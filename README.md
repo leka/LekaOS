@@ -33,6 +33,14 @@ mbed compile -m NUCLEO_WB55RG
 mbed compile -m NUCLEO_WB55RG --flash
 ```
 
+## Testing
+
+Tests are available in the `test` folder:
+
+- [unit tests](./test/unit)
+- [functional tests](./test/functional)
+- [app tests](./test/app)
+
 ## License
 
 Copyright (c) APF France handicap. All rights reserved.
