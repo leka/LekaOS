@@ -41,6 +41,13 @@ Tests are available in the `test` folder:
 - [functional tests](./test/functional)
 - [app tests](./test/app)
 
+## Tools & Utils
+
+This project needs several tools to contribute:
+
+- Clang Format
+- Editor Config
+
 ## License
 
 Copyright (c) APF France handicap. All rights reserved.

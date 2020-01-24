@@ -1,0 +1,39 @@
+BasedOnStyle: Google
+IndentWidth: 4
+TabWidth: 4
+ColumnLimit: 100
+
+Language: Cpp
+Standard: Latest
+
+AccessModifierOffset: -2
+SpacesBeforeTrailingComments: 3
+
+NamespaceIndentation: All
+
+Cpp11BracedListStyle: true
+
+DerivePointerAlignment: false
+PointerAlignment: Right
+AlignAfterOpenBracket: true
+AlignConsecutiveAssignments: true
+
+AlignEscapedNewlines: Right
+AlignTrailingComments: true
+AllowShortBlocksOnASingleLine: true
+FixNamespaceComments: true
+IndentCaseLabels: true
+
+NamespaceIndentation: All
+SpaceBeforeCpp11BracedList: true
+SpaceBeforeParens: ControlStatements
+SpaceBeforeRangeBasedForLoopColon: false
+
+UseTab: Always
+KeepEmptyLinesAtTheStartOfBlocks: false
+AllowShortIfStatementsOnASingleLine: false
+MaxEmptyLinesToKeep: 1
+
+#IndentPPDirectives: BeforeHash
+#AlignConsecutiveMacros: true
+#SpaceInEmptyBlock: true
