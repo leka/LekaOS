@@ -1,24 +1,24 @@
 ### Ignored directories to speed up compilation time
 
 test/**
-lib/mbed-os/components/**
-lib/mbed-os/features/cellular/**
-lib/mbed-os/features/cryptocell/**
-lib/mbed-os/features/deprecated_warnings/**
+libvendor/mbed-os/components/**
+libvendor/mbed-os/features/cellular/**
+libvendor/mbed-os/features/cryptocell/**
+libvendor/mbed-os/features/deprecated_warnings/**
 
-# lib/mbed-os/features/FEATURE_BLE/**
-# lib/mbed-os/features/FEATURE_BOOTLOADER/**
+# libvendor/mbed-os/features/FEATURE_BLE/**
+# libvendor/mbed-os/features/FEATURE_BOOTLOADER/**
 
-lib/mbed-os/features/lorawan/**
-lib/mbed-os/features/lwipstack/**
+libvendor/mbed-os/features/lorawan/**
+libvendor/mbed-os/features/lwipstack/**
 
-lib/mbed-os/features/nanostack/**
-lib/mbed-os/features/netsocket/**
-lib/mbed-os/features/nfc/**
-lib/mbed-os/features/unsupported/**
+libvendor/mbed-os/features/nanostack/**
+libvendor/mbed-os/features/netsocket/**
+libvendor/mbed-os/features/nfc/**
+libvendor/mbed-os/features/unsupported/**
 
 ### Needed directories
 
-# lib/mbed-os/features/device_key/**
-# lib/mbed-os/features/frameworks/**
-# lib/mbed-os/features/mbedtls/**
+# libvendor/mbed-os/features/device_key/**
+# libvendor/mbed-os/features/frameworks/**
+# libvendor/mbed-os/features/mbedtls/**
