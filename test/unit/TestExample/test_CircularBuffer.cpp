@@ -19,26 +19,18 @@
 #include "platform/CircularBuffer.h"
 
 class TestCircularBuffer : public testing::Test {
-protected:
-    mbed::CircularBuffer<int, 10> *buf;
+  protected:
+	mbed::CircularBuffer<int, 10> *buf;
 
-    virtual void SetUp()
-    {
-        buf = new mbed::CircularBuffer<int, 10>;
-    }
+	virtual void SetUp() {
+		buf = new mbed::CircularBuffer<int, 10>;
+	}
 
-    virtual void TearDown()
-    {
-        delete buf;
-    }
+	virtual void TearDown() {
+		delete buf;
+	}
 };
 
-<<<<<<< HEAD
-TEST_F(TestCircularBuffer, constructor)
-{
-    EXPECT_TRUE(buf);
-=======
 TEST_F(TestCircularBuffer, secondTest) {
 	EXPECT_TRUE(buf);
->>>>>>> 2d09715... wip tests
 }

@@ -4,7 +4,7 @@ TabWidth: 4
 ColumnLimit: 100
 
 Language: Cpp
-Standard: Latest
+Standard: Cpp11
 
 AccessModifierOffset: -2
 SpacesBeforeTrailingComments: 3
@@ -12,6 +12,8 @@ SpacesBeforeTrailingComments: 3
 NamespaceIndentation: All
 
 Cpp11BracedListStyle: true
+
+IncludeBlocks: Merge
 
 DerivePointerAlignment: false
 PointerAlignment: Right
@@ -32,6 +34,7 @@ SpaceBeforeRangeBasedForLoopColon: false
 UseTab: Always
 KeepEmptyLinesAtTheStartOfBlocks: false
 AllowShortIfStatementsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
 MaxEmptyLinesToKeep: 1
 
 #IndentPPDirectives: BeforeHash

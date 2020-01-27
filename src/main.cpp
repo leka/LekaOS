@@ -1,5 +1,5 @@
-#include "mbed.h"
 #include "HelloWorld/HelloWorld.h"
+#include "mbed.h"
 
 HelloWorld hello;
 uint8_t myCount = 0;

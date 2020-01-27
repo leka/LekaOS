@@ -8,8 +8,8 @@
  * @copyright Copyright (c) 2019
  */
 
-#include "mbed.h"
 #include "HelloWorld.h"
+#include "mbed.h"
 
 HelloWorld::HelloWorld(void) {
 	// nothing to do
@@ -19,11 +19,9 @@ HelloWorld::HelloWorld(void) {
  * @brief Start the 3 threads to blink the leds
  */
 void HelloWorld::start(void) {
-
 	thread1.start(callback(blink, &led1Data));
 	thread2.start(callback(blink, &led2Data));
 	thread3.start(callback(blink, &led3Data));
-
 }	// void start(void)
 
 /**
@@ -32,10 +30,8 @@ void HelloWorld::start(void) {
  * @param data Data structure with led pin & sleep time
  */
 void HelloWorld::blink(Data *data) {
-
 	while (true) {
 		data->led = !data->led;
 		rtos::ThisThread::sleep_for(data->sleepTime);
 	}
-
 }	// void blink(Data * data)

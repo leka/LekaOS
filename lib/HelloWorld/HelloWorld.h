@@ -19,7 +19,6 @@
  */
 
 class HelloWorld {
-
 	/**
 	 * @brief Struct used to hold led pin & sleep time information
 	 */
@@ -46,7 +45,6 @@ class HelloWorld {
 	struct Data led3Data = {DigitalOut(LED3), 1500};
 
 	static void blink(Data *data);
-
 };	 // class HelloWorld
 
 #endif
