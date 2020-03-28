@@ -1,0 +1,23 @@
+'LekaOS - Tasks, Bugs & PRs':
+  'Backlog':
+    - '99 - status: backlog'
+  'To do':
+    - '99 - status: to do'
+  'In progress':
+    - '99 - status: in progress'
+  'Review needed':
+    - '99 - status: review needed'
+  'Review approved':
+    - '99 - status: review approved'
+  'Done':
+    - '99 - status: done'
+
+'LekaOS - Epics & Stories':
+  'Backlog':
+    - '99 - status: backlog'
+  'To do':
+    - '99 - status: to do'
+  'In progress':
+    - '99 - status: in progress'
+  'Done':
+    - '99 - status: done'
