@@ -1,0 +1,15 @@
+name: Project Auto Labeler
+
+on:
+  project_card:
+    types: [moved, created]
+
+jobs:
+  triage:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Auto card labeler
+      uses: technote-space/auto-card-labeler
+      with:
+        GITHUB_TOKEN: ${{ github.token }}
+        CONFIG_FILENAME: project-status-labels.yml
