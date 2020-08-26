@@ -7,32 +7,36 @@ require 'csv'
 #
 
 def puts_help
+	puts ""
 	puts "Choose one of:"
-	puts "   --check-signals"
-	puts "   --fix-signals"
-	puts "   --check-labels"
-	puts "   --fix-labels"
-	puts "   --rm-scripts"
+	puts "   --check-signals <path/to/ioc/file>"
+	puts "   --fix-signals <path/to/ioc/file>"
+	puts "   --check-labels <path/to/ioc/file>"
+	puts "   --fix-labels <path/to/ioc/file>"
+	puts "   --rm-scripts <path/to/ioc/file>"
 end
 
 arguments_available = ["--check-signals", "--check-labels", "--fix-signals", "--fix-labels", "--rm-scripts"]
 arguments_passed = ARGV
 
-if arguments_passed.length > 1
-	puts "❌ Too many arguments..."
+$arg_action = arguments_passed[0]
+$arg_path   = arguments_passed[1]
+
+if arguments_passed.include? "--help"
 	puts_help
 	exit
 end
 
-arguments_passed.each do |arg|
-	if !arguments_available.include? arg
-		puts "❌ #{arg} not available..."
-		puts_help
-		exit
-	end
+if arguments_passed.length != 2
+	puts ""
+	puts "❌ The script needs 2 arguments: <action> and <path>"
+	puts_help
+	exit
 end
 
-if arguments_passed.include? "--help"
+if !arguments_available.include? $arg_action
+	puts ""
+	puts "❌ #{$arg_action} not available..."
 	puts_help
 	exit
 end
@@ -52,20 +56,30 @@ $fix_labels    = false
 $rm_scripts    = false
 (arguments_passed.include? "--rm-scripts") ? $rm_scripts = true : $rm_scripts = false
 
+
 #
 # MARK:- Variables
 #
 
 # .ioc File
 
-$mcu_file_prefix  = "Leka-MCU_Pins"
-$mcu_file_version = "1.0.0"
-$ioc_file         = "#{$mcu_file_prefix}-v#{$mcu_file_version}.ioc"
+$ioc_file_path    = $arg_path
+$ioc_file_prefix  = "Leka-MCU_Pins"
+$ioc_file_version = File.basename(File.dirname($ioc_file_path))
+$ioc_file         = File.basename($ioc_file_path)
+$ioc_dir_path     = File.dirname($ioc_file_path)
+
+puts ""
+puts "Getting ioc file information..."
+puts "   ioc file directory: #{$ioc_dir_path}"
+puts "   ioc file name:      #{$ioc_file}"
+puts "   ioc file version:   #{$ioc_file_version}"
+puts "Getting ioc file information... ✅"
 
 # CSV Files
 
-pin_csv_reference_file = "#{$mcu_file_prefix}-v#{$mcu_file_version}-reference.csv"
-pin_csv_generated_file = "#{$mcu_file_prefix}-v#{$mcu_file_version}-generated.csv"
+pin_csv_reference_file = "#{$ioc_dir_path}/#{$ioc_file_prefix}-v#{$ioc_file_version}-reference.csv"
+pin_csv_generated_file = "#{$ioc_dir_path}/#{$ioc_file_prefix}-v#{$ioc_file_version}-generated.csv"
 
 $pin_csv_reference = CSV.parse(File.read(pin_csv_reference_file), headers: true)
 $pin_csv_generated = CSV.parse(File.read(pin_csv_generated_file), headers: true)
@@ -80,11 +94,8 @@ $header_label    = "Label"
 
 # Script files
 
-$fix_signals_file = "fix_signals.txt"
-$fix_labels_file  = "fix_labels.txt"
-
-# Fix needed
-
+$fix_signals_file = "#{$ioc_dir_path}/fix_signals.txt"
+$fix_labels_file  = "#{$ioc_dir_path}/fix_labels.txt"
 
 
 #
@@ -115,8 +126,8 @@ def puts_script_instructions(file)
 	puts ""
 	puts "      $ stm32cubemx -i"
 	puts ""
-	puts "    MX> config load #{$ioc_file}"
-	puts "    MX> script #{File.basename(file)}"
+	puts "    MX> config load #{$ioc_file_path}"
+	puts "    MX> script #{$ioc_dir_path}/#{File.basename(file)}"
 	puts "    MX> config save"
 	puts "    MX> csv pinout #{$pin_csv_generated_file}"
 	puts ""
