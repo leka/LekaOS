@@ -51,6 +51,7 @@ _deps
 # mbed
 
 lib/_vendor/mbed-os
+cube_path.json
 
 
 # C
