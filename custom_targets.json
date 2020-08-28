@@ -121,13 +121,9 @@
 		"extra_labels_add": [
 			"STM32F769xI"
 		],
-		"components_add": [
-			"QSPIF"
-		],
+		"components_add": [],
 		"supported_form_factors": [],
-		"features" : [
-			"BLE"
-		],
+		"features" : [],
 		"config": {
 			"flash_dual_bank": {
 				"help": "Default board configuration is Single Bank Flash. If you enable Dual Bank with ST Link Utility, set value to 1",
@@ -141,15 +137,13 @@
 			"STM32F769xx",
 			"HSE_VALUE=25000000"
 		],
-		"device_has_add": [
-			"QSPI"
-		],
+		"device_has_add": [],
 		"device_has_remove": [
 			"I2CSLAVE",
-			"SPISLACE",
+			"SPISLAVE",
 			"CAN"
 		],
-		"device_name": "STM32F769BI",
+		"device_name": "STM32F769NI",
 		"overrides": {
 			"network-default-interface-type": "WIFI"
 		}
