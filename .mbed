@@ -1,0 +1,4 @@
+MBED_OS_DIR=./libvendor/mbed-os
+TARGET=disco_f769ni
+TOOLCHAIN=GCC_ARM
+ROOT=.
