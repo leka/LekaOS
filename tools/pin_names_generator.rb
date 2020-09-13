@@ -1,5 +1,9 @@
 #!/usr/bin/env ruby
 
+# Leka - LekaOS
+# Copyright 2020 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
 require 'csv'
 require 'fileutils'
 
