@@ -85,7 +85,12 @@ $pins_array = []
 
 $pins.each_with_index do |pin, index|
 	unless pin[$header_label].to_s.strip.empty?
-		output = [pin[$header_label], pin[$header_name].insert(2, "_")]
+		label = pin[$header_label]
+		name  = pin[$header_name].insert(2, "_")
+		if index = name.index("/")
+			name = pin[$header_name][0..index-1]
+		end
+		output = [label, name]
 		$pins_array.append(output)
 	end
 end
