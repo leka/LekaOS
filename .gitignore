@@ -53,7 +53,7 @@ _deps
 lib/_vendor/mbed-os
 cube_path.json
 LekaPinNames*.bak
-
+*.ioc.csv
 
 # C
 
