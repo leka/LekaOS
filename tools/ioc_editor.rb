@@ -73,6 +73,13 @@ $ioc_file_version = File.basename(File.dirname($ioc_file_path))
 $ioc_file         = File.basename($ioc_file_path)
 $ioc_dir_path     = File.dirname($ioc_file_path)
 
+if !$ioc_file_path.include? "ioc"
+	puts ""
+	puts "❌ The file chosen is not a .ioc file..."
+	puts_help
+	exit
+end
+
 puts ""
 puts "Getting ioc file information..."
 puts "   ioc file directory: #{$ioc_dir_path}"
@@ -82,11 +89,11 @@ puts "Getting ioc file information... ✅"
 
 # CSV Files
 
-pin_csv_reference_file = "#{$ioc_dir_path}/#{$ioc_file_prefix}-v#{$ioc_file_version}-reference.csv"
-pin_csv_generated_file = "#{$ioc_dir_path}/#{$ioc_file_prefix}-v#{$ioc_file_version}-generated.csv"
+$pin_csv_reference_file = "#{$ioc_dir_path}/#{$ioc_file_prefix}-v#{$ioc_file_version}-reference.csv"
+$pin_csv_generated_file = "#{$ioc_dir_path}/#{$ioc_file_prefix}-v#{$ioc_file_version}-generated.csv"
 
-$pin_csv_reference = CSV.parse(File.read(pin_csv_reference_file), headers: true)
-$pin_csv_generated = CSV.parse(File.read(pin_csv_generated_file), headers: true)
+$pin_csv_reference = CSV.parse(File.read($pin_csv_reference_file), headers: true)
+$pin_csv_generated = CSV.parse(File.read($pin_csv_generated_file), headers: true)
 
 # CSV Headers - Position, Name, Type, Signal, Label
 
