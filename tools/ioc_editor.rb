@@ -20,7 +20,7 @@ def puts_help
 	puts "   --rm-scripts <path/to/ioc/file>"
 end
 
-arguments_available = ["--check-signals", "--check-labels", "--fix-signals", "--fix-labels", "--rm-scripts"]
+arguments_available = ["--check-signals", "--check-labels", "--fix-signals", "--fix-labels", "--rm-scripts", "--generate-csv"]
 arguments_passed = ARGV
 
 $arg_action = arguments_passed[0]
@@ -60,6 +60,9 @@ $fix_labels    = false
 $rm_scripts    = false
 (arguments_passed.include? "--rm-scripts") ? $rm_scripts = true : $rm_scripts = false
 
+$generate_csv = false
+(arguments_passed.include? "--generate-csv") ? $generate_csv = true : $generate_csv = false
+
 
 #
 # MARK:- Variables
@@ -70,7 +73,7 @@ $rm_scripts    = false
 $ioc_file_path    = $arg_path
 $ioc_file_prefix  = "Leka-MCU_Pins"
 $ioc_file_version = File.basename(File.dirname($ioc_file_path))
-$ioc_file         = File.basename($ioc_file_path)
+$ioc_file_name    = File.basename($ioc_file_path)
 $ioc_dir_path     = File.dirname($ioc_file_path)
 
 if !$ioc_file_path.include? "ioc"
@@ -83,17 +86,31 @@ end
 puts ""
 puts "Getting ioc file information..."
 puts "   ioc file directory: #{$ioc_dir_path}"
-puts "   ioc file name:      #{$ioc_file}"
+puts "   ioc file name:      #{$ioc_file_name}"
 puts "   ioc file version:   #{$ioc_file_version}"
 puts "Getting ioc file information... ✅"
 
 # CSV Files
 
-$pin_csv_reference_file = "#{$ioc_dir_path}/#{$ioc_file_prefix}-v#{$ioc_file_version}-reference.csv"
-$pin_csv_generated_file = "#{$ioc_dir_path}/#{$ioc_file_prefix}-v#{$ioc_file_version}-generated.csv"
+$pin_csv_reference_file_path = "#{$ioc_dir_path}/#{$ioc_file_prefix}-v#{$ioc_file_version}.reference.csv"
+$pin_csv_generated_file_path = "#{$ioc_dir_path}/#{$ioc_file_name}.csv"
 
-$pin_csv_reference = CSV.parse(File.read($pin_csv_reference_file), headers: true)
-$pin_csv_generated = CSV.parse(File.read($pin_csv_generated_file), headers: true)
+if !File.exist?($pin_csv_generated_file_path) or $generate_csv
+	puts ""
+	puts "Generating .csv file from #{$ioc_file_path}..."
+	IO.popen(['stm32cubemx', '-i'], 'w+') do |io|
+		io.puts "config load #{$ioc_file_path}"
+		io.puts "config load #{$ioc_file_path}"
+		io.puts "csv pinout #{$pin_csv_generated_file_path}"
+		io.puts "exit"
+		io.close
+	end
+	puts "Generating .csv file from #{$ioc_file_path}... ✅"
+end
+
+
+$pin_csv_reference = CSV.parse(File.read($pin_csv_reference_file_path), headers: true)
+$pin_csv_generated = CSV.parse(File.read($pin_csv_generated_file_path), headers: true)
 
 # CSV Headers - Position, Name, Type, Signal, Label
 
@@ -140,7 +157,7 @@ def puts_script_instructions(file)
 	puts "    MX> config load #{$ioc_file_path}"
 	puts "    MX> script #{$ioc_dir_path}/#{File.basename(file)}"
 	puts "    MX> config save"
-	puts "    MX> csv pinout #{$pin_csv_generated_file}"
+	puts "    MX> csv pinout #{$pin_csv_generated_file_path}"
 	puts ""
 end
 
