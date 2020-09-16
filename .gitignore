@@ -54,6 +54,8 @@ lib/_vendor/mbed-os
 cube_path.json
 LekaPinNames*.bak
 *.ioc.csv
+*fix_labels.txt
+*fix_signals.txt
 
 # C
 
