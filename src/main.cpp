@@ -12,12 +12,16 @@ int main(void) {
 
 	auto start = Kernel::Clock::now();
 
+	printf("\nHello, Investigation Day!\n\n");
+
+	rtos::ThisThread::sleep_for(2s);
+
 	hello.start();
 
 	while (true) {
 		auto t = Kernel::Clock::now() - start;
-		int c_size = sprintf(buff, "A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world, int(t.count()/1000));
-		serial.write(buff, c_size);
+		int length = sprintf(buff, "A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world, int(t.count()/1000));
+		serial.write(buff, length);
 		rtos::ThisThread::sleep_for(1s);
 	}
 
