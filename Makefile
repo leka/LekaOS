@@ -1,5 +1,7 @@
 disco:
 	mbed compile -m DISCO_ORIGINAL --color --profile=release --profile=./profiles/leka.json
+	arm-none-eabi-objcopy -O ihex build/DISCO_ORIGINAL/GCC_ARM-RELEASE/LekaOS.elf build/DISCO_ORIGINAL/GCC_ARM-RELEASE/LekaOS.hex
+	arm-none-eabi-size build/DISCO_ORIGINAL/GCC_ARM-RELEASE/LekaOS.hex
 
 disco_flash:
 	$(MAKE) disco
@@ -7,6 +9,8 @@ disco_flash:
 
 leka:
 	mbed compile -m LEKA_V1.0_DEV --color --profile=release --profile=./profiles/leka.json
+	arm-none-eabi-objcopy -O ihex build/LEKA_V1.0_DEV/GCC_ARM-RELEASE/LekaOS.elf build/LEKA_V1.0_DEV/GCC_ARM-RELEASE/LekaOS.hex
+	arm-none-eabi-size build/LEKA_V1.0_DEV/GCC_ARM-RELEASE/LekaOS.hex
 
 leka_flash:
 	$(MAKE) leka
