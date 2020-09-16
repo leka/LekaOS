@@ -46,7 +46,7 @@ _deps
 
 # VSCode
 
-#.vscode
+.vscode
 
 # mbed
 
