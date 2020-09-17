@@ -1,4 +1,4 @@
-// Mbed CMake Template
+// Leka - LekaOS
 // Copyright 2020 Ladislas de Toldi (ladislas [at] detoldi.me)
 // SPDX-License-Identifier: Apache-2.0
 
