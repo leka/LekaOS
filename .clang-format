@@ -33,6 +33,7 @@ UseTab: Always
 KeepEmptyLinesAtTheStartOfBlocks: false
 
 AllowShortFunctionsOnASingleLine: Inline
+AllowShortBlocksOnASingleLine: Never
 
 BreakBeforeBraces: Custom
 BraceWrapping:
