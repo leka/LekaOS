@@ -3,9 +3,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "HelloWorld.h"
+#include "LekaWifi.h"
 #include "mbed.h"
 
 HelloWorld hello;
+LekaWifi leka_wifi;
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 
@@ -20,6 +22,7 @@ int main(void)
 
 	rtos::ThisThread::sleep_for(2s);
 
+	leka_wifi.start();
 	hello.start();
 
 	while (true) {
