@@ -1,11 +1,13 @@
 #define FASTLED_INTERNAL
 #include "FastLED.h"
 
-#if defined(__SAM3X8E__)
-volatile uint32_t fuckit;
-#endif
+#include "SK9822Controller.h"
 
-FASTLED_NAMESPACE_BEGIN
+// #if defined(__SAM3X8E__)
+// volatile uint32_t fuckit;
+// #endif
+
+// FASTLED_NAMESPACE_BEGIN
 
 void *pSmartMatrix = NULL;
 
@@ -17,6 +19,24 @@ static uint32_t lastshow				= 0;
 
 uint32_t _frame_cnt = 0;
 uint32_t _retry_cnt = 0;
+
+uint32_t micros()
+{
+	HighResClock::lock();
+	auto t = HighResClock::now();
+	HighResClock::unlock();
+	std::chrono::microseconds tms = t.time_since_epoch();
+	return static_cast<uint32_t>(tms.count());
+}
+
+uint32_t millis()
+{
+	HighResClock::lock();
+	auto t = HighResClock::now();
+	HighResClock::unlock();
+	std::chrono::microseconds tms = t.time_since_epoch();
+	return static_cast<uint32_t>(tms.count() / 1000);
+}
 
 // uint32_t CRGB::Squant = ((uint32_t)((__TIME__[4]-'0') * 28))<<16 | ((__TIME__[6]-'0')*50)<<8 |
 // ((__TIME__[7]-'0')*28);
@@ -139,10 +159,11 @@ void CFastLED::delay(unsigned long ms)
 #ifndef FASTLED_ACCURATE_CLOCK
 		// make sure to allow at least one ms to pass to ensure the clock moves
 		// forward
-		::delay(1);
+		// ::delay(1);
+		wait_ns(1000'0000);
 #endif
 		show();
-		yield();
+		// yield();
 	} while ((millis() - start) < ms);
 }
 
@@ -282,4 +303,4 @@ namespace __cxxabiv1 {
 }	// namespace __cxxabiv1
 #endif
 
-FASTLED_NAMESPACE_END
+// FASTLED_NAMESPACE_END

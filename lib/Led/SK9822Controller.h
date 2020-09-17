@@ -5,7 +5,10 @@
 #ifndef _LK_ALPHA_OS_LIB_LED_SK9822_CONTROLLER_H_
 #define _LK_ALPHA_OS_LIB_LED_SK9822_CONTROLLER_H_
 
-#include "FastLED.h"
+// #include "FastLED.h"
+#include "PinNames.h"
+#include "controller.h"
+#include "mbed.h"
 #include "pixeltypes.h"
 
 ///
@@ -18,26 +21,36 @@
 /// @tparam SPI_SPEED the clock divider used for these leds. Set using the DATA_RATE_MHZ/DATA_RATE_KHZ macros.
 /// Defaults to DATA_RATE_MHZ(24)
 ///
+
+#define DATA_RATE_MHZ
+
+// template <EOrder RGB_ORDER = RGB>
 template <uint8_t DATA_PIN, uint8_t CLOCK_PIN, EOrder RGB_ORDER = RGB, uint32_t SPI_SPEED = DATA_RATE_MHZ(24)>
 class SK9822Controller : public CPixelLEDController<RGB_ORDER>
 {
   public:
-	SK9822Controller() {}
+	SK9822Controller(SPI &spi) : mSPI(spi) {}
+	// SK9822Controller() {}
 
-	virtual void init() { mSPI.init(); }
+	virtual void init()
+	{ /* mSPI.init(); */
+	}
 
   protected:
 	virtual void showPixels(PixelController<RGB_ORDER> &pixels)
 	{
-		mSPI.select();
+		mSPI.lock();
 
-		uint8_t s0 = pixels.getScale0(), s1 = pixels.getScale1(), s2 = pixels.getScale2();
+		uint8_t s0 = pixels.getScale0();
+		uint8_t s1 = pixels.getScale1();
+		uint8_t s2 = pixels.getScale2();
 
 		const uint16_t maxBrightness = 0x1F;
-		uint16_t brightness			 = ((((uint16_t)max(max(s0, s1), s2) + 1) * maxBrightness - 1) >> 8) + 1;
-		s0							 = (maxBrightness * s0 + (brightness >> 1)) / brightness;
-		s1							 = (maxBrightness * s1 + (brightness >> 1)) / brightness;
-		s2							 = (maxBrightness * s2 + (brightness >> 1)) / brightness;
+		const uint16_t brightness	 = ((((uint16_t)max(max(s0, s1), s2) + 1) * maxBrightness - 1) >> 8) + 1;
+
+		s0 = (maxBrightness * s0 + (brightness >> 1)) / brightness;
+		s1 = (maxBrightness * s1 + (brightness >> 1)) / brightness;
+		s2 = (maxBrightness * s2 + (brightness >> 1)) / brightness;
 
 		startBoundary();
 		while (pixels.has(1)) {
@@ -48,38 +61,42 @@ class SK9822Controller : public CPixelLEDController<RGB_ORDER>
 
 		endBoundary(pixels.size());
 
-		mSPI.waitFully();
-		mSPI.release();
+		// mSPI.waitFully();
+		mSPI.unlock();
 	}
 
   private:
 	// TODO: move to mbed SPI
-	typedef SPIOutput<DATA_PIN, CLOCK_PIN, SPI_SPEED> SPI;
-	SPI mSPI;
+	// typedef SPIOutput<DATA_PIN, CLOCK_PIN, SPI_SPEED> SPI;
+	// SPI mSPI(PinName::PB_15, PinName::PB_14, PinName::PA_12);
+	SPI &mSPI;
 
 	void startBoundary()
 	{
-		mSPI.writeWord(0);
-		mSPI.writeWord(0);
+		mSPI.write(0x00);
+		mSPI.write(0x00);
+		mSPI.write(0x00);
+		mSPI.write(0x00);
 	}
+
 	void endBoundary(int nLeds)
 	{
 		int nLongWords = (nLeds / 32);
 		do {
-			mSPI.writeByte(0x00);
-			mSPI.writeByte(0x00);
-			mSPI.writeByte(0x00);
-			mSPI.writeByte(0x00);
+			mSPI.write(0x00);
+			mSPI.write(0x00);
+			mSPI.write(0x00);
+			mSPI.write(0x00);
 		} while (nLongWords--);
 	}
 
 	inline void writeLed(uint8_t brightness, uint8_t b0, uint8_t b1, uint8_t b2) __attribute__((always_inline))
 	{
 		// #ifdef FASTLED_SPI_BYTE_ONLY
-		mSPI.writeByte(0xE0 | brightness);
-		mSPI.writeByte(b0);
-		mSPI.writeByte(b1);
-		mSPI.writeByte(b2);
+		mSPI.write(0xE0 | brightness);
+		mSPI.write(b0);
+		mSPI.write(b1);
+		mSPI.write(b2);
 		// #else
 		// 		uint16_t b = 0xE000 | (brightness << 8) | (uint16_t)b0;
 		// 		mSPI.writeWord(b);
@@ -88,4 +105,6 @@ class SK9822Controller : public CPixelLEDController<RGB_ORDER>
 		// 		mSPI.writeWord(w);
 		// #endif
 	}
-};	 // _LK_ALPHA_OS_LIB_LED_SK9822_CONTROLLER_H_
+};
+
+#endif	 // _LK_ALPHA_OS_LIB_LED_SK9822_CONTROLLER_H_
