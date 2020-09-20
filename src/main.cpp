@@ -5,8 +5,10 @@
 #include "mbed.h"
 
 #include "HelloWorld.h"
+#include "LekaTouch.h"
 
 HelloWorld hello;
+LekaTouch leka_touch;
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 
@@ -21,6 +23,7 @@ int main(void)
 
 	rtos::ThisThread::sleep_for(2s);
 
+	leka_touch.start();
 	hello.start();
 
 	while (true) {
