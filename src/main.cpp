@@ -7,12 +7,14 @@
 #include "mbed.h"
 
 HelloWorld hello;
-LekaWifi leka_wifi;
+Wifi leka_wifi;
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 
 constexpr uint8_t buff_size = 128;
 char buff[buff_size] {};
+
+Thread wifi_thread;
 
 int main(void)
 {
@@ -22,11 +24,12 @@ int main(void)
 
 	rtos::ThisThread::sleep_for(2s);
 
-	leka_wifi.start();
+	wifi_thread.start({&leka_wifi, &Wifi::start});
 	hello.start();
 
 	while (true) {
-		auto t	   = Kernel::Clock::now() - start;
+		auto t = Kernel::Clock::now() - start;
+
 		int length = sprintf(buff, "A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME,
 							 hello.world, int(t.count() / 1000));
 		serial.write(buff, length);
