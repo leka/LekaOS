@@ -6,14 +6,18 @@
 =======
 >>>>>>> 8270ace... Bluetooth - Initial commit
 #include "HelloWorld.h"
+#include "LekaBluetooth.h"
 #include "mbed.h"
 
 HelloWorld hello;
+Bluetooth leka_bluetooth;
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 
 constexpr uint8_t buff_size = 128;
 char buff[buff_size] {};
+
+Thread bluetooth_thread;
 
 int main(void)
 {
@@ -21,6 +25,7 @@ int main(void)
 
 	printf("\nHello, Investigation Day!\n\n");
 
+	bluetooth_thread.start({&leka_bluetooth, &Bluetooth::start});
 	rtos::ThisThread::sleep_for(2s);
 
 	hello.start();
