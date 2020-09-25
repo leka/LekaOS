@@ -22,6 +22,7 @@ class Bluetooth
 
 	void start(void);
 	void pairing();
+	void playPause();
 	void checkResponse(bool printResponse = false);
 	// void converse();
 

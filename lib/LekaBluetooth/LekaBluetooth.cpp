@@ -75,6 +75,19 @@ void Bluetooth::checkResponse(bool printResponse)
 	return;
 }
 
+void Bluetooth::playPause()
+{
+	/* Pause or play video/song on paired device */
+
+	_buffer_length = 0;
+
+	_buffer_length = BM64::getCommand(BM64::Command::play_pause, BM64::Command::play_pause_length, _buffer);
+
+	_interface.write(_buffer, _buffer_length);
+
+	return;
+}
+
 // void Bluetooth::converse() {}
 
 void Bluetooth::start()
@@ -86,6 +99,8 @@ void Bluetooth::start()
 		while (_paired) {
 			checkResponse(true);
 			ThisThread::sleep_for(20ms);
+			playPause();
+			ThisThread::sleep_for(1s);
 		}
 		// converse();
 		ThisThread::sleep_for(10s);

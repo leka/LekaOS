@@ -17,6 +17,9 @@ namespace BM64 {
 		const uint8_t pairing[3]	= {0x02, 0x00, 0x50};
 		const size_t pairing_length = 3;
 
+		const uint8_t play_pause[3]	   = {0x02, 0x00, 0x32};
+		const size_t play_pause_length = 3;
+
 	};	 // namespace Command
 	// using command_t = Command;
 
