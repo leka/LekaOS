@@ -14,24 +14,38 @@
 #include "MCP23017.h"
 #include "mbed.h"
 
-class LekaTouch
+class Touch
 {
   public:
-	LekaTouch();
-	~LekaTouch() {};
+	Touch();
+	~Touch() {};
 
 	void start(void);
+	void init_read_interface();
+	void init_write_interface(uint8_t address);
+	void calibrate_two_sensors(bool &sensor_left, bool &sensor_right, uint8_t channel);
+	void calibration();
+	void print_all_read_interface_registers();
+	void print_all_write_interface_registers(uint8_t address);
+	void update_sensors_status();
 
   private:
 	I2C _write_interface;
 	MCP23017 _read_interface;
-	DigitalOut _mux_reset;	 // SET TO 1 if necessary
+	DigitalOut _mux_reset;
 	DigitalIn _mux_inta;
 	DigitalIn _mux_intb;
 
-	uint8_t _write_address_left	 = 0xC0;   // To check if left side
-	uint8_t _write_address_right = 0xC2;   // To check if right side
-	uint8_t _read_address		 = 0x4E;
+	bool _ear_left_touched;
+	bool _ear_right_touched;
+	bool _belt_left_back_touched;
+	bool _belt_left_front_touched;
+	bool _belt_right_back_touched;
+	bool _belt_right_front_touched;
+
+	const uint8_t _write_address_left  = 0xC0;
+	const uint8_t _write_address_right = 0xC2;
+	const uint8_t _read_address		   = 0x4E;
 };
 
 #endif
