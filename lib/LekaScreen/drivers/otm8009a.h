@@ -149,7 +149,7 @@ extern "C" {
 
 /* Possible used values of MADCTR */
 #define OTM8009A_MADCTR_MODE_PORTRAIT 0x00
-#define OTM8009A_MADCTR_MODE_LANDSCAPE 0x60 /* MY = 0, MX = 1, MV = 1, ML = 0, RGB = 0 */
+#define OTM8009A_MADCTR_MODE_LANDSCAPE 0xA0 /* MY = 0, MX = 1, MV = 1, ML = 0, RGB = 0 */
 
 #define OTM8009A_CMD_IDMOFF 0x38 /* Idle mode Off command */
 #define OTM8009A_CMD_IDMON 0x39	 /* Idle mode On command  */
