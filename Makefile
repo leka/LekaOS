@@ -48,7 +48,7 @@ config:
 config_target:
 	@echo ""
 	@echo "🏃 Running target configuration script 📝"
-	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_DIR)/config
+	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_DIR)/config -a $(ROOT_DIR)/mbed_app.json
 
 config_cmake:
 	@echo ""
