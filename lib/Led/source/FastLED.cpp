@@ -1,7 +1,6 @@
-#define FASTLED_INTERNAL
-#include "FastLED.h"
 
-#include "SK9822Controller.h"
+
+#include "../include/FastLED.h"
 
 // #if defined(__SAM3X8E__)
 // volatile uint32_t fuckit;

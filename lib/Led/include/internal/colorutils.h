@@ -4,7 +4,6 @@
 ///@file colorutils.h
 /// functions for color fill, paletters, blending, and more
 
-#include "FastLED.h"
 #include "fastled_progmem.h"
 #include "pixeltypes.h"
 

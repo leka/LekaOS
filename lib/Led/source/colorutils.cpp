@@ -1,10 +1,8 @@
-#define FASTLED_INTERNAL
-#define __PROG_TYPES_COMPAT__
-
-#include "colorutils.h"
-
 #include <math.h>
 #include <stdint.h>
+
+// Force
+#include "../include/internal/colorutils.h"
 
 // #include "FastLED.h"
 
@@ -96,38 +94,6 @@ void fill_gradient_RGB(CRGB *leds, uint16_t startpos, CRGB startcolor, uint16_t 
 	}
 }
 
-#if 0
-void fill_gradient( const CHSV& c1, const CHSV& c2)
-{
-    fill_gradient( FastLED[0].leds(), FastLED[0].size(), c1, c2);
-}
-
-void fill_gradient( const CHSV& c1, const CHSV& c2, const CHSV& c3)
-{
-    fill_gradient( FastLED[0].leds(), FastLED[0].size(), c1, c2, c3);
-}
-
-void fill_gradient( const CHSV& c1, const CHSV& c2, const CHSV& c3, const CHSV& c4)
-{
-    fill_gradient( FastLED[0].leds(), FastLED[0].size(), c1, c2, c3, c4);
-}
-
-void fill_gradient_RGB( const CRGB& c1, const CRGB& c2)
-{
-    fill_gradient_RGB( FastLED[0].leds(), FastLED[0].size(), c1, c2);
-}
-
-void fill_gradient_RGB( const CRGB& c1, const CRGB& c2, const CRGB& c3)
-{
-    fill_gradient_RGB( FastLED[0].leds(), FastLED[0].size(), c1, c2, c3);
-}
-
-void fill_gradient_RGB( const CRGB& c1, const CRGB& c2, const CRGB& c3, const CRGB& c4)
-{
-    fill_gradient_RGB( FastLED[0].leds(), FastLED[0].size(), c1, c2, c3, c4);
-}
-#endif
-
 void fill_gradient_RGB(CRGB *leds, uint16_t numLeds, const CRGB &c1, const CRGB &c2)
 {
 	uint16_t last = numLeds - 1;
@@ -216,24 +182,10 @@ CRGB &nblend(CRGB &existing, const CRGB &overlay, fract8 amountOfOverlay)
 		return existing;
 	}
 
-#if 0
-    // Old blend method which unfortunately had some rounding errors
-    fract8 amountOfKeep = 255 - amountOfOverlay;
-
-    existing.red   = scale8_LEAVING_R1_DIRTY( existing.red,   amountOfKeep)
-                    + scale8_LEAVING_R1_DIRTY( overlay.red,    amountOfOverlay);
-    existing.green = scale8_LEAVING_R1_DIRTY( existing.green, amountOfKeep)
-                    + scale8_LEAVING_R1_DIRTY( overlay.green,  amountOfOverlay);
-    existing.blue  = scale8_LEAVING_R1_DIRTY( existing.blue,  amountOfKeep)
-                    + scale8_LEAVING_R1_DIRTY( overlay.blue,   amountOfOverlay);
-
-    cleanup_R1();
-#else
 	// Corrected blend method, with no loss-of-precision rounding errors
 	existing.red   = blend8(existing.red, overlay.red, amountOfOverlay);
 	existing.green = blend8(existing.green, overlay.green, amountOfOverlay);
 	existing.blue  = blend8(existing.blue, overlay.blue, amountOfOverlay);
-#endif
 
 	return existing;
 }

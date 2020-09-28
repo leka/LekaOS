@@ -2,7 +2,7 @@
 // #include <stdint.h>
 // #include "FastLED.h"
 
-#include "lib8tion.h"
+#include "../include/internal/lib8tion.h"
 
 // FASTLED_NAMESPACE_BEGIN
 

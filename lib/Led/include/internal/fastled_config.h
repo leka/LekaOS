@@ -1,7 +1,7 @@
 #ifndef __INC_FASTLED_CONFIG_H
 #define __INC_FASTLED_CONFIG_H
 
-#include "FastLED.h"
+// #include "FastLED.h"
 
 ///@file fastled_config.h
 /// contains definitions that can be used to configure FastLED at compile time
@@ -48,7 +48,7 @@
 
 // Use this toggle whether to use 'fixed' FastLED 8- and 16-bit noise functions.
 // The prior noise functions had some math errors that led to 'discontinuities' in the
-// output, which by definition should be smooth and continuous.  The bug led to 
+// output, which by definition should be smooth and continuous.  The bug led to
 // noise function output that had 'edges' and glitches in it.  This is now fixed, and the
 // fix is enabled by default.  However, if for some reason you wish to run with the old
 // noise code, including the glitches, you can disable the bugfix here.

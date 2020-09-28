@@ -2,7 +2,6 @@
 #define __INC_COLOR_H
 
 // #include "FastLED.h"
-#include "mbed.h"
 
 // FASTLED_NAMESPACE_BEGIN
 

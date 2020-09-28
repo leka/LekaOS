@@ -23,12 +23,14 @@ endif()
 
 # Add libraries
 add_subdirectory(${LIB_DIR}/HelloWorld)
+add_subdirectory(${LIB_DIR}/Led)
 
 # Add the main source files of the project from ./src
 add_subdirectory(${ROOT_DIR}/src)
 
 # If you use spikes to test features, you can add them here
 add_subdirectory(${ROOT_DIR}/spike/blinky)
+add_subdirectory(${ROOT_DIR}/spike/investigation_day_led)
 
 # Finally print the mbed-cmake build report
 mbed_cmake_print_build_report()

@@ -2,35 +2,39 @@
 // Copyright 2020 APF France handicap & FastLED (https://github.com/FastLED/FastLED)
 // SPDX-License-Identifier: MIT
 
-#ifndef _LK_ALPHA_OS_LIB_LED_H_
-#define _LK_ALPHA_OS_LIB_LED_H_
+#ifndef _LEKA_OS_LIB_LED_H_
+#define _LEKA_OS_LIB_LED_H_
 
 #include <cstdint>
 
 #include "chrono"
 #include "mbed.h"
 
+// Force
+#include "internal/colorpalettes.h"
+#include "internal/colorutils.h"
+
 // #include "cpp_compat.h"
-#include "fastled_config.h"
+#include "internal/fastled_config.h"
 // #include "led_sysdefs.h"
 
 // Utility functions
-#include "SK9822Controller.h"
-// #include "bitswap.h"
+#include "internal/SK9822Controller.h"
+#include "internal/bitswap.h"
 // #include "colorpalettes.h"
 // #include "colorutils.h"
 // #include "controller.h"
 // // #include "dmx.h"
 // #include "fastled_delay.h"
-// #include "fastled_progmem.h"
+#include "internal/fastled_progmem.h"
 // #include "fastpin.h"
 // #include "fastspi.h"
 // #include "fastspi_types.h"
-// #include "hsv2rgb.h"
-// #include "lib8tion.h"
+#include "internal/hsv2rgb.h"
+#include "internal/lib8tion.h"
 // #include "noise.h"
 // #include "pixelset.h"
-// #include "pixeltypes.h"
+#include "internal/pixeltypes.h"
 // #include "platforms.h"
 // #include "power_mgt.h"
 
@@ -828,4 +832,4 @@ extern CFastLED FastLED;
 
 // FASTLED_NAMESPACE_END
 
-#endif	 //_LK_ALPHA_OS_LIB_LED_H_
+#endif	 // _LEKA_OS_LIB_LED_H_

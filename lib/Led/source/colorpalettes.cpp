@@ -1,10 +1,5 @@
-#ifndef __INC_COLORPALETTES_H
-#define __INC_COLORPALETTES_H
-#define FASTLED_INTERNAL
-#include "colorpalettes.h"
 
-#include "FastLED.h"
-#include "colorutils.h"
+#include "../include/internal/colorpalettes.h"
 
 // FASTLED_USING_NAMESPACE
 
@@ -95,5 +90,3 @@ DEFINE_GRADIENT_PALETTE(Rainbow_gp) {0,	  255, 0,	0,	   // Red
 									 192, 85,  0,	171,   // Purple
 									 224, 171, 0,	85,	   // Pink
 									 255, 255, 0,	0};	   // and back to Red
-
-#endif
