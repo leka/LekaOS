@@ -1,29 +1,75 @@
-disco:
-	mbed compile -m DISCO_ORIGINAL --color --profile=release --profile=./profiles/leka.json
-	arm-none-eabi-objcopy -O ihex build/DISCO_ORIGINAL/GCC_ARM-RELEASE/LekaOS.elf build/DISCO_ORIGINAL/GCC_ARM-RELEASE/LekaOS.hex
-	arm-none-eabi-size build/DISCO_ORIGINAL/GCC_ARM-RELEASE/LekaOS.hex
+# Mbed CMake Template
+# Copyright 2020 Ladislas de Toldi (ladislas [at] detoldi.me)
+# SPDX-License-Identifier: Apache-2.0
 
-disco_flash:
-	$(MAKE) disco
-	cp build/DISCO_ORIGINAL/GCC_ARM-RELEASE/LekaOS.bin /Volumes/DIS_F769NI
+#
+# MARK: - Constants
+#
 
-leka:
-	mbed compile -m LEKA_V1.0_DEV --color --profile=release --profile=./profiles/leka.json
-	arm-none-eabi-objcopy -O ihex build/LEKA_V1.0_DEV/GCC_ARM-RELEASE/LekaOS.elf build/LEKA_V1.0_DEV/GCC_ARM-RELEASE/LekaOS.hex
-	arm-none-eabi-size build/LEKA_V1.0_DEV/GCC_ARM-RELEASE/LekaOS.hex
+ROOT_DIR    := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+CMAKE_DIR   := $(ROOT_DIR)/cmake
+BUILD_DIR   := $(ROOT_DIR)/build
+MBED_OS_DIR := $(ROOT_DIR)/lib/_vendor/mbed-os
 
-leka_flash:
-	$(MAKE) leka
-	# to do
+#
+# MARK:- Arguments
+#
 
-term:
-	mbed sterm
+BRANCH       ?= master
+PROJECT      ?=
+PROGRAM      ?= src/LekaOS.bin
+BAUDRATE     ?= 115200
+BUILD_TYPE   ?= Release
+TARGET_BOARD ?= DISCO_F769NI
 
-vs:
-	mv Makefile tmpMakefile
-	mbed-vscode-generator -m disco_f769ni
-	mv tmpMakefile Makefile
+
+#
+# MARK:- Targets
+#
+
+all:
+	@echo ""
+	@echo "🏗️  Building application 🚧"
+	ninja -C ./build -f build.ninja $(PROJECT)
+
+clean:
+	@echo ""
+	@echo "⚠️  Cleaning up build & cmake/config directories 🧹"
+	rm -rf $(BUILD_DIR)
+	rm -rf $(CMAKE_DIR)/config
+
+config:
+	@$(MAKE) clean
+	@echo ""
+	@$(MAKE) config_target
+	@echo ""
+	@$(MAKE) config_cmake
+
+config_target:
+	@echo ""
+	@echo "🏃 Running target configuration script 📝"
+	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_DIR)/config
+
+config_cmake:
+	@echo ""
+	@echo "🏃 Running cmake configuration script 📝"
+	@mkdir -p $(BUILD_DIR)
+	@cd $(BUILD_DIR); cmake -GNinja -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
 
 clone_mbed:
-	rm -rf ./lib/_vendor/mbed-os
-	git clone --depth=1 --branch=mbed-os-6.3.0 https://github.com/ARMmbed/mbed-os ./lib/_vendor/mbed-os
+	@echo ""
+	@echo "🧬 Cloning Mbed OS ⚗️"
+	@rm -rf $(MBED_OS_DIR)
+	git clone --depth=1 --branch=$(BRANCH) https://github.com/ARMmbed/mbed-os $(MBED_OS_DIR)
+	@echo ""
+	@echo "🧬 Symlinking templates to Mbed OS directory ⚗️"
+	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_CMakelists.txt $(MBED_OS_DIR)/CMakeLists.txt
+	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_mbedignore.txt $(MBED_OS_DIR)/.mbedignore
+
+flash:
+	@diskutil list | grep "DIS_" | awk '{print $$5}' | xargs -I {} diskutil unmount '/dev/{}'
+	@diskutil list | grep "DIS_" | awk '{print $$5}' | xargs -I {} diskutil mount   '/dev/{}'
+	cp build/$(PROGRAM) /Volumes/DIS_F769NI
+
+term:
+	mbed sterm -b $(BAUDRATE)
