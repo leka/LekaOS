@@ -33,11 +33,9 @@ class HelloWorld
   private:
 	LowPowerTicker flipper1;
 	LowPowerTicker flipper2;
-	LowPowerTicker flipper3;
 
 	struct Data led1Data = {DigitalOut(LED1), 500ms};
 	struct Data led2Data = {DigitalOut(LED2), 1000ms};
-	struct Data led3Data = {DigitalOut(LED3), 1500ms};
 
 	static void blink(Data *data);
 };	 // class HelloWorld

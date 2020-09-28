@@ -16,7 +16,6 @@ void HelloWorld::start(void)
 {
 	flipper1.attach(callback(blink, &led1Data), led1Data.sleepTime);
 	flipper2.attach(callback(blink, &led2Data), led2Data.sleepTime);
-	flipper3.attach(callback(blink, &led3Data), led3Data.sleepTime);
 }
 
 ///
