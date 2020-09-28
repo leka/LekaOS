@@ -1,4 +1,4 @@
-MBED_OS_DIR=./lib/_vendor/mbed-os
-TARGET=disco_f769ni
-TOOLCHAIN=GCC_ARM
 ROOT=.
+MBED_OS_DIR=./lib/_vendor/mbed-os
+TARGET=DISCO_F769NI
+TOOLCHAIN=GCC_ARM
