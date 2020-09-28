@@ -11,20 +11,22 @@
 #include "LekaTouch.h"
 
 Touch::Touch()
-	: _write_interface(PIN_I2C3_SDA, PIN_I2C3_SCL),
-	  _read_interface(PIN_I2C3_SDA, PIN_I2C3_SCL, 0x4E),
-	  _mux_reset(PIN_MUX_RST, 0),
-	  _mux_inta(PIN_MUX_INTA),
-	  _mux_intb(PIN_MUX_INTB)
+	: _write_interface(SENSOR_PROXIMITY_MUX_I2C_SDA, SENSOR_PROXIMITY_MUX_I2C_SCL),
+	  _read_interface(SENSOR_PROXIMITY_MUX_I2C_SDA, SENSOR_PROXIMITY_MUX_I2C_SCL, 0x4E),
+	  _mux_reset(SENSOR_PROXIMITY_MUX_RESET, 0),
+	  _mux_inta(SENSOR_PROXIMITY_MUX_IRQA),
+	  _mux_intb(SENSOR_PROXIMITY_MUX_IRQB)
 {
+	/* Reset multiplexer before starting */
+
 	_mux_reset = 1;
 
-	init_read_interface();
-	init_write_interface(_write_address_left);
-	init_write_interface(_write_address_right);
+	initReadInterface();
+	initWriteInterface(_write_address_left);
+	initWriteInterface(_write_address_right);
 }
 
-void Touch::init_read_interface()
+void Touch::initReadInterface()
 {
 	/* Reset multiplexer (read interface) registers */
 	_read_interface.reset();
@@ -50,7 +52,7 @@ void Touch::init_read_interface()
 	return;
 }
 
-void Touch::init_write_interface(uint8_t address)
+void Touch::initWriteInterface(uint8_t address)
 {
 	/* DAC (write interface) has 4 outputs. Due to the robot with its 6 sensors, 2 DACs are necessary. */
 	/* There are two ways to write, one for configuration (presented here) and one for calibration */
@@ -79,7 +81,7 @@ void Touch::init_write_interface(uint8_t address)
 	return;
 }
 
-void Touch::print_all_read_interface_registers()
+void Touch::printAllReadInterfaceRegisters()
 {
 	for (uint16_t address = 0x00; address < 0x16; address += 0x01) {
 		printf("Register address %X -> %X\n", address, _read_interface.readRegister(address));
@@ -87,7 +89,7 @@ void Touch::print_all_read_interface_registers()
 	printf("\n");
 }
 
-void Touch::print_all_write_interface_registers(uint8_t address)
+void Touch::printAllWriteInterfaceRegisters(uint8_t address)
 {
 	/* Read DAC (write interface) is sequential, first register (3 bytes) then EEPROM (3 bytes) for each DAC */
 	/* Structure is : CH_A_reg, CH_A_EEPROM, CH_B_reg, CH_B_EEPROM, CH_C_reg, CH_C_EEPROM, CH_D_reg, CH_D_EEPROM */
@@ -107,7 +109,7 @@ void Touch::print_all_write_interface_registers(uint8_t address)
 	return;
 }
 
-void Touch::calibrate_two_sensors(bool &sensor_left, bool &sensor_right, uint8_t channel)
+void Touch::calibrateTwoSensors(bool &sensor_left, bool &sensor_right, uint8_t channel)
 {
 	uint16_t value_left_calib  = 0x0FFF;
 	uint16_t value_right_calib = 0x0FFF;
@@ -120,7 +122,7 @@ void Touch::calibrate_two_sensors(bool &sensor_left, bool &sensor_right, uint8_t
 	_write_interface.write(_write_address_left, buffer, 3);
 	_write_interface.write(_write_address_right, buffer, 3);
 	ThisThread::sleep_for(1s);
-	update_sensors_status();
+	updateSensorsStatus();
 
 	while (!(sensor_left && sensor_right)) {
 		/* Decrement values if hands are not detected */
@@ -151,7 +153,7 @@ void Touch::calibrate_two_sensors(bool &sensor_left, bool &sensor_right, uint8_t
 
 		/* Check sensors return */
 		ThisThread::sleep_for(1ms);
-		update_sensors_status();
+		updateSensorsStatus();
 	}
 
 	/* Write in EEPROM values of calibration of touch sensor */
@@ -180,20 +182,20 @@ void Touch::calibration()
 
 	printf("Place your hands on EAR LEFT and EAR RIGHT of Leka, calibration start in 5 seconds.\n");
 	ThisThread::sleep_for(5s);
-	calibrate_two_sensors(_ear_left_touched, _ear_right_touched, 2);
+	calibrateTwoSensors(_ear_left_touched, _ear_right_touched, 2);
 
 	printf("Place your hands on BELT LEFT BACK and BELT RIGHT FRONT of Leka, calibration start in 5 seconds.\n");
 	ThisThread::sleep_for(5s);
-	calibrate_two_sensors(_belt_left_back_touched, _belt_right_front_touched, 1);
+	calibrateTwoSensors(_belt_left_back_touched, _belt_right_front_touched, 1);
 
 	printf("Place your hands on BELT LEFT FRONT and BELT RIGHT BACK of Leka, calibration start in 5 seconds.\n");
 	ThisThread::sleep_for(5s);
-	calibrate_two_sensors(_belt_left_front_touched, _belt_right_back_touched, 0);
+	calibrateTwoSensors(_belt_left_front_touched, _belt_right_back_touched, 0);
 
 	return;
 }
 
-void Touch::update_sensors_status()
+void Touch::updateSensorsStatus()
 {
 	uint8_t value = (uint8_t)(~(_read_interface.digitalWordRead() >> 8));
 
@@ -211,9 +213,9 @@ void Touch::start(void)
 {
 	printf("Touch example\n\n");
 
-	// print_all_read_interface_registers();
-	// print_all_write_interface_registers(_write_address_left);
-	// print_all_write_interface_registers(_write_address_right);
+	// printAllReadInterfaceRegisters();
+	// printAllWriteInterfaceRegisters(_write_address_left);
+	// printAllWriteInterfaceRegisters(_write_address_right);
 	// calibration();
 
 	int n_repetition = 10;
@@ -221,7 +223,7 @@ void Touch::start(void)
 		printf("Start a cycle of %d checking of touch sensor every 1 second, then pause 10s\n\n", n_repetition);
 
 		for (int i = 0; i < n_repetition; i++) {
-			update_sensors_status();
+			updateSensorsStatus();
 
 			printf("Ear left touched: %s\n", _ear_left_touched ? "true" : "false");
 			printf("Ear right touched: %s\n", _ear_right_touched ? "true" : "false");

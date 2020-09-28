@@ -10,7 +10,8 @@
 #ifndef _LEKA_OS_LIB_LEKATOUCH_H_
 #define _LEKA_OS_LIB_LEKATOUCH_H_
 
-#include "LekaTouchPins.h"
+// #include "LekaTouchPins.h"
+#include "LekaPinNames.h"
 #include "MCP23017.h"
 #include "mbed.h"
 
@@ -21,13 +22,13 @@ class Touch
 	~Touch() {};
 
 	void start(void);
-	void init_read_interface();
-	void init_write_interface(uint8_t address);
-	void calibrate_two_sensors(bool &sensor_left, bool &sensor_right, uint8_t channel);
+	void initReadInterface();
+	void initWriteInterface(uint8_t address);
+	void calibrateTwoSensors(bool &sensor_left, bool &sensor_right, uint8_t channel);
 	void calibration();
-	void print_all_read_interface_registers();
-	void print_all_write_interface_registers(uint8_t address);
-	void update_sensors_status();
+	void printAllReadInterfaceRegisters();
+	void printAllWriteInterfaceRegisters(uint8_t address);
+	void updateSensorsStatus();
 
   private:
 	I2C _write_interface;
