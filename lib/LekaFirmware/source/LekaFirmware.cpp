@@ -247,24 +247,27 @@ void Firmware::checkActiveFlash()
 		message_to_write[content] = (uint8_t)content;
 	}
 
-	/* Write on flash */
 	for (uint32_t address = 0x0; address < ExtFlashSize; address += message_size) {
-		write(address, message_to_write, message_size, true);	// Erase before write
-	}
+		/* Write on flash */
+		write(address, message_to_write, message_size);	  // Do not erase (0x1000) before write
 
-	/* Read to check good writing*/
-	for (uint32_t address = 0x0; address < ExtFlashSize; address += message_size) {
+		/* Read to check good writing */
 		for (uint16_t i = 0; i < message_size; i++) {
 			buffer[i] = 0x00;
 		}
 
 		read(address, buffer, message_size);
 		if (memcmp(message_to_write, buffer, message_size) != 0) {
-			printf("Error on external memory n°%d at address %lX\n", _selected_memory, address);
+			printf("Error on external memory #%d at address 0x%lX\n", _selected_memory, address);
 			return;
 		}
+		if (address != 0x0 && address % 0x10000 == 0x0000) {
+			printf("Block(64kB) from 0x%lX to 0x%lX on external memory #%d is fine\n", address - 0x10000, address,
+				   _selected_memory);
+		}
 	}
-	printf("External memory n°%d is OK!\n", _selected_memory);
+
+	printf("External memory #%d is OK!\n", _selected_memory);
 	return;
 }
 
