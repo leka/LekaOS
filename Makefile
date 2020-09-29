@@ -20,8 +20,7 @@ PROJECT      ?=
 PROGRAM      ?= src/LekaOS.bin
 BAUDRATE     ?= 115200
 BUILD_TYPE   ?= Release
-TARGET_BOARD ?= DISCO_F769NI
-
+TARGET_BOARD ?= -x LEKA_V1_0_DEV
 
 #
 # MARK:- Targets
