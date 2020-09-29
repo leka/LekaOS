@@ -1,12 +1,6 @@
-/**
- * @file LekaBluetooth.cpp
- * @author Yann Locatelli
- *
- * @version 0.1
- * @date 2020-09-23
- *
- * @copyright Copyright (c) 2020
- */
+// Leka - LekaOS
+// Copyright 2020 APF France handicap
+// SPDX-License-Identifier: Apache-2.0
 
 #include "LekaBluetooth.h"
 

@@ -1,5 +1,5 @@
-# Mbed CMake Template
-# Copyright 2020 Ladislas de Toldi (ladislas [at] detoldi.me)
+# Leka - LekaOS
+# Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
 add_mbed_executable(spike_blinky)

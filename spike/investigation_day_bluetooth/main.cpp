@@ -1,6 +1,11 @@
+// Leka - LekaOS
+// Copyright 2020 APF France handicap
+// SPDX-License-Identifier: Apache-2.0
+
+#include "mbed.h"
+
 #include "HelloWorld.h"
 #include "LekaBluetooth.h"
-#include "mbed.h"
 
 HelloWorld hello;
 Bluetooth leka_bluetooth;

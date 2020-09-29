@@ -2,9 +2,10 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#include "mbed.h"
+
 #include "HelloWorld.h"
 #include "LekaWifi.h"
-#include "mbed.h"
 
 HelloWorld hello;
 Wifi leka_wifi;

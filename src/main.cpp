@@ -2,8 +2,9 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "HelloWorld.h"
 #include "mbed.h"
+
+#include "HelloWorld.h"
 
 HelloWorld hello;
 

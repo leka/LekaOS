@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "mbed.h"
-// Force
+
 #include "FastLED.h"
 #include "HelloWorld.h"
 #include "LekaPinNames.h"

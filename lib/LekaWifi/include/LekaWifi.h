@@ -1,12 +1,7 @@
-/**
- * @file LekaWifi.h
- * @author Yann Locatelli
- *
- * @version 0.1
- * @date 2020-09-17
- *
- * @copyright Copyright (c) 2020
- */
+// Leka - LekaOS
+// Copyright 2020 APF France handicap
+// SPDX-License-Identifier: Apache-2.0
+
 #ifndef _LEKA_OS_LIB_WIFI_H_
 #define _LEKA_OS_LIB_WIFI_H_
 
