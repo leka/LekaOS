@@ -11,6 +11,8 @@
 #ifndef _LEKA_OS_LIB_WIFI_PINS_H_
 #define _LEKA_OS_LIB_WIFI_PINS_H_
 
+#include "mbed.h"
+
 constexpr PinName PIN_ESP_TX = PD_5;
 constexpr PinName PIN_ESP_RX = PA_3;
 // constexpr PinName PIN_ESP_CTS = PD_3;
