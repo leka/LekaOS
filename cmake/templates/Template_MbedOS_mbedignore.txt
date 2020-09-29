@@ -1,0 +1,4 @@
+connectivity/*
+features/*
+storage/kvstore/*
+drivers/device_key/*
