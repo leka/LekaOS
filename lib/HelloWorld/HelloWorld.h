@@ -28,7 +28,7 @@ class HelloWorld
 
 	void start(void);
 
-	char const *world = "Hello, Mbed CMake Template!";
+	char const *world = "Hello, LekaOS!";
 
   private:
 	LowPowerTicker flipper1;
