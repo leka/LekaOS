@@ -4,7 +4,14 @@ TabWidth: 4
 ColumnLimit: 120
 
 Language: Cpp
-Standard: Cpp11
+Standard: Latest
+
+IncludeBlocks: Regroup
+
+IncludeCategories:
+  - Regex:           'mbed'
+    Priority:        1
+    SortPriority:    0
 
 AccessModifierOffset: -2
 SpacesBeforeTrailingComments: 3
