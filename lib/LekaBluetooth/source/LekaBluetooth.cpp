@@ -59,11 +59,15 @@ void Bluetooth::checkResponse(bool printResponse)
 				_interface.read(_buffer + 1 + 2, _buffer_length);
 				_buffer_length += 1 + 2;
 
-				if (_buffer[3] == 0x01 && _buffer[4] == 0x06) { _paired = true; }
+				if (_buffer[3] == 0x01 && _buffer[4] == 0x06) {
+					_paired = true;
+				}
 
 				if (printResponse) {
 					printf("Frame received = ");
-					for (int i = 0; i < _buffer_length; i++) { printf("%X ", _buffer[i]); }
+					for (int i = 0; i < _buffer_length; i++) {
+						printf("%X ", _buffer[i]);
+					}
 					printf("\n");
 				}
 			}
