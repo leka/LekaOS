@@ -15,10 +15,11 @@ MBED_OS_DIR := $(ROOT_DIR)/lib/_vendor/mbed-os
 # MARK:- Arguments
 #
 
+PORT         ?= /dev/tty.usbmodem14303
 BRANCH       ?= master
 PROJECT      ?=
-PROGRAM      ?= src/LekaOS.bin
 BAUDRATE     ?= 115200
+BIN_PATH     ?= $(BUILD_DIR)/src/LekaOS.bin
 BUILD_TYPE   ?= Release
 TARGET_BOARD ?= -x LEKA_V1_0_DEV
 
@@ -66,9 +67,11 @@ clone_mbed:
 	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_mbedignore.txt $(MBED_OS_DIR)/.mbedignore
 
 flash:
-	@diskutil list | grep "DIS_" | awk '{print $$5}' | xargs -I {} diskutil unmount '/dev/{}'
-	@diskutil list | grep "DIS_" | awk '{print $$5}' | xargs -I {} diskutil mount   '/dev/{}'
-	cp build/$(PROGRAM) /Volumes/DIS_F769NI
+	openocd -f interface/stlink.cfg -c "transport select hla_swd" -f target/stm32f7x.cfg -c "program $(BIN_PATH) 0x08000000 reset exit"
+	st-flash reset
+
+reset:
+	st-flash reset
 
 term:
-	mbed sterm -b $(BAUDRATE)
+	mbed sterm -b $(BAUDRATE) -p $(PORT)
