@@ -12,12 +12,14 @@
 
 #include "LekaLCD.h"
 
-Screen::Screen() {}
+Screen::Screen() : _brightness(SCREEN_BACKLIGHT_PWM)
+{
+	_brightness.period(0.01f);	 // Set PWM at 1/(0.01 seconds) = 100Hz
+	_brightness = 0.50f;
+}
 
 void squareBouncing()
 {
-	printf("------Programm starting--------\n\r");
-
 	LekaLCD lcd;
 
 	uint32_t posx  = 0;
@@ -67,7 +69,8 @@ void squareBouncing()
 			green--;
 		}
 
-		HAL_Delay(1);	// little delay to let things settle
+		// HAL_Delay(1);	// ~2ms little delay to let things settle
+		ThisThread::sleep_for(1ms);
 	}
 }
 
