@@ -15,8 +15,8 @@
 		"DISCO_IOC": {
 			"target_name": "\"DISCO_IOC\""
 		},
-		"LEKA_V1.0_DEV": {
-			"target_name": "\"LEKA_V1.0_DEV\""
+		"LEKA_V1_0_DEV": {
+			"target_name": "\"LEKA_V1_0_DEV\""
 		}
 	}
 }
