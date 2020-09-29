@@ -21,7 +21,13 @@ class RFID
 
 	void start(void);
 
+	bool checkConnected();
+
   private:
+	BufferedSerial _interface;
+
+	const uint8_t _IDN_cmd[2]	  = {0x00, 0x01};
+	const uint8_t _IDN_cmd_length = 2;
 };
 
 #endif
