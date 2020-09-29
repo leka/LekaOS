@@ -6,8 +6,10 @@
 // Force
 #include "FastLED.h"
 #include "HelloWorld.h"
+#include "LekaPinNames.h"
 
-SPI spi(D11, NC, D13);
+// SPI spi(D11, NC, D13);
+SPI spi(LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK);
 
 #define NUM_LEDS 20
 #define BRIGHTNESS 255
@@ -215,7 +217,7 @@ int main(void)
 {
 	printf("\nHello, Investigation Day!\n\n");
 
-	FastLED.addLeds<SK9822, D11, D13, RGB>(leds, spi, NUM_LEDS);
+	FastLED.addLeds<SK9822, LED_BELT_SPI_MOSI, LED_BELT_SPI_SCK, RGB>(leds, spi, NUM_LEDS);
 	FastLED.setBrightness(BRIGHTNESS);
 
 	leds[0] = CRGB::White;

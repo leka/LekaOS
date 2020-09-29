@@ -16,3 +16,5 @@ target_include_directories(spike_investigation_day_led
 
 target_link_libraries(spike_investigation_day_led lib_Led)
 target_link_libraries(spike_investigation_day_led lib_HelloWorld)
+
+target_link_target_board_libraries(spike_investigation_day_led DISCO_ORIGINAL LEKA_V1_0_DEV)

@@ -15,11 +15,8 @@ project(LekaOS LANGUAGES C CXX ASM)
 set(LIB_DIR ${ROOT_DIR}/lib)
 set(TARGETS_DIR ${ROOT_DIR}/targets)
 
-# Add custom targets
-if (${TARGET_BOARD} MATCHES "\-x")
-	string(REPLACE "\-x " "" CUSTOM_BOARD ${TARGET_BOARD})
-	add_subdirectory(${TARGETS_DIR}/TARGET_${CUSTOM_BOARD})
-endif()
+# Add custom target subdirectory
+add_target_board_subdirectory("${TARGET_BOARD}")
 
 # Add libraries
 add_subdirectory(${LIB_DIR}/HelloWorld)
