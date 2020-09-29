@@ -1,5 +1,5 @@
-# Mbed CMake Template
-# Copyright 2020 Ladislas de Toldi (ladislas [at] detoldi.me)
+# Leka - LekaOS
+# Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
 # mbed-cmake requires at least CMake 3.18
@@ -19,8 +19,9 @@ set(TARGETS_DIR ${ROOT_DIR}/targets)
 add_target_board_subdirectory("${TARGET_BOARD}")
 
 # Add libraries
-add_subdirectory(${LIB_DIR}/HelloWorld)
 add_subdirectory(${LIB_DIR}/Led)
+add_subdirectory(${LIB_DIR}/LekaWifi)
+add_subdirectory(${LIB_DIR}/HelloWorld)
 
 # Add the main source files of the project from ./src
 add_subdirectory(${ROOT_DIR}/src)
@@ -28,6 +29,7 @@ add_subdirectory(${ROOT_DIR}/src)
 # If you use spikes to test features, you can add them here
 add_subdirectory(${ROOT_DIR}/spike/blinky)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_led)
+add_subdirectory(${ROOT_DIR}/spike/investigation_day_wifi)
 
 # Finally print the mbed-cmake build report
 mbed_cmake_print_build_report()
