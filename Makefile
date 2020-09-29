@@ -1,4 +1,4 @@
-# Mbed CMake Template
+gd # Mbed CMake Template
 # Copyright 2020 Ladislas de Toldi (ladislas [at] detoldi.me)
 # SPDX-License-Identifier: Apache-2.0
 
@@ -53,7 +53,7 @@ config_cmake:
 	@echo ""
 	@echo "🏃 Running cmake configuration script 📝"
 	@mkdir -p $(BUILD_DIR)
-	@cd $(BUILD_DIR); cmake -GNinja -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
+	@cd $(BUILD_DIR); cmake -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
 
 clone_mbed:
 	@echo ""
