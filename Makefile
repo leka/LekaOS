@@ -1,4 +1,4 @@
-gd # Mbed CMake Template
+# Mbed CMake Template
 # Copyright 2020 Ladislas de Toldi (ladislas [at] detoldi.me)
 # SPDX-License-Identifier: Apache-2.0
 
