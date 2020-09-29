@@ -16,7 +16,7 @@ size_t BM64::getCommand(const uint8_t *cmd, const size_t cmd_length, uint8_t *bu
 	uint8_t checksum	= 0x00;
 
 	/* HEAD - START */
-	buffer[0] = 0xAA;	// Not include in checksum
+	buffer[0] = 0xAA;	// Not included in checksum
 
 	/* HEAD - LENGTH (2 BYTES) */
 	buffer[1] = (uint8_t)((uint16_t)cmd_length >> 8);
@@ -24,7 +24,7 @@ size_t BM64::getCommand(const uint8_t *cmd, const size_t cmd_length, uint8_t *bu
 	checksum -= (buffer[1] + buffer[2]);
 
 	/* MID - OP Code & DATA - PARAMETER */
-	for (uint16_t i = 0; i < (uint16_t)cmd_length; i++) {
+	for (size_t i = 0; i < cmd_length; i++) {
 		buffer[i + 3] = cmd[i];
 		checksum -= buffer[i + 3];
 	}

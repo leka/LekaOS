@@ -11,7 +11,7 @@
 #include "LekaBluetooth.h"
 
 Bluetooth::Bluetooth()
-	: _interface(PIN_BM64_TX, PIN_BM64_RX, 115200), _bluetooth_reset(PIN_BM64_RST), _bluetooth_wake_up(PIN_BM64_WAKEUP)
+	: _interface(BT_UART_TX, BT_UART_RX, 115200), _bluetooth_reset(BT_RESET), _bluetooth_wake_up(BT_WAKE_UP)
 {
 	// ThisThread::sleep_for(1s);
 	_bluetooth_wake_up = 1;
@@ -99,8 +99,8 @@ void Bluetooth::start()
 		while (_paired) {
 			checkResponse(true);
 			ThisThread::sleep_for(20ms);
-			playPause();
-			ThisThread::sleep_for(1s);
+			// playPause();
+			// ThisThread::sleep_for(5s);
 		}
 		// converse();
 		ThisThread::sleep_for(10s);

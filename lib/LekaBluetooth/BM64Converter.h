@@ -14,18 +14,18 @@
 
 namespace BM64 {
 	namespace Command {
-		const uint8_t pairing[3]	= {0x02, 0x00, 0x50};
-		const size_t pairing_length = 3;
+		const uint8_t pairing[3]		= {0x02, 0x00, 0x50};
+		constexpr size_t pairing_length = 3;
 
-		const uint8_t play_pause[3]	   = {0x02, 0x00, 0x32};
-		const size_t play_pause_length = 3;
+		const uint8_t play_pause[3]		   = {0x02, 0x00, 0x32};
+		constexpr size_t play_pause_length = 3;
 
 	};	 // namespace Command
 	// using command_t = Command;
 
 	namespace Response {
-		const uint8_t acknowledge[2]	= {0xFF, 0xFF};	  // Not done yet
-		const size_t acknowledge_length = 2;
+		const uint8_t acknowledge[2]		= {0xFF, 0xFF};	  // Not done yet
+		constexpr size_t acknowledge_length = 2;
 	};	 // namespace Response
 	// using response_t = Response;
 

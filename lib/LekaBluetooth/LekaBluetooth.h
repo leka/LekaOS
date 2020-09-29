@@ -11,7 +11,7 @@
 #define _LEKA_OS_LIB_BLUETOOTH_H_
 
 #include "BM64Converter.h"
-#include "LekaBluetoothPins.h"
+#include "LekaPinNames.h"
 #include "mbed.h"
 
 class Bluetooth
