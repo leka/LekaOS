@@ -22,6 +22,7 @@ add_target_board_subdirectory("${TARGET_BOARD}")
 add_subdirectory(${LIB_DIR}/Led)
 add_subdirectory(${LIB_DIR}/LekaWifi)
 add_subdirectory(${LIB_DIR}/HelloWorld)
+add_subdirectory(${LIB_DIR}/LekaFirmware)
 add_subdirectory(${LIB_DIR}/LekaBluetooth)
 
 # Add the main source files of the project from ./src
@@ -31,6 +32,7 @@ add_subdirectory(${ROOT_DIR}/src)
 add_subdirectory(${ROOT_DIR}/spike/blinky)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_led)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_wifi)
+add_subdirectory(${ROOT_DIR}/spike/investigation_day_qspi)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_bluetooth)
 
 # Finally print the mbed-cmake build report

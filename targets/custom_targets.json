@@ -135,7 +135,9 @@
 			"STM32F769xx",
 			"HSE_VALUE=25000000"
 		],
-		"device_has_add": [],
+		"device_has_add": [
+			"QSPI"
+		],
 		"device_has_remove": [
 			"I2CSLAVE",
 			"SPISLAVE",

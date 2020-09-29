@@ -3,14 +3,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "HelloWorld.h"
+#include "LekaFirmware.h"
 #include "mbed.h"
 
 HelloWorld hello;
+Firmware leka_firmware;
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 
 constexpr uint8_t buff_size = 128;
 char buff[buff_size] {};
+
+Thread firmware_thread;
 
 int main(void)
 {
@@ -18,6 +22,7 @@ int main(void)
 
 	printf("\nHello, Investigation Day!\n\n");
 
+	firmware_thread.start({&leka_firmware, &Firmware::start});
 	rtos::ThisThread::sleep_for(2s);
 
 	hello.start();

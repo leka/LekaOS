@@ -96,7 +96,9 @@ ext_flash_status_t Firmware::initExternalFlash()
 
 void Firmware::selectMemory(uint8_t memory_number)
 {
-	if (memory_number == _selected_memory) { return; }
+	if (memory_number == _selected_memory) {
+		return;
+	}
 
 	_disable_ext_memory_1 = 1;
 	_disable_ext_memory_2 = 1;
@@ -164,7 +166,9 @@ ext_flash_status_t Firmware::writeEnable()
 		return status;
 	}
 
-	if ((status_value[0] & BIT_WEL)) { status = EXTERNAL_FLASH_STATUS_OK; }
+	if ((status_value[0] & BIT_WEL)) {
+		status = EXTERNAL_FLASH_STATUS_OK;
+	}
 	return status;
 }
 
@@ -193,7 +197,9 @@ ext_flash_status_t Firmware::write(uint8_t address, const char *buffer, size_t b
 {
 	qspi_status_t result;
 
-	if (priorErase && eraseSector(address) != EXTERNAL_FLASH_STATUS_ERROR) { return EXTERNAL_FLASH_STATUS_ERROR; }
+	if (priorErase && eraseSector(address) != EXTERNAL_FLASH_STATUS_ERROR) {
+		return EXTERNAL_FLASH_STATUS_ERROR;
+	}
 
 	if (0 != writeEnable()) {
 		printf("Write Enable failed \n");
@@ -248,7 +254,9 @@ void Firmware::checkActiveFlash()
 
 	/* Read to check good writing*/
 	for (uint32_t address = 0x0; address < ExtFlashSize; address += message_size) {
-		for (uint16_t i = 0; i < message_size; i++) { buffer[i] = 0x00; }
+		for (uint16_t i = 0; i < message_size; i++) {
+			buffer[i] = 0x00;
+		}
 
 		read(address, buffer, message_size);
 		if (memcmp(message_to_write, buffer, message_size) != 0) {
@@ -256,7 +264,7 @@ void Firmware::checkActiveFlash()
 			return;
 		}
 	}
-	// printf("External memory n°%d is OK!\n", _selected_memory);
+	printf("External memory n°%d is OK!\n", _selected_memory);
 	return;
 }
 
