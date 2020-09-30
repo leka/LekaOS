@@ -5,13 +5,17 @@
 #include "mbed.h"
 
 #include "HelloWorld.h"
+#include "LekaScreen.h"
 
 HelloWorld hello;
+Screen leka_screen;
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 
 constexpr uint8_t buff_size = 128;
 char buff[buff_size] {};
+
+Thread screen_thread;
 
 int main(void)
 {
@@ -21,6 +25,7 @@ int main(void)
 
 	rtos::ThisThread::sleep_for(2s);
 
+	screen_thread.start({&leka_screen, &Screen::start});
 	hello.start();
 
 	while (true) {

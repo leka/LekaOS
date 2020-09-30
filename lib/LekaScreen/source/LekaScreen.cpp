@@ -10,18 +10,14 @@
 
 #include "LekaScreen.h"
 
-#include "LekaLCD.h"
-
 Screen::Screen() : _brightness(SCREEN_BACKLIGHT_PWM)
 {
 	_brightness.period(0.01f);	 // Set PWM at 1/(0.01 seconds) = 100Hz
 	_brightness = 0.50f;
 }
 
-void squareBouncing()
+void squareBouncing(LekaLCD &lcd)
 {
-	LekaLCD lcd;
-
 	uint32_t posx  = 0;
 	uint32_t posy  = 0;
 	uint32_t dirx  = 1;
@@ -49,8 +45,12 @@ void squareBouncing()
 		posy = (posy + diry);
 
 		// chek for screen limits
-		if (posx >= 800 - sizex || posx <= 0) { dirx *= -1; }
-		if (posy >= 480 - sizey || posy <= 0) { diry *= -1; }
+		if (posx >= 800 - sizex || posx <= 0) {
+			dirx *= -1;
+		}
+		if (posy >= 480 - sizey || posy <= 0) {
+			diry *= -1;
+		}
 
 		// draw the square
 		lcd.fillRect(posx, posy, sizex, sizey, (alpha << 24) | (red << 16) | (green << 8) | (blue));
@@ -79,7 +79,7 @@ void Screen::start()
 	printf("Screen example\n\n");
 
 	while (true) {
-		squareBouncing();
+		squareBouncing(_lcd);
 		ThisThread::sleep_for(1ms);
 	}
 

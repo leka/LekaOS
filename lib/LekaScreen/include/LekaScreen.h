@@ -10,8 +10,10 @@
 #ifndef _LEKA_OS_LIB_SCREEN_H_
 #define _LEKA_OS_LIB_SCREEN_H_
 
-#include "LekaPinNames.h"
 #include "mbed.h"
+
+#include "LekaLCD.h"
+#include "LekaPinNames.h"
 
 class Screen
 {
@@ -23,6 +25,7 @@ class Screen
 
   private:
 	PwmOut _brightness;
+	LekaLCD _lcd;
 };
 
 #endif

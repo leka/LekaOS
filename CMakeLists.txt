@@ -26,6 +26,7 @@ add_subdirectory(${LIB_DIR}/Led)
 add_subdirectory(${LIB_DIR}/LekaRFID)
 add_subdirectory(${LIB_DIR}/LekaWifi)
 add_subdirectory(${LIB_DIR}/LekaTouch)
+add_subdirectory(${LIB_DIR}/LekaScreen)
 add_subdirectory(${LIB_DIR}/LekaFirmware)
 add_subdirectory(${LIB_DIR}/LekaBluetooth)
 
@@ -34,6 +35,7 @@ add_subdirectory(${ROOT_DIR}/src)
 
 # If you use spikes to test features, you can add them here
 add_subdirectory(${ROOT_DIR}/spike/blinky)
+add_subdirectory(${ROOT_DIR}/spike/investigation_day_lcd)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_led)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_qspi)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_rfid)

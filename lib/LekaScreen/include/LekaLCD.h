@@ -5,6 +5,8 @@
 
 #include "mbed.h"
 
+#include "otm8009a.h"
+
 class LekaLCD
 {
   public:

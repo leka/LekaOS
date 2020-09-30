@@ -1,7 +1,5 @@
 #include "LekaLCD.h"
 
-#include "drivers/otm8009a.h"
-
 LekaLCD::LekaLCD()
 {
 	reset();
