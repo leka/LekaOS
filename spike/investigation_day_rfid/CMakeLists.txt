@@ -15,6 +15,6 @@ target_include_directories(spike_investigation_day_rfid
 )
 
 target_link_libraries(spike_investigation_day_rfid lib_HelloWorld)
-target_link_libraries(spike_investigation_day_rfid lib_LekaRfid)
+target_link_libraries(spike_investigation_day_rfid lib_LekaRFID)
 
 target_link_target_board_libraries(spike_investigation_day_rfid DISCO_ORIGINAL LEKA_V1_0_DEV)
