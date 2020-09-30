@@ -32,6 +32,14 @@ Thread screen_thread;
 Thread touch_thread;
 Thread wifi_thread;
 
+Ticker kicker;
+const uint32_t TIMEOUT_MS = 5000;
+
+void watchdogKick()
+{
+	Watchdog::get_instance().kick();
+}
+
 int main(void)
 {
 	auto start = Kernel::Clock::now();
@@ -39,6 +47,10 @@ int main(void)
 	printf("\nHello, Investigation Day!\n\n");
 
 	rtos::ThisThread::sleep_for(2s);
+
+	Watchdog &watchdog = Watchdog::get_instance();
+	watchdog.start(TIMEOUT_MS);
+	kicker.attach_us(watchdogKick, 1000);
 
 	bluetooth_thread.start(callback(&leka_bluetooth, &Bluetooth::start));
 	// firmware_thread.start(callback(&leka_firmware, &Firmware::start));
