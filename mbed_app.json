@@ -16,7 +16,13 @@
 			"target_name": "\"DISCO_IOC\""
 		},
 		"LEKA_V1_0_DEV": {
-			"target_name": "\"LEKA_V1_0_DEV\""
+			"target_name": "\"LEKA_V1_0_DEV\"",
+			"bluenrg_ms.SPI_IRQ": "PI_11",
+			"bluenrg_ms.SPI_MISO": "PF_8",
+			"bluenrg_ms.SPI_MOSI": "PF_9",
+			"bluenrg_ms.SPI_RESET": "PE_3",
+			"bluenrg_ms.SPI_SCK": "PF_7",
+			"bluenrg_ms.SPI_nCS": "PF_6"
 		}
 	}
 }

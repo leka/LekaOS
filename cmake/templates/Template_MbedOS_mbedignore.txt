@@ -6,7 +6,6 @@ connectivity/lwipstack/*
 connectivity/nanostack/*
 connectivity/nfc/*
 connectivity/drivers/802.15.4_RF/*
-connectivity/drivers/ble/*
 connectivity/drivers/cellular/*
 connectivity/drivers/emac/*
 connectivity/drivers/lora/*

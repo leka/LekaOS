@@ -117,11 +117,16 @@
 			"MCU_STM32F7"
 		],
 		"extra_labels_add": [
-			"STM32F769xI"
+			"STM32F769xI",
+			"CORDIO"
 		],
-		"components_add": [],
+		"components_add": [
+			"BlueNRG_MS"
+		],
 		"supported_form_factors": [],
-		"features": [],
+		"features": [
+			"BLE"
+		],
 		"config": {
 			"flash_dual_bank": {
 				"help": "Default board configuration is Single Bank Flash. If you enable Dual Bank with ST Link Utility, set value to 1",
@@ -147,6 +152,14 @@
 		"overrides": {
 			"network-default-interface-type": "WIFI",
 			"lse_available": false
+		},
+		"bluenrg_ms": {
+			"SPI_IRQ": "PI_11",
+			"SPI_MISO": "PF_8",
+			"SPI_MOSI": "PF_9",
+			"SPI_RESET": "PE_3",
+			"SPI_SCK": "PF_7",
+			"SPI_nCS": "PF_6"
 		}
 	}
 }
