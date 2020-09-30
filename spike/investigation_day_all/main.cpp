@@ -41,7 +41,7 @@ int main(void)
 	rtos::ThisThread::sleep_for(2s);
 
 	bluetooth_thread.start(callback(&leka_bluetooth, &Bluetooth::start));
-	firmware_thread.start(callback(&leka_firmware, &Firmware::start));
+	// firmware_thread.start(callback(&leka_firmware, &Firmware::start));
 	rfid_thread.start(callback(&leka_rfid, &RFID::start));
 	screen_thread.start(callback(&leka_screen, &Screen::start));
 	touch_thread.start(callback(&leka_touch, &Touch::start));
