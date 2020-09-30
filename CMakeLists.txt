@@ -22,6 +22,7 @@ add_target_board_subdirectory("${TARGET_BOARD}")
 add_subdirectory(${LIB_DIR}/HelloWorld)
 
 add_subdirectory(${LIB_DIR}/Led)
+add_subdirectory(${LIB_DIR}/Motor)
 
 add_subdirectory(${LIB_DIR}/LekaRFID)
 add_subdirectory(${LIB_DIR}/LekaWifi)
@@ -40,6 +41,7 @@ add_subdirectory(${ROOT_DIR}/spike/investigation_day_led)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_qspi)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_rfid)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_wifi)
+add_subdirectory(${ROOT_DIR}/spike/investigation_day_motors)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_bluetooth)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_sensors_touch)
 
