@@ -37,6 +37,8 @@ add_subdirectory(${ROOT_DIR}/src)
 
 # If you use spikes to test features, you can add them here
 add_subdirectory(${ROOT_DIR}/spike/blinky)
+add_subdirectory(${ROOT_DIR}/spike/watchdog)
+
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_ble)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_lcd)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_led)
