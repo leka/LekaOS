@@ -116,7 +116,7 @@ LekaLCD::LekaLCD()
 
 #if !defined(DATA_IN_ExtSDRAM)
 	SDRAM_init();
-#endif;
+#endif
 
 	val = OTM8009A_Init(OTM8009A_FORMAT_RGB888, OTM8009A_ORIENTATION_LANDSCAPE);
 	printf("OTM8009A_Init %d\n", val);
