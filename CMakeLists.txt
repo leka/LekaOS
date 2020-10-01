@@ -48,9 +48,9 @@ add_subdirectory(${ROOT_DIR}/spike/investigation_day_wifi)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_motors)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_bluetooth)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_sensors_touch)
-add_subdirectory(${ROOT_DIR}/spike/investigation_day_all)
 
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_ble_led_motors)
+add_subdirectory(${ROOT_DIR}/spike/investigation_day_bluetooth_firmware_rfid_screen_touch_wifi)
 
 # Finally print the mbed-cmake build report
 mbed_cmake_print_build_report()
