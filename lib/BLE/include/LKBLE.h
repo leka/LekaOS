@@ -11,7 +11,7 @@
 #include "pretty_printer.h"
 
 const static char DEVICE_NAME[] = "Heartrate";
-static events::EventQueue event_queue(/* event count */ 16 * EVENTS_EVENT_SIZE);
+static events::EventQueue event_queue(/* event count */ 32 * EVENTS_EVENT_SIZE);
 
 class HeartrateDemo : ble::Gap::EventHandler
 {
@@ -19,7 +19,7 @@ class HeartrateDemo : ble::Gap::EventHandler
 	HeartrateDemo(BLE &ble, events::EventQueue &event_queue)
 		: _ble(ble),
 		  _event_queue(event_queue),
-		  _led1(LED1, 1),
+		  //   _led1(LED1, 1),
 		  _connected(false),
 		  _hr_uuid(GattService::UUID_HEART_RATE_SERVICE),
 		  _hr_counter(100),
@@ -34,10 +34,11 @@ class HeartrateDemo : ble::Gap::EventHandler
 
 		_ble.init(this, &HeartrateDemo::on_init_complete);
 
-		_event_queue.call_every(500ms, this, &HeartrateDemo::blink);
+		// _event_queue.call_every(500ms, this, &HeartrateDemo::blink);
 		_event_queue.call_every(1000ms, this, &HeartrateDemo::update_sensor_value);
 
-		_event_queue.dispatch_forever();
+		// _event_queue.dispatch_forever();
+		// printf("dispatch_forever\n");
 	}
 
   private:
@@ -109,7 +110,7 @@ class HeartrateDemo : ble::Gap::EventHandler
 		}
 	}
 
-	void blink(void) { _led1 = !_led1; }
+	// void blink(void) { _led1 = !_led1; }
 
   private:
 	/* Event handler */
@@ -130,7 +131,7 @@ class HeartrateDemo : ble::Gap::EventHandler
   private:
 	BLE &_ble;
 	events::EventQueue &_event_queue;
-	DigitalOut _led1;
+	// DigitalOut _led1;
 
 	bool _connected;
 

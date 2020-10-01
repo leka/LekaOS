@@ -1,11 +1,10 @@
-/*
- * Copyright (c) 2020 Arm Limited and affiliates.
- * SPDX-License-Identifier: Apache-2.0
- */
+// Leka - LekaOS
+// Copyright (c) 2020 Arm Limited and affiliates.
+// SPDX-License-Identifier: Apache-2.0
 
 #include "mbed.h"
 
-const uint32_t TIMEOUT_MS = 5000;
+const auto TIMEOUT_MS = 5000ms;
 // InterruptIn button(BUTTON1);
 volatile int countdown = 9;
 
@@ -20,7 +19,7 @@ int main()
 	printf("\r\nTarget started.\r\n");
 
 	Watchdog &watchdog = Watchdog::get_instance();
-	watchdog.start(TIMEOUT_MS);
+	watchdog.start(5000);
 	// button.rise(&trigger);
 
 	uint32_t watchdog_timeout = watchdog.get_timeout();
