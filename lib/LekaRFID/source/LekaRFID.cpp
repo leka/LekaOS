@@ -147,78 +147,78 @@ void RFID::sendReceive()
 
 void RFID::sendReceive2()
 {
-    uint8_t *buffer          = new uint8_t[1];
-    uint8_t buffer_length = 0;
+	uint8_t *buffer		  = new uint8_t[1];
+	uint8_t buffer_length = 0;
 
-    _interface.write(_send_receive2_cmd, _send_receive2_cmd_length);
-    ThisThread::sleep_for(10ms);
+	_interface.write(_send_receive2_cmd, _send_receive2_cmd_length);
+	ThisThread::sleep_for(10ms);
 
-    for (int i = 0; i < 10; i++) {
-        if (_interface.readable()) {
-            _interface.read(buffer, 2);
-            buffer_length = buffer[1];
-            _interface.read(buffer + 2, buffer_length);
+	for (int i = 0; i < 10; i++) {
+		if (_interface.readable()) {
+			_interface.read(buffer, 2);
+			buffer_length = buffer[1];
+			_interface.read(buffer + 2, buffer_length);
 
-            printf("Answer received from reader: ");
-            for (int i = 0; i < buffer_length + 2; i++) {
-                printf("%X ", buffer[i]);
-            }
-            printf("\n");
-            return;
-        }
-    }
-    printf("No answer received from reader...\n");
-    return;
+			printf("Answer received from reader: ");
+			for (int i = 0; i < buffer_length + 2; i++) {
+				printf("%X ", buffer[i]);
+			}
+			printf("\n");
+			return;
+		}
+	}
+	printf("No answer received from reader...\n");
+	return;
 }
 
 void RFID::sendReceive3()
 {
-    uint8_t *buffer          = new uint8_t[1];
-    uint8_t buffer_length = 0;
+	uint8_t *buffer		  = new uint8_t[1];
+	uint8_t buffer_length = 0;
 
-    _interface.write(_send_receive3_cmd, _send_receive3_cmd_length);
-    ThisThread::sleep_for(10ms);
+	_interface.write(_send_receive3_cmd, _send_receive3_cmd_length);
+	ThisThread::sleep_for(10ms);
 
-    for (int i = 0; i < 10; i++) {
-        if (_interface.readable()) {
-            _interface.read(buffer, 2);
-            buffer_length = buffer[1];
-            _interface.read(buffer + 2, buffer_length);
+	for (int i = 0; i < 10; i++) {
+		if (_interface.readable()) {
+			_interface.read(buffer, 2);
+			buffer_length = buffer[1];
+			_interface.read(buffer + 2, buffer_length);
 
-            printf("Answer received from reader: ");
-            for (int i = 0; i < buffer_length + 2; i++) {
-                printf("%X ", buffer[i]);
-            }
-            printf("\n");
-            return;
-        }
-    }
-    printf("No answer received from reader...\n");
-    return;
+			printf("Answer received from reader: ");
+			for (int i = 0; i < buffer_length + 2; i++) {
+				printf("%X ", buffer[i]);
+			}
+			printf("\n");
+			return;
+		}
+	}
+	printf("No answer received from reader...\n");
+	return;
 }
 
 bool RFID::setIEC14443()
 {
-    uint8_t buffer[2]                          = {0x00};
-    const uint8_t aimed_buffer_length          = 0x02;
-    uint8_t aimed_buffer[aimed_buffer_length] = {0x00, 0x00};
+	uint8_t buffer[2]						  = {0x00};
+	const uint8_t aimed_buffer_length		  = 0x02;
+	uint8_t aimed_buffer[aimed_buffer_length] = {0x00, 0x00};
 
-    _interface.write(_iec_14443_cmd, _iec_14443_cmd_length);
-    ThisThread::sleep_for(10ms);
+	_interface.write(_iec_14443_cmd, _iec_14443_cmd_length);
+	ThisThread::sleep_for(10ms);
 
-    for (int i = 0; i < 10; i++) {
-        if (_interface.readable()) {
-            _interface.read(buffer, aimed_buffer_length);
-            // for (int i = 0; i < aimed_buffer_length; i++) {
-            //     printf("%X ", buffer[i]);
-            // }
-            // printf("\n");
-            if ((memcmp(aimed_buffer, buffer, aimed_buffer_length) == 0)) {
-                return true;
-            }
-        }
-    }
-    return false;
+	for (int i = 0; i < 10; i++) {
+		if (_interface.readable()) {
+			_interface.read(buffer, aimed_buffer_length);
+			// for (int i = 0; i < aimed_buffer_length; i++) {
+			//     printf("%X ", buffer[i]);
+			// }
+			// printf("\n");
+			if ((memcmp(aimed_buffer, buffer, aimed_buffer_length) == 0)) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 void RFID::start()
@@ -231,30 +231,30 @@ void RFID::start()
 	}
 	printf("RFID reader detected!\n\n");
 
-    // while (!setIEC15693()) {
-    //     printf("Attempt to enable RFID reader...\n");
-    //     ThisThread::sleep_for(1s);
-    // }
-    // printf("RFID reader enable with IEC 15693!\n");
+	// while (!setIEC15693()) {
+	//     printf("Attempt to enable RFID reader...\n");
+	//     ThisThread::sleep_for(1s);
+	// }
+	// printf("RFID reader enable with IEC 15693!\n");
 
-    while (!setIEC14443()) {
-        printf("Attempt to enable RFID reader...\n");
-        ThisThread::sleep_for(1s);
-    }
-    printf("RFID reader enable with IEC 14443!\n");
+	while (!setIEC14443()) {
+		printf("Attempt to enable RFID reader...\n");
+		ThisThread::sleep_for(1s);
+	}
+	printf("RFID reader enable with IEC 14443!\n");
 
-    while (!setReceiverGain()) {
-        printf("Attempt to set RFID reader gain...\n");
-        ThisThread::sleep_for(1s);
-    }
-    printf("RFID reader gain set!\n");
+	while (!setReceiverGain()) {
+		printf("Attempt to set RFID reader gain...\n");
+		ThisThread::sleep_for(1s);
+	}
+	printf("RFID reader gain set!\n");
 
-    while (true) {
-        // sendReceive();
-        sendReceive2();
-        sendReceive3();
-        ThisThread::sleep_for(10s);
-    }
+	while (true) {
+		// sendReceive();
+		sendReceive2();
+		sendReceive3();
+		ThisThread::sleep_for(10s);
+	}
 
 	printf("End of RFID example\n\n");
 }

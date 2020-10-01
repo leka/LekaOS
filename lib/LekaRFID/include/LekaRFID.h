@@ -23,11 +23,11 @@ class RFID
 	bool getID();
 	void fieldOff();
 	bool setIEC15693();
-    bool setIEC14443();
-    bool setReceiverGain();
-    void sendReceive();
-    void sendReceive2();
-    void sendReceive3();
+	bool setIEC14443();
+	bool setReceiverGain();
+	void sendReceive();
+	void sendReceive2();
+	void sendReceive3();
 
   private:
 	BufferedSerial _interface;
@@ -40,16 +40,16 @@ class RFID
 	const uint8_t _field_off_cmd_length			= 4;
 	const uint8_t _iec_15693_cmd[4]				= {0x02, 0x02, 0x01, 0x09};
 	const uint8_t _iec_15693_cmd_length			= 4;
-    const uint8_t _iec_14443_cmd[4]                = {0x02, 0x02, 0x02, 0x00};
-    const uint8_t _iec_14443_cmd_length            = 4;
+	const uint8_t _iec_14443_cmd[4]				= {0x02, 0x02, 0x02, 0x00};
+	const uint8_t _iec_14443_cmd_length			= 4;
 	const uint8_t _set_receiver_gain_cmd[6]		= {0x09, 0x04, 0x68, 0x01, 0x01, 0xD1};
 	const uint8_t _set_receiver_gain_cmd_length = 6;
 	const uint8_t _send_receive_cmd[5]			= {0x04, 0x03, 0x26, 0x01, 0x00};
 	const uint8_t _send_receive_cmd_length		= 5;
-    const uint8_t _send_receive2_cmd[4]            = {0x04, 0x02, 0x26, 0x07};
-    const uint8_t _send_receive2_cmd_length        = 4;
-    const uint8_t _send_receive3_cmd[5]            = {0x04, 0x03, 0x93, 0x20, 0x08};
-    const uint8_t _send_receive3_cmd_length        = 5;
+	const uint8_t _send_receive2_cmd[4]			= {0x04, 0x02, 0x26, 0x07};
+	const uint8_t _send_receive2_cmd_length		= 4;
+	const uint8_t _send_receive3_cmd[5]			= {0x04, 0x03, 0x93, 0x20, 0x08};
+	const uint8_t _send_receive3_cmd_length		= 5;
 };
 
 #endif
