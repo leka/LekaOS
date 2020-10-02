@@ -2,6 +2,9 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#ifndef _LEKA_OS_SPIKE_MOTORS_UTILS_H_
+#define _LEKA_OS_SPIKE_MOTORS_UTILS_H_
+
 #include "Motor.h"
 
 DigitalOut motor_right_dir_1(PE_4);
@@ -46,3 +49,5 @@ void motor_thread()
 		rtos::ThisThread::sleep_for(5s);
 	}
 }
+
+#endif	 // _LEKA_OS_SPIKE_MOTORS_UTILS_H_

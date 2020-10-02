@@ -1,6 +1,5 @@
 #include "mbed.h"
 
-#include "BLEUtils.h"
 #include "LKBLE.h"
 #include "LedUtils.h"
 #include "MotorsUtils.h"
