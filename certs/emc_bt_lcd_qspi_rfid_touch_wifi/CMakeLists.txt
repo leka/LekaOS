@@ -1,0 +1,25 @@
+# Leka - LekaOS
+# Copyright 2020 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+add_mbed_executable(certs_emc_bt_lcd_qspi_rfid_touch_wifi)
+
+target_sources(certs_emc_bt_lcd_qspi_rfid_touch_wifi
+  PRIVATE
+    main.cpp
+)
+
+target_include_directories(certs_emc_bt_lcd_qspi_rfid_touch_wifi
+  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi lib_LekaBluetooth)
+target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi lib_LekaFirmware)
+target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi lib_LekaRFID)
+target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi lib_LekaScreen)
+target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi lib_LekaTouch)
+target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi lib_LekaWifi)
+target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi lib_HelloWorld)
+
+target_link_target_board_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi DISCO_ORIGINAL LEKA_V1_0_DEV)
