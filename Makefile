@@ -32,6 +32,11 @@ all:
 	@echo "🏗️  Building application 🚧"
 	ninja -C ./build -f build.ninja $(PROJECT)
 
+lekaos:
+	@echo ""
+	@echo "🏗️  Building LekaOS 🚧"
+	ninja -C ./build -f build.ninja LekaOS
+
 clean:
 	@echo ""
 	@echo "⚠️  Cleaning up build & cmake/config directories 🧹"
