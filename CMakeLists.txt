@@ -36,8 +36,8 @@ add_subdirectory(${LIB_DIR}/LekaBluetooth)
 add_subdirectory(${ROOT_DIR}/src)
 
 # If you use spikes to test features, you can add them here
-add_subdirectory(${ROOT_DIR}/spike/blinky)
-add_subdirectory(${ROOT_DIR}/spike/watchdog)
+add_subdirectory(${ROOT_DIR}/spike/mbed_blinky)
+add_subdirectory(${ROOT_DIR}/spike/mbed_watchdog)
 
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_ble)
 add_subdirectory(${ROOT_DIR}/spike/investigation_day_lcd)
