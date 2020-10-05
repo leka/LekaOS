@@ -5,9 +5,10 @@
 #ifndef _LEKA_OS_LIB_WIFI_H_
 #define _LEKA_OS_LIB_WIFI_H_
 
+#include "mbed.h"
+
 #include "ESP8266Interface.h"
 #include "internal/LekaWifiPins.h"
-#include "mbed.h"
 
 class Wifi
 {

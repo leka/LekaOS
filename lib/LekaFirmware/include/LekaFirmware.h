@@ -10,7 +10,8 @@
 // #include "LekaFirmwarePins.h"
 #include "mbed.h"
 
-typedef enum ext_flash_status {
+typedef enum ext_flash_status
+{
 	EXTERNAL_FLASH_STATUS_ERROR				= 1, /**< Generic error >*/
 	EXTERNAL_FLASH_STATUS_INVALID_PARAMETER = 2, /**< The parameter is invalid >*/
 	EXTERNAL_FLASH_STATUS_OK				= 0, /**< Function executed sucessfully  >*/

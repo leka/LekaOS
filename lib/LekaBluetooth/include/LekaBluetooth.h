@@ -5,9 +5,10 @@
 #ifndef _LEKA_OS_LIB_BLUETOOTH_H_
 #define _LEKA_OS_LIB_BLUETOOTH_H_
 
+#include "mbed.h"
+
 #include "BM64Converter.h"
 #include "LekaPinNames.h"
-#include "mbed.h"
 
 class Bluetooth
 {
