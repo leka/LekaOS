@@ -10,7 +10,8 @@
 ///@defgroup ColorEnums Color correction/temperature
 /// definitions for color correction and light temperatures
 ///@{
-typedef enum {
+typedef enum
+{
 	// Color correction starting points
 
 	/// typical values for SMD5050 LEDs
@@ -31,7 +32,8 @@ typedef enum {
 
 } LEDColorCorrection;
 
-typedef enum {
+typedef enum
+{
 	/// @name Black-body radiation light sources
 	/// Black-body radiation light sources emit a (relatively) continuous
 	/// spectrum, and can be described as having a Kelvin 'temperature'
