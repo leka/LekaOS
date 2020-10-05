@@ -5,10 +5,11 @@
 #ifndef _LEKA_OS_LIB_LED_H_
 #define _LEKA_OS_LIB_LED_H_
 
+#include "mbed.h"
+
 #include <cstdint>
 
 #include "chrono"
-#include "mbed.h"
 
 // Force
 #include "internal/colorpalettes.h"
@@ -41,7 +42,18 @@
 // FASTLED_NAMESPACE_BEGIN
 
 /// definitions for the spi chipset constants
-enum ESPIChipsets { LPD6803, LPD8806, WS2801, WS2803, SM16716, P9813, APA102, SK9822, DOTSTAR };
+enum ESPIChipsets
+{
+	LPD6803,
+	LPD8806,
+	WS2801,
+	WS2803,
+	SM16716,
+	P9813,
+	APA102,
+	SK9822,
+	DOTSTAR
+};
 
 // #ifdef HAS_PIXIE
 // template <uint8_t DATA_PIN, EOrder RGB_ORDER>

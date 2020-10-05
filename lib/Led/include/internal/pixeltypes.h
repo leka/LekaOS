@@ -68,7 +68,8 @@ struct CHSV {
 };
 
 /// Pre-defined hue values for HSV objects
-typedef enum {
+typedef enum
+{
 	HUE_RED	   = 0,
 	HUE_ORANGE = 32,
 	HUE_YELLOW = 64,
@@ -554,7 +555,8 @@ struct CRGB {
 	}
 
 	/// Predefined RGB colors
-	typedef enum {
+	typedef enum
+	{
 		AliceBlue			 = 0xF0F8FF,
 		Amethyst			 = 0x9966CC,
 		AntiqueWhite		 = 0xFAEBD7,
@@ -797,7 +799,15 @@ __attribute__((always_inline)) inline CRGB operator%(const CRGB &p1, uint8_t d)
 /// RGB orderings, used when instantiating controllers to determine what
 /// order the controller should send RGB data out in, RGB being the default
 /// ordering.
-enum EOrder { RGB = 0012, RBG = 0021, GRB = 0102, GBR = 0120, BRG = 0201, BGR = 0210 };
+enum EOrder
+{
+	RGB = 0012,
+	RBG = 0021,
+	GRB = 0102,
+	GBR = 0120,
+	BRG = 0201,
+	BGR = 0210
+};
 
 // FASTLED_NAMESPACE_END
 ///@}

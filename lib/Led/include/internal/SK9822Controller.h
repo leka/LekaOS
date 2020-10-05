@@ -6,9 +6,10 @@
 #define _LK_ALPHA_OS_LIB_LED_SK9822_CONTROLLER_H_
 
 // #include "FastLED.h"
+#include "mbed.h"
+
 #include "PinNames.h"
 #include "controller.h"
-#include "mbed.h"
 #include "pixeltypes.h"
 
 ///

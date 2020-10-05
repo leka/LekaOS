@@ -51,7 +51,13 @@ void fill_rainbow(struct CHSV *targetArray, int numToFill, uint8_t initialhue, u
 //   computed in HSV space, and then HSV values are converted to RGB
 //   as they're written into the RGB array.
 
-typedef enum { FORWARD_HUES, BACKWARD_HUES, SHORTEST_HUES, LONGEST_HUES } TGradientDirectionCode;
+typedef enum
+{
+	FORWARD_HUES,
+	BACKWARD_HUES,
+	SHORTEST_HUES,
+	LONGEST_HUES
+} TGradientDirectionCode;
 
 #define saccum87 int16_t
 
@@ -1283,7 +1289,11 @@ class CRGBPalette256
 	}
 };
 
-typedef enum { NOBLEND = 0, LINEARBLEND = 1 } TBlendType;
+typedef enum
+{
+	NOBLEND		= 0,
+	LINEARBLEND = 1
+} TBlendType;
 
 CRGB ColorFromPalette(const CRGBPalette16 &pal, uint8_t index, uint8_t brightness = 255,
 					  TBlendType blendType = LINEARBLEND);

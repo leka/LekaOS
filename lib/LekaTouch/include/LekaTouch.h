@@ -11,9 +11,10 @@
 #define _LEKA_OS_LIB_LEKATOUCH_H_
 
 // #include "LekaTouchPins.h"
+#include "mbed.h"
+
 #include "LekaPinNames.h"
 #include "MCP23017.h"
-#include "mbed.h"
 
 class Touch
 {
