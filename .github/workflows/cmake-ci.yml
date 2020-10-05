@@ -1,6 +1,6 @@
 # CMake CI Workflow
 
-name: CMake CI
+name: CI
 
 on: [push]
 
@@ -24,3 +24,16 @@ jobs:
           python3 -m pip install -U --user -r lib/_vendor/mbed-os/requirements.txt
           make config
           make
+
+  clang_format_check:
+    name: Clang Format Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: DoozyX/clang-format-lint-action@v0.10
+        with:
+          source: './src ./lib ./spike ./test'
+          exclude: './lib/_vendor'
+          extensions: 'h,cpp,c'
+          clangFormatVersion: 10
+          inplace: "" # meaning false, see https://github.com/DoozyX/clang-format-lint-action/issues/18#issue-710169130
