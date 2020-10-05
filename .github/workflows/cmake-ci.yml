@@ -12,17 +12,26 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
-      - name: Test script
+      - name: Brew install coreutils & ninja
         run: |
-          brew install coreutils
-          export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"
-          brew install ninja
+          brew install coreutils ninja
+          echo "/usr/local/opt/coreutils/libexec/gnubin" >> $GITHUB_PATH
+      - name: Brew install arm-none-eabi-gcc
+        run: |
           brew tap ArmMbed/homebrew-formulae
           brew install arm-none-eabi-gcc
+      - name: Clone Mbed OS
+        run: |
           make clone_mbed BRANCH=mbed-os-6.3.0
+      - name: Install mbed-cli and dependencies
+        run: |
           python3 -m pip install -U --user mbed-cli pyserial intelhex prettytable
           python3 -m pip install -U --user -r lib/_vendor/mbed-os/requirements.txt
+      - name: Config build system
+        run: |
           make config
+      - name: Build LekaOS & al.
+        run: |
           make
 
   clang_format_check:
