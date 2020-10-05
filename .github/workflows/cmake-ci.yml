@@ -1,6 +1,6 @@
 # CMake CI Workflow
 
-name: CMake CI
+name: CI
 
 on: [push]
 
