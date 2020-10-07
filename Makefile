@@ -9,7 +9,7 @@
 ROOT_DIR    := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 CMAKE_DIR   := $(ROOT_DIR)/cmake
 BUILD_DIR   := $(ROOT_DIR)/build
-MBED_OS_DIR := $(ROOT_DIR)/lib/_vendor/mbed-os
+MBED_OS_DIR := $(ROOT_DIR)/extern/mbed-os
 
 #
 # MARK:- Arguments
