@@ -49,7 +49,7 @@ Then, install the required tools:
 $ python3 -m pip install -U --user pyserial intelhex prettytable
 
 # And finally mbed-cli requirements
-$ python3 -m pip install -U --user -r lib/_vendor/mbed-os/requirements.txt
+$ python3 -m pip install -U --user -r extern/mbed-os/requirements.txt
 ```
 
 ### 2. Install arm-none-eabi-gcc
@@ -105,7 +105,7 @@ Using [mbed-cli](https://github.com/ARMmbed/mbed-cli) is **highly discouraged** 
 If you still want to use it, you can set your target and favorite toolchain in the [`.mbed`](./.mbed) file:
 
 ```bash
-MBED_OS_DIR=./lib/_vendor/mbed-os
+MBED_OS_DIR=./extern/mbed-os
 TARGET=DISCO_F769NI
 TOOLCHAIN=GCC_ARM
 ROOT=.

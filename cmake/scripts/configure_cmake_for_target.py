@@ -10,7 +10,7 @@ from pathlib import Path
 
 # import Mbed's built-in tools library
 project_root_dir   = Path(os.path.dirname(__file__)).parent.parent
-mbed_os_dir        = os.path.join(project_root_dir, "lib/_vendor/mbed-os")
+mbed_os_dir        = os.path.join(project_root_dir, "extern/mbed-os")
 custom_targets_dir = os.path.join(project_root_dir, "targets")
 
 sys.path.append(mbed_os_dir)
