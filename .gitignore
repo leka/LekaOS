@@ -3,7 +3,7 @@
 #
 
 .vscode
-lib/_vendor/mbed-os
+extern/mbed-os
 build
 cmake/config/
 
