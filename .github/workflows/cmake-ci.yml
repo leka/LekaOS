@@ -26,7 +26,7 @@ jobs:
       - name: Install mbed-cli and dependencies
         run: |
           python3 -m pip install -U --user mbed-cli pyserial intelhex prettytable
-          python3 -m pip install -U --user -r lib/_vendor/mbed-os/requirements.txt
+          python3 -m pip install -U --user -r extern/mbed-os/requirements.txt
       - name: Config build system
         run: |
           make config
@@ -42,7 +42,7 @@ jobs:
       - uses: DoozyX/clang-format-lint-action@v0.10
         with:
           source: './src ./lib ./spike ./test'
-          exclude: './lib/_vendor'
+          exclude: './extern'
           extensions: 'h,cpp,c'
           clangFormatVersion: 10
           inplace: "" # meaning false, see https://github.com/DoozyX/clang-format-lint-action/issues/18#issue-710169130
