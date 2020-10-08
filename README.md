@@ -1,4 +1,6 @@
-# LekaOS ![CMake CI](https://github.com/leka/LekaOS/workflows/CMake%20CI/badge.svg)
+# LekaOS
+
+![CI](https://github.com/leka/LekaOS/workflows/CI/badge.svg)
 
 ## About
 
