@@ -72,11 +72,12 @@ clone_mbed:
 	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_mbedignore.txt $(MBED_OS_DIR)/.mbedignore
 
 flash:
-	openocd -f interface/stlink.cfg -c "transport select hla_swd" -f target/stm32f7x.cfg -c "program $(BIN_PATH) 0x08000000 reset exit"
-	st-flash reset
+	openocd -f interface/stlink.cfg -c 'transport select hla_swd' -f target/stm32f7x.cfg -c 'program $(BIN_PATH) 0x08000000' -c exit
+	sleep 1
+	@$(MAKE) reset
 
 reset:
-	st-flash reset
+	openocd -f interface/stlink.cfg -c 'transport select hla_swd' -f target/stm32f7x.cfg -c init -c 'reset run' -c exit
 
 term:
 	mbed sterm -b $(BAUDRATE) -p $(PORT)
