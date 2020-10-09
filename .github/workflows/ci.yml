@@ -1,8 +1,18 @@
-# CMake CI Workflow
+# CI Workflow
 
 name: CI
 
 on: [push]
+  paths-ignore:
+  - 'docs/**'
+  - 'extern/**'
+  - 'tools/**'
+  - '.vscode/**'
+  - '.editorconfig'
+  - '.gitignore'
+  - '.mbed'
+  - 'LICENSE'
+  - 'README.md'
 
 jobs:
 
