@@ -16,11 +16,12 @@ Follow the guide:
 
 ## Documentation
 
-- LekaOS Tools
-    - [`PinMap`, `PinNames` & `.ioc` files edition](./docs/leka/Tools-Pins.md)
+- LekaOS
+    - [Tools - `PinMap`, `PinNames` & `.ioc` files edition](./docs/leka/Tools-Pins.md)
+    - [Tests](./docs/leka/Tests.md)
 
-- Mbed OS Drivers
-    - [SPI Clock Frequency](./docs/mbed-os/SPI.md)
+- Mbed OS
+    - [Drivers - SPI Clock Frequency](./docs/mbed-os/SPI.md)
 
 ## License
 
