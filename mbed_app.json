@@ -3,17 +3,8 @@
 		"target_name": null
 	},
 	"target_overrides": {
-		"DISCO_F769NI": {
-			"target_name": "\"DISCO_F769NI\""
-		},
-		"DISCO_ORIGINAL": {
-			"target_name": "\"DISCO_ORIGINAL\""
-		},
-		"DISCO_MODIFIED": {
-			"target_name": "\"DISCO_MODIFIED\""
-		},
-		"DISCO_IOC": {
-			"target_name": "\"DISCO_IOC\""
+		"LEKA_DISCO": {
+			"target_name": "\"LEKA_DISCO\""
 		},
 		"LEKA_V1_0_DEV": {
 			"target_name": "\"LEKA_V1_0_DEV\"",
