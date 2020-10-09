@@ -49,9 +49,9 @@ add_subdirectory(${ROOT_DIR}/spike/lk_motors)
 add_subdirectory(${ROOT_DIR}/spike/lk_bluetooth)
 add_subdirectory(${ROOT_DIR}/spike/lk_sensors_touch)
 
-add_subdirectory(${ROOT_DIR}/test/cert/emc_ble_led_motors)
-add_subdirectory(${ROOT_DIR}/test/cert/emc_lcd_led_motors)
-add_subdirectory(${ROOT_DIR}/test/cert/emc_bt_lcd_qspi_rfid_touch_wifi)
+add_subdirectory(${ROOT_DIR}/tests/cert/emc_ble_led_motors)
+add_subdirectory(${ROOT_DIR}/tests/cert/emc_lcd_led_motors)
+add_subdirectory(${ROOT_DIR}/tests/cert/emc_bt_lcd_qspi_rfid_touch_wifi)
 
 # Finally print the mbed-cmake build report
 mbed_cmake_print_build_report()
