@@ -2,16 +2,16 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(lib_Led STATIC)
+add_library(driver_FastLED STATIC)
 
-target_include_directories(lib_Led
+target_include_directories(driver_FastLED
   PUBLIC
   	${CMAKE_CURRENT_SOURCE_DIR}/include
 	${CMAKE_CURRENT_SOURCE_DIR}/include/internal
 	${CMAKE_CURRENT_SOURCE_DIR}/include/internal/lib8tion
 )
 
-target_sources(lib_Led
+target_sources(driver_FastLED
   PRIVATE
   	source/FastLED.cpp
 	source/bitswap.cpp
@@ -21,4 +21,4 @@ target_sources(lib_Led
 	source/lib8tion.cpp
 )
 
-target_link_libraries(lib_Led mbed-os)
+target_link_libraries(driver_FastLED mbed-os)
