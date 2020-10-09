@@ -26,14 +26,14 @@ add_subdirectory(${DRIVERS_DIR}/Motor)
 # Add libraries
 add_subdirectory(${LIBS_DIR}/HelloWorld)
 
-add_subdirectory(${LIBS_DIR}/BLE)
+add_subdirectory(${LIBS_DIR}/InvestigationDay/BLE)
 
-add_subdirectory(${LIBS_DIR}/LekaRFID)
-add_subdirectory(${LIBS_DIR}/LekaWifi)
-add_subdirectory(${LIBS_DIR}/LekaTouch)
-add_subdirectory(${LIBS_DIR}/LekaScreen)
-add_subdirectory(${LIBS_DIR}/LekaFirmware)
-add_subdirectory(${LIBS_DIR}/LekaBluetooth)
+add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaRFID)
+add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaWifi)
+add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaTouch)
+add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaScreen)
+add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaFirmware)
+add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaBluetooth)
 
 # Add the main source files of the project from ./src
 add_subdirectory(${ROOT_DIR}/src)
