@@ -12,25 +12,28 @@ include(./mbed-cmake.cmake)
 project(LekaOS LANGUAGES C CXX ASM)
 
 # For convenience you can define useful variables
-set(LIB_DIR ${ROOT_DIR}/lib)
+set(LIBS_DIR ${ROOT_DIR}/libs)
+set(DRIVERS_DIR ${ROOT_DIR}/drivers)
 set(TARGETS_DIR ${ROOT_DIR}/targets)
 
 # Add custom target subdirectory
 add_target_board_subdirectory("${TARGET_BOARD}")
 
+# Add drivers
+add_subdirectory(${DRIVERS_DIR}/FastLED)
+add_subdirectory(${DRIVERS_DIR}/Motor)
+
 # Add libraries
-add_subdirectory(${LIB_DIR}/HelloWorld)
+add_subdirectory(${LIBS_DIR}/HelloWorld)
 
-add_subdirectory(${LIB_DIR}/BLE)
-add_subdirectory(${LIB_DIR}/Led)
-add_subdirectory(${LIB_DIR}/Motor)
+add_subdirectory(${LIBS_DIR}/InvestigationDay/BLE)
 
-add_subdirectory(${LIB_DIR}/LekaRFID)
-add_subdirectory(${LIB_DIR}/LekaWifi)
-add_subdirectory(${LIB_DIR}/LekaTouch)
-add_subdirectory(${LIB_DIR}/LekaScreen)
-add_subdirectory(${LIB_DIR}/LekaFirmware)
-add_subdirectory(${LIB_DIR}/LekaBluetooth)
+add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaRFID)
+add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaWifi)
+add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaTouch)
+add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaScreen)
+add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaFirmware)
+add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaBluetooth)
 
 # Add the main source files of the project from ./src
 add_subdirectory(${ROOT_DIR}/src)

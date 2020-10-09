@@ -14,8 +14,9 @@ target_sources(certs_emc_lcd_led_motors
     main.cpp
 )
 
-target_link_libraries(certs_emc_lcd_led_motors lib_Led)
-target_link_libraries(certs_emc_lcd_led_motors lib_Motor)
+target_link_libraries(certs_emc_lcd_led_motors driver_Motor)
+target_link_libraries(certs_emc_lcd_led_motors driver_FastLED)
+
 target_link_libraries(certs_emc_lcd_led_motors lib_LekaScreen)
 
 target_link_target_board_libraries(certs_emc_lcd_led_motors DISCO_ORIGINAL LEKA_V1_0_DEV_led_motors)
