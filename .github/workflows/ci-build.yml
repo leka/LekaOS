@@ -1,23 +1,40 @@
 # CI Workflow
 
-name: CI
+name: CI - Build
 
-on: [push]
-  paths-ignore:
-  - 'docs/**'
-  - 'extern/**'
-  - 'tools/**'
-  - '.vscode/**'
-  - '.editorconfig'
-  - '.gitignore'
-  - '.mbed'
-  - 'LICENSE'
-  - 'README.md'
+on:
+  push:
+    branches:
+      - develop
+    paths-ignore:
+      - 'docs/**'
+      - 'extern/**'
+      - 'tools/**'
+      - '.vscode/**'
+      - '.editorconfig'
+      - '.gitignore'
+      - '.mbed'
+      - 'LICENSE'
+      - 'README.md'
+
+  pull_request:
+    branches:
+      - develop
+    paths-ignore:
+      - 'docs/**'
+      - 'extern/**'
+      - 'tools/**'
+      - '.vscode/**'
+      - '.editorconfig'
+      - '.gitignore'
+      - '.mbed'
+      - 'LICENSE'
+      - 'README.md'
 
 jobs:
 
   make_config_make_all:
-    name: Config & Build
+    name: Config & Build LekaOS
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -43,16 +60,3 @@ jobs:
       - name: Build LekaOS & al.
         run: |
           make
-
-  clang_format_check:
-    name: Clang Format Check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: DoozyX/clang-format-lint-action@v0.10
-        with:
-          source: './src ./lib ./spike ./test'
-          exclude: './extern'
-          extensions: 'h,cpp,c'
-          clangFormatVersion: 10
-          inplace: "" # meaning false, see https://github.com/DoozyX/clang-format-lint-action/issues/18#issue-710169130

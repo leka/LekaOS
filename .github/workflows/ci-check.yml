@@ -1,0 +1,25 @@
+# CI - Check Workflow
+
+name: CI - Check
+
+on:
+  push:
+    paths:
+      - '**.h'
+      - '**.c'
+      - '**.cpp'
+
+jobs:
+
+  check_clang_format:
+    name: Clang Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: DoozyX/clang-format-lint-action@v0.10
+        with:
+          source: './src ./lib ./spike ./test'
+          exclude: './extern'
+          extensions: 'h,cpp,c'
+          clangFormatVersion: 10
+          inplace: "" # meaning false, see https://github.com/DoozyX/clang-format-lint-action/issues/18#issue-710169130
