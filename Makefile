@@ -43,6 +43,9 @@ clean:
 	rm -rf $(BUILD_DIR)
 	rm -rf $(CMAKE_DIR)/config
 
+config_leka_disco:
+	@$(MAKE) config TARGET_BOARD="-x LEKA_DISCO"
+
 config:
 	@$(MAKE) clean
 	@echo ""
