@@ -14,6 +14,14 @@ Follow the guide:
 
 > [INSTALL.md](./docs/INSTALL.md)
 
+## Documentation
+
+- LekaOS Tools
+    - [`PinMap`, `PinNames` & `.ioc` files edition](./docs/leka/Tools-Pins.md)
+
+- Mbed OS Drivers
+    - [SPI Clock Frequency](./docs/mbed-os/SPI.md)
+
 ## License
 
 Copyright (c) APF France handicap. All rights reserved.
