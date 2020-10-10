@@ -11,7 +11,7 @@ assignees: ''
 
 Lorem Ipsum
 
-**Related epic/story**: <!-- to complete #{task id} -->
+**Related epic/story/task**: <!-- to complete #{task id} -->
 
 ## Subtasks <!-- if needed -->
 
