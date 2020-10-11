@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: DoozyX/clang-format-lint-action@v0.10
         with:
-          source: './src ./lib ./spike ./test'
+          source: './src ./lib ./spike ./test ./targets/TARGET_LEKA_V1_0_DEV'
           exclude: './extern'
           extensions: 'h,cpp,c'
           clangFormatVersion: 10
