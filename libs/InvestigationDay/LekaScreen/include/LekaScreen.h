@@ -13,7 +13,7 @@
 #include "mbed.h"
 
 #include "LekaLCD.h"
-#include "LekaPinNames.h"
+#include "PinNames.h"
 
 class Screen
 {

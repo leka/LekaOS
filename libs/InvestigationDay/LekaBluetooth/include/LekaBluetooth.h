@@ -8,7 +8,7 @@
 #include "mbed.h"
 
 #include "BM64Converter.h"
-#include "LekaPinNames.h"
+#include "PinNames.h"
 
 class Bluetooth
 {

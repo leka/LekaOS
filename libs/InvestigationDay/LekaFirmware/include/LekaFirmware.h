@@ -6,7 +6,7 @@
 #define _LEKA_OS_LIB_FIRMWARE_H_
 
 #include "IS25LP016D.h"
-#include "LekaPinNames.h"
+#include "PinNames.h"
 // #include "LekaFirmwarePins.h"
 #include "mbed.h"
 

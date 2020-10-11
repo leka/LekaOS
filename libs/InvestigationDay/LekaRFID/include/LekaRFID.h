@@ -7,7 +7,7 @@
 
 #include "mbed.h"
 
-#include "LekaPinNames.h"
+#include "PinNames.h"
 
 class RFID
 {

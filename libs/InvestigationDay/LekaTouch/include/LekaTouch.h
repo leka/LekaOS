@@ -13,8 +13,8 @@
 // #include "LekaTouchPins.h"
 #include "mbed.h"
 
-#include "LekaPinNames.h"
 #include "MCP23017.h"
+#include "PinNames.h"
 
 class Touch
 {

@@ -5,8 +5,8 @@
 #include "mbed.h"
 
 #include "HelloWorld.h"
-#include "LekaPinNames.h"
 #include "Motor.h"
+#include "PinNames.h"
 
 HelloWorld hello;
 
