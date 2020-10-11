@@ -55,9 +55,12 @@ $header_label    = "Label"
 
 # Leka Pin Names File
 
-$leka_pinmap_path      = arguments_passed[1].chomp("/")
-$leka_pinmap_file_name = "LekaPinNames.h"
-$leka_pinmap_file_path = $leka_pinmap_path + "/" + $leka_pinmap_file_name
+$target_directory_path = arguments_passed[1].chomp("/")
+$pin_names_file_name   = "PinNames.h"
+$pin_names_file_path   = $target_directory_path + "/" + $pin_names_file_name
+
+$pin_names_orig_file_name   = "PinNames.orig"
+$pin_names_orig_file_path   = $target_directory_path + "/" + $pin_names_orig_file_name
 
 
 #
@@ -68,18 +71,22 @@ $leka_pinmap_file_path = $leka_pinmap_path + "/" + $leka_pinmap_file_name
 
 puts ""
 puts "Getting files information..."
-puts "   csv file directory: #{$csv_dir_path}"
-puts "   csv file name:      #{$csv_file_name}"
-puts "   csv file version:   #{$csv_file_version}"
-puts "   pinmap directory:   #{$leka_pinmap_path}"
-puts "   pinmap file name:   #{$leka_pinmap_file_name}"
+puts "   csv file directory:  #{$csv_dir_path}"
+puts "   csv file name:       #{$csv_file_name}"
+puts "   csv file version:    #{$csv_file_version}"
+puts "   pin names directory: #{$target_directory_path}"
+puts "   pin names file name: #{$pin_names_file_name}"
+puts "   pin names orig name: #{$pin_names_orig_file_name}"
 puts "Getting file information... ✅"
 
 # Parse CSV file
 
+puts ""
+puts "Parsing #{$csv_file_name} file..."
+
 $pins = CSV.parse(File.read($csv_file_path), headers: true)
 
-# Create a sorted 2D array with the label and pin name: ["pin label", "pin name"]
+### Create a sorted 2D array with the label and pin name: ["pin label", "pin name"]
 
 $pins_array = []
 
@@ -97,7 +104,7 @@ end
 
 $pins_array.sort!
 
-# Group pins by function (BLE, BT, SENSORS, etc.)
+### Group pins by function (BLE, BT, SENSORS, etc.)
 
 $grouped_pins_array = []
 
@@ -110,62 +117,64 @@ $pins_array.each_with_index do |pin, index|
 	end
 end
 
-# Create LekaPinNames.h and create back-up if needed
+puts "Parsing #{$csv_file_name} file... ✅"
+
+# Create output data to be inserted
 
 puts ""
-puts "Checking if #{$leka_pinmap_file_path} already exists..."
+puts "Creating pin names data from parsed #{$csv_file_name} file..."
 
-if(File.exist?($leka_pinmap_file_path))
-	puts "   #{$leka_pinmap_file_path} already exists, creating a backup..."
-	FileUtils.cp $leka_pinmap_file_path, "#{$leka_pinmap_file_path}.#{Time.now.strftime("%Y%m%d%H%M%S")}.bak"
-	puts "   #{$leka_pinmap_file_path} already exists, creating a backup... ✅"
-else
-	puts "   #{$leka_pinmap_file_path} doesn't exist, creating file..."
-	FileUtils.touch $leka_pinmap_file_path
-	puts "   #{$leka_pinmap_file_path} doesn't exist, creating file... ✅"
-end
-
-puts "Checking if #{$leka_pinmap_file_path} already exists... ✅"
-
-# Add content to LekaPinNames.h
-
-puts ""
-puts "Writing content to #{$leka_pinmap_file_path}..."
-
-file = File.new($leka_pinmap_file_path, "w")
-
-file.puts """
-// Leka - LekaOS
-// Copyright #{Time.now.strftime("%Y")} APF France handicap
-// SPDX-License-Identifier: Apache-2.0
-
-#ifndef _LEKA_OS_LEKA_PIN_NAMES_H_
-#define _LEKA_OS_LEKA_PIN_NAMES_H_
-
-#include \"PinNames.h\"
-
-// LekaPinNames.h v#{$csv_file_version}
-// Generated on #{Time.now.strftime("%Y/%m/%d")}
-
-"""
+$pin_names_output_data = []
 
 output = ""
 $grouped_pins_array.each do |label, name|
 	if [label, name] == ["", ""]
 		unless output.empty?
 			output = ""
-			file.puts output
+			$pin_names_output_data.append output
 		end
 	else
 		unless label.include? "MIPI" or label.include? "FMC"
-			output = "constexpr PinName " + label.ljust(28) + " = " + name + ";"
-			file.puts output
+			output = label + " = " + name + ","
+			$pin_names_output_data.append output
 		end
 	end
 end
 
-file.puts """
-#endif // _LEKA_OS_LEKA_PIN_NAMES_H_
-"""
+$pin_names_output_data.unshift("\n", "    // Leka Pin Names")
+$pin_names_output_data.append("\n")
 
-puts "Writing content to #{$leka_pinmap_file_path}... ✅"
+puts "Creating pin names data from parsed #{$csv_file_name} file... ✅"
+
+puts ""
+puts "Parsing original #{$pin_names_orig_file_path} file..."
+
+$pin_names_file_data = File.readlines($pin_names_orig_file_path).map(&:chomp)
+$insert_at_index     = 0
+
+$pin_names_file_data.each_with_index do |line, index|
+	if line.include? "// Not connected"
+		$insert_at_index = index
+		break
+	end
+end
+
+$pin_names_file_data.insert($insert_at_index, $pin_names_output_data)
+
+puts "Parsing original #{$pin_names_orig_file_path} file... ✅"
+
+puts ""
+puts "Writting final output to #{$pin_names_file_name} file..."
+
+File.open($pin_names_file_path, 'w') do |file|
+	file.puts $pin_names_file_data
+end
+
+puts "Writting final output to #{$pin_names_file_name} file... ✅"
+
+puts ""
+puts "Running clang-format to format #{$pin_names_file_name} file..."
+
+system("clang-format", "-i", "-style=file", "#{$pin_names_file_path}")
+
+puts "Running clang-format to format #{$pin_names_file_name} file... ✅"
