@@ -439,6 +439,17 @@ typedef enum
 	QSPI_FLASH1_SCK = PB_2,
 	QSPI_FLASH1_CSN = PB_6,
 
+	// Leka Pin Names
+	BLE_IRQ		 = PI_11,
+	BLE_RESET	 = PE_3,
+	BLE_SPI_MISO = PF_8,
+	BLE_SPI_MOSI = PF_9,
+	BLE_SPI_NSS	 = PF_6,
+	BLE_SPI_SCK	 = PF_7,
+
+	LED_BELT_SPI_MOSI = PB_15,
+	LED_BELT_SPI_SCK  = PA_12,
+
 	// Not connected
 	NC = (int)0xFFFFFFFF
 } PinName;
