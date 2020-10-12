@@ -76,14 +76,6 @@
 		"overrides": {
 			"network-default-interface-type": "WIFI",
 			"lse_available": false
-		},
-		"bluenrg_ms": {
-			"SPI_IRQ": "PI_11",
-			"SPI_MISO": "PF_8",
-			"SPI_MOSI": "PF_9",
-			"SPI_RESET": "PE_3",
-			"SPI_SCK": "PF_7",
-			"SPI_nCS": "PF_6"
 		}
 	}
 }

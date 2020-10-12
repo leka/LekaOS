@@ -8,12 +8,12 @@
 		},
 		"LEKA_V1_0_DEV": {
 			"target_name": "\"LEKA_V1_0_DEV\"",
-			"bluenrg_ms.SPI_IRQ": "PI_11",
-			"bluenrg_ms.SPI_MISO": "PF_8",
-			"bluenrg_ms.SPI_MOSI": "PF_9",
-			"bluenrg_ms.SPI_RESET": "PE_3",
-			"bluenrg_ms.SPI_SCK": "PF_7",
-			"bluenrg_ms.SPI_nCS": "PF_6"
+			"bluenrg_ms.SPI_IRQ": "BLE_IRQ",
+			"bluenrg_ms.SPI_RESET": "BLE_RESET",
+			"bluenrg_ms.SPI_MISO": "BLE_SPI_MISO",
+			"bluenrg_ms.SPI_MOSI": "BLE_SPI_MOSI",
+			"bluenrg_ms.SPI_nCS": "BLE_SPI_NSS",
+			"bluenrg_ms.SPI_SCK": "BLE_SPI_SCK"
 		}
 	}
 }
