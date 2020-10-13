@@ -16,7 +16,9 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
+#include "FATFileSystem.h"
 #include "LekaLCD.h"
+#include "SDBlockDevice.h"
 
 class Screen
 {
@@ -26,9 +28,15 @@ class Screen
 
 	void start(void);
 
+	int SDInit();
+
   private:
 	mbed::PwmOut _brightness;
 	LekaLCD _lcd;
+
+	SDBlockDevice _interface;
+	FATFileSystem _file_interface;
+	mbed::DigitalOut _sd_enable;
 };
 
 #endif

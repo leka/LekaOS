@@ -13,7 +13,11 @@
 using namespace mbed;
 using namespace std::chrono;
 
-Screen::Screen() : _brightness(SCREEN_BACKLIGHT_PWM)
+Screen::Screen()
+	: _brightness(SCREEN_BACKLIGHT_PWM),
+	  _interface(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK),
+	  _file_interface("leka_fs"),
+	  _sd_enable(SD_SPI_CS)
 {
 	_brightness.period(0.01f);	 // Set PWM at 1/(0.01 seconds) = 100Hz
 	_brightness = 0.50f;
@@ -77,9 +81,30 @@ void squareBouncing(LekaLCD &lcd)
 	}
 }
 
+int Screen::SDInit()
+{
+	// _sd_enable = 0;
+	printf("Starting init... \n");
+	int err = _interface.init();
+	printf("Error value: %d\n", err);
+	if (0 != err) {
+		printf("Init failed \n");
+		return -1;
+	}
+	printf("Init success \n");
+
+	if (0 != _interface.frequency(5000000)) {
+		printf("Error setting frequency \n");
+	}
+	printf("frequency set \n");
+
+	return 0;
+}
+
 void Screen::start()
 {
 	printf("Screen example\n\n");
+	SDInit();
 
 	while (true) {
 		squareBouncing(_lcd);
