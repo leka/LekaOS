@@ -101,10 +101,25 @@ int Screen::SDInit()
 	return 0;
 }
 
+void Screen::getFileSize()
+{
+	static char filename[] = "image.jpg";
+	FIL JPEG_File; /* File object */
+
+	_file_interface.mount(&_interface);
+	if (f_open(&JPEG_File, filename, FA_READ) == FR_OK) {
+		printf("File %s openened. File size : %lu \n\r", filename, f_size(&JPEG_File));
+
+		f_close(&JPEG_File);
+	}
+	return;
+}
+
 void Screen::start()
 {
 	printf("Screen example\n\n");
 	SDInit();
+	// getFileSize();
 
 	while (true) {
 		squareBouncing(_lcd);

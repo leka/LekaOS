@@ -29,6 +29,7 @@ class Screen
 	void start(void);
 
 	int SDInit();
+	void getFileSize();
 
   private:
 	mbed::PwmOut _brightness;
