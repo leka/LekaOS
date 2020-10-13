@@ -12,7 +12,6 @@ target_include_directories(lib_LekaScreen
 
 target_sources(lib_LekaScreen
   PRIVATE
-    source/LekaLCD.cpp
   	source/LekaScreen.cpp
 )
 
