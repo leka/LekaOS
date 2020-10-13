@@ -4,7 +4,7 @@
 
 #include "LekaWifi.h"
 
-Wifi::Wifi() : _interface(PIN_ESP_TX, PIN_ESP_RX), _wifi_reset(PIN_ESP_RST, 0), _wifi_enable(PIN_ESP_ENA, 1)
+Wifi::Wifi() : _interface(WIFI_USART_TX, WIFI_USART_RX), _wifi_reset(WIFI_RESET, 0), _wifi_enable(WIFI_ENABLE, 1)
 {
 	ThisThread::sleep_for(1s);
 	_wifi_reset = 1;

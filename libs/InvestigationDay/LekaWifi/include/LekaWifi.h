@@ -8,7 +8,6 @@
 #include "mbed.h"
 
 #include "ESP8266Interface.h"
-#include "internal/LekaWifiPins.h"
 
 class Wifi
 {
