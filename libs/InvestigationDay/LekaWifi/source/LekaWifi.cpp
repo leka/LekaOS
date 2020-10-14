@@ -6,7 +6,7 @@
 
 Wifi::Wifi() : _interface(WIFI_USART_TX, WIFI_USART_RX), _wifi_reset(WIFI_RESET, 0), _wifi_enable(WIFI_ENABLE, 1)
 {
-	ThisThread::sleep_for(1s);
+	rtos::ThisThread::sleep_for(1s);
 	_wifi_reset = 1;
 }
 
@@ -109,7 +109,7 @@ void Wifi::start()
 	while (true) {
 		scan_available_networks(&_interface);
 		// connect_network(_network_name, _network_password);
-		ThisThread::sleep_for(10s);
+		rtos::ThisThread::sleep_for(10s);
 	}
 
 	printf("End of WiFi example\n\n");

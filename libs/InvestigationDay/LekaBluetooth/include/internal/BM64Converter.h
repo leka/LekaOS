@@ -5,7 +5,8 @@
 #ifndef _LEKA_OS_LIB_BM64_CONVERTER_H_
 #define _LEKA_OS_LIB_BM64_CONVERTER_H_
 
-#include "mbed.h"
+#include <cstddef>
+#include <cstdint>
 
 namespace BM64 {
 	namespace Command {

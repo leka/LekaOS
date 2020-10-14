@@ -19,7 +19,11 @@
 #ifndef MBED_MCP23017_H
 #define MBED_MCP23017_H
 
-#include "mbed.h"
+#include <cstdint>
+
+#include "drivers/I2C.h"
+
+using namespace mbed;
 
 //
 // Register defines from data sheet - we set IOCON.BANK to 0

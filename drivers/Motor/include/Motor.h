@@ -5,9 +5,12 @@
 #ifndef _LEKA_OS_LIB_MOTOR_H_
 #define _LEKA_OS_LIB_MOTOR_H_
 
-#include "mbed.h"
+#include "drivers/DigitalOut.h"
+#include "drivers/PwmOut.h"
 
 #include "MotorBase.h"
+
+using namespace mbed;
 
 class Motor : public MotorBase
 {

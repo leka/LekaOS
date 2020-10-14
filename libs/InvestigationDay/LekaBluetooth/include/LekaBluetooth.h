@@ -5,10 +5,19 @@
 #ifndef _LEKA_OS_LIB_BLUETOOTH_H_
 #define _LEKA_OS_LIB_BLUETOOTH_H_
 
-#include "mbed.h"
+#include "PinNames.h"
+
+#include <chrono>
+
+#include "drivers/BufferedSerial.h"
+#include "drivers/DigitalOut.h"
+#include "rtos/ThisThread.h"
+#include "rtos/Thread.h"
 
 #include "BM64Converter.h"
-#include "PinNames.h"
+
+using namespace mbed;
+using namespace std::chrono;
 
 class Bluetooth
 {

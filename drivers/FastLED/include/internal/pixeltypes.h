@@ -1,8 +1,6 @@
 #ifndef __INC_PIXELS_H
 #define __INC_PIXELS_H
 
-#include "mbed.h"
-
 // #include "FastLED.h"
 #include "color.h"
 #include "lib8tion.h"

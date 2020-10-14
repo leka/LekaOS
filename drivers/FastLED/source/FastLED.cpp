@@ -1,6 +1,6 @@
 
 
-#include "../include/FastLED.h"
+#include "FastLED.h"
 
 // #if defined(__SAM3X8E__)
 // volatile uint32_t fuckit;
@@ -159,6 +159,7 @@ void CFastLED::delay(unsigned long ms)
 		// make sure to allow at least one ms to pass to ensure the clock moves
 		// forward
 		// ::delay(1);
+		// TODO: change that with sleep_for
 		wait_ns(1000'0000);
 #endif
 		show();

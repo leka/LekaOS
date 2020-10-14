@@ -5,9 +5,13 @@
 #ifndef _LEKA_OS_LIB_HELLOWORLD_H_
 #define _LEKA_OS_LIB_HELLOWORLD_H_
 
-#include "mbed.h"
+#include <chrono>
 
-#include "chrono"
+#include "drivers/DigitalOut.h"
+#include "drivers/LowPowerTicker.h"
+
+using namespace mbed;
+using namespace std::chrono;
 
 ///
 /// @class HelloWorld
@@ -21,7 +25,7 @@ class HelloWorld
 	///
 	struct Data {
 		DigitalOut led;
-		chrono::milliseconds sleepTime;
+		std::chrono::milliseconds sleepTime;
 	};
 
 	HelloWorld(void);

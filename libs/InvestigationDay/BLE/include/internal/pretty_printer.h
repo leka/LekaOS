@@ -6,7 +6,6 @@
 #define _LEKA_OS_LIB_BLE_PRETTY_PRINTER_H_
 
 #include "ble/BLE.h"
-#include "pretty_printer.h"
 
 inline void print_error(ble_error_t error, const char *msg)
 {

@@ -5,7 +5,7 @@
 #ifndef _LEKA_OS_LIB_QSPI_IS25LP016D_H_
 #define _LEKA_OS_LIB_QSPI_IS25LP016D_H_
 
-#include "mbed.h"
+#include <cstdint>
 
 constexpr uint8_t CMD_READ	= 0x03;
 constexpr uint8_t CMD_WRITE = 0x02;

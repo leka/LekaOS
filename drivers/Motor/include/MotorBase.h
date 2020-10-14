@@ -5,8 +5,6 @@
 #ifndef _LEKA_OS_LIB_MOTOR_BASE_H_
 #define _LEKA_OS_LIB_MOTOR_BASE_H_
 
-// #include "mbed.h"
-
 enum class Rotation
 {
 	clockwise,

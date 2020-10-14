@@ -30,24 +30,24 @@ void Touch::initReadInterface()
 {
 	/* Reset multiplexer (read interface) registers */
 	_read_interface.reset();
-	ThisThread::sleep_for(1ms);
+	rtos::ThisThread::sleep_for(1ms);
 
 	/* NB. for following functions, 2bytes are sent in order to set both bank (A and B) */
 
 	/* Set direction of I/O of multiplexer - 0 = output (supply sensor), 1 = input (sensor data) */
 	/* IODIRA register address 0x00 | IODIRB register address 0x01 (need pull-up) */
 	_read_interface.inputOutputMask(0xFF00);   // IODIRB << 8 + IODIRA
-	ThisThread::sleep_for(1ms);
+	rtos::ThisThread::sleep_for(1ms);
 
 	/* Set pull-up (value is 1), here to bank B */
 	/* GPPUA register address 0x0C | GPPUB register addres 0x0D */
 	_read_interface.internalPullupMask(0xFF00);	  // GPPUB << 8 + GPPUA
-	ThisThread::sleep_for(1ms);
+	rtos::ThisThread::sleep_for(1ms);
 
 	/* Define interesting pins to be read, here 6 first GPIO/bits containing touch sensor return */
 	/* GPIOA register address 0x12 | GPIOB register addres 0x13 */
 	_read_interface.digitalWordWrite(0x003F);	// GPIOB << 8 + GPIOA
-	ThisThread::sleep_for(1ms);
+	rtos::ThisThread::sleep_for(1ms);
 
 	return;
 }
@@ -64,19 +64,19 @@ void Touch::initWriteInterface(uint8_t address)
 	/* Structure of byte is : C2 C1 C0 x VrefA VrefB VrefC VrefD */
 	char vref[] = {0x80};
 	_write_interface.write(address, vref, 1);
-	ThisThread::sleep_for(1ms);
+	rtos::ThisThread::sleep_for(1ms);
 
 	/* Power down, set to Normal mode(00) */
 	/* Structure of 2-byte is : C2 C1 C0 x PD1A PD0A PD1B PD0B PD1C PD0C PD1D PD0D x x x x */
 	char pd[] = {0xA0, 0x00};
 	_write_interface.write(address, pd, 2);
-	ThisThread::sleep_for(1ms);
+	rtos::ThisThread::sleep_for(1ms);
 
 	/* Gain, set to x1 (0) instead of x2 (1) */
 	/* Structure of 2-byte is : C2 C1 C0 x GxA GxB GxC GxD */
 	char gain[] = {0xC0};
 	_write_interface.write(address, gain, 1);
-	ThisThread::sleep_for(1ms);
+	rtos::ThisThread::sleep_for(1ms);
 
 	return;
 }
@@ -121,7 +121,7 @@ void Touch::calibrateTwoSensors(bool &sensor_left, bool &sensor_right, uint8_t c
 	/* Reset calibration value to 0 on channel link to sensor */
 	_write_interface.write(_write_address_left, buffer, 3);
 	_write_interface.write(_write_address_right, buffer, 3);
-	ThisThread::sleep_for(1s);
+	rtos::ThisThread::sleep_for(1s);
 	updateSensorsStatus();
 
 	while (!(sensor_left && sensor_right)) {
@@ -152,7 +152,7 @@ void Touch::calibrateTwoSensors(bool &sensor_left, bool &sensor_right, uint8_t c
 		_write_interface.write(_write_address_right, buffer, 3);
 
 		/* Check sensors return */
-		ThisThread::sleep_for(1ms);
+		rtos::ThisThread::sleep_for(1ms);
 		updateSensorsStatus();
 	}
 
@@ -166,10 +166,10 @@ void Touch::calibrateTwoSensors(bool &sensor_left, bool &sensor_right, uint8_t c
 	buffer[1] = (uint8_t)(value_right_calib & 0x0F00 >> 8);
 	buffer[2] = (uint8_t)(value_right_calib & 0x00FF >> 0);
 	_write_interface.write(_write_address_right, buffer, 3);
-	ThisThread::sleep_for(1ms);
+	rtos::ThisThread::sleep_for(1ms);
 
 	printf("CALIBRATED!\n\n");
-	ThisThread::sleep_for(100ms);
+	rtos::ThisThread::sleep_for(100ms);
 	return;
 }
 
@@ -178,18 +178,18 @@ void Touch::calibration()
 	printf("Touch calibration\n\n");
 	printf("For each of 6 touch sensors, value of sensibility will change.\n");
 	printf("Please keep your hands on 2 sensors until \"CALIBRATED !\" appears.\n\n");
-	ThisThread::sleep_for(15s);
+	rtos::ThisThread::sleep_for(15s);
 
 	printf("Place your hands on EAR LEFT and EAR RIGHT of Leka, calibration start in 5 seconds.\n");
-	ThisThread::sleep_for(5s);
+	rtos::ThisThread::sleep_for(5s);
 	calibrateTwoSensors(_ear_left_touched, _ear_right_touched, 2);
 
 	printf("Place your hands on BELT LEFT BACK and BELT RIGHT FRONT of Leka, calibration start in 5 seconds.\n");
-	ThisThread::sleep_for(5s);
+	rtos::ThisThread::sleep_for(5s);
 	calibrateTwoSensors(_belt_left_back_touched, _belt_right_front_touched, 1);
 
 	printf("Place your hands on BELT LEFT FRONT and BELT RIGHT BACK of Leka, calibration start in 5 seconds.\n");
-	ThisThread::sleep_for(5s);
+	rtos::ThisThread::sleep_for(5s);
 	calibrateTwoSensors(_belt_left_front_touched, _belt_right_back_touched, 0);
 
 	return;
@@ -233,9 +233,9 @@ void Touch::start(void)
 			printf("Belt right back touched: %s\n", _belt_right_back_touched ? "true" : "false");
 			printf("\n");
 
-			ThisThread::sleep_for(1s);
+			rtos::ThisThread::sleep_for(1s);
 		}
-		ThisThread::sleep_for(10s);
+		rtos::ThisThread::sleep_for(10s);
 	}
 
 	printf("End of Touch example\n\n");

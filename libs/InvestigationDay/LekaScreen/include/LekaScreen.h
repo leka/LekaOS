@@ -10,10 +10,16 @@
 #ifndef _LEKA_OS_LIB_SCREEN_H_
 #define _LEKA_OS_LIB_SCREEN_H_
 
-#include "mbed.h"
+#include "PinNames.h"
+
+#include "drivers/PwmOut.h"
+#include "rtos/ThisThread.h"
+#include "rtos/Thread.h"
 
 #include "LekaLCD.h"
-#include "PinNames.h"
+
+using namespace mbed;
+using namespace std::chrono;
 
 class Screen
 {

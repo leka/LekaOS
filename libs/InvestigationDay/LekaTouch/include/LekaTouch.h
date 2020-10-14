@@ -11,10 +11,20 @@
 #define _LEKA_OS_LIB_LEKATOUCH_H_
 
 // #include "LekaTouchPins.h"
-#include "mbed.h"
+
+#include <chrono>
+
+#include "PinNames.h"
+
+#include "drivers/DigitalIn.h"
+#include "drivers/DigitalOut.h"
+#include "rtos/ThisThread.h"
+#include "rtos/Thread.h"
 
 #include "MCP23017.h"
-#include "PinNames.h"
+
+using namespace mbed;
+using namespace std::chrono;
 
 class Touch
 {
