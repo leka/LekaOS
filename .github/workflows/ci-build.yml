@@ -42,43 +42,66 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.0.0
 
+      - name: Create job timestamp
+        id: create_job_timestamp
+        run: echo "::set-output name=timestamp::$(date +'%Y%m%d%H%M%S')"
+
+      - name: Cache ccache files
+        id: cache_ccache_files
+        uses: actions/cache@v2
+        with:
+          path: ~/.ccache
+          key: ${ { runner.os } }-build-cache_ccache_files-${ { steps.create_job_timestamp.outputs.timestamp } }
+          restore-keys: |
+            ${ { runner.os } }-build-cache_ccache_files-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - name: Cache Mbed OS
-        id: cache-mbed-os
-        env:
-          cache-name: cache-mbed-os
+        id: cache_mbed_os
         uses: actions/cache@v2
         with:
           path: extern/mbed-os
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('extern/mbed-os/.git/ORIG_HEAD') }}
+          key: ${{ runner.os }}-build-cache_mbed_os-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h') }}
+          restore-keys: |
+            ${{ runner.os }}-build-cache_mbed_os-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
 
-      - name: Clone Mbed OS
-        if: steps.cache-mbed-os.outputs.cache-hit != 'true'
+      - name: Curl Mbed OS
+        if: steps.cache_mbed_os.outputs.cache-hit != 'true'
         run: |
-          make clone_mbed BRANCH=mbed-os-6.3.0
+          make curl_mbed
 
       - name: Cache CMake Config
-        id: cache-cmake-config
-        env:
-          cache-name: cache-cmake-config
+        id: cache_cmake_config
         uses: actions/cache@v2
         with:
           path: cmake/config
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('cmake/config/**.h') }}
+          key: ${{ runner.os }}-build-cache_cmake_config-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-cache_cmake_config-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
 
-      - name: Config build system
-        if: steps.cache-cmake-config.outputs.cache-hit != 'true'
-        run: |
-          make config
-
-      - name: Cache build output
-        id: cache-build-output
-        env:
-          cache-name: cache-build-output
+      - name: Cache build directory
+        id: cache_build_directory
         uses: actions/cache@v2
         with:
           path: build
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('build/.ninja_deps') }}
+          key: ${{ runner.os }}-build-cache_build_directory-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-cache_build_directory-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Config build system
+        if: steps.cache_cmake_config.outputs.cache-hit != 'true' || steps.cache_build_directory.outputs.cache-hit != 'true'
+        run: |
+          make config
 
       - name: Build LekaOS & al.
         run: |
+          ccache -p
+          ccache -z
           make
