@@ -1,5 +1,6 @@
 {
 	"files.associations": {
-		"*.orig": "cpp"
+		"*.orig": "cpp",
+		".clang-format": "yaml"
 	}
 }
