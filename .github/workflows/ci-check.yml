@@ -2,12 +2,7 @@
 
 name: CI - Check
 
-on:
-  push:
-    paths:
-      - '**.h'
-      - '**.c'
-      - '**.cpp'
+on: push
 
 jobs:
 
