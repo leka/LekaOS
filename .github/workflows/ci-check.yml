@@ -2,24 +2,16 @@
 
 name: CI - Check
 
-on:
-  push:
-    paths:
-      - '**.h'
-      - '**.c'
-      - '**.cpp'
+on: push
 
 jobs:
 
   check_clang_format:
     name: Clang Format
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     steps:
-      - uses: actions/checkout@v2
-      - uses: DoozyX/clang-format-lint-action@v0.10
-        with:
-          source: './src ./lib ./spike ./test ./targets/TARGET_LEKA_V1_0_DEV'
-          exclude: './extern'
-          extensions: 'h,cpp,c'
-          clangFormatVersion: 10
-          inplace: "" # meaning false, see https://github.com/DoozyX/clang-format-lint-action/issues/18#issue-710169130
+      - name: Checkout
+        uses: actions/checkout@v2.0.0
+      - name: Run clang-format
+        run: |
+          python3 tools/run-clang-format.py -r --extension=h,c,cpp --color=always --style=file ./src ./drivers ./libs ./spikes ./tests

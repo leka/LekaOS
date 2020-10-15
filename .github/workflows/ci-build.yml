@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - develop
+      - master
     paths-ignore:
       - 'docs/**'
       - 'extern/**'
@@ -20,6 +21,7 @@ on:
   pull_request:
     branches:
       - develop
+      - 'feature/**'
     paths-ignore:
       - 'docs/**'
       - 'extern/**'
@@ -35,28 +37,42 @@ jobs:
 
   make_config_make_all:
     name: Config & Build LekaOS
-    runs-on: macos-latest
+    runs-on: [self-hosted, macOS]
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
-      - name: Brew install coreutils & ninja
-        run: |
-          brew install coreutils ninja
-          echo "/usr/local/opt/coreutils/libexec/gnubin" >> $GITHUB_PATH
-      - name: Brew install arm-none-eabi-gcc
-        run: |
-          brew tap ArmMbed/homebrew-formulae
-          brew install arm-none-eabi-gcc
+
+      - name: Cache Mbed OS
+        id: cache-mbed-os
+        uses: actions/cache@v2
+        with:
+          path: ./extern/mbed-os
+          key: ${{ runner.os }}-${{ hashFiles('./extern/mbed-os/.git/ORIG_HEAD') }}
+
       - name: Clone Mbed OS
+        if: steps.cache-mbed-os.outputs.cache-hit != 'true'
         run: |
           make clone_mbed BRANCH=mbed-os-6.3.0
-      - name: Install mbed-cli and dependencies
-        run: |
-          python3 -m pip install -U --user mbed-cli pyserial intelhex prettytable
-          python3 -m pip install -U --user -r extern/mbed-os/requirements.txt
+
+      - name: Cache CMake Config
+        id: cache-cmake-config
+        uses: actions/cache@v2
+        with:
+          path: ./cmake/config
+          key: ${{ runner.os }}-${{ hashFiles('./cmake/config/**.h') }}
+
       - name: Config build system
+        if: steps.cache-cmake-config.outputs.cache-hit != 'true'
         run: |
           make config
+
+      - name: Cache build output
+        id: cache-build-output
+        uses: actions/cache@v2
+        with:
+          path: ./build
+          key: ${{ runner.os }}-${{ hashFiles('./build/.ninja_deps') }}
+
       - name: Build LekaOS & al.
         run: |
           make
