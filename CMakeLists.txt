@@ -58,6 +58,19 @@ add_subdirectory(${SPIKES_DIR}/lk_motors)
 add_subdirectory(${SPIKES_DIR}/lk_bluetooth)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_touch)
 
+add_custom_target(spikes)
+add_dependencies( spikes
+	spike_lk_ble
+	spike_lk_lcd
+	spike_lk_led
+	spike_lk_qspi
+	spike_lk_rfid
+	spike_lk_wifi
+	spike_lk_motors
+	spike_lk_bluetooth
+	spike_lk_sensors_touch
+)
+
 add_subdirectory(${ROOT_DIR}/tests/cert/emc_ble_led_motors)
 add_subdirectory(${ROOT_DIR}/tests/cert/emc_lcd_led_motors)
 add_subdirectory(${ROOT_DIR}/tests/cert/emc_bt_lcd_qspi_rfid_touch_wifi)
