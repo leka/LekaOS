@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - develop
+      - master
     paths-ignore:
       - 'docs/**'
       - 'extern/**'
@@ -20,6 +21,7 @@ on:
   pull_request:
     branches:
       - develop
+      - 'feature/**'
     paths-ignore:
       - 'docs/**'
       - 'extern/**'
