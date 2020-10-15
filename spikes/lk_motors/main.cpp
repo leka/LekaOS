@@ -4,9 +4,10 @@
 
 #include "mbed.h"
 
+#include "PinNames.h"
+
 #include "HelloWorld.h"
 #include "Motor.h"
-#include "PinNames.h"
 
 HelloWorld hello;
 

@@ -5,8 +5,9 @@
 #ifndef _LEKA_OS_SPIKE_LED_UTILS_H_
 #define _LEKA_OS_SPIKE_LED_UTILS_H_
 
-#include "FastLED.h"
 #include "PinNames.h"
+
+#include "FastLED.h"
 
 // SPI spi(D11, NC, D13);
 SPI spi(LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK);

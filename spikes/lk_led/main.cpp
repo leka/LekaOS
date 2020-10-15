@@ -4,9 +4,10 @@
 
 #include "mbed.h"
 
+#include "PinNames.h"
+
 #include "FastLED.h"
 #include "HelloWorld.h"
-#include "PinNames.h"
 
 // SPI spi(D11, NC, D13);
 SPI spi(LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK);

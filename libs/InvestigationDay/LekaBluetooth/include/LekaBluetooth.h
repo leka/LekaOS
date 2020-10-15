@@ -5,9 +5,9 @@
 #ifndef _LEKA_OS_LIB_BLUETOOTH_H_
 #define _LEKA_OS_LIB_BLUETOOTH_H_
 
-#include "PinNames.h"
-
 #include <chrono>
+
+#include "PinNames.h"
 
 #include "drivers/BufferedSerial.h"
 #include "drivers/DigitalOut.h"
