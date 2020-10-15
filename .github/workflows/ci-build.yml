@@ -37,7 +37,7 @@ jobs:
 
   make_config_make_all:
     name: Config & Build LekaOS
-    runs-on: [self-hosted, macOS]
+    runs-on: [self-hosted, build]
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
