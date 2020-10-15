@@ -46,8 +46,8 @@ jobs:
         id: cache-mbed-os
         uses: actions/cache@v2
         with:
-          path: ./extern/mbed-os
-          key: ${{ runner.os }}-${{ hashFiles('./extern/mbed-os/.git/ORIG_HEAD') }}
+          path: extern/mbed-os
+          key: ${{ runner.os }}-${{ hashFiles('extern/mbed-os/.git/ORIG_HEAD') }}
 
       - name: Clone Mbed OS
         if: steps.cache-mbed-os.outputs.cache-hit != 'true'
@@ -58,8 +58,8 @@ jobs:
         id: cache-cmake-config
         uses: actions/cache@v2
         with:
-          path: ./cmake/config
-          key: ${{ runner.os }}-${{ hashFiles('./cmake/config/**.h') }}
+          path: cmake/config
+          key: ${{ runner.os }}-${{ hashFiles('cmake/config/**.h') }}
 
       - name: Config build system
         if: steps.cache-cmake-config.outputs.cache-hit != 'true'
@@ -70,8 +70,8 @@ jobs:
         id: cache-build-output
         uses: actions/cache@v2
         with:
-          path: ./build
-          key: ${{ runner.os }}-${{ hashFiles('./build/.ninja_deps') }}
+          path: build
+          key: ${{ runner.os }}-${{ hashFiles('build/.ninja_deps') }}
 
       - name: Build LekaOS & al.
         run: |
