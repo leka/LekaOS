@@ -18,6 +18,7 @@ MBED_OS_DIR := $(ROOT_DIR)/extern/mbed-os
 PORT         ?= /dev/tty.usbmodem14303
 BRANCH       ?= master
 PROJECT      ?=
+VERSION      ?= mbed-os-6.3.0
 BAUDRATE     ?= 115200
 BIN_PATH     ?= $(BUILD_DIR)/src/LekaOS.bin
 BUILD_TYPE   ?= Release
@@ -69,6 +70,19 @@ clone_mbed:
 	@echo "🧬 Cloning Mbed OS ⚗️"
 	@rm -rf $(MBED_OS_DIR)
 	git clone --depth=1 --branch=$(BRANCH) https://github.com/ARMmbed/mbed-os $(MBED_OS_DIR)
+	@echo ""
+	@echo "🔗 Symlinking templates to Mbed OS directory 🗂️"
+	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_CMakelists.txt $(MBED_OS_DIR)/CMakeLists.txt
+	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_mbedignore.txt $(MBED_OS_DIR)/.mbedignore
+
+curl_mbed:
+	@echo ""
+	@echo "🧬 Curling Mbed OS ⚗️"
+	@rm -rf $(MBED_OS_DIR)
+	@mkdir -p $(MBED_OS_DIR)
+	curl -O -L https://github.com/ARMmbed/mbed-os/archive/$(VERSION).tar.gz
+	tar -xzf $(VERSION).tar.gz --strip-components=1 -C extern/mbed-os
+	rm -rf $(VERSION).tar.gz
 	@echo ""
 	@echo "🔗 Symlinking templates to Mbed OS directory 🗂️"
 	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_CMakelists.txt $(MBED_OS_DIR)/CMakeLists.txt
