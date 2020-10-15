@@ -118,17 +118,11 @@ void Screen::ScreenInit()
 {
 	// FROM BSP
 
-	printf("Reset LCD\n");
 	LCDReset();
-	printf("MSP init\n");
 	MSPInit();
-	printf("DSI init\n");
 	DSIInit();
-	printf("LTDC init\n");
 	LTDCInit();
-	printf("OTM8009A init\n");
 	OTM8009AInit();
-	printf("END of Screen init\n");
 }
 
 void Screen::LCDReset()
@@ -865,6 +859,34 @@ void Screen::drawRectangle(uint32_t Xpos, uint32_t Ypos, uint32_t Width, uint32_
 	fillBuffer(_active_layer, (uint32_t *)Xaddress, Width, Height, offset, ColorIndex);
 }
 
+void Screen::drawImage(uint32_t data, uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+{
+	uint32_t destination = _frame_buffer_start_address + (x + y * _screen_width) * 4;
+	_hdma2d.Instance	 = DMA2D;
+
+	_hdma2d.Init.Mode		  = DMA2D_M2M_BLEND;
+	_hdma2d.Init.ColorMode	  = DMA2D_OUTPUT_ARGB8888;
+	_hdma2d.Init.OutputOffset = _screen_width - width;
+
+	// Foreground
+	_hdma2d.LayerCfg[1].AlphaMode	   = DMA2D_NO_MODIF_ALPHA;
+	_hdma2d.LayerCfg[1].InputColorMode = DMA2D_INPUT_ARGB8888;
+	_hdma2d.LayerCfg[1].InputOffset	   = 0;
+	_hdma2d.LayerCfg[1].AlphaInverted  = DMA2D_REGULAR_ALPHA;
+
+	// Background
+	_hdma2d.LayerCfg[0].AlphaMode	   = DMA2D_NO_MODIF_ALPHA;
+	_hdma2d.LayerCfg[0].InputColorMode = DMA2D_INPUT_ARGB8888;
+	_hdma2d.LayerCfg[0].InputOffset	   = _screen_width - width;
+
+	HAL_DMA2D_Init(&_hdma2d);
+	HAL_DMA2D_ConfigLayer(&_hdma2d, 1);
+	HAL_DMA2D_ConfigLayer(&_hdma2d, 0);
+	// HAL_DMA2D_Start(&_hdma2d, data, destination, width, height);
+	HAL_DMA2D_BlendingStart(&_hdma2d, data, destination, destination, width, height);
+	HAL_DMA2D_PollForTransfer(&_hdma2d, 10);
+}
+
 void Screen::fillBuffer(uint32_t LayerIndex, void *pDst, uint32_t xSize, uint32_t ySize, uint32_t OffLine,
 						uint32_t ColorIndex)
 {
@@ -886,12 +908,37 @@ void Screen::fillBuffer(uint32_t LayerIndex, void *pDst, uint32_t xSize, uint32_
 	}
 }
 
+void Screen::showFace(bool jpeg_file)
+{
+	if (jpeg_file) {
+		printf("NOT SUPPORTED YET!\n");
+	} else {
+		uint32_t bg_color = 0xffffffff;
+		// initialize and select layer 0
+		LTDCLayerInit(0);
+		// lcd.LTDCLayerInit(1);
+		setActiveLayer(0);
+		// clear layer 0 in white
+		clear(bg_color);
+
+		drawImage((uint32_t)IMAGE_DATA_EYE, 100, 100, IMAGE_WIDTH_EYE, IMAGE_HEIGHT_EYE);
+		drawImage((uint32_t)IMAGE_DATA_EYE, 500, 100, IMAGE_WIDTH_EYE, IMAGE_HEIGHT_EYE);
+		drawImage((uint32_t)IMAGE_DATA_MOUTH, 340, 290, IMAGE_WIDTH_MOUTH, IMAGE_HEIGHT_MOUTH);
+	}
+
+	// ThisThread::sleep_for(30s);
+	return;
+}
+
 void Screen::start()
 {
 	printf("Screen example\n\n");
 	SDInit();
 	// getFileSize();
 	ScreenInit();
+
+	showFace(false);
+	ThisThread::sleep_for(30s);
 
 	while (true) {
 		squareBouncing();

@@ -19,6 +19,8 @@
 #include "FATFileSystem.h"
 #include "LekaLCD.h"
 #include "SDBlockDevice.h"
+#include "img/leka_eye_alpha.h"
+#include "img/leka_mouth_alpha.h"
 #include "otm8009a.h"
 
 class Screen
@@ -49,10 +51,12 @@ class Screen
 	void setActiveLayer(uint32_t layer_index);
 	void clear(uint32_t ColorIndex);
 	void drawRectangle(uint32_t Xpos, uint32_t Ypos, uint32_t Width, uint32_t Height, uint32_t ColorIndex);
+	void drawImage(uint32_t data, uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 	void fillBuffer(uint32_t LayerIndex, void *pDst, uint32_t xSize, uint32_t ySize, uint32_t OffLine,
 					uint32_t ColorIndex);
 
 	void squareBouncing();
+	void showFace(bool jpeg_file);
 
   private:
 	mbed::PwmOut _brightness;
