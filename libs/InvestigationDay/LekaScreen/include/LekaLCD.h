@@ -3,7 +3,7 @@
 #ifndef __LEKALCD_H__
 #define __LEKALCD_H__
 
-#include "mbed.h"
+#include "platform/Stream.h"
 
 #include "otm8009a.h"
 

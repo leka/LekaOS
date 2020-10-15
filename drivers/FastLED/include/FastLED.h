@@ -5,11 +5,10 @@
 #ifndef _LEKA_OS_LIB_LED_H_
 #define _LEKA_OS_LIB_LED_H_
 
-#include "mbed.h"
-
+#include <chrono>
 #include <cstdint>
 
-#include "chrono"
+#include "platform/mbed_wait_api.h"
 
 // Force
 #include "internal/colorpalettes.h"

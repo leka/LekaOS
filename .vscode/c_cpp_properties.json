@@ -8,7 +8,7 @@
 			"defines": [],
 			"macFrameworkPath": [],
 			"compilerPath": "/usr/local/bin/arm-none-eabi-gcc",
-			"cStandard": "gnu18",
+			"cStandard": "gnu11",
 			"cppStandard": "gnu++14",
 			"intelliSenseMode": "gcc-arm",
 			"compilerArgs": [],

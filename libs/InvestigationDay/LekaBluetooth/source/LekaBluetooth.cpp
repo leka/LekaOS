@@ -7,11 +7,11 @@
 Bluetooth::Bluetooth()
 	: _interface(BT_UART_TX, BT_UART_RX, 115200), _bluetooth_reset(BT_RESET), _bluetooth_wake_up(BT_WAKE_UP)
 {
-	// ThisThread::sleep_for(1s);
+	// rtos::ThisThread::sleep_for(1s);
 	_bluetooth_wake_up = 1;
-	ThisThread::sleep_for(25ms);   // Delay recommanded in datasheet
+	rtos::ThisThread::sleep_for(25ms);	 // Delay recommanded in datasheet
 	_bluetooth_reset = 1;
-	ThisThread::sleep_for(450ms);	// Delay recommanded in datasheet
+	rtos::ThisThread::sleep_for(450ms);	  // Delay recommanded in datasheet
 }
 
 void Bluetooth::pairing()
@@ -28,7 +28,7 @@ void Bluetooth::pairing()
 		if (_paired) {
 			break;
 		} else {
-			ThisThread::sleep_for(10s);
+			rtos::ThisThread::sleep_for(10s);
 		}
 		attempts++;
 	}
@@ -43,7 +43,7 @@ void Bluetooth::checkResponse(bool printResponse)
 	_buffer_length		 = 0;
 
 	while (attempts < max_attempts) {
-		ThisThread::sleep_for(10ms);
+		rtos::ThisThread::sleep_for(10ms);
 		while (_interface.readable()) {
 			_interface.read(_buffer, 1);
 			if (_buffer[0] == 0xAA) {
@@ -96,12 +96,12 @@ void Bluetooth::start()
 		pairing();
 		while (_paired) {
 			checkResponse(true);
-			ThisThread::sleep_for(20ms);
+			rtos::ThisThread::sleep_for(20ms);
 			// playPause();
-			// ThisThread::sleep_for(5s);
+			// rtos::ThisThread::sleep_for(5s);
 		}
 		// converse();
-		ThisThread::sleep_for(10s);
+		rtos::ThisThread::sleep_for(10s);
 	}
 
 	printf("End of Bluetooth example\n\n");

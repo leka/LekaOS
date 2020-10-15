@@ -14,7 +14,7 @@ Firmware::Firmware()
 	  _disable_ext_memory_2(QSPI_FLASH_nCS_2, 1),
 	  _disable_ext_memory_3(QSPI_FLASH_nCS_3, 1)
 {
-	ThisThread::sleep_for(10ms);
+	rtos::ThisThread::sleep_for(10ms);
 	init();
 }
 
@@ -130,7 +130,7 @@ bool Firmware::memoryIsReady()
 		if (QSPI_STATUS_OK != _interface.command_transfer(CMD_RDSR, -1, NULL, 0, status_value, STATUS_REG_SIZE)) {
 			printf("Reading Status Register failed \n");
 		}
-		ThisThread::sleep_for(1ms);
+		rtos::ThisThread::sleep_for(1ms);
 	} while ((status_value[0] & BIT_WIP) != 0 && retries);
 
 	if ((status_value[0] & BIT_WIP) != 0) {
@@ -275,7 +275,7 @@ void Firmware::start()
 			checkActiveFlash();
 		}
 
-		ThisThread::sleep_for(10s);
+		rtos::ThisThread::sleep_for(10s);
 	}
 
 	printf("End of Firmware example\n\n");

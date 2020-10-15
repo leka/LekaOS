@@ -5,10 +5,17 @@
 #ifndef _LEKA_OS_LIB_WIFI_H_
 #define _LEKA_OS_LIB_WIFI_H_
 
-#include "mbed.h"
+#include <chrono>
+
+#include "drivers/DigitalOut.h"
+#include "rtos/Thread.h"
+
+#include "connectivity/netsocket/include/netsocket/TCPSocket.h"
 
 #include "ESP8266Interface.h"
-#include "internal/LekaWifiPins.h"
+
+using namespace mbed;
+using namespace std::chrono;
 
 class Wifi
 {

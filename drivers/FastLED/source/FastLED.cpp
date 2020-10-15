@@ -1,6 +1,6 @@
 
 
-#include "../include/FastLED.h"
+#include "FastLED.h"
 
 // #if defined(__SAM3X8E__)
 // volatile uint32_t fuckit;
@@ -159,6 +159,7 @@ void CFastLED::delay(unsigned long ms)
 		// make sure to allow at least one ms to pass to ensure the clock moves
 		// forward
 		// ::delay(1);
+		// TODO: change that with sleep_for
 		wait_ns(1000'0000);
 #endif
 		show();
@@ -282,23 +283,29 @@ extern "C" void yield(void) {}
 #ifdef NEED_CXX_BITS
 namespace __cxxabiv1 {
 #if !defined(ESP8266) && !defined(ESP32)
-	extern "C" void __cxa_pure_virtual(void) {}
+extern "C" void __cxa_pure_virtual(void) {}
 #endif
 
-	/* guard variables */
+/* guard variables */
 
-	/* The ABI requires a 64-bit type.  */
-	__extension__ typedef int __guard __attribute__((mode(__DI__)));
+/* The ABI requires a 64-bit type.  */
+__extension__ typedef int __guard __attribute__((mode(__DI__)));
 
-	extern "C" int __cxa_guard_acquire(__guard *) __attribute__((weak));
-	extern "C" void __cxa_guard_release(__guard *) __attribute__((weak));
-	extern "C" void __cxa_guard_abort(__guard *) __attribute__((weak));
+extern "C" int __cxa_guard_acquire(__guard *) __attribute__((weak));
+extern "C" void __cxa_guard_release(__guard *) __attribute__((weak));
+extern "C" void __cxa_guard_abort(__guard *) __attribute__((weak));
 
-	extern "C" int __cxa_guard_acquire(__guard *g) { return !*(char *)(g); }
+extern "C" int __cxa_guard_acquire(__guard *g)
+{
+	return !*(char *)(g);
+}
 
-	extern "C" void __cxa_guard_release(__guard *g) { *(char *)g = 1; }
+extern "C" void __cxa_guard_release(__guard *g)
+{
+	*(char *)g = 1;
+}
 
-	extern "C" void __cxa_guard_abort(__guard *) {}
+extern "C" void __cxa_guard_abort(__guard *) {}
 }	// namespace __cxxabiv1
 #endif
 

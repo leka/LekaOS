@@ -4,8 +4,6 @@
 ///@file controller.h
 /// base definitions used by led controllers for writing out led data
 
-#include "mbed.h"
-
 #include <cstddef>
 
 // #include "FastLED.h"

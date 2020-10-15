@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "events/mbed_events.h"
-#include "mbed.h"
 
 #include "ble/BLE.h"
 #include "ble/Gap.h"
 #include "ble/services/HeartRateService.h"
+
 #include "pretty_printer.h"
 
 const static char DEVICE_NAME[] = "Heartrate";

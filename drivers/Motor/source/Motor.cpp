@@ -4,8 +4,6 @@
 
 #include "Motor.h"
 
-#include "mbed.h"
-
 Motor::Motor(DigitalOut &direction_1, DigitalOut &direction_2, PwmOut &speed)
 	: _direction_1(direction_1), _direction_2(direction_2), _speed(speed)
 {

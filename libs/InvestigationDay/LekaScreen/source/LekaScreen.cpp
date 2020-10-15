@@ -70,7 +70,7 @@ void squareBouncing(LekaLCD &lcd)
 		}
 
 		// HAL_Delay(1);	// ~2ms little delay to let things settle
-		ThisThread::sleep_for(1ms);
+		rtos::ThisThread::sleep_for(1ms);
 	}
 }
 
@@ -80,7 +80,7 @@ void Screen::start()
 
 	while (true) {
 		squareBouncing(_lcd);
-		ThisThread::sleep_for(1ms);
+		rtos::ThisThread::sleep_for(1ms);
 	}
 
 	printf("End of Screen example\n\n");

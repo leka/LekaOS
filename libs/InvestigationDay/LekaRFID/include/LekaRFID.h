@@ -5,9 +5,16 @@
 #ifndef _LEKA_OS_LIB_RFID_H_
 #define _LEKA_OS_LIB_RFID_H_
 
-#include "mbed.h"
+#include <chrono>
 
 #include "PinNames.h"
+
+#include "drivers/BufferedSerial.h"
+#include "rtos/ThisThread.h"
+#include "rtos/Thread.h"
+
+using namespace mbed;
+using namespace std::chrono;
 
 class RFID
 {

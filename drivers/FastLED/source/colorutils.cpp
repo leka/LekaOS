@@ -1,6 +1,3 @@
-#include <math.h>
-#include <stdint.h>
-
 // Force
 #include "../include/internal/colorutils.h"
 

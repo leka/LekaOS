@@ -5,10 +5,19 @@
 #ifndef _LEKA_OS_LIB_FIRMWARE_H_
 #define _LEKA_OS_LIB_FIRMWARE_H_
 
-#include "IS25LP016D.h"
+#include <chrono>
+
 #include "PinNames.h"
-// #include "LekaFirmwarePins.h"
-#include "mbed.h"
+
+#include "drivers/DigitalOut.h"
+#include "drivers/QSPI.h"
+#include "rtos/ThisThread.h"
+#include "rtos/Thread.h"
+
+#include "IS25LP016D.h"
+
+using namespace mbed;
+using namespace std::chrono;
 
 typedef enum ext_flash_status
 {

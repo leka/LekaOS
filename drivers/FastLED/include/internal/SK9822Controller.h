@@ -6,11 +6,18 @@
 #define _LK_ALPHA_OS_LIB_LED_SK9822_CONTROLLER_H_
 
 // #include "FastLED.h"
-#include "mbed.h"
+
+#include <algorithm>
 
 #include "PinNames.h"
+
+#include "drivers/HighResClock.h"
+#include "drivers/SPI.h"
+
 #include "controller.h"
 #include "pixeltypes.h"
+
+using namespace mbed;
 
 ///
 /// @brief SK9822 controller class.
@@ -47,7 +54,7 @@ class SK9822Controller : public CPixelLEDController<RGB_ORDER>
 		uint8_t s2 = pixels.getScale2();
 
 		const uint16_t maxBrightness = 0x1F;
-		const uint16_t brightness	 = ((((uint16_t)max(max(s0, s1), s2) + 1) * maxBrightness - 1) >> 8) + 1;
+		const uint16_t brightness	 = ((((uint16_t)std::max(std::max(s0, s1), s2) + 1) * maxBrightness - 1) >> 8) + 1;
 
 		s0 = (maxBrightness * s0 + (brightness >> 1)) / brightness;
 		s1 = (maxBrightness * s1 + (brightness >> 1)) / brightness;
