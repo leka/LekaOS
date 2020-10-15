@@ -9,14 +9,21 @@ Standard: Latest
 IncludeBlocks: Regroup
 
 IncludeCategories:
-  - Regex:           'mbed'
+  - Regex:           '(<|"mbed)'
+    Priority:        0
+    SortPriority:    1
+  - Regex:           '"(drivers|rtos|events|platform)'
+    Priority:        2
+    SortPriority:    0
+  - Regex:           'PinNames.h'
     Priority:        1
+    SortPriority:    0
+  - Regex:           '"(connectivity|features|storage|ble)'
+    Priority:        3
     SortPriority:    0
 
 AccessModifierOffset: -2
 SpacesBeforeTrailingComments: 3
-
-NamespaceIndentation: All
 
 Cpp11BracedListStyle: true
 
@@ -30,7 +37,7 @@ AlignTrailingComments: true
 FixNamespaceComments: true
 IndentCaseLabels: true
 
-NamespaceIndentation: All
+NamespaceIndentation: Inner
 SpaceBeforeCpp11BracedList: true
 SpaceBeforeParens: ControlStatements
 SpaceBeforeRangeBasedForLoopColon: false
@@ -47,6 +54,7 @@ BraceWrapping:
   AfterClass: true
   AfterFunction: true
   AfterEnum: true
+  AfterNamespace: false
 
 #IndentPPDirectives: BeforeHash
 #AlignConsecutiveMacros: true
