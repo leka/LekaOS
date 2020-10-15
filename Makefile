@@ -17,7 +17,7 @@ MBED_OS_DIR := $(ROOT_DIR)/extern/mbed-os
 
 PORT         ?= /dev/tty.usbmodem14303
 BRANCH       ?= master
-PROJECT      ?=
+TARGET       ?=
 VERSION      ?= mbed-os-6.3.0
 BAUDRATE     ?= 115200
 BIN_PATH     ?= $(BUILD_DIR)/src/LekaOS.bin
@@ -31,7 +31,7 @@ TARGET_BOARD ?= -x LEKA_V1_0_DEV
 all:
 	@echo ""
 	@echo "🏗️  Building application 🚧"
-	ninja -C ./build -f build.ninja $(PROJECT)
+	cmake --build build -t $(TARGET)
 
 lekaos:
 	@echo ""
