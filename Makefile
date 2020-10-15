@@ -25,7 +25,7 @@ BUILD_TYPE   ?= Release
 TARGET_BOARD ?= -x LEKA_V1_0_DEV
 
 #
-# MARK:- Targets
+# MARK:- Build targets
 #
 
 all:
@@ -38,11 +38,9 @@ lekaos:
 	@echo "🏗️  Building LekaOS 🚧"
 	ninja -C ./build -f build.ninja LekaOS
 
-clean:
-	@echo ""
-	@echo "⚠️  Cleaning up build & cmake/config directories 🧹"
-	rm -rf $(BUILD_DIR)
-	rm -rf $(CMAKE_DIR)/config
+#
+# MARK:- Config targets
+#
 
 config_leka_disco:
 	@$(MAKE) config TARGET_BOARD="-x LEKA_DISCO"
@@ -64,6 +62,24 @@ config_cmake:
 	@echo "🏃 Running cmake configuration script 📝"
 	@mkdir -p $(BUILD_DIR)
 	@cd $(BUILD_DIR); cmake -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
+
+#
+# MARK:- Tools targets
+#
+
+clang_format:
+	@echo ""
+	@echo "🕵️ Running clang-format 🔍"
+	python3 tools/run-clang-format.py -r --extension=h,c,cpp --color=always --style=file ./src ./drivers ./libs ./spikes ./tests
+
+clang_format_fix:
+	@echo ""
+	@echo "🕵️ Running clang-format & fixing files ♻️"
+	python3 tools/run-clang-format.py -r -i --extension=h,c,cpp --color=always --style=file ./src ./drivers ./libs ./spikes ./tests
+
+#
+# MARK:- Mbed targets
+#
 
 clone_mbed:
 	@echo ""
@@ -87,6 +103,16 @@ curl_mbed:
 	@echo "🔗 Symlinking templates to Mbed OS directory 🗂️"
 	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_CMakelists.txt $(MBED_OS_DIR)/CMakeLists.txt
 	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_mbedignore.txt $(MBED_OS_DIR)/.mbedignore
+
+#
+# MARK:- Utils targets
+#
+
+clean:
+	@echo ""
+	@echo "⚠️  Cleaning up build & cmake/config directories 🧹"
+	rm -rf $(BUILD_DIR)
+	rm -rf $(CMAKE_DIR)/config
 
 flash:
 	openocd -f interface/stlink.cfg -c 'transport select hla_swd' -f target/stm32f7x.cfg -c 'program $(BIN_PATH) 0x08000000' -c exit
