@@ -11,7 +11,7 @@ IncludeBlocks: Regroup
 IncludeCategories:
   - Regex:           '(<|"mbed)'
     Priority:        0
-    SortPriority:    1
+    SortPriority:    0
   - Regex:           '"(drivers|rtos|events|platform)'
     Priority:        2
     SortPriority:    0
