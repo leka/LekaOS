@@ -66,7 +66,7 @@ extern "C" {
 		#ifndef __weak
 			#define __weak __attribute__((weak))
 		#endif /* __weak */
-	#endif	   /* __GNUC__ */
+	#endif /* __GNUC__ */
 
 	/**
 	 *  @brief LCD_OrientationTypeDef
@@ -97,10 +97,10 @@ extern "C" {
 	/**
 	 * @brief  OTM8009A_480X800 Timing parameters for Portrait orientation mode
 	 */
-	#define OTM8009A_480X800_HSYNC ((uint16_t)2)  /* Horizontal synchronization */
+	#define OTM8009A_480X800_HSYNC ((uint16_t)2) /* Horizontal synchronization */
 	#define OTM8009A_480X800_HBP   ((uint16_t)34) /* Horizontal back porch      */
 	#define OTM8009A_480X800_HFP   ((uint16_t)34) /* Horizontal front porch     */
-	#define OTM8009A_480X800_VSYNC ((uint16_t)1)  /* Vertical synchronization   */
+	#define OTM8009A_480X800_VSYNC ((uint16_t)1) /* Vertical synchronization   */
 	#define OTM8009A_480X800_VBP   ((uint16_t)15) /* Vertical back porch        */
 	#define OTM8009A_480X800_VFP   ((uint16_t)16) /* Vertical front porch       */
 
@@ -109,11 +109,11 @@ extern "C" {
 	 *         Same values as for Portrait mode in fact.
 	 */
 	#define OTM8009A_800X480_HSYNC OTM8009A_480X800_VSYNC /* Horizontal synchronization */
-	#define OTM8009A_800X480_HBP   OTM8009A_480X800_VBP	  /* Horizontal back porch      */
-	#define OTM8009A_800X480_HFP   OTM8009A_480X800_VFP	  /* Horizontal front porch     */
+	#define OTM8009A_800X480_HBP   OTM8009A_480X800_VBP /* Horizontal back porch      */
+	#define OTM8009A_800X480_HFP   OTM8009A_480X800_VFP /* Horizontal front porch     */
 	#define OTM8009A_800X480_VSYNC OTM8009A_480X800_HSYNC /* Vertical synchronization   */
-	#define OTM8009A_800X480_VBP   OTM8009A_480X800_HBP	  /* Vertical back porch        */
-	#define OTM8009A_800X480_VFP   OTM8009A_480X800_HFP	  /* Vertical front porch       */
+	#define OTM8009A_800X480_VBP   OTM8009A_480X800_HBP /* Vertical back porch        */
+	#define OTM8009A_800X480_VFP   OTM8009A_480X800_HFP /* Vertical front porch       */
 
 	/* List of OTM8009A used commands                                  */
 	/* Detailed in OTM8009A Data Sheet 'DATA_SHEET_OTM8009A_V0 92.pdf' */
@@ -149,7 +149,7 @@ extern "C" {
 
 	/* Possible used values of MADCTR */
 	#define OTM8009A_MADCTR_MODE_PORTRAIT  0x00
-	#define OTM8009A_MADCTR_MODE_LANDSCAPE 0xA0 /* MY = 0, MX = 1, MV = 1, ML = 0, RGB = 0 */
+	#define OTM8009A_MADCTR_MODE_LANDSCAPE 0x60 /* MY = 0, MX = 1, MV = 1, ML = 0, RGB = 0 */
 
 	#define OTM8009A_CMD_IDMOFF 0x38 /* Idle mode Off command */
 	#define OTM8009A_CMD_IDMON	0x39 /* Idle mode On command  */
