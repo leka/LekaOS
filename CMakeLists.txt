@@ -5,6 +5,11 @@
 # mbed-cmake requires at least CMake 3.18
 cmake_minimum_required(VERSION 3.18)
 
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+	set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
+endif()
+
 # ⚠️ Before all, include mbed-cmake.cmake
 include(./mbed-cmake.cmake)
 
