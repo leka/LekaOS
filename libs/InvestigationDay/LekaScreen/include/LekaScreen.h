@@ -39,7 +39,8 @@ class Screen
 
 	void JPEGInit();
 	void DMA2D_Init(uint32_t ImageWidth, uint32_t ImageHeight);
-	void DMA2D_CopyBuffer(uint32_t *pSrc, uint32_t *pDst, uint16_t ImageWidth, uint16_t ImageHeight);
+	void DMA2D_CopyBuffer(uint32_t *pSrc, uint32_t *pDst, uint16_t x, uint16_t y, uint16_t xsize, uint16_t ysize,
+						  uint32_t width_offset);
 	void DSI_IRQHandler(void);
 	void HAL_DSI_ErrorCallback(DSI_HandleTypeDef *hdsi);
 	void DMA2D_IRQHandler(void);

@@ -97,6 +97,7 @@ uint8_t SetSysClock_PLL_HSE(uint8_t bypass)
     RCC_PeriphCLKInitTypeDef RCC_PeriphClkInitStruct;
 
     // Enable power clock
+    __HAL_RCC_PWR_CLK_ENABLE();
     __PWR_CLK_ENABLE();
     __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
@@ -116,10 +117,10 @@ uint8_t SetSysClock_PLL_HSE(uint8_t bypass)
     RCC_OscInitStruct.PLL.PLLState        = RCC_PLL_ON;
     RCC_OscInitStruct.PLL.PLLSource       = RCC_PLLSOURCE_HSE;
     RCC_OscInitStruct.PLL.PLLM            = 25;            // VCO input clock = 1 MHz (25 MHz / 25)
-    RCC_OscInitStruct.PLL.PLLN            = 432;           // VCO output clock = 432 MHz (1 MHz * 432)
+    RCC_OscInitStruct.PLL.PLLN            = 400;           // VCO output clock = 432 MHz (1 MHz * 432)
     RCC_OscInitStruct.PLL.PLLP            = RCC_PLLP_DIV2; // PLLCLK = 216 MHz (432 MHz / 2)
-    RCC_OscInitStruct.PLL.PLLQ            = 9;             // USB clock = 48 MHz (432 MHz / 9) --> OK for USB
-    RCC_OscInitStruct.PLL.PLLR            = 2;
+    RCC_OscInitStruct.PLL.PLLQ            = 8;             // USB clock = 48 MHz (432 MHz / 9) --> OK for USB
+    RCC_OscInitStruct.PLL.PLLR            = 7;
 
     if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK) {
         return 0; // FAIL
@@ -147,7 +148,7 @@ uint8_t SetSysClock_PLL_HSE(uint8_t bypass)
     RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;           //  54 MHz
     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;           // 108 MHz
 
-    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_7) != HAL_OK) {
+    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_6) != HAL_OK) {
         return 0; // FAIL
     }
 

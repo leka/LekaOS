@@ -116,6 +116,19 @@ void Screen::getFileSize()
 
 		f_close(&JPEG_File);
 	}
+
+	DIR *d;
+	struct dirent *p;
+	d = opendir("/leka_fs");
+	if (d != NULL) {
+		while ((p = readdir(d)) != NULL) {
+			printf(" - %s\n", p->d_name);
+		}
+	} else {
+		printf("Could not open directory!\n");
+	}
+	closedir(d);
+
 	return;
 }
 
@@ -936,15 +949,16 @@ void Screen::showFace(bool jpeg_file)
 		// static char filename[] = "video.avi";
 		FIL JPEG_File; /* File object */
 
-		static uint32_t FrameOffset = 0;
-		uint32_t JpegProcessing_End = 0;
+		// static uint32_t FrameOffset = 0;
+		// uint32_t JpegProcessing_End = 0;
+		uint32_t width_offset = 0;
 
 		DSI_IRQ_counter = 0;
 		printf("\n\r--------Programm starting--------\n\r");
 
-		uint32_t isfirstFrame, currentFrameRate;
-		auto startTime = HAL_GetTick();
-		auto endTime   = HAL_GetTick();
+		// uint32_t isfirstFrame, currentFrameRate;
+		// auto startTime = HAL_GetTick();
+		// auto endTime   = HAL_GetTick();
 		// char message[16];
 
 		/*##-1- JPEG Initialization ################################################*/
@@ -973,7 +987,7 @@ void Screen::showFace(bool jpeg_file)
 		// active_area = LEFT_AREA;
 
 		// BSP_LCD_Clear(LCD_COLOR_CYAN);
-		uint32_t bg_color = 0x00ffff00;
+		uint32_t bg_color = 0xffffff00;
 		clear(bg_color);
 		// clear layer 0 in yellow
 
@@ -1001,9 +1015,25 @@ void Screen::showFace(bool jpeg_file)
 			printf("After decoding\n");
 
 			HAL_JPEG_GetInfo(&_hjpeg, &_hjpeginfo);
-			DMA2D_CopyBuffer((uint32_t *)JPEG_OUTPUT_DATA_BUFFER, (uint32_t *)LCD_FRAME_BUFFER, _hjpeginfo.ImageWidth,
-							 _hjpeginfo.ImageHeight);
 
+			uint16_t xPos = (_screen_width - _hjpeginfo.ImageWidth) / 2;
+			uint16_t yPos = (_screen_height - _hjpeginfo.ImageHeight) / 2;
+			if (_hjpeginfo.ChromaSubsampling == JPEG_420_SUBSAMPLING) {
+				if ((_hjpeginfo.ImageWidth % 16) != 0) width_offset = 16 - (_hjpeginfo.ImageWidth % 16);
+			}
+
+			if (_hjpeginfo.ChromaSubsampling == JPEG_422_SUBSAMPLING) {
+				if ((_hjpeginfo.ImageWidth % 16) != 0) width_offset = 16 - (_hjpeginfo.ImageWidth % 16);
+			}
+
+			if (_hjpeginfo.ChromaSubsampling == JPEG_444_SUBSAMPLING) {
+				if ((_hjpeginfo.ImageWidth % 8) != 0) width_offset = (_hjpeginfo.ImageWidth % 8);
+			}
+
+			DMA2D_CopyBuffer((uint32_t *)JPEG_OUTPUT_DATA_BUFFER, (uint32_t *)LCD_FRAME_BUFFER, xPos, yPos,
+							 _hjpeginfo.ImageWidth, _hjpeginfo.ImageHeight, width_offset);
+			printf("End of CopyBuffer\n");
+			ThisThread::sleep_for(1s);
 			//##-10- Close the avi file ##########################################
 			f_close(&JPEG_File);
 
@@ -1013,9 +1043,9 @@ void Screen::showFace(bool jpeg_file)
 		// 	printf("Mount failed \n\r");
 		// } else
 		// 	printf("FATFS link failed\n\r");
-		printf("Frame offset %lu \n\r", FrameOffset);
-		while (true) {
-		}
+		// printf("Frame offset %lu \n\r", FrameOffset);
+		// while (true) {
+		// }
 	} else {
 		uint32_t bg_color = 0xffffffff;
 		// initialize and select layer 0
@@ -1088,16 +1118,61 @@ void Screen::DMA2D_Init(uint32_t ImageWidth, uint32_t ImageHeight)
  * @param  ImageHeight: image Height
  * @retval None
  */
-void Screen::DMA2D_CopyBuffer(uint32_t *pSrc, uint32_t *pDst, uint16_t ImageWidth, uint16_t ImageHeight)
+void Screen::DMA2D_CopyBuffer(uint32_t *pSrc, uint32_t *pDst, uint16_t x, uint16_t y, uint16_t xsize, uint16_t ysize,
+							  uint32_t width_offset)
 {
-	uint32_t x			 = (_screen_width - _hjpeginfo.ImageWidth) / 2;
-	uint32_t y			 = (_screen_height - _hjpeginfo.ImageHeight) / 2;
+	// uint32_t x			 = (_screen_width - _hjpeginfo.ImageWidth) / 2;
+	// uint32_t y			 = (_screen_height - _hjpeginfo.ImageHeight) / 2;
+	// uint32_t destination = (uint32_t)pDst + (y * _screen_width + x) * 4;
+	// // printf("DMA copy buffer \n\r");
+	// /*while (pending_buffer != -1) {
+	// }*/
+	// HAL_DMA2D_Start(&_hdma2d, (uint32_t)pSrc, destination, ImageWidth, ImageHeight);
+	// HAL_DMA2D_PollForTransfer(&_hdma2d, 100);
+
 	uint32_t destination = (uint32_t)pDst + (y * _screen_width + x) * 4;
-	// printf("DMA copy buffer \n\r");
-	/*while (pending_buffer != -1) {
-	}*/
-	HAL_DMA2D_Start(&_hdma2d, (uint32_t)pSrc, destination, ImageWidth, ImageHeight);
-	HAL_DMA2D_PollForTransfer(&_hdma2d, 100);
+	uint32_t source		 = (uint32_t)pSrc;
+
+	/*##-1- Configure the DMA2D Mode, Color Mode and output offset #############*/
+	_hdma2d.Init.Mode		   = DMA2D_M2M_PFC;
+	_hdma2d.Init.ColorMode	   = DMA2D_OUTPUT_ARGB8888;
+	_hdma2d.Init.OutputOffset  = _screen_width - xsize;
+	_hdma2d.Init.AlphaInverted = DMA2D_REGULAR_ALPHA; /* No Output Alpha Inversion*/
+	_hdma2d.Init.RedBlueSwap   = DMA2D_RB_REGULAR;	  /* No Output Red & Blue swap */
+
+	/*##-2- DMA2D Callbacks Configuration ######################################*/
+	_hdma2d.XferCpltCallback = NULL;
+
+	/*##-3- Foreground Configuration ###########################################*/
+	_hdma2d.LayerCfg[1].AlphaMode  = DMA2D_REPLACE_ALPHA;
+	_hdma2d.LayerCfg[1].InputAlpha = 0xFF;
+
+#if (JPEG_RGB_FORMAT == JPEG_ARGB8888)
+	_hdma2d.LayerCfg[1].InputColorMode = DMA2D_INPUT_ARGB8888;
+
+#elif (JPEG_RGB_FORMAT == JPEG_RGB888)
+	_hdma2d.LayerCfg[1].InputColorMode = DMA2D_INPUT_RGB888;
+
+#elif (JPEG_RGB_FORMAT == JPEG_RGB565)
+	_hdma2d.LayerCfg[1].InputColorMode = DMA2D_INPUT_RGB565;
+
+#endif /* JPEG_RGB_FORMAT * */
+
+	_hdma2d.LayerCfg[1].InputOffset	  = width_offset;
+	_hdma2d.LayerCfg[1].RedBlueSwap	  = DMA2D_RB_REGULAR;	 /* No ForeGround Red/Blue swap */
+	_hdma2d.LayerCfg[1].AlphaInverted = DMA2D_REGULAR_ALPHA; /* No ForeGround Alpha inversion */
+
+	_hdma2d.Instance = DMA2D;
+
+	/* DMA2D Initialization */
+	if (HAL_DMA2D_Init(&_hdma2d) == HAL_OK) {
+		if (HAL_DMA2D_ConfigLayer(&_hdma2d, 1) == HAL_OK) {
+			if (HAL_DMA2D_Start(&_hdma2d, source, destination, xsize, ysize) == HAL_OK) {
+				/* Polling For DMA transfer */
+				HAL_DMA2D_PollForTransfer(&_hdma2d, 100);
+			}
+		}
+	}
 }
 
 /**
@@ -1155,6 +1230,15 @@ void Screen::start()
 	printf("Screen example\n\n");
 	SDInit();
 	// getFileSize();
+
+	// /* Enable I-Cache */
+	// SCB_EnableICache();
+	// /* Enable D-Cache */
+	// SCB_EnableDCache();
+	// printf("End of cache\n");
+
+	// HAL_Init();
+	// printf("End of HAL init\n");
 
 	ScreenInit();
 	JPEGInit();

@@ -76,7 +76,8 @@
 		"device_name": "STM32F769NI",
 		"overrides": {
 			"network-default-interface-type": "WIFI",
-			"lse_available": false
+			"lse_available": false,
+			"clock_source": "USE_PLL_HSE_EXTC"
 		}
 	},
 	"LEKA_V1_1_DEV": {
