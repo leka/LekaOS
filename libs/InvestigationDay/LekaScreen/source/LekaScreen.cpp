@@ -924,7 +924,7 @@ void Screen::fillBuffer(uint32_t LayerIndex, void *pDst, uint32_t xSize, uint32_
 	}
 }
 
-extern uint32_t Previous_FrameSize;
+// extern uint32_t Previous_FrameSize;
 int DSI_IRQ_counter	  = 0;
 int DMA2D_IRQ_counter = 0;
 int HAL_error_status  = 0;
@@ -932,8 +932,8 @@ int HAL_error_status  = 0;
 void Screen::showFace(bool jpeg_file)
 {
 	if (jpeg_file) {
-		// static char filename[] = "image.jpg";
-		static char filename[] = "video.avi";
+		static char filename[] = "image.jpg";
+		// static char filename[] = "video.avi";
 		FIL JPEG_File; /* File object */
 
 		static uint32_t FrameOffset = 0;
@@ -994,57 +994,15 @@ void Screen::showFace(bool jpeg_file)
 		//##-5- Open the JPG file with read access #############################
 		if (f_open(&JPEG_File, filename, FA_READ) == FR_OK) {
 			printf("File %s openened. File size : %lu \n\r", filename, f_size(&JPEG_File));
-			isfirstFrame = 1;
-			// FrameIndex	 = 0;
-			uint32_t FrameRate = 0;
 
-			do {
-				//##-6- Find next JPEG Frame offset in the video file #############################
-				FrameOffset = JPEG_FindFrameOffset(FrameOffset + Previous_FrameSize, &JPEG_File);
-				// printf("Frame offset = %lu \n\r", FrameOffset);
-				if (FrameOffset != 0) {
-					startTime = HAL_GetTick();
-					// printf("Start time %lu \n\r", startTime);
-					f_lseek(&JPEG_File, FrameOffset);
-					// printf("File pointer at position : %lu \n\r",JPEG_File.fptr);
-					//##-7- Start decoding the current JPEG frame with DMA (Not Blocking ) Method
-					//################
-					printf("Before Decoding\n");
-					JPEG_Decode_DMA(&_hjpeg, &JPEG_File, JPEG_OUTPUT_DATA_BUFFER);
-					printf("After decoding\n");
-					//##-8- Wait till end of JPEG decoding, and perfom Input/Output Processing in BackGround  #
-					do {
-						JPEG_InputHandler(&_hjpeg);
-						JpegProcessing_End = JPEG_OutputHandler(&_hjpeg);
-					} while (JpegProcessing_End == 0);
+			printf("Before Decoding\n");
+			// JPEG_Decode_DMA(&_hjpeg, &JPEG_File, JPEG_OUTPUT_DATA_BUFFER);
+			JPEG_DecodePolling(&_hjpeg, &JPEG_File, JPEG_OUTPUT_DATA_BUFFER);
+			printf("After decoding\n");
 
-					// FrameIndex++;
-
-					if (isfirstFrame == 1) {
-						isfirstFrame = 0;
-						// printf("Getting JPEG info \n\r");
-						//##-9- Get JPEG Info  ###############################################
-						HAL_JPEG_GetInfo(&_hjpeg, &_hjpeginfo);
-						// printf("Initializing DMA2D \n\r");
-						//##-10- Initialize the DMA2D ########################################
-						DMA2D_Init(_hjpeginfo.ImageWidth, _hjpeginfo.ImageHeight);
-					}
-					//##-11- Copy the Decoded frame to the display frame buffer using the DMA2D #
-					DMA2D_CopyBuffer((uint32_t *)JPEG_OUTPUT_DATA_BUFFER, (uint32_t *)LCD_FRAME_BUFFER,
-									 _hjpeginfo.ImageWidth, _hjpeginfo.ImageHeight);
-					// printf("DMA2D: %d \n\r", DMA2D_IRQ_counter);
-
-					//##-12- Calc the current decode frame rate #
-					endTime = HAL_GetTick();
-					// printf("End time %lu \n\r", endTime);
-					currentFrameRate = 1000 / (endTime - startTime);
-					// sprintf(message, " %lu fps", currentFrameRate);
-					// BSP_LCD_DisplayStringAt(0, 0, (uint8_t *)message, CENTER_MODE);
-					FrameRate += currentFrameRate;
-					//                        printf("-------------\n\r");
-				}
-
-			} while (FrameOffset != 0);
+			HAL_JPEG_GetInfo(&_hjpeg, &_hjpeginfo);
+			DMA2D_CopyBuffer((uint32_t *)JPEG_OUTPUT_DATA_BUFFER, (uint32_t *)LCD_FRAME_BUFFER, _hjpeginfo.ImageWidth,
+							 _hjpeginfo.ImageHeight);
 
 			//##-10- Close the avi file ##########################################
 			f_close(&JPEG_File);
@@ -1139,7 +1097,7 @@ void Screen::DMA2D_CopyBuffer(uint32_t *pSrc, uint32_t *pDst, uint16_t ImageWidt
 	/*while (pending_buffer != -1) {
 	}*/
 	HAL_DMA2D_Start(&_hdma2d, (uint32_t)pSrc, destination, ImageWidth, ImageHeight);
-	HAL_DMA2D_PollForTransfer(&_hdma2d, 10);
+	HAL_DMA2D_PollForTransfer(&_hdma2d, 100);
 }
 
 /**

@@ -14,7 +14,7 @@ target_sources(lib_LekaScreen
   PRIVATE
   	source/LekaScreen.cpp
 	include/internal/jpeg_utils.cpp
-	include/internal/decode_dma.cpp
+	include/internal/decode_polling.cpp
 	include/internal/stm32f7xx_hal_msp.cpp
 )
 

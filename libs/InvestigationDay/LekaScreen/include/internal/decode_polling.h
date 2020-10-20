@@ -1,8 +1,8 @@
 /**
  ******************************************************************************
- * @file    JPEG/JPEG_DecodingUsingFs_DMA/Inc/decode_dma.h
+ * @file    JPEG/JPEG_DecodingUsingFs_Polling/Inc/decode_polling.h
  * @author  MCD Application Team
- * @brief   Header for decode_dma.c module
+ * @brief   Header for decode_polling.c module
  ******************************************************************************
  * @attention
  *
@@ -18,21 +18,18 @@
  */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __DECODE_DMA_H
-#define __DECODE_DMA_H
+#ifndef __DECODE_POLLING_H
+#define __DECODE_POLLING_H
 
 /* Includes ------------------------------------------------------------------*/
 #include "LekaScreen.h"
 
 /* Exported variables --------------------------------------------------------*/
-// __IO uint32_t Previous_FrameSize = 0;
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
-uint32_t JPEG_Decode_DMA(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress);
-uint32_t JPEG_OutputHandler(JPEG_HandleTypeDef *hjpeg);
-void JPEG_InputHandler(JPEG_HandleTypeDef *hjpeg);
+uint32_t JPEG_DecodePolling(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress);
 
-#endif /* __DECODE_DMA_H */
+#endif /* __DECODE_POLLING_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
