@@ -19,8 +19,10 @@
 #include "FATFileSystem.h"
 #include "LekaLCD.h"
 #include "SDBlockDevice.h"
+#include "decode_dma.h"
 #include "img/leka_eye_alpha.h"
 #include "img/leka_mouth_alpha.h"
+#include "jpeg_utils.h"
 #include "otm8009a.h"
 
 class Screen
@@ -33,6 +35,16 @@ class Screen
 
 	int SDInit();
 	void getFileSize();
+
+	void JPEGInit();
+	void DMA2D_Init(uint32_t ImageWidth, uint32_t ImageHeight);
+	void DMA2D_CopyBuffer(uint32_t *pSrc, uint32_t *pDst, uint16_t ImageWidth, uint16_t ImageHeight);
+	void DSI_IRQHandler(void);
+	void HAL_DSI_ErrorCallback(DSI_HandleTypeDef *hdsi);
+	void DMA2D_IRQHandler(void);
+	void JPEG_IRQHandler(void);
+	void DMA2_Stream3_IRQHandler(void);
+	void DMA2_Stream4_IRQHandler(void);
 
 	void ScreenInit();
 	void LCDReset();
@@ -78,7 +90,8 @@ class Screen
 	uint32_t HACT = OTM8009A_800X480_WIDTH;
 
 	uint32_t _active_layer;
-	const uint32_t _frame_buffer_start_address = 0xC0000000;
+	const uint32_t LCD_FRAME_BUFFER		   = 0xC0000000;
+	const uint32_t JPEG_OUTPUT_DATA_BUFFER = 0xC0200000;
 
 	DSI_HandleTypeDef _hdsi;
 	DSI_VidCfgTypeDef _hdsivideo;
@@ -87,6 +100,8 @@ class Screen
 	DMA_HandleTypeDef _hdma;
 	FMC_SDRAM_CommandTypeDef _hsdramcmd;
 	DMA2D_HandleTypeDef _hdma2d;
+	JPEG_HandleTypeDef _hjpeg;
+	JPEG_ConfTypeDef _hjpeginfo;
 };
 
 #endif

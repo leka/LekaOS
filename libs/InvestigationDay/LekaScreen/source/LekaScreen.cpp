@@ -13,6 +13,11 @@
 using namespace mbed;
 using namespace std::chrono;
 
+void DMA2D_TransferCompleteCallback(DMA2D_HandleTypeDef *hdma2d);
+void DMA2D_TransferErrorCallback(DMA2D_HandleTypeDef *hdma2d);
+uint32_t JPEG_FindFrameOffset(uint32_t offset, FIL *file);
+void OnError_Handler(const char *, int);
+
 Screen::Screen()
 	: _brightness(SCREEN_BACKLIGHT_PWM),
 	  _interface(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK),
@@ -112,6 +117,17 @@ void Screen::getFileSize()
 		f_close(&JPEG_File);
 	}
 	return;
+}
+
+// void HAL_JPEG_MspInit(JPEG_HandleTypeDef *hjpeg);
+
+void Screen::JPEGInit()
+{
+	JPEG_InitColorTables();
+
+	_hjpeg.Instance = JPEG;
+	// HAL_JPEG_MspInit(&_hjpeg);
+	HAL_JPEG_Init(&_hjpeg);
 }
 
 void Screen::ScreenInit()
@@ -815,7 +831,7 @@ void Screen::LTDCLayerInit(uint16_t layer_index)
 	Layercfg.WindowY0		 = 0;
 	Layercfg.WindowY1		 = _screen_height;
 	Layercfg.PixelFormat	 = LTDC_PIXEL_FORMAT_ARGB8888;
-	Layercfg.FBStartAdress	 = _frame_buffer_start_address;	  // Previously FB_Address given in parameter
+	Layercfg.FBStartAdress	 = LCD_FRAME_BUFFER;   // Previously FB_Address given in parameter
 	Layercfg.Alpha			 = 255;
 	Layercfg.Alpha0			 = 0;
 	Layercfg.Backcolor.Blue	 = 0;
@@ -861,7 +877,7 @@ void Screen::drawRectangle(uint32_t Xpos, uint32_t Ypos, uint32_t Width, uint32_
 
 void Screen::drawImage(uint32_t data, uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 {
-	uint32_t destination = _frame_buffer_start_address + (x + y * _screen_width) * 4;
+	uint32_t destination = LCD_FRAME_BUFFER + (x + y * _screen_width) * 4;
 	_hdma2d.Instance	 = DMA2D;
 
 	_hdma2d.Init.Mode		  = DMA2D_M2M_BLEND;
@@ -908,10 +924,140 @@ void Screen::fillBuffer(uint32_t LayerIndex, void *pDst, uint32_t xSize, uint32_
 	}
 }
 
+extern uint32_t Previous_FrameSize;
+int DSI_IRQ_counter	  = 0;
+int DMA2D_IRQ_counter = 0;
+int HAL_error_status  = 0;
+
 void Screen::showFace(bool jpeg_file)
 {
 	if (jpeg_file) {
-		printf("NOT SUPPORTED YET!\n");
+		// static char filename[] = "image.jpg";
+		static char filename[] = "video.avi";
+		FIL JPEG_File; /* File object */
+
+		static uint32_t FrameOffset = 0;
+		uint32_t JpegProcessing_End = 0;
+
+		DSI_IRQ_counter = 0;
+		printf("\n\r--------Programm starting--------\n\r");
+
+		uint32_t isfirstFrame, currentFrameRate;
+		auto startTime = HAL_GetTick();
+		auto endTime   = HAL_GetTick();
+		// char message[16];
+
+		/*##-1- JPEG Initialization ################################################*/
+		/* Init The JPEG Look Up Tables used for YCbCr to RGB conversion   */
+		// JPEG_InitColorTables();
+		/* Init the HAL JPEG driver */
+		// JPEG_Handle.Instance = JPEG;
+		// HAL_JPEG_Init(&JPEG_Handle);
+
+		// BSP_LCD_Init();
+		// printf("LCD_Init done \n\r");
+
+		// LCD_LayerInit(0, LCD_FB_START_ADDRESS);
+		// BSP_LCD_LayerDefaultInit(0, LCD_FB_START_ADDRESS);
+		LTDCLayerInit(0);	// FLAG for passing address
+		// BSP_LCD_SelectLayer(0);
+		setActiveLayer(0);
+		printf("LCD_LayerInit done \n\r");
+
+		/*HAL_DSI_LongWrite(&hdsi_discovery, 0, DSI_DCS_LONG_PKT_WRITE, 4, OTM8009A_CMD_CASET, pColLeft);
+		HAL_DSI_LongWrite(&hdsi_discovery, 0, DSI_DCS_LONG_PKT_WRITE, 4, OTM8009A_CMD_PASET, pPage);
+		// Update pitch : the draw is done on the whole physical X Size
+		HAL_LTDC_SetPitch(&hltdc_discovery, OTM8009A_800X480_WIDTH, 0);*/
+
+		// pending_buffer = 0;
+		// active_area = LEFT_AREA;
+
+		// BSP_LCD_Clear(LCD_COLOR_CYAN);
+		uint32_t bg_color = 0x00ffff00;
+		clear(bg_color);
+		// clear layer 0 in yellow
+
+		printf("Screen Clear done \n\r");
+
+		// HAL_DSI_LongWrite(&hdsi_discovery, 0, DSI_DCS_LONG_PKT_WRITE, 2, OTM8009A_CMD_WRTESCN, pScanCol);
+
+		// Send Display On DCS Command to display
+		HAL_DSI_ShortWrite(&(_hdsi), 0, DSI_DCS_SHORT_PKT_WRITE_P1, OTM8009A_CMD_DISPON, 0x00);
+		// HAL_DSI_Refresh(&hdsi_discovery);
+
+		// printf("DSI IRQ calls : %d \n\r \n\r", DSI_IRQ_counter);
+		//##-3- Link the micro SD disk I/O driver ##################################
+		// if (FATFS_LinkDriver(&SD_Driver, SDPath) == 0) {
+		//##-4- Register the file system object to the FatFs module ##############
+		// if (f_mount(&SDFatFs, (TCHAR const *)SDPath, 0) == FR_OK) {
+		_file_interface.mount(&_interface);
+		//##-5- Open the JPG file with read access #############################
+		if (f_open(&JPEG_File, filename, FA_READ) == FR_OK) {
+			printf("File %s openened. File size : %lu \n\r", filename, f_size(&JPEG_File));
+			isfirstFrame = 1;
+			// FrameIndex	 = 0;
+			uint32_t FrameRate = 0;
+
+			do {
+				//##-6- Find next JPEG Frame offset in the video file #############################
+				FrameOffset = JPEG_FindFrameOffset(FrameOffset + Previous_FrameSize, &JPEG_File);
+				// printf("Frame offset = %lu \n\r", FrameOffset);
+				if (FrameOffset != 0) {
+					startTime = HAL_GetTick();
+					// printf("Start time %lu \n\r", startTime);
+					f_lseek(&JPEG_File, FrameOffset);
+					// printf("File pointer at position : %lu \n\r",JPEG_File.fptr);
+					//##-7- Start decoding the current JPEG frame with DMA (Not Blocking ) Method
+					//################
+					printf("Before Decoding\n");
+					JPEG_Decode_DMA(&_hjpeg, &JPEG_File, JPEG_OUTPUT_DATA_BUFFER);
+					printf("After decoding\n");
+					//##-8- Wait till end of JPEG decoding, and perfom Input/Output Processing in BackGround  #
+					do {
+						JPEG_InputHandler(&_hjpeg);
+						JpegProcessing_End = JPEG_OutputHandler(&_hjpeg);
+					} while (JpegProcessing_End == 0);
+
+					// FrameIndex++;
+
+					if (isfirstFrame == 1) {
+						isfirstFrame = 0;
+						// printf("Getting JPEG info \n\r");
+						//##-9- Get JPEG Info  ###############################################
+						HAL_JPEG_GetInfo(&_hjpeg, &_hjpeginfo);
+						// printf("Initializing DMA2D \n\r");
+						//##-10- Initialize the DMA2D ########################################
+						DMA2D_Init(_hjpeginfo.ImageWidth, _hjpeginfo.ImageHeight);
+					}
+					//##-11- Copy the Decoded frame to the display frame buffer using the DMA2D #
+					DMA2D_CopyBuffer((uint32_t *)JPEG_OUTPUT_DATA_BUFFER, (uint32_t *)LCD_FRAME_BUFFER,
+									 _hjpeginfo.ImageWidth, _hjpeginfo.ImageHeight);
+					// printf("DMA2D: %d \n\r", DMA2D_IRQ_counter);
+
+					//##-12- Calc the current decode frame rate #
+					endTime = HAL_GetTick();
+					// printf("End time %lu \n\r", endTime);
+					currentFrameRate = 1000 / (endTime - startTime);
+					// sprintf(message, " %lu fps", currentFrameRate);
+					// BSP_LCD_DisplayStringAt(0, 0, (uint8_t *)message, CENTER_MODE);
+					FrameRate += currentFrameRate;
+					//                        printf("-------------\n\r");
+				}
+
+			} while (FrameOffset != 0);
+
+			//##-10- Close the avi file ##########################################
+			f_close(&JPEG_File);
+
+		} else
+			printf("Failed to open file %s \n\r", filename);
+		// } else
+		// 	printf("Mount failed \n\r");
+		// } else
+		// 	printf("FATFS link failed\n\r");
+		printf("Frame offset %lu \n\r", FrameOffset);
+		while (true) {
+		}
 	} else {
 		uint32_t bg_color = 0xffffffff;
 		// initialize and select layer 0
@@ -930,14 +1076,132 @@ void Screen::showFace(bool jpeg_file)
 	return;
 }
 
+#define PATTERN_SEARCH_BUFFERSIZE 512
+/* Private macro -------------------------------------------------------------*/
+#define __DSI_MASK_TE()	  (GPIOJ->AFR[0] &= (0xFFFFF0FFU)) /* Mask DSI TearingEffect Pin*/
+#define __DSI_UNMASK_TE() (GPIOJ->AFR[0] |= ((uint32_t)(GPIO_AF13_DSI) << 8)) /* UnMask DSI TearingEffect Pin*/
+
+#define JPEG_SOI_MARKER		  (0xFFD8) /* JPEG Start Of Image marker*/
+#define JPEG_SOI_MARKER_BYTE0 (JPEG_SOI_MARKER & 0xFF)
+#define JPEG_SOI_MARKER_BYTE1 ((JPEG_SOI_MARKER >> 8) & 0xFF)
+/* Private variables ---------------------------------------------------------*/
+static uint8_t PatternSearchBuffer[PATTERN_SEARCH_BUFFERSIZE];
+
+/**
+ * @brief  Initialize the DMA2D in memory to memory with PFC.
+ * @param  ImageWidth: image width
+ * @param  ImageHeight: image Height
+ * @retval None
+ */
+void Screen::DMA2D_Init(uint32_t ImageWidth, uint32_t ImageHeight)
+{
+	/* Init DMA2D */
+	/*##-1- Configure the DMA2D Mode, Color Mode and output offset #############*/
+	_hdma2d.Init.Mode		   = DMA2D_M2M_PFC;	  // memory to memory with pixel format convert
+	_hdma2d.Init.ColorMode	   = DMA2D_OUTPUT_ARGB8888;
+	_hdma2d.Init.OutputOffset  = _screen_width - ImageWidth;
+	_hdma2d.Init.AlphaInverted = DMA2D_REGULAR_ALPHA; /* No Output Alpha Inversion*/
+	_hdma2d.Init.RedBlueSwap   = DMA2D_RB_REGULAR;	  /* No Output Red & Blue swap */
+
+	/*##-2- DMA2D Callbacks Configuration ######################################*/
+	_hdma2d.XferCpltCallback  = DMA2D_TransferCompleteCallback;
+	_hdma2d.XferErrorCallback = DMA2D_TransferErrorCallback;
+
+	/*##-3- Foreground Configuration ###########################################*/
+	_hdma2d.LayerCfg[1].AlphaMode	   = DMA2D_REPLACE_ALPHA;
+	_hdma2d.LayerCfg[1].InputAlpha	   = 0xFF;
+	_hdma2d.LayerCfg[1].InputColorMode = DMA2D_INPUT_ARGB8888;
+	_hdma2d.LayerCfg[1].InputOffset	   = 0;
+	_hdma2d.LayerCfg[1].RedBlueSwap	   = DMA2D_RB_REGULAR;	  /* No ForeGround Red/Blue swap */
+	_hdma2d.LayerCfg[1].AlphaInverted  = DMA2D_REGULAR_ALPHA; /* No ForeGround Alpha inversion */
+
+	_hdma2d.Instance = DMA2D;
+
+	/*##-4- DMA2D Initialization     ###########################################*/
+	HAL_DMA2D_Init(&_hdma2d);
+	HAL_DMA2D_ConfigLayer(&_hdma2d, 1);
+}
+
+/**
+ * @brief  Copy the Decoded image to the display Frame buffer.
+ * @param  pSrc: Pointer to source buffer
+ * @param  pDst: Pointer to destination buffer
+ * @param  ImageWidth: image width
+ * @param  ImageHeight: image Height
+ * @retval None
+ */
+void Screen::DMA2D_CopyBuffer(uint32_t *pSrc, uint32_t *pDst, uint16_t ImageWidth, uint16_t ImageHeight)
+{
+	uint32_t x			 = (_screen_width - _hjpeginfo.ImageWidth) / 2;
+	uint32_t y			 = (_screen_height - _hjpeginfo.ImageHeight) / 2;
+	uint32_t destination = (uint32_t)pDst + (y * _screen_width + x) * 4;
+	// printf("DMA copy buffer \n\r");
+	/*while (pending_buffer != -1) {
+	}*/
+	HAL_DMA2D_Start(&_hdma2d, (uint32_t)pSrc, destination, ImageWidth, ImageHeight);
+	HAL_DMA2D_PollForTransfer(&_hdma2d, 10);
+}
+
+/**
+ * @brief  DMA2D Transfer completed callback
+ * @param  hdma2d: DMA2D handle.
+ * @retval None
+ */
+void DMA2D_TransferCompleteCallback(DMA2D_HandleTypeDef *hdma2d)
+{
+	// Frame Buffer updated , unmask the DSI TE pin to ask for a DSI refersh
+	/*pending_buffer = 1;*/
+	// UnMask the TE
+	//__DSI_UNMASK_TE();
+	// HAL_DSI_Refresh(&hdsi_discovery);
+}
+
+void DMA2D_TransferErrorCallback(DMA2D_HandleTypeDef *hdma2d)
+{
+	OnError_Handler(__FILE__, __LINE__);
+}
+
+/**
+ * @brief  Find Next JPEG frame offset in the video file.
+ * @param  offset: Current offset in the video file.
+ * @param  file: Pointer to the video file object.
+ * @retval None
+ */
+uint32_t JPEG_FindFrameOffset(uint32_t offset, FIL *file)
+{
+	uint32_t index = offset, i, readSize = 0;
+	do {
+		if (f_size(file) <= (index + 1)) {
+			/* end of file reached*/
+			return 0;
+		}
+		f_lseek(file, index);
+		f_read(file, PatternSearchBuffer, PATTERN_SEARCH_BUFFERSIZE, (UINT *)(&readSize));
+		if (readSize != 0) {
+			for (i = 0; i < (readSize - 1); i++) {
+				if ((PatternSearchBuffer[i] == JPEG_SOI_MARKER_BYTE1) &&
+					(PatternSearchBuffer[i + 1] == JPEG_SOI_MARKER_BYTE0)) {
+					return index + i;
+				}
+			}
+
+			index += (readSize - 1);
+		}
+	} while (readSize != 0);
+
+	return 0;
+}
+
 void Screen::start()
 {
 	printf("Screen example\n\n");
 	SDInit();
 	// getFileSize();
-	ScreenInit();
 
-	showFace(false);
+	ScreenInit();
+	JPEGInit();
+
+	showFace(true);
 	ThisThread::sleep_for(30s);
 
 	while (true) {
@@ -946,4 +1210,49 @@ void Screen::start()
 	}
 
 	printf("End of Screen example\n\n");
+}
+
+/**
+ * @brief  On Error Handler.
+ * @param  None
+ * @retval None
+ */
+void OnError_Handler(const char *file, int line)
+{
+	printf("Error crash in %s line %d\n\r", file, line);
+	while (1) {
+		;
+	} /* Blocking on error */
+}
+
+void Screen::DSI_IRQHandler(void)
+{
+	DSI_IRQ_counter += 1;
+	HAL_DSI_IRQHandler(&_hdsi);
+}
+
+void Screen::HAL_DSI_ErrorCallback(DSI_HandleTypeDef *hdsi)
+{
+	HAL_error_status = 1;
+}
+
+void Screen::DMA2D_IRQHandler(void)
+{
+	DMA2D_IRQ_counter += 1;
+	HAL_DMA2D_IRQHandler(&_hdma2d);
+}
+
+void Screen::JPEG_IRQHandler(void)
+{
+	HAL_JPEG_IRQHandler(&_hjpeg);
+}
+
+void Screen::DMA2_Stream3_IRQHandler(void)
+{
+	HAL_DMA_IRQHandler(_hjpeg.hdmain);
+}
+
+void Screen::DMA2_Stream4_IRQHandler(void)
+{
+	HAL_DMA_IRQHandler(_hjpeg.hdmaout);
 }
