@@ -1202,7 +1202,7 @@ void Screen::start()
 	JPEGInit();
 
 	showFace(true);
-	ThisThread::sleep_for(30s);
+	rtos::ThisThread::sleep_for(30s);
 
 	while (true) {
 		squareBouncing();
