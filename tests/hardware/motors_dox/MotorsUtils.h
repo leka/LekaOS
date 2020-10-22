@@ -21,8 +21,7 @@ Motor motor_left(motor_left_dir_1, motor_left_dir_2, motor_left_speed);
 
 Motors motors(motor_right, motor_left);
 
-float h		  = 120.0;
-uint8_t speed = h;
+uint8_t speed = 0xFF;
 
 void motor_thread()
 {
