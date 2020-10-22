@@ -17,8 +17,6 @@
 #include "MotorBase.h"
 #include "TwoMotorsBase.h"
 
-using namespace mbed;
-
 class Motors : TwoMotorsBase
 {
   public:
