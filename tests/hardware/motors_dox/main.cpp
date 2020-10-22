@@ -18,6 +18,8 @@ int main(void)
 {
 	printf("\nHello, DOX of motors!\n\n");
 
+	rtos::ThisThread::sleep_for(30s);	// Delay to close the robot
+
 	auto start = Kernel::Clock::now();
 
 	thread_motors.start(motor_thread);
@@ -26,9 +28,9 @@ int main(void)
 	thread_watchdog.start(watchdog_thread);
 
 	while (true) {
-		auto t	   = Kernel::Clock::now() - start;
-		int length = sprintf(buff, "Leka is still alive after: %i s\n", int(t.count() / 1000));
-		serial.write(buff, length);
+		// auto t	   = Kernel::Clock::now() - start;
+		// int length = sprintf(buff, "Leka is still alive after: %i s\n", int(t.count() / 1000));
+		// serial.write(buff, length);
 		rtos::ThisThread::sleep_for(1s);
 	}
 

@@ -12,7 +12,6 @@ Motor::Motor(DigitalOut &direction_1, DigitalOut &direction_2, PwmOut &speed)
 	: _direction_1(direction_1), _direction_2(direction_2), _speed(speed)
 {
 	// nothing to do
-	// _speed.period_us(500.0)	  // Cycle of 500us = 1/2kHz
 }
 
 void Motor::spin(rotation_t rotation, float speed)
@@ -31,12 +30,6 @@ void Motor::spin(rotation_t rotation, float speed)
 void Motor::stop(void)
 {
 	spin(Rotation::clockwise, 0);
-}
-
-void Motor::brake(void)
-{
-	_direction_1.write(0);
-	_direction_2.write(0);
 }
 
 }	// namespace leka

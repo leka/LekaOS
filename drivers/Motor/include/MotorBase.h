@@ -10,7 +10,10 @@ namespace leka {
 enum class Rotation
 {
 	clockwise,
-	counterClockwise
+	counterClockwise,
+
+	right = clockwise,
+	left  = counterClockwise
 };
 
 using rotation_t = Rotation;
@@ -20,7 +23,6 @@ class MotorBase
   public:
 	virtual void spin(rotation_t rotation, float speed) = 0;
 	virtual void stop(void)								= 0;
-	virtual void brake(void)							= 0;
 };
 
 }	// namespace leka

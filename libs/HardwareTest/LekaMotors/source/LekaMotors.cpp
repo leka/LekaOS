@@ -9,25 +9,29 @@ Motors::Motors(MotorBase &motor_right, MotorBase &motor_left) : _motor_right(mot
 	// nothing to do
 }
 
-void Motors::translate(translation_t translation, float speed)
+void Motors::move(direction_t direction, uint8_t speed)
 {
-	if (translation == Translation::forward) {
-		_motor_right.spin(Rotation::clockwise, speed);
-		_motor_left.spin(Rotation::counterClockwise, speed);
+	float float_speed = float(speed) / 255;
+
+	if (direction == Direction::forward) {
+		_motor_right.spin(Rotation::clockwise, float_speed);
+		_motor_left.spin(Rotation::counterClockwise, float_speed);
 	} else {
-		_motor_right.spin(Rotation::counterClockwise, speed);
-		_motor_left.spin(Rotation::clockwise, speed);
+		_motor_right.spin(Rotation::counterClockwise, float_speed);
+		_motor_left.spin(Rotation::clockwise, float_speed);
 	}
 }
 
-void Motors::spin(turn_t turn, float speed)
+void Motors::spin(rotation_t rotation, uint8_t speed)
 {
-	if (turn == Turn::right) {
-		_motor_right.spin(Rotation::counterClockwise, speed);
-		_motor_left.spin(Rotation::counterClockwise, speed);
+	float float_speed = float(speed) / 255;
+
+	if (spin == Rotation::right) {
+		_motor_right.spin(Rotation::counterClockwise, float_speed);
+		_motor_left.spin(Rotation::counterClockwise, float_speed);
 	} else {
-		_motor_right.spin(Rotation::clockwise, speed);
-		_motor_left.spin(Rotation::clockwise, speed);
+		_motor_right.spin(Rotation::clockwise, float_speed);
+		_motor_left.spin(Rotation::clockwise, float_speed);
 	}
 }
 
@@ -35,10 +39,4 @@ void Motors::stop(void)
 {
 	_motor_right.stop();
 	_motor_left.stop();
-}
-
-void Motors::brake(void)
-{
-	_motor_right.brake();
-	_motor_left.brake();
 }

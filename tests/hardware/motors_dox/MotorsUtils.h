@@ -21,28 +21,28 @@ Motor motor_left(motor_left_dir_1, motor_left_dir_2, motor_left_speed);
 
 Motors motors(motor_right, motor_left);
 
+uint8_t speed = 0xFF;
+
 void motor_thread()
 {
-	float speed = 0.6;
 	while (true) {
-		printf("motor spin left\n");
-		motors.spin(Turn::left, speed);
-		// spinLeft();
-		rtos::ThisThread::sleep_for(5s);
+		motors.move(Direction::forward, speed);
+		rtos::ThisThread::sleep_for(6s);
 
-		printf("motors stop\n");
 		motors.stop();
-		rtos::ThisThread::sleep_for(5s);
+		rtos::ThisThread::sleep_for(3s);
 
-		printf("turn right\n");
-		motors.spin(Turn::right, speed);
-		// spinRight();
-		rtos::ThisThread::sleep_for(5s);
+		motors.spin(Rotation::right, speed);
+		rtos::ThisThread::sleep_for(1s);
 
-		printf("motor brakes\n");
-		motors.brake();
-		// stop();
-		rtos::ThisThread::sleep_for(5s);
+		motors.stop();
+		rtos::ThisThread::sleep_for(3s);
+
+		motors.move(Direction::forward, speed);
+		rtos::ThisThread::sleep_for(6s);
+
+		motors.stop();
+		rtos::ThisThread::sleep_for(60s);
 	}
 }
 

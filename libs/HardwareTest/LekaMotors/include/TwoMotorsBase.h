@@ -5,29 +5,20 @@
 #ifndef _LEKA_OS_LIB_TWO_MOTORS_BASE_H_
 #define _LEKA_OS_LIB_TWO_MOTORS_BASE_H_
 
-enum class Turn
-{
-	left,
-	right
-};
-
-using turn_t = Turn;
-
-enum class Translation
+enum class Direction
 {
 	forward,
 	backward
 };
 
-using translation_t = Translation;
+using direction_t = Direction;
 
 class TwoMotorsBase
 {
   public:
-	virtual void translate(translation_t translation, float speed) = 0;
-	virtual void spin(turn_t turn, float speed)					   = 0;
-	virtual void stop(void)										   = 0;
-	virtual void brake(void)									   = 0;
+	virtual void move(direction_t direction, uint8_t speed) = 0;
+	virtual void spin(rotation_t rotation, uint8_t speed)	= 0;
+	virtual void stop(void)									= 0;
 };
 
 #endif	 // _LEKA_OS_LIB_TWO_MOTORS_BASE_H_

@@ -25,10 +25,9 @@ class Motors : TwoMotorsBase
 	Motors(MotorBase &motor_right, MotorBase &motor_left);
 	~Motors() {};
 
-	void translate(translation_t translation, float speed);
-	void spin(turn_t turn, float speed);
+	void move(direction_t direction, uint8_t speed);
+	void spin(rotation_t rotation, uint8_t speed);
 	void stop(void);
-	void brake(void);
 
   private:
 	MotorBase &_motor_right;
