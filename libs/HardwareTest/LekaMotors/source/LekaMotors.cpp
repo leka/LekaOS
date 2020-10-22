@@ -26,7 +26,7 @@ void Motors::spin(rotation_t rotation, uint8_t speed)
 {
 	float float_speed = float(speed) / 255;
 
-	if (spin == Rotation::right) {
+	if (rotation == Rotation::right) {
 		_motor_right.spin(Rotation::counterClockwise, float_speed);
 		_motor_left.spin(Rotation::counterClockwise, float_speed);
 	} else {
