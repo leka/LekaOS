@@ -11,27 +11,27 @@ Motors::Motors(MotorBase &motor_right, MotorBase &motor_left) : _motor_right(mot
 
 void Motors::move(direction_t direction, uint8_t speed)
 {
-	float float_speed = float(speed) / 255;
+	float speed_f = static_cast<float>(speed) / 255.0f;
 
 	if (direction == Direction::forward) {
-		_motor_right.spin(Rotation::clockwise, float_speed);
-		_motor_left.spin(Rotation::counterClockwise, float_speed);
+		_motor_right.spin(Rotation::clockwise, speed_f);
+		_motor_left.spin(Rotation::counterClockwise, speed_f);
 	} else {
-		_motor_right.spin(Rotation::counterClockwise, float_speed);
-		_motor_left.spin(Rotation::clockwise, float_speed);
+		_motor_right.spin(Rotation::counterClockwise, speed_f);
+		_motor_left.spin(Rotation::clockwise, speed_f);
 	}
 }
 
 void Motors::spin(rotation_t rotation, uint8_t speed)
 {
-	float float_speed = float(speed) / 255;
+	float speed_f = static_cast<float>(speed) / 255.0f;
 
 	if (rotation == Rotation::right) {
-		_motor_right.spin(Rotation::counterClockwise, float_speed);
-		_motor_left.spin(Rotation::counterClockwise, float_speed);
+		_motor_right.spin(Rotation::counterClockwise, speed_f);
+		_motor_left.spin(Rotation::counterClockwise, speed_f);
 	} else {
-		_motor_right.spin(Rotation::clockwise, float_speed);
-		_motor_left.spin(Rotation::clockwise, float_speed);
+		_motor_right.spin(Rotation::clockwise, speed_f);
+		_motor_left.spin(Rotation::clockwise, speed_f);
 	}
 }
 
