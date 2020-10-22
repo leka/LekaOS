@@ -6,6 +6,8 @@
 extern/mbed-os
 build
 cmake/config/
+.cache
+.clangd
 
 
 #
