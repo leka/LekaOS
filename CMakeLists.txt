@@ -16,6 +16,9 @@ include(./mbed-cmake.cmake)
 # Then configure name of the project
 project(LekaOS LANGUAGES C CXX ASM)
 
+# Generate compile commands database
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
+
 # For convenience you can define useful variables
 set(LIBS_DIR    ${ROOT_DIR}/libs)
 set(SPIKES_DIR  ${ROOT_DIR}/spikes)
