@@ -17,8 +17,6 @@
 #include "controller.h"
 #include "pixeltypes.h"
 
-using namespace mbed;
-
 ///
 /// @brief SK9822 controller class.
 ///		   Based on https://github.com/FastLED/FastLED/blob/master/chipsets.h
@@ -37,7 +35,7 @@ template <uint8_t DATA_PIN, uint8_t CLOCK_PIN, EOrder RGB_ORDER = RGB, uint32_t 
 class SK9822Controller : public CPixelLEDController<RGB_ORDER>
 {
   public:
-	SK9822Controller(SPI &spi) : mSPI(spi) {}
+	SK9822Controller(mbed::SPI &spi) : mSPI(spi) {}
 	// SK9822Controller() {}
 
 	virtual void init()
@@ -77,7 +75,7 @@ class SK9822Controller : public CPixelLEDController<RGB_ORDER>
 	// TODO: move to mbed SPI
 	// typedef SPIOutput<DATA_PIN, CLOCK_PIN, SPI_SPEED> SPI;
 	// SPI mSPI(PinName::PB_15, PinName::PB_14, PinName::PA_12);
-	SPI &mSPI;
+	mbed::SPI &mSPI;
 
 	void startBoundary()
 	{

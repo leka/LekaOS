@@ -14,9 +14,6 @@
 
 #include "ESP8266Interface.h"
 
-using namespace mbed;
-using namespace std::chrono;
-
 class Wifi
 {
   public:
@@ -32,8 +29,8 @@ class Wifi
 
   private:
 	ESP8266Interface _interface;
-	DigitalOut _wifi_reset;
-	DigitalOut _wifi_enable;
+	mbed::DigitalOut _wifi_reset;
+	mbed::DigitalOut _wifi_enable;
 
 	char const *_network_name = "HUAWEI P smart 2019";
 	char const *_network_password;

@@ -23,8 +23,6 @@
 
 #include "drivers/I2C.h"
 
-using namespace mbed;
-
 //
 // Register defines from data sheet - we set IOCON.BANK to 0
 // as it is easier to manage the registers sequentially.
@@ -139,7 +137,7 @@ class MCP23017
 	void write(int data);
 
   protected:
-	I2C _i2c;
+	mbed::I2C _i2c;
 	int MCP23017_i2cAddress;											  // physical I2C address
 	unsigned short shadow_GPIO, shadow_IODIR, shadow_GPPU, shadow_IPOL;	  // Cached copies of the register values
 };

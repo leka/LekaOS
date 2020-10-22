@@ -4,6 +4,9 @@
 
 #include "LekaWifi.h"
 
+using namespace mbed;
+using namespace std::chrono;
+
 Wifi::Wifi() : _interface(WIFI_USART_TX, WIFI_USART_RX), _wifi_reset(WIFI_RESET, 0), _wifi_enable(WIFI_ENABLE, 1)
 {
 	rtos::ThisThread::sleep_for(1s);

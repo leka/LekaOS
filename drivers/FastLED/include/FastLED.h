@@ -8,6 +8,7 @@
 #include <chrono>
 #include <cstdint>
 
+#include "drivers/I2C.h"
 #include "platform/mbed_wait_api.h"
 
 // Force
@@ -367,7 +368,7 @@ class CFastLED
 	// }
 
 	template <ESPIChipsets CHIPSET, uint8_t DATA_PIN, uint8_t CLOCK_PIN, EOrder RGB_ORDER>
-	static CLEDController &addLeds(struct CRGB *data, SPI &spi, int nLedsOrOffset, int nLedsIfOffset = 0)
+	static CLEDController &addLeds(struct CRGB *data, mbed::SPI &spi, int nLedsOrOffset, int nLedsIfOffset = 0)
 	{
 		switch (CHIPSET) {
 			// case LPD6803: {

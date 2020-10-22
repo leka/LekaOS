@@ -8,6 +8,8 @@
 
 // FASTLED_NAMESPACE_BEGIN
 
+using namespace mbed;
+
 void *pSmartMatrix = NULL;
 
 CFastLED FastLED;

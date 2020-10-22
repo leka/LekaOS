@@ -4,6 +4,9 @@
 
 #include "HelloWorld.h"
 
+using namespace mbed;
+using namespace std::chrono;
+
 HelloWorld::HelloWorld(void)
 {
 	// nothing to do

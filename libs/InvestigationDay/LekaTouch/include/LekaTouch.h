@@ -18,13 +18,11 @@
 
 #include "drivers/DigitalIn.h"
 #include "drivers/DigitalOut.h"
+#include "drivers/I2C.h"
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
 #include "MCP23017.h"
-
-using namespace mbed;
-using namespace std::chrono;
 
 class Touch
 {
@@ -42,11 +40,11 @@ class Touch
 	void updateSensorsStatus();
 
   private:
-	I2C _write_interface;
+	mbed::I2C _write_interface;
 	MCP23017 _read_interface;
-	DigitalOut _mux_reset;
-	DigitalIn _mux_inta;
-	DigitalIn _mux_intb;
+	mbed::DigitalOut _mux_reset;
+	mbed::DigitalIn _mux_inta;
+	mbed::DigitalIn _mux_intb;
 
 	bool _ear_left_touched;
 	bool _ear_right_touched;

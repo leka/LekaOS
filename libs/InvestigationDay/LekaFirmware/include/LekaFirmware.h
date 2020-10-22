@@ -16,9 +16,6 @@
 
 #include "IS25LP016D.h"
 
-using namespace mbed;
-using namespace std::chrono;
-
 typedef enum ext_flash_status
 {
 	EXTERNAL_FLASH_STATUS_ERROR				= 1, /**< Generic error >*/
@@ -47,11 +44,11 @@ class Firmware
 	void start(void);
 
   private:
-	QSPI _interface;
+	mbed::QSPI _interface;
 	uint8_t _selected_memory;
-	DigitalOut _disable_ext_memory_1;
-	DigitalOut _disable_ext_memory_2;
-	DigitalOut _disable_ext_memory_3;
+	mbed::DigitalOut _disable_ext_memory_1;
+	mbed::DigitalOut _disable_ext_memory_2;
+	mbed::DigitalOut _disable_ext_memory_3;
 };
 
 #endif

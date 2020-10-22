@@ -10,9 +10,6 @@
 #include "drivers/DigitalOut.h"
 #include "drivers/LowPowerTicker.h"
 
-using namespace mbed;
-using namespace std::chrono;
-
 ///
 /// @class HelloWorld
 /// @brief This class is used to for debugging purpose to make sure the program is still running
@@ -24,7 +21,7 @@ class HelloWorld
 	/// @brief Struct used to hold led pin & sleep time information
 	///
 	struct Data {
-		DigitalOut led;
+		mbed::DigitalOut led;
 		std::chrono::milliseconds sleepTime;
 	};
 
@@ -36,11 +33,11 @@ class HelloWorld
 	char const *world = "Hello, LekaOS!";
 
   private:
-	LowPowerTicker flipper1;
-	LowPowerTicker flipper2;
+	mbed::LowPowerTicker flipper1;
+	mbed::LowPowerTicker flipper2;
 
-	struct Data led1Data = {DigitalOut(LED1), 500ms};
-	struct Data led2Data = {DigitalOut(LED2), 1000ms};
+	struct Data led1Data = {mbed::DigitalOut(LED1), std::chrono::milliseconds(500)};
+	struct Data led2Data = {mbed::DigitalOut(LED2), std::chrono::milliseconds(1000)};
 
 	static void blink(Data *data);
 };	 // class HelloWorld
