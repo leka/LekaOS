@@ -7,6 +7,8 @@
 #include "HelloWorld.h"
 #include "LekaRfid.h"
 
+using namespace leka;
+
 HelloWorld hello;
 RFID leka_rfid;
 

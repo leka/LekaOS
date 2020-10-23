@@ -10,6 +10,8 @@
 #include "drivers/DigitalOut.h"
 #include "drivers/LowPowerTicker.h"
 
+namespace leka {
+
 ///
 /// @class HelloWorld
 /// @brief This class is used to for debugging purpose to make sure the program is still running
@@ -41,5 +43,7 @@ class HelloWorld
 
 	static void blink(Data *data);
 };	 // class HelloWorld
+
+}	// namespace leka
 
 #endif	 // _LEKA_OS_LIB_HELLOWORLD_H_

@@ -6,6 +6,8 @@
 
 #include "HelloWorld.h"
 
+using namespace leka;
+
 HelloWorld hello;
 
 static BufferedSerial serial(USBTX, USBRX, 9600);

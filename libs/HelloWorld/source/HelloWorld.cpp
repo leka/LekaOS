@@ -7,6 +7,8 @@
 using namespace mbed;
 using namespace std::chrono;
 
+namespace leka {
+
 HelloWorld::HelloWorld(void)
 {
 	// nothing to do
@@ -30,3 +32,5 @@ void HelloWorld::blink(Data *data)
 {
 	data->led = !data->led;
 }
+
+}	// namespace leka

@@ -7,6 +7,8 @@
 #include "HelloWorld.h"
 #include "LekaTouch.h"
 
+using namespace leka;
+
 HelloWorld hello;
 Touch leka_touch;
 

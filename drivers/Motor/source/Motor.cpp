@@ -4,6 +4,8 @@
 
 #include "Motor.h"
 
+namespace leka {
+
 using namespace mbed;
 
 Motor::Motor(DigitalOut &direction_1, DigitalOut &direction_2, PwmOut &speed)
@@ -29,3 +31,5 @@ void Motor::stop(void)
 {
 	spin(Rotation::clockwise, 0);
 }
+
+}	// namespace leka

@@ -10,6 +10,8 @@
 
 #include "MotorBase.h"
 
+namespace leka {
+
 class Motor : public MotorBase
 {
   public:
@@ -23,5 +25,7 @@ class Motor : public MotorBase
 	mbed::DigitalOut &_direction_2;
 	mbed::PwmOut &_speed;
 };
+
+}	// namespace leka
 
 #endif	 // _LEKA_OS_LIB_MOTOR_H_

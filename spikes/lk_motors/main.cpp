@@ -9,6 +9,8 @@
 #include "HelloWorld.h"
 #include "Motor.h"
 
+using namespace leka;
+
 HelloWorld hello;
 
 DigitalOut motor_right_dir_1(PE_4);
