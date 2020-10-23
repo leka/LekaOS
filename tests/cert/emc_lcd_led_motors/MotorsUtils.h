@@ -7,6 +7,8 @@
 
 #include "Motor.h"
 
+using namespace leka;
+
 DigitalOut motor_right_dir_1(PE_4);
 DigitalOut motor_right_dir_2(PE_5);
 PwmOut motor_right_speed(PA_2);

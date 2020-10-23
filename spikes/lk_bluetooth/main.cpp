@@ -7,6 +7,8 @@
 #include "HelloWorld.h"
 #include "LekaBluetooth.h"
 
+using namespace leka;
+
 HelloWorld hello;
 Bluetooth leka_bluetooth;
 

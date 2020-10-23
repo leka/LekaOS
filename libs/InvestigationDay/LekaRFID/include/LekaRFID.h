@@ -13,9 +13,6 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
-using namespace mbed;
-using namespace std::chrono;
-
 class RFID
 {
   public:
@@ -37,7 +34,7 @@ class RFID
 	void sendReceive3();
 
   private:
-	BufferedSerial _interface;
+	mbed::BufferedSerial _interface;
 
 	const uint8_t _echo_cmd[1]					= {0x55};
 	const uint8_t _echo_cmd_length				= 1;

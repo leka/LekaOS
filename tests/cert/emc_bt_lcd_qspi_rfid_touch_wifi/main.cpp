@@ -12,6 +12,8 @@
 #include "LekaTouch.h"
 #include "LekaWifi.h"
 
+using namespace leka;
+
 HelloWorld hello;
 Bluetooth leka_bluetooth;
 Firmware leka_firmware;

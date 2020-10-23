@@ -10,6 +10,9 @@
 
 #include "LekaScreen.h"
 
+using namespace mbed;
+using namespace std::chrono;
+
 Screen::Screen() : _brightness(SCREEN_BACKLIGHT_PWM)
 {
 	_brightness.period(0.01f);	 // Set PWM at 1/(0.01 seconds) = 100Hz

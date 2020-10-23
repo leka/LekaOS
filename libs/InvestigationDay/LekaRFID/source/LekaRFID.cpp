@@ -4,6 +4,9 @@
 
 #include "LekaRFID.h"
 
+using namespace mbed;
+using namespace std::chrono;
+
 RFID::RFID() : _interface(RFID_UART_TX, RFID_UART_RX, 57600) {}
 
 bool RFID::echo()

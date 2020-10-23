@@ -4,6 +4,9 @@
 
 #include "LekaBluetooth.h"
 
+using namespace mbed;
+using namespace std::chrono;
+
 Bluetooth::Bluetooth()
 	: _interface(BT_UART_TX, BT_UART_RX, 115200), _bluetooth_reset(BT_RESET), _bluetooth_wake_up(BT_WAKE_UP)
 {

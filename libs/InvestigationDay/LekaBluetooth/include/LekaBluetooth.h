@@ -16,9 +16,6 @@
 
 #include "BM64Converter.h"
 
-using namespace mbed;
-using namespace std::chrono;
-
 class Bluetooth
 {
   public:
@@ -32,9 +29,9 @@ class Bluetooth
 	// void converse();
 
   private:
-	BufferedSerial _interface;
-	DigitalOut _bluetooth_reset;
-	DigitalOut _bluetooth_wake_up;
+	mbed::BufferedSerial _interface;
+	mbed::DigitalOut _bluetooth_reset;
+	mbed::DigitalOut _bluetooth_wake_up;
 
 	uint8_t _buffer[24]		= {0};
 	uint16_t _buffer_length = 0;

@@ -10,20 +10,22 @@
 
 #include "MotorBase.h"
 
-using namespace mbed;
+namespace leka {
 
 class Motor : public MotorBase
 {
   public:
-	Motor(DigitalOut &direction_1, DigitalOut &direction_2, PwmOut &speed);
+	Motor(mbed::DigitalOut &direction_1, mbed::DigitalOut &direction_2, mbed::PwmOut &speed);
 
 	void spin(rotation_t rotation, float speed);
 	void stop(void);
 
   private:
-	DigitalOut &_direction_1;
-	DigitalOut &_direction_2;
-	PwmOut &_speed;
+	mbed::DigitalOut &_direction_1;
+	mbed::DigitalOut &_direction_2;
+	mbed::PwmOut &_speed;
 };
+
+}	// namespace leka
 
 #endif	 // _LEKA_OS_LIB_MOTOR_H_

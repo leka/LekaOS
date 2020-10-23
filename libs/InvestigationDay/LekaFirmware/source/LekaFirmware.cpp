@@ -8,6 +8,9 @@
 
 #include "LekaFirmware.h"
 
+using namespace mbed;
+using namespace std::chrono;
+
 Firmware::Firmware()
 	: _interface(QSPI_FLASH_IO0, QSPI_FLASH_IO1, QSPI_FLASH_IO2, QSPI_FLASH_IO3, QSPI_FLASH_CLK, QSPI_FLASH_nCS),
 	  _disable_ext_memory_1(QSPI_FLASH_nCS_1, 1),

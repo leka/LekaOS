@@ -7,6 +7,8 @@
 #include "HelloWorld.h"
 #include "LekaScreen.h"
 
+using namespace leka;
+
 HelloWorld hello;
 Screen leka_screen;
 

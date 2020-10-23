@@ -7,6 +7,8 @@
 #include "HelloWorld.h"
 #include "LekaFirmware.h"
 
+using namespace leka;
+
 HelloWorld hello;
 Firmware leka_firmware;
 

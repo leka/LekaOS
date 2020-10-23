@@ -18,9 +18,6 @@
 
 #include "LekaLCD.h"
 
-using namespace mbed;
-using namespace std::chrono;
-
 class Screen
 {
   public:
@@ -30,7 +27,7 @@ class Screen
 	void start(void);
 
   private:
-	PwmOut _brightness;
+	mbed::PwmOut _brightness;
 	LekaLCD _lcd;
 };
 

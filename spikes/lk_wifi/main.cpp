@@ -7,6 +7,8 @@
 #include "HelloWorld.h"
 #include "LekaWifi.h"
 
+using namespace leka;
+
 HelloWorld hello;
 Wifi leka_wifi;
 

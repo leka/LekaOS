@@ -10,6 +10,9 @@
 
 #include "LekaTouch.h"
 
+using namespace mbed;
+using namespace std::chrono;
+
 Touch::Touch()
 	: _write_interface(SENSOR_PROXIMITY_MUX_I2C_SDA, SENSOR_PROXIMITY_MUX_I2C_SCL),
 	  _read_interface(SENSOR_PROXIMITY_MUX_I2C_SDA, SENSOR_PROXIMITY_MUX_I2C_SCL, 0x4E),
