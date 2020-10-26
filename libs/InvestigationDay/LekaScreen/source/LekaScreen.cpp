@@ -945,7 +945,7 @@ int HAL_error_status  = 0;
 void Screen::showFace(bool jpeg_file)
 {
 	if (jpeg_file) {
-		static char filename[] = "image.jpg";
+		static char filename[] = "assets/images/emotion-happy.jpg";
 		// static char filename[] = "video.avi";
 		FIL JPEG_File; /* File object */
 
@@ -1298,3 +1298,274 @@ void Screen::DMA2_Stream4_IRQHandler(void)
 {
 	HAL_DMA_IRQHandler(_hjpeg.hdmaout);
 }
+
+void HAL_JPEG_MspInit(JPEG_HandleTypeDef *hjpeg)
+{
+	static DMA_HandleTypeDef hdmaIn;
+	static DMA_HandleTypeDef hdmaOut;
+
+	/* Enable JPEG clock */
+	__HAL_RCC_JPEG_CLK_ENABLE();
+
+	/* Enable DMA clock */
+	__HAL_RCC_DMA2_CLK_ENABLE();
+
+	HAL_NVIC_SetPriority(JPEG_IRQn, 0x06, 0x0F);
+	HAL_NVIC_EnableIRQ(JPEG_IRQn);
+
+	/* Input DMA */
+	/* Set the parameters to be configured */
+	hdmaIn.Init.Channel				= DMA_CHANNEL_9;
+	hdmaIn.Init.Direction			= DMA_MEMORY_TO_PERIPH;
+	hdmaIn.Init.PeriphInc			= DMA_PINC_DISABLE;
+	hdmaIn.Init.MemInc				= DMA_MINC_ENABLE;
+	hdmaIn.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+	hdmaIn.Init.MemDataAlignment	= DMA_MDATAALIGN_WORD;
+	hdmaIn.Init.Mode				= DMA_NORMAL;
+	hdmaIn.Init.Priority			= DMA_PRIORITY_HIGH;
+	hdmaIn.Init.FIFOMode			= DMA_FIFOMODE_ENABLE;
+	hdmaIn.Init.FIFOThreshold		= DMA_FIFO_THRESHOLD_FULL;
+	hdmaIn.Init.MemBurst			= DMA_MBURST_INC4;
+	hdmaIn.Init.PeriphBurst			= DMA_PBURST_INC4;
+
+	hdmaIn.Instance = DMA2_Stream3;
+
+	/* Associate the DMA handle */
+	__HAL_LINKDMA(hjpeg, hdmain, hdmaIn);
+
+	HAL_NVIC_SetPriority(DMA2_Stream3_IRQn, 0x07, 0x0F);
+	HAL_NVIC_EnableIRQ(DMA2_Stream3_IRQn);
+
+	/* DeInitialize the DMA Stream */
+	HAL_DMA_DeInit(&hdmaIn);
+	/* Initialize the DMA stream */
+	HAL_DMA_Init(&hdmaIn);
+
+	/* Output DMA */
+	/* Set the parameters to be configured */
+	hdmaOut.Init.Channel			 = DMA_CHANNEL_9;
+	hdmaOut.Init.Direction			 = DMA_PERIPH_TO_MEMORY;
+	hdmaOut.Init.PeriphInc			 = DMA_PINC_DISABLE;
+	hdmaOut.Init.MemInc				 = DMA_MINC_ENABLE;
+	hdmaOut.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+	hdmaOut.Init.MemDataAlignment	 = DMA_MDATAALIGN_WORD;
+	hdmaOut.Init.Mode				 = DMA_NORMAL;
+	hdmaOut.Init.Priority			 = DMA_PRIORITY_VERY_HIGH;
+	hdmaOut.Init.FIFOMode			 = DMA_FIFOMODE_ENABLE;
+	hdmaOut.Init.FIFOThreshold		 = DMA_FIFO_THRESHOLD_FULL;
+	hdmaOut.Init.MemBurst			 = DMA_MBURST_INC4;
+	hdmaOut.Init.PeriphBurst		 = DMA_PBURST_INC4;
+
+	hdmaOut.Instance = DMA2_Stream4;
+	/* DeInitialize the DMA Stream */
+	HAL_DMA_DeInit(&hdmaOut);
+	/* Initialize the DMA stream */
+	HAL_DMA_Init(&hdmaOut);
+
+	/* Associate the DMA handle */
+	__HAL_LINKDMA(hjpeg, hdmaout, hdmaOut);
+
+	HAL_NVIC_SetPriority(DMA2_Stream4_IRQn, 0x07, 0x0F);
+	HAL_NVIC_EnableIRQ(DMA2_Stream4_IRQn);
+}
+
+void HAL_JPEG_MspDeInit(JPEG_HandleTypeDef *hjpeg)
+{
+	HAL_NVIC_DisableIRQ(DMA2_Stream4_IRQn);
+
+	/* DeInitialize the MDMA Stream */
+	HAL_DMA_DeInit(hjpeg->hdmain);
+
+	/* DeInitialize the MDMA Stream */
+	HAL_DMA_DeInit(hjpeg->hdmaout);
+}
+
+#define VECT_TAB_OFFSET 0x00
+
+void SystemInit(void)
+{
+	/* FPU settings ------------------------------------------------------------*/
+#if (__FPU_PRESENT == 1) && (__FPU_USED == 1)
+	SCB->CPACR |= ((3UL << 10 * 2) | (3UL << 11 * 2)); /* set CP10 and CP11 Full Access */
+#endif
+	/* Reset the RCC clock configuration to the default reset state ------------*/
+	/* Set HSION bit */
+	RCC->CR |= (uint32_t)0x00000001;
+
+	/* Reset CFGR register */
+	RCC->CFGR = 0x00000000;
+
+	/* Reset HSEON, CSSON and PLLON bits */
+	RCC->CR &= (uint32_t)0xFEF6FFFF;
+
+	/* Reset PLLCFGR register */
+	RCC->PLLCFGR = 0x24003010;
+
+	/* Reset HSEBYP bit */
+	RCC->CR &= (uint32_t)0xFFFBFFFF;
+
+	/* Disable all interrupts */
+	RCC->CIR = 0x00000000;
+
+#if defined(DATA_IN_ExtSDRAM)
+	SystemInit_ExtMemCtl();
+#endif /* DATA_IN_ExtSDRAM */
+
+	/* Configure the Vector Table location add offset address ------------------*/
+#ifdef VECT_TAB_SRAM
+	SCB->VTOR = SRAM1_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal SRAM */
+#else
+	SCB->VTOR						   = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
+#endif
+}
+
+#if defined(DATA_IN_ExtSDRAM)
+static void SystemInit_ExtMemCtl(void);
+#endif /* DATA_IN_ExtSDRAM */
+
+#if defined(DATA_IN_ExtSDRAM)
+/**
+ * @brief  Setup the external memory controller.
+ *         Called in startup_stm32f7xx.s before jump to main.
+ *         This function configures the external memories (SDRAM)
+ *         This SDRAM will be used as program data memory (including heap and stack).
+ * @param  None
+ * @retval None
+ */
+void SystemInit_ExtMemCtl(void)
+{
+	register uint32_t tmpreg = 0, timeout = 0xFFFF;
+	register __IO uint32_t index;
+
+	/* Enable GPIOD, GPIOE, GPIOF, GPIOG, GPIOH and GPIOI interface
+	clock */
+	RCC->AHB1ENR |= 0x000001F8;
+
+	/* Connect PDx pins to FMC Alternate function */
+	GPIOD->AFR[0] = 0x000000CC;
+	GPIOD->AFR[1] = 0xCC000CCC;
+	/* Configure PDx pins in Alternate function mode */
+	GPIOD->MODER = 0xA02A000A;
+	/* Configure PDx pins speed to 100 MHz */
+	GPIOD->OSPEEDR = 0xF03F000F;
+	/* Configure PDx pins Output type to push-pull */
+	GPIOD->OTYPER = 0x00000000;
+	/* No pull-up, pull-down for PDx pins */
+	GPIOD->PUPDR = 0x50150005;
+
+	/* Connect PEx pins to FMC Alternate function */
+	GPIOE->AFR[0] = 0xC00000CC;
+	GPIOE->AFR[1] = 0xCCCCCCCC;
+	/* Configure PEx pins in Alternate function mode */
+	GPIOE->MODER = 0xAAAA800A;
+	/* Configure PEx pins speed to 100 MHz */
+	GPIOE->OSPEEDR = 0xFFFFC00F;
+	/* Configure PEx pins Output type to push-pull */
+	GPIOE->OTYPER = 0x00000000;
+	/* No pull-up, pull-down for PEx pins */
+	GPIOE->PUPDR = 0x55554005;
+
+	/* Connect PFx pins to FMC Alternate function */
+	GPIOF->AFR[0] = 0x00CCCCCC;
+	GPIOF->AFR[1] = 0xCCCCC000;
+	/* Configure PFx pins in Alternate function mode */
+	GPIOF->MODER = 0xAA800AAA;
+	/* Configure PFx pins speed to 100 MHz */
+	GPIOF->OSPEEDR = 0xFFC00FFF;
+	/* Configure PFx pins Output type to push-pull */
+	GPIOF->OTYPER = 0x00000000;
+	/* No pull-up, pull-down for PFx pins */
+	GPIOF->PUPDR = 0x55400555;
+
+	/* Connect PGx pins to FMC Alternate function */
+	GPIOG->AFR[0] = 0x00CC0CCC;
+	GPIOG->AFR[1] = 0xC000000C;
+	/* Configure PGx pins in Alternate function mode */
+	GPIOG->MODER = 0x80020A2A;
+	/* Configure PGx pins speed to 100 MHz */
+	GPIOG->OSPEEDR = 0xC0030F3F;
+	/* Configure PGx pins Output type to push-pull */
+	GPIOG->OTYPER = 0x00000000;
+	/* No pull-up, pull-down for PGx pins */
+	GPIOG->PUPDR = 0x40010515;
+
+	/* Connect PHx pins to FMC Alternate function */
+	GPIOH->AFR[0] = 0x00C0CC00;
+	GPIOH->AFR[1] = 0xCCCCCCCC;
+	/* Configure PHx pins in Alternate function mode */
+	GPIOH->MODER = 0xAAAA08A0;
+	/* Configure PHx pins speed to 100 MHz */
+	GPIOH->OSPEEDR = 0xFFFF0CF0;
+	/* Configure PHx pins Output type to push-pull */
+	GPIOH->OTYPER = 0x00000000;
+	/* No pull-up, pull-down for PHx pins */
+	GPIOH->PUPDR = 0x55550450;
+
+	/* Connect PIx pins to FMC Alternate function */
+	GPIOI->AFR[0] = 0xCCCCCCCC;
+	GPIOI->AFR[1] = 0x00000CC0;
+	/* Configure PIx pins in Alternate function mode */
+	GPIOI->MODER = 0x0028AAAA;
+	/* Configure PIx pins speed to 100 MHz */
+	GPIOI->OSPEEDR = 0x003CFFFF;
+	/* Configure PIx pins Output type to push-pull */
+	GPIOI->OTYPER = 0x00000000;
+	/* No pull-up, pull-down for PIx pins */
+	GPIOI->PUPDR = 0x00145555;
+
+	/* Enable the FMC interface clock */
+	RCC->AHB3ENR |= 0x00000001;
+
+	/* Configure and enable SDRAM bank1 */
+	FMC_Bank5_6->SDCR[0] = 0x000019E4;
+	FMC_Bank5_6->SDTR[0] = 0x01116361;
+
+	/* SDRAM initialization sequence */
+	/* Clock enable command */
+	FMC_Bank5_6->SDCMR = 0x00000011;
+	tmpreg			   = FMC_Bank5_6->SDSR & 0x00000020;
+	while ((tmpreg != 0) && (timeout-- > 0)) {
+		tmpreg = FMC_Bank5_6->SDSR & 0x00000020;
+	}
+
+	/* Delay */
+	for (index = 0; index < 1000; index++)
+		;
+
+	/* PALL command */
+	FMC_Bank5_6->SDCMR = 0x00000012;
+	timeout			   = 0xFFFF;
+	while ((tmpreg != 0) && (timeout-- > 0)) {
+		tmpreg = FMC_Bank5_6->SDSR & 0x00000020;
+	}
+
+	/* Auto refresh command */
+	FMC_Bank5_6->SDCMR = 0x000000F3;
+	timeout			   = 0xFFFF;
+	while ((tmpreg != 0) && (timeout-- > 0)) {
+		tmpreg = FMC_Bank5_6->SDSR & 0x00000020;
+	}
+
+	/* MRD register program */
+	FMC_Bank5_6->SDCMR = 0x00046014;
+	timeout			   = 0xFFFF;
+	while ((tmpreg != 0) && (timeout-- > 0)) {
+		tmpreg = FMC_Bank5_6->SDSR & 0x00000020;
+	}
+
+	/* Set refresh count */
+	tmpreg			   = FMC_Bank5_6->SDRTR;
+	FMC_Bank5_6->SDRTR = (tmpreg | (0x00000603 << 1));
+
+	/* Disable write protection */
+	tmpreg				 = FMC_Bank5_6->SDCR[0];
+	FMC_Bank5_6->SDCR[0] = (tmpreg & 0xFFFFFDFF);
+
+	/*
+	 * Disable the FMC bank1 (enabled after reset).
+	 * This, prevents CPU speculation access on this bank which blocks the use of FMC during
+	 * 24us. During this time the others FMC master (such as LTDC) cannot use it!
+	 */
+	FMC_Bank1->BTCR[0] = 0x000030d2;
+}
+#endif /* DATA_IN_ExtSDRAM */
