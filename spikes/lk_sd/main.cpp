@@ -27,9 +27,15 @@ int main(void)
 
 	hello.start();
 
-	leka_sd.showRootDirectory();
-	uint32_t size = leka_sd.getFileSize("assets/images/emotion-happy.jpg");
-	printf("File size is %ld\n", size);
+	FIL file;
+	const char filename[] = "assets/images/emotion-happy.jpg";
+
+	if (f_open(&file, filename, FA_READ) == FR_OK) {
+		// Files can be opened from anywhere as long as leka_sd is called.
+		printf("File %s openened. File size : %lu bytes\n", filename, f_size(&file));
+
+		f_close(&file);
+	}
 
 	while (true) {
 		auto t = Kernel::Clock::now() - start;
