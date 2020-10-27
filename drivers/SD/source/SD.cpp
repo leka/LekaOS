@@ -8,9 +8,45 @@ namespace leka {
 
 using namespace mbed;
 
-SD::SD()
+SD::SD() : _block_interface(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK), _file_interface("fs")
 {
-	// nothing to do
+	_block_interface.init();
+	_block_interface.frequency(5000000);
+
+	_file_interface.mount(&_block_interface);
+}
+
+uint32_t SD::getFileSize(const char *filename)
+{
+	FIL file;
+	uint32_t file_size = 0;
+
+	if (f_open(&file, filename, FA_READ) == FR_OK) {
+		file_size = f_size(&file);
+
+		f_close(&file);
+	}
+
+	return file_size;
+}
+
+void SD::showRootDirectory()
+{
+	DIR *dir;
+	struct dirent *p;
+
+	dir = opendir("/fs");
+	if (dir != NULL) {
+		printf("At root of SD card:\n");
+		while ((p = readdir(dir)) != NULL) {
+			printf(" - %s\n", p->d_name);
+		}
+	} else {
+		printf("Could not open directory!\n");
+	}
+	closedir(dir);
+
+	return;
 }
 
 }	// namespace leka

@@ -27,6 +27,10 @@ int main(void)
 
 	hello.start();
 
+	leka_sd.showRootDirectory();
+	uint32_t size = leka_sd.getFileSize("assets/images/emotion-happy.jpg");
+	printf("File size is %ld\n", size);
+
 	while (true) {
 		auto t = Kernel::Clock::now() - start;
 
