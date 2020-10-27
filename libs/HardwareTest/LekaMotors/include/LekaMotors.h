@@ -17,6 +17,8 @@
 #include "MotorBase.h"
 #include "TwoMotorsBase.h"
 
+namespace leka {
+
 class Motors : TwoMotorsBase
 {
   public:
@@ -31,5 +33,7 @@ class Motors : TwoMotorsBase
 	MotorBase &_motor_right;
 	MotorBase &_motor_left;
 };
+
+}	// namespace leka
 
 #endif

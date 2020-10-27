@@ -10,6 +10,8 @@
 #include "LekaMotors.h"
 #include "Motor.h"
 
+using namespace leka;
+
 DigitalOut motor_right_dir_1(MOTOR_RIGHT_DIRECTION_1);
 DigitalOut motor_right_dir_2(MOTOR_RIGHT_DIRECTION_2);
 PwmOut motor_right_speed(MOTOR_RIGHT_PWM);

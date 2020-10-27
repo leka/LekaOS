@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_LIB_TWO_MOTORS_BASE_H_
 #define _LEKA_OS_LIB_TWO_MOTORS_BASE_H_
 
+namespace leka {
+
 enum class Direction
 {
 	forward,
@@ -20,5 +22,7 @@ class TwoMotorsBase
 	virtual void spin(rotation_t rotation, uint8_t speed)	= 0;
 	virtual void stop(void)									= 0;
 };
+
+}	// namespace leka
 
 #endif	 // _LEKA_OS_LIB_TWO_MOTORS_BASE_H_

@@ -4,6 +4,8 @@
 
 #include "LekaMotors.h"
 
+namespace leka {
+
 using namespace mbed;
 
 Motors::Motors(MotorBase &motor_right, MotorBase &motor_left) : _motor_right(motor_right), _motor_left(motor_left)
@@ -42,3 +44,5 @@ void Motors::stop(void)
 	_motor_right.stop();
 	_motor_left.stop();
 }
+
+}	// namespace leka
