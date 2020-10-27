@@ -45,7 +45,8 @@
 			"CORDIO"
 		],
 		"components_add": [
-			"BlueNRG_MS"
+			"BlueNRG_MS",
+			"SD"
 		],
 		"supported_form_factors": [],
 		"features": [

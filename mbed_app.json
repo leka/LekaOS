@@ -13,7 +13,11 @@
 			"bluenrg_ms.SPI_MISO": "BLE_SPI_MISO",
 			"bluenrg_ms.SPI_MOSI": "BLE_SPI_MOSI",
 			"bluenrg_ms.SPI_nCS": "BLE_SPI_NSS",
-			"bluenrg_ms.SPI_SCK": "BLE_SPI_SCK"
+			"bluenrg_ms.SPI_SCK": "BLE_SPI_SCK",
+			"sd.SPI_MOSI" : "PA_7",
+			"sd.SPI_MISO" : "PA_6",
+			"sd.SPI_CLK" : "PA_5",
+			"sd.SPI_CS" : "PC_4"
 		}
 	}
 }
