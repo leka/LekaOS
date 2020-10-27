@@ -52,6 +52,7 @@ add_subdirectory(${ROOT_DIR}/src)
 # If you use spikes to test features, you can add them here
 add_subdirectory(${SPIKES_DIR}/mbed_blinky)
 add_subdirectory(${SPIKES_DIR}/mbed_watchdog)
+add_subdirectory(${SPIKES_DIR}/mbed_watchdog_ticker_vs_thread)
 
 add_subdirectory(${SPIKES_DIR}/lk_ble)
 add_subdirectory(${SPIKES_DIR}/lk_lcd)
@@ -63,8 +64,8 @@ add_subdirectory(${SPIKES_DIR}/lk_motors)
 add_subdirectory(${SPIKES_DIR}/lk_bluetooth)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_touch)
 
-add_custom_target(spikes)
-add_dependencies( spikes
+add_custom_target(spikes_leka)
+add_dependencies( spikes_leka
 	spike_lk_ble
 	spike_lk_lcd
 	spike_lk_led
@@ -74,6 +75,13 @@ add_dependencies( spikes
 	spike_lk_motors
 	spike_lk_bluetooth
 	spike_lk_sensors_touch
+)
+
+add_custom_target(spikes_mbed)
+add_dependencies( spikes_mbed
+	spike_mbed_blinky
+	spike_mbed_watchdog
+	spike_mbed_watchdog_ticker_vs_thread
 )
 
 add_subdirectory(${ROOT_DIR}/tests/cert/emc_ble_led_motors)
