@@ -272,6 +272,8 @@ typedef enum
 	LED3 = PB_13,	// LED_EARS_SPI_SCK
 	LED4 = PB_15,	// LED_EARS_SPI_MOSI
 
+	USER_BUTTON = (int)0xFFFFFFFF,
+
 	/**** USB FS pins ****/
 	USB_OTG_FS_DM	= PA_11,
 	USB_OTG_FS_DP	= PA_12,
