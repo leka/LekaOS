@@ -2,18 +2,18 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_SD_H_
-#define _LEKA_OS_LIB_SD_H_
+#ifndef _LEKA_OS_LIB_FILEMANAGER_H_
+#define _LEKA_OS_LIB_FILEMANAGER_H_
 
 #include "FATFileSystem.h"
 #include "SDBlockDevice.h"
 
 namespace leka {
 
-class SD
+class FileManager
 {
   public:
-	SD();
+	FileManager();
 
 	uint32_t getFileSize(const char *filename);
 	void showRootDirectory();
@@ -25,4 +25,4 @@ class SD
 
 }	// namespace leka
 
-#endif	 // _LEKA_OS_LIB_SD_H_
+#endif	 // _LEKA_OS_LIB_FILEMANAGER_H_

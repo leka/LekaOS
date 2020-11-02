@@ -4,13 +4,13 @@
 
 #include "mbed.h"
 
+#include "FileManager.h"
 #include "HelloWorld.h"
-#include "SD.h"
 
 using namespace leka;
 
 HelloWorld hello;
-SD leka_sd;
+FileManager leka_sd;
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 

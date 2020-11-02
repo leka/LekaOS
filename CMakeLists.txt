@@ -31,7 +31,7 @@ add_target_board_subdirectory("${TARGET_BOARD}")
 # Add drivers
 add_subdirectory(${DRIVERS_DIR}/FastLED)
 add_subdirectory(${DRIVERS_DIR}/Motor)
-add_subdirectory(${DRIVERS_DIR}/SD)
+add_subdirectory(${DRIVERS_DIR}/FileManager)
 
 # Add libraries
 add_subdirectory(${LIBS_DIR}/HelloWorld)

@@ -14,7 +14,7 @@ target_include_directories(spike_lk_sd
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_link_libraries(spike_lk_sd driver_SD)
+target_link_libraries(spike_lk_sd driver_file_manager)
 target_link_libraries(spike_lk_sd lib_HelloWorld)
 
 target_link_target_board_libraries(spike_lk_sd DISCO_ORIGINAL LEKA_V1_0_DEV)

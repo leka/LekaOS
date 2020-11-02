@@ -2,13 +2,13 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "SD.h"
+#include "FileManager.h"
 
 namespace leka {
 
 using namespace mbed;
 
-SD::SD() : _block_interface(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK), _file_interface("fs")
+FileManager::FileManager() : _block_interface(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK), _file_interface("fs")
 {
 	_block_interface.init();
 	_block_interface.frequency(5000000);
@@ -16,7 +16,7 @@ SD::SD() : _block_interface(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK), _file_interfa
 	_file_interface.mount(&_block_interface);
 }
 
-uint32_t SD::getFileSize(const char *filename)
+uint32_t FileManager::getFileSize(const char *filename)
 {
 	FIL file;
 	uint32_t file_size = 0;
@@ -30,7 +30,7 @@ uint32_t SD::getFileSize(const char *filename)
 	return file_size;
 }
 
-void SD::showRootDirectory()
+void FileManager::showRootDirectory()
 {
 	DIR *dir;
 	struct dirent *p;
