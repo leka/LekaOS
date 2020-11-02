@@ -16,7 +16,8 @@ class FileManager
 	FileManager();
 
 	uint32_t getFileSize(const char *filename);
-	void showRootDirectory();
+
+	void testWorkingToRemove();
 
   private:
 	SDBlockDevice _bd;

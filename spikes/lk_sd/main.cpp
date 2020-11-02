@@ -27,6 +27,8 @@ int main(void)
 
 	hello.start();
 
+	leka_sd.testWorkingToRemove();
+
 	FIL file;
 	const char filename[] = "assets/images/emotion-happy.jpg";
 

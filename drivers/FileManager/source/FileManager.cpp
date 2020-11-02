@@ -30,7 +30,7 @@ uint32_t FileManager::getFileSize(const char *filename)
 	return file_size;
 }
 
-void FileManager::showRootDirectory()
+void FileManager::testWorkingToRemove()
 {
 	DIR *dir;
 	struct dirent *p;
