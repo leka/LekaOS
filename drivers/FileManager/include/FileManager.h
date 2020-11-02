@@ -15,13 +15,16 @@ class FileManager
   public:
 	FileManager();
 
-	uint32_t getFileSize(const char *filename);
+	bool open(const char *filename);
+	bool close();
+	uint32_t getFileSize();
 
 	void testWorkingToRemove();
 
   private:
 	SDBlockDevice _bd;
 	FATFileSystem _fs;
+	FIL _file;
 };
 
 }	// namespace leka

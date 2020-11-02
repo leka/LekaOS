@@ -16,15 +16,34 @@ FileManager::FileManager() : _bd(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK), _fs("fs"
 	_fs.mount(&_bd);
 }
 
-uint32_t FileManager::getFileSize(const char *filename)
+bool FileManager::open(const char *filename)
 {
-	FIL file;
+	bool file_opened = false;
+
+	if (f_open(&_file, filename, FA_READ) == FR_OK) {
+		file_opened = true;
+	}
+
+	return file_opened;
+}
+
+bool FileManager::close()
+{
+	bool file_closed = false;
+
+	if (f_close(&_file) == FR_OK) {
+		file_closed = true;
+	}
+
+	return file_closed;
+}
+
+uint32_t FileManager::getFileSize()
+{
 	uint32_t file_size = 0;
 
-	if (f_open(&file, filename, FA_READ) == FR_OK) {
-		file_size = f_size(&file);
-
-		f_close(&file);
+	if (_file.obj.fs != NULL) {
+		file_size = f_size(&_file);
 	}
 
 	return file_size;

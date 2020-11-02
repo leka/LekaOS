@@ -29,15 +29,12 @@ int main(void)
 
 	leka_sd.testWorkingToRemove();
 
-	FIL file;
 	const char filename[] = "assets/images/emotion-happy.jpg";
 
-	if (f_open(&file, filename, FA_READ) == FR_OK) {
-		// Files can be opened from anywhere as long as leka_sd is called.
-		printf("File %s openened. File size : %lu bytes\n", filename, f_size(&file));
-
-		f_close(&file);
-	}
+	leka_sd.open(filename);
+	uint32_t file_size = leka_sd.getFileSize();
+	printf("File %s openened. File size : %lu bytes\n", filename, file_size);
+	leka_sd.close();
 
 	while (true) {
 		auto t = Kernel::Clock::now() - start;
