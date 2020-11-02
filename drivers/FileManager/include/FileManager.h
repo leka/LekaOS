@@ -19,8 +19,8 @@ class FileManager
 	void showRootDirectory();
 
   private:
-	SDBlockDevice _block_interface;
-	FATFileSystem _file_interface;
+	SDBlockDevice _bd;
+	FATFileSystem _fs;
 };
 
 }	// namespace leka

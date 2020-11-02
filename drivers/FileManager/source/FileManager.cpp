@@ -8,12 +8,12 @@ namespace leka {
 
 using namespace mbed;
 
-FileManager::FileManager() : _block_interface(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK), _file_interface("fs")
+FileManager::FileManager() : _bd(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK), _fs("fs")
 {
-	_block_interface.init();
-	_block_interface.frequency(5000000);
+	_bd.init();
+	_bd.frequency(5000000);
 
-	_file_interface.mount(&_block_interface);
+	_fs.mount(&_bd);
 }
 
 uint32_t FileManager::getFileSize(const char *filename)
