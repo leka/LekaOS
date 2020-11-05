@@ -32,8 +32,10 @@ add_target_board_subdirectory("${TARGET_BOARD}")
 add_subdirectory(${DRIVERS_DIR}/FastLED)
 add_subdirectory(${DRIVERS_DIR}/Motor)
 
+
 # Add libraries
 add_subdirectory(${LIBS_DIR}/HelloWorld)
+add_subdirectory(${LIBS_DIR}/FileManager)
 
 add_subdirectory(${LIBS_DIR}/InvestigationDay/BLE)
 
@@ -62,6 +64,7 @@ add_subdirectory(${SPIKES_DIR}/lk_rfid)
 add_subdirectory(${SPIKES_DIR}/lk_wifi)
 add_subdirectory(${SPIKES_DIR}/lk_motors)
 add_subdirectory(${SPIKES_DIR}/lk_bluetooth)
+add_subdirectory(${SPIKES_DIR}/lk_file_manager)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_touch)
 
 add_custom_target(spikes_leka)
@@ -74,6 +77,7 @@ add_dependencies( spikes_leka
 	spike_lk_wifi
 	spike_lk_motors
 	spike_lk_bluetooth
+	spike_lk_file_manager
 	spike_lk_sensors_touch
 )
 
