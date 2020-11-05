@@ -9,13 +9,13 @@
 ///@{
 
 // X(n+1) = (2053 * X(n)) + 13849)
-#define FASTLED_RAND16_2053 ((uint16_t)(2053))
+#define FASTLED_RAND16_2053	 ((uint16_t)(2053))
 #define FASTLED_RAND16_13849 ((uint16_t)(13849))
 
 #if defined(LIB8_ATTINY)
-#define APPLY_FASTLED_RAND16_2053(x) (x << 11) + (x << 2) + x
+	#define APPLY_FASTLED_RAND16_2053(x) (x << 11) + (x << 2) + x
 #else
-#define APPLY_FASTLED_RAND16_2053(x) (x * FASTLED_RAND16_2053)
+	#define APPLY_FASTLED_RAND16_2053(x) (x * FASTLED_RAND16_2053)
 #endif
 
 /// random number seed

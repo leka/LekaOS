@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #if !DEVICE_QSPI
-#error[NOT_SUPPORTED] QSPI not supported for this target
+	#error[NOT_SUPPORTED] QSPI not supported for this target
 #endif
 
 #include "LekaFirmware.h"

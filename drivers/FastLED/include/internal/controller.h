@@ -13,7 +13,7 @@
 
 // FASTLED_NAMESPACE_BEGIN
 
-#define RO(X) RGB_BYTE(RGB_ORDER, X)
+#define RO(X)			RGB_BYTE(RGB_ORDER, X)
 #define RGB_BYTE(RO, X) (((RO) >> (3 * (2 - (X)))) & 0x3)
 
 #define RGB_BYTE0(RO) ((RO >> 6) & 0x3)
@@ -23,7 +23,7 @@
 // operator byte *(struct CRGB[] arr) { return (byte*)arr; }
 
 #define DISABLE_DITHER 0x00
-#define BINARY_DITHER 0x01
+#define BINARY_DITHER  0x01
 typedef uint8_t EDitherMode;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -273,27 +273,27 @@ struct PixelController {
 	{
 #if !defined(NO_DITHERING) || (NO_DITHERING != 1)
 
-		// Set 'virtual bits' of dithering to the highest level
-		// that is not likely to cause excessive flickering at
-		// low brightness levels + low update rates.
-		// These pre-set values are a little ambitious, since
-		// a 400Hz update rate for WS2811-family LEDs is only
-		// possible with 85 pixels or fewer.
-		// Once we have a 'number of milliseconds since last update'
-		// value available here, we can quickly calculate the correct
-		// number of 'virtual bits' on the fly with a couple of 'if'
-		// statements -- no division required.  At this point,
-		// the division is done at compile time, so there's no runtime
-		// cost, but the values are still hard-coded.
-#define MAX_LIKELY_UPDATE_RATE_HZ 400
-#define MIN_ACCEPTABLE_DITHER_RATE_HZ 50
-#define UPDATES_PER_FULL_DITHER_CYCLE (MAX_LIKELY_UPDATE_RATE_HZ / MIN_ACCEPTABLE_DITHER_RATE_HZ)
-#define RECOMMENDED_VIRTUAL_BITS                                                                                       \
-	((UPDATES_PER_FULL_DITHER_CYCLE > 1) + (UPDATES_PER_FULL_DITHER_CYCLE > 2) + (UPDATES_PER_FULL_DITHER_CYCLE > 4) + \
-	 (UPDATES_PER_FULL_DITHER_CYCLE > 8) + (UPDATES_PER_FULL_DITHER_CYCLE > 16) +                                      \
-	 (UPDATES_PER_FULL_DITHER_CYCLE > 32) + (UPDATES_PER_FULL_DITHER_CYCLE > 64) +                                     \
-	 (UPDATES_PER_FULL_DITHER_CYCLE > 128))
-#define VIRTUAL_BITS RECOMMENDED_VIRTUAL_BITS
+			// Set 'virtual bits' of dithering to the highest level
+			// that is not likely to cause excessive flickering at
+			// low brightness levels + low update rates.
+			// These pre-set values are a little ambitious, since
+			// a 400Hz update rate for WS2811-family LEDs is only
+			// possible with 85 pixels or fewer.
+			// Once we have a 'number of milliseconds since last update'
+			// value available here, we can quickly calculate the correct
+			// number of 'virtual bits' on the fly with a couple of 'if'
+			// statements -- no division required.  At this point,
+			// the division is done at compile time, so there's no runtime
+			// cost, but the values are still hard-coded.
+	#define MAX_LIKELY_UPDATE_RATE_HZ	  400
+	#define MIN_ACCEPTABLE_DITHER_RATE_HZ 50
+	#define UPDATES_PER_FULL_DITHER_CYCLE (MAX_LIKELY_UPDATE_RATE_HZ / MIN_ACCEPTABLE_DITHER_RATE_HZ)
+	#define RECOMMENDED_VIRTUAL_BITS                                                                                   \
+		((UPDATES_PER_FULL_DITHER_CYCLE > 1) + (UPDATES_PER_FULL_DITHER_CYCLE > 2) +                                   \
+		 (UPDATES_PER_FULL_DITHER_CYCLE > 4) + (UPDATES_PER_FULL_DITHER_CYCLE > 8) +                                   \
+		 (UPDATES_PER_FULL_DITHER_CYCLE > 16) + (UPDATES_PER_FULL_DITHER_CYCLE > 32) +                                 \
+		 (UPDATES_PER_FULL_DITHER_CYCLE > 64) + (UPDATES_PER_FULL_DITHER_CYCLE > 128))
+	#define VIRTUAL_BITS RECOMMENDED_VIRTUAL_BITS
 
 		// R is the digther signal 'counter'.
 		static uint8_t R = 0;
@@ -354,9 +354,9 @@ struct PixelController {
 			uint8_t s = mScale.raw[i];
 			e[i]	  = s ? (256 / s) + 1 : 0;
 			d[i]	  = scale8(Q, e[i]);
-#if (FASTLED_SCALE8_FIXED == 1)
+	#if (FASTLED_SCALE8_FIXED == 1)
 			if (d[i]) (d[i]--);
-#endif
+	#endif
 			if (e[i]) e[i]--;
 		}
 #endif

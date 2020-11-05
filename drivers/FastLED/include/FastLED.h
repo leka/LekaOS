@@ -469,7 +469,7 @@ class CFastLED
 		return addLeds(&c, data, nLedsOrOffset, nLedsIfOffset);
 	}
 
-#if defined(__FASTLED_HAS_FIBCC) && (__FASTLED_HAS_FIBCC == 1)
+	#if defined(__FASTLED_HAS_FIBCC) && (__FASTLED_HAS_FIBCC == 1)
 	template <uint8_t NUM_LANES, template <uint8_t DATA_PIN, EOrder RGB_ORDER> class CHIPSET, uint8_t DATA_PIN,
 			  EOrder RGB_ORDER = RGB>
 	static CLEDController &addLeds(struct CRGB *data, int nLeds)
@@ -477,9 +477,9 @@ class CFastLED
 		static __FIBCC<CHIPSET, DATA_PIN, NUM_LANES, RGB_ORDER> c;
 		return addLeds(&c, data, nLeds);
 	}
-#endif
+	#endif
 
-#ifdef FASTSPI_USE_DMX_SIMPLE
+	#ifdef FASTSPI_USE_DMX_SIMPLE
 	template <EClocklessChipsets CHIPSET, uint8_t DATA_PIN, EOrder RGB_ORDER = RGB>
 	static CLEDController &addLeds(struct CRGB *data, int nLedsOrOffset, int nLedsIfOffset = 0)
 	{
@@ -490,8 +490,8 @@ class CFastLED
 			}
 		}
 	}
-#endif
-	//@}
+	#endif
+		//@}
 #endif
 
 	/// @name Adding 3rd party library controllers
@@ -539,12 +539,12 @@ class CFastLED
 				static COctoWS2811Controller<RGB_ORDER, WS2811_400kHz> controller;
 				return addLeds(&controller, data, nLedsOrOffset, nLedsIfOffset);
 			}
-#ifdef WS2813_800kHz
+	#ifdef WS2813_800kHz
 			case OCTOWS2813: {
 				static COctoWS2811Controller<RGB_ORDER, WS2813_800kHz> controller;
 				return addLeds(&controller, data, nLedsOrOffset, nLedsIfOffset);
 			}
-#endif
+	#endif
 		}
 	}
 
@@ -603,7 +603,7 @@ class CFastLED
 	static CLEDController &addLeds(struct CRGB *data, int nLedsOrOffset, int nLedsIfOffset = 0)
 	{
 		switch (CHIPSET) {
-#ifdef PORTA_FIRST_PIN
+	#ifdef PORTA_FIRST_PIN
 			case WS2811_PORTA:
 				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTA_FIRST_PIN, NS(320), NS(320), NS(640),
 																  RGB_ORDER>(),
@@ -624,8 +624,8 @@ class CFastLED
 				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTA_FIRST_PIN, NS(500), NS(1500),
 																  NS(500), RGB_ORDER>(),
 							   data, nLedsOrOffset, nLedsIfOffset);
-#endif
-#ifdef PORTB_FIRST_PIN
+	#endif
+	#ifdef PORTB_FIRST_PIN
 			case WS2811_PORTB:
 				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTB_FIRST_PIN, NS(320), NS(320), NS(640),
 																  RGB_ORDER>(),
@@ -646,8 +646,8 @@ class CFastLED
 				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTB_FIRST_PIN, NS(500), NS(1500),
 																  NS(500), RGB_ORDER>(),
 							   data, nLedsOrOffset, nLedsIfOffset);
-#endif
-#ifdef PORTC_FIRST_PIN
+	#endif
+	#ifdef PORTC_FIRST_PIN
 			case WS2811_PORTC:
 				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTC_FIRST_PIN, NS(320), NS(320), NS(640),
 																  RGB_ORDER>(),
@@ -668,8 +668,8 @@ class CFastLED
 				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTC_FIRST_PIN, NS(500), NS(1500),
 																  NS(500), RGB_ORDER>(),
 							   data, nLedsOrOffset, nLedsIfOffset);
-#endif
-#ifdef PORTD_FIRST_PIN
+	#endif
+	#ifdef PORTD_FIRST_PIN
 			case WS2811_PORTD:
 				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTD_FIRST_PIN, NS(320), NS(320), NS(640),
 																  RGB_ORDER>(),
@@ -690,8 +690,8 @@ class CFastLED
 				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTD_FIRST_PIN, NS(500), NS(1500),
 																  NS(500), RGB_ORDER>(),
 							   data, nLedsOrOffset, nLedsIfOffset);
-#endif
-#ifdef HAS_PORTDC
+	#endif
+	#ifdef HAS_PORTDC
 			case WS2811_PORTDC:
 				return addLeds(
 					new SixteenWayInlineBlockClocklessController<NUM_LANES, NS(320), NS(320), NS(640), RGB_ORDER>(),
@@ -712,7 +712,7 @@ class CFastLED
 				return addLeds(
 					new SixteenWayInlineBlockClocklessController<NUM_LANES, NS(500), NS(1500), NS(500), RGB_ORDER>(),
 					data, nLedsOrOffset, nLedsIfOffset);
-#endif
+	#endif
 		}
 	}
 
@@ -721,7 +721,7 @@ class CFastLED
 	{
 		return addLeds<CHIPSET, NUM_LANES, GRB>(data, nLedsOrOffset, nLedsIfOffset);
 	}
-	//@}
+		//@}
 #endif
 
 	/// Set the global brightness scaling
@@ -828,18 +828,18 @@ class CFastLED
 	CRGB *leds() { return (*this)[0].leds(); }
 };
 
-#define FastSPI_LED FastLED
+#define FastSPI_LED	 FastLED
 #define FastSPI_LED2 FastLED
 #ifndef LEDS
-#define LEDS FastLED
+	#define LEDS FastLED
 #endif
 
 extern CFastLED FastLED;
 
 // Warnings for undefined things
 #ifndef HAS_HARDWARE_PIN_SUPPORT
-#warning "No pin/port mappings found, pin access will be slightly slower. See fastpin.h for info."
-#define NO_HARDWARE_PIN_SUPPORT
+	#warning "No pin/port mappings found, pin access will be slightly slower. See fastpin.h for info."
+	#define NO_HARDWARE_PIN_SUPPORT
 #endif
 
 // FASTLED_NAMESPACE_END

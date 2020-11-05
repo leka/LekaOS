@@ -27,22 +27,22 @@
 // Register defines from data sheet - we set IOCON.BANK to 0
 // as it is easier to manage the registers sequentially.
 //
-#define IODIR 0x00
-#define IPOL 0x02
+#define IODIR	0x00
+#define IPOL	0x02
 #define GPINTEN 0x04
-#define DEFVAL 0x06
-#define INTCON 0x08
-#define IOCON 0x0A
-#define GPPU 0x0C
-#define INTF 0x0E
-#define INTCAP 0x10
-#define GPIO 0x12
-#define OLAT 0x14
+#define DEFVAL	0x06
+#define INTCON	0x08
+#define IOCON	0x0A
+#define GPPU	0x0C
+#define INTF	0x0E
+#define INTCAP	0x10
+#define GPIO	0x12
+#define OLAT	0x14
 
 #define I2C_BASE_ADDRESS 0x40
 
 #define DIR_OUTPUT 0
-#define DIR_INPUT 1
+#define DIR_INPUT  1
 
 /** MCP23017 class
  *

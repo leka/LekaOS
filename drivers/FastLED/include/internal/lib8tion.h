@@ -173,7 +173,7 @@ Lib8tion is pronounced like 'libation': lie-BAY-shun
 
 // #include <stdint.h>
 
-#define LIB8STATIC __attribute__((unused)) static inline
+#define LIB8STATIC				 __attribute__((unused)) static inline
 #define LIB8STATIC_ALWAYS_INLINE __attribute__((always_inline)) static inline
 
 // #if !defined(__AVR__)
@@ -195,21 +195,21 @@ Lib8tion is pronounced like 'libation': lie-BAY-shun
 // #define QADD7_C 1
 // #endif	 // end of defined(FASTLED_TEENSY3)
 
-#define QSUB8_C 1
-#define SCALE8_C 1
+#define QSUB8_C		 1
+#define SCALE8_C	 1
 #define SCALE16BY8_C 1
-#define SCALE16_C 1
-#define ABS8_C 1
-#define MUL8_C 1
-#define QMUL8_C 1
-#define ADD8_C 1
-#define SUB8_C 1
-#define EASE8_C 1
-#define AVG8_C 1
-#define AVG7_C 1
-#define AVG16_C 1
-#define AVG15_C 1
-#define BLEND8_C 1
+#define SCALE16_C	 1
+#define ABS8_C		 1
+#define MUL8_C		 1
+#define QMUL8_C		 1
+#define ADD8_C		 1
+#define SUB8_C		 1
+#define EASE8_C		 1
+#define AVG8_C		 1
+#define AVG7_C		 1
+#define AVG16_C		 1
+#define AVG15_C		 1
+#define BLEND8_C	 1
 
 // end of #if defined(__arm__)
 
@@ -304,23 +304,23 @@ Lib8tion is pronounced like 'libation': lie-BAY-shun
 
 // unspecified architecture, so
 // no ASM, everything in C
-#define QADD8_C 1
-#define QADD7_C 1
-#define QSUB8_C 1
-#define SCALE8_C 1
+#define QADD8_C		 1
+#define QADD7_C		 1
+#define QSUB8_C		 1
+#define SCALE8_C	 1
 #define SCALE16BY8_C 1
-#define SCALE16_C 1
-#define ABS8_C 1
-#define MUL8_C 1
-#define QMUL8_C 1
-#define ADD8_C 1
-#define SUB8_C 1
-#define EASE8_C 1
-#define AVG8_C 1
-#define AVG7_C 1
-#define AVG16_C 1
-#define AVG15_C 1
-#define BLEND8_C 1
+#define SCALE16_C	 1
+#define ABS8_C		 1
+#define MUL8_C		 1
+#define QMUL8_C		 1
+#define ADD8_C		 1
+#define SUB8_C		 1
+#define EASE8_C		 1
+#define AVG8_C		 1
+#define AVG7_C		 1
+#define AVG16_C		 1
+#define AVG15_C		 1
+#define BLEND8_C	 1
 
 // #endif
 
@@ -445,10 +445,10 @@ void *memcpy8(void *dst, const void *src, uint16_t num) __attribute__((noinline)
 void *memset8(void *ptr, uint8_t value, uint16_t num) __attribute__((noinline));
 }
 #else
-// on non-AVR platforms, these names just call standard libc.
-#define memmove8 memmove
-#define memcpy8 memcpy
-#define memset8 memset
+	// on non-AVR platforms, these names just call standard libc.
+	#define memmove8 memmove
+	#define memcpy8	 memcpy
+	#define memset8	 memset
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -616,14 +616,14 @@ LIB8STATIC uint8_t ease8InOutQuad(uint8_t val)
 		"sbrc %[val], 7 \n"
 		"com %[j]       \n"
 		"clr __zero_reg__   \n"
-		: [ j ] "+&a"(j)
-		: [ val ] "a"(val)
+		: [j] "+&a"(j)
+		: [val] "a"(val)
 		: "r0", "r1");
 	return j;
 }
 
 #else
-#error "No implementation for ease8InOutQuad available."
+	#error "No implementation for ease8InOutQuad available."
 #endif
 
 /// ease16InOutQuad: 16-bit quadratic ease-in / ease-out function
@@ -716,13 +716,13 @@ LIB8STATIC uint8_t ease8InOutApprox(fract8 i)
 
 		"Ldone_%=:               \n\t"
 
-		: [ i ] "+&a"(i)
+		: [i] "+&a"(i)
 		:
 		: "r0", "r1");
 	return i;
 }
 #else
-#error "No implementation for ease8 available."
+	#error "No implementation for ease8 available."
 #endif
 
 /// triwave8: triangle (sawtooth) wave generator.  Useful for
@@ -927,12 +927,12 @@ typedef q<uint16_t, 12, 4> q124;
 // You can also force use of the get_millisecond_timer function
 // by #defining USE_GET_MILLISECOND_TIMER.
 #if (defined(ARDUINO) || defined(SPARK) || defined(FASTLED_HAS_MILLIS)) && !defined(USE_GET_MILLISECOND_TIMER)
-// Forward declaration of Arduino function 'millis'.
-// uint32_t millis();
-#define GET_MILLIS millis
+	// Forward declaration of Arduino function 'millis'.
+	// uint32_t millis();
+	#define GET_MILLIS millis
 #else
 uint32_t get_millisecond_timer();
-#define GET_MILLIS get_millisecond_timer
+	#define GET_MILLIS get_millisecond_timer
 #endif
 
 // beat16 generates a 16-bit 'sawtooth' wave at a given BPM,
@@ -1063,7 +1063,7 @@ LIB8STATIC uint16_t div1024_32_16(uint32_t in32)
 		"  ror %B[in]  \n\t"
 		"  mov %B[out],%C[in] \n\t"
 		"  mov %A[out],%B[in] \n\t"
-		: [ in ] "+r"(in32), [ out ] "=r"(out16));
+		: [in] "+r"(in32), [out] "=r"(out16));
 #else
 	out16 = (in32 >> 10) & 0xFFFF;
 #endif
@@ -1084,42 +1084,42 @@ LIB8STATIC uint16_t bseconds16()
 // Classes to implement "Every N Milliseconds", "Every N Seconds",
 // "Every N Minutes", "Every N Hours", and "Every N BSeconds".
 #if 1
-#define INSTANTIATE_EVERY_N_TIME_PERIODS(NAME, TIMETYPE, TIMEGETTER)                                                   \
-	class NAME                                                                                                         \
-	{                                                                                                                  \
-	  public:                                                                                                          \
-		TIMETYPE mPrevTrigger;                                                                                         \
-		TIMETYPE mPeriod;                                                                                              \
+	#define INSTANTIATE_EVERY_N_TIME_PERIODS(NAME, TIMETYPE, TIMEGETTER)                                               \
+		class NAME                                                                                                     \
+		{                                                                                                              \
+		  public:                                                                                                      \
+			TIMETYPE mPrevTrigger;                                                                                     \
+			TIMETYPE mPeriod;                                                                                          \
                                                                                                                        \
-		NAME()                                                                                                         \
-		{                                                                                                              \
-			reset();                                                                                                   \
-			mPeriod = 1;                                                                                               \
-		};                                                                                                             \
-		NAME(TIMETYPE period)                                                                                          \
-		{                                                                                                              \
-			reset();                                                                                                   \
-			setPeriod(period);                                                                                         \
-		};                                                                                                             \
-		void setPeriod(TIMETYPE period) { mPeriod = period; };                                                         \
-		TIMETYPE getTime() { return (TIMETYPE)(TIMEGETTER()); };                                                       \
-		TIMETYPE getPeriod() { return mPeriod; };                                                                      \
-		TIMETYPE getElapsed() { return getTime() - mPrevTrigger; }                                                     \
-		TIMETYPE getRemaining() { return mPeriod - getElapsed(); }                                                     \
-		TIMETYPE getLastTriggerTime() { return mPrevTrigger; }                                                         \
-		bool ready()                                                                                                   \
-		{                                                                                                              \
-			bool isReady = (getElapsed() >= mPeriod);                                                                  \
-			if (isReady) {                                                                                             \
+			NAME()                                                                                                     \
+			{                                                                                                          \
 				reset();                                                                                               \
+				mPeriod = 1;                                                                                           \
+			};                                                                                                         \
+			NAME(TIMETYPE period)                                                                                      \
+			{                                                                                                          \
+				reset();                                                                                               \
+				setPeriod(period);                                                                                     \
+			};                                                                                                         \
+			void setPeriod(TIMETYPE period) { mPeriod = period; };                                                     \
+			TIMETYPE getTime() { return (TIMETYPE)(TIMEGETTER()); };                                                   \
+			TIMETYPE getPeriod() { return mPeriod; };                                                                  \
+			TIMETYPE getElapsed() { return getTime() - mPrevTrigger; }                                                 \
+			TIMETYPE getRemaining() { return mPeriod - getElapsed(); }                                                 \
+			TIMETYPE getLastTriggerTime() { return mPrevTrigger; }                                                     \
+			bool ready()                                                                                               \
+			{                                                                                                          \
+				bool isReady = (getElapsed() >= mPeriod);                                                              \
+				if (isReady) {                                                                                         \
+					reset();                                                                                           \
+				}                                                                                                      \
+				return isReady;                                                                                        \
 			}                                                                                                          \
-			return isReady;                                                                                            \
-		}                                                                                                              \
-		void reset() { mPrevTrigger = getTime(); };                                                                    \
-		void trigger() { mPrevTrigger = getTime() - mPeriod; };                                                        \
+			void reset() { mPrevTrigger = getTime(); };                                                                \
+			void trigger() { mPrevTrigger = getTime() - mPeriod; };                                                    \
                                                                                                                        \
-		operator bool() { return ready(); }                                                                            \
-	};
+			operator bool() { return ready(); }                                                                        \
+		};
 INSTANTIATE_EVERY_N_TIME_PERIODS(CEveryNMillis, uint32_t, GET_MILLIS);
 INSTANTIATE_EVERY_N_TIME_PERIODS(CEveryNSeconds, uint16_t, seconds16);
 INSTANTIATE_EVERY_N_TIME_PERIODS(CEveryNBSeconds, uint16_t, bseconds16);
@@ -1178,8 +1178,8 @@ typedef CEveryNTimePeriods<uint8_t, hours8> CEveryNHours;
 #endif
 
 #define CONCAT_HELPER(x, y) x##y
-#define CONCAT_MACRO(x, y) CONCAT_HELPER(x, y)
-#define EVERY_N_MILLIS(N) EVERY_N_MILLIS_I(CONCAT_MACRO(PER, __COUNTER__), N)
+#define CONCAT_MACRO(x, y)	CONCAT_HELPER(x, y)
+#define EVERY_N_MILLIS(N)	EVERY_N_MILLIS_I(CONCAT_MACRO(PER, __COUNTER__), N)
 #define EVERY_N_MILLIS_I(NAME, N)                                                                                      \
 	static CEveryNMillis NAME(N);                                                                                      \
 	if (NAME)
@@ -1200,8 +1200,8 @@ typedef CEveryNTimePeriods<uint8_t, hours8> CEveryNHours;
 	static CEveryNHours NAME(N);                                                                                       \
 	if (NAME)
 
-#define CEveryNMilliseconds CEveryNMillis
-#define EVERY_N_MILLISECONDS(N) EVERY_N_MILLIS(N)
+#define CEveryNMilliseconds				CEveryNMillis
+#define EVERY_N_MILLISECONDS(N)			EVERY_N_MILLIS(N)
 #define EVERY_N_MILLISECONDS_I(NAME, N) EVERY_N_MILLIS_I(NAME, N)
 
 // FASTLED_NAMESPACE_END
