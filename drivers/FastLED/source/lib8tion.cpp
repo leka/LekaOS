@@ -46,8 +46,8 @@ void *memset8(void *ptr, uint8_t val, uint16_t num)
 		"  brcc Lsetloop_%=        \n\t"
 		"  sbci %B[num], 0         \n\t"
 		"  brcc Lsetloop_%=        \n\t"
-		: [ num ] "+r"(num)
-		: [ ptr ] "r"(ptr), [ val ] "r"(val)
+		: [num] "+r"(num)
+		: [ptr] "r"(ptr), [val] "r"(val)
 		: "memory");
 	return ptr;
 }
@@ -72,8 +72,8 @@ void *memcpy8(void *dst, const void *src, uint16_t num)
 		"  brcc Lcpyloop_%=        \n\t"
 		"  sbci %B[num], 0         \n\t"
 		"  brcc Lcpyloop_%=        \n\t"
-		: [ num ] "+r"(num)
-		: [ src ] "r"(src), [ dst ] "r"(dst)
+		: [num] "+r"(num)
+		: [src] "r"(src), [dst] "r"(dst)
 		: "memory");
 	return dst;
 }
@@ -105,8 +105,8 @@ void *memmove8(void *dst, const void *src, uint16_t num)
 			"  brcc Lmovloop_%=        \n\t"
 			"  sbci %B[num], 0         \n\t"
 			"  brcc Lmovloop_%=        \n\t"
-			: [ num ] "+r"(num)
-			: [ src ] "r"(src), [ dst ] "r"(dst)
+			: [num] "+r"(num)
+			: [src] "r"(src), [dst] "r"(dst)
 			: "memory");
 		return dst;
 	}
@@ -118,9 +118,9 @@ void *memmove8(void *dst, const void *src, uint16_t num)
 
 #if 0
 // TEST / VERIFICATION CODE ONLY BELOW THIS POINT
-#include <Arduino.h>
+	#include <Arduino.h>
 
-#include "lib8tion.h"
+	#include "lib8tion.h"
 
 void test1abs( int8_t i)
 {

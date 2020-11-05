@@ -56,8 +56,8 @@ void hsv2rgb_raw(const struct CHSV &hsv, struct CRGB &rgb)
 #endif
 
 #define APPLY_DIMMING(X) (X)
-#define HSV_SECTION_6 (0x20)
-#define HSV_SECTION_3 (0x40)
+#define HSV_SECTION_6	 (0x20)
+#define HSV_SECTION_3	 (0x40)
 
 void hsv2rgb_raw_C(const struct CHSV &hsv, struct CRGB &rgb)
 {
@@ -167,8 +167,8 @@ void hsv2rgb_raw_avr(const struct CHSV &hsv, struct CRGB &rgb)
 	asm volatile(
 		"mul %[value], %[invsat]            \n"
 		"mov %[brightness_floor], r1        \n"
-		: [ brightness_floor ] "=r"(brightness_floor)
-		: [ value ] "r"(value), [ invsat ] "r"(invsat)
+		: [brightness_floor] "=r"(brightness_floor)
+		: [value] "r"(value), [invsat] "r"(invsat)
 		: "r0", "r1");
 
 	// The color amplitude is the maximum amount of R, G, and B
@@ -191,9 +191,8 @@ void hsv2rgb_raw_avr(const struct CHSV &hsv, struct CRGB &rgb)
 		"com %[rampup]                           \n"
 		"mul %[rampup], %[color_amplitude]       \n"
 		"mov %[rampdown_amp_adj], r1             \n"
-		:
-		[ rampup_amp_adj ] "=&r"(rampup_amp_adj), [ rampdown_amp_adj ] "=&r"(rampdown_amp_adj), [ rampup ] "+r"(rampup)
-		: [ color_amplitude ] "r"(color_amplitude)
+		: [rampup_amp_adj] "=&r"(rampup_amp_adj), [rampdown_amp_adj] "=&r"(rampdown_amp_adj), [rampup] "+r"(rampup)
+		: [color_amplitude] "r"(color_amplitude)
 		: "r0", "r1");
 
 	// add brightness_floor offset to everything
@@ -251,7 +250,7 @@ void hsv2rgb_spectrum(const CHSV &hsv, CRGB &rgb)
 #define K255 255
 #define K171 171
 #define K170 170
-#define K85 85
+#define K85	 85
 
 void hsv2rgb_rainbow(const CHSV &hsv, CRGB &rgb)
 {

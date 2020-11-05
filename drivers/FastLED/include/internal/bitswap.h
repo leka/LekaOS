@@ -71,27 +71,27 @@ typedef union {
 	};
 } bitswap_type;
 
-#define SWAPSA(X, N)                                                                                                   \
-	out.X##0 = in.a.a##N;                                                                                              \
-	out.X##1 = in.a.b##N;                                                                                              \
-	out.X##2 = in.a.c##N;                                                                                              \
-	out.X##3 = in.a.d##N;
+	#define SWAPSA(X, N)                                                                                               \
+		out.X##0 = in.a.a##N;                                                                                          \
+		out.X##1 = in.a.b##N;                                                                                          \
+		out.X##2 = in.a.c##N;                                                                                          \
+		out.X##3 = in.a.d##N;
 
-#define SWAPSB(X, N)                                                                                                   \
-	out.X##0 = in.b.a##N;                                                                                              \
-	out.X##1 = in.b.b##N;                                                                                              \
-	out.X##2 = in.b.c##N;                                                                                              \
-	out.X##3 = in.b.d##N;
+	#define SWAPSB(X, N)                                                                                               \
+		out.X##0 = in.b.a##N;                                                                                          \
+		out.X##1 = in.b.b##N;                                                                                          \
+		out.X##2 = in.b.c##N;                                                                                          \
+		out.X##3 = in.b.d##N;
 
-#define SWAPS(X, N)                                                                                                    \
-	out.X##0 = in.a.a##N;                                                                                              \
-	out.X##1 = in.a.b##N;                                                                                              \
-	out.X##2 = in.a.c##N;                                                                                              \
-	out.X##3 = in.a.d##N;                                                                                              \
-	out.X##4 = in.b.a##N;                                                                                              \
-	out.X##5 = in.b.b##N;                                                                                              \
-	out.X##6 = in.b.c##N;                                                                                              \
-	out.X##7 = in.b.d##N;
+	#define SWAPS(X, N)                                                                                                \
+		out.X##0 = in.a.a##N;                                                                                          \
+		out.X##1 = in.a.b##N;                                                                                          \
+		out.X##2 = in.a.c##N;                                                                                          \
+		out.X##3 = in.a.d##N;                                                                                          \
+		out.X##4 = in.b.a##N;                                                                                          \
+		out.X##5 = in.b.b##N;                                                                                          \
+		out.X##6 = in.b.c##N;                                                                                          \
+		out.X##7 = in.b.d##N;
 
 /// Do an 8byte by 8bit rotation
 __attribute__((always_inline)) inline void swapbits8(bitswap_type in, bitswap_type &out)

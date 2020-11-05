@@ -44,7 +44,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t qadd8(uint8_t i, uint8_t j)
 	asm volatile("uqadd8 %0, %0, %1" : "+r"(i) : "r"(j));
 	return i;
 #else
-#error "No implementation for qadd8 available."
+	#error "No implementation for qadd8 available."
 #endif
 }
 
@@ -77,7 +77,7 @@ LIB8STATIC_ALWAYS_INLINE int8_t qadd7(int8_t i, int8_t j)
 	asm volatile("qadd8 %0, %0, %1" : "+r"(i) : "r"(j));
 	return i;
 #else
-#error "No implementation for qadd7 available."
+	#error "No implementation for qadd7 available."
 #endif
 }
 
@@ -106,7 +106,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t qsub8(uint8_t i, uint8_t j)
 		: "a"(j));
 	return i;
 #else
-#error "No implementation for qsub8 available."
+	#error "No implementation for qsub8 available."
 #endif
 }
 
@@ -121,7 +121,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t add8(uint8_t i, uint8_t j)
 	asm volatile("add %0, %1" : "+a"(i) : "a"(j));
 	return i;
 #else
-#error "No implementation for add8 available."
+	#error "No implementation for add8 available."
 #endif
 }
 
@@ -136,11 +136,11 @@ LIB8STATIC_ALWAYS_INLINE uint16_t add8to16(uint8_t i, uint16_t j)
 	asm volatile(
 		"add %A[j], %[i]              \n\t"
 		"adc %B[j], __zero_reg__      \n\t"
-		: [ j ] "+a"(j)
-		: [ i ] "a"(i));
+		: [j] "+a"(j)
+		: [i] "a"(i));
 	return i;
 #else
-#error "No implementation for add8to16 available."
+	#error "No implementation for add8to16 available."
 #endif
 }
 
@@ -155,7 +155,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t sub8(uint8_t i, uint8_t j)
 	asm volatile("sub %0, %1" : "+a"(i) : "a"(j));
 	return i;
 #else
-#error "No implementation for sub8 available."
+	#error "No implementation for sub8 available."
 #endif
 }
 
@@ -176,7 +176,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t avg8(uint8_t i, uint8_t j)
 		: "a"(j));
 	return i;
 #else
-#error "No implementation for avg8 available."
+	#error "No implementation for avg8 available."
 #endif
 }
 
@@ -197,11 +197,11 @@ LIB8STATIC_ALWAYS_INLINE uint16_t avg16(uint16_t i, uint16_t j)
 		"ror %B[i]        \n\t"
 		/* Divide iLo by two, moving C flag into high 8th bit */
 		"ror %A[i]        \n\t"
-		: [ i ] "+a"(i)
-		: [ j ] "a"(j));
+		: [i] "+a"(i)
+		: [j] "a"(j));
 	return i;
 #else
-#error "No implementation for avg16 available."
+	#error "No implementation for avg16 available."
 #endif
 }
 
@@ -222,7 +222,7 @@ LIB8STATIC_ALWAYS_INLINE int8_t avg7(int8_t i, int8_t j)
 		: "a"(j));
 	return i;
 #else
-#error "No implementation for avg7 available."
+	#error "No implementation for avg7 available."
 #endif
 }
 
@@ -245,11 +245,11 @@ LIB8STATIC_ALWAYS_INLINE int16_t avg15(int16_t i, int16_t j)
 		/* add j + C to i */
 		"adc %A[i], %A[j]   \n\t"
 		"adc %B[i], %B[j]   \n\t"
-		: [ i ] "+a"(i)
-		: [ j ] "a"(j));
+		: [i] "+a"(i)
+		: [j] "a"(j));
 	return i;
 #else
-#error "No implementation for avg15 available."
+	#error "No implementation for avg15 available."
 #endif
 }
 
@@ -268,8 +268,8 @@ LIB8STATIC_ALWAYS_INLINE uint8_t mod8(uint8_t a, uint8_t m)
 		"L_%=:  sub %[a],%[m]    \n\t"
 		"       brcc L_%=        \n\t"
 		"       add %[a],%[m]    \n\t"
-		: [ a ] "+r"(a)
-		: [ m ] "r"(m));
+		: [a] "+r"(a)
+		: [m] "r"(m));
 #else
 	while (a >= m) a -= m;
 #endif
@@ -295,8 +295,8 @@ LIB8STATIC uint8_t addmod8(uint8_t a, uint8_t b, uint8_t m)
 		"L_%=:  sub %[a],%[m]    \n\t"
 		"       brcc L_%=        \n\t"
 		"       add %[a],%[m]    \n\t"
-		: [ a ] "+r"(a)
-		: [ b ] "r"(b), [ m ] "r"(m));
+		: [a] "+r"(a)
+		: [b] "r"(b), [m] "r"(m));
 #else
 	a += b;
 	while (a >= m) a -= m;
@@ -323,8 +323,8 @@ LIB8STATIC uint8_t submod8(uint8_t a, uint8_t b, uint8_t m)
 		"L_%=:  sub %[a],%[m]    \n\t"
 		"       brcc L_%=        \n\t"
 		"       add %[a],%[m]    \n\t"
-		: [ a ] "+r"(a)
-		: [ b ] "r"(b), [ m ] "r"(m));
+		: [a] "+r"(a)
+		: [b] "r"(b), [m] "r"(m));
 #else
 	a -= b;
 	while (a >= m) a -= m;
@@ -350,7 +350,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t mul8(uint8_t i, uint8_t j)
 		: "r0", "r1");
 	return i;
 #else
-#error "No implementation for mul8 available."
+	#error "No implementation for mul8 available."
 #endif
 }
 
@@ -383,7 +383,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t qmul8(uint8_t i, uint8_t j)
 		: "r0", "r1");
 	return i;
 #else
-#error "No implementation for qmul8 available."
+	#error "No implementation for qmul8 available."
 #endif
 }
 
@@ -405,7 +405,7 @@ LIB8STATIC_ALWAYS_INLINE int8_t abs8(int8_t i)
 		: "r"(i));
 	return i;
 #else
-#error "No implementation for abs8 available."
+	#error "No implementation for abs8 available."
 #endif
 }
 
@@ -450,29 +450,29 @@ LIB8STATIC uint8_t sqrt16(uint16_t x)
 #if (FASTLED_BLEND_FIXED == 1)
 LIB8STATIC uint8_t blend8(uint8_t a, uint8_t b, uint8_t amountOfB)
 {
-#if BLEND8_C == 1
+	#if BLEND8_C == 1
 	uint16_t partial;
 	uint8_t result;
 
 	uint8_t amountOfA = 255 - amountOfB;
 
 	partial = (a * amountOfA);
-#if (FASTLED_SCALE8_FIXED == 1)
+		#if (FASTLED_SCALE8_FIXED == 1)
 	partial += a;
-	// partial = add8to16( a, partial);
-#endif
+				// partial = add8to16( a, partial);
+		#endif
 
 	partial += (b * amountOfB);
-#if (FASTLED_SCALE8_FIXED == 1)
+		#if (FASTLED_SCALE8_FIXED == 1)
 	partial += b;
-	// partial = add8to16( b, partial);
-#endif
+				// partial = add8to16( b, partial);
+		#endif
 
 	result = partial >> 8;
 
 	return result;
 
-#elif BLEND8_AVRASM == 1
+	#elif BLEND8_AVRASM == 1
 	uint16_t partial;
 	uint8_t result;
 
@@ -492,7 +492,7 @@ LIB8STATIC uint8_t blend8(uint8_t a, uint8_t b, uint8_t amountOfB)
 
 		"  clr __zero_reg__              \n\t"
 
-#if (FASTLED_SCALE8_FIXED == 1)
+		#if (FASTLED_SCALE8_FIXED == 1)
 		/* partial += a */
 		"  add %A[partial], %[a]         \n\t"
 		"  adc %B[partial], __zero_reg__ \n\t"
@@ -500,19 +500,19 @@ LIB8STATIC uint8_t blend8(uint8_t a, uint8_t b, uint8_t amountOfB)
 		// partial += b
 		"  add %A[partial], %[b]         \n\t"
 		"  adc %B[partial], __zero_reg__ \n\t"
-#endif
+		#endif
 
-		: [ partial ] "=r"(partial), [ amountOfB ] "+a"(amountOfB)
-		: [ a ] "a"(a), [ b ] "a"(b)
+		: [partial] "=r"(partial), [amountOfB] "+a"(amountOfB)
+		: [a] "a"(a), [b] "a"(b)
 		: "r0", "r1");
 
 	result = partial >> 8;
 
 	return result;
 
-#else
-#error "No implementation for blend8 available."
-#endif
+	#else
+		#error "No implementation for blend8 available."
+	#endif
 }
 
 #else

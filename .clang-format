@@ -23,7 +23,6 @@ IncludeCategories:
     SortPriority:    0
 
 AccessModifierOffset: -2
-SpacesBeforeTrailingComments: 3
 
 Cpp11BracedListStyle: true
 
@@ -32,10 +31,16 @@ PointerAlignment: Right
 AlignAfterOpenBracket: true
 AlignConsecutiveAssignments: true
 
-AlignEscapedNewlines: Right
-AlignTrailingComments: true
 FixNamespaceComments: true
 IndentCaseLabels: true
+
+AlignEscapedNewlines: Right
+
+SpacesBeforeTrailingComments: 3
+AlignTrailingComments: true
+ReflowComments: true
+
+AlignConsecutiveMacros: true
 
 NamespaceIndentation: Inner
 SpaceBeforeCpp11BracedList: true
@@ -47,7 +52,6 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 
 AllowShortFunctionsOnASingleLine: Inline
 AllowShortBlocksOnASingleLine: Never
-#AllowShortBlocksOnASingleLine: true
 
 BreakBeforeBraces: Custom
 BraceWrapping:
@@ -56,6 +60,4 @@ BraceWrapping:
   AfterEnum: true
   AfterNamespace: false
 
-#IndentPPDirectives: BeforeHash
-#AlignConsecutiveMacros: true
-#SpaceInEmptyBlock: true
+IndentPPDirectives: BeforeHash

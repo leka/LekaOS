@@ -58,7 +58,7 @@
 // Use this to determine how many times FastLED will attempt to re-transmit a frame if interrupted
 // for too long by interrupts.
 #ifndef FASTLED_INTERRUPT_RETRY_COUNT
-#define FASTLED_INTERRUPT_RETRY_COUNT 2
+	#define FASTLED_INTERRUPT_RETRY_COUNT 2
 #endif
 
 // Use this toggle to enable global brightness in contollers that support is (ADA102 and SK9822).

@@ -14,7 +14,7 @@ using namespace leka;
 // SPI spi(D11, NC, D13);
 SPI spi(LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK);
 
-#define NUM_LEDS 20
+#define NUM_LEDS   20
 #define BRIGHTNESS 255
 
 CRGB leds[NUM_LEDS];

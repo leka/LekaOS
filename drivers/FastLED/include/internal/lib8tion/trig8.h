@@ -15,9 +15,9 @@
 ///@{
 
 #if defined(__AVR__)
-#define sin16 sin16_avr
+	#define sin16 sin16_avr
 #else
-#define sin16 sin16_C
+	#define sin16 sin16_C
 #endif
 
 /// Fast 16-bit approximation of sin(x). This approximation never varies more than
@@ -137,9 +137,9 @@ LIB8STATIC int16_t cos16(uint16_t theta)
 //        20X faster than floating point sin(x) and cos(x)
 
 #if defined(__AVR__) && !defined(LIB8_ATTINY)
-#define sin8 sin8_avr
+	#define sin8 sin8_avr
 #else
-#define sin8 sin8_C
+	#define sin8 sin8_C
 #endif
 
 const uint8_t b_m16_interleave[] = {0, 49, 49, 41, 90, 27, 117, 10};
@@ -158,7 +158,7 @@ LIB8STATIC uint8_t sin8_avr(uint8_t theta)
 	asm volatile(
 		"sbrc %[theta],6         \n\t"
 		"com  %[offset]           \n\t"
-		: [ theta ] "+r"(theta), [ offset ] "+r"(offset));
+		: [theta] "+r"(theta), [offset] "+r"(offset));
 
 	offset &= 0x3F;	  // 0..63
 
@@ -189,8 +189,8 @@ LIB8STATIC uint8_t sin8_avr(uint8_t theta)
 		"swap %[xr1]               \n\t"
 		"andi %[xr1], 0xF0         \n\t"
 		"or   %[mx], %[xr1]        \n\t"
-		: [ mx ] "=d"(mx), [ xr1 ] "=d"(xr1)
-		: [ m16 ] "d"(m16), [ secoffset ] "d"(secoffset));
+		: [mx] "=d"(mx), [xr1] "=d"(xr1)
+		: [m16] "d"(m16), [secoffset] "d"(secoffset));
 
 	int8_t y = mx + b;
 	if (theta & 0x80) y = -y;
