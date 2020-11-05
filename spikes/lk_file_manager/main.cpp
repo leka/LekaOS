@@ -10,7 +10,7 @@
 using namespace leka;
 
 HelloWorld hello;
-FileManager leka_sd;
+FileManager sd_card;
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 
@@ -27,14 +27,14 @@ int main(void)
 
 	hello.start();
 
-	leka_sd.testWorkingToRemove();
+	sd_card.testWorkingToRemove();
 
 	const char filename[] = "assets/images/emotion-happy.jpg";
 
-	leka_sd.open(filename);
-	uint32_t file_size = leka_sd.getFileSize();
+	sd_card.open(filename);
+	uint32_t file_size = sd_card.getFileSize();
 	printf("File %s openened. File size : %lu bytes\n", filename, file_size);
-	leka_sd.close();
+	sd_card.close();
 
 	while (true) {
 		auto t = Kernel::Clock::now() - start;
