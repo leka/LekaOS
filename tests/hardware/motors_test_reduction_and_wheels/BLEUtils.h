@@ -15,24 +15,24 @@ static EventQueue event_queue(/* event count */ 10 * EVENTS_EVENT_SIZE);
 
 const static char DEVICE_NAME[] = "LekaDev";
 
-class LEDService
+class MotorsService
 {
   public:
-	const static uint16_t MOTORS_SERVICE_UUID										 = 0xA000;
-	const static uint16_t MOTOROS_DIFFERENT_MOVEMENTS_STATE_CHARACTERISTIC_UUID		 = 0xA001;
-	const static uint16_t MOTOROS_PROGRESSIVE_ACCELERATION_STATE_CHARACTERISTIC_UUID = 0xA002;
+	const static uint16_t MOTORS_SERVICE_UUID										= 0xA000;
+	const static uint16_t MOTORS_DIFFERENT_MOVEMENTS_STATE_CHARACTERISTIC_UUID		= 0xA001;
+	const static uint16_t MOTORS_PROGRESSIVE_ACCELERATION_STATE_CHARACTERISTIC_UUID = 0xA002;
 
-	LEDService(BLE &_ble, bool initialValueForLEDCharacteristic)
+	MotorsService(BLE &_ble, bool initialValueForMotorsCharacteristics)
 		: ble(_ble),
-		  motorsDifferentMovementsState(MOTOROS_DIFFERENT_MOVEMENTS_STATE_CHARACTERISTIC_UUID,
-										&initialValueForLEDCharacteristic),
-		  motorsProgressiveAccelerationState(MOTOROS_PROGRESSIVE_ACCELERATION_STATE_CHARACTERISTIC_UUID,
-											 &initialValueForLEDCharacteristic)
+		  motorsDifferentMovementsState(MOTORS_DIFFERENT_MOVEMENTS_STATE_CHARACTERISTIC_UUID,
+										&initialValueForMotorsCharacteristics),
+		  motorsProgressiveAccelerationState(MOTORS_PROGRESSIVE_ACCELERATION_STATE_CHARACTERISTIC_UUID,
+											 &initialValueForMotorsCharacteristics)
 	{
 		GattCharacteristic *charTable[] = {&motorsDifferentMovementsState, &motorsProgressiveAccelerationState};
-		GattService ledService(MOTORS_SERVICE_UUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
+		GattService motorsService(MOTORS_SERVICE_UUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
-		ble.gattServer().addService(ledService);
+		ble.gattServer().addService(motorsService);
 	}
 
 	GattAttribute::Handle_t getDifferentMovementsValueHandle() const
@@ -50,27 +50,27 @@ class LEDService
 	ReadWriteGattCharacteristic<bool> motorsProgressiveAccelerationState;
 };
 
-class LEDDemo : ble::Gap::EventHandler
+class MotorsBLEProgram : ble::Gap::EventHandler
 {
   public:
-	LEDDemo(BLE &ble, events::EventQueue &event_queue)
+	MotorsBLEProgram(BLE &ble, events::EventQueue &event_queue)
 		: _ble(ble),
 		  _event_queue(event_queue),
-		  _led_uuid(LEDService::MOTORS_SERVICE_UUID),
-		  _led_service(NULL),
+		  _motors_service_uuid(MotorsService::MOTORS_SERVICE_UUID),
+		  _motors_service(NULL),
 		  _adv_data_builder(_adv_buffer)
 	{
 	}
 
-	~LEDDemo() { delete _led_service; }
+	~MotorsBLEProgram() { delete _motors_service; }
 
 	void start()
 	{
 		_ble.gap().setEventHandler(this);
 
-		_ble.init(this, &LEDDemo::on_init_complete);
+		_ble.init(this, &MotorsBLEProgram::on_init_complete);
 
-		// _event_queue.call_every(500, this, &LEDDemo::blink);
+		// _event_queue.call_every(500, this, &MotorsBLEProgram::blink);
 
 		// _event_queue.dispatch_forever();
 	}
@@ -86,9 +86,9 @@ class LEDDemo : ble::Gap::EventHandler
 			return;
 		}
 
-		_led_service = new LEDService(_ble, false);
+		_motors_service = new MotorsService(_ble, false);
 
-		_ble.gattServer().onDataWritten(this, &LEDDemo::on_data_written);
+		_ble.gattServer().onDataWritten(this, &MotorsBLEProgram::on_data_written);
 
 		print_mac_address();
 
@@ -103,7 +103,7 @@ class LEDDemo : ble::Gap::EventHandler
 												  ble::adv_interval_t(ble::millisecond_t(1000)));
 
 		_adv_data_builder.setFlags();
-		_adv_data_builder.setLocalServiceList(mbed::make_Span(&_led_uuid, 1));
+		_adv_data_builder.setLocalServiceList(mbed::make_Span(&_motors_service_uuid, 1));
 		_adv_data_builder.setName(DEVICE_NAME);
 
 		/* Setup advertising */
@@ -134,17 +134,17 @@ class LEDDemo : ble::Gap::EventHandler
 	}
 
 	/**
-	 * This callback allows the LEDService to receive updates to the motorsDifferentMovementsState Characteristic.
+	 * This callback allows the MotorsService to receive updates to the motorsDifferentMovementsState Characteristic.
 	 *
 	 * @param[in] params Information about the characterisitc being updated.
 	 */
 	void on_data_written(const GattWriteCallbackParams *params)
 	{
-		if ((params->handle == _led_service->getDifferentMovementsValueHandle()) && (params->len == 1)) {
+		if ((params->handle == _motors_service->getDifferentMovementsValueHandle()) && (params->len == 1)) {
 			shouldRun				 = *(params->data);
 			TEST_DIFFERENT_MOVEMENTS = shouldRun;
 		}
-		if ((params->handle == _led_service->getProgressiveAccelerationValueHandle()) && (params->len == 1)) {
+		if ((params->handle == _motors_service->getProgressiveAccelerationValueHandle()) && (params->len == 1)) {
 			shouldRun					  = *(params->data);
 			TEST_PROGRESSIVE_ACCELERATION = shouldRun;
 		}
@@ -164,8 +164,8 @@ class LEDDemo : ble::Gap::EventHandler
 
 	bool shouldRun = false;
 
-	UUID _led_uuid;
-	LEDService *_led_service;
+	UUID _motors_service_uuid;
+	MotorsService *_motors_service;
 
 	uint8_t _adv_buffer[ble::LEGACY_ADVERTISING_MAX_SIZE];
 	ble::AdvertisingDataBuilder _adv_data_builder;

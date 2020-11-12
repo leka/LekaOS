@@ -30,7 +30,7 @@ int main(void)
 
 	ble.onEventsToProcess(schedule_ble_events);
 
-	LEDDemo demo(ble, event_queue);
+	MotorsBLEProgram demo(ble, event_queue);
 
 	demo.start();
 
