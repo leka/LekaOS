@@ -22,6 +22,17 @@ void schedule_ble_events(BLE::OnEventsToProcessCallbackContext *context)
 	event_queue.call(Callback<void()>(&context->ble, &BLE::processEvents));
 }
 
+// This projet is intended to test different types of motors using BLE to control their movement
+// An app such as NRF Connect has to be installed on your iPhone/iPad
+// When scanning, you should be able to discover the robot named "LekaDev"
+// When connected, you'll have access to the `0xA000` sercie, with two characteristics:
+//
+//     - `0xA001` --> the motor will roll, turn, spin, roll backward
+//     - `0xA002` --> the robot will accelerate and decelerate progressively
+//
+// To start/stop each behavior, you need to write `bool = true` or `byte = 0x01` to the behavior
+// you want to test.
+
 int main(void)
 {
 	printf("\nHello, BLE Motors Test!\n\n");
