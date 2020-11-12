@@ -8,7 +8,7 @@
 #include "ble/Gap.h"
 #include "ble/services/HeartRateService.h"
 
-#include "pretty_printer.h"
+#include "PrettyPrinter.h"
 
 const static char DEVICE_NAME[] = "Heartrate";
 static events::EventQueue event_queue(/* event count */ 32 * EVENTS_EVENT_SIZE);
@@ -50,7 +50,7 @@ class HeartrateDemo : ble::Gap::EventHandler
 			return;
 		}
 
-		print_mac_address();
+		pp::ble::printMacAddress();
 
 		startAdvertising();
 	}

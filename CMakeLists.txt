@@ -36,6 +36,7 @@ add_subdirectory(${DRIVERS_DIR}/Motor)
 # Add libraries
 add_subdirectory(${LIBS_DIR}/HelloWorld)
 add_subdirectory(${LIBS_DIR}/FileManager)
+add_subdirectory(${LIBS_DIR}/PrettyPrinter)
 
 add_subdirectory(${LIBS_DIR}/InvestigationDay/BLE)
 

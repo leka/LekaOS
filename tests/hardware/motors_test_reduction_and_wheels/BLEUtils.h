@@ -6,7 +6,7 @@
 
 #include "ble/BLE.h"
 
-#include "pretty_printer.h"
+#include "PrettyPrinter.h"
 
 bool TEST_DIFFERENT_MOVEMENTS	   = false;
 bool TEST_PROGRESSIVE_ACCELERATION = false;
@@ -90,7 +90,7 @@ class MotorsBLEProgram : ble::Gap::EventHandler
 
 		_ble.gattServer().onDataWritten(this, &MotorsBLEProgram::onDataWritten);
 
-		print_mac_address();
+		pp::ble::printMacAddress();
 
 		startAdvertising();
 	}

@@ -6,13 +6,15 @@ add_library(lib_BLE STATIC)
 
 target_include_directories(lib_BLE
   PUBLIC
-  	${CMAKE_CURRENT_SOURCE_DIR}/include
-	${CMAKE_CURRENT_SOURCE_DIR}/include/internal
+  	./include
+	./include/internal
 )
 
 target_sources(lib_BLE
   PRIVATE
-  	include/LKBLE.h
+  	./include/LKBLE.h
 )
+
+target_link_libraries(lib_BLE lib_PrettyPrinter)
 
 target_link_libraries(lib_BLE mbed-os)
