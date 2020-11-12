@@ -30,9 +30,9 @@ int main(void)
 
 	ble.onEventsToProcess(schedule_ble_events);
 
-	MotorsBLEProgram demo(ble, event_queue);
+	MotorsBLEProgram motors_ble(ble, event_queue);
 
-	demo.start();
+	motors_ble.start();
 
 	thread_ble_event_queue.start(callback(&event_queue, &EventQueue::dispatch_forever));
 

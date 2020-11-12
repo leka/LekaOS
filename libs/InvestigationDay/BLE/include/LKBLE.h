@@ -32,7 +32,7 @@ class HeartrateDemo : ble::Gap::EventHandler
 	{
 		_ble.gap().setEventHandler(this);
 
-		_ble.init(this, &HeartrateDemo::on_init_complete);
+		_ble.init(this, &HeartrateDemo::onInitComplete);
 
 		// _event_queue.call_every(500ms, this, &HeartrateDemo::blink);
 		_event_queue.call_every(1000ms, this, &HeartrateDemo::update_sensor_value);
@@ -43,7 +43,7 @@ class HeartrateDemo : ble::Gap::EventHandler
 
   private:
 	/** Callback triggered when the ble initialization process has finished */
-	void on_init_complete(BLE::InitializationCompleteCallbackContext *params)
+	void onInitComplete(BLE::InitializationCompleteCallbackContext *params)
 	{
 		if (params->error != BLE_ERROR_NONE) {
 			printf("Ble initialization failed.");
@@ -52,10 +52,10 @@ class HeartrateDemo : ble::Gap::EventHandler
 
 		print_mac_address();
 
-		start_advertising();
+		startAdvertising();
 	}
 
-	void start_advertising()
+	void startAdvertising()
 	{
 		/* Create advertising parameters and payload */
 

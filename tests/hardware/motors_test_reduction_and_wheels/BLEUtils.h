@@ -24,12 +24,12 @@ class MotorsService
 
 	MotorsService(BLE &_ble, bool initialValueForMotorsCharacteristics)
 		: ble(_ble),
-		  motorsDifferentMovementsState(MOTORS_DIFFERENT_MOVEMENTS_STATE_CHARACTERISTIC_UUID,
-										&initialValueForMotorsCharacteristics),
-		  motorsProgressiveAccelerationState(MOTORS_PROGRESSIVE_ACCELERATION_STATE_CHARACTERISTIC_UUID,
-											 &initialValueForMotorsCharacteristics)
+		  motors_different_movements_state(MOTORS_DIFFERENT_MOVEMENTS_STATE_CHARACTERISTIC_UUID,
+										   &initialValueForMotorsCharacteristics),
+		  motors_progressive_acceleration_state(MOTORS_PROGRESSIVE_ACCELERATION_STATE_CHARACTERISTIC_UUID,
+												&initialValueForMotorsCharacteristics)
 	{
-		GattCharacteristic *charTable[] = {&motorsDifferentMovementsState, &motorsProgressiveAccelerationState};
+		GattCharacteristic *charTable[] = {&motors_different_movements_state, &motors_progressive_acceleration_state};
 		GattService motorsService(MOTORS_SERVICE_UUID, charTable, sizeof(charTable) / sizeof(GattCharacteristic *));
 
 		ble.gattServer().addService(motorsService);
@@ -37,17 +37,17 @@ class MotorsService
 
 	GattAttribute::Handle_t getDifferentMovementsValueHandle() const
 	{
-		return motorsDifferentMovementsState.getValueHandle();
+		return motors_different_movements_state.getValueHandle();
 	}
 	GattAttribute::Handle_t getProgressiveAccelerationValueHandle() const
 	{
-		return motorsProgressiveAccelerationState.getValueHandle();
+		return motors_progressive_acceleration_state.getValueHandle();
 	}
 
   private:
 	BLE &ble;
-	ReadWriteGattCharacteristic<bool> motorsDifferentMovementsState;
-	ReadWriteGattCharacteristic<bool> motorsProgressiveAccelerationState;
+	ReadWriteGattCharacteristic<bool> motors_different_movements_state;
+	ReadWriteGattCharacteristic<bool> motors_progressive_acceleration_state;
 };
 
 class MotorsBLEProgram : ble::Gap::EventHandler
@@ -68,18 +68,18 @@ class MotorsBLEProgram : ble::Gap::EventHandler
 	{
 		_ble.gap().setEventHandler(this);
 
-		_ble.init(this, &MotorsBLEProgram::on_init_complete);
+		_ble.init(this, &MotorsBLEProgram::onInitComplete);
 
 		// _event_queue.call_every(500, this, &MotorsBLEProgram::blink);
 
 		// _event_queue.dispatch_forever();
 	}
 
-	bool motorsShouldRun() { return shouldRun; }
+	bool motorsShouldRun() { return _should_run; }
 
   private:
 	/** Callback triggered when the ble initialization process has finished */
-	void on_init_complete(BLE::InitializationCompleteCallbackContext *params)
+	void onInitComplete(BLE::InitializationCompleteCallbackContext *params)
 	{
 		if (params->error != BLE_ERROR_NONE) {
 			printf("Ble initialization failed.");
@@ -88,14 +88,14 @@ class MotorsBLEProgram : ble::Gap::EventHandler
 
 		_motors_service = new MotorsService(_ble, false);
 
-		_ble.gattServer().onDataWritten(this, &MotorsBLEProgram::on_data_written);
+		_ble.gattServer().onDataWritten(this, &MotorsBLEProgram::onDataWritten);
 
 		print_mac_address();
 
-		start_advertising();
+		startAdvertising();
 	}
 
-	void start_advertising()
+	void startAdvertising()
 	{
 		/* Create advertising parameters and payload */
 
@@ -134,19 +134,19 @@ class MotorsBLEProgram : ble::Gap::EventHandler
 	}
 
 	/**
-	 * This callback allows the MotorsService to receive updates to the motorsDifferentMovementsState Characteristic.
+	 * This callback allows the MotorsService to receive updates to the motors_different_movements_state Characteristic.
 	 *
 	 * @param[in] params Information about the characterisitc being updated.
 	 */
-	void on_data_written(const GattWriteCallbackParams *params)
+	void onDataWritten(const GattWriteCallbackParams *params)
 	{
 		if ((params->handle == _motors_service->getDifferentMovementsValueHandle()) && (params->len == 1)) {
-			shouldRun				 = *(params->data);
-			TEST_DIFFERENT_MOVEMENTS = shouldRun;
+			_should_run				 = *(params->data);
+			TEST_DIFFERENT_MOVEMENTS = _should_run;
 		}
 		if ((params->handle == _motors_service->getProgressiveAccelerationValueHandle()) && (params->len == 1)) {
-			shouldRun					  = *(params->data);
-			TEST_PROGRESSIVE_ACCELERATION = shouldRun;
+			_should_run					  = *(params->data);
+			TEST_PROGRESSIVE_ACCELERATION = _should_run;
 		}
 	}
 
@@ -162,7 +162,7 @@ class MotorsBLEProgram : ble::Gap::EventHandler
 	BLE &_ble;
 	events::EventQueue &_event_queue;
 
-	bool shouldRun = false;
+	bool _should_run = false;
 
 	UUID _motors_service_uuid;
 	MotorsService *_motors_service;
