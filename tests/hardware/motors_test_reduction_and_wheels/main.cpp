@@ -24,7 +24,7 @@ void schedule_ble_events(BLE::OnEventsToProcessCallbackContext *context)
 
 int main(void)
 {
-	printf("\nHello, DOX of motors!\n\n");
+	printf("\nHello, BLE Motors Test!\n\n");
 
 	BLE &ble = BLE::Instance();
 

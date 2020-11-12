@@ -125,7 +125,9 @@ void motor_thread()
 		auto stop	  = Kernel::Clock::now();
 		auto duration = stop - start;
 
-		printf("%i\n", int(duration.count()));
+		if (auto count = int(duration.count()) != 0) {
+			printf("%i\n", count);
+		}
 
 		rtos::ThisThread::sleep_for(1s);
 	}
