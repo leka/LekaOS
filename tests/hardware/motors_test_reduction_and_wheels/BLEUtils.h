@@ -1,3 +1,7 @@
+// Leka - LekaOS
+// Copyright 2020 APF France handicap
+// SPDX-License-Identifier: Apache-2.0
+
 #ifndef _LEKA_OS_SPIKE_BLE_UTILS_H_
 #define _LEKA_OS_SPIKE_BLE_UTILS_H_
 
