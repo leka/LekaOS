@@ -36,6 +36,7 @@ add_subdirectory(${DRIVERS_DIR}/Motor)
 # Add libraries
 add_subdirectory(${LIBS_DIR}/HelloWorld)
 add_subdirectory(${LIBS_DIR}/FileManager)
+add_subdirectory(${LIBS_DIR}/PrettyPrinter)
 
 add_subdirectory(${LIBS_DIR}/InvestigationDay/BLE)
 
@@ -91,7 +92,7 @@ add_dependencies( spikes_mbed
 add_subdirectory(${ROOT_DIR}/tests/cert/emc_ble_led_motors)
 add_subdirectory(${ROOT_DIR}/tests/cert/emc_lcd_led_motors)
 add_subdirectory(${ROOT_DIR}/tests/cert/emc_bt_lcd_qspi_rfid_touch_wifi)
-add_subdirectory(${ROOT_DIR}/tests/hardware/motors_dox)
+add_subdirectory(${ROOT_DIR}/tests/hardware/motors_test_reduction_and_wheels)
 
 # Finally print the mbed-cmake build report
 mbed_cmake_print_build_report()
