@@ -30,7 +30,8 @@ typedef enum
 	ALT0 = 0x100,
 	ALT1 = 0x200,
 	ALT2 = 0x300,
-	ALT3 = 0x400
+	ALT3 = 0x400,
+	ALT4 = 0x500
 } ALTx;
 
 typedef enum
@@ -251,6 +252,30 @@ typedef enum
 	ADC_VREF = 0xF1,   // Internal pin virtual value
 	ADC_VBAT = 0xF2,   // Internal pin virtual value
 
+	// Arduino Uno(Rev3) Header pin connection naming
+	A0	= Px_x,
+	A1	= Px_x,
+	A2	= Px_x,
+	A3	= Px_x,
+	A4	= Px_x,
+	A5	= Px_x,
+	D0	= Px_x,
+	D1	= Px_x,
+	D2	= Px_x,
+	D3	= Px_x,
+	D4	= Px_x,
+	D5	= Px_x,
+	D6	= Px_x,
+	D7	= Px_x,
+	D8	= Px_x,
+	D9	= Px_x,
+	D10 = Px_x,
+	D11 = Px_x,
+	D12 = Px_x,
+	D13 = Px_x,
+	D14 = Px_x,
+	D15 = Px_x,
+
 // STDIO for console print
 #ifdef MBED_CONF_TARGET_STDIO_UART_TX
 	STDIO_UART_TX = MBED_CONF_TARGET_STDIO_UART_TX,
@@ -260,19 +285,33 @@ typedef enum
 #ifdef MBED_CONF_TARGET_STDIO_UART_RX
 	STDIO_UART_RX = MBED_CONF_TARGET_STDIO_UART_RX,
 #else
-	STDIO_UART_RX = PA_10,
+	STDIO_UART_RX = PA_3,
 #endif
 
 	USBTX = STDIO_UART_TX,	 // used for greentea tests
 	USBRX = STDIO_UART_RX,	 // used for greentea tests
 
-	// Standardized LED and button names
-	LED1 = PG_13,	// LED_BELT_SPI_SCK
-	LED2 = PG_14,	// LED_BELT_SPI_MOSI
-	LED3 = PB_13,	// LED_EARS_SPI_SCK
-	LED4 = PB_15,	// LED_EARS_SPI_MOSI
+	// I2C signals aliases
+	I2C_SDA = D14,
+	I2C_SCL = D15,
 
-	USER_BUTTON = (int)0xFFFFFFFF,
+	// SPI signals aliases
+	SPI_CS	 = D10,
+	SPI_MOSI = D11,
+	SPI_MISO = D12,
+	SPI_SCK	 = D13,
+
+	// Standardized LED and button names
+	LED1	= PB_13,   // LED_EARS_SPI_SCK
+	LED2	= PG_14,   // LED_BELT_SPI_MOSI
+	LED3	= PH_4,	   // DEBUG_LED
+	LED4	= PB_15,   // LED_EARS_SPI_MOSI
+	LED5	= PG_13,   // LED_BELT_SPI_SCK
+	BUTTON1 = Px_x,
+
+	// Backward legacy names
+	USER_BUTTON = BUTTON1,
+	PWM_OUT		= D3,
 
 	/**** USB FS pins ****/
 	USB_OTG_FS_DM	= PA_11,
@@ -363,93 +402,6 @@ typedef enum
 	SYS_WKUP4		 = PC_13,
 	SYS_WKUP5		 = PI_8,
 	SYS_WKUP6		 = PI_11,
-
-	// Leka Pin Names
-	BATTERY_BMS_I2C_SCL = PB_6,
-	BATTERY_BMS_I2C_SDA = PB_7,
-
-	BLE_IRQ		 = PI_11,
-	BLE_RESET	 = PE_3,
-	BLE_SPI_MISO = PF_8,
-	BLE_SPI_MOSI = PF_9,
-	BLE_SPI_NSS	 = PF_6,
-	BLE_SPI_SCK	 = PF_7,
-
-	BT_RESET   = PC_8,
-	BT_UART_RX = PC_7,
-	BT_UART_TX = PC_6,
-	BT_WAKE_UP = PG_7,
-
-	HSE_IN	= PH_0,
-	HSE_OUT = PH_1,
-
-	LED_BELT_SPI_MOSI = PG_14,
-	LED_BELT_SPI_SCK  = PG_13,
-	LED_EARS_SPI_MOSI = PB_15,
-	LED_EARS_SPI_SCK  = PB_13,
-
-	LSE_IN	= PC_14,
-	LSE_OUT = PC_15,
-
-	MCU_MIC_INPUT	= PF_10,
-	MCU_SOUND_OUT	= PA_4,
-	MCU_SYS_WAKE_UP = PA_0,
-
-	MOTOR_LEFT_DIRECTION_1	= PI_8,
-	MOTOR_LEFT_DIRECTION_2	= PC_13,
-	MOTOR_LEFT_PWM			= PA_1,
-	MOTOR_RIGHT_DIRECTION_1 = PE_4,
-	MOTOR_RIGHT_DIRECTION_2 = PE_5,
-	MOTOR_RIGHT_PWM			= PA_2,
-
-	QSPI_FLASH_CLK	 = PB_2,
-	QSPI_FLASH_IO0	 = PD_11,
-	QSPI_FLASH_IO1	 = PC_10,
-	QSPI_FLASH_IO2	 = PE_2,
-	QSPI_FLASH_IO3	 = PD_13,
-	QSPI_FLASH_nCS	 = PB_10,
-	QSPI_FLASH_nCS_1 = PD_12,
-	QSPI_FLASH_nCS_2 = PH_6,
-	QSPI_FLASH_nCS_3 = PJ_4,
-
-	RFID_UART_RX = PA_11,
-	RFID_UART_TX = PA_12,
-
-	SCREEN_BACKLIGHT_PWM = PB_14,
-
-	SD_SPI_CS	= PC_4,
-	SD_SPI_MISO = PA_6,
-	SD_SPI_MOSI = PA_7,
-	SD_SPI_SCK	= PA_5,
-
-	SENSOR_IMU_IRQ				 = PG_9,
-	SENSOR_IMU_TH_I2C_SCL		 = PB_8,
-	SENSOR_IMU_TH_I2C_SDA		 = PB_9,
-	SENSOR_LIGHT_ADC_INPUT		 = PB_1,
-	SENSOR_MAGNETO_IRQ			 = PA_15,
-	SENSOR_PROXIMITY_MUX_I2C_SCL = PH_7,
-	SENSOR_PROXIMITY_MUX_I2C_SDA = PC_9,
-	SENSOR_PROXIMITY_MUX_IRQA	 = PI_13,
-	SENSOR_PROXIMITY_MUX_IRQB	 = PG_10,
-	SENSOR_PROXIMITY_MUX_RESET	 = PI_12,
-	SENSOR_TEMPERATURE_IRQ		 = PB_5,
-
-	SOUND_ENABLE = PA_8,
-
-	SYS_POWER_CHECKUP_3V3 = PJ_0,
-	SYS_POWER_CHECKUP_5V  = PJ_1,
-	SYS_PROG_SWCLK		  = PA_14,
-	SYS_PROG_SWDIO		  = PA_13,
-	SYS_PROG_SWO		  = PB_3,
-	SYS_PROG_VCP_RX		  = PA_10,
-	SYS_PROG_VCP_TX		  = PA_9,
-
-	WIFI_ENABLE	   = PC_12,
-	WIFI_RESET	   = PJ_3,
-	WIFI_USART_CTS = PD_3,
-	WIFI_USART_RTS = PD_4,
-	WIFI_USART_RX  = PA_3,
-	WIFI_USART_TX  = PD_5,
 
 	// Not connected
 	NC = (int)0xFFFFFFFF
