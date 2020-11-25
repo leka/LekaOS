@@ -126,6 +126,9 @@ puts "Creating pin names data from parsed #{$csv_file_name} file..."
 
 $pin_names_output_data = []
 
+$pin_names_output_data.append("\n")
+$pin_names_output_data.append("    // Leka Pin Names")
+
 output = ""
 $grouped_pins_array.each do |label, name|
 	if [label, name] == ["", ""]
@@ -141,7 +144,18 @@ $grouped_pins_array.each do |label, name|
 	end
 end
 
-$pin_names_output_data.unshift("\n", "    // Leka Pin Names")
+$pin_names_output_data.append("\n")
+$pin_names_output_data.append("STDIO_UART_TX = SYS_PROG_VCP_TX,")
+$pin_names_output_data.append("STDIO_UART_RX = SYS_PROG_VCP_RX,")
+$pin_names_output_data.append("\n")
+$pin_names_output_data.append("USBTX = STDIO_UART_TX,")
+$pin_names_output_data.append("USBRX = STDIO_UART_RX,")
+$pin_names_output_data.append("\n")
+$pin_names_output_data.append("LED1 = DEBUG_LED,")
+$pin_names_output_data.append("LED2 = NC,")
+$pin_names_output_data.append("LED3 = NC,")
+$pin_names_output_data.append("\n")
+$pin_names_output_data.append("USER_BUTTON = NC,")
 $pin_names_output_data.append("\n")
 
 puts "Creating pin names data from parsed #{$csv_file_name} file... ✅"
@@ -153,8 +167,12 @@ $pin_names_file_data = File.readlines($pin_names_orig_file_path).map(&:chomp)
 $insert_at_index     = 0
 
 $pin_names_file_data.each_with_index do |line, index|
-	if line.include? "// Not connected"
-		$insert_at_index = index
+	regex = /(\bSTDIO_|LED[0-9]|USB_OTG|ETH_|= D[0-9]|Px_x|BUTTON)/
+	if line.match regex
+		$pin_names_file_data[index] = "// #{$pin_names_file_data[index]}"
+	end
+	if line.include? "} PinName;"
+		$insert_at_index = index - 1
 		break
 	end
 end

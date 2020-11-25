@@ -13,9 +13,9 @@ using namespace std::chrono;
 
 Firmware::Firmware()
 	: _interface(QSPI_FLASH_IO0, QSPI_FLASH_IO1, QSPI_FLASH_IO2, QSPI_FLASH_IO3, QSPI_FLASH_CLK, QSPI_FLASH_nCS),
-	  _disable_ext_memory_1(QSPI_FLASH_nCS_1, 1),
-	  _disable_ext_memory_2(QSPI_FLASH_nCS_2, 1),
-	  _disable_ext_memory_3(QSPI_FLASH_nCS_3, 1)
+	  _disable_ext_memory_1(QSPI_FLASH_nCS, 1),
+	  _disable_ext_memory_2(QSPI_FLASH_nCS, 1),
+	  _disable_ext_memory_3(QSPI_FLASH_nCS, 1)
 {
 	rtos::ThisThread::sleep_for(10ms);
 	init();

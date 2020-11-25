@@ -8,6 +8,8 @@ build
 cmake/config/
 .cache
 .clangd
+*.ioc.csv
+cube_path.json
 
 
 #

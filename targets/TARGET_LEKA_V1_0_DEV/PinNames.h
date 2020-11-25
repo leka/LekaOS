@@ -30,11 +30,14 @@ typedef enum
 	ALT0 = 0x100,
 	ALT1 = 0x200,
 	ALT2 = 0x300,
-	ALT3 = 0x400
+	ALT3 = 0x400,
+	ALT4 = 0x500
 } ALTx;
 
 typedef enum
 {
+	// Not connected
+	NC = (int)0xFFFFFFFF,
 
 	PA_0	   = 0x00,
 	PA_0_ALT0  = PA_0 | ALT0,	// same pin used for alternate HW
@@ -251,88 +254,126 @@ typedef enum
 	ADC_VREF = 0xF1,   // Internal pin virtual value
 	ADC_VBAT = 0xF2,   // Internal pin virtual value
 
+// Arduino Uno(Rev3) Header pin connection naming
+// 	A0	= Px_x,
+// 	A1	= Px_x,
+// 	A2	= Px_x,
+// 	A3	= Px_x,
+// 	A4	= Px_x,
+// 	A5	= Px_x,
+// 	D0	= Px_x,
+// 	D1	= Px_x,
+// 	D2	= Px_x,
+// 	D3	= Px_x,
+// 	D4	= Px_x,
+// 	D5	= Px_x,
+// 	D6	= Px_x,
+// 	D7	= Px_x,
+// 	D8	= Px_x,
+// 	D9	= Px_x,
+// 	D10 = Px_x,
+// 	D11 = Px_x,
+// 	D12 = Px_x,
+// 	D13 = Px_x,
+// 	D14 = Px_x,
+// 	D15 = Px_x,
+
 // STDIO for console print
 #ifdef MBED_CONF_TARGET_STDIO_UART_TX
-	STDIO_UART_TX = MBED_CONF_TARGET_STDIO_UART_TX,
+// 	STDIO_UART_TX = MBED_CONF_TARGET_STDIO_UART_TX,
 #else
-	STDIO_UART_TX = PA_9,
+// 	STDIO_UART_TX = PA_9,
 #endif
 #ifdef MBED_CONF_TARGET_STDIO_UART_RX
-	STDIO_UART_RX = MBED_CONF_TARGET_STDIO_UART_RX,
+// 	STDIO_UART_RX = MBED_CONF_TARGET_STDIO_UART_RX,
 #else
-	STDIO_UART_RX = PA_10,
+// 	STDIO_UART_RX = PA_3,
 #endif
 
-	USBTX = STDIO_UART_TX,	 // used for greentea tests
-	USBRX = STDIO_UART_RX,	 // used for greentea tests
+	// 	USBTX = STDIO_UART_TX,	 // used for greentea tests
+	// 	USBRX = STDIO_UART_RX,	 // used for greentea tests
+
+	// I2C signals aliases
+	// 	I2C_SDA = D14,
+	// 	I2C_SCL = D15,
+
+	// SPI signals aliases
+	// 	SPI_CS	 = D10,
+	// 	SPI_MOSI = D11,
+	// 	SPI_MISO = D12,
+	// 	SPI_SCK	 = D13,
 
 	// Standardized LED and button names
-	LED1 = PG_13,	// LED_BELT_SPI_SCK
-	LED2 = PG_14,	// LED_BELT_SPI_MOSI
-	LED3 = PB_13,	// LED_EARS_SPI_SCK
-	LED4 = PB_15,	// LED_EARS_SPI_MOSI
+	// 	LED1	= PB_13,   // LED_EARS_SPI_SCK
+	// 	LED2	= PG_14,   // LED_BELT_SPI_MOSI
+	// 	LED3	= PH_4,	   // DEBUG_LED
+	// 	LED4	= PB_15,   // LED_EARS_SPI_MOSI
+	// 	LED5	= PG_13,   // LED_BELT_SPI_SCK
+	// 	BUTTON1 = Px_x,
 
-	USER_BUTTON = (int)0xFFFFFFFF,
+	// Backward legacy names
+	// 	USER_BUTTON = PA_0,
+	// 	PWM_OUT		= D3,
 
 	/**** USB FS pins ****/
-	USB_OTG_FS_DM	= PA_11,
-	USB_OTG_FS_DP	= PA_12,
-	USB_OTG_FS_ID	= PA_10,
-	USB_OTG_FS_SOF	= PA_8,
-	USB_OTG_FS_VBUS = PA_9,
+	// 	USB_OTG_FS_DM	= PA_11,
+	// 	USB_OTG_FS_DP	= PA_12,
+	// 	USB_OTG_FS_ID	= PA_10,
+	// 	USB_OTG_FS_SOF	= PA_8,
+	// 	USB_OTG_FS_VBUS = PA_9,
 
 	/**** USB HS pins ****/
-	USB_OTG_HS_DM			 = PB_14,
-	USB_OTG_HS_DP			 = PB_15,
-	USB_OTG_HS_ID			 = PB_12,
-	USB_OTG_HS_SOF			 = PA_4,
-	USB_OTG_HS_ULPI_CK		 = PA_5,
-	USB_OTG_HS_ULPI_D0		 = PA_3,
-	USB_OTG_HS_ULPI_D1		 = PB_0,
-	USB_OTG_HS_ULPI_D2		 = PB_1,
-	USB_OTG_HS_ULPI_D3		 = PB_10,
-	USB_OTG_HS_ULPI_D4		 = PB_11,
-	USB_OTG_HS_ULPI_D5		 = PB_12,
-	USB_OTG_HS_ULPI_D6		 = PB_13,
-	USB_OTG_HS_ULPI_D7		 = PB_5,
-	USB_OTG_HS_ULPI_DIR		 = PC_2,
-	USB_OTG_HS_ULPI_DIR_ALT0 = PI_11,
-	USB_OTG_HS_ULPI_NXT		 = PC_3,
-	USB_OTG_HS_ULPI_NXT_ALT0 = PH_4,
-	USB_OTG_HS_ULPI_STP		 = PC_0,
-	USB_OTG_HS_VBUS			 = PB_13,
+	// 	USB_OTG_HS_DM			 = PB_14,
+	// 	USB_OTG_HS_DP			 = PB_15,
+	// 	USB_OTG_HS_ID			 = PB_12,
+	// 	USB_OTG_HS_SOF			 = PA_4,
+	// 	USB_OTG_HS_ULPI_CK		 = PA_5,
+	// 	USB_OTG_HS_ULPI_D0		 = PA_3,
+	// 	USB_OTG_HS_ULPI_D1		 = PB_0,
+	// 	USB_OTG_HS_ULPI_D2		 = PB_1,
+	// 	USB_OTG_HS_ULPI_D3		 = PB_10,
+	// 	USB_OTG_HS_ULPI_D4		 = PB_11,
+	// 	USB_OTG_HS_ULPI_D5		 = PB_12,
+	// 	USB_OTG_HS_ULPI_D6		 = PB_13,
+	// 	USB_OTG_HS_ULPI_D7		 = PB_5,
+	// 	USB_OTG_HS_ULPI_DIR		 = PC_2,
+	// 	USB_OTG_HS_ULPI_DIR_ALT0 = PI_11,
+	// 	USB_OTG_HS_ULPI_NXT		 = PC_3,
+	// 	USB_OTG_HS_ULPI_NXT_ALT0 = PH_4,
+	// 	USB_OTG_HS_ULPI_STP		 = PC_0,
+	// 	USB_OTG_HS_VBUS			 = PB_13,
 
 	/**** ETHERNET pins ****/
-	ETH_COL			 = PH_3,
-	ETH_COL_ALT0	 = PA_3,
-	ETH_CRS			 = PA_0,
-	ETH_CRS_ALT0	 = PH_2,
-	ETH_CRS_DV		 = PA_7,
-	ETH_MDC			 = PC_1,
-	ETH_MDIO		 = PA_2,
-	ETH_PPS_OUT		 = PG_8,
-	ETH_PPS_OUT_ALT0 = PB_5,
-	ETH_REF_CLK		 = PA_1,
-	ETH_RXD0		 = PC_4,
-	ETH_RXD1		 = PC_5,
-	ETH_RXD2		 = PB_0,
-	ETH_RXD2_ALT0	 = PH_6,
-	ETH_RXD3		 = PB_1,
-	ETH_RXD3_ALT0	 = PH_7,
-	ETH_RX_CLK		 = PA_1,
-	ETH_RX_DV		 = PA_7,
-	ETH_RX_ER		 = PI_10,
-	ETH_RX_ER_ALT0	 = PB_10,
-	ETH_TXD0		 = PB_12,
-	ETH_TXD0_ALT0	 = PG_13,
-	ETH_TXD1		 = PB_13,
-	ETH_TXD1_ALT0	 = PG_14,
-	ETH_TXD2		 = PC_2,
-	ETH_TXD3		 = PE_2,
-	ETH_TXD3_ALT0	 = PB_8,
-	ETH_TX_CLK		 = PC_3,
-	ETH_TX_EN		 = PB_11,
-	ETH_TX_EN_ALT0	 = PG_11,
+	// 	ETH_COL			 = PH_3,
+	// 	ETH_COL_ALT0	 = PA_3,
+	// 	ETH_CRS			 = PA_0,
+	// 	ETH_CRS_ALT0	 = PH_2,
+	// 	ETH_CRS_DV		 = PA_7,
+	// 	ETH_MDC			 = PC_1,
+	// 	ETH_MDIO		 = PA_2,
+	// 	ETH_PPS_OUT		 = PG_8,
+	// 	ETH_PPS_OUT_ALT0 = PB_5,
+	// 	ETH_REF_CLK		 = PA_1,
+	// 	ETH_RXD0		 = PC_4,
+	// 	ETH_RXD1		 = PC_5,
+	// 	ETH_RXD2		 = PB_0,
+	// 	ETH_RXD2_ALT0	 = PH_6,
+	// 	ETH_RXD3		 = PB_1,
+	// 	ETH_RXD3_ALT0	 = PH_7,
+	// 	ETH_RX_CLK		 = PA_1,
+	// 	ETH_RX_DV		 = PA_7,
+	// 	ETH_RX_ER		 = PI_10,
+	// 	ETH_RX_ER_ALT0	 = PB_10,
+	// 	ETH_TXD0		 = PB_12,
+	// 	ETH_TXD0_ALT0	 = PG_13,
+	// 	ETH_TXD1		 = PB_13,
+	// 	ETH_TXD1_ALT0	 = PG_14,
+	// 	ETH_TXD2		 = PC_2,
+	// 	ETH_TXD3		 = PE_2,
+	// 	ETH_TXD3_ALT0	 = PB_8,
+	// 	ETH_TX_CLK		 = PC_3,
+	// 	ETH_TX_EN		 = PB_11,
+	// 	ETH_TX_EN_ALT0	 = PG_11,
 
 	/**** OSCILLATOR pins ****/
 	RCC_OSC32_IN  = PC_14,
@@ -365,8 +406,8 @@ typedef enum
 	SYS_WKUP6		 = PI_11,
 
 	// Leka Pin Names
-	BATTERY_BMS_I2C_SCL = PB_6,
-	BATTERY_BMS_I2C_SDA = PB_7,
+	BATTERY_CHARGE_STATUS = PC_0,
+	BATTERY_VOLTAGE		  = PC_3,
 
 	BLE_IRQ		 = PI_11,
 	BLE_RESET	 = PE_3,
@@ -379,6 +420,8 @@ typedef enum
 	BT_UART_RX = PC_7,
 	BT_UART_TX = PC_6,
 	BT_WAKE_UP = PG_7,
+
+	DEBUG_LED = PH_4,
 
 	HSE_IN	= PH_0,
 	HSE_OUT = PH_1,
@@ -395,22 +438,21 @@ typedef enum
 	MCU_SOUND_OUT	= PA_4,
 	MCU_SYS_WAKE_UP = PA_0,
 
-	MOTOR_LEFT_DIRECTION_1	= PI_8,
-	MOTOR_LEFT_DIRECTION_2	= PC_13,
+	MOTOR_LEFT_DIRECTION_1	= PC_13,
+	MOTOR_LEFT_DIRECTION_2	= PI_8,
 	MOTOR_LEFT_PWM			= PA_1,
+	MOTOR_LEFT_VOLTAGE		= PC_1,
 	MOTOR_RIGHT_DIRECTION_1 = PE_4,
 	MOTOR_RIGHT_DIRECTION_2 = PE_5,
 	MOTOR_RIGHT_PWM			= PA_2,
+	MOTOR_RIGHT_VOLTAGE		= PC_2,
 
-	QSPI_FLASH_CLK	 = PB_2,
-	QSPI_FLASH_IO0	 = PD_11,
-	QSPI_FLASH_IO1	 = PC_10,
-	QSPI_FLASH_IO2	 = PE_2,
-	QSPI_FLASH_IO3	 = PD_13,
-	QSPI_FLASH_nCS	 = PB_10,
-	QSPI_FLASH_nCS_1 = PD_12,
-	QSPI_FLASH_nCS_2 = PH_6,
-	QSPI_FLASH_nCS_3 = PJ_4,
+	QSPI_FLASH_CLK = PB_2,
+	QSPI_FLASH_IO0 = PD_11,
+	QSPI_FLASH_IO1 = PC_10,
+	QSPI_FLASH_IO2 = PE_2,
+	QSPI_FLASH_IO3 = PD_13,
+	QSPI_FLASH_nCS = PB_10,
 
 	RFID_UART_RX = PA_11,
 	RFID_UART_TX = PA_12,
@@ -444,15 +486,26 @@ typedef enum
 	SYS_PROG_VCP_RX		  = PA_10,
 	SYS_PROG_VCP_TX		  = PA_9,
 
-	WIFI_ENABLE	   = PC_12,
-	WIFI_RESET	   = PJ_3,
-	WIFI_USART_CTS = PD_3,
-	WIFI_USART_RTS = PD_4,
-	WIFI_USART_RX  = PA_3,
-	WIFI_USART_TX  = PD_5,
+	WIFI_ACTIVATE_UPDATE = PD_2,
+	WIFI_ENABLE			 = PC_12,
+	WIFI_RESET			 = PJ_3,
+	WIFI_USART_CTS		 = PD_3,
+	WIFI_USART_RTS		 = PD_4,
+	WIFI_USART_RX		 = PA_3,
+	WIFI_USART_TX		 = PD_5,
 
-	// Not connected
-	NC = (int)0xFFFFFFFF
+	STDIO_UART_TX = SYS_PROG_VCP_TX,
+	STDIO_UART_RX = SYS_PROG_VCP_RX,
+
+	USBTX = STDIO_UART_TX,
+	USBRX = STDIO_UART_RX,
+
+	LED1 = DEBUG_LED,
+	LED2 = NC,
+	LED3 = NC,
+
+	USER_BUTTON = NC,
+
 } PinName;
 
 #ifdef __cplusplus
