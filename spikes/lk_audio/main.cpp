@@ -6,6 +6,7 @@
 
 #include "PinNames.h"
 
+#include "AudioFrequency.h"
 #include "HelloWorld.h"
 
 using namespace leka;
@@ -14,6 +15,8 @@ HelloWorld hello;
 
 AnalogOut audio_output(MCU_SOUND_OUT);
 DigitalOut audio_enable(SOUND_ENABLE, 1);
+
+AudioFrequency audio_frequency(audio_output);
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 
@@ -27,6 +30,8 @@ int main(void)
 	printf("\nHello LekaOS, Audio test!\n\n");
 
 	rtos::ThisThread::sleep_for(2s);
+
+	audio_frequency.playFrequency(440, 1);	 // 440 Hz, 10s
 
 	hello.start();
 
