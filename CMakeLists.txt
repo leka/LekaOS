@@ -31,6 +31,7 @@ add_target_board_subdirectory("${TARGET_BOARD}")
 # Add drivers
 add_subdirectory(${DRIVERS_DIR}/FastLED)
 add_subdirectory(${DRIVERS_DIR}/Motor)
+add_subdirectory(${DRIVERS_DIR}/Audio)
 
 
 # Add libraries
@@ -57,6 +58,7 @@ add_subdirectory(${SPIKES_DIR}/mbed_blinky)
 add_subdirectory(${SPIKES_DIR}/mbed_watchdog)
 add_subdirectory(${SPIKES_DIR}/mbed_watchdog_ticker_vs_thread)
 
+add_subdirectory(${SPIKES_DIR}/lk_audio)
 add_subdirectory(${SPIKES_DIR}/lk_ble)
 add_subdirectory(${SPIKES_DIR}/lk_lcd)
 add_subdirectory(${SPIKES_DIR}/lk_led)
@@ -70,6 +72,7 @@ add_subdirectory(${SPIKES_DIR}/lk_sensors_touch)
 
 add_custom_target(spikes_leka)
 add_dependencies( spikes_leka
+	spike_lk_audio
 	spike_lk_ble
 	spike_lk_lcd
 	spike_lk_led
