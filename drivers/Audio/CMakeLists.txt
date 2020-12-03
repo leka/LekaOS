@@ -12,6 +12,7 @@ target_include_directories(driver_audio
 
 target_sources(driver_audio
   PRIVATE
+    source/AudioFrequency.cpp
     source/AudioPlayer.cpp
     source/WaveAudioStream.cpp
 )
