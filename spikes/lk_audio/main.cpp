@@ -7,16 +7,20 @@
 #include "PinNames.h"
 
 #include "AudioFrequency.h"
+#include "AudioPlayer.h"
+#include "FileManager.h"
 #include "HelloWorld.h"
 
 using namespace leka;
 
 HelloWorld hello;
+FileManager sd_card;
 
 AnalogOut audio_output(MCU_SOUND_OUT);
 DigitalOut audio_enable(SOUND_ENABLE, 1);
 
 AudioFrequency audio_frequency(audio_output);
+AudioPlayer player(&audio_output);
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 
@@ -31,7 +35,22 @@ int main(void)
 
 	rtos::ThisThread::sleep_for(2s);
 
-	audio_frequency.playFrequency(440, 1);	 // 440 Hz, 10s
+	// First, check haptic vibrator works
+	audio_frequency.playFrequency(440, 1);	 // 440 Hz, 1s
+
+	// Secondly, check that wav file exists
+	const char filename[] = "assets/audio/file_example_WAV_1MG.wav";
+
+	sd_card.open(filename);
+	uint32_t file_size = sd_card.getFileSize();
+	printf("File %s openened. File size : %lu bytes\n", filename, file_size);
+	sd_card.close();
+
+	// Finally, use AudioPlayer to play wav file on haptic vibrator
+	File file(&sd_card._fs, filename);
+	printf("Playng the song...\n");
+	player.play(&file);
+	printf("End of the song.\n");
 
 	// hello.start();
 

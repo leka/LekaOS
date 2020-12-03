@@ -21,9 +21,10 @@ class FileManager
 
 	void testWorkingToRemove();
 
+	FATFileSystem _fs;
+
   private:
 	SDBlockDevice _bd;
-	FATFileSystem _fs;
 	FIL _file;
 };
 

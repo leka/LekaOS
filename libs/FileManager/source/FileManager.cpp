@@ -11,7 +11,7 @@ using namespace mbed;
 FileManager::FileManager() : _bd(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK), _fs("fs")
 {
 	_bd.init();
-	_bd.frequency(5000000);
+	_bd.frequency(25000000);
 
 	_fs.mount(&_bd);
 }
