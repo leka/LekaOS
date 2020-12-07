@@ -17,4 +17,4 @@ target_include_directories(spike_lk_led
 target_link_libraries(spike_lk_led driver_FastLED)
 target_link_libraries(spike_lk_led lib_HelloWorld)
 
-target_link_target_board_libraries(spike_lk_led DISCO_ORIGINAL LEKA_V1_0_DEV)
+target_link_custom_board_libraries(spike_lk_led)

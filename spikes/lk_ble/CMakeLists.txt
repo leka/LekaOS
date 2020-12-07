@@ -17,4 +17,4 @@ target_include_directories(spike_lk_ble
 target_link_libraries(spike_lk_ble lib_HelloWorld)
 target_link_libraries(spike_lk_ble lib_BLE)
 
-target_link_target_board_libraries(spike_lk_ble DISCO_ORIGINAL LEKA_V1_0_DEV)
+target_link_custom_board_libraries(spike_lk_ble)
