@@ -14,4 +14,4 @@ target_sources(spike_mbed_watchdog
     main.cpp
 )
 
-target_link_target_board_libraries(spike_mbed_watchdog DISCO_ORIGINAL LEKA_V1_0_DEV)
+target_link_custom_board_libraries(spike_mbed_watchdog)

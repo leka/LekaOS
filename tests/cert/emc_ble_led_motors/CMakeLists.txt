@@ -19,4 +19,4 @@ target_link_libraries(certs_emc_ble_led_motors driver_FastLED)
 
 target_link_libraries(certs_emc_ble_led_motors lib_BLE)
 
-target_link_target_board_libraries(certs_emc_ble_led_motors DISCO_ORIGINAL LEKA_V1_0_DEV_led_motors)
+target_link_custom_board_libraries(certs_emc_ble_led_motors)

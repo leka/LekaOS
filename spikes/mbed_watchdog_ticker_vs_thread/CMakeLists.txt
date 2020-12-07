@@ -14,4 +14,4 @@ target_sources(spike_mbed_watchdog_ticker_vs_thread
     main.cpp
 )
 
-target_link_target_board_libraries(spike_mbed_watchdog_ticker_vs_thread DISCO_ORIGINAL LEKA_V1_0_DEV)
+target_link_custom_board_libraries(spike_mbed_watchdog_ticker_vs_thread)
