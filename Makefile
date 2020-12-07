@@ -46,7 +46,7 @@ config_leka_disco:
 	@$(MAKE) config TARGET_BOARD="-x LEKA_DISCO"
 
 config:
-	@$(MAKE) clean
+	@$(MAKE) deep_clean
 	@echo ""
 	@$(MAKE) config_target
 	@echo ""
@@ -57,10 +57,9 @@ config_target:
 	@echo "🏃 Running target configuration script 📝"
 	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_DIR)/config -a $(ROOT_DIR)/mbed_app.json
 
-config_cmake:
+config_cmake: mkdir_build
 	@echo ""
 	@echo "🏃 Running cmake configuration script 📝"
-	@mkdir -p $(BUILD_DIR)
 	@cd $(BUILD_DIR); cmake -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
 
 #
@@ -108,10 +107,18 @@ curl_mbed:
 # MARK:- Utils targets
 #
 
+mkdir_build:
+	@mkdir -p $(BUILD_DIR)
+
 clean:
 	@echo ""
-	@echo "⚠️  Cleaning up build & cmake/config directories 🧹"
+	@echo "⚠️  Cleaning up build directories 🧹"
 	rm -rf $(BUILD_DIR)
+
+deep_clean:
+	@$(MAKE) clean
+	@echo ""
+	@echo "⚠️  Cleaning up cmake/config directories 🧹"
 	rm -rf $(CMAKE_DIR)/config
 
 flash:
