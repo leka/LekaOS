@@ -89,10 +89,10 @@ add_dependencies( spikes_mbed
 	spike_mbed_watchdog_ticker_vs_thread
 )
 
-add_subdirectory(${ROOT_DIR}/tests/cert/emc_ble_led_motors)
-add_subdirectory(${ROOT_DIR}/tests/cert/emc_lcd_led_motors)
-add_subdirectory(${ROOT_DIR}/tests/cert/emc_bt_lcd_qspi_rfid_touch_wifi)
-add_subdirectory(${ROOT_DIR}/tests/hardware/motors_test_reduction_and_wheels)
+add_subdirectory(${ROOT_DIR}/tests/functional/cert/emc_ble_led_motors)
+add_subdirectory(${ROOT_DIR}/tests/functional/cert/emc_lcd_led_motors)
+add_subdirectory(${ROOT_DIR}/tests/functional/cert/emc_bt_lcd_qspi_rfid_touch_wifi)
+add_subdirectory(${ROOT_DIR}/tests/functional/hardware/motors_test_reduction_and_wheels)
 
 # Finally print the mbed-cmake build report
 mbed_cmake_print_build_report()
