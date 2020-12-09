@@ -145,10 +145,10 @@ endif()
 
 if(NOT MBED_UNITTESTS)
 	# find upload tools
-	find_package(OpenOCD)
-	find_package(JLINK)
+	# find_package(OpenOCD)
+	# find_package(JLINK)
 
-	include(SetUploadMethod)
+	# include(SetUploadMethod)
 endif()
 
 # add Mbed OS source
