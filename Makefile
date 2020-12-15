@@ -13,7 +13,7 @@ PROJECT_BUILD_DIR    := $(ROOT_DIR)/build
 UNIT_TESTS_BUILD_DIR := $(ROOT_DIR)/build/unit_tests
 
 #
-# MARK:- Arguments
+# MARK: - Arguments
 #
 
 PORT         ?= /dev/tty.usbmodem14303
@@ -26,7 +26,7 @@ BUILD_TYPE   ?= Release
 TARGET_BOARD ?= -x LEKA_V1_0_DEV
 
 #
-# MARK:- Build targets
+# MARK: - Build targets
 #
 
 all:
@@ -50,7 +50,7 @@ tests_functional:
 	cmake --build $(PROJECT_BUILD_DIR) -t tests_functional
 
 #
-# MARK:- Config targets
+# MARK: - Config targets
 #
 
 config_leka_disco:
@@ -74,7 +74,7 @@ config_cmake: mkdir_build
 	@cd $(PROJECT_BUILD_DIR); cmake -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
 
 #
-# MARK:- Tests targets
+# MARK: - Tests targets
 #
 
 unit_tests:
@@ -98,7 +98,7 @@ clean_unit_tests:
 	rm -rf $(UNIT_TESTS_BUILD_DIR)
 
 #
-# MARK:- Tools targets
+# MARK: - Tools targets
 #
 
 clang_format:
@@ -112,7 +112,7 @@ clang_format_fix:
 	python3 tools/run-clang-format.py -r -i --extension=h,c,cpp --color=always --style=file ./src ./drivers ./libs ./spikes ./tests
 
 #
-# MARK:- Mbed targets
+# MARK: - Mbed targets
 #
 
 clone_mbed:
@@ -139,7 +139,7 @@ curl_mbed:
 	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_mbedignore.txt $(MBED_OS_DIR)/.mbedignore
 
 #
-# MARK:- Utils targets
+# MARK: - Utils targets
 #
 
 mkdir_build:
