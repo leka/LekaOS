@@ -144,10 +144,11 @@ endif()
 # -------------------------------------------------------------
 
 if(NOT MBED_UNITTESTS)
+	set(CMAKE_EXECUTABLE_SUFFIX .elf)
+
 	# find upload tools
 	# find_package(OpenOCD)
 	# find_package(JLINK)
-
 	# include(SetUploadMethod)
 endif()
 
