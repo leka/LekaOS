@@ -6,10 +6,10 @@
 # MARK: - Constants
 #
 
-ROOT_DIR    := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-CMAKE_DIR   := $(ROOT_DIR)/cmake
-BUILD_DIR   := $(ROOT_DIR)/build
-MBED_OS_DIR := $(ROOT_DIR)/extern/mbed-os
+ROOT_DIR             := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+CMAKE_DIR            := $(ROOT_DIR)/cmake
+MBED_OS_DIR          := $(ROOT_DIR)/extern/mbed-os
+PROJECT_BUILD_DIR    := $(ROOT_DIR)/build
 
 #
 # MARK:- Arguments
@@ -20,7 +20,7 @@ BRANCH       ?= master
 TARGET       ?=
 VERSION      ?= mbed-os-6.3.0
 BAUDRATE     ?= 115200
-BIN_PATH     ?= $(BUILD_DIR)/src/LekaOS.bin
+BIN_PATH     ?= $(PROJECT_BUILD_DIR)/src/LekaOS.bin
 BUILD_TYPE   ?= Release
 TARGET_BOARD ?= -x LEKA_V1_0_DEV
 
@@ -30,13 +30,23 @@ TARGET_BOARD ?= -x LEKA_V1_0_DEV
 
 all:
 	@echo ""
-	@echo "🏗️  Building application 🚧"
-	cmake --build build -t $(TARGET)
+	@echo "🏗️  Building everything! 🌈"
+	cmake --build $(PROJECT_BUILD_DIR)
+
+os:
+	@echo ""
+	@echo "🏗️  Building LekaOS 🤖"
+	cmake --build $(PROJECT_BUILD_DIR) -t LekaOS
 
 lekaos:
 	@echo ""
-	@echo "🏗️  Building LekaOS 🚧"
-	ninja -C ./build -f build.ninja LekaOS
+	@echo "🏗️  Building spikes 🍱"
+	cmake --build $(PROJECT_BUILD_DIR) -t spikes
+
+tests_functional:
+	@echo ""
+	@echo "🏗️  Building functional tests ⚗️"
+	cmake --build $(PROJECT_BUILD_DIR) -t tests_functional
 
 #
 # MARK:- Config targets
@@ -60,7 +70,7 @@ config_target:
 config_cmake: mkdir_build
 	@echo ""
 	@echo "🏃 Running cmake configuration script 📝"
-	@cd $(BUILD_DIR); cmake -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
+	@cd $(PROJECT_BUILD_DIR); cmake -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
 
 #
 # MARK:- Tools targets
@@ -108,12 +118,12 @@ curl_mbed:
 #
 
 mkdir_build:
-	@mkdir -p $(BUILD_DIR)
+	@mkdir -p $(PROJECT_BUILD_DIR)
 
 clean:
 	@echo ""
 	@echo "⚠️  Cleaning up build directories 🧹"
-	rm -rf $(BUILD_DIR)
+	rm -rf $(PROJECT_BUILD_DIR)
 
 deep_clean:
 	@$(MAKE) clean
