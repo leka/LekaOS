@@ -124,11 +124,9 @@ if(MBED_UNITTESTS)
 	# Build internal GTest.
 	# We use an internal GTest because hardly any platform has a complete package available
 	# for it for some reason.
-	add_subdirectory(${MBED_CMAKE_SOURCE_DIR}/gtest-external-project)
-
-	include(GoogleTest)
-
-	enable_testing()
+	# add_subdirectory(${MBED_CMAKE_SOURCE_DIR}/gtest-external-project)
+	# include(GoogleTest)
+	# enable_testing()
 endif()
 
 # load the Mbed CMake functions
