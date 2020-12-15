@@ -29,6 +29,8 @@ TARGET_BOARD ?= -x LEKA_V1_0_DEV
 # MARK: - Build targets
 #
 
+.PHONY: spikes tests
+
 all:
 	@echo ""
 	@echo "🏗️  Building everything! 🌈"
@@ -39,7 +41,7 @@ os:
 	@echo "🏗️  Building LekaOS 🤖"
 	cmake --build $(PROJECT_BUILD_DIR) -t LekaOS
 
-lekaos:
+spikes:
 	@echo ""
 	@echo "🏗️  Building spikes 🍱"
 	cmake --build $(PROJECT_BUILD_DIR) -t spikes
@@ -58,10 +60,9 @@ config_leka_disco:
 
 config:
 	@$(MAKE) deep_clean
-	@echo ""
 	@$(MAKE) config_target
-	@echo ""
 	@$(MAKE) config_cmake
+	@$(MAKE) config_unit_tests
 
 config_target:
 	@echo ""
