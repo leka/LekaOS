@@ -121,10 +121,7 @@ clone_mbed:
 	@echo "🧬 Cloning Mbed OS 📦"
 	@rm -rf $(MBED_OS_DIR)
 	git clone --depth=1 --branch=$(BRANCH) https://github.com/ARMmbed/mbed-os $(MBED_OS_DIR)
-	@echo ""
-	@echo "🔗 Symlinking templates to Mbed OS directory 🗂️"
-	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_CMakelists.txt $(MBED_OS_DIR)/CMakeLists.txt
-	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_mbedignore.txt $(MBED_OS_DIR)/.mbedignore
+	@$(MAKE) mbed_symlink_files
 
 curl_mbed:
 	@echo ""
@@ -134,6 +131,9 @@ curl_mbed:
 	curl -O -L https://github.com/ARMmbed/mbed-os/archive/$(VERSION).tar.gz
 	tar -xzf $(VERSION).tar.gz --strip-components=1 -C extern/mbed-os
 	rm -rf $(VERSION).tar.gz
+	@$(MAKE) mbed_symlink_files
+
+mbed_symlink_files:
 	@echo ""
 	@echo "🔗 Symlinking templates to Mbed OS directory 🗂️"
 	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_CMakelists.txt $(MBED_OS_DIR)/CMakeLists.txt
