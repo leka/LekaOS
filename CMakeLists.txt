@@ -5,12 +5,17 @@
 # mbed-cmake requires at least CMake 3.18
 cmake_minimum_required(VERSION 3.18)
 
+# Activate ccache if available
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
 	set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
 endif()
 
-# ⚠️ Before all, include mbed-cmake.cmake
+# Before all, set ROOT_DIR, MBED_OS_DIR
+set(ROOT_DIR    ${CMAKE_CURRENT_LIST_DIR})
+set(MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
+
+# And include mbed-cmake.cmake
 include(./mbed-cmake.cmake)
 
 # Then configure name of the project
