@@ -105,12 +105,12 @@ clean_unit_tests:
 clang_format:
 	@echo ""
 	@echo "🏃‍♂️ Running clang-format 🎨"
-	python3 tools/run-clang-format.py -r --extension=h,c,cpp --color=always --style=file ./src ./drivers ./libs ./spikes ./tests
+	python3 tools/run-clang-format.py -r --extension=h,c,cpp --color=always --style=file .
 
 clang_format_fix:
 	@echo ""
 	@echo "🏃‍♂️ Running clang-format & fixing files 🎨"
-	python3 tools/run-clang-format.py -r -i --extension=h,c,cpp --color=always --style=file ./src ./drivers ./libs ./spikes ./tests
+	python3 tools/run-clang-format.py -r --extension=h,c,cpp --color=always --style=file . -i
 
 #
 # MARK: - Mbed targets
