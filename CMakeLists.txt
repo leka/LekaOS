@@ -32,19 +32,31 @@ set(SPIKES_DIR  ${ROOT_DIR}/spikes)
 set(DRIVERS_DIR ${ROOT_DIR}/drivers)
 set(TARGETS_DIR ${ROOT_DIR}/targets)
 
-# Add custom target subdirectory
-add_target_board_subdirectory("${TARGET_BOARD}")
+if(NOT MBED_UNITTESTS)
 
-# Add drivers & libraries
-add_subdirectory(${DRIVERS_DIR})
-add_subdirectory(${LIBS_DIR})
+	# Add custom target subdirectory
+	add_target_board_subdirectory("${TARGET_BOARD}")
 
-# Add spikes, functional tests
-add_subdirectory(${SPIKES_DIR})
-add_subdirectory(${TESTS_DIR})
+	# Add drivers & libraries
+	add_subdirectory(${DRIVERS_DIR})
+	add_subdirectory(${LIBS_DIR})
 
-# Add LekaOS
-add_subdirectory(${OS_DIR})
+	# Add spikes, functional tests
+	add_subdirectory(${SPIKES_DIR})
+	add_subdirectory(${TESTS_DIR}/functional)
+
+	# Add LekaOS
+	add_subdirectory(${OS_DIR})
+
+else()
+
+	# Enable testing
+	enable_testing ()
+
+	# Add unit tests
+	add_subdirectory(${TESTS_DIR}/unit)
+
+endif(NOT MBED_UNITTESTS)
 
 # Finally print the mbed-cmake build report
 mbed_cmake_print_build_report()

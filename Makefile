@@ -10,6 +10,7 @@ ROOT_DIR             := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))
 CMAKE_DIR            := $(ROOT_DIR)/cmake
 MBED_OS_DIR          := $(ROOT_DIR)/extern/mbed-os
 PROJECT_BUILD_DIR    := $(ROOT_DIR)/build
+UNIT_TESTS_BUILD_DIR := $(ROOT_DIR)/build/unit_tests
 
 #
 # MARK:- Arguments
@@ -71,6 +72,30 @@ config_cmake: mkdir_build
 	@echo ""
 	@echo "🏃 Running cmake configuration script 📝"
 	@cd $(PROJECT_BUILD_DIR); cmake -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
+
+#
+# MARK:- Tests targets
+#
+
+unit_tests:
+	@echo ""
+	@echo "🏗️  Building unit tests 🧪"
+	cmake --build $(UNIT_TESTS_BUILD_DIR)
+
+	@echo ""
+	@echo "🏃‍♂️ Running unit tests 🧪"
+	@$(UNIT_TESTS_BUILD_DIR)/tests/unit/LekaOSUnitTests
+
+config_unit_tests:
+	@echo ""
+	@echo "🏃 Running unit tests cmake configuration script 📝"
+	@mkdir -p $(UNIT_TESTS_BUILD_DIR)
+	@cd $(UNIT_TESTS_BUILD_DIR); cmake -GNinja -DMBED_UNITTESTS=TRUE ../..
+
+clean_unit_tests:
+	@echo ""
+	@echo "⚠️  Cleaning up unit tests build directories 🧹"
+	rm -rf $(UNIT_TESTS_BUILD_DIR)
 
 #
 # MARK:- Tools targets
