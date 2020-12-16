@@ -22,9 +22,9 @@ To start with:
 $ git clone https://github.com/leka/LekaOS && cd LekaOS
 
 # Clone or curl Mbed OS using the Makefile
-$ make clone_mbed
+$ make mbed_clone
 # or
-$ make curl_mbed
+$ make mbed_curl
 
 # With clone_mbed You can specify a branch (default is mbed-os-6.6.0)
 $ make clone_mbed BRANCH=master
@@ -72,7 +72,7 @@ We put together an handy [`Makefile`](./Makefile) to make it easier to configure
 
 ```bash
 # First, you need to clone mbed-os
-$ make clone_mbed
+$ make mbed_clone
 
 # You can specify a branch (default is mbed-os-6.6.0)
 $ make clone_mbed BRANCH=master

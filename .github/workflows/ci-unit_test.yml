@@ -70,7 +70,7 @@ jobs:
       - name: Curl Mbed OS
         if: steps.cache_mbed_os.outputs.cache-hit != 'true'
         run: |
-          make curl_mbed
+          make mbed_curl
 
       - name: Cache CMake Config
         id: cache_cmake_config
