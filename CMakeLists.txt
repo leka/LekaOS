@@ -5,12 +5,17 @@
 # mbed-cmake requires at least CMake 3.18
 cmake_minimum_required(VERSION 3.18)
 
+# Activate ccache if available
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
 	set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
 endif()
 
-# ⚠️ Before all, include mbed-cmake.cmake
+# Before all, set ROOT_DIR, MBED_OS_DIR
+set(ROOT_DIR    ${CMAKE_CURRENT_LIST_DIR})
+set(MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
+
+# And include mbed-cmake.cmake
 include(./mbed-cmake.cmake)
 
 # Then configure name of the project
@@ -20,79 +25,38 @@ project(LekaOS LANGUAGES C CXX ASM)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 # For convenience you can define useful variables
+set(OS_DIR      ${ROOT_DIR}/src)
 set(LIBS_DIR    ${ROOT_DIR}/libs)
+set(TESTS_DIR   ${ROOT_DIR}/tests)
 set(SPIKES_DIR  ${ROOT_DIR}/spikes)
 set(DRIVERS_DIR ${ROOT_DIR}/drivers)
 set(TARGETS_DIR ${ROOT_DIR}/targets)
 
-# Add custom target subdirectory
-add_target_board_subdirectory("${TARGET_BOARD}")
+if(NOT MBED_UNITTESTS)
 
-# Add drivers
-add_subdirectory(${DRIVERS_DIR}/FastLED)
-add_subdirectory(${DRIVERS_DIR}/Motor)
+	# Add custom target subdirectory
+	add_target_board_subdirectory("${TARGET_BOARD}")
 
+	# Add drivers & libraries
+	add_subdirectory(${DRIVERS_DIR})
+	add_subdirectory(${LIBS_DIR})
 
-# Add libraries
-add_subdirectory(${LIBS_DIR}/HelloWorld)
-add_subdirectory(${LIBS_DIR}/FileManager)
-add_subdirectory(${LIBS_DIR}/PrettyPrinter)
+	# Add spikes, functional tests
+	add_subdirectory(${SPIKES_DIR})
+	add_subdirectory(${TESTS_DIR}/functional)
 
-add_subdirectory(${LIBS_DIR}/InvestigationDay/BLE)
+	# Add LekaOS
+	add_subdirectory(${OS_DIR})
 
-add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaRFID)
-add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaWifi)
-add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaTouch)
-add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaScreen)
-add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaFirmware)
-add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaBluetooth)
-add_subdirectory(${LIBS_DIR}/HardwareTest/LekaMotors)
-add_subdirectory(${LIBS_DIR}/HardwareTest/LekaSD)
+else()
 
-# Add the main source files of the project from ./src
-add_subdirectory(${ROOT_DIR}/src)
+	# Enable testing
+	enable_testing ()
 
-# If you use spikes to test features, you can add them here
-add_subdirectory(${SPIKES_DIR}/mbed_blinky)
-add_subdirectory(${SPIKES_DIR}/mbed_watchdog)
-add_subdirectory(${SPIKES_DIR}/mbed_watchdog_ticker_vs_thread)
+	# Add unit tests
+	add_subdirectory(${TESTS_DIR}/unit)
 
-add_subdirectory(${SPIKES_DIR}/lk_ble)
-add_subdirectory(${SPIKES_DIR}/lk_lcd)
-add_subdirectory(${SPIKES_DIR}/lk_led)
-add_subdirectory(${SPIKES_DIR}/lk_qspi)
-add_subdirectory(${SPIKES_DIR}/lk_rfid)
-add_subdirectory(${SPIKES_DIR}/lk_wifi)
-add_subdirectory(${SPIKES_DIR}/lk_motors)
-add_subdirectory(${SPIKES_DIR}/lk_bluetooth)
-add_subdirectory(${SPIKES_DIR}/lk_file_manager)
-add_subdirectory(${SPIKES_DIR}/lk_sensors_touch)
-
-add_custom_target(spikes_leka)
-add_dependencies( spikes_leka
-	spike_lk_ble
-	spike_lk_lcd
-	spike_lk_led
-	spike_lk_qspi
-	spike_lk_rfid
-	spike_lk_wifi
-	spike_lk_motors
-	spike_lk_bluetooth
-	spike_lk_file_manager
-	spike_lk_sensors_touch
-)
-
-add_custom_target(spikes_mbed)
-add_dependencies( spikes_mbed
-	spike_mbed_blinky
-	spike_mbed_watchdog
-	spike_mbed_watchdog_ticker_vs_thread
-)
-
-add_subdirectory(${ROOT_DIR}/tests/cert/emc_ble_led_motors)
-add_subdirectory(${ROOT_DIR}/tests/cert/emc_lcd_led_motors)
-add_subdirectory(${ROOT_DIR}/tests/cert/emc_bt_lcd_qspi_rfid_touch_wifi)
-add_subdirectory(${ROOT_DIR}/tests/hardware/motors_test_reduction_and_wheels)
+endif(NOT MBED_UNITTESTS)
 
 # Finally print the mbed-cmake build report
 mbed_cmake_print_build_report()

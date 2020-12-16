@@ -6,13 +6,14 @@
 # MARK: - Constants
 #
 
-ROOT_DIR    := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-CMAKE_DIR   := $(ROOT_DIR)/cmake
-BUILD_DIR   := $(ROOT_DIR)/build
-MBED_OS_DIR := $(ROOT_DIR)/extern/mbed-os
+ROOT_DIR             := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+CMAKE_DIR            := $(ROOT_DIR)/cmake
+MBED_OS_DIR          := $(ROOT_DIR)/extern/mbed-os
+PROJECT_BUILD_DIR    := $(ROOT_DIR)/build
+UNIT_TESTS_BUILD_DIR := $(ROOT_DIR)/build/unit_tests
 
 #
-# MARK:- Arguments
+# MARK: - Arguments
 #
 
 PORT         ?= /dev/tty.usbmodem14303
@@ -20,26 +21,38 @@ BRANCH       ?= master
 TARGET       ?=
 VERSION      ?= mbed-os-6.3.0
 BAUDRATE     ?= 115200
-BIN_PATH     ?= $(BUILD_DIR)/src/LekaOS.bin
+BIN_PATH     ?= $(PROJECT_BUILD_DIR)/src/LekaOS.bin
 BUILD_TYPE   ?= Release
 TARGET_BOARD ?= -x LEKA_V1_0_DEV
 
 #
-# MARK:- Build targets
+# MARK: - Build targets
 #
+
+.PHONY: spikes tests
 
 all:
 	@echo ""
-	@echo "🏗️  Building application 🚧"
-	cmake --build build -t $(TARGET)
+	@echo "🏗️  Building everything! 🌈"
+	cmake --build $(PROJECT_BUILD_DIR)
 
-lekaos:
+os:
 	@echo ""
-	@echo "🏗️  Building LekaOS 🚧"
-	ninja -C ./build -f build.ninja LekaOS
+	@echo "🏗️  Building LekaOS 🤖"
+	cmake --build $(PROJECT_BUILD_DIR) -t LekaOS
+
+spikes:
+	@echo ""
+	@echo "🏗️  Building spikes 🍱"
+	cmake --build $(PROJECT_BUILD_DIR) -t spikes
+
+tests_functional:
+	@echo ""
+	@echo "🏗️  Building functional tests ⚗️"
+	cmake --build $(PROJECT_BUILD_DIR) -t tests_functional
 
 #
-# MARK:- Config targets
+# MARK: - Config targets
 #
 
 config_leka_disco:
@@ -47,10 +60,9 @@ config_leka_disco:
 
 config:
 	@$(MAKE) deep_clean
-	@echo ""
 	@$(MAKE) config_target
-	@echo ""
 	@$(MAKE) config_cmake
+	@$(MAKE) config_unit_tests
 
 config_target:
 	@echo ""
@@ -60,60 +72,84 @@ config_target:
 config_cmake: mkdir_build
 	@echo ""
 	@echo "🏃 Running cmake configuration script 📝"
-	@cd $(BUILD_DIR); cmake -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
+	@cd $(PROJECT_BUILD_DIR); cmake -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
 
 #
-# MARK:- Tools targets
+# MARK: - Tests targets
+#
+
+unit_tests:
+	@echo ""
+	@echo "🏗️  Building unit tests 🧪"
+	cmake --build $(UNIT_TESTS_BUILD_DIR)
+
+	@echo ""
+	@echo "🏃‍♂️ Running unit tests 🧪"
+	@$(UNIT_TESTS_BUILD_DIR)/tests/unit/LekaOSUnitTests
+
+config_unit_tests:
+	@echo ""
+	@echo "🏃 Running unit tests cmake configuration script 📝"
+	@mkdir -p $(UNIT_TESTS_BUILD_DIR)
+	@cd $(UNIT_TESTS_BUILD_DIR); cmake -GNinja -DMBED_UNITTESTS=TRUE ../..
+
+clean_unit_tests:
+	@echo ""
+	@echo "⚠️  Cleaning up unit tests build directories 🧹"
+	rm -rf $(UNIT_TESTS_BUILD_DIR)
+
+#
+# MARK: - Tools targets
 #
 
 clang_format:
 	@echo ""
-	@echo "🕵️ Running clang-format 🔍"
-	python3 tools/run-clang-format.py -r --extension=h,c,cpp --color=always --style=file ./src ./drivers ./libs ./spikes ./tests
+	@echo "🏃‍♂️ Running clang-format 🎨"
+	python3 tools/run-clang-format.py -r --extension=h,c,cpp --color=always --style=file .
 
 clang_format_fix:
 	@echo ""
-	@echo "🕵️ Running clang-format & fixing files ♻️"
-	python3 tools/run-clang-format.py -r -i --extension=h,c,cpp --color=always --style=file ./src ./drivers ./libs ./spikes ./tests
+	@echo "🏃‍♂️ Running clang-format & fixing files 🎨"
+	python3 tools/run-clang-format.py -r --extension=h,c,cpp --color=always --style=file . -i
 
 #
-# MARK:- Mbed targets
+# MARK: - Mbed targets
 #
 
 clone_mbed:
 	@echo ""
-	@echo "🧬 Cloning Mbed OS ⚗️"
+	@echo "🧬 Cloning Mbed OS 📦"
 	@rm -rf $(MBED_OS_DIR)
 	git clone --depth=1 --branch=$(BRANCH) https://github.com/ARMmbed/mbed-os $(MBED_OS_DIR)
-	@echo ""
-	@echo "🔗 Symlinking templates to Mbed OS directory 🗂️"
-	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_CMakelists.txt $(MBED_OS_DIR)/CMakeLists.txt
-	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_mbedignore.txt $(MBED_OS_DIR)/.mbedignore
+	@$(MAKE) mbed_symlink_files
 
 curl_mbed:
 	@echo ""
-	@echo "🧬 Curling Mbed OS ⚗️"
+	@echo "🧬 Curling Mbed OS 📦"
 	@rm -rf $(MBED_OS_DIR)
 	@mkdir -p $(MBED_OS_DIR)
 	curl -O -L https://github.com/ARMmbed/mbed-os/archive/$(VERSION).tar.gz
 	tar -xzf $(VERSION).tar.gz --strip-components=1 -C extern/mbed-os
 	rm -rf $(VERSION).tar.gz
+	@$(MAKE) mbed_symlink_files
+
+mbed_symlink_files:
 	@echo ""
 	@echo "🔗 Symlinking templates to Mbed OS directory 🗂️"
 	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_CMakelists.txt $(MBED_OS_DIR)/CMakeLists.txt
 	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_mbedignore.txt $(MBED_OS_DIR)/.mbedignore
 
 #
-# MARK:- Utils targets
+# MARK: - Utils targets
 #
 
 mkdir_build:
-	@mkdir -p $(BUILD_DIR)
+	@mkdir -p $(PROJECT_BUILD_DIR)
 
 clean:
 	@echo ""
 	@echo "⚠️  Cleaning up build directories 🧹"
-	rm -rf $(BUILD_DIR)
+	rm -rf $(PROJECT_BUILD_DIR)
 
 deep_clean:
 	@$(MAKE) clean

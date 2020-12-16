@@ -36,11 +36,7 @@ class HelloWorld
 
   private:
 	mbed::LowPowerTicker flipper1;
-	mbed::LowPowerTicker flipper2;
-
 	struct Data led1Data = {mbed::DigitalOut(LED1), std::chrono::milliseconds(500)};
-	struct Data led2Data = {mbed::DigitalOut(LED2), std::chrono::milliseconds(1000)};
-
 	static void blink(Data *data);
 };	 // class HelloWorld
 

@@ -5,7 +5,6 @@ name: CI - Check
 on: push
 
 jobs:
-
   check_clang_format:
     name: Clang Format
     runs-on: [self-hosted, check]

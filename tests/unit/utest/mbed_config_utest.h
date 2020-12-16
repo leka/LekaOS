@@ -1,0 +1,62 @@
+//
+// Mbed config header used for unit test stubs.
+// MBed doesn't provide this, so we have to do it ourselves.
+//
+
+#ifndef _LEKA_OS_UNIT_TESTS_MBED_CONFIG_H_
+#define _LEKA_OS_UNIT_TESTS_MBED_CONFIG_H_
+
+#define DEVICE_ANALOGIN		  1
+#define DEVICE_ANALOGOUT	  1
+#define DEVICE_CAN			  1
+#define DEVICE_EMAC			  1
+#define DEVICE_ETHERNET		  1
+#define DEVICE_FLASH		  1
+#define DEVICE_I2C			  1
+#define DEVICE_I2C_ASYNCH	  1
+#define DEVICE_I2CSLAVE		  1
+#define DEVICE_INTERRUPTIN	  1
+#define DEVICE_LPTICKER		  1
+#define DEVICE_MPU			  1
+#define DEVICE_PORTIN		  1
+#define DEVICE_PORTINOUT	  1
+#define DEVICE_PORTOUT		  1
+#define DEVICE_PWMOUT		  1
+#define DEVICE_QSPI			  1
+#define DEVICE_RESET_REASON	  1
+#define DEVICE_RTC			  1
+#define DEVICE_SERIAL		  1
+#define DEVICE_SERIAL_ASYNCH  1
+#define DEVICE_SERIAL_FC	  1
+#define DEVICE_SLEEP		  1
+#define DEVICE_SPI			  1
+#define DEVICE_SPI_ASYNCH	  1
+#define DEVICE_SPISLAVE		  1
+#define DEVICE_STDIO_MESSAGES 1
+#define DEVICE_TRNG			  1
+#define DEVICE_USBDEVICE	  1
+#define DEVICE_USTICKER		  1
+#define DEVICE_WATCHDOG		  1
+
+#define COMPONENT_FLASHIAP		  1
+#define FLASHIAP_APP_ROM_END_ADDR = 0x80000
+
+#define MBED_CONF_CELLULAR_USE_SMS							 1
+#define MBED_CONF_DATAFLASH_SPI_FREQ						 = 1
+#define MBED_CONF_FAT_CHAN_FF_MAX_SS						 = 4096
+#define MBED_CONF_FLASHIAP_BLOCK_DEVICE_BASE_ADDRESS		 = 0
+#define MBED_CONF_FLASHIAP_BLOCK_DEVICE_SIZE				 = 0
+#define MBED_CONF_PLATFORM_CTHUNK_COUNT_MAX					 = 10
+#define MBED_CONF_QSPIF_QSPI_FREQ							 = 1
+#define MBED_CONF_QSPIF_QSPI_MIN_PROG_SIZE					 = 1
+#define MBED_CONF_QSPIF_QSPI_MIN_READ_SIZE					 = 1
+#define MBED_CONF_STORAGE_STORAGE_TYPE						 = default
+#define MBED_CONF_STORAGE_TDB_INTERNAL_INTERNAL_BASE_ADDRESS = 0x80000
+#define MBED_CONF_STORAGE_TDB_INTERNAL_INTERNAL_SIZE		 = 1024
+
+#define MBED_LFS_BLOCK_SIZE = 512
+#define MBED_LFS_LOOKAHEAD	= 512
+#define MBED_LFS_PROG_SIZE	= 64
+#define MBED_LFS_READ_SIZE	= 64
+
+#endif

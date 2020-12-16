@@ -93,7 +93,7 @@ function(add_mbed_executable EXECUTABLE)
 	endif()
 
 	# add upload target
-	gen_upload_target(${EXECUTABLE} ${BIN_FILE})
+	# gen_upload_target(${EXECUTABLE} ${BIN_FILE})
 
 endfunction(add_mbed_executable)
 

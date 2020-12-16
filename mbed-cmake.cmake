@@ -15,11 +15,9 @@ message(STATUS "")
 set(MBED_CMAKE_VERSION 1.3.0)
 message(STATUS "mbed-cmake version ${MBED_CMAKE_VERSION}, running on CMake ${CMAKE_VERSION}")
 
-set(ROOT_DIR ${CMAKE_CURRENT_LIST_DIR})
 set(MBED_CMAKE_ROOT_DIR ${ROOT_DIR}/cmake)
 set(MBED_CMAKE_SCRIPTS_DIR ${MBED_CMAKE_ROOT_DIR}/scripts)
 set(MBED_CMAKE_CONFIG_DIR ${MBED_CMAKE_ROOT_DIR}/config)
-set(MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
 
 list(APPEND CMAKE_MODULE_PATH ${MBED_CMAKE_ROOT_DIR})
 list(APPEND CMAKE_MODULE_PATH ${MBED_CMAKE_ROOT_DIR}/utils)
@@ -124,11 +122,9 @@ if(MBED_UNITTESTS)
 	# Build internal GTest.
 	# We use an internal GTest because hardly any platform has a complete package available
 	# for it for some reason.
-	add_subdirectory(${MBED_CMAKE_SOURCE_DIR}/gtest-external-project)
-
-	include(GoogleTest)
-
-	enable_testing()
+	# add_subdirectory(${MBED_CMAKE_SOURCE_DIR}/gtest-external-project)
+	# include(GoogleTest)
+	# enable_testing()
 endif()
 
 # load the Mbed CMake functions
@@ -144,11 +140,12 @@ endif()
 # -------------------------------------------------------------
 
 if(NOT MBED_UNITTESTS)
-	# find upload tools
-	find_package(OpenOCD)
-	find_package(JLINK)
+	set(CMAKE_EXECUTABLE_SUFFIX .elf)
 
-	include(SetUploadMethod)
+	# find upload tools
+	# find_package(OpenOCD)
+	# find_package(JLINK)
+	# include(SetUploadMethod)
 endif()
 
 # add Mbed OS source
