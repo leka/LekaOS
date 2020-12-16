@@ -21,11 +21,13 @@ To start with:
 # Clone the repository
 $ git clone https://github.com/leka/LekaOS && cd LekaOS
 
-# Clone Mbed OS using the Makefile
+# Clone or curl Mbed OS using the Makefile
 $ make clone_mbed
+# or
+$ make curl_mbed
 
-# You can specify a branch (default is master)
-$ make clone_mbed BRANCH=mbed-os-6.3.0
+# With clone_mbed You can specify a branch (default is mbed-os-6.6.0)
+$ make clone_mbed BRANCH=master
 ```
 
 ### 1. Install mbed-cli & co.
@@ -36,10 +38,7 @@ I recommend the manual install. Make sure to follow the instructions from mbed:
 
 ```bash
 # For the latest stable version
-$ python3 -m pip install -U --user mbed-cli
-
-# For HEAD
-$ python3 -m pip install -U --user https://github.com/ARMmbed/mbed-cli/archive/master.zip
+$ python3 -m pip install -U --user mbed-cli mbed-tools
 ```
 
 Then, install the required tools:
@@ -75,14 +74,14 @@ We put together an handy [`Makefile`](./Makefile) to make it easier to configure
 # First, you need to clone mbed-os
 $ make clone_mbed
 
-# You can specify a branch (default is master)
-$ make clone_mbed BRANCH=mbed-os-6.3.0
+# You can specify a branch (default is mbed-os-6.6.0)
+$ make clone_mbed BRANCH=master
 
-# Then configure for your target
-$ make config TARGET_BOARD=DISCO_F769NI
+# Then configure the project
+$ make config
 
 # You can also specify a build type (default is Release)
-$ make config TARGET_BOARD=DISCO_F769NI BUILD_TYPE=Debug
+$ make config BUILD_TYPE=Debug
 
 # Finally, to compile your project
 $ make
@@ -121,4 +120,4 @@ The main idea behind this template is to have your main source files (those for 
 
 Now, you sometimes need to create a simple, very basic example project to test a new features, investigate a bug or try a different solution to a problem.
 
-These can be added to the [`spike`](./spike) directory inside their own directory. You'll need at leat a `main.cpp` and a `CMakeLists.txt`. See [`blinky`](./spike/blinky) for a working example.
+These can be added to the [`spikes`](./spikes) directory inside their own directory. You'll need at leat a `main.cpp` and a `CMakeLists.txt`. See [`blinky`](./spikes/blinky) for a working example.
