@@ -17,9 +17,9 @@ UNIT_TESTS_BUILD_DIR := $(ROOT_DIR)/build/unit_tests
 #
 
 PORT         ?= /dev/tty.usbmodem14303
-BRANCH       ?= mbed-os-6.6.0
+BRANCH       ?= $(shell cat $(ROOT_DIR)/.mbed_version)
 TARGET       ?=
-VERSION      ?= mbed-os-6.6.0
+VERSION      ?= $(shell cat $(ROOT_DIR)/.mbed_version)
 BAUDRATE     ?= 115200
 BIN_PATH     ?= $(PROJECT_BUILD_DIR)/src/LekaOS.bin
 BUILD_TYPE   ?= Release
