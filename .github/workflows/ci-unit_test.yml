@@ -99,10 +99,14 @@ jobs:
         run: |
           make config
 
+      - name: Ccache pre build
+        run: |
+          make ccache_prebuild
+
       - name: Build & run unit tests
         run: |
-          ccache -p
-          ccache -z
           make unit_tests
-          ccache -p
-          ccache -z
+
+      - name: Ccache post build
+        run: |
+          make ccache_postbuild
