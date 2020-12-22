@@ -33,7 +33,7 @@ int main(void)
 
 	sd_card.open(filename);
 	uint32_t file_size = sd_card.getFileSize();
-	printf("File %s openened. File size : %lu bytes\n", filename, file_size);
+	printf("File %s openened. File size : %u bytes\n", filename, file_size);
 	sd_card.close();
 
 	while (true) {

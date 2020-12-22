@@ -255,11 +255,11 @@ void Firmware::checkActiveFlash()
 
 		read(address, buffer, message_size);
 		if (memcmp(message_to_write, buffer, message_size) != 0) {
-			printf("Error on external memory #%d at address 0x%lX\n", _selected_memory, address);
+			printf("Error on external memory #%d at address 0x%X\n", _selected_memory, address);
 			return;
 		}
 		if (address != 0x0 && address % 0x10000 == 0x0000) {
-			printf("Block(64kB) from 0x%lX to 0x%lX on external memory #%d is fine\n", address - 0x10000, address,
+			printf("Block(64kB) from 0x%X to 0x%X on external memory #%d is fine\n", address - 0x10000, address,
 				   _selected_memory);
 		}
 	}
