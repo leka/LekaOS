@@ -29,7 +29,7 @@ TARGET_BOARD ?= -x LEKA_V1_0_DEV
 # MARK: - Build targets
 #
 
-.PHONY: spikes tests
+.PHONY: spikes tests config
 
 all:
 	@echo ""

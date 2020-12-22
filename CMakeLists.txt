@@ -19,7 +19,7 @@ if(ENABLE_CODE_ANALYSIS)
 	find_program(CPPCHECK "cppcheck")
 	if(CPPCHECK)
 		set(CMAKE_CXX_CPPCHECK "${CPPCHECK}"
-			"--platform=unix32"
+			"--platform=${CMAKE_CURRENT_SOURCE_DIR}/tools/config/cppcheck_leka_platform.xml"
 			"--std=c++14"
 			"--cppcheck-build-dir=build/cppcheck"
 			"--enable=all"
