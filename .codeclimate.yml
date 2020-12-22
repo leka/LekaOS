@@ -1,3 +1,9 @@
+exclude_patterns:
+  - "extern/mbed-os"
+  - "tests"
+  - "targets"
+  - "tools/target_generator.py"
+
 plugins:
   cppcheck:
     enabled: true
