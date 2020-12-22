@@ -166,23 +166,20 @@ end
 def check_name_and_position
 	error_name_position = false
 
+	def check ( header_name, row, index )
+		pin_number = index + 1
+		if row[header_name] != $pin_csv_generated[index][header_name]
+			puts "#{pin_number} - ❌ #{header_name.downcase} - reference: #{row[header_name]} -- ioc: #{$pin_csv_generated[index][header_name]}"
+			error_name_position = true
+		end
+	end
+
 	puts ""
 	puts "Checking pins' positions & names..."
 
 	$pin_csv_reference.each_with_index do |row, index|
-		pin_number = index + 1
-
-		# Check positions
-		if row[$header_position] != $pin_csv_generated[index][$header_position]
-			puts "#{pin_number} - ❌ position - reference: #{row[$header_position]} -- ioc: #{$pin_csv_generated[index][$header_position]}"
-			error_name_position = true
-		end
-
-		# Check names
-		if row[$header_name] != $pin_csv_generated[index][$header_name]
-			puts "#{pin_number} - ❌ name - reference: #{row[$header_name]} -- ioc: #{$pin_csv_generated[index][$header_name]}"
-			error_name_position = true
-		end
+		check $header_position, row, index
+		check $header_name, row, index
 	end
 
 	if error_name_position
