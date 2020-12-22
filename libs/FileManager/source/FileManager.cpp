@@ -51,11 +51,10 @@ uint32_t FileManager::getFileSize()
 
 void FileManager::testWorkingToRemove()
 {
-	DIR *dir;
-	struct dirent *p;
+	DIR *dir = opendir("/fs");
 
-	dir = opendir("/fs");
 	if (dir != NULL) {
+		struct dirent *p;
 		printf("At root of SD card:\n");
 		while ((p = readdir(dir)) != NULL) {
 			printf(" - %s\n", p->d_name);
