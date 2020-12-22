@@ -61,7 +61,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: extern/mbed-os
-          key: ${{ runner.os }}-build-cache_mbed_os-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h') }}
+          key: ${{ runner.os }}-build-cache_mbed_os-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h', '.mbed_version') }}
           restore-keys: |
             ${{ runner.os }}-build-cache_mbed_os-
             ${{ runner.os }}-build-
@@ -70,14 +70,14 @@ jobs:
       - name: Curl Mbed OS
         if: steps.cache_mbed_os.outputs.cache-hit != 'true'
         run: |
-          make curl_mbed
+          make mbed_curl
 
       - name: Cache CMake Config
         id: cache_cmake_config
         uses: actions/cache@v2
         with:
           path: cmake/config
-          key: ${{ runner.os }}-build-cache_cmake_config-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json') }}
+          key: ${{ runner.os }}-build-cache_cmake_config-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json', '.mbed_version', 'Makefile', 'CMakeLists.txt') }}
           restore-keys: |
             ${{ runner.os }}-build-cache_cmake_config-
             ${{ runner.os }}-build-
@@ -88,7 +88,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: build
-          key: ${{ runner.os }}-build-cache_build_directory-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json') }}
+          key: ${{ runner.os }}-build-cache_build_directory-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json', '.mbed_version', 'Makefile', 'CMakeLists.txt') }}
           restore-keys: |
             ${{ runner.os }}-build-cache_build_directory-
             ${{ runner.os }}-build-
@@ -99,8 +99,14 @@ jobs:
         run: |
           make config
 
+      - name: Ccache pre build
+        run: |
+          make ccache_prebuild
+
       - name: Build LekaOS & al.
         run: |
-          ccache -p
-          ccache -z
           make
+
+      - name: Ccache post build
+        run: |
+          make ccache_postbuild

@@ -17,9 +17,9 @@ UNIT_TESTS_BUILD_DIR := $(ROOT_DIR)/build/unit_tests
 #
 
 PORT         ?= /dev/tty.usbmodem14303
-BRANCH       ?= master
+BRANCH       ?= $(shell cat $(ROOT_DIR)/.mbed_version)
 TARGET       ?=
-VERSION      ?= mbed-os-6.3.0
+VERSION      ?= $(shell cat $(ROOT_DIR)/.mbed_version)
 BAUDRATE     ?= 115200
 BIN_PATH     ?= $(PROJECT_BUILD_DIR)/src/LekaOS.bin
 BUILD_TYPE   ?= Release
@@ -116,14 +116,14 @@ clang_format_fix:
 # MARK: - Mbed targets
 #
 
-clone_mbed:
+mbed_clone:
 	@echo ""
 	@echo "🧬 Cloning Mbed OS 📦"
 	@rm -rf $(MBED_OS_DIR)
 	git clone --depth=1 --branch=$(BRANCH) https://github.com/ARMmbed/mbed-os $(MBED_OS_DIR)
 	@$(MAKE) mbed_symlink_files
 
-curl_mbed:
+mbed_curl:
 	@echo ""
 	@echo "🧬 Curling Mbed OS 📦"
 	@rm -rf $(MBED_OS_DIR)
@@ -156,6 +156,20 @@ deep_clean:
 	@echo ""
 	@echo "⚠️  Cleaning up cmake/config directories 🧹"
 	rm -rf $(CMAKE_DIR)/config
+
+ccache_prebuild:
+	@echo ""
+	@echo "🪆 Ccache config ⚙️"
+	@ccache -p
+	@echo ""
+	@echo "🪆 Ccache pre build stats 📉"
+	@ccache -s
+	@ccache -z
+
+ccache_postbuild:
+	@echo ""
+	@echo "🪆 Ccache post build stats 📈"
+	@ccache -s
 
 flash:
 	openocd -f interface/stlink.cfg -c 'transport select hla_swd' -f target/stm32f7x.cfg -c 'program $(BIN_PATH) 0x08000000' -c exit
