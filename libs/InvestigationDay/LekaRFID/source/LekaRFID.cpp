@@ -106,11 +106,13 @@ bool RFID::setReceiverGain()
 	_interface.write(_set_receiver_gain_cmd, _set_receiver_gain_cmd_length);
 	rtos::ThisThread::sleep_for(10ms);
 
+	// TODO: why a for loop? why not while(!_interface.readable())?
 	for (int i = 0; i < 10; i++) {
 		if (_interface.readable()) {
 			_interface.read(buffer, aimed_buffer_length);
-			for (int i = 0; i < aimed_buffer_length; i++) {
-				printf("%X ", buffer[i]);
+			// TODO: check the second for loop and the use of the index
+			for (int j = 0; j < aimed_buffer_length; j++) {
+				printf("%X ", buffer[j]);
 			}
 			printf("\n");
 			if ((memcmp(aimed_buffer, buffer, aimed_buffer_length) == 0)) {
@@ -129,6 +131,7 @@ void RFID::sendReceive()
 	_interface.write(_send_receive_cmd, _send_receive_cmd_length);
 	rtos::ThisThread::sleep_for(10ms);
 
+	// TODO: why a for loop? why not while(!_interface.readable())?
 	for (int i = 0; i < 10; i++) {
 		if (_interface.readable()) {
 			_interface.read(buffer, 2);
@@ -136,8 +139,9 @@ void RFID::sendReceive()
 			_interface.read(&buffer[2], length);
 
 			printf("Answer received from reader: ");
-			for (int i = 0; i < length + 2; i++) {
-				printf("%X ", buffer[i]);
+			// TODO: check the second for loop and the use of the index
+			for (int j = 0; j < length + 2; j++) {
+				printf("%X ", buffer[j]);
 			}
 			printf("\n");
 			return;
@@ -155,6 +159,7 @@ void RFID::sendReceive2()
 	_interface.write(_send_receive2_cmd, _send_receive2_cmd_length);
 	rtos::ThisThread::sleep_for(10ms);
 
+	// TODO: why a for loop? why not while(!_interface.readable())?
 	for (int i = 0; i < 10; i++) {
 		if (_interface.readable()) {
 			_interface.read(buffer, 2);
@@ -162,8 +167,9 @@ void RFID::sendReceive2()
 			_interface.read(&buffer[2], length);
 
 			printf("Answer received from reader: ");
-			for (int i = 0; i < length + 2; i++) {
-				printf("%X ", buffer[i]);
+			// TODO: check the second for loop and the use of the index
+			for (int j = 0; j < length + 2; j++) {
+				printf("%X ", buffer[j]);
 			}
 			printf("\n");
 			return;
@@ -181,6 +187,7 @@ void RFID::sendReceive3()
 	_interface.write(_send_receive3_cmd, _send_receive3_cmd_length);
 	rtos::ThisThread::sleep_for(10ms);
 
+	// TODO: why a for loop? why not while(!_interface.readable())?
 	for (int i = 0; i < 10; i++) {
 		if (_interface.readable()) {
 			_interface.read(buffer, 2);
@@ -188,8 +195,9 @@ void RFID::sendReceive3()
 			_interface.read(&buffer[2], length);
 
 			printf("Answer received from reader: ");
-			for (int i = 0; i < length + 2; i++) {
-				printf("%X ", buffer[i]);
+			// TODO: check the second for loop and the use of the index
+			for (int j = 0; j < length + 2; j++) {
+				printf("%X ", buffer[j]);
 			}
 			printf("\n");
 			return;
