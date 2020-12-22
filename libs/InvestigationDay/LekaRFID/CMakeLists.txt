@@ -7,7 +7,6 @@ add_library(lib_LekaRFID STATIC)
 target_include_directories(lib_LekaRFID
   PUBLIC
   	${CMAKE_CURRENT_SOURCE_DIR}/include
-	${CMAKE_CURRENT_SOURCE_DIR}/include/internal
 )
 
 target_sources(lib_LekaRFID

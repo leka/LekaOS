@@ -7,7 +7,6 @@ add_library(driver_Motor STATIC)
 target_include_directories(driver_Motor
   PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include
-	${CMAKE_CURRENT_SOURCE_DIR}/include/internal
 )
 
 target_sources(driver_Motor
