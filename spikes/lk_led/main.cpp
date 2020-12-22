@@ -95,58 +95,6 @@ void turnOff()
 								   black, black, black, black);
 }
 
-void ChangePalette(char choice)
-{
-	if (choice == 'a') {
-		currentPalette	= RainbowColors_p;
-		currentBlending = LINEARBLEND;
-	}
-	if (choice == 'z') {
-		currentPalette	= RainbowStripeColors_p;
-		currentBlending = NOBLEND;
-	}
-	if (choice == 'e') {
-		currentPalette	= RainbowStripeColors_p;
-		currentBlending = LINEARBLEND;
-	}
-	if (choice == 'r') {
-		SetupPurpleAndGreenPalette();
-		currentBlending = LINEARBLEND;
-	}
-	if (choice == 't') {
-		SetupTotallyRandomPalette();
-		currentBlending = LINEARBLEND;
-	}
-	if (choice == 'y') {
-		SetupBlackAndWhiteStripedPalette();
-		currentBlending = NOBLEND;
-	}
-	if (choice == 'u') {
-		SetupBlackAndWhiteStripedPalette();
-		currentBlending = LINEARBLEND;
-	}
-	if (choice == 'i') {
-		currentPalette	= CloudColors_p;
-		currentBlending = LINEARBLEND;
-	}
-	if (choice == 'o') {
-		currentPalette	= PartyColors_p;
-		currentBlending = LINEARBLEND;
-	}
-	if (choice == 'p') {
-		currentPalette	= myRedWhiteBluePalette_p;
-		currentBlending = NOBLEND;
-	}
-	if (choice == 'm') {
-		currentPalette	= myRedWhiteBluePalette_p;
-		currentBlending = LINEARBLEND;
-	}
-	if (choice == 'q') {
-		turnOff();
-		currentBlending = LINEARBLEND;
-	}
-}
-
 void ChangePalettePeriodically()
 {
 	uint8_t secondHand		  = (mainMillis() / 1000) % 60;
@@ -228,6 +176,7 @@ int main(void)
 	leds[2] = CRGB::White;
 	leds[3] = CRGB::Black;
 	leds[4] = CRGB::White;
+
 	FastLED.show();
 
 	rtos::ThisThread::sleep_for(2s);
@@ -235,24 +184,14 @@ int main(void)
 	currentPalette	= RainbowColors_p;
 	currentBlending = LINEARBLEND;
 
-	// auto start = Kernel::Clock::now();
 	hello.start();
 
 	while (true) {
-		// auto t	   = Kernel::Clock::now() - start;
-		// int length = sprintf(buff, "A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME,
-		// 					 hello.world, int(t.count() / 1000));
-		// serial.write(buff, length);
-
-		// for (int i = 0; i < 16; i++) {
-		// 	currentPalette[i] = CHSV(random8(), 255, random8());
-		// }
-
 		ChangePalettePeriodically();
 
 		static uint8_t startIndex = 0;
 
-		startIndex = startIndex + 1; /* motion speed */
+		startIndex = startIndex + 1;   // motion speed
 
 		FillLEDsFromPaletteColors(startIndex);
 
