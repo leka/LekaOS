@@ -434,13 +434,13 @@ CRGB ColorFromPalette(const CRGBPalette16 &pal, uint8_t index, uint8_t brightnes
 	// We then add that to a base array pointer.
 	const CRGB *entry = (CRGB *)((uint8_t *)(&(pal[0])) + hi4XsizeofCRGB);
 
-	uint8_t blend = lo4 && (blendType != NOBLEND);
+	bool should_blend = lo4 && (blendType != NOBLEND);
 
 	uint8_t red1   = entry->red;
 	uint8_t green1 = entry->green;
 	uint8_t blue1  = entry->blue;
 
-	if (blend) {
+	if (should_blend) {
 		if (hi4 == 15) {
 			entry = &(pal[0]);
 		} else {
@@ -515,9 +515,9 @@ CRGB ColorFromPalette(const TProgmemRGBPalette16 &pal, uint8_t index, uint8_t br
 	uint8_t green1 = entry.green;
 	uint8_t blue1  = entry.blue;
 
-	uint8_t blend = lo4 && (blendType != NOBLEND);
+	bool should_blend = lo4 && (blendType != NOBLEND);
 
-	if (blend) {
+	if (should_blend) {
 		if (hi4 == 15) {
 			entry = FL_PGM_READ_DWORD_NEAR(&(pal[0]));
 		} else {
@@ -603,9 +603,9 @@ CRGB ColorFromPalette(const CRGBPalette32 &pal, uint8_t index, uint8_t brightnes
 	uint8_t green1 = entry->green;
 	uint8_t blue1  = entry->blue;
 
-	uint8_t blend = lo3 && (blendType != NOBLEND);
+	bool should_blend = lo3 && (blendType != NOBLEND);
 
-	if (blend) {
+	if (should_blend) {
 		if (hi5 == 31) {
 			entry = &(pal[0]);
 		} else {
@@ -685,9 +685,9 @@ CRGB ColorFromPalette(const TProgmemRGBPalette32 &pal, uint8_t index, uint8_t br
 	uint8_t green1 = entry.green;
 	uint8_t blue1  = entry.blue;
 
-	uint8_t blend = lo3 && (blendType != NOBLEND);
+	bool should_blend = lo3 && (blendType != NOBLEND);
 
-	if (blend) {
+	if (should_blend) {
 		if (hi5 == 31) {
 			entry = FL_PGM_READ_DWORD_NEAR(&(pal[0]));
 		} else {
@@ -781,9 +781,9 @@ CHSV ColorFromPalette(const struct CHSVPalette16 &pal, uint8_t index, uint8_t br
 	uint8_t sat1 = entry->sat;
 	uint8_t val1 = entry->val;
 
-	uint8_t blend = lo4 && (blendType != NOBLEND);
+	bool should_blend = lo4 && (blendType != NOBLEND);
 
-	if (blend) {
+	if (should_blend) {
 		if (hi4 == 15) {
 			entry = &(pal[0]);
 		} else {
@@ -868,9 +868,9 @@ CHSV ColorFromPalette(const struct CHSVPalette32 &pal, uint8_t index, uint8_t br
 	uint8_t sat1 = entry->sat;
 	uint8_t val1 = entry->val;
 
-	uint8_t blend = lo3 && (blendType != NOBLEND);
+	bool should_blend = lo3 && (blendType != NOBLEND);
 
-	if (blend) {
+	if (should_blend) {
 		if (hi5 == 31) {
 			entry = &(pal[0]);
 		} else {
