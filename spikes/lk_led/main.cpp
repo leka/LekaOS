@@ -86,14 +86,14 @@ void SetupPurpleAndGreenPalette()
 								   purple, purple, black, black);
 }
 
-// This function sets up a palette of purple and green stripes.
-void turnOff()
-{
-	CRGB black = CRGB::Black;
-
-	currentPalette = CRGBPalette16(black, black, black, black, black, black, black, black, black, black, black, black,
-								   black, black, black, black);
-}
+// TODO: add the function to the library
+// void turnOff()
+// {
+// 	CRGB black = CRGB::Black;
+//
+// 	currentPalette = CRGBPalette16(black, black, black, black, black, black, black, black, black, black, black, black,
+// 								   black, black, black, black);
+// }
 
 void ChangePalettePeriodically()
 {
