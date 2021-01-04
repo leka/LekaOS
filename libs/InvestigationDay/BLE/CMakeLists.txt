@@ -7,7 +7,6 @@ add_library(lib_BLE STATIC)
 target_include_directories(lib_BLE
   PUBLIC
   	./include
-	./include/internal
 )
 
 target_sources(lib_BLE

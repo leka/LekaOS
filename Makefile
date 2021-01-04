@@ -29,12 +29,14 @@ TARGET_BOARD ?= -x LEKA_V1_0_DEV
 # MARK: - Build targets
 #
 
-.PHONY: spikes tests
+.PHONY: spikes tests config
 
 all:
 	@echo ""
 	@echo "🏗️  Building everything! 🌈"
 	cmake --build $(PROJECT_BUILD_DIR)
+	@rm -rf $(ROOT_DIR)/compile_commands.json
+	@cp $(PROJECT_BUILD_DIR)/compile_commands.json ./
 
 os:
 	@echo ""
@@ -72,7 +74,7 @@ config_target:
 config_cmake: mkdir_build
 	@echo ""
 	@echo "🏃 Running cmake configuration script 📝"
-	@cd $(PROJECT_BUILD_DIR); cmake -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) ..
+	@cd $(PROJECT_BUILD_DIR); cmake -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=$(CODE_ANALYSIS) ..
 
 #
 # MARK: - Tests targets
@@ -111,6 +113,13 @@ clang_format_fix:
 	@echo ""
 	@echo "🏃‍♂️ Running clang-format & fixing files 🎨"
 	python3 tools/run-clang-format.py -r --extension=h,c,cpp --color=always --style=file . -i
+
+code_analysis: mkdir_build
+	@echo ""
+	@echo "🏃‍♂️ Running cppcheck code analysis 🔬"
+	@mkdir -p $(PROJECT_BUILD_DIR)/cppcheck
+	@cd $(PROJECT_BUILD_DIR)/cppcheck; cmake -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=ON ../..
+	cmake --build $(PROJECT_BUILD_DIR)/cppcheck
 
 #
 # MARK: - Mbed targets

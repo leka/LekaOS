@@ -48,10 +48,10 @@ void squareBouncing(LekaLCD &lcd)
 		posy = (posy + diry);
 
 		// chek for screen limits
-		if (posx >= 800 - sizex || posx <= 0) {
+		if (posx >= 800 - sizex || posx == 0) {
 			dirx *= -1;
 		}
-		if (posy >= 480 - sizey || posy <= 0) {
+		if (posy >= 480 - sizey || posy == 0) {
 			diry *= -1;
 		}
 

@@ -35,11 +35,12 @@ bool RFID::echo()
 
 bool RFID::getID()
 {
-	uint8_t *buffer							  = new uint8_t[1];
-	uint8_t buffer_length					  = 0;
-	const uint8_t aimed_buffer_length		  = 0x11;
-	uint8_t aimed_buffer[aimed_buffer_length] = {0x00, 0x0F, 0x4E, 0x46, 0x43, 0x20, 0x46, 0x53, 0x32,
-												 0x4A, 0x41, 0x53, 0x54, 0x34, 0x00, 0x2A, 0xCE};
+	const uint8_t max_buffer_length	  = 0x20;	// TODO: what is the maximum length that we can receive?
+	uint8_t buffer[max_buffer_length] = {0};
+
+	const uint8_t aimed_buffer_length				= 0x11;
+	const uint8_t aimed_buffer[aimed_buffer_length] = {0x00, 0x0F, 0x4E, 0x46, 0x43, 0x20, 0x46, 0x53, 0x32,
+													   0x4A, 0x41, 0x53, 0x54, 0x34, 0x00, 0x2A, 0xCE};
 
 	_interface.write(_idn_cmd, _idn_cmd_length);
 	rtos::ThisThread::sleep_for(10ms);
@@ -48,12 +49,10 @@ bool RFID::getID()
 		if (_interface.readable()) {
 			_interface.read(buffer, 2);
 			if (buffer[0] == 0x00) {
-				buffer_length = buffer[1];
-				_interface.read(buffer + 2, buffer_length);
-				// for (int i = 0; i < aimed_buffer_length; i++) {
-				// 	printf("%X ", buffer[i]);
-				// }
-				// printf("\n");
+				auto length = buffer[1];
+				// TODO: shoudld we check that length < max_buffer_length?
+				_interface.read(&buffer[2], length);
+				// TODO: which id are we talking about? does it mean that the RFID id never changes?
 				if ((memcmp(aimed_buffer, buffer, aimed_buffer_length) == 0)) {
 					return true;
 				}
@@ -107,11 +106,13 @@ bool RFID::setReceiverGain()
 	_interface.write(_set_receiver_gain_cmd, _set_receiver_gain_cmd_length);
 	rtos::ThisThread::sleep_for(10ms);
 
+	// TODO: why a for loop? why not while(!_interface.readable())?
 	for (int i = 0; i < 10; i++) {
 		if (_interface.readable()) {
 			_interface.read(buffer, aimed_buffer_length);
-			for (int i = 0; i < aimed_buffer_length; i++) {
-				printf("%X ", buffer[i]);
+			// TODO: check the second for loop and the use of the index
+			for (int j = 0; j < aimed_buffer_length; j++) {
+				printf("%X ", buffer[j]);
 			}
 			printf("\n");
 			if ((memcmp(aimed_buffer, buffer, aimed_buffer_length) == 0)) {
@@ -124,21 +125,23 @@ bool RFID::setReceiverGain()
 
 void RFID::sendReceive()
 {
-	uint8_t *buffer		  = new uint8_t[1];
-	uint8_t buffer_length = 0;
+	const uint8_t max_buffer_length	  = 0x20;	// TODO: what is the maximum length that we can receive?
+	uint8_t buffer[max_buffer_length] = {0};
 
 	_interface.write(_send_receive_cmd, _send_receive_cmd_length);
 	rtos::ThisThread::sleep_for(10ms);
 
+	// TODO: why a for loop? why not while(!_interface.readable())?
 	for (int i = 0; i < 10; i++) {
 		if (_interface.readable()) {
 			_interface.read(buffer, 2);
-			buffer_length = buffer[1];
-			_interface.read(buffer + 2, buffer_length);
+			auto length = buffer[1];
+			_interface.read(&buffer[2], length);
 
 			printf("Answer received from reader: ");
-			for (int i = 0; i < buffer_length + 2; i++) {
-				printf("%X ", buffer[i]);
+			// TODO: check the second for loop and the use of the index
+			for (int j = 0; j < length + 2; j++) {
+				printf("%X ", buffer[j]);
 			}
 			printf("\n");
 			return;
@@ -150,21 +153,23 @@ void RFID::sendReceive()
 
 void RFID::sendReceive2()
 {
-	uint8_t *buffer		  = new uint8_t[1];
-	uint8_t buffer_length = 0;
+	const uint8_t max_buffer_length	  = 0x20;	// TODO: what is the maximum length that we can receive?
+	uint8_t buffer[max_buffer_length] = {0};
 
 	_interface.write(_send_receive2_cmd, _send_receive2_cmd_length);
 	rtos::ThisThread::sleep_for(10ms);
 
+	// TODO: why a for loop? why not while(!_interface.readable())?
 	for (int i = 0; i < 10; i++) {
 		if (_interface.readable()) {
 			_interface.read(buffer, 2);
-			buffer_length = buffer[1];
-			_interface.read(buffer + 2, buffer_length);
+			auto length = buffer[1];
+			_interface.read(&buffer[2], length);
 
 			printf("Answer received from reader: ");
-			for (int i = 0; i < buffer_length + 2; i++) {
-				printf("%X ", buffer[i]);
+			// TODO: check the second for loop and the use of the index
+			for (int j = 0; j < length + 2; j++) {
+				printf("%X ", buffer[j]);
 			}
 			printf("\n");
 			return;
@@ -176,21 +181,23 @@ void RFID::sendReceive2()
 
 void RFID::sendReceive3()
 {
-	uint8_t *buffer		  = new uint8_t[1];
-	uint8_t buffer_length = 0;
+	const uint8_t max_buffer_length	  = 0x20;	// TODO: what is the maximum length that we can receive?
+	uint8_t buffer[max_buffer_length] = {0};
 
 	_interface.write(_send_receive3_cmd, _send_receive3_cmd_length);
 	rtos::ThisThread::sleep_for(10ms);
 
+	// TODO: why a for loop? why not while(!_interface.readable())?
 	for (int i = 0; i < 10; i++) {
 		if (_interface.readable()) {
 			_interface.read(buffer, 2);
-			buffer_length = buffer[1];
-			_interface.read(buffer + 2, buffer_length);
+			auto length = buffer[1];
+			_interface.read(&buffer[2], length);
 
 			printf("Answer received from reader: ");
-			for (int i = 0; i < buffer_length + 2; i++) {
-				printf("%X ", buffer[i]);
+			// TODO: check the second for loop and the use of the index
+			for (int j = 0; j < length + 2; j++) {
+				printf("%X ", buffer[j]);
 			}
 			printf("\n");
 			return;

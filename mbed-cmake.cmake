@@ -3,14 +3,14 @@ cmake_policy(VERSION 3.12)
 
 if(NOT MBED_UNITTESTS)
 
-message(STATUS [==[                                                                ]==])
-message(STATUS [==[   _          _          ____   _____                  _        ]==])
-message(STATUS [==[  | |        | |        / __ \ / ____|   ___          | |       ]==])
-message(STATUS [==[  | |     ___| | ____ _| |  | | (___    ( _ )     __ _| |       ]==])
-message(STATUS [==[  | |    / _ \ |/ / _` | |  | |\___ \   / _ \/\  / _` | |       ]==])
-message(STATUS [==[  | |___|  __/   < (_| | |__| |____) | | (_>  < | (_| | |_      ]==])
-message(STATUS [==[  |______\___|_|\_\__,_|\____/|_____/   \___/\/  \__,_|_(_)     ]==])
-message(STATUS [==[                                                                ]==])
+message(STATUS [==[                                                                   ]==])
+message(STATUS [==[      _          _          ____   _____                  _        ]==])
+message(STATUS [==[     | |        | |        / __ \ / ____|   ___          | |       ]==])
+message(STATUS [==[     | |     ___| | ____ _| |  | | (___    ( _ )     __ _| |       ]==])
+message(STATUS [==[     | |    / _ \ |/ / _` | |  | |\___ \   / _ \/\  / _` | |       ]==])
+message(STATUS [==[     | |___|  __/   < (_| | |__| |____) | | (_>  < | (_| | |_      ]==])
+message(STATUS [==[     |______\___|_|\_\__,_|\____/|_____/   \___/\/  \__,_|_(_)     ]==])
+message(STATUS [==[                                                                   ]==])
 
 else()
 

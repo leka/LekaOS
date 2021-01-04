@@ -243,12 +243,14 @@ extern int noise_max;
 
 void CFastLED::countFPS(int nFrames)
 {
-	static int br			  = 0;
-	static uint32_t lastframe = 0;	 // millis();
+	static int br = 0;
 
 	if (br++ >= nFrames) {
-		uint32_t now = millis();
+		uint32_t now			  = millis();
+		static uint32_t lastframe = 0;
+
 		now -= lastframe;
+
 		if (now == 0) {
 			now = 1;   // prevent division by zero below
 		}

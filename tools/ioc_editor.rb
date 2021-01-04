@@ -7,7 +7,7 @@
 require 'csv'
 
 #
-# MARK:- Deal with argv
+# MARK: - Deal with argv
 #
 
 def puts_help
@@ -65,7 +65,7 @@ $generate_csv = false
 
 
 #
-# MARK:- Variables
+# MARK: - Variables
 #
 
 # .ioc File
@@ -125,12 +125,9 @@ $header_label    = "Label"
 $fix_signals_file = "#{$ioc_dir_path}/fix_signals.txt"
 $fix_labels_file  = "#{$ioc_dir_path}/fix_labels.txt"
 
-
 #
-# MARK:- Functions
+# MARK: - Helper functions
 #
-
-# Helpers
 
 def not_power_or_reset ( string )
 	if string == "Power" || string == "Reset_State"
@@ -161,37 +158,27 @@ def puts_script_instructions(file)
 	puts ""
 end
 
-# Checkers
-
-def check_name_and_position
-	error_name_position = false
-
+def puts_fix(fix)
 	puts ""
-	puts "Checking pins' positions & names..."
-
-	$pin_csv_reference.each_with_index do |row, index|
-		pin_number = index + 1
-
-		# Check positions
-		if row[$header_position] != $pin_csv_generated[index][$header_position]
-			puts "#{pin_number} - ❌ position - reference: #{row[$header_position]} -- ioc: #{$pin_csv_generated[index][$header_position]}"
-			error_name_position = true
-		end
-
-		# Check names
-		if row[$header_name] != $pin_csv_generated[index][$header_name]
-			puts "#{pin_number} - ❌ name - reference: #{row[$header_name]} -- ioc: #{$pin_csv_generated[index][$header_name]}"
-			error_name_position = true
-		end
-	end
-
-	if error_name_position
-		puts "Checking pins' positions & names... ❌"
-		exit
-	else
-		puts "Checking pins' positions & names... ✅"
-	end
+	puts "Generating script to fix pins' #{fix.downcase}..."
 end
+
+def puts_check(check)
+	puts ""
+	puts "Checking pins' #{check.downcase}..."
+end
+
+def puts_check_ok(check)
+	puts "Checking pins' #{check.downcase}... ✅"
+end
+
+def puts_check_error(check)
+	puts "Checking pins' #{check.downcase}... ❌"
+end
+
+#
+# MARK: - Checker functions
+#
 
 def compare_ref_and_ioc
 	puts ""
@@ -206,139 +193,123 @@ def compare_ref_and_ioc
 	end
 end
 
+def check_name_and_position
+	error_name_position = false
+
+	def check ( header_name, row, index )
+		pin_number = index + 1
+		if row[header_name] != $pin_csv_generated[index][header_name]
+			puts "#{pin_number} - ❌ #{header_name.downcase} - reference: #{row[header_name]} -- ioc: #{$pin_csv_generated[index][header_name]}"
+			error_name_position = true
+		end
+	end
+
+	puts_check "positions & names"
+
+	$pin_csv_reference.each_with_index do |row, index|
+		check $header_position, row, index
+		check $header_name, row, index
+	end
+
+	if error_name_position
+		puts_check_error "positions & names"
+		exit
+	else
+		puts_check_ok "positions & names"
+	end
+end
+
+def check_signals_or_labels(signals_or_labels)
+	puts_check signals_or_labels
+	error = false
+
+	$pin_csv_reference.each_with_index do |row, index|
+		pin_number = index + 1
+		if row[signals_or_labels] != $pin_csv_generated[index][signals_or_labels] && not_power_or_reset(row[$header_signal])
+			puts_error(pin_number, row[$header_name], row[signals_or_labels], $pin_csv_generated[index][signals_or_labels])
+			error = true
+		end
+	end
+
+	if error
+		puts_check_error signals_or_labels
+	else
+		puts_check_ok signals_or_labels
+	end
+
+	return error
+end
+
+def fix_signals_or_labels(signals_or_labels)
+
+	# Fix signal
+	# set pin <pin name> <signal name>
+	# set pin PA12 UART4_TX
+
+	# Fix label
+	# set gpio parameters <matching pin> <param name> <param value>
+	# set gpio parameters PE4 GPIO_Label MOTOR_RIGHT_DIRECTION
+
+	puts_fix signals_or_labels
+
+	if signals_or_labels == $header_signal
+		file = File.new($fix_signals_file, "w")
+	elsif signals_or_labels == $header_label
+		file = File.new($fix_labels_file, "w")
+	end
+
+	$pin_csv_reference.each_with_index do |row, index|
+		pin_number = index + 1
+		if row[signals_or_labels] != $pin_csv_generated[index][signals_or_labels] && not_power_or_reset(row[$header_signal])
+			fix = "set pin #{row[$header_name]} #{row[signals_or_labels]}"
+			puts fix
+			file.puts fix
+		end
+	end
+
+	file.close
+
+	puts_script_instructions(file)
+end
+
 #
-# MARK:- Compare reference file and .ioc file
+# MARK: - Main script
 #
 
+# Check for the basics
 compare_ref_and_ioc
-
-#
-# MARK:- Check pins and positions are correct
-#
-
 check_name_and_position
 
-#
-# MARK:- Check signals
-#
-
-if $check_signals || $fix_signals
-	puts ""
-	puts "Checking pins' signals..."
-
-	$error_signals = false
-
-	$pin_csv_reference.each_with_index do |row, index|
-		pin_number = index + 1
-		if row[$header_signal] != $pin_csv_generated[index][$header_signal] && not_power_or_reset(row[$header_signal])
-			puts_error(pin_number, row[$header_name], row[$header_signal], $pin_csv_generated[index][$header_signal])
-			$error_signals = true
-		end
-	end
-
-	if $error_signals
-		puts "Checking pins' signals... ❌"
-		$fix_signals_needed = true
-	else
-		puts "Checking pins' signals... ✅"
-	end
+# Check  & fix signals
+if $check_signals
+	check_signals_or_labels $header_signal
+	return
 end
-
-#
-# MARK:- Fix signals
-#
-
-# set pin <pin name> <signal name>
-# set pin PA12 UART4_TX
-# def puts_error(pin_number, pin_name, expected, found)
 
 if $fix_signals
-	puts ""
-	puts "Generating script to fix pins' signals..."
-
-	if !$fix_signals_needed
-		puts "No need to generate a script to fix pins' signals... 🎉"
-		return
-	end
-
-	file = File.new($fix_signals_file, "w")
-
-	$pin_csv_reference.each_with_index do |row, index|
-		pin_number = index + 1
-		if row[$header_signal] != $pin_csv_generated[index][$header_signal] && not_power_or_reset(row[$header_signal])
-			fix = "set pin #{row[$header_name]} #{row[$header_signal]}"
-			puts fix
-			file.puts fix
-		end
-	end
-
-	file.close
-
-	puts_script_instructions(file)
-end
-
-#
-# MARK:- Check labels
-#
-
-if $check_labels || $fix_labels
-	puts ""
-	puts "Checking pins' labels..."
-
-	$error_labels = false
-
-	$pin_csv_reference.each_with_index do |row, index|
-		pin_number = index + 1
-		if row[$header_label] != $pin_csv_generated[index][$header_label] && not_power_or_reset(row[$header_signal])
-			puts_error(pin_number, row[$header_name], row[$header_label], $pin_csv_generated[index][$header_label])
-			$error_labels = true
-		end
-	end
-
-	if $error_labels
-		puts "Checking pins' labels... ❌"
-		$fix_labels_needed = true
+	if check_signals_or_labels $header_signal
+		fix_signals_or_labels $header_signal
 	else
-		puts "Checking pins' labels... ✅"
+		puts "No need to generate a script to fix pins' signals... 🎉"
 	end
+	return
 end
 
-#
-# MARK:- Fix labels
-#
-
-# set gpio parameters <matching pin> <param name> <param value>
-# set gpio parameters PE4 GPIO_Label MOTOR_RIGHT_DIRECTION
+if $check_labels
+	check_signals_or_labels $header_label
+	return
+end
 
 if $fix_labels
-	puts ""
-	puts "Generating script to fix pins' labels..."
-
-	if !$fix_labels_needed
+	if check_signals_or_labels $header_label
+		fix_signals_or_labels $header_label
+	else
 		puts "No need to generate a script to fix pins' labels... 🎉"
-		return
 	end
-
-	file = File.new($fix_labels_file, "w")
-
-	$pin_csv_reference.each_with_index do |row, index|
-		pin_number = index + 1
-		if row[$header_label] != $pin_csv_generated[index][$header_label] && not_power_or_reset(row[$header_signal])
-			fix = "set gpio parameters #{row[$header_name]} GPIO_Label #{row[$header_label]}"
-			puts fix
-			file.puts fix
-		end
-	end
-
-	file.close
-
-	puts_script_instructions(file)
+	return
 end
 
-#
-# MARK:- Remove scripts
-#
-
+# Remove files
 if $rm_scripts
 	puts ""
 	puts "Removing script files..."

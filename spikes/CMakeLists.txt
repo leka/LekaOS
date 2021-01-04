@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 add_subdirectory(${SPIKES_DIR}/mbed_blinky)
-add_subdirectory(${SPIKES_DIR}/mbed_watchdog)
 add_subdirectory(${SPIKES_DIR}/mbed_watchdog_ticker_vs_thread)
 
 add_subdirectory(${SPIKES_DIR}/lk_ble)
@@ -34,7 +33,6 @@ add_dependencies( spikes_leka
 add_custom_target(spikes_mbed)
 add_dependencies( spikes_mbed
 	spike_mbed_blinky
-	spike_mbed_watchdog
 	spike_mbed_watchdog_ticker_vs_thread
 )
 
