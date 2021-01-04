@@ -4,6 +4,10 @@ exclude_patterns:
   - "targets"
   - "tools/target_generator.py"
 
+prepare:
+  fetch:
+    - "https://gist.githubusercontent.com/ladislas/705c060b5fa6bf84eda2e172c1db2aec/raw/compile_commands.json"
+
 plugins:
   cppcheck:
     enabled: true

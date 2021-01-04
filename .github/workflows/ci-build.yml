@@ -110,3 +110,11 @@ jobs:
       - name: Ccache post build
         run: |
           make ccache_postbuild
+
+      - name: Upload artifact compile_commands.json
+        uses: exuanbo/actions-deploy-gist@v1.0.3
+        with:
+          token: ${{ secrets.GIST_TOKEN }}
+          gist_id: 705c060b5fa6bf84eda2e172c1db2aec
+          gist_file_name: compile_commands.json
+          file_path: build/compile_commands.json
