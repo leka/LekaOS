@@ -3,6 +3,8 @@ exclude_patterns:
   - "tests"
   - "targets"
   - "tools/target_generator.py"
+  - "tools/run-clang-format.py"
+  - "cmake/scripts/configure_cmake_for_target.py"
 
 prepare:
   fetch:
