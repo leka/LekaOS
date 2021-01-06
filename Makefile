@@ -10,7 +10,7 @@ ROOT_DIR             := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))
 CMAKE_DIR            := $(ROOT_DIR)/cmake
 MBED_OS_DIR          := $(ROOT_DIR)/extern/mbed-os
 PROJECT_BUILD_DIR    := $(ROOT_DIR)/build
-UNIT_TESTS_BUILD_DIR := $(ROOT_DIR)/build/unit_tests
+UNIT_TESTS_BUILD_DIR := $(ROOT_DIR)/build_unit_tests
 
 #
 # MARK: - Arguments
@@ -29,7 +29,7 @@ TARGET_BOARD ?= -x LEKA_V1_0_DEV
 # MARK: - Build targets
 #
 
-.PHONY: spikes tests config
+.PHONY: spikes tests config build_unit_tests
 
 all:
 	@echo ""
@@ -61,10 +61,16 @@ config_leka_disco:
 	@$(MAKE) config TARGET_BOARD="-x LEKA_DISCO"
 
 config:
-	@$(MAKE) deep_clean
 	@$(MAKE) config_target
 	@$(MAKE) config_cmake
-	@$(MAKE) config_unit_tests
+
+clean:
+	@$(MAKE) rm_build
+
+clean_config:
+	@$(MAKE) rm_build
+	@$(MAKE) rm_config
+	@$(MAKE) config
 
 config_target:
 	@echo ""
@@ -80,22 +86,52 @@ config_cmake: mkdir_build
 # MARK: - Tests targets
 #
 
+ut:
+	@$(MAKE) unit_tests
+	@$(MAKE) coverage
+
 unit_tests:
+	@$(MAKE) build_unit_tests
+	@$(MAKE) run_unit_tests
+
+coverage:
+	@echo ""
+	@echo "🔬 Generating code coverage 📝"
+	@gcovr -r . -e tests/unit/mbed-os -e googletest -e $(UNIT_TESTS_BUILD_DIR) --html-details $(UNIT_TESTS_BUILD_DIR)/coverage.html
+	@echo "📝 Html report can be viewed with:"
+	@echo "    open $(UNIT_TESTS_BUILD_DIR)/coverage.html\n"
+	@gcovr -r . -e tests/unit/mbed-os -e googletest -e $(UNIT_TESTS_BUILD_DIR)
+
+coverage_json:
+	@echo ""
+	@echo "🔬 Generating code coverage in json 📝"
+	@gcovr -r . -e tests/unit/mbed-os -e googletest -e $(UNIT_TESTS_BUILD_DIR) --json > $(UNIT_TESTS_BUILD_DIR)/coverage.json
+	@echo "📝 Json report is available at: $(UNIT_TESTS_BUILD_DIR)/coverage.json 📝"
+
+view_coverage:
+	@echo ""
+	@echo "🔬 Opening code coverage in browser 📝"
+	@open $(UNIT_TESTS_BUILD_DIR)/coverage.html
+
+build_unit_tests:
 	@echo ""
 	@echo "🏗️  Building unit tests 🧪"
 	cmake --build $(UNIT_TESTS_BUILD_DIR)
 
+run_unit_tests:
 	@echo ""
 	@echo "🏃‍♂️ Running unit tests 🧪"
-	@$(UNIT_TESTS_BUILD_DIR)/tests/unit/LekaOSUnitTests
+	@$(UNIT_TESTS_BUILD_DIR)/LekaOSUnitTestsExec
 
-config_unit_tests:
+config_unit_tests: mkdir_build_unit_tests
 	@echo ""
 	@echo "🏃 Running unit tests cmake configuration script 📝"
-	@mkdir -p $(UNIT_TESTS_BUILD_DIR)
-	@cd $(UNIT_TESTS_BUILD_DIR); cmake -GNinja -DMBED_UNITTESTS=TRUE ../..
+	cmake -S ./tests/unit -B $(UNIT_TESTS_BUILD_DIR) -GNinja -DCMAKE_BUILD_TYPE=Debug -DCOVERAGE=True
 
 clean_unit_tests:
+	@$(MAKE) rm_unit_tests
+
+rm_unit_tests:
 	@echo ""
 	@echo "⚠️  Cleaning up unit tests build directories 🧹"
 	rm -rf $(UNIT_TESTS_BUILD_DIR)
@@ -155,16 +191,23 @@ mbed_symlink_files:
 mkdir_build:
 	@mkdir -p $(PROJECT_BUILD_DIR)
 
-clean:
+mkdir_build_unit_tests:
+	@mkdir -p $(UNIT_TESTS_BUILD_DIR)
+
+rm_build:
 	@echo ""
 	@echo "⚠️  Cleaning up build directories 🧹"
 	rm -rf $(PROJECT_BUILD_DIR)
 
-deep_clean:
-	@$(MAKE) clean
+rm_config:
 	@echo ""
 	@echo "⚠️  Cleaning up cmake/config directories 🧹"
 	rm -rf $(CMAKE_DIR)/config
+
+deep_clean:
+	@$(MAKE) rm_build
+	@$(MAKE) rm_config
+	@$(MAKE) rm_unit_tests
 
 ccache_prebuild:
 	@echo ""
