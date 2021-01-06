@@ -1,6 +1,5 @@
 exclude_patterns:
   - "extern/mbed-os"
-  - "tests"
   - "targets"
   - "tools/target_generator.py"
   - "tools/run-clang-format.py"
