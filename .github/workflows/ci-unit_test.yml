@@ -7,31 +7,12 @@ on:
     branches:
       - develop
       - master
-    paths-ignore:
-      - "docs/**"
-      - "extern/**"
-      - "tools/**"
-      - ".vscode/**"
-      - ".editorconfig"
-      - ".gitignore"
-      - ".mbed"
-      - "LICENSE"
-      - "README.md"
 
   pull_request:
     branches:
       - develop
-      - "feature/**"
-    paths-ignore:
-      - "docs/**"
-      - "extern/**"
-      - "tools/**"
-      - ".vscode/**"
-      - ".editorconfig"
-      - ".gitignore"
-      - ".mbed"
-      - "LICENSE"
-      - "README.md"
+      - 'feature/**'
+      - 'bugfix/**'
 
 jobs:
   config_build_run:
