@@ -23,12 +23,14 @@ message(STATUS "")
 
 project(LekaOSUnitTests LANGUAGES C CXX)
 
+# Colored output for compilation
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	add_compile_options("-fdiagnostics-color=always")
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(Apple)?Clang$")
 	add_compile_options("-fcolor-diagnostics")
 endif()
 
+# Add code coverage
 if (COVERAGE)
 	if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
 		message(WARNING "Non-debug build may result in misleading code coverage results.")
@@ -39,6 +41,9 @@ if (COVERAGE)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COVERAGE_COMPILER_FLAGS}")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COVERAGE_COMPILER_FLAGS}")
 endif(COVERAGE)
+
+# Generate compile commands database
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 #
 # Mark: - Define directories
