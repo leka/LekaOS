@@ -61,7 +61,8 @@ jobs:
       - name: Generate code coverage
         uses: paambaati/codeclimate-action@v2.7.5
         env:
-          CC_TEST_REPORTER_ID: 945dfb58a832d233a3caeb84e3e6d3be212e8c7abcb48117fce63b9adcb43647
+          CC_TEST_REPORTER_ID: 8de9444a64780871f476dc71b6ef5ed0406880cc6803680982ceefb84dc96633
         with:
+          debug: true
           coverageCommand: lcov --capture --directory . --output-file coverage.info
           coverageLocations: ${{github.workspace}}/coverage.info:lcov
