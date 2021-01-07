@@ -1,6 +1,6 @@
 # LekaOS
 
-![CI](https://github.com/leka/LekaOS/workflows/CI/badge.svg)
+![CI](https://github.com/leka/LekaOS/workflows/CI/badge.svg) [![Maintainability](https://api.codeclimate.com/v1/badges/96be380d9d5e62be5a23/maintainability)](https://codeclimate.com/repos/5fe1fdba6d4b510c01008ae2/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/96be380d9d5e62be5a23/test_coverage)](https://codeclimate.com/repos/5fe1fdba6d4b510c01008ae2/test_coverage)
 
 ## About
 

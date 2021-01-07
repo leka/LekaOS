@@ -11,8 +11,8 @@ on:
   pull_request:
     branches:
       - develop
-      - 'feature/**'
-      - 'bugfix/**'
+      - "feature/**"
+      - "bugfix/**"
 
 jobs:
   config_build:
@@ -22,63 +22,46 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.0.0
 
-      - name: Create job timestamp
-        id: create_job_timestamp
-        run: echo "::set-output name=timestamp::$(date +'%Y%m%d%H%M%S')"
+      - name: Create cache variables
+        id: create_cache_variables
+        run: |
+          echo "::set-output name=timestamp::$(date +'%Y%m%d%H%M%S')"
+          echo "::set-output name=runner_name::$(basename $(dirname $(dirname $(dirname $(pwd)))))"
 
       - name: Cache ccache files
         id: cache_ccache_files
         uses: actions/cache@v2
         with:
           path: ~/.ccache
-          key: ${ { runner.os } }-build-cache_ccache_files-${ { steps.create_job_timestamp.outputs.timestamp } }
+          key: ${ { runner.os } }-cache-ccache_files-${ { steps.create_cache_variables.outputs.timestamp } }
           restore-keys: |
-            ${ { runner.os } }-build-cache_ccache_files-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+            ${ { runner.os } }-cache-ccache_files-
 
       - name: Cache Mbed OS
         id: cache_mbed_os
         uses: actions/cache@v2
         with:
           path: extern/mbed-os
-          key: ${{ runner.os }}-build-cache_mbed_os-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h', '.mbed_version') }}
-          restore-keys: |
-            ${{ runner.os }}-build-cache_mbed_os-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+          key: ${{ runner.os }}-cache-mbed_os-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h', '.mbed_version') }}
 
       - name: Curl Mbed OS
         if: steps.cache_mbed_os.outputs.cache-hit != 'true'
         run: |
           make mbed_curl
 
-      - name: Cache CMake Config
-        id: cache_cmake_config
+      - name: Cache cmake config & build directory
+        id: cache_cmake_config_and_build_directory
         uses: actions/cache@v2
         with:
-          path: cmake/config
-          key: ${{ runner.os }}-build-cache_cmake_config-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json', '.mbed_version', 'Makefile', 'CMakeLists.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-build-cache_cmake_config-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      - name: Cache build directory
-        id: cache_build_directory
-        uses: actions/cache@v2
-        with:
-          path: build
-          key: ${{ runner.os }}-build-cache_build_directory-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json', '.mbed_version', 'Makefile', 'CMakeLists.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-build-cache_build_directory-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+          path: |
+            build
+            cmake/config
+          key: ${{ runner.os }}-${{ steps.create_cache_variables.outputs.runner_name }}-cache-cmake_config_and_build_directory-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json', '.mbed_version', 'Makefile', 'CMakeLists.txt') }}
 
       - name: Config build system
-        if: steps.cache_cmake_config.outputs.cache-hit != 'true' || steps.cache_build_directory.outputs.cache-hit != 'true'
+        if: steps.cache_cmake_config_and_build_directory.outputs.cache-hit != 'true'
         run: |
-          make config
+          make clean_config
 
       - name: Ccache pre build
         run: |
