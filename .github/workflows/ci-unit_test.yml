@@ -11,8 +11,8 @@ on:
   pull_request:
     branches:
       - develop
-      - 'feature/**'
-      - 'bugfix/**'
+      - "feature/**"
+      - "bugfix/**"
 
 jobs:
   config_build_run:
@@ -21,6 +21,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
+
+      - name: Get runner name
+        id: get_runner_name
+        run: echo "::set-output name=runner_name::$(basename $(dirname $(dirname $(dirname $(pwd)))))"
 
       - name: Cache Mbed OS
         id: cache_mbed_os
@@ -43,11 +47,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: build_unit_tests
-          key: ${{ runner.os }}-build-cache_build_unit_tests_directory-${{ hashFiles('.mbed_version', 'Makefile', 'tests/unit/CMakeLists.txt') }}
+          key: ${{ runner.os }}-${{ steps.get_runner_name.outputs.runner_name }}-build-cache_build_unit_tests_directory-${{ hashFiles('.mbed_version', 'Makefile', 'tests/unit/CMakeLists.txt') }}
           restore-keys: |
-            ${{ runner.os }}-build-cache_build_unit_tests_directory-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+            ${{ runner.os }}-${{ steps.get_runner_name.outputs.runner_name }}-build-cache_build_unit_tests_directory-
+            ${{ runner.os }}-${{ steps.get_runner_name.outputs.runner_name }}-build-
+            ${{ runner.os }}-${{ steps.get_runner_name.outputs.runner_name }}-
 
       - name: Config build system
         if: steps.cache_cmake_config.outputs.cache-hit != 'true' || steps.cache_build_unit_tests_directory.outputs.cache-hit != 'true'

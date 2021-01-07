@@ -11,8 +11,8 @@ on:
   pull_request:
     branches:
       - develop
-      - 'feature/**'
-      - 'bugfix/**'
+      - "feature/**"
+      - "bugfix/**"
 
 jobs:
   config_build:
@@ -25,6 +25,10 @@ jobs:
       - name: Create job timestamp
         id: create_job_timestamp
         run: echo "::set-output name=timestamp::$(date +'%Y%m%d%H%M%S')"
+
+      - name: Get runner name
+        id: get_runner_name
+        run: echo "::set-output name=runner_name::$(basename $(dirname $(dirname $(dirname $(pwd)))))"
 
       - name: Cache ccache files
         id: cache_ccache_files
@@ -58,22 +62,22 @@ jobs:
         uses: actions/cache@v2
         with:
           path: cmake/config
-          key: ${{ runner.os }}-build-cache_cmake_config-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json', '.mbed_version', 'Makefile', 'CMakeLists.txt') }}
+          key: ${{ runner.os }}-${{ steps.get_runner_name.outputs.runner_name }}-build-cache_cmake_config-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json', '.mbed_version', 'Makefile', 'CMakeLists.txt') }}
           restore-keys: |
-            ${{ runner.os }}-build-cache_cmake_config-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+            ${{ runner.os }}-${{ steps.get_runner_name.outputs.runner_name }}-build-cache_cmake_config-
+            ${{ runner.os }}-${{ steps.get_runner_name.outputs.runner_name }}-build-
+            ${{ runner.os }}-${{ steps.get_runner_name.outputs.runner_name }}-
 
       - name: Cache build directory
         id: cache_build_directory
         uses: actions/cache@v2
         with:
           path: build
-          key: ${{ runner.os }}-build-cache_build_directory-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json', '.mbed_version', 'Makefile', 'CMakeLists.txt') }}
+          key: ${{ runner.os }}-${{ steps.get_runner_name.outputs.runner_name }}-build-cache_build_directory-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json', '.mbed_version', 'Makefile', 'CMakeLists.txt') }}
           restore-keys: |
-            ${{ runner.os }}-build-cache_build_directory-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
+            ${{ runner.os }}-${{ steps.get_runner_name.outputs.runner_name }}-build-cache_build_directory-
+            ${{ runner.os }}-${{ steps.get_runner_name.outputs.runner_name }}-build-
+            ${{ runner.os }}-${{ steps.get_runner_name.outputs.runner_name }}-
 
       - name: Config build system
         if: steps.cache_cmake_config.outputs.cache-hit != 'true' || steps.cache_build_directory.outputs.cache-hit != 'true'
