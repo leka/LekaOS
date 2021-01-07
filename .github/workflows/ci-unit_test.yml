@@ -64,5 +64,6 @@ jobs:
           CC_TEST_REPORTER_ID: 8de9444a64780871f476dc71b6ef5ed0406880cc6803680982ceefb84dc96633
         with:
           debug: true
-          coverageCommand: lcov --capture --directory . --output-file coverage.info
+          prefix: ${{github.workspace}}
+          coverageCommand: make coverage_lcov
           coverageLocations: ${{github.workspace}}/coverage.info:lcov
