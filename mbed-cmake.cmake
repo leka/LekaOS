@@ -1,8 +1,6 @@
 # mbed-cmake requires CMake >= 3.12 for the new FindPython3 module
 cmake_policy(VERSION 3.12)
 
-if(NOT MBED_UNITTESTS)
-
 message(STATUS [==[                                                                   ]==])
 message(STATUS [==[      _          _          ____   _____                  _        ]==])
 message(STATUS [==[     | |        | |        / __ \ / ____|   ___          | |       ]==])
@@ -11,19 +9,6 @@ message(STATUS [==[     | |    / _ \ |/ / _` | |  | |\___ \   / _ \/\  / _` | | 
 message(STATUS [==[     | |___|  __/   < (_| | |__| |____) | | (_>  < | (_| | |_      ]==])
 message(STATUS [==[     |______\___|_|\_\__,_|\____/|_____/   \___/\/  \__,_|_(_)     ]==])
 message(STATUS [==[                                                                   ]==])
-
-else()
-
-message(STATUS [==[                                                                                          ]==])
-message(STATUS [==[      _          _          ____   _____   _    _       _ _   _______        _            ]==])
-message(STATUS [==[     | |        | |        / __ \ / ____| | |  | |     (_) | |__   __|      | |           ]==])
-message(STATUS [==[     | |     ___| | ____ _| |  | | (___   | |  | |_ __  _| |_   | | ___  ___| |_ ___      ]==])
-message(STATUS [==[     | |    / _ \ |/ / _` | |  | |\___ \  | |  | | '_ \| | __|  | |/ _ \/ __| __/ __|     ]==])
-message(STATUS [==[     | |___|  __/   < (_| | |__| |____) | | |__| | | | | | |_   | |  __/\__ \ |_\__ \     ]==])
-message(STATUS [==[     |______\___|_|\_\__,_|\____/|_____/   \____/|_| |_|_|\__|  |_|\___||___/\__|___/     ]==])
-message(STATUS [==[     																				     ]==])
-
-endif(NOT MBED_UNITTESTS)
 
 message(STATUS "")
 

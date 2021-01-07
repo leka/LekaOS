@@ -6,9 +6,35 @@ This document explains the different kinds of tests used in the development of L
 
 ## Unit Tests
 
-Unit tests (located in [`tests/unit`](../../tests/unit)) are intended to run on the host computer. 
+Unit tests (located in [`tests/unit`](../../tests/unit)) are intended to run on the host computer.
 
-Please refer to mbed-os [Unit Testing documentation](https://os.mbed.com/docs/mbed-os/v6.3/debug-test/unit-testing.html).
+LekaOS unit tests use GoogleTest and gMock. Please refer to their respectif documentation:
+
+- [GoogleTest Github repository](https://github.com/google/googletest)
+- [GoogleTest Introduction](https://github.com/google/googletest/blob/master/googletest/docs/primer.md)
+- [gMock for Dummies](https://github.com/google/googletest/blob/master/googlemock/docs/for_dummies.md)
+- [gMock Cookbook](https://github.com/google/googletest/blob/master/googlemock/docs/cook_book.md)
+
+### Setup
+
+To build and run the unit tests you need to:
+
+```bash
+# Install brew deps
+$ brew install gcovr lcov
+```
+
+### Build & Run
+
+To build and run unit tests, you need to:
+
+```bash
+# Config unit tests
+$ make config_unit_tests
+
+# Build & run
+$ make ut
+```
 
 ## Functional Tests
 

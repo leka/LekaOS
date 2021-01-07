@@ -7,31 +7,12 @@ on:
     branches:
       - develop
       - master
-    paths-ignore:
-      - "docs/**"
-      - "extern/**"
-      - "tools/**"
-      - ".vscode/**"
-      - ".editorconfig"
-      - ".gitignore"
-      - ".mbed"
-      - "LICENSE"
-      - "README.md"
 
   pull_request:
     branches:
       - develop
-      - "feature/**"
-    paths-ignore:
-      - "docs/**"
-      - "extern/**"
-      - "tools/**"
-      - ".vscode/**"
-      - ".editorconfig"
-      - ".gitignore"
-      - ".mbed"
-      - "LICENSE"
-      - "README.md"
+      - 'feature/**'
+      - 'bugfix/**'
 
 jobs:
   config_build_run:
@@ -40,21 +21,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
-
-      - name: Create job timestamp
-        id: create_job_timestamp
-        run: echo "::set-output name=timestamp::$(date +'%Y%m%d%H%M%S')"
-
-      - name: Cache ccache files
-        id: cache_ccache_files
-        uses: actions/cache@v2
-        with:
-          path: ~/.ccache
-          key: ${ { runner.os } }-build-cache_ccache_files-${ { steps.create_job_timestamp.outputs.timestamp } }
-          restore-keys: |
-            ${ { runner.os } }-build-cache_ccache_files-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
 
       - name: Cache Mbed OS
         id: cache_mbed_os
@@ -72,41 +38,30 @@ jobs:
         run: |
           make mbed_curl
 
-      - name: Cache CMake Config
-        id: cache_cmake_config
+      - name: Cache build unit tests directory
+        id: cache_build_unit_tests_directory
         uses: actions/cache@v2
         with:
-          path: cmake/config
-          key: ${{ runner.os }}-build-cache_cmake_config-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json', '.mbed_version', 'Makefile', 'CMakeLists.txt', 'tests/unit/CMakeLists.txt') }}
+          path: build_unit_tests
+          key: ${{ runner.os }}-build-cache_build_unit_tests_directory-${{ hashFiles('.mbed_version', 'Makefile', 'tests/unit/CMakeLists.txt') }}
           restore-keys: |
-            ${{ runner.os }}-build-cache_cmake_config-
-            ${{ runner.os }}-build-
-            ${{ runner.os }}-
-
-      - name: Cache build directory
-        id: cache_build_directory
-        uses: actions/cache@v2
-        with:
-          path: build
-          key: ${{ runner.os }}-build-cache_build_directory-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json', '.mbed_version', 'Makefile', 'CMakeLists.txt', 'tests/unit/CMakeLists.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-build-cache_build_directory-
+            ${{ runner.os }}-build-cache_build_unit_tests_directory-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
 
       - name: Config build system
-        if: steps.cache_cmake_config.outputs.cache-hit != 'true' || steps.cache_build_directory.outputs.cache-hit != 'true'
+        if: steps.cache_cmake_config.outputs.cache-hit != 'true' || steps.cache_build_unit_tests_directory.outputs.cache-hit != 'true'
         run: |
-          make config
-
-      - name: Ccache pre build
-        run: |
-          make ccache_prebuild
+          make config_unit_tests
 
       - name: Build & run unit tests
         run: |
-          make unit_tests
+          make ut
 
-      - name: Ccache post build
-        run: |
-          make ccache_postbuild
+      - name: Generate code coverage
+        uses: paambaati/codeclimate-action@v2.7.5
+        env:
+          CC_TEST_REPORTER_ID: 945dfb58a832d233a3caeb84e3e6d3be212e8c7abcb48117fce63b9adcb43647
+        with:
+          coverageCommand: lcov --capture --directory . --output-file coverage.info
+          coverageLocations: ${{github.workspace}}/coverage.info:lcov

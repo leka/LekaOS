@@ -10,7 +10,7 @@ find_program(CCACHE "ccache")
 if(CCACHE)
     set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE}")
     set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE}")
-endif()
+endif(CCACHE)
 
 option(ENABLE_CODE_ANALYSIS "Run code analysis" OFF)
 message(STATUS "ENABLE_CODE_ANALYSIS --> ${ENABLE_CODE_ANALYSIS}")
@@ -56,31 +56,19 @@ set(SPIKES_DIR  ${ROOT_DIR}/spikes)
 set(DRIVERS_DIR ${ROOT_DIR}/drivers)
 set(TARGETS_DIR ${ROOT_DIR}/targets)
 
-if(NOT MBED_UNITTESTS)
+# Add custom target subdirectory
+add_target_board_subdirectory("${TARGET_BOARD}")
 
-	# Add custom target subdirectory
-	add_target_board_subdirectory("${TARGET_BOARD}")
+# Add drivers & libraries
+add_subdirectory(${DRIVERS_DIR})
+add_subdirectory(${LIBS_DIR})
 
-	# Add drivers & libraries
-	add_subdirectory(${DRIVERS_DIR})
-	add_subdirectory(${LIBS_DIR})
+# Add spikes, functional tests
+add_subdirectory(${SPIKES_DIR})
+add_subdirectory(${TESTS_DIR}/functional)
 
-	# Add spikes, functional tests
-	add_subdirectory(${SPIKES_DIR})
-	add_subdirectory(${TESTS_DIR}/functional)
-
-	# Add LekaOS
-	add_subdirectory(${OS_DIR})
-
-else()
-
-	# Enable testing
-	enable_testing ()
-
-	# Add unit tests
-	add_subdirectory(${TESTS_DIR}/unit)
-
-endif(NOT MBED_UNITTESTS)
+# Add LekaOS
+add_subdirectory(${OS_DIR})
 
 # Finally print the mbed-cmake build report
 mbed_cmake_print_build_report()

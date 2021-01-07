@@ -4,7 +4,7 @@
 
 .vscode
 extern/mbed-os
-build
+build*
 cmake/config/
 .cache
 .clangd
