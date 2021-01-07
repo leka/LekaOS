@@ -32,7 +32,7 @@ LIB8STATIC_ALWAYS_INLINE uint8_t scale8(uint8_t i, fract8 scale)
 		#else
 	uint8_t work = 0;
 		#endif
-	uint8_t cnt = 0x80;
+	uint8_t cnt	 = 0x80;
 	asm volatile(
 		#if (FASTLED_SCALE8_FIXED == 1)
 		"  inc %[scale]                 \n\t"
@@ -186,7 +186,7 @@ LIB8STATIC_ALWAYS_INLINE void nscale8_LEAVING_R1_DIRTY(uint8_t &i, fract8 scale)
 	#if (FASTLED_SCALE8_FIXED == 1)
 	i = (((uint16_t)i) * ((uint16_t)(scale) + 1)) >> 8;
 	#else
-	i = ((int)i * (int)(scale)) >> 8;
+	i	   = ((int)i * (int)(scale)) >> 8;
 	#endif
 #elif SCALE8_AVRASM == 1
 	asm volatile(
@@ -309,9 +309,9 @@ LIB8STATIC void nscale8x3(uint8_t &r, uint8_t &g, uint8_t &b, fract8 scale)
 	g					 = (((uint16_t)g) * scale_fixed) >> 8;
 	b					 = (((uint16_t)b) * scale_fixed) >> 8;
 	#else
-	r = ((int)r * (int)(scale)) >> 8;
-	g = ((int)g * (int)(scale)) >> 8;
-	b = ((int)b * (int)(scale)) >> 8;
+	r	   = ((int)r * (int)(scale)) >> 8;
+	g	   = ((int)g * (int)(scale)) >> 8;
+	b	   = ((int)b * (int)(scale)) >> 8;
 	#endif
 #elif SCALE8_AVRASM == 1
 	r = scale8_LEAVING_R1_DIRTY(r, scale);
@@ -361,8 +361,8 @@ LIB8STATIC void nscale8x2(uint8_t &i, uint8_t &j, fract8 scale)
 	i					 = (((uint16_t)i) * scale_fixed) >> 8;
 	j					 = (((uint16_t)j) * scale_fixed) >> 8;
 	#else
-	i = ((uint16_t)i * (uint16_t)(scale)) >> 8;
-	j = ((uint16_t)j * (uint16_t)(scale)) >> 8;
+	i	   = ((uint16_t)i * (uint16_t)(scale)) >> 8;
+	j	   = ((uint16_t)j * (uint16_t)(scale)) >> 8;
 	#endif
 #elif SCALE8_AVRASM == 1
 	i = scale8_LEAVING_R1_DIRTY(i, scale);
