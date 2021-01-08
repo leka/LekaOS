@@ -3,5 +3,5 @@
 # SPDX-License-Identifier: Apache-2.0
 
 leka_unit_tests_sources(
-	TestTemplate.cpp
+	test_Template.cpp
 )
