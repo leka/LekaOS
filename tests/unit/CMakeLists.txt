@@ -113,14 +113,20 @@ function(leka_unit_tests_sources UNIT_TESTS_SOURCES)
 	)
 endfunction()
 
+# Define function to register new unit tests
+function(leka_register_unit_tests_for_library LIBRARY)
+	add_subdirectory("${LIBS_DIR}/${LIBRARY}/tests" "lib/${LIBRARY}")
+endfunction()
+
 #
 # Mark: - Add unit tests
 #
 
+# Add mbed-os & template
 add_subdirectory(mbed-os)
 add_subdirectory(template)
 
-
+leka_register_unit_tests_for_library(LKCalculatorKit)
 
 #
 # Mark: - Finish up
