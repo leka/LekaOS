@@ -72,4 +72,4 @@ jobs:
           debug: true
           prefix: ${{github.workspace}}
           coverageCommand: make coverage_lcov
-          coverageLocations: ${{github.workspace}}/coverage.info:lcov
+          coverageLocations: ${{github.workspace}}/build_unit_tests/_coverage/coverage.info:lcov
