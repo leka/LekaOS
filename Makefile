@@ -6,11 +6,12 @@
 # MARK: - Constants
 #
 
-ROOT_DIR             := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-CMAKE_DIR            := $(ROOT_DIR)/cmake
-MBED_OS_DIR          := $(ROOT_DIR)/extern/mbed-os
-PROJECT_BUILD_DIR    := $(ROOT_DIR)/build
-UNIT_TESTS_BUILD_DIR := $(ROOT_DIR)/build_unit_tests
+ROOT_DIR                := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+CMAKE_DIR               := $(ROOT_DIR)/cmake
+MBED_OS_DIR             := $(ROOT_DIR)/extern/mbed-os
+PROJECT_BUILD_DIR       := $(ROOT_DIR)/_build
+UNIT_TESTS_BUILD_DIR    := $(ROOT_DIR)/_build_unit_tests
+UNIT_TESTS_COVERAGE_DIR := $(UNIT_TESTS_BUILD_DIR)/_coverage
 
 #
 # MARK: - Arguments
@@ -97,27 +98,28 @@ unit_tests:
 coverage:
 	@echo ""
 	@echo "🔬 Generating code coverage 📝"
-	@gcovr -r . -e tests/unit/mbed-os -e googletest -e $(UNIT_TESTS_BUILD_DIR) --html-details $(UNIT_TESTS_BUILD_DIR)/coverage.html
+	@gcovr -r . -e tests/unit/mbed-os -e googletest -e $(UNIT_TESTS_BUILD_DIR) --html-details $(UNIT_TESTS_COVERAGE_DIR)/coverage.html
 	@echo "📝 Html report can be viewed with:"
-	@echo "    open $(UNIT_TESTS_BUILD_DIR)/coverage.html\n"
-	@gcovr -r . -e tests/unit/mbed-os -e googletest -e $(UNIT_TESTS_BUILD_DIR)
+	@echo "    open $(UNIT_TESTS_COVERAGE_DIR)/coverage.html\n"
+	@gcovr -r . --exclude-directories '.*googletest.*' --exclude-directories '.*mbed-os.*' --exclude-directories '.*template.*' -e '.*gtest.*'
 
 coverage_json:
 	@echo ""
 	@echo "🔬 Generating code coverage in json 📝"
-	@gcovr -r . -e tests/unit/mbed-os -e googletest -e $(UNIT_TESTS_BUILD_DIR) --json > $(UNIT_TESTS_BUILD_DIR)/coverage.json
-	@echo "📝 Json report is available at: $(UNIT_TESTS_BUILD_DIR)/coverage.json 📝"
+	@gcovr -r . -e tests/unit/mbed-os -e googletest -e $(UNIT_TESTS_BUILD_DIR) --json > $(UNIT_TESTS_COVERAGE_DIR)/coverage.json
+	@echo "📝 Json report is available at: $(UNIT_TESTS_COVERAGE_DIR)/coverage.json 📝"
 
 coverage_lcov:
 	@echo ""
 	@echo "🔬 Generating code coverage using lcov 📝"
-	@lcov --capture --directory . --output-file _tmp_coverage.info
-	@lcov --remove _tmp_coverage.info '*googletest*' '*v1*' '*Xcode*' '*CommandLineTools*' -o coverage.info
+	@mkdir -p $(UNIT_TESTS_COVERAGE_DIR)
+	@lcov --capture --directory . --output-file $(UNIT_TESTS_COVERAGE_DIR)/_tmp_coverage.info
+	@lcov --remove $(UNIT_TESTS_COVERAGE_DIR)/_tmp_coverage.info '*googletest*' '*v1*' '*Xcode*' '*CommandLineTools*' '*tests/unit*' -o $(UNIT_TESTS_COVERAGE_DIR)/coverage.info
 
 view_coverage:
 	@echo ""
 	@echo "🔬 Opening code coverage in browser 📝"
-	@open $(UNIT_TESTS_BUILD_DIR)/coverage.html
+	@open $(UNIT_TESTS_COVERAGE_DIR)/coverage.html
 
 build_unit_tests:
 	@echo ""
@@ -199,6 +201,7 @@ mkdir_build:
 
 mkdir_build_unit_tests:
 	@mkdir -p $(UNIT_TESTS_BUILD_DIR)
+	@mkdir -p $(UNIT_TESTS_COVERAGE_DIR)
 
 rm_build:
 	@echo ""

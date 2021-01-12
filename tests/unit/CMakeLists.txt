@@ -23,6 +23,10 @@ message(STATUS "")
 
 project(LekaOSUnitTests LANGUAGES C CXX)
 
+# Set -std=gnu++17
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # Colored output for compilation
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	add_compile_options("-fdiagnostics-color=always")
@@ -95,9 +99,11 @@ add_subdirectory(
 #
 
 enable_testing()
-
 add_executable(LekaOSUnitTestsExec)
-set_property(TARGET LekaOSUnitTestsExec PROPERTY CXX_STANDARD 17)
+
+#
+# Mark: - Define functions
+#
 
 add_custom_command(
 	TARGET LekaOSUnitTestsExec
@@ -113,14 +119,24 @@ function(leka_unit_tests_sources UNIT_TESTS_SOURCES)
 	)
 endfunction()
 
+# Define function to register new unit tests
+function(leka_register_unit_tests_for_library LIBRARY)
+	add_subdirectory("${LIBS_DIR}/${LIBRARY}" "lib/${LIBRARY}")
+	target_link_libraries(LekaOSUnitTestsExec
+		PRIVATE
+			${LIBRARY}
+	)
+endfunction()
+
 #
 # Mark: - Add unit tests
 #
 
+# Add mbed-os & template
 add_subdirectory(mbed-os)
 add_subdirectory(template)
 
-
+leka_register_unit_tests_for_library(LKCalculatorKit)
 
 #
 # Mark: - Finish up

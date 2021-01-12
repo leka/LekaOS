@@ -52,7 +52,7 @@ jobs:
         id: cache_build_unit_tests_directory
         uses: actions/cache@v2
         with:
-          path: build_unit_tests
+          path: _build_unit_tests
           key: ${{ runner.os }}-${{ steps.create_cache_variables.outputs.runner_name }}-cache-build_unit_tests_directory-${{ hashFiles('Makefile', 'tests/unit/CMakeLists.txt') }}
 
       - name: Config build system
@@ -72,4 +72,4 @@ jobs:
           debug: true
           prefix: ${{github.workspace}}
           coverageCommand: make coverage_lcov
-          coverageLocations: ${{github.workspace}}/coverage.info:lcov
+          coverageLocations: ${{github.workspace}}/_build_unit_tests/_coverage/coverage.info:lcov
