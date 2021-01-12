@@ -54,7 +54,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            build
+            _build
             cmake/config
           key: ${{ runner.os }}-${{ steps.create_cache_variables.outputs.runner_name }}-cache-cmake_config_and_build_directory-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json', '.mbed_version', 'Makefile', 'CMakeLists.txt') }}
 
@@ -81,4 +81,4 @@ jobs:
           token: ${{ secrets.GIST_TOKEN }}
           gist_id: 705c060b5fa6bf84eda2e172c1db2aec
           gist_file_name: compile_commands.json
-          file_path: build/compile_commands.json
+          file_path: _build/compile_commands.json

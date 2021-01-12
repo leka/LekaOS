@@ -9,8 +9,8 @@
 ROOT_DIR                := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 CMAKE_DIR               := $(ROOT_DIR)/cmake
 MBED_OS_DIR             := $(ROOT_DIR)/extern/mbed-os
-PROJECT_BUILD_DIR       := $(ROOT_DIR)/build
-UNIT_TESTS_BUILD_DIR    := $(ROOT_DIR)/build_unit_tests
+PROJECT_BUILD_DIR       := $(ROOT_DIR)/_build
+UNIT_TESTS_BUILD_DIR    := $(ROOT_DIR)/_build_unit_tests
 UNIT_TESTS_COVERAGE_DIR := $(UNIT_TESTS_BUILD_DIR)/_coverage
 
 #
