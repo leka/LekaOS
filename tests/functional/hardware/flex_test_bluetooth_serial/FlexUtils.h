@@ -187,6 +187,18 @@ void flex_thread()
 				}
 				break;
 			default:
+				text_length = sprintf(buff, "\n\"R\" for reading value from RFID reader.\n");
+				leka_bluetooth.sendMessage(buff, text_length);
+				text_length = sprintf(
+					buff, "\"TV\" for reading value from Touch sensors.\n\"TC\" for calibrate Touch sensors.\n");
+				leka_bluetooth.sendMessage(buff, text_length);
+				text_length = sprintf(buff, "\"LBrgbfl\" for LEDs on belt. rgb are hex value for Red Green Blue. ");
+				leka_bluetooth.sendMessage(buff, text_length);
+				text_length = sprintf(buff, "fl are hex value of first LED and last LED to apply.\n");
+				leka_bluetooth.sendMessage(buff, text_length);
+				text_length =
+					sprintf(buff, "For example \"4C 42 FF 00 00 00 09\" will turn on LEDs on left side in red.\n\n");
+				leka_bluetooth.sendMessage(buff, text_length);
 				break;
 		}
 	}
