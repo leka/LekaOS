@@ -152,12 +152,19 @@ void Bluetooth::start()
 
 	printf("Bluetooth example\n\n");
 
+	// Enable sound output
+	_buffer_length = BM64::getCommand(BM64::Command::eq_soft_mode, BM64::Command::eq_soft_mode_length, _buffer);
+	_interface.write(_buffer, _buffer_length);
+	rtos::ThisThread::sleep_for(100ms);
+
 	while (!isPaired()) {
 		printf("Bluetooth is trying to pair...\n");
 		pairing();
 		rtos::ThisThread::sleep_for(1s);
 	}
-	text_length = sprintf(text, "This spike do an echo via bluetooth communication.\n\n");
+	text_length = sprintf(text, "This spike do an echo via bluetooth communication.\n");
+	sendMessage(text, text_length);
+	text_length = sprintf(text, "You also can connect with your phone and play songs via the robot!\nEnjoy!\n\n");
 	sendMessage(text, text_length);
 
 	while (true) {

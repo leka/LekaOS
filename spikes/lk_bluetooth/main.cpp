@@ -13,6 +13,7 @@ HelloWorld hello;
 Bluetooth leka_bluetooth;
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
+DigitalOut audio_enable(SOUND_ENABLE, 1);
 
 constexpr uint8_t buff_size = 128;
 char buff[buff_size] {};
