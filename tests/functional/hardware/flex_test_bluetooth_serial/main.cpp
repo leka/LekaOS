@@ -4,6 +4,7 @@
 
 #include "mbed.h"
 
+#include "LedUtils.h"
 #include "LekaBluetooth.h"
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
