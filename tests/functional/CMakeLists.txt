@@ -6,6 +6,7 @@ add_subdirectory(${TESTS_DIR}/functional/cert/emc_ble_led_motors)
 add_subdirectory(${TESTS_DIR}/functional/cert/emc_lcd_led_motors)
 add_subdirectory(${TESTS_DIR}/functional/cert/emc_bt_lcd_qspi_rfid_touch_wifi)
 add_subdirectory(${TESTS_DIR}/functional/hardware/motors_test_reduction_and_wheels)
+add_subdirectory(${TESTS_DIR}/functional/hardware/flex_test_bluetooth_serial)
 
 add_custom_target(tests_functional)
 add_dependencies(tests_functional
@@ -13,4 +14,5 @@ add_dependencies(tests_functional
 	certs_emc_lcd_led_motors
 	certs_emc_bt_lcd_qspi_rfid_touch_wifi
 	hardware_motors_test_reduction_and_wheels
+	hardware_flex_test_bluetooth_serial
 )
