@@ -176,6 +176,27 @@ void Touch::calibrateTwoSensors(bool &sensor_left, bool &sensor_right, uint8_t c
 	return;
 }
 
+void Touch::calibrateEars()
+{
+	printf("Place your hands on EAR LEFT and EAR RIGHT of Leka, calibration start in 5 seconds.\n");
+	rtos::ThisThread::sleep_for(5s);
+	calibrateTwoSensors(_ear_left_touched, _ear_right_touched, 2);
+}
+
+void Touch::calibrateBeltLBRF()
+{
+	printf("Place your hands on BELT LEFT BACK and BELT RIGHT FRONT of Leka, calibration start in 5 seconds.\n");
+	rtos::ThisThread::sleep_for(5s);
+	calibrateTwoSensors(_belt_left_back_touched, _belt_right_front_touched, 1);
+}
+
+void Touch::calibrateBeltRBLF()
+{
+	printf("Place your hands on BELT LEFT FRONT and BELT RIGHT BACK of Leka, calibration start in 5 seconds.\n");
+	rtos::ThisThread::sleep_for(5s);
+	calibrateTwoSensors(_belt_left_front_touched, _belt_right_back_touched, 0);
+}
+
 void Touch::calibration()
 {
 	printf("Touch calibration\n\n");
@@ -183,17 +204,9 @@ void Touch::calibration()
 	printf("Please keep your hands on 2 sensors until \"CALIBRATED !\" appears.\n\n");
 	rtos::ThisThread::sleep_for(15s);
 
-	printf("Place your hands on EAR LEFT and EAR RIGHT of Leka, calibration start in 5 seconds.\n");
-	rtos::ThisThread::sleep_for(5s);
-	calibrateTwoSensors(_ear_left_touched, _ear_right_touched, 2);
-
-	printf("Place your hands on BELT LEFT BACK and BELT RIGHT FRONT of Leka, calibration start in 5 seconds.\n");
-	rtos::ThisThread::sleep_for(5s);
-	calibrateTwoSensors(_belt_left_back_touched, _belt_right_front_touched, 1);
-
-	printf("Place your hands on BELT LEFT FRONT and BELT RIGHT BACK of Leka, calibration start in 5 seconds.\n");
-	rtos::ThisThread::sleep_for(5s);
-	calibrateTwoSensors(_belt_left_front_touched, _belt_right_back_touched, 0);
+	calibrateEars();
+	calibrateBeltLBRF();
+	calibrateBeltRBLF();
 
 	return;
 }
