@@ -17,6 +17,24 @@ char instruction[8];
 bool flex_init()
 {
 	// Check flex is connected and initialized components on it.
+	if (leka_rfid.checkConnected() == false) {
+		text_length = sprintf(buff, "RFID is not connected\n");
+		leka_bluetooth.sendMessage(buff, text_length);
+
+		return false;
+	}
+
+	/* Initialized RFID */
+	while (!leka_rfid.setIEC14443()) {
+		rtos::ThisThread::sleep_for(1s);
+	}
+	while (!leka_rfid.setReceiverGain()) {
+		rtos::ThisThread::sleep_for(1s);
+	}
+	text_length = sprintf(buff, "RFID enable\n");
+	leka_bluetooth.sendMessage(buff, text_length);
+
+	/* Initialized LEDs */
 	initLed();
 
 	rtos::ThisThread::sleep_for(1s);
@@ -26,6 +44,28 @@ bool flex_init()
 	FastLED.show();
 
 	return true;
+}
+
+void readRFID()
+{
+	text_length = sprintf(buff, "\n\nRFID - Ask reader");
+	leka_bluetooth.sendMessage(buff, text_length);
+
+	text_length = sprintf(buff, "\nAnswer type 1:");
+	leka_bluetooth.sendMessage(buff, text_length);
+
+	leka_rfid.sendReceive(2);
+	text_length = leka_rfid.getAnswer(buff);
+	leka_bluetooth.sendMessage(buff, text_length);
+
+	text_length = sprintf(buff, "\nAnswer type 2:");
+	leka_bluetooth.sendMessage(buff, text_length);
+
+	leka_rfid.sendReceive(3);
+	text_length = leka_rfid.getAnswer(buff);
+	leka_bluetooth.sendMessage(buff, text_length);
+
+	return;
 }
 
 void showLEDs(uint8_t R, uint8_t G, uint8_t B, uint8_t first_led, uint8_t last_led)
@@ -71,6 +111,9 @@ void flex_thread()
 				} else if (instruction[1] == 0x45) {   // For E(ars)
 					continue;						   // Not implemented
 				}
+				break;
+			case 0x52:	 // For R(FID)
+				readRFID();
 				break;
 			default:
 				break;
