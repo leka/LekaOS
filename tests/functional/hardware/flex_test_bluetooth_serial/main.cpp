@@ -35,7 +35,8 @@ int main(void)
 	thread_flex.start(flex_thread);
 
 	while (true) {
-		rtos::ThisThread::sleep_for(1s);
+		leka_bluetooth.checkResponse(true);
+		rtos::ThisThread::sleep_for(20ms);
 	}
 
 	return 0;
