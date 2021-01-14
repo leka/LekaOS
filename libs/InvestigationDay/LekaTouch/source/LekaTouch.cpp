@@ -198,7 +198,7 @@ void Touch::calibration()
 	return;
 }
 
-void Touch::updateSensorsStatus()
+uint8_t Touch::updateSensorsStatus()
 {
 	uint8_t value = (uint8_t)(~(_read_interface.digitalWordRead() >> 8));
 
@@ -209,7 +209,7 @@ void Touch::updateSensorsStatus()
 	_belt_left_back_touched	  = (bool)((value >> 1) & 0x01);
 	_belt_left_front_touched  = (bool)((value >> 0) & 0x01);
 
-	return;
+	return value;
 }
 
 void Touch::start(void)
