@@ -68,6 +68,70 @@ void readRFID()
 	return;
 }
 
+void readTouch()
+{
+	text_length = sprintf(buff, "\n\nTouch value");
+	leka_bluetooth.sendMessage(buff, text_length);
+
+	text_length = sprintf(
+		buff, "\n(+1) Left Front, (+2) Left Back, (+4) Right Back, (+8) Left Back, (+10) Left Ear, (+20) Right Ear");
+	leka_bluetooth.sendMessage(buff, text_length);
+	uint8_t val = leka_touch.updateSensorsStatus();
+	text_length = sprintf(buff, "\nValue:%x", val);
+	leka_bluetooth.sendMessage(buff, text_length);
+
+	return;
+}
+
+void calibrateTouch()
+{
+	text_length = sprintf(buff, "\n\nTouch Calibration");
+	leka_bluetooth.sendMessage(buff, text_length);
+
+	text_length = sprintf(buff, "Touch calibration\n\n");
+	leka_bluetooth.sendMessage(buff, text_length);
+	text_length = sprintf(buff, "For each of 6 touch sensors, value of sensibility will change.\n");
+	leka_bluetooth.sendMessage(buff, text_length);
+	text_length = sprintf(buff, "Please keep your hands on 2 sensors until \"CALIBRATED !\" appears.\n\n");
+	leka_bluetooth.sendMessage(buff, text_length);
+	rtos::ThisThread::sleep_for(15s);
+
+	text_length =
+		sprintf(buff, "Place your hands on EAR LEFT and EAR RIGHT of Leka, calibration start in 10 seconds.\n");
+	leka_bluetooth.sendMessage(buff, text_length);
+	text_length = sprintf(buff, "EARS...");
+	leka_bluetooth.sendMessage(buff, text_length);
+	rtos::ThisThread::sleep_for(5s);
+	leka_touch.calibrateEars();
+	text_length = sprintf(buff, "CALIBRATED !\n");
+	leka_bluetooth.sendMessage(buff, text_length);
+
+	text_length = sprintf(
+		buff, "Place your hands on BELT LEFT BACK and BELT RIGHT FRONT of Leka, calibration start in 10 seconds.\n");
+	leka_bluetooth.sendMessage(buff, text_length);
+	text_length = sprintf(buff, "BELT LB RF...");
+	leka_bluetooth.sendMessage(buff, text_length);
+	rtos::ThisThread::sleep_for(5s);
+	leka_touch.calibrateBeltLBRF();
+	text_length = sprintf(buff, "CALIBRATED !\n");
+	leka_bluetooth.sendMessage(buff, text_length);
+
+	text_length = sprintf(
+		buff, "Place your hands on BELT LEFT FRONT and BELT RIGHT BACK of Leka, calibration start in 10 seconds.\n");
+	leka_bluetooth.sendMessage(buff, text_length);
+	text_length = sprintf(buff, "BELT RB LF...");
+	leka_bluetooth.sendMessage(buff, text_length);
+	rtos::ThisThread::sleep_for(5s);
+	leka_touch.calibrateBeltRBLF();
+	text_length = sprintf(buff, "CALIBRATED !\n");
+	leka_bluetooth.sendMessage(buff, text_length);
+
+	text_length = sprintf(buff, "End of Touch calibration\n");
+	leka_bluetooth.sendMessage(buff, text_length);
+
+	return;
+}
+
 void showLEDs(uint8_t R, uint8_t G, uint8_t B, uint8_t first_led, uint8_t last_led)
 {
 	text_length = sprintf(buff, "\n\nLEDs show");
@@ -114,6 +178,13 @@ void flex_thread()
 				break;
 			case 0x52:	 // For R(FID)
 				readRFID();
+				break;
+			case 0x54:							// For T(ouch)
+				if (instruction[1] == 0x56) {	// For V(alue)
+					readTouch();
+				} else if (instruction[1] == 0x43) {   // For C(alibration)
+					calibrateTouch();
+				}
 				break;
 			default:
 				break;
