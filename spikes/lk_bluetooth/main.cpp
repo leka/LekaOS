@@ -34,7 +34,7 @@ int main(void)
 		auto t	   = Kernel::Clock::now() - start;
 		int length = sprintf(buff, "A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME,
 							 hello.world, int(t.count() / 1000));
-		serial.write(buff, length);
+		leka_bluetooth.sendMessage(buff, length);
 		rtos::ThisThread::sleep_for(1s);
 	}
 
