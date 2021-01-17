@@ -118,7 +118,7 @@ function(remove_from_path DIRECTORY)
 
 endfunction(remove_from_path)
 
-function (target_link_custom_board_libraries TARGET)
+function (target_link_custom_leka_targets TARGET)
 	# foreach(board IN ITEMS ${AVAILABLE_CUSTOM_TARGETS})
 	# 	if (${TARGET_BOARD} MATCHES ${board})
 	# 		message(STATUS "Adding ${board} library dependency to ${TARGET}")

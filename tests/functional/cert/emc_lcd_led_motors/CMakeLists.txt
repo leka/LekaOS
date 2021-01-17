@@ -19,4 +19,4 @@ target_link_libraries(certs_emc_lcd_led_motors driver_FastLED)
 
 target_link_libraries(certs_emc_lcd_led_motors lib_LekaScreen)
 
-target_link_custom_board_libraries(certs_emc_lcd_led_motors)
+target_link_custom_leka_targets(certs_emc_lcd_led_motors)

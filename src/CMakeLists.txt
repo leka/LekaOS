@@ -16,4 +16,4 @@ target_include_directories(LekaOS
 
 target_link_libraries(LekaOS lib_HelloWorld)
 
-target_link_custom_board_libraries(LekaOS)
+target_link_custom_leka_targets(LekaOS)

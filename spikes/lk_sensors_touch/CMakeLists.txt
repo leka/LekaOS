@@ -17,4 +17,4 @@ target_include_directories(spike_lk_sensors_touch
 target_link_libraries(spike_lk_sensors_touch lib_HelloWorld)
 target_link_libraries(spike_lk_sensors_touch lib_LekaTouch)
 
-target_link_custom_board_libraries(spike_lk_sensors_touch)
+target_link_custom_leka_targets(spike_lk_sensors_touch)
