@@ -18,6 +18,10 @@ jobs:
   config_build:
     name: Config & Build
     runs-on: [self-hosted, build]
+    strategy:
+      fail-fast: false
+      matrix:
+        custom_target: ["LEKA_V1_1_DEV", "LEKA_V1_2_DEV"]
     steps:
       - name: Checkout
         uses: actions/checkout@v2.0.0
@@ -54,14 +58,14 @@ jobs:
         uses: actions/cache@v2
         with:
           path: |
-            _build
-            cmake/config
-          key: ${{ runner.os }}-${{ steps.create_cache_variables.outputs.runner_name }}-cache-cmake_config_and_build_directory-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json', '.mbed_version', 'Makefile', 'CMakeLists.txt') }}
+            _build/${{ matrix.custom_target }}
+            _build/cmake_config/${{ matrix.custom_target }}
+          key: ${{ runner.os }}-${{ steps.create_cache_variables.outputs.runner_name }}-cache-cmake_config_and_build_directory-${{ matrix.custom_target }}-${{ hashFiles('mbed_app.json', 'targets/custom_targets.json', '.mbed_version', 'Makefile', 'CMakeLists.txt') }}
 
       - name: Config build system
         if: steps.cache_cmake_config_and_build_directory.outputs.cache-hit != 'true'
         run: |
-          make clean_config
+          make clean_config TARGET_BOARD=${{ matrix.custom_target }}
 
       - name: Ccache pre build
         run: |
@@ -69,16 +73,17 @@ jobs:
 
       - name: Build LekaOS & al.
         run: |
-          make
+          make TARGET_BOARD=${{ matrix.custom_target }}
 
       - name: Ccache post build
         run: |
           make ccache_postbuild
 
-      - name: Upload artifact compile_commands.json
+      - name: Upload compile_commands.json to gist
+        if: ${{ matrix.custom_target == 'LEKA_V1_2_DEV' }}
         uses: exuanbo/actions-deploy-gist@v1.0.3
         with:
           token: ${{ secrets.GIST_TOKEN }}
           gist_id: 705c060b5fa6bf84eda2e172c1db2aec
           gist_file_name: compile_commands.json
-          file_path: _build/compile_commands.json
+          file_path: _build/${{ matrix.custom_target }}/compile_commands.json
