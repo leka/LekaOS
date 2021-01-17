@@ -118,20 +118,6 @@ function(remove_from_path DIRECTORY)
 
 endfunction(remove_from_path)
 
-function (add_target_subdirectory TARGET_BOARD)
-	if (${TARGET_BOARD} MATCHES "\-x")
-		string(REPLACE "\-x " "" CUSTOM_BOARD ${TARGET_BOARD})
-		add_subdirectory(${TARGETS_DIR}/TARGET_${CUSTOM_BOARD})
-	endif()
-endfunction()
-
-function (add_target_board_subdirectory TARGET_BOARD)
-	if (${TARGET_BOARD} MATCHES "\-x")
-		string(REPLACE "\-x " "" CUSTOM_BOARD ${TARGET_BOARD})
-		add_subdirectory(${TARGETS_DIR}/TARGET_${CUSTOM_BOARD})
-	endif()
-endfunction()
-
 function (target_link_custom_board_libraries TARGET)
 	set(AVAILABLE_TARGET_BOARDS DISCO_ORIGINAL LEKA_V1_0_DEV LEKA_V1_1_DEV LEKA_V1_2_DEV)
 	if (${TARGET_BOARD} MATCHES "\-x")

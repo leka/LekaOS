@@ -57,7 +57,10 @@ set(DRIVERS_DIR ${ROOT_DIR}/drivers)
 set(TARGETS_DIR ${ROOT_DIR}/targets)
 
 # Add custom target subdirectory
-add_target_board_subdirectory("${TARGET_BOARD}")
+set(AVAILABLE_CUSTOM_TARGETS DISCO_ORIGINAL LEKA_V1_0_DEV LEKA_V1_1_DEV LEKA_V1_2_DEV)
+if (${TARGET_BOARD} IN_LIST AVAILABLE_CUSTOM_TARGETS)
+	add_subdirectory(${TARGETS_DIR}/TARGET_${TARGET_BOARD})
+endif()
 
 # Add drivers & libraries
 add_subdirectory(${DRIVERS_DIR})
