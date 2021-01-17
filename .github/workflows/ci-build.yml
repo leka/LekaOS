@@ -29,6 +29,7 @@ jobs:
       - name: Create cache variables
         id: create_cache_variables
         run: |
+          echo "TIMESTAMP=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
           echo "::set-output name=timestamp::$(date +'%Y%m%d%H%M%S')"
           echo "::set-output name=runner_name::$(basename $(dirname $(dirname $(dirname $(pwd)))))"
 
@@ -87,3 +88,13 @@ jobs:
           gist_id: 705c060b5fa6bf84eda2e172c1db2aec
           gist_file_name: compile_commands.json
           file_path: _build/${{ matrix.custom_target }}/compile_commands.json
+
+      - name: Upload build artifacts
+        if: ${{ matrix.custom_target == 'LEKA_V1_2_DEV' }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: LEKA_V1_2_DEV-Build-Artifacts
+          path: |
+            _build/LEKA_V1_2_DEV/**/*.bin
+            _build/LEKA_V1_2_DEV/**/*.hex
+            _build/LEKA_V1_2_DEV/**/*.elf
