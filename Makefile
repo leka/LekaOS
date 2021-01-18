@@ -171,9 +171,9 @@ clang_format_fix:
 code_analysis: mkdir_build
 	@echo ""
 	@echo "🏃‍♂️ Running cppcheck code analysis 🔬"
-	@mkdir -p $(TARGET_BUILD_DIR)/cppcheck
-	@cd $(TARGET_BUILD_DIR)/cppcheck; cmake -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=ON ../..
-	cmake --build $(TARGET_BUILD_DIR)/cppcheck
+	@mkdir -p $(PROJECT_BUILD_DIR)/cppcheck
+	cmake -S . -B $(PROJECT_BUILD_DIR)/cppcheck -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=ON
+	cmake --build $(PROJECT_BUILD_DIR)/cppcheck
 
 #
 # MARK: - Mbed targets
