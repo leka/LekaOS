@@ -1048,10 +1048,6 @@ void Screen::showFace(bool jpeg_file)
 		setActiveLayer(0);
 		// clear layer 0 in white
 		clear(bg_color);
-
-		drawImage((uint32_t)IMAGE_DATA_EYE, 100, 100, IMAGE_WIDTH_EYE, IMAGE_HEIGHT_EYE);
-		drawImage((uint32_t)IMAGE_DATA_EYE, 500, 100, IMAGE_WIDTH_EYE, IMAGE_HEIGHT_EYE);
-		drawImage((uint32_t)IMAGE_DATA_MOUTH, 340, 290, IMAGE_WIDTH_MOUTH, IMAGE_HEIGHT_MOUTH);
 	}
 
 	// ThisThread::sleep_for(30s);

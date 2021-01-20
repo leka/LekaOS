@@ -16,8 +16,6 @@
 #include "SDBlockDevice.h"
 // #include "decode_dma.h"
 #include "decode_polling.h"
-#include "img/leka_eye_alpha.h"
-#include "img/leka_mouth_alpha.h"
 #include "jpeg_utils.h"
 #include "otm8009a.h"
 
