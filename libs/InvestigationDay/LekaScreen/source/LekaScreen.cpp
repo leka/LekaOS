@@ -1033,7 +1033,7 @@ void Screen::showFace(bool jpeg_file)
 			DMA2D_CopyBuffer((uint32_t *)JPEG_OUTPUT_DATA_BUFFER, (uint32_t *)LCD_FRAME_BUFFER, xPos, yPos,
 							 _hjpeginfo.ImageWidth, _hjpeginfo.ImageHeight, width_offset);
 			printf("End of CopyBuffer\n");
-			ThisThread::sleep_for(1s);
+			rtos::ThisThread::sleep_for(1s);
 			//##-10- Close the avi file ##########################################
 			f_close(&JPEG_File);
 
@@ -1415,7 +1415,7 @@ void SystemInit(void)
 #ifdef VECT_TAB_SRAM
 	SCB->VTOR = SRAM1_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal SRAM */
 #else
-	SCB->VTOR						   = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
+	SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
 #endif
 }
 

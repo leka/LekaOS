@@ -31,10 +31,10 @@ int main(void)
 	hello.start();
 
 	while (true) {
-		// auto t	   = Kernel::Clock::now() - start;
-		// int length = sprintf(buff, "A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME,
-		// 					 hello.world, int(t.count() / 1000));
-		// serial.write(buff, length);
+		auto t	   = Kernel::Clock::now() - start;
+		int length = sprintf(buff, "A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME,
+							 hello.world, int(t.count() / 1000));
+		serial.write(buff, length);
 		rtos::ThisThread::sleep_for(1s);
 	}
 
