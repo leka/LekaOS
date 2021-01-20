@@ -185,8 +185,7 @@ with open(os.path.join(generated_path, "do-not-modify.txt"), 'w') as do_not_modi
 # -------------------------------------------------------------------------
 
 # Add custom targets
-if is_custom_target:
-    Target.add_extra_targets(custom_targets_dir)
+Target.add_extra_targets(custom_targets_dir)
 
 # profile constants
 # list of all profile JSONs
@@ -225,9 +224,8 @@ for profile_json_path in profile_jsons:
 
 
 # Add custom targets
-if is_custom_target:
-    target_dir = "TARGET_" + target_name
-    resources.add_directory(os.path.join(custom_targets_dir, target_dir))
+target_dir = "TARGET_" + target_name
+resources.add_directory(os.path.join(custom_targets_dir, target_dir))
 
 # Profiles seem to only set flags, so for the remaining operations we can use any toolchain
 toolchain = profile_toolchains[0]

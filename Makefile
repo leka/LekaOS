@@ -6,25 +6,38 @@
 # MARK: - Constants
 #
 
-ROOT_DIR                := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
-CMAKE_DIR               := $(ROOT_DIR)/cmake
-MBED_OS_DIR             := $(ROOT_DIR)/extern/mbed-os
-PROJECT_BUILD_DIR       := $(ROOT_DIR)/_build
-UNIT_TESTS_BUILD_DIR    := $(ROOT_DIR)/_build_unit_tests
-UNIT_TESTS_COVERAGE_DIR := $(UNIT_TESTS_BUILD_DIR)/_coverage
+ROOT_DIR          := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+CMAKE_DIR         := $(ROOT_DIR)/cmake
+MBED_OS_DIR       := $(ROOT_DIR)/extern/mbed-os
+PROJECT_BUILD_DIR := $(ROOT_DIR)/_build
 
 #
 # MARK: - Arguments
 #
 
-PORT         ?= /dev/tty.usbmodem14303
-BRANCH       ?= $(shell cat $(ROOT_DIR)/.mbed_version)
-TARGET       ?=
-VERSION      ?= $(shell cat $(ROOT_DIR)/.mbed_version)
-BAUDRATE     ?= 115200
-BIN_PATH     ?= $(PROJECT_BUILD_DIR)/src/LekaOS.bin
-BUILD_TYPE   ?= Release
-TARGET_BOARD ?= -x LEKA_V1_0_DEV
+PORT          ?= /dev/tty.usbmodem14303
+BRANCH        ?= $(shell cat $(ROOT_DIR)/.mbed_version)
+VERSION       ?= $(shell cat $(ROOT_DIR)/.mbed_version)
+BAUDRATE      ?= 115200
+BUILD_TYPE    ?= Release
+TARGET_BOARD  ?= LEKA_V1_2_DEV
+CODE_ANALYSIS ?= OFF
+
+#
+# MARK: - Build dirs
+#
+
+CMAKE_CONFIG_DIR        := $(PROJECT_BUILD_DIR)/cmake_config
+TARGET_BUILD_DIR        := $(PROJECT_BUILD_DIR)/${TARGET_BOARD}
+UNIT_TESTS_BUILD_DIR    := $(ROOT_DIR)/_build_unit_tests
+UNIT_TESTS_COVERAGE_DIR := $(UNIT_TESTS_BUILD_DIR)/_coverage
+
+#
+# MARK: - .bin path
+#
+
+LEKA_OS_BIN_PATH := $(TARGET_BUILD_DIR)/src/LekaOS.bin
+BIN_PATH         ?= $(LEKA_OS_BIN_PATH)
 
 #
 # MARK: - Build targets
@@ -35,31 +48,28 @@ TARGET_BOARD ?= -x LEKA_V1_0_DEV
 all:
 	@echo ""
 	@echo "🏗️  Building everything! 🌈"
-	cmake --build $(PROJECT_BUILD_DIR)
+	cmake --build $(TARGET_BUILD_DIR)
 	@rm -rf $(ROOT_DIR)/compile_commands.json
-	@cp $(PROJECT_BUILD_DIR)/compile_commands.json ./
+	@cp $(TARGET_BUILD_DIR)/compile_commands.json ./
 
 os:
 	@echo ""
 	@echo "🏗️  Building LekaOS 🤖"
-	cmake --build $(PROJECT_BUILD_DIR) -t LekaOS
+	cmake --build $(TARGET_BUILD_DIR) -t LekaOS
 
 spikes:
 	@echo ""
 	@echo "🏗️  Building spikes 🍱"
-	cmake --build $(PROJECT_BUILD_DIR) -t spikes
+	cmake --build $(TARGET_BUILD_DIR) -t spikes
 
 tests_functional:
 	@echo ""
 	@echo "🏗️  Building functional tests ⚗️"
-	cmake --build $(PROJECT_BUILD_DIR) -t tests_functional
+	cmake --build $(TARGET_BUILD_DIR) -t tests_functional
 
 #
 # MARK: - Config targets
 #
-
-config_leka_disco:
-	@$(MAKE) config TARGET_BOARD="-x LEKA_DISCO"
 
 config:
 	@$(MAKE) config_target
@@ -73,15 +83,15 @@ clean_config:
 	@$(MAKE) rm_config
 	@$(MAKE) config
 
-config_target:
+config_target: mkdir_config
 	@echo ""
-	@echo "🏃 Running target configuration script 📝"
-	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_DIR)/config -a $(ROOT_DIR)/mbed_app.json
+	@echo "🏃 Running configuration script for target $(TARGET_BOARD) 📝"
+	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(PROJECT_BUILD_DIR)/cmake_config/$(TARGET_BOARD) -a $(ROOT_DIR)/mbed_app.json
 
 config_cmake: mkdir_build
 	@echo ""
-	@echo "🏃 Running cmake configuration script 📝"
-	@cd $(PROJECT_BUILD_DIR); cmake -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=$(CODE_ANALYSIS) ..
+	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
+	@cmake -S . -B $(TARGET_BUILD_DIR) -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=$(CODE_ANALYSIS)
 
 #
 # MARK: - Tests targets
@@ -162,7 +172,7 @@ code_analysis: mkdir_build
 	@echo ""
 	@echo "🏃‍♂️ Running cppcheck code analysis 🔬"
 	@mkdir -p $(PROJECT_BUILD_DIR)/cppcheck
-	@cd $(PROJECT_BUILD_DIR)/cppcheck; cmake -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=ON ../..
+	cmake -S . -B $(PROJECT_BUILD_DIR)/cppcheck -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=ON
 	cmake --build $(PROJECT_BUILD_DIR)/cppcheck
 
 #
@@ -197,7 +207,10 @@ mbed_symlink_files:
 #
 
 mkdir_build:
-	@mkdir -p $(PROJECT_BUILD_DIR)
+	@mkdir -p $(TARGET_BUILD_DIR)
+
+mkdir_config:
+	@mkdir -p $(CMAKE_CONFIG_DIR)/$(TARGET_BOARD)
 
 mkdir_build_unit_tests:
 	@mkdir -p $(UNIT_TESTS_BUILD_DIR)
@@ -205,17 +218,21 @@ mkdir_build_unit_tests:
 
 rm_build:
 	@echo ""
-	@echo "⚠️  Cleaning up build directories 🧹"
+	@echo "⚠️  Cleaning up $(TARGET_BOARD) build directory 🧹"
+	rm -rf $(TARGET_BUILD_DIR)
+
+rm_build_all:
+	@echo ""
+	@echo "⚠️  Cleaning up all build directories 🧹"
 	rm -rf $(PROJECT_BUILD_DIR)
 
 rm_config:
 	@echo ""
-	@echo "⚠️  Cleaning up cmake/config directories 🧹"
-	rm -rf $(CMAKE_DIR)/config
+	@echo "⚠️  Cleaning up $(TARGET_BOARD) cmake_config directory 🧹"
+	rm -rf $(CMAKE_CONFIG_DIR)/$(TARGET_BOARD)
 
 deep_clean:
-	@$(MAKE) rm_build
-	@$(MAKE) rm_config
+	@$(MAKE) rm_build_all
 	@$(MAKE) rm_unit_tests
 
 ccache_prebuild:

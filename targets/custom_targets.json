@@ -78,5 +78,91 @@
 			"network-default-interface-type": "WIFI",
 			"lse_available": false
 		}
+	},
+	"LEKA_V1_1_DEV": {
+		"inherits": [
+			"MCU_STM32F7"
+		],
+		"extra_labels_add": [
+			"STM32F769xI",
+			"CORDIO"
+		],
+		"components_add": [
+			"BlueNRG_MS",
+			"SD"
+		],
+		"supported_form_factors": [],
+		"features": [
+			"BLE"
+		],
+		"config": {
+			"flash_dual_bank": {
+				"help": "Default board configuration is Single Bank Flash. If you enable Dual Bank with ST Link Utility, set value to 1",
+				"value": "0"
+			}
+		},
+		"detect_code": [
+			"1234"
+		],
+		"macros_add": [
+			"STM32F769xx",
+			"HSE_VALUE=25000000"
+		],
+		"device_has_add": [
+			"QSPI"
+		],
+		"device_has_remove": [
+			"I2CSLAVE",
+			"SPISLAVE",
+			"CAN"
+		],
+		"device_name": "STM32F769NI",
+		"overrides": {
+			"network-default-interface-type": "WIFI",
+			"lse_available": false
+		}
+	},
+	"LEKA_V1_2_DEV": {
+		"inherits": [
+			"MCU_STM32F7"
+		],
+		"extra_labels_add": [
+			"STM32F769xI",
+			"CORDIO"
+		],
+		"components_add": [
+			"BlueNRG_MS",
+			"SD"
+		],
+		"supported_form_factors": [],
+		"features": [
+			"BLE"
+		],
+		"config": {
+			"flash_dual_bank": {
+				"help": "Default board configuration is Single Bank Flash. If you enable Dual Bank with ST Link Utility, set value to 1",
+				"value": "0"
+			}
+		},
+		"detect_code": [
+			"1234"
+		],
+		"macros_add": [
+			"STM32F769xx",
+			"HSE_VALUE=25000000"
+		],
+		"device_has_add": [
+			"QSPI"
+		],
+		"device_has_remove": [
+			"I2CSLAVE",
+			"SPISLAVE",
+			"CAN"
+		],
+		"device_name": "STM32F769NI",
+		"overrides": {
+			"network-default-interface-type": "WIFI",
+			"lse_available": false
+		}
 	}
 }

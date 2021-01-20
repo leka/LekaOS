@@ -70,15 +70,16 @@ $generate_csv = false
 
 # .ioc File
 
-$ioc_file_path    = $arg_path
+$target_dir       = $arg_path
 $ioc_file_prefix  = "Leka-MCU_Pins"
-$ioc_file_version = File.basename(File.dirname($ioc_file_path))
-$ioc_file_name    = File.basename($ioc_file_path)
-$ioc_dir_path     = File.dirname($ioc_file_path)
+$ioc_file_version = $target_dir.scan(/(?<=V)[0-9]*_[0-9]*/)[0].sub!("_", ".")
+$ioc_dir_path     = "#{$target_dir}/pins"
+$ioc_file_name    = "#{$ioc_file_prefix}-v#{$ioc_file_version}.ioc"
+$ioc_file_path    = "#{$ioc_dir_path}/#{$ioc_file_name}"
 
-if !$ioc_file_path.include? "ioc"
+if !File.file?($ioc_file_path)
 	puts ""
-	puts "❌ The file chosen is not a .ioc file..."
+	puts "❌ #{$ioc_file_path} does not exist..."
 	puts_help
 	exit
 end

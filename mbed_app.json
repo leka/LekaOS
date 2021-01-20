@@ -3,11 +3,7 @@
 		"target_name": null
 	},
 	"target_overrides": {
-		"LEKA_DISCO": {
-			"target_name": "\"LEKA_DISCO\""
-		},
-		"LEKA_V1_0_DEV": {
-			"target_name": "\"LEKA_V1_0_DEV\"",
+		"*": {
 			"bluenrg_ms.SPI_IRQ": "BLE_IRQ",
 			"bluenrg_ms.SPI_RESET": "BLE_RESET",
 			"bluenrg_ms.SPI_MISO": "BLE_SPI_MISO",
@@ -18,6 +14,18 @@
 			"sd.SPI_MISO": "SD_SPI_MISO",
 			"sd.SPI_MOSI": "SD_SPI_MOSI",
 			"sd.SPI_CLK": "SD_SPI_SCK"
+		},
+		"LEKA_DISCO": {
+			"target_name": "\"LEKA_DISCO\""
+		},
+		"LEKA_V1_0_DEV": {
+			"target_name": "\"LEKA_V1_0_DEV\""
+		},
+		"LEKA_V1_1_DEV": {
+			"target_name": "\"LEKA_V1_1_DEV\""
+		},
+		"LEKA_V1_2_DEV": {
+			"target_name": "\"LEKA_V1_2_DEV\""
 		}
 	}
 }

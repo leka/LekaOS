@@ -7,5 +7,8 @@
 		".cache": true,
 		".clangd": true
 	},
-	"cmake.buildDirectory": "${workspaceFolder}/_build"
+	"cmake.buildDirectory": "${workspaceFolder}/_build/LEKA_V1_2_DEV",
+	"cmake.configureArgs": [
+		"-DTARGET_BOARD=LEKA_V1_2_DEV"
+	]
 }
