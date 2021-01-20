@@ -12,6 +12,11 @@ void DMA2D_TransferErrorCallback(DMA2D_HandleTypeDef *hdma2d);
 uint32_t JPEG_FindFrameOffset(uint32_t offset, FIL *file);
 void OnError_Handler(const char *, int);
 
+leka::LCD_Model otm8009a_model = {leka::LCD::OTM8009A,	   OTM8009A_800X480_WIDTH, OTM8009A_800X480_HEIGHT,
+								  OTM8009A_800X480_HSYNC,  OTM8009A_800X480_HBP,   OTM8009A_800X480_HFP,
+								  OTM8009A_800X480_HEIGHT, OTM8009A_800X480_VSYNC, OTM8009A_800X480_VBP,
+								  OTM8009A_800X480_VBP,	   OTM8009A_800X480_WIDTH};
+
 Screen::Screen()
 	: _brightness(SCREEN_BACKLIGHT_PWM),
 	  _interface(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK),
@@ -20,6 +25,9 @@ Screen::Screen()
 {
 	_brightness.period(0.01f);	 // Set PWM at 1/(0.01 seconds) = 100Hz
 	_brightness = 0.50f;
+
+	_screen_width  = otm8009a_model.width;
+	_screen_height = otm8009a_model.height;
 }
 
 void Screen::squareBouncing()
@@ -143,9 +151,9 @@ void Screen::ScreenInit()
 
 	LCDReset();
 	MSPInit();
-	DSIInit();
+	leka::DSIInit();
 	LTDCInit();
-	OTM8009AInit();
+	OTM8009A_Init(OTM8009A_FORMAT_RGB888, OTM8009A_ORIENTATION_LANDSCAPE);
 }
 
 void Screen::LCDReset()
@@ -216,120 +224,13 @@ void Screen::MSPInit()
 	return;
 }
 
-void Screen::DSIInit()
-{
-	DSI_PLLInitTypeDef dsiPllInit;
-	uint32_t LcdClock = 27429; /*!< LcdClk = 27429 kHz */
-
-	uint32_t laneByteClk_kHz = 0;
-	// uint32_t VSA;  /*!< Vertical start active time in units of lines */
-	// uint32_t VBP;  /*!< Vertical Back Porch time in units of lines */
-	// uint32_t VFP;  /*!< Vertical Front Porch time in units of lines */
-	// uint32_t VACT; /*!< Vertical Active time in units of lines = imageSize Y in pixels to display */
-	// uint32_t HSA;  /*!< Horizontal start active time in units of lcdClk */
-	// uint32_t HBP;  /*!< Horizontal Back Porch time in units of lcdClk */
-	// uint32_t HFP;  /*!< Horizontal Front Porch time in units of lcdClk */
-	// uint32_t HACT; /*!< Horizontal Active time in units of lcdClk = imageSize X in pixels to display */
-
-	/* ADDED PARAMETER, NOT PRESENT IN BSP */
-	// uint32_t lcd_x_size = OTM8009A_800X480_WIDTH;
-	// uint32_t lcd_y_size = OTM8009A_800X480_HEIGHT;
-	/* END OF ADDED PARAMETERS */
-
-	/* Base address of DSI Host/Wrapper registers to be set before calling De-Init */
-	_hdsi.Instance = DSI;
-
-	HAL_DSI_DeInit(&(_hdsi));
-
-	dsiPllInit.PLLNDIV = 100;
-	dsiPllInit.PLLIDF  = DSI_PLL_IN_DIV5;
-	dsiPllInit.PLLODF  = DSI_PLL_OUT_DIV1;
-	laneByteClk_kHz	   = 62500; /* 500 MHz / 8 = 62.5 MHz = 62500 kHz */
-
-	/* Set number of Lanes */
-	_hdsi.Init.NumberOfLanes = DSI_TWO_DATA_LANES;
-
-	/* TXEscapeCkdiv = f(LaneByteClk)/15.62 = 4 */
-	_hdsi.Init.TXEscapeCkdiv = laneByteClk_kHz / 15620;
-
-	HAL_DSI_Init(&(_hdsi), &(dsiPllInit));
-
-	/* Timing parameters for all Video modes
-	 * Set Timing parameters of LTDC depending on its chosen orientation
-	 */
-	// if (orientation == LCD_ORIENTATION_PORTRAIT) {
-	// 	lcd_x_size = OTM8009A_480X800_WIDTH;  /* 480 */
-	// 	lcd_y_size = OTM8009A_480X800_HEIGHT; /* 800 */
-	// } else {
-	/* lcd_orientation == LCD_ORIENTATION_LANDSCAPE */
-	// lcd_x_size = OTM8009A_800X480_WIDTH;  /* 800 */
-	// lcd_y_size = OTM8009A_800X480_HEIGHT; /* 480 */
-	// }
-
-	// HACT = _screen_width;	 // Previously lcd_x_size, replace by _screen_width
-	// VACT = _screen_height;	 // Previously lcd_y_size, replace by _screen_height
-
-	/* The following values are same for portrait and landscape orientations */
-	// VSA = OTM8009A_480X800_VSYNC; /* 12  */
-	// VBP = OTM8009A_480X800_VBP;	  /* 12  */
-	// VFP = OTM8009A_480X800_VFP;	  /* 12  */
-	// HSA = OTM8009A_480X800_HSYNC; /* 63  */
-	// HBP = OTM8009A_480X800_HBP;	  /* 120 */
-	// HFP = OTM8009A_480X800_HFP;	  /* 120 */
-
-	_hdsivideo.VirtualChannelID		= 0;			// Previously LCD_OTM8009A_ID = 0
-	_hdsivideo.ColorCoding			= DSI_RGB888;	// Previously LCD_DSI_PIXEL_DATA_FMT_RBG888 = DSI_RGB888
-	_hdsivideo.VSPolarity			= DSI_VSYNC_ACTIVE_HIGH;
-	_hdsivideo.HSPolarity			= DSI_HSYNC_ACTIVE_HIGH;
-	_hdsivideo.DEPolarity			= DSI_DATA_ENABLE_ACTIVE_HIGH;
-	_hdsivideo.Mode					= DSI_VID_MODE_BURST; /* Mode Video burst ie : one LgP per line */
-	_hdsivideo.NullPacketSize		= 0xFFF;
-	_hdsivideo.NumberOfChunks		= 0;
-	_hdsivideo.PacketSize			= HACT; /* Value depending on display orientation choice portrait/landscape */
-	_hdsivideo.HorizontalSyncActive = (HSA * laneByteClk_kHz) / LcdClock;
-	_hdsivideo.HorizontalBackPorch	= (HBP * laneByteClk_kHz) / LcdClock;
-	_hdsivideo.HorizontalLine		= ((HACT + HSA + HBP + HFP) * laneByteClk_kHz) /
-								LcdClock; /* Value depending on display orientation choice portrait/landscape */
-	_hdsivideo.VerticalSyncActive = VSA;
-	_hdsivideo.VerticalBackPorch  = VBP;
-	_hdsivideo.VerticalFrontPorch = VFP;
-	_hdsivideo.VerticalActive	  = VACT; /* Value depending on display orientation choice portrait/landscape */
-
-	/* Enable or disable sending LP command while streaming is active in video mode */
-	_hdsivideo.LPCommandEnable = DSI_LP_COMMAND_ENABLE; /* Enable sending commands in mode LP (Low Power) */
-
-	/* Largest packet size possible to transmit in LP mode in VSA, VBP, VFP regions */
-	/* Only useful when sending LP packets is allowed while streaming is active in video mode */
-	_hdsivideo.LPLargestPacketSize = 16;
-
-	/* Largest packet size possible to transmit in LP mode in HFP region during VACT period */
-	/* Only useful when sending LP packets is allowed while streaming is active in video mode */
-	_hdsivideo.LPVACTLargestPacketSize = 0;
-
-	/* Specify for each region of the video frame, if the transmission of command in LP mode is allowed in this region
-	 */
-	/* while streaming is active in video mode */
-	_hdsivideo.LPHorizontalFrontPorchEnable = DSI_LP_HFP_ENABLE;  /* Allow sending LP commands during HFP period */
-	_hdsivideo.LPHorizontalBackPorchEnable	= DSI_LP_HBP_ENABLE;  /* Allow sending LP commands during HBP period */
-	_hdsivideo.LPVerticalActiveEnable		= DSI_LP_VACT_ENABLE; /* Allow sending LP commands during VACT period */
-	_hdsivideo.LPVerticalFrontPorchEnable	= DSI_LP_VFP_ENABLE;  /* Allow sending LP commands during VFP period */
-	_hdsivideo.LPVerticalBackPorchEnable	= DSI_LP_VBP_ENABLE;  /* Allow sending LP commands during VBP period */
-	_hdsivideo.LPVerticalSyncActiveEnable =
-		DSI_LP_VSYNC_ENABLE; /* Allow sending LP commands during VSync = VSA period */
-
-	/* Configure DSI Video mode timings with settings set above */
-	HAL_DSI_ConfigVideoMode(&(_hdsi), &(_hdsivideo));
-
-	return;
-}
-
 void Screen::LTDCInit()
 {
 	/* Timing Configuration */
-	_hltdc.Init.HorizontalSync	   = (HSA - 1);
-	_hltdc.Init.AccumulatedHBP	   = (HSA + HBP - 1);
-	_hltdc.Init.AccumulatedActiveW = (_screen_width + HSA + HBP - 1);
-	_hltdc.Init.TotalWidth		   = (_screen_width + HSA + HBP + HFP - 1);
+	_hltdc.Init.HorizontalSync	   = (otm8009a_model.HSA - 1);
+	_hltdc.Init.AccumulatedHBP	   = (otm8009a_model.HSA + otm8009a_model.HBP - 1);
+	_hltdc.Init.AccumulatedActiveW = (_screen_width + otm8009a_model.HSA + otm8009a_model.HBP - 1);
+	_hltdc.Init.TotalWidth		   = (_screen_width + otm8009a_model.HSA + otm8009a_model.HBP + otm8009a_model.HFP - 1);
 
 	/* Initialize the LCD pixel width and pixel height */
 	_hltdc.LayerCfg->ImageWidth	 = _screen_width;
@@ -358,14 +259,14 @@ void Screen::LTDCInit()
 	_hltdc.Instance				= LTDC;
 
 	/* Get LTDC Configuration from DSI Configuration */
-	HAL_LTDC_StructInitFromVideoConfig(&(_hltdc), &(_hdsivideo));
+	HAL_LTDC_StructInitFromVideoConfig(&(_hltdc), &(leka::hdsivideo));
 
 	/* Initialize the LTDC */
 	HAL_LTDC_Init(&_hltdc);
 
 	/* Enable the DSI host and wrapper after the LTDC initialization
 	   To avoid any synchronization issue, the DSI shall be started after enabling the LTDC */
-	HAL_DSI_Start(&_hdsi);
+	HAL_DSI_Start(&leka::hdsi);
 
 	// #if !defined(DATA_IN_ExtSDRAM)
 	/* Initialize the SDRAM */
@@ -570,264 +471,6 @@ void Screen::SDRAMInitSequence()
 	return;
 }
 
-void Screen::OTM8009AInit()
-{
-	/* Initialize the OTM8009A LCD Display IC Driver (KoD LCD IC Driver)
-	 *  depending on configuration set in 'hdsivideo_handle'.
-	 */
-	OTM8009A_Init(OTM8009A_FORMAT_RGB888, OTM8009A_ORIENTATION_LANDSCAPE);
-}
-
-void Screen::DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams)
-{
-	if (NbrParams <= 1) {
-		HAL_DSI_ShortWrite(&_hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, pParams[0], pParams[1]);
-	} else {
-		HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, NbrParams, pParams[NbrParams], pParams);
-	}
-}
-
-uint8_t Screen::OTM8009A_Init(uint32_t ColorCoding, uint32_t orientation)
-{
-	/* Enable CMD2 to access vendor specific commands                               */
-	/* Enter in command 2 mode and set EXTC to enable address shift function (0x00) */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData1);
-	DSI_IO_WriteCmd(3, (uint8_t *)lcdRegData1);
-
-	/* Enter ORISE Command 2 */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData2); /* Shift address to 0x80 */
-	DSI_IO_WriteCmd(2, (uint8_t *)lcdRegData2);
-
-	/////////////////////////////////////////////////////////////////////
-	/* SD_PCH_CTRL - 0xC480h - 129th parameter - Default 0x00          */
-	/* Set SD_PT                                                       */
-	/* -> Source output level during porch and non-display area to GND */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData2);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData3);
-	HAL_Delay(10);
-	/* Not documented */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData4);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData5);
-	HAL_Delay(10);
-	/////////////////////////////////////////////////////////////////////
-
-	/* PWR_CTRL4 - 0xC4B0h - 178th parameter - Default 0xA8 */
-	/* Set gvdd_en_test                                     */
-	/* -> enable GVDD test mode !!!                         */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData6);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData7);
-
-	/* PWR_CTRL2 - 0xC590h - 146th parameter - Default 0x79      */
-	/* Set pump 4 vgh voltage                                    */
-	/* -> from 15.0v down to 13.0v                               */
-	/* Set pump 5 vgh voltage                                    */
-	/* -> from -12.0v downto -9.0v                               */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData8);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData9);
-
-	/* P_DRV_M - 0xC0B4h - 181th parameter - Default 0x00 */
-	/* -> Column inversion                                */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData10);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData11);
-
-	/* VCOMDC - 0xD900h - 1st parameter - Default 0x39h */
-	/* VCOM Voltage settings                            */
-	/* -> from -1.0000v downto -1.2625v                 */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData1);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData12);
-
-	/* Oscillator adjustment for Idle/Normal mode (LPDT only) set to 65Hz (default is 60Hz) */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData13);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData14);
-
-	/* Video mode internal */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData15);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData16);
-
-	/* PWR_CTRL2 - 0xC590h - 147h parameter - Default 0x00 */
-	/* Set pump 4&5 x6                                     */
-	/* -> ONLY VALID when PUMP4_EN_ASDM_HV = "0"           */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData17);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData18);
-
-	/* PWR_CTRL2 - 0xC590h - 150th parameter - Default 0x33h */
-	/* Change pump4 clock ratio                              */
-	/* -> from 1 line to 1/2 line                            */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData19);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData9);
-
-	/* GVDD/NGVDD settings */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData1);
-	DSI_IO_WriteCmd(2, (uint8_t *)lcdRegData5);
-
-	/* PWR_CTRL2 - 0xC590h - 149th parameter - Default 0x33h */
-	/* Rewrite the default value !                           */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData20);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData21);
-
-	/* Panel display timing Setting 3 */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData22);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData23);
-
-	/* Power control 1 */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData24);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData25);
-
-	/* Source driver precharge */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData13);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData26);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData15);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData27);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData28);
-	DSI_IO_WriteCmd(2, (uint8_t *)lcdRegData6);
-
-	/* GOAVST */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData2);
-	DSI_IO_WriteCmd(6, (uint8_t *)lcdRegData7);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData29);
-	DSI_IO_WriteCmd(14, (uint8_t *)lcdRegData8);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData30);
-	DSI_IO_WriteCmd(14, (uint8_t *)lcdRegData9);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData31);
-	DSI_IO_WriteCmd(10, (uint8_t *)lcdRegData10);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData32);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData46);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData2);
-	DSI_IO_WriteCmd(10, (uint8_t *)lcdRegData11);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData33);
-	DSI_IO_WriteCmd(15, (uint8_t *)lcdRegData12);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData29);
-	DSI_IO_WriteCmd(15, (uint8_t *)lcdRegData13);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData30);
-	DSI_IO_WriteCmd(10, (uint8_t *)lcdRegData14);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData31);
-	DSI_IO_WriteCmd(15, (uint8_t *)lcdRegData15);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData32);
-	DSI_IO_WriteCmd(15, (uint8_t *)lcdRegData16);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData34);
-	DSI_IO_WriteCmd(10, (uint8_t *)lcdRegData17);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData35);
-	DSI_IO_WriteCmd(10, (uint8_t *)lcdRegData18);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData2);
-	DSI_IO_WriteCmd(10, (uint8_t *)lcdRegData19);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData33);
-	DSI_IO_WriteCmd(15, (uint8_t *)lcdRegData20);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData29);
-	DSI_IO_WriteCmd(15, (uint8_t *)lcdRegData21);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData30);
-	DSI_IO_WriteCmd(10, (uint8_t *)lcdRegData22);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData31);
-	DSI_IO_WriteCmd(15, (uint8_t *)lcdRegData23);
-
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData32);
-	DSI_IO_WriteCmd(15, (uint8_t *)lcdRegData24);
-
-	/////////////////////////////////////////////////////////////////////////////
-	/* PWR_CTRL1 - 0xc580h - 130th parameter - default 0x00 */
-	/* Pump 1 min and max DM                                */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData13);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData47);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData48);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData49);
-	/////////////////////////////////////////////////////////////////////////////
-
-	/* CABC LEDPWM frequency adjusted to 19,5kHz */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData50);
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData51);
-
-	/* Exit CMD2 mode */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData1);
-	DSI_IO_WriteCmd(3, (uint8_t *)lcdRegData25);
-
-	/*************************************************************************** */
-	/* Standard DCS Initialization TO KEEP CAN BE DONE IN HSDT                   */
-	/*************************************************************************** */
-
-	/* NOP - goes back to DCS std command ? */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData1);
-
-	/* Gamma correction 2.2+ table (HSDT possible) */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData1);
-	DSI_IO_WriteCmd(16, (uint8_t *)lcdRegData3);
-
-	/* Gamma correction 2.2- table (HSDT possible) */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData1);
-	DSI_IO_WriteCmd(16, (uint8_t *)lcdRegData4);
-
-	/* Send Sleep Out command to display : no parameter */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData36);
-
-	/* Wait for sleep out exit */
-	HAL_Delay(120);
-
-	switch (ColorCoding) {
-		case OTM8009A_FORMAT_RBG565:
-			/* Set Pixel color format to RGB565 */
-			DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData37);
-			break;
-		case OTM8009A_FORMAT_RGB888:
-			/* Set Pixel color format to RGB888 */
-			DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData38);
-			break;
-		default:
-			break;
-	}
-
-	/* Send command to configure display in landscape orientation mode. By default
-		the orientation mode is portrait  */
-	if (orientation == OTM8009A_ORIENTATION_LANDSCAPE) {
-		DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData39);
-		DSI_IO_WriteCmd(4, (uint8_t *)lcdRegData27);
-		DSI_IO_WriteCmd(4, (uint8_t *)lcdRegData28);
-	}
-
-	/** CABC : Content Adaptive Backlight Control section start >> */
-	/* Note : defaut is 0 (lowest Brightness), 0xFF is highest Brightness, try 0x7F : intermediate value */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData40);
-
-	/* defaut is 0, try 0x2C - Brightness Control Block, Display Dimming & BackLight on */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData41);
-
-	/* defaut is 0, try 0x02 - image Content based Adaptive Brightness [Still Picture] */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData42);
-
-	/* defaut is 0 (lowest Brightness), 0xFF is highest Brightness */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData43);
-
-	/** CABC : Content Adaptive Backlight Control section end << */
-
-	/* Send Command Display On */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData44);
-
-	/* NOP command */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData1);
-
-	/* Send Command GRAM memory write (no parameters) : this initiates frame write via other DSI commands sent by */
-	/* DSI host from LTDC incoming pixels in video mode */
-	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData45);
-
-	return 0;
-}
-
 void Screen::LTDCLayerInit(uint16_t layer_index)
 {
 	LTDC_LayerCfgTypeDef Layercfg;
@@ -932,7 +575,6 @@ void Screen::fillBuffer(uint32_t LayerIndex, void *pDst, uint32_t xSize, uint32_
 }
 
 // extern uint32_t Previous_FrameSize;
-int DSI_IRQ_counter	  = 0;
 int DMA2D_IRQ_counter = 0;
 int HAL_error_status  = 0;
 
@@ -947,7 +589,7 @@ void Screen::showFace(bool jpeg_file)
 		// uint32_t JpegProcessing_End = 0;
 		uint32_t width_offset = 0;
 
-		DSI_IRQ_counter = 0;
+		leka::DSI_IRQ_counter = 0;
 		printf("\n\r--------Programm starting--------\n\r");
 
 		// uint32_t isfirstFrame, currentFrameRate;
@@ -990,7 +632,7 @@ void Screen::showFace(bool jpeg_file)
 		// HAL_DSI_LongWrite(&hdsi_discovery, 0, DSI_DCS_LONG_PKT_WRITE, 2, OTM8009A_CMD_WRTESCN, pScanCol);
 
 		// Send Display On DCS Command to display
-		HAL_DSI_ShortWrite(&(_hdsi), 0, DSI_DCS_SHORT_PKT_WRITE_P1, OTM8009A_CMD_DISPON, 0x00);
+		HAL_DSI_ShortWrite(&(leka::hdsi), 0, DSI_DCS_SHORT_PKT_WRITE_P1, OTM8009A_CMD_DISPON, 0x00);
 		// HAL_DSI_Refresh(&hdsi_discovery);
 
 		// printf("DSI IRQ calls : %d \n\r \n\r", DSI_IRQ_counter);
@@ -1255,17 +897,6 @@ void OnError_Handler(const char *file, int line)
 	while (1) {
 		;
 	} /* Blocking on error */
-}
-
-void Screen::DSI_IRQHandler(void)
-{
-	DSI_IRQ_counter += 1;
-	HAL_DSI_IRQHandler(&_hdsi);
-}
-
-void Screen::HAL_DSI_ErrorCallback(DSI_HandleTypeDef *hdsi)
-{
-	HAL_error_status = 1;
 }
 
 void Screen::DMA2D_IRQHandler(void)

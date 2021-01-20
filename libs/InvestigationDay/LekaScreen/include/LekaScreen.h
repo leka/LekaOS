@@ -15,7 +15,9 @@
 #include "LekaLCD.h"
 #include "SDBlockDevice.h"
 // #include "decode_dma.h"
+#include "Screen.h"
 #include "decode_polling.h"
+#include "dsi.h"
 #include "jpeg_utils.h"
 #include "otm8009a.h"
 
@@ -34,8 +36,6 @@ class Screen
 	void DMA2D_Init(uint32_t ImageWidth, uint32_t ImageHeight);
 	void DMA2D_CopyBuffer(uint32_t *pSrc, uint32_t *pDst, uint16_t x, uint16_t y, uint16_t xsize, uint16_t ysize,
 						  uint32_t width_offset);
-	void DSI_IRQHandler(void);
-	void HAL_DSI_ErrorCallback(DSI_HandleTypeDef *hdsi);
 	void DMA2D_IRQHandler(void);
 	void JPEG_IRQHandler(void);
 	void DMA2_Stream3_IRQHandler(void);
@@ -44,15 +44,10 @@ class Screen
 	void ScreenInit();
 	void LCDReset();
 	void MSPInit();
-	void DSIInit();
 	void LTDCInit();
 	void SDRAMInit();
 	void SDRAMMSPInit();
 	void SDRAMInitSequence();
-	void OTM8009AInit();
-
-	void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams);
-	uint8_t OTM8009A_Init(uint32_t ColorCoding, uint32_t orientation);
 
 	void LTDCLayerInit(uint16_t layer_index);
 	void setActiveLayer(uint32_t layer_index);
@@ -72,24 +67,13 @@ class Screen
 	FATFileSystem _file_interface;
 	mbed::DigitalOut _sd_enable;
 
-	static const uint32_t _screen_width	 = OTM8009A_800X480_WIDTH;
-	static const uint32_t _screen_height = OTM8009A_800X480_HEIGHT;
-
-	uint32_t VSA  = OTM8009A_480X800_VSYNC; /* 12  */
-	uint32_t VBP  = OTM8009A_480X800_VBP;	/* 12  */
-	uint32_t VFP  = OTM8009A_480X800_VFP;	/* 12  */
-	uint32_t VACT = OTM8009A_800X480_HEIGHT;
-	uint32_t HSA  = OTM8009A_480X800_HSYNC; /* 63  */
-	uint32_t HBP  = OTM8009A_480X800_HBP;	/* 120 */
-	uint32_t HFP  = OTM8009A_480X800_HFP;
-	uint32_t HACT = OTM8009A_800X480_WIDTH;
+	uint32_t _screen_width;
+	uint32_t _screen_height;
 
 	uint32_t _active_layer;
 	const uint32_t LCD_FRAME_BUFFER		   = 0xC0000000;
 	const uint32_t JPEG_OUTPUT_DATA_BUFFER = 0xC0200000;
 
-	DSI_HandleTypeDef _hdsi;
-	DSI_VidCfgTypeDef _hdsivideo;
 	LTDC_HandleTypeDef _hltdc;
 	SDRAM_HandleTypeDef _hsdram;
 	DMA_HandleTypeDef _hdma;

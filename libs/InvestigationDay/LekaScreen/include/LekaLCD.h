@@ -66,8 +66,6 @@ class LekaLCD
   private:
 	DMA2D_HandleTypeDef _handle_dma2d;
 	LTDC_HandleTypeDef _handle_ltdc;
-	DSI_HandleTypeDef _handle_dsi;
-	DSI_VidCfgTypeDef _handle_dsivideo;
 	SDRAM_HandleTypeDef _handle_sdram;
 
 	// using landscape orientation by default
@@ -95,8 +93,6 @@ class LekaLCD
 	// internal init functions
 	void reset();
 	void MspInit();
-	void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams);
-	uint8_t OTM8009A_Init(uint32_t ColorCoding, uint32_t orientation);
 	void SDRAM_init();
 };
 

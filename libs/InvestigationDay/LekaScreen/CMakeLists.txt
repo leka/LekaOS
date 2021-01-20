@@ -17,4 +17,5 @@ target_sources(lib_LekaScreen
 	source/decode_polling.cpp
 )
 
+target_link_libraries(lib_LekaScreen driver_Screen)
 target_link_libraries(lib_LekaScreen mbed-os)
