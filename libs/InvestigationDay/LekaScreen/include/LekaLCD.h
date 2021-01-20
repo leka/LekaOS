@@ -1,4 +1,6 @@
-
+// Leka - LekaOS
+// Copyright 2021 APF France handicap
+// SPDX-License-Identifier: Apache-2.0
 
 #ifndef __LEKALCD_H__
 #define __LEKALCD_H__

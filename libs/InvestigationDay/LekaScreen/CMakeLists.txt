@@ -13,8 +13,8 @@ target_include_directories(lib_LekaScreen
 target_sources(lib_LekaScreen
   PRIVATE
   	source/LekaScreen.cpp
-	include/internal/jpeg_utils.cpp
-	include/internal/decode_polling.cpp
+	source/jpeg_utils.cpp
+	source/decode_polling.cpp
 )
 
 target_link_libraries(lib_LekaScreen mbed-os)
