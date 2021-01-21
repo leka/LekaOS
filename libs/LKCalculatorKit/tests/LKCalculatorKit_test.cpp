@@ -23,8 +23,6 @@ class LKCalculatorKitTest : public ::testing::Test
 	LKCalculatorKit calc;
 };
 
-LKCalculatorKit calc;
-
 TEST_F(LKCalculatorKitTest, initialization)
 {
 	ASSERT_NE(&calc, nullptr);
