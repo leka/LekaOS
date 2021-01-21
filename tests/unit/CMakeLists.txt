@@ -119,12 +119,21 @@ function(leka_unit_tests_sources UNIT_TESTS_SOURCES)
 	)
 endfunction()
 
-# Define function to register new unit tests
+# Define function to register new unit tests for libraries
 function(leka_register_unit_tests_for_library LIBRARY)
-	add_subdirectory("${LIBS_DIR}/${LIBRARY}" "lib/${LIBRARY}")
+	add_subdirectory("${LIBS_DIR}/${LIBRARY}" "libs/${LIBRARY}")
 	target_link_libraries(LekaOSUnitTestsExec
 		PRIVATE
 			${LIBRARY}
+	)
+endfunction()
+
+# Define function to register new unit tests for drivers
+function(leka_register_unit_tests_for_driver DRIVER)
+	add_subdirectory("${DRIVERS_DIR}/${DRIVER}" "drivers/${DRIVER}")
+	target_link_libraries(LekaOSUnitTestsExec
+		PRIVATE
+			${DRIVER}
 	)
 endfunction()
 
@@ -136,6 +145,7 @@ endfunction()
 add_subdirectory(mbed-os)
 add_subdirectory(template)
 
+# Register libraries
 leka_register_unit_tests_for_library(LKCalculatorKit)
 
 #
