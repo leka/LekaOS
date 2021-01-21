@@ -53,10 +53,12 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 # Mark: - Define directories
 #
 
-set(UNITTESTS_DIR  ${CMAKE_CURRENT_LIST_DIR})
-set(ROOT_DIR       ${UNITTESTS_DIR}/../..)
-set(MBED_OS_DIR    ${ROOT_DIR}/extern/mbed-os)
-set(MBED_STUBS_DIR ${UNITTESTS_DIR}/mbed-os/stubs)
+set(UNITTESTS_DIR ${CMAKE_CURRENT_LIST_DIR})
+set(ROOT_DIR      ${UNITTESTS_DIR}/../..)
+set(MBED_OS_DIR   ${ROOT_DIR}/extern/mbed-os)
+
+set(MBED_STUBS_DIR   ${UNITTESTS_DIR}/mbed-os/stubs)
+set(MBED_INCLUDE_DIR ${UNITTESTS_DIR}/mbed-os/include)
 
 set(LIBS_DIR      ${ROOT_DIR}/libs)
 set(DRIVERS_DIR   ${ROOT_DIR}/drivers)
