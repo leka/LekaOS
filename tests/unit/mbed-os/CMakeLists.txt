@@ -71,6 +71,8 @@ target_sources(mbed-os
 
 target_compile_options(mbed-os
 	INTERFACE
-		-include./mbed_config.h
-		-include./mbed_target_config.h
+		-include${MBED_INCLUDE_DIR}/mbed_config.h
+		-include${MBED_INCLUDE_DIR}/mbed_target_config.h
+		-include${MBED_INCLUDE_DIR}/PinNames.h
+		-include${MBED_INCLUDE_DIR}/PinNamesTypes.h
 )
