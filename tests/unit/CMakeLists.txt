@@ -147,6 +147,9 @@ endfunction()
 add_subdirectory(mbed-os)
 add_subdirectory(template)
 
+# Register drivers
+leka_register_unit_tests_for_driver(LKCoreMotor)
+
 # Register libraries
 leka_register_unit_tests_for_library(LKCalculatorKit)
 
