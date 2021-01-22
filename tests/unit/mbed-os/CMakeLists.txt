@@ -35,6 +35,7 @@ target_include_directories(mbed-os
 		"${ROOT_DIR}/extern/mbed-os/drivers/include/drivers/internal"
 		"${ROOT_DIR}/extern/mbed-os/hal"
 		"${ROOT_DIR}/extern/mbed-os/hal/include"
+		"${ROOT_DIR}/extern/mbed-os/hal/include/hal"
 		"${ROOT_DIR}/extern/mbed-os/events/include"
 		"${ROOT_DIR}/extern/mbed-os/events/include/events/internal"
 		"${ROOT_DIR}/extern/mbed-os/events/source"
@@ -67,6 +68,8 @@ target_include_directories(mbed-os
 target_sources(mbed-os
 	INTERFACE
 		${MBED_STUBS_DIR}/stub_ThisThread.cpp
+		${MBED_STUBS_DIR}/stub_PwmOut.cpp
+		${MBED_STUBS_DIR}/stub_gpio_api.cpp
 )
 
 target_compile_options(mbed-os
