@@ -15,3 +15,11 @@ target_sources(LKCoreMotor
 )
 
 target_link_libraries(LKCoreMotor mbed-os)
+
+if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
+
+	leka_unit_tests_sources(
+		tests/LKCoreMotor_test.cpp
+	)
+
+endif()
