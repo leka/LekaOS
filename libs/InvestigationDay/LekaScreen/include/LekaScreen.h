@@ -20,6 +20,7 @@
 #include "dsi.h"
 #include "jpeg_utils.h"
 #include "otm8009a.h"
+#include "otm8009a_conf.h"
 
 class Screen
 {
@@ -61,14 +62,9 @@ class Screen
 	void showFace(bool jpeg_file);
 
   private:
-	mbed::PwmOut _brightness;
-
 	SDBlockDevice _interface;
 	FATFileSystem _file_interface;
 	mbed::DigitalOut _sd_enable;
-
-	uint32_t _screen_width;
-	uint32_t _screen_height;
 
 	uint32_t _active_layer;
 	const uint32_t LCD_FRAME_BUFFER		   = 0xC0000000;

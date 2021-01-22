@@ -12,22 +12,10 @@ void DMA2D_TransferErrorCallback(DMA2D_HandleTypeDef *hdma2d);
 uint32_t JPEG_FindFrameOffset(uint32_t offset, FIL *file);
 void OnError_Handler(const char *, int);
 
-leka::LCD_Model otm8009a_model = {leka::LCD::OTM8009A,	   OTM8009A_800X480_WIDTH, OTM8009A_800X480_HEIGHT,
-								  OTM8009A_800X480_HSYNC,  OTM8009A_800X480_HBP,   OTM8009A_800X480_HFP,
-								  OTM8009A_800X480_HEIGHT, OTM8009A_800X480_VSYNC, OTM8009A_800X480_VBP,
-								  OTM8009A_800X480_VBP,	   OTM8009A_800X480_WIDTH};
+leka::LKScreen _screen(otm8009a_model);
 
-Screen::Screen()
-	: _brightness(SCREEN_BACKLIGHT_PWM),
-	  _interface(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK),
-	  _file_interface("leka_fs"),
-	  _sd_enable(SD_SPI_CS)
+Screen::Screen() : _interface(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK), _file_interface("leka_fs"), _sd_enable(SD_SPI_CS)
 {
-	_brightness.period(0.01f);	 // Set PWM at 1/(0.01 seconds) = 100Hz
-	_brightness = 0.50f;
-
-	_screen_width  = otm8009a_model.width;
-	_screen_height = otm8009a_model.height;
 }
 
 void Screen::squareBouncing()
@@ -229,12 +217,12 @@ void Screen::LTDCInit()
 	/* Timing Configuration */
 	_hltdc.Init.HorizontalSync	   = (otm8009a_model.HSA - 1);
 	_hltdc.Init.AccumulatedHBP	   = (otm8009a_model.HSA + otm8009a_model.HBP - 1);
-	_hltdc.Init.AccumulatedActiveW = (_screen_width + otm8009a_model.HSA + otm8009a_model.HBP - 1);
-	_hltdc.Init.TotalWidth		   = (_screen_width + otm8009a_model.HSA + otm8009a_model.HBP + otm8009a_model.HFP - 1);
+	_hltdc.Init.AccumulatedActiveW = (_screen.getWidth() + otm8009a_model.HSA + otm8009a_model.HBP - 1);
+	_hltdc.Init.TotalWidth = (_screen.getWidth() + otm8009a_model.HSA + otm8009a_model.HBP + otm8009a_model.HFP - 1);
 
 	/* Initialize the LCD pixel width and pixel height */
-	_hltdc.LayerCfg->ImageWidth	 = _screen_width;
-	_hltdc.LayerCfg->ImageHeight = _screen_height;
+	_hltdc.LayerCfg->ImageWidth	 = _screen.getWidth();
+	_hltdc.LayerCfg->ImageHeight = _screen.getHeight();
 
 	/** LCD clock configuration
 	 * Note: The following values should not be changed as the PLLSAI is also used
@@ -477,9 +465,9 @@ void Screen::LTDCLayerInit(uint16_t layer_index)
 
 	/* Layer Init */
 	Layercfg.WindowX0		 = 0;
-	Layercfg.WindowX1		 = _screen_width;
+	Layercfg.WindowX1		 = _screen.getWidth();
 	Layercfg.WindowY0		 = 0;
-	Layercfg.WindowY1		 = _screen_height;
+	Layercfg.WindowY1		 = _screen.getHeight();
 	Layercfg.PixelFormat	 = LTDC_PIXEL_FORMAT_ARGB8888;
 	Layercfg.FBStartAdress	 = LCD_FRAME_BUFFER;   // Previously FB_Address given in parameter
 	Layercfg.Alpha			 = 255;
@@ -489,8 +477,8 @@ void Screen::LTDCLayerInit(uint16_t layer_index)
 	Layercfg.Backcolor.Red	 = 0;
 	Layercfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;
 	Layercfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;
-	Layercfg.ImageWidth		 = _screen_width;
-	Layercfg.ImageHeight	 = _screen_height;
+	Layercfg.ImageWidth		 = _screen.getWidth();
+	Layercfg.ImageHeight	 = _screen.getHeight();
 
 	HAL_LTDC_ConfigLayer(&_hltdc, &Layercfg, layer_index);
 
@@ -506,8 +494,8 @@ void Screen::setActiveLayer(uint32_t layer_index)
 
 void Screen::clear(uint32_t ColorIndex)
 {
-	fillBuffer(_active_layer, (uint32_t *)(_hltdc.LayerCfg[_active_layer].FBStartAdress), _screen_width, _screen_height,
-			   0, ColorIndex);
+	fillBuffer(_active_layer, (uint32_t *)(_hltdc.LayerCfg[_active_layer].FBStartAdress), _screen.getWidth(),
+			   _screen.getHeight(), 0, ColorIndex);
 }
 
 void Screen::drawRectangle(uint32_t Xpos, uint32_t Ypos, uint32_t Width, uint32_t Height, uint32_t ColorIndex)
@@ -518,8 +506,8 @@ void Screen::drawRectangle(uint32_t Xpos, uint32_t Ypos, uint32_t Width, uint32_
 	// BSP_LCD_SetTextColor(DrawProp[_active_layer].TextColor);
 
 	/* Get the rectangle start address */
-	Xaddress		= (_hltdc.LayerCfg[_active_layer].FBStartAdress) + 4 * (_screen_width * Ypos + Xpos);
-	uint32_t offset = _screen_width - Width;
+	Xaddress		= (_hltdc.LayerCfg[_active_layer].FBStartAdress) + 4 * (_screen.getWidth() * Ypos + Xpos);
+	uint32_t offset = _screen.getWidth() - Width;
 
 	/* Fill the rectangle */
 	fillBuffer(_active_layer, (uint32_t *)Xaddress, Width, Height, offset, ColorIndex);
@@ -527,12 +515,12 @@ void Screen::drawRectangle(uint32_t Xpos, uint32_t Ypos, uint32_t Width, uint32_
 
 void Screen::drawImage(uint32_t data, uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 {
-	uint32_t destination = LCD_FRAME_BUFFER + (x + y * _screen_width) * 4;
+	uint32_t destination = LCD_FRAME_BUFFER + (x + y * _screen.getWidth()) * 4;
 	_hdma2d.Instance	 = DMA2D;
 
 	_hdma2d.Init.Mode		  = DMA2D_M2M_BLEND;
 	_hdma2d.Init.ColorMode	  = DMA2D_OUTPUT_ARGB8888;
-	_hdma2d.Init.OutputOffset = _screen_width - width;
+	_hdma2d.Init.OutputOffset = _screen.getWidth() - width;
 
 	// Foreground
 	_hdma2d.LayerCfg[1].AlphaMode	   = DMA2D_NO_MODIF_ALPHA;
@@ -543,7 +531,7 @@ void Screen::drawImage(uint32_t data, uint32_t x, uint32_t y, uint32_t width, ui
 	// Background
 	_hdma2d.LayerCfg[0].AlphaMode	   = DMA2D_NO_MODIF_ALPHA;
 	_hdma2d.LayerCfg[0].InputColorMode = DMA2D_INPUT_ARGB8888;
-	_hdma2d.LayerCfg[0].InputOffset	   = _screen_width - width;
+	_hdma2d.LayerCfg[0].InputOffset	   = _screen.getWidth() - width;
 
 	HAL_DMA2D_Init(&_hdma2d);
 	HAL_DMA2D_ConfigLayer(&_hdma2d, 1);
@@ -652,8 +640,8 @@ void Screen::showFace(bool jpeg_file)
 
 			HAL_JPEG_GetInfo(&_hjpeg, &_hjpeginfo);
 
-			uint16_t xPos = (_screen_width - _hjpeginfo.ImageWidth) / 2;
-			uint16_t yPos = (_screen_height - _hjpeginfo.ImageHeight) / 2;
+			uint16_t xPos = (_screen.getWidth() - _hjpeginfo.ImageWidth) / 2;
+			uint16_t yPos = (_screen.getHeight() - _hjpeginfo.ImageHeight) / 2;
 			if (_hjpeginfo.ChromaSubsampling == JPEG_420_SUBSAMPLING) {
 				if ((_hjpeginfo.ImageWidth % 16) != 0) width_offset = 16 - (_hjpeginfo.ImageWidth % 16);
 			}
@@ -719,7 +707,7 @@ void Screen::DMA2D_Init(uint32_t ImageWidth, uint32_t ImageHeight)
 	/*##-1- Configure the DMA2D Mode, Color Mode and output offset #############*/
 	_hdma2d.Init.Mode		   = DMA2D_M2M_PFC;	  // memory to memory with pixel format convert
 	_hdma2d.Init.ColorMode	   = DMA2D_OUTPUT_ARGB8888;
-	_hdma2d.Init.OutputOffset  = _screen_width - ImageWidth;
+	_hdma2d.Init.OutputOffset  = _screen.getWidth() - ImageWidth;
 	_hdma2d.Init.AlphaInverted = DMA2D_REGULAR_ALPHA; /* No Output Alpha Inversion*/
 	_hdma2d.Init.RedBlueSwap   = DMA2D_RB_REGULAR;	  /* No Output Red & Blue swap */
 
@@ -753,22 +741,22 @@ void Screen::DMA2D_Init(uint32_t ImageWidth, uint32_t ImageHeight)
 void Screen::DMA2D_CopyBuffer(uint32_t *pSrc, uint32_t *pDst, uint16_t x, uint16_t y, uint16_t xsize, uint16_t ysize,
 							  uint32_t width_offset)
 {
-	// uint32_t x			 = (_screen_width - _hjpeginfo.ImageWidth) / 2;
-	// uint32_t y			 = (_screen_height - _hjpeginfo.ImageHeight) / 2;
-	// uint32_t destination = (uint32_t)pDst + (y * _screen_width + x) * 4;
+	// uint32_t x			 = (_screen.getWidth() - _hjpeginfo.ImageWidth) / 2;
+	// uint32_t y			 = (_screen.getHeight() - _hjpeginfo.ImageHeight) / 2;
+	// uint32_t destination = (uint32_t)pDst + (y * _screen.getWidth() + x) * 4;
 	// // printf("DMA copy buffer \n\r");
 	// /*while (pending_buffer != -1) {
 	// }*/
 	// HAL_DMA2D_Start(&_hdma2d, (uint32_t)pSrc, destination, ImageWidth, ImageHeight);
 	// HAL_DMA2D_PollForTransfer(&_hdma2d, 100);
 
-	uint32_t destination = (uint32_t)pDst + (y * _screen_width + x) * 4;
+	uint32_t destination = (uint32_t)pDst + (y * _screen.getWidth() + x) * 4;
 	uint32_t source		 = (uint32_t)pSrc;
 
 	/*##-1- Configure the DMA2D Mode, Color Mode and output offset #############*/
 	_hdma2d.Init.Mode		   = DMA2D_M2M_PFC;
 	_hdma2d.Init.ColorMode	   = DMA2D_OUTPUT_ARGB8888;
-	_hdma2d.Init.OutputOffset  = _screen_width - xsize;
+	_hdma2d.Init.OutputOffset  = _screen.getWidth() - xsize;
 	_hdma2d.Init.AlphaInverted = DMA2D_REGULAR_ALPHA; /* No Output Alpha Inversion*/
 	_hdma2d.Init.RedBlueSwap   = DMA2D_RB_REGULAR;	  /* No Output Red & Blue swap */
 
@@ -876,7 +864,19 @@ void Screen::start()
 	JPEGInit();
 
 	showFace(true);
-	rtos::ThisThread::sleep_for(30s);
+	// rtos::ThisThread::sleep_for(30s);
+	/* TO DELETE */
+	for (int i = 0; i < 21; i++) {
+		if (i % 2) {
+			_screen.turnOff();
+			_screen.rotateUpsideDown(true);
+		} else {
+			_screen.turnOn();
+			_screen.rotateUpsideDown(false);
+		}
+		rtos::ThisThread::sleep_for(1s);
+	}
+	/* END OF TO DELETE */
 
 	while (true) {
 		squareBouncing();

@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_DRIVER_SCREEN_H_
 #define _LEKA_OS_DRIVER_SCREEN_H_
 
+#include "drivers/PwmOut.h"
+
 namespace leka {
 
 enum LCD
@@ -26,15 +28,27 @@ typedef struct {
 	uint16_t HBP;
 	uint16_t HFP;
 	uint16_t HACT;
+
+	void (*rotateUpsideDown)(bool upside_down);
 } LCD_Model;
 
 class LKScreen
 {
   public:
-	LKScreen(LCD_Model lcd_model);
+	LKScreen(LCD_Model &lcd_model);
+
+	uint16_t getWidth();
+	uint16_t getHeight();
+	void setBrightness(float value);
+	void turnOff();
+	void turnOn();
+
+	void (*rotateUpsideDown)(bool upside_down);
 
   private:
 	LCD_Model _lcd_model;
+	mbed::PwmOut _brightness;
+	float _brightness_value = 0;
 };
 
 }	// namespace leka
