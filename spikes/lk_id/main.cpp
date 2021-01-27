@@ -7,6 +7,7 @@
 #include "PinNames.h"
 
 #include "HelloWorld.h"
+#include "ID.h"
 
 using namespace leka;
 
@@ -24,6 +25,9 @@ int main(void)
 	rtos::ThisThread::sleep_for(2s);
 
 	hello.start();
+
+	mcu_id id1 = get_id();
+	printf("ID: %lX %lX %lX\n", id1.front, id1.middle, id1.back);
 
 	while (true) {
 		auto t	   = Kernel::Clock::now() - start;

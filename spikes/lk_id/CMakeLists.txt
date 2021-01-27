@@ -14,6 +14,7 @@ target_include_directories(spike_lk_id
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
+target_link_libraries(spike_lk_id driver_ID)
 target_link_libraries(spike_lk_id lib_HelloWorld)
 
 target_link_custom_leka_targets(spike_lk_id)
