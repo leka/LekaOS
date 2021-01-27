@@ -48,6 +48,7 @@ void Display::Init()
 	leka::DSIStart();
 	SDRAMInit();
 	LCDDriverInit();
+	JPEGCodecInit();
 }
 
 void Display::MSPInit()
@@ -132,6 +133,9 @@ void Display::LCDDriverInit()
 	_screen.driverInit();
 }
 
-void Display::JPEGCodecInit() {}
+void Display::JPEGCodecInit()
+{
+	leka::JPEGInit();
+}
 
 }	// namespace leka

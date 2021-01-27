@@ -5,6 +5,7 @@
 #include "decode.h"
 
 JPEG_HandleTypeDef hjpeg;
+JPEG_ConfTypeDef hjpeginfo;
 
 namespace leka {
 
@@ -82,7 +83,46 @@ void JPEGMspInit()
 #endif
 }
 
+void JPEGMspDeInit()
+{
+#if USE_DECODE_DMA
+	HAL_NVIC_DisableIRQ(DMA2_Stream4_IRQn);
+
+	/* DeInitialize the MDMA Stream */
+	HAL_DMA_DeInit(hjpeg.hdmain);
+
+	/* DeInitialize the MDMA Stream */
+	HAL_DMA_DeInit(hjpeg.hdmaout);
+#endif
+}
+
+void JPEGInit()
+{
+	JPEG_InitColorTables();
+
+	hjpeg.Instance = JPEG;
+	// HAL_JPEG_MspInit(&hjpeg);
+	HAL_JPEG_Init(&hjpeg);
+}
+
 }	// namespace leka
+
+#if USE_DECODE_DMA
+void JPEG_IRQHandler(void)
+{
+	HAL_JPEG_IRQHandler(&hjpeg);
+}
+
+void DMA2_Stream3_IRQHandler(void)
+{
+	HAL_DMA_IRQHandler(hjpeg.hdmain);
+}
+
+void DMA2_Stream4_IRQHandler(void)
+{
+	HAL_DMA_IRQHandler(hjpeg.hdmaout);
+}
+#endif
 
 // /**
 //  * @brief  On Error Handler.

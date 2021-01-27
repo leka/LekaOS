@@ -122,17 +122,6 @@ void Screen::getFileSize()
 	return;
 }
 
-// void HAL_JPEG_MspInit(JPEG_HandleTypeDef *hjpeg);
-
-void Screen::JPEGInit()
-{
-	JPEG_InitColorTables();
-
-	_hjpeg.Instance = JPEG;
-	// HAL_JPEG_MspInit(&_hjpeg);
-	HAL_JPEG_Init(&_hjpeg);
-}
-
 void Screen::LTDCLayerInit(uint16_t layer_index)
 {
 	LTDC_LayerCfgTypeDef Layercfg;
@@ -308,28 +297,28 @@ void Screen::showFace(bool jpeg_file)
 			printf("File %s openened. File size : %lu \n\r", filename, f_size(&JPEG_File));
 
 			printf("Before Decoding\n");
-			// JPEG_Decode_DMA(&_hjpeg, &JPEG_File, JPEG_OUTPUT_DATA_BUFFER);
-			JPEG_DecodePolling(&_hjpeg, &JPEG_File, JPEG_OUTPUT_DATA_BUFFER);
+			// JPEG_Decode_DMA(&hjpeg, &JPEG_File, JPEG_OUTPUT_DATA_BUFFER);
+			JPEG_DecodePolling(&hjpeg, &JPEG_File, JPEG_OUTPUT_DATA_BUFFER);
 			printf("After decoding\n");
 
-			HAL_JPEG_GetInfo(&_hjpeg, &_hjpeginfo);
+			HAL_JPEG_GetInfo(&hjpeg, &hjpeginfo);
 
-			uint16_t xPos = (display.getWidth() - _hjpeginfo.ImageWidth) / 2;
-			uint16_t yPos = (display.getHeight() - _hjpeginfo.ImageHeight) / 2;
-			if (_hjpeginfo.ChromaSubsampling == JPEG_420_SUBSAMPLING) {
-				if ((_hjpeginfo.ImageWidth % 16) != 0) width_offset = 16 - (_hjpeginfo.ImageWidth % 16);
+			uint16_t xPos = (display.getWidth() - hjpeginfo.ImageWidth) / 2;
+			uint16_t yPos = (display.getHeight() - hjpeginfo.ImageHeight) / 2;
+			if (hjpeginfo.ChromaSubsampling == JPEG_420_SUBSAMPLING) {
+				if ((hjpeginfo.ImageWidth % 16) != 0) width_offset = 16 - (hjpeginfo.ImageWidth % 16);
 			}
 
-			if (_hjpeginfo.ChromaSubsampling == JPEG_422_SUBSAMPLING) {
-				if ((_hjpeginfo.ImageWidth % 16) != 0) width_offset = 16 - (_hjpeginfo.ImageWidth % 16);
+			if (hjpeginfo.ChromaSubsampling == JPEG_422_SUBSAMPLING) {
+				if ((hjpeginfo.ImageWidth % 16) != 0) width_offset = 16 - (hjpeginfo.ImageWidth % 16);
 			}
 
-			if (_hjpeginfo.ChromaSubsampling == JPEG_444_SUBSAMPLING) {
-				if ((_hjpeginfo.ImageWidth % 8) != 0) width_offset = (_hjpeginfo.ImageWidth % 8);
+			if (hjpeginfo.ChromaSubsampling == JPEG_444_SUBSAMPLING) {
+				if ((hjpeginfo.ImageWidth % 8) != 0) width_offset = (hjpeginfo.ImageWidth % 8);
 			}
 
 			DMA2D_CopyBuffer((uint32_t *)JPEG_OUTPUT_DATA_BUFFER, (uint32_t *)LCD_FRAME_BUFFER, xPos, yPos,
-							 _hjpeginfo.ImageWidth, _hjpeginfo.ImageHeight, width_offset);
+							 hjpeginfo.ImageWidth, hjpeginfo.ImageHeight, width_offset);
 			printf("End of CopyBuffer\n");
 			rtos::ThisThread::sleep_for(1s);
 			//##-10- Close the avi file ##########################################
@@ -415,8 +404,8 @@ void Screen::DMA2D_Init(uint32_t ImageWidth, uint32_t ImageHeight)
 void Screen::DMA2D_CopyBuffer(uint32_t *pSrc, uint32_t *pDst, uint16_t x, uint16_t y, uint16_t xsize, uint16_t ysize,
 							  uint32_t width_offset)
 {
-	// uint32_t x			 = (display.getWidth() - _hjpeginfo.ImageWidth) / 2;
-	// uint32_t y			 = (display.getHeight() - _hjpeginfo.ImageHeight) / 2;
+	// uint32_t x			 = (display.getWidth() - hjpeginfo.ImageWidth) / 2;
+	// uint32_t y			 = (display.getHeight() - hjpeginfo.ImageHeight) / 2;
 	// uint32_t destination = (uint32_t)pDst + (y * display.getWidth() + x) * 4;
 	// // printf("DMA copy buffer \n\r");
 	// /*while (pending_buffer != -1) {
@@ -525,17 +514,7 @@ void Screen::start()
 	SDInit();
 	// getFileSize();
 
-	// /* Enable I-Cache */
-	// SCB_EnableICache();
-	// /* Enable D-Cache */
-	// SCB_EnableDCache();
-	// printf("End of cache\n");
-
-	// HAL_Init();
-	// printf("End of HAL init\n");
-
 	display.Init();
-	JPEGInit();
 
 	showFace(true);
 	// rtos::ThisThread::sleep_for(30s);
@@ -565,100 +544,4 @@ void Screen::DMA2D_IRQHandler(void)
 {
 	DMA2D_IRQ_counter += 1;
 	HAL_DMA2D_IRQHandler(&_hdma2d);
-}
-
-void Screen::JPEG_IRQHandler(void)
-{
-	HAL_JPEG_IRQHandler(&_hjpeg);
-}
-
-void Screen::DMA2_Stream3_IRQHandler(void)
-{
-	HAL_DMA_IRQHandler(_hjpeg.hdmain);
-}
-
-void Screen::DMA2_Stream4_IRQHandler(void)
-{
-	HAL_DMA_IRQHandler(_hjpeg.hdmaout);
-}
-
-void HAL_JPEG_MspInit(JPEG_HandleTypeDef *hjpeg)
-{
-	static DMA_HandleTypeDef hdmaIn;
-	static DMA_HandleTypeDef hdmaOut;
-
-	/* Enable JPEG clock */
-	__HAL_RCC_JPEG_CLK_ENABLE();
-
-	/* Enable DMA clock */
-	__HAL_RCC_DMA2_CLK_ENABLE();
-
-	HAL_NVIC_SetPriority(JPEG_IRQn, 0x06, 0x0F);
-	HAL_NVIC_EnableIRQ(JPEG_IRQn);
-
-	/* Input DMA */
-	/* Set the parameters to be configured */
-	hdmaIn.Init.Channel				= DMA_CHANNEL_9;
-	hdmaIn.Init.Direction			= DMA_MEMORY_TO_PERIPH;
-	hdmaIn.Init.PeriphInc			= DMA_PINC_DISABLE;
-	hdmaIn.Init.MemInc				= DMA_MINC_ENABLE;
-	hdmaIn.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-	hdmaIn.Init.MemDataAlignment	= DMA_MDATAALIGN_WORD;
-	hdmaIn.Init.Mode				= DMA_NORMAL;
-	hdmaIn.Init.Priority			= DMA_PRIORITY_HIGH;
-	hdmaIn.Init.FIFOMode			= DMA_FIFOMODE_ENABLE;
-	hdmaIn.Init.FIFOThreshold		= DMA_FIFO_THRESHOLD_FULL;
-	hdmaIn.Init.MemBurst			= DMA_MBURST_INC4;
-	hdmaIn.Init.PeriphBurst			= DMA_PBURST_INC4;
-
-	hdmaIn.Instance = DMA2_Stream3;
-
-	/* Associate the DMA handle */
-	__HAL_LINKDMA(hjpeg, hdmain, hdmaIn);
-
-	HAL_NVIC_SetPriority(DMA2_Stream3_IRQn, 0x07, 0x0F);
-	HAL_NVIC_EnableIRQ(DMA2_Stream3_IRQn);
-
-	/* DeInitialize the DMA Stream */
-	HAL_DMA_DeInit(&hdmaIn);
-	/* Initialize the DMA stream */
-	HAL_DMA_Init(&hdmaIn);
-
-	/* Output DMA */
-	/* Set the parameters to be configured */
-	hdmaOut.Init.Channel			 = DMA_CHANNEL_9;
-	hdmaOut.Init.Direction			 = DMA_PERIPH_TO_MEMORY;
-	hdmaOut.Init.PeriphInc			 = DMA_PINC_DISABLE;
-	hdmaOut.Init.MemInc				 = DMA_MINC_ENABLE;
-	hdmaOut.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-	hdmaOut.Init.MemDataAlignment	 = DMA_MDATAALIGN_WORD;
-	hdmaOut.Init.Mode				 = DMA_NORMAL;
-	hdmaOut.Init.Priority			 = DMA_PRIORITY_VERY_HIGH;
-	hdmaOut.Init.FIFOMode			 = DMA_FIFOMODE_ENABLE;
-	hdmaOut.Init.FIFOThreshold		 = DMA_FIFO_THRESHOLD_FULL;
-	hdmaOut.Init.MemBurst			 = DMA_MBURST_INC4;
-	hdmaOut.Init.PeriphBurst		 = DMA_PBURST_INC4;
-
-	hdmaOut.Instance = DMA2_Stream4;
-	/* DeInitialize the DMA Stream */
-	HAL_DMA_DeInit(&hdmaOut);
-	/* Initialize the DMA stream */
-	HAL_DMA_Init(&hdmaOut);
-
-	/* Associate the DMA handle */
-	__HAL_LINKDMA(hjpeg, hdmaout, hdmaOut);
-
-	HAL_NVIC_SetPriority(DMA2_Stream4_IRQn, 0x07, 0x0F);
-	HAL_NVIC_EnableIRQ(DMA2_Stream4_IRQn);
-}
-
-void HAL_JPEG_MspDeInit(JPEG_HandleTypeDef *hjpeg)
-{
-	HAL_NVIC_DisableIRQ(DMA2_Stream4_IRQn);
-
-	/* DeInitialize the MDMA Stream */
-	HAL_DMA_DeInit(hjpeg->hdmain);
-
-	/* DeInitialize the MDMA Stream */
-	HAL_DMA_DeInit(hjpeg->hdmaout);
 }

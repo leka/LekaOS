@@ -5,18 +5,11 @@
 #ifndef _LEKA_OS_LIB_SCREEN_H_
 #define _LEKA_OS_LIB_SCREEN_H_
 
-#include "PinNames.h"
-
-#include "drivers/PwmOut.h"
 #include "rtos/ThisThread.h"
-#include "rtos/Thread.h"
 
+#include "Display.h"
 #include "FATFileSystem.h"
 #include "SDBlockDevice.h"
-// #include "decode_dma.h"
-#include "Display.h"
-#include "decode.h"
-#include "jpeg_utils.h"
 #include "otm8009a_conf.h"
 
 class Screen
@@ -30,14 +23,10 @@ class Screen
 	int SDInit();
 	void getFileSize();
 
-	void JPEGInit();
 	void DMA2D_Init(uint32_t ImageWidth, uint32_t ImageHeight);
 	void DMA2D_CopyBuffer(uint32_t *pSrc, uint32_t *pDst, uint16_t x, uint16_t y, uint16_t xsize, uint16_t ysize,
 						  uint32_t width_offset);
 	void DMA2D_IRQHandler(void);
-	void JPEG_IRQHandler(void);
-	void DMA2_Stream3_IRQHandler(void);
-	void DMA2_Stream4_IRQHandler(void);
 
 	void LTDCLayerInit(uint16_t layer_index);
 	void setActiveLayer(uint32_t layer_index);
@@ -56,13 +45,9 @@ class Screen
 	mbed::DigitalOut _sd_enable;
 
 	uint32_t _active_layer;
-	const uint32_t LCD_FRAME_BUFFER		   = 0xC0000000;
-	const uint32_t JPEG_OUTPUT_DATA_BUFFER = 0xC0200000;
 
 	DMA_HandleTypeDef _hdma;
 	DMA2D_HandleTypeDef _hdma2d;
-	JPEG_HandleTypeDef _hjpeg;
-	JPEG_ConfTypeDef _hjpeginfo;
 };
 
 #endif
