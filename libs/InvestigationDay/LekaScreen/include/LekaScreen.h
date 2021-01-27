@@ -12,7 +12,6 @@
 #include "rtos/Thread.h"
 
 #include "FATFileSystem.h"
-#include "LekaLCD.h"
 #include "SDBlockDevice.h"
 // #include "decode_dma.h"
 #include "Screen.h"
