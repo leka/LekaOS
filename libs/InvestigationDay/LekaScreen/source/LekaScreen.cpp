@@ -139,7 +139,7 @@ void Screen::ScreenInit()
 
 	LCDReset();
 	MSPInit();
-	leka::DSIInit();
+	leka::DSIInit(otm8009a_model);
 	LTDCInit();
 	OTM8009A_Init(OTM8009A_FORMAT_RGB888, OTM8009A_ORIENTATION_LANDSCAPE);
 }
@@ -254,7 +254,7 @@ void Screen::LTDCInit()
 
 	/* Enable the DSI host and wrapper after the LTDC initialization
 	   To avoid any synchronization issue, the DSI shall be started after enabling the LTDC */
-	HAL_DSI_Start(&leka::hdsi);
+	leka::DSIStart();
 
 	// #if !defined(DATA_IN_ExtSDRAM)
 	/* Initialize the SDRAM */
@@ -874,6 +874,7 @@ void Screen::start()
 			_screen.turnOn();
 			_screen.rotateUpsideDown(false);
 		}
+		_screen.setBrightness((float)(i / 21.0f));
 		rtos::ThisThread::sleep_for(1s);
 	}
 	/* END OF TO DELETE */

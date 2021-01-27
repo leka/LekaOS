@@ -5,6 +5,7 @@
 #ifndef _LEKA_OS_LIB_DSI_H_
 #define _LEKA_OS_LIB_DSI_H_
 
+#include "Screen.h"
 #include "stm32f7xx_hal.h"
 
 namespace leka {
@@ -15,7 +16,8 @@ extern int DSI_IRQ_counter;
 void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams);
 
 void DSI_IRQHandler(void);
-void DSIInit();
+void DSIInit(LCD_Model lcd_model);
+void DSIStart();
 }	// namespace leka
 
 #endif	 // _LEKA_OS_LIB_DSI_H_

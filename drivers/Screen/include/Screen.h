@@ -20,14 +20,14 @@ typedef struct {
 	uint16_t width;
 	uint16_t height;
 
-	uint16_t VSA;
-	uint16_t VBP;
-	uint16_t VFP;
-	uint16_t VACT;
-	uint16_t HSA;
-	uint16_t HBP;
-	uint16_t HFP;
-	uint16_t HACT;
+	uint32_t VSA;  /*!< Vertical start active time in units of lines */
+	uint32_t VBP;  /*!< Vertical Back Porch time in units of lines */
+	uint32_t VFP;  /*!< Vertical Front Porch time in units of lines */
+	uint32_t VACT; /*!< Vertical Active time in units of lines = imageSize Y in pixels to display */
+	uint32_t HSA;  /*!< Horizontal start active time in units of lcdClk */
+	uint32_t HBP;  /*!< Horizontal Back Porch time in units of lcdClk */
+	uint32_t HFP;  /*!< Horizontal Front Porch time in units of lcdClk */
+	uint32_t HACT; /*!< Horizontal Active time in units of lcdClk = imageSize X in pixels to display */
 
 	void (*rotateUpsideDown)(bool upside_down);
 } LCD_Model;

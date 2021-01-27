@@ -45,8 +45,6 @@ extern "C" {
 
 	/* Includes ------------------------------------------------------------------*/
 	#include <stdint.h>
-
-// #include "otm8009a_conf.h"
 /** @addtogroup BSP
  * @{
  */

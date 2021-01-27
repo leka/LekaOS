@@ -11,7 +11,8 @@ using namespace mbed;
 LKScreen::LKScreen(LCD_Model &lcd_model) : _lcd_model(lcd_model), _brightness(SCREEN_BACKLIGHT_PWM)
 {
 	_brightness.period(0.01f);	 // Set PWM at 1/(0.01 seconds) = 100Hz
-	setBrightness(0.10f);
+	_brightness = 0.10f;
+	// setBrightness(0.10f);
 
 	rotateUpsideDown = lcd_model.rotateUpsideDown;
 }
@@ -25,7 +26,7 @@ uint16_t LKScreen::getHeight()
 	return _lcd_model.height;
 }
 
-void LKScreen::setBrightness(float value)
+__weak void LKScreen::setBrightness(float value)
 {
 	if (value > 1.0f) {
 		_brightness_value = 1.0f;
@@ -37,12 +38,12 @@ void LKScreen::setBrightness(float value)
 	_brightness = _brightness_value;
 }
 
-void LKScreen::turnOff()
+__weak void LKScreen::turnOff()
 {
 	_brightness = 0;
 }
 
-void LKScreen::turnOn()
+__weak void LKScreen::turnOn()
 {
 	_brightness = _brightness_value;
 }

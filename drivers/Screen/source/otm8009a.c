@@ -176,12 +176,12 @@ const uint8_t ShortRegData51[] = {0xC6, 0x06};
   * @brief  DSI IO write short/long command.
   * @note : Can be surcharged by application code implementation of the function.
   */
-// __weak void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams)
-// {
-//   /* NOTE : This function Should not be modified, when it is needed,
-//             the DSI_IO_WriteCmd could be implemented in the user file
-//    */
-// }
+__weak void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams)
+{
+  /* NOTE : This function Should not be modified, when it is needed,
+            the DSI_IO_WriteCmd could be implemented in the user file
+   */
+}
 
 /**
   * @brief  Initializes the LCD KoD display part by communication in DSI mode in Video Mode
@@ -207,9 +207,7 @@ uint8_t OTM8009A_Init(uint32_t ColorCoding, uint32_t orientation)
   /* -> Source output level during porch and non-display area to GND */
   DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData2);
   DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData3);
-  printf("ready to delay?\n");
   OTM8009A_IO_Delay(10);
-  printf("delay!\n");
   /* Not documented */
   DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData4);
   DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData5);
