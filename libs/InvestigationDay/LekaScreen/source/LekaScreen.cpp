@@ -77,49 +77,15 @@ void Screen::squareBouncing()
 
 int Screen::SDInit()
 {
-	// _sd_enable = 0;
-	printf("Starting init... \n");
-	int err = _interface.init();
-	printf("Error value: %d\n", err);
-	if (0 != err) {
-		printf("Init failed \n");
+	if (0 != _interface.init()) {
 		return -1;
 	}
-	printf("Init success \n");
 
 	if (0 != _interface.frequency(5000000)) {
 		printf("Error setting frequency \n");
 	}
-	printf("frequency set \n");
 
 	return 0;
-}
-
-void Screen::getFileSize()
-{
-	static char filename[] = "image.jpg";
-	FIL JPEG_File; /* File object */
-
-	_file_interface.mount(&_interface);
-	if (f_open(&JPEG_File, filename, FA_READ) == FR_OK) {
-		printf("File %s openened. File size : %lu \n\r", filename, f_size(&JPEG_File));
-
-		f_close(&JPEG_File);
-	}
-
-	DIR *d;
-	struct dirent *p;
-	d = opendir("/leka_fs");
-	if (d != NULL) {
-		while ((p = readdir(d)) != NULL) {
-			printf(" - %s\n", p->d_name);
-		}
-	} else {
-		printf("Could not open directory!\n");
-	}
-	closedir(d);
-
-	return;
 }
 
 void Screen::LTDCLayerInit(uint16_t layer_index)
@@ -225,7 +191,6 @@ void Screen::fillBuffer(uint32_t LayerIndex, void *pDst, uint32_t xSize, uint32_
 	}
 }
 
-// extern uint32_t Previous_FrameSize;
 int DMA2D_IRQ_counter = 0;
 int HAL_error_status  = 0;
 
@@ -249,15 +214,6 @@ void Screen::showFace(bool jpeg_file)
 		// char message[16];
 
 		/*##-1- JPEG Initialization ################################################*/
-		/* Init The JPEG Look Up Tables used for YCbCr to RGB conversion   */
-		// JPEG_InitColorTables();
-		/* Init the HAL JPEG driver */
-		// JPEG_Handle.Instance = JPEG;
-		// HAL_JPEG_Init(&JPEG_Handle);
-
-		// BSP_LCD_Init();
-		// printf("LCD_Init done \n\r");
-
 		// LCD_LayerInit(0, LCD_FB_START_ADDRESS);
 		// BSP_LCD_LayerDefaultInit(0, LCD_FB_START_ADDRESS);
 		LTDCLayerInit(0);	// FLAG for passing address
@@ -287,10 +243,7 @@ void Screen::showFace(bool jpeg_file)
 		// HAL_DSI_Refresh(&hdsi_discovery);
 
 		// printf("DSI IRQ calls : %d \n\r \n\r", DSI_IRQ_counter);
-		//##-3- Link the micro SD disk I/O driver ##################################
-		// if (FATFS_LinkDriver(&SD_Driver, SDPath) == 0) {
 		//##-4- Register the file system object to the FatFs module ##############
-		// if (f_mount(&SDFatFs, (TCHAR const *)SDPath, 0) == FR_OK) {
 		_file_interface.mount(&_interface);
 		//##-5- Open the JPG file with read access #############################
 		if (f_open(&JPEG_File, filename, FA_READ) == FR_OK) {
@@ -326,13 +279,7 @@ void Screen::showFace(bool jpeg_file)
 
 		} else
 			printf("Failed to open file %s \n\r", filename);
-		// } else
-		// 	printf("Mount failed \n\r");
-		// } else
-		// 	printf("FATFS link failed\n\r");
 		// printf("Frame offset %lu \n\r", FrameOffset);
-		// while (true) {
-		// }
 	} else {
 		uint32_t bg_color = 0xffffffff;
 		// initialize and select layer 0
@@ -342,8 +289,6 @@ void Screen::showFace(bool jpeg_file)
 		// clear layer 0 in white
 		clear(bg_color);
 	}
-
-	// ThisThread::sleep_for(30s);
 	return;
 }
 
@@ -512,7 +457,6 @@ void Screen::start()
 {
 	printf("Screen example\n\n");
 	SDInit();
-	// getFileSize();
 
 	display.Init();
 

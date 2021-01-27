@@ -21,7 +21,6 @@ class Screen
 	void start(void);
 
 	int SDInit();
-	void getFileSize();
 
 	void DMA2D_Init(uint32_t ImageWidth, uint32_t ImageHeight);
 	void DMA2D_CopyBuffer(uint32_t *pSrc, uint32_t *pDst, uint16_t x, uint16_t y, uint16_t xsize, uint16_t ysize,
@@ -42,7 +41,6 @@ class Screen
   private:
 	SDBlockDevice _interface;
 	FATFileSystem _file_interface;
-	mbed::DigitalOut _sd_enable;
 
 	uint32_t _active_layer;
 
