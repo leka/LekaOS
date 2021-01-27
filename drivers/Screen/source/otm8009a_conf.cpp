@@ -29,10 +29,17 @@ void otm8009RotateUpsideDown(bool upside_down)
 }
 
 // Mandatory by screen
+void otm8009Init()
+{
+	OTM8009A_Init(OTM8009A_FORMAT_RGB888, OTM8009A_ORIENTATION_LANDSCAPE);
+}
+
+// Mandatory by screen
 leka::LCD_Model otm8009a_model = {leka::LCD::OTM8009A,	   OTM8009A_800X480_WIDTH, OTM8009A_800X480_HEIGHT,
 								  OTM8009A_800X480_HSYNC,  OTM8009A_800X480_HBP,   OTM8009A_800X480_HFP,
 								  OTM8009A_800X480_HEIGHT, OTM8009A_800X480_VSYNC, OTM8009A_800X480_VBP,
-								  OTM8009A_800X480_VBP,	   OTM8009A_800X480_WIDTH, otm8009RotateUpsideDown};
+								  OTM8009A_800X480_VBP,	   OTM8009A_800X480_WIDTH, otm8009Init,
+								  otm8009RotateUpsideDown};
 
 /**
  * @brief  Switch back on the display if was switched off by previous call of BSP_LCD_DisplayOff().

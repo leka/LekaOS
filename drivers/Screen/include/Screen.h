@@ -29,6 +29,7 @@ typedef struct {
 	uint32_t HFP;  /*!< Horizontal Front Porch time in units of lcdClk */
 	uint32_t HACT; /*!< Horizontal Active time in units of lcdClk = imageSize X in pixels to display */
 
+	void (*driverInit)();
 	void (*rotateUpsideDown)(bool upside_down);
 } LCD_Model;
 
@@ -43,6 +44,7 @@ class LKScreen
 	void turnOff();
 	void turnOn();
 
+	void (*driverInit)();
 	void (*rotateUpsideDown)(bool upside_down);
 
 	LCD_Model getModel();

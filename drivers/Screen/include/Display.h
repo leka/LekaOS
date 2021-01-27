@@ -6,7 +6,9 @@
 #define _LEKA_OS_DRIVER_DISPLAY_H_
 
 #include "Screen.h"
+#include "dsi.h"
 #include "ltdc.h"
+#include "sdram.h"
 
 namespace leka {
 
@@ -23,13 +25,13 @@ class Display
 
 	void rotateUpsideDown(bool upside_down);
 
-	static void Init();
+	void Init();
 	static void MSPInit();
 	static void MSPDeInit();
-	static void DSIInit();
+	void DSIInit();
 	void LTDCInit();
 	static void SDRAMInit();
-	static void LCDDriverInit();
+	void LCDDriverInit();
 	static void JPEGCodecInit();
 
 	static void DMAInit();

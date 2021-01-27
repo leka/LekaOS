@@ -15,14 +15,9 @@
 #include "SDBlockDevice.h"
 // #include "decode_dma.h"
 #include "Display.h"
-#include "Screen.h"
 #include "decode_polling.h"
-#include "dsi.h"
 #include "jpeg_utils.h"
-#include "ltdc.h"
-#include "otm8009a.h"
 #include "otm8009a_conf.h"
-#include "sdram.h"
 
 class Screen
 {
@@ -43,8 +38,6 @@ class Screen
 	void JPEG_IRQHandler(void);
 	void DMA2_Stream3_IRQHandler(void);
 	void DMA2_Stream4_IRQHandler(void);
-
-	void ScreenInit();
 
 	void LTDCLayerInit(uint16_t layer_index);
 	void setActiveLayer(uint32_t layer_index);

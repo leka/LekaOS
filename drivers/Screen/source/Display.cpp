@@ -19,9 +19,35 @@ uint16_t Display::getHeight()
 	return _screen.getHeight();
 }
 
+void Display::setBrightness(float value)
+{
+	_screen.setBrightness(value);
+}
+
+void Display::turnOff()
+{
+	_screen.turnOff();
+}
+
+void Display::turnOn()
+{
+	_screen.turnOn();
+}
+
 void Display::rotateUpsideDown(bool upside_down)
 {
 	_screen.rotateUpsideDown(upside_down);
+}
+
+void Display::Init()
+{
+	leka::DSIReset();
+	MSPInit();
+	DSIInit();
+	LTDCInit();
+	leka::DSIStart();
+	SDRAMInit();
+	LCDDriverInit();
 }
 
 void Display::MSPInit()
@@ -84,24 +110,26 @@ void Display::MSPDeInit()
 	__HAL_RCC_DSI_CLK_DISABLE();
 }
 
+void Display::DSIInit()
+{
+	leka::DSIInit(_screen.getModel());
+}
+
 void Display::LTDCInit()
 {
 	leka::LTDCInit(_screen.getModel());
 }
 
-void Display::setBrightness(float value)
+void Display::SDRAMInit()
 {
-	_screen.setBrightness(value);
+	BSP_SDRAM_Init();
 }
 
-void Display::turnOff()
+void Display::LCDDriverInit()
 {
-	_screen.turnOff();
+	_screen.driverInit();
 }
 
-void Display::turnOn()
-{
-	_screen.turnOn();
-}
+void Display::JPEGCodecInit() {}
 
 }	// namespace leka

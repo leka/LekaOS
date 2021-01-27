@@ -134,19 +134,6 @@ void Screen::JPEGInit()
 	HAL_JPEG_Init(&_hjpeg);
 }
 
-void Screen::ScreenInit()
-{
-	// FROM BSP
-
-	leka::DSIReset();
-	leka::Display::MSPInit();
-	leka::DSIInit(otm8009a_model);
-	display.LTDCInit();
-	leka::DSIStart();
-	BSP_SDRAM_Init();
-	OTM8009A_Init(OTM8009A_FORMAT_RGB888, OTM8009A_ORIENTATION_LANDSCAPE);
-}
-
 void Screen::LTDCLayerInit(uint16_t layer_index)
 {
 	LTDC_LayerCfgTypeDef Layercfg;
@@ -548,7 +535,7 @@ void Screen::start()
 	// HAL_Init();
 	// printf("End of HAL init\n");
 
-	ScreenInit();
+	display.Init();
 	JPEGInit();
 
 	showFace(true);

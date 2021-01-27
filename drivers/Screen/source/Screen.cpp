@@ -14,6 +14,7 @@ LKScreen::LKScreen(LCD_Model &lcd_model) : _lcd_model(lcd_model), _brightness(SC
 	_brightness = 0.10f;
 	// setBrightness(0.10f);
 
+	driverInit		 = lcd_model.driverInit;
 	rotateUpsideDown = lcd_model.rotateUpsideDown;
 }
 
