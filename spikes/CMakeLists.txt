@@ -15,6 +15,7 @@ add_subdirectory(${SPIKES_DIR}/lk_motors)
 add_subdirectory(${SPIKES_DIR}/lk_bluetooth)
 add_subdirectory(${SPIKES_DIR}/lk_file_manager)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_touch)
+add_subdirectory(${SPIKES_DIR}/lk_id)
 
 add_custom_target(spikes_leka)
 add_dependencies( spikes_leka
@@ -28,6 +29,7 @@ add_dependencies( spikes_leka
 	spike_lk_bluetooth
 	spike_lk_file_manager
 	spike_lk_sensors_touch
+	spike_lk_id
 )
 
 add_custom_target(spikes_mbed)
