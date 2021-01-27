@@ -14,6 +14,7 @@
 #include "FATFileSystem.h"
 #include "SDBlockDevice.h"
 // #include "decode_dma.h"
+#include "Display.h"
 #include "Screen.h"
 #include "decode_polling.h"
 #include "dsi.h"
@@ -43,8 +44,6 @@ class Screen
 	void DMA2_Stream4_IRQHandler(void);
 
 	void ScreenInit();
-	void LCDReset();
-	void MSPInit();
 	void LTDCInit();
 
 	void LTDCLayerInit(uint16_t layer_index);

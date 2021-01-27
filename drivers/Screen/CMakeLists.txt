@@ -16,6 +16,7 @@ target_sources(driver_Screen
     source/dsi.cpp
     source/Screen.cpp
     source/sdram.c
+    source/Display.cpp
 )
 
 target_link_libraries(driver_Screen mbed-os)

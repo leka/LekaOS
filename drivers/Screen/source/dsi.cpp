@@ -90,6 +90,37 @@ void DSIInit(LCD_Model lcd_model)
 	HAL_DSI_ConfigVideoMode(&(hdsi), &(hdsivideo));
 }
 
+/**
+ * @brief  BSP LCD Reset
+ *         Hw reset the LCD DSI activating its XRES signal (active low for some time)
+ *         and desactivating it later.
+ */
+void DSIReset(void)
+{
+	GPIO_InitTypeDef gpio_init_structure;
+
+	__HAL_RCC_GPIOJ_CLK_ENABLE();
+
+	/* Configure the GPIO on PJ15 */
+	gpio_init_structure.Pin	  = GPIO_PIN_15;
+	gpio_init_structure.Mode  = GPIO_MODE_OUTPUT_PP;
+	gpio_init_structure.Pull  = GPIO_PULLUP;
+	gpio_init_structure.Speed = GPIO_SPEED_HIGH;
+
+	HAL_GPIO_Init(GPIOJ, &gpio_init_structure);
+
+	/* Activate XRES active low */
+	HAL_GPIO_WritePin(GPIOJ, GPIO_PIN_15, GPIO_PIN_RESET);
+
+	HAL_Delay(20); /* wait 20 ms */
+
+	/* Desactivate XRES */
+	HAL_GPIO_WritePin(GPIOJ, GPIO_PIN_15, GPIO_PIN_SET);
+
+	/* Wait for 10ms after releasing XRES before sending commands */
+	HAL_Delay(10);
+}
+
 void DSI_IRQHandler(void)
 {
 	DSI_IRQ_counter += 1;

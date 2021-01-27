@@ -18,6 +18,7 @@ void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams);
 void DSI_IRQHandler(void);
 void DSIInit(LCD_Model lcd_model);
 void DSIStart();
+void DSIReset();
 }	// namespace leka
 
 #endif	 // _LEKA_OS_LIB_DSI_H_

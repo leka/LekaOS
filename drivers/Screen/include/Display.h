@@ -1,0 +1,43 @@
+// Leka - LekaOS
+// Copyright 2021 APF France handicap
+// SPDX-License-Identifier: Apache-2.0
+
+#ifndef _LEKA_OS_DRIVER_DISPLAY_H_
+#define _LEKA_OS_DRIVER_DISPLAY_H_
+
+#include "Screen.h"
+
+namespace leka {
+
+class Display
+{
+  public:
+	Display(LKScreen &screen);
+
+	uint16_t getWidth();
+	uint16_t getHeight();
+	void setBrightness(float value);
+	void turnOff();
+	void turnOn();
+
+	void rotateUpsideDown(bool upside_down);
+
+	static void Init();
+	static void MSPInit();
+	static void MSPDeInit();
+	static void DSIInit();
+	static void LTDCInit();
+	static void SDRAMInit();
+	static void LCDDriverInit();
+	static void JPEGCodecInit();
+
+	static void DMAInit();
+	static void DMA2DInit();
+
+  private:
+	LKScreen &_screen;
+};
+
+}	// namespace leka
+
+#endif	 // _LEKA_OS_DRIVER_DISPLAY_H_
