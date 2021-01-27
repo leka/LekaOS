@@ -6,6 +6,7 @@
 #define _LEKA_OS_DRIVER_DISPLAY_H_
 
 #include "Screen.h"
+#include "ltdc.h"
 
 namespace leka {
 
@@ -26,7 +27,7 @@ class Display
 	static void MSPInit();
 	static void MSPDeInit();
 	static void DSIInit();
-	static void LTDCInit();
+	void LTDCInit();
 	static void SDRAMInit();
 	static void LCDDriverInit();
 	static void JPEGCodecInit();

@@ -84,6 +84,11 @@ void Display::MSPDeInit()
 	__HAL_RCC_DSI_CLK_DISABLE();
 }
 
+void Display::LTDCInit()
+{
+	leka::LTDCInit(_screen.getModel());
+}
+
 void Display::setBrightness(float value)
 {
 	_screen.setBrightness(value);

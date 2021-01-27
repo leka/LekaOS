@@ -141,61 +141,10 @@ void Screen::ScreenInit()
 	leka::DSIReset();
 	leka::Display::MSPInit();
 	leka::DSIInit(otm8009a_model);
-	LTDCInit();
-	OTM8009A_Init(OTM8009A_FORMAT_RGB888, OTM8009A_ORIENTATION_LANDSCAPE);
-}
-
-void Screen::LTDCInit()
-{
-	/* Timing Configuration */
-	_hltdc.Init.HorizontalSync	   = (otm8009a_model.HSA - 1);
-	_hltdc.Init.AccumulatedHBP	   = (otm8009a_model.HSA + otm8009a_model.HBP - 1);
-	_hltdc.Init.AccumulatedActiveW = (display.getWidth() + otm8009a_model.HSA + otm8009a_model.HBP - 1);
-	_hltdc.Init.TotalWidth = (display.getWidth() + otm8009a_model.HSA + otm8009a_model.HBP + otm8009a_model.HFP - 1);
-
-	/* Initialize the LCD pixel width and pixel height */
-	_hltdc.LayerCfg->ImageWidth	 = display.getWidth();
-	_hltdc.LayerCfg->ImageHeight = display.getHeight();
-
-	/** LCD clock configuration
-	 * Note: The following values should not be changed as the PLLSAI is also used
-	 *      to clock the USB FS
-	 * PLLSAI_VCO Input = HSE_VALUE/PLL_M = 1 Mhz
-	 * PLLSAI_VCO Output = PLLSAI_VCO Input * PLLSAIN = 384 Mhz
-	 * PLLLCDCLK = PLLSAI_VCO Output/PLLSAIR = 384 MHz / 7 = 54.85 MHz
-	 * LTDC clock frequency = PLLLCDCLK / LTDC_PLLSAI_DIVR_2 = 54.85 MHz / 2 = 27.429 MHz
-	 */
-	static RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
-	PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
-	PeriphClkInitStruct.PLLSAI.PLLSAIN		 = 384;
-	PeriphClkInitStruct.PLLSAI.PLLSAIR		 = 7;
-	PeriphClkInitStruct.PLLSAIDivR			 = RCC_PLLSAIDIVR_2;
-	HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
-
-	/* Background value */
-	_hltdc.Init.Backcolor.Blue	= 0xFF;	  // Previously 0
-	_hltdc.Init.Backcolor.Green = 0xFF;	  // Previously 0
-	_hltdc.Init.Backcolor.Red	= 0xFF;	  // Previously 0
-	_hltdc.Init.PCPolarity		= LTDC_PCPOLARITY_IPC;
-	_hltdc.Instance				= LTDC;
-
-	/* Get LTDC Configuration from DSI Configuration */
-	HAL_LTDC_StructInitFromVideoConfig(&(_hltdc), &(leka::hdsivideo));
-
-	/* Initialize the LTDC */
-	HAL_LTDC_Init(&_hltdc);
-
-	/* Enable the DSI host and wrapper after the LTDC initialization
-	   To avoid any synchronization issue, the DSI shall be started after enabling the LTDC */
+	display.LTDCInit();
 	leka::DSIStart();
-
-	// #if !defined(DATA_IN_ExtSDRAM)
-	/* Initialize the SDRAM */
 	BSP_SDRAM_Init();
-	// #endif /* DATA_IN_ExtSDRAM */
-
-	/* Initialize the font */
-	// BSP_LCD_SetFont(&LCD_DEFAULT_FONT);
+	OTM8009A_Init(OTM8009A_FORMAT_RGB888, OTM8009A_ORIENTATION_LANDSCAPE);
 }
 
 void Screen::LTDCLayerInit(uint16_t layer_index)
@@ -219,7 +168,7 @@ void Screen::LTDCLayerInit(uint16_t layer_index)
 	Layercfg.ImageWidth		 = display.getWidth();
 	Layercfg.ImageHeight	 = display.getHeight();
 
-	HAL_LTDC_ConfigLayer(&_hltdc, &Layercfg, layer_index);
+	HAL_LTDC_ConfigLayer(&leka::hltdc, &Layercfg, layer_index);
 
 	// DrawProp[LayerIndex].BackColor = LCD_COLOR_WHITE;
 	// DrawProp[LayerIndex].pFont	   = &Font24;
@@ -233,7 +182,7 @@ void Screen::setActiveLayer(uint32_t layer_index)
 
 void Screen::clear(uint32_t ColorIndex)
 {
-	fillBuffer(_active_layer, (uint32_t *)(_hltdc.LayerCfg[_active_layer].FBStartAdress), display.getWidth(),
+	fillBuffer(_active_layer, (uint32_t *)(leka::hltdc.LayerCfg[_active_layer].FBStartAdress), display.getWidth(),
 			   display.getHeight(), 0, ColorIndex);
 }
 
@@ -245,7 +194,7 @@ void Screen::drawRectangle(uint32_t Xpos, uint32_t Ypos, uint32_t Width, uint32_
 	// BSP_LCD_SetTextColor(DrawProp[_active_layer].TextColor);
 
 	/* Get the rectangle start address */
-	Xaddress		= (_hltdc.LayerCfg[_active_layer].FBStartAdress) + 4 * (display.getWidth() * Ypos + Xpos);
+	Xaddress		= (leka::hltdc.LayerCfg[_active_layer].FBStartAdress) + 4 * (display.getWidth() * Ypos + Xpos);
 	uint32_t offset = display.getWidth() - Width;
 
 	/* Fill the rectangle */

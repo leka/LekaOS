@@ -45,6 +45,8 @@ class LKScreen
 
 	void (*rotateUpsideDown)(bool upside_down);
 
+	LCD_Model getModel();
+
   private:
 	LCD_Model _lcd_model;
 	mbed::PwmOut _brightness;

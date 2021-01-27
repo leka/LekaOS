@@ -19,6 +19,7 @@
 #include "decode_polling.h"
 #include "dsi.h"
 #include "jpeg_utils.h"
+#include "ltdc.h"
 #include "otm8009a.h"
 #include "otm8009a_conf.h"
 #include "sdram.h"
@@ -44,7 +45,6 @@ class Screen
 	void DMA2_Stream4_IRQHandler(void);
 
 	void ScreenInit();
-	void LTDCInit();
 
 	void LTDCLayerInit(uint16_t layer_index);
 	void setActiveLayer(uint32_t layer_index);
@@ -66,10 +66,7 @@ class Screen
 	const uint32_t LCD_FRAME_BUFFER		   = 0xC0000000;
 	const uint32_t JPEG_OUTPUT_DATA_BUFFER = 0xC0200000;
 
-	LTDC_HandleTypeDef _hltdc;
-	SDRAM_HandleTypeDef _hsdram;
 	DMA_HandleTypeDef _hdma;
-	FMC_SDRAM_CommandTypeDef _hsdramcmd;
 	DMA2D_HandleTypeDef _hdma2d;
 	JPEG_HandleTypeDef _hjpeg;
 	JPEG_ConfTypeDef _hjpeginfo;

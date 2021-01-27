@@ -26,6 +26,11 @@ uint16_t LKScreen::getHeight()
 	return _lcd_model.height;
 }
 
+LCD_Model LKScreen::getModel()
+{
+	return _lcd_model;
+}
+
 __weak void LKScreen::setBrightness(float value)
 {
 	if (value > 1.0f) {
