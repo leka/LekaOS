@@ -37,38 +37,38 @@
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __JPEG_UTILS_H
-#define __JPEG_UTILS_H
+	#define __JPEG_UTILS_H
 
-/* Includes ------------------------------------------------------------------*/
-#include "jpeg_utils_conf.h"
+	/* Includes ------------------------------------------------------------------*/
+	#include "jpeg_utils_conf.h"
 
-/** @addtogroup Utilities
- * @{
- */
+	/** @addtogroup Utilities
+	 * @{
+	 */
 
-/** @addtogroup JPEG
- * @{
- */
+	/** @addtogroup JPEG
+	 * @{
+	 */
 
-/** @defgroup JPEG_Exported_Defines JPEG Exported Defines
- * @{
- */
-/**
- * @}
- */
+	/** @defgroup JPEG_Exported_Defines JPEG Exported Defines
+	 * @{
+	 */
+	/**
+	 * @}
+	 */
 
-/** @defgroup JPEG_Exported_Types JPEG Exported Types
- * @{
- */
-#if (USE_JPEG_DECODER == 1)
+	/** @defgroup JPEG_Exported_Types JPEG Exported Types
+	 * @{
+	 */
+	#if (USE_JPEG_DECODER == 1)
 typedef uint32_t (*JPEG_YCbCrToRGB_Convert_Function)(uint8_t *pInBuffer, uint8_t *pOutBuffer, uint32_t BlockIndex,
 													 uint32_t DataCount, uint32_t *ConvertedDataCount);
-#endif
+	#endif
 
-#if (USE_JPEG_ENCODER == 1)
+	#if (USE_JPEG_ENCODER == 1)
 typedef uint32_t (*JPEG_RGBToYCbCr_Convert_Function)(uint8_t *pInBuffer, uint8_t *pOutBuffer, uint32_t BlockIndex,
 													 uint32_t DataCount, uint32_t *ConvertedDataCount);
-#endif
+	#endif
 /**
  * @}
  */
@@ -92,15 +92,15 @@ typedef uint32_t (*JPEG_RGBToYCbCr_Convert_Function)(uint8_t *pInBuffer, uint8_t
  */
 void JPEG_InitColorTables(void);
 
-#if (USE_JPEG_DECODER == 1)
+	#if (USE_JPEG_DECODER == 1)
 HAL_StatusTypeDef JPEG_GetDecodeColorConvertFunc(JPEG_ConfTypeDef *pJpegInfo,
 												 JPEG_YCbCrToRGB_Convert_Function *pFunction, uint32_t *ImageNbMCUs);
-#endif
+	#endif
 
-#if (USE_JPEG_ENCODER == 1)
+	#if (USE_JPEG_ENCODER == 1)
 HAL_StatusTypeDef JPEG_GetEncodeColorConvertFunc(JPEG_ConfTypeDef *pJpegInfo,
 												 JPEG_RGBToYCbCr_Convert_Function *pFunction, uint32_t *ImageNbMCUs);
-#endif
+	#endif
 /**
  * @}
  */

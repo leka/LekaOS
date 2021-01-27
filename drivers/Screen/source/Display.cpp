@@ -86,6 +86,8 @@ void Display::MSPInit()
 	/** @brief NVIC configuration for DSI interrupt that is now enabled */
 	HAL_NVIC_SetPriority(DSI_IRQn, 3, 0);
 	HAL_NVIC_EnableIRQ(DSI_IRQn);
+
+	leka::JPEGMspInit();
 }
 
 void Display::MSPDeInit()

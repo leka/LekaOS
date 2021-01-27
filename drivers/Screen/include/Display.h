@@ -6,6 +6,7 @@
 #define _LEKA_OS_DRIVER_DISPLAY_H_
 
 #include "Screen.h"
+#include "decode.h"
 #include "dsi.h"
 #include "ltdc.h"
 #include "sdram.h"

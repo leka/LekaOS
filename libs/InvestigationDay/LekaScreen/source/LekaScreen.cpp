@@ -10,7 +10,6 @@ using namespace std::chrono;
 void DMA2D_TransferCompleteCallback(DMA2D_HandleTypeDef *hdma2d);
 void DMA2D_TransferErrorCallback(DMA2D_HandleTypeDef *hdma2d);
 uint32_t JPEG_FindFrameOffset(uint32_t offset, FIL *file);
-void OnError_Handler(const char *, int);
 
 leka::LKScreen _screen(otm8009a_model);
 leka::Display display(_screen);
@@ -486,7 +485,7 @@ void DMA2D_TransferCompleteCallback(DMA2D_HandleTypeDef *hdma2d)
 
 void DMA2D_TransferErrorCallback(DMA2D_HandleTypeDef *hdma2d)
 {
-	OnError_Handler(__FILE__, __LINE__);
+	OnError_Handler();
 }
 
 /**
@@ -560,19 +559,6 @@ void Screen::start()
 	}
 
 	printf("End of Screen example\n\n");
-}
-
-/**
- * @brief  On Error Handler.
- * @param  None
- * @retval None
- */
-void OnError_Handler(const char *file, int line)
-{
-	printf("Error crash in %s line %d\n\r", file, line);
-	while (1) {
-		;
-	} /* Blocking on error */
 }
 
 void Screen::DMA2D_IRQHandler(void)

@@ -15,7 +15,7 @@
 #include "SDBlockDevice.h"
 // #include "decode_dma.h"
 #include "Display.h"
-#include "decode_polling.h"
+#include "decode.h"
 #include "jpeg_utils.h"
 #include "otm8009a_conf.h"
 
