@@ -15,6 +15,7 @@ target_sources(driver_Screen
     source/otm8009a_conf.cpp
     source/dsi.cpp
     source/Screen.cpp
+    source/sdram.c
 )
 
 target_link_libraries(driver_Screen mbed-os)

@@ -21,6 +21,7 @@
 #include "jpeg_utils.h"
 #include "otm8009a.h"
 #include "otm8009a_conf.h"
+#include "sdram.h"
 
 class Screen
 {
@@ -46,9 +47,6 @@ class Screen
 	void LCDReset();
 	void MSPInit();
 	void LTDCInit();
-	void SDRAMInit();
-	void SDRAMMSPInit();
-	void SDRAMInitSequence();
 
 	void LTDCLayerInit(uint16_t layer_index);
 	void setActiveLayer(uint32_t layer_index);
