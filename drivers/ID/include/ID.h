@@ -7,8 +7,12 @@
 
 #include <stdint.h>
 
-#define MMIO32(addr) (*(volatile uint32_t *)(addr))
-#define U_ID_REG	 0x1ff0f420
+#define PTR_32BITS_REG(addr) (*(volatile uint32_t *)(addr))
+#define U_ID_REG			 0x1ff0f420
+
+#define MCU_ID_FRONT  uint32_t PTR_REG(U_ID_REG + 0x0)
+#define MCU_ID_MIDDLE uint32_t PTR_REG(U_ID_REG + 0x4)
+#define MCU_ID_BACK	  uint32_t PTR_REG(U_ID_REG + 0x8)
 
 namespace leka {
 

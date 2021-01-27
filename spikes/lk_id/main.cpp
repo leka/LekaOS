@@ -27,7 +27,8 @@ int main(void)
 	hello.start();
 
 	mcu_id id1 = get_id();
-	printf("ID: %lX %lX %lX\n", id1.front, id1.middle, id1.back);
+	printf("ID_v1: %lX %lX %lX\n", id1.front, id1.middle, id1.back);
+	printf("ID_v2: %lX %lX %lX\n", MCU_ID_FRONT, MCU_ID_MIDDLE, MCU_ID_BACK);
 
 	while (true) {
 		auto t	   = Kernel::Clock::now() - start;

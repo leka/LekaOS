@@ -11,9 +11,9 @@ mcu_id get_id()
 {
 	mcu_id id;
 
-	id.front  = MMIO32(U_ID_REG + 0x0);
-	id.middle = MMIO32(U_ID_REG + 0x4);
-	id.back	  = MMIO32(U_ID_REG + 0x8);
+	id.front  = MCU_ID_FRONT;
+	id.middle = MCU_ID_MIDDLE;
+	id.back	  = MCU_ID_BACK;
 
 	return id;
 }
