@@ -25,7 +25,7 @@ jobs:
       - name: Create cache variables
         id: create_cache_variables
         run: |
-          echo "::set-output name=runner_name::$(basename $(dirname $(dirname $(dirname $(pwd)))))"
+          echo "::set-output name=timestamp::$(date +'%Y%m%d%H%M%S')"
 
       - name: Cache ccache files
         id: cache_ccache_files
@@ -48,15 +48,7 @@ jobs:
         run: |
           make mbed_curl
 
-      - name: Cache build unit tests directory
-        id: cache_build_unit_tests_directory
-        uses: actions/cache@v2
-        with:
-          path: _build_unit_tests
-          key: ${{ runner.os }}-${{ steps.create_cache_variables.outputs.runner_name }}-cache-build_unit_tests_directory-${{ hashFiles('Makefile', 'tests/unit/CMakeLists.txt') }}
-
       - name: Config build system
-        if: steps.cache_build_unit_tests_directory.outputs.cache-hit != 'true'
         run: |
           make config_unit_tests
 
