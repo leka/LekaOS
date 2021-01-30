@@ -23,6 +23,7 @@ target_sources(driver_Screen
     source/JPEG/decode_dma.cpp
     source/JPEG/decode_polling.cpp
     source/JPEG/decode.cpp
+    source/dma2d.cpp
 )
 
 target_link_libraries(driver_Screen mbed-os)

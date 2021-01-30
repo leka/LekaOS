@@ -7,6 +7,7 @@
 
 #include "Screen.h"
 #include "decode.h"
+#include "dma2d.h"
 #include "dsi.h"
 #include "ltdc.h"
 #include "sdram.h"
@@ -36,7 +37,7 @@ class Display
 	static void JPEGCodecInit();
 
 	static void DMAInit();
-	static void DMA2DInit();
+	void DMA2DInit();
 
   private:
 	LKScreen &_screen;

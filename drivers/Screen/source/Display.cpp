@@ -49,6 +49,7 @@ void Display::Init()
 	SDRAMInit();
 	LCDDriverInit();
 	JPEGCodecInit();
+	DMA2DInit();
 }
 
 void Display::MSPInit()
@@ -136,6 +137,11 @@ void Display::LCDDriverInit()
 void Display::JPEGCodecInit()
 {
 	leka::JPEGInit();
+}
+
+void Display::DMA2DInit()
+{
+	leka::DMA2DInit(_screen.getWidth());
 }
 
 }	// namespace leka
