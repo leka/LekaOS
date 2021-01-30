@@ -10,9 +10,7 @@ using namespace std::chrono;
 leka::LKScreen _screen(otm8009a_model);
 leka::Display display(_screen);
 
-Screen::Screen() : _interface(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK), _file_interface("leka_fs"), _sd_enable(SD_SPI_CS)
-{
-}
+Screen::Screen() {}
 
 void Screen::squareBouncing()
 {
@@ -66,19 +64,6 @@ void Screen::squareBouncing()
 
 		rtos::ThisThread::sleep_for(1ms);
 	}
-}
-
-int Screen::SDInit()
-{
-	if (0 != _interface.init()) {
-		return -1;
-	}
-
-	if (0 != _interface.frequency(5000000)) {
-		printf("Error setting frequency \n");
-	}
-
-	return 0;
 }
 
 void Screen::LTDCLayerInit()
@@ -146,8 +131,6 @@ void Screen::showFace(bool jpeg_file)
 		uint32_t bg_color = 0xffffff00;
 		clear(bg_color);
 
-		//##-4- Register the file system object to the FatFs module ##############
-		_file_interface.mount(&_interface);
 		//##-5- Open the JPG file with read access #############################
 		if (f_open(&JPEG_File, filename, FA_READ) == FR_OK) {
 			printf("File %s openened. File size : %lu \n\r", filename, f_size(&JPEG_File));
@@ -191,7 +174,6 @@ void Screen::showFace(bool jpeg_file)
 void Screen::start()
 {
 	printf("Screen example\n\n");
-	SDInit();
 
 	display.Init();
 

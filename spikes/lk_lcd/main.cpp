@@ -4,6 +4,7 @@
 
 #include "mbed.h"
 
+#include "FileManager.h"
 #include "HelloWorld.h"
 #include "LekaScreen.h"
 
@@ -11,6 +12,7 @@ using namespace leka;
 
 HelloWorld hello;
 Screen leka_screen;
+FileManager sd_card;
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 

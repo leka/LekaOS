@@ -16,5 +16,6 @@ target_include_directories(spike_lk_lcd
 
 target_link_libraries(spike_lk_lcd lib_LekaScreen)
 target_link_libraries(spike_lk_lcd lib_HelloWorld)
+target_link_libraries(spike_lk_lcd lib_FileManager)
 
 target_link_custom_leka_targets(spike_lk_lcd)
