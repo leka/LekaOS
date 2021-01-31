@@ -12,107 +12,9 @@ leka::Display display(_screen);
 
 Screen::Screen() {}
 
-void Screen::squareBouncing()
-{
-	uint32_t posx  = 0;
-	uint32_t posy  = 0;
-	uint32_t dirx  = 1;
-	uint32_t diry  = 1;
-	uint32_t sizex = 100;
-	uint32_t sizey = 100;
-
-	uint32_t bg_color = 0xffffff00;
-
-	// square color
-	uint8_t alpha = 0xff;
-	uint8_t red	  = 0xff;
-	uint8_t green = 0x00;
-	uint8_t blue  = 0x00;
-
-	// initialize and select layer 0
-	LTDCLayerInit();
-	clear(bg_color);
-
-	while (true) {
-		// update position
-		posx = (posx + dirx);
-		posy = (posy + diry);
-
-		// chek for screen limits
-		if (posx >= 800 - sizex || posx == 0) {
-			dirx *= -1;
-		}
-		if (posy >= 480 - sizey || posy == 0) {
-			diry *= -1;
-		}
-
-		// draw the square
-		drawRectangle(posx, posy, sizex, sizey, (alpha << 24) | (red << 16) | (green << 8) | (blue));
-		// update colors
-		if (green == 0) {
-			red--;
-			blue++;
-		}
-		if (red == 0) {
-			green++;
-			blue--;
-		}
-		if (blue == 0) {
-			red++;
-			green--;
-		}
-
-		rtos::ThisThread::sleep_for(1ms);
-	}
-}
-
-void Screen::LTDCLayerInit()
-{
-	LTDC_LayerCfgTypeDef Layercfg;
-
-	/* Layer Init */
-	Layercfg.WindowX0		 = 0;
-	Layercfg.WindowX1		 = display.getWidth();
-	Layercfg.WindowY0		 = 0;
-	Layercfg.WindowY1		 = display.getHeight();
-	Layercfg.PixelFormat	 = LTDC_PIXEL_FORMAT_ARGB8888;
-	Layercfg.FBStartAdress	 = LCD_FRAME_BUFFER;   // Previously FB_Address given in parameter
-	Layercfg.Alpha			 = 255;
-	Layercfg.Alpha0			 = 0;
-	Layercfg.Backcolor.Blue	 = 0;
-	Layercfg.Backcolor.Green = 0;
-	Layercfg.Backcolor.Red	 = 0;
-	Layercfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;
-	Layercfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;
-	Layercfg.ImageWidth		 = display.getWidth();
-	Layercfg.ImageHeight	 = display.getHeight();
-
-	HAL_LTDC_ConfigLayer(&leka::hltdc, &Layercfg, 1);
-
-	// DrawProp[1].BackColor = LCD_COLOR_WHITE;
-	// DrawProp[1].pFont	   = &Font24;
-	// DrawProp[1].TextColor = LCD_COLOR_BLACK;
-}
-
 void Screen::clear(uint32_t ColorIndex)
 {
-	leka::DMA2DDrawing((uint32_t *)(leka::hltdc.LayerCfg[1].FBStartAdress), display.getWidth(), display.getHeight(), 0,
-					   ColorIndex);
-}
-
-void Screen::drawRectangle(uint32_t Xpos, uint32_t Ypos, uint32_t Width, uint32_t Height, uint32_t ColorIndex)
-{
-	uint32_t Xaddress = 0;
-
-	/* Set the text color */
-	// BSP_LCD_SetTextColor(DrawProp[1].TextColor);
-
-	/* Get the rectangle start address */
-	Xaddress		= (leka::hltdc.LayerCfg[1].FBStartAdress) + 4 * (display.getWidth() * Ypos + Xpos);
-	uint32_t offset = display.getWidth() - Width;
-
-	/* Fill the rectangle */
-	leka::DMA2DDrawing((uint32_t *)Xaddress, Width, Height, offset, ColorIndex);
+	leka::drawClear(ColorIndex);
 }
 
 void Screen::showFace(bool jpeg_file)
@@ -124,9 +26,6 @@ void Screen::showFace(bool jpeg_file)
 		uint32_t width_offset = 0;
 
 		printf("\n\r--------Programm starting--------\n\r");
-
-		/*##-1- JPEG Initialization ################################################*/
-		LTDCLayerInit();
 
 		uint32_t bg_color = 0xffffff00;
 		clear(bg_color);
@@ -165,7 +64,6 @@ void Screen::showFace(bool jpeg_file)
 			printf("Failed to open file %s \n\r", filename);
 	} else {
 		uint32_t bg_color = 0xffffffff;
-		LTDCLayerInit();
 		clear(bg_color);
 	}
 	return;
@@ -176,6 +74,7 @@ void Screen::start()
 	printf("Screen example\n\n");
 
 	display.Init();
+	leka::drawingToolsInit(otm8009a_model);
 
 	showFace(true);
 	// rtos::ThisThread::sleep_for(30s);
@@ -195,7 +94,7 @@ void Screen::start()
 	/* END OF TO DELETE */
 
 	while (true) {
-		squareBouncing();
+		leka::screenSaver();
 		rtos::ThisThread::sleep_for(1ms);
 	}
 

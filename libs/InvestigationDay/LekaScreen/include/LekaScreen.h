@@ -8,6 +8,7 @@
 #include "rtos/ThisThread.h"
 
 #include "Display.h"
+#include "DrawingTools.h"
 #include "dma2d.h"
 #include "otm8009a_conf.h"
 
@@ -19,11 +20,8 @@ class Screen
 
 	void start(void);
 
-	void LTDCLayerInit();
 	void clear(uint32_t ColorIndex);
-	void drawRectangle(uint32_t Xpos, uint32_t Ypos, uint32_t Width, uint32_t Height, uint32_t ColorIndex);
 
-	void squareBouncing();
 	void showFace(bool jpeg_file);
 
   private:

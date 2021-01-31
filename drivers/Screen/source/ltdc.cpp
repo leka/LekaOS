@@ -50,4 +50,35 @@ void LTDCInit(LCD_Model lcd_model)
 	HAL_LTDC_Init(&hltdc);
 }
 
+void LTDCLayerInit()
+{
+	uint16_t width	= 800;
+	uint16_t height = 480;
+
+	LTDC_LayerCfgTypeDef Layercfg;
+
+	/* Layer Init */
+	Layercfg.WindowX0		 = 0;
+	Layercfg.WindowX1		 = width;
+	Layercfg.WindowY0		 = 0;
+	Layercfg.WindowY1		 = height;
+	Layercfg.PixelFormat	 = LTDC_PIXEL_FORMAT_ARGB8888;
+	Layercfg.FBStartAdress	 = LCD_FRAME_BUFFER;   // Previously FB_Address given in parameter
+	Layercfg.Alpha			 = 255;
+	Layercfg.Alpha0			 = 0;
+	Layercfg.Backcolor.Blue	 = 0;
+	Layercfg.Backcolor.Green = 0;
+	Layercfg.Backcolor.Red	 = 0;
+	Layercfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;
+	Layercfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;
+	Layercfg.ImageWidth		 = width;
+	Layercfg.ImageHeight	 = height;
+
+	HAL_LTDC_ConfigLayer(&hltdc, &Layercfg, 1);
+
+	// DrawProp[1].BackColor = LCD_COLOR_WHITE;
+	// DrawProp[1].pFont	   = &Font24;
+	// DrawProp[1].TextColor = LCD_COLOR_BLACK;
+}
+
 }	// namespace leka

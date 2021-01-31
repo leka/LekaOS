@@ -8,7 +8,10 @@ namespace leka {
 
 using namespace mbed;
 
-Display::Display(LKScreen &screen) : _screen(screen) {}
+Display::Display(LKScreen &screen) : _screen(screen)
+{
+	rotateUpsideDown(false);
+}
 
 uint16_t Display::getWidth()
 {
@@ -122,6 +125,7 @@ void Display::DSIInit()
 void Display::LTDCInit()
 {
 	leka::LTDCInit(_screen.getModel());
+	leka::LTDCLayerInit();
 }
 
 void Display::SDRAMInit()
