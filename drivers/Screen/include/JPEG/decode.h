@@ -12,6 +12,7 @@
 #define JPEG_OUTPUT_DATA_BUFFER 0xC0200000
 
 #include "FATFileSystem.h"
+#include "dma2d.h"
 #include "jpeg_utils.h"
 
 #if USE_DECODE_DMA
@@ -22,11 +23,17 @@
 
 extern JPEG_HandleTypeDef hjpeg;
 extern JPEG_ConfTypeDef hjpeginfo;
+#if USE_DECODE_DMA
+extern uint32_t JpegProcessing_End;
+#endif
 
 namespace leka {
 void JPEGMspInit();
 void JPEGMspDeInit();
 void JPEGInit();
+
+void displayImage(FIL *JPEG_File);
+void jpeg_decode(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress);
 }	// namespace leka
 
 #if USE_DECODE_DMA

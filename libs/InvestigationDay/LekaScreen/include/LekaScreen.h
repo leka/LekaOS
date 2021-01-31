@@ -9,7 +9,7 @@
 
 #include "Display.h"
 #include "DrawingTools.h"
-#include "dma2d.h"
+#include "decode.h"
 #include "otm8009a_conf.h"
 
 class Screen
@@ -22,7 +22,7 @@ class Screen
 
 	void clear(uint32_t ColorIndex);
 
-	void showFace(bool jpeg_file);
+	void showFace();
 
   private:
 };

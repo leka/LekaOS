@@ -6,6 +6,9 @@
 
 JPEG_HandleTypeDef hjpeg;
 JPEG_ConfTypeDef hjpeginfo;
+#if USE_DECODE_DMA
+uint32_t JpegProcessing_End = 0;
+#endif
 
 namespace leka {
 
@@ -103,6 +106,50 @@ void JPEGInit()
 	hjpeg.Instance = JPEG;
 	// HAL_JPEG_MspInit(&hjpeg);
 	HAL_JPEG_Init(&hjpeg);
+}
+
+void displayImage(FIL *JPEG_File)
+{
+	uint32_t width_offset  = 0;
+	uint16_t screen_width  = 800;
+	uint16_t screen_height = 480;
+
+	jpeg_decode(&hjpeg, JPEG_File, JPEG_OUTPUT_DATA_BUFFER);
+
+	HAL_JPEG_GetInfo(&hjpeg, &hjpeginfo);
+
+	uint16_t xPos = (screen_width - hjpeginfo.ImageWidth) / 2;
+	uint16_t yPos = (screen_height - hjpeginfo.ImageHeight) / 2;
+	if (hjpeginfo.ChromaSubsampling == JPEG_420_SUBSAMPLING) {
+		if ((hjpeginfo.ImageWidth % 16) != 0) width_offset = 16 - (hjpeginfo.ImageWidth % 16);
+	}
+
+	if (hjpeginfo.ChromaSubsampling == JPEG_422_SUBSAMPLING) {
+		if ((hjpeginfo.ImageWidth % 16) != 0) width_offset = 16 - (hjpeginfo.ImageWidth % 16);
+	}
+
+	if (hjpeginfo.ChromaSubsampling == JPEG_444_SUBSAMPLING) {
+		if ((hjpeginfo.ImageWidth % 8) != 0) width_offset = (hjpeginfo.ImageWidth % 8);
+	}
+
+	leka::DMA2DImage((uint32_t *)JPEG_OUTPUT_DATA_BUFFER, (uint32_t *)LCD_FRAME_BUFFER, xPos, yPos,
+					 hjpeginfo.ImageWidth, hjpeginfo.ImageHeight, width_offset);
+}
+
+void jpeg_decode(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress)
+{
+#if USE_DECODE_DMA
+	JPEG_Decode_DMA(hjpeg, file, DestAddress);
+
+	do {
+		JPEG_InputHandler(hjpeg);
+		JpegProcessing_End = JPEG_OutputHandler(hjpeg);
+
+	} while (JpegProcessing_End == 0);
+
+#elif USE_DECODE_POLLING
+	JPEG_DecodePolling(hjpeg, file, DestAddress);
+#endif
 }
 
 }	// namespace leka
