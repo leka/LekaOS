@@ -12,7 +12,7 @@ uint32_t data_address				= frame_buffer_start_address;
 
 uint32_t default_background_color = 0xffffffff;
 
-void (*pScreenSaver)();
+void (*pScreenSaver)(seconds duration_sec);
 
 void drawingToolsInit(LCD_Model lcd_model)
 {
@@ -41,18 +41,20 @@ void drawFilledRectangle(uint16_t x_0, uint16_t y_0, uint16_t width, uint16_t he
 	leka::DMA2DDrawing((uint32_t *)data_address, width, height, screen_width - width, color);
 }
 
-void screenSaver()
+void screenSaver(seconds duration_sec)
 {
-	pScreenSaver();
+	pScreenSaver(duration_sec);
 }
 
-void setScreenSaver(void (*pscreen_saver)())
+void setScreenSaver(void (*pscreen_saver)(seconds duration_sec))
 {
 	pScreenSaver = pscreen_saver;
 }
 
-void screenSaverSquareBouncing()
+void screenSaverSquareBouncing(seconds duration_sec)
 {
+	mbed::LowPowerTimer timer;
+
 	uint32_t posx  = 0;
 	uint32_t posy  = 0;
 	uint32_t dirx  = 1;
@@ -70,7 +72,8 @@ void screenSaverSquareBouncing()
 
 	drawClear(bg_color);
 
-	while (true) {
+	timer.start();
+	while (timer.elapsed_time() < duration_sec) {
 		// update position
 		posx = (posx + dirx);
 		posy = (posy + diry);
