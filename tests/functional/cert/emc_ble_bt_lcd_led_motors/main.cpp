@@ -2,17 +2,23 @@
 
 #include "BLEUtils.h"
 
+#include "AudioUtils.h"
+#include "FileManager.h"
 #include "LedUtils.h"
 #include "LekaScreen.h"
 #include "MotorsUtils.h"
 #include "WatchdogUtils.h"
 
+Thread thread_audio;
 Thread thread_led;
 Thread thread_motors;
 Thread thread_watchdog;
 Thread thread_lcd;
 Thread thread_ble;
 
+FileManager sd_card;
+DigitalOut audio_enable(SOUND_ENABLE, 1);
+AnalogOut audio_output(MCU_SOUND_OUT);
 Screen lcd;
 AnalogIn batteries_level(BATTERY_VOLTAGE);
 
@@ -31,6 +37,7 @@ int main(void)
 	auto duration = Kernel::Clock::now() - start;
 
 	thread_motors.start(motor_thread);
+
 	thread_lcd.start({&lcd, &Screen::start});
 
 	watchdog.start(5000);
@@ -39,6 +46,9 @@ int main(void)
 	initLed();
 	rtos::ThisThread::sleep_for(2s);
 	thread_led.start(led_thread);
+
+	audio_pause_duration = 20s;
+	thread_audio.start(callback(playSoundPeriodically, &audio_output));
 
 	BLE &ble = BLE::Instance();
 	ble.onEventsToProcess(schedule_ble_events);
