@@ -17,6 +17,7 @@ namespace leka {
 class Display
 {
   public:
+	Display(LCD_Model lcd_model);
 	Display(LKScreen &screen);
 
 	uint16_t getWidth();
@@ -40,7 +41,7 @@ class Display
 	void DMA2DInit();
 
   private:
-	LKScreen &_screen;
+	LKScreen _screen;
 };
 
 }	// namespace leka

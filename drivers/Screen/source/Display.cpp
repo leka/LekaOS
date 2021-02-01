@@ -8,10 +8,9 @@ namespace leka {
 
 using namespace mbed;
 
-Display::Display(LKScreen &screen) : _screen(screen)
-{
-	rotateUpsideDown(false);
-}
+Display::Display(LCD_Model lcd_model) : _screen(lcd_model) {}
+
+Display::Display(LKScreen &screen) : _screen(screen) {}
 
 uint16_t Display::getWidth()
 {
@@ -53,6 +52,8 @@ void Display::Init()
 	LCDDriverInit();
 	JPEGCodecInit();
 	DMA2DInit();
+
+	rotateUpsideDown(false);
 }
 
 void Display::MSPInit()
