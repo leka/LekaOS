@@ -2,23 +2,23 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_DISPLAY_H_
-#define _LEKA_OS_DRIVER_DISPLAY_H_
+#ifndef _LEKA_OS_DRIVER_LKCOREAV_H_
+#define _LEKA_OS_DRIVER_LKCOREAV_H_
 
-#include "Screen.h"
-#include "decode.h"
+#include "LKScreen.h"
 #include "dma2d.h"
 #include "dsi.h"
+#include "jpeg.h"
 #include "ltdc.h"
 #include "sdram.h"
 
 namespace leka {
 
-class Display
+class LKCoreAV
 {
   public:
-	Display(LCD_Model lcd_model);
-	Display(LKScreen &screen);
+	LKCoreAV(LCD_Model lcd_model);
+	LKCoreAV(LKScreen &screen);
 
 	uint16_t getWidth();
 	uint16_t getHeight();
@@ -46,4 +46,4 @@ class Display
 
 }	// namespace leka
 
-#endif	 // _LEKA_OS_DRIVER_DISPLAY_H_
+#endif	 // _LEKA_OS_DRIVER_LKCOREAV_H_

@@ -7,8 +7,8 @@
 
 #include "rtos/ThisThread.h"
 
+#include "LKScreen.h"
 #include "LowPowerTimer.h"
-#include "Screen.h"
 #include "dma2d.h"
 #include "ltdc.h"
 

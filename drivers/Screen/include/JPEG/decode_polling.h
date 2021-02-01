@@ -24,7 +24,7 @@
 	/* Includes ------------------------------------------------------------------*/
 	// #include "main.h"
 	// #include "stm32f7xx_hal_jpeg.h"
-	#include "decode.h"
+	#include "jpeg.h"
 
 /* Exported variables --------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/

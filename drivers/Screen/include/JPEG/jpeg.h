@@ -12,7 +12,7 @@
 #define JPEG_OUTPUT_DATA_BUFFER 0xC0200000
 
 #include "FATFileSystem.h"
-#include "Screen.h"
+#include "LKScreen.h"
 #include "dma2d.h"
 #include "jpeg_utils.h"
 

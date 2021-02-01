@@ -12,9 +12,9 @@ void Screen::start()
 {
 	printf("Screen example\n\n");
 
-	leka::Display display(otm8009a_model);
+	leka::LKCoreAV lk_core_av(otm8009a_model);
 
-	display.Init();
+	lk_core_av.Init();
 	leka::draw::toolsInit();
 
 	while (true) {

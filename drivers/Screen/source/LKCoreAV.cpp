@@ -2,46 +2,46 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "Display.h"
+#include "LKCoreAV.h"
 
 namespace leka {
 
 using namespace mbed;
 
-Display::Display(LCD_Model lcd_model) : _screen(lcd_model) {}
+LKCoreAV::LKCoreAV(LCD_Model lcd_model) : _screen(lcd_model) {}
 
-Display::Display(LKScreen &screen) : _screen(screen) {}
+LKCoreAV::LKCoreAV(LKScreen &screen) : _screen(screen) {}
 
-uint16_t Display::getWidth()
+uint16_t LKCoreAV::getWidth()
 {
 	return _screen.getWidth();
 }
-uint16_t Display::getHeight()
+uint16_t LKCoreAV::getHeight()
 {
 	return _screen.getHeight();
 }
 
-void Display::setBrightness(float value)
+void LKCoreAV::setBrightness(float value)
 {
 	_screen.setBrightness(value);
 }
 
-void Display::turnOff()
+void LKCoreAV::turnOff()
 {
 	_screen.turnOff();
 }
 
-void Display::turnOn()
+void LKCoreAV::turnOn()
 {
 	_screen.turnOn();
 }
 
-void Display::rotateUpsideDown(bool upside_down)
+void LKCoreAV::rotateUpsideDown(bool upside_down)
 {
 	_screen.rotateUpsideDown(upside_down);
 }
 
-void Display::Init()
+void LKCoreAV::Init()
 {
 	leka::dsi::reset();
 	MSPInit();
@@ -56,7 +56,7 @@ void Display::Init()
 	rotateUpsideDown(false);
 }
 
-void Display::MSPInit()
+void LKCoreAV::MSPInit()
 {
 	// MSP : MCU Support Package. https://stackoverflow.com/a/37520805
 
@@ -96,7 +96,7 @@ void Display::MSPInit()
 	leka::jpeg::mspInit();
 }
 
-void Display::MSPDeInit()
+void LKCoreAV::MSPDeInit()
 {
 	/** @brief Disable IRQ of LTDC IP */
 	HAL_NVIC_DisableIRQ(LTDC_IRQn);
@@ -118,33 +118,33 @@ void Display::MSPDeInit()
 	__HAL_RCC_DSI_CLK_DISABLE();
 }
 
-void Display::DSIInit()
+void LKCoreAV::DSIInit()
 {
 	leka::dsi::init(_screen.getModel());
 }
 
-void Display::LTDCInit()
+void LKCoreAV::LTDCInit()
 {
 	leka::ltdc::init(_screen.getModel());
 	leka::ltdc::layerInit();
 }
 
-void Display::SDRAMInit()
+void LKCoreAV::SDRAMInit()
 {
 	BSP_SDRAM_Init();
 }
 
-void Display::LCDDriverInit()
+void LKCoreAV::LCDDriverInit()
 {
 	_screen.driverInit();
 }
 
-void Display::JPEGCodecInit()
+void LKCoreAV::JPEGCodecInit()
 {
 	leka::jpeg::init();
 }
 
-void Display::DMA2DInit()
+void LKCoreAV::DMA2DInit()
 {
 	leka::dma2d::init(_screen.getWidth());
 }

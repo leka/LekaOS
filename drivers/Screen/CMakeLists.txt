@@ -15,15 +15,15 @@ target_sources(driver_Screen
     source/otm8009a.c
     source/otm8009a_conf.cpp
     source/dsi.cpp
-    source/Screen.cpp
+    source/LKScreen.cpp
     source/sdram.c
-    source/Display.cpp
+    source/LKCoreAV.cpp
     source/ltdc.cpp
     source/JPEG/jpeg_utils.cpp
     source/JPEG/decode_dma.cpp
     source/JPEG/decode_polling.cpp
     source/JPEG/decode_interrupt.cpp
-    source/JPEG/decode.cpp
+    source/JPEG/jpeg.cpp
     source/dma2d.cpp
 )
 

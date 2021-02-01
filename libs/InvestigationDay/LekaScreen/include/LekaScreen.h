@@ -5,8 +5,8 @@
 #ifndef _LEKA_OS_LIB_SCREEN_H_
 #define _LEKA_OS_LIB_SCREEN_H_
 
-#include "Display.h"
 #include "DrawingTools.h"
+#include "LKCoreAV.h"
 #include "otm8009a_conf.h"
 
 class Screen

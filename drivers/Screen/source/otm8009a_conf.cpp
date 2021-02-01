@@ -1,7 +1,5 @@
 #include "otm8009a_conf.h"
 
-#include "Screen.h"
-
 // Mandatory by driver otm8009a
 void OTM8009A_IO_Delay(uint32_t Delay)
 {

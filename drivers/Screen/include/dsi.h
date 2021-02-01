@@ -5,7 +5,7 @@
 #ifndef _LEKA_OS_LIB_DSI_H_
 #define _LEKA_OS_LIB_DSI_H_
 
-#include "Screen.h"
+#include "LKScreen.h"
 #include "stm32f7xx_hal.h"
 
 namespace leka {
