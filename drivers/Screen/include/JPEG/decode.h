@@ -31,7 +31,6 @@ namespace jpeg {
 	void init();
 
 	void display(FIL *JPEG_File);
-	void decode(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress);
 }	// namespace jpeg
 }	// namespace leka
 

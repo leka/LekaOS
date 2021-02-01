@@ -12,6 +12,8 @@ uint32_t JpegProcessing_End = 0;
 
 namespace leka {
 namespace jpeg {
+	void decode(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress);
+
 	void mspInit()
 	{
 		__HAL_RCC_JPEG_CLK_ENABLE();
