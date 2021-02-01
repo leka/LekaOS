@@ -2,15 +2,15 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(driver_Screen STATIC)
+add_library(driver_LKCoreAV STATIC)
 
-target_include_directories(driver_Screen
+target_include_directories(driver_LKCoreAV
   PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include
   ${CMAKE_CURRENT_SOURCE_DIR}/include/JPEG
 )
 
-target_sources(driver_Screen
+target_sources(driver_LKCoreAV
   PRIVATE
     source/otm8009a.c
     source/otm8009a_conf.cpp
@@ -27,4 +27,4 @@ target_sources(driver_Screen
     source/dma2d.cpp
 )
 
-target_link_libraries(driver_Screen mbed-os)
+target_link_libraries(driver_LKCoreAV mbed-os)

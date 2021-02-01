@@ -4,4 +4,4 @@
 
 add_subdirectory(${DRIVERS_DIR}/FastLED)
 add_subdirectory(${DRIVERS_DIR}/Motor)
-add_subdirectory(${DRIVERS_DIR}/Screen)
+add_subdirectory(${DRIVERS_DIR}/LKCoreAV)
