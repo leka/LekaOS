@@ -7,16 +7,14 @@
 
 #include "Screen.h"
 #include "dsi.h"
-// #include "stm32f7xx_hal.h"
-#include "decode.h"
 
 namespace leka {
 
 extern LTDC_HandleTypeDef hltdc;
-
-void LTDCInit(LCD_Model lcd_model);
-void LTDCLayerInit();
-
+namespace ltdc {
+	void init(LCD_Model lcd_model);
+	void layerInit();
+}	// namespace ltdc
 }	// namespace leka
 
 #endif	 // _LEKA_OS_LIB_LTDC_H_

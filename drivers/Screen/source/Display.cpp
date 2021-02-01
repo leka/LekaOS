@@ -43,11 +43,11 @@ void Display::rotateUpsideDown(bool upside_down)
 
 void Display::Init()
 {
-	leka::DSIReset();
+	leka::dsi::reset();
 	MSPInit();
 	DSIInit();
 	LTDCInit();
-	leka::DSIStart();
+	leka::dsi::start();
 	SDRAMInit();
 	LCDDriverInit();
 	JPEGCodecInit();
@@ -93,7 +93,7 @@ void Display::MSPInit()
 	HAL_NVIC_SetPriority(DSI_IRQn, 3, 0);
 	HAL_NVIC_EnableIRQ(DSI_IRQn);
 
-	leka::JPEGMspInit();
+	leka::jpeg::mspInit();
 }
 
 void Display::MSPDeInit()
@@ -120,13 +120,13 @@ void Display::MSPDeInit()
 
 void Display::DSIInit()
 {
-	leka::DSIInit(_screen.getModel());
+	leka::dsi::init(_screen.getModel());
 }
 
 void Display::LTDCInit()
 {
-	leka::LTDCInit(_screen.getModel());
-	leka::LTDCLayerInit();
+	leka::ltdc::init(_screen.getModel());
+	leka::ltdc::layerInit();
 }
 
 void Display::SDRAMInit()
@@ -141,12 +141,12 @@ void Display::LCDDriverInit()
 
 void Display::JPEGCodecInit()
 {
-	leka::JPEGInit();
+	leka::jpeg::init();
 }
 
 void Display::DMA2DInit()
 {
-	leka::DMA2DInit(_screen.getWidth());
+	leka::dma2d::init(_screen.getWidth());
 }
 
 }	// namespace leka

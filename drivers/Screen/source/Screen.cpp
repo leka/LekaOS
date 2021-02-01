@@ -8,8 +8,16 @@ namespace leka {
 
 using namespace mbed;
 
+namespace screen {
+	uint16_t width	= 800;
+	uint16_t height = 480;
+}	// namespace screen
+
 LKScreen::LKScreen(LCD_Model &lcd_model) : _lcd_model(lcd_model), _brightness(SCREEN_BACKLIGHT_PWM)
 {
+	screen::width  = _lcd_model.width;
+	screen::height = _lcd_model.height;
+
 	_brightness.period(0.01f);	 // Set PWM at 1/(0.01 seconds) = 100Hz
 	_brightness = 0.10f;
 	// setBrightness(0.10f);

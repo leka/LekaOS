@@ -15,10 +15,10 @@ void Screen::start()
 	leka::Display display(otm8009a_model);
 
 	display.Init();
-	leka::drawingToolsInit(otm8009a_model);
+	leka::draw::toolsInit();
 
 	while (true) {
-		leka::screenSaver(43200s);	 // 12 hours
+		leka::screensaver::run(43200s);	  // 12 hours
 	}
 
 	printf("End of Screen example\n\n");

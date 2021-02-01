@@ -9,10 +9,10 @@
 #define USE_DECODE_POLLING	 1
 #define USE_DECODE_INTERRUPT 0
 
-#define LCD_FRAME_BUFFER		0xC0000000
 #define JPEG_OUTPUT_DATA_BUFFER 0xC0200000
 
 #include "FATFileSystem.h"
+#include "Screen.h"
 #include "dma2d.h"
 #include "jpeg_utils.h"
 
@@ -24,19 +24,15 @@
 	#include "decode_interrupt.h"
 #endif
 
-extern JPEG_HandleTypeDef hjpeg;
-extern JPEG_ConfTypeDef hjpeginfo;
-#if USE_DECODE_DMA
-extern uint32_t JpegProcessing_End;
-#endif
-
 namespace leka {
-void JPEGMspInit();
-void JPEGMspDeInit();
-void JPEGInit();
+namespace jpeg {
+	void mspInit();
+	void mspDeInit();
+	void init();
 
-void displayImage(FIL *JPEG_File);
-void jpeg_decode(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress);
+	void display(FIL *JPEG_File);
+	void decode(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress);
+}	// namespace jpeg
 }	// namespace leka
 
 #if USE_DECODE_INTERRUPT

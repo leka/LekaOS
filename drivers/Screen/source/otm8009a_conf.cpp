@@ -11,7 +11,7 @@ void OTM8009A_IO_Delay(uint32_t Delay)
 // Mandatory by driver otm8009a
 void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams)
 {
-	leka::DSI_IO_WriteCmd(NbrParams, pParams);
+	leka::dsi::DSI_IO_WriteCmd(NbrParams, pParams);
 }
 
 // Mandatory by screen

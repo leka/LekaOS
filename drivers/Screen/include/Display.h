@@ -35,7 +35,7 @@ class Display
 	void LTDCInit();
 	static void SDRAMInit();
 	void LCDDriverInit();
-	static void JPEGCodecInit();
+	void JPEGCodecInit();
 
 	static void DMAInit();
 	void DMA2DInit();

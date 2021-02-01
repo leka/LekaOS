@@ -7,6 +7,8 @@
 
 #include "drivers/PwmOut.h"
 
+#define LCD_FRAME_BUFFER 0xC0000000
+
 namespace leka {
 
 enum LCD
@@ -32,6 +34,11 @@ typedef struct {
 	void (*driverInit)();
 	void (*rotateUpsideDown)(bool upside_down);
 } LCD_Model;
+
+namespace screen {
+	extern uint16_t width;
+	extern uint16_t height;
+}	// namespace screen
 
 class LKScreen
 {
