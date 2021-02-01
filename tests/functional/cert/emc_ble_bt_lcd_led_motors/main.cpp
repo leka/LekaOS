@@ -1,5 +1,7 @@
 #include "mbed.h"
 
+#include "BLEUtils.h"
+
 #include "LedUtils.h"
 #include "LekaScreen.h"
 #include "MotorsUtils.h"
@@ -9,6 +11,7 @@ Thread thread_led;
 Thread thread_motors;
 Thread thread_watchdog;
 Thread thread_lcd;
+Thread thread_ble;
 
 Screen lcd;
 AnalogIn batteries_level(BATTERY_VOLTAGE);
@@ -37,13 +40,19 @@ int main(void)
 	rtos::ThisThread::sleep_for(2s);
 	thread_led.start(led_thread);
 
+	BLE &ble = BLE::Instance();
+	ble.onEventsToProcess(schedule_ble_events);
+	BeaconDemo ble_beacon(ble, event_queue);
+	thread_ble.start({&ble_beacon, &BeaconDemo::start});
+
+	rtos::ThisThread::sleep_for(10s);
 	while (true) {
-		duration = Kernel::Clock::now() - start;
-		int length =
-			sprintf(buff, "Leka is still alive after: %2i:%2i:%2i\nBattery at 0x%X\n\n",
-					int(chrono::duration_cast<chrono::hours>(duration).count()),
-					int(chrono::duration_cast<chrono::minutes>(duration).count()) % 60,
-					int(chrono::duration_cast<chrono::seconds>(duration).count()) % 60, batteries_level.read_u16());
+		duration   = Kernel::Clock::now() - start;
+		int length = sprintf(buff, "Leka is still alive after: %2i:%2i:%2i\nBattery at 0x%X\n\n",
+							 int(std::chrono::duration_cast<std::chrono::hours>(duration).count()),
+							 int(std::chrono::duration_cast<std::chrono::minutes>(duration).count()) % 60,
+							 int(std::chrono::duration_cast<std::chrono::seconds>(duration).count()) % 60,
+							 batteries_level.read_u16());
 		serial.write(buff, length);
 		rtos::ThisThread::sleep_for(1s);
 	}
