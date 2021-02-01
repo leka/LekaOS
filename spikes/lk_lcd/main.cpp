@@ -6,12 +6,15 @@
 
 #include "FileManager.h"
 #include "HelloWorld.h"
-#include "LekaScreen.h"
+#include "LKAVKit.h"
+#include "LKCoreAV.h"
+#include "otm8009a_conf.h"
 
 using namespace leka;
 
 HelloWorld hello;
-Screen leka_screen;
+LKCoreAV lk_core_av(otm8009a_model);
+LKAVKit lk_av_kit(lk_core_av, otm8009a_model);
 FileManager sd_card;
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
@@ -21,6 +24,25 @@ char buff[buff_size] {};
 
 Thread screen_thread;
 
+void screenExample()
+{
+	printf("Screen example\n\n");
+
+	char filename[] = "assets/images/emotion-happy.jpg";
+	FIL JPEG_File;
+
+	lk_core_av.setBrightness(0.3f);
+
+	while (true) {
+		lk_av_kit.screenSaver(30s);
+		if (f_open(&JPEG_File, filename, FA_READ) == FR_OK) {
+			lk_av_kit.displayImage(&JPEG_File);
+			f_close(&JPEG_File);
+		}
+		rtos::ThisThread::sleep_for(10s);
+	}
+}
+
 int main(void)
 {
 	auto start = Kernel::Clock::now();
@@ -29,7 +51,8 @@ int main(void)
 
 	rtos::ThisThread::sleep_for(2s);
 
-	screen_thread.start({&leka_screen, &Screen::start});
+	// screen_thread.start({&leka_screen, &Screen::start});
+	screen_thread.start(screenExample);
 	hello.start();
 
 	while (true) {
