@@ -11,6 +11,7 @@ Thread thread_watchdog;
 Thread thread_lcd;
 
 Screen lcd;
+AnalogIn batteries_level(BATTERY_VOLTAGE);
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 
@@ -23,7 +24,8 @@ int main(void)
 {
 	printf("\nHello, Investigation Day!\n\n");
 
-	auto start = Kernel::Clock::now();
+	auto start	  = Kernel::Clock::now();
+	auto duration = Kernel::Clock::now() - start;
 
 	thread_motors.start(motor_thread);
 	thread_lcd.start({&lcd, &Screen::start});
@@ -36,8 +38,12 @@ int main(void)
 	thread_led.start(led_thread);
 
 	while (true) {
-		auto t	   = Kernel::Clock::now() - start;
-		int length = sprintf(buff, "Leka is still alive after: %i s\n", int(t.count() / 1000));
+		duration = Kernel::Clock::now() - start;
+		int length =
+			sprintf(buff, "Leka is still alive after: %2i:%2i:%2i\nBattery at 0x%X\n\n",
+					int(chrono::duration_cast<chrono::hours>(duration).count()),
+					int(chrono::duration_cast<chrono::minutes>(duration).count()) % 60,
+					int(chrono::duration_cast<chrono::seconds>(duration).count()) % 60, batteries_level.read_u16());
 		serial.write(buff, length);
 		rtos::ThisThread::sleep_for(1s);
 	}
