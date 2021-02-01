@@ -6,7 +6,7 @@
 
 JPEG_HandleTypeDef hjpeg;
 JPEG_ConfTypeDef hjpeginfo;
-#if USE_DECODE_DMA
+#if USE_DECODE_INTERRUPT or USE_DECODE_DMA
 uint32_t JpegProcessing_End = 0;
 #endif
 
@@ -15,6 +15,11 @@ namespace leka {
 void JPEGMspInit()
 {
 	__HAL_RCC_JPEG_CLK_ENABLE();
+
+#if USE_DECODE_INTERRUPT
+	HAL_NVIC_SetPriority(JPEG_IRQn, 0x06, 0x0F);
+	HAL_NVIC_EnableIRQ(JPEG_IRQn);
+#endif
 
 #if USE_DECODE_DMA
 	static DMA_HandleTypeDef hdmaIn;
@@ -138,8 +143,12 @@ void displayImage(FIL *JPEG_File)
 
 void jpeg_decode(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress)
 {
-#if USE_DECODE_DMA
+#if USE_DECODE_INTERRUPT or USE_DECODE_DMA
+	#if USE_DECODE_DMA
 	JPEG_Decode_DMA(hjpeg, file, DestAddress);
+	#elif USE_DECODE_INTERRUPT
+	JPEG_Decode_IT(hjpeg, file, DestAddress);
+	#endif
 
 	do {
 		JPEG_InputHandler(hjpeg);
@@ -153,6 +162,14 @@ void jpeg_decode(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress)
 }
 
 }	// namespace leka
+
+#if USE_DECODE_INTERRUPT
+
+void JPEG_IRQHandler(void)
+{
+	HAL_JPEG_IRQHandler(&hjpeg);
+}
+#endif
 
 #if USE_DECODE_DMA
 void JPEG_IRQHandler(void)
@@ -195,4 +212,9 @@ void OnError_Handler()
 	while (1) {
 		;
 	} /* Blocking on error */
+}
+
+void HAL_JPEG_MspInit(JPEG_HandleTypeDef *hjpeg)
+{
+	leka::JPEGMspInit();
 }

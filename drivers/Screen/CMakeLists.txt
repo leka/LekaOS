@@ -22,6 +22,7 @@ target_sources(driver_Screen
     source/JPEG/jpeg_utils.cpp
     source/JPEG/decode_dma.cpp
     source/JPEG/decode_polling.cpp
+    source/JPEG/decode_interrupt.cpp
     source/JPEG/decode.cpp
     source/dma2d.cpp
 )
