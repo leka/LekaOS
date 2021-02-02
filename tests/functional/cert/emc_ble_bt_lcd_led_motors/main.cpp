@@ -5,11 +5,13 @@
 #include "AudioUtils.h"
 #include "FileManager.h"
 #include "LedUtils.h"
+#include "LekaBluetooth.h"
 #include "LekaScreen.h"
 #include "MotorsUtils.h"
 #include "WatchdogUtils.h"
 
 Thread thread_audio;
+Thread bluetooth_thread;
 Thread thread_led;
 Thread thread_motors;
 Thread thread_watchdog;
@@ -21,6 +23,7 @@ DigitalOut audio_enable(SOUND_ENABLE, 1);
 AnalogOut audio_output(MCU_SOUND_OUT);
 Screen lcd;
 AnalogIn batteries_level(BATTERY_VOLTAGE);
+Bluetooth leka_bluetooth;
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 
@@ -35,6 +38,8 @@ int main(void)
 
 	auto start	  = Kernel::Clock::now();
 	auto duration = Kernel::Clock::now() - start;
+
+	bluetooth_thread.start({&leka_bluetooth, &Bluetooth::start});
 
 	thread_motors.start(motor_thread);
 
@@ -63,7 +68,8 @@ int main(void)
 							 int(std::chrono::duration_cast<std::chrono::minutes>(duration).count()) % 60,
 							 int(std::chrono::duration_cast<std::chrono::seconds>(duration).count()) % 60,
 							 batteries_level.read_u16());
-		serial.write(buff, length);
+		// serial.write(buff, length);
+		leka_bluetooth.sendMessage(buff, length);
 		rtos::ThisThread::sleep_for(1s);
 	}
 
