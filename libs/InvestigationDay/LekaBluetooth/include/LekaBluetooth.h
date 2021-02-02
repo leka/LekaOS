@@ -16,6 +16,8 @@
 
 #include "BM64Converter.h"
 
+constexpr uint8_t max_buffer_size = 128;
+
 class Bluetooth
 {
   public:
@@ -26,17 +28,24 @@ class Bluetooth
 	void pairing();
 	void playPause();
 	void checkResponse(bool printResponse = false);
-	// void converse();
+
+	bool isPaired();
+	void sendMessage(char *msg, size_t msg_length);
+	size_t getMessage(char *buffer);
+	bool checkNewMessage();
 
   private:
 	mbed::BufferedSerial _interface;
 	mbed::DigitalOut _bluetooth_reset;
 	mbed::DigitalOut _bluetooth_wake_up;
 
-	uint8_t _buffer[24]		= {0};
-	uint16_t _buffer_length = 0;
+	uint8_t _buffer[max_buffer_size] = {0};
+	uint16_t _buffer_length			 = 0;
+	char _msg_rcv[max_buffer_size];
+	size_t _msg_length = 0;
 
-	bool _paired = false;	// Check simultaneous pairing is possible
+	bool _paired	  = false;	 // Check simultaneous pairing is possible
+	bool _new_message = true;
 };
 
 #endif
