@@ -123,12 +123,18 @@ bool RFID::setReceiverGain()
 	return false;
 }
 
-void RFID::sendReceive()
+void RFID::sendReceive(uint8_t val)
 {
 	const uint8_t max_buffer_length	  = 0x20;	// TODO: what is the maximum length that we can receive?
 	uint8_t buffer[max_buffer_length] = {0};
 
-	_interface.write(_send_receive_cmd, _send_receive_cmd_length);
+	if (val == 1) {
+		_interface.write(_send_receive_cmd, _send_receive_cmd_length);
+	} else if (val == 2) {
+		_interface.write(_send_receive2_cmd, _send_receive2_cmd_length);
+	} else if (val == 3) {
+		_interface.write(_send_receive3_cmd, _send_receive3_cmd_length);
+	}
 	rtos::ThisThread::sleep_for(10ms);
 
 	// TODO: why a for loop? why not while(!_interface.readable())?
@@ -140,7 +146,9 @@ void RFID::sendReceive()
 
 			printf("Answer received from reader: ");
 			// TODO: check the second for loop and the use of the index
+			_answer_length = length + 2;
 			for (int j = 0; j < length + 2; j++) {
+				_answer[j] = buffer[j];
 				printf("%X ", buffer[j]);
 			}
 			printf("\n");
@@ -150,61 +158,12 @@ void RFID::sendReceive()
 	printf("No answer received from reader...\n");
 	return;
 }
-
-void RFID::sendReceive2()
+size_t RFID::getAnswer(char *buffer)
 {
-	const uint8_t max_buffer_length	  = 0x20;	// TODO: what is the maximum length that we can receive?
-	uint8_t buffer[max_buffer_length] = {0};
-
-	_interface.write(_send_receive2_cmd, _send_receive2_cmd_length);
-	rtos::ThisThread::sleep_for(10ms);
-
-	// TODO: why a for loop? why not while(!_interface.readable())?
-	for (int i = 0; i < 10; i++) {
-		if (_interface.readable()) {
-			_interface.read(buffer, 2);
-			auto length = buffer[1];
-			_interface.read(&buffer[2], length);
-
-			printf("Answer received from reader: ");
-			// TODO: check the second for loop and the use of the index
-			for (int j = 0; j < length + 2; j++) {
-				printf("%X ", buffer[j]);
-			}
-			printf("\n");
-			return;
-		}
+	for (uint16_t i = 0; i < _answer_length; i++) {
+		buffer[i] = _answer[i];
 	}
-	printf("No answer received from reader...\n");
-	return;
-}
-
-void RFID::sendReceive3()
-{
-	const uint8_t max_buffer_length	  = 0x20;	// TODO: what is the maximum length that we can receive?
-	uint8_t buffer[max_buffer_length] = {0};
-
-	_interface.write(_send_receive3_cmd, _send_receive3_cmd_length);
-	rtos::ThisThread::sleep_for(10ms);
-
-	// TODO: why a for loop? why not while(!_interface.readable())?
-	for (int i = 0; i < 10; i++) {
-		if (_interface.readable()) {
-			_interface.read(buffer, 2);
-			auto length = buffer[1];
-			_interface.read(&buffer[2], length);
-
-			printf("Answer received from reader: ");
-			// TODO: check the second for loop and the use of the index
-			for (int j = 0; j < length + 2; j++) {
-				printf("%X ", buffer[j]);
-			}
-			printf("\n");
-			return;
-		}
-	}
-	printf("No answer received from reader...\n");
-	return;
+	return _answer_length;
 }
 
 bool RFID::setIEC14443()
@@ -260,10 +219,10 @@ void RFID::start()
 	printf("RFID reader gain set!\n");
 
 	while (true) {
-		// sendReceive();
-		sendReceive2();
-		sendReceive3();
-		rtos::ThisThread::sleep_for(10s);
+		// sendReceive(1);
+		sendReceive(2);
+		sendReceive(3);
+		rtos::ThisThread::sleep_for(1s);
 	}
 
 	printf("End of RFID example\n\n");
