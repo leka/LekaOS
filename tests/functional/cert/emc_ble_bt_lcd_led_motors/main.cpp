@@ -7,6 +7,7 @@
 #include "LedUtils.h"
 #include "LekaScreen.h"
 #include "MotorsUtils.h"
+#include "RFIDUtils.h"
 #include "WatchdogUtils.h"
 
 Thread thread_audio;
@@ -26,6 +27,7 @@ static BufferedSerial serial(USBTX, USBRX, 9600);
 
 constexpr uint8_t buff_size = 128;
 char buff[buff_size] {};
+char buff_rfid[40] {};
 
 Watchdog &watchdog = Watchdog::get_instance();
 
@@ -55,6 +57,8 @@ int main(void)
 	BeaconDemo ble_beacon(ble, event_queue);
 	thread_ble.start({&ble_beacon, &BeaconDemo::start});
 
+	initRfid();
+
 	rtos::ThisThread::sleep_for(10s);
 	while (true) {
 		duration   = Kernel::Clock::now() - start;
@@ -64,6 +68,11 @@ int main(void)
 							 int(std::chrono::duration_cast<std::chrono::seconds>(duration).count()) % 60,
 							 batteries_level.read_u16());
 		serial.write(buff, length);
+
+		getRfid(buff_rfid);
+		length = snprintf(buff, buff_size, "RFID response is %s\n\n", buff_rfid);
+		serial.write(buff, length);
+
 		rtos::ThisThread::sleep_for(1s);
 	}
 

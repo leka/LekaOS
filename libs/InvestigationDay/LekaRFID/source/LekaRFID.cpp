@@ -144,7 +144,7 @@ void RFID::sendReceive(uint8_t val)
 			auto length = buffer[1];
 			_interface.read(&buffer[2], length);
 
-			printf("Answer received from reader: ");
+			// printf("Answer received from reader: ");
 			// TODO: check the second for loop and the use of the index
 			_answer_length = length + 2;
 			for (int j = 0; j < length + 2; j++) {
