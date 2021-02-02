@@ -29,9 +29,9 @@ class RFID
 	bool setIEC15693();
 	bool setIEC14443();
 	bool setReceiverGain();
-	void sendReceive();
-	void sendReceive2();
-	void sendReceive3();
+	void sendReceive(uint8_t val);
+
+	size_t getAnswer(char *buffer);
 
   private:
 	mbed::BufferedSerial _interface;
@@ -54,6 +54,9 @@ class RFID
 	const uint8_t _send_receive2_cmd_length		= 4;
 	const uint8_t _send_receive3_cmd[5]			= {0x04, 0x03, 0x93, 0x20, 0x08};
 	const uint8_t _send_receive3_cmd_length		= 5;
+
+	uint8_t _answer[64];
+	size_t _answer_length = 0;
 };
 
 #endif
