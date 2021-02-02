@@ -17,6 +17,9 @@ namespace Command {
 	const uint8_t play_pause[3]		   = {0x02, 0x00, 0x32};
 	constexpr size_t play_pause_length = 3;
 
+	const uint8_t eq_soft_mode[3]		 = {0x1C, 0x01, 0x00};
+	constexpr size_t eq_soft_mode_length = 3;
+
 };	 // namespace Command
 // using command_t = Command;
 
