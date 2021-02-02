@@ -37,7 +37,11 @@ class Touch
 	void calibration();
 	void printAllReadInterfaceRegisters();
 	void printAllWriteInterfaceRegisters(uint8_t address);
-	void updateSensorsStatus();
+	uint8_t updateSensorsStatus();
+
+	void calibrateEars();
+	void calibrateBeltRBLF();
+	void calibrateBeltLBRF();
 
   private:
 	mbed::I2C _write_interface;
