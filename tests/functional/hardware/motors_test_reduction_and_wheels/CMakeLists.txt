@@ -14,7 +14,7 @@ target_sources(hardware_motors_test_reduction_and_wheels
     main.cpp
 )
 
-target_link_libraries(hardware_motors_test_reduction_and_wheels driver_Motor)
+target_link_libraries(hardware_motors_test_reduction_and_wheels LKCoreMotor)
 
 target_link_libraries(hardware_motors_test_reduction_and_wheels lib_LekaMotors)
 target_link_libraries(hardware_motors_test_reduction_and_wheels lib_PrettyPrinter)
