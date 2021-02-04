@@ -78,10 +78,13 @@ jobs:
           file_path: _build/${{ matrix.custom_target }}/compile_commands.json
 
       - name: Upload build artifacts
-        if: ${{ matrix.custom_target == 'LEKA_V1_2_DEV' }}
+        if: |
+          contains(matrix.custom_target, 'LEKA_V1_2_DEV') &&
+          (contains(github.ref, 'develop') || contains(github.ref, 'master'))
         uses: actions/upload-artifact@v2
         with:
           name: LEKA_V1_2_DEV-Build-Artifacts
+          retention-days: 7
           path: |
             _build/LEKA_V1_2_DEV/**/*.bin
             _build/LEKA_V1_2_DEV/**/*.hex
