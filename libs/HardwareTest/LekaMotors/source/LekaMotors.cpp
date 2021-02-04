@@ -8,7 +8,8 @@ namespace leka {
 
 using namespace mbed;
 
-Motors::Motors(MotorBase &motor_right, MotorBase &motor_left) : _motor_right(motor_right), _motor_left(motor_left)
+Motors::Motors(LKCoreMotorBase &motor_right, LKCoreMotorBase &motor_left)
+	: _motor_right(motor_right), _motor_left(motor_left)
 {
 	// nothing to do
 }
