@@ -14,14 +14,14 @@
 #include "FATFileSystem.h"
 #include "LKScreen.h"
 #include "dma2d.h"
-#include "jpeg_utils.h"
+#include "st_jpeg_utils.h"
 
 #if USE_DECODE_DMA
-	#include "decode_dma.h"
+	#include "st_decode_dma.h"
 #elif USE_DECODE_POLLING
-	#include "decode_polling.h"
+	#include "st_decode_polling.h"
 #elif USE_DECODE_INTERRUPT
-	#include "decode_interrupt.h"
+	#include "st_decode_interrupt.h"
 #endif
 
 namespace leka {

@@ -115,7 +115,7 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
-#include "jpeg_utils.h"
+#include "st_jpeg_utils.h"
 
 /** @addtogroup Utilities
  * @{

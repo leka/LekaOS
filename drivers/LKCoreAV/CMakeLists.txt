@@ -12,18 +12,18 @@ target_include_directories(driver_LKCoreAV
 
 target_sources(driver_LKCoreAV
   PRIVATE
-    source/otm8009a.c
+    source/st_otm8009a.c
     source/otm8009a_conf.cpp
     source/dsi.cpp
     source/LKScreen.cpp
-    source/sdram.c
+    source/st_sdram.c
     source/LKCoreAV.cpp
     source/ltdc.cpp
-    source/JPEG/jpeg_utils.cpp
-    source/JPEG/decode_dma.cpp
-    source/JPEG/decode_polling.cpp
-    source/JPEG/decode_interrupt.cpp
-    source/JPEG/jpeg.cpp
+    source/jpeg/st_jpeg_utils.cpp
+    source/jpeg/st_decode_dma.cpp
+    source/jpeg/st_decode_polling.cpp
+    source/jpeg/st_decode_interrupt.cpp
+    source/jpeg/jpeg.cpp
     source/dma2d.cpp
 )
 

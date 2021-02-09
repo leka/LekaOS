@@ -10,7 +10,7 @@
 #include "dsi.h"
 #include "jpeg.h"
 #include "ltdc.h"
-#include "sdram.h"
+#include "st_sdram.h"
 
 namespace leka {
 

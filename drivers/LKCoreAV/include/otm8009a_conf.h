@@ -7,7 +7,7 @@
 
 #include "LKScreen.h"
 #include "dsi.h"
-#include "otm8009a.h"
+#include "st_otm8009a.h"
 #include "stm32f7xx_hal.h"
 
 void otm8009RotateUpsideDown(bool upside_down);

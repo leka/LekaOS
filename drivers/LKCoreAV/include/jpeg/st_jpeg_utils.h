@@ -40,7 +40,7 @@
 	#define __JPEG_UTILS_H
 
 	/* Includes ------------------------------------------------------------------*/
-	#include "jpeg_utils_conf.h"
+	#include "st_jpeg_utils_conf.h"
 
 	/** @addtogroup Utilities
 	 * @{

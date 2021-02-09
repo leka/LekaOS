@@ -82,7 +82,7 @@
 EndDependencies */
 
 /* Includes ------------------------------------------------------------------*/
-#include "sdram.h"
+#include "st_sdram.h"
 
 /** @addtogroup BSP
   * @{
