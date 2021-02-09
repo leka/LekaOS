@@ -8,17 +8,15 @@ namespace leka {
 
 using namespace mbed;
 
-LKCoreAV::LKCoreAV(LCD_Model lcd_model) : _screen(lcd_model) {}
-
-LKCoreAV::LKCoreAV(LKScreen &screen) : _screen(screen) {}
+LKCoreAV::LKCoreAV(PinName backlight) : _screen(backlight) {}
 
 uint16_t LKCoreAV::getWidth()
 {
-	return _screen.getWidth();
+	return screen_dimension.width;
 }
 uint16_t LKCoreAV::getHeight()
 {
-	return _screen.getHeight();
+	return screen_dimension.height;
 }
 
 void LKCoreAV::setBrightness(float value)
@@ -120,12 +118,12 @@ void LKCoreAV::MSPDeInit()
 
 void LKCoreAV::DSIInit()
 {
-	leka::dsi::init(_screen.getModel());
+	leka::dsi::init();
 }
 
 void LKCoreAV::LTDCInit()
 {
-	leka::ltdc::init(_screen.getModel());
+	leka::ltdc::init();
 	leka::ltdc::layerInit();
 }
 
@@ -136,7 +134,7 @@ void LKCoreAV::SDRAMInit()
 
 void LKCoreAV::LCDDriverInit()
 {
-	_screen.driverInit();
+	_screen.initializeDriver();
 }
 
 void LKCoreAV::JPEGCodecInit()
@@ -146,7 +144,7 @@ void LKCoreAV::JPEGCodecInit()
 
 void LKCoreAV::DMA2DInit()
 {
-	leka::dma2d::init(_screen.getWidth());
+	leka::dma2d::init(screen_dimension.width);
 }
 
 }	// namespace leka

@@ -123,8 +123,8 @@ namespace jpeg {
 
 		HAL_JPEG_GetInfo(&hjpeg, &hjpeginfo);
 
-		uint16_t xPos = (leka::screen::width - hjpeginfo.ImageWidth) / 2;
-		uint16_t yPos = (leka::screen::height - hjpeginfo.ImageHeight) / 2;
+		uint16_t xPos = (screen_dimension.width - hjpeginfo.ImageWidth) / 2;
+		uint16_t yPos = (screen_dimension.height - hjpeginfo.ImageHeight) / 2;
 		if (hjpeginfo.ChromaSubsampling == JPEG_420_SUBSAMPLING) {
 			if ((hjpeginfo.ImageWidth % 16) != 0) width_offset = 16 - (hjpeginfo.ImageWidth % 16);
 		}

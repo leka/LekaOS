@@ -9,6 +9,7 @@
 #include "dma2d.h"
 #include "dsi.h"
 #include "jpeg.h"
+#include "lcd_properties.h"
 #include "ltdc.h"
 #include "st_sdram.h"
 
@@ -17,8 +18,7 @@ namespace leka {
 class LKCoreAV
 {
   public:
-	LKCoreAV(LCD_Model lcd_model);
-	LKCoreAV(LKScreen &screen);
+	LKCoreAV(PinName backlight);
 
 	uint16_t getWidth();
 	uint16_t getHeight();

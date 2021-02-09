@@ -12,7 +12,7 @@ void Screen::start()
 {
 	printf("Screen example\n\n");
 
-	leka::LKCoreAV lk_core_av(otm8009a_model);
+	leka::LKCoreAV lk_core_av(SCREEN_BACKLIGHT_PWM);
 
 	lk_core_av.Init();
 	leka::draw::toolsInit();

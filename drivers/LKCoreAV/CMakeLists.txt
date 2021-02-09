@@ -14,7 +14,6 @@ target_include_directories(driver_LKCoreAV
 target_sources(driver_LKCoreAV
   PRIVATE
     source/st_otm8009a.c
-    source/otm8009a_conf.cpp
     source/dsi.cpp
     source/LKScreen.cpp
     source/st_sdram.c

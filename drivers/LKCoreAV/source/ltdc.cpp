@@ -9,19 +9,20 @@ namespace leka {
 LTDC_HandleTypeDef hltdc;
 
 namespace ltdc {
-	void init(LCD_Model lcd_model)
+	void init()
 	{
 		static RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
 
 		/* Timing Configuration */
-		hltdc.Init.HorizontalSync	  = (lcd_model.HSA - 1);
-		hltdc.Init.AccumulatedHBP	  = (lcd_model.HSA + lcd_model.HBP - 1);
-		hltdc.Init.AccumulatedActiveW = (lcd_model.width + lcd_model.HSA + lcd_model.HBP - 1);
-		hltdc.Init.TotalWidth		  = (lcd_model.width + lcd_model.HSA + lcd_model.HBP + lcd_model.HFP - 1);
+		hltdc.Init.HorizontalSync	  = (screen_property.HSA - 1);
+		hltdc.Init.AccumulatedHBP	  = (screen_property.HSA + screen_property.HBP - 1);
+		hltdc.Init.AccumulatedActiveW = (screen_dimension.width + screen_property.HSA + screen_property.HBP - 1);
+		hltdc.Init.TotalWidth =
+			(screen_dimension.width + screen_property.HSA + screen_property.HBP + screen_property.HFP - 1);
 
 		/* Initialize the LCD pixel width and pixel height */
-		hltdc.LayerCfg->ImageWidth	= lcd_model.width;
-		hltdc.LayerCfg->ImageHeight = lcd_model.height;
+		hltdc.LayerCfg->ImageWidth	= screen_dimension.width;
+		hltdc.LayerCfg->ImageHeight = screen_dimension.height;
 
 		/** LCD clock configuration
 		 * Note: The following values should not be changed as the PLLSAI is also used
@@ -57,9 +58,9 @@ namespace ltdc {
 
 		/* Layer Init */
 		Layercfg.WindowX0		 = 0;
-		Layercfg.WindowX1		 = leka::screen::width;
+		Layercfg.WindowX1		 = screen_dimension.width;
 		Layercfg.WindowY0		 = 0;
-		Layercfg.WindowY1		 = leka::screen::height;
+		Layercfg.WindowY1		 = screen_dimension.height;
 		Layercfg.PixelFormat	 = LTDC_PIXEL_FORMAT_ARGB8888;
 		Layercfg.FBStartAdress	 = LCD_FRAME_BUFFER;   // Previously FB_Address given in parameter
 		Layercfg.Alpha			 = 255;
@@ -69,8 +70,8 @@ namespace ltdc {
 		Layercfg.Backcolor.Red	 = 0;
 		Layercfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;
 		Layercfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;
-		Layercfg.ImageWidth		 = leka::screen::width;
-		Layercfg.ImageHeight	 = leka::screen::height;
+		Layercfg.ImageWidth		 = screen_dimension.width;
+		Layercfg.ImageHeight	 = screen_dimension.height;
 
 		HAL_LTDC_ConfigLayer(&hltdc, &Layercfg, 1);
 

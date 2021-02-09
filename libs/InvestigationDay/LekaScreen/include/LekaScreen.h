@@ -7,7 +7,6 @@
 
 #include "DrawingTools.h"
 #include "LKCoreAV.h"
-#include "otm8009a_conf.h"
 
 class Screen
 {

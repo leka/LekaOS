@@ -5,7 +5,7 @@
 #ifndef _LEKA_OS_LIB_DSI_H_
 #define _LEKA_OS_LIB_DSI_H_
 
-#include "LKScreen.h"
+#include "lcd_properties.h"
 #include "stm32f7xx_hal.h"
 
 namespace leka {
@@ -17,7 +17,7 @@ namespace dsi {
 	void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams);
 
 	void DSI_IRQHandler(void);
-	void init(LCD_Model lcd_model);
+	void init();
 	void start();
 	void reset();
 }	// namespace dsi

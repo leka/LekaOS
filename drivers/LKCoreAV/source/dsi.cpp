@@ -22,7 +22,7 @@ namespace dsi {
 		}
 	}
 
-	void init(LCD_Model lcd_model)
+	void init()
 	{
 		DSI_PLLInitTypeDef dsiPllInit;
 		uint32_t LcdClock = 27429; /*!< LcdClk = 27429 kHz */
@@ -54,17 +54,19 @@ namespace dsi {
 		hdsivideo.Mode			   = DSI_VID_MODE_BURST; /* Mode Video burst ie : one LgP per line */
 		hdsivideo.NullPacketSize   = 0xFFF;
 		hdsivideo.NumberOfChunks   = 0;
-		hdsivideo.PacketSize = lcd_model.HACT; /* Value depending on display orientation choice portrait/landscape */
-		hdsivideo.HorizontalSyncActive = (lcd_model.HSA * laneByteClk_kHz) / LcdClock;
-		hdsivideo.HorizontalBackPorch  = (lcd_model.HBP * laneByteClk_kHz) / LcdClock;
+		hdsivideo.PacketSize =
+			screen_property.HACT; /* Value depending on display orientation choice portrait/landscape */
+		hdsivideo.HorizontalSyncActive = (screen_property.HSA * laneByteClk_kHz) / LcdClock;
+		hdsivideo.HorizontalBackPorch  = (screen_property.HBP * laneByteClk_kHz) / LcdClock;
 		hdsivideo.HorizontalLine =
-			((lcd_model.HACT + lcd_model.HSA + lcd_model.HBP + lcd_model.HFP) * laneByteClk_kHz) /
+			((screen_property.HACT + screen_property.HSA + screen_property.HBP + screen_property.HFP) *
+			 laneByteClk_kHz) /
 			LcdClock; /* Value depending on display orientation choice portrait/landscape */
-		hdsivideo.VerticalSyncActive = lcd_model.VSA;
-		hdsivideo.VerticalBackPorch	 = lcd_model.VBP;
-		hdsivideo.VerticalFrontPorch = lcd_model.VFP;
+		hdsivideo.VerticalSyncActive = screen_property.VSA;
+		hdsivideo.VerticalBackPorch	 = screen_property.VBP;
+		hdsivideo.VerticalFrontPorch = screen_property.VFP;
 		hdsivideo.VerticalActive =
-			lcd_model.VACT; /* Value depending on display orientation choice portrait/landscape */
+			screen_property.VACT; /* Value depending on display orientation choice portrait/landscape */
 
 		/* Enable or disable sending LP command while streaming is active in video mode */
 		hdsivideo.LPCommandEnable = DSI_LP_COMMAND_ENABLE; /* Enable sending commands in mode LP (Low Power) */
@@ -135,6 +137,12 @@ namespace dsi {
 	void start() { HAL_DSI_Start(&hdsi); }
 }	// namespace dsi
 }	// namespace leka
+
+// Mandatory by driver st_otm8009a
+void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams)
+{
+	leka::dsi::DSI_IO_WriteCmd(NbrParams, pParams);
+}
 
 void HAL_DSI_ErrorCallback(DSI_HandleTypeDef *hdsi)
 {

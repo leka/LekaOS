@@ -5,14 +5,14 @@
 #ifndef _LEKA_OS_LIB_LTDC_H_
 #define _LEKA_OS_LIB_LTDC_H_
 
-#include "LKScreen.h"
 #include "dsi.h"
+#include "lcd_properties.h"
 
 namespace leka {
 
 extern LTDC_HandleTypeDef hltdc;
 namespace ltdc {
-	void init(LCD_Model lcd_model);
+	void init();
 	void layerInit();
 }	// namespace ltdc
 }	// namespace leka

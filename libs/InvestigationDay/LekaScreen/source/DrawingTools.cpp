@@ -18,7 +18,7 @@ namespace draw {
 	{
 		data_address = frame_buffer_start_address;
 
-		leka::dma2d::loadDrawing((uint32_t *)data_address, leka::screen::width, leka::screen::height, 0, color);
+		leka::dma2d::loadDrawing((uint32_t *)data_address, screen_dimension.width, screen_dimension.height, 0, color);
 	}
 
 	void filledRectangle(uint16_t x_0, uint16_t y_0, uint16_t width, uint16_t height, uint32_t color)
@@ -26,9 +26,9 @@ namespace draw {
 		// x_0 and y_0 refer to left corner of the rectangle
 		uint8_t n_channel = 4;	 // ARGB
 
-		data_address = frame_buffer_start_address + n_channel * (leka::screen::width * y_0 + x_0);
+		data_address = frame_buffer_start_address + n_channel * (screen_dimension.width * y_0 + x_0);
 
-		leka::dma2d::loadDrawing((uint32_t *)data_address, width, height, leka::screen::width - width, color);
+		leka::dma2d::loadDrawing((uint32_t *)data_address, width, height, screen_dimension.width - width, color);
 	}
 }	// namespace draw
 

@@ -12,8 +12,8 @@
 #define JPEG_OUTPUT_DATA_BUFFER 0xC0200000
 
 #include "FATFileSystem.h"
-#include "LKScreen.h"
 #include "dma2d.h"
+#include "lcd_properties.h"
 #include "st_jpeg_utils.h"
 
 #if USE_DECODE_DMA

@@ -7,9 +7,9 @@
 
 #include "rtos/ThisThread.h"
 
-#include "LKScreen.h"
 #include "LowPowerTimer.h"
 #include "dma2d.h"
+#include "lcd_properties.h"
 #include "ltdc.h"
 
 namespace leka {

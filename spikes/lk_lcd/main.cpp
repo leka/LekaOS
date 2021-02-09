@@ -4,17 +4,19 @@
 
 #include "mbed.h"
 
+#include "PinNames.h"
+
 #include "FileManager.h"
 #include "HelloWorld.h"
 #include "LKAVKit.h"
 #include "LKCoreAV.h"
-#include "otm8009a_conf.h"
+#include "lcd_properties.h"
 
 using namespace leka;
 
 HelloWorld hello;
-LKCoreAV lk_core_av(otm8009a_model);
-LKAVKit lk_av_kit(lk_core_av, otm8009a_model);
+LKCoreAV lk_core_av(SCREEN_BACKLIGHT_PWM);
+LKAVKit lk_av_kit(lk_core_av);
 FileManager sd_card;
 
 static BufferedSerial serial(USBTX, USBRX, 9600);

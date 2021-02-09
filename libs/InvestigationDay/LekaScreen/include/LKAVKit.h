@@ -12,7 +12,7 @@ namespace leka {
 class LKAVKit
 {
   public:
-	LKAVKit(LKCoreAV &lk_core_av, LCD_Model lcd_model);
+	LKAVKit(LKCoreAV &lk_core_av);
 
 	void turnOff();
 

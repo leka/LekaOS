@@ -4,7 +4,7 @@ namespace leka {
 using namespace mbed;
 using namespace std::chrono;
 
-LKAVKit::LKAVKit(LKCoreAV &lk_core_av, LCD_Model lcd_model) : _lk_core_av(lk_core_av)
+LKAVKit::LKAVKit(LKCoreAV &lk_core_av) : _lk_core_av(lk_core_av)
 {
 	_lk_core_av.Init();
 	leka::draw::toolsInit();
