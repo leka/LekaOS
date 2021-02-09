@@ -7,7 +7,8 @@ add_library(driver_LKCoreAV STATIC)
 target_include_directories(driver_LKCoreAV
   PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/include/JPEG
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/internal
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/internal/jpeg
 )
 
 target_sources(driver_LKCoreAV
