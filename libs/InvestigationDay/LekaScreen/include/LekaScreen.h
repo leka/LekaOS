@@ -7,6 +7,7 @@
 
 #include "DrawingTools.h"
 #include "LKCoreAV.h"
+#include "Screensaver.h"
 
 class Screen
 {

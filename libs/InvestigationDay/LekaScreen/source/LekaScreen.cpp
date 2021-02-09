@@ -13,12 +13,15 @@ void Screen::start()
 	printf("Screen example\n\n");
 
 	leka::LKCoreAV lk_core_av(SCREEN_BACKLIGHT_PWM);
+	leka::Draw draw;
+	leka::Screensaver screensaver;
 
-	lk_core_av.Init();
-	leka::draw::toolsInit();
+	lk_core_av.initialize();
+	draw.initialize();
+	screensaver.start();
 
 	while (true) {
-		leka::screensaver::run(43200s);	  // 12 hours
+		rtos::ThisThread::sleep_for(1h);
 	}
 
 	printf("End of Screen example\n\n");

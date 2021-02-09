@@ -20,6 +20,10 @@ class LKCoreAV
   public:
 	LKCoreAV(PinName backlight);
 
+	void initialize();
+	static void initializeHAL();
+	static void disposeHAL();
+
 	uint16_t getWidth();
 	uint16_t getHeight();
 	void setBrightness(float value);
@@ -27,21 +31,14 @@ class LKCoreAV
 	void turnOn();
 
 	void rotateUpsideDown(bool upside_down);
-
-	void Init();
-	static void MSPInit();
-	static void MSPDeInit();
-	void DSIInit();
-	void LTDCInit();
-	static void SDRAMInit();
-	void LCDDriverInit();
-	void JPEGCodecInit();
-
-	static void DMAInit();
-	void DMA2DInit();
+	void displayImage(FIL *file);
 
   private:
 	LKScreen _screen;
+	LKLTDC _ltdc;
+	LKDSI _dsi;
+	LKDMA2D _dma2d;
+	LKJPEG _jpeg;
 };
 
 }	// namespace leka

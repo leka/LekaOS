@@ -10,51 +10,31 @@ using namespace mbed;
 
 LKCoreAV::LKCoreAV(PinName backlight) : _screen(backlight) {}
 
-uint16_t LKCoreAV::getWidth()
+void LKCoreAV::initialize()
 {
-	return screen_dimension.width;
-}
-uint16_t LKCoreAV::getHeight()
-{
-	return screen_dimension.height;
-}
+	_dsi.reset();
 
-void LKCoreAV::setBrightness(float value)
-{
-	_screen.setBrightness(value);
-}
+	initializeHAL();
 
-void LKCoreAV::turnOff()
-{
-	_screen.turnOff();
-}
+	_dsi.initialize();
 
-void LKCoreAV::turnOn()
-{
-	_screen.turnOn();
-}
+	_ltdc.initialize(LKDSI::getDsivideoHandler());
+	_ltdc.initializeLayer();
 
-void LKCoreAV::rotateUpsideDown(bool upside_down)
-{
-	_screen.rotateUpsideDown(upside_down);
-}
+	_dsi.start();
 
-void LKCoreAV::Init()
-{
-	leka::dsi::reset();
-	MSPInit();
-	DSIInit();
-	LTDCInit();
-	leka::dsi::start();
-	SDRAMInit();
-	LCDDriverInit();
-	JPEGCodecInit();
-	DMA2DInit();
+	BSP_SDRAM_Init();
+
+	_screen.initializeDriver();
+
+	_jpeg.initialize();
+
+	_dma2d.initialize();
 
 	rotateUpsideDown(false);
 }
 
-void LKCoreAV::MSPInit()
+void LKCoreAV::initializeHAL()
 {
 	// MSP : MCU Support Package. https://stackoverflow.com/a/37520805
 
@@ -90,11 +70,9 @@ void LKCoreAV::MSPInit()
 	/** @brief NVIC configuration for DSI interrupt that is now enabled */
 	HAL_NVIC_SetPriority(DSI_IRQn, 3, 0);
 	HAL_NVIC_EnableIRQ(DSI_IRQn);
-
-	leka::jpeg::mspInit();
 }
 
-void LKCoreAV::MSPDeInit()
+void LKCoreAV::disposeHAL()
 {
 	/** @brief Disable IRQ of LTDC IP */
 	HAL_NVIC_DisableIRQ(LTDC_IRQn);
@@ -116,35 +94,38 @@ void LKCoreAV::MSPDeInit()
 	__HAL_RCC_DSI_CLK_DISABLE();
 }
 
-void LKCoreAV::DSIInit()
+uint16_t LKCoreAV::getWidth()
 {
-	leka::dsi::init();
+	return screen_dimension.width;
+}
+uint16_t LKCoreAV::getHeight()
+{
+	return screen_dimension.height;
 }
 
-void LKCoreAV::LTDCInit()
+void LKCoreAV::setBrightness(float value)
 {
-	leka::ltdc::init();
-	leka::ltdc::layerInit();
+	_screen.setBrightness(value);
 }
 
-void LKCoreAV::SDRAMInit()
+void LKCoreAV::turnOff()
 {
-	BSP_SDRAM_Init();
+	_screen.turnOff();
 }
 
-void LKCoreAV::LCDDriverInit()
+void LKCoreAV::turnOn()
 {
-	_screen.initializeDriver();
+	_screen.turnOn();
 }
 
-void LKCoreAV::JPEGCodecInit()
+void LKCoreAV::rotateUpsideDown(bool upside_down)
 {
-	leka::jpeg::init();
+	_screen.rotateUpsideDown(upside_down);
 }
 
-void LKCoreAV::DMA2DInit()
+void LKCoreAV::displayImage(FIL *file)
 {
-	leka::dma2d::init(screen_dimension.width);
+	_jpeg.display(file);
 }
 
 }	// namespace leka

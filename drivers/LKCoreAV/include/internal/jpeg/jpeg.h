@@ -25,13 +25,28 @@
 #endif
 
 namespace leka {
-namespace jpeg {
-	void mspInit();
-	void mspDeInit();
-	void init();
+
+class LKJPEG
+{
+  public:
+	LKJPEG();
+
+	void initialize();
+	void disposeHAL();
 
 	void display(FIL *JPEG_File);
-}	// namespace jpeg
+
+  private:
+	void decode(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress);
+
+	JPEG_HandleTypeDef hjpeg;
+	JPEG_ConfTypeDef hjpeginfo;
+
+#if USE_DECODE_INTERRUPT or USE_DECODE_DMA
+	uint32_t JpegProcessing_End = 0;
+#endif
+};
+
 }	// namespace leka
 
 #if USE_DECODE_INTERRUPT
@@ -43,8 +58,6 @@ void DMA2_Stream3_IRQHandler(void);
 void DMA2_Stream4_IRQHandler(void);
 #endif
 
-// void OnError_Handler(const char *file, int line);
 void OnError_Handler();
-void HAL_JPEG_MspInit(JPEG_HandleTypeDef *hjpeg);
 
 #endif	 // _LEKA_OS_LIB_JPEG_DECODE_H_

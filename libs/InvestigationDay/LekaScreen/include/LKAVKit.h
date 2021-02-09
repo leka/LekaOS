@@ -7,6 +7,7 @@
 
 #include "DrawingTools.h"
 #include "LKCoreAV.h"
+#include "Screensaver.h"
 
 namespace leka {
 class LKAVKit
@@ -16,8 +17,8 @@ class LKAVKit
 
 	void turnOff();
 
-	void clear(uint32_t ColorIndex = 0xFFFFFFFF);
-	void screenSaver(std::chrono::seconds duration_sec = std::chrono::seconds(10));
+	void clear(uint32_t color = 0xFFFFFFFF);
+	void screensaver();
 
 	void displayImage(FIL *file);
 
@@ -29,6 +30,9 @@ class LKAVKit
 
   private:
 	LKCoreAV &_lk_core_av;
+
+	Draw _draw;
+	Screensaver _screensaver;
 };
 }	// namespace leka
 

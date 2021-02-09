@@ -7,7 +7,6 @@
 
 #include "drivers/PwmOut.h"
 
-#include "dsi.h"
 #include "st_otm8009a.h"
 
 namespace leka {
@@ -27,7 +26,6 @@ class LKScreen
 
   private:
 	mbed::PwmOut _brightness;
-	float _brightness_value = 0;
 };
 
 }	// namespace leka

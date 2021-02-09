@@ -5,16 +5,23 @@
 #ifndef _LEKA_OS_LIB_LTDC_H_
 #define _LEKA_OS_LIB_LTDC_H_
 
-#include "dsi.h"
 #include "lcd_properties.h"
+#include "stm32f7xx_hal.h"
 
 namespace leka {
 
-extern LTDC_HandleTypeDef hltdc;
-namespace ltdc {
-	void init();
-	void layerInit();
-}	// namespace ltdc
+class LKLTDC
+{
+  public:
+	LKLTDC();
+
+	void initialize(DSI_VidCfgTypeDef hdsivideo);
+	void initializeLayer();
+
+  private:
+	LTDC_HandleTypeDef hltdc;
+};
+
 }	// namespace leka
 
 #endif	 // _LEKA_OS_LIB_LTDC_H_

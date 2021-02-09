@@ -9,18 +9,30 @@
 #include "stm32f7xx_hal.h"
 
 namespace leka {
-extern DSI_HandleTypeDef hdsi;
-extern DSI_VidCfgTypeDef hdsivideo;
-extern int DSI_IRQ_counter;
 
-namespace dsi {
-	void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams);
+class LKDSI
+{
+  public:
+	LKDSI();
 
-	void DSI_IRQHandler(void);
-	void init();
+	void initialize();
 	void start();
 	void reset();
-}	// namespace dsi
+
+	static DSI_VidCfgTypeDef getDsivideoHandler();
+
+	static void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams);
+	void DSI_IRQHandler(void);
+	static void HAL_DSI_ErrorCallback(DSI_HandleTypeDef *hdsi);
+
+  private:
+	static DSI_HandleTypeDef hdsi;
+	static DSI_VidCfgTypeDef hdsivideo;
+	int DSI_IRQ_counter;
+
+	static int HAL_error_status;
+};
+
 }	// namespace leka
 
 void HAL_DSI_ErrorCallback(DSI_HandleTypeDef *hdsi);

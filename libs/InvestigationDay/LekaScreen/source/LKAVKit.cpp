@@ -6,8 +6,8 @@ using namespace std::chrono;
 
 LKAVKit::LKAVKit(LKCoreAV &lk_core_av) : _lk_core_av(lk_core_av)
 {
-	_lk_core_av.Init();
-	leka::draw::toolsInit();
+	_lk_core_av.initialize();
+	_draw.initialize();
 }
 
 void LKAVKit::turnOff()
@@ -15,19 +15,20 @@ void LKAVKit::turnOff()
 	_lk_core_av.turnOff();
 }
 
-void LKAVKit::clear(uint32_t ColorIndex)
+void LKAVKit::clear(uint32_t color)
 {
-	leka::draw::clear(ColorIndex);
+	Draw::clear(color);
 }
 
-void LKAVKit::screenSaver(std::chrono::seconds duration_sec)
+void LKAVKit::screensaver()
 {
-	leka::screensaver::run(duration_sec);
+	_screensaver.start();
 }
 
 void LKAVKit::displayImage(FIL *file)
 {
-	leka::jpeg::display(file);
+	_screensaver.stop();
+	_lk_core_av.displayImage(file);
 }
 
 }	// namespace leka

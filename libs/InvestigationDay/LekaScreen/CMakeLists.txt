@@ -14,6 +14,7 @@ target_sources(lib_LekaScreen
   	source/LekaScreen.cpp
     source/DrawingTools.cpp
     source/LKAVKit.cpp
+    source/Screensaver.cpp
 )
 
 target_link_libraries(lib_LekaScreen driver_LKCoreAV)

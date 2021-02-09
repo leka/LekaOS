@@ -36,7 +36,8 @@ void screenExample()
 	lk_core_av.setBrightness(0.3f);
 
 	while (true) {
-		lk_av_kit.screenSaver(30s);
+		lk_av_kit.screensaver();
+		rtos::ThisThread::sleep_for(30s);
 		if (f_open(&JPEG_File, filename, FA_READ) == FR_OK) {
 			lk_av_kit.displayImage(&JPEG_File);
 			f_close(&JPEG_File);
