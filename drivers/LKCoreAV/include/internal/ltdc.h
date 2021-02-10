@@ -10,10 +10,10 @@
 
 namespace leka {
 
-class LKLTDC
+class LKCoreLTDC
 {
   public:
-	LKLTDC();
+	LKCoreLTDC();
 
 	void initialize(DSI_VidCfgTypeDef hdsivideo);
 	void initializeLayer();

@@ -6,11 +6,11 @@
 
 namespace leka {
 
-DMA2D_HandleTypeDef LKDMA2D::hdma2d;
+DMA2D_HandleTypeDef LKCoreDMA2D::hdma2d;
 
-LKDMA2D::LKDMA2D() {}
+LKCoreDMA2D::LKCoreDMA2D() {}
 
-void LKDMA2D::initialize()
+void LKCoreDMA2D::initialize()
 {
 	/* Init DMA2D */
 	/*##-1- Configure the DMA2D Mode, Color Mode and output offset #############*/
@@ -50,8 +50,8 @@ void LKDMA2D::initialize()
 	HAL_DMA2D_ConfigLayer(&hdma2d, 1);
 }
 
-void LKDMA2D::loadImage(uint32_t *pSrc, uint32_t *pDst, uint16_t x, uint16_t y, uint16_t xsize, uint16_t ysize,
-						uint32_t width_offset, uint16_t screen_width)
+void LKCoreDMA2D::loadImage(uint32_t *pSrc, uint32_t *pDst, uint16_t x, uint16_t y, uint16_t xsize, uint16_t ysize,
+							uint32_t width_offset, uint16_t screen_width)
 {
 	uint32_t source		 = (uint32_t)pSrc;
 	uint32_t destination = (uint32_t)pDst + (y * screen_width + x) * 4;
@@ -70,7 +70,7 @@ void LKDMA2D::loadImage(uint32_t *pSrc, uint32_t *pDst, uint16_t x, uint16_t y, 
 	}
 }
 
-void LKDMA2D::loadDrawing(void *pDst, uint32_t xSize, uint32_t ySize, uint32_t OffLine, uint32_t ColorIndex)
+void LKCoreDMA2D::loadDrawing(void *pDst, uint32_t xSize, uint32_t ySize, uint32_t OffLine, uint32_t ColorIndex)
 {
 	hdma2d.Init.Mode		 = DMA2D_R2M;
 	hdma2d.Init.OutputOffset = OffLine;

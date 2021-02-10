@@ -9,10 +9,10 @@
 
 namespace leka {
 
-class LKDMA2D
+class LKCoreDMA2D
 {
   public:
-	LKDMA2D();
+	LKCoreDMA2D();
 
 	void initialize();
 

@@ -17,7 +17,7 @@ void Draw::clear(uint32_t color)
 {
 	data_address = frame_buffer_start_address;
 
-	LKDMA2D::loadDrawing((uint32_t *)data_address, screen_dimension.width, screen_dimension.height, 0, color);
+	LKCoreDMA2D::loadDrawing((uint32_t *)data_address, screen_dimension.width, screen_dimension.height, 0, color);
 }
 
 void Draw::filledRectangle(uint16_t x_0, uint16_t y_0, uint16_t width, uint16_t height, uint32_t color)
@@ -26,7 +26,7 @@ void Draw::filledRectangle(uint16_t x_0, uint16_t y_0, uint16_t width, uint16_t 
 	uint8_t n_channel = 4;	 // ARGB
 	data_address	  = frame_buffer_start_address + n_channel * (screen_dimension.width * y_0 + x_0);
 
-	LKDMA2D::loadDrawing((uint32_t *)data_address, width, height, screen_dimension.width - width, color);
+	LKCoreDMA2D::loadDrawing((uint32_t *)data_address, width, height, screen_dimension.width - width, color);
 }
 
 }	// namespace leka

@@ -35,10 +35,10 @@ class LKCoreAV
 
   private:
 	LKScreen _screen;
-	LKLTDC _ltdc;
-	LKDSI _dsi;
-	LKDMA2D _dma2d;
-	LKJPEG _jpeg;
+	LKCoreLTDC _ltdc;
+	LKCoreDSI _dsi;
+	LKCoreDMA2D _dma2d;
+	LKCoreJPEG _jpeg;
 };
 
 }	// namespace leka

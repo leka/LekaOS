@@ -10,16 +10,16 @@
 
 namespace leka {
 
-class LKDSI
+class LKCoreDSI
 {
   public:
-	LKDSI();
+	LKCoreDSI();
 
 	void initialize();
 	void start();
 	void reset();
 
-	static DSI_VidCfgTypeDef getDsivideoHandler();
+	DSI_VidCfgTypeDef getDsivideoHandler();
 
 	static void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams);
 	void DSI_IRQHandler(void);
@@ -27,7 +27,7 @@ class LKDSI
 
   private:
 	static DSI_HandleTypeDef hdsi;
-	static DSI_VidCfgTypeDef hdsivideo;
+	DSI_VidCfgTypeDef hdsivideo;
 	int DSI_IRQ_counter;
 
 	static int HAL_error_status;

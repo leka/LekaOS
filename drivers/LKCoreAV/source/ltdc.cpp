@@ -6,9 +6,9 @@
 
 namespace leka {
 
-LKLTDC::LKLTDC() {}
+LKCoreLTDC::LKCoreLTDC() {}
 
-void LKLTDC::initialize(DSI_VidCfgTypeDef hdsivideo)
+void LKCoreLTDC::initialize(DSI_VidCfgTypeDef hdsivideo)
 {
 	static RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
 
@@ -51,7 +51,7 @@ void LKLTDC::initialize(DSI_VidCfgTypeDef hdsivideo)
 	HAL_LTDC_Init(&hltdc);
 }
 
-void LKLTDC::initializeLayer()
+void LKCoreLTDC::initializeLayer()
 {
 	LTDC_LayerCfgTypeDef layercfg;
 

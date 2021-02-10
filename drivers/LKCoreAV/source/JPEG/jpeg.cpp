@@ -6,9 +6,9 @@
 
 namespace leka {
 
-LKJPEG::LKJPEG() {}
+LKCoreJPEG::LKCoreJPEG() {}
 
-void LKJPEG::disposeHAL()
+void LKCoreJPEG::disposeHAL()
 {
 #if USE_DECODE_DMA
 	HAL_NVIC_DisableIRQ(DMA2_Stream4_IRQn);
@@ -21,7 +21,7 @@ void LKJPEG::disposeHAL()
 #endif
 }
 
-void LKJPEG::initialize()
+void LKCoreJPEG::initialize()
 {
 	JPEG_InitColorTables();
 
@@ -30,7 +30,7 @@ void LKJPEG::initialize()
 	HAL_JPEG_Init(&hjpeg);
 }
 
-void LKJPEG::display(FIL *JPEG_File)
+void LKCoreJPEG::display(FIL *JPEG_File)
 {
 	uint32_t width_offset = 0;
 
@@ -52,11 +52,11 @@ void LKJPEG::display(FIL *JPEG_File)
 		if ((hjpeginfo.ImageWidth % 8) != 0) width_offset = (hjpeginfo.ImageWidth % 8);
 	}
 
-	LKDMA2D::loadImage((uint32_t *)JPEG_OUTPUT_DATA_BUFFER, (uint32_t *)LCD_FRAME_BUFFER, xPos, yPos,
-					   hjpeginfo.ImageWidth, hjpeginfo.ImageHeight, width_offset);
+	LKCoreDMA2D::loadImage((uint32_t *)JPEG_OUTPUT_DATA_BUFFER, (uint32_t *)LCD_FRAME_BUFFER, xPos, yPos,
+						   hjpeginfo.ImageWidth, hjpeginfo.ImageHeight, width_offset);
 }
 
-void LKJPEG::decode(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress)
+void LKCoreJPEG::decode(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress)
 {
 #if USE_DECODE_INTERRUPT or USE_DECODE_DMA
 	#if USE_DECODE_DMA

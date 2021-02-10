@@ -26,10 +26,10 @@
 
 namespace leka {
 
-class LKJPEG
+class LKCoreJPEG
 {
   public:
-	LKJPEG();
+	LKCoreJPEG();
 
 	void initialize();
 	void disposeHAL();

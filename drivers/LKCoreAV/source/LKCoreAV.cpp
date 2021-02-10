@@ -18,7 +18,7 @@ void LKCoreAV::initialize()
 
 	_dsi.initialize();
 
-	_ltdc.initialize(LKDSI::getDsivideoHandler());
+	_ltdc.initialize(_dsi.getDsivideoHandler());
 	_ltdc.initializeLayer();
 
 	_dsi.start();

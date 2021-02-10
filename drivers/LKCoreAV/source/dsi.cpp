@@ -5,13 +5,12 @@
 #include "dsi.h"
 
 namespace leka {
-DSI_HandleTypeDef LKDSI::hdsi;
-DSI_VidCfgTypeDef LKDSI::hdsivideo;
-int LKDSI::HAL_error_status;
+DSI_HandleTypeDef LKCoreDSI::hdsi;
+int LKCoreDSI::HAL_error_status;
 
-LKDSI::LKDSI() {}
+LKCoreDSI::LKCoreDSI() {}
 
-void LKDSI::initialize()
+void LKCoreDSI::initialize()
 {
 	DSI_PLLInitTypeDef dsiPllInit;
 	uint32_t LcdClock = 27429; /*!< LcdClk = 27429 kHz */
@@ -82,12 +81,12 @@ void LKDSI::initialize()
 	HAL_DSI_ConfigVideoMode(&(hdsi), &(hdsivideo));
 }
 
-void LKDSI::start()
+void LKCoreDSI::start()
 {
 	HAL_DSI_Start(&hdsi);
 }
 
-void LKDSI::reset(void)
+void LKCoreDSI::reset(void)
 {
 	GPIO_InitTypeDef gpio_init_structure;
 
@@ -113,12 +112,12 @@ void LKDSI::reset(void)
 	HAL_Delay(10);
 }
 
-DSI_VidCfgTypeDef LKDSI::getDsivideoHandler()
+DSI_VidCfgTypeDef LKCoreDSI::getDsivideoHandler()
 {
 	return hdsivideo;
 }
 
-void LKDSI::DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams)
+void LKCoreDSI::DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams)
 {
 	if (NbrParams <= 1) {
 		HAL_DSI_ShortWrite(&hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, pParams[0], pParams[1]);
@@ -127,13 +126,13 @@ void LKDSI::DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams)
 	}
 }
 
-void LKDSI::DSI_IRQHandler(void)
+void LKCoreDSI::DSI_IRQHandler(void)
 {
 	DSI_IRQ_counter += 1;
 	HAL_DSI_IRQHandler(&hdsi);
 }
 
-void LKDSI::HAL_DSI_ErrorCallback(DSI_HandleTypeDef *hdsi)
+void LKCoreDSI::HAL_DSI_ErrorCallback(DSI_HandleTypeDef *hdsi)
 {
 	HAL_error_status = 1;
 }
@@ -143,10 +142,10 @@ void LKDSI::HAL_DSI_ErrorCallback(DSI_HandleTypeDef *hdsi)
 // Mandatory by driver st_otm8009a
 void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams)
 {
-	leka::LKDSI::DSI_IO_WriteCmd(NbrParams, pParams);
+	leka::LKCoreDSI::DSI_IO_WriteCmd(NbrParams, pParams);
 }
 
 void HAL_DSI_ErrorCallback(DSI_HandleTypeDef *hdsi)
 {
-	leka::LKDSI::HAL_DSI_ErrorCallback(hdsi);
+	leka::LKCoreDSI::HAL_DSI_ErrorCallback(hdsi);
 }
