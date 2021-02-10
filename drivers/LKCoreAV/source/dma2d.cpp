@@ -50,37 +50,20 @@ void LKCoreDMA2D::initialize()
 	HAL_DMA2D_ConfigLayer(&hdma2d, 1);
 }
 
-void LKCoreDMA2D::loadImage(uint32_t *pSrc, uint32_t *pDst, uint16_t x, uint16_t y, uint16_t xsize, uint16_t ysize,
-							uint32_t width_offset, uint16_t screen_width)
+void LKCoreDMA2D::load(bool is_image, uint32_t source_address_color, uint32_t destination_address, uint16_t xsize,
+					   uint16_t ysize, uint16_t output_offset, uint32_t width_offset)
 {
-	uint32_t source		 = (uint32_t)pSrc;
-	uint32_t destination = (uint32_t)pDst + (y * screen_width + x) * 4;
-
-	uint32_t ImageWidth = 800;
-
-	hdma2d.Init.Mode		 = DMA2D_M2M_PFC;
-	hdma2d.Init.OutputOffset = screen_width - ImageWidth;
+	hdma2d.Init.Mode			   = is_image ? DMA2D_M2M_PFC : DMA2D_R2M;
+	hdma2d.Init.OutputOffset	   = output_offset;
+	hdma2d.LayerCfg[1].InputOffset = width_offset;
 
 	if (HAL_DMA2D_Init(&hdma2d) == HAL_OK) {
 		if (HAL_DMA2D_ConfigLayer(&hdma2d, 1) == HAL_OK) {
-			if (HAL_DMA2D_Start(&hdma2d, source, destination, xsize, ysize) == HAL_OK) {
+			if (HAL_DMA2D_Start(&hdma2d, source_address_color, destination_address, xsize, ysize) == HAL_OK) {
 				HAL_DMA2D_PollForTransfer(&hdma2d, 100);
 			}
 		}
 	}
 }
 
-void LKCoreDMA2D::loadDrawing(void *pDst, uint32_t xSize, uint32_t ySize, uint32_t OffLine, uint32_t ColorIndex)
-{
-	hdma2d.Init.Mode		 = DMA2D_R2M;
-	hdma2d.Init.OutputOffset = OffLine;
-
-	if (HAL_DMA2D_Init(&hdma2d) == HAL_OK) {
-		if (HAL_DMA2D_ConfigLayer(&hdma2d, 1) == HAL_OK) {
-			if (HAL_DMA2D_Start(&hdma2d, ColorIndex, (uint32_t)pDst, xSize, ySize) == HAL_OK) {
-				HAL_DMA2D_PollForTransfer(&hdma2d, 10);
-			}
-		}
-	}
-}
 }	// namespace leka

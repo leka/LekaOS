@@ -38,8 +38,10 @@ void LKCoreJPEG::display(FIL *JPEG_File)
 
 	HAL_JPEG_GetInfo(&hjpeg, &hjpeginfo);
 
-	uint16_t xPos = (screen_dimension.width - hjpeginfo.ImageWidth) / 2;
-	uint16_t yPos = (screen_dimension.height - hjpeginfo.ImageHeight) / 2;
+	uint16_t xPos				 = (screen_dimension.width - hjpeginfo.ImageWidth) / 2;
+	uint16_t yPos				 = (screen_dimension.height - hjpeginfo.ImageHeight) / 2;
+	uint32_t destination_address = LCD_FRAME_BUFFER + (yPos * screen_dimension.width + xPos) * 4;
+
 	if (hjpeginfo.ChromaSubsampling == JPEG_420_SUBSAMPLING) {
 		if ((hjpeginfo.ImageWidth % 16) != 0) width_offset = 16 - (hjpeginfo.ImageWidth % 16);
 	}
@@ -52,8 +54,8 @@ void LKCoreJPEG::display(FIL *JPEG_File)
 		if ((hjpeginfo.ImageWidth % 8) != 0) width_offset = (hjpeginfo.ImageWidth % 8);
 	}
 
-	LKCoreDMA2D::loadImage((uint32_t *)JPEG_OUTPUT_DATA_BUFFER, (uint32_t *)LCD_FRAME_BUFFER, xPos, yPos,
-						   hjpeginfo.ImageWidth, hjpeginfo.ImageHeight, width_offset);
+	LKCoreDMA2D::load(true, JPEG_OUTPUT_DATA_BUFFER, destination_address, hjpeginfo.ImageWidth, hjpeginfo.ImageHeight,
+					  screen_dimension.width - hjpeginfo.ImageWidth, width_offset);
 }
 
 void LKCoreJPEG::decode(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress)
