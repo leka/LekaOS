@@ -17,7 +17,6 @@ void Screen::start()
 	leka::Screensaver screensaver;
 
 	lk_core_av.initialize();
-	draw.initialize();
 	screensaver.start();
 
 	while (true) {

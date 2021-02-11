@@ -12,11 +12,21 @@ namespace leka {
 class LKCoreDMA2D
 {
   public:
+	enum class Mode
+	{
+		M2M		= DMA2D_M2M,		   // Memory-to-memory for 2D memory copy operations
+		M2M_PFC = DMA2D_M2M_PFC,	   // Memory-to-memory with pixel format conversion for bitmap drawing with format
+									   // conversion
+		M2M_BLEND = DMA2D_M2M_BLEND,   // Memory-to-memory with pixel format conversion and blending for bitmap or text
+									   // drawing with transparency
+		R2M = DMA2D_R2M				   // Register-to-memory for rectangle filling operations
+	};
+
 	LKCoreDMA2D();
 
 	void initialize();
 
-	static void load(bool is_image, uint32_t source_address_color, uint32_t destination_address, uint16_t xsize,
+	static void load(Mode mode, uint32_t source_address_color, uint32_t destination_address, uint16_t xsize,
 					 uint16_t ysize, uint16_t output_offset, uint32_t width_offset = 0);
 
   private:

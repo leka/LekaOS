@@ -54,8 +54,8 @@ void LKCoreJPEG::display(FIL *JPEG_File)
 		if ((hjpeginfo.ImageWidth % 8) != 0) width_offset = (hjpeginfo.ImageWidth % 8);
 	}
 
-	LKCoreDMA2D::load(true, JPEG_OUTPUT_DATA_BUFFER, destination_address, hjpeginfo.ImageWidth, hjpeginfo.ImageHeight,
-					  screen_dimension.width - hjpeginfo.ImageWidth, width_offset);
+	LKCoreDMA2D::load(LKCoreDMA2D::Mode::M2M_PFC, JPEG_OUTPUT_DATA_BUFFER, destination_address, hjpeginfo.ImageWidth,
+					  hjpeginfo.ImageHeight, screen_dimension.width - hjpeginfo.ImageWidth, width_offset);
 }
 
 void LKCoreJPEG::decode(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress)

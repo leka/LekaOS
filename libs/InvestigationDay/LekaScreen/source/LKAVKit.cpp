@@ -7,7 +7,6 @@ using namespace std::chrono;
 LKAVKit::LKAVKit(LKCoreAV &lk_core_av) : _lk_core_av(lk_core_av)
 {
 	_lk_core_av.initialize();
-	_draw.initialize();
 }
 
 void LKAVKit::turnOff()

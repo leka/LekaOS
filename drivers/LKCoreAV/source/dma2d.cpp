@@ -50,10 +50,10 @@ void LKCoreDMA2D::initialize()
 	HAL_DMA2D_ConfigLayer(&hdma2d, 1);
 }
 
-void LKCoreDMA2D::load(bool is_image, uint32_t source_address_color, uint32_t destination_address, uint16_t xsize,
+void LKCoreDMA2D::load(Mode mode, uint32_t source_address_color, uint32_t destination_address, uint16_t xsize,
 					   uint16_t ysize, uint16_t output_offset, uint32_t width_offset)
 {
-	hdma2d.Init.Mode			   = is_image ? DMA2D_M2M_PFC : DMA2D_R2M;
+	hdma2d.Init.Mode			   = (uint32_t)mode;
 	hdma2d.Init.OutputOffset	   = output_offset;
 	hdma2d.LayerCfg[1].InputOffset = width_offset;
 
