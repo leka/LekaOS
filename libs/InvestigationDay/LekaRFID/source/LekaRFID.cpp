@@ -21,10 +21,6 @@ bool RFID::echo()
 	for (int i = 0; i < 10; i++) {
 		if (_interface.readable()) {
 			_interface.read(buffer, aimed_buffer_length);
-			// for (int i = 0; i < aimed_buffer_length; i++) {
-			// 	printf("%X ", buffer[i]);
-			// }
-			// printf("\n");
 			if ((memcmp(aimed_buffer, buffer, aimed_buffer_length) == 0)) {
 				return true;
 			}
@@ -85,10 +81,6 @@ bool RFID::setIEC15693()
 	for (int i = 0; i < 10; i++) {
 		if (_interface.readable()) {
 			_interface.read(buffer, aimed_buffer_length);
-			// for (int i = 0; i < aimed_buffer_length; i++) {
-			// 	printf("%X ", buffer[i]);
-			// }
-			// printf("\n");
 			if ((memcmp(aimed_buffer, buffer, aimed_buffer_length) == 0)) {
 				return true;
 			}
@@ -144,7 +136,6 @@ void RFID::sendReceive(uint8_t val)
 			auto length = buffer[1];
 			_interface.read(&buffer[2], length);
 
-			// printf("Answer received from reader: ");
 			// TODO: check the second for loop and the use of the index
 			_answer_length = length + 2;
 			for (int j = 0; j < length + 2; j++) {
@@ -178,10 +169,6 @@ bool RFID::setIEC14443()
 	for (int i = 0; i < 10; i++) {
 		if (_interface.readable()) {
 			_interface.read(buffer, aimed_buffer_length);
-			// for (int i = 0; i < aimed_buffer_length; i++) {
-			//     printf("%X ", buffer[i]);
-			// }
-			// printf("\n");
 			if ((memcmp(aimed_buffer, buffer, aimed_buffer_length) == 0)) {
 				return true;
 			}
@@ -200,12 +187,6 @@ void RFID::start()
 	}
 	printf("RFID reader detected!\n\n");
 
-	// while (!setIEC15693()) {
-	//     printf("Attempt to enable RFID reader...\n");
-	//     rtos::ThisThread::sleep_for(1s);
-	// }
-	// printf("RFID reader enable with IEC 15693!\n");
-
 	while (!setIEC14443()) {
 		printf("Attempt to enable RFID reader...\n");
 		rtos::ThisThread::sleep_for(1s);
@@ -219,7 +200,6 @@ void RFID::start()
 	printf("RFID reader gain set!\n");
 
 	while (true) {
-		// sendReceive(1);
 		sendReceive(2);
 		sendReceive(3);
 		rtos::ThisThread::sleep_for(1s);

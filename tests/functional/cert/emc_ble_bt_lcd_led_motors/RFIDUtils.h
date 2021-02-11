@@ -4,10 +4,6 @@ RFID leka_rfid;
 
 void initRfid()
 {
-	// while (!leka_rfid.checkConnected()) {
-	// 	ThisThread::sleep_for(100ms);
-	// }
-
 	while (!leka_rfid.setIEC14443()) {
 		rtos::ThisThread::sleep_for(100ms);
 	}
