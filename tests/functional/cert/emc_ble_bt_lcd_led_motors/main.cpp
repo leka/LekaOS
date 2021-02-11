@@ -21,13 +21,11 @@
 Thread thread_ble;
 #endif
 
-#if USE_HAPTIC
+#if USE_HAPTIC and USE_SD
 DigitalOut audio_enable(SOUND_ENABLE, 1);
-	#if USE_SD and !USE_BLUETOOTH
-		#include "AudioUtils.h"
+	#include "AudioUtils.h"
 Thread thread_audio;
 AnalogOut audio_output(MCU_SOUND_OUT);
-	#endif
 #endif
 
 #if USE_SD
@@ -80,6 +78,14 @@ char buff[buff_size] {};
 
 Watchdog &watchdog = Watchdog::get_instance();
 
+void pairBluetooth()
+{
+	while (!leka_bluetooth.isPaired()) {
+		leka_bluetooth.pairing();
+		rtos::ThisThread::sleep_for(1s);
+	}
+}
+
 int main(void)
 {
 	printf("\nHello, Investigation Day!\n\n");
@@ -91,7 +97,7 @@ int main(void)
 	thread_watchdog.start(watchdog_thread);
 
 #if USE_BLUETOOTH
-	thread_bluetooth.start({&leka_bluetooth, &Bluetooth::start});
+	thread_bluetooth.start(pairBluetooth);
 #endif
 
 #if USE_MOTORS
@@ -108,7 +114,7 @@ int main(void)
 	thread_led.start(led_thread);
 #endif
 
-#if USE_HAPTIC and USE_SD and !USE_BLUETOOTH
+#if USE_HAPTIC and USE_SD
 	audio_pause_duration = 20s;
 	thread_audio.start(callback(playSoundPeriodically, &audio_output));
 #endif

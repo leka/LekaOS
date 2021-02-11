@@ -151,10 +151,10 @@ bool Bluetooth::checkNewMessage()
 
 void Bluetooth::start()
 {
-	// char text[max_buffer_size] = {0};
-	// uint16_t text_length;
+	char text[max_buffer_size] = {0};
+	uint16_t text_length;
 
-	// printf("Bluetooth example\n\n");
+	printf("Bluetooth example\n\n");
 
 	// Enable sound output
 	_buffer_length = BM64::getCommand(BM64::Command::eq_soft_mode, BM64::Command::eq_soft_mode_length, _buffer);
@@ -166,18 +166,18 @@ void Bluetooth::start()
 		pairing();
 		rtos::ThisThread::sleep_for(1s);
 	}
-	// text_length = sprintf(text, "This spike do an echo via bluetooth communication.\n");
-	// sendMessage(text, text_length);
-	// text_length = sprintf(text, "You also can connect with your phone and play songs via the robot!\nEnjoy!\n\n");
-	// sendMessage(text, text_length);
+	text_length = sprintf(text, "This spike do an echo via bluetooth communication.\n");
+	sendMessage(text, text_length);
+	text_length = sprintf(text, "You also can connect with your phone and play songs via the robot!\nEnjoy!\n\n");
+	sendMessage(text, text_length);
 
 	while (true) {
 		checkResponse(true);
-		// if (checkNewMessage()) {
-		// 	text_length = getMessage(text);
-		// 	rtos::ThisThread::sleep_for(2s);   // Delay of echo
-		// 	sendMessage(text, text_length);	   // ECHO
-		// }
+		if (checkNewMessage()) {
+			text_length = getMessage(text);
+			rtos::ThisThread::sleep_for(2s);   // Delay of echo
+			sendMessage(text, text_length);	   // ECHO
+		}
 		rtos::ThisThread::sleep_for(800ms);
 	}
 
