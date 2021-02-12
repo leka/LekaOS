@@ -15,6 +15,7 @@ target_sources(driver_LKCoreVideo
     source/LKCoreDMA2D.cpp
 	source/LKCoreLTDC.cpp
 	source/LKCoreDSI.cpp
+    source/LKCoreLCD.cpp
     source/LKCoreVideo.cpp
     source/st_sdram.cpp
     source/st_otm8009a.cpp
