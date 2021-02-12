@@ -152,6 +152,7 @@ leka_register_unit_tests_for_driver(LKCoreMotor)
 
 # Register libraries
 leka_register_unit_tests_for_library(LKCalculatorKit)
+leka_register_unit_tests_for_library(LKUtils)
 
 #
 # Mark: - Finish up
