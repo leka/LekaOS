@@ -7,11 +7,13 @@ add_library(driver_LKCoreVideo STATIC)
 target_include_directories(driver_LKCoreVideo
   PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/internal
 )
 
 target_sources(driver_LKCoreVideo
   PRIVATE
     source/LKCoreVideo.cpp
+    source/st_otm8009a.c
 )
 
 target_link_libraries(driver_LKCoreVideo mbed-os)
