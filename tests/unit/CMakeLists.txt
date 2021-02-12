@@ -152,6 +152,7 @@ add_subdirectory(template)
 
 # Register drivers
 leka_register_unit_tests_for_driver(LKCoreMotor)
+leka_register_unit_tests_for_driver(LKCoreVideo)
 leka_register_unit_tests_for_driver(LKCoreLightSensor)
 leka_register_unit_tests_for_driver(LKCoreMicrophone)
 
