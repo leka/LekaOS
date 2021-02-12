@@ -24,11 +24,11 @@ class LKCoreDMA2D
 
 	void initialize();
 
-	static void load(Mode mode, uint32_t pdata_or_color, uint32_t destination_address, uint16_t xsize, uint16_t ysize,
-					 uint16_t output_offset, uint32_t width_offset = 0);
+	void load(Mode mode, uint32_t pdata_or_color, uint32_t destination_address, uint16_t xsize, uint16_t ysize,
+			  uint16_t output_offset, uint32_t width_offset = 0);
 
   private:
-	static DMA2D_HandleTypeDef _hdma2d;
+	DMA2D_HandleTypeDef _hdma2d;
 };
 
 }	// namespace leka

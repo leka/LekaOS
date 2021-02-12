@@ -6,11 +6,7 @@
 
 namespace leka {
 
-DMA2D_HandleTypeDef LKCoreDMA2D::_hdma2d;
-
-LKCoreDMA2D::LKCoreDMA2D() {}
-
-void LKCoreDMA2D::initialize()
+LKCoreDMA2D::LKCoreDMA2D()
 {
 	// MARK: Configure DMA2D mode, color mode and output offset
 	_hdma2d.Init.Mode		   = DMA2D_M2M_PFC;
@@ -39,7 +35,10 @@ void LKCoreDMA2D::initialize()
 
 	// MARK: Set DMA2D instance
 	_hdma2d.Instance = DMA2D;
+}
 
+void LKCoreDMA2D::initialize()
+{
 	// MARK: Initializer DMA2D
 	HAL_DMA2D_Init(&_hdma2d);
 	HAL_DMA2D_ConfigLayer(&_hdma2d, 0);
