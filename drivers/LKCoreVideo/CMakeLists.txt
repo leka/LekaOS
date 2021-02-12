@@ -12,7 +12,7 @@ target_include_directories(driver_LKCoreVideo
 
 target_sources(driver_LKCoreVideo
   PRIVATE
-    source/LKCoreDma2d.cpp
+    source/LKCoreDMA2D.cpp
     source/LKCoreVideo.cpp
 )
 

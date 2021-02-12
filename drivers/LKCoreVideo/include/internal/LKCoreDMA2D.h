@@ -28,7 +28,7 @@ class LKCoreDMA2D
 					 uint16_t output_offset, uint32_t width_offset = 0);
 
   private:
-	static DMA2D_HandleTypeDef hdma2d;
+	static DMA2D_HandleTypeDef _hdma2d;
 };
 
 }	// namespace leka
