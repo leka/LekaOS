@@ -28,3 +28,11 @@ target_sources(LKCoreVideo
 )
 
 target_link_libraries(LKCoreVideo mbed-os)
+
+if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
+
+	leka_unit_tests_sources(
+		tests/LKCoreDMA2D_test.cpp
+	)
+
+endif()
