@@ -14,6 +14,6 @@ target_sources(lib_LekaMotors
 	source/LekaMotors.cpp
 )
 
-target_link_libraries(lib_LekaMotors driver_Motor)
+target_link_libraries(lib_LekaMotors LKCoreMotor)
 
 target_link_libraries(lib_LekaMotors mbed-os)

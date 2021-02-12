@@ -53,10 +53,12 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 # Mark: - Define directories
 #
 
-set(UNITTESTS_DIR  ${CMAKE_CURRENT_LIST_DIR})
-set(ROOT_DIR       ${UNITTESTS_DIR}/../..)
-set(MBED_OS_DIR    ${ROOT_DIR}/extern/mbed-os)
-set(MBED_STUBS_DIR ${UNITTESTS_DIR}/mbed-os/stubs)
+set(UNITTESTS_DIR ${CMAKE_CURRENT_LIST_DIR})
+set(ROOT_DIR      ${UNITTESTS_DIR}/../..)
+set(MBED_OS_DIR   ${ROOT_DIR}/extern/mbed-os)
+
+set(MBED_STUBS_DIR   ${UNITTESTS_DIR}/mbed-os/stubs)
+set(MBED_INCLUDE_DIR ${UNITTESTS_DIR}/mbed-os/include)
 
 set(LIBS_DIR      ${ROOT_DIR}/libs)
 set(DRIVERS_DIR   ${ROOT_DIR}/drivers)
@@ -119,12 +121,21 @@ function(leka_unit_tests_sources UNIT_TESTS_SOURCES)
 	)
 endfunction()
 
-# Define function to register new unit tests
+# Define function to register new unit tests for libraries
 function(leka_register_unit_tests_for_library LIBRARY)
-	add_subdirectory("${LIBS_DIR}/${LIBRARY}" "lib/${LIBRARY}")
+	add_subdirectory("${LIBS_DIR}/${LIBRARY}" "libs/${LIBRARY}")
 	target_link_libraries(LekaOSUnitTestsExec
 		PRIVATE
 			${LIBRARY}
+	)
+endfunction()
+
+# Define function to register new unit tests for drivers
+function(leka_register_unit_tests_for_driver DRIVER)
+	add_subdirectory("${DRIVERS_DIR}/${DRIVER}" "drivers/${DRIVER}")
+	target_link_libraries(LekaOSUnitTestsExec
+		PRIVATE
+			${DRIVER}
 	)
 endfunction()
 
@@ -136,7 +147,12 @@ endfunction()
 add_subdirectory(mbed-os)
 add_subdirectory(template)
 
+# Register drivers
+leka_register_unit_tests_for_driver(LKCoreMotor)
+
+# Register libraries
 leka_register_unit_tests_for_library(LKCalculatorKit)
+leka_register_unit_tests_for_library(LKUtils)
 
 #
 # Mark: - Finish up

@@ -5,20 +5,12 @@
 #ifndef _LEKA_OS_SPIKE_MOTORS_UTILS_H_
 #define _LEKA_OS_SPIKE_MOTORS_UTILS_H_
 
-#include "Motor.h"
+#include "LKCoreMotor.h"
 
 using namespace leka;
 
-DigitalOut motor_right_dir_1(PE_4);
-DigitalOut motor_right_dir_2(PE_5);
-PwmOut motor_right_speed(PA_2);
-
-DigitalOut motor_left_dir_1(PC_13);
-DigitalOut motor_left_dir_2(PI_8);
-PwmOut motor_left_speed(PA_1);
-
-Motor motor_right(motor_right_dir_1, motor_right_dir_2, motor_right_speed);
-Motor motor_left(motor_left_dir_1, motor_left_dir_2, motor_left_speed);
+LKCoreMotor motor_right(MOTOR_RIGHT_DIRECTION_1, MOTOR_RIGHT_DIRECTION_2, MOTOR_RIGHT_PWM);
+LKCoreMotor motor_left(MOTOR_LEFT_DIRECTION_1, MOTOR_LEFT_DIRECTION_2, MOTOR_LEFT_PWM);
 
 void spinLeft()
 {

@@ -111,7 +111,7 @@ coverage:
 	@gcovr -r . -e tests/unit/mbed-os -e googletest -e $(UNIT_TESTS_BUILD_DIR) --html-details $(UNIT_TESTS_COVERAGE_DIR)/coverage.html
 	@echo "📝 Html report can be viewed with:"
 	@echo "    open $(UNIT_TESTS_COVERAGE_DIR)/coverage.html\n"
-	@gcovr -r . --exclude-directories '.*googletest.*' --exclude-directories '.*mbed-os.*' --exclude-directories '.*template.*' -e '.*gtest.*'
+	@gcovr -r . --exclude-directories '.*googletest.*' --exclude-directories '.*mbed-os.*' --exclude-directories '.*template.*' -e '.*gtest.*' -e '.*_test\.cpp' -e 'extern.*'
 
 coverage_json:
 	@echo ""
