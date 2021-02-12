@@ -14,6 +14,7 @@ target_sources(driver_LKCoreVideo
   PRIVATE
     source/LKCoreDMA2D.cpp
     source/LKCoreVideo.cpp
+    source/st_sdram.c
 )
 
 target_link_libraries(driver_LKCoreVideo mbed-os)
