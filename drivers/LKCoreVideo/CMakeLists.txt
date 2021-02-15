@@ -2,16 +2,16 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(driver_LKCoreVideo STATIC)
+add_library(LKCoreVideo STATIC)
 
-target_include_directories(driver_LKCoreVideo
+target_include_directories(LKCoreVideo
   PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/include/internal
 	${CMAKE_CURRENT_SOURCE_DIR}/include/internal/jpeg
 )
 
-target_sources(driver_LKCoreVideo
+target_sources(LKCoreVideo
   PRIVATE
     source/LKCoreDMA2D.cpp
 	source/LKCoreJPEG.cpp
@@ -27,4 +27,4 @@ target_sources(driver_LKCoreVideo
     source/st_otm8009a.cpp
 )
 
-target_link_libraries(driver_LKCoreVideo mbed-os)
+target_link_libraries(LKCoreVideo mbed-os)
