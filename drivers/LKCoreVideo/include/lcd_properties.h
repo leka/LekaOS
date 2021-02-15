@@ -8,6 +8,7 @@
 #include "st_otm8009a.h"
 
 namespace leka {
+
 namespace lcd {
 
 	constexpr uint32_t frame_buffer_address = 0xC0000000;
@@ -31,6 +32,15 @@ namespace lcd {
 	} property;
 
 }	// namespace lcd
+
+namespace dsi {
+
+	constexpr uint32_t lcdClock			 = 27429;	// LcdClk = 27429 kHz
+	constexpr uint32_t laneByteClock_kHz = 62500;	// 500 MHz / 8 = 62.5 MHz = 62500 kHz
+	constexpr float txEscapeClockDiv	 = laneByteClock_kHz / 15620;
+
+}	// namespace dsi
+
 }	// namespace leka
 
 #endif	 // _LEKA_OS_LCD_PROPERTIES_H_
