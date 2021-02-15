@@ -13,6 +13,7 @@ target_include_directories(driver_LKCoreVideo
 target_sources(driver_LKCoreVideo
   PRIVATE
     source/LKCoreDMA2D.cpp
+	source/LKCoreLTDC.cpp
     source/LKCoreVideo.cpp
     source/st_sdram.cpp
     source/st_otm8009a.cpp
