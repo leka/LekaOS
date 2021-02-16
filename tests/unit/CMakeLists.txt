@@ -165,6 +165,7 @@ leka_register_unit_tests_for_library(LKUtils)
 target_link_libraries(LekaOSUnitTestsExec
 	PRIVATE
 		gtest_main
+		gmock_main
 		mbed-os
 )
 
