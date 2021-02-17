@@ -47,10 +47,9 @@ void LKCoreDMA2D::initialize()
 	HAL_DMA2D_ConfigLayer(&_hdma2d, 1);
 }
 
-void LKCoreDMA2D::load(Mode mode, uint32_t pdata_or_color, uint32_t destination_address, uint16_t xsize, uint16_t ysize,
-					   uint16_t output_offset, uint32_t width_offset)
+void LKCoreDMA2D::load(LoadParameters params)
 {
-	switch (mode) {
+	switch (params.mode) {
 		case Mode::R2M:
 			_hdma2d.Init.Mode = DMA2D_R2M;
 			break;
@@ -60,12 +59,13 @@ void LKCoreDMA2D::load(Mode mode, uint32_t pdata_or_color, uint32_t destination_
 		default:
 			return;
 	}
-	_hdma2d.Init.OutputOffset		= output_offset;
-	_hdma2d.LayerCfg[1].InputOffset = width_offset;
+	_hdma2d.Init.OutputOffset		= params.output_offset;
+	_hdma2d.LayerCfg[1].InputOffset = params.width_offset;
 
 	if (HAL_DMA2D_Init(&_hdma2d) == HAL_OK) {
 		if (HAL_DMA2D_ConfigLayer(&_hdma2d, 1) == HAL_OK) {
-			if (HAL_DMA2D_Start(&_hdma2d, pdata_or_color, destination_address, xsize, ysize) == HAL_OK) {
+			if (HAL_DMA2D_Start(&_hdma2d, params.pdata_or_color, params.destination_address, params.xsize,
+								params.ysize) == HAL_OK) {
 				HAL_DMA2D_PollForTransfer(&_hdma2d, 100);
 			}
 		}
