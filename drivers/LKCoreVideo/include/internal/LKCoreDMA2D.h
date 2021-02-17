@@ -20,12 +20,21 @@ class LKCoreDMA2D
 		R2M			 // Register-to-memory for rectangle filling operations
 	};
 
+	struct LoadParameters {
+		Mode mode;
+		uint32_t pdata_or_color;
+		uint32_t destination_address;
+		uint16_t xsize;
+		uint16_t ysize;
+		uint16_t output_offset;
+		uint32_t width_offset = 0;
+	};
+
 	LKCoreDMA2D();
 
 	void initialize();
 
-	void load(Mode mode, uint32_t pdata_or_color, uint32_t destination_address, uint16_t xsize, uint16_t ysize,
-			  uint16_t output_offset, uint32_t width_offset = 0);
+	void load(LoadParameters params);
 
   private:
 	DMA2D_HandleTypeDef _hdma2d;
