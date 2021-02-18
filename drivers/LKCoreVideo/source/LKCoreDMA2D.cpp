@@ -8,7 +8,7 @@
 
 namespace leka {
 
-LKCoreDMA2D::LKCoreDMA2D()
+LKCoreDMA2D::LKCoreDMA2D(LKCoreSTM32Hal &hal) : _hal(hal)
 {
 	// MARK: Configure DMA2D mode, color mode and output offset
 	_hdma2d.Init.Mode		   = DMA2D_M2M_PFC;
@@ -44,27 +44,33 @@ void LKCoreDMA2D::initialize()
 	// MARK: Initializer DMA2D
 	// This part **must not** be moved to the constructor as LCD
 	// initialization must be performed in a very specific order
-	HAL_DMA2D_Init(&_hdma2d);
-	HAL_DMA2D_ConfigLayer(&_hdma2d, 0);
-	HAL_DMA2D_ConfigLayer(&_hdma2d, 1);
+	_hal.HAL_DMA2D_Init(&_hdma2d);
+	_hal.HAL_DMA2D_ConfigLayer(&_hdma2d, 0);
+	_hal.HAL_DMA2D_ConfigLayer(&_hdma2d, 1);
+}
+
+void LKCoreDMA2D::transferData(uint32_t pdata, uint16_t width, uint16_t height)
+{
+	if (_hal.HAL_DMA2D_Init(&_hdma2d) == HAL_OK) {
+		if (_hal.HAL_DMA2D_ConfigLayer(&_hdma2d, 1) == HAL_OK) {
+			if (_hal.HAL_DMA2D_Start(&_hdma2d, pdata, lcd::frame_buffer_address, width, height) == HAL_OK) {
+				_hal.HAL_DMA2D_PollForTransfer(&_hdma2d, 100);
+			}
+		}
+	}
 }
 
 void LKCoreDMA2D::transferImage(uint16_t width, uint16_t height, uint16_t width_offset)
 {
-	uint32_t source_address		 = jpeg::decoded_buffer_address;
-	uint32_t destination_address = lcd::frame_buffer_address;
-
 	_hdma2d.Init.Mode				= DMA2D_M2M_PFC;
-	_hdma2d.Init.OutputOffset		= 0;
 	_hdma2d.LayerCfg[1].InputOffset = width_offset;
 
-	if (HAL_DMA2D_Init(&_hdma2d) == HAL_OK) {
-		if (HAL_DMA2D_ConfigLayer(&_hdma2d, 1) == HAL_OK) {
-			if (HAL_DMA2D_Start(&_hdma2d, source_address, destination_address, width, height) == HAL_OK) {
-				HAL_DMA2D_PollForTransfer(&_hdma2d, 100);
-			}
-		}
-	}
+	transferData(jpeg::decoded_buffer_address, width, height);
+}
+
+DMA2D_HandleTypeDef LKCoreDMA2D::getHandler(void)
+{
+	return _hdma2d;
 }
 
 }	// namespace leka
