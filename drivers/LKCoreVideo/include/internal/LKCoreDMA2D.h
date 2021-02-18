@@ -5,21 +5,25 @@
 #ifndef _LEKA_OS_LIB_DMA2D_H_
 #define _LEKA_OS_LIB_DMA2D_H_
 
-#include "stm32f7xx_hal.h"
+#include "LKCoreSTM32Hal.h"
 
 namespace leka {
 
 class LKCoreDMA2D
 {
   public:
-	LKCoreDMA2D();
+	LKCoreDMA2D(LKCoreSTM32Hal &hal);
 
 	void initialize();
 
+	void transferData(uint32_t pdata, uint16_t width, uint16_t height);
 	void transferImage(uint16_t width, uint16_t height, uint16_t width_offset);
+
+	DMA2D_HandleTypeDef getHandler(void);
 
   private:
 	DMA2D_HandleTypeDef _hdma2d;
+	LKCoreSTM32Hal &_hal;
 };
 
 }	// namespace leka
