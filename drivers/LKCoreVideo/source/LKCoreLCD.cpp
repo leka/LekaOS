@@ -4,7 +4,7 @@
 
 #include "LKCoreLCD.h"
 
-#include "rtos/rtos.h"
+#include "rtos/ThisThread.h"
 
 #include "st_otm8009a.h"
 
