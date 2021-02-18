@@ -4,13 +4,13 @@
 
 #include "LKCoreDSI.h"
 
-#include "rtos/rtos.h"
+#include "rtos/ThisThread.h"
 
 #include "corevideo_config.h"
 
-namespace leka {
+using namespace std::chrono;
 
-using namespace std::literals::chrono_literals;
+namespace leka {
 
 // TODO: move to header after class or use static inline (needs C++17) as described here:
 // https://stackoverflow.com/a/50298253/2205264
@@ -110,13 +110,13 @@ void LKCoreDSI::reset(void)
 	// Activate MIPI_DSI_RESET active low
 	HAL_GPIO_WritePin(GPIOJ, GPIO_PIN_15, GPIO_PIN_RESET);
 
-	ThisThread::sleep_for(20ms);
+	rtos::ThisThread::sleep_for(20ms);
 
 	// Desactivate MIPI_DSI_RESET
 	HAL_GPIO_WritePin(GPIOJ, GPIO_PIN_15, GPIO_PIN_SET);
 
 	// Wait for 10ms after releasing MIPI_DSI_RESET before sending commands
-	ThisThread::sleep_for(10ms);
+	rtos::ThisThread::sleep_for(10ms);
 }
 
 DSI_VidCfgTypeDef LKCoreDSI::getConfig()
