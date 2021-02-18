@@ -41,6 +41,19 @@ namespace dsi {
 
 }	// namespace dsi
 
+namespace jpeg {
+
+	constexpr uint32_t decoded_buffer_address = 0xC0200000;
+
+	const uint8_t JPEG_ARGB8888 = 0;   // ARGB8888 Color Format
+	const uint8_t JPEG_RGB888	= 1;   // RGB888 Color Format
+	const uint8_t JPEG_RGB565	= 2;   // RGB565 Color Format
+
+	const uint8_t JPEG_RGB_FORMAT = JPEG_ARGB8888;	 // Select RGB format: ARGB8888, RGB888, RBG565
+	const uint8_t JPEG_SWAP_RB	  = 0;				 // Change color order to BGR
+
+}	// namespace jpeg
+
 }	// namespace leka
 
 #endif	 // _LEKA_OS_LCD_PROPERTIES_H_
