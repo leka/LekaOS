@@ -19,7 +19,6 @@ target_sources(LKCoreVideo
 	source/LKCoreDSI.cpp
     source/LKCoreLCD.cpp
 	source/LKCoreLTDC.cpp
-	source/LKCoreSTM32Hal.cpp
     source/LKCoreVideo.cpp
 	source/st_decode_polling.cpp
 	source/st_jpeg_utils.cpp
@@ -28,6 +27,7 @@ target_sources(LKCoreVideo
 )
 
 target_link_libraries(LKCoreVideo mbed-os)
+target_link_libraries(LKCoreVideo LKCoreSTM32Hal)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
