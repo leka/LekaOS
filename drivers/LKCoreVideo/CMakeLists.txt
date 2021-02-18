@@ -8,15 +8,19 @@ target_include_directories(driver_LKCoreVideo
   PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/include/internal
+	${CMAKE_CURRENT_SOURCE_DIR}/include/internal/jpeg
 )
 
 target_sources(driver_LKCoreVideo
   PRIVATE
     source/LKCoreDMA2D.cpp
+	source/LKCoreJPEG.cpp
 	source/LKCoreLTDC.cpp
 	source/LKCoreDSI.cpp
     source/LKCoreLCD.cpp
     source/LKCoreVideo.cpp
+	source/st_decode_polling.cpp
+	source/st_jpeg_utils.cpp
     source/st_sdram.cpp
     source/st_otm8009a.cpp
 )
