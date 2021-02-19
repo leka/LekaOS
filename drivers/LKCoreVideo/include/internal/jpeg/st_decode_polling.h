@@ -17,22 +17,22 @@
  ******************************************************************************
  */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __DECODE_POLLING_H
-	#define __DECODE_POLLING_H
+// /* Define to prevent recursive inclusion -------------------------------------*/
+// #ifndef __DECODE_POLLING_H
+// 	#define __DECODE_POLLING_H
 
-	/* Includes ------------------------------------------------------------------*/
-	#include "stm32f7xx_hal.h"
-	#include "stm32f7xx_hal_jpeg.h"
-	#include "st_jpeg_utils.h"
-	#include "storage/filesystem/fat/ChaN/ff.h"
+// 	/* Includes ------------------------------------------------------------------*/
+// 	#include "stm32f7xx_hal.h"
+// 	#include "stm32f7xx_hal_jpeg.h"
+// 	#include "st_jpeg_utils.h"
+// 	#include "storage/filesystem/fat/ChaN/ff.h"
 
-/* Exported variables --------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
-HAL_StatusTypeDef JPEG_DecodePolling(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress);
+// /* Exported variables --------------------------------------------------------*/
+// /* Exported constants --------------------------------------------------------*/
+// /* Exported macro ------------------------------------------------------------*/
+// /* Exported functions ------------------------------------------------------- */
+// HAL_StatusTypeDef JPEG_DecodePolling(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress);
 
-#endif /* __DECODE_POLLING_H */
+// #endif /* __DECODE_POLLING_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -18,11 +18,13 @@
  */
 
 /* Includes ------------------------------------------------------------------*/
+#include "LKCoreJPEG.h"
 #include "st_decode_polling.h"
 
-#include "LKCoreJPEG.h"
-
 using namespace leka;
+
+// TODO: find a way to better handle this here.
+extern LKCoreJPEG corejpeg;
 
 /** @addtogroup STM32F7xx_HAL_Examples
  * @{
@@ -33,34 +35,34 @@ using namespace leka;
  */
 
 /* Private typedef -----------------------------------------------------------*/
-typedef struct {
-	uint8_t *DataBuffer;
-	uint32_t DataBufferSize;
+// typedef struct {
+// 	uint8_t *DataBuffer;
+// 	uint32_t DataBufferSize;
 
-} JPEG_Data_BufferTypeDef;
+// } JPEG_Data_BufferTypeDef;
 
-/* Private define ------------------------------------------------------------*/
+// /* Private define ------------------------------------------------------------*/
 
-#define CHUNK_SIZE_IN  ((uint32_t)(4096))
-#define CHUNK_SIZE_OUT ((uint32_t)(768))
+// #define CHUNK_SIZE_IN  ((uint32_t)(4096))
+// #define CHUNK_SIZE_OUT ((uint32_t)(768))
 
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
-JPEG_YCbCrToRGB_Convert_Function pConvert_Function;
+// JPEG_YCbCrToRGB_Convert_Function pConvert_Function;
 
-FIL *pFile; /* pointer to File object */
+// FIL *pFile; /* pointer to File object */
 
-uint8_t MCU_Data_OutBuffer[CHUNK_SIZE_OUT];
-uint8_t JPEG_Data_InBuffer[CHUNK_SIZE_IN];
+// uint8_t MCU_Data_OutBuffer[CHUNK_SIZE_OUT];
+// uint8_t JPEG_Data_InBuffer[CHUNK_SIZE_IN];
 
-JPEG_Data_BufferTypeDef JPEG_InBuffer = {JPEG_Data_InBuffer, 0};
+// JPEG_Data_BufferTypeDef JPEG_InBuffer = {JPEG_Data_InBuffer, 0};
 
-uint32_t MCU_TotalNb	   = 0;
-uint32_t MCU_BlockIndex	   = 0;
-uint32_t Inputfile_Offset  = 0;
-uint32_t Jpeg_Decoding_End = 0;
+// uint32_t MCU_TotalNb	   = 0;
+// uint32_t MCU_BlockIndex	   = 0;
+// uint32_t Inputfile_Offset  = 0;
+// uint32_t Jpeg_Decoding_End = 0;
 
-uint32_t FrameBufferAddress;
+// uint32_t FrameBufferAddress;
 
 /* Private function prototypes -----------------------------------------------*/
 
@@ -73,25 +75,25 @@ uint32_t FrameBufferAddress;
  * @param  DestAddress : ARGB destination Frame Buffer Address.
  * @retval None
  */
-HAL_StatusTypeDef JPEG_DecodePolling(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress)
-{
-	pFile			   = file;
-	FrameBufferAddress = DestAddress;
+// HAL_StatusTypeDef JPEG_DecodePolling(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddress)
+// {
+// pFile			   = file;
+// FrameBufferAddress = DestAddress;
 
-	/* Read from JPG file and fill the input buffer */
-	if (f_read(pFile, JPEG_InBuffer.DataBuffer, CHUNK_SIZE_IN, (UINT *)(&JPEG_InBuffer.DataBufferSize)) != FR_OK) {
-		return HAL_ERROR;
-	}
+// /* Read from JPG file and fill the input buffer */
+// if (f_read(pFile, JPEG_InBuffer.DataBuffer, CHUNK_SIZE_IN, (UINT *)(&JPEG_InBuffer.DataBufferSize)) != FR_OK) {
+// 	return HAL_ERROR;
+// }
 
-	/* Update the file Offset*/
-	Inputfile_Offset = JPEG_InBuffer.DataBufferSize;
+// /* Update the file Offset*/
+// Inputfile_Offset = JPEG_InBuffer.DataBufferSize;
 
-	/* Start JPEG decoding with polling (Blocking) method */
-	HAL_JPEG_Decode(hjpeg, JPEG_InBuffer.DataBuffer, JPEG_InBuffer.DataBufferSize, MCU_Data_OutBuffer, CHUNK_SIZE_OUT,
-					HAL_MAX_DELAY);
+// /* Start JPEG decoding with polling (Blocking) method */
+// HAL_JPEG_Decode(hjpeg, JPEG_InBuffer.DataBuffer, JPEG_InBuffer.DataBufferSize, MCU_Data_OutBuffer,
+// CHUNK_SIZE_OUT, 				HAL_MAX_DELAY);
 
-	return HAL_OK;
-}
+// return HAL_OK;
+// }
 
 /**
  * @brief  JPEG Info ready callback
@@ -99,29 +101,30 @@ HAL_StatusTypeDef JPEG_DecodePolling(JPEG_HandleTypeDef *hjpeg, FIL *file, uint3
  * @param pInfo: JPEG Info Struct pointer
  * @retval None
  */
-void HAL_JPEG_InfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *pInfo)
+void HAL_JPEG_InfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info)
 {
-	if (pInfo->ChromaSubsampling == JPEG_420_SUBSAMPLING) {
-		if ((pInfo->ImageWidth % 16) != 0) pInfo->ImageWidth += (16 - (pInfo->ImageWidth % 16));
+	corejpeg.onInfoReadyCallback(hjpeg, info);
+	// if (pInfo->ChromaSubsampling == JPEG_420_SUBSAMPLING) {
+	// 	if ((pInfo->ImageWidth % 16) != 0) pInfo->ImageWidth += (16 - (pInfo->ImageWidth % 16));
 
-		if ((pInfo->ImageHeight % 16) != 0) pInfo->ImageHeight += (16 - (pInfo->ImageHeight % 16));
-	}
+	// 	if ((pInfo->ImageHeight % 16) != 0) pInfo->ImageHeight += (16 - (pInfo->ImageHeight % 16));
+	// }
 
-	if (pInfo->ChromaSubsampling == JPEG_422_SUBSAMPLING) {
-		if ((pInfo->ImageWidth % 16) != 0) pInfo->ImageWidth += (16 - (pInfo->ImageWidth % 16));
+	// if (pInfo->ChromaSubsampling == JPEG_422_SUBSAMPLING) {
+	// 	if ((pInfo->ImageWidth % 16) != 0) pInfo->ImageWidth += (16 - (pInfo->ImageWidth % 16));
 
-		if ((pInfo->ImageHeight % 8) != 0) pInfo->ImageHeight += (8 - (pInfo->ImageHeight % 8));
-	}
+	// 	if ((pInfo->ImageHeight % 8) != 0) pInfo->ImageHeight += (8 - (pInfo->ImageHeight % 8));
+	// }
 
-	if (pInfo->ChromaSubsampling == JPEG_444_SUBSAMPLING) {
-		if ((pInfo->ImageWidth % 8) != 0) pInfo->ImageWidth += (8 - (pInfo->ImageWidth % 8));
+	// if (pInfo->ChromaSubsampling == JPEG_444_SUBSAMPLING) {
+	// 	if ((pInfo->ImageWidth % 8) != 0) pInfo->ImageWidth += (8 - (pInfo->ImageWidth % 8));
 
-		if ((pInfo->ImageHeight % 8) != 0) pInfo->ImageHeight += (8 - (pInfo->ImageHeight % 8));
-	}
+	// 	if ((pInfo->ImageHeight % 8) != 0) pInfo->ImageHeight += (8 - (pInfo->ImageHeight % 8));
+	// }
 
-	if (JPEG_GetDecodeColorConvertFunc(pInfo, &pConvert_Function, &MCU_TotalNb) != HAL_OK) {
-		// OnError_Handler();
-	}
+	// if (JPEG_GetDecodeColorConvertFunc(pInfo, &pConvert_Function, &MCU_TotalNb) != HAL_OK) {
+	// 	// OnError_Handler();
+	// }
 }
 
 /**
@@ -132,18 +135,19 @@ void HAL_JPEG_InfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *pIn
  */
 void HAL_JPEG_GetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t NbDecodedData)
 {
-	if (NbDecodedData != JPEG_InBuffer.DataBufferSize) {
-		Inputfile_Offset = Inputfile_Offset - JPEG_InBuffer.DataBufferSize + NbDecodedData;
-		f_lseek(LKCoreJPEG::getFile(), Inputfile_Offset);
-	}
+	corejpeg.onDataAvailableCallback(hjpeg, NbDecodedData);
+	// if (NbDecodedData != JPEG_InBuffer.DataBufferSize) {
+	// 	Inputfile_Offset = Inputfile_Offset - JPEG_InBuffer.DataBufferSize + NbDecodedData;
+	// 	f_lseek(LKCoreJPEG::getFile(), Inputfile_Offset);
+	// }
 
-	if (f_read(LKCoreJPEG::getFile(), JPEG_InBuffer.DataBuffer, CHUNK_SIZE_IN,
-			   (UINT *)(&JPEG_InBuffer.DataBufferSize)) == FR_OK) {
-		Inputfile_Offset += JPEG_InBuffer.DataBufferSize;
-		HAL_JPEG_ConfigInputBuffer(hjpeg, JPEG_InBuffer.DataBuffer, JPEG_InBuffer.DataBufferSize);
-	} else {
-		// OnError_Handler();
-	}
+	// if (f_read(LKCoreJPEG::getFile(), JPEG_InBuffer.DataBuffer, CHUNK_SIZE_IN,
+	// 		   (UINT *)(&JPEG_InBuffer.DataBufferSize)) == FR_OK) {
+	// 	Inputfile_Offset += JPEG_InBuffer.DataBufferSize;
+	// 	HAL_JPEG_ConfigInputBuffer(hjpeg, JPEG_InBuffer.DataBuffer, JPEG_InBuffer.DataBufferSize);
+	// } else {
+	// 	// OnError_Handler();
+	// }
 }
 
 /**
@@ -155,12 +159,12 @@ void HAL_JPEG_GetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t NbDecodedData)
  */
 void HAL_JPEG_DataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t OutDataLength)
 {
-	uint32_t ConvertedDataCount;
+	// uint32_t ConvertedDataCount;
 
-	MCU_BlockIndex +=
-		pConvert_Function(pDataOut, (uint8_t *)FrameBufferAddress, MCU_BlockIndex, OutDataLength, &ConvertedDataCount);
+	// MCU_BlockIndex +=
+	// 	pConvert_Function(pDataOut, (uint8_t *)FrameBufferAddress, MCU_BlockIndex, OutDataLength, &ConvertedDataCount);
 
-	HAL_JPEG_ConfigOutputBuffer(hjpeg, MCU_Data_OutBuffer, CHUNK_SIZE_OUT);
+	// HAL_JPEG_ConfigOutputBuffer(hjpeg, MCU_Data_OutBuffer, CHUNK_SIZE_OUT);
 }
 
 /**
@@ -180,7 +184,7 @@ void HAL_JPEG_ErrorCallback(JPEG_HandleTypeDef *hjpeg)
  */
 void HAL_JPEG_DecodeCpltCallback(JPEG_HandleTypeDef *hjpeg)
 {
-	Jpeg_Decoding_End = 1;
+	corejpeg.onDecodeCompleteCallback(hjpeg);
 }
 
 /**
