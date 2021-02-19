@@ -15,11 +15,11 @@ target_sources(driver_LKCoreVideo
   PRIVATE
     source/LKCoreDMA2D.cpp
 	source/LKCoreJPEG.cpp
+	source/LKCoreJPEG_HAL_JPEG_Callbacks.cpp
 	source/LKCoreLTDC.cpp
 	source/LKCoreDSI.cpp
     source/LKCoreLCD.cpp
     source/LKCoreVideo.cpp
-	source/st_decode_polling.cpp
 	source/st_jpeg_utils.cpp
     source/st_sdram.cpp
     source/st_otm8009a.cpp
