@@ -41,7 +41,7 @@ namespace lcd {
 LKCoreLCD::LKCoreLCD(PinName backlight, float brightness) : _brightness(backlight)
 {
 	_brightness.period(0.01f);	 // Set PWM at 1/(0.01 seconds) = 100Hz
-	_brightness = brightness;
+	_brightness.write(brightness);
 }
 
 void LKCoreLCD::initialize()
@@ -62,7 +62,7 @@ void LKCoreLCD::turnOff()
 
 void LKCoreLCD::setBrightness(float value)
 {
-	_brightness = value;
+	_brightness.write(value);
 }
 
 void LKCoreLCD::setLandscapeOrientation()
