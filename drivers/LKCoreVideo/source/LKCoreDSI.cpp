@@ -6,7 +6,7 @@
 
 #include "rtos/rtos.h"
 
-#include "lcd_properties.h"
+#include "corevideo_config.h"
 
 namespace leka {
 

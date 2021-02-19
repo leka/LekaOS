@@ -4,7 +4,7 @@
 
 #include "LKCoreLTDC.h"
 
-#include "lcd_properties.h"
+#include "corevideo_config.h"
 
 namespace leka {
 
