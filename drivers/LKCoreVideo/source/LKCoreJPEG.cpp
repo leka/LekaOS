@@ -61,32 +61,14 @@ uint32_t LKCoreJPEG::getWidthOffset()
 	return width_offset;
 }
 
-void LKCoreJPEG::getJpegInformation()
-{
-	HAL_JPEG_GetInfo(&_hjpeg, &_config);
-
-	// Image centered
-	uint16_t x_corner_top_left = (lcd::dimension.width - _config.ImageWidth) / 2;
-	uint16_t y_corner_top_left = (lcd::dimension.height - _config.ImageHeight) / 2;
-
-	_dma2d_params.mode			 = LKCoreDMA2D::Mode::M2M_PFC;
-	_dma2d_params.pdata_or_color = jpeg::decoded_buffer_address;
-	_dma2d_params.destination_address =
-		lcd::frame_buffer_address + (y_corner_top_left * lcd::dimension.width + x_corner_top_left) * 4;
-	_dma2d_params.xsize			= _config.ImageWidth;
-	_dma2d_params.ysize			= _config.ImageHeight;
-	_dma2d_params.output_offset = lcd::dimension.width - _config.ImageWidth;
-	_dma2d_params.width_offset	= getWidthOffset();
-}
-
 void LKCoreJPEG::display(FIL *jpeg_file)
 {
 	_file = jpeg_file;
 	decodePolling(jpeg::decoded_buffer_address);
 
-	getJpegInformation();
+	HAL_JPEG_GetInfo(&_hjpeg, &_config);
 
-	_dma2d.load(_dma2d_params);
+	_dma2d.transferImage(_config.ImageWidth, _config.ImageHeight, getWidthOffset());
 }
 
 FIL *LKCoreJPEG::getFile()
