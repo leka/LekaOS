@@ -4,7 +4,7 @@
 
 #include "LKCoreJPEG.h"
 
-#include "lcd_properties.h"
+#include "corevideo_config.h"
 #include "st_decode_polling.h"
 #include "st_jpeg_utils.h"
 
