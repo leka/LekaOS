@@ -23,7 +23,6 @@ class LKCoreJPEG
 
 	void decodePolling(uint32_t destination_address);
 	uint32_t getWidthOffset();
-	void getJpegInformation();
 	void display(FIL *jpeg_file);
 
 	static FIL *getFile();
@@ -32,7 +31,6 @@ class LKCoreJPEG
 	JPEG_HandleTypeDef _hjpeg;
 	JPEG_ConfTypeDef _config;
 	LKCoreDMA2D &_dma2d;
-	LKCoreDMA2D::LoadParameters _dma2d_params;
 
 	static FIL *_file;
 };
