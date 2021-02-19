@@ -18,6 +18,8 @@ target_sources(driver_LKCoreVideo
 	source/LKCoreLTDC.cpp
 	source/LKCoreDSI.cpp
     source/LKCoreLCD.cpp
+	source/LKCoreLTDC.cpp
+	source/LKCoreSTM32Hal.cpp
     source/LKCoreVideo.cpp
 	source/st_decode_polling.cpp
 	source/st_jpeg_utils.cpp
