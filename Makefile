@@ -32,6 +32,9 @@ TARGET_BUILD_DIR        := $(PROJECT_BUILD_DIR)/${TARGET_BOARD}
 UNIT_TESTS_BUILD_DIR    := $(ROOT_DIR)/_build_unit_tests
 UNIT_TESTS_COVERAGE_DIR := $(UNIT_TESTS_BUILD_DIR)/_coverage
 
+EXCLUDE_FROM_COVERAGE = --exclude-directories '.*googletest.*' --exclude-directories '.*mbed-os.*' --exclude-directories '.*template.*' \
+						-e '.*gtest.*' -e '.*mock.*' -e '.*_test\.cpp' -e 'extern.*' -e '.*st_.*' -e '.*LKCoreSTM32Hal.*' \
+
 #
 # MARK: - .bin path
 #
@@ -108,10 +111,12 @@ unit_tests:
 coverage:
 	@echo ""
 	@echo "🔬 Generating code coverage 📝"
-	@gcovr -r . -e tests/unit/mbed-os -e googletest -e $(UNIT_TESTS_BUILD_DIR) --html-details $(UNIT_TESTS_COVERAGE_DIR)/coverage.html
+	@echo ""
+	@gcovr -r . $(EXCLUDE_FROM_COVERAGE)
+	@gcovr -r . $(EXCLUDE_FROM_COVERAGE) --html-details $(UNIT_TESTS_COVERAGE_DIR)/coverage.html
+	@echo ""
 	@echo "📝 Html report can be viewed with:"
 	@echo "    open $(UNIT_TESTS_COVERAGE_DIR)/coverage.html\n"
-	@gcovr -r . --exclude-directories '.*googletest.*' --exclude-directories '.*mbed-os.*' --exclude-directories '.*template.*' -e '.*gtest.*' -e '.*_test\.cpp' -e 'extern.*'
 
 coverage_json:
 	@echo ""
