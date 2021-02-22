@@ -5,29 +5,32 @@
 add_library(LKCoreVideo STATIC)
 
 target_include_directories(LKCoreVideo
-  PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/internal
-	${CMAKE_CURRENT_SOURCE_DIR}/include/internal/jpeg
+	PUBLIC
+		include
+		include/internal
+		include/internal/jpeg
 )
 
 target_sources(LKCoreVideo
   PRIVATE
-    source/LKCoreDMA2D.cpp
+	source/LKCoreDMA2D.cpp
 	source/LKCoreJPEG.cpp
 	source/LKCoreLTDC.cpp
 	source/LKCoreDSI.cpp
-    source/LKCoreLCD.cpp
+	source/LKCoreLCD.cpp
 	source/LKCoreLTDC.cpp
-    source/LKCoreVideo.cpp
+	source/LKCoreVideo.cpp
 	source/st_decode_polling.cpp
 	source/st_jpeg_utils.cpp
-    source/st_sdram.cpp
-    source/st_otm8009a.cpp
+	source/st_sdram.cpp
+	source/st_otm8009a.cpp
 )
 
-target_link_libraries(LKCoreVideo mbed-os)
-target_link_libraries(LKCoreVideo LKCoreSTM32Hal)
+target_link_libraries(LKCoreVideo
+	PRIVATE
+		mbed-os
+		LKCoreSTM32Hal
+)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
