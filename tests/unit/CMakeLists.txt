@@ -57,6 +57,7 @@ set(UNITTESTS_DIR ${CMAKE_CURRENT_LIST_DIR})
 set(ROOT_DIR      ${UNITTESTS_DIR}/../..)
 set(MBED_OS_DIR   ${ROOT_DIR}/extern/mbed-os)
 
+set(MBED_MOCKS_DIR   ${UNITTESTS_DIR}/mbed-os/mocks)
 set(MBED_STUBS_DIR   ${UNITTESTS_DIR}/mbed-os/stubs)
 set(MBED_INCLUDE_DIR ${UNITTESTS_DIR}/mbed-os/include)
 
@@ -115,9 +116,10 @@ add_custom_command(
 
 # Define function to add sources to LekaOS Unit Tests
 function(leka_unit_tests_sources UNIT_TESTS_SOURCES)
+	set(_UNIT_TESTS_SOURCES ${UNIT_TESTS_SOURCES} ${ARGN})
 	target_sources(LekaOSUnitTestsExec
 		PRIVATE
-			${UNIT_TESTS_SOURCES}
+			${_UNIT_TESTS_SOURCES}
 	)
 endfunction()
 
