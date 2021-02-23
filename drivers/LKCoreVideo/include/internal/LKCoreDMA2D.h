@@ -5,14 +5,14 @@
 #ifndef _LEKA_OS_LIB_DMA2D_H_
 #define _LEKA_OS_LIB_DMA2D_H_
 
-#include "LKCoreSTM32Hal.h"
+#include "LKCoreSTM32HalBase.h"
 
 namespace leka {
 
 class LKCoreDMA2D
 {
   public:
-	LKCoreDMA2D(LKCoreSTM32Hal &hal);
+	LKCoreDMA2D(LKCoreSTM32HalBase &hal);
 
 	void initialize();
 
@@ -23,7 +23,7 @@ class LKCoreDMA2D
 
   private:
 	DMA2D_HandleTypeDef _hdma2d;
-	LKCoreSTM32Hal &_hal;
+	LKCoreSTM32HalBase &_hal;
 };
 
 }	// namespace leka
