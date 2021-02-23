@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_STM32_HAL_MOCK_H_
 #define _LEKA_OS_STM32_HAL_MOCK_H_
 
-#include "LKCoreSTM32Hal.h"
+#include "LKCoreSTM32HalBase.h"
 #include "gmock/gmock.h"
 
 namespace leka {
 
-class LKCoreSTM32HalMock : public LKCoreSTM32Hal
+class LKCoreSTM32HalMock : public LKCoreSTM32HalBase
 {
   public:
 	MOCK_METHOD(HAL_StatusTypeDef, HAL_DMA2D_Init, (DMA2D_HandleTypeDef * hdma2d), (override));
