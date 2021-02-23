@@ -13,6 +13,9 @@ target_include_directories(mbed-os
 		${UNITTESTS_DIR}/mbed-os/include
 		${UNITTESTS_DIR}/mbed-os/mocks
 
+		${ROOT_DIR}/drivers/LKCoreVideo/include
+		${ROOT_DIR}/drivers/LKCoreVideo/include/internal
+
 		${ROOT_DIR}/drivers/LKCoreSTM32Hal/include
 		${ROOT_DIR}/extern/mbed-os/targets/TARGET_STM/TARGET_STM32F7/STM32Cube_FW
 		${ROOT_DIR}/extern/mbed-os/targets/TARGET_STM/TARGET_STM32F7/STM32Cube_FW/CMSIS
@@ -83,6 +86,7 @@ target_sources(mbed-os
 		${MBED_STUBS_DIR}/stub_ThisThread.cpp
 		${MBED_STUBS_DIR}/stub_PwmOut.cpp
 		${MBED_STUBS_DIR}/stub_gpio_api.cpp
+		${MBED_STUBS_DIR}/stub_st_otm8009a.cpp
 )
 
 target_compile_options(mbed-os
