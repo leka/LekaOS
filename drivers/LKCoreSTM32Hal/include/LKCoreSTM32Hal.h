@@ -5,11 +5,12 @@
 #ifndef _LEKA_OS_STM32_HAL_H_
 #define _LEKA_OS_STM32_HAL_H_
 
+#include "LKCoreSTM32HalBase.h"
 #include "stm32f7xx_hal.h"
 
 namespace leka {
 
-class LKCoreSTM32Hal
+class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 {
   public:
 	LKCoreSTM32Hal();
