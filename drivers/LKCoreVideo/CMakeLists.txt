@@ -34,6 +34,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
 		tests/LKCoreDMA2D_test.cpp
+		tests/LKCoreDSI_test.cpp
 	)
 
 endif()
