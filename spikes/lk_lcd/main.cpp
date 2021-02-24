@@ -12,6 +12,7 @@
 #include "LKCoreLCD.h"
 #include "LKCoreLTDC.h"
 #include "LKCoreSTM32Hal.h"
+#include "st_otm8009a.h"
 #include "st_sdram.h"
 
 using namespace leka;
@@ -20,7 +21,7 @@ HelloWorld hello;
 
 LKCoreSTM32Hal hal;
 LKCoreDMA2D coredma2d(hal);
-LKCoreDSI coredsi;
+LKCoreDSI coredsi(hal);
 LKCoreJPEG corejpeg(coredma2d);
 LKCoreLCD corelcd(SCREEN_BACKLIGHT_PWM, 0.5f);
 LKCoreLTDC coreltdc;
@@ -35,6 +36,12 @@ Thread screen_thread;
 
 void init()
 {
+	DSI_IO_RegisterWriteCmd(
+		[](uint32_t NbrParams, uint8_t *pParams)
+		{
+			coredsi.writeCommand(pParams, NbrParams);
+		});
+
 	coredsi.reset();
 
 	/** @brief Enable the LTDC clock */

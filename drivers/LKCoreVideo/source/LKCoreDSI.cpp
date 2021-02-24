@@ -12,11 +12,7 @@ using namespace std::chrono;
 
 namespace leka {
 
-// TODO: move to header after class or use static inline (needs C++17) as described here:
-// https://stackoverflow.com/a/50298253/2205264
-DSI_HandleTypeDef LKCoreDSI::_hdsi;
-
-LKCoreDSI::LKCoreDSI()
+LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
 	// Base address of DSI Host/Wrapper registers to be set before calling De-Init
 	_hdsi.Instance = DSI;
@@ -74,20 +70,20 @@ void LKCoreDSI::initialize()
 	dsiPllInit.PLLIDF  = DSI_PLL_IN_DIV5;
 	dsiPllInit.PLLODF  = DSI_PLL_OUT_DIV1;
 
-	HAL_DSI_DeInit(&(_hdsi));
+	_hal.HAL_DSI_DeInit(&_hdsi);
 
 	// Initialize DSI
 	// DO NOT MOVE to the constructor as LCD initialization
 	// must be performed in a very specific order
-	HAL_DSI_Init(&(_hdsi), &(dsiPllInit));
+	_hal.HAL_DSI_Init(&_hdsi, &dsiPllInit);
 
 	// Configure DSI Video mode timings
-	HAL_DSI_ConfigVideoMode(&(_hdsi), &(_config));
+	_hal.HAL_DSI_ConfigVideoMode(&_hdsi, &_config);
 }
 
 void LKCoreDSI::start()
 {
-	HAL_DSI_Start(&_hdsi);
+	_hal.HAL_DSI_Start(&_hdsi);
 }
 
 void LKCoreDSI::reset(void)
@@ -97,7 +93,7 @@ void LKCoreDSI::reset(void)
 
 	GPIO_InitTypeDef gpio_init_structure;
 
-	__HAL_RCC_GPIOJ_CLK_ENABLE();
+	_hal.HAL_RCC_GPIOJ_CLK_ENABLE();
 
 	// Configure the GPIO on PJ15 (MIPI_DSI_RESET)
 	gpio_init_structure.Pin	  = GPIO_PIN_15;
@@ -105,18 +101,23 @@ void LKCoreDSI::reset(void)
 	gpio_init_structure.Pull  = GPIO_PULLUP;
 	gpio_init_structure.Speed = GPIO_SPEED_HIGH;
 
-	HAL_GPIO_Init(GPIOJ, &gpio_init_structure);
+	_hal.HAL_GPIO_Init(GPIOJ, &gpio_init_structure);
 
 	// Activate MIPI_DSI_RESET active low
-	HAL_GPIO_WritePin(GPIOJ, GPIO_PIN_15, GPIO_PIN_RESET);
+	_hal.HAL_GPIO_WritePin(GPIOJ, GPIO_PIN_15, GPIO_PIN_RESET);
 
 	rtos::ThisThread::sleep_for(20ms);
 
 	// Desactivate MIPI_DSI_RESET
-	HAL_GPIO_WritePin(GPIOJ, GPIO_PIN_15, GPIO_PIN_SET);
+	_hal.HAL_GPIO_WritePin(GPIOJ, GPIO_PIN_15, GPIO_PIN_SET);
 
 	// Wait for 10ms after releasing MIPI_DSI_RESET before sending commands
 	rtos::ThisThread::sleep_for(10ms);
+}
+
+DSI_HandleTypeDef LKCoreDSI::getHandle()
+{
+	return _hdsi;
 }
 
 DSI_VidCfgTypeDef LKCoreDSI::getConfig()
@@ -124,19 +125,15 @@ DSI_VidCfgTypeDef LKCoreDSI::getConfig()
 	return _config;
 }
 
-void LKCoreDSI::DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams)
+void LKCoreDSI::writeCommand(uint8_t *data, uint32_t size)
 {
-	if (NbrParams <= 1) {
-		HAL_DSI_ShortWrite(&_hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, pParams[0], pParams[1]);
+	// Example of implementation (coredsi is a LKCoreDSI object):
+	// DSI_IO_RegisterWriteCmd([](uint32_t NbrParams, uint8_t *pParams){coredsi.writeCommand(pParams, NbrParams);});
+	if (size <= 1) {
+		_hal.HAL_DSI_ShortWrite(&_hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, data[0], data[1]);
 	} else {
-		HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, NbrParams, pParams[NbrParams], pParams);
+		_hal.HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, size, data[size], data);
 	}
 }
 
 }	// namespace leka
-
-// Implementation mandatory st_otm8009a driver
-void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams)
-{
-	leka::LKCoreDSI::DSI_IO_WriteCmd(NbrParams, pParams);
-}
