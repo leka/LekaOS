@@ -180,6 +180,10 @@ extern "C" {
  * @}
  */
 
+/* Exported types ------------------------------------------------------------*/
+
+typedef void (*pDSI_IO_WriteCmd)(uint32_t NbrParams, uint8_t *pParams);
+
 /* Exported macro ------------------------------------------------------------*/
 
 /** @defgroup OTM8009A_Exported_Macros OTM8009A Exported Macros
@@ -195,6 +199,7 @@ extern "C" {
 /** @addtogroup OTM8009A_Exported_Functions
  * @{
  */
+void DSI_IO_RegisterWriteCmd(pDSI_IO_WriteCmd p_function);
 void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams);
 uint8_t OTM8009A_Init(uint32_t ColorCoding, uint32_t orientation);
 void OTM8009A_IO_Delay(uint32_t Delay);
