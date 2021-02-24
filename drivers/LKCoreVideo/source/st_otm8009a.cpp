@@ -53,6 +53,9 @@
 
 /* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+
+pDSI_IO_WriteCmd p_io_write;
+
 /* Private constants ---------------------------------------------------------*/
 /** @defgroup OTM8009A_Private_Constants OTM8009A Private Constants
  * @{
@@ -183,12 +186,19 @@ const uint8_t ShortRegData51[] = {0xC6, 0x06};
  * @{
  */
 
+void DSI_IO_RegisterWriteCmd(pDSI_IO_WriteCmd p_function)
+{
+	p_io_write = p_function;
+}
+
 /**
  * @brief  DSI IO write short/long command.
  * @note : Can be surcharged by application code implementation of the function.
  */
-__weak void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams)
+void DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams)
 {
+	p_io_write(NbrParams, pParams);
+
 	/* NOTE : This function Should not be modified, when it is needed,
 			  the DSI_IO_WriteCmd could be implemented in the user file
 	 */
