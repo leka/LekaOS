@@ -38,7 +38,7 @@ namespace lcd {
 
 }	// namespace lcd
 
-LKCoreLCD::LKCoreLCD(PinName backlight, float brightness) : _brightness(backlight)
+LKCoreLCD::LKCoreLCD(LKCoreDSIBase &dsi, PinName backlight, float brightness) : _dsi(dsi), _brightness(backlight)
 {
 	_brightness.period(0.01f);	 // Set PWM at 1/(0.01 seconds) = 100Hz
 	_brightness.write(brightness);
@@ -52,28 +52,29 @@ void LKCoreLCD::initialize()
 
 void LKCoreLCD::turnOn()
 {
-	DSI_IO_WriteCmd(0, (uint8_t *)lcd::command::status::on);
+	_dsi.writeCommand((uint8_t *)lcd::command::status::on, 0);
 }
 
 void LKCoreLCD::turnOff()
 {
-	DSI_IO_WriteCmd(0, (uint8_t *)lcd::command::status::off);
+	_dsi.writeCommand((uint8_t *)lcd::command::status::off, 0);
 }
 
 void LKCoreLCD::setBrightness(float value)
 {
-	_brightness.write(value);
+	if (value > 1.0f) {
+		_brightness.write(1.0f);
+	} else if (value < 0.0f) {
+		_brightness.write(0.0f);
+	} else {
+		_brightness.write(value);
+	}
 }
 
-void LKCoreLCD::setLandscapeOrientation()
+uint8_t LKCoreLCD::getCommandByteForLandscapeOrientation(bool vertical_symmetry, bool horizontal_symmetry,
+														 bool is_landscape, bool reverse_refresh_top_to_bottom,
+														 bool use_bgr)
 {
-	// Following code is defined from datasheet of OTM8009A driver, register 36H (Memory Data Access Control)
-	bool vertical_symmetry			   = true;
-	bool horizontal_symmetry		   = false;
-	bool is_landscape				   = true;
-	bool reverse_refresh_top_to_bottom = false;
-	bool use_bgr					   = false;
-
 	uint8_t command_byte = 0x00;
 
 	if (vertical_symmetry) {
@@ -92,11 +93,21 @@ void LKCoreLCD::setLandscapeOrientation()
 		command_byte |= (1 << 3);
 	}
 
+	return command_byte;
+}
+
+void LKCoreLCD::setLandscapeOrientation(bool vertical_symmetry, bool horizontal_symmetry, bool is_landscape,
+										bool reverse_refresh_top_to_bottom, bool use_bgr)
+{
+	// Following code is defined from datasheet of OTM8009A driver, register 36H (Memory Data Access Control)
+	uint8_t command_byte = getCommandByteForLandscapeOrientation(vertical_symmetry, horizontal_symmetry, is_landscape,
+																 reverse_refresh_top_to_bottom, use_bgr);
+
 	uint8_t command_orientation[] = {OTM8009A_CMD_MADCTR, command_byte};
 
-	DSI_IO_WriteCmd(0, command_orientation);
-	DSI_IO_WriteCmd(4, (uint8_t *)lcd::command::orientation::update_column);
-	DSI_IO_WriteCmd(4, (uint8_t *)lcd::command::orientation::update_pages);
+	_dsi.writeCommand(command_orientation, 0);
+	_dsi.writeCommand((uint8_t *)lcd::command::orientation::update_column, 4);
+	_dsi.writeCommand((uint8_t *)lcd::command::orientation::update_pages, 4);
 }
 
 }	// namespace leka

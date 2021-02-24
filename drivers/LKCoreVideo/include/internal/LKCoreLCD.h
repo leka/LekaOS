@@ -7,12 +7,14 @@
 
 #include "drivers/PwmOut.h"
 
+#include "LKCoreDSIBase.h"
+
 namespace leka {
 
 class LKCoreLCD
 {
   public:
-	LKCoreLCD(PinName backlight, float brightness = 0.10f);
+	LKCoreLCD(LKCoreDSIBase &dsi, PinName backlight, float brightness = 0.10f);
 
 	void initialize();
 
@@ -21,10 +23,15 @@ class LKCoreLCD
 
 	void setBrightness(float value);
 
-  private:
-	mbed::PwmOut _brightness;
+	uint8_t getCommandByteForLandscapeOrientation(bool vertical_symmetry, bool horizontal_symmetry, bool is_landscape,
+												  bool reverse_refresh_top_to_bottom, bool use_bgr);
+	void setLandscapeOrientation(bool vertical_symmetry = true, bool horizontal_symmetry = false,
+								 bool is_landscape = true, bool reverse_refresh_top_to_bottom = false,
+								 bool use_bgr = false);
 
-	void setLandscapeOrientation();
+  private:
+	LKCoreDSIBase &_dsi;
+	mbed::PwmOut _brightness;
 };
 
 }	// namespace leka
