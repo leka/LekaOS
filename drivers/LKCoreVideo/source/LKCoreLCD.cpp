@@ -4,15 +4,7 @@
 
 #include "LKCoreLCD.h"
 
-#include "rtos/ThisThread.h"
-
 #include "st_otm8009a.h"
-
-// Implementation mandatory st_otm8009a driver
-void OTM8009A_IO_Delay(uint32_t delay)
-{
-	rtos::ThisThread::sleep_for(std::chrono::milliseconds(delay));
-}
 
 namespace leka {
 

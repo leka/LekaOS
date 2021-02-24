@@ -37,6 +37,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "st_otm8009a.h"
 
+#include "rtos/ThisThread.h"
+
 /** @addtogroup BSP
  * @{
  */
@@ -450,6 +452,11 @@ uint8_t OTM8009A_Init(uint32_t ColorCoding, uint32_t orientation)
 	DSI_IO_WriteCmd(0, (uint8_t *)ShortRegData45);
 
 	return 0;
+}
+
+void OTM8009A_IO_Delay(uint32_t delay)
+{
+	rtos::ThisThread::sleep_for(std::chrono::milliseconds(delay));
 }
 
 /**
