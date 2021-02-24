@@ -52,6 +52,7 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 
 AllowShortFunctionsOnASingleLine: Inline
 AllowShortBlocksOnASingleLine: Never
+AllowShortLambdasOnASingleLine: Empty
 
 BreakBeforeBraces: Custom
 BraceWrapping:
@@ -59,5 +60,6 @@ BraceWrapping:
   AfterFunction: true
   AfterEnum: true
   AfterNamespace: false
+  BeforeLambdaBody: true
 
 IndentPPDirectives: BeforeHash
