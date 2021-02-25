@@ -8,7 +8,7 @@
 
 namespace leka {
 
-LKCoreLTDC::LKCoreLTDC()
+LKCoreLTDC::LKCoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi) : _hal(hal), _dsi(dsi)
 {
 	_hltdc.Instance = LTDC;
 
@@ -49,7 +49,7 @@ void LKCoreLTDC::setupLayerConfig()
 
 	_layerConfig.PixelFormat = LTDC_PIXEL_FORMAT_ARGB8888;
 
-	_layerConfig.FBStartAdress = lcd::frame_buffer_address;	  // Previously FB_Address given in parameter
+	_layerConfig.FBStartAdress = lcd::frame_buffer_address;
 
 	_layerConfig.Alpha	= 255;
 	_layerConfig.Alpha0 = 0;
@@ -65,7 +65,7 @@ void LKCoreLTDC::setupLayerConfig()
 	_layerConfig.ImageHeight = lcd::dimension.height;
 }
 
-void LKCoreLTDC::initialize(DSI_VidCfgTypeDef *dsi_video_config)
+void LKCoreLTDC::initialize()
 {
 	RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
 
@@ -81,15 +81,16 @@ void LKCoreLTDC::initialize(DSI_VidCfgTypeDef *dsi_video_config)
 	PeriphClkInitStruct.PLLSAI.PLLSAIR = 7;
 	PeriphClkInitStruct.PLLSAIDivR	   = RCC_PLLSAIDIVR_2;
 
-	HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
+	_hal.HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 
 	// MARK: Get LTDC Configuration from DSI Configuration
-	HAL_LTDC_StructInitFromVideoConfig(&_hltdc, dsi_video_config);
+	DSI_VidCfgTypeDef dsi_video_config = _dsi.getConfig();
+	_hal.HAL_LTDC_StructInitFromVideoConfig(&_hltdc, &dsi_video_config);
 
 	// MARK: Initializer LTDC
 	// This part **must not** be moved to the constructor as LCD
 	// initialization must be performed in a very specific order
-	HAL_LTDC_Init(&_hltdc);
+	_hal.HAL_LTDC_Init(&_hltdc);
 }
 
 void LKCoreLTDC::configureLayer()
@@ -97,7 +98,17 @@ void LKCoreLTDC::configureLayer()
 	// MARK: Initializer LTDC layer
 	// This part **must not** be moved to the constructor as LCD
 	// initialization must be performed in a very specific order
-	HAL_LTDC_ConfigLayer(&_hltdc, &_layerConfig, 1);
+	_hal.HAL_LTDC_ConfigLayer(&_hltdc, &_layerConfig, 1);
+}
+
+LTDC_HandleTypeDef LKCoreLTDC::getHandle()
+{
+	return _hltdc;
+}
+
+LTDC_LayerCfgTypeDef LKCoreLTDC::getLayerConfig()
+{
+	return _layerConfig;
 }
 
 }	// namespace leka
