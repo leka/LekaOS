@@ -5,16 +5,17 @@
 #ifndef _LEKA_OS_LIB_LTDC_H_
 #define _LEKA_OS_LIB_LTDC_H_
 
-#include "stm32f7xx_hal.h"
+#include "LKCoreDSIBase.h"
+#include "LKCoreSTM32HalBase.h"
 
 namespace leka {
 
 class LKCoreLTDC
 {
   public:
-	LKCoreLTDC();
+	LKCoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi);
 
-	void initialize(DSI_VidCfgTypeDef *dsi_video_config);
+	void initialize();
 
 	void setupLayerConfig(void);
 	void setupTimingConfig(void);
@@ -22,7 +23,13 @@ class LKCoreLTDC
 
 	void configureLayer(void);
 
+	LTDC_HandleTypeDef getHandle(void);
+	LTDC_LayerCfgTypeDef getLayerConfig(void);
+
   private:
+	LKCoreSTM32HalBase &_hal;
+	LKCoreDSIBase &_dsi;
+
 	LTDC_HandleTypeDef _hltdc;
 	LTDC_LayerCfgTypeDef _layerConfig;
 };
