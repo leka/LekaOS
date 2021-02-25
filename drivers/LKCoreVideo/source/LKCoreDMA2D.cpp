@@ -68,7 +68,7 @@ void LKCoreDMA2D::transferImage(uint16_t width, uint16_t height, uint16_t width_
 	transferData(jpeg::decoded_buffer_address, width, height);
 }
 
-DMA2D_HandleTypeDef LKCoreDMA2D::getHandler(void)
+DMA2D_HandleTypeDef LKCoreDMA2D::getHandle(void)
 {
 	return _hdma2d;
 }
