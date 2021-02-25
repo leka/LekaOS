@@ -49,11 +49,12 @@ void LKCoreDMA2D::initialize()
 	_hal.HAL_DMA2D_ConfigLayer(&_hdma2d, 1);
 }
 
-void LKCoreDMA2D::transferData(uint32_t pdata, uint16_t width, uint16_t height)
+void LKCoreDMA2D::transferData(uintptr_t input_data_address, uintptr_t output_data_address, uint16_t width,
+							   uint16_t height)
 {
 	if (_hal.HAL_DMA2D_Init(&_hdma2d) == HAL_OK) {
 		if (_hal.HAL_DMA2D_ConfigLayer(&_hdma2d, 1) == HAL_OK) {
-			if (_hal.HAL_DMA2D_Start(&_hdma2d, pdata, lcd::frame_buffer_address, width, height) == HAL_OK) {
+			if (_hal.HAL_DMA2D_Start(&_hdma2d, input_data_address, output_data_address, width, height) == HAL_OK) {
 				_hal.HAL_DMA2D_PollForTransfer(&_hdma2d, 100);
 			}
 		}
@@ -64,13 +65,22 @@ void LKCoreDMA2D::transferImage(uint16_t width, uint16_t height, uint16_t width_
 {
 	_hdma2d.Init.Mode				= DMA2D_M2M_PFC;
 	_hdma2d.LayerCfg[1].InputOffset = width_offset;
+	_hdma2d.Init.OutputOffset		= 0;   // TODO: Check if needed
 
-	transferData(jpeg::decoded_buffer_address, width, height);
+	transferData(jpeg::decoded_buffer_address, lcd::frame_buffer_address, width, height);
 }
 
 DMA2D_HandleTypeDef LKCoreDMA2D::getHandle(void)
 {
 	return _hdma2d;
+}
+
+void LKCoreDMA2D::transferDrawing(uintptr_t first_pixel_address, uint16_t width, uint16_t height, uint32_t color)
+{
+	_hdma2d.Init.Mode		  = DMA2D_R2M;
+	_hdma2d.Init.OutputOffset = lcd::dimension.width - width;
+
+	transferData(color, first_pixel_address, width, height);
 }
 
 }	// namespace leka
