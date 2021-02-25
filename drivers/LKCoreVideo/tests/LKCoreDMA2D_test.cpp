@@ -29,37 +29,37 @@ TEST_F(LKCoreDMA2DTest, instantiation)
 	ASSERT_NE(&dma2d, nullptr);
 }
 
-TEST_F(LKCoreDMA2DTest, handlerConfigurationInstance)
+TEST_F(LKCoreDMA2DTest, handleConfigurationInstance)
 {
-	auto handler = dma2d.getHandler();
+	auto handle = dma2d.getHandle();
 
-	ASSERT_EQ(handler.Instance, DMA2D);
+	ASSERT_EQ(handle.Instance, DMA2D);
 }
 
-TEST_F(LKCoreDMA2DTest, handlerConfigurationInit)
+TEST_F(LKCoreDMA2DTest, handleConfigurationInit)
 {
-	auto handler = dma2d.getHandler();
+	auto handle = dma2d.getHandle();
 
-	ASSERT_EQ(handler.Init.ColorMode, DMA2D_OUTPUT_ARGB8888);
-	ASSERT_EQ(handler.Init.AlphaInverted, DMA2D_REGULAR_ALPHA);
-	ASSERT_EQ(handler.Init.RedBlueSwap, DMA2D_RB_REGULAR);
+	ASSERT_EQ(handle.Init.ColorMode, DMA2D_OUTPUT_ARGB8888);
+	ASSERT_EQ(handle.Init.AlphaInverted, DMA2D_REGULAR_ALPHA);
+	ASSERT_EQ(handle.Init.RedBlueSwap, DMA2D_RB_REGULAR);
 }
 
-TEST_F(LKCoreDMA2DTest, handlerConfigurationLayerConfig)
+TEST_F(LKCoreDMA2DTest, handleConfigurationLayerConfig)
 {
-	auto handler = dma2d.getHandler();
+	auto handle = dma2d.getHandle();
 
-	ASSERT_EQ(handler.LayerCfg[0].AlphaMode, DMA2D_REPLACE_ALPHA);
-	ASSERT_EQ(handler.LayerCfg[0].InputAlpha, 0xFF);
-	ASSERT_EQ(handler.LayerCfg[0].InputColorMode, DMA2D_INPUT_ARGB8888);
-	ASSERT_EQ(handler.LayerCfg[0].RedBlueSwap, DMA2D_RB_REGULAR);
-	ASSERT_EQ(handler.LayerCfg[0].AlphaInverted, DMA2D_REGULAR_ALPHA);
+	ASSERT_EQ(handle.LayerCfg[0].AlphaMode, DMA2D_REPLACE_ALPHA);
+	ASSERT_EQ(handle.LayerCfg[0].InputAlpha, 0xFF);
+	ASSERT_EQ(handle.LayerCfg[0].InputColorMode, DMA2D_INPUT_ARGB8888);
+	ASSERT_EQ(handle.LayerCfg[0].RedBlueSwap, DMA2D_RB_REGULAR);
+	ASSERT_EQ(handle.LayerCfg[0].AlphaInverted, DMA2D_REGULAR_ALPHA);
 
-	ASSERT_EQ(handler.LayerCfg[1].AlphaMode, DMA2D_REPLACE_ALPHA);
-	ASSERT_EQ(handler.LayerCfg[1].InputAlpha, 0xFF);
-	ASSERT_EQ(handler.LayerCfg[1].InputColorMode, DMA2D_INPUT_ARGB8888);
-	ASSERT_EQ(handler.LayerCfg[1].RedBlueSwap, DMA2D_RB_REGULAR);
-	ASSERT_EQ(handler.LayerCfg[1].AlphaInverted, DMA2D_REGULAR_ALPHA);
+	ASSERT_EQ(handle.LayerCfg[1].AlphaMode, DMA2D_REPLACE_ALPHA);
+	ASSERT_EQ(handle.LayerCfg[1].InputAlpha, 0xFF);
+	ASSERT_EQ(handle.LayerCfg[1].InputColorMode, DMA2D_INPUT_ARGB8888);
+	ASSERT_EQ(handle.LayerCfg[1].RedBlueSwap, DMA2D_RB_REGULAR);
+	ASSERT_EQ(handle.LayerCfg[1].AlphaInverted, DMA2D_REGULAR_ALPHA);
 }
 
 TEST_F(LKCoreDMA2DTest, initializationSequence)
@@ -141,8 +141,8 @@ TEST_F(LKCoreDMA2DTest, transferImage)
 	}
 
 	dma2d.transferImage(800, 480, 100);
-	auto handler = dma2d.getHandler();
+	auto handle = dma2d.getHandle();
 
-	ASSERT_EQ(handler.Init.Mode, DMA2D_M2M_PFC);
-	ASSERT_EQ(handler.LayerCfg[1].InputOffset, 100);
+	ASSERT_EQ(handle.Init.Mode, DMA2D_M2M_PFC);
+	ASSERT_EQ(handle.LayerCfg[1].InputOffset, 100);
 }

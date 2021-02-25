@@ -19,7 +19,7 @@ class LKCoreDMA2D
 	void transferData(uint32_t pdata, uint16_t width, uint16_t height);
 	void transferImage(uint16_t width, uint16_t height, uint16_t width_offset);
 
-	DMA2D_HandleTypeDef getHandler(void);
+	DMA2D_HandleTypeDef getHandle(void);
 
   private:
 	DMA2D_HandleTypeDef _hdma2d;
