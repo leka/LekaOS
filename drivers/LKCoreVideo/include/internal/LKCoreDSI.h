@@ -5,23 +5,24 @@
 #ifndef _LEKA_OS_DRIVER_DSI_H_
 #define _LEKA_OS_DRIVER_DSI_H_
 
+#include "LKCoreDSIBase.h"
 #include "LKCoreSTM32HalBase.h"
 
 namespace leka {
 
-class LKCoreDSI
+class LKCoreDSI : public LKCoreDSIBase
 {
   public:
 	LKCoreDSI(LKCoreSTM32HalBase &hal);
 
-	void initialize();
-	void start();
-	void reset();
+	void initialize() final;
+	void start() final;
+	void reset() final;
 
 	DSI_HandleTypeDef getHandle();
-	DSI_VidCfgTypeDef getConfig();
+	DSI_VidCfgTypeDef getConfig() final;
 
-	void writeCommand(uint8_t *data, uint32_t size);
+	void writeCommand(uint8_t *data, uint32_t size) final;
 
   private:
 	LKCoreSTM32HalBase &_hal;
