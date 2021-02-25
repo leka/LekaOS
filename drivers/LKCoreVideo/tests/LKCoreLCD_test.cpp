@@ -6,15 +6,17 @@
 
 #include "gtest/gtest.h"
 #include "mock_LKCoreDSI.h"
+#include "st_otm8009a.h"
 #include "stub_PwmOut.h"
 
 using namespace leka;
 using ::testing::_;
 using ::testing::AtLeast;
+using ::testing::ElementsAre;
+using ::testing::InSequence;
 
 // TODO:
 // - Check driver init called
-// - Check arrays in setLandscapeOrientation
 
 class LKCoreLCDTest : public ::testing::Test
 {
@@ -114,10 +116,39 @@ TEST_F(LKCoreLCDTest, getCommandByteForLandscapeOrientationUseBGRTrue)
 	ASSERT_EQ(command_byte, 0x08);
 }
 
+ACTION_TEMPLATE(SaveArray, HAS_3_TEMPLATE_PARAMS(int, k, int, l, typename, T), AND_1_VALUE_PARAMS(pointer))
+{
+	const T *data		= std::get<k>(args);
+	const uint32_t size = std::get<l>(args);
+
+	// TODO: update when writeCommand of DSI is updated
+	for (int i = 0; i < size + 1; i++) {
+		(*pointer)[i] = *(data + i);
+	}
+}
+
 TEST_F(LKCoreLCDTest, setLandscapeOrientation)
 {
-	EXPECT_CALL(dsimock, writeCommand(_, 0)).Times(AtLeast(1));
-	EXPECT_CALL(dsimock, writeCommand(_, 4)).Times(AtLeast(2));
+	auto expected_instruction_array	  = ElementsAre(OTM8009A_CMD_MADCTR, 0xA0);
+	auto expected_update_column_array = ElementsAre(0x00, 0x00, 0x03, 0x1F, OTM8009A_CMD_CASET);
+	auto expected_update_pages_array  = ElementsAre(0x00, 0x00, 0x01, 0xDF, OTM8009A_CMD_PASET);
+
+	uint8_t actual_instruction_array[2];
+	uint8_t actual_update_column_array[5];
+	uint8_t actual_update_pages_array[5];
+
+	{
+		InSequence seq;
+
+		// TODO: update when writeCommand of DSI is updated
+		EXPECT_CALL(dsimock, writeCommand(_, 1)).WillOnce(SaveArray<0, 1, uint8_t>(&actual_instruction_array));
+		EXPECT_CALL(dsimock, writeCommand(_, 4)).WillOnce(SaveArray<0, 1, uint8_t>(&actual_update_column_array));
+		EXPECT_CALL(dsimock, writeCommand(_, 4)).WillOnce(SaveArray<0, 1, uint8_t>(&actual_update_pages_array));
+	}
 
 	corelcd.setLandscapeOrientation();
+
+	EXPECT_THAT(actual_instruction_array, expected_instruction_array);
+	EXPECT_THAT(actual_update_column_array, expected_update_column_array);
+	EXPECT_THAT(actual_update_pages_array, expected_update_pages_array);
 }

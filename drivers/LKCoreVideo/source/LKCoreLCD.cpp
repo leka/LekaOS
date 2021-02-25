@@ -97,7 +97,7 @@ void LKCoreLCD::setLandscapeOrientation(bool vertical_symmetry, bool horizontal_
 
 	uint8_t command_orientation[] = {OTM8009A_CMD_MADCTR, command_byte};
 
-	_dsi.writeCommand(command_orientation, 0);
+	_dsi.writeCommand(command_orientation, 1);
 	_dsi.writeCommand((uint8_t *)lcd::command::orientation::update_column, 4);
 	_dsi.writeCommand((uint8_t *)lcd::command::orientation::update_pages, 4);
 }
