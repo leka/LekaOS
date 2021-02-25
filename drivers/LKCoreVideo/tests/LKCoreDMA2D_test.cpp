@@ -4,11 +4,12 @@
 
 #include "LKCoreDMA2D.h"
 
+#include "corevideo_config.h"
 #include "gtest/gtest.h"
 #include "mock_LKCoreSTM32Hal.h"
 
 using namespace leka;
-// using ::testing::AtLeast;
+using ::testing::_;
 using ::testing::InSequence;
 using ::testing::Return;
 
@@ -84,7 +85,7 @@ TEST_F(LKCoreDMA2DTest, transferDataSequence)
 		EXPECT_CALL(hal, HAL_DMA2D_PollForTransfer).Times(1);
 	}
 
-	dma2d.transferData(0, 0, 0);
+	dma2d.transferData(0, 0, 0, 0);
 }
 
 TEST_F(LKCoreDMA2DTest, transferDataWithFailureForHALDMA2DInit)
@@ -98,7 +99,7 @@ TEST_F(LKCoreDMA2DTest, transferDataWithFailureForHALDMA2DInit)
 		EXPECT_CALL(hal, HAL_DMA2D_PollForTransfer).Times(0);
 	}
 
-	dma2d.transferData(0, 0, 0);
+	dma2d.transferData(0, 0, 0, 0);
 }
 
 TEST_F(LKCoreDMA2DTest, transferDataWithFailureForHALDMA2DConfigLayer)
@@ -112,7 +113,7 @@ TEST_F(LKCoreDMA2DTest, transferDataWithFailureForHALDMA2DConfigLayer)
 		EXPECT_CALL(hal, HAL_DMA2D_PollForTransfer).Times(0);
 	}
 
-	dma2d.transferData(0, 0, 0);
+	dma2d.transferData(0, 0, 0, 0);
 }
 
 TEST_F(LKCoreDMA2DTest, transferDataWithFailureForHALDMA2DStart)
@@ -126,10 +127,35 @@ TEST_F(LKCoreDMA2DTest, transferDataWithFailureForHALDMA2DStart)
 		EXPECT_CALL(hal, HAL_DMA2D_PollForTransfer).Times(0);
 	}
 
-	dma2d.transferData(0, 0, 0);
+	dma2d.transferData(0, 0, 0, 0);
 }
 
 TEST_F(LKCoreDMA2DTest, transferImage)
+{
+	uint16_t image_width  = 800;
+	uint16_t image_height = 480;
+
+	{
+		InSequence seq;
+
+		EXPECT_CALL(hal, HAL_DMA2D_Init).Times(1).WillRepeatedly(Return(HAL_OK));
+		EXPECT_CALL(hal, HAL_DMA2D_ConfigLayer).Times(1).WillRepeatedly(Return(HAL_OK));
+		EXPECT_CALL(
+			hal, HAL_DMA2D_Start(_, jpeg::decoded_buffer_address, lcd::frame_buffer_address, image_width, image_height))
+			.Times(1)
+			.WillRepeatedly(Return(HAL_OK));
+		EXPECT_CALL(hal, HAL_DMA2D_PollForTransfer).Times(1);
+	}
+
+	dma2d.transferImage(image_width, image_height, 100);
+	auto handle = dma2d.getHandle();
+
+	ASSERT_EQ(handle.Init.Mode, DMA2D_M2M_PFC);
+	ASSERT_EQ(handle.LayerCfg[1].InputOffset, 100);
+	ASSERT_EQ(handle.Init.OutputOffset, 0);
+}
+
+TEST_F(LKCoreDMA2DTest, transferDrawing)
 {
 	{
 		InSequence seq;
@@ -140,9 +166,9 @@ TEST_F(LKCoreDMA2DTest, transferImage)
 		EXPECT_CALL(hal, HAL_DMA2D_PollForTransfer).Times(1);
 	}
 
-	dma2d.transferImage(800, 480, 100);
+	dma2d.transferDrawing(0x0, 100, 100, 0xFFFF0000);	// Draw a red square of side 100 pixels in the top left corner
 	auto handle = dma2d.getHandle();
 
-	ASSERT_EQ(handle.Init.Mode, DMA2D_M2M_PFC);
-	ASSERT_EQ(handle.LayerCfg[1].InputOffset, 100);
+	ASSERT_EQ(handle.Init.Mode, DMA2D_R2M);
+	ASSERT_EQ(handle.Init.OutputOffset, 700);
 }
