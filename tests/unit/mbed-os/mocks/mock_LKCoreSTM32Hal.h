@@ -14,6 +14,7 @@ class LKCoreSTM32HalMock : public LKCoreSTM32HalBase
 {
   public:
 	MOCK_METHOD(void, HAL_RCC_GPIOJ_CLK_ENABLE, (), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_RCCEx_PeriphCLKConfig, (RCC_PeriphCLKInitTypeDef * PeriphClkInit), (override));
 
 	MOCK_METHOD(void, HAL_GPIO_Init, (GPIO_TypeDef * GPIOx, GPIO_InitTypeDef *GPIO_Init), (override));
 	MOCK_METHOD(void, HAL_GPIO_WritePin, (GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState), (override));
@@ -39,6 +40,12 @@ class LKCoreSTM32HalMock : public LKCoreSTM32HalBase
 				(DSI_HandleTypeDef * hdsi, uint32_t ChannelID, uint32_t Mode, uint32_t NbParams, uint32_t Param1,
 				 uint8_t *ParametersTable),
 				(override));
+
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_LTDC_StructInitFromVideoConfig,
+				(LTDC_HandleTypeDef * hltdc, DSI_VidCfgTypeDef *VidCfg), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_LTDC_Init, (LTDC_HandleTypeDef * hltdc), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_LTDC_ConfigLayer,
+				(LTDC_HandleTypeDef * hltdc, LTDC_LayerCfgTypeDef *pLayerCfg, uint32_t LayerIdx), (override));
 };
 
 }	// namespace leka
