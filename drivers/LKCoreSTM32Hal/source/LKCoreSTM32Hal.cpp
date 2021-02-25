@@ -9,6 +9,11 @@ void LKCoreSTM32Hal::HAL_RCC_GPIOJ_CLK_ENABLE(void)
 	__HAL_RCC_GPIOJ_CLK_ENABLE();
 }
 
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef *PeriphClkInit)
+{
+	return ::HAL_RCCEx_PeriphCLKConfig(PeriphClkInit);
+}
+
 void LKCoreSTM32Hal::HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init)
 {
 	::HAL_GPIO_Init(GPIOx, GPIO_Init);
@@ -70,6 +75,23 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DSI_LongWrite(DSI_HandleTypeDef *hdsi, uin
 													uint32_t NbParams, uint32_t Param1, uint8_t *ParametersTable)
 {
 	return ::HAL_DSI_LongWrite(hdsi, ChannelID, Mode, NbParams, Param1, ParametersTable);
+}
+
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_LTDC_StructInitFromVideoConfig(LTDC_HandleTypeDef *hltdc,
+																	 DSI_VidCfgTypeDef *VidCfg)
+{
+	return ::HAL_LTDC_StructInitFromVideoConfig(hltdc, VidCfg);
+}
+
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_LTDC_Init(LTDC_HandleTypeDef *hltdc)
+{
+	return ::HAL_LTDC_Init(hltdc);
+}
+
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfgTypeDef *pLayerCfg,
+													   uint32_t LayerIdx)
+{
+	return ::HAL_LTDC_ConfigLayer(hltdc, pLayerCfg, LayerIdx);
 }
 
 }	// namespace leka
