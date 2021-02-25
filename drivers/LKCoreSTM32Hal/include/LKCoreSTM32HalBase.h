@@ -14,7 +14,8 @@ class LKCoreSTM32HalBase
   public:
 	virtual ~LKCoreSTM32HalBase() = default;
 
-	virtual void HAL_RCC_GPIOJ_CLK_ENABLE(void) = 0;
+	virtual void HAL_RCC_GPIOJ_CLK_ENABLE(void)													 = 0;
+	virtual HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef *PeriphClkInit) = 0;
 
 	virtual void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init)				   = 0;
 	virtual void HAL_GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState) = 0;
@@ -33,6 +34,12 @@ class LKCoreSTM32HalBase
 												 uint32_t Param1, uint32_t Param2)							  = 0;
 	virtual HAL_StatusTypeDef HAL_DSI_LongWrite(DSI_HandleTypeDef *hdsi, uint32_t ChannelID, uint32_t Mode,
 												uint32_t NbParams, uint32_t Param1, uint8_t *ParametersTable) = 0;
+
+	virtual HAL_StatusTypeDef HAL_LTDC_StructInitFromVideoConfig(LTDC_HandleTypeDef *hltdc,
+																 DSI_VidCfgTypeDef *VidCfg) = 0;
+	virtual HAL_StatusTypeDef HAL_LTDC_Init(LTDC_HandleTypeDef *hltdc)						= 0;
+	virtual HAL_StatusTypeDef HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfgTypeDef *pLayerCfg,
+												   uint32_t LayerIdx)						= 0;
 
   private:
 };
