@@ -24,7 +24,7 @@ LKCoreDMA2D coredma2d(hal);
 LKCoreDSI coredsi(hal);
 LKCoreJPEG corejpeg(coredma2d);
 LKCoreLCD corelcd(SCREEN_BACKLIGHT_PWM, 0.5f);
-LKCoreLTDC coreltdc;
+LKCoreLTDC coreltdc(hal, coredsi);
 FileManager sd_card;
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
@@ -79,8 +79,7 @@ void init()
 
 	coredsi.initialize();
 
-	DSI_VidCfgTypeDef dsi_config = coredsi.getConfig();
-	coreltdc.initialize(&dsi_config);
+	coreltdc.initialize();
 	coreltdc.configureLayer();
 
 	coredsi.start();
