@@ -2,16 +2,16 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(lib_FileManager STATIC)
+add_library(FileManager STATIC)
 
-target_include_directories(lib_FileManager
-  PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
+target_include_directories(FileManager
+	PUBLIC
+		${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_sources(lib_FileManager
-  PRIVATE
-    source/FileManager.cpp
+target_sources(FileManager
+	PRIVATE
+		source/FileManager.cpp
 )
 
-target_link_libraries(lib_FileManager mbed-os)
+target_link_libraries(FileManager mbed-os)
