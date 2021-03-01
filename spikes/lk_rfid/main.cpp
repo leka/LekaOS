@@ -5,7 +5,7 @@
 #include "mbed.h"
 
 #include "HelloWorld.h"
-#include "LekaRfid.h"
+#include "LekaRFID.h"
 
 using namespace leka;
 

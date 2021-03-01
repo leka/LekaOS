@@ -7,7 +7,7 @@
 #include "HelloWorld.h"
 #include "LekaBluetooth.h"
 #include "LekaFirmware.h"
-#include "LekaRfid.h"
+#include "LekaRFID.h"
 #include "LekaScreen.h"
 #include "LekaTouch.h"
 #include "LekaWifi.h"
