@@ -19,7 +19,7 @@
 	   function includes the MSP layer hardware resources initialization and the
 	   FMC controller configuration to interface with the external SDRAM memory.
 	 o It contains the SDRAM initialization sequence to program the SDRAM external
-	   device using the function BSP_SDRAM_Initialization_sequence(). Note that this
+	   device using the function BSP_SDRAM_Init(). Note that this
 	   sequence is standard for all SDRAM devices, but can include some differences
 	   from a device to another. If it is the case, the right sequence should be
 	   implemented separately.
