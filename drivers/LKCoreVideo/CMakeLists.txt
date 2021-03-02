@@ -17,8 +17,8 @@ target_sources(LKCoreVideo
 	source/LKCoreDSI.cpp
 	source/LKCoreJPEG.cpp
 	source/LKCoreLTDC.cpp
+	source/LKCoreLCDDriverOTM8009A.cpp
 	source/st_jpeg_utils.cpp
-	source/st_otm8009a.cpp
 	source/st_sdram.cpp
     source/LKCoreLCD.cpp
     source/LKCoreVideo.cpp
@@ -36,6 +36,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/LKCoreDMA2D_test.cpp
 		tests/LKCoreDSI_test.cpp
 		tests/LKCoreLTDC_test.cpp
+		tests/LKCoreLCDDriverOTM8009A_test.cpp
 	)
 
 endif()

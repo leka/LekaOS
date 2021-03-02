@@ -7,12 +7,14 @@
 
 #include "drivers/PwmOut.h"
 
+#include "LKCoreLCDDriverBase.h"
+
 namespace leka {
 
 class LKCoreLCD
 {
   public:
-	LKCoreLCD(PinName backlight, float brightness = 0.10f);
+	LKCoreLCD(LKCoreLCDDriverBase &driver);
 
 	void initialize();
 
@@ -22,9 +24,7 @@ class LKCoreLCD
 	void setBrightness(float value);
 
   private:
-	mbed::PwmOut _brightness;
-
-	void setLandscapeOrientation();
+	LKCoreLCDDriverBase &_driver;
 };
 
 }	// namespace leka
