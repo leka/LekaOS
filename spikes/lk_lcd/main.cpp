@@ -10,9 +10,9 @@
 #include "LKCoreDSI.h"
 #include "LKCoreJPEG.h"
 #include "LKCoreLCD.h"
+#include "LKCoreLCDDriverOTM8009A.h"
 #include "LKCoreLTDC.h"
 #include "LKCoreSTM32Hal.h"
-#include "st_otm8009a.h"
 #include "st_sdram.h"
 
 using namespace leka;
@@ -23,7 +23,8 @@ LKCoreSTM32Hal hal;
 LKCoreDMA2D coredma2d(hal);
 LKCoreDSI coredsi(hal);
 LKCoreJPEG corejpeg(coredma2d);
-LKCoreLCD corelcd(SCREEN_BACKLIGHT_PWM, 0.5f);
+LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
+LKCoreLCD corelcd(coreotm);
 LKCoreLTDC coreltdc(hal, coredsi);
 FileManager sd_card;
 
@@ -36,12 +37,6 @@ Thread screen_thread;
 
 void init()
 {
-	DSI_IO_RegisterWriteCmd(
-		[](uint32_t NbrParams, uint8_t *pParams)
-		{
-			coredsi.write(pParams, NbrParams);
-		});
-
 	coredsi.reset();
 
 	/** @brief Enable the LTDC clock */
@@ -89,6 +84,8 @@ void init()
 	corelcd.initialize();
 	corejpeg.initialize();
 	coredma2d.initialize();
+
+	corelcd.setBrightness(0.5f);
 
 	HAL_JPEG_RegisterInfoReadyCallback(corejpeg.getHandlePointer(),
 									   [](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info)
