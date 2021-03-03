@@ -23,7 +23,7 @@ LKCoreSTM32Hal hal;
 LKCoreDMA2D coredma2d(hal);
 LKCoreDSI coredsi(hal);
 LKCoreJPEG corejpeg(coredma2d);
-LKCoreLCD corelcd(SCREEN_BACKLIGHT_PWM, 0.5f);
+LKCoreLCD corelcd(coredsi, SCREEN_BACKLIGHT_PWM, 0.5f);
 LKCoreLTDC coreltdc(hal, coredsi);
 FileManager sd_card;
 
