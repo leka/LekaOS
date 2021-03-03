@@ -10,5 +10,15 @@
 	"cmake.buildDirectory": "${workspaceFolder}/_build/LEKA_V1_2_DEV",
 	"cmake.configureArgs": [
 		"-DTARGET_BOARD=LEKA_V1_2_DEV"
-	]
+	],
+	"markdownlint.config": {
+		"MD002": false,
+		"MD007": {
+			"indent": 4
+		},
+		"MD029": {
+			"style": "one"
+		},
+		"MD033": false
+	}
 }

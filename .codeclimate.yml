@@ -1,4 +1,5 @@
 exclude_patterns:
+  - ".github"
   - "extern/mbed-os"
   - "targets"
   - "tests/unit/mbed-os"
@@ -11,6 +12,9 @@ prepare:
     - "https://gist.githubusercontent.com/ladislas/705c060b5fa6bf84eda2e172c1db2aec/raw/compile_commands.json"
 
 plugins:
+  markdownlint:
+    enabled: true
+
   cppcheck:
     enabled: true
     config:
