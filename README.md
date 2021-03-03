@@ -6,7 +6,7 @@
 
 Welcome to LekaOS!
 
-![](./docs/assets/leka-alpha.jpeg)
+!["Leka Alpha Picture"](./docs/assets/leka-alpha.jpeg)
 
 ## Setup & Installation
 
@@ -17,8 +17,8 @@ Follow the guide:
 ## Documentation
 
 - LekaOS
-	- [Tools - `PinMap`, `PinNames` & `.ioc` files edition](./docs/leka/Tools-Pins.md)
-	- [Tests](./docs/leka/Tests.md)
+    - [Tools - `PinMap`, `PinNames` & `.ioc` files edition](./docs/leka/Tools-Pins.md)
+    - [Tests](./docs/leka/Tests.md)
 
 - Mbed OS
     - [Drivers - SPI Clock Frequency](./docs/mbed-os/SPI.md)

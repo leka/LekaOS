@@ -19,52 +19,52 @@ To start with:
 
 ```bash
 # Clone the repository
-$ git clone https://github.com/leka/LekaOS && cd LekaOS
+git clone https://github.com/leka/LekaOS && cd LekaOS
 
 # Clone or curl Mbed OS using the Makefile
-$ make mbed_clone
+make mbed_clone
 # or
-$ make mbed_curl
+make mbed_curl
 
 # With clone_mbed You can specify a branch (default is mbed-os-6.6.0)
-$ make clone_mbed BRANCH=master
+make clone_mbed BRANCH=master
 ```
 
-### 1. Install mbed-cli & co.
+### 1. Install mbed-cli & co
 
 I recommend the manual install. Make sure to follow the instructions from mbed:
 
-> https://os.mbed.com/docs/mbed-os/v6.3/build-tools/install-and-set-up.html
+> <https://os.mbed.com/docs/mbed-os/v6.3/build-tools/install-and-set-up.html>
 
 ```bash
 # For the latest stable version
-$ python3 -m pip install -U --user mbed-cli mbed-tools
+python3 -m pip install -U --user mbed-cli mbed-tools
 ```
 
 Then, install the required tools:
 
 ```bash
 # First, important packages
-$ python3 -m pip install -U --user pyserial intelhex prettytable
+python3 -m pip install -U --user pyserial intelhex prettytable
 
 # And finally mbed-cli requirements
-$ python3 -m pip install -U --user -r extern/mbed-os/requirements.txt
+python3 -m pip install -U --user -r extern/mbed-os/requirements.txt
 ```
 
 ### 2. Install arm-none-eabi-gcc
 
-#### For macOS:
+#### For macOS
 
 ```bash
-$ brew tap ArmMbed/homebrew-formulae
-$ brew install arm-none-eabi-gcc
+brew tap ArmMbed/homebrew-formulae
+brew install arm-none-eabi-gcc
 ```
 
-#### For Windows & Linux:
+#### For Windows & Linux
 
 You can download the toolchain here:
 
-> https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads
+> <https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads>
 
 ## How to use
 
@@ -72,19 +72,19 @@ We put together an handy [`Makefile`](./Makefile) to make it easier to configure
 
 ```bash
 # First, you need to clone mbed-os
-$ make mbed_clone
+make mbed_clone
 
 # You can specify a branch (default is mbed-os-6.6.0)
-$ make clone_mbed BRANCH=master
+make clone_mbed BRANCH=master
 
 # Then configure the project
-$ make config
+make config
 
 # You can also specify a build type (default is Release)
-$ make config BUILD_TYPE=Debug
+make config BUILD_TYPE=Debug
 
 # Finally, to compile your project
-$ make
+make
 ```
 
 ### Using `.mbedignore`
