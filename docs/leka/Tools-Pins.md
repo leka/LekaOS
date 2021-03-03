@@ -12,12 +12,12 @@ The reference `.csv` file can be found here:
 
 Run the following:
 
-```
+```bash
 # to get the help
-$ ruby tools/ioc_editor.rb --help
+ruby tools/ioc_editor.rb --help
 
 # or to get an example
-$ ruby tools/ioc_editor.rb --check-labels targets/TARGET_LEKA_V1.0_DEV/pins/1.0.0/Leka-MCU_Pins-v1.0.0.ioc
+ruby tools/ioc_editor.rb --check-labels targets/TARGET_LEKA_V1.0_DEV/pins/1.0.0/Leka-MCU_Pins-v1.0.0.ioc
 ```
 
 ## PinNames.h generator
@@ -28,6 +28,6 @@ The [`tools/pin_names_generator.rb`](../../tools/pin_names_generator.rb) script 
 
 Run the following:
 
-```
-$ ruby tools/pin_names_generator.rb targets/TARGET_LEKA_V1_0_DEV/pins/1.1.0/Leka-MCU_Pins-v1.1.0.reference.csv targets/TARGET_LEKA_V1_0_DEV
+```bash
+ruby tools/pin_names_generator.rb targets/TARGET_LEKA_V1_0_DEV/pins/1.1.0/Leka-MCU_Pins-v1.1.0.reference.csv targets/TARGET_LEKA_V1_0_DEV
 ```

@@ -21,7 +21,7 @@ To build and run the unit tests you need to:
 
 ```bash
 # Install brew deps
-$ brew install gcovr lcov
+brew install gcovr lcov
 ```
 
 ### Build & Run
@@ -30,10 +30,10 @@ To build and run unit tests, you need to:
 
 ```bash
 # Config unit tests
-$ make config_unit_tests
+make config_unit_tests
 
 # Build & run
-$ make ut
+make ut
 ```
 
 ## Functional Tests
@@ -71,5 +71,3 @@ For example:
 - Security
 - Crash tests
 - Failure tests
-
-
