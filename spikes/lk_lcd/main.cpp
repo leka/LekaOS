@@ -39,7 +39,7 @@ void init()
 	DSI_IO_RegisterWriteCmd(
 		[](uint32_t NbrParams, uint8_t *pParams)
 		{
-			coredsi.writeCommand(pParams, NbrParams);
+			coredsi.write(pParams, NbrParams);
 		});
 
 	coredsi.reset();
