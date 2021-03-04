@@ -22,7 +22,7 @@ class LKCoreDSI : public LKCoreDSIBase
 	DSI_HandleTypeDef getHandle();
 	DSI_VidCfgTypeDef getConfig() final;
 
-	void writeCommand(uint8_t *data, uint32_t size) final;
+	void write(const uint8_t *data, const uint32_t size) final;
 
   private:
 	LKCoreSTM32HalBase &_hal;
