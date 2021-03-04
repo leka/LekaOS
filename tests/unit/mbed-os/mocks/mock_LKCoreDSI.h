@@ -17,7 +17,7 @@ class LKCoreDSIMock : public LKCoreDSIBase
 	MOCK_METHOD(void, start, (), (override));
 	MOCK_METHOD(void, reset, (), (override));
 	MOCK_METHOD(DSI_VidCfgTypeDef, getConfig, (), (override));
-	MOCK_METHOD(void, writeCommand, (uint8_t * data, uint32_t size), (override));
+	MOCK_METHOD(void, write, (const uint8_t *data, const uint32_t size), (override));
 };
 
 }	// namespace leka
