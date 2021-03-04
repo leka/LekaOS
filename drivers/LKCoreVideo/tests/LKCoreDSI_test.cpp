@@ -137,8 +137,8 @@ TEST_F(LKCoreDSITest, ioWriteCmdShortCommand)
 	EXPECT_CALL(halmock, HAL_DSI_ShortWrite(_, config.VirtualChannelID, _, command[0], command[1])).Times(2);
 	EXPECT_CALL(halmock, HAL_DSI_LongWrite).Times(0);
 
-	coredsi.writeCommand((uint8_t *)command, 0);
-	coredsi.writeCommand((uint8_t *)command, 1);
+	coredsi.write(command, 0);
+	coredsi.write(command, 1);
 }
 
 TEST_F(LKCoreDSITest, ioWriteCmdLongCommand)
@@ -159,6 +159,6 @@ TEST_F(LKCoreDSITest, ioWriteCmdLongCommand)
 											   instruction, command))
 			.Times(1);
 
-		coredsi.writeCommand((uint8_t *)command, n_params);
+		coredsi.write(command, n_params);
 	}
 }
