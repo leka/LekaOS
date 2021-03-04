@@ -127,12 +127,10 @@ DSI_VidCfgTypeDef LKCoreDSI::getConfig()
 
 void LKCoreDSI::write(const uint8_t *data, const uint32_t size)
 {
-	// Example of implementation (coredsi is a LKCoreDSI object):
-	// DSI_IO_RegisterWriteCmd([](uint32_t NbrParams, uint8_t *pParams){coredsi.writeCommand(pParams, NbrParams);});
-	if (size <= 1) {
+	if (size <= 2) {
 		_hal.HAL_DSI_ShortWrite(&_hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, data[0], data[1]);
 	} else {
-		_hal.HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, size, data[size], const_cast<uint8_t *>(data));
+		_hal.HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, size, data[size - 1], const_cast<uint8_t *>(data));
 	}
 }
 
