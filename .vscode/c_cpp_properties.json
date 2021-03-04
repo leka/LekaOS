@@ -9,7 +9,7 @@
 			"macFrameworkPath": [],
 			"compilerPath": "/usr/local/bin/arm-none-eabi-gcc",
 			"cStandard": "gnu11",
-			"cppStandard": "gnu++14",
+			"cppStandard": "gnu++17",
 			"intelliSenseMode": "gcc-arm",
 			"compilerArgs": [],
 			"configurationProvider": "ms-vscode.cmake-tools",
