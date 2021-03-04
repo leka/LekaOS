@@ -25,9 +25,6 @@ list(APPEND CMAKE_MODULE_PATH ${MBED_CMAKE_ROOT_DIR}/utils)
 # Fix error: The C Compiler is not able to compile a simple test program
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
-# Add custom flags
-add_compile_options(-fdiagnostics-color)
-
 include(CheckTypeSize)
 include(Shorthand)
 include(Utils)
@@ -103,12 +100,6 @@ if(NOT MBED_UNITTESTS)
 		list_to_space_separated(CMAKE_ASM_FLAGS_${BUILD_TYPE} ${MCU_COMPILE_OPTIONS_${BUILD_TYPE}})
 	endforeach()
 endif()
-
-# Set language standard
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_EXTENSIONS TRUE)
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_EXTENSIONS TRUE)
 
 # find python (used for memap and several upload methods)
 # -------------------------------------------------------------
