@@ -17,3 +17,6 @@ add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaBluetooth)
 add_subdirectory(${LIBS_DIR}/HardwareTest/LekaSD)
 add_subdirectory(${LIBS_DIR}/HardwareTest/LekaMotors)
 
+add_subdirectory(${LIBS_DIR}/LKCalculatorKit)
+add_subdirectory(${LIBS_DIR}/LKUtils)
+
