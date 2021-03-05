@@ -16,7 +16,9 @@ target_include_directories(mbed-os
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/target_h/platform
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/target_h/platform/cxxsupport
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/target_h/drivers
+		${ROOT_DIR}/extern/mbed-os/UNITTESTS/target_h/rtos
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/target_h/rtos/include
+
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs
 		${ROOT_DIR}/extern/mbed-os
 		${ROOT_DIR}/extern/mbed-os/features
@@ -68,9 +70,15 @@ target_include_directories(mbed-os
 
 target_sources(mbed-os
 	INTERFACE
-		${MBED_STUBS_DIR}/stub_ThisThread.cpp
-		${MBED_STUBS_DIR}/stub_PwmOut.cpp
 		${MBED_STUBS_DIR}/stub_gpio_api.cpp
+		${MBED_STUBS_DIR}/stub_AnalogIn.cpp
+		${MBED_STUBS_DIR}/stub_PwmOut.cpp
+		${MBED_STUBS_DIR}/stub_ThisThread.cpp
+
+		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/mbed_rtos_rtx_stub.c
+		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/rtx_mutex_stub.c
+		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/Mutex_stub.cpp
+		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/mbed_assert_stub.cpp
 )
 
 target_compile_options(mbed-os
