@@ -9,4 +9,7 @@ namespace leka {
 extern float spy_PwmOut_value;
 float spy_PwmOut_getValue();
 
+extern float spy_PwmOut_period;
+float spy_PwmOut_getPeriod();
+
 }	// namespace leka
