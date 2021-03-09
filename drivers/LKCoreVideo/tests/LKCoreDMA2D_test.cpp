@@ -17,8 +17,8 @@ class LKCoreDMA2DTest : public ::testing::Test
   protected:
 	LKCoreDMA2DTest() : dma2d(hal) {}
 
-	void SetUp() override {}
-	void TearDown() override {}
+	// void SetUp() override {}
+	// void TearDown() override {}
 
 	LKCoreSTM32HalMock hal;
 	LKCoreDMA2D dma2d;
