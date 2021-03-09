@@ -129,7 +129,8 @@ coverage_lcov:
 	@echo "🔬 Generating code coverage using lcov 📝"
 	@mkdir -p $(UNIT_TESTS_COVERAGE_DIR)
 	@lcov --capture --directory . --output-file $(UNIT_TESTS_COVERAGE_DIR)/_tmp_coverage.info
-	@lcov --remove $(UNIT_TESTS_COVERAGE_DIR)/_tmp_coverage.info '*googletest*' '*v1*' '*Xcode*' '*CommandLineTools*' '*tests/unit*' -o $(UNIT_TESTS_COVERAGE_DIR)/coverage.info
+	@lcov --remove $(UNIT_TESTS_COVERAGE_DIR)/_tmp_coverage.info '/usr/*' '*extern*' '*googletest*' '*v1*' '*Xcode*' '*CommandLineTools*' '*tests/unit*' -o $(UNIT_TESTS_COVERAGE_DIR)/coverage.info
+	@lcov --list $(UNIT_TESTS_COVERAGE_DIR)/coverage.info
 
 view_coverage:
 	@echo ""
