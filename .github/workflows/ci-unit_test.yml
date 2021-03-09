@@ -56,12 +56,21 @@ jobs:
         run: |
           make ut
 
-      - name: Generate Codeclimate code coverage
+      - name: Generate lcov code coverage
+        run: |
+          make coverage_lcov
+
+      - name: Upload Codeclimate code coverage
         uses: paambaati/codeclimate-action@v2.7.5
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           debug: true
           prefix: ${{github.workspace}}
-          coverageCommand: make coverage_lcov
           coverageLocations: ${{github.workspace}}/_build_unit_tests/_coverage/coverage.info:lcov
+
+      - name: Upload Codecov code coverage
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          bash <(curl -s https://codecov.io/bash) -f ${{github.workspace}}/_build_unit_tests/_coverage/coverage.info || echo "Codecov did not collect coverage reports"
