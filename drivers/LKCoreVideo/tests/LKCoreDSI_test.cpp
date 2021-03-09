@@ -17,8 +17,8 @@ class LKCoreDSITest : public ::testing::Test
   protected:
 	LKCoreDSITest() : coredsi(halmock) {}
 
-	void SetUp() override {}
-	void TearDown() override {}
+	// void SetUp() override {}
+	// void TearDown() override {}
 
 	LKCoreSTM32HalMock halmock;
 	LKCoreDSI coredsi;
