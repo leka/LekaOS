@@ -21,8 +21,8 @@ class LKCoreLTDCTest : public ::testing::Test
   protected:
 	LKCoreLTDCTest() : coreltdc(halmock, dsimock) {}
 
-	void SetUp() override {}
-	void TearDown() override {}
+	// void SetUp() override {}
+	// void TearDown() override {}
 
 	LKCoreSTM32HalMock halmock;
 	LKCoreDSIMock dsimock;
