@@ -56,10 +56,10 @@ jobs:
         run: |
           make ut
 
-      - name: Generate code coverage
+      - name: Generate Codeclimate code coverage
         uses: paambaati/codeclimate-action@v2.7.5
         env:
-          CC_TEST_REPORTER_ID: 8de9444a64780871f476dc71b6ef5ed0406880cc6803680982ceefb84dc96633
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           debug: true
           prefix: ${{github.workspace}}
