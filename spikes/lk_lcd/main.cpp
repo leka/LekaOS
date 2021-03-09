@@ -8,6 +8,7 @@
 #include "HelloWorld.h"
 #include "LKCoreDMA2D.h"
 #include "LKCoreDSI.h"
+#include "LKCoreGraphics.h"
 #include "LKCoreJPEG.h"
 #include "LKCoreLCD.h"
 #include "LKCoreLCDDriverOTM8009A.h"
@@ -22,6 +23,7 @@ HelloWorld hello;
 LKCoreSTM32Hal hal;
 LKCoreDMA2D coredma2d(hal);
 LKCoreDSI coredsi(hal);
+LKCoreGraphics coregraphics(coredma2d);
 LKCoreJPEG corejpeg(coredma2d);
 LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 LKCoreLCD corelcd(coreotm);
@@ -134,6 +136,27 @@ int main(void)
 	FIL JPEG_File;
 
 	hello.start();
+	coregraphics.clearScreen();
+	rtos::ThisThread::sleep_for(1s);
+
+	uint32_t text_length = 0;
+	Color foreground;
+	Color background = CGColor::white;
+	for (int i = 0; i < 20; i++) {
+		text_length = sprintf(buff, "Line #%d", i + 1);
+		foreground	= (i % 2 == 0) ? CGColor::black : CGColor::red;
+		coregraphics.display(buff, text_length, i, foreground, background);
+	}
+	rtos::ThisThread::sleep_for(10s);
+
+	text_length =
+		sprintf(buff,
+				"\t\t\t\tThis sentence is supposed to be on multiple lines because it is too long to be displayed on "
+				"only one line of the screen.");
+
+	coregraphics.display(buff, text_length, 10, {0x00, 0x00, 0xFF}, CGColor::white);   // Write in blue
+
+	rtos::ThisThread::sleep_for(10s);
 
 	while (true) {
 		auto t	   = Kernel::Clock::now() - start;

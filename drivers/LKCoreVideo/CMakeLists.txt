@@ -14,10 +14,14 @@ target_include_directories(LKCoreVideo
 target_sources(LKCoreVideo
   PRIVATE
 	source/LKCoreDMA2D.cpp
+	source/LKCoreGraphics.cpp
+	source/LKCoreJPEG.cpp
+	source/LKCoreLTDC.cpp
 	source/LKCoreDSI.cpp
 	source/LKCoreJPEG.cpp
 	source/LKCoreLTDC.cpp
 	source/LKCoreLCDDriverOTM8009A.cpp
+	source/LKCoreVideo.cpp
 	source/st_jpeg_utils.cpp
 	source/st_sdram.cpp
     source/LKCoreLCD.cpp
