@@ -2,8 +2,8 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DSI_MOCK_H_
-#define _LEKA_OS_DSI_MOCK_H_
+#ifndef _LEKA_OS_LCD_DRIVER_MOCK_H_
+#define _LEKA_OS_LCD_DRIVER_MOCK_H_
 
 #include "LKCoreLCDDriverBase.h"
 #include "gmock/gmock.h"
@@ -22,4 +22,4 @@ class LKCoreLCDDriverMock : public LKCoreLCDDriverBase
 
 }	// namespace leka
 
-#endif	 // _LEKA_OS_DSI_MOCK_H_
+#endif	 // _LEKA_OS_LCD_DRIVER_MOCK_H_
