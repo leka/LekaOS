@@ -6,7 +6,7 @@
 #define _LEKA_OS_LIB_GRAPHICS_H_
 
 #include "CGColor.h"
-#include "LKCoreDMA2D.h"
+#include "LKCoreDMA2DBase.h"
 #include "corevideo_config.h"
 
 namespace leka {
@@ -30,7 +30,7 @@ class LKCoreGraphics
 		uint16_t height;
 	};
 
-	LKCoreGraphics(LKCoreDMA2D &dma2d);
+	LKCoreGraphics(LKCoreDMA2DBase &dma2d);
 
 	void clearScreen(Color color = CGColor::white);
 
@@ -52,7 +52,7 @@ class LKCoreGraphics
 
   private:
 	uintptr_t _data_address;
-	LKCoreDMA2D _dma2d;
+	LKCoreDMA2DBase &_dma2d;
 };
 
 }	// namespace leka
