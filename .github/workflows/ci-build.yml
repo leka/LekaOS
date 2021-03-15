@@ -24,7 +24,9 @@ jobs:
         custom_target: ["LEKA_V1_1_DEV", "LEKA_V1_2_DEV"]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.0.0
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
 
       - name: Create cache variables
         id: create_cache_variables
