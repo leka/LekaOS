@@ -38,6 +38,7 @@ target_link_libraries(LKCoreVideo
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
+		tests/CGColor_test.cpp
 		tests/LKCoreDMA2D_test.cpp
 		tests/LKCoreDSI_test.cpp
 		tests/LKCoreJPEG_test.cpp
