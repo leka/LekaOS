@@ -10,7 +10,7 @@ jobs:
     runs-on: [self-hosted, check]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2.0.0
+        uses: actions/checkout@v2
       - name: Run clang-format
         run: |
           python3 tools/run-clang-format.py -r --extension=h,c,cpp --color=always --style=file ./src ./drivers ./libs ./spikes ./tests
