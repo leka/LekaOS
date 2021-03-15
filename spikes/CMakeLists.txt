@@ -13,6 +13,7 @@ add_subdirectory(${SPIKES_DIR}/lk_rfid)
 add_subdirectory(${SPIKES_DIR}/lk_wifi)
 add_subdirectory(${SPIKES_DIR}/lk_motors)
 add_subdirectory(${SPIKES_DIR}/lk_bluetooth)
+add_subdirectory(${SPIKES_DIR}/lk_microphone)
 add_subdirectory(${SPIKES_DIR}/lk_file_manager)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_touch)
 
@@ -26,6 +27,7 @@ add_dependencies( spikes_leka
 	spike_lk_wifi
 	spike_lk_motors
 	spike_lk_bluetooth
+	spike_lk_microphone
 	spike_lk_file_manager
 	spike_lk_sensors_touch
 )
