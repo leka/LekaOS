@@ -7,52 +7,32 @@
 
 #include "CGColor.h"
 #include "LKCoreDMA2DBase.h"
+#include "LKCoreGraphicsBase.h"
 #include "corevideo_config.h"
 
 namespace leka {
 
-class LKCoreGraphics
+class LKCoreGraphics : public LKCoreGraphicsBase
 {
   public:
-	struct Pixel {
-		uint16_t x = 0;
-		uint16_t y = 0;
-	};
-
-	struct Character {
-		Pixel origin;	 // Top left corner by convention
-		uint8_t ascii;	 // From 0x20 to 0x7F
-	};
-
-	struct FilledRectangle {
-		Pixel origin;	// Top left corner by convention
-		uint16_t width;
-		uint16_t height;
-	};
-
 	LKCoreGraphics(LKCoreDMA2DBase &dma2d);
 
-	void clearScreen(Color color = CGColor::white);
+	void clearScreen(Color color = CGColor::white) final;
 
-	void draw(Pixel pixel, Color color);
-	void draw(Character character, Color foreground = CGColor::black, Color background = CGColor::white);
-	void display(char *text, uint16_t text_length, uint8_t starting_line, Color foreground = CGColor::black,
-				 Color background = CGColor::white);
-	void draw(FilledRectangle rectangle, Color color);
+	void drawPixel(Pixel pixel, Color color) final;
+	void drawRectangle(FilledRectangle rectangle, Color color) final;
 
-	const uint8_t *fontGetFirstPixelAddress(char character);
-	uint32_t fontGetPixelBytes(uint8_t *line_address);
-	bool fontPixelIsOn(uint32_t byte_of_line, uint8_t pixel_id);
+	uintptr_t getDestinationAddress() final;
+	uint32_t getDestinationColor() final;
 
   private:
-	void rawMemoryWrite(Pixel pixel, Color color)
-	{
-		*(uint32_t *)(lcd::frame_buffer_address + (4 * (pixel.y * lcd::dimension.width + pixel.x))) = color.getARGB();
-	}
+	void rawMemoryWrite(uintptr_t destination, uint32_t data);
 
   private:
-	uintptr_t _data_address;
 	LKCoreDMA2DBase &_dma2d;
+
+	uintptr_t _destination_address;
+	uint32_t _destinationColor;
 };
 
 }	// namespace leka
