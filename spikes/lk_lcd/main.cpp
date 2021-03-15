@@ -159,7 +159,7 @@ int main(void)
 	for (int i = 0; i < 20; i++) {
 		text_length = sprintf(buff, "Line #%d", i + 1);
 		foreground	= (i % 2 == 0) ? CGColor::black : CGColor::red;
-		coregraphics.display(buff, text_length, i, foreground, background);
+		// coregraphics.display(buff, text_length, i, foreground, background);
 	}
 	rtos::ThisThread::sleep_for(10s);
 
@@ -168,7 +168,7 @@ int main(void)
 				"\t\t\t\tThis sentence is supposed to be on multiple lines because it is too long to be displayed on "
 				"only one line of the screen.");
 
-	coregraphics.display(buff, text_length, 10, {0x00, 0x00, 0xFF}, CGColor::white);   // Write in blue
+	// coregraphics.display(buff, text_length, 10, {0x00, 0x00, 0xFF}, CGColor::white);   // Write in blue
 
 	rtos::ThisThread::sleep_for(10s);
 
