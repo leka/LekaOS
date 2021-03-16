@@ -150,6 +150,7 @@ add_subdirectory(mbed-os)
 add_subdirectory(template)
 
 # Register drivers
+leka_register_unit_tests_for_driver(LKCoreFatFs)
 leka_register_unit_tests_for_driver(LKCoreMotor)
 leka_register_unit_tests_for_driver(LKCoreSTM32Hal)
 leka_register_unit_tests_for_driver(LKCoreVideo)
