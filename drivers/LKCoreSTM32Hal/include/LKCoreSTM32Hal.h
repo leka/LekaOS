@@ -16,6 +16,7 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 	LKCoreSTM32Hal();
 
 	void HAL_RCC_GPIOJ_CLK_ENABLE(void) final;
+	void HAL_RCC_JPEG_CLK_ENABLE(void) final;
 	HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef *PeriphClkInit) final;
 
 	void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init) final;
@@ -40,6 +41,14 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 	HAL_StatusTypeDef HAL_LTDC_Init(LTDC_HandleTypeDef *hltdc) final;
 	HAL_StatusTypeDef HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfgTypeDef *pLayerCfg,
 										   uint32_t LayerIdx) final;
+
+	HAL_StatusTypeDef HAL_JPEG_Init(JPEG_HandleTypeDef *hjpeg) final;
+	HAL_StatusTypeDef HAL_JPEG_GetInfo(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *pInfo) final;
+	HAL_StatusTypeDef HAL_JPEG_Decode(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataIn, uint32_t InDataLength,
+									  uint8_t *pDataOutMCU, uint32_t OutDataLength, uint32_t Timeout) final;
+	void HAL_JPEG_ConfigInputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewInputBuffer, uint32_t InDataLength) final;
+	void HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer,
+									 uint32_t OutDataLength) final;
 
   private:
 };

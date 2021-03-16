@@ -9,6 +9,11 @@ void LKCoreSTM32Hal::HAL_RCC_GPIOJ_CLK_ENABLE(void)
 	__HAL_RCC_GPIOJ_CLK_ENABLE();
 }
 
+void LKCoreSTM32Hal::HAL_RCC_JPEG_CLK_ENABLE(void)
+{
+	__HAL_RCC_JPEG_CLK_ENABLE();
+}
+
 HAL_StatusTypeDef LKCoreSTM32Hal::HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef *PeriphClkInit)
 {
 	return ::HAL_RCCEx_PeriphCLKConfig(PeriphClkInit);
@@ -92,6 +97,30 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc
 													   uint32_t LayerIdx)
 {
 	return ::HAL_LTDC_ConfigLayer(hltdc, pLayerCfg, LayerIdx);
+}
+
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_JPEG_Init(JPEG_HandleTypeDef *hjpeg)
+{
+	return ::HAL_JPEG_Init(hjpeg);
+}
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_JPEG_GetInfo(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *pInfo)
+{
+	return ::HAL_JPEG_GetInfo(hjpeg, pInfo);
+}
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_JPEG_Decode(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataIn, uint32_t InDataLength,
+												  uint8_t *pDataOutMCU, uint32_t OutDataLength, uint32_t Timeout)
+{
+	return ::HAL_JPEG_Decode(hjpeg, pDataIn, InDataLength, pDataOutMCU, OutDataLength, Timeout);
+}
+void LKCoreSTM32Hal::HAL_JPEG_ConfigInputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewInputBuffer,
+												uint32_t InDataLength)
+{
+	::HAL_JPEG_ConfigInputBuffer(hjpeg, pNewInputBuffer, InDataLength);
+}
+void LKCoreSTM32Hal::HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer,
+												 uint32_t OutDataLength)
+{
+	::HAL_JPEG_ConfigOutputBuffer(hjpeg, pNewOutputBuffer, OutDataLength);
 }
 
 }	// namespace leka
