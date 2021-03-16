@@ -7,7 +7,7 @@
 
 #include <cstdint>
 
-#include "LKCoreDMA2D.h"
+#include "LKCoreDMA2DBase.h"
 #include "LKCoreFatFsBase.h"
 #include "st_jpeg_utils.h"
 #include "stm32f7xx_hal_jpeg.h"
@@ -17,7 +17,7 @@ namespace leka {
 class LKCoreJPEG
 {
   public:
-	LKCoreJPEG(LKCoreDMA2D &dma2d, LKCoreFatFsBase &file);
+	LKCoreJPEG(LKCoreDMA2DBase &dma2d, LKCoreFatFsBase &file);
 
 	void initialize(void);
 
@@ -51,7 +51,7 @@ class LKCoreJPEG
 
 	JPEG_HandleTypeDef _hjpeg;
 	JPEG_ConfTypeDef _config;
-	LKCoreDMA2D &_dma2d;
+	LKCoreDMA2DBase &_dma2d;
 	LKCoreFatFsBase &_file;
 
 	JPEG_YCbCrToRGB_Convert_Function pConvert_Function;
