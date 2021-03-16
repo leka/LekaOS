@@ -30,7 +30,7 @@ LKCoreSTM32Hal hal;
 LKCoreDMA2D coredma2d(hal);
 LKCoreDSI coredsi(hal);
 LKCoreGraphics coregraphics(coredma2d);
-LKCoreJPEG corejpeg(coredma2d, corefatfs);
+LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
 LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 LKCoreLCD corelcd(coreotm);
 LKCoreLTDC coreltdc(hal, coredsi);

@@ -9,6 +9,7 @@
 
 #include "LKCoreDMA2DBase.h"
 #include "LKCoreFatFsBase.h"
+#include "LKCoreSTM32HalBase.h"
 #include "st_jpeg_utils.h"
 #include "stm32f7xx_hal_jpeg.h"
 
@@ -17,7 +18,7 @@ namespace leka {
 class LKCoreJPEG
 {
   public:
-	LKCoreJPEG(LKCoreDMA2DBase &dma2d, LKCoreFatFsBase &file);
+	LKCoreJPEG(LKCoreSTM32HalBase &hal, LKCoreDMA2DBase &dma2d, LKCoreFatFsBase &file);
 
 	void initialize(void);
 
@@ -51,6 +52,7 @@ class LKCoreJPEG
 
 	JPEG_HandleTypeDef _hjpeg;
 	JPEG_ConfTypeDef _config;
+	LKCoreSTM32HalBase &_hal;
 	LKCoreDMA2DBase &_dma2d;
 	LKCoreFatFsBase &_file;
 
