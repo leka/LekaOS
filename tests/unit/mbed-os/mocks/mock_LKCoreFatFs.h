@@ -19,7 +19,7 @@ class LKCoreFatFsMock : public LKCoreFatFsBase
 				(override));
 	MOCK_METHOD(FRESULT, write,
 				(const void *buffer, uint32_t number_of_bytes_to_write, uint32_t *number_of_bytes_written), (override));
-	MOCK_METHOD(FRESULT, movePointer, (uint32_t bytes_offset_from_top_of_file), (override));
+	MOCK_METHOD(FRESULT, seek, (uint32_t bytes_offset_from_top_of_file), (override));
 	MOCK_METHOD(uint32_t, getSize, (), (override));
 	MOCK_METHOD(FIL *, getPointer, (), (override));
 };
