@@ -60,7 +60,6 @@ set(MBED_OS_DIR   ${ROOT_DIR}/extern/mbed-os)
 set(MBED_MOCKS_DIR   ${UNITTESTS_DIR}/mbed-os/mocks)
 set(MBED_STUBS_DIR   ${UNITTESTS_DIR}/mbed-os/stubs)
 set(MBED_INCLUDE_DIR ${UNITTESTS_DIR}/mbed-os/include)
-set(MBED_MOCKS_DIR ${UNITTESTS_DIR}/mbed-os/mocks)
 
 set(LIBS_DIR      ${ROOT_DIR}/libs)
 set(DRIVERS_DIR   ${ROOT_DIR}/drivers)
