@@ -40,6 +40,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/LKCoreDMA2D_test.cpp
 		tests/LKCoreDSI_test.cpp
+		tests/LKCoreJPEG_test.cpp
 		tests/LKCoreLCD_test.cpp
 		tests/LKCoreLTDC_test.cpp
 		tests/LKCoreLCDDriverOTM8009A_test.cpp
