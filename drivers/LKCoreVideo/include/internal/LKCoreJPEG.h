@@ -5,9 +5,10 @@
 #ifndef _LEKA_OS_LIB_JPEG_DECODE_H_
 #define _LEKA_OS_LIB_JPEG_DECODE_H_
 
-#include "storage/filesystem/fat/ChaN/ff.h"
+#include <cstdint>
 
 #include "LKCoreDMA2D.h"
+#include "LKCoreFatFsBase.h"
 #include "st_jpeg_utils.h"
 #include "stm32f7xx_hal_jpeg.h"
 
@@ -16,7 +17,7 @@ namespace leka {
 class LKCoreJPEG
 {
   public:
-	LKCoreJPEG(LKCoreDMA2D &dma2d);
+	LKCoreJPEG(LKCoreDMA2D &dma2d, LKCoreFatFsBase &file);
 
 	void initialize(void);
 
@@ -25,8 +26,6 @@ class LKCoreJPEG
 	JPEG_HandleTypeDef *getHandlePointer(void);
 
 	uint32_t getWidthOffset(void);
-
-	FIL *getCurrentImage();
 
 	void displayImage(FIL *file);
 	HAL_StatusTypeDef decodeImageWithPolling(void);	  // TODO: Update Return type with something else than HAL status
@@ -53,14 +52,13 @@ class LKCoreJPEG
 	JPEG_HandleTypeDef _hjpeg;
 	JPEG_ConfTypeDef _config;
 	LKCoreDMA2D &_dma2d;
+	LKCoreFatFsBase &_file;
 
 	JPEG_YCbCrToRGB_Convert_Function pConvert_Function;
 
 	uint32_t _mcu_number		= 0;
 	uint32_t _mcu_block_index	= 0;
 	uint32_t _input_file_offset = 0;
-
-	FIL *_file;
 };
 
 }	// namespace leka
