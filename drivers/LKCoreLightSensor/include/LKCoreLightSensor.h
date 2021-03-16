@@ -7,8 +7,6 @@
 
 #include "drivers/AnalogIn.h"
 
-#include "LKUtils.h"
-
 namespace leka {
 
 class LKCoreLightSensor
