@@ -32,6 +32,7 @@ target_link_libraries(LKCoreVideo
 	PRIVATE
 		mbed-os
 		LKCoreSTM32Hal
+		LKCoreFatFs
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

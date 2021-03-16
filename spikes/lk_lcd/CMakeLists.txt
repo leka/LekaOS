@@ -17,7 +17,7 @@ target_include_directories(spike_lk_lcd
 target_link_libraries(spike_lk_lcd
 		lib_LekaScreen
 		lib_HelloWorld
-		FileManager
+		LKCoreFatFs
 		LKCoreVideo
 		LKCoreSTM32Hal
 )
