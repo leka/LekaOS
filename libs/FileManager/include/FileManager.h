@@ -1,6 +1,7 @@
 // Leka - LekaOS
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
+// DEPRECATED - Use FATFileSystem and LKCoreFatFs instead
 
 #ifndef _LEKA_OS_LIB_FILEMANAGER_H_
 #define _LEKA_OS_LIB_FILEMANAGER_H_
