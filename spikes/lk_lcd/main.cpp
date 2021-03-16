@@ -4,31 +4,36 @@
 
 #include "mbed.h"
 
-#include "FileManager.h"
+#include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LKCoreDMA2D.h"
 #include "LKCoreDSI.h"
+#include "LKCoreFatFs.h"
 #include "LKCoreGraphics.h"
 #include "LKCoreJPEG.h"
 #include "LKCoreLCD.h"
 #include "LKCoreLCDDriverOTM8009A.h"
 #include "LKCoreLTDC.h"
 #include "LKCoreSTM32Hal.h"
+#include "SDBlockDevice.h"
 #include "st_sdram.h"
 
 using namespace leka;
 
 HelloWorld hello;
 
+SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
+FATFileSystem fatfs("fs");
+LKCoreFatFs corefatfs;
+
 LKCoreSTM32Hal hal;
 LKCoreDMA2D coredma2d(hal);
 LKCoreDSI coredsi(hal);
 LKCoreGraphics coregraphics(coredma2d);
-LKCoreJPEG corejpeg(coredma2d);
+LKCoreJPEG corejpeg(coredma2d, corefatfs);
 LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 LKCoreLCD corelcd(coreotm);
 LKCoreLTDC coreltdc(hal, coredsi);
-FileManager sd_card;
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 
@@ -120,6 +125,14 @@ void init()
 							  });
 }
 
+void initializeSD()
+{
+	sd_blockdevice.init();
+	sd_blockdevice.frequency(25'000'000);
+
+	fatfs.mount(&sd_blockdevice);
+}
+
 int main(void)
 {
 	auto start = Kernel::Clock::now();
@@ -129,6 +142,7 @@ int main(void)
 	rtos::ThisThread::sleep_for(2s);
 
 	init();
+	initializeSD();
 
 	char filename1[] = "assets/images/Leka/logo.jpg";
 	char filename2[] = "assets/images/Leka/emotion-happy.jpg";
@@ -165,15 +179,15 @@ int main(void)
 		serial.write(buff, length);
 		rtos::ThisThread::sleep_for(1s);
 
-		if (f_open(&JPEG_File, filename1, FA_READ) == FR_OK) {
+		if (corefatfs.open(filename1) == FR_OK) {
 			corejpeg.displayImage(&JPEG_File);
-			f_close(&JPEG_File);
+			corefatfs.close();
 			rtos::ThisThread::sleep_for(2s);
 		}
 
-		if (f_open(&JPEG_File, filename2, FA_READ) == FR_OK) {
+		if (corefatfs.open(filename2) == FR_OK) {
 			corejpeg.displayImage(&JPEG_File);
-			f_close(&JPEG_File);
+			corefatfs.close();
 			rtos::ThisThread::sleep_for(2s);
 		}
 	}
