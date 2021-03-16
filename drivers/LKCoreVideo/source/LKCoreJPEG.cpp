@@ -5,7 +5,6 @@
 #include "LKCoreJPEG.h"
 
 #include "corevideo_config.h"
-#include "st_jpeg_utils.h"
 
 namespace leka {
 
@@ -76,6 +75,7 @@ void LKCoreJPEG::displayImage(FIL *file)
 
 HAL_StatusTypeDef LKCoreJPEG::decodeImageWithPolling(void)
 {
+	// WARNING: DO NOT REMOVE
 	_mcu_block_index = 0;
 
 	// TODO: rely on LKFileSystemKit to handle open/read/close

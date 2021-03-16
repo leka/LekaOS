@@ -13,6 +13,7 @@ target_include_directories(mbed-os
 		${UNITTESTS_DIR}/mbed-os/include
 		${UNITTESTS_DIR}/mbed-os/mocks
 
+		${ROOT_DIR}/drivers/LKCoreFatFs/include
 		${ROOT_DIR}/drivers/LKCoreSTM32Hal/include
 		${ROOT_DIR}/extern/mbed-os/targets/TARGET_STM/TARGET_STM32F7/STM32Cube_FW
 		${ROOT_DIR}/extern/mbed-os/targets/TARGET_STM/TARGET_STM32F7/STM32Cube_FW/CMSIS
