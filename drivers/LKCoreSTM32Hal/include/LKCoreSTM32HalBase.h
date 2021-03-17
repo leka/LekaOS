@@ -16,10 +16,22 @@ class LKCoreSTM32HalBase
 
 	virtual void HAL_RCC_GPIOJ_CLK_ENABLE(void)													 = 0;
 	virtual void HAL_RCC_JPEG_CLK_ENABLE(void)													 = 0;
+	virtual void HAL_RCC_LTDC_CLK_ENABLE(void)													 = 0;
+	virtual void HAL_RCC_LTDC_FORCE_RESET(void)													 = 0;
+	virtual void HAL_RCC_LTDC_RELEASE_RESET(void)												 = 0;
+	virtual void HAL_RCC_DMA2D_CLK_ENABLE(void)													 = 0;
+	virtual void HAL_RCC_DMA2D_FORCE_RESET(void)												 = 0;
+	virtual void HAL_RCC_DMA2D_RELEASE_RESET(void)												 = 0;
+	virtual void HAL_RCC_DSI_CLK_ENABLE(void)													 = 0;
+	virtual void HAL_RCC_DSI_FORCE_RESET(void)													 = 0;
+	virtual void HAL_RCC_DSI_RELEASE_RESET(void)												 = 0;
 	virtual HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef *PeriphClkInit) = 0;
 
 	virtual void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init)				   = 0;
 	virtual void HAL_GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState) = 0;
+
+	virtual void HAL_NVIC_SetPriority(IRQn_Type IRQn, uint32_t PreemptPriority, uint32_t SubPriority) = 0;
+	virtual void HAL_NVIC_EnableIRQ(IRQn_Type IRQn)													  = 0;
 
 	virtual HAL_StatusTypeDef HAL_DMA2D_Init(DMA2D_HandleTypeDef *hdma2d)							   = 0;
 	virtual HAL_StatusTypeDef HAL_DMA2D_ConfigLayer(DMA2D_HandleTypeDef *hdma2d, uint32_t LayerIdx)	   = 0;
