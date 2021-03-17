@@ -2,42 +2,43 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_JPEG_DECODE_H_
-#define _LEKA_OS_LIB_JPEG_DECODE_H_
+#ifndef _LEKA_OS_DRIVER_JPEG_H_
+#define _LEKA_OS_DRIVER_JPEG_H_
 
 #include <cstdint>
 
 #include "LKCoreDMA2DBase.h"
 #include "LKCoreFatFsBase.h"
+#include "LKCoreJPEGBase.h"
 #include "LKCoreSTM32HalBase.h"
 #include "st_jpeg_utils.h"
-#include "stm32f7xx_hal_jpeg.h"
 
 namespace leka {
 
-class LKCoreJPEG
+class LKCoreJPEG : public LKCoreJPEGBase
 {
   public:
 	LKCoreJPEG(LKCoreSTM32HalBase &hal, LKCoreDMA2DBase &dma2d, LKCoreFatFsBase &file);
 
-	void initialize(void);
+	void initialize(void) final;
 
-	JPEG_ConfTypeDef getConfig(void);
-	JPEG_HandleTypeDef getHandle(void);
-	JPEG_HandleTypeDef *getHandlePointer(void);
+	JPEG_ConfTypeDef getConfig(void) final;
+	JPEG_HandleTypeDef getHandle(void) final;
+	JPEG_HandleTypeDef *getHandlePointer(void) final;
 
-	uint32_t getWidthOffset(void);
+	uint32_t getWidthOffset(void) final;
 
-	void displayImage(FIL *file);
-	HAL_StatusTypeDef decodeImageWithPolling(void);	  // TODO: Update Return type with something else than HAL status
+	void displayImage(FIL *file) final;
+	HAL_StatusTypeDef decodeImageWithPolling(
+		void) final;   // TODO: Update Return type with something else than HAL status
 
-	void onErrorCallback(JPEG_HandleTypeDef *hjpeg);
-	void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info);
+	void onErrorCallback(JPEG_HandleTypeDef *hjpeg) final;
+	void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) final;
 
-	void onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size);
-	void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size);
+	void onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) final;
+	void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) final;
 
-	void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg);
+	void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) final;
 
   private:
 	struct JPEGDataBuffer {
@@ -65,4 +66,4 @@ class LKCoreJPEG
 
 }	// namespace leka
 
-#endif	 // _LEKA_OS_LIB_JPEG_DECODE_H_
+#endif	 // _LEKA_OS_DRIVER_JPEG_H_
