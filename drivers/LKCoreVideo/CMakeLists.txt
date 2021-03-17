@@ -41,6 +41,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/CGColor_test.cpp
 		tests/LKCoreDMA2D_test.cpp
 		tests/LKCoreDSI_test.cpp
+		tests/LKCoreGraphics_test.cpp
 		tests/LKCoreJPEG_test.cpp
 		tests/LKCoreLCD_test.cpp
 		tests/LKCoreLTDC_test.cpp
