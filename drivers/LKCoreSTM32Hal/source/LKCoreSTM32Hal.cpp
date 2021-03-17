@@ -14,6 +14,51 @@ void LKCoreSTM32Hal::HAL_RCC_JPEG_CLK_ENABLE(void)
 	__HAL_RCC_JPEG_CLK_ENABLE();
 }
 
+void LKCoreSTM32Hal::HAL_RCC_LTDC_CLK_ENABLE(void)
+{
+	__HAL_RCC_LTDC_CLK_ENABLE();
+}
+
+void LKCoreSTM32Hal::HAL_RCC_LTDC_FORCE_RESET(void)
+{
+	__HAL_RCC_LTDC_FORCE_RESET();
+}
+
+void LKCoreSTM32Hal::HAL_RCC_LTDC_RELEASE_RESET(void)
+{
+	__HAL_RCC_LTDC_RELEASE_RESET();
+}
+
+void LKCoreSTM32Hal::HAL_RCC_DMA2D_CLK_ENABLE(void)
+{
+	__HAL_RCC_DMA2D_CLK_ENABLE();
+}
+
+void LKCoreSTM32Hal::HAL_RCC_DMA2D_FORCE_RESET(void)
+{
+	__HAL_RCC_DMA2D_FORCE_RESET();
+}
+
+void LKCoreSTM32Hal::HAL_RCC_DMA2D_RELEASE_RESET(void)
+{
+	__HAL_RCC_DMA2D_RELEASE_RESET();
+}
+
+void LKCoreSTM32Hal::HAL_RCC_DSI_CLK_ENABLE(void)
+{
+	__HAL_RCC_DSI_CLK_ENABLE();
+}
+
+void LKCoreSTM32Hal::HAL_RCC_DSI_FORCE_RESET(void)
+{
+	__HAL_RCC_DSI_FORCE_RESET();
+}
+
+void LKCoreSTM32Hal::HAL_RCC_DSI_RELEASE_RESET(void)
+{
+	__HAL_RCC_DSI_RELEASE_RESET();
+}
+
 HAL_StatusTypeDef LKCoreSTM32Hal::HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef *PeriphClkInit)
 {
 	return ::HAL_RCCEx_PeriphCLKConfig(PeriphClkInit);
@@ -27,6 +72,16 @@ void LKCoreSTM32Hal::HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_I
 void LKCoreSTM32Hal::HAL_GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState)
 {
 	::HAL_GPIO_WritePin(GPIOx, GPIO_Pin, PinState);
+}
+
+void LKCoreSTM32Hal::HAL_NVIC_SetPriority(IRQn_Type IRQn, uint32_t PreemptPriority, uint32_t SubPriority)
+{
+	::HAL_NVIC_SetPriority(IRQn, PreemptPriority, SubPriority);
+}
+
+void LKCoreSTM32Hal::HAL_NVIC_EnableIRQ(IRQn_Type IRQn)
+{
+	::HAL_NVIC_EnableIRQ(IRQn);
 }
 
 HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DMA2D_Init(DMA2D_HandleTypeDef *hdma2d)
