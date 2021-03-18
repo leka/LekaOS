@@ -1,0 +1,44 @@
+# CI Workflow
+
+name: CI - Mbed OS Upgrade
+
+on:
+  pull_request:
+    branches:
+      - developd
+
+jobs:
+  config_build:
+    name: Config & Build
+    runs-on: [self-hosted, build]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: Create mbed version variables
+        id: create_mbed_version_variables
+        run: |
+          echo "mbed.new_version=$(cat .mbed_version)" >> $GITHUB_ENV
+          git checkout HEAD~1
+          echo "mbed.current_version=$(cat .mbed_version)" >> $GITHUB_ENV
+          git checkout @{-1}
+
+      - name: Compile with new version of Mbed OS
+        run: |
+          echo "new version is: ${{ env.mbed.new_version }}"
+          echo "current version is: ${{ env.mbed.current_version }}"
+      # - name: Move bin files to temporary folder named new
+      # - name: Compile with previous version of Mbed OS
+      # - name: Move bin files to temporary folder named old
+      # - name: Compare bin files
+      # - name: Publish differences
+      #   if:
+      #   uses: peter-evans/commit-comment@v1
+      #   with:
+      #     body: |
+      #       This is a multi-line test comment
+      #       - With GitHub **Markdown** :sparkles:
+      #       - Created by [commit-comment][1]
+      #       [1]: https://github.com/peter-evans/commit-comment
