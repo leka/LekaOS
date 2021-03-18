@@ -14,6 +14,7 @@ target_include_directories(LKCoreVideo
 target_sources(LKCoreVideo
   PRIVATE
 	source/LKCoreDMA2D.cpp
+	source/LKCoreFont.cpp
 	source/LKCoreGraphics.cpp
 	source/LKCoreJPEG.cpp
 	source/LKCoreLTDC.cpp
