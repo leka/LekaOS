@@ -14,6 +14,7 @@
 #include "LKCoreJPEG.h"
 #include "LKCoreLCD.h"
 #include "LKCoreLCDDriverOTM8009A.h"
+#include "LKCoreLL.h"
 #include "LKCoreLTDC.h"
 #include "LKCoreSTM32Hal.h"
 #include "SDBlockDevice.h"
@@ -27,11 +28,13 @@ SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 LKCoreFatFs corefatfs;
 
+LKCoreLL corell;
+CGPixel pixel(corell);
 LKCoreSTM32Hal hal;
 LKCoreDMA2D coredma2d(hal);
 LKCoreDSI coredsi(hal);
 LKCoreGraphics coregraphics(coredma2d);
-LKCoreFont corefont(coregraphics);
+LKCoreFont corefont(pixel);
 LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
 LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 LKCoreLCD corelcd(coreotm);
