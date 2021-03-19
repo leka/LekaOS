@@ -17,9 +17,6 @@ class LKCoreMicrophone
 	float readVolume(void);
 
   private:
-	float readRawValue(void);
-
-  private:
 	mbed::AnalogIn _pin;
 };
 
