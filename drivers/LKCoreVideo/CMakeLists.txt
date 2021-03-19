@@ -32,6 +32,7 @@ target_sources(LKCoreVideo
 target_link_libraries(LKCoreVideo
 	PRIVATE
 		mbed-os
+		LKCoreLL
 		LKCoreSTM32Hal
 		LKCoreFatFs
 )
