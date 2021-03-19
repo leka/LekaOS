@@ -15,3 +15,12 @@ target_sources(LKCoreLL
 )
 
 target_link_libraries(LKCoreLL mbed-os)
+
+
+if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
+
+	leka_unit_tests_sources(
+		tests/LKCoreLL_test.cpp
+	)
+
+endif()
