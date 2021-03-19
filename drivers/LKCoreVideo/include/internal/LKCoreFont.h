@@ -6,6 +6,7 @@
 #define _LEKA_OS_LIB_FONT_H_
 
 #include "CGColor.h"
+#include "CGPixel.h"
 #include "LKCoreFontBase.h"
 
 namespace leka {
@@ -13,7 +14,7 @@ namespace leka {
 class LKCoreFont : public LKCoreFontBase
 {
   public:
-	LKCoreFont(LKCoreGraphicsBase &graphics);
+	LKCoreFont(CGPixel &pixel_to_draw);
 
 	void drawChar(Character character, Color foreground = CGColor::black, Color background = CGColor::white) final;
 	void display(char *text, uint16_t text_length, uint8_t starting_line, Color foreground = CGColor::black,
@@ -24,7 +25,7 @@ class LKCoreFont : public LKCoreFontBase
 	bool fontPixelIsOn(uint32_t byte_of_line, uint8_t pixel_id) final;
 
   private:
-	LKCoreGraphicsBase &_graphics;
+	CGPixel &_pixel_to_draw;
 };
 
 }	// namespace leka

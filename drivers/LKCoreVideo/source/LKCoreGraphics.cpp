@@ -17,41 +17,14 @@ void LKCoreGraphics::clearScreen(Color color)
 	drawRectangle(rect, color);
 }
 
-void LKCoreGraphics::drawPixel(Pixel pixel, Color color)
-{
-	// TODO: Use a buffer and draw all in the same time. Need to determine buffer address
-
-	_destination_address = lcd::frame_buffer_address + (4 * (pixel.y * lcd::dimension.width + pixel.x));
-	_destinationColor	 = color.getARGB();
-
-	rawMemoryWrite(_destination_address, _destinationColor);
-}
-
 void LKCoreGraphics::drawRectangle(FilledRectangle rectangle, Color color)
 {
-	_destination_address =
+	uintptr_t destination_address =
 		lcd::frame_buffer_address + 4 * (lcd::dimension.width * rectangle.origin.y + rectangle.origin.x);
 
-	_destinationColor = color.getARGB();
+	uint32_t destinationColor = color.getARGB();
 
-	_dma2d.transferDrawing(_destination_address, rectangle.width, rectangle.height, _destinationColor);
-}
-
-void LKCoreGraphics::rawMemoryWrite(uintptr_t destination, uint32_t data)
-{
-#if defined(__arm__)
-	*reinterpret_cast<uintptr_t *>(destination) = data;
-#endif
-}
-
-uintptr_t LKCoreGraphics::getDestinationAddress()
-{
-	return _destination_address;
-}
-
-uint32_t LKCoreGraphics::getDestinationColor()
-{
-	return _destinationColor;
+	_dma2d.transferDrawing(destination_address, rectangle.width, rectangle.height, destinationColor);
 }
 
 }	// namespace leka

@@ -78,19 +78,3 @@ TEST_F(LKCoreGraphicsTest, clearScreenOtherColor)
 
 	graphics.clearScreen(CGColor::magenta);
 }
-
-TEST_F(LKCoreGraphicsTest, drawPixel)
-{
-	Color color = CGColor::magenta;
-	LKCoreGraphics::Pixel pixel;
-	pixel.x = 420;
-	pixel.y = 42;
-
-	uint32_t expected_destination_color	   = color.getARGB();
-	uintptr_t expected_destination_address = lcd::frame_buffer_address + 4 * (lcd::dimension.width * pixel.y + pixel.x);
-
-	graphics.drawPixel(pixel, color);
-
-	EXPECT_EQ(expected_destination_color, graphics.getDestinationColor());
-	EXPECT_EQ(expected_destination_address, graphics.getDestinationAddress());
-}

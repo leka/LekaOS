@@ -9,7 +9,7 @@
 
 namespace leka {
 
-LKCoreFont::LKCoreFont(LKCoreGraphicsBase &graphics) : _graphics(graphics) {}
+LKCoreFont::LKCoreFont(CGPixel &pixel_to_draw) : _pixel_to_draw(pixel_to_draw) {}
 
 const uint8_t *LKCoreFont::fontGetFirstPixelAddress(char character)
 {
@@ -32,9 +32,8 @@ bool LKCoreFont::fontPixelIsOn(uint32_t byte_of_line, uint8_t pixel_id)
 
 void LKCoreFont::drawChar(Character character, Color foreground, Color background)
 {
-	LKCoreGraphicsBase::Pixel pixel_to_draw;
-	pixel_to_draw.x = character.origin.x;
-	pixel_to_draw.y = character.origin.y;
+	_pixel_to_draw.coordinates.x = character.origin.x;
+	_pixel_to_draw.coordinates.y = character.origin.y;
 
 	const uint8_t *first_byte_address = fontGetFirstPixelAddress(character.ascii);
 
@@ -42,15 +41,15 @@ void LKCoreFont::drawChar(Character character, Color foreground, Color backgroun
 		uint32_t byte_of_line = fontGetPixelBytes((uint8_t *)first_byte_address + next_byte);
 
 		for (uint8_t pixel_id = 0; pixel_id < graphics::pixels_per_line; pixel_id++) {
-			pixel_to_draw.x = character.origin.x + pixel_id;
+			_pixel_to_draw.coordinates.x = character.origin.x + pixel_id;
 
 			if (fontPixelIsOn(byte_of_line, pixel_id)) {
-				_graphics.drawPixel(pixel_to_draw, foreground);
+				_pixel_to_draw.draw(foreground);
 			} else {
-				_graphics.drawPixel(pixel_to_draw, background);
+				_pixel_to_draw.draw(background);
 			}
 		}
-		pixel_to_draw.y++;
+		_pixel_to_draw.coordinates.y++;
 	}
 }
 
