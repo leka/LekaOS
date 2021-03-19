@@ -19,6 +19,7 @@ target_link_libraries(spike_lk_lcd
 		lib_HelloWorld
 		LKCoreFatFs
 		LKCoreVideo
+		LKCoreLL
 		LKCoreSTM32Hal
 )
 
