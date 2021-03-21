@@ -25,9 +25,9 @@ TEST(LKCoreMicrophoneTest, readMinSound)
 	ASSERT_EQ(expected, micro.readVolume());
 }
 
-TEST(LKCoreMicrophoneTest, readMiddleSound)
+TEST(LKCoreMicrophoneTest, readAverageSound)
 {
-	auto expected = test_set_sound(0.25f);
+	auto expected = test_set_sound(0.50f);
 
 	ASSERT_EQ(expected, micro.readVolume());
 }
