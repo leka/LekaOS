@@ -84,15 +84,17 @@ jobs:
             file_name=$(basename $f)
             python3 extern/mbed-os/tools/memap.py -t GCC_ARM _mbed_tmp/${{ env.mbed_current_version }}/$file_name > _mbed_tmp/${{ env.mbed_current_version }}/$file_name.txt
             python3 extern/mbed-os/tools/memap.py -t GCC_ARM _mbed_tmp/${{ env.mbed_upgrade_version }}/$file_name > _mbed_tmp/${{ env.mbed_upgrade_version }}/$file_name.txt
+            echo "### \`$file_name\`"  >> $GITHUB_ENV
             if ! diff_output=$(diff --unified=150 _mbed_tmp/${{ env.mbed_current_version }}/$file_name.txt _mbed_tmp/${{ env.mbed_upgrade_version }}/$file_name.txt); then
               echo $diff_output
-              echo "### \`$file_name\`"  >> $GITHUB_ENV
               echo "" >> $GITHUB_ENV
               echo "\`\`\`diff" >> $GITHUB_ENV
               echo "$diff_output" >> $GITHUB_ENV
               echo "\`\`\`" >> $GITHUB_ENV
-              echo "" >> $GITHUB_ENV
+            else
+              echo "No \`.map\` differences found." >> $GITHUB_ENV
             fi
+            echo "" >> $GITHUB_ENV
           done
           echo 'eof' >> $GITHUB_ENV
 
