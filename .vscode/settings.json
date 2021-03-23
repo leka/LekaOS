@@ -1,7 +1,8 @@
 {
 	"files.associations": {
 		"*.orig": "cpp",
-		".clang-format": "yaml"
+		".clang-format": "yaml",
+		"mstd_atomic": "cpp"
 	},
 	"files.exclude": {
 		".cache": true,
