@@ -87,4 +87,9 @@ void LKCoreFont::display(char *text, uint16_t text_length, uint8_t starting_line
 	}
 }
 
+CGPixel LKCoreFont::getLastDrawnPixel()
+{
+	return _pixel_to_draw;
+}
+
 }	// namespace leka
