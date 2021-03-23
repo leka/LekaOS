@@ -55,13 +55,13 @@ void LKCoreFont::drawChar(Character character, Color foreground, Color backgroun
 
 void LKCoreFont::display(char *text, uint16_t text_length, uint8_t starting_line, Color foreground, Color background)
 {
-	if (starting_line > 19) {
+	if (starting_line < 1 || starting_line > 20) {
 		return;
 	}
 
 	Character character;
 	character.origin.x = 0;
-	character.origin.y = starting_line * graphics::font_pixel_height;
+	character.origin.y = (starting_line - 1) * graphics::font_pixel_height;
 
 	for (uint16_t char_index = 0; char_index < text_length; char_index++) {
 		if (text[char_index] == '\n') {
