@@ -24,6 +24,8 @@ class LKCoreFont : public LKCoreFontBase
 	uint32_t fontGetPixelBytes(uint8_t *line_address) final;
 	bool fontPixelIsOn(uint32_t byte_of_line, uint8_t pixel_id) final;
 
+	CGPixel getLastDrawnPixel();
+
   private:
 	CGPixel &_pixel_to_draw;
 };
