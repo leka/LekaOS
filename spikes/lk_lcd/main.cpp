@@ -161,8 +161,8 @@ int main(void)
 	uint32_t text_length = 0;
 	Color foreground;
 	Color background = CGColor::white;
-	for (int i = 0; i < 20; i++) {
-		text_length = sprintf(buff, "Line #%d", i + 1);
+	for (int i = 1; i <= 20; i++) {
+		text_length = sprintf(buff, "Line #%d", i);
 		foreground	= (i % 2 == 0) ? CGColor::black : CGColor::red;
 		corefont.display(buff, text_length, i, foreground, background);
 	}
