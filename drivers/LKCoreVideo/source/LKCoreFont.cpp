@@ -70,9 +70,6 @@ void LKCoreFont::display(char *text, uint16_t text_length, uint8_t starting_line
 		} else if (text[char_index] < ' ') {
 			// Character non supported before first writtable character
 			continue;
-		} else if (text[char_index] > '~') {
-			// Character non supported beyond last writtable character
-			continue;
 		} else {
 			character.ascii = text[char_index];
 			drawChar(character, foreground, background);
