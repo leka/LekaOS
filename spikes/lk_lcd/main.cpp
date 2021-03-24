@@ -16,10 +16,10 @@
 #include "LKCoreLCDDriverOTM8009A.h"
 #include "LKCoreLL.h"
 #include "LKCoreLTDC.h"
+#include "LKCoreSDRAM.h"
 #include "LKCoreSTM32Hal.h"
 #include "LKCoreVideo.h"
 #include "SDBlockDevice.h"
-#include "st_sdram.h"
 
 using namespace leka;
 
@@ -32,6 +32,7 @@ LKCoreFatFs corefatfs;
 LKCoreLL corell;
 CGPixel pixel(corell);
 LKCoreSTM32Hal hal;
+LKCoreSDRAM coresdram(hal);
 LKCoreDMA2D coredma2d(hal);
 LKCoreDSI coredsi(hal);
 LKCoreLTDC coreltdc(hal, coredsi);
@@ -40,7 +41,7 @@ LKCoreFont corefont(pixel);
 LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 LKCoreLCD corelcd(coreotm);
 LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
-LKCoreVideo corevideo(hal, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
+LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 
