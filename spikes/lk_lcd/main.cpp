@@ -17,6 +17,7 @@
 #include "LKCoreLL.h"
 #include "LKCoreLTDC.h"
 #include "LKCoreSTM32Hal.h"
+#include "LKCoreVideo.h"
 #include "SDBlockDevice.h"
 #include "st_sdram.h"
 
@@ -33,12 +34,13 @@ CGPixel pixel(corell);
 LKCoreSTM32Hal hal;
 LKCoreDMA2D coredma2d(hal);
 LKCoreDSI coredsi(hal);
+LKCoreLTDC coreltdc(hal, coredsi);
 LKCoreGraphics coregraphics(coredma2d);
 LKCoreFont corefont(pixel);
-LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
 LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 LKCoreLCD corelcd(coreotm);
-LKCoreLTDC coreltdc(hal, coredsi);
+LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
+LKCoreVideo corevideo(hal, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 
@@ -47,58 +49,8 @@ char buff[buff_size] {};
 
 Thread screen_thread;
 
-void init()
+void registerCallbacks(void)
 {
-	coredsi.reset();
-
-	/** @brief Enable the LTDC clock */
-	__HAL_RCC_LTDC_CLK_ENABLE();
-
-	/** @brief Toggle Sw reset of LTDC IP */
-	__HAL_RCC_LTDC_FORCE_RESET();
-	__HAL_RCC_LTDC_RELEASE_RESET();
-
-	/** @brief Enable the DMA2D clock */
-	__HAL_RCC_DMA2D_CLK_ENABLE();
-
-	/** @brief Toggle Sw reset of DMA2D IP */
-	__HAL_RCC_DMA2D_FORCE_RESET();
-	__HAL_RCC_DMA2D_RELEASE_RESET();
-
-	/** @brief Enable DSI Host and wrapper clocks */
-	__HAL_RCC_DSI_CLK_ENABLE();
-
-	/** @brief Soft Reset the DSI Host and wrapper */
-	__HAL_RCC_DSI_FORCE_RESET();
-	__HAL_RCC_DSI_RELEASE_RESET();
-
-	/** @brief NVIC configuration for LTDC interrupt that is now enabled */
-	HAL_NVIC_SetPriority(LTDC_IRQn, 3, 0);
-	HAL_NVIC_EnableIRQ(LTDC_IRQn);
-
-	/** @brief NVIC configuration for DMA2D interrupt that is now enabled */
-	HAL_NVIC_SetPriority(DMA2D_IRQn, 3, 0);
-	HAL_NVIC_EnableIRQ(DMA2D_IRQn);
-
-	/** @brief NVIC configuration for DSI interrupt that is now enabled */
-	HAL_NVIC_SetPriority(DSI_IRQn, 3, 0);
-	HAL_NVIC_EnableIRQ(DSI_IRQn);
-
-	coredsi.initialize();
-
-	coreltdc.initialize();
-	coreltdc.configureLayer();
-
-	coredsi.start();
-
-	BSP_SDRAM_Init();
-
-	corelcd.initialize();
-	corejpeg.initialize();
-	coredma2d.initialize();
-
-	corelcd.setBrightness(0.5f);
-
 	HAL_JPEG_RegisterInfoReadyCallback(corejpeg.getHandlePointer(),
 									   [](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info)
 									   {
@@ -146,7 +98,8 @@ int main(void)
 
 	rtos::ThisThread::sleep_for(2s);
 
-	init();
+	corevideo.initialize();
+	registerCallbacks();
 	initializeSD();
 
 	char filename1[] = "assets/images/Leka/logo.jpg";
@@ -155,7 +108,7 @@ int main(void)
 	FIL JPEG_File;
 
 	hello.start();
-	coregraphics.clearScreen();
+	corevideo.clearScreen();
 	rtos::ThisThread::sleep_for(1s);
 
 	uint32_t text_length = 0;
@@ -164,16 +117,16 @@ int main(void)
 	for (int i = 1; i <= 20; i++) {
 		text_length = sprintf(buff, "Line #%d", i);
 		foreground	= (i % 2 == 0) ? CGColor::black : CGColor::red;
-		corefont.display(buff, text_length, i, foreground, background);
+		corevideo.displayText(buff, text_length, i, foreground, background);
 	}
-	rtos::ThisThread::sleep_for(10s);
+	rtos::ThisThread::sleep_for(5s);
 
 	text_length =
 		sprintf(buff,
-				"\t\t\t\tThis sentence is supposed to be on multiple lines because it is too long to be displayed on "
+				"\tThis sentence is supposed to be on multiple lines because it is too long to be displayed on "
 				"only one line of the screen.");
 
-	corefont.display(buff, text_length, 10, {0x00, 0x00, 0xFF}, CGColor::white);   // Write in blue
+	corevideo.displayText(buff, text_length, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// Write in blue
 
 	rtos::ThisThread::sleep_for(10s);
 
@@ -185,15 +138,23 @@ int main(void)
 		rtos::ThisThread::sleep_for(1s);
 
 		if (corefatfs.open(filename1) == FR_OK) {
-			corejpeg.displayImage(&JPEG_File);
+			corevideo.displayImage(&JPEG_File);
+			corevideo.setBrightness(0.2f);
+
+			corevideo.turnOn();
+
 			corefatfs.close();
 			rtos::ThisThread::sleep_for(2s);
 		}
 
 		if (corefatfs.open(filename2) == FR_OK) {
-			corejpeg.displayImage(&JPEG_File);
+			corevideo.displayImage(&JPEG_File);
+			corevideo.setBrightness(0.9f);
+
 			corefatfs.close();
 			rtos::ThisThread::sleep_for(2s);
+
+			corevideo.turnOff();
 		}
 	}
 
