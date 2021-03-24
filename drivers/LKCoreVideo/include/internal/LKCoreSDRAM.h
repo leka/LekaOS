@@ -25,6 +25,8 @@ class LKCoreSDRAM : public LKCoreSDRAMBase
 	void initializeController() final;
 	void initializationSequence(void) final;
 
+	SDRAM_HandleTypeDef getHandle(void);
+
   private:
 	LKCoreSTM32HalBase &_hal;
 
