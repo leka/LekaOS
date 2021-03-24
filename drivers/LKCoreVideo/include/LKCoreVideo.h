@@ -12,17 +12,17 @@
 #include "LKCoreJPEGBase.h"
 #include "LKCoreLCDBase.h"
 #include "LKCoreLTDCBase.h"
+#include "LKCoreSDRAM.h"
 #include "LKCoreSTM32HalBase.h"
-#include "st_sdram.h"
 
 namespace leka {
 
 class LKCoreVideo
 {
   public:
-	LKCoreVideo(LKCoreSTM32HalBase &hal, LKCoreDMA2DBase &coredma2d, LKCoreDSIBase &coredsi, LKCoreLTDCBase &coreltdc,
-				LKCoreLCDBase &corelcd, LKCoreGraphicsBase &coregraphics, LKCoreFontBase &corefont,
-				LKCoreJPEGBase &corejpeg);
+	LKCoreVideo(LKCoreSTM32HalBase &hal, LKCoreSDRAM &coresdram, LKCoreDMA2DBase &coredma2d, LKCoreDSIBase &coredsi,
+				LKCoreLTDCBase &coreltdc, LKCoreLCDBase &corelcd, LKCoreGraphicsBase &coregraphics,
+				LKCoreFontBase &corefont, LKCoreJPEGBase &corejpeg);
 
 	void initialize(void);
 
@@ -39,6 +39,7 @@ class LKCoreVideo
 
   private:
 	LKCoreSTM32HalBase &_hal;
+	LKCoreSDRAM &_coresdram;
 	LKCoreDMA2DBase &_coredma2d;
 	LKCoreDSIBase &_coredsi;
 	LKCoreLTDCBase &_coreltdc;
