@@ -20,13 +20,12 @@ target_sources(LKCoreVideo
 	source/LKCoreLTDC.cpp
 	source/LKCoreDSI.cpp
 	source/LKCoreJPEG.cpp
+	source/LKCoreLCD.cpp
 	source/LKCoreLTDC.cpp
 	source/LKCoreLCDDriverOTM8009A.cpp
+	source/LKCoreSDRAM.cpp
 	source/LKCoreVideo.cpp
 	source/st_jpeg_utils.cpp
-	source/st_sdram.cpp
-    source/LKCoreLCD.cpp
-    source/LKCoreVideo.cpp
 )
 
 target_link_libraries(LKCoreVideo

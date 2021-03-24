@@ -6,10 +6,11 @@
 
 namespace leka {
 
-LKCoreVideo::LKCoreVideo(LKCoreSTM32HalBase &hal, LKCoreDMA2DBase &coredma2d, LKCoreDSIBase &coredsi,
-						 LKCoreLTDCBase &coreltdc, LKCoreLCDBase &corelcd, LKCoreGraphicsBase &coregraphics,
-						 LKCoreFontBase &corefont, LKCoreJPEGBase &corejpeg)
+LKCoreVideo::LKCoreVideo(LKCoreSTM32HalBase &hal, LKCoreSDRAM &coresdram, LKCoreDMA2DBase &coredma2d,
+						 LKCoreDSIBase &coredsi, LKCoreLTDCBase &coreltdc, LKCoreLCDBase &corelcd,
+						 LKCoreGraphicsBase &coregraphics, LKCoreFontBase &corefont, LKCoreJPEGBase &corejpeg)
 	: _hal(hal),
+	  _coresdram(coresdram),
 	  _coredma2d(coredma2d),
 	  _coredsi(coredsi),
 	  _coreltdc(coreltdc),
@@ -64,7 +65,7 @@ void LKCoreVideo::initialize(void)
 
 	_coredsi.start();
 
-	BSP_SDRAM_Init();
+	_coresdram.initialize();
 
 	_corelcd.initialize();
 	_corejpeg.initialize();
