@@ -49,6 +49,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/LKCoreLCD_test.cpp
 		tests/LKCoreLTDC_test.cpp
 		tests/LKCoreLCDDriverOTM8009A_test.cpp
+		tests/LKCoreSDRAM_test.cpp
 	)
 
 endif()

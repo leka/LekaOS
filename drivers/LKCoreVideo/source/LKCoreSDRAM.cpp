@@ -213,4 +213,9 @@ void LKCoreSDRAM::initializationSequence()
 	_hal.HAL_SDRAM_ProgramRefreshRate(&_hsdram, sdram::refresh_count);
 }
 
+SDRAM_HandleTypeDef LKCoreSDRAM::getHandle(void)
+{
+	return _hsdram;
+}
+
 }	// namespace leka
