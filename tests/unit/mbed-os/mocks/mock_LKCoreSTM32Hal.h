@@ -13,7 +13,16 @@ namespace leka {
 class LKCoreSTM32HalMock : public LKCoreSTM32HalBase
 {
   public:
+	MOCK_METHOD(void, HAL_RCC_GPIOD_CLK_ENABLE, (), (override));
+	MOCK_METHOD(void, HAL_RCC_GPIOE_CLK_ENABLE, (), (override));
+	MOCK_METHOD(void, HAL_RCC_GPIOF_CLK_ENABLE, (), (override));
+	MOCK_METHOD(void, HAL_RCC_GPIOG_CLK_ENABLE, (), (override));
+	MOCK_METHOD(void, HAL_RCC_GPIOH_CLK_ENABLE, (), (override));
+	MOCK_METHOD(void, HAL_RCC_GPIOI_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_GPIOJ_CLK_ENABLE, (), (override));
+
+	MOCK_METHOD(void, HAL_RCC_FMC_CLK_ENABLE, (), (override));
+	MOCK_METHOD(void, HAL_RCC_DMA2_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_JPEG_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_LTDC_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_LTDC_FORCE_RESET, (), (override));
@@ -26,12 +35,25 @@ class LKCoreSTM32HalMock : public LKCoreSTM32HalBase
 	MOCK_METHOD(void, HAL_RCC_DSI_RELEASE_RESET, (), (override));
 	MOCK_METHOD(HAL_StatusTypeDef, HAL_RCCEx_PeriphCLKConfig, (RCC_PeriphCLKInitTypeDef * PeriphClkInit), (override));
 
+	MOCK_METHOD(void, HAL_LINKDMA,
+				(SDRAM_HandleTypeDef * hsdram, DMA_HandleTypeDef *hdma, DMA_HandleTypeDef dma_handle), (override));
+
 	MOCK_METHOD(void, HAL_GPIO_Init, (GPIO_TypeDef * GPIOx, GPIO_InitTypeDef *GPIO_Init), (override));
 	MOCK_METHOD(void, HAL_GPIO_WritePin, (GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState), (override));
 
 	MOCK_METHOD(void, HAL_NVIC_SetPriority, (IRQn_Type IRQn, uint32_t PreemptPriority, uint32_t SubPriority),
 				(override));
 	MOCK_METHOD(void, HAL_NVIC_EnableIRQ, (IRQn_Type IRQn), (override));
+
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_SDRAM_Init, (SDRAM_HandleTypeDef * hsdram, FMC_SDRAM_TimingTypeDef *Timing),
+				(override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_SDRAM_SendCommand,
+				(SDRAM_HandleTypeDef * hsdram, FMC_SDRAM_CommandTypeDef *Command, uint32_t Timeout), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_SDRAM_ProgramRefreshRate, (SDRAM_HandleTypeDef * hsdram, uint32_t RefreshRate),
+				(override));
+
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_DMA_Init, (DMA_HandleTypeDef * hdma), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_DMA_DeInit, (DMA_HandleTypeDef * hdma), (override));
 
 	MOCK_METHOD(HAL_StatusTypeDef, HAL_DMA2D_Init, (DMA2D_HandleTypeDef * hdma2d), (override));
 	MOCK_METHOD(HAL_StatusTypeDef, HAL_DMA2D_ConfigLayer, (DMA2D_HandleTypeDef * hdma2d, uint32_t LayerIdx),

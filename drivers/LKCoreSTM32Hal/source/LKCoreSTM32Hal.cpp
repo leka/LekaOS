@@ -4,9 +4,49 @@ namespace leka {
 
 LKCoreSTM32Hal::LKCoreSTM32Hal() {}
 
+void LKCoreSTM32Hal::HAL_RCC_GPIOD_CLK_ENABLE(void)
+{
+	__HAL_RCC_GPIOD_CLK_ENABLE();
+}
+
+void LKCoreSTM32Hal::HAL_RCC_GPIOE_CLK_ENABLE(void)
+{
+	__HAL_RCC_GPIOE_CLK_ENABLE();
+}
+
+void LKCoreSTM32Hal::HAL_RCC_GPIOF_CLK_ENABLE(void)
+{
+	__HAL_RCC_GPIOF_CLK_ENABLE();
+}
+
+void LKCoreSTM32Hal::HAL_RCC_GPIOG_CLK_ENABLE(void)
+{
+	__HAL_RCC_GPIOG_CLK_ENABLE();
+}
+
+void LKCoreSTM32Hal::HAL_RCC_GPIOH_CLK_ENABLE(void)
+{
+	__HAL_RCC_GPIOH_CLK_ENABLE();
+}
+
+void LKCoreSTM32Hal::HAL_RCC_GPIOI_CLK_ENABLE(void)
+{
+	__HAL_RCC_GPIOI_CLK_ENABLE();
+}
+
 void LKCoreSTM32Hal::HAL_RCC_GPIOJ_CLK_ENABLE(void)
 {
 	__HAL_RCC_GPIOJ_CLK_ENABLE();
+}
+
+void LKCoreSTM32Hal::HAL_RCC_FMC_CLK_ENABLE(void)
+{
+	__HAL_RCC_FMC_CLK_ENABLE();
+}
+
+void LKCoreSTM32Hal::HAL_RCC_DMA2_CLK_ENABLE(void)
+{
+	__HAL_RCC_DMA2_CLK_ENABLE();
 }
 
 void LKCoreSTM32Hal::HAL_RCC_JPEG_CLK_ENABLE(void)
@@ -64,6 +104,11 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTyp
 	return ::HAL_RCCEx_PeriphCLKConfig(PeriphClkInit);
 }
 
+void LKCoreSTM32Hal::HAL_LINKDMA(SDRAM_HandleTypeDef *hsdram, DMA_HandleTypeDef *hdma, DMA_HandleTypeDef dma_handle)
+{
+	__HAL_LINKDMA(hsdram, hdma, dma_handle);
+}
+
 void LKCoreSTM32Hal::HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init)
 {
 	::HAL_GPIO_Init(GPIOx, GPIO_Init);
@@ -82,6 +127,32 @@ void LKCoreSTM32Hal::HAL_NVIC_SetPriority(IRQn_Type IRQn, uint32_t PreemptPriori
 void LKCoreSTM32Hal::HAL_NVIC_EnableIRQ(IRQn_Type IRQn)
 {
 	::HAL_NVIC_EnableIRQ(IRQn);
+}
+
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_SDRAM_Init(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_TimingTypeDef *Timing)
+{
+	return ::HAL_SDRAM_Init(hsdram, Timing);
+}
+
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_SDRAM_SendCommand(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_CommandTypeDef *Command,
+														uint32_t Timeout)
+{
+	return ::HAL_SDRAM_SendCommand(hsdram, Command, Timeout);
+}
+
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_SDRAM_ProgramRefreshRate(SDRAM_HandleTypeDef *hsdram, uint32_t RefreshRate)
+{
+	return ::HAL_SDRAM_ProgramRefreshRate(hsdram, RefreshRate);
+}
+
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DMA_Init(DMA_HandleTypeDef *hdma)
+{
+	return ::HAL_DMA_Init(hdma);
+}
+
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DMA_DeInit(DMA_HandleTypeDef *hdma)
+{
+	return ::HAL_DMA_DeInit(hdma);
 }
 
 HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DMA2D_Init(DMA2D_HandleTypeDef *hdma2d)
