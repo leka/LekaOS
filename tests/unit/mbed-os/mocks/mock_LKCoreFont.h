@@ -13,7 +13,7 @@ namespace leka {
 class LKCoreFontMock : public LKCoreFontBase
 {
   public:
-	MOCK_METHOD(void, draw, (Character character, Color foreground, Color background), (override));
+	MOCK_METHOD(void, drawChar, (Character character, Color foreground, Color background), (override));
 	MOCK_METHOD(void, display,
 				(const char *text, uint32_t size, uint32_t starting_line, Color foreground, Color background),
 				(override));
