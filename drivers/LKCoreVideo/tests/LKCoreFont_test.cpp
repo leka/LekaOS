@@ -11,6 +11,7 @@
 
 using namespace leka;
 using ::testing::_;
+using ::testing::AnyNumber;
 using ::testing::AtLeast;
 using ::testing::Matcher;
 using ::testing::WithArg;
@@ -218,6 +219,9 @@ TEST_F(LKCoreFontTest, displayWithNewLine)
 
 	auto expected_last_pixel_y_position = graphics::font_pixel_height * starting_line + graphics::font_pixel_height;
 
+	// TODO: This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove it in the future
+	EXPECT_CALL(llmock, rawMemoryWrite).Times(AnyNumber());
+
 	// ACT
 	text_length = sprintf(buff, "This is the first line\nThis is the second line");
 	font.display(buff, text_length, starting_line);
@@ -241,6 +245,9 @@ TEST_F(LKCoreFontTest, displayUnwrittableAsciiCharacter)
 	Point expected_last_pixel;
 	expected_last_pixel.x = (graphics::font_pixel_width * (text_length - 1)) - 1;
 	expected_last_pixel.y = graphics::font_pixel_height;
+
+	// TODO: This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove it in the future
+	EXPECT_CALL(llmock, rawMemoryWrite).Times(AnyNumber());
 
 	// ACT
 	font.display(buff, text_length, starting_line);
@@ -269,6 +276,9 @@ TEST_F(LKCoreFontTest, displayWithScreenWidthReached)
 	expected_last_pixel.x = (text_length % max_char_per_line) * graphics::font_pixel_width - 1;
 	expected_last_pixel.y = ((text_length / max_char_per_line) + 1) * graphics::font_pixel_height;
 
+	// TODO: This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove it in the future
+	EXPECT_CALL(llmock, rawMemoryWrite).Times(AnyNumber());
+
 	// ACT
 	font.display(buff, text_length, starting_line);
 
@@ -288,6 +298,9 @@ TEST_F(LKCoreFontTest, displayWithScreenHeightReached)
 	auto starting_line = 20;
 
 	auto expected_last_pixel_y_position = lcd::dimension.height;
+
+	// TODO: This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove it in the future
+	EXPECT_CALL(llmock, rawMemoryWrite).Times(AnyNumber());
 
 	// ACT
 	text_length = sprintf(buff, "This text should appear on the screen\nThis text should NOT appear on the screen");
