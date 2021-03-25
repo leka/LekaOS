@@ -20,7 +20,7 @@ if(ENABLE_CODE_ANALYSIS)
 	if(CPPCHECK)
 		set(CMAKE_CXX_CPPCHECK "${CPPCHECK}"
 			"--platform=${CMAKE_CURRENT_SOURCE_DIR}/tools/config/cppcheck_leka_platform.xml"
-			"--std=c++14"
+			"--std=c++17"
 			"--cppcheck-build-dir=build/cppcheck"
 			"--enable=all"
 			"--inconclusive"
@@ -34,6 +34,18 @@ if(ENABLE_CODE_ANALYSIS)
 		)
 	endif(CPPCHECK)
 endif(ENABLE_CODE_ANALYSIS)
+
+# Set C/C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS TRUE)
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_EXTENSIONS TRUE)
+
+# Add custom flags
+add_compile_options(
+	-fdiagnostics-color
+	$<$<COMPILE_LANGUAGE:CXX>:-Wno-register>
+)
 
 # Before all, set ROOT_DIR, MBED_OS_DIR
 set(ROOT_DIR    ${CMAKE_CURRENT_LIST_DIR})
