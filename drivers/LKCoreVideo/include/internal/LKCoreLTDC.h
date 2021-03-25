@@ -22,6 +22,7 @@ class LKCoreLTDC : public LKCoreLTDCBase
 	void setupTimingConfig(void) final;
 	void setupBackgroundConfig(void) final;
 
+	void configurePeriphClock(void) final;
 	void configureLayer(void) final;
 
 	LTDC_HandleTypeDef getHandle(void) final;
