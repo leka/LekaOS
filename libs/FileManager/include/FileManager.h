@@ -17,6 +17,7 @@ class FileManager
 
 	bool open(const char *filename);
 	bool close();
+	bool write(const char *data, const uint32_t size);
 	uint32_t getFileSize();
 
 	void testWorkingToRemove();
