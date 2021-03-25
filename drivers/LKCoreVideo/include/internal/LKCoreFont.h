@@ -17,7 +17,7 @@ class LKCoreFont : public LKCoreFontBase
 	LKCoreFont(CGPixel &pixel_to_draw);
 
 	void drawChar(Character character, Color foreground = CGColor::black, Color background = CGColor::white) final;
-	void display(char *text, uint16_t text_length, uint8_t starting_line, Color foreground = CGColor::black,
+	void display(const char *text, uint32_t size, uint32_t starting_line, Color foreground = CGColor::black,
 				 Color background = CGColor::white) final;
 
 	const uint8_t *fontGetFirstPixelAddress(char character) final;
