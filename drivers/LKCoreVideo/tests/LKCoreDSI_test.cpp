@@ -122,6 +122,7 @@ TEST_F(LKCoreDSITest, resetSequence)
 {
 	{
 		InSequence seq;
+		EXPECT_CALL(halmock, HAL_RCC_GPIOJ_CLK_ENABLE).Times(1);
 		EXPECT_CALL(halmock, HAL_GPIO_Init).Times(1);
 		EXPECT_CALL(halmock, HAL_GPIO_WritePin).Times(2);
 	}
