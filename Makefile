@@ -33,7 +33,7 @@ UNIT_TESTS_BUILD_DIR    := $(ROOT_DIR)/_build_unit_tests
 UNIT_TESTS_COVERAGE_DIR := $(UNIT_TESTS_BUILD_DIR)/_coverage
 
 EXCLUDE_FROM_COVERAGE = --exclude-directories '.*googletest.*' --exclude-directories '.*mbed-os.*' --exclude-directories '.*template.*' \
-						-e '.*gtest.*' -e '.*mock.*' -e '.*_test\.cpp' -e 'extern.*' -e '.*st_.*' -e '.*LKCoreSTM32Hal.*' \
+						-e '.*gtest.*' -e '.*mock.*' -e '.*_test\.cpp' -e 'extern.*' -e '.*st_.*' -e '.*LKCoreSTM32Hal.*' -e '.*LKCoreFatFs.*' \
 
 #
 # MARK: - .bin path
