@@ -14,11 +14,7 @@ class LKCoreGraphicsMock : public LKCoreGraphicsBase
 {
   public:
 	MOCK_METHOD(void, clearScreen, (Color color), (override));
-	MOCK_METHOD(void, drawPixel, (Pixel pixel, Color color), (override));
 	MOCK_METHOD(void, drawRectangle, (FilledRectangle rectangle, Color color), (override));
-
-	MOCK_METHOD(uintptr_t, getDestinationAddress, (), (override));
-	MOCK_METHOD(uint32_t, getDestinationColor, (), (override));
 };
 
 }	// namespace leka
