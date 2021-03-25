@@ -103,10 +103,10 @@ void LKCoreVideo::displayImage(FIL *file)
 	_corejpeg.displayImage(file);
 }
 
-void LKCoreVideo::displayText(char *text, uint16_t text_length, uint8_t starting_line, Color foreground,
+void LKCoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, Color foreground,
 							  Color background)
 {
-	_corefont.display(text, text_length, starting_line, foreground, background);
+	_corefont.display(text, size, starting_line, foreground, background);
 }
 
 }	// namespace leka

@@ -15,7 +15,7 @@ class LKCoreFontMock : public LKCoreFontBase
   public:
 	MOCK_METHOD(void, draw, (Character character, Color foreground, Color background), (override));
 	MOCK_METHOD(void, display,
-				(char *text, uint16_t text_length, uint8_t starting_line, Color foreground, Color background),
+				(const char *text, uint32_t size, uint32_t starting_line, Color foreground, Color background),
 				(override));
 	MOCK_METHOD(const uint8_t *, fontGetFirstPixelAddress, (char character), (override));
 	MOCK_METHOD(uint32_t, fontGetPixelBytes, (uint8_t * line_address), (override));
