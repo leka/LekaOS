@@ -24,7 +24,7 @@ class LKCoreFontBase
 
 	virtual void drawChar(Character character, Color foreground = CGColor::black,
 						  Color background = CGColor::white) = 0;
-	virtual void display(char *text, uint16_t text_length, uint8_t starting_line, Color foreground = CGColor::black,
+	virtual void display(const char *text, uint32_t size, uint32_t starting_line, Color foreground = CGColor::black,
 						 Color background = CGColor::white)	 = 0;
 
 	virtual const uint8_t *fontGetFirstPixelAddress(char character)		= 0;

@@ -111,22 +111,21 @@ int main(void)
 	corevideo.clearScreen();
 	rtos::ThisThread::sleep_for(1s);
 
-	uint32_t text_length = 0;
+	uint32_t size = 0;
 	Color foreground;
 	Color background = CGColor::white;
 	for (int i = 1; i <= 20; i++) {
-		text_length = sprintf(buff, "Line #%d", i);
-		foreground	= (i % 2 == 0) ? CGColor::black : CGColor::red;
-		corevideo.displayText(buff, text_length, i, foreground, background);
+		size	   = sprintf(buff, "Line #%d", i);
+		foreground = (i % 2 == 0) ? CGColor::black : CGColor::red;
+		corevideo.displayText(buff, size, i, foreground, background);
 	}
 	rtos::ThisThread::sleep_for(5s);
 
-	text_length =
-		sprintf(buff,
-				"\tThis sentence is supposed to be on multiple lines because it is too long to be displayed on "
-				"only one line of the screen.");
+	size = sprintf(buff,
+				   "\tThis sentence is supposed to be on multiple lines because it is too long to be displayed on "
+				   "only one line of the screen.");
 
-	corevideo.displayText(buff, text_length, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// Write in blue
+	corevideo.displayText(buff, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	 // Write in blue
 
 	rtos::ThisThread::sleep_for(10s);
 
