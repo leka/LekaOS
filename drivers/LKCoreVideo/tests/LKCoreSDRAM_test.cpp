@@ -9,6 +9,7 @@
 
 using namespace leka;
 using ::testing::_;
+using ::testing::AnyNumber;
 using ::testing::InSequence;
 using ::testing::Return;
 
@@ -140,6 +141,22 @@ TEST_F(LKCoreSDRAMTest, initializeSDRAMInitSuccess)
 		EXPECT_CALL(halmock, HAL_SDRAM_ProgramRefreshRate).Times(1);   // Check call of initializationSequence
 	}
 
+	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove them in the future
+	EXPECT_CALL(halmock, HAL_RCC_DMA2_CLK_ENABLE).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_RCC_GPIOD_CLK_ENABLE).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_RCC_GPIOE_CLK_ENABLE).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_RCC_GPIOF_CLK_ENABLE).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_RCC_GPIOG_CLK_ENABLE).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_RCC_GPIOH_CLK_ENABLE).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_RCC_GPIOI_CLK_ENABLE).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_GPIO_Init).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_LINKDMA).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_DMA_DeInit).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_DMA_Init).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_NVIC_SetPriority).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_NVIC_EnableIRQ).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_SDRAM_SendCommand).Times(AnyNumber());
+
 	auto actual_status = coresdram.initialize();
 
 	ASSERT_EQ(actual_status, sdram::status::ok);
@@ -154,6 +171,22 @@ TEST_F(LKCoreSDRAMTest, initializeSDRAMInitFailed)
 		EXPECT_CALL(halmock, HAL_SDRAM_Init).WillOnce(Return(HAL_ERROR));
 		EXPECT_CALL(halmock, HAL_SDRAM_ProgramRefreshRate).Times(1);   // Check call of initializationSequence
 	}
+
+	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove them in the future
+	EXPECT_CALL(halmock, HAL_RCC_DMA2_CLK_ENABLE).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_RCC_GPIOD_CLK_ENABLE).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_RCC_GPIOE_CLK_ENABLE).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_RCC_GPIOF_CLK_ENABLE).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_RCC_GPIOG_CLK_ENABLE).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_RCC_GPIOH_CLK_ENABLE).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_RCC_GPIOI_CLK_ENABLE).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_GPIO_Init).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_LINKDMA).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_DMA_DeInit).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_DMA_Init).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_NVIC_SetPriority).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_NVIC_EnableIRQ).Times(AnyNumber());
+	EXPECT_CALL(halmock, HAL_SDRAM_SendCommand).Times(AnyNumber());
 
 	auto actual_status = coresdram.initialize();
 
