@@ -7,22 +7,23 @@
 #ifndef _LEKA_OS_LIB_SDRAM_H_
 #define _LEKA_OS_LIB_SDRAM_H_
 
+#include "LKCoreSDRAMBase.h"
 #include "LKCoreSTM32HalBase.h"
 
 namespace leka {
 
-class LKCoreSDRAM
+class LKCoreSDRAM : public LKCoreSDRAMBase
 {
   public:
 	LKCoreSDRAM(LKCoreSTM32HalBase &hal);
 
-	void setupSDRAMConfig();
-	FMC_SDRAM_TimingTypeDef setupTimingConfig();
-	DMA_HandleTypeDef setupDMA();
+	void setupSDRAMConfig() final;
+	FMC_SDRAM_TimingTypeDef setupTimingConfig(void) final;
+	DMA_HandleTypeDef setupDMA() final;
 
-	uint8_t initialize(void);
-	void initializeController(void);
-	void initializationSequence(void);
+	uint8_t initialize(void) final;
+	void initializeController() final;
+	void initializationSequence(void) final;
 
   private:
 	LKCoreSTM32HalBase &_hal;
