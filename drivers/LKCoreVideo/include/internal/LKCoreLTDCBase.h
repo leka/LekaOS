@@ -20,7 +20,8 @@ class LKCoreLTDCBase
 	virtual void setupTimingConfig(void)	 = 0;
 	virtual void setupBackgroundConfig(void) = 0;
 
-	virtual void configureLayer(void) = 0;
+	virtual void configurePeriphClock(void) = 0;
+	virtual void configureLayer(void)		= 0;
 
 	virtual LTDC_HandleTypeDef getHandle(void)		  = 0;
 	virtual LTDC_LayerCfgTypeDef getLayerConfig(void) = 0;

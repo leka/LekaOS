@@ -67,6 +67,20 @@ void LKCoreLTDC::setupLayerConfig()
 
 void LKCoreLTDC::initialize()
 {
+	configurePeriphClock();
+
+	// MARK: Get LTDC Configuration from DSI Configuration
+	DSI_VidCfgTypeDef dsi_video_config = _dsi.getConfig();
+	_hal.HAL_LTDC_StructInitFromVideoConfig(&_hltdc, &dsi_video_config);
+
+	// MARK: Initializer LTDC
+	// This part **must not** be moved to the constructor as LCD
+	// initialization must be performed in a very specific order
+	_hal.HAL_LTDC_Init(&_hltdc);
+}
+
+void LKCoreLTDC::configurePeriphClock()
+{
 	RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
 
 	// LCD clock configuration
@@ -82,15 +96,6 @@ void LKCoreLTDC::initialize()
 	PeriphClkInitStruct.PLLSAIDivR	   = RCC_PLLSAIDIVR_2;
 
 	_hal.HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
-
-	// MARK: Get LTDC Configuration from DSI Configuration
-	DSI_VidCfgTypeDef dsi_video_config = _dsi.getConfig();
-	_hal.HAL_LTDC_StructInitFromVideoConfig(&_hltdc, &dsi_video_config);
-
-	// MARK: Initializer LTDC
-	// This part **must not** be moved to the constructor as LCD
-	// initialization must be performed in a very specific order
-	_hal.HAL_LTDC_Init(&_hltdc);
 }
 
 void LKCoreLTDC::configureLayer()

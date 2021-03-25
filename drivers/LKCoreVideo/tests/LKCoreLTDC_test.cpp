@@ -142,7 +142,7 @@ TEST_F(LKCoreLTDCTest, initializationRCCPeriphClock)
 
 	EXPECT_CALL(halmock, HAL_RCCEx_PeriphCLKConfig(WithStructEqualTo(expected))).Times(1);
 
-	coreltdc.initialize();
+	coreltdc.configurePeriphClock();
 }
 
 TEST_F(LKCoreLTDCTest, configureLayer)
