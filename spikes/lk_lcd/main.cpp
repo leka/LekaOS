@@ -52,35 +52,24 @@ Thread screen_thread;
 
 void registerCallbacks(void)
 {
-	HAL_JPEG_RegisterInfoReadyCallback(corejpeg.getHandlePointer(),
-									   [](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info)
-									   {
-										   corejpeg.onInfoReadyCallback(hjpeg, info);
-									   });
+	HAL_JPEG_RegisterInfoReadyCallback(
+		corejpeg.getHandlePointer(),
+		[](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) { corejpeg.onInfoReadyCallback(hjpeg, info); });
 
-	HAL_JPEG_RegisterGetDataCallback(corejpeg.getHandlePointer(),
-									 [](JPEG_HandleTypeDef *hjpeg, uint32_t size)
-									 {
-										 corejpeg.onDataAvailableCallback(hjpeg, size);
-									 });
+	HAL_JPEG_RegisterGetDataCallback(corejpeg.getHandlePointer(), [](JPEG_HandleTypeDef *hjpeg, uint32_t size) {
+		corejpeg.onDataAvailableCallback(hjpeg, size);
+	});
 
 	HAL_JPEG_RegisterDataReadyCallback(corejpeg.getHandlePointer(),
-									   [](JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t size)
-									   {
+									   [](JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t size) {
 										   corejpeg.onDataReadyCallback(hjpeg, pDataOut, size);
 									   });
 
 	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_DECODE_CPLT_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg)
-							  {
-								  corejpeg.onDecodeCompleteCallback(hjpeg);
-							  });
+							  [](JPEG_HandleTypeDef *hjpeg) { corejpeg.onDecodeCompleteCallback(hjpeg); });
 
 	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_ERROR_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg)
-							  {
-								  corejpeg.onErrorCallback(hjpeg);
-							  });
+							  [](JPEG_HandleTypeDef *hjpeg) { corejpeg.onErrorCallback(hjpeg); });
 }
 
 void initializeSD()
