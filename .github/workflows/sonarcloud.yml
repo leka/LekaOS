@@ -1,0 +1,33 @@
+# SonarCloud Analysis
+
+name: SonarCloud Analysis
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonarcloud:
+    name: SonarCloud
+    runs-on: [self-hosted, build]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Build wrapper
+        run: |
+          curl -s --create-dirs -o ./wrapper.zip https://sonarcloud.io/static/cpp/build-wrapper-macosx-x86.zip
+          unzip -q -o wrapper.zip
+          make mbed_curl
+          make config
+          ./build-wrapper-macosx-x86/build-wrapper-macosx-x86 --out-dir bw-output make
+          sonar-scanner -X -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
