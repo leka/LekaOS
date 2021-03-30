@@ -16,7 +16,7 @@ target_include_directories(spike_lk_sensor_battery
 
 target_link_libraries(spike_lk_sensor_battery
 	lib_HelloWorld
-	lib_FileManager
+	FileManager
 	LKCoreBattery
 	LKCoreMotor
 )
