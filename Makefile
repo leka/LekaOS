@@ -124,6 +124,17 @@ coverage_json:
 	@gcovr -r . -e tests/unit/mbed-os -e googletest -e $(UNIT_TESTS_BUILD_DIR) --json > $(UNIT_TESTS_COVERAGE_DIR)/coverage.json
 	@echo "📝 Json report is available at: $(UNIT_TESTS_COVERAGE_DIR)/coverage.json 📝"
 
+coverage_sonarqube:
+	@echo ""
+	@echo "🔬 Generating code coverage 📝"
+	@echo ""
+	@gcovr -r . $(EXCLUDE_FROM_COVERAGE)
+	@gcovr -r . $(EXCLUDE_FROM_COVERAGE) --sonarqube $(UNIT_TESTS_COVERAGE_DIR)/coverage.xml
+	@echo ""
+	@echo "📝 SonarQube XML report can be viewed with:"
+	@echo "    open $(UNIT_TESTS_COVERAGE_DIR)/coverage.xml\n"
+
+
 coverage_lcov:
 	@echo ""
 	@echo "🔬 Generating code coverage using lcov 📝"
