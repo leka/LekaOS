@@ -27,6 +27,7 @@ jobs:
           make mbed_curl
           make config
           ./build-wrapper-macosx-x86/build-wrapper-macosx-x86 --out-dir bw-output make
+          make config_unit_tests && make unit_tests && make coverage_sonarqube
           sonar-scanner -X -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
