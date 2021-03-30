@@ -1,6 +1,10 @@
 {
 	"config": {
-		"target_name": null
+		"target_name": null,
+		"USE_HAL_JPEG_REGISTER_CALLBACKS": {
+			"macro_name": "USE_HAL_JPEG_REGISTER_CALLBACKS",
+			"value": "1U"
+		}
 	},
 	"target_overrides": {
 		"*": {
