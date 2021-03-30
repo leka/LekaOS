@@ -7,3 +7,5 @@ add_subdirectory(${DRIVERS_DIR}/Motor)
 add_subdirectory(${DRIVERS_DIR}/LKCoreMotor)
 add_subdirectory(${DRIVERS_DIR}/LKCoreLightSensor)
 add_subdirectory(${DRIVERS_DIR}/LKCoreMicrophone)
+add_subdirectory(${DRIVERS_DIR}/LKCoreBattery)
+

@@ -38,6 +38,15 @@ bool FileManager::close()
 	return file_closed;
 }
 
+bool FileManager::write(const char *data, const uint32_t size)
+{
+	UINT uint_size = static_cast<UINT>(size);
+	if (f_write(&_file, data, uint_size, NULL) == FR_OK) {
+		return true;
+	}
+	return false;
+}
+
 uint32_t FileManager::getFileSize()
 {
 	uint32_t file_size = 0;

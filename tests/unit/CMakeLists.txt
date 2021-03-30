@@ -153,6 +153,8 @@ add_subdirectory(template)
 leka_register_unit_tests_for_driver(LKCoreMotor)
 leka_register_unit_tests_for_driver(LKCoreLightSensor)
 leka_register_unit_tests_for_driver(LKCoreMicrophone)
+leka_register_unit_tests_for_driver(LKCoreBattery)
+
 
 # Register libraries
 leka_register_unit_tests_for_library(LKCalculatorKit)
