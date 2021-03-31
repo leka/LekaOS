@@ -1,6 +1,6 @@
 # CI Workflow
 
-name: CI - Unit Tests
+name: Unit Tests
 
 on:
   push:
@@ -61,15 +61,6 @@ jobs:
       - name: Generate lcov code coverage
         run: |
           make coverage_lcov
-
-      - name: Upload Codeclimate code coverage
-        uses: paambaati/codeclimate-action@v2.7.5
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        with:
-          debug: true
-          prefix: ${{github.workspace}}
-          coverageLocations: ${{github.workspace}}/_build_unit_tests/_coverage/coverage.info:lcov
 
       - name: Upload Codecov code coverage
         env:

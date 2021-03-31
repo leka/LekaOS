@@ -1,6 +1,11 @@
 # LekaOS
 
-![CI](https://github.com/leka/LekaOS/workflows/CI/badge.svg) [![Maintainability](https://api.codeclimate.com/v1/badges/96be380d9d5e62be5a23/maintainability)](https://codeclimate.com/repos/5fe1fdba6d4b510c01008ae2/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/96be380d9d5e62be5a23/test_coverage)](https://codeclimate.com/repos/5fe1fdba6d4b510c01008ae2/test_coverage)
+![CI](https://github.com/leka/LekaOS/workflows/CI/badge.svg)
+[![codecov](https://codecov.io/gh/leka/LekaOS/branch/develop/graph/badge.svg?token=B5WPA2NKH7)](https://codecov.io/gh/leka/LekaOS)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=leka_LekaOS&metric=alert_status&token=dadf2cb8d5c754c0bf7bb5749172ff58e796573f)](https://sonarcloud.io/dashboard?id=leka_LekaOS)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=leka_LekaOS&metric=coverage&token=dadf2cb8d5c754c0bf7bb5749172ff58e796573f)](https://sonarcloud.io/dashboard?id=leka_LekaOS)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=leka_LekaOS&metric=sqale_rating&token=dadf2cb8d5c754c0bf7bb5749172ff58e796573f)](https://sonarcloud.io/dashboard?id=leka_LekaOS)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=leka_LekaOS&metric=bugs&token=dadf2cb8d5c754c0bf7bb5749172ff58e796573f)](https://sonarcloud.io/dashboard?id=leka_LekaOS)
 
 ## About
 

@@ -1,6 +1,6 @@
 # CI Workflow
 
-name: CI - LekaOS & al.
+name: Config & Build
 
 on:
   push:
@@ -15,13 +15,13 @@ on:
       - "bugfix/**"
 
 jobs:
-  config_build:
-    name: Config & Build
+  leka_os_and_al:
+    name: LekaOS & al.
     runs-on: [self-hosted, build]
     strategy:
       fail-fast: false
       matrix:
-        custom_target: ["LEKA_V1_1_DEV", "LEKA_V1_2_DEV"]
+        custom_target: ["LEKA_V1_2_DEV"]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
