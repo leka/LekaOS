@@ -1,6 +1,6 @@
 # SonarCloud Analysis
 
-name: SonarCloud Analysis
+name: SonarCloud
 
 on:
   push:
@@ -12,22 +12,36 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  sonarcloud:
-    name: SonarCloud
+  analysis:
+    name: Analysis
     runs-on: [self-hosted, build]
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
-      - name: Build wrapper
+      - name: Download build wrapper
         run: |
           curl -s --create-dirs -o ./wrapper.zip https://sonarcloud.io/static/cpp/build-wrapper-macosx-x86.zip
           unzip -q -o wrapper.zip
+
+      - name: Download mbed-os
+        run: |
           make mbed_curl
+
+      - name: Config, build LekaOS & al.
+        run: |
           make config
           ./build-wrapper-macosx-x86/build-wrapper-macosx-x86 --out-dir bw-output make
-          make config_unit_tests && make unit_tests && make coverage_sonarqube
+
+      - name: Config, build & run unit tests
+        run: |
+          make config_unit_tests
+          make unit_tests
+          make coverage_sonarqube
+
+      - name: Run sonar-scanner
+        run: |
           sonar-scanner -X -Dsonar.login=${{ secrets.SONAR_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
