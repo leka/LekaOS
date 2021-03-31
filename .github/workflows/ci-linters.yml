@@ -1,6 +1,6 @@
 # CI - Check Workflow
 
-name: CI - Check
+name: Linters
 
 on: push
 

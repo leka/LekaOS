@@ -1,6 +1,6 @@
 # CI Workflow
 
-name: CI - Unit Tests
+name: Unit Tests
 
 on:
   push:
