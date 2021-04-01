@@ -134,7 +134,6 @@ coverage_sonarqube:
 	@echo "📝 SonarQube XML report can be viewed with:"
 	@echo "    open $(UNIT_TESTS_COVERAGE_DIR)/coverage.xml\n"
 
-
 coverage_lcov:
 	@echo ""
 	@echo "🔬 Generating code coverage using lcov 📝"
