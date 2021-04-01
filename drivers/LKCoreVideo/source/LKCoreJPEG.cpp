@@ -79,8 +79,7 @@ HAL_StatusTypeDef LKCoreJPEG::decodeImageWithPolling(void)
 	_mcu_block_index = 0;
 
 	// TODO: rely on LKFileSystemKit to handle open/read/close
-	if (_file.read(_jpeg_input_buffer.data, leka::jpeg::input_data_buffer_size,
-				   (uint32_t *)(&_jpeg_input_buffer.size)) != FR_OK) {
+	if (_file.read(_jpeg_input_buffer.data, leka::jpeg::input_data_buffer_size, &_jpeg_input_buffer.size) != FR_OK) {
 		return HAL_ERROR;
 	}
 
@@ -130,8 +129,7 @@ void LKCoreJPEG::onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t siz
 		_file.seek(_input_file_offset);
 	}
 
-	if (_file.read(_jpeg_input_buffer.data, leka::jpeg::input_data_buffer_size,
-				   (uint32_t *)(&_jpeg_input_buffer.size)) == FR_OK) {
+	if (_file.read(_jpeg_input_buffer.data, leka::jpeg::input_data_buffer_size, &_jpeg_input_buffer.size) == FR_OK) {
 		_input_file_offset += _jpeg_input_buffer.size;
 		_hal.HAL_JPEG_ConfigInputBuffer(hjpeg, _jpeg_input_buffer.data, _jpeg_input_buffer.size);
 	} else {

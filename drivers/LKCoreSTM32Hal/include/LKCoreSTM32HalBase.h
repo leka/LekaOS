@@ -81,8 +81,6 @@ class LKCoreSTM32HalBase
 											uint32_t InDataLength)											  = 0;
 	virtual void HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer,
 											 uint32_t OutDataLength)										  = 0;
-
-  private:
 };
 
 }	// namespace leka

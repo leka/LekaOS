@@ -213,7 +213,7 @@ void LKCoreSDRAM::initializationSequence()
 	_hal.HAL_SDRAM_ProgramRefreshRate(&_hsdram, sdram::refresh_count);
 }
 
-SDRAM_HandleTypeDef LKCoreSDRAM::getHandle(void)
+SDRAM_HandleTypeDef LKCoreSDRAM::getHandle(void) const
 {
 	return _hsdram;
 }

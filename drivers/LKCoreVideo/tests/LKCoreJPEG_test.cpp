@@ -31,6 +31,30 @@ class LKCoreJPEGTest : public ::testing::Test
 	LKCoreDMA2DMock dma2dmock;
 	LKCoreFatFsMock filemock;
 	LKCoreJPEG corejpeg;
+
+	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call
+	// TODO: Remove them in the future
+	void MOCK_FUNCTION_silenceUnexpectedCalls(void)
+	{
+		EXPECT_CALL(filemock, read).Times(AnyNumber());
+		EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(AnyNumber());
+		EXPECT_CALL(dma2dmock, transferImage).Times(AnyNumber());
+	}
+
+	void TEST_FUNCTION_WidthOffsetFromChromaSubsampling(JPEG_ConfTypeDef config)
+	{
+		for (int offset = 0; offset < 16; offset++) {
+			// Setup
+			config.ImageWidth = 16 * 50 + offset;	// =800 + i
+			EXPECT_CALL(halmock, HAL_JPEG_GetInfo(_, _)).WillOnce(DoAll(SetArgPointee<1>(config), Return(HAL_OK)));
+			// Apply setup
+			FIL image;
+			corejpeg.displayImage(&image);
+			// Test
+			auto width_offset = corejpeg.getWidthOffset();
+			ASSERT_EQ((16 - offset) % 16, width_offset);
+		}
+	}
 };
 
 TEST_F(LKCoreJPEGTest, instantiation)
@@ -62,10 +86,7 @@ TEST_F(LKCoreJPEGTest, getConfiguration)
 	// Setup
 	EXPECT_CALL(halmock, HAL_JPEG_GetInfo(_, _)).WillOnce(DoAll(SetArgPointee<1>(expected_config), Return(HAL_OK)));
 
-	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove them in the future
-	EXPECT_CALL(filemock, read).Times(AnyNumber());
-	EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(AnyNumber());
-	EXPECT_CALL(dma2dmock, transferImage).Times(AnyNumber());
+	MOCK_FUNCTION_silenceUnexpectedCalls();
 
 	// Apply setup
 	FIL image;
@@ -111,16 +132,11 @@ TEST_F(LKCoreJPEGTest, decodeImageWithPollingDecodeCalledFailed)
 TEST_F(LKCoreJPEGTest, getWidthOffsetNoChromaSubsampling)
 {
 	JPEG_ConfTypeDef config;
-
 	config.ChromaSubsampling = 3;
 
 	// Setup
 	EXPECT_CALL(halmock, HAL_JPEG_GetInfo(_, _)).WillOnce(DoAll(SetArgPointee<1>(config), Return(HAL_OK)));
-
-	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove them in the future
-	EXPECT_CALL(filemock, read).Times(AnyNumber());
-	EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(AnyNumber());
-	EXPECT_CALL(dma2dmock, transferImage).Times(AnyNumber());
+	MOCK_FUNCTION_silenceUnexpectedCalls();
 
 	// Apply setup
 	FIL image;
@@ -135,67 +151,29 @@ TEST_F(LKCoreJPEGTest, getWidthOffsetNoChromaSubsampling)
 TEST_F(LKCoreJPEGTest, getWidthOffsetChromaSubsampling420)
 {
 	JPEG_ConfTypeDef config;
-
 	config.ChromaSubsampling = JPEG_420_SUBSAMPLING;
 
-	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove them in the future
-	EXPECT_CALL(filemock, read).Times(AnyNumber());
-	EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(AnyNumber());
-	EXPECT_CALL(dma2dmock, transferImage).Times(AnyNumber());
+	MOCK_FUNCTION_silenceUnexpectedCalls();
 
-	for (int offset = 0; offset < 16; offset++) {
-		// Setup
-		config.ImageWidth = 16 * 50 + offset;	// =800 + i
-		EXPECT_CALL(halmock, HAL_JPEG_GetInfo(_, _)).WillOnce(DoAll(SetArgPointee<1>(config), Return(HAL_OK)));
-
-		// Apply setup
-		FIL image;
-		corejpeg.displayImage(&image);
-
-		// Test
-		auto width_offset = corejpeg.getWidthOffset();
-
-		ASSERT_EQ((16 - offset) % 16, width_offset);
-	}
+	TEST_FUNCTION_WidthOffsetFromChromaSubsampling(config);
 }
 
 TEST_F(LKCoreJPEGTest, getWidthOffsetChromaSubsampling422)
 {
 	JPEG_ConfTypeDef config;
-
 	config.ChromaSubsampling = JPEG_422_SUBSAMPLING;
 
-	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove them in the future
-	EXPECT_CALL(filemock, read).Times(AnyNumber());
-	EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(AnyNumber());
-	EXPECT_CALL(dma2dmock, transferImage).Times(AnyNumber());
+	MOCK_FUNCTION_silenceUnexpectedCalls();
 
-	for (int offset = 0; offset < 16; offset++) {
-		// Setup
-		config.ImageWidth = 16 * 50 + offset;	// =800 + i
-		EXPECT_CALL(halmock, HAL_JPEG_GetInfo(_, _)).WillOnce(DoAll(SetArgPointee<1>(config), Return(HAL_OK)));
-
-		// Apply setup
-		FIL image;
-		corejpeg.displayImage(&image);
-
-		// Test
-		auto width_offset = corejpeg.getWidthOffset();
-
-		ASSERT_EQ((16 - offset) % 16, width_offset);
-	}
+	TEST_FUNCTION_WidthOffsetFromChromaSubsampling(config);
 }
 
 TEST_F(LKCoreJPEGTest, getWidthOffsetChromaSubsampling444)
 {
 	JPEG_ConfTypeDef config;
-
 	config.ChromaSubsampling = JPEG_444_SUBSAMPLING;
 
-	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove them in the future
-	EXPECT_CALL(filemock, read).Times(AnyNumber());
-	EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(AnyNumber());
-	EXPECT_CALL(dma2dmock, transferImage).Times(AnyNumber());
+	MOCK_FUNCTION_silenceUnexpectedCalls();
 
 	for (int offset = 0; offset < 8; offset++) {
 		// Setup
@@ -352,6 +330,36 @@ TEST_F(LKCoreJPEGTest, onDataAvailableCallback)
 		EXPECT_CALL(filemock, seek).Times(1);
 		EXPECT_CALL(filemock, read).Times(1);
 		EXPECT_CALL(halmock, HAL_JPEG_ConfigInputBuffer).Times(1);
+	}
+
+	corejpeg.onDataAvailableCallback(&hjpeg, size);
+}
+
+TEST_F(LKCoreJPEGTest, onDataAvailableCallbackSizeEqual)
+{
+	JPEG_HandleTypeDef hjpeg;
+	uint32_t size = 0;
+
+	{
+		InSequence seq;
+		EXPECT_CALL(filemock, seek).Times(0);
+		EXPECT_CALL(filemock, read).Times(1);
+		EXPECT_CALL(halmock, HAL_JPEG_ConfigInputBuffer).Times(1);
+	}
+
+	corejpeg.onDataAvailableCallback(&hjpeg, size);
+}
+
+TEST_F(LKCoreJPEGTest, onDataAvailableCallbackCannotReadFile)
+{
+	JPEG_HandleTypeDef hjpeg;
+	uint32_t size;
+
+	{
+		InSequence seq;
+		EXPECT_CALL(filemock, seek).Times(1);
+		EXPECT_CALL(filemock, read).WillOnce(Return(FR_NO_FILE));
+		EXPECT_CALL(halmock, HAL_JPEG_ConfigInputBuffer).Times(0);
 	}
 
 	corejpeg.onDataAvailableCallback(&hjpeg, size);

@@ -14,12 +14,12 @@
 namespace leka {
 
 struct Point {
-	uint16_t x = 0;
-	uint16_t y = 0;
+	uint32_t x = 0;
+	uint32_t y = 0;
 };
 
 struct CGPixel {
-	CGPixel(LKCoreLL &ll) : corell(ll) {}
+	explicit CGPixel(LKCoreLL &ll) : corell(ll) {}
 
 	Point coordinates {0, 0};
 	LKCoreLL &corell;

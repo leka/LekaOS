@@ -41,7 +41,7 @@ namespace dsi {
 
 	constexpr uint32_t lcdClock			 = 27429;	// LcdClk = 27429 kHz
 	constexpr uint32_t laneByteClock_kHz = 62500;	// 500 MHz / 8 = 62.5 MHz = 62500 kHz
-	constexpr float txEscapeClockDiv	 = laneByteClock_kHz / 15620;
+	constexpr uint32_t txEscapeClockDiv	 = laneByteClock_kHz / 15620;
 
 }	// namespace dsi
 

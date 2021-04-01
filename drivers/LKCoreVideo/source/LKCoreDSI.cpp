@@ -115,7 +115,7 @@ void LKCoreDSI::reset(void)
 	rtos::ThisThread::sleep_for(10ms);
 }
 
-DSI_HandleTypeDef LKCoreDSI::getHandle()
+DSI_HandleTypeDef LKCoreDSI::getHandle() const
 {
 	return _hdsi;
 }

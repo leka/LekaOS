@@ -14,17 +14,17 @@ namespace leka {
 class LKCoreFont : public LKCoreFontBase
 {
   public:
-	LKCoreFont(CGPixel &pixel_to_draw);
+	explicit LKCoreFont(CGPixel &pixel_to_draw);
 
 	void drawChar(Character character, Color foreground = CGColor::black, Color background = CGColor::white) final;
 	void display(const char *text, uint32_t size, uint32_t starting_line, Color foreground = CGColor::black,
 				 Color background = CGColor::white) final;
 
 	const uint8_t *fontGetFirstPixelAddress(char character) final;
-	uint32_t fontGetPixelBytes(uint8_t *line_address) final;
+	uint32_t fontGetPixelBytes(const uint8_t *line_address) final;
 	bool fontPixelIsOn(uint32_t byte_of_line, uint8_t pixel_id) final;
 
-	CGPixel getLastDrawnPixel();
+	CGPixel getLastDrawnPixel() const;
 
   private:
 	CGPixel &_pixel_to_draw;

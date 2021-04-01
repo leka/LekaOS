@@ -16,7 +16,7 @@ namespace leka {
 class LKCoreGraphics : public LKCoreGraphicsBase
 {
   public:
-	LKCoreGraphics(LKCoreDMA2DBase &dma2d);
+	explicit LKCoreGraphics(LKCoreDMA2DBase &dma2d);
 
 	void clearScreen(Color color = CGColor::white) final;
 
