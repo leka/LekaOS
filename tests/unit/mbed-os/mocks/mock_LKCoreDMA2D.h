@@ -15,10 +15,10 @@ class LKCoreDMA2DMock : public LKCoreDMA2DBase
   public:
 	MOCK_METHOD(void, initialize, (), (override));
 	MOCK_METHOD(void, transferData,
-				(uintptr_t input_data_address, uintptr_t output_data_address, uint16_t width, uint16_t height),
+				(uintptr_t input_data_address, uintptr_t output_data_address, uint32_t width, uint32_t height),
 				(override));
-	MOCK_METHOD(void, transferImage, (uint16_t width, uint16_t height, uint16_t width_offset), (override));
-	MOCK_METHOD(void, transferDrawing, (uintptr_t first_pixel_address, uint16_t width, uint16_t height, uint32_t color),
+	MOCK_METHOD(void, transferImage, (uint32_t width, uint32_t height, uint32_t width_offset), (override));
+	MOCK_METHOD(void, transferDrawing, (uintptr_t first_pixel_address, uint32_t width, uint32_t height, uint32_t color),
 				(override));
 	MOCK_METHOD(DMA2D_HandleTypeDef, getHandle, (), (override));
 };

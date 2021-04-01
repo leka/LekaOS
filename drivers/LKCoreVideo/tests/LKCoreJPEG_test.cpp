@@ -357,6 +357,36 @@ TEST_F(LKCoreJPEGTest, onDataAvailableCallback)
 	corejpeg.onDataAvailableCallback(&hjpeg, size);
 }
 
+TEST_F(LKCoreJPEGTest, onDataAvailableCallbackSizeEqual)
+{
+	JPEG_HandleTypeDef hjpeg;
+	uint32_t size = 0;
+
+	{
+		InSequence seq;
+		EXPECT_CALL(filemock, seek).Times(0);
+		EXPECT_CALL(filemock, read).Times(1);
+		EXPECT_CALL(halmock, HAL_JPEG_ConfigInputBuffer).Times(1);
+	}
+
+	corejpeg.onDataAvailableCallback(&hjpeg, size);
+}
+
+TEST_F(LKCoreJPEGTest, onDataAvailableCallbackCannotReadFile)
+{
+	JPEG_HandleTypeDef hjpeg;
+	uint32_t size;
+
+	{
+		InSequence seq;
+		EXPECT_CALL(filemock, seek).Times(1);
+		EXPECT_CALL(filemock, read).WillOnce(Return(FR_NO_FILE));
+		EXPECT_CALL(halmock, HAL_JPEG_ConfigInputBuffer).Times(0);
+	}
+
+	corejpeg.onDataAvailableCallback(&hjpeg, size);
+}
+
 TEST_F(LKCoreJPEGTest, onDataReadyCallback)
 {
 	JPEG_HandleTypeDef hjpeg;

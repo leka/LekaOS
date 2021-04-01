@@ -2,8 +2,6 @@
 
 namespace leka {
 
-LKCoreSTM32Hal::LKCoreSTM32Hal() {}
-
 void LKCoreSTM32Hal::HAL_RCC_GPIOD_CLK_ENABLE(void)
 {
 	__HAL_RCC_GPIOD_CLK_ENABLE();

@@ -28,7 +28,7 @@ class LKCoreFontBase
 						 Color background = CGColor::white)	 = 0;
 
 	virtual const uint8_t *fontGetFirstPixelAddress(char character)		= 0;
-	virtual uint32_t fontGetPixelBytes(uint8_t *line_address)			= 0;
+	virtual uint32_t fontGetPixelBytes(const uint8_t *line_address)		= 0;
 	virtual bool fontPixelIsOn(uint32_t byte_of_line, uint8_t pixel_id) = 0;
 };
 

@@ -19,7 +19,7 @@ class LKCoreDSI : public LKCoreDSIBase
 	void start() final;
 	void reset() final;
 
-	DSI_HandleTypeDef getHandle();
+	DSI_HandleTypeDef getHandle() const;
 	DSI_VidCfgTypeDef getConfig() final;
 
 	void write(const uint8_t *data, const uint32_t size) final;

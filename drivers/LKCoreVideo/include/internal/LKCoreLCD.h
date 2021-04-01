@@ -17,12 +17,12 @@ class LKCoreLCD : public LKCoreLCDBase
   public:
 	LKCoreLCD(LKCoreLCDDriverBase &driver);
 
-	void initialize();
+	void initialize() final;
 
-	void turnOn();
-	void turnOff();
+	void turnOn() final;
+	void turnOff() final;
 
-	void setBrightness(float value);
+	void setBrightness(float value) final;
 
   private:
 	LKCoreLCDDriverBase &_driver;

@@ -166,36 +166,28 @@ namespace lcd {
 
 		}	// namespace display
 
-		namespace gram {
+		namespace gram::command {
 
-			namespace command {
+			// #define OTM8009A_CMD_RAMWR 0x2C	  // Memory (GRAM) write command
+			// #define OTM8009A_CMD_RAMRD 0x2E	  // Memory (GRAM) read command
+			constexpr uint8_t write = 0x2C;
+			constexpr uint8_t read	= 0x2E;
 
-				// #define OTM8009A_CMD_RAMWR 0x2C	  // Memory (GRAM) write command
-				// #define OTM8009A_CMD_RAMRD 0x2E	  // Memory (GRAM) read command
-				constexpr uint8_t write = 0x2C;
-				constexpr uint8_t read	= 0x2E;
+		}	// namespace gram::command
 
-			}	// namespace command
+		namespace cabc::command {
 
-		}	// namespace gram
+			// CABC Management : ie : Content Adaptive Back light Control in IC OTM8009a
+			// #define OTM8009A_CMD_WRDISBV  0x51	 // Write Display Brightness command
+			// #define OTM8009A_CMD_WRCTRLD  0x53	 // Write CTRL Display command
+			// #define OTM8009A_CMD_WRCABC	  0x55	 // Write Content Adaptive Brightness command
+			// #define OTM8009A_CMD_WRCABCMB 0x5E	 // Write CABC Minimum Brightness command
+			constexpr uint8_t wrdisbv  = 0x51;
+			constexpr uint8_t wrctrld  = 0x53;
+			constexpr uint8_t wrcabc   = 0x55;
+			constexpr uint8_t wrcabcmb = 0x5E;
 
-		namespace cabc {
-
-			namespace command {
-
-				// CABC Management : ie : Content Adaptive Back light Control in IC OTM8009a
-				// #define OTM8009A_CMD_WRDISBV  0x51	 // Write Display Brightness command
-				// #define OTM8009A_CMD_WRCTRLD  0x53	 // Write CTRL Display command
-				// #define OTM8009A_CMD_WRCABC	  0x55	 // Write Content Adaptive Brightness command
-				// #define OTM8009A_CMD_WRCABCMB 0x5E	 // Write CABC Minimum Brightness command
-				constexpr uint8_t wrdisbv  = 0x51;
-				constexpr uint8_t wrctrld  = 0x53;
-				constexpr uint8_t wrcabc   = 0x55;
-				constexpr uint8_t wrcabcmb = 0x5E;
-
-			}	// namespace command
-
-		}	// namespace cabc
+		}	// namespace cabc::command
 
 		namespace set_address {
 
@@ -330,30 +322,30 @@ namespace lcd {
 
 // ? OTM8009A_CMD not used at the moment
 
-// #define OTM8009A_CMD_SWRESET   0x01 /* Sw reset command */
-// #define OTM8009A_CMD_RDDMADCTL 0x0B /* Read Display MADCTR command : read memory display access ctrl */
-// #define OTM8009A_CMD_RDDCOLMOD 0x0C /* Read Display pixel format */
-// #define OTM8009A_CMD_SLPIN	   0x10 /* Sleep In command */
-// #define OTM8009A_CMD_PTLON 0x12 /* Partial mode On command */
+// #define OTM8009A_CMD_SWRESET   0x01 // Sw reset command
+// #define OTM8009A_CMD_RDDMADCTL 0x0B // Read Display MADCTR command : read memory display access ctrl
+// #define OTM8009A_CMD_RDDCOLMOD 0x0C // Read Display pixel format
+// #define OTM8009A_CMD_SLPIN	   0x10 // Sleep In command
+// #define OTM8009A_CMD_PTLON 0x12 // Partial mode On command
 
-// #define OTM8009A_CMD_PLTAR 0x30 /* Partial area command (4 parameters) */
+// #define OTM8009A_CMD_PLTAR 0x30 // Partial area command (4 parameters)
 
-// #define OTM8009A_CMD_TEOFF 0x34 /* Tearing Effect Line Off command : command with no parameter */
-// #define OTM8009A_CMD_TEEON 0x35 /* Tearing Effect Line On command : command with 1 parameter 'TELOM' */
+// #define OTM8009A_CMD_TEOFF 0x34 // Tearing Effect Line Off command : command with no parameter
+// #define OTM8009A_CMD_TEEON 0x35 // Tearing Effect Line On command : command with 1 parameter 'TELOM'
 
-// /* Parameter TELOM : Tearing Effect Line Output Mode : possible values */
+// // Parameter TELOM : Tearing Effect Line Output Mode : possible values
 // #define OTM8009A_TEEON_TELOM_VBLANKING_INFO_ONLY		  0x00
 // #define OTM8009A_TEEON_TELOM_VBLANKING_AND_HBLANKING_INFO 0x01
 
-// #define OTM8009A_CMD_IDMOFF 0x38 /* Idle mode Off command */
-// #define OTM8009A_CMD_IDMON	0x39 /* Idle mode On command  */
+// #define OTM8009A_CMD_IDMOFF 0x38 // Idle mode Off command
+// #define OTM8009A_CMD_IDMON	0x39 // Idle mode On command
 
-// #define OTM8009A_CMD_COLMOD 0x3A /* Interface Pixel format command */
+// #define OTM8009A_CMD_COLMOD 0x3A // Interface Pixel format command
 
-// #define OTM8009A_CMD_RAMWRC 0x3C /* Memory write continue command */
-// #define OTM8009A_CMD_RAMRDC 0x3E /* Memory read continue command  */
+// #define OTM8009A_CMD_RAMWRC 0x3C // Memory write continue command
+// #define OTM8009A_CMD_RAMRDC 0x3E // Memory read continue command
 
-// #define OTM8009A_CMD_WRTESCN 0x44 /* Write Tearing Effect Scan line command */
-// #define OTM8009A_CMD_RDSCNL	 0x45 /* Read  Tearing Effect Scan line command */
+// #define OTM8009A_CMD_WRTESCN 0x44 // Write Tearing Effect Scan line command
+// #define OTM8009A_CMD_RDSCNL	 0x45 // Read  Tearing Effect Scan line command
 
 #endif	 // _LEKA_OS_DRIVER_LK_CORE_OTM8009A_H_
