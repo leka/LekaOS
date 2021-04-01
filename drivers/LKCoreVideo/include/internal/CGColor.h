@@ -15,7 +15,7 @@ struct Color {
 	uint8_t blue;
 	uint8_t alpha = 0xFF;
 
-	uint32_t getARGB() { return alpha << 24 | red << 16 | green << 8 | blue; }
+	uint32_t getARGB() const { return alpha << 24 | red << 16 | green << 8 | blue; }
 };
 
 namespace CGColor {

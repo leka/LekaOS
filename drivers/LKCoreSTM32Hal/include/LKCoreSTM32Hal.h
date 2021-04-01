@@ -13,7 +13,7 @@ namespace leka {
 class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 {
   public:
-	LKCoreSTM32Hal();
+	LKCoreSTM32Hal() = default;
 
 	void HAL_RCC_GPIOD_CLK_ENABLE(void) final;
 	void HAL_RCC_GPIOE_CLK_ENABLE(void) final;
@@ -80,8 +80,6 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 	void HAL_JPEG_ConfigInputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewInputBuffer, uint32_t InDataLength) final;
 	void HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer,
 									 uint32_t OutDataLength) final;
-
-  private:
 };
 
 }	// namespace leka

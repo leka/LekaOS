@@ -19,7 +19,7 @@ const uint8_t *LKCoreFont::fontGetFirstPixelAddress(char character)
 	return &LKFontTable[index];
 }
 
-uint32_t LKCoreFont::fontGetPixelBytes(uint8_t *line_address)
+uint32_t LKCoreFont::fontGetPixelBytes(const uint8_t *line_address)
 {
 	return (line_address[0] << 16) | (line_address[1] << 8) | line_address[2];
 }
@@ -38,7 +38,7 @@ void LKCoreFont::drawChar(Character character, Color foreground, Color backgroun
 	const uint8_t *first_byte_address = fontGetFirstPixelAddress(character.ascii);
 
 	for (uint32_t next_byte = 0; next_byte < graphics::bytes_per_char; next_byte += graphics::bytes_per_line) {
-		uint32_t byte_of_line = fontGetPixelBytes((uint8_t *)first_byte_address + next_byte);
+		uint32_t byte_of_line = fontGetPixelBytes(first_byte_address + next_byte);
 
 		for (uint8_t pixel_id = 0; pixel_id < graphics::pixels_per_line; pixel_id++) {
 			_pixel_to_draw.coordinates.x = character.origin.x + pixel_id;
@@ -87,7 +87,7 @@ void LKCoreFont::display(const char *text, uint32_t size, uint32_t starting_line
 	}
 }
 
-CGPixel LKCoreFont::getLastDrawnPixel()
+CGPixel LKCoreFont::getLastDrawnPixel() const
 {
 	return _pixel_to_draw;
 }

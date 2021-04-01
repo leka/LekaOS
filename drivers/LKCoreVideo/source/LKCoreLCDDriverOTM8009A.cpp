@@ -267,16 +267,16 @@ void LKCoreLCDDriverOTM8009A::setLandscapeOrientation()
 	// ? Following code is implemented based on OTM8009A driver datasheet
 	// ? register 36H (Memory Data Access Control)
 
-	uint8_t settings = 0x00;
+	std::byte settings {0x00};
 
-	settings |= (1 << 7);	// Set vertical symmetry - needed
-	settings |= (1 << 5);	// Set landcape mode - needed
+	settings |= std::byte {1 << 7};	  // Set vertical symmetry - needed
+	settings |= std::byte {1 << 5};	  // Set landscape mode - needed
 
-	// settings |= (1 << 6);	// Set horizontal symmetry - not needed
-	// settings |= (1 << 4);	// Set reverse refresh top to bottom - not needed
-	// settings |= (1 << 3);	// Set use BGR (Blue Green Red) - not needed
+	// settings |= std::byte {1 << 6};	// Set horizontal symmetry - not needed
+	// settings |= std::byte {1 << 4};	// Set reverse refresh top to bottom - not needed
+	// settings |= std::byte {1 << 3};	// Set use BGR (Blue Green Red) - not needed
 
-	uint8_t command[] = {madctr::command, settings};
+	uint8_t command[] = {madctr::command, std::to_integer<uint8_t>(settings)};
 
 	// Set landscape mode
 	_dsi.write(command, std::size(command));
