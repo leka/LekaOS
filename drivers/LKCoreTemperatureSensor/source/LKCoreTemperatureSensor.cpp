@@ -24,37 +24,29 @@ LKCoreTemperatureSensor::LKCoreTemperatureSensor(mbed::I2C &i2c) : _i2c(i2c)
 status_t LKCoreTemperatureSensor::init()
 {
 	// Power on the device
-	uint8_t POWER_UP = 0x01;
-	if (auto ret = hts221_power_on_set(&_register_io_function, POWER_UP); ret != 0) {
-		printf("POWER ON");
+	if (auto ret = hts221_power_on_set(&_register_io_function, state::ON); ret != 0) {
 		return Status::ERROR;
 	}
 
-	uint8_t BDU_ON = 0x01;	 // The BDU bit is used to inhibit the output register update between the reading of the
-							 // upper and lower register parts.
-	if (auto ret = hts221_block_data_update_set(&_register_io_function, BDU_ON); ret != 0) {
-		printf("BDU \n");
+	// The BDU bit is used to inhibit the output register update between the reading of the
+	// upper and lower register parts.
+	if (auto ret = hts221_block_data_update_set(&_register_io_function, state::ON); ret != 0) {
 		return Status::ERROR;
 	}
 
 	if (auto ret = hts221_data_rate_set(&_register_io_function, HTS221_ODR_12Hz5); ret != 0) {
-		printf("DATA RATE");
 		return Status::ERROR;
 	}
 
-	uint8_t HEATER_OFF = 0x00;
-	if (auto ret = hts221_heater_set(&_register_io_function, HEATER_OFF); ret != 0) {
-		printf("HEATER \n");
+	if (auto ret = hts221_heater_set(&_register_io_function, state::ON); ret != 0) {
 		return Status::ERROR;
 	}
 
 	if (auto ret = hts221_temperature_avg_set(&_register_io_function, HTS221_T_AVG_32); ret != 0) {
-		printf("TEMP AVG \n");
 		return Status::ERROR;
 	}
 
 	if (auto ret = hts221_humidity_avg_set(&_register_io_function, HTS221_H_AVG_64); ret != 0) {
-		printf("HUM AVG \n");
 		return Status::ERROR;
 	}
 
@@ -80,7 +72,7 @@ status_t LKCoreTemperatureSensor::turnOn()
  */
 status_t LKCoreTemperatureSensor::turnOff()
 {
-	if (auto ret = hts221_power_on_set(&_register_io_function, 0x00); ret != 0) {
+	if (auto ret = hts221_power_on_set(&_register_io_function, state::OFF); ret != 0) {
 		return Status::ERROR;
 	}
 	return Status::SUCCESS;
@@ -94,7 +86,7 @@ status_t LKCoreTemperatureSensor::turnOff()
  */
 status_t LKCoreTemperatureSensor::boot()
 {
-	if (auto ret = hts221_boot_set(&_register_io_function, 0x01); ret != 0) {
+	if (auto ret = hts221_boot_set(&_register_io_function, state::ON); ret != 0) {
 		return Status::ERROR;
 	}
 	return Status::SUCCESS;
@@ -112,7 +104,7 @@ status_t LKCoreTemperatureSensor::enableIrq()
 		return Status::ERROR;
 	}
 
-	if (auto ret = hts221_drdy_on_int_set(&_register_io_function, 0x00); ret != 0) {   // DRDY Active when low
+	if (auto ret = hts221_drdy_on_int_set(&_register_io_function, state::OFF); ret != 0) {   // DRDY Active when low
 		return Status::ERROR;
 	}
 	return Status::SUCCESS;

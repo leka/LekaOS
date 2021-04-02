@@ -33,14 +33,14 @@ int main(void)
 		printf("Enable Irq failed\n");
 	}
 
-	if (temperatureSensor.heaterSet(0x01) != Status::SUCCESS) {
+	if (temperatureSensor.heaterSet(state::ON) != Status::SUCCESS) {
 		printf("Heater On failed\n");
 	}
 
 	uint8_t heater = temperatureSensor.heaterGet();
 	printf("Value of heater : %i\n", heater);
 
-	if (temperatureSensor.heaterSet(0x00) != Status::SUCCESS) {
+	if (temperatureSensor.heaterSet(state::OFF) != Status::SUCCESS) {
 		printf("Heater Off failed\n");
 	}
 

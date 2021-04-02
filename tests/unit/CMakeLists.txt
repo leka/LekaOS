@@ -153,11 +153,8 @@ add_subdirectory(template)
 leka_register_unit_tests_for_driver(LKCoreMotor)
 leka_register_unit_tests_for_driver(LKCoreLightSensor)
 leka_register_unit_tests_for_driver(LKCoreMicrophone)
-<<<<<<< HEAD
 leka_register_unit_tests_for_driver(LKCoreBattery)
-=======
 leka_register_unit_tests_for_driver(LKCoreTemperatureSensor)
->>>>>>> eaa0d01 (:construction:(Driver Temperature Sensor): Error building.)
 
 
 # Register libraries
