@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "drivers/I2C.h"
+#include "LKCoreTemperatureSensor.h"
 
 namespace leka {
 

@@ -2,7 +2,9 @@
 	"files.associations": {
 		"*.orig": "cpp",
 		".clang-format": "yaml",
-		"mstd_atomic": "cpp"
+		"mstd_atomic": "cpp",
+		"hts221_driver.h": "c",
+		"hts221_driver.c": "cpp"
 	},
 	"files.exclude": {
 		".cache": true,

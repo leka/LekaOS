@@ -13,17 +13,7 @@ TEST(LKCoreTemperatureSensorTest, initialization)
 	ASSERT_NE(&temperatureSensor, nullptr);
 }
 
-// TEST(LKCoreTemperatureSensorTest, I2C_init)
-// {
-// 	ASSERT_EQ(temperatureSensor.s(), Status::SUCCESS);
-// }
-
-// TEST(LKCoreTemperatureSensorTest, initialization)
-// {
-// 	ASSERT_EQ(temperatureSensor.init(), Status::SUCCESS);
-// }
-
-// TEST(LKCoreTemperatureSensorTest, initialization)
-// {
-// 	ASSERT_NE(&temperatureSensor, nullptr);
-// }
+TEST(LKCoreTemperatureSensorTest, getTemperature)
+{
+	ASSERT_EQ(temperatureSensor.getTemperature(), 1);
+}

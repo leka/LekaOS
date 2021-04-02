@@ -17,7 +17,7 @@
  ******************************************************************************
  */
 
-#include "internal/HTS221_Driver.h"
+#include "HTS221_Driver.h"
 
 /**
  * @defgroup  HTS221

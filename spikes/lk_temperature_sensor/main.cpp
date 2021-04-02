@@ -21,8 +21,6 @@ char buff[buff_size] {};
 
 int main(void)
 {
-	auto start = Kernel::Clock::now();
-
 	printf("\nHello, Investigation Day!\n\n");
 
 	if (temperatureSensor.boot() != Status::SUCCESS) {
@@ -52,19 +50,16 @@ int main(void)
 	hello.start();
 
 	while (true) {
-		auto t = Kernel::Clock::now() - start;
-
 		float temperature = temperatureSensor.getTemperature();
 		printf("Value of temperature : %f\n", temperature);
 
 		float humidity = temperatureSensor.getHumidity();
 		printf("Value of humidity : %f\n", humidity);
 
-		// if (temperatureSensor.end() != Status::SUCCESS) {
-		// 	printf("End failed\n");
-		// }
-
 		rtos::ThisThread::sleep_for(5s);
 	}
-	return 0;
+
+	// if (temperatureSensor.turnOff() != Status::SUCCESS) {
+		// 	printf("End failed\n");
+		// }
 }

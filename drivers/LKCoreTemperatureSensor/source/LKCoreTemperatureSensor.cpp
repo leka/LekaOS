@@ -276,7 +276,7 @@ int LKCoreTemperatureSensor::write(uint8_t register_address, uint8_t *pBuffer, u
 {
 	if (number_bytes_to_write > (_buffer.size() - 1)) {
 		return 1;
-	};
+	}
 
 	_buffer[0] = register_address | 0x80;	// First, send register address
 	std::copy(pBuffer, (pBuffer + number_bytes_to_write), (_buffer.begin() + 1));

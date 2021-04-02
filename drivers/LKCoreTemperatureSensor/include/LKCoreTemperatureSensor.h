@@ -9,7 +9,7 @@
 
 #include "drivers/I2C.h"
 
-#include "internal/HTS221_Driver.h"
+#include "../extern/HTS221/HTS221_Driver.h"
 #include "internal/LKCoreTemperatureSensorBase.h"
 
 namespace leka {
@@ -22,15 +22,15 @@ namespace state {
 class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 {
   public:
-	LKCoreTemperatureSensor(mbed::I2C &i2C);
+	explicit LKCoreTemperatureSensor(mbed::I2C &i2C);
 	status_t turnOn();
 	status_t turnOff();
 	status_t boot();
 	status_t enableIrq();
 
-	uint8_t getId();
-	celsius_t getTemperature();
-	rH_t getHumidity();
+	uint8_t getId() override;
+	celsius_t getTemperature() override;
+	rH_t getHumidity() override;
 
 	status_t heaterSet(uint8_t val);
 	uint8_t heaterGet();
