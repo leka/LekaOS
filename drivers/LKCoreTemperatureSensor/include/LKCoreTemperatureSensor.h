@@ -17,7 +17,7 @@ namespace leka {
 namespace state {
 	constexpr uint8_t ON  = 1;
 	constexpr uint8_t OFF = 0;
-};	 // namespace heater::state
+};	 // namespace state
 
 class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 {
@@ -58,5 +58,5 @@ class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 	static int32_t ptr_io_read(void *handle, uint8_t register_address, uint8_t *p_buffer,
 							   uint16_t number_bytes_to_read);
 };
-} // namespace leka
+}	// namespace leka
 #endif	 // _LEKA_OS_DRIVER_LK_CORE_TEMPERATURE_SENSOR_H_

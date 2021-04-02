@@ -104,7 +104,7 @@ status_t LKCoreTemperatureSensor::enableIrq()
 		return Status::ERROR;
 	}
 
-	if (auto ret = hts221_drdy_on_int_set(&_register_io_function, state::OFF); ret != 0) {   // DRDY Active when low
+	if (auto ret = hts221_drdy_on_int_set(&_register_io_function, state::OFF); ret != 0) {	 // DRDY Active when low
 		return Status::ERROR;
 	}
 	return Status::SUCCESS;
