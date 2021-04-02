@@ -7,9 +7,6 @@ add_subdirectory(${DRIVERS_DIR}/Motor)
 add_subdirectory(${DRIVERS_DIR}/LKCoreMotor)
 add_subdirectory(${DRIVERS_DIR}/LKCoreLightSensor)
 add_subdirectory(${DRIVERS_DIR}/LKCoreMicrophone)
-<<<<<<< HEAD
 add_subdirectory(${DRIVERS_DIR}/LKCoreBattery)
-=======
 add_subdirectory(${DRIVERS_DIR}/LKCoreTemperatureSensor)
->>>>>>> eaa0d01 (:construction:(Driver Temperature Sensor): Error building.)
 

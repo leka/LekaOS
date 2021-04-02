@@ -5,15 +5,14 @@
 #ifndef _LEKA_OS_DRIVER_LK_CORE_TEMPERATURE_SENSOR_DRIVER_BASE_H_
 #define _LEKA_OS_DRIVER_LK_CORE_TEMPERATURE_SENSOR_DRIVER_BASE_H_
 
-#include "mbed.h"
-
-#include "internal/status.h"
+#include "../../include/status.h"
 
 //
 // MARK: - Type definitions
 //
 
-using mg_t = float;
+using celsius_t = float_t;
+using rH_t		= float_t;
 
 class LKCoreTemperatureSensorDriverBase
 {
@@ -21,9 +20,9 @@ class LKCoreTemperatureSensorDriverBase
 	//
 	// MARK: - Virtual methods
 	//
-	virtual status_t getId(uint8_t &id)		= 0;
-	virtual status_t getTemperature(mg_t &) = 0;
-	virtual status_t getHumidity(mg_t &)	= 0;
+	virtual uint8_t getId()			   = 0;
+	virtual celsius_t getTemperature() = 0;
+	virtual rH_t getHumidity()		   = 0;
 };
 
 #endif	 // _LEKA_OS_DRIVER_LK_CORE_TEMPERATURE_SENSOR_DRIVER_BASE_H_

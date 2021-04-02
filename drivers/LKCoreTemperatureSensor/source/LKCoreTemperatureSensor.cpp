@@ -3,8 +3,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "LKCoreTemperatureSensor.h"
+using namespace leka;
 
-LKCoreTemperatureSensor::LKCoreTemperatureSensor(I2C &i2c) : _i2c(i2c)
+LKCoreTemperatureSensor::LKCoreTemperatureSensor(mbed::I2C &i2c) : _i2c(i2c)
 {
 	_register_io_function.write_reg = (stmdev_write_ptr)ptr_io_write;
 	_register_io_function.read_reg	= (stmdev_read_ptr)ptr_io_read;
@@ -29,7 +30,8 @@ status_t LKCoreTemperatureSensor::init()
 		return Status::ERROR;
 	}
 
-	uint8_t BDU_ON = 0x01;	 // This feature prevents the reading of LSB and MSB related to different samples.
+	uint8_t BDU_ON = 0x01;	 // The BDU bit is used to inhibit the output register update between the reading of the
+							 // upper and lower register parts.
 	if (auto ret = hts221_block_data_update_set(&_register_io_function, BDU_ON); ret != 0) {
 		printf("BDU \n");
 		return Status::ERROR;
@@ -40,8 +42,8 @@ status_t LKCoreTemperatureSensor::init()
 		return Status::ERROR;
 	}
 
-	uint8_t HEATHER_OFF = 0x00;
-	if (auto ret = hts221_heater_set(&_register_io_function, HEATHER_OFF); ret != 0) {
+	uint8_t HEATER_OFF = 0x00;
+	if (auto ret = hts221_heater_set(&_register_io_function, HEATER_OFF); ret != 0) {
 		printf("HEATER \n");
 		return Status::ERROR;
 	}
@@ -60,12 +62,23 @@ status_t LKCoreTemperatureSensor::init()
 }
 
 /**
+ * @brief  Turn the device on
+ *
+ * @retval         interface status (MANDATORY: Status::SUCCESS -> no Error)
+ *
+ */
+status_t LKCoreTemperatureSensor::turnOn()
+{
+	return LKCoreTemperatureSensor::init();
+}
+
+/**
  * @brief  Turn the device off
  *
  * @retval         interface status (MANDATORY: Status::SUCCESS -> no Error)
  *
  */
-status_t LKCoreTemperatureSensor::end()
+status_t LKCoreTemperatureSensor::turnOff()
 {
 	if (auto ret = hts221_power_on_set(&_register_io_function, 0x00); ret != 0) {
 		return Status::ERROR;
@@ -112,43 +125,51 @@ status_t LKCoreTemperatureSensor::enableIrq()
  */
 status_t LKCoreTemperatureSensor::calibration()
 {
-	float_t h0rH, h1rH, h0t0Out, h1t0Out, t0degC, t1degC, t0Out, t1Out;
+	float_t t0degC;
 	if (auto ret = hts221_temp_deg_point_0_get(&_register_io_function, &t0degC); ret != 0) {
 		return Status::ERROR;
 	}
 
+	float_t t1degC;
 	if (auto ret = hts221_temp_deg_point_1_get(&_register_io_function, &t1degC); ret != 0) {
 		return Status::ERROR;
 	}
 
+	float_t t0Out;
 	if (auto ret = hts221_temp_adc_point_0_get(&_register_io_function, &t0Out); ret != 0) {
 		return Status::ERROR;
 	}
 
+	float_t t1Out;
 	if (auto ret = hts221_temp_adc_point_1_get(&_register_io_function, &t1Out); ret != 0) {
 		return Status::ERROR;
 	}
 
+	float_t h0rH;
 	if (auto ret = hts221_hum_rh_point_0_get(&_register_io_function, &h0rH); ret != 0) {
 		return Status::ERROR;
 	}
 
+	float_t h1rH;
 	if (auto ret = hts221_hum_rh_point_1_get(&_register_io_function, &h1rH); ret != 0) {
 		return Status::ERROR;
 	}
 
+	float_t h0t0Out;
 	if (auto ret = hts221_hum_adc_point_0_get(&_register_io_function, &h0t0Out); ret != 0) {
 		return Status::ERROR;
 	}
 
+	float_t h1t0Out;
 	if (auto ret = hts221_hum_adc_point_1_get(&_register_io_function, &h1t0Out); ret != 0) {
 		return Status::ERROR;
 	}
-	_humiditySlope = (h1rH - h0rH) / (2.0 * (h1t0Out - h0t0Out));
-	_humidityZero  = h0rH - _humiditySlope * h0t0Out;
 
-	_temperatureSlope = (t1degC - t0degC) / (8.0 * (t1Out - t0Out));
-	_temperatureZero  = t0degC - _temperatureSlope * t0Out;
+	_humiditySlope		  = (h1rH - h0rH) / (2.0 * (h1t0Out - h0t0Out));
+	_humidity_y_intercept = h0rH - _humiditySlope * h0t0Out;
+
+	_temperatureSlope		 = (t1degC - t0degC) / (8.0 * (t1Out - t0Out));
+	_temperature_y_intercept = t0degC - _temperatureSlope * t0Out;
 
 	return Status::SUCCESS;
 }
@@ -160,48 +181,44 @@ status_t LKCoreTemperatureSensor::calibration()
  * @retval         interface status (MANDATORY: return Status::SUCCESS -> no Error)
  *
  */
-status_t LKCoreTemperatureSensor::getId(uint8_t &id)
+uint8_t LKCoreTemperatureSensor::getId()
 {
-	if (auto ret = hts221_device_id_get(&_register_io_function, &id); ret != 0) {
-		return Status::ERROR;
-	}
-	return Status::SUCCESS;
+	uint8_t id = 0;
+	hts221_device_id_get(&_register_io_function, &id);
+	return id;
 }
 
 /**
- * @brief  DegC temperature.[get]
+ * @brief  get DegC temperature.[get]
  *
- * @param  temperatureValue    variable that stores data read
- * @retval         interface status (MANDATORY: return Status::SUCCESS -> no Error)
+ * @retval Float Value of temperature in degC
  *
  */
-status_t LKCoreTemperatureSensor::getTemperature(mg_t &temperatureValue)
+celsius_t LKCoreTemperatureSensor::getTemperature()
 {
 	int16_t rawtemperatureValue;
-	if (auto ret = hts221_temperature_raw_get(&_register_io_function, &rawtemperatureValue); ret != 0) {
-		return Status::ERROR;
-	}
-	temperatureValue = rawtemperatureValue * _temperatureSlope + _temperatureZero;
-	return Status::SUCCESS;
+	float temperatureValue = -1;
+
+	hts221_temperature_raw_get(&_register_io_function, &rawtemperatureValue);
+	temperatureValue = rawtemperatureValue * _temperatureSlope + _temperature_y_intercept;
+	return temperatureValue;
 }
 
 /**
- * @brief  rH Temperature.[get]
+ * @brief  get humidity level in rH.[get]
  *
- * @param  humidityValue    variable that stores data read
- * @retval         interface status (MANDATORY: return Status::SUCCESS -> no Error)
+ * @retval Float value of humidity in rH
  *
  */
-status_t LKCoreTemperatureSensor::getHumidity(mg_t &humidityValue)
+rH_t LKCoreTemperatureSensor::getHumidity()
 {
 	int16_t rawHumidityValue;
+	float humidityValue = -1;
 
-	if (auto ret = hts221_humidity_raw_get(&_register_io_function, &rawHumidityValue); ret != 0) {
-		return Status::ERROR;
-	}
+	hts221_humidity_raw_get(&_register_io_function, &rawHumidityValue);
+	humidityValue = rawHumidityValue * _humiditySlope + _humidity_y_intercept;
 
-	humidityValue = rawHumidityValue * _humiditySlope + _humidityZero;
-	return Status::SUCCESS;
+	return humidityValue;
 }
 
 /**
@@ -222,16 +239,14 @@ status_t LKCoreTemperatureSensor::heaterSet(uint8_t val)
 /**
  * @brief  State of heater[get]
  *
- * @param 		   val variable where the status of heater is stored
- * @retval         interface status (MANDATORY: return Status::SUCCESS -> no Error)
+ * @retval Uint8_t value of the state of the heater, 1 on, 0 off.
  *
  */
-status_t LKCoreTemperatureSensor::heaterGet(uint8_t *val)
+uint8_t LKCoreTemperatureSensor::heaterGet()
 {
-	if (auto ret = hts221_heater_get(&_register_io_function, val); ret != 0) {
-		return Status::ERROR;
-	}
-	return Status::SUCCESS;
+	uint8_t heaterStatus = 255;
+	hts221_heater_get(&_register_io_function, &heaterStatus);
+	return heaterStatus;
 }
 
 /**
@@ -267,7 +282,7 @@ int LKCoreTemperatureSensor::read(uint8_t register_address, uint8_t *pBuffer, ui
  */
 int LKCoreTemperatureSensor::write(uint8_t register_address, uint8_t *pBuffer, uint16_t number_bytes_to_write)
 {
-	if (number_bytes_to_write > (kBufferSize - 1)) {
+	if (number_bytes_to_write > (_buffer.size() - 1)) {
 		return 1;
 	};
 

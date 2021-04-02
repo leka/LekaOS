@@ -18,7 +18,7 @@ add_subdirectory(${SPIKES_DIR}/lk_microphone)
 add_subdirectory(${SPIKES_DIR}/lk_light_sensor)
 add_subdirectory(${SPIKES_DIR}/lk_file_manager)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_touch)
-add_subdirectory(${SPIKES_DIR}/lk_i2c)
+add_subdirectory(${SPIKES_DIR}/lk_temperature_sensor)
 
 add_custom_target(spikes_leka)
 add_dependencies( spikes_leka
@@ -35,8 +35,7 @@ add_dependencies( spikes_leka
 	spike_lk_light_sensor
 	spike_lk_file_manager
 	spike_lk_sensors_touch
-	spike_lk_i2c
-
+	spike_lk_temperature_sensor
 )
 
 add_custom_target(spikes_mbed)

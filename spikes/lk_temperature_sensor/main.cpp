@@ -37,16 +37,15 @@ int main(void)
 		printf("Heater On failed\n");
 	}
 
-	uint8_t heaterState;
-	if (temperatureSensor.heaterGet(&heaterState) != Status::SUCCESS) {
-		printf("Calibration failed\n");
-	} else {
-		printf("Value of heater : %i\n", heaterState);
-	}
+	uint8_t heater = temperatureSensor.heaterGet();
+	printf("Value of heater : %i\n", heater);
 
 	if (temperatureSensor.heaterSet(0x00) != Status::SUCCESS) {
 		printf("Heater Off failed\n");
 	}
+
+	uint8_t id = temperatureSensor.getId();
+	printf("Device ID : %i\n", id);
 
 	rtos::ThisThread::sleep_for(2s);
 
@@ -54,22 +53,17 @@ int main(void)
 
 	while (true) {
 		auto t = Kernel::Clock::now() - start;
-		uint8_t id;
-		if (temperatureSensor.getId(id) != Status::SUCCESS) {
-			printf("Failed to read ID.\n");
-		}
 
-		float temperature;
-		temperatureSensor.getTemperature(temperature);
+		float temperature = temperatureSensor.getTemperature();
 		printf("Value of temperature : %f\n", temperature);
 
-		float humidity;
-		temperatureSensor.getHumidity(humidity);
+		float humidity = temperatureSensor.getHumidity();
 		printf("Value of humidity : %f\n", humidity);
 
 		// if (temperatureSensor.end() != Status::SUCCESS) {
 		// 	printf("End failed\n");
 		// }
+
 		rtos::ThisThread::sleep_for(5s);
 	}
 	return 0;
