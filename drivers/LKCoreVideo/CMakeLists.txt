@@ -8,7 +8,7 @@ target_include_directories(LKCoreVideo
 	PUBLIC
 		include
 		include/internal
-		include/internal/jpeg
+		external/include
 )
 
 target_sources(LKCoreVideo
@@ -25,7 +25,7 @@ target_sources(LKCoreVideo
 	source/LKCoreLCDDriverOTM8009A.cpp
 	source/LKCoreSDRAM.cpp
 	source/LKCoreVideo.cpp
-	source/st_jpeg_utils.cpp
+	external/source/st_jpeg_utils.cpp
 )
 
 target_link_libraries(LKCoreVideo
