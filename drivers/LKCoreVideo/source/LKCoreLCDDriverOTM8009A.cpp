@@ -276,7 +276,7 @@ void LKCoreLCDDriverOTM8009A::setLandscapeOrientation()
 	// settings |= std::byte {1 << 4};	// Set reverse refresh top to bottom - not needed
 	// settings |= std::byte {1 << 3};	// Set use BGR (Blue Green Red) - not needed
 
-	uint8_t command[] = {madctr::command, std::to_integer<uint8_t>(settings)};
+	const uint8_t command[] = {madctr::command, std::to_integer<uint8_t>(settings)};
 
 	// Set landscape mode
 	_dsi.write(command, std::size(command));
