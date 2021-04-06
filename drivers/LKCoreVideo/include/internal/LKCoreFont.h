@@ -14,7 +14,7 @@ namespace leka {
 class LKCoreFont : public LKCoreFontBase
 {
   public:
-	LKCoreFont(CGPixel &pixel_to_draw);
+	explicit LKCoreFont(CGPixel &pixel_to_draw);
 
 	void drawChar(Character character, Color foreground = CGColor::black, Color background = CGColor::white) final;
 	void display(const char *text, uint32_t size, uint32_t starting_line, Color foreground = CGColor::black,

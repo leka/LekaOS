@@ -19,7 +19,7 @@ struct Point {
 };
 
 struct CGPixel {
-	CGPixel(LKCoreLL &ll) : corell(ll) {}
+	explicit CGPixel(LKCoreLL &ll) : corell(ll) {}
 
 	Point coordinates {0, 0};
 	LKCoreLL &corell;

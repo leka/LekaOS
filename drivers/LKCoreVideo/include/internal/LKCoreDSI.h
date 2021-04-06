@@ -13,7 +13,7 @@ namespace leka {
 class LKCoreDSI : public LKCoreDSIBase
 {
   public:
-	LKCoreDSI(LKCoreSTM32HalBase &hal);
+	explicit LKCoreDSI(LKCoreSTM32HalBase &hal);
 
 	void initialize() final;
 	void start() final;
