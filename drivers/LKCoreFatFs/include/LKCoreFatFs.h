@@ -12,7 +12,7 @@ namespace leka {
 class LKCoreFatFs : public LKCoreFatFsBase
 {
   public:
-	LKCoreFatFs();
+	LKCoreFatFs() = default;   // SDBlockDevice must be initialized and mounted before using LKCoreFatFs
 
 	FRESULT open(const char *path) final;
 	FRESULT close() final;

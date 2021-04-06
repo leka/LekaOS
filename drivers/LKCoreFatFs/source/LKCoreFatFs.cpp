@@ -6,13 +6,6 @@
 
 namespace leka {
 
-LKCoreFatFs::LKCoreFatFs()
-{
-	// SDBlockDevice must be initialized and mounted before use
-
-	// nothing to do
-}
-
 FRESULT LKCoreFatFs::open(const char *path)
 {
 	// TODO: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0305r1.html
