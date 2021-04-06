@@ -43,7 +43,7 @@ constexpr uint32_t memory_width = FMC_SDRAM_MEM_BUS_WIDTH_32;
 // #define SDCLOCK_PERIOD FMC_SDRAM_CLOCK_PERIOD_2
 constexpr uint32_t sd_clock_period = FMC_SDRAM_CLOCK_PERIOD_2;
 
-// #define REFRESH_COUNT ((uint32_t)0x0603) /* SDRAM refresh counter (100Mhz SD clock) */
+// #define REFRESH_COUNT ((uint32_t)0x0603)   // SDRAM refresh counter (100Mhz SD clock)
 constexpr uint32_t refresh_count = 0x0603;
 
 // #define SDRAM_TIMEOUT ((uint32_t)0xFFFF)
