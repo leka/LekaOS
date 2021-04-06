@@ -49,15 +49,15 @@ void LKCoreDMA2D::initialize()
 	_hal.HAL_DMA2D_ConfigLayer(&_hdma2d, 1);
 }
 
-void LKCoreDMA2D::transferData(uintptr_t input_data_address, uintptr_t output_data_address, uint32_t width,
-							   uint32_t height)
+void LKCoreDMA2D::transferData(uintptr_t input, uintptr_t output, uint32_t width, uint32_t height)
 {
-	if (_hal.HAL_DMA2D_Init(&_hdma2d) == HAL_OK) {
-		if (_hal.HAL_DMA2D_ConfigLayer(&_hdma2d, 1) == HAL_OK) {
-			if (_hal.HAL_DMA2D_Start(&_hdma2d, input_data_address, output_data_address, width, height) == HAL_OK) {
-				_hal.HAL_DMA2D_PollForTransfer(&_hdma2d, 100);
-			}
-		}
+	// TODO: Check if init and config are needed everytime
+	auto init	= [&] { return _hal.HAL_DMA2D_Init(&_hdma2d) == HAL_OK; };
+	auto config = [&] { return _hal.HAL_DMA2D_ConfigLayer(&_hdma2d, 1) == HAL_OK; };
+	auto start	= [&] { return _hal.HAL_DMA2D_Start(&_hdma2d, input, output, width, height) == HAL_OK; };
+
+	if (init() && config() && start()) {
+		_hal.HAL_DMA2D_PollForTransfer(&_hdma2d, 100);
 	}
 }
 
