@@ -60,6 +60,6 @@ int main(void)
 	}
 
 	// if (temperatureSensor.turnOff() != Status::SUCCESS) {
-		// 	printf("End failed\n");
-		// }
+	// 	printf("End failed\n");
+	// }
 }

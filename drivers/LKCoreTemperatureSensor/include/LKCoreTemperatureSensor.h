@@ -9,8 +9,8 @@
 
 #include "drivers/I2C.h"
 
-#include "../extern/HTS221/HTS221_Driver.h"
-#include "internal/LKCoreTemperatureSensorBase.h"
+#include "../external/include/HTS221_Driver.h"
+#include "LKCoreTemperatureSensorBase.h"
 
 namespace leka {
 
