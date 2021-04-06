@@ -19,12 +19,12 @@ FRESULT LKCoreFatFs::close()
 
 FRESULT LKCoreFatFs::read(void *buffer, uint32_t number_of_bytes_to_read, uint32_t *number_of_bytes_read)
 {
-	return f_read(&_file, buffer, number_of_bytes_to_read, (UINT *)number_of_bytes_read);
+	return f_read(&_file, buffer, number_of_bytes_to_read, reinterpret_cast<UINT *>(number_of_bytes_read));
 }
 
 FRESULT LKCoreFatFs::write(const void *buffer, uint32_t number_of_bytes_to_write, uint32_t *number_of_bytes_written)
 {
-	return f_write(&_file, buffer, number_of_bytes_to_write, (UINT *)number_of_bytes_written);
+	return f_write(&_file, buffer, number_of_bytes_to_write, reinterpret_cast<UINT *>(number_of_bytes_written));
 }
 
 FRESULT LKCoreFatFs::seek(uint32_t byte_offset_from_top_of_file)
@@ -41,4 +41,5 @@ FIL *LKCoreFatFs::getPointer()
 {
 	return &_file;
 }
+
 }	// namespace leka
