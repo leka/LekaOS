@@ -29,8 +29,8 @@ class LKCoreLCDDriverOTM8009A : public LKCoreLCDDriverBase
 	void setBrightness(float value) final;
 
   private:
-	mbed::PwmOut _backlight;
 	LKCoreDSIBase &_dsi;
+	mbed::PwmOut _backlight;
 };
 
 namespace lcd {
