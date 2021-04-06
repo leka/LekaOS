@@ -207,7 +207,7 @@ namespace lcd::otm8009a {
 
 	}	// namespace set_address
 
-	namespace registerData {
+	namespace register_data {
 
 		constexpr uint8_t long01[] = {0x80, 0x09, 0x01, 0xFF};
 		constexpr uint8_t long02[] = {0x80, 0x09, 0xFF};
@@ -310,7 +310,7 @@ namespace lcd::otm8009a {
 		constexpr uint8_t short50[] = {nop::command, 0xB1};
 		constexpr uint8_t short51[] = {0xC6, 0x06};
 
-	}	// namespace registerData
+	}	// namespace register_data
 
 }	// namespace lcd::otm8009a
 
