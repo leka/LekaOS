@@ -32,7 +32,7 @@ void LKAnimationKit::stop()
 	_animation.stop();
 }
 
-void LKAnimationKit::runner()
+__attribute__((noreturn)) void LKAnimationKit::runner()
 {
 	while (true) {
 		if (_start_animation) {

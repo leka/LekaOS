@@ -52,7 +52,7 @@ void LKCoreAnimation::run(SelectedAnimation selected_animation)
 
 void LKCoreAnimation::stop(void) const {}
 
-void LKCoreAnimation::runSlowRainbow()
+__attribute__((noreturn)) void LKCoreAnimation::runSlowRainbow()
 {
 	Color clear_color = {0x00, 0x00, 0x00};
 
@@ -99,7 +99,7 @@ void LKCoreAnimation::runSlowRainbow()
 	}
 }
 
-void LKCoreAnimation::runFallingSnowflakes()
+__attribute__((noreturn)) void LKCoreAnimation::runFallingSnowflakes()
 {
 	_coregraphics.clearScreen(CGColor::black);
 
@@ -133,7 +133,7 @@ void LKCoreAnimation::runFallingSnowflakes()
 	}
 }
 
-void LKCoreAnimation::runSparkleStars()
+__attribute__((noreturn)) void LKCoreAnimation::runSparkleStars()
 {
 	_coregraphics.clearScreen(CGColor::black);
 
