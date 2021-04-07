@@ -166,6 +166,4 @@ int main(void)
 
 		rtos::ThisThread::sleep_for(1s);
 	}
-
-	return 0;
 }

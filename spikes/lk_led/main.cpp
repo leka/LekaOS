@@ -199,6 +199,4 @@ int main(void)
 
 		rtos::ThisThread::sleep_for(10ms);
 	}
-
-	return 0;
 }

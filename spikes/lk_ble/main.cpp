@@ -28,6 +28,4 @@ int main()
 	while (true) {
 		rtos::ThisThread::sleep_for(5s);
 	}
-
-	return 0;
 }

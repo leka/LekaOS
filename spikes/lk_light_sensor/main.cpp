@@ -22,8 +22,6 @@ char buff[buff_size] {};
 
 int main(void)
 {
-	auto start = Kernel::Clock::now();
-
 	rtos::ThisThread::sleep_for(2s);
 
 	hello.start();
@@ -35,6 +33,4 @@ int main(void)
 
 		rtos::ThisThread::sleep_for(33ms);
 	}
-
-	return 0;
 }

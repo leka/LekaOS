@@ -100,6 +100,4 @@ int main(void)
 
 		wait_us(250);
 	}
-
-	return 0;
 }
