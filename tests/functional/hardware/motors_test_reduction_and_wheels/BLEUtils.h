@@ -61,12 +61,9 @@ class MotorsBLEProgram : ble::Gap::EventHandler
 		: _ble(ble),
 		  _event_queue(event_queue),
 		  _motors_service_uuid(MotorsService::MOTORS_SERVICE_UUID),
-		  _motors_service(nullptr),
 		  _adv_data_builder(_adv_buffer)
 	{
 	}
-
-	~MotorsBLEProgram() { delete _motors_service; }
 
 	void start()
 	{
@@ -90,7 +87,7 @@ class MotorsBLEProgram : ble::Gap::EventHandler
 			return;
 		}
 
-		_motors_service = new MotorsService(_ble, false);
+		_motors_service = make_unique<MotorsService>(_ble, false);
 
 		_ble.gattServer().onDataWritten(this, &MotorsBLEProgram::onDataWritten);
 
@@ -169,7 +166,7 @@ class MotorsBLEProgram : ble::Gap::EventHandler
 	bool _should_run = false;
 
 	UUID _motors_service_uuid;
-	MotorsService *_motors_service;
+	unique_ptr<MotorsService> _motors_service;
 
 	uint8_t _adv_buffer[ble::LEGACY_ADVERTISING_MAX_SIZE];
 	ble::AdvertisingDataBuilder _adv_data_builder;
