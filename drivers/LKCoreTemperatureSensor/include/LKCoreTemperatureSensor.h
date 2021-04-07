@@ -5,8 +5,8 @@
 #ifndef _LEKA_OS_DRIVER_LK_CORE_TEMPERATURE_SENSOR_H_
 #define _LEKA_OS_DRIVER_LK_CORE_TEMPERATURE_SENSOR_H_
 
-#include "internal/LKCoreHTS221Driver.h"
-#include "internal/LKCoreTemperatureSensorBase.h"
+#include "LKCoreHTS221Driver.h"
+#include "LKCoreTemperatureSensorBase.h"
 
 namespace leka {
 

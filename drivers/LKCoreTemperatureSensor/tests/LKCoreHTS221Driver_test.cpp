@@ -16,3 +16,19 @@ TEST(LKCoreHTS221DriverTest, initialization)
 {
 	ASSERT_NE(&temperatureSensor, nullptr);
 }
+
+TEST(LKCoreHTS221DriverTest, HTS221Init)
+{
+	ASSERT_EQ(temperatureSensor.init(), status_t::SUCCESS);
+}
+
+TEST(LKCoreHTS221DriverTest, Calibration)
+{
+	ASSERT_EQ(temperatureSensor.calibration(), status_t::SUCCESS);
+}
+
+TEST(LKCoreHTS221DriverTest, getID)
+{
+	I2C::read("9");
+	ASSERT_EQ(temperatureSensor.getId(), uint8_t(1));
+}

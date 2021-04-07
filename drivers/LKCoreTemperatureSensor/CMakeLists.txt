@@ -8,12 +8,14 @@ target_include_directories(LKCoreTemperatureSensor
 	PUBLIC
 		include
 		include/internal
+		external/include
 )
 
 target_sources(LKCoreTemperatureSensor
 	PRIVATE
 		source/LKCoreTemperatureSensor.cpp
 		source/LKCoreHTS221Driver.cpp
+		external/source/hts221_reg.c
 )
 
 target_link_libraries(LKCoreTemperatureSensor mbed-os)
