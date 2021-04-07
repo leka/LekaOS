@@ -8,11 +8,13 @@ target_include_directories(LKCoreVideo
 	PUBLIC
 		include
 		include/internal
+		include/internal/animations
 		external/include
 )
 
 target_sources(LKCoreVideo
   PRIVATE
+	source/AnimationBouncingSquare.cpp
 	source/LKCoreDMA2D.cpp
 	source/LKCoreFont.cpp
 	source/LKCoreGraphics.cpp
