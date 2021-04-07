@@ -4,7 +4,6 @@
 
 #include "LKCoreHTS221Driver.h"
 
-#include "I2C.h"
 #include "gtest/gtest.h"
 
 using namespace leka;
