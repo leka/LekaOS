@@ -25,6 +25,8 @@ class LKCoreHTS221Driver
 	virtual status_t init();
 	virtual status_t calibration();
 	virtual uint8_t getId();
+	virtual int16_t getRawTemperature();
+	virtual int16_t getRawHumidity();
 
   private:
 	mbed::I2C &_i2c;

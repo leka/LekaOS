@@ -45,8 +45,9 @@ status_t LKCoreHTS221Driver::init()
 	return Status::SUCCESS;
 }
 
-status_t LKCoreHTS221Driver::calibration(){
-float_t t0degC;
+status_t LKCoreHTS221Driver::calibration()
+{
+	float_t t0degC;
 	if (auto ret = hts221_temp_deg_point_0_get(&_register_io_function, &t0degC); ret != 0) {
 		return Status::ERROR;
 	}
@@ -95,11 +96,27 @@ float_t t0degC;
 	return Status::SUCCESS;
 }
 
-uint8_t LKCoreHTS221Driver::getId(){
+uint8_t LKCoreHTS221Driver::getId()
+{
 	uint8_t id = 0;
 	hts221_device_id_get(&_register_io_function, &id);
 	return id;
 }
+
+int16_t LKCoreHTS221Driver::getRawTemperature()
+{
+	int16_t rawTemperaturevalue = 0;
+	hts221_temperature_raw_get(&_register_io_function, &rawTemperaturevalue);
+	return rawTemperaturevalue;
+}
+
+int16_t LKCoreHTS221Driver::getRawHumidity()
+{
+	int16_t rawHumidityvalue = 0;
+	hts221_temperature_raw_get(&_register_io_function, &rawHumidityvalue);
+	return rawHumidityvalue;
+}
+
 /**
  * @brief  Read register inside I2C slave device[get]
  *

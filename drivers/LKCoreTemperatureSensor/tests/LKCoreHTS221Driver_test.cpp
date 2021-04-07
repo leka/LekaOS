@@ -29,6 +29,26 @@ TEST(LKCoreHTS221DriverTest, Calibration)
 
 TEST(LKCoreHTS221DriverTest, getID)
 {
-	I2C::read("9");
-	ASSERT_EQ(temperatureSensor.getId(), uint8_t(1));
+	const int sizeValue	  = 1;
+	char value[sizeValue] = {'9'};
+	spy_temperatureSensor_setValue(value, sizeValue);
+	ASSERT_EQ(temperatureSensor.getId(), value[0]);
+}
+
+TEST(LKCoreHTS221DriverTest, getRawTemperature)
+{
+	const int sizeValue	  = 2;
+	char value[sizeValue] = {0x32, 0x00};	// 0x32 = 50
+	spy_temperatureSensor_setValue(value, sizeValue);
+	int16_t rawTemperatureValue = 50.0;
+	ASSERT_EQ(temperatureSensor.getRawTemperature(), rawTemperatureValue);
+}
+
+TEST(LKCoreHTS221DriverTest, getRawHumidity)
+{
+	const int sizeValue	  = 2;
+	char value[sizeValue] = {0x32, 0x00};	// 0x32 = 50
+	spy_temperatureSensor_setValue(value, sizeValue);
+	int16_t rawHumidityValue = 50.0;
+	ASSERT_EQ(temperatureSensor.getRawHumidity(), rawHumidityValue);
 }
