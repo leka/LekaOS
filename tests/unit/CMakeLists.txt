@@ -150,7 +150,11 @@ add_subdirectory(mbed-os)
 add_subdirectory(template)
 
 # Register drivers
+leka_register_unit_tests_for_driver(LKCoreFatFs)
 leka_register_unit_tests_for_driver(LKCoreMotor)
+leka_register_unit_tests_for_driver(LKCoreLL)
+leka_register_unit_tests_for_driver(LKCoreSTM32Hal)
+leka_register_unit_tests_for_driver(LKCoreVideo)
 leka_register_unit_tests_for_driver(LKCoreLightSensor)
 leka_register_unit_tests_for_driver(LKCoreMicrophone)
 leka_register_unit_tests_for_driver(LKCoreBattery)
@@ -167,6 +171,7 @@ leka_register_unit_tests_for_library(LKUtils)
 target_link_libraries(LekaOSUnitTestsExec
 	PRIVATE
 		gtest_main
+		gmock_main
 		mbed-os
 )
 

@@ -10,9 +10,18 @@ target_include_directories(mbed-os
 	INTERFACE
 		${UNITTESTS_DIR}/mbed-os
 		${UNITTESTS_DIR}/mbed-os/stubs
+		${UNITTESTS_DIR}/mbed-os/include
+		${UNITTESTS_DIR}/mbed-os/mocks
+
+		${ROOT_DIR}/drivers/LKCoreFatFs/include
+		${ROOT_DIR}/drivers/LKCoreLL/include
+		${ROOT_DIR}/drivers/LKCoreSTM32Hal/include
+		${ROOT_DIR}/extern/mbed-os/targets/TARGET_STM/TARGET_STM32F7/STM32Cube_FW
+		${ROOT_DIR}/extern/mbed-os/targets/TARGET_STM/TARGET_STM32F7/STM32Cube_FW/CMSIS
+		${ROOT_DIR}/extern/mbed-os/targets/TARGET_STM/TARGET_STM32F7/STM32Cube_FW/STM32F7xx_HAL_Driver
+		${ROOT_DIR}/extern/mbed-os/targets/TARGET_STM/TARGET_STM32F7/STM32Cube_FW/STM32F7xx_HAL_Driver/Legacy
+
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/target_h
-		${ROOT_DIR}/extern/mbed-os/events/tests/UNITTESTS/target_h
-		${ROOT_DIR}/extern/mbed-os/events/tests/UNITTESTS/target_h/equeue
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/target_h/platform
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/target_h/platform/cxxsupport
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/target_h/drivers
@@ -20,6 +29,10 @@ target_include_directories(mbed-os
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/target_h/rtos/include
 
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs
+
+		${ROOT_DIR}/extern/mbed-os/events/tests/UNITTESTS/target_h
+		${ROOT_DIR}/extern/mbed-os/events/tests/UNITTESTS/target_h/equeue
+
 		${ROOT_DIR}/extern/mbed-os
 		${ROOT_DIR}/extern/mbed-os/features
 		${ROOT_DIR}/extern/mbed-os/platform/include
