@@ -61,7 +61,7 @@ class MotorsBLEProgram : ble::Gap::EventHandler
 		: _ble(ble),
 		  _event_queue(event_queue),
 		  _motors_service_uuid(MotorsService::MOTORS_SERVICE_UUID),
-		  _motors_service(NULL),
+		  _motors_service(nullptr),
 		  _adv_data_builder(_adv_buffer)
 	{
 	}
