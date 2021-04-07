@@ -7,6 +7,8 @@
 
 #include "drivers/I2C.h"
 
+#include "../external/include/hts221_reg.h"
+
 namespace leka {
 
 }	// namespace leka
