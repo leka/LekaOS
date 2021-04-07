@@ -42,6 +42,12 @@ class LKCoreHTS221Driver
 	std::array<uint8_t, 32> _buffer = {0};
 
   private:
+	status_t setPower(uint8_t);
+	status_t setBDU(uint8_t);
+	status_t setDataAquisitionRate(hts221_odr_t);
+	status_t setAvgTemperature(hts221_avgt_t);
+	status_t setAvgHumidity(hts221_avgh_t);
+
 	int read(uint8_t register_address, uint8_t *pBuffer, uint16_t number_bytes_to_read);
 	int write(uint8_t register_address, uint8_t *pBuffer, uint16_t number_bytes_to_write);
 

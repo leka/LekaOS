@@ -16,32 +16,72 @@ LKCoreHTS221Driver::LKCoreHTS221Driver(mbed::I2C &i2c) : _i2c(i2c)
 status_t LKCoreHTS221Driver::init()
 {
 	// Power on the device
-	if (auto ret = hts221_power_on_set(&_register_io_function, state::ON); ret != 0) {
+	if (auto ret = setPower(state::ON); ret != Status::SUCCESS) {
 		return Status::ERROR;
 	}
 
-	// The BDU bit is used to inhibit the output register update between the reading of the
-	// upper and lower register parts.
-	if (auto ret = hts221_block_data_update_set(&_register_io_function, state::ON); ret != 0) {
+	if (auto ret = setBDU(state::ON); ret != Status::SUCCESS) {
 		return Status::ERROR;
 	}
 
-	if (auto ret = hts221_data_rate_set(&_register_io_function, HTS221_ODR_7Hz); ret != 0) {
+	if (auto ret = setDataAquisitionRate(HTS221_ODR_7Hz); ret != Status::SUCCESS) {
 		return Status::ERROR;
 	}
 
-	if (auto ret = hts221_heater_set(&_register_io_function, state::OFF); ret != 0) {
+	if (auto ret = setHeater(state::OFF); ret != Status::SUCCESS) {
 		return Status::ERROR;
 	}
 
-	if (auto ret = hts221_temperature_avg_set(&_register_io_function, HTS221_T_AVG_32); ret != 0) {
+	if (auto ret = setAvgTemperature(HTS221_T_AVG_16); ret != Status::SUCCESS) {
 		return Status::ERROR;
 	}
 
-	if (auto ret = hts221_humidity_avg_set(&_register_io_function, HTS221_H_AVG_64); ret != 0) {
+	if (auto ret = setAvgHumidity(HTS221_H_AVG_32); ret != Status::SUCCESS) {
 		return Status::ERROR;
 	}
 
+	return Status::SUCCESS;
+}
+
+status_t LKCoreHTS221Driver::setPower(uint8_t state)
+{
+	if (auto ret = hts221_power_on_set(&_register_io_function, state); ret != 0) {
+		return Status::ERROR;
+	}
+	return Status::SUCCESS;
+}
+
+status_t LKCoreHTS221Driver::setBDU(uint8_t state)
+// The BDU bit is used to inhibit the output register update between the reading of the
+// upper and lower register parts.
+{
+	if (auto ret = hts221_block_data_update_set(&_register_io_function, state); ret != 0) {
+		return Status::ERROR;
+	}
+	return Status::SUCCESS;
+}
+
+status_t LKCoreHTS221Driver::setDataAquisitionRate(hts221_odr_t rate)
+{
+	if (auto ret = hts221_block_data_update_set(&_register_io_function, rate); ret != 0) {
+		return Status::ERROR;
+	}
+	return Status::SUCCESS;
+}
+
+status_t LKCoreHTS221Driver::setAvgTemperature(hts221_avgt_t nbAvgTemp)
+{
+	if (auto ret = hts221_temperature_avg_set(&_register_io_function, nbAvgTemp); ret != 0) {
+		return Status::ERROR;
+	}
+	return Status::SUCCESS;
+}
+
+status_t LKCoreHTS221Driver::setAvgHumidity(hts221_avgh_t nbAvgHum)
+{
+	if (auto ret = hts221_humidity_avg_set(&_register_io_function, nbAvgHum); ret != 0) {
+		return Status::ERROR;
+	}
 	return Status::SUCCESS;
 }
 
