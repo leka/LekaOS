@@ -28,6 +28,9 @@ class LKCoreHTS221Driver
 	virtual int16_t getRawTemperature();
 	virtual int16_t getRawHumidity();
 
+	virtual status_t setHeater(uint8_t);
+	virtual uint8_t getHeater();
+
   private:
 	mbed::I2C &_i2c;
 	float_t _humiditySlope {0};

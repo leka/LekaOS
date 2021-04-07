@@ -26,11 +26,11 @@ status_t LKCoreHTS221Driver::init()
 		return Status::ERROR;
 	}
 
-	if (auto ret = hts221_data_rate_set(&_register_io_function, HTS221_ODR_12Hz5); ret != 0) {
+	if (auto ret = hts221_data_rate_set(&_register_io_function, HTS221_ODR_7Hz); ret != 0) {
 		return Status::ERROR;
 	}
 
-	if (auto ret = hts221_heater_set(&_register_io_function, state::ON); ret != 0) {
+	if (auto ret = hts221_heater_set(&_register_io_function, state::OFF); ret != 0) {
 		return Status::ERROR;
 	}
 
@@ -115,6 +115,21 @@ int16_t LKCoreHTS221Driver::getRawHumidity()
 	int16_t rawHumidityvalue = 0;
 	hts221_temperature_raw_get(&_register_io_function, &rawHumidityvalue);
 	return rawHumidityvalue;
+}
+
+status_t LKCoreHTS221Driver::setHeater(uint8_t state)
+{
+	if (auto ret = hts221_heater_set(&_register_io_function, state); ret != 0) {
+		return Status::ERROR;
+	}
+	return Status::SUCCESS;
+}
+
+uint8_t LKCoreHTS221Driver::getHeater()
+{
+	uint8_t heaterState = 0;
+	hts221_heater_get(&_register_io_function, &heaterState);
+	return heaterState;
 }
 
 /**

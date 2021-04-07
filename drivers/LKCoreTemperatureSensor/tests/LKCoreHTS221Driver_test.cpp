@@ -52,3 +52,17 @@ TEST(LKCoreHTS221DriverTest, getRawHumidity)
 	int16_t rawHumidityValue = 50.0;
 	ASSERT_EQ(temperatureSensor.getRawHumidity(), rawHumidityValue);
 }
+
+TEST(LKCoreHTS221DriverTest, setHeater)
+{
+	ASSERT_EQ(temperatureSensor.setHeater(state::OFF), status_t::SUCCESS);
+	ASSERT_EQ(temperatureSensor.setHeater(state::ON), status_t::SUCCESS);
+}
+
+TEST(LKCoreHTS221DriverTest, getHeater)
+{
+	const int sizeValue	  = 1;
+	char value[sizeValue] = {state::OFF};
+	spy_temperatureSensor_setValue(value, sizeValue);
+	ASSERT_EQ(temperatureSensor.getHeater(), state::OFF);
+}
