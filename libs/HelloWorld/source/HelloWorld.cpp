@@ -9,11 +9,6 @@ using namespace std::chrono;
 
 namespace leka {
 
-HelloWorld::HelloWorld(void)
-{
-	// nothing to do
-}
-
 ///
 /// @brief Start the 3 threads to blink the leds
 ///

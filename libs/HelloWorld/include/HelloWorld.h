@@ -27,8 +27,7 @@ class HelloWorld
 		std::chrono::milliseconds sleepTime;
 	};
 
-	HelloWorld(void);
-	~HelloWorld(void) {};
+	HelloWorld(void) = default;
 
 	void start(void);
 
