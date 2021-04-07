@@ -10,6 +10,14 @@
 
 namespace leka {
 
+class LKCoreHTS221Driver
+{
+  public:
+	explicit LKCoreHTS221Driver(mbed::I2C &i2c) : _i2c {i2c} {};
+
+  private:
+	mbed::I2C &_i2c;
+};
 }	// namespace leka
 
 #endif	 //_LEKA_OS_DRIVER_LK_CORE_HTS221_DRIVER_H_
