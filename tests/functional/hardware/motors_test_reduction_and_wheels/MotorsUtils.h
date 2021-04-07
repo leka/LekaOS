@@ -87,8 +87,8 @@ void motor_thread()
 		while (TEST_PROGRESSIVE_ACCELERATION) {
 			printf("TEST_PROGRESSIVE_ACCELERATION\n");
 
-			for (float speed = 0.0f; speed <= 1.0f; speed += 0.20f) {
-				moveForward(speed);
+			for (int speed = 0; speed <= 100; speed += 20) {
+				moveForward(static_cast<float>(speed) / 100);
 				rtos::ThisThread::sleep_for(3s);
 				if (!TEST_PROGRESSIVE_ACCELERATION) {
 					motors.stop();
@@ -101,8 +101,8 @@ void motor_thread()
 				break;
 			}
 
-			for (float speed = 0.8f; speed >= 0.0f; speed -= 0.20f) {
-				moveForward(speed);
+			for (int speed = 80; speed >= 0; speed -= 20) {
+				moveForward(static_cast<float>(speed) / 100);
 				rtos::ThisThread::sleep_for(3s);
 				if (!TEST_PROGRESSIVE_ACCELERATION) {
 					motors.stop();
