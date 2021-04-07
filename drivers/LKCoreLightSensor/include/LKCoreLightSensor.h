@@ -21,7 +21,7 @@ class LKCoreLightSensor
 	};
 
   public:
-	LKCoreLightSensor(PinName pin) : _pin {mbed::AnalogIn(pin)} {};
+	explicit LKCoreLightSensor(PinName pin) : _pin {mbed::AnalogIn(pin)} {};
 
 	float readLuminosity(void);
 
