@@ -64,7 +64,7 @@ int RMS(std::array<int, 10> &data, int newvalue)
 
 	square += newvalue * newvalue;
 
-	mean = square / data.size();
+	mean = static_cast<float>(square) / static_cast<float>(data.size());
 
 	root = std::sqrt(mean);
 
