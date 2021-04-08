@@ -6,6 +6,9 @@
 
 using namespace leka;
 
+/**
+ * @brief  Constructor
+ */
 LKCoreHTS221Driver::LKCoreHTS221Driver(mbed::I2C &i2c) : _i2c(i2c)
 {
 	_register_io_function.write_reg = (stmdev_write_ptr)ptr_io_write;
@@ -13,6 +16,11 @@ LKCoreHTS221Driver::LKCoreHTS221Driver(mbed::I2C &i2c) : _i2c(i2c)
 	_register_io_function.handle	= (void *)this;
 }
 
+/**
+ * @brief  Init the device (Power:ON, BDU:ON, AcquisitionRate:7Hz, heater:OFF, AvgTemperature:16, AvgHumidity:32)
+ *
+ * @retval         interface status (MANDATORY: Status::SUCCESS -> no Error)
+ */
 status_t LKCoreHTS221Driver::init()
 {
 	// Power on the device
@@ -43,6 +51,11 @@ status_t LKCoreHTS221Driver::init()
 	return Status::SUCCESS;
 }
 
+/**
+ * @brief  Set the state of the device, 1: ON, 0:OFF
+ *
+ * @retval         interface status (MANDATORY: Status::SUCCESS -> no Error)
+ */
 status_t LKCoreHTS221Driver::setPower(uint8_t state)
 {
 	if (auto ret = hts221_power_on_set(&_register_io_function, state); ret != 0) {
@@ -51,6 +64,11 @@ status_t LKCoreHTS221Driver::setPower(uint8_t state)
 	return Status::SUCCESS;
 }
 
+/**
+ * @brief  Set the state of the BDU, 1: ON, 0:OFF
+ *
+ * @retval         interface status (MANDATORY: Status::SUCCESS -> no Error)
+ */
 status_t LKCoreHTS221Driver::setBDU(uint8_t state)
 // The BDU bit is used to inhibit the output register update between the reading of the
 // upper and lower register parts.
@@ -61,6 +79,11 @@ status_t LKCoreHTS221Driver::setBDU(uint8_t state)
 	return Status::SUCCESS;
 }
 
+/**
+ * @brief  Set the data acquisition rate
+ *
+ * @retval         interface status (MANDATORY: Status::SUCCESS -> no Error)
+ */
 status_t LKCoreHTS221Driver::setDataAquisitionRate(hts221_odr_t rate)
 {
 	if (auto ret = hts221_block_data_update_set(&_register_io_function, rate); ret != 0) {
@@ -69,6 +92,11 @@ status_t LKCoreHTS221Driver::setDataAquisitionRate(hts221_odr_t rate)
 	return Status::SUCCESS;
 }
 
+/**
+ * @brief  Set the number of temperature measures on which the average is made
+ *
+ * @retval         interface status (MANDATORY: Status::SUCCESS -> no Error)
+ */
 status_t LKCoreHTS221Driver::setAvgTemperature(hts221_avgt_t nbAvgTemp)
 {
 	if (auto ret = hts221_temperature_avg_set(&_register_io_function, nbAvgTemp); ret != 0) {
@@ -77,6 +105,11 @@ status_t LKCoreHTS221Driver::setAvgTemperature(hts221_avgt_t nbAvgTemp)
 	return Status::SUCCESS;
 }
 
+/**
+ * @brief  Set the number of humidity measures on which the average is made
+ *
+ * @retval         interface status (MANDATORY: Status::SUCCESS -> no Error)
+ */
 status_t LKCoreHTS221Driver::setAvgHumidity(hts221_avgh_t nbAvgHum)
 {
 	if (auto ret = hts221_humidity_avg_set(&_register_io_function, nbAvgHum); ret != 0) {
@@ -85,6 +118,12 @@ status_t LKCoreHTS221Driver::setAvgHumidity(hts221_avgh_t nbAvgHum)
 	return Status::SUCCESS;
 }
 
+/**
+ * @brief  Compute value for slope and y intercept for both temperature and humdity using calibration values stored
+ * inside the device
+ *
+ * @retval         interface status (MANDATORY: Status::SUCCESS -> no Error)
+ */
 status_t LKCoreHTS221Driver::calibration()
 {
 	float_t t0degC;
@@ -136,6 +175,11 @@ status_t LKCoreHTS221Driver::calibration()
 	return Status::SUCCESS;
 }
 
+/**
+ * @brief  Return the id of the device
+ *
+ * @retval        uint8_t
+ */
 uint8_t LKCoreHTS221Driver::getId()
 {
 	uint8_t id = 0;
@@ -143,6 +187,11 @@ uint8_t LKCoreHTS221Driver::getId()
 	return id;
 }
 
+/**
+ * @brief  Return the raw value of temperature
+ *
+ * @retval         int16_t
+ */
 int16_t LKCoreHTS221Driver::getRawTemperature()
 {
 	int16_t rawTemperaturevalue = 0;
@@ -150,6 +199,11 @@ int16_t LKCoreHTS221Driver::getRawTemperature()
 	return rawTemperaturevalue;
 }
 
+/**
+ * @brief  Return the raw value of humidity
+ *
+ * @retval         int16_t
+ */
 int16_t LKCoreHTS221Driver::getRawHumidity()
 {
 	int16_t rawHumidityvalue = 0;
@@ -157,6 +211,11 @@ int16_t LKCoreHTS221Driver::getRawHumidity()
 	return rawHumidityvalue;
 }
 
+/**
+ * @brief  Set the state of the heater, 1:ON, 0:OFF
+ *
+ * @retval         interface status (MANDATORY: Status::SUCCESS -> no Error)
+ */
 status_t LKCoreHTS221Driver::setHeater(uint8_t state)
 {
 	if (auto ret = hts221_heater_set(&_register_io_function, state); ret != 0) {
@@ -165,6 +224,11 @@ status_t LKCoreHTS221Driver::setHeater(uint8_t state)
 	return Status::SUCCESS;
 }
 
+/**
+ * @brief  Get the state of the heater
+ *
+ * @retval         uint8_t
+ */
 uint8_t LKCoreHTS221Driver::getHeater()
 {
 	uint8_t heaterState = 0;
@@ -172,6 +236,11 @@ uint8_t LKCoreHTS221Driver::getHeater()
 	return heaterState;
 }
 
+/**
+ * @brief  Set DRDY state, if 1: set a signal when data is available
+ *
+ * @retval         interface status (MANDATORY: Status::SUCCESS -> no Error)
+ */
 status_t LKCoreHTS221Driver::setIrq(uint8_t state)
 {
 	if (auto ret = hts221_pin_mode_set(&_register_io_function, HTS221_OPEN_DRAIN); ret != 0) {	 // Set the pin 3
