@@ -5,5 +5,10 @@
 #include "LKCoreTemperatureSensor.h"
 
 namespace leka {
-
+LKCoreTemperatureSensor::LKCoreTemperatureSensor(mbed::I2C &i2c)
+	: LKCoreHTS221Driver(i2c), LKCoreTemperatureSensorDriverBase()
+{
+	init();
+	calibration();
+};
 }	// namespace leka

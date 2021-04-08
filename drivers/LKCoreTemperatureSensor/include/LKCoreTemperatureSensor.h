@@ -9,7 +9,15 @@
 #include "LKCoreTemperatureSensorBase.h"
 
 namespace leka {
+class LKCoreTemperatureSensor : public LKCoreHTS221Driver, public LKCoreTemperatureSensorDriverBase
+{
+  public:
+	explicit LKCoreTemperatureSensor(mbed::I2C &i2c);
+	// virtual ~LKCoreTemperatureSensor() = default;
 
+	// virtual float getTemperature();
+  private:
+};
 }	// namespace leka
 
 #endif	 //_LEKA_OS_DRIVER_LK_CORE_TEMPERATURE_SENSOR_H_

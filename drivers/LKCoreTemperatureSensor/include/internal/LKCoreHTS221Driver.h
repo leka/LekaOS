@@ -22,6 +22,8 @@ class LKCoreHTS221Driver
 {
   public:
 	explicit LKCoreHTS221Driver(mbed::I2C &i2c);
+	virtual ~LKCoreHTS221Driver() = default;
+
 	virtual status_t init();
 	virtual status_t calibration();
 	virtual uint8_t getId();
