@@ -18,7 +18,7 @@ namespace state {
 	constexpr uint8_t OFF = 0;
 };	 // namespace state
 
-class LKCoreHTS221Driver : public LKCoreI2C
+class LKCoreHTS221Driver : public interface::LKCoreI2C
 {
   public:
 	explicit LKCoreHTS221Driver(mbed::I2C &i2c);

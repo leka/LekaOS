@@ -7,6 +7,7 @@
 
 #include "I2C.h"
 
+namespace leka::interface{
 class LKCoreI2C
 {
   public:
@@ -18,5 +19,5 @@ class LKCoreI2C
   private:
 	mbed::I2C &_i2c;
 };
-
+} // namespace leka::interface
 #endif	 //_LEKA_OS_DRIVER_LK_CORE_I2C_H_

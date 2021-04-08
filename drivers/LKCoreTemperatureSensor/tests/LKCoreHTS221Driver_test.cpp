@@ -7,6 +7,7 @@
 #include "LKCoreTemperatureSensor.h"
 #include "gtest/gtest.h"
 #include "stub_I2C.h"
+#include "mock_i2c.h"
 
 using namespace leka;
 
@@ -14,6 +15,21 @@ namespace lekaI2C {
 mbed::I2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
 }
 LKCoreHTS221Driver HTS221_temperatureSensor(lekaI2C::i2c);
+
+
+class LKCoreI2CTest : public ::testing::Test
+{
+	LKCoreI2CTest() : LKCoreI2C(lekaI2C::i2c)
+
+	LKCoreI2CMock LKCoreI2CMOCK;
+};
+
+TEST_F(LKCoreHTS221DriverTest, mock)
+{
+	EXPECT_CALL(LKCoreI2CMOCK, read()).Times(3);
+
+	HTS221_temperatureSensor.init()
+}
 
 TEST(LKCoreHTS221DriverTest, initialization)
 {

@@ -82,6 +82,8 @@ target_include_directories(mbed-os
 
 		${ROOT_DIR}/drivers/LKCoreTemperatureSensor/include/internal/
 		${ROOT_DIR}/drivers/LKCoreTemperatureSensor/external/include/
+
+		${ROOT_DIR}/tests/unit/mbed-os/mocks
 )
 
 target_sources(mbed-os
