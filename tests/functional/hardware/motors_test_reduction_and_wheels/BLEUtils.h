@@ -65,6 +65,8 @@ class MotorsBLEProgram : ble::Gap::EventHandler
 	{
 	}
 
+	virtual ~MotorsBLEProgram() = default;
+
 	void start()
 	{
 		_ble.gap().setEventHandler(this);
