@@ -133,7 +133,7 @@ class BeaconDemo : ble::Gap::EventHandler
 			return;
 		}
 
-		pp::ble::printMacAddress();
+		leka::ble::printMacAddress();
 
 		start_advertising();
 	}
@@ -172,7 +172,7 @@ class BeaconDemo : ble::Gap::EventHandler
 		ble_error_t error = _ble.gap().setAdvertisingParameters(ble::LEGACY_ADVERTISING_HANDLE, adv_parameters);
 
 		if (error) {
-			pp::ble::printError(error, "_ble.gap().setAdvertisingParameters() failed");
+			leka::ble::printError(error, "_ble.gap().setAdvertisingParameters() failed");
 			return;
 		}
 
@@ -180,7 +180,7 @@ class BeaconDemo : ble::Gap::EventHandler
 			_ble.gap().setAdvertisingPayload(ble::LEGACY_ADVERTISING_HANDLE, _adv_data_builder.getAdvertisingData());
 
 		if (error) {
-			pp::ble::printError(error, "_ble.gap().setAdvertisingPayload() failed");
+			leka::ble::printError(error, "_ble.gap().setAdvertisingPayload() failed");
 			return;
 		}
 
@@ -189,20 +189,18 @@ class BeaconDemo : ble::Gap::EventHandler
 		error = _ble.gap().startAdvertising(ble::LEGACY_ADVERTISING_HANDLE);
 
 		if (error) {
-			pp::ble::printError(error, "_ble.gap().startAdvertising() failed");
+			leka::ble::printError(error, "_ble.gap().startAdvertising() failed");
 			return;
 		}
 	}
 
-  private:
 	/* Event handler */
 
-	void onDisconnectionComplete(const ble::DisconnectionCompleteEvent &)
+	void onDisconnectionComplete(const ble::DisconnectionCompleteEvent &) final
 	{
 		_ble.gap().startAdvertising(ble::LEGACY_ADVERTISING_HANDLE);
 	}
 
-  private:
 	BLE &_ble;
 	events::EventQueue &_event_queue;
 

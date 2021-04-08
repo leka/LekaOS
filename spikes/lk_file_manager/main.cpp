@@ -44,6 +44,4 @@ int main(void)
 		serial.write(buff, length);
 		rtos::ThisThread::sleep_for(1s);
 	}
-
-	return 0;
 }

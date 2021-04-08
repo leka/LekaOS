@@ -17,8 +17,8 @@ class Motor : public MotorBase
   public:
 	Motor(mbed::DigitalOut &direction_1, mbed::DigitalOut &direction_2, mbed::PwmOut &speed);
 
-	void spin(rotation_t rotation, float speed);
-	void stop(void);
+	void spin(rotation_t rotation, float speed) final;
+	void stop(void) final;
 
   private:
 	mbed::DigitalOut &_direction_1;

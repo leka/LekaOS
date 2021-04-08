@@ -65,7 +65,10 @@ void motorThread()
 int main(void)
 {
 	rtos::ThisThread::sleep_for(2s);
+
 	hello.start();
+
+	rtos::ThisThread::sleep_for(2s);
 
 	if (PRINT_BATTERY_VOLTAGE_LOG) {
 		constexpr uint16_t buffeur_size = 2048;
@@ -80,5 +83,7 @@ int main(void)
 		motor_thread.start(motorThread);
 	}
 
-	return 0;
+	while (true) {
+		rtos::ThisThread::sleep_for(10s);
+	}
 }

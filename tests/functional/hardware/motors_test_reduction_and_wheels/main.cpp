@@ -54,6 +54,4 @@ int main(void)
 	while (true) {
 		rtos::ThisThread::sleep_for(1s);
 	}
-
-	return 0;
 }

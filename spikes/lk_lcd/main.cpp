@@ -146,6 +146,4 @@ int main(void)
 			corevideo.turnOff();
 		}
 	}
-
-	return 0;
 }

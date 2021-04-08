@@ -4,12 +4,7 @@
 
 #include "PrettyPrinter.h"
 
-// #include "ble/BLE.h"
-
-// using namespace pp;
-// using namespace pp::ble;
-
-void pp::ble::printError(ble_error_t error, const char *msg)
+void leka::ble::printError(ble_error_t error, const char *msg)
 {
 	printf("%s: ", msg);
 	switch (error) {
@@ -66,19 +61,19 @@ void pp::ble::printError(ble_error_t error, const char *msg)
 }
 
 /** print device address to the terminal */
-void pp::ble::printAddress(const ::ble::address_t &addr)
+void leka::ble::printAddress(const ::ble::address_t &addr)
 {
 	printf("%02x:%02x:%02x:%02x:%02x:%02x\r\n", addr[5], addr[4], addr[3], addr[2], addr[1], addr[0]);
 }
 
-void pp::ble::printMacAddress()
+void leka::ble::printMacAddress()
 {
 	/* Print out device MAC address to the console*/
 	::ble::own_address_type_t addr_type;
 	::ble::address_t address;
 	BLE::Instance().gap().getAddress(addr_type, address);
 	printf("DEVICE MAC ADDRESS: ");
-	pp::ble::printAddress(address);
+	leka::ble::printAddress(address);
 }
 
 const char *phy_to_string(::ble::phy_t phy)

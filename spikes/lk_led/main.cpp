@@ -45,10 +45,10 @@ void FillLEDsFromPaletteColors(uint8_t colorIndex)
 {
 	uint8_t brightness = 255;
 
-	for (int i = 0; i < NUM_LEDS; i++) {
-		leds[i] = ColorFromPalette(currentPalette, colorIndex, brightness, currentBlending);
+	std::for_each(std::begin(leds), std::end(leds), [&](auto &led) {
+		led = ColorFromPalette(currentPalette, colorIndex, brightness, currentBlending);
 		colorIndex += 3;
-	}
+	});
 }
 
 // This function fills the palette with totally random colors.
@@ -199,6 +199,4 @@ int main(void)
 
 		rtos::ThisThread::sleep_for(10ms);
 	}
-
-	return 0;
 }
