@@ -72,8 +72,3 @@ TEST(LKCoreHTS221DriverTest, setIrq)
 	ASSERT_EQ(HTS221_temperatureSensor.setIrq(state::ON), status_t::SUCCESS);
 }
 
-LKCoreTemperatureSensor temperatureSensor(i2c);
-TEST(LKCoreTemperatureSensorTest, initialization)
-{
-	ASSERT_NE(&temperatureSensor, nullptr);
-}
