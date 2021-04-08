@@ -16,7 +16,6 @@ add_subdirectory(${DRIVERS_DIR}/LKCoreMicrophone)
 add_subdirectory(${DRIVERS_DIR}/LKCoreLightSensor)
 add_subdirectory(${DRIVERS_DIR}/LKCoreTemperatureSensor)
 
-
 # Actuators drivers
 add_subdirectory(${DRIVERS_DIR}/LKCoreMotor)
 add_subdirectory(${DRIVERS_DIR}/FastLED)

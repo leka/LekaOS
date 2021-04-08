@@ -15,6 +15,7 @@ target_sources(LKCoreTemperatureSensor
 	PRIVATE
 		source/LKCoreTemperatureSensor.cpp
 		source/LKCoreHTS221Driver.cpp
+		source/LKCoreI2C.cpp
 		external/source/hts221_reg.c
 )
 

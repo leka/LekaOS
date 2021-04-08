@@ -9,7 +9,7 @@ using namespace leka;
 /**
  * @brief  Constructor
  */
-LKCoreHTS221Driver::LKCoreHTS221Driver(mbed::I2C &i2c) : _i2c(i2c)
+LKCoreHTS221Driver::LKCoreHTS221Driver(mbed::I2C &i2c) : LKCoreI2C(i2c)
 {
 	_register_io_function.write_reg = (stmdev_write_ptr)ptr_io_write;
 	_register_io_function.read_reg	= (stmdev_read_ptr)ptr_io_read;
@@ -266,10 +266,10 @@ int LKCoreHTS221Driver::read(uint8_t register_address, uint8_t *pBuffer, uint16_
 {
 	// Send component address, with no STOP condition
 	uint8_t address = register_address | 0x80;
-	int ret			= _i2c.write(_address, (const char *)&address, 1, true);
+	int ret			= LKCoreI2C::write(_address, (const char *)&address, 1, true);
 	if (ret == 0) {
 		// Read data, with STOP condition
-		ret = _i2c.read(_address, (char *)pBuffer, number_bytes_to_read, false);
+		ret = LKCoreI2C::read(_address, (char *)pBuffer, number_bytes_to_read, false);
 	}
 
 	return ret;
@@ -293,7 +293,7 @@ int LKCoreHTS221Driver::write(uint8_t register_address, uint8_t *pBuffer, uint16
 	_buffer[0] = register_address | 0x80;	// First, send register address
 	std::copy(pBuffer, (pBuffer + number_bytes_to_write), (_buffer.begin() + 1));
 
-	int ret = _i2c.write(_address, (const char *)_buffer.data(), (number_bytes_to_write + 1), false);
+	int ret = LKCoreI2C::write(_address, (const char *)_buffer.data(), (number_bytes_to_write + 1), false);
 
 	return ret;
 }

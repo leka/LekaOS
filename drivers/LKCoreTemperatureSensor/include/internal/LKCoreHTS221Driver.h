@@ -7,7 +7,7 @@
 
 #include <array>
 
-#include "I2C.h"
+#include "LKCoreI2C.h"
 #include "hts221_reg.h"
 #include "status.h"
 
@@ -18,7 +18,7 @@ namespace state {
 	constexpr uint8_t OFF = 0;
 };	 // namespace state
 
-class LKCoreHTS221Driver
+class LKCoreHTS221Driver : public LKCoreI2C
 {
   public:
 	explicit LKCoreHTS221Driver(mbed::I2C &i2c);
@@ -36,7 +36,6 @@ class LKCoreHTS221Driver
 	virtual status_t setIrq(uint8_t);
 
   private:
-	mbed::I2C &_i2c;
 	float_t _humiditySlope {0};
 	float_t _humidity_y_intercept {0};
 	float_t _temperatureSlope {0};
