@@ -7,15 +7,13 @@
 
 #include "ble/BLE.h"
 
-namespace pp {
-namespace ble {
+namespace pp::ble {
 
-	void printError(ble_error_t error, const char *msg);
-	void printAddress(const ::ble::address_t &addr);
-	void printMacAddress();
-	const char *phy_to_string(::ble::phy_t phy);
+void printError(ble_error_t error, const char *msg);
+void printAddress(const ::ble::address_t &addr);
+void printMacAddress();
+const char *phy_to_string(::ble::phy_t phy);
 
-}	// namespace ble
-}	// namespace pp
+}	// namespace pp::ble
 
 #endif	 // _LEKA_OS_LIB_BLE_PRETTY_PRINTER_H_
