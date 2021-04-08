@@ -91,7 +91,7 @@ class MotorsBLEProgram : ble::Gap::EventHandler
 
 		_ble.gattServer().onDataWritten(this, &MotorsBLEProgram::onDataWritten);
 
-		pp::ble::printMacAddress();
+		leka::ble::printMacAddress();
 
 		startAdvertising();
 	}

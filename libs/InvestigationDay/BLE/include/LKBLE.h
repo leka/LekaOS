@@ -50,7 +50,7 @@ class HeartrateDemo : ble::Gap::EventHandler
 			return;
 		}
 
-		pp::ble::printMacAddress();
+		leka::ble::printMacAddress();
 
 		startAdvertising();
 	}
