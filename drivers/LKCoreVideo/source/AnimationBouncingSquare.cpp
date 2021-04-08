@@ -12,10 +12,6 @@ AnimationBouncingSquare::AnimationBouncingSquare(LKCoreGraphicsBase &coregraphic
 
 void AnimationBouncingSquare::stop(void)
 {
-	_is_running = false;
-
-	rtos::ThisThread::sleep_for(_refresh_rate * 10);
-
 	_coregraphics.clearScreen(CGColor::black);
 }
 
@@ -70,29 +66,22 @@ void AnimationBouncingSquare::updateColor()
 
 void AnimationBouncingSquare::start(void)
 {
-	_is_running = true;
-
 	_coregraphics.clearScreen(CGColor::yellow);
 }
 
 void AnimationBouncingSquare::run(void)
 {
-	while (_is_running) {
-		// Change direction at screen limits
-		updateDirection();
+	// Change direction at screen limits
+	updateDirection();
 
-		// Update square position
-		updatePosition();
+	// Update square position
+	updatePosition();
 
-		// Update square color
-		updateColor();
+	// Update square color
+	updateColor();
 
-		// Draw square
-		_coregraphics.drawRectangle(_square, _color);
-
-		// Wait some time
-		rtos::ThisThread::sleep_for(_refresh_rate);
-	}
+	// Draw square
+	_coregraphics.drawRectangle(_square, _color);
 }
 
 }	// namespace leka

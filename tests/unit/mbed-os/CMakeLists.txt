@@ -86,6 +86,7 @@ target_sources(mbed-os
 		${MBED_STUBS_DIR}/stub_gpio_api.cpp
 		${MBED_STUBS_DIR}/stub_AnalogIn.cpp
 		${MBED_STUBS_DIR}/stub_PwmOut.cpp
+		${MBED_STUBS_DIR}/stub_EventQueue_extended.cpp
 
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/mbed_rtos_rtx_stub.c
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/ThisThread_stub.cpp
@@ -93,6 +94,8 @@ target_sources(mbed-os
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/rtx_mutex_stub.c
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/Mutex_stub.cpp
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/mbed_assert_stub.cpp
+		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/EventQueue_stub.cpp
+		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/equeue_stub.c
 )
 
 target_compile_options(mbed-os

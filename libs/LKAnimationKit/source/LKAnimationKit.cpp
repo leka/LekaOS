@@ -4,38 +4,27 @@
 
 #include "LKAnimationKit.h"
 
-#include "rtos/ThisThread.h"
-
-#define RUN_ANIMATION_FLAG (1UL << 0)
-
-using namespace std::chrono;
 using namespace leka;
 
-LKAnimationKit::LKAnimationKit(rtos::Thread &thread, interface::CGAnimation &animation)
-	: _thread(thread), _animation(animation)
+LKAnimationKit::LKAnimationKit(rtos::Thread &thread, events::EventQueue &event_queue, interface::CGAnimation &animation)
+	: _thread(thread), _event_queue(event_queue), _animation(animation)
 {
-	_thread.start({this, &LKAnimationKit::runner});
+	_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
 }
 
 void LKAnimationKit::start(interface::CGAnimation &animation)
 {
-	stop();
+	stop();	  // Avoid speed up of animation
 
 	_animation = animation;
 	_animation.start();
 
-	_event_flags.set(RUN_ANIMATION_FLAG);
+	_animation_id = _event_queue.call_every(_refresh_rate, &_animation, &interface::CGAnimation::run);
 }
 
 void LKAnimationKit::stop()
 {
-	_animation.stop();
-}
+	_event_queue.cancel(_animation_id);
 
-__attribute__((noreturn)) void LKAnimationKit::runner()
-{
-	while (true) {
-		_event_flags.wait_any(RUN_ANIMATION_FLAG);
-		_animation.run();
-	}
+	_animation.stop();
 }

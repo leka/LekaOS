@@ -7,8 +7,6 @@
 
 #include <cstdint>
 
-#include "rtos/ThisThread.h"
-
 #include "CGAnimation.h"
 #include "LKCoreGraphicsBase.h"
 
@@ -31,9 +29,6 @@ class AnimationBouncingSquare : public interface::CGAnimation
 
   private:
 	LKCoreGraphicsBase &_coregraphics;
-	bool _is_running = false;
-
-	std::chrono::milliseconds _refresh_rate = std::chrono::milliseconds(1);
 
 	LKCoreGraphicsBase::FilledRectangle _square {{0, 0}, 100, 100};
 	Color _color {0xFF, 0x00, 0x00};

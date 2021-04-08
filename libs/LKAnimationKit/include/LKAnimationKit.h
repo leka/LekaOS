@@ -5,7 +5,7 @@
 #ifndef _LEKA_OS_LIB_LKANIMATIONKIT_H_
 #define _LEKA_OS_LIB_LKANIMATIONKIT_H_
 
-#include "rtos/EventFlags.h"
+#include "events/EventQueue.h"
 #include "rtos/Thread.h"
 
 #include "CGAnimation.h"
@@ -15,19 +15,18 @@ namespace leka {
 class LKAnimationKit
 {
   public:
-	LKAnimationKit(rtos::Thread &thread, interface::CGAnimation &animation);
+	LKAnimationKit(rtos::Thread &thread, events::EventQueue &event_queue, interface::CGAnimation &animation);
 
 	void start(interface::CGAnimation &animation);
 	void stop();
 
   private:
-	void runner();
-
-  private:
 	rtos::Thread &_thread;
+	events::EventQueue &_event_queue;
 	interface::CGAnimation &_animation;
 
-	rtos::EventFlags _event_flags;
+	int _animation_id;
+	std::chrono::milliseconds _refresh_rate = std::chrono::milliseconds(1);
 };
 
 }	// namespace leka

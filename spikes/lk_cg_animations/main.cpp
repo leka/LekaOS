@@ -54,8 +54,9 @@ int main(void)
 	LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 	Thread animation_thread;
+	EventQueue animation_event_queue;
 	AnimationBouncingSquare animation_bouncing_square(coregraphics);
-	LKAnimationKit animationkit(animation_thread, animation_bouncing_square);
+	LKAnimationKit animationkit(animation_thread, animation_event_queue, animation_bouncing_square);
 
 	static BufferedSerial serial(USBTX, USBRX, 9600);
 
