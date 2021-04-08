@@ -10,8 +10,10 @@
 
 using namespace leka;
 
+namespace lekaI2C {
 mbed::I2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
-LKCoreHTS221Driver HTS221_temperatureSensor(i2c);
+}
+LKCoreHTS221Driver HTS221_temperatureSensor(lekaI2C::i2c);
 
 TEST(LKCoreHTS221DriverTest, initialization)
 {
@@ -71,4 +73,3 @@ TEST(LKCoreHTS221DriverTest, setIrq)
 {
 	ASSERT_EQ(HTS221_temperatureSensor.setIrq(state::ON), status_t::SUCCESS);
 }
-
