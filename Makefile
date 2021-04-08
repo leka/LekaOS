@@ -9,7 +9,6 @@
 ROOT_DIR          := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 CMAKE_DIR         := $(ROOT_DIR)/cmake
 MBED_OS_DIR       := $(ROOT_DIR)/extern/mbed-os
-PROJECT_BUILD_DIR := $(ROOT_DIR)/_build
 
 #
 # MARK: - Arguments
@@ -27,13 +26,18 @@ CODE_ANALYSIS ?= OFF
 # MARK: - Build dirs
 #
 
+PROJECT_BUILD_DIR       := $(ROOT_DIR)/_build
 CMAKE_CONFIG_DIR        := $(PROJECT_BUILD_DIR)/cmake_config
 TARGET_BUILD_DIR        := $(PROJECT_BUILD_DIR)/${TARGET_BOARD}
 UNIT_TESTS_BUILD_DIR    := $(ROOT_DIR)/_build_unit_tests
 UNIT_TESTS_COVERAGE_DIR := $(UNIT_TESTS_BUILD_DIR)/_coverage
 
-EXCLUDE_FROM_COVERAGE = --exclude-directories '.*googletest.*' --exclude-directories '.*mbed-os.*' --exclude-directories '.*template.*' \
-						-e '.*gtest.*' -e '.*mock.*' -e '.*_test\.cpp' -e 'extern.*' -e '.*st_.*' -e '.*LKCoreSTM32Hal.*' -e '.*LKCoreFatFs.*' \
+#
+# MARK: - Coverage exclusions
+#
+
+EXCLUDE_FROM_GCOVR_COVERAGE = -e '.*_build.*' -e '.*extern.*' -e '.*tests/unit.*' -e '.*_test\.cpp' -e '.*LKCoreSTM32Hal.*' -e '.*LKCoreFatFs.*'
+EXCLUDE_FROM_LCOV_COVERAGE  = '*Xcode*' '*_build*' '*extern*' '*tests/unit*' '*_test.cpp' '*LKCoreSTM32Hal*' '*LKCoreFatFs*'
 
 #
 # MARK: - .bin path
@@ -112,8 +116,8 @@ coverage:
 	@echo ""
 	@echo "🔬 Generating code coverage 📝"
 	@echo ""
-	@gcovr -r . $(EXCLUDE_FROM_COVERAGE)
-	@gcovr -r . $(EXCLUDE_FROM_COVERAGE) --html-details $(UNIT_TESTS_COVERAGE_DIR)/coverage.html
+	@gcovr -r . $(EXCLUDE_FROM_GCOVR_COVERAGE)
+	@gcovr -r . $(EXCLUDE_FROM_GCOVR_COVERAGE) --html-details $(UNIT_TESTS_COVERAGE_DIR)/coverage.html
 	@echo ""
 	@echo "📝 Html report can be viewed with:"
 	@echo "    open $(UNIT_TESTS_COVERAGE_DIR)/coverage.html\n"
@@ -128,8 +132,8 @@ coverage_sonarqube:
 	@echo ""
 	@echo "🔬 Generating code coverage 📝"
 	@echo ""
-	@gcovr -r . $(EXCLUDE_FROM_COVERAGE)
-	@gcovr -r . $(EXCLUDE_FROM_COVERAGE) --sonarqube $(UNIT_TESTS_COVERAGE_DIR)/coverage.xml
+	@gcovr -r . $(EXCLUDE_FROM_GCOVR_COVERAGE)
+	@gcovr -r . $(EXCLUDE_FROM_GCOVR_COVERAGE) --sonarqube $(UNIT_TESTS_COVERAGE_DIR)/coverage.xml
 	@echo ""
 	@echo "📝 SonarQube XML report can be viewed with:"
 	@echo "    open $(UNIT_TESTS_COVERAGE_DIR)/coverage.xml\n"
@@ -139,7 +143,7 @@ coverage_lcov:
 	@echo "🔬 Generating code coverage using lcov 📝"
 	@mkdir -p $(UNIT_TESTS_COVERAGE_DIR)
 	@lcov --capture --directory . --output-file $(UNIT_TESTS_COVERAGE_DIR)/_tmp_coverage.info
-	@lcov --remove $(UNIT_TESTS_COVERAGE_DIR)/_tmp_coverage.info '/usr/*' '*extern*' '*googletest*' '*v1*' '*Xcode*' '*CommandLineTools*' '*tests/unit*' -o $(UNIT_TESTS_COVERAGE_DIR)/coverage.info
+	@lcov --remove $(UNIT_TESTS_COVERAGE_DIR)/_tmp_coverage.info $(EXCLUDE_FROM_LCOV_COVERAGE) -o $(UNIT_TESTS_COVERAGE_DIR)/coverage.info
 	@lcov --list $(UNIT_TESTS_COVERAGE_DIR)/coverage.info
 
 view_coverage:
