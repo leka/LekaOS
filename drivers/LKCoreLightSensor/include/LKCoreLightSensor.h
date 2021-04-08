@@ -20,7 +20,6 @@ class LKCoreLightSensor
 		sunny
 	};
 
-  public:
 	explicit LKCoreLightSensor(PinName pin) : _pin {mbed::AnalogIn(pin)} {};
 
 	float readLuminosity(void);
@@ -30,7 +29,6 @@ class LKCoreLightSensor
   private:
 	float readRawValue(void);
 
-  private:
 	mbed::AnalogIn _pin;
 };
 
