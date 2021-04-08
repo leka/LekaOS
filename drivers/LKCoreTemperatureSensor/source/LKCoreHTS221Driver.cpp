@@ -172,6 +172,18 @@ uint8_t LKCoreHTS221Driver::getHeater()
 	return heaterState;
 }
 
+status_t LKCoreHTS221Driver::setIrq(uint8_t state)
+{
+	if (auto ret = hts221_pin_mode_set(&_register_io_function, HTS221_OPEN_DRAIN); ret != 0) {	 // Set the pin 3
+		return Status::ERROR;
+	}
+
+	if (auto ret = hts221_drdy_on_int_set(&_register_io_function, state); ret != 0) {	// DRDY Active when low
+		return Status::ERROR;
+	}
+	return Status::SUCCESS;
+}
+
 /**
  * @brief  Read register inside I2C slave device[get]
  *

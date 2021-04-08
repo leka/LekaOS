@@ -66,3 +66,7 @@ TEST(LKCoreHTS221DriverTest, getHeater)
 	spy_temperatureSensor_setValue(value, sizeValue);
 	ASSERT_EQ(temperatureSensor.getHeater(), state::OFF);
 }
+TEST(LKCoreHTS221DriverTest, setIrq)
+{
+	ASSERT_EQ(temperatureSensor.setIrq(state::ON), status_t::SUCCESS);
+}
