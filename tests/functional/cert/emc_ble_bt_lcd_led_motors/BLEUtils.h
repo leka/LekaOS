@@ -196,7 +196,7 @@ class BeaconDemo : ble::Gap::EventHandler
 
 	/* Event handler */
 
-	void onDisconnectionComplete(const ble::DisconnectionCompleteEvent &)
+	void onDisconnectionComplete(const ble::DisconnectionCompleteEvent &) final
 	{
 		_ble.gap().startAdvertising(ble::LEGACY_ADVERTISING_HANDLE);
 	}
