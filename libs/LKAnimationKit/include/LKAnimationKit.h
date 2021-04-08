@@ -26,7 +26,7 @@ class LKAnimationKit
 	rtos::Thread &_thread;
 	interface::CGAnimation &_animation;
 
-	bool _start_animation;
+	bool _run_animation;
 };
 
 }	// namespace leka

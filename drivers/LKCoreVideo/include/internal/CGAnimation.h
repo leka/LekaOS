@@ -15,6 +15,7 @@ class CGAnimation
 	virtual ~CGAnimation() = default;
 
 	virtual void start() = 0;
+	virtual void run()	 = 0;
 	virtual void stop()	 = 0;
 };
 

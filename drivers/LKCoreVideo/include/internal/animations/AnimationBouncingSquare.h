@@ -20,6 +20,7 @@ class AnimationBouncingSquare : public interface::CGAnimation
 	explicit AnimationBouncingSquare(LKCoreGraphicsBase &coregraphics);
 
 	void start(void) final;
+	void run(void) final;
 	void stop(void) final;
 
 	bool squareIsOutOfBoundVertical() const;

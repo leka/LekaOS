@@ -73,7 +73,10 @@ void AnimationBouncingSquare::start(void)
 	_is_running = true;
 
 	_coregraphics.clearScreen(CGColor::yellow);
+}
 
+void AnimationBouncingSquare::run(void)
+{
 	while (_is_running) {
 		// Change direction at screen limits
 		updateDirection();

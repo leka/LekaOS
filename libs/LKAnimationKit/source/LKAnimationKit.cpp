@@ -20,9 +20,10 @@ void LKAnimationKit::start(interface::CGAnimation &animation)
 	stop();
 
 	_animation = animation;
+	_animation.start();
 
-	_start_animation = true;
-	while (_start_animation) {
+	_run_animation = true;
+	while (_run_animation) {
 		rtos::ThisThread::sleep_for(100ms);
 	}
 }
@@ -35,9 +36,9 @@ void LKAnimationKit::stop()
 __attribute__((noreturn)) void LKAnimationKit::runner()
 {
 	while (true) {
-		if (_start_animation) {
-			_start_animation = false;
-			_animation.start();
+		if (_run_animation) {
+			_run_animation = false;
+			_animation.run();
 		}
 
 		rtos::ThisThread::sleep_for(1s);

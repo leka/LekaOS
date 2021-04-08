@@ -15,6 +15,7 @@ class AnimationMock : public interface::CGAnimation
 {
   public:
 	MOCK_METHOD(void, start, (), (override));
+	MOCK_METHOD(void, run, (), (override));
 	MOCK_METHOD(void, stop, (), (override));
 };
 
