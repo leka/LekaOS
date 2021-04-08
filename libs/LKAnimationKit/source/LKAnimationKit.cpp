@@ -6,6 +6,8 @@
 
 #include "rtos/ThisThread.h"
 
+#define RUN_ANIMATION_FLAG (1UL << 0)
+
 using namespace std::chrono;
 using namespace leka;
 
@@ -22,10 +24,7 @@ void LKAnimationKit::start(interface::CGAnimation &animation)
 	_animation = animation;
 	_animation.start();
 
-	_run_animation = true;
-	while (_run_animation) {
-		rtos::ThisThread::sleep_for(100ms);
-	}
+	_event_flags.set(RUN_ANIMATION_FLAG);
 }
 
 void LKAnimationKit::stop()
@@ -36,11 +35,7 @@ void LKAnimationKit::stop()
 __attribute__((noreturn)) void LKAnimationKit::runner()
 {
 	while (true) {
-		if (_run_animation) {
-			_run_animation = false;
-			_animation.run();
-		}
-
-		rtos::ThisThread::sleep_for(1s);
+		_event_flags.wait_any(RUN_ANIMATION_FLAG);
+		_animation.run();
 	}
 }

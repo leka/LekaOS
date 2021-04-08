@@ -5,6 +5,7 @@
 #ifndef _LEKA_OS_LIB_LKANIMATIONKIT_H_
 #define _LEKA_OS_LIB_LKANIMATIONKIT_H_
 
+#include "rtos/EventFlags.h"
 #include "rtos/Thread.h"
 
 #include "CGAnimation.h"
@@ -26,7 +27,7 @@ class LKAnimationKit
 	rtos::Thread &_thread;
 	interface::CGAnimation &_animation;
 
-	bool _run_animation;
+	rtos::EventFlags _event_flags;
 };
 
 }	// namespace leka
