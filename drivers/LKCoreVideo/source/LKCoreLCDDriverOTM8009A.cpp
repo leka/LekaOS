@@ -13,12 +13,6 @@ namespace leka {
 using namespace std::chrono;
 using namespace lcd::otm8009a;
 
-LKCoreLCDDriverOTM8009A::LKCoreLCDDriverOTM8009A(LKCoreDSIBase &dsi, PinName backlight)
-	: _dsi(dsi), _backlight(backlight)
-{
-	_backlight.period(0.01f);	// Set PWM at 1/(0.01 seconds) = 100Hz
-}
-
 void LKCoreLCDDriverOTM8009A::turnOn()
 {
 	_dsi.write(display::turn_on::array, std::size(display::turn_on::array));
@@ -36,6 +30,8 @@ void LKCoreLCDDriverOTM8009A::setBrightness(float brightness)
 
 void LKCoreLCDDriverOTM8009A::initialize()
 {
+	_backlight.period(0.01f);	// Set PWM at 1/(0.01 seconds) = 100Hz
+
 	// Enable CMD2 to access vendor specific commands
 	// Enter in command 2 mode and set EXTC to enable address shift function (0x00)
 	_dsi.write(register_data::short01, std::size(register_data::short01));

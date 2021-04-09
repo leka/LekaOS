@@ -61,7 +61,6 @@ void LKCoreVideo::initialize(void)
 	_coredsi.initialize();
 
 	_coreltdc.initialize();
-	_coreltdc.configureLayer();
 
 	_coredsi.start();
 

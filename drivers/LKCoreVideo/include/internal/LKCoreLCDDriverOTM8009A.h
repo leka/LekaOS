@@ -18,7 +18,7 @@ namespace leka {
 class LKCoreLCDDriverOTM8009A : public LKCoreLCDDriverBase
 {
   public:
-	LKCoreLCDDriverOTM8009A(LKCoreDSIBase &dsi, PinName backlight);
+	LKCoreLCDDriverOTM8009A(LKCoreDSIBase &dsi, PinName backlight) : _dsi {dsi}, _backlight {backlight} {};
 
 	void initialize() final;
 	void setLandscapeOrientation() final;

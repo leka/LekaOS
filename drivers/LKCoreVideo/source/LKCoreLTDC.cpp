@@ -12,36 +12,25 @@ LKCoreLTDC::LKCoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi) : _hal(hal),
 {
 	_hltdc.Instance = LTDC;
 
-	// MARK: Initialize the LCD pixel width and pixel height
+	// LCD pixel width/height
 	_hltdc.LayerCfg->ImageWidth	 = lcd::dimension.width;
 	_hltdc.LayerCfg->ImageHeight = lcd::dimension.height;
 
-	setupLayerConfig();
-	setupTimingConfig();
-	setupBackgroundConfig();
-}
-
-void LKCoreLTDC::setupTimingConfig()
-{
-	// MARK: Timing and synchronization
+	// Timing and synchronization
 	_hltdc.Init.HorizontalSync	   = (lcd::property.HSA - 1);
 	_hltdc.Init.AccumulatedHBP	   = (lcd::property.HSA + lcd::property.HBP - 1);
 	_hltdc.Init.AccumulatedActiveW = (lcd::dimension.width + lcd::property.HSA + lcd::property.HBP - 1);
 	_hltdc.Init.TotalWidth = (lcd::dimension.width + lcd::property.HSA + lcd::property.HBP + lcd::property.HFP - 1);
-}
 
-void LKCoreLTDC::setupBackgroundConfig()
-{
-	// MARK: Background values
+	// Background values
 	_hltdc.Init.Backcolor.Blue	= 0;
 	_hltdc.Init.Backcolor.Green = 0;
 	_hltdc.Init.Backcolor.Red	= 0;
-	_hltdc.Init.PCPolarity		= LTDC_PCPOLARITY_IPC;
-}
 
-void LKCoreLTDC::setupLayerConfig()
-{
-	// MARK: Layer
+	// Misc
+	_hltdc.Init.PCPolarity = LTDC_PCPOLARITY_IPC;
+
+	// Layer config
 	_layerConfig.WindowX0 = 0;
 	_layerConfig.WindowX1 = lcd::dimension.width;
 	_layerConfig.WindowY0 = 0;
@@ -69,14 +58,19 @@ void LKCoreLTDC::initialize()
 {
 	configurePeriphClock();
 
-	// MARK: Get LTDC Configuration from DSI Configuration
+	// Get LTDC config from DSI
 	DSI_VidCfgTypeDef dsi_video_config = _dsi.getConfig();
 	_hal.HAL_LTDC_StructInitFromVideoConfig(&_hltdc, &dsi_video_config);
 
-	// MARK: Initializer LTDC
+	// Initialize LTDC
 	// This part **must not** be moved to the constructor as LCD
 	// initialization must be performed in a very specific order
 	_hal.HAL_LTDC_Init(&_hltdc);
+
+	// Initialize LTDC layer
+	// This part **must not** be moved to the constructor as LCD
+	// initialization must be performed in a very specific order
+	_hal.HAL_LTDC_ConfigLayer(&_hltdc, &_layerConfig, 1);
 }
 
 void LKCoreLTDC::configurePeriphClock()
@@ -98,20 +92,12 @@ void LKCoreLTDC::configurePeriphClock()
 	_hal.HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 }
 
-void LKCoreLTDC::configureLayer()
-{
-	// MARK: Initializer LTDC layer
-	// This part **must not** be moved to the constructor as LCD
-	// initialization must be performed in a very specific order
-	_hal.HAL_LTDC_ConfigLayer(&_hltdc, &_layerConfig, 1);
-}
-
-LTDC_HandleTypeDef LKCoreLTDC::getHandle()
+LTDC_HandleTypeDef LKCoreLTDC::getHandle() const
 {
 	return _hltdc;
 }
 
-LTDC_LayerCfgTypeDef LKCoreLTDC::getLayerConfig()
+LTDC_LayerCfgTypeDef LKCoreLTDC::getLayerConfig() const
 {
 	return _layerConfig;
 }
