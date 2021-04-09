@@ -18,9 +18,9 @@ void LKAnimationKit::start(interface::CGAnimation &animation)
 	stop();	  // Avoid speed up of animation
 
 	_animation = animation;
-	_animation.start();
+	animation.start();
 
-	_animation_id = _event_queue.call_every(_refresh_rate, &_animation, &interface::CGAnimation::run);
+	_animation_id = _event_queue.call_every(_refresh_rate, &animation, &interface::CGAnimation::run);
 }
 
 void LKAnimationKit::stop()
