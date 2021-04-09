@@ -101,22 +101,6 @@ TEST_F(LKCoreLTDCTest, setupLayerConfig)
 	ASSERT_EQ(layer_config.ImageHeight, lcd::dimension.height);
 }
 
-TEST_F(LKCoreLTDCTest, initializationSequence)
-{
-	uint8_t default_layer_id = 1;	// Foreground
-
-	{
-		InSequence seq;
-		EXPECT_CALL(halmock, HAL_RCCEx_PeriphCLKConfig).Times(1);
-		EXPECT_CALL(dsimock, getConfig).Times(1);
-		EXPECT_CALL(halmock, HAL_LTDC_StructInitFromVideoConfig).Times(1);
-		EXPECT_CALL(halmock, HAL_LTDC_Init).Times(1);
-		EXPECT_CALL(halmock, HAL_LTDC_ConfigLayer(_, _, default_layer_id)).Times(1);
-	}
-
-	coreltdc.initialize();
-}
-
 MATCHER_P(WithStructEqualTo, expected, "Compare RCC_PeriphCLKInitTypeDef")
 {
 	if (arg->PeriphClockSelection != expected.PeriphClockSelection) {
@@ -134,8 +118,10 @@ MATCHER_P(WithStructEqualTo, expected, "Compare RCC_PeriphCLKInitTypeDef")
 	return true;
 }
 
-TEST_F(LKCoreLTDCTest, initializationRCCPeriphClock)
+TEST_F(LKCoreLTDCTest, initializationSequence)
 {
+	uint8_t default_layer_id = 1;	// Foreground
+
 	RCC_PeriphCLKInitTypeDef expected;
 
 	expected.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
@@ -143,7 +129,14 @@ TEST_F(LKCoreLTDCTest, initializationRCCPeriphClock)
 	expected.PLLSAI.PLLSAIR		  = 7;
 	expected.PLLSAIDivR			  = RCC_PLLSAIDIVR_2;
 
-	EXPECT_CALL(halmock, HAL_RCCEx_PeriphCLKConfig(WithStructEqualTo(expected))).Times(1);
+	{
+		InSequence seq;
+		EXPECT_CALL(halmock, HAL_RCCEx_PeriphCLKConfig(WithStructEqualTo(expected))).Times(1);
+		EXPECT_CALL(dsimock, getConfig).Times(1);
+		EXPECT_CALL(halmock, HAL_LTDC_StructInitFromVideoConfig).Times(1);
+		EXPECT_CALL(halmock, HAL_LTDC_Init).Times(1);
+		EXPECT_CALL(halmock, HAL_LTDC_ConfigLayer(_, _, default_layer_id)).Times(1);
+	}
 
 	coreltdc.initialize();
 }
