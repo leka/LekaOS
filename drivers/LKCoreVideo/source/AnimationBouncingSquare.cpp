@@ -6,16 +6,16 @@
 
 #include "corevideo_config.h"
 
-namespace leka {
+namespace leka::animation {
 
-AnimationBouncingSquare::AnimationBouncingSquare(LKCoreGraphicsBase &coregraphics) : _coregraphics(coregraphics) {}
+BouncingSquare::BouncingSquare(LKCoreGraphicsBase &coregraphics) : _coregraphics(coregraphics) {}
 
-void AnimationBouncingSquare::stop(void)
+void BouncingSquare::stop(void)
 {
 	_coregraphics.clearScreen(CGColor::black);
 }
 
-bool AnimationBouncingSquare::squareWillBeOutOfBoundVertical() const
+bool BouncingSquare::squareWillBeOutOfBoundVertical() const
 {
 	bool top_out_of_bound	 = _square.origin.y + _vertical_shift <= 0;
 	bool bottom_out_of_bound = _square.origin.y + _square.height + _vertical_shift > lcd::dimension.height - 1;
@@ -23,7 +23,7 @@ bool AnimationBouncingSquare::squareWillBeOutOfBoundVertical() const
 	return (top_out_of_bound || bottom_out_of_bound);
 }
 
-bool AnimationBouncingSquare::squareWillBeOutOfBoundHorizontal() const
+bool BouncingSquare::squareWillBeOutOfBoundHorizontal() const
 {
 	bool left_out_of_bound	= _square.origin.x + _horizontal_shift <= 0;
 	bool right_out_of_bound = _square.origin.x + _square.width + _horizontal_shift > lcd::dimension.width - 1;
@@ -31,7 +31,7 @@ bool AnimationBouncingSquare::squareWillBeOutOfBoundHorizontal() const
 	return (left_out_of_bound || right_out_of_bound);
 }
 
-void AnimationBouncingSquare::updateDirection()
+void BouncingSquare::updateDirection()
 {
 	if (squareWillBeOutOfBoundHorizontal()) {
 		_horizontal_shift = -_horizontal_shift;
@@ -42,13 +42,13 @@ void AnimationBouncingSquare::updateDirection()
 	}
 }
 
-void AnimationBouncingSquare::updatePosition()
+void BouncingSquare::updatePosition()
 {
 	_square.origin.x += _horizontal_shift;
 	_square.origin.y += _vertical_shift;
 }
 
-void AnimationBouncingSquare::updateColor()
+void BouncingSquare::updateColor()
 {
 	if (_color.red == 0x00) {
 		_color.green++;
@@ -64,12 +64,12 @@ void AnimationBouncingSquare::updateColor()
 	}
 }
 
-void AnimationBouncingSquare::start(void)
+void BouncingSquare::start(void)
 {
 	_coregraphics.clearScreen(CGColor::yellow);
 }
 
-void AnimationBouncingSquare::run(void)
+void BouncingSquare::run(void)
 {
 	// Change direction at screen limits
 	updateDirection();
@@ -84,4 +84,4 @@ void AnimationBouncingSquare::run(void)
 	_coregraphics.drawRectangle(_square, _color);
 }
 
-}	// namespace leka
+}	// namespace leka::animation

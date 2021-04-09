@@ -15,20 +15,20 @@
 
 using namespace std::chrono;
 
-namespace leka {
+namespace leka::animation {
 
 LKCoreAnimation::LKCoreAnimation(LKCoreGraphics &coregraphics) : _coregraphics(coregraphics) {}
 
 void LKCoreAnimation::run()
 {
-	using animation_map_t = std::map<SelectedAnimation, AnimationBouncingSquare *>;
+	using animation_map_t = std::map<SelectedAnimation, BouncingSquare *>;
 
-	AnimationBouncingSquare animation_bouncing_square(_coregraphics);
+	BouncingSquare animation_bouncing_square(_coregraphics);
 
 	animation_map_t animation_map {{SelectedAnimation::bouncing_square, &animation_bouncing_square},
 								   {SelectedAnimation::sparkle_stars, &animation_bouncing_square}};
 
-	AnimationBouncingSquare *animation = animation_map[SelectedAnimation::bouncing_square];
+	BouncingSquare *animation = animation_map[SelectedAnimation::bouncing_square];
 	animation->start();
 }
 
@@ -192,4 +192,4 @@ __attribute__((noreturn)) void LKCoreAnimation::runSparkleStars()
 	}
 }
 
-}	// namespace leka
+}	// namespace leka::animation

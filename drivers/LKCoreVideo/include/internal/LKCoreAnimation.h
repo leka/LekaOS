@@ -7,7 +7,7 @@
 
 #include "LKCoreGraphics.h"
 
-namespace leka {
+namespace leka::animation {
 
 class LKCoreAnimation
 {
@@ -36,6 +36,6 @@ class LKCoreAnimation
 	LKCoreGraphics &_coregraphics;
 };
 
-}	// namespace leka
+}	// namespace leka::animation
 
 #endif	 // _LEKA_OS_DRIVER_LKCORANIMATION_H_

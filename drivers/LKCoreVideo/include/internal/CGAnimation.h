@@ -7,7 +7,7 @@
 
 #include <cstdint>
 
-namespace leka::interface {
+namespace leka::animation::interface {
 
 class CGAnimation
 {
@@ -19,6 +19,6 @@ class CGAnimation
 	virtual void stop()	 = 0;
 };
 
-}	// namespace leka::interface
+}	// namespace leka::animation::interface
 
 #endif

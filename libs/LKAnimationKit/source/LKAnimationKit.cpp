@@ -5,6 +5,7 @@
 #include "LKAnimationKit.h"
 
 using namespace leka;
+using namespace animation;
 
 LKAnimationKit::LKAnimationKit(rtos::Thread &thread, events::EventQueue &event_queue, interface::CGAnimation &animation)
 	: _thread(thread), _event_queue(event_queue), _animation(animation)

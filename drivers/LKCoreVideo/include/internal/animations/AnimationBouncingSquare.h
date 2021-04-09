@@ -10,12 +10,12 @@
 #include "CGAnimation.h"
 #include "LKCoreGraphicsBase.h"
 
-namespace leka {
+namespace leka::animation {
 
-class AnimationBouncingSquare : public interface::CGAnimation
+class BouncingSquare : public interface::CGAnimation
 {
   public:
-	explicit AnimationBouncingSquare(LKCoreGraphicsBase &coregraphics);
+	explicit BouncingSquare(LKCoreGraphicsBase &coregraphics);
 
 	void start(void) final;
 	void run(void) final;
@@ -36,6 +36,6 @@ class AnimationBouncingSquare : public interface::CGAnimation
 	int16_t _vertical_shift	  = 1;
 };
 
-}	// namespace leka
+}	// namespace leka::animation
 
 #endif

@@ -9,7 +9,7 @@
 #include "CGAnimation.h"
 #include "gmock/gmock.h"
 
-namespace leka {
+namespace leka::animation {
 
 class AnimationMock : public interface::CGAnimation
 {
@@ -19,6 +19,6 @@ class AnimationMock : public interface::CGAnimation
 	MOCK_METHOD(void, stop, (), (override));
 };
 
-}	// namespace leka
+}	// namespace leka::animation
 
 #endif	 // _LEKA_OS_ANIMATION_MOCK_H_

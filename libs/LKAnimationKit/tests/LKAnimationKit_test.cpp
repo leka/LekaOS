@@ -23,7 +23,7 @@ class LKAnimationKitTest : public ::testing::Test
 
 	rtos::Thread animation_thread;
 	events::EventQueue event_queue;
-	AnimationMock animation;
+	animation::AnimationMock animation;
 	LKAnimationKit animationkit;
 };
 
