@@ -7,9 +7,10 @@
 		".cache": true,
 		".clangd": true
 	},
-	"cmake.buildDirectory": "${workspaceFolder}/_build/LEKA_V1_2_DEV",
+	"cmake.buildDirectory": "${workspaceFolder}/_build_cmake_tools",
 	"cmake.configureArgs": [
-		"-DTARGET_BOARD=LEKA_V1_2_DEV"
+		"-DTARGET_BOARD=LEKA_V1_2_DEV",
+		"-DCMAKE_CONFIG_DIR=${workspaceFolder}/_build_cmake_tools/cmake_config"
 	],
 	"markdownlint.config": {
 		"MD002": false,
@@ -24,5 +25,6 @@
 		},
 		"MD033": false
 	},
-	"editor.formatOnSave": true
+	"editor.formatOnSave": true,
+	"cmake.configureOnOpen": true
 }
