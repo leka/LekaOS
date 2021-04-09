@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "I2C.h"
-#include "LKCoreHTS221Driver.h"
 
 namespace leka {
 

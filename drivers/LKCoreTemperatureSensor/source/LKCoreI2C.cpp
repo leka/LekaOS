@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "LKCoreI2C.h"
-using namespace leka::interface;
+using namespace leka;
 
 int LKCoreI2C::read(int address, char *data, int length, bool repeated = false)
 {

@@ -2,22 +2,66 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_LK_CORE_TEMPERATURE_SENSOR_H_
-#define _LEKA_OS_DRIVER_LK_CORE_TEMPERATURE_SENSOR_H_
+#ifndef _LEKA_OS_DRIVER_LK_CORE_HTS221_DRIVER_H_
+#define _LEKA_OS_DRIVER_LK_CORE_HTS221_DRIVER_H_
 
-#include "LKCoreHTS221Driver.h"
-#include "LKCoreTemperatureSensorBase.h"
+#include <array>
+
+#include "LKCoreI2C.h"
+#include "hts221_reg.h"
+#include "status.h"
 
 namespace leka {
-class LKCoreTemperatureSensor : public LKCoreHTS221Driver, public LKCoreTemperatureSensorDriverBase
+
+namespace state {
+	constexpr uint8_t ON  = 1;
+	constexpr uint8_t OFF = 0;
+};	 // namespace state
+
+class LKCoreTemperatureSensor
 {
   public:
-	explicit LKCoreTemperatureSensor(mbed::I2C &i2c);
-	// virtual ~LKCoreTemperatureSensor() = default;
+	explicit LKCoreTemperatureSensor(interface::LKCoreI2C &i2c);
+	virtual ~LKCoreTemperatureSensor() = default;
 
-	// virtual float getTemperature();
+	virtual status_t init();
+	virtual status_t calibration();
+	virtual uint8_t getId();
+	virtual int16_t getRawTemperature();
+	virtual int16_t getRawHumidity();
+
+	virtual status_t setHeater(uint8_t);
+	virtual uint8_t getHeater();
+
+	virtual status_t setIrq(uint8_t);
+
   private:
+	interface::LKCoreI2C &_i2c;
+
+	float_t _humiditySlope {0};
+	float_t _humidity_y_intercept {0};
+	float_t _temperatureSlope {0};
+	float_t _temperature_y_intercept {0};
+
+	uint8_t _address				= HTS221_I2C_ADDRESS;
+	std::array<uint8_t, 32> _buffer = {0};
+
+  private:
+	status_t setPower(uint8_t);
+	status_t setBDU(uint8_t);
+	status_t setDataAquisitionRate(hts221_odr_t);
+	status_t setAvgTemperature(hts221_avgt_t);
+	status_t setAvgHumidity(hts221_avgh_t);
+
+	int read(uint8_t register_address, uint8_t *pBuffer, uint16_t number_bytes_to_read);
+	int write(uint8_t register_address, uint8_t *pBuffer, uint16_t number_bytes_to_write);
+
+	stmdev_ctx_t _register_io_function;
+	static int32_t ptr_io_write(void *handle, uint8_t register_address, uint8_t *p_buffer,
+								uint16_t number_bytes_to_write);
+	static int32_t ptr_io_read(void *handle, uint8_t register_address, uint8_t *p_buffer,
+							   uint16_t number_bytes_to_read);
 };
 }	// namespace leka
 
-#endif	 //_LEKA_OS_DRIVER_LK_CORE_TEMPERATURE_SENSOR_H_
+#endif	 //_LEKA_OS_DRIVER_LK_CORE_HTS221_DRIVER_H_

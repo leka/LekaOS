@@ -14,7 +14,6 @@ target_include_directories(LKCoreTemperatureSensor
 target_sources(LKCoreTemperatureSensor
 	PRIVATE
 		source/LKCoreTemperatureSensor.cpp
-		source/LKCoreHTS221Driver.cpp
 		source/LKCoreI2C.cpp
 		external/source/hts221_reg.c
 )
@@ -25,7 +24,6 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
 		tests/LKCoreTemperatureSensor_test.cpp
-		tests/LKCoreHTS221Driver_test.cpp
 	)
 
 endif()
