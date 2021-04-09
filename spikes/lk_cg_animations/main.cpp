@@ -73,12 +73,14 @@ int main(void)
 							 hello.world, int(t.count() / 1000));
 		serial.write(buff, length);
 
+		animationkit.setRefreshRate(1ms);
 		animationkit.start(animation_bouncing_square);
 		rtos::ThisThread::sleep_for(5s);
 
 		animationkit.stop();
 		rtos::ThisThread::sleep_for(1s);
 
+		animationkit.setRefreshRate(25ms);
 		animationkit.start(animation_slow_rainbow);
 		rtos::ThisThread::sleep_for(5s);
 

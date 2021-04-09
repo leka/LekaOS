@@ -20,6 +20,8 @@ class LKAnimationKit
 	void start(animation::interface::CGAnimation &animation);
 	void stop();
 
+	void setRefreshRate(events::EventQueue::duration refresh_rate);
+
   private:
 	rtos::Thread &_thread;
 	events::EventQueue &_event_queue;

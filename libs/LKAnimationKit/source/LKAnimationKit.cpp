@@ -29,3 +29,8 @@ void LKAnimationKit::stop()
 
 	_animation.stop();
 }
+
+void LKAnimationKit::setRefreshRate(events::EventQueue::duration refresh_rate)
+{
+	_refresh_rate = refresh_rate;
+}

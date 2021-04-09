@@ -45,3 +45,10 @@ TEST_F(LKAnimationKitTest, stop)
 
 	animationkit.stop();
 }
+
+TEST_F(LKAnimationKitTest, setRefreshRate)
+{
+	auto refresh_rate = std::chrono::milliseconds(42);
+
+	animationkit.setRefreshRate(refresh_rate);
+}
