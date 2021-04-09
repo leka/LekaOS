@@ -31,13 +31,20 @@ LKCoreFatFs corefatfs;
 
 LKCoreSTM32Hal hal;
 LKCoreDMA2D coredma2d(hal);
-LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
+// LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
 
 int main(void)
 {
+	printf("New run\n");
+
 	HelloWorld hello;
 
 	// SD
+	printf("HardFault, Mode: Handler, Priv : Privileged, Stack: MSP\n");
+	sd_blockdevice.init();
+	sd_blockdevice.frequency(25'000'000);
+
+	fatfs.mount(&sd_blockdevice);
 
 	LKCoreLL corell;
 	CGPixel pixel(corell);
@@ -50,9 +57,10 @@ int main(void)
 	LKCoreFont corefont(pixel);
 	LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 	LKCoreLCD corelcd(coreotm);
-	// JPEG
+	LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);	  // JPEG
 	LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
+	printf("HardFault, Mode: Thread, Priv : Privileged, Stack: PSP\n");
 	Thread animation_thread;
 	EventQueue animation_event_queue;
 	AnimationBouncingSquare animation_bouncing_square(coregraphics);
