@@ -21,12 +21,6 @@ class BouncingSquare : public interface::CGAnimation
 	void run(void) final;
 	void stop(void) final;
 
-	bool squareWillBeOutOfBoundVertical() const;
-	bool squareWillBeOutOfBoundHorizontal() const;
-	void updateDirection();
-	void updatePosition();
-	void updateColor();
-
   private:
 	LKCoreGraphicsBase &_coregraphics;
 
@@ -34,6 +28,12 @@ class BouncingSquare : public interface::CGAnimation
 	Color _color {0xFF, 0x00, 0x00};
 	int16_t _horizontal_shift = 1;
 	int16_t _vertical_shift	  = 1;
+
+	bool squareWillBeOutOfBoundVertical() const;
+	bool squareWillBeOutOfBoundHorizontal() const;
+	void updateDirection();
+	void updatePosition();
+	void updateColor();
 };
 
 }	// namespace leka::animation
