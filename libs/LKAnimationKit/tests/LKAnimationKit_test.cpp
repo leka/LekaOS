@@ -4,13 +4,14 @@
 
 #include "LKAnimationKit.h"
 
-// #include "CGAnimation.h"
 #include "EventQueue_stub.h"
 #include "Thread_stub.h"
 #include "gtest/gtest.h"
 #include "mock_CGAnimation.h"
 
 using namespace leka;
+
+using ::testing::InSequence;
 
 class LKAnimationKitTest : public ::testing::Test
 {
@@ -26,7 +27,17 @@ class LKAnimationKitTest : public ::testing::Test
 	LKAnimationKit animationkit;
 };
 
-TEST_F(LKAnimationKitTest, instanciation) {}
+TEST_F(LKAnimationKitTest, start)
+{
+	{
+		InSequence seq;
+
+		EXPECT_CALL(animation, stop);
+		EXPECT_CALL(animation, start);
+	}
+
+	animationkit.start(animation);
+}
 
 TEST_F(LKAnimationKitTest, stop)
 {
