@@ -7,10 +7,14 @@
 #include "LKCoreI2C.h"
 #include "gtest/gtest.h"
 #include "mock_LKCoreI2C.h"
-#include "stub_I2C.h"
+// #include "stub_I2C.h"
 
+using ::testing::_;
 using ::testing::AnyNumber;
+using ::testing::DoAll;
 using ::testing::InSequence;
+using ::testing::Return;
+using ::testing::SetArgPointee;
 
 using namespace leka;
 
@@ -48,58 +52,56 @@ TEST_F(LKCoreI2CTest, initializationCountOfReadWrite)
 	HTS221_temperatureSensor.init();
 }
 
-TEST_F(LKCoreI2CTest, Calibration)
+TEST_F(LKCoreI2CTest, CalibrationAndGetTemperature)
 {
-	silenceUnexpectedCalls();
+	char test;
+	// silenceUnexpectedCalls();
+	// init values for calibration
+	{
+		InSequence seq;
+		test = 0x00;   // t0degC/8 [7,0]
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
+		test = 0x00;   // ????
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
+		test = 0x40;   // t1degC/8
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
+		test = 0x00;   // t0_Out [15,8]
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
+		test = 0x00;   // t0_Out [7,0]
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
+		test = 0x01;   // t1_Out
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
+		test = 0x00;   // h0rH
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
+		test = 0x04;   // h1rH
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
+		test = 0x00;   // h0t0Out
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
+		test = 0x01;   // h1t0Out
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
+	}
 	ASSERT_EQ(HTS221_temperatureSensor.calibration(), status_t::SUCCESS);
+	test = 0x0A;   // value for temperature
+	EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
+	ASSERT_EQ(HTS221_temperatureSensor.getTemperature(), test);
+
+	printf("Value of slope %f and Zero %f\n", HTS221_temperatureSensor.getSlope(), HTS221_temperatureSensor.getZero());
+	test = 0x0A;   // value for humidity
+	EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
+	ASSERT_EQ(HTS221_temperatureSensor.getHumidity(), test);
 }
 
-TEST_F(LKCoreI2CTest, getID)
-{
-	silenceUnexpectedCalls();
-	const int sizeValue	  = 1;
-	char value[sizeValue] = {'9'};
-	spy_temperatureSensor_setValue(value, sizeValue);
-	ASSERT_EQ(HTS221_temperatureSensor.getId(), value[0]);
-}
+// TEST_F(LKCoreI2CTest, getTemperature)
+// {
+// 	silenceUnexpectedCalls();
+// 	char test[1] = {0x0A};
+// 	EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(*test), Return(0)));
+// 	printf("Value of slope %f and Zero %f\n", HTS221_temperatureSensor.getSlope(), HTS221_temperatureSensor.getZero());
+// 	ASSERT_EQ(HTS221_temperatureSensor.getTemperature(), 1);
+// }
 
-TEST_F(LKCoreI2CTest, getRawTemperature)
+TEST_F(LKCoreI2CTest, getHumidity)
 {
 	silenceUnexpectedCalls();
-	const int sizeValue	  = 2;
-	char value[sizeValue] = {0x32, 0x00};	// 0x32 = 50
-	spy_temperatureSensor_setValue(value, sizeValue);
-	int16_t rawTemperatureValue = 50.0;
-	ASSERT_EQ(HTS221_temperatureSensor.getRawTemperature(), rawTemperatureValue);
-}
-
-TEST_F(LKCoreI2CTest, getRawHumidity)
-{
-	silenceUnexpectedCalls();
-	const int sizeValue	  = 2;
-	char value[sizeValue] = {0x32, 0x00};	// 0x32 = 50
-	spy_temperatureSensor_setValue(value, sizeValue);
-	int16_t rawHumidityValue = 50.0;
-	ASSERT_EQ(HTS221_temperatureSensor.getRawHumidity(), rawHumidityValue);
-}
-
-TEST_F(LKCoreI2CTest, setHeater)
-{
-	silenceUnexpectedCalls();
-	ASSERT_EQ(HTS221_temperatureSensor.setHeater(state::OFF), status_t::SUCCESS);
-	ASSERT_EQ(HTS221_temperatureSensor.setHeater(state::ON), status_t::SUCCESS);
-}
-
-TEST_F(LKCoreI2CTest, getHeater)
-{
-	silenceUnexpectedCalls();
-	const int sizeValue	  = 1;
-	char value[sizeValue] = {state::OFF};
-	spy_temperatureSensor_setValue(value, sizeValue);
-	ASSERT_EQ(HTS221_temperatureSensor.getHeater(), state::OFF);
-}
-TEST_F(LKCoreI2CTest, setIrq)
-{
-	silenceUnexpectedCalls();
-	ASSERT_EQ(HTS221_temperatureSensor.setIrq(state::ON), status_t::SUCCESS);
+	ASSERT_EQ(HTS221_temperatureSensor.getHumidity(), 0);
 }

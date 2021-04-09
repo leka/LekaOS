@@ -6,6 +6,15 @@
 
 using namespace leka;
 
+float LKCoreTemperatureSensor::getSlope()
+{
+	return _humiditySlope;
+}
+float LKCoreTemperatureSensor::getZero()
+{
+	return _humidity_y_intercept;
+}
+
 /**
  * @brief  Constructor
  */
@@ -87,6 +96,19 @@ status_t LKCoreTemperatureSensor::setBDU(uint8_t state)
 status_t LKCoreTemperatureSensor::setDataAquisitionRate(hts221_odr_t rate)
 {
 	if (auto ret = hts221_block_data_update_set(&_register_io_function, rate); ret != 0) {
+		return Status::ERROR;
+	}
+	return Status::SUCCESS;
+}
+
+/**
+ * @brief  Set heater state
+ *
+ * @retval         interface status (MANDATORY: Status::SUCCESS -> no Error)
+ */
+status_t LKCoreTemperatureSensor::setHeater(uint8_t state)
+{
+	if (auto ret = hts221_heater_set(&_register_io_function, state); ret != 0) {
 		return Status::ERROR;
 	}
 	return Status::SUCCESS;
@@ -176,81 +198,36 @@ status_t LKCoreTemperatureSensor::calibration()
 }
 
 /**
- * @brief  Return the id of the device
+ * @brief  get DegC temperature.[get]
  *
- * @retval        uint8_t
+ * @retval Float Value of temperature in degC
+ *
  */
-uint8_t LKCoreTemperatureSensor::getId()
+celsius_t LKCoreTemperatureSensor::getTemperature()
 {
-	uint8_t id = 0;
-	hts221_device_id_get(&_register_io_function, &id);
-	return id;
+	int16_t rawtemperatureValue;
+	float temperatureValue = -1;
+
+	hts221_temperature_raw_get(&_register_io_function, &rawtemperatureValue);
+	temperatureValue = rawtemperatureValue * _temperatureSlope + _temperature_y_intercept;
+	return temperatureValue;
 }
 
 /**
- * @brief  Return the raw value of temperature
+ * @brief  get humidity level in rH.[get]
  *
- * @retval         int16_t
- */
-int16_t LKCoreTemperatureSensor::getRawTemperature()
-{
-	int16_t rawTemperaturevalue = 0;
-	hts221_temperature_raw_get(&_register_io_function, &rawTemperaturevalue);
-	return rawTemperaturevalue;
-}
-
-/**
- * @brief  Return the raw value of humidity
+ * @retval Float value of humidity in rH
  *
- * @retval         int16_t
  */
-int16_t LKCoreTemperatureSensor::getRawHumidity()
+rH_t LKCoreTemperatureSensor::getHumidity()
 {
-	int16_t rawHumidityvalue = 0;
-	hts221_temperature_raw_get(&_register_io_function, &rawHumidityvalue);
-	return rawHumidityvalue;
-}
+	int16_t rawHumidityValue;
+	float humidityValue = -1;
 
-/**
- * @brief  Set the state of the heater, 1:ON, 0:OFF
- *
- * @retval         interface status (MANDATORY: Status::SUCCESS -> no Error)
- */
-status_t LKCoreTemperatureSensor::setHeater(uint8_t state)
-{
-	if (auto ret = hts221_heater_set(&_register_io_function, state); ret != 0) {
-		return Status::ERROR;
-	}
-	return Status::SUCCESS;
-}
+	hts221_humidity_raw_get(&_register_io_function, &rawHumidityValue);
+	humidityValue = rawHumidityValue * _humiditySlope + _humidity_y_intercept;
 
-/**
- * @brief  Get the state of the heater
- *
- * @retval         uint8_t
- */
-uint8_t LKCoreTemperatureSensor::getHeater()
-{
-	uint8_t heaterState = 0;
-	hts221_heater_get(&_register_io_function, &heaterState);
-	return heaterState;
-}
-
-/**
- * @brief  Set DRDY state, if 1: set a signal when data is available
- *
- * @retval         interface status (MANDATORY: Status::SUCCESS -> no Error)
- */
-status_t LKCoreTemperatureSensor::setIrq(uint8_t state)
-{
-	if (auto ret = hts221_pin_mode_set(&_register_io_function, HTS221_OPEN_DRAIN); ret != 0) {	 // Set the pin 3
-		return Status::ERROR;
-	}
-
-	if (auto ret = hts221_drdy_on_int_set(&_register_io_function, state); ret != 0) {	// DRDY Active when low
-		return Status::ERROR;
-	}
-	return Status::SUCCESS;
+	return humidityValue;
 }
 
 /**

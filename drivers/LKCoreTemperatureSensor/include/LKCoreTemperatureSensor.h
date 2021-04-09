@@ -8,6 +8,7 @@
 #include <array>
 
 #include "LKCoreI2C.h"
+#include "LKCoreTemperatureSensorBase.h"
 #include "hts221_reg.h"
 #include "status.h"
 
@@ -18,7 +19,7 @@ namespace state {
 	constexpr uint8_t OFF = 0;
 };	 // namespace state
 
-class LKCoreTemperatureSensor
+class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 {
   public:
 	explicit LKCoreTemperatureSensor(interface::LKCoreI2C &i2c);
@@ -26,14 +27,10 @@ class LKCoreTemperatureSensor
 
 	virtual status_t init();
 	virtual status_t calibration();
-	virtual uint8_t getId();
-	virtual int16_t getRawTemperature();
-	virtual int16_t getRawHumidity();
-
-	virtual status_t setHeater(uint8_t);
-	virtual uint8_t getHeater();
-
-	virtual status_t setIrq(uint8_t);
+	virtual celsius_t getTemperature();
+	virtual rH_t getHumidity();
+	float getSlope();
+	float getZero();
 
   private:
 	interface::LKCoreI2C &_i2c;
@@ -50,6 +47,7 @@ class LKCoreTemperatureSensor
 	status_t setPower(uint8_t);
 	status_t setBDU(uint8_t);
 	status_t setDataAquisitionRate(hts221_odr_t);
+	status_t setHeater(uint8_t);
 	status_t setAvgTemperature(hts221_avgt_t);
 	status_t setAvgHumidity(hts221_avgh_t);
 
