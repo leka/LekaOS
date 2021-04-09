@@ -188,6 +188,7 @@ status_t LKCoreTemperatureSensor::calibration()
 		return Status::ERROR;
 	}
 
+	printf("%f, %f, %f, %f \n", h0rH, h1rH, h1t0Out, h0t0Out);
 	_humiditySlope		  = (h1rH - h0rH) / (2.0 * (h1t0Out - h0t0Out));
 	_humidity_y_intercept = h0rH - _humiditySlope * h0t0Out;
 

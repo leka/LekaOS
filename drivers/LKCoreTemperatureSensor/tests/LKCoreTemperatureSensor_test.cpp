@@ -11,10 +11,12 @@
 
 using ::testing::_;
 using ::testing::AnyNumber;
+using ::testing::Args;
 using ::testing::DoAll;
 using ::testing::InSequence;
 using ::testing::Return;
 using ::testing::SetArgPointee;
+using ::testing::SetArrayArgument;
 
 using namespace leka;
 
@@ -71,14 +73,22 @@ TEST_F(LKCoreI2CTest, CalibrationAndGetTemperature)
 		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
 		test = 0x01;   // t1_Out
 		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
-		test = 0x00;   // h0rH
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
-		test = 0x04;   // h1rH
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
-		test = 0x00;   // h0t0Out
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
-		test = 0x01;   // h1t0Out
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
+		char h0rH[1] = {0x01};	 // h0rH
+		// EXPECT_CALL(i2cMock, read(_, _, _, _)).With(Args<1>(humidity)).Times(1);
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h0rH, h0rH + 1), Return(0)));
+		char h1rH[1] = {0x02};	 // h1rH
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1rH, h1rH + 1), Return(0)));
+		// EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(humidity[0]), Return(0)));
+		char h0t0[2];
+		h0t0[0] = 0x01;	  // h0t0
+		h0t0[1] = 0x00;	  // h0t0
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h0t0, h0t0 + 1), Return(0)));
+		// EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(humidity[0]), Return(0)));
+		char h1t0[2];
+		h1t0[0] = 0x06;	  // h1t0
+		h1t0[1] = 0x00;	  // h1t0
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1t0, h1t0 + 1), Return(0)));
+		// EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(humidity[0]), Return(0)));
 	}
 	ASSERT_EQ(HTS221_temperatureSensor.calibration(), status_t::SUCCESS);
 	test = 0x0A;   // value for temperature
