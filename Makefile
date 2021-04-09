@@ -27,10 +27,17 @@ CODE_ANALYSIS ?= OFF
 #
 
 PROJECT_BUILD_DIR       := $(ROOT_DIR)/_build
-CMAKE_CONFIG_DIR        := $(PROJECT_BUILD_DIR)/cmake_config
 TARGET_BUILD_DIR        := $(PROJECT_BUILD_DIR)/${TARGET_BOARD}
+CMAKE_CONFIG_DIR        := $(TARGET_BUILD_DIR)/cmake_config
 UNIT_TESTS_BUILD_DIR    := $(ROOT_DIR)/_build_unit_tests
 UNIT_TESTS_COVERAGE_DIR := $(UNIT_TESTS_BUILD_DIR)/_coverage
+
+#
+# MARK: - VSCode CMake Tools
+#
+
+CMAKE_TOOLS_BUILD_DIR := $(ROOT_DIR)/_build_cmake_tools
+CMAKE_TOOLS_CONFIG_DIR := $(CMAKE_TOOLS_BUILD_DIR)/cmake_config
 
 #
 # MARK: - Coverage exclusions
@@ -79,8 +86,12 @@ tests_functional:
 #
 
 config:
-	@$(MAKE) config_target
-	@$(MAKE) config_cmake
+	@$(MAKE) config_cmake_target
+	@$(MAKE) config_cmake_build
+
+config_tools:
+	@$(MAKE) config_tools_target
+	@$(MAKE) config_tools_build
 
 clean:
 	@$(MAKE) rm_build
@@ -90,15 +101,25 @@ clean_config:
 	@$(MAKE) rm_config
 	@$(MAKE) config
 
-config_target: mkdir_config
+config_cmake_target: mkdir_cmake_config
 	@echo ""
 	@echo "🏃 Running configuration script for target $(TARGET_BOARD) 📝"
-	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(PROJECT_BUILD_DIR)/cmake_config/$(TARGET_BOARD) -a $(ROOT_DIR)/mbed_app.json
+	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_CONFIG_DIR) -a $(ROOT_DIR)/mbed_app.json
 
-config_cmake: mkdir_build
+config_tools_target: mkdir_cmake_config
+	@echo ""
+	@echo "🏃 Running configuration script for VSCode CMake Tools 📝"
+	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_TOOLS_CONFIG_DIR) -a $(ROOT_DIR)/mbed_app.json
+
+config_cmake_build: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
-	@cmake -S . -B $(TARGET_BUILD_DIR) -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=$(CODE_ANALYSIS)
+	@cmake -S . -B $(TARGET_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=$(CODE_ANALYSIS)
+
+config_tools_build: mkdir_tools_config
+	@echo ""
+	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
+	@cmake -S . -B $(CMAKE_TOOLS_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_TOOLS_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=$(CODE_ANALYSIS)
 
 #
 # MARK: - Tests targets
@@ -226,11 +247,11 @@ mbed_symlink_files:
 # MARK: - Utils targets
 #
 
-mkdir_build:
-	@mkdir -p $(TARGET_BUILD_DIR)
+mkdir_cmake_config:
+	@mkdir -p $(CMAKE_CONFIG_DIR)
 
-mkdir_config:
-	@mkdir -p $(CMAKE_CONFIG_DIR)/$(TARGET_BOARD)
+mkdir_tools_config:
+	@mkdir -p $(CMAKE_CONFIG_DIR)
 
 mkdir_build_unit_tests:
 	@mkdir -p $(UNIT_TESTS_BUILD_DIR)
@@ -245,11 +266,12 @@ rm_build_all:
 	@echo ""
 	@echo "⚠️  Cleaning up all build directories 🧹"
 	rm -rf $(PROJECT_BUILD_DIR)
+	rm -rf $(CMAKE_TOOLS_BUILD_DIR)
 
 rm_config:
 	@echo ""
 	@echo "⚠️  Cleaning up $(TARGET_BOARD) cmake_config directory 🧹"
-	rm -rf $(CMAKE_CONFIG_DIR)/$(TARGET_BOARD)
+	rm -rf $(CMAKE_CONFIG_DIR)
 
 deep_clean:
 	@$(MAKE) rm_build_all
