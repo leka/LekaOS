@@ -15,29 +15,29 @@ void AnimationBouncingSquare::stop(void)
 	_coregraphics.clearScreen(CGColor::black);
 }
 
-bool AnimationBouncingSquare::squareIsOutOfBoundVertical() const
+bool AnimationBouncingSquare::squareWillBeOutOfBoundVertical() const
 {
-	bool is_top_out_of_bound	= _square.origin.y + _vertical_shift <= 0;
-	bool is_bottom_out_of_bound = _square.origin.y + _square.height + _vertical_shift > lcd::dimension.height - 1;
+	bool top_out_of_bound	 = _square.origin.y + _vertical_shift <= 0;
+	bool bottom_out_of_bound = _square.origin.y + _square.height + _vertical_shift > lcd::dimension.height - 1;
 
-	return (is_top_out_of_bound || is_bottom_out_of_bound);
+	return (top_out_of_bound || bottom_out_of_bound);
 }
 
-bool AnimationBouncingSquare::squareIsOutOfBoundHorizontal() const
+bool AnimationBouncingSquare::squareWillBeOutOfBoundHorizontal() const
 {
-	bool is_left_out_of_bound  = _square.origin.x + _horizontal_shift <= 0;
-	bool is_right_out_of_bound = _square.origin.x + _square.width + _horizontal_shift > lcd::dimension.width - 1;
+	bool left_out_of_bound	= _square.origin.x + _horizontal_shift <= 0;
+	bool right_out_of_bound = _square.origin.x + _square.width + _horizontal_shift > lcd::dimension.width - 1;
 
-	return (is_left_out_of_bound || is_right_out_of_bound);
+	return (left_out_of_bound || right_out_of_bound);
 }
 
 void AnimationBouncingSquare::updateDirection()
 {
-	if (squareIsOutOfBoundHorizontal()) {
+	if (squareWillBeOutOfBoundHorizontal()) {
 		_horizontal_shift = -_horizontal_shift;
 	}
 
-	if (squareIsOutOfBoundVertical()) {
+	if (squareWillBeOutOfBoundVertical()) {
 		_vertical_shift = -_vertical_shift;
 	}
 }

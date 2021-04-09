@@ -21,8 +21,8 @@ class AnimationBouncingSquare : public interface::CGAnimation
 	void run(void) final;
 	void stop(void) final;
 
-	bool squareIsOutOfBoundVertical() const;
-	bool squareIsOutOfBoundHorizontal() const;
+	bool squareWillBeOutOfBoundVertical() const;
+	bool squareWillBeOutOfBoundHorizontal() const;
 	void updateDirection();
 	void updatePosition();
 	void updateColor();
