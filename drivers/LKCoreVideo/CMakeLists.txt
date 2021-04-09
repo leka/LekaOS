@@ -15,6 +15,8 @@ target_include_directories(LKCoreVideo
 target_sources(LKCoreVideo
   PRIVATE
 	source/AnimationBouncingSquare.cpp
+	source/UnrealRainbow.cpp
+
 	source/LKCoreAnimation.cpp
 	source/LKCoreDMA2D.cpp
 	source/LKCoreFont.cpp

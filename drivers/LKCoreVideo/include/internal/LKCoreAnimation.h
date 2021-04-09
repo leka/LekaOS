@@ -28,7 +28,6 @@ class LKCoreAnimation
 	void stop(void) const;
 
   private:
-	void runSlowRainbow(void);
 	void runFallingSnowflakes(void);
 	void runSparkleStars(void);
 
