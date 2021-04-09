@@ -15,6 +15,7 @@ target_include_directories(LKCoreVideo
 target_sources(LKCoreVideo
   PRIVATE
 	source/AnimationBouncingSquare.cpp
+	source/SparkleStars.cpp
 	source/UnrealRainbow.cpp
 
 	source/LKCoreAnimation.cpp

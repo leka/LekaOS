@@ -22,6 +22,7 @@
 #include "LKCoreSTM32Hal.h"
 #include "LKCoreVideo.h"
 #include "SDBlockDevice.h"
+#include "SparkleStars.h"
 #include "UnrealRainbow.h"
 
 using namespace leka;
@@ -50,6 +51,7 @@ Thread animation_thread;
 EventQueue animation_event_queue;
 animation::BouncingSquare animation_bouncing_square(coregraphics);
 animation::UnrealRainbow animation_slow_rainbow(coregraphics);
+animation::SparkleStars animation_sparkle_stars(coregraphics);
 LKAnimationKit animationkit(animation_thread, animation_event_queue, animation_bouncing_square);
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
@@ -82,6 +84,13 @@ int main(void)
 
 		animationkit.setRefreshRate(25ms);
 		animationkit.start(animation_slow_rainbow);
+		rtos::ThisThread::sleep_for(5s);
+
+		animationkit.stop();
+		rtos::ThisThread::sleep_for(1s);
+
+		animationkit.setRefreshRate(100ms);
+		animationkit.start(animation_sparkle_stars);
 		rtos::ThisThread::sleep_for(5s);
 
 		animationkit.stop();
