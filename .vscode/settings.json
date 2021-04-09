@@ -23,5 +23,6 @@
 			"style": "one"
 		},
 		"MD033": false
-	}
+	},
+	"editor.formatOnSave": true
 }
