@@ -34,26 +34,18 @@ class LKCoreI2CTest : public ::testing::Test
 	};
 };
 
-TEST_F(LKCoreI2CTest, initializationSequence)
-{
-	{
-		InSequence seq;
-		EXPECT_CALL(i2cMock, write).Times(12);
-	}
-	// silenceUnexpectedCalls();
-	HTS221_temperatureSensor.init();
-}
-
 TEST_F(LKCoreI2CTest, initialization)
 {
 	silenceUnexpectedCalls();
 	ASSERT_NE(&HTS221_temperatureSensor, nullptr);
 }
 
-TEST_F(LKCoreI2CTest, HTS221Init)
+TEST_F(LKCoreI2CTest, initializationCountOfReadWrite)
 {
-	silenceUnexpectedCalls();
-	ASSERT_EQ(HTS221_temperatureSensor.init(), status_t::SUCCESS);
+	EXPECT_CALL(i2cMock, write).Times(12);
+	EXPECT_CALL(i2cMock, read).Times(6);
+
+	HTS221_temperatureSensor.init();
 }
 
 TEST_F(LKCoreI2CTest, Calibration)
