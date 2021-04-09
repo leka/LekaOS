@@ -17,7 +17,6 @@ class LKCoreLTDC : public LKCoreLTDCBase
 	LKCoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi);
 
 	void initialize(void) final;
-	void configureLayer(void) final;
 
 	LTDC_HandleTypeDef getHandle(void) const;
 	LTDC_LayerCfgTypeDef getLayerConfig(void) const;

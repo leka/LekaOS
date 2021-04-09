@@ -14,7 +14,6 @@ class LKCoreLTDCMock : public LKCoreLTDCBase
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));
-	MOCK_METHOD(void, configureLayer, (), (override));
 };
 
 }	// namespace leka

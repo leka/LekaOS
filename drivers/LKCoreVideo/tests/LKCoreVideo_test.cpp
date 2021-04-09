@@ -92,7 +92,6 @@ TEST_F(LKCoreVideoTest, initialization)
 		EXPECT_CALL(halmock, HAL_NVIC_EnableIRQ(DSI_IRQn)).Times(1);
 		EXPECT_CALL(dsimock, initialize).Times(1);
 		EXPECT_CALL(ltdcmock, initialize).Times(1);
-		EXPECT_CALL(ltdcmock, configureLayer).Times(1);
 		EXPECT_CALL(dsimock, start).Times(1);
 		EXPECT_CALL(sdrammock, initialize).Times(1);
 		EXPECT_CALL(lcdmock, initialize).Times(1);

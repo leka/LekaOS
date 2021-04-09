@@ -103,12 +103,15 @@ TEST_F(LKCoreLTDCTest, setupLayerConfig)
 
 TEST_F(LKCoreLTDCTest, initializationSequence)
 {
+	uint8_t default_layer_id = 1;	// Foreground
+
 	{
 		InSequence seq;
 		EXPECT_CALL(halmock, HAL_RCCEx_PeriphCLKConfig).Times(1);
 		EXPECT_CALL(dsimock, getConfig).Times(1);
 		EXPECT_CALL(halmock, HAL_LTDC_StructInitFromVideoConfig).Times(1);
 		EXPECT_CALL(halmock, HAL_LTDC_Init).Times(1);
+		EXPECT_CALL(halmock, HAL_LTDC_ConfigLayer(_, _, default_layer_id)).Times(1);
 	}
 
 	coreltdc.initialize();
@@ -143,13 +146,4 @@ TEST_F(LKCoreLTDCTest, initializationRCCPeriphClock)
 	EXPECT_CALL(halmock, HAL_RCCEx_PeriphCLKConfig(WithStructEqualTo(expected))).Times(1);
 
 	coreltdc.initialize();
-}
-
-TEST_F(LKCoreLTDCTest, configureLayer)
-{
-	uint8_t default_layer_id = 1;	// Foreground
-
-	EXPECT_CALL(halmock, HAL_LTDC_ConfigLayer(_, _, default_layer_id)).Times(1);
-
-	coreltdc.configureLayer();
 }

@@ -66,6 +66,11 @@ void LKCoreLTDC::initialize()
 	// This part **must not** be moved to the constructor as LCD
 	// initialization must be performed in a very specific order
 	_hal.HAL_LTDC_Init(&_hltdc);
+
+	// Initialize LTDC layer
+	// This part **must not** be moved to the constructor as LCD
+	// initialization must be performed in a very specific order
+	_hal.HAL_LTDC_ConfigLayer(&_hltdc, &_layerConfig, 1);
 }
 
 void LKCoreLTDC::configurePeriphClock()
@@ -85,14 +90,6 @@ void LKCoreLTDC::configurePeriphClock()
 	PeriphClkInitStruct.PLLSAIDivR	   = RCC_PLLSAIDIVR_2;
 
 	_hal.HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
-}
-
-void LKCoreLTDC::configureLayer()	// TODO: move to initialize()
-{
-	// Initialize LTDC layer
-	// This part **must not** be moved to the constructor as LCD
-	// initialization must be performed in a very specific order
-	_hal.HAL_LTDC_ConfigLayer(&_hltdc, &_layerConfig, 1);
 }
 
 LTDC_HandleTypeDef LKCoreLTDC::getHandle() const

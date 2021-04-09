@@ -10,10 +10,8 @@ namespace leka {
 class LKCoreLTDCBase
 {
   public:
-	virtual ~LKCoreLTDCBase() = default;
-
-	virtual void initialize(void)	  = 0;
-	virtual void configureLayer(void) = 0;
+	virtual ~LKCoreLTDCBase()	  = default;
+	virtual void initialize(void) = 0;
 };
 
 }	// namespace leka
