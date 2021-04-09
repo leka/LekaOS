@@ -25,54 +25,38 @@
 
 using namespace leka;
 
+HelloWorld hello;
+
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 LKCoreFatFs corefatfs;
 
+LKCoreLL corell;
+CGPixel pixel(corell);
 LKCoreSTM32Hal hal;
+LKCoreSDRAM coresdram(hal);
 LKCoreDMA2D coredma2d(hal);
-// LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
+LKCoreDSI coredsi(hal);
+LKCoreLTDC coreltdc(hal, coredsi);
+LKCoreGraphics coregraphics(coredma2d);
+LKCoreFont corefont(pixel);
+LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
+LKCoreLCD corelcd(coreotm);
+LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
+LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
+
+Thread animation_thread;
+EventQueue animation_event_queue;
+AnimationBouncingSquare animation_bouncing_square(coregraphics);
+LKAnimationKit animationkit(animation_thread, animation_event_queue, animation_bouncing_square);
+
+static BufferedSerial serial(USBTX, USBRX, 9600);
+
+constexpr uint8_t buff_size = 128;
+char buff[buff_size] {};
 
 int main(void)
 {
-	printf("New run\n");
-
-	HelloWorld hello;
-
-	// SD
-	printf("HardFault, Mode: Handler, Priv : Privileged, Stack: MSP\n");
-	sd_blockdevice.init();
-	sd_blockdevice.frequency(25'000'000);
-
-	fatfs.mount(&sd_blockdevice);
-
-	LKCoreLL corell;
-	CGPixel pixel(corell);
-	// HAL
-	LKCoreSDRAM coresdram(hal);
-	// DMA2D
-	LKCoreDSI coredsi(hal);
-	LKCoreLTDC coreltdc(hal, coredsi);
-	LKCoreGraphics coregraphics(coredma2d);
-	LKCoreFont corefont(pixel);
-	LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
-	LKCoreLCD corelcd(coreotm);
-	LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);	  // JPEG
-	LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
-
-	printf("HardFault, Mode: Thread, Priv : Privileged, Stack: PSP\n");
-	Thread animation_thread;
-	EventQueue animation_event_queue;
-	AnimationBouncingSquare animation_bouncing_square(coregraphics);
-	LKAnimationKit animationkit(animation_thread, animation_event_queue, animation_bouncing_square);
-
-	static BufferedSerial serial(USBTX, USBRX, 9600);
-
-	constexpr uint8_t buff_size = 128;
-	char buff[buff_size] {};
-
-	///
-
 	auto start = Kernel::Clock::now();
 
 	rtos::ThisThread::sleep_for(2s);
