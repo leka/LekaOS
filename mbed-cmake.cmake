@@ -17,7 +17,8 @@ message(STATUS "mbed-cmake version ${MBED_CMAKE_VERSION}, running on CMake ${CMA
 
 set(MBED_CMAKE_ROOT_DIR ${ROOT_DIR}/cmake)
 set(MBED_CMAKE_SCRIPTS_DIR ${MBED_CMAKE_ROOT_DIR}/scripts)
-set(MBED_CMAKE_CONFIG_DIR ${ROOT_DIR}/_build/cmake_config/${TARGET_BOARD})
+
+set(MBED_CMAKE_CONFIG_DIR ${CMAKE_CONFIG_DIR})
 
 list(APPEND CMAKE_MODULE_PATH ${MBED_CMAKE_ROOT_DIR})
 list(APPEND CMAKE_MODULE_PATH ${MBED_CMAKE_ROOT_DIR}/utils)
@@ -58,7 +59,7 @@ if(NOT DEFINED MBED_CMAKE_CONFIG_HEADERS_PATH)
 endif()
 
 if(NOT EXISTS ${MBED_CMAKE_GENERATED_CONFIG_PATH}/cmake/MbedOSConfig.cmake)
-	message(FATAL_ERROR "Mbed config files and headers do not exist!  You need to run mbed-cmake/configure_for_target.py from the top source dir!")
+	message(FATAL_ERROR "Mbed config files and headers do not exist! You need to run mbed-cmake/configure_for_target.py from the top source dir!")
 endif()
 
 # unit test config
