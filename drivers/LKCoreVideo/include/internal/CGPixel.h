@@ -24,7 +24,7 @@ struct CGPixel {
 	Point coordinates {0, 0};
 	LKCoreLL &corell;
 
-	void draw(Color color)
+	void draw(CGColor color)
 	{
 		uintptr_t destination_address =
 			lcd::frame_buffer_address + (4 * (coordinates.y * lcd::dimension.width + coordinates.x));

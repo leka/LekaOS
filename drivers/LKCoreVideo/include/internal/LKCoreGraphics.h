@@ -18,9 +18,9 @@ class LKCoreGraphics : public LKCoreGraphicsBase
   public:
 	explicit LKCoreGraphics(LKCoreDMA2DBase &dma2d);
 
-	void clearScreen(Color color = CGColor::white) final;
+	void clearScreen(CGColor color = CGColor::white) final;
 
-	void drawRectangle(FilledRectangle rectangle, Color color) final;
+	void drawRectangle(FilledRectangle rectangle, CGColor color) final;
 
   private:
 	LKCoreDMA2DBase &_dma2d;

@@ -22,10 +22,10 @@ class LKCoreFontBase
 
 	virtual ~LKCoreFontBase() = default;
 
-	virtual void drawChar(Character character, Color foreground = CGColor::black,
-						  Color background = CGColor::white) = 0;
-	virtual void display(const char *text, uint32_t size, uint32_t starting_line, Color foreground = CGColor::black,
-						 Color background = CGColor::white)	 = 0;
+	virtual void drawChar(Character character, CGColor foreground = CGColor::black,
+						  CGColor background = CGColor::white) = 0;
+	virtual void display(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
+						 CGColor background = CGColor::white)  = 0;
 
 	virtual const uint8_t *fontGetFirstPixelAddress(char character)		= 0;
 	virtual uint32_t fontGetPixelBytes(const uint8_t *line_address)		= 0;

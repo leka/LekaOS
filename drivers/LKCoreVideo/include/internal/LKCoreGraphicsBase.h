@@ -21,9 +21,9 @@ class LKCoreGraphicsBase
 
 	virtual ~LKCoreGraphicsBase() = default;
 
-	virtual void clearScreen(Color color = CGColor::white) = 0;
+	virtual void clearScreen(CGColor color = CGColor::white) = 0;
 
-	virtual void drawRectangle(FilledRectangle rectangle, Color color) = 0;
+	virtual void drawRectangle(FilledRectangle rectangle, CGColor color) = 0;
 };
 
 }	// namespace leka

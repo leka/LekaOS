@@ -8,7 +8,7 @@ namespace leka {
 
 LKCoreGraphics::LKCoreGraphics(LKCoreDMA2DBase &dma2d) : _dma2d(dma2d) {}
 
-void LKCoreGraphics::clearScreen(Color color)
+void LKCoreGraphics::clearScreen(CGColor color)
 {
 	FilledRectangle rect;
 	rect.width	= lcd::dimension.width;
@@ -17,7 +17,7 @@ void LKCoreGraphics::clearScreen(Color color)
 	drawRectangle(rect, color);
 }
 
-void LKCoreGraphics::drawRectangle(FilledRectangle rectangle, Color color)
+void LKCoreGraphics::drawRectangle(FilledRectangle rectangle, CGColor color)
 {
 	uintptr_t destination_address =
 		lcd::frame_buffer_address + 4 * (lcd::dimension.width * rectangle.origin.y + rectangle.origin.x);

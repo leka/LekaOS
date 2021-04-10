@@ -88,12 +88,12 @@ void LKCoreVideo::setBrightness(float value)
 	_corelcd.setBrightness(value);
 }
 
-void LKCoreVideo::clearScreen(Color color)
+void LKCoreVideo::clearScreen(CGColor color)
 {
 	_coregraphics.clearScreen(color);
 }
 
-void LKCoreVideo::displayRectangle(LKCoreGraphicsBase::FilledRectangle rectangle, Color color)
+void LKCoreVideo::displayRectangle(LKCoreGraphicsBase::FilledRectangle rectangle, CGColor color)
 {
 	_coregraphics.drawRectangle(rectangle, color);
 }
@@ -103,8 +103,8 @@ void LKCoreVideo::displayImage(FIL *file)
 	_corejpeg.displayImage(file);
 }
 
-void LKCoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, Color foreground,
-							  Color background)
+void LKCoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,
+							  CGColor background)
 {
 	_corefont.display(text, size, starting_line, foreground, background);
 }

@@ -102,11 +102,11 @@ int main(void)
 	rtos::ThisThread::sleep_for(1s);
 
 	uint32_t size = 0;
-	Color foreground;
-	Color background = CGColor::white;
+	CGColor foreground;
+	CGColor background = CGColor::white;
 	for (int i = 1; i <= 20; i++) {
 		size	   = sprintf(buff, "Line #%d", i);
-		foreground = (i % 2 == 0) ? CGColor::black : CGColor::red;
+		foreground = (i % 2 == 0) ? CGColor::black : CGColor::pure_red;
 		corevideo.displayText(buff, size, i, foreground, background);
 	}
 	rtos::ThisThread::sleep_for(5s);

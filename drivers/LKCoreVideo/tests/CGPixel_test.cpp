@@ -15,7 +15,7 @@ TEST(CGPixelTest, draw)
 	CGPixel pixel(llmock);
 	pixel.coordinates.x = 42;
 	pixel.coordinates.y = 99;
-	Color color			= CGColor::magenta;
+	CGColor color		= CGColor::magenta;
 
 	uintptr_t expected_address =
 		lcd::frame_buffer_address + (4 * (pixel.coordinates.y * lcd::dimension.width + pixel.coordinates.x));

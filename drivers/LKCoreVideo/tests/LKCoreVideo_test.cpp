@@ -135,7 +135,7 @@ TEST_F(LKCoreVideoTest, clearScreen)
 
 TEST_F(LKCoreVideoTest, clearScreenWithColor)
 {
-	Color clear_color {0x2A, 0x2B, 0x2C};
+	CGColor clear_color {0x2A, 0x2B, 0x2C};
 
 	EXPECT_CALL(graphicsmock, clearScreen(compareColor(clear_color))).Times(1);
 
@@ -150,7 +150,7 @@ TEST_F(LKCoreVideoTest, drawRectangle)
 	rectangle.width	   = 11;
 	rectangle.height   = 33;
 
-	Color rectangle_color;
+	CGColor rectangle_color;
 
 	EXPECT_CALL(graphicsmock, drawRectangle(compareFilledRectangle(rectangle), _)).Times(1);
 
@@ -160,7 +160,7 @@ TEST_F(LKCoreVideoTest, drawRectangle)
 TEST_F(LKCoreVideoTest, drawRectangleWithColor)
 {
 	LKCoreGraphicsBase::FilledRectangle rectangle;
-	Color rectangle_color {0x2A, 0x2B, 0x2C};
+	CGColor rectangle_color {0x2A, 0x2B, 0x2C};
 
 	EXPECT_CALL(graphicsmock, drawRectangle(_, compareColor(rectangle_color))).Times(1);
 
@@ -196,8 +196,8 @@ TEST_F(LKCoreVideoTest, displayTextWithColor)
 
 	auto starting_line = 1;
 
-	Color foreground_color;
-	Color background_color;
+	CGColor foreground_color;
+	CGColor background_color;
 
 	EXPECT_CALL(fontmock, display(_, _, _, compareColor(foreground_color), compareColor(background_color))).Times(1);
 
