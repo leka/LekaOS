@@ -7,6 +7,7 @@ add_mbed_executable(certs_emc_ble_bt_lcd_led_motors)
 target_include_directories(certs_emc_ble_bt_lcd_led_motors
 	PRIVATE
 		.
+		../../include
 )
 
 target_sources(certs_emc_ble_bt_lcd_led_motors

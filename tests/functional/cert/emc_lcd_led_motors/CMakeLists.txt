@@ -5,18 +5,20 @@
 add_mbed_executable(certs_emc_lcd_led_motors)
 
 target_include_directories(certs_emc_lcd_led_motors
-  PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+	PRIVATE
+		.
+		../../include
 )
 
 target_sources(certs_emc_lcd_led_motors
-  PRIVATE
-    main.cpp
+	PRIVATE
+		main.cpp
 )
 
-target_link_libraries(certs_emc_lcd_led_motors LKCoreMotor)
-target_link_libraries(certs_emc_lcd_led_motors driver_FastLED)
-
-target_link_libraries(certs_emc_lcd_led_motors lib_LekaScreen)
+target_link_libraries(certs_emc_lcd_led_motors
+	LKCoreMotor
+	driver_FastLED
+	lib_LekaScreen
+)
 
 target_link_custom_leka_targets(certs_emc_lcd_led_motors)

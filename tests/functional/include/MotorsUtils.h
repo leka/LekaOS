@@ -7,21 +7,20 @@
 
 #include "LKCoreMotor.h"
 
-using namespace leka;
-
-LKCoreMotor motor_right(MOTOR_RIGHT_DIRECTION_1, MOTOR_RIGHT_DIRECTION_2, MOTOR_RIGHT_PWM);
-LKCoreMotor motor_left(MOTOR_LEFT_DIRECTION_1, MOTOR_LEFT_DIRECTION_2, MOTOR_LEFT_PWM);
+leka::LKCoreMotor motor_right(PinName::MOTOR_RIGHT_DIRECTION_1, PinName::MOTOR_RIGHT_DIRECTION_2,
+							  PinName::MOTOR_RIGHT_PWM);
+leka::LKCoreMotor motor_left(PinName::MOTOR_LEFT_DIRECTION_1, PinName::MOTOR_LEFT_DIRECTION_2, PinName::MOTOR_LEFT_PWM);
 
 void spinLeft()
 {
-	motor_right.spin(Rotation::clockwise, 0.5f);
-	motor_left.spin(Rotation::clockwise, 0.5f);
+	motor_right.spin(leka::Rotation::clockwise, 0.5f);
+	motor_left.spin(leka::Rotation::clockwise, 0.5f);
 }
 
 void spinRight()
 {
-	motor_right.spin(Rotation::counterClockwise, 0.5f);
-	motor_left.spin(Rotation::counterClockwise, 0.5f);
+	motor_right.spin(leka::Rotation::counterClockwise, 0.5f);
+	motor_left.spin(leka::Rotation::counterClockwise, 0.5f);
 }
 
 void stop()
