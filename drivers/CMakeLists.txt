@@ -18,4 +18,3 @@ add_subdirectory(${DRIVERS_DIR}/LKCoreLightSensor)
 # Actuators drivers
 add_subdirectory(${DRIVERS_DIR}/LKCoreMotor)
 add_subdirectory(${DRIVERS_DIR}/FastLED)
-add_subdirectory(${DRIVERS_DIR}/Motor)
