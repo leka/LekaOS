@@ -5,40 +5,43 @@
 #ifndef _LEKA_OS_SPIKE_MOTORS_UTILS_H_
 #define _LEKA_OS_SPIKE_MOTORS_UTILS_H_
 
+#include <tuple>
+
 #include "LKCoreMotor.h"
 
-leka::LKCoreMotor motor_right(PinName::MOTOR_RIGHT_DIRECTION_1, PinName::MOTOR_RIGHT_DIRECTION_2,
-							  PinName::MOTOR_RIGHT_PWM);
-leka::LKCoreMotor motor_left(PinName::MOTOR_LEFT_DIRECTION_1, PinName::MOTOR_LEFT_DIRECTION_2, PinName::MOTOR_LEFT_PWM);
+struct Motors {
+	leka::LKCoreMotor &left;
+	leka::LKCoreMotor &right;
+};
 
-void spinLeft()
+void spinLeft(Motors &motors)
 {
-	motor_right.spin(leka::Rotation::clockwise, 0.5f);
-	motor_left.spin(leka::Rotation::clockwise, 0.5f);
+	motors.left.spin(leka::Rotation::clockwise, 0.5f);
+	motors.right.spin(leka::Rotation::clockwise, 0.5f);
 }
 
-void spinRight()
+void spinRight(Motors &motors)
 {
-	motor_right.spin(leka::Rotation::counterClockwise, 0.5f);
-	motor_left.spin(leka::Rotation::counterClockwise, 0.5f);
+	motors.left.spin(leka::Rotation::counterClockwise, 0.5f);
+	motors.right.spin(leka::Rotation::counterClockwise, 0.5f);
 }
 
-void stop()
+void stop(Motors &motors)
 {
-	motor_right.stop();
-	motor_left.stop();
+	motors.left.stop();
+	motors.right.stop();
 }
 
-void motor_thread()
+void motor_thread(Motors *motors)
 {
 	while (true) {
-		spinLeft();
+		spinLeft(*motors);
 		rtos::ThisThread::sleep_for(5s);
 
-		spinRight();
+		spinRight(*motors);
 		rtos::ThisThread::sleep_for(5s);
 
-		stop();
+		stop(*motors);
 		rtos::ThisThread::sleep_for(5s);
 	}
 }

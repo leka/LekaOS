@@ -101,7 +101,14 @@ int main(void)
 #endif
 
 #if USE_MOTORS
-	thread_motors.start(motor_thread);
+	leka::LKCoreMotor motor_right(PinName::MOTOR_RIGHT_DIRECTION_1, PinName::MOTOR_RIGHT_DIRECTION_2,
+								  PinName::MOTOR_RIGHT_PWM);
+	leka::LKCoreMotor motor_left(PinName::MOTOR_LEFT_DIRECTION_1, PinName::MOTOR_LEFT_DIRECTION_2,
+								 PinName::MOTOR_LEFT_PWM);
+
+	Motors motors {.left = motor_left, .right = motor_right};
+
+	thread_motors.start(callback(motor_thread, &motors));
 #endif
 
 #if USE_SCREEN
