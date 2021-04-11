@@ -6,6 +6,7 @@
 
 #include "AnimationBouncingSquare.h"
 #include "FATFileSystem.h"
+#include "FallingSnow.h"
 #include "HelloWorld.h"
 #include "LKAnimationKit.h"
 #include "LKCoreDMA2D.h"
@@ -52,6 +53,7 @@ EventQueue animation_event_queue;
 animation::BouncingSquare animation_bouncing_square(coregraphics);
 animation::UnrealRainbow animation_slow_rainbow(coregraphics);
 animation::SparkleStars animation_sparkle_stars(coregraphics);
+animation::FallingSnow animation_falling_snow(coregraphics);
 LKAnimationKit animationkit(animation_thread, animation_event_queue, animation_bouncing_square);
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
@@ -91,6 +93,13 @@ int main(void)
 
 		animationkit.setRefreshRate(100ms);
 		animationkit.start(animation_sparkle_stars);
+		rtos::ThisThread::sleep_for(5s);
+
+		animationkit.stop();
+		rtos::ThisThread::sleep_for(1s);
+
+		animationkit.setRefreshRate(60ms);
+		animationkit.start(animation_falling_snow);
 		rtos::ThisThread::sleep_for(5s);
 
 		animationkit.stop();
