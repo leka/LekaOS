@@ -19,7 +19,6 @@ target_sources(LKCoreVideo
 	source/SparkleStars.cpp
 	source/UnrealRainbow.cpp
 
-	source/LKCoreAnimation.cpp
 	source/LKCoreDMA2D.cpp
 	source/LKCoreFont.cpp
 	source/LKCoreGraphics.cpp
