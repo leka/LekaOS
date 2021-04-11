@@ -38,6 +38,7 @@ void LKCoreAnimation::run(SelectedAnimation selected_animation)
 		case bouncing_square:
 			break;
 		case slow_rainbow:
+			runSlowRainbow();
 			break;
 		case falling_snowflakes:
 			runFallingSnowflakes();
@@ -51,6 +52,53 @@ void LKCoreAnimation::run(SelectedAnimation selected_animation)
 }
 
 void LKCoreAnimation::stop(void) const {}
+
+__attribute__((noreturn)) void LKCoreAnimation::runSlowRainbow()
+{
+	Color clear_color = {0x00, 0x00, 0x00};
+
+	_coregraphics.clearScreen(CGColor::black);
+	rtos::ThisThread::sleep_for(500ms);
+
+	while (true) {
+		// Update color
+		if (clear_color.red == 0x00 && clear_color.green == 0xFF) {
+			if (++clear_color.blue == 0xFF) {
+				clear_color.green--;
+			}
+		} else if (clear_color.red == 0xFF && clear_color.green == 0x00) {
+			if (--clear_color.blue == 0x00) {
+				clear_color.green++;
+			}
+		} else if (clear_color.red == 0x00 && clear_color.blue == 0xFF) {
+			if (--clear_color.green == 0x00) {
+				clear_color.red++;
+			}
+		} else if (clear_color.red == 0xFF && clear_color.blue == 0x00) {
+			if (++clear_color.green == 0xFF) {
+				clear_color.red--;
+			}
+		} else if (clear_color.green == 0x00 && clear_color.blue == 0xFF) {
+			if (++clear_color.red == 0xFF) {
+				clear_color.blue--;
+			}
+		} else if (clear_color.green == 0xFF && clear_color.blue == 0x00) {
+			if (--clear_color.red == 0x00) {
+				clear_color.blue++;
+			}
+		} else {
+			// Get to initial condition
+			clear_color.red++;
+			clear_color.blue = 0x01;
+		}
+
+		// Apply color
+		_coregraphics.clearScreen(clear_color);
+
+		// Take a break
+		rtos::ThisThread::sleep_for(25ms);
+	}
+}
 
 __attribute__((noreturn)) void LKCoreAnimation::runFallingSnowflakes()
 {
