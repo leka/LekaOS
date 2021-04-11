@@ -8,24 +8,6 @@ exclude_patterns:
   - "tools/run-clang-format.py"
   - "cmake/scripts/configure_cmake_for_target.py"
 
-prepare:
-  fetch:
-    - "https://gist.githubusercontent.com/ladislas/705c060b5fa6bf84eda2e172c1db2aec/raw/compile_commands.json"
-
 plugins:
   markdownlint:
     enabled: true
-
-  cppcheck:
-    enabled: true
-    config:
-      check: all
-      project: compile_commands.json
-      language: c++
-      stds:
-        - c++14
-      platform: unix32
-      max_configs: 42
-      inconclusive: true
-      suppressions-list: .cppcheck_suppressions
-      inline-suppr: true
