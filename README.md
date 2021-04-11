@@ -14,7 +14,6 @@ Welcome to LekaOS!
 !["Leka Alpha Picture"](./docs/assets/leka-alpha.jpeg)
 
 ## Setup & Installation
-
 Follow the guide:
 
 > [INSTALL.md](./docs/INSTALL.md)
@@ -33,3 +32,5 @@ Follow the guide:
 Copyright (c) APF France handicap. All rights reserved.
 
 Licensed under the [Apache-2.0](./LICENSE) license.
+
+https://leka.io
