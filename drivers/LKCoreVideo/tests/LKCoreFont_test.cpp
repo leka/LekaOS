@@ -144,9 +144,9 @@ TEST_F(LKCoreFontTest, drawCharacterWithColor)
 	// ENHANCEMENT: Set pixels_lit by checking number of bit set.
 
 	LKCoreFont::Character character;
-	character.ascii		   = '.';
-	Color foreground_color = CGColor::red;
-	Color background_color = CGColor::black;
+	character.ascii			 = '.';
+	CGColor foreground_color = CGColor::pure_red;
+	CGColor background_color = CGColor::black;
 
 	auto pixels_per_char = graphics::font_pixel_width * graphics::font_pixel_height;   // 17 * 24 = 408
 	auto pixels_lit		 = 12;	 // Corrolated with LKFontTable for the tested character
@@ -165,8 +165,8 @@ TEST_F(LKCoreFontTest, displayNormalSentence)
 
 	auto starting_line = 1;
 
-	Color foreground_color = CGColor::black;
-	Color background_color = CGColor::white;
+	CGColor foreground_color = CGColor::black;
+	CGColor background_color = CGColor::white;
 
 	auto pixels_per_char	 = graphics::font_pixel_width * graphics::font_pixel_height;   // 17 * 24 = 408
 	auto expected_pixel_draw = text_length * pixels_per_char;

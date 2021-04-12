@@ -30,7 +30,7 @@ bool LKCoreFont::fontPixelIsOn(uint32_t byte_of_line, uint8_t pixel_id)
 	return byte_of_line & pixel_id_mask;   // Return true if different of 0x00
 }
 
-void LKCoreFont::drawChar(Character character, Color foreground, Color background)
+void LKCoreFont::drawChar(Character character, CGColor foreground, CGColor background)
 {
 	_pixel_to_draw.coordinates.x = character.origin.x;
 	_pixel_to_draw.coordinates.y = character.origin.y;
@@ -53,7 +53,8 @@ void LKCoreFont::drawChar(Character character, Color foreground, Color backgroun
 	}
 }
 
-void LKCoreFont::display(const char *text, uint32_t size, uint32_t starting_line, Color foreground, Color background)
+void LKCoreFont::display(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,
+						 CGColor background)
 {
 	if (starting_line < 1 || starting_line > 20) {
 		return;

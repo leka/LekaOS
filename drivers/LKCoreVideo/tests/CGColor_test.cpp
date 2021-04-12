@@ -10,7 +10,7 @@ using namespace leka;
 
 TEST(CGColorTest, getARGBFromAnyColor)
 {
-	Color color;
+	CGColor color;
 	color.alpha = 0x2A;
 	color.red	= 0x2B;
 	color.green = 0x2C;
@@ -21,7 +21,7 @@ TEST(CGColorTest, getARGBFromAnyColor)
 
 TEST(CGColorTest, getARGBRegisteredColor)
 {
-	Color magenta = CGColor::magenta;
+	CGColor magenta = CGColor::magenta;
 
 	auto expected_value = magenta.alpha << 24 | magenta.red << 16 | magenta.green << 8 | magenta.blue;
 

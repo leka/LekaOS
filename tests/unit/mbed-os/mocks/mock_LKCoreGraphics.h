@@ -13,8 +13,8 @@ namespace leka {
 class LKCoreGraphicsMock : public LKCoreGraphicsBase
 {
   public:
-	MOCK_METHOD(void, clearScreen, (Color color), (override));
-	MOCK_METHOD(void, drawRectangle, (FilledRectangle rectangle, Color color), (override));
+	MOCK_METHOD(void, clearScreen, (CGColor color), (override));
+	MOCK_METHOD(void, drawRectangle, (FilledRectangle rectangle, CGColor color), (override));
 };
 
 }	// namespace leka

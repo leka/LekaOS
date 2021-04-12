@@ -31,11 +31,11 @@ class LKCoreVideo
 
 	void setBrightness(float value);
 
-	void clearScreen(Color color = CGColor::white);
-	void displayRectangle(LKCoreGraphicsBase::FilledRectangle rectangle, Color color);
+	void clearScreen(CGColor color = CGColor::white);
+	void displayRectangle(LKCoreGraphicsBase::FilledRectangle rectangle, CGColor color);
 	void displayImage(FIL *file);
-	void displayText(const char *text, uint32_t size, uint32_t starting_line, Color foreground = CGColor::black,
-					 Color background = CGColor::white);
+	void displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
+					 CGColor background = CGColor::white);
 
   private:
 	LKCoreSTM32HalBase &_hal;
