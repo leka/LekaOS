@@ -4,6 +4,7 @@
 
 #include "mbed.h"
 
+#include "BouncingSquare.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LKAnimationKit.h"
@@ -46,7 +47,8 @@ LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, cor
 
 Thread animation_thread;
 EventQueue animation_event_queue;
-// LKAnimationKit animationkit(animation_thread, animation_event_queue, animation_bouncing_square);
+animation::BouncingSquare animation_bouncing_square(coregraphics);
+LKAnimationKit animationkit(animation_thread, animation_event_queue, animation_bouncing_square);
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 
@@ -69,11 +71,11 @@ int main(void)
 							 hello.world, int(t.count() / 1000));
 		serial.write(buff, length);
 
-		// animationkit.setRefreshRate(1ms);
-		// animationkit.start(animation_bouncing_square);
+		animationkit.setRefreshRate(1ms);
+		animationkit.start(animation_bouncing_square);
 		rtos::ThisThread::sleep_for(5s);
 
-		// animationkit.stop();
+		animationkit.stop();
 		rtos::ThisThread::sleep_for(1s);
 	}
 }

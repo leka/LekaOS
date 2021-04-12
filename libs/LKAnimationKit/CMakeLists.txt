@@ -12,6 +12,7 @@ target_include_directories(LKAnimationKit
 
 target_sources(LKAnimationKit
   	PRIVATE
+		source/BouncingSquare.cpp
 		source/LKAnimationKit.cpp
 )
 
