@@ -43,9 +43,9 @@ class SparkleStars : public interface::CGAnimation
 	std::uniform_int_distribution<int> brightness_shift_distribution {-sparkle_stars::max_brightness_shift,
 																	  sparkle_stars::max_brightness_shift};
 
-	void updateBrightness(uint8_t star_index);
-	bool isBlackStar(uint8_t star_index);
-	void createNewStar(uint8_t star_index);
+	void updateBrightness(uint16_t star_index);
+	bool isBlackStar(uint16_t star_index);
+	void createNewStar(uint16_t star_index);
 	void drawStar(LKCoreGraphicsBase::FilledRectangle star, Color star_brightness);
 };
 

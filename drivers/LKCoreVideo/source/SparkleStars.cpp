@@ -13,7 +13,7 @@ void SparkleStars::start(void)
 	_coregraphics.clearScreen(CGColor::black);
 }
 
-void SparkleStars::updateBrightness(uint8_t star_index)
+void SparkleStars::updateBrightness(uint16_t star_index)
 {
 	// auto new_brightness	  = _stars_brightness[star_index].red + brightness_shift_distribution(generator);
 	auto brightness_shift = (rand() % max_brightness_shift) - (max_brightness_shift / 2);
@@ -28,12 +28,12 @@ void SparkleStars::updateBrightness(uint8_t star_index)
 	}
 }
 
-bool SparkleStars::isBlackStar(uint8_t star_index)
+bool SparkleStars::isBlackStar(uint16_t star_index)
 {
 	return _stars_brightness[star_index].red == 0;
 }
 
-void SparkleStars::createNewStar(uint8_t star_index)
+void SparkleStars::createNewStar(uint16_t star_index)
 {
 	// _stars[star_index].origin.x = origin_x_distribution(generator);
 	_stars[star_index].origin.x = rand() % lcd::dimension.width;
@@ -41,7 +41,7 @@ void SparkleStars::createNewStar(uint8_t star_index)
 	_stars[star_index].origin.y = rand() % lcd::dimension.height;
 
 	// auto real_star_size		  = star_size_distribution(generator);
-	auto real_star_size		  = star_size + (rand() % 3 - 1);
+	uint16_t real_star_size	  = star_size + (rand() % 3 - 1);
 	_stars[star_index].width  = real_star_size;
 	_stars[star_index].height = real_star_size;
 
@@ -55,7 +55,7 @@ void SparkleStars::drawStar(LKCoreGraphicsBase::FilledRectangle star, Color star
 
 void SparkleStars::run(void)
 {
-	for (uint8_t star_index = 0; star_index < n_stars; star_index++) {
+	for (uint16_t star_index = 0; star_index < n_stars; star_index++) {
 		updateBrightness(star_index);
 
 		drawStar(_stars[star_index], _stars_brightness[star_index]);
