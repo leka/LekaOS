@@ -19,16 +19,18 @@ void BouncingSquare::stop(void)
 
 bool BouncingSquare::squareWillBeOutOfBoundVertical() const
 {
-	bool top_out_of_bound	 = _square.origin.y + _vertical_shift <= 0;
-	bool bottom_out_of_bound = _square.origin.y + _square.height + _vertical_shift > lcd::dimension.height - 1;
+	bool top_out_of_bound = _square.origin.y + _vertical_shift <= 0;
+	bool bottom_out_of_bound =
+		_square.origin.y + _square.height + _vertical_shift > static_cast<uint16_t>(lcd::dimension.height - 1);
 
 	return (top_out_of_bound || bottom_out_of_bound);
 }
 
 bool BouncingSquare::squareWillBeOutOfBoundHorizontal() const
 {
-	bool left_out_of_bound	= _square.origin.x + _horizontal_shift <= 0;
-	bool right_out_of_bound = _square.origin.x + _square.width + _horizontal_shift > lcd::dimension.width - 1;
+	bool left_out_of_bound = _square.origin.x + _horizontal_shift <= 0;
+	bool right_out_of_bound =
+		_square.origin.x + _square.width + _horizontal_shift > static_cast<uint16_t>(lcd::dimension.width - 1);
 
 	return (left_out_of_bound || right_out_of_bound);
 }
