@@ -6,6 +6,7 @@
 add_subdirectory(${DRIVERS_DIR}/LKCoreLL)
 add_subdirectory(${DRIVERS_DIR}/LKCoreFatFs)
 add_subdirectory(${DRIVERS_DIR}/LKCoreSTM32Hal)
+add_subdirectory(${DRIVERS_DIR}/LKCoreI2C)
 
 # LCD drivers
 add_subdirectory(${DRIVERS_DIR}/LKCoreVideo)

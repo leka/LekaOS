@@ -14,11 +14,10 @@ target_include_directories(LKCoreTemperatureSensor
 target_sources(LKCoreTemperatureSensor
 	PRIVATE
 		source/LKCoreTemperatureSensor.cpp
-		source/LKCoreI2C.cpp
 		external/source/hts221_reg.c
 )
 
-target_link_libraries(LKCoreTemperatureSensor mbed-os)
+target_link_libraries(LKCoreTemperatureSensor LKCoreI2C mbed-os)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
