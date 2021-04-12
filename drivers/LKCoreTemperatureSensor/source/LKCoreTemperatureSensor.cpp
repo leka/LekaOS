@@ -139,6 +139,7 @@ status_t LKCoreTemperatureSensor::setAvgHumidity(hts221_avgh_t nbAvgHum)
  */
 status_t LKCoreTemperatureSensor::calibration()
 {
+	LKCoreTemperatureSensor::_calibration.initialisation = 1;
 	float_t t0degC;
 	if (auto ret = hts221_temp_deg_point_0_get(&_register_io_function, &t0degC); ret != 0) {
 		return Status::ERROR;
@@ -187,6 +188,11 @@ status_t LKCoreTemperatureSensor::calibration()
 		t0degC - LKCoreTemperatureSensor::_calibration.temperatureSlope * t0Out;
 
 	return Status::SUCCESS;
+}
+
+calibrationValues LKCoreTemperatureSensor::getCalibrationValues()
+{
+	return _calibration;
 }
 
 /**

@@ -35,6 +35,7 @@ class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 
 	virtual status_t init();
 	virtual status_t calibration();
+	virtual calibrationValues getCalibrationValues();
 	virtual celsius_t getTemperature();
 	virtual rH_t getHumidity();
 

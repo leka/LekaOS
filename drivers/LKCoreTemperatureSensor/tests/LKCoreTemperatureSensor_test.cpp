@@ -55,10 +55,46 @@ TEST_F(LKCoreI2CTest, initializationCountOfReadWrite)
 
 TEST_F(LKCoreI2CTest, Calibration)
 {
-	EXPECT_CALL(i2cMock, write).Times(10);
-	EXPECT_CALL(i2cMock, read).Times(10);
+	// init values for calibration
+	{
+		InSequence seq;
+		uint8_t t0deg[1] = {0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0deg, t0deg + 1), Return(0)));
+		uint8_t t0msbdeg[1] = {0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0msbdeg, t0msbdeg + 1), Return(0)));
+		uint8_t t1deg[1] = {0x40};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t1deg, t1deg + 1), Return(0)));
+		uint8_t t1mbsdeg[1] = {0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t1mbsdeg, t1mbsdeg + 1), Return(0)));
+		uint8_t t0Out[2] = {0x00, 0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0Out, t0Out + 2), Return(0)));
+		uint8_t t1Out[2] = {0x01, 0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t1Out, t1Out + 2), Return(0)));
+		uint8_t h0rH[1] = {0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h0rH, h0rH + 1), Return(0)));
+		uint8_t h1rH[1] = {0x04};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1rH, h1rH + 1), Return(0)));
+		uint8_t h0t0[2] = {0x00, 0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h0t0, h0t0 + 2), Return(0)));
+		uint8_t h1t0[2] = {0x01, 0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1t0, h1t0 + 2), Return(0)));
+	}
+	calibrationValues expectedCalibrationValues;
+	expectedCalibrationValues.initialisation		  = 1;
+	expectedCalibrationValues.humiditySlope			  = 1;
+	expectedCalibrationValues.humidity_y_intercept	  = 0;
+	expectedCalibrationValues.temperatureSlope		  = 1;
+	expectedCalibrationValues.temperature_y_intercept = 0;
 
 	ASSERT_EQ(HTS221_temperatureSensor.calibration(), status_t::SUCCESS);
+	ASSERT_EQ(HTS221_temperatureSensor.getCalibrationValues().initialisation, expectedCalibrationValues.initialisation);
+	ASSERT_EQ(HTS221_temperatureSensor.getCalibrationValues().humiditySlope, expectedCalibrationValues.humiditySlope);
+	ASSERT_EQ(HTS221_temperatureSensor.getCalibrationValues().humidity_y_intercept,
+			  expectedCalibrationValues.humidity_y_intercept);
+	ASSERT_EQ(HTS221_temperatureSensor.getCalibrationValues().temperatureSlope,
+			  expectedCalibrationValues.temperatureSlope);
+	ASSERT_EQ(HTS221_temperatureSensor.getCalibrationValues().temperature_y_intercept,
+			  expectedCalibrationValues.temperature_y_intercept);
 }
 
 TEST_F(LKCoreI2CTest, GetTemperature)
