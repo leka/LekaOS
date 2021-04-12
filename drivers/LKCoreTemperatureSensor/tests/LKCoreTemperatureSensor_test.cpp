@@ -80,13 +80,13 @@ TEST_F(LKCoreI2CTest, Calibration)
 		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1t0, h1t0 + 2), Return(0)));
 	}
 	calibrationValues expectedCalibrationValues;
-	expectedCalibrationValues.initialisation		  = 1;
+	expectedCalibrationValues.initialisation		  = true;
 	expectedCalibrationValues.humiditySlope			  = 1;
 	expectedCalibrationValues.humidity_y_intercept	  = 0;
 	expectedCalibrationValues.temperatureSlope		  = 1;
 	expectedCalibrationValues.temperature_y_intercept = 0;
 
-	ASSERT_EQ(HTS221_temperatureSensor.calibration(), status_t::SUCCESS);
+	ASSERT_EQ(HTS221_temperatureSensor.calibration(), true);
 	ASSERT_EQ(HTS221_temperatureSensor.getCalibrationValues().initialisation, expectedCalibrationValues.initialisation);
 	ASSERT_EQ(HTS221_temperatureSensor.getCalibrationValues().humiditySlope, expectedCalibrationValues.humiditySlope);
 	ASSERT_EQ(HTS221_temperatureSensor.getCalibrationValues().humidity_y_intercept,
@@ -124,7 +124,7 @@ TEST_F(LKCoreI2CTest, GetTemperature)
 		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1t0, h1t0 + 2), Return(0)));
 	}
 
-	ASSERT_EQ(HTS221_temperatureSensor.calibration(), status_t::SUCCESS);
+	ASSERT_EQ(HTS221_temperatureSensor.calibration(), true);
 	uint8_t expected = 0x0A;   // expected value for temperature in degC
 	EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(expected), Return(0)));
 	ASSERT_EQ(HTS221_temperatureSensor.getTemperature(), expected);
@@ -156,7 +156,7 @@ TEST_F(LKCoreI2CTest, GetHumidity)
 		uint8_t h1t0[2] = {0x01, 0x00};
 		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1t0, h1t0 + 2), Return(0)));
 	}
-	ASSERT_EQ(HTS221_temperatureSensor.calibration(), status_t::SUCCESS);
+	ASSERT_EQ(HTS221_temperatureSensor.calibration(), true);
 	uint8_t expected = 0x0A;   // expected value for humidty in rH
 	EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(expected), Return(0)));
 	ASSERT_EQ(HTS221_temperatureSensor.getTemperature(), expected);

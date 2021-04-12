@@ -33,8 +33,8 @@ class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 	explicit LKCoreTemperatureSensor(interface::LKCoreI2C &i2c);
 	virtual ~LKCoreTemperatureSensor() = default;
 
-	virtual status_t init();
-	virtual status_t calibration();
+	virtual bool init();
+	virtual bool calibration();
 	virtual calibrationValues getCalibrationValues();
 	virtual celsius_t getTemperature();
 	virtual rH_t getHumidity();
@@ -46,12 +46,12 @@ class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 	std::array<uint8_t, 32> _buffer = {0};
 
   private:
-	status_t setPower(uint8_t);
-	status_t setBDU(uint8_t);
-	status_t setDataAquisitionRate(hts221_odr_t);
-	status_t setHeater(uint8_t);
-	status_t setAvgTemperature(hts221_avgt_t);
-	status_t setAvgHumidity(hts221_avgh_t);
+	bool setPower(uint8_t);
+	bool setBDU(uint8_t);
+	bool setDataAquisitionRate(hts221_odr_t);
+	bool setHeater(uint8_t);
+	bool setAvgTemperature(hts221_avgt_t);
+	bool setAvgHumidity(hts221_avgh_t);
 
 	int read(uint8_t register_address, uint8_t *pBuffer, uint16_t number_bytes_to_read);
 	int write(uint8_t register_address, uint8_t *pBuffer, uint16_t number_bytes_to_write);
