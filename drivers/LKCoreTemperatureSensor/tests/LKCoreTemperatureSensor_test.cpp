@@ -7,7 +7,6 @@
 #include "LKCoreI2C.h"
 #include "gtest/gtest.h"
 #include "mock_LKCoreI2C.h"
-// #include "stub_I2C.h"
 
 using ::testing::_;
 using ::testing::AnyNumber;
@@ -18,10 +17,6 @@ using ::testing::SetArgPointee;
 using ::testing::SetArrayArgument;
 
 using namespace leka;
-
-namespace lekaI2C {
-mbed::I2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
-}	// namespace lekaI2C
 
 class LKCoreI2CTest : public ::testing::Test
 {

@@ -8,4 +8,5 @@ namespace leka {
 
 extern char spy_I2C_read_value[64];
 char *spy_temperatureSensor_setValue(char *value, int size);
+char *spy_temperatureSensor_getValue(const int size);
 }	// namespace leka

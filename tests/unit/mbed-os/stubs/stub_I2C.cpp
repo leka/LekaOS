@@ -24,6 +24,9 @@ int I2C::read(int address, char *data, int length, bool repeated)
 
 int I2C::write(int address, const char *data, int length, bool repeated)
 {
+	for (int i = 0; i < length; i++) {
+		leka::spy_I2C_read_value[i] = data[i];
+	}
 	return 0;
 }
 
@@ -45,12 +48,18 @@ char spy_I2C_read_value[64] {0};
 
 char *spy_temperatureSensor_setValue(char *value, const int size)
 {
-	printf("Value of spy : \n");
 	for (int i = 0; i < size; i++) {
 		spy_I2C_read_value[i] = value[i];
-		printf("%c ", value[i]);
 	}
-	printf("\n");
+	return spy_I2C_read_value;
+}
+
+char *spy_temperatureSensor_getValue(const int size)
+{
+	char newValue[size];
+	for (int i = 0; i < size; ++i) {
+		newValue[i] = spy_I2C_read_value[i];
+	}
 	return spy_I2C_read_value;
 }
 }	// namespace leka
