@@ -19,6 +19,14 @@ namespace state {
 	constexpr uint8_t OFF = 0;
 };	 // namespace state
 
+struct calibrationValues {
+	bool initialisation = 0;
+	float_t humiditySlope {0};
+	float_t humidity_y_intercept {0};
+	float_t temperatureSlope {0};
+	float_t temperature_y_intercept {0};
+};
+
 class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 {
   public:
@@ -32,12 +40,7 @@ class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 
   private:
 	interface::LKCoreI2C &_i2c;
-
-	float_t _humiditySlope {0};
-	float_t _humidity_y_intercept {0};
-	float_t _temperatureSlope {0};
-	float_t _temperature_y_intercept {0};
-
+	calibrationValues _calibration;
 	uint8_t _address				= HTS221_I2C_ADDRESS;
 	std::array<uint8_t, 32> _buffer = {0};
 

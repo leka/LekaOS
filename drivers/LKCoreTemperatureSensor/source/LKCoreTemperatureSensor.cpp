@@ -178,12 +178,13 @@ status_t LKCoreTemperatureSensor::calibration()
 	if (auto ret = hts221_hum_adc_point_1_get(&_register_io_function, &h1t0Out); ret != 0) {
 		return Status::ERROR;
 	}
+	LKCoreTemperatureSensor::_calibration.humiditySlope = (h1rH - h0rH) / (2.0 * (h1t0Out - h0t0Out));
+	LKCoreTemperatureSensor::_calibration.humidity_y_intercept =
+		h0rH - LKCoreTemperatureSensor::_calibration.humiditySlope * h0t0Out;
 
-	_humiditySlope		  = (h1rH - h0rH) / (2.0 * (h1t0Out - h0t0Out));
-	_humidity_y_intercept = h0rH - _humiditySlope * h0t0Out;
-
-	_temperatureSlope		 = (t1degC - t0degC) / (8.0 * (t1Out - t0Out));
-	_temperature_y_intercept = t0degC - _temperatureSlope * t0Out;
+	LKCoreTemperatureSensor::_calibration.temperatureSlope = (t1degC - t0degC) / (8.0 * (t1Out - t0Out));
+	LKCoreTemperatureSensor::_calibration.temperature_y_intercept =
+		t0degC - LKCoreTemperatureSensor::_calibration.temperatureSlope * t0Out;
 
 	return Status::SUCCESS;
 }
@@ -200,7 +201,8 @@ celsius_t LKCoreTemperatureSensor::getTemperature()
 	float temperatureValue = -1;
 
 	hts221_temperature_raw_get(&_register_io_function, &rawtemperatureValue);
-	temperatureValue = rawtemperatureValue * _temperatureSlope + _temperature_y_intercept;
+	temperatureValue = rawtemperatureValue * LKCoreTemperatureSensor::_calibration.temperatureSlope +
+					   LKCoreTemperatureSensor::_calibration.temperature_y_intercept;
 
 	return temperatureValue;
 }
@@ -217,7 +219,8 @@ rH_t LKCoreTemperatureSensor::getHumidity()
 	float humidityValue = -1;
 
 	hts221_humidity_raw_get(&_register_io_function, &rawHumidityValue);
-	humidityValue = rawHumidityValue * _humiditySlope + _humidity_y_intercept;
+	humidityValue = rawHumidityValue * LKCoreTemperatureSensor::_calibration.humiditySlope +
+					LKCoreTemperatureSensor::_calibration.humidity_y_intercept;
 
 	return humidityValue;
 }
