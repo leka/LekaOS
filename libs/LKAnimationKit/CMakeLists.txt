@@ -14,6 +14,7 @@ target_sources(LKAnimationKit
   	PRIVATE
 		source/BouncingSquare.cpp
 		source/LKAnimationKit.cpp
+		source/UnrealRainbow.cpp
 )
 
 target_link_libraries(LKAnimationKit
