@@ -23,32 +23,14 @@ LKCoreTemperatureSensor::LKCoreTemperatureSensor(interface::LKCoreI2C &i2c) : _i
  */
 bool LKCoreTemperatureSensor::init()
 {
-	// Power on the device
-	if (auto ret = setPower(state::ON); ret != true) {
-		return false;
-	}
-
-	if (auto ret = setBDU(state::ON); ret != true) {
-		return false;
-	}
-
-	if (auto ret = setDataAquisitionRate(HTS221_ODR_7Hz); ret != true) {
-		return false;
-	}
-
-	if (auto ret = setHeater(state::OFF); ret != true) {
-		return false;
-	}
-
-	if (auto ret = setAvgTemperature(HTS221_T_AVG_16); ret != true) {
-		return false;
-	}
-
-	if (auto ret = setAvgHumidity(HTS221_H_AVG_32); ret != true) {
-		return false;
-	}
-
-	return true;
+	bool status;
+	status &= setPower(state::ON);
+	status &= setBDU(state::ON);
+	status &= setDataAquisitionRate(HTS221_ODR_7Hz);
+	status &= setHeater(state::OFF);
+	status &= setAvgTemperature(HTS221_T_AVG_16);
+	status &= setAvgHumidity(HTS221_H_AVG_32);
+	return !status;	  // 0 is success for mbed::i2C
 }
 
 /**
@@ -58,10 +40,8 @@ bool LKCoreTemperatureSensor::init()
  */
 bool LKCoreTemperatureSensor::setPower(uint8_t state)
 {
-	if (auto ret = hts221_power_on_set(&_register_io_function, state); ret != 0) {
-		return false;
-	}
-	return true;
+	auto status = hts221_power_on_set(&_register_io_function, state);
+	return !status;	  // 0 is success for mbed::i2C
 }
 
 /**
@@ -73,10 +53,8 @@ bool LKCoreTemperatureSensor::setBDU(uint8_t state)
 // The BDU bit is used to inhibit the output register update between the reading of the
 // upper and lower register parts.
 {
-	if (auto ret = hts221_block_data_update_set(&_register_io_function, state); ret != 0) {
-		return false;
-	}
-	return true;
+	auto status = hts221_block_data_update_set(&_register_io_function, state);
+	return !status;	  // 0 is success for mbed::i2C
 }
 
 /**
@@ -86,10 +64,8 @@ bool LKCoreTemperatureSensor::setBDU(uint8_t state)
  */
 bool LKCoreTemperatureSensor::setDataAquisitionRate(hts221_odr_t rate)
 {
-	if (auto ret = hts221_block_data_update_set(&_register_io_function, rate); ret != 0) {
-		return false;
-	}
-	return true;
+	auto status = hts221_block_data_update_set(&_register_io_function, rate);
+	return !status;	  // 0 is success for mbed::i2C
 }
 
 /**
@@ -99,10 +75,8 @@ bool LKCoreTemperatureSensor::setDataAquisitionRate(hts221_odr_t rate)
  */
 bool LKCoreTemperatureSensor::setHeater(uint8_t state)
 {
-	if (auto ret = hts221_heater_set(&_register_io_function, state); ret != 0) {
-		return false;
-	}
-	return true;
+	auto status = hts221_heater_set(&_register_io_function, state);
+	return !status;	  // 0 is success for mbed::i2C
 }
 
 /**
@@ -112,10 +86,8 @@ bool LKCoreTemperatureSensor::setHeater(uint8_t state)
  */
 bool LKCoreTemperatureSensor::setAvgTemperature(hts221_avgt_t nbAvgTemp)
 {
-	if (auto ret = hts221_temperature_avg_set(&_register_io_function, nbAvgTemp); ret != 0) {
-		return false;
-	}
-	return true;
+	auto status = hts221_temperature_avg_set(&_register_io_function, nbAvgTemp);
+	return !status;	  // 0 is success for mbed::i2C
 }
 
 /**
@@ -125,10 +97,8 @@ bool LKCoreTemperatureSensor::setAvgTemperature(hts221_avgt_t nbAvgTemp)
  */
 bool LKCoreTemperatureSensor::setAvgHumidity(hts221_avgh_t nbAvgHum)
 {
-	if (auto ret = hts221_humidity_avg_set(&_register_io_function, nbAvgHum); ret != 0) {
-		return false;
-	}
-	return true;
+	auto status = hts221_humidity_avg_set(&_register_io_function, nbAvgHum);
+	return !status;	  // 0 is success for mbed::i2C
 }
 
 /**
@@ -139,45 +109,31 @@ bool LKCoreTemperatureSensor::setAvgHumidity(hts221_avgh_t nbAvgHum)
  */
 bool LKCoreTemperatureSensor::calibration()
 {
+	bool status;
 	float_t t0degC;
-	if (auto ret = hts221_temp_deg_point_0_get(&_register_io_function, &t0degC); ret != 0) {
-		return false;
-	}
+	status &= hts221_temp_deg_point_0_get(&_register_io_function, &t0degC);
 
 	float_t t1degC;
-	if (auto ret = hts221_temp_deg_point_1_get(&_register_io_function, &t1degC); ret != 0) {
-		return false;
-	}
+	status &= hts221_temp_deg_point_1_get(&_register_io_function, &t1degC);
 
 	float_t t0Out;
-	if (auto ret = hts221_temp_adc_point_0_get(&_register_io_function, &t0Out); ret != 0) {
-		return false;
-	}
+	status &= hts221_temp_adc_point_0_get(&_register_io_function, &t0Out);
 
 	float_t t1Out;
-	if (auto ret = hts221_temp_adc_point_1_get(&_register_io_function, &t1Out); ret != 0) {
-		return false;
-	}
+	status &= hts221_temp_adc_point_1_get(&_register_io_function, &t1Out);
 
 	float_t h0rH;
-	if (auto ret = hts221_hum_rh_point_0_get(&_register_io_function, &h0rH); ret != 0) {
-		return false;
-	}
+	status &= hts221_hum_rh_point_0_get(&_register_io_function, &h0rH);
 
 	float_t h1rH;
-	if (auto ret = hts221_hum_rh_point_1_get(&_register_io_function, &h1rH); ret != 0) {
-		return false;
-	}
+	status &= hts221_hum_rh_point_1_get(&_register_io_function, &h1rH);
 
 	float_t h0t0Out;
-	if (auto ret = hts221_hum_adc_point_0_get(&_register_io_function, &h0t0Out); ret != 0) {
-		return false;
-	}
+	status &= hts221_hum_adc_point_0_get(&_register_io_function, &h0t0Out);
 
 	float_t h1t0Out;
-	if (auto ret = hts221_hum_adc_point_1_get(&_register_io_function, &h1t0Out); ret != 0) {
-		return false;
-	}
+	status &= hts221_hum_adc_point_1_get(&_register_io_function, &h1t0Out);
+
 	LKCoreTemperatureSensor::_calibration.initialisation = true;
 
 	LKCoreTemperatureSensor::_calibration.humiditySlope = (h1rH - h0rH) / (2.0 * (h1t0Out - h0t0Out));
@@ -188,7 +144,7 @@ bool LKCoreTemperatureSensor::calibration()
 	LKCoreTemperatureSensor::_calibration.temperature_y_intercept =
 		t0degC - LKCoreTemperatureSensor::_calibration.temperatureSlope * t0Out;
 
-	return true;
+	return !status;
 }
 
 calibrationValues LKCoreTemperatureSensor::getCalibrationValues()
@@ -265,10 +221,6 @@ int LKCoreTemperatureSensor::read(uint8_t register_address, uint8_t *pBuffer, ui
  */
 int LKCoreTemperatureSensor::write(uint8_t register_address, uint8_t *pBuffer, uint16_t number_bytes_to_write)
 {
-	if (number_bytes_to_write > (_buffer.size() - 1)) {
-		return 1;
-	}
-
 	_buffer[0] = register_address | 0x80;	// First, send register address
 	std::copy(pBuffer, (pBuffer + number_bytes_to_write), (_buffer.begin() + 1));
 

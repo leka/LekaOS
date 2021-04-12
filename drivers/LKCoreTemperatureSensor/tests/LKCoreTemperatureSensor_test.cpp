@@ -18,10 +18,10 @@ using ::testing::SetArrayArgument;
 
 using namespace leka;
 
-class LKCoreI2CTest : public ::testing::Test
+class LKCoreTemperatureSensorTest : public ::testing::Test
 {
   protected:
-	LKCoreI2CTest() : HTS221_temperatureSensor(i2cMock) {};
+	LKCoreTemperatureSensorTest() : HTS221_temperatureSensor(i2cMock) {};
 
 	LKCoreTemperatureSensor HTS221_temperatureSensor;
 	LKCoreI2CMock i2cMock;
@@ -34,13 +34,13 @@ class LKCoreI2CTest : public ::testing::Test
 	};
 };
 
-TEST_F(LKCoreI2CTest, initialization)
+TEST_F(LKCoreTemperatureSensorTest, initialization)
 {
 	silenceUnexpectedCalls();
 	ASSERT_NE(&HTS221_temperatureSensor, nullptr);
 }
 
-TEST_F(LKCoreI2CTest, initializationCountOfReadWrite)
+TEST_F(LKCoreTemperatureSensorTest, initializationCountOfReadWrite)
 {
 	EXPECT_CALL(i2cMock, write).Times(12);
 	EXPECT_CALL(i2cMock, read).Times(6);
@@ -48,7 +48,7 @@ TEST_F(LKCoreI2CTest, initializationCountOfReadWrite)
 	HTS221_temperatureSensor.init();
 }
 
-TEST_F(LKCoreI2CTest, Calibration)
+TEST_F(LKCoreTemperatureSensorTest, Calibration)
 {
 	// init values for calibration
 	{
@@ -92,7 +92,7 @@ TEST_F(LKCoreI2CTest, Calibration)
 			  expectedCalibrationValues.temperature_y_intercept);
 }
 
-TEST_F(LKCoreI2CTest, GetTemperature)
+TEST_F(LKCoreTemperatureSensorTest, GetTemperature)
 {
 	// init values for calibration
 	{
@@ -125,7 +125,7 @@ TEST_F(LKCoreI2CTest, GetTemperature)
 	ASSERT_EQ(HTS221_temperatureSensor.getTemperature(), expected);
 }
 
-TEST_F(LKCoreI2CTest, GetHumidity)
+TEST_F(LKCoreTemperatureSensorTest, GetHumidity)
 {
 	// init values for calibration
 	{
@@ -154,5 +154,5 @@ TEST_F(LKCoreI2CTest, GetHumidity)
 	ASSERT_EQ(HTS221_temperatureSensor.calibration(), true);
 	uint8_t expected = 0x0A;   // expected value for humidty in rH
 	EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(expected), Return(0)));
-	ASSERT_EQ(HTS221_temperatureSensor.getTemperature(), expected);
+	ASSERT_EQ(HTS221_temperatureSensor.getHumidity(), expected);
 }
