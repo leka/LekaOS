@@ -26,7 +26,7 @@ class UnrealRainbow : public interface::CGAnimation
   private:
 	LKCoreGraphicsBase &_coregraphics;
 
-	Color _color {0x01, 0x00, 0x01};
+	CGColor _color {0x01, 0x00, 0x01};
 
 	int _dir		  = 1;
 	uint8_t *_channel = &_color.red;

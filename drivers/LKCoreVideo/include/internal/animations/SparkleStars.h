@@ -33,7 +33,7 @@ class SparkleStars : public interface::CGAnimation
 	LKCoreGraphicsBase &_coregraphics;
 
 	std::array<LKCoreGraphicsBase::FilledRectangle, sparkle_stars::n_stars> _stars;
-	std::array<Color, sparkle_stars::n_stars> _stars_brightness;
+	std::array<CGColor, sparkle_stars::n_stars> _stars_brightness;
 
 	std::random_device generator;
 	std::uniform_int_distribution<int> origin_x_distribution {0, lcd::dimension.width - 1};
@@ -46,7 +46,7 @@ class SparkleStars : public interface::CGAnimation
 	void updateBrightness(uint16_t star_index);
 	bool isBlackStar(uint16_t star_index);
 	void createNewStar(uint16_t star_index);
-	void drawStar(LKCoreGraphicsBase::FilledRectangle star, Color star_brightness);
+	void drawStar(LKCoreGraphicsBase::FilledRectangle star, CGColor star_brightness);
 };
 
 }	// namespace leka::animation

@@ -25,7 +25,7 @@ class BouncingSquare : public interface::CGAnimation
 	LKCoreGraphicsBase &_coregraphics;
 
 	LKCoreGraphicsBase::FilledRectangle _square {{0, 0}, 100, 100};
-	Color _color {0xFF, 0x00, 0x00};
+	CGColor _color {0xFF, 0x00, 0x00};
 	int16_t _horizontal_shift = 1;
 	int16_t _vertical_shift	  = 1;
 

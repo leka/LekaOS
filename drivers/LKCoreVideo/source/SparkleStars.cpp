@@ -48,7 +48,7 @@ void SparkleStars::createNewStar(uint16_t star_index)
 	_stars_brightness[star_index] = {0x00, 0x00, 0x00};
 }
 
-void SparkleStars::drawStar(LKCoreGraphicsBase::FilledRectangle star, Color star_brightness)
+void SparkleStars::drawStar(LKCoreGraphicsBase::FilledRectangle star, CGColor star_brightness)
 {
 	_coregraphics.drawRectangle(star, star_brightness);
 }
