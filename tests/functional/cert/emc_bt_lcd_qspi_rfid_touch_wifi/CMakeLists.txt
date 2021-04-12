@@ -4,22 +4,25 @@
 
 add_mbed_executable(certs_emc_bt_lcd_qspi_rfid_touch_wifi)
 
-target_sources(certs_emc_bt_lcd_qspi_rfid_touch_wifi
-  PRIVATE
-    main.cpp
-)
-
 target_include_directories(certs_emc_bt_lcd_qspi_rfid_touch_wifi
-  PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+	PRIVATE
+		.
+		../../include
 )
 
-target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi lib_LekaBluetooth)
-target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi lib_LekaFirmware)
-target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi lib_LekaRFID)
-target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi lib_LekaScreen)
-target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi lib_LekaTouch)
-target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi lib_LekaWifi)
-target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi lib_HelloWorld)
+target_sources(certs_emc_bt_lcd_qspi_rfid_touch_wifi
+	PRIVATE
+		main.cpp
+)
+
+target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi
+	lib_LekaBluetooth
+	lib_LekaFirmware
+	lib_LekaRFID
+	lib_LekaScreen
+	lib_LekaTouch
+	lib_LekaWifi
+	lib_HelloWorld
+)
 
 target_link_custom_leka_targets(certs_emc_bt_lcd_qspi_rfid_touch_wifi)

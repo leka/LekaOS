@@ -34,7 +34,14 @@ int main(void)
 	initLed();
 	thread_led.start(led_thread);
 
-	thread_motors.start(motor_thread);
+	leka::LKCoreMotor motor_right(PinName::MOTOR_RIGHT_DIRECTION_1, PinName::MOTOR_RIGHT_DIRECTION_2,
+								  PinName::MOTOR_RIGHT_PWM);
+	leka::LKCoreMotor motor_left(PinName::MOTOR_LEFT_DIRECTION_1, PinName::MOTOR_LEFT_DIRECTION_2,
+								 PinName::MOTOR_LEFT_PWM);
+
+	Motors motors {.left = motor_left, .right = motor_right};
+
+	thread_motors.start(callback(motor_thread, &motors));
 
 	BLE &ble = BLE::Instance();
 	HeartrateDemo ble_demo(ble, event_queue);
