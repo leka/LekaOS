@@ -11,7 +11,6 @@
 
 using ::testing::_;
 using ::testing::AnyNumber;
-using ::testing::Args;
 using ::testing::DoAll;
 using ::testing::InSequence;
 using ::testing::Return;
@@ -56,7 +55,6 @@ TEST_F(LKCoreI2CTest, initializationCountOfReadWrite)
 
 TEST_F(LKCoreI2CTest, Calibration)
 {
-	// init values for calibration
 	EXPECT_CALL(i2cMock, write).Times(10);
 	EXPECT_CALL(i2cMock, read).Times(10);
 
@@ -91,7 +89,7 @@ TEST_F(LKCoreI2CTest, GetTemperature)
 	}
 
 	ASSERT_EQ(HTS221_temperatureSensor.calibration(), status_t::SUCCESS);
-	uint8_t expected = 0x0A;   // value for temperature
+	uint8_t expected = 0x0A;   // expected value for temperature in degC
 	EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(expected), Return(0)));
 	ASSERT_EQ(HTS221_temperatureSensor.getTemperature(), expected);
 }
@@ -123,7 +121,7 @@ TEST_F(LKCoreI2CTest, GetHumidity)
 		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1t0, h1t0 + 2), Return(0)));
 	}
 	ASSERT_EQ(HTS221_temperatureSensor.calibration(), status_t::SUCCESS);
-	uint8_t expected = 0x0A;
+	uint8_t expected = 0x0A;   // expected value for humidty in rH
 	EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(expected), Return(0)));
 	ASSERT_EQ(HTS221_temperatureSensor.getTemperature(), expected);
 }
