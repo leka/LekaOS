@@ -2,6 +2,8 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+// MARK: GCOVR_EXCL_START
+
 #include "FallingSnow.h"
 
 namespace leka::animation {
@@ -75,3 +77,5 @@ void FallingSnow::stop(void)
 }
 
 }	// namespace leka::animation
+
+// MARK: GCOVR_EXCL_STOP

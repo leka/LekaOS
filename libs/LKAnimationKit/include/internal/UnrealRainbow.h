@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_LIB_ANIMATION_UNREALRAINBOW_H_
 #define _LEKA_OS_LIB_ANIMATION_UNREALRAINBOW_H_
 
+// MARK: GCOVR_EXCL_START
+
 #include <cstdint>
 
 #include "CGAnimation.h"
@@ -35,5 +37,7 @@ class UnrealRainbow : public interface::CGAnimation
 };
 
 }	// namespace leka::animation
+
+// MARK: GCOVR_EXCL_STOP
 
 #endif

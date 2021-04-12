@@ -2,6 +2,8 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+// MARK: GCOVR_EXCL_START
+
 #include "UnrealRainbow.h"
 
 #include "corevideo_config.h"
@@ -48,3 +50,5 @@ void UnrealRainbow::stop(void)
 }
 
 }	// namespace leka::animation
+
+// MARK: GCOVR_EXCL_STOP

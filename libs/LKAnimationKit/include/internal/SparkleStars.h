@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_LIB_ANIMATION_SPARKLESTARS_H_
 #define _LEKA_OS_LIB_ANIMATION_SPARKLESTARS_H_
 
+// MARK: GCOVR_EXCL_START
+
 #include <array>
 #include <random>
 
@@ -50,5 +52,7 @@ class SparkleStars : public interface::CGAnimation
 };
 
 }	// namespace leka::animation
+
+// MARK: GCOVR_EXCL_STOP
 
 #endif
