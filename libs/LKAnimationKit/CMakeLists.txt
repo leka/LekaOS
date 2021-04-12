@@ -7,18 +7,23 @@ add_library(LKAnimationKit STATIC)
 target_include_directories(LKAnimationKit
   	PUBLIC
 		include
+		include/internal
 )
 
 target_sources(LKAnimationKit
   	PRIVATE
-    	source/LKAnimationKit.cpp
+		source/BouncingSquare.cpp
+		source/FallingSnow.cpp
+		source/LKAnimationKit.cpp
+		source/SparkleStars.cpp
+		source/UnrealRainbow.cpp
 )
 
-target_link_libraries(LKAnimationKit mbed-os)
-target_link_libraries(LKAnimationKit LKCoreLL)
-target_link_libraries(LKAnimationKit LKCoreSTM32Hal)
-target_link_libraries(LKAnimationKit LKCoreVideo)
-
+target_link_libraries(LKAnimationKit
+	LKCoreLL
+	LKCoreSTM32Hal
+	LKCoreVideo
+)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 

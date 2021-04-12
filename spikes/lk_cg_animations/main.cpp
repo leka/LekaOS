@@ -4,7 +4,7 @@
 
 #include "mbed.h"
 
-#include "AnimationBouncingSquare.h"
+#include "BouncingSquare.h"
 #include "FATFileSystem.h"
 #include "FallingSnow.h"
 #include "HelloWorld.h"

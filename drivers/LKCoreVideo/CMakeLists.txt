@@ -8,17 +8,11 @@ target_include_directories(LKCoreVideo
 	PUBLIC
 		include
 		include/internal
-		include/internal/animations
 		external/include
 )
 
 target_sources(LKCoreVideo
   PRIVATE
-	source/AnimationBouncingSquare.cpp
-	source/FallingSnow.cpp
-	source/SparkleStars.cpp
-	source/UnrealRainbow.cpp
-
 	source/LKCoreDMA2D.cpp
 	source/LKCoreFont.cpp
 	source/LKCoreGraphics.cpp
