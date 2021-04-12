@@ -54,64 +54,76 @@ TEST_F(LKCoreI2CTest, initializationCountOfReadWrite)
 	HTS221_temperatureSensor.init();
 }
 
-TEST_F(LKCoreI2CTest, CalibrationAndGetTemperature)
+TEST_F(LKCoreI2CTest, Calibration)
 {
-	char test;
-	// silenceUnexpectedCalls();
+	// init values for calibration
+	EXPECT_CALL(i2cMock, write).Times(10);
+	EXPECT_CALL(i2cMock, read).Times(10);
+
+	ASSERT_EQ(HTS221_temperatureSensor.calibration(), status_t::SUCCESS);
+}
+
+TEST_F(LKCoreI2CTest, GetTemperature)
+{
 	// init values for calibration
 	{
 		InSequence seq;
-		test = 0x00;   // t0degC/8 [7,0]
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
-		test = 0x00;   // ????
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
-		test = 0x40;   // t1degC/8
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
-		test = 0x00;   // t0_Out [15,8]
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
-		test = 0x00;   // t0_Out [7,0]
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
-		test = 0x01;   // t1_Out
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
-		char h0rH[1] = {0x01};	 // h0rH
-		// EXPECT_CALL(i2cMock, read(_, _, _, _)).With(Args<1>(humidity)).Times(1);
+		uint8_t t0deg[1] = {0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0deg, t0deg + 1), Return(0)));
+		uint8_t t0msbdeg[1] = {0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0msbdeg, t0msbdeg + 1), Return(0)));
+		uint8_t t1deg[1] = {0x40};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t1deg, t1deg + 1), Return(0)));
+		uint8_t t1mbsdeg[1] = {0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t1mbsdeg, t1mbsdeg + 1), Return(0)));
+		uint8_t t0Out[2] = {0x00, 0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0Out, t0Out + 2), Return(0)));
+		uint8_t t1Out[2] = {0x01, 0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t1Out, t1Out + 2), Return(0)));
+		uint8_t h0rH[1] = {0x00};
 		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h0rH, h0rH + 1), Return(0)));
-		char h1rH[1] = {0x02};	 // h1rH
+		uint8_t h1rH[1] = {0x00};
 		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1rH, h1rH + 1), Return(0)));
-		// EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(humidity[0]), Return(0)));
-		char h0t0[2];
-		h0t0[0] = 0x01;	  // h0t0
-		h0t0[1] = 0x00;	  // h0t0
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h0t0, h0t0 + 1), Return(0)));
-		// EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(humidity[0]), Return(0)));
-		char h1t0[2];
-		h1t0[0] = 0x06;	  // h1t0
-		h1t0[1] = 0x00;	  // h1t0
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1t0, h1t0 + 1), Return(0)));
-		// EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(humidity[0]), Return(0)));
+		uint8_t h0t0[2] = {0x00, 0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h0t0, h0t0 + 2), Return(0)));
+		uint8_t h1t0[2] = {0x00, 0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1t0, h1t0 + 2), Return(0)));
 	}
-	ASSERT_EQ(HTS221_temperatureSensor.calibration(), status_t::SUCCESS);
-	test = 0x0A;   // value for temperature
-	EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
-	ASSERT_EQ(HTS221_temperatureSensor.getTemperature(), test);
 
-	printf("Value of slope %f and Zero %f\n", HTS221_temperatureSensor.getSlope(), HTS221_temperatureSensor.getZero());
-	test = 0x0A;   // value for humidity
-	EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(test), Return(0)));
-	ASSERT_EQ(HTS221_temperatureSensor.getHumidity(), test);
+	ASSERT_EQ(HTS221_temperatureSensor.calibration(), status_t::SUCCESS);
+	uint8_t expected = 0x0A;   // value for temperature
+	EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(expected), Return(0)));
+	ASSERT_EQ(HTS221_temperatureSensor.getTemperature(), expected);
 }
 
-// TEST_F(LKCoreI2CTest, getTemperature)
-// {
-// 	silenceUnexpectedCalls();
-// 	char test[1] = {0x0A};
-// 	EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(*test), Return(0)));
-// 	printf("Value of slope %f and Zero %f\n", HTS221_temperatureSensor.getSlope(), HTS221_temperatureSensor.getZero());
-// 	ASSERT_EQ(HTS221_temperatureSensor.getTemperature(), 1);
-// }
-
-TEST_F(LKCoreI2CTest, getHumidity)
+TEST_F(LKCoreI2CTest, GetHumidity)
 {
-	silenceUnexpectedCalls();
-	ASSERT_EQ(HTS221_temperatureSensor.getHumidity(), 0);
+	// init values for calibration
+	{
+		InSequence seq;
+		uint8_t t0deg[1] = {0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0deg, t0deg + 1), Return(0)));
+		uint8_t t0msbdeg[1] = {0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0msbdeg, t0msbdeg + 1), Return(0)));
+		uint8_t t1deg[1] = {0x40};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t1deg, t1deg + 1), Return(0)));
+		uint8_t t1mbsdeg[1] = {0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t1mbsdeg, t1mbsdeg + 1), Return(0)));
+		uint8_t t0Out[2] = {0x00, 0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0Out, t0Out + 2), Return(0)));
+		uint8_t t1Out[2] = {0x01, 0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t1Out, t1Out + 2), Return(0)));
+		uint8_t h0rH[1] = {0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h0rH, h0rH + 1), Return(0)));
+		uint8_t h1rH[1] = {0x04};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1rH, h1rH + 1), Return(0)));
+		uint8_t h0t0[2] = {0x00, 0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h0t0, h0t0 + 2), Return(0)));
+		uint8_t h1t0[2] = {0x01, 0x00};
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1t0, h1t0 + 2), Return(0)));
+	}
+	ASSERT_EQ(HTS221_temperatureSensor.calibration(), status_t::SUCCESS);
+	uint8_t expected = 0x0A;
+	EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(expected), Return(0)));
+	ASSERT_EQ(HTS221_temperatureSensor.getTemperature(), expected);
 }

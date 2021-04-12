@@ -29,8 +29,6 @@ class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 	virtual status_t calibration();
 	virtual celsius_t getTemperature();
 	virtual rH_t getHumidity();
-	float getSlope();
-	float getZero();
 
   private:
 	interface::LKCoreI2C &_i2c;
