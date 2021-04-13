@@ -865,7 +865,7 @@ int32_t hts221_temp_deg_point_1_get(stmdev_ctx_t *ctx, float_t *val)
 int32_t hts221_hum_adc_point_0_get(stmdev_ctx_t *ctx, float_t *val)
 {
 	uint8_t coeff_p[2];
-	int32_t coeff;
+	int16_t coeff;
 	int32_t ret;
 	ret	  = hts221_read_reg(ctx, HTS221_H0_T0_OUT_L, coeff_p, 2);
 	coeff = (coeff_p[1] * 256) + coeff_p[0];
@@ -884,7 +884,7 @@ int32_t hts221_hum_adc_point_0_get(stmdev_ctx_t *ctx, float_t *val)
 int32_t hts221_hum_adc_point_1_get(stmdev_ctx_t *ctx, float_t *val)
 {
 	uint8_t coeff_p[2];
-	int32_t coeff;
+	int16_t coeff;
 	int32_t ret;
 	ret	  = hts221_read_reg(ctx, HTS221_H1_T0_OUT_L, coeff_p, 2);
 	coeff = (coeff_p[1] * 256) + coeff_p[0];
