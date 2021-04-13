@@ -23,7 +23,7 @@ LKCoreTemperatureSensor::LKCoreTemperatureSensor(interface::LKCoreI2C &i2c) : _i
  */
 bool LKCoreTemperatureSensor::init()
 {
-	bool status;
+	bool status = false;
 	status &= setPower(state::ON);
 	status &= setBDU(state::ON);
 	status &= setDataAquisitionRate(HTS221_ODR_7Hz);
@@ -40,7 +40,7 @@ bool LKCoreTemperatureSensor::init()
  */
 bool LKCoreTemperatureSensor::setPower(uint8_t state)
 {
-	auto status = hts221_power_on_set(&_register_io_function, state);
+	bool status = hts221_power_on_set(&_register_io_function, state);
 	return !status;	  // 0 is success for mbed::i2C
 }
 
@@ -53,7 +53,7 @@ bool LKCoreTemperatureSensor::setBDU(uint8_t state)
 // The BDU bit is used to inhibit the output register update between the reading of the
 // upper and lower register parts.
 {
-	auto status = hts221_block_data_update_set(&_register_io_function, state);
+	bool status = hts221_block_data_update_set(&_register_io_function, state);
 	return !status;	  // 0 is success for mbed::i2C
 }
 
@@ -64,7 +64,7 @@ bool LKCoreTemperatureSensor::setBDU(uint8_t state)
  */
 bool LKCoreTemperatureSensor::setDataAquisitionRate(hts221_odr_t rate)
 {
-	auto status = hts221_block_data_update_set(&_register_io_function, rate);
+	bool status = hts221_data_rate_set(&_register_io_function, rate);
 	return !status;	  // 0 is success for mbed::i2C
 }
 
@@ -75,7 +75,7 @@ bool LKCoreTemperatureSensor::setDataAquisitionRate(hts221_odr_t rate)
  */
 bool LKCoreTemperatureSensor::setHeater(uint8_t state)
 {
-	auto status = hts221_heater_set(&_register_io_function, state);
+	bool status = hts221_heater_set(&_register_io_function, state);
 	return !status;	  // 0 is success for mbed::i2C
 }
 
@@ -86,7 +86,7 @@ bool LKCoreTemperatureSensor::setHeater(uint8_t state)
  */
 bool LKCoreTemperatureSensor::setAvgTemperature(hts221_avgt_t nbAvgTemp)
 {
-	auto status = hts221_temperature_avg_set(&_register_io_function, nbAvgTemp);
+	bool status = hts221_temperature_avg_set(&_register_io_function, nbAvgTemp);
 	return !status;	  // 0 is success for mbed::i2C
 }
 
@@ -97,7 +97,7 @@ bool LKCoreTemperatureSensor::setAvgTemperature(hts221_avgt_t nbAvgTemp)
  */
 bool LKCoreTemperatureSensor::setAvgHumidity(hts221_avgh_t nbAvgHum)
 {
-	auto status = hts221_humidity_avg_set(&_register_io_function, nbAvgHum);
+	bool status = hts221_humidity_avg_set(&_register_io_function, nbAvgHum);
 	return !status;	  // 0 is success for mbed::i2C
 }
 
@@ -109,7 +109,7 @@ bool LKCoreTemperatureSensor::setAvgHumidity(hts221_avgh_t nbAvgHum)
  */
 bool LKCoreTemperatureSensor::calibration()
 {
-	bool status;
+	bool status = false;
 	float_t t0degC;
 	status &= hts221_temp_deg_point_0_get(&_register_io_function, &t0degC);
 
@@ -136,14 +136,16 @@ bool LKCoreTemperatureSensor::calibration()
 
 	LKCoreTemperatureSensor::_calibration.initialisation = true;
 
-	LKCoreTemperatureSensor::_calibration.humiditySlope = (h1rH - h0rH) / (2.0 * (h1t0Out - h0t0Out));
+	printf("Humidity calibration : %f, %f, %f, %f\n", h0rH, h1rH, h0t0Out, h1t0Out);
+	printf("Temperature calibration : %f, %f, %f, %f\n", t0degC, t1degC, t0Out, t1Out);
+
+	LKCoreTemperatureSensor::_calibration.humiditySlope = (h1rH - h0rH) / (2.0f * (h1t0Out - h0t0Out));
 	LKCoreTemperatureSensor::_calibration.humidity_y_intercept =
 		h0rH - LKCoreTemperatureSensor::_calibration.humiditySlope * h0t0Out;
 
-	LKCoreTemperatureSensor::_calibration.temperatureSlope = (t1degC - t0degC) / (8.0 * (t1Out - t0Out));
+	LKCoreTemperatureSensor::_calibration.temperatureSlope = (t1degC - t0degC) / (8.0f * (t1Out - t0Out));
 	LKCoreTemperatureSensor::_calibration.temperature_y_intercept =
 		t0degC - LKCoreTemperatureSensor::_calibration.temperatureSlope * t0Out;
-
 	return !status;
 }
 
@@ -221,6 +223,9 @@ int LKCoreTemperatureSensor::read(uint8_t register_address, uint8_t *pBuffer, ui
  */
 int LKCoreTemperatureSensor::write(uint8_t register_address, uint8_t *pBuffer, uint16_t number_bytes_to_write)
 {
+	if (number_bytes_to_write > (_buffer.size() - 1)) {
+		return 1;
+	}
 	_buffer[0] = register_address | 0x80;	// First, send register address
 	std::copy(pBuffer, (pBuffer + number_bytes_to_write), (_buffer.begin() + 1));
 

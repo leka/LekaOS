@@ -15,8 +15,8 @@
 namespace leka {
 
 namespace state {
-	constexpr uint8_t ON  = 1;
-	constexpr uint8_t OFF = 0;
+	constexpr uint8_t ON  = 0x01;
+	constexpr uint8_t OFF = 0x00;
 };	 // namespace state
 
 struct calibrationValues {
@@ -33,11 +33,11 @@ class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 	explicit LKCoreTemperatureSensor(interface::LKCoreI2C &i2c);
 	virtual ~LKCoreTemperatureSensor() = default;
 
-	virtual bool init();
-	virtual bool calibration();
-	virtual calibrationValues getCalibrationValues();
-	virtual celsius_t getTemperature();
-	virtual rH_t getHumidity();
+	virtual bool init() final;
+	virtual bool calibration() final;
+	virtual calibrationValues getCalibrationValues() final;
+	virtual celsius_t getTemperature() final;
+	virtual rH_t getHumidity() final;
 
   private:
 	interface::LKCoreI2C &_i2c;
@@ -45,7 +45,6 @@ class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 	uint8_t _address				= HTS221_I2C_ADDRESS;
 	std::array<uint8_t, 32> _buffer = {0};
 
-  private:
 	bool setPower(uint8_t);
 	bool setBDU(uint8_t);
 	bool setDataAquisitionRate(hts221_odr_t);
