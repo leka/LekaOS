@@ -24,12 +24,15 @@ LKCoreTemperatureSensor::LKCoreTemperatureSensor(interface::LKCoreI2C &i2c) : _i
 bool LKCoreTemperatureSensor::init()
 {
 	bool status = false;
-	status &= setPower(state::ON);
-	status &= setBDU(state::ON);
+	status &= setPower(static_cast<uint8_t>(state::ON));
+	status &= setBlock_data_update(static_cast<uint8_t>(state::ON));
 	status &= setDataAquisitionRate(HTS221_ODR_7Hz);
-	status &= setHeater(state::OFF);
+	status &= setHeater(static_cast<uint8_t>(state::OFF));
 	status &= setAvgTemperature(HTS221_T_AVG_16);
 	status &= setAvgHumidity(HTS221_H_AVG_32);
+
+	status &= calibration();
+
 	return !status;	  // 0 is success for mbed::i2C
 }
 
@@ -49,7 +52,7 @@ bool LKCoreTemperatureSensor::setPower(uint8_t state)
  *
  * @retval         interface status (MANDATORY: true -> no Error)
  */
-bool LKCoreTemperatureSensor::setBDU(uint8_t state)
+bool LKCoreTemperatureSensor::setBlock_data_update(uint8_t state)
 // The BDU bit is used to inhibit the output register update between the reading of the
 // upper and lower register parts.
 {
@@ -134,22 +137,20 @@ bool LKCoreTemperatureSensor::calibration()
 	float_t h1t0Out;
 	status &= hts221_hum_adc_point_1_get(&_register_io_function, &h1t0Out);
 
-	LKCoreTemperatureSensor::_calibration.initialisation = true;
+	_calibration.is_initialise = true;
 
 	printf("Humidity calibration : %f, %f, %f, %f\n", h0rH, h1rH, h0t0Out, h1t0Out);
 	printf("Temperature calibration : %f, %f, %f, %f\n", t0degC, t1degC, t0Out, t1Out);
 
-	LKCoreTemperatureSensor::_calibration.humiditySlope = (h1rH - h0rH) / (2.0f * (h1t0Out - h0t0Out));
-	LKCoreTemperatureSensor::_calibration.humidity_y_intercept =
-		h0rH - LKCoreTemperatureSensor::_calibration.humiditySlope * h0t0Out;
+	_calibration.humidity.slope		  = (h1rH - h0rH) / (h1t0Out - h0t0Out);
+	_calibration.humidity.y_intercept = h0rH - _calibration.humidity.slope * h0t0Out;
 
-	LKCoreTemperatureSensor::_calibration.temperatureSlope = (t1degC - t0degC) / (8.0f * (t1Out - t0Out));
-	LKCoreTemperatureSensor::_calibration.temperature_y_intercept =
-		t0degC - LKCoreTemperatureSensor::_calibration.temperatureSlope * t0Out;
+	_calibration.temperature.slope		 = (t1degC - t0degC) / (t1Out - t0Out);
+	_calibration.temperature.y_intercept = t0degC - _calibration.temperature.slope * t0Out;
 	return !status;
 }
 
-calibrationValues LKCoreTemperatureSensor::getCalibrationValues()
+LKCoreTemperatureSensor::Calibration LKCoreTemperatureSensor::getCalibration()
 {
 	return _calibration;
 }
@@ -166,8 +167,7 @@ celsius_t LKCoreTemperatureSensor::getTemperature()
 	float temperatureValue = -1;
 
 	hts221_temperature_raw_get(&_register_io_function, &rawtemperatureValue);
-	temperatureValue = rawtemperatureValue * LKCoreTemperatureSensor::_calibration.temperatureSlope +
-					   LKCoreTemperatureSensor::_calibration.temperature_y_intercept;
+	temperatureValue = rawtemperatureValue * _calibration.temperature.slope + _calibration.temperature.y_intercept;
 
 	return temperatureValue;
 }
@@ -178,14 +178,13 @@ celsius_t LKCoreTemperatureSensor::getTemperature()
  * @retval Float value of humidity in rH
  *
  */
-rH_t LKCoreTemperatureSensor::getHumidity()
+virtualHumidity_t LKCoreTemperatureSensor::getHumidity()
 {
 	int16_t rawHumidityValue;
 	float humidityValue = -1;
 
 	hts221_humidity_raw_get(&_register_io_function, &rawHumidityValue);
-	humidityValue = rawHumidityValue * LKCoreTemperatureSensor::_calibration.humiditySlope +
-					LKCoreTemperatureSensor::_calibration.humidity_y_intercept;
+	humidityValue = rawHumidityValue * _calibration.humidity.slope + _calibration.humidity.y_intercept;
 
 	return humidityValue;
 }

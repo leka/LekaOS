@@ -7,17 +7,15 @@
 
 #include <stdint.h>
 
-using celsius_t = float;
-using rH_t		= float;
+using celsius_t			= float;
+using virtualHumidity_t = float;
 
 class LKCoreTemperatureSensorDriverBase
 {
   public:
-	//
-	// MARK: - Virtual methods
-	//
-	virtual celsius_t getTemperature() = 0;
-	virtual rH_t getHumidity()		   = 0;
+	virtual bool init()						= 0;
+	virtual celsius_t getTemperature()		= 0;
+	virtual virtualHumidity_t getHumidity() = 0;
 };
 
 #endif	 // _LEKA_OS_DRIVER_LK_CORE_TEMPERATURE_SENSOR_DRIVER_BASE_H_

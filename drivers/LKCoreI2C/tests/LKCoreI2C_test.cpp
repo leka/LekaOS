@@ -10,26 +10,30 @@
 using namespace leka;
 
 mbed::I2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
-LKCoreI2C lekaI2C(i2c);
+LKCoreI2C corei2c(i2c);
 
 TEST(LKCoreI2CTests, initialisation)
 {
-	ASSERT_NE(&lekaI2C, nullptr);
+	ASSERT_NE(&corei2c, nullptr);
 }
 
-TEST(LKCoreI2CTests, I2Cread)
+TEST(LKCoreI2CTests, coreI2CWrite)
 {
-	char expected[1] = {0x05};
-	char readValue[1];
-	spy_temperatureSensor_setValue(expected, 1);
-	lekaI2C.read(0, readValue, 1, false);
-	ASSERT_EQ(readValue[0], expected[0]);
-}
-
-TEST(LKCoreI2CTests, I2Cwrite)
-{
-	char value[1] = {0x09};
-	lekaI2C.write(0, value, 1, false);
-	char *readValue = spy_temperatureSensor_getValue(1);
+	char value[2] = {0x08, 0x09};
+	corei2c.write(0, value, 2, false);
+	std::vector<char> readValue = spy_temperatureSensor_getValue(2);
 	ASSERT_EQ(value[0], readValue[0]);
+	ASSERT_EQ(value[1], readValue[1]);
+}
+
+TEST(LKCoreI2CTests, coreI2CRead)
+{
+	std::vector<char> expected;
+	expected.push_back(char(0x01));
+	expected.push_back(char(0x02));
+	char readValue[2];
+	spy_temperatureSensor_setValue(expected, 2);
+	corei2c.read(0, readValue, 2, false);
+	ASSERT_EQ(readValue[0], expected[0]);
+	ASSERT_EQ(readValue[1], expected[1]);
 }

@@ -29,12 +29,11 @@ int main(void)
 
 	hello.start();
 	temperatureSensor.init();
-	temperatureSensor.calibration();
-	calibrationValues calibrationValuesSpike = temperatureSensor.getCalibrationValues();
+	LKCoreTemperatureSensor::Calibration calibrationValues = temperatureSensor.getCalibration();
 
-	printf("Calibration : %i, %f, %f, %f, %f \n", calibrationValuesSpike.initialisation,
-		   calibrationValuesSpike.humiditySlope, calibrationValuesSpike.humidity_y_intercept,
-		   calibrationValuesSpike.temperatureSlope, calibrationValuesSpike.temperature_y_intercept);
+	printf("Calibration : %i, %f, %f, %f, %f \n", calibrationValues.is_initialise, calibrationValues.humidity.slope,
+		   calibrationValues.humidity.y_intercept, calibrationValues.temperature.slope,
+		   calibrationValues.temperature.y_intercept);
 
 	while (true) {
 		auto t = Kernel::Clock::now() - start;
