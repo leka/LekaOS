@@ -101,7 +101,7 @@ bool LKCoreTemperatureSensor::calibration()
 	return !status;
 }
 
-LKCoreTemperatureSensor::Calibration LKCoreTemperatureSensor::getCalibration()
+const LKCoreTemperatureSensor::Calibration LKCoreTemperatureSensor::getCalibration()
 {
 	return _calibration;
 }

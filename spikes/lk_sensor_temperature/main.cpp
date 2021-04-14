@@ -12,18 +12,14 @@
 
 using namespace leka;
 
-HelloWorld hello;
-
-I2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
-LKCoreI2C interface_temperature_sensor(i2c);
-LKCoreTemperatureSensor temperature_sensor(interface_temperature_sensor);
-
-static BufferedSerial serial(USBTX, USBRX, 9600);
-constexpr uint8_t buff_size = 128;
-char buff[buff_size] {};
-
 int main(void)
 {
+	HelloWorld hello;
+
+	I2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
+	LKCoreI2C interface_temperature_sensor(i2c);
+	LKCoreTemperatureSensor temperature_sensor(interface_temperature_sensor);
+
 	auto start = Kernel::Clock::now();
 	rtos::ThisThread::sleep_for(2s);
 
@@ -38,13 +34,10 @@ int main(void)
 		calibration.temperature.slope, calibration.temperature.y_intercept);
 
 	while (true) {
-		auto t = Kernel::Clock::now() - start;
-
 		auto temperature = temperature_sensor.getTemperature();
 		auto humidity	 = temperature_sensor.getHumidity();
 
-		int length = sprintf(buff, "Temperature : %f degC, Humidite : %f rH\n", temperature, humidity);
-		serial.write(buff, length);
+		printf("Temperature : %f degC, Humidite : %f rH\n", temperature, humidity);
 
 		rtos::ThisThread::sleep_for(1s);
 	}

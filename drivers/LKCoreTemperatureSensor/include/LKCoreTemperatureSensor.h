@@ -32,7 +32,7 @@ class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 	bool init() final;
 	celsius_t getTemperature() final;
 	virtualHumidity_t getHumidity() final;
-	Calibration getCalibration();
+	const Calibration getCalibration();
 
   private:
 	bool calibration();
