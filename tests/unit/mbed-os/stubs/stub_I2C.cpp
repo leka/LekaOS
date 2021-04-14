@@ -46,20 +46,18 @@ namespace leka {
 
 std::vector<char> spy_I2C_read_value;
 
-std::vector<char> spy_temperatureSensor_setValue(std::vector<char> value, const int size)
+std::vector<char> spy_temperatureSensor_setValue(std::vector<char> value)
 {
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < value.size(); i++) {
 		spy_I2C_read_value.push_back(value[i]);
 	}
 	return spy_I2C_read_value;
 }
 
-std::vector<char> spy_temperatureSensor_getValue(int size)
+std::vector<char> spy_temperatureSensor_getValue()
 {
 	std::vector<char> mem_vector;
-	for (int i = 0; i < size; ++i) {
-		mem_vector.push_back(spy_I2C_read_value[i]);
-	}
+	mem_vector.assign(spy_I2C_read_value.begin(), spy_I2C_read_value.end());
 	spy_I2C_read_value.clear();
 	return mem_vector;
 }

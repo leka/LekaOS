@@ -8,6 +8,6 @@
 namespace leka {
 
 extern std::vector<char> spy_I2C_read_value;
-std::vector<char> spy_temperatureSensor_setValue(std::vector<char> value, int size);
-std::vector<char> spy_temperatureSensor_getValue(int size);
+std::vector<char> spy_temperatureSensor_setValue(std::vector<char> value);
+std::vector<char> spy_temperatureSensor_getValue();
 }	// namespace leka
