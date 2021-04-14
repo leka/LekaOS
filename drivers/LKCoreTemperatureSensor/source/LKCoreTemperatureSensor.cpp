@@ -93,9 +93,6 @@ bool LKCoreTemperatureSensor::calibration()
 
 	_calibration.is_initialise = true;
 
-	printf("Humidity calibration : %f, %f, %f, %f\n", h0rH, h1rH, h0t0Out, h1t0Out);
-	printf("Temperature calibration : %f, %f, %f, %f\n", t0degC, t1degC, t0Out, t1Out);
-
 	_calibration.humidity.slope		  = (h1rH - h0rH) / (h1t0Out - h0t0Out);
 	_calibration.humidity.y_intercept = h0rH - _calibration.humidity.slope * h0t0Out;
 
