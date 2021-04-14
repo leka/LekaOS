@@ -32,8 +32,8 @@ int main(void)
 	LKCoreTemperatureSensor::Calibration calibration = temperature_sensor.getCalibration();
 
 	printf(
-		"Calibration values : \n is_initialise: %i,\nhumidity_slope: %f,\nhumidity_y_intercept: "
-		"%f,\ntemperature_slope: %f,\ntemperature_y_intercept: %f\n",
+		"Calibration values : \n is_initialise: %i,\n humidity_slope: %f,\n humidity_y_intercept: "
+		"%f,\n temperature_slope: %f,\n temperature_y_intercept: %f\n\n",
 		calibration.is_initialise, calibration.humidity.slope, calibration.humidity.y_intercept,
 		calibration.temperature.slope, calibration.temperature.y_intercept);
 
@@ -43,7 +43,7 @@ int main(void)
 		auto temperature = temperature_sensor.getTemperature();
 		auto humidity	 = temperature_sensor.getHumidity();
 
-		int length = sprintf(buff, " temperature : %f °C, Humidite : %f rH\n", temperature, humidity);
+		int length = sprintf(buff, "Temperature : %f degC, Humidite : %f rH\n", temperature, humidity);
 		serial.write(buff, length);
 
 		rtos::ThisThread::sleep_for(1s);
