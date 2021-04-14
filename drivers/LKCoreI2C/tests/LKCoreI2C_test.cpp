@@ -21,9 +21,9 @@ TEST(LKCoreI2CTests, coreI2CWrite)
 {
 	char value[2] = {0x08, 0x09};
 	corei2c.write(0, value, 2, false);
-	std::vector<char> readValue = spy_temperatureSensor_getValue(2);
-	ASSERT_EQ(value[0], readValue[0]);
-	ASSERT_EQ(value[1], readValue[1]);
+	std::vector<char> read_value = spy_temperatureSensor_getValue(2);
+	ASSERT_EQ(value[0], read_value[0]);
+	ASSERT_EQ(value[1], read_value[1]);
 }
 
 TEST(LKCoreI2CTests, coreI2CRead)
@@ -31,9 +31,9 @@ TEST(LKCoreI2CTests, coreI2CRead)
 	std::vector<char> expected;
 	expected.push_back(char(0x01));
 	expected.push_back(char(0x02));
-	char readValue[2];
+	char read_value[2];
 	spy_temperatureSensor_setValue(expected, 2);
-	corei2c.read(0, readValue, 2, false);
-	ASSERT_EQ(readValue[0], expected[0]);
-	ASSERT_EQ(readValue[1], expected[1]);
+	corei2c.read(0, read_value, 2, false);
+	ASSERT_EQ(read_value[0], expected[0]);
+	ASSERT_EQ(read_value[1], expected[1]);
 }

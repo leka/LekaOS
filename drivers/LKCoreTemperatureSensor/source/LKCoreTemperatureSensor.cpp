@@ -111,24 +111,24 @@ LKCoreTemperatureSensor::Calibration LKCoreTemperatureSensor::getCalibration()
 
 celsius_t LKCoreTemperatureSensor::getTemperature()
 {
-	int16_t rawtemperatureValue;
-	float temperatureValue = -1;
+	int16_t raw_temperature_value;
+	float temperature_value = -1;
 
-	hts221_temperature_raw_get(&_register_io_function, &rawtemperatureValue);
-	temperatureValue = rawtemperatureValue * _calibration.temperature.slope + _calibration.temperature.y_intercept;
+	hts221_temperature_raw_get(&_register_io_function, &raw_temperature_value);
+	temperature_value = raw_temperature_value * _calibration.temperature.slope + _calibration.temperature.y_intercept;
 
-	return temperatureValue;
+	return temperature_value;
 }
 
 virtualHumidity_t LKCoreTemperatureSensor::getHumidity()
 {
-	int16_t rawHumidityValue;
-	float humidityValue = -1;
+	int16_t raw_humidity_value;
+	float humidity_value = -1;
 
-	hts221_humidity_raw_get(&_register_io_function, &rawHumidityValue);
-	humidityValue = rawHumidityValue * _calibration.humidity.slope + _calibration.humidity.y_intercept;
+	hts221_humidity_raw_get(&_register_io_function, &raw_humidity_value);
+	humidity_value = raw_humidity_value * _calibration.humidity.slope + _calibration.humidity.y_intercept;
 
-	return humidityValue;
+	return humidity_value;
 }
 
 int LKCoreTemperatureSensor::read(uint8_t register_address, uint8_t *pBuffer, uint16_t number_bytes_to_read)
