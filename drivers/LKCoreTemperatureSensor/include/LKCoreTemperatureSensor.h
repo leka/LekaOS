@@ -10,7 +10,6 @@
 #include "LKCoreI2C.h"
 #include "LKCoreTemperatureSensorBase.h"
 #include "hts221_reg.h"
-#include "status.h"
 
 namespace leka {
 
@@ -18,7 +17,6 @@ class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 {
   public:
 	explicit LKCoreTemperatureSensor(interface::LKCoreI2C &i2c);
-	virtual ~LKCoreTemperatureSensor() = default;
 
 	struct CalibrationValues {
 		float_t slope {0};
@@ -32,16 +30,16 @@ class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 	};
 
 	bool init() final;
-	bool calibration();
-	Calibration getCalibration();
 	celsius_t getTemperature() final;
 	virtualHumidity_t getHumidity() final;
+	Calibration getCalibration();
 
   private:
-	bool setPower(uint8_t state);
-	bool setBlock_data_update(uint8_t state);
+	bool calibration();
+	bool setPower(uint8_t State);
+	bool setBlock_data_update(uint8_t State);
 	bool setDataAquisitionRate(hts221_odr_t rate);
-	bool setHeater(uint8_t state);
+	bool setHeater(uint8_t State);
 	bool setAvgTemperature(hts221_avgt_t nbAvgTemp);
 	bool setAvgHumidity(hts221_avgh_t nbAvgHum);
 
@@ -59,7 +57,7 @@ class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 	Calibration _calibration;
 	std::array<uint8_t, 32> _buffer = {0};
 
-	enum class state
+	enum class State
 	{
 		OFF = 0,
 		ON	= 1,
