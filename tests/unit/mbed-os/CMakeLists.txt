@@ -79,11 +79,6 @@ target_include_directories(mbed-os
 		${ROOT_DIR}/extern/mbed-os/connectivity/lorawan
 		${ROOT_DIR}/extern/mbed-os/connectivity/mbedtls
 		${ROOT_DIR}/extern/mbed-os/connectivity/mbedtls/include
-
-		${ROOT_DIR}/drivers/LKCoreTemperatureSensor/include/internal/
-		${ROOT_DIR}/drivers/LKCoreTemperatureSensor/external/include/
-
-		${ROOT_DIR}/tests/unit/mbed-os/mocks
 )
 
 target_sources(mbed-os
