@@ -15,8 +15,8 @@ using namespace leka;
 HelloWorld hello;
 
 I2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
-LKCoreI2C interfaceTemperatureSensor(i2c);
-LKCoreTemperatureSensor temperatureSensor(interfaceTemperatureSensor);
+LKCoreI2C interface_temperature_sensor(i2c);
+LKCoreTemperatureSensor temperature_sensor(interface_temperature_sensor);
 
 static BufferedSerial serial(USBTX, USBRX, 9600);
 constexpr uint8_t buff_size = 128;
@@ -28,20 +28,22 @@ int main(void)
 	rtos::ThisThread::sleep_for(2s);
 
 	hello.start();
-	temperatureSensor.init();
-	LKCoreTemperatureSensor::Calibration calibrationValues = temperatureSensor.getCalibration();
+	temperature_sensor.init();
+	LKCoreTemperatureSensor::Calibration calibration = temperature_sensor.getCalibration();
 
-	printf("Calibration : %i, %f, %f, %f, %f \n", calibrationValues.is_initialise, calibrationValues.humidity.slope,
-		   calibrationValues.humidity.y_intercept, calibrationValues.temperature.slope,
-		   calibrationValues.temperature.y_intercept);
+	printf(
+		"Calibration values : \n is_initialise: %i,\nhumidity_slope: %f,\nhumidity_y_intercept: "
+		"%f,\ntemperature_slope: %f,\ntemperature_y_intercept: %f\n",
+		calibration.is_initialise, calibration.humidity.slope, calibration.humidity.y_intercept,
+		calibration.temperature.slope, calibration.temperature.y_intercept);
 
 	while (true) {
 		auto t = Kernel::Clock::now() - start;
 
-		auto temperature = temperatureSensor.getTemperature();
-		auto humidity	 = temperatureSensor.getHumidity();
+		auto temperature = temperature_sensor.getTemperature();
+		auto humidity	 = temperature_sensor.getHumidity();
 
-		int length = sprintf(buff, "%f, %f\n", temperature, humidity);
+		int length = sprintf(buff, " temperature : %f °C, Humidite : %f rH\n", temperature, humidity);
 		serial.write(buff, length);
 
 		rtos::ThisThread::sleep_for(1s);
