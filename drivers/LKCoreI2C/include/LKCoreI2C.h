@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_DRIVER_LK_CORE_I2C_H_
 #define _LEKA_OS_DRIVER_LK_CORE_I2C_H_
 
+#include <array>
+
 #include "I2C.h"
 
 namespace leka {

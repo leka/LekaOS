@@ -32,6 +32,33 @@ class LKCoreTemperatureSensorTest : public ::testing::Test
 		EXPECT_CALL(i2cMock, read).Times(AnyNumber());
 		EXPECT_CALL(i2cMock, write).Times(AnyNumber());
 	};
+
+	void initialisationSequence()
+	{
+		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
+		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
+
+		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
+		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
+
+		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
+		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
+
+		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
+		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
+
+		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
+		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
+
+		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
+		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
+		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
+	};
 };
 
 TEST_F(LKCoreTemperatureSensorTest, initialization)
@@ -44,82 +71,7 @@ TEST_F(LKCoreTemperatureSensorTest, initializationSequence)
 {
 	{
 		InSequence initSeq;
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-	}
-	HTS221_temperatureSensor.init();
-}
-
-TEST_F(LKCoreTemperatureSensorTest, Calibration)
-{
-	{
-		InSequence seq;
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
+		initialisationSequence();
 		uint8_t t0deg[1] = {0x00};
 		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
 		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0deg, t0deg + 1), Return(0)));
@@ -151,7 +103,7 @@ TEST_F(LKCoreTemperatureSensorTest, Calibration)
 		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
 		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1t0, h1t0 + 2), Return(0)));
 	}
-
+	HTS221_temperatureSensor.init();
 	LKCoreTemperatureSensor::Calibration expected_calibration;
 	expected_calibration.is_initialise			 = true;
 	expected_calibration.humidity.slope			 = 1;
@@ -159,7 +111,6 @@ TEST_F(LKCoreTemperatureSensorTest, Calibration)
 	expected_calibration.temperature.slope		 = 1;
 	expected_calibration.temperature.y_intercept = 0;
 
-	HTS221_temperatureSensor.init();
 	LKCoreTemperatureSensor::Calibration sensor_calibration = HTS221_temperatureSensor.getCalibration();
 
 	ASSERT_EQ(sensor_calibration.is_initialise, expected_calibration.is_initialise);
@@ -171,65 +122,9 @@ TEST_F(LKCoreTemperatureSensorTest, Calibration)
 
 TEST_F(LKCoreTemperatureSensorTest, GetTemperature)
 {
-	{
-		InSequence seq;
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		uint8_t t0deg[1] = {0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0deg, t0deg + 1), Return(0)));
-		uint8_t t0msbdeg[1] = {0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0msbdeg, t0msbdeg + 1), Return(0)));
-		uint8_t t1deg[1] = {0x08};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t1deg, t1deg + 1), Return(0)));
-		uint8_t t1mbsdeg[1] = {0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t1mbsdeg, t1mbsdeg + 1), Return(0)));
-		uint8_t t0Out[2] = {0x00, 0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0Out, t0Out + 2), Return(0)));
-		uint8_t t1Out[2] = {0x01, 0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t1Out, t1Out + 2), Return(0)));
-		uint8_t h0rH[1] = {0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h0rH, h0rH + 1), Return(0)));
-		uint8_t h1rH[1] = {0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1rH, h1rH + 1), Return(0)));
-		uint8_t h0t0[2] = {0x00, 0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h0t0, h0t0 + 2), Return(0)));
-		uint8_t h1t0[2] = {0x00, 0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1t0, h1t0 + 2), Return(0)));
-	}
-
-	HTS221_temperatureSensor.init();
+	float_t temperature_slope		= 1;
+	float_t temperature_y_intercept = 0;
+	HTS221_temperatureSensor.setCalibration(0, 0, temperature_slope, temperature_y_intercept);
 	uint8_t degC_expected = 0x0A;
 	EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
 	EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(degC_expected), Return(0)));
@@ -238,64 +133,9 @@ TEST_F(LKCoreTemperatureSensorTest, GetTemperature)
 
 TEST_F(LKCoreTemperatureSensorTest, GetHumidity)
 {
-	{
-		InSequence seq;
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		uint8_t t0deg[1] = {0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0deg, t0deg + 1), Return(0)));
-		uint8_t t0msbdeg[1] = {0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0msbdeg, t0msbdeg + 1), Return(0)));
-		uint8_t t1deg[1] = {0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t1deg, t1deg + 1), Return(0)));
-		uint8_t t1mbsdeg[1] = {0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t1mbsdeg, t1mbsdeg + 1), Return(0)));
-		uint8_t t0Out[2] = {0x00, 0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0Out, t0Out + 2), Return(0)));
-		uint8_t t1Out[2] = {0x01, 0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t1Out, t1Out + 2), Return(0)));
-		uint8_t h0rH[1] = {0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h0rH, h0rH + 1), Return(0)));
-		uint8_t h1rH[1] = {0x02};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1rH, h1rH + 1), Return(0)));
-		uint8_t h0t0[2] = {0x00, 0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h0t0, h0t0 + 2), Return(0)));
-		uint8_t h1t0[2] = {0x01, 0x00};
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(h1t0, h1t0 + 2), Return(0)));
-	}
-	HTS221_temperatureSensor.init();
+	float_t humidity_slope		 = 1;
+	float_t humidity_y_intercept = 0;
+	HTS221_temperatureSensor.setCalibration(humidity_slope, humidity_y_intercept, 0, 0);
 	uint8_t rH_expected = 0x0A;
 	EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
 	EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArgPointee<1>(rH_expected), Return(0)));

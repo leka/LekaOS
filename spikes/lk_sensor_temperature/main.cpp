@@ -20,7 +20,6 @@ int main(void)
 	LKCoreI2C interface_temperature_sensor(i2c);
 	LKCoreTemperatureSensor temperature_sensor(interface_temperature_sensor);
 
-	auto start = Kernel::Clock::now();
 	rtos::ThisThread::sleep_for(2s);
 
 	hello.start();

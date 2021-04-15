@@ -101,9 +101,17 @@ bool LKCoreTemperatureSensor::calibration()
 	return !status;
 }
 
-const LKCoreTemperatureSensor::Calibration LKCoreTemperatureSensor::getCalibration()
+LKCoreTemperatureSensor::Calibration const LKCoreTemperatureSensor::getCalibration()
 {
 	return _calibration;
+}
+void LKCoreTemperatureSensor::setCalibration(float_t humidity_slope, float_t humidity_y_intercept,
+											 float_t temperature_slope, float_t temperature_y_intercept)
+{
+	_calibration.humidity.slope			 = humidity_slope;
+	_calibration.humidity.y_intercept	 = humidity_y_intercept;
+	_calibration.temperature.slope		 = temperature_slope;
+	_calibration.temperature.y_intercept = temperature_y_intercept;
 }
 
 celsius_t LKCoreTemperatureSensor::getTemperature()
