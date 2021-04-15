@@ -125,7 +125,7 @@ celsius_t LKCoreTemperatureSensor::getTemperature()
 	return temperature_value;
 }
 
-virtualHumidity_t LKCoreTemperatureSensor::getHumidity()
+relativeHumidity_t LKCoreTemperatureSensor::getHumidity()
 {
 	int16_t raw_humidity_value;
 	float humidity_value = -1;
@@ -136,10 +136,10 @@ virtualHumidity_t LKCoreTemperatureSensor::getHumidity()
 	return humidity_value;
 }
 
-int LKCoreTemperatureSensor::read(uint8_t register_address, uint8_t *pBuffer, uint16_t number_bytes_to_read)
+int LKCoreTemperatureSensor::read(uint8_t register_command, uint8_t *pBuffer, uint16_t number_bytes_to_read)
 {
-	uint8_t address = register_address | 0x80;
-	int ret			= _i2c.write(_address, (const char *)&address, 1, true);
+	uint8_t command = register_command | 0x80;
+	int ret			= _i2c.write(_address, (const char *)&command, 1, true);
 	if (ret == 0) {
 		ret = _i2c.read(_address, (char *)pBuffer, number_bytes_to_read, false);
 	}
@@ -147,9 +147,9 @@ int LKCoreTemperatureSensor::read(uint8_t register_address, uint8_t *pBuffer, ui
 	return ret;
 }
 
-int LKCoreTemperatureSensor::write(uint8_t register_address, uint8_t *pBuffer, uint16_t number_bytes_to_write)
+int LKCoreTemperatureSensor::write(uint8_t register_command, uint8_t *pBuffer, uint16_t number_bytes_to_write)
 {
-	_buffer[0] = register_address | 0x80;
+	_buffer[0] = register_command | 0x80;
 	std::copy(pBuffer, (pBuffer + number_bytes_to_write), (_buffer.begin() + 1));
 
 	int ret = _i2c.write(_address, (const char *)_buffer.data(), (number_bytes_to_write + 1), false);
