@@ -39,6 +39,12 @@ TEST_F(LKCoreTemperatureSensorTest, initialization)
 	ASSERT_NE(&HTS221_temperatureSensor, nullptr);
 }
 
+TEST_F(LKCoreTemperatureSensorTest, FailToWrite)
+{
+	EXPECT_CALL(i2cMock, write(_, _, _, _)).WillOnce(Return(1));
+	HTS221_temperatureSensor.getHumidity();
+}
+
 TEST_F(LKCoreTemperatureSensorTest, initializationSequence)
 {
 	{

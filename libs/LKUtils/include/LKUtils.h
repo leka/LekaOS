@@ -15,8 +15,8 @@ OutputType map(IntputType x, IntputType in_min, IntputType in_max, OutputType ou
 
 struct LinearInterpolationValues {
 	bool is_initialise {false};
-	float slope;
-	float y_intercept;
+	float slope {0};
+	float y_intercept {0};
 };
 
 template <typename FirstInputType, typename SecondeIntputType>
@@ -24,9 +24,11 @@ LinearInterpolationValues LinearInterpolation(FirstInputType x1, FirstInputType 
 											  SecondeIntputType y2)
 {
 	LinearInterpolationValues values;
-	values.is_initialise = true;
-	values.slope		 = (y2 - y1) / (x2 - x1);
-	values.y_intercept	 = y1 - values.slope * x1;
+	if ((x2 - x1) != 0) {
+		values.is_initialise = true;
+		values.slope		 = (y2 - y1) / (x2 - x1);
+		values.y_intercept	 = y1 - values.slope * x1;
+	}
 	return values;
 }
 }	// namespace leka::utils
