@@ -8,25 +8,31 @@
 #include <array>
 
 #include "LKCoreI2C.h"
-#include "LKCoreTemperatureSensorBase.h"
+#include "LKUtils.h"
 #include "hts221_reg.h"
 
 namespace leka {
+using celsius_t			 = float;
+using relativeHumidity_t = float;
 
-class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
+namespace interface {
+	class LKCoreTemperatureSensor
+	{
+	  public:
+		virtual bool init()						 = 0;
+		virtual celsius_t getTemperature()		 = 0;
+		virtual relativeHumidity_t getHumidity() = 0;
+	};
+}	// namespace interface
+
+class LKCoreTemperatureSensor : public interface::LKCoreTemperatureSensor
 {
   public:
 	explicit LKCoreTemperatureSensor(interface::LKCoreI2C &i2c);
 
-	struct CalibrationValues {
-		float_t slope {0};
-		float_t y_intercept {0};
-	};
-
 	struct Calibration {
-		bool is_initialise {false};
-		CalibrationValues humidity;
-		CalibrationValues temperature;
+		utils::LinearInterpolationValues humidity;
+		utils::LinearInterpolationValues temperature;
 	};
 
 	bool init() final;
@@ -37,13 +43,20 @@ class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 	const Calibration getCalibration();
 
   private:
+	struct Reference;
 	bool calibration();
+	bool getReferenceTemperature(Reference &temperature_reference);
+	bool getReferenceHumidity(Reference &humidity_reference);
+
+	void temperatureCalibration(Reference const &temperature_reference);
+	void humidityCalibration(Reference const &humidity_reference);
+
 	bool setPower(uint8_t State);
 	bool setBlock_data_update(uint8_t State);
 	bool setDataAquisitionRate(hts221_odr_t rate);
 	bool setHeater(uint8_t State);
-	bool setAvgTemperature(hts221_avgt_t nbAvgTemp);
-	bool setAvgHumidity(hts221_avgh_t nbAvgHum);
+	bool setAverageTemperature(hts221_avgt_t nbAvgTemp);
+	bool setAverageHumidity(hts221_avgh_t nbAvgHum);
 
 	int read(uint8_t register_address, uint8_t *pBuffer, uint16_t number_bytes_to_read);
 	int write(uint8_t register_address, uint8_t *pBuffer, uint16_t number_bytes_to_write);
@@ -58,6 +71,13 @@ class LKCoreTemperatureSensor : public LKCoreTemperatureSensorDriverBase
 	interface::LKCoreI2C &_i2c;
 	Calibration _calibration;
 	std::array<uint8_t, 32> _buffer = {0};
+
+	struct Reference {
+		float_t x0;
+		float_t x1;
+		float_t y0;
+		float_t y1;
+	};
 
 	enum class State
 	{

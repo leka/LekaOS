@@ -7,7 +7,6 @@ add_library(LKCoreTemperatureSensor STATIC)
 target_include_directories(LKCoreTemperatureSensor
 	PUBLIC
 		include
-		include/internal
 		external/include
 )
 
@@ -17,7 +16,11 @@ target_sources(LKCoreTemperatureSensor
 		external/source/hts221_reg.c
 )
 
-target_link_libraries(LKCoreTemperatureSensor LKCoreI2C mbed-os)
+target_link_libraries(LKCoreTemperatureSensor
+		mbed-os
+		LKCoreI2C
+		LKUtils
+)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 

@@ -27,10 +27,10 @@ int main(void)
 	LKCoreTemperatureSensor::Calibration calibration = temperature_sensor.getCalibration();
 
 	printf(
-		"Calibration values : \n is_initialise: %i,\n humidity_slope: %f,\n humidity_y_intercept: "
-		"%f,\n temperature_slope: %f,\n temperature_y_intercept: %f\n\n",
-		calibration.is_initialise, calibration.humidity.slope, calibration.humidity.y_intercept,
-		calibration.temperature.slope, calibration.temperature.y_intercept);
+		"Calibration values : \n humidity_is_initialise: %i,\n humidity_slope: %f,\n humidity_y_intercept: "
+		"%f,\n temperature_is_initialise: %i,\n temperature_slope: %f,\n temperature_y_intercept: %f\n\n",
+		calibration.humidity.is_initialise, calibration.humidity.slope, calibration.humidity.y_intercept,
+		calibration.temperature.is_initialise, calibration.temperature.slope, calibration.temperature.y_intercept);
 
 	while (true) {
 		auto temperature = temperature_sensor.getTemperature();

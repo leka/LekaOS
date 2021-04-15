@@ -25,15 +25,8 @@ class LKCoreTemperatureSensorTest : public ::testing::Test
 
 	LKCoreTemperatureSensor HTS221_temperatureSensor;
 	LKCoreI2CMock i2cMock;
-	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call
-	// TODO: Remove them in the future
-	void silenceUnexpectedCalls(void)
-	{
-		EXPECT_CALL(i2cMock, read).Times(AnyNumber());
-		EXPECT_CALL(i2cMock, write).Times(AnyNumber());
-	};
 
-	void initialisationSequence()
+	void writeSequence()
 	{
 		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
 		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
@@ -43,7 +36,6 @@ class LKCoreTemperatureSensorTest : public ::testing::Test
 
 TEST_F(LKCoreTemperatureSensorTest, initialization)
 {
-	silenceUnexpectedCalls();
 	ASSERT_NE(&HTS221_temperatureSensor, nullptr);
 }
 
@@ -52,7 +44,7 @@ TEST_F(LKCoreTemperatureSensorTest, initializationSequence)
 	{
 		InSequence initSeq;
 		for (int i = 0; i < 6; i++) {
-			initialisationSequence();
+			writeSequence();
 		}
 		uint8_t t0deg[1] = {0x00};
 		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
@@ -87,17 +79,19 @@ TEST_F(LKCoreTemperatureSensorTest, initializationSequence)
 	}
 	HTS221_temperatureSensor.init();
 	LKCoreTemperatureSensor::Calibration expected_calibration;
-	expected_calibration.is_initialise			 = true;
-	expected_calibration.humidity.slope			 = 1;
-	expected_calibration.humidity.y_intercept	 = 0;
-	expected_calibration.temperature.slope		 = 1;
-	expected_calibration.temperature.y_intercept = 0;
+	expected_calibration.humidity.is_initialise	   = true;
+	expected_calibration.humidity.slope			   = 1;
+	expected_calibration.humidity.y_intercept	   = 0;
+	expected_calibration.temperature.is_initialise = true;
+	expected_calibration.temperature.slope		   = 1;
+	expected_calibration.temperature.y_intercept   = 0;
 
 	LKCoreTemperatureSensor::Calibration sensor_calibration = HTS221_temperatureSensor.getCalibration();
 
-	ASSERT_EQ(sensor_calibration.is_initialise, expected_calibration.is_initialise);
+	ASSERT_EQ(sensor_calibration.humidity.is_initialise, expected_calibration.humidity.is_initialise);
 	ASSERT_EQ(sensor_calibration.humidity.slope, expected_calibration.humidity.slope);
 	ASSERT_EQ(sensor_calibration.humidity.y_intercept, expected_calibration.humidity.y_intercept);
+	ASSERT_EQ(sensor_calibration.temperature.is_initialise, expected_calibration.temperature.is_initialise);
 	ASSERT_EQ(sensor_calibration.temperature.slope, expected_calibration.temperature.slope);
 	ASSERT_EQ(sensor_calibration.temperature.y_intercept, expected_calibration.temperature.y_intercept);
 }
