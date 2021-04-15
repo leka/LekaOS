@@ -25,43 +25,43 @@ bool LKCoreTemperatureSensor::init()
 
 	status &= calibration();
 
-	return !status;	  // 0 is success for mbed::i2C
+	return status;
 }
 
 bool LKCoreTemperatureSensor::setPower(uint8_t State)
 {
 	bool status = hts221_power_on_set(&_register_io_function, State);
-	return !status;	  // 0 is success for mbed::i2C
+	return status;
 }
 
 bool LKCoreTemperatureSensor::setBlock_data_update(uint8_t State)
 {
 	bool status = hts221_block_data_update_set(&_register_io_function, State);
-	return !status;	  // 0 is success for mbed::i2C
+	return status;
 }
 
 bool LKCoreTemperatureSensor::setDataAquisitionRate(hts221_odr_t rate)
 {
 	bool status = hts221_data_rate_set(&_register_io_function, rate);
-	return !status;	  // 0 is success for mbed::i2C
+	return status;
 }
 
 bool LKCoreTemperatureSensor::setHeater(uint8_t State)
 {
 	bool status = hts221_heater_set(&_register_io_function, State);
-	return !status;	  // 0 is success for mbed::i2C
+	return status;
 }
 
 bool LKCoreTemperatureSensor::setAverageTemperature(hts221_avgt_t nbAvgTemp)
 {
 	bool status = hts221_temperature_avg_set(&_register_io_function, nbAvgTemp);
-	return !status;	  // 0 is success for mbed::i2C
+	return status;
 }
 
 bool LKCoreTemperatureSensor::setAverageHumidity(hts221_avgh_t nbAvgHum)
 {
 	bool status = hts221_humidity_avg_set(&_register_io_function, nbAvgHum);
-	return !status;	  // 0 is success for mbed::i2C
+	return status;
 }
 
 bool LKCoreTemperatureSensor::getReferenceTemperature(Reference &temperature_reference)
@@ -71,7 +71,7 @@ bool LKCoreTemperatureSensor::getReferenceTemperature(Reference &temperature_ref
 	status &= hts221_temp_deg_point_1_get(&_register_io_function, &temperature_reference.y1);
 	status &= hts221_temp_adc_point_0_get(&_register_io_function, &temperature_reference.x0);
 	status &= hts221_temp_adc_point_1_get(&_register_io_function, &temperature_reference.x1);
-	return !status;
+	return status;
 }
 
 bool LKCoreTemperatureSensor::getReferenceHumidity(Reference &humidity_reference)
@@ -81,7 +81,7 @@ bool LKCoreTemperatureSensor::getReferenceHumidity(Reference &humidity_reference
 	status &= hts221_hum_rh_point_1_get(&_register_io_function, &humidity_reference.y1);
 	status &= hts221_hum_adc_point_0_get(&_register_io_function, &humidity_reference.x0);
 	status &= hts221_hum_adc_point_1_get(&_register_io_function, &humidity_reference.x1);
-	return !status;
+	return status;
 }
 
 void LKCoreTemperatureSensor::temperatureCalibration(Reference const &temperature_reference)
@@ -108,7 +108,7 @@ bool LKCoreTemperatureSensor::calibration()
 	temperatureCalibration(temperature_reference);
 	humidityCalibration(humidity_reference);
 
-	return !status;
+	return status;
 }
 
 LKCoreTemperatureSensor::Calibration const LKCoreTemperatureSensor::getCalibration()
