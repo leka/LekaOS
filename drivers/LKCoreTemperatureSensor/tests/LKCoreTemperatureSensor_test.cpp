@@ -38,26 +38,6 @@ class LKCoreTemperatureSensorTest : public ::testing::Test
 		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
 		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
 		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, read(_, _, _, _)).Times(1);
-		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
 	};
 };
 
@@ -71,7 +51,9 @@ TEST_F(LKCoreTemperatureSensorTest, initializationSequence)
 {
 	{
 		InSequence initSeq;
-		initialisationSequence();
+		for (int i = 0; i < 6; i++) {
+			initialisationSequence();
+		}
 		uint8_t t0deg[1] = {0x00};
 		EXPECT_CALL(i2cMock, write(_, _, _, _)).Times(1);
 		EXPECT_CALL(i2cMock, read(_, _, _, _)).WillOnce(DoAll(SetArrayArgument<1>(t0deg, t0deg + 1), Return(0)));
