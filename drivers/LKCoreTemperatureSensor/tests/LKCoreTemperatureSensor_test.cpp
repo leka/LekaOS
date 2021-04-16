@@ -96,7 +96,7 @@ TEST_F(LKCoreTemperatureSensorTest, initializationSequence)
 	ASSERT_EQ(sensor_calibration.temperature.y_intercept, expected_calibration.temperature.y_intercept);
 }
 
-TEST_F(LKCoreTemperatureSensorTest, GetTemperature)
+TEST_F(LKCoreTemperatureSensorTest, getTemperature)
 {
 	float_t temperature_slope		= 1;
 	float_t temperature_y_intercept = 0;
@@ -107,7 +107,7 @@ TEST_F(LKCoreTemperatureSensorTest, GetTemperature)
 	ASSERT_EQ(HTS221_temperatureSensor.getTemperature(), degC_expected);
 }
 
-TEST_F(LKCoreTemperatureSensorTest, GetHumidity)
+TEST_F(LKCoreTemperatureSensorTest, getHumidity)
 {
 	float_t humidity_slope		 = 1;
 	float_t humidity_y_intercept = 0;

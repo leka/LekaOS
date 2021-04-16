@@ -17,25 +17,21 @@ TEST(LKCoreI2CTests, initialisation)
 	ASSERT_NE(&corei2c, nullptr);
 }
 
-TEST(LKCoreI2CTests, coreI2CWrite)
+TEST(LKCoreI2CTests, writeTwoValues)
 {
-	char value[2] = {0x08, 0x09};
+	auto expected_written_values = std::vector<char> {0x08, 0x09};
+	corei2c.write(0, expected_written_values.data(), std::size(expected_written_values), false);
 
-	corei2c.write(0, value, 2, false);
-	std::vector<char> read_value = spy_temperatureSensor_getValue();
-
-	ASSERT_EQ(value[0], read_value[0]);
-	ASSERT_EQ(value[1], read_value[1]);
+	auto actual_written_values = spy_temperatureSensor_getValue();
+	ASSERT_EQ(expected_written_values, actual_written_values);
 }
 
-TEST(LKCoreI2CTests, coreI2CRead)
+TEST(LKCoreI2CTests, readTwoValues)
 {
-	std::vector<char> expected = {char(0x01), char(0x02)};
-	char read_value[2];
+	auto expected_read_values = std::vector<char> {0x01, 0x02};
+	auto actual_read_values	  = std::vector<char> {0x00, 0x00};
+	spy_temperatureSensor_setValue(expected_read_values);
+	corei2c.read(0, actual_read_values.data(), std::size(actual_read_values), false);
 
-	spy_temperatureSensor_setValue(expected);
-	corei2c.read(0, read_value, 2, false);
-
-	ASSERT_EQ(read_value[0], expected[0]);
-	ASSERT_EQ(read_value[1], expected[1]);
+	ASSERT_EQ(expected_read_values, actual_read_values);
 }

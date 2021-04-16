@@ -13,102 +13,104 @@ LKCoreTemperatureSensor::LKCoreTemperatureSensor(interface::LKCoreI2C &i2c) : _i
 	_register_io_function.handle	= (void *)this;
 }
 
-bool LKCoreTemperatureSensor::init()
+int32_t LKCoreTemperatureSensor::init()
 {
-	bool status = false;
-	status &= setPower(static_cast<uint8_t>(State::ON));
-	status &= setBlock_data_update(static_cast<uint8_t>(State::ON));
-	status &= setDataAquisitionRate(HTS221_ODR_7Hz);
-	status &= setHeater(static_cast<uint8_t>(State::OFF));
-	status &= setAverageTemperature(HTS221_T_AVG_16);
-	status &= setAverageHumidity(HTS221_H_AVG_32);
+	auto status = setPower(static_cast<uint8_t>(State::ON));
+	status		= setBlockDataUpdate(static_cast<uint8_t>(State::ON));
+	status		= setDataAquisitionRate(HTS221_ODR_7Hz);
+	status		= setHeater(static_cast<uint8_t>(State::OFF));
+	status		= setAverageTemperature(HTS221_T_AVG_16);
+	status		= setAverageHumidity(HTS221_H_AVG_32);
 
-	status &= calibration();
+	calibration();
 
 	return status;
 }
 
-bool LKCoreTemperatureSensor::setPower(uint8_t State)
+int32_t LKCoreTemperatureSensor::setPower(uint8_t State)
 {
-	bool status = hts221_power_on_set(&_register_io_function, State);
+	auto status = hts221_power_on_set(&_register_io_function, State);
 	return status;
 }
 
-bool LKCoreTemperatureSensor::setBlock_data_update(uint8_t State)
+int32_t LKCoreTemperatureSensor::setBlockDataUpdate(uint8_t State)
 {
-	bool status = hts221_block_data_update_set(&_register_io_function, State);
+	auto status = hts221_block_data_update_set(&_register_io_function, State);
 	return status;
 }
 
-bool LKCoreTemperatureSensor::setDataAquisitionRate(hts221_odr_t rate)
+int32_t LKCoreTemperatureSensor::setDataAquisitionRate(hts221_odr_t rate)
 {
-	bool status = hts221_data_rate_set(&_register_io_function, rate);
+	auto status = hts221_data_rate_set(&_register_io_function, rate);
 	return status;
 }
 
-bool LKCoreTemperatureSensor::setHeater(uint8_t State)
+int32_t LKCoreTemperatureSensor::setHeater(uint8_t State)
 {
-	bool status = hts221_heater_set(&_register_io_function, State);
+	auto status = hts221_heater_set(&_register_io_function, State);
 	return status;
 }
 
-bool LKCoreTemperatureSensor::setAverageTemperature(hts221_avgt_t nbAvgTemp)
+int32_t LKCoreTemperatureSensor::setAverageTemperature(hts221_avgt_t nbAvgTemp)
 {
-	bool status = hts221_temperature_avg_set(&_register_io_function, nbAvgTemp);
+	auto status = hts221_temperature_avg_set(&_register_io_function, nbAvgTemp);
 	return status;
 }
 
-bool LKCoreTemperatureSensor::setAverageHumidity(hts221_avgh_t nbAvgHum)
+int32_t LKCoreTemperatureSensor::setAverageHumidity(hts221_avgh_t nbAvgHum)
 {
-	bool status = hts221_humidity_avg_set(&_register_io_function, nbAvgHum);
+	auto status = hts221_humidity_avg_set(&_register_io_function, nbAvgHum);
 	return status;
 }
 
-bool LKCoreTemperatureSensor::getReferenceTemperature(Reference &temperature_reference)
+auto LKCoreTemperatureSensor::getReferenceTemperature()
 {
-	bool status = false;
-	status &= hts221_temp_deg_point_0_get(&_register_io_function, &temperature_reference.y0);
-	status &= hts221_temp_deg_point_1_get(&_register_io_function, &temperature_reference.y1);
-	status &= hts221_temp_adc_point_0_get(&_register_io_function, &temperature_reference.x0);
-	status &= hts221_temp_adc_point_1_get(&_register_io_function, &temperature_reference.x1);
-	return status;
+	float_t t0deg {0};
+	auto status = hts221_temp_deg_point_0_get(&_register_io_function, &t0deg);
+
+	float_t t1deg {0};
+	status = hts221_temp_deg_point_1_get(&_register_io_function, &t1deg);
+
+	float_t t0adc {0};
+	status = hts221_temp_adc_point_0_get(&_register_io_function, &t0adc);
+
+	float_t t1adc {0};
+	status = hts221_temp_adc_point_1_get(&_register_io_function, &t1adc);
+
+	std::tuple<float_t, float_t, float_t, float_t> ref(t0deg, t1deg, t0adc, t1adc);
+	return ref;
 }
 
-bool LKCoreTemperatureSensor::getReferenceHumidity(Reference &humidity_reference)
+auto LKCoreTemperatureSensor::getReferenceHumidity()
 {
-	bool status = false;
-	status &= hts221_hum_rh_point_0_get(&_register_io_function, &humidity_reference.y0);
-	status &= hts221_hum_rh_point_1_get(&_register_io_function, &humidity_reference.y1);
-	status &= hts221_hum_adc_point_0_get(&_register_io_function, &humidity_reference.x0);
-	status &= hts221_hum_adc_point_1_get(&_register_io_function, &humidity_reference.x1);
-	return status;
+	float_t h0rh {0};
+	hts221_hum_rh_point_0_get(&_register_io_function, &h0rh);
+
+	float_t h1rh {0};
+	hts221_hum_rh_point_1_get(&_register_io_function, &h1rh);
+
+	float_t h0adc {0};
+	hts221_hum_adc_point_0_get(&_register_io_function, &h0adc);
+
+	float_t h1adc {0};
+	hts221_hum_adc_point_1_get(&_register_io_function, &h1adc);
+
+	std::tuple<float_t, float_t, float_t, float_t> ref(h0rh, h1rh, h0adc, h1adc);
+	return ref;
 }
 
-void LKCoreTemperatureSensor::temperatureCalibration(Reference const &temperature_reference)
+void LKCoreTemperatureSensor::calibration()
 {
-	_calibration.temperature = utils::LinearInterpolation(temperature_reference.x0, temperature_reference.x1,
-														  temperature_reference.y0, temperature_reference.y1);
-}
+	auto temperature_reference = getReferenceTemperature();
+	auto humidity_reference	   = getReferenceHumidity();
 
-void LKCoreTemperatureSensor::humidityCalibration(Reference const &humidity_reference)
-{
-	_calibration.humidity = utils::LinearInterpolation(humidity_reference.x0, humidity_reference.x1,
-													   humidity_reference.y0, humidity_reference.y1);
-}
+	_calibration.temperature =
+		utils::LinearInterpolation(std::get<0>(temperature_reference), std::get<1>(temperature_reference),
+								   std::get<2>(temperature_reference), std::get<3>(temperature_reference));
 
-bool LKCoreTemperatureSensor::calibration()
-{
-	bool status {0};
-	Reference temperature_reference;
-	Reference humidity_reference;
-
-	status &= getReferenceTemperature(temperature_reference);
-	status &= getReferenceHumidity(humidity_reference);
-
-	temperatureCalibration(temperature_reference);
-	humidityCalibration(humidity_reference);
-
-	return status;
+	_calibration.humidity =
+		utils::LinearInterpolation(std::get<0>(humidity_reference), std::get<1>(humidity_reference),
+								   std::get<2>(humidity_reference), std::get<3>(humidity_reference));
 }
 
 LKCoreTemperatureSensor::Calibration const LKCoreTemperatureSensor::getCalibration()
