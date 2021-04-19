@@ -30,7 +30,7 @@ namespace interface {
 class LKCoreTemperatureSensor : public interface::LKCoreTemperatureSensor
 {
   public:
-	explicit LKCoreTemperatureSensor(interface::LKCoreI2C &i2c);
+	explicit LKCoreTemperatureSensor(interface::I2C &i2c);
 
 	int32_t init() final;
 	celsius_t getTemperature() final;
