@@ -10,7 +10,7 @@
 
 namespace leka {
 
-class LKCoreI2CMock : public interface::LKCoreI2C
+class LKCoreI2CMock : public interface::I2C
 {
   public:
 	MOCK_METHOD(int, read, (int, char *, int, bool), (override));
