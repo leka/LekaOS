@@ -74,15 +74,6 @@ jobs:
         run: |
           make ccache_postbuild
 
-      - name: Upload compile_commands.json to gist
-        if: ${{ matrix.custom_target == 'LEKA_V1_2_DEV' }}
-        uses: exuanbo/actions-deploy-gist@v1.0.3
-        with:
-          token: ${{ secrets.GIST_TOKEN }}
-          gist_id: 705c060b5fa6bf84eda2e172c1db2aec
-          gist_file_name: compile_commands.json
-          file_path: _build/${{ matrix.custom_target }}/compile_commands.json
-
       - name: Upload build artifacts
         if: |
           contains(matrix.custom_target, 'LEKA_V1_2_DEV') &&
