@@ -44,7 +44,7 @@ class LKCoreTemperatureSensor : public interface::LKCoreTemperatureSensor
 	const Calibration getCalibration();
 
   private:
-	void calibration();
+	void calibrate();
 	auto getReferenceTemperature();
 	auto getReferenceHumidity();
 
@@ -52,8 +52,8 @@ class LKCoreTemperatureSensor : public interface::LKCoreTemperatureSensor
 	void enableBlockDataUpdate();
 	void setDataAquisitionRate();
 	void powerOffHeater();
-	void setAverageTemperature();
-	void setAverageHumidity();
+	void setNumberAverageTemperature();
+	void setNumberAverageHumidity();
 
 	float getReferenceTemperatureDegC0();
 	float getReferenceTemperatureDegC1();

@@ -19,10 +19,10 @@ void LKCoreTemperatureSensor::init()
 	enableBlockDataUpdate();
 	setDataAquisitionRate();
 	powerOffHeater();
-	setAverageTemperature();
-	setAverageHumidity();
+	setNumberAverageTemperature();
+	setNumberAverageHumidity();
 
-	calibration();
+	calibrate();
 }
 
 void LKCoreTemperatureSensor::powerOnDevice()
@@ -45,12 +45,12 @@ void LKCoreTemperatureSensor::powerOffHeater()
 	hts221_heater_set(&_register_io_function, static_cast<uint8_t>(State::OFF));
 }
 
-void LKCoreTemperatureSensor::setAverageTemperature()
+void LKCoreTemperatureSensor::setNumberAverageTemperature()
 {
 	hts221_temperature_avg_set(&_register_io_function, HTS221_T_AVG_16);
 }
 
-void LKCoreTemperatureSensor::setAverageHumidity()
+void LKCoreTemperatureSensor::setNumberAverageHumidity()
 {
 	hts221_humidity_avg_set(&_register_io_function, HTS221_H_AVG_32);
 }
@@ -77,7 +77,7 @@ auto LKCoreTemperatureSensor::getReferenceHumidity()
 	return ref;
 }
 
-void LKCoreTemperatureSensor::calibration()
+void LKCoreTemperatureSensor::calibrate()
 {
 	auto temperature_reference = getReferenceTemperature();
 	auto humidity_reference	   = getReferenceHumidity();
