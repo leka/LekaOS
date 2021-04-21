@@ -81,11 +81,11 @@ TEST(LKUtilsTest, LinearFunctionyInterceptValue)
 	float y1 = 5.0;
 	float y2 = 6.0;
 
-	LinearFunctionValues values;
-	values = linearFunction(x1, x2, y1, y2);
+	LinearFunctionCoefficients coefficients;
+	coefficients = computeLinearCoefficients(x1, x2, y1, y2);
 
-	ASSERT_EQ(values.slope, 1.0);
-	ASSERT_EQ(values.y_intercept, 5.0);
+	ASSERT_EQ(coefficients.slope, 1.0);
+	ASSERT_EQ(coefficients.y_intercept, 5.0);
 }
 
 TEST(LKUtilsTest, LinearFunctionDividedByZero)
@@ -95,9 +95,9 @@ TEST(LKUtilsTest, LinearFunctionDividedByZero)
 	float y1 = 0.0;
 	float y2 = 1.0;
 
-	LinearFunctionValues values;
-	values = linearFunction(x1, x2, y1, y2);
+	LinearFunctionCoefficients coefficients;
+	coefficients = computeLinearCoefficients(x1, x2, y1, y2);
 
-	ASSERT_EQ(values.slope, 0);
-	ASSERT_EQ(values.y_intercept, 0);
+	ASSERT_EQ(coefficients.slope, 0);
+	ASSERT_EQ(coefficients.y_intercept, 0);
 }
