@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "LKUtils.h"
-
 #include "gtest/gtest.h"
 
 // Test list
@@ -72,32 +71,4 @@ TEST(LKUtilsTest, mapFloatToUint8Middle)
 
 	auto result = map(value, 0.0f, 1.0f, min, max);
 	ASSERT_EQ(result, 51);
-}
-
-TEST(LKUtilsTest, LinearFunctionyInterceptValue)
-{
-	float x1 = 0.0;
-	float x2 = 1.0;
-	float y1 = 5.0;
-	float y2 = 6.0;
-
-	LinearFunctionCoefficients coefficients;
-	coefficients = computeLinearCoefficients(x1, x2, y1, y2);
-
-	ASSERT_EQ(coefficients.slope, 1.0);
-	ASSERT_EQ(coefficients.y_intercept, 5.0);
-}
-
-TEST(LKUtilsTest, LinearFunctionDividedByZero)
-{
-	float x1 = 5.0;
-	float x2 = 5.0;
-	float y1 = 0.0;
-	float y2 = 1.0;
-
-	LinearFunctionCoefficients coefficients;
-	coefficients = computeLinearCoefficients(x1, x2, y1, y2);
-
-	ASSERT_EQ(coefficients.slope, 0);
-	ASSERT_EQ(coefficients.y_intercept, 0);
 }
