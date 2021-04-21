@@ -13,6 +13,13 @@ OutputType map(IntputType x, IntputType in_min, IntputType in_max, OutputType ou
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+struct LinearFunctionValues {
+	float slope {0};
+	float y_intercept {0};
+};
+
+LinearFunctionValues linearFunction(float x1, float x2, float y1, float y2);
+
 }	// namespace leka::utils
 
 #endif	 // _LEKA_OS_LIB_LKUTILS_H_
