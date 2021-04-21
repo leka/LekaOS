@@ -17,7 +17,8 @@ target_sources(LKUtils
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
-		tests/LKUtils_test.cpp
+		tests/LKUtils_test_map.cpp
+		tests/LKUtils_test_linear_function.cpp
 	)
 
 endif()

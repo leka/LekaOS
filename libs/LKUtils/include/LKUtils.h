@@ -5,6 +5,9 @@
 #ifndef _LEKA_OS_LIB_LKUTILS_H_
 #define _LEKA_OS_LIB_LKUTILS_H_
 
+#include <iostream>
+#include <tuple>
+
 namespace leka::utils {
 
 template <typename OutputType, typename IntputType>
@@ -13,12 +16,8 @@ OutputType map(IntputType x, IntputType in_min, IntputType in_max, OutputType ou
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-struct LinearFunctionCoefficients {
-	float slope {0};
-	float y_intercept {0};
-};
-
-LinearFunctionCoefficients computeLinearCoefficients(float x1, float x2, float y1, float y2);
+std::pair<float, float> computeLinearCoefficientsPair(float x1, float x2, float y1, float y2);
+std::tuple<float, float> computeLinearCoefficientsTuple(float x1, float x2, float y1, float y2);
 
 }	// namespace leka::utils
 
