@@ -6,24 +6,22 @@
 
 namespace leka::utils {
 
-std::pair<float, float> computeLinearCoefficientsPair(float x1, float x2, float y1, float y2)
+LinearFunctionCoefficients computeLinearCoefficients(float x1, float x2, float y1, float y2)
 {
-	// auto pair = LinearFunctionCoefficientsPair;
-	auto pair = std::make_pair(0., 0.);
+	auto coefficients = LinearFunctionCoefficients {0, 0};
 
 	if (x2 - x1 == 0) {
-		return pair;
+		return coefficients;
 	}
 
-	pair.first	= (y2 - y1) / (x2 - x1);
-	pair.second = y1 - pair.first * x1;
+	coefficients.slope		 = (y2 - y1) / (x2 - x1);
+	coefficients.y_intercept = y1 - coefficients.slope * x1;
 
-	return pair;
+	return coefficients;
 }
 
 std::tuple<float, float> computeLinearCoefficientsTuple(float x1, float x2, float y1, float y2)
 {
-	// auto pair = LinearFunctionCoefficientsPair;
 	auto tuple = std::make_tuple(0., 0.);
 
 	if (x2 - x1 == 0) {
