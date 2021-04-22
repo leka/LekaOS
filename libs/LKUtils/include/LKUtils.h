@@ -15,13 +15,17 @@ OutputType map(IntputType x, IntputType in_min, IntputType in_max, OutputType ou
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-struct LinearFunctionCoefficients {
-	float slope {0};
-	float y_intercept {0};
-};
+namespace math {
 
-LinearFunctionCoefficients computeLinearCoefficients(float x1, float x2, float y1, float y2);
-std::tuple<float, float> computeLinearCoefficientsTuple(float x1, float x2, float y1, float y2);
+	struct LinearFunctionCoefficients {
+		float slope {0};
+		float y_intercept {0};
+	};
+
+	LinearFunctionCoefficients computeLinearCoefficients(float x1, float x2, float y1, float y2);
+	std::tuple<float, float> computeLinearCoefficientsTuple(float x1, float x2, float y1, float y2);
+
+}	// namespace math
 
 }	// namespace leka::utils
 
