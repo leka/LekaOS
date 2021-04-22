@@ -2,17 +2,17 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreI2C.h"
+#include "CoreI2C.h"
 
 #include "gtest/gtest.h"
 #include "stub_I2C.h"
 
 using namespace leka;
 
-class LKCoreI2CTests : public ::testing::Test
+class CoreI2CTests : public ::testing::Test
 {
   protected:
-	LKCoreI2CTests() : corei2c(i2c) {}
+	CoreI2CTests() : corei2c(i2c) {}
 
 	void SetUp() override
 	{
@@ -23,19 +23,19 @@ class LKCoreI2CTests : public ::testing::Test
 	// void TearDown() override {}
 
 	mbed::I2C i2c {NC, NC};
-	LKCoreI2C corei2c;
+	CoreI2C corei2c;
 
-	std::vector<char> expected_read_values;
-	std::vector<char> actual_read_values;
-	std::vector<char> expected_written_values;
+	std::vector<uint8_t> expected_read_values;
+	std::vector<uint8_t> actual_read_values;
+	std::vector<uint8_t> expected_written_values;
 };
 
-TEST_F(LKCoreI2CTests, initialisation)
+TEST_F(CoreI2CTests, initialisation)
 {
 	ASSERT_NE(&corei2c, nullptr);
 }
 
-TEST_F(LKCoreI2CTests, writeZeroBytes)
+TEST_F(CoreI2CTests, writeZeroBytes)
 {
 	expected_written_values = {};
 
@@ -44,7 +44,7 @@ TEST_F(LKCoreI2CTests, writeZeroBytes)
 	ASSERT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
 }
 
-TEST_F(LKCoreI2CTests, writeOneByte)
+TEST_F(CoreI2CTests, writeOneByte)
 {
 	expected_written_values = {0x01};
 
@@ -53,7 +53,7 @@ TEST_F(LKCoreI2CTests, writeOneByte)
 	ASSERT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
 }
 
-TEST_F(LKCoreI2CTests, writeTwoBytes)
+TEST_F(CoreI2CTests, writeTwoBytes)
 {
 	expected_written_values = {0x01, 0x02};
 
@@ -62,7 +62,7 @@ TEST_F(LKCoreI2CTests, writeTwoBytes)
 	ASSERT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
 }
 
-TEST_F(LKCoreI2CTests, writeFiveBytes)
+TEST_F(CoreI2CTests, writeFiveBytes)
 {
 	expected_written_values = {0x01, 0x02, 0x03, 0x04, 0x05};
 
@@ -71,7 +71,7 @@ TEST_F(LKCoreI2CTests, writeFiveBytes)
 	ASSERT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
 }
 
-TEST_F(LKCoreI2CTests, writeTenBytes)
+TEST_F(CoreI2CTests, writeTenBytes)
 {
 	expected_written_values = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A};
 
@@ -80,7 +80,7 @@ TEST_F(LKCoreI2CTests, writeTenBytes)
 	ASSERT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
 }
 
-TEST_F(LKCoreI2CTests, readZeroBytes)
+TEST_F(CoreI2CTests, readZeroBytes)
 {
 	expected_read_values = {};
 	actual_read_values.resize(0);
@@ -91,7 +91,7 @@ TEST_F(LKCoreI2CTests, readZeroBytes)
 	EXPECT_EQ(expected_read_values, actual_read_values);
 }
 
-TEST_F(LKCoreI2CTests, readOneByte)
+TEST_F(CoreI2CTests, readOneByte)
 {
 	expected_read_values = {0x01};
 	actual_read_values.resize(1);
@@ -102,7 +102,7 @@ TEST_F(LKCoreI2CTests, readOneByte)
 	EXPECT_EQ(expected_read_values, actual_read_values);
 }
 
-TEST_F(LKCoreI2CTests, readTwoBytes)
+TEST_F(CoreI2CTests, readTwoBytes)
 {
 	expected_read_values = {0x01, 0x02};
 	actual_read_values.resize(2);
@@ -113,7 +113,7 @@ TEST_F(LKCoreI2CTests, readTwoBytes)
 	EXPECT_EQ(expected_read_values, actual_read_values);
 }
 
-TEST_F(LKCoreI2CTests, readFiveBytes)
+TEST_F(CoreI2CTests, readFiveBytes)
 {
 	expected_read_values = {0x01, 0x02, 0x03, 0x04, 0x05};
 	actual_read_values.resize(5);
@@ -124,7 +124,7 @@ TEST_F(LKCoreI2CTests, readFiveBytes)
 	EXPECT_EQ(expected_read_values, actual_read_values);
 }
 
-TEST_F(LKCoreI2CTests, readTenBytes)
+TEST_F(CoreI2CTests, readTenBytes)
 {
 	expected_read_values = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A};
 	actual_read_values.resize(10);
