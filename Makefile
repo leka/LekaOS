@@ -127,6 +127,9 @@ config_tools_build: mkdir_tools_config
 
 ut:
 	@$(MAKE) unit_tests
+
+utc:
+	@$(MAKE) unit_tests
 	@$(MAKE) coverage
 
 unit_tests:
