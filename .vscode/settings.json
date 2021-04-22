@@ -87,5 +87,13 @@
 		"MD033": false
 	},
 	"editor.formatOnSave": true,
-	"cmake.configureOnOpen": true
+	"cmake.configureOnOpen": true,
+	"clangd.checkUpdates": true,
+	"clangd.arguments": [
+		"--query-driver=/usr/local/bin/arm-none-eabi*",
+		"--log=verbose",
+		"--completion-style=detailed",
+		"--clang-tidy",
+		"--clang-tidy-checks=-*,modernize*"
+	]
 }
