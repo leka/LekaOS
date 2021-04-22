@@ -5,8 +5,6 @@
 #ifndef _LEKA_OS_LIB_LKUTILS_H_
 #define _LEKA_OS_LIB_LKUTILS_H_
 
-#include <tuple>
-
 namespace leka::utils {
 
 template <typename OutputType, typename IntputType>
@@ -17,13 +15,17 @@ OutputType map(IntputType x, IntputType in_min, IntputType in_max, OutputType ou
 
 namespace math {
 
-	struct LinearFunctionCoefficients {
-		float slope {0};
-		float y_intercept {0};
+	struct Point {
+		float x {0.f};
+		float y {0.f};
 	};
 
-	LinearFunctionCoefficients computeLinearCoefficients(float x1, float x2, float y1, float y2);
-	std::tuple<float, float> computeLinearCoefficientsTuple(float x1, float x2, float y1, float y2);
+	struct LinearCoefficients {
+		float slope {0.f};
+		float y_intercept {0.f};
+	};
+
+	auto computeLinearCoefficients(Point p1, Point p2) -> LinearCoefficients;
 
 }	// namespace math
 

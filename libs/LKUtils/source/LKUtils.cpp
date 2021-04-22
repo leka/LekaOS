@@ -4,34 +4,26 @@
 
 #include "LKUtils.h"
 
-namespace leka::utils {
+namespace leka::utils::math {
 
-LinearFunctionCoefficients computeLinearCoefficients(float x1, float x2, float y1, float y2)
+auto computeLinearCoefficients(Point p1, Point p2) -> LinearCoefficients
 {
-	auto coefficients = LinearFunctionCoefficients {0, 0};
+	auto coeffs = LinearCoefficients {0, 0};
 
-	if (x2 - x1 == 0) {
-		return coefficients;
+	if (p1.x > p2.x) {
+		// TODO: add log.error("p1 and p2 are inverted")
+		return coeffs;
 	}
 
-	coefficients.slope		 = (y2 - y1) / (x2 - x1);
-	coefficients.y_intercept = y1 - coefficients.slope * x1;
-
-	return coefficients;
-}
-
-std::tuple<float, float> computeLinearCoefficientsTuple(float x1, float x2, float y1, float y2)
-{
-	auto tuple = std::make_tuple(0., 0.);
-
-	if (x2 - x1 == 0) {
-		return tuple;
+	if (p2.x == p1.x) {
+		// TODO: add log.error("p1 and p2 have the same x value")
+		return coeffs;
 	}
 
-	std::get<0>(tuple) = (y2 - y1) / (x2 - x1);
-	std::get<1>(tuple) = y1 - std::get<0>(tuple) * x1;
+	coeffs.slope	   = (p2.y - p1.y) / (p2.x - p1.x);
+	coeffs.y_intercept = p1.y - coeffs.slope * p1.x;
 
-	return tuple;
+	return coeffs;
 }
 
-}	// namespace leka::utils
+}	// namespace leka::utils::math
