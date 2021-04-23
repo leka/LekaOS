@@ -87,6 +87,7 @@ target_sources(mbed-os
 		${MBED_STUBS_DIR}/stub_AnalogIn.cpp
 		${MBED_STUBS_DIR}/stub_PwmOut.cpp
 		${MBED_STUBS_DIR}/stub_I2C.cpp
+		${MBED_STUBS_DIR}/stub_Kernel.cpp
 
 		${MBED_STUBS_DIR}/stub_extension_EventQueue.cpp
 

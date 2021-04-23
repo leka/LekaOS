@@ -173,6 +173,7 @@ leka_register_unit_tests_for_driver(CoreI2C)
 leka_register_unit_tests_for_library(LKAnimationKit)
 leka_register_unit_tests_for_library(LKCalculatorKit)
 leka_register_unit_tests_for_library(LKUtils)
+leka_register_unit_tests_for_library(LogKit)
 
 #
 # Mark: - Finish up
