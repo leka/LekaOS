@@ -43,8 +43,8 @@ CMAKE_TOOLS_CONFIG_DIR := $(CMAKE_TOOLS_BUILD_DIR)/cmake_config
 # MARK: - Coverage exclusions
 #
 
-EXCLUDE_FROM_GCOVR_COVERAGE = -e '.*_build.*' -e '.*extern.*' -e '.*tests/unit.*' -e '.*_test\.cpp' -e '.*LKCoreSTM32Hal.*' -e '.*LKCoreFatFs.*'
-EXCLUDE_FROM_LCOV_COVERAGE  = '*Xcode*' '*_build*' '*extern*' '*tests/unit*' '*_test.cpp' '*LKCoreSTM32Hal*' '*LKCoreFatFs*'
+EXCLUDE_FROM_GCOVR_COVERAGE = -e '.*_build.*' -e '.*extern.*' -e '.*tests/unit.*' -e '.*_test.*\.cpp' -e '.*LKCoreSTM32Hal.*' -e '.*LKCoreFatFs.*'
+EXCLUDE_FROM_LCOV_COVERAGE  = '*Xcode*' '*_build*' '*extern*' '*tests/unit*' '*_test*.cpp' '*LKCoreSTM32Hal*' '*LKCoreFatFs*'
 
 #
 # MARK: - .bin path
