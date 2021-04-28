@@ -28,20 +28,6 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Create cache variables
-        id: create_cache_variables
-        run: |
-          echo "::set-output name=timestamp::$(date +'%Y%m%d%H%M%S')"
-
-      - name: Cache ccache files
-        id: cache_ccache_files
-        uses: actions/cache@v2
-        with:
-          path: ~/.ccache
-          key: ${ { runner.os } }-cache-ccache_files-${ { steps.create_cache_variables.outputs.timestamp } }
-          restore-keys: |
-            ${ { runner.os } }-cache-ccache_files-
-
       - name: Cache Mbed OS
         id: cache_mbed_os
         uses: actions/cache@v2
