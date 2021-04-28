@@ -4,6 +4,13 @@
 
 cmake_minimum_required(VERSION 3.18)
 
+# Activate ccache if available
+find_program(CCACHE "ccache")
+if(CCACHE)
+    set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE}")
+    set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE}")
+endif(CCACHE)
+
 message(STATUS "")
 
 message(STATUS [==[                                                                                          ]==])
