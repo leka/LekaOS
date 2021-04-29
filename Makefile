@@ -9,6 +9,7 @@
 ROOT_DIR          := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 CMAKE_DIR         := $(ROOT_DIR)/cmake
 MBED_OS_DIR       := $(ROOT_DIR)/extern/mbed-os
+PELION_OS_DIR     := $(ROOT_DIR)/extern/mbed-cloud-client
 
 #
 # MARK: - Arguments
@@ -245,6 +246,16 @@ mbed_symlink_files:
 	@echo "🔗 Symlinking templates to Mbed OS directory 🗂️"
 	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_CMakelists.txt $(MBED_OS_DIR)/CMakeLists.txt
 	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_mbedignore.txt $(MBED_OS_DIR)/.mbedignore
+
+#
+# MARK: - Pelion
+#
+
+pelion_clone:
+	@echo ""
+	@echo "🧬 Cloning Pelion 📦"
+	@rm -rf $(PELION_OS_DIR)
+	git clone --depth=1 --branch=4.8.0 https://github.com/PelionIoT/mbed-cloud-client $(PELION_OS_DIR)
 
 #
 # MARK: - Utils targets
