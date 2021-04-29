@@ -50,9 +50,11 @@ add_compile_options(
 # Before all, set ROOT_DIR, MBED_OS_DIR
 set(ROOT_DIR    ${CMAKE_CURRENT_LIST_DIR})
 set(MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
+set(PELION_DIR  ${ROOT_DIR}/extern/mbed-cloud-client)
 
 # And include mbed-cmake.cmake
 include(./mbed-cmake.cmake)
+include(./pelion.cmake)
 
 # Then configure name of the project
 project(LekaOS LANGUAGES C CXX ASM)
@@ -77,6 +79,7 @@ endif()
 # Add drivers & libraries
 add_subdirectory(${DRIVERS_DIR})
 add_subdirectory(${LIBS_DIR})
+add_subdirectory(${PELION_DIR})
 
 # Add spikes, functional tests
 add_subdirectory(${SPIKES_DIR})
