@@ -5,16 +5,16 @@
 #ifndef _LEKA_OS_I2C_MOCK_H_
 #define _LEKA_OS_I2C_MOCK_H_
 
-#include "LKCoreI2C.h"
+#include "CoreI2C.h"
 #include "gmock/gmock.h"
 
 namespace leka {
 
-class LKCoreI2CMock : public interface::LKCoreI2C
+class LKCoreI2CMock : public interface::I2C
 {
   public:
-	MOCK_METHOD(int, read, (int, char *, int, bool), (override));
-	MOCK_METHOD(int, write, (int, const char *, int, bool), (override));
+	MOCK_METHOD(int, read, (int, uint8_t *, int, bool), (override));
+	MOCK_METHOD(int, write, (int, const uint8_t *, int, bool), (override));
 };
 
 }	// namespace leka

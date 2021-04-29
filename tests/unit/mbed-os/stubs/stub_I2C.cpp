@@ -40,15 +40,15 @@ void I2C::unlock(void)
 
 namespace leka {
 
-std::vector<char> spy_I2C_read_values;
-std::vector<char> spy_I2C_write_values;
+std::vector<uint8_t> spy_I2C_read_values;
+std::vector<uint8_t> spy_I2C_write_values;
 
-void spy_temperatureSensor_setValuesBeforeRead(std::vector<char> values)
+void spy_temperatureSensor_setValuesBeforeRead(std::vector<uint8_t> values)
 {
 	spy_I2C_read_values = values;
 }
 
-std::vector<char> spy_temperatureSensor_getValuesAfterWrite()
+std::vector<uint8_t> spy_temperatureSensor_getValuesAfterWrite()
 {
 	return spy_I2C_write_values;
 }
