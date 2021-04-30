@@ -19,8 +19,8 @@
 #ifndef PAL_MBEDOS_CONFIGURATION_H_
 #define PAL_MBEDOS_CONFIGURATION_H_
 
-#include "cmsis_os.h"
-#include "mbed_version.h"
+// #include "cmsis_os.h"
+// #include "mbed_version.h"
 
 /*!
 * \brief This file is for more specific definitions (per board or module if needed).

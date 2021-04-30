@@ -56,6 +56,9 @@ set(PELION_DIR  ${ROOT_DIR}/extern/mbed-cloud-client)
 include(./mbed-cmake.cmake)
 include(./pelion.cmake)
 
+add_definitions(-DPAL_PLATFORM_DEFINED_CONFIGURATION="mbed-client-pal/Configs/pal_config/mbedOS/mbedOS_SST.h")
+add_definitions(-DMBED_CONF_NS_HAL_PAL_EVENT_LOOP_THREAD_STACK_SIZE=6144)
+
 # Then configure name of the project
 project(LekaOS LANGUAGES C CXX ASM)
 
