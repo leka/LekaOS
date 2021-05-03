@@ -32,6 +32,9 @@
  *      - Userinfo parameter is not handled
  */
 
+#ifndef HTTP_RECEIVE_BUFFER_SIZE
+#define HTTP_RECEIVE_BUFFER_SIZE 8 * 1024
+#endif
 
 /**
  * \brief HttpRequest implements the logic for interacting with HTTPS servers.
@@ -126,7 +129,8 @@ public:
                 return NULL;
             }
 
-            nsapi_error_t connection_result = socket->connect(parsed_url->host(), parsed_url->port());
+			SocketAddress socket_address(parsed_url->host(), parsed_url->port());
+            nsapi_error_t connection_result = socket->connect(socket_address);
             if (connection_result != 0) {
                 error = connection_result;
                 return NULL;
