@@ -15,12 +15,13 @@ target_sources(spike_lk_cg_animations
 )
 
 target_link_libraries(spike_lk_cg_animations
-		lib_HelloWorld
-		LKCoreFatFs
-		LKCoreVideo
-		LKCoreLL
-		LKCoreSTM32Hal
-		LKAnimationKit
+	LogKit
+	lib_HelloWorld
+	LKCoreFatFs
+	LKCoreVideo
+	LKCoreLL
+	LKCoreSTM32Hal
+	LKAnimationKit
 )
 
 target_link_custom_leka_targets(spike_lk_cg_animations)

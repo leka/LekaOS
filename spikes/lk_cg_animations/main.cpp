@@ -2,7 +2,11 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "mbed.h"
+#include "drivers/BufferedSerial.h"
+#include "events/EventQueue.h"
+#include "rtos/Kernel.h"
+#include "rtos/ThisThread.h"
+#include "rtos/Thread.h"
 
 #include "BouncingSquare.h"
 #include "FATFileSystem.h"
@@ -21,9 +25,11 @@
 #include "LKCoreSDRAM.h"
 #include "LKCoreSTM32Hal.h"
 #include "LKCoreVideo.h"
+#include "LogKit.h"
 #include "SDBlockDevice.h"
 
 using namespace leka;
+using namespace std::chrono;
 
 HelloWorld hello;
 
@@ -45,19 +51,20 @@ LKCoreLCD corelcd(coreotm);
 LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
 LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
-Thread animation_thread;
-EventQueue animation_event_queue;
+rtos::Thread animation_thread;
+events::EventQueue animation_event_queue;
+
 animation::BouncingSquare animation_bouncing_square(coregraphics);
 LKAnimationKit animationkit(animation_thread, animation_event_queue);
 
-static BufferedSerial serial(USBTX, USBRX, 9600);
-
-constexpr uint8_t buff_size = 128;
-char buff[buff_size] {};
-
-int main(void)
+auto main() -> int
 {
-	auto start = Kernel::Clock::now();
+	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
+	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+
+	log_info("Hello, World!\n\n");
+
+	auto start = rtos::Kernel::Clock::now();
 
 	rtos::ThisThread::sleep_for(2s);
 
@@ -66,10 +73,9 @@ int main(void)
 	hello.start();
 
 	while (true) {
-		auto t	   = Kernel::Clock::now() - start;
-		int length = sprintf(buff, "A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME,
-							 hello.world, int(t.count() / 1000));
-		serial.write(buff, length);
+		auto t = rtos::Kernel::Clock::now() - start;
+		log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world,
+				 int(t.count() / 1000));
 
 		animationkit.start(animation_bouncing_square);
 		rtos::ThisThread::sleep_for(5s);
