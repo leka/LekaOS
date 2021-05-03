@@ -11,6 +11,9 @@ add_subdirectory(${DRIVERS_DIR}/LKCoreSTM32Hal)
 # LCD drivers
 add_subdirectory(${DRIVERS_DIR}/LKCoreVideo)
 
+# Wifi drivers
+add_subdirectory(${DRIVERS_DIR}/CoreWifi)
+
 # Sensors drivers
 add_subdirectory(${DRIVERS_DIR}/CoreHTS)
 add_subdirectory(${DRIVERS_DIR}/LKCoreBattery)
