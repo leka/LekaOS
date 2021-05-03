@@ -2,15 +2,18 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#include <chrono>
+
 #include "events/mbed_events.h"
 
 #include "ble/BLE.h"
 #include "ble/Gap.h"
 #include "ble/services/HeartRateService.h"
 
+#include "LogKit.h"
 #include "PrettyPrinter.h"
 
-const static char DEVICE_NAME[] = "Heartrate";
+const static auto DEVICE_NAME = std::array<char, 10> {"Heartrate"};
 static events::EventQueue event_queue(/* event count */ 32 * EVENTS_EVENT_SIZE);
 
 class HeartrateDemo : ble::Gap::EventHandler
@@ -24,7 +27,7 @@ class HeartrateDemo : ble::Gap::EventHandler
 		  _hr_uuid(GattService::UUID_HEART_RATE_SERVICE),
 		  _hr_counter(100),
 		  _hr_service(ble, _hr_counter, HeartRateService::LOCATION_FINGER),
-		  _adv_data_builder(_adv_buffer)
+		  _adv_data_builder(_adv_buffer.data(), std::size(_adv_buffer))
 	{
 	}
 
@@ -35,7 +38,7 @@ class HeartrateDemo : ble::Gap::EventHandler
 		_ble.init(this, &HeartrateDemo::onInitComplete);
 
 		// _event_queue.call_every(500ms, this, &HeartrateDemo::blink);
-		_event_queue.call_every(1000ms, this, &HeartrateDemo::update_sensor_value);
+		_event_queue.call_every(std::chrono::milliseconds(1000), this, &HeartrateDemo::update_sensor_value);
 
 		// _event_queue.dispatch_forever();
 		// printf("dispatch_forever\n");
@@ -46,7 +49,7 @@ class HeartrateDemo : ble::Gap::EventHandler
 	void onInitComplete(BLE::InitializationCompleteCallbackContext *params)
 	{
 		if (params->error != BLE_ERROR_NONE) {
-			printf("Ble initialization failed.");
+			log_error("Ble initialization failed.");
 			return;
 		}
 
@@ -65,7 +68,7 @@ class HeartrateDemo : ble::Gap::EventHandler
 		_adv_data_builder.setFlags();
 		_adv_data_builder.setAppearance(ble::adv_data_appearance_t::GENERIC_HEART_RATE_SENSOR);
 		_adv_data_builder.setLocalServiceList(mbed::make_Span(&_hr_uuid, 1));
-		_adv_data_builder.setName(DEVICE_NAME);
+		_adv_data_builder.setName(DEVICE_NAME.data());
 
 		/* Setup advertising */
 
@@ -115,13 +118,13 @@ class HeartrateDemo : ble::Gap::EventHandler
   private:
 	/* Event handler */
 
-	void onDisconnectionComplete(const ble::DisconnectionCompleteEvent &)
+	void onDisconnectionComplete(const ble::DisconnectionCompleteEvent &) override
 	{
 		_ble.gap().startAdvertising(ble::LEGACY_ADVERTISING_HANDLE);
 		_connected = false;
 	}
 
-	virtual void onConnectionComplete(const ble::ConnectionCompleteEvent &event)
+	void onConnectionComplete(const ble::ConnectionCompleteEvent &event) override
 	{
 		if (event.getStatus() == BLE_ERROR_NONE) {
 			_connected = true;
@@ -131,15 +134,12 @@ class HeartrateDemo : ble::Gap::EventHandler
   private:
 	BLE &_ble;
 	events::EventQueue &_event_queue;
-	// DigitalOut _led1;
 
 	bool _connected;
-
 	UUID _hr_uuid;
-
 	uint8_t _hr_counter;
 	HeartRateService _hr_service;
 
-	uint8_t _adv_buffer[ble::LEGACY_ADVERTISING_MAX_SIZE];
+	std::array<uint8_t, ble::LEGACY_ADVERTISING_MAX_SIZE> _adv_buffer;
 	ble::AdvertisingDataBuilder _adv_data_builder;
 };
