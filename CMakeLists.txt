@@ -50,6 +50,7 @@ add_compile_options(
 # Before all, set ROOT_DIR, MBED_OS_DIR
 set(ROOT_DIR    ${CMAKE_CURRENT_LIST_DIR})
 set(MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
+set(MBED_HTTP_DIR ${ROOT_DIR}/extern/mbed-http)
 
 # And include mbed-cmake.cmake
 include(./mbed-cmake.cmake)
@@ -81,6 +82,8 @@ add_subdirectory(${LIBS_DIR})
 # Add spikes, functional tests
 add_subdirectory(${SPIKES_DIR})
 add_subdirectory(${TESTS_DIR}/functional)
+
+add_subdirectory(${MBED_HTTP_DIR})
 
 # Add LekaOS
 add_subdirectory(${OS_DIR})
