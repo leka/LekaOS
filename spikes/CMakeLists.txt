@@ -12,6 +12,7 @@ add_subdirectory(${SPIKES_DIR}/lk_led)
 add_subdirectory(${SPIKES_DIR}/lk_qspi)
 add_subdirectory(${SPIKES_DIR}/lk_rfid)
 add_subdirectory(${SPIKES_DIR}/lk_wifi)
+add_subdirectory(${SPIKES_DIR}/lk_log_kit)
 add_subdirectory(${SPIKES_DIR}/lk_motors)
 add_subdirectory(${SPIKES_DIR}/lk_sensor_battery)
 add_subdirectory(${SPIKES_DIR}/lk_bluetooth)
@@ -30,6 +31,7 @@ add_dependencies( spikes_leka
 	spike_lk_qspi
 	spike_lk_rfid
 	spike_lk_wifi
+	spike_lk_log_kit
 	spike_lk_motors
 	spike_lk_sensor_battery
 	spike_lk_bluetooth
