@@ -2,29 +2,25 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "mbed.h"
+#include <cstddef>
 
 #include "PinNames.h"
 
+#include "drivers/BufferedSerial.h"
+#include "drivers/HighResClock.h"
+#include "drivers/SPI.h"
+#include "rtos/Kernel.h"
+#include "rtos/ThisThread.h"
+
 #include "FastLED.h"
 #include "HelloWorld.h"
+#include "LogKit.h"
 
 using namespace leka;
+using namespace std::chrono;
 
-// SPI spi(D11, NC, D13);
-SPI spi(LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK);
-
-#define NUM_LEDS   20
-#define BRIGHTNESS 255
-
-CRGB leds[NUM_LEDS];
-
-HelloWorld hello;
-
-// static BufferedSerial serial(USBTX, USBRX, 9600);
-
-// constexpr uint8_t buff_size = 128;
-// char buff[buff_size] {};
+auto const NUM_LEDS	  = 20;
+auto const BRIGHTNESS = 255;
 
 CRGBPalette16 currentPalette;
 TBlendType currentBlending;
@@ -32,16 +28,17 @@ TBlendType currentBlending;
 extern CRGBPalette16 myRedWhiteBluePalette;
 extern const TProgmemPalette16 myRedWhiteBluePalette_p;
 
-uint32_t mainMillis()
+auto mainMillis() -> uint32_t
 {
-	HighResClock::lock();
-	auto t = HighResClock::now();
-	HighResClock::unlock();
+	mbed::HighResClock::lock();
+	auto t = mbed::HighResClock::now();
+	mbed::HighResClock::unlock();
 	std::chrono::microseconds tms = t.time_since_epoch();
 	return static_cast<uint32_t>(tms.count() / 1000);
 }
 
-void FillLEDsFromPaletteColors(uint8_t colorIndex)
+template <std::size_t N>
+void FillLEDsFromPaletteColors(std::array<CRGB, N> &leds, uint8_t colorIndex)
 {
 	uint8_t brightness = 255;
 
@@ -164,11 +161,19 @@ const TProgmemPalette16 myRedWhiteBluePalette_p = {CRGB::Red,
 
 												   CRGB::Orange, CRGB::Gray,   CRGB::Orange, CRGB::Black};
 
-int main(void)
+auto main() -> int
 {
-	printf("\nHello, Investigation Day!\n\n");
+	auto leds = std::array<CRGB, NUM_LEDS> {};
+	mbed::SPI spi(LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK);
 
-	FastLED.addLeds<SK9822, LED_BELT_SPI_MOSI, LED_BELT_SPI_SCK, RGB>(leds, spi, NUM_LEDS);
+	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
+	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+
+	HelloWorld hello;
+	hello.start();
+	log_info("Hello, World!\n\n");
+
+	FastLED.addLeds<SK9822, LED_BELT_SPI_MOSI, LED_BELT_SPI_SCK, RGB>(leds.data(), spi, NUM_LEDS);
 	FastLED.setBrightness(BRIGHTNESS);
 
 	leds[0] = CRGB::White;
@@ -184,8 +189,6 @@ int main(void)
 	currentPalette	= RainbowColors_p;
 	currentBlending = LINEARBLEND;
 
-	hello.start();
-
 	while (true) {
 		ChangePalettePeriodically();
 
@@ -193,7 +196,7 @@ int main(void)
 
 		startIndex = startIndex + 1;   // motion speed
 
-		FillLEDsFromPaletteColors(startIndex);
+		FillLEDsFromPaletteColors(leds, startIndex);
 
 		FastLED.show();
 
