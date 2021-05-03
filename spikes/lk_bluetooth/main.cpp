@@ -2,39 +2,39 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "mbed.h"
+#include "rtos/Kernel.h"
+#include "rtos/ThisThread.h"
+#include "rtos/Thread.h"
 
 #include "HelloWorld.h"
 #include "LekaBluetooth.h"
+#include "LogKit.h"
 
 using namespace leka;
+using namespace std::chrono;
 
-HelloWorld hello;
-Bluetooth leka_bluetooth;
-
-static BufferedSerial serial(USBTX, USBRX, 9600);
-
-constexpr uint8_t buff_size = 128;
-char buff[buff_size] {};
-
-Thread bluetooth_thread;
-
-int main(void)
+auto main() -> int
 {
-	auto start = Kernel::Clock::now();
+	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
+	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 
-	printf("\nHello, Investigation Day!\n\n");
+	auto start = rtos::Kernel::Clock::now();
 
-	bluetooth_thread.start({&leka_bluetooth, &Bluetooth::start});
+	log_info("Hello, World!\n\n");
+
+	Bluetooth bluetooth;
+	rtos::Thread bluetooth_thread;
+	bluetooth_thread.start({&bluetooth, &Bluetooth::start});
+
 	rtos::ThisThread::sleep_for(2s);
 
+	HelloWorld hello;
 	hello.start();
 
 	while (true) {
-		auto t	   = Kernel::Clock::now() - start;
-		int length = sprintf(buff, "A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME,
-							 hello.world, int(t.count() / 1000));
-		serial.write(buff, length);
+		auto t = rtos::Kernel::Clock::now() - start;
+		log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world,
+				 int(t.count() / 1000));
 		rtos::ThisThread::sleep_for(1s);
 	}
 }

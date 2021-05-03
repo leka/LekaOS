@@ -4,17 +4,20 @@
 
 add_mbed_executable(spike_lk_bluetooth)
 
-target_sources(spike_lk_bluetooth
-  PRIVATE
-    main.cpp
-)
-
 target_include_directories(spike_lk_bluetooth
-  PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+	PRIVATE
+		.
 )
 
-target_link_libraries(spike_lk_bluetooth lib_HelloWorld)
-target_link_libraries(spike_lk_bluetooth lib_LekaBluetooth)
+target_sources(spike_lk_bluetooth
+	PRIVATE
+		main.cpp
+)
+
+target_link_libraries(spike_lk_bluetooth
+	LogKit
+	lib_HelloWorld
+	lib_LekaBluetooth
+)
 
 target_link_custom_leka_targets(spike_lk_bluetooth)
