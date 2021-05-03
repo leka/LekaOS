@@ -15,6 +15,9 @@ target_include_directories(spike_lk_wifi
 )
 
 target_link_libraries(spike_lk_wifi lib_HelloWorld)
-target_link_libraries(spike_lk_wifi lib_LekaWifi)
+target_link_libraries(spike_lk_wifi FileManager)
+target_link_libraries(spike_lk_wifi CoreWifi)
+target_link_libraries(spike_lk_wifi HTTP)
+
 
 target_link_custom_leka_targets(spike_lk_wifi)
