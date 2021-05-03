@@ -17,4 +17,5 @@ target_sources(lib_PrettyPrinter
 target_link_libraries(lib_PrettyPrinter
 	PRIVATE
 		mbed-os
+		LogKit
 )
