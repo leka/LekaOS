@@ -2,35 +2,35 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "mbed.h"
-
 #include "PinNames.h"
+
+#include "drivers/BufferedSerial.h"
+#include "rtos/Kernel.h"
+#include "rtos/ThisThread.h"
+#include "rtos/Thread.h"
 
 #include "HelloWorld.h"
 #include "LKCoreLightSensor.h"
+#include "LogKit.h"
 
 using namespace leka;
+using namespace std::chrono;
 
-HelloWorld hello;
-
-LKCoreLightSensor lightSensor(SENSOR_LIGHT_ADC_INPUT);
-
-static BufferedSerial serial(USBTX, USBRX, 9600);
-
-constexpr uint8_t buff_size = 128;
-char buff[buff_size] {};
-
-int main(void)
+auto main() -> int
 {
+	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
+	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+
+	log_info("Hello, World!\n\n");
 	rtos::ThisThread::sleep_for(2s);
 
+	HelloWorld hello;
 	hello.start();
 
-	while (true) {
-		// TODO: print floats
-		int length = sprintf(buff, "%d\n", static_cast<int>(100 * lightSensor.readLuminosity()));
-		serial.write(buff, length);
+	LKCoreLightSensor lightSensor(SENSOR_LIGHT_ADC_INPUT);
 
+	while (true) {
+		log_info("Current luminosity: %.4f", lightSensor.readLuminosity());
 		rtos::ThisThread::sleep_for(33ms);
 	}
 }
