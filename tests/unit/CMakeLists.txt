@@ -68,6 +68,9 @@ set(MBED_MOCKS_DIR   ${UNITTESTS_DIR}/mbed-os/mocks)
 set(MBED_STUBS_DIR   ${UNITTESTS_DIR}/mbed-os/stubs)
 set(MBED_INCLUDE_DIR ${UNITTESTS_DIR}/mbed-os/include)
 
+set(MOCKS_DIR   ${UNITTESTS_DIR}/mocks)
+set(STUBS_DIR   ${UNITTESTS_DIR}/stubs)
+
 set(LIBS_DIR      ${ROOT_DIR}/libs)
 set(DRIVERS_DIR   ${ROOT_DIR}/drivers)
 
@@ -149,11 +152,16 @@ function(leka_register_unit_tests_for_driver DRIVER)
 endfunction()
 
 #
+# Mark: - Add fakes, stubs & mocks
+#
+
+add_subdirectory(mbed-os)
+add_subdirectory(mocks)
+
+#
 # Mark: - Add unit tests
 #
 
-# Add mbed-os & template
-add_subdirectory(mbed-os)
 add_subdirectory(template)
 
 # Register drivers
@@ -184,6 +192,7 @@ target_link_libraries(LekaOSUnitTestsExec
 		gtest_main
 		gmock_main
 		mbed-os
+		mocks
 )
 
 add_test(NAME LekaOSUnitTests COMMAND LekaOSUnitTestsExec)

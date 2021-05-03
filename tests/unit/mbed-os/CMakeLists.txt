@@ -11,7 +11,6 @@ target_include_directories(mbed-os
 		${UNITTESTS_DIR}/mbed-os
 		${UNITTESTS_DIR}/mbed-os/stubs
 		${UNITTESTS_DIR}/mbed-os/include
-		${UNITTESTS_DIR}/mbed-os/mocks
 
 		${ROOT_DIR}/drivers/LKCoreFatFs/include
 		${ROOT_DIR}/drivers/LKCoreLL/include
