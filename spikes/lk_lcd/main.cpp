@@ -2,7 +2,12 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "mbed.h"
+#include <memory>
+
+#include "drivers/BufferedSerial.h"
+#include "platform/Callback.h"
+#include "rtos/ThisThread.h"
+#include "rtos/Thread.h"
 
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
@@ -19,11 +24,11 @@
 #include "LKCoreSDRAM.h"
 #include "LKCoreSTM32Hal.h"
 #include "LKCoreVideo.h"
+#include "LogKit.h"
 #include "SDBlockDevice.h"
 
 using namespace leka;
-
-HelloWorld hello;
+using namespace std::chrono;
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
@@ -43,14 +48,10 @@ LKCoreLCD corelcd(coreotm);
 LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
 LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
-static BufferedSerial serial(USBTX, USBRX, 9600);
+const auto filename1 = std::array<char, 32> {"assets/images/Leka/logo.jpg"};
+const auto filename2 = std::array<char, 38> {"assets/images/Leka/emotion-happy.jpg"};
 
-constexpr uint8_t buff_size = 128;
-char buff[buff_size] {};
-
-Thread screen_thread;
-
-void registerCallbacks(void)
+void registerCallbacks()
 {
 	HAL_JPEG_RegisterInfoReadyCallback(
 		corejpeg.getHandlePointer(),
@@ -80,54 +81,67 @@ void initializeSD()
 	fatfs.mount(&sd_blockdevice);
 }
 
-int main(void)
+auto main() -> int
 {
-	auto start = Kernel::Clock::now();
+	auto start = rtos::Kernel::Clock::now();
 
-	printf("\nHello, Investigation Day!\n\n");
+	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
+	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+
+	log_info("Hello, World!\n\n");
 
 	rtos::ThisThread::sleep_for(2s);
 
 	corevideo.initialize();
 	registerCallbacks();
+
 	initializeSD();
 
-	char filename1[] = "assets/images/Leka/logo.jpg";
-	char filename2[] = "assets/images/Leka/emotion-happy.jpg";
-
-	FIL JPEG_File;
-
+	HelloWorld hello;
 	hello.start();
+
 	corevideo.clearScreen();
 	rtos::ThisThread::sleep_for(1s);
 
-	uint32_t size = 0;
-	CGColor foreground;
-	CGColor background = CGColor::white;
-	for (int i = 1; i <= 20; i++) {
-		size	   = sprintf(buff, "Line #%d", i);
+	static auto line = 1;
+	static CGColor foreground;
+	static CGColor background = CGColor::white;
+
+	leka::logger::set_print_function(
+		[](const char *str, size_t size) { corevideo.displayText(str, size, line, foreground, background); });
+
+	for (int i = 1; i <= 10; i++) {
 		foreground = (i % 2 == 0) ? CGColor::black : CGColor::pure_red;
-		corevideo.displayText(buff, size, i, foreground, background);
+		line	   = i * 2;
+		log_info("Line #%i", i);
+		rtos::ThisThread::sleep_for(1s);
 	}
+
 	rtos::ThisThread::sleep_for(5s);
 
-	size = sprintf(buff,
-				   "\tThis sentence is supposed to be on multiple lines because it is too long to be displayed on "
-				   "only one line of the screen.");
+	leka::logger::set_print_function([](const char *str, size_t size) {
+		corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
+	});
 
-	corevideo.displayText(buff, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	 // Write in blue
+	log_info(
+		"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
+		"only one line of the screen.");
 
 	rtos::ThisThread::sleep_for(10s);
 
+	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+
+	auto JPEG_File = std::make_unique<FIL>();
+
 	while (true) {
-		auto t	   = Kernel::Clock::now() - start;
-		int length = sprintf(buff, "A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME,
-							 hello.world, int(t.count() / 1000));
-		serial.write(buff, length);
+		auto t = rtos::Kernel::Clock::now() - start;
+		log_info("A message from your board %s --> \"%s\" at %is", MBED_CONF_APP_TARGET_NAME, hello.world,
+				 int(t.count() / 1000));
+
 		rtos::ThisThread::sleep_for(1s);
 
-		if (corefatfs.open(filename1) == FR_OK) {
-			corevideo.displayImage(&JPEG_File);
+		if (corefatfs.open(filename1.data()) == FR_OK) {
+			corevideo.displayImage(JPEG_File.get());
 			corevideo.setBrightness(0.2f);
 
 			corevideo.turnOn();
@@ -136,8 +150,8 @@ int main(void)
 			rtos::ThisThread::sleep_for(2s);
 		}
 
-		if (corefatfs.open(filename2) == FR_OK) {
-			corevideo.displayImage(&JPEG_File);
+		if (corefatfs.open(filename2.data()) == FR_OK) {
+			corevideo.displayImage(JPEG_File.get());
 			corevideo.setBrightness(0.9f);
 
 			corefatfs.close();
