@@ -4,17 +4,20 @@
 
 add_mbed_executable(spike_lk_rfid)
 
-target_sources(spike_lk_rfid
-  PRIVATE
-    main.cpp
-)
-
 target_include_directories(spike_lk_rfid
-  PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+	PRIVATE
+		.
 )
 
-target_link_libraries(spike_lk_rfid lib_HelloWorld)
-target_link_libraries(spike_lk_rfid lib_LekaRFID)
+target_sources(spike_lk_rfid
+	PRIVATE
+		main.cpp
+)
+
+target_link_libraries(spike_lk_rfid
+	LogKit
+	lib_HelloWorld
+	lib_LekaRFID
+)
 
 target_link_custom_leka_targets(spike_lk_rfid)
