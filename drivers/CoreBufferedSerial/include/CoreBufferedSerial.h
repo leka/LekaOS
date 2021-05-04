@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_DRIVER_CORE_BUFFERED_SERIAL_H_
 #define _LEKA_OS_DRIVER_CORE_BUFFERED_SERIAL_H_
 
+// ? LCOV_EXCL_START - Exclude from coverage report
+
 #include "drivers/BufferedSerial.h"
 
 namespace leka::interface {
@@ -35,5 +37,7 @@ class CoreBufferedSerial : public interface::BufferedSerial
 };
 
 }	// namespace leka
+
+// ? LCOV_EXCL_STOP - Exclude from coverage report
 
 #endif	 //_LEKA_OS_DRIVER_CORE_BUFFERED_SERIAL_H_
