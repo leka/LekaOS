@@ -2,20 +2,20 @@
 // Copyright (c) 2019 ARM Limited
 // SPDX-License-Identifier: Apache-2.0
 
-#include "mbed.h"
+#include "drivers/DigitalOut.h"
+#include "rtos/ThisThread.h"
 
-// Blinking rate in milliseconds
-#define BLINKING_RATE 500ms
+using namespace std::chrono;
 
-int main()
+auto main() -> int
 {
 	// Initialise the digital pin LED1 as an output
-	DigitalOut led(LED1);
+	mbed::DigitalOut led(LED1);
 
 	while (true) {
 		led = !led;
-		ThisThread::sleep_for(500ms);
+		rtos::ThisThread::sleep_for(500ms);
 		led = !led;
-		ThisThread::sleep_for(100ms);
+		rtos::ThisThread::sleep_for(100ms);
 	}
 }
