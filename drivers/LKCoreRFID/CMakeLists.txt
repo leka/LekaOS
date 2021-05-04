@@ -14,7 +14,10 @@ target_sources(LKCoreRFID
 		source/LKCoreRFID.cpp
 )
 
-target_link_libraries(LKCoreRFID mbed-os)
+target_link_libraries(LKCoreRFID
+	CoreBufferedSerial
+	mbed-os
+)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 

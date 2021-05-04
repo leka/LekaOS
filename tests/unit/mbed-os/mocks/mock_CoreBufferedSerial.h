@@ -13,8 +13,8 @@ namespace leka {
 class LKCoreBufferedSerialMock : public interface::BufferedSerial
 {
   public:
-	MOCK_METHOD(int, read, (void *, ssize_t), (override));
-	MOCK_METHOD(int, write, (const void *, ssize_t), (override));
+	MOCK_METHOD(ssize_t, read, (void *, ssize_t), (override));
+	MOCK_METHOD(ssize_t, write, (const void *, ssize_t), (override));
 };
 
 }	// namespace leka
