@@ -6,7 +6,7 @@
 
 namespace leka {
 
-LKCoreRFID::LKCoreRFID(mbed::BufferedSerial &interface) : _interface(interface) {}
+LKCoreRFID::LKCoreRFID(interface::BufferedSerial &interface) : _interface(interface) {}
 
 RFIDTag LKCoreRFID::RFIDMessageIntoStruct(uint8_t *tag_value)
 {
