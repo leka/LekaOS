@@ -9,26 +9,18 @@
 
 #include "CoreBufferedSerial.h"
 
-#define _MAXIMUM_BUFFER_SIZE 253   // 255 minus 1 bit for command and one for length
-
 namespace leka {
-
-struct RFIDTag {
-	uint8_t command;
-	uint8_t length;
-	uint8_t data[_MAXIMUM_BUFFER_SIZE];
-};
 
 class LKCoreRFID
 {
   public:
 	LKCoreRFID(interface::BufferedSerial &interface);
-	auto RFIDMessageIntoStruct(uint8_t *tagValue) -> RFIDTag;
-	// auto setProtocol();
+
+	auto writeProtocol() -> void;
+	auto checkProtocol() -> bool;
 
   private:
 	interface::BufferedSerial &_interface;
-	auto isDataLengthOk(uint8_t length) -> bool;
 };
 
 }	// namespace leka
