@@ -167,7 +167,7 @@ leka_register_unit_tests_for_driver(LKCoreMicrophone)
 leka_register_unit_tests_for_driver(LKCoreBattery)
 leka_register_unit_tests_for_driver(CoreHTS)
 leka_register_unit_tests_for_driver(CoreI2C)
-
+leka_register_unit_tests_for_driver(CoreBufferedSerial)
 
 # Register libraries
 leka_register_unit_tests_for_library(LKAnimationKit)
