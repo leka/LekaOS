@@ -86,6 +86,7 @@ target_sources(mbed-os
 		${MBED_STUBS_DIR}/stub_gpio_api.cpp
 		${MBED_STUBS_DIR}/stub_AnalogIn.cpp
 		${MBED_STUBS_DIR}/stub_PwmOut.cpp
+		${MBED_STUBS_DIR}/stub_BufferedSerial.cpp
 		${MBED_STUBS_DIR}/stub_I2C.cpp
 
 		${MBED_STUBS_DIR}/stub_extension_EventQueue.cpp
@@ -97,6 +98,8 @@ target_sources(mbed-os
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/Mutex_stub.cpp
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/mbed_assert_stub.cpp
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/EventQueue_stub.cpp
+		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/SerialBase_stub.cpp
+		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/FileHandle_stub.cpp
 		${ROOT_DIR}/extern/mbed-os/UNITTESTS/stubs/equeue_stub.c
 )
 
