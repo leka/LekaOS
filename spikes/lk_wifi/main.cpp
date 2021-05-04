@@ -35,28 +35,40 @@ FIL file;
 size_t received			= 0;
 size_t received_packets = 0;
 
-void run()
+void runCustomHttp()
 {
+	f_open(&file, "update.bin", FA_READ | FA_WRITE | FA_CREATE_ALWAYS);
 	// Get information online
 	// Open a socket on the network interface, and create a TCP connection to ifconfig.io
 	TCPSocket socket;
 	socket.open(&wifi_interface);
 
-	SocketAddress socket_address;
-	wifi_interface.get_ip_address(&socket_address);
-	wifi_interface.gethostbyname("ifconfig.io", &socket_address);
-	socket_address.set_port(80);
+	SocketAddress socket_address("192.168.1.37", 8000);
 	socket.connect(socket_address);
 	// Send a simple http request
-	char tx_buffer[] = "GET / HTTP/1.1\r\nHost: ifconfig.io\r\n\r\n";
+	char tx_buffer[] = "GET /update.bin HTTP/1.1\r\nHost: 192.168.1.37\r\n\r\n";
 	socket.send(tx_buffer, sizeof tx_buffer);
 
 	// Recieve a simple http response and print out the response line
-	char rx_buffer[1];
-	socket.recv(rx_buffer, sizeof rx_buffer);
+	uint8_t rx_buffer[1024];
+	int received_data;
+	int total_received_data {0};
+	UINT nbBytesWritten {0};
+	do {
+		received_data = socket.recv(rx_buffer, sizeof rx_buffer);
+		f_write(&file, rx_buffer, received_data, &nbBytesWritten);
+
+		total_received_data += received_data;
+		printf("Received data: %d bytes\n", total_received_data);
+	} while (received_data > 0);
 
 	// Close the socket to return its memory and bring down the network interface
 	socket.close();
+
+	f_close(&file);
+
+	printf("Size is: %ld\n", f_size(&file));
+	ThisThread::sleep_for(1min);
 }
 
 void store_fragment(const char *buffer, size_t size)
@@ -117,7 +129,7 @@ int main(void)
 		serial.write(buff, length);
 		rtos::ThisThread::sleep_for(1s);
 
-		// run();
-		check_for_update();
+		runCustomHttp();
+		// check_for_update();
 	}
 }
