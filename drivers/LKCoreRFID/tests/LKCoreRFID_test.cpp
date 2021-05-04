@@ -5,10 +5,12 @@
 #include "LKCoreRFID.h"
 
 #include "gtest/gtest.h"
+#include "stub_BufferedSerial.h"
 
 using namespace leka;
 
-LKCoreRFID coreRFID;
+mbed::BufferedSerial interface(RFID_UART_TX, RFID_UART_RX, 57600);
+LKCoreRFID coreRFID(interface);
 
 TEST(LKCoreRFIDSensorTest, initialization)
 {
