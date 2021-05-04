@@ -15,11 +15,3 @@ target_sources(CoreBufferedSerial
 )
 
 target_link_libraries(CoreBufferedSerial mbed-os)
-
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
-	leka_unit_tests_sources(
-		tests/CoreBufferedSerial_test.cpp
-	)
-
-endif()
