@@ -9,7 +9,7 @@
 
 #include "FileManager.h"
 
-int readSdFile(const char *fileName, char *buffer, uint32_t buffer_size)
+auto readSdFile(const char *fileName, char *buffer, uint32_t buffer_size) -> int
 {
 	FIL file;
 	UINT nbBytesRead {0};
@@ -32,7 +32,7 @@ int readSdFile(const char *fileName, char *buffer, uint32_t buffer_size)
 	return static_cast<int>(nbBytesRead);
 }
 
-int writeSDFile(const char *fileName, const char *data, int nbByteToWrite)
+auto writeSDFile(const char *fileName, const char *data, int nbByteToWrite) -> int
 {
 	FIL file;
 	UINT nbBytesWritten {0};
