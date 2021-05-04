@@ -14,8 +14,8 @@ class BufferedSerial
   public:
 	virtual ~BufferedSerial() = default;
 
-	virtual auto read(void *buffer, ssize_t length) -> ssize_t		  = 0;
-	virtual auto write(const void *buffer, ssize_t length) -> ssize_t = 0;
+	virtual auto read(char *buffer, ssize_t length) -> ssize_t		  = 0;
+	virtual auto write(const char *buffer, ssize_t length) -> ssize_t = 0;
 };
 
 }	// namespace leka::interface
@@ -27,8 +27,8 @@ class CoreBufferedSerial : public interface::BufferedSerial
   public:
 	explicit CoreBufferedSerial(mbed::BufferedSerial &interface) : _interface {interface} {};
 
-	auto read(void *buffer, ssize_t length) -> ssize_t final;
-	auto write(const void *buffer, ssize_t length) -> ssize_t final;
+	auto read(char *buffer, ssize_t length) -> ssize_t final;
+	auto write(const char *buffer, ssize_t length) -> ssize_t final;
 
   private:
 	mbed::BufferedSerial &_interface;
