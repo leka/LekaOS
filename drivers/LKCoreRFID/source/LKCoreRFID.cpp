@@ -5,6 +5,9 @@
 #include "LKCoreRFID.h"
 
 namespace leka {
+
+LKCoreRFID::LKCoreRFID(mbed::BufferedSerial &interface) : _interface(interface) {}
+
 RFIDTag LKCoreRFID::RFIDMessageIntoStruct(uint8_t *tag_value)
 {
 	RFIDTag decompose_value;
@@ -23,6 +26,13 @@ RFIDTag LKCoreRFID::RFIDMessageIntoStruct(uint8_t *tag_value)
 
 	return decompose_value;
 }
+
+// auto setProtocol() -> void
+// {
+// 	const uint8_t iec_14443_cmd[4]	   = {0x02, 0x02, 0x02, 0x00};
+// 	const uint8_t iec_14443_cmd_length = 4;
+// 	_interface.write(iec_14443_cmd, iec_14443_cmd_length);
+// }
 
 auto LKCoreRFID::isDataLengthOk(uint8_t length) -> bool
 {

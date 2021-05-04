@@ -20,10 +20,12 @@ struct RFIDTag {
 class LKCoreRFID
 {
   public:
-	LKCoreRFID() = default;
-	RFIDTag RFIDMessageIntoStruct(uint8_t *tagValue);
+	LKCoreRFID(mbed::BufferedSerial &interface);
+	auto RFIDMessageIntoStruct(uint8_t *tagValue) -> RFIDTag;
+	// auto setProtocol();
 
   private:
+	mbed::BufferedSerial &_interface;
 	auto isDataLengthOk(uint8_t length) -> bool;
 };
 
