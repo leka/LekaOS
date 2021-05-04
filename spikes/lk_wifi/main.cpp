@@ -67,9 +67,7 @@ void store_fragment(const char *buffer, size_t size)
 	received += size;
 	received_packets++;
 
-	// if (received_packets % 20 == 0) {
 	printf("Received %u bytes\n", received);
-	// }
 }
 
 void check_for_update()
@@ -110,23 +108,6 @@ int main(void)
 	hello.start();
 
 	// sd_card.testWorkingToRemove();
-
-	// printf("Write in doc...\n");
-	// if (f_open(&file, "update.bin", FA_READ | FA_WRITE | FA_OPEN_APPEND | FA_CREATE_ALWAYS) != FR_OK) {
-	// 	printf("Failed to open.\n");
-	// 	return -1;
-	// }
-
-	// UINT nbBytesWritten {0};
-	// if (f_write(&file, "hello", 5, &nbBytesWritten) != FR_OK) {
-	// 	printf("Failed to Write.\n");
-	// 	return -1;
-	// }
-
-	// if (f_close(&file) != FR_OK) {
-	// 	printf("Failed to close.\n");
-	// 	return -1;
-	// }
 
 	while (true) {
 		auto t = Kernel::Clock::now() - start;
