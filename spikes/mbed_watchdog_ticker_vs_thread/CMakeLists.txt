@@ -5,13 +5,17 @@
 add_mbed_executable(spike_mbed_watchdog_ticker_vs_thread)
 
 target_include_directories(spike_mbed_watchdog_ticker_vs_thread
-  PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+	PRIVATE
+		${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_sources(spike_mbed_watchdog_ticker_vs_thread
-  PRIVATE
-    main.cpp
+	PRIVATE
+		main.cpp
+)
+
+target_link_libraries(spike_mbed_watchdog_ticker_vs_thread
+	LogKit
 )
 
 target_link_custom_leka_targets(spike_mbed_watchdog_ticker_vs_thread)
