@@ -5,15 +5,18 @@
 add_library(lib_LekaTouch STATIC)
 
 target_include_directories(lib_LekaTouch
-  PUBLIC
-  	${CMAKE_CURRENT_SOURCE_DIR}/include
-	${CMAKE_CURRENT_SOURCE_DIR}/include/internal
+	PUBLIC
+		include
+		include/internal
 )
 
 target_sources(lib_LekaTouch
-  PRIVATE
-  	source/MCP23017.cpp
-	source/LekaTouch.cpp
+	PRIVATE
+		source/MCP23017.cpp
+		source/LekaTouch.cpp
 )
 
-target_link_libraries(lib_LekaTouch mbed-os)
+target_link_libraries(lib_LekaTouch
+	mbed-os
+	LogKit
+)
