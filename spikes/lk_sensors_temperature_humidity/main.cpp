@@ -4,17 +4,24 @@
 
 #include "PinNames.h"
 
+#include "drivers/BufferedSerial.h"
 #include "drivers/I2C.h"
 #include "rtos/ThisThread.h"
 
 #include "CoreHTS.h"
 #include "CoreI2C.h"
+#include "LogKit.h"
 
 using namespace leka;
 using namespace std::chrono;
 
 auto main() -> int
 {
+	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
+	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+
+	log_info("Hello, World!\n\n");
+
 	mbed::I2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
 	CoreI2C corei2c(i2c);
 	CoreHTS corehts(corei2c);
@@ -26,17 +33,17 @@ auto main() -> int
 	auto coefficients_temperature = corehts.getTemperatureCalibrationCoefficients();
 	auto coefficients_humidity	  = corehts.getHumidityCalibrationCoefficients();
 
-	printf("Temperature calibration values: slope: %f, y-intercept: %f\n", coefficients_temperature.slope,
-		   coefficients_temperature.y_intercept);
+	log_info("Temperature calibration values: slope: %f, y-intercept: %f\n", coefficients_temperature.slope,
+			 coefficients_temperature.y_intercept);
 
-	printf("Humidity calibration values: slope: %f, y-intercept: %f\n", coefficients_humidity.slope,
-		   coefficients_humidity.y_intercept);
+	log_info("Humidity calibration values: slope: %f, y-intercept: %f\n", coefficients_humidity.slope,
+			 coefficients_humidity.y_intercept);
 
 	while (true) {
 		auto temperature = corehts.getTemperatureCelsius();
 		auto humidity	 = corehts.getRelativeHumidity();
 
-		printf("Temperature: %.1fC, Humidity: %.1f%% (relative humidy)\n", temperature, humidity);
+		log_info("Temperature: %.1fC, Humidity: %.1f%% (relative humidy)\n", temperature, humidity);
 
 		rtos::ThisThread::sleep_for(1s);
 	}
