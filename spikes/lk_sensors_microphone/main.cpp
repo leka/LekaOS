@@ -2,24 +2,21 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "mbed.h"
-#include <vector>
+#include <cmath>
 
 #include "PinNames.h"
 
+#include "drivers/BufferedSerial.h"
+#include "drivers/I2C.h"
+#include "platform/mbed_wait_api.h"
+#include "rtos/ThisThread.h"
+
 #include "HelloWorld.h"
 #include "LKCoreMicrophone.h"
-#include "math.h"
+#include "LogKit.h"
 
 using namespace leka;
-
-HelloWorld hello;
-
-LKCoreMicrophone microphone(MCU_MIC_INPUT);
-
-static BufferedSerial serial(USBTX, USBRX, 9600);
-constexpr uint8_t buff_size = 128;
-char buff[buff_size] {};
+using namespace std::chrono;
 
 // SMA - Small Moving Average
 template <uint8_t N, class input_t = uint16_t, class sum_t = uint32_t>
@@ -28,7 +25,7 @@ class SMA
   public:
 	SMA() = default;
 
-	input_t operator()(input_t input)
+	auto operator()(input_t input) -> input_t
 	{
 		sum -= previousInputs[index];
 		sum += input;
@@ -45,11 +42,11 @@ class SMA
 	sum_t sum	  = 0;
 	uint8_t index = 0;
 
-	input_t previousInputs[N] = {};
+	std::array<input_t, N> previousInputs {};
 };
 
 // RMS - Root Mean Square
-int RMS(std::array<int, 10> &data, int newvalue)
+auto RMS(std::array<int, 10> &data, int newvalue) -> int
 {
 	int square = 0;
 	float mean = 0;
@@ -71,20 +68,26 @@ int RMS(std::array<int, 10> &data, int newvalue)
 	return static_cast<int>(root);
 }
 
-int main(void)
+auto main() -> int
 {
-	auto start = Kernel::Clock::now();
-	rtos::ThisThread::sleep_for(2s);
+	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
+	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 
+	HelloWorld hello;
 	hello.start();
 
-	std::array<int, 10> rms_buffer;
-	static SMA<5> sma_filter;
+	log_info("Hello, World!\n\n");
+
+	rtos::ThisThread::sleep_for(2s);
+
+	// RMS vs SMA value (un/comment to test)
+	// static auto sma_filter = SMA<5> {};
+	auto rms_buffer = std::array<int, 10> {};
+
+	LKCoreMicrophone microphone(MCU_MIC_INPUT);
 
 	while (true) {
-		auto t = Kernel::Clock::now() - start;
-
-		int rawValue = static_cast<int>(1000 * microphone.readVolume());
+		auto rawValue = static_cast<int>(1000 * microphone.readVolume());
 
 		if (rawValue <= 458) {
 			rawValue = std::abs(rawValue - 458) + 458;
@@ -95,8 +98,7 @@ int main(void)
 		auto output = RMS(rms_buffer, rawValue);
 
 		// TODO: print floats
-		int length = sprintf(buff, "%d\n", output);
-		serial.write(buff, length);
+		log_info("%d", output);
 
 		wait_us(250);
 	}
