@@ -2,68 +2,76 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "mbed.h"
-
 #include "PinNames.h"
+
+#include "drivers/BufferedSerial.h"
+#include "drivers/PwmOut.h"
+#include "platform/Callback.h"
+#include "rtos/ThisThread.h"
+#include "rtos/Thread.h"
 
 #include "HelloWorld.h"
 #include "LKCoreMotor.h"
+#include "LKCoreMotorBase.h"
+#include "LogKit.h"
 
 using namespace leka;
+using namespace std::chrono;
 
-HelloWorld hello;
-
-LKCoreMotor motor_right(MOTOR_RIGHT_DIRECTION_1, MOTOR_RIGHT_DIRECTION_2, MOTOR_RIGHT_PWM);
-LKCoreMotor motor_left(MOTOR_LEFT_DIRECTION_1, MOTOR_LEFT_DIRECTION_2, MOTOR_LEFT_PWM);
-
-static BufferedSerial serial(USBTX, USBRX, 9600);
-
-constexpr uint8_t buff_size = 128;
-char buff[buff_size] {};
-
-void spinLeft()
+void spinLeft(LKCoreMotorBase &left, LKCoreMotorBase &right)
 {
-	motor_right.spin(Rotation::clockwise, 0.5f);
-	motor_left.spin(Rotation::clockwise, 0.5f);
+	left.spin(Rotation::clockwise, 0.5f);
+	right.spin(Rotation::clockwise, 0.5f);
 }
 
-void spinRight()
+void spinRight(LKCoreMotorBase &left, LKCoreMotorBase &right)
 {
-	motor_right.spin(Rotation::counterClockwise, 0.5f);
-	motor_left.spin(Rotation::counterClockwise, 0.5f);
+	left.spin(Rotation::counterClockwise, 0.5f);
+	right.spin(Rotation::counterClockwise, 0.5f);
 }
 
-void stop()
+void stop(LKCoreMotorBase &left, LKCoreMotorBase &right)
 {
-	motor_right.stop();
-	motor_left.stop();
+	left.stop();
+	right.stop();
 }
 
-int main(void)
+auto main() -> int
 {
-	auto start = Kernel::Clock::now();
+	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
+	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 
-	printf("\nHello, Investigation Day!\n\n");
+	auto start = rtos::Kernel::Clock::now();
+
+	log_info("Hello, World!\n\n");
 
 	rtos::ThisThread::sleep_for(2s);
 
+	HelloWorld hello;
 	hello.start();
 
+	LKCoreMotor motor_right(MOTOR_RIGHT_DIRECTION_1, MOTOR_RIGHT_DIRECTION_2, MOTOR_RIGHT_PWM);
+	LKCoreMotor motor_left(MOTOR_LEFT_DIRECTION_1, MOTOR_LEFT_DIRECTION_2, MOTOR_LEFT_PWM);
+
 	while (true) {
-		auto t	   = Kernel::Clock::now() - start;
-		int length = sprintf(buff, "A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME,
-							 hello.world, int(t.count() / 1000));
-		serial.write(buff, length);
+		auto t = rtos::Kernel::Clock::now() - start;
+		log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world,
+				 int(t.count() / 1000));
 
-		spinLeft();
+		rtos::ThisThread::sleep_for(1s);
 
-		rtos::ThisThread::sleep_for(5s);
-
-		spinRight();
+		log_info("Spin left...");
+		spinLeft(motor_left, motor_right);
 
 		rtos::ThisThread::sleep_for(5s);
 
-		stop();
+		log_info("Spin right...");
+		spinRight(motor_left, motor_right);
+
+		rtos::ThisThread::sleep_for(5s);
+
+		log_info("Spin stop...");
+		stop(motor_left, motor_right);
 
 		rtos::ThisThread::sleep_for(5s);
 	}
