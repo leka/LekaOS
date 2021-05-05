@@ -11,7 +11,7 @@
 // - -155 / 0
 // - get last result - done
 
-using namespace leka::utils;
+using namespace leka::utils::math;
 
 TEST(LKUtilsTest, mapUint8ToFloatMin)
 {
