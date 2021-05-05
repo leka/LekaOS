@@ -82,7 +82,7 @@ TEST_F(LKCoreRFIDSensorTest, RFIDMessageToStruct)
 	uint8_t expected_id[4]	= {0x88, 0x04, 0x17, 0x9F};
 	RFIDTag rfid_tag		= {0, 0, 0, 0, 0, 0, 0};
 
-	ASSERT_EQ(corerfid.RFIDMessageIntoStruct(tag_message, rfid_tag), true);
+	corerfid.RFIDMessageIntoStruct(tag_message, rfid_tag);
 
 	ASSERT_EQ(rfid_tag.result_code, 0x80);
 	ASSERT_EQ(rfid_tag.length, 0x08);
@@ -96,26 +96,6 @@ TEST_F(LKCoreRFIDSensorTest, RFIDMessageToStruct)
 	ASSERT_EQ(rfid_tag.checks, 0x28);
 	ASSERT_EQ(rfid_tag.collisionbyte, 0x00);
 	ASSERT_EQ(rfid_tag.collisionbit, 0x00);
-}
-
-TEST_F(LKCoreRFIDSensorTest, RFIDMessageToStructWrongResultCode)
-{
-	uint8_t tag_message[2] = {0x05};
-
-	RFIDTag rfid_tag = {0, 0, 0, 0, 0, 0};
-	ASSERT_EQ(corerfid.RFIDMessageIntoStruct(tag_message, rfid_tag), false);
-
-	ASSERT_EQ(rfid_tag.result_code, 0x00);
-}
-
-TEST_F(LKCoreRFIDSensorTest, RFIDMessageToStructWrongLength)
-{
-	uint8_t tag_message[2] = {0x80, 0x4F};
-
-	RFIDTag rfid_tag = {0, 0, 0, 0, 0, 0};
-	ASSERT_EQ(corerfid.RFIDMessageIntoStruct(tag_message, rfid_tag), false);
-
-	ASSERT_EQ(rfid_tag.length, 0x00);
 }
 
 TEST_F(LKCoreRFIDSensorTest, sendREQA)

@@ -68,33 +68,10 @@ auto LKCoreRFID::sendCL1() -> void
 	_interface.write(command_buffer, buffer_size);
 }
 
-bool LKCoreRFID::isDataLengthOk(uint8_t length)
+auto LKCoreRFID::RFIDMessageIntoStruct(uint8_t *tag_value, RFIDTag &rfid_tag) -> void
 {
-	if (length != 8) {
-		return false;
-	}
-	return true;
-}
-
-bool LKCoreRFID::isResultCodeOk(uint8_t command)
-{
-	if (command != 0x80) {
-		return false;
-	}
-	return true;
-}
-
-auto LKCoreRFID::RFIDMessageIntoStruct(uint8_t *tag_value, RFIDTag &rfid_tag) -> bool
-{
-	if (!isResultCodeOk(tag_value[0])) {
-		return false;
-	};
 	rfid_tag.result_code = tag_value[0];
-
-	if (!isDataLengthOk(tag_value[1])) {
-		return false;
-	};
-	rfid_tag.length = tag_value[1];
+	rfid_tag.length		 = tag_value[1];
 
 	for (int i = 0; i < 4; ++i) {
 		rfid_tag.id[i] = tag_value[i + 2];
@@ -104,8 +81,6 @@ auto LKCoreRFID::RFIDMessageIntoStruct(uint8_t *tag_value, RFIDTag &rfid_tag) ->
 	rfid_tag.checks		   = tag_value[7];
 	rfid_tag.collisionbyte = tag_value[8];
 	rfid_tag.collisionbit  = tag_value[9];
-
-	return true;
 }
 
 }	// namespace leka
