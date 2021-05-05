@@ -6,12 +6,12 @@
 
 using namespace leka;
 
-auto CoreBufferedSerial::read(char *buffer, ssize_t length) -> ssize_t
+auto CoreBufferedSerial::read(uint8_t *buffer, ssize_t length) -> ssize_t
 {
 	return _interface.read(buffer, length);
 }
 
-auto CoreBufferedSerial::write(const char *buffer, ssize_t length) -> ssize_t
+auto CoreBufferedSerial::write(const uint8_t *buffer, ssize_t length) -> ssize_t
 {
 	return _interface.write(buffer, length);
 }
