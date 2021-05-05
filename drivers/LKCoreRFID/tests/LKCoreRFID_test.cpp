@@ -133,3 +133,28 @@ TEST_F(LKCoreRFIDSensorTest, sendCL1)
 
 	corerfid.sendCL1();
 }
+
+TEST_F(LKCoreRFIDSensorTest, receiveID)
+{
+	uint8_t read_values[10] = {0x80, 0x08, 0x88, 0x04, 0x17, 0x9F, 0x04, 0x28, 0x00, 0x00};
+	uint8_t expected_id[4]	= {0x88, 0x04, 0x17, 0x9F};
+	RFIDTag rfid_tag		= {0, 0, 0, 0, 0, 0, 0};
+
+	EXPECT_CALL(mockBufferedSerial, read)
+		.WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 10), Return(0)));
+
+	rfid_tag = corerfid.receiveID();
+
+	ASSERT_EQ(rfid_tag.result_code, 0x80);
+	ASSERT_EQ(rfid_tag.length, 0x08);
+
+	ASSERT_EQ(rfid_tag.id[0], expected_id[0]);
+	ASSERT_EQ(rfid_tag.id[1], expected_id[1]);
+	ASSERT_EQ(rfid_tag.id[2], expected_id[2]);
+	ASSERT_EQ(rfid_tag.id[3], expected_id[3]);
+
+	ASSERT_EQ(rfid_tag.check_sum, 0x04);
+	ASSERT_EQ(rfid_tag.checks, 0x28);
+	ASSERT_EQ(rfid_tag.collisionbyte, 0x00);
+	ASSERT_EQ(rfid_tag.collisionbit, 0x00);
+}

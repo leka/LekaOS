@@ -34,13 +34,10 @@ class LKCoreRFID
 	auto checkATQA() -> bool;
 
 	auto sendCL1() -> void;
-	// auto receiveID() -> void;
+	auto receiveID() -> RFIDTag;
 
   private:
 	interface::BufferedSerial &_interface;
-
-	auto isDataLengthOk(uint8_t length) -> bool;
-	auto isResultCodeOk(uint8_t commabd) -> bool;
 };
 
 }	// namespace leka
