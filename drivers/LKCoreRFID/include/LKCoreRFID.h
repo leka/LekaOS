@@ -25,7 +25,7 @@ class LKCoreRFID
 {
   public:
 	LKCoreRFID(interface::BufferedSerial &interface);
-	auto RFIDMessageIntoStruct(uint8_t *tagValue, RFIDTag &rfid_tag) -> bool;
+	auto RFIDMessageIntoStruct(uint8_t *tagValue, RFIDTag &rfid_tag) -> void;
 	auto writeProtocol() -> void;
 	auto setGain() -> void;
 	auto checkSensorSet() -> bool;
