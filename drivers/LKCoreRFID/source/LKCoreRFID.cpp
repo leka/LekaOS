@@ -8,6 +8,19 @@ namespace leka {
 
 LKCoreRFID::LKCoreRFID(interface::BufferedSerial &interface) : _interface(interface) {}
 
+auto LKCoreRFID::RFIDMessageIntoStruct(const uint8_t *tag_value, RFIDTag &rfid_tag) const -> void
+{
+	rfid_tag.result_code = tag_value[0];
+	rfid_tag.length		 = tag_value[1];
+
+	memcpy(rfid_tag.id, tag_value + 2, 4);
+
+	rfid_tag.check_sum	   = tag_value[6];
+	rfid_tag.checks		   = tag_value[7];
+	rfid_tag.collisionbyte = tag_value[8];
+	rfid_tag.collisionbit  = tag_value[9];
+}
+
 auto LKCoreRFID::writeProtocol() -> void
 {
 	const uint8_t buffer_size				  = 4;
@@ -31,7 +44,7 @@ auto LKCoreRFID::checkSensorSet() -> bool
 
 	_interface.read(buffer, buffer_size);
 
-	if (buffer[0] == 0 && buffer[1] == 0) {
+	if (buffer[0] == 0x00 && buffer[1] == 0x00) {
 		return true;
 	}
 
@@ -68,19 +81,14 @@ auto LKCoreRFID::sendCL1() -> void
 	_interface.write(command_buffer, buffer_size);
 }
 
-auto LKCoreRFID::RFIDMessageIntoStruct(uint8_t *tag_value, RFIDTag &rfid_tag) -> void
+auto LKCoreRFID::receiveID() -> RFIDTag
 {
-	rfid_tag.result_code = tag_value[0];
-	rfid_tag.length		 = tag_value[1];
+	RFIDTag rfid_tag {0, 0, 0, 0, 0, 0, 0};
+	const uint8_t buffer_size = 2;
+	uint8_t buffer[buffer_size];
 
-	for (int i = 0; i < 4; ++i) {
-		rfid_tag.id[i] = tag_value[i + 2];
-	}
-
-	rfid_tag.check_sum	   = tag_value[6];
-	rfid_tag.checks		   = tag_value[7];
-	rfid_tag.collisionbyte = tag_value[8];
-	rfid_tag.collisionbit  = tag_value[9];
+	_interface.read(buffer, buffer_size);
+	RFIDMessageIntoStruct(buffer, rfid_tag);
+	return rfid_tag;
 }
-
 }	// namespace leka
