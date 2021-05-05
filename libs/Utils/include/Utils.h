@@ -2,8 +2,8 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_LKUTILS_H_
-#define _LEKA_OS_LIB_LKUTILS_H_
+#ifndef _LEKA_OS_LIB_UTILS_H_
+#define _LEKA_OS_LIB_UTILS_H_
 
 namespace leka::utils {
 
@@ -31,4 +31,4 @@ namespace math {
 
 }	// namespace leka::utils
 
-#endif	 // _LEKA_OS_LIB_LKUTILS_H_
+#endif	 // _LEKA_OS_LIB_UTILS_H_
