@@ -17,7 +17,7 @@ add_subdirectory(${SPIKES_DIR}/lk_motors)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_battery)
 add_subdirectory(${SPIKES_DIR}/lk_bluetooth)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_microphone)
-add_subdirectory(${SPIKES_DIR}/lk_light_sensor)
+add_subdirectory(${SPIKES_DIR}/lk_sensors_light)
 add_subdirectory(${SPIKES_DIR}/lk_file_manager)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_touch)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_temperature_humidity)
@@ -36,7 +36,7 @@ add_dependencies( spikes_leka
 	spike_lk_sensors_battery
 	spike_lk_bluetooth
 	spike_lk_sensors_microphone
-	spike_lk_light_sensor
+	spike_lk_sensors_light
 	spike_lk_file_manager
 	spike_lk_sensors_touch
 	spike_lk_sensors_temperature_humidity
