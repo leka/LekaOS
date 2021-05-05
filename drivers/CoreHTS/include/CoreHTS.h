@@ -9,7 +9,7 @@
 #include <tuple>
 
 #include "CoreI2C.h"
-#include "LKUtils.h"
+#include "Utils.h"
 #include "hts221_reg.h"
 
 namespace leka {

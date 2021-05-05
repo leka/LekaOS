@@ -180,7 +180,7 @@ leka_register_unit_tests_for_driver(CoreI2C)
 # Register libraries
 leka_register_unit_tests_for_library(LKAnimationKit)
 leka_register_unit_tests_for_library(LKCalculatorKit)
-leka_register_unit_tests_for_library(LKUtils)
+leka_register_unit_tests_for_library(Utils)
 leka_register_unit_tests_for_library(LogKit)
 
 #

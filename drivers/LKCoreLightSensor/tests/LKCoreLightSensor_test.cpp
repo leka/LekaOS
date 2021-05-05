@@ -1,6 +1,6 @@
 #include "LKCoreLightSensor.h"
 
-#include "LKUtils.h"
+// #include "LKUtils.h"
 #include "gtest/gtest.h"
 #include "stub_AnalogIn.h"
 
