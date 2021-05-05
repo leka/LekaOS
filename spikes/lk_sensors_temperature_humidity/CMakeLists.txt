@@ -4,17 +4,18 @@
 
 add_mbed_executable(spike_lk_sensors_temperature_humidity)
 
-target_sources(spike_lk_sensors_temperature_humidity
-	PRIVATE
-		main.cpp
-)
-
 target_include_directories(spike_lk_sensors_temperature_humidity
 	PRIVATE
 	.
 )
 
+target_sources(spike_lk_sensors_temperature_humidity
+	PRIVATE
+		main.cpp
+)
+
 target_link_libraries(spike_lk_sensors_temperature_humidity
+	LogKit
 	CoreHTS
 	CoreI2C
 )

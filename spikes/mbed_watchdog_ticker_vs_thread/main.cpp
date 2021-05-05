@@ -2,9 +2,18 @@
 // Copyright (c) 2020 Arm Limited and affiliates.
 // SPDX-License-Identifier: Apache-2.0
 
-#include "mbed.h"
-
 #include "PinNames.h"
+
+#include "drivers/DigitalOut.h"
+#include "drivers/InterruptIn.h"
+#include "drivers/Ticker.h"
+#include "drivers/Watchdog.h"
+#include "rtos/ThisThread.h"
+#include "rtos/Thread.h"
+
+#include "LogKit.h"
+
+using namespace std::chrono;
 
 ///
 /// @brief Uncomment the line you want to test. `USE_THREAD` will run the example with
@@ -18,16 +27,21 @@
 // MARK:- Variables
 //
 
-DigitalOut led_main(LED1);
-DigitalOut led_error(LED3);
-DigitalOut led_watchdog(LED2);
+struct variables {
+	static inline auto led_main		= mbed::DigitalOut {LED1};
+	static inline auto led_error	= mbed::DigitalOut {LED3};
+	static inline auto led_watchdog = mbed::DigitalOut {LED2};
 
-InterruptIn button(USER_BUTTON);
+	static inline auto button = mbed::InterruptIn {USER_BUTTON};
 
-Watchdog &watchdog = Watchdog::get_instance();
+	static inline auto &watchdog = mbed::Watchdog::get_instance();
 
-bool should_abort	  = false;
-bool should_get_stuck = false;
+	static inline auto thread_watchdog = rtos::Thread {};
+	static inline auto ticker_watchdog = mbed::Ticker {};
+
+	static inline auto should_abort		= false;
+	static inline auto should_get_stuck = false;
+};
 
 //
 // MARK:- Functions
@@ -35,19 +49,16 @@ bool should_get_stuck = false;
 
 void kickWatchdog()
 {
-	watchdog.kick();
-	led_watchdog = !led_watchdog;
+	variables::watchdog.kick();
+	variables::led_watchdog = !variables::led_watchdog;
 }
 
-///
-/// @brief Abort or run infinite loop
-///
-/// Comment the line you don't need
-///
+// Abort or run infinite loop
 void buttonInterrupt()
 {
-	// should_abort = true;
-	should_get_stuck = true;
+	// Comment the line you don't need
+	// variables::should_abort = true;
+	variables::should_get_stuck = true;
 }
 
 //
@@ -55,8 +66,6 @@ void buttonInterrupt()
 //
 
 #ifdef USE_THREAD
-
-Thread thread_watchdog;
 
 void watchdogThreadFunction()
 {
@@ -68,9 +77,9 @@ void watchdogThreadFunction()
 
 void initWatchdog()
 {
-	watchdog.start(5000);
-	thread_watchdog.start(watchdogThreadFunction);
-	thread_watchdog.set_priority(osPriorityLow);
+	variables::watchdog.start(5000);
+	variables::thread_watchdog.start(watchdogThreadFunction);
+	variables::thread_watchdog.set_priority(osPriorityLow);
 }
 
 #endif
@@ -81,12 +90,10 @@ void initWatchdog()
 
 #ifdef USE_TICKER
 
-Ticker ticker_watchdog;
-
 void initWatchdog()
 {
-	watchdog.start(5000);
-	ticker_watchdog.attach(kickWatchdog, 500ms);
+	variables::watchdog.start(5000);
+	variables::ticker_watchdog.attach(kickWatchdog, 500ms);
 }
 
 #endif
@@ -95,49 +102,49 @@ void initWatchdog()
 // MARK:- Main thread
 //
 
-int main()
+auto main() -> int
 {
-	printf("Hello\n");
+	log_info("Hello, World!\n\n");
 
-	led_error = 0;
+	variables::led_error = 0;
 
-	led_main	 = 1;
-	led_watchdog = 1;
-
-	rtos::ThisThread::sleep_for(1s);
-
-	led_main	 = 0;
-	led_watchdog = 0;
+	variables::led_main		= 1;
+	variables::led_watchdog = 1;
 
 	rtos::ThisThread::sleep_for(1s);
 
-	led_main	 = 1;
-	led_watchdog = 1;
+	variables::led_main		= 0;
+	variables::led_watchdog = 0;
 
 	rtos::ThisThread::sleep_for(1s);
 
-	led_main	 = 0;
-	led_watchdog = 0;
+	variables::led_main		= 1;
+	variables::led_watchdog = 1;
+
+	rtos::ThisThread::sleep_for(1s);
+
+	variables::led_main		= 0;
+	variables::led_watchdog = 0;
 
 	rtos::ThisThread::sleep_for(1s);
 
 	initWatchdog();
 
-	button.rise(&buttonInterrupt);
+	variables::button.rise(&buttonInterrupt);
 
-	while (1) {
-		led_main = !led_main;
+	while (true) {
+		variables::led_main = !variables::led_main;
 
 		rtos::ThisThread::sleep_for(100ms);
 
-		if (should_abort) {
-			led_error = !led_error;
+		if (variables::should_abort) {
+			variables::led_error = !variables::led_error;
 			abort();
 		}
 
-		if (should_get_stuck) {
+		if (variables::should_get_stuck) {
 			while (true) {
-				led_error = !led_error;
+				variables::led_error = !variables::led_error;
 				// Comment the type of delay you want to test
 				HAL_Delay(200);
 				// rtos::ThisThread::sleep_for(200ms);

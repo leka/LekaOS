@@ -4,14 +4,14 @@
 
 add_mbed_executable(spike_mbed_blinky)
 
-target_sources(spike_mbed_blinky
-  PRIVATE
-    main.cpp
+target_include_directories(spike_mbed_blinky
+	PRIVATE
+		.
 )
 
-target_include_directories(spike_mbed_blinky
-  PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+target_sources(spike_mbed_blinky
+	PRIVATE
+		main.cpp
 )
 
 target_link_custom_leka_targets(spike_mbed_blinky)

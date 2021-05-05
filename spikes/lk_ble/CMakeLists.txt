@@ -4,17 +4,20 @@
 
 add_mbed_executable(spike_lk_ble)
 
-target_sources(spike_lk_ble
-  PRIVATE
-    main.cpp
-)
-
 target_include_directories(spike_lk_ble
-  PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+	PRIVATE
+		.
 )
 
-target_link_libraries(spike_lk_ble lib_HelloWorld)
-target_link_libraries(spike_lk_ble lib_BLE)
+target_sources(spike_lk_ble
+	PRIVATE
+		main.cpp
+)
+
+target_link_libraries(spike_lk_ble
+	LogKit
+	lib_HelloWorld
+	lib_BLE
+)
 
 target_link_custom_leka_targets(spike_lk_ble)
