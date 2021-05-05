@@ -50,9 +50,9 @@ class RFID
 	const uint8_t _set_receiver_gain_cmd_length = 6;
 	const uint8_t _send_receive_cmd[5]			= {0x04, 0x03, 0x26, 0x01, 0x00};
 	const uint8_t _send_receive_cmd_length		= 5;
-	const uint8_t _send_receive2_cmd[4]			= {0x04, 0x02, 0x26, 0x07};
+	const uint8_t _send_receive2_cmd[4]			= {0x04, 0x02, 0x26, 0x07};	  // REQA
 	const uint8_t _send_receive2_cmd_length		= 4;
-	const uint8_t _send_receive3_cmd[5]			= {0x04, 0x03, 0x93, 0x20, 0x08};
+	const uint8_t _send_receive3_cmd[5]			= {0x04, 0x03, 0x93, 0x20, 0x08};	// Anti Coli 1
 	const uint8_t _send_receive3_cmd_length		= 5;
 
 	uint8_t _answer[64];
