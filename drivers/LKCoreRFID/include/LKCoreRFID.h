@@ -14,7 +14,8 @@ namespace leka {
 struct RFIDTag {
 	uint8_t result_code {0};
 	uint8_t length {0};
-	uint8_t id[5] {0, 0, 0, 0, 0};
+	uint8_t id[4] {0, 0, 0, 0};
+	uint8_t check_sum {0};
 	uint8_t checks {0};
 	uint8_t collisionbyte {0};
 	uint8_t collisionbit {0};
@@ -24,9 +25,16 @@ class LKCoreRFID
 {
   public:
 	LKCoreRFID(interface::BufferedSerial &interface);
-	auto RFIDMessageIntoStruct(uint8_t *tagValue, RFIDTag &rfid_tag) -> bool;
+	auto RFIDMessageIntoStruct(uint8_t *tagValue, RFIDTag &rfid_tag) -> void;
 	auto writeProtocol() -> void;
-	auto checkProtocol() -> bool;
+	auto setGain() -> void;
+	auto checkSensorSet() -> bool;
+
+	auto sendREQA() -> void;
+	auto checkATQA() -> bool;
+
+	auto sendCL1() -> void;
+	// auto receiveID() -> void;
 
   private:
 	interface::BufferedSerial &_interface;

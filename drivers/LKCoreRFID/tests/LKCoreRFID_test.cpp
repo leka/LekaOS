@@ -19,6 +19,7 @@ using ::testing::Pointee;
 using ::testing::Return;
 using ::testing::Sequence;
 using ::testing::SetArgPointee;
+using ::testing::SetArrayArgument;
 
 using namespace leka;
 
@@ -48,31 +49,40 @@ TEST_F(LKCoreRFIDSensorTest, writeProtocol)
 	corerfid.writeProtocol();
 }
 
-TEST_F(LKCoreRFIDSensorTest, checkProtocolPass)
+TEST_F(LKCoreRFIDSensorTest, setGain)
+{
+	const auto expected_values = ElementsAre(0x09, 0x04, 0x68, 0x01, 0x01, 0xD1);
+
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+
+	corerfid.setGain();
+}
+
+TEST_F(LKCoreRFIDSensorTest, checkSensorSetPass)
 {
 	uint8_t read_values[2] = {0x00, 0x00};
 
 	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArgPointee<0>(*read_values), Return(0)));
 
-	ASSERT_EQ(corerfid.checkProtocol(), true);
+	ASSERT_EQ(corerfid.checkSensorSet(), true);
 }
 
-TEST_F(LKCoreRFIDSensorTest, checkProtocolfailed)
+TEST_F(LKCoreRFIDSensorTest, checkSensorSetfailed)
 {
 	uint8_t read_values[2] = {0x82, 0x00};
 
 	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArgPointee<0>(*read_values), Return(0)));
 
-	ASSERT_EQ(corerfid.checkProtocol(), false);
+	ASSERT_EQ(corerfid.checkSensorSet(), false);
 }
 
 TEST_F(LKCoreRFIDSensorTest, RFIDMessageToStruct)
 {
-	uint8_t tag_message[10] = {0x80, 0x08, 0x79, 0xC6, 0x7B, 0xBF, 0x7B, 0x28, 0x00, 0x00};
-	uint8_t expected_id[5]	= {0x79, 0xC6, 0x7B, 0xBF, 0x7B};
-	RFIDTag rfid_tag		= {0, 0, 0, 0, 0, 0};
+	uint8_t tag_message[10] = {0x80, 0x08, 0x88, 0x04, 0x17, 0x9F, 0x04, 0x28, 0x00, 0x00};
+	uint8_t expected_id[4]	= {0x88, 0x04, 0x17, 0x9F};
+	RFIDTag rfid_tag		= {0, 0, 0, 0, 0, 0, 0};
 
-	ASSERT_EQ(corerfid.RFIDMessageIntoStruct(tag_message, rfid_tag), true);
+	corerfid.RFIDMessageIntoStruct(tag_message, rfid_tag);
 
 	ASSERT_EQ(rfid_tag.result_code, 0x80);
 	ASSERT_EQ(rfid_tag.length, 0x08);
@@ -81,29 +91,45 @@ TEST_F(LKCoreRFIDSensorTest, RFIDMessageToStruct)
 	ASSERT_EQ(rfid_tag.id[1], expected_id[1]);
 	ASSERT_EQ(rfid_tag.id[2], expected_id[2]);
 	ASSERT_EQ(rfid_tag.id[3], expected_id[3]);
-	ASSERT_EQ(rfid_tag.id[4], expected_id[4]);
 
+	ASSERT_EQ(rfid_tag.check_sum, 0x04);
 	ASSERT_EQ(rfid_tag.checks, 0x28);
 	ASSERT_EQ(rfid_tag.collisionbyte, 0x00);
 	ASSERT_EQ(rfid_tag.collisionbit, 0x00);
 }
 
-TEST_F(LKCoreRFIDSensorTest, RFIDMessageToStructWrongResultCode)
+TEST_F(LKCoreRFIDSensorTest, sendREQA)
 {
-	uint8_t tag_message[2] = {0x05};
+	const auto expected_values = ElementsAre(0x04, 0x02, 0x26, 0x07);
 
-	RFIDTag rfid_tag = {0, 0, 0, 0, 0, 0};
-	ASSERT_EQ(corerfid.RFIDMessageIntoStruct(tag_message, rfid_tag), false);
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
-	ASSERT_EQ(rfid_tag.result_code, 0x00);
+	corerfid.sendREQA();
 }
 
-TEST_F(LKCoreRFIDSensorTest, RFIDMessageToStructWrongLength)
+TEST_F(LKCoreRFIDSensorTest, checkATQAPass)
 {
-	uint8_t tag_message[2] = {0x80, 0x4F};
+	uint8_t read_values[7] = {0x80, 0x05, 0x04, 0x00, 0x28, 0x00, 0x00};
 
-	RFIDTag rfid_tag = {0, 0, 0, 0, 0, 0};
-	ASSERT_EQ(corerfid.RFIDMessageIntoStruct(tag_message, rfid_tag), false);
+	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 7), Return(0)));
 
-	ASSERT_EQ(rfid_tag.length, 0x00);
+	ASSERT_EQ(corerfid.checkATQA(), true);
+}
+
+TEST_F(LKCoreRFIDSensorTest, checkATQAFail)
+{
+	uint8_t read_values[7] = {0x80, 0x05, 0x44, 0x00, 0x28, 0x00, 0x00};
+
+	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 7), Return(0)));
+
+	ASSERT_EQ(corerfid.checkATQA(), false);
+}
+
+TEST_F(LKCoreRFIDSensorTest, sendCL1)
+{
+	const auto expected_values = ElementsAre(0x04, 0x03, 0x93, 0x20, 0x08);
+
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+
+	corerfid.sendCL1();
 }
