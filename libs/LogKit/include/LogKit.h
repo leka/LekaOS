@@ -145,7 +145,7 @@ struct logger {
 	do {                                                                                                               \
 		leka::logger::mutex.lock();                                                                                    \
 		leka::logger::format_time_human_readable(leka::logger::now());                                                 \
-		leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __PRETTY_FUNCTION__);                      \
+		leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                             \
 		leka::logger::format_message(str, ##__VA_ARGS__);                                                              \
 		auto length =                                                                                                  \
 			leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                       \
@@ -159,7 +159,7 @@ struct logger {
 	do {                                                                                                               \
 		leka::logger::mutex.lock();                                                                                    \
 		leka::logger::format_time_human_readable(leka::logger::now());                                                 \
-		leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __PRETTY_FUNCTION__);                      \
+		leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                             \
 		leka::logger::format_message(str, ##__VA_ARGS__);                                                              \
 		auto length =                                                                                                  \
 			leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                       \
@@ -173,7 +173,7 @@ struct logger {
 	do {                                                                                                               \
 		leka::logger::mutex.lock();                                                                                    \
 		leka::logger::format_time_human_readable(leka::logger::now());                                                 \
-		leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __PRETTY_FUNCTION__);                      \
+		leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                             \
 		leka::logger::format_message(str, ##__VA_ARGS__);                                                              \
 		auto length =                                                                                                  \
 			leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                       \
