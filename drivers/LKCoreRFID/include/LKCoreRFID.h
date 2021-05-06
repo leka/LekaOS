@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_DRIVER_LK_CORE_RFID_H_
 #define _LEKA_OS_DRIVER_LK_CORE_RFID_H_
 
+#include <array>
+
 #include "drivers/BufferedSerial.h"
 
 #include "CoreBufferedSerial.h"
@@ -15,6 +17,7 @@ struct RFIDTag {
 	uint8_t result_code {0};
 	uint8_t length {0};
 	uint8_t id[4] {0, 0, 0, 0};
+	// std::array<uint8_t, 4> id = {0, 0, 0, 0};
 	uint8_t check_sum {0};
 	uint8_t checks {0};
 	uint8_t collisionbyte {0};
@@ -24,8 +27,8 @@ struct RFIDTag {
 class LKCoreRFID
 {
   public:
-	LKCoreRFID(interface::BufferedSerial &interface);
-	auto RFIDMessageIntoStruct(uint8_t *tagValue, RFIDTag &rfid_tag) -> void;
+	explicit LKCoreRFID(interface::BufferedSerial &interface);
+	auto RFIDMessageIntoStruct(const uint8_t *tagValue, RFIDTag &rfid_tag) const -> void;
 	auto writeProtocol() -> void;
 	auto setGain() -> void;
 	auto checkSensorSet() -> bool;

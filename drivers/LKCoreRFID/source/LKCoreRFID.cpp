@@ -8,14 +8,12 @@ namespace leka {
 
 LKCoreRFID::LKCoreRFID(interface::BufferedSerial &interface) : _interface(interface) {}
 
-auto LKCoreRFID::RFIDMessageIntoStruct(uint8_t *tag_value, RFIDTag &rfid_tag) -> void
+auto LKCoreRFID::RFIDMessageIntoStruct(const uint8_t *tag_value, RFIDTag &rfid_tag) const -> void
 {
 	rfid_tag.result_code = tag_value[0];
 	rfid_tag.length		 = tag_value[1];
 
-	for (int i = 0; i < 4; ++i) {
-		rfid_tag.id[i] = tag_value[i + 2];
-	}
+	memcpy(rfid_tag.id, tag_value + 2, 4);
 
 	rfid_tag.check_sum	   = tag_value[6];
 	rfid_tag.checks		   = tag_value[7];
