@@ -33,6 +33,22 @@ class LKCoreRFIDSensorTest : public ::testing::Test
 
 	LKCoreRFID corerfid;
 	LKCoreBufferedSerialMock mockBufferedSerial;
+
+	auto compareRfidTag(RFIDTag &rfid_tag, uint8_t *expected_id)
+	{
+		ASSERT_EQ(rfid_tag.result_code, 0x80);
+		ASSERT_EQ(rfid_tag.length, 0x08);
+
+		ASSERT_EQ(rfid_tag.id[0], expected_id[0]);
+		ASSERT_EQ(rfid_tag.id[1], expected_id[1]);
+		ASSERT_EQ(rfid_tag.id[2], expected_id[2]);
+		ASSERT_EQ(rfid_tag.id[3], expected_id[3]);
+
+		ASSERT_EQ(rfid_tag.check_sum, 0x04);
+		ASSERT_EQ(rfid_tag.checks, 0x28);
+		ASSERT_EQ(rfid_tag.collisionbyte, 0x00);
+		ASSERT_EQ(rfid_tag.collisionbit, 0x00);
+	}
 };
 
 TEST_F(LKCoreRFIDSensorTest, initialization)
@@ -84,18 +100,7 @@ TEST_F(LKCoreRFIDSensorTest, RFIDMessageToStruct)
 
 	corerfid.RFIDMessageIntoStruct(tag_message, rfid_tag);
 
-	ASSERT_EQ(rfid_tag.result_code, 0x80);
-	ASSERT_EQ(rfid_tag.length, 0x08);
-
-	ASSERT_EQ(rfid_tag.id[0], expected_id[0]);
-	ASSERT_EQ(rfid_tag.id[1], expected_id[1]);
-	ASSERT_EQ(rfid_tag.id[2], expected_id[2]);
-	ASSERT_EQ(rfid_tag.id[3], expected_id[3]);
-
-	ASSERT_EQ(rfid_tag.check_sum, 0x04);
-	ASSERT_EQ(rfid_tag.checks, 0x28);
-	ASSERT_EQ(rfid_tag.collisionbyte, 0x00);
-	ASSERT_EQ(rfid_tag.collisionbit, 0x00);
+	compareRfidTag(rfid_tag, expected_id);
 }
 
 TEST_F(LKCoreRFIDSensorTest, sendREQA)
@@ -145,16 +150,5 @@ TEST_F(LKCoreRFIDSensorTest, receiveID)
 
 	rfid_tag = corerfid.receiveID();
 
-	ASSERT_EQ(rfid_tag.result_code, 0x80);
-	ASSERT_EQ(rfid_tag.length, 0x08);
-
-	ASSERT_EQ(rfid_tag.id[0], expected_id[0]);
-	ASSERT_EQ(rfid_tag.id[1], expected_id[1]);
-	ASSERT_EQ(rfid_tag.id[2], expected_id[2]);
-	ASSERT_EQ(rfid_tag.id[3], expected_id[3]);
-
-	ASSERT_EQ(rfid_tag.check_sum, 0x04);
-	ASSERT_EQ(rfid_tag.checks, 0x28);
-	ASSERT_EQ(rfid_tag.collisionbyte, 0x00);
-	ASSERT_EQ(rfid_tag.collisionbit, 0x00);
+	compareRfidTag(rfid_tag, expected_id);
 }
