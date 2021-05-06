@@ -83,11 +83,20 @@ TEST_F(LKCoreRFIDSensorTest, checkSensorSetPass)
 	ASSERT_EQ(corerfid.checkSensorSet(), true);
 }
 
-TEST_F(LKCoreRFIDSensorTest, checkSensorSetfailed)
+TEST_F(LKCoreRFIDSensorTest, checkSensorSetfailedOnFirstValue)
 {
 	uint8_t read_values[2] = {0x82, 0x00};
 
-	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArgPointee<0>(*read_values), Return(0)));
+	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 2), Return(0)));
+
+	ASSERT_EQ(corerfid.checkSensorSet(), false);
+}
+
+TEST_F(LKCoreRFIDSensorTest, checkSensorSetfailedOnSecondValue)
+{
+	uint8_t read_values[2] = {0x00, 0x82};
+
+	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 2), Return(0)));
 
 	ASSERT_EQ(corerfid.checkSensorSet(), false);
 }
@@ -121,9 +130,18 @@ TEST_F(LKCoreRFIDSensorTest, checkATQAPass)
 	ASSERT_EQ(corerfid.checkATQA(), true);
 }
 
-TEST_F(LKCoreRFIDSensorTest, checkATQAFail)
+TEST_F(LKCoreRFIDSensorTest, checkATQAFailOnFirstId)
 {
 	uint8_t read_values[7] = {0x80, 0x05, 0x44, 0x00, 0x28, 0x00, 0x00};
+
+	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 7), Return(0)));
+
+	ASSERT_EQ(corerfid.checkATQA(), false);
+}
+
+TEST_F(LKCoreRFIDSensorTest, checkATQAFailOnLastId)
+{
+	uint8_t read_values[7] = {0x80, 0x05, 0x04, 0x44, 0x28, 0x00, 0x00};
 
 	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 7), Return(0)));
 

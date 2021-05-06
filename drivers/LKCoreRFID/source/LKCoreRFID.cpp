@@ -44,7 +44,7 @@ auto LKCoreRFID::checkSensorSet() -> bool
 
 	_interface.read(buffer, buffer_size);
 
-	if (buffer[0] == 0 && buffer[1] == 0) {
+	if (buffer[0] == 0x00 && buffer[1] == 0x00) {
 		return true;
 	}
 
