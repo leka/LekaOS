@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <mutex>
 #include <string_view>
 #include <unordered_map>
 
@@ -143,7 +144,7 @@ struct logger {
 
 #define log_debug(str, ...)                                                                                            \
 	do {                                                                                                               \
-		leka::logger::mutex.lock();                                                                                    \
+		const std::lock_guard<rtos::Mutex> lock(leka::logger::mutex);                                                  \
 		leka::logger::format_time_human_readable(leka::logger::now());                                                 \
 		leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                             \
 		leka::logger::format_message(str, ##__VA_ARGS__);                                                              \
@@ -152,12 +153,11 @@ struct logger {
 										leka::logger::level_lut.at(leka::logger::level::debug).data(),                 \
 										leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());  \
 		leka::logger::print(leka::logger::buffer::output.data(), length);                                              \
-		leka::logger::mutex.unlock();                                                                                  \
 	} while (0)
 
 #define log_info(str, ...)                                                                                             \
 	do {                                                                                                               \
-		leka::logger::mutex.lock();                                                                                    \
+		const std::lock_guard<rtos::Mutex> lock(leka::logger::mutex);                                                  \
 		leka::logger::format_time_human_readable(leka::logger::now());                                                 \
 		leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                             \
 		leka::logger::format_message(str, ##__VA_ARGS__);                                                              \
@@ -166,12 +166,11 @@ struct logger {
 										leka::logger::level_lut.at(leka::logger::level::info).data(),                  \
 										leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());  \
 		leka::logger::print(leka::logger::buffer::output.data(), length);                                              \
-		leka::logger::mutex.unlock();                                                                                  \
 	} while (0)
 
 #define log_error(str, ...)                                                                                            \
 	do {                                                                                                               \
-		leka::logger::mutex.lock();                                                                                    \
+		const std::lock_guard<rtos::Mutex> lock(leka::logger::mutex);                                                  \
 		leka::logger::format_time_human_readable(leka::logger::now());                                                 \
 		leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                             \
 		leka::logger::format_message(str, ##__VA_ARGS__);                                                              \
@@ -180,7 +179,6 @@ struct logger {
 										leka::logger::level_lut.at(leka::logger::level::error).data(),                 \
 										leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());  \
 		leka::logger::print(leka::logger::buffer::output.data(), length);                                              \
-		leka::logger::mutex.unlock();                                                                                  \
 	} while (0)
 
 #endif	 // _LEKA_OS_LIB_LOG_KIT_H_
