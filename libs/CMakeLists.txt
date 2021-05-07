@@ -23,6 +23,7 @@ add_subdirectory(${LIBS_DIR}/LKCalculatorKit)
 
 add_subdirectory(${LIBS_DIR}/Utils)
 add_subdirectory(${LIBS_DIR}/LogKit)
+add_subdirectory(${LIBS_DIR}/CircularBuffer)
 add_subdirectory(${LIBS_DIR}/CriticalSection)
 
 add_subdirectory(${LIBS_DIR}/PrettyPrinter)
