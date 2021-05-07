@@ -18,14 +18,14 @@ template <typename T, uint32_t BufferSize, typename CounterType = uint32_t>
 class CircularBuffer
 {
   public:
-	CircularBuffer() : _head(0), _tail(0), _full(false)
+	CircularBuffer()
 	{
 		static_assert(
 			(sizeof(CounterType) >= sizeof(uint32_t)) || (BufferSize < (((uint64_t)1) << (sizeof(CounterType) * 8))),
 			"Invalid BufferSize for the CounterType");
 	}
 
-	~CircularBuffer() {}
+	~CircularBuffer() = default;
 
 	void push(const T &data)
 	{
@@ -55,7 +55,7 @@ class CircularBuffer
 			_tail = 0;
 			_head = 0;
 			_full = true;
-			std::copy(src + len - BufferSize, src + len, _buffer);
+			std::copy(src + len - BufferSize, src + len, _buffer.data());
 		} else {
 			/* we need to adjust the tail at the end if we're filling the buffer of overflowing */
 			bool adjust_tail = ((BufferSize - non_critical_size()) <= len);
@@ -67,14 +67,14 @@ class CircularBuffer
 				written = BufferSize - _head;
 			}
 
-			std::copy(src, src + written, _buffer + _head);
+			std::copy(src, src + written, _buffer.data() + _head);
 			_head = incrementCounter(_head, written);
 
 			CounterType left_to_write = len - written;
 
 			/* we might need to continue to write from the start of the buffer */
 			if (left_to_write) {
-				std::copy(src + written, src + written + left_to_write, _buffer);
+				std::copy(src + written, src + written + left_to_write, _buffer.data());
 				_head = left_to_write;
 			}
 
@@ -89,7 +89,7 @@ class CircularBuffer
 
 	void push(mbed::Span<const T> src) { push(src.data(), src.size()); }
 
-	bool pop(T &data)
+	auto pop(T &data) -> bool
 	{
 		bool data_popped = false;
 
@@ -108,7 +108,7 @@ class CircularBuffer
 		return data_popped;
 	}
 
-	CounterType pop(T *dest, CounterType len)
+	auto pop(T *dest, CounterType len) -> CounterType
 	{
 		MBED_ASSERT(len > 0);
 
@@ -132,14 +132,14 @@ class CircularBuffer
 				data_popped = BufferSize - _tail;
 			}
 
-			std::copy(_buffer + _tail, _buffer + _tail + data_popped, dest);
+			std::copy(_buffer.begin() + _tail, _buffer.begin() + _tail + data_popped, dest);
 			_tail = incrementCounter(_tail, data_popped);
 
 			/* if we looped over the end we may need to pop again */
 			CounterType left_to_pop = len - data_popped;
 
 			if (left_to_pop) {
-				std::copy(_buffer, _buffer + left_to_pop, dest + data_popped);
+				std::copy(_buffer.begin(), _buffer.begin() + left_to_pop, dest + data_popped);
 				_tail = left_to_pop;
 
 				data_popped += left_to_pop;
@@ -153,13 +153,13 @@ class CircularBuffer
 		return data_popped;
 	}
 
-	mbed::Span<T> pop(mbed::Span<T> dest)
+	auto pop(mbed::Span<T> dest) -> mbed::Span<T>
 	{
 		CounterType popped = pop(dest.data(), dest.size());
 		return mbed::make_Span(dest.data(), popped);
 	}
 
-	bool empty() const
+	[[nodiscard]] auto empty() const -> bool
 	{
 		core_util_critical_section_enter();
 		bool is_empty = non_critical_empty();
@@ -167,7 +167,7 @@ class CircularBuffer
 		return is_empty;
 	}
 
-	bool full() const { return core_util_atomic_load_bool(&_full); }
+	[[nodiscard]] auto full() const -> bool { return core_util_atomic_load_bool(&_full); }
 
 	void reset()
 	{
@@ -178,7 +178,7 @@ class CircularBuffer
 		core_util_critical_section_exit();
 	}
 
-	CounterType size() const
+	auto size() const -> CounterType
 	{
 		core_util_critical_section_enter();
 		CounterType elements = non_critical_size();
@@ -186,7 +186,7 @@ class CircularBuffer
 		return elements;
 	}
 
-	bool peek(T &data) const
+	auto peek(T &data) const -> bool
 	{
 		bool data_updated = false;
 		core_util_critical_section_enter();
@@ -199,13 +199,13 @@ class CircularBuffer
 	}
 
   private:
-	bool non_critical_empty() const
+	[[nodiscard]] auto non_critical_empty() const -> bool
 	{
 		bool is_empty = (_head == _tail) && !_full;
 		return is_empty;
 	}
 
-	CounterType non_critical_size() const
+	auto non_critical_size() const -> CounterType
 	{
 		CounterType elements;
 		if (!_full) {
@@ -220,7 +220,7 @@ class CircularBuffer
 		return elements;
 	}
 
-	CounterType incrementCounter(CounterType val, CounterType increment = 1)
+	auto incrementCounter(CounterType val, CounterType increment = 1) -> CounterType
 	{
 		val += increment;
 
@@ -234,10 +234,10 @@ class CircularBuffer
 	}
 
   private:
-	T _buffer[BufferSize];
-	CounterType _head;
-	CounterType _tail;
-	bool _full;
+	std::array<T, BufferSize> _buffer;
+	CounterType _head {0};
+	CounterType _tail {0};
+	bool _full {false};
 };
 
 }	// namespace leka::utils
