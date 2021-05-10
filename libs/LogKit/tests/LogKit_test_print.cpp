@@ -24,7 +24,7 @@ class LogKitPrintTest : public ::testing::Test
 	static void test_printf(const char *str, size_t size)
 	{
 		spy_string = "Custom print function: " + std::string {str};
-		std::cout << spy_string << '\n';
+		std::cout << spy_string;
 	}
 
 	static void test_default_printf(const char *str, size_t size)

@@ -32,7 +32,7 @@ class LogKitNowTest : public ::testing::Test
 	static void test_printf(const char *str, size_t size)
 	{
 		spy_string = std::string {str};
-		std::cout << spy_string << '\n';
+		std::cout << spy_string;
 	}
 
 	static auto test_dynamic_now() -> int64_t
