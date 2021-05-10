@@ -46,23 +46,25 @@ class CircularBuffer
 
 	void push(const T *src, CounterType len)
 	{
-		MBED_ASSERT(len > 0);
+		if (len <= 0) {
+			return;
+		}
 
 		core_util_critical_section_enter();
 
-		/* if we try to write more bytes than the buffer can hold we only bother writing the last bytes */
+		// if we try to write more bytes than the buffer can hold we only bother writing the last bytes
 		if (len > BufferSize) {
 			_tail = 0;
 			_head = 0;
 			_full = true;
 			std::copy(src + len - BufferSize, src + len, _buffer.data());
 		} else {
-			/* we need to adjust the tail at the end if we're filling the buffer of overflowing */
+			// we need to adjust the tail at the end if we're filling the buffer of overflowing
 			bool adjust_tail = ((BufferSize - non_critical_size()) <= len);
 
 			CounterType written = len;
 
-			/* on first pass we write as much as we can to the right of head */
+			// on first pass we write as much as we can to the right of head
 			if ((_head + written) > BufferSize) {
 				written = BufferSize - _head;
 			}
@@ -70,12 +72,10 @@ class CircularBuffer
 			std::copy(src, src + written, _buffer.data() + _head);
 			_head = incrementCounter(_head, written);
 
-			CounterType left_to_write = len - written;
-
-			/* we might need to continue to write from the start of the buffer */
-			if (left_to_write) {
-				std::copy(src + written, src + written + left_to_write, _buffer.data());
-				_head = left_to_write;
+			// we might need to continue to write from the start of the buffer
+			if (CounterType items_left_to_write = len - written) {
+				std::copy(src + written, src + written + items_left_to_write, _buffer.data());
+				_head = items_left_to_write;
 			}
 
 			if (adjust_tail) {
@@ -108,9 +108,7 @@ class CircularBuffer
 
 	auto pop(T *dest, CounterType len) -> CounterType
 	{
-		MBED_ASSERT(len > 0);
-
-		if (len == 0) {
+		if (len <= 0) {
 			return 0;
 		}
 
@@ -119,13 +117,13 @@ class CircularBuffer
 		core_util_critical_section_enter();
 
 		if (!non_critical_empty()) {
-			/* make sure we only try to read as much as we have items present */
+			// make sure we only try to read as much as we have items present
 			if (len > non_critical_size()) {
 				len = non_critical_size();
 			}
 			data_popped = len;
 
-			/* items may be split by overlap, take only the number we have to the right of tail */
+			// items may be split by overlap, take only the number we have to the right of tail
 			if ((_tail + data_popped) > BufferSize) {
 				data_popped = BufferSize - _tail;
 			}
@@ -133,14 +131,11 @@ class CircularBuffer
 			std::copy(_buffer.begin() + _tail, _buffer.begin() + _tail + data_popped, dest);
 			_tail = incrementCounter(_tail, data_popped);
 
-			/* if we looped over the end we may need to pop again */
-			CounterType left_to_pop = len - data_popped;
-
-			if (left_to_pop) {
-				std::copy(_buffer.begin(), _buffer.begin() + left_to_pop, dest + data_popped);
-				_tail = left_to_pop;
-
-				data_popped += left_to_pop;
+			// if we looped over the end we may need to pop again
+			if (CounterType items_left_to_pop = len - data_popped) {
+				std::copy(_buffer.begin(), _buffer.begin() + items_left_to_pop, dest + data_popped);
+				_tail = items_left_to_pop;
+				data_popped += items_left_to_pop;
 			}
 
 			_full = false;
@@ -216,16 +211,13 @@ class CircularBuffer
 	{
 		val += increment;
 
-		MBED_ASSERT(val <= BufferSize);
-
-		if (val == BufferSize) {
+		if (val >= BufferSize) {
 			val = 0;
 		}
 
 		return val;
 	}
 
-  private:
 	std::array<T, BufferSize> _buffer;
 	CounterType _head {0};
 	CounterType _tail {0};
