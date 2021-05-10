@@ -87,8 +87,6 @@ class CircularBuffer
 		core_util_critical_section_exit();
 	}
 
-	void push(mbed::Span<const T> src) { push(src.data(), src.size()); }
-
 	auto pop(T &data) -> bool
 	{
 		bool data_popped = false;
@@ -151,12 +149,6 @@ class CircularBuffer
 		core_util_critical_section_exit();
 
 		return data_popped;
-	}
-
-	auto pop(mbed::Span<T> dest) -> mbed::Span<T>
-	{
-		CounterType popped = pop(dest.data(), dest.size());
-		return mbed::make_Span(dest.data(), popped);
 	}
 
 	[[nodiscard]] auto empty() const -> bool
