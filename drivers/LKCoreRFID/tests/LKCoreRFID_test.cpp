@@ -43,7 +43,6 @@ class LKCoreRFIDSensorTest : public ::testing::Test
 		ASSERT_EQ(rfid_tag.UID[4], expected_values.UID[4]);
 		ASSERT_EQ(rfid_tag.UID[5], expected_values.UID[5]);
 		ASSERT_EQ(rfid_tag.UID[6], expected_values.UID[6]);
-		ASSERT_EQ(rfid_tag.UID[7], expected_values.UID[7]);
 
 		ASSERT_EQ(rfid_tag.SAK[0], expected_values.SAK[0]);
 		ASSERT_EQ(rfid_tag.SAK[1], expected_values.SAK[1]);
@@ -147,7 +146,7 @@ TEST_F(LKCoreRFIDSensorTest, sendCL1)
 	corerfid.sendCL1();
 }
 
-TEST_F(LKCoreRFIDSensorTest, receiveID)
+TEST_F(LKCoreRFIDSensorTest, receiveUID1)
 {
 	uint8_t read_values[10] = {0x80, 0x08, 0x88, 0x04, 0x17, 0x9F, 0x04, 0x28, 0x00, 0x00};
 	RFIDTag expected_values = {{0x88, 0x04, 0x17, 0x9F}, {0}, 0};
@@ -155,7 +154,7 @@ TEST_F(LKCoreRFIDSensorTest, receiveID)
 	EXPECT_CALL(mockBufferedSerial, read)
 		.WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 10), Return(0)));
 
-	corerfid.receiveID();
+	corerfid.receiveUID1();
 
 	compareRfidTag(corerfid._rfid_tag, expected_values);
 }

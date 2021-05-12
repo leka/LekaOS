@@ -24,7 +24,7 @@ namespace leka {
 // };
 
 struct RFIDTag {
-	uint8_t UID[8] {0, 0, 0, 0, 0, 0, 0, 0};
+	uint8_t UID[7] {0, 0, 0, 0, 0, 0, 0};
 	uint8_t SAK[4] {0x00, 0x00, 0x00, 0x00};
 	uint8_t data[16] {0};
 };
@@ -44,7 +44,7 @@ class LKCoreRFID
 	auto checkATQA() -> bool;
 
 	auto sendCL1() -> void;
-	auto receiveID() -> void;
+	auto receiveUID1() -> void;
 
 	// auto sendID1() -> void;
 	// auto receiveSAK1() -> RFIDTag;

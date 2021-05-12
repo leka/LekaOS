@@ -68,9 +68,9 @@ auto LKCoreRFID::sendCL1() -> void
 	_interface.write(command_buffer, buffer_size);
 }
 
-auto LKCoreRFID::receiveID() -> void
+auto LKCoreRFID::receiveUID1() -> void
 {
-	const uint8_t buffer_size = 2;
+	const uint8_t buffer_size = 10;
 	uint8_t buffer[buffer_size];
 
 	_interface.read(buffer, buffer_size);
