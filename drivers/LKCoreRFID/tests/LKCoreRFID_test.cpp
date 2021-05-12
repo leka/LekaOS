@@ -258,7 +258,15 @@ TEST_F(LKCoreRFIDSensorTest, authentification)
 	corerfid.authentification();
 }
 
-TEST_F(LKCoreRFIDSensorTest, read)
+TEST_F(LKCoreRFIDSensorTest, readRFIDTag)
+{
+	const auto expected_values = ElementsAre(0x04, 0x03, 0x30, 0x05, 0x28);
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+
+	corerfid.readRFIDTag();
+}
+
+TEST_F(LKCoreRFIDSensorTest, receiveRFIDTag)
 {
 	uint8_t read_values[20] = {
 		0x80, 0x15, 0x34, 0x03, 0x00, 0xFE, 0x01, 0x02, 0x03, 0x04,
@@ -270,7 +278,7 @@ TEST_F(LKCoreRFIDSensorTest, read)
 	EXPECT_CALL(mockBufferedSerial, read)
 		.WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 20), Return(0)));
 
-	corerfid.readRFIDTag();
+	corerfid.receiveRFIDTag();
 
 	compareRfidTag(corerfid._rfid_tag, expected_values);
 }

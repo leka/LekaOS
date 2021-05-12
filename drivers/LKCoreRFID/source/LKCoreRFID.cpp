@@ -163,6 +163,14 @@ auto LKCoreRFID::authentification() -> void
 
 auto LKCoreRFID::readRFIDTag() -> void
 {
+	const uint8_t buffer_size				  = 5;
+	const uint8_t command_buffer[buffer_size] = {0x04, 0x03, 0x30, 0x05, 0x28};
+
+	_interface.write(command_buffer, buffer_size);
+}
+
+auto LKCoreRFID::receiveRFIDTag() -> void
+{
 	const uint8_t buffer_size = 21;
 	uint8_t buffer[buffer_size];
 
