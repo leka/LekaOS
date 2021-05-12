@@ -8,9 +8,14 @@ namespace leka {
 
 LKCoreRFID::LKCoreRFID(interface::BufferedSerial &interface) : _interface(interface) {}
 
-auto LKCoreRFID::setRFIDTag(RFIDTag expected_values) -> void
+auto LKCoreRFID::setRFIDTag(RFIDTag &expected_values) -> void
 {
 	_rfid_tag = expected_values;
+}
+
+auto LKCoreRFID::getRFIDTag() -> RFIDTag
+{
+	return _rfid_tag;
 }
 
 auto LKCoreRFID::writeProtocol() -> void
@@ -162,6 +167,14 @@ auto LKCoreRFID::authentification() -> void
 }
 
 auto LKCoreRFID::readRFIDTag() -> void
+{
+	const uint8_t buffer_size				  = 5;
+	const uint8_t command_buffer[buffer_size] = {0x04, 0x03, 0x30, 0x05, 0x28};
+
+	_interface.write(command_buffer, buffer_size);
+}
+
+auto LKCoreRFID::receiveRFIDTag() -> void
 {
 	const uint8_t buffer_size = 21;
 	uint8_t buffer[buffer_size];
