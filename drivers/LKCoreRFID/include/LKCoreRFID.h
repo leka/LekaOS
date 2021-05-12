@@ -48,7 +48,7 @@ class LKCoreRFID
 	auto sendUID2() -> void;
 	auto receiveSAK2() -> void;
 
-	// auto authentification() -> bool;
+	auto authentification() -> void;
 
 	// auto readRFIDTag();
 
