@@ -47,17 +47,19 @@ class LKCoreRFID
 	auto receiveUID1() -> void;
 
 	auto sendUID1() -> void;
-	// auto receiveSAK1() -> RFIDTag;
+	auto receiveSAK1() -> void;
 
 	// auto sendCL2() -> void;
-	// auto receiveID2() -> RFIDTag;
+	// auto receiveID2() -> void;
 
 	// auto sendID2() -> void;
-	// auto receiveSAK2() -> RFIDTag;
+	// auto receiveSAK2() -> void;
 
 	// auto authentification() -> bool;
 
 	// auto readRFIDTag();
+
+	// auto checkCRC() -> bool;
 
   private:
 	interface::BufferedSerial &_interface;

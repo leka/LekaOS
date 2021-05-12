@@ -167,3 +167,16 @@ TEST_F(LKCoreRFIDSensorTest, sendUID1)
 
 	corerfid.sendUID1();
 }
+
+TEST_F(LKCoreRFIDSensorTest, receiveSAK1)
+{
+	uint8_t read_values[8]	= {0x80, 0x06, 0x04, 0xDA, 0x17, 0x08, 0x00, 0x00};
+	RFIDTag expected_values = {{0}, {0x04, 0xDA}, 0};
+
+	EXPECT_CALL(mockBufferedSerial, read)
+		.WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 10), Return(0)));
+
+	corerfid.receiveSAK1();
+
+	compareRfidTag(corerfid._rfid_tag, expected_values);
+}
