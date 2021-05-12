@@ -13,20 +13,27 @@
 
 namespace leka {
 
+// struct RFIDTag {
+// 	uint8_t result_code {0};
+// 	uint8_t length {0};
+// 	uint8_t id[4] {0, 0, 0, 0};
+// 	uint8_t check_sum {0};
+// 	uint8_t checks {0};
+// 	uint8_t collisionbyte {0};
+// 	uint8_t collisionbit {0};
+// };
+
 struct RFIDTag {
-	uint8_t result_code {0};
-	uint8_t length {0};
-	uint8_t id[4] {0, 0, 0, 0};
-	// std::array<uint8_t, 4> id = {0, 0, 0, 0};
-	uint8_t check_sum {0};
-	uint8_t checks {0};
-	uint8_t collisionbyte {0};
-	uint8_t collisionbit {0};
+	uint8_t UID[8] {0, 0, 0, 0, 0, 0, 0, 0};
+	uint8_t SAK[4] {0x00, 0x00, 0x00, 0x00};
+	uint8_t data[16] {0};
 };
 
 class LKCoreRFID
 {
   public:
+	RFIDTag _rfid_tag {0, 0, 0};
+
 	explicit LKCoreRFID(interface::BufferedSerial &interface);
 	auto RFIDMessageIntoStruct(const uint8_t *tagValue, RFIDTag &rfid_tag) const -> void;
 	auto writeProtocol() -> void;
@@ -37,7 +44,20 @@ class LKCoreRFID
 	auto checkATQA() -> bool;
 
 	auto sendCL1() -> void;
-	auto receiveID() -> RFIDTag;
+	auto receiveID() -> void;
+
+	// auto sendID1() -> void;
+	// auto receiveSAK1() -> RFIDTag;
+
+	// auto sendCL2() -> void;
+	// auto receiveID2() -> RFIDTag;
+
+	// auto sendID2() -> void;
+	// auto receiveSAK2() -> RFIDTag;
+
+	// auto authentification() -> bool;
+
+	// auto readRFIDTag();
 
   private:
 	interface::BufferedSerial &_interface;
