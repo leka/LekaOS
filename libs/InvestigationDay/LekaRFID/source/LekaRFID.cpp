@@ -7,6 +7,22 @@
 using namespace mbed;
 using namespace std::chrono;
 
+// auto computeCRC(uint8_t *buffer) -> void
+// {
+// 	auto crc = static_cast<uint16_t>(0x6363);	// init values for crc corresponding to ISO14443
+
+// 	for (int i = 0; i < 2; ++i) {
+// 		auto elem = buffer[i];
+// 		elem ^= uint8_t(crc & 0xff);
+// 		elem ^= elem << 4;
+
+// 		uint32_t elem32 = elem;
+// 		crc				= (crc >> 8) ^ (elem32 << 8) ^ (elem32 << 3) ^ (elem32 >> 4);
+// 	}
+// 	buffer[0] = static_cast<uint8_t>(crc & 0xff);
+// 	buffer[1] = static_cast<uint8_t>((crc >> 8) & 0xff);
+// }
+
 RFID::RFID() : _interface(RFID_UART_TX, RFID_UART_RX, 57600) {}
 
 bool RFID::echo()
@@ -89,6 +105,32 @@ bool RFID::setIEC15693()
 	return false;
 }
 
+bool RFID::setSync()
+{
+	uint8_t buffer[2]						  = {0x00};
+	const uint8_t aimed_buffer_length		  = 0x2;
+	uint8_t aimed_buffer[aimed_buffer_length] = {0x00, 0x00};
+
+	_interface.write(_set_receiver_gain_cmd, _set_receiver_gain_cmd_length);
+	rtos::ThisThread::sleep_for(10ms);
+
+	// TODO: why a for loop? why not while(!_interface.readable())?
+	for (int i = 0; i < 10; i++) {
+		if (_interface.readable()) {
+			_interface.read(buffer, aimed_buffer_length);
+			// TODO: check the second for loop and the use of the index
+			for (int j = 0; j < aimed_buffer_length; j++) {
+				printf("%X ", buffer[j]);
+			}
+			printf("\n");
+			if ((memcmp(aimed_buffer, buffer, aimed_buffer_length) == 0)) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 bool RFID::setReceiverGain()
 {
 	uint8_t buffer[2]						  = {0x00};
@@ -126,6 +168,18 @@ void RFID::sendReceive(uint8_t val)
 		_interface.write(_send_receive2_cmd, _send_receive2_cmd_length);
 	} else if (val == 3) {
 		_interface.write(_send_receive3_cmd, _send_receive3_cmd_length);
+	} else if (val == 4) {
+		_interface.write(_send_receive4_cmd, _send_receive4_cmd_length);
+	} else if (val == 5) {
+		_interface.write(_send_receive5_cmd, _send_receive5_cmd_length);
+	} else if (val == 6) {
+		_interface.write(_send_receive6_cmd, _send_receive6_cmd_length);
+	} else if (val == 7) {
+		_interface.write(_send_receive7_cmd, _send_receive7_cmd_length);
+	} else if (val == 8) {
+		_interface.write(_send_receive8_cmd, _send_receive8_cmd_length);
+	} else if (val == 9) {
+		_interface.write(_send_receive9_cmd, _send_receive9_cmd_length);
 	}
 	rtos::ThisThread::sleep_for(10ms);
 
@@ -193,6 +247,11 @@ void RFID::start()
 	}
 	printf("RFID reader enable with IEC 14443!\n");
 
+	while (!setSync()) {
+		printf("Attempt to set RFID sync...\n");
+		rtos::ThisThread::sleep_for(1s);
+	}
+
 	while (!setReceiverGain()) {
 		printf("Attempt to set RFID reader gain...\n");
 		rtos::ThisThread::sleep_for(1s);
@@ -202,6 +261,12 @@ void RFID::start()
 	while (true) {
 		sendReceive(2);
 		sendReceive(3);
+		sendReceive(4);
+		sendReceive(5);
+		sendReceive(6);
+		sendReceive(7);
+		sendReceive(8);
+		sendReceive(9);
 		rtos::ThisThread::sleep_for(1s);
 	}
 
