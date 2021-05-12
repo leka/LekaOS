@@ -7,6 +7,7 @@ add_subdirectory(${SPIKES_DIR}/mbed_watchdog_ticker_vs_thread)
 
 add_subdirectory(${SPIKES_DIR}/lk_ble)
 add_subdirectory(${SPIKES_DIR}/lk_cg_animations)
+add_subdirectory(${SPIKES_DIR}/lk_file_reception)
 add_subdirectory(${SPIKES_DIR}/lk_lcd)
 add_subdirectory(${SPIKES_DIR}/lk_led)
 add_subdirectory(${SPIKES_DIR}/lk_qspi)
@@ -38,6 +39,7 @@ add_dependencies( spikes_leka
 	spike_lk_sensors_microphone
 	spike_lk_sensors_light
 	spike_lk_file_manager
+	spike_lk_file_reception
 	spike_lk_sensors_touch
 	spike_lk_sensors_temperature_humidity
 )
