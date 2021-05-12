@@ -51,6 +51,23 @@ class LKCoreRFIDSensorTest : public ::testing::Test
 		ASSERT_EQ(rfid_tag.SAK[1], expected_values.SAK[1]);
 		ASSERT_EQ(rfid_tag.SAK[2], expected_values.SAK[2]);
 		ASSERT_EQ(rfid_tag.SAK[3], expected_values.SAK[3]);
+
+		ASSERT_EQ(rfid_tag.data[0], expected_values.data[0]);
+		ASSERT_EQ(rfid_tag.data[1], expected_values.data[1]);
+		ASSERT_EQ(rfid_tag.data[2], expected_values.data[2]);
+		ASSERT_EQ(rfid_tag.data[3], expected_values.data[3]);
+		ASSERT_EQ(rfid_tag.data[4], expected_values.data[4]);
+		ASSERT_EQ(rfid_tag.data[5], expected_values.data[5]);
+		ASSERT_EQ(rfid_tag.data[6], expected_values.data[6]);
+		ASSERT_EQ(rfid_tag.data[7], expected_values.data[7]);
+		ASSERT_EQ(rfid_tag.data[8], expected_values.data[8]);
+		ASSERT_EQ(rfid_tag.data[9], expected_values.data[9]);
+		ASSERT_EQ(rfid_tag.data[10], expected_values.data[10]);
+		ASSERT_EQ(rfid_tag.data[11], expected_values.data[11]);
+		ASSERT_EQ(rfid_tag.data[12], expected_values.data[12]);
+		ASSERT_EQ(rfid_tag.data[13], expected_values.data[13]);
+		ASSERT_EQ(rfid_tag.data[14], expected_values.data[14]);
+		ASSERT_EQ(rfid_tag.data[15], expected_values.data[15]);
 	}
 };
 
@@ -180,8 +197,7 @@ TEST_F(LKCoreRFIDSensorTest, receiveSAK1)
 	uint8_t read_values[8]	= {0x80, 0x06, 0x04, 0xDA, 0x17, 0x08, 0x00, 0x00};
 	RFIDTag expected_values = {{0}, {0}, {0x04, 0xDA}, 0};
 
-	EXPECT_CALL(mockBufferedSerial, read)
-		.WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 10), Return(0)));
+	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 8), Return(0)));
 
 	corerfid.receiveSAK1();
 
@@ -227,8 +243,7 @@ TEST_F(LKCoreRFIDSensorTest, receiveSAK2)
 	uint8_t read_values[8]	= {0x80, 0x06, 0x00, 0xFE, 0x51, 0x08, 0x00, 0x00};
 	RFIDTag expected_values = {{0}, {0}, {0x00, 0x00, 0x00, 0xFE}, 0};
 
-	EXPECT_CALL(mockBufferedSerial, read)
-		.WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 10), Return(0)));
+	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 8), Return(0)));
 
 	corerfid.receiveSAK2();
 
@@ -241,4 +256,21 @@ TEST_F(LKCoreRFIDSensorTest, authentification)
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
 	corerfid.authentification();
+}
+
+TEST_F(LKCoreRFIDSensorTest, read)
+{
+	uint8_t read_values[20] = {
+		0x80, 0x15, 0x34, 0x03, 0x00, 0xFE, 0x01, 0x02, 0x03, 0x04,
+		0x0,  0x0,	0x0,  0x0,	0x0,  0x0,	0x0,  0x0,	0x5C, 0x4C};   // would have 0x08, 0x00, 0x00 more but
+																	   // SetArrayArgument bug after +20 values
+	RFIDTag expected_values = {
+		{0}, {0}, {0}, {0x34, 0x03, 0x00, 0xFE, 0x01, 0x02, 0x03, 0x04, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}};
+
+	EXPECT_CALL(mockBufferedSerial, read)
+		.WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 20), Return(0)));
+
+	corerfid.readRFIDTag();
+
+	compareRfidTag(corerfid._rfid_tag, expected_values);
 }
