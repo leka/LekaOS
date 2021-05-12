@@ -23,11 +23,10 @@ struct RFIDTag {
 class LKCoreRFID
 {
   public:
-	RFIDTag _rfid_tag {0, 0, 0, 0};
-
 	explicit LKCoreRFID(interface::BufferedSerial &interface);
 
-	auto setRFIDTag(RFIDTag expected_values) -> void;
+	auto setRFIDTag(RFIDTag &expected_values) -> void;
+	auto getRFIDTag() -> RFIDTag;
 
 	auto writeProtocol() -> void;
 	auto setGain() -> void;
@@ -56,6 +55,7 @@ class LKCoreRFID
 
   private:
 	interface::BufferedSerial &_interface;
+	RFIDTag _rfid_tag {0, 0, 0, 0};
 };
 
 }	// namespace leka

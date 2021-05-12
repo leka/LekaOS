@@ -34,7 +34,7 @@ class LKCoreRFIDSensorTest : public ::testing::Test
 	LKCoreRFID corerfid;
 	LKCoreBufferedSerialMock mockBufferedSerial;
 
-	auto compareRfidTag(RFIDTag &rfid_tag, RFIDTag &expected_values)
+	auto compareRfidTag(RFIDTag rfid_tag, RFIDTag &expected_values)
 	{
 		ASSERT_EQ(rfid_tag.UID[0], expected_values.UID[0]);
 		ASSERT_EQ(rfid_tag.UID[1], expected_values.UID[1]);
@@ -176,7 +176,7 @@ TEST_F(LKCoreRFIDSensorTest, receiveUID1)
 
 	corerfid.receiveUID1();
 
-	compareRfidTag(corerfid._rfid_tag, expected_values);
+	compareRfidTag(corerfid.getRFIDTag(), expected_values);
 }
 
 TEST_F(LKCoreRFIDSensorTest, sendUID1)
@@ -201,7 +201,7 @@ TEST_F(LKCoreRFIDSensorTest, receiveSAK1)
 
 	corerfid.receiveSAK1();
 
-	compareRfidTag(corerfid._rfid_tag, expected_values);
+	compareRfidTag(corerfid.getRFIDTag(), expected_values);
 }
 
 TEST_F(LKCoreRFIDSensorTest, sendCL2)
@@ -223,7 +223,7 @@ TEST_F(LKCoreRFIDSensorTest, receiveUID2)
 
 	corerfid.receiveUID2();
 
-	compareRfidTag(corerfid._rfid_tag, expected_values);
+	compareRfidTag(corerfid.getRFIDTag(), expected_values);
 }
 
 TEST_F(LKCoreRFIDSensorTest, sendUID2)
@@ -247,7 +247,7 @@ TEST_F(LKCoreRFIDSensorTest, receiveSAK2)
 
 	corerfid.receiveSAK2();
 
-	compareRfidTag(corerfid._rfid_tag, expected_values);
+	compareRfidTag(corerfid.getRFIDTag(), expected_values);
 }
 
 TEST_F(LKCoreRFIDSensorTest, authentification)
@@ -280,5 +280,5 @@ TEST_F(LKCoreRFIDSensorTest, receiveRFIDTag)
 
 	corerfid.receiveRFIDTag();
 
-	compareRfidTag(corerfid._rfid_tag, expected_values);
+	compareRfidTag(corerfid.getRFIDTag(), expected_values);
 }
