@@ -8,6 +8,11 @@ namespace leka {
 
 LKCoreRFID::LKCoreRFID(interface::BufferedSerial &interface) : _interface(interface) {}
 
+auto LKCoreRFID::setRFIDTag(RFIDTag expected_values) -> void
+{
+	_rfid_tag = expected_values;
+}
+
 auto LKCoreRFID::writeProtocol() -> void
 {
 	const uint8_t buffer_size				  = 4;
@@ -75,12 +80,22 @@ auto LKCoreRFID::receiveUID1() -> void
 
 	_interface.read(buffer, buffer_size);
 	memcpy(_rfid_tag.UID, buffer + 2, 4);
+	_rfid_tag.crc_UID[0] = buffer[6];
 }
 
 auto LKCoreRFID::sendUID1() -> void
 {
 	const uint8_t buffer_size				  = 10;
-	const uint8_t command_buffer[buffer_size] = {0x04, 0x08, 0x93, 0x70, 0x88, 0x04, 0x61, 0xD5, 0x38, 0x28};
+	const uint8_t command_buffer[buffer_size] = {0x04,
+												 0x08,
+												 0x93,
+												 0x70,
+												 _rfid_tag.UID[0],
+												 _rfid_tag.UID[1],
+												 _rfid_tag.UID[2],
+												 _rfid_tag.UID[3],
+												 _rfid_tag.crc_UID[0],
+												 0x28};
 
 	_interface.write(command_buffer, buffer_size);
 }
@@ -94,4 +109,47 @@ auto LKCoreRFID::receiveSAK1() -> void
 	memcpy(_rfid_tag.SAK, buffer + 2, 2);
 }
 
+auto LKCoreRFID::sendCL2() -> void
+{
+	const uint8_t buffer_size				  = 5;
+	const uint8_t command_buffer[buffer_size] = {0x04, 0x03, 0x95, 0x20, 0x08};
+
+	_interface.write(command_buffer, buffer_size);
+}
+
+auto LKCoreRFID::receiveUID2() -> void
+{
+	const uint8_t buffer_size = 10;
+	uint8_t buffer[buffer_size];
+
+	_interface.read(buffer, buffer_size);
+	memcpy(_rfid_tag.UID + 4, buffer + 2, 4);
+	_rfid_tag.crc_UID[1] = buffer[6];
+}
+
+auto LKCoreRFID::sendUID2() -> void
+{
+	const uint8_t buffer_size				  = 10;
+	const uint8_t command_buffer[buffer_size] = {0x04,
+												 0x08,
+												 0x95,
+												 0x70,
+												 _rfid_tag.UID[3],
+												 _rfid_tag.UID[4],
+												 _rfid_tag.UID[5],
+												 _rfid_tag.UID[6],
+												 _rfid_tag.crc_UID[1],
+												 0x28};
+
+	_interface.write(command_buffer, buffer_size);
+}
+
+auto LKCoreRFID::receiveSAK2() -> void
+{
+	const uint8_t buffer_size = 8;
+	uint8_t buffer[buffer_size];
+
+	_interface.read(buffer, buffer_size);
+	memcpy(_rfid_tag.SAK + 2, buffer + 2, 2);
+}
 }	// namespace leka
