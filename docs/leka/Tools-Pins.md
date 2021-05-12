@@ -1,4 +1,4 @@
-# Tools
+# Tools - `PinMap`, `PinNames` & `.ioc` files edition
 
 ## `.ioc` files editor
 

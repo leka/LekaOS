@@ -11,9 +11,9 @@ Unit tests (located in [`tests/unit`](../../tests/unit)) are intended to run on 
 LekaOS unit tests use GoogleTest and gMock. Please refer to their respectif documentation:
 
 - [GoogleTest Github repository](https://github.com/google/googletest)
-- [GoogleTest Introduction](https://github.com/google/googletest/blob/master/googletest/docs/primer.md)
-- [gMock for Dummies](https://github.com/google/googletest/blob/master/googlemock/docs/for_dummies.md)
-- [gMock Cookbook](https://github.com/google/googletest/blob/master/googlemock/docs/cook_book.md)
+- [GoogleTest Introduction](https://google.github.io/googletest/primer.html)
+- [gMock for Dummies](https://google.github.io/googletest/gmock_for_dummies.html)
+- [gMock Cookbook](https://google.github.io/googletest/gmock_cook_book.html)
 
 ### Setup
 
@@ -34,6 +34,9 @@ make config_unit_tests
 
 # Build & run
 make ut
+
+# Build, run & generate coverage
+make utc
 ```
 
 ## Functional Tests
