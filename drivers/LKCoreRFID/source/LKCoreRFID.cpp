@@ -84,4 +84,14 @@ auto LKCoreRFID::sendUID1() -> void
 
 	_interface.write(command_buffer, buffer_size);
 }
+
+auto LKCoreRFID::receiveSAK1() -> void
+{
+	const uint8_t buffer_size = 8;
+	uint8_t buffer[buffer_size];
+
+	_interface.read(buffer, buffer_size);
+	memcpy(_rfid_tag.SAK, buffer + 2, 2);
+}
+
 }	// namespace leka
