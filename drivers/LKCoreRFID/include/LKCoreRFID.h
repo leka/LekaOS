@@ -50,7 +50,7 @@ class LKCoreRFID
 
 	auto authentification() -> void;
 
-	// auto readRFIDTag();
+	auto readRFIDTag() -> void;
 
 	// auto checkCRC() -> bool;
 

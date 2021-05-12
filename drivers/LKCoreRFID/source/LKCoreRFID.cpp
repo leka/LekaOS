@@ -160,4 +160,14 @@ auto LKCoreRFID::authentification() -> void
 
 	_interface.write(command_buffer, buffer_size);
 }
+
+auto LKCoreRFID::readRFIDTag() -> void
+{
+	const uint8_t buffer_size = 21;
+	uint8_t buffer[buffer_size];
+
+	_interface.read(buffer, buffer_size);
+	memcpy(_rfid_tag.data, buffer + 2, 16);
+}
+
 }	// namespace leka
