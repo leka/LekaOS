@@ -46,7 +46,7 @@ class LKCoreRFID
 	auto sendCL1() -> void;
 	auto receiveUID1() -> void;
 
-	// auto sendID1() -> void;
+	auto sendUID1() -> void;
 	// auto receiveSAK1() -> RFIDTag;
 
 	// auto sendCL2() -> void;

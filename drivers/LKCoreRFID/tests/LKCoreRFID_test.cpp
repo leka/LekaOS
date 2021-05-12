@@ -158,3 +158,12 @@ TEST_F(LKCoreRFIDSensorTest, receiveUID1)
 
 	compareRfidTag(corerfid._rfid_tag, expected_values);
 }
+
+TEST_F(LKCoreRFIDSensorTest, sendUID1)
+{
+	const auto expected_values = ElementsAre(0x04, 0x08, 0x93, 0x70, 0x88, 0x04, 0x61, 0xD5, 0x38, 0x28);
+
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+
+	corerfid.sendUID1();
+}
