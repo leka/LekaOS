@@ -89,57 +89,52 @@ class CircularBuffer
 
 	auto pop(T &data) -> bool
 	{
-		bool data_popped = false;
+		if (empty()) {
+			return false;
+		}
 
 		core_util_critical_section_enter();
 
-		if (!non_critical_empty()) {
-			data_popped = true;
-
-			data  = _buffer[_tail];
-			_tail = incrementCounter(_tail);
-			_full = false;
-		}
+		data  = _buffer[_tail];
+		_tail = incrementCounter(_tail);
+		_full = false;
 
 		core_util_critical_section_exit();
 
-		return data_popped;
+		return true;
 	}
 
 	auto pop(T *dest, CounterType len) -> CounterType
 	{
-		if (len <= 0) {
+		if (len <= 0 || empty()) {
 			return 0;
 		}
 
-		CounterType data_popped = 0;
-
 		core_util_critical_section_enter();
 
-		if (!non_critical_empty()) {
-			// make sure we only try to read as much as we have items present
-			if (len > non_critical_size()) {
-				len = non_critical_size();
-			}
-			data_popped = len;
-
-			// items may be split by overlap, take only the number we have to the right of tail
-			if ((_tail + data_popped) > BufferSize) {
-				data_popped = BufferSize - _tail;
-			}
-
-			std::copy(_buffer.begin() + _tail, _buffer.begin() + _tail + data_popped, dest);
-			_tail = incrementCounter(_tail, data_popped);
-
-			// if we looped over the end we may need to pop again
-			if (CounterType items_left_to_pop = len - data_popped) {
-				std::copy(_buffer.begin(), _buffer.begin() + items_left_to_pop, dest + data_popped);
-				_tail = items_left_to_pop;
-				data_popped += items_left_to_pop;
-			}
-
-			_full = false;
+		// make sure we only try to read as much as we have items present
+		if (len > non_critical_size()) {
+			len = non_critical_size();
 		}
+
+		CounterType data_popped = len;
+
+		// items may be split by overlap, take only the number we have to the right of tail
+		if ((_tail + data_popped) > BufferSize) {
+			data_popped = BufferSize - _tail;
+		}
+
+		std::copy(_buffer.begin() + _tail, _buffer.begin() + _tail + data_popped, dest);
+		_tail = incrementCounter(_tail, data_popped);
+
+		// if we looped over the end we may need to pop again
+		if (CounterType items_left_to_pop = len - data_popped) {
+			std::copy(_buffer.begin(), _buffer.begin() + items_left_to_pop, dest + data_popped);
+			_tail = items_left_to_pop;
+			data_popped += items_left_to_pop;
+		}
+
+		_full = false;
 
 		core_util_critical_section_exit();
 
@@ -175,14 +170,15 @@ class CircularBuffer
 
 	auto peek(T &data) const -> bool
 	{
-		bool data_updated = false;
-		core_util_critical_section_enter();
-		if (!empty()) {
-			data		 = _buffer[_tail];
-			data_updated = true;
+		if (empty()) {
+			return false;
 		}
+
+		core_util_critical_section_enter();
+		data = _buffer[_tail];
 		core_util_critical_section_exit();
-		return data_updated;
+
+		return true;
 	}
 
   private:
