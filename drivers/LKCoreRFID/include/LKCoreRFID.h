@@ -14,10 +14,10 @@
 namespace leka {
 
 struct RFIDTag {
-	uint8_t UID[8] {0, 0, 0, 0, 0, 0, 0, 0};
-	uint8_t crc_UID[2] {0, 0};
-	uint8_t SAK[4] {0, 0, 0, 0};
-	uint8_t data[16] {0};
+	std::array<uint8_t, 8> UID {0};
+	std::array<uint8_t, 2> crc_UID {0};
+	std::array<uint8_t, 4> SAK {0};
+	std::array<uint8_t, 16> data {0};
 };
 
 class LKCoreRFID
