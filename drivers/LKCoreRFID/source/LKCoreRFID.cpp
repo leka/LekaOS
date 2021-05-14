@@ -84,7 +84,8 @@ auto LKCoreRFID::receiveUID1() -> void
 	uint8_t buffer[buffer_size];
 
 	_interface.read(buffer, buffer_size);
-	memcpy(_rfid_tag.UID, buffer + 2, 4);
+	// memcpy(_rfid_tag.UID, buffer + 2, 4);
+	std::copy_n(buffer + 2, 4, _rfid_tag.UID.begin());
 	_rfid_tag.crc_UID[0] = buffer[6];
 }
 
@@ -111,7 +112,8 @@ auto LKCoreRFID::receiveSAK1() -> void
 	uint8_t buffer[buffer_size];
 
 	_interface.read(buffer, buffer_size);
-	memcpy(_rfid_tag.SAK, buffer + 2, 2);
+	// memcpy(_rfid_tag.SAK, buffer + 2, 2);
+	std::copy_n(buffer + 2, 2, _rfid_tag.SAK.begin());
 }
 
 auto LKCoreRFID::sendCL2() -> void
@@ -128,7 +130,8 @@ auto LKCoreRFID::receiveUID2() -> void
 	uint8_t buffer[buffer_size];
 
 	_interface.read(buffer, buffer_size);
-	memcpy(_rfid_tag.UID + 4, buffer + 2, 4);
+	// memcpy(_rfid_tag.UID + 4, buffer + 2, 4);
+	std::copy_n(buffer + 2, 4, _rfid_tag.UID.begin() + 4);
 	_rfid_tag.crc_UID[1] = buffer[6];
 }
 
@@ -155,7 +158,8 @@ auto LKCoreRFID::receiveSAK2() -> void
 	uint8_t buffer[buffer_size];
 
 	_interface.read(buffer, buffer_size);
-	memcpy(_rfid_tag.SAK + 2, buffer + 2, 2);
+	// memcpy(_rfid_tag.SAK + 2, buffer + 2, 2);
+	std::copy_n(buffer + 2, 2, _rfid_tag.SAK.begin() + 2);
 }
 
 auto LKCoreRFID::authentification() -> void
@@ -180,7 +184,8 @@ auto LKCoreRFID::receiveRFIDTag() -> void
 	uint8_t buffer[buffer_size];
 
 	_interface.read(buffer, buffer_size);
-	memcpy(_rfid_tag.data, buffer + 2, 16);
+	// memcpy(_rfid_tag.data, buffer + 2, 16);
+	std::copy_n(buffer + 2, 16, _rfid_tag.data.begin());
 }
 
 }	// namespace leka
