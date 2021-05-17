@@ -14,9 +14,9 @@ auto LKCoreRFID::send(const std::array<uint8_t, N> &command) -> void
 	_interface.write(command.data(), N);
 }
 
-auto LKCoreRFID::setRFIDTag(RFIDTag const *expected_values) -> void
+auto LKCoreRFID::setRFIDTag(RFIDTag const &expected_values) -> void
 {
-	_rfid_tag = *expected_values;
+	_rfid_tag = expected_values;
 }
 
 auto LKCoreRFID::getRFIDTag() const -> RFIDTag

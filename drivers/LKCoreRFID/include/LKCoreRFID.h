@@ -28,7 +28,7 @@ class LKCoreRFID
 	template <size_t N>
 	void send(const std::array<uint8_t, N> &command);
 
-	auto setRFIDTag(RFIDTag const *expected_values) -> void;
+	auto setRFIDTag(RFIDTag const &expected_values) -> void;
 	auto getRFIDTag() const -> RFIDTag;
 
 	auto setProtocol() -> void;
