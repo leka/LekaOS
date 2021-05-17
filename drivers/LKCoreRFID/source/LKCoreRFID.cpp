@@ -46,10 +46,11 @@ auto LKCoreRFID::computeCrcIso14443a(uint8_t const *pbtData, size_t szLen) const
 		bt	 = static_cast<std::byte>(*pbtData++);
 		bt	 = (bt ^ static_cast<std::byte>(wCrc & 0x00FF));
 		bt	 = (bt ^ (bt << 4));
-		wCrc = (wCrc >> 8) ^ ((uint32_t)bt << 8) ^ ((uint32_t)bt << 3) ^ ((uint32_t)bt >> 4);
+		wCrc = (wCrc >> 8) ^ (static_cast<uint32_t>(bt) << 8) ^ (static_cast<uint32_t>(bt) << 3) ^
+			   (static_cast<uint32_t>(bt) >> 4);
 	} while (--szLen);
 
-	std::array<uint8_t, 2> pbtCrc = {(uint8_t)(wCrc & 0xFF), (uint8_t)((wCrc >> 8) & 0xFF)};
+	std::array<uint8_t, 2> pbtCrc = {static_cast<uint8_t>(wCrc & 0xFF), static_cast<uint8_t>((wCrc >> 8) & 0xFF)};
 	return pbtCrc;
 }
 
