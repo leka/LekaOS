@@ -189,9 +189,9 @@ Target.add_extra_targets(custom_targets_dir)
 
 # profile constants
 # list of all profile JSONs
-profile_jsons = [os.path.join(mbed_os_dir, "tools/profiles/develop.json"),
-                 os.path.join(mbed_os_dir, "tools/profiles/debug.json"),
-                 os.path.join(mbed_os_dir, "tools/profiles/release.json")]
+profile_jsons = [os.path.join(project_root_dir, "tools/profiles/develop.json"),
+                 os.path.join(project_root_dir, "tools/profiles/debug.json"),
+                 os.path.join(project_root_dir, "tools/profiles/release.json")]
 # CMake build type matching each Mbed profile
 profile_cmake_names = ["RELWITHDEBINFO",
                        "DEBUG",
