@@ -36,38 +36,10 @@ class LKCoreRFIDSensorTest : public ::testing::Test
 
 	auto compareRfidTag(RFIDTag rfid_tag, RFIDTag &expected_values)
 	{
-		ASSERT_EQ(rfid_tag.UID[0], expected_values.UID[0]);
-		ASSERT_EQ(rfid_tag.UID[1], expected_values.UID[1]);
-		ASSERT_EQ(rfid_tag.UID[2], expected_values.UID[2]);
-		ASSERT_EQ(rfid_tag.UID[3], expected_values.UID[3]);
-		ASSERT_EQ(rfid_tag.UID[4], expected_values.UID[4]);
-		ASSERT_EQ(rfid_tag.UID[5], expected_values.UID[5]);
-		ASSERT_EQ(rfid_tag.UID[6], expected_values.UID[6]);
-
-		ASSERT_EQ(rfid_tag.crc_UID[0], expected_values.crc_UID[0]);
-		ASSERT_EQ(rfid_tag.crc_UID[1], expected_values.crc_UID[1]);
-
-		ASSERT_EQ(rfid_tag.SAK[0], expected_values.SAK[0]);
-		ASSERT_EQ(rfid_tag.SAK[1], expected_values.SAK[1]);
-		ASSERT_EQ(rfid_tag.SAK[2], expected_values.SAK[2]);
-		ASSERT_EQ(rfid_tag.SAK[3], expected_values.SAK[3]);
-
-		ASSERT_EQ(rfid_tag.data[0], expected_values.data[0]);
-		ASSERT_EQ(rfid_tag.data[1], expected_values.data[1]);
-		ASSERT_EQ(rfid_tag.data[2], expected_values.data[2]);
-		ASSERT_EQ(rfid_tag.data[3], expected_values.data[3]);
-		ASSERT_EQ(rfid_tag.data[4], expected_values.data[4]);
-		ASSERT_EQ(rfid_tag.data[5], expected_values.data[5]);
-		ASSERT_EQ(rfid_tag.data[6], expected_values.data[6]);
-		ASSERT_EQ(rfid_tag.data[7], expected_values.data[7]);
-		ASSERT_EQ(rfid_tag.data[8], expected_values.data[8]);
-		ASSERT_EQ(rfid_tag.data[9], expected_values.data[9]);
-		ASSERT_EQ(rfid_tag.data[10], expected_values.data[10]);
-		ASSERT_EQ(rfid_tag.data[11], expected_values.data[11]);
-		ASSERT_EQ(rfid_tag.data[12], expected_values.data[12]);
-		ASSERT_EQ(rfid_tag.data[13], expected_values.data[13]);
-		ASSERT_EQ(rfid_tag.data[14], expected_values.data[14]);
-		ASSERT_EQ(rfid_tag.data[15], expected_values.data[15]);
+		ASSERT_EQ(rfid_tag.UID, expected_values.UID);
+		ASSERT_EQ(rfid_tag.crc_UID, expected_values.crc_UID);
+		ASSERT_EQ(rfid_tag.SAK, expected_values.SAK);
+		ASSERT_EQ(rfid_tag.data, expected_values.data);
 	}
 };
 
