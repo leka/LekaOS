@@ -53,12 +53,11 @@ auto LKCoreRFID::setGain() -> void
 
 auto LKCoreRFID::receiveSetupAnswer() -> bool
 {
-	const uint8_t buffer_size = 2;
-	uint8_t buffer[buffer_size];
+	std::array<uint8_t, 2> buffer;
 
-	_interface.read(buffer, buffer_size);
+	_interface.read(buffer.data(), buffer.size());
 
-	return checkSensorSetup(buffer);
+	return checkSensorSetup(buffer.data());
 }
 
 auto LKCoreRFID::checkSensorSetup(const uint8_t *buffer) const -> bool
@@ -99,12 +98,11 @@ auto LKCoreRFID::checkATQA(const uint8_t *buffer) const -> bool
 
 auto LKCoreRFID::receiveATQA() -> bool
 {
-	const uint8_t buffer_size = 7;
-	uint8_t buffer[buffer_size];
+	std::array<uint8_t, 7> buffer;
 
-	_interface.read(buffer, buffer_size);
+	_interface.read(buffer.data(), buffer.size());
 
-	return checkATQA(buffer);
+	return checkATQA(buffer.data());
 }
 
 auto LKCoreRFID::sendCL1() -> void
@@ -127,12 +125,11 @@ auto LKCoreRFID::setUID1(uint8_t *buffer) -> void
 
 auto LKCoreRFID::receiveUID1() -> void
 {
-	const uint8_t buffer_size = 10;
-	uint8_t buffer[buffer_size];
+	std::array<uint8_t, 10> buffer;
 
-	_interface.read(buffer, buffer_size);
+	_interface.read(buffer.data(), buffer.size());
 
-	setUID1(buffer);
+	setUID1(buffer.data());
 }
 
 auto LKCoreRFID::sendUID1() -> void
@@ -157,12 +154,11 @@ auto LKCoreRFID::setSAK1(uint8_t *buffer) -> void
 
 auto LKCoreRFID::receiveSAK1() -> void
 {
-	const uint8_t buffer_size = 8;
-	uint8_t buffer[buffer_size];
+	std::array<uint8_t, 8> buffer;
 
-	_interface.read(buffer, buffer_size);
+	_interface.read(buffer.data(), buffer.size());
 
-	setSAK1(buffer);
+	setSAK1(buffer.data());
 }
 
 auto LKCoreRFID::sendCL2() -> void
@@ -185,12 +181,11 @@ auto LKCoreRFID::setUID2(uint8_t *buffer) -> void
 
 auto LKCoreRFID::receiveUID2() -> void
 {
-	const uint8_t buffer_size = 10;
-	uint8_t buffer[buffer_size];
+	std::array<uint8_t, 10> buffer;
 
-	_interface.read(buffer, buffer_size);
+	_interface.read(buffer.data(), buffer.size());
 
-	setUID2(buffer);
+	setUID2(buffer.data());
 }
 
 auto LKCoreRFID::sendUID2() -> void
@@ -215,12 +210,11 @@ auto LKCoreRFID::setSAK2(uint8_t *buffer) -> void
 
 auto LKCoreRFID::receiveSAK2() -> void
 {
-	const uint8_t buffer_size = 8;
-	uint8_t buffer[buffer_size];
+	std::array<uint8_t, 8> buffer;
 
-	_interface.read(buffer, buffer_size);
+	_interface.read(buffer.data(), buffer.size());
 
-	setSAK2(buffer);
+	setSAK2(buffer.data());
 }
 
 auto LKCoreRFID::authentification() -> void
@@ -257,12 +251,11 @@ auto LKCoreRFID::setData(uint8_t *buffer) -> void
 
 auto LKCoreRFID::receiveRFIDTag() -> void
 {
-	const uint8_t buffer_size = 21;
-	uint8_t buffer[buffer_size];
+	std::array<uint8_t, 21> buffer;
 
-	_interface.read(buffer, buffer_size);
+	_interface.read(buffer.data(), buffer.size());
 
-	setData(buffer);
+	setData(buffer.data());
 }
 
 }	// namespace leka
