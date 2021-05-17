@@ -54,12 +54,14 @@ class LKCoreRFID
 
 	auto readRFIDTag() -> void;
 	auto receiveRFIDTag() -> void;
-	// auto checkCRC() -> bool;
 
   private:
 	interface::BufferedSerial &_interface;
 	RFIDTag _rfid_tag {0, 0, 0, 0};
 
+	auto computeCrcIso14443a(uint8_t *pbtData, size_t szLen) -> std::array<uint8_t, 2>;
+
+	auto checkCRC(const std::array<uint8_t, 21> &buffer) -> bool;
 	auto checkATQA(const uint8_t *buffer) const -> bool;
 	auto checkSensorSetup(const uint8_t *buffer) const -> bool;
 
