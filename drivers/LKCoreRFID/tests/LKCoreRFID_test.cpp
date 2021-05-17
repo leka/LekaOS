@@ -36,38 +36,10 @@ class LKCoreRFIDSensorTest : public ::testing::Test
 
 	auto compareRfidTag(RFIDTag rfid_tag, RFIDTag &expected_values)
 	{
-		ASSERT_EQ(rfid_tag.UID[0], expected_values.UID[0]);
-		ASSERT_EQ(rfid_tag.UID[1], expected_values.UID[1]);
-		ASSERT_EQ(rfid_tag.UID[2], expected_values.UID[2]);
-		ASSERT_EQ(rfid_tag.UID[3], expected_values.UID[3]);
-		ASSERT_EQ(rfid_tag.UID[4], expected_values.UID[4]);
-		ASSERT_EQ(rfid_tag.UID[5], expected_values.UID[5]);
-		ASSERT_EQ(rfid_tag.UID[6], expected_values.UID[6]);
-
-		ASSERT_EQ(rfid_tag.crc_UID[0], expected_values.crc_UID[0]);
-		ASSERT_EQ(rfid_tag.crc_UID[1], expected_values.crc_UID[1]);
-
-		ASSERT_EQ(rfid_tag.SAK[0], expected_values.SAK[0]);
-		ASSERT_EQ(rfid_tag.SAK[1], expected_values.SAK[1]);
-		ASSERT_EQ(rfid_tag.SAK[2], expected_values.SAK[2]);
-		ASSERT_EQ(rfid_tag.SAK[3], expected_values.SAK[3]);
-
-		ASSERT_EQ(rfid_tag.data[0], expected_values.data[0]);
-		ASSERT_EQ(rfid_tag.data[1], expected_values.data[1]);
-		ASSERT_EQ(rfid_tag.data[2], expected_values.data[2]);
-		ASSERT_EQ(rfid_tag.data[3], expected_values.data[3]);
-		ASSERT_EQ(rfid_tag.data[4], expected_values.data[4]);
-		ASSERT_EQ(rfid_tag.data[5], expected_values.data[5]);
-		ASSERT_EQ(rfid_tag.data[6], expected_values.data[6]);
-		ASSERT_EQ(rfid_tag.data[7], expected_values.data[7]);
-		ASSERT_EQ(rfid_tag.data[8], expected_values.data[8]);
-		ASSERT_EQ(rfid_tag.data[9], expected_values.data[9]);
-		ASSERT_EQ(rfid_tag.data[10], expected_values.data[10]);
-		ASSERT_EQ(rfid_tag.data[11], expected_values.data[11]);
-		ASSERT_EQ(rfid_tag.data[12], expected_values.data[12]);
-		ASSERT_EQ(rfid_tag.data[13], expected_values.data[13]);
-		ASSERT_EQ(rfid_tag.data[14], expected_values.data[14]);
-		ASSERT_EQ(rfid_tag.data[15], expected_values.data[15]);
+		ASSERT_EQ(rfid_tag.UID, expected_values.UID);
+		ASSERT_EQ(rfid_tag.crc_UID, expected_values.crc_UID);
+		ASSERT_EQ(rfid_tag.SAK, expected_values.SAK);
+		ASSERT_EQ(rfid_tag.data, expected_values.data);
 	}
 };
 
@@ -185,7 +157,7 @@ TEST_F(LKCoreRFIDSensorTest, sendUID1)
 
 	RFIDTag expected_rfid_tag = {{0x88, 0x04, 0x61, 0xD5, 0x0, 0x0, 0x0, 0x0}, {0x38, 0x0}, {}, {}};
 
-	corerfid.setRFIDTag(&expected_rfid_tag);
+	corerfid.setRFIDTag(expected_rfid_tag);
 
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
@@ -231,7 +203,7 @@ TEST_F(LKCoreRFIDSensorTest, sendUID2)
 	const auto expected_values = ElementsAre(0x04, 0x08, 0x95, 0x70, 0x32, 0x9B, 0x66, 0x80, 0x4F, 0x28);
 	RFIDTag expected_rfid_tag  = {{0, 0, 0, 0, 0x32, 0x9B, 0x66, 0x80}, {0, 0x4F}, {}, {}};
 
-	corerfid.setRFIDTag(&expected_rfid_tag);
+	corerfid.setRFIDTag(expected_rfid_tag);
 
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
@@ -271,9 +243,26 @@ TEST_F(LKCoreRFIDSensorTest, receiveRFIDTag)
 	uint8_t read_values[20] = {
 		0x80, 0x15, 0x34, 0x03, 0x00, 0xFE, 0x01, 0x02, 0x03, 0x04,
 		0x0,  0x0,	0x0,  0x0,	0x0,  0x0,	0x0,  0x0,	0x5C, 0x4C};   // would have 0x08, 0x00, 0x00 more but
-																	   // SetArrayArgument bug after +20 values
+																	   // SetArrayArgument is limited to 20 values
 	RFIDTag expected_values = {
 		{0}, {0}, {0}, {0x34, 0x03, 0x00, 0xFE, 0x01, 0x02, 0x03, 0x04, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}};
+
+	EXPECT_CALL(mockBufferedSerial, read)
+		.WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 20), Return(0)));
+
+	corerfid.receiveRFIDTag();
+
+	compareRfidTag(corerfid.getRFIDTag(), expected_values);
+}
+
+TEST_F(LKCoreRFIDSensorTest, receiveRFIDTagWrongCRC)
+{
+	uint8_t read_values[20] = {
+		0x80, 0x15, 0x34, 0x03, 0x00, 0xFE, 0x01, 0x02, 0x03, 0x04,
+		0x0,  0x0,	0x0,  0x0,	0x0,  0x0,	0x0,  0x0,	0xAC, 0x4C};   // would have 0x08, 0x00, 0x00 more but
+																	   // SetArrayArgument is limited to 20 values
+	RFIDTag expected_values = {
+		{0}, {0}, {0}, {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}};
 
 	EXPECT_CALL(mockBufferedSerial, read)
 		.WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 20), Return(0)));

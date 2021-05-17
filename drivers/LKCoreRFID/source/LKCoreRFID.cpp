@@ -14,14 +14,43 @@ auto LKCoreRFID::send(const std::array<uint8_t, N> &command) -> void
 	_interface.write(command.data(), N);
 }
 
-auto LKCoreRFID::setRFIDTag(RFIDTag *expected_values) -> void
+auto LKCoreRFID::setRFIDTag(RFIDTag const &expected_values) -> void
 {
-	_rfid_tag = *expected_values;
+	_rfid_tag = expected_values;
 }
 
 auto LKCoreRFID::getRFIDTag() const -> RFIDTag
 {
 	return _rfid_tag;
+}
+
+auto LKCoreRFID::checkCRC(const std::array<uint8_t, 21> &buffer) const -> bool
+{
+	std::array<uint8_t, 2> expected_crc = {buffer[18], buffer[19]};
+
+	std::array<uint8_t, 16> data {0};
+	std::copy_n(buffer.begin() + 2, 16, data.begin());
+
+	if (std::array<uint8_t, 2> actual_crc = computeCrcIso14443a(data.data(), data.size()); expected_crc == actual_crc) {
+		return true;
+	}
+	return false;
+}
+
+auto LKCoreRFID::computeCrcIso14443a(uint8_t const *pbtData, size_t szLen) const -> std::array<uint8_t, 2>
+{
+	uint32_t wCrc = 0x6363;
+
+	do {
+		std::byte bt;
+		bt	 = static_cast<std::byte>(*pbtData++);
+		bt	 = (bt ^ static_cast<std::byte>(wCrc & 0x00FF));
+		bt	 = (bt ^ (bt << 4));
+		wCrc = (wCrc >> 8) ^ ((uint32_t)bt << 8) ^ ((uint32_t)bt << 3) ^ ((uint32_t)bt >> 4);
+	} while (--szLen);
+
+	std::array<uint8_t, 2> pbtCrc = {(uint8_t)(wCrc & 0xFF), (uint8_t)((wCrc >> 8) & 0xFF)};
+	return pbtCrc;
 }
 
 auto LKCoreRFID::setProtocol() -> void
@@ -255,7 +284,9 @@ auto LKCoreRFID::receiveRFIDTag() -> void
 
 	_interface.read(buffer.data(), buffer.size());
 
-	setData(buffer.data());
+	if (checkCRC(buffer)) {
+		setData(buffer.data());
+	}
 }
 
 }	// namespace leka
