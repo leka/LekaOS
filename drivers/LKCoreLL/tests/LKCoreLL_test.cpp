@@ -8,7 +8,7 @@
 
 using namespace leka;
 
-TEST(LKUtilsTest, rawMemoryWriteToBuffer)
+TEST(LKCoreLLTest, rawMemoryWriteToBuffer)
 {
 	LKCoreLL ll;
 

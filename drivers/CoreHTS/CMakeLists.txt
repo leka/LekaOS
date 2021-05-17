@@ -19,7 +19,7 @@ target_sources(CoreHTS
 target_link_libraries(CoreHTS
 		mbed-os
 		CoreI2C
-		LKUtils
+		Utils
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
