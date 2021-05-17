@@ -5,6 +5,7 @@
 #ifndef _LEKA_OS_LIB_UTILS_H_
 #define _LEKA_OS_LIB_UTILS_H_
 
+#include "ArrayUtils.h"
 #include "MathUtils.h"
 
 #endif	 // _LEKA_OS_LIB_UTILS_H_
