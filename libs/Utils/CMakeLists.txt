@@ -12,13 +12,14 @@ target_include_directories(Utils
 target_sources(Utils
   	PRIVATE
     	source/Utils.cpp
+		source/MathUtils.cpp
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
-		tests/Utils_test_map.cpp
-		tests/Utils_test_linear_function.cpp
+		tests/MathUtils_test_map.cpp
+		tests/MathUtils_test_linear_function.cpp
 	)
 
 endif()

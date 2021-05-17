@@ -13,7 +13,7 @@
 
 using namespace leka::utils::math;
 
-TEST(LKUtilsTest, mapUint8ToFloatMin)
+TEST(MathUtilsTest, mapUint8ToFloatMin)
 {
 	uint8_t min	  = 0;
 	uint8_t max	  = 255;
@@ -23,7 +23,7 @@ TEST(LKUtilsTest, mapUint8ToFloatMin)
 	ASSERT_EQ(result, 0.0f);
 }
 
-TEST(LKUtilsTest, mapUint8ToFloatMax)
+TEST(MathUtilsTest, mapUint8ToFloatMax)
 {
 	uint8_t min	  = 0;
 	uint8_t max	  = 255;
@@ -33,7 +33,7 @@ TEST(LKUtilsTest, mapUint8ToFloatMax)
 	ASSERT_EQ(result, 1.0f);
 }
 
-TEST(LKUtilsTest, mapUint8ToFloatMiddle)
+TEST(MathUtilsTest, mapUint8ToFloatMiddle)
 {
 	uint8_t min	  = 0;
 	uint8_t max	  = 255;
@@ -43,7 +43,7 @@ TEST(LKUtilsTest, mapUint8ToFloatMiddle)
 	ASSERT_EQ(result, 0.2f);
 }
 
-TEST(LKUtilsTest, mapFloatToUint8Min)
+TEST(MathUtilsTest, mapFloatToUint8Min)
 {
 	uint8_t min = 0;
 	uint8_t max = 255;
@@ -53,7 +53,7 @@ TEST(LKUtilsTest, mapFloatToUint8Min)
 	ASSERT_EQ(result, 0);
 }
 
-TEST(LKUtilsTest, mapFloatToUint8Max)
+TEST(MathUtilsTest, mapFloatToUint8Max)
 {
 	uint8_t min = 0;
 	uint8_t max = 255;
@@ -63,7 +63,7 @@ TEST(LKUtilsTest, mapFloatToUint8Max)
 	ASSERT_EQ(result, 255);
 }
 
-TEST(LKUtilsTest, mapFloatToUint8Middle)
+TEST(MathUtilsTest, mapFloatToUint8Middle)
 {
 	uint8_t min = 0;
 	uint8_t max = 255;

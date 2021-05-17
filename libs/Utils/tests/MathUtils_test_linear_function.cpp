@@ -9,7 +9,7 @@ using namespace leka::utils::math;
 
 auto rounding_error = float {0.0001};
 
-TEST(LKUtilsTest, computeLinearCoefficientsForFunction1)
+TEST(MathUtilsTest, computeLinearCoefficientsForFunction1)
 {
 	// function: y = x
 
@@ -22,7 +22,7 @@ TEST(LKUtilsTest, computeLinearCoefficientsForFunction1)
 	ASSERT_NEAR(y_intercept, 0.0, rounding_error);
 }
 
-TEST(LKUtilsTest, computeLinearCoefficientsForFunction2)
+TEST(MathUtilsTest, computeLinearCoefficientsForFunction2)
 {
 	// function: y = -x
 
@@ -35,7 +35,7 @@ TEST(LKUtilsTest, computeLinearCoefficientsForFunction2)
 	ASSERT_NEAR(y_intercept, 0.0, rounding_error);
 }
 
-TEST(LKUtilsTest, computeLinearCoefficientsForFunction3)
+TEST(MathUtilsTest, computeLinearCoefficientsForFunction3)
 {
 	// function: y = 2x - 5
 
@@ -48,7 +48,7 @@ TEST(LKUtilsTest, computeLinearCoefficientsForFunction3)
 	ASSERT_NEAR(y_intercept, -5.0, rounding_error);
 }
 
-TEST(LKUtilsTest, computeLinearCoefficientsForFunction4)
+TEST(MathUtilsTest, computeLinearCoefficientsForFunction4)
 {
 	// function: y = -x/2 + 0.75
 
@@ -61,7 +61,7 @@ TEST(LKUtilsTest, computeLinearCoefficientsForFunction4)
 	ASSERT_NEAR(y_intercept, 0.75, rounding_error);
 }
 
-TEST(LKUtilsTest, computeLinearCoefficientsWithPointsHavingSameXValue)
+TEST(MathUtilsTest, computeLinearCoefficientsWithPointsHavingSameXValue)
 {
 	Point p1 {-2, -2};
 	Point p2 {-2, 3};
