@@ -150,7 +150,7 @@ TEST_F(LKCoreRFIDSensorTest, checkATQAFailOnFirstId)
 
 TEST_F(LKCoreRFIDSensorTest, checkATQAFailOnLastId)
 {
-	uint8_t read_values[7] = {0x80, 0x05, 0x04, 0x44, 0x28, 0x00, 0x00};
+	uint8_t read_values[7] = {0x80, 0x05, 0x44, 0x44, 0x28, 0x00, 0x00};
 
 	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 7), Return(0)));
 

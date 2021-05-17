@@ -61,12 +61,12 @@ auto LKCoreRFID::receiveSetupAnswer() -> bool
 	return checkSensorSetup(buffer);
 }
 
-auto LKCoreRFID::checkSensorSetup(uint8_t *buffer) -> bool
+auto LKCoreRFID::checkSensorSetup(const uint8_t *buffer) const -> bool
 {
 	const std::array<uint8_t, 2> CR95HF_setup_completed = {0x00, 0x00};
-	std::array<uint8_t, 2> CR95HF_answer				= {buffer[0], buffer[1]};
 
-	if (CR95HF_answer[0] == CR95HF_setup_completed[0] && CR95HF_answer[1] == CR95HF_setup_completed[1]) {
+	if (std::array<uint8_t, 2> CR95HF_answer = {buffer[0], buffer[1]};
+		CR95HF_answer[0] == CR95HF_setup_completed[0] && CR95HF_answer[1] == CR95HF_setup_completed[1]) {
 		return true;
 	}
 
@@ -85,12 +85,12 @@ auto LKCoreRFID::sendREQA() -> void
 	send(command);
 }
 
-auto LKCoreRFID::checkATQA(uint8_t *buffer) -> bool
+auto LKCoreRFID::checkATQA(const uint8_t *buffer) const -> bool
 {
 	const std::array<uint8_t, 2> ATQA_NTAG213_value = {0x44, 0x00};
-	std::array<uint8_t, 2> ATQA_tag_answer			= {buffer[2], buffer[3]};
 
-	if ((ATQA_tag_answer[0] == ATQA_NTAG213_value[0]) && (ATQA_tag_answer[1] == ATQA_NTAG213_value[1])) {
+	if (std::array<uint8_t, 2> ATQA_tag_answer = {buffer[2], buffer[3]};
+		(ATQA_tag_answer[0] == ATQA_NTAG213_value[0]) && (ATQA_tag_answer[1] == ATQA_NTAG213_value[1])) {
 		return true;
 	}
 

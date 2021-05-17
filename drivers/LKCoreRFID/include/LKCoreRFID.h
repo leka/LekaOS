@@ -60,8 +60,8 @@ class LKCoreRFID
 	interface::BufferedSerial &_interface;
 	RFIDTag _rfid_tag {0, 0, 0, 0};
 
-	auto checkATQA(uint8_t *buffer) -> bool;
-	auto checkSensorSetup(uint8_t *buffer) -> bool;
+	auto checkATQA(const uint8_t *buffer) const -> bool;
+	auto checkSensorSetup(const uint8_t *buffer) const -> bool;
 
 	auto setUID1(uint8_t *buffer) -> void;
 	auto setUID2(uint8_t *buffer) -> void;
