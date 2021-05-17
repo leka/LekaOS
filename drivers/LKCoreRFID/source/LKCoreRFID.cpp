@@ -31,22 +31,20 @@ auto LKCoreRFID::checkCRC(const std::array<uint8_t, 21> &buffer) -> bool
 	std::array<uint8_t, 16> data {0};
 	std::copy_n(buffer.begin() + 2, 16, data.begin());
 
-	std::array<uint8_t, 2> actual_crc = computeCrcIso14443a(data.data(), data.size());
-
-	if (expected_crc[0] == actual_crc[0]) {
-		return 1;
+	if (std::array<uint8_t, 2> actual_crc = computeCrcIso14443a(data.data(), data.size()); expected_crc == actual_crc) {
+		return true;
 	}
-	return 0;
+	return false;
 }
 
-auto LKCoreRFID::computeCrcIso14443a(uint8_t *pbtData, size_t szLen) -> std::array<uint8_t, 2>
+auto LKCoreRFID::computeCrcIso14443a(uint8_t *pbtData, size_t szLen) const -> std::array<uint8_t, 2>
 {
 	uint32_t wCrc = 0x6363;
 
 	do {
-		uint8_t bt;
-		bt	 = *pbtData++;
-		bt	 = (bt ^ (uint8_t)(wCrc & 0x00FF));
+		std::byte bt;
+		bt	 = static_cast<std::byte>(*pbtData++);
+		bt	 = (bt ^ static_cast<std::byte>(wCrc & 0x00FF));
 		bt	 = (bt ^ (bt << 4));
 		wCrc = (wCrc >> 8) ^ ((uint32_t)bt << 8) ^ ((uint32_t)bt << 3) ^ ((uint32_t)bt >> 4);
 	} while (--szLen);
