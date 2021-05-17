@@ -14,7 +14,7 @@ auto LKCoreRFID::send(const std::array<uint8_t, N> &command) -> void
 	_interface.write(command.data(), N);
 }
 
-auto LKCoreRFID::setRFIDTag(RFIDTag *const expected_values) -> void
+auto LKCoreRFID::setRFIDTag(RFIDTag const *expected_values) -> void
 {
 	_rfid_tag = *expected_values;
 }
@@ -24,7 +24,7 @@ auto LKCoreRFID::getRFIDTag() const -> RFIDTag
 	return _rfid_tag;
 }
 
-auto LKCoreRFID::checkCRC(const std::array<uint8_t, 21> &buffer) -> bool
+auto LKCoreRFID::checkCRC(const std::array<uint8_t, 21> &buffer) const -> bool
 {
 	std::array<uint8_t, 2> expected_crc = {buffer[18], buffer[19]};
 
@@ -37,7 +37,7 @@ auto LKCoreRFID::checkCRC(const std::array<uint8_t, 21> &buffer) -> bool
 	return false;
 }
 
-auto LKCoreRFID::computeCrcIso14443a(uint8_t *pbtData, size_t szLen) const -> std::array<uint8_t, 2>
+auto LKCoreRFID::computeCrcIso14443a(uint8_t const *pbtData, size_t szLen) const -> std::array<uint8_t, 2>
 {
 	uint32_t wCrc = 0x6363;
 

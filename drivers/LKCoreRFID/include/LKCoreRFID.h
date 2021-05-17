@@ -28,7 +28,7 @@ class LKCoreRFID
 	template <size_t N>
 	void send(const std::array<uint8_t, N> &command);
 
-	auto setRFIDTag(RFIDTag *const expected_values) -> void;
+	auto setRFIDTag(RFIDTag const *expected_values) -> void;
 	auto getRFIDTag() const -> RFIDTag;
 
 	auto setProtocol() -> void;
@@ -59,9 +59,9 @@ class LKCoreRFID
 	interface::BufferedSerial &_interface;
 	RFIDTag _rfid_tag {0, 0, 0, 0};
 
-	auto computeCrcIso14443a(uint8_t *pbtData, size_t szLen) const -> std::array<uint8_t, 2>;
+	auto computeCrcIso14443a(uint8_t const *pbtData, size_t szLen) const -> std::array<uint8_t, 2>;
 
-	auto checkCRC(const std::array<uint8_t, 21> &buffer) -> bool;
+	auto checkCRC(const std::array<uint8_t, 21> &buffer) const -> bool;
 	auto checkATQA(const uint8_t *buffer) const -> bool;
 	auto checkSensorSetup(const uint8_t *buffer) const -> bool;
 
