@@ -181,6 +181,22 @@ class CircularBuffer
 		return true;
 	}
 
+	auto peekAt(CounterType position, T &data) const -> bool
+	{
+		core_util_critical_section_enter();
+
+		if (non_critical_empty() || position >= non_critical_size()) {
+			core_util_critical_section_exit();
+			return false;
+		}
+
+		data = _buffer[position];
+
+		core_util_critical_section_exit();
+
+		return true;
+	}
+
   private:
 	[[nodiscard]] auto non_critical_empty() const -> bool
 	{

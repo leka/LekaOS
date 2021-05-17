@@ -171,3 +171,98 @@ TEST_F(CircularBufferTest, pushMoreItemsThanBufferCapacity)
 		EXPECT_TRUE(0 == memcmp(items.data() + 1, items_popped.data(), TEST_BUFFER_SIZE));
 	}
 }
+
+TEST_F(CircularBufferTest, peekOneItem)
+{
+	buf.push(42);
+	EXPECT_EQ(buf.size(), 1);
+
+	int item = 0;
+	bool ret = buf.peek(item);
+
+	EXPECT_TRUE(ret);
+	EXPECT_EQ(item, 42);
+	EXPECT_EQ(buf.size(), 1);
+}
+
+TEST_F(CircularBufferTest, peekOneItemWhenEmpty)
+{
+	EXPECT_EQ(buf.size(), 0);
+
+	int item = 0;
+	bool ret = buf.peek(item);
+
+	EXPECT_FALSE(ret);
+	EXPECT_EQ(item, 0);
+	EXPECT_EQ(buf.size(), 0);
+}
+
+TEST_F(CircularBufferTest, peekOneItemAtPosition)
+{
+	buf.push(42);
+	buf.push(43);
+	buf.push(44);
+
+	EXPECT_EQ(buf.size(), 3);
+
+	int item = 0;
+	bool ret = false;
+
+	ret = buf.peekAt(0, item);
+
+	EXPECT_TRUE(ret);
+	EXPECT_EQ(item, 42);
+	EXPECT_EQ(buf.size(), 3);
+
+	ret = buf.peekAt(1, item);
+
+	EXPECT_TRUE(ret);
+	EXPECT_EQ(item, 43);
+	EXPECT_EQ(buf.size(), 3);
+
+	ret = buf.peekAt(2, item);
+
+	EXPECT_TRUE(ret);
+	EXPECT_EQ(item, 44);
+	EXPECT_EQ(buf.size(), 3);
+}
+
+TEST_F(CircularBufferTest, peekOneItemAtPositionWhenEmpty)
+{
+	EXPECT_EQ(buf.size(), 0);
+
+	int item = 0;
+	bool ret = false;
+
+	ret = buf.peekAt(0, item);
+
+	EXPECT_FALSE(ret);
+	EXPECT_EQ(item, 0);
+
+	ret = buf.peekAt(1, item);
+
+	EXPECT_FALSE(ret);
+	EXPECT_EQ(item, 0);
+}
+
+TEST_F(CircularBufferTest, peekOneItemAtPositionBiggerThenSize)
+{
+	buf.push(42);
+	buf.push(43);
+	buf.push(44);
+
+	EXPECT_EQ(buf.size(), 3);
+
+	int item = 0;
+	bool ret = false;
+
+	ret = buf.peekAt(3, item);
+
+	EXPECT_FALSE(ret);
+	EXPECT_EQ(item, 0);
+
+	ret = buf.peekAt(4, item);
+
+	EXPECT_FALSE(ret);
+	EXPECT_EQ(item, 0);
+}
