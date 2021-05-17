@@ -89,11 +89,12 @@ class CircularBuffer
 
 	auto pop(T &data) -> bool
 	{
-		if (empty()) {
+		core_util_critical_section_enter();
+
+		if (non_critical_empty()) {
+			core_util_critical_section_exit();
 			return false;
 		}
-
-		core_util_critical_section_enter();
 
 		data  = _buffer[_tail];
 		_tail = incrementCounter(_tail);
@@ -106,11 +107,12 @@ class CircularBuffer
 
 	auto pop(T *dest, CounterType len) -> CounterType
 	{
-		if (len <= 0 || empty()) {
+		core_util_critical_section_enter();
+
+		if (len <= 0 || non_critical_empty()) {
+			core_util_critical_section_exit();
 			return 0;
 		}
-
-		core_util_critical_section_enter();
 
 		// make sure we only try to read as much as we have items present
 		if (len > non_critical_size()) {
@@ -170,7 +172,9 @@ class CircularBuffer
 
 	auto peek(T &data) const -> bool
 	{
-		if (empty()) {
+		core_util_critical_section_enter();
+		if (non_critical_empty()) {
+			core_util_critical_section_exit();
 			return false;
 		}
 
