@@ -98,7 +98,7 @@ TEST_F(LKCoreRFIDSensorTest, receiveSensorSetPass)
 {
 	uint8_t read_values[2] = {0x00, 0x00};
 
-	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArgPointee<0>(*read_values), Return(0)));
+	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 2), Return(0)));
 
 	ASSERT_EQ(corerfid.receiveSetupAnswer(), true);
 }
