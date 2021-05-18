@@ -24,12 +24,6 @@ static BufferedSerial serial(USBTX, USBRX, 9600);
 constexpr uint8_t buff_size = 128;
 char buff[buff_size] {};
 
-void waitForAnswer()
-{
-	while (!rfid_serial.readable()) {
-	};
-}
-
 void readTag(RFIDTag tag)
 {
 	printf("\n");
