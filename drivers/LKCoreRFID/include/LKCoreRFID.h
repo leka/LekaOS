@@ -51,6 +51,7 @@ class LKCoreRFID
 	auto receiveSAK2() -> void;
 
 	auto authentification() -> void;
+	auto receiveAuthentification() -> bool;
 
 	auto readRFIDTag() -> void;
 	auto receiveRFIDTag() -> void;
@@ -64,6 +65,7 @@ class LKCoreRFID
 	auto checkCRC(const std::array<uint8_t, 21> &buffer) const -> bool;
 	auto checkATQA(const uint8_t *buffer) const -> bool;
 	auto checkSensorSetup(const uint8_t *buffer) const -> bool;
+	auto checkAuthentification(const uint8_t *buffer) const -> bool;
 
 	auto setUID1(uint8_t *buffer) -> void;
 	auto setUID2(uint8_t *buffer) -> void;
