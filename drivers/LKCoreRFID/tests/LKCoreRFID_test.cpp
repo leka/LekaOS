@@ -75,6 +75,15 @@ TEST_F(LKCoreRFIDSensorTest, receiveSensorSetPass)
 	ASSERT_EQ(corerfid.receiveSetupAnswer(), true);
 }
 
+TEST_F(LKCoreRFIDSensorTest, setRFIDTag)
+{
+	RFIDTag expected_rfid_tag = {{0x88, 0x04, 0x61, 0xD5, 0x0, 0x0, 0x0, 0x0}, {0x38, 0x0}, {0x01, 0x02}, {0xff}};
+
+	corerfid.setRFIDTag(expected_rfid_tag);
+
+	compareRfidTag(corerfid.getRFIDTag(), expected_rfid_tag);
+}
+
 TEST_F(LKCoreRFIDSensorTest, receiveSensorSetfailedOnFirstValue)
 {
 	uint8_t read_values[2] = {0x82, 0x00};
