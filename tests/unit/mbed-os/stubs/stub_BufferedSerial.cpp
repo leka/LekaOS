@@ -23,11 +23,11 @@ short BufferedSerial::poll(short events) const
 
 ssize_t BufferedSerial::write(const void *buffer, size_t length)
 {
-	return 0;
+	return length;
 }
 ssize_t BufferedSerial::read(void *buffer, size_t length)
 {
-	return 0;
+	return length;
 }
 
 int BufferedSerial::close()
