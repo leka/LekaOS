@@ -18,30 +18,25 @@ HelloWorld hello;
 
 void readTag(RFIDTag tag)
 {
-	printf("\n");
-	printf("UID :");
+	log_info("UID :");
 	for (int i = 0; i < 8; ++i) {
-		printf(" %i,", tag.UID[i]);
+		log_info(" %i,", tag.UID[i]);
 	}
-	printf("\n");
 
-	printf("CRC :");
+	log_info("CRC :");
 	for (int i = 0; i < 2; ++i) {
-		printf(" %i,", tag.crc_UID[i]);
+		log_info(" %i,", tag.crc_UID[i]);
 	}
-	printf("\n");
 
-	printf("SAK :");
+	log_info("SAK :");
 	for (int i = 0; i < 4; ++i) {
-		printf(" %i,", tag.UID[i]);
+		log_info(" %i,", tag.UID[i]);
 	}
-	printf("\n");
 
-	printf("Data:");
+	log_info("Data:");
 	for (int i = 0; i < 16; ++i) {
-		printf(" %i,", tag.data[i]);
+		log_info(" %i,", tag.data[i]);
 	}
-	printf("\n");
 }
 
 int main(void)
@@ -87,7 +82,7 @@ int main(void)
 		for (int i = 0; i < 10; i++) {
 			if (rfid_serial.readable()) {
 				if (!coreRfid.receiveATQA()) {
-					printf("Wrong ATQA\n");
+					log_info("Wrong ATQA\n");
 					next = false;
 				};
 				i = 10;
