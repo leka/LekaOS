@@ -32,7 +32,7 @@ class LKCoreRFIDSensorTest : public ::testing::Test
 	// void TearDown() override {}
 
 	LKCoreRFID corerfid;
-	LKCoreBufferedSerialMock mockBufferedSerial;
+	CoreBufferedSerialMock mockBufferedSerial;
 
 	auto compareRfidTag(RFIDTag rfid_tag, RFIDTag &expected_values)
 	{
@@ -73,6 +73,15 @@ TEST_F(LKCoreRFIDSensorTest, receiveSensorSetPass)
 	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 2), Return(0)));
 
 	ASSERT_EQ(corerfid.receiveSetupAnswer(), true);
+}
+
+TEST_F(LKCoreRFIDSensorTest, setRFIDTag)
+{
+	RFIDTag expected_rfid_tag = {{0x88, 0x04, 0x61, 0xD5, 0x0, 0x0, 0x0, 0x0}, {0x38, 0x0}, {0x01, 0x02}, {0xff}};
+
+	corerfid.setRFIDTag(expected_rfid_tag);
+
+	compareRfidTag(corerfid.getRFIDTag(), expected_rfid_tag);
 }
 
 TEST_F(LKCoreRFIDSensorTest, receiveSensorSetfailedOnFirstValue)
