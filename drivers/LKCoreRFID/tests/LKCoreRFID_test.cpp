@@ -32,7 +32,7 @@ class LKCoreRFIDSensorTest : public ::testing::Test
 	// void TearDown() override {}
 
 	LKCoreRFID corerfid;
-	LKCoreBufferedSerialMock mockBufferedSerial;
+	CoreBufferedSerialMock mockBufferedSerial;
 
 	auto compareRfidTag(RFIDTag rfid_tag, RFIDTag &expected_values)
 	{
