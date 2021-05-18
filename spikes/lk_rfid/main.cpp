@@ -9,20 +9,12 @@
 #include "CoreBufferedSerial.h"
 #include "HelloWorld.h"
 #include "LKCoreRFID.h"
+#include "LogKit.h"
 
 using namespace leka;
 using namespace std::chrono;
 
 HelloWorld hello;
-
-mbed::BufferedSerial rfid_serial(RFID_UART_TX, RFID_UART_RX, 57600);
-CoreBufferedSerial rfidrfid_serial(rfid_serial);
-LKCoreRFID coreRfid(rfidrfid_serial);
-
-static BufferedSerial serial(USBTX, USBRX, 9600);
-
-constexpr uint8_t buff_size = 128;
-char buff[buff_size] {};
 
 void readTag(RFIDTag tag)
 {
@@ -57,6 +49,10 @@ int main(void)
 	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 
+	mbed::BufferedSerial rfid_serial(RFID_UART_TX, RFID_UART_RX, 57600);
+	CoreBufferedSerial rfidrfid_serial(rfid_serial);
+	LKCoreRFID coreRfid(rfidrfid_serial);
+
 	auto start = rtos::Kernel::Clock::now();
 
 	log_info("Hello, World!\n\n");
@@ -83,7 +79,7 @@ int main(void)
 	}
 
 	while (true) {
-		auto t	  = Kernel::Clock::now() - start;
+		auto t	  = rtos::Kernel::Clock::now() - start;
 		bool next = true;
 
 		coreRfid.sendREQA();
