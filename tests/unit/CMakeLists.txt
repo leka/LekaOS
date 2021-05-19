@@ -182,6 +182,7 @@ leka_register_unit_tests_for_library(LKAnimationKit)
 leka_register_unit_tests_for_library(LKCalculatorKit)
 leka_register_unit_tests_for_library(Utils)
 leka_register_unit_tests_for_library(LogKit)
+leka_register_unit_tests_for_library(CircularBuffer)
 leka_register_unit_tests_for_library(CriticalSection)
 
 #

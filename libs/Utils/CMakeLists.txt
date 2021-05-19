@@ -5,13 +5,13 @@
 add_library(Utils STATIC)
 
 target_include_directories(Utils
-  	PUBLIC
+	PUBLIC
 		include
 )
 
 target_sources(Utils
-  	PRIVATE
-    	source/Utils.cpp
+	PRIVATE
+		source/Utils.cpp
 		source/ArrayUtils.cpp
 		source/MathUtils.cpp
 )
