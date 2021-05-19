@@ -14,6 +14,6 @@ target_sources(spike_lk_rfid
 		main.cpp
 )
 
-target_link_libraries(spike_lk_rfid lib_HelloWorld LKCoreRFID LogKit)
+target_link_libraries(spike_lk_rfid LKCoreRFID LogKit)
 
 target_link_custom_leka_targets(spike_lk_rfid)
