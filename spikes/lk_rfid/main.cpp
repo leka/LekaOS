@@ -13,7 +13,7 @@
 using namespace leka;
 using namespace std::chrono;
 
-void readTag(RFIDTag tag)
+void readTag(RFIDTag const tag)
 {
 	log_info("UID :");
 	for (int i = 0; i < 8; ++i) {
@@ -36,7 +36,7 @@ void readTag(RFIDTag tag)
 	}
 }
 
-void setProtocol(mbed::BufferedSerial &serial, LKCoreRFID &coreRfid)
+void setProtocol(mbed::BufferedSerial const &serial, LKCoreRFID &coreRfid)
 {
 	coreRfid.setProtocol();
 	while (!serial.readable()) {
@@ -45,7 +45,7 @@ void setProtocol(mbed::BufferedSerial &serial, LKCoreRFID &coreRfid)
 	coreRfid.receiveSetupAnswer();
 }
 
-void setGain(mbed::BufferedSerial &serial, LKCoreRFID &coreRfid)
+void setGain(mbed::BufferedSerial const &serial, LKCoreRFID &coreRfid)
 {
 	coreRfid.setGain();
 	while (!serial.readable()) {
@@ -54,7 +54,7 @@ void setGain(mbed::BufferedSerial &serial, LKCoreRFID &coreRfid)
 	coreRfid.receiveSetupAnswer();
 }
 
-bool sendREQA(mbed::BufferedSerial &serial, LKCoreRFID &coreRfid)
+bool sendREQA(mbed::BufferedSerial const &serial, LKCoreRFID &coreRfid)
 {
 	coreRfid.sendREQA();
 	rtos::ThisThread::sleep_for(10ms);
@@ -65,11 +65,10 @@ bool sendREQA(mbed::BufferedSerial &serial, LKCoreRFID &coreRfid)
 		log_info("Reception failed\n");
 		return false;
 	};
-	log_info("Reception success\n");
 	return true;
 }
 
-void sendCL1(mbed::BufferedSerial &serial, LKCoreRFID &coreRfid)
+void sendCL1(mbed::BufferedSerial const &serial, LKCoreRFID &coreRfid)
 {
 	coreRfid.sendCL1();
 	rtos::ThisThread::sleep_for(10ms);
@@ -79,7 +78,7 @@ void sendCL1(mbed::BufferedSerial &serial, LKCoreRFID &coreRfid)
 	coreRfid.receiveUID1();
 }
 
-void sendUID1(mbed::BufferedSerial &serial, LKCoreRFID &coreRfid)
+void sendUID1(mbed::BufferedSerial const &serial, LKCoreRFID &coreRfid)
 {
 	coreRfid.sendUID1();
 	rtos::ThisThread::sleep_for(10ms);
@@ -89,19 +88,17 @@ void sendUID1(mbed::BufferedSerial &serial, LKCoreRFID &coreRfid)
 	coreRfid.receiveSAK1();
 }
 
-void sendCL2(mbed::BufferedSerial &serial, LKCoreRFID &coreRfid)
+void sendCL2(mbed::BufferedSerial const &serial, LKCoreRFID &coreRfid)
 {
 	coreRfid.sendCL2();
 	rtos::ThisThread::sleep_for(10ms);
-	for (int i = 0; i < 10; i++) {
-		if (serial.readable()) {
-			coreRfid.receiveUID2();
-			i = 10;
-		}
+	while (!serial.readable()) {
+		rtos::ThisThread::sleep_for(1ms);
 	}
+	coreRfid.receiveUID2();
 }
 
-void sendUID2(mbed::BufferedSerial &serial, LKCoreRFID &coreRfid)
+void sendUID2(mbed::BufferedSerial const &serial, LKCoreRFID &coreRfid)
 {
 	coreRfid.sendUID2();
 	rtos::ThisThread::sleep_for(10ms);
@@ -111,7 +108,7 @@ void sendUID2(mbed::BufferedSerial &serial, LKCoreRFID &coreRfid)
 	coreRfid.receiveSAK2();
 }
 
-void authentification(mbed::BufferedSerial &serial, LKCoreRFID &coreRfid)
+void authentification(mbed::BufferedSerial const &serial, LKCoreRFID &coreRfid)
 {
 	coreRfid.authentification();
 	rtos::ThisThread::sleep_for(10ms);
@@ -121,11 +118,14 @@ void authentification(mbed::BufferedSerial &serial, LKCoreRFID &coreRfid)
 	coreRfid.receiveAuthentification();
 }
 
-void readRFIDTag(mbed::BufferedSerial &serial, LKCoreRFID &coreRfid)
+void readRFIDTag(mbed::BufferedSerial const &serial, LKCoreRFID &coreRfid)
 {
 	RFIDTag tag;
 	coreRfid.readRFIDTag();
 	rtos::ThisThread::sleep_for(10ms);
+	while (!serial.readable()) {
+		rtos::ThisThread::sleep_for(1ms);
+	}
 	coreRfid.receiveRFIDTag();
 	tag = coreRfid.getRFIDTag();
 	readTag(tag);
