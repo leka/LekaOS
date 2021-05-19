@@ -13,7 +13,7 @@
 using namespace leka;
 using namespace std::chrono;
 
-void readTag(RFIDTag const tag)
+void readTag(RFIDTag const &tag)
 {
 	log_info("UID :");
 	for (int i = 0; i < 8; ++i) {
@@ -64,7 +64,7 @@ bool sendREQA(mbed::BufferedSerial const &serial, LKCoreRFID &coreRfid)
 	if (!coreRfid.receiveATQA()) {
 		log_info("Reception failed\n");
 		return false;
-	};
+	}
 	return true;
 }
 
