@@ -23,11 +23,9 @@ class CoreRFID
 		std::array<uint8_t, 16> data {0};
 	};
 
-  public:
 	explicit CoreRFID(interface::BufferedSerial &interface);
 
-	auto setRFIDTag(std::array<uint8_t, 8> &tag_uid, std::array<uint8_t, 2> &tag_crc_uid,
-					std::array<uint8_t, 4> &tag_sak, std::array<uint8_t, 16> &tag_data) -> void;
+	auto setRFIDTag(CoreRFID::Tag tag) -> void;
 
 	auto getTag() const -> CoreRFID::Tag;
 
