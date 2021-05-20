@@ -74,7 +74,7 @@ class CoreRFID
 
 	auto checkAuthentication(const uint8_t *buffer) const -> bool;
 
-	auto computeCrcIso14443a(uint8_t const *pbtData, size_t szLen) const -> std::array<uint8_t, 2>;
+	auto computeCRC(uint8_t const *data, size_t size) const -> std::array<uint8_t, 2>;
 	auto checkCRC(const std::array<uint8_t, 21> &buffer) const -> bool;
 
 	auto setData(uint8_t *buffer) -> void;
