@@ -54,6 +54,7 @@ class LKCoreRFID
 	auto receiveAuthentification() -> bool;
 
 	auto readRFIDTag() -> void;
+	auto receiveRFIDTag() -> void;
 
   private:
 	interface::BufferedSerial &_interface;
@@ -72,6 +73,8 @@ class LKCoreRFID
 
 	auto computeCrcIso14443a(uint8_t const *pbtData, size_t szLen) const -> std::array<uint8_t, 2>;
 	auto checkCRC(const std::array<uint8_t, 21> &buffer) const -> bool;
+
+	auto setData(uint8_t *buffer) -> void;
 };
 
 }	// namespace leka

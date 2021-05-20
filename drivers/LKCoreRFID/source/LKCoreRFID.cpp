@@ -294,4 +294,21 @@ auto LKCoreRFID::computeCrcIso14443a(uint8_t const *pbtData, size_t szLen) const
 	std::array<uint8_t, 2> pbtCrc = {static_cast<uint8_t>(wCrc & 0xFF), static_cast<uint8_t>((wCrc >> 8) & 0xFF)};
 	return pbtCrc;
 }
+
+auto LKCoreRFID::setData(uint8_t *buffer) -> void
+{
+	std::copy_n(buffer + 2, 16, _rfid_tag.data.begin());
+}
+
+auto LKCoreRFID::receiveRFIDTag() -> void
+{
+	std::array<uint8_t, 21> buffer;
+
+	_interface.read(buffer.data(), buffer.size());
+
+	if (checkCRC(buffer)) {
+		setData(buffer.data());
+	}
+}
+
 }	// namespace leka

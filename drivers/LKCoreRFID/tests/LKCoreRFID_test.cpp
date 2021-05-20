@@ -267,3 +267,43 @@ TEST_F(LKCoreRFIDSensorTest, readRFIDTag)
 
 	corerfid.readRFIDTag();
 }
+
+TEST_F(LKCoreRFIDSensorTest, receiveRFIDTag)
+{
+	uint8_t read_values[20] = {0x80, 0x15, 0x34, 0x03, 0x00, 0xFE, 0x01, 0x02, 0x03, 0x04,
+							   0x0,	 0x0,  0x0,	 0x0,  0x0,	 0x0,  0x0,	 0x0,  0x5C, 0x4C};	  // would have 0x08,
+																							  // 0x00, 0x00 more
+																							  // but
+																							  // SetArrayArgument
+																							  // is limited to 20
+																							  // values
+	RFIDTag expected_values = {
+		{0}, {0}, {0}, {0x34, 0x03, 0x00, 0xFE, 0x01, 0x02, 0x03, 0x04, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}};
+
+	EXPECT_CALL(mockBufferedSerial, read)
+		.WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 20), Return(0)));
+
+	corerfid.receiveRFIDTag();
+
+	compareRfidTag(corerfid.getRFIDTag(), expected_values);
+}
+
+TEST_F(LKCoreRFIDSensorTest, receiveRFIDTagWrongCRC)
+{
+	uint8_t read_values[20] = {0x80, 0x15, 0x34, 0x03, 0x00, 0xFE, 0x01, 0x02, 0x03, 0x04,
+							   0x0,	 0x0,  0x0,	 0x0,  0x0,	 0x0,  0x0,	 0x0,  0xAC, 0x4C};	  // would have 0x08,
+																							  // 0x00, 0x00 more
+																							  // but
+																							  // SetArrayArgument
+																							  // is limited to 20
+																							  // values
+	RFIDTag expected_values = {
+		{0}, {0}, {0}, {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}};
+
+	EXPECT_CALL(mockBufferedSerial, read)
+		.WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 20), Return(0)));
+
+	corerfid.receiveRFIDTag();
+
+	compareRfidTag(corerfid.getRFIDTag(), expected_values);
+}
