@@ -56,8 +56,8 @@ class CoreRFID
 	auto authentication() -> void;
 	auto receiveAuthentication() -> bool;
 
-	auto readRFIDTag() -> void;
-	auto receiveRFIDTag() -> void;
+	auto readTagData() -> void;
+	auto receiveTagData() -> void;
 
   private:
 	interface::BufferedSerial &_interface;

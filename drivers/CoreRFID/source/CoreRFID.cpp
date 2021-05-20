@@ -256,7 +256,7 @@ auto CoreRFID::receiveAuthentication() -> bool
 	return checkAuthentication(buffer.data());
 }
 
-auto CoreRFID::readRFIDTag() -> void
+auto CoreRFID::readTagData() -> void
 {
 	const uint8_t cmd_CR95HF	   = 0x04;
 	const uint8_t length		   = 0x03;
@@ -304,7 +304,7 @@ auto CoreRFID::setData(uint8_t *buffer) -> void
 	std::copy_n(buffer + 2, 16, my_tag.data.begin());
 }
 
-auto CoreRFID::receiveRFIDTag() -> void
+auto CoreRFID::receiveTagData() -> void
 {
 	std::array<uint8_t, 21> buffer;
 

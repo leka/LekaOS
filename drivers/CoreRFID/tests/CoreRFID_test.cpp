@@ -288,12 +288,12 @@ TEST_F(CoreRFIDSensorTest, receiveAuthenticationFailedOnSecondValue)
 	ASSERT_EQ(corerfid.receiveAuthentication(), false);
 }
 
-TEST_F(CoreRFIDSensorTest, readRFIDTag)
+TEST_F(CoreRFIDSensorTest, readTagData)
 {
 	const auto expected_values = ElementsAre(0x04, 0x03, 0x30, 0x05, 0x28);
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
-	corerfid.readRFIDTag();
+	corerfid.readTagData();
 }
 
 TEST_F(CoreRFIDSensorTest, receiveRFIDTag)
@@ -315,7 +315,7 @@ TEST_F(CoreRFIDSensorTest, receiveRFIDTag)
 	EXPECT_CALL(mockBufferedSerial, read)
 		.WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 20), Return(0)));
 
-	corerfid.receiveRFIDTag();
+	corerfid.receiveTagData();
 
 	compareRfidTag(corerfid.getTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }
@@ -339,7 +339,7 @@ TEST_F(CoreRFIDSensorTest, receiveRFIDTagWrongCRC)
 	EXPECT_CALL(mockBufferedSerial, read)
 		.WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 20), Return(0)));
 
-	corerfid.receiveRFIDTag();
+	corerfid.receiveTagData();
 
 	compareRfidTag(corerfid.getTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }
