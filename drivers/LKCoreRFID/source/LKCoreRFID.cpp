@@ -83,4 +83,26 @@ auto LKCoreRFID::sendREQA() -> void
 
 	send(command);
 }
+
+auto LKCoreRFID::checkATQA(const uint8_t *buffer) const -> bool
+{
+	const std::array<uint8_t, 2> ATQA_NTAG213_value = {0x44, 0x00};
+
+	if (std::array<uint8_t, 2> ATQA_tag_answer = {buffer[2], buffer[3]};
+		(ATQA_tag_answer[0] == ATQA_NTAG213_value[0]) && (ATQA_tag_answer[1] == ATQA_NTAG213_value[1])) {
+		return true;
+	}
+
+	return false;
+}
+
+auto LKCoreRFID::receiveATQA() -> bool
+{
+	std::array<uint8_t, 7> buffer;
+
+	_interface.read(buffer.data(), buffer.size());
+
+	return checkATQA(buffer.data());
+}
+
 }	// namespace leka
