@@ -28,9 +28,9 @@ class CoreMotor : public CoreMotorBase
 		  _speed {mbed::PwmOut(speed)} {};
 
 	void spin(rotation_t rotation, float speed) override;
-	void stop(void) override;
+	void stop() override;
 
-	Status getStatus(void) const;
+	[[nodiscard]] auto getStatus() const -> Status;
 
   private:
 	Status _status {0, 0, 0};
