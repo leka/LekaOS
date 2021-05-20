@@ -13,20 +13,23 @@
 
 namespace leka {
 
-struct RFIDTag {
-	std::array<uint8_t, 8> UID {0};
-	std::array<uint8_t, 2> crc_UID {0};
-	std::array<uint8_t, 4> SAK {0};
-	std::array<uint8_t, 16> data {0};
-};
-
 class CoreRFID
 {
   public:
+	struct Tag {
+		std::array<uint8_t, 8> UID {0};
+		std::array<uint8_t, 2> crc_UID {0};
+		std::array<uint8_t, 4> SAK {0};
+		std::array<uint8_t, 16> data {0};
+	};
+
+  public:
 	explicit CoreRFID(interface::BufferedSerial &interface);
 
-	auto setRFIDTag(RFIDTag const &expected_values) -> void;
-	auto getRFIDTag() const -> RFIDTag;
+	auto setRFIDTag(std::array<uint8_t, 8> &tag_UID, std::array<uint8_t, 2> &tag_crc_UID,
+					std::array<uint8_t, 4> &tag_SAK, std::array<uint8_t, 16> &tag_data) -> void;
+
+	auto getRFIDTag() const -> CoreRFID::Tag;
 
 	template <size_t N>
 	void send(const std::array<uint8_t, N> &command);
@@ -58,7 +61,7 @@ class CoreRFID
 
   private:
 	interface::BufferedSerial &_interface;
-	RFIDTag _rfid_tag {0, 0, 0, 0};
+	CoreRFID::Tag my_tag;
 
 	auto checkSensorSetup(const uint8_t *buffer) const -> bool;
 	auto checkATQA(const uint8_t *buffer) const -> bool;

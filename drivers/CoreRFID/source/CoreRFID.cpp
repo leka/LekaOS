@@ -8,14 +8,18 @@ namespace leka {
 
 CoreRFID::CoreRFID(interface::BufferedSerial &interface) : _interface(interface) {}
 
-auto CoreRFID::setRFIDTag(RFIDTag const &expected_values) -> void
+auto CoreRFID::setRFIDTag(std::array<uint8_t, 8> &tag_UID, std::array<uint8_t, 2> &tag_crc_UID,
+						  std::array<uint8_t, 4> &tag_SAK, std::array<uint8_t, 16> &tag_data) -> void
 {
-	_rfid_tag = expected_values;
+	my_tag.UID	   = tag_UID;
+	my_tag.crc_UID = tag_crc_UID;
+	my_tag.SAK	   = tag_SAK;
+	my_tag.data	   = tag_data;
 }
 
-auto CoreRFID::getRFIDTag() const -> RFIDTag
+auto CoreRFID::getRFIDTag() const -> CoreRFID::Tag
 {
-	return _rfid_tag;
+	return my_tag;
 }
 
 template <size_t N>
@@ -131,8 +135,8 @@ auto CoreRFID::sendCL2() -> void
 
 auto CoreRFID::setUID2(uint8_t *buffer) -> void
 {
-	std::copy_n(buffer + 2, 4, _rfid_tag.UID.begin() + 4);
-	_rfid_tag.crc_UID[1] = buffer[6];
+	std::copy_n(buffer + 2, 4, my_tag.UID.begin() + 4);
+	my_tag.crc_UID[1] = buffer[6];
 }
 
 auto CoreRFID::receiveUID2() -> void
@@ -146,8 +150,8 @@ auto CoreRFID::receiveUID2() -> void
 
 auto CoreRFID::setUID1(uint8_t *buffer) -> void
 {
-	std::copy_n(buffer + 2, 4, _rfid_tag.UID.begin());
-	_rfid_tag.crc_UID[0] = buffer[6];
+	std::copy_n(buffer + 2, 4, my_tag.UID.begin());
+	my_tag.crc_UID[0] = buffer[6];
 }
 
 auto CoreRFID::receiveUID1() -> void
@@ -164,8 +168,8 @@ auto CoreRFID::sendUID1() -> void
 	const uint8_t cmd_CR95HF			 = 0x04;
 	const uint8_t length				 = 0x08;
 	const std::array<uint8_t, 2> cmd_tag = {0x93, 0x70};
-	const std::array<uint8_t, 4> uid	 = {_rfid_tag.UID[0], _rfid_tag.UID[1], _rfid_tag.UID[2], _rfid_tag.UID[3]};
-	const uint8_t uid_crc				 = _rfid_tag.crc_UID[0];
+	const std::array<uint8_t, 4> uid	 = {my_tag.UID[0], my_tag.UID[1], my_tag.UID[2], my_tag.UID[3]};
+	const uint8_t uid_crc				 = my_tag.crc_UID[0];
 	const uint8_t flags					 = 0x28;
 
 	std::array<uint8_t, 10> command = {cmd_CR95HF, length, cmd_tag[0], cmd_tag[1], uid[0],
@@ -179,8 +183,8 @@ auto CoreRFID::sendUID2() -> void
 	const uint8_t cmd_CR95HF			 = 0x04;
 	const uint8_t length				 = 0x08;
 	const std::array<uint8_t, 2> cmd_tag = {0x95, 0x70};
-	const std::array<uint8_t, 4> uid	 = {_rfid_tag.UID[4], _rfid_tag.UID[5], _rfid_tag.UID[6], _rfid_tag.UID[7]};
-	const uint8_t uid_crc				 = _rfid_tag.crc_UID[1];
+	const std::array<uint8_t, 4> uid	 = {my_tag.UID[4], my_tag.UID[5], my_tag.UID[6], my_tag.UID[7]};
+	const uint8_t uid_crc				 = my_tag.crc_UID[1];
 	const uint8_t flags					 = 0x28;
 
 	std::array<uint8_t, 10> command = {cmd_CR95HF, length, cmd_tag[0], cmd_tag[1], uid[0],
@@ -191,7 +195,7 @@ auto CoreRFID::sendUID2() -> void
 
 auto CoreRFID::setSAK1(uint8_t *buffer) -> void
 {
-	std::copy_n(buffer + 2, 2, _rfid_tag.SAK.begin());
+	std::copy_n(buffer + 2, 2, my_tag.SAK.begin());
 }
 
 auto CoreRFID::receiveSAK1() -> void
@@ -205,7 +209,7 @@ auto CoreRFID::receiveSAK1() -> void
 
 auto CoreRFID::setSAK2(uint8_t *buffer) -> void
 {
-	std::copy_n(buffer + 2, 2, _rfid_tag.SAK.begin() + 2);
+	std::copy_n(buffer + 2, 2, my_tag.SAK.begin() + 2);
 }
 
 auto CoreRFID::receiveSAK2() -> void
@@ -297,7 +301,7 @@ auto CoreRFID::computeCrcIso14443a(uint8_t const *pbtData, size_t szLen) const -
 
 auto CoreRFID::setData(uint8_t *buffer) -> void
 {
-	std::copy_n(buffer + 2, 16, _rfid_tag.data.begin());
+	std::copy_n(buffer + 2, 16, my_tag.data.begin());
 }
 
 auto CoreRFID::receiveRFIDTag() -> void
