@@ -9,8 +9,8 @@ namespace leka {
 
 enum class Rotation
 {
-	clockwise,
-	counterClockwise,
+	clockwise		 = 0,
+	counterClockwise = 1,
 
 	right = clockwise,
 	left  = counterClockwise
