@@ -23,12 +23,12 @@ auto CoreRFID::getTag() const -> CoreRFID::Tag
 }
 
 template <size_t N>
-auto CoreRFID::send(const std::array<uint8_t, N> &command) -> void
+void CoreRFID::send(const std::array<uint8_t, N> &command)
 {
 	_interface.write(command.data(), N);
 }
 
-auto CoreRFID::setProtocol() -> void
+void CoreRFID::setProtocol()
 {
 	const uint8_t cmd_CR95HF = 0x02;
 	const uint8_t length	 = 0x02;
@@ -40,7 +40,7 @@ auto CoreRFID::setProtocol() -> void
 	send(command);
 }
 
-auto CoreRFID::setGain() -> void
+void CoreRFID::setGain()
 {
 	const uint8_t cmd_CR95HF			= 0x09;
 	const uint8_t length				= 0x04;
@@ -76,7 +76,7 @@ auto CoreRFID::checkSensorSetup(const uint8_t *buffer) const -> bool
 	return false;
 }
 
-auto CoreRFID::sendREQA() -> void
+void CoreRFID::sendREQA()
 {
 	const uint8_t cmd_CR95HF = 0x04;
 	const uint8_t length	 = 0x02;
@@ -109,7 +109,7 @@ auto CoreRFID::receiveATQA() -> bool
 	return checkATQA(buffer.data());
 }
 
-auto CoreRFID::sendCL1() -> void
+void CoreRFID::sendCL1()
 {
 	const uint8_t cmd_CR95HF			 = 0x04;
 	const uint8_t length				 = 0x03;
@@ -121,7 +121,7 @@ auto CoreRFID::sendCL1() -> void
 	send(command);
 }
 
-auto CoreRFID::sendCL2() -> void
+void CoreRFID::sendCL2()
 {
 	const uint8_t cmd_CR95HF			 = 0x04;
 	const uint8_t length				 = 0x03;
@@ -133,13 +133,13 @@ auto CoreRFID::sendCL2() -> void
 	send(command);
 }
 
-auto CoreRFID::setUID2(uint8_t *buffer) -> void
+void CoreRFID::setUID2(uint8_t *buffer)
 {
 	std::copy_n(buffer + 2, 4, my_tag.uid.begin() + 4);
 	my_tag.crc_uid[1] = buffer[6];
 }
 
-auto CoreRFID::receiveUID2() -> void
+void CoreRFID::receiveUID2()
 {
 	std::array<uint8_t, 10> buffer;
 
@@ -148,13 +148,13 @@ auto CoreRFID::receiveUID2() -> void
 	setUID2(buffer.data());
 }
 
-auto CoreRFID::setUID1(uint8_t *buffer) -> void
+void CoreRFID::setUID1(uint8_t *buffer)
 {
 	std::copy_n(buffer + 2, 4, my_tag.uid.begin());
 	my_tag.crc_uid[0] = buffer[6];
 }
 
-auto CoreRFID::receiveUID1() -> void
+void CoreRFID::receiveUID1()
 {
 	std::array<uint8_t, 10> buffer;
 
@@ -163,7 +163,7 @@ auto CoreRFID::receiveUID1() -> void
 	setUID1(buffer.data());
 }
 
-auto CoreRFID::sendUID1() -> void
+void CoreRFID::sendUID1()
 {
 	const uint8_t cmd_CR95HF			 = 0x04;
 	const uint8_t length				 = 0x08;
@@ -178,7 +178,7 @@ auto CoreRFID::sendUID1() -> void
 	send(command);
 }
 
-auto CoreRFID::sendUID2() -> void
+void CoreRFID::sendUID2()
 {
 	const uint8_t cmd_CR95HF			 = 0x04;
 	const uint8_t length				 = 0x08;
@@ -193,12 +193,12 @@ auto CoreRFID::sendUID2() -> void
 	send(command);
 }
 
-auto CoreRFID::setSAK1(uint8_t *buffer) -> void
+void CoreRFID::setSAK1(uint8_t *buffer)
 {
 	std::copy_n(buffer + 2, 2, my_tag.sak.begin());
 }
 
-auto CoreRFID::receiveSAK1() -> void
+void CoreRFID::receiveSAK1()
 {
 	std::array<uint8_t, 8> buffer;
 
@@ -207,12 +207,12 @@ auto CoreRFID::receiveSAK1() -> void
 	setSAK1(buffer.data());
 }
 
-auto CoreRFID::setSAK2(uint8_t *buffer) -> void
+void CoreRFID::setSAK2(uint8_t *buffer)
 {
 	std::copy_n(buffer + 2, 2, my_tag.sak.begin() + 2);
 }
 
-auto CoreRFID::receiveSAK2() -> void
+void CoreRFID::receiveSAK2()
 {
 	std::array<uint8_t, 8> buffer;
 
@@ -221,7 +221,7 @@ auto CoreRFID::receiveSAK2() -> void
 	setSAK2(buffer.data());
 }
 
-auto CoreRFID::authentication() -> void
+void CoreRFID::authentication()
 {
 	const uint8_t cmd_CR95HF				  = 0x04;
 	const uint8_t length					  = 0x06;
@@ -256,7 +256,7 @@ auto CoreRFID::receiveAuthentication() -> bool
 	return checkAuthentication(buffer.data());
 }
 
-auto CoreRFID::readTagData() -> void
+void CoreRFID::readTagData()
 {
 	const uint8_t cmd_CR95HF	   = 0x04;
 	const uint8_t length		   = 0x03;
@@ -299,12 +299,12 @@ auto CoreRFID::computeCRC(uint8_t const *data, size_t size) const -> std::array<
 	return pbtCrc;
 }
 
-auto CoreRFID::setData(uint8_t *buffer) -> void
+void CoreRFID::setData(uint8_t *buffer)
 {
 	std::copy_n(buffer + 2, 16, my_tag.data.begin());
 }
 
-auto CoreRFID::receiveTagData() -> void
+void CoreRFID::receiveTagData()
 {
 	std::array<uint8_t, 21> buffer;
 

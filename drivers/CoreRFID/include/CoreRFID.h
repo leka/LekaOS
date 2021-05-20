@@ -34,30 +34,30 @@ class CoreRFID
 	template <size_t N>
 	void send(const std::array<uint8_t, N> &command);
 
-	auto setProtocol() -> void;
-	auto setGain() -> void;
+	void setProtocol();
+	void setGain();
 	auto receiveSetupAnswer() -> bool;
 
-	auto sendREQA() -> void;
+	void sendREQA();
 	auto receiveATQA() -> bool;
 
-	auto sendCL1() -> void;
-	auto sendCL2() -> void;
+	void sendCL1();
+	void sendCL2();
 
-	auto receiveUID1() -> void;
-	auto receiveUID2() -> void;
+	void receiveUID1();
+	void receiveUID2();
 
-	auto sendUID1() -> void;
-	auto sendUID2() -> void;
+	void sendUID1();
+	void sendUID2();
 
-	auto receiveSAK1() -> void;
-	auto receiveSAK2() -> void;
+	void receiveSAK1();
+	void receiveSAK2();
 
-	auto authentication() -> void;
+	void authentication();
 	auto receiveAuthentication() -> bool;
 
-	auto readTagData() -> void;
-	auto receiveTagData() -> void;
+	void readTagData();
+	void receiveTagData();
 
   private:
 	interface::BufferedSerial &_interface;
@@ -66,18 +66,18 @@ class CoreRFID
 	auto checkSensorSetup(const uint8_t *buffer) const -> bool;
 	auto checkATQA(const uint8_t *buffer) const -> bool;
 
-	auto setUID1(uint8_t *buffer) -> void;
-	auto setUID2(uint8_t *buffer) -> void;
+	void setUID1(uint8_t *buffer);
+	void setUID2(uint8_t *buffer);
 
-	auto setSAK1(uint8_t *buffer) -> void;
-	auto setSAK2(uint8_t *buffer) -> void;
+	void setSAK1(uint8_t *buffer);
+	void setSAK2(uint8_t *buffer);
 
 	auto checkAuthentication(const uint8_t *buffer) const -> bool;
 
 	auto computeCRC(uint8_t const *data, size_t size) const -> std::array<uint8_t, 2>;
 	auto checkCRC(const std::array<uint8_t, 21> &buffer) const -> bool;
 
-	auto setData(uint8_t *buffer) -> void;
+	void setData(uint8_t *buffer);
 };
 
 }	// namespace leka
