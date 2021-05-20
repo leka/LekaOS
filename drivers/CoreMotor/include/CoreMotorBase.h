@@ -22,7 +22,7 @@ class CoreMotorBase
 {
   public:
 	virtual void spin(rotation_t rotation, float speed) = 0;
-	virtual void stop(void)								= 0;
+	virtual void stop()									= 0;
 };
 
 }	// namespace leka
