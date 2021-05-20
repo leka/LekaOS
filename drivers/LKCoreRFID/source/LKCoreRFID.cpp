@@ -216,4 +216,18 @@ auto LKCoreRFID::receiveSAK2() -> void
 
 	setSAK2(buffer.data());
 }
+
+auto LKCoreRFID::authentification() -> void
+{
+	const uint8_t cmd_CR95HF				  = 0x04;
+	const uint8_t length					  = 0x06;
+	const uint8_t cmd_tag					  = 0x1B;
+	const std::array<uint8_t, 4> tag_password = {0xFF, 0xFF, 0xFF, 0xFF};
+	const uint8_t flags						  = 0x28;
+
+	std::array<uint8_t, 8> command = {cmd_CR95HF,	   length,			cmd_tag,		 tag_password[0],
+									  tag_password[1], tag_password[2], tag_password[3], flags};
+
+	send(command);
+}
 }	// namespace leka

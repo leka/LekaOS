@@ -224,3 +224,11 @@ TEST_F(LKCoreRFIDSensorTest, receiveSAK2)
 
 	compareRfidTag(corerfid.getRFIDTag(), expected_values);
 }
+
+TEST_F(LKCoreRFIDSensorTest, authentification)
+{
+	const auto expected_values = ElementsAre(0x04, 0x06, 0x1B, 0xFF, 0xFF, 0xFF, 0xFF, 0x28);
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+
+	corerfid.authentification();
+}

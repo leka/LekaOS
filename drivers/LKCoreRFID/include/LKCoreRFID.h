@@ -50,6 +50,8 @@ class LKCoreRFID
 	auto receiveSAK1() -> void;
 	auto receiveSAK2() -> void;
 
+	auto authentification() -> void;
+
   private:
 	interface::BufferedSerial &_interface;
 	RFIDTag _rfid_tag {0, 0, 0, 0};
