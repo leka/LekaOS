@@ -28,9 +28,18 @@ class LKCoreRFID
 	auto setRFIDTag(RFIDTag const &expected_values) -> void;
 	auto getRFIDTag() const -> RFIDTag;
 
+	template <size_t N>
+	void send(const std::array<uint8_t, N> &command);
+
+	auto setProtocol() -> void;
+	auto setGain() -> void;
+	auto receiveSetupAnswer() -> bool;
+
   private:
 	interface::BufferedSerial &_interface;
 	RFIDTag _rfid_tag {0, 0, 0, 0};
+
+	auto checkSensorSetup(const uint8_t *buffer) const -> bool;
 };
 
 }	// namespace leka

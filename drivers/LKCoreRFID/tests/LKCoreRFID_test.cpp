@@ -9,6 +9,12 @@
 #include "mock_CoreBufferedSerial.h"
 #include "stub_BufferedSerial.h"
 
+using ::testing::Args;
+using ::testing::DoAll;
+using ::testing::ElementsAre;
+using ::testing::Return;
+using ::testing::SetArrayArgument;
+
 using namespace leka;
 
 class LKCoreRFIDSensorTest : public ::testing::Test
@@ -43,4 +49,49 @@ TEST_F(LKCoreRFIDSensorTest, setRFIDTag)
 	corerfid.setRFIDTag(expected_rfid_tag);
 
 	compareRfidTag(corerfid.getRFIDTag(), expected_rfid_tag);
+}
+
+TEST_F(LKCoreRFIDSensorTest, writeProtocol)
+{
+	const auto expected_values = ElementsAre(0x02, 0x02, 0x02, 0x00);
+
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+
+	corerfid.setProtocol();
+}
+
+TEST_F(LKCoreRFIDSensorTest, setGain)
+{
+	const auto expected_values = ElementsAre(0x09, 0x04, 0x68, 0x01, 0x01, 0xD1);
+
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+
+	corerfid.setGain();
+}
+
+TEST_F(LKCoreRFIDSensorTest, receiveSensorSetPass)
+{
+	uint8_t read_values[2] = {0x00, 0x00};
+
+	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 2), Return(0)));
+
+	ASSERT_EQ(corerfid.receiveSetupAnswer(), true);
+}
+
+TEST_F(LKCoreRFIDSensorTest, receiveSensorSetfailedOnFirstValue)
+{
+	uint8_t read_values[2] = {0x82, 0x00};
+
+	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 2), Return(0)));
+
+	ASSERT_EQ(corerfid.receiveSetupAnswer(), false);
+}
+
+TEST_F(LKCoreRFIDSensorTest, receiveSensorSetfailedOnSecondValue)
+{
+	uint8_t read_values[2] = {0x00, 0x82};
+
+	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 2), Return(0)));
+
+	ASSERT_EQ(corerfid.receiveSetupAnswer(), false);
 }
