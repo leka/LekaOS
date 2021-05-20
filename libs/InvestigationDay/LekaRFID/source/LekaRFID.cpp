@@ -29,58 +29,29 @@ bool RFID::echo()
 	return false;
 }
 
-bool RFID::getID()
-{
-	const uint8_t max_buffer_length	  = 0x20;	// TODO: what is the maximum length that we can receive?
-	uint8_t buffer[max_buffer_length] = {0};
-
-	const uint8_t aimed_buffer_length				= 0x11;
-	const uint8_t aimed_buffer[aimed_buffer_length] = {0x00, 0x0F, 0x4E, 0x46, 0x43, 0x20, 0x46, 0x53, 0x32,
-													   0x4A, 0x41, 0x53, 0x54, 0x34, 0x00, 0x2A, 0xCE};
-
-	_interface.write(_idn_cmd, _idn_cmd_length);
-	rtos::ThisThread::sleep_for(10ms);
-
-	for (int i = 0; i < 10; i++) {
-		if (_interface.readable()) {
-			_interface.read(buffer, 2);
-			if (buffer[0] == 0x00) {
-				auto length = buffer[1];
-				// TODO: shoudld we check that length < max_buffer_length?
-				_interface.read(&buffer[2], length);
-				// TODO: which id are we talking about? does it mean that the RFID id never changes?
-				if ((memcmp(aimed_buffer, buffer, aimed_buffer_length) == 0)) {
-					return true;
-				}
-			}
-		}
-	}
-	return false;
-}
-
 bool RFID::checkConnected()
 {
 	return echo();
 }
 
-void RFID::fieldOff()
-{
-	_interface.write(_field_off_cmd, _field_off_cmd_length);
-	rtos::ThisThread::sleep_for(1ms);
-}
-
-bool RFID::setIEC15693()
+bool RFID::setSync()
 {
 	uint8_t buffer[2]						  = {0x00};
-	const uint8_t aimed_buffer_length		  = 0x02;
+	const uint8_t aimed_buffer_length		  = 0x2;
 	uint8_t aimed_buffer[aimed_buffer_length] = {0x00, 0x00};
 
-	_interface.write(_iec_15693_cmd, _iec_15693_cmd_length);
+	_interface.write(_set_receiver_gain_cmd, _set_receiver_gain_cmd_length);
 	rtos::ThisThread::sleep_for(10ms);
 
+	// TODO: why a for loop? why not while(!_interface.readable())?
 	for (int i = 0; i < 10; i++) {
 		if (_interface.readable()) {
 			_interface.read(buffer, aimed_buffer_length);
+			// TODO: check the second for loop and the use of the index
+			for (int j = 0; j < aimed_buffer_length; j++) {
+				printf("%X ", buffer[j]);
+			}
+			printf("\n");
 			if ((memcmp(aimed_buffer, buffer, aimed_buffer_length) == 0)) {
 				return true;
 			}
@@ -126,6 +97,18 @@ void RFID::sendReceive(uint8_t val)
 		_interface.write(_send_receive2_cmd, _send_receive2_cmd_length);
 	} else if (val == 3) {
 		_interface.write(_send_receive3_cmd, _send_receive3_cmd_length);
+	} else if (val == 4) {
+		_interface.write(_send_receive4_cmd, _send_receive4_cmd_length);
+	} else if (val == 5) {
+		_interface.write(_send_receive5_cmd, _send_receive5_cmd_length);
+	} else if (val == 6) {
+		_interface.write(_send_receive6_cmd, _send_receive6_cmd_length);
+	} else if (val == 7) {
+		_interface.write(_send_receive7_cmd, _send_receive7_cmd_length);
+	} else if (val == 8) {
+		_interface.write(_send_receive8_cmd, _send_receive8_cmd_length);
+	} else if (val == 9) {
+		_interface.write(_send_receive9_cmd, _send_receive9_cmd_length);
 	}
 	rtos::ThisThread::sleep_for(10ms);
 
@@ -193,6 +176,11 @@ void RFID::start()
 	}
 	printf("RFID reader enable with IEC 14443!\n");
 
+	while (!setSync()) {
+		printf("Attempt to set RFID sync...\n");
+		rtos::ThisThread::sleep_for(1s);
+	}
+
 	while (!setReceiverGain()) {
 		printf("Attempt to set RFID reader gain...\n");
 		rtos::ThisThread::sleep_for(1s);
@@ -202,6 +190,12 @@ void RFID::start()
 	while (true) {
 		sendReceive(2);
 		sendReceive(3);
+		sendReceive(4);
+		sendReceive(5);
+		sendReceive(6);
+		sendReceive(7);
+		sendReceive(8);
+		sendReceive(9);
 		rtos::ThisThread::sleep_for(1s);
 	}
 
