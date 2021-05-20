@@ -200,3 +200,27 @@ TEST_F(LKCoreRFIDSensorTest, sendUID2)
 
 	corerfid.sendUID2();
 }
+
+TEST_F(LKCoreRFIDSensorTest, receiveSAK1)
+{
+	uint8_t read_values[8]	= {0x80, 0x06, 0x04, 0xDA, 0x17, 0x08, 0x00, 0x00};
+	RFIDTag expected_values = {{0}, {0}, {0x04, 0xDA}, 0};
+
+	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 8), Return(0)));
+
+	corerfid.receiveSAK1();
+
+	compareRfidTag(corerfid.getRFIDTag(), expected_values);
+}
+
+TEST_F(LKCoreRFIDSensorTest, receiveSAK2)
+{
+	uint8_t read_values[8]	= {0x80, 0x06, 0x00, 0xFE, 0x51, 0x08, 0x00, 0x00};
+	RFIDTag expected_values = {{0}, {0}, {0x00, 0x00, 0x00, 0xFE}, 0};
+
+	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 8), Return(0)));
+
+	corerfid.receiveSAK2();
+
+	compareRfidTag(corerfid.getRFIDTag(), expected_values);
+}

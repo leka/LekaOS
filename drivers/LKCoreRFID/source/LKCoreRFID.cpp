@@ -188,4 +188,32 @@ auto LKCoreRFID::sendUID2() -> void
 
 	send(command);
 }
+
+auto LKCoreRFID::setSAK1(uint8_t *buffer) -> void
+{
+	std::copy_n(buffer + 2, 2, _rfid_tag.SAK.begin());
+}
+
+auto LKCoreRFID::receiveSAK1() -> void
+{
+	std::array<uint8_t, 8> buffer;
+
+	_interface.read(buffer.data(), buffer.size());
+
+	setSAK1(buffer.data());
+}
+
+auto LKCoreRFID::setSAK2(uint8_t *buffer) -> void
+{
+	std::copy_n(buffer + 2, 2, _rfid_tag.SAK.begin() + 2);
+}
+
+auto LKCoreRFID::receiveSAK2() -> void
+{
+	std::array<uint8_t, 8> buffer;
+
+	_interface.read(buffer.data(), buffer.size());
+
+	setSAK2(buffer.data());
+}
 }	// namespace leka

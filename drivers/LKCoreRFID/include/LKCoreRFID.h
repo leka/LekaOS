@@ -47,6 +47,9 @@ class LKCoreRFID
 	auto sendUID1() -> void;
 	auto sendUID2() -> void;
 
+	auto receiveSAK1() -> void;
+	auto receiveSAK2() -> void;
+
   private:
 	interface::BufferedSerial &_interface;
 	RFIDTag _rfid_tag {0, 0, 0, 0};
@@ -56,6 +59,9 @@ class LKCoreRFID
 
 	auto setUID1(uint8_t *buffer) -> void;
 	auto setUID2(uint8_t *buffer) -> void;
+
+	auto setSAK1(uint8_t *buffer) -> void;
+	auto setSAK2(uint8_t *buffer) -> void;
 };
 
 }	// namespace leka
