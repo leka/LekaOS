@@ -25,8 +25,7 @@ class CoreRFID
 
 	explicit CoreRFID(interface::BufferedSerial &interface);
 
-	auto setRFIDTag(CoreRFID::Tag tag) -> void;
-
+	void setTag(CoreRFID::Tag const &tag);
 	auto getTag() const -> CoreRFID::Tag;
 
 	template <size_t N>

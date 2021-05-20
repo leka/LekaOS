@@ -42,11 +42,11 @@ TEST_F(CoreRFIDSensorTest, initialization)
 	ASSERT_NE(&corerfid, nullptr);
 }
 
-TEST_F(CoreRFIDSensorTest, setRFIDTag)
+TEST_F(CoreRFIDSensorTest, setTag)
 {
 	CoreRFID::Tag expected_tag {{0x88, 0x04, 0x61, 0xD5, 0x0, 0x0, 0x0, 0x0}, {0x38, 0x0}, {0x01, 0x02}, {0xff}};
 
-	corerfid.setRFIDTag(expected_tag);
+	corerfid.setTag(expected_tag);
 
 	compareRfidTag(corerfid.getTag(), expected_tag);
 }
@@ -184,7 +184,7 @@ TEST_F(CoreRFIDSensorTest, sendUID1)
 
 	CoreRFID::Tag expected_tag {{0x88, 0x04, 0x61, 0xD5, 0x0, 0x0, 0x0, 0x0}, {0x38, 0x0}, {0}, {0}};
 
-	corerfid.setRFIDTag(expected_tag);
+	corerfid.setTag(expected_tag);
 
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
@@ -197,7 +197,7 @@ TEST_F(CoreRFIDSensorTest, sendUID2)
 
 	CoreRFID::Tag expected_tag {{0, 0, 0, 0, 0x32, 0x9B, 0x66, 0x80}, {0x00, 0x4F}, {0}, {0}};
 
-	corerfid.setRFIDTag(expected_tag);
+	corerfid.setTag(expected_tag);
 
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 

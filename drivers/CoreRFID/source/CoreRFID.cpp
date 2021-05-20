@@ -8,7 +8,7 @@ namespace leka {
 
 CoreRFID::CoreRFID(interface::BufferedSerial &interface) : _interface(interface) {}
 
-auto CoreRFID::setRFIDTag(CoreRFID::Tag tag) -> void
+void CoreRFID::setTag(CoreRFID::Tag const &tag)
 {
 	my_tag.uid	   = tag.uid;
 	my_tag.crc_uid = tag.crc_uid;
