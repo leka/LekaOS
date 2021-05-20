@@ -28,13 +28,13 @@ class CoreRFIDSensorTest : public ::testing::Test
 	CoreRFID corerfid;
 	CoreBufferedSerialMock mockBufferedSerial;
 
-	auto compareRfidTag(CoreRFID::Tag tag, std::array<uint8_t, 8> &expected_UID,
-						std::array<uint8_t, 2> &expected_crc_UID, std::array<uint8_t, 4> &expected_SAK,
+	auto compareRfidTag(CoreRFID::Tag tag, std::array<uint8_t, 8> &expected_uid,
+						std::array<uint8_t, 2> &expected_crc_uid, std::array<uint8_t, 4> &expected_sak,
 						std::array<uint8_t, 16> &expected_data)
 	{
-		ASSERT_EQ(tag.UID, expected_UID);
-		ASSERT_EQ(tag.crc_UID, expected_crc_UID);
-		ASSERT_EQ(tag.SAK, expected_SAK);
+		ASSERT_EQ(tag.uid, expected_uid);
+		ASSERT_EQ(tag.crc_uid, expected_crc_uid);
+		ASSERT_EQ(tag.sak, expected_sak);
 		ASSERT_EQ(tag.data, expected_data);
 	}
 };
@@ -46,14 +46,14 @@ TEST_F(CoreRFIDSensorTest, initialization)
 
 TEST_F(CoreRFIDSensorTest, setRFIDTag)
 {
-	std::array<uint8_t, 8> expected_UID		= {0x88, 0x04, 0x61, 0xD5, 0x0, 0x0, 0x0, 0x0};
-	std::array<uint8_t, 2> expected_crc_UID = {0x38, 0x0};
-	std::array<uint8_t, 4> expected_SAK		= {0x01, 0x02};
+	std::array<uint8_t, 8> expected_uid		= {0x88, 0x04, 0x61, 0xD5, 0x0, 0x0, 0x0, 0x0};
+	std::array<uint8_t, 2> expected_crc_uid = {0x38, 0x0};
+	std::array<uint8_t, 4> expected_sak		= {0x01, 0x02};
 	std::array<uint8_t, 16> expected_data	= {0xff};
 
-	corerfid.setRFIDTag(expected_UID, expected_crc_UID, expected_SAK, expected_data);
+	corerfid.setRFIDTag(expected_uid, expected_crc_uid, expected_sak, expected_data);
 
-	compareRfidTag(corerfid.getRFIDTag(), expected_UID, expected_crc_UID, expected_SAK, expected_data);
+	compareRfidTag(corerfid.getRFIDTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }
 
 TEST_F(CoreRFIDSensorTest, writeProtocol)
@@ -159,9 +159,9 @@ TEST_F(CoreRFIDSensorTest, receiveUID1)
 {
 	uint8_t read_values[10] = {0x80, 0x08, 0x88, 0x04, 0x17, 0x9F, 0x04, 0x28, 0x00, 0x00};
 
-	std::array<uint8_t, 8> expected_UID		= {0x88, 0x04, 0x17, 0x9F};
-	std::array<uint8_t, 2> expected_crc_UID = {0x04};
-	std::array<uint8_t, 4> expected_SAK		= {0x0};
+	std::array<uint8_t, 8> expected_uid		= {0x88, 0x04, 0x17, 0x9F};
+	std::array<uint8_t, 2> expected_crc_uid = {0x04};
+	std::array<uint8_t, 4> expected_sak		= {0x0};
 	std::array<uint8_t, 16> expected_data	= {0x0};
 
 	EXPECT_CALL(mockBufferedSerial, read)
@@ -169,16 +169,16 @@ TEST_F(CoreRFIDSensorTest, receiveUID1)
 
 	corerfid.receiveUID1();
 
-	compareRfidTag(corerfid.getRFIDTag(), expected_UID, expected_crc_UID, expected_SAK, expected_data);
+	compareRfidTag(corerfid.getRFIDTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }
 
 TEST_F(CoreRFIDSensorTest, receiveUID2)
 {
 	uint8_t read_values[10] = {0x80, 0x08, 0x32, 0x9B, 0x66, 0x80, 0x4F, 0x28, 0x00, 0x00};
 
-	std::array<uint8_t, 8> expected_UID		= {0x00, 0x00, 0x00, 0x00, 0x32, 0x9B, 0x66, 0x80};
-	std::array<uint8_t, 2> expected_crc_UID = {0x00, 0x4F};
-	std::array<uint8_t, 4> expected_SAK		= {0};
+	std::array<uint8_t, 8> expected_uid		= {0x00, 0x00, 0x00, 0x00, 0x32, 0x9B, 0x66, 0x80};
+	std::array<uint8_t, 2> expected_crc_uid = {0x00, 0x4F};
+	std::array<uint8_t, 4> expected_sak		= {0};
 	std::array<uint8_t, 16> expected_data	= {0};
 
 	EXPECT_CALL(mockBufferedSerial, read)
@@ -186,19 +186,19 @@ TEST_F(CoreRFIDSensorTest, receiveUID2)
 
 	corerfid.receiveUID2();
 
-	compareRfidTag(corerfid.getRFIDTag(), expected_UID, expected_crc_UID, expected_SAK, expected_data);
+	compareRfidTag(corerfid.getRFIDTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }
 
 TEST_F(CoreRFIDSensorTest, sendUID1)
 {
 	const auto expected_values = ElementsAre(0x04, 0x08, 0x93, 0x70, 0x88, 0x04, 0x61, 0xD5, 0x38, 0x28);
 
-	std::array<uint8_t, 8> expected_UID		= {0x88, 0x04, 0x61, 0xD5, 0x0, 0x0, 0x0, 0x0};
-	std::array<uint8_t, 2> expected_crc_UID = {0x38, 0x0};
-	std::array<uint8_t, 4> expected_SAK		= {0};
+	std::array<uint8_t, 8> expected_uid		= {0x88, 0x04, 0x61, 0xD5, 0x0, 0x0, 0x0, 0x0};
+	std::array<uint8_t, 2> expected_crc_uid = {0x38, 0x0};
+	std::array<uint8_t, 4> expected_sak		= {0};
 	std::array<uint8_t, 16> expected_data	= {0};
 
-	corerfid.setRFIDTag(expected_UID, expected_crc_UID, expected_SAK, expected_data);
+	corerfid.setRFIDTag(expected_uid, expected_crc_uid, expected_sak, expected_data);
 
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
@@ -209,12 +209,12 @@ TEST_F(CoreRFIDSensorTest, sendUID2)
 {
 	const auto expected_values = ElementsAre(0x04, 0x08, 0x95, 0x70, 0x32, 0x9B, 0x66, 0x80, 0x4F, 0x28);
 
-	std::array<uint8_t, 8> expected_UID		= {0, 0, 0, 0, 0x32, 0x9B, 0x66, 0x80};
-	std::array<uint8_t, 2> expected_crc_UID = {0, 0x4F};
-	std::array<uint8_t, 4> expected_SAK		= {0};
+	std::array<uint8_t, 8> expected_uid		= {0, 0, 0, 0, 0x32, 0x9B, 0x66, 0x80};
+	std::array<uint8_t, 2> expected_crc_uid = {0, 0x4F};
+	std::array<uint8_t, 4> expected_sak		= {0};
 	std::array<uint8_t, 16> expected_data	= {0};
 
-	corerfid.setRFIDTag(expected_UID, expected_crc_UID, expected_SAK, expected_data);
+	corerfid.setRFIDTag(expected_uid, expected_crc_uid, expected_sak, expected_data);
 
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
@@ -225,32 +225,32 @@ TEST_F(CoreRFIDSensorTest, receiveSAK1)
 {
 	uint8_t read_values[8] = {0x80, 0x06, 0x04, 0xDA, 0x17, 0x08, 0x00, 0x00};
 
-	std::array<uint8_t, 8> expected_UID		= {0};
-	std::array<uint8_t, 2> expected_crc_UID = {0};
-	std::array<uint8_t, 4> expected_SAK		= {0x04, 0xDA};
+	std::array<uint8_t, 8> expected_uid		= {0};
+	std::array<uint8_t, 2> expected_crc_uid = {0};
+	std::array<uint8_t, 4> expected_sak		= {0x04, 0xDA};
 	std::array<uint8_t, 16> expected_data	= {0};
 
 	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 8), Return(0)));
 
 	corerfid.receiveSAK1();
 
-	compareRfidTag(corerfid.getRFIDTag(), expected_UID, expected_crc_UID, expected_SAK, expected_data);
+	compareRfidTag(corerfid.getRFIDTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }
 
 TEST_F(CoreRFIDSensorTest, receiveSAK2)
 {
 	uint8_t read_values[8] = {0x80, 0x06, 0x00, 0xFE, 0x51, 0x08, 0x00, 0x00};
 
-	std::array<uint8_t, 8> expected_UID		= {0};
-	std::array<uint8_t, 2> expected_crc_UID = {0};
-	std::array<uint8_t, 4> expected_SAK		= {0x00, 0x00, 0x00, 0xFE};
+	std::array<uint8_t, 8> expected_uid		= {0};
+	std::array<uint8_t, 2> expected_crc_uid = {0};
+	std::array<uint8_t, 4> expected_sak		= {0x00, 0x00, 0x00, 0xFE};
 	std::array<uint8_t, 16> expected_data	= {0};
 
 	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 8), Return(0)));
 
 	corerfid.receiveSAK2();
 
-	compareRfidTag(corerfid.getRFIDTag(), expected_UID, expected_crc_UID, expected_SAK, expected_data);
+	compareRfidTag(corerfid.getRFIDTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }
 
 TEST_F(CoreRFIDSensorTest, authentification)
@@ -306,9 +306,9 @@ TEST_F(CoreRFIDSensorTest, receiveRFIDTag)
 																							  // is limited to 20
 																							  // values
 
-	std::array<uint8_t, 8> expected_UID		= {0};
-	std::array<uint8_t, 2> expected_crc_UID = {0};
-	std::array<uint8_t, 4> expected_SAK		= {0};
+	std::array<uint8_t, 8> expected_uid		= {0};
+	std::array<uint8_t, 2> expected_crc_uid = {0};
+	std::array<uint8_t, 4> expected_sak		= {0};
 	std::array<uint8_t, 16> expected_data	= {0x34, 0x03, 0x00, 0xFE, 0x01, 0x02, 0x03, 0x04,
 											   0x0,	 0x0,  0x0,	 0x0,  0x0,	 0x0,  0x0,	 0x0};
 
@@ -317,7 +317,7 @@ TEST_F(CoreRFIDSensorTest, receiveRFIDTag)
 
 	corerfid.receiveRFIDTag();
 
-	compareRfidTag(corerfid.getRFIDTag(), expected_UID, expected_crc_UID, expected_SAK, expected_data);
+	compareRfidTag(corerfid.getRFIDTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }
 
 TEST_F(CoreRFIDSensorTest, receiveRFIDTagWrongCRC)
@@ -330,9 +330,9 @@ TEST_F(CoreRFIDSensorTest, receiveRFIDTagWrongCRC)
 																							  // is limited to 20
 																							  // values
 
-	std::array<uint8_t, 8> expected_UID		= {0};
-	std::array<uint8_t, 2> expected_crc_UID = {0};
-	std::array<uint8_t, 4> expected_SAK		= {0};
+	std::array<uint8_t, 8> expected_uid		= {0};
+	std::array<uint8_t, 2> expected_crc_uid = {0};
+	std::array<uint8_t, 4> expected_sak		= {0};
 	std::array<uint8_t, 16> expected_data	= {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 											   0x0,	 0x0,  0x0,	 0x0,  0x0,	 0x0,  0x0,	 0x0};
 
@@ -341,5 +341,5 @@ TEST_F(CoreRFIDSensorTest, receiveRFIDTagWrongCRC)
 
 	corerfid.receiveRFIDTag();
 
-	compareRfidTag(corerfid.getRFIDTag(), expected_UID, expected_crc_UID, expected_SAK, expected_data);
+	compareRfidTag(corerfid.getRFIDTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }

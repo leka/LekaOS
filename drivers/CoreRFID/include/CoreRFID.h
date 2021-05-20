@@ -17,17 +17,17 @@ class CoreRFID
 {
   public:
 	struct Tag {
-		std::array<uint8_t, 8> UID {0};
-		std::array<uint8_t, 2> crc_UID {0};
-		std::array<uint8_t, 4> SAK {0};
+		std::array<uint8_t, 8> uid {0};
+		std::array<uint8_t, 2> crc_uid {0};
+		std::array<uint8_t, 4> sak {0};
 		std::array<uint8_t, 16> data {0};
 	};
 
   public:
 	explicit CoreRFID(interface::BufferedSerial &interface);
 
-	auto setRFIDTag(std::array<uint8_t, 8> &tag_UID, std::array<uint8_t, 2> &tag_crc_UID,
-					std::array<uint8_t, 4> &tag_SAK, std::array<uint8_t, 16> &tag_data) -> void;
+	auto setRFIDTag(std::array<uint8_t, 8> &tag_uid, std::array<uint8_t, 2> &tag_crc_uid,
+					std::array<uint8_t, 4> &tag_sak, std::array<uint8_t, 16> &tag_data) -> void;
 
 	auto getRFIDTag() const -> CoreRFID::Tag;
 
