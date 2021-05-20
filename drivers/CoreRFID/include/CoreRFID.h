@@ -2,8 +2,8 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_LK_CORE_RFID_H_
-#define _LEKA_OS_DRIVER_LK_CORE_RFID_H_
+#ifndef _LEKA_OS_DRIVER_CORE_RFID_H_
+#define _LEKA_OS_DRIVER_CORE_RFID_H_
 
 #include <array>
 
@@ -20,10 +20,10 @@ struct RFIDTag {
 	std::array<uint8_t, 16> data {0};
 };
 
-class LKCoreRFID
+class CoreRFID
 {
   public:
-	explicit LKCoreRFID(interface::BufferedSerial &interface);
+	explicit CoreRFID(interface::BufferedSerial &interface);
 
 	auto setRFIDTag(RFIDTag const &expected_values) -> void;
 	auto getRFIDTag() const -> RFIDTag;
@@ -79,4 +79,4 @@ class LKCoreRFID
 
 }	// namespace leka
 
-#endif	 //_LEKA_OS_DRIVER_LK_CORE_RFID_H_
+#endif	 //_LEKA_OS_DRIVER_CORE_RFID_H_

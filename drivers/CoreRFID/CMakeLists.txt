@@ -2,19 +2,19 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(LKCoreRFID STATIC)
+add_library(CoreRFID STATIC)
 
-target_include_directories(LKCoreRFID
+target_include_directories(CoreRFID
 	PUBLIC
 		include
 )
 
-target_sources(LKCoreRFID
+target_sources(CoreRFID
 	PRIVATE
-		source/LKCoreRFID.cpp
+		source/CoreRFID.cpp
 )
 
-target_link_libraries(LKCoreRFID
+target_link_libraries(CoreRFID
 	CoreBufferedSerial
 	mbed-os
 )
@@ -22,7 +22,7 @@ target_link_libraries(LKCoreRFID
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
-		tests/LKCoreRFID_test.cpp
+		tests/CoreRFID_test.cpp
 	)
 
 endif()

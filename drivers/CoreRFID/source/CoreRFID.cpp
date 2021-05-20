@@ -2,29 +2,29 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreRFID.h"
+#include "CoreRFID.h"
 
 namespace leka {
 
-LKCoreRFID::LKCoreRFID(interface::BufferedSerial &interface) : _interface(interface) {}
+CoreRFID::CoreRFID(interface::BufferedSerial &interface) : _interface(interface) {}
 
-auto LKCoreRFID::setRFIDTag(RFIDTag const &expected_values) -> void
+auto CoreRFID::setRFIDTag(RFIDTag const &expected_values) -> void
 {
 	_rfid_tag = expected_values;
 }
 
-auto LKCoreRFID::getRFIDTag() const -> RFIDTag
+auto CoreRFID::getRFIDTag() const -> RFIDTag
 {
 	return _rfid_tag;
 }
 
 template <size_t N>
-auto LKCoreRFID::send(const std::array<uint8_t, N> &command) -> void
+auto CoreRFID::send(const std::array<uint8_t, N> &command) -> void
 {
 	_interface.write(command.data(), N);
 }
 
-auto LKCoreRFID::setProtocol() -> void
+auto CoreRFID::setProtocol() -> void
 {
 	const uint8_t cmd_CR95HF = 0x02;
 	const uint8_t length	 = 0x02;
@@ -36,7 +36,7 @@ auto LKCoreRFID::setProtocol() -> void
 	send(command);
 }
 
-auto LKCoreRFID::setGain() -> void
+auto CoreRFID::setGain() -> void
 {
 	const uint8_t cmd_CR95HF			= 0x09;
 	const uint8_t length				= 0x04;
@@ -51,7 +51,7 @@ auto LKCoreRFID::setGain() -> void
 	send(command);
 }
 
-auto LKCoreRFID::receiveSetupAnswer() -> bool
+auto CoreRFID::receiveSetupAnswer() -> bool
 {
 	std::array<uint8_t, 2> buffer;
 
@@ -60,7 +60,7 @@ auto LKCoreRFID::receiveSetupAnswer() -> bool
 	return checkSensorSetup(buffer.data());
 }
 
-auto LKCoreRFID::checkSensorSetup(const uint8_t *buffer) const -> bool
+auto CoreRFID::checkSensorSetup(const uint8_t *buffer) const -> bool
 {
 	const std::array<uint8_t, 2> CR95HF_setup_completed = {0x00, 0x00};
 
@@ -72,7 +72,7 @@ auto LKCoreRFID::checkSensorSetup(const uint8_t *buffer) const -> bool
 	return false;
 }
 
-auto LKCoreRFID::sendREQA() -> void
+auto CoreRFID::sendREQA() -> void
 {
 	const uint8_t cmd_CR95HF = 0x04;
 	const uint8_t length	 = 0x02;
@@ -84,7 +84,7 @@ auto LKCoreRFID::sendREQA() -> void
 	send(command);
 }
 
-auto LKCoreRFID::checkATQA(const uint8_t *buffer) const -> bool
+auto CoreRFID::checkATQA(const uint8_t *buffer) const -> bool
 {
 	const std::array<uint8_t, 2> ATQA_NTAG213_value = {0x44, 0x00};
 
@@ -96,7 +96,7 @@ auto LKCoreRFID::checkATQA(const uint8_t *buffer) const -> bool
 	return false;
 }
 
-auto LKCoreRFID::receiveATQA() -> bool
+auto CoreRFID::receiveATQA() -> bool
 {
 	std::array<uint8_t, 7> buffer;
 
@@ -105,7 +105,7 @@ auto LKCoreRFID::receiveATQA() -> bool
 	return checkATQA(buffer.data());
 }
 
-auto LKCoreRFID::sendCL1() -> void
+auto CoreRFID::sendCL1() -> void
 {
 	const uint8_t cmd_CR95HF			 = 0x04;
 	const uint8_t length				 = 0x03;
@@ -117,7 +117,7 @@ auto LKCoreRFID::sendCL1() -> void
 	send(command);
 }
 
-auto LKCoreRFID::sendCL2() -> void
+auto CoreRFID::sendCL2() -> void
 {
 	const uint8_t cmd_CR95HF			 = 0x04;
 	const uint8_t length				 = 0x03;
@@ -129,13 +129,13 @@ auto LKCoreRFID::sendCL2() -> void
 	send(command);
 }
 
-auto LKCoreRFID::setUID2(uint8_t *buffer) -> void
+auto CoreRFID::setUID2(uint8_t *buffer) -> void
 {
 	std::copy_n(buffer + 2, 4, _rfid_tag.UID.begin() + 4);
 	_rfid_tag.crc_UID[1] = buffer[6];
 }
 
-auto LKCoreRFID::receiveUID2() -> void
+auto CoreRFID::receiveUID2() -> void
 {
 	std::array<uint8_t, 10> buffer;
 
@@ -144,13 +144,13 @@ auto LKCoreRFID::receiveUID2() -> void
 	setUID2(buffer.data());
 }
 
-auto LKCoreRFID::setUID1(uint8_t *buffer) -> void
+auto CoreRFID::setUID1(uint8_t *buffer) -> void
 {
 	std::copy_n(buffer + 2, 4, _rfid_tag.UID.begin());
 	_rfid_tag.crc_UID[0] = buffer[6];
 }
 
-auto LKCoreRFID::receiveUID1() -> void
+auto CoreRFID::receiveUID1() -> void
 {
 	std::array<uint8_t, 10> buffer;
 
@@ -159,7 +159,7 @@ auto LKCoreRFID::receiveUID1() -> void
 	setUID1(buffer.data());
 }
 
-auto LKCoreRFID::sendUID1() -> void
+auto CoreRFID::sendUID1() -> void
 {
 	const uint8_t cmd_CR95HF			 = 0x04;
 	const uint8_t length				 = 0x08;
@@ -174,7 +174,7 @@ auto LKCoreRFID::sendUID1() -> void
 	send(command);
 }
 
-auto LKCoreRFID::sendUID2() -> void
+auto CoreRFID::sendUID2() -> void
 {
 	const uint8_t cmd_CR95HF			 = 0x04;
 	const uint8_t length				 = 0x08;
@@ -189,12 +189,12 @@ auto LKCoreRFID::sendUID2() -> void
 	send(command);
 }
 
-auto LKCoreRFID::setSAK1(uint8_t *buffer) -> void
+auto CoreRFID::setSAK1(uint8_t *buffer) -> void
 {
 	std::copy_n(buffer + 2, 2, _rfid_tag.SAK.begin());
 }
 
-auto LKCoreRFID::receiveSAK1() -> void
+auto CoreRFID::receiveSAK1() -> void
 {
 	std::array<uint8_t, 8> buffer;
 
@@ -203,12 +203,12 @@ auto LKCoreRFID::receiveSAK1() -> void
 	setSAK1(buffer.data());
 }
 
-auto LKCoreRFID::setSAK2(uint8_t *buffer) -> void
+auto CoreRFID::setSAK2(uint8_t *buffer) -> void
 {
 	std::copy_n(buffer + 2, 2, _rfid_tag.SAK.begin() + 2);
 }
 
-auto LKCoreRFID::receiveSAK2() -> void
+auto CoreRFID::receiveSAK2() -> void
 {
 	std::array<uint8_t, 8> buffer;
 
@@ -217,7 +217,7 @@ auto LKCoreRFID::receiveSAK2() -> void
 	setSAK2(buffer.data());
 }
 
-auto LKCoreRFID::authentification() -> void
+auto CoreRFID::authentification() -> void
 {
 	const uint8_t cmd_CR95HF				  = 0x04;
 	const uint8_t length					  = 0x06;
@@ -231,7 +231,7 @@ auto LKCoreRFID::authentification() -> void
 	send(command);
 }
 
-auto LKCoreRFID::checkAuthentification(const uint8_t *buffer) const -> bool
+auto CoreRFID::checkAuthentification(const uint8_t *buffer) const -> bool
 {
 	const std::array<uint8_t, 2> PASSWORD_CHECK_VALUES = {0xA0, 0x1E};
 
@@ -243,7 +243,7 @@ auto LKCoreRFID::checkAuthentification(const uint8_t *buffer) const -> bool
 	return false;
 }
 
-auto LKCoreRFID::receiveAuthentification() -> bool
+auto CoreRFID::receiveAuthentification() -> bool
 {
 	std::array<uint8_t, 9> buffer;
 
@@ -252,7 +252,7 @@ auto LKCoreRFID::receiveAuthentification() -> bool
 	return checkAuthentification(buffer.data());
 }
 
-auto LKCoreRFID::readRFIDTag() -> void
+auto CoreRFID::readRFIDTag() -> void
 {
 	const uint8_t cmd_CR95HF	   = 0x04;
 	const uint8_t length		   = 0x03;
@@ -265,7 +265,7 @@ auto LKCoreRFID::readRFIDTag() -> void
 	send(command);
 }
 
-auto LKCoreRFID::checkCRC(const std::array<uint8_t, 21> &buffer) const -> bool
+auto CoreRFID::checkCRC(const std::array<uint8_t, 21> &buffer) const -> bool
 {
 	std::array<uint8_t, 2> expected_crc = {buffer[18], buffer[19]};
 
@@ -278,7 +278,7 @@ auto LKCoreRFID::checkCRC(const std::array<uint8_t, 21> &buffer) const -> bool
 	return false;
 }
 
-auto LKCoreRFID::computeCrcIso14443a(uint8_t const *pbtData, size_t szLen) const -> std::array<uint8_t, 2>
+auto CoreRFID::computeCrcIso14443a(uint8_t const *pbtData, size_t szLen) const -> std::array<uint8_t, 2>
 {
 	uint32_t wCrc = 0x6363;
 
@@ -295,12 +295,12 @@ auto LKCoreRFID::computeCrcIso14443a(uint8_t const *pbtData, size_t szLen) const
 	return pbtCrc;
 }
 
-auto LKCoreRFID::setData(uint8_t *buffer) -> void
+auto CoreRFID::setData(uint8_t *buffer) -> void
 {
 	std::copy_n(buffer + 2, 16, _rfid_tag.data.begin());
 }
 
-auto LKCoreRFID::receiveRFIDTag() -> void
+auto CoreRFID::receiveRFIDTag() -> void
 {
 	std::array<uint8_t, 21> buffer;
 
