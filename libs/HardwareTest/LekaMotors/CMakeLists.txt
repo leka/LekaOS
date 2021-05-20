@@ -5,15 +5,16 @@
 add_library(lib_LekaMotors STATIC)
 
 target_include_directories(lib_LekaMotors
-  PUBLIC
-  	${CMAKE_CURRENT_SOURCE_DIR}/include
+	PUBLIC
+		include
 )
 
 target_sources(lib_LekaMotors
-  PRIVATE
-	source/LekaMotors.cpp
+	PRIVATE
+		source/LekaMotors.cpp
 )
 
-target_link_libraries(lib_LekaMotors LKCoreMotor)
-
-target_link_libraries(lib_LekaMotors mbed-os)
+target_link_libraries(lib_LekaMotors
+	mbed-os
+	CoreMotor
+)

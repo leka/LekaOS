@@ -16,7 +16,7 @@ target_sources(spike_lk_motors
 
 target_link_libraries(spike_lk_motors
 	LogKit
-	LKCoreMotor
+	CoreMotor
 	lib_HelloWorld
 )
 
