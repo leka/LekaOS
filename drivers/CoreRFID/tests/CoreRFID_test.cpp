@@ -253,39 +253,39 @@ TEST_F(CoreRFIDSensorTest, receiveSAK2)
 	compareRfidTag(corerfid.getTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }
 
-TEST_F(CoreRFIDSensorTest, authentification)
+TEST_F(CoreRFIDSensorTest, authentication)
 {
 	const auto expected_values = ElementsAre(0x04, 0x06, 0x1B, 0xFF, 0xFF, 0xFF, 0xFF, 0x28);
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
-	corerfid.authentification();
+	corerfid.authentication();
 }
 
-TEST_F(CoreRFIDSensorTest, receiveAuthentificationSuccess)
+TEST_F(CoreRFIDSensorTest, receiveAuthenticationSuccess)
 {
 	uint8_t read_values[9] = {0x0, 0x0, 0x0, 0x0, 0xA0, 0x1E, 0x0, 0x0, 0x0};
 
 	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 9), Return(0)));
 
-	ASSERT_EQ(corerfid.receiveAuthentification(), true);
+	ASSERT_EQ(corerfid.receiveAuthentication(), true);
 }
 
-TEST_F(CoreRFIDSensorTest, receiveAuthentificationFailedOnFirstValue)
+TEST_F(CoreRFIDSensorTest, receiveAuthenticationFailedOnFirstValue)
 {
 	uint8_t read_values[9] = {0x0, 0x0, 0x0, 0x0, 0x88, 0x1E, 0x0, 0x0, 0x0};
 
 	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 9), Return(0)));
 
-	ASSERT_EQ(corerfid.receiveAuthentification(), false);
+	ASSERT_EQ(corerfid.receiveAuthentication(), false);
 }
 
-TEST_F(CoreRFIDSensorTest, receiveAuthentificationFailedOnSecondValue)
+TEST_F(CoreRFIDSensorTest, receiveAuthenticationFailedOnSecondValue)
 {
 	uint8_t read_values[9] = {0x0, 0x0, 0x0, 0x0, 0xA0, 0x88, 0x0, 0x0, 0x0};
 
 	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 9), Return(0)));
 
-	ASSERT_EQ(corerfid.receiveAuthentification(), false);
+	ASSERT_EQ(corerfid.receiveAuthentication(), false);
 }
 
 TEST_F(CoreRFIDSensorTest, readRFIDTag)

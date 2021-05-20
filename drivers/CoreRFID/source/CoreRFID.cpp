@@ -221,7 +221,7 @@ auto CoreRFID::receiveSAK2() -> void
 	setSAK2(buffer.data());
 }
 
-auto CoreRFID::authentification() -> void
+auto CoreRFID::authentication() -> void
 {
 	const uint8_t cmd_CR95HF				  = 0x04;
 	const uint8_t length					  = 0x06;
@@ -235,7 +235,7 @@ auto CoreRFID::authentification() -> void
 	send(command);
 }
 
-auto CoreRFID::checkAuthentification(const uint8_t *buffer) const -> bool
+auto CoreRFID::checkAuthentication(const uint8_t *buffer) const -> bool
 {
 	const std::array<uint8_t, 2> PASSWORD_CHECK_VALUES = {0xA0, 0x1E};
 
@@ -247,13 +247,13 @@ auto CoreRFID::checkAuthentification(const uint8_t *buffer) const -> bool
 	return false;
 }
 
-auto CoreRFID::receiveAuthentification() -> bool
+auto CoreRFID::receiveAuthentication() -> bool
 {
 	std::array<uint8_t, 9> buffer;
 
 	_interface.read(buffer.data(), buffer.size());
 
-	return checkAuthentification(buffer.data());
+	return checkAuthentication(buffer.data());
 }
 
 auto CoreRFID::readRFIDTag() -> void

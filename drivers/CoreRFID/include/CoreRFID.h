@@ -53,8 +53,8 @@ class CoreRFID
 	auto receiveSAK1() -> void;
 	auto receiveSAK2() -> void;
 
-	auto authentification() -> void;
-	auto receiveAuthentification() -> bool;
+	auto authentication() -> void;
+	auto receiveAuthentication() -> bool;
 
 	auto readRFIDTag() -> void;
 	auto receiveRFIDTag() -> void;
@@ -72,7 +72,7 @@ class CoreRFID
 	auto setSAK1(uint8_t *buffer) -> void;
 	auto setSAK2(uint8_t *buffer) -> void;
 
-	auto checkAuthentification(const uint8_t *buffer) const -> bool;
+	auto checkAuthentication(const uint8_t *buffer) const -> bool;
 
 	auto computeCrcIso14443a(uint8_t const *pbtData, size_t szLen) const -> std::array<uint8_t, 2>;
 	auto checkCRC(const std::array<uint8_t, 21> &buffer) const -> bool;
