@@ -18,7 +18,7 @@ enum class Rotation
 
 using rotation_t = Rotation;
 
-class LKCoreMotorBase
+class CoreMotorBase
 {
   public:
 	virtual void spin(rotation_t rotation, float speed) = 0;

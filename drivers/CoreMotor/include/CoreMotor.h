@@ -8,11 +8,11 @@
 #include "drivers/DigitalOut.h"
 #include "drivers/PwmOut.h"
 
-#include "LKCoreMotorBase.h"
+#include "CoreMotorBase.h"
 
 namespace leka {
 
-class LKCoreMotor : public LKCoreMotorBase
+class CoreMotor : public CoreMotorBase
 {
   public:
 	// TODO: stub DigitalOut::read()
@@ -22,7 +22,7 @@ class LKCoreMotor : public LKCoreMotorBase
 		float speed;
 	};
 
-	LKCoreMotor(PinName direction_1, PinName direction_2, PinName speed)
+	CoreMotor(PinName direction_1, PinName direction_2, PinName speed)
 		: _dir_1 {mbed::DigitalOut(direction_1)},
 		  _dir_2 {mbed::DigitalOut(direction_2)},
 		  _speed {mbed::PwmOut(speed)} {};

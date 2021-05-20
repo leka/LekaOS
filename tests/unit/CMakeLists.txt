@@ -166,7 +166,6 @@ add_subdirectory(template)
 
 # Register drivers
 leka_register_unit_tests_for_driver(LKCoreFatFs)
-leka_register_unit_tests_for_driver(LKCoreMotor)
 leka_register_unit_tests_for_driver(LKCoreLL)
 leka_register_unit_tests_for_driver(LKCoreSTM32Hal)
 leka_register_unit_tests_for_driver(LKCoreVideo)
@@ -175,6 +174,7 @@ leka_register_unit_tests_for_driver(LKCoreMicrophone)
 leka_register_unit_tests_for_driver(LKCoreBattery)
 leka_register_unit_tests_for_driver(CoreHTS)
 leka_register_unit_tests_for_driver(CoreI2C)
+leka_register_unit_tests_for_driver(CoreMotor)
 leka_register_unit_tests_for_driver(CoreBufferedSerial)
 
 # Register libraries
