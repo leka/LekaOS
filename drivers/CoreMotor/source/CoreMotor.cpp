@@ -19,13 +19,13 @@ void CoreMotor::spin(rotation_t rotation, float speed)
 	setSpeed(speed);
 }
 
-void CoreMotor::stop(void)
+void CoreMotor::stop()
 {
 	setDirections(0, 0);
 	setSpeed(0);
 }
 
-CoreMotor::Status CoreMotor::getStatus(void) const
+auto CoreMotor::getStatus() const -> CoreMotor::Status
 {
 	return _status;
 }
