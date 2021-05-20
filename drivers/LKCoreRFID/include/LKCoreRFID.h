@@ -44,6 +44,9 @@ class LKCoreRFID
 	auto receiveUID1() -> void;
 	auto receiveUID2() -> void;
 
+	auto sendUID1() -> void;
+	auto sendUID2() -> void;
+
   private:
 	interface::BufferedSerial &_interface;
 	RFIDTag _rfid_tag {0, 0, 0, 0};

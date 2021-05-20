@@ -159,4 +159,33 @@ auto LKCoreRFID::receiveUID1() -> void
 	setUID1(buffer.data());
 }
 
+auto LKCoreRFID::sendUID1() -> void
+{
+	const uint8_t cmd_CR95HF			 = 0x04;
+	const uint8_t length				 = 0x08;
+	const std::array<uint8_t, 2> cmd_tag = {0x93, 0x70};
+	const std::array<uint8_t, 4> uid	 = {_rfid_tag.UID[0], _rfid_tag.UID[1], _rfid_tag.UID[2], _rfid_tag.UID[3]};
+	const uint8_t uid_crc				 = _rfid_tag.crc_UID[0];
+	const uint8_t flags					 = 0x28;
+
+	std::array<uint8_t, 10> command = {cmd_CR95HF, length, cmd_tag[0], cmd_tag[1], uid[0],
+									   uid[1],	   uid[2], uid[3],	   uid_crc,	   flags};
+
+	send(command);
+}
+
+auto LKCoreRFID::sendUID2() -> void
+{
+	const uint8_t cmd_CR95HF			 = 0x04;
+	const uint8_t length				 = 0x08;
+	const std::array<uint8_t, 2> cmd_tag = {0x95, 0x70};
+	const std::array<uint8_t, 4> uid	 = {_rfid_tag.UID[4], _rfid_tag.UID[5], _rfid_tag.UID[6], _rfid_tag.UID[7]};
+	const uint8_t uid_crc				 = _rfid_tag.crc_UID[1];
+	const uint8_t flags					 = 0x28;
+
+	std::array<uint8_t, 10> command = {cmd_CR95HF, length, cmd_tag[0], cmd_tag[1], uid[0],
+									   uid[1],	   uid[2], uid[3],	   uid_crc,	   flags};
+
+	send(command);
+}
 }	// namespace leka

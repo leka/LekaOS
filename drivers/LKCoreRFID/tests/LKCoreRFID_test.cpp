@@ -175,3 +175,28 @@ TEST_F(LKCoreRFIDSensorTest, receiveUID2)
 
 	compareRfidTag(corerfid.getRFIDTag(), expected_values);
 }
+
+TEST_F(LKCoreRFIDSensorTest, sendUID1)
+{
+	const auto expected_values = ElementsAre(0x04, 0x08, 0x93, 0x70, 0x88, 0x04, 0x61, 0xD5, 0x38, 0x28);
+
+	RFIDTag expected_rfid_tag = {{0x88, 0x04, 0x61, 0xD5, 0x0, 0x0, 0x0, 0x0}, {0x38, 0x0}, {}, {}};
+
+	corerfid.setRFIDTag(expected_rfid_tag);
+
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+
+	corerfid.sendUID1();
+}
+
+TEST_F(LKCoreRFIDSensorTest, sendUID2)
+{
+	const auto expected_values = ElementsAre(0x04, 0x08, 0x95, 0x70, 0x32, 0x9B, 0x66, 0x80, 0x4F, 0x28);
+	RFIDTag expected_rfid_tag  = {{0, 0, 0, 0, 0x32, 0x9B, 0x66, 0x80}, {0, 0x4F}, {}, {}};
+
+	corerfid.setRFIDTag(expected_rfid_tag);
+
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+
+	corerfid.sendUID2();
+}
