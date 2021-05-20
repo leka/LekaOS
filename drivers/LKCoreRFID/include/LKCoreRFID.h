@@ -25,6 +25,9 @@ class LKCoreRFID
   public:
 	explicit LKCoreRFID(interface::BufferedSerial &interface);
 
+	auto setRFIDTag(RFIDTag const &expected_values) -> void;
+	auto getRFIDTag() const -> RFIDTag;
+
   private:
 	interface::BufferedSerial &_interface;
 	RFIDTag _rfid_tag {0, 0, 0, 0};
