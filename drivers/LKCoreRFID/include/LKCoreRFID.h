@@ -51,6 +51,7 @@ class LKCoreRFID
 	auto receiveSAK2() -> void;
 
 	auto authentification() -> void;
+	auto receiveAuthentification() -> bool;
 
   private:
 	interface::BufferedSerial &_interface;
@@ -64,6 +65,8 @@ class LKCoreRFID
 
 	auto setSAK1(uint8_t *buffer) -> void;
 	auto setSAK2(uint8_t *buffer) -> void;
+
+	auto checkAuthentification(const uint8_t *buffer) const -> bool;
 };
 
 }	// namespace leka

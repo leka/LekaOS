@@ -232,3 +232,30 @@ TEST_F(LKCoreRFIDSensorTest, authentification)
 
 	corerfid.authentification();
 }
+
+TEST_F(LKCoreRFIDSensorTest, receiveAuthentificationSuccess)
+{
+	uint8_t read_values[9] = {0x0, 0x0, 0x0, 0x0, 0xA0, 0x1E, 0x0, 0x0, 0x0};
+
+	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 9), Return(0)));
+
+	ASSERT_EQ(corerfid.receiveAuthentification(), true);
+}
+
+TEST_F(LKCoreRFIDSensorTest, receiveAuthentificationFailedOnFirstValue)
+{
+	uint8_t read_values[9] = {0x0, 0x0, 0x0, 0x0, 0x88, 0x1E, 0x0, 0x0, 0x0};
+
+	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 9), Return(0)));
+
+	ASSERT_EQ(corerfid.receiveAuthentification(), false);
+}
+
+TEST_F(LKCoreRFIDSensorTest, receiveAuthentificationFailedOnSecondValue)
+{
+	uint8_t read_values[9] = {0x0, 0x0, 0x0, 0x0, 0xA0, 0x88, 0x0, 0x0, 0x0};
+
+	EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArrayArgument<0>(read_values, read_values + 9), Return(0)));
+
+	ASSERT_EQ(corerfid.receiveAuthentification(), false);
+}

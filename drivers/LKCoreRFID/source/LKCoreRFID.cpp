@@ -230,4 +230,26 @@ auto LKCoreRFID::authentification() -> void
 
 	send(command);
 }
+
+auto LKCoreRFID::checkAuthentification(const uint8_t *buffer) const -> bool
+{
+	const std::array<uint8_t, 2> PASSWORD_CHECK_VALUES = {0xA0, 0x1E};
+
+	if (std::array<uint8_t, 2> PASSWORD_tag_answer = {buffer[4], buffer[5]};
+		(PASSWORD_tag_answer[0] == PASSWORD_CHECK_VALUES[0]) && (PASSWORD_tag_answer[1] == PASSWORD_CHECK_VALUES[1])) {
+		return true;
+	}
+
+	return false;
+}
+
+auto LKCoreRFID::receiveAuthentification() -> bool
+{
+	std::array<uint8_t, 9> buffer;
+
+	_interface.read(buffer.data(), buffer.size());
+
+	return checkAuthentification(buffer.data());
+}
+
 }	// namespace leka
