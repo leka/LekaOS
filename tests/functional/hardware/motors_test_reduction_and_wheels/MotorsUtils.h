@@ -7,13 +7,13 @@
 
 #include "PinNames.h"
 
-#include "LKCoreMotor.h"
+#include "CoreMotor.h"
 #include "LekaMotors.h"
 
 using namespace leka;
 
-LKCoreMotor motor_right(MOTOR_RIGHT_DIRECTION_1, MOTOR_RIGHT_DIRECTION_2, MOTOR_RIGHT_PWM);
-LKCoreMotor motor_left(MOTOR_LEFT_DIRECTION_1, MOTOR_LEFT_DIRECTION_2, MOTOR_LEFT_PWM);
+CoreMotor motor_right(MOTOR_RIGHT_DIRECTION_1, MOTOR_RIGHT_DIRECTION_2, MOTOR_RIGHT_PWM);
+CoreMotor motor_left(MOTOR_LEFT_DIRECTION_1, MOTOR_LEFT_DIRECTION_2, MOTOR_LEFT_PWM);
 
 Motors motors(motor_right, motor_left);
 

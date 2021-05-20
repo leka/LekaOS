@@ -7,11 +7,11 @@
 
 #include <tuple>
 
-#include "LKCoreMotor.h"
+#include "CoreMotor.h"
 
 struct Motors {
-	leka::LKCoreMotor &left;
-	leka::LKCoreMotor &right;
+	leka::CoreMotor &left;
+	leka::CoreMotor &right;
 };
 
 void spinLeft(Motors &motors)

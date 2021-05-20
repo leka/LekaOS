@@ -10,27 +10,27 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
+#include "CoreMotor.h"
+#include "CoreMotorBase.h"
 #include "HelloWorld.h"
-#include "LKCoreMotor.h"
-#include "LKCoreMotorBase.h"
 #include "LogKit.h"
 
 using namespace leka;
 using namespace std::chrono;
 
-void spinLeft(LKCoreMotorBase &left, LKCoreMotorBase &right)
+void spinLeft(CoreMotorBase &left, CoreMotorBase &right)
 {
 	left.spin(Rotation::clockwise, 0.5f);
 	right.spin(Rotation::clockwise, 0.5f);
 }
 
-void spinRight(LKCoreMotorBase &left, LKCoreMotorBase &right)
+void spinRight(CoreMotorBase &left, CoreMotorBase &right)
 {
 	left.spin(Rotation::counterClockwise, 0.5f);
 	right.spin(Rotation::counterClockwise, 0.5f);
 }
 
-void stop(LKCoreMotorBase &left, LKCoreMotorBase &right)
+void stop(CoreMotorBase &left, CoreMotorBase &right)
 {
 	left.stop();
 	right.stop();
@@ -50,8 +50,8 @@ auto main() -> int
 	HelloWorld hello;
 	hello.start();
 
-	LKCoreMotor motor_right(MOTOR_RIGHT_DIRECTION_1, MOTOR_RIGHT_DIRECTION_2, MOTOR_RIGHT_PWM);
-	LKCoreMotor motor_left(MOTOR_LEFT_DIRECTION_1, MOTOR_LEFT_DIRECTION_2, MOTOR_LEFT_PWM);
+	CoreMotor motor_right(MOTOR_RIGHT_DIRECTION_1, MOTOR_RIGHT_DIRECTION_2, MOTOR_RIGHT_PWM);
+	CoreMotor motor_left(MOTOR_LEFT_DIRECTION_1, MOTOR_LEFT_DIRECTION_2, MOTOR_LEFT_PWM);
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;

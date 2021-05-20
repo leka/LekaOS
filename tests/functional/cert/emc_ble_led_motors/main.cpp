@@ -34,10 +34,10 @@ int main(void)
 	initLed();
 	thread_led.start(led_thread);
 
-	leka::LKCoreMotor motor_right(PinName::MOTOR_RIGHT_DIRECTION_1, PinName::MOTOR_RIGHT_DIRECTION_2,
-								  PinName::MOTOR_RIGHT_PWM);
-	leka::LKCoreMotor motor_left(PinName::MOTOR_LEFT_DIRECTION_1, PinName::MOTOR_LEFT_DIRECTION_2,
-								 PinName::MOTOR_LEFT_PWM);
+	leka::CoreMotor motor_right(PinName::MOTOR_RIGHT_DIRECTION_1, PinName::MOTOR_RIGHT_DIRECTION_2,
+								PinName::MOTOR_RIGHT_PWM);
+	leka::CoreMotor motor_left(PinName::MOTOR_LEFT_DIRECTION_1, PinName::MOTOR_LEFT_DIRECTION_2,
+							   PinName::MOTOR_LEFT_PWM);
 
 	Motors motors {.left = motor_left, .right = motor_right};
 

@@ -19,7 +19,7 @@ target_link_libraries(spike_lk_sensors_battery
 	lib_HelloWorld
 	FileManager
 	LKCoreBattery
-	LKCoreMotor
+	CoreMotor
 )
 
 target_link_custom_leka_targets(spike_lk_sensors_battery)

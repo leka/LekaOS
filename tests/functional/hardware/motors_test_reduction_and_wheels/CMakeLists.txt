@@ -15,7 +15,7 @@ target_sources(hardware_motors_test_reduction_and_wheels
 )
 
 target_link_libraries(hardware_motors_test_reduction_and_wheels
-	LKCoreMotor
+	CoreMotor
 	lib_LekaMotors
 	lib_PrettyPrinter
 )
