@@ -71,4 +71,16 @@ auto LKCoreRFID::checkSensorSetup(const uint8_t *buffer) const -> bool
 
 	return false;
 }
+
+auto LKCoreRFID::sendREQA() -> void
+{
+	const uint8_t cmd_CR95HF = 0x04;
+	const uint8_t length	 = 0x02;
+	const uint8_t cmd_tag	 = 0x26;
+	const uint8_t flags		 = 0x07;
+
+	std::array<uint8_t, 4> command = {cmd_CR95HF, length, cmd_tag, flags};
+
+	send(command);
+}
 }	// namespace leka

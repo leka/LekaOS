@@ -95,3 +95,12 @@ TEST_F(LKCoreRFIDSensorTest, receiveSensorSetfailedOnSecondValue)
 
 	ASSERT_EQ(corerfid.receiveSetupAnswer(), false);
 }
+
+TEST_F(LKCoreRFIDSensorTest, sendREQA)
+{
+	const auto expected_values = ElementsAre(0x04, 0x02, 0x26, 0x07);
+
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+
+	corerfid.sendREQA();
+}

@@ -35,6 +35,8 @@ class LKCoreRFID
 	auto setGain() -> void;
 	auto receiveSetupAnswer() -> bool;
 
+	auto sendREQA() -> void;
+
   private:
 	interface::BufferedSerial &_interface;
 	RFIDTag _rfid_tag {0, 0, 0, 0};
