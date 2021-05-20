@@ -252,4 +252,17 @@ auto LKCoreRFID::receiveAuthentification() -> bool
 	return checkAuthentification(buffer.data());
 }
 
+auto LKCoreRFID::readRFIDTag() -> void
+{
+	const uint8_t cmd_CR95HF	   = 0x04;
+	const uint8_t length		   = 0x03;
+	const uint8_t cmd_tag		   = 0x30;
+	const uint8_t register_to_read = 0x05;
+	const uint8_t flags			   = 0x28;
+
+	std::array<uint8_t, 5> command = {cmd_CR95HF, length, cmd_tag, register_to_read, flags};
+
+	send(command);
+}
+
 }	// namespace leka

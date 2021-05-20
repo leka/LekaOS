@@ -53,6 +53,8 @@ class LKCoreRFID
 	auto authentification() -> void;
 	auto receiveAuthentification() -> bool;
 
+	auto readRFIDTag() -> void;
+
   private:
 	interface::BufferedSerial &_interface;
 	RFIDTag _rfid_tag {0, 0, 0, 0};
