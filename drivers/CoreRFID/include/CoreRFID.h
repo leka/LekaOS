@@ -29,7 +29,7 @@ class CoreRFID
 	auto setRFIDTag(std::array<uint8_t, 8> &tag_uid, std::array<uint8_t, 2> &tag_crc_uid,
 					std::array<uint8_t, 4> &tag_sak, std::array<uint8_t, 16> &tag_data) -> void;
 
-	auto getRFIDTag() const -> CoreRFID::Tag;
+	auto getTag() const -> CoreRFID::Tag;
 
 	template <size_t N>
 	void send(const std::array<uint8_t, N> &command);

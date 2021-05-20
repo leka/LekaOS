@@ -53,7 +53,7 @@ TEST_F(CoreRFIDSensorTest, setRFIDTag)
 
 	corerfid.setRFIDTag(expected_uid, expected_crc_uid, expected_sak, expected_data);
 
-	compareRfidTag(corerfid.getRFIDTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
+	compareRfidTag(corerfid.getTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }
 
 TEST_F(CoreRFIDSensorTest, writeProtocol)
@@ -169,7 +169,7 @@ TEST_F(CoreRFIDSensorTest, receiveUID1)
 
 	corerfid.receiveUID1();
 
-	compareRfidTag(corerfid.getRFIDTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
+	compareRfidTag(corerfid.getTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }
 
 TEST_F(CoreRFIDSensorTest, receiveUID2)
@@ -186,7 +186,7 @@ TEST_F(CoreRFIDSensorTest, receiveUID2)
 
 	corerfid.receiveUID2();
 
-	compareRfidTag(corerfid.getRFIDTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
+	compareRfidTag(corerfid.getTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }
 
 TEST_F(CoreRFIDSensorTest, sendUID1)
@@ -234,7 +234,7 @@ TEST_F(CoreRFIDSensorTest, receiveSAK1)
 
 	corerfid.receiveSAK1();
 
-	compareRfidTag(corerfid.getRFIDTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
+	compareRfidTag(corerfid.getTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }
 
 TEST_F(CoreRFIDSensorTest, receiveSAK2)
@@ -250,7 +250,7 @@ TEST_F(CoreRFIDSensorTest, receiveSAK2)
 
 	corerfid.receiveSAK2();
 
-	compareRfidTag(corerfid.getRFIDTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
+	compareRfidTag(corerfid.getTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }
 
 TEST_F(CoreRFIDSensorTest, authentification)
@@ -317,7 +317,7 @@ TEST_F(CoreRFIDSensorTest, receiveRFIDTag)
 
 	corerfid.receiveRFIDTag();
 
-	compareRfidTag(corerfid.getRFIDTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
+	compareRfidTag(corerfid.getTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }
 
 TEST_F(CoreRFIDSensorTest, receiveRFIDTagWrongCRC)
@@ -341,5 +341,5 @@ TEST_F(CoreRFIDSensorTest, receiveRFIDTagWrongCRC)
 
 	corerfid.receiveRFIDTag();
 
-	compareRfidTag(corerfid.getRFIDTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
+	compareRfidTag(corerfid.getTag(), expected_uid, expected_crc_uid, expected_sak, expected_data);
 }

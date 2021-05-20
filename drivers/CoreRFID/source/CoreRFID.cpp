@@ -17,7 +17,7 @@ auto CoreRFID::setRFIDTag(std::array<uint8_t, 8> &tag_uid, std::array<uint8_t, 2
 	my_tag.data	   = tag_data;
 }
 
-auto CoreRFID::getRFIDTag() const -> CoreRFID::Tag
+auto CoreRFID::getTag() const -> CoreRFID::Tag
 {
 	return my_tag;
 }
