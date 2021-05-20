@@ -131,3 +131,21 @@ TEST_F(LKCoreRFIDSensorTest, checkATQAFailOnLastId)
 
 	ASSERT_EQ(corerfid.receiveATQA(), false);
 }
+
+TEST_F(LKCoreRFIDSensorTest, sendCL1)
+{
+	const auto expected_values = ElementsAre(0x04, 0x03, 0x93, 0x20, 0x08);
+
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+
+	corerfid.sendCL1();
+}
+
+TEST_F(LKCoreRFIDSensorTest, sendCL2)
+{
+	const auto expected_values = ElementsAre(0x04, 0x03, 0x95, 0x20, 0x08);
+
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+
+	corerfid.sendCL2();
+}

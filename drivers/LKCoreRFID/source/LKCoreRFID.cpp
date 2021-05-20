@@ -105,4 +105,27 @@ auto LKCoreRFID::receiveATQA() -> bool
 	return checkATQA(buffer.data());
 }
 
+auto LKCoreRFID::sendCL1() -> void
+{
+	const uint8_t cmd_CR95HF			 = 0x04;
+	const uint8_t length				 = 0x03;
+	const std::array<uint8_t, 2> cmd_tag = {0x93, 0x20};
+	const uint8_t flags					 = 0x08;
+
+	std::array<uint8_t, 5> command = {cmd_CR95HF, length, cmd_tag[0], cmd_tag[1], flags};
+
+	send(command);
+}
+
+auto LKCoreRFID::sendCL2() -> void
+{
+	const uint8_t cmd_CR95HF			 = 0x04;
+	const uint8_t length				 = 0x03;
+	const std::array<uint8_t, 2> cmd_tag = {0x95, 0x20};
+	const uint8_t flags					 = 0x08;
+
+	std::array<uint8_t, 5> command = {cmd_CR95HF, length, cmd_tag[0], cmd_tag[1], flags};
+
+	send(command);
+}
 }	// namespace leka

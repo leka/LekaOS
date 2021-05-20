@@ -38,6 +38,9 @@ class LKCoreRFID
 	auto sendREQA() -> void;
 	auto receiveATQA() -> bool;
 
+	auto sendCL1() -> void;
+	auto sendCL2() -> void;
+
   private:
 	interface::BufferedSerial &_interface;
 	RFIDTag _rfid_tag {0, 0, 0, 0};
