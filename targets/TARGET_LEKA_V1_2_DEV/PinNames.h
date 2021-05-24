@@ -2,7 +2,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  ******************************************************************************
  *
- * Copyright (c) 2016-2020 STMicroelectronics.
+ * Copyright (c) 2016-2021 STMicroelectronics.
  * All rights reserved.
  *
  * This software component is licensed by ST under BSD 3-Clause license,
@@ -12,8 +12,10 @@
  *
  ******************************************************************************
  *
- * Automatically generated from STM32CubeMX/db/mcu/STM32F769B(G-I)Tx.xml
+ * Automatically generated from STM32CubeMX/db/mcu/STM32F769NIHx.xml
  */
+
+/* MBED TARGET LIST: DISCO_F769NI */
 
 #ifndef MBED_PINNAMES_H
 #define MBED_PINNAMES_H
@@ -30,8 +32,6 @@ typedef enum
 	ALT0 = 0x100,
 	ALT1 = 0x200,
 	ALT2 = 0x300,
-	ALT3 = 0x400,
-	ALT4 = 0x500
 } ALTx;
 
 typedef enum
@@ -49,6 +49,8 @@ typedef enum
 	PA_2_ALT0  = PA_2 | ALT0,	// same pin used for alternate HW
 	PA_2_ALT1  = PA_2 | ALT1,	// same pin used for alternate HW
 	PA_3	   = 0x03,
+	PA_3_ALT0  = PA_3 | ALT0,	// same pin used for alternate HW
+	PA_3_ALT1  = PA_3 | ALT1,	// same pin used for alternate HW
 	PA_4	   = 0x04,
 	PA_4_ALT0  = PA_4 | ALT0,	// same pin used for alternate HW
 	PA_4_ALT1  = PA_4 | ALT1,	// same pin used for alternate HW
@@ -254,66 +256,44 @@ typedef enum
 	ADC_VREF = 0xF1,   // Internal pin virtual value
 	ADC_VBAT = 0xF2,   // Internal pin virtual value
 
-// Arduino Uno(Rev3) Header pin connection naming
-// 	A0	= Px_x,
-// 	A1	= Px_x,
-// 	A2	= Px_x,
-// 	A3	= Px_x,
-// 	A4	= Px_x,
-// 	A5	= Px_x,
-// 	D0	= Px_x,
-// 	D1	= Px_x,
-// 	D2	= Px_x,
-// 	D3	= Px_x,
-// 	D4	= Px_x,
-// 	D5	= Px_x,
-// 	D6	= Px_x,
-// 	D7	= Px_x,
-// 	D8	= Px_x,
-// 	D9	= Px_x,
-// 	D10 = Px_x,
-// 	D11 = Px_x,
-// 	D12 = Px_x,
-// 	D13 = Px_x,
-// 	D14 = Px_x,
-// 	D15 = Px_x,
+#ifdef TARGET_FF_ARDUINO_UNO
+					   // Arduino Uno (Rev3) pins
+// 	ARDUINO_UNO_A0 = PA_6,
+// 	ARDUINO_UNO_A1 = PA_4,
+// 	ARDUINO_UNO_A2 = PC_2,
+// 	ARDUINO_UNO_A3 = PF_10,
+// 	ARDUINO_UNO_A4 = PF_8,
+// 	ARDUINO_UNO_A5 = PF_9,
+
+// 	ARDUINO_UNO_D0	= PC_7,
+// 	ARDUINO_UNO_D1	= PC_6,
+// 	ARDUINO_UNO_D2	= PJ_1,
+// 	ARDUINO_UNO_D3	= PF_6,
+// 	ARDUINO_UNO_D4	= PJ_0,
+// 	ARDUINO_UNO_D5	= PC_8,
+// 	ARDUINO_UNO_D6	= PF_7,
+// 	ARDUINO_UNO_D7	= PJ_3,
+// 	ARDUINO_UNO_D8	= PJ_4,
+// 	ARDUINO_UNO_D9	= PH_6,
+// 	ARDUINO_UNO_D10 = PA_11,
+// 	ARDUINO_UNO_D11 = PB_15,
+// 	ARDUINO_UNO_D12 = PB_14,
+// 	ARDUINO_UNO_D13 = PA_12,
+// 	ARDUINO_UNO_D14 = PB_9,
+// 	ARDUINO_UNO_D15 = PB_8,
+#endif
 
 // STDIO for console print
 #ifdef MBED_CONF_TARGET_STDIO_UART_TX
-// 	STDIO_UART_TX = MBED_CONF_TARGET_STDIO_UART_TX,
+	CONSOLE_TX = MBED_CONF_TARGET_STDIO_UART_TX,
 #else
-// 	STDIO_UART_TX = PA_9,
+	CONSOLE_TX = PA_9,
 #endif
 #ifdef MBED_CONF_TARGET_STDIO_UART_RX
-// 	STDIO_UART_RX = MBED_CONF_TARGET_STDIO_UART_RX,
+	CONSOLE_RX = MBED_CONF_TARGET_STDIO_UART_RX,
 #else
-// 	STDIO_UART_RX = PA_3,
+	CONSOLE_RX = PA_10,
 #endif
-
-	// 	USBTX = STDIO_UART_TX,	 // used for greentea tests
-	// 	USBRX = STDIO_UART_RX,	 // used for greentea tests
-
-	// I2C signals aliases
-	// 	I2C_SDA = D14,
-	// 	I2C_SCL = D15,
-
-	// SPI signals aliases
-	// 	SPI_CS	 = D10,
-	// 	SPI_MOSI = D11,
-	// 	SPI_MISO = D12,
-	// 	SPI_SCK	 = D13,
-
-	// Standardized LED and button names
-	// 	LED1	= PB_13,   // LED_EARS_SPI_SCK
-	// 	LED2	= PG_14,   // LED_BELT_SPI_MOSI
-	// 	LED3	= PH_4,	   // DEBUG_LED
-	// 	LED4	= PB_15,   // LED_EARS_SPI_MOSI
-	// 	LED5	= PG_13,   // LED_BELT_SPI_SCK
-	// 	BUTTON1 = Px_x,
-
-	// Backward legacy names
-	// 	USER_BUTTON = PA_0,
-	// 	PWM_OUT		= D3,
 
 	/**** USB FS pins ****/
 	// 	USB_OTG_FS_DM	= PA_11,
@@ -346,34 +326,34 @@ typedef enum
 	/**** ETHERNET pins ****/
 	// 	ETH_COL			 = PH_3,
 	// 	ETH_COL_ALT0	 = PA_3,
-	// 	ETH_CRS			 = PA_0,
-	// 	ETH_CRS_ALT0	 = PH_2,
+	// 	ETH_CRS			 = PH_2,
+	// 	ETH_CRS_ALT0	 = PA_0,
 	// 	ETH_CRS_DV		 = PA_7,
 	// 	ETH_MDC			 = PC_1,
 	// 	ETH_MDIO		 = PA_2,
-	// 	ETH_PPS_OUT		 = PG_8,
-	// 	ETH_PPS_OUT_ALT0 = PB_5,
+	// 	ETH_PPS_OUT		 = PB_5,
+	// 	ETH_PPS_OUT_ALT0 = PG_8,
 	// 	ETH_REF_CLK		 = PA_1,
 	// 	ETH_RXD0		 = PC_4,
 	// 	ETH_RXD1		 = PC_5,
-	// 	ETH_RXD2		 = PB_0,
-	// 	ETH_RXD2_ALT0	 = PH_6,
-	// 	ETH_RXD3		 = PB_1,
-	// 	ETH_RXD3_ALT0	 = PH_7,
+	// 	ETH_RXD2		 = PH_6,
+	// 	ETH_RXD2_ALT0	 = PB_0,
+	// 	ETH_RXD3		 = PH_7,
+	// 	ETH_RXD3_ALT0	 = PB_1,
 	// 	ETH_RX_CLK		 = PA_1,
 	// 	ETH_RX_DV		 = PA_7,
 	// 	ETH_RX_ER		 = PI_10,
 	// 	ETH_RX_ER_ALT0	 = PB_10,
-	// 	ETH_TXD0		 = PB_12,
-	// 	ETH_TXD0_ALT0	 = PG_13,
-	// 	ETH_TXD1		 = PB_13,
-	// 	ETH_TXD1_ALT0	 = PG_14,
+	// 	ETH_TXD0		 = PG_13,
+	// 	ETH_TXD0_ALT0	 = PB_12,
+	// 	ETH_TXD1		 = PG_14,
+	// 	ETH_TXD1_ALT0	 = PB_13,
 	// 	ETH_TXD2		 = PC_2,
 	// 	ETH_TXD3		 = PE_2,
 	// 	ETH_TXD3_ALT0	 = PB_8,
 	// 	ETH_TX_CLK		 = PC_3,
-	// 	ETH_TX_EN		 = PB_11,
-	// 	ETH_TX_EN_ALT0	 = PG_11,
+	// 	ETH_TX_EN		 = PG_11,
+	// 	ETH_TX_EN_ALT0	 = PB_11,
 
 	/**** OSCILLATOR pins ****/
 	RCC_OSC32_IN  = PC_14,
@@ -389,21 +369,29 @@ typedef enum
 	SYS_JTRST		 = PB_4,
 	SYS_TRACECLK	 = PE_2,
 	SYS_TRACED0		 = PE_3,
-	SYS_TRACED0_ALT0 = PC_1,
-	SYS_TRACED0_ALT1 = PG_13,
+	SYS_TRACED0_ALT0 = PG_13,
+	SYS_TRACED0_ALT1 = PC_1,
 	SYS_TRACED1		 = PE_4,
-	SYS_TRACED1_ALT0 = PC_8,
-	SYS_TRACED1_ALT1 = PG_14,
+	SYS_TRACED1_ALT0 = PG_14,
+	SYS_TRACED1_ALT1 = PC_8,
 	SYS_TRACED2		 = PE_5,
 	SYS_TRACED2_ALT0 = PD_2,
-	SYS_TRACED3		 = PE_6,
-	SYS_TRACED3_ALT0 = PC_12,
+	SYS_TRACED3		 = PC_12,
+	SYS_TRACED3_ALT0 = PE_6,
 	SYS_WKUP1		 = PA_0,
 	SYS_WKUP2		 = PA_2,
 	SYS_WKUP3		 = PC_1,
 	SYS_WKUP4		 = PC_13,
 	SYS_WKUP5		 = PI_8,
 	SYS_WKUP6		 = PI_11,
+
+	/**** QSPI FLASH pins ****/
+	// 	QSPI_FLASH1_IO0 = PC_9,
+	// 	QSPI_FLASH1_IO1 = PC_10,
+	// 	QSPI_FLASH1_IO2 = PE_2,
+	// 	QSPI_FLASH1_IO3 = PD_13,
+	// 	QSPI_FLASH1_SCK = PB_2,
+	// 	QSPI_FLASH1_CSN = PB_6,
 
 	// Leka Pin Names
 	BATTERY_CHARGE_STATUS = PC_0,
@@ -493,12 +481,6 @@ typedef enum
 	WIFI_USART_RTS		 = PD_4,
 	WIFI_USART_RX		 = PA_3,
 	WIFI_USART_TX		 = PD_5,
-
-	STDIO_UART_TX = SYS_PROG_VCP_TX,
-	STDIO_UART_RX = SYS_PROG_VCP_RX,
-
-	USBTX = STDIO_UART_TX,
-	USBRX = STDIO_UART_RX,
 
 	LED1 = DEBUG_LED,
 	LED2 = NC,
