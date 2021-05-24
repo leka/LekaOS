@@ -14,7 +14,7 @@
 			"QSPIF"
 		],
 		"supported_form_factors": [
-			"ARDUINO"
+			"ARDUINO_UNO"
 		],
 		"features": [
 			"BLE"
