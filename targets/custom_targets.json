@@ -75,7 +75,6 @@
 			"QSPI"
 		],
 		"device_has_remove": [
-			"I2CSLAVE",
 			"SPISLAVE",
 			"CAN"
 		],
@@ -118,7 +117,6 @@
 			"QSPI"
 		],
 		"device_has_remove": [
-			"I2CSLAVE",
 			"SPISLAVE",
 			"CAN"
 		],
@@ -161,7 +159,6 @@
 			"QSPI"
 		],
 		"device_has_remove": [
-			"I2CSLAVE",
 			"SPISLAVE",
 			"CAN"
 		],
