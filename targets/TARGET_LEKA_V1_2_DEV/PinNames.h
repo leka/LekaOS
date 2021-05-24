@@ -20,6 +20,8 @@
 #ifndef MBED_PINNAMES_H
 #define MBED_PINNAMES_H
 
+#include "mbed_version.h"
+
 #include "PinNamesTypes.h"
 #include "cmsis.h"
 
@@ -385,13 +387,22 @@ typedef enum
 	SYS_WKUP5		 = PI_8,
 	SYS_WKUP6		 = PI_11,
 
-	/**** QSPI FLASH pins ****/
-	// 	QSPI_FLASH1_IO0 = PC_9,
-	// 	QSPI_FLASH1_IO1 = PC_10,
-	// 	QSPI_FLASH1_IO2 = PE_2,
-	// 	QSPI_FLASH1_IO3 = PD_13,
-	// 	QSPI_FLASH1_SCK = PB_2,
-	// 	QSPI_FLASH1_CSN = PB_6,
+/**** QSPI FLASH pins ****/
+// 	QSPI_FLASH1_IO0 = PC_9,
+// 	QSPI_FLASH1_IO1 = PC_10,
+// 	QSPI_FLASH1_IO2 = PE_2,
+// 	QSPI_FLASH1_IO3 = PD_13,
+// 	QSPI_FLASH1_SCK = PB_2,
+// 	QSPI_FLASH1_CSN = PB_6,
+
+#if (MBED_MINOR_VERSION < 11)
+	// mbed-os v6.9.0 compatibility
+	STDIO_UART_TX = CONSOLE_TX,
+	STDIO_UART_RX = CONSOLE_RX,
+
+	USBTX = STDIO_UART_TX,
+	USBRX = STDIO_UART_RX,
+#endif
 
 	// Leka Pin Names
 	BATTERY_CHARGE_STATUS = PC_0,
