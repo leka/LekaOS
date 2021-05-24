@@ -11,7 +11,7 @@ on:
 
 jobs:
   build_disco:
-    name: Build & Compare
+    name: Build for LEKA_DISCO
     runs-on: [self-hosted, build]
     steps:
       - name: Checkout
