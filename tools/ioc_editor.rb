@@ -13,11 +13,14 @@ require 'csv'
 def puts_help
 	puts ""
 	puts "Choose one of:"
-	puts "   --check-signals <path/to/ioc/file>"
-	puts "   --fix-signals <path/to/ioc/file>"
-	puts "   --check-labels <path/to/ioc/file>"
-	puts "   --fix-labels <path/to/ioc/file>"
-	puts "   --rm-scripts <path/to/ioc/file>"
+	puts "   --check-signals <path/to/target/directory>"
+	puts "   --fix-signals <path/to/target/directory>"
+	puts "   --check-labels <path/to/target/directory>"
+	puts "   --fix-labels <path/to/target/directory>"
+	puts "   --rm-scripts <path/to/target/directory>"
+	puts ""
+	puts "Example:"
+	puts "   ruby tools/ioc_editor.rb --check-labels targets/TARGET_LEKA_V1_2_DEV"
 end
 
 arguments_available = ["--check-signals", "--check-labels", "--fix-signals", "--fix-labels", "--rm-scripts", "--generate-csv"]
