@@ -62,3 +62,4 @@
 #define __CORTEX_M7				   1
 #define __FPU_PRESENT			   1
 #define __MBED_CMSIS_RTOS_CM	   1
+#define FEATURE_EXPERIMENTAL_API   1
