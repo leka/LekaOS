@@ -5,8 +5,8 @@
 #ifndef _LEKA_OS_LIB_MOTOR_H_
 #define _LEKA_OS_LIB_MOTOR_H_
 
-#include "drivers/DigitalOut.h"
 #include "drivers/PwmOut.h"
+#include "drivers/interfaces/InterfaceDigitalOut.h"
 
 #include "CoreMotorBase.h"
 
@@ -22,10 +22,8 @@ class CoreMotor : public CoreMotorBase
 		float speed;
 	};
 
-	CoreMotor(PinName direction_1, PinName direction_2, PinName speed)
-		: _dir_1 {mbed::DigitalOut(direction_1)},
-		  _dir_2 {mbed::DigitalOut(direction_2)},
-		  _speed {mbed::PwmOut(speed)} {};
+	CoreMotor(mbed::interface::DigitalOut &dir_1, mbed::interface::DigitalOut &dir_2, PinName speed)
+		: _dir_1 {dir_1}, _dir_2 {dir_2}, _speed {mbed::PwmOut(speed)} {};
 
 	void spin(rotation_t rotation, float speed) override;
 	void stop() override;
@@ -35,8 +33,8 @@ class CoreMotor : public CoreMotorBase
   private:
 	Status _status {0, 0, 0};
 
-	mbed::DigitalOut _dir_1;
-	mbed::DigitalOut _dir_2;
+	mbed::interface::DigitalOut &_dir_1;
+	mbed::interface::DigitalOut &_dir_2;
 	mbed::PwmOut _speed;
 
 	void setDirections(int dir_1, int dir_2);
