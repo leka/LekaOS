@@ -16,9 +16,9 @@ class RFID
   public:
 	virtual ~RFID() = default;
 
-	virtual void send(void *data, size_t size)	  = 0;
-	virtual void receive(void *data, size_t size) = 0;
-	virtual void tagIsNearReader()				  = 0;
+	virtual void send(uint8_t *data, size_t size)	 = 0;
+	virtual void receive(uint8_t *data, size_t size) = 0;
+	// virtual void tagIsNearReader()				  = 0;
 
 	class ISO14443
 	{

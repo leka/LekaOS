@@ -2,9 +2,25 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_LK_CORE_CR95HF_INTERFACE_H_
-#define _LEKA_OS_DRIVER_LK_CORE_CR95HF_INTERFACE_H_
+#ifndef _LEKA_OS_DRIVER_LK_CORE_CR95HF_H_
+#define _LEKA_OS_DRIVER_LK_CORE_CR95HF_H_
 
-#include "RFIDInterface.h"
+#include "CoreBufferedSerial.h"
+#include "RfidInterface.h"
 
-#endif	 //_LEKA_OS_DRIVER_LK_CORE_CR95HF_INTERFACE_H_
+namespace leka {
+
+class CoreCR95HF : public interface::RFID
+{
+  public:
+	explicit CoreCR95HF(interface::BufferedSerial &serial);
+	void send(uint8_t *data, size_t size) final;
+	void receive(uint8_t *data, size_t size) final;
+
+  private:
+	interface::BufferedSerial &_serial;
+};
+
+}	// namespace leka
+
+#endif	 //_LEKA_OS_DRIVER_LK_CORE_CR95HF_H_
