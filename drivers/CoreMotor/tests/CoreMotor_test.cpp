@@ -5,7 +5,8 @@
 #include "CoreMotor.h"
 
 #include "gtest/gtest.h"
-#include "stub_PwmOut.h"
+#include "mocks/mock_DigitalOut.h"
+#include "stubs/stub_PwmOut.h"
 
 // Test list
 // - create object - done
@@ -15,7 +16,10 @@
 
 using namespace leka;
 
-CoreMotor motor(MOTOR_RIGHT_DIRECTION_1, MOTOR_RIGHT_DIRECTION_2, MOTOR_RIGHT_PWM);
+auto dir_1 = mbed::DigitalOutMock {MOTOR_RIGHT_DIRECTION_1};
+auto dir_2 = mbed::DigitalOutMock {MOTOR_RIGHT_DIRECTION_2};
+
+CoreMotor motor(dir_1, dir_2, MOTOR_RIGHT_PWM);
 
 TEST(CoreMotorTest, initialization)
 {
