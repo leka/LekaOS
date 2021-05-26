@@ -22,7 +22,7 @@ class CoreCR95HF : public interface::RFID
 	interface::BufferedSerial &_serial;
 
 	void formatCommand(const uint8_t *data, uint8_t *command, size_t size);
-	const size_t findCorrespondingFlag(size_t size);
+	size_t findCorrespondingFlag(size_t size);
 };
 
 }	// namespace leka

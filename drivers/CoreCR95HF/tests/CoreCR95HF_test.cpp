@@ -9,7 +9,10 @@
 #include "stub_BufferedSerial.h"
 
 using ::testing::Args;
+using ::testing::DoAll;
 using ::testing::ElementsAre;
+using ::testing::Return;
+using ::testing::SetArrayArgument;
 
 using namespace leka;
 
@@ -57,4 +60,41 @@ TEST_F(CoreCR95HFSensorTest, sendWithoutArguments)
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
 	corecr95hf.send(nullptr, 0);
+}
+
+TEST_F(CoreCR95HFSensorTest, receiveAQTA)
+{
+	std::array<uint8_t, 7> read_values = {0x80, 0x05, 0x44, 0x0, 0x28, 0x00, 0x00};
+	std::array<uint8_t, 7> expected_values {0};
+
+	EXPECT_CALL(mockBufferedSerial, read)
+		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 7), Return(0)));
+
+	corecr95hf.receive(expected_values.data(), expected_values.size());
+	ASSERT_EQ(read_values, expected_values);
+}
+
+TEST_F(CoreCR95HFSensorTest, receiveRead)
+{
+	std::array<uint8_t, 20> read_values = {0x80, 0x15, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04,
+										   0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0xDA, 0x48};
+	std::array<uint8_t, 20> expected_values {0};
+
+	EXPECT_CALL(mockBufferedSerial, read)
+		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 20), Return(0)));
+
+	corecr95hf.receive(expected_values.data(), expected_values.size());
+	ASSERT_EQ(read_values, expected_values);
+}
+
+TEST_F(CoreCR95HFSensorTest, receiveFailed)
+{
+	std::array<uint8_t, 7> read_values = {0x80, 0x05, 0x44, 0x0, 0x28, 0x00, 0x00};
+	std::array<uint8_t, 7> expected_values {0};
+
+	EXPECT_CALL(mockBufferedSerial, read)
+		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 2), Return(0)));
+
+	corecr95hf.receive(expected_values.data(), expected_values.size());
+	ASSERT_NE(read_values, expected_values);
 }

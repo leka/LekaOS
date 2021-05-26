@@ -11,7 +11,7 @@ CoreCR95HF::CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {}
 
 void CoreCR95HF::send(uint8_t *data, const size_t size)
 {
-	const size_t max_command_size = 5;
+	const size_t max_command_size = 10;
 	const size_t command_size	  = size + 3;
 
 	uint8_t command[max_command_size] {0};
@@ -32,7 +32,7 @@ void CoreCR95HF::formatCommand(const uint8_t *data, uint8_t *command, size_t siz
 	command[size + 2] = findCorrespondingFlag(size);
 }
 
-const size_t CoreCR95HF::findCorrespondingFlag(size_t size)
+size_t CoreCR95HF::findCorrespondingFlag(size_t size)
 {
 	if (size == 1) {
 		return 0x07;
@@ -42,6 +42,17 @@ const size_t CoreCR95HF::findCorrespondingFlag(size_t size)
 	}
 	return 0;
 }
-void CoreCR95HF::receive(uint8_t *data, size_t size) {}
+
+void CoreCR95HF::receive(uint8_t *data, size_t size)
+{
+	const size_t max_answer_size = 23;
+	std::array<uint8_t, max_answer_size> buffer {0};
+
+	_serial.read(buffer.data(), size);
+
+	for (int i = 0; i < size; ++i) {
+		data[i] = buffer[i];
+	}
+}
 
 }	// namespace leka
