@@ -9,6 +9,7 @@ add_library(mbed-os INTERFACE)
 target_include_directories(mbed-os
 	INTERFACE
 		${UNITTESTS_DIR}/mbed-os
+		${UNITTESTS_DIR}/mbed-os/mocks
 		${UNITTESTS_DIR}/mbed-os/stubs
 		${UNITTESTS_DIR}/mbed-os/include
 
