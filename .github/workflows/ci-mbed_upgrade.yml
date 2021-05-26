@@ -1,6 +1,6 @@
 # CI Workflow
 
-name: CI - Mbed OS Upgrade
+name: Mbed OS Upgrade
 
 on:
   pull_request:
@@ -10,7 +10,23 @@ on:
       - ".mbed_version"
 
 jobs:
-  main_job:
+  build_disco:
+    name: Build for LEKA_DISCO
+    runs-on: [self-hosted, build]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: Compile for LEKA_DISCO
+        run: |
+          make deep_clean
+          make mbed_curl
+          make config TARGET_BOARD="LEKA_DISCO"
+          make TARGET_BOARD="LEKA_DISCO"
+
+  build_compare_leka:
     name: Build & Compare
     runs-on: [self-hosted, build]
     steps:

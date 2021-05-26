@@ -145,12 +145,6 @@ $grouped_pins_array.each do |label, name|
 end
 
 $pin_names_output_data.append("\n")
-$pin_names_output_data.append("STDIO_UART_TX = SYS_PROG_VCP_TX,")
-$pin_names_output_data.append("STDIO_UART_RX = SYS_PROG_VCP_RX,")
-$pin_names_output_data.append("\n")
-$pin_names_output_data.append("USBTX = STDIO_UART_TX,")
-$pin_names_output_data.append("USBRX = STDIO_UART_RX,")
-$pin_names_output_data.append("\n")
 $pin_names_output_data.append("LED1 = DEBUG_LED,")
 $pin_names_output_data.append("LED2 = NC,")
 $pin_names_output_data.append("LED3 = NC,")
@@ -167,7 +161,7 @@ $pin_names_file_data = File.readlines($pin_names_orig_file_path).map(&:chomp)
 $insert_at_index     = 0
 
 $pin_names_file_data.each_with_index do |line, index|
-	regex = /(\bSTDIO_|LED[0-9]|USB_OTG|ETH_|= D[0-9]|Px_x|BUTTON)/
+	regex = /(\bSTDIO_|LED[0-9]|USB_OTG|ETH_|= D[0-9]|ARDUINO_UNO_|QSPI_FLASH1_|BUTTON)/
 	if line.match regex
 		$pin_names_file_data[index] = "// #{$pin_names_file_data[index]}"
 	end
