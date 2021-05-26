@@ -98,3 +98,21 @@ TEST_F(CoreCR95HFSensorTest, receiveFailed)
 	corecr95hf.receive(expected_values.data(), expected_values.size());
 	ASSERT_NE(read_values, expected_values);
 }
+
+TEST_F(CoreCR95HFSensorTest, writeProtocol)
+{
+	const auto expected_values = ElementsAre(0x02, 0x02, 0x02, 0x00);
+
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+
+	corecr95hf.setProcoleISO14443();
+}
+
+TEST_F(CoreCR95HFSensorTest, setGainAndModulation)
+{
+	const auto expected_values = ElementsAre(0x09, 0x04, 0x68, 0x01, 0x01, 0xD1);
+
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+
+	corecr95hf.setGainAndModulation();
+}
