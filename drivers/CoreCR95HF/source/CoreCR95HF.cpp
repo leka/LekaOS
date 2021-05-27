@@ -18,23 +18,26 @@ void CoreCR95HF::send(uint8_t *data, const size_t size)
 	_serial.write(_send_buffer.data(), command_size);
 }
 
-void CoreCR95HF::formatCommand(const uint8_t *data, uint8_t *command, size_t size) const
+void CoreCR95HF::formatCommand(const uint8_t *command_iso, uint8_t *command_send, size_t size_of_command_iso) const
 {
-	command[0] = 0x04;
-	command[1] = static_cast<uint8_t>(size) + 1;
+	command_send[0] = CR95HF::commands::send_reveive;
+	command_send[1] = static_cast<uint8_t>(size_of_command_iso) + 1;
 
-	for (unsigned int i = 0; i < size; ++i) {
-		command[i + 2] = data[i];
+	for (unsigned int i = 0; i < size_of_command_iso; ++i) {
+		command_send[i + 2] = command_iso[i];
 	}
-	command[size + 2] = findCorrespondingFlag(size);
+	command_send[size_of_command_iso + 2] = findCorrespondingFlag(command_iso);
 }
 
-auto CoreCR95HF::findCorrespondingFlag(size_t size) const -> uint8_t
+auto CoreCR95HF::findCorrespondingFlag(const uint8_t *command_iso) const -> uint8_t
 {
-	if (size == 1) {
+	if (command_iso == nullptr) {
+		return 0;
+	}
+	if (command_iso[0] == ISO14443_command::request_A) {
 		return CR95HF::flags::seven_significant_bits;
 	}
-	if (size == 2) {
+	if (command_iso[0] == ISO14443_command::read_register_8[0]) {
 		return CR95HF::flags::eight_significant_bits_with_crc;
 	}
 	return 0;

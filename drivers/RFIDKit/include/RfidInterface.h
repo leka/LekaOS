@@ -9,6 +9,11 @@
 #include <cstddef>
 #include <stdint.h>
 
+namespace ISO14443_command {
+constexpr uint8_t request_A = 0x26;
+constexpr std::array<uint8_t, 2> read_register_8 {0x30, 0x08};
+}	// namespace ISO14443_command
+
 namespace leka::interface {
 
 class RFID
@@ -25,8 +30,8 @@ class RFID
 		virtual void requestA();
 		virtual void read();
 
-		static constexpr uint8_t commandRequestA {0x26};
-		std::array<uint8_t, 16> data {0};
+	  private:
+		std::array<uint8_t, 16> _tag_data {0};
 	};
 };
 

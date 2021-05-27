@@ -44,7 +44,7 @@ class CoreCR95HF : public interface::RFID
 	std::array<uint8_t, CR95HF::max_data_receive_length> _receive_buffer {0};
 
 	void formatCommand(const uint8_t *data, uint8_t *command, size_t size) const;
-	[[nodiscard]] auto findCorrespondingFlag(size_t size) const -> uint8_t;
+	[[nodiscard]] auto findCorrespondingFlag(const uint8_t *command_iso) const -> uint8_t;
 };
 
 }	// namespace leka
