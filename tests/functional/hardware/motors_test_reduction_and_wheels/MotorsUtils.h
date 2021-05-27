@@ -12,8 +12,14 @@
 
 using namespace leka;
 
-CoreMotor motor_right(MOTOR_RIGHT_DIRECTION_1, MOTOR_RIGHT_DIRECTION_2, MOTOR_RIGHT_PWM);
-CoreMotor motor_left(MOTOR_LEFT_DIRECTION_1, MOTOR_LEFT_DIRECTION_2, MOTOR_LEFT_PWM);
+auto motor_left_dir_1 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
+auto morot_left_dir_2 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
+
+auto motor_right_dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
+auto morot_right_dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
+
+auto motor_left	 = CoreMotor {motor_left_dir_1, morot_left_dir_2, MOTOR_RIGHT_PWM};
+auto motor_right = CoreMotor {motor_right_dir_1, morot_right_dir_2, MOTOR_RIGHT_PWM};
 
 Motors motors(motor_right, motor_left);
 
