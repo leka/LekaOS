@@ -25,10 +25,14 @@ int main(void)
 
 	auto start = Kernel::Clock::now();
 
-	leka::CoreMotor motor_right(PinName::MOTOR_RIGHT_DIRECTION_1, PinName::MOTOR_RIGHT_DIRECTION_2,
-								PinName::MOTOR_RIGHT_PWM);
-	leka::CoreMotor motor_left(PinName::MOTOR_LEFT_DIRECTION_1, PinName::MOTOR_LEFT_DIRECTION_2,
-							   PinName::MOTOR_LEFT_PWM);
+	auto motor_left_dir_1 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
+	auto morot_left_dir_2 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
+
+	auto motor_right_dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
+	auto morot_right_dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
+
+	auto motor_left	 = leka::CoreMotor {motor_left_dir_1, morot_left_dir_2, MOTOR_RIGHT_PWM};
+	auto motor_right = leka::CoreMotor {motor_right_dir_1, morot_right_dir_2, MOTOR_RIGHT_PWM};
 
 	Motors motors {.left = motor_left, .right = motor_right};
 
