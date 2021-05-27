@@ -9,40 +9,6 @@ namespace leka {
 
 CoreCR95HF::CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {}
 
-void CoreCR95HF::send(uint8_t *data, const size_t size)
-{
-	const size_t command_size = size + 3;
-
-	formatCommand(data, _send_buffer.data(), size);
-
-	_serial.write(_send_buffer.data(), command_size);
-}
-
-void CoreCR95HF::formatCommand(const uint8_t *command_iso, uint8_t *command_send, size_t size_of_command_iso) const
-{
-	command_send[0] = CR95HF::commands::send_reveive;
-	command_send[1] = static_cast<uint8_t>(size_of_command_iso) + 1;
-
-	for (unsigned int i = 0; i < size_of_command_iso; ++i) {
-		command_send[i + 2] = command_iso[i];
-	}
-	command_send[size_of_command_iso + 2] = findCorrespondingFlag(command_iso);
-}
-
-auto CoreCR95HF::findCorrespondingFlag(const uint8_t *command_iso) const -> uint8_t
-{
-	if (command_iso == nullptr) {
-		return 0;
-	}
-	if (command_iso[0] == ISO14443_command::request_A) {
-		return CR95HF::flags::seven_significant_bits;
-	}
-	if (command_iso[0] == ISO14443_command::read_register_8[0]) {
-		return CR95HF::flags::eight_significant_bits_with_crc;
-	}
-	return 0;
-}
-
 void CoreCR95HF::receive(uint8_t *data, size_t size)
 {
 	_serial.read(_receive_buffer.data(), size);
@@ -54,14 +20,60 @@ void CoreCR95HF::receive(uint8_t *data, size_t size)
 
 void CoreCR95HF::setProcoleISO14443()
 {
-	std::array<uint8_t, 4> set_protocol_ISO14443_command {0x02, 0x02, 0x02, 0x00};
+	std::array<uint8_t, 4> set_protocol_ISO14443_command {cr95hf::commands::set_protocol, 0x02,
+														  cr95hf::protocol::ISO14443A, cr95hf::protocol_flag};
 	_serial.write(set_protocol_ISO14443_command.data(), 4);
 }
 
 void CoreCR95HF::setGainAndModulation()
 {
-	std::array<uint8_t, 6> set_gain_and_modulation_command {0x09, 0x04, 0x68, 0x01, 0x01, 0xD1};
+	std::array<uint8_t, 6> set_gain_and_modulation_command {cr95hf::commands::set_gain_and_modulation,
+															0x04,
+															cr95hf::ARC_B_register,
+															cr95hf::flag_increment,
+															cr95hf::gain_modulation_index,
+															cr95hf::gain_modulation_values::ISO14443A};
 	_serial.write(set_gain_and_modulation_command.data(), 6);
+}
+
+auto CoreCR95HF::receiveSetupAnswer() -> bool
+{
+	std::array<uint8_t, 2> buffer;
+
+	_serial.read(buffer.data(), buffer.size());
+
+	return checkSensorSetup(buffer.data());
+}
+
+auto CoreCR95HF::checkSensorSetup(const uint8_t *buffer) const -> bool
+{
+	const std::array<uint8_t, 2> CR95HF_setup_completed = {0x00, 0x00};
+
+	if (std::array<uint8_t, 2> CR95HF_answer = {buffer[0], buffer[1]};
+		CR95HF_answer[0] == CR95HF_setup_completed[0] && CR95HF_answer[1] == CR95HF_setup_completed[1]) {
+		return true;
+	}
+
+	return false;
+}
+
+auto CoreCR95HF::init() -> bool
+{
+	using namespace std::chrono;
+
+	bool init_status = false;
+
+	setProcoleISO14443();
+	rtos::ThisThread::sleep_for(10ms);
+	if (init_status = receiveSetupAnswer(); init_status == false) {
+		return init_status;
+	}
+
+	setGainAndModulation();
+	rtos::ThisThread::sleep_for(10ms);
+	init_status = receiveSetupAnswer();
+
+	return init_status;
 }
 
 }	// namespace leka
