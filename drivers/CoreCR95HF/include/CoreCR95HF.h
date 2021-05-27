@@ -5,8 +5,6 @@
 #ifndef _LEKA_OS_DRIVER_LK_CORE_CR95HF_H_
 #define _LEKA_OS_DRIVER_LK_CORE_CR95HF_H_
 
-#include <cstddef>
-
 #include "CoreBufferedSerial.h"
 #include "RfidInterface.h"
 
