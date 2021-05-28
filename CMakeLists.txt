@@ -67,12 +67,16 @@ set(TESTS_DIR   ${ROOT_DIR}/tests)
 set(SPIKES_DIR  ${ROOT_DIR}/spikes)
 set(DRIVERS_DIR ${ROOT_DIR}/drivers)
 set(TARGETS_DIR ${ROOT_DIR}/targets)
+set(INCLUDE_DIR ${ROOT_DIR}/include)
 
 # Add custom target subdirectory
 set(AVAILABLE_CUSTOM_TARGETS DISCO_ORIGINAL LEKA_V1_0_DEV LEKA_V1_1_DEV LEKA_V1_2_DEV)
 if (${TARGET_BOARD} IN_LIST AVAILABLE_CUSTOM_TARGETS)
 	add_subdirectory(${TARGETS_DIR}/TARGET_${TARGET_BOARD})
 endif()
+
+# Add include directories
+add_subdirectory(${INCLUDE_DIR})
 
 # Add drivers & libraries
 add_subdirectory(${DRIVERS_DIR})
