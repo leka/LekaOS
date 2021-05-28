@@ -15,6 +15,9 @@
 #include "CorePwm.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
+#include "boost/di.hpp"
+
+namespace di = boost::di;
 
 using namespace leka;
 using namespace std::chrono;
@@ -61,6 +64,10 @@ auto main() -> int
 
 	auto motor_left	 = CoreMotor {motor_left_dir_1, motor_left_dir_2, motor_left_speed};
 	auto motor_right = CoreMotor {motor_right_dir_1, motor_right_dir_2, motor_right_speed};
+
+	// TODO: test di injector for motors
+	auto injector = di::make_injector(di::bind<mbed::interface::DigitalOut>.to<mbed::DigitalOut>());
+	auto motor	  = injector.create<CoreMotor>();
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
