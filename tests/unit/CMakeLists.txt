@@ -73,6 +73,7 @@ set(STUBS_DIR   ${UNITTESTS_DIR}/stubs)
 
 set(LIBS_DIR      ${ROOT_DIR}/libs)
 set(DRIVERS_DIR   ${ROOT_DIR}/drivers)
+set(INCLUDE_DIR   ${ROOT_DIR}/include)
 
 #
 # Mark: - Add GoogleTest & GMock
@@ -152,6 +153,12 @@ function(leka_register_unit_tests_for_driver DRIVER)
 endfunction()
 
 #
+# Mark: - Include, interfaces
+#
+
+add_subdirectory("${INCLUDE_DIR}" "include")
+
+#
 # Mark: - Add fakes, stubs & mocks
 #
 
@@ -195,6 +202,7 @@ target_link_libraries(LekaOSUnitTestsExec
 		gmock_main
 		mbed-os
 		mocks
+		interface
 )
 
 add_test(NAME LekaOSUnitTests COMMAND LekaOSUnitTestsExec)
