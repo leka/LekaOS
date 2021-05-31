@@ -179,14 +179,17 @@ leka_register_unit_tests_for_driver(LKCoreVideo)
 leka_register_unit_tests_for_driver(LKCoreLightSensor)
 leka_register_unit_tests_for_driver(LKCoreMicrophone)
 leka_register_unit_tests_for_driver(LKCoreBattery)
+
 leka_register_unit_tests_for_driver(CoreHTS)
 leka_register_unit_tests_for_driver(CoreI2C)
+leka_register_unit_tests_for_driver(CorePwm)
 leka_register_unit_tests_for_driver(CoreMotor)
 leka_register_unit_tests_for_driver(CoreBufferedSerial)
 
 # Register libraries
 leka_register_unit_tests_for_library(LKAnimationKit)
 leka_register_unit_tests_for_library(LKCalculatorKit)
+
 leka_register_unit_tests_for_library(Utils)
 leka_register_unit_tests_for_library(LogKit)
 leka_register_unit_tests_for_library(CircularBuffer)
