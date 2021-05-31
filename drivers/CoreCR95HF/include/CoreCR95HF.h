@@ -12,6 +12,11 @@
 
 namespace leka {
 
+struct Protocol {
+	uint8_t set_protocol_command;
+	uint8_t gain_modulation_values;
+};
+
 namespace cr95hf {
 
 	constexpr size_t max_tx_length = 16;
@@ -30,22 +35,14 @@ namespace cr95hf {
 
 	}	// namespace command
 
-	namespace gain_modulation_values {
+	namespace protocol {
 
-		constexpr uint8_t ISO15993	= 0xD0;
-		constexpr uint8_t ISO14443A = 0xD1;
-		constexpr uint8_t ISO14443B = 0x20;
-		constexpr uint8_t ISO18092	= 0x20;
+		constexpr Protocol ISO15693	 = {.set_protocol_command = 0x01, .gain_modulation_values = 0xD0};
+		constexpr Protocol ISO14443A = {.set_protocol_command = 0x02, .gain_modulation_values = 0xD1};
+		constexpr Protocol ISO14443B = {.set_protocol_command = 0x03, .gain_modulation_values = 0x20};
+		constexpr Protocol ISO18092	 = {.set_protocol_command = 0x04, .gain_modulation_values = 0x20};
 
-	}	// namespace gain_modulation_values
-
-	enum class protocol : uint8_t
-	{
-		ISO15693  = 0x01,
-		ISO14443A = 0x02,
-		ISO14443B = 0x03,
-		ISO18092  = 0x04,
-	};
+	};	 // namespace protocol
 
 }	// namespace cr95hf
 
