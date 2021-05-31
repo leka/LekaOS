@@ -26,7 +26,7 @@ void CoreCR95HF::setGainAndModulation()
 {
 	std::array<uint8_t, 6> set_gain_and_modulation_command {cr95hf::command::set_gain_and_modulation,
 															0x04,
-															cr95hf::ARC_B_register,
+															cr95hf::arc_b,
 															cr95hf::flag_increment,
 															cr95hf::gain_modulation_index,
 															cr95hf::gain_modulation_values::ISO14443A};

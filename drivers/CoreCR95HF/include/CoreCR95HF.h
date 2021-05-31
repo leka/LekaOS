@@ -18,7 +18,7 @@ namespace cr95hf {
 	constexpr size_t max_rx_length = 32;
 
 	constexpr uint8_t protocol_flag			= 0x00;
-	constexpr uint8_t ARC_B_register		= 0x68;
+	constexpr uint8_t arc_b					= 0x68;	  // Analog Register Configuration
 	constexpr uint8_t flag_increment		= 0x01;
 	constexpr uint8_t gain_modulation_index = 0x01;
 
