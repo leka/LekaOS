@@ -73,22 +73,22 @@ class CoreCR95HF : public interface::RFID
   private:
 	interface::BufferedSerial &_serial;
 
-	std::array<uint8_t, cr95hf::max_tx_length> _send_buffer {0};
-	std::array<uint8_t, cr95hf::max_rx_length> _receive_buffer {0};
+	std::array<uint8_t, cr95hf::max_tx_length> _tx_buf {0};
+	std::array<uint8_t, cr95hf::max_rx_length> _rx_buf {0};
 
 	template <size_t SIZE>
 	auto formatedCommand(interface::CommandISO<SIZE> cmd) -> const uint8_t *
 	{
-		_send_buffer[0] = cr95hf::command::send_receive;
-		_send_buffer[1] = static_cast<uint8_t>(cmd.data.size()) + 1;
+		_tx_buf[0] = cr95hf::command::send_receive;
+		_tx_buf[1] = static_cast<uint8_t>(cmd.data.size()) + 1;
 
 		for (unsigned int i = 0; i < cmd.data.size(); ++i) {
-			_send_buffer[i + 2] = cmd.getData()[i];
+			_tx_buf[i + 2] = cmd.getData()[i];
 		}
 
-		_send_buffer[cmd.data.size() + 2] = static_cast<uint8_t>(cmd.flags);
+		_tx_buf[cmd.data.size() + 2] = static_cast<uint8_t>(cmd.flags);
 
-		return _send_buffer.data();
+		return _tx_buf.data();
 	}
 
 	void setProcoleISO14443();

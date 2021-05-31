@@ -8,10 +8,10 @@ namespace leka {
 
 void CoreCR95HF::receive(uint8_t *data, size_t size)
 {
-	_serial.read(_receive_buffer.data(), size);
+	_serial.read(_rx_buf.data(), size);
 
 	for (unsigned int i = 0; i < size; ++i) {
-		data[i] = _receive_buffer[i];
+		data[i] = _rx_buf[i];
 	}
 }
 
