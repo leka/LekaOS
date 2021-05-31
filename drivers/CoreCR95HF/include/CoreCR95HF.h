@@ -50,9 +50,13 @@ class CoreCR95HF : public interface::RFID
 	template <size_t SIZE>
 	void send(interface::CommandISO<SIZE> cmd)
 	{
-		const size_t command_size = cmd.data.size() + 3;
+		if (const size_t command_size = cmd.data.size() + 3; command_size > cr95hf::max_data_send_length) {
+			_serial.write(formatedCommand(cmd), 1);
+		}
 
-		_serial.write(formatedCommand(cmd), command_size);
+		else {
+			_serial.write(formatedCommand(cmd), command_size);
+		}
 	}
 
 	void receive(uint8_t *data, size_t size) final;
@@ -73,6 +77,7 @@ class CoreCR95HF : public interface::RFID
 		for (unsigned int i = 0; i < cmd.data.size(); ++i) {
 			_send_buffer[i + 2] = cmd.getData()[i];
 		}
+
 		_send_buffer[cmd.data.size() + 2] = static_cast<uint8_t>(cmd.flags);
 
 		return _send_buffer.data();

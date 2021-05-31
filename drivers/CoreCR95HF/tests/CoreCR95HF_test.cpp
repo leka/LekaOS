@@ -65,6 +65,18 @@ TEST_F(CoreCR95HFSensorTest, sendWithoutArguments)
 	corecr95hf.send(no_command);
 }
 
+TEST_F(CoreCR95HFSensorTest, sendTooManyArguments)
+{
+	const auto expected_values = ElementsAre(0x04);
+	CommandISO<17> hugeCommand = {
+		.data  = {0x30, 0x08, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
+		.flags = Flag::b8};
+
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+
+	corecr95hf.send(hugeCommand);
+}
+
 TEST_F(CoreCR95HFSensorTest, receiveAQTA)
 {
 	std::array<uint8_t, 7> read_values = {0x80, 0x05, 0x44, 0x0, 0x28, 0x00, 0x00};
