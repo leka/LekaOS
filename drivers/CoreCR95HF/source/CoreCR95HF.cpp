@@ -10,7 +10,7 @@ void CoreCR95HF::receive(uint8_t *data, size_t size)
 {
 	_serial.read(_rx_buf.data(), size);
 
-	for (unsigned int i = 0; i < size; ++i) {
+	for (auto i = 0; i < size; ++i) {
 		data[i] = _rx_buf[i];
 	}
 }

@@ -82,7 +82,7 @@ class CoreCR95HF : public interface::RFID
 		_tx_buf[0] = cr95hf::command::send_receive;
 		_tx_buf[1] = static_cast<uint8_t>(cmd.data.size()) + 1;
 
-		for (unsigned int i = 0; i < cmd.data.size(); ++i) {
+		for (auto i = 0; i < cmd.data.size(); ++i) {
 			_tx_buf[i + 2] = cmd.getData()[i];
 		}
 
