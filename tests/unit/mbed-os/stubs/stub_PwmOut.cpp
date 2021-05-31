@@ -21,6 +21,11 @@ void PwmOut::write(float value)
 	leka::spy_PwmOut_value = value;
 }
 
+auto PwmOut::read() -> float
+{
+	return leka::spy_PwmOut_value;
+}
+
 void PwmOut::period(float value)
 {
 	leka::spy_PwmOut_period = value;
