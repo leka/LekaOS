@@ -30,15 +30,6 @@ namespace cr95hf {
 
 	}	// namespace command
 
-	namespace protocol {
-
-		constexpr uint8_t ISO15693	= 0x01;
-		constexpr uint8_t ISO14443A = 0x02;
-		constexpr uint8_t ISO14443B = 0x03;
-		constexpr uint8_t ISO18092	= 0x04;
-
-	}	// namespace protocol
-
 	namespace gain_modulation_values {
 
 		constexpr uint8_t ISO15993	= 0xD0;
@@ -47,6 +38,14 @@ namespace cr95hf {
 		constexpr uint8_t ISO18092	= 0x20;
 
 	}	// namespace gain_modulation_values
+
+	enum class protocol : uint8_t
+	{
+		ISO15693  = 0x01,
+		ISO14443A = 0x02,
+		ISO14443B = 0x03,
+		ISO18092  = 0x04,
+	};
 
 }	// namespace cr95hf
 

@@ -23,6 +23,7 @@ constexpr Flag operator|(Flag lhs, Flag rhs)
 	return static_cast<Flag>(static_cast<std::underlying_type_t<Flag>>(lhs) |
 							 static_cast<std::underlying_type_t<Flag>>(rhs));
 }
+
 template <size_t SIZE>
 struct CommandISO {
 	[[nodiscard]] auto getData() const -> const uint8_t * { return data.data(); }
