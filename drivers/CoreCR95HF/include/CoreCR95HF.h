@@ -14,8 +14,8 @@ namespace leka {
 
 namespace cr95hf {
 
-	constexpr size_t max_data_send_length	 = 16;
-	constexpr size_t max_data_receive_length = 32;
+	constexpr size_t max_tx_length = 16;
+	constexpr size_t max_rx_length = 32;
 
 	constexpr uint8_t protocol_flag			= 0x00;
 	constexpr uint8_t ARC_B_register		= 0x68;
@@ -58,7 +58,7 @@ class CoreCR95HF : public interface::RFID
 	template <size_t SIZE>
 	void send(interface::CommandISO<SIZE> cmd)
 	{
-		if (const size_t command_size = cmd.data.size() + 3; command_size > cr95hf::max_data_send_length) {
+		if (const size_t command_size = cmd.data.size() + 3; command_size > cr95hf::max_tx_length) {
 			_serial.write(formatedCommand(cmd), 1);
 		}
 
@@ -73,8 +73,8 @@ class CoreCR95HF : public interface::RFID
   private:
 	interface::BufferedSerial &_serial;
 
-	std::array<uint8_t, cr95hf::max_data_send_length> _send_buffer {0};
-	std::array<uint8_t, cr95hf::max_data_receive_length> _receive_buffer {0};
+	std::array<uint8_t, cr95hf::max_tx_length> _send_buffer {0};
+	std::array<uint8_t, cr95hf::max_rx_length> _receive_buffer {0};
 
 	template <size_t SIZE>
 	auto formatedCommand(interface::CommandISO<SIZE> cmd) -> const uint8_t *
