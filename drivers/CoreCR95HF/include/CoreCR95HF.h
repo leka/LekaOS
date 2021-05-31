@@ -25,7 +25,7 @@ namespace cr95hf {
 	namespace command {
 
 		constexpr uint8_t set_protocol			  = 0x02;
-		constexpr uint8_t send_reveive			  = 0x04;
+		constexpr uint8_t send_receive			  = 0x04;
 		constexpr uint8_t set_gain_and_modulation = 0x09;
 
 	}	// namespace command
@@ -79,7 +79,7 @@ class CoreCR95HF : public interface::RFID
 	template <size_t SIZE>
 	auto formatedCommand(interface::CommandISO<SIZE> cmd) -> const uint8_t *
 	{
-		_send_buffer[0] = cr95hf::command::send_reveive;
+		_send_buffer[0] = cr95hf::command::send_receive;
 		_send_buffer[1] = static_cast<uint8_t>(cmd.data.size()) + 1;
 
 		for (unsigned int i = 0; i < cmd.data.size(); ++i) {
