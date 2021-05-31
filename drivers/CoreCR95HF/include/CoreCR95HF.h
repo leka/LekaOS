@@ -13,6 +13,7 @@
 namespace leka {
 
 namespace cr95hf {
+
 	constexpr size_t max_data_send_length	 = 16;
 	constexpr size_t max_data_receive_length = 32;
 
@@ -21,18 +22,25 @@ namespace cr95hf {
 	constexpr uint8_t flag_increment		= 0x01;
 	constexpr uint8_t gain_modulation_index = 0x01;
 
-	namespace commands {
+	namespace command {
+
 		constexpr uint8_t set_protocol			  = 0x02;
 		constexpr uint8_t send_reveive			  = 0x04;
 		constexpr uint8_t set_gain_and_modulation = 0x09;
-	}	// namespace commands
+
+	}	// namespace command
+
 	namespace protocol {
+
 		constexpr uint8_t ISO15693	= 0x01;
 		constexpr uint8_t ISO14443A = 0x02;
 		constexpr uint8_t ISO14443B = 0x03;
 		constexpr uint8_t ISO18092	= 0x04;
+
 	}	// namespace protocol
+
 	namespace gain_modulation_values {
+
 		constexpr uint8_t ISO15993	= 0xD0;
 		constexpr uint8_t ISO14443A = 0xD1;
 		constexpr uint8_t ISO14443B = 0x20;
