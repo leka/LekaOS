@@ -43,9 +43,6 @@ class RFID
 	class ISO14443
 	{
 	  public:
-		virtual void requestA();
-		virtual void read();
-
 	  private:
 		std::array<uint8_t, 16> _tag_data {0};
 
