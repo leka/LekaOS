@@ -7,8 +7,6 @@
 
 namespace leka {
 
-CoreCR95HF::CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {}
-
 void CoreCR95HF::receive(uint8_t *data, size_t size)
 {
 	_serial.read(_receive_buffer.data(), size);

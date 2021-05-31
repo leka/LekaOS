@@ -53,7 +53,7 @@ namespace cr95hf {
 class CoreCR95HF : public interface::RFID
 {
   public:
-	explicit CoreCR95HF(interface::BufferedSerial &serial);
+	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
 	template <size_t SIZE>
 	void send(interface::CommandISO<SIZE> cmd)
