@@ -8,7 +8,7 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreBufferedSerial.h"
-#include "RfidInterface.h"
+#include "RFID.h"
 
 namespace leka {
 

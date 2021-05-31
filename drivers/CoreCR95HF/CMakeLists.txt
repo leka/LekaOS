@@ -17,7 +17,6 @@ target_sources(CoreCR95HF
 target_link_libraries(CoreCR95HF
 		mbed-os
 		CoreBufferedSerial
-		RFIDKit
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
