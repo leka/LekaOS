@@ -73,8 +73,8 @@ class CoreCR95HF : public interface::RFID
   private:
 	interface::BufferedSerial &_serial;
 
-	std::array<uint8_t, cr95hf::max_tx_length> _tx_buf {0};
-	std::array<uint8_t, cr95hf::max_rx_length> _rx_buf {0};
+	std::array<uint8_t, cr95hf::max_tx_length> _tx_buf {};
+	std::array<uint8_t, cr95hf::max_rx_length> _rx_buf {};
 
 	template <size_t SIZE>
 	auto formatedCommand(interface::CommandISO<SIZE> cmd) -> const uint8_t *
