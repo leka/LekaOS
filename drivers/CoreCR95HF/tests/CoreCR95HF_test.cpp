@@ -38,7 +38,7 @@ TEST_F(CoreCR95HFSensorTest, initialization)
 TEST_F(CoreCR95HFSensorTest, sendSuccessREQA)
 {
 	const auto expected_values	   = ElementsAre(0x04, 0x02, 0x26, 0x07);
-	CommandISO<1> command_requestA = {.data = {0x26}, .flags = Flag::b7};
+	CommandISO<1> command_requestA = {.data = {0x26}, .flags = Flag::seven_significant_bits};
 
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
@@ -48,7 +48,7 @@ TEST_F(CoreCR95HFSensorTest, sendSuccessREQA)
 TEST_F(CoreCR95HFSensorTest, sendSuccessRead)
 {
 	const auto expected_values			  = ElementsAre(0x04, 0x03, 0x30, 0x08, 0x28);
-	CommandISO<2> command_read_register_8 = {.data = {0x30, 0x08}, .flags = Flag::crc | Flag::b8};
+	CommandISO<2> command_read_register_8 = {.data = {0x30, 0x08}, .flags = Flag::crc | Flag::eigth_significant_bits};
 
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
@@ -70,7 +70,7 @@ TEST_F(CoreCR95HFSensorTest, sendTooManyArguments)
 	const auto expected_values = ElementsAre(0x04);
 	CommandISO<17> hugeCommand = {
 		.data  = {0x30, 0x08, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
-		.flags = Flag::b8};
+		.flags = Flag::eigth_significant_bits};
 
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 

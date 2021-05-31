@@ -13,9 +13,9 @@ namespace leka::interface {
 
 enum class Flag : uint8_t
 {
-	b7	= 0b00000111,
-	b8	= 0b00001000,
-	crc = 0b00100000,
+	seven_significant_bits = 0b00000111,
+	eigth_significant_bits = 0b00001000,
+	crc					   = 0b00100000,
 };
 
 constexpr Flag operator|(Flag lhs, Flag rhs)
@@ -48,8 +48,9 @@ class RFID
 	  private:
 		std::array<uint8_t, 16> _tag_data {0};
 
-		CommandISO<1> command_requestA		  = {.data = {0x26}, .flags = Flag::b7};
-		CommandISO<2> command_read_register_8 = {.data = {0x30, 0x08}, .flags = Flag::crc | Flag::b8};
+		CommandISO<1> command_requestA		  = {.data = {0x26}, .flags = Flag::seven_significant_bits};
+		CommandISO<2> command_read_register_8 = {.data	= {0x30, 0x08},
+												 .flags = Flag::crc | Flag::eigth_significant_bits};
 	};
 };
 
