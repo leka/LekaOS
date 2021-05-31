@@ -20,14 +20,14 @@ void CoreCR95HF::receive(uint8_t *data, size_t size)
 
 void CoreCR95HF::setProcoleISO14443()
 {
-	std::array<uint8_t, 4> set_protocol_ISO14443_command {cr95hf::commands::set_protocol, 0x02,
+	std::array<uint8_t, 4> set_protocol_ISO14443_command {cr95hf::command::set_protocol, 0x02,
 														  cr95hf::protocol::ISO14443A, cr95hf::protocol_flag};
 	_serial.write(set_protocol_ISO14443_command.data(), 4);
 }
 
 void CoreCR95HF::setGainAndModulation()
 {
-	std::array<uint8_t, 6> set_gain_and_modulation_command {cr95hf::commands::set_gain_and_modulation,
+	std::array<uint8_t, 6> set_gain_and_modulation_command {cr95hf::command::set_gain_and_modulation,
 															0x04,
 															cr95hf::ARC_B_register,
 															cr95hf::flag_increment,
