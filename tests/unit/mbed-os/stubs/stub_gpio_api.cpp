@@ -13,3 +13,13 @@ void gpio_write(gpio_t *gpio, int value)
 {
 	return;
 }
+
+auto gpio_read(gpio_t *obj) -> int
+{
+	return 0;
+}
+
+auto gpio_is_connected(const gpio_t *obj) -> int
+{
+	return 1;
+}
