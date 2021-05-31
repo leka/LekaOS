@@ -6,7 +6,6 @@
 #define _LEKA_OS_DRIVER_LK_KIT_RFID_INTERFACE_H_
 
 #include <array>
-#include <cassert>
 #include <cstddef>
 #include <cstdint>
 
