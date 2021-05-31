@@ -2,24 +2,26 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(LKCoreMotor STATIC)
+add_library(CoreMotor STATIC)
 
-target_include_directories(LKCoreMotor
+target_include_directories(CoreMotor
 	PUBLIC
 		include
 )
 
-target_sources(LKCoreMotor
+target_sources(CoreMotor
 	PRIVATE
-		source/LKCoreMotor.cpp
+		source/CoreMotor.cpp
 )
 
-target_link_libraries(LKCoreMotor mbed-os)
+target_link_libraries(CoreMotor
+	mbed-os
+)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
-		tests/LKCoreMotor_test.cpp
+		tests/CoreMotor_test.cpp
 	)
 
 endif()

@@ -11,10 +11,10 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
+#include "CoreMotor.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LKCoreBattery.h"
-#include "LKCoreMotor.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 #include "Utils.h"
@@ -54,8 +54,8 @@ auto main() -> int
 		}
 	};
 
-	auto motor_right = LKCoreMotor {MOTOR_RIGHT_DIRECTION_1, MOTOR_RIGHT_DIRECTION_2, MOTOR_RIGHT_PWM};
-	auto motor_left	 = LKCoreMotor {MOTOR_LEFT_DIRECTION_1, MOTOR_LEFT_DIRECTION_2, MOTOR_LEFT_PWM};
+	auto motor_right = CoreMotor {MOTOR_RIGHT_DIRECTION_1, MOTOR_RIGHT_DIRECTION_2, MOTOR_RIGHT_PWM};
+	auto motor_left	 = CoreMotor {MOTOR_LEFT_DIRECTION_1, MOTOR_LEFT_DIRECTION_2, MOTOR_LEFT_PWM};
 
 	auto motors_thread = rtos::Thread {};
 	auto motors_lambda = [&motor_left, &motor_right] {

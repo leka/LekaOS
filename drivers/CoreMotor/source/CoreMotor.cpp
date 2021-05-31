@@ -2,13 +2,13 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreMotor.h"
+#include "CoreMotor.h"
 
 namespace leka {
 
 using namespace mbed;
 
-void LKCoreMotor::spin(rotation_t rotation, float speed)
+void CoreMotor::spin(rotation_t rotation, float speed)
 {
 	if (rotation == Rotation::clockwise) {
 		setDirections(1, 0);
@@ -19,18 +19,18 @@ void LKCoreMotor::spin(rotation_t rotation, float speed)
 	setSpeed(speed);
 }
 
-void LKCoreMotor::stop(void)
+void CoreMotor::stop()
 {
 	setDirections(0, 0);
 	setSpeed(0);
 }
 
-LKCoreMotor::Status LKCoreMotor::getStatus(void) const
+auto CoreMotor::getStatus() const -> CoreMotor::Status
 {
 	return _status;
 }
 
-void LKCoreMotor::setDirections(int dir_1, int dir_2)
+void CoreMotor::setDirections(int dir_1, int dir_2)
 {
 	_dir_1.write(dir_1);
 	_status.dir_1 = dir_1;
@@ -39,7 +39,7 @@ void LKCoreMotor::setDirections(int dir_1, int dir_2)
 	_status.dir_2 = dir_2;
 }
 
-void LKCoreMotor::setSpeed(float speed)
+void CoreMotor::setSpeed(float speed)
 {
 	if (speed < 0.0f) {
 		_speed.write(0);

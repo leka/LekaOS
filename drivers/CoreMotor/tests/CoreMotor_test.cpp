@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreMotor.h"
+#include "CoreMotor.h"
 
 #include "gtest/gtest.h"
 #include "stub_PwmOut.h"
@@ -15,14 +15,14 @@
 
 using namespace leka;
 
-LKCoreMotor motor(MOTOR_RIGHT_DIRECTION_1, MOTOR_RIGHT_DIRECTION_2, MOTOR_RIGHT_PWM);
+CoreMotor motor(MOTOR_RIGHT_DIRECTION_1, MOTOR_RIGHT_DIRECTION_2, MOTOR_RIGHT_PWM);
 
-TEST(LKCoreMotorTest, initialization)
+TEST(CoreMotorTest, initialization)
 {
 	ASSERT_NE(&motor, nullptr);
 }
 
-TEST(LKCoreMotorTest, speedValueNotLowerThanZero)
+TEST(CoreMotorTest, speedValueNotLowerThanZero)
 {
 	motor.spin(Rotation::clockwise, -100);
 
@@ -32,7 +32,7 @@ TEST(LKCoreMotorTest, speedValueNotLowerThanZero)
 	ASSERT_EQ(status.speed, 0);
 }
 
-TEST(LKCoreMotorTest, speedValueNotGreaterThanOne)
+TEST(CoreMotorTest, speedValueNotGreaterThanOne)
 {
 	motor.spin(Rotation::clockwise, 100);
 
@@ -42,7 +42,7 @@ TEST(LKCoreMotorTest, speedValueNotGreaterThanOne)
 	ASSERT_EQ(status.speed, 1);
 }
 
-TEST(LKCoreMotorTest, directionValuesForClockwiseRotation)
+TEST(CoreMotorTest, directionValuesForClockwiseRotation)
 {
 	motor.spin(Rotation::clockwise, 1);
 
@@ -52,7 +52,7 @@ TEST(LKCoreMotorTest, directionValuesForClockwiseRotation)
 	ASSERT_EQ(status.dir_2, 0);
 }
 
-TEST(LKCoreMotorTest, speedValueForClockwiseRotation)
+TEST(CoreMotorTest, speedValueForClockwiseRotation)
 {
 	motor.spin(Rotation::clockwise, 1);
 
@@ -62,7 +62,7 @@ TEST(LKCoreMotorTest, speedValueForClockwiseRotation)
 	ASSERT_EQ(status.speed, 1);
 }
 
-TEST(LKCoreMotorTest, directionValuesForCounterClockwiseRotation)
+TEST(CoreMotorTest, directionValuesForCounterClockwiseRotation)
 {
 	motor.spin(Rotation::counterClockwise, 1);
 
@@ -72,7 +72,7 @@ TEST(LKCoreMotorTest, directionValuesForCounterClockwiseRotation)
 	ASSERT_EQ(status.dir_2, 1);
 }
 
-TEST(LKCoreMotorTest, speedValueForCounterClockwiseRotation)
+TEST(CoreMotorTest, speedValueForCounterClockwiseRotation)
 {
 	motor.spin(Rotation::counterClockwise, 1);
 
@@ -82,7 +82,7 @@ TEST(LKCoreMotorTest, speedValueForCounterClockwiseRotation)
 	ASSERT_EQ(status.speed, 1);
 }
 
-TEST(LKCoreMotorTest, directionValuesForStop)
+TEST(CoreMotorTest, directionValuesForStop)
 {
 	motor.stop();
 
@@ -92,7 +92,7 @@ TEST(LKCoreMotorTest, directionValuesForStop)
 	ASSERT_EQ(status.dir_2, 0);
 }
 
-TEST(LKCoreMotorTest, speedValueForStop)
+TEST(CoreMotorTest, speedValueForStop)
 {
 	motor.stop();
 

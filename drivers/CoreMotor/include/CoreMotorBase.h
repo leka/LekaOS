@@ -9,8 +9,8 @@ namespace leka {
 
 enum class Rotation
 {
-	clockwise,
-	counterClockwise,
+	clockwise		 = 0,
+	counterClockwise = 1,
 
 	right = clockwise,
 	left  = counterClockwise
@@ -18,11 +18,11 @@ enum class Rotation
 
 using rotation_t = Rotation;
 
-class LKCoreMotorBase
+class CoreMotorBase
 {
   public:
 	virtual void spin(rotation_t rotation, float speed) = 0;
-	virtual void stop(void)								= 0;
+	virtual void stop()									= 0;
 };
 
 }	// namespace leka
