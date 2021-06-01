@@ -55,8 +55,10 @@ class CoreCR95HF : public interface::RFID
 	void send(std::array<uint8_t, SIZE> cmd)
 	{
 		formatCommand(cmd);
+		int number_of_bytes_added_to_the_command = 2;
 
-		if (const size_t command_size = cmd.size() + 2; command_size <= cr95hf::max_tx_length) {
+		if (const size_t command_size = cmd.size() + number_of_bytes_added_to_the_command;
+			command_size <= cr95hf::max_tx_length) {
 			_serial.write(_tx_buf.data(), command_size);
 		} else {
 			_serial.write(_tx_buf.data(), 1);
