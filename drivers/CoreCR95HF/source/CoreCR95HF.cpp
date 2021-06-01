@@ -6,7 +6,7 @@
 
 namespace leka {
 
-void CoreCR95HF::setProcoleISO14443()
+void CoreCR95HF::setProtocoleISO14443()
 {
 	std::array<uint8_t, 4> set_protocol_ISO14443_command {cr95hf::command::set_protocol, 0x02,
 														  cr95hf::protocol::ISO14443A.id, cr95hf::set_protocol_flag};
@@ -51,7 +51,7 @@ auto CoreCR95HF::init() -> bool
 
 	bool init_status = false;
 
-	setProcoleISO14443();
+	setProtocoleISO14443();
 	rtos::ThisThread::sleep_for(10ms);
 	if (init_status = receiveSetupAnswer(); init_status == false) {
 		return init_status;

@@ -100,7 +100,7 @@ class CoreCR95HF : public interface::RFID
 		}
 	}
 
-	void setProcoleISO14443();
+	void setProtocoleISO14443();
 	void setGainAndModulation();
 
 	auto checkSensorSetup(const uint8_t *buffer) const -> bool;
