@@ -20,7 +20,7 @@ void CoreCR95HF::setGainAndModulation()
 															cr95hf::arc_b,
 															cr95hf::flag_increment,
 															cr95hf::gain_modulation_index,
-															cr95hf::protocol::ISO14443A.gain_modulation_value};
+															cr95hf::protocol::ISO14443A.gain_modulation_values()};
 	_serial.write(set_gain_and_modulation_command.data(), 6);
 }
 

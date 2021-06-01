@@ -13,8 +13,10 @@
 namespace leka {
 
 struct Protocol {
-	uint8_t id;
-	uint8_t gain_modulation_value;
+	const uint8_t id;
+	const uint8_t gain;
+	const uint8_t modulation;
+	constexpr auto gain_modulation_values() const -> uint8_t { return gain | modulation; }
 };
 
 namespace cr95hf {
@@ -37,14 +39,14 @@ namespace cr95hf {
 
 	namespace protocol {
 
-		constexpr Protocol ISO15693	 = {.id					   = 0x01,
-										.gain_modulation_value = 0x00 | 0xD0};	 // gain = 34 dB, modulation = 95%
-		constexpr Protocol ISO14443A = {.id					   = 0x02,
-										.gain_modulation_value = 0x01 | 0xD0};	 // gain = 32 dB, modulation = 95%
-		constexpr Protocol ISO14443B = {.id					   = 0x03,
-										.gain_modulation_value = 0x00 | 0x20};	 // gain = 34 dB, modulation = 17%
-		constexpr Protocol ISO18092	 = {.id					   = 0x04,
-										.gain_modulation_value = 0x00 | 0x20};	 // gain = 34 dB, modulation = 17%
+		constexpr Protocol ISO15693 = {
+			.id = 0x01, .gain = 0x00, .modulation = 0xD0};	 // gain = 34 dB, modulation = 95%
+		constexpr Protocol ISO14443A = {
+			.id = 0x02, .gain = 0x01, .modulation = 0xD0};	 // gain = 32 dB, modulation = 95%
+		constexpr Protocol ISO14443B = {
+			.id = 0x03, .gain = 0x00, .modulation = 0x20};	 // gain = 34 dB, modulation = 17%
+		constexpr Protocol ISO18092 = {
+			.id = 0x04, .gain = 0x00, .modulation = 0x20};	 // gain = 34 dB, modulation = 17%
 
 	};	 // namespace protocol
 
