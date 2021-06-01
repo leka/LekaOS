@@ -14,7 +14,7 @@ namespace leka {
 
 struct Protocol {
 	uint8_t set_protocol_command;
-	uint8_t gain_modulation_values;
+	uint8_t gain_modulation_value;
 };
 
 namespace cr95hf {
@@ -37,10 +37,10 @@ namespace cr95hf {
 
 	namespace protocol {
 
-		constexpr Protocol ISO15693	 = {.set_protocol_command = 0x01, .gain_modulation_values = 0xD0};
-		constexpr Protocol ISO14443A = {.set_protocol_command = 0x02, .gain_modulation_values = 0xD1};
-		constexpr Protocol ISO14443B = {.set_protocol_command = 0x03, .gain_modulation_values = 0x20};
-		constexpr Protocol ISO18092	 = {.set_protocol_command = 0x04, .gain_modulation_values = 0x20};
+		constexpr Protocol ISO15693	 = {.set_protocol_command = 0x01, .gain_modulation_value = 0xD0};
+		constexpr Protocol ISO14443A = {.set_protocol_command = 0x02, .gain_modulation_value = 0xD1};
+		constexpr Protocol ISO14443B = {.set_protocol_command = 0x03, .gain_modulation_value = 0x20};
+		constexpr Protocol ISO18092	 = {.set_protocol_command = 0x04, .gain_modulation_value = 0x20};
 
 	};	 // namespace protocol
 
