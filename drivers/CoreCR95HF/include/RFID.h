@@ -40,11 +40,10 @@ class RFID
 	void send(const std::array<uint8_t, SIZE> &cmd);
 
 	template <size_t SIZE>
-	void receive(std::array<uint8_t, SIZE> &answers);
+	void receive(std::array<uint8_t, SIZE> &rfid_answer);
 
 	class ISO14443
 	{
-	  public:
 	  private:
 		std::array<uint8_t, 16> _tag_data {0};
 
