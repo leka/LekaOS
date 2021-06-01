@@ -7,7 +7,7 @@
 #include "CoreHTS.h"
 #include "CoreI2C.h"
 #include "gtest/gtest.h"
-#include "mock_CoreI2C.h"
+#include "mocks/leka/CoreI2C.h"
 
 using ::testing::_;
 using ::testing::AnyNumber;

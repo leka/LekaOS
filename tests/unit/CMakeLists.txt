@@ -60,16 +60,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 # Mark: - Define directories
 #
 
-set(UNITTESTS_DIR ${CMAKE_CURRENT_LIST_DIR})
-set(ROOT_DIR      ${UNITTESTS_DIR}/../..)
-set(MBED_OS_DIR   ${ROOT_DIR}/extern/mbed-os)
-
-set(MBED_MOCKS_DIR   ${UNITTESTS_DIR}/mbed-os/mocks)
-set(MBED_STUBS_DIR   ${UNITTESTS_DIR}/mbed-os/stubs)
-set(MBED_INCLUDE_DIR ${UNITTESTS_DIR}/mbed-os/include)
-
-set(MOCKS_DIR   ${UNITTESTS_DIR}/mocks)
-set(STUBS_DIR   ${UNITTESTS_DIR}/stubs)
+set(UNIT_TESTS_DIR     ${CMAKE_CURRENT_LIST_DIR})
+set(ROOT_DIR           ${UNIT_TESTS_DIR}/../..)
+set(EXTERN_MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
 
 set(LIBS_DIR      ${ROOT_DIR}/libs)
 set(DRIVERS_DIR   ${ROOT_DIR}/drivers)
@@ -159,11 +152,17 @@ endfunction()
 add_subdirectory("${INCLUDE_DIR}" "include")
 
 #
+# Mark: - Headers
+#
+
+add_subdirectory(./headers)
+
+#
 # Mark: - Add fakes, stubs & mocks
 #
 
-add_subdirectory(mbed-os)
-add_subdirectory(mocks)
+add_subdirectory(./stubs)
+add_subdirectory(./mocks)
 
 #
 # Mark: - Add unit tests
@@ -205,6 +204,7 @@ target_link_libraries(LekaOSUnitTestsExec
 		gmock_main
 		mbed-os
 		mocks
+		stubs
 		interface
 )
 

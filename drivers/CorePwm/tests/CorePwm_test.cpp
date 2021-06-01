@@ -5,7 +5,7 @@
 #include "CorePwm.h"
 
 #include "gtest/gtest.h"
-#include "stub_PwmOut.h"
+#include "stubs/mbed/PwmOut.h"
 
 using namespace leka;
 

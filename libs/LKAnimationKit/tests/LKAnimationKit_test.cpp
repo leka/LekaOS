@@ -4,10 +4,10 @@
 
 #include "LKAnimationKit.h"
 
-#include "EventQueue_stub.h"
 #include "Thread_stub.h"
+#include "UNITTESTS/stubs/EventQueue_stub.h"
 #include "gtest/gtest.h"
-#include "mock_CGAnimation.h"
+#include "mocks/leka/CGAnimation.h"
 
 using namespace leka;
 

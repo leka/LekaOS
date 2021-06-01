@@ -6,7 +6,7 @@
 
 #include "corevideo_config.h"
 #include "gtest/gtest.h"
-#include "mock_LKCoreDMA2D.h"
+#include "mocks/leka/LKCoreDMA2D.h"
 
 using namespace leka;
 using ::testing::_;

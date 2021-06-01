@@ -5,7 +5,7 @@
 #include "CoreI2C.h"
 
 #include "gtest/gtest.h"
-#include "stub_I2C.h"
+#include "stubs/mbed/I2C.h"
 
 using namespace leka;
 

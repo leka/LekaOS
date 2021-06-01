@@ -4,7 +4,7 @@
 
 #define __STDC_LIMIT_MACROS
 
-#include "stub_mbed_critical.h"
+#include "../mbed_critical.h"
 
 auto core_util_are_interrupts_enabled() -> bool
 {

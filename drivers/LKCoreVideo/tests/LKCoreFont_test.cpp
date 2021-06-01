@@ -7,7 +7,7 @@
 #include "LKFont.h"
 #include "corevideo_config.h"
 #include "gtest/gtest.h"
-#include "mock_LKCoreLL.h"
+#include "mocks/leka/LKCoreLL.h"
 
 using namespace leka;
 using ::testing::_;

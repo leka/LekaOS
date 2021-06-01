@@ -4,7 +4,8 @@
 
 #include <vector>
 
-#include "I2C.h"
+#include "drivers/I2C.h"
+
 namespace leka {
 
 extern std::vector<uint8_t> spy_I2C_read_values;

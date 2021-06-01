@@ -5,8 +5,8 @@
 #include "LKCoreLCD.h"
 
 #include "gtest/gtest.h"
-#include "mock_LKCoreLCDDriver.h"
-#include "stub_PwmOut.h"
+#include "mocks/leka/LKCoreLCDDriver.h"
+#include "stubs/mbed/PwmOut.h"
 
 using namespace leka;
 using ::testing::_;
