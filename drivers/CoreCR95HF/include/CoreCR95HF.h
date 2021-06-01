@@ -37,10 +37,14 @@ namespace cr95hf {
 
 	namespace protocol {
 
-		constexpr Protocol ISO15693	 = {.id = 0x01, .gain_modulation_value = 0xD0};
-		constexpr Protocol ISO14443A = {.id = 0x02, .gain_modulation_value = 0xD1};
-		constexpr Protocol ISO14443B = {.id = 0x03, .gain_modulation_value = 0x20};
-		constexpr Protocol ISO18092	 = {.id = 0x04, .gain_modulation_value = 0x20};
+		constexpr Protocol ISO15693	 = {.id					   = 0x01,
+										.gain_modulation_value = 0x00 | 0xD0};	 // gain = 34 dB, modulation = 95%
+		constexpr Protocol ISO14443A = {.id					   = 0x02,
+										.gain_modulation_value = 0x01 | 0xD0};	 // gain = 32 dB, modulation = 95%
+		constexpr Protocol ISO14443B = {.id					   = 0x03,
+										.gain_modulation_value = 0x00 | 0x20};	 // gain = 34 dB, modulation = 17%
+		constexpr Protocol ISO18092	 = {.id					   = 0x04,
+										.gain_modulation_value = 0x00 | 0x20};	 // gain = 34 dB, modulation = 17%
 
 	};	 // namespace protocol
 
