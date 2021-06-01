@@ -74,9 +74,10 @@ class CoreCR95HF : public interface::RFID
 	template <size_t SIZE>
 	void receive(std::array<uint8_t, SIZE> &rfid_answer)
 	{
-		_serial.read(_rx_buf.data(), rfid_answer.size());
+		auto rfid_answer_size = rfid_answer.size();
+		_serial.read(_rx_buf.data(), rfid_answer_size);
 
-		for (auto i = 0; i < rfid_answer.size(); ++i) {
+		for (auto i = 0; i < rfid_answer_size; ++i) {
 			rfid_answer[i] = _rx_buf[i];
 		}
 	}
