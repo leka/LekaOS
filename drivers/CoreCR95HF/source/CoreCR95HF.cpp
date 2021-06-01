@@ -18,8 +18,7 @@ void CoreCR95HF::receive(uint8_t *data, size_t size)
 void CoreCR95HF::setProcoleISO14443()
 {
 	std::array<uint8_t, 4> set_protocol_ISO14443_command {cr95hf::command::set_protocol, 0x02,
-														  cr95hf::protocol::ISO14443A.set_protocol_command,
-														  cr95hf::set_protocol_flag};
+														  cr95hf::protocol::ISO14443A.id, cr95hf::set_protocol_flag};
 	_serial.write(set_protocol_ISO14443_command.data(), 4);
 }
 
