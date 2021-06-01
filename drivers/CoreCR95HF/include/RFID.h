@@ -37,8 +37,10 @@ class RFID
 	virtual ~RFID() = default;
 
 	template <size_t SIZE>
-	void send(CommandISO<SIZE> cmd);
-	virtual void receive(uint8_t *data, size_t size) = 0;
+	void send(const std::array<uint8_t, SIZE> &cmd);
+
+	template <size_t SIZE>
+	void receive(std::array<uint8_t, SIZE> &answers);
 
 	class ISO14443
 	{

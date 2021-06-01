@@ -2,8 +2,8 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_LK_CORE_CR95HF_H_
-#define _LEKA_OS_DRIVER_LK_CORE_CR95HF_H_
+#ifndef _LEKA_OS_DRIVER_CORE_CR95HF_H_
+#define _LEKA_OS_DRIVER_CORE_CR95HF_H_
 
 #include "rtos/ThisThread.h"
 
@@ -56,12 +56,12 @@ class CoreCR95HF : public interface::RFID
 	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
 	template <size_t SIZE>
-	void send(std::array<uint8_t, SIZE> cmd)
+	void send(const std::array<uint8_t, SIZE> &cmd_iso)
 	{
-		formatCommand(cmd);
+		formatCommand(cmd_iso);
 		int number_of_bytes_added_to_the_command = 2;
 
-		if (const size_t command_size = cmd.size() + number_of_bytes_added_to_the_command;
+		if (const size_t command_size = cmd_iso.size() + number_of_bytes_added_to_the_command;
 			command_size <= cr95hf::max_tx_length) {
 			_serial.write(_tx_buf.data(), command_size);
 		} else {
@@ -79,13 +79,13 @@ class CoreCR95HF : public interface::RFID
 	std::array<uint8_t, cr95hf::max_rx_length> _rx_buf {};
 
 	template <size_t SIZE>
-	void formatCommand(std::array<uint8_t, SIZE> cmd)
+	void formatCommand(std::array<uint8_t, SIZE> cmd_iso)
 	{
 		_tx_buf[0] = cr95hf::command::send_receive;
-		_tx_buf[1] = cmd.size();
+		_tx_buf[1] = cmd_iso.size();
 
-		for (auto i = 0; i < cmd.size(); ++i) {
-			_tx_buf[i + 2] = cmd[i];
+		for (auto i = 0; i < cmd_iso.size(); ++i) {
+			_tx_buf[i + 2] = cmd_iso[i];
 		}
 	}
 
@@ -98,4 +98,4 @@ class CoreCR95HF : public interface::RFID
 
 }	// namespace leka
 
-#endif	 //_LEKA_OS_DRIVER_LK_CORE_CR95HF_H_
+#endif	 //_LEKA_OS_DRIVER_CORE_CR95HF_H_
