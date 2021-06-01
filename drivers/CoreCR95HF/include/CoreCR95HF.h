@@ -52,14 +52,14 @@ class CoreCR95HF : public interface::RFID
 	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
 	template <size_t SIZE>
-	void send(interface::CommandISO<SIZE> cmd)
+	void send(std::array<uint8_t, SIZE> cmd)
 	{
-		if (const size_t command_size = cmd.data.size() + 3; command_size > cr95hf::max_tx_length) {
-			_serial.write(formatedCommand(cmd), 1);
-		}
+		formatCommand(cmd);
 
-		else {
-			_serial.write(formatedCommand(cmd), command_size);
+		if (const size_t command_size = cmd.size() + 2; command_size <= cr95hf::max_tx_length) {
+			_serial.write(_tx_buf.data(), command_size);
+		} else {
+			_serial.write(_tx_buf.data(), 1);
 		}
 	}
 
@@ -73,18 +73,14 @@ class CoreCR95HF : public interface::RFID
 	std::array<uint8_t, cr95hf::max_rx_length> _rx_buf {};
 
 	template <size_t SIZE>
-	auto formatedCommand(interface::CommandISO<SIZE> cmd) -> const uint8_t *
+	void formatCommand(std::array<uint8_t, SIZE> cmd)
 	{
 		_tx_buf[0] = cr95hf::command::send_receive;
-		_tx_buf[1] = static_cast<uint8_t>(cmd.data.size()) + 1;
+		_tx_buf[1] = cmd.size();
 
-		for (auto i = 0; i < cmd.data.size(); ++i) {
-			_tx_buf[i + 2] = cmd.getData()[i];
+		for (auto i = 0; i < cmd.size(); ++i) {
+			_tx_buf[i + 2] = cmd[i];
 		}
-
-		_tx_buf[cmd.data.size() + 2] = static_cast<uint8_t>(cmd.flags);
-
-		return _tx_buf.data();
 	}
 
 	void setProcoleISO14443();

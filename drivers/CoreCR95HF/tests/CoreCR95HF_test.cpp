@@ -35,46 +35,36 @@ TEST_F(CoreCR95HFSensorTest, initialization)
 	ASSERT_NE(&corecr95hf, nullptr);
 }
 
-TEST_F(CoreCR95HFSensorTest, sendSuccessREQA)
+TEST_F(CoreCR95HFSensorTest, sendCommandSuccess)
 {
 	const auto expected_values	   = ElementsAre(0x04, 0x02, 0x26, 0x07);
-	CommandISO<1> command_requestA = {.data = {0x26}, .flags = Flag::seven_significant_bits};
+	std::array<uint8_t, 2> command = {0x26, 0x07};
 
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
-	corecr95hf.send(command_requestA);
-}
-
-TEST_F(CoreCR95HFSensorTest, sendSuccessRead)
-{
-	const auto expected_values			  = ElementsAre(0x04, 0x03, 0x30, 0x08, 0x28);
-	CommandISO<2> command_read_register_8 = {.data = {0x30, 0x08}, .flags = Flag::crc | Flag::eigth_significant_bits};
-
-	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
-
-	corecr95hf.send(command_read_register_8);
+	corecr95hf.send(command);
 }
 
 TEST_F(CoreCR95HFSensorTest, sendWithoutArguments)
 {
-	const auto expected_values = ElementsAre(0x04, 0x01, 0x0);
-	CommandISO<0> no_command   = {};
+	const auto expected_values	   = ElementsAre(0x04, 0x00);
+	std::array<uint8_t, 0> command = {};
 
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
-	corecr95hf.send(no_command);
+	corecr95hf.send(command);
 }
 
 TEST_F(CoreCR95HFSensorTest, sendTooManyArguments)
 {
 	const auto expected_values = ElementsAre(0x04);
-	CommandISO<17> hugeCommand = {
-		.data  = {0x30, 0x08, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff},
-		.flags = Flag::eigth_significant_bits};
+
+	std::array<uint8_t, 18> command = {0x30, 0x08, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+									   0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x08};
 
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
-	corecr95hf.send(hugeCommand);
+	corecr95hf.send(command);
 }
 
 TEST_F(CoreCR95HFSensorTest, receiveAQTA)
