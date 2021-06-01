@@ -75,7 +75,7 @@ TEST_F(CoreCR95HFSensorTest, receiveAQTA)
 	EXPECT_CALL(mockBufferedSerial, read)
 		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 7), Return(0)));
 
-	corecr95hf.receive(expected_values.data(), expected_values.size());
+	corecr95hf.receive(expected_values);
 	ASSERT_EQ(read_values, expected_values);
 }
 
@@ -88,7 +88,7 @@ TEST_F(CoreCR95HFSensorTest, receiveRead)
 	EXPECT_CALL(mockBufferedSerial, read)
 		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 20), Return(0)));
 
-	corecr95hf.receive(expected_values.data(), expected_values.size());
+	corecr95hf.receive(expected_values);
 	ASSERT_EQ(read_values, expected_values);
 }
 
@@ -100,7 +100,7 @@ TEST_F(CoreCR95HFSensorTest, receiveFailed)
 	EXPECT_CALL(mockBufferedSerial, read)
 		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 2), Return(0)));
 
-	corecr95hf.receive(expected_values.data(), expected_values.size());
+	corecr95hf.receive(expected_values);
 	ASSERT_NE(read_values, expected_values);
 }
 

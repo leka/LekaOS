@@ -69,7 +69,16 @@ class CoreCR95HF : public interface::RFID
 		}
 	}
 
-	void receive(uint8_t *data, size_t size) final;
+	template <size_t SIZE>
+	void receive(std::array<uint8_t, SIZE> &answers)
+	{
+		_serial.read(_rx_buf.data(), answers.size());
+
+		for (auto i = 0; i < answers.size(); ++i) {
+			answers[i] = _rx_buf[i];
+		}
+	}
+
 	auto init() -> bool;
 
   private:

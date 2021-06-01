@@ -6,15 +6,6 @@
 
 namespace leka {
 
-void CoreCR95HF::receive(uint8_t *data, size_t size)
-{
-	_serial.read(_rx_buf.data(), size);
-
-	for (auto i = 0; i < size; ++i) {
-		data[i] = _rx_buf[i];
-	}
-}
-
 void CoreCR95HF::setProcoleISO14443()
 {
 	std::array<uint8_t, 4> set_protocol_ISO14443_command {cr95hf::command::set_protocol, 0x02,
