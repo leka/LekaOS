@@ -15,12 +15,13 @@ void CoreCR95HF::setProtocoleISO14443()
 
 void CoreCR95HF::setGainAndModulation()
 {
-	std::array<uint8_t, 6> set_gain_and_modulation_command {cr95hf::command::set_gain_and_modulation,
-															0x04,
-															cr95hf::arc_b,
-															cr95hf::flag_increment,
-															cr95hf::gain_modulation_index,
-															cr95hf::protocol::ISO14443A.gain_modulation_values()};
+	std::array<uint8_t, 6> set_gain_and_modulation_command {
+		cr95hf::command::set_gain_and_modulation,
+		0x04,
+		cr95hf::arc_b,
+		cr95hf::flag_increment,
+		cr95hf::gain_modulation_index,
+		static_cast<uint8_t>(cr95hf::protocol::ISO14443A.gain_modulation_values())};
 	_serial.write(set_gain_and_modulation_command.data(), 6);
 }
 
