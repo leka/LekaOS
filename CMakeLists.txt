@@ -75,7 +75,10 @@ if (${TARGET_BOARD} IN_LIST AVAILABLE_CUSTOM_TARGETS)
 	add_subdirectory(${TARGETS_DIR}/TARGET_${TARGET_BOARD})
 endif()
 
-# Add include directories
+# Add c++ support, include directories
+include_directories(BEFORE SYSTEM
+	${INCLUDE_DIR}/cxxsupport
+)
 add_subdirectory(${INCLUDE_DIR})
 
 # Add drivers & libraries

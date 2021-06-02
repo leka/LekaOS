@@ -146,8 +146,12 @@ function(leka_register_unit_tests_for_driver DRIVER)
 endfunction()
 
 #
-# Mark: - Include, interfaces
+# Mark: - C++ Support, interfaces
 #
+
+include_directories(BEFORE SYSTEM
+	${INCLUDE_DIR}/cxxsupport
+)
 
 add_subdirectory("${INCLUDE_DIR}" "include")
 
