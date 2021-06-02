@@ -29,14 +29,6 @@ namespace cr95hf {
 	constexpr uint8_t flag_increment		= 0x01;
 	constexpr uint8_t gain_modulation_index = 0x01;
 
-	namespace command {
-
-		constexpr uint8_t set_protocol			  = 0x02;
-		constexpr uint8_t send_receive			  = 0x04;
-		constexpr uint8_t set_gain_and_modulation = 0x09;
-
-	}	// namespace command
-
 	namespace protocol {
 
 		constexpr Protocol ISO15693 = {
@@ -49,6 +41,25 @@ namespace cr95hf {
 			.id = 0x04, .gain = std::byte(0x00), .modulation = std::byte(0x20)};   // gain = 34 dB, modulation = 17%
 
 	};	 // namespace protocol
+
+	namespace command {
+
+		constexpr uint8_t set_protocol			  = 0x02;
+		constexpr uint8_t send_receive			  = 0x04;
+		constexpr uint8_t set_gain_and_modulation = 0x09;
+
+		constexpr std::array<uint8_t, 4> set_protocol_ISO14443_command {
+			cr95hf::command::set_protocol, 0x02, cr95hf::protocol::ISO14443A.id, cr95hf::set_protocol_flag};
+
+		constexpr std::array<uint8_t, 6> set_gain_and_modulation_command {
+			cr95hf::command::set_gain_and_modulation,
+			0x04,
+			cr95hf::arc_b,
+			cr95hf::flag_increment,
+			cr95hf::gain_modulation_index,
+			static_cast<uint8_t>(cr95hf::protocol::ISO14443A.gain_modulation_values())};
+
+	}	// namespace command
 
 }	// namespace cr95hf
 
