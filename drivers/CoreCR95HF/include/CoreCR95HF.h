@@ -16,10 +16,7 @@ namespace cr95hf {
 		const uint8_t id;
 		const std::byte gain;
 		const std::byte modulation;
-		constexpr auto gain_modulation_values() const -> std::uint8_t
-		{
-			return std::to_integer<uint8_t>(gain | modulation);
-		}
+		constexpr auto gain_modulation_values() const -> uint8_t { return std::to_integer<uint8_t>(gain | modulation); }
 	};
 
 	constexpr size_t max_tx_length = 16;

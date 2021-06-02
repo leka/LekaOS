@@ -36,8 +36,8 @@ TEST_F(CoreCR95HFSensorTest, initialization)
 
 TEST_F(CoreCR95HFSensorTest, sendCommandSuccess)
 {
-	const auto expected_values	   = ElementsAre(0x04, 0x02, 0x26, 0x07);
 	std::array<uint8_t, 2> command = {0x26, 0x07};
+	const auto expected_values	   = ElementsAre(cr95hf::command::send_receive, command.size(), command[0], command[1]);
 
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
@@ -48,13 +48,13 @@ TEST_F(CoreCR95HFSensorTest, receiveDataSuccess)
 {
 	std::array<uint8_t, 20> read_values = {0x80, 0x15, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04,
 										   0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0xDA, 0x48};
-	std::array<uint8_t, 20> expected_values {0};
+	std::array<uint8_t, 20> actual_values {0};
 
 	EXPECT_CALL(mockBufferedSerial, read)
 		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 20), Return(0)));
 
-	corecr95hf.receive(expected_values);
-	ASSERT_EQ(read_values, expected_values);
+	corecr95hf.receive(actual_values);
+	ASSERT_EQ(read_values, actual_values);
 }
 
 TEST_F(CoreCR95HFSensorTest, receiveDataFailed)
@@ -74,14 +74,17 @@ TEST_F(CoreCR95HFSensorTest, initSuccess)
 	{
 		InSequence seq;
 
-		const auto expected_values_set_protocol = ElementsAre(0x02, 0x02, 0x02, 0x00);
+		const auto expected_values_set_protocol =
+			ElementsAre(cr95hf::command::set_protocol, 0x02, cr95hf::protocol::ISO14443A.id, cr95hf::set_protocol_flag);
 		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_set_protocol));
 
 		std::array<uint8_t, 2> receive_values = {0x00, 0x00};
 		EXPECT_CALL(mockBufferedSerial, read)
 			.WillOnce(DoAll(SetArrayArgument<0>(begin(receive_values), begin(receive_values) + 2), Return(0)));
 
-		const auto expected_values_set_gain_and_modulation = ElementsAre(0x09, 0x04, 0x68, 0x01, 0x01, 0xD1);
+		const auto expected_values_set_gain_and_modulation =
+			ElementsAre(cr95hf::command::set_gain_and_modulation, 0x04, cr95hf::arc_b, cr95hf::flag_increment,
+						cr95hf::gain_modulation_index, cr95hf::protocol::ISO14443A.gain_modulation_values());
 		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_set_gain_and_modulation));
 
 		EXPECT_CALL(mockBufferedSerial, read)
@@ -96,7 +99,8 @@ TEST_F(CoreCR95HFSensorTest, initFailedOnSetProtocolOnFirstValue)
 	{
 		InSequence seq;
 
-		const auto expected_values_set_protocol = ElementsAre(0x02, 0x02, 0x02, 0x00);
+		const auto expected_values_set_protocol =
+			ElementsAre(cr95hf::command::set_protocol, 0x02, cr95hf::protocol::ISO14443A.id, cr95hf::set_protocol_flag);
 		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_set_protocol));
 
 		std::array<uint8_t, 2> receive_values_protocol = {0x04, 0x00};
@@ -113,7 +117,8 @@ TEST_F(CoreCR95HFSensorTest, initFailedOnSetProtocolOnSecondValue)
 	{
 		InSequence seq;
 
-		const auto expected_values_set_protocol = ElementsAre(0x02, 0x02, 0x02, 0x00);
+		const auto expected_values_set_protocol =
+			ElementsAre(cr95hf::command::set_protocol, 0x02, cr95hf::protocol::ISO14443A.id, cr95hf::set_protocol_flag);
 		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_set_protocol));
 
 		std::array<uint8_t, 2> receive_values_protocol = {0x00, 0x04};
