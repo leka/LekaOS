@@ -6,7 +6,6 @@
 
 #include "gtest/gtest.h"
 #include "mock_CoreBufferedSerial.h"
-#include "stub_BufferedSerial.h"
 
 using ::testing::Args;
 using ::testing::DoAll;
