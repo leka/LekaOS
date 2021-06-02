@@ -60,7 +60,7 @@ namespace cr95hf {
 			cr95hf::arc_b,
 			cr95hf::flag_increment,
 			cr95hf::gain_modulation_index,
-			static_cast<uint8_t>(cr95hf::protocol::ISO14443A.gain_modulation_values())};
+			cr95hf::protocol::ISO14443A.gain_modulation_values()};
 
 	}	// namespace command
 
@@ -98,7 +98,7 @@ class CoreCR95HF : public interface::RFID
 	void setProtocoleISO14443();
 	void setGainAndModulation();
 
-	auto receiveSetupAnswer() -> bool;
+	auto isSetupAnswerCorrect() -> bool;
 	template <size_t SIZE>
 	auto checkSensorSetup(const std::array<uint8_t, SIZE> &data) const -> bool
 	{
