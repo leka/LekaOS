@@ -22,10 +22,21 @@ auto CoreCR95HF::isSetupAnswerCorrect() -> bool
 {
 	std::array<uint8_t, 2> buffer;
 
-	_serial.read(buffer.data(), buffer.size());
+	receive(buffer);
 
-	return checkSensorSetup(buffer);
+	return checkAnswerSensorSetup(buffer);
 }
+
+auto CoreCR95HF::checkAnswerSensorSetup(const std::array<uint8_t, 2> &data) const -> bool
+{
+	const std::array<uint8_t, 2> CR95HF_setup_completed = {0x00, 0x00};
+
+	if (data[0] == CR95HF_setup_completed[0] && data[1] == CR95HF_setup_completed[1]) {
+		return true;
+	}
+
+	return false;
+};
 
 auto CoreCR95HF::init() -> bool
 {
