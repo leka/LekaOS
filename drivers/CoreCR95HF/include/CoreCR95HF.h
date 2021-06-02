@@ -69,10 +69,9 @@ class CoreCR95HF : public interface::RFID
 	template <size_t SIZE>
 	void receive(std::array<uint8_t, SIZE> &rfid_answer)
 	{
-		auto rfid_answer_size = rfid_answer.size();
-		_serial.read(_rx_buf.data(), rfid_answer_size);
+		_serial.read(_rx_buf.data(), rfid_answer.size());
 
-		for (auto i = 0; i < rfid_answer_size; ++i) {
+		for (auto i = 0; i < rfid_answer.size(); ++i) {
 			rfid_answer[i] = _rx_buf[i];
 		}
 	}
@@ -82,8 +81,13 @@ class CoreCR95HF : public interface::RFID
   private:
 	interface::BufferedSerial &_serial;
 
-	std::array<uint8_t, cr95hf::max_tx_length> _tx_buf {};
-	std::array<uint8_t, cr95hf::max_rx_length> _rx_buf {};
+	void setProtocoleISO14443();
+	void setGainAndModulation();
+
+	auto checkSensorSetup(const uint8_t *buffer) const -> bool;
+	auto receiveSetupAnswer() -> bool;
+
+	auto calculateCommandSize(const size_t iso_cmd_size) const -> size_t;
 
 	template <size_t SIZE>
 	void formatCommand(std::array<uint8_t, SIZE> cmd_iso)
@@ -96,13 +100,8 @@ class CoreCR95HF : public interface::RFID
 		}
 	}
 
-	void setProtocoleISO14443();
-	void setGainAndModulation();
-
-	auto checkSensorSetup(const uint8_t *buffer) const -> bool;
-	auto receiveSetupAnswer() -> bool;
-
-	auto calculateCommandSize(const size_t iso_cmd_size) const -> size_t;
+	std::array<uint8_t, cr95hf::max_tx_length> _tx_buf {};
+	std::array<uint8_t, cr95hf::max_rx_length> _rx_buf {};
 };
 
 }	// namespace leka
