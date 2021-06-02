@@ -60,9 +60,7 @@ class CoreCR95HF : public interface::RFID
 	template <size_t SIZE>
 	void send(const std::array<uint8_t, SIZE> &iso_command)
 	{
-		int number_of_bytes_added_to_the_command = 2;
-		const size_t size						 = iso_command.size() + number_of_bytes_added_to_the_command;
-
+		auto size = calculateCommandSize(iso_command.size());
 		formatCommand(iso_command);
 
 		_serial.write(_tx_buf.data(), size);
@@ -103,6 +101,8 @@ class CoreCR95HF : public interface::RFID
 
 	auto checkSensorSetup(const uint8_t *buffer) const -> bool;
 	auto receiveSetupAnswer() -> bool;
+
+	auto calculateCommandSize(const size_t iso_cmd_size) const -> size_t;
 };
 
 }	// namespace leka

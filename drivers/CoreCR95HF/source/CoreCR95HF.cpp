@@ -65,4 +65,8 @@ auto CoreCR95HF::init() -> bool
 	return init_status;
 }
 
+auto CoreCR95HF::calculateCommandSize(const size_t iso_cmd_size) const -> size_t
+{
+	return iso_cmd_size + 2;
+}
 }	// namespace leka
