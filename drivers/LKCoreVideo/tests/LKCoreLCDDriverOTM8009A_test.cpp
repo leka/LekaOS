@@ -6,9 +6,9 @@
 
 #include "LKCoreLCDDriverOTM8009A.h"
 #include "gtest/gtest.h"
-#include "mock_LKCoreDSI.h"
-#include "mock_LKCoreSTM32Hal.h"
-#include "stub_PwmOut.h"
+#include "mocks/leka/LKCoreDSI.h"
+#include "mocks/leka/LKCoreSTM32Hal.h"
+#include "stubs/mbed/PwmOut.h"
 
 using namespace leka;
 

@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "gpio_api.h"
+#include "hal/gpio_api.h"
 
 void gpio_init_out(gpio_t *gpio, PinName pin)
 {

@@ -5,15 +5,15 @@
 #include "LKCoreVideo.h"
 
 #include "gtest/gtest.h"
-#include "mock_LKCoreDMA2D.h"
-#include "mock_LKCoreDSI.h"
-#include "mock_LKCoreFont.h"
-#include "mock_LKCoreGraphics.h"
-#include "mock_LKCoreJPEG.h"
-#include "mock_LKCoreLCD.h"
-#include "mock_LKCoreLTDC.h"
-#include "mock_LKCoreSDRAM.h"
-#include "mock_LKCoreSTM32Hal.h"
+#include "mocks/leka/LKCoreDMA2D.h"
+#include "mocks/leka/LKCoreDSI.h"
+#include "mocks/leka/LKCoreFont.h"
+#include "mocks/leka/LKCoreGraphics.h"
+#include "mocks/leka/LKCoreJPEG.h"
+#include "mocks/leka/LKCoreLCD.h"
+#include "mocks/leka/LKCoreLTDC.h"
+#include "mocks/leka/LKCoreSDRAM.h"
+#include "mocks/leka/LKCoreSTM32Hal.h"
 
 using namespace leka;
 using ::testing::_;

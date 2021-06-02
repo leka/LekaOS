@@ -7,7 +7,7 @@
 #include <memory>
 
 #include "gtest/gtest.h"
-#include "stub_mbed_critical.h"
+#include "stubs/mbed/mbed_critical.h"
 
 using namespace leka;
 

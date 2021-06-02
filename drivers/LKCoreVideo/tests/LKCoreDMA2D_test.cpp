@@ -6,7 +6,7 @@
 
 #include "corevideo_config.h"
 #include "gtest/gtest.h"
-#include "mock_LKCoreSTM32Hal.h"
+#include "mocks/leka/LKCoreSTM32Hal.h"
 
 using namespace leka;
 using ::testing::_;

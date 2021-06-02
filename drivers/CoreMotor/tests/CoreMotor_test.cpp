@@ -5,7 +5,7 @@
 #include "CoreMotor.h"
 
 #include "gtest/gtest.h"
-#include "stub_PwmOut.h"
+#include "stubs/mbed/PwmOut.h"
 
 // Test list
 // - create object - done

@@ -5,9 +5,9 @@
 #include "LKCoreJPEG.h"
 
 #include "gtest/gtest.h"
-#include "mock_LKCoreDMA2D.h"
-#include "mock_LKCoreFatFs.h"
-#include "mock_LKCoreSTM32Hal.h"
+#include "mocks/leka/LKCoreDMA2D.h"
+#include "mocks/leka/LKCoreFatFs.h"
+#include "mocks/leka/LKCoreSTM32Hal.h"
 #include "st_jpeg_utils.h"
 
 using namespace leka;

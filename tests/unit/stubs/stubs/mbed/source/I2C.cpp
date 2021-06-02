@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "stub_I2C.h"
+#include "../I2C.h"
 
 namespace mbed {
 

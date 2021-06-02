@@ -7,7 +7,7 @@
 #include "LogKit.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "stubs/stub_Kernel.h"
+#include "stubs/mbed/Kernel.h"
 
 using namespace leka;
 

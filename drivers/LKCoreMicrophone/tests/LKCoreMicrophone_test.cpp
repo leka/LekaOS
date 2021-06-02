@@ -1,7 +1,7 @@
 #include "LKCoreMicrophone.h"
 
 #include "gtest/gtest.h"
-#include "stub_AnalogIn.h"
+#include "stubs/mbed/AnalogIn.h"
 
 using namespace leka;
 
