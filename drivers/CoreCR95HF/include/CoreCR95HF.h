@@ -39,18 +39,14 @@ namespace cr95hf {
 
 	namespace protocol {
 
-		constexpr Protocol ISO15693	 = {.id			= 0x01,
-										.gain		= static_cast<std::byte>(0x00),
-										.modulation = static_cast<std::byte>(0xD0)};   // gain = 34 dB, modulation = 95%
-		constexpr Protocol ISO14443A = {.id			= 0x02,
-										.gain		= static_cast<std::byte>(0x01),
-										.modulation = static_cast<std::byte>(0xD0)};   // gain = 32 dB, modulation = 95%
-		constexpr Protocol ISO14443B = {.id			= 0x03,
-										.gain		= static_cast<std::byte>(0x00),
-										.modulation = static_cast<std::byte>(0x20)};   // gain = 34 dB, modulation = 17%
-		constexpr Protocol ISO18092	 = {.id			= 0x04,
-										.gain		= static_cast<std::byte>(0x00),
-										.modulation = static_cast<std::byte>(0x20)};   // gain = 34 dB, modulation = 17%
+		constexpr Protocol ISO15693 = {
+			.id = 0x01, .gain = std::byte(0x00), .modulation = std::byte(0xD0)};   // gain = 34 dB, modulation = 95%
+		constexpr Protocol ISO14443A = {
+			.id = 0x02, .gain = std::byte(0x01), .modulation = std::byte(0xD0)};   // gain = 32 dB, modulation = 95%
+		constexpr Protocol ISO14443B = {
+			.id = 0x03, .gain = std::byte(0x00), .modulation = std::byte(0x20)};   // gain = 34 dB, modulation = 17%
+		constexpr Protocol ISO18092 = {
+			.id = 0x04, .gain = std::byte(0x00), .modulation = std::byte(0x20)};   // gain = 34 dB, modulation = 17%
 
 	};	 // namespace protocol
 
@@ -62,14 +58,14 @@ class CoreCR95HF : public interface::RFID
 	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
 	template <size_t SIZE>
-	void send(const std::array<uint8_t, SIZE> &cmd_iso)
+	void send(const std::array<uint8_t, SIZE> &iso_command)
 	{
 		int number_of_bytes_added_to_the_command = 2;
-		const size_t command_size				 = cmd_iso.size() + number_of_bytes_added_to_the_command;
+		const size_t size						 = iso_command.size() + number_of_bytes_added_to_the_command;
 
-		formatCommand(cmd_iso);
+		formatCommand(iso_command);
 
-		_serial.write(_tx_buf.data(), command_size);
+		_serial.write(_tx_buf.data(), size);
 	}
 
 	template <size_t SIZE>
