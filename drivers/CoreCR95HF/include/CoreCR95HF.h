@@ -99,17 +99,8 @@ class CoreCR95HF : public interface::RFID
 	void setGainAndModulation();
 
 	auto isSetupAnswerCorrect() -> bool;
-	template <size_t SIZE>
-	auto checkSensorSetup(const std::array<uint8_t, SIZE> &data) const -> bool
-	{
-		const std::array<uint8_t, 2> CR95HF_setup_completed = {0x00, 0x00};
 
-		if (data[0] == CR95HF_setup_completed[0] && data[1] == CR95HF_setup_completed[1]) {
-			return true;
-		}
-
-		return false;
-	};
+	auto checkAnswerSensorSetup(const std::array<uint8_t, 2> &data) const -> bool;
 
 	auto calculateCommandSize(const size_t iso_cmd_size) const -> size_t;
 
