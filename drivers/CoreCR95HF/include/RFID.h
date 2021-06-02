@@ -9,13 +9,13 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace leka::interface {
+namespace leka::rfid {
 
 enum class Flag : uint8_t
 {
 	seven_significant_bits = 0b00000111,
 	eigth_significant_bits = 0b00001000,
-	crc					   = 0b00100000,
+	crc					   = 0b00100000
 };
 
 constexpr Flag operator|(Flag lhs, Flag rhs)
@@ -24,12 +24,9 @@ constexpr Flag operator|(Flag lhs, Flag rhs)
 							 static_cast<std::underlying_type_t<Flag>>(rhs));
 };
 
-template <size_t SIZE>
-struct CommandISO {
-	[[nodiscard]] auto getData() const -> const uint8_t * { return data.data(); }
-	std::array<uint8_t, SIZE> data;
-	Flag flags;
-};
+}	// namespace leka::rfid
+
+namespace leka::interface {
 
 class RFID
 {
@@ -44,12 +41,23 @@ class RFID
 
 	class ISO14443
 	{
+	  public:
+		void virtual write() = 0;
+		void virtual read()	 = 0;
+
+		template <size_t SIZE>
+		struct ISOCommand {
+			const std::array<uint8_t, SIZE> data;
+			const leka::rfid::Flag flags;
+			[[nodiscard]] inline auto getData() const -> uint8_t * { return data.data(); }
+		};
+
 	  private:
 		std::array<uint8_t, 16> _tag_data {0};
 
-		CommandISO<1> command_requestA		  = {.data = {0x26}, .flags = Flag::seven_significant_bits};
-		CommandISO<2> command_read_register_8 = {.data	= {0x30, 0x08},
-												 .flags = Flag::crc | Flag::eigth_significant_bits};
+		ISOCommand<1> command_requestA		  = {.data = {0x26}, .flags = leka::rfid::Flag::seven_significant_bits};
+		ISOCommand<2> command_read_register_8 = {
+			.data = {0x30, 0x08}, .flags = leka::rfid::Flag::crc | leka::rfid::Flag::eigth_significant_bits};
 	};
 };
 

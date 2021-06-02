@@ -84,8 +84,18 @@ class CoreCR95HF : public interface::RFID
 	void setProtocoleISO14443();
 	void setGainAndModulation();
 
-	auto checkSensorSetup(const uint8_t *buffer) const -> bool;
 	auto receiveSetupAnswer() -> bool;
+	template <size_t SIZE>
+	auto checkSensorSetup(const std::array<uint8_t, SIZE> &data) const -> bool
+	{
+		const std::array<uint8_t, 2> CR95HF_setup_completed = {0x00, 0x00};
+
+		if (data[0] == CR95HF_setup_completed[0] && data[1] == CR95HF_setup_completed[1]) {
+			return true;
+		}
+
+		return false;
+	};
 
 	auto calculateCommandSize(const size_t iso_cmd_size) const -> size_t;
 

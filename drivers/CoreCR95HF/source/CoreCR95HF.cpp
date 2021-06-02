@@ -31,19 +31,7 @@ auto CoreCR95HF::receiveSetupAnswer() -> bool
 
 	_serial.read(buffer.data(), buffer.size());
 
-	return checkSensorSetup(buffer.data());
-}
-
-auto CoreCR95HF::checkSensorSetup(const uint8_t *buffer) const -> bool
-{
-	const std::array<uint8_t, 2> CR95HF_setup_completed = {0x00, 0x00};
-
-	if (std::array<uint8_t, 2> CR95HF_answer = {buffer[0], buffer[1]};
-		CR95HF_answer[0] == CR95HF_setup_completed[0] && CR95HF_answer[1] == CR95HF_setup_completed[1]) {
-		return true;
-	}
-
-	return false;
+	return checkSensorSetup(buffer);
 }
 
 auto CoreCR95HF::init() -> bool
