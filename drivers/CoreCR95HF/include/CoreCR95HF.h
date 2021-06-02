@@ -5,8 +5,6 @@
 #ifndef _LEKA_OS_DRIVER_CORE_CR95HF_H_
 #define _LEKA_OS_DRIVER_CORE_CR95HF_H_
 
-#include "rtos/ThisThread.h"
-
 #include "CoreBufferedSerial.h"
 #include "RFID.h"
 
@@ -74,10 +72,9 @@ class CoreCR95HF : public interface::RFID
 	template <size_t SIZE>
 	void send(const std::array<uint8_t, SIZE> &iso_command)
 	{
-		auto size = calculateCommandSize(iso_command.size());
 		formatCommand(iso_command);
 
-		_serial.write(_tx_buf.data(), size);
+		_serial.write(_tx_buf.data(), calculateCommandSize(iso_command.size()));
 	}
 
 	template <size_t SIZE>
@@ -95,23 +92,23 @@ class CoreCR95HF : public interface::RFID
   private:
 	interface::BufferedSerial &_serial;
 
-	void setProtocoleISO14443();
+	void setProtocolISO14443();
 	void setGainAndModulation();
 
 	auto isSetupAnswerCorrect() -> bool;
 
 	auto checkAnswerSetup(const std::array<uint8_t, 2> &buffer) const -> bool;
 
-	auto calculateCommandSize(const size_t iso_cmd_size) const -> size_t;
+	auto calculateCommandSize(const size_t size) const -> size_t;
 
 	template <size_t SIZE>
-	void formatCommand(std::array<uint8_t, SIZE> cmd_iso)
+	void formatCommand(std::array<uint8_t, SIZE> iso_command)
 	{
 		_tx_buf[0] = cr95hf::command::send_receive;
-		_tx_buf[1] = cmd_iso.size();
+		_tx_buf[1] = iso_command.size();
 
-		for (auto i = 0; i < cmd_iso.size(); ++i) {
-			_tx_buf[i + 2] = cmd_iso[i];
+		for (auto i = 0; i < iso_command.size(); ++i) {
+			_tx_buf[i + 2] = iso_command[i];
 		}
 	}
 

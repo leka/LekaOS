@@ -4,11 +4,13 @@
 
 #include "CoreCR95HF.h"
 
+#include "rtos/ThisThread.h"
+
 using namespace std::chrono;
 
 namespace leka {
 
-void CoreCR95HF::setProtocoleISO14443()
+void CoreCR95HF::setProtocolISO14443()
 {
 	_serial.write(cr95hf::command::set_protocol_ISO14443_command.data(), 4);
 }
@@ -36,7 +38,7 @@ auto CoreCR95HF::checkAnswerSetup(const std::array<uint8_t, 2> &buffer) const ->
 
 auto CoreCR95HF::init() -> bool
 {
-	setProtocoleISO14443();
+	setProtocolISO14443();
 
 	rtos::ThisThread::sleep_for(10ms);
 
@@ -55,8 +57,8 @@ auto CoreCR95HF::init() -> bool
 	return true;
 }
 
-auto CoreCR95HF::calculateCommandSize(const size_t iso_cmd_size) const -> size_t
+auto CoreCR95HF::calculateCommandSize(const size_t size) const -> size_t
 {
-	return iso_cmd_size + 2;
+	return size + 2;
 }
 }	// namespace leka
