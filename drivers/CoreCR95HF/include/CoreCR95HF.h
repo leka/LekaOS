@@ -100,7 +100,7 @@ class CoreCR95HF : public interface::RFID
 
 	auto isSetupAnswerCorrect() -> bool;
 
-	auto checkAnswerSensorSetup(const std::array<uint8_t, 2> &data) const -> bool;
+	auto checkAnswerSetup(const std::array<uint8_t, 2> &buffer) const -> bool;
 
 	auto calculateCommandSize(const size_t iso_cmd_size) const -> size_t;
 

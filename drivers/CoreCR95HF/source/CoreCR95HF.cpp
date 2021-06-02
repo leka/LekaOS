@@ -24,18 +24,14 @@ auto CoreCR95HF::isSetupAnswerCorrect() -> bool
 
 	receive(buffer);
 
-	return checkAnswerSensorSetup(buffer);
+	return checkAnswerSetup(buffer);
 }
 
-auto CoreCR95HF::checkAnswerSensorSetup(const std::array<uint8_t, 2> &data) const -> bool
+auto CoreCR95HF::checkAnswerSetup(const std::array<uint8_t, 2> &buffer) const -> bool
 {
 	const std::array<uint8_t, 2> CR95HF_setup_completed = {0x00, 0x00};
 
-	if (data[0] == CR95HF_setup_completed[0] && data[1] == CR95HF_setup_completed[1]) {
-		return true;
-	}
-
-	return false;
+	return (buffer == CR95HF_setup_completed) ? true : false;
 };
 
 auto CoreCR95HF::init() -> bool
