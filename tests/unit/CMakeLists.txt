@@ -153,7 +153,9 @@ include_directories(BEFORE SYSTEM
 	${INCLUDE_DIR}/cxxsupport
 )
 
-add_subdirectory("${INCLUDE_DIR}" "include")
+include_directories(BEFORE
+	${INCLUDE_DIR}
+)
 
 #
 # Mark: - Headers
@@ -209,7 +211,6 @@ target_link_libraries(LekaOSUnitTestsExec
 		mbed-os
 		mocks
 		stubs
-		interface
 )
 
 add_test(NAME LekaOSUnitTests COMMAND LekaOSUnitTestsExec)
