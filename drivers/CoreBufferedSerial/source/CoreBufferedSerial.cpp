@@ -18,4 +18,9 @@ auto CoreBufferedSerial::write(const uint8_t *buffer, ssize_t length) -> ssize_t
 	return _serial.write(buffer, length);
 }
 
+auto CoreBufferedSerial::readable() -> bool
+{
+	return _serial.readable();
+}
+
 // ? LCOV_EXCL_STOP - Exclude from coverage report

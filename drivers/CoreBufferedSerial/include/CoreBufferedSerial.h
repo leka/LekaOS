@@ -7,18 +7,7 @@
 
 #include "drivers/BufferedSerial.h"
 
-namespace leka::interface {
-
-class BufferedSerial
-{
-  public:
-	virtual ~BufferedSerial() = default;
-
-	virtual auto read(uint8_t *buffer, ssize_t length) -> ssize_t		 = 0;
-	virtual auto write(const uint8_t *buffer, ssize_t length) -> ssize_t = 0;
-};
-
-}	// namespace leka::interface
+#include "interface/drivers/BufferedSerial.h"
 
 namespace leka {
 
@@ -29,6 +18,7 @@ class CoreBufferedSerial : public interface::BufferedSerial
 
 	auto read(uint8_t *buffer, ssize_t length) -> ssize_t final;
 	auto write(const uint8_t *buffer, ssize_t length) -> ssize_t final;
+	auto readable() -> bool final;
 
   private:
 	mbed::BufferedSerial &_serial;
