@@ -22,7 +22,6 @@ target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi
 	lib_LekaScreen
 	lib_LekaTouch
 	lib_LekaWifi
-	lib_HelloWorld
 )
 
 target_link_custom_leka_targets(certs_emc_bt_lcd_qspi_rfid_touch_wifi)

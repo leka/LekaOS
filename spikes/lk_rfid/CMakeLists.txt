@@ -15,8 +15,6 @@ target_sources(spike_lk_rfid
 )
 
 target_link_libraries(spike_lk_rfid
-	LogKit
-	lib_HelloWorld
 	lib_LekaRFID
 )
 

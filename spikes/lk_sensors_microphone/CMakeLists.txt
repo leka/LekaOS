@@ -15,8 +15,6 @@ target_sources(spike_lk_sensors_microphone
 )
 
 target_link_libraries(spike_lk_sensors_microphone
-	LogKit
-	lib_HelloWorld
 	LKCoreMicrophone
 )
 

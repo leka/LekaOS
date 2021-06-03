@@ -15,9 +15,7 @@ target_sources(spike_lk_led
 )
 
 target_link_libraries(spike_lk_led
-	LogKit
 	driver_FastLED
-	lib_HelloWorld
 )
 
 target_link_custom_leka_targets(spike_lk_led)

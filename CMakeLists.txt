@@ -84,6 +84,21 @@ include_directories(BEFORE
 	${INCLUDE_DIR}
 )
 
+# Link libraries to all targets
+add_subdirectory(${LIBS_DIR}/Utils)
+add_subdirectory(${LIBS_DIR}/LogKit)
+add_subdirectory(${LIBS_DIR}/HelloWorld)
+add_subdirectory(${LIBS_DIR}/CircularBuffer)
+add_subdirectory(${LIBS_DIR}/CriticalSection)
+
+link_libraries(
+	Utils
+	LogKit
+	HelloWorld
+	CircularBuffer
+	CriticalSection
+)
+
 # Add drivers & libraries
 add_subdirectory(${DRIVERS_DIR})
 add_subdirectory(${LIBS_DIR})

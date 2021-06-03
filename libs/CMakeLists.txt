@@ -7,8 +7,6 @@ add_subdirectory(${LIBS_DIR}/FileManager)
 add_subdirectory(${LIBS_DIR}/HardwareTest/LekaSD)
 add_subdirectory(${LIBS_DIR}/HardwareTest/LekaMotors)
 
-add_subdirectory(${LIBS_DIR}/HelloWorld)
-
 add_subdirectory(${LIBS_DIR}/InvestigationDay/BLE)
 add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaRFID)
 add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaWifi)
@@ -20,10 +18,5 @@ add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaBluetooth)
 add_subdirectory(${LIBS_DIR}/LKAnimationKit)
 
 add_subdirectory(${LIBS_DIR}/LKCalculatorKit)
-
-add_subdirectory(${LIBS_DIR}/Utils)
-add_subdirectory(${LIBS_DIR}/LogKit)
-add_subdirectory(${LIBS_DIR}/CircularBuffer)
-add_subdirectory(${LIBS_DIR}/CriticalSection)
 
 add_subdirectory(${LIBS_DIR}/PrettyPrinter)

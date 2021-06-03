@@ -15,8 +15,6 @@ target_sources(spike_lk_qspi
 )
 
 target_link_libraries(spike_lk_qspi
-	LogKit
-	lib_HelloWorld
 	lib_LekaFirmware
 )
 

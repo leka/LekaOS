@@ -16,8 +16,6 @@ target_sources(spike_lk_lcd
 
 target_link_libraries(spike_lk_lcd
 	lib_LekaScreen
-	lib_HelloWorld
-	LogKit
 	LKCoreFatFs
 	LKCoreVideo
 	LKCoreLL
