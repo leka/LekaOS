@@ -13,9 +13,9 @@ namespace leka::rfid {
 
 enum class Flag : uint8_t
 {
-	seven_significant_bits = 0b00000111,
-	eigth_significant_bits = 0b00001000,
-	crc					   = 0b00100000
+	sb_7 = 0b00000111,	 // significant bits : 7
+	sb_8 = 0b00001000,	 // significant bits : 8
+	crc	 = 0b00100000
 };
 
 constexpr Flag operator|(Flag lhs, Flag rhs)
@@ -46,7 +46,7 @@ class RFID
 		void virtual read()	 = 0;
 
 		template <size_t SIZE>
-		struct ISOCommand {
+		struct Command {
 			const std::array<uint8_t, SIZE> data;
 			const leka::rfid::Flag flags;
 			[[nodiscard]] inline auto getData() const -> uint8_t * { return data.data(); }
@@ -55,9 +55,9 @@ class RFID
 	  private:
 		std::array<uint8_t, 16> _tag_data {0};
 
-		ISOCommand<1> command_requestA		  = {.data = {0x26}, .flags = leka::rfid::Flag::seven_significant_bits};
-		ISOCommand<2> command_read_register_8 = {
-			.data = {0x30, 0x08}, .flags = leka::rfid::Flag::crc | leka::rfid::Flag::eigth_significant_bits};
+		Command<1> command_requestA		   = {.data = {0x26}, .flags = leka::rfid::Flag::sb_7};
+		Command<2> command_read_register_8 = {.data	 = {0x30, 0x08},
+											  .flags = leka::rfid::Flag::crc | leka::rfid::Flag::sb_8};
 	};
 };
 

@@ -12,12 +12,12 @@ namespace leka {
 
 void CoreCR95HF::setProtocolISO14443()
 {
-	_serial.write(cr95hf::command::set_protocol_ISO14443_command.data(), 4);
+	_serial.write(cr95hf::command::frame::set_protocol_ISO14443_command.data(), 4);
 }
 
 void CoreCR95HF::setGainAndModulation()
 {
-	_serial.write(cr95hf::command::set_gain_and_modulation_command.data(), 6);
+	_serial.write(cr95hf::command::frame::set_gain_and_modulation_command.data(), 6);
 }
 
 auto CoreCR95HF::isSetupAnswerCorrect() -> bool
@@ -26,15 +26,8 @@ auto CoreCR95HF::isSetupAnswerCorrect() -> bool
 
 	receive(buffer);
 
-	return checkAnswerSetup(buffer);
+	return buffer == cr95hf::command::frame::CR95HF_setup_completed ? true : false;
 }
-
-auto CoreCR95HF::checkAnswerSetup(const std::array<uint8_t, 2> &buffer) const -> bool
-{
-	const std::array<uint8_t, 2> CR95HF_setup_completed = {0x00, 0x00};
-
-	return (buffer == CR95HF_setup_completed) ? true : false;
-};
 
 auto CoreCR95HF::init() -> bool
 {

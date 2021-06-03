@@ -46,16 +46,22 @@ namespace cr95hf {
 		constexpr uint8_t send_receive			  = 0x04;
 		constexpr uint8_t set_gain_and_modulation = 0x09;
 
-		constexpr std::array<uint8_t, 4> set_protocol_ISO14443_command {
-			cr95hf::command::set_protocol, 0x02, cr95hf::protocol::ISO14443A.id, cr95hf::set_protocol_flag};
+		namespace frame {
 
-		constexpr std::array<uint8_t, 6> set_gain_and_modulation_command {
-			cr95hf::command::set_gain_and_modulation,
-			0x04,
-			cr95hf::arc_b,
-			cr95hf::flag_increment,
-			cr95hf::gain_modulation_index,
-			cr95hf::protocol::ISO14443A.gain_modulation_values()};
+			constexpr std::array<uint8_t, 4> set_protocol_ISO14443_command {
+				cr95hf::command::set_protocol, 0x02, cr95hf::protocol::ISO14443A.id, cr95hf::set_protocol_flag};
+
+			constexpr std::array<uint8_t, 6> set_gain_and_modulation_command {
+				cr95hf::command::set_gain_and_modulation,
+				0x04,
+				cr95hf::arc_b,
+				cr95hf::flag_increment,
+				cr95hf::gain_modulation_index,
+				cr95hf::protocol::ISO14443A.gain_modulation_values()};
+
+			constexpr std::array<uint8_t, 2> CR95HF_setup_completed = {0x00, 0x00};
+
+		}	// namespace frame
 
 	}	// namespace command
 
@@ -77,11 +83,13 @@ class CoreCR95HF : public interface::RFID
 	template <size_t SIZE>
 	void receive(std::array<uint8_t, SIZE> &rfid_answer)
 	{
-		_serial.read(_rx_buf.data(), rfid_answer.size());
+		auto size = _serial.read(rfid_answer.data(), rfid_answer.size());
 
-		for (auto i = 0; i < rfid_answer.size(); ++i) {
-			rfid_answer[i] = _rx_buf[i];
+		if (size == 0) {
+			return 0;
 		}
+
+		return size;
 	}
 
 	auto init() -> bool;
