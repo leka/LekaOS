@@ -79,7 +79,10 @@ endif()
 include_directories(BEFORE SYSTEM
 	${INCLUDE_DIR}/cxxsupport
 )
-add_subdirectory(${INCLUDE_DIR})
+
+include_directories(BEFORE
+	${INCLUDE_DIR}
+)
 
 # Add drivers & libraries
 add_subdirectory(${DRIVERS_DIR})

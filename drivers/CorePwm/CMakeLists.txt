@@ -16,7 +16,6 @@ target_sources(CorePwm
 
 target_link_libraries(CorePwm
 	mbed-os
-	interface
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
