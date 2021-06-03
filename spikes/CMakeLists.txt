@@ -22,6 +22,8 @@ add_subdirectory(${SPIKES_DIR}/lk_file_manager)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_touch)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_temperature_humidity)
 
+add_subdirectory(${SPIKES_DIR}/stl_cxxsupport)
+
 add_custom_target(spikes_leka)
 add_dependencies( spikes_leka
 	spike_lk_ble
@@ -48,8 +50,14 @@ add_dependencies( spikes_mbed
 	spike_mbed_watchdog_ticker_vs_thread
 )
 
+add_custom_target(spikes_stl)
+add_dependencies( spikes_stl
+	spike_stl_cxxsupport
+)
+
 add_custom_target(spikes)
 add_dependencies(spikes
 	spikes_leka
 	spikes_mbed
+	spikes_stl
 )
