@@ -62,7 +62,9 @@
 		"cinttypes": "cpp",
 		"typeindex": "cpp",
 		"typeinfo": "cpp",
-		"variant": "cpp"
+		"variant": "cpp",
+		"lstd_*": "cpp",
+		"mstd_*": "cpp"
 	},
 	"files.exclude": {
 		".cache": true,
