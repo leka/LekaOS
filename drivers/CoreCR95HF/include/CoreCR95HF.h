@@ -6,7 +6,7 @@
 #define _LEKA_OS_DRIVER_CORE_CR95HF_H_
 
 #include "CoreBufferedSerial.h"
-#include "RFID.h"
+#include "interface/drivers/RFID.h"
 
 namespace leka {
 
@@ -81,7 +81,7 @@ class CoreCR95HF : public interface::RFID
 	}
 
 	template <size_t SIZE>
-	void receive(std::array<uint8_t, SIZE> &rfid_answer)
+	auto receive(std::array<uint8_t, SIZE> &rfid_answer) -> bool
 	{
 		auto size = _serial.read(rfid_answer.data(), rfid_answer.size());
 

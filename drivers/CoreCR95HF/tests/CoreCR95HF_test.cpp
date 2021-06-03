@@ -5,7 +5,7 @@
 #include "CoreCR95HF.h"
 
 #include "gtest/gtest.h"
-#include "mock_CoreBufferedSerial.h"
+#include "mocks/leka/CoreBufferedSerial.h"
 
 using ::testing::Args;
 using ::testing::DoAll;
