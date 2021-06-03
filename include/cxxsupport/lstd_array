@@ -6,6 +6,8 @@
 #ifndef _LEKA_OS_CXX_SUPPORT_ARRAY_H_
 #define _LEKA_OS_CXX_SUPPORT_ARRAY_H_
 
+// clang-format off
+
 // ? Information about this header
 // ?
 // ? The purpose of this header is to provide C++ STL functionalities
@@ -19,8 +21,6 @@
 // ?     - GNU Free Documentation License (GFDL)
 // ?
 // ? It is therefore made available under the same terms.
-
-// clang-format off
 
 #if __cplusplus >= 201703L && __has_include(<array>)
 #include <version>
