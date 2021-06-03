@@ -15,8 +15,6 @@ target_sources(spike_lk_bluetooth
 )
 
 target_link_libraries(spike_lk_bluetooth
-	LogKit
-	lib_HelloWorld
 	lib_LekaBluetooth
 )
 

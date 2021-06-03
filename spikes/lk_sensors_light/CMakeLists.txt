@@ -15,8 +15,6 @@ target_sources(spike_lk_sensors_light
 )
 
 target_link_libraries(spike_lk_sensors_light
-	LogKit
-	lib_HelloWorld
 	LKCoreLightSensor
 )
 

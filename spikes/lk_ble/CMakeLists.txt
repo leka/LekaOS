@@ -15,8 +15,6 @@ target_sources(spike_lk_ble
 )
 
 target_link_libraries(spike_lk_ble
-	LogKit
-	lib_HelloWorld
 	lib_BLE
 )
 

@@ -15,8 +15,6 @@ target_sources(spike_lk_sensors_touch
 )
 
 target_link_libraries(spike_lk_sensors_touch
-	LogKit
-	lib_HelloWorld
 	lib_LekaTouch
 )
 
