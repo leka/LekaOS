@@ -150,10 +150,9 @@ endfunction()
 #
 
 include_directories(BEFORE SYSTEM
+	${EXTERN_MBED_OS_DIR}/UNITTESTS/target_h/platform/cxxsupport
+	${EXTERN_MBED_OS_DIR}/platform/cxxsupport
 	${INCLUDE_DIR}/cxxsupport
-)
-
-include_directories(BEFORE
 	${INCLUDE_DIR}
 )
 
