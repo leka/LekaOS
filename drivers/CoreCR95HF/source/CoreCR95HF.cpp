@@ -3,12 +3,50 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "CoreCR95HF.h"
+#include <cstddef>
 
 #include "rtos/ThisThread.h"
 
 using namespace std::chrono;
 
 namespace leka {
+
+void CoreCR95HF::send(const lstd::span<uint8_t> &iso_command)
+{
+	formatCommand(iso_command);
+
+	_serial.write(_tx_buf.data(), calculateCommandSize(iso_command.size()));
+}
+
+void CoreCR95HF::formatCommand(const lstd::span<uint8_t> &iso_command)
+{
+	_tx_buf[0] = cr95hf::command::send_receive;
+	_tx_buf[1] = iso_command.size();
+
+	for (auto i = 0; i < iso_command.size(); ++i) {
+		_tx_buf[i + 2] = iso_command[i];
+	}
+}
+
+auto CoreCR95HF::isSetupAnswerCorrect() -> bool
+{
+	std::array<uint8_t, 2> buffer;
+
+	receive(buffer);
+
+	return buffer == cr95hf::status::setup_complete ? true : false;
+}
+
+auto CoreCR95HF::receive(lstd::span<uint8_t> rfid_answer) -> size_t
+{
+	auto size = _serial.read(rfid_answer.data(), rfid_answer.size());
+
+	if (size < 0) {	  // serial::read error
+		return 0;
+	}
+
+	return size;
+}
 
 void CoreCR95HF::setProtocolISO14443()
 {
@@ -18,15 +56,6 @@ void CoreCR95HF::setProtocolISO14443()
 void CoreCR95HF::setGainAndModulation()
 {
 	_serial.write(cr95hf::command::frame::set_gain_and_modulation_command.data(), 6);
-}
-
-auto CoreCR95HF::isSetupAnswerCorrect() -> bool
-{
-	std::array<uint8_t, 2> buffer;
-
-	receive(buffer);
-
-	return buffer == cr95hf::command::frame::CR95HF_setup_completed ? true : false;
 }
 
 auto CoreCR95HF::init() -> bool

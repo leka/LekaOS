@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_DRIVER_CORE_CR95HF_H_
 #define _LEKA_OS_DRIVER_CORE_CR95HF_H_
 
+#include <lstd_span>
+
 #include "CoreBufferedSerial.h"
 #include "interface/drivers/RFID.h"
 
@@ -59,11 +61,15 @@ namespace cr95hf {
 				cr95hf::gain_modulation_index,
 				cr95hf::protocol::ISO14443A.gain_modulation_values()};
 
-			constexpr std::array<uint8_t, 2> CR95HF_setup_completed = {0x00, 0x00};
-
 		}	// namespace frame
 
 	}	// namespace command
+
+	namespace status {
+
+		constexpr std::array<uint8_t, 2> setup_complete = {0x00, 0x00};
+
+	}	// namespace status
 
 }	// namespace cr95hf
 
@@ -72,30 +78,16 @@ class CoreCR95HF : public interface::RFID
   public:
 	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
-	template <size_t SIZE>
-	void send(const std::array<uint8_t, SIZE> &iso_command)
-	{
-		formatCommand(iso_command);
+	void send(const lstd::span<uint8_t> &iso_command);
 
-		_serial.write(_tx_buf.data(), calculateCommandSize(iso_command.size()));
-	}
-
-	template <size_t SIZE>
-	auto receive(std::array<uint8_t, SIZE> &rfid_answer) -> bool
-	{
-		auto size = _serial.read(rfid_answer.data(), rfid_answer.size());
-
-		if (size == 0) {
-			return 0;
-		}
-
-		return size;
-	}
+	auto receive(lstd::span<uint8_t> rfid_answer) -> size_t;
 
 	auto init() -> bool;
 
   private:
 	interface::BufferedSerial &_serial;
+
+	void formatCommand(const lstd::span<uint8_t> &iso_command);
 
 	void setProtocolISO14443();
 	void setGainAndModulation();
@@ -103,19 +95,7 @@ class CoreCR95HF : public interface::RFID
 	auto isSetupAnswerCorrect() -> bool;
 
 	auto checkAnswerSetup(const std::array<uint8_t, 2> &buffer) const -> bool;
-
 	auto calculateCommandSize(const size_t size) const -> size_t;
-
-	template <size_t SIZE>
-	void formatCommand(std::array<uint8_t, SIZE> iso_command)
-	{
-		_tx_buf[0] = cr95hf::command::send_receive;
-		_tx_buf[1] = iso_command.size();
-
-		for (auto i = 0; i < iso_command.size(); ++i) {
-			_tx_buf[i + 2] = iso_command[i];
-		}
-	}
 
 	std::array<uint8_t, cr95hf::max_tx_length> _tx_buf {};
 	std::array<uint8_t, cr95hf::max_rx_length> _rx_buf {};
