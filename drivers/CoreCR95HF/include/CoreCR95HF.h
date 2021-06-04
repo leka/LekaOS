@@ -42,6 +42,12 @@ namespace cr95hf {
 
 	};	 // namespace protocol
 
+	namespace status {
+
+		constexpr std::array<uint8_t, 2> setup_complete = {0x00, 0x00};
+
+	}	// namespace status
+
 	namespace command {
 
 		constexpr uint8_t set_protocol			  = 0x02;
@@ -65,12 +71,6 @@ namespace cr95hf {
 
 	}	// namespace command
 
-	namespace status {
-
-		constexpr std::array<uint8_t, 2> setup_complete = {0x00, 0x00};
-
-	}	// namespace status
-
 }	// namespace cr95hf
 
 class CoreCR95HF : public interface::RFID
@@ -79,7 +79,6 @@ class CoreCR95HF : public interface::RFID
 	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
 	void send(const lstd::span<uint8_t> &iso_command);
-
 	auto receive(lstd::span<uint8_t> rfid_answer) -> size_t;
 
 	auto init() -> bool;
@@ -88,14 +87,12 @@ class CoreCR95HF : public interface::RFID
 	interface::BufferedSerial &_serial;
 
 	void formatCommand(const lstd::span<uint8_t> &iso_command);
+	auto calculateCommandSize(const size_t size) const -> size_t;
 
 	void setProtocolISO14443();
 	void setGainAndModulation();
 
 	auto isSetupAnswerCorrect() -> bool;
-
-	auto checkAnswerSetup(const std::array<uint8_t, 2> &buffer) const -> bool;
-	auto calculateCommandSize(const size_t size) const -> size_t;
 
 	std::array<uint8_t, cr95hf::max_tx_length> _tx_buf {};
 	std::array<uint8_t, cr95hf::max_rx_length> _rx_buf {};

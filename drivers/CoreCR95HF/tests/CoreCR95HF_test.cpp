@@ -51,22 +51,22 @@ TEST_F(CoreCR95HFSensorTest, receiveDataSuccess)
 	std::array<uint8_t, 20> actual_values {0};
 
 	EXPECT_CALL(mockBufferedSerial, read)
-		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 20), Return(0)));
+		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 20), Return(20)));
 
-	corecr95hf.receive(actual_values);
+	ASSERT_EQ(corecr95hf.receive(actual_values), 20);
 	ASSERT_EQ(read_values, actual_values);
 }
 
 TEST_F(CoreCR95HFSensorTest, receiveDataFailed)
 {
 	std::array<uint8_t, 7> read_values = {0x80, 0x05, 0x44, 0x0, 0x28, 0x00, 0x00};
-	std::array<uint8_t, 7> expected_values {0};
+	std::array<uint8_t, 7> actual_values {0};
 
 	EXPECT_CALL(mockBufferedSerial, read)
-		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 2), Return(0)));
+		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 2), Return(-1)));
 
-	corecr95hf.receive(expected_values);
-	ASSERT_NE(read_values, expected_values);
+	ASSERT_EQ(corecr95hf.receive(actual_values), 0);
+	ASSERT_NE(read_values, actual_values);
 }
 
 TEST_F(CoreCR95HFSensorTest, initSuccess)
