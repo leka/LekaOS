@@ -79,7 +79,7 @@ class CoreCR95HF : public interface::RFID
 	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
 	void send(const lstd::span<uint8_t> &iso_command);
-	auto receive(lstd::span<uint8_t> rfid_answer) -> size_t;
+	auto receive(const lstd::span<uint8_t> &rfid_answer) -> size_t;
 
 	auto init() -> bool;
 
@@ -95,7 +95,6 @@ class CoreCR95HF : public interface::RFID
 	auto isSetupAnswerCorrect() -> bool;
 
 	std::array<uint8_t, cr95hf::max_tx_length> _tx_buf {};
-	std::array<uint8_t, cr95hf::max_rx_length> _rx_buf {};
 };
 
 }	// namespace leka
