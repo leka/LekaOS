@@ -17,6 +17,7 @@ class CoreRFIDMock : public interface::RFID
   public:
 	MOCK_METHOD(void, send, (const lstd::span<uint8_t> &), (override));
 	MOCK_METHOD(size_t, receive, (const lstd::span<uint8_t> &), (override));
+	MOCK_METHOD(bool, init, (), (override));
 };
 
 }	// namespace leka
