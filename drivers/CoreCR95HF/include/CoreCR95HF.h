@@ -78,8 +78,8 @@ class CoreCR95HF : public interface::RFID
   public:
 	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
-	void send(const lstd::span<uint8_t> &iso_command);
-	auto receive(const lstd::span<uint8_t> &rfid_answer) -> size_t;
+	void send(const lstd::span<uint8_t> &iso_command) final;
+	auto receive(const lstd::span<uint8_t> &rfid_answer) -> size_t final;
 
 	auto init() -> bool;
 
