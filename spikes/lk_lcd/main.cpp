@@ -50,6 +50,7 @@ LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, cor
 
 const auto filename1 = std::array<char, 32> {"assets/images/Leka/logo.jpg"};
 const auto filename2 = std::array<char, 38> {"assets/images/Leka/emotion-happy.jpg"};
+char filename3[]	 = "assets/video/BirdsAndFeeder.avi";
 
 void registerCallbacks()
 {
@@ -114,10 +115,8 @@ auto main() -> int
 		foreground = (i % 2 == 0) ? CGColor::black : CGColor::pure_red;
 		line	   = i * 2;
 		log_info("Line #%i", i);
-		rtos::ThisThread::sleep_for(1s);
+		rtos::ThisThread::sleep_for(200ms);
 	}
-
-	rtos::ThisThread::sleep_for(5s);
 
 	leka::logger::set_print_function([](const char *str, size_t size) {
 		corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
@@ -127,7 +126,7 @@ auto main() -> int
 		"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
 		"only one line of the screen.");
 
-	rtos::ThisThread::sleep_for(10s);
+	rtos::ThisThread::sleep_for(2s);
 
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 
@@ -140,24 +139,33 @@ auto main() -> int
 
 		rtos::ThisThread::sleep_for(1s);
 
+		corevideo.turnOn();
 		if (corefatfs.open(filename1.data()) == FR_OK) {
+			log_info("Displaying image 1 : %s", filename1.data());
 			corevideo.displayImage(JPEG_File.get());
 			corevideo.setBrightness(0.2f);
 
-			corevideo.turnOn();
 
 			corefatfs.close();
 			rtos::ThisThread::sleep_for(2s);
 		}
 
 		if (corefatfs.open(filename2.data()) == FR_OK) {
+			log_info("Displaying image 2 : %s", filename2.data());
 			corevideo.displayImage(JPEG_File.get());
 			corevideo.setBrightness(0.9f);
 
 			corefatfs.close();
 			rtos::ThisThread::sleep_for(2s);
 
-			corevideo.turnOff();
 		}
+
+		if (corefatfs.open(filename3) == FR_OK) {
+			log_info("Displaying video : %s", filename3);
+			corejpeg.playVideo();
+			corefatfs.close();
+		}
+		corevideo.turnOff();
+		rtos::ThisThread::sleep_for(1s);
 	}
 }

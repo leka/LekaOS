@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "LKCoreJPEG.h"
+#include "LogKit.h"
 
 #include "corevideo_config.h"
 
@@ -66,12 +67,75 @@ uint32_t LKCoreJPEG::getWidthOffset(void)
 
 void LKCoreJPEG::displayImage(FIL *file)
 {
+	auto start_time = HAL_GetTick();
+	_previous_frame_size = 0;
+	
 	decodeImageWithPolling();	// TODO: handle errors
 
 	_hal.HAL_JPEG_GetInfo(&_hjpeg, &_config);
 
 	_dma2d.transferImage(_config.ImageWidth, _config.ImageHeight, getWidthOffset());
+
+	log_info("Image time : %dms", HAL_GetTick() - start_time);
 }
+
+uint32_t findFrameOffset(uint32_t offset, LKCoreFatFsBase &file) 
+{
+	uint8_t pattern_search_buffer[jpeg::PATTERN_SEARCH_BUFFERSIZE];
+
+	uint32_t index     = offset;
+	uint32_t read_size = 0;
+
+	do {
+		if (file.getSize() <= (index + 1)) {
+			return 0;
+		}
+		file.seek(index);
+		file.read(pattern_search_buffer, jpeg::PATTERN_SEARCH_BUFFERSIZE, &read_size);
+
+		if (read_size != 0) {
+			for (uint32_t i = 0; i < (read_size - 1); i++) {
+				if ((pattern_search_buffer[i] == jpeg::JPEG_SOI_MARKER_BYTE1) &&
+					(pattern_search_buffer[i + 1] == jpeg::JPEG_SOI_MARKER_BYTE0)) {
+					return index + i;
+				}
+			}
+			index += (read_size - 1);
+		}
+	} while (read_size != 0);
+
+	return 0;
+}
+
+
+void LKCoreJPEG::playVideo()
+{
+	bool is_first_frame	  = true;
+	uint32_t frame_index  = 0;
+	uint32_t frame_offset = 0;
+
+	do {
+		frame_offset = findFrameOffset(frame_offset + _previous_frame_size, _file);
+		if (frame_offset != 0) {
+			auto start_time = HAL_GetTick();
+
+			_file.seek(frame_offset);
+			_previous_frame_size = 0;
+			decodeImageWithPolling();
+
+			frame_index++;
+
+			if (is_first_frame) {
+				is_first_frame = false;
+				HAL_JPEG_GetInfo(&_hjpeg, &_config);
+			}
+			_dma2d.transferImage(_config.ImageWidth, _config.ImageHeight, getWidthOffset());
+			
+			log_info("framenb : %d, Frame time %dms", frame_index,HAL_GetTick() - startTime);
+		}
+	} while (frame_offset != 0);
+}
+
 
 HAL_StatusTypeDef LKCoreJPEG::decodeImageWithPolling(void)
 {
@@ -134,7 +198,9 @@ void LKCoreJPEG::onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t siz
 		_hal.HAL_JPEG_ConfigInputBuffer(hjpeg, _jpeg_input_buffer.data, _jpeg_input_buffer.size);
 	} else {
 		// TODO: handle error
+		log_error("FILE READ ERROR");
 	}
+	_previous_frame_size += size;
 }
 void LKCoreJPEG::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t size)
 {

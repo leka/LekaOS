@@ -29,8 +29,9 @@ class LKCoreJPEG : public LKCoreJPEGBase
 	uint32_t getWidthOffset(void) final;
 
 	void displayImage(FIL *file) final;
-	HAL_StatusTypeDef decodeImageWithPolling(
-		void) final;   // TODO: Update Return type with something else than HAL status
+	void playVideo();
+	
+	HAL_StatusTypeDef decodeImageWithPolling(void) final;   // TODO: Update Return type with something else than HAL status
 
 	void onErrorCallback(JPEG_HandleTypeDef *hjpeg) final;
 	void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) final;
@@ -59,6 +60,7 @@ class LKCoreJPEG : public LKCoreJPEGBase
 
 	JPEG_YCbCrToRGB_Convert_Function pConvert_Function;
 
+	uint32_t _previous_frame_size = 0;
 	uint32_t _mcu_number		= 0;
 	uint32_t _mcu_block_index	= 0;
 	uint32_t _input_file_offset = 0;
