@@ -78,7 +78,24 @@ void CoreCR95HF::setGainAndModulation()
 	_serial.write(cr95hf::command::frame::set_gain_and_modulation.data(), 6);
 }
 
-void CoreCR95HF::send(const lstd::span<uint8_t> &command) {}
+void CoreCR95HF::send(const lstd::span<uint8_t> &command)
+{
+	auto command_size = formatCommand(command);
+
+	_serial.write(_tx_buf.data(), command_size);
+}
+
+auto CoreCR95HF::formatCommand(const lstd::span<uint8_t> &command) -> size_t
+{
+	_tx_buf[0] = cr95hf::command::send_receive;
+	_tx_buf[1] = static_cast<uint8_t>(command.size());
+
+	for (auto i = 0; i < command.size(); ++i) {
+		_tx_buf[i + cr95hf::tag_answer_heading_size] = command[i];
+	}
+
+	return command.size() + cr95hf::tag_answer_heading_size;
+}
 
 auto CoreCR95HF::receive(const lstd::span<uint8_t> &tag_anwser) -> size_t {}
 

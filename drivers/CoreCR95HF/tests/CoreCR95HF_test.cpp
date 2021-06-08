@@ -126,3 +126,13 @@ TEST_F(CoreCR95HFSensorTest, initFailedTimeOut)
 	auto is_initialized = corecr95hf.init();
 	ASSERT_EQ(is_initialized, false);
 }
+
+TEST_F(CoreCR95HFSensorTest, sendCommandSuccess)
+{
+	std::array<uint8_t, 2> command = {0x26, 0x07};
+	const auto expected_values	   = ElementsAre(cr95hf::command::send_receive, command.size(), command[0], command[1]);
+
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+
+	corecr95hf.send(command);
+}

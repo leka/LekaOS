@@ -96,6 +96,8 @@ class CoreCR95HF : public interface::RFID
 	auto receiveCR95HFAnswer() -> size_t;
 	auto isDataAvailable() -> bool;
 
+	auto formatCommand(const lstd::span<uint8_t> &command) -> size_t;
+
 	interface::BufferedSerial &_serial;
 
 	std::array<uint8_t, cr95hf::max_tx_length> _tx_buf {};
