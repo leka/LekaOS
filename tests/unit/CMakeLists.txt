@@ -211,6 +211,7 @@ leka_register_unit_tests_for_driver(CoreI2C)
 leka_register_unit_tests_for_driver(CorePwm)
 leka_register_unit_tests_for_driver(CoreMotor)
 leka_register_unit_tests_for_driver(CoreBufferedSerial)
+leka_register_unit_tests_for_driver(CoreCR95HF)
 
 # Register libraries
 leka_register_unit_tests_for_library(LKAnimationKit)
