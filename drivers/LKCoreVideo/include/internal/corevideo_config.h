@@ -70,6 +70,11 @@ namespace jpeg {
 
 	}	// namespace mcu
 
+	namespace dma {
+		constexpr uint32_t chunk_size_in = 4096;
+		constexpr uint32_t chunk_size_out = 768*4;
+	}	// namespace dma
+
 }	// namespace jpeg
 
 namespace graphics {

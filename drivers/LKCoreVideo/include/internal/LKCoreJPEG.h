@@ -33,6 +33,8 @@ class LKCoreJPEG : public LKCoreJPEGBase
 	
 	HAL_StatusTypeDef decodeImageWithPolling(void) final;   // TODO: Update Return type with something else than HAL status
 
+    HAL_StatusTypeDef decodeImageWithDMA(void);
+
 	void onErrorCallback(JPEG_HandleTypeDef *hjpeg) final;
 	void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) final;
 

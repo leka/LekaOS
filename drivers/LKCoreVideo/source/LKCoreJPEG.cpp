@@ -73,8 +73,10 @@ void LKCoreJPEG::displayImage(FIL *file)
 	decodeImageWithPolling();	// TODO: handle errors
 
 	_hal.HAL_JPEG_GetInfo(&_hjpeg, &_config);
-
+	
+	auto t = HAL_GetTick();
 	_dma2d.transferImage(_config.ImageWidth, _config.ImageHeight, getWidthOffset());
+	log_info("DMA2D TRANSFER took %dms", HAL_GetTick() - t);
 
 	log_info("Image time : %dms", HAL_GetTick() - start_time);
 }
@@ -129,9 +131,11 @@ void LKCoreJPEG::playVideo()
 				is_first_frame = false;
 				HAL_JPEG_GetInfo(&_hjpeg, &_config);
 			}
+			auto t = HAL_GetTick();
 			_dma2d.transferImage(_config.ImageWidth, _config.ImageHeight, getWidthOffset());
+			log_info("DMA2D TRANSFER took %dms", HAL_GetTick() - t);
 			
-			log_info("framenb : %d, Frame time %dms", frame_index,HAL_GetTick() - startTime);
+			log_info("framenb : %d, Frame time %dms", frame_index,HAL_GetTick() - start_time);
 		}
 	} while (frame_offset != 0);
 }
@@ -149,9 +153,17 @@ HAL_StatusTypeDef LKCoreJPEG::decodeImageWithPolling(void)
 
 	_input_file_offset = _jpeg_input_buffer.size;
 
+	auto start = HAL_GetTick();
 	_hal.HAL_JPEG_Decode(&_hjpeg, _jpeg_input_buffer.data, _jpeg_input_buffer.size, _mcu_data_output_buffer,
 						 leka::jpeg::mcu::output_data_buffer_size, HAL_MAX_DELAY);
+	log_info("JPEG_DECODE took %dms",HAL_GetTick() - start);
+	return HAL_OK;
+}
 
+HAL_StatusTypeDef LKCoreJPEG::decodeImageWithDMA(void) 
+{
+
+	
 	return HAL_OK;
 }
 
