@@ -97,6 +97,7 @@ class CoreCR95HF : public interface::RFID
 	auto isDataAvailable() -> bool;
 
 	auto formatCommand(const lstd::span<uint8_t> &command) -> size_t;
+	auto formatTagAnswer(const lstd::span<uint8_t> &tag_anwser, const size_t size) -> bool;
 
 	interface::BufferedSerial &_serial;
 

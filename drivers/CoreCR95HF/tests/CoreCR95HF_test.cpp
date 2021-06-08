@@ -136,3 +136,66 @@ TEST_F(CoreCR95HFSensorTest, sendCommandSuccess)
 
 	corecr95hf.send(command);
 }
+
+TEST_F(CoreCR95HFSensorTest, receiveDataSuccess)
+{
+	std::array<uint8_t, 23> read_values = {0x80, 0x15, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02,
+										   0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0xDA, 0x48, 0x28, 0x00, 0x00};
+
+	std::array<uint8_t, 18> expected_values = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01,
+											   0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0xDA, 0x48};
+
+	std::array<uint8_t, 18> actual_values {0};
+
+	EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(1));
+	EXPECT_CALL(mockBufferedSerial, read)
+		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 23), Return(23)));
+
+	uint8_t actual_size = corecr95hf.receive(actual_values);
+
+	ASSERT_EQ(actual_size, 18);
+	ASSERT_EQ(actual_values, expected_values);
+}
+
+TEST_F(CoreCR95HFSensorTest, receiveDataFailedWrongAnswerFlag)
+{
+	std::array<uint8_t, 7> read_values = {0xff, 0x05, 0x44, 0x00, 0x28, 0x00, 0x00};
+	std::array<uint8_t, 7> actual_values {0};
+
+	EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(1));
+	EXPECT_CALL(mockBufferedSerial, read)
+		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 7), Return(7)));
+
+	uint8_t actual_size = corecr95hf.receive(actual_values);
+
+	ASSERT_EQ(actual_size, 0);
+	ASSERT_NE(actual_values, read_values);
+}
+
+TEST_F(CoreCR95HFSensorTest, receiveDataFailedWrongLength)
+{
+	std::array<uint8_t, 7> read_values = {0x80, 0x02, 0x44, 0x00, 0x28, 0x00, 0x00};
+	std::array<uint8_t, 7> actual_values {0};
+
+	EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(1));
+	EXPECT_CALL(mockBufferedSerial, read)
+		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 7), Return(0)));
+
+	uint8_t actual_size = corecr95hf.receive(actual_values);
+
+	ASSERT_EQ(actual_size, 0);
+	ASSERT_NE(actual_values, read_values);
+}
+
+TEST_F(CoreCR95HFSensorTest, receiveDataFailedTimeOut)
+{
+	std::array<uint8_t, 2> read_values = {0x80, 0x02};
+	std::array<uint8_t, 2> actual_values {0};
+
+	EXPECT_CALL(mockBufferedSerial, readable).WillRepeatedly(Return(0));
+
+	uint8_t actual_size = corecr95hf.receive(actual_values);
+
+	ASSERT_EQ(actual_size, 0);
+	ASSERT_NE(actual_values, read_values);
+}

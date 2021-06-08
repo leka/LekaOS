@@ -97,6 +97,34 @@ auto CoreCR95HF::formatCommand(const lstd::span<uint8_t> &command) -> size_t
 	return command.size() + cr95hf::tag_answer_heading_size;
 }
 
-auto CoreCR95HF::receive(const lstd::span<uint8_t> &tag_anwser) -> size_t {}
+auto CoreCR95HF::receive(const lstd::span<uint8_t> &tag_anwser) -> size_t
+{
+	size_t size {0};
+	if (isDataAvailable()) {
+		size = _serial.read(_rx_buf.data(), _rx_buf.size());
+	}
+
+	if (!formatTagAnswer(tag_anwser, size)) {
+		return 0;
+	}
+
+	return (size - cr95hf::tag_answer_heading_size - cr95hf::tag_answer_flag_size);
+}
+
+auto CoreCR95HF::formatTagAnswer(const lstd::span<uint8_t> &tag_anwser, const size_t size) -> bool
+{
+	uint8_t status = _rx_buf[0];
+	uint8_t length = _rx_buf[1];
+
+	if (status != cr95hf::status::communication_succeed || length != size - cr95hf::tag_answer_heading_size) {
+		return false;
+	}
+
+	for (auto i = 0; i < length - cr95hf::tag_answer_flag_size; ++i) {
+		tag_anwser.data()[i] = _rx_buf[i + cr95hf::tag_answer_heading_size];
+	}
+
+	return true;
+}
 
 }	// namespace leka
