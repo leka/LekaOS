@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <lstd_span>
 
-#include "CoreBufferedSerial.h"
+#include "interface/drivers/BufferedSerial.h"
 #include "interface/drivers/RFID.h"
 
 namespace leka {
@@ -25,6 +25,9 @@ namespace cr95hf {
 	constexpr size_t max_tx_length = 16;
 	constexpr size_t max_rx_length = 32;
 
+	constexpr size_t tag_answer_heading_size = 2;
+	constexpr size_t tag_answer_flag_size	 = 3;
+
 	constexpr uint8_t set_protocol_flag		= 0x00;
 	constexpr uint8_t arc_b					= 0x68;	  // Analog Register Configuration
 	constexpr uint8_t flag_increment		= 0x01;
@@ -32,20 +35,21 @@ namespace cr95hf {
 
 	namespace protocol {
 
-		constexpr Protocol ISO15693 = {
+		constexpr Protocol iso15693 = {
 			.id = 0x01, .gain = std::byte(0x00), .modulation = std::byte(0xD0)};   // gain = 34 dB, modulation = 95%
-		constexpr Protocol ISO14443A = {
+		constexpr Protocol iso14443A = {
 			.id = 0x02, .gain = std::byte(0x01), .modulation = std::byte(0xD0)};   // gain = 32 dB, modulation = 95%
-		constexpr Protocol ISO14443B = {
+		constexpr Protocol iso14443B = {
 			.id = 0x03, .gain = std::byte(0x00), .modulation = std::byte(0x20)};   // gain = 34 dB, modulation = 17%
-		constexpr Protocol ISO18092 = {
+		constexpr Protocol iso18092 = {
 			.id = 0x04, .gain = std::byte(0x00), .modulation = std::byte(0x20)};   // gain = 34 dB, modulation = 17%
 
 	};	 // namespace protocol
 
 	namespace status {
 
-		constexpr std::array<uint8_t, 2> setup_complete = {0x00, 0x00};
+		constexpr uint8_t communication_succeed		   = 0x80;
+		constexpr std::array<uint8_t, 2> setup_success = {0x00, 0x00};
 
 	}	// namespace status
 
@@ -57,16 +61,16 @@ namespace cr95hf {
 
 		namespace frame {
 
-			constexpr std::array<uint8_t, 4> set_protocol_ISO14443_command {
-				cr95hf::command::set_protocol, 0x02, cr95hf::protocol::ISO14443A.id, cr95hf::set_protocol_flag};
+			constexpr std::array<uint8_t, 4> set_protocol_iso14443 {
+				cr95hf::command::set_protocol, 0x02, cr95hf::protocol::iso14443A.id, cr95hf::set_protocol_flag};
 
-			constexpr std::array<uint8_t, 6> set_gain_and_modulation_command {
+			constexpr std::array<uint8_t, 6> set_gain_and_modulation {
 				cr95hf::command::set_gain_and_modulation,
 				0x04,
 				cr95hf::arc_b,
 				cr95hf::flag_increment,
 				cr95hf::gain_modulation_index,
-				cr95hf::protocol::ISO14443A.gain_modulation_values()};
+				cr95hf::protocol::iso14443A.gain_modulation_values()};
 
 		}	// namespace frame
 
@@ -79,21 +83,21 @@ class CoreCR95HF : public interface::RFID
   public:
 	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
-	void send(const lstd::span<uint8_t> &iso_command) final;
-	auto receive(const lstd::span<uint8_t> &tag_anwser) -> size_t final;
-
 	auto init() -> bool final;
+
+	void send(const lstd::span<uint8_t> &iso_command) final;
+
+	auto receive(const lstd::span<uint8_t> &tag_anwser) -> size_t final;
 
   private:
 	interface::BufferedSerial &_serial;
 
-	void formatCommand(const lstd::span<uint8_t> &iso_command);
-	auto calculateCommandSize(const size_t size) const -> size_t;
+	auto formatCommand(const lstd::span<uint8_t> &command) -> size_t;
 
 	void setProtocolISO14443();
 	void setGainAndModulation();
 
-	auto isSetupAnswerCorrect() -> bool;
+	auto didSetupSucceed() -> bool;
 	auto receiveCR95HFAnswer() -> size_t;
 
 	auto formatTagAnswer(const lstd::span<uint8_t> &tag_anwser, const size_t size) -> bool;

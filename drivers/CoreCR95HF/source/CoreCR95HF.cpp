@@ -14,28 +14,30 @@ namespace leka {
 
 void CoreCR95HF::send(const lstd::span<uint8_t> &command)
 {
-	formatCommand(command);
+	auto command_size = formatCommand(command);
 
-	_serial.write(_tx_buf.data(), calculateCommandSize(command.size()));
+	_serial.write(_tx_buf.data(), command_size);
 }
 
-void CoreCR95HF::formatCommand(const lstd::span<uint8_t> &command)
+auto CoreCR95HF::formatCommand(const lstd::span<uint8_t> &command) -> size_t
 {
 	_tx_buf[0] = cr95hf::command::send_receive;
 	_tx_buf[1] = command.size();
 
 	for (auto i = 0; i < command.size(); ++i) {
-		_tx_buf[i + 2] = command[i];
+		_tx_buf[i + cr95hf::tag_answer_heading_size] = command[i];
 	}
+
+	return command.size() + cr95hf::tag_answer_heading_size;
 }
 
-auto CoreCR95HF::isSetupAnswerCorrect() -> bool
+auto CoreCR95HF::didSetupSucceed() -> bool
 {
 	receiveCR95HFAnswer();
 
 	std::array<uint8_t, 2> buffer {_rx_buf[0], _rx_buf[1]};
 
-	return buffer == cr95hf::status::setup_complete ? true : false;
+	return buffer == cr95hf::status::setup_success ? true : false;
 }
 
 auto CoreCR95HF::receiveCR95HFAnswer() -> size_t
@@ -69,13 +71,12 @@ auto CoreCR95HF::formatTagAnswer(const lstd::span<uint8_t> &tag_anwser, const si
 	uint8_t status = _rx_buf[0];
 	uint8_t length = _rx_buf[1];
 
-	if (status != 0x80 || length != size - 2) {
-		printf("Status or length failed \n");
+	if (status != cr95hf::status::communication_succeed || length != size - cr95hf::tag_answer_heading_size) {
 		return false;
 	};
 
-	for (auto i = 0; i < length - 3; ++i) {
-		tag_anwser.data()[i] = _rx_buf[i + 2];
+	for (auto i = 0; i < length - cr95hf::tag_answer_flag_size; ++i) {
+		tag_anwser.data()[i] = _rx_buf[i + cr95hf::tag_answer_heading_size];
 	}
 
 	return true;
@@ -83,12 +84,12 @@ auto CoreCR95HF::formatTagAnswer(const lstd::span<uint8_t> &tag_anwser, const si
 
 void CoreCR95HF::setProtocolISO14443()
 {
-	_serial.write(cr95hf::command::frame::set_protocol_ISO14443_command.data(), 4);
+	_serial.write(cr95hf::command::frame::set_protocol_iso14443.data(), 4);
 }
 
 void CoreCR95HF::setGainAndModulation()
 {
-	_serial.write(cr95hf::command::frame::set_gain_and_modulation_command.data(), 6);
+	_serial.write(cr95hf::command::frame::set_gain_and_modulation.data(), 6);
 }
 
 auto CoreCR95HF::init() -> bool
@@ -97,7 +98,7 @@ auto CoreCR95HF::init() -> bool
 
 	rtos::ThisThread::sleep_for(10ms);
 
-	if (!isSetupAnswerCorrect()) {
+	if (!didSetupSucceed()) {
 		return false;
 	}
 
@@ -105,15 +106,11 @@ auto CoreCR95HF::init() -> bool
 
 	rtos::ThisThread::sleep_for(10ms);
 
-	if (!isSetupAnswerCorrect()) {
+	if (!didSetupSucceed()) {
 		return false;
 	}
 
 	return true;
 }
 
-auto CoreCR95HF::calculateCommandSize(const size_t size) const -> size_t
-{
-	return size + 2;
-}
 }	// namespace leka
