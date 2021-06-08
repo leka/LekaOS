@@ -44,20 +44,12 @@ auto CoreCR95HF::receiveCR95HFAnswer() -> size_t
 {
 	auto size = _serial.read(_rx_buf.data(), _rx_buf.size());
 
-	if (size < 0) {	  // serial::read error
-		return 0;
-	}
-
 	return size;
 }
 
 auto CoreCR95HF::receive(const lstd::span<uint8_t> &tag_anwser) -> size_t
 {
 	auto size = _serial.read(_rx_buf.data(), _rx_buf.size());
-
-	if (size == 0) {   // serial::read error
-		return 0;
-	}
 
 	if (!formatTagAnswer(tag_anwser, size)) {
 		return 0;
