@@ -74,9 +74,7 @@ void LKCoreJPEG::displayImage(FIL *file)
 
 	_hal.HAL_JPEG_GetInfo(&_hjpeg, &_config);
 	
-	auto t = HAL_GetTick();
 	_dma2d.transferImage(_config.ImageWidth, _config.ImageHeight, getWidthOffset());
-	log_info("DMA2D TRANSFER took %dms", HAL_GetTick() - t);
 
 	log_info("Image time : %dms", HAL_GetTick() - start_time);
 }
@@ -131,9 +129,7 @@ void LKCoreJPEG::playVideo()
 				is_first_frame = false;
 				HAL_JPEG_GetInfo(&_hjpeg, &_config);
 			}
-			auto t = HAL_GetTick();
 			_dma2d.transferImage(_config.ImageWidth, _config.ImageHeight, getWidthOffset());
-			log_info("DMA2D TRANSFER took %dms", HAL_GetTick() - t);
 			
 			log_info("framenb : %d, Frame time %dms", frame_index,HAL_GetTick() - start_time);
 		}
@@ -147,16 +143,16 @@ HAL_StatusTypeDef LKCoreJPEG::decodeImageWithPolling(void)
 	_mcu_block_index = 0;
 
 	// TODO: rely on LKFileSystemKit to handle open/read/close
-	if (_file.read(_jpeg_input_buffer.data, leka::jpeg::input_data_buffer_size, &_jpeg_input_buffer.size) != FR_OK) {
+	uint32_t read_size;
+	if (_file.read(_jpeg_input_buffer.data(), _jpeg_input_buffer.size(), &read_size) != FR_OK) {
 		return HAL_ERROR;
 	}
+	_input_file_offset = read_size;
 
-	_input_file_offset = _jpeg_input_buffer.size;
-
-	auto start = HAL_GetTick();
-	_hal.HAL_JPEG_Decode(&_hjpeg, _jpeg_input_buffer.data, _jpeg_input_buffer.size, _mcu_data_output_buffer,
-						 leka::jpeg::mcu::output_data_buffer_size, HAL_MAX_DELAY);
-	log_info("JPEG_DECODE took %dms",HAL_GetTick() - start);
+	_hal.HAL_JPEG_Decode(&_hjpeg, 
+						_jpeg_input_buffer.data(), read_size,
+						_jpeg_output_buffer.data(), _jpeg_output_buffer.size(),
+						HAL_MAX_DELAY);
 	return HAL_OK;
 }
 
@@ -200,14 +196,15 @@ void LKCoreJPEG::onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef
 void LKCoreJPEG::onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size)
 {
 	// TODO: rely on LKFileSystemKit to handle open/read/close
-	if (size != _jpeg_input_buffer.size) {
-		_input_file_offset = _input_file_offset - _jpeg_input_buffer.size + size;
+	if (size != _jpeg_input_buffer.size()) {
+		_input_file_offset = _input_file_offset - _jpeg_input_buffer.size() + size;
 		_file.seek(_input_file_offset);
 	}
 
-	if (_file.read(_jpeg_input_buffer.data, leka::jpeg::input_data_buffer_size, &_jpeg_input_buffer.size) == FR_OK) {
-		_input_file_offset += _jpeg_input_buffer.size;
-		_hal.HAL_JPEG_ConfigInputBuffer(hjpeg, _jpeg_input_buffer.data, _jpeg_input_buffer.size);
+	uint32_t read_size;
+	if (_file.read(_jpeg_input_buffer.data(), _jpeg_input_buffer.size(), &read_size) == FR_OK) {
+		_input_file_offset += read_size;
+		_hal.HAL_JPEG_ConfigInputBuffer(hjpeg, _jpeg_input_buffer.data(), read_size);
 	} else {
 		// TODO: handle error
 		log_error("FILE READ ERROR");
@@ -219,7 +216,7 @@ void LKCoreJPEG::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOu
 	_mcu_block_index +=
 		pConvert_Function(pDataOut, (uint8_t *)jpeg::decoded_buffer_address, _mcu_block_index, size, nullptr);
 
-	_hal.HAL_JPEG_ConfigOutputBuffer(hjpeg, _mcu_data_output_buffer, leka::jpeg::mcu::output_data_buffer_size);
+	_hal.HAL_JPEG_ConfigOutputBuffer(hjpeg, _jpeg_output_buffer.data(), _jpeg_output_buffer.size());
 }
 
 void LKCoreJPEG::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)

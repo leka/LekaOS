@@ -6,6 +6,7 @@
 #define _LEKA_OS_DRIVER_JPEG_H_
 
 #include <cstdint>
+#include <array>
 
 #include "LKCoreDMA2DBase.h"
 #include "LKCoreFatFsBase.h"
@@ -49,23 +50,22 @@ class LKCoreJPEG : public LKCoreJPEGBase
 		uint32_t size;
 	};
 
-	uint8_t _mcu_data_output_buffer[leka::jpeg::mcu::output_data_buffer_size] {0};
-	uint8_t _jpeg_data_output_buffer[leka::jpeg::input_data_buffer_size] {0};
-
-	JPEGDataBuffer _jpeg_input_buffer = {_jpeg_data_output_buffer, 0};	 // TODO: do we really need this struct?
+	std::array<uint8_t, jpeg::output_data_buffer_size> _jpeg_output_buffer = {0};
+	std::array<uint8_t, jpeg::input_data_buffer_size> _jpeg_input_buffer = {0};
 
 	JPEG_HandleTypeDef _hjpeg;
 	JPEG_ConfTypeDef _config;
+
 	LKCoreSTM32HalBase &_hal;
 	LKCoreDMA2DBase &_dma2d;
 	LKCoreFatFsBase &_file;
 
 	JPEG_YCbCrToRGB_Convert_Function pConvert_Function;
 
-	uint32_t _previous_frame_size = 0;
-	uint32_t _mcu_number		= 0;
-	uint32_t _mcu_block_index	= 0;
-	uint32_t _input_file_offset = 0;
+	uint32_t _previous_frame_size 	= 0;
+	uint32_t _mcu_number			= 0;
+	uint32_t _mcu_block_index		= 0;
+	uint32_t _input_file_offset 	= 0;
 };
 
 }	// namespace leka
