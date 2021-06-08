@@ -211,6 +211,9 @@ leka_register_unit_tests_for_driver(CoreQSPI)
 leka_register_unit_tests_for_driver(CoreMotor)
 leka_register_unit_tests_for_driver(CoreFlashMemory)
 leka_register_unit_tests_for_driver(CoreBufferedSerial)
+leka_register_unit_tests_for_driver(CoreCR95HF)
+leka_register_unit_tests_for_driver(RFIDKit)
+
 
 # Register libraries
 leka_register_unit_tests_for_library(LKAnimationKit)

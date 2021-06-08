@@ -1,22 +1,27 @@
-// Leka - LekaOS
-// Copyright 2020 APF France handicap
-// SPDX-License-Identifier: Apache-2.0
+#include "mbed.h"
+#include <cstddef>
+#include <cstdint>
 
 #include "drivers/BufferedSerial.h"
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
+#include "CoreBufferedSerial.h"
+#include "CoreCR95HF.h"
 #include "HelloWorld.h"
-#include "LekaRFID.h"
 #include "LogKit.h"
+#include "RFIDKit.h"
 
 using namespace leka;
 using namespace std::chrono;
 
+EventQueue eventQueue;
+Thread thread;
+
 auto main() -> int
 {
-	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
-	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+	static auto log_serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
+	leka::logger::set_print_function([](const char *str, size_t size) { log_serial.write(str, size); });
 
 	auto start = rtos::Kernel::Clock::now();
 
@@ -24,18 +29,17 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(2s);
 
-	RFID leka_rfid;
-	rtos::Thread rfid_thread;
-	rfid_thread.start({&leka_rfid, &RFID::start});
+	auto mbed_serial = mbed::BufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
+	auto rfid_serial = CoreBufferedSerial(mbed_serial);
+	auto rfid_reader = CoreCR95HF(rfid_serial, thread, eventQueue);
+	auto core_rfid	 = RFIDKit(rfid_reader);
+
+	core_rfid.init();
 
 	HelloWorld hello;
 	hello.start();
 
 	while (true) {
-		auto t = rtos::Kernel::Clock::now() - start;
-		log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world,
-				 int(t.count() / 1000));
-
-		rtos::ThisThread::sleep_for(1s);
+		rtos::ThisThread::sleep_for(10ms);
 	}
 }
