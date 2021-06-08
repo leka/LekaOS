@@ -22,7 +22,7 @@ void CoreCR95HF::send(const lstd::span<uint8_t> &command)
 auto CoreCR95HF::formatCommand(const lstd::span<uint8_t> &command) -> size_t
 {
 	_tx_buf[0] = cr95hf::command::send_receive;
-	_tx_buf[1] = command.size();
+	_tx_buf[1] = static_cast<uint8_t>(command.size());
 
 	for (auto i = 0; i < command.size(); ++i) {
 		_tx_buf[i + cr95hf::tag_answer_heading_size] = command[i];
@@ -55,7 +55,7 @@ auto CoreCR95HF::receive(const lstd::span<uint8_t> &tag_anwser) -> size_t
 {
 	auto size = _serial.read(_rx_buf.data(), _rx_buf.size());
 
-	if (size < 0) {	  // serial::read error
+	if (size == 0) {   // serial::read error
 		return 0;
 	}
 
@@ -73,7 +73,7 @@ auto CoreCR95HF::formatTagAnswer(const lstd::span<uint8_t> &tag_anwser, const si
 
 	if (status != cr95hf::status::communication_succeed || length != size - cr95hf::tag_answer_heading_size) {
 		return false;
-	};
+	}
 
 	for (auto i = 0; i < length - cr95hf::tag_answer_flag_size; ++i) {
 		tag_anwser.data()[i] = _rx_buf[i + cr95hf::tag_answer_heading_size];

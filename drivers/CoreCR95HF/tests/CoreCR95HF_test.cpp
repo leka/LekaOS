@@ -96,7 +96,7 @@ TEST_F(CoreCR95HFSensorTest, receiveDataFailedRead)
 	std::array<uint8_t, 7> actual_values {0};
 
 	EXPECT_CALL(mockBufferedSerial, read)
-		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 7), Return(-1)));
+		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 7), Return(0)));
 
 	uint8_t actual_size = corecr95hf.receive(actual_values);
 
