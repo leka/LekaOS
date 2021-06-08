@@ -4,6 +4,7 @@
 
 #include "CoreCR95HF.h"
 #include <cstddef>
+#include <cstdint>
 
 #include "rtos/ThisThread.h"
 
@@ -30,22 +31,54 @@ void CoreCR95HF::formatCommand(const lstd::span<uint8_t> &command)
 
 auto CoreCR95HF::isSetupAnswerCorrect() -> bool
 {
-	std::array<uint8_t, 2> buffer;
+	receiveCR95HFAnswer();
 
-	receive(buffer);
+	std::array<uint8_t, 2> buffer {_rx_buf[0], _rx_buf[1]};
 
 	return buffer == cr95hf::status::setup_complete ? true : false;
 }
 
-auto CoreCR95HF::receive(const lstd::span<uint8_t> &rfid_answer) -> size_t
+auto CoreCR95HF::receiveCR95HFAnswer() -> size_t
 {
-	auto size = _serial.read(rfid_answer.data(), rfid_answer.size());
+	auto size = _serial.read(_rx_buf.data(), _rx_buf.size());
 
 	if (size < 0) {	  // serial::read error
 		return 0;
 	}
 
 	return size;
+}
+
+auto CoreCR95HF::receive(const lstd::span<uint8_t> &tag_anwser) -> size_t
+{
+	auto size = _serial.read(_rx_buf.data(), _rx_buf.size());
+
+	if (size < 0) {	  // serial::read error
+		return 0;
+	}
+
+	if (!formatTagAnswer(tag_anwser, size)) {
+		return 0;
+	}
+
+	return size;
+}
+
+auto CoreCR95HF::formatTagAnswer(const lstd::span<uint8_t> &tag_anwser, const size_t size) -> bool
+{
+	uint8_t status = _rx_buf[0];
+	uint8_t length = _rx_buf[1];
+
+	if (status != 0x80 || length != size - 2) {
+		printf("Status or length failed \n");
+		return false;
+	};
+
+	for (auto i = 0; i < length - 3; ++i) {
+		tag_anwser.data()[i] = _rx_buf[i + 2];
+	}
+
+	return true;
 }
 
 void CoreCR95HF::setProtocolISO14443()

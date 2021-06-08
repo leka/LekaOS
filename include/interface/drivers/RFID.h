@@ -33,9 +33,10 @@ class RFID
   public:
 	virtual ~RFID() = default;
 
-	virtual void send(const lstd::span<uint8_t> &iso_command)			   = 0;
-	virtual auto receive(const lstd::span<uint8_t> &rfid_answer) -> size_t = 0;
-	virtual auto init() -> bool											   = 0;
+	virtual auto init() -> bool = 0;
+
+	virtual void send(const lstd::span<uint8_t> &iso_command)			  = 0;
+	virtual auto receive(const lstd::span<uint8_t> &tag_anwser) -> size_t = 0;
 
 	class ISO14443
 	{

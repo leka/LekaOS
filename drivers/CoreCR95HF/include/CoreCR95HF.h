@@ -5,6 +5,7 @@
 #ifndef _LEKA_OS_DRIVER_CORE_CR95HF_H_
 #define _LEKA_OS_DRIVER_CORE_CR95HF_H_
 
+#include <cstdint>
 #include <lstd_span>
 
 #include "CoreBufferedSerial.h"
@@ -79,7 +80,7 @@ class CoreCR95HF : public interface::RFID
 	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
 	void send(const lstd::span<uint8_t> &iso_command) final;
-	auto receive(const lstd::span<uint8_t> &rfid_answer) -> size_t final;
+	auto receive(const lstd::span<uint8_t> &tag_anwser) -> size_t final;
 
 	auto init() -> bool final;
 
@@ -93,8 +94,12 @@ class CoreCR95HF : public interface::RFID
 	void setGainAndModulation();
 
 	auto isSetupAnswerCorrect() -> bool;
+	auto receiveCR95HFAnswer() -> size_t;
+
+	auto formatTagAnswer(const lstd::span<uint8_t> &tag_anwser, const size_t size) -> bool;
 
 	std::array<uint8_t, cr95hf::max_tx_length> _tx_buf {};
+	std::array<uint8_t, cr95hf::max_rx_length> _rx_buf {};
 };
 
 }	// namespace leka
