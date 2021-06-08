@@ -90,6 +90,12 @@ class CoreCR95HF : public interface::RFID
 	auto receive(const lstd::span<uint8_t> &tag_anwser) -> size_t final;
 
   private:
+	void setProtocolISO14443();
+	void setGainAndModulation();
+	auto didSetupSucceed() -> bool;
+	auto receiveCR95HFAnswer() -> size_t;
+	auto isDataAvailable() -> bool;
+
 	interface::BufferedSerial &_serial;
 
 	std::array<uint8_t, cr95hf::max_tx_length> _tx_buf {};
