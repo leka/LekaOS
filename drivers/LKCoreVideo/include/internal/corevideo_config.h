@@ -50,6 +50,7 @@ namespace jpeg {
 	constexpr uintptr_t decoded_buffer_address = 0xC0200000;
 
 	constexpr uint32_t input_data_buffer_size = 4096;
+	constexpr uint32_t output_data_buffer_size = 768;
 
 	constexpr uint8_t JPEG_ARGB8888 = 0;   // ARGB8888 Color Format
 	constexpr uint8_t JPEG_RGB888	= 1;   // RGB888 Color Format
@@ -63,12 +64,6 @@ namespace jpeg {
 	constexpr uint16_t JPEG_SOI_MARKER		 = 0xFFD8; /* JPEG Start Of Image marker*/
 	constexpr uint16_t JPEG_SOI_MARKER_BYTE0 = (JPEG_SOI_MARKER & 0xFF);
 	constexpr uint16_t JPEG_SOI_MARKER_BYTE1 = ((JPEG_SOI_MARKER >> 8) & 0xFF);
-
-	namespace mcu {
-
-		constexpr uint32_t output_data_buffer_size = 768;
-
-	}	// namespace mcu
 
 	namespace dma {
 		constexpr uint32_t chunk_size_in = 4096;
