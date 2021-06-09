@@ -71,6 +71,8 @@ namespace interface {
 		class ISO14443
 		{
 		  public:
+			virtual auto init() -> bool = 0;
+
 			virtual auto getTagData(std::array<uint8_t, 16> &tag_data) -> bool = 0;
 
 			template <size_t SIZE>
