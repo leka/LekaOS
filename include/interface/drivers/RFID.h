@@ -71,8 +71,9 @@ namespace interface {
 		class ISO14443
 		{
 		  public:
-			void virtual write() = 0;
-			void virtual read()	 = 0;
+			void virtual sendREQA()			 = 0;
+			void virtual sendReadRegister8() = 0;
+			void virtual read()				 = 0;
 
 			template <size_t SIZE>
 			struct Command {
@@ -96,6 +97,9 @@ namespace interface {
 			Command<1> command_requestA		   = {.data = {0x26}, .flags = leka::rfid::Flag::sb_7};
 			Command<2> command_read_register_8 = {.data	 = {0x30, 0x08},
 												  .flags = leka::rfid::Flag::crc | leka::rfid::Flag::sb_8};
+
+		  private:
+			std::array<uint8_t, 16> _tag_data {0};
 		};
 	};
 
