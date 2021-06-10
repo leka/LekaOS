@@ -115,20 +115,6 @@ TEST_F(CoreCR95HFSensorTest, initFailedOnSetGainAndModulation)
 	ASSERT_EQ(is_initialized, false);
 }
 
-TEST_F(CoreCR95HFSensorTest, initFailedTimeOut)
-{
-	std::array<uint8_t, 2> set_protocol_failed_answer = {0x82, 0x00};
-	{
-		InSequence seq;
-
-		sendSetProtocol();
-		EXPECT_CALL(mockBufferedSerial, readable).WillRepeatedly(Return(false));
-	}
-
-	auto is_initialized = corecr95hf.init();
-	ASSERT_EQ(is_initialized, false);
-}
-
 TEST_F(CoreCR95HFSensorTest, sendCommandSuccess)
 {
 	std::array<uint8_t, 2> command = {0x26, 0x07};
@@ -183,19 +169,6 @@ TEST_F(CoreCR95HFSensorTest, receiveDataFailedWrongLength)
 	EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
 	EXPECT_CALL(mockBufferedSerial, read)
 		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 7), Return(0)));
-
-	uint8_t actual_size = corecr95hf.receive(actual_values);
-
-	ASSERT_EQ(actual_size, false);
-	ASSERT_NE(actual_values, read_values);
-}
-
-TEST_F(CoreCR95HFSensorTest, receiveDataFailedTimeOut)
-{
-	std::array<uint8_t, 2> read_values = {0x80, 0x02};
-	std::array<uint8_t, 2> actual_values {0};
-
-	EXPECT_CALL(mockBufferedSerial, readable).WillRepeatedly(Return(false));
 
 	uint8_t actual_size = corecr95hf.receive(actual_values);
 

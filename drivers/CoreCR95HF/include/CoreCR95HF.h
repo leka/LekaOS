@@ -99,7 +99,6 @@ class CoreCR95HF : public interface::RFID
 	auto receive(const lstd::span<uint8_t> &anwser) -> size_t final;
 
   private:
-	auto isDataAvailable() -> bool;
 	auto didSetupSucceed() -> bool;
 
 	void setProtocolISO14443();

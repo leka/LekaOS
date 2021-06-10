@@ -46,26 +46,12 @@ auto CoreCR95HF::receiveCR95HFAnswer() -> size_t
 {
 	size_t size {0};
 
-	if (isDataAvailable()) {
+	rtos::ThisThread::sleep_for(10ms);
+	if (_serial.readable()) {
 		size = _serial.read(_rx_buf.data(), _rx_buf.size());
 	}
 
 	return size;
-}
-
-auto CoreCR95HF::isDataAvailable() -> bool
-{
-	int count {0};
-	while (!_serial.readable()) {
-		++count;
-		rtos::ThisThread::sleep_for(1ms);
-
-		if (count > 10) {
-			_rx_buf[0] = rfid::cr95hf::status::error_time_out;
-			return false;
-		}
-	}
-	return true;
 }
 
 void CoreCR95HF::setProtocolISO14443()
