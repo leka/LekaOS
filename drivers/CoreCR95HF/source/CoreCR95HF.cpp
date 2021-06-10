@@ -39,7 +39,7 @@ auto CoreCR95HF::didSetupSucceed() -> bool
 
 	std::array<uint8_t, 2> buffer {_rx_buf[0], _rx_buf[1]};
 
-	return buffer == cr95hf::status::setup_success ? true : false;
+	return buffer == rfid::cr95hf::status::setup_success ? true : false;
 }
 
 auto CoreCR95HF::receiveCR95HFAnswer() -> size_t
@@ -55,13 +55,13 @@ auto CoreCR95HF::receiveCR95HFAnswer() -> size_t
 
 auto CoreCR95HF::isDataAvailable() -> bool
 {
-	int count = 0;
+	int count {0};
 	while (!_serial.readable()) {
 		++count;
 		rtos::ThisThread::sleep_for(1ms);
 
 		if (count > 10) {
-			_rx_buf[0] = cr95hf::status::error_time_out;
+			_rx_buf[0] = rfid::cr95hf::status::error_time_out;
 			return false;
 		}
 	}
@@ -70,12 +70,12 @@ auto CoreCR95HF::isDataAvailable() -> bool
 
 void CoreCR95HF::setProtocolISO14443()
 {
-	_serial.write(cr95hf::command::frame::set_protocol_iso14443.data(), 4);
+	_serial.write(rfid::cr95hf::command::frame::set_protocol_iso14443.data(), 4);
 }
 
 void CoreCR95HF::setGainAndModulation()
 {
-	_serial.write(cr95hf::command::frame::set_gain_and_modulation.data(), 6);
+	_serial.write(rfid::cr95hf::command::frame::set_gain_and_modulation.data(), 6);
 }
 
 void CoreCR95HF::send(const lstd::span<uint8_t> &command)
@@ -87,41 +87,39 @@ void CoreCR95HF::send(const lstd::span<uint8_t> &command)
 
 auto CoreCR95HF::formatCommand(const lstd::span<uint8_t> &command) -> size_t
 {
-	_tx_buf[0] = cr95hf::command::send_receive;
+	_tx_buf[0] = rfid::cr95hf::command::send_receive;
 	_tx_buf[1] = static_cast<uint8_t>(command.size());
 
 	for (auto i = 0; i < command.size(); ++i) {
-		_tx_buf[i + cr95hf::tag_answer_heading_size] = command[i];
+		_tx_buf[i + rfid::cr95hf::tag_answer::heading_size] = command[i];
 	}
 
-	return command.size() + cr95hf::tag_answer_heading_size;
+	return command.size() + rfid::cr95hf::tag_answer::heading_size;
 }
 
-auto CoreCR95HF::receive(const lstd::span<uint8_t> &tag_anwser) -> size_t
+auto CoreCR95HF::receive(const lstd::span<uint8_t> &answer) -> size_t
 {
-	size_t size {0};
-	if (isDataAvailable()) {
-		size = _serial.read(_rx_buf.data(), _rx_buf.size());
-	}
+	auto size = receiveCR95HFAnswer();
 
-	if (!formatTagAnswer(tag_anwser, size)) {
+	if (!processTagAnswer(answer, size)) {
 		return 0;
 	}
 
-	return (size - cr95hf::tag_answer_heading_size - cr95hf::tag_answer_flag_size);
+	return (size - rfid::cr95hf::tag_answer::heading_size - rfid::cr95hf::tag_answer::flag_size);
 }
 
-auto CoreCR95HF::formatTagAnswer(const lstd::span<uint8_t> &tag_anwser, const size_t size) -> bool
+auto CoreCR95HF::processTagAnswer(const lstd::span<uint8_t> &answer, const size_t size) -> bool
 {
 	uint8_t status = _rx_buf[0];
 	uint8_t length = _rx_buf[1];
 
-	if (status != cr95hf::status::communication_succeed || length != size - cr95hf::tag_answer_heading_size) {
+	if (status != rfid::cr95hf::status::communication_succeed ||
+		length != size - rfid::cr95hf::tag_answer::heading_size) {
 		return false;
 	}
 
-	for (auto i = 0; i < length - cr95hf::tag_answer_flag_size; ++i) {
-		tag_anwser.data()[i] = _rx_buf[i + cr95hf::tag_answer_heading_size];
+	for (auto i = 0; i < length - rfid::cr95hf::tag_answer::flag_size; ++i) {
+		answer.data()[i] = _rx_buf[i + rfid::cr95hf::tag_answer::heading_size];
 	}
 
 	return true;

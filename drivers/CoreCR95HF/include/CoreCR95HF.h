@@ -12,7 +12,7 @@
 
 namespace leka {
 
-namespace cr95hf {
+namespace rfid::cr95hf {
 
 	struct Protocol {
 		const uint8_t id;
@@ -24,24 +24,32 @@ namespace cr95hf {
 	constexpr size_t max_tx_length = 16;
 	constexpr size_t max_rx_length = 32;
 
-	constexpr size_t tag_answer_heading_size = 2;
-	constexpr size_t tag_answer_flag_size	 = 3;
+	namespace settings {
 
-	constexpr uint8_t set_protocol_flag		= 0x00;
-	constexpr uint8_t arc_b					= 0x68;	  // Analog Register Configuration
-	constexpr uint8_t flag_increment		= 0x01;
-	constexpr uint8_t gain_modulation_index = 0x01;
+		constexpr uint8_t default_protocol_parameters_for_rx_speed_tx_speed_rfu = 0x00;
+		constexpr uint8_t arc_b								  = 0x68;	// Analog Register Configuration
+		constexpr uint8_t flag_increment					  = 0x01;
+		constexpr uint8_t acr_b_index_for_gain_and_modulation = 0x01;
+
+	}	// namespace settings
+
+	namespace tag_answer {
+
+		constexpr size_t heading_size = 2;
+		constexpr size_t flag_size	  = 3;
+
+	}	// namespace tag_answer
 
 	namespace protocol {
 
 		constexpr Protocol iso15693 = {
-			.id = 0x01, .gain = std::byte(0x00), .modulation = std::byte(0xD0)};   // gain = 34 dB, modulation = 95%
+			.id = 0x01, .gain = std::byte {0x00}, .modulation = std::byte {0xD0}};	 // gain = 34 dB, modulation = 95%
 		constexpr Protocol iso14443A = {
-			.id = 0x02, .gain = std::byte(0x01), .modulation = std::byte(0xD0)};   // gain = 32 dB, modulation = 95%
+			.id = 0x02, .gain = std::byte {0x01}, .modulation = std::byte {0xD0}};	 // gain = 32 dB, modulation = 95%
 		constexpr Protocol iso14443B = {
-			.id = 0x03, .gain = std::byte(0x00), .modulation = std::byte(0x20)};   // gain = 34 dB, modulation = 17%
+			.id = 0x03, .gain = std::byte {0x00}, .modulation = std::byte {0x20}};	 // gain = 34 dB, modulation = 17%
 		constexpr Protocol iso18092 = {
-			.id = 0x04, .gain = std::byte(0x00), .modulation = std::byte(0x20)};   // gain = 34 dB, modulation = 17%
+			.id = 0x04, .gain = std::byte {0x00}, .modulation = std::byte {0x20}};	 // gain = 34 dB, modulation = 17%
 
 	};	 // namespace protocol
 
@@ -55,28 +63,29 @@ namespace cr95hf {
 
 	namespace command {
 
-		constexpr uint8_t set_protocol			  = 0x02;
 		constexpr uint8_t send_receive			  = 0x04;
+		constexpr uint8_t set_protocol			  = 0x02;
 		constexpr uint8_t set_gain_and_modulation = 0x09;
 
 		namespace frame {
 
 			constexpr std::array<uint8_t, 4> set_protocol_iso14443 {
-				cr95hf::command::set_protocol, 0x02, cr95hf::protocol::iso14443A.id, cr95hf::set_protocol_flag};
+				rfid::cr95hf::command::set_protocol, 0x02, rfid::cr95hf::protocol::iso14443A.id,
+				rfid::cr95hf::settings::default_protocol_parameters_for_rx_speed_tx_speed_rfu};
 
 			constexpr std::array<uint8_t, 6> set_gain_and_modulation {
-				cr95hf::command::set_gain_and_modulation,
+				rfid::cr95hf::command::set_gain_and_modulation,
 				0x04,
-				cr95hf::arc_b,
-				cr95hf::flag_increment,
-				cr95hf::gain_modulation_index,
-				cr95hf::protocol::iso14443A.gain_modulation_values()};
+				rfid::cr95hf::settings::arc_b,
+				rfid::cr95hf::settings::flag_increment,
+				rfid::cr95hf::settings::acr_b_index_for_gain_and_modulation,
+				rfid::cr95hf::protocol::iso14443A.gain_modulation_values()};
 
 		}	// namespace frame
 
 	}	// namespace command
 
-}	// namespace cr95hf
+}	// namespace rfid::cr95hf
 
 class CoreCR95HF : public interface::RFID
 {
@@ -87,22 +96,23 @@ class CoreCR95HF : public interface::RFID
 
 	void send(const lstd::span<uint8_t> &iso_command) final;
 
-	auto receive(const lstd::span<uint8_t> &tag_anwser) -> size_t final;
+	auto receive(const lstd::span<uint8_t> &anwser) -> size_t final;
 
   private:
+	auto isDataAvailable() -> bool;
+	auto didSetupSucceed() -> bool;
+
 	void setProtocolISO14443();
 	void setGainAndModulation();
-	auto didSetupSucceed() -> bool;
 	auto receiveCR95HFAnswer() -> size_t;
-	auto isDataAvailable() -> bool;
 
 	auto formatCommand(const lstd::span<uint8_t> &command) -> size_t;
-	auto formatTagAnswer(const lstd::span<uint8_t> &tag_anwser, const size_t size) -> bool;
+	auto processTagAnswer(const lstd::span<uint8_t> &tag_anwser, const size_t size) -> bool;
 
 	interface::BufferedSerial &_serial;
 
-	std::array<uint8_t, cr95hf::max_tx_length> _tx_buf {};
-	std::array<uint8_t, cr95hf::max_rx_length> _rx_buf {};
+	std::array<uint8_t, rfid::cr95hf::max_tx_length> _tx_buf {};
+	std::array<uint8_t, rfid::cr95hf::max_rx_length> _rx_buf {};
 };
 
 }	// namespace leka
