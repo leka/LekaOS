@@ -22,7 +22,7 @@ class RFIDKit : public interface::RFID::ISO14443
 
   private:
 	template <size_t SIZE>
-	void commandToArray(Command<SIZE> command, const lstd::span<uint8_t> &span)
+	void commandToArray(Command<SIZE> command, const lstd::span<uint8_t> &span) const
 	{
 		for (auto i = 0; i < SIZE; ++i) {
 			span.data()[i] = command.data.data()[i];
