@@ -41,6 +41,37 @@ class CoreRFIDKitTest : public CoreCR95HFSensorTest
 
 	RFIDKit coreRfid;
 
+	void sendSetProtocol()
+	{
+		const auto expected_values_set_protocol =
+			ElementsAre(rfid::cr95hf::command::set_protocol, 0x02, rfid::cr95hf::protocol::iso14443A.id,
+						rfid::cr95hf::settings::default_protocol_parameters_for_rx_speed_tx_speed_rfu);
+		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_set_protocol));
+	}
+
+	void receiveSetProtocolAnswer(const std::array<uint8_t, 2> &returned_values)
+	{
+		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
+		EXPECT_CALL(mockBufferedSerial, read)
+			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + 2), Return(0)));
+	}
+
+	void sendSetGainAndModulation()
+	{
+		const auto expected_values_set_gain_and_modulation = ElementsAre(
+			rfid::cr95hf::command::set_gain_and_modulation, 0x04, rfid::cr95hf::settings::arc_b,
+			rfid::cr95hf::settings::flag_increment, rfid::cr95hf::settings::acr_b_index_for_gain_and_modulation,
+			rfid::cr95hf::protocol::iso14443A.gain_modulation_values());
+		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_set_gain_and_modulation));
+	}
+
+	void receiveSetGainAndModulationAnswer(const std::array<uint8_t, 2> &returned_values)
+	{
+		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
+		EXPECT_CALL(mockBufferedSerial, read)
+			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + 2), Return(0)));
+	}
+
 	void writeREQARequest()
 	{
 		const auto expected_values = ElementsAre(0x04, 0x02, 0x26, 0x07);
@@ -73,6 +104,38 @@ class CoreRFIDKitTest : public CoreCR95HFSensorTest
 TEST_F(CoreRFIDKitTest, initialization)
 {
 	ASSERT_NE(&coreRfid, nullptr);
+}
+
+TEST_F(CoreRFIDKitTest, initSuccess)
+{
+	std::array<uint8_t, 2> set_protocol_success_answer			  = {0x00, 0x00};
+	std::array<uint8_t, 2> set_gain_and_modulation_success_answer = {0x00, 0x00};
+
+	{
+		InSequence seq;
+
+		sendSetProtocol();
+		receiveSetProtocolAnswer(set_protocol_success_answer);
+		sendSetGainAndModulation();
+		receiveSetGainAndModulationAnswer(set_gain_and_modulation_success_answer);
+	}
+
+	auto is_initialized = corecr95hf.init();
+	ASSERT_EQ(is_initialized, true);
+}
+
+TEST_F(CoreRFIDKitTest, initFailed)
+{
+	std::array<uint8_t, 2> set_protocol_failed_answer = {0x82, 0x00};
+	{
+		InSequence seq;
+
+		sendSetProtocol();
+		receiveSetProtocolAnswer(set_protocol_failed_answer);
+	}
+
+	auto is_initialized = corecr95hf.init();
+	ASSERT_EQ(is_initialized, false);
 }
 
 TEST_F(CoreRFIDKitTest, getTagDataSuccess)
