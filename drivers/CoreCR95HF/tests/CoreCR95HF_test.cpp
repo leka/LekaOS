@@ -146,6 +146,21 @@ TEST_F(CoreCR95HFSensorTest, receiveDataSuccess)
 	ASSERT_EQ(actual_values, expected_values);
 }
 
+TEST_F(CoreCR95HFSensorTest, receiveDataFailed)
+{
+	std::array<uint8_t, 6> read_values	   = {0x80, 0x04, 0xff, 0x28, 0x00, 0x00};
+	std::array<uint8_t, 1> expected_values = {0};
+
+	std::array<uint8_t, 1> actual_values {0};
+
+	EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(false));
+
+	uint8_t actual_size = corecr95hf.receive(actual_values);
+
+	ASSERT_EQ(actual_size, 0);
+	ASSERT_EQ(actual_values, expected_values);
+}
+
 TEST_F(CoreCR95HFSensorTest, receiveDataFailedWrongAnswerFlag)
 {
 	std::array<uint8_t, 7> read_values = {0xff, 0x05, 0x44, 0x00, 0x28, 0x00, 0x00};
