@@ -11,8 +11,13 @@
 using namespace std::chrono;
 
 namespace leka {
-
 auto CoreCR95HF::init() -> bool
+{
+	_serial.write(rfid::cr95hf::command::frame::enable_tag_detection.data(),
+				  rfid::cr95hf::command::frame::enable_tag_detection.size());
+}
+
+auto CoreCR95HF::setup() -> bool
 {
 	setProtocolISO14443();
 
@@ -58,12 +63,14 @@ auto CoreCR95HF::receiveCR95HFAnswer() -> size_t
 
 void CoreCR95HF::setProtocolISO14443()
 {
-	_serial.write(rfid::cr95hf::command::frame::set_protocol_iso14443.data(), 4);
+	_serial.write(rfid::cr95hf::command::frame::set_protocol_iso14443.data(),
+				  rfid::cr95hf::command::frame::set_protocol_iso14443.size());
 }
 
 void CoreCR95HF::setGainAndModulation()
 {
-	_serial.write(rfid::cr95hf::command::frame::set_gain_and_modulation.data(), 6);
+	_serial.write(rfid::cr95hf::command::frame::set_gain_and_modulation.data(),
+				  rfid::cr95hf::command::frame::set_gain_and_modulation.size());
 }
 
 void CoreCR95HF::send(const lstd::span<uint8_t> &command)

@@ -33,6 +33,8 @@ namespace interface {
 
 		virtual auto init() -> bool = 0;
 
+		virtual auto setup() -> bool = 0;
+
 		virtual void send(const lstd::span<uint8_t> &iso_command) = 0;
 
 		virtual auto receive(const lstd::span<uint8_t> &tag_anwser) -> size_t = 0;

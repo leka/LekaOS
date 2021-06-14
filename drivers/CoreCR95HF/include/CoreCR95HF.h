@@ -5,6 +5,7 @@
 #ifndef _LEKA_OS_DRIVER_CORE_CR95HF_H_
 #define _LEKA_OS_DRIVER_CORE_CR95HF_H_
 
+#include <cstdint>
 #include <lstd_span>
 
 #include "interface/drivers/BufferedSerial.h"
@@ -30,6 +31,21 @@ namespace rfid::cr95hf {
 		constexpr uint8_t arc_b								  = 0x68;	// Analog Register Configuration
 		constexpr uint8_t flag_increment					  = 0x01;
 		constexpr uint8_t acr_b_index_for_gain_and_modulation = 0x01;
+
+		namespace idle {
+			constexpr uint8_t tag_detection_command					= 0x07;
+			constexpr uint8_t wu_source								= 0x0A;
+			constexpr std::array<uint8_t, 2> enter_control			= {0x21, 0x00};
+			constexpr std::array<uint8_t, 2> wu_control				= {0x79, 0x01};
+			constexpr std::array<uint8_t, 2> leave_control			= {0x18, 0x00};
+			constexpr uint8_t wu_periode							= 0x20;
+			constexpr uint8_t oscillator_start						= 0x60;
+			constexpr uint8_t digital_to_analog_start				= 0x60;
+			constexpr std::array<uint8_t, 2> digital_to_analog_data = {0x60, 0x70};
+			constexpr uint8_t swing_count							= 0x3F;
+			constexpr uint8_t max_sleep								= 0x08;
+
+		}	// namespace idle
 
 	}	// namespace settings
 
@@ -68,6 +84,23 @@ namespace rfid::cr95hf {
 		constexpr uint8_t set_gain_and_modulation = 0x09;
 
 		namespace frame {
+			constexpr std::array<uint8_t, 16> enable_tag_detection {
+				rfid::cr95hf::settings::idle::tag_detection_command,
+				0x0E,
+				rfid::cr95hf::settings::idle::wu_source,
+				rfid::cr95hf::settings::idle::enter_control[0],
+				rfid::cr95hf::settings::idle::enter_control[1],
+				rfid::cr95hf::settings::idle::wu_control[0],
+				rfid::cr95hf::settings::idle::wu_control[1],
+				rfid::cr95hf::settings::idle::leave_control[0],
+				rfid::cr95hf::settings::idle::leave_control[1],
+				rfid::cr95hf::settings::idle::wu_periode,
+				rfid::cr95hf::settings::idle::oscillator_start,
+				rfid::cr95hf::settings::idle::digital_to_analog_start,
+				rfid::cr95hf::settings::idle::digital_to_analog_data[0],
+				rfid::cr95hf::settings::idle::digital_to_analog_data[1],
+				rfid::cr95hf::settings::idle::swing_count,
+				rfid::cr95hf::settings::idle::max_sleep};
 
 			constexpr std::array<uint8_t, 4> set_protocol_iso14443 {
 				rfid::cr95hf::command::set_protocol, 0x02, rfid::cr95hf::protocol::iso14443A.id,
@@ -93,6 +126,8 @@ class CoreCR95HF : public interface::RFID
 	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
 	auto init() -> bool final;
+
+	auto setup() -> bool final;
 
 	void send(const lstd::span<uint8_t> &iso_command) final;
 

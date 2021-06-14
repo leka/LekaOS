@@ -41,7 +41,7 @@ class CoreCR95HFSensorTest : public ::testing::Test
 	{
 		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
 		EXPECT_CALL(mockBufferedSerial, read)
-			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + size), Return(2)));
+			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + size), Return(size)));
 	}
 
 	void sendSetGainAndModulation()
@@ -66,7 +66,23 @@ TEST_F(CoreCR95HFSensorTest, initialization)
 	ASSERT_NE(&corecr95hf, nullptr);
 }
 
-TEST_F(CoreCR95HFSensorTest, initSuccess)
+TEST_F(CoreCR95HFSensorTest, init)
+{
+	const auto expected_values_init = ElementsAre(
+		rfid::cr95hf::settings::idle::tag_detection_command, 0x0E, rfid::cr95hf::settings::idle::wu_source,
+		rfid::cr95hf::settings::idle::enter_control[0], rfid::cr95hf::settings::idle::enter_control[1],
+		rfid::cr95hf::settings::idle::wu_control[0], rfid::cr95hf::settings::idle::wu_control[1],
+		rfid::cr95hf::settings::idle::leave_control[0], rfid::cr95hf::settings::idle::leave_control[1],
+		rfid::cr95hf::settings::idle::wu_periode, rfid::cr95hf::settings::idle::oscillator_start,
+		rfid::cr95hf::settings::idle::digital_to_analog_start, rfid::cr95hf::settings::idle::digital_to_analog_data[0],
+		rfid::cr95hf::settings::idle::digital_to_analog_data[1], rfid::cr95hf::settings::idle::swing_count,
+		rfid::cr95hf::settings::idle::max_sleep);
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_init));
+
+	corecr95hf.init();
+}
+
+TEST_F(CoreCR95HFSensorTest, setupSuccess)
 {
 	std::array<uint8_t, 2> set_protocol_success_answer			  = {0x00, 0x00};
 	std::array<uint8_t, 2> set_gain_and_modulation_success_answer = {0x00, 0x00};
@@ -80,11 +96,11 @@ TEST_F(CoreCR95HFSensorTest, initSuccess)
 		receiveSetGainAndModulationAnswer(set_gain_and_modulation_success_answer);
 	}
 
-	auto is_initialized = corecr95hf.init();
+	auto is_initialized = corecr95hf.setup();
 	ASSERT_EQ(is_initialized, true);
 }
 
-TEST_F(CoreCR95HFSensorTest, initFailedOnSetProtocolAnswerTooSmall)
+TEST_F(CoreCR95HFSensorTest, setupFailedOnSetProtocolAnswerTooSmall)
 {
 	std::array<uint8_t, 3> set_protocol_failed_answer = {0x82, 0x00, 0x00};
 	{
@@ -94,11 +110,11 @@ TEST_F(CoreCR95HFSensorTest, initFailedOnSetProtocolAnswerTooSmall)
 		receiveSetProtocolAnswer(set_protocol_failed_answer);
 	}
 
-	auto is_initialized = corecr95hf.init();
+	auto is_initialized = corecr95hf.setup();
 	ASSERT_EQ(is_initialized, false);
 }
 
-TEST_F(CoreCR95HFSensorTest, initFailedOnSetProtocolOnFirstValue)
+TEST_F(CoreCR95HFSensorTest, setupFailedOnSetProtocolOnFirstValue)
 {
 	std::array<uint8_t, 2> set_protocol_failed_answer = {0x82, 0x00};
 	{
@@ -108,11 +124,11 @@ TEST_F(CoreCR95HFSensorTest, initFailedOnSetProtocolOnFirstValue)
 		receiveSetProtocolAnswer(set_protocol_failed_answer);
 	}
 
-	auto is_initialized = corecr95hf.init();
+	auto is_initialized = corecr95hf.setup();
 	ASSERT_EQ(is_initialized, false);
 }
 
-TEST_F(CoreCR95HFSensorTest, initFailedOnSetGainAndModulation)
+TEST_F(CoreCR95HFSensorTest, setupFailedOnSetGainAndModulation)
 {
 	std::array<uint8_t, 2> set_protocol_success_answer		 = {0x00, 0x00};
 	std::array<uint8_t, 2> set_gain_modulation_failed_answer = {0x00, 0xff};
@@ -126,7 +142,7 @@ TEST_F(CoreCR95HFSensorTest, initFailedOnSetGainAndModulation)
 		receiveSetGainAndModulationAnswer(set_gain_modulation_failed_answer);
 	}
 
-	auto is_initialized = corecr95hf.init();
+	auto is_initialized = corecr95hf.setup();
 	ASSERT_EQ(is_initialized, false);
 }
 
