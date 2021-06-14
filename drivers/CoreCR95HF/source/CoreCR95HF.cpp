@@ -35,7 +35,9 @@ auto CoreCR95HF::init() -> bool
 
 auto CoreCR95HF::didSetupSucceed() -> bool
 {
-	receiveCR95HFAnswer();
+	if (receiveCR95HFAnswer() != 2) {
+		return false;
+	}
 
 	std::array<uint8_t, 2> buffer {_rx_buf[0], _rx_buf[1]};
 
@@ -98,6 +100,10 @@ auto CoreCR95HF::processTagAnswer(const lstd::span<uint8_t> &answer, const size_
 {
 	uint8_t status = _rx_buf[0];
 	uint8_t length = _rx_buf[1];
+
+	if (size == 2) {
+		return false;
+	}
 
 	if (status != rfid::cr95hf::status::communication_succeed ||
 		length != size - rfid::cr95hf::tag_answer::heading_size) {

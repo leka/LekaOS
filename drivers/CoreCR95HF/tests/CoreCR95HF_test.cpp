@@ -36,11 +36,12 @@ class CoreCR95HFSensorTest : public ::testing::Test
 		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_set_protocol));
 	}
 
-	void receiveSetProtocolAnswer(const std::array<uint8_t, 2> &returned_values)
+	template <size_t size>
+	void receiveSetProtocolAnswer(const std::array<uint8_t, size> &returned_values)
 	{
 		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
 		EXPECT_CALL(mockBufferedSerial, read)
-			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + 2), Return(0)));
+			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + size), Return(2)));
 	}
 
 	void sendSetGainAndModulation()
@@ -56,7 +57,7 @@ class CoreCR95HFSensorTest : public ::testing::Test
 	{
 		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
 		EXPECT_CALL(mockBufferedSerial, read)
-			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + 2), Return(0)));
+			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + 2), Return(2)));
 	}
 };
 
@@ -81,6 +82,20 @@ TEST_F(CoreCR95HFSensorTest, initSuccess)
 
 	auto is_initialized = corecr95hf.init();
 	ASSERT_EQ(is_initialized, true);
+}
+
+TEST_F(CoreCR95HFSensorTest, initFailedOnSetProtocolAnswerTooSmall)
+{
+	std::array<uint8_t, 3> set_protocol_failed_answer = {0x82, 0x00, 0x00};
+	{
+		InSequence seq;
+
+		sendSetProtocol();
+		receiveSetProtocolAnswer(set_protocol_failed_answer);
+	}
+
+	auto is_initialized = corecr95hf.init();
+	ASSERT_EQ(is_initialized, false);
 }
 
 TEST_F(CoreCR95HFSensorTest, initFailedOnSetProtocolOnFirstValue)
