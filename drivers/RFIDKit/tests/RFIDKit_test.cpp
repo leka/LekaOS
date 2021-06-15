@@ -22,24 +22,49 @@ using ::testing::SetArrayArgument;
 class CoreCR95HFSensorTest : public ::testing::Test
 {
   protected:
-	CoreCR95HFSensorTest() : corecr95hf(mockBufferedSerial) {};
+	CoreCR95HFSensorTest() : coreRfid(mockBufferedSerial) {};
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	CoreCR95HF corecr95hf;
+	CoreCR95HF coreRfid;
 	CoreBufferedSerialMock mockBufferedSerial;
 };
 
 class CoreRFIDKitTest : public CoreCR95HFSensorTest
 {
   protected:
-	CoreRFIDKitTest() : coreRfid(CoreCR95HFSensorTest::corecr95hf) {};
+	CoreRFIDKitTest() : coreRfid(CoreCR95HFSensorTest::coreRfid) {};
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
 	RFIDKit coreRfid;
+
+	std::array<uint8_t, 2> set_protocol_answer		  = {0x00, 0x00};
+	std::array<uint8_t, 2> set_gain_modulation_answer = {0x00, 0x00};
+
+	template <size_t size>
+	void setup(const std::array<uint8_t, size> &returned_values_set_protocol,
+			   const std::array<uint8_t, 2> &returned_values_set_gain_and_modulation)
+	{
+		printf("protocol values : ");
+		for (int i = 0; i < size; ++i) {
+			printf("%i ", returned_values_set_protocol[i]);
+		}
+		printf("\n");
+
+		printf("gain values : ");
+		for (int i = 0; i < size; ++i) {
+			printf("%i ", returned_values_set_gain_and_modulation[i]);
+		}
+		printf("\n");
+
+		sendSetProtocol();
+		receiveSetProtocolAnswer(returned_values_set_protocol);
+		sendSetGainAndModulation();
+		receiveSetGainAndModulationAnswer(returned_values_set_gain_and_modulation);
+	}
 
 	void sendSetProtocol()
 	{
@@ -49,11 +74,12 @@ class CoreRFIDKitTest : public CoreCR95HFSensorTest
 		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_set_protocol));
 	}
 
-	void receiveSetProtocolAnswer(const std::array<uint8_t, 2> &returned_values)
+	template <size_t size>
+	void receiveSetProtocolAnswer(const std::array<uint8_t, size> &returned_values)
 	{
 		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
 		EXPECT_CALL(mockBufferedSerial, read)
-			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + 2), Return(0)));
+			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + size), Return(size)));
 	}
 
 	void sendSetGainAndModulation()
@@ -69,7 +95,7 @@ class CoreRFIDKitTest : public CoreCR95HFSensorTest
 	{
 		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
 		EXPECT_CALL(mockBufferedSerial, read)
-			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + 2), Return(0)));
+			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + 2), Return(2)));
 	}
 
 	void writeREQARequest()
@@ -106,36 +132,20 @@ TEST_F(CoreRFIDKitTest, initialization)
 	ASSERT_NE(&coreRfid, nullptr);
 }
 
-TEST_F(CoreRFIDKitTest, initSuccess)
+TEST_F(CoreRFIDKitTest, init)
 {
-	std::array<uint8_t, 2> set_protocol_success_answer			  = {0x00, 0x00};
-	std::array<uint8_t, 2> set_gain_and_modulation_success_answer = {0x00, 0x00};
+	const auto expected_values_init = ElementsAre(
+		rfid::cr95hf::settings::idle::tag_detection_command, 0x0E, rfid::cr95hf::settings::idle::wu_source,
+		rfid::cr95hf::settings::idle::enter_control[0], rfid::cr95hf::settings::idle::enter_control[1],
+		rfid::cr95hf::settings::idle::wu_control[0], rfid::cr95hf::settings::idle::wu_control[1],
+		rfid::cr95hf::settings::idle::leave_control[0], rfid::cr95hf::settings::idle::leave_control[1],
+		rfid::cr95hf::settings::idle::wu_periode, rfid::cr95hf::settings::idle::oscillator_start,
+		rfid::cr95hf::settings::idle::digital_to_analog_start, rfid::cr95hf::settings::idle::digital_to_analog_data[0],
+		rfid::cr95hf::settings::idle::digital_to_analog_data[1], rfid::cr95hf::settings::idle::swing_count,
+		rfid::cr95hf::settings::idle::max_sleep);
+	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_init));
 
-	{
-		InSequence seq;
-
-		sendSetProtocol();
-		receiveSetProtocolAnswer(set_protocol_success_answer);
-		sendSetGainAndModulation();
-		receiveSetGainAndModulationAnswer(set_gain_and_modulation_success_answer);
-	}
-
-	auto is_initialized = corecr95hf.init();
-	ASSERT_EQ(is_initialized, true);
-}
-
-TEST_F(CoreRFIDKitTest, initFailed)
-{
-	std::array<uint8_t, 2> set_protocol_failed_answer = {0x82, 0x00};
-	{
-		InSequence seq;
-
-		sendSetProtocol();
-		receiveSetProtocolAnswer(set_protocol_failed_answer);
-	}
-
-	auto is_initialized = corecr95hf.init();
-	ASSERT_EQ(is_initialized, false);
+	coreRfid.init();
 }
 
 TEST_F(CoreRFIDKitTest, getTagDataSuccess)
@@ -145,6 +155,7 @@ TEST_F(CoreRFIDKitTest, getTagDataSuccess)
 										   0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x24, 0xF5, 0x28, 0x00, 0x00};
 	{
 		InSequence seq;
+		setup(set_protocol_answer, set_gain_modulation_answer);
 
 		writeREQARequest();
 		receiveAQTA(atqa_answer);
@@ -164,13 +175,62 @@ TEST_F(CoreRFIDKitTest, getTagDataSuccess)
 	ASSERT_EQ(actual_values, expected_values);
 }
 
+TEST_F(CoreRFIDKitTest, setupFailedOnSetProtocolAnswerTooSmall)
+{
+	std::array<uint8_t, 3> set_protocol_failed_answer = {0x82, 0x00, 0x00};
+	std::array<uint8_t, 16> actual_values {0};
+
+	{
+		InSequence seq;
+
+		sendSetProtocol();
+		receiveSetProtocolAnswer(set_protocol_failed_answer);
+	}
+
+	auto is_initialized = coreRfid.getTagData(actual_values);
+	ASSERT_EQ(is_initialized, false);
+}
+
+TEST_F(CoreRFIDKitTest, setupFailedOnSetProtocolOnFirstValue)
+{
+	set_protocol_answer = {0x82, 0x00};
+
+	std::array<uint8_t, 16> actual_values {0};
+
+	{
+		InSequence seq;
+
+		sendSetProtocol();
+		receiveSetProtocolAnswer(set_protocol_answer);
+	}
+
+	auto is_initialized = coreRfid.getTagData(actual_values);
+	ASSERT_EQ(is_initialized, false);
+}
+
+TEST_F(CoreRFIDKitTest, setupFailedOnSetGainAndModulation)
+{
+	set_gain_modulation_answer = {0x00, 0xff};
+
+	std::array<uint8_t, 16> actual_values {0};
+
+	{
+		InSequence seq;
+
+		setup(set_protocol_answer, set_gain_modulation_answer);
+	}
+
+	auto is_initialized = coreRfid.getTagData(actual_values);
+	ASSERT_EQ(is_initialized, false);
+}
+
 TEST_F(CoreRFIDKitTest, getTagDataFailedOnReceiveATQA)
 {
 	std::array<uint8_t, 7> atqa_answer {0x80, 0x05, 0xFF, 0x00, 0x28, 0x00, 0x00};
 
 	{
 		InSequence seq;
-
+		setup(set_protocol_answer, set_gain_modulation_answer);
 		writeREQARequest();
 		receiveAQTA(atqa_answer);
 	}
@@ -187,6 +247,8 @@ TEST_F(CoreRFIDKitTest, getTagDataFailedOnReceiveTagData)
 										   0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0xFF, 0xFF, 0x28, 0x00, 0x00};
 	{
 		InSequence seq;
+
+		setup(set_protocol_answer, set_gain_modulation_answer);
 
 		writeREQARequest();
 		receiveAQTA(atqa_answer);
