@@ -133,6 +133,8 @@ class CoreCR95HF : public interface::RFID
 
 	auto receive(const lstd::span<uint8_t> &anwser) -> size_t final;
 
+	auto getSerial() const -> const interface::BufferedSerial & { return _serial; }
+
   private:
 	auto didSetupSucceed() -> bool;
 
