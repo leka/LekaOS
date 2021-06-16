@@ -17,7 +17,8 @@ on:
 jobs:
   leka_os_and_al:
     name: LekaOS & al.
-    runs-on: [self-hosted, build]
+    runs-on: ubuntu-latest
+    container: weareleka/docker-arm-toolchain:latest
     strategy:
       fail-fast: false
       matrix:

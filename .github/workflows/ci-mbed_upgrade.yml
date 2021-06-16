@@ -12,7 +12,8 @@ on:
 jobs:
   build_disco:
     name: Build for LEKA_DISCO
-    runs-on: [self-hosted, build]
+    runs-on: ubuntu-latest
+    container: weareleka/docker-arm-toolchain:latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -28,7 +29,8 @@ jobs:
 
   build_compare_leka:
     name: Build & Compare
-    runs-on: [self-hosted, build]
+    runs-on: ubuntu-latest
+    container: weareleka/docker-arm-toolchain:latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
