@@ -41,7 +41,7 @@ namespace rfid::cr95hf {
 			constexpr uint8_t wu_periode							= 0x20;
 			constexpr uint8_t oscillator_start						= 0x60;
 			constexpr uint8_t digital_to_analog_start				= 0x60;
-			constexpr std::array<uint8_t, 2> digital_to_analog_data = {0x60, 0x70};
+			constexpr std::array<uint8_t, 2> digital_to_analog_data = {0x70, 0x80};
 			constexpr uint8_t swing_count							= 0x3F;
 			constexpr uint8_t max_sleep								= 0x08;
 
@@ -125,7 +125,7 @@ class CoreCR95HF : public interface::RFID
   public:
 	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
-	auto init() -> bool final;
+	void init() final;
 
 	auto setup() -> bool final;
 

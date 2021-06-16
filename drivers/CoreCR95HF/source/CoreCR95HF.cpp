@@ -11,10 +11,11 @@
 using namespace std::chrono;
 
 namespace leka {
-auto CoreCR95HF::init() -> bool
+void CoreCR95HF::init()
 {
 	_serial.write(rfid::cr95hf::command::frame::enable_tag_detection.data(),
 				  rfid::cr95hf::command::frame::enable_tag_detection.size());
+	rtos::ThisThread::sleep_for(10ms);
 }
 
 auto CoreCR95HF::setup() -> bool
@@ -53,7 +54,6 @@ auto CoreCR95HF::receiveCR95HFAnswer() -> size_t
 {
 	size_t size {0};
 
-	rtos::ThisThread::sleep_for(10ms);
 	if (_serial.readable()) {
 		size = _serial.read(_rx_buf.data(), _rx_buf.size());
 	}

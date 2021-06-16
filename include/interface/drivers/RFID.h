@@ -31,7 +31,7 @@ namespace interface {
 	  public:
 		virtual ~RFID() = default;
 
-		virtual auto init() -> bool = 0;
+		virtual void init() = 0;
 
 		virtual auto setup() -> bool = 0;
 
