@@ -140,8 +140,8 @@ auto main() -> int
 		rtos::ThisThread::sleep_for(1s);
 
 		corevideo.turnOn();
-		if (corefatfs.open(filename1.data()) == FR_OK) {
-			log_info("Displaying image 1 : %s", filename1.data());
+		if (corefatfs.open(filename1) == FR_OK) {
+			log_info("Displaying image 1 : %s", filename1);
 			corevideo.displayImage(JPEG_File.get());
 			corevideo.setBrightness(0.2f);
 
@@ -150,8 +150,8 @@ auto main() -> int
 			rtos::ThisThread::sleep_for(2s);
 		}
 
-		if (corefatfs.open(filename2.data()) == FR_OK) {
-			log_info("Displaying image 2 : %s", filename2.data());
+		if (corefatfs.open(filename2) == FR_OK) {
+			log_info("Displaying image 2 : %s", filename2);
 			corevideo.displayImage(JPEG_File.get());
 			corevideo.setBrightness(0.9f);
 
