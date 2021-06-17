@@ -17,7 +17,7 @@ class RFIDKit : public interface::RFID::ISO14443
   public:
 	explicit RFIDKit(interface::RFID &rfid_reader) : _rfid_reader(rfid_reader) {};
 
-	auto init() -> bool final;
+	void init() final;
 	auto getTagData(std::array<uint8_t, 16> &tag_data) -> bool final;
 
   private:

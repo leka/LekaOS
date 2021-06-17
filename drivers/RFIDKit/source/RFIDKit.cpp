@@ -7,9 +7,9 @@
 #include <cstdint>
 
 namespace leka {
-auto RFIDKit::init() -> bool
+void RFIDKit::init()
 {
-	return _rfid_reader.init();
+	_rfid_reader.init();
 }
 
 auto RFIDKit::getTagData(std::array<uint8_t, 16> &tag_data) -> bool
