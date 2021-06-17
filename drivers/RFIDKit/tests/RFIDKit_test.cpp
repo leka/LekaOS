@@ -154,7 +154,7 @@ TEST_F(CoreRFIDKitTest, init)
 		rfid::cr95hf::settings::idle::max_sleep);
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_init));
 
-	coreRfid.init();
+	coreRfid.enableTagDetection();
 }
 
 TEST_F(CoreRFIDKitTest, getTagDataSuccess)

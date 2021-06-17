@@ -19,7 +19,7 @@ class RFIDKit : public interface::RFID::ISO14443
 
 	void setInterrupt(void func()) final;
 
-	void init() final;
+	void enableTagDetection() final;
 
 	auto getTagData(std::array<uint8_t, 16> &tag_data) -> bool final;
 

@@ -13,9 +13,9 @@ void RFIDKit::setInterrupt(void func())
 	serial.sigio(func);
 }
 
-void RFIDKit::init()
+void RFIDKit::enableTagDetection()
 {
-	_rfid_reader.init();
+	_rfid_reader.enableTagDetection();
 }
 
 auto RFIDKit::getTagData(std::array<uint8_t, 16> &tag_data) -> bool
