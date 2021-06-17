@@ -124,4 +124,16 @@ auto CoreCR95HF::processTagAnswer(const lstd::span<uint8_t> &answer, const size_
 	return true;
 }
 
+auto CoreCR95HF::receiveCallback() -> bool
+{
+	std::array<uint8_t, 2> buffer {};
+	receiveCR95HFAnswer();
+
+	std::copy(_rx_buf.begin() + 1, _rx_buf.begin() + 1 + buffer.size(), buffer.begin());
+
+	printf("Values : %i, %i\n", buffer[0], buffer[1]);
+
+	return buffer == rfid::cr95hf::tag_answer::tag_detection_callback ? true : false;
+}
+
 }	// namespace leka

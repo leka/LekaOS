@@ -221,3 +221,29 @@ TEST_F(CoreCR95HFSensorTest, receiveDataFailedWrongLength)
 	ASSERT_EQ(actual_size, false);
 	ASSERT_NE(actual_values, read_values);
 }
+
+TEST_F(CoreCR95HFSensorTest, receiveCallbackSuccess)
+{
+	std::array<uint8_t, 3> callback_success_answer = {0x00, 0x01, 0x02};
+
+	EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
+	EXPECT_CALL(mockBufferedSerial, read)
+		.WillOnce(
+			DoAll(SetArrayArgument<0>(begin(callback_success_answer), begin(callback_success_answer) + 3), Return(3)));
+
+	uint8_t is_callback_correct = corecr95hf.receiveCallback();
+	ASSERT_EQ(is_callback_correct, true);
+}
+
+TEST_F(CoreCR95HFSensorTest, receiveCallbackFailed)
+{
+	std::array<uint8_t, 3> callback_success_answer = {0x00, 0x01, 0x01};
+
+	EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
+	EXPECT_CALL(mockBufferedSerial, read)
+		.WillOnce(
+			DoAll(SetArrayArgument<0>(begin(callback_success_answer), begin(callback_success_answer) + 3), Return(3)));
+
+	uint8_t is_callback_correct = corecr95hf.receiveCallback();
+	ASSERT_EQ(is_callback_correct, false);
+}

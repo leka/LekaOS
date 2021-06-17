@@ -53,7 +53,7 @@ namespace rfid::cr95hf {
 
 		constexpr size_t heading_size = 2;
 		constexpr size_t flag_size	  = 3;
-
+		constexpr std::array<uint8_t, 2> tag_detection_callback {0x01, 0x02};
 	}	// namespace tag_answer
 
 	namespace protocol {
@@ -125,6 +125,8 @@ class CoreCR95HF : public interface::RFID
   public:
 	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
+	auto getSerial() -> const interface::BufferedSerial & final { return _serial; }
+
 	void init() final;
 
 	auto setup() -> bool final;
@@ -133,7 +135,7 @@ class CoreCR95HF : public interface::RFID
 
 	auto receive(const lstd::span<uint8_t> &anwser) -> size_t final;
 
-	auto getSerial() -> const interface::BufferedSerial & final { return _serial; }
+	auto receiveCallback() -> bool final;
 
   private:
 	auto didSetupSucceed() -> bool;

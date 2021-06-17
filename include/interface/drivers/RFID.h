@@ -41,6 +41,8 @@ namespace interface {
 
 		virtual auto receive(const lstd::span<uint8_t> &tag_anwser) -> size_t = 0;
 
+		virtual auto receiveCallback() -> bool = 0;
+
 		class ISO14443
 		{
 		  public:
