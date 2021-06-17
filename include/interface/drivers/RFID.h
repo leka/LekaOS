@@ -31,6 +31,8 @@ namespace interface {
 	  public:
 		virtual ~RFID() = default;
 
+		virtual auto getSerial() -> const interface::BufferedSerial & = 0;
+
 		virtual void init() = 0;
 
 		virtual auto setup() -> bool = 0;
