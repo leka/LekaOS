@@ -53,7 +53,7 @@ namespace rfid::cr95hf {
 
 		constexpr size_t heading_size = 2;
 		constexpr size_t flag_size	  = 3;
-		constexpr std::array<uint8_t, 2> tag_detection_callback {0x01, 0x02};
+
 	}	// namespace tag_answer
 
 	namespace protocol {
@@ -74,6 +74,7 @@ namespace rfid::cr95hf {
 		constexpr uint8_t communication_succeed		   = 0x80;
 		constexpr uint8_t error_time_out			   = 0x87;
 		constexpr std::array<uint8_t, 2> setup_success = {0x00, 0x00};
+		constexpr std::array<uint8_t, 2> tag_detection_callback {0x01, 0x02};
 
 	}	// namespace status
 
@@ -127,21 +128,21 @@ class CoreCR95HF : public interface::RFID
 
 	auto getSerial() -> interface::BufferedSerial & final { return _serial; }
 
-	void init() final;
+	void enableTagDetection() final;
 
 	auto setup() -> bool final;
 
 	void send(const lstd::span<uint8_t> &iso_command) final;
 
-	auto receive(const lstd::span<uint8_t> &anwser) -> size_t final;
+	auto receiveTagData(const lstd::span<uint8_t> &anwser) -> size_t final;
 
 	auto receiveCallback() -> bool final;
 
   private:
 	auto didSetupSucceed() -> bool;
 
-	void setProtocolISO14443();
-	void setGainAndModulation();
+	auto setProtocolISO14443() -> bool;
+	auto setGainAndModulation() -> bool;
 	auto receiveCR95HFAnswer() -> size_t;
 
 	auto formatCommand(const lstd::span<uint8_t> &command) -> size_t;

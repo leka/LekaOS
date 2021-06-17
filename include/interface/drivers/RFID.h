@@ -33,13 +33,13 @@ namespace interface {
 
 		virtual auto getSerial() -> interface::BufferedSerial & = 0;
 
-		virtual void init() = 0;
+		virtual void enableTagDetection() = 0;
 
 		virtual auto setup() -> bool = 0;
 
 		virtual void send(const lstd::span<uint8_t> &iso_command) = 0;
 
-		virtual auto receive(const lstd::span<uint8_t> &tag_anwser) -> size_t = 0;
+		virtual auto receiveTagData(const lstd::span<uint8_t> &tag_anwser) -> size_t = 0;
 
 		virtual auto receiveCallback() -> bool = 0;
 

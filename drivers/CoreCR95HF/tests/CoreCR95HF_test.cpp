@@ -66,7 +66,7 @@ TEST_F(CoreCR95HFSensorTest, initialization)
 	ASSERT_NE(&corecr95hf, nullptr);
 }
 
-TEST_F(CoreCR95HFSensorTest, init)
+TEST_F(CoreCR95HFSensorTest, enableTagDetection)
 {
 	const auto expected_values_init = ElementsAre(
 		rfid::cr95hf::settings::idle::tag_detection_command, 0x0E, rfid::cr95hf::settings::idle::wu_source,
@@ -79,7 +79,7 @@ TEST_F(CoreCR95HFSensorTest, init)
 		rfid::cr95hf::settings::idle::max_sleep);
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_init));
 
-	corecr95hf.init();
+	corecr95hf.enableTagDetection();
 }
 
 TEST_F(CoreCR95HFSensorTest, setupSuccess)
@@ -171,7 +171,7 @@ TEST_F(CoreCR95HFSensorTest, receiveDataSuccess)
 	EXPECT_CALL(mockBufferedSerial, read)
 		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 23), Return(23)));
 
-	uint8_t actual_size = corecr95hf.receive(actual_values);
+	uint8_t actual_size = corecr95hf.receiveTagData(actual_values);
 
 	ASSERT_EQ(actual_size, 18);
 	ASSERT_EQ(actual_values, expected_values);
@@ -186,7 +186,7 @@ TEST_F(CoreCR95HFSensorTest, receiveDataFailed)
 
 	EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(false));
 
-	uint8_t actual_size = corecr95hf.receive(actual_values);
+	uint8_t actual_size = corecr95hf.receiveTagData(actual_values);
 
 	ASSERT_EQ(actual_size, 0);
 	ASSERT_EQ(actual_values, expected_values);
@@ -201,7 +201,7 @@ TEST_F(CoreCR95HFSensorTest, receiveDataFailedWrongAnswerFlag)
 	EXPECT_CALL(mockBufferedSerial, read)
 		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 7), Return(7)));
 
-	uint8_t actual_size = corecr95hf.receive(actual_values);
+	uint8_t actual_size = corecr95hf.receiveTagData(actual_values);
 
 	ASSERT_EQ(actual_size, false);
 	ASSERT_NE(actual_values, read_values);
@@ -216,7 +216,7 @@ TEST_F(CoreCR95HFSensorTest, receiveDataFailedWrongLength)
 	EXPECT_CALL(mockBufferedSerial, read)
 		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 7), Return(0)));
 
-	uint8_t actual_size = corecr95hf.receive(actual_values);
+	uint8_t actual_size = corecr95hf.receiveTagData(actual_values);
 
 	ASSERT_EQ(actual_size, false);
 	ASSERT_NE(actual_values, read_values);
@@ -235,14 +235,27 @@ TEST_F(CoreCR95HFSensorTest, receiveCallbackSuccess)
 	ASSERT_EQ(is_callback_correct, true);
 }
 
-TEST_F(CoreCR95HFSensorTest, receiveCallbackFailed)
+TEST_F(CoreCR95HFSensorTest, receiveCallbackFailedWrongValue)
 {
-	std::array<uint8_t, 3> callback_success_answer = {0x00, 0x01, 0x01};
+	std::array<uint8_t, 3> callback_wrong_answer = {0x00, 0x01, 0x01};
 
 	EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
 	EXPECT_CALL(mockBufferedSerial, read)
 		.WillOnce(
-			DoAll(SetArrayArgument<0>(begin(callback_success_answer), begin(callback_success_answer) + 3), Return(3)));
+			DoAll(SetArrayArgument<0>(begin(callback_wrong_answer), begin(callback_wrong_answer) + 3), Return(3)));
+
+	uint8_t is_callback_correct = corecr95hf.receiveCallback();
+	ASSERT_EQ(is_callback_correct, false);
+}
+
+TEST_F(CoreCR95HFSensorTest, receiveCallbackFailedWrongSize)
+{
+	std::array<uint8_t, 4> callback_wrong_answer = {0x00, 0x01, 0x02, 0x00};
+
+	EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
+	EXPECT_CALL(mockBufferedSerial, read)
+		.WillOnce(
+			DoAll(SetArrayArgument<0>(begin(callback_wrong_answer), begin(callback_wrong_answer) + 4), Return(4)));
 
 	uint8_t is_callback_correct = corecr95hf.receiveCallback();
 	ASSERT_EQ(is_callback_correct, false);

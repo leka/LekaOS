@@ -11,32 +11,20 @@
 using namespace std::chrono;
 
 namespace leka {
-void CoreCR95HF::init()
+void CoreCR95HF::enableTagDetection()
 {
 	_serial.write(rfid::cr95hf::command::frame::enable_tag_detection.data(),
 				  rfid::cr95hf::command::frame::enable_tag_detection.size());
-	rtos::ThisThread::sleep_for(10ms);
 }
 
 auto CoreCR95HF::setup() -> bool
 {
-	setProtocolISO14443();
-
-	rtos::ThisThread::sleep_for(10ms);
-
-	if (!didSetupSucceed()) {
-		return false;
+	if (setProtocolISO14443()) {
+		if (setGainAndModulation()) {
+			return true;
+		}
 	}
-
-	setGainAndModulation();
-
-	rtos::ThisThread::sleep_for(10ms);
-
-	if (!didSetupSucceed()) {
-		return false;
-	}
-
-	return true;
+	return false;
 }
 
 auto CoreCR95HF::didSetupSucceed() -> bool
@@ -54,6 +42,7 @@ auto CoreCR95HF::receiveCR95HFAnswer() -> size_t
 {
 	size_t size {0};
 
+	rtos::ThisThread::sleep_for(10ms);
 	if (_serial.readable()) {
 		size = _serial.read(_rx_buf.data(), _rx_buf.size());
 	}
@@ -61,16 +50,20 @@ auto CoreCR95HF::receiveCR95HFAnswer() -> size_t
 	return size;
 }
 
-void CoreCR95HF::setProtocolISO14443()
+auto CoreCR95HF::setProtocolISO14443() -> bool
 {
 	_serial.write(rfid::cr95hf::command::frame::set_protocol_iso14443.data(),
 				  rfid::cr95hf::command::frame::set_protocol_iso14443.size());
+
+	return didSetupSucceed();
 }
 
-void CoreCR95HF::setGainAndModulation()
+auto CoreCR95HF::setGainAndModulation() -> bool
 {
 	_serial.write(rfid::cr95hf::command::frame::set_gain_and_modulation.data(),
 				  rfid::cr95hf::command::frame::set_gain_and_modulation.size());
+
+	return didSetupSucceed();
 }
 
 void CoreCR95HF::send(const lstd::span<uint8_t> &command)
@@ -78,6 +71,8 @@ void CoreCR95HF::send(const lstd::span<uint8_t> &command)
 	auto command_size = formatCommand(command);
 
 	_serial.write(_tx_buf.data(), command_size);
+
+	rtos::ThisThread::sleep_for(10ms);
 }
 
 auto CoreCR95HF::formatCommand(const lstd::span<uint8_t> &command) -> size_t
@@ -92,7 +87,7 @@ auto CoreCR95HF::formatCommand(const lstd::span<uint8_t> &command) -> size_t
 	return command.size() + rfid::cr95hf::tag_answer::heading_size;
 }
 
-auto CoreCR95HF::receive(const lstd::span<uint8_t> &answer) -> size_t
+auto CoreCR95HF::receiveTagData(const lstd::span<uint8_t> &answer) -> size_t
 {
 	auto size = receiveCR95HFAnswer();
 
@@ -127,11 +122,14 @@ auto CoreCR95HF::processTagAnswer(const lstd::span<uint8_t> &answer, const size_
 auto CoreCR95HF::receiveCallback() -> bool
 {
 	std::array<uint8_t, 2> buffer {};
-	receiveCR95HFAnswer();
+
+	if (receiveCR95HFAnswer() != 3) {
+		return false;
+	}
 
 	std::copy(_rx_buf.begin() + 1, _rx_buf.begin() + 1 + buffer.size(), buffer.begin());
 
-	return buffer == rfid::cr95hf::tag_answer::tag_detection_callback ? true : false;
+	return buffer == rfid::cr95hf::status::tag_detection_callback ? true : false;
 }
 
 }	// namespace leka
