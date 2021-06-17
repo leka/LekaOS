@@ -7,6 +7,12 @@
 #include <cstdint>
 
 namespace leka {
+void RFIDKit::setInterrupt(void func())
+{
+	interface::BufferedSerial &serial = _rfid_reader.getSerial();
+	serial.sigio(func);
+}
+
 void RFIDKit::init()
 {
 	_rfid_reader.init();

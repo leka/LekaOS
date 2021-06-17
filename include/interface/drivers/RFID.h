@@ -73,6 +73,8 @@ namespace interface {
 		class ISO14443
 		{
 		  public:
+			virtual void setInterrupt(void func()) = 0;
+
 			virtual void init() = 0;
 
 			virtual auto getTagData(std::array<uint8_t, 16> &tag_data) -> bool = 0;
