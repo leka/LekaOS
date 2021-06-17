@@ -48,9 +48,9 @@ LKCoreLCD corelcd(coreotm);
 LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
 LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
-const auto filename1 = std::array<char, 32> {"assets/images/Leka/logo.jpg"};
-const auto filename2 = std::array<char, 38> {"assets/images/Leka/emotion-happy.jpg"};
-char filename3[]	 = "assets/video/BirdsAndFeeder.avi";
+const char filename1[] = "assets/images/Leka/logo.jpg";
+const char filename2[] = "assets/images/Leka/emotion-happy.jpg";
+const char filename3[] = "assets/video/BirdsAndFeeder.avi";
 
 void registerCallbacks()
 {

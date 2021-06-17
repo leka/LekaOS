@@ -14,7 +14,7 @@ MBED_OS_DIR       := $(ROOT_DIR)/extern/mbed-os
 # MARK: - Arguments
 #
 
-PORT          ?= /dev/tty.usbmodem14303
+PORT          ?= /dev/ttyACM0
 BRANCH        ?= $(shell cat $(ROOT_DIR)/.mbed_version)
 VERSION       ?= $(shell cat $(ROOT_DIR)/.mbed_version)
 BAUDRATE      ?= 115200
@@ -50,7 +50,7 @@ EXCLUDE_FROM_LCOV_COVERAGE  = '*Xcode*' '*_build*' '*extern*' '*tests/unit*' '*_
 # MARK: - .bin path
 #
 
-LEKA_OS_BIN_PATH := $(TARGET_BUILD_DIR)/src/LekaOS.bin
+LEKA_OS_BIN_PATH := $(TARGET_BUILD_DIR)/spikes/lk_lcd/spike_lk_lcd.bin
 BIN_PATH         ?= $(LEKA_OS_BIN_PATH)
 
 #
@@ -304,3 +304,6 @@ reset:
 
 term:
 	mbed sterm -b $(BAUDRATE) -p $(PORT)
+
+flashterm: all flash term
+	@echo ""
