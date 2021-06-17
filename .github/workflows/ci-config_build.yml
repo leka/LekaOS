@@ -18,16 +18,36 @@ jobs:
   leka_os_and_al:
     name: LekaOS & al.
     runs-on: ubuntu-latest
-    container: weareleka/docker-arm-toolchain:latest
+    container:
+      image: weareleka/docker-arm-toolchain:latest
+      env:
+        CCACHE_DIR: /ccache
+      options: -v ccache:/ccache
+
     strategy:
       fail-fast: false
       matrix:
         custom_target: ["LEKA_V1_2_DEV"]
     steps:
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "::set-output name=date::$(date +%s)"
+        shell: bash
+
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 2
+
+      - name: Cache ccache
+        id: cache_cccache
+        uses: actions/cache@v2
+        with:
+          path: /ccache
+          key: ${{ runner.os }}-${{ matrix.custom_target }}-cache-cccache-${{ steps.get-date.outputs.date }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.custom_target }}-cache-cccache-
 
       - name: Cache Mbed OS
         id: cache_mbed_os
