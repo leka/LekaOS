@@ -41,6 +41,7 @@ class CoreRFIDKitTest : public CoreCR95HFSensorTest
 
 	RFIDKit coreRfid;
 
+	std::array<uint8_t, 3> returned_values_callback	  = {0x00, 0x01, 0x02};
 	std::array<uint8_t, 2> set_protocol_answer		  = {0x00, 0x00};
 	std::array<uint8_t, 2> set_gain_modulation_answer = {0x00, 0x00};
 
@@ -60,10 +61,18 @@ class CoreRFIDKitTest : public CoreCR95HFSensorTest
 		}
 		printf("\n");
 
+		receiveCallback(returned_values_callback);
 		sendSetProtocol();
 		receiveSetProtocolAnswer(returned_values_set_protocol);
 		sendSetGainAndModulation();
 		receiveSetGainAndModulationAnswer(returned_values_set_gain_and_modulation);
+	}
+
+	void receiveCallback(const std::array<uint8_t, 3> &returned_values)
+	{
+		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
+		EXPECT_CALL(mockBufferedSerial, read)
+			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + 3), Return(3)));
 	}
 
 	void sendSetProtocol()
@@ -175,6 +184,20 @@ TEST_F(CoreRFIDKitTest, getTagDataSuccess)
 	ASSERT_EQ(actual_values, expected_values);
 }
 
+TEST_F(CoreRFIDKitTest, setupFailedOnWrongCallbackValues)
+{
+	std::array<uint8_t, 3> callback_values = {0x00, 0x01, 0x01};
+	std::array<uint8_t, 16> actual_values {0};
+
+	{
+		InSequence seq;
+		receiveCallback(callback_values);
+	}
+
+	auto is_initialized = coreRfid.getTagData(actual_values);
+	ASSERT_EQ(is_initialized, false);
+}
+
 TEST_F(CoreRFIDKitTest, setupFailedOnSetProtocolAnswerTooSmall)
 {
 	std::array<uint8_t, 3> set_protocol_failed_answer = {0x82, 0x00, 0x00};
@@ -182,7 +205,7 @@ TEST_F(CoreRFIDKitTest, setupFailedOnSetProtocolAnswerTooSmall)
 
 	{
 		InSequence seq;
-
+		receiveCallback(returned_values_callback);
 		sendSetProtocol();
 		receiveSetProtocolAnswer(set_protocol_failed_answer);
 	}
@@ -200,6 +223,7 @@ TEST_F(CoreRFIDKitTest, setupFailedOnSetProtocolOnFirstValue)
 	{
 		InSequence seq;
 
+		receiveCallback(returned_values_callback);
 		sendSetProtocol();
 		receiveSetProtocolAnswer(set_protocol_answer);
 	}
