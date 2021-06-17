@@ -125,7 +125,7 @@ class CoreCR95HF : public interface::RFID
   public:
 	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
-	auto getSerial() -> const interface::BufferedSerial & final { return _serial; }
+	auto getSerial() -> interface::BufferedSerial & final { return _serial; }
 
 	void init() final;
 
