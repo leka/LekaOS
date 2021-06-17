@@ -5,7 +5,7 @@
 			"type": "cortex-debug",
 			"request": "launch",
 			"cwd": "${workspaceRoot}",
-			"executable": "${command:cmake.launchTargetPath}",
+			"executable": "_build/LEKA_V1_2_DEV/spikes/lk_lcd/spike_lk_lcd.elf",//"${command:cmake.launchTargetPath}",
 			"servertype": "openocd",
 			"configFiles": [
 				"interface/stlink.cfg",

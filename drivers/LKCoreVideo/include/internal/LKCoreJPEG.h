@@ -18,7 +18,7 @@ namespace leka {
 
 class LKCoreJPEG : public LKCoreJPEGBase
 {
-  public:
+	public:
 	LKCoreJPEG(LKCoreSTM32HalBase &hal, LKCoreDMA2DBase &dma2d, LKCoreFatFsBase &file);
 
 	void initialize(void) final;
@@ -31,20 +31,32 @@ class LKCoreJPEG : public LKCoreJPEGBase
 
 	void displayImage(FIL *file) final;
 	void playVideo();
-	
+
 	HAL_StatusTypeDef decodeImageWithPolling(void) final;   // TODO: Update Return type with something else than HAL status
+	HAL_StatusTypeDef decodeImageWithDma(void);
 
-    HAL_StatusTypeDef decodeImageWithDMA(void);
+	void registerPollingCallbacks(void);
+	void registerDmaCallbacks(void);
 
-	void onErrorCallback(JPEG_HandleTypeDef *hjpeg) final;
-	void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) final;
+	void polling_onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info);
+	void polling_onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size);
+	void polling_onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size);
+	void polling_onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg);
+	void polling_onErrorCallback(JPEG_HandleTypeDef *hjpeg);
 
-	void onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) final;
-	void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) final;
+	void dma_onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info);
+	void dma_onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size);
+	void dma_onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size);
+	void dma_onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg);
+	void dma_onErrorCallback(JPEG_HandleTypeDef *hjpeg);
 
-	void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) final;
+	void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) final {}
+	void onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) final {}
+	void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) final {}
+	void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) final {}
+	void onErrorCallback(JPEG_HandleTypeDef *hjpeg) final {}
 
-  private:
+	private:
 	struct JPEGDataBuffer {
 		uint8_t *data;
 		uint32_t size;

@@ -19,6 +19,26 @@
 				],
 				"limitSymbolsToIncludedHeaders": true
 			}
+		},
+		{
+			"name": "Linux",
+			"includePath": [
+				"${workspaceFolder}/**"
+			],
+			"defines": [],
+			"macFrameworkPath": [],
+			"compilerPath": "/usr/bin/arm-none-eabi-gcc",
+			"cStandard": "gnu11",
+			"cppStandard": "gnu++17",
+			"intelliSenseMode": "gcc-arm",
+			"compilerArgs": [],
+			"configurationProvider": "ms-vscode.cmake-tools",
+			"browse": {
+				"path": [
+					"${workspaceFolder}/**"
+				],
+				"limitSymbolsToIncludedHeaders": true
+			}
 		}
 	],
 	"version": 4

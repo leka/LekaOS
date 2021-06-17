@@ -12,7 +12,7 @@ target_include_directories(LKCoreVideo
 )
 
 target_sources(LKCoreVideo
-  PRIVATE
+	PRIVATE
 	source/LKCoreDMA2D.cpp
 	source/LKCoreFont.cpp
 	source/LKCoreGraphics.cpp
@@ -26,6 +26,7 @@ target_sources(LKCoreVideo
 	source/LKCoreSDRAM.cpp
 	source/LKCoreVideo.cpp
 	external/source/st_jpeg_utils.cpp
+	external/source/decode_dma.cpp
 )
 
 target_link_libraries(LKCoreVideo
