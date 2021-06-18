@@ -81,6 +81,8 @@ void HAL_JPEG_MspInit(JPEG_HandleTypeDef *hjpeg)
     
 }
 
+extern uint32_t Previous_FrameSize;
+
 namespace leka {
 
 LKCoreJPEG::LKCoreJPEG(LKCoreSTM32HalBase &hal, LKCoreDMA2DBase &dma2d, LKCoreFatFsBase &file)
@@ -186,20 +188,20 @@ uint32_t findFrameOffset(uint32_t offset, LKCoreFatFsBase &file)
 
 void LKCoreJPEG::playVideo()
 {
-	registerPollingCallbacks();
+	registerDmaCallbacks();
 
 	bool is_first_frame	  = true;
 	uint32_t frame_index  = 0;
 	uint32_t frame_offset = 0;
 
 	do {
-		frame_offset = findFrameOffset(frame_offset + _previous_frame_size, _file);
+		auto start_time = HAL_GetTick();
+		frame_offset = findFrameOffset(frame_offset + Previous_FrameSize, _file);
 		if (frame_offset != 0) {
-			auto start_time = HAL_GetTick();
 
 			_file.seek(frame_offset);
-			_previous_frame_size = 0;
-			decodeImageWithPolling();
+			Previous_FrameSize = 0;
+			decodeImageWithDma();
 
 			frame_index++;
 
@@ -238,14 +240,12 @@ HAL_StatusTypeDef LKCoreJPEG::decodeImageWithDma(void)
 {
 	decode_dma::JPEG_Decode_DMA(&_hjpeg, _file.getPointer(), jpeg::decoded_buffer_address);
 	int jpeg_decode_end = 0;
-	int cnt = 0;
-	do
-	{
+
+	do {
 		decode_dma::JPEG_InputHandler(&_hjpeg);
 		jpeg_decode_end = decode_dma::JPEG_OutputHandler(&_hjpeg);
-		cnt++;
-
 	} while(jpeg_decode_end == 0);
+	
 	return HAL_OK;
 }
 
@@ -396,10 +396,10 @@ void LKCoreJPEG::dma_onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *out
 	decode_dma::DataReadyCallback(hjpeg, output_buffer, size);
 }
 void LKCoreJPEG::dma_onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) {
-	decode_dma::ErrorCallback(hjpeg);
+	decode_dma::DecodeCpltCallback(hjpeg);
 }
 void LKCoreJPEG::dma_onErrorCallback(JPEG_HandleTypeDef *hjpeg) {
-	decode_dma::DecodeCpltCallback(hjpeg);
+	decode_dma::ErrorCallback(hjpeg);
 }
 
 }	// namespace leka
