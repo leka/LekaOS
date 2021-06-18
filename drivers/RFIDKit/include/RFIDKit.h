@@ -19,7 +19,7 @@ class RFIDKit : public interface::RFID::ISO14443
 
 	void setInterrupt(void func()) final;
 
-	void enableTagDetection() final;
+	void setReaderForTagDetection() final;
 
 	auto getTagData(std::array<uint8_t, 16> &tag_data) -> bool final;
 
@@ -38,7 +38,7 @@ class RFIDKit : public interface::RFID::ISO14443
 	void sendReadRegister8();
 
 	auto receiveATQA() -> bool;
-	auto receiveTagData() -> bool;
+	auto receiveReadTagData() -> bool;
 	auto computeCRC(uint8_t const *data, size_t size) const -> std::array<uint8_t, 2>;
 
 	void getData(std::array<uint8_t, 16> &tag_data);

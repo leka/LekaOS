@@ -13,7 +13,7 @@ void RFIDKit::setInterrupt(void func())
 	serial.sigio(func);
 }
 
-void RFIDKit::enableTagDetection()
+void RFIDKit::setReaderForTagDetection()
 {
 	_rfid_reader.enableTagDetection();
 }
@@ -34,7 +34,7 @@ auto RFIDKit::getTagData(std::array<uint8_t, 16> &tag_data) -> bool
 	}
 
 	sendReadRegister8();
-	if (!receiveTagData()) {
+	if (!receiveReadTagData()) {
 		return false;
 	}
 
@@ -64,14 +64,14 @@ auto RFIDKit::receiveATQA() -> bool
 {
 	std::array<uint8_t, 2> ATQA_answer {};
 
-	_rfid_reader.receive(ATQA_answer);
+	_rfid_reader.receiveTagData(ATQA_answer);
 
 	return ATQA_answer == interface::RFID::ISO14443::ATQA_answer ? true : false;
 }
 
-auto RFIDKit::receiveTagData() -> bool
+auto RFIDKit::receiveReadTagData() -> bool
 {
-	_rfid_reader.receive(_tag_data);
+	_rfid_reader.receiveTagData(_tag_data);
 
 	std::array<uint8_t, 2> received_crc = {_tag_data.data()[16], _tag_data.data()[17]};
 

@@ -7,7 +7,6 @@
 #include "CoreCR95HF.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreBufferedSerial.h"
-#include "mocks/leka/CoreRFID.h"
 
 using namespace leka;
 using namespace interface;
@@ -49,18 +48,6 @@ class CoreRFIDKitTest : public CoreCR95HFSensorTest
 	void setup(const std::array<uint8_t, size> &returned_values_set_protocol,
 			   const std::array<uint8_t, 2> &returned_values_set_gain_and_modulation)
 	{
-		printf("protocol values : ");
-		for (int i = 0; i < size; ++i) {
-			printf("%i ", returned_values_set_protocol[i]);
-		}
-		printf("\n");
-
-		printf("gain values : ");
-		for (int i = 0; i < size; ++i) {
-			printf("%i ", returned_values_set_gain_and_modulation[i]);
-		}
-		printf("\n");
-
 		receiveCallback(returned_values_callback);
 		sendSetProtocol();
 		receiveSetProtocolAnswer(returned_values_set_protocol);
@@ -68,11 +55,12 @@ class CoreRFIDKitTest : public CoreCR95HFSensorTest
 		receiveSetGainAndModulationAnswer(returned_values_set_gain_and_modulation);
 	}
 
-	void receiveCallback(const std::array<uint8_t, 3> &returned_values)
+	template <size_t size>
+	void receiveCallback(const std::array<uint8_t, size> &returned_values)
 	{
 		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
 		EXPECT_CALL(mockBufferedSerial, read)
-			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + 3), Return(3)));
+			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + size), Return(size)));
 	}
 
 	void sendSetProtocol()
@@ -141,7 +129,15 @@ TEST_F(CoreRFIDKitTest, initialization)
 	ASSERT_NE(&coreRfid, nullptr);
 }
 
-TEST_F(CoreRFIDKitTest, init)
+void interruptFunction() {};
+TEST_F(CoreRFIDKitTest, setInterrupt)
+{
+	EXPECT_CALL(mockBufferedSerial, sigio);
+
+	coreRfid.setInterrupt(interruptFunction);
+}
+
+TEST_F(CoreRFIDKitTest, waitForTagDetection)
 {
 	const auto expected_values_init = ElementsAre(
 		rfid::cr95hf::settings::idle::tag_detection_command, 0x0E, rfid::cr95hf::settings::idle::wu_source,
@@ -154,7 +150,7 @@ TEST_F(CoreRFIDKitTest, init)
 		rfid::cr95hf::settings::idle::max_sleep);
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_init));
 
-	coreRfid.enableTagDetection();
+	coreRfid.setReaderForTagDetection();
 }
 
 TEST_F(CoreRFIDKitTest, getTagDataSuccess)
@@ -187,6 +183,20 @@ TEST_F(CoreRFIDKitTest, getTagDataSuccess)
 TEST_F(CoreRFIDKitTest, setupFailedOnWrongCallbackValues)
 {
 	std::array<uint8_t, 3> callback_values = {0x00, 0x01, 0x01};
+	std::array<uint8_t, 16> actual_values {0};
+
+	{
+		InSequence seq;
+		receiveCallback(callback_values);
+	}
+
+	auto is_initialized = coreRfid.getTagData(actual_values);
+	ASSERT_EQ(is_initialized, false);
+}
+
+TEST_F(CoreRFIDKitTest, setupFailedOnWrongCallbackSize)
+{
+	std::array<uint8_t, 4> callback_values = {0x00, 0x01, 0x02, 0x00};
 	std::array<uint8_t, 16> actual_values {0};
 
 	{
