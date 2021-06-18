@@ -240,12 +240,15 @@ HAL_StatusTypeDef LKCoreJPEG::decodeImageWithDma(void)
 {
 	decode_dma::JPEG_Decode_DMA(&_hjpeg, _file.getPointer(), jpeg::decoded_buffer_address);
 	int jpeg_decode_end = 0;
-
 	do {
+		tmp = HAL_GetTick();
 		decode_dma::JPEG_InputHandler(&_hjpeg);
+		accu_in += HAL_GetTick() - tmp;
+		tmp = HAL_GetTick();
 		jpeg_decode_end = decode_dma::JPEG_OutputHandler(&_hjpeg);
+		accu_out += HAL_GetTick() - tmp;
 	} while(jpeg_decode_end == 0);
-	
+	log_info("in/ou handlers %dms, (in %dms, out %dms)", HAL_GetTick() - start, accu_in, accu_out);
 	return HAL_OK;
 }
 

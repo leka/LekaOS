@@ -133,7 +133,6 @@ uint32_t JPEG_Decode_DMA(JPEG_HandleTypeDef *hjpeg, FIL *file, uint32_t DestAddr
   /* Read from JPG file and fill input buffers */
   for(i = 0; i < NB_INPUT_DATA_BUFFERS; i++)
   {
-	  //printf("%lu : reading at %lu\n\r", i,  pFile->fptr);
     if(f_read (pFile, Jpeg_IN_BufferTab[i].DataBuffer , CHUNK_SIZE_IN, (UINT*)(&Jpeg_IN_BufferTab[i].DataBufferSize)) == FR_OK)
     {
       Jpeg_IN_BufferTab[i].State = JPEG_BUFFER_FULL;
