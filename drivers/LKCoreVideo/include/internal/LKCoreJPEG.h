@@ -56,11 +56,29 @@ class LKCoreJPEG : public LKCoreJPEGBase
 	void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) final {}
 	void onErrorCallback(JPEG_HandleTypeDef *hjpeg) final {}
 
+	void decoderInputHandler();
+	bool decoderOutputHandler();
+
 	private:
-	struct JPEGDataBuffer {
-		uint8_t *data;
-		uint32_t size;
+
+	enum BufferState {Empty, Full};
+	template <unsigned T>
+	struct JPEGBuffer {
+		unsigned size = 0;
+		BufferState state = Empty;
+		std::array<uint8_t, T> array = {0};
 	};
+
+	uint32_t _out_read_index = 0;
+	uint32_t _out_write_index = 0;
+	volatile bool _out_paused = false;
+
+	uint32_t _in_read_index = 0;
+	uint32_t _in_write_index = 0;
+	volatile bool _in_paused = false;
+
+	std::array<JPEGBuffer<jpeg::dma::chunk_size_in>, 2> _jpeg_in_buffers;
+	std::array<JPEGBuffer<jpeg::dma::chunk_size_out>, 2> _jpeg_out_buffers;
 
 	std::array<uint8_t, jpeg::output_data_buffer_size> _jpeg_output_buffer = {0};
 	std::array<uint8_t, jpeg::input_data_buffer_size> _jpeg_input_buffer = {0};
@@ -77,6 +95,8 @@ class LKCoreJPEG : public LKCoreJPEGBase
 	uint32_t _previous_frame_size 	= 0;
 	uint32_t _mcu_number			= 0;
 	uint32_t _mcu_block_index		= 0;
+	bool _hw_decode_ended = false;
+
 	uint32_t _input_file_offset 	= 0;
 };
 

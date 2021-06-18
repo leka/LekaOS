@@ -67,7 +67,7 @@ namespace jpeg {
 
 	namespace dma {
 		constexpr uint32_t chunk_size_in = 4096;
-		constexpr uint32_t chunk_size_out = 768*4;
+		constexpr uint32_t chunk_size_out = 768;
 	}	// namespace dma
 
 }	// namespace jpeg
