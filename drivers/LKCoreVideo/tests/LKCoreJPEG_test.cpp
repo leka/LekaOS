@@ -323,7 +323,7 @@ TEST_F(LKCoreJPEGTest, onInfoReadyCallback444ChromSubsamplingDimensionsNotMultip
 TEST_F(LKCoreJPEGTest, onDataAvailableCallback)
 {
 	JPEG_HandleTypeDef hjpeg;
-	uint32_t size;
+	uint32_t size {2};
 
 	{
 		InSequence seq;
@@ -338,7 +338,7 @@ TEST_F(LKCoreJPEGTest, onDataAvailableCallback)
 TEST_F(LKCoreJPEGTest, onDataAvailableCallbackSizeEqual)
 {
 	JPEG_HandleTypeDef hjpeg;
-	uint32_t size = 0;
+	uint32_t size {0};
 
 	{
 		InSequence seq;
@@ -353,7 +353,7 @@ TEST_F(LKCoreJPEGTest, onDataAvailableCallbackSizeEqual)
 TEST_F(LKCoreJPEGTest, onDataAvailableCallbackCannotReadFile)
 {
 	JPEG_HandleTypeDef hjpeg;
-	uint32_t size;
+	uint32_t size {2};
 
 	{
 		InSequence seq;
