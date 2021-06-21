@@ -22,7 +22,7 @@ jobs:
     env:
       CC: /usr/bin/clang
       CXX: /usr/bin/clang++
-      CCACHE_DIR: /home/ccache
+      CCACHE_DIR: /home/runner/work/ccache
 
     steps:
       - name: Get Date
@@ -44,7 +44,7 @@ jobs:
         id: cache_cccache
         uses: actions/cache@v2
         with:
-          path: /home/ccache
+          path: /home/runner/work/ccache
           key: ${{ runner.os }}-unit_tests-clang-cache-cccache-${{ steps.get-date.outputs.date }}
           restore-keys: |
             ${{ runner.os }}-unit_tests-clang-cache-cccache-
@@ -86,7 +86,7 @@ jobs:
     env:
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
-      CCACHE_DIR: /home/ccache
+      CCACHE_DIR: /home/runner/work/ccache
 
     steps:
       - name: Get Date
@@ -108,7 +108,7 @@ jobs:
         id: cache_cccache
         uses: actions/cache@v2
         with:
-          path: /home/ccache
+          path: /home/runner/work/ccache
           key: ${{ runner.os }}-unit_tests-gcc-cache-cccache-${{ steps.get-date.outputs.date }}
           restore-keys: |
             ${{ runner.os }}-unit_tests-gcc-cache-cccache-
