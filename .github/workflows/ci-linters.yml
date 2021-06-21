@@ -5,9 +5,10 @@ name: Linters
 on: push
 
 jobs:
-  check_clang_format:
-    name: Run clang-format
+  clang_format:
+    name: clang-format
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
