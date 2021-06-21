@@ -145,15 +145,15 @@ class CoreCR95HF : public interface::RFID
 
 	void send(const lstd::span<uint8_t> &iso_command) final;
 
-	auto receiveTagData(const lstd::span<uint8_t> &anwser) -> size_t final;
-
 	auto receiveCallback() -> bool final;
 
-  private:
-	auto didSetupSucceed() -> bool;
+	auto receiveTagData(const lstd::span<uint8_t> &anwser) -> size_t final;
 
+  private:
 	auto setProtocolISO14443() -> bool;
 	auto setGainAndModulation() -> bool;
+
+	auto didSetupSucceed() -> bool;
 	auto receiveCR95HFAnswer() -> size_t;
 
 	auto formatCommand(const lstd::span<uint8_t> &command) -> size_t;
