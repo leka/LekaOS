@@ -33,8 +33,8 @@ void core_util_critical_section_exit()
 
 namespace leka {
 
-auto spy_mbed_critical_enter_calls = 0;
-auto spy_mbed_critical_exit_calls  = 0;
+int spy_mbed_critical_enter_calls = 0;
+int spy_mbed_critical_exit_calls  = 0;
 
 auto spy_mbed_critical_enter_was_called() -> bool
 {

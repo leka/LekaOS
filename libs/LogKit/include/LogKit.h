@@ -135,7 +135,7 @@ struct logger {
 
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 
-#define log(str, ...)                                                                                                  \
+#define log_(str, ...)                                                                                                 \
 	do {                                                                                                               \
 		auto length =                                                                                                  \
 			snprintf(leka::logger::buffer::output.data(), std::size(leka::logger::buffer::output), "%s", str);         \

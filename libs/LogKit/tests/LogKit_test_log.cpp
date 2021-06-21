@@ -36,7 +36,7 @@ class LogKitTest : public ::testing::Test
 
 TEST_F(LogKitTest, logFree)
 {
-	log("Hello, World");
+	log_("Hello, World");
 
 	ASSERT_EQ("Hello, World", spy_string);
 }
