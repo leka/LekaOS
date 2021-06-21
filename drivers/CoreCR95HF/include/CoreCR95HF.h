@@ -32,9 +32,11 @@ namespace rfid::cr95hf {
 		constexpr uint8_t flag_increment					  = 0x01;
 		constexpr uint8_t acr_b_index_for_gain_and_modulation = 0x01;
 
-		namespace idle {
+		namespace idle_tag_detection {
+
 			constexpr uint8_t tag_detection_command					= 0x07;
 			constexpr uint8_t wu_source								= 0x0A;
+			constexpr uint8_t length								= 0x0E;
 			constexpr std::array<uint8_t, 2> enter_control			= {0x21, 0x00};
 			constexpr std::array<uint8_t, 2> wu_control				= {0x79, 0x01};
 			constexpr std::array<uint8_t, 2> leave_control			= {0x18, 0x00};
@@ -45,7 +47,7 @@ namespace rfid::cr95hf {
 			constexpr uint8_t swing_count							= 0x3F;
 			constexpr uint8_t max_sleep								= 0x08;
 
-		}	// namespace idle
+		}	// namespace idle_tag_detection
 
 	}	// namespace settings
 
@@ -80,36 +82,45 @@ namespace rfid::cr95hf {
 
 	namespace command {
 
-		constexpr uint8_t send_receive			  = 0x04;
-		constexpr uint8_t set_protocol			  = 0x02;
-		constexpr uint8_t set_gain_and_modulation = 0x09;
+		constexpr uint8_t send_receive = 0x04;
+
+		namespace set_protocol {
+			constexpr uint8_t id	 = 0x02;
+			constexpr uint8_t length = 0x02;
+		}	// namespace set_protocol
+
+		namespace set_gain_and_modulation {
+			constexpr uint8_t id	 = 0x09;
+			constexpr uint8_t length = 0x04;
+		}	// namespace set_gain_and_modulation
 
 		namespace frame {
 			constexpr std::array<uint8_t, 16> enable_tag_detection {
-				rfid::cr95hf::settings::idle::tag_detection_command,
-				0x0E,
-				rfid::cr95hf::settings::idle::wu_source,
-				rfid::cr95hf::settings::idle::enter_control[0],
-				rfid::cr95hf::settings::idle::enter_control[1],
-				rfid::cr95hf::settings::idle::wu_control[0],
-				rfid::cr95hf::settings::idle::wu_control[1],
-				rfid::cr95hf::settings::idle::leave_control[0],
-				rfid::cr95hf::settings::idle::leave_control[1],
-				rfid::cr95hf::settings::idle::wu_periode,
-				rfid::cr95hf::settings::idle::oscillator_start,
-				rfid::cr95hf::settings::idle::digital_to_analog_start,
-				rfid::cr95hf::settings::idle::digital_to_analog_data[0],
-				rfid::cr95hf::settings::idle::digital_to_analog_data[1],
-				rfid::cr95hf::settings::idle::swing_count,
-				rfid::cr95hf::settings::idle::max_sleep};
+				rfid::cr95hf::settings::idle_tag_detection::tag_detection_command,
+				rfid::cr95hf::settings::idle_tag_detection::length,
+				rfid::cr95hf::settings::idle_tag_detection::wu_source,
+				rfid::cr95hf::settings::idle_tag_detection::enter_control[0],
+				rfid::cr95hf::settings::idle_tag_detection::enter_control[1],
+				rfid::cr95hf::settings::idle_tag_detection::wu_control[0],
+				rfid::cr95hf::settings::idle_tag_detection::wu_control[1],
+				rfid::cr95hf::settings::idle_tag_detection::leave_control[0],
+				rfid::cr95hf::settings::idle_tag_detection::leave_control[1],
+				rfid::cr95hf::settings::idle_tag_detection::wu_periode,
+				rfid::cr95hf::settings::idle_tag_detection::oscillator_start,
+				rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_start,
+				rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_data[0],
+				rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_data[1],
+				rfid::cr95hf::settings::idle_tag_detection::swing_count,
+				rfid::cr95hf::settings::idle_tag_detection::max_sleep};
 
 			constexpr std::array<uint8_t, 4> set_protocol_iso14443 {
-				rfid::cr95hf::command::set_protocol, 0x02, rfid::cr95hf::protocol::iso14443A.id,
+				rfid::cr95hf::command::set_protocol::id, rfid::cr95hf::command::set_protocol::length,
+				rfid::cr95hf::protocol::iso14443A.id,
 				rfid::cr95hf::settings::default_protocol_parameters_for_rx_speed_tx_speed_rfu};
 
 			constexpr std::array<uint8_t, 6> set_gain_and_modulation {
-				rfid::cr95hf::command::set_gain_and_modulation,
-				0x04,
+				rfid::cr95hf::command::set_gain_and_modulation::id,
+				rfid::cr95hf::command::set_gain_and_modulation::length,
 				rfid::cr95hf::settings::arc_b,
 				rfid::cr95hf::settings::flag_increment,
 				rfid::cr95hf::settings::acr_b_index_for_gain_and_modulation,
