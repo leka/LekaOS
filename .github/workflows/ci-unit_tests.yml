@@ -17,7 +17,7 @@ on:
 jobs:
   config_build_run:
     name: Config, Build & Run
-    runs-on: [self-hosted, build]
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -46,6 +46,7 @@ jobs:
 
       - name: Generate lcov code coverage
         run: |
+          sudo apt-get install lcov
           make coverage_lcov
 
       - name: Upload Codecov code coverage
