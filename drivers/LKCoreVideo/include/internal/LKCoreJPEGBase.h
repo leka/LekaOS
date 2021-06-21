@@ -25,7 +25,6 @@ public:
 
 	virtual auto getWidthOffset(void) -> uint32_t = 0;
 
-	virtual void displayImage(FIL *file) = 0;
 	virtual auto decodeImage(void) -> uint32_t = 0;
 
 	virtual void registerCallbacks() = 0;
