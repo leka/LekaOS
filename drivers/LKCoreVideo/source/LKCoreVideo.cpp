@@ -100,7 +100,12 @@ void LKCoreVideo::displayRectangle(LKCoreGraphicsBase::FilledRectangle rectangle
 
 void LKCoreVideo::displayImage(FIL *file)
 {
-	_corejpeg.displayImage(file);
+	_corejpeg.decodeImage();
+
+	auto& config = _corejpeg.getConfig();
+	_hal.HAL_JPEG_GetInfo(&_corejpeg.getHandle(), &config);
+
+	_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, _corejpeg.getWidthOffset());
 }
 
 void LKCoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,

@@ -94,6 +94,8 @@ void LKCoreJPEG::initialize()
 	JPEG_InitColorTables();
 	_hal.HAL_RCC_JPEG_CLK_ENABLE();
 	_hal.HAL_JPEG_Init(&_hjpeg);
+
+	registerCallbacks();
 }
 
 JPEG_ConfTypeDef& LKCoreJPEG::getConfig(void)
@@ -137,21 +139,6 @@ uint32_t LKCoreJPEG::getWidthOffset(void)
 	}
 
 	return width_offset;
-}
-
-void LKCoreJPEG::displayImage(FIL *file)
-{
-	registerCallbacks();
-
-	auto start_time = HAL_GetTick();
-
-	decodeImage();	// TODO: handle errors
-
-	_hal.HAL_JPEG_GetInfo(&_hjpeg, &_config);
-
-	_dma2d.transferImage(_config.ImageWidth, _config.ImageHeight, getWidthOffset());
-
-	log_info("Image time : %dms", HAL_GetTick() - start_time);
 }
 
 uint32_t findFrameOffset(uint32_t offset, LKCoreFatFsBase &file)
@@ -208,7 +195,7 @@ void LKCoreJPEG::playVideo()
 		frame_offset = findFrameOffset(frame_offset+frame_size, _file);
 
 		auto dt = HAL_GetTick() - start_time;
-		log_info("%dms = %f fps", dt, 100.f/dt);
+		log_info("%dms = %f fps", dt, 1000.f/dt);
 	}
 }
 

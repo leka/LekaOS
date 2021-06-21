@@ -19,7 +19,7 @@ namespace leka {
 
 class LKCoreJPEG : public LKCoreJPEGBase
 {
-	public:
+public:
 	LKCoreJPEG(LKCoreSTM32HalBase &hal, LKCoreDMA2DBase &dma2d, LKCoreFatFsBase &file, std::unique_ptr<Mode> mode);
 
 	void initialize(void) final;
@@ -30,8 +30,7 @@ class LKCoreJPEG : public LKCoreJPEGBase
 
 	uint32_t getWidthOffset(void) final;
 
-	void displayImage(FIL *file) final;
-	void playVideo();
+	void playVideo(); // TODO : move this method to LKCoreVideo
 
 	uint32_t decodeImage(void) final;   // TODO: Update Return type with something else than HAL status
 
@@ -81,7 +80,7 @@ class LKCoreJPEG : public LKCoreJPEGBase
 		std::array<uint8_t, jpeg::input_data_buffer_size> _jpeg_input_buffer = {0};
 	};
 
-	private:
+private:
 	JPEG_HandleTypeDef _hjpeg;
 	JPEG_ConfTypeDef _config;
 
