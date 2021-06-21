@@ -33,13 +33,13 @@ class LKCoreJPEG : public LKCoreJPEGBase
 	void displayImage(FIL *file) final;
 	void playVideo();
 
-	HAL_StatusTypeDef decodeImage(void) final;   // TODO: Update Return type with something else than HAL status
+	uint32_t decodeImage(void) final;   // TODO: Update Return type with something else than HAL status
 
 	void registerCallbacks(void);
 
 	struct DMAMode : LKCoreJPEGBase::Mode
 	{
-		auto decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> HAL_StatusTypeDef final; // TODO: Update Return type with something else than HAL status
+		auto decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint32_t final; // TODO: Update Return type with something else than HAL status
 		void onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) final;
 		void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) final;
 
@@ -70,7 +70,7 @@ class LKCoreJPEG : public LKCoreJPEGBase
 
 	struct PollingMode : LKCoreJPEGBase::Mode
 	{
-		auto decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> HAL_StatusTypeDef final; // TODO: Update Return type with something else than HAL status
+		auto decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint32_t final; // TODO: Update Return type with something else than HAL status
 		void onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) final;
 		void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) final;
 
@@ -82,18 +82,13 @@ class LKCoreJPEG : public LKCoreJPEGBase
 	};
 
 	private:
-	std::unique_ptr<Mode> _mode;
-
 	JPEG_HandleTypeDef _hjpeg;
 	JPEG_ConfTypeDef _config;
 
 	LKCoreSTM32HalBase &_hal;
 	LKCoreDMA2DBase &_dma2d;
 	LKCoreFatFsBase &_file;
-
-	uint32_t _previous_frame_size 	= 0;
-
-	uint32_t _input_file_offset 	= 0;
+	std::unique_ptr<Mode> _mode;
 };
 
 }	// namespace leka
