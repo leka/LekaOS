@@ -7,34 +7,51 @@
 
 #include "storage/filesystem/fat/ChaN/ff.h"
 
+#include "st_jpeg_utils.h"
 #include "stm32f7xx_hal_jpeg.h"
 
 namespace leka {
 
 class LKCoreJPEGBase
 {
-  public:
+	public:
 	~LKCoreJPEGBase() = default;
 
 	virtual void initialize(void) = 0;
 
-	virtual JPEG_ConfTypeDef getConfig(void)		   = 0;
-	virtual JPEG_HandleTypeDef getHandle(void)		   = 0;
-	virtual JPEG_HandleTypeDef *getHandlePointer(void) = 0;
+	virtual auto getConfig(void) -> JPEG_ConfTypeDef& = 0;
+	virtual auto getHandle(void) -> JPEG_HandleTypeDef& = 0;
+	virtual auto getHandlePointer(void) -> JPEG_HandleTypeDef* = 0;
 
-	virtual uint32_t getWidthOffset(void) = 0;
+	virtual auto getWidthOffset(void) -> uint32_t = 0;
 
 	virtual void displayImage(FIL *file) = 0;
-	virtual HAL_StatusTypeDef decodeImageWithPolling(
-		void) = 0;	 // TODO: Update Return type with something else than HAL status
+	virtual auto decodeImage(void) -> HAL_StatusTypeDef = 0; // TODO: Update Return type with something else than HAL status
 
-	virtual void onErrorCallback(JPEG_HandleTypeDef *hjpeg)								= 0;
-	virtual void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) = 0;
+	virtual void registerCallbacks() = 0;
 
-	virtual void onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size)					   = 0;
-	virtual void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) = 0;
+	protected:
+	struct Mode {
+		~Mode() = default;
 
-	virtual void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) = 0;
+		virtual auto decodeImage(JPEG_HandleTypeDef *hjpeg, FIL* file) -> HAL_StatusTypeDef = 0; // TODO: Update Return type with something else than HAL status
+
+		virtual void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info);
+		virtual void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg);
+		virtual void onErrorCallback(JPEG_HandleTypeDef *hjpeg);
+
+		virtual void onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) = 0;
+		virtual void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) = 0;
+
+		JPEG_YCbCrToRGB_Convert_Function pConvert_Function;
+		uint32_t _previous_image_size 	= 0;
+
+
+	protected:
+		uint32_t _mcu_number = 0;
+		uint32_t _mcu_block_index = 0;
+		bool _hw_decode_ended = false;
+	};
 };
 
 }	// namespace leka
