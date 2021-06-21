@@ -78,3 +78,57 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           bash <(curl -s https://codecov.io/bash) -f ${{github.workspace}}/_build_unit_tests/_coverage/coverage.info || echo "Codecov did not collect coverage reports"
+
+  clang:
+    name: clang
+    runs-on: ubuntu-latest
+
+    env:
+      CC: /usr/bin/clang
+      CXX: /usr/bin/clang++
+      CCACHE_DIR: /home/runner/work/ccache
+
+    steps:
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "::set-output name=date::$(date +%s)"
+        shell: bash
+
+      - name: Install tools
+        run: |
+          sudo apt-get install -y ninja-build ccache lcov gcovr
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: Cache ccache
+        id: cache_cccache
+        uses: actions/cache@v2
+        with:
+          path: /home/runner/work/ccache
+          key: ${{ runner.os }}-unit_tests-clang-cache-cccache-${{ steps.get-date.outputs.date }}
+          restore-keys: |
+            ${{ runner.os }}-unit_tests-clang-cache-cccache-
+
+      - name: Cache Mbed OS
+        id: cache_mbed_os
+        uses: actions/cache@v2
+        with:
+          path: extern/mbed-os
+          key: ${{ runner.os }}-cache-mbed_os-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h', '.mbed_version') }}
+
+      - name: Curl Mbed OS
+        if: steps.cache_mbed_os.outputs.cache-hit != 'true'
+        run: |
+          make mbed_curl
+
+      - name: Config build system
+        run: |
+          make config_unit_tests
+
+      - name: Build & run unit tests
+        run: |
+          make ut
