@@ -64,16 +64,24 @@
 		"typeinfo": "cpp",
 		"variant": "cpp",
 		"lstd_*": "cpp",
-		"mstd_*": "cpp"
+		"mstd_*": "cpp",
+		"mstd_iterator": "cpp",
+		"lstd_span": "cpp",
+		"condition_variable": "cpp",
+		"mutex": "cpp",
+		"numbers": "cpp",
+		"semaphore": "cpp",
+		"stop_token": "cpp",
+		"thread": "cpp"
 	},
 	"files.exclude": {
 		".cache": true,
 		".clangd": true
 	},
-	"cmake.buildDirectory": "${workspaceFolder}/_build_cmake_tools",
+	"cmake.buildDirectory": "${workspaceFolder}/_build",
 	"cmake.configureArgs": [
 		"-DTARGET_BOARD=LEKA_V1_2_DEV",
-		"-DCMAKE_CONFIG_DIR=${workspaceFolder}/_build_cmake_tools/cmake_config"
+		"-DCMAKE_CONFIG_DIR=${workspaceFolder}/_build/cmake_config"
 	],
 	"markdownlint.config": {
 		"MD002": false,
@@ -92,7 +100,7 @@
 	"cmake.configureOnOpen": true,
 	"clangd.checkUpdates": true,
 	"clangd.arguments": [
-		"--query-driver=/usr/local/bin/arm-none-eabi*",
+		"--query-driver=/usr/bin/arm-none-eabi*",
 		"--log=verbose",
 		"--completion-style=detailed",
 		"--clang-tidy",

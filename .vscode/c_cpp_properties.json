@@ -25,14 +25,13 @@
 			"includePath": [
 				"${workspaceFolder}/**"
 			],
-			"defines": [],
+			"defines": ["STM32F769xx", "USE_HAL_JPEG_REGISTER_CALLBACKS"],
 			"macFrameworkPath": [],
 			"compilerPath": "/usr/bin/arm-none-eabi-gcc",
 			"cStandard": "gnu11",
 			"cppStandard": "gnu++17",
 			"intelliSenseMode": "gcc-arm",
 			"compilerArgs": [],
-			"configurationProvider": "ms-vscode.cmake-tools",
 			"browse": {
 				"path": [
 					"${workspaceFolder}/**"
