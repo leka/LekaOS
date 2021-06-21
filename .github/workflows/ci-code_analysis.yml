@@ -1,6 +1,6 @@
-# SonarCloud Analysis
+# Code Analysis
 
-name: SonarCloud
+name: Code Analysis
 
 on:
   push:
@@ -12,9 +12,10 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  analysis:
-    name: Analysis
-    runs-on: [self-hosted, build]
+  sonarcloud:
+    name: sonarcloud
+    runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
         with:
