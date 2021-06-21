@@ -15,8 +15,8 @@ on:
       - "bugfix/**"
 
 jobs:
-  config_build_run:
-    name: Config, Build & Run
+  clang:
+    name: Unit tests on clang
     runs-on: ubuntu-latest
 
     env:
@@ -26,7 +26,7 @@ jobs:
     steps:
       - name: Install tools
         run: |
-          sudo apt-get install -y ninja-build ccache zstd lcov
+          sudo apt-get install -y ninja-build ccache lcov
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -47,8 +47,54 @@ jobs:
 
       - name: Config build system
         run: |
-          which clang
-          which clang++
+          make config_unit_tests
+
+      - name: Build & run unit tests
+        run: |
+          make ut
+
+      - name: Generate lcov code coverage
+        run: |
+          make coverage_lcov
+
+      - name: Upload Codecov code coverage
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          bash <(curl -s https://codecov.io/bash) -f ${{github.workspace}}/_build_unit_tests/_coverage/coverage.info || echo "Codecov did not collect coverage reports"
+
+  gcc:
+    name: Unit tests on gcc
+    runs-on: ubuntu-latest
+
+    env:
+      CC: /usr/bin/gcc
+      CXX: /usr/bin/g++
+
+    steps:
+      - name: Install tools
+        run: |
+          sudo apt-get install -y ninja-build ccache lcov
+
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: Cache Mbed OS
+        id: cache_mbed_os
+        uses: actions/cache@v2
+        with:
+          path: extern/mbed-os
+          key: ${{ runner.os }}-cache-mbed_os-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h', '.mbed_version') }}
+
+      - name: Curl Mbed OS
+        if: steps.cache_mbed_os.outputs.cache-hit != 'true'
+        run: |
+          make mbed_curl
+
+      - name: Config build system
+        run: |
           make config_unit_tests
 
       - name: Build & run unit tests
