@@ -66,7 +66,8 @@ class CoreRFIDKitTest : public CoreCR95HFSensorTest
 	void sendSetProtocol()
 	{
 		const auto expected_values_set_protocol =
-			ElementsAre(rfid::cr95hf::command::set_protocol, 0x02, rfid::cr95hf::protocol::iso14443A.id,
+			ElementsAre(rfid::cr95hf::command::set_protocol::id, rfid::cr95hf::command::set_protocol::length,
+						rfid::cr95hf::protocol::iso14443A.id,
 						rfid::cr95hf::settings::default_protocol_parameters_for_rx_speed_tx_speed_rfu);
 		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_set_protocol));
 	}
@@ -82,8 +83,9 @@ class CoreRFIDKitTest : public CoreCR95HFSensorTest
 	void sendSetGainAndModulation()
 	{
 		const auto expected_values_set_gain_and_modulation = ElementsAre(
-			rfid::cr95hf::command::set_gain_and_modulation, 0x04, rfid::cr95hf::settings::arc_b,
-			rfid::cr95hf::settings::flag_increment, rfid::cr95hf::settings::acr_b_index_for_gain_and_modulation,
+			rfid::cr95hf::command::set_gain_and_modulation::id, rfid::cr95hf::command::set_gain_and_modulation::length,
+			rfid::cr95hf::settings::arc_b, rfid::cr95hf::settings::flag_increment,
+			rfid::cr95hf::settings::acr_b_index_for_gain_and_modulation,
 			rfid::cr95hf::protocol::iso14443A.gain_modulation_values());
 		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_set_gain_and_modulation));
 	}
@@ -140,14 +142,20 @@ TEST_F(CoreRFIDKitTest, setInterrupt)
 TEST_F(CoreRFIDKitTest, waitForTagDetection)
 {
 	const auto expected_values_init = ElementsAre(
-		rfid::cr95hf::settings::idle::tag_detection_command, 0x0E, rfid::cr95hf::settings::idle::wu_source,
-		rfid::cr95hf::settings::idle::enter_control[0], rfid::cr95hf::settings::idle::enter_control[1],
-		rfid::cr95hf::settings::idle::wu_control[0], rfid::cr95hf::settings::idle::wu_control[1],
-		rfid::cr95hf::settings::idle::leave_control[0], rfid::cr95hf::settings::idle::leave_control[1],
-		rfid::cr95hf::settings::idle::wu_periode, rfid::cr95hf::settings::idle::oscillator_start,
-		rfid::cr95hf::settings::idle::digital_to_analog_start, rfid::cr95hf::settings::idle::digital_to_analog_data[0],
-		rfid::cr95hf::settings::idle::digital_to_analog_data[1], rfid::cr95hf::settings::idle::swing_count,
-		rfid::cr95hf::settings::idle::max_sleep);
+		rfid::cr95hf::settings::idle_tag_detection::tag_detection_command,
+		rfid::cr95hf::settings::idle_tag_detection::length, rfid::cr95hf::settings::idle_tag_detection::wu_source,
+		rfid::cr95hf::settings::idle_tag_detection::enter_control[0],
+		rfid::cr95hf::settings::idle_tag_detection::enter_control[1],
+		rfid::cr95hf::settings::idle_tag_detection::wu_control[0],
+		rfid::cr95hf::settings::idle_tag_detection::wu_control[1],
+		rfid::cr95hf::settings::idle_tag_detection::leave_control[0],
+		rfid::cr95hf::settings::idle_tag_detection::leave_control[1],
+		rfid::cr95hf::settings::idle_tag_detection::wu_periode,
+		rfid::cr95hf::settings::idle_tag_detection::oscillator_start,
+		rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_start,
+		rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_data[0],
+		rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_data[1],
+		rfid::cr95hf::settings::idle_tag_detection::swing_count, rfid::cr95hf::settings::idle_tag_detection::max_sleep);
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_init));
 
 	coreRfid.setReaderForTagDetection();
