@@ -34,13 +34,6 @@ class LogKitTest : public ::testing::Test
 	static inline auto spy_string = std::string {};
 };
 
-TEST_F(LogKitTest, logFree)
-{
-	log("Hello, World");
-
-	ASSERT_EQ("Hello, World", spy_string);
-}
-
 TEST_F(LogKitTest, logDebug)
 {
 	log_debug("Hello, World");
