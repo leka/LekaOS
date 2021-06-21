@@ -24,6 +24,10 @@ jobs:
       CXX: /usr/bin/clang++
 
     steps:
+      - name: Install tools
+        run: |
+          sudo apt-get install -y ninja-build ccache zstd lcov
+
       - name: Checkout
         uses: actions/checkout@v2
         with:
@@ -53,7 +57,6 @@ jobs:
 
       - name: Generate lcov code coverage
         run: |
-          sudo apt-get install lcov
           make coverage_lcov
 
       - name: Upload Codecov code coverage
