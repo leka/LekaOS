@@ -43,6 +43,8 @@ jobs:
 
       - name: Config build system
         run: |
+          which clang
+          which clang++
           make config_unit_tests
 
       - name: Build & run unit tests
