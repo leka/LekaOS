@@ -22,56 +22,77 @@ jobs:
     env:
       CC: /usr/bin/gcc
       CXX: /usr/bin/g++
+
       CCACHE_DIR: /home/runner/work/ccache
+      CCACHE_COMPRESS: true
+      CCACHE_COMPRESSLEVEL: 6
 
     steps:
-      - name: Get Date
-        id: get-date
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      #
+      # Mark: - Create cache variables
+      #
+
+      - name: Create cache variables
+        id: cache_variables
+        shell: bash
         run: |
           echo "::set-output name=date::$(date +%s)"
-        shell: bash
+
+      #
+      # Mark: - Install misc. tools
+      #
 
       - name: Install tools
         run: |
-          sudo apt-get install -y ninja-build ccache lcov
+          sudo apt-get install -y --no-install-recommends ninja-build ccache lcov
 
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-
-      - name: Cache ccache
-        id: cache_cccache
-        uses: actions/cache@v2
-        with:
-          path: /home/runner/work/ccache
-          key: ${{ runner.os }}-unit_tests-gcc-cache-cccache-${{ steps.get-date.outputs.date }}
-          restore-keys: |
-            ${{ runner.os }}-unit_tests-gcc-cache-cccache-
+      #
+      # Mark: - Download mbed-os & ccache
+      #
 
       - name: Cache Mbed OS
         id: cache_mbed_os
         uses: actions/cache@v2
         with:
           path: extern/mbed-os
-          key: ${{ runner.os }}-cache-mbed_os-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h', '.mbed_version') }}
+          key: ${{ runner.os }}-global_cache-mbed_os-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h', '.mbed_version') }}
 
       - name: Curl Mbed OS
         if: steps.cache_mbed_os.outputs.cache-hit != 'true'
         run: |
           make mbed_curl
 
-      - name: Config build system
+      - name: Cache ccache
+        id: cache_ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR}}
+          key: ${{ runner.os }}-cache-unit_tests-gcc-ccache-${{ steps.cache_variables.outputs.date }}
+          restore-keys: |
+            ${{ runner.os }}-cache-unit_tests-gcc-ccache-
+
+      #
+      # Mark: - Config, build & run unit tests
+      #
+
+      - name: Ccache pre build
+        run: |
+          make ccache_prebuild
+
+      - name: Config, build & run
         run: |
           make config_unit_tests
-
-      - name: Build & run unit tests
-        run: |
-          make ut
-
-      - name: Generate lcov code coverage
-        run: |
+          make unit_tests
           make coverage_lcov
+
+      - name: Ccache post build
+        run: |
+          make ccache_postbuild
+          ccache -z
 
       - name: Upload Codecov code coverage
         env:
@@ -86,49 +107,73 @@ jobs:
     env:
       CC: /usr/bin/clang
       CXX: /usr/bin/clang++
+
       CCACHE_DIR: /home/runner/work/ccache
+      CCACHE_COMPRESS: true
+      CCACHE_COMPRESSLEVEL: 6
 
     steps:
-      - name: Get Date
-        id: get-date
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      #
+      # Mark: - Create cache variables
+      #
+
+      - name: Create cache variables
+        id: cache_variables
+        shell: bash
         run: |
           echo "::set-output name=date::$(date +%s)"
-        shell: bash
+
+      #
+      # Mark: - Install misc. tools
+      #
 
       - name: Install tools
         run: |
-          sudo apt-get install -y ninja-build ccache lcov gcovr
+          sudo apt-get install -y --no-install-recommends ninja-build ccache
 
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-
-      - name: Cache ccache
-        id: cache_cccache
-        uses: actions/cache@v2
-        with:
-          path: /home/runner/work/ccache
-          key: ${{ runner.os }}-unit_tests-clang-cache-cccache-${{ steps.get-date.outputs.date }}
-          restore-keys: |
-            ${{ runner.os }}-unit_tests-clang-cache-cccache-
+      #
+      # Mark: - Download mbed-os & ccache
+      #
 
       - name: Cache Mbed OS
         id: cache_mbed_os
         uses: actions/cache@v2
         with:
           path: extern/mbed-os
-          key: ${{ runner.os }}-cache-mbed_os-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h', '.mbed_version') }}
+          key: ${{ runner.os }}-global_cache-mbed_os-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h', '.mbed_version') }}
 
       - name: Curl Mbed OS
         if: steps.cache_mbed_os.outputs.cache-hit != 'true'
         run: |
           make mbed_curl
 
-      - name: Config build system
+      - name: Cache ccache
+        id: cache_ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR}}
+          key: ${{ runner.os }}-cache-unit_tests-clang-ccache-${{ steps.cache_variables.outputs.date }}
+          restore-keys: |
+            ${{ runner.os }}-cache-unit_tests-clang-ccache-
+
+      #
+      # Mark: - Config, build & run unit tests
+      #
+
+      - name: Ccache pre build
+        run: |
+          make ccache_prebuild
+
+      - name: Config, build & run
         run: |
           make config_unit_tests
+          make unit_tests
 
-      - name: Build & run unit tests
+      - name: Ccache post build
         run: |
-          make ut
+          make ccache_postbuild
+          ccache -z
