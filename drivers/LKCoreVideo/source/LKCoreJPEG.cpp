@@ -483,4 +483,37 @@ bool LKCoreJPEG::DMAMode::decoderOutputHandler(JPEG_HandleTypeDef *hjpeg) {
 	return false;
 }
 
+auto LKCoreJPEG::ST_DMAMode::decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint32_t {
+	decode_dma::JPEG_Decode_DMA(hjpeg, file, jpeg::decoded_buffer_address);
+
+	int process_ended = 0;
+
+	do {
+		decode_dma::JPEG_InputHandler(hjpeg);
+		process_ended = decode_dma::JPEG_OutputHandler(hjpeg);
+	} while (process_ended == 0);
+
+	return decode_dma::Previous_FrameSize;
+}
+
+void LKCoreJPEG::ST_DMAMode::onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) {
+	decode_dma::InfoReadyCallback(hjpeg, info);
+}
+
+void LKCoreJPEG::ST_DMAMode::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) {
+	decode_dma::DecodeCpltCallback(hjpeg);
+}
+
+void LKCoreJPEG::ST_DMAMode::onErrorCallback(JPEG_HandleTypeDef *hjpeg) {
+	decode_dma::ErrorCallback(hjpeg);
+}
+
+void LKCoreJPEG::ST_DMAMode::onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) {
+	decode_dma::GetDataCallback(hjpeg, size);
+}
+
+void LKCoreJPEG::ST_DMAMode::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) {
+	decode_dma::DataReadyCallback(hjpeg, output_buffer, size);
+}
+
 }	// namespace leka

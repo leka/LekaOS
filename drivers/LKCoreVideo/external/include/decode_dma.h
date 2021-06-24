@@ -40,7 +40,7 @@ void DataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t Ou
 void ErrorCallback(JPEG_HandleTypeDef *hjpeg);
 void DecodeCpltCallback(JPEG_HandleTypeDef *hjpeg);
 
-//extern uint32_t Previous_FrameSize;
+extern volatile uint32_t Previous_FrameSize;
 }
 #endif /* __DECODE_DMA_H */
 

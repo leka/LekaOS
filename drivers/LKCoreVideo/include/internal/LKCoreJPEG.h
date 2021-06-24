@@ -80,6 +80,16 @@ public:
 		std::array<uint8_t, jpeg::input_data_buffer_size> _jpeg_input_buffer = {0};
 	};
 
+	struct ST_DMAMode : LKCoreJPEGBase::Mode
+	{
+		auto decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint32_t final;
+		void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) final;
+		void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) final;
+		void onErrorCallback(JPEG_HandleTypeDef *hjpeg) final;
+		void onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) final;
+		void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) final;
+	};
+
 private:
 	JPEG_HandleTypeDef _hjpeg;
 	JPEG_ConfTypeDef _config;
