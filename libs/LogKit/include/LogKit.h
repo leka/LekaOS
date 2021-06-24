@@ -135,13 +135,6 @@ struct logger {
 
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 
-#define log(str, ...)                                                                                                  \
-	do {                                                                                                               \
-		auto length =                                                                                                  \
-			snprintf(leka::logger::buffer::output.data(), std::size(leka::logger::buffer::output), "%s", str);         \
-		leka::logger::print(leka::logger::buffer::output.data(), length);                                              \
-	} while (0)
-
 #define log_debug(str, ...)                                                                                            \
 	do {                                                                                                               \
 		const std::lock_guard<rtos::Mutex> lock(leka::logger::mutex);                                                  \

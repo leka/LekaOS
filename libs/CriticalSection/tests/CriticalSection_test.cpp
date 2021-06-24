@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "CriticalSection.h"
+#include <mutex>
 
 #include "gtest/gtest.h"
 #include "stubs/mbed/mbed_critical.h"

@@ -1,0 +1,171 @@
+# CI Workflow
+
+name: Cross-compilation
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+
+  pull_request:
+    branches:
+      - develop
+      - "feature/**"
+      - "bugfix/**"
+
+jobs:
+  leka_os_and_al:
+    name: LekaOS & al.
+    runs-on: ubuntu-latest
+
+    env:
+      CCACHE_DIR: /home/runner/work/ccache
+      CCACHE_COMPRESS: true
+      CCACHE_COMPRESSLEVEL: 6
+
+      ARM_TOOLCHAIN_URL: "https://developer.arm.com/-/media/Files/downloads/gnu-rm/10-2020q4/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2"
+      ARM_TOOLCHAIN_FILENAME: "gcc-arm-none-eabi-*-x86_64-linux.tar.bz2"
+      ARM_TOOLCHAIN_EXTRACT_DIRECTORY: "gcc-arm-none-eabi-*"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        custom_target: ["LEKA_V1_2_DEV"]
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      #
+      # Mark: - Create cache variables
+      #
+
+      - name: Create cache variables
+        id: cache_variables
+        shell: bash
+        run: |
+          echo "::set-output name=date::$(date +%s)"
+
+          sha=($(echo -n ${{ env.ARM_TOOLCHAIN_URL }} | sha1sum ))
+          echo "::set-output name=arm_toolchain_url_sha::$sha"
+
+      #
+      # Mark: - Install ARM GCC Toolchain
+      #
+
+      - name: Cache ARM GCC Toolchain
+        id: cache_arm_toolchain
+        uses: actions/cache@v2
+        with:
+          path: ~/gcc-arm-none-eabi
+          key: ${{ runner.os }}-global_cache-arm_toolchain-${{ steps.cache_variables.outputs.arm_toolchain_url_sha }}
+
+      - name: Install ARM GCC Toolchain
+        if: steps.cache_arm_toolchain.outputs.cache-hit != 'true'
+        run: |
+          wget ${{ env.ARM_TOOLCHAIN_URL }}
+          tar -xjf ${{ env.ARM_TOOLCHAIN_FILENAME }} && rm -rf ${{ env.ARM_TOOLCHAIN_FILENAME }}
+          mv ${{ env.ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} ~/gcc-arm-none-eabi
+
+      - name: Add ARM GCC Toolchain to path
+        run: |
+          echo "~/gcc-arm-none-eabi/bin" >> $GITHUB_PATH
+
+      - name: Test ARM GCC Toolchain
+        run: |
+          ls -al ~/gcc-arm-none-eabi/bin
+          arm-none-eabi-gcc -v
+
+      #
+      # Mark: - Install misc. tools
+      #
+
+      - name: Install tools
+        run: |
+          sudo apt-get install -y --no-install-recommends ninja-build ccache
+
+      #
+      # Mark: - Download mbed-os & ccache
+      #
+
+      - name: Cache Mbed OS
+        id: cache_mbed_os
+        uses: actions/cache@v2
+        with:
+          path: extern/mbed-os
+          key: ${{ runner.os }}-global_cache-mbed_os-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h', '.mbed_version') }}
+
+      - name: Curl Mbed OS
+        if: steps.cache_mbed_os.outputs.cache-hit != 'true'
+        run: |
+          make mbed_curl
+
+      - name: Cache ccache
+        id: cache_ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR}}
+          key: ${{ runner.os }}-cache-cross_compilation-${{ matrix.custom_target }}-ccache-${{ steps.cache_variables.outputs.date }}
+          restore-keys: |
+            ${{ runner.os }}-cache-cross_compilation-${{ matrix.custom_target }}-ccache-
+
+      #
+      # Mark: - Install python/pip dependencies
+      #
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Cache pip dependencies
+        id: cache_pip_dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/pip
+            ${{ env.pythonLocation }}
+          key: ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-${{ hashFiles('extern/mbed-os/requirements.txt', '.mbed_version') }}
+
+      - name: Install pip packages
+        run: |
+          pip install --upgrade --upgrade-strategy eager mbed-cli
+          pip install --upgrade --upgrade-strategy eager -r ./extern/mbed-os/requirements.txt
+
+      - name: Test pip packages
+        run: |
+          pip list -v
+          mbed-cli --help
+
+      #
+      # Mark: - Config & build
+      #
+
+      - name: Ccache pre build
+        run: |
+          make ccache_prebuild
+
+      - name: Config, build LekaOS & al.
+        run: |
+          make config TARGET_BOARD=${{ matrix.custom_target }}
+          make TARGET_BOARD=${{ matrix.custom_target }}
+
+      - name: Ccache post build
+        run: |
+          make ccache_postbuild
+          ccache -z
+
+      - name: Upload build artifacts
+        if: |
+          contains(matrix.custom_target, 'LEKA_V1_2_DEV') &&
+          (contains(github.ref, 'develop') || contains(github.ref, 'master'))
+        uses: actions/upload-artifact@v2
+        with:
+          name: LEKA_V1_2_DEV-Build-Artifacts
+          retention-days: 7
+          path: |
+            _build/LEKA_V1_2_DEV/**/*.bin
+            _build/LEKA_V1_2_DEV/**/*.hex
+            _build/LEKA_V1_2_DEV/**/*.elf
