@@ -96,7 +96,7 @@
 		},
 		"MD033": false
 	},
-	"editor.formatOnSave": true,
+	"editor.formatOnSave": false,
 	"cmake.configureOnOpen": true,
 	"clangd.checkUpdates": true,
 	"clangd.arguments": [

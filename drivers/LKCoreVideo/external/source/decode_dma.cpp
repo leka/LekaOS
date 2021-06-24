@@ -47,6 +47,8 @@ typedef struct
 #define NB_OUTPUT_DATA_BUFFERS      2
 #define NB_INPUT_DATA_BUFFERS       2
 
+namespace decode_dma {
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 JPEG_YCbCrToRGB_Convert_Function pConvert_Function;
@@ -91,7 +93,6 @@ volatile uint32_t Previous_FrameSize = 0;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
-namespace decode_dma {
 
 void OnError_Handler() {
 	while(1);

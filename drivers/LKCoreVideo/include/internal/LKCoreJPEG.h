@@ -32,7 +32,7 @@ public:
 
 	void playVideo(); // TODO : move this method to LKCoreVideo
 
-	uint32_t decodeImage(void) final;   // TODO: Update Return type with something else than HAL status
+	uint32_t decodeImage(void) final;
 
 	void registerCallbacks(void);
 
@@ -69,7 +69,7 @@ public:
 
 	struct PollingMode : LKCoreJPEGBase::Mode
 	{
-		auto decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint32_t final; // TODO: Update Return type with something else than HAL status
+		auto decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint32_t final;
 		void onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) final;
 		void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) final;
 
@@ -78,6 +78,16 @@ public:
 		uint32_t _input_file_offset = 0;
 		std::array<uint8_t, jpeg::output_data_buffer_size> _jpeg_output_buffer = {0};
 		std::array<uint8_t, jpeg::input_data_buffer_size> _jpeg_input_buffer = {0};
+	};
+
+	struct ST_DMAMode : LKCoreJPEGBase::Mode
+	{
+		auto decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint32_t final;
+		void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) final;
+		void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) final;
+		void onErrorCallback(JPEG_HandleTypeDef *hjpeg) final;
+		void onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) final;
+		void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) final;
 	};
 
 private:
