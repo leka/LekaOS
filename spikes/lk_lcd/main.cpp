@@ -145,18 +145,18 @@ auto main() -> int
 
 		for (const auto& image : images) {
 			if (corefatfs.open(image.c_str()) == FR_OK) {
+				log_info("Displaying image : %s", image.c_str());
 				corevideo.displayImage(JPEG_File.get());
 				corefatfs.close();
-				log_info("Displaying image : %s", image.c_str());
 				rtos::ThisThread::sleep_for(2s);
 			}
 		}
 
 		for (const auto& video : videos) {
 			if (corefatfs.open(video.c_str()) == FR_OK) {
+				log_info("Displaying video : %s", video.c_str());
 				corejpeg.playVideo();
 				corefatfs.close();
-				log_info("Displaying video : %s", video.c_str());
 				rtos::ThisThread::sleep_for(200ms);
 			}
 		}

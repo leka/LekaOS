@@ -65,7 +65,7 @@ void LKCoreDMA2D::transferImage(uint32_t width, uint32_t height, uint32_t width_
 {
 	_hdma2d.Init.Mode				= DMA2D_M2M_PFC;
 	_hdma2d.LayerCfg[1].InputOffset = width_offset;
-	_hdma2d.Init.OutputOffset		= 0;   // TODO: Check if needed
+	_hdma2d.Init.OutputOffset		= lcd::dimension.width-width;   // TODO: Check if needed
 
 	transferData(jpeg::decoded_buffer_address, lcd::frame_buffer_address, width, height);
 }

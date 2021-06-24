@@ -192,7 +192,7 @@ void LKCoreJPEG::playVideo()
 		_dma2d.transferImage(_config.ImageWidth, _config.ImageHeight, getWidthOffset());
 
 		// get next frame offset
-		frame_offset = findFrameOffset(frame_offset+frame_size, _file);
+		frame_offset = findFrameOffset(frame_offset+frame_size+4, _file);
 
 		auto dt = HAL_GetTick() - start_time;
 		log_info("%dms = %f fps", dt, 1000.f/dt);
