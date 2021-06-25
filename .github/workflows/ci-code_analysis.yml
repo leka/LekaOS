@@ -110,20 +110,23 @@ jobs:
           sudo apt-get install -y --no-install-recommends ninja-build ccache lcov gcovr
 
       #
-      # Mark: - Download mbed-os & ccache
+      # Mark: - Download `extern` dependencies & ccache
       #
 
-      - name: Cache Mbed OS
-        id: cache_mbed_os
+      - name: Cache extern dependencies
+        id: cache_extern_dependencies
         uses: actions/cache@v2
         with:
-          path: extern/mbed-os
-          key: ${{ runner.os }}-global_cache-mbed_os-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h', '.mbed_version') }}
+          path: |
+            extern/mbed-os
+            extern/mcuboot
+          key: ${{ runner.os }}-global_cache-extern_dependencies-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h', '.mbed_version', '.mcuboot_version') }}
 
-      - name: Curl Mbed OS
-        if: steps.cache_mbed_os.outputs.cache-hit != 'true'
+      - name: Pull extern dependencies
+        if: steps.cache_extern_dependencies.outputs.cache-hit != 'true'
         run: |
           make mbed_curl
+          make mcuboot_clone
 
       - name: Cache ccache
         id: cache_ccache
@@ -266,20 +269,23 @@ jobs:
           sudo apt-get install -y --no-install-recommends ninja-build
 
       #
-      # Mark: - Download mbed-os & ccache
+      # Mark: - Download `extern` dependencies & ccache
       #
 
-      - name: Cache Mbed OS
-        id: cache_mbed_os
+      - name: Cache extern dependencies
+        id: cache_extern_dependencies
         uses: actions/cache@v2
         with:
-          path: extern/mbed-os
-          key: ${{ runner.os }}-global_cache-mbed_os-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h', '.mbed_version') }}
+          path: |
+            extern/mbed-os
+            extern/mcuboot
+          key: ${{ runner.os }}-global_cache-extern_dependencies-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h', '.mbed_version', '.mcuboot_version') }}
 
-      - name: Curl Mbed OS
-        if: steps.cache_mbed_os.outputs.cache-hit != 'true'
+      - name: Pull extern dependencies
+        if: steps.cache_extern_dependencies.outputs.cache-hit != 'true'
         run: |
           make mbed_curl
+          make mcuboot_clone
 
       #
       # Mark: - Install python/pip dependencies

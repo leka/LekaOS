@@ -9,17 +9,19 @@
 ROOT_DIR          := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 CMAKE_DIR         := $(ROOT_DIR)/cmake
 MBED_OS_DIR       := $(ROOT_DIR)/extern/mbed-os
+MCUBOOT_DIR       := $(ROOT_DIR)/extern/mcuboot
 
 #
 # MARK: - Arguments
 #
 
-PORT          ?= /dev/tty.usbmodem14303
-BRANCH        ?= $(shell cat $(ROOT_DIR)/.mbed_version)
-VERSION       ?= $(shell cat $(ROOT_DIR)/.mbed_version)
-BAUDRATE      ?= 115200
-BUILD_TYPE    ?= Release
-TARGET_BOARD  ?= LEKA_V1_2_DEV
+PORT            ?= /dev/tty.usbmodem14303
+MBED_BRANCH     ?= $(shell cat $(ROOT_DIR)/.mbed_version)
+MBED_VERSION    ?= $(shell cat $(ROOT_DIR)/.mbed_version)
+MCUBOOT_VERSION ?= $(shell cat $(ROOT_DIR)/.mcuboot_version)
+BAUDRATE        ?= 115200
+BUILD_TYPE      ?= Release
+TARGET_BOARD    ?= LEKA_V1_2_DEV
 
 #
 # MARK: - Options
@@ -254,7 +256,7 @@ mbed_clone:
 	@echo ""
 	@echo "🧬 Cloning Mbed OS 📦"
 	@rm -rf $(MBED_OS_DIR)
-	git clone --depth=1 --branch=$(BRANCH) https://github.com/ARMmbed/mbed-os $(MBED_OS_DIR)
+	git clone --depth=1 --branch=$(MBED_BRANCH) https://github.com/ARMmbed/mbed-os $(MBED_OS_DIR)
 	@$(MAKE) mbed_symlink_files
 
 mbed_curl:
@@ -262,9 +264,9 @@ mbed_curl:
 	@echo "🧬 Curling Mbed OS 📦"
 	@rm -rf $(MBED_OS_DIR)
 	@mkdir -p $(MBED_OS_DIR)
-	curl -O -L https://github.com/ARMmbed/mbed-os/archive/$(VERSION).tar.gz
-	tar -xzf $(VERSION).tar.gz --strip-components=1 -C extern/mbed-os
-	rm -rf $(VERSION).tar.gz
+	curl -O -L https://github.com/ARMmbed/mbed-os/archive/$(MBED_VERSION).tar.gz
+	tar -xzf $(MBED_VERSION).tar.gz --strip-components=1 -C extern/mbed-os
+	rm -rf $(MBED_VERSION).tar.gz
 	@$(MAKE) mbed_symlink_files
 
 mbed_symlink_files:
@@ -272,6 +274,24 @@ mbed_symlink_files:
 	@echo "🔗 Symlinking templates to Mbed OS directory 🗂️"
 	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_CMakelists.txt $(MBED_OS_DIR)/CMakeLists.txt
 	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_mbedignore.txt $(MBED_OS_DIR)/.mbedignore
+
+#
+# MARK: - Mcuboot targets
+#
+
+mcuboot_clone:
+	@echo ""
+	@echo "🧬 Cloning MCUBoot 📦"
+	@rm -rf $(MCUBOOT_DIR)
+	@git clone --single-branch https://github.com/mcu-tools/mcuboot.git $(MCUBOOT_DIR)
+	@cd $(MCUBOOT_DIR) && git reset --hard $(MCUBOOT_VERSION) && cd $(ROOT_DIR)
+	@$(MAKE) mcuboot_symlink_files
+
+mcuboot_symlink_files:
+	@echo ""
+	@echo "🔗 Symlinking CMakeLists.txt to MCUBoot directory 🗂️"
+	ln -srf $(CMAKE_DIR)/templates/Template_MCUBoot_CMakeLists.txt $(MCUBOOT_DIR)/boot/CMakeLists.txt
+	ln -srf $(CMAKE_DIR)/templates/Template_MCUBoot_mbed_CMakeLists.txt $(MCUBOOT_DIR)/boot/mbed/CMakeLists.txt
 
 #
 # MARK: - Utils targets
