@@ -131,47 +131,72 @@ class CoreRFIDKitTest : public CoreCR95HFSensorTest
 	}
 };
 
+TEST_F(CoreRFIDKitTest, initialization)
+{
+	ASSERT_NE(&coreRfid, nullptr);
+}
+
 void interruptFunction() {};
-TEST_F(CoreRFIDKitTest, TEST)
+TEST_F(CoreRFIDKitTest, getSerialTEST)
 {
 	EXPECT_CALL(mockCR95HF, getSerial).WillOnce(ReturnRef(mockBufferedSerial));
 
 	coreRfid.setInterrupt(interruptFunction);
 }
 
-TEST_F(CoreRFIDKitTest, initialization)
-{
-	ASSERT_NE(&coreRfid, nullptr);
-}
+// TEST_F(CoreRFIDKitTest, setInterrupt)
+// {
+// 	EXPECT_CALL(mockBufferedSerial, sigio);
 
-// void interruptFunction() {};
-TEST_F(CoreRFIDKitTest, setInterrupt)
-{
-	EXPECT_CALL(mockBufferedSerial, sigio);
+// 	coreRfid.setInterrupt(interruptFunction);
+// }
 
-	coreRfid.setInterrupt(interruptFunction);
-}
-
-TEST_F(CoreRFIDKitTest, waitForTagDetection)
+TEST_F(CoreRFIDKitTest, waitForTagDetectionTEST)
 {
-	const auto expected_values_init = ElementsAre(
-		rfid::cr95hf::settings::idle_tag_detection::tag_detection_command,
-		rfid::cr95hf::settings::idle_tag_detection::length, rfid::cr95hf::settings::idle_tag_detection::wu_source,
-		rfid::cr95hf::settings::idle_tag_detection::enter_control[0],
-		rfid::cr95hf::settings::idle_tag_detection::enter_control[1],
-		rfid::cr95hf::settings::idle_tag_detection::wu_control[0],
-		rfid::cr95hf::settings::idle_tag_detection::wu_control[1],
-		rfid::cr95hf::settings::idle_tag_detection::leave_control[0],
-		rfid::cr95hf::settings::idle_tag_detection::leave_control[1],
-		rfid::cr95hf::settings::idle_tag_detection::wu_periode,
-		rfid::cr95hf::settings::idle_tag_detection::oscillator_start,
-		rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_start,
-		rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_data[0],
-		rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_data[1],
-		rfid::cr95hf::settings::idle_tag_detection::swing_count, rfid::cr95hf::settings::idle_tag_detection::max_sleep);
-	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_init));
+	EXPECT_CALL(mockCR95HF, enableTagDetection).Times(1);
 
 	coreRfid.setReaderForTagDetection();
+}
+
+// TEST_F(CoreRFIDKitTest, waitForTagDetection)
+// {
+// 	const auto expected_values_init = ElementsAre(
+// 		rfid::cr95hf::settings::idle_tag_detection::tag_detection_command,
+// 		rfid::cr95hf::settings::idle_tag_detection::length, rfid::cr95hf::settings::idle_tag_detection::wu_source,
+// 		rfid::cr95hf::settings::idle_tag_detection::enter_control[0],
+// 		rfid::cr95hf::settings::idle_tag_detection::enter_control[1],
+// 		rfid::cr95hf::settings::idle_tag_detection::wu_control[0],
+// 		rfid::cr95hf::settings::idle_tag_detection::wu_control[1],
+// 		rfid::cr95hf::settings::idle_tag_detection::leave_control[0],
+// 		rfid::cr95hf::settings::idle_tag_detection::leave_control[1],
+// 		rfid::cr95hf::settings::idle_tag_detection::wu_periode,
+// 		rfid::cr95hf::settings::idle_tag_detection::oscillator_start,
+// 		rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_start,
+// 		rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_data[0],
+// 		rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_data[1],
+// 		rfid::cr95hf::settings::idle_tag_detection::swing_count, rfid::cr95hf::settings::idle_tag_detection::max_sleep);
+// 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_init));
+
+// 	coreRfid.setReaderForTagDetection();
+// }
+
+TEST_F(CoreRFIDKitTest, getTagDataSuccessTEST)
+{
+	{
+		InSequence seq;
+		EXPECT_CALL(mockCR95HF, send).Times(2);
+		EXPECT_CALL(mockCR95HF, receiveTagData).Times(2);
+	}
+
+	std::array<uint8_t, 16> expected_values = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04,
+											   0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04};
+
+	std::array<uint8_t, 16> actual_values {0};
+
+	bool is_communication_succeed = coreRfid.getTagData(actual_values);
+
+	ASSERT_EQ(is_communication_succeed, true);
+	ASSERT_EQ(actual_values, expected_values);
 }
 
 TEST_F(CoreRFIDKitTest, getTagDataSuccess)

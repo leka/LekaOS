@@ -20,13 +20,13 @@ void RFIDKit::setReaderForTagDetection()
 
 auto RFIDKit::getTagData(std::array<uint8_t, 16> &tag_data) -> bool
 {
-	if (!_rfid_reader.receiveCallback()) {
-		return false;
-	}
+	// if (!_rfid_reader.receiveCallback()) {
+	// 	return false;
+	// }
 
-	if (!_rfid_reader.setup()) {
-		return false;
-	}
+	// if (!_rfid_reader.setup()) {
+	// 	return false;
+	// }
 
 	sendREQA();
 	if (!receiveATQA()) {
