@@ -7,38 +7,43 @@
 #include "CoreCR95HF.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreBufferedSerial.h"
+#include "mocks/leka/CoreRFID.h"
 
 using namespace leka;
 using namespace interface;
 
+using ::testing::_;
 using ::testing::Args;
 using ::testing::DoAll;
 using ::testing::ElementsAre;
 using ::testing::InSequence;
 using ::testing::Return;
+using ::testing::ReturnRef;
 using ::testing::SetArrayArgument;
 
 class CoreCR95HFSensorTest : public ::testing::Test
 {
   protected:
-	CoreCR95HFSensorTest() : coreRfid(mockBufferedSerial) {};
+	CoreCR95HFSensorTest() : coreRfidReader(mockBufferedSerial) {};
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	CoreCR95HF coreRfid;
+	CoreCR95HF coreRfidReader;
 	CoreBufferedSerialMock mockBufferedSerial;
 };
 
 class CoreRFIDKitTest : public CoreCR95HFSensorTest
 {
   protected:
-	CoreRFIDKitTest() : coreRfid(CoreCR95HFSensorTest::coreRfid) {};
+	CoreRFIDKitTest() : coreRfid(mockCR95HF) {};
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
 	RFIDKit coreRfid;
+	CoreRFIDMock mockCR95HF;
+	CoreBufferedSerialMock mockBufferedSerial;
 
 	std::array<uint8_t, 3> returned_values_callback	  = {0x00, 0x01, 0x02};
 	std::array<uint8_t, 2> set_protocol_answer		  = {0x00, 0x00};
@@ -126,12 +131,20 @@ class CoreRFIDKitTest : public CoreCR95HFSensorTest
 	}
 };
 
+void interruptFunction() {};
+TEST_F(CoreRFIDKitTest, TEST)
+{
+	EXPECT_CALL(mockCR95HF, getSerial).WillOnce(ReturnRef(mockBufferedSerial));
+
+	coreRfid.setInterrupt(interruptFunction);
+}
+
 TEST_F(CoreRFIDKitTest, initialization)
 {
 	ASSERT_NE(&coreRfid, nullptr);
 }
 
-void interruptFunction() {};
+// void interruptFunction() {};
 TEST_F(CoreRFIDKitTest, setInterrupt)
 {
 	EXPECT_CALL(mockBufferedSerial, sigio);
