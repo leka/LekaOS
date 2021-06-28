@@ -21,21 +21,20 @@ namespace leka {
 class LKCoreJPEG : public LKCoreJPEGBase
 {
 public:
-	LKCoreJPEG(LKCoreSTM32HalBase &hal, LKCoreDMA2DBase &dma2d, LKCoreFatFsBase &file, std::unique_ptr<Mode> mode);
+	LKCoreJPEG(LKCoreSTM32HalBase &hal, std::unique_ptr<Mode> mode);
 
 	void initialize(void) final;
 
 	auto getConfig(void) -> JPEG_ConfTypeDef& final;
 	auto getHandle(void) -> JPEG_HandleTypeDef& final;
-	auto getHandlePointer(void) -> JPEG_HandleTypeDef* final;
 
 	auto getWidthOffset(void) -> uint32_t final;
 
-	void playVideo(); // TODO : move this method to LKCoreVideo
-
-	auto decodeImage(void) -> uint32_t final;
+	auto decodeImage(LKCoreFatFsBase& file) -> uint32_t final;
 
 	void registerCallbacks(void);
+
+	static auto findFrameOffset(LKCoreFatFsBase& file, uint32_t offset) -> uint32_t;
 
 	struct DMAMode : LKCoreJPEGBase::Mode
 	{
@@ -89,8 +88,6 @@ private:
 	JPEG_ConfTypeDef _config;
 
 	LKCoreSTM32HalBase& _hal;
-	LKCoreDMA2DBase& _dma2d;
-	LKCoreFatFsBase& _file;
 
 	std::unique_ptr<Mode> _mode;
 };

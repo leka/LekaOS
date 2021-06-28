@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "LKCoreVideo.h"
+#include "LKCoreJPEG.h"
+#include "LogKit.h"
 
 namespace leka {
 
@@ -98,14 +100,40 @@ void LKCoreVideo::displayRectangle(LKCoreGraphicsBase::FilledRectangle rectangle
 	_coregraphics.drawRectangle(rectangle, color);
 }
 
-void LKCoreVideo::displayImage(FIL *file)
+void LKCoreVideo::displayImage(LKCoreFatFsBase& file)
 {
-	_corejpeg.decodeImage();
+	_corejpeg.decodeImage(file);
 
 	auto& config = _corejpeg.getConfig();
 	_hal.HAL_JPEG_GetInfo(&_corejpeg.getHandle(), &config);
 
 	_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, _corejpeg.getWidthOffset());
+}
+
+void LKCoreVideo::displayVideo(LKCoreFatFsBase& file)
+{
+	uint32_t frame_index = 0;
+	uint32_t frame_size = 0;
+	uint32_t frame_offset = LKCoreJPEG::findFrameOffset(file, 0);
+
+	while (frame_offset != 0) {
+		file.seek(frame_offset);
+
+		auto start_time = HAL_GetTick();
+		frame_size = _corejpeg.decodeImage(file);
+
+		// if first frame, get file info
+		if (frame_index == 0)
+			HAL_JPEG_GetInfo(&_corejpeg.getHandle(), &_corejpeg.getConfig());
+		frame_index += 1;
+
+		_coredma2d.transferImage(_corejpeg.getConfig().ImageWidth, _corejpeg.getConfig().ImageHeight, _corejpeg.getWidthOffset());
+
+		// get next frame offset
+		frame_offset = LKCoreJPEG::findFrameOffset(file, frame_offset+frame_size+4);
+		auto dt = HAL_GetTick() - start_time;
+		log_info("%dms = %f fps", dt, 1000.f/dt);
+	}
 }
 
 void LKCoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,

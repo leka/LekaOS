@@ -21,11 +21,10 @@ public:
 
 	virtual auto getConfig(void) -> JPEG_ConfTypeDef& = 0;
 	virtual auto getHandle(void) -> JPEG_HandleTypeDef& = 0;
-	virtual auto getHandlePointer(void) -> JPEG_HandleTypeDef* = 0;
 
 	virtual auto getWidthOffset(void) -> uint32_t = 0;
 
-	virtual auto decodeImage(void) -> uint32_t = 0;
+	virtual auto decodeImage(LKCoreFatFsBase& file) -> uint32_t = 0;
 
 	virtual void registerCallbacks() = 0;
 

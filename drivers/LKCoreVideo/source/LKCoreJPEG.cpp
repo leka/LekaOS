@@ -3,15 +3,13 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "LKCoreJPEG.h"
-#include "LogKit.h"
-
 #include "corevideo_config.h"
 
 
 namespace leka {
 
-LKCoreJPEG::LKCoreJPEG(LKCoreSTM32HalBase &hal, LKCoreDMA2DBase &dma2d, LKCoreFatFsBase &file, std::unique_ptr<Mode> mode)
-	: _hal(hal), _dma2d(dma2d), _file(file), _mode(std::move(mode))
+LKCoreJPEG::LKCoreJPEG(LKCoreSTM32HalBase &hal, std::unique_ptr<Mode> mode)
+	: _hal(hal), _mode(std::move(mode))
 {
 	_hjpeg.Instance = JPEG;
 }
@@ -20,11 +18,12 @@ void LKCoreJPEG::initialize()
 {
 	JPEG_InitColorTables();
 	registerCallbacks();
-	
+
 	// enable JPEG clock and init
 	_hal.HAL_RCC_JPEG_CLK_ENABLE();
 	_hal.HAL_JPEG_Init(&_hjpeg);
 	
+	registerCallbacks();
 	// enable JPEG IRQ request
 	HAL_NVIC_SetPriority(JPEG_IRQn, 0x06, 0x0F);
 	HAL_NVIC_EnableIRQ(JPEG_IRQn);
@@ -38,11 +37,6 @@ auto LKCoreJPEG::getConfig(void) -> JPEG_ConfTypeDef&
 auto LKCoreJPEG::getHandle(void) -> JPEG_HandleTypeDef&
 {
 	return _hjpeg;
-}
-
-auto LKCoreJPEG::getHandlePointer(void) -> JPEG_HandleTypeDef*
-{
-	return &_hjpeg;
 }
 
 auto LKCoreJPEG::getWidthOffset(void) -> uint32_t
@@ -73,7 +67,7 @@ auto LKCoreJPEG::getWidthOffset(void) -> uint32_t
 	return width_offset;
 }
 
-auto findFrameOffset(uint32_t offset, LKCoreFatFsBase& file) -> uint32_t
+auto LKCoreJPEG::findFrameOffset(LKCoreFatFsBase& file, uint32_t offset) -> uint32_t
 {
 	uint8_t pattern_search_buffer[jpeg::PATTERN_SEARCH_BUFFERSIZE];
 
@@ -101,38 +95,9 @@ auto findFrameOffset(uint32_t offset, LKCoreFatFsBase& file) -> uint32_t
 	return 0;
 }
 
-
-void LKCoreJPEG::playVideo()
+auto LKCoreJPEG::decodeImage(LKCoreFatFsBase& file) -> uint32_t
 {
-	registerCallbacks();
-
-	uint32_t frame_index = 0;
-	uint32_t frame_size = 0;
-	uint32_t frame_offset = findFrameOffset(0, _file);
-
-	while (frame_offset != 0) {
-		_file.seek(frame_offset);
-
-		auto start_time = HAL_GetTick();
-		frame_size = decodeImage();
-
-		// if first frame, get file info
-		if (frame_index == 0)
-			HAL_JPEG_GetInfo(&_hjpeg, &_config);
-		frame_index += 1;
-
-		_dma2d.transferImage(_config.ImageWidth, _config.ImageHeight, getWidthOffset());
-
-		// get next frame offset
-		frame_offset = findFrameOffset(frame_offset+frame_size+4, _file);
-		auto dt = HAL_GetTick() - start_time;
-		log_info("%dms = %f fps", dt, 1000.f/dt);
-	}
-}
-
-auto LKCoreJPEG::decodeImage(void) -> uint32_t
-{
-	return _mode->decodeImage(&_hjpeg, _file.getPointer());
+	return _mode->decodeImage(&_hjpeg, file.getPointer());
 }
 
 void LKCoreJPEG::registerCallbacks(void)

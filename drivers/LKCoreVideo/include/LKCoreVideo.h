@@ -5,6 +5,7 @@
 #ifndef _LEKA_OS_DRIVER_LKCOREVIDEO_H_
 #define _LEKA_OS_DRIVER_LKCOREVIDEO_H_
 
+#include "LKCoreFatFsBase.h"
 #include "LKCoreDMA2DBase.h"
 #include "LKCoreDSIBase.h"
 #include "LKCoreFontBase.h"
@@ -33,7 +34,10 @@ class LKCoreVideo
 
 	void clearScreen(CGColor color = CGColor::white);
 	void displayRectangle(LKCoreGraphicsBase::FilledRectangle rectangle, CGColor color);
-	void displayImage(FIL *file);
+	
+	void displayImage(LKCoreFatFsBase& file);
+	void displayVideo(LKCoreFatFsBase& file);
+
 	void displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
 					 CGColor background = CGColor::white);
 

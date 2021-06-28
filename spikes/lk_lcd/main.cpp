@@ -45,7 +45,7 @@ LKCoreGraphics coregraphics(coredma2d);
 LKCoreFont corefont(pixel);
 LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 LKCoreLCD corelcd(coreotm);
-LKCoreJPEG corejpeg(hal, coredma2d, corefatfs, std::make_unique<LKCoreJPEG::DMAMode>());
+LKCoreJPEG corejpeg(hal, std::make_unique<LKCoreJPEG::DMAMode>());
 LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 std::vector<std::string> images = {
@@ -67,17 +67,17 @@ std::vector<std::string> videos = {
 extern "C" {
 	void JPEG_IRQHandler(void)
 	{
-		HAL_JPEG_IRQHandler(corejpeg.getHandlePointer());
+		HAL_JPEG_IRQHandler(&corejpeg.getHandle());
 	}
 
 	void DMA2_Stream0_IRQHandler(void)
 	{
-		HAL_DMA_IRQHandler(corejpeg.getHandlePointer()->hdmain);
+		HAL_DMA_IRQHandler(corejpeg.getHandle().hdmain);
 	}
 
 	void DMA2_Stream1_IRQHandler(void)
 	{
-		HAL_DMA_IRQHandler(corejpeg.getHandlePointer()->hdmaout);
+		HAL_DMA_IRQHandler(corejpeg.getHandle().hdmaout);
 	}
 
 	void DMA2D_IRQHandler(void)
@@ -154,7 +154,7 @@ auto main() -> int
 		for (const auto& image : images) {
 			if (corefatfs.open(image.c_str()) == FR_OK) {
 				log_info("Displaying image : %s", image.c_str());
-				corevideo.displayImage(JPEG_File.get());
+				corevideo.displayImage(corefatfs);
 				corefatfs.close();
 				rtos::ThisThread::sleep_for(2s);
 			}
@@ -163,7 +163,7 @@ auto main() -> int
 		for (const auto& video : videos) {
 			if (corefatfs.open(video.c_str()) == FR_OK) {
 				log_info("Displaying video : %s", video.c_str());
-				corejpeg.playVideo();
+				corevideo.displayVideo(corefatfs);
 				corefatfs.close();
 				rtos::ThisThread::sleep_for(200ms);
 			}
