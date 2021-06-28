@@ -9,10 +9,10 @@
 
 namespace leka {
 
-class LKCoreBattery
+class CoreBattery
 {
   public:
-	explicit LKCoreBattery(PinName pin) : _pin {mbed::AnalogIn(pin)} {};
+	explicit CoreBattery(PinName pin) : _pin {mbed::AnalogIn(pin)} {};
 
 	float readVoltage(void);
 

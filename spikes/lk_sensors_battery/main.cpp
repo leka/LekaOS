@@ -11,10 +11,10 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
+#include "CoreBattery.h"
 #include "CoreMotor.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
-#include "LKCoreBattery.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 #include "Utils.h"
@@ -38,7 +38,7 @@ auto main() -> int
 	HelloWorld hello;
 	hello.start();
 
-	auto battery = LKCoreBattery {PinName::BATTERY_VOLTAGE};
+	auto battery = CoreBattery {PinName::BATTERY_VOLTAGE};
 
 	auto battery_thread = rtos::Thread {};
 	auto battery_lambda = [&battery] {

@@ -2,24 +2,24 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(LKCoreBattery STATIC)
+add_library(CoreBattery STATIC)
 
-target_include_directories(LKCoreBattery
+target_include_directories(CoreBattery
 	PUBLIC
 		include
 )
 
-target_sources(LKCoreBattery
+target_sources(CoreBattery
 	PRIVATE
-		source/LKCoreBattery.cpp
+		source/CoreBattery.cpp
 )
 
-target_link_libraries(LKCoreBattery mbed-os)
+target_link_libraries(CoreBattery mbed-os)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
-		tests/LKCoreBattery_test.cpp
+		tests/CoreBattery_test.cpp
 	)
 
 endif()
