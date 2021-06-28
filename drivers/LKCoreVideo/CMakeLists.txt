@@ -13,20 +13,19 @@ target_include_directories(LKCoreVideo
 
 target_sources(LKCoreVideo
 	PRIVATE
-	source/LKCoreDMA2D.cpp
-	source/LKCoreFont.cpp
-	source/LKCoreGraphics.cpp
-	source/LKCoreJPEG.cpp
-	source/LKCoreLTDC.cpp
-	source/LKCoreDSI.cpp
-	source/LKCoreJPEG.cpp
-	source/LKCoreLCD.cpp
-	source/LKCoreLTDC.cpp
-	source/LKCoreLCDDriverOTM8009A.cpp
-	source/LKCoreSDRAM.cpp
-	source/LKCoreVideo.cpp
-	external/source/st_jpeg_utils.cpp
-	external/source/decode_dma.cpp
+		source/LKCoreDMA2D.cpp
+		source/LKCoreFont.cpp
+		source/LKCoreGraphics.cpp
+		source/LKCoreJPEG.cpp
+		source/LKCoreLTDC.cpp
+		source/LKCoreDSI.cpp
+		source/LKCoreJPEG.cpp
+		source/LKCoreLCD.cpp
+		source/LKCoreLTDC.cpp
+		source/LKCoreLCDDriverOTM8009A.cpp
+		source/LKCoreSDRAM.cpp
+		source/LKCoreVideo.cpp
+		external/source/st_jpeg_utils.cpp
 )
 
 target_link_libraries(LKCoreVideo

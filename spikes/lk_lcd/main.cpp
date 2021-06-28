@@ -45,35 +45,44 @@ LKCoreGraphics coregraphics(coredma2d);
 LKCoreFont corefont(pixel);
 LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 LKCoreLCD corelcd(coreotm);
-LKCoreJPEG corejpeg(hal, coredma2d, corefatfs, std::make_unique<LKCoreJPEG::ST_DMAMode>());
+LKCoreJPEG corejpeg(hal, coredma2d, corefatfs, std::make_unique<LKCoreJPEG::DMAMode>());
 LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
-std::array<std::string, 2> images = {
+std::vector<std::string> images = {
 	"assets/images/Leka/logo.jpg",
 	"assets/images/Leka/emotion-happy.jpg"
 };
 
-std::array<std::string, 4> videos = {
-	"assets/video/JoieV4.avi",
-	"assets/video/JoieV4_3.avi",
-	"assets/video/JoieV4_low.avi",
-	"assets/video/JoieV4_smol.avi"
+std::vector<std::string> videos = {
+	"assets/video/20fps.avi",
+	"assets/video/20fps_s700.avi",
+	"assets/video/20fps_s600.avi",
+	"assets/video/20fps_s500.avi",
+	"assets/video/20fps_s400.avi",
+	"assets/video/20fps_s300.avi",
+	"assets/video/20fps_s200.avi",
+	"assets/video/20fps_s100.avi"
 };
 
 extern "C" {
 	void JPEG_IRQHandler(void)
 	{
-	  HAL_JPEG_IRQHandler(corejpeg.getHandlePointer());
+		HAL_JPEG_IRQHandler(corejpeg.getHandlePointer());
 	}
 
-	void DMA2_Stream3_IRQHandler(void)
+	void DMA2_Stream0_IRQHandler(void)
 	{
-	  HAL_DMA_IRQHandler(corejpeg.getHandlePointer()->hdmain);
+		HAL_DMA_IRQHandler(corejpeg.getHandlePointer()->hdmain);
 	}
 
-	void DMA2_Stream4_IRQHandler(void)
+	void DMA2_Stream1_IRQHandler(void)
 	{
-	  HAL_DMA_IRQHandler(corejpeg.getHandlePointer()->hdmaout);
+		HAL_DMA_IRQHandler(corejpeg.getHandlePointer()->hdmaout);
+	}
+
+	void DMA2D_IRQHandler(void)
+	{
+		HAL_DMA2D_IRQHandler(&coredma2d.getHandle());
 	}
 }
 
@@ -94,10 +103,9 @@ auto main() -> int
 
 	log_info("Hello, World!\n\n");
 
-	rtos::ThisThread::sleep_for(2s);
+	rtos::ThisThread::sleep_for(0s);
 
 	corevideo.initialize();
-	//registerCallbacks();
 
 	initializeSD();
 
@@ -158,6 +166,10 @@ auto main() -> int
 				corejpeg.playVideo();
 				corefatfs.close();
 				rtos::ThisThread::sleep_for(200ms);
+			}
+			else {
+				log_info("Failed to open %s", video.c_str());
+				rtos::ThisThread::sleep_for(400ms);
 			}
 		}
 

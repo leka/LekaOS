@@ -33,20 +33,24 @@ protected:
 	struct Mode {
 		~Mode() = default;
 
-		virtual auto decodeImage(JPEG_HandleTypeDef *hjpeg, FIL* file) -> uint32_t = 0;
+		virtual auto decodeImage(JPEG_HandleTypeDef* hjpeg, FIL* file) -> uint32_t = 0;
 
 		// called when file opened sucessfully to get file info
-		virtual void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info);
+		virtual void onInfoReadyCallback(JPEG_HandleTypeDef* hjpeg, JPEG_ConfTypeDef *info);
+		
 		// called when JPEG decoder finished its work
-		virtual void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg);
+		virtual void onDecodeCompleteCallback(JPEG_HandleTypeDef* hjpeg);
+		
 		// called when error occurs while decoding
-		virtual void onErrorCallback(JPEG_HandleTypeDef *hjpeg);
-		// called when JPEG decoder is ready to get a new inpu buffer and process it
-		virtual void onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) = 0;
+		virtual void onErrorCallback(JPEG_HandleTypeDef* hjpeg);
+		
+		// called when JPEG decoder is ready to get a new input buffer and process it
+		virtual void onGetDataCallback(JPEG_HandleTypeDef* hjpeg, uint32_t decoded_datasize) = 0;
+		
 		// called when JPEG decoder finished processing the current buffer, output data in output_buffer
-		virtual void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) = 0;
+		virtual void onDataReadyCallback(JPEG_HandleTypeDef* hjpeg, uint8_t* output_data, uint32_t output_datasize) = 0;
 
-		// conversion function, defined on runtime depending on file subsampling
+		// color conversion function pointer, set by onInfoReadyCallback
 		JPEG_YCbCrToRGB_Convert_Function pConvert_Function;
 
 		uint32_t _previous_image_size 	= 0;

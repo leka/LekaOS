@@ -4,6 +4,7 @@
 
 #include "LKCoreDMA2D.h"
 
+#include "LogKit.h"
 #include "corevideo_config.h"
 
 namespace leka {
@@ -54,10 +55,10 @@ void LKCoreDMA2D::transferData(uintptr_t input, uintptr_t output, uint32_t width
 	// TODO: Check if init and config are needed everytime
 	auto init	= [&] { return _hal.HAL_DMA2D_Init(&_hdma2d) == HAL_OK; };
 	auto config = [&] { return _hal.HAL_DMA2D_ConfigLayer(&_hdma2d, 1) == HAL_OK; };
-	auto start	= [&] { return _hal.HAL_DMA2D_Start(&_hdma2d, input, output, width, height) == HAL_OK; };
+	auto start	= [&] { return HAL_DMA2D_Start_IT(&_hdma2d, input, output, width, height) == HAL_OK; };
 
 	if (init() && config() && start()) {
-		_hal.HAL_DMA2D_PollForTransfer(&_hdma2d, 100);
+		//_hal.HAL_DMA2D_PollForTransfer(&_hdma2d, 100);
 	}
 }
 
@@ -70,7 +71,7 @@ void LKCoreDMA2D::transferImage(uint32_t width, uint32_t height, uint32_t width_
 	transferData(jpeg::decoded_buffer_address, lcd::frame_buffer_address, width, height);
 }
 
-DMA2D_HandleTypeDef LKCoreDMA2D::getHandle(void)
+DMA2D_HandleTypeDef& LKCoreDMA2D::getHandle(void)
 {
 	return _hdma2d;
 }

@@ -15,6 +15,7 @@
 #include "LKCoreSTM32HalBase.h"
 #include "st_jpeg_utils.h"
 
+
 namespace leka {
 
 class LKCoreJPEG : public LKCoreJPEGBase
@@ -28,50 +29,49 @@ public:
 	auto getHandle(void) -> JPEG_HandleTypeDef& final;
 	auto getHandlePointer(void) -> JPEG_HandleTypeDef* final;
 
-	uint32_t getWidthOffset(void) final;
+	auto getWidthOffset(void) -> uint32_t final;
 
 	void playVideo(); // TODO : move this method to LKCoreVideo
 
-	uint32_t decodeImage(void) final;
+	auto decodeImage(void) -> uint32_t final;
 
 	void registerCallbacks(void);
 
 	struct DMAMode : LKCoreJPEGBase::Mode
 	{
-		auto decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint32_t final; // debug needed
-		void onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) final;
-		void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) final;
+		auto decodeImage(JPEG_HandleTypeDef* hjpeg, FIL* file) -> uint32_t final; // debug needed
+		void onGetDataCallback(JPEG_HandleTypeDef* hjpeg, uint32_t decoded_datasize) final;
+		void onDataReadyCallback(JPEG_HandleTypeDef* hjpeg, uint8_t* output_data, uint32_t output_datasize) final;
 
 	private:
-		void decoderInputHandler(JPEG_HandleTypeDef *hjpeg, FIL *file);
-		bool decoderOutputHandler(JPEG_HandleTypeDef *hjpeg);
+		void decoderInputHandler(JPEG_HandleTypeDef* hjpeg, FIL* file);
+		bool decoderOutputHandler(JPEG_HandleTypeDef* hjpeg);
 
-		enum BufferState {Empty, Full};
-
-		template <unsigned S>
-		struct JPEGBuffer {
-			unsigned size = 0;
-			BufferState state = Empty;
-			std::array<uint8_t, S> array = {0};
+		struct Buffer
+		{
+			enum State {Empty, Full};
+			State state;  
+			uint8_t *data;
+			unsigned datasize;
 		};
+
+		std::array<Buffer, jpeg::in_buffers_nb> _in_buffers;
+		std::array<Buffer, jpeg::out_buffers_nb> _out_buffers;
 
 		uint32_t _out_read_index = 0;
 		uint32_t _out_write_index = 0;
-		volatile bool _out_paused = false;
+		bool _out_paused = 0;
 
 		uint32_t _in_read_index = 0;
 		uint32_t _in_write_index = 0;
-		volatile bool _in_paused = false;
-
-		std::array<JPEGBuffer<jpeg::dma::chunk_size_in>, 2> _jpeg_in_buffers;
-		std::array<JPEGBuffer<jpeg::dma::chunk_size_out>, 2> _jpeg_out_buffers;
+		bool _in_paused = 0;
 	};
 
 	struct PollingMode : LKCoreJPEGBase::Mode
 	{
-		auto decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint32_t final;
-		void onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) final;
-		void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) final;
+		auto decodeImage(JPEG_HandleTypeDef* hjpeg, FIL* file) -> uint32_t final;
+		void onGetDataCallback(JPEG_HandleTypeDef* hjpeg, uint32_t decoded_datasize) final;
+		void onDataReadyCallback(JPEG_HandleTypeDef* hjpeg, uint8_t* output_data, uint32_t output_datasize) final;
 
 	private:
 		FIL* _file;
@@ -80,23 +80,14 @@ public:
 		std::array<uint8_t, jpeg::input_data_buffer_size> _jpeg_input_buffer = {0};
 	};
 
-	struct ST_DMAMode : LKCoreJPEGBase::Mode
-	{
-		auto decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint32_t final;
-		void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) final;
-		void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) final;
-		void onErrorCallback(JPEG_HandleTypeDef *hjpeg) final;
-		void onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) final;
-		void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) final;
-	};
-
 private:
 	JPEG_HandleTypeDef _hjpeg;
 	JPEG_ConfTypeDef _config;
 
-	LKCoreSTM32HalBase &_hal;
-	LKCoreDMA2DBase &_dma2d;
-	LKCoreFatFsBase &_file;
+	LKCoreSTM32HalBase& _hal;
+	LKCoreDMA2DBase& _dma2d;
+	LKCoreFatFsBase& _file;
+
 	std::unique_ptr<Mode> _mode;
 };
 

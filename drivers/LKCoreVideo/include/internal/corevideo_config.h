@@ -51,6 +51,10 @@ namespace jpeg {
 
 	constexpr uint32_t input_data_buffer_size = 4096;
 	constexpr uint32_t output_data_buffer_size = 768;
+	constexpr uint32_t chunk_size_in = 4096;
+	constexpr uint32_t chunk_size_out = 768;
+	constexpr uint32_t in_buffers_nb = 2;
+	constexpr uint32_t out_buffers_nb = 2;
 
 	constexpr uint8_t JPEG_ARGB8888 = 0;   // ARGB8888 Color Format
 	constexpr uint8_t JPEG_RGB888	= 1;   // RGB888 Color Format
@@ -66,8 +70,7 @@ namespace jpeg {
 	constexpr uint16_t JPEG_SOI_MARKER_BYTE1 = ((JPEG_SOI_MARKER >> 8) & 0xFF);
 
 	namespace dma {
-		constexpr uint32_t chunk_size_in = 4096;
-		constexpr uint32_t chunk_size_out = 768;
+		
 	}	// namespace dma
 
 }	// namespace jpeg

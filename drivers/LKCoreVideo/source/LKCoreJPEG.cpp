@@ -6,12 +6,11 @@
 #include "LogKit.h"
 
 #include "corevideo_config.h"
-#include "decode_dma.h"
 
-void HAL_JPEG_MspInit(JPEG_HandleTypeDef *hjpeg)
+void HAL_JPEG_MspInit(JPEG_HandleTypeDef* hjpeg)
 {
-	static DMA_HandleTypeDef   hdmaIn;
-	static DMA_HandleTypeDef   hdmaOut;
+	static DMA_HandleTypeDef hdmaIn;
+	static DMA_HandleTypeDef hdmaOut;
 
 	/* Enable JPEG clock */
 	__HAL_RCC_JPEG_CLK_ENABLE();
@@ -37,19 +36,18 @@ void HAL_JPEG_MspInit(JPEG_HandleTypeDef *hjpeg)
 	hdmaIn.Init.MemBurst = DMA_MBURST_INC4;
 	hdmaIn.Init.PeriphBurst = DMA_PBURST_INC4;
 
-	hdmaIn.Instance = DMA2_Stream3;
-
-	/* Associate the DMA handle */
-	__HAL_LINKDMA(hjpeg, hdmain, hdmaIn);
-
-	HAL_NVIC_SetPriority(DMA2_Stream3_IRQn, 0x07, 0x0F);
-	HAL_NVIC_EnableIRQ(DMA2_Stream3_IRQn);
+	hdmaIn.Instance = DMA2_Stream0;
 
 	/* DeInitialize the DMA Stream */
 	HAL_DMA_DeInit(&hdmaIn);
 	/* Initialize the DMA stream */
 	HAL_DMA_Init(&hdmaIn);
 
+	/* Associate the DMA handle */
+	__HAL_LINKDMA(hjpeg, hdmain, hdmaIn);
+
+	HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0x07, 0x0F);
+	HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
 
 	/* Output DMA */
 	/* Set the parameters to be configured */
@@ -66,8 +64,7 @@ void HAL_JPEG_MspInit(JPEG_HandleTypeDef *hjpeg)
 	hdmaOut.Init.MemBurst = DMA_MBURST_INC4;
 	hdmaOut.Init.PeriphBurst = DMA_PBURST_INC4;
 
-
-	hdmaOut.Instance = DMA2_Stream4;
+	hdmaOut.Instance = DMA2_Stream1;
 	/* DeInitialize the DMA Stream */
 	HAL_DMA_DeInit(&hdmaOut);
 	/* Initialize the DMA stream */
@@ -76,8 +73,8 @@ void HAL_JPEG_MspInit(JPEG_HandleTypeDef *hjpeg)
 	/* Associate the DMA handle */
 	__HAL_LINKDMA(hjpeg, hdmaout, hdmaOut);
 
-	HAL_NVIC_SetPriority(DMA2_Stream4_IRQn, 0x07, 0x0F);
-	HAL_NVIC_EnableIRQ(DMA2_Stream4_IRQn);
+	HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 0x07, 0x0F);
+	HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
 
 }
 
@@ -98,22 +95,22 @@ void LKCoreJPEG::initialize()
 	registerCallbacks();
 }
 
-JPEG_ConfTypeDef& LKCoreJPEG::getConfig(void)
+auto LKCoreJPEG::getConfig(void) -> JPEG_ConfTypeDef&
 {
 	return _config;
 }
 
-JPEG_HandleTypeDef& LKCoreJPEG::getHandle(void)
+auto LKCoreJPEG::getHandle(void) -> JPEG_HandleTypeDef&
 {
 	return _hjpeg;
 }
 
-JPEG_HandleTypeDef* LKCoreJPEG::getHandlePointer(void)
+auto LKCoreJPEG::getHandlePointer(void) -> JPEG_HandleTypeDef*
 {
 	return &_hjpeg;
 }
 
-uint32_t LKCoreJPEG::getWidthOffset(void)
+auto LKCoreJPEG::getWidthOffset(void) -> uint32_t
 {
 	uint32_t width_offset = 0;
 
@@ -141,7 +138,7 @@ uint32_t LKCoreJPEG::getWidthOffset(void)
 	return width_offset;
 }
 
-uint32_t findFrameOffset(uint32_t offset, LKCoreFatFsBase &file)
+auto findFrameOffset(uint32_t offset, LKCoreFatFsBase& file) -> uint32_t
 {
 	uint8_t pattern_search_buffer[jpeg::PATTERN_SEARCH_BUFFERSIZE];
 
@@ -179,11 +176,11 @@ void LKCoreJPEG::playVideo()
 	uint32_t frame_offset = findFrameOffset(0, _file);
 
 	while (frame_offset != 0) {
-		auto start_time = HAL_GetTick();
-
 		_file.seek(frame_offset);
 
+		auto start_time = HAL_GetTick();
 		frame_size = decodeImage();
+
 		// if first frame, get file info
 		if (frame_index == 0)
 			HAL_JPEG_GetInfo(&_hjpeg, &_config);
@@ -193,7 +190,6 @@ void LKCoreJPEG::playVideo()
 
 		// get next frame offset
 		frame_offset = findFrameOffset(frame_offset+frame_size+4, _file);
-
 		auto dt = HAL_GetTick() - start_time;
 		log_info("%dms = %f fps", dt, 1000.f/dt);
 	}
@@ -204,47 +200,48 @@ auto LKCoreJPEG::decodeImage(void) -> uint32_t
 	return _mode->decodeImage(&_hjpeg, _file.getPointer());
 }
 
-void LKCoreJPEG::registerCallbacks(void) {
+void LKCoreJPEG::registerCallbacks(void)
+{
 	static auto* self = this;
 
 	HAL_JPEG_RegisterInfoReadyCallback(
 		&self->getHandle(),
-		[](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) {
+		[](JPEG_HandleTypeDef* hjpeg, JPEG_ConfTypeDef *info) {
 			self->_mode->onInfoReadyCallback(hjpeg, info);
 		}
 	);
 
 	HAL_JPEG_RegisterGetDataCallback(
 		&self->getHandle(),
-		[](JPEG_HandleTypeDef *hjpeg, uint32_t size) {
+		[](JPEG_HandleTypeDef* hjpeg, uint32_t size) {
 			self->_mode->onGetDataCallback(hjpeg, size);
 		}
 	);
 
 	HAL_JPEG_RegisterDataReadyCallback(
 		&self->getHandle(),
-		[](JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t size) {
+		[](JPEG_HandleTypeDef* hjpeg, uint8_t *pDataOut, uint32_t size) {
 			self->_mode->onDataReadyCallback(hjpeg, pDataOut, size);
 		}
 	);
 
 	HAL_JPEG_RegisterCallback(
 		&self->getHandle(), HAL_JPEG_DECODE_CPLT_CB_ID,
-		[](JPEG_HandleTypeDef *hjpeg) {
+		[](JPEG_HandleTypeDef* hjpeg) {
 			self->_mode->onDecodeCompleteCallback(hjpeg);
 		}
 	);
 
 	HAL_JPEG_RegisterCallback(
 		&self->getHandle(), HAL_JPEG_ERROR_CB_ID,
-		[](JPEG_HandleTypeDef *hjpeg) {
+		[](JPEG_HandleTypeDef* hjpeg) {
 			self->_mode->onErrorCallback(hjpeg);
 		}
 	);
 }
 
 
-void LKCoreJPEG::Mode::onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info)
+void LKCoreJPEG::Mode::onInfoReadyCallback(JPEG_HandleTypeDef* hjpeg, JPEG_ConfTypeDef* info)
 {
 	switch (info->ChromaSubsampling) {
 		case JPEG_420_SUBSAMPLING:
@@ -273,24 +270,22 @@ void LKCoreJPEG::Mode::onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfT
 		while(1);
 }
 
-void LKCoreJPEG::Mode::onErrorCallback(JPEG_HandleTypeDef *hjpeg)
+void LKCoreJPEG::Mode::onErrorCallback(JPEG_HandleTypeDef* hjpeg)
 {
 	while(1);
 }
 
-void LKCoreJPEG::Mode::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
+void LKCoreJPEG::Mode::onDecodeCompleteCallback(JPEG_HandleTypeDef* hjpeg)
 {
 	_hw_decode_ended = true;
 }
 
-auto LKCoreJPEG::PollingMode::decodeImage(JPEG_HandleTypeDef *hjpeg, FIL* file) -> uint32_t
+auto LKCoreJPEG::PollingMode::decodeImage(JPEG_HandleTypeDef* hjpeg, FIL* file) -> uint32_t
 {
 	_file = file;
-	// WARNING: DO NOT REMOVE
 	_mcu_block_index = 0;
 	_previous_image_size = 0;
 
-	// TODO: rely on LKFileSystemKit to handle open/read/close
 	unsigned read_size;
 	if (f_read(file, _jpeg_input_buffer.data(), _jpeg_input_buffer.size(), &read_size) != FR_OK)
 		return HAL_ERROR;
@@ -304,11 +299,10 @@ auto LKCoreJPEG::PollingMode::decodeImage(JPEG_HandleTypeDef *hjpeg, FIL* file) 
 	return _previous_image_size;
 }
 
-void LKCoreJPEG::PollingMode::onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size)
+void LKCoreJPEG::PollingMode::onGetDataCallback(JPEG_HandleTypeDef* hjpeg, uint32_t decoded_datasize)
 {
-	// TODO: rely on LKFileSystemKit to handle open/read/close
-	if (size != _jpeg_input_buffer.size()) {
-		_input_file_offset = _input_file_offset - _jpeg_input_buffer.size() + size;
+	if (decoded_datasize != _jpeg_input_buffer.size()) {
+		_input_file_offset = _input_file_offset - _jpeg_input_buffer.size() + decoded_datasize;
 		f_lseek(_file, _input_file_offset);
 	}
 
@@ -320,20 +314,25 @@ void LKCoreJPEG::PollingMode::onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint3
 	else {
 		while(1); // TODO: handle error
 	}
-	_previous_image_size += size;
+	_previous_image_size += decoded_datasize;
 }
 
-void LKCoreJPEG::PollingMode::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size)
+void LKCoreJPEG::PollingMode::onDataReadyCallback(JPEG_HandleTypeDef* hjpeg, uint8_t* output_data, uint32_t output_datasize)
 {
-	_mcu_block_index += pConvert_Function(output_buffer, (uint8_t*)jpeg::decoded_buffer_address, _mcu_block_index, size, nullptr);
+	_mcu_block_index += pConvert_Function(
+							output_data, (uint8_t*)jpeg::decoded_buffer_address,
+							_mcu_block_index, output_datasize,
+							nullptr
+						);
 
 	HAL_JPEG_ConfigOutputBuffer(hjpeg, _jpeg_output_buffer.data(), _jpeg_output_buffer.size());
 }
 
-auto LKCoreJPEG::DMAMode::decodeImage(JPEG_HandleTypeDef *hjpeg, FIL* file) -> uint32_t
+auto LKCoreJPEG::DMAMode::decodeImage(JPEG_HandleTypeDef* hjpeg, FIL* file) -> uint32_t
 {
-	uint32_t i;
-
+	static uint8_t BIG_CHUNGUS_OF_MEMORY_IN[jpeg::chunk_size_in * jpeg::in_buffers_nb];
+	static uint8_t BIG_CHUNGUS_OF_MEMORY_OUT[jpeg::chunk_size_out * jpeg::out_buffers_nb];
+	
 	_previous_image_size = 0;
 
 	_mcu_number = 0;
@@ -346,174 +345,137 @@ auto LKCoreJPEG::DMAMode::decodeImage(JPEG_HandleTypeDef *hjpeg, FIL* file) -> u
 
 	_in_read_index = 0;
 	_in_write_index = 0;
-	_in_paused = 0;
+	_in_paused = false;
 
-	_jpeg_out_buffers[0].state = BufferState::Empty;
-	_jpeg_out_buffers[0].size = 0;
-
-	_jpeg_out_buffers[1].state = BufferState::Empty;
-	_jpeg_out_buffers[1].size = 0;
-
-	/* Read from JPG file and fill input buffers */
-	for(i = 0; i < 2; i++)
-	{
-		if(f_read (file, _jpeg_in_buffers[i].array.data() , jpeg::dma::chunk_size_in, &_jpeg_in_buffers[i].size) == FR_OK) {
-			_jpeg_in_buffers[i].state = BufferState::Full;
-		}
-		else {
-			// TODO : handle error
-			while(1);
-		}
+	// initialize memory chungus
+	uint32_t i = 0;
+	for (auto& buffer : _in_buffers) {
+		buffer.state = Buffer::State::Empty;
+		buffer.datasize = 0;
+		buffer.data = BIG_CHUNGUS_OF_MEMORY_IN + i * jpeg::chunk_size_in;
+		i += 1;
 	}
-	// Start JPEG decoding with DMA method
-	HAL_JPEG_Decode_DMA(hjpeg ,_jpeg_in_buffers[0].array.data() ,_jpeg_in_buffers[0].size, _jpeg_out_buffers[0].array.data(), jpeg::dma::chunk_size_out);
+	i = 0;
+	for (auto& buffer : _out_buffers) {
+		buffer.state = Buffer::State::Empty;
+		buffer.datasize = 0;
+		buffer.data = BIG_CHUNGUS_OF_MEMORY_OUT + i * jpeg::chunk_size_out;
+		i += 1;
+	}
 
-	bool jpeg_decode_end = false;
+	// read file and fill input buffers
+	for (auto& buffer : _in_buffers) {
+		if(f_read(file, buffer.data, jpeg::chunk_size_in, &buffer.datasize) == FR_OK)
+			buffer.state = Buffer::State::Full;
+	}
+
+	// start JPEG decoding with DMA method
+	HAL_JPEG_Decode_DMA(hjpeg, _in_buffers[0].data, _in_buffers[0].datasize, _out_buffers[0].data, jpeg::chunk_size_out);
+
+	// loop until decode process ends
+	bool process_ended = false;
+	unsigned in_time = 0;
+	unsigned out_time = 0;
 	do {
+		unsigned start = HAL_GetTick();
 		decoderInputHandler(hjpeg, file);
-		jpeg_decode_end = decoderOutputHandler(hjpeg);
-	} while(jpeg_decode_end == false);
+		in_time += HAL_GetTick() - start;
+
+		start = HAL_GetTick();
+		process_ended = decoderOutputHandler(hjpeg);
+		out_time += HAL_GetTick() - start;
+	} while (process_ended == false);
 
 	return _previous_image_size;
 }
 
-void LKCoreJPEG::DMAMode::onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size)
+void LKCoreJPEG::DMAMode::onGetDataCallback(JPEG_HandleTypeDef* hjpeg, uint32_t decoded_datasize)
 {
-	if(size == _jpeg_in_buffers[_in_read_index].size)
-	{
-		_jpeg_in_buffers[_in_read_index].state = BufferState::Empty;
-		_jpeg_in_buffers[_in_read_index].size = 0;
+	auto& read_buffer = _in_buffers[_in_read_index];
+	auto& next_read_buffer = _in_buffers[(_in_read_index + 1) % jpeg::in_buffers_nb];
 
-		_in_read_index++;
-		if(_in_read_index >= 2)
-		{
-			_in_read_index = 0;
-		}
+	if(decoded_datasize == read_buffer.datasize) {
+		read_buffer.state = Buffer::State::Empty;
+		read_buffer.datasize = 0;
+	
+		_in_read_index = (_in_read_index + 1) % jpeg::in_buffers_nb;
 
-		if(_jpeg_in_buffers[_in_read_index].state == BufferState::Empty)
-		{
-			HAL_JPEG_Pause(hjpeg, JPEG_PAUSE_RESUME_INPUT);
+		if(next_read_buffer.state == Buffer::State::Empty) {
 			_in_paused = true;
+			HAL_JPEG_Pause(hjpeg, JPEG_PAUSE_RESUME_INPUT);
 		}
-		else
-		{
-			HAL_JPEG_ConfigInputBuffer(hjpeg,_jpeg_in_buffers[_in_read_index].array.data(), _jpeg_in_buffers[_in_read_index].size);
+		else {
+			HAL_JPEG_ConfigInputBuffer(hjpeg, next_read_buffer.data, next_read_buffer.datasize);
 		}
 	}
-	else
-	{
-		HAL_JPEG_ConfigInputBuffer(hjpeg,_jpeg_in_buffers[_in_read_index].array.data() + size, _jpeg_in_buffers[_in_read_index].size - size);
+	else {
+		HAL_JPEG_ConfigInputBuffer(hjpeg, next_read_buffer.data + decoded_datasize, next_read_buffer.datasize - decoded_datasize);
 	}
-	_previous_image_size += size;
-	//decode_dma::GetDataCallback(hjpeg, size);
+	_previous_image_size += decoded_datasize;
 }
 
-void LKCoreJPEG::DMAMode::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size)
+void LKCoreJPEG::DMAMode::onDataReadyCallback(JPEG_HandleTypeDef* hjpeg, uint8_t* output_data, uint32_t output_datasize)
 {
-	_jpeg_out_buffers[_out_write_index].state = BufferState::Full;
-	_jpeg_out_buffers[_out_write_index].size = size;
+	auto& write_buffer = _out_buffers[_out_write_index];
+	auto& next_write_buffer = _out_buffers[(_out_write_index + 1) % jpeg::out_buffers_nb];
 
-	_out_write_index++;
-	if(_out_write_index >= 2)
-	{
-		_out_write_index = 0;
-	}
+	write_buffer.state = Buffer::State::Full;
+	write_buffer.datasize = output_datasize;
 
-	if(_jpeg_out_buffers[_out_write_index].state != BufferState::Empty) {
-		HAL_JPEG_Pause(hjpeg, JPEG_PAUSE_RESUME_OUTPUT);
+	_out_write_index = (_out_write_index + 1) % jpeg::out_buffers_nb;
+
+	if(next_write_buffer.state != Buffer::State::Empty) {
 		_out_paused = true;
+		HAL_JPEG_Pause(hjpeg, JPEG_PAUSE_RESUME_OUTPUT);
 	}
-	HAL_JPEG_ConfigOutputBuffer(hjpeg, _jpeg_out_buffers[_out_write_index].array.data(), jpeg::dma::chunk_size_out);
-	//decode_dma::DataReadyCallback(hjpeg, output_buffer, size);
+	HAL_JPEG_ConfigOutputBuffer(hjpeg, next_write_buffer.data, jpeg::chunk_size_out); 
 }
 
-void LKCoreJPEG::DMAMode::decoderInputHandler(JPEG_HandleTypeDef *hjpeg, FIL *file) {
-	if(_jpeg_in_buffers[_in_write_index].state == BufferState::Empty)
-	{
-		if(f_read(file, _jpeg_in_buffers[_in_write_index].array.data() , jpeg::dma::chunk_size_in, &_jpeg_in_buffers[_in_write_index].size) == FR_OK)
-		{
-			_jpeg_in_buffers[_in_write_index].state = BufferState::Full;
-		}
+void LKCoreJPEG::DMAMode::decoderInputHandler(JPEG_HandleTypeDef* hjpeg, FIL* file)
+{
+	auto& write_buffer = _in_buffers[_in_write_index];
+	auto& read_buffer = _in_buffers[_in_read_index];
+	
+	if(write_buffer.state == Buffer::State::Empty) {
+		if(f_read(file, write_buffer.data, jpeg::chunk_size_in, &write_buffer.datasize) == FR_OK)
+			write_buffer.state = Buffer::State::Full;
 		else
-		{
-			while(1); // TODO : handle error
-		}
+			while(1);
 
-		if((_in_paused == true) && (_in_write_index == _in_read_index))
-		{
+		if(_in_paused && _in_write_index == _in_read_index) {
 			_in_paused = false;
-			HAL_JPEG_ConfigInputBuffer(hjpeg, _jpeg_in_buffers[_in_read_index].array.data(), _jpeg_in_buffers[_in_read_index].size);
-			HAL_JPEG_Resume(hjpeg, JPEG_PAUSE_RESUME_INPUT);
+			HAL_JPEG_ConfigInputBuffer(hjpeg, read_buffer.data, read_buffer.datasize);
+			HAL_JPEG_Resume(hjpeg, JPEG_PAUSE_RESUME_INPUT); 
 		}
 
-		_in_write_index++;
-		if(_in_write_index >= 2)
-		{
-			_in_write_index = 0;
-		}
+		_in_write_index = (_in_write_index + 1) % jpeg::in_buffers_nb;
 	}
 }
 
-bool LKCoreJPEG::DMAMode::decoderOutputHandler(JPEG_HandleTypeDef *hjpeg) {
-	if(_jpeg_out_buffers[_out_read_index].state == BufferState::Full)
-	{
-		_mcu_block_index += pConvert_Function(_jpeg_out_buffers[_out_read_index].array.data(), (uint8_t *)jpeg::decoded_buffer_address, _mcu_block_index, _jpeg_out_buffers[_out_read_index].size, NULL);
+bool LKCoreJPEG::DMAMode::decoderOutputHandler(JPEG_HandleTypeDef* hjpeg)
+{
+	uint32_t converted_data_count;
+	auto& read_buffer = _out_buffers[_out_read_index];
+	auto& write_buffer = _out_buffers[_out_write_index];
 
-		_jpeg_out_buffers[_out_read_index].state = BufferState::Empty;
-		_jpeg_out_buffers[_out_read_index].size = 0;
-
-		_out_read_index++;
-		if(_out_read_index >= 2)
-		{
-			_out_read_index = 0;
-		}
-
-		if(_mcu_block_index == _mcu_number)
-		{
-			return true;
-		}
+	if(read_buffer.state == Buffer::State::Full) {
+		_mcu_block_index += pConvert_Function(
+								read_buffer.data, (uint8_t*)jpeg::decoded_buffer_address,
+								_mcu_block_index, read_buffer.datasize,
+								&converted_data_count
+							);
+	
+		read_buffer.state = Buffer::State::Empty;
+		read_buffer.datasize = 0;
+	
+		_out_read_index = (_out_read_index + 1) % jpeg::out_buffers_nb;
 	}
-	else if((_out_paused == true)
-			&& (_jpeg_out_buffers[_out_write_index].state == BufferState::Empty)
-			&& (_jpeg_out_buffers[_out_read_index].state == BufferState::Empty))
-	{
+	else if(_out_paused && write_buffer.state == Buffer::State::Empty && read_buffer.state == Buffer::State::Empty) {
 		_out_paused = false;
 		HAL_JPEG_Resume(hjpeg, JPEG_PAUSE_RESUME_OUTPUT);
 	}
-	return false;
-}
 
-auto LKCoreJPEG::ST_DMAMode::decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint32_t {
-	decode_dma::JPEG_Decode_DMA(hjpeg, file, jpeg::decoded_buffer_address);
-
-	int process_ended = 0;
-
-	do {
-		decode_dma::JPEG_InputHandler(hjpeg);
-		process_ended = decode_dma::JPEG_OutputHandler(hjpeg);
-	} while (process_ended == 0);
-
-	return decode_dma::Previous_FrameSize;
-}
-
-void LKCoreJPEG::ST_DMAMode::onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) {
-	decode_dma::InfoReadyCallback(hjpeg, info);
-}
-
-void LKCoreJPEG::ST_DMAMode::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) {
-	decode_dma::DecodeCpltCallback(hjpeg);
-}
-
-void LKCoreJPEG::ST_DMAMode::onErrorCallback(JPEG_HandleTypeDef *hjpeg) {
-	decode_dma::ErrorCallback(hjpeg);
-}
-
-void LKCoreJPEG::ST_DMAMode::onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) {
-	decode_dma::GetDataCallback(hjpeg, size);
-}
-
-void LKCoreJPEG::ST_DMAMode::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) {
-	decode_dma::DataReadyCallback(hjpeg, output_buffer, size);
+	return _mcu_block_index == _mcu_number;
 }
 
 }	// namespace leka
