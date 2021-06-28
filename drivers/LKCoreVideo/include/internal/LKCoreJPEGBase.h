@@ -35,6 +35,8 @@ protected:
 
 		virtual auto decodeImage(JPEG_HandleTypeDef* hjpeg, FIL* file) -> uint32_t = 0;
 
+		virtual void onMspInitCallback(JPEG_HandleTypeDef* hjpeg);
+
 		// called when file opened sucessfully to get file info
 		virtual void onInfoReadyCallback(JPEG_HandleTypeDef* hjpeg, JPEG_ConfTypeDef *info);
 		

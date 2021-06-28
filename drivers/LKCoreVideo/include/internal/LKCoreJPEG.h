@@ -39,13 +39,17 @@ public:
 
 	struct DMAMode : LKCoreJPEGBase::Mode
 	{
-		auto decodeImage(JPEG_HandleTypeDef* hjpeg, FIL* file) -> uint32_t final; // debug needed
+		auto decodeImage(JPEG_HandleTypeDef* hjpeg, FIL* file) -> uint32_t final;
+		void onMspInitCallback(JPEG_HandleTypeDef* hjpeg) final;
 		void onGetDataCallback(JPEG_HandleTypeDef* hjpeg, uint32_t decoded_datasize) final;
 		void onDataReadyCallback(JPEG_HandleTypeDef* hjpeg, uint8_t* output_data, uint32_t output_datasize) final;
 
 	private:
 		void decoderInputHandler(JPEG_HandleTypeDef* hjpeg, FIL* file);
 		bool decoderOutputHandler(JPEG_HandleTypeDef* hjpeg);
+		
+		DMA_HandleTypeDef _hdma_in;
+		DMA_HandleTypeDef _hdma_out;
 
 		struct Buffer
 		{

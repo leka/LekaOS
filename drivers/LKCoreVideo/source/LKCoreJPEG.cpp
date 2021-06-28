@@ -7,76 +7,6 @@
 
 #include "corevideo_config.h"
 
-void HAL_JPEG_MspInit(JPEG_HandleTypeDef* hjpeg)
-{
-	static DMA_HandleTypeDef hdmaIn;
-	static DMA_HandleTypeDef hdmaOut;
-
-	/* Enable JPEG clock */
-	__HAL_RCC_JPEG_CLK_ENABLE();
-
-	/* Enable DMA clock */
-	__HAL_RCC_DMA2_CLK_ENABLE();
-
-	HAL_NVIC_SetPriority(JPEG_IRQn, 0x06, 0x0F);
-	HAL_NVIC_EnableIRQ(JPEG_IRQn);
-
-	/* Input DMA */
-	/* Set the parameters to be configured */
-	hdmaIn.Init.Channel = DMA_CHANNEL_9;
-	hdmaIn.Init.Direction = DMA_MEMORY_TO_PERIPH;
-	hdmaIn.Init.PeriphInc = DMA_PINC_DISABLE;
-	hdmaIn.Init.MemInc = DMA_MINC_ENABLE;
-	hdmaIn.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-	hdmaIn.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
-	hdmaIn.Init.Mode = DMA_NORMAL;
-	hdmaIn.Init.Priority = DMA_PRIORITY_HIGH;
-	hdmaIn.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
-	hdmaIn.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
-	hdmaIn.Init.MemBurst = DMA_MBURST_INC4;
-	hdmaIn.Init.PeriphBurst = DMA_PBURST_INC4;
-
-	hdmaIn.Instance = DMA2_Stream0;
-
-	/* DeInitialize the DMA Stream */
-	HAL_DMA_DeInit(&hdmaIn);
-	/* Initialize the DMA stream */
-	HAL_DMA_Init(&hdmaIn);
-
-	/* Associate the DMA handle */
-	__HAL_LINKDMA(hjpeg, hdmain, hdmaIn);
-
-	HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0x07, 0x0F);
-	HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
-
-	/* Output DMA */
-	/* Set the parameters to be configured */
-	hdmaOut.Init.Channel = DMA_CHANNEL_9;
-	hdmaOut.Init.Direction = DMA_PERIPH_TO_MEMORY;
-	hdmaOut.Init.PeriphInc = DMA_PINC_DISABLE;
-	hdmaOut.Init.MemInc = DMA_MINC_ENABLE;
-	hdmaOut.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
-	hdmaOut.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
-	hdmaOut.Init.Mode = DMA_NORMAL;
-	hdmaOut.Init.Priority = DMA_PRIORITY_VERY_HIGH;
-	hdmaOut.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
-	hdmaOut.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
-	hdmaOut.Init.MemBurst = DMA_MBURST_INC4;
-	hdmaOut.Init.PeriphBurst = DMA_PBURST_INC4;
-
-	hdmaOut.Instance = DMA2_Stream1;
-	/* DeInitialize the DMA Stream */
-	HAL_DMA_DeInit(&hdmaOut);
-	/* Initialize the DMA stream */
-	HAL_DMA_Init(&hdmaOut);
-
-	/* Associate the DMA handle */
-	__HAL_LINKDMA(hjpeg, hdmaout, hdmaOut);
-
-	HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 0x07, 0x0F);
-	HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
-
-}
 
 namespace leka {
 
@@ -89,10 +19,15 @@ LKCoreJPEG::LKCoreJPEG(LKCoreSTM32HalBase &hal, LKCoreDMA2DBase &dma2d, LKCoreFa
 void LKCoreJPEG::initialize()
 {
 	JPEG_InitColorTables();
+	registerCallbacks();
+	
+	// enable JPEG clock and init
 	_hal.HAL_RCC_JPEG_CLK_ENABLE();
 	_hal.HAL_JPEG_Init(&_hjpeg);
-
-	registerCallbacks();
+	
+	// enable JPEG IRQ request
+	HAL_NVIC_SetPriority(JPEG_IRQn, 0x06, 0x0F);
+	HAL_NVIC_EnableIRQ(JPEG_IRQn);
 }
 
 auto LKCoreJPEG::getConfig(void) -> JPEG_ConfTypeDef&
@@ -213,15 +148,15 @@ void LKCoreJPEG::registerCallbacks(void)
 
 	HAL_JPEG_RegisterGetDataCallback(
 		&self->getHandle(),
-		[](JPEG_HandleTypeDef* hjpeg, uint32_t size) {
-			self->_mode->onGetDataCallback(hjpeg, size);
+		[](JPEG_HandleTypeDef* hjpeg, uint32_t decoded_datasize) {
+			self->_mode->onGetDataCallback(hjpeg, decoded_datasize);
 		}
 	);
 
 	HAL_JPEG_RegisterDataReadyCallback(
 		&self->getHandle(),
-		[](JPEG_HandleTypeDef* hjpeg, uint8_t *pDataOut, uint32_t size) {
-			self->_mode->onDataReadyCallback(hjpeg, pDataOut, size);
+		[](JPEG_HandleTypeDef* hjpeg, uint8_t* output_data, uint32_t output_datasize) {
+			self->_mode->onDataReadyCallback(hjpeg, output_data, output_datasize);
 		}
 	);
 
@@ -238,8 +173,16 @@ void LKCoreJPEG::registerCallbacks(void)
 			self->_mode->onErrorCallback(hjpeg);
 		}
 	);
+
+	HAL_JPEG_RegisterCallback(
+		&self->getHandle(), HAL_JPEG_MSPINIT_CB_ID,
+		[](JPEG_HandleTypeDef* hjpeg) {
+			self->_mode->onMspInitCallback(hjpeg);
+		}
+	);
 }
 
+void LKCoreJPEG::Mode::onMspInitCallback(JPEG_HandleTypeDef* hjpeg) {}
 
 void LKCoreJPEG::Mode::onInfoReadyCallback(JPEG_HandleTypeDef* hjpeg, JPEG_ConfTypeDef* info)
 {
@@ -280,6 +223,8 @@ void LKCoreJPEG::Mode::onDecodeCompleteCallback(JPEG_HandleTypeDef* hjpeg)
 	_hw_decode_ended = true;
 }
 
+// Polling mode ///////////////////////////////////////////////////
+
 auto LKCoreJPEG::PollingMode::decodeImage(JPEG_HandleTypeDef* hjpeg, FIL* file) -> uint32_t
 {
 	_file = file;
@@ -312,7 +257,7 @@ void LKCoreJPEG::PollingMode::onGetDataCallback(JPEG_HandleTypeDef* hjpeg, uint3
 		HAL_JPEG_ConfigInputBuffer(hjpeg, _jpeg_input_buffer.data(), read_size);
 	}
 	else {
-		while(1); // TODO: handle error
+		while(1);
 	}
 	_previous_image_size += decoded_datasize;
 }
@@ -326,6 +271,62 @@ void LKCoreJPEG::PollingMode::onDataReadyCallback(JPEG_HandleTypeDef* hjpeg, uin
 						);
 
 	HAL_JPEG_ConfigOutputBuffer(hjpeg, _jpeg_output_buffer.data(), _jpeg_output_buffer.size());
+}
+
+// DMA mode ///////////////////////////////////////////////////
+
+void LKCoreJPEG::DMAMode::onMspInitCallback(JPEG_HandleTypeDef* hjpeg)
+{
+	// enable DMA2 clock
+	__HAL_RCC_DMA2_CLK_ENABLE();
+
+	// input DMA parameters
+	_hdma_in.Init.Channel = DMA_CHANNEL_9;
+	_hdma_in.Init.Direction = DMA_MEMORY_TO_PERIPH;
+	_hdma_in.Init.PeriphInc = DMA_PINC_DISABLE;
+	_hdma_in.Init.MemInc = DMA_MINC_ENABLE;
+	_hdma_in.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+	_hdma_in.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+	_hdma_in.Init.Mode = DMA_NORMAL;
+	_hdma_in.Init.Priority = DMA_PRIORITY_HIGH;
+	_hdma_in.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+	_hdma_in.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
+	_hdma_in.Init.MemBurst = DMA_MBURST_INC4;
+	_hdma_in.Init.PeriphBurst = DMA_PBURST_INC4;
+	
+	// init and link DMA IN
+	_hdma_in.Instance = DMA2_Stream0;
+	HAL_DMA_DeInit(&_hdma_in);
+	HAL_DMA_Init(&_hdma_in);
+	__HAL_LINKDMA(hjpeg, hdmain, _hdma_in);
+	
+	// enable DMA IRQ
+	HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0x07, 0x0F);
+	HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
+
+	// Output DMA paramters
+	_hdma_out.Init.Channel = DMA_CHANNEL_9;
+	_hdma_out.Init.Direction = DMA_PERIPH_TO_MEMORY;
+	_hdma_out.Init.PeriphInc = DMA_PINC_DISABLE;
+	_hdma_out.Init.MemInc = DMA_MINC_ENABLE;
+	_hdma_out.Init.PeriphDataAlignment = DMA_PDATAALIGN_WORD;
+	_hdma_out.Init.MemDataAlignment = DMA_MDATAALIGN_WORD;
+	_hdma_out.Init.Mode = DMA_NORMAL;
+	_hdma_out.Init.Priority = DMA_PRIORITY_VERY_HIGH;
+	_hdma_out.Init.FIFOMode = DMA_FIFOMODE_ENABLE;
+	_hdma_out.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
+	_hdma_out.Init.MemBurst = DMA_MBURST_INC4;
+	_hdma_out.Init.PeriphBurst = DMA_PBURST_INC4;
+	
+	// init and link DMA OUT
+	_hdma_out.Instance = DMA2_Stream1;
+	HAL_DMA_DeInit(&_hdma_out);
+	HAL_DMA_Init(&_hdma_out);
+	__HAL_LINKDMA(hjpeg, hdmaout, _hdma_out);
+
+	// enable DMA IRQ
+	HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 0x07, 0x0F);
+	HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
 }
 
 auto LKCoreJPEG::DMAMode::decodeImage(JPEG_HandleTypeDef* hjpeg, FIL* file) -> uint32_t
