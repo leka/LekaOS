@@ -28,17 +28,23 @@ auto RFIDKit::getTagData(std::array<uint8_t, 16> &tag_data) -> bool
 	// 	return false;
 	// }
 
+	printf("Send REQA\n");
 	sendREQA();
-	if (!receiveATQA()) {
-		return false;
-	}
+	printf("receive ATQA\n");
+	// if (!receiveATQA()) {
+	// 	printf("REQA failed\n");
+	// 	return false;
+	// }
 
-	sendReadRegister8();
-	if (!receiveReadTagData()) {
-		return false;
-	}
+	// printf("Send read\n");
+	// sendReadRegister8();
+	// printf("receive read\n");
+	// if (!receiveReadTagData()) {
+	// 	printf("Read failed\n");
+	// 	return false;
+	// }
 
-	getData(tag_data);
+	// getData(tag_data);
 	return true;
 }
 

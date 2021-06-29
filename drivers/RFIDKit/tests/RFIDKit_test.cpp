@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "RFIDKit.h"
+#include <cstdint>
 
 #include "CoreCR95HF.h"
 #include "gtest/gtest.h"
@@ -16,9 +17,11 @@ using ::testing::_;
 using ::testing::Args;
 using ::testing::DoAll;
 using ::testing::ElementsAre;
+using ::testing::ElementsAreArray;
 using ::testing::InSequence;
 using ::testing::Return;
 using ::testing::ReturnRef;
+using ::testing::SetArgPointee;
 using ::testing::SetArrayArgument;
 
 class CoreCR95HFSensorTest : public ::testing::Test
@@ -184,8 +187,24 @@ TEST_F(CoreRFIDKitTest, getTagDataSuccessTEST)
 {
 	{
 		InSequence seq;
-		EXPECT_CALL(mockCR95HF, send).Times(2);
-		EXPECT_CALL(mockCR95HF, receiveTagData).Times(2);
+		// const auto reqa = ElementsAre(0x26, 0x07);
+		// const auto send_reqa_values = ElementsAreArray(0x26, 0x07);
+		std::array<uint8_t, 2> data = {0x26, 0x07};
+		EXPECT_CALL(mockCR95HF, send).WillOnce(SetArrayArgument<0>(data.begin(), data.begin() + 1));
+		// EXPECT_CALL(mockCR95HF, send(ElementsAreArray(data.data(), data.data())));
+
+		// EXPECT_CALL(mockCR95HF, send).WillOnce(SetArrayArgument<0>(data.begin(), data.begin() + data.size()));
+
+		// std::array<uint8_t, 2> atqa = {0x44, 0x00};
+		// EXPECT_CALL(mockCR95HF, receiveTagData).WillOnce(DoAll(SetArgPointee<0>(atqa), Return(atqa.size())));
+
+		// const auto send_read_values = ElementsAre(0x30, 0x08, 0x28);
+		// EXPECT_CALL(mockCR95HF, send).With(Args<0, 1>(send_read_values));
+
+		// std::array<uint8_t, 18> data = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01,
+		// 								0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0xDA, 0x48};
+		// EXPECT_CALL(mockCR95HF, receiveTagData)
+		// 	.WillOnce(DoAll(SetArrayArgument<0>(data.begin(), data.begin() + data.size()), Return(data.size())));
 	}
 
 	std::array<uint8_t, 16> expected_values = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04,
