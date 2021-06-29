@@ -52,7 +52,8 @@
 		],
 		"components_add": [
 			"BlueNRG_MS",
-			"SD"
+			"SD",
+			"QSPIF"
 		],
 		"supported_form_factors": [],
 		"features": [
@@ -94,7 +95,8 @@
 		],
 		"components_add": [
 			"BlueNRG_MS",
-			"SD"
+			"SD",
+			"QSPIF"
 		],
 		"supported_form_factors": [],
 		"features": [
@@ -136,7 +138,8 @@
 		],
 		"components_add": [
 			"BlueNRG_MS",
-			"SD"
+			"SD",
+			"QSPIF"
 		],
 		"supported_form_factors": [],
 		"features": [
