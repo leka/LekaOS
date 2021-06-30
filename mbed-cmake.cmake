@@ -72,6 +72,9 @@ option(MBED_UNITTESTS "If true, compile for the local system and run unit tests"
 # read flags from generated configuration file
 include(${MBED_CMAKE_GENERATED_CONFIG_PATH}/cmake/MbedOSConfig.cmake)
 
+# read flags from custom configuration file
+include(${ROOT_DIR}/cmake_config/cmake/MbedAppFlags.cmake)
+
 # load toolchain
 if(MBED_UNITTESTS)
 	message(STATUS "Unit tests enabled, not loading mbed-cmake toolchain file")
