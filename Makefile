@@ -217,6 +217,22 @@ clang_format_fix:
 	@echo "🏃‍♂️ Running clang-format & fixing files 🎨"
 	python3 tools/run-clang-format.py -r --extension=h,c,cpp --color=always --style=file . -i
 
+clang_tidy_diff:
+	@echo ""
+	@echo "🏃‍♂️ Running clang-tidy on modified files 🧹"
+	@echo ""
+	@git diff --name-only develop | grep -E "\.h\$$|\.cpp\$$"
+	@echo ""
+	@git diff --name-only develop | grep -E "\.h\$$|\.cpp\$$" | xargs /usr/local/opt/llvm/bin/clang-tidy -p=.
+
+clang_tidy_diff_fix:
+	@echo ""
+	@echo "🏃‍♂️ Running clang-tidy on modified files 🧹"
+	@echo ""
+	@git diff --name-only develop | grep -E "\.h\$$|\.cpp\$$"
+	@echo ""
+	@git diff --name-only develop | grep -E "\.h\$$|\.cpp\$$" | xargs /usr/local/opt/llvm/bin/clang-tidy -p=. --fix --fix-errors
+
 code_analysis: mkdir_build
 	@echo ""
 	@echo "🏃‍♂️ Running cppcheck code analysis 🔬"
