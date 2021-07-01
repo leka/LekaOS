@@ -69,8 +69,6 @@ all:
 	@echo ""
 	@echo "🏗️  Building everything! 🌈"
 	cmake --build $(TARGET_BUILD_DIR)
-	@rm -rf $(ROOT_DIR)/compile_commands.json
-	@cp $(TARGET_BUILD_DIR)/compile_commands.json ./
 
 os:
 	@echo ""
@@ -126,6 +124,7 @@ config_tools_build: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
 	@cmake -S . -B $(CMAKE_TOOLS_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_TOOLS_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=Debug -DENABLE_CODE_ANALYSIS=$(ENABLE_CODE_ANALYSIS)
+	@ln -sf $(CMAKE_TOOLS_BUILD_DIR)/compile_commands.json ./
 
 #
 # MARK: - Tests targets
@@ -276,6 +275,7 @@ rm_build_all:
 	@echo "⚠️  Cleaning up all build directories 🧹"
 	rm -rf $(PROJECT_BUILD_DIR)
 	rm -rf $(CMAKE_TOOLS_BUILD_DIR)
+	rm -rf ./compile_commands.json
 
 rm_config:
 	@echo ""
