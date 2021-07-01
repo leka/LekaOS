@@ -3,7 +3,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "RFIDKit.h"
+#include <cstddef>
 #include <cstdint>
+#include <lstd_span>
 
 #include "CoreCR95HF.h"
 #include "gtest/gtest.h"
@@ -13,30 +15,13 @@
 using namespace leka;
 using namespace interface;
 
-using ::testing::_;
-using ::testing::Args;
 using ::testing::DoAll;
-using ::testing::ElementsAre;
-using ::testing::ElementsAreArray;
 using ::testing::InSequence;
 using ::testing::Return;
 using ::testing::ReturnRef;
 using ::testing::SetArgPointee;
-using ::testing::SetArrayArgument;
 
-class CoreCR95HFSensorTest : public ::testing::Test
-{
-  protected:
-	CoreCR95HFSensorTest() : coreRfidReader(mockBufferedSerial) {};
-
-	// void SetUp() override {}
-	// void TearDown() override {}
-
-	CoreCR95HF coreRfidReader;
-	CoreBufferedSerialMock mockBufferedSerial;
-};
-
-class CoreRFIDKitTest : public CoreCR95HFSensorTest
+class CoreRFIDKitTest : public ::testing::Test
 {
   protected:
 	CoreRFIDKitTest() : coreRfid(mockCR95HF) {};
@@ -48,90 +33,19 @@ class CoreRFIDKitTest : public CoreCR95HFSensorTest
 	CoreRFIDMock mockCR95HF;
 	CoreBufferedSerialMock mockBufferedSerial;
 
-	std::array<uint8_t, 3> returned_values_callback	  = {0x00, 0x01, 0x02};
-	std::array<uint8_t, 2> set_protocol_answer		  = {0x00, 0x00};
-	std::array<uint8_t, 2> set_gain_modulation_answer = {0x00, 0x00};
-
 	template <size_t size>
-	void setup(const std::array<uint8_t, size> &returned_values_set_protocol,
-			   const std::array<uint8_t, 2> &returned_values_set_gain_and_modulation)
+	void receive(std::array<uint8_t, size> &data)
 	{
-		receiveCallback(returned_values_callback);
-		sendSetProtocol();
-		receiveSetProtocolAnswer(returned_values_set_protocol);
-		sendSetGainAndModulation();
-		receiveSetGainAndModulationAnswer(returned_values_set_gain_and_modulation);
+		lstd::span<uint8_t> span {data};
+		EXPECT_CALL(mockCR95HF, receiveTagData).WillRepeatedly(DoAll(SetArgPointee<0>(span), Return(size)));
 	}
 
-	template <size_t size>
-	void receiveCallback(const std::array<uint8_t, size> &returned_values)
-	{
-		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
-		EXPECT_CALL(mockBufferedSerial, read)
-			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + size), Return(size)));
-	}
-
-	void sendSetProtocol()
-	{
-		const auto expected_values_set_protocol =
-			ElementsAre(rfid::cr95hf::command::set_protocol::id, rfid::cr95hf::command::set_protocol::length,
-						rfid::cr95hf::protocol::iso14443A.id,
-						rfid::cr95hf::settings::default_protocol_parameters_for_rx_speed_tx_speed_rfu);
-		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_set_protocol));
-	}
-
-	template <size_t size>
-	void receiveSetProtocolAnswer(const std::array<uint8_t, size> &returned_values)
-	{
-		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
-		EXPECT_CALL(mockBufferedSerial, read)
-			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + size), Return(size)));
-	}
-
-	void sendSetGainAndModulation()
-	{
-		const auto expected_values_set_gain_and_modulation = ElementsAre(
-			rfid::cr95hf::command::set_gain_and_modulation::id, rfid::cr95hf::command::set_gain_and_modulation::length,
-			rfid::cr95hf::settings::arc_b, rfid::cr95hf::settings::flag_increment,
-			rfid::cr95hf::settings::acr_b_index_for_gain_and_modulation,
-			rfid::cr95hf::protocol::iso14443A.gain_modulation_values());
-		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_set_gain_and_modulation));
-	}
-
-	void receiveSetGainAndModulationAnswer(const std::array<uint8_t, 2> &returned_values)
-	{
-		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
-		EXPECT_CALL(mockBufferedSerial, read)
-			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + 2), Return(2)));
-	}
-
-	void writeREQARequest()
-	{
-		const auto expected_values = ElementsAre(0x04, 0x02, 0x26, 0x07);
-		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
-	}
-
-	void writeReadRequest()
-	{
-		const auto send_read_values = ElementsAre(0x04, 0x03, 0x30, 0x08, 0x28);
-		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(send_read_values));
-	}
-
-	void receiveAQTA(const std::array<uint8_t, 7> &atqa_answer)
-	{
-		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(1));
-		EXPECT_CALL(mockBufferedSerial, read)
-			.WillOnce(DoAll(SetArrayArgument<0>(begin(atqa_answer), begin(atqa_answer) + atqa_answer.size()),
-							Return(atqa_answer.size())));
-	}
-
-	void receiveTagData(const std::array<uint8_t, 23> &read_values)
-	{
-		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(1));
-		EXPECT_CALL(mockBufferedSerial, read)
-			.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + read_values.size()),
-							Return(read_values.size())));
-	}
+	std::array<uint8_t, 2> REQA = {0x26, 0x07};
+	lstd::span<uint8_t> REQA_span {REQA};
+	std::array<uint8_t, 2> ATQA			   = {0x44, 0x00};
+	std::array<uint8_t, 3> read_register_8 = {0x30, 0x08, 0x28};
+	lstd::span<uint8_t> read_register_8_span {read_register_8};
+	std::array<uint8_t, 16> actual_values {0};
 };
 
 TEST_F(CoreRFIDKitTest, initialization)
@@ -140,19 +54,13 @@ TEST_F(CoreRFIDKitTest, initialization)
 }
 
 void interruptFunction() {};
-TEST_F(CoreRFIDKitTest, getSerialTEST)
+TEST_F(CoreRFIDKitTest, setInterruptSuccess)
 {
 	EXPECT_CALL(mockCR95HF, getSerial).WillOnce(ReturnRef(mockBufferedSerial));
+	EXPECT_CALL(mockBufferedSerial, sigio).Times(1);
 
 	coreRfid.setInterrupt(interruptFunction);
 }
-
-// TEST_F(CoreRFIDKitTest, setInterrupt)
-// {
-// 	EXPECT_CALL(mockBufferedSerial, sigio);
-
-// 	coreRfid.setInterrupt(interruptFunction);
-// }
 
 TEST_F(CoreRFIDKitTest, waitForTagDetectionTEST)
 {
@@ -161,83 +69,45 @@ TEST_F(CoreRFIDKitTest, waitForTagDetectionTEST)
 	coreRfid.setReaderForTagDetection();
 }
 
-// TEST_F(CoreRFIDKitTest, waitForTagDetection)
-// {
-// 	const auto expected_values_init = ElementsAre(
-// 		rfid::cr95hf::settings::idle_tag_detection::tag_detection_command,
-// 		rfid::cr95hf::settings::idle_tag_detection::length, rfid::cr95hf::settings::idle_tag_detection::wu_source,
-// 		rfid::cr95hf::settings::idle_tag_detection::enter_control[0],
-// 		rfid::cr95hf::settings::idle_tag_detection::enter_control[1],
-// 		rfid::cr95hf::settings::idle_tag_detection::wu_control[0],
-// 		rfid::cr95hf::settings::idle_tag_detection::wu_control[1],
-// 		rfid::cr95hf::settings::idle_tag_detection::leave_control[0],
-// 		rfid::cr95hf::settings::idle_tag_detection::leave_control[1],
-// 		rfid::cr95hf::settings::idle_tag_detection::wu_periode,
-// 		rfid::cr95hf::settings::idle_tag_detection::oscillator_start,
-// 		rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_start,
-// 		rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_data[0],
-// 		rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_data[1],
-// 		rfid::cr95hf::settings::idle_tag_detection::swing_count, rfid::cr95hf::settings::idle_tag_detection::max_sleep);
-// 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values_init));
-
-// 	coreRfid.setReaderForTagDetection();
-// }
-
-TEST_F(CoreRFIDKitTest, getTagDataSuccessTEST)
+MATCHER_P(compareSpan, expected_span, "")
 {
-	{
-		InSequence seq;
-		// const auto reqa = ElementsAre(0x26, 0x07);
-		// const auto send_reqa_values = ElementsAreArray(0x26, 0x07);
-		std::array<uint8_t, 2> data = {0x26, 0x07};
-		EXPECT_CALL(mockCR95HF, send).WillOnce(SetArrayArgument<0>(data.begin(), data.begin() + 1));
-		// EXPECT_CALL(mockCR95HF, send(ElementsAreArray(data.data(), data.data())));
+	auto actual_span_size	= arg.size();
+	auto expected_span_size = expected_span.size();
 
-		// EXPECT_CALL(mockCR95HF, send).WillOnce(SetArrayArgument<0>(data.begin(), data.begin() + data.size()));
-
-		// std::array<uint8_t, 2> atqa = {0x44, 0x00};
-		// EXPECT_CALL(mockCR95HF, receiveTagData).WillOnce(DoAll(SetArgPointee<0>(atqa), Return(atqa.size())));
-
-		// const auto send_read_values = ElementsAre(0x30, 0x08, 0x28);
-		// EXPECT_CALL(mockCR95HF, send).With(Args<0, 1>(send_read_values));
-
-		// std::array<uint8_t, 18> data = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01,
-		// 								0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0xDA, 0x48};
-		// EXPECT_CALL(mockCR95HF, receiveTagData)
-		// 	.WillOnce(DoAll(SetArrayArgument<0>(data.begin(), data.begin() + data.size()), Return(data.size())));
+	if (actual_span_size != expected_span_size) {
+		return false;
 	}
 
-	std::array<uint8_t, 16> expected_values = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04,
-											   0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04};
+	auto same_span = bool {true};
 
-	std::array<uint8_t, 16> actual_values {0};
+	for (auto i = 0; i < actual_span_size; i++) {
+		same_span = same_span && (arg[i] == expected_span[i]);
+	}
 
-	bool is_communication_succeed = coreRfid.getTagData(actual_values);
-
-	ASSERT_EQ(is_communication_succeed, true);
-	ASSERT_EQ(actual_values, expected_values);
+	return same_span;
 }
 
 TEST_F(CoreRFIDKitTest, getTagDataSuccess)
 {
-	std::array<uint8_t, 7> atqa_answer {0x80, 0x05, 0x44, 0x00, 0x28, 0x00, 0x00};
-	std::array<uint8_t, 23> read_values = {0x80, 0x15, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02,
-										   0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x24, 0xF5, 0x28, 0x00, 0x00};
 	{
 		InSequence seq;
-		setup(set_protocol_answer, set_gain_modulation_answer);
 
-		writeREQARequest();
-		receiveAQTA(atqa_answer);
+		EXPECT_CALL(mockCR95HF, receiveCallback).WillOnce(Return(true));
+		EXPECT_CALL(mockCR95HF, setup).WillOnce(Return(true));
 
-		writeReadRequest();
-		receiveTagData(read_values);
+		EXPECT_CALL(mockCR95HF, send(compareSpan(REQA_span))).Times(1);
+
+		receive(ATQA);
+
+		EXPECT_CALL(mockCR95HF, send(compareSpan(read_register_8_span))).Times(1);
+
+		std::array<uint8_t, 18> tagData = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01,
+										   0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x24, 0xF5};
+		receive(tagData);
 	}
 
 	std::array<uint8_t, 16> expected_values = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04,
 											   0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04};
-
-	std::array<uint8_t, 16> actual_values {0};
 
 	bool is_communication_succeed = coreRfid.getTagData(actual_values);
 
@@ -245,119 +115,64 @@ TEST_F(CoreRFIDKitTest, getTagDataSuccess)
 	ASSERT_EQ(actual_values, expected_values);
 }
 
-TEST_F(CoreRFIDKitTest, setupFailedOnWrongCallbackValues)
+TEST_F(CoreRFIDKitTest, getTagDataFailedOnWrongCallbackValues)
 {
-	std::array<uint8_t, 3> callback_values = {0x00, 0x01, 0x01};
-	std::array<uint8_t, 16> actual_values {0};
-
-	{
-		InSequence seq;
-		receiveCallback(callback_values);
-	}
+	EXPECT_CALL(mockCR95HF, receiveCallback).WillOnce(Return(false));
 
 	auto is_initialized = coreRfid.getTagData(actual_values);
 	ASSERT_EQ(is_initialized, false);
 }
 
-TEST_F(CoreRFIDKitTest, setupFailedOnWrongCallbackSize)
+TEST_F(CoreRFIDKitTest, getTagDataFailedOnWrongCallback)
 {
-	std::array<uint8_t, 4> callback_values = {0x00, 0x01, 0x02, 0x00};
-	std::array<uint8_t, 16> actual_values {0};
-
-	{
-		InSequence seq;
-		receiveCallback(callback_values);
-	}
+	EXPECT_CALL(mockCR95HF, receiveCallback).WillOnce(Return(false));
 
 	auto is_initialized = coreRfid.getTagData(actual_values);
 	ASSERT_EQ(is_initialized, false);
 }
 
-TEST_F(CoreRFIDKitTest, setupFailedOnSetProtocolAnswerTooSmall)
+TEST_F(CoreRFIDKitTest, getTagDataFailedOnWrongSetProtocol)
 {
-	std::array<uint8_t, 3> set_protocol_failed_answer = {0x82, 0x00, 0x00};
-	std::array<uint8_t, 16> actual_values {0};
-
-	{
-		InSequence seq;
-		receiveCallback(returned_values_callback);
-		sendSetProtocol();
-		receiveSetProtocolAnswer(set_protocol_failed_answer);
-	}
+	EXPECT_CALL(mockCR95HF, receiveCallback).WillOnce(Return(true));
+	EXPECT_CALL(mockCR95HF, setup).WillOnce(Return(false));
 
 	auto is_initialized = coreRfid.getTagData(actual_values);
 	ASSERT_EQ(is_initialized, false);
 }
 
-TEST_F(CoreRFIDKitTest, setupFailedOnSetProtocolOnFirstValue)
+TEST_F(CoreRFIDKitTest, getTagDataFailedOnWrongATQA)
 {
-	set_protocol_answer = {0x82, 0x00};
+	EXPECT_CALL(mockCR95HF, receiveCallback).WillOnce(Return(true));
+	EXPECT_CALL(mockCR95HF, setup).WillOnce(Return(true));
 
-	std::array<uint8_t, 16> actual_values {0};
+	EXPECT_CALL(mockCR95HF, send(compareSpan(REQA_span))).Times(1);
 
-	{
-		InSequence seq;
-
-		receiveCallback(returned_values_callback);
-		sendSetProtocol();
-		receiveSetProtocolAnswer(set_protocol_answer);
-	}
+	ATQA = {0xFF, 0xFF};
+	receive(ATQA);
 
 	auto is_initialized = coreRfid.getTagData(actual_values);
 	ASSERT_EQ(is_initialized, false);
 }
 
-TEST_F(CoreRFIDKitTest, setupFailedOnSetGainAndModulation)
+TEST_F(CoreRFIDKitTest, getTagDataFailedOnWrongCRC)
 {
-	set_gain_modulation_answer = {0x00, 0xff};
-
-	std::array<uint8_t, 16> actual_values {0};
-
 	{
 		InSequence seq;
 
-		setup(set_protocol_answer, set_gain_modulation_answer);
+		EXPECT_CALL(mockCR95HF, receiveCallback).WillOnce(Return(true));
+		EXPECT_CALL(mockCR95HF, setup).WillOnce(Return(true));
+
+		EXPECT_CALL(mockCR95HF, send(compareSpan(REQA_span))).Times(1);
+
+		receive(ATQA);
+
+		EXPECT_CALL(mockCR95HF, send(compareSpan(read_register_8_span))).Times(1);
+
+		std::array<uint8_t, 18> tagData = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01,
+										   0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0xFF, 0xFF};
+		receive(tagData);
 	}
 
 	auto is_initialized = coreRfid.getTagData(actual_values);
 	ASSERT_EQ(is_initialized, false);
-}
-
-TEST_F(CoreRFIDKitTest, getTagDataFailedOnReceiveATQA)
-{
-	std::array<uint8_t, 7> atqa_answer {0x80, 0x05, 0xFF, 0x00, 0x28, 0x00, 0x00};
-
-	{
-		InSequence seq;
-		setup(set_protocol_answer, set_gain_modulation_answer);
-		writeREQARequest();
-		receiveAQTA(atqa_answer);
-	}
-	std::array<uint8_t, 16> actual_values {0};
-	bool is_communication_succeed = coreRfid.getTagData(actual_values);
-
-	ASSERT_EQ(is_communication_succeed, false);
-}
-
-TEST_F(CoreRFIDKitTest, getTagDataFailedOnReceiveTagData)
-{
-	std::array<uint8_t, 7> atqa_answer {0x80, 0x05, 0x44, 0x00, 0x28, 0x00, 0x00};
-	std::array<uint8_t, 23> read_values = {0x80, 0x15, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02,
-										   0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0xFF, 0xFF, 0x28, 0x00, 0x00};
-	{
-		InSequence seq;
-
-		setup(set_protocol_answer, set_gain_modulation_answer);
-
-		writeREQARequest();
-		receiveAQTA(atqa_answer);
-
-		writeReadRequest();
-		receiveTagData(read_values);
-	}
-
-	std::array<uint8_t, 16> actual_values {0};
-	bool is_communication_succeed = coreRfid.getTagData(actual_values);
-
-	ASSERT_EQ(is_communication_succeed, false);
 }

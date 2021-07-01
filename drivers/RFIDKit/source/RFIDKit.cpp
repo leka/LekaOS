@@ -20,31 +20,25 @@ void RFIDKit::setReaderForTagDetection()
 
 auto RFIDKit::getTagData(std::array<uint8_t, 16> &tag_data) -> bool
 {
-	// if (!_rfid_reader.receiveCallback()) {
-	// 	return false;
-	// }
+	if (!_rfid_reader.receiveCallback()) {
+		return false;
+	}
 
-	// if (!_rfid_reader.setup()) {
-	// 	return false;
-	// }
+	if (!_rfid_reader.setup()) {
+		return false;
+	}
 
-	printf("Send REQA\n");
 	sendREQA();
-	printf("receive ATQA\n");
-	// if (!receiveATQA()) {
-	// 	printf("REQA failed\n");
-	// 	return false;
-	// }
+	if (!receiveATQA()) {
+		return false;
+	}
 
-	// printf("Send read\n");
-	// sendReadRegister8();
-	// printf("receive read\n");
-	// if (!receiveReadTagData()) {
-	// 	printf("Read failed\n");
-	// 	return false;
-	// }
+	sendReadRegister8();
+	if (!receiveReadTagData()) {
+		return false;
+	}
 
-	// getData(tag_data);
+	getData(tag_data);
 	return true;
 }
 
@@ -69,24 +63,34 @@ void RFIDKit::sendReadRegister8()
 auto RFIDKit::receiveATQA() -> bool
 {
 	std::array<uint8_t, 2> ATQA_answer {};
+	lstd::span<uint8_t> span = {ATQA_answer};
 
-	_rfid_reader.receiveTagData(ATQA_answer);
+	_rfid_reader.receiveTagData(&span);
 
-	return ATQA_answer == interface::RFID::ISO14443::ATQA_answer ? true : false;
+	return (span[0] == interface::RFID::ISO14443::ATQA_answer[0] &&
+			span[1] == interface::RFID::ISO14443::ATQA_answer[1])
+			   ? true
+			   : false;
 }
 
 auto RFIDKit::receiveReadTagData() -> bool
 {
-	_rfid_reader.receiveTagData(_tag_data);
+	lstd::span<uint8_t> span = {_tag_data};
+	_rfid_reader.receiveTagData(&span);
 
-	std::array<uint8_t, 2> received_crc = {_tag_data.data()[16], _tag_data.data()[17]};
+	for (size_t i = 0; i < span.size(); ++i) {
+		_tag_data[i] = span.data()[i];
+	}
 
-	return received_crc == computeCRC(_tag_data.data(), 16) ? true : false;
+	std::array<uint8_t, 2> received_crc = {span.data()[16], span.data()[17]};
+
+	return received_crc == computeCRC(_tag_data.data()) ? true : false;
 }
 
-auto RFIDKit::computeCRC(uint8_t const *data, size_t size) const -> std::array<uint8_t, 2>
+auto RFIDKit::computeCRC(uint8_t const *data) const -> std::array<uint8_t, 2>
 {
 	uint32_t wCrc = 0x6363;
+	size_t size	  = 16;
 
 	do {
 		std::byte bt;

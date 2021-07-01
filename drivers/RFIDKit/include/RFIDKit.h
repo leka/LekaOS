@@ -25,9 +25,9 @@ class RFIDKit : public interface::RFID::ISO14443
 
   private:
 	template <size_t SIZE>
-	void commandToArray(Command<SIZE> command, const lstd::span<uint8_t> &span) const
+	void commandToArray(Command<SIZE> command, lstd::span<uint8_t> span) const
 	{
-		for (auto i = 0; i < SIZE; ++i) {
+		for (size_t i = 0; i < SIZE; ++i) {
 			span.data()[i] = command.data.data()[i];
 		}
 
@@ -39,7 +39,7 @@ class RFIDKit : public interface::RFID::ISO14443
 
 	auto receiveATQA() -> bool;
 	auto receiveReadTagData() -> bool;
-	auto computeCRC(uint8_t const *data, size_t size) const -> std::array<uint8_t, 2>;
+	auto computeCRC(uint8_t const *data) const -> std::array<uint8_t, 2>;
 
 	void getData(std::array<uint8_t, 16> &tag_data);
 
