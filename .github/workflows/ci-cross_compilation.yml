@@ -20,6 +20,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      CLICOLOR_FORCE: true # ninja
+
       CCACHE_DIR: /home/runner/work/ccache
       CCACHE_COMPRESS: true
       CCACHE_COMPRESSLEVEL: 6

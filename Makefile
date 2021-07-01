@@ -188,7 +188,7 @@ build_unit_tests:
 run_unit_tests:
 	@echo ""
 	@echo "🏃‍♂️ Running unit tests 🧪"
-	@$(UNIT_TESTS_BUILD_DIR)/LekaOSUnitTestsExec --gtest_output=xml:$(UNIT_TESTS_COVERAGE_DIR)/google_test_detail.xml
+	@$(UNIT_TESTS_BUILD_DIR)/LekaOSUnitTestsExec --gtest_color=yes --gtest_output=xml:$(UNIT_TESTS_COVERAGE_DIR)/google_test_detail.xml
 
 config_unit_tests: mkdir_build_unit_tests
 	@echo ""

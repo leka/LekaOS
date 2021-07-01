@@ -1,5 +1,8 @@
 # vim: set filetype=yaml:
 ---
+HeaderFilterRegex: ""
+UseColor: true
+
 Checks: " \
   -* \
   , bugprone-assert-side-effect \
@@ -94,8 +97,6 @@ CheckOptions:
     value: true
   - key: readability-function-cognitive-complexity.IgnoreMacros
     value: true
-
-HeaderFilterRegex: ""
 
 WarningsAsErrors: " \
   modernize-*
