@@ -96,3 +96,7 @@ CheckOptions:
     value: true
 
 HeaderFilterRegex: ""
+
+WarningsAsErrors: " \
+  modernize-*
+  "
