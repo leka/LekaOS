@@ -70,6 +70,10 @@ project(LekaOS LANGUAGES C CXX ASM)
 # Generate compile commands database
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
+if(CMAKE_EXPORT_COMPILE_COMMANDS)
+    set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
+endif()
+
 # For convenience you can define useful variables
 set(OS_DIR      ${ROOT_DIR}/src)
 set(LIBS_DIR    ${ROOT_DIR}/libs)
