@@ -32,7 +32,7 @@ using namespace std::chrono;
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
-LKCoreFatFs corefatfs;
+LKCoreFatFs file;
 
 LKCoreLL corell;
 CGPixel pixel(corell);
@@ -45,32 +45,39 @@ LKCoreGraphics coregraphics(coredma2d);
 LKCoreFont corefont(pixel);
 LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 LKCoreLCD corelcd(coreotm);
-LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
+LKCoreJPEG corejpeg(hal, std::make_unique<LKCoreJPEGDMAMode>());
 LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
-const auto filename1 = std::array<char, 32> {"assets/images/Leka/logo.jpg"};
-const auto filename2 = std::array<char, 38> {"assets/images/Leka/emotion-happy.jpg"};
+std::vector<const char *> images = {"assets/images/Leka/logo.jpg", "assets/images/Leka/emotion-happy.jpg"};
 
-void registerCallbacks()
+std::vector<const char *> videos = {
+	//"assets/video/20fps.avi",
+	"assets/video/20fps_low10.avi",
+	//"assets/video/20fps_low15.avi",
+	"assets/video/20fps_s700.avi",
+	//"assets/video/20fps_s600.avi",
+	//"assets/video/20fps_s500.avi",
+	//"assets/video/20fps_s400.avi",
+	//"assets/video/20fps_s300.avi",
+	//"assets/video/20fps_s200.avi",
+	//"assets/video/20fps_s100.avi"
+};
+
+extern "C" {
+void JPEG_IRQHandler(void)
 {
-	HAL_JPEG_RegisterInfoReadyCallback(
-		corejpeg.getHandlePointer(),
-		[](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) { corejpeg.onInfoReadyCallback(hjpeg, info); });
+	HAL_JPEG_IRQHandler(&corejpeg.getHandle());
+}
 
-	HAL_JPEG_RegisterGetDataCallback(corejpeg.getHandlePointer(), [](JPEG_HandleTypeDef *hjpeg, uint32_t size) {
-		corejpeg.onDataAvailableCallback(hjpeg, size);
-	});
+void DMA2_Stream0_IRQHandler(void)
+{
+	HAL_DMA_IRQHandler(corejpeg.getHandle().hdmain);
+}
 
-	HAL_JPEG_RegisterDataReadyCallback(corejpeg.getHandlePointer(),
-									   [](JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t size) {
-										   corejpeg.onDataReadyCallback(hjpeg, pDataOut, size);
-									   });
-
-	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_DECODE_CPLT_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { corejpeg.onDecodeCompleteCallback(hjpeg); });
-
-	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_ERROR_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { corejpeg.onErrorCallback(hjpeg); });
+void DMA2_Stream1_IRQHandler(void)
+{
+	HAL_DMA_IRQHandler(corejpeg.getHandle().hdmaout);
+}
 }
 
 void initializeSD()
@@ -90,10 +97,7 @@ auto main() -> int
 
 	log_info("Hello, World!\n\n");
 
-	rtos::ThisThread::sleep_for(2s);
-
 	corevideo.initialize();
-	registerCallbacks();
 
 	initializeSD();
 
@@ -101,23 +105,19 @@ auto main() -> int
 	hello.start();
 
 	corevideo.clearScreen();
-	rtos::ThisThread::sleep_for(1s);
 
 	static auto line = 1;
 	static CGColor foreground;
-	static CGColor background = CGColor::white;
 
 	leka::logger::set_print_function(
-		[](const char *str, size_t size) { corevideo.displayText(str, size, line, foreground, background); });
+		[](const char *str, size_t size) { corevideo.displayText(str, size, line, foreground, CGColor::white); });
 
 	for (int i = 1; i <= 10; i++) {
 		foreground = (i % 2 == 0) ? CGColor::black : CGColor::pure_red;
 		line	   = i * 2;
 		log_info("Line #%i", i);
-		rtos::ThisThread::sleep_for(1s);
+		rtos::ThisThread::sleep_for(200ms);
 	}
-
-	rtos::ThisThread::sleep_for(5s);
 
 	leka::logger::set_print_function([](const char *str, size_t size) {
 		corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
@@ -127,37 +127,34 @@ auto main() -> int
 		"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
 		"only one line of the screen.");
 
-	rtos::ThisThread::sleep_for(10s);
+	rtos::ThisThread::sleep_for(1s);
 
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
-
-	auto JPEG_File = std::make_unique<FIL>();
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
 		log_info("A message from your board %s --> \"%s\" at %is", MBED_CONF_APP_TARGET_NAME, hello.world,
 				 int(t.count() / 1000));
 
-		rtos::ThisThread::sleep_for(1s);
+		corevideo.setBrightness(0.6f);
 
-		if (corefatfs.open(filename1.data()) == FR_OK) {
-			corevideo.displayImage(JPEG_File.get());
-			corevideo.setBrightness(0.2f);
-
-			corevideo.turnOn();
-
-			corefatfs.close();
-			rtos::ThisThread::sleep_for(2s);
+		for (const auto &image_name: images) {
+			if (file.open(image_name) == FR_OK) {
+				corevideo.displayImage(file);
+				corevideo.turnOn();
+				file.close();
+				rtos::ThisThread::sleep_for(2s);
+			}
 		}
 
-		if (corefatfs.open(filename2.data()) == FR_OK) {
-			corevideo.displayImage(JPEG_File.get());
-			corevideo.setBrightness(0.9f);
-
-			corefatfs.close();
-			rtos::ThisThread::sleep_for(2s);
-
-			corevideo.turnOff();
+		for (const auto &video_name: videos) {
+			if (file.open(video_name) == FR_OK) {
+				corevideo.displayVideo(file);
+				file.close();
+				rtos::ThisThread::sleep_for(2s);
+			}
 		}
+
+		corevideo.turnOff();
 	}
 }

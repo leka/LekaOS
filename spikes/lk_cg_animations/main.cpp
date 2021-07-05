@@ -48,7 +48,7 @@ LKCoreGraphics coregraphics(coredma2d);
 LKCoreFont corefont(pixel);
 LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 LKCoreLCD corelcd(coreotm);
-LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
+LKCoreJPEG corejpeg(hal, std::make_unique<LKCoreJPEGDMAMode>());
 LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 rtos::Thread animation_thread;

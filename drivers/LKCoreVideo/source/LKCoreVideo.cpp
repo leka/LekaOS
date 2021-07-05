@@ -4,6 +4,8 @@
 
 #include "LKCoreVideo.h"
 
+#include "LogKit.h"
+
 namespace leka {
 
 LKCoreVideo::LKCoreVideo(LKCoreSTM32HalBase &hal, LKCoreSDRAMBase &coresdram, LKCoreDMA2DBase &coredma2d,
@@ -21,7 +23,7 @@ LKCoreVideo::LKCoreVideo(LKCoreSTM32HalBase &hal, LKCoreSDRAMBase &coresdram, LK
 {
 }
 
-void LKCoreVideo::initialize(void)
+void LKCoreVideo::initialize()
 {
 	_coredsi.reset();
 
@@ -98,9 +100,47 @@ void LKCoreVideo::displayRectangle(LKCoreGraphicsBase::FilledRectangle rectangle
 	_coregraphics.drawRectangle(rectangle, color);
 }
 
-void LKCoreVideo::displayImage(FIL *file)
+void LKCoreVideo::displayImage(LKCoreFatFs &file)
 {
-	_corejpeg.displayImage(file);
+	_corejpeg.decodeImage(file);
+
+	auto config = _corejpeg.getConfig();
+
+	_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, LKCoreJPEG::getWidthOffset(config));
+}
+
+void LKCoreVideo::displayVideo(LKCoreFatFs &file)
+{
+	uint32_t frame_index  = 0;
+	uint32_t frame_size	  = 0;
+	uint32_t frame_offset = LKCoreJPEG::findFrameOffset(file, 0);
+	JPEG_ConfTypeDef config;
+
+	while (frame_offset != 0) {
+		file.seek(frame_offset);
+
+		auto start_time = HAL_GetTick();
+		frame_size		= _corejpeg.decodeImage(file);
+
+		// if first frame, get file info
+		if (frame_index == 0) config = _corejpeg.getConfig();
+
+		frame_index += 1;
+
+		_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, LKCoreJPEG::getWidthOffset(config));
+
+		// get next frame offset
+		frame_offset = LKCoreJPEG::findFrameOffset(file, frame_offset + frame_size + 4);
+
+		auto dt = HAL_GetTick() - start_time;
+		if (dt < 1000.f / 25.f) HAL_Delay(1000.f / 25.f - dt);
+
+		std::array<char, 32> buff;
+		sprintf(buff.data(), "%3lu ms = %5.2f fps", dt, 1000.f / dt);
+		// displayText(buff, strlen(buff), 20);
+		log_info("%s", buff.data());
+	}
+	log_info("%d frames", frame_index);
 }
 
 void LKCoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,
