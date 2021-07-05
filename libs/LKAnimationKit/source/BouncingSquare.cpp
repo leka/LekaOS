@@ -8,6 +8,7 @@
 
 namespace leka::animation {
 
+/*
 BouncingSquare::BouncingSquare(interface::Graphics &coregraphics) : _coregraphics(coregraphics) {}
 
 void BouncingSquare::start()
@@ -87,6 +88,7 @@ void BouncingSquare::drawSquare()
 {
 	_coregraphics.drawRectangle(_square, _color);
 }
+*/
 }	// namespace leka::animation
 
 // ? LCOV_EXCL_STOP - Exclude from coverage report

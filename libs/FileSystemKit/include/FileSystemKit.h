@@ -42,6 +42,8 @@ class FileSystemKit
 
 	  private:
 		std::unique_ptr<FILE, decltype(&fclose)> _file {nullptr, fclose};
+		uint32_t _size;
+		bool _size_changed;
 	};
 };
 

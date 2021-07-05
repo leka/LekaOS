@@ -10,10 +10,9 @@
 #include <cstdint>
 
 #include "CGAnimation.h"
-#include "interface/Graphics.hpp"
 
 namespace leka::animation {
-
+/*
 class BouncingSquare : public interface::CGAnimation
 {
   public:
@@ -42,7 +41,7 @@ class BouncingSquare : public interface::CGAnimation
 	};
 	Shift _shift {.horizontal = 1, .vertical = 1};
 };
-
+*/
 }	// namespace leka::animation
 
 // ? LCOV_EXCL_STOP - Exclude from coverage report

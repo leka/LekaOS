@@ -2,29 +2,28 @@
 
 #include "rtos/ThisThread.h"
 
-using namespace std::chrono;
-
-namespace leka {
+using namespace leka;
+using namespace std::chrono_literals;
 
 CoreSDRAM::CoreSDRAM(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
-	_hsdram.Instance = FMC_SDRAM_DEVICE;
+	_handle.Instance = FMC_SDRAM_DEVICE;
 
 	setupSDRAMConfig();
 }
 
 void CoreSDRAM::setupSDRAMConfig()
 {
-	_hsdram.Init.SDBank				= FMC_SDRAM_BANK1;
-	_hsdram.Init.ColumnBitsNumber	= FMC_SDRAM_COLUMN_BITS_NUM_8;
-	_hsdram.Init.RowBitsNumber		= FMC_SDRAM_ROW_BITS_NUM_12;
-	_hsdram.Init.MemoryDataWidth	= sdram::memory_width;
-	_hsdram.Init.InternalBankNumber = FMC_SDRAM_INTERN_BANKS_NUM_4;
-	_hsdram.Init.CASLatency			= FMC_SDRAM_CAS_LATENCY_3;
-	_hsdram.Init.WriteProtection	= FMC_SDRAM_WRITE_PROTECTION_DISABLE;
-	_hsdram.Init.SDClockPeriod		= sdram::sd_clock_period;
-	_hsdram.Init.ReadBurst			= FMC_SDRAM_RBURST_ENABLE;
-	_hsdram.Init.ReadPipeDelay		= FMC_SDRAM_RPIPE_DELAY_0;
+	_handle.Init.SDBank				= FMC_SDRAM_BANK1;
+	_handle.Init.ColumnBitsNumber	= FMC_SDRAM_COLUMN_BITS_NUM_8;
+	_handle.Init.RowBitsNumber		= FMC_SDRAM_ROW_BITS_NUM_12;
+	_handle.Init.MemoryDataWidth	= sdram::memory_width;
+	_handle.Init.InternalBankNumber = FMC_SDRAM_INTERN_BANKS_NUM_4;
+	_handle.Init.CASLatency			= FMC_SDRAM_CAS_LATENCY_3;
+	_handle.Init.WriteProtection	= FMC_SDRAM_WRITE_PROTECTION_DISABLE;
+	_handle.Init.SDClockPeriod		= sdram::sd_clock_period;
+	_handle.Init.ReadBurst			= FMC_SDRAM_RBURST_ENABLE;
+	_handle.Init.ReadPipeDelay		= FMC_SDRAM_RPIPE_DELAY_0;
 }
 
 auto CoreSDRAM::setupTimingConfig() -> FMC_SDRAM_TimingTypeDef
@@ -74,7 +73,7 @@ auto CoreSDRAM::initialize() -> uint8_t
 	// SDRAM controller initialization
 	initializeController();
 
-	if (_hal.HAL_SDRAM_Init(&_hsdram, &timing) != HAL_OK) {
+	if (_hal.HAL_SDRAM_Init(&_handle, &timing) != HAL_OK) {
 		sdram_status = sdram::status::error;
 	} else {
 		sdram_status = sdram::status::ok;
@@ -144,10 +143,10 @@ void CoreSDRAM::initializeController()
 
 	// Configure common DMA parameters
 
-	DMA_HandleTypeDef dma_handle = setupDMA();
+	static DMA_HandleTypeDef dma_handle = setupDMA();
 
 	// Associate the DMA handle
-	_hal.HAL_LINKDMA(&_hsdram, _hsdram.hdma, dma_handle);
+	__HAL_LINKDMA(&_handle, hdma, dma_handle);
 
 	// Deinitialize the stream for new transfer
 	_hal.HAL_DMA_DeInit(&dma_handle);
@@ -171,7 +170,7 @@ void CoreSDRAM::initializationSequence()
 	command.ModeRegisterDefinition = 0;
 
 	// Send the command
-	_hal.HAL_SDRAM_SendCommand(&_hsdram, &command, sdram::timeout);
+	_hal.HAL_SDRAM_SendCommand(&_handle, &command, sdram::timeout);
 
 	// Step 2: Insert 100 us minimum delay
 	// Inserted delay is equal to 1 ms due to systick time base unit (ms)
@@ -184,7 +183,7 @@ void CoreSDRAM::initializationSequence()
 	command.ModeRegisterDefinition = 0;
 
 	// Send the command
-	_hal.HAL_SDRAM_SendCommand(&_hsdram, &command, sdram::timeout);
+	_hal.HAL_SDRAM_SendCommand(&_handle, &command, sdram::timeout);
 
 	// Step 4: Configure an Auto Refresh command
 	command.CommandMode			   = FMC_SDRAM_CMD_AUTOREFRESH_MODE;
@@ -193,7 +192,7 @@ void CoreSDRAM::initializationSequence()
 	command.ModeRegisterDefinition = 0;
 
 	// Send the command
-	_hal.HAL_SDRAM_SendCommand(&_hsdram, &command, sdram::timeout);
+	_hal.HAL_SDRAM_SendCommand(&_handle, &command, sdram::timeout);
 
 	// Step 5: Program the external memory mode register
 	constexpr auto mode_register_definition =
@@ -206,16 +205,9 @@ void CoreSDRAM::initializationSequence()
 	command.ModeRegisterDefinition = mode_register_definition;
 
 	// Send the command
-	_hal.HAL_SDRAM_SendCommand(&_hsdram, &command, sdram::timeout);
+	_hal.HAL_SDRAM_SendCommand(&_handle, &command, sdram::timeout);
 
 	// Step 6: Set the refresh rate counter
 	// Set the device refresh rate
-	_hal.HAL_SDRAM_ProgramRefreshRate(&_hsdram, sdram::refresh_count);
+	_hal.HAL_SDRAM_ProgramRefreshRate(&_handle, sdram::refresh_count);
 }
-
-auto CoreSDRAM::getHandle() const -> SDRAM_HandleTypeDef
-{
-	return _hsdram;
-}
-
-}	// namespace leka

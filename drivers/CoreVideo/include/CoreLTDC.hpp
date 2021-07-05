@@ -6,7 +6,6 @@
 #define _LEKA_OS_LIB_LTDC_H_
 
 #include "LKCoreSTM32HalBase.h"
-#include "interface/DSI.hpp"
 #include "interface/LTDC.hpp"
 
 namespace leka {
@@ -14,19 +13,14 @@ namespace leka {
 class CoreLTDC : public interface::LTDCBase
 {
   public:
-	CoreLTDC(LKCoreSTM32HalBase &hal, interface::DSIBase &dsi);
+	explicit CoreLTDC(LKCoreSTM32HalBase &hal);
 
 	void initialize() final;
 
-	[[nodiscard]] auto getHandle() const -> LTDC_HandleTypeDef;
-	[[nodiscard]] auto getLayerConfig() const -> LTDC_LayerCfgTypeDef;
-
   private:
 	LKCoreSTM32HalBase &_hal;
-	interface::DSIBase &_dsi;
 
-	LTDC_HandleTypeDef _hltdc {};
-	LTDC_LayerCfgTypeDef _layerConfig {};
+	LTDC_LayerCfgTypeDef _layerConfig;
 
 	void configurePeriphClock();
 };

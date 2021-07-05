@@ -33,66 +33,66 @@ class LKCoreSTM32HalMock : public LKCoreSTM32HalBase
 	MOCK_METHOD(void, HAL_RCC_DSI_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_DSI_FORCE_RESET, (), (override));
 	MOCK_METHOD(void, HAL_RCC_DSI_RELEASE_RESET, (), (override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_RCCEx_PeriphCLKConfig, (RCC_PeriphCLKInitTypeDef * PeriphClkInit), (override));
+	MOCK_METHOD(HALStatus, HAL_RCCEx_PeriphCLKConfig, (RCC_PeriphCLKInitTypeDef *), (override));
 
-	MOCK_METHOD(void, HAL_LINKDMA,
-				(SDRAM_HandleTypeDef * hsdram, DMA_HandleTypeDef *hdma, DMA_HandleTypeDef dma_handle), (override));
+	MOCK_METHOD(void, HAL_GPIO_Init, (GPIO_TypeDef *, GPIO_InitTypeDef *), (override));
+	MOCK_METHOD(void, HAL_GPIO_WritePin, (GPIO_TypeDef *, uint16_t, GPIO_PinState), (override));
 
-	MOCK_METHOD(void, HAL_GPIO_Init, (GPIO_TypeDef * GPIOx, GPIO_InitTypeDef *GPIO_Init), (override));
-	MOCK_METHOD(void, HAL_GPIO_WritePin, (GPIO_TypeDef * GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState), (override));
-
-	MOCK_METHOD(void, HAL_NVIC_SetPriority, (IRQn_Type IRQn, uint32_t PreemptPriority, uint32_t SubPriority),
-				(override));
+	MOCK_METHOD(void, HAL_NVIC_SetPriority, (IRQn_Type IRQn, uint32_t, uint32_t), (override));
 	MOCK_METHOD(void, HAL_NVIC_EnableIRQ, (IRQn_Type IRQn), (override));
 
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_SDRAM_Init, (SDRAM_HandleTypeDef * hsdram, FMC_SDRAM_TimingTypeDef *Timing),
+	MOCK_METHOD(HALStatus, HAL_SDRAM_Init, (SDRAM_HandleTypeDef *, FMC_SDRAM_TimingTypeDef *), (override));
+	MOCK_METHOD(HALStatus, HAL_SDRAM_SendCommand, (SDRAM_HandleTypeDef *, FMC_SDRAM_CommandTypeDef *, uint32_t),
 				(override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_SDRAM_SendCommand,
-				(SDRAM_HandleTypeDef * hsdram, FMC_SDRAM_CommandTypeDef *Command, uint32_t Timeout), (override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_SDRAM_ProgramRefreshRate, (SDRAM_HandleTypeDef * hsdram, uint32_t RefreshRate),
+	MOCK_METHOD(HALStatus, HAL_SDRAM_ProgramRefreshRate, (SDRAM_HandleTypeDef *, uint32_t), (override));
+
+	MOCK_METHOD(HALStatus, HAL_DMA_Init, (DMA_HandleTypeDef *), (override));
+	MOCK_METHOD(HALStatus, HAL_DMA_DeInit, (DMA_HandleTypeDef *), (override));
+
+	MOCK_METHOD(HALStatus, HAL_DMA2D_Init, (DMA2D_HandleTypeDef *), (override));
+	MOCK_METHOD(HALStatus, HAL_DMA2D_ConfigLayer, (DMA2D_HandleTypeDef *, uint32_t), (override));
+	MOCK_METHOD(HALStatus, HAL_DMA2D_Start, (DMA2D_HandleTypeDef *, uint32_t, uint32_t, uint32_t, uint32_t),
+				(override));
+	MOCK_METHOD(HALStatus, HAL_DMA2D_Start_IT, (DMA2D_HandleTypeDef *, uint32_t, uint32_t, uint32_t, uint32_t),
+				(override));
+	MOCK_METHOD(HALStatus, HAL_DMA2D_PollForTransfer, (DMA2D_HandleTypeDef *, uint32_t), (override));
+
+	MOCK_METHOD(HALStatus, HAL_DSI_Init, (DSI_HandleTypeDef *, DSI_PLLInitTypeDef *), (override));
+	MOCK_METHOD(HALStatus, HAL_DSI_DeInit, (DSI_HandleTypeDef *), (override));
+	MOCK_METHOD(HALStatus, HAL_DSI_Start, (DSI_HandleTypeDef *), (override));
+	MOCK_METHOD(HALStatus, HAL_DSI_Refresh, (DSI_HandleTypeDef *), (override));
+	MOCK_METHOD(HALStatus, HAL_DSI_ConfigVideoMode, (DSI_HandleTypeDef *, DSI_VidCfgTypeDef *), (override));
+	MOCK_METHOD(HALStatus, HAL_DSI_ConfigAdaptedCommandMode, (DSI_HandleTypeDef *, DSI_CmdCfgTypeDef *), (override));
+	MOCK_METHOD(HALStatus, HAL_DSI_ConfigCommand, (DSI_HandleTypeDef *, DSI_LPCmdTypeDef *), (override));
+	MOCK_METHOD(HALStatus, HAL_DSI_ConfigFlowControl, (DSI_HandleTypeDef *, uint32_t), (override));
+	MOCK_METHOD(HALStatus, HAL_DSI_ConfigPhyTimer, (DSI_HandleTypeDef *, DSI_PHY_TimerTypeDef *), (override));
+	MOCK_METHOD(HALStatus, HAL_DSI_ShortWrite, (DSI_HandleTypeDef *, uint32_t, uint32_t, uint32_t, uint32_t),
+				(override));
+	MOCK_METHOD(HALStatus, HAL_DSI_LongWrite, (DSI_HandleTypeDef *, uint32_t, uint32_t, uint32_t, uint32_t, uint8_t *),
 				(override));
 
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_DMA_Init, (DMA_HandleTypeDef * hdma), (override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_DMA_DeInit, (DMA_HandleTypeDef * hdma), (override));
+	MOCK_METHOD(HALStatus, HAL_DSI_RegisterCallback,
+				(DSI_HandleTypeDef *, HAL_DSI_CallbackIDTypeDef, pDSI_CallbackTypeDef), (override));
 
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_DMA2D_Init, (DMA2D_HandleTypeDef * hdma2d), (override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_DMA2D_ConfigLayer, (DMA2D_HandleTypeDef * hdma2d, uint32_t LayerIdx),
-				(override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_DMA2D_Start,
-				(DMA2D_HandleTypeDef * hdma2d, uint32_t pdata, uint32_t DstAddress, uint32_t Width, uint32_t Height),
-				(override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_DMA2D_PollForTransfer, (DMA2D_HandleTypeDef * hdma2d, uint32_t Timeout),
-				(override));
+	MOCK_METHOD(HALStatus, HAL_LTDC_Init, (LTDC_HandleTypeDef *), (override));
+	MOCK_METHOD(HALStatus, HAL_LTDC_ConfigLayer, (LTDC_HandleTypeDef *, LTDC_LayerCfgTypeDef *, uint32_t), (override));
+	MOCK_METHOD(HALStatus, HAL_LTDC_SetPitch, (LTDC_HandleTypeDef *, uint32_t, uint32_t), (override));
+	MOCK_METHOD(HALStatus, HAL_LTDC_SetAddress, (LTDC_HandleTypeDef *, uint32_t, uint32_t), (override));
 
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_DSI_Init, (DSI_HandleTypeDef * hdsi, DSI_PLLInitTypeDef *PLLInit), (override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_DSI_DeInit, (DSI_HandleTypeDef * hdsi), (override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_DSI_ConfigVideoMode, (DSI_HandleTypeDef * hdsi, DSI_VidCfgTypeDef *VidCfg),
+	MOCK_METHOD(HALStatus, HAL_JPEG_Init, (JPEG_HandleTypeDef *), (override));
+	MOCK_METHOD(HALStatus, HAL_JPEG_GetInfo, (JPEG_HandleTypeDef *, JPEG_ConfTypeDef *), (override));
+	MOCK_METHOD(HALStatus, HAL_JPEG_Decode, (JPEG_HandleTypeDef *, uint8_t *, uint32_t, uint8_t *, uint32_t, uint32_t),
 				(override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_DSI_Start, (DSI_HandleTypeDef * hdsi), (override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_DSI_ShortWrite,
-				(DSI_HandleTypeDef * hdsi, uint32_t ChannelID, uint32_t Mode, uint32_t Param1, uint32_t Param2),
+	MOCK_METHOD(void, HAL_JPEG_ConfigInputBuffer, (JPEG_HandleTypeDef *, uint8_t *, uint32_t), (override));
+	MOCK_METHOD(void, HAL_JPEG_ConfigOutputBuffer, (JPEG_HandleTypeDef *, uint8_t *, uint32_t), (override));
+	MOCK_METHOD(HALStatus, HAL_JPEG_RegisterInfoReadyCallback, (JPEG_HandleTypeDef *, pJPEG_InfoReadyCallbackTypeDef),
 				(override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_DSI_LongWrite,
-				(DSI_HandleTypeDef * hdsi, uint32_t ChannelID, uint32_t Mode, uint32_t NbParams, uint32_t Param1,
-				 uint8_t *ParametersTable),
+	MOCK_METHOD(HALStatus, HAL_JPEG_RegisterGetDataCallback, (JPEG_HandleTypeDef *, pJPEG_GetDataCallbackTypeDef),
 				(override));
-
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_LTDC_StructInitFromVideoConfig,
-				(LTDC_HandleTypeDef * hltdc, DSI_VidCfgTypeDef *VidCfg), (override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_LTDC_Init, (LTDC_HandleTypeDef * hltdc), (override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_LTDC_ConfigLayer,
-				(LTDC_HandleTypeDef * hltdc, LTDC_LayerCfgTypeDef *pLayerCfg, uint32_t LayerIdx), (override));
-
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_JPEG_Init, (JPEG_HandleTypeDef * hjpeg), (override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_JPEG_GetInfo, (JPEG_HandleTypeDef * hjpeg, JPEG_ConfTypeDef *pInfo), (override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_JPEG_Decode,
-				(JPEG_HandleTypeDef * hjpeg, uint8_t *pDataIn, uint32_t InDataLength, uint8_t *pDataOutMCU,
-				 uint32_t OutDataLength, uint32_t Timeout),
+	MOCK_METHOD(HALStatus, HAL_JPEG_RegisterDataReadyCallback, (JPEG_HandleTypeDef *, pJPEG_DataReadyCallbackTypeDef),
 				(override));
-	MOCK_METHOD(void, HAL_JPEG_ConfigInputBuffer,
-				(JPEG_HandleTypeDef * hjpeg, uint8_t *pNewInputBuffer, uint32_t InDataLength), (override));
-	MOCK_METHOD(void, HAL_JPEG_ConfigOutputBuffer,
-				(JPEG_HandleTypeDef * hjpeg, uint8_t *pNewOutputBuffer, uint32_t OutDataLength), (override));
+	MOCK_METHOD(HALStatus, HAL_JPEG_RegisterCallback,
+				(JPEG_HandleTypeDef *, HAL_JPEG_CallbackIDTypeDef, pJPEG_CallbackTypeDef), (override));
 };
 
 }	// namespace leka

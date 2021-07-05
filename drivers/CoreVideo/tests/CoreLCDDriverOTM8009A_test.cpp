@@ -6,7 +6,7 @@
 
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "gtest/gtest.h"
-#include "mocks/leka/CoreDSI.h"
+#include "mocks/leka/CoreVideo/CoreDSI.h"
 #include "mocks/leka/LKCoreSTM32Hal.h"
 #include "stubs/mbed/PwmOut.h"
 
@@ -21,9 +21,6 @@ class LKCoreOTM8009ATest : public ::testing::Test
 {
   protected:
 	LKCoreOTM8009ATest() : otm(dsimock, PinName::SCREEN_BACKLIGHT_PWM) {}
-
-	// void SetUp() override {}
-	// void TearDown() override {}
 
 	CoreDSIMock dsimock;
 	CoreLCDDriverOTM8009A otm;

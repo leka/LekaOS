@@ -15,14 +15,14 @@ namespace lcd {
 
 	// TODO : this should not depend on OTM driver,
 	// TODO : it should be instanciated and passed to objects that need it
-	const struct {
+	constexpr struct {
 		uint16_t width	= lcd::otm8009a::landscape::width;
 		uint16_t height = lcd::otm8009a::landscape::height;
 	} dimension;
 
 	// TODO : this should not depend on OTM driver,
 	// TODO : it should be instanciated and passed to objects that need it
-	const struct {
+	constexpr struct {
 		uint16_t VSA  = lcd::otm8009a::landscape::vsync;	// Vertical start active time in units of lines
 		uint16_t VBP  = lcd::otm8009a::landscape::vbp;		// Vertical Back Porch time in units of lines
 		uint16_t VFP  = lcd::otm8009a::landscape::vfp;		// Vertical Front Porch time in units of lines
@@ -43,13 +43,31 @@ namespace dsi {
 	constexpr uint32_t laneByteClock_kHz = 62500;	// 500 MHz / 8 = 62.5 MHz = 62500 kHz
 	constexpr uint32_t txEscapeClockDiv	 = laneByteClock_kHz / 15620;
 
+	constexpr uint16_t refresh_columns_count = 2;	// allowed value : 1, 2, (4)
+
+	struct SyncProps {
+		int hsync;
+		int hbp;
+		int activew;
+		int hfp;
+		int vsync;
+		int vbp;
+		int activeh;
+		int vfp;
+	};
+	constexpr SyncProps sync_props = {
+		1, 1, lcd::dimension.width / refresh_columns_count, 1, 1, 1, lcd::dimension.height, 1};
+
 }	// namespace dsi
 
 namespace jpeg {
 
-	constexpr uintptr_t decoded_buffer_address = 0xC0200000;
+	constexpr uintptr_t decoded_buffer_address = lcd::frame_buffer_address + 800 * 480 * 4;	  // 0xC0200000;
 
-	constexpr uint32_t input_data_buffer_size = 4096;
+	constexpr uint32_t input_chunk_size	 = 2048;
+	constexpr uint32_t output_chunk_size = 768 * 4;
+	constexpr uint32_t input_buffers_nb	 = 1;
+	constexpr uint32_t output_buffers_nb = 8;
 
 	constexpr uint8_t JPEG_ARGB8888 = 0;   // ARGB8888 Color Format
 	constexpr uint8_t JPEG_RGB888	= 1;   // RGB888 Color Format
@@ -58,11 +76,9 @@ namespace jpeg {
 	constexpr uint8_t JPEG_RGB_FORMAT = JPEG_ARGB8888;	 // Select RGB format: ARGB8888, RGB888, RBG565
 	constexpr uint8_t JPEG_SWAP_RB	  = 0;				 // Change color order to BGR
 
-	namespace mcu {
-
-		constexpr uint32_t output_data_buffer_size = 768;
-
-	}	// namespace mcu
+	constexpr uint16_t JPEG_SOI_MARKER		 = 0xFFD8;	 // JPEG Start of Image marker
+	constexpr uint16_t JPEG_SOI_MARKER_BYTE0 = (JPEG_SOI_MARKER & 0xFF);
+	constexpr uint16_t JPEG_SOI_MARKER_BYTE1 = ((JPEG_SOI_MARKER >> 8) & 0xFF);
 
 }	// namespace jpeg
 

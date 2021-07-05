@@ -6,50 +6,144 @@
 
 #include "internal/corevideo_config.h"
 
-namespace leka {
+using namespace leka;
 
-CoreJPEG::CoreJPEG(LKCoreSTM32HalBase &hal, interface::DMA2DBase &dma2d, LKCoreFatFsBase &file)
-	: _hal(hal), _dma2d(dma2d), _file(file)
+CoreJPEG::CoreJPEG(LKCoreSTM32HalBase &hal, interface::JPEGMode &mode) : _hal(hal), _mode(mode)
 {
-	_hjpeg.Instance = JPEG;
+	_handle.Instance = JPEG;
 }
 
 void CoreJPEG::initialize()
 {
+	__HAL_RCC_JPEG_CLK_ENABLE();
+	__HAL_RCC_JPEG_FORCE_RESET();
+	__HAL_RCC_JPEG_RELEASE_RESET();
+
+	_hal.HAL_NVIC_SetPriority(JPEG_IRQn, 0x06, 0x0F);
+	_hal.HAL_NVIC_EnableIRQ(JPEG_IRQn);
+
+	registerCallbacks();
+
 	JPEG_InitColorTables();
-	_hal.HAL_RCC_JPEG_CLK_ENABLE();
-	_hal.HAL_JPEG_Init(&_hjpeg);
+	_hal.HAL_JPEG_Init(&_handle);
+
+	// need to be called again because JPEG_Init resets the callbacks
+	registerCallbacks();
 }
 
-auto CoreJPEG::getConfig() -> JPEG_ConfTypeDef
+void displayInformation(JPEGConfig config)
 {
-	return _config;
+	printf("JPEG file configuration:\n");
+
+	printf("ColorSpace: %ld\n", config.ColorSpace);
+	printf("ChromaSubsampling: %ld [0 -> 4:4:4 | 1 -> 4:2:0 | 2 -> 4:2:2]\n", config.ChromaSubsampling);
+	printf("ImageHeight: %ld\n", config.ImageHeight);
+	printf("ImageWidth: %ld\n", config.ImageWidth);
+	printf("ImageQuality: %ld\n\n", config.ImageQuality);
+
+	//   uint32_t ColorSpace;               /*!< Image Color space : gray-scale, YCBCR, RGB or CMYK
+	//                                            This parameter can be a value of @ref JPEG_ColorSpace */
+	//   uint32_t ChromaSubsampling;        /*!< Chroma Subsampling in case of YCBCR or CMYK color space, 0-> 4:4:4 ,
+	//   1-> 4:2:2, 2 -> 4:1:1, 3 -> 4:2:0        This parameter can be a value of @ref JPEG_ChromaSubsampling */
+	//   uint32_t ImageHeight;              /*!< Image height : number of lines */
+	//   uint32_t ImageWidth;               /*!< Image width : number of pixels per line */
+	//   uint32_t ImageQuality;             /*!< Quality of the JPEG encoding : from 1 to 100 */
 }
 
-auto CoreJPEG::getHandle() -> JPEG_HandleTypeDef
+auto CoreJPEG::getConfig() -> JPEGConfig
 {
-	return _hjpeg;
+	JPEGConfig config;
+	_hal.HAL_JPEG_GetInfo(&_handle, &config);
+
+	displayInformation(config);
+
+	config.initialized = true;
+	return config;
 }
 
-auto CoreJPEG::getHandlePointer() -> JPEG_HandleTypeDef *
+void CoreJPEG::registerCallbacks()
 {
-	return &_hjpeg;
+	static CoreJPEG *self;
+	self = this;
+
+	auto info_ready_cb = [](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) {
+		self->_mode.onInfoReadyCallback(hjpeg, info);
+	};
+
+	auto get_data_cb = [](JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize) {
+		self->_mode.onGetDataCallback(hjpeg, decoded_datasize);
+	};
+
+	auto data_ready_cb = [](JPEG_HandleTypeDef *hjpeg, uint8_t *output_data, uint32_t datasize) {
+		self->_mode.onDataReadyCallback(hjpeg, output_data, datasize);
+	};
+
+	auto decode_cmplt_cb = [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onDecodeCompleteCallback(hjpeg); };
+
+	auto error_cb = [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onErrorCallback(hjpeg); };
+
+	auto mspinit_cb = [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onMspInitCallback(hjpeg); };
+
+	_hal.HAL_JPEG_RegisterInfoReadyCallback(&_handle, info_ready_cb);
+	_hal.HAL_JPEG_RegisterGetDataCallback(&_handle, get_data_cb);
+	_hal.HAL_JPEG_RegisterDataReadyCallback(&_handle, data_ready_cb);
+	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_DECODE_CPLT_CB_ID, decode_cmplt_cb);
+	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_ERROR_CB_ID, error_cb);
+	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_MSPINIT_CB_ID, mspinit_cb);
 }
 
-auto CoreJPEG::getWidthOffset() -> uint32_t
+auto CoreJPEG::decodeImage(interface::File &file) -> std::uint32_t
+{
+	return _mode.decodeImage(&_handle, file);
+}
+
+auto CoreJPEG::findFrameOffset(interface::File &file, uint32_t offset) -> uint32_t
+{
+	std::array<uint8_t, 512> pattern_search_buffer;
+
+	size_t file_size   = file.size();
+	uint32_t index	   = offset;
+	uint32_t read_size = 0;
+
+	do {
+		if (file_size <= (index + 1)) {
+			return 0;
+		}
+		file.seek(index);
+		read_size = file.read(pattern_search_buffer.data(), pattern_search_buffer.size());
+
+		if (read_size != 0) {
+			for (uint32_t i = 0; i < (read_size - 1); i++) {
+				if ((pattern_search_buffer[i] == jpeg::JPEG_SOI_MARKER_BYTE1) &&
+					(pattern_search_buffer[i + 1] == jpeg::JPEG_SOI_MARKER_BYTE0)) {
+					return index + i;
+				}
+			}
+			index += (read_size - 1);
+		}
+	} while (read_size != 0);
+
+	return 0;
+}
+
+auto JPEGConfig::getWidthOffset() const -> uint32_t
 {
 	uint32_t width_offset = 0;
 
-	switch (_config.ChromaSubsampling) {
+	switch (ChromaSubsampling) {
 		case JPEG_420_SUBSAMPLING:
+			if ((ImageWidth % 16) != 0) {
+				width_offset = 16 - (ImageWidth % 16);
+			}
+			break;
 		case JPEG_422_SUBSAMPLING:
-			if ((_config.ImageWidth % 16) != 0) {
-				width_offset = 16 - (_config.ImageWidth % 16);
+			if ((ImageWidth % 16) != 0) {
+				width_offset = 16 - (ImageWidth % 16);
 			}
 			break;
 		case JPEG_444_SUBSAMPLING:
-			if ((_config.ImageWidth % 8) != 0) {
-				width_offset = (_config.ImageWidth % 8);
+			if ((ImageWidth % 8) != 0) {
+				width_offset = (ImageWidth % 8);
 			}
 			break;
 		default:
@@ -59,102 +153,3 @@ auto CoreJPEG::getWidthOffset() -> uint32_t
 
 	return width_offset;
 }
-
-void CoreJPEG::displayImage(FIL *file)
-{
-	decodeImageWithPolling();	// TODO(@yann): handle errors
-
-	_hal.HAL_JPEG_GetInfo(&_hjpeg, &_config);
-
-	_dma2d.transferImage(_config.ImageWidth, _config.ImageHeight, getWidthOffset());
-}
-
-auto CoreJPEG::decodeImageWithPolling() -> HAL_StatusTypeDef
-{
-	// WARNING: DO NOT REMOVE
-	_mcu_block_index = 0;
-
-	// TODO(@yann): rely on LKFileSystemKit to handle open/read/close
-	if (_file.read(_jpeg_input_buffer.data, leka::jpeg::input_data_buffer_size, &_jpeg_input_buffer.size) != FR_OK) {
-		return HAL_ERROR;
-	}
-
-	_input_file_offset = _jpeg_input_buffer.size;
-
-	_hal.HAL_JPEG_Decode(&_hjpeg, _jpeg_input_buffer.data, _jpeg_input_buffer.size, _mcu_data_output_buffer.data(),
-						 leka::jpeg::mcu::output_data_buffer_size, HAL_MAX_DELAY);
-
-	return HAL_OK;
-}
-
-void CoreJPEG::onErrorCallback(JPEG_HandleTypeDef *hjpeg)
-{
-	// TODO(@yann): handle errors
-}
-
-void CoreJPEG::onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info)
-{
-	if (info->ChromaSubsampling == JPEG_420_SUBSAMPLING) {
-		if ((info->ImageWidth % 16) != 0) {
-			info->ImageWidth += (16 - (info->ImageWidth % 16));
-		}
-
-		if ((info->ImageHeight % 16) != 0) {
-			info->ImageHeight += (16 - (info->ImageHeight % 16));
-		}
-	}
-
-	if (info->ChromaSubsampling == JPEG_422_SUBSAMPLING) {
-		if ((info->ImageWidth % 16) != 0) {
-			info->ImageWidth += (16 - (info->ImageWidth % 16));
-		}
-
-		if ((info->ImageHeight % 8) != 0) {
-			info->ImageHeight += (8 - (info->ImageHeight % 8));
-		}
-	}
-
-	if (info->ChromaSubsampling == JPEG_444_SUBSAMPLING) {
-		if ((info->ImageWidth % 8) != 0) {
-			info->ImageWidth += (8 - (info->ImageWidth % 8));
-		}
-
-		if ((info->ImageHeight % 8) != 0) {
-			info->ImageHeight += (8 - (info->ImageHeight % 8));
-		}
-	}
-
-	if (JPEG_GetDecodeColorConvertFunc(info, &pConvert_Function, &_mcu_number) != HAL_OK) {
-		// TODO(@yann): handle errors
-	}
-}
-
-void CoreJPEG::onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size)
-{
-	// TODO(@yann): rely on LKFileSystemKit to handle open/read/close
-	if (size != _jpeg_input_buffer.size) {
-		_input_file_offset = _input_file_offset - _jpeg_input_buffer.size + size;
-		_file.seek(_input_file_offset);
-	}
-
-	if (_file.read(_jpeg_input_buffer.data, leka::jpeg::input_data_buffer_size, &_jpeg_input_buffer.size) == FR_OK) {
-		_input_file_offset += _jpeg_input_buffer.size;
-		_hal.HAL_JPEG_ConfigInputBuffer(hjpeg, _jpeg_input_buffer.data, _jpeg_input_buffer.size);
-	} else {
-		// TODO(@yann): handle error
-	}
-}
-void CoreJPEG::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size)
-{
-	_mcu_block_index += pConvert_Function(output_buffer, reinterpret_cast<uint8_t *>(jpeg::decoded_buffer_address),
-										  _mcu_block_index, size, nullptr);
-
-	_hal.HAL_JPEG_ConfigOutputBuffer(hjpeg, _mcu_data_output_buffer.data(), leka::jpeg::mcu::output_data_buffer_size);
-}
-
-void CoreJPEG::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
-{
-	// TODO(@yann): implement flag
-}
-
-}	// namespace leka

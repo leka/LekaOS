@@ -11,14 +11,11 @@
 #include "BouncingSquare.h"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
-#include "CoreFont.hpp"
-#include "CoreGraphics.hpp"
 #include "CoreJPEG.hpp"
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLTDC.hpp"
 #include "CoreSDRAM.hpp"
-#include "CoreVideo.hpp"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LKAnimationKit.h"
@@ -37,25 +34,21 @@ SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 LKCoreFatFs corefatfs;
 
-LKCoreLL corell;
-CGPixel pixel(corell);
 LKCoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);
+CoreJPEGModeDMA corejpegmode(hal);
+CoreJPEG corejpeg(hal, corejpegmode);
 CoreDMA2D coredma2d(hal);
-CoreDSI coredsi(hal);
-CoreLTDC coreltdc(hal, coredsi);
-CoreGraphics coregraphics(coredma2d);
-CoreFont corefont(pixel);
+CoreLTDC coreltdc(hal);
+CoreDSI coredsi(hal, coreltdc);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 CoreLCD corelcd(coreotm);
-CoreJPEG corejpeg(hal, coredma2d, corefatfs);
-CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 rtos::Thread animation_thread;
 events::EventQueue animation_event_queue;
 
-animation::BouncingSquare animation_bouncing_square(coregraphics);
-LKAnimationKit animationkit(animation_thread, animation_event_queue);
+// animation::BouncingSquare animation_bouncing_square(coregraphics);
+// LKAnimationKit animationkit(animation_thread, animation_event_queue);
 
 auto main() -> int
 {
@@ -68,8 +61,6 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(2s);
 
-	corevideo.initialize();
-
 	hello.start();
 
 	while (true) {
@@ -77,10 +68,10 @@ auto main() -> int
 		log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world,
 				 int(t.count() / 1000));
 
-		animationkit.start(animation_bouncing_square);
+		// animationkit.start(animation_bouncing_square);
 		rtos::ThisThread::sleep_for(5s);
 
-		animationkit.stop();
+		// animationkit.stop();
 		rtos::ThisThread::sleep_for(1s);
 	}
 }

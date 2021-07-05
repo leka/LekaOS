@@ -6,33 +6,39 @@
 
 #include "internal/corevideo_config.h"
 
-namespace leka {
+using namespace leka;
 
-CoreLTDC::CoreLTDC(LKCoreSTM32HalBase &hal, interface::DSIBase &dsi) : _hal(hal), _dsi(dsi)
+CoreLTDC::CoreLTDC(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
-	_hltdc.Instance = LTDC;
+	_handle.Instance = LTDC;
 
-	// LCD pixel width/height
-	_hltdc.LayerCfg->ImageWidth	 = lcd::dimension.width;
-	_hltdc.LayerCfg->ImageHeight = lcd::dimension.height;
+	const auto &props = dsi::sync_props;
 
 	// Timing and synchronization
-	_hltdc.Init.HorizontalSync	   = (lcd::property.HSA - 1);
-	_hltdc.Init.AccumulatedHBP	   = (lcd::property.HSA + lcd::property.HBP - 1);
-	_hltdc.Init.AccumulatedActiveW = (lcd::dimension.width + lcd::property.HSA + lcd::property.HBP - 1);
-	_hltdc.Init.TotalWidth = (lcd::dimension.width + lcd::property.HSA + lcd::property.HBP + lcd::property.HFP - 1);
+	_handle.Init.HorizontalSync		= props.hsync;
+	_handle.Init.AccumulatedHBP		= props.hsync + props.hbp;
+	_handle.Init.AccumulatedActiveW = props.hsync + props.hbp + props.activew;
+	_handle.Init.TotalWidth			= props.hsync + props.hbp + props.activew + props.hfp;
 
-	// Background values
-	_hltdc.Init.Backcolor.Blue	= 0;
-	_hltdc.Init.Backcolor.Green = 0;
-	_hltdc.Init.Backcolor.Red	= 0;
+	_handle.Init.VerticalSync		= props.vsync;
+	_handle.Init.AccumulatedVBP		= props.vsync + props.vbp;
+	_handle.Init.AccumulatedActiveH = props.vsync + props.vbp + props.activeh;
+	_handle.Init.TotalHeigh			= props.vsync + props.vbp + props.activeh + props.vfp;
 
-	// Misc
-	_hltdc.Init.PCPolarity = LTDC_PCPOLARITY_IPC;
+	// Background color
+	_handle.Init.Backcolor.Blue	 = 0;
+	_handle.Init.Backcolor.Green = 0;
+	_handle.Init.Backcolor.Red	 = 0;
+
+	// Polarity
+	_handle.Init.HSPolarity = LTDC_HSPOLARITY_AL;
+	_handle.Init.VSPolarity = LTDC_VSPOLARITY_AL;
+	_handle.Init.DEPolarity = LTDC_DEPOLARITY_AL;
+	_handle.Init.PCPolarity = LTDC_PCPOLARITY_IPC;
 
 	// Layer config
 	_layerConfig.WindowX0 = 0;
-	_layerConfig.WindowX1 = lcd::dimension.width;
+	_layerConfig.WindowX1 = props.activew;
 	_layerConfig.WindowY0 = 0;
 	_layerConfig.WindowY1 = lcd::dimension.height;
 
@@ -56,21 +62,21 @@ CoreLTDC::CoreLTDC(LKCoreSTM32HalBase &hal, interface::DSIBase &dsi) : _hal(hal)
 
 void CoreLTDC::initialize()
 {
-	configurePeriphClock();
+	__HAL_RCC_LTDC_CLK_ENABLE();
+	__HAL_RCC_LTDC_FORCE_RESET();
+	__HAL_RCC_LTDC_RELEASE_RESET();
 
-	// Get LTDC config from DSI
-	DSI_VidCfgTypeDef dsi_video_config = _dsi.getConfig();
-	_hal.HAL_LTDC_StructInitFromVideoConfig(&_hltdc, &dsi_video_config);
+	_hal.HAL_NVIC_SetPriority(LTDC_IRQn, 3, 0);
+	_hal.HAL_NVIC_EnableIRQ(LTDC_IRQn);
+
+	configurePeriphClock();
 
 	// Initialize LTDC
 	// This part **must not** be moved to the constructor as LCD
 	// initialization must be performed in a very specific order
-	_hal.HAL_LTDC_Init(&_hltdc);
-
-	// Initialize LTDC layer
-	// This part **must not** be moved to the constructor as LCD
-	// initialization must be performed in a very specific order
-	_hal.HAL_LTDC_ConfigLayer(&_hltdc, &_layerConfig, 1);
+	_hal.HAL_LTDC_Init(&_handle);
+	_hal.HAL_LTDC_ConfigLayer(&_handle, &_layerConfig, 0);
+	_hal.HAL_LTDC_SetPitch(&_handle, lcd::dimension.width, 0);
 }
 
 void CoreLTDC::configurePeriphClock()
@@ -91,15 +97,3 @@ void CoreLTDC::configurePeriphClock()
 
 	_hal.HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 }
-
-auto CoreLTDC::getHandle() const -> LTDC_HandleTypeDef
-{
-	return _hltdc;
-}
-
-auto CoreLTDC::getLayerConfig() const -> LTDC_LayerCfgTypeDef
-{
-	return _layerConfig;
-}
-
-}	// namespace leka

@@ -2,76 +2,31 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include <memory>
-
 #include "drivers/BufferedSerial.h"
 #include "platform/Callback.h"
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
-#include "CoreDMA2D.hpp"
-#include "CoreDSI.hpp"
-#include "CoreFont.hpp"
-#include "CoreGraphics.hpp"
-#include "CoreJPEG.hpp"
-#include "CoreLCD.hpp"
-#include "CoreLCDDriverOTM8009A.hpp"
-#include "CoreLTDC.hpp"
 #include "CoreSDRAM.hpp"
-#include "CoreVideo.hpp"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LKCoreFatFs.h"
-#include "LKCoreLL.h"
 #include "LKCoreSTM32Hal.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
+#include "VideoKit.h"
 
 using namespace leka;
 using namespace std::chrono;
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
-LKCoreFatFs corefatfs;
 
-LKCoreLL corell;
-CGPixel pixel(corell);
 LKCoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);
-CoreDMA2D coredma2d(hal);
-CoreDSI coredsi(hal);
-CoreLTDC coreltdc(hal, coredsi);
-CoreGraphics coregraphics(coredma2d);
-CoreFont corefont(pixel);
-CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
-CoreLCD corelcd(coreotm);
-CoreJPEG corejpeg(hal, coredma2d, corefatfs);
-CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
-const auto filename1 = std::array<char, 32> {"assets/images/Leka/logo.jpg"};
-const auto filename2 = std::array<char, 38> {"assets/images/Leka/emotion-happy.jpg"};
-
-void registerCallbacks()
-{
-	HAL_JPEG_RegisterInfoReadyCallback(
-		corejpeg.getHandlePointer(),
-		[](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) { corejpeg.onInfoReadyCallback(hjpeg, info); });
-
-	HAL_JPEG_RegisterGetDataCallback(corejpeg.getHandlePointer(), [](JPEG_HandleTypeDef *hjpeg, uint32_t size) {
-		corejpeg.onDataAvailableCallback(hjpeg, size);
-	});
-
-	HAL_JPEG_RegisterDataReadyCallback(corejpeg.getHandlePointer(),
-									   [](JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t size) {
-										   corejpeg.onDataReadyCallback(hjpeg, pDataOut, size);
-									   });
-
-	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_DECODE_CPLT_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { corejpeg.onDecodeCompleteCallback(hjpeg); });
-
-	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_ERROR_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { corejpeg.onErrorCallback(hjpeg); });
-}
+VideoKit screen(hal);
+VideoKit_DeclareIRQHandlers(screen);
 
 void initializeSD()
 {
@@ -81,83 +36,74 @@ void initializeSD()
 	fatfs.mount(&sd_blockdevice);
 }
 
+void formatTime(char *buffer, int64_t time)
+{
+	int ds	= (time / 1000);
+	int dms = (time / 1000.f - ds) * 100;
+	sprintf(buffer, "%02d:%02d,%02d", ds / 60, ds % 60, dms);
+}
+
 auto main() -> int
 {
-	auto start = rtos::Kernel::Clock::now();
+	HelloWorld hello;
+	hello.start();
 
 	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 
 	log_info("Hello, World!\n\n");
 
-	rtos::ThisThread::sleep_for(2s);
-
-	corevideo.initialize();
-	registerCallbacks();
-
 	initializeSD();
 
-	HelloWorld hello;
-	hello.start();
+	coresdram.initialize();
 
-	corevideo.clearScreen();
-	rtos::ThisThread::sleep_for(1s);
+	screen.initialize();
+	screen.setFrameRateLimit(30);
 
-	static auto line = 1;
-	static CGColor foreground;
-	static CGColor background = CGColor::white;
+	gfx::Image image1("/fs/images/leka-logo.jpg");
+	// gfx::Image image2("/fs/assets/images/Leka/image.jpg");
 
-	leka::logger::set_print_function(
-		[](const char *str, size_t size) { corevideo.displayText(str, size, line, foreground, background); });
+	screen.draw(image1);
+	screen.display();
+	rtos::ThisThread::sleep_for(2s);
 
-	for (int i = 1; i <= 10; i++) {
-		foreground = (i % 2 == 0) ? CGColor::black : CGColor::pure_red;
-		line	   = i * 2;
-		log_info("Line #%i", i);
-		rtos::ThisThread::sleep_for(1s);
-	}
+	// screen.draw(image2);
+	// screen.display();
+	// rtos::ThisThread::sleep_for(2s);
 
-	rtos::ThisThread::sleep_for(5s);
+	// gfx::Video video_joie("/fs/assets/video/JoieV4_low.avi");
+	gfx::Video video_joie("/fs/videos/animation-idle.avi");
 
-	leka::logger::set_print_function([](const char *str, size_t size) {
-		corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
-	});
+	// gfx::Video video_birds("/fs/assets/video/BirdsAndFeeder.avi");
 
-	log_info(
-		"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
-		"only one line of the screen.");
+	// std::array<gfx::Video *, 3> videos = {&video_joie, &video_perplex, &video_birds};
+	std::array<gfx::Video *, 1> videos = {&video_joie};
 
-	rtos::ThisThread::sleep_for(10s);
+	gfx::Rectangle progress_bar_bg(0, 460, 800, 20, {190, 250, 230});
+	gfx::Rectangle progress_bar(0, 460, 0, 20, {20, 240, 165});
 
-	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
-
-	auto JPEG_File = std::make_unique<FIL>();
+	char buff[128];
 
 	while (true) {
-		auto t = rtos::Kernel::Clock::now() - start;
-		log_info("A message from your board %s --> \"%s\" at %is", MBED_CONF_APP_TARGET_NAME, hello.world,
-				 int(t.count() / 1000));
+		for (auto *video_ptr: videos) {
+			auto &video = *video_ptr;
+			screen.resetCounters();
+			video.restart();
+			while (!video.hasEnded()) {
+				screen.draw(video);
 
-		rtos::ThisThread::sleep_for(1s);
+				video.nextFrame();
+				// progress_bar.width = video.getProgress() * lcd::dimension.width;
 
-		if (corefatfs.open(filename1.data()) == FR_OK) {
-			corevideo.displayImage(JPEG_File.get());
-			corevideo.setBrightness(0.2f);
+				// screen.draw(progress_bar_bg);
+				// screen.draw(progress_bar);
 
-			corevideo.turnOn();
+				// formatTime(buff, video.getTime());
+				// screen.drawText(buff, 20, 460, {250, 60, 150});
 
-			corefatfs.close();
-			rtos::ThisThread::sleep_for(2s);
-		}
-
-		if (corefatfs.open(filename2.data()) == FR_OK) {
-			corevideo.displayImage(JPEG_File.get());
-			corevideo.setBrightness(0.9f);
-
-			corefatfs.close();
-			rtos::ThisThread::sleep_for(2s);
-
-			corevideo.turnOff();
+				screen.display();
+			}
+			screen.displayCounters();
 		}
 	}
 }

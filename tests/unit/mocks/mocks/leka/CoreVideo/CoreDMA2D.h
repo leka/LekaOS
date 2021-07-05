@@ -14,13 +14,14 @@ class CoreDMA2DMock : public interface::DMA2DBase
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));
-	MOCK_METHOD(void, transferData,
-				(uintptr_t input_data_address, uintptr_t output_data_address, uint32_t width, uint32_t height),
-				(override));
+
+	MOCK_METHOD(void, setFrameBufferAddress, (uintptr_t address), (override));
+
+	MOCK_METHOD(void, transferData, (uintptr_t src, uintptr_t dst, uint32_t width, uint32_t height), (override));
 	MOCK_METHOD(void, transferImage, (uint32_t width, uint32_t height, uint32_t width_offset), (override));
-	MOCK_METHOD(void, transferDrawing, (uintptr_t first_pixel_address, uint32_t width, uint32_t height, uint32_t color),
-				(override));
-	MOCK_METHOD(DMA2D_HandleTypeDef, getHandle, (), (override));
+
+	MOCK_METHOD(void, fillRect, (uint32_t x, uint32_t y, uint32_t width, uint32_t height, uint32_t color), (override));
+	MOCK_METHOD(void, setPixel, (uint32_t x, uint32_t y, uint32_t color), (override));
 };
 
 }	// namespace leka

@@ -1,6 +1,6 @@
-// // Leka - LekaOS
-// // Copyright 2021 APF France handicap
-// // SPDX-License-Identifier: Apache-2.0
+// Leka - LekaOS
+// Copyright 2021 APF France handicap
+// SPDX-License-Identifier: Apache-2.0
 
 #include "CoreSDRAM.hpp"
 
@@ -18,9 +18,6 @@ class CoreSDRAMTest : public ::testing::Test
   protected:
 	CoreSDRAMTest() : coresdram(halmock) {}
 
-	// void SetUp() override {}
-	// void TearDown() override {}
-
 	LKCoreSTM32HalMock halmock;
 	CoreSDRAM coresdram;
 
@@ -36,7 +33,6 @@ class CoreSDRAMTest : public ::testing::Test
 		EXPECT_CALL(halmock, HAL_RCC_GPIOH_CLK_ENABLE).Times(AnyNumber());
 		EXPECT_CALL(halmock, HAL_RCC_GPIOI_CLK_ENABLE).Times(AnyNumber());
 		EXPECT_CALL(halmock, HAL_GPIO_Init).Times(AnyNumber());
-		EXPECT_CALL(halmock, HAL_LINKDMA).Times(AnyNumber());
 		EXPECT_CALL(halmock, HAL_DMA_DeInit).Times(AnyNumber());
 		EXPECT_CALL(halmock, HAL_DMA_Init).Times(AnyNumber());
 		EXPECT_CALL(halmock, HAL_NVIC_SetPriority).Times(AnyNumber());
@@ -128,7 +124,6 @@ TEST_F(CoreSDRAMTest, initializeController)
 		EXPECT_CALL(halmock, HAL_GPIO_Init(GPIOH, _)).Times(1);
 		EXPECT_CALL(halmock, HAL_GPIO_Init(GPIOI, _)).Times(1);
 
-		EXPECT_CALL(halmock, HAL_LINKDMA).Times(1);
 		EXPECT_CALL(halmock, HAL_DMA_DeInit).Times(1);
 		EXPECT_CALL(halmock, HAL_DMA_Init).Times(1);
 

@@ -25,12 +25,8 @@ class CoreSDRAM : public interface::SDRAM
 	void initializeController() final;
 	void initializationSequence() final;
 
-	[[nodiscard]] auto getHandle() const -> SDRAM_HandleTypeDef;
-
   private:
 	LKCoreSTM32HalBase &_hal;
-
-	SDRAM_HandleTypeDef _hsdram {};
 };
 
 }	// namespace leka
