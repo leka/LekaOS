@@ -327,4 +327,4 @@ jobs:
       - name: Run clang-tidy
         run: |
           echo ${{ steps.modified_files.outputs.all }}
-          echo ${{ steps.modified_files.outputs.all }} | xargs -n1 | grep -E '\.h$|\.cpp$' | xargs --no-run-if-empty clang-tidy-12 -p=.
+          echo ${{ steps.modified_files.outputs.all }} | xargs -n1 | grep -E '\.h$|\.cpp$' | xargs --no-run-if-empty clang-tidy-12 -p=. --quiet

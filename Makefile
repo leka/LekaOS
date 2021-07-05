@@ -223,7 +223,7 @@ clang_tidy_diff:
 	@echo ""
 	@git diff --name-only develop | grep -E "\.h\$$|\.cpp\$$"
 	@echo ""
-	@git diff --name-only develop | grep -E "\.h\$$|\.cpp\$$" | xargs /usr/local/opt/llvm/bin/clang-tidy -p=.
+	@git diff --name-only develop | grep -E "\.h\$$|\.cpp\$$" | xargs /usr/local/opt/llvm/bin/clang-tidy -p=. --quiet
 
 clang_tidy_diff_fix:
 	@echo ""
@@ -231,7 +231,7 @@ clang_tidy_diff_fix:
 	@echo ""
 	@git diff --name-only develop | grep -E "\.h\$$|\.cpp\$$"
 	@echo ""
-	@git diff --name-only develop | grep -E "\.h\$$|\.cpp\$$" | xargs /usr/local/opt/llvm/bin/clang-tidy -p=. --fix --fix-errors
+	@git diff --name-only develop | grep -E "\.h\$$|\.cpp\$$" | xargs /usr/local/opt/llvm/bin/clang-tidy -p=. --quiet --fix --fix-errors
 
 code_analysis: mkdir_build
 	@echo ""
