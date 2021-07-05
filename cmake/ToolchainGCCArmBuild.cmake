@@ -11,7 +11,7 @@ set(PREPROCESSED_LINKER_SCRIPT ${CMAKE_CURRENT_BINARY_DIR}/${LINKER_SCRIPT_FILEN
 
 # NOTE: clearly the linker script is not assembly!  We give -x assembler-with-cpp to force GCC to try and compile the file
 # as if it was assembly.  It only gets to the preprocessor stage because of -E, and everything works fine.
-set(PREPROCESS_ONLY_FLAGS -x assembler-with-cpp -E -Wp,-P ${CMAKE_EXE_LINKER_FLAGS})
+set(PREPROCESS_ONLY_FLAGS -x assembler-with-cpp -E -Wp,-P ${MBED_APP_FLAGS} ${CMAKE_EXE_LINKER_FLAGS})
 
 # This is kind of a hack, but without it we would have to have a seperate facility for finding the preprocessor executable.
 # We also needed to pass the linker flags because they can include defines needed in the linker script

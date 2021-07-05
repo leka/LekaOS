@@ -51,6 +51,16 @@ add_compile_options(
 set(ROOT_DIR    ${CMAKE_CURRENT_LIST_DIR})
 set(MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
 
+# Bootloader option
+option(ENABLE_BOOTLOADER "Build LekaOS with bootloader" OFF)
+message(STATUS "ENABLE_BOOTLOADER (Build LekaOS with bootloader) --> ${ENABLE_BOOTLOADER}")
+if (ENABLE_BOOTLOADER)
+	set(MBED_APP_FLAGS
+		-DMBED_APP_START=0x08040000
+		-DMBED_APP_SIZE=0x180000
+	)
+endif(ENABLE_BOOTLOADER)
+
 # And include mbed-cmake.cmake
 include(./mbed-cmake.cmake)
 

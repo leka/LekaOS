@@ -20,7 +20,13 @@ VERSION       ?= $(shell cat $(ROOT_DIR)/.mbed_version)
 BAUDRATE      ?= 115200
 BUILD_TYPE    ?= Release
 TARGET_BOARD  ?= LEKA_V1_2_DEV
-CODE_ANALYSIS ?= OFF
+
+#
+# MARK: - Options
+#
+
+ENABLE_CODE_ANALYSIS ?= OFF
+ENABLE_BOOTLOADER    ?= OFF
 
 #
 # MARK: - Build dirs
@@ -114,12 +120,12 @@ config_tools_target: mkdir_cmake_config
 config_cmake_build: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
-	@cmake -S . -B $(TARGET_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=$(CODE_ANALYSIS)
+	@cmake -S . -B $(TARGET_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=$(ENABLE_CODE_ANALYSIS) -DENABLE_BOOTLOADER=$(ENABLE_BOOTLOADER)
 
 config_tools_build: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
-	@cmake -S . -B $(CMAKE_TOOLS_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_TOOLS_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=Debug -DENABLE_CODE_ANALYSIS=$(CODE_ANALYSIS)
+	@cmake -S . -B $(CMAKE_TOOLS_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_TOOLS_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=Debug -DENABLE_CODE_ANALYSIS=$(ENABLE_CODE_ANALYSIS)
 
 #
 # MARK: - Tests targets
