@@ -16,13 +16,24 @@ LKCoreJPEG::LKCoreJPEG(LKCoreSTM32HalBase &hal, std::unique_ptr<LKCoreJPEGMode> 
 
 void LKCoreJPEG::initialize()
 {
+	registerCallbacks();
+
 	JPEG_InitColorTables();
 	_hal.HAL_RCC_JPEG_CLK_ENABLE();
 	_hal.HAL_JPEG_Init(&_hjpeg);
+
+	// need to be called again because JPEG_Init resets the callbacks
+	registerCallbacks();
+
+	// enable JPEG IRQ request
+	HAL_NVIC_SetPriority(JPEG_IRQn, 0x06, 0x0F);
+	HAL_NVIC_EnableIRQ(JPEG_IRQn);
 }
 
-auto LKCoreJPEG::getConfig() -> JPEG_ConfTypeDef &
+auto LKCoreJPEG::getConfig(bool update) -> JPEG_ConfTypeDef &
 {
+	if (update) _hal.HAL_JPEG_GetInfo(&_hjpeg, &_config);
+	
 	return _config;
 }
 

@@ -138,8 +138,8 @@ auto LKCoreJPEGDMAMode::decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uin
 	}
 
 	// start JPEG decoding with DMA method
-	HAL_JPEG_Decode_DMA(hjpeg, _in_buffers[0].data, _in_buffers[0].datasize, _out_buffers[0].data,
-						jpeg::chunk_size_out);
+	HAL_JPEG_Decode_DMA(hjpeg, _in_buffers[0].data, _in_buffers[0].datasize,
+							   _out_buffers[0].data, jpeg::chunk_size_out);
 
 	// loop until decode process ends
 	bool process_ended = false;

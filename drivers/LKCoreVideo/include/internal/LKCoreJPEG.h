@@ -24,7 +24,7 @@ class LKCoreJPEG : public LKCoreJPEGBase
 	void initialize() final;
 
 	auto getHandle() -> JPEG_HandleTypeDef & final;
-	auto getConfig() -> JPEG_ConfTypeDef & final;
+	auto getConfig(bool update = false) -> JPEG_ConfTypeDef & final;
 
 	void registerCallbacks() final;
 
