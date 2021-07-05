@@ -30,11 +30,12 @@ void LKCoreJPEG::initialize()
 	HAL_NVIC_EnableIRQ(JPEG_IRQn);
 }
 
-auto LKCoreJPEG::getConfig(bool update) -> JPEG_ConfTypeDef &
+auto LKCoreJPEG::getConfig() -> JPEG_ConfTypeDef
 {
-	if (update) _hal.HAL_JPEG_GetInfo(&_hjpeg, &_config);
-	
-	return _config;
+	JPEG_ConfTypeDef config;
+	_hal.HAL_JPEG_GetInfo(&_hjpeg, &config);
+
+	return config;
 }
 
 auto LKCoreJPEG::getHandle() -> JPEG_HandleTypeDef &
@@ -68,24 +69,24 @@ void LKCoreJPEG::registerCallbacks()
 							  [](JPEG_HandleTypeDef *hjpeg) { self->_mode->onMspInitCallback(hjpeg); });
 }
 
-auto LKCoreJPEG::getWidthOffset(void) -> uint32_t
+auto LKCoreJPEG::getWidthOffset(JPEG_ConfTypeDef &config) -> uint32_t
 {
 	uint32_t width_offset = 0;
 
-	switch (_config.ChromaSubsampling) {
+	switch (config.ChromaSubsampling) {
 		case JPEG_420_SUBSAMPLING:
-			if ((_config.ImageWidth % 16) != 0) {
-				width_offset = 16 - (_config.ImageWidth % 16);
+			if ((config.ImageWidth % 16) != 0) {
+				width_offset = 16 - (config.ImageWidth % 16);
 			}
 			break;
 		case JPEG_422_SUBSAMPLING:
-			if ((_config.ImageWidth % 16) != 0) {
-				width_offset = 16 - (_config.ImageWidth % 16);
+			if ((config.ImageWidth % 16) != 0) {
+				width_offset = 16 - (config.ImageWidth % 16);
 			}
 			break;
 		case JPEG_444_SUBSAMPLING:
-			if ((_config.ImageWidth % 8) != 0) {
-				width_offset = (_config.ImageWidth % 8);
+			if ((config.ImageWidth % 8) != 0) {
+				width_offset = (config.ImageWidth % 8);
 			}
 			break;
 		default:

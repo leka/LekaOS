@@ -24,12 +24,12 @@ class LKCoreJPEG : public LKCoreJPEGBase
 	void initialize() final;
 
 	auto getHandle() -> JPEG_HandleTypeDef & final;
-	auto getConfig(bool update = false) -> JPEG_ConfTypeDef & final;
+	auto getConfig() -> JPEG_ConfTypeDef final;
 
 	void registerCallbacks() final;
 
 	auto decodeImage(LKCoreFatFsBase &file) -> uint32_t final;
-	auto getWidthOffset() -> uint32_t final;
+	static auto getWidthOffset(JPEG_ConfTypeDef &config) -> uint32_t;
 
   private:
 	LKCoreSTM32HalBase &_hal;
@@ -37,7 +37,6 @@ class LKCoreJPEG : public LKCoreJPEGBase
 	std::unique_ptr<LKCoreJPEGMode> _mode;
 
 	JPEG_HandleTypeDef _hjpeg;
-	JPEG_ConfTypeDef _config;
 };
 
 }	// namespace leka

@@ -7,8 +7,10 @@
 
 #include "LKCoreDMA2DBase.h"
 #include "LKCoreDSIBase.h"
+#include "LKCoreFatFs.h"
 #include "LKCoreFontBase.h"
 #include "LKCoreGraphicsBase.h"
+#include "LKCoreJPEG.h"
 #include "LKCoreJPEGBase.h"
 #include "LKCoreLCDBase.h"
 #include "LKCoreLTDCBase.h"
@@ -33,7 +35,7 @@ class LKCoreVideo
 
 	void clearScreen(CGColor color = CGColor::white);
 	void displayRectangle(LKCoreGraphicsBase::FilledRectangle rectangle, CGColor color);
-	void displayImage(FIL *file);
+	void displayImage(LKCoreFatFs &file);
 	void displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
 					 CGColor background = CGColor::white);
 

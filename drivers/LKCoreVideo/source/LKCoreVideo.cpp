@@ -98,9 +98,13 @@ void LKCoreVideo::displayRectangle(LKCoreGraphicsBase::FilledRectangle rectangle
 	_coregraphics.drawRectangle(rectangle, color);
 }
 
-void LKCoreVideo::displayImage(FIL *file)
+void LKCoreVideo::displayImage(LKCoreFatFs &file)
 {
-	// TODO : implement
+	_corejpeg.decodeImage(file);
+
+	auto config = _corejpeg.getConfig();
+
+	_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, LKCoreJPEG::getWidthOffset(config));
 }
 
 void LKCoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,
