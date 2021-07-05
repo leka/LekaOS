@@ -2,6 +2,11 @@
 
 namespace leka {
 
+void LKCoreSTM32Hal::HAL_RCC_GPIOA_CLK_ENABLE(void)
+{
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+}
+
 void LKCoreSTM32Hal::HAL_RCC_GPIOD_CLK_ENABLE(void)
 {
 	__HAL_RCC_GPIOD_CLK_ENABLE();
@@ -37,9 +42,20 @@ void LKCoreSTM32Hal::HAL_RCC_GPIOJ_CLK_ENABLE(void)
 	__HAL_RCC_GPIOJ_CLK_ENABLE();
 }
 
+
+void LKCoreSTM32Hal::HAL_RCC_TIM6_CLK_ENABLE(void)
+{
+	__HAL_RCC_TIM6_CLK_ENABLE();
+}
+
 void LKCoreSTM32Hal::HAL_RCC_FMC_CLK_ENABLE(void)
 {
 	__HAL_RCC_FMC_CLK_ENABLE();
+}
+
+void LKCoreSTM32Hal::HAL_RCC_DMA1_CLK_ENABLE(void)
+{
+	__HAL_RCC_DMA1_CLK_ENABLE();
 }
 
 void LKCoreSTM32Hal::HAL_RCC_DMA2_CLK_ENABLE(void)
@@ -105,6 +121,11 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTyp
 void LKCoreSTM32Hal::HAL_LINKDMA(SDRAM_HandleTypeDef *hsdram, DMA_HandleTypeDef *hdma, DMA_HandleTypeDef dma_handle)
 {
 	__HAL_LINKDMA(hsdram, hdma, dma_handle);
+}
+
+void LKCoreSTM32Hal::HAL_LINKDMA_DAC(DAC_HandleTypeDef *hdac, DMA_HandleTypeDef *DMA_Handle1, DMA_HandleTypeDef dma_handle)
+{
+	__HAL_LINKDMA(hdac, DMA_Handle1, dma_handle);
 }
 
 void LKCoreSTM32Hal::HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init)
@@ -246,5 +267,43 @@ void LKCoreSTM32Hal::HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint
 {
 	::HAL_JPEG_ConfigOutputBuffer(hjpeg, pNewOutputBuffer, OutDataLength);
 }
+
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_TIM_Base_Init(TIM_HandleTypeDef *htim)
+{
+	return ::HAL_TIM_Base_Init(htim);
+}
+
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,
+													TIM_MasterConfigTypeDef *sMasterConfig)	
+{
+	return ::HAL_TIMEx_MasterConfigSynchronization(htim,sMasterConfig);
+}
+
+
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_TIM_Base_Start(TIM_HandleTypeDef *htim)
+{
+	return ::HAL_TIM_Base_Start(htim);
+}
+
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_TIM_Base_Stop(TIM_HandleTypeDef *htim)
+{
+	return ::HAL_TIM_Base_Stop(htim);
+}
+
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_TIM_Base_DeInit(TIM_HandleTypeDef *htim)
+{
+	return ::HAL_TIM_Base_DeInit(htim);
+}
+
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_Init(DAC_HandleTypeDef *hdac)
+{
+	return ::HAL_DAC_Init(hdac);
+}
+
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_ConfigChannel(DAC_HandleTypeDef* hdac, DAC_ChannelConfTypeDef* sConfig, uint32_t Channel)
+{
+	return ::HAL_DAC_ConfigChannel(hdac,sConfig,Channel);
+}
+
 
 }	// namespace leka

@@ -15,6 +15,7 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
   public:
 	LKCoreSTM32Hal() = default;
 
+	void HAL_RCC_GPIOA_CLK_ENABLE(void) final;
 	void HAL_RCC_GPIOD_CLK_ENABLE(void) final;
 	void HAL_RCC_GPIOE_CLK_ENABLE(void) final;
 	void HAL_RCC_GPIOF_CLK_ENABLE(void) final;
@@ -23,7 +24,9 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 	void HAL_RCC_GPIOI_CLK_ENABLE(void) final;
 	void HAL_RCC_GPIOJ_CLK_ENABLE(void) final;
 
+	void HAL_RCC_TIM6_CLK_ENABLE(void) final;
 	void HAL_RCC_FMC_CLK_ENABLE(void) final;
+	void HAL_RCC_DMA1_CLK_ENABLE(void) final;
 	void HAL_RCC_DMA2_CLK_ENABLE(void) final;
 	void HAL_RCC_JPEG_CLK_ENABLE(void) final;
 	void HAL_RCC_LTDC_CLK_ENABLE(void) final;
@@ -35,9 +38,11 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 	void HAL_RCC_DSI_CLK_ENABLE(void) final;
 	void HAL_RCC_DSI_FORCE_RESET(void) final;
 	void HAL_RCC_DSI_RELEASE_RESET(void) final;
+	
 	HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef *PeriphClkInit) final;
 
 	void HAL_LINKDMA(SDRAM_HandleTypeDef *hsdram, DMA_HandleTypeDef *hdma, DMA_HandleTypeDef dma_handle) final;
+	void HAL_LINKDMA_DAC(DAC_HandleTypeDef *hdac, DMA_HandleTypeDef *DMA_Handle1, DMA_HandleTypeDef dma_handle) final;
 
 	void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init) final;
 	void HAL_GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState) final;
@@ -80,6 +85,18 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 	void HAL_JPEG_ConfigInputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewInputBuffer, uint32_t InDataLength) final;
 	void HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer,
 									 uint32_t OutDataLength) final;
+
+
+
+	HAL_StatusTypeDef HAL_TIM_Base_Init(TIM_HandleTypeDef *htim)  final;
+	HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,TIM_MasterConfigTypeDef *sMasterConfig) final;
+	HAL_StatusTypeDef HAL_TIM_Base_Start(TIM_HandleTypeDef *htim) final;
+	HAL_StatusTypeDef HAL_TIM_Base_Stop(TIM_HandleTypeDef *htim) final;
+	HAL_StatusTypeDef HAL_TIM_Base_DeInit(TIM_HandleTypeDef *htim) final;
+
+	HAL_StatusTypeDef HAL_DAC_Init(DAC_HandleTypeDef *hdac) final;
+	HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef* hdac, DAC_ChannelConfTypeDef* sConfig, uint32_t Channel) final;
+
 };
 
 }	// namespace leka
