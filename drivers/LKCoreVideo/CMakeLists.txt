@@ -20,6 +20,7 @@ target_sources(LKCoreVideo
 	source/LKCoreLTDC.cpp
 	source/LKCoreDSI.cpp
 	source/LKCoreJPEG.cpp
+	source/LKCoreJPEGMode.cpp
 	source/LKCoreLCD.cpp
 	source/LKCoreLTDC.cpp
 	source/LKCoreLCDDriverOTM8009A.cpp
