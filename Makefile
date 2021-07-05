@@ -69,8 +69,6 @@ all:
 	@echo ""
 	@echo "🏗️  Building everything! 🌈"
 	cmake --build $(TARGET_BUILD_DIR)
-	@rm -rf $(ROOT_DIR)/compile_commands.json
-	@cp $(TARGET_BUILD_DIR)/compile_commands.json ./
 
 os:
 	@echo ""
@@ -126,6 +124,7 @@ config_tools_build: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
 	@cmake -S . -B $(CMAKE_TOOLS_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_TOOLS_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=Debug -DENABLE_CODE_ANALYSIS=$(ENABLE_CODE_ANALYSIS)
+	@ln -sf $(CMAKE_TOOLS_BUILD_DIR)/compile_commands.json ./
 
 #
 # MARK: - Tests targets
@@ -189,7 +188,7 @@ build_unit_tests:
 run_unit_tests:
 	@echo ""
 	@echo "🏃‍♂️ Running unit tests 🧪"
-	@$(UNIT_TESTS_BUILD_DIR)/LekaOSUnitTestsExec --gtest_output=xml:$(UNIT_TESTS_COVERAGE_DIR)/google_test_detail.xml
+	@$(UNIT_TESTS_BUILD_DIR)/LekaOSUnitTestsExec --gtest_color=yes --gtest_output=xml:$(UNIT_TESTS_COVERAGE_DIR)/google_test_detail.xml
 
 config_unit_tests: mkdir_build_unit_tests
 	@echo ""
@@ -217,6 +216,22 @@ clang_format_fix:
 	@echo ""
 	@echo "🏃‍♂️ Running clang-format & fixing files 🎨"
 	python3 tools/run-clang-format.py -r --extension=h,c,cpp --color=always --style=file . -i
+
+clang_tidy_diff:
+	@echo ""
+	@echo "🏃‍♂️ Running clang-tidy on modified files 🧹"
+	@echo ""
+	@git diff --name-only develop | grep -E "\.h\$$|\.cpp\$$"
+	@echo ""
+	@git diff --name-only develop | grep -E "\.h\$$|\.cpp\$$" | xargs /usr/local/opt/llvm/bin/clang-tidy -p=. --quiet
+
+clang_tidy_diff_fix:
+	@echo ""
+	@echo "🏃‍♂️ Running clang-tidy on modified files 🧹"
+	@echo ""
+	@git diff --name-only develop | grep -E "\.h\$$|\.cpp\$$"
+	@echo ""
+	@git diff --name-only develop | grep -E "\.h\$$|\.cpp\$$" | xargs /usr/local/opt/llvm/bin/clang-tidy -p=. --quiet --fix --fix-errors
 
 code_analysis: mkdir_build
 	@echo ""
@@ -276,6 +291,7 @@ rm_build_all:
 	@echo "⚠️  Cleaning up all build directories 🧹"
 	rm -rf $(PROJECT_BUILD_DIR)
 	rm -rf $(CMAKE_TOOLS_BUILD_DIR)
+	rm -rf ./compile_commands.json
 
 rm_config:
 	@echo ""

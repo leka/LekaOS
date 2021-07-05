@@ -2,34 +2,35 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "mbed.h"
+#include "drivers/BufferedSerial.h"
+#include "rtos/Kernel.h"
+#include "rtos/ThisThread.h"
+#include "rtos/Thread.h"
 
 #include "HelloWorld.h"
+#include "LogKit.h"
 
 using namespace leka;
+using namespace std::chrono;
 
-HelloWorld hello;
-
-static BufferedSerial serial(USBTX, USBRX, 9600);
-
-constexpr uint8_t buff_size = 128;
-char buff[buff_size] {};
-
-int main(void)
+auto main() -> int
 {
-	auto start = Kernel::Clock::now();
+	static auto serial = mbed::BufferedSerial(USBTX, USBRX);
+	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 
-	printf("\nHello, Investigation Day!\n\n");
+	rtos::ThisThread::sleep_for(1s);
+
+	log_info("\n\n");
+	log_info("Hello, LekaOS!\n");
 
 	rtos::ThisThread::sleep_for(2s);
 
+	auto hello = HelloWorld();
 	hello.start();
 
 	while (true) {
-		auto t	   = Kernel::Clock::now() - start;
-		int length = sprintf(buff, "A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME,
-							 hello.world, int(t.count() / 1000));
-		serial.write(buff, length);
+		log_debug("A message from your board %s --> \"%s\" at %ims", MBED_CONF_APP_TARGET_NAME, hello.world,
+				  int(rtos::Kernel::Clock::now().time_since_epoch().count()));
 		rtos::ThisThread::sleep_for(1s);
 	}
 }

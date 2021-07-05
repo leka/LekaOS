@@ -1,7 +1,8 @@
 {
 	"files.associations": {
-		"*.orig": "cpp",
 		".clang-format": "yaml",
+		".clang-tidy": "yaml",
+		"*.orig": "cpp",
 		"any": "cpp",
 		"array": "cpp",
 		"atomic": "cpp",
@@ -96,6 +97,7 @@
 		"--log=verbose",
 		"--completion-style=detailed",
 		"--clang-tidy",
-		"--clang-tidy-checks=-*,modernize*"
+		"--header-insertion=never",
+		"--suggest-missing-includes"
 	]
 }

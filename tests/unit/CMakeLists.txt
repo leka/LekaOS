@@ -36,8 +36,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Colored output for compilation
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+	message(STATUS "GCC found! Adding -fdiagnostics-color=always compile option")
 	add_compile_options("-fdiagnostics-color=always")
-elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "^(Apple)?Clang$")
+elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+	message(STATUS "Clang found! Adding -fcolor-diagnostics compile option")
 	add_compile_options("-fcolor-diagnostics")
 endif()
 
