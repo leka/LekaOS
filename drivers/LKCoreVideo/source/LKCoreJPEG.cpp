@@ -69,6 +69,11 @@ void LKCoreJPEG::registerCallbacks()
 							  [](JPEG_HandleTypeDef *hjpeg) { self->_mode->onMspInitCallback(hjpeg); });
 }
 
+auto LKCoreJPEG::decodeImage(LKCoreFatFsBase &file) -> std::uint32_t
+{
+	return _mode->decodeImage(&_hjpeg, file.getPointer());
+}
+
 auto LKCoreJPEG::getWidthOffset(JPEG_ConfTypeDef &config) -> uint32_t
 {
 	uint32_t width_offset = 0;
@@ -97,9 +102,32 @@ auto LKCoreJPEG::getWidthOffset(JPEG_ConfTypeDef &config) -> uint32_t
 	return width_offset;
 }
 
-auto LKCoreJPEG::decodeImage(LKCoreFatFsBase &file) -> std::uint32_t
+auto LKCoreJPEG::findFrameOffset(LKCoreFatFsBase &file, uint32_t offset) -> uint32_t
 {
-	return _mode->decodeImage(&_hjpeg, file.getPointer());
+	static std::array<uint8_t, 512> pattern_search_buffer;
+
+	uint32_t index	   = offset;
+	uint32_t read_size = 0;
+
+	do {
+		if (file.getSize() <= (index + 1)) {
+			return 0;
+		}
+		file.seek(index);
+		file.read(pattern_search_buffer.data(), pattern_search_buffer.size(), &read_size);
+
+		if (read_size != 0) {
+			for (uint32_t i = 0; i < (read_size - 1); i++) {
+				if ((pattern_search_buffer[i] == jpeg::JPEG_SOI_MARKER_BYTE1) &&
+					(pattern_search_buffer[i + 1] == jpeg::JPEG_SOI_MARKER_BYTE0)) {
+					return index + i;
+				}
+			}
+			index += (read_size - 1);
+		}
+	} while (read_size != 0);
+
+	return 0;
 }
 
 }	// namespace leka

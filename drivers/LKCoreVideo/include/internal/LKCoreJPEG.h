@@ -29,7 +29,9 @@ class LKCoreJPEG : public LKCoreJPEGBase
 	void registerCallbacks() final;
 
 	auto decodeImage(LKCoreFatFsBase &file) -> uint32_t final;
+
 	static auto getWidthOffset(JPEG_ConfTypeDef &config) -> uint32_t;
+	static auto findFrameOffset(LKCoreFatFsBase &file, uint32_t offset) -> uint32_t;
 
   private:
 	LKCoreSTM32HalBase &_hal;

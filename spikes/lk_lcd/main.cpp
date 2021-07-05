@@ -48,7 +48,20 @@ LKCoreLCD corelcd(coreotm);
 LKCoreJPEG corejpeg(hal, std::make_unique<LKCoreJPEGDMAMode>());
 LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
-std::vector<const char*> images = {"assets/images/Leka/logo.jpg", "assets/images/Leka/emotion-happy.jpg"};
+std::vector<const char *> images = {"assets/images/Leka/logo.jpg", "assets/images/Leka/emotion-happy.jpg"};
+
+std::vector<const char *> videos = {
+	//"assets/video/20fps.avi",
+	"assets/video/20fps_low10.avi",
+	//"assets/video/20fps_low15.avi",
+	"assets/video/20fps_s700.avi",
+	//"assets/video/20fps_s600.avi",
+	//"assets/video/20fps_s500.avi",
+	//"assets/video/20fps_s400.avi",
+	//"assets/video/20fps_s300.avi",
+	//"assets/video/20fps_s200.avi",
+	//"assets/video/20fps_s100.avi"
+};
 
 extern "C" {
 void JPEG_IRQHandler(void)
@@ -129,6 +142,14 @@ auto main() -> int
 			if (file.open(image_name) == FR_OK) {
 				corevideo.displayImage(file);
 				corevideo.turnOn();
+				file.close();
+				rtos::ThisThread::sleep_for(2s);
+			}
+		}
+
+		for (const auto &video_name: videos) {
+			if (file.open(video_name) == FR_OK) {
+				corevideo.displayVideo(file);
 				file.close();
 				rtos::ThisThread::sleep_for(2s);
 			}

@@ -26,7 +26,7 @@ class LKCoreVideo
 				LKCoreLTDCBase &coreltdc, LKCoreLCDBase &corelcd, LKCoreGraphicsBase &coregraphics,
 				LKCoreFontBase &corefont, LKCoreJPEGBase &corejpeg);
 
-	void initialize(void);
+	void initialize();
 
 	void turnOff();
 	void turnOn();
@@ -36,6 +36,7 @@ class LKCoreVideo
 	void clearScreen(CGColor color = CGColor::white);
 	void displayRectangle(LKCoreGraphicsBase::FilledRectangle rectangle, CGColor color);
 	void displayImage(LKCoreFatFs &file);
+	void displayVideo(LKCoreFatFs &file);
 	void displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
 					 CGColor background = CGColor::white);
 

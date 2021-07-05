@@ -61,8 +61,9 @@ namespace jpeg {
 	constexpr uint8_t JPEG_RGB_FORMAT = JPEG_ARGB8888;	 // Select RGB format: ARGB8888, RGB888, RBG565
 	constexpr uint8_t JPEG_SWAP_RB	  = 0;				 // Change color order to BGR
 
-	constexpr uint32_t input_data_buffer_size  = 4096;
-	constexpr uint32_t output_data_buffer_size = 768;
+	constexpr uint16_t JPEG_SOI_MARKER		 = 0xFFD8;	 // JPEG Start of Image marker
+	constexpr uint16_t JPEG_SOI_MARKER_BYTE0 = (JPEG_SOI_MARKER & 0xFF);
+	constexpr uint16_t JPEG_SOI_MARKER_BYTE1 = ((JPEG_SOI_MARKER >> 8) & 0xFF);
 
 }	// namespace jpeg
 

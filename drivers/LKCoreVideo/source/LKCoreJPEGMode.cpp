@@ -25,14 +25,14 @@ void LKCoreJPEGMode::onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTyp
 	}
 
 	if (JPEG_GetDecodeColorConvertFunc(info, &pConvert_Function, &_mcu_number) != HAL_OK) {
-		while (1)
+		while (true)
 			;
 	}
 }
 
 void LKCoreJPEGMode::onErrorCallback(JPEG_HandleTypeDef *hjpeg)
 {
-	while (1)
+	while (true)
 		;
 }
 
@@ -98,8 +98,8 @@ void LKCoreJPEGDMAMode::onMspInitCallback(JPEG_HandleTypeDef *hjpeg)
 
 auto LKCoreJPEGDMAMode::decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint32_t
 {
-	static uint8_t BIG_CHUNGUS_OF_MEMORY_IN[jpeg::chunk_size_in * jpeg::in_buffers_nb];
-	static uint8_t BIG_CHUNGUS_OF_MEMORY_OUT[jpeg::chunk_size_out * jpeg::out_buffers_nb];
+	static std::array<uint8_t, jpeg::chunk_size_in * jpeg::in_buffers_nb> BIG_CHUNGUS_OF_MEMORY_IN;
+	static std::array<uint8_t, jpeg::chunk_size_out * jpeg::out_buffers_nb> BIG_CHUNGUS_OF_MEMORY_OUT;
 
 	previous_image_size = 0;
 
@@ -120,14 +120,14 @@ auto LKCoreJPEGDMAMode::decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uin
 	for (auto &buffer: _in_buffers) {
 		buffer.state	= Buffer::State::Empty;
 		buffer.datasize = 0;
-		buffer.data		= BIG_CHUNGUS_OF_MEMORY_IN + i * jpeg::chunk_size_in;
+		buffer.data		= BIG_CHUNGUS_OF_MEMORY_IN.data() + i * jpeg::chunk_size_in;
 		i += 1;
 	}
 	i = 0;
 	for (auto &buffer: _out_buffers) {
 		buffer.state	= Buffer::State::Empty;
 		buffer.datasize = 0;
-		buffer.data		= BIG_CHUNGUS_OF_MEMORY_OUT + i * jpeg::chunk_size_out;
+		buffer.data		= BIG_CHUNGUS_OF_MEMORY_OUT.data() + i * jpeg::chunk_size_out;
 		i += 1;
 	}
 
@@ -138,8 +138,8 @@ auto LKCoreJPEGDMAMode::decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uin
 	}
 
 	// start JPEG decoding with DMA method
-	HAL_JPEG_Decode_DMA(hjpeg, _in_buffers[0].data, _in_buffers[0].datasize,
-							   _out_buffers[0].data, jpeg::chunk_size_out);
+	HAL_JPEG_Decode_DMA(hjpeg, _in_buffers[0].data, _in_buffers[0].datasize, _out_buffers[0].data,
+						jpeg::chunk_size_out);
 
 	// loop until decode process ends
 	bool process_ended = false;
@@ -153,7 +153,7 @@ auto LKCoreJPEGDMAMode::decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uin
 		start		  = HAL_GetTick();
 		process_ended = decoderOutputHandler(hjpeg);
 		out_time += HAL_GetTick() - start;
-	} while (process_ended == false);
+	} while (!process_ended);
 
 	return previous_image_size;
 }
@@ -208,7 +208,7 @@ void LKCoreJPEGDMAMode::decoderInputHandler(JPEG_HandleTypeDef *hjpeg, FIL *file
 		if (f_read(file, write_buffer.data, jpeg::chunk_size_in, &write_buffer.datasize) == FR_OK)
 			write_buffer.state = Buffer::State::Full;
 		else
-			while (1)
+			while (true)
 				;
 
 		if (_in_paused && _in_write_index == _in_read_index) {
@@ -221,7 +221,7 @@ void LKCoreJPEGDMAMode::decoderInputHandler(JPEG_HandleTypeDef *hjpeg, FIL *file
 	}
 }
 
-bool LKCoreJPEGDMAMode::decoderOutputHandler(JPEG_HandleTypeDef *hjpeg)
+auto LKCoreJPEGDMAMode::decoderOutputHandler(JPEG_HandleTypeDef *hjpeg) -> bool
 {
 	uint32_t converted_data_count;
 	auto &read_buffer  = _out_buffers[_out_read_index];

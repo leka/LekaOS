@@ -53,7 +53,7 @@ struct LKCoreJPEGDMAMode : LKCoreJPEGMode {
 
   private:
 	void decoderInputHandler(JPEG_HandleTypeDef *hjpeg, FIL *file);
-	bool decoderOutputHandler(JPEG_HandleTypeDef *hjpeg);
+	auto decoderOutputHandler(JPEG_HandleTypeDef *hjpeg) -> bool;
 
 	struct Buffer {
 		enum State
@@ -74,11 +74,11 @@ struct LKCoreJPEGDMAMode : LKCoreJPEGMode {
 
 	uint32_t _out_read_index  = 0;
 	uint32_t _out_write_index = 0;
-	bool _out_paused		  = 0;
+	bool _out_paused		  = false;
 
 	uint32_t _in_read_index	 = 0;
 	uint32_t _in_write_index = 0;
-	bool _in_paused			 = 0;
+	bool _in_paused			 = false;
 };
 
 }	// namespace leka
