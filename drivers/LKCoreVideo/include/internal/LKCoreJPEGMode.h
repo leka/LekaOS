@@ -4,13 +4,11 @@
 #include <array>
 #include <cstdint>
 
-#include "corevideo_config.h"
 #include "LKCoreFatFsBase.h"
 #include "LKCoreSTM32HalBase.h"
-
+#include "corevideo_config.h"
 #include "st_jpeg_utils.h"
 #include "stm32f7xx_hal_jpeg.h"
-
 
 namespace leka {
 
@@ -38,6 +36,7 @@ struct LKCoreJPEGMode {
 
   protected:
 	LKCoreJPEGMode() = default;
+
 	uint32_t _mcu_number	  = 0;
 	uint32_t _mcu_block_index = 0;
 	bool _hw_decode_ended	  = false;
@@ -82,6 +81,6 @@ struct LKCoreJPEGDMAMode : LKCoreJPEGMode {
 	bool _in_paused			 = 0;
 };
 
-}
+}	// namespace leka
 
 #endif	 //_LEKA_OS_DRIVER_JPEGMODE_H_

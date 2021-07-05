@@ -6,7 +6,6 @@
 #define _LEKA_OS_DRIVER_JPEG_BASE_H_
 
 #include "LKCoreFatFsBase.h"
-
 #include "stm32f7xx_hal.h"
 #include "stm32f7xx_hal_jpeg.h"
 

@@ -1,6 +1,5 @@
 #include "LKCoreJPEGMode.h"
 
-
 namespace leka {
 
 //------------------ Default Callbacks ------------------------
@@ -41,7 +40,6 @@ void LKCoreJPEGMode::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
 {
 	_hw_decode_ended = true;
 }
-
 
 //------------------ DMA Mode ------------------------
 void LKCoreJPEGDMAMode::onMspInitCallback(JPEG_HandleTypeDef *hjpeg)
@@ -245,4 +243,4 @@ bool LKCoreJPEGDMAMode::decoderOutputHandler(JPEG_HandleTypeDef *hjpeg)
 	return _mcu_block_index == _mcu_number;
 }
 
-}
+}	// namespace leka
