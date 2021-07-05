@@ -2,6 +2,7 @@
 ---
 HeaderFilterRegex: ""
 UseColor: true
+FormatStyle: file
 
 Checks: " \
   -* \
