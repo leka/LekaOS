@@ -41,7 +41,7 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 	
 	HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef *PeriphClkInit) final;
 
-	void HAL_LINKDMA(SDRAM_HandleTypeDef *hsdram, DMA_HandleTypeDef *hdma, DMA_HandleTypeDef dma_handle) final;
+	void HAL_LINKDMA_SDRAM(SDRAM_HandleTypeDef *hsdram, DMA_HandleTypeDef *hdma, DMA_HandleTypeDef dma_handle) final;
 	void HAL_LINKDMA_DAC(DAC_HandleTypeDef *hdac, DMA_HandleTypeDef *DMA_Handle1, DMA_HandleTypeDef dma_handle) final;
 
 	void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init) final;

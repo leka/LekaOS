@@ -40,7 +40,7 @@ class LKCoreSTM32HalBase
 	virtual void HAL_RCC_DSI_RELEASE_RESET(void)												 = 0;
 	virtual HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef *PeriphClkInit) = 0;
 
-	virtual void HAL_LINKDMA(SDRAM_HandleTypeDef *hsdram, DMA_HandleTypeDef *hdma, DMA_HandleTypeDef dma_handle) = 0;
+	virtual void HAL_LINKDMA_SDRAM(SDRAM_HandleTypeDef *hsdram, DMA_HandleTypeDef *hdma, DMA_HandleTypeDef dma_handle) = 0;
 	virtual void HAL_LINKDMA_DAC(DAC_HandleTypeDef *hdac, DMA_HandleTypeDef *DMA_Handle1, DMA_HandleTypeDef dma_handle) = 0;
 
 	virtual void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init)				   = 0;

@@ -118,7 +118,7 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTyp
 	return ::HAL_RCCEx_PeriphCLKConfig(PeriphClkInit);
 }
 
-void LKCoreSTM32Hal::HAL_LINKDMA(SDRAM_HandleTypeDef *hsdram, DMA_HandleTypeDef *hdma, DMA_HandleTypeDef dma_handle)
+void LKCoreSTM32Hal::HAL_LINKDMA_SDRAM(SDRAM_HandleTypeDef *hsdram, DMA_HandleTypeDef *hdma, DMA_HandleTypeDef dma_handle)
 {
 	__HAL_LINKDMA(hsdram, hdma, dma_handle);
 }
