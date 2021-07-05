@@ -49,7 +49,10 @@ namespace jpeg {
 
 	constexpr uintptr_t decoded_buffer_address = 0xC0200000;
 
-	constexpr uint32_t input_data_buffer_size = 4096;
+	constexpr uint32_t chunk_size_in	= 2048;
+	constexpr uint32_t chunk_size_out	= 768 * 4;
+	constexpr uint32_t in_buffers_nb	= 1;
+	constexpr uint32_t out_buffers_nb	= 4;
 
 	constexpr uint8_t JPEG_ARGB8888 = 0;   // ARGB8888 Color Format
 	constexpr uint8_t JPEG_RGB888	= 1;   // RGB888 Color Format
@@ -58,11 +61,8 @@ namespace jpeg {
 	constexpr uint8_t JPEG_RGB_FORMAT = JPEG_ARGB8888;	 // Select RGB format: ARGB8888, RGB888, RBG565
 	constexpr uint8_t JPEG_SWAP_RB	  = 0;				 // Change color order to BGR
 
-	namespace mcu {
-
-		constexpr uint32_t output_data_buffer_size = 768;
-
-	}	// namespace mcu
+	constexpr uint32_t input_data_buffer_size = 4096;
+	constexpr uint32_t output_data_buffer_size = 768;
 
 }	// namespace jpeg
 

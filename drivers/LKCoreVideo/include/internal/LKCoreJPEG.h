@@ -6,10 +6,11 @@
 #define _LEKA_OS_DRIVER_JPEG_H_
 
 #include <cstdint>
+#include <memory>
 
-#include "LKCoreDMA2DBase.h"
 #include "LKCoreFatFsBase.h"
 #include "LKCoreJPEGBase.h"
+#include "LKCoreJPEGMode.h"
 #include "LKCoreSTM32HalBase.h"
 #include "st_jpeg_utils.h"
 
@@ -18,50 +19,25 @@ namespace leka {
 class LKCoreJPEG : public LKCoreJPEGBase
 {
   public:
-	LKCoreJPEG(LKCoreSTM32HalBase &hal, LKCoreDMA2DBase &dma2d, LKCoreFatFsBase &file);
+	LKCoreJPEG(LKCoreSTM32HalBase &hal, std::unique_ptr<LKCoreJPEGMode> mode);
 
-	void initialize(void) final;
+	void initialize() final;
 
-	JPEG_ConfTypeDef getConfig(void) final;
-	JPEG_HandleTypeDef getHandle(void) final;
-	JPEG_HandleTypeDef *getHandlePointer(void) final;
+	auto getHandle() -> JPEG_HandleTypeDef & final;
+	auto getConfig() -> JPEG_ConfTypeDef & final;
 
-	uint32_t getWidthOffset(void) final;
+	void registerCallbacks() final;
 
-	void displayImage(FIL *file) final;
-	HAL_StatusTypeDef decodeImageWithPolling(
-		void) final;   // TODO: Update Return type with something else than HAL status
-
-	void onErrorCallback(JPEG_HandleTypeDef *hjpeg) final;
-	void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) final;
-
-	void onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) final;
-	void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) final;
-
-	void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) final;
+	auto decodeImage(LKCoreFatFsBase &file) -> uint32_t final;
+	auto getWidthOffset() -> uint32_t final;
 
   private:
-	struct JPEGDataBuffer {
-		uint8_t *data;
-		uint32_t size;
-	};
+	LKCoreSTM32HalBase &_hal;
 
-	uint8_t _mcu_data_output_buffer[leka::jpeg::mcu::output_data_buffer_size] {0};
-	uint8_t _jpeg_data_output_buffer[leka::jpeg::input_data_buffer_size] {0};
-
-	JPEGDataBuffer _jpeg_input_buffer = {_jpeg_data_output_buffer, 0};	 // TODO: do we really need this struct?
+	std::unique_ptr<LKCoreJPEGMode> _mode;
 
 	JPEG_HandleTypeDef _hjpeg;
 	JPEG_ConfTypeDef _config;
-	LKCoreSTM32HalBase &_hal;
-	LKCoreDMA2DBase &_dma2d;
-	LKCoreFatFsBase &_file;
-
-	JPEG_YCbCrToRGB_Convert_Function pConvert_Function;
-
-	uint32_t _mcu_number		= 0;
-	uint32_t _mcu_block_index	= 0;
-	uint32_t _input_file_offset = 0;
 };
 
 }	// namespace leka

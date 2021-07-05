@@ -100,7 +100,7 @@ void LKCoreVideo::displayRectangle(LKCoreGraphicsBase::FilledRectangle rectangle
 
 void LKCoreVideo::displayImage(FIL *file)
 {
-	_corejpeg.displayImage(file);
+	// TODO : implement
 }
 
 void LKCoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,

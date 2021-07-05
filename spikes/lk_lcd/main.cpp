@@ -45,33 +45,11 @@ LKCoreGraphics coregraphics(coredma2d);
 LKCoreFont corefont(pixel);
 LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 LKCoreLCD corelcd(coreotm);
-LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
+LKCoreJPEG corejpeg(hal, std::make_unique<LKCoreJPEGDMAMode>());
 LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 const auto filename1 = std::array<char, 32> {"assets/images/Leka/logo.jpg"};
 const auto filename2 = std::array<char, 38> {"assets/images/Leka/emotion-happy.jpg"};
-
-void registerCallbacks()
-{
-	HAL_JPEG_RegisterInfoReadyCallback(
-		corejpeg.getHandlePointer(),
-		[](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) { corejpeg.onInfoReadyCallback(hjpeg, info); });
-
-	HAL_JPEG_RegisterGetDataCallback(corejpeg.getHandlePointer(), [](JPEG_HandleTypeDef *hjpeg, uint32_t size) {
-		corejpeg.onDataAvailableCallback(hjpeg, size);
-	});
-
-	HAL_JPEG_RegisterDataReadyCallback(corejpeg.getHandlePointer(),
-									   [](JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t size) {
-										   corejpeg.onDataReadyCallback(hjpeg, pDataOut, size);
-									   });
-
-	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_DECODE_CPLT_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { corejpeg.onDecodeCompleteCallback(hjpeg); });
-
-	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_ERROR_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { corejpeg.onErrorCallback(hjpeg); });
-}
 
 void initializeSD()
 {
@@ -93,7 +71,6 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(2s);
 
 	corevideo.initialize();
-	registerCallbacks();
 
 	initializeSD();
 
