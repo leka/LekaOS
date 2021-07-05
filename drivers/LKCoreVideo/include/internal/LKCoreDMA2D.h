@@ -16,12 +16,12 @@ class LKCoreDMA2D : public LKCoreDMA2DBase
 
 	void initialize() final;
 
+	auto getHandle() -> DMA2D_HandleTypeDef & final;
+
 	void transferData(uintptr_t input_data_address, uintptr_t output_data_address, uint32_t width,
 					  uint32_t height) final;
 	void transferImage(uint32_t width, uint32_t height, uint32_t width_offset) final;
 	void transferDrawing(uintptr_t first_pixel_address, uint32_t width, uint32_t height, uint32_t color) final;
-
-	DMA2D_HandleTypeDef getHandle(void) final;
 
   private:
 	DMA2D_HandleTypeDef _hdma2d;
