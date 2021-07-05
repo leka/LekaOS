@@ -329,4 +329,7 @@ jobs:
           echo ${{ steps.modified_files.outputs.added }}           \
                ${{ steps.modified_files.outputs.modified }}        \
                ${{ steps.modified_files.outputs.added_modified }}  \
-          | xargs -n1 | grep -E '\.h$|\.cpp$' | xargs --no-run-if-empty clang-tidy-12 -p=. --quiet
+               | xargs -n1 \
+               | grep -E -v "_test" \
+               | grep -E    "\.h$|\.cpp$" \
+               | xargs --no-run-if-empty clang-tidy-12 -p=. --quiet

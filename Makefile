@@ -222,10 +222,10 @@ clang_tidy_diff:
 	@echo "🏃‍♂️ Running clang-tidy on modified files 🧹"
 	@echo ""
 	@git diff --name-status develop \
-		| grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$"
+		| grep -E -v "_test" | grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$"
 	@echo ""
 	@git diff --name-status develop \
-		| grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$" \
+		| grep -E -v "_test" | grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$" \
 		| xargs /usr/local/opt/llvm/bin/clang-tidy -p=. --quiet
 
 clang_tidy_diff_fix:
@@ -233,10 +233,10 @@ clang_tidy_diff_fix:
 	@echo "🏃‍♂️ Running clang-tidy on modified files 🧹"
 	@echo ""
 	@git diff --name-status develop \
-		| grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$"
+		| grep -E -v "_test" | grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$"
 	@echo ""
 	@git diff --name-status develop \
-		| grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$" \
+		| grep -E -v "_test" | grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$" \
 		| xargs /usr/local/opt/llvm/bin/clang-tidy -p=. --quiet --fix --fix-errors
 
 code_analysis: mkdir_build
