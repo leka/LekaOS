@@ -43,7 +43,7 @@ auto main() -> int
 	auto battery_thread = rtos::Thread {};
 	auto battery_lambda = [&battery] {
 		auto now	 = [] { return static_cast<int>(rtos::Kernel::Clock::now().time_since_epoch().count()); };
-		auto voltage = [&] { return battery.readVoltage(); };
+		auto voltage = [&] { return battery.getVoltage(); };
 
 		auto buffer = std::array<char, 64> {};
 

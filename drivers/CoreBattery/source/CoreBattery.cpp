@@ -6,9 +6,16 @@
 
 namespace leka {
 
-float CoreBattery::readVoltage(void)
+auto CoreBattery::getVoltage() -> float
 {
-	return _pin.read();
+	auto raw	 = readRawVoltage();
+	auto voltage = raw / voltage::divider;
+	return voltage;
+}
+
+auto CoreBattery::readRawVoltage() -> float
+{
+	return _pin.read_voltage();
 }
 
 }	// namespace leka

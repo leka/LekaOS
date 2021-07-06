@@ -1,5 +1,5 @@
 // Leka - LekaOS
-// Copyright 2021 APF France handicap
+// Copyright 2021 APF rance handicap
 // SPDX-License-Identifier: Apache-2.0
 
 #include "CoreBattery.h"
@@ -11,34 +11,37 @@ using namespace leka;
 
 CoreBattery corebattery(PinName::BATTERY_VOLTAGE);
 
-float test_set_Voltage(float value)
-{
-	spy_AnalogIn_setValue(value);
-	return value;
-}
-
 TEST(CoreBatteryTest, initialization)
 {
 	ASSERT_NE(&corebattery, nullptr);
 }
 
-TEST(CoreBatteryTest, readMinVoltage)
+TEST(CoreBatteryTest, getVoltage)
 {
-	auto expected = test_set_Voltage(0.0f);
+	auto AnalogIn_read_voltage_value = float {1.2};
+	spy_AnalogIn_setVoltageValue(AnalogIn_read_voltage_value);
 
-	ASSERT_EQ(expected, corebattery.readVoltage());
+	auto expected = AnalogIn_read_voltage_value / CoreBattery::voltage::divider;
+
+	ASSERT_FLOAT_EQ(expected, corebattery.getVoltage());
 }
 
-TEST(CoreBatteryTest, readMiddleVoltage)
+TEST(CoreBatteryTest, getVoltageLowest)
 {
-	auto expected = test_set_Voltage(0.25f);
+	auto AnalogIn_read_voltage_value = float {0};
+	spy_AnalogIn_setVoltageValue(AnalogIn_read_voltage_value);
 
-	ASSERT_EQ(expected, corebattery.readVoltage());
+	auto expected = AnalogIn_read_voltage_value / CoreBattery::voltage::divider;
+
+	ASSERT_FLOAT_EQ(expected, corebattery.getVoltage());
 }
 
-TEST(CoreBatteryTest, readMaxVoltage)
+TEST(CoreBatteryTest, getVoltageHighest)
 {
-	auto expected = test_set_Voltage(1.0f);
+	auto AnalogIn_read_voltage_value = float {1.65};
+	spy_AnalogIn_setVoltageValue(AnalogIn_read_voltage_value);
 
-	ASSERT_EQ(expected, corebattery.readVoltage());
+	auto expected = AnalogIn_read_voltage_value / CoreBattery::voltage::divider;
+
+	ASSERT_FLOAT_EQ(expected, corebattery.getVoltage());
 }
