@@ -8,7 +8,7 @@
 #include "LKCoreSTM32HalBase.h"
 
 
-//TODO Add final specifiers 
+//TODO : Add final specifiers 
 
 namespace leka {
 

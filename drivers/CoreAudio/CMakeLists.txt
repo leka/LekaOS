@@ -15,6 +15,8 @@ target_sources(CoreAudio
 		source/CoreAudio.cpp
 		source/CoreDACTimer.cpp
 		source/CoreDAC.cpp
+		source/WavFile.cpp
+		source/WavReader.cpp
 )
 
 target_link_libraries(CoreAudio
