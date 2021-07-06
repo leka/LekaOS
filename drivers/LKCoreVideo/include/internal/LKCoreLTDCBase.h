@@ -12,6 +12,8 @@ class LKCoreLTDCBase
   public:
 	virtual ~LKCoreLTDCBase()	  = default;
 	virtual void initialize(void) = 0;
+	virtual LTDC_HandleTypeDef& getHandle();
+
 };
 
 }	// namespace leka

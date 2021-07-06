@@ -133,6 +133,7 @@ auto LKCoreJPEGDMAMode::decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uin
 
 	// read file and fill input buffers
 	for (auto &buffer: _in_buffers) {
+		// TODO : (@ladislas) change FIL*
 		if (f_read(file, buffer.data, jpeg::chunk_size_in, &buffer.datasize) == FR_OK)
 			buffer.state = Buffer::State::Full;
 	}
