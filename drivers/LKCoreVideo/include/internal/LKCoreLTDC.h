@@ -18,7 +18,7 @@ class LKCoreLTDC : public LKCoreLTDCBase
 
 	void initialize(void) final;
 
-	LTDC_HandleTypeDef getHandle(void) const;
+	LTDC_HandleTypeDef& getHandle() final;
 	LTDC_LayerCfgTypeDef getLayerConfig(void) const;
 
   private:

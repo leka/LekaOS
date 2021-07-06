@@ -18,16 +18,26 @@ class LKCoreDSI : public LKCoreDSIBase
 	void initialize() final;
 	void start() final;
 	void reset() final;
+	void refresh() final;
 
-	DSI_HandleTypeDef getHandle() const;
-	DSI_VidCfgTypeDef getConfig() final;
+	auto getSyncProps() -> SyncProps final;
+
+	void enableLPCmd() final;
+	void disableLPCmd() final;
+
+	void enableTearingEffectReporting() final;
+
+	auto getHandle() -> DSI_HandleTypeDef & final;
 
 	void write(const uint8_t *data, const uint32_t size) final;
 
   private:
 	LKCoreSTM32HalBase &_hal;
 	DSI_HandleTypeDef _hdsi;
-	DSI_VidCfgTypeDef _config;
+	DSI_CmdCfgTypeDef _cmdconf;
+	DSI_LPCmdTypeDef _lpcmd;
+
+	int _screen_sections = 1;
 };
 
 }	// namespace leka
