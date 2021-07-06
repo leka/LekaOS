@@ -5,7 +5,7 @@
 			"type": "cortex-debug",
 			"request": "launch",
 			"cwd": "${workspaceRoot}",
-			"executable": "${command:cmake.launchTargetPath}",
+			"executable": "_build/LEKA_V1_2_DEV/spikes/lk_haptic_actuator/spike_lk_haptic_actuator.elf",
 			"servertype": "openocd",
 			"configFiles": [
 				"interface/stlink.cfg",
