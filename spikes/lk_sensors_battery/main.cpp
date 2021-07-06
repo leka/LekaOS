@@ -11,10 +11,10 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
+#include "CoreBattery.h"
 #include "CoreMotor.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
-#include "LKCoreBattery.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 #include "Utils.h"
@@ -38,12 +38,12 @@ auto main() -> int
 	HelloWorld hello;
 	hello.start();
 
-	auto battery = LKCoreBattery {PinName::BATTERY_VOLTAGE};
+	auto battery = CoreBattery {PinName::BATTERY_VOLTAGE};
 
 	auto battery_thread = rtos::Thread {};
 	auto battery_lambda = [&battery] {
 		auto now	 = [] { return static_cast<int>(rtos::Kernel::Clock::now().time_since_epoch().count()); };
-		auto voltage = [&] { return battery.readVoltage(); };
+		auto voltage = [&] { return battery.getVoltage(); };
 
 		auto buffer = std::array<char, 64> {};
 
