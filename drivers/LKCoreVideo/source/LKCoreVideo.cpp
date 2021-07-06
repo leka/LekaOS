@@ -2,11 +2,14 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#include <chrono>
 #include "LKCoreVideo.h"
 
 #include "LogKit.h"
+#include "rtos/ThisThread.h"
 
-namespace leka {
+using namespace std::chrono;
+using namespace leka;
 
 LKCoreVideo::LKCoreVideo(LKCoreSTM32HalBase &hal, LKCoreSDRAMBase &coresdram, LKCoreDMA2DBase &coredma2d,
 						 LKCoreDSIBase &coredsi, LKCoreLTDCBase &coreltdc, LKCoreLCDBase &corelcd,
@@ -119,7 +122,7 @@ void LKCoreVideo::displayVideo(LKCoreFatFs &file)
 	while (frame_offset != 0) {
 		file.seek(frame_offset);
 
-		auto start_time = HAL_GetTick();
+		auto start_time = rtos::Kernel::Clock::now();
 		frame_size		= _corejpeg.decodeImage(file);
 
 		// if first frame, get file info
@@ -132,11 +135,14 @@ void LKCoreVideo::displayVideo(LKCoreFatFs &file)
 		// get next frame offset
 		frame_offset = LKCoreJPEG::findFrameOffset(file, frame_offset + frame_size + 4);
 
-		auto dt = HAL_GetTick() - start_time;
-		if (dt < 1000.f / 25.f) HAL_Delay(1000.f / 25.f - dt);
+		// temporaire
+		auto dt = rtos::Kernel::Clock::now() - start_time;
+		if (dt < 40ms) {
+			rtos::ThisThread::sleep_for(40ms - dt);
+		}
 
 		std::array<char, 32> buff;
-		sprintf(buff.data(), "%3lu ms = %5.2f fps", dt, 1000.f / dt);
+		sprintf(buff.data(), "%3lu ms = %5.2f fps", dt.count(), 1000.f / dt.count());
 		// displayText(buff, strlen(buff), 20);
 		log_info("%s", buff.data());
 	}
@@ -148,5 +154,3 @@ void LKCoreVideo::displayText(const char *text, uint32_t size, uint32_t starting
 {
 	_corefont.display(text, size, starting_line, foreground, background);
 }
-
-}	// namespace leka
