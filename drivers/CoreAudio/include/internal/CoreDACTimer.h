@@ -31,7 +31,11 @@ class CoreDACTimer
 	LKCoreSTM32HalBase &_hal;
 	TIM_HandleTypeDef _htim;
 
-	auto calculatePeriod(float freq) -> uint32_t;
+	auto _calculatePeriod(float freq) -> uint32_t;
+
+	void _registerMspCallbacks();
+	void _mspInitCallback();
+	void _mspDeInitCallback();
 };
 
 }	// namespace leka

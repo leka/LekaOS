@@ -9,25 +9,28 @@ namespace leka {
 CoreDACTimer::CoreDACTimer(LKCoreSTM32HalBase &hal)
 : _hal(hal)
 {
+    _htim.Instance = TIM6;    //select timer
 }
 
 void CoreDACTimer::initialize(float frequency)
 {
-    _hal.HAL_RCC_TIM6_CLK_ENABLE();
-
-    _htim.Instance				 = TIM6;    //select timer
+    //_htim.Instance				 = TIM6;    //select timer
     _htim.Init.Prescaler		 = 0;       // no need of prescaler for high frequencies
     _htim.Init.CounterMode		 = TIM_COUNTERMODE_UP;  //count up
-    _htim.Init.Period			 = calculatePeriod(frequency);  //period of the timer
+    _htim.Init.Period			 = _calculatePeriod(frequency);  //period of the timer
     _htim.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;  //no need to change counter period while working
+
+    _registerMspCallbacks();
+
     _hal.HAL_TIM_Base_Init(&_htim);     //TODO : handle errors if necessary
-    
+    printf("Call to HAL_TIM_init passed\n");
     
     TIM_MasterConfigTypeDef sMasterConfig = {0};
 
     sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;    //trigger used for DAC
     sMasterConfig.MasterSlaveMode	  = TIM_MASTERSLAVEMODE_DISABLE;    //TODO verify utility of this parameter
     _hal.HAL_TIMEx_MasterConfigSynchronization(&_htim, &sMasterConfig);//TODO : handle errors if necessary
+    printf("Call to HAL_TIMx_Masterblabla passed\n");
 }
 
 void CoreDACTimer::start()
@@ -43,8 +46,6 @@ void CoreDACTimer::stop()
 void CoreDACTimer::deInitialize()
 {
     _hal.HAL_TIM_Base_DeInit(&_htim);
-	__HAL_RCC_TIM6_CLK_DISABLE();
-    
     // TODO : do we make a "stop and deInit" method
 }
 
@@ -53,7 +54,7 @@ auto CoreDACTimer::getHandle() -> TIM_HandleTypeDef
     return this->_htim;
 }
 
-auto CoreDACTimer::calculatePeriod(float frequency) -> uint32_t
+auto CoreDACTimer::_calculatePeriod(float frequency) -> uint32_t
 {
     // TODO : handle frequency in a non-supported range
     // TODO : check if an enum of closed values would be better for allowed frequencies
@@ -70,7 +71,30 @@ auto CoreDACTimer::calculatePeriod(float frequency) -> uint32_t
 }
 
 
+void CoreDACTimer::_registerMspCallbacks()
+{
+     static auto *self = this;
+    _hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPINIT_CB_ID, [](TIM_HandleTypeDef *htim) { self->_mspInitCallback();});
+    _hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPDEINIT_CB_ID, [](TIM_HandleTypeDef *htim) { self->_mspDeInitCallback();});
+}
 
+void CoreDACTimer::_mspInitCallback()
+{	
+    if (_htim.Instance == TIM6) {
+		/* Peripheral clock enable */
+		
+        _hal.HAL_RCC_TIM6_CLK_ENABLE();
+    }
+}
+
+void CoreDACTimer::_mspDeInitCallback()
+{	
+    if (_htim.Instance == TIM6) {
+		/* Peripheral clock enable */
+		
+    _hal.HAL_RCC_TIM6_CLK_DISABLE();
+    }
+}
 
 
 
