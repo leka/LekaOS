@@ -30,6 +30,7 @@ class CoreAudio
     void stop();
     void setVolume(float volume) {_volume = volume; };
 
+    void fillBufferWithSinWave(uint16_t *buffer, uint32_t bufferSize, uint32_t frequency, uint32_t samplingRate = 44100, uint16_t maxValue = 0xFFFF, uint16_t minValue = 0x0);
 
   private:
     static uint16_t _waveBuffer[512];
@@ -48,5 +49,7 @@ class CoreAudio
 };
 
 }	// namespace leka
+
+
 
 #endif	 // _LEKA_OS_LIB_AUDIO_H_

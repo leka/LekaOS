@@ -3,7 +3,10 @@
 namespace leka 
 {
 
-CoreDAC::CoreDAC(LKCoreSTM32HalBase &hal) : _hal(hal), _dmaFlag(None)
+
+interface::Dac::DMA_Flag CoreDAC::_dmaFlag = None;
+
+CoreDAC::CoreDAC(LKCoreSTM32HalBase &hal) : _hal(hal)//, _dmaFlag(None)
 {
     _hdac.Instance = DAC;
     _hdma.Instance = DMA1_Stream5;
@@ -68,6 +71,11 @@ void CoreDAC::stop()
     _hal.HAL_DAC_Stop_DMA(&_hdac, DAC_CHANNEL_1);
 }
 
+auto CoreDAC::dmaFlag() -> DMA_Flag&
+{
+    return leka::CoreDAC::_dmaFlag;
+}
+
 auto CoreDAC::getHandle() -> DAC_HandleTypeDef&
 {
     return this->_hdac;
@@ -87,17 +95,15 @@ void CoreDAC::_registerCallbacks()
     [](DAC_HandleTypeDef *hdac)
     {
         // DOESNT WORK WHEN TRYING TO MODIFY AN ATTRIBUTE OF SELF
-        self->_halfCptCallback(hdac);
+        self->_halfCptCallback(hdac, nullptr);
     });
 
     // TODO(aermanio) : check if all callbacks need to be registered
 }
 
-void CoreDAC::_halfCptCallback(DAC_HandleTypeDef *hdac)
+void CoreDAC::_halfCptCallback(DAC_HandleTypeDef *hdac, DMA_Flag* fl)
 {
-    //_dmaFlag = Half_cpt;
-    DMA_Flag fl = _dmaFlag;
-    fl = Half_cpt;
+    _dmaFlag = Half_cpt;
 }
 
 void CoreDAC::_cptCallback(DAC_HandleTypeDef *hdac)

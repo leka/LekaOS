@@ -7,49 +7,44 @@
 
 #include "LKCoreSTM32HalBase.h"
 #include "CoreDACTimer.h"
+#include "interface/drivers/Dac.h"
 
 
 namespace leka {
 
 // DAC class made to be used with the DACTimer component
 // This class configures a DMA channel by default in order to be able to output data through DAC at a high sampling rate without too much impact on performance 
-class CoreDAC
+class CoreDAC : public interface::Dac
 {
 	//TODO(aermanio) : Add final specifiers 
   public:
-	enum DMA_Flag
-	{
-		None,
-		Half_cpt,
-		Cpt
-	};
-
 
 	explicit CoreDAC(LKCoreSTM32HalBase &hal);
 
-	void initialize();
-	void deInitialize();
-	void start(uint16_t* pData, uint32_t dataLength);
-	void stop();
+	void initialize() final;
+	void deInitialize() final;
+	void start(uint16_t* pData, uint32_t dataLength) final;
+	void stop() final;
 
-	auto dmaFlag() -> DMA_Flag& {return _dmaFlag;}
+	auto dmaFlag() -> DMA_Flag& final;
 
-	auto getHandle() -> DAC_HandleTypeDef&;
-	DMA_Flag _dmaFlag;
+	auto getHandle() -> DAC_HandleTypeDef& final;
+	
+	static DMA_Flag _dmaFlag;
+	DMA_Flag _flag;
 
-
-	void _registerCallbacks();
-
-  private:
+  protected:
 	LKCoreSTM32HalBase &_hal;
     DAC_HandleTypeDef _hdac;
     DMA_HandleTypeDef _hdma;
-	void _halfCptCallback(DAC_HandleTypeDef *hdac);
-	void _cptCallback(DAC_HandleTypeDef *hdac);
 
-	void _registerMspCallbacks();
-	void _mspInitCallback();
-	void _mspDeInitCallback();	
+	void _registerCallbacks() final;
+	void _halfCptCallback(DAC_HandleTypeDef *hdac, DMA_Flag* fl) final;
+	void _cptCallback(DAC_HandleTypeDef *hdac) final;
+
+	void _registerMspCallbacks() final;
+	void _mspInitCallback() final;
+	void _mspDeInitCallback() final;	
 };
 
 }	// namespace leka

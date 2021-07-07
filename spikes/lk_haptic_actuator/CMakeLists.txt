@@ -15,6 +15,7 @@ target_sources(spike_lk_haptic_actuator
 )
 
 target_link_libraries(spike_lk_haptic_actuator
+	LKCoreSTM32Hal
 	CoreAudio
 	FileManager
 )

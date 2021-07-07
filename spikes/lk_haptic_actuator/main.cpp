@@ -16,7 +16,7 @@ using namespace leka;
 
 leka::FileManager sd_card;
 
-mbed::DigitalOut audio_enable(SOUND_ENABLE, 0);
+mbed::DigitalOut audio_enable(SOUND_ENABLE, 1);
 static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 
 LKCoreSTM32Hal hal;

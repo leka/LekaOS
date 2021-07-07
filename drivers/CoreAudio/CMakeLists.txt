@@ -20,15 +20,16 @@ target_sources(CoreAudio
 )
 
 target_link_libraries(CoreAudio
-	mbed-os
-	LKCoreSTM32Hal
-	LKCoreFatFs
+
+		mbed-os
+		LKCoreSTM32Hal
+		LKCoreFatFs
 )
 
-# if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
+if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
-# 	leka_unit_tests_sources(
-# 		tests/CoreMotor_test.cpp
-# 	)
+	leka_unit_tests_sources(
+		tests/CoreDACTimerr_test.cpp
+	)
 
-# endif()
+endif()
