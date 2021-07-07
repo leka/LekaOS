@@ -39,21 +39,31 @@ class CoreDAC
 	void start(uint16_t* pData, uint32_t dataLength);
 	void stop();
 
-	auto dmaFlag() -> DMA_Flag&{return _dmaFlag;}
+	auto dmaFlag() -> DMA_Flag& {return _dmaFlag;}
 
-	auto getHandle() -> DAC_HandleTypeDef*;
+	auto getHandle() -> DAC_HandleTypeDef&;
+	DMA_Flag _dmaFlag;
+
+
+	void _registerCallbacks();
+
+	void test(){_x += 1;}
 
   private:
 	LKCoreSTM32HalBase &_hal;
     DAC_HandleTypeDef _hdac;
     DMA_HandleTypeDef _hdma;
+	void _halfCptCallback(DAC_HandleTypeDef *hdac);
+	void _cptCallback(DAC_HandleTypeDef *hdac);
 
-	void _registerCallbacks();
-	void _halfCptCallback();
-	void _cptCallback();
+	void _registerMspCallbacks();
 	void _mspInitCallback();
+	void _mspDeInitCallback();
 
-	DMA_Flag _dmaFlag;
+  protected :
+	uint8_t _x;
+
+	
 };
 
 }	// namespace leka
