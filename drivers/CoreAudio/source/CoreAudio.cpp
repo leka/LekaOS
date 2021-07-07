@@ -20,7 +20,9 @@ void CoreAudio::playFile(FIL* file)
     WavFile wavFile(file);
     uint16_t* _waveBuffer_2 = _waveBuffer + 256;
 
+    printf("Will Initialize CoreAudio\n");
     _initialize(wavFile.header().SamplingRate);
+    printf("CoreAudio Initialized\n");
 
     WavReader::loadSector(&wavFile, _waveBuffer, 512);
     _scaleToVolume(_waveBuffer, 256);
@@ -78,8 +80,12 @@ void CoreAudio::stop()
 
 void CoreAudio::_initialize(float frequency)
 {
+    printf("Initialize CoreTimer\n");
     _coreTimer.initialize(frequency);
+    printf("CoreTimer Initialized\n");
+    printf("Initialize CoreDAC\n");
     _coreDac.initialize();
+    printf("CoreDAC Initialized\n");
 }
 
 void CoreAudio::_align12bR(uint16_t *buffer, uint16_t length)
