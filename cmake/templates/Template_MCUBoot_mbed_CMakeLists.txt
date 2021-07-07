@@ -1,0 +1,26 @@
+# vim: set filetype=cmake:
+# Leka
+# Copyright 2021 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+target_include_directories(bootutil
+	PUBLIC
+		./
+		include
+		include/flash_map_backend
+		include/mcuboot_config
+		include/os
+		include/sysflash
+)
+
+target_sources(bootutil
+	PRIVATE
+		src/flash_map_backend.cpp
+		src/secondary_bd.cpp
+		app_enc_keys.c
+		mcuboot_main.cpp
+)
+
+target_link_libraries(bootutil
+	mbed-os
+)
