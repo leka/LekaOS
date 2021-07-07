@@ -24,7 +24,8 @@ CoreDACTimer coreDACTimer(hal);
 CoreDAC coreDAC(hal);
 CoreAudio coreAudio(hal,coreDAC,coreDACTimer);
 
-
+// Initialise the digital pin LED1 as an output
+mbed::DigitalOut led(LED1);
 
 /**
  * @brief This function handles DMA1 stream5 global interrupt.
@@ -32,12 +33,13 @@ CoreAudio coreAudio(hal,coreDAC,coreDACTimer);
 extern "C" {
 	void DMA1_Stream5_IRQHandler()
 	{
-		HAL_DMA_IRQHandler(coreDAC.getHandle()->DMA_Handle1);
+		HAL_DMA_IRQHandler(coreDAC.getHandle().DMA_Handle1);
 	}
 }
 
 auto main() -> int
 {
+    led.write(0);
     printf("Hello, on a mis autre chose!\n\n");
     
     FIL file;
