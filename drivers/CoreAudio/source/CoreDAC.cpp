@@ -80,14 +80,14 @@ void CoreDAC::_registerCallbacks()
     [](DAC_HandleTypeDef *hdac)
     { 
         // DOESNT WORK WHEN TRYING TO MODIFY AN ATTRIBUTE OF SELF
-        //self->_cptCallback(hdac);
+        self->_cptCallback(hdac);
     });
 
     _hal.HAL_DAC_RegisterCallback(&_hdac,  HAL_DAC_CH1_HALF_COMPLETE_CB_ID,
     [](DAC_HandleTypeDef *hdac)
     {
         // DOESNT WORK WHEN TRYING TO MODIFY AN ATTRIBUTE OF SELF
-        //self->_halfCptCallback(hdac);
+        self->_halfCptCallback(hdac);
     });
 
     // TODO(aermanio) : check if all callbacks need to be registered
