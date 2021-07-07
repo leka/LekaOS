@@ -99,7 +99,7 @@ jobs:
           path: |
             extern/mbed-os
             extern/mcuboot
-          key: ${{ runner.os }}-global_cache-extern_dependencies-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h', '.mbed_version', '.mcuboot_version') }}
+          key: ${{ runner.os }}-global_cache-extern_dependencies-${{ hashFiles('.mbed_version', '.mcuboot_version') }}
 
       - name: Pull extern dependencies
         if: steps.cache_extern_dependencies.outputs.cache-hit != 'true'
