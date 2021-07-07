@@ -14,52 +14,23 @@ namespace leka {
 
 LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
-	// Base address of DSI Host/Wrapper registers to be set before calling De-Init
 	_hdsi.Instance = DSI;
-
-	// Set number of Lanes
 	_hdsi.Init.NumberOfLanes = DSI_TWO_DATA_LANES;
-
 	_hdsi.Init.TXEscapeCkdiv = dsi::txEscapeClockDiv;
 
-	_config.VirtualChannelID = 0;
-	_config.ColorCoding		 = DSI_RGB888;
-	_config.VSPolarity		 = DSI_VSYNC_ACTIVE_HIGH;
-	_config.HSPolarity		 = DSI_HSYNC_ACTIVE_HIGH;
-	_config.DEPolarity		 = DSI_DATA_ENABLE_ACTIVE_HIGH;
-	_config.Mode			 = DSI_VID_MODE_BURST;	 // Mode Video burst ie : one LgP per line
-	_config.NullPacketSize	 = 0xFFF;
-	_config.NumberOfChunks	 = 0;
-	_config.PacketSize		 = lcd::property.HACT;	 // Value depending on display orientation choice portrait/landscape
-	_config.HorizontalSyncActive = (lcd::property.HSA * dsi::laneByteClock_kHz) / dsi::lcdClock;
-	_config.HorizontalBackPorch	 = (lcd::property.HBP * dsi::laneByteClock_kHz) / dsi::lcdClock;
-	_config.HorizontalLine =
-		((lcd::property.HACT + lcd::property.HSA + lcd::property.HBP + lcd::property.HFP) * dsi::laneByteClock_kHz) /
-		dsi::lcdClock;	 // Value depending on display orientation choice portrait/landscape
-	_config.VerticalSyncActive = lcd::property.VSA;
-	_config.VerticalBackPorch  = lcd::property.VBP;
-	_config.VerticalFrontPorch = lcd::property.VFP;
-	_config.VerticalActive = lcd::property.VACT;   // Value depending on display orientation choice portrait/landscape
+	_screen_sections = 2;
 
-	// Enable or disable sending LP command while streaming is active in video mode
-	_config.LPCommandEnable = DSI_LP_COMMAND_ENABLE;   // Enable sending commands in mode LP (Low Power)
-
-	// Largest packet size possible to transmit in LP mode in VSA, VBP, VFP regions
-	// Only useful when sending LP packets is allowed while streaming is active in video mode
-	_config.LPLargestPacketSize = 16;
-
-	// Largest packet size possible to transmit in LP mode in HFP region during VACT period
-	// Only useful when sending LP packets is allowed while streaming is active in video mode
-	_config.LPVACTLargestPacketSize = 0;
-
-	// Specify for each region of the video frame, if the transmission of command in LP mode is allowed in this region
-	// while streaming is active in video mode
-	_config.LPHorizontalFrontPorchEnable = DSI_LP_HFP_ENABLE;	  // Allow sending LP commands during HFP period
-	_config.LPHorizontalBackPorchEnable	 = DSI_LP_HBP_ENABLE;	  // Allow sending LP commands during HBP period
-	_config.LPVerticalActiveEnable		 = DSI_LP_VACT_ENABLE;	  // Allow sending LP commands during VACT period
-	_config.LPVerticalFrontPorchEnable	 = DSI_LP_VFP_ENABLE;	  // Allow sending LP commands during VFP period
-	_config.LPVerticalBackPorchEnable	 = DSI_LP_VBP_ENABLE;	  // Allow sending LP commands during VBP period
-	_config.LPVerticalSyncActiveEnable	 = DSI_LP_VSYNC_ENABLE;	  // Allow sending LP commands during VSync = VSA period
+	_cmdconf.VirtualChannelID	   = 0;
+	_cmdconf.HSPolarity			   = DSI_HSYNC_ACTIVE_HIGH;
+	_cmdconf.VSPolarity			   = DSI_VSYNC_ACTIVE_HIGH;
+	_cmdconf.DEPolarity			   = DSI_DATA_ENABLE_ACTIVE_HIGH;
+	_cmdconf.ColorCoding		   = DSI_RGB888;
+	_cmdconf.CommandSize		   = lcd::dimension.width/_screen_sections;
+	_cmdconf.TearingEffectSource   = DSI_TE_DSILINK;
+	_cmdconf.TearingEffectPolarity = DSI_TE_RISING_EDGE;
+	_cmdconf.VSyncPol			   = DSI_VSYNC_FALLING;
+	_cmdconf.AutomaticRefresh	   = DSI_AR_DISABLE;
+	_cmdconf.TEAcknowledgeRequest  = DSI_TE_ACKNOWLEDGE_ENABLE;
 }
 
 void LKCoreDSI::initialize()
@@ -78,12 +49,76 @@ void LKCoreDSI::initialize()
 	_hal.HAL_DSI_Init(&_hdsi, &dsiPllInit);
 
 	// Configure DSI Video mode timings
-	_hal.HAL_DSI_ConfigVideoMode(&_hdsi, &_config);
+	HAL_DSI_ConfigAdaptedCommandMode(&_hdsi, &_cmdconf);
 }
 
 void LKCoreDSI::start()
 {
 	_hal.HAL_DSI_Start(&_hdsi);
+
+	DSI_PHY_TimerTypeDef phy_timings;
+	phy_timings.ClockLaneHS2LPTime	= 35;
+	phy_timings.ClockLaneLP2HSTime	= 35;
+	phy_timings.DataLaneHS2LPTime	= 35;
+	phy_timings.DataLaneLP2HSTime	= 35;
+	phy_timings.DataLaneMaxReadTime = 0;
+	phy_timings.StopWaitTime		= 10;
+	HAL_DSI_ConfigPhyTimer(&_hdsi, &phy_timings);
+}
+
+void LKCoreDSI::refresh() 
+{
+	if (_hdsi.Lock == HAL_LOCKED) return;
+
+	_hdsi.Lock = HAL_LOCKED;
+	_hdsi.Instance->WCR |= DSI_WCR_LTDCEN;
+	_hdsi.Lock = HAL_UNLOCKED;
+}
+
+auto LKCoreDSI::getSyncProps() -> LKCoreDSI::SyncProps
+{
+	return {
+		1,
+		1,
+		lcd::dimension.width/_screen_sections,
+		1,
+		1,
+		1,
+		lcd::dimension.height,
+		1
+	};
+}
+
+void LKCoreDSI::enableLPCmd()
+{
+	_lpcmd.LPGenShortWriteNoP  = DSI_LP_GSW0P_ENABLE;
+	_lpcmd.LPGenShortWriteOneP = DSI_LP_GSW1P_ENABLE;
+	_lpcmd.LPGenShortWriteTwoP = DSI_LP_GSW2P_ENABLE;
+	_lpcmd.LPGenShortReadNoP   = DSI_LP_GSR0P_ENABLE;
+	_lpcmd.LPGenShortReadOneP  = DSI_LP_GSR1P_ENABLE;
+	_lpcmd.LPGenShortReadTwoP  = DSI_LP_GSR2P_ENABLE;
+	_lpcmd.LPGenLongWrite	   = DSI_LP_GLW_ENABLE;
+	_lpcmd.LPDcsShortWriteNoP  = DSI_LP_DSW0P_ENABLE;
+	_lpcmd.LPDcsShortWriteOneP = DSI_LP_DSW1P_ENABLE;
+	_lpcmd.LPDcsShortReadNoP   = DSI_LP_DSR0P_ENABLE;
+	_lpcmd.LPDcsLongWrite	   = DSI_LP_DLW_ENABLE;
+	HAL_DSI_ConfigCommand(&_hdsi, &_lpcmd);
+}
+
+void LKCoreDSI::disableLPCmd()
+{
+	_lpcmd.LPGenShortWriteNoP  = DSI_LP_GSW0P_DISABLE;
+	_lpcmd.LPGenShortWriteOneP = DSI_LP_GSW1P_DISABLE;
+	_lpcmd.LPGenShortWriteTwoP = DSI_LP_GSW2P_DISABLE;
+	_lpcmd.LPGenShortReadNoP   = DSI_LP_GSR0P_DISABLE;
+	_lpcmd.LPGenShortReadOneP  = DSI_LP_GSR1P_DISABLE;
+	_lpcmd.LPGenShortReadTwoP  = DSI_LP_GSR2P_DISABLE;
+	_lpcmd.LPGenLongWrite	   = DSI_LP_GLW_DISABLE;
+	_lpcmd.LPDcsShortWriteNoP  = DSI_LP_DSW0P_DISABLE;
+	_lpcmd.LPDcsShortWriteOneP = DSI_LP_DSW1P_DISABLE;
+	_lpcmd.LPDcsShortReadNoP   = DSI_LP_DSR0P_DISABLE;
+	_lpcmd.LPDcsLongWrite	   = DSI_LP_DLW_DISABLE;
+	HAL_DSI_ConfigCommand(&_hdsi, &_lpcmd);
 }
 
 void LKCoreDSI::reset(void)
@@ -115,14 +150,9 @@ void LKCoreDSI::reset(void)
 	rtos::ThisThread::sleep_for(10ms);
 }
 
-DSI_HandleTypeDef LKCoreDSI::getHandle() const
+auto LKCoreDSI::getHandle() -> DSI_HandleTypeDef &
 {
 	return _hdsi;
-}
-
-DSI_VidCfgTypeDef LKCoreDSI::getConfig()
-{
-	return _config;
 }
 
 void LKCoreDSI::write(const uint8_t *data, const uint32_t size)

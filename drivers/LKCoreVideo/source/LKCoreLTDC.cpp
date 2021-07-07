@@ -12,15 +12,17 @@ LKCoreLTDC::LKCoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi) : _hal(hal),
 {
 	_hltdc.Instance = LTDC;
 
-	// LCD pixel width/height
-	_hltdc.LayerCfg->ImageWidth	 = lcd::dimension.width;
-	_hltdc.LayerCfg->ImageHeight = lcd::dimension.height;
-
+	auto props = dsi.getSyncProps();
 	// Timing and synchronization
-	_hltdc.Init.HorizontalSync	   = (lcd::property.HSA - 1);
-	_hltdc.Init.AccumulatedHBP	   = (lcd::property.HSA + lcd::property.HBP - 1);
-	_hltdc.Init.AccumulatedActiveW = (lcd::dimension.width + lcd::property.HSA + lcd::property.HBP - 1);
-	_hltdc.Init.TotalWidth = (lcd::dimension.width + lcd::property.HSA + lcd::property.HBP + lcd::property.HFP - 1);
+	_hltdc.Init.HorizontalSync	   = props.hsync;
+	_hltdc.Init.AccumulatedHBP	   = props.hsync + props.hbp;
+	_hltdc.Init.AccumulatedActiveW = props.hsync + props.hbp + props.activew;
+	_hltdc.Init.TotalWidth = props.hsync + props.hbp + props.activew + props.hfp;
+
+	_hltdc.Init.VerticalSync	   = props.vsync;
+	_hltdc.Init.AccumulatedVBP	   = props.vsync + props.vbp;
+	_hltdc.Init.AccumulatedActiveH = props.vsync + props.vbp + props.activeh;
+	_hltdc.Init.TotalHeight = props.vsync + props.vbp + props.activeh + props.vfp;
 
 	// Background values
 	_hltdc.Init.Backcolor.Blue	= 0;
@@ -28,11 +30,14 @@ LKCoreLTDC::LKCoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi) : _hal(hal),
 	_hltdc.Init.Backcolor.Red	= 0;
 
 	// Misc
+	_hltdc.Init.HSPolarity = LTDC_HSPOLARITY_AL;
+	_hltdc.Init.VSPolarity = LTDC_VSPOLARITY_AL;
+	_hltdc.Init.DEPolarity = LTDC_DEPOLARITY_AL;
 	_hltdc.Init.PCPolarity = LTDC_PCPOLARITY_IPC;
 
 	// Layer config
 	_layerConfig.WindowX0 = 0;
-	_layerConfig.WindowX1 = lcd::dimension.width;
+	_layerConfig.WindowX1 = props.activew;
 	_layerConfig.WindowY0 = 0;
 	_layerConfig.WindowY1 = lcd::dimension.height;
 
@@ -59,7 +64,7 @@ void LKCoreLTDC::initialize()
 	configurePeriphClock();
 
 	// Get LTDC config from DSI
-	DSI_VidCfgTypeDef dsi_video_config = _dsi.getConfig();
+	DSI_VidCfgTypeDef dsi_video_config;// = _dsi.getConfig();
 	_hal.HAL_LTDC_StructInitFromVideoConfig(&_hltdc, &dsi_video_config);
 
 	// Initialize LTDC
