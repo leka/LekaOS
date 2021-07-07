@@ -8,13 +8,6 @@
 #include "LKCoreSTM32HalBase.h"
 #include "CoreDACTimer.h"
 
-// redeclared DAC functions
-extern "C" {
-void DMA1_Stream5_IRQHandler();
-}
-void HAL_DAC_ConvCpltCallbackCh1(DAC_HandleTypeDef *hdac);
-void HAL_DAC_ConvHalfCpltCallbackCh1(DAC_HandleTypeDef *hdac);
-
 
 namespace leka {
 
@@ -47,8 +40,6 @@ class CoreDAC
 
 	void _registerCallbacks();
 
-	void test(){_x += 1;}
-
   private:
 	LKCoreSTM32HalBase &_hal;
     DAC_HandleTypeDef _hdac;
@@ -58,12 +49,7 @@ class CoreDAC
 
 	void _registerMspCallbacks();
 	void _mspInitCallback();
-	void _mspDeInitCallback();
-
-  protected :
-	uint8_t _x;
-
-	
+	void _mspDeInitCallback();	
 };
 
 }	// namespace leka

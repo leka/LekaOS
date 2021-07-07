@@ -95,7 +95,9 @@ void CoreDAC::_registerCallbacks()
 
 void CoreDAC::_halfCptCallback(DAC_HandleTypeDef *hdac)
 {
-    _dmaFlag = Half_cpt;
+    //_dmaFlag = Half_cpt;
+    DMA_Flag fl = _dmaFlag;
+    fl = Half_cpt;
 }
 
 void CoreDAC::_cptCallback(DAC_HandleTypeDef *hdac)
