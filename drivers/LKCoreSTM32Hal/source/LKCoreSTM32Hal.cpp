@@ -48,6 +48,11 @@ void LKCoreSTM32Hal::HAL_RCC_TIM6_CLK_ENABLE(void)
 	__HAL_RCC_TIM6_CLK_ENABLE();
 }
 
+void LKCoreSTM32Hal::HAL_RCC_TIM6_CLK_DISABLE(void)	
+{
+	__HAL_RCC_TIM6_CLK_DISABLE();
+}
+
 void LKCoreSTM32Hal::HAL_RCC_FMC_CLK_ENABLE(void)
 {
 	__HAL_RCC_FMC_CLK_ENABLE();
@@ -294,6 +299,12 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_TIMEx_MasterConfigSynchronization(TIM_Hand
 	return ::HAL_TIMEx_MasterConfigSynchronization(htim,sMasterConfig);
 }
 
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_TIM_RegisterCallback(TIM_HandleTypeDef *htim,
+	 											HAL_TIM_CallbackIDTypeDef CallbackID, pTIM_CallbackTypeDef pCallback)	
+{
+	return ::HAL_TIM_RegisterCallback(htim,CallbackID,pCallback);
+}
+
 
 HAL_StatusTypeDef LKCoreSTM32Hal::HAL_TIM_Base_Start(TIM_HandleTypeDef *htim)
 {
@@ -339,7 +350,10 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_Stop_DMA(DAC_HandleTypeDef* hdac, uint
 {
 	return ::HAL_DAC_Stop_DMA(hdac, Channel);
 }
-
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_DeInit(DAC_HandleTypeDef* hdac)
+{
+	return ::HAL_DAC_DeInit(hdac);
+}
 
 
 }	// namespace leka

@@ -25,6 +25,7 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 	void HAL_RCC_GPIOJ_CLK_ENABLE(void) final;
 
 	void HAL_RCC_TIM6_CLK_ENABLE(void) final;
+	void HAL_RCC_TIM6_CLK_DISABLE(void)	final;
 	void HAL_RCC_FMC_CLK_ENABLE(void) final;
 	void HAL_RCC_DMA1_CLK_ENABLE(void) final;
 	void HAL_RCC_DMA2_CLK_ENABLE(void) final;
@@ -93,6 +94,8 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 
 	HAL_StatusTypeDef HAL_TIM_Base_Init(TIM_HandleTypeDef *htim)  final;
 	HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,TIM_MasterConfigTypeDef *sMasterConfig) final;
+	HAL_StatusTypeDef HAL_TIM_RegisterCallback(TIM_HandleTypeDef *htim,
+	 											HAL_TIM_CallbackIDTypeDef CallbackID, pTIM_CallbackTypeDef pCallback) final;
 	HAL_StatusTypeDef HAL_TIM_Base_Start(TIM_HandleTypeDef *htim) final;
 	HAL_StatusTypeDef HAL_TIM_Base_Stop(TIM_HandleTypeDef *htim) final;
 	HAL_StatusTypeDef HAL_TIM_Base_DeInit(TIM_HandleTypeDef *htim) final;
@@ -104,6 +107,7 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 	HAL_StatusTypeDef HAL_DAC_Start(DAC_HandleTypeDef* hdac, uint32_t Channel) final;
 	HAL_StatusTypeDef HAL_DAC_Start_DMA(DAC_HandleTypeDef* hdac, uint32_t Channel, uint32_t* pData, uint32_t Length, uint32_t Alignment) final;
 	HAL_StatusTypeDef HAL_DAC_Stop_DMA(DAC_HandleTypeDef* hdac, uint32_t Channel) final;
+	HAL_StatusTypeDef HAL_DAC_DeInit(DAC_HandleTypeDef* hdac) final;
 
 
 };
