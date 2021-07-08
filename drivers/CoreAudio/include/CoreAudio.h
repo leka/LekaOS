@@ -31,7 +31,7 @@ class CoreAudio
     void setVolume(float volume) {_volume = volume; };
 
     void fillBufferWithSinWave(uint16_t *buffer, uint32_t bufferSize, uint32_t frequency, uint32_t samplingRate = 44100, uint16_t maxValue = 0xFFFF, uint16_t minValue = 0x0);
-
+    void fillBufferWithSquare(uint16_t *buffer, uint32_t bufferSize,uint16_t maxValue, uint16_t minValue);
   private:
     static uint16_t _waveBuffer[512];
 

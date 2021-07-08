@@ -12,7 +12,7 @@ namespace leka {
 
 uint16_t CoreAudio::_waveBuffer[512];
 
-CoreAudio::CoreAudio(LKCoreSTM32HalBase &hal,CoreDAC &dac, CoreDACTimer &timer) : _hal(hal), _coreDac(dac) ,_coreTimer(timer), _volume(10) {}
+CoreAudio::CoreAudio(LKCoreSTM32HalBase &hal,CoreDAC &dac, CoreDACTimer &timer) : _hal(hal), _coreDac(dac) ,_coreTimer(timer), _volume(100) {}
 
 
 void CoreAudio::playFile(FIL* file)
@@ -21,6 +21,7 @@ void CoreAudio::playFile(FIL* file)
     uint16_t* _waveBuffer_2 = _waveBuffer + 256;
 
     //fillBufferWithSinWave(_waveBuffer, 512, 220 , 44100, 0xFFF, 0);
+    //fillBufferWithSquare(_waveBuffer, 512, uint16_t maxValue, uint16_t minValue)
 
     printf("Will Initialize CoreAudio\n");
     _initialize(wavFile.header().SamplingRate);
@@ -96,7 +97,7 @@ void CoreAudio::_align12bR(uint16_t *buffer, uint16_t length)
 {
     for(int i = 0; i<length; ++i)
     {
-        *buffer = *buffer >> 4;
+        buffer[i] = buffer[i] >> 4;
     }
 }
 
@@ -104,9 +105,10 @@ void CoreAudio::_scaleToVolume(uint16_t *buffer, uint16_t length)
 {
     for(int i = 0; i<length; ++i)
     {
-        //*buffer = static_cast<double>(*buffer) * (_volume/100.F);
-        *buffer = static_cast<double>(*buffer) /6.F;
-        //*buffer += 0x7FFF * (1.F - _volume/100.F);
+        buffer[i] = static_cast<double>(buffer[i]) * (_volume/100.F);
+        //*buffer = static_cast<double>(*buffer) /6.F;
+        buffer[i] += 0x7FFF * (1.F - _volume/100.F);
+        //buffer[i] = buffer[i] / 2;
     }
 }
 
@@ -121,6 +123,16 @@ void CoreAudio::fillBufferWithSinWave(uint16_t *buffer, uint32_t bufferSize, uin
 		float tmp = 0.5 * sin(i * 2.0 * M_PI / samplesPerPeriod) + 0.5;
 		tmp *= maxValue-minValue;
 		buffer[i] = tmp + minValue;
+	}
+}
+
+void CoreAudio::fillBufferWithSquare(uint16_t *buffer, uint32_t bufferSize, uint16_t maxValue, uint16_t minValue)
+{
+    for(uint32_t i = 0; i < bufferSize/2; ++i) {
+		buffer[i] = maxValue;
+	}
+    for(uint32_t i = bufferSize/2; i < bufferSize; ++i) {
+		buffer[i] = minValue;
 	}
 }
 

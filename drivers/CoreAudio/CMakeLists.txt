@@ -29,7 +29,7 @@ target_link_libraries(CoreAudio
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
-		tests/CoreDACTimerr_test.cpp
+		tests/CoreDACTimer_test.cpp
 	)
 
 endif()

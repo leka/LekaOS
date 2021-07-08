@@ -40,20 +40,43 @@ extern "C" {
 auto main() -> int
 {
     led.write(0);
-    printf("Hello, on a mis autre chose!\n\n");
+    printf("\n\nHello, on a mis autre chose!\n\n");
     
     FIL file;
-    std::string filename = "fur-elise.wav";
+    std::string filename = "test-voix.wav"; //sawtooth10_44ksamp_mono_5sec.wav
 
-    if (f_open(&file, filename.c_str(), FA_READ) == FR_OK) 
-	{
-        printf("File %s did open!!\n", filename.c_str());
-        coreAudio.playFile(&file);
-    }
-    else {
-        printf("Could not open file\n");
-    }
+    while(true)
+    {
+        coreAudio.setVolume(30);
+        filename = "test-voix-100Hzmin.wav"; 
+        if (f_open(&file, filename.c_str(), FA_READ) == FR_OK) 
+        {
+            printf("\n\nFile %s did open!!\n", filename.c_str());
+            coreAudio.playFile(&file);
+        }
+        else 
+        {
+            printf("Could not open file\n");
+        }
 
-    f_close(&file);
+        f_close(&file);
+
+
+        coreAudio.setVolume(80);
+        filename = "fur-elise-100Hzmin.wav"; //sawtooth10_44ksamp_mono_5sec.wav
+
+        if (f_open(&file, filename.c_str(), FA_READ) == FR_OK) 
+        {
+            printf("\n\nFile %s did open!!\n", filename.c_str());
+            coreAudio.playFile(&file);
+        }
+        else 
+        {
+            printf("Could not open file\n");
+        }
+
+        f_close(&file);
+    }
+    
 }
 
