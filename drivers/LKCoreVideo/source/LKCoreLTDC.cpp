@@ -22,7 +22,7 @@ LKCoreLTDC::LKCoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi) : _hal(hal),
 	_hltdc.Init.VerticalSync	   = props.vsync;
 	_hltdc.Init.AccumulatedVBP	   = props.vsync + props.vbp;
 	_hltdc.Init.AccumulatedActiveH = props.vsync + props.vbp + props.activeh;
-	_hltdc.Init.TotalHeight = props.vsync + props.vbp + props.activeh + props.vfp;
+	_hltdc.Init.TotalHeigh = props.vsync + props.vbp + props.activeh + props.vfp;
 
 	// Background values
 	_hltdc.Init.Backcolor.Blue	= 0;
