@@ -6,17 +6,20 @@
 #define _LEKA_OS_LIB_DMA2D_H_
 
 #include "LKCoreDMA2DBase.h"
+#include "corevideo_config.h"
 
 namespace leka {
 
 class LKCoreDMA2D : public LKCoreDMA2DBase
 {
   public:
-	explicit LKCoreDMA2D(LKCoreSTM32HalBase &hal);
+	LKCoreDMA2D(LKCoreSTM32HalBase &hal);
 
 	void initialize() final;
 
 	auto getHandle() -> DMA2D_HandleTypeDef & final;
+
+	void setFrameBufferAddress(uintptr_t address) final;
 
 	void transferData(uintptr_t input_data_address, uintptr_t output_data_address, uint32_t width,
 					  uint32_t height) final;
@@ -26,6 +29,8 @@ class LKCoreDMA2D : public LKCoreDMA2DBase
   private:
 	DMA2D_HandleTypeDef _hdma2d;
 	LKCoreSTM32HalBase &_hal;
+
+	uintptr_t _frame_buffer_address = lcd::frame_buffer_address;
 };
 
 }	// namespace leka

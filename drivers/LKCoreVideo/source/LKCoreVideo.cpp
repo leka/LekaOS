@@ -3,10 +3,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <chrono>
-#include "LKCoreVideo.h"
 
-#include "LogKit.h"
 #include "rtos/ThisThread.h"
+
+#include "LKCoreVideo.h"
+#include "LogKit.h"
 
 using namespace std::chrono;
 using namespace leka;
@@ -17,8 +18,8 @@ LKCoreVideo::LKCoreVideo(LKCoreSTM32HalBase &hal, LKCoreSDRAMBase &coresdram, LK
 	: _hal(hal),
 	  _coresdram(coresdram),
 	  _coredma2d(coredma2d),
-	  _coredsi(coredsi),
 	  _coreltdc(coreltdc),
+	  _coredsi(coredsi),
 	  _corelcd(corelcd),
 	  _coregraphics(coregraphics),
 	  _corefont(corefont),
@@ -28,8 +29,6 @@ LKCoreVideo::LKCoreVideo(LKCoreSTM32HalBase &hal, LKCoreSDRAMBase &coresdram, LK
 
 void LKCoreVideo::initialize()
 {
-	_coredsi.reset();
-
 	/** @brief Enable the LTDC clock */
 	_hal.HAL_RCC_LTDC_CLK_ENABLE();
 
@@ -63,39 +62,19 @@ void LKCoreVideo::initialize()
 	_hal.HAL_NVIC_SetPriority(DSI_IRQn, 3, 0);
 	_hal.HAL_NVIC_EnableIRQ(DSI_IRQn);
 
-	_coredsi.initialize();
-
-	_coreltdc.initialize();
-
-	_coredsi.start();
-
 	_coresdram.initialize();
 
-	_coredsi.enableLPCmd();
-	_corelcd.initialize();
-	_coredsi.disableLPCmd();
-
-	_coredsi.enableTearingEffectReporting();
-	
 	_corejpeg.initialize();
 	_coredma2d.initialize();
 
+	_coreltdc.initialize();
+
+	_coredsi.initialize();
+
+	_corelcd.initialize();
 	_corelcd.setBrightness(0.5f);
 
-	uint8_t pColLeft[]	= {0x00, 0x00, 0x03, 0x20}; /*   0 -> 399 */
-	uint8_t pColRight[] = {0x01, 0x90, 0x03, 0x1F}; /* 400 -> 799 */
-	uint8_t pPage[]		= {0x00, 0x00, 0x01, 0xDF}; /*   0 -> 479 */
-	uint8_t pScanCol[]	= {0x02, 0x15};				/* Scan @ 533 */
-	auto OTM8009A_CMD_CASET = 0x2A;
-	auto OTM8009A_CMD_PASET = 0x2B;
-	auto OTM8009A_CMD_WRTESCN = 0x44;
-
-	HAL_DSI_LongWrite(&_coredsi.getHandle(), 0, DSI_DCS_LONG_PKT_WRITE, 4, OTM8009A_CMD_CASET, pColLeft);
-	HAL_DSI_LongWrite(&_coredsi.getHandle(), 0, DSI_DCS_LONG_PKT_WRITE, 4, OTM8009A_CMD_PASET, pPage);
-
-	HAL_LTDC_SetPitch(&_coreltdc.getHandle(), 800, 0);
-
-	HAL_DSI_LongWrite(&_coredsi.getHandle(), 0, DSI_DCS_LONG_PKT_WRITE, 2, OTM8009A_CMD_WRTESCN, pScanCol);
+	_coredsi.enableTearingEffectReporting();
 }
 
 void LKCoreVideo::turnOff()
@@ -130,7 +109,6 @@ void LKCoreVideo::displayImage(LKCoreFatFs &file)
 	auto config = _corejpeg.getConfig();
 
 	_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, LKCoreJPEG::getWidthOffset(config));
-	_coredsi.refresh();
 }
 
 void LKCoreVideo::displayVideo(LKCoreFatFs &file)
@@ -143,30 +121,21 @@ void LKCoreVideo::displayVideo(LKCoreFatFs &file)
 	while (frame_offset != 0) {
 		file.seek(frame_offset);
 
-		auto start_time = rtos::Kernel::Clock::now();
-		frame_size		= _corejpeg.decodeImage(file);
+		frame_size = _corejpeg.decodeImage(file);
 
 		// if first frame, get file info
-		if (frame_index == 0) config = _corejpeg.getConfig();
+		if (frame_index == 0) {
+			config = _corejpeg.getConfig();
+		}
 
 		frame_index += 1;
 
 		_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, LKCoreJPEG::getWidthOffset(config));
-		_coredsi.refresh();
 
 		// get next frame offset
 		frame_offset = LKCoreJPEG::findFrameOffset(file, frame_offset + frame_size + 4);
 
-		// temporaire
-		auto dt = rtos::Kernel::Clock::now() - start_time;
-		if (dt < 40ms) {
-			rtos::ThisThread::sleep_for(40ms - dt);
-		}
-
-		std::array<char, 32> buff;
-		sprintf(buff.data(), "%3lu ms = %5.2f fps", dt.count(), 1000.f / dt.count());
-		// displayText(buff, strlen(buff), 20);
-		log_info("%s", buff.data());
+		display();
 	}
 	log_info("%d frames", frame_index);
 }
@@ -175,4 +144,29 @@ void LKCoreVideo::displayText(const char *text, uint32_t size, uint32_t starting
 							  CGColor background)
 {
 	_corefont.display(text, size, starting_line, foreground, background);
+}
+
+void LKCoreVideo::display()
+{
+	static auto start_time = rtos::Kernel::Clock::now();
+
+	// wait for DMA2D to finish transfer
+	while (_coredma2d.getHandle().State != HAL_DMA2D_STATE_READY)
+		;
+
+	// refresh screen
+	_coredsi.refresh();
+
+	// wait for DSI to finish refresh
+	while (_coredsi.getHandle().State != HAL_DSI_STATE_READY || _coredsi.isBusy())
+		;
+
+	// cap fps
+	auto dt = rtos::Kernel::Clock::now() - start_time;
+	if (dt < 40ms) {
+		rtos::ThisThread::sleep_for(40ms - dt);
+	}
+
+	log_info("(%ld) %ld ms = %f fps", dt, 1000.f / dt.count());
+	start_time = rtos::Kernel::Clock::now();
 }

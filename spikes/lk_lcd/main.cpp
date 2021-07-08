@@ -24,6 +24,7 @@
 #include "LKCoreSDRAM.h"
 #include "LKCoreSTM32Hal.h"
 #include "LKCoreVideo.h"
+#include "LKVideoKit.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 
@@ -34,30 +35,39 @@ SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 LKCoreFatFs file;
 
-LKCoreLL corell;
-CGPixel pixel(corell);
 LKCoreSTM32Hal hal;
 LKCoreSDRAM coresdram(hal);
-LKCoreDMA2D coredma2d(hal);
-LKCoreDSI coredsi(hal);
-LKCoreLTDC coreltdc(hal, coredsi);
-LKCoreGraphics coregraphics(coredma2d);
-LKCoreFont corefont(pixel);
+
+// screen + dsi + ltdc
+LKCoreLTDC coreltdc(hal);
+LKCoreDSI coredsi(hal, coreltdc);
 LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 LKCoreLCD corelcd(coreotm);
+
+// peripherals
+LKCoreDMA2D coredma2d(hal);
 LKCoreJPEG corejpeg(hal, std::make_unique<LKCoreJPEGDMAMode>());
+
+// graphics (will move to libs/VideoKit)
+LKCoreLL corell;
+CGPixel pixel(corell);
+LKCoreFont corefont(pixel);
+LKCoreGraphics coregraphics(coredma2d);
+
 LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
-std::vector<const char *> images = {"assets/images/Leka/logo.jpg", "assets/images/Leka/emotion-happy.jpg"};
+LKVideoKit screen;
+
+std::vector<const char *> images = {"assets/images/Leka/logo.jpg", "assets/images/Leka/image.jpg"};
 
 std::vector<const char *> videos = {
 	//"assets/video/20fps.avi",
 	"assets/video/20fps_low10.avi",
-	//"assets/video/20fps_low15.avi",
-	"assets/video/20fps_s700.avi",
+	//"assets/video/20fps_s700.avi",
 	//"assets/video/20fps_s600.avi",
 	//"assets/video/20fps_s500.avi",
 	//"assets/video/20fps_s400.avi",
+	//"assets/video/BirdsAndFeeder.avi",
 	//"assets/video/20fps_s300.avi",
 	//"assets/video/20fps_s200.avi",
 	//"assets/video/20fps_s100.avi"
@@ -83,6 +93,15 @@ void DMA2_Stream1_IRQHandler(void)
 {
 	HAL_DMA_IRQHandler(corejpeg.getHandle().hdmaout);
 }
+
+void DMA2D_IRQHandler(void)
+{
+	HAL_DMA2D_IRQHandler(&coredma2d.getHandle());
+}
+void LTDC_IRQHandler(void)
+{
+	HAL_LTDC_IRQHandler(&coreltdc.getHandle());
+}
 }
 
 void initializeSD()
@@ -102,20 +121,22 @@ auto main() -> int
 
 	log_info("Hello, World!\n\n");
 
-	corevideo.initialize();
-
 	initializeSD();
+
+	corevideo.initialize();
+	memset((uint8_t *)lcd::frame_buffer_address, 0x5f, 800 * 480 * 4);
 
 	HelloWorld hello;
 	hello.start();
 
-	corevideo.clearScreen();
+	// corevideo.clearScreen();
 
 	static auto line = 1;
 	static CGColor foreground;
 
-	leka::logger::set_print_function(
-		[](const char *str, size_t size) { corevideo.displayText(str, size, line, foreground, CGColor::white); });
+	leka::logger::set_print_function([](const char *str, size_t size) {
+		// corevideo.displayText(str, size, line, foreground, CGColor::white);
+	});
 
 	for (int i = 1; i <= 10; i++) {
 		foreground = (i % 2 == 0) ? CGColor::black : CGColor::pure_red;
@@ -125,41 +146,47 @@ auto main() -> int
 	}
 
 	leka::logger::set_print_function([](const char *str, size_t size) {
-		corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
+		// corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
 	});
 
 	log_info(
 		"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
 		"only one line of the screen.");
 
+	// coredsi.refresh();
+
 	rtos::ThisThread::sleep_for(1s);
 
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 
+	// HAL_LTDC_ProgramLineEvent(&coreltdc.getHandle(), 0);
+	corevideo.setBrightness(0.6f);
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
 		log_info("A message from your board %s --> \"%s\" at %is", MBED_CONF_APP_TARGET_NAME, hello.world,
 				 int(t.count() / 1000));
 
-		corevideo.setBrightness(0.6f);
-
+		// while (true) {
 		for (const auto &image_name: images) {
 			if (file.open(image_name) == FR_OK) {
 				corevideo.displayImage(file);
+				corevideo.display();
 				corevideo.turnOn();
 				file.close();
-				rtos::ThisThread::sleep_for(2s);
+				rtos::ThisThread::sleep_for(1s);
 			}
 		}
+		//}
 
 		for (const auto &video_name: videos) {
 			if (file.open(video_name) == FR_OK) {
 				corevideo.displayVideo(file);
 				file.close();
-				rtos::ThisThread::sleep_for(2s);
+				rtos::ThisThread::sleep_for(500ms);
 			}
 		}
 
 		corevideo.turnOff();
+		rtos::ThisThread::sleep_for(500ms);
 	}
 }
