@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_DRIVER_DSI_H_
 #define _LEKA_OS_DRIVER_DSI_H_
 
+#include <array>
+
 #include "LKCoreDSIBase.h"
 #include "LKCoreSTM32HalBase.h"
 
@@ -29,7 +31,7 @@ class LKCoreDSI : public LKCoreDSIBase
 
 	auto getHandle() -> DSI_HandleTypeDef & final;
 
-	void write(const uint8_t *data, const uint32_t size) final;
+	void write(const uint8_t *data, uint32_t size) final;
 
   private:
 	LKCoreSTM32HalBase &_hal;
@@ -37,7 +39,8 @@ class LKCoreDSI : public LKCoreDSIBase
 	DSI_CmdCfgTypeDef _cmdconf;
 	DSI_LPCmdTypeDef _lpcmd;
 
-	int _screen_sections = 1;
+	std::array<std::array<uint8_t, 4>, 2> _columns;   // TODO : use constant, fix circular includes
+	int _current_columns = 0;
 };
 
 }	// namespace leka

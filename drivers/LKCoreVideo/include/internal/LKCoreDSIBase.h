@@ -38,7 +38,7 @@ class LKCoreDSIBase
 
 	virtual auto getHandle() -> DSI_HandleTypeDef & = 0;
 
-	virtual void write(const uint8_t *data, const uint32_t size) = 0;
+	virtual void write(const uint8_t *data, uint32_t size) = 0;
 };
 
 }	// namespace leka

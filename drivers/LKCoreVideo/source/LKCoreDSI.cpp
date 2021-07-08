@@ -5,8 +5,8 @@
 #include "LKCoreDSI.h"
 
 #include "rtos/ThisThread.h"
-
 #include "corevideo_config.h"
+
 
 using namespace std::chrono;
 
@@ -18,19 +18,28 @@ LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 	_hdsi.Init.NumberOfLanes = DSI_TWO_DATA_LANES;
 	_hdsi.Init.TXEscapeCkdiv = dsi::txEscapeClockDiv;
 
-	_screen_sections = 1;
-
 	_cmdconf.VirtualChannelID	   = 0;
 	_cmdconf.HSPolarity			   = DSI_HSYNC_ACTIVE_HIGH;
 	_cmdconf.VSPolarity			   = DSI_VSYNC_ACTIVE_HIGH;
 	_cmdconf.DEPolarity			   = DSI_DATA_ENABLE_ACTIVE_HIGH;
 	_cmdconf.ColorCoding		   = DSI_RGB888;
-	_cmdconf.CommandSize		   = lcd::dimension.width/_screen_sections;
+	_cmdconf.CommandSize		   = lcd::dimension.width/dsi::refresh_columns_count;
 	_cmdconf.TearingEffectSource   = DSI_TE_DSILINK;
 	_cmdconf.TearingEffectPolarity = DSI_TE_RISING_EDGE;
 	_cmdconf.VSyncPol			   = DSI_VSYNC_FALLING;
 	_cmdconf.AutomaticRefresh	   = DSI_AR_DISABLE;
 	_cmdconf.TEAcknowledgeRequest  = DSI_TE_ACKNOWLEDGE_ENABLE;
+
+	for (int i = 0; i < dsi::refresh_columns_count; ++i) {
+		auto col_offset = i * dsi::refresh_columns_count;
+		auto col_width = _cmdconf.CommandSize - 1;
+		_columns[i][0] = ((col_offset)&0xff00) >> 8;
+		_columns[i][1] = ((col_offset)&0x00ff) >> 0;
+		_columns[i][2] = ((col_offset+col_width)&0xff00) >> 8;
+		_columns[i][3] = ((col_offset+col_width)&0x00ff) >> 0;
+	}
+
+	HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 4, 0x2a, _columns[0].data());
 }
 
 void LKCoreDSI::initialize()
@@ -80,7 +89,7 @@ auto LKCoreDSI::getSyncProps() -> LKCoreDSI::SyncProps
 	return {
 		1,
 		1,
-		lcd::dimension.width/_screen_sections,
+		lcd::dimension.width/dsi::refresh_columns_count,
 		1,
 		1,
 		1,
@@ -177,7 +186,7 @@ auto LKCoreDSI::getHandle() -> DSI_HandleTypeDef &
 	return _hdsi;
 }
 
-void LKCoreDSI::write(const uint8_t *data, const uint32_t size)
+void LKCoreDSI::write(const uint8_t *data, uint32_t size)
 {
 	if (size <= 2) {
 		_hal.HAL_DSI_ShortWrite(&_hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, data[0], data[1]);
