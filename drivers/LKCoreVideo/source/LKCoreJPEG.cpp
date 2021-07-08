@@ -104,7 +104,7 @@ auto LKCoreJPEG::getWidthOffset(JPEG_ConfTypeDef &config) -> uint32_t
 
 auto LKCoreJPEG::findFrameOffset(LKCoreFatFsBase &file, uint32_t offset) -> uint32_t
 {
-	static std::array<uint8_t, 512> pattern_search_buffer;
+	std::array<uint8_t, 512> pattern_search_buffer;
 
 	uint32_t index	   = offset;
 	uint32_t read_size = 0;

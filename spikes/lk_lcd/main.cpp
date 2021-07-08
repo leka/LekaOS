@@ -54,7 +54,7 @@ std::vector<const char *> videos = {
 	//"assets/video/20fps.avi",
 	"assets/video/20fps_low10.avi",
 	//"assets/video/20fps_low15.avi",
-	"assets/video/20fps_s700.avi",
+	//"assets/video/20fps_s700.avi",
 	//"assets/video/20fps_s600.avi",
 	//"assets/video/20fps_s500.avi",
 	//"assets/video/20fps_s400.avi",
@@ -62,6 +62,12 @@ std::vector<const char *> videos = {
 	//"assets/video/20fps_s200.avi",
 	//"assets/video/20fps_s100.avi"
 };
+int dma2d_cnt = 0;
+void DMA2D_TransferCompleteCallback(DMA2D_HandleTypeDef *hdma2d)
+{
+	dma2d_cnt++;
+	coredsi.refresh();
+}
 
 extern "C" {
 void DSI_IRQHandler(void)
@@ -83,6 +89,10 @@ void DMA2_Stream1_IRQHandler(void)
 {
 	HAL_DMA_IRQHandler(corejpeg.getHandle().hdmaout);
 }
+void DMA2D_IRQHandler(void)
+{
+	HAL_DMA2D_IRQHandler(&coredma2d.getHandle());
+}
 }
 
 void initializeSD()
@@ -102,9 +112,10 @@ auto main() -> int
 
 	log_info("Hello, World!\n\n");
 
-	corevideo.initialize();
-
 	initializeSD();
+
+	coredma2d.getHandle().XferCpltCallback = DMA2D_TransferCompleteCallback;
+	corevideo.initialize();
 
 	HelloWorld hello;
 	hello.start();
@@ -148,17 +159,21 @@ auto main() -> int
 				corevideo.displayImage(file);
 				corevideo.turnOn();
 				file.close();
+				log_info("dma2d irq : %d", dma2d_cnt);
 				rtos::ThisThread::sleep_for(2s);
 			}
 		}
-
-		for (const auto &video_name: videos) {
-			if (file.open(video_name) == FR_OK) {
-				corevideo.displayVideo(file);
-				file.close();
-				rtos::ThisThread::sleep_for(2s);
+		while(1) {
+			for (const auto &video_name: videos) {
+				if (file.open(video_name) == FR_OK) {
+					corevideo.displayVideo(file);
+					file.close();
+					log_info("dma2d irq : %d", dma2d_cnt);
+					rtos::ThisThread::sleep_for(2s);
+				}
 			}
 		}
+		
 
 		corevideo.turnOff();
 	}

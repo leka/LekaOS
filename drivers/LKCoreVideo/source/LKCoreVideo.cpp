@@ -82,7 +82,7 @@ void LKCoreVideo::initialize()
 
 	_corelcd.setBrightness(0.5f);
 
-	uint8_t pColLeft[]	= {0x00, 0x00, 0x03, 0x20}; /*   0 -> 399 */
+	uint8_t pColLeft[]	= {0x00, 0x00, 0x03, 0x1F}; /*   0 -> 399 */
 	uint8_t pColRight[] = {0x01, 0x90, 0x03, 0x1F}; /* 400 -> 799 */
 	uint8_t pPage[]		= {0x00, 0x00, 0x01, 0xDF}; /*   0 -> 479 */
 	uint8_t pScanCol[]	= {0x02, 0x15};				/* Scan @ 533 */
@@ -90,7 +90,6 @@ void LKCoreVideo::initialize()
 	auto OTM8009A_CMD_PASET = 0x2B;
 	auto OTM8009A_CMD_WRTESCN = 0x44;
 
-	HAL_DSI_LongWrite(&_coredsi.getHandle(), 0, DSI_DCS_LONG_PKT_WRITE, 4, OTM8009A_CMD_CASET, pColLeft);
 	HAL_DSI_LongWrite(&_coredsi.getHandle(), 0, DSI_DCS_LONG_PKT_WRITE, 4, OTM8009A_CMD_PASET, pPage);
 
 	HAL_LTDC_SetPitch(&_coreltdc.getHandle(), 800, 0);
@@ -130,7 +129,6 @@ void LKCoreVideo::displayImage(LKCoreFatFs &file)
 	auto config = _corejpeg.getConfig();
 
 	_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, LKCoreJPEG::getWidthOffset(config));
-	_coredsi.refresh();
 }
 
 void LKCoreVideo::displayVideo(LKCoreFatFs &file)
@@ -152,16 +150,17 @@ void LKCoreVideo::displayVideo(LKCoreFatFs &file)
 		frame_index += 1;
 
 		_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, LKCoreJPEG::getWidthOffset(config));
-		_coredsi.refresh();
 
 		// get next frame offset
 		frame_offset = LKCoreJPEG::findFrameOffset(file, frame_offset + frame_size + 4);
 
 		// temporaire
 		auto dt = rtos::Kernel::Clock::now() - start_time;
+		/*
 		if (dt < 40ms) {
 			rtos::ThisThread::sleep_for(40ms - dt);
 		}
+		*/
 
 		std::array<char, 32> buff;
 		sprintf(buff.data(), "%3lu ms = %5.2f fps", dt.count(), 1000.f / dt.count());
