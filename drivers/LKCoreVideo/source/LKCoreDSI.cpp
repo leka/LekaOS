@@ -18,7 +18,7 @@ LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 	_hdsi.Init.NumberOfLanes = DSI_TWO_DATA_LANES;
 	_hdsi.Init.TXEscapeCkdiv = dsi::txEscapeClockDiv;
 
-	_screen_sections = 2;
+	_screen_sections = 1;
 
 	_cmdconf.VirtualChannelID	   = 0;
 	_cmdconf.HSPolarity			   = DSI_HSYNC_ACTIVE_HIGH;
@@ -35,13 +35,13 @@ LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 
 void LKCoreDSI::initialize()
 {
+	_hal.HAL_DSI_DeInit(&_hdsi);
+
 	DSI_PLLInitTypeDef dsiPllInit;
 
 	dsiPllInit.PLLNDIV = 100;
 	dsiPllInit.PLLIDF  = DSI_PLL_IN_DIV5;
 	dsiPllInit.PLLODF  = DSI_PLL_OUT_DIV1;
-
-	_hal.HAL_DSI_DeInit(&_hdsi);
 
 	// Initialize DSI
 	// DO NOT MOVE to the constructor as LCD initialization
@@ -119,6 +119,28 @@ void LKCoreDSI::disableLPCmd()
 	_lpcmd.LPDcsShortReadNoP   = DSI_LP_DSR0P_DISABLE;
 	_lpcmd.LPDcsLongWrite	   = DSI_LP_DLW_DISABLE;
 	HAL_DSI_ConfigCommand(&_hdsi, &_lpcmd);
+}
+
+void LKCoreDSI::enableTearingEffectReporting()
+{
+	HAL_DSI_ConfigFlowControl(&_hdsi, DSI_FLOW_CONTROL_BTA);
+
+	// Enable GPIOJ clock
+	__HAL_RCC_GPIOJ_CLK_ENABLE();
+
+	// Configure DSI_TE pin from MB1166 : Tearing effect on separated GPIO from KoD LCD
+	// that is mapped on GPIOJ2 as alternate DSI function (DSI_TE)
+	// This pin is used only when the LCD and DSI link is configured in command mode
+	GPIO_InitTypeDef GPIO_Init_Structure;
+	GPIO_Init_Structure.Pin		  = GPIO_PIN_2;
+	GPIO_Init_Structure.Mode	  = GPIO_MODE_AF_PP;
+	GPIO_Init_Structure.Pull	  = GPIO_NOPULL;
+	GPIO_Init_Structure.Speed	  = GPIO_SPEED_HIGH;
+	GPIO_Init_Structure.Alternate = GPIO_AF13_DSI;
+	HAL_GPIO_Init(GPIOJ, &GPIO_Init_Structure);
+
+	//maskTE();
+	HAL_DSI_Refresh(&_hdsi);
 }
 
 void LKCoreDSI::reset(void)

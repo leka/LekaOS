@@ -63,10 +63,6 @@ void LKCoreLTDC::initialize()
 {
 	configurePeriphClock();
 
-	// Get LTDC config from DSI
-	DSI_VidCfgTypeDef dsi_video_config;// = _dsi.getConfig();
-	_hal.HAL_LTDC_StructInitFromVideoConfig(&_hltdc, &dsi_video_config);
-
 	// Initialize LTDC
 	// This part **must not** be moved to the constructor as LCD
 	// initialization must be performed in a very specific order
@@ -97,7 +93,7 @@ void LKCoreLTDC::configurePeriphClock()
 	_hal.HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 }
 
-LTDC_HandleTypeDef LKCoreLTDC::getHandle() const
+LTDC_HandleTypeDef& LKCoreLTDC::getHandle()
 {
 	return _hltdc;
 }

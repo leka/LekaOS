@@ -31,6 +31,11 @@ class LKCoreDSIBase
 	};
 	virtual auto getSyncProps() -> SyncProps = 0;
 
+	virtual void enableLPCmd()  = 0;
+	virtual void disableLPCmd() = 0;
+
+	virtual void enableTearingEffectReporting() = 0;
+
 	virtual auto getHandle() -> DSI_HandleTypeDef & = 0;
 
 	virtual void write(const uint8_t *data, const uint32_t size) = 0;

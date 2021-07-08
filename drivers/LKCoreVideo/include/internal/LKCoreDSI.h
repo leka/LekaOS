@@ -22,8 +22,10 @@ class LKCoreDSI : public LKCoreDSIBase
 
 	auto getSyncProps() -> SyncProps final;
 
-	void enableLPCmd();
-	void disableLPCmd();
+	void enableLPCmd() final;
+	void disableLPCmd() final;
+
+	void enableTearingEffectReporting() final;
 
 	auto getHandle() -> DSI_HandleTypeDef & final;
 
