@@ -26,6 +26,7 @@ target_sources(LKCoreVideo
 	source/LKCoreLCDDriverOTM8009A.cpp
 	source/LKCoreSDRAM.cpp
 	source/LKCoreVideo.cpp
+	source/LKVideoKit.cpp
 	external/source/st_jpeg_utils.cpp
 )
 

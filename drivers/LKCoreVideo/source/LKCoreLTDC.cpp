@@ -8,21 +8,21 @@
 
 namespace leka {
 
-LKCoreLTDC::LKCoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi) : _hal(hal), _dsi(dsi)
+LKCoreLTDC::LKCoreLTDC(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
 	_hltdc.Instance = LTDC;
 
-	auto props = dsi.getSyncProps();
+	auto props = dsi::sync_props;
 	// Timing and synchronization
 	_hltdc.Init.HorizontalSync	   = props.hsync;
 	_hltdc.Init.AccumulatedHBP	   = props.hsync + props.hbp;
 	_hltdc.Init.AccumulatedActiveW = props.hsync + props.hbp + props.activew;
-	_hltdc.Init.TotalWidth = props.hsync + props.hbp + props.activew + props.hfp;
+	_hltdc.Init.TotalWidth		   = props.hsync + props.hbp + props.activew + props.hfp;
 
 	_hltdc.Init.VerticalSync	   = props.vsync;
 	_hltdc.Init.AccumulatedVBP	   = props.vsync + props.vbp;
 	_hltdc.Init.AccumulatedActiveH = props.vsync + props.vbp + props.activeh;
-	_hltdc.Init.TotalHeigh = props.vsync + props.vbp + props.activeh + props.vfp;
+	_hltdc.Init.TotalHeigh		   = props.vsync + props.vbp + props.activeh + props.vfp;
 
 	// Background values
 	_hltdc.Init.Backcolor.Blue	= 0;
@@ -71,7 +71,9 @@ void LKCoreLTDC::initialize()
 	// Initialize LTDC layer
 	// This part **must not** be moved to the constructor as LCD
 	// initialization must be performed in a very specific order
-	_hal.HAL_LTDC_ConfigLayer(&_hltdc, &_layerConfig, 1);
+	_hal.HAL_LTDC_ConfigLayer(&_hltdc, &_layerConfig, 0);
+
+	HAL_LTDC_SetPitch(&_hltdc, 800, 0);
 }
 
 void LKCoreLTDC::configurePeriphClock()
@@ -93,14 +95,9 @@ void LKCoreLTDC::configurePeriphClock()
 	_hal.HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 }
 
-LTDC_HandleTypeDef& LKCoreLTDC::getHandle()
+auto LKCoreLTDC::getHandle() -> LTDC_HandleTypeDef &
 {
 	return _hltdc;
-}
-
-LTDC_LayerCfgTypeDef LKCoreLTDC::getLayerConfig() const
-{
-	return _layerConfig;
 }
 
 }	// namespace leka
