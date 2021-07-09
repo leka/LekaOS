@@ -30,6 +30,7 @@ class Dac
 	virtual auto dmaFlag() -> DMA_Flag& =0;
 
 	virtual auto getHandle() -> DAC_HandleTypeDef& =0;
+	virtual auto getDMAHandle() -> DMA_HandleTypeDef& =0;
 
 	
 

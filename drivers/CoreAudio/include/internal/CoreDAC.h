@@ -29,6 +29,7 @@ class CoreDAC : public interface::Dac
 	auto dmaFlag() -> DMA_Flag& final;
 
 	auto getHandle() -> DAC_HandleTypeDef& final;
+	auto getDMAHandle() -> DMA_HandleTypeDef& final;
 	
 	static DMA_Flag _dmaFlag;
 	DMA_Flag _flag;

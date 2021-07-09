@@ -81,6 +81,11 @@ auto CoreDAC::getHandle() -> DAC_HandleTypeDef&
     return this->_hdac;
 }
 
+auto CoreDAC::getDMAHandle() -> DMA_HandleTypeDef&
+{
+    return this->_hdma;
+}
+
 void CoreDAC::_registerCallbacks()
 {
     static auto *self = this;
