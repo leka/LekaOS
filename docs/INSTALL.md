@@ -60,6 +60,51 @@ sudo apt install build-essential git python-minimal
 sudo apt install make cmake ninja-build lcov gcovr stlink ccache open-ocd
 ```
 
+##### Ubuntu 18.04
+*Note: A lot of the errors encountered with this distro come from the out of date software provided by apt-get. If something doesn't seem to work make sure the installed version is the latest one or the one you need.*
+```bash
+# first update
+sudo apt update
+
+# then the prerequisites
+sudo apt install build-essential git python-minimal
+
+# then some first pre-compatible tools
+sudo apt install make ninja-build lcov gcovr ccache
+
+# then cmake needs to be installed with snap to have the latest version
+# apt-get repo isn't up to date
+sudo snap install cmake
+
+# then install last version of openocd from git
+# move to the folder in which you want to install openocd
+# follow https://github.com/ntfreak/openocd to check if these instructions are up to date
+git clone git://git.code.sf.net/p/openocd/code openocd
+cd openocd/
+./bootstrap
+./configure
+make
+sudo make install
+
+# then install the latest version of clang-format
+# follow https://apt.llvm.org/ to check if these instructions are up to date
+# add the last version to your source list with the following script
+bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+
+# update the package manager list
+sudo apt-get update
+
+# install the desired version (change the 12 if a more recent version is needed)
+sudo apt-get install clang-format-12
+
+# then you have to create a new shortcut to allow the "clang-format" command to call clang-format-12
+sudo ln -s /usr/lib/llvm-12/bin/clang-format /usr/bin/clang-format
+# if this call does not work, check the link to which the clang-format-12 shortcut in /usr/bin/clang-format-12 sends to
+```
+Then you will need to install the latest version of _st-link_ driver, the recommended way is with the debian package that you can download on this page :
+https://github.com/stlink-org/stlink/releases
+*You might need to scroll a little bit*
+
 ### 1. Clone the repository
 
 To start with:
