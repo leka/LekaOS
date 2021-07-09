@@ -3,10 +3,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <chrono>
-#include "LKCoreVideo.h"
 
-#include "LogKit.h"
 #include "rtos/ThisThread.h"
+
+#include "LKCoreVideo.h"
+#include "LogKit.h"
 
 using namespace std::chrono;
 using namespace leka;
@@ -76,7 +77,7 @@ void LKCoreVideo::initialize()
 	_coredsi.disableLPCmd();
 
 	_coredsi.enableTearingEffectReporting();
-	
+
 	_corejpeg.initialize();
 	_coredma2d.initialize();
 

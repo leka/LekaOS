@@ -5,15 +5,15 @@
 #include "LKCoreDSI.h"
 
 #include "rtos/ThisThread.h"
-#include "corevideo_config.h"
 
+#include "corevideo_config.h"
 
 using namespace std::chrono;
 using namespace leka;
 
 LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
-	_hdsi.Instance = DSI;
+	_hdsi.Instance			 = DSI;
 	_hdsi.Init.NumberOfLanes = DSI_TWO_DATA_LANES;
 	_hdsi.Init.TXEscapeCkdiv = dsi::txEscapeClockDiv;
 
@@ -22,7 +22,7 @@ LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 	_cmdconf.VSPolarity			   = DSI_VSYNC_ACTIVE_HIGH;
 	_cmdconf.DEPolarity			   = DSI_DATA_ENABLE_ACTIVE_HIGH;
 	_cmdconf.ColorCoding		   = DSI_RGB888;
-	_cmdconf.CommandSize		   = lcd::dimension.width/dsi::refresh_columns_count;
+	_cmdconf.CommandSize		   = lcd::dimension.width / dsi::refresh_columns_count;
 	_cmdconf.TearingEffectSource   = DSI_TE_DSILINK;
 	_cmdconf.TearingEffectPolarity = DSI_TE_RISING_EDGE;
 	_cmdconf.VSyncPol			   = DSI_VSYNC_FALLING;
@@ -30,12 +30,12 @@ LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 	_cmdconf.TEAcknowledgeRequest  = DSI_TE_ACKNOWLEDGE_DISABLE;
 
 	for (int i = 0; i < dsi::refresh_columns_count; ++i) {
-		auto col_width = _cmdconf.CommandSize ;
+		auto col_width	= _cmdconf.CommandSize;
 		auto col_offset = i * col_width;
-		_columns[i][0] = ((col_offset)&0xff00) >> 8;
-		_columns[i][1] = ((col_offset)&0x00ff) >> 0;
-		_columns[i][2] = ((col_offset+col_width-1)&0xff00) >> 8;
-		_columns[i][3] = ((col_offset+col_width-1)&0x00ff) >> 0;
+		_columns[i][0]	= (col_offset & 0xff00) >> 8;
+		_columns[i][1]	= (col_offset & 0x00ff) >> 0;
+		_columns[i][2]	= ((col_offset + col_width - 1) & 0xff00) >> 8;
+		_columns[i][3]	= ((col_offset + col_width - 1) & 0x00ff) >> 0;
 	}
 }
 
@@ -72,7 +72,7 @@ void LKCoreDSI::start()
 	HAL_DSI_ConfigPhyTimer(&_hdsi, &phy_timings);
 }
 
-void LKCoreDSI::refresh() 
+void LKCoreDSI::refresh()
 {
 	if (_hdsi.Lock == HAL_LOCKED) {
 		return;
@@ -85,16 +85,7 @@ void LKCoreDSI::refresh()
 
 auto LKCoreDSI::getSyncProps() -> LKCoreDSI::SyncProps
 {
-	return {
-		1,
-		1,
-		lcd::dimension.width/dsi::refresh_columns_count,
-		1,
-		1,
-		1,
-		lcd::dimension.height,
-		1
-	};
+	return {1, 1, lcd::dimension.width / dsi::refresh_columns_count, 1, 1, 1, lcd::dimension.height, 1};
 }
 
 void LKCoreDSI::enableLPCmd()
@@ -147,7 +138,6 @@ void LKCoreDSI::enableTearingEffectReporting()
 	GPIO_Init_Structure.Alternate = GPIO_AF13_DSI;
 	HAL_GPIO_Init(GPIOJ, &GPIO_Init_Structure);
 
-	//maskTE();
 	HAL_DSI_Refresh(&_hdsi);
 }
 

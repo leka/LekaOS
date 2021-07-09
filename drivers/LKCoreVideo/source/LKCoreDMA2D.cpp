@@ -4,8 +4,8 @@
 
 #include "LKCoreDMA2D.h"
 
-#include "corevideo_config.h"
 #include "LogKit.h"
+#include "corevideo_config.h"
 
 using namespace leka;
 
@@ -67,7 +67,7 @@ void LKCoreDMA2D::transferData(uintptr_t input, uintptr_t output, uint32_t width
 	}
 
 	// wait until DSI is ready
-	while(_dsi.isBusy())
+	while (_dsi.isBusy())
 		;
 
 	if (HAL_DMA2D_Start_IT(&_hdma2d, input, output, width, height) != HAL_OK) {

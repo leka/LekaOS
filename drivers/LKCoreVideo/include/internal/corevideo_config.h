@@ -43,7 +43,7 @@ namespace dsi {
 	constexpr uint32_t laneByteClock_kHz = 62500;	// 500 MHz / 8 = 62.5 MHz = 62500 kHz
 	constexpr uint32_t txEscapeClockDiv	 = laneByteClock_kHz / 15620;
 
-	constexpr uint32_t refresh_columns_count = 1; // allowed value : 1
+	constexpr uint32_t refresh_columns_count = 1;	// allowed value : 1
 
 }	// namespace dsi
 

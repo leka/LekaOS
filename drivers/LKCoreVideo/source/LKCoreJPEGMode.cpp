@@ -243,4 +243,3 @@ auto LKCoreJPEGDMAMode::decoderOutputHandler(JPEG_HandleTypeDef *hjpeg) -> bool
 
 	return _mcu_block_index == _mcu_number;
 }
-

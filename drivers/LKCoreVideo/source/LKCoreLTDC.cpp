@@ -17,12 +17,12 @@ LKCoreLTDC::LKCoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi) : _hal(hal),
 	_hltdc.Init.HorizontalSync	   = props.hsync;
 	_hltdc.Init.AccumulatedHBP	   = props.hsync + props.hbp;
 	_hltdc.Init.AccumulatedActiveW = props.hsync + props.hbp + props.activew;
-	_hltdc.Init.TotalWidth = props.hsync + props.hbp + props.activew + props.hfp;
+	_hltdc.Init.TotalWidth		   = props.hsync + props.hbp + props.activew + props.hfp;
 
 	_hltdc.Init.VerticalSync	   = props.vsync;
 	_hltdc.Init.AccumulatedVBP	   = props.vsync + props.vbp;
 	_hltdc.Init.AccumulatedActiveH = props.vsync + props.vbp + props.activeh;
-	_hltdc.Init.TotalHeigh = props.vsync + props.vbp + props.activeh + props.vfp;
+	_hltdc.Init.TotalHeigh		   = props.vsync + props.vbp + props.activeh + props.vfp;
 
 	// Background values
 	_hltdc.Init.Backcolor.Blue	= 0;
@@ -93,14 +93,9 @@ void LKCoreLTDC::configurePeriphClock()
 	_hal.HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 }
 
-LTDC_HandleTypeDef& LKCoreLTDC::getHandle()
+auto LKCoreLTDC::getHandle() -> LTDC_HandleTypeDef &
 {
 	return _hltdc;
-}
-
-LTDC_LayerCfgTypeDef LKCoreLTDC::getLayerConfig() const
-{
-	return _layerConfig;
 }
 
 }	// namespace leka

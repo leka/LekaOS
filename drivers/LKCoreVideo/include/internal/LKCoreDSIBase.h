@@ -31,7 +31,7 @@ class LKCoreDSIBase
 	};
 	virtual auto getSyncProps() -> SyncProps = 0;
 
-	virtual void enableLPCmd()  = 0;
+	virtual void enableLPCmd()	= 0;
 	virtual void disableLPCmd() = 0;
 
 	virtual void enableTearingEffectReporting() = 0;

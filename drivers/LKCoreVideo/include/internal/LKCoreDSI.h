@@ -41,7 +41,7 @@ class LKCoreDSI : public LKCoreDSIBase
 	DSI_CmdCfgTypeDef _cmdconf;
 	DSI_LPCmdTypeDef _lpcmd;
 
-	std::array<std::array<uint8_t, 4>, 2> _columns;   // TODO : use constant, fix circular includes
+	std::array<std::array<uint8_t, 4>, 2> _columns;	  // TODO : use constant, fix circular includes
 	int _current_columns = 0;
 };
 

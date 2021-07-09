@@ -16,10 +16,9 @@ class LKCoreLTDC : public LKCoreLTDCBase
   public:
 	LKCoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi);
 
-	void initialize(void) final;
+	void initialize() final;
 
-	LTDC_HandleTypeDef& getHandle() final;
-	LTDC_LayerCfgTypeDef getLayerConfig(void) const;
+	auto getHandle() -> LTDC_HandleTypeDef & final;
 
   private:
 	LKCoreSTM32HalBase &_hal;
@@ -28,7 +27,7 @@ class LKCoreLTDC : public LKCoreLTDCBase
 	LTDC_HandleTypeDef _hltdc;
 	LTDC_LayerCfgTypeDef _layerConfig;
 
-	void configurePeriphClock(void);
+	void configurePeriphClock();
 };
 
 }	// namespace leka

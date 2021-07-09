@@ -51,8 +51,8 @@ LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, cor
 std::vector<const char *> images = {"assets/images/Leka/logo.jpg", "assets/images/Leka/image.jpg"};
 
 std::vector<const char *> videos = {
-	//"assets/video/20fps.avi",
 	"assets/video/20fps_low10.avi",
+	//"assets/video/20fps.avi",
 	"assets/video/20fps_low15.avi",
 	//"assets/video/20fps_s700.avi",
 	//"assets/video/20fps_s600.avi",
@@ -155,7 +155,6 @@ auto main() -> int
 		log_info("A message from your board %s --> \"%s\" at %is", MBED_CONF_APP_TARGET_NAME, hello.world,
 				 int(t.count() / 1000));
 
-
 		for (const auto &image_name: images) {
 			if (file.open(image_name) == FR_OK) {
 				corevideo.displayImage(file);
@@ -173,7 +172,6 @@ auto main() -> int
 				rtos::ThisThread::sleep_for(500ms);
 			}
 		}
-		
 
 		corevideo.turnOff();
 	}
