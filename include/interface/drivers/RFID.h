@@ -18,6 +18,7 @@ namespace rfid {
 		std::array<uint8_t, 4> sak {};
 		std::array<uint8_t, 16> data {};
 	};
+
 	enum class Flag : uint8_t
 	{
 		sb_7 = 0b00000111,	 // significant bits : 7
