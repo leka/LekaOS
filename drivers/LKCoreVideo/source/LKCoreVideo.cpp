@@ -81,20 +81,6 @@ void LKCoreVideo::initialize()
 	_coredma2d.initialize();
 
 	_corelcd.setBrightness(0.5f);
-
-	uint8_t pColLeft[]	= {0x00, 0x00, 0x03, 0x1F}; /*   0 -> 399 */
-	uint8_t pColRight[] = {0x01, 0x90, 0x03, 0x1F}; /* 400 -> 799 */
-	uint8_t pPage[]		= {0x00, 0x00, 0x01, 0xDF}; /*   0 -> 479 */
-	uint8_t pScanCol[]	= {0x02, 0x15};				/* Scan @ 533 */
-	auto OTM8009A_CMD_CASET = 0x2A;
-	auto OTM8009A_CMD_PASET = 0x2B;
-	auto OTM8009A_CMD_WRTESCN = 0x44;
-
-	HAL_DSI_LongWrite(&_coredsi.getHandle(), 0, DSI_DCS_LONG_PKT_WRITE, 4, OTM8009A_CMD_PASET, pPage);
-
-	HAL_LTDC_SetPitch(&_coreltdc.getHandle(), 800, 0);
-
-	HAL_DSI_LongWrite(&_coredsi.getHandle(), 0, DSI_DCS_LONG_PKT_WRITE, 2, OTM8009A_CMD_WRTESCN, pScanCol);
 }
 
 void LKCoreVideo::turnOff()
@@ -145,7 +131,9 @@ void LKCoreVideo::displayVideo(LKCoreFatFs &file)
 		frame_size		= _corejpeg.decodeImage(file);
 
 		// if first frame, get file info
-		if (frame_index == 0) config = _corejpeg.getConfig();
+		if (frame_index == 0) {
+			config = _corejpeg.getConfig();
+		}
 
 		frame_index += 1;
 

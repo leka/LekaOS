@@ -9,8 +9,7 @@
 
 
 using namespace std::chrono;
-
-namespace leka {
+using namespace leka;
 
 LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
@@ -28,18 +27,16 @@ LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 	_cmdconf.TearingEffectPolarity = DSI_TE_RISING_EDGE;
 	_cmdconf.VSyncPol			   = DSI_VSYNC_FALLING;
 	_cmdconf.AutomaticRefresh	   = DSI_AR_DISABLE;
-	_cmdconf.TEAcknowledgeRequest  = DSI_TE_ACKNOWLEDGE_ENABLE;
+	_cmdconf.TEAcknowledgeRequest  = DSI_TE_ACKNOWLEDGE_DISABLE;
 
 	for (int i = 0; i < dsi::refresh_columns_count; ++i) {
-		auto col_offset = i * dsi::refresh_columns_count;
-		auto col_width = _cmdconf.CommandSize - 1;
+		auto col_width = _cmdconf.CommandSize ;
+		auto col_offset = i * col_width;
 		_columns[i][0] = ((col_offset)&0xff00) >> 8;
 		_columns[i][1] = ((col_offset)&0x00ff) >> 0;
-		_columns[i][2] = ((col_offset+col_width)&0xff00) >> 8;
-		_columns[i][3] = ((col_offset+col_width)&0x00ff) >> 0;
+		_columns[i][2] = ((col_offset+col_width-1)&0xff00) >> 8;
+		_columns[i][3] = ((col_offset+col_width-1)&0x00ff) >> 0;
 	}
-
-	HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 4, 0x2a, _columns[0].data());
 }
 
 void LKCoreDSI::initialize()
@@ -77,7 +74,9 @@ void LKCoreDSI::start()
 
 void LKCoreDSI::refresh() 
 {
-	if (_hdsi.Lock == HAL_LOCKED) return;
+	if (_hdsi.Lock == HAL_LOCKED) {
+		return;
+	}
 
 	_hdsi.Lock = HAL_LOCKED;
 	_hdsi.Instance->WCR |= DSI_WCR_LTDCEN;
@@ -186,6 +185,11 @@ auto LKCoreDSI::getHandle() -> DSI_HandleTypeDef &
 	return _hdsi;
 }
 
+auto LKCoreDSI::isBusy() -> bool
+{
+	return _hdsi.State == HAL_DSI_STATE_BUSY;
+}
+
 void LKCoreDSI::write(const uint8_t *data, uint32_t size)
 {
 	if (size <= 2) {
@@ -194,5 +198,3 @@ void LKCoreDSI::write(const uint8_t *data, uint32_t size)
 		_hal.HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, size, data[size - 1], const_cast<uint8_t *>(data));
 	}
 }
-
-}	// namespace leka

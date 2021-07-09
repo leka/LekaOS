@@ -6,7 +6,7 @@
 
 #include "corevideo_config.h"
 
-namespace leka {
+using namespace leka;
 
 LKCoreJPEG::LKCoreJPEG(LKCoreSTM32HalBase &hal, std::unique_ptr<LKCoreJPEGMode> mode)
 	: _hal(hal), _mode(std::move(mode))
@@ -129,5 +129,3 @@ auto LKCoreJPEG::findFrameOffset(LKCoreFatFsBase &file, uint32_t offset) -> uint
 
 	return 0;
 }
-
-}	// namespace leka

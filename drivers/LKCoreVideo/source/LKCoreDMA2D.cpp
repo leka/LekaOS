@@ -5,10 +5,11 @@
 #include "LKCoreDMA2D.h"
 
 #include "corevideo_config.h"
+#include "LogKit.h"
 
-namespace leka {
+using namespace leka;
 
-LKCoreDMA2D::LKCoreDMA2D(LKCoreSTM32HalBase &hal) : _hal(hal)
+LKCoreDMA2D::LKCoreDMA2D(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi) : _hal(hal), _dsi(dsi)
 {
 	// MARK: Configure DMA2D mode, color mode and output offset
 	_hdma2d.Init.Mode		   = DMA2D_M2M_PFC;
@@ -56,12 +57,21 @@ auto LKCoreDMA2D::getHandle() -> DMA2D_HandleTypeDef &
 
 void LKCoreDMA2D::transferData(uintptr_t input, uintptr_t output, uint32_t width, uint32_t height)
 {
-	// TODO: Check if init and config are needed everytime
-	auto init	= [&] { return _hal.HAL_DMA2D_Init(&_hdma2d) == HAL_OK; };
-	auto config = [&] { return _hal.HAL_DMA2D_ConfigLayer(&_hdma2d, 0) == HAL_OK; };
-	auto start	= [&] { return HAL_DMA2D_Start_IT(&_hdma2d, input, output, width, height) == HAL_OK; };
+	if (_hal.HAL_DMA2D_Init(&_hdma2d) != HAL_OK) {
+		log_error("DMA2D Init error");
+		return;
+	}
+	if (_hal.HAL_DMA2D_ConfigLayer(&_hdma2d, 0) != HAL_OK) {
+		log_error("DMA2D config layer error");
+		return;
+	}
 
-	if (init() && config() && start()) {
+	// wait until DSI is ready
+	while(_dsi.isBusy())
+		;
+
+	if (HAL_DMA2D_Start_IT(&_hdma2d, input, output, width, height) != HAL_OK) {
+		log_error("DMA2D Start IT error");
 	}
 }
 
@@ -81,5 +91,3 @@ void LKCoreDMA2D::transferDrawing(uintptr_t first_pixel_address, uint32_t width,
 
 	transferData(color, first_pixel_address, width, height);
 }
-
-}	// namespace leka

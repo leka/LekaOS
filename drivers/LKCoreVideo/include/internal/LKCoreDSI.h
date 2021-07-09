@@ -31,6 +31,8 @@ class LKCoreDSI : public LKCoreDSIBase
 
 	auto getHandle() -> DSI_HandleTypeDef & final;
 
+	auto isBusy() -> bool final;
+
 	void write(const uint8_t *data, uint32_t size) final;
 
   private:

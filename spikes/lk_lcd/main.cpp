@@ -38,8 +38,8 @@ LKCoreLL corell;
 CGPixel pixel(corell);
 LKCoreSTM32Hal hal;
 LKCoreSDRAM coresdram(hal);
-LKCoreDMA2D coredma2d(hal);
 LKCoreDSI coredsi(hal);
+LKCoreDMA2D coredma2d(hal, coredsi);
 LKCoreLTDC coreltdc(hal, coredsi);
 LKCoreGraphics coregraphics(coredma2d);
 LKCoreFont corefont(pixel);
@@ -48,12 +48,12 @@ LKCoreLCD corelcd(coreotm);
 LKCoreJPEG corejpeg(hal, std::make_unique<LKCoreJPEGDMAMode>());
 LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
-std::vector<const char *> images = {"assets/images/Leka/logo.jpg", "assets/images/Leka/emotion-happy.jpg"};
+std::vector<const char *> images = {"assets/images/Leka/logo.jpg", "assets/images/Leka/image.jpg"};
 
 std::vector<const char *> videos = {
 	//"assets/video/20fps.avi",
 	"assets/video/20fps_low10.avi",
-	//"assets/video/20fps_low15.avi",
+	"assets/video/20fps_low15.avi",
 	//"assets/video/20fps_s700.avi",
 	//"assets/video/20fps_s600.avi",
 	//"assets/video/20fps_s500.avi",
@@ -143,16 +143,18 @@ auto main() -> int
 		"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
 		"only one line of the screen.");
 
+	coredsi.refresh();
+
 	rtos::ThisThread::sleep_for(1s);
 
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 
+	corevideo.setBrightness(0.6f);
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
 		log_info("A message from your board %s --> \"%s\" at %is", MBED_CONF_APP_TARGET_NAME, hello.world,
 				 int(t.count() / 1000));
 
-		corevideo.setBrightness(0.6f);
 
 		for (const auto &image_name: images) {
 			if (file.open(image_name) == FR_OK) {
@@ -160,17 +162,15 @@ auto main() -> int
 				corevideo.turnOn();
 				file.close();
 				log_info("dma2d irq : %d", dma2d_cnt);
-				rtos::ThisThread::sleep_for(2s);
+				rtos::ThisThread::sleep_for(1s);
 			}
 		}
-		while(1) {
-			for (const auto &video_name: videos) {
-				if (file.open(video_name) == FR_OK) {
-					corevideo.displayVideo(file);
-					file.close();
-					log_info("dma2d irq : %d", dma2d_cnt);
-					rtos::ThisThread::sleep_for(2s);
-				}
+		for (const auto &video_name: videos) {
+			if (file.open(video_name) == FR_OK) {
+				corevideo.displayVideo(file);
+				file.close();
+				log_info("dma2d irq : %d", dma2d_cnt);
+				rtos::ThisThread::sleep_for(500ms);
 			}
 		}
 		
