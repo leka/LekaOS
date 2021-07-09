@@ -115,13 +115,12 @@ auto CoreCR95HF::didSetBaudrateSucceed(uint8_t baudrate) -> bool
 
 auto CoreCR95HF::setCommunicationProtocol(rfid::Protocol protocol) -> bool
 {
+	auto setCommunicationProtocol = bool {false};
 	if (protocol == rfid::Protocol::ISO14443A) {
-		if (setProtocolISO14443A() && setGainAndModulationISO14443A()) {
-			return true;
-		}
+		setCommunicationProtocol = setProtocolISO14443A() && setGainAndModulationISO14443A();
 	}
 
-	return false;
+	return setCommunicationProtocol;
 }
 
 auto CoreCR95HF::setProtocolISO14443A() -> bool
@@ -172,9 +171,7 @@ auto CoreCR95HF::formatCommand(lstd::span<uint8_t> command) -> size_t
 
 auto CoreCR95HF::receiveDataFromTag(lstd::span<uint8_t> answer) -> size_t
 {
-	auto size = receiveCR95HFAnswer();
-
-	if (!DataFromTagIsCorrect(size)) {
+	if (auto size = receiveCR95HFAnswer(); !DataFromTagIsCorrect(size)) {
 		return 0;
 	}
 
