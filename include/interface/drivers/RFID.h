@@ -53,6 +53,7 @@ namespace interface {
 
 		virtual void registerTagAvailableCallback(tagAvailableCallback callback) = 0;
 		virtual auto getTagAvailableCallback() -> tagAvailableCallback			 = 0;
+		virtual void onTagAvailable()											 = 0;
 
 		virtual auto getIDN() -> std::array<uint8_t, 17>   = 0;
 		virtual auto setBaudrate(uint8_t baudrate) -> bool = 0;

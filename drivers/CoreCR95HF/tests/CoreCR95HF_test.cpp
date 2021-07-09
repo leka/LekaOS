@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "CoreCR95HF.h"
+#include <cstdint>
 
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreBufferedSerial.h"
@@ -29,18 +30,31 @@ class CoreCR95HFSensorTest : public ::testing::Test
 	CoreCR95HF corecr95hf;
 	CoreBufferedSerialMock mockBufferedSerial;
 
+	void sendSetModeTagDetection()
+	{
+		const auto expected_values = ElementsAre(rfid::cr95hf::settings::idle_tag_detection::tag_detection_command,
+												 rfid::cr95hf::settings::idle_tag_detection::length,
+												 rfid::cr95hf::settings::idle_tag_detection::wu_source,
+												 rfid::cr95hf::settings::idle_tag_detection::enter_control[0],
+												 rfid::cr95hf::settings::idle_tag_detection::enter_control[1],
+												 rfid::cr95hf::settings::idle_tag_detection::wu_control[0],
+												 rfid::cr95hf::settings::idle_tag_detection::wu_control[1],
+												 rfid::cr95hf::settings::idle_tag_detection::leave_control[0],
+												 rfid::cr95hf::settings::idle_tag_detection::leave_control[1],
+												 rfid::cr95hf::settings::idle_tag_detection::wu_periode,
+												 rfid::cr95hf::settings::idle_tag_detection::oscillator_start,
+												 rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_start,
+												 rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_data[0],
+												 rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_data[1],
+												 rfid::cr95hf::settings::idle_tag_detection::swing_count,
+												 rfid::cr95hf::settings::idle_tag_detection::max_sleep);
+		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+	}
+
 	void sendAskIdn()
 	{
 		const auto expected_values = ElementsAre(rfid::cr95hf::command::idn::id, rfid::cr95hf::command::idn::length);
 		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
-	}
-
-	template <size_t size>
-	void receiveAskIdnAnswer(const std::array<uint8_t, size> &returned_values)
-	{
-		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
-		EXPECT_CALL(mockBufferedSerial, read)
-			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + size), Return(size)));
 	}
 
 	void sendSetBaudrate(uint8_t baudrate)
@@ -50,12 +64,6 @@ class CoreCR95HFSensorTest : public ::testing::Test
 		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 	}
 
-	void receiveSetBaudrate(uint8_t returned_value, int answer_size)
-	{
-		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
-		EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArgPointee<0>(returned_value), Return(answer_size)));
-	}
-
 	void sendSetProtocol()
 	{
 		const auto expected_values =
@@ -63,14 +71,6 @@ class CoreCR95HFSensorTest : public ::testing::Test
 						rfid::cr95hf::protocol::iso14443A.id,
 						rfid::cr95hf::settings::default_protocol_parameters_for_rx_speed_tx_speed_rfu);
 		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
-	}
-
-	template <size_t size>
-	void receiveSetProtocolAnswer(const std::array<uint8_t, size> &returned_values)
-	{
-		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
-		EXPECT_CALL(mockBufferedSerial, read)
-			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + size), Return(size)));
 	}
 
 	void sendSetGainAndModulation()
@@ -83,11 +83,18 @@ class CoreCR95HFSensorTest : public ::testing::Test
 		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 	}
 
-	void receiveSetGainAndModulationAnswer(const std::array<uint8_t, 2> &returned_values)
+	template <size_t size>
+	void receiveCR95HFAnswer(const std::array<uint8_t, size> &returned_values)
 	{
 		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
 		EXPECT_CALL(mockBufferedSerial, read)
-			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + 2), Return(2)));
+			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + size), Return(size)));
+	}
+
+	void receiveSetBaudrate(uint8_t returned_value, int answer_size)
+	{
+		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
+		EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArgPointee<0>(returned_value), Return(answer_size)));
 	}
 };
 
@@ -112,6 +119,30 @@ TEST_F(CoreCR95HFSensorTest, registerTagAvailableCallback)
 	ASSERT_EQ(ptr_to_callback, callback);
 }
 
+TEST_F(CoreCR95HFSensorTest, onTagAvailableSuccess)
+{
+	std::array<uint8_t, 3> expected_tag_detection_callback = {0x00, 0x01, 0x02};
+
+	corecr95hf.registerTagAvailableCallback(callback);
+	{
+		InSequence seq;
+		receiveCR95HFAnswer(expected_tag_detection_callback);
+		sendSetModeTagDetection();
+	}
+
+	corecr95hf.onTagAvailable();
+}
+TEST_F(CoreCR95HFSensorTest, onTagAvailableWrongCallback)
+{
+	std::array<uint8_t, 3> expected_tag_detection_callback = {0x00, 0x01, 0xff};
+
+	corecr95hf.registerTagAvailableCallback(callback);
+
+	receiveCR95HFAnswer(expected_tag_detection_callback);
+
+	corecr95hf.onTagAvailable();
+}
+
 TEST_F(CoreCR95HFSensorTest, getIDNSuccess)
 {
 	std::array<uint8_t, 17> expected_idn = {0x00, 0x0F, 0x4E, 0x46, 0x43, 0x20, 0x46, 0x53, 0x32,
@@ -120,7 +151,7 @@ TEST_F(CoreCR95HFSensorTest, getIDNSuccess)
 	{
 		InSequence seq;
 		sendAskIdn();
-		receiveAskIdnAnswer(expected_idn);
+		receiveCR95HFAnswer(expected_idn);
 	}
 
 	auto idn = corecr95hf.getIDN();
@@ -138,7 +169,7 @@ TEST_F(CoreCR95HFSensorTest, getIDNFailedOnSize)
 	{
 		InSequence seq;
 		sendAskIdn();
-		receiveAskIdnAnswer(wrong_idn);
+		receiveCR95HFAnswer(wrong_idn);
 	}
 
 	auto idn = corecr95hf.getIDN();
@@ -153,7 +184,7 @@ TEST_F(CoreCR95HFSensorTest, getIDNFailedOnValues)
 	{
 		InSequence seq;
 		sendAskIdn();
-		receiveAskIdnAnswer(expected_idn);
+		receiveCR95HFAnswer(expected_idn);
 	}
 
 	auto idn = corecr95hf.getIDN();
@@ -212,9 +243,9 @@ TEST_F(CoreCR95HFSensorTest, setCommunicationProtocolSuccess)
 		InSequence seq;
 
 		sendSetProtocol();
-		receiveSetProtocolAnswer(set_protocol_success_answer);
+		receiveCR95HFAnswer(set_protocol_success_answer);
 		sendSetGainAndModulation();
-		receiveSetGainAndModulationAnswer(set_gain_and_modulation_success_answer);
+		receiveCR95HFAnswer(set_gain_and_modulation_success_answer);
 	}
 
 	auto is_initialized = corecr95hf.setCommunicationProtocol(rfid::Protocol::ISO14443A);
@@ -228,7 +259,7 @@ TEST_F(CoreCR95HFSensorTest, setCommunicationProtocolFailedOnAnswerTooBig)
 		InSequence seq;
 
 		sendSetProtocol();
-		receiveSetProtocolAnswer(set_protocol_failed_answer);
+		receiveCR95HFAnswer(set_protocol_failed_answer);
 	}
 
 	auto is_initialized = corecr95hf.setCommunicationProtocol(rfid::Protocol::ISO14443A);
@@ -242,7 +273,7 @@ TEST_F(CoreCR95HFSensorTest, setCommunicationProtocolFailedOnWrongFirstValue)
 		InSequence seq;
 
 		sendSetProtocol();
-		receiveSetProtocolAnswer(set_protocol_failed_answer);
+		receiveCR95HFAnswer(set_protocol_failed_answer);
 	}
 
 	auto is_initialized = corecr95hf.setCommunicationProtocol(rfid::Protocol::ISO14443A);

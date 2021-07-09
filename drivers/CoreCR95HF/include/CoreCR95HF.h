@@ -160,6 +160,7 @@ class CoreCR95HF : public interface::RFID
 
 	void registerTagAvailableCallback(tagAvailableCallback callback) final { _tagAvailableCallback = callback; };
 	auto getTagAvailableCallback() -> tagAvailableCallback final { return _tagAvailableCallback; };
+	void onTagAvailable() final;
 
 	auto getIDN() -> std::array<uint8_t, 17> final;
 	auto setBaudrate(uint8_t baudrate) -> bool final;
@@ -171,7 +172,7 @@ class CoreCR95HF : public interface::RFID
 
   private:
 	void registerSigioCallback();
-	void onTagAvailable();
+
 	auto receiveTagDetectionCallback() -> bool;
 	void setModeTagDetection();
 
