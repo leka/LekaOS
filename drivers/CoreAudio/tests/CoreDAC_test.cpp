@@ -22,8 +22,7 @@ class CoreDACTest : public ::testing::Test
 	// void TearDown() override {}
 
 	LKCoreSTM32HalMock halmock;
-	CoreDACTimer coredac;
-
+	CoreDAC coredac;
 
 	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call
 	// TODO: Remove them in the future
@@ -37,7 +36,7 @@ class CoreDACTest : public ::testing::Test
 		EXPECT_CALL(halmock, HAL_RCC_GPIOH_CLK_ENABLE).Times(AnyNumber());
 		EXPECT_CALL(halmock, HAL_RCC_GPIOI_CLK_ENABLE).Times(AnyNumber());
 		EXPECT_CALL(halmock, HAL_GPIO_Init).Times(AnyNumber());
-		EXPECT_CALL(halmock, HAL_LINKDMA).Times(AnyNumber());
+		EXPECT_CALL(halmock, HAL_LINKDMA_DAC).Times(AnyNumber());
 		EXPECT_CALL(halmock, HAL_DMA_DeInit).Times(AnyNumber());
 		EXPECT_CALL(halmock, HAL_DMA_Init).Times(AnyNumber());
 		EXPECT_CALL(halmock, HAL_NVIC_SetPriority).Times(AnyNumber());
@@ -54,132 +53,125 @@ TEST_F(CoreDACTest, instantiation)
 TEST_F(CoreDACTest, handleConfigurationInstance)
 {
 	auto hdac = coredac.getHandle();
-    auto hdma = coredac.getDMAHandle();
+	auto hdma = coredac.getDMAHandle();
 
 	ASSERT_EQ(hdac.Instance, DAC);
-    ASSERT_EQ(hdma.Instance, DMA1_Stream5);
+	ASSERT_EQ(hdma.Instance, DMA1_Stream5);
 }
 
 TEST_F(CoreDACTest, initialize)
 {
-    {
-        InSequence seq;
+	{
+		InSequence seq;
 
-        EXPECT_CALL(halmock,HAL_RCC_GPIOA_CLK_ENABLE ).Times(1);
-        EXPECT_CALL(halmock, HAL_RCC_DMA1_CLK_ENABLE).Times(1);
-        EXPECT_CALL(halmock, HAL_NVIC_SetPriority).Times(1);
-        EXPECT_CALL(halmock,HAL_NVIC_EnableIRQ ).Times(1);
-        EXPECT_CALL(coredac, _registerMspCallbacks).Times(1);
-        EXPECT_CALL(halmock,HAL_DAC_Init ).Times(1);
-        EXPECT_CALL(coredac, _registerCallbacks).Times(1);
-        EXPECT_CALL(halmock,HAL_DAC_ConfigChannel ).Times(1);
-    }
-    coredac.initialize();
+		EXPECT_CALL(halmock, HAL_RCC_GPIOA_CLK_ENABLE).Times(1);
+		EXPECT_CALL(halmock, HAL_RCC_DMA1_CLK_ENABLE).Times(1);
+		EXPECT_CALL(halmock, HAL_NVIC_SetPriority).Times(1);
+		EXPECT_CALL(halmock, HAL_NVIC_EnableIRQ).Times(1);
+		EXPECT_CALL(coredac, _registerMspCallbacks).Times(1);
+		EXPECT_CALL(halmock, HAL_DAC_Init).Times(1);
+		EXPECT_CALL(coredac, _registerCallbacks).Times(1);
+		EXPECT_CALL(halmock, HAL_DAC_ConfigChannel).Times(1);
+	}
+	coredac.initialize();
 }
 
 TEST_F(CoreDACTest, deInitialize)
 {
-    {
-        EXPECT_CALL(halmock,HAL_DAC_DeInit ).Times(1);
-    }
-    coredac.deInitialize();
+	{
+		EXPECT_CALL(halmock, HAL_DAC_DeInit).Times(1);
+	}
+	coredac.deInitialize();
 }
 
 TEST_F(CoreDACTest, start)
 {
-    {
-        InSequence seq;
+	{
+		InSequence seq;
 
-        EXPECT_CALL(halmock,HAL_DAC_Start ).Times(1);
-        EXPECT_CALL(halmock,HAL_DAC_Start_DMA ).Times(1);
-    }
-    coredac.start();
+		EXPECT_CALL(halmock, HAL_DAC_Start).Times(1);
+		EXPECT_CALL(halmock, HAL_DAC_Start_DMA).Times(1);
+	}
+	coredac.start(null,0));
 }
-
 
 TEST_F(CoreDACTest, stop)
 {
-    {
-        EXPECT_CALL(halmock,HAL_DAC_Stop ).Times(1);
-    }
-    coredac.stop();
+	{
+		EXPECT_CALL(halmock, HAL_DAC_Stop_DMA).Times(1);
+	}
+	coredac.stop();
 }
 
 TEST_F(CoreDACTest, _registerCallbacks)
 {
-    {
-        EXPECT_CALL(halmock,HAL_DAC_RegisterCallback ).Times(2);
-    }
-    coredac._registerCallbacks();
+	{
+		EXPECT_CALL(halmock, HAL_DAC_RegisterCallback).Times(2);
+	}
+	coredac._registerCallbacks();
 }
 
 TEST_F(CoreDACTest, _halfCptCallback)
 {
-
-    coredac._halfCptCallback();
-    ASSERT_EQ(coredac.dmaFlag(),interface::Dac::DMA_Flag::Half_cpt);
+	coredac._halfCptCallback();
+	ASSERT_EQ(coredac.dmaFlag(), interface::Dac::DMA_Flag::Half_cpt);
 }
 
 TEST_F(CoreDACTest, _cptCallback)
 {
-    coredac._cptCallback();
+	coredac._cptCallback();
 
-    ASSERT_EQ(coredac.dmaFlag(),interface::Dac::DMA_Flag::Cpt);
+	ASSERT_EQ(coredac.dmaFlag(), interface::Dac::DMA_Flag::Cpt);
 }
 
 TEST_F(CoreDACTest, _registerMSPCallbacks)
 {
-    {
-        EXPECT_CALL(halmock,HAL_DAC_RegisterCallback ).Times(2);
-    }
-    coredac._registerCallbacks();
+	{
+		EXPECT_CALL(halmock, HAL_DAC_RegisterCallback).Times(2);
+	}
+	coredac._registerCallbacks();
 }
-
 
 TEST_F(CoreDACTest, _mspInitCallback)
 {
-    DMA_HandleTypeDef _hdma = coredac.getDMAHandle();
+	DMA_HandleTypeDef _hdma = coredac.getDMAHandle();
 
-    {
-        InSequence seq;
+	{
+		InSequence seq;
 
-        EXPECT_CALL(halmock,HAL_RCC_DAC_CLK_ENABLE ).Times(1);
-        EXPECT_CALL(halmock,HAL_RCC_GPIOA_CLK_ENABLE ).Times(1);
-        EXPECT_CALL(halmock,HAL_GPIO_Init ).Times(1);
-        EXPECT_CALL(halmock,HAL_DMA_Init).Times(1);
-    }
-    coredac._mspInitCallback();
+		EXPECT_CALL(halmock, HAL_RCC_DAC_CLK_ENABLE).Times(1);
+		EXPECT_CALL(halmock, HAL_RCC_GPIOA_CLK_ENABLE).Times(1);
+		EXPECT_CALL(halmock, HAL_GPIO_Init).Times(1);
+		EXPECT_CALL(halmock, HAL_DMA_Init).Times(1);
+	}
+	coredac._mspInitCallback();
 
-    ASSERT_EQ(coredac.dmaFlag(),interface::Dac::DMA_Flag::Cpt);
+	ASSERT_EQ(coredac.dmaFlag(), interface::Dac::DMA_Flag::Cpt);
 
+	ASSERT_EQ(_hdma.Init.Channel, DMA_CHANNEL_7);
+	ASSERT_EQ(_hdma.Init.Direction, DMA_MEMORY_TO_PERIPH);
+	ASSERT_EQ(_hdma.Init.PeriphInc, DMA_PINC_DISABLE);
+	ASSERT_EQ(_hdma.Init.MemInc, DMA_MINC_ENABLE);
+	ASSERT_EQ(_hdma.Init.PeriphDataAlignment, DMA_PDATAALIGN_HALFWORD);
+	ASSERT_EQ(_hdma.Init.MemDataAlignment, DMA_MDATAALIGN_HALFWORD);
+	ASSERT_EQ(_hdma.Init.Mode, DMA_CIRCULAR);
+	ASSERT_EQ(_hdma.Init.Priority, DMA_PRIORITY_LOW);	   // changed from low to high
+	ASSERT_EQ(_hdma.Init.FIFOMode, DMA_FIFOMODE_ENABLE);   // enable
+	ASSERT_EQ(_hdma.Init.FIFOThreshold, DMA_FIFO_THRESHOLD_HALFFULL);
+	ASSERT_EQ(_hdma.Init.MemBurst, DMA_MBURST_INC4);   // inc4
+	ASSERT_EQ(_hdma.Init.PeriphBurst, DMA_PBURST_SINGLE);
 
-    ASSERT_EQ(_hdma.Init.Channel, DMA_CHANNEL_7);
-    ASSERT_EQ(_hdma.Init.Direction, DMA_MEMORY_TO_PERIPH);
-    ASSERT_EQ(_hdma.Init.PeriphInc, DMA_PINC_DISABLE);
-    ASSERT_EQ(_hdma.Init.MemInc, DMA_MINC_ENABLE);
-    ASSERT_EQ(_hdma.Init.PeriphDataAlignment, DMA_PDATAALIGN_HALFWORD);
-    ASSERT_EQ(_hdma.Init.MemDataAlignment, DMA_MDATAALIGN_HALFWORD);
-    ASSERT_EQ(_hdma.Init.Mode, DMA_CIRCULAR);
-    ASSERT_EQ(_hdma.Init.Priority, DMA_PRIORITY_LOW);		// changed from low to high
-    ASSERT_EQ(_hdma.Init.FIFOMode, DMA_FIFOMODE_ENABLE);	// enable
-    ASSERT_EQ(_hdma.Init.FIFOThreshold, DMA_FIFO_THRESHOLD_HALFFULL);
-    ASSERT_EQ(_hdma.Init.MemBurst, DMA_MBURST_INC4);	// inc4
-    ASSERT_EQ(_hdma.Init.PeriphBurst, DMA_PBURST_SINGLE);
-
-    ASSERT_EQ(coredac.DMA_Handle1, &_hdma);
+	ASSERT_EQ(coredac.DMA_Handle1, &_hdma);
 }
 
 TEST_F(CoreDACTest, _mspDeInitCallback)
 {
-    {
-        InSequence seq;
+	{
+		InSequence seq;
 
-        EXPECT_CALL(halmock,HAL_RCC_DAC_CLK_DISABLE ).Times(1);
-        EXPECT_CALL(halmock,HAL_GPIO_DeInit ).Times(1);
-        EXPECT_CALL(halmock,HAL_DMA_DeInit ).Times(1);
-    }
-    coredac._mspDeInitCallback();
+		EXPECT_CALL(halmock, HAL_RCC_DAC_CLK_DISABLE).Times(1);
+		EXPECT_CALL(halmock, HAL_GPIO_DeInit).Times(1);
+		EXPECT_CALL(halmock, HAL_DMA_DeInit).Times(1);
+	}
+	coredac._mspDeInitCallback();
 }
-
-
-
