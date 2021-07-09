@@ -14,6 +14,41 @@ using namespace std::chrono;
 
 namespace leka {
 
+void CoreCR95HF::registerSigioCallback()
+{
+	static auto *self = this;
+	auto callback	  = []() { self->onTagAvailable(); };
+	_serial.sigio(callback);
+}
+
+void CoreCR95HF::onTagAvailable()
+{
+	if (receiveTagDetectionCallback()) {
+		_tagAvailableCallback();
+	}
+
+	setModeTagDetection();
+}
+
+auto CoreCR95HF::receiveTagDetectionCallback() -> bool
+{
+	std::array<uint8_t, 2> buffer {};
+
+	if (receiveCR95HFAnswer() != 3) {
+		return false;
+	}
+
+	std::copy(_rx_buf.begin() + 1, _rx_buf.begin() + 1 + buffer.size(), buffer.begin());
+
+	return buffer == rfid::cr95hf::status::tag_detection_callback ? true : false;
+}
+
+void CoreCR95HF::setModeTagDetection()
+{
+	_serial.write(rfid::cr95hf::command::frame::set_mode_tag_detection.data(),
+				  rfid::cr95hf::command::frame::set_mode_tag_detection.size());
+}
+
 auto CoreCR95HF::receiveCR95HFAnswer() -> size_t
 {
 	size_t size {0};

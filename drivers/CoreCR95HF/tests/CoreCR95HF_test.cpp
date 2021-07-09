@@ -23,7 +23,7 @@ class CoreCR95HFSensorTest : public ::testing::Test
   protected:
 	CoreCR95HFSensorTest() : corecr95hf(mockBufferedSerial) {};
 
-	// void setCommunicationProtocol() override {}
+	// void SetUp() override {}
 	// void TearDown() override {}
 
 	CoreCR95HF corecr95hf;
@@ -67,6 +67,22 @@ class CoreCR95HFSensorTest : public ::testing::Test
 TEST_F(CoreCR95HFSensorTest, initialization)
 {
 	ASSERT_NE(&corecr95hf, nullptr);
+}
+
+TEST_F(CoreCR95HFSensorTest, enableTagDetection)
+{
+	EXPECT_CALL(mockBufferedSerial, sigio).Times(1);
+
+	corecr95hf.init();
+}
+
+void callback() {};
+TEST_F(CoreCR95HFSensorTest, registerTagAvailableCallback)
+{
+	corecr95hf.registerTagAvailableCallback(callback);
+	auto ptr_to_callback = corecr95hf.getTagAvailableCallback();
+
+	ASSERT_EQ(ptr_to_callback, callback);
 }
 
 TEST_F(CoreCR95HFSensorTest, setCommunicationProtocolSuccess)

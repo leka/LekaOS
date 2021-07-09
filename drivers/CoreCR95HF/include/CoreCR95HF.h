@@ -137,6 +137,11 @@ class CoreCR95HF : public interface::RFID
   public:
 	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
+	void init() final { registerSigioCallback(); }
+
+	void registerTagAvailableCallback(tagAvailableCallback callback) final { _tagAvailableCallback = callback; };
+	auto getTagAvailableCallback() -> tagAvailableCallback final { return _tagAvailableCallback; };
+
 	auto setCommunicationProtocol(rfid::Protocol protocol) -> bool final;
 
 	void sendCommandToTag(lstd::span<uint8_t> iso_command) final;

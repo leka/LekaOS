@@ -49,6 +49,11 @@ namespace interface {
 	  public:
 		virtual ~RFID() = default;
 
+		virtual void init() = 0;
+
+		virtual void registerTagAvailableCallback(tagAvailableCallback callback) = 0;
+		virtual auto getTagAvailableCallback() -> tagAvailableCallback			 = 0;
+
 		virtual auto setCommunicationProtocol(rfid::Protocol protocol) -> bool = 0;
 
 		virtual void sendCommandToTag(lstd::span<uint8_t> iso_command) = 0;
