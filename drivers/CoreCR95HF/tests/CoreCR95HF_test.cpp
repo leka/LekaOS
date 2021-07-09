@@ -32,22 +32,24 @@ class CoreCR95HFSensorTest : public ::testing::Test
 
 	void sendSetModeTagDetection()
 	{
-		const auto expected_values = ElementsAre(rfid::cr95hf::settings::idle_tag_detection::tag_detection_command,
-												 rfid::cr95hf::settings::idle_tag_detection::length,
-												 rfid::cr95hf::settings::idle_tag_detection::wu_source,
-												 rfid::cr95hf::settings::idle_tag_detection::enter_control[0],
-												 rfid::cr95hf::settings::idle_tag_detection::enter_control[1],
-												 rfid::cr95hf::settings::idle_tag_detection::wu_control[0],
-												 rfid::cr95hf::settings::idle_tag_detection::wu_control[1],
-												 rfid::cr95hf::settings::idle_tag_detection::leave_control[0],
-												 rfid::cr95hf::settings::idle_tag_detection::leave_control[1],
-												 rfid::cr95hf::settings::idle_tag_detection::wu_periode,
-												 rfid::cr95hf::settings::idle_tag_detection::oscillator_start,
-												 rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_start,
-												 rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_data[0],
-												 rfid::cr95hf::settings::idle_tag_detection::digital_to_analog_data[1],
-												 rfid::cr95hf::settings::idle_tag_detection::swing_count,
-												 rfid::cr95hf::settings::idle_tag_detection::max_sleep);
+		const auto expected_values = ElementsAre(rfid::cr95hf::command::frame::set_mode_tag_detection[0],
+												 rfid::cr95hf::command::frame::set_mode_tag_detection[1],
+												 rfid::cr95hf::command::frame::set_mode_tag_detection[2],
+												 rfid::cr95hf::command::frame::set_mode_tag_detection[3],
+												 rfid::cr95hf::command::frame::set_mode_tag_detection[4],
+												 rfid::cr95hf::command::frame::set_mode_tag_detection[5],
+												 rfid::cr95hf::command::frame::set_mode_tag_detection[6],
+												 rfid::cr95hf::command::frame::set_mode_tag_detection[7],
+												 rfid::cr95hf::command::frame::set_mode_tag_detection[8],
+												 rfid::cr95hf::command::frame::set_mode_tag_detection[9],
+												 rfid::cr95hf::command::frame::set_mode_tag_detection[10],
+												 rfid::cr95hf::command::frame::set_mode_tag_detection[11],
+												 rfid::cr95hf::command::frame::set_mode_tag_detection[12],
+												 rfid::cr95hf::command::frame::set_mode_tag_detection[13],
+												 rfid::cr95hf::command::frame::set_mode_tag_detection[14],
+												 rfid::cr95hf::command::frame::set_mode_tag_detection[15]
+
+		);
 		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 	}
 
