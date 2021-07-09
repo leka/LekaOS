@@ -75,6 +75,7 @@ namespace rfid::cr95hf {
 
 		constexpr uint8_t communication_succeed		   = 0x80;
 		constexpr uint8_t error_time_out			   = 0x87;
+		constexpr std::array<uint8_t, 2> idn_success   = {0x00, 0x0F};
 		constexpr std::array<uint8_t, 2> setup_success = {0x00, 0x00};
 		constexpr std::array<uint8_t, 2> tag_detection_callback {0x01, 0x02};
 
@@ -83,6 +84,16 @@ namespace rfid::cr95hf {
 	namespace command {
 
 		constexpr uint8_t send_receive = 0x04;
+
+		namespace idn {
+			constexpr uint8_t id	 = 0x01;
+			constexpr uint8_t length = 0x00;
+		}	// namespace idn
+
+		namespace set_baudrate {
+			constexpr uint8_t id	 = 0x0A;
+			constexpr uint8_t length = 0x01;
+		}	// namespace set_baudrate
 
 		namespace set_protocol {
 			constexpr uint8_t id	 = 0x02;
@@ -113,6 +124,14 @@ namespace rfid::cr95hf {
 				rfid::cr95hf::settings::idle_tag_detection::swing_count,
 				rfid::cr95hf::settings::idle_tag_detection::max_sleep};
 
+			constexpr std::array<uint8_t, 2> idn {
+				rfid::cr95hf::command::idn::id,
+				rfid::cr95hf::command::idn::length,
+			};
+
+			constexpr std::array<uint8_t, 3> set_baudrate {rfid::cr95hf::command::set_baudrate::id,
+														   rfid::cr95hf::command::set_baudrate::length};
+
 			constexpr std::array<uint8_t, 4> set_protocol_iso14443 {
 				rfid::cr95hf::command::set_protocol::id, rfid::cr95hf::command::set_protocol::length,
 				rfid::cr95hf::protocol::iso14443A.id,
@@ -142,6 +161,9 @@ class CoreCR95HF : public interface::RFID
 	void registerTagAvailableCallback(tagAvailableCallback callback) final { _tagAvailableCallback = callback; };
 	auto getTagAvailableCallback() -> tagAvailableCallback final { return _tagAvailableCallback; };
 
+	auto getIDN() -> std::array<uint8_t, 17> final;
+	auto setBaudrate(uint8_t baudrate) -> bool final;
+
 	auto setCommunicationProtocol(rfid::Protocol protocol) -> bool final;
 
 	void sendCommandToTag(lstd::span<uint8_t> iso_command) final;
@@ -154,6 +176,11 @@ class CoreCR95HF : public interface::RFID
 	void setModeTagDetection();
 
 	auto writeConfiguration(lstd::span<uint8_t> conf) -> size_t;
+
+	void askCR95HFForIDN();
+	auto didIDNIsCorrect() -> bool;
+
+	auto didSetBaudrateSucceed(uint8_t baudrate) -> bool;
 
 	auto setProtocolISO14443A() -> bool;
 	auto setGainAndModulationISO14443A() -> bool;

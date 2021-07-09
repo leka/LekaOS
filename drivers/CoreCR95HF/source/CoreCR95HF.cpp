@@ -49,6 +49,36 @@ void CoreCR95HF::setModeTagDetection()
 				  rfid::cr95hf::command::frame::set_mode_tag_detection.size());
 }
 
+std::array<uint8_t, 17> CoreCR95HF::getIDN()
+{
+	std::array<uint8_t, 17> idn {};
+
+	askCR95HFForIDN();
+	if (!didIDNIsCorrect()) {
+		return idn;
+	}
+
+	std::copy(_rx_buf.begin(), _rx_buf.begin() + idn.size(), idn.begin());
+
+	return idn;
+}
+
+void CoreCR95HF::askCR95HFForIDN()
+{
+	_serial.write(rfid::cr95hf::command::frame::idn.data(), rfid::cr95hf::command::frame::idn.size());
+}
+
+auto CoreCR95HF::didIDNIsCorrect() -> bool
+{
+	if (receiveCR95HFAnswer() != 17) {
+		return false;
+	}
+
+	std::array<uint8_t, 2> buffer {_rx_buf[0], _rx_buf[1]};
+
+	return buffer == rfid::cr95hf::status::idn_success ? true : false;
+}
+
 auto CoreCR95HF::receiveCR95HFAnswer() -> size_t
 {
 	size_t size {0};
@@ -59,6 +89,28 @@ auto CoreCR95HF::receiveCR95HFAnswer() -> size_t
 	}
 
 	return size;
+}
+
+auto CoreCR95HF::setBaudrate(uint8_t baudrate) -> bool
+{
+	std::array<uint8_t, 3> set_baudrate_frame = {rfid::cr95hf::command::set_baudrate::id,
+												 rfid::cr95hf::command::set_baudrate::length, baudrate};
+
+	_serial.write(set_baudrate_frame.data(), set_baudrate_frame.size());
+
+	if (!didSetBaudrateSucceed(baudrate)) {
+		return false;
+	}
+	return true;
+}
+
+auto CoreCR95HF::didSetBaudrateSucceed(uint8_t baudrate) -> bool
+{
+	if (receiveCR95HFAnswer() != 1) {
+		return false;
+	}
+
+	return _rx_buf[0] == baudrate ? true : false;
 }
 
 auto CoreCR95HF::setCommunicationProtocol(rfid::Protocol protocol) -> bool

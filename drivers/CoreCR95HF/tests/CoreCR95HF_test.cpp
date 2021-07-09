@@ -29,6 +29,33 @@ class CoreCR95HFSensorTest : public ::testing::Test
 	CoreCR95HF corecr95hf;
 	CoreBufferedSerialMock mockBufferedSerial;
 
+	void sendAskIdn()
+	{
+		const auto expected_values = ElementsAre(rfid::cr95hf::command::idn::id, rfid::cr95hf::command::idn::length);
+		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+	}
+
+	template <size_t size>
+	void receiveAskIdnAnswer(const std::array<uint8_t, size> &returned_values)
+	{
+		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
+		EXPECT_CALL(mockBufferedSerial, read)
+			.WillOnce(DoAll(SetArrayArgument<0>(begin(returned_values), begin(returned_values) + size), Return(size)));
+	}
+
+	void sendSetBaudrate(uint8_t baudrate)
+	{
+		const auto expected_values =
+			ElementsAre(rfid::cr95hf::command::set_baudrate::id, rfid::cr95hf::command::set_baudrate::length, baudrate);
+		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
+	}
+
+	void receiveSetBaudrate(uint8_t returned_value, int answer_size)
+	{
+		EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
+		EXPECT_CALL(mockBufferedSerial, read).WillOnce(DoAll(SetArgPointee<0>(returned_value), Return(answer_size)));
+	}
+
 	void sendSetProtocol()
 	{
 		const auto expected_values =
@@ -83,6 +110,97 @@ TEST_F(CoreCR95HFSensorTest, registerTagAvailableCallback)
 	auto ptr_to_callback = corecr95hf.getTagAvailableCallback();
 
 	ASSERT_EQ(ptr_to_callback, callback);
+}
+
+TEST_F(CoreCR95HFSensorTest, getIDNSuccess)
+{
+	std::array<uint8_t, 17> expected_idn = {0x00, 0x0F, 0x4E, 0x46, 0x43, 0x20, 0x46, 0x53, 0x32,
+											0x4A, 0x41, 0x53, 0x54, 0x34, 0x00, 0x2A, 0xCE};
+
+	{
+		InSequence seq;
+		sendAskIdn();
+		receiveAskIdnAnswer(expected_idn);
+	}
+
+	auto idn = corecr95hf.getIDN();
+	ASSERT_EQ(idn, expected_idn);
+}
+
+TEST_F(CoreCR95HFSensorTest, getIDNFailedOnSize)
+{
+	std::array<uint8_t, 15> wrong_idn = {0x00, 0x0F, 0x4E, 0x46, 0x43, 0x20, 0x46, 0x53,
+										 0x32, 0x4A, 0x41, 0x53, 0x54, 0x34, 0x00};
+
+	std::array<uint8_t, 17> expected_idn = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+											0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+	{
+		InSequence seq;
+		sendAskIdn();
+		receiveAskIdnAnswer(wrong_idn);
+	}
+
+	auto idn = corecr95hf.getIDN();
+	ASSERT_EQ(idn, expected_idn);
+}
+
+TEST_F(CoreCR95HFSensorTest, getIDNFailedOnValues)
+{
+	std::array<uint8_t, 17> expected_idn = {0xFF, 0xFF, 0x4E, 0x46, 0x43, 0x20, 0x46, 0x53, 0x32,
+											0x4A, 0x41, 0x53, 0x54, 0x34, 0x00, 0x2A, 0xCE};
+
+	{
+		InSequence seq;
+		sendAskIdn();
+		receiveAskIdnAnswer(expected_idn);
+	}
+
+	auto idn = corecr95hf.getIDN();
+	ASSERT_NE(idn, expected_idn);
+}
+
+TEST_F(CoreCR95HFSensorTest, setBaudrateSuccess)
+{
+	uint8_t expected_baudrate = 0x55;
+
+	{
+		InSequence seq;
+		sendSetBaudrate(expected_baudrate);
+		receiveSetBaudrate(expected_baudrate, 1);
+	}
+
+	auto baudrate = corecr95hf.setBaudrate(expected_baudrate);
+	ASSERT_EQ(baudrate, true);
+}
+
+TEST_F(CoreCR95HFSensorTest, setBaudrateFailedOnSize)
+{
+	uint8_t expected_baudrate = 0x55;
+
+	{
+		InSequence seq;
+		sendSetBaudrate(expected_baudrate);
+		receiveSetBaudrate(expected_baudrate, 2);
+	}
+
+	auto baudrate = corecr95hf.setBaudrate(expected_baudrate);
+	ASSERT_EQ(baudrate, false);
+}
+
+TEST_F(CoreCR95HFSensorTest, setBaudrateFailedOnValue)
+{
+	uint8_t expected_baudrate = 0x55;
+	uint8_t wrong_baudrate	  = 0xff;
+
+	{
+		InSequence seq;
+		sendSetBaudrate(expected_baudrate);
+		receiveSetBaudrate(wrong_baudrate, 1);
+	}
+
+	auto baudrate = corecr95hf.setBaudrate(expected_baudrate);
+	ASSERT_EQ(baudrate, false);
 }
 
 TEST_F(CoreCR95HFSensorTest, setCommunicationProtocolSuccess)
