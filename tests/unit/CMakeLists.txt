@@ -178,6 +178,7 @@ add_subdirectory(./mocks)
 add_subdirectory(template)
 
 # Register drivers
+leka_register_unit_tests_for_driver(CoreAudio)
 leka_register_unit_tests_for_driver(LKCoreFatFs)
 leka_register_unit_tests_for_driver(LKCoreLL)
 leka_register_unit_tests_for_driver(LKCoreSTM32Hal)
