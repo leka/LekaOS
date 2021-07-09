@@ -8,11 +8,11 @@
 #include "LKCoreSTM32HalBase.h"
 #include "interface/drivers/DacTimer.h"
 
-
 namespace leka {
 
 // Timer class for the DAC
-// This class configures the hardware timer TIM6 to output trigger signals to the DAC through the TRGO line and thus without the need of interrupts
+// This class configures the hardware timer TIM6 to output trigger signals to the DAC through the TRGO line and thus
+// without the need of interrupts
 class CoreDACTimer : public interface::DacTimer
 {
   public:
@@ -22,7 +22,7 @@ class CoreDACTimer : public interface::DacTimer
 	void deInitialize() final;
 	void start() final;
 	void stop() final;
-	//void connectToDAC();
+	// void connectToDAC();
 
 	auto getHandle() -> TIM_HandleTypeDef final;
 

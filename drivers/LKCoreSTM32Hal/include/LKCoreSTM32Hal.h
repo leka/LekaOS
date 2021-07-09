@@ -25,7 +25,7 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 	void HAL_RCC_GPIOJ_CLK_ENABLE(void) final;
 
 	void HAL_RCC_TIM6_CLK_ENABLE(void) final;
-	void HAL_RCC_TIM6_CLK_DISABLE(void)	final;
+	void HAL_RCC_TIM6_CLK_DISABLE(void) final;
 	void HAL_RCC_FMC_CLK_ENABLE(void) final;
 	void HAL_RCC_DMA1_CLK_ENABLE(void) final;
 	void HAL_RCC_DMA2_CLK_ENABLE(void) final;
@@ -41,7 +41,7 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 	void HAL_RCC_DSI_RELEASE_RESET(void) final;
 	void HAL_RCC_DAC_CLK_ENABLE(void) final;
 	void HAL_RCC_DAC_CLK_DISABLE(void) final;
-	
+
 	HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef *PeriphClkInit) final;
 
 	void HAL_LINKDMA_SDRAM(SDRAM_HandleTypeDef *hsdram, DMA_HandleTypeDef *hdma, DMA_HandleTypeDef dma_handle) final;
@@ -49,7 +49,7 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 
 	void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init) final;
 	void HAL_GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState) final;
-	void HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin) final;
+	void HAL_GPIO_DeInit(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin) final;
 
 	void HAL_NVIC_SetPriority(IRQn_Type IRQn, uint32_t PreemptPriority, uint32_t SubPriority) final;
 	void HAL_NVIC_EnableIRQ(IRQn_Type IRQn) final;
@@ -90,26 +90,25 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 	void HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer,
 									 uint32_t OutDataLength) final;
 
-
-
-	HAL_StatusTypeDef HAL_TIM_Base_Init(TIM_HandleTypeDef *htim)  final;
-	HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,TIM_MasterConfigTypeDef *sMasterConfig) final;
-	HAL_StatusTypeDef HAL_TIM_RegisterCallback(TIM_HandleTypeDef *htim,
-	 											HAL_TIM_CallbackIDTypeDef CallbackID, pTIM_CallbackTypeDef pCallback) final;
+	HAL_StatusTypeDef HAL_TIM_Base_Init(TIM_HandleTypeDef *htim) final;
+	HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,
+															TIM_MasterConfigTypeDef *sMasterConfig) final;
+	HAL_StatusTypeDef HAL_TIM_RegisterCallback(TIM_HandleTypeDef *htim, HAL_TIM_CallbackIDTypeDef CallbackID,
+											   pTIM_CallbackTypeDef pCallback) final;
 	HAL_StatusTypeDef HAL_TIM_Base_Start(TIM_HandleTypeDef *htim) final;
 	HAL_StatusTypeDef HAL_TIM_Base_Stop(TIM_HandleTypeDef *htim) final;
 	HAL_StatusTypeDef HAL_TIM_Base_DeInit(TIM_HandleTypeDef *htim) final;
 
 	HAL_StatusTypeDef HAL_DAC_Init(DAC_HandleTypeDef *hdac) final;
-	HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef* hdac, DAC_ChannelConfTypeDef* sConfig, uint32_t Channel) final;
-	HAL_StatusTypeDef HAL_DAC_RegisterCallback (DAC_HandleTypeDef *hdac,
-								 HAL_DAC_CallbackIDTypeDef CallbackID, pDAC_CallbackTypeDef pCallback) final;
-	HAL_StatusTypeDef HAL_DAC_Start(DAC_HandleTypeDef* hdac, uint32_t Channel) final;
-	HAL_StatusTypeDef HAL_DAC_Start_DMA(DAC_HandleTypeDef* hdac, uint32_t Channel, uint32_t* pData, uint32_t Length, uint32_t Alignment) final;
-	HAL_StatusTypeDef HAL_DAC_Stop_DMA(DAC_HandleTypeDef* hdac, uint32_t Channel) final;
-	HAL_StatusTypeDef HAL_DAC_DeInit(DAC_HandleTypeDef* hdac) final;
-
-
+	HAL_StatusTypeDef HAL_DAC_ConfigChannel(DAC_HandleTypeDef *hdac, DAC_ChannelConfTypeDef *sConfig,
+											uint32_t Channel) final;
+	HAL_StatusTypeDef HAL_DAC_RegisterCallback(DAC_HandleTypeDef *hdac, HAL_DAC_CallbackIDTypeDef CallbackID,
+											   pDAC_CallbackTypeDef pCallback) final;
+	HAL_StatusTypeDef HAL_DAC_Start(DAC_HandleTypeDef *hdac, uint32_t Channel) final;
+	HAL_StatusTypeDef HAL_DAC_Start_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t *pData, uint32_t Length,
+										uint32_t Alignment) final;
+	HAL_StatusTypeDef HAL_DAC_Stop_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel) final;
+	HAL_StatusTypeDef HAL_DAC_DeInit(DAC_HandleTypeDef *hdac) final;
 };
 
 }	// namespace leka

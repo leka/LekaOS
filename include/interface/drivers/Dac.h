@@ -5,7 +5,6 @@
 #ifndef _LEKA_OS_INTERFACE_DRIVER_DAC_H_
 #define _LEKA_OS_INTERFACE_DRIVER_DAC_H_
 
-
 #include "stm32f7xx_hal.h"
 
 namespace leka::interface {
@@ -20,32 +19,28 @@ class Dac
 		Cpt
 	};
 
-    ~Dac() = default;
+	~Dac() = default;
 
-    virtual void initialize() =0;
-	virtual void deInitialize() =0;
-	virtual void start(uint16_t* pData, uint32_t dataLength) =0;
-	virtual void stop() =0;
+	virtual void initialize()								 = 0;
+	virtual void deInitialize()								 = 0;
+	virtual void start(uint16_t *pData, uint32_t dataLength) = 0;
+	virtual void stop()										 = 0;
 
-	virtual auto dmaFlag() -> DMA_Flag& =0;
+	virtual auto dmaFlag() -> DMA_Flag & = 0;
 
-	virtual auto getHandle() -> DAC_HandleTypeDef& =0;
-	virtual auto getDMAHandle() -> DMA_HandleTypeDef& =0;
+	virtual auto getHandle() -> DAC_HandleTypeDef &	   = 0;
+	virtual auto getDMAHandle() -> DMA_HandleTypeDef & = 0;
 
-	
+  protected:
+	virtual void _registerCallbacks()									 = 0;
+	virtual void _halfCptCallback(DAC_HandleTypeDef *hdac, DMA_Flag *fl) = 0;
+	virtual void _cptCallback(DAC_HandleTypeDef *hdac)					 = 0;
 
-  protected :
-	virtual void _registerCallbacks() =0;
-    virtual void _halfCptCallback(DAC_HandleTypeDef *hdac, DMA_Flag* fl) =0;
-	virtual void _cptCallback(DAC_HandleTypeDef *hdac) =0;
-
-	virtual void _registerMspCallbacks() =0;
-	virtual void _mspInitCallback() =0;
-	virtual void _mspDeInitCallback() =0;
+	virtual void _registerMspCallbacks() = 0;
+	virtual void _mspInitCallback()		 = 0;
+	virtual void _mspDeInitCallback()	 = 0;
 };
 
-
-} // namespace leka
-
+}	// namespace leka::interface
 
 #endif

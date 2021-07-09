@@ -42,13 +42,12 @@ void LKCoreSTM32Hal::HAL_RCC_GPIOJ_CLK_ENABLE(void)
 	__HAL_RCC_GPIOJ_CLK_ENABLE();
 }
 
-
 void LKCoreSTM32Hal::HAL_RCC_TIM6_CLK_ENABLE(void)
 {
 	__HAL_RCC_TIM6_CLK_ENABLE();
 }
 
-void LKCoreSTM32Hal::HAL_RCC_TIM6_CLK_DISABLE(void)	
+void LKCoreSTM32Hal::HAL_RCC_TIM6_CLK_DISABLE(void)
 {
 	__HAL_RCC_TIM6_CLK_DISABLE();
 }
@@ -133,12 +132,14 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTyp
 	return ::HAL_RCCEx_PeriphCLKConfig(PeriphClkInit);
 }
 
-void LKCoreSTM32Hal::HAL_LINKDMA_SDRAM(SDRAM_HandleTypeDef *hsdram, DMA_HandleTypeDef *hdma, DMA_HandleTypeDef dma_handle)
+void LKCoreSTM32Hal::HAL_LINKDMA_SDRAM(SDRAM_HandleTypeDef *hsdram, DMA_HandleTypeDef *hdma,
+									   DMA_HandleTypeDef dma_handle)
 {
 	__HAL_LINKDMA(hsdram, hdma, dma_handle);
 }
 
-void LKCoreSTM32Hal::HAL_LINKDMA_DAC(DAC_HandleTypeDef *hdac, DMA_HandleTypeDef *DMA_Handle1, DMA_HandleTypeDef dma_handle)
+void LKCoreSTM32Hal::HAL_LINKDMA_DAC(DAC_HandleTypeDef *hdac, DMA_HandleTypeDef *DMA_Handle1,
+									 DMA_HandleTypeDef dma_handle)
 {
 	__HAL_LINKDMA(hdac, DMA_Handle1, dma_handle);
 }
@@ -294,17 +295,17 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_TIM_Base_Init(TIM_HandleTypeDef *htim)
 }
 
 HAL_StatusTypeDef LKCoreSTM32Hal::HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,
-													TIM_MasterConfigTypeDef *sMasterConfig)	
+																		TIM_MasterConfigTypeDef *sMasterConfig)
 {
-	return ::HAL_TIMEx_MasterConfigSynchronization(htim,sMasterConfig);
+	return ::HAL_TIMEx_MasterConfigSynchronization(htim, sMasterConfig);
 }
 
 HAL_StatusTypeDef LKCoreSTM32Hal::HAL_TIM_RegisterCallback(TIM_HandleTypeDef *htim,
-	 											HAL_TIM_CallbackIDTypeDef CallbackID, pTIM_CallbackTypeDef pCallback)	
+														   HAL_TIM_CallbackIDTypeDef CallbackID,
+														   pTIM_CallbackTypeDef pCallback)
 {
-	return ::HAL_TIM_RegisterCallback(htim,CallbackID,pCallback);
+	return ::HAL_TIM_RegisterCallback(htim, CallbackID, pCallback);
 }
-
 
 HAL_StatusTypeDef LKCoreSTM32Hal::HAL_TIM_Base_Start(TIM_HandleTypeDef *htim)
 {
@@ -326,34 +327,37 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_Init(DAC_HandleTypeDef *hdac)
 	return ::HAL_DAC_Init(hdac);
 }
 
-HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_ConfigChannel(DAC_HandleTypeDef* hdac, DAC_ChannelConfTypeDef* sConfig, uint32_t Channel)
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_ConfigChannel(DAC_HandleTypeDef *hdac, DAC_ChannelConfTypeDef *sConfig,
+														uint32_t Channel)
 {
-	return ::HAL_DAC_ConfigChannel(hdac,sConfig,Channel);
+	return ::HAL_DAC_ConfigChannel(hdac, sConfig, Channel);
 }
 
-HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_RegisterCallback (DAC_HandleTypeDef *hdac, HAL_DAC_CallbackIDTypeDef CallbackID, pDAC_CallbackTypeDef pCallback)
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_RegisterCallback(DAC_HandleTypeDef *hdac,
+														   HAL_DAC_CallbackIDTypeDef CallbackID,
+														   pDAC_CallbackTypeDef pCallback)
 {
 	return ::HAL_DAC_RegisterCallback(hdac, CallbackID, pCallback);
 }
 
-HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_Start(DAC_HandleTypeDef* hdac, uint32_t Channel)
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_Start(DAC_HandleTypeDef *hdac, uint32_t Channel)
 {
 	return ::HAL_DAC_Start(hdac, Channel);
 }
 
-HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_Start_DMA(DAC_HandleTypeDef* hdac, uint32_t Channel, uint32_t* pData, uint32_t Length, uint32_t Alignment)
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_Start_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t *pData,
+													uint32_t Length, uint32_t Alignment)
 {
 	return ::HAL_DAC_Start_DMA(hdac, Channel, pData, Length, Alignment);
 }
 
-HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_Stop_DMA(DAC_HandleTypeDef* hdac, uint32_t Channel)
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_Stop_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel)
 {
 	return ::HAL_DAC_Stop_DMA(hdac, Channel);
 }
-HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_DeInit(DAC_HandleTypeDef* hdac)
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_DeInit(DAC_HandleTypeDef *hdac)
 {
 	return ::HAL_DAC_DeInit(hdac);
 }
-
 
 }	// namespace leka

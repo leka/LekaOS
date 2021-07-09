@@ -26,7 +26,8 @@ enum DMA1_IRQ_Flag
 	DMA1_cpt
 };
 
-enum SamplingRate{
+enum SamplingRate
+{
 	Sampling_11K = 11025,
 	Sampling_22K = 22050,
 	Sampling_44K = 44100,
@@ -100,17 +101,16 @@ void TIM6_Init(SamplingRate sRate)
 	TIM_MasterConfigTypeDef sMasterConfig = {0};
 
 	uint32_t clockFreq = HAL_RCC_GetPCLK1Freq();
- 
+
 	/* Get PCLK1 prescaler */
-	if((RCC->CFGR & RCC_CFGR_PPRE1) != 0)
-	{
-		clockFreq *=2;
+	if ((RCC->CFGR & RCC_CFGR_PPRE1) != 0) {
+		clockFreq *= 2;
 	};
 
 	uint32_t period = 0;
 
-	//period = ((double)clockFreq / sr)-1;
-	period = clockFreq /sRate ;
+	// period = ((double)clockFreq / sr)-1;
+	period = clockFreq / sRate;
 	// printf("First period calculation %u\n",period);
 
 	// switch (sRate) {
@@ -131,7 +131,6 @@ void TIM6_Init(SamplingRate sRate)
 	// 	break;
 	// }
 	// printf("Second period calculation %u\n",period);
-	
 
 	htim6.Instance				 = TIM6;
 	htim6.Init.Prescaler		 = 0;
@@ -176,7 +175,7 @@ void init_TIM_DAC_DMA()
 {
 	GPIO_Init();
 	DMA_Init();
-	TIM6_Init(SamplingRate::Sampling_44K);   // TODO add period change with sample rate
+	TIM6_Init(SamplingRate::Sampling_44K);	 // TODO add period change with sample rate
 	DAC_Init();
 }
 
@@ -208,12 +207,11 @@ void Error_Handler()
  * @brief This function handles DMA1 stream5 global interrupt.
  */
 extern "C" {
-	void DMA1_Stream5_IRQHandler()
-	{
-		HAL_DMA_IRQHandler(&hdma_dac1);
-	}
+void DMA1_Stream5_IRQHandler()
+{
+	HAL_DMA_IRQHandler(&hdma_dac1);
 }
-
+}
 
 void HAL_DAC_ConvCpltCallbackCh1(DAC_HandleTypeDef *hdac)
 {
@@ -279,7 +277,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac)
  */
 void HAL_DAC_MspDeInit(DAC_HandleTypeDef *hdac)
 {
-	//printf("HAL_DAC_MspDeInit\n");
+	// printf("HAL_DAC_MspDeInit\n");
 	if (hdac->Instance == DAC) {
 		/* Peripheral clock disable */
 		__HAL_RCC_DAC_CLK_DISABLE();
@@ -302,10 +300,10 @@ void HAL_DAC_MspDeInit(DAC_HandleTypeDef *hdac)
  */
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim_base)
 {
-	//printf("HAL_TIM_Base_MspInit\n");
+	// printf("HAL_TIM_Base_MspInit\n");
 	if (htim_base->Instance == TIM6) {
 		/* Peripheral clock enable */
-		
+
 		__HAL_RCC_TIM6_CLK_ENABLE();
 	}
 }
@@ -318,12 +316,11 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim_base)
  */
 void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef *htim_base)
 {
-	//printf("HAL_TIM_Base_MspDeInit\n");
+	// printf("HAL_TIM_Base_MspDeInit\n");
 	if (htim_base->Instance == TIM6) {
 		/* Peripheral clock disable */
 		__HAL_RCC_TIM6_CLK_DISABLE();
 	}
 }
-
 
 #endif	 // _LEKA_OS_SPIKE_WAVE_PLAYER_SETUP_H_
