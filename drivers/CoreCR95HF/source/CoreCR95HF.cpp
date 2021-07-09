@@ -3,29 +3,41 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "CoreCR95HF.h"
+#include <array>
 #include <cstddef>
 #include <cstdint>
+#include <lstd_span>
 
 #include "rtos/ThisThread.h"
 
 using namespace std::chrono;
 
 namespace leka {
-void CoreCR95HF::enableTagDetection()
+
+auto CoreCR95HF::receiveCR95HFAnswer() -> size_t
 {
-	_serial.write(rfid::cr95hf::command::frame::enable_tag_detection.data(),
-				  rfid::cr95hf::command::frame::enable_tag_detection.size());
+	size_t size {0};
+
+	rtos::ThisThread::sleep_for(10ms);
+	if (_serial.readable()) {
+		size = _serial.read(_rx_buf.data(), _rx_buf.size());
+	}
+
+	return size;
 }
 
-auto CoreCR95HF::setup() -> bool
+auto CoreCR95HF::setCommunicationProtocol(rfid::Protocol protocol) -> bool
 {
-	if (setProtocolISO14443() && setGainAndModulation()) {
-		return true;
+	if (protocol == rfid::Protocol::ISO14443A) {
+		if (setProtocolISO14443A() && setGainAndModulationISO14443A()) {
+			return true;
+		}
 	}
+
 	return false;
 }
 
-auto CoreCR95HF::setProtocolISO14443() -> bool
+auto CoreCR95HF::setProtocolISO14443A() -> bool
 {
 	_serial.write(rfid::cr95hf::command::frame::set_protocol_iso14443.data(),
 				  rfid::cr95hf::command::frame::set_protocol_iso14443.size());
@@ -33,7 +45,7 @@ auto CoreCR95HF::setProtocolISO14443() -> bool
 	return didSetupSucceed();
 }
 
-auto CoreCR95HF::setGainAndModulation() -> bool
+auto CoreCR95HF::setGainAndModulationISO14443A() -> bool
 {
 	_serial.write(rfid::cr95hf::command::frame::set_gain_and_modulation.data(),
 				  rfid::cr95hf::command::frame::set_gain_and_modulation.size());
@@ -52,26 +64,14 @@ auto CoreCR95HF::didSetupSucceed() -> bool
 	return buffer == rfid::cr95hf::status::setup_success ? true : false;
 }
 
-auto CoreCR95HF::receiveCR95HFAnswer() -> size_t
-{
-	size_t size {0};
-
-	rtos::ThisThread::sleep_for(10ms);
-	if (_serial.readable()) {
-		size = _serial.read(_rx_buf.data(), _rx_buf.size());
-	}
-
-	return size;
-}
-
-void CoreCR95HF::send(const lstd::span<uint8_t> &command)
+void CoreCR95HF::sendCommandToTag(lstd::span<uint8_t> command)
 {
 	auto command_size = formatCommand(command);
 
 	_serial.write(_tx_buf.data(), command_size);
 }
 
-auto CoreCR95HF::formatCommand(const lstd::span<uint8_t> &command) -> size_t
+auto CoreCR95HF::formatCommand(lstd::span<uint8_t> command) -> size_t
 {
 	_tx_buf[0] = rfid::cr95hf::command::send_receive;
 	_tx_buf[1] = static_cast<uint8_t>(command.size());
@@ -83,45 +83,37 @@ auto CoreCR95HF::formatCommand(const lstd::span<uint8_t> &command) -> size_t
 	return command.size() + rfid::cr95hf::tag_answer::heading_size;
 }
 
-auto CoreCR95HF::receiveCallback() -> bool
-{
-	std::array<uint8_t, 2> buffer {};
-
-	if (receiveCR95HFAnswer() != 3) {
-		return false;
-	}
-
-	std::copy(_rx_buf.begin() + 1, _rx_buf.begin() + 1 + buffer.size(), buffer.begin());
-
-	return buffer == rfid::cr95hf::status::tag_detection_callback ? true : false;
-}
-
-auto CoreCR95HF::receiveTagData(const lstd::span<uint8_t> &answer) -> size_t
+auto CoreCR95HF::receiveDataFromTag(lstd::span<uint8_t> answer) -> size_t
 {
 	auto size = receiveCR95HFAnswer();
 
-	if (!processTagAnswer(answer, size)) {
+	if (!DataFromTagIsCorrect(size)) {
 		return 0;
 	}
 
-	return (size - rfid::cr95hf::tag_answer::heading_size - rfid::cr95hf::tag_answer::flag_size);
+	copyTagDataToSpan(answer);
+
+	return true;
 }
 
-auto CoreCR95HF::processTagAnswer(const lstd::span<uint8_t> &answer, const size_t size) -> bool
+auto CoreCR95HF::DataFromTagIsCorrect(size_t sizeTagAnswer) -> bool
 {
 	uint8_t status = _rx_buf[0];
 	uint8_t length = _rx_buf[1];
 
 	if (status != rfid::cr95hf::status::communication_succeed ||
-		length != size - rfid::cr95hf::tag_answer::heading_size) {
+		length != sizeTagAnswer - rfid::cr95hf::tag_answer::heading_size) {
 		return false;
 	}
 
-	for (auto i = 0; i < length - rfid::cr95hf::tag_answer::flag_size; ++i) {
+	return true;
+}
+
+void CoreCR95HF::copyTagDataToSpan(lstd::span<uint8_t> answer)
+{
+	for (auto i = 0; i < answer.size(); ++i) {
 		answer.data()[i] = _rx_buf[i + rfid::cr95hf::tag_answer::heading_size];
 	}
-
-	return true;
 }
 
 }	// namespace leka

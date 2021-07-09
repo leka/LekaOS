@@ -5,6 +5,10 @@
 #ifndef _LEKA_OS_DRIVER_LK_KIT_RFID_INTERFACE_H_
 #define _LEKA_OS_DRIVER_LK_KIT_RFID_INTERFACE_H_
 
+#include <cstdint>
+
+using tagAvailableCallback = void (*)();
+
 namespace leka {
 
 namespace rfid {
@@ -22,6 +26,14 @@ namespace rfid {
 								 static_cast<std::underlying_type_t<Flag>>(rhs));
 	};
 
+	enum class Protocol : uint8_t
+	{
+		ISO14443A,
+		ISO14443B,
+		ISO15693,
+		ISO18092
+	};
+
 }	// namespace rfid
 
 namespace interface {
@@ -31,17 +43,11 @@ namespace interface {
 	  public:
 		virtual ~RFID() = default;
 
-		virtual auto getSerial() -> interface::BufferedSerial & = 0;
+		virtual auto setCommunicationProtocol(rfid::Protocol protocol) -> bool = 0;
 
-		virtual void enableTagDetection() = 0;
+		virtual void sendCommandToTag(lstd::span<uint8_t> iso_command) = 0;
 
-		virtual auto setup() -> bool = 0;
-
-		virtual void send(const lstd::span<uint8_t> &iso_command) = 0;
-
-		virtual auto receiveTagData(const lstd::span<uint8_t> &tag_anwser) -> size_t = 0;
-
-		virtual auto receiveCallback() -> bool = 0;
+		virtual auto receiveDataFromTag(lstd::span<uint8_t> answer) -> size_t = 0;
 
 		class ISO14443
 		{
@@ -53,12 +59,21 @@ namespace interface {
 			struct Command {
 				const std::array<uint8_t, SIZE> data;
 				const leka::rfid::Flag flags;
-				[[nodiscard]] inline auto getData() const -> uint8_t * { return data.data(); }
+				[[nodiscard]] inline auto getArray() const -> std::array<uint8_t, SIZE + 1>
+				{
+					auto cmd = std::array<uint8_t, SIZE + 1> {};
+
+					for (int i = 0; i < SIZE; ++i) {
+						cmd[i] = data[i];
+					}
+
+					cmd[SIZE] = flags;
+
+					return cmd;
+				}
 			};
 
 		  private:
-			std::array<uint8_t, 16> _tag_data {0};
-
 			Command<1> command_requestA		   = {.data = {0x26}, .flags = leka::rfid::Flag::sb_7};
 			Command<2> command_read_register_8 = {.data	 = {0x30, 0x08},
 												  .flags = leka::rfid::Flag::crc | leka::rfid::Flag::sb_8};

@@ -95,7 +95,7 @@ namespace rfid::cr95hf {
 		}	// namespace set_gain_and_modulation
 
 		namespace frame {
-			constexpr std::array<uint8_t, 16> enable_tag_detection {
+			constexpr std::array<uint8_t, 16> set_mode_tag_detection {
 				rfid::cr95hf::settings::idle_tag_detection::tag_detection_command,
 				rfid::cr95hf::settings::idle_tag_detection::length,
 				rfid::cr95hf::settings::idle_tag_detection::wu_source,
@@ -137,27 +137,26 @@ class CoreCR95HF : public interface::RFID
   public:
 	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
-	auto getSerial() -> interface::BufferedSerial & final { return _serial; }
+	auto setCommunicationProtocol(rfid::Protocol protocol) -> bool final;
 
-	void enableTagDetection() final;
-
-	auto setup() -> bool final;
-
-	void send(const lstd::span<uint8_t> &iso_command) final;
-
-	auto receiveCallback() -> bool final;
-
-	auto receiveTagData(const lstd::span<uint8_t> &anwser) -> size_t final;
+	void sendCommandToTag(lstd::span<uint8_t> iso_command) final;
+	auto receiveDataFromTag(lstd::span<uint8_t> answer) -> size_t final;
 
   private:
-	auto setProtocolISO14443() -> bool;
-	auto setGainAndModulation() -> bool;
+	auto writeConfiguration(lstd::span<uint8_t> conf) -> size_t;
+
+	auto setProtocolISO14443A() -> bool;
+	auto setGainAndModulationISO14443A() -> bool;
 
 	auto didSetupSucceed() -> bool;
 	auto receiveCR95HFAnswer() -> size_t;
 
-	auto formatCommand(const lstd::span<uint8_t> &command) -> size_t;
-	auto processTagAnswer(const lstd::span<uint8_t> &tag_anwser, const size_t size) -> bool;
+	auto formatCommand(lstd::span<uint8_t> command) -> size_t;
+
+	auto DataFromTagIsCorrect(size_t sizeTagAnswer) -> bool;
+	void copyTagDataToSpan(lstd::span<uint8_t> answer);
+
+	tagAvailableCallback _tagAvailableCallback;
 
 	interface::BufferedSerial &_serial;
 
