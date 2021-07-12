@@ -81,7 +81,7 @@ void LKCoreDMA2D::transferImage(uint32_t width, uint32_t height, uint32_t width_
 	_hdma2d.LayerCfg[0].InputOffset = width_offset;
 	_hdma2d.Init.OutputOffset		= lcd::dimension.width - width;
 
-	transferData(jpeg::decoded_buffer_address, lcd::frame_buffer_address, width, height);
+	transferData(jpeg::decoded_buffer_address, active_frame_buffer, width, height);
 }
 
 void LKCoreDMA2D::transferDrawing(uintptr_t first_pixel_address, uint32_t width, uint32_t height, uint32_t color)

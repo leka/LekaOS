@@ -27,7 +27,7 @@ LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 	_cmdconf.TearingEffectPolarity = DSI_TE_RISING_EDGE;
 	_cmdconf.VSyncPol			   = DSI_VSYNC_FALLING;
 	_cmdconf.AutomaticRefresh	   = DSI_AR_DISABLE;
-	_cmdconf.TEAcknowledgeRequest  = DSI_TE_ACKNOWLEDGE_DISABLE;
+	_cmdconf.TEAcknowledgeRequest  = DSI_TE_ACKNOWLEDGE_ENABLE;
 
 	for (int i = 0; i < dsi::refresh_columns_count; ++i) {
 		auto col_width	= _cmdconf.CommandSize;
@@ -37,6 +37,8 @@ LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 		_columns[i][2]	= ((col_offset + col_width - 1) & 0xff00) >> 8;
 		_columns[i][3]	= ((col_offset + col_width - 1) & 0x00ff) >> 0;
 	}
+
+	current_fb = lcd::frame_buffer_address;
 }
 
 void LKCoreDSI::initialize()

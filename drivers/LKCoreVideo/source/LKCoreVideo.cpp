@@ -72,9 +72,7 @@ void LKCoreVideo::initialize()
 
 	_coresdram.initialize();
 
-	_coredsi.enableLPCmd();
 	_corelcd.initialize();
-	_coredsi.disableLPCmd();
 
 	_coredsi.enableTearingEffectReporting();
 
@@ -118,6 +116,8 @@ void LKCoreVideo::displayImage(LKCoreFatFs &file)
 	_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, LKCoreJPEG::getWidthOffset(config));
 }
 
+extern int front_buffer;
+
 void LKCoreVideo::displayVideo(LKCoreFatFs &file)
 {
 	uint32_t frame_index  = 0;
@@ -154,7 +154,7 @@ void LKCoreVideo::displayVideo(LKCoreFatFs &file)
 		std::array<char, 32> buff;
 		sprintf(buff.data(), "%3lu ms = %5.2f fps", dt.count(), 1000.f / dt.count());
 		// displayText(buff, strlen(buff), 20);
-		log_info("%s", buff.data());
+		log_info("%s on buff 0x%x, front buffer %d", buff.data(), _coredsi.current_fb, front_buffer);
 	}
 	log_info("%d frames", frame_index);
 }

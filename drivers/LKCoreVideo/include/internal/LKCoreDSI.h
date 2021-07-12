@@ -9,6 +9,7 @@
 
 #include "LKCoreDSIBase.h"
 #include "LKCoreSTM32HalBase.h"
+#include "corevideo_config.h"
 
 namespace leka {
 
@@ -41,7 +42,7 @@ class LKCoreDSI : public LKCoreDSIBase
 	DSI_CmdCfgTypeDef _cmdconf;
 	DSI_LPCmdTypeDef _lpcmd;
 
-	std::array<std::array<uint8_t, 4>, 2> _columns;	  // TODO : use constant, fix circular includes
+	std::array<std::array<uint8_t, 4>, dsi::refresh_columns_count> _columns;
 	int _current_columns = 0;
 };
 

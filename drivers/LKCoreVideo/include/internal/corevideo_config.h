@@ -12,6 +12,7 @@ namespace leka {
 namespace lcd {
 
 	constexpr uintptr_t frame_buffer_address = 0xC0000000;
+	constexpr uintptr_t frame_buffer_address2 = 0xC0000000 + 800*480*4;
 
 	// TODO : this should not depend on OTM driver,
 	// TODO : it should be instanciated and passed to objects that need it
@@ -43,13 +44,13 @@ namespace dsi {
 	constexpr uint32_t laneByteClock_kHz = 62500;	// 500 MHz / 8 = 62.5 MHz = 62500 kHz
 	constexpr uint32_t txEscapeClockDiv	 = laneByteClock_kHz / 15620;
 
-	constexpr uint32_t refresh_columns_count = 1;	// allowed value : 1
+	constexpr uint16_t refresh_columns_count = 1;	// allowed value : 1
 
 }	// namespace dsi
 
 namespace jpeg {
 
-	constexpr uintptr_t decoded_buffer_address = 0xC0200000;
+	constexpr uintptr_t decoded_buffer_address = lcd::frame_buffer_address2 + 800*480*4;// 0xC0200000;
 
 	constexpr uint32_t chunk_size_in  = 2048;
 	constexpr uint32_t chunk_size_out = 768 * 4;

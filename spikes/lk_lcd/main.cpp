@@ -34,18 +34,25 @@ SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 LKCoreFatFs file;
 
-LKCoreLL corell;
-CGPixel pixel(corell);
 LKCoreSTM32Hal hal;
 LKCoreSDRAM coresdram(hal);
+
+// screen + dsi + ltdc
 LKCoreDSI coredsi(hal);
-LKCoreDMA2D coredma2d(hal, coredsi);
-LKCoreLTDC coreltdc(hal, coredsi);
-LKCoreGraphics coregraphics(coredma2d);
-LKCoreFont corefont(pixel);
 LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 LKCoreLCD corelcd(coreotm);
+LKCoreLTDC coreltdc(hal, coredsi);
+
+// peripherals
+LKCoreDMA2D coredma2d(hal, coredsi);
 LKCoreJPEG corejpeg(hal, std::make_unique<LKCoreJPEGDMAMode>());
+
+// graphics (will move to libs/VideoKit)
+LKCoreLL corell;
+CGPixel pixel(corell);
+LKCoreFont corefont(pixel);
+LKCoreGraphics coregraphics(coredma2d);
+
 LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 std::vector<const char *> images = {"assets/images/Leka/logo.jpg", "assets/images/Leka/image.jpg"};
@@ -62,11 +69,42 @@ std::vector<const char *> videos = {
 	//"assets/video/20fps_s200.avi",
 	//"assets/video/20fps_s100.avi"
 };
+
+constexpr uintptr_t buffers[] = {
+	lcd::frame_buffer_address,
+	lcd::frame_buffer_address2
+};
+
+int front_buffer = 0;
+int pend_buffer = -1;
+
+#define OTM8009A_CMD_WRTESCN 0x44	// Write Tearing Effect Scan line command
+#define OTM8009A_CMD_TEOFF 0x34		// Tearing Effect Line Off command : command with no parameter
+#define OTM8009A_CMD_PASET 0x2B // Page address set command 
+#define OTM8009A_CMD_CASET 0x2A // Column address set command
+
+uint8_t pScanCol[]    = {(533&0xff00)>>8, 533&0xff};	// Scan @ 533
+uint8_t pColFull[]    = {0x00, 0x00, 0x03, 0x1F}; //   0 -> 799
+uint8_t pPage[]       = {0x00, 0x00, 0x01, 0xDF}; //  0 -> 479
+
+// temporary
 int dma2d_cnt = 0;
 void DMA2D_TransferCompleteCallback(DMA2D_HandleTypeDef *hdma2d)
 {
 	dma2d_cnt++;
-	coredsi.refresh();
+	HAL_DSI_Refresh(&coredsi.getHandle());
+	//coredma2d.active_frame_buffer = (uint32_t)buffers[0];
+}
+
+void HAL_DSI_EndOfRefreshCallback(DSI_HandleTypeDef *hdsi)
+{
+	coredsi.current_fb = ((uint32_t)buffers[1-front_buffer]);
+	// flip buffers
+	coredma2d.active_frame_buffer = (uint32_t)buffers[1-front_buffer];
+	front_buffer = 1 - front_buffer;
+	__HAL_DSI_WRAPPER_DISABLE(hdsi);
+	HAL_LTDC_SetAddress(&coreltdc.getHandle(), ((uint32_t)buffers[front_buffer]), 0);
+	__HAL_DSI_WRAPPER_ENABLE(hdsi);
 }
 
 extern "C" {
@@ -89,9 +127,14 @@ void DMA2_Stream1_IRQHandler(void)
 {
 	HAL_DMA_IRQHandler(corejpeg.getHandle().hdmaout);
 }
+
 void DMA2D_IRQHandler(void)
 {
 	HAL_DMA2D_IRQHandler(&coredma2d.getHandle());
+}
+void LTDC_IRQHandler(void)
+{
+  HAL_LTDC_IRQHandler(&coreltdc.getHandle());
 }
 }
 
@@ -114,19 +157,28 @@ auto main() -> int
 
 	initializeSD();
 
+	// temporary
 	coredma2d.getHandle().XferCpltCallback = DMA2D_TransferCompleteCallback;
+
 	corevideo.initialize();
+	memset((uint8_t*)lcd::frame_buffer_address, 0x5f, 800*480*4);
+	memset((uint8_t*)lcd::frame_buffer_address2, 0xcf, 800*480*4);
+	
+	//HAL_DSI_LongWrite(&coredsi.getHandle(), 0, DSI_DCS_LONG_PKT_WRITE, 4, OTM8009A_CMD_CASET, pColFull);
+	//HAL_DSI_LongWrite(&coredsi.getHandle(), 0, DSI_DCS_LONG_PKT_WRITE, 4, OTM8009A_CMD_PASET, pPage);
+	//HAL_LTDC_SetPitch(&coreltdc.getHandle(), 800, 0);
 
 	HelloWorld hello;
 	hello.start();
 
-	corevideo.clearScreen();
+	//corevideo.clearScreen();
 
 	static auto line = 1;
 	static CGColor foreground;
 
-	leka::logger::set_print_function(
-		[](const char *str, size_t size) { corevideo.displayText(str, size, line, foreground, CGColor::white); });
+	leka::logger::set_print_function([](const char *str, size_t size) { 
+		//corevideo.displayText(str, size, line, foreground, CGColor::white);
+	});
 
 	for (int i = 1; i <= 10; i++) {
 		foreground = (i % 2 == 0) ? CGColor::black : CGColor::pure_red;
@@ -136,43 +188,49 @@ auto main() -> int
 	}
 
 	leka::logger::set_print_function([](const char *str, size_t size) {
-		corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
+		//corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
 	});
 
 	log_info(
 		"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
 		"only one line of the screen.");
 
-	coredsi.refresh();
+	// coredsi.refresh();
 
 	rtos::ThisThread::sleep_for(1s);
 
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 
+	// HAL_LTDC_ProgramLineEvent(&coreltdc.getHandle(), 0);
 	corevideo.setBrightness(0.6f);
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
 		log_info("A message from your board %s --> \"%s\" at %is", MBED_CONF_APP_TARGET_NAME, hello.world,
 				 int(t.count() / 1000));
 
-		for (const auto &image_name: images) {
-			if (file.open(image_name) == FR_OK) {
-				corevideo.displayImage(file);
-				corevideo.turnOn();
-				file.close();
-				log_info("dma2d irq : %d", dma2d_cnt);
-				rtos::ThisThread::sleep_for(1s);
+
+		//while (true) {
+			for (const auto &image_name: images) {
+				if (file.open(image_name) == FR_OK) {
+					corevideo.displayImage(file);
+					corevideo.turnOn();
+
+					file.close();
+					log_info("dma2d irq : %d  on buffer 0x%x ", dma2d_cnt, front_buffer);
+					rtos::ThisThread::sleep_for(1s);
+				}
 			}
-		}
+		//}
+
 		for (const auto &video_name: videos) {
 			if (file.open(video_name) == FR_OK) {
 				corevideo.displayVideo(file);
 				file.close();
-				log_info("dma2d irq : %d", dma2d_cnt);
 				rtos::ThisThread::sleep_for(500ms);
 			}
 		}
 
 		corevideo.turnOff();
+		rtos::ThisThread::sleep_for(500ms);
 	}
 }
