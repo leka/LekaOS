@@ -52,7 +52,6 @@ namespace interface {
 		virtual void init() = 0;
 
 		virtual void registerTagAvailableCallback(tagAvailableCallback callback) = 0;
-		virtual auto getTagAvailableCallback() -> tagAvailableCallback			 = 0;
 		virtual void onTagAvailable()											 = 0;
 
 		virtual auto getIDN() -> std::array<uint8_t, 17>   = 0;
@@ -60,9 +59,9 @@ namespace interface {
 
 		virtual auto setCommunicationProtocol(rfid::Protocol protocol) -> bool = 0;
 
-		virtual void sendCommandToTag(lstd::span<uint8_t> iso_command) = 0;
+		virtual void sendCommandToTag(lstd::span<uint8_t> cmd) = 0;
 
-		virtual auto receiveDataFromTag(lstd::span<uint8_t> answer) -> size_t = 0;
+		virtual auto receiveDataFromTag(lstd::span<uint8_t> data) -> size_t = 0;
 
 		class ISO14443
 		{

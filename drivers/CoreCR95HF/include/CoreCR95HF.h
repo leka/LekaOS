@@ -27,7 +27,7 @@ namespace rfid::cr95hf {
 
 	namespace settings {
 
-		constexpr uint8_t default_protocol_parameters_for_rx_speed_tx_speed_rfu = 0x00;
+		constexpr uint8_t default_rx_tx_speed				  = 0x00;
 		constexpr uint8_t arc_b								  = 0x68;	// Analog Register Configuration
 		constexpr uint8_t flag_increment					  = 0x01;
 		constexpr uint8_t acr_b_index_for_gain_and_modulation = 0x01;
@@ -134,8 +134,7 @@ namespace rfid::cr95hf {
 
 			constexpr std::array<uint8_t, 4> set_protocol_iso14443 {
 				rfid::cr95hf::command::set_protocol::id, rfid::cr95hf::command::set_protocol::length,
-				rfid::cr95hf::protocol::iso14443A.id,
-				rfid::cr95hf::settings::default_protocol_parameters_for_rx_speed_tx_speed_rfu};
+				rfid::cr95hf::protocol::iso14443A.id, rfid::cr95hf::settings::default_rx_tx_speed};
 
 			constexpr std::array<uint8_t, 6> set_gain_and_modulation {
 				rfid::cr95hf::command::set_gain_and_modulation::id,
@@ -156,10 +155,9 @@ class CoreCR95HF : public interface::RFID
   public:
 	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
-	void init() final { registerSigioCallback(); }
+	void init() final { registerCallback(); }
 
 	void registerTagAvailableCallback(tagAvailableCallback callback) final { _tagAvailableCallback = callback; };
-	auto getTagAvailableCallback() -> tagAvailableCallback final { return _tagAvailableCallback; };
 	void onTagAvailable() final;
 
 	auto getIDN() -> std::array<uint8_t, 17> final;
@@ -167,11 +165,11 @@ class CoreCR95HF : public interface::RFID
 
 	auto setCommunicationProtocol(rfid::Protocol protocol) -> bool final;
 
-	void sendCommandToTag(lstd::span<uint8_t> iso_command) final;
-	auto receiveDataFromTag(lstd::span<uint8_t> answer) -> size_t final;
+	void sendCommandToTag(lstd::span<uint8_t> cmd) final;
+	auto receiveDataFromTag(lstd::span<uint8_t> data) -> size_t final;
 
   private:
-	void registerSigioCallback();
+	void registerCallback();
 
 	auto receiveTagDetectionCallback() -> bool;
 	void setModeTagDetection();
@@ -186,18 +184,19 @@ class CoreCR95HF : public interface::RFID
 	auto setProtocolISO14443A() -> bool;
 	auto setGainAndModulationISO14443A() -> bool;
 
-	auto didSetupSucceed() -> bool;
-	auto receiveCR95HFAnswer() -> size_t;
+	auto didsetCommunicationProtocolSucceed() -> bool;
+	void read();
 
 	auto formatCommand(lstd::span<uint8_t> command) -> size_t;
 
-	auto DataFromTagIsCorrect(size_t sizeTagAnswer) -> bool;
-	void copyTagDataToSpan(lstd::span<uint8_t> answer);
+	auto DataFromTagIsCorrect(size_t sizeTagData) -> bool;
+	void copyTagDataToSpan(lstd::span<uint8_t> data);
 
 	tagAvailableCallback _tagAvailableCallback;
 
 	interface::BufferedSerial &_serial;
 
+	size_t _anwser_size {0};
 	std::array<uint8_t, rfid::cr95hf::max_tx_length> _tx_buf {};
 	std::array<uint8_t, rfid::cr95hf::max_rx_length> _rx_buf {};
 

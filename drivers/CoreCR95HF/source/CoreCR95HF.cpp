@@ -14,7 +14,7 @@ using namespace std::chrono;
 
 namespace leka {
 
-void CoreCR95HF::registerSigioCallback()
+void CoreCR95HF::registerCallback()
 {
 	static auto *self = this;
 	auto callback	  = []() { self->onTagAvailable(); };
@@ -23,6 +23,8 @@ void CoreCR95HF::registerSigioCallback()
 
 void CoreCR95HF::onTagAvailable()
 {
+	read();
+
 	if (receiveTagDetectionCallback()) {
 		_tagAvailableCallback();
 	}
@@ -30,11 +32,19 @@ void CoreCR95HF::onTagAvailable()
 	setModeTagDetection();
 }
 
+void CoreCR95HF::read()
+{
+	rtos::ThisThread::sleep_for(10ms);
+	if (_serial.readable()) {
+		_anwser_size = _serial.read(_rx_buf.data(), _rx_buf.size());
+	}
+}
+
 auto CoreCR95HF::receiveTagDetectionCallback() -> bool
 {
 	std::array<uint8_t, 2> buffer {};
 
-	if (receiveCR95HFAnswer() != 3) {
+	if (_anwser_size != 3) {
 		return false;
 	}
 
@@ -70,25 +80,13 @@ void CoreCR95HF::askCR95HFForIDN()
 
 auto CoreCR95HF::didIDNIsCorrect() -> bool
 {
-	if (receiveCR95HFAnswer() != 17) {
+	if (_anwser_size != 17) {
 		return false;
 	}
 
 	std::array<uint8_t, 2> buffer {_rx_buf[0], _rx_buf[1]};
 
 	return buffer == rfid::cr95hf::status::idn_success ? true : false;
-}
-
-auto CoreCR95HF::receiveCR95HFAnswer() -> size_t
-{
-	size_t size {0};
-
-	rtos::ThisThread::sleep_for(10ms);
-	if (_serial.readable()) {
-		size = _serial.read(_rx_buf.data(), _rx_buf.size());
-	}
-
-	return size;
 }
 
 auto CoreCR95HF::setBaudrate(uint8_t baudrate) -> bool
@@ -106,7 +104,7 @@ auto CoreCR95HF::setBaudrate(uint8_t baudrate) -> bool
 
 auto CoreCR95HF::didSetBaudrateSucceed(uint8_t baudrate) -> bool
 {
-	if (receiveCR95HFAnswer() != 1) {
+	if (_anwser_size != 1) {
 		return false;
 	}
 
@@ -128,7 +126,7 @@ auto CoreCR95HF::setProtocolISO14443A() -> bool
 	_serial.write(rfid::cr95hf::command::frame::set_protocol_iso14443.data(),
 				  rfid::cr95hf::command::frame::set_protocol_iso14443.size());
 
-	return didSetupSucceed();
+	return didsetCommunicationProtocolSucceed();
 }
 
 auto CoreCR95HF::setGainAndModulationISO14443A() -> bool
@@ -136,12 +134,12 @@ auto CoreCR95HF::setGainAndModulationISO14443A() -> bool
 	_serial.write(rfid::cr95hf::command::frame::set_gain_and_modulation.data(),
 				  rfid::cr95hf::command::frame::set_gain_and_modulation.size());
 
-	return didSetupSucceed();
+	return didsetCommunicationProtocolSucceed();
 }
 
-auto CoreCR95HF::didSetupSucceed() -> bool
+auto CoreCR95HF::didsetCommunicationProtocolSucceed() -> bool
 {
-	if (receiveCR95HFAnswer() != 2) {
+	if (_anwser_size != 2) {
 		return false;
 	}
 
@@ -169,34 +167,34 @@ auto CoreCR95HF::formatCommand(lstd::span<uint8_t> command) -> size_t
 	return command.size() + rfid::cr95hf::tag_answer::heading_size;
 }
 
-auto CoreCR95HF::receiveDataFromTag(lstd::span<uint8_t> answer) -> size_t
+auto CoreCR95HF::receiveDataFromTag(lstd::span<uint8_t> data) -> size_t
 {
-	if (auto size = receiveCR95HFAnswer(); !DataFromTagIsCorrect(size)) {
+	if (!DataFromTagIsCorrect(data.size())) {
 		return 0;
 	}
 
-	copyTagDataToSpan(answer);
+	copyTagDataToSpan(data);
 
 	return true;
 }
 
-auto CoreCR95HF::DataFromTagIsCorrect(size_t sizeTagAnswer) -> bool
+auto CoreCR95HF::DataFromTagIsCorrect(size_t sizeTagData) -> bool
 {
 	uint8_t status = _rx_buf[0];
 	uint8_t length = _rx_buf[1];
 
 	if (status != rfid::cr95hf::status::communication_succeed ||
-		length != sizeTagAnswer - rfid::cr95hf::tag_answer::heading_size) {
+		length != sizeTagData - rfid::cr95hf::tag_answer::flag_size) {
 		return false;
 	}
 
 	return true;
 }
 
-void CoreCR95HF::copyTagDataToSpan(lstd::span<uint8_t> answer)
+void CoreCR95HF::copyTagDataToSpan(lstd::span<uint8_t> data)
 {
-	for (auto i = 0; i < answer.size(); ++i) {
-		answer.data()[i] = _rx_buf[i + rfid::cr95hf::tag_answer::heading_size];
+	for (auto i = 0; i < data.size(); ++i) {
+		data[i] = _rx_buf[i + rfid::cr95hf::tag_answer::heading_size];
 	}
 }
 

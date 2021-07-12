@@ -30,6 +30,14 @@ class CoreCR95HFSensorTest : public ::testing::Test
 	CoreCR95HF corecr95hf;
 	CoreBufferedSerialMock mockBufferedSerial;
 
+	template <size_t size>
+
+	void setExpectedReveivedData(const std::array<uint8_t, size> &returned_values)
+	{
+		receiveCR95HFAnswer(returned_values);
+		sendSetModeTagDetection();
+	};
+
 	void sendSetModeTagDetection()
 	{
 		const auto expected_values = ElementsAre(rfid::cr95hf::command::frame::set_mode_tag_detection[0],
@@ -70,8 +78,7 @@ class CoreCR95HFSensorTest : public ::testing::Test
 	{
 		const auto expected_values =
 			ElementsAre(rfid::cr95hf::command::set_protocol::id, rfid::cr95hf::command::set_protocol::length,
-						rfid::cr95hf::protocol::iso14443A.id,
-						rfid::cr95hf::settings::default_protocol_parameters_for_rx_speed_tx_speed_rfu);
+						rfid::cr95hf::protocol::iso14443A.id, rfid::cr95hf::settings::default_rx_tx_speed);
 		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 	}
 
@@ -116,9 +123,6 @@ void callback() {};
 TEST_F(CoreCR95HFSensorTest, registerTagAvailableCallback)
 {
 	corecr95hf.registerTagAvailableCallback(callback);
-	auto ptr_to_callback = corecr95hf.getTagAvailableCallback();
-
-	ASSERT_EQ(ptr_to_callback, callback);
 }
 
 TEST_F(CoreCR95HFSensorTest, onTagAvailableSuccess)
@@ -152,10 +156,12 @@ TEST_F(CoreCR95HFSensorTest, getIDNSuccess)
 
 	{
 		InSequence seq;
+		setExpectedReveivedData(expected_idn);
+
 		sendAskIdn();
-		receiveCR95HFAnswer(expected_idn);
 	}
 
+	corecr95hf.onTagAvailable();
 	auto idn = corecr95hf.getIDN();
 	ASSERT_EQ(idn, expected_idn);
 }
@@ -170,10 +176,11 @@ TEST_F(CoreCR95HFSensorTest, getIDNFailedOnSize)
 
 	{
 		InSequence seq;
+		setExpectedReveivedData(wrong_idn);
 		sendAskIdn();
-		receiveCR95HFAnswer(wrong_idn);
 	}
 
+	corecr95hf.onTagAvailable();
 	auto idn = corecr95hf.getIDN();
 	ASSERT_EQ(idn, expected_idn);
 }
@@ -185,10 +192,11 @@ TEST_F(CoreCR95HFSensorTest, getIDNFailedOnValues)
 
 	{
 		InSequence seq;
+		setExpectedReveivedData(expected_idn);
 		sendAskIdn();
-		receiveCR95HFAnswer(expected_idn);
 	}
 
+	corecr95hf.onTagAvailable();
 	auto idn = corecr95hf.getIDN();
 	ASSERT_NE(idn, expected_idn);
 }
@@ -244,12 +252,12 @@ TEST_F(CoreCR95HFSensorTest, setCommunicationProtocolSuccess)
 	{
 		InSequence seq;
 
+		setExpectedReveivedData(set_protocol_success_answer);
 		sendSetProtocol();
-		receiveCR95HFAnswer(set_protocol_success_answer);
 		sendSetGainAndModulation();
-		receiveCR95HFAnswer(set_gain_and_modulation_success_answer);
 	}
 
+	corecr95hf.onTagAvailable();
 	auto is_initialized = corecr95hf.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 	ASSERT_EQ(is_initialized, true);
 }
@@ -259,11 +267,11 @@ TEST_F(CoreCR95HFSensorTest, setCommunicationProtocolFailedOnAnswerTooBig)
 	std::array<uint8_t, 3> set_protocol_failed_answer = {0x00, 0x00, 0x00};
 	{
 		InSequence seq;
-
+		setExpectedReveivedData(set_protocol_failed_answer);
 		sendSetProtocol();
-		receiveCR95HFAnswer(set_protocol_failed_answer);
 	}
 
+	corecr95hf.onTagAvailable();
 	auto is_initialized = corecr95hf.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 	ASSERT_EQ(is_initialized, false);
 }
@@ -274,10 +282,11 @@ TEST_F(CoreCR95HFSensorTest, setCommunicationProtocolFailedOnWrongFirstValue)
 	{
 		InSequence seq;
 
+		setExpectedReveivedData(set_protocol_failed_answer);
 		sendSetProtocol();
-		receiveCR95HFAnswer(set_protocol_failed_answer);
 	}
 
+	corecr95hf.onTagAvailable();
 	auto is_initialized = corecr95hf.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 	ASSERT_EQ(is_initialized, false);
 }
@@ -303,10 +312,9 @@ TEST_F(CoreCR95HFSensorTest, receiveDataSuccess)
 
 	std::array<uint8_t, 18> actual_values {0};
 
-	EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
-	EXPECT_CALL(mockBufferedSerial, read)
-		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 23), Return(23)));
+	setExpectedReveivedData(read_values);
 
+	corecr95hf.onTagAvailable();
 	uint8_t is_communication_succeed = corecr95hf.receiveDataFromTag(actual_values);
 
 	ASSERT_EQ(is_communication_succeed, true);
