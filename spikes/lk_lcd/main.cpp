@@ -76,16 +76,6 @@ constexpr uintptr_t buffers[] = {
 };
 
 int front_buffer = 0;
-int pend_buffer = -1;
-
-#define OTM8009A_CMD_WRTESCN 0x44	// Write Tearing Effect Scan line command
-#define OTM8009A_CMD_TEOFF 0x34		// Tearing Effect Line Off command : command with no parameter
-#define OTM8009A_CMD_PASET 0x2B // Page address set command 
-#define OTM8009A_CMD_CASET 0x2A // Column address set command
-
-uint8_t pScanCol[]    = {(533&0xff00)>>8, 533&0xff};	// Scan @ 533
-uint8_t pColFull[]    = {0x00, 0x00, 0x03, 0x1F}; //   0 -> 799
-uint8_t pPage[]       = {0x00, 0x00, 0x01, 0xDF}; //  0 -> 479
 
 // temporary
 int dma2d_cnt = 0;
@@ -93,14 +83,12 @@ void DMA2D_TransferCompleteCallback(DMA2D_HandleTypeDef *hdma2d)
 {
 	dma2d_cnt++;
 	HAL_DSI_Refresh(&coredsi.getHandle());
-	//coredma2d.active_frame_buffer = (uint32_t)buffers[0];
 }
 
 void HAL_DSI_EndOfRefreshCallback(DSI_HandleTypeDef *hdsi)
 {
 	coredsi.current_fb = ((uint32_t)buffers[1-front_buffer]);
 	// flip buffers
-	coredma2d.active_frame_buffer = (uint32_t)buffers[1-front_buffer];
 	front_buffer = 1 - front_buffer;
 	__HAL_DSI_WRAPPER_DISABLE(hdsi);
 	HAL_LTDC_SetAddress(&coreltdc.getHandle(), ((uint32_t)buffers[front_buffer]), 0);
@@ -164,10 +152,6 @@ auto main() -> int
 	memset((uint8_t*)lcd::frame_buffer_address, 0x5f, 800*480*4);
 	memset((uint8_t*)lcd::frame_buffer_address2, 0xcf, 800*480*4);
 	
-	//HAL_DSI_LongWrite(&coredsi.getHandle(), 0, DSI_DCS_LONG_PKT_WRITE, 4, OTM8009A_CMD_CASET, pColFull);
-	//HAL_DSI_LongWrite(&coredsi.getHandle(), 0, DSI_DCS_LONG_PKT_WRITE, 4, OTM8009A_CMD_PASET, pPage);
-	//HAL_LTDC_SetPitch(&coreltdc.getHandle(), 800, 0);
-
 	HelloWorld hello;
 	hello.start();
 

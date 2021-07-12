@@ -24,8 +24,6 @@ class LKCoreDMA2D : public LKCoreDMA2DBase
 	void transferImage(uint32_t width, uint32_t height, uint32_t width_offset) final;
 	void transferDrawing(uintptr_t first_pixel_address, uint32_t width, uint32_t height, uint32_t color) final;
 
-	uint32_t active_frame_buffer;
-
   private:
 	DMA2D_HandleTypeDef _hdma2d;
 	LKCoreSTM32HalBase &_hal;
