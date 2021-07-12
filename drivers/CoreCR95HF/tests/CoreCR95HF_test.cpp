@@ -207,10 +207,12 @@ TEST_F(CoreCR95HFSensorTest, setBaudrateSuccess)
 
 	{
 		InSequence seq;
-		sendSetBaudrate(expected_baudrate);
 		receiveSetBaudrate(expected_baudrate, 1);
+		sendSetModeTagDetection();
+		sendSetBaudrate(expected_baudrate);
 	}
 
+	corecr95hf.onTagAvailable();
 	auto baudrate = corecr95hf.setBaudrate(expected_baudrate);
 	ASSERT_EQ(baudrate, true);
 }
@@ -221,10 +223,12 @@ TEST_F(CoreCR95HFSensorTest, setBaudrateFailedOnSize)
 
 	{
 		InSequence seq;
-		sendSetBaudrate(expected_baudrate);
 		receiveSetBaudrate(expected_baudrate, 2);
+		sendSetModeTagDetection();
+		sendSetBaudrate(expected_baudrate);
 	}
 
+	corecr95hf.onTagAvailable();
 	auto baudrate = corecr95hf.setBaudrate(expected_baudrate);
 	ASSERT_EQ(baudrate, false);
 }
@@ -236,10 +240,12 @@ TEST_F(CoreCR95HFSensorTest, setBaudrateFailedOnValue)
 
 	{
 		InSequence seq;
-		sendSetBaudrate(expected_baudrate);
 		receiveSetBaudrate(wrong_baudrate, 1);
+		sendSetModeTagDetection();
+		sendSetBaudrate(expected_baudrate);
 	}
 
+	corecr95hf.onTagAvailable();
 	auto baudrate = corecr95hf.setBaudrate(expected_baudrate);
 	ASSERT_EQ(baudrate, false);
 }
@@ -321,29 +327,14 @@ TEST_F(CoreCR95HFSensorTest, receiveDataSuccess)
 	ASSERT_EQ(actual_values, expected_values);
 }
 
-TEST_F(CoreCR95HFSensorTest, receiveDataFailed)
-{
-	std::array<uint8_t, 6> read_values	   = {0x80, 0x04, 0xff, 0x28, 0x00, 0x00};
-	std::array<uint8_t, 1> expected_values = {0};
-
-	std::array<uint8_t, 1> actual_values {0};
-
-	EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(false));
-
-	uint8_t is_communication_succeed = corecr95hf.receiveDataFromTag(actual_values);
-
-	ASSERT_EQ(is_communication_succeed, false);
-	ASSERT_EQ(actual_values, expected_values);
-}
-
 TEST_F(CoreCR95HFSensorTest, receiveDataFailedWrongAnswerFlag)
 {
 	std::array<uint8_t, 7> read_values = {0xff, 0x05, 0x44, 0x00, 0x28, 0x00, 0x00};
 	std::array<uint8_t, 7> actual_values {0};
 
-	EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
-	EXPECT_CALL(mockBufferedSerial, read)
-		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 7), Return(7)));
+	setExpectedReveivedData(read_values);
+
+	corecr95hf.onTagAvailable();
 
 	uint8_t is_communication_succeed = corecr95hf.receiveDataFromTag(actual_values);
 
@@ -356,9 +347,9 @@ TEST_F(CoreCR95HFSensorTest, receiveDataFailedWrongLength)
 	std::array<uint8_t, 7> read_values = {0x80, 0x02, 0x44, 0x00, 0x28, 0x00, 0x00};
 	std::array<uint8_t, 7> actual_values {0};
 
-	EXPECT_CALL(mockBufferedSerial, readable).WillOnce(Return(true));
-	EXPECT_CALL(mockBufferedSerial, read)
-		.WillOnce(DoAll(SetArrayArgument<0>(begin(read_values), begin(read_values) + 7), Return(0)));
+	setExpectedReveivedData(read_values);
+
+	corecr95hf.onTagAvailable();
 
 	uint8_t is_communication_succeed = corecr95hf.receiveDataFromTag(actual_values);
 

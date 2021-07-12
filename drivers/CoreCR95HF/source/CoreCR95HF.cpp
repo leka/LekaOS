@@ -184,7 +184,7 @@ auto CoreCR95HF::DataFromTagIsCorrect(size_t sizeTagData) -> bool
 	uint8_t length = _rx_buf[1];
 
 	if (status != rfid::cr95hf::status::communication_succeed ||
-		length != sizeTagData - rfid::cr95hf::tag_answer::flag_size) {
+		sizeTagData != length - rfid::cr95hf::tag_answer::flag_size) {
 		return false;
 	}
 
