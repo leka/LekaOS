@@ -70,10 +70,7 @@ std::vector<const char *> videos = {
 	//"assets/video/20fps_s100.avi"
 };
 
-constexpr uintptr_t buffers[] = {
-	lcd::frame_buffer_address,
-	lcd::frame_buffer_address2
-};
+constexpr uintptr_t buffers[] = {lcd::frame_buffer_address, lcd::frame_buffer_address2};
 
 int front_buffer = 0;
 
@@ -87,7 +84,7 @@ void DMA2D_TransferCompleteCallback(DMA2D_HandleTypeDef *hdma2d)
 
 void HAL_DSI_EndOfRefreshCallback(DSI_HandleTypeDef *hdsi)
 {
-	coredsi.current_fb = ((uint32_t)buffers[1-front_buffer]);
+	coredsi.current_fb = ((uint32_t)buffers[1 - front_buffer]);
 	// flip buffers
 	front_buffer = 1 - front_buffer;
 	__HAL_DSI_WRAPPER_DISABLE(hdsi);
@@ -122,7 +119,7 @@ void DMA2D_IRQHandler(void)
 }
 void LTDC_IRQHandler(void)
 {
-  HAL_LTDC_IRQHandler(&coreltdc.getHandle());
+	HAL_LTDC_IRQHandler(&coreltdc.getHandle());
 }
 }
 
@@ -149,19 +146,19 @@ auto main() -> int
 	coredma2d.getHandle().XferCpltCallback = DMA2D_TransferCompleteCallback;
 
 	corevideo.initialize();
-	memset((uint8_t*)lcd::frame_buffer_address, 0x5f, 800*480*4);
-	memset((uint8_t*)lcd::frame_buffer_address2, 0xcf, 800*480*4);
-	
+	memset((uint8_t *)lcd::frame_buffer_address, 0x5f, 800 * 480 * 4);
+	memset((uint8_t *)lcd::frame_buffer_address2, 0xcf, 800 * 480 * 4);
+
 	HelloWorld hello;
 	hello.start();
 
-	//corevideo.clearScreen();
+	// corevideo.clearScreen();
 
 	static auto line = 1;
 	static CGColor foreground;
 
-	leka::logger::set_print_function([](const char *str, size_t size) { 
-		//corevideo.displayText(str, size, line, foreground, CGColor::white);
+	leka::logger::set_print_function([](const char *str, size_t size) {
+		// corevideo.displayText(str, size, line, foreground, CGColor::white);
 	});
 
 	for (int i = 1; i <= 10; i++) {
@@ -172,7 +169,7 @@ auto main() -> int
 	}
 
 	leka::logger::set_print_function([](const char *str, size_t size) {
-		//corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
+		// corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
 	});
 
 	log_info(
@@ -192,18 +189,17 @@ auto main() -> int
 		log_info("A message from your board %s --> \"%s\" at %is", MBED_CONF_APP_TARGET_NAME, hello.world,
 				 int(t.count() / 1000));
 
+		// while (true) {
+		for (const auto &image_name: images) {
+			if (file.open(image_name) == FR_OK) {
+				corevideo.displayImage(file);
+				corevideo.turnOn();
 
-		//while (true) {
-			for (const auto &image_name: images) {
-				if (file.open(image_name) == FR_OK) {
-					corevideo.displayImage(file);
-					corevideo.turnOn();
-
-					file.close();
-					log_info("dma2d irq : %d  on buffer 0x%x ", dma2d_cnt, front_buffer);
-					rtos::ThisThread::sleep_for(1s);
-				}
+				file.close();
+				log_info("dma2d irq : %d  on buffer 0x%x ", dma2d_cnt, front_buffer);
+				rtos::ThisThread::sleep_for(1s);
 			}
+		}
 		//}
 
 		for (const auto &video_name: videos) {
