@@ -10,7 +10,7 @@ namespace leka {
 
 uint16_t CoreAudio::_waveBuffer[512];
 
-CoreAudio::CoreAudio(LKCoreSTM32HalBase &hal, CoreDAC &dac, CoreDACTimer &timer)
+CoreAudio::CoreAudio(LKCoreSTM32HalBase &hal, interface::Dac &dac, interface::DacTimer &timer)
 	: _hal(hal), _coreDac(dac), _coreTimer(timer), _volume(100)
 {
 }

@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_LIB_AUDIO_H_
 #define _LEKA_OS_LIB_AUDIO_H_
 
+#include <cmath>
+
 #include "CoreDAC.h"
 #include "CoreDACTimer.h"
 #include "LKCoreFatFs.h"
@@ -17,7 +19,7 @@ namespace leka {
 class CoreAudio
 {
   public:
-	CoreAudio(LKCoreSTM32HalBase &hal, CoreDAC &dac, CoreDACTimer &timer);
+	CoreAudio(LKCoreSTM32HalBase &hal, interface::Dac &dac, interface::DacTimer &timer);
 	void playFile(FIL *file);
 	void pause();
 	void resume();
@@ -32,8 +34,8 @@ class CoreAudio
 	static uint16_t _waveBuffer[512];
 
 	LKCoreSTM32HalBase &_hal;
-	CoreDAC &_coreDac;
-	CoreDACTimer &_coreTimer;
+	interface::Dac &_coreDac;
+	interface::DacTimer &_coreTimer;
 	float _volume;
 
 	bool _playing;
