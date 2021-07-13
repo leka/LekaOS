@@ -30,6 +30,11 @@ class CoreDAC : public interface::Dac
 	auto getHandle() -> DAC_HandleTypeDef & final;
 	auto getDMAHandle() -> DMA_HandleTypeDef & final;
 
+	void _halfCptCallback() final;
+	void _cptCallback() final;
+	void _mspInitCallback() final;
+	void _mspDeInitCallback() final;
+
 	static DMA_Flag _dmaFlag;
 	DMA_Flag _flag;
 
@@ -38,13 +43,9 @@ class CoreDAC : public interface::Dac
 	DAC_HandleTypeDef _hdac;
 	DMA_HandleTypeDef _hdma;
 
-	void _registerCallbacks() final;
-	void _halfCptCallback(DAC_HandleTypeDef *hdac, DMA_Flag *fl) final;
-	void _cptCallback(DAC_HandleTypeDef *hdac) final;
+	void _registerCallbacks() final;   // Can stay private => Test output after init
 
-	void _registerMspCallbacks() final;
-	void _mspInitCallback() final;
-	void _mspDeInitCallback() final;
+	void _registerMspCallbacks() final;	  // Can stay private => Test output after init
 };
 
 }	// namespace leka

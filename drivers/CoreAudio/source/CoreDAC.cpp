@@ -86,23 +86,23 @@ void CoreDAC::_registerCallbacks()
 	static auto *self = this;
 	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_COMPLETE_CB_ID, [](DAC_HandleTypeDef *hdac) {
 		// DOESNT WORK WHEN TRYING TO MODIFY AN ATTRIBUTE OF SELF
-		self->_cptCallback(hdac);
+		self->_cptCallback();
 	});
 
 	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_HALF_COMPLETE_CB_ID, [](DAC_HandleTypeDef *hdac) {
 		// DOESNT WORK WHEN TRYING TO MODIFY AN ATTRIBUTE OF SELF
-		self->_halfCptCallback(hdac, nullptr);
+		self->_halfCptCallback();
 	});
 
 	// TODO(aermanio) : check if all callbacks need to be registered
 }
 
-void CoreDAC::_halfCptCallback(DAC_HandleTypeDef *hdac, DMA_Flag *fl)
+void CoreDAC::_halfCptCallback()
 {
 	_dmaFlag = Half_cpt;
 }
 
-void CoreDAC::_cptCallback(DAC_HandleTypeDef *hdac)
+void CoreDAC::_cptCallback()
 {
 	_dmaFlag = Cpt;
 }
