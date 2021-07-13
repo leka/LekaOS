@@ -26,6 +26,7 @@ void WavFile::_readHeader()
 	_header.FileTypeBlockID = _readHeaderDataUnit(buffer, indexInBuffer, 4, BigEndian);
 	if (_header.FileTypeBlockID != FILE_TYPE_ID) {
 		// printf("File is not RIFF\n");
+
 		// return 1;
 		// TODO(samhadjes) : handle error
 	}
@@ -101,16 +102,28 @@ void WavFile::_readHeader()
 auto WavFile::_readHeaderDataUnit(uint8_t *buffer, uint8_t idx, uint8_t numOfBytes, Endianness bytesFormat) -> uint32_t
 {
 	uint32_t index = 0;
-	uint32_t Temp  = 0;
+	uint32_t temp  = 0;
 
 	for (index = 0; index < numOfBytes; index++) {
-		Temp |= buffer[idx + index] << (index * 8);
+		temp |= buffer[idx + index] << (index * 8);
 	}
 
 	if (bytesFormat == BigEndian) {
-		Temp = __REV(Temp);
+		temp = _reverseEndianness(temp, numOfBytes);
 	}
-	return Temp;
+
+	return temp;
+}
+
+auto WavFile::_reverseEndianness(uint32_t val, uint8_t numBytes) -> uint32_t
+{
+	uint32_t index = 0;
+	uint32_t temp  = 0;
+	auto *buffer   = (uint8_t *)&val;
+	for (index = 0; index < numBytes; index++) {
+		temp |= buffer[index] << ((numBytes - 1 - index) * 8);
+	}
+	return temp;
 }
 
 }	// namespace leka
