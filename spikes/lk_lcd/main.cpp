@@ -24,6 +24,7 @@
 #include "LKCoreSDRAM.h"
 #include "LKCoreSTM32Hal.h"
 #include "LKCoreVideo.h"
+#include "LKVideoKit.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 
@@ -44,7 +45,7 @@ LKCoreLCD corelcd(coreotm);
 LKCoreLTDC coreltdc(hal, coredsi);
 
 // peripherals
-LKCoreDMA2D coredma2d(hal, coredsi);
+LKCoreDMA2D coredma2d(hal);
 LKCoreJPEG corejpeg(hal, std::make_unique<LKCoreJPEGDMAMode>());
 
 // graphics (will move to libs/VideoKit)
@@ -55,42 +56,22 @@ LKCoreGraphics coregraphics(coredma2d);
 
 LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
+LKVideoKit screen;
+
 std::vector<const char *> images = {"assets/images/Leka/logo.jpg", "assets/images/Leka/image.jpg"};
 
 std::vector<const char *> videos = {
-	"assets/video/20fps_low10.avi",
 	//"assets/video/20fps.avi",
-	"assets/video/20fps_low15.avi",
-	//"assets/video/20fps_s700.avi",
-	//"assets/video/20fps_s600.avi",
-	//"assets/video/20fps_s500.avi",
-	//"assets/video/20fps_s400.avi",
-	//"assets/video/20fps_s300.avi",
-	//"assets/video/20fps_s200.avi",
-	//"assets/video/20fps_s100.avi"
+	"assets/video/20fps_low10.avi",
+	"assets/video/20fps_s700.avi",
+	"assets/video/20fps_s600.avi",
+	"assets/video/20fps_s500.avi",
+	"assets/video/20fps_s400.avi",
+	"assets/video/20fps_s300.avi",
+	"assets/video/20fps_s200.avi",
+	"assets/video/20fps_s100.avi"
+	"assets/video/BirdsAndFeeder.avi",
 };
-
-constexpr uintptr_t buffers[] = {lcd::frame_buffer_address, lcd::frame_buffer_address2};
-
-int front_buffer = 0;
-
-// temporary
-int dma2d_cnt = 0;
-void DMA2D_TransferCompleteCallback(DMA2D_HandleTypeDef *hdma2d)
-{
-	dma2d_cnt++;
-	HAL_DSI_Refresh(&coredsi.getHandle());
-}
-
-void HAL_DSI_EndOfRefreshCallback(DSI_HandleTypeDef *hdsi)
-{
-	coredsi.current_fb = ((uint32_t)buffers[1 - front_buffer]);
-	// flip buffers
-	front_buffer = 1 - front_buffer;
-	__HAL_DSI_WRAPPER_DISABLE(hdsi);
-	HAL_LTDC_SetAddress(&coreltdc.getHandle(), ((uint32_t)buffers[front_buffer]), 0);
-	__HAL_DSI_WRAPPER_ENABLE(hdsi);
-}
 
 extern "C" {
 void DSI_IRQHandler(void)
@@ -142,9 +123,6 @@ auto main() -> int
 
 	initializeSD();
 
-	// temporary
-	coredma2d.getHandle().XferCpltCallback = DMA2D_TransferCompleteCallback;
-
 	corevideo.initialize();
 	memset((uint8_t *)lcd::frame_buffer_address, 0x5f, 800 * 480 * 4);
 	memset((uint8_t *)lcd::frame_buffer_address2, 0xcf, 800 * 480 * 4);
@@ -193,10 +171,9 @@ auto main() -> int
 		for (const auto &image_name: images) {
 			if (file.open(image_name) == FR_OK) {
 				corevideo.displayImage(file);
+				corevideo.display();
 				corevideo.turnOn();
-
 				file.close();
-				log_info("dma2d irq : %d  on buffer 0x%x ", dma2d_cnt, front_buffer);
 				rtos::ThisThread::sleep_for(1s);
 			}
 		}

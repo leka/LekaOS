@@ -15,7 +15,6 @@ class LKCoreDSIBase
 	virtual ~LKCoreDSIBase() = default;
 
 	virtual void initialize() = 0;
-	virtual void start()	  = 0;
 	virtual void reset()	  = 0;
 	virtual void refresh()	  = 0;
 
@@ -41,8 +40,6 @@ class LKCoreDSIBase
 	virtual auto isBusy() -> bool = 0;
 
 	virtual void write(const uint8_t *data, uint32_t size) = 0;
-
-	uint32_t current_fb;
 };
 
 }	// namespace leka

@@ -42,7 +42,7 @@ CGPixel pixel(corell);
 LKCoreSTM32Hal hal;
 LKCoreSDRAM coresdram(hal);
 LKCoreDSI coredsi(hal);
-LKCoreDMA2D coredma2d(hal, coredsi);
+LKCoreDMA2D coredma2d(hal);
 LKCoreLTDC coreltdc(hal, coredsi);
 LKCoreGraphics coregraphics(coredma2d);
 LKCoreFont corefont(pixel);

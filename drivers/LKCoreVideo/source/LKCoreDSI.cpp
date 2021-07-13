@@ -37,12 +37,12 @@ LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 		_columns[i][2]	= ((col_offset + col_width - 1) & 0xff00) >> 8;
 		_columns[i][3]	= ((col_offset + col_width - 1) & 0x00ff) >> 0;
 	}
-
-	current_fb = lcd::frame_buffer_address;
 }
 
 void LKCoreDSI::initialize()
 {
+	reset();
+
 	_hal.HAL_DSI_DeInit(&_hdsi);
 
 	DSI_PLLInitTypeDef dsiPllInit;
@@ -58,10 +58,7 @@ void LKCoreDSI::initialize()
 
 	// Configure DSI Video mode timings
 	HAL_DSI_ConfigAdaptedCommandMode(&_hdsi, &_cmdconf);
-}
 
-void LKCoreDSI::start()
-{
 	_hal.HAL_DSI_Start(&_hdsi);
 
 	DSI_PHY_TimerTypeDef phy_timings;

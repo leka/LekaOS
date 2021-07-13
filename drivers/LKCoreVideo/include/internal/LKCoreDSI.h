@@ -19,7 +19,6 @@ class LKCoreDSI : public LKCoreDSIBase
 	explicit LKCoreDSI(LKCoreSTM32HalBase &hal);
 
 	void initialize() final;
-	void start() final;
 	void reset() final;
 	void refresh() final;
 

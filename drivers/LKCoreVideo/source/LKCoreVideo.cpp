@@ -29,8 +29,6 @@ LKCoreVideo::LKCoreVideo(LKCoreSTM32HalBase &hal, LKCoreSDRAMBase &coresdram, LK
 
 void LKCoreVideo::initialize()
 {
-	_coredsi.reset();
-
 	/** @brief Enable the LTDC clock */
 	_hal.HAL_RCC_LTDC_CLK_ENABLE();
 
@@ -64,22 +62,26 @@ void LKCoreVideo::initialize()
 	_hal.HAL_NVIC_SetPriority(DSI_IRQn, 3, 0);
 	_hal.HAL_NVIC_EnableIRQ(DSI_IRQn);
 
-	_coredsi.initialize();
-
-	_coreltdc.initialize();
-
-	_coredsi.start();
-
 	_coresdram.initialize();
-
-	_corelcd.initialize();
-
-	_coredsi.enableTearingEffectReporting();
 
 	_corejpeg.initialize();
 	_coredma2d.initialize();
 
+	_coreltdc.initialize();
+
+	_coredsi.initialize();
+
+	_corelcd.initialize();
 	_corelcd.setBrightness(0.5f);
+
+	// TODO (@madour) : move to somewhere else
+	static auto &self = *this;
+
+	HAL_DSI_RegisterCallback(&_coredsi.getHandle(), HAL_DSI_ENDOF_REFRESH_CB_ID, [](DSI_HandleTypeDef *hdsi){
+		__HAL_DSI_WRAPPER_DISABLE(hdsi);
+		HAL_LTDC_SetAddress(&self._coreltdc.getHandle(), lcd::frame_buffer_address, 0);
+		__HAL_DSI_WRAPPER_ENABLE(hdsi);
+	});
 }
 
 void LKCoreVideo::turnOff()
@@ -115,8 +117,6 @@ void LKCoreVideo::displayImage(LKCoreFatFs &file)
 
 	_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, LKCoreJPEG::getWidthOffset(config));
 }
-
-extern int front_buffer;
 
 void LKCoreVideo::displayVideo(LKCoreFatFs &file)
 {
@@ -154,7 +154,8 @@ void LKCoreVideo::displayVideo(LKCoreFatFs &file)
 		std::array<char, 32> buff;
 		sprintf(buff.data(), "%3lu ms = %5.2f fps", dt.count(), 1000.f / dt.count());
 		// displayText(buff, strlen(buff), 20);
-		log_info("%s on buff 0x%x, front buffer %d", buff.data(), _coredsi.current_fb, front_buffer);
+		log_info("%s", buff.data());
+		display();
 	}
 	log_info("%d frames", frame_index);
 }
@@ -163,4 +164,16 @@ void LKCoreVideo::displayText(const char *text, uint32_t size, uint32_t starting
 							  CGColor background)
 {
 	_corefont.display(text, size, starting_line, foreground, background);
+}
+
+void LKCoreVideo::display()
+{
+	// wait for DMA2D to finish transfer
+	while (_coredma2d.getHandle().State != HAL_DMA2D_STATE_READY)
+		;
+	// refresh screen
+	_coredsi.refresh();
+	// wait for DSI to finish refresh
+	while(_coredsi.isBusy())
+		;
 }

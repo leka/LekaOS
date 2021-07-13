@@ -39,7 +39,7 @@ class LKCoreVideo
 	void displayVideo(LKCoreFatFs &file);
 	void displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
 					 CGColor background = CGColor::white);
-
+	void display();
   private:
 	LKCoreSTM32HalBase &_hal;
 	LKCoreSDRAMBase &_coresdram;
