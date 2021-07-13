@@ -26,15 +26,16 @@ class CoreDACTimer : public interface::DacTimer
 
 	auto getHandle() -> TIM_HandleTypeDef final;
 
+	void _mspInitCallback() final;	   // Can stay private => Test output after init
+	void _mspDeInitCallback() final;   // Can stay private => Test output after init
+
   protected:
 	LKCoreSTM32HalBase &_hal;
 	TIM_HandleTypeDef _htim;
 
-	auto _calculatePeriod(float freq) -> uint32_t final;
+	auto _calculatePeriod(float freq) -> uint32_t final;   // Can stay private
 
-	void _registerMspCallbacks() final;
-	void _mspInitCallback() final;
-	void _mspDeInitCallback() final;
+	void _registerMspCallbacks() final;	  // Can stay private => Test output after init
 };
 
 }	// namespace leka
