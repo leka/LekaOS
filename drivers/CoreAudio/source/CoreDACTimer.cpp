@@ -58,9 +58,10 @@ auto CoreDACTimer::_calculatePeriod(float frequency) -> uint32_t
 	// TODO : handle frequency in a non-supported range
 	// TODO : check if an enum of closed values would be better for allowed frequencies
 	uint32_t period;
-	uint32_t clockFreq = HAL_RCC_GetPCLK1Freq();   // TODO : make this a HAL method if necessary
+	uint32_t clockFreq = _hal.HAL_RCC_GetPCLK1Freq();	// TODO : make this a HAL method if necessary
 
 	/* Get PCLK1 prescaler */
+
 	if ((RCC->CFGR & RCC_CFGR_PPRE1) != 0) {
 		clockFreq *= 2;
 	};
