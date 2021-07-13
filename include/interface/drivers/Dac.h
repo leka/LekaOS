@@ -32,9 +32,9 @@ class Dac
 	virtual auto getDMAHandle() -> DMA_HandleTypeDef & = 0;
 
   protected:
-	virtual void _registerCallbacks()									 = 0;
-	virtual void _halfCptCallback(DAC_HandleTypeDef *hdac, DMA_Flag *fl) = 0;
-	virtual void _cptCallback(DAC_HandleTypeDef *hdac)					 = 0;
+	virtual void _registerCallbacks() = 0;
+	virtual void _halfCptCallback()	  = 0;
+	virtual void _cptCallback()		  = 0;
 
 	virtual void _registerMspCallbacks() = 0;
 	virtual void _mspInitCallback()		 = 0;
