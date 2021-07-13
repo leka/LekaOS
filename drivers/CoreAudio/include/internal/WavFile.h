@@ -52,6 +52,7 @@ class WavFile
 
 	void _readHeader();
 	auto _readHeaderDataUnit(uint8_t *buffer, uint8_t idx, uint8_t numOfBytes, Endianness bytesFormat) -> uint32_t;
+	auto _reverseEndianness(uint32_t val, uint8_t numBytes) -> uint32_t;
 };
 
 }	// namespace leka
