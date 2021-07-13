@@ -355,9 +355,15 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_Stop_DMA(DAC_HandleTypeDef *hdac, uint
 {
 	return ::HAL_DAC_Stop_DMA(hdac, Channel);
 }
+
 HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_DeInit(DAC_HandleTypeDef *hdac)
 {
 	return ::HAL_DAC_DeInit(hdac);
+}
+
+uint32_t LKCoreSTM32Hal::HAL_RCC_GetPCLK1Freq(void)
+{
+	return ::HAL_RCC_GetPCLK1Freq();
 }
 
 }	// namespace leka

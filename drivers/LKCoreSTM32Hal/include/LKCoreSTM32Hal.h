@@ -109,6 +109,8 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 										uint32_t Alignment) final;
 	HAL_StatusTypeDef HAL_DAC_Stop_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel) final;
 	HAL_StatusTypeDef HAL_DAC_DeInit(DAC_HandleTypeDef *hdac) final;
+
+	uint32_t HAL_RCC_GetPCLK1Freq(void) final;
 };
 
 }	// namespace leka

@@ -128,6 +128,7 @@ class LKCoreSTM32HalMock : public LKCoreSTM32HalBase
 				(override));
 	MOCK_METHOD(HAL_StatusTypeDef, HAL_DAC_Stop_DMA, (DAC_HandleTypeDef * hdac, uint32_t Channel), (override));
 	MOCK_METHOD(HAL_StatusTypeDef, HAL_DAC_DeInit, (DAC_HandleTypeDef * hdac), (override));
+	MOCK_METHOD(uint32_t, HAL_RCC_GetPCLK1Freq, (), (override));
 };
 
 }	// namespace leka

@@ -115,6 +115,7 @@ class LKCoreSTM32HalBase
 												uint32_t Length, uint32_t Alignment)	  = 0;
 	virtual HAL_StatusTypeDef HAL_DAC_Stop_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel) = 0;
 	virtual HAL_StatusTypeDef HAL_DAC_DeInit(DAC_HandleTypeDef *hdac)					  = 0;
+	virtual uint32_t HAL_RCC_GetPCLK1Freq(void)											  = 0;
 };
 
 }	// namespace leka
