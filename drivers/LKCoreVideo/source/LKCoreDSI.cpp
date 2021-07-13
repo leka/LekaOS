@@ -73,6 +73,9 @@ void LKCoreDSI::initialize()
 
 void LKCoreDSI::refresh()
 {
+	uint8_t pScanCol[]	= {0x00, 0x0};				/* Scan @ 533 */
+	//HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 2, 0x44, pScanCol);
+
 	if (_hdsi.Lock == HAL_LOCKED) {
 		return;
 	}
@@ -138,6 +141,16 @@ void LKCoreDSI::enableTearingEffectReporting()
 	HAL_GPIO_Init(GPIOJ, &GPIO_Init_Structure);
 
 	HAL_DSI_Refresh(&_hdsi);
+}
+
+void LKCoreDSI::setupPartialRefresh()
+{
+	uint8_t pColLeft[]	= {0x00, 0x00, 0x01, 0x8F}; //   0 -> 399
+	uint8_t pColRight[] = {0x01, 0x90, 0x03, 0x1F}; // 400 -> 799
+	uint8_t pPage[]		= {0x00, 0x00, 0x01, 0xDF}; //   0 -> 479
+
+	HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 4, 0x2a, _columns[0].data());
+	HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 4, 0x2b, pPage);
 }
 
 void LKCoreDSI::reset(void)

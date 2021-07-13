@@ -72,6 +72,8 @@ void LKCoreLTDC::initialize()
 	// This part **must not** be moved to the constructor as LCD
 	// initialization must be performed in a very specific order
 	_hal.HAL_LTDC_ConfigLayer(&_hltdc, &_layerConfig, 0);
+
+	HAL_LTDC_SetPitch(&_hltdc, 800, 0);
 }
 
 void LKCoreLTDC::configurePeriphClock()

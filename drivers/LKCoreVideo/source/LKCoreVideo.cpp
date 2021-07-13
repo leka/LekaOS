@@ -74,13 +74,43 @@ void LKCoreVideo::initialize()
 	_corelcd.initialize();
 	_corelcd.setBrightness(0.5f);
 
+	//_coredsi.enableTearingEffectReporting();
+	//_coredsi.setupPartialRefresh();
+
 	// TODO (@madour) : move to somewhere else
 	static auto &self = *this;
-
+	static int active_area = 0;
+	static uint8_t pColLeft[]	= {0x00, 0x00, 0x01, 0x8F}; /*   0 -> 399 */
+	static uint8_t pColRight[] = {0x01, 0x90, 0x03, 0x1F}; /* 400 -> 799 */
 	HAL_DSI_RegisterCallback(&_coredsi.getHandle(), HAL_DSI_ENDOF_REFRESH_CB_ID, [](DSI_HandleTypeDef *hdsi){
-		__HAL_DSI_WRAPPER_DISABLE(hdsi);
+		/*__HAL_DSI_WRAPPER_DISABLE(hdsi);
 		HAL_LTDC_SetAddress(&self._coreltdc.getHandle(), lcd::frame_buffer_address, 0);
-		__HAL_DSI_WRAPPER_ENABLE(hdsi);
+		__HAL_DSI_WRAPPER_ENABLE(hdsi);*/
+
+		/*if (active_area == 1) { // right next
+			__HAL_DSI_WRAPPER_DISABLE(hdsi);
+			//HAL_LTDC_SetAddress(&self._coreltdc.getHandle(), lcd::frame_buffer_address + 400*4, 0);
+			__HAL_DSI_WRAPPER_ENABLE(hdsi);
+
+			//HAL_DSI_LongWrite(hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 4, 0x2a, pColRight);
+			//HAL_DSI_Refresh(hdsi);
+			active_area = 0;
+			self._coredma2d.go = true;
+
+		} else if (active_area == 0) { // left next
+			__HAL_DSI_WRAPPER_DISABLE(hdsi);
+			HAL_LTDC_SetAddress(&self._coreltdc.getHandle(), lcd::frame_buffer_address, 0);
+			__HAL_DSI_WRAPPER_ENABLE(hdsi);
+
+			HAL_DSI_LongWrite(hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 4, 0x2a, pColLeft);
+			active_area = 1;
+			self._coredma2d.go = true;
+		}*/
+	});
+
+	HAL_DSI_RegisterCallback(&_coredsi.getHandle(), HAL_DSI_TEARING_EFFECT_CB_ID, [](DSI_HandleTypeDef *hdsi){
+		HAL_DSI_ShortWrite(hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, 0x34, 0x00);
+		HAL_DSI_Refresh(hdsi);
 	});
 }
 
@@ -154,7 +184,7 @@ void LKCoreVideo::displayVideo(LKCoreFatFs &file)
 		std::array<char, 32> buff;
 		sprintf(buff.data(), "%3lu ms = %5.2f fps", dt.count(), 1000.f / dt.count());
 		// displayText(buff, strlen(buff), 20);
-		log_info("%s", buff.data());
+		// log_info("%s", buff.data());
 		display();
 	}
 	log_info("%d frames", frame_index);
@@ -168,12 +198,18 @@ void LKCoreVideo::displayText(const char *text, uint32_t size, uint32_t starting
 
 void LKCoreVideo::display()
 {
+	static auto time = HAL_GetTick();
 	// wait for DMA2D to finish transfer
+	auto time2 = HAL_GetTick();
 	while (_coredma2d.getHandle().State != HAL_DMA2D_STATE_READY)
 		;
+	log_info("%lums", HAL_GetTick() - time2);
 	// refresh screen
 	_coredsi.refresh();
 	// wait for DSI to finish refresh
-	while(_coredsi.isBusy())
-		;
+	/*while(false && (_coredsi.isBusy() || _coredsi.busy ))
+		;*/
+
+	log_info("%lums", HAL_GetTick() - time);
+	time = HAL_GetTick();
 }

@@ -67,10 +67,10 @@ std::vector<const char *> videos = {
 	"assets/video/20fps_s600.avi",
 	"assets/video/20fps_s500.avi",
 	"assets/video/20fps_s400.avi",
+	"assets/video/BirdsAndFeeder.avi",
 	"assets/video/20fps_s300.avi",
 	"assets/video/20fps_s200.avi",
 	"assets/video/20fps_s100.avi"
-	"assets/video/BirdsAndFeeder.avi",
 };
 
 extern "C" {

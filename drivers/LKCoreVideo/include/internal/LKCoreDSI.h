@@ -28,12 +28,14 @@ class LKCoreDSI : public LKCoreDSIBase
 	void disableLPCmd() final;
 
 	void enableTearingEffectReporting() final;
+	void setupPartialRefresh() final;
 
 	auto getHandle() -> DSI_HandleTypeDef & final;
 
 	auto isBusy() -> bool final;
 
 	void write(const uint8_t *data, uint32_t size) final;
+
 
   private:
 	LKCoreSTM32HalBase &_hal;

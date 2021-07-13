@@ -34,6 +34,7 @@ class LKCoreDSIBase
 	virtual void disableLPCmd() = 0;
 
 	virtual void enableTearingEffectReporting() = 0;
+	virtual void setupPartialRefresh() = 0;
 
 	virtual auto getHandle() -> DSI_HandleTypeDef & = 0;
 

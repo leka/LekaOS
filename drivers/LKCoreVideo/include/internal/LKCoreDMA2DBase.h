@@ -14,6 +14,8 @@ class LKCoreDMA2DBase
   public:
 	virtual ~LKCoreDMA2DBase() = default;
 
+	volatile bool go = true;
+
 	virtual void initialize() = 0;
 
 	virtual auto getHandle() -> DMA2D_HandleTypeDef & = 0;
