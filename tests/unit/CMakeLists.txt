@@ -178,7 +178,6 @@ add_subdirectory(./mocks)
 add_subdirectory(template)
 
 # Register drivers
-leka_register_unit_tests_for_driver(CoreAudio)
 leka_register_unit_tests_for_driver(LKCoreFatFs)
 leka_register_unit_tests_for_driver(LKCoreLL)
 leka_register_unit_tests_for_driver(LKCoreSTM32Hal)
@@ -192,6 +191,7 @@ leka_register_unit_tests_for_driver(CoreI2C)
 leka_register_unit_tests_for_driver(CorePwm)
 leka_register_unit_tests_for_driver(CoreMotor)
 leka_register_unit_tests_for_driver(CoreBufferedSerial)
+leka_register_unit_tests_for_driver(CoreAudio)
 
 # Register libraries
 leka_register_unit_tests_for_library(LKAnimationKit)
@@ -201,6 +201,7 @@ leka_register_unit_tests_for_library(Utils)
 leka_register_unit_tests_for_library(LogKit)
 leka_register_unit_tests_for_library(CircularBuffer)
 leka_register_unit_tests_for_library(CriticalSection)
+
 
 #
 # Mark: - Finish up
