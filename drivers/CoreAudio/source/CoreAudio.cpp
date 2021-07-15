@@ -63,12 +63,12 @@ void CoreAudio::playFile(FIL *file)
 
 void CoreAudio::pause()
 {
-	// TODO(samhadjes) : implement pause/resume
+	_coreTimer.stop();
 }
 
 void CoreAudio::resume()
 {
-	// TODO(samhadjes) : implement pause/resume
+	_coreTimer.start();
 }
 
 void CoreAudio::stop()
