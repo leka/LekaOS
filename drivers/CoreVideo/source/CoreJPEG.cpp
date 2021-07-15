@@ -8,8 +8,7 @@
 
 using namespace leka;
 
-CoreJPEG::CoreJPEG(LKCoreSTM32HalBase &hal, std::unique_ptr<CoreJPEGMode> mode)
-	: _hal(hal), _mode(std::move(mode))
+CoreJPEG::CoreJPEG(LKCoreSTM32HalBase &hal, std::unique_ptr<CoreJPEGMode> mode) : _hal(hal), _mode(std::move(mode))
 {
 	_handle.Instance = JPEG;
 }

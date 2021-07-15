@@ -53,8 +53,7 @@ void CoreFont::drawChar(Character character, CGColor foreground, CGColor backgro
 	}
 }
 
-void CoreFont::display(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,
-						 CGColor background)
+void CoreFont::display(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground, CGColor background)
 {
 	if (starting_line < 1 || starting_line > 20) {
 		return;

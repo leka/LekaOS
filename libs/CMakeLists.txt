@@ -16,6 +16,7 @@ add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaScreen)
 add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaFirmware)
 add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaBluetooth)
 
+add_subdirectory(${LIBS_DIR}/VideoKit)
 add_subdirectory(${LIBS_DIR}/LKAnimationKit)
 
 add_subdirectory(${LIBS_DIR}/LKCalculatorKit)

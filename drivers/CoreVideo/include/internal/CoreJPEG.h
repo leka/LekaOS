@@ -8,8 +8,8 @@
 #include <cstdint>
 #include <memory>
 
-#include "LKCoreFatFsBase.h"
 #include "CoreJPEGMode.h"
+#include "LKCoreFatFsBase.h"
 #include "LKCoreSTM32HalBase.h"
 #include "interface/CoreJPEG.h"
 #include "st_jpeg_utils.h"
