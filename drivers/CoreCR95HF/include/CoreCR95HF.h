@@ -187,7 +187,7 @@ class CoreCR95HF : public interface::RFID
 	auto didsetCommunicationProtocolSucceed() -> bool;
 	void read();
 
-	auto formatCommand(lstd::span<uint8_t> command) -> size_t;
+	auto formatCommand(lstd::span<uint8_t> cmd) -> size_t;
 
 	auto DataFromTagIsCorrect(size_t sizeTagData) -> bool;
 	void copyTagDataToSpan(lstd::span<uint8_t> data);

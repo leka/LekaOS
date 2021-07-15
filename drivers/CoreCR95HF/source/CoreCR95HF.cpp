@@ -155,16 +155,16 @@ void CoreCR95HF::sendCommandToTag(lstd::span<uint8_t> command)
 	_serial.write(_tx_buf.data(), command_size);
 }
 
-auto CoreCR95HF::formatCommand(lstd::span<uint8_t> command) -> size_t
+auto CoreCR95HF::formatCommand(lstd::span<uint8_t> cmd) -> size_t
 {
 	_tx_buf[0] = rfid::cr95hf::command::send_receive;
-	_tx_buf[1] = static_cast<uint8_t>(command.size());
+	_tx_buf[1] = static_cast<uint8_t>(cmd.size());
 
-	for (auto i = 0; i < command.size(); ++i) {
-		_tx_buf[i + rfid::cr95hf::tag_answer::heading_size] = command[i];
+	for (auto i = 0; i < cmd.size(); ++i) {
+		_tx_buf[i + rfid::cr95hf::tag_answer::heading_size] = cmd[i];
 	}
 
-	return command.size() + rfid::cr95hf::tag_answer::heading_size;
+	return cmd.size() + rfid::cr95hf::tag_answer::heading_size;
 }
 
 auto CoreCR95HF::receiveDataFromTag(lstd::span<uint8_t> data) -> size_t
