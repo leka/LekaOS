@@ -3,24 +3,22 @@
 using namespace leka;
 using namespace std::chrono_literals;
 
-LKVideoKit::LKVideoKit() :
-	_coresdram(_hal),
-	// screen + dsi + ltdc
-	_coredsi(_hal),
-	_coreltdc(_hal, _coredsi),
-	_coreotm(_coredsi, PinName::SCREEN_BACKLIGHT_PWM),
-	_corelcd(_coreotm),
-	// peripherals
-	_coredma2d(_hal),
-	_corejpeg(_hal, std::make_unique<LKCoreJPEGDMAMode>())
+LKVideoKit::LKVideoKit()
+	: _coresdram(_hal),
+	  // screen + dsi + ltdc
+	  _coreltdc(_hal),
+	  _coredsi(_hal, _coreltdc),
+	  _coreotm(_coredsi, PinName::SCREEN_BACKLIGHT_PWM),
+	  _corelcd(_coreotm),
+	  // peripherals
+	  _coredma2d(_hal),
+	  _corejpeg(_hal, std::make_unique<LKCoreJPEGDMAMode>())
 {
-
 }
-
 
 void LKVideoKit::clear()
 {
-	// TODO 
+	// TODO
 }
 
 void LKVideoKit::display()
@@ -31,7 +29,7 @@ void LKVideoKit::display()
 	// refresh screen
 	_coredsi.refresh();
 	// wait for DSI to finish refresh
-	while(_coredsi.isBusy())
+	while (_coredsi.isBusy())
 		;
 
 	if (auto dt = rtos::Kernel::Clock::now() - _last_time; dt < 40ms) {

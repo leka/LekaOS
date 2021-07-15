@@ -18,23 +18,10 @@ class LKCoreDSIBase
 	virtual void reset()	  = 0;
 	virtual void refresh()	  = 0;
 
-	struct SyncProps {
-		int hsync;
-		int hbp;
-		int activew;
-		int hfp;
-		int vsync;
-		int vbp;
-		int activeh;
-		int vfp;
-	};
-	virtual auto getSyncProps() -> SyncProps = 0;
-
 	virtual void enableLPCmd()	= 0;
 	virtual void disableLPCmd() = 0;
 
 	virtual void enableTearingEffectReporting() = 0;
-	virtual void setupPartialRefresh() = 0;
 
 	virtual auto getHandle() -> DSI_HandleTypeDef & = 0;
 

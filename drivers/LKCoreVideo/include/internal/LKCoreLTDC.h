@@ -5,7 +5,6 @@
 #ifndef _LEKA_OS_LIB_LTDC_H_
 #define _LEKA_OS_LIB_LTDC_H_
 
-#include "LKCoreDSIBase.h"
 #include "LKCoreLTDCBase.h"
 #include "LKCoreSTM32HalBase.h"
 
@@ -14,7 +13,7 @@ namespace leka {
 class LKCoreLTDC : public LKCoreLTDCBase
 {
   public:
-	LKCoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi);
+	LKCoreLTDC(LKCoreSTM32HalBase &hal);
 
 	void initialize() final;
 
@@ -22,7 +21,6 @@ class LKCoreLTDC : public LKCoreLTDCBase
 
   private:
 	LKCoreSTM32HalBase &_hal;
-	LKCoreDSIBase &_dsi;
 
 	LTDC_HandleTypeDef _hltdc;
 	LTDC_LayerCfgTypeDef _layerConfig;

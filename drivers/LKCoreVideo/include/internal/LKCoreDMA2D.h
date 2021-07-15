@@ -5,8 +5,8 @@
 #ifndef _LEKA_OS_LIB_DMA2D_H_
 #define _LEKA_OS_LIB_DMA2D_H_
 
-#include "corevideo_config.h"
 #include "LKCoreDMA2DBase.h"
+#include "corevideo_config.h"
 
 namespace leka {
 

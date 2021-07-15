@@ -39,10 +39,10 @@ LKCoreSTM32Hal hal;
 LKCoreSDRAM coresdram(hal);
 
 // screen + dsi + ltdc
-LKCoreDSI coredsi(hal);
+LKCoreLTDC coreltdc(hal);
+LKCoreDSI coredsi(hal, coreltdc);
 LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 LKCoreLCD corelcd(coreotm);
-LKCoreLTDC coreltdc(hal, coredsi);
 
 // peripherals
 LKCoreDMA2D coredma2d(hal);
@@ -63,14 +63,14 @@ std::vector<const char *> images = {"assets/images/Leka/logo.jpg", "assets/image
 std::vector<const char *> videos = {
 	//"assets/video/20fps.avi",
 	"assets/video/20fps_low10.avi",
-	"assets/video/20fps_s700.avi",
-	"assets/video/20fps_s600.avi",
-	"assets/video/20fps_s500.avi",
-	"assets/video/20fps_s400.avi",
-	"assets/video/BirdsAndFeeder.avi",
-	"assets/video/20fps_s300.avi",
-	"assets/video/20fps_s200.avi",
-	"assets/video/20fps_s100.avi"
+	//"assets/video/20fps_s700.avi",
+	//"assets/video/20fps_s600.avi",
+	//"assets/video/20fps_s500.avi",
+	//"assets/video/20fps_s400.avi",
+	//"assets/video/BirdsAndFeeder.avi",
+	//"assets/video/20fps_s300.avi",
+	//"assets/video/20fps_s200.avi",
+	//"assets/video/20fps_s100.avi"
 };
 
 extern "C" {
@@ -125,7 +125,6 @@ auto main() -> int
 
 	corevideo.initialize();
 	memset((uint8_t *)lcd::frame_buffer_address, 0x5f, 800 * 480 * 4);
-	memset((uint8_t *)lcd::frame_buffer_address2, 0xcf, 800 * 480 * 4);
 
 	HelloWorld hello;
 	hello.start();

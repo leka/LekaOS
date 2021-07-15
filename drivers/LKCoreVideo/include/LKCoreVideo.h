@@ -40,12 +40,13 @@ class LKCoreVideo
 	void displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
 					 CGColor background = CGColor::white);
 	void display();
+
   private:
 	LKCoreSTM32HalBase &_hal;
 	LKCoreSDRAMBase &_coresdram;
 	LKCoreDMA2DBase &_coredma2d;
-	LKCoreDSIBase &_coredsi;
 	LKCoreLTDCBase &_coreltdc;
+	LKCoreDSIBase &_coredsi;
 	LKCoreLCDBase &_corelcd;
 	LKCoreGraphicsBase &_coregraphics;
 	LKCoreFontBase &_corefont;

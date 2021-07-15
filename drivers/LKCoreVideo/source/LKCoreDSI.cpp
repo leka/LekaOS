@@ -11,7 +11,7 @@
 using namespace std::chrono;
 using namespace leka;
 
-LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
+LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal, LKCoreLTDCBase &ltdc) : _hal(hal), _ltdc(ltdc)
 {
 	_hdsi.Instance			 = DSI;
 	_hdsi.Init.NumberOfLanes = DSI_TWO_DATA_LANES;
@@ -69,25 +69,28 @@ void LKCoreDSI::initialize()
 	phy_timings.DataLaneMaxReadTime = 0;
 	phy_timings.StopWaitTime		= 10;
 	HAL_DSI_ConfigPhyTimer(&_hdsi, &phy_timings);
-}
 
-void LKCoreDSI::refresh()
-{
-	uint8_t pScanCol[]	= {0x00, 0x0};				/* Scan @ 533 */
-	//HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 2, 0x44, pScanCol);
+	static auto &self = *this;
+	HAL_DSI_RegisterCallback(&_hdsi, HAL_DSI_ENDOF_REFRESH_CB_ID, [](DSI_HandleTypeDef *hdsi) {
+		self._current_column = (self._current_column + 1) % self._columns.size();
 
-	if (_hdsi.Lock == HAL_LOCKED) {
-		return;
-	}
+		auto new_address = lcd::frame_buffer_address + dsi::sync_props.activew * self._current_column * 4;
 
-	_hdsi.Lock = HAL_LOCKED;
-	_hdsi.Instance->WCR |= DSI_WCR_LTDCEN;
-	_hdsi.Lock = HAL_UNLOCKED;
-}
+		// update LTDC layer frame buffer pointer
+		__HAL_DSI_WRAPPER_DISABLE(hdsi);
+		HAL_LTDC_SetAddress(&self._ltdc.getHandle(), new_address, 0);
+		__HAL_DSI_WRAPPER_ENABLE(hdsi);
 
-auto LKCoreDSI::getSyncProps() -> LKCoreDSI::SyncProps
-{
-	return {1, 1, lcd::dimension.width / dsi::refresh_columns_count, 1, 1, 1, lcd::dimension.height, 1};
+		// update DSI refresh column
+		HAL_DSI_LongWrite(hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 4, lcd::otm8009a::set_address::for_column::command,
+						  self._columns[self._current_column].data());
+
+		if (self._current_column != 0) {
+			HAL_DSI_Refresh(hdsi);
+		}
+	});
+
+	refresh();
 }
 
 void LKCoreDSI::enableLPCmd()
@@ -124,6 +127,14 @@ void LKCoreDSI::disableLPCmd()
 
 void LKCoreDSI::enableTearingEffectReporting()
 {
+	HAL_DSI_RegisterCallback(&_hdsi, HAL_DSI_TEARING_EFFECT_CB_ID, [](DSI_HandleTypeDef *hdsi) {
+		// mask TE pin (automatically unmaksed by refresh)
+		HAL_DSI_ShortWrite(hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, lcd::otm8009a::tearing_effect::off, 0x00);
+		// refresh DSI
+		HAL_DSI_Refresh(hdsi);
+	});
+
+	// enable Bus Turn Around for 2 ways communication (needed for TE signal)
 	HAL_DSI_ConfigFlowControl(&_hdsi, DSI_FLOW_CONTROL_BTA);
 
 	// Enable GPIOJ clock
@@ -140,17 +151,8 @@ void LKCoreDSI::enableTearingEffectReporting()
 	GPIO_Init_Structure.Alternate = GPIO_AF13_DSI;
 	HAL_GPIO_Init(GPIOJ, &GPIO_Init_Structure);
 
-	HAL_DSI_Refresh(&_hdsi);
-}
-
-void LKCoreDSI::setupPartialRefresh()
-{
-	uint8_t pColLeft[]	= {0x00, 0x00, 0x01, 0x8F}; //   0 -> 399
-	uint8_t pColRight[] = {0x01, 0x90, 0x03, 0x1F}; // 400 -> 799
-	uint8_t pPage[]		= {0x00, 0x00, 0x01, 0xDF}; //   0 -> 479
-
-	HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 4, 0x2a, _columns[0].data());
-	HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 4, 0x2b, pPage);
+	refresh();
+	_sync_on_TE = true;
 }
 
 void LKCoreDSI::reset(void)
@@ -180,6 +182,22 @@ void LKCoreDSI::reset(void)
 
 	// Wait for 10ms after releasing MIPI_DSI_RESET before sending commands
 	rtos::ThisThread::sleep_for(10ms);
+}
+
+void LKCoreDSI::refresh()
+{
+	if (_sync_on_TE) {
+		// request TE pin
+		uint8_t val[] = {0x00, 0x00};
+		HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 2, lcd::otm8009a::tearing_effect::write_scanline, val);
+	} else {
+		// normal refresh
+		if (_hdsi.Lock != HAL_LOCKED) {
+			_hdsi.Lock = HAL_LOCKED;
+			_hdsi.Instance->WCR |= DSI_WCR_LTDCEN;
+			_hdsi.Lock = HAL_UNLOCKED;
+		}
+	}
 }
 
 auto LKCoreDSI::getHandle() -> DSI_HandleTypeDef &

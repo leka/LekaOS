@@ -5,18 +5,19 @@
 
 #include "rtos/ThisThread.h"
 
-#include "LKCoreSTM32Hal.h"
-#include "LKCoreSDRAM.h"
+#include "LKCoreDMA2D.h"
 #include "LKCoreDSI.h"
+#include "LKCoreJPEG.h"
 #include "LKCoreLCD.h"
 #include "LKCoreLCDDriverOTM8009A.h"
 #include "LKCoreLTDC.h"
-#include "LKCoreJPEG.h"
-#include "LKCoreDMA2D.h"
+#include "LKCoreSDRAM.h"
+#include "LKCoreSTM32Hal.h"
 
 namespace leka {
 
-class LKVideoKit {
+class LKVideoKit
+{
   public:
 	LKVideoKit();
 
@@ -27,9 +28,9 @@ class LKVideoKit {
 	LKCoreSTM32Hal _hal;
 	LKCoreSDRAM _coresdram;
 
-	// screen + dsi + ltdc
-	LKCoreDSI _coredsi;
+	// ltdc + dsi + lcd screen
 	LKCoreLTDC _coreltdc;
+	LKCoreDSI _coredsi;
 	LKCoreLCDDriverOTM8009A _coreotm;
 	LKCoreLCD _corelcd;
 
@@ -40,6 +41,6 @@ class LKVideoKit {
 	rtos::Kernel::Clock::time_point _last_time = rtos::Kernel::Clock::now();
 };
 
-}
+}	// namespace leka
 
-#endif // _LEKA_OS_LIB_LKVIDEOKIT_H_
+#endif	 // _LEKA_OS_LIB_LKVIDEOKIT_H_

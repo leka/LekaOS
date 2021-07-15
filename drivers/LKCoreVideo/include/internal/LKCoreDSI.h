@@ -8,6 +8,7 @@
 #include <array>
 
 #include "LKCoreDSIBase.h"
+#include "LKCoreLTDCBase.h"
 #include "LKCoreSTM32HalBase.h"
 #include "corevideo_config.h"
 
@@ -16,19 +17,16 @@ namespace leka {
 class LKCoreDSI : public LKCoreDSIBase
 {
   public:
-	explicit LKCoreDSI(LKCoreSTM32HalBase &hal);
+	explicit LKCoreDSI(LKCoreSTM32HalBase &hal, LKCoreLTDCBase &ltdc);
 
 	void initialize() final;
 	void reset() final;
 	void refresh() final;
 
-	auto getSyncProps() -> SyncProps final;
-
 	void enableLPCmd() final;
 	void disableLPCmd() final;
 
 	void enableTearingEffectReporting() final;
-	void setupPartialRefresh() final;
 
 	auto getHandle() -> DSI_HandleTypeDef & final;
 
@@ -36,15 +34,18 @@ class LKCoreDSI : public LKCoreDSIBase
 
 	void write(const uint8_t *data, uint32_t size) final;
 
-
   private:
 	LKCoreSTM32HalBase &_hal;
+	LKCoreLTDCBase &_ltdc;
+
 	DSI_HandleTypeDef _hdsi;
 	DSI_CmdCfgTypeDef _cmdconf;
 	DSI_LPCmdTypeDef _lpcmd;
 
 	std::array<std::array<uint8_t, 4>, dsi::refresh_columns_count> _columns;
-	int _current_columns = 0;
+	int _current_column = 0;
+
+	bool _sync_on_TE = false;
 };
 
 }	// namespace leka

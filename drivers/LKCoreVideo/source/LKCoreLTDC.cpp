@@ -8,11 +8,11 @@
 
 namespace leka {
 
-LKCoreLTDC::LKCoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi) : _hal(hal), _dsi(dsi)
+LKCoreLTDC::LKCoreLTDC(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
 	_hltdc.Instance = LTDC;
 
-	auto props = dsi.getSyncProps();
+	auto props = dsi::sync_props;
 	// Timing and synchronization
 	_hltdc.Init.HorizontalSync	   = props.hsync;
 	_hltdc.Init.AccumulatedHBP	   = props.hsync + props.hbp;
