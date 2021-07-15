@@ -9,36 +9,26 @@
 #include "drivers/interfaces/InterfaceDigitalOut.h"
 
 #include "CoreMotorBase.h"
+#include "interface/drivers/PwmOut.h"
 
 namespace leka {
 
 class CoreMotor : public CoreMotorBase
 {
   public:
-	// TODO: stub DigitalOut::read()
-	struct Status {
-		int dir_1;
-		int dir_2;
-		float speed;
-	};
-
-	CoreMotor(mbed::interface::DigitalOut &dir_1, mbed::interface::DigitalOut &dir_2, PinName speed)
-		: _dir_1 {dir_1}, _dir_2 {dir_2}, _speed {mbed::PwmOut(speed)} {};
+	CoreMotor(mbed::interface::DigitalOut &dir_1, mbed::interface::DigitalOut &dir_2, interface::PwmOut &speed)
+		: _dir_1 {dir_1}, _dir_2 {dir_2}, _speed {speed} {};
 
 	void spin(rotation_t rotation, float speed) override;
 	void stop() override;
 
-	[[nodiscard]] auto getStatus() const -> Status;
-
   private:
-	Status _status {0, 0, 0};
+	void setDirections(int dir_1, int dir_2);
+	void setSpeed(float speed);
 
 	mbed::interface::DigitalOut &_dir_1;
 	mbed::interface::DigitalOut &_dir_2;
-	mbed::PwmOut _speed;
-
-	void setDirections(int dir_1, int dir_2);
-	void setSpeed(float speed);
+	interface::PwmOut &_speed;
 };
 
 }	// namespace leka
