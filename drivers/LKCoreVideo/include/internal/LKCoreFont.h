@@ -7,11 +7,11 @@
 
 #include "CGColor.h"
 #include "CGPixel.h"
-#include "LKCoreFontBase.h"
+#include "interface/LKCoreFont.h"
 
 namespace leka {
 
-class LKCoreFont : public LKCoreFontBase
+class LKCoreFont : public interface::LKCoreFont
 {
   public:
 	explicit LKCoreFont(CGPixel &pixel_to_draw);

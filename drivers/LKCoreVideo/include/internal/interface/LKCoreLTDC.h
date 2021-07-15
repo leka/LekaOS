@@ -5,19 +5,18 @@
 #ifndef _LEKA_OS_LIB_LTDC_BASE_H_
 #define _LEKA_OS_LIB_LTDC_BASE_H_
 
+#include "LKComponentHandler.h"
 #include "stm32f7xx_hal.h"
 
-namespace leka {
+namespace leka::interface {
 
-class LKCoreLTDCBase
+class LKCoreLTDC : public LKComponentHandler<LTDC_HandleTypeDef>
 {
   public:
-	virtual ~LKCoreLTDCBase() = default;
+	virtual ~LKCoreLTDC()	  = default;
 	virtual void initialize() = 0;
-
-	virtual auto getHandle() -> LTDC_HandleTypeDef & = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface
 
 #endif	 // _LEKA_OS_LIB_LTDC_BASE_H_

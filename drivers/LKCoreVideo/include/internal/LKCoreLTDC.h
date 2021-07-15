@@ -5,24 +5,21 @@
 #ifndef _LEKA_OS_LIB_LTDC_H_
 #define _LEKA_OS_LIB_LTDC_H_
 
-#include "LKCoreLTDCBase.h"
 #include "LKCoreSTM32HalBase.h"
+#include "interface/LKCoreLTDC.h"
 
 namespace leka {
 
-class LKCoreLTDC : public LKCoreLTDCBase
+class LKCoreLTDC : public interface::LKCoreLTDC
 {
   public:
 	LKCoreLTDC(LKCoreSTM32HalBase &hal);
 
 	void initialize() final;
 
-	auto getHandle() -> LTDC_HandleTypeDef & final;
-
   private:
 	LKCoreSTM32HalBase &_hal;
 
-	LTDC_HandleTypeDef _hltdc;
 	LTDC_LayerCfgTypeDef _layerConfig;
 
 	void configurePeriphClock();

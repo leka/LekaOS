@@ -7,15 +7,15 @@
 
 #include "drivers/PwmOut.h"
 
-#include "LKCoreLCDBase.h"
-#include "LKCoreLCDDriverBase.h"
+#include "interface/LKCoreLCD.h"
+#include "interface/LKCoreLCDDriver.h"
 
 namespace leka {
 
-class LKCoreLCD : public LKCoreLCDBase
+class LKCoreLCD : public interface::LKCoreLCD
 {
   public:
-	explicit LKCoreLCD(LKCoreLCDDriverBase &driver);
+	explicit LKCoreLCD(interface::LKCoreLCDDriver &driver);
 
 	void initialize() final;
 
@@ -25,7 +25,7 @@ class LKCoreLCD : public LKCoreLCDBase
 	void setBrightness(float value) final;
 
   private:
-	LKCoreLCDDriverBase &_driver;
+	interface::LKCoreLCDDriver &_driver;
 };
 
 }	// namespace leka

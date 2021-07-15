@@ -8,7 +8,7 @@
 
 namespace leka {
 
-LKCoreLCD::LKCoreLCD(LKCoreLCDDriverBase &driver) : _driver(driver)
+LKCoreLCD::LKCoreLCD(interface::LKCoreLCDDriver &driver) : _driver(driver)
 {
 	// nothing to do
 }

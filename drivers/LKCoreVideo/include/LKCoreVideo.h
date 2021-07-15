@@ -5,26 +5,27 @@
 #ifndef _LEKA_OS_DRIVER_LKCOREVIDEO_H_
 #define _LEKA_OS_DRIVER_LKCOREVIDEO_H_
 
-#include "LKCoreDMA2DBase.h"
-#include "LKCoreDSIBase.h"
 #include "LKCoreFatFs.h"
-#include "LKCoreFontBase.h"
-#include "LKCoreGraphicsBase.h"
 #include "LKCoreJPEG.h"
-#include "LKCoreJPEGBase.h"
-#include "LKCoreLCDBase.h"
-#include "LKCoreLTDCBase.h"
-#include "LKCoreSDRAMBase.h"
 #include "LKCoreSTM32HalBase.h"
+#include "interface/LKCoreDMA2D.h"
+#include "interface/LKCoreDSI.h"
+#include "interface/LKCoreFont.h"
+#include "interface/LKCoreGraphics.h"
+#include "interface/LKCoreJPEG.h"
+#include "interface/LKCoreLCD.h"
+#include "interface/LKCoreLTDC.h"
+#include "interface/LKCoreSDRAM.h"
 
 namespace leka {
 
 class LKCoreVideo
 {
   public:
-	LKCoreVideo(LKCoreSTM32HalBase &hal, LKCoreSDRAMBase &coresdram, LKCoreDMA2DBase &coredma2d, LKCoreDSIBase &coredsi,
-				LKCoreLTDCBase &coreltdc, LKCoreLCDBase &corelcd, LKCoreGraphicsBase &coregraphics,
-				LKCoreFontBase &corefont, LKCoreJPEGBase &corejpeg);
+	LKCoreVideo(LKCoreSTM32HalBase &hal, interface::LKCoreSDRAM &coresdram, interface::LKCoreDMA2D &coredma2d,
+				interface::LKCoreDSI &coredsi, interface::LKCoreLTDC &coreltdc, interface::LKCoreLCD &corelcd,
+				interface::LKCoreGraphics &coregraphics, interface::LKCoreFont &corefont,
+				interface::LKCoreJPEG &corejpeg);
 
 	void initialize();
 
@@ -34,7 +35,7 @@ class LKCoreVideo
 	void setBrightness(float value);
 
 	void clearScreen(CGColor color = CGColor::white);
-	void displayRectangle(LKCoreGraphicsBase::FilledRectangle rectangle, CGColor color);
+	void displayRectangle(interface::LKCoreGraphics::FilledRectangle rectangle, CGColor color);
 	void displayImage(LKCoreFatFs &file);
 	void displayVideo(LKCoreFatFs &file);
 	void displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
@@ -43,14 +44,14 @@ class LKCoreVideo
 
   private:
 	LKCoreSTM32HalBase &_hal;
-	LKCoreSDRAMBase &_coresdram;
-	LKCoreDMA2DBase &_coredma2d;
-	LKCoreLTDCBase &_coreltdc;
-	LKCoreDSIBase &_coredsi;
-	LKCoreLCDBase &_corelcd;
-	LKCoreGraphicsBase &_coregraphics;
-	LKCoreFontBase &_corefont;
-	LKCoreJPEGBase &_corejpeg;
+	interface::LKCoreSDRAM &_coresdram;
+	interface::LKCoreDMA2D &_coredma2d;
+	interface::LKCoreLTDC &_coreltdc;
+	interface::LKCoreDSI &_coredsi;
+	interface::LKCoreLCD &_corelcd;
+	interface::LKCoreGraphics &_coregraphics;
+	interface::LKCoreFont &_corefont;
+	interface::LKCoreJPEG &_corejpeg;
 };
 
 }	// namespace leka
