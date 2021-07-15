@@ -14,13 +14,13 @@ namespace leka {
 class CorePwm : public interface::PwmOut
 {
   public:
-	explicit CorePwm(mbed::PwmOut &pwm) : _pwm {pwm} {};
+	explicit CorePwm(PinName pin) : _pwm {mbed::PwmOut(pin)} {};
 
 	auto read() -> float final;
 	void write(float value) final;
 
   private:
-	mbed::PwmOut &_pwm;
+	mbed::PwmOut _pwm;
 };
 
 }	// namespace leka
