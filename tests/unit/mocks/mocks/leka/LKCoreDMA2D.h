@@ -5,8 +5,8 @@
 #ifndef _LEKA_OS_DMA2D_MOCK_H_
 #define _LEKA_OS_DMA2D_MOCK_H_
 
-#include "interface/LKCoreDMA2D.h"
 #include "gmock/gmock.h"
+#include "interface/LKCoreDMA2D.h"
 
 namespace leka {
 

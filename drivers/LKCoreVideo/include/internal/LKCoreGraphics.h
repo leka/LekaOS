@@ -6,10 +6,10 @@
 #define _LEKA_OS_LIB_GRAPHICS_H_
 
 #include "CGColor.h"
-#include "interface/LKCoreDMA2D.h"
-#include "interface/LKCoreGraphics.h"
 #include "LKCoreLL.h"
 #include "corevideo_config.h"
+#include "interface/LKCoreDMA2D.h"
+#include "interface/LKCoreGraphics.h"
 
 namespace leka {
 

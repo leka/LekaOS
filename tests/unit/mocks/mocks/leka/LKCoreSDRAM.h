@@ -5,8 +5,8 @@
 #ifndef _LEKA_OS_SDRAM_MOCK_H_
 #define _LEKA_OS_SDRAM_MOCK_H_
 
-#include "interface/LKCoreSDRAM.h"
 #include "gmock/gmock.h"
+#include "interface/LKCoreSDRAM.h"
 
 namespace leka {
 

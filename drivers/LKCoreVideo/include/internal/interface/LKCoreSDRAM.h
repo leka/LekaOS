@@ -7,21 +7,22 @@
 #ifndef _LEKA_OS_LIB_SDRAM_BASE_H_
 #define _LEKA_OS_LIB_SDRAM_BASE_H_
 
+#include "LKComponentHandler.h"
 #include "stm32f7xx_hal.h"
 
 namespace leka::interface {
 
-class LKCoreSDRAM
+class LKCoreSDRAM : public LKComponentHandler<SDRAM_HandleTypeDef>
 {
   public:
-	virtual ~LKCoreSDRAM() = default;
+	virtual ~LKCoreSDRAM()										= default;
 	virtual void setupSDRAMConfig()								= 0;
 	virtual auto setupTimingConfig() -> FMC_SDRAM_TimingTypeDef = 0;
 	virtual auto setupDMA() -> DMA_HandleTypeDef				= 0;
 
-	virtual auto initialize() -> uint8_t	  = 0;
-	virtual void initializeController()		  = 0;
-	virtual void initializationSequence()	  = 0;
+	virtual auto initialize() -> uint8_t  = 0;
+	virtual void initializeController()	  = 0;
+	virtual void initializationSequence() = 0;
 };
 
 }	// namespace leka::interface

@@ -5,8 +5,8 @@
 #ifndef _LEKA_OS_DSI_MOCK_H_
 #define _LEKA_OS_DSI_MOCK_H_
 
-#include "interface/LKCoreDSI.h"
 #include "gmock/gmock.h"
+#include "interface/LKCoreDSI.h"
 
 namespace leka {
 

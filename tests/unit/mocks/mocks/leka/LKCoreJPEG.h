@@ -5,8 +5,8 @@
 #ifndef _LEKA_OS_JPEG_MOCK_H_
 #define _LEKA_OS_JPEG_MOCK_H_
 
-#include "interface/LKCoreJPEG.h"
 #include "gmock/gmock.h"
+#include "interface/LKCoreJPEG.h"
 
 namespace leka {
 

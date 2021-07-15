@@ -13,9 +13,9 @@ using namespace leka;
 
 LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal, interface::LKCoreLTDC &ltdc) : _hal(hal), _ltdc(ltdc)
 {
-	_hdsi.Instance			 = DSI;
-	_hdsi.Init.NumberOfLanes = DSI_TWO_DATA_LANES;
-	_hdsi.Init.TXEscapeCkdiv = dsi::txEscapeClockDiv;
+	_handle.Instance		   = DSI;
+	_handle.Init.NumberOfLanes = DSI_TWO_DATA_LANES;
+	_handle.Init.TXEscapeCkdiv = dsi::txEscapeClockDiv;
 
 	_cmdconf.VirtualChannelID	   = 0;
 	_cmdconf.HSPolarity			   = DSI_HSYNC_ACTIVE_HIGH;
@@ -43,7 +43,7 @@ void LKCoreDSI::initialize()
 {
 	reset();
 
-	_hal.HAL_DSI_DeInit(&_hdsi);
+	_hal.HAL_DSI_DeInit(&_handle);
 
 	DSI_PLLInitTypeDef dsiPllInit;
 
@@ -54,12 +54,12 @@ void LKCoreDSI::initialize()
 	// Initialize DSI
 	// DO NOT MOVE to the constructor as LCD initialization
 	// must be performed in a very specific order
-	_hal.HAL_DSI_Init(&_hdsi, &dsiPllInit);
+	_hal.HAL_DSI_Init(&_handle, &dsiPllInit);
 
 	// Configure DSI Video mode timings
-	HAL_DSI_ConfigAdaptedCommandMode(&_hdsi, &_cmdconf);
+	HAL_DSI_ConfigAdaptedCommandMode(&_handle, &_cmdconf);
 
-	_hal.HAL_DSI_Start(&_hdsi);
+	_hal.HAL_DSI_Start(&_handle);
 
 	DSI_PHY_TimerTypeDef phy_timings;
 	phy_timings.ClockLaneHS2LPTime	= 35;
@@ -68,10 +68,10 @@ void LKCoreDSI::initialize()
 	phy_timings.DataLaneLP2HSTime	= 35;
 	phy_timings.DataLaneMaxReadTime = 0;
 	phy_timings.StopWaitTime		= 10;
-	HAL_DSI_ConfigPhyTimer(&_hdsi, &phy_timings);
+	HAL_DSI_ConfigPhyTimer(&_handle, &phy_timings);
 
 	static auto &self = *this;
-	HAL_DSI_RegisterCallback(&_hdsi, HAL_DSI_ENDOF_REFRESH_CB_ID, [](DSI_HandleTypeDef *hdsi) {
+	HAL_DSI_RegisterCallback(&_handle, HAL_DSI_ENDOF_REFRESH_CB_ID, [](DSI_HandleTypeDef *hdsi) {
 		self._current_column = (self._current_column + 1) % self._columns.size();
 
 		auto new_address = lcd::frame_buffer_address + dsi::sync_props.activew * self._current_column * 4;
@@ -106,7 +106,7 @@ void LKCoreDSI::enableLPCmd()
 	_lpcmd.LPDcsShortWriteOneP = DSI_LP_DSW1P_ENABLE;
 	_lpcmd.LPDcsShortReadNoP   = DSI_LP_DSR0P_ENABLE;
 	_lpcmd.LPDcsLongWrite	   = DSI_LP_DLW_ENABLE;
-	HAL_DSI_ConfigCommand(&_hdsi, &_lpcmd);
+	HAL_DSI_ConfigCommand(&_handle, &_lpcmd);
 }
 
 void LKCoreDSI::disableLPCmd()
@@ -122,12 +122,12 @@ void LKCoreDSI::disableLPCmd()
 	_lpcmd.LPDcsShortWriteOneP = DSI_LP_DSW1P_DISABLE;
 	_lpcmd.LPDcsShortReadNoP   = DSI_LP_DSR0P_DISABLE;
 	_lpcmd.LPDcsLongWrite	   = DSI_LP_DLW_DISABLE;
-	HAL_DSI_ConfigCommand(&_hdsi, &_lpcmd);
+	HAL_DSI_ConfigCommand(&_handle, &_lpcmd);
 }
 
 void LKCoreDSI::enableTearingEffectReporting()
 {
-	HAL_DSI_RegisterCallback(&_hdsi, HAL_DSI_TEARING_EFFECT_CB_ID, [](DSI_HandleTypeDef *hdsi) {
+	HAL_DSI_RegisterCallback(&_handle, HAL_DSI_TEARING_EFFECT_CB_ID, [](DSI_HandleTypeDef *hdsi) {
 		// mask TE pin (automatically unmaksed by refresh)
 		HAL_DSI_ShortWrite(hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, lcd::otm8009a::tearing_effect::off, 0x00);
 		// refresh DSI
@@ -135,7 +135,7 @@ void LKCoreDSI::enableTearingEffectReporting()
 	});
 
 	// enable Bus Turn Around for 2 ways communication (needed for TE signal)
-	HAL_DSI_ConfigFlowControl(&_hdsi, DSI_FLOW_CONTROL_BTA);
+	HAL_DSI_ConfigFlowControl(&_handle, DSI_FLOW_CONTROL_BTA);
 
 	// Enable GPIOJ clock
 	__HAL_RCC_GPIOJ_CLK_ENABLE();
@@ -189,32 +189,27 @@ void LKCoreDSI::refresh()
 	if (_sync_on_TE) {
 		// request TE pin
 		uint8_t val[] = {0x00, 0x00};
-		HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 2, lcd::otm8009a::tearing_effect::write_scanline, val);
+		HAL_DSI_LongWrite(&_handle, 0, DSI_DCS_LONG_PKT_WRITE, 2, lcd::otm8009a::tearing_effect::write_scanline, val);
 	} else {
 		// normal refresh
-		if (_hdsi.Lock != HAL_LOCKED) {
-			_hdsi.Lock = HAL_LOCKED;
-			_hdsi.Instance->WCR |= DSI_WCR_LTDCEN;
-			_hdsi.Lock = HAL_UNLOCKED;
+		if (_handle.Lock != HAL_LOCKED) {
+			_handle.Lock = HAL_LOCKED;
+			_handle.Instance->WCR |= DSI_WCR_LTDCEN;
+			_handle.Lock = HAL_UNLOCKED;
 		}
 	}
 }
 
-auto LKCoreDSI::getHandle() -> DSI_HandleTypeDef &
-{
-	return _hdsi;
-}
-
 auto LKCoreDSI::isBusy() -> bool
 {
-	return _hdsi.State == HAL_DSI_STATE_BUSY;
+	return _handle.State == HAL_DSI_STATE_BUSY;
 }
 
 void LKCoreDSI::write(const uint8_t *data, uint32_t size)
 {
 	if (size <= 2) {
-		_hal.HAL_DSI_ShortWrite(&_hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, data[0], data[1]);
+		_hal.HAL_DSI_ShortWrite(&_handle, 0, DSI_DCS_SHORT_PKT_WRITE_P1, data[0], data[1]);
 	} else {
-		_hal.HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, size, data[size - 1], const_cast<uint8_t *>(data));
+		_hal.HAL_DSI_LongWrite(&_handle, 0, DSI_DCS_LONG_PKT_WRITE, size, data[size - 1], const_cast<uint8_t *>(data));
 	}
 }

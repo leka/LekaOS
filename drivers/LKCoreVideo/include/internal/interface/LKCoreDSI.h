@@ -5,11 +5,12 @@
 #ifndef _LEKA_OS_DRIVER_DSI_BASE_H_
 #define _LEKA_OS_DRIVER_DSI_BASE_H_
 
+#include "LKComponentHandler.h"
 #include "stm32f7xx_hal.h"
 
 namespace leka::interface {
 
-class LKCoreDSI
+class LKCoreDSI : public LKComponentHandler<DSI_HandleTypeDef>
 {
   public:
 	virtual ~LKCoreDSI() = default;
@@ -23,13 +24,11 @@ class LKCoreDSI
 
 	virtual void enableTearingEffectReporting() = 0;
 
-	virtual auto getHandle() -> DSI_HandleTypeDef & = 0;
-
 	virtual auto isBusy() -> bool = 0;
 
 	virtual void write(const uint8_t *data, uint32_t size) = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface
 
 #endif	 // _LEKA_OS_DRIVER_DSI_BASE_H_

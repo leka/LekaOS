@@ -5,8 +5,8 @@
 #ifndef _LEKA_OS_LCD_DRIVER_MOCK_H_
 #define _LEKA_OS_LCD_DRIVER_MOCK_H_
 
-#include "interface/LKCoreLCDDriver.h"
 #include "gmock/gmock.h"
+#include "interface/LKCoreLCDDriver.h"
 
 namespace leka {
 

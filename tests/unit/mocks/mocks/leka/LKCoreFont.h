@@ -5,8 +5,8 @@
 #ifndef _LEKA_OS_FONT_MOCK_H_
 #define _LEKA_OS_FONT_MOCK_H_
 
-#include "interface/LKCoreFont.h"
 #include "gmock/gmock.h"
+#include "interface/LKCoreFont.h"
 
 namespace leka {
 

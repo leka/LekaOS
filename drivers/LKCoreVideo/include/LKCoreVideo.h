@@ -5,26 +5,27 @@
 #ifndef _LEKA_OS_DRIVER_LKCOREVIDEO_H_
 #define _LEKA_OS_DRIVER_LKCOREVIDEO_H_
 
+#include "LKCoreFatFs.h"
+#include "LKCoreJPEG.h"
+#include "LKCoreSTM32HalBase.h"
 #include "interface/LKCoreDMA2D.h"
 #include "interface/LKCoreDSI.h"
-#include "LKCoreFatFs.h"
 #include "interface/LKCoreFont.h"
 #include "interface/LKCoreGraphics.h"
-#include "LKCoreJPEG.h"
 #include "interface/LKCoreJPEG.h"
 #include "interface/LKCoreLCD.h"
 #include "interface/LKCoreLTDC.h"
 #include "interface/LKCoreSDRAM.h"
-#include "LKCoreSTM32HalBase.h"
 
 namespace leka {
 
 class LKCoreVideo
 {
   public:
-	LKCoreVideo(LKCoreSTM32HalBase &hal, interface::LKCoreSDRAM &coresdram, interface::LKCoreDMA2D &coredma2d, interface::LKCoreDSI &coredsi,
-				interface::LKCoreLTDC &coreltdc, interface::LKCoreLCD &corelcd, interface::LKCoreGraphics &coregraphics,
-				interface::LKCoreFont &corefont, interface::LKCoreJPEG &corejpeg);
+	LKCoreVideo(LKCoreSTM32HalBase &hal, interface::LKCoreSDRAM &coresdram, interface::LKCoreDMA2D &coredma2d,
+				interface::LKCoreDSI &coredsi, interface::LKCoreLTDC &coreltdc, interface::LKCoreLCD &corelcd,
+				interface::LKCoreGraphics &coregraphics, interface::LKCoreFont &corefont,
+				interface::LKCoreJPEG &corejpeg);
 
 	void initialize();
 

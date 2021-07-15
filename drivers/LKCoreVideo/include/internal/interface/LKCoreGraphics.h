@@ -26,6 +26,6 @@ class LKCoreGraphics
 	virtual void drawRectangle(FilledRectangle rectangle, CGColor color) = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface
 
 #endif

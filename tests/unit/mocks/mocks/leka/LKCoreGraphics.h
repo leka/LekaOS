@@ -5,8 +5,8 @@
 #ifndef _LEKA_OS_GRAPHICS_MOCK_H_
 #define _LEKA_OS_GRAPHICS_MOCK_H_
 
-#include "interface/LKCoreGraphics.h"
 #include "gmock/gmock.h"
+#include "interface/LKCoreGraphics.h"
 
 namespace leka {
 

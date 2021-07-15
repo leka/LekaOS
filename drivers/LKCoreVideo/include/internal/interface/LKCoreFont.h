@@ -32,6 +32,6 @@ class LKCoreFont
 	virtual bool fontPixelIsOn(uint32_t byte_of_line, uint8_t pixel_id) = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface
 
 #endif

@@ -20,6 +20,6 @@ class LKCoreLCD
 	virtual void setBrightness(float value) = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface
 
 #endif	 // _LEKA_OS_DRIVER_LCD_BASE_H_
