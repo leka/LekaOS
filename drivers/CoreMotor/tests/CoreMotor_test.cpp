@@ -5,103 +5,101 @@
 #include "CoreMotor.h"
 
 #include "gtest/gtest.h"
+#include "mocks/leka/PwmOut.h"
 #include "mocks/mbed/DigitalOut.h"
-#include "stubs/mbed/PwmOut.h"
 
-// Test list
-// - create object - done
-// - spin/direction logic
-// - set speed
-// - stop
+using ::testing::_;
+using ::testing::AnyNumber;
 
 using namespace leka;
 
-auto dir_1 = mbed::mock::DigitalOut {};
-auto dir_2 = mbed::mock::DigitalOut {};
+class CoreMotorTest : public ::testing::Test
+{
+  protected:
+	CoreMotorTest() : motor(dir_1, dir_2, speed) {}
 
-CoreMotor motor(dir_1, dir_2, MOTOR_RIGHT_PWM);
+	// void SetUp() override {}
+	// void TearDown() override {}
 
-TEST(CoreMotorTest, initialization)
+	mbed::mock::DigitalOut dir_1 = {};
+	mbed::mock::DigitalOut dir_2 = {};
+	mock::PwmOut speed			 = {};
+
+	// TODO (@ladislas) - These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call
+	// TODO (@ladislas) - Remove them in the future
+	void MOCK_FUNCTION_silence_digital_write_unexpected_calls()
+	{
+		EXPECT_CALL(dir_1, write).Times(AnyNumber());
+		EXPECT_CALL(dir_2, write).Times(AnyNumber());
+	}
+
+	CoreMotor motor;
+};
+
+TEST_F(CoreMotorTest, initialization)
 {
 	ASSERT_NE(&motor, nullptr);
 }
 
-TEST(CoreMotorTest, speedValueNotLowerThanZero)
+TEST_F(CoreMotorTest, rotateClockwiseNormalSpeed)
 {
-	motor.spin(Rotation::clockwise, -100);
+	EXPECT_CALL(dir_1, write(1));
+	EXPECT_CALL(dir_2, write(0));
+	EXPECT_CALL(speed, write(0.5));
 
-	auto status = motor.getStatus();
-
-	ASSERT_EQ(spy_PwmOut_getValue(), 0);
-	ASSERT_EQ(status.speed, 0);
+	motor.spin(Rotation::clockwise, 0.5);
 }
 
-TEST(CoreMotorTest, speedValueNotGreaterThanOne)
+TEST_F(CoreMotorTest, rotateClockwiseMaxSpeed)
 {
+	EXPECT_CALL(dir_1, write(1));
+	EXPECT_CALL(dir_2, write(0));
+	EXPECT_CALL(speed, write(1));
+
+	motor.spin(Rotation::clockwise, 1);
+}
+
+TEST_F(CoreMotorTest, rotateCounterClockwiseNormalSpeed)
+{
+	EXPECT_CALL(dir_1, write(0));
+	EXPECT_CALL(dir_2, write(1));
+	EXPECT_CALL(speed, write(0.5));
+
+	motor.spin(Rotation::counterClockwise, 0.5);
+}
+
+TEST_F(CoreMotorTest, rotateCounterClockwiseMaxSpeed)
+{
+	EXPECT_CALL(dir_1, write(0));
+	EXPECT_CALL(dir_2, write(1));
+	EXPECT_CALL(speed, write(1));
+
+	motor.spin(Rotation::counterClockwise, 1);
+}
+
+TEST_F(CoreMotorTest, stop)
+{
+	EXPECT_CALL(dir_1, write(0));
+	EXPECT_CALL(dir_2, write(0));
+	EXPECT_CALL(speed, write(0));
+
+	motor.stop();
+}
+
+TEST_F(CoreMotorTest, speedValueNotGreaterThanOne)
+{
+	MOCK_FUNCTION_silence_digital_write_unexpected_calls();
+
+	EXPECT_CALL(speed, write(1));
+
 	motor.spin(Rotation::clockwise, 100);
-
-	auto status = motor.getStatus();
-
-	ASSERT_EQ(spy_PwmOut_getValue(), 1);
-	ASSERT_EQ(status.speed, 1);
 }
 
-TEST(CoreMotorTest, directionValuesForClockwiseRotation)
+TEST_F(CoreMotorTest, speedValueNotLowerThanZero)
 {
-	motor.spin(Rotation::clockwise, 1);
+	MOCK_FUNCTION_silence_digital_write_unexpected_calls();
 
-	auto status = motor.getStatus();
+	EXPECT_CALL(speed, write(0));
 
-	ASSERT_EQ(status.dir_1, 1);
-	ASSERT_EQ(status.dir_2, 0);
-}
-
-TEST(CoreMotorTest, speedValueForClockwiseRotation)
-{
-	motor.spin(Rotation::clockwise, 1);
-
-	auto status = motor.getStatus();
-
-	ASSERT_EQ(spy_PwmOut_getValue(), 1);
-	ASSERT_EQ(status.speed, 1);
-}
-
-TEST(CoreMotorTest, directionValuesForCounterClockwiseRotation)
-{
-	motor.spin(Rotation::counterClockwise, 1);
-
-	auto status = motor.getStatus();
-
-	ASSERT_EQ(status.dir_1, 0);
-	ASSERT_EQ(status.dir_2, 1);
-}
-
-TEST(CoreMotorTest, speedValueForCounterClockwiseRotation)
-{
-	motor.spin(Rotation::counterClockwise, 1);
-
-	auto status = motor.getStatus();
-
-	ASSERT_EQ(spy_PwmOut_getValue(), 1);
-	ASSERT_EQ(status.speed, 1);
-}
-
-TEST(CoreMotorTest, directionValuesForStop)
-{
-	motor.stop();
-
-	auto status = motor.getStatus();
-
-	ASSERT_EQ(status.dir_1, 0);
-	ASSERT_EQ(status.dir_2, 0);
-}
-
-TEST(CoreMotorTest, speedValueForStop)
-{
-	motor.stop();
-
-	auto status = motor.getStatus();
-
-	ASSERT_EQ(spy_PwmOut_getValue(), 0);
-	ASSERT_EQ(status.speed, 0);
+	motor.spin(Rotation::clockwise, -100);
 }
