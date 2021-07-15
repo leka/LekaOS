@@ -7,17 +7,17 @@
 
 #include <array>
 
-#include "LKCoreDSIBase.h"
-#include "LKCoreLTDCBase.h"
 #include "LKCoreSTM32HalBase.h"
 #include "corevideo_config.h"
+#include "interface/LKCoreDSI.h"
+#include "interface/LKCoreLTDC.h"
 
 namespace leka {
 
-class LKCoreDSI : public LKCoreDSIBase
+class LKCoreDSI : public interface::LKCoreDSI
 {
   public:
-	explicit LKCoreDSI(LKCoreSTM32HalBase &hal, LKCoreLTDCBase &ltdc);
+	explicit LKCoreDSI(LKCoreSTM32HalBase &hal, interface::LKCoreLTDC &ltdc);
 
 	void initialize() final;
 	void reset() final;
@@ -28,17 +28,14 @@ class LKCoreDSI : public LKCoreDSIBase
 
 	void enableTearingEffectReporting() final;
 
-	auto getHandle() -> DSI_HandleTypeDef & final;
-
 	auto isBusy() -> bool final;
 
 	void write(const uint8_t *data, uint32_t size) final;
 
   private:
 	LKCoreSTM32HalBase &_hal;
-	LKCoreLTDCBase &_ltdc;
+	interface::LKCoreLTDC &_ltdc;
 
-	DSI_HandleTypeDef _hdsi;
 	DSI_CmdCfgTypeDef _cmdconf;
 	DSI_LPCmdTypeDef _lpcmd;
 

@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_JPEG_MOCK_H_
 #define _LEKA_OS_JPEG_MOCK_H_
 
-#include "LKCoreJPEGBase.h"
 #include "gmock/gmock.h"
+#include "interface/LKCoreJPEG.h"
 
 namespace leka {
 
-class LKCoreJPEGMock : public LKCoreJPEGBase
+class LKCoreJPEGMock : public LKCoreJPEG
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));

@@ -8,9 +8,9 @@
 #include "CGColor.h"
 #include "CGPixel.h"
 
-namespace leka {
+namespace leka::interface {
 
-class LKCoreGraphicsBase
+class LKCoreGraphics
 {
   public:
 	struct FilledRectangle {
@@ -19,13 +19,13 @@ class LKCoreGraphicsBase
 		uint16_t height;
 	};
 
-	virtual ~LKCoreGraphicsBase() = default;
+	virtual ~LKCoreGraphics() = default;
 
 	virtual void clearScreen(CGColor color = CGColor::white) = 0;
 
 	virtual void drawRectangle(FilledRectangle rectangle, CGColor color) = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface
 
 #endif

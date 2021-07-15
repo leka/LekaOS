@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_SDRAM_MOCK_H_
 #define _LEKA_OS_SDRAM_MOCK_H_
 
-#include "LKCoreSDRAMBase.h"
 #include "gmock/gmock.h"
+#include "interface/LKCoreSDRAM.h"
 
 namespace leka {
 
-class LKCoreSDRAMMock : public LKCoreSDRAMBase
+class LKCoreSDRAMMock : public interface::LKCoreSDRAM
 {
   public:
 	MOCK_METHOD(void, setupSDRAMConfig, (), (override));
