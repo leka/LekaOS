@@ -12,9 +12,9 @@
 using namespace std::chrono;
 using namespace leka;
 
-LKCoreVideo::LKCoreVideo(LKCoreSTM32HalBase &hal, LKCoreSDRAMBase &coresdram, LKCoreDMA2DBase &coredma2d,
-						 LKCoreDSIBase &coredsi, LKCoreLTDCBase &coreltdc, LKCoreLCDBase &corelcd,
-						 LKCoreGraphicsBase &coregraphics, LKCoreFontBase &corefont, LKCoreJPEGBase &corejpeg)
+LKCoreVideo::LKCoreVideo(LKCoreSTM32HalBase &hal, interface::LKCoreSDRAM &coresdram, interface::LKCoreDMA2D &coredma2d,
+						 interface::LKCoreDSI &coredsi, interface::LKCoreLTDC &coreltdc, interface::LKCoreLCD &corelcd,
+						 interface::LKCoreGraphics &coregraphics, interface::LKCoreFont &corefont, interface::LKCoreJPEG &corejpeg)
 	: _hal(hal),
 	  _coresdram(coresdram),
 	  _coredma2d(coredma2d),
@@ -97,7 +97,7 @@ void LKCoreVideo::clearScreen(CGColor color)
 	_coregraphics.clearScreen(color);
 }
 
-void LKCoreVideo::displayRectangle(LKCoreGraphicsBase::FilledRectangle rectangle, CGColor color)
+void LKCoreVideo::displayRectangle(interface::LKCoreGraphics::FilledRectangle rectangle, CGColor color)
 {
 	_coregraphics.drawRectangle(rectangle, color);
 }

@@ -9,12 +9,12 @@
 #include "stm32f7xx_hal.h"
 #include "stm32f7xx_hal_jpeg.h"
 
-namespace leka {
+namespace leka::interface {
 
-class LKCoreJPEGBase
+class LKCoreJPEG
 {
   public:
-	~LKCoreJPEGBase() = default;
+	~LKCoreJPEG() = default;
 
 	virtual void initialize() = 0;
 

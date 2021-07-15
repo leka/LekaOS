@@ -7,12 +7,12 @@
 
 #include "stm32f7xx_hal.h"
 
-namespace leka {
+namespace leka::interface {
 
-class LKCoreLTDCBase
+class LKCoreLTDC
 {
   public:
-	virtual ~LKCoreLTDCBase() = default;
+	virtual ~LKCoreLTDC() = default;
 	virtual void initialize() = 0;
 
 	virtual auto getHandle() -> LTDC_HandleTypeDef & = 0;

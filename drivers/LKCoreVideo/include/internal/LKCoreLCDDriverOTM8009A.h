@@ -7,18 +7,18 @@
 
 #include "drivers/PwmOut.h"
 
-#include "LKCoreDSIBase.h"
-#include "LKCoreLCDDriverBase.h"
+#include "interface/LKCoreDSI.h"
+#include "interface/LKCoreLCDDriver.h"
 
 namespace leka {
 
 // ? OTM8009A LCD driver datasheet available at:
 // ? http://www.orientdisplay.com/pdf/OTM8009A.pdf
 
-class LKCoreLCDDriverOTM8009A : public LKCoreLCDDriverBase
+class LKCoreLCDDriverOTM8009A : public interface::LKCoreLCDDriver
 {
   public:
-	LKCoreLCDDriverOTM8009A(LKCoreDSIBase &dsi, PinName backlight) : _dsi {dsi}, _backlight {backlight} {};
+	LKCoreLCDDriverOTM8009A(interface::LKCoreDSI &dsi, PinName backlight) : _dsi {dsi}, _backlight {backlight} {};
 
 	void initialize() final;
 	void setLandscapeOrientation() final;
@@ -29,7 +29,7 @@ class LKCoreLCDDriverOTM8009A : public LKCoreLCDDriverBase
 	void setBrightness(float value) final;
 
   private:
-	LKCoreDSIBase &_dsi;
+	interface::LKCoreDSI &_dsi;
 	mbed::PwmOut _backlight;
 };
 

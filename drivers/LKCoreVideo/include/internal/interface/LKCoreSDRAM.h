@@ -9,20 +9,21 @@
 
 #include "stm32f7xx_hal.h"
 
-namespace leka {
+namespace leka::interface {
 
-class LKCoreSDRAMBase
+class LKCoreSDRAM
 {
   public:
-	virtual void setupSDRAMConfig()							= 0;
-	virtual FMC_SDRAM_TimingTypeDef setupTimingConfig(void) = 0;
-	virtual DMA_HandleTypeDef setupDMA()					= 0;
+	virtual ~LKCoreSDRAM() = default;
+	virtual void setupSDRAMConfig()								= 0;
+	virtual auto setupTimingConfig() -> FMC_SDRAM_TimingTypeDef = 0;
+	virtual auto setupDMA() -> DMA_HandleTypeDef				= 0;
 
-	virtual uint8_t initialize(void)		  = 0;
+	virtual auto initialize() -> uint8_t	  = 0;
 	virtual void initializeController()		  = 0;
-	virtual void initializationSequence(void) = 0;
+	virtual void initializationSequence()	  = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface
 
 #endif

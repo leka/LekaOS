@@ -7,12 +7,12 @@
 
 #include "stm32f7xx_hal.h"
 
-namespace leka {
+namespace leka::interface {
 
-class LKCoreDSIBase
+class LKCoreDSI
 {
   public:
-	virtual ~LKCoreDSIBase() = default;
+	virtual ~LKCoreDSI() = default;
 
 	virtual void initialize() = 0;
 	virtual void reset()	  = 0;

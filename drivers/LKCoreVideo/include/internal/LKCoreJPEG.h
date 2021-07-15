@@ -9,14 +9,14 @@
 #include <memory>
 
 #include "LKCoreFatFsBase.h"
-#include "LKCoreJPEGBase.h"
+#include "interface/LKCoreJPEG.h"
 #include "LKCoreJPEGMode.h"
 #include "LKCoreSTM32HalBase.h"
 #include "st_jpeg_utils.h"
 
 namespace leka {
 
-class LKCoreJPEG : public LKCoreJPEGBase
+class LKCoreJPEG : public interface::LKCoreJPEG
 {
   public:
 	LKCoreJPEG(LKCoreSTM32HalBase &hal, std::unique_ptr<LKCoreJPEGMode> mode);

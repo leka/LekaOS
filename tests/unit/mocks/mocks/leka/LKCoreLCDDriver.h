@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_LCD_DRIVER_MOCK_H_
 #define _LEKA_OS_LCD_DRIVER_MOCK_H_
 
-#include "LKCoreLCDDriverBase.h"
+#include "interface/LKCoreLCDDriver.h"
 #include "gmock/gmock.h"
 
 namespace leka {
 
-class LKCoreLCDDriverMock : public LKCoreLCDDriverBase
+class LKCoreLCDDriverMock : public interface::LKCoreLCDDriver
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));

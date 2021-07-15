@@ -10,9 +10,9 @@
 #include "CGColor.h"
 #include "CGPixel.h"
 
-namespace leka {
+namespace leka::interface {
 
-class LKCoreFontBase
+class LKCoreFont
 {
   public:
 	struct Character {
@@ -20,7 +20,7 @@ class LKCoreFontBase
 		uint8_t ascii;	 // From 0x20 to 0x7F
 	};
 
-	virtual ~LKCoreFontBase() = default;
+	virtual ~LKCoreFont() = default;
 
 	virtual void drawChar(Character character, CGColor foreground = CGColor::black,
 						  CGColor background = CGColor::white) = 0;

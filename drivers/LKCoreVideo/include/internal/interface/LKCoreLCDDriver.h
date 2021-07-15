@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_DRIVER_LK_CORE_LCD_SOURCE_DRIVER_BASE_H_
 #define _LEKA_OS_DRIVER_LK_CORE_LCD_SOURCE_DRIVER_BASE_H_
 
-namespace leka {
+namespace leka::interface {
 
-class LKCoreLCDDriverBase
+class LKCoreLCDDriver
 {
   public:
-	~LKCoreLCDDriverBase() = default;
+	~LKCoreLCDDriver() = default;
 
 	virtual void initialize()			   = 0;
 	virtual void setLandscapeOrientation() = 0;

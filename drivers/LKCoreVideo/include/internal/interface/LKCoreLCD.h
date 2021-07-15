@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_DRIVER_LCD_BASE_H_
 #define _LEKA_OS_DRIVER_LCD_BASE_H_
 
-namespace leka {
+namespace leka::interface {
 
-class LKCoreLCDBase
+class LKCoreLCD
 {
   public:
-	~LKCoreLCDBase() = default;
+	~LKCoreLCD() = default;
 
 	virtual void initialize() = 0;
 

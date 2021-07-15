@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_GRAPHICS_MOCK_H_
 #define _LEKA_OS_GRAPHICS_MOCK_H_
 
-#include "LKCoreGraphicsBase.h"
+#include "interface/LKCoreGraphics.h"
 #include "gmock/gmock.h"
 
 namespace leka {
 
-class LKCoreGraphicsMock : public LKCoreGraphicsBase
+class LKCoreGraphicsMock : public interface::LKCoreGraphics
 {
   public:
 	MOCK_METHOD(void, clearScreen, (CGColor color), (override));

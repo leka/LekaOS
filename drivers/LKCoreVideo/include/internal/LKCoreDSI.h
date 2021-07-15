@@ -7,17 +7,17 @@
 
 #include <array>
 
-#include "LKCoreDSIBase.h"
-#include "LKCoreLTDCBase.h"
+#include "interface/LKCoreDSI.h"
+#include "interface/LKCoreLTDC.h"
 #include "LKCoreSTM32HalBase.h"
 #include "corevideo_config.h"
 
 namespace leka {
 
-class LKCoreDSI : public LKCoreDSIBase
+class LKCoreDSI : public interface::LKCoreDSI
 {
   public:
-	explicit LKCoreDSI(LKCoreSTM32HalBase &hal, LKCoreLTDCBase &ltdc);
+	explicit LKCoreDSI(LKCoreSTM32HalBase &hal, interface::LKCoreLTDC &ltdc);
 
 	void initialize() final;
 	void reset() final;
@@ -36,7 +36,7 @@ class LKCoreDSI : public LKCoreDSIBase
 
   private:
 	LKCoreSTM32HalBase &_hal;
-	LKCoreLTDCBase &_ltdc;
+	interface::LKCoreLTDC &_ltdc;
 
 	DSI_HandleTypeDef _hdsi;
 	DSI_CmdCfgTypeDef _cmdconf;

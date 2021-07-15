@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_LTDC_MOCK_H_
 #define _LEKA_OS_LTDC_MOCK_H_
 
-#include "LKCoreLTDCBase.h"
+#include "interface/LKCoreLTDC.h"
 #include "gmock/gmock.h"
 
 namespace leka {
 
-class LKCoreLTDCMock : public LKCoreLTDCBase
+class LKCoreLTDCMock : public interface::LKCoreLTDC
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));

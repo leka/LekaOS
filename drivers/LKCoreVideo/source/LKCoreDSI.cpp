@@ -11,7 +11,7 @@
 using namespace std::chrono;
 using namespace leka;
 
-LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal, LKCoreLTDCBase &ltdc) : _hal(hal), _ltdc(ltdc)
+LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal, interface::LKCoreLTDC &ltdc) : _hal(hal), _ltdc(ltdc)
 {
 	_hdsi.Instance			 = DSI;
 	_hdsi.Init.NumberOfLanes = DSI_TWO_DATA_LANES;

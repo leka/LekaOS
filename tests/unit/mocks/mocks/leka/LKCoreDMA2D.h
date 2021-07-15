@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_DMA2D_MOCK_H_
 #define _LEKA_OS_DMA2D_MOCK_H_
 
-#include "LKCoreDMA2DBase.h"
+#include "interface/LKCoreDMA2D.h"
 #include "gmock/gmock.h"
 
 namespace leka {
 
-class LKCoreDMA2DMock : public LKCoreDMA2DBase
+class LKCoreDMA2DMock : public interface::LKCoreDMA2D
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));

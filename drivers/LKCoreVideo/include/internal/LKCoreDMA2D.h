@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_LIB_DMA2D_H_
 #define _LEKA_OS_LIB_DMA2D_H_
 
-#include "LKCoreDMA2DBase.h"
+#include "interface/LKCoreDMA2D.h"
 #include "corevideo_config.h"
 
 namespace leka {
 
-class LKCoreDMA2D : public LKCoreDMA2DBase
+class LKCoreDMA2D : public interface::LKCoreDMA2D
 {
   public:
 	LKCoreDMA2D(LKCoreSTM32HalBase &hal);
