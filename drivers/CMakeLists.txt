@@ -13,6 +13,9 @@ add_subdirectory(${DRIVERS_DIR}/CoreBufferedSerial)
 # LCD drivers
 add_subdirectory(${DRIVERS_DIR}/LKCoreVideo)
 
+# Connectivity drivers
+add_subdirectory(${DRIVERS_DIR}/CoreWifi)
+
 # Sensors drivers
 add_subdirectory(${DRIVERS_DIR}/CoreHTS)
 add_subdirectory(${DRIVERS_DIR}/CoreBattery)
