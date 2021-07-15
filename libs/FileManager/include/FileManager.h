@@ -11,6 +11,7 @@
 
 namespace leka {
 
+// TODO (@ladislas) - move the bd and fs part to FileSystemKit
 class FileManager
 {
   public:

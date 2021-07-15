@@ -16,7 +16,7 @@ target_sources(spike_lk_lcd
 
 target_link_libraries(spike_lk_lcd
 	lib_LekaScreen
-	LKCoreFatFs
+	CoreFs
 	LKCoreVideo
 	LKCoreLL
 	LKCoreSTM32Hal

@@ -198,7 +198,7 @@ link_libraries(
 add_subdirectory(template)
 
 # Register drivers
-leka_register_unit_tests_for_driver(LKCoreFatFs)
+leka_register_unit_tests_for_driver(CoreFs)
 leka_register_unit_tests_for_driver(LKCoreLL)
 leka_register_unit_tests_for_driver(LKCoreSTM32Hal)
 leka_register_unit_tests_for_driver(LKCoreVideo)
@@ -215,6 +215,7 @@ leka_register_unit_tests_for_driver(CoreBufferedSerial)
 # Register libraries
 leka_register_unit_tests_for_library(LKAnimationKit)
 leka_register_unit_tests_for_library(LKCalculatorKit)
+leka_register_unit_tests_for_library(FileSystemKit)
 
 #
 # Mark: - Finish up

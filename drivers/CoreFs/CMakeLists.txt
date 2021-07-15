@@ -2,16 +2,16 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(LKCoreFatFs STATIC)
+add_library(CoreFs STATIC)
 
-target_include_directories(LKCoreFatFs
+target_include_directories(CoreFs
 	PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_sources(LKCoreFatFs
+target_sources(CoreFs
 	PRIVATE
 		source/LKCoreFatFs.cpp
 )
 
-target_link_libraries(LKCoreFatFs mbed-os)
+target_link_libraries(CoreFs mbed-os)
