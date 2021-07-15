@@ -8,18 +8,21 @@
 #include "PinNames.h"
 
 #include "CoreMotor.h"
+#include "CorePwm.h"
 #include "LekaMotors.h"
 
 using namespace leka;
 
 auto motor_left_dir_1 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
 auto morot_left_dir_2 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
+auto morot_left_speed = CorePwm {MOTOR_LEFT_PWM};
 
 auto motor_right_dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
 auto morot_right_dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
+auto morot_right_speed = CorePwm {MOTOR_RIGHT_PWM};
 
-auto motor_left	 = CoreMotor {motor_left_dir_1, morot_left_dir_2, MOTOR_RIGHT_PWM};
-auto motor_right = CoreMotor {motor_right_dir_1, morot_right_dir_2, MOTOR_RIGHT_PWM};
+auto motor_left	 = CoreMotor {motor_left_dir_1, morot_left_dir_2, morot_left_speed};
+auto motor_right = CoreMotor {motor_right_dir_1, morot_right_dir_2, morot_right_speed};
 
 Motors motors(motor_right, motor_left);
 
