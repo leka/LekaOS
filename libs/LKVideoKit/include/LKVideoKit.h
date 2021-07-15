@@ -1,5 +1,5 @@
-#ifndef _LEKA_OS_LIB_VideoKit_H_
-#define _LEKA_OS_LIB_VideoKit_H_
+#ifndef _LEKA_OS_LIB_LKVIDEOKIT_H_
+#define _LEKA_OS_LIB_LKVIDEOKIT_H_
 
 #include <chrono>
 
@@ -13,18 +13,29 @@
 #include "CoreLTDC.h"
 #include "CoreSDRAM.h"
 #include "LKCoreSTM32Hal.h"
+#include "LKGraphics.h"
 
 namespace leka {
 
-class VideoKit
+class LKVideoKit
 {
-  public:
-	VideoKit();
+	public:
+	LKVideoKit();
 
-	void clear();
+	auto getDSI() -> CoreDSI &;
+	auto getLTDC() -> CoreLTDC &;
+	auto getDMA2D() -> CoreDMA2D &;
+	auto getJPEG() -> CoreJPEG &;
+
+	void initialize();
+
+	void clear(gfx::Color color = gfx::Color::White);
+
+	void drawRectangle(gfx::Rectangle rect, uint32_t x, uint32_t y);
+
 	void display();
 
-  private:
+	private:
 	LKCoreSTM32Hal _hal;
 	CoreSDRAM _coresdram;
 
@@ -43,4 +54,4 @@ class VideoKit
 
 }	// namespace leka
 
-#endif	 // _LEKA_OS_LIB_VideoKit_H_
+#endif	 // _LEKA_OS_LIB_LKVIDEOKIT_H_

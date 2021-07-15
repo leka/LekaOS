@@ -10,20 +10,19 @@
 #include <cstdint>
 
 #include "CGAnimation.h"
-#include "interface/CoreGraphics.h"
 
 namespace leka::animation {
-
+/*
 class BouncingSquare : public interface::CGAnimation
 {
-  public:
+	public:
 	explicit BouncingSquare(interface::CoreGraphics &coregraphics);
 
 	void start(void) final;
 	void run(void) final;
 	void stop(void) final;
 
-  private:
+	private:
 	bool squareWillBeOutOfBoundVertical() const;
 	bool squareWillBeOutOfBoundHorizontal() const;
 	void updateSquareDirection();
@@ -42,7 +41,7 @@ class BouncingSquare : public interface::CGAnimation
 	};
 	Shift _shift {.horizontal = 1, .vertical = 1};
 };
-
+*/
 }	// namespace leka::animation
 
 // ? LCOV_EXCL_STOP - Exclude from coverage report

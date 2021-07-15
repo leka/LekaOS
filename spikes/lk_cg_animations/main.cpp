@@ -15,8 +15,6 @@
 #include "CoreDMA2D.h"
 #include "CoreDSI.h"
 #include "LKCoreFatFs.h"
-#include "CoreFont.h"
-#include "CoreGraphics.h"
 #include "CoreJPEG.h"
 #include "CoreLCD.h"
 #include "CoreLCDDriverOTM8009A.h"
@@ -37,25 +35,21 @@ SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 LKCoreFatFs corefatfs;
 
-LKCoreLL corell;
-CGPixel pixel(corell);
 LKCoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);
 CoreDMA2D coredma2d(hal);
 CoreLTDC coreltdc(hal);
 CoreDSI coredsi(hal, coreltdc);
-CoreGraphics coregraphics(coredma2d);
-CoreFont corefont(pixel);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 CoreLCD corelcd(coreotm);
 CoreJPEG corejpeg(hal, std::make_unique<CoreJPEGDMAMode>());
-CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
+CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, corejpeg);
 
 rtos::Thread animation_thread;
 events::EventQueue animation_event_queue;
 
-animation::BouncingSquare animation_bouncing_square(coregraphics);
-LKAnimationKit animationkit(animation_thread, animation_event_queue);
+// animation::BouncingSquare animation_bouncing_square(coregraphics);
+// LKAnimationKit animationkit(animation_thread, animation_event_queue);
 
 auto main() -> int
 {
@@ -77,10 +71,10 @@ auto main() -> int
 		log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world,
 				 int(t.count() / 1000));
 
-		animationkit.start(animation_bouncing_square);
+		// animationkit.start(animation_bouncing_square);
 		rtos::ThisThread::sleep_for(5s);
 
-		animationkit.stop();
+		// animationkit.stop();
 		rtos::ThisThread::sleep_for(1s);
 	}
 }
