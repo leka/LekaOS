@@ -42,7 +42,8 @@ class CoreDSI : public interface::CoreDSI
 	std::array<std::array<uint8_t, 4>, dsi::refresh_columns_count> _columns;
 	int _current_column = 0;
 
-	bool _sync_on_TE = false;
+	bool _sync_on_TE   = false;
+	bool _refresh_done = true;
 };
 
 }	// namespace leka

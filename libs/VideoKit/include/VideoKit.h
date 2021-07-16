@@ -15,12 +15,14 @@
 #include "Graphics.h"
 #include "LKCoreSTM32Hal.h"
 
+using namespace std::chrono_literals;
+
 namespace leka {
 
-class LKVideoKit
+class VideoKit
 {
   public:
-	LKVideoKit();
+	VideoKit();
 
 	auto getDSI() -> CoreDSI &;
 	auto getLTDC() -> CoreLTDC &;
@@ -29,13 +31,22 @@ class LKVideoKit
 
 	void initialize();
 
+	void setFrameRateLimit(unsigned framerate);
+
 	void clear(gfx::Color color = gfx::Color::White);
 
 	void drawRectangle(gfx::Rectangle rect, uint32_t x, uint32_t y);
 
+	// temporary
+	void drawImage(LKCoreFatFsBase &file);
+	void drawVideo(LKCoreFatFsBase &file);
+
 	void display();
 
   private:
+	void refresh();
+	void tick();
+
 	LKCoreSTM32Hal _hal;
 	CoreSDRAM _coresdram;
 
@@ -50,6 +61,7 @@ class LKVideoKit
 	CoreLCD _corelcd;
 
 	rtos::Kernel::Clock::time_point _last_time = rtos::Kernel::Clock::now();
+	std::chrono::milliseconds _frametime	   = 40ms;
 };
 
 }	// namespace leka
