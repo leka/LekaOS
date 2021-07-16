@@ -1,0 +1,147 @@
+// // Leka - LekaOS
+// // Copyright 2021 APF France handicap
+// // SPDX-License-Identifier: Apache-2.0
+
+#include "CoreAudio.h"
+
+#include "gtest/gtest.h"
+#include "mocks/leka/CoreDAC.h"
+#include "mocks/leka/CoreDACTimer.h"
+#include "mocks/leka/LKCoreSTM32Hal.h"
+
+using namespace leka;
+using ::testing::_;
+using ::testing::AnyNumber;
+using ::testing::InSequence;
+using ::testing::Return;
+
+class CoreAudioTest : public ::testing::Test
+{
+  protected:
+	CoreAudioTest() : coreaudio(halmock, dacmock, timermock) {}
+
+	// void SetUp() override {}
+	// void TearDown() override {}
+
+	LKCoreSTM32HalMock halmock;
+	CoreDACMock dacmock;
+	CoreDACTimerMock timermock;
+
+	CoreAudio coreaudio;
+};
+
+TEST_F(CoreAudioTest, instantiation)
+{
+	ASSERT_NE(&coreaudio, nullptr);
+}
+
+// TEST_F(CoreAudioTest, handleConfigurationInstance)
+// {
+// 	auto hdac = coredac.getHandle();
+// 	auto hdma = coredac.getDMAHandle();
+
+// 	ASSERT_EQ(hdac.Instance, DAC);
+// 	ASSERT_EQ(hdma.Instance, DMA1_Stream5);
+// }
+
+// TEST_F(CoreAudioTest, initialize)
+// {
+// 	auto handle = coredac.getHandle();
+// 	{
+// 		InSequence seq;
+
+// 		EXPECT_CALL(halmock, HAL_RCC_GPIOA_CLK_ENABLE).Times(1);
+// 		EXPECT_CALL(halmock, HAL_RCC_DMA1_CLK_ENABLE).Times(1);
+// 		EXPECT_CALL(halmock, HAL_NVIC_SetPriority).Times(1);
+// 		EXPECT_CALL(halmock, HAL_NVIC_EnableIRQ).Times(1);
+// 		EXPECT_CALL(halmock, HAL_DAC_RegisterCallback).Times(2);
+// 		EXPECT_CALL(halmock, HAL_DAC_Init).Times(1);
+// 		EXPECT_CALL(halmock, HAL_DAC_RegisterCallback).Times(2);
+// 		EXPECT_CALL(halmock, HAL_DAC_ConfigChannel).Times(1);
+// 	}
+// 	coredac.initialize();
+// }
+
+// TEST_F(CoreAudioTest, mspInitCallback)
+// {
+// 	{
+// 		InSequence seq;
+
+// 		EXPECT_CALL(halmock, HAL_RCC_DAC_CLK_ENABLE).Times(1);
+// 		EXPECT_CALL(halmock, HAL_RCC_GPIOA_CLK_ENABLE).Times(1);
+// 		EXPECT_CALL(halmock, HAL_GPIO_Init).Times(1);
+// 		EXPECT_CALL(halmock, HAL_DMA_Init).Times(1);
+// 	}
+// 	coredac._mspInitCallback();
+
+// 	auto hdma = coredac.getDMAHandle();
+
+// 	ASSERT_EQ(hdma.Init.Channel, DMA_CHANNEL_7);
+// 	ASSERT_EQ(hdma.Init.Direction, DMA_MEMORY_TO_PERIPH);
+// 	ASSERT_EQ(hdma.Init.PeriphInc, DMA_PINC_DISABLE);
+// 	ASSERT_EQ(hdma.Init.MemInc, DMA_MINC_ENABLE);
+// 	ASSERT_EQ(hdma.Init.PeriphDataAlignment, DMA_PDATAALIGN_HALFWORD);
+// 	ASSERT_EQ(hdma.Init.MemDataAlignment, DMA_MDATAALIGN_HALFWORD);
+// 	ASSERT_EQ(hdma.Init.Mode, DMA_CIRCULAR);
+// 	ASSERT_EQ(hdma.Init.Priority, DMA_PRIORITY_LOW);	  // changed from low to high
+// 	ASSERT_EQ(hdma.Init.FIFOMode, DMA_FIFOMODE_ENABLE);	  // enable
+// 	ASSERT_EQ(hdma.Init.FIFOThreshold, DMA_FIFO_THRESHOLD_HALFFULL);
+// 	ASSERT_EQ(hdma.Init.MemBurst, DMA_MBURST_INC4);	  // inc4
+// 	ASSERT_EQ(hdma.Init.PeriphBurst, DMA_PBURST_SINGLE);
+
+// 	// NOT EASILY TESTABLE
+// 	// auto hdac = coredac.getHandle();
+// 	// ASSERT_EQ(hdac.DMA_Handle1, &hdma);
+// }
+
+// TEST_F(CoreAudioTest, deInitialize)
+// {
+// 	{
+// 		EXPECT_CALL(halmock, HAL_DAC_DeInit).Times(1);
+// 	}
+// 	coredac.deInitialize();
+// }
+
+// TEST_F(CoreAudioTest, start)
+// {
+// 	{
+// 		InSequence seq;
+
+// 		EXPECT_CALL(halmock, HAL_DAC_Start).Times(1);
+// 		EXPECT_CALL(halmock, HAL_DAC_Start_DMA).Times(1);
+// 	}
+// 	coredac.start(nullptr, 0);
+// }
+
+// TEST_F(CoreAudioTest, stop)
+// {
+// 	{
+// 		EXPECT_CALL(halmock, HAL_DAC_Stop_DMA).Times(1);
+// 	}
+// 	coredac.stop();
+// }
+
+// TEST_F(CoreAudioTest, halfCptCallback)
+// {
+// 	coredac._halfCptCallback();
+// 	ASSERT_EQ(coredac.dmaFlag(), interface::Dac::DMA_Flag::Half_cpt);
+// }
+
+// TEST_F(CoreAudioTest, _cptCallback)
+// {
+// 	coredac._cptCallback();
+
+// 	ASSERT_EQ(coredac.dmaFlag(), interface::Dac::DMA_Flag::Cpt);
+// }
+
+// TEST_F(CoreAudioTest, mspDeInitCallback)
+// {
+// 	{
+// 		InSequence seq;
+
+// 		EXPECT_CALL(halmock, HAL_RCC_DAC_CLK_DISABLE).Times(1);
+// 		EXPECT_CALL(halmock, HAL_GPIO_DeInit).Times(1);
+// 		EXPECT_CALL(halmock, HAL_DMA_DeInit).Times(1);
+// 	}
+// 	coredac._mspDeInitCallback();
+// }

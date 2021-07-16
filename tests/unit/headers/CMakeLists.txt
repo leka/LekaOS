@@ -34,6 +34,7 @@ target_include_directories(mbed-os
 		${EXTERN_MBED_OS_DIR}/platform/mbed-trace/include
 		${EXTERN_MBED_OS_DIR}/storage/filesystem/littlefs/include
 		${EXTERN_MBED_OS_DIR}/storage/filesystem/fat/include
+		${EXTERN_MBED_OS_DIR}/storage/filesystem/fat/ChaN
 		${EXTERN_MBED_OS_DIR}/storage/blockdevice/include
 		${EXTERN_MBED_OS_DIR}/storage/filesystem/include
 		${EXTERN_MBED_OS_DIR}/storage/kvstore/include

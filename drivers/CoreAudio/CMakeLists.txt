@@ -31,6 +31,8 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/CoreDACTimer_test.cpp
 		tests/CoreDAC_test.cpp
+		tests/CoreAudio_test.cpp
+		# TODO : handle inclusion of last test files when functionnal
 	)
 
 endif()
