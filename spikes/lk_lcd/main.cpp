@@ -2,29 +2,27 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include <memory>
-
 #include "drivers/BufferedSerial.h"
 #include "platform/Callback.h"
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
-#include "FATFileSystem.h"
-#include "HelloWorld.h"
 #include "CoreDMA2D.h"
 #include "CoreDSI.h"
-#include "LKCoreFatFs.h"
 #include "CoreJPEG.h"
 #include "CoreLCD.h"
 #include "CoreLCDDriverOTM8009A.h"
-#include "LKCoreLL.h"
 #include "CoreLTDC.h"
 #include "CoreSDRAM.h"
-#include "LKCoreSTM32Hal.h"
 #include "CoreVideo.h"
-#include "LKVideoKit.h"
+#include "FATFileSystem.h"
+#include "HelloWorld.h"
+#include "LKCoreFatFs.h"
+#include "LKCoreLL.h"
+#include "LKCoreSTM32Hal.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
+#include "VideoKit.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -123,11 +121,11 @@ auto main() -> int
 	HelloWorld hello;
 	hello.start();
 
-	int y = 0;
-	int w = 1;
+	uint32_t y = 0;
+	uint32_t w = 1;
 	while (true) {
 		screen.clear(gfx::Color::Yellow);
-		screen.drawRectangle({std::min(800, ++w), 20, gfx::Color::Blue}, 0, std::min(400, ++y));
+		screen.drawRectangle({std::min(800ul, ++w), 20, gfx::Color::Blue}, 0, std::min(400ul, ++y));
 		screen.display();
 	}
 

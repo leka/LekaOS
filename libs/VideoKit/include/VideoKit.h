@@ -12,14 +12,14 @@
 #include "CoreLCDDriverOTM8009A.h"
 #include "CoreLTDC.h"
 #include "CoreSDRAM.h"
+#include "Graphics.h"
 #include "LKCoreSTM32Hal.h"
-#include "LKGraphics.h"
 
 namespace leka {
 
 class LKVideoKit
 {
-	public:
+  public:
 	LKVideoKit();
 
 	auto getDSI() -> CoreDSI &;
@@ -35,19 +35,19 @@ class LKVideoKit
 
 	void display();
 
-	private:
+  private:
 	LKCoreSTM32Hal _hal;
 	CoreSDRAM _coresdram;
+
+	// peripherals
+	CoreJPEG _corejpeg;
+	CoreDMA2D _coredma2d;
 
 	// ltdc + dsi + lcd screen
 	CoreLTDC _coreltdc;
 	CoreDSI _coredsi;
 	CoreLCDDriverOTM8009A _coreotm;
 	CoreLCD _corelcd;
-
-	// peripherals
-	CoreDMA2D _coredma2d;
-	CoreJPEG _corejpeg;
 
 	rtos::Kernel::Clock::time_point _last_time = rtos::Kernel::Clock::now();
 };

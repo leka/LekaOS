@@ -2,20 +2,20 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(LKVideoKit STATIC)
+add_library(VideoKit STATIC)
 
-target_include_directories(LKVideoKit
-		PUBLIC
+target_include_directories(VideoKit
+	PUBLIC
 		include
 )
 
-target_sources(LKVideoKit
-		PRIVATE
-		source/LKGraphics.cpp
-		source/LKVideoKit.cpp
+target_sources(VideoKit
+	PRIVATE
+		source/Graphics.cpp
+		source/VideoKit.cpp
 )
 
-target_link_libraries(LKVideoKit CoreVideo LKCoreSTM32Hal LKCoreFatFs)
+target_link_libraries(VideoKit CoreVideo LKCoreSTM32Hal LKCoreFatFs)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 

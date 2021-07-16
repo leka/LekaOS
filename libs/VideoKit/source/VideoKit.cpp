@@ -1,4 +1,4 @@
-#include "LKVideoKit.h"
+#include "VideoKit.h"
 
 #include "LogKit.h"
 
@@ -7,14 +7,14 @@ using namespace std::chrono_literals;
 
 LKVideoKit::LKVideoKit()
 	: _coresdram(_hal),
+	  // peripherals
+	  _corejpeg(_hal, std::make_unique<CoreJPEGDMAMode>()),
+	  _coredma2d(_hal),
 	  // screen + dsi + ltdc
 	  _coreltdc(_hal),
 	  _coredsi(_hal, _coreltdc),
 	  _coreotm(_coredsi, PinName::SCREEN_BACKLIGHT_PWM),
-	  _corelcd(_coreotm),
-	  // peripherals
-	  _coredma2d(_hal),
-	  _corejpeg(_hal, std::make_unique<CoreJPEGDMAMode>())
+	  _corelcd(_coreotm)
 {
 }
 

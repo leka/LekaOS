@@ -12,16 +12,16 @@
 using namespace std::chrono;
 using namespace leka;
 
-CoreVideo::CoreVideo(LKCoreSTM32HalBase &hal, interface::CoreSDRAM &coresdram, interface::CoreDMA2D &coredma2d,
-						 interface::CoreDSI &coredsi, interface::CoreLTDC &coreltdc, interface::CoreLCD &corelcd,
-						 interface::CoreJPEG &corejpeg)
+CoreVideo::CoreVideo(LKCoreSTM32HalBase &hal, interface::CoreLCD &corelcd, interface::CoreDSI &coredsi,
+					 interface::CoreLTDC &coreltdc, interface::CoreDMA2D &coredma2d, interface::CoreJPEG &corejpeg,
+					 interface::CoreSDRAM &coresdram)
 	: _hal(hal),
-	  _coresdram(coresdram),
-	  _coredma2d(coredma2d),
-	  _coreltdc(coreltdc),
-	  _coredsi(coredsi),
 	  _corelcd(corelcd),
-	  _corejpeg(corejpeg)
+	  _coredsi(coredsi),
+	  _coreltdc(coreltdc),
+	  _coredma2d(coredma2d),
+	  _corejpeg(corejpeg),
+	  _coresdram(coresdram)
 {
 }
 

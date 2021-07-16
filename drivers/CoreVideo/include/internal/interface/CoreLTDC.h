@@ -13,7 +13,7 @@ namespace leka::interface {
 class CoreLTDC : public ComponentHandler<LTDC_HandleTypeDef>
 {
   public:
-	virtual ~CoreLTDC()	  = default;
+	virtual ~CoreLTDC()		  = default;
 	virtual void initialize() = 0;
 };
 

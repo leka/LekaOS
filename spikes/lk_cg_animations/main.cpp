@@ -9,20 +9,20 @@
 #include "rtos/Thread.h"
 
 #include "BouncingSquare.h"
-#include "FATFileSystem.h"
-#include "HelloWorld.h"
-#include "LKAnimationKit.h"
 #include "CoreDMA2D.h"
 #include "CoreDSI.h"
-#include "LKCoreFatFs.h"
 #include "CoreJPEG.h"
 #include "CoreLCD.h"
 #include "CoreLCDDriverOTM8009A.h"
-#include "LKCoreLL.h"
 #include "CoreLTDC.h"
 #include "CoreSDRAM.h"
-#include "LKCoreSTM32Hal.h"
 #include "CoreVideo.h"
+#include "FATFileSystem.h"
+#include "HelloWorld.h"
+#include "LKAnimationKit.h"
+#include "LKCoreFatFs.h"
+#include "LKCoreLL.h"
+#include "LKCoreSTM32Hal.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 
@@ -37,13 +37,13 @@ LKCoreFatFs corefatfs;
 
 LKCoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);
+CoreJPEG corejpeg(hal, std::make_unique<CoreJPEGDMAMode>());
 CoreDMA2D coredma2d(hal);
 CoreLTDC coreltdc(hal);
 CoreDSI coredsi(hal, coreltdc);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 CoreLCD corelcd(coreotm);
-CoreJPEG corejpeg(hal, std::make_unique<CoreJPEGDMAMode>());
-CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, corejpeg);
+CoreVideo corevideo(hal, corelcd, coredsi, coreltdc, coredma2d, corejpeg, coresdram);
 
 rtos::Thread animation_thread;
 events::EventQueue animation_event_queue;

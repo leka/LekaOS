@@ -5,8 +5,8 @@
 #ifndef _LEKA_OS_DRIVER_CoreVideo_H_
 #define _LEKA_OS_DRIVER_CoreVideo_H_
 
-#include "LKCoreFatFs.h"
 #include "CoreJPEG.h"
+#include "LKCoreFatFs.h"
 #include "LKCoreSTM32HalBase.h"
 #include "interface/CoreDMA2D.h"
 #include "interface/CoreDSI.h"
@@ -19,10 +19,10 @@ namespace leka {
 
 class CoreVideo
 {
-	public:
-	CoreVideo(LKCoreSTM32HalBase &hal, interface::CoreSDRAM &coresdram, interface::CoreDMA2D &coredma2d,
-				interface::CoreDSI &coredsi, interface::CoreLTDC &coreltdc, interface::CoreLCD &corelcd,
-				interface::CoreJPEG &corejpeg);
+  public:
+	CoreVideo(LKCoreSTM32HalBase &hal, interface::CoreLCD &corelcd, interface::CoreDSI &coredsi,
+			  interface::CoreLTDC &coreltdc, interface::CoreDMA2D &coredma2d, interface::CoreJPEG &corejpeg,
+			  interface::CoreSDRAM &coresdram);
 
 	void initialize();
 
@@ -35,14 +35,15 @@ class CoreVideo
 	void displayVideo(LKCoreFatFs &file);
 	void display();
 
-	private:
+  private:
 	LKCoreSTM32HalBase &_hal;
-	interface::CoreSDRAM &_coresdram;
-	interface::CoreDMA2D &_coredma2d;
-	interface::CoreLTDC &_coreltdc;
-	interface::CoreDSI &_coredsi;
+
 	interface::CoreLCD &_corelcd;
+	interface::CoreDSI &_coredsi;
+	interface::CoreLTDC &_coreltdc;
+	interface::CoreDMA2D &_coredma2d;
 	interface::CoreJPEG &_corejpeg;
+	interface::CoreSDRAM &_coresdram;
 };
 
 }	// namespace leka

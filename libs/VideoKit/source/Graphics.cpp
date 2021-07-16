@@ -1,4 +1,4 @@
-#include "LKGraphics.h"
+#include "Graphics.h"
 
 using namespace leka;
 using namespace leka::gfx;
