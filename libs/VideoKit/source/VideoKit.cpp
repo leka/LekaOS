@@ -55,7 +55,7 @@ void VideoKit::initialize()
 	_corelcd.initialize();
 	_corelcd.setBrightness(0.5f);
 
-	_coredsi.enableTearingEffectReporting();
+	if (dsi::refresh_columns_count > 1) _coredsi.enableTearingEffectReporting();
 }
 
 auto VideoKit::getDSI() -> CoreDSI &
@@ -86,6 +86,11 @@ void VideoKit::setFrameRateLimit(unsigned framerate)
 void VideoKit::clear(gfx::Color color)
 {
 	_coredma2d.fillRect(0, 0, lcd::dimension.width, lcd::dimension.height, color.toARGB8888());
+}
+
+void VideoKit::draw(gfx::Drawable &drawable)
+{
+	drawable.draw(*this);
 }
 
 void VideoKit::drawRectangle(gfx::Rectangle rect, uint32_t x, uint32_t y)
@@ -142,8 +147,8 @@ void VideoKit::display()
 	tick();
 
 	// wait for DSI to finish refresh before starting the new frame
-	while (_coredsi.isBusy())
-		;
+	// while (_coredsi.isBusy())
+	;
 }
 
 void VideoKit::refresh()

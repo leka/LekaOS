@@ -62,6 +62,7 @@ std::vector<const char *> videos = {
 	//"assets/video/20fps_s300.avi",
 	//"assets/video/20fps_s200.avi",
 	//"assets/video/20fps_s100.avi"
+	"assets/video/Perplex_10.avi",
 };
 
 extern "C" {
@@ -121,11 +122,27 @@ auto main() -> int
 	screen.initialize();
 	screen.setFrameRateLimit(25);
 
-	file.open(images[0]);
+	gfx::Image image1(images[0]);
+	gfx::Video video_perplex(videos[0]);
+	gfx::Video video_joie(videos[1]);
+
+	std::array<gfx::Video *, 2> videos_array = {&video_joie, &video_perplex};
+
+	int video_index = 0;
+	int w			= 0;
 	while (true) {
-		screen.clear(gfx::Color::White);
-		screen.drawImage(file);
-		screen.drawRectangle({400, 20, gfx::Color::Green}, 195, 400);
+		auto *video = videos_array[video_index];
+		if (video->hasEnded()) {
+			video->restart();
+			video_index = (video_index + 1) % videos_array.size();
+			video		= videos_array[video_index];
+		}
+
+		w = video->getProgress() * lcd::dimension.width;
+
+		screen.draw(*video);
+		screen.drawRectangle({800, 20, {250, 190, 230}}, 0, 460);
+		screen.drawRectangle({w, 20, {185, 20, 230}}, 0, 460);
 		screen.display();
 	}
 
