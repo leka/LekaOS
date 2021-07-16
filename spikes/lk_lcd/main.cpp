@@ -62,6 +62,7 @@ std::vector<const char *> videos = {
 	//"assets/video/20fps_s300.avi",
 	//"assets/video/20fps_s200.avi",
 	//"assets/video/20fps_s100.avi"
+	"assets/video/Perplex_10.avi",
 };
 
 extern "C" {
@@ -121,12 +122,39 @@ auto main() -> int
 	screen.initialize();
 	screen.setFrameRateLimit(25);
 
-	file.open(images[0]);
+	gfx::Image image1("assets/images/Leka/logo.jpg");
+	screen.draw(image1);
+	screen.display();
+	rtos::ThisThread::sleep_for(2s);
+
+	gfx::Image image2("assets/images/Leka/image.jpg");
+	screen.draw(image2);
+	screen.display();
+	rtos::ThisThread::sleep_for(2s);
+	
+	gfx::Video video_perplex("assets/video/Perplex_10.avi");
+	gfx::Video video_joie("assets/video/20fps_low10.avi");
+	int w = 0;
 	while (true) {
-		screen.clear(gfx::Color::White);
-		screen.drawImage(file);
-		screen.drawRectangle({400, 20, gfx::Color::Green}, 195, 400);
-		screen.display();
+		while (!video_joie.hasEnded()) {
+			w = video_joie.getProgress() * lcd::dimension.width;
+
+			screen.draw(video_joie);
+			screen.drawRectangle({800, 20, {250, 190, 230}}, 0, 460);
+			screen.drawRectangle({w, 20, {185, 20, 230}}, 0, 460);
+			screen.display();
+		}
+		video_joie.restart();
+
+		while (!video_perplex.hasEnded()) {
+			w = video_perplex.getProgress() * lcd::dimension.width;
+
+			screen.draw(video_perplex);
+			screen.drawRectangle({800, 20, {250, 190, 230}}, 0, 460);
+			screen.drawRectangle({w, 20, {185, 20, 230}}, 0, 460);
+			screen.display();
+		}
+		video_perplex.restart();
 	}
 
 	// corevideo.clearScreen();
