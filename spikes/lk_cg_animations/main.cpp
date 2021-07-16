@@ -12,19 +12,19 @@
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LKAnimationKit.h"
-#include "LKCoreDMA2D.h"
-#include "LKCoreDSI.h"
+#include "CoreDMA2D.h"
+#include "CoreDSI.h"
 #include "LKCoreFatFs.h"
-#include "LKCoreFont.h"
-#include "LKCoreGraphics.h"
-#include "LKCoreJPEG.h"
-#include "LKCoreLCD.h"
-#include "LKCoreLCDDriverOTM8009A.h"
+#include "CoreFont.h"
+#include "CoreGraphics.h"
+#include "CoreJPEG.h"
+#include "CoreLCD.h"
+#include "CoreLCDDriverOTM8009A.h"
 #include "LKCoreLL.h"
-#include "LKCoreLTDC.h"
-#include "LKCoreSDRAM.h"
+#include "CoreLTDC.h"
+#include "CoreSDRAM.h"
 #include "LKCoreSTM32Hal.h"
-#include "LKCoreVideo.h"
+#include "CoreVideo.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 
@@ -40,16 +40,16 @@ LKCoreFatFs corefatfs;
 LKCoreLL corell;
 CGPixel pixel(corell);
 LKCoreSTM32Hal hal;
-LKCoreSDRAM coresdram(hal);
-LKCoreDMA2D coredma2d(hal);
-LKCoreLTDC coreltdc(hal);
-LKCoreDSI coredsi(hal, coreltdc);
-LKCoreGraphics coregraphics(coredma2d);
-LKCoreFont corefont(pixel);
-LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
-LKCoreLCD corelcd(coreotm);
-LKCoreJPEG corejpeg(hal, std::make_unique<LKCoreJPEGDMAMode>());
-LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
+CoreSDRAM coresdram(hal);
+CoreDMA2D coredma2d(hal);
+CoreLTDC coreltdc(hal);
+CoreDSI coredsi(hal, coreltdc);
+CoreGraphics coregraphics(coredma2d);
+CoreFont corefont(pixel);
+CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
+CoreLCD corelcd(coreotm);
+CoreJPEG corejpeg(hal, std::make_unique<CoreJPEGDMAMode>());
+CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 rtos::Thread animation_thread;
 events::EventQueue animation_event_queue;
