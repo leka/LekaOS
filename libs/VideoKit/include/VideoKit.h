@@ -17,10 +17,10 @@
 
 namespace leka {
 
-class LKVideoKit
+class VideoKit
 {
   public:
-	LKVideoKit();
+	VideoKit();
 
 	auto getDSI() -> CoreDSI &;
 	auto getLTDC() -> CoreLTDC &;
@@ -34,6 +34,7 @@ class LKVideoKit
 	void drawRectangle(gfx::Rectangle rect, uint32_t x, uint32_t y);
 
 	void display();
+	void tick(unsigned framerate);
 
   private:
 	LKCoreSTM32Hal _hal;

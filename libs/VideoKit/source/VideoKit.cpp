@@ -5,7 +5,7 @@
 using namespace leka;
 using namespace std::chrono_literals;
 
-LKVideoKit::LKVideoKit()
+VideoKit::VideoKit()
 	: _coresdram(_hal),
 	  // peripherals
 	  _corejpeg(_hal, std::make_unique<CoreJPEGDMAMode>()),
@@ -18,7 +18,7 @@ LKVideoKit::LKVideoKit()
 {
 }
 
-void LKVideoKit::initialize()
+void VideoKit::initialize()
 {
 	__HAL_RCC_LTDC_CLK_ENABLE();
 
@@ -59,52 +59,54 @@ void LKVideoKit::initialize()
 	_coredsi.enableTearingEffectReporting();
 }
 
-auto LKVideoKit::getDSI() -> CoreDSI &
+auto VideoKit::getDSI() -> CoreDSI &
 {
 	return _coredsi;
 }
 
-auto LKVideoKit::getLTDC() -> CoreLTDC &
+auto VideoKit::getLTDC() -> CoreLTDC &
 {
 	return _coreltdc;
 }
 
-auto LKVideoKit::getDMA2D() -> CoreDMA2D &
+auto VideoKit::getDMA2D() -> CoreDMA2D &
 {
 	return _coredma2d;
 }
 
-auto LKVideoKit::getJPEG() -> CoreJPEG &
+auto VideoKit::getJPEG() -> CoreJPEG &
 {
 	return _corejpeg;
 }
 
-void LKVideoKit::clear(gfx::Color color)
+void VideoKit::clear(gfx::Color color)
 {
 	_coredma2d.fillRect(0, 0, lcd::dimension.width, lcd::dimension.height, color.toARGB8888());
 }
 
-void LKVideoKit::drawRectangle(gfx::Rectangle rect, uint32_t x, uint32_t y)
+void VideoKit::drawRectangle(gfx::Rectangle rect, uint32_t x, uint32_t y)
 {
 	_coredma2d.fillRect(x, y, rect.width, rect.height, rect.color.toARGB8888());
 }
 
-void LKVideoKit::display()
+void VideoKit::display()
 {
 	// wait for DMA2D to finish transfer
 	while (_coredma2d.getHandle().State != HAL_DMA2D_STATE_READY)
 		;
 	// refresh screen
 	_coredsi.refresh();
-	// wait for DSI to finish refresh
-	while (_coredsi.isBusy())
-		;
+}
 
+void VideoKit::tick(unsigned framerate)
+{
 	auto dt = rtos::Kernel::Clock::now() - _last_time;
-	if (dt < 40ms) {
-		rtos::ThisThread::sleep_for(40ms - dt);
+	auto frametime = (1000ms/framerate);
+	if (dt < frametime) {
+		rtos::ThisThread::sleep_for(frametime - dt);
 	}
-
+	dt = rtos::Kernel::Clock::now() - _last_time;
 	log_info("(%ld) %ld ms = %f fps", dt, 1000.f / dt.count());
+
 	_last_time = rtos::Kernel::Clock::now();
 }

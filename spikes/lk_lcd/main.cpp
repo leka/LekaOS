@@ -47,7 +47,7 @@ CoreJPEG corejpeg(hal, std::make_unique<CoreJPEGDMAMode>());
 
 LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, corejpeg);
 */
-LKVideoKit screen;
+VideoKit screen;
 
 std::vector<const char *> images = {"assets/images/Leka/logo.jpg", "assets/images/Leka/image.jpg"};
 
@@ -127,6 +127,7 @@ auto main() -> int
 		screen.clear(gfx::Color::Yellow);
 		screen.drawRectangle({std::min(800ul, ++w), 20, gfx::Color::Blue}, 0, std::min(400ul, ++y));
 		screen.display();
+		screen.tick(50);
 	}
 
 	// corevideo.clearScreen();
