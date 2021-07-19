@@ -95,33 +95,33 @@ class MCP23017
 	 *
 	 * @note See mbed::DigitalOut class declaration for API documentation
 	 */
-	class ExpandedOutput : public ExpandedIO, public mbed::DigitalOut
-	{
-	  public:
-		ExpandedOutput(MCP23017 &parent, Pin pin) : ExpandedIO(parent, pin), mbed::DigitalOut(NC) { internal_output(); }
-		virtual ~ExpandedOutput() override {}
-		virtual void write(int value) override { ExpandedIO::internal_write(value); }
-		virtual int read() override { return ExpandedIO::internal_read(); }
-		virtual int is_connected() override { return 1; }
-	};
+	// class ExpandedOutput : public ExpandedIO, public mbed::DigitalOut
+	// {
+	//   public:
+	// 	ExpandedOutput(MCP23017 &parent, Pin pin) : ExpandedIO(parent, pin), mbed::DigitalOut(NC) { internal_output(); }
+	// 	virtual ~ExpandedOutput() override {}
+	// 	virtual void write(int value) override { ExpandedIO::internal_write(value); }
+	// 	virtual int read() override { return ExpandedIO::internal_read(); }
+	// 	virtual int is_connected() override { return 1; }
+	// };
 
 	/**
 	 * ExpandedInputOutput class that implements the mbed::DigitalInOut API
 	 *
 	 * @note See mbed::DigitalInOut class declaration for API documentation
 	 */
-	class ExpandedInputOutput : public ExpandedIO, public mbed::DigitalInOut
-	{
-	  public:
-		ExpandedInputOutput(MCP23017 &parent, Pin pin) : ExpandedIO(parent, pin), mbed::DigitalInOut(NC) { output(); }
-		virtual ~ExpandedInputOutput() override {}
-		virtual void write(int value) override { ExpandedIO::internal_write(value); }
-		virtual int read() override { return ExpandedIO::internal_read(); }
-		virtual void output() override { ExpandedIO::internal_output(); }
-		virtual void input() override { ExpandedIO::internal_input(); }
-		virtual void mode(PinMode pull) override { ExpandedIO::internal_mode(pull); }
-		virtual int is_connected() override { return 1; }
-	};
+	// class ExpandedInputOutput : public ExpandedIO, public mbed::DigitalInOut
+	// {
+	//   public:
+	// 	ExpandedInputOutput(MCP23017 &parent, Pin pin) : ExpandedIO(parent, pin), mbed::DigitalInOut(NC) { output(); }
+	// 	virtual ~ExpandedInputOutput() override {}
+	// 	virtual void write(int value) override { ExpandedIO::internal_write(value); }
+	// 	virtual int read() override { return ExpandedIO::internal_read(); }
+	// 	virtual void output() override { ExpandedIO::internal_output(); }
+	// 	virtual void input() override { ExpandedIO::internal_input(); }
+	// 	virtual void mode(PinMode pull) override { ExpandedIO::internal_mode(pull); }
+	// 	virtual int is_connected() override { return 1; }
+	// };
 
   public:
 	/** Allow ExpandedInput/Output/InputOutput to access internal members*/
@@ -154,14 +154,14 @@ class MCP23017
 	 * @param[in] pin Pin to instantiate as DigitalOut
 	 * @retval out DigitalOut-like object
 	 */
-	ExpandedOutput as_output(Pin pin);
+	// ExpandedOutput as_output(Pin pin);
 
 	/**
 	 * Convenience function to create a DigitalInOut object for a given pin
 	 * @param[in] pin Pin to instantiate as DigitalInOut
 	 * @retval inout DigitalInOut-like object
 	 */
-	ExpandedInputOutput as_input_output(Pin pin);
+	// ExpandedInputOutput as_input_output(Pin pin);
 
 	/** Set pins to input mode
 	 *
@@ -188,7 +188,7 @@ class MCP23017
 	 *
 	 * @param pins A bitmask of pins to set to output mode.
 	 */
-	void set_output_pins(uint8_t pins);
+	// void set_output_pins(uint8_t pins);
 
 	/** Write to the output pins.
 	 *
@@ -196,14 +196,14 @@ class MCP23017
 	 *
 	 * @param values A bitmask indicating whether a pin should be on or off.
 	 */
-	void write_outputs(uint8_t values);
+	// void write_outputs(uint8_t values);
 	/** Read back the outputs.
 	 *
 	 * This function is used to read the last values written to the output pins.
 	 *
 	 * @returns The value from the OLAT register.
 	 */
-	uint8_t read_outputs();
+	// uint8_t read_outputs();
 
 	/** Read from the input pins.
 	 *
