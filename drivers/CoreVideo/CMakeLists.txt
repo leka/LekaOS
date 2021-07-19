@@ -23,7 +23,6 @@ target_sources(CoreVideo
 	source/CoreLTDC.cpp
 	source/CoreLCDDriverOTM8009A.cpp
 	source/CoreSDRAM.cpp
-	source/CoreVideo.cpp
 	external/source/st_jpeg_utils.cpp
 )
 

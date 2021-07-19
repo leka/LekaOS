@@ -16,7 +16,6 @@
 #include "CoreLCDDriverOTM8009A.h"
 #include "CoreLTDC.h"
 #include "CoreSDRAM.h"
-#include "CoreVideo.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LKAnimationKit.h"
@@ -43,7 +42,6 @@ CoreLTDC coreltdc(hal);
 CoreDSI coredsi(hal, coreltdc);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 CoreLCD corelcd(coreotm);
-CoreVideo corevideo(hal, corelcd, coredsi, coreltdc, coredma2d, corejpeg, coresdram);
 
 rtos::Thread animation_thread;
 events::EventQueue animation_event_queue;
@@ -61,8 +59,6 @@ auto main() -> int
 	auto start = rtos::Kernel::Clock::now();
 
 	rtos::ThisThread::sleep_for(2s);
-
-	corevideo.initialize();
 
 	hello.start();
 
