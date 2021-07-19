@@ -93,48 +93,9 @@ void VideoKit::draw(gfx::Drawable &drawable)
 	drawable.draw(*this);
 }
 
-void VideoKit::drawRectangle(gfx::Rectangle rect, uint32_t x, uint32_t y)
+void VideoKit::drawRectangle(uint32_t x, uint32_t y, uint32_t w, uint32_t h, gfx::Color color)
 {
-	_coredma2d.fillRect(x, y, rect.width, rect.height, rect.color.toARGB8888());
-}
-
-void VideoKit::drawImage(LKCoreFatFsBase &file)
-{
-	file.seek(0);
-	_corejpeg.decodeImage(file);
-
-	auto config = _corejpeg.getConfig();
-
-	_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, CoreJPEG::getWidthOffset(config));
-}
-
-void VideoKit::drawVideo(LKCoreFatFsBase &file)
-{
-	uint32_t frame_index  = 0;
-	uint32_t frame_size	  = 0;
-	uint32_t frame_offset = CoreJPEG::findFrameOffset(file, 0);
-	JPEG_ConfTypeDef config;
-
-	while (frame_offset != 0) {
-		file.seek(frame_offset);
-
-		frame_size = _corejpeg.decodeImage(file);
-
-		// if first frame, get file info
-		if (frame_index == 0) {
-			config = _corejpeg.getConfig();
-		}
-
-		frame_index += 1;
-
-		_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, CoreJPEG::getWidthOffset(config));
-
-		// get next frame offset
-		frame_offset = CoreJPEG::findFrameOffset(file, frame_offset + frame_size + 4);
-
-		display();
-	}
-	log_info("%d frames", frame_index);
+	_coredma2d.fillRect(x, y, w, h, color.toARGB8888());
 }
 
 void VideoKit::display()

@@ -118,7 +118,6 @@ auto main() -> int
 
 	initializeSD();
 
-	// corevideo.initialize();
 	screen.initialize();
 	screen.setFrameRateLimit(25);
 
@@ -131,33 +130,34 @@ auto main() -> int
 	screen.draw(image2);
 	screen.display();
 	rtos::ThisThread::sleep_for(2s);
-	
+
 	gfx::Video video_perplex("assets/video/Perplex_10.avi");
 	gfx::Video video_joie("assets/video/20fps_low10.avi");
-	int w = 0;
+
+	gfx::Rectangle progress_bar_bg(0, 460, 800, 20, {190, 250, 230});
+	gfx::Rectangle progress_bar(0, 460, 0, 20, {20, 240, 165});
+
 	while (true) {
 		while (!video_joie.hasEnded()) {
-			w = video_joie.getProgress() * lcd::dimension.width;
+			progress_bar.width = video_joie.getProgress() * lcd::dimension.width;
 
 			screen.draw(video_joie);
-			screen.drawRectangle({800, 20, {250, 190, 230}}, 0, 460);
-			screen.drawRectangle({w, 20, {185, 20, 230}}, 0, 460);
+			screen.draw(progress_bar_bg);
+			screen.draw(progress_bar);
 			screen.display();
 		}
 		video_joie.restart();
 
 		while (!video_perplex.hasEnded()) {
-			w = video_perplex.getProgress() * lcd::dimension.width;
+			int w = video_perplex.getProgress() * lcd::dimension.width;
 
 			screen.draw(video_perplex);
-			screen.drawRectangle({800, 20, {250, 190, 230}}, 0, 460);
-			screen.drawRectangle({w, 20, {185, 20, 230}}, 0, 460);
+			screen.drawRectangle(0, 460, 800, 20, {250, 190, 230});
+			screen.drawRectangle(0, 460, w, 20, {185, 20, 230});
 			screen.display();
 		}
 		video_perplex.restart();
 	}
-
-	// corevideo.clearScreen();
 
 	leka::logger::set_print_function([](const char *str, size_t size) {
 		// corevideo.displayText(str, size, line, foreground, CGColor::white);
@@ -178,8 +178,6 @@ auto main() -> int
 	log_info(
 		"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
 		"only one line of the screen.");
-
-	// coredsi.refresh();
 
 	rtos::ThisThread::sleep_for(1s);
 	*/
