@@ -8,6 +8,7 @@ add_subdirectory(${DRIVERS_DIR}/CorePwm)
 add_subdirectory(${DRIVERS_DIR}/LKCoreLL)
 add_subdirectory(${DRIVERS_DIR}/CoreFs)
 add_subdirectory(${DRIVERS_DIR}/LKCoreSTM32Hal)
+add_subdirectory(${DRIVERS_DIR}/CoreIOExpander)
 add_subdirectory(${DRIVERS_DIR}/CoreBufferedSerial)
 
 # LCD drivers
