@@ -67,7 +67,7 @@ void CoreJPEG::registerCallbacks()
 
 auto CoreJPEG::decodeImage(LKCoreFatFsBase &file) -> std::uint32_t
 {
-	return _mode.decodeImage(&_handle, file.getPointer());
+	return _mode.decodeImage(&_handle, file);
 }
 
 auto CoreJPEG::getWidthOffset(JPEG_ConfTypeDef &config) -> uint32_t
