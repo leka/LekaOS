@@ -42,7 +42,7 @@ void CoreJPEGMode::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
 }
 
 //------------------ DMA Mode ------------------------
-void CoreJPEGDMAMode::onMspInitCallback(JPEG_HandleTypeDef *hjpeg)
+void CoreJPEGModeDMA::onMspInitCallback(JPEG_HandleTypeDef *hjpeg)
 {
 	// enable DMA2 clock
 	__HAL_RCC_DMA2_CLK_ENABLE();
@@ -96,10 +96,10 @@ void CoreJPEGDMAMode::onMspInitCallback(JPEG_HandleTypeDef *hjpeg)
 	HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
 }
 
-auto CoreJPEGDMAMode::decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint32_t
+auto CoreJPEGModeDMA::decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint32_t
 {
-	static std::array<uint8_t, jpeg::chunk_size_in * jpeg::in_buffers_nb> BIG_CHUNGUS_OF_MEMORY_IN;
-	static std::array<uint8_t, jpeg::chunk_size_out * jpeg::out_buffers_nb> BIG_CHUNGUS_OF_MEMORY_OUT;
+	static std::array<uint8_t, jpeg::input_chunk_size * jpeg::input_buffers_nb> BIG_CHUNGUS_OF_MEMORY_IN;
+	static std::array<uint8_t, jpeg::output_chunk_size * jpeg::output_buffers_nb> BIG_CHUNGUS_OF_MEMORY_OUT;
 
 	previous_image_size = 0;
 
@@ -107,40 +107,40 @@ auto CoreJPEGDMAMode::decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint3
 	_mcu_block_index = 0;
 	_hw_decode_ended = false;
 
-	_out_read_index	 = 0;
-	_out_write_index = 0;
-	_out_paused		 = false;
+	_in_buffers_read_index	 = 0;
+	_in_buffers_write_index	 = 0;
+	_out_buffers_read_index	 = 0;
+	_out_buffers_write_index = 0;
 
-	_in_read_index	= 0;
-	_in_write_index = 0;
-	_in_paused		= false;
+	_in_paused	= false;
+	_out_paused = false;
 
 	// initialize memory chungus
 	uint32_t i = 0;
 	for (auto &buffer: _in_buffers) {
 		buffer.state	= Buffer::State::Empty;
 		buffer.datasize = 0;
-		buffer.data		= BIG_CHUNGUS_OF_MEMORY_IN.data() + i * jpeg::chunk_size_in;
+		buffer.data		= BIG_CHUNGUS_OF_MEMORY_IN.data() + i * jpeg::input_chunk_size;
 		i += 1;
 	}
 	i = 0;
 	for (auto &buffer: _out_buffers) {
 		buffer.state	= Buffer::State::Empty;
 		buffer.datasize = 0;
-		buffer.data		= BIG_CHUNGUS_OF_MEMORY_OUT.data() + i * jpeg::chunk_size_out;
+		buffer.data		= BIG_CHUNGUS_OF_MEMORY_OUT.data() + i * jpeg::output_chunk_size;
 		i += 1;
 	}
 
 	// read file and fill input buffers
 	for (auto &buffer: _in_buffers) {
 		// TODO : (@ladislas) change FIL*
-		if (f_read(file, buffer.data, jpeg::chunk_size_in, &buffer.datasize) == FR_OK)
+		if (f_read(file, buffer.data, jpeg::input_chunk_size, &buffer.datasize) == FR_OK)
 			buffer.state = Buffer::State::Full;
 	}
 
 	// start JPEG decoding with DMA method
 	HAL_JPEG_Decode_DMA(hjpeg, _in_buffers[0].data, _in_buffers[0].datasize, _out_buffers[0].data,
-						jpeg::chunk_size_out);
+						jpeg::output_chunk_size);
 
 	// loop until decode process ends
 	bool process_ended = false;
@@ -159,16 +159,60 @@ auto CoreJPEGDMAMode::decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint3
 	return previous_image_size;
 }
 
-void CoreJPEGDMAMode::onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize)
+void CoreJPEGModeDMA::decoderInputHandler(JPEG_HandleTypeDef *hjpeg, FIL *file)
 {
-	auto &read_buffer	   = _in_buffers[_in_read_index];
-	auto &next_read_buffer = _in_buffers[(_in_read_index + 1) % jpeg::in_buffers_nb];
+	auto &write_buffer = _in_buffers[_in_buffers_write_index];
+	auto &read_buffer  = _in_buffers[_in_buffers_read_index];
+
+	if (write_buffer.state == Buffer::State::Empty) {
+		if (f_read(file, write_buffer.data, jpeg::input_chunk_size, &write_buffer.datasize) == FR_OK)
+			write_buffer.state = Buffer::State::Full;
+		else
+			while (true)   // TODO (@Madour) - handle error
+				;
+
+		if (_in_paused && _in_buffers_write_index == _in_buffers_read_index) {
+			_in_paused = false;
+			HAL_JPEG_ConfigInputBuffer(hjpeg, read_buffer.data, read_buffer.datasize);
+			HAL_JPEG_Resume(hjpeg, JPEG_PAUSE_RESUME_INPUT);
+		}
+
+		_in_buffers_write_index = (_in_buffers_write_index + 1) % jpeg::input_buffers_nb;
+	}
+}
+
+auto CoreJPEGModeDMA::decoderOutputHandler(JPEG_HandleTypeDef *hjpeg) -> bool
+{
+	uint32_t converted_data_count;
+	auto &read_buffer  = _out_buffers[_out_buffers_read_index];
+	auto &write_buffer = _out_buffers[_out_buffers_write_index];
+
+	if (read_buffer.state == Buffer::State::Full) {
+		_mcu_block_index += pConvert_Function(read_buffer.data, (uint8_t *)jpeg::decoded_buffer_address,
+											  _mcu_block_index, read_buffer.datasize, &converted_data_count);
+
+		read_buffer.state	 = Buffer::State::Empty;
+		read_buffer.datasize = 0;
+
+		_out_buffers_read_index = (_out_buffers_read_index + 1) % jpeg::output_buffers_nb;
+	} else if (_out_paused && write_buffer.state == Buffer::State::Empty && read_buffer.state == Buffer::State::Empty) {
+		_out_paused = false;
+		HAL_JPEG_Resume(hjpeg, JPEG_PAUSE_RESUME_OUTPUT);
+	}
+
+	return _mcu_block_index == _mcu_number;
+}
+
+void CoreJPEGModeDMA::onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize)
+{
+	auto &read_buffer	   = _in_buffers[_in_buffers_read_index];
+	auto &next_read_buffer = _in_buffers[(_in_buffers_read_index + 1) % jpeg::input_buffers_nb];
 
 	if (decoded_datasize == read_buffer.datasize) {
 		read_buffer.state	 = Buffer::State::Empty;
 		read_buffer.datasize = 0;
 
-		_in_read_index = (_in_read_index + 1) % jpeg::in_buffers_nb;
+		_in_buffers_read_index = (_in_buffers_read_index + 1) % jpeg::input_buffers_nb;
 
 		if (next_read_buffer.state == Buffer::State::Empty) {
 			_in_paused = true;
@@ -183,63 +227,19 @@ void CoreJPEGDMAMode::onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t deco
 	previous_image_size += decoded_datasize;
 }
 
-void CoreJPEGDMAMode::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_data, uint32_t output_datasize)
+void CoreJPEGModeDMA::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_data, uint32_t output_datasize)
 {
-	auto &write_buffer		= _out_buffers[_out_write_index];
-	auto &next_write_buffer = _out_buffers[(_out_write_index + 1) % jpeg::out_buffers_nb];
+	auto &write_buffer		= _out_buffers[_out_buffers_write_index];
+	auto &next_write_buffer = _out_buffers[(_out_buffers_write_index + 1) % jpeg::output_buffers_nb];
 
 	write_buffer.state	  = Buffer::State::Full;
 	write_buffer.datasize = output_datasize;
 
-	_out_write_index = (_out_write_index + 1) % jpeg::out_buffers_nb;
+	_out_buffers_write_index = (_out_buffers_write_index + 1) % jpeg::output_buffers_nb;
 
 	if (next_write_buffer.state != Buffer::State::Empty) {
 		_out_paused = true;
 		HAL_JPEG_Pause(hjpeg, JPEG_PAUSE_RESUME_OUTPUT);
 	}
-	HAL_JPEG_ConfigOutputBuffer(hjpeg, next_write_buffer.data, jpeg::chunk_size_out);
-}
-
-void CoreJPEGDMAMode::decoderInputHandler(JPEG_HandleTypeDef *hjpeg, FIL *file)
-{
-	auto &write_buffer = _in_buffers[_in_write_index];
-	auto &read_buffer  = _in_buffers[_in_read_index];
-
-	if (write_buffer.state == Buffer::State::Empty) {
-		if (f_read(file, write_buffer.data, jpeg::chunk_size_in, &write_buffer.datasize) == FR_OK)
-			write_buffer.state = Buffer::State::Full;
-		else
-			while (true)
-				;
-
-		if (_in_paused && _in_write_index == _in_read_index) {
-			_in_paused = false;
-			HAL_JPEG_ConfigInputBuffer(hjpeg, read_buffer.data, read_buffer.datasize);
-			HAL_JPEG_Resume(hjpeg, JPEG_PAUSE_RESUME_INPUT);
-		}
-
-		_in_write_index = (_in_write_index + 1) % jpeg::in_buffers_nb;
-	}
-}
-
-auto CoreJPEGDMAMode::decoderOutputHandler(JPEG_HandleTypeDef *hjpeg) -> bool
-{
-	uint32_t converted_data_count;
-	auto &read_buffer  = _out_buffers[_out_read_index];
-	auto &write_buffer = _out_buffers[_out_write_index];
-
-	if (read_buffer.state == Buffer::State::Full) {
-		_mcu_block_index += pConvert_Function(read_buffer.data, (uint8_t *)jpeg::decoded_buffer_address,
-											  _mcu_block_index, read_buffer.datasize, &converted_data_count);
-
-		read_buffer.state	 = Buffer::State::Empty;
-		read_buffer.datasize = 0;
-
-		_out_read_index = (_out_read_index + 1) % jpeg::out_buffers_nb;
-	} else if (_out_paused && write_buffer.state == Buffer::State::Empty && read_buffer.state == Buffer::State::Empty) {
-		_out_paused = false;
-		HAL_JPEG_Resume(hjpeg, JPEG_PAUSE_RESUME_OUTPUT);
-	}
-
-	return _mcu_block_index == _mcu_number;
+	HAL_JPEG_ConfigOutputBuffer(hjpeg, next_write_buffer.data, jpeg::output_chunk_size);
 }

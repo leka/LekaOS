@@ -8,8 +8,8 @@
 
 #include "corevideo_config.h"
 
-using namespace std::chrono;
 using namespace leka;
+using namespace std::chrono_literals;
 
 CoreDSI::CoreDSI(LKCoreSTM32HalBase &hal, interface::CoreLTDC &ltdc) : _hal(hal), _ltdc(ltdc)
 {
@@ -70,25 +70,26 @@ void CoreDSI::initialize()
 	phy_timings.StopWaitTime		= 10;
 	HAL_DSI_ConfigPhyTimer(&_handle, &phy_timings);
 
-	static auto &self = *this;
+	static CoreDSI *self;
+	self = this;
 	HAL_DSI_RegisterCallback(&_handle, HAL_DSI_ENDOF_REFRESH_CB_ID, [](DSI_HandleTypeDef *hdsi) {
-		self._current_column = (self._current_column + 1) % self._columns.size();
+		self->_current_column = (self->_current_column + 1) % self->_columns.size();
 
-		auto new_address = lcd::frame_buffer_address + dsi::sync_props.activew * self._current_column * 4;
+		auto new_address = lcd::frame_buffer_address + dsi::sync_props.activew * self->_current_column * 4;
 
 		// update LTDC layer frame buffer pointer
 		__HAL_DSI_WRAPPER_DISABLE(hdsi);
-		HAL_LTDC_SetAddress(&self._ltdc.getHandle(), new_address, 0);
+		HAL_LTDC_SetAddress(&self->_ltdc.getHandle(), new_address, 0);
 		__HAL_DSI_WRAPPER_ENABLE(hdsi);
 
 		// update DSI refresh column
 		HAL_DSI_LongWrite(hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 4, lcd::otm8009a::set_address::for_column::command,
-						  self._columns[self._current_column].data());
+						  self->_columns[self->_current_column].data());
 
-		if (self._current_column != 0) {
+		if (self->_current_column != 0) {
 			HAL_DSI_Refresh(hdsi);
 		} else {
-			self._refresh_done = true;
+			self->_refresh_done = true;
 		}
 	});
 

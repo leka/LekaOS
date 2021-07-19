@@ -2,9 +2,8 @@
 
 #include "rtos/ThisThread.h"
 
-using namespace std::chrono;
-
-namespace leka {
+using namespace leka;
+using namespace std::chrono_literals;
 
 CoreSDRAM::CoreSDRAM(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
@@ -212,5 +211,3 @@ void CoreSDRAM::initializationSequence()
 	// Set the device refresh rate
 	_hal.HAL_SDRAM_ProgramRefreshRate(&_handle, sdram::refresh_count);
 }
-
-}	// namespace leka

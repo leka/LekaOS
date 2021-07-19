@@ -42,8 +42,8 @@ struct CoreJPEGMode {
 	bool _hw_decode_ended	  = false;
 };
 
-struct CoreJPEGDMAMode : CoreJPEGMode {
-	CoreJPEGDMAMode() = default;
+struct CoreJPEGModeDMA : CoreJPEGMode {
+	CoreJPEGModeDMA() = default;
 
 	auto decodeImage(JPEG_HandleTypeDef *hjpeg, FIL *file) -> uint32_t final;
 
@@ -54,6 +54,9 @@ struct CoreJPEGDMAMode : CoreJPEGMode {
   private:
 	void decoderInputHandler(JPEG_HandleTypeDef *hjpeg, FIL *file);
 	auto decoderOutputHandler(JPEG_HandleTypeDef *hjpeg) -> bool;
+
+	DMA_HandleTypeDef _hdma_in;
+	DMA_HandleTypeDef _hdma_out;
 
 	struct Buffer {
 		enum State
@@ -66,19 +69,16 @@ struct CoreJPEGDMAMode : CoreJPEGMode {
 		unsigned datasize;
 	};
 
-	std::array<Buffer, jpeg::in_buffers_nb> _in_buffers;
-	std::array<Buffer, jpeg::out_buffers_nb> _out_buffers;
+	std::array<Buffer, jpeg::input_buffers_nb> _in_buffers;
+	std::array<Buffer, jpeg::output_buffers_nb> _out_buffers;
 
-	DMA_HandleTypeDef _hdma_in;
-	DMA_HandleTypeDef _hdma_out;
+	uint32_t _in_buffers_read_index	  = 0;
+	uint32_t _in_buffers_write_index  = 0;
+	uint32_t _out_buffers_read_index  = 0;
+	uint32_t _out_buffers_write_index = 0;
 
-	uint32_t _out_read_index  = 0;
-	uint32_t _out_write_index = 0;
-	bool _out_paused		  = false;
-
-	uint32_t _in_read_index	 = 0;
-	uint32_t _in_write_index = 0;
-	bool _in_paused			 = false;
+	bool _in_paused	 = false;
+	bool _out_paused = false;
 };
 
 }	// namespace leka

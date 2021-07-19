@@ -64,10 +64,10 @@ namespace jpeg {
 
 	constexpr uintptr_t decoded_buffer_address = lcd::frame_buffer_address + 800 * 480 * 4;	  // 0xC0200000;
 
-	constexpr uint32_t chunk_size_in  = 2048;
-	constexpr uint32_t chunk_size_out = 768 * 4;
-	constexpr uint32_t in_buffers_nb  = 1;
-	constexpr uint32_t out_buffers_nb = 8;
+	constexpr uint32_t input_chunk_size	 = 2048;
+	constexpr uint32_t output_chunk_size = 768 * 4;
+	constexpr uint32_t input_buffers_nb	 = 1;
+	constexpr uint32_t output_buffers_nb = 8;
 
 	constexpr uint8_t JPEG_ARGB8888 = 0;   // ARGB8888 Color Format
 	constexpr uint8_t JPEG_RGB888	= 1;   // RGB888 Color Format
