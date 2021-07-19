@@ -73,6 +73,8 @@ class Video : public Drawable
 	Video(const char *path);
 	~Video();
 
+	void nextFrame();
+
 	auto getProgress() -> float;
 	auto hasEnded() -> bool;
 	void restart();

@@ -103,16 +103,17 @@ auto main() -> int
 	screen.setFrameRateLimit(25);
 
 	gfx::Image image1("assets/images/Leka/logo.jpg");
+	gfx::Image image2("assets/images/Leka/image.jpg");
+
 	screen.draw(image1);
 	screen.display();
 	rtos::ThisThread::sleep_for(2s);
 
-	gfx::Image image2("assets/images/Leka/image.jpg");
 	screen.draw(image2);
 	screen.display();
 	rtos::ThisThread::sleep_for(2s);
 
-	gfx::Video video_perplex("assets/video/Perplex_10.avi");
+	gfx::Video video_birds("assets/video/BirdsAndFeeder_low.avi");
 	gfx::Video video_joie("assets/video/20fps_low10.avi");
 
 	gfx::Rectangle progress_bar_bg(0, 460, 800, 20, {190, 250, 230});
@@ -120,24 +121,30 @@ auto main() -> int
 
 	while (true) {
 		while (!video_joie.hasEnded()) {
+			screen.draw(video_joie);
+
+			video_joie.nextFrame();
 			progress_bar.width = video_joie.getProgress() * lcd::dimension.width;
 
-			screen.draw(video_joie);
 			screen.draw(progress_bar_bg);
 			screen.draw(progress_bar);
+
 			screen.display();
 		}
 		video_joie.restart();
 
-		while (!video_perplex.hasEnded()) {
-			int w = video_perplex.getProgress() * lcd::dimension.width;
+		while (!video_birds.hasEnded()) {
+			screen.draw(video_birds);
 
-			screen.draw(video_perplex);
+			video_birds.nextFrame();
+			int w = video_birds.getProgress() * lcd::dimension.width;
+
 			screen.drawRectangle(0, 460, 800, 20, {250, 190, 230});
 			screen.drawRectangle(0, 460, w, 20, {185, 20, 230});
+
 			screen.display();
 		}
-		video_perplex.restart();
+		video_birds.restart();
 	}
 
 	leka::logger::set_print_function([](const char *str, size_t size) {

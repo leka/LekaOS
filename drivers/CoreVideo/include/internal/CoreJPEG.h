@@ -28,6 +28,7 @@ class CoreJPEG : public interface::CoreJPEG
 	auto decodeImage(LKCoreFatFsBase &file) -> uint32_t final;
 
 	struct Config : JPEG_ConfTypeDef {
+		bool initialized = false;
 		auto getWidthOffset() -> uint32_t;
 	};
 	auto getConfig() -> CoreJPEG::Config;
