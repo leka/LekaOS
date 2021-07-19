@@ -19,7 +19,7 @@ namespace leka {
 class CoreJPEG : public interface::CoreJPEG
 {
   public:
-	CoreJPEG(LKCoreSTM32HalBase &hal);
+	explicit CoreJPEG(LKCoreSTM32HalBase &hal);
 
 	void initialize() final;
 

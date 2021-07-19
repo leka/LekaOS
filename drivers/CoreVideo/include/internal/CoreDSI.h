@@ -17,7 +17,7 @@ namespace leka {
 class CoreDSI : public interface::CoreDSI
 {
   public:
-	explicit CoreDSI(LKCoreSTM32HalBase &hal, interface::CoreLTDC &ltdc);
+	CoreDSI(LKCoreSTM32HalBase &hal, interface::CoreLTDC &ltdc);
 
 	void initialize() final;
 	void reset() final;
