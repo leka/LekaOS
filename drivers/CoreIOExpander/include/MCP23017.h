@@ -17,9 +17,9 @@
 
 namespace leka {
 
-/** MCP23008 class
+/** MCP23017 class
  *
- * Allow access to an I2C connected MCP23008 8-bit I/O extender chip
+ * Allow access to an I2C connected MCP23017 16-bit I/O extender chip
  *
  */
 
@@ -53,14 +53,14 @@ class MCP23017
 	 *
 	 * @note Accessing an ExpandedIO from multiple handles
 	 * (ie: using it with both ExpandedInput and ExpandedOutput,
-	 * or using the MCP23008 APIs directly) may cause unexpected
+	 * or using the MCP23017 APIs directly) may cause unexpected
 	 * behavior. The state of an ExpandedIO's direction
 	 * is not maintained past initialization.
 	 */
 	class ExpandedIO
 	{
 	  public:
-		ExpandedIO(MCP23008 &parent, Pin pin);
+		ExpandedIO(MCP23017 &parent, Pin pin);
 
 	  protected:
 		int internal_read();
@@ -70,7 +70,7 @@ class MCP23017
 		void internal_input();
 
 	  protected:
-		MCP23008 &_parent;
+		MCP23017 &_parent;
 		Pin _pin;
 	};
 
@@ -83,7 +83,7 @@ class MCP23017
 	class ExpandedInput : public ExpandedIO, public mbed::DigitalIn
 	{
 	  public:
-		ExpandedInput(MCP23008 &parent, Pin pin) : ExpandedIO(parent, pin), mbed::DigitalIn(NC) { internal_input(); }
+		ExpandedInput(MCP23017 &parent, Pin pin) : ExpandedIO(parent, pin), mbed::DigitalIn(NC) { internal_input(); }
 		virtual ~ExpandedInput() override {}
 		virtual int read() override { return ExpandedIO::internal_read(); }
 		virtual void mode(PinMode pull) override { ExpandedIO::internal_mode(pull); }
@@ -98,7 +98,7 @@ class MCP23017
 	class ExpandedOutput : public ExpandedIO, public mbed::DigitalOut
 	{
 	  public:
-		ExpandedOutput(MCP23008 &parent, Pin pin) : ExpandedIO(parent, pin), mbed::DigitalOut(NC) { internal_output(); }
+		ExpandedOutput(MCP23017 &parent, Pin pin) : ExpandedIO(parent, pin), mbed::DigitalOut(NC) { internal_output(); }
 		virtual ~ExpandedOutput() override {}
 		virtual void write(int value) override { ExpandedIO::internal_write(value); }
 		virtual int read() override { return ExpandedIO::internal_read(); }
@@ -113,7 +113,7 @@ class MCP23017
 	class ExpandedInputOutput : public ExpandedIO, public mbed::DigitalInOut
 	{
 	  public:
-		ExpandedInputOutput(MCP23008 &parent, Pin pin) : ExpandedIO(parent, pin), mbed::DigitalInOut(NC) { output(); }
+		ExpandedInputOutput(MCP23017 &parent, Pin pin) : ExpandedIO(parent, pin), mbed::DigitalInOut(NC) { output(); }
 		virtual ~ExpandedInputOutput() override {}
 		virtual void write(int value) override { ExpandedIO::internal_write(value); }
 		virtual int read() override { return ExpandedIO::internal_read(); }
@@ -133,11 +133,11 @@ class MCP23017
 	 *
 	 * @param sda I2C sda pin
 	 * @param scl I2C scl pin
-	 * @param address The hardware address of the MCP23008. This is the 3-bit
+	 * @param address The hardware address of the MCP23017. This is the 3-bit
 	 * value that is physically set via A0, A1, and A2.
 	 * @param freq The I2C frequency. Should probably be 100KHz or 400KHz.
 	 */
-	MCP23008(PinName sda, PinName scl, uint8_t address, Frequency freq = Frequency_100KHz);
+	MCP23017(PinName sda, PinName scl, uint8_t address, Frequency freq = Frequency_100KHz);
 
 	/**
 	 * Convenience function to create a DigitalIn object for a given pin
@@ -252,9 +252,9 @@ class MCP23017
 	 * Example:
 	 * @code
 	 * InterruptIn in ( p16 );
-	 * MCP23008 mcp ( p9, p10, 0 );
+	 * MCP23017 mcp ( p9, p10, 0 );
 	 * in.fall ( &interrupt );
-	 * mcp.interrupt_on_changes ( MCP23008::Pin_GP0 );
+	 * mcp.interrupt_on_changes ( MCP23017::Pin_GP0 );
 	 * while ( 1 ) {
 	 *      wait ( 1 );
 	 * }
