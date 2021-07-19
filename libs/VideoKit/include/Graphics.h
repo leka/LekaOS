@@ -30,22 +30,36 @@ struct Color {
 	static Color Magenta;
 };
 
-struct Rectangle {
+class Drawable
+{
+  public:
+	virtual ~Drawable() = default;
+  private:
+	friend VideoKit;
+	virtual void draw(VideoKit &screen) = 0;
+};
+
+class Rectangle : public Drawable
+{
+  public:
+	Rectangle(uint32_t w, uint32_t h, Color color = Color::White);
+	Rectangle(uint32_t x, uint32_t y, uint32_t w, uint32_t h, Color color = Color::White);
+
+	uint32_t x;
+	uint32_t y;
 	uint32_t width;
 	uint32_t height;
 	Color color;
-};
 
-class Drawable
-{
-	friend VideoKit;
-	virtual void draw(VideoKit &screen) = 0;
+  private:
+	void draw(VideoKit &screen) final;
 };
 
 class Image : public Drawable
 {
   public:
 	Image(const char *path);
+	~Image();
 
   private:
 	void draw(VideoKit &screen) final;
@@ -56,13 +70,15 @@ class Video : public Drawable
 {
   public:
 	Video(const char *path);
+	~Video();
+
+	auto getProgress() -> float;
 	auto hasEnded() -> bool;
 	void restart();
 
-	auto getProgress() -> float;
-
   private:
 	void draw(VideoKit &screen) final;
+
 	LKCoreFatFs _file;
 	JPEG_ConfTypeDef _config;
 
