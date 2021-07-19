@@ -7,17 +7,10 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
-#include "CoreDMA2D.h"
-#include "CoreDSI.h"
-#include "CoreJPEG.h"
-#include "CoreLCD.h"
-#include "CoreLCDDriverOTM8009A.h"
-#include "CoreLTDC.h"
 #include "CoreSDRAM.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LKCoreFatFs.h"
-#include "LKCoreLL.h"
 #include "LKCoreSTM32Hal.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
@@ -28,9 +21,10 @@ using namespace std::chrono;
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
-LKCoreFatFs file;
 
-VideoKit screen;
+LKCoreSTM32Hal hal;
+CoreSDRAM coresdram(hal);
+VideoKit screen(hal);
 
 std::vector<const char *> images = {"assets/images/Leka/logo.jpg", "assets/images/Leka/image.jpg"};
 
@@ -98,6 +92,8 @@ auto main() -> int
 	log_info("Hello, World!\n\n");
 
 	initializeSD();
+
+	coresdram.initialize();
 
 	screen.initialize();
 	screen.setFrameRateLimit(25);
