@@ -4,8 +4,8 @@
 
 using namespace leka;
 
-VideoKit::VideoKit()
-	: _coresdram(_hal),
+VideoKit::VideoKit(LKCoreSTM32HalBase &hal)
+	: _hal(hal),
 	  // peripherals
 	  _corejpeg(_hal),
 	  _coredma2d(_hal),
@@ -42,8 +42,6 @@ void VideoKit::initialize()
 
 	HAL_NVIC_SetPriority(DSI_IRQn, 3, 0);
 	HAL_NVIC_EnableIRQ(DSI_IRQn);
-
-	_coresdram.initialize();
 
 	_corejpeg.initialize();
 	_coredma2d.initialize();
