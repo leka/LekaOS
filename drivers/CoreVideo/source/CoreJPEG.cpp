@@ -34,7 +34,7 @@ auto CoreJPEG::getConfig() -> CoreJPEG::Config
 	JPEG_ConfTypeDef config;
 	_hal.HAL_JPEG_GetInfo(&_handle, &config);
 
-	return CoreJPEG::Config{config};
+	return CoreJPEG::Config {config};
 }
 
 void CoreJPEG::registerCallbacks()
