@@ -57,7 +57,7 @@ void Image::draw(VideoKit &screen)
 Video::Video(const char *path)
 {
 	_file.open(path);
-	_frame_offset = CoreJPEG::findFrameOffset(_file, 0);
+	restart();
 }
 
 Video::~Video()
@@ -65,9 +65,23 @@ Video::~Video()
 	_file.close();
 }
 
+void Video::nextFrame()
+{
+	auto offset = CoreJPEG::findFrameOffset(_file, _frame_offset);
+	if (offset != 0) {
+		_frame_offset = offset;
+		_file.seek(_frame_offset);
+		_frame_index += 1;
+	} else {
+		_ended = true;
+	}
+}
+
 auto Video::getProgress() -> float
 {
-	return (float(_frame_offset) / _file.getSize());
+	auto progress = float(_frame_offset) / _file.getSize();
+	// clamp progress to be in range [0.f, 1.f]
+	return progress > 1.f ? 1.f : progress < 0.f ? 0.f : progress;
 }
 
 auto Video::hasEnded() -> bool
@@ -78,26 +92,27 @@ auto Video::hasEnded() -> bool
 void Video::restart()
 {
 	_file.seek(0);
-	_frame_offset = CoreJPEG::findFrameOffset(_file, 0);
+	_frame_offset = 0;
 	_frame_index  = 0;
 	_ended		  = false;
+	nextFrame();
 }
 
 void Video::draw(VideoKit &screen)
 {
-	if (_frame_offset == 0) return;
-
-	_file.seek(_frame_offset);
-
+	// decode current frame
 	auto frame_size = screen.getJPEG().decodeImage(_file);
 
-	if (_frame_index == 0) {
+	// get configuration on first frame
+	if (!_config.initialized) {
 		_config = screen.getJPEG().getConfig();
 	}
+
+	// transfer frame to frame buffer
 	screen.getDMA2D().transferImage(_config.ImageWidth, _config.ImageHeight, _config.getWidthOffset());
 
-	_frame_index += 1;
-	_frame_offset = CoreJPEG::findFrameOffset(_file, _frame_offset + frame_size + 4);
-
-	if (_frame_offset == 0) _ended = true;
+	// increment frame offset
+	if (!_ended) {
+		_frame_offset = _frame_offset + frame_size + 4;
+	}
 }
