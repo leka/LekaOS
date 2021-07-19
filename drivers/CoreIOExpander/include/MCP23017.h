@@ -26,13 +26,13 @@ namespace leka {
 class MCP23017
 {
   public:
-	enum Frequency
-	{
-		Frequency_100KHz = 100000,
-		Frequency_400KHz = 400000,
-		/* Note: 1.7MHz probably won't work for mbed */
-		Frequency_1700KHz = 1700000
-	};
+	// enum Frequency
+	// {
+	// 	Frequency_100KHz = 100000,
+	// 	Frequency_400KHz = 400000,
+	// 	/* Note: 1.7MHz probably won't work for mbed */
+	// 	Frequency_1700KHz = 1700000
+	// };
 	enum Pin
 	{
 		Pin_GP0 = 0x01,
@@ -137,7 +137,7 @@ class MCP23017
 	 * value that is physically set via A0, A1, and A2.
 	 * @param freq The I2C frequency. Should probably be 100KHz or 400KHz.
 	 */
-	MCP23017(PinName sda, PinName scl, uint8_t address, Frequency freq = Frequency_100KHz);
+	MCP23017(interface::I2C &i2c);
 
 	/**
 	 * Convenience function to create a DigitalIn object for a given pin
@@ -285,8 +285,8 @@ class MCP23017
 
 	void reset();
 
-	mbed::I2C i2c;
-	uint8_t i2c_address;
+	interface::I2C &_i2c;
+	const uint8_t _I2C_ADDRESS = 0x4E;
 
 	PlatformMutex mutex;
 };
