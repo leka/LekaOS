@@ -14,7 +14,6 @@
 #include "CoreLCDDriverOTM8009A.h"
 #include "CoreLTDC.h"
 #include "CoreSDRAM.h"
-#include "CoreVideo.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LKCoreFatFs.h"
@@ -31,22 +30,6 @@ SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 LKCoreFatFs file;
 
-/*
-LKCoreSTM32Hal hal;
-CoreSDRAM coresdram(hal);
-
-// screen + dsi + ltdc
-CoreLTDC coreltdc(hal);
-CoreDSI coredsi(hal, coreltdc);
-CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
-CoreLCD corelcd(coreotm);
-
-// peripherals
-CoreDMA2D coredma2d(hal);
-CoreJPEG corejpeg(hal, std::make_unique<CoreJPEGDMAMode>());
-
-LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, corejpeg);
-*/
 VideoKit screen;
 
 std::vector<const char *> images = {"assets/images/Leka/logo.jpg", "assets/images/Leka/image.jpg"};
@@ -108,8 +91,6 @@ auto main() -> int
 {
 	HelloWorld hello;
 	hello.start();
-
-	auto start = rtos::Kernel::Clock::now();
 
 	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
@@ -181,37 +162,4 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(1s);
 	*/
-
-	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
-
-	// HAL_LTDC_ProgramLineEvent(&coreltdc.getHandle(), 0);
-	// corevideo.setBrightness(0.6f);
-	while (true) {
-		auto t = rtos::Kernel::Clock::now() - start;
-		log_info("A message from your board %s --> \"%s\" at %is", MBED_CONF_APP_TARGET_NAME, hello.world,
-				 int(t.count() / 1000));
-
-		// while (true) {
-		for (const auto &image_name: images) {
-			if (file.open(image_name) == FR_OK) {
-				// corevideo.displayImage(file);
-				// corevideo.display();
-				// corevideo.turnOn();
-				file.close();
-				rtos::ThisThread::sleep_for(1s);
-			}
-		}
-		//}
-
-		for (const auto &video_name: videos) {
-			if (file.open(video_name) == FR_OK) {
-				// corevideo.displayVideo(file);
-				file.close();
-				rtos::ThisThread::sleep_for(500ms);
-			}
-		}
-
-		// corevideo.turnOff();
-		rtos::ThisThread::sleep_for(500ms);
-	}
 }

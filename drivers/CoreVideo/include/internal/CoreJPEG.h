@@ -23,13 +23,15 @@ class CoreJPEG : public interface::CoreJPEG
 
 	void initialize() final;
 
-	auto getConfig() -> JPEG_ConfTypeDef final;
-
 	void registerCallbacks() final;
 
 	auto decodeImage(LKCoreFatFsBase &file) -> uint32_t final;
 
-	static auto getWidthOffset(JPEG_ConfTypeDef &config) -> uint32_t;
+	struct Config : JPEG_ConfTypeDef {
+		auto getWidthOffset() -> uint32_t;
+	};
+	auto getConfig() -> CoreJPEG::Config;
+
 	static auto findFrameOffset(LKCoreFatFsBase &file, uint32_t offset) -> uint32_t;
 
   private:
