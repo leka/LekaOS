@@ -14,7 +14,7 @@ namespace leka {
 class CoreDMA2D : public interface::CoreDMA2D
 {
   public:
-	CoreDMA2D(LKCoreSTM32HalBase &hal);
+	explicit CoreDMA2D(LKCoreSTM32HalBase &hal);
 
 	void initialize() final;
 

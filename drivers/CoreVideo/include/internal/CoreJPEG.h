@@ -19,7 +19,7 @@ namespace leka {
 class CoreJPEG : public interface::CoreJPEG
 {
   public:
-	CoreJPEG(LKCoreSTM32HalBase &hal, std::unique_ptr<CoreJPEGMode> mode);
+	explicit CoreJPEG(LKCoreSTM32HalBase &hal);
 
 	void initialize() final;
 
@@ -35,7 +35,7 @@ class CoreJPEG : public interface::CoreJPEG
   private:
 	LKCoreSTM32HalBase &_hal;
 
-	std::unique_ptr<CoreJPEGMode> _mode;
+	CoreJPEGModeDMA _mode;
 };
 
 }	// namespace leka

@@ -6,7 +6,7 @@
 
 #include "rtos/ThisThread.h"
 
-namespace leka {
+using namespace leka;
 
 CoreLCD::CoreLCD(interface::CoreLCDDriver &driver) : _driver(driver)
 {
@@ -33,5 +33,3 @@ void CoreLCD::setBrightness(float brightness)
 {
 	_driver.setBrightness(brightness);
 }
-
-}	// namespace leka

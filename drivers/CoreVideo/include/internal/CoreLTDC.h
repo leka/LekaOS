@@ -13,7 +13,7 @@ namespace leka {
 class CoreLTDC : public interface::CoreLTDC
 {
   public:
-	CoreLTDC(LKCoreSTM32HalBase &hal);
+	explicit CoreLTDC(LKCoreSTM32HalBase &hal);
 
 	void initialize() final;
 

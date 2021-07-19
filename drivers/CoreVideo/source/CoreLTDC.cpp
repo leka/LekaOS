@@ -6,7 +6,7 @@
 
 #include "corevideo_config.h"
 
-namespace leka {
+using namespace leka;
 
 CoreLTDC::CoreLTDC(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
@@ -94,5 +94,3 @@ void CoreLTDC::configurePeriphClock()
 
 	_hal.HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 }
-
-}	// namespace leka
