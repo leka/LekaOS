@@ -36,11 +36,8 @@ class VideoKit
 	void clear(gfx::Color color = gfx::Color::White);
 
 	void draw(gfx::Drawable &drawable);
-	void drawRectangle(gfx::Rectangle rect, uint32_t x, uint32_t y);
 
-	// temporary
-	void drawImage(LKCoreFatFsBase &file);
-	void drawVideo(LKCoreFatFsBase &file);
+	void drawRectangle(uint32_t x, uint32_t y, uint32_t w, uint32_t h, gfx::Color color);
 
 	void display();
 
