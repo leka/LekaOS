@@ -80,10 +80,10 @@ class MCP23017
 	 *
 	 * @note See mbed::DigitalIn class declaration for API documentation
 	 */
-	class ExpandedInput : public ExpandedIO, public mbed::DigitalIn
+	class ExpandedInput : public ExpandedIO, public mbed::interface::DigitalIn
 	{
 	  public:
-		ExpandedInput(MCP23017 &parent, Pin pin) : ExpandedIO(parent, pin), mbed::DigitalIn(NC) { internal_input(); }
+		ExpandedInput(MCP23017 &parent, Pin pin) : ExpandedIO(parent, pin) { internal_input(); }
 		virtual ~ExpandedInput() override {}
 		virtual int read() override { return ExpandedIO::internal_read(); }
 		virtual void mode(PinMode pull) override { ExpandedIO::internal_mode(pull); }
