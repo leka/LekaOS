@@ -81,7 +81,7 @@ class Video : public Drawable
 	void draw(VideoKit &screen) final;
 
 	LKCoreFatFs _file;
-	JPEG_ConfTypeDef _config;
+	CoreJPEG::Config _config;
 
 	uint32_t _frame_index  = 0;
 	uint32_t _frame_offset = 0;

@@ -29,12 +29,12 @@ void CoreJPEG::initialize()
 	HAL_NVIC_EnableIRQ(JPEG_IRQn);
 }
 
-auto CoreJPEG::getConfig() -> JPEG_ConfTypeDef
+auto CoreJPEG::getConfig() -> CoreJPEG::Config
 {
 	JPEG_ConfTypeDef config;
 	_hal.HAL_JPEG_GetInfo(&_handle, &config);
 
-	return config;
+	return CoreJPEG::Config{config};
 }
 
 void CoreJPEG::registerCallbacks()
@@ -70,34 +70,6 @@ auto CoreJPEG::decodeImage(LKCoreFatFsBase &file) -> std::uint32_t
 	return _mode.decodeImage(&_handle, file);
 }
 
-auto CoreJPEG::getWidthOffset(JPEG_ConfTypeDef &config) -> uint32_t
-{
-	uint32_t width_offset = 0;
-
-	switch (config.ChromaSubsampling) {
-		case JPEG_420_SUBSAMPLING:
-			if ((config.ImageWidth % 16) != 0) {
-				width_offset = 16 - (config.ImageWidth % 16);
-			}
-			break;
-		case JPEG_422_SUBSAMPLING:
-			if ((config.ImageWidth % 16) != 0) {
-				width_offset = 16 - (config.ImageWidth % 16);
-			}
-			break;
-		case JPEG_444_SUBSAMPLING:
-			if ((config.ImageWidth % 8) != 0) {
-				width_offset = (config.ImageWidth % 8);
-			}
-			break;
-		default:
-			width_offset = 0;
-			break;
-	}
-
-	return width_offset;
-}
-
 auto CoreJPEG::findFrameOffset(LKCoreFatFsBase &file, uint32_t offset) -> uint32_t
 {
 	std::array<uint8_t, 512> pattern_search_buffer;
@@ -124,4 +96,32 @@ auto CoreJPEG::findFrameOffset(LKCoreFatFsBase &file, uint32_t offset) -> uint32
 	} while (read_size != 0);
 
 	return 0;
+}
+
+auto CoreJPEG::Config::getWidthOffset() -> uint32_t
+{
+	uint32_t width_offset = 0;
+
+	switch (ChromaSubsampling) {
+		case JPEG_420_SUBSAMPLING:
+			if ((ImageWidth % 16) != 0) {
+				width_offset = 16 - (ImageWidth % 16);
+			}
+			break;
+		case JPEG_422_SUBSAMPLING:
+			if ((ImageWidth % 16) != 0) {
+				width_offset = 16 - (ImageWidth % 16);
+			}
+			break;
+		case JPEG_444_SUBSAMPLING:
+			if ((ImageWidth % 8) != 0) {
+				width_offset = (ImageWidth % 8);
+			}
+			break;
+		default:
+			width_offset = 0;
+			break;
+	}
+
+	return width_offset;
 }
