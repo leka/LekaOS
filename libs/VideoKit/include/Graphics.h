@@ -34,6 +34,7 @@ class Drawable
 {
   public:
 	virtual ~Drawable() = default;
+
   private:
 	friend VideoKit;
 	virtual void draw(VideoKit &screen) = 0;

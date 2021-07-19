@@ -8,7 +8,7 @@
 
 using namespace leka;
 
-CoreJPEG::CoreJPEG(LKCoreSTM32HalBase &hal, std::unique_ptr<CoreJPEGMode> mode) : _hal(hal), _mode(std::move(mode))
+CoreJPEG::CoreJPEG(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
 	_handle.Instance = JPEG;
 }
@@ -39,33 +39,35 @@ auto CoreJPEG::getConfig() -> JPEG_ConfTypeDef
 
 void CoreJPEG::registerCallbacks()
 {
-	static auto &self = *this;
-	HAL_JPEG_RegisterInfoReadyCallback(&self.getHandle(), [](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) {
-		self._mode->onInfoReadyCallback(hjpeg, info);
+	static CoreJPEG *self;
+	self = this;
+
+	HAL_JPEG_RegisterInfoReadyCallback(&self->getHandle(), [](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) {
+		self->_mode.onInfoReadyCallback(hjpeg, info);
 	});
 
-	HAL_JPEG_RegisterGetDataCallback(&self.getHandle(), [](JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize) {
-		self._mode->onGetDataCallback(hjpeg, decoded_datasize);
+	HAL_JPEG_RegisterGetDataCallback(&self->getHandle(), [](JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize) {
+		self->_mode.onGetDataCallback(hjpeg, decoded_datasize);
 	});
 
-	HAL_JPEG_RegisterDataReadyCallback(&self.getHandle(),
+	HAL_JPEG_RegisterDataReadyCallback(&self->getHandle(),
 									   [](JPEG_HandleTypeDef *hjpeg, uint8_t *output_data, uint32_t datasize) {
-										   self._mode->onDataReadyCallback(hjpeg, output_data, datasize);
+										   self->_mode.onDataReadyCallback(hjpeg, output_data, datasize);
 									   });
 
-	HAL_JPEG_RegisterCallback(&self.getHandle(), HAL_JPEG_DECODE_CPLT_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { self._mode->onDecodeCompleteCallback(hjpeg); });
+	HAL_JPEG_RegisterCallback(&self->getHandle(), HAL_JPEG_DECODE_CPLT_CB_ID,
+							  [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onDecodeCompleteCallback(hjpeg); });
 
-	HAL_JPEG_RegisterCallback(&self.getHandle(), HAL_JPEG_ERROR_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { self._mode->onErrorCallback(hjpeg); });
+	HAL_JPEG_RegisterCallback(&self->getHandle(), HAL_JPEG_ERROR_CB_ID,
+							  [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onErrorCallback(hjpeg); });
 
-	HAL_JPEG_RegisterCallback(&self.getHandle(), HAL_JPEG_MSPINIT_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { self._mode->onMspInitCallback(hjpeg); });
+	HAL_JPEG_RegisterCallback(&self->getHandle(), HAL_JPEG_MSPINIT_CB_ID,
+							  [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onMspInitCallback(hjpeg); });
 }
 
 auto CoreJPEG::decodeImage(LKCoreFatFsBase &file) -> std::uint32_t
 {
-	return _mode->decodeImage(&_handle, file.getPointer());
+	return _mode.decodeImage(&_handle, file);
 }
 
 auto CoreJPEG::getWidthOffset(JPEG_ConfTypeDef &config) -> uint32_t
