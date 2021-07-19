@@ -11,7 +11,6 @@
 #include "CoreLCD.h"
 #include "CoreLCDDriverOTM8009A.h"
 #include "CoreLTDC.h"
-#include "CoreSDRAM.h"
 #include "Graphics.h"
 #include "LKCoreSTM32Hal.h"
 
@@ -22,7 +21,7 @@ namespace leka {
 class VideoKit
 {
   public:
-	VideoKit();
+	VideoKit(LKCoreSTM32HalBase &);
 
 	auto getDSI() -> CoreDSI &;
 	auto getLTDC() -> CoreLTDC &;
@@ -45,8 +44,7 @@ class VideoKit
 	void refresh();
 	void tick();
 
-	LKCoreSTM32Hal _hal;
-	CoreSDRAM _coresdram;
+	LKCoreSTM32HalBase &_hal;
 
 	// peripherals
 	CoreJPEG _corejpeg;
