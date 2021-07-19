@@ -139,6 +139,16 @@ class MCP23017
 	 */
 	MCP23017(interface::I2C &i2c);
 
+	/** Set the registers associated with each port as being separated into different banks or in the same bank
+	 *
+	 * This function sets how the registers are addressed for ports A and B.
+	 * If the bit is set to 1, ports are segregated: registers of port A are in a row followed by registers of port B.
+	 * If the bit is set to 0, ports are paired: each register of port A is followed by the same of port B.
+	 *
+	 * @param separated True if registers of each port are separated.
+	 */
+	void set_register_mapping(bool separated);
+
 	/**
 	 * Convenience function to create a DigitalIn object for a given pin
 	 * @param[in] pin Pin to instantiate as DigitalIn
