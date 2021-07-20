@@ -16,6 +16,7 @@ target_sources(certs_emc_ble_led_motors
 )
 
 target_link_libraries(certs_emc_ble_led_motors
+	CorePwm
 	CoreMotor
 	driver_FastLED
 	lib_BLE

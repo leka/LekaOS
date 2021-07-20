@@ -172,7 +172,27 @@ add_subdirectory(./stubs)
 add_subdirectory(./mocks)
 
 #
-# Mark: - Add unit tests
+# Mark: - Register tests for util libraries
+#
+
+leka_register_unit_tests_for_library(Utils)
+leka_register_unit_tests_for_library(LogKit)
+leka_register_unit_tests_for_library(CircularBuffer)
+leka_register_unit_tests_for_library(CriticalSection)
+
+#
+# Mark: - Link util libraries for remaining tests
+#
+
+link_libraries(
+	Utils
+	LogKit
+	CircularBuffer
+	CriticalSection
+)
+
+#
+# Mark: - Register tests for drivers and libraries
 #
 
 add_subdirectory(template)
@@ -184,7 +204,7 @@ leka_register_unit_tests_for_driver(LKCoreSTM32Hal)
 leka_register_unit_tests_for_driver(LKCoreVideo)
 leka_register_unit_tests_for_driver(LKCoreLightSensor)
 leka_register_unit_tests_for_driver(LKCoreMicrophone)
-leka_register_unit_tests_for_driver(LKCoreBattery)
+leka_register_unit_tests_for_driver(CoreBattery)
 
 leka_register_unit_tests_for_driver(CoreHTS)
 leka_register_unit_tests_for_driver(CoreI2C)
@@ -196,12 +216,6 @@ leka_register_unit_tests_for_driver(CoreAudio)
 # Register libraries
 leka_register_unit_tests_for_library(LKAnimationKit)
 leka_register_unit_tests_for_library(LKCalculatorKit)
-
-leka_register_unit_tests_for_library(Utils)
-leka_register_unit_tests_for_library(LogKit)
-leka_register_unit_tests_for_library(CircularBuffer)
-leka_register_unit_tests_for_library(CriticalSection)
-
 
 #
 # Mark: - Finish up

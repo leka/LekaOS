@@ -6,12 +6,12 @@
 
 void gpio_init_out(gpio_t *gpio, PinName pin)
 {
-	return;
+	// nothing to do
 }
 
-void gpio_write(gpio_t *gpio, int value)
+void gpio_write(gpio_t *obj, int value)
 {
-	return;
+	// nothing to do
 }
 
 auto gpio_read(gpio_t *obj) -> int
@@ -22,4 +22,9 @@ auto gpio_read(gpio_t *obj) -> int
 auto gpio_is_connected(const gpio_t *obj) -> int
 {
 	return 1;
+}
+
+void gpio_init_out_ex(gpio_t *gpio, PinName pin, int value)
+{
+	// nothing to do
 }

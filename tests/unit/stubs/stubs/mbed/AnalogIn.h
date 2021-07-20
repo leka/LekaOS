@@ -7,6 +7,9 @@
 namespace leka {
 
 extern float spy_AnalogIn_value;
-float spy_AnalogIn_setValue(float);
+extern float spy_AnalogIn_voltage_value;
+
+void spy_AnalogIn_setValue(float value);
+void spy_AnalogIn_setVoltageValue(float value);
 
 }	// namespace leka
