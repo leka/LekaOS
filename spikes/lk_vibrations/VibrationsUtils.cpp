@@ -74,8 +74,8 @@ void fillBufferWithEnvelop(uint16_t *buffer, uint32_t bufferSize, EnvelopType eT
 			for (uint32_t i = 0; i < riseTime; ++i) {
 				buffer[i] = i * ((double)maxVal / riseTime);
 			}
-			for (uint32_t i = riseTime; i < bufferSize; ++i) {
-				buffer[i] = maxVal - i * ((double)maxVal / (bufferSize - riseTime));
+			for (uint32_t i = 0; i < bufferSize - riseTime; ++i) {
+				buffer[i + riseTime] = maxVal - i * ((double)maxVal / (bufferSize - riseTime));
 			}
 			break;
 	}
