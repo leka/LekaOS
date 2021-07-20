@@ -4,6 +4,7 @@
 
 .vscode
 extern/mbed-os
+extern/mcuboot
 _build*
 _coverage*
 cmake/config/
