@@ -4,6 +4,7 @@
 
 #include "CoreCR95HF.h"
 #include <cstdint>
+#include <functional>
 
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreBufferedSerial.h"
@@ -119,17 +120,19 @@ TEST_F(CoreCR95HFSensorTest, enableTagDetection)
 	corecr95hf.init();
 }
 
-void callback() {};
+void func() {};
+std::function<void()> callbackFunction = func;
+
 TEST_F(CoreCR95HFSensorTest, registerTagAvailableCallback)
 {
-	corecr95hf.registerTagAvailableCallback(callback);
+	corecr95hf.registerTagAvailableCallback(callbackFunction);
 }
 
 TEST_F(CoreCR95HFSensorTest, onTagAvailableSuccess)
 {
 	std::array<uint8_t, 3> expected_tag_detection_callback = {0x00, 0x01, 0x02};
 
-	corecr95hf.registerTagAvailableCallback(callback);
+	corecr95hf.registerTagAvailableCallback(callbackFunction);
 	{
 		InSequence seq;
 		receiveCR95HFAnswer(expected_tag_detection_callback);
@@ -142,7 +145,7 @@ TEST_F(CoreCR95HFSensorTest, onTagAvailableWrongCallback)
 {
 	std::array<uint8_t, 3> expected_tag_detection_callback = {0x00, 0x01, 0xff};
 
-	corecr95hf.registerTagAvailableCallback(callback);
+	corecr95hf.registerTagAvailableCallback(callbackFunction);
 
 	receiveCR95HFAnswer(expected_tag_detection_callback);
 
