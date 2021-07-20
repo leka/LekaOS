@@ -10,7 +10,7 @@
 #define SIN_FREQUENCY	128
 #define OUT_BUFF_SIZE	512
 #define SAMPLING_RATE	2048
-#define DAC_MAX_VAL		0x3FF
+#define DAC_MAX_VAL		0xAAA
 
 #include <array>
 #include <cmath>
