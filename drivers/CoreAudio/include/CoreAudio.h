@@ -36,6 +36,7 @@ class CoreAudio
 	LKCoreSTM32HalBase &_hal;
 	interface::Dac &_coreDac;
 	interface::DacTimer &_coreTimer;
+
 	float _volume;
 
 	bool _playing;
@@ -43,6 +44,8 @@ class CoreAudio
 	void _initialize(float frequency);
 	void _align12bR(uint16_t *buffer, uint16_t length);
 	void _scaleToVolume(uint16_t *buffer, uint16_t length);
+	void _halfCptCallback();
+	void _cptCallback();
 };
 
 }	// namespace leka

@@ -39,23 +39,24 @@ void CoreAudio::playFile(FIL *file)
 	_coreDac.start(_waveBuffer, 512);
 
 	while (!eof) {
-		if (_coreDac.dmaFlag() == CoreDAC::Half_cpt) {
-			eof = WavReader::loadSector(&wavFile, _waveBuffer, 512);
-			_scaleToVolume(_waveBuffer, 256);
-			_align12bR(_waveBuffer, 256);
-			_coreDac.dmaFlag() = CoreDAC::None;
-			// printf("half DMA\n");
-		}
+		// TODO update method
+		// if (_coreDac.dmaFlag() == CoreDAC::Half_cpt) {
+		// 	eof = WavReader::loadSector(&wavFile, _waveBuffer, 512);
+		// 	_scaleToVolume(_waveBuffer, 256);
+		// 	_align12bR(_waveBuffer, 256);
+		// 	_coreDac.dmaFlag() = CoreDAC::None;
+		// 	// printf("half DMA\n");
+		// }
 
-		if (_coreDac.dmaFlag() == CoreDAC::Cpt) {
-			if (!eof) {
-				eof = WavReader::loadSector(&wavFile, _waveBuffer_2, 512);
-				_scaleToVolume(_waveBuffer_2, 256);
-				_align12bR(_waveBuffer_2, 256);
-			}
-			_coreDac.dmaFlag() = CoreDAC::None;
-			// printf("cpt DMA\n");
-		}
+		// if (_coreDac.dmaFlag() == CoreDAC::Cpt) {
+		// 	if (!eof) {
+		// 		eof = WavReader::loadSector(&wavFile, _waveBuffer_2, 512);
+		// 		_scaleToVolume(_waveBuffer_2, 256);
+		// 		_align12bR(_waveBuffer_2, 256);
+		// 	}
+		// 	_coreDac.dmaFlag() = CoreDAC::None;
+		// 	// printf("cpt DMA\n");
+		// }
 	}
 
 	stop();
@@ -86,6 +87,10 @@ void CoreAudio::_initialize(float frequency)
 	printf("Initialize CoreDAC\n");
 	_coreDac.initialize();
 	printf("CoreDAC Initialized\n");
+
+	static auto *self = this;
+	_coreDac.setCptCallbackPtr([](DAC_HandleTypeDef *hdac) { self->_cptCallback(); });
+	_coreDac.setHalfCptCallbackPtr([](DAC_HandleTypeDef *hdac) { self->_halfCptCallback(); });
 }
 
 void CoreAudio::_align12bR(uint16_t *buffer, uint16_t length)
@@ -128,5 +133,9 @@ void CoreAudio::fillBufferWithSquare(uint16_t *buffer, uint32_t bufferSize, uint
 		buffer[i] = minValue;
 	}
 }
+
+void CoreAudio::_halfCptCallback() {}
+
+void CoreAudio::_cptCallback() {}
 
 }	// namespace leka

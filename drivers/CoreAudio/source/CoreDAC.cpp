@@ -2,9 +2,10 @@
 
 namespace leka {
 
-interface::Dac::DMA_Flag CoreDAC::_dmaFlag = None;
+// interface::Dac::DMA_Flag CoreDAC::_dmaFlag = None;
 
-CoreDAC::CoreDAC(LKCoreSTM32HalBase &hal) : _hal(hal)	//, _dmaFlag(None)
+CoreDAC::CoreDAC(LKCoreSTM32HalBase &hal)
+	: _hal(hal), _pCallbackCpt(nullptr), _pCallbackHlfCpt(nullptr)	 //, _dmaFlag(None)
 {
 	_hdac.Instance = DAC;
 	_hdma.Instance = DMA1_Stream5;
@@ -66,10 +67,10 @@ void CoreDAC::stop()
 	_hal.HAL_DAC_Stop_DMA(&_hdac, DAC_CHANNEL_1);
 }
 
-auto CoreDAC::dmaFlag() -> DMA_Flag &
-{
-	return leka::CoreDAC::_dmaFlag;
-}
+// auto CoreDAC::dmaFlag() -> DMA_Flag &
+// {
+// 	return leka::CoreDAC::_dmaFlag;
+// }
 
 auto CoreDAC::getHandle() -> DAC_HandleTypeDef &
 {
@@ -83,29 +84,31 @@ auto CoreDAC::getDMAHandle() -> DMA_HandleTypeDef &
 
 void CoreDAC::_registerCallbacks()
 {
-	static auto *self = this;
-	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_COMPLETE_CB_ID, [](DAC_HandleTypeDef *hdac) {
-		// DOESNT WORK WHEN TRYING TO MODIFY AN ATTRIBUTE OF SELF
-		self->_cptCallback();
-	});
+	// static auto *self = this;
+	// _hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_COMPLETE_CB_ID, [](DAC_HandleTypeDef *hdac) {
+	// 	// DOESNT WORK WHEN TRYING TO MODIFY AN ATTRIBUTE OF SELF
+	// 	self->_cptCallback();
+	// });
 
-	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_HALF_COMPLETE_CB_ID, [](DAC_HandleTypeDef *hdac) {
-		// DOESNT WORK WHEN TRYING TO MODIFY AN ATTRIBUTE OF SELF
-		self->_halfCptCallback();
-	});
+	// _hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_HALF_COMPLETE_CB_ID, [](DAC_HandleTypeDef *hdac) {
+	// 	// DOESNT WORK WHEN TRYING TO MODIFY AN ATTRIBUTE OF SELF
+	// 	self->_halfCptCallback();
+	// });
+	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_COMPLETE_CB_ID, _pCallbackCpt);
+	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_HALF_COMPLETE_CB_ID, _pCallbackHlfCpt);
 
 	// TODO(aermanio) : check if all callbacks need to be registered
 }
 
-void CoreDAC::_halfCptCallback()
-{
-	_dmaFlag = Half_cpt;
-}
+// void CoreDAC::_halfCptCallback()
+// {
+// 	_dmaFlag = Half_cpt;
+// }
 
-void CoreDAC::_cptCallback()
-{
-	_dmaFlag = Cpt;
-}
+// void CoreDAC::_cptCallback()
+// {
+// 	_dmaFlag = Cpt;
+// }
 
 void CoreDAC::_registerMspCallbacks()
 {
@@ -169,6 +172,16 @@ void CoreDAC::_mspDeInitCallback()
 		/* DAC DMA DeInit */
 		_hal.HAL_DMA_DeInit(_hdac.DMA_Handle1);
 	}
+}
+
+void CoreDAC::setCptCallbackPtr(pDAC_CallbackTypeDef pCallbackCpt)
+{
+	this->_pCallbackCpt = pCallbackCpt;
+}
+
+void CoreDAC::setHalfCptCallbackPtr(pDAC_CallbackTypeDef pCallbackHlfCpt)
+{
+	this->_pCallbackHlfCpt = pCallbackHlfCpt;
 }
 
 }	// namespace leka

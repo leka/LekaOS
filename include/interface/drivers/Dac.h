@@ -26,15 +26,18 @@ class Dac
 	virtual void start(uint16_t *pData, uint32_t dataLength) = 0;
 	virtual void stop()										 = 0;
 
-	virtual auto dmaFlag() -> DMA_Flag & = 0;
+	// virtual auto dmaFlag() -> DMA_Flag & = 0;
 
 	virtual auto getHandle() -> DAC_HandleTypeDef &	   = 0;
 	virtual auto getDMAHandle() -> DMA_HandleTypeDef & = 0;
 
+	virtual void setCptCallbackPtr(pDAC_CallbackTypeDef pCallbackCpt)	  = 0;
+	virtual void setHalfCptCallbackPtr(pDAC_CallbackTypeDef pCallbackCpt) = 0;
+
   protected:
 	virtual void _registerCallbacks() = 0;
-	virtual void _halfCptCallback()	  = 0;
-	virtual void _cptCallback()		  = 0;
+	// virtual void _halfCptCallback()	  = 0;
+	// virtual void _cptCallback()		  = 0;
 
 	virtual void _registerMspCallbacks() = 0;
 	virtual void _mspInitCallback()		 = 0;

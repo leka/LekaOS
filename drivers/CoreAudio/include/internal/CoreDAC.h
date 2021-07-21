@@ -25,23 +25,29 @@ class CoreDAC : public interface::Dac
 	void start(uint16_t *pData, uint32_t dataLength) final;
 	void stop() final;
 
-	auto dmaFlag() -> DMA_Flag & final;
+	// auto dmaFlag() -> DMA_Flag & final;
 
 	auto getHandle() -> DAC_HandleTypeDef & final;
 	auto getDMAHandle() -> DMA_HandleTypeDef & final;
 
-	void _halfCptCallback() final;
-	void _cptCallback() final;
+	// void _halfCptCallback() final;
+	// void _cptCallback() final;
 	void _mspInitCallback() final;
 	void _mspDeInitCallback() final;
 
-	static DMA_Flag _dmaFlag;
-	DMA_Flag _flag;
+	// static DMA_Flag _dmaFlag;
+	// DMA_Flag _flag;
+
+	void setCptCallbackPtr(pDAC_CallbackTypeDef pCallbackCpt) final;
+	void setHalfCptCallbackPtr(pDAC_CallbackTypeDef pCallbackHlfCpt) final;
 
   protected:
 	LKCoreSTM32HalBase &_hal;
 	DAC_HandleTypeDef _hdac;
 	DMA_HandleTypeDef _hdma;
+
+	pDAC_CallbackTypeDef _pCallbackCpt;
+	pDAC_CallbackTypeDef _pCallbackHlfCpt;
 
 	void _registerCallbacks() final;   // Can stay private => Test output after init
 
