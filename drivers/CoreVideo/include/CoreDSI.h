@@ -28,7 +28,7 @@ class CoreDSI : public interface::CoreDSI
 
 	void enableTearingEffectReporting() final;
 
-	auto isBusy() -> bool final;
+	auto refreshDone() -> bool final;
 
 	void write(const uint8_t *data, uint32_t size) final;
 

@@ -81,6 +81,13 @@ void initializeSD()
 	fatfs.mount(&sd_blockdevice);
 }
 
+void formatTime(char *buffer, int64_t time)
+{
+	int ds	= (time / 1000);
+	int dms = (time / 1000.f - ds) * 100;
+	sprintf(buffer, "%02d:%02d,%02d", ds / 60, ds % 60, dms);
+}
+
 auto main() -> int
 {
 	HelloWorld hello;
@@ -109,11 +116,13 @@ auto main() -> int
 	screen.display();
 	rtos::ThisThread::sleep_for(2s);
 
-	gfx::Video video_birds("assets/video/BirdsAndFeeder_low.avi");
 	gfx::Video video_joie("assets/video/20fps_low10.avi");
+	gfx::Video video_birds("assets/video/BirdsAndFeeder_low.avi");
 
 	gfx::Rectangle progress_bar_bg(0, 460, 800, 20, {190, 250, 230});
 	gfx::Rectangle progress_bar(0, 460, 0, 20, {20, 240, 165});
+
+	char buff[128];
 
 	while (true) {
 		while (!video_joie.hasEnded()) {
@@ -124,6 +133,9 @@ auto main() -> int
 
 			screen.draw(progress_bar_bg);
 			screen.draw(progress_bar);
+
+			formatTime(buff, video_joie.getTime());
+			screen.drawText(buff, 20, 460, {250, 60, 150});
 
 			screen.display();
 		}
@@ -136,34 +148,13 @@ auto main() -> int
 			int w = video_birds.getProgress() * lcd::dimension.width;
 
 			screen.drawRectangle(0, 460, 800, 20, {250, 190, 230});
-			screen.drawText("#Bonjour je suis Leka~0123456789", 50, 50, {140, 200, 200});
 			screen.drawRectangle(0, 460, w, 20, {185, 20, 230});
+
+			formatTime(buff, video_birds.getTime());
+			screen.drawText(buff, 20, 460, {60, 200, 150});
 
 			screen.display();
 		}
 		video_birds.restart();
 	}
-
-	leka::logger::set_print_function([](const char *str, size_t size) {
-		// corevideo.displayText(str, size, line, foreground, CGColor::white);
-	});
-
-	/*
-	for (int i = 1; i <= 10; i++) {
-		foreground = (i % 2 == 0) ? CGColor::black : CGColor::pure_red;
-		line	   = i * 2;
-		log_info("Line #%i", i);
-		rtos::ThisThread::sleep_for(200ms);
-	}
-
-	leka::logger::set_print_function([](const char *str, size_t size) {
-		// corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
-	});
-
-	log_info(
-		"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
-		"only one line of the screen.");
-
-	rtos::ThisThread::sleep_for(1s);
-	*/
 }

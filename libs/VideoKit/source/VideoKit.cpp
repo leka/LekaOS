@@ -103,8 +103,8 @@ void VideoKit::drawText(const char *text, uint32_t x, uint32_t y, gfx::Color col
 	while (*text != '\0') {
 		char letter = *text++;
 		auto *addr	= Font::getCharAddress(letter);
-		for (int j = 0; j < Font::character_height; ++j) {
-			for (int i = 0; i < Font::character_width; ++i) {
+		for (size_t j = 0; j < Font::character_height; ++j) {
+			for (size_t i = 0; i < Font::character_width; ++i) {
 				if (Font::isPixelOn(addr, i, j)) {
 					_coredma2d.setPixel(posx + i, posy + j, color.toARGB8888());
 				} else if (bg_color.a > 0) {
@@ -112,22 +112,27 @@ void VideoKit::drawText(const char *text, uint32_t x, uint32_t y, gfx::Color col
 				}
 			}
 		}
-		posx += Font::character_width - 1;
+		if (posx > lcd::dimension.width - Font::character_width) {
+			posx = x;
+			posy += Font::character_height - 2;
+		} else {
+			posx += Font::character_width - 1;
+		}
 	}
 }
 
 void VideoKit::display()
 {
 	// wait for DMA2D to finish transfer
-	while (_coredma2d.getHandle().State != HAL_DMA2D_STATE_READY)
+	while (_coredma2d.isBusy())
 		;
 
 	refresh();
 	tick();
 
-	// wait for DSI to finish refresh before starting the new frame
-	// while (_coredsi.isBusy())
-	;
+	// wait for DSI to finish transfer
+	while (_coredsi.isBusy())
+		;
 }
 
 void VideoKit::refresh()

@@ -204,9 +204,9 @@ void CoreDSI::refresh()
 	}
 }
 
-auto CoreDSI::isBusy() -> bool
+auto CoreDSI::refreshDone() -> bool
 {
-	return _handle.State == HAL_DSI_STATE_BUSY || !_refresh_done;
+	return !_refresh_done;
 }
 
 void CoreDSI::write(const uint8_t *data, uint32_t size)
