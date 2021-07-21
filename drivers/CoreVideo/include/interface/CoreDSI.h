@@ -24,7 +24,7 @@ class CoreDSI : public ComponentHandler<DSI_HandleTypeDef>
 
 	virtual void enableTearingEffectReporting() = 0;
 
-	virtual auto isBusy() -> bool = 0;
+	virtual auto refreshDone() -> bool = 0;
 
 	virtual void write(const uint8_t *data, uint32_t size) = 0;
 };

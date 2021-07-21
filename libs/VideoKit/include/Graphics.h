@@ -3,6 +3,8 @@
 
 #include <cstdint>
 
+#include "rtos/Kernel.h"
+
 #include "CoreJPEG.h"
 #include "LKCoreFatFs.h"
 
@@ -57,6 +59,21 @@ class Rectangle : public Drawable
 	void draw(VideoKit &screen) final;
 };
 
+class Text : public Drawable
+{
+  public:
+	Text(const char *string, uint32_t x, uint32_t y, Color color, Color bg = Color::Transparent);
+
+	const char *string;
+	uint32_t x;
+	uint32_t y;
+	Color color;
+	Color bg;
+
+  private:
+	void draw(VideoKit &screen) final;
+};
+
 class Image : public Drawable
 {
   public:
@@ -76,7 +93,9 @@ class Video : public Drawable
 
 	void nextFrame();
 
+	auto getTime() -> int64_t;
 	auto getProgress() -> float;
+
 	auto hasEnded() -> bool;
 	void restart();
 
@@ -88,6 +107,8 @@ class Video : public Drawable
 
 	uint32_t _frame_index  = 0;
 	uint32_t _frame_offset = 0;
+
+	rtos::Kernel::Clock::time_point _start_time;
 
 	bool _ended = false;
 };
