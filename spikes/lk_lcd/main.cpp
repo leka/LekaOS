@@ -136,6 +136,7 @@ auto main() -> int
 			int w = video_birds.getProgress() * lcd::dimension.width;
 
 			screen.drawRectangle(0, 460, 800, 20, {250, 190, 230});
+			screen.drawText("#Bonjour je suis Leka~0123456789", 50, 50, {140, 200, 200});
 			screen.drawRectangle(0, 460, w, 20, {185, 20, 230});
 
 			screen.display();
