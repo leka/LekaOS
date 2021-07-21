@@ -93,14 +93,13 @@ void CoreDMA2D::transferImage(uint32_t width, uint32_t height, uint32_t width_of
 	transferData(jpeg::decoded_buffer_address, getPositionAddress(x, y), width, height);
 }
 
-void CoreDMA2D::transferDrawing(uintptr_t first_pixel_address, uint32_t width, uint32_t height, uint32_t color)
-{
-	_handle.Init.Mode = DMA2D_R2M;
-	transferData(color, first_pixel_address, width, height);
-}
-
 void CoreDMA2D::fillRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
 {
 	_handle.Init.Mode = DMA2D_R2M;
 	transferData(color, getPositionAddress(x, y), w, h);
+}
+
+void CoreDMA2D::setPixel(uint32_t x, uint32_t y, uint32_t color)
+{
+	*((uintptr_t*)getPositionAddress(x, y)) = color;
 }

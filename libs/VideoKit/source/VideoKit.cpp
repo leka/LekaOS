@@ -96,6 +96,15 @@ void VideoKit::drawRectangle(uint32_t x, uint32_t y, uint32_t w, uint32_t h, gfx
 	_coredma2d.fillRect(x, y, w, h, color.toARGB8888());
 }
 
+void VideoKit::drawText(const char *text, uint32_t column, uint32_t line, gfx::Color color, gfx::Color bg_color)
+{
+	log_info("%s of size %d at (%d,%d)", text, strlen(text), column, line);
+	while(*text != '\0') {
+		char letter = *text;
+		
+	}
+}
+
 void VideoKit::display()
 {
 	// wait for DMA2D to finish transfer

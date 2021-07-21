@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // Original file: https://github.com/STMicroelectronics/STM32CubeF7/blob/master/Utilities/Fonts/font24.c
 
+#include <cstdint>
+
 namespace leka {
 
 // LKFontTable contains pixels to draw for character from 0x20 (space) to 0x7E (~) in ascii value.
@@ -12,7 +14,19 @@ namespace leka {
 // Reading has to be done row of pixel by row of pixel. Hence, the row of 17 pixels is encoded on 3 bytes.
 // As consequence of the 2 previous sentences, the last 7 bits are not used in the third byte.
 
-constexpr uint8_t LKFontTable[] = {
+class Font {
+  public:
+	static constexpr uint32_t character_width = 17;
+	static constexpr uint32_t character_height = 24;
+
+	static auto getCharAddress(char character) -> const uint8_t *;
+	static auto isPixelOn(const uint8_t *, uint32_t x, uint32_t y) -> bool;
+
+  private: 
+	static constexpr char first_char = ' ';
+	static constexpr char last_char = '~';
+	static constexpr uint32_t bytes_per_char = 3 * 24;
+	static constexpr uint8_t table[] = {
 	// @0 ' ' (17 pixels wide)
 	0x00, 0x00, 0x00,	//
 	0x00, 0x00, 0x00,	//
@@ -2482,6 +2496,7 @@ constexpr uint8_t LKFontTable[] = {
 	0x00, 0x00, 0x00,	//
 	0x00, 0x00, 0x00,	//
 	0x00, 0x00, 0x00,	//
+};
 };
 
 }	// namespace leka

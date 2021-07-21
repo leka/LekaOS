@@ -106,6 +106,16 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(2s);
 
 	screen.draw(image2);
+
+	auto ca = Font::getCharAddress('!');
+	for (int j = 0; j < 24; ++j) {
+		for (int i = 0; i < 17; ++i) {
+			printf("%d", Font::isPixelOn(ca, i, j));
+		}
+		printf("\n\r");
+	}
+
+	screen.drawText("Text of size 15", 0, 0);
 	screen.display();
 	rtos::ThisThread::sleep_for(2s);
 

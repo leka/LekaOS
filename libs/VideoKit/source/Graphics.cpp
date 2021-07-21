@@ -30,7 +30,7 @@ Rectangle::Rectangle(uint32_t posx, uint32_t posy, uint32_t w, uint32_t h, Color
 
 void Rectangle::draw(VideoKit &screen)
 {
-	screen.getDMA2D().fillRect(x, y, width, height, color.toARGB8888());
+	screen.drawRectangle(x, y, width, height, color);
 }
 
 // --- gfx::Image -------------------------------------
