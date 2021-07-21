@@ -11,6 +11,7 @@ target_include_directories(VideoKit
 
 target_sources(VideoKit
 	PRIVATE
+		source/Font.cpp
 		source/Graphics.cpp
 		source/VideoKit.cpp
 )

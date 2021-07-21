@@ -11,8 +11,10 @@ auto Color::toARGB8888() -> uint32_t
 	return (a << 24) | (r << 16) | (g << 8) | (b << 0);
 }
 
-Color Color::White	 = {0xff, 0xff, 0xff};
+Color Color::Transparent = {0x00, 0x00, 0x00, 0x00};
+
 Color Color::Black	 = {0x00, 0x00, 0x00};
+Color Color::White	 = {0xff, 0xff, 0xff};
 Color Color::Red	 = {0xff, 0x00, 0x00};
 Color Color::Green	 = {0x00, 0xff, 0x00};
 Color Color::Blue	 = {0x00, 0x00, 0xff};
@@ -30,7 +32,7 @@ Rectangle::Rectangle(uint32_t posx, uint32_t posy, uint32_t w, uint32_t h, Color
 
 void Rectangle::draw(VideoKit &screen)
 {
-	screen.getDMA2D().fillRect(x, y, width, height, color.toARGB8888());
+	screen.drawRectangle(x, y, width, height, color);
 }
 
 // --- gfx::Image -------------------------------------
