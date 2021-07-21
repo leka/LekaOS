@@ -7,23 +7,22 @@ add_library(CoreVideo STATIC)
 target_include_directories(CoreVideo
 	PUBLIC
 		include
-		include/internal
 		external/include
 )
 
 target_sources(CoreVideo
 	PRIVATE
-	source/CoreDMA2D.cpp
-	source/CoreJPEG.cpp
-	source/CoreLTDC.cpp
-	source/CoreDSI.cpp
-	source/CoreJPEG.cpp
-	source/CoreJPEGMode.cpp
-	source/CoreLCD.cpp
-	source/CoreLTDC.cpp
-	source/CoreLCDDriverOTM8009A.cpp
-	source/CoreSDRAM.cpp
-	external/source/st_jpeg_utils.cpp
+		source/CoreDMA2D.cpp
+		source/CoreJPEG.cpp
+		source/CoreLTDC.cpp
+		source/CoreDSI.cpp
+		source/CoreJPEG.cpp
+		source/CoreJPEGMode.cpp
+		source/CoreLCD.cpp
+		source/CoreLTDC.cpp
+		source/CoreLCDDriverOTM8009A.cpp
+		source/CoreSDRAM.cpp
+		external/source/st_jpeg_utils.cpp
 )
 
 target_link_libraries(CoreVideo
