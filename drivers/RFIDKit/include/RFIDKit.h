@@ -17,11 +17,11 @@ class RFIDKit : public interface::RFID::ISO14443
   public:
 	explicit RFIDKit(interface::RFID &rfid_reader) : _rfid_reader(rfid_reader) {};
 
-	void setInterrupt(void func()) final;
+	void init() final;
 
-	void setReaderForTagDetection() final;
+	void getTagData() final;
 
-	auto getTagData(std::array<uint8_t, 16> &tag_data) -> bool final;
+	auto getTag() -> rfid::Tag final { return _tag; };
 
   private:
 	template <size_t SIZE>
@@ -44,6 +44,7 @@ class RFIDKit : public interface::RFID::ISO14443
 	void getData(std::array<uint8_t, 16> &tag_data);
 
 	interface::RFID &_rfid_reader;
+	rfid::Tag _tag {};
 };
 
 }	// namespace leka

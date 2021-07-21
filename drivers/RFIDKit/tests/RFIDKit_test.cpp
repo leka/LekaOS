@@ -11,6 +11,7 @@
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreBufferedSerial.h"
 #include "mocks/leka/CoreRFID.h"
+#include "serial_api.h"
 
 using namespace leka;
 using namespace interface;
@@ -37,7 +38,7 @@ class CoreRFIDKitTest : public ::testing::Test
 	void receive(std::array<uint8_t, size> &data)
 	{
 		lstd::span<uint8_t> span {data};
-		EXPECT_CALL(mockCR95HF, receiveTagData).WillRepeatedly(DoAll(SetArgPointee<0>(span), Return(size)));
+		EXPECT_CALL(mockCR95HF, receiveDataFromTag).WillRepeatedly(DoAll(SetArgPointee<0>(span), Return(size)));
 	}
 
 	std::array<uint8_t, 2> REQA = {0x26, 0x07};
@@ -54,19 +55,12 @@ TEST_F(CoreRFIDKitTest, initialization)
 }
 
 void interruptFunction() {};
-TEST_F(CoreRFIDKitTest, setInterruptSuccess)
+TEST_F(CoreRFIDKitTest, init)
 {
-	EXPECT_CALL(mockCR95HF, getSerial).WillOnce(ReturnRef(mockBufferedSerial));
-	EXPECT_CALL(mockBufferedSerial, sigio).Times(1);
+	EXPECT_CALL(mockCR95HF, registerTagAvailableCallback).Times(1);
+	EXPECT_CALL(mockCR95HF, init).Times(1);
 
-	coreRfid.setInterrupt(interruptFunction);
-}
-
-TEST_F(CoreRFIDKitTest, waitForTagDetectionTEST)
-{
-	EXPECT_CALL(mockCR95HF, enableTagDetection).Times(1);
-
-	coreRfid.setReaderForTagDetection();
+	coreRfid.init();
 }
 
 MATCHER_P(compareSpan, expected_span, "")
@@ -92,14 +86,13 @@ TEST_F(CoreRFIDKitTest, getTagDataSuccess)
 	{
 		InSequence seq;
 
-		EXPECT_CALL(mockCR95HF, receiveCallback).WillOnce(Return(true));
-		EXPECT_CALL(mockCR95HF, setup).WillOnce(Return(true));
+		EXPECT_CALL(mockCR95HF, setCommunicationProtocol).WillOnce(Return(true));
 
-		EXPECT_CALL(mockCR95HF, send(compareSpan(REQA_span))).Times(1);
+		EXPECT_CALL(mockCR95HF, sendCommandToTag(compareSpan(REQA_span))).Times(1);
 
 		receive(ATQA);
 
-		EXPECT_CALL(mockCR95HF, send(compareSpan(read_register_8_span))).Times(1);
+		EXPECT_CALL(mockCR95HF, sendCommandToTag(compareSpan(read_register_8_span))).Times(1);
 
 		std::array<uint8_t, 18> tagData = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01,
 										   0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x24, 0xF5};
@@ -109,70 +102,8 @@ TEST_F(CoreRFIDKitTest, getTagDataSuccess)
 	std::array<uint8_t, 16> expected_values = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04,
 											   0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04};
 
-	bool is_communication_succeed = coreRfid.getTagData(actual_values);
+	coreRfid.getTagData();
+	rfid::Tag tag = coreRfid.getTag();
 
-	ASSERT_EQ(is_communication_succeed, true);
-	ASSERT_EQ(actual_values, expected_values);
-}
-
-TEST_F(CoreRFIDKitTest, getTagDataFailedOnWrongCallbackValues)
-{
-	EXPECT_CALL(mockCR95HF, receiveCallback).WillOnce(Return(false));
-
-	auto is_initialized = coreRfid.getTagData(actual_values);
-	ASSERT_EQ(is_initialized, false);
-}
-
-TEST_F(CoreRFIDKitTest, getTagDataFailedOnWrongCallback)
-{
-	EXPECT_CALL(mockCR95HF, receiveCallback).WillOnce(Return(false));
-
-	auto is_initialized = coreRfid.getTagData(actual_values);
-	ASSERT_EQ(is_initialized, false);
-}
-
-TEST_F(CoreRFIDKitTest, getTagDataFailedOnWrongSetProtocol)
-{
-	EXPECT_CALL(mockCR95HF, receiveCallback).WillOnce(Return(true));
-	EXPECT_CALL(mockCR95HF, setup).WillOnce(Return(false));
-
-	auto is_initialized = coreRfid.getTagData(actual_values);
-	ASSERT_EQ(is_initialized, false);
-}
-
-TEST_F(CoreRFIDKitTest, getTagDataFailedOnWrongATQA)
-{
-	EXPECT_CALL(mockCR95HF, receiveCallback).WillOnce(Return(true));
-	EXPECT_CALL(mockCR95HF, setup).WillOnce(Return(true));
-
-	EXPECT_CALL(mockCR95HF, send(compareSpan(REQA_span))).Times(1);
-
-	ATQA = {0xFF, 0xFF};
-	receive(ATQA);
-
-	auto is_initialized = coreRfid.getTagData(actual_values);
-	ASSERT_EQ(is_initialized, false);
-}
-
-TEST_F(CoreRFIDKitTest, getTagDataFailedOnWrongCRC)
-{
-	{
-		InSequence seq;
-
-		EXPECT_CALL(mockCR95HF, receiveCallback).WillOnce(Return(true));
-		EXPECT_CALL(mockCR95HF, setup).WillOnce(Return(true));
-
-		EXPECT_CALL(mockCR95HF, send(compareSpan(REQA_span))).Times(1);
-
-		receive(ATQA);
-
-		EXPECT_CALL(mockCR95HF, send(compareSpan(read_register_8_span))).Times(1);
-
-		std::array<uint8_t, 18> tagData = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01,
-										   0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0xFF, 0xFF};
-		receive(tagData);
-	}
-
-	auto is_initialized = coreRfid.getTagData(actual_values);
-	ASSERT_EQ(is_initialized, false);
+	ASSERT_EQ(tag.data, expected_values);
 }

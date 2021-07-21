@@ -64,7 +64,7 @@ namespace interface {
 
 		virtual void sendCommandToTag(lstd::span<uint8_t> cmd) = 0;
 
-		virtual auto receiveDataFromTag(lstd::span<uint8_t> data) -> bool = 0;
+		virtual auto receiveDataFromTag(lstd::span<uint8_t> *data) -> size_t = 0;
 
 		virtual void setModeTagDetection() = 0;
 
@@ -73,11 +73,11 @@ namespace interface {
 		class ISO14443
 		{
 		  public:
-			virtual void setInterrupt(void func()) = 0;
+			virtual void init() = 0;
 
-			virtual void setReaderForTagDetection() = 0;
+			virtual void getTagData() = 0;
 
-			virtual auto getTagData(std::array<uint8_t, 16> &tag_data) -> bool = 0;
+			virtual auto getTag() -> rfid::Tag = 0;
 
 			template <size_t SIZE>
 			struct Command {
@@ -97,7 +97,7 @@ namespace interface {
 				}
 			};
 
-		  private:
+		  protected:
 			Command<1> command_requestA		   = {.data = {0x26}, .flags = leka::rfid::Flag::sb_7};
 			Command<2> command_read_register_8 = {.data	 = {0x30, 0x08},
 												  .flags = leka::rfid::Flag::crc | leka::rfid::Flag::sb_8};
