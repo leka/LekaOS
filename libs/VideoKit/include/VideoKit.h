@@ -38,7 +38,8 @@ class VideoKit
 	void draw(gfx::Drawable &drawable);
 
 	void drawRectangle(uint32_t x, uint32_t y, uint32_t w, uint32_t h, gfx::Color color);
-	void drawText(const char *text, uint32_t column, uint32_t line, gfx::Color color=gfx::Color::Black, gfx::Color bg_color=gfx::Color::White);
+
+	void drawText(const char *text, uint32_t x, uint32_t y, gfx::Color color, gfx::Color bg = gfx::Color::Transparent);
 
 	void display();
 

@@ -106,16 +106,6 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(2s);
 
 	screen.draw(image2);
-
-	auto ca = Font::getCharAddress('!');
-	for (int j = 0; j < 24; ++j) {
-		for (int i = 0; i < 17; ++i) {
-			printf("%d", Font::isPixelOn(ca, i, j));
-		}
-		printf("\n\r");
-	}
-
-	screen.drawText("Text of size 15", 0, 0);
 	screen.display();
 	rtos::ThisThread::sleep_for(2s);
 
@@ -146,6 +136,7 @@ auto main() -> int
 			int w = video_birds.getProgress() * lcd::dimension.width;
 
 			screen.drawRectangle(0, 460, 800, 20, {250, 190, 230});
+			screen.drawText("#Bonjour je suis Leka~0123456789", 50, 50, {140, 200, 200});
 			screen.drawRectangle(0, 460, w, 20, {185, 20, 230});
 
 			screen.display();
