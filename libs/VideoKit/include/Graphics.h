@@ -57,6 +57,21 @@ class Rectangle : public Drawable
 	void draw(VideoKit &screen) final;
 };
 
+class Text : public Drawable
+{
+  public:
+	Text(const char *string, uint32_t x, uint32_t y, Color color, Color bg = Color::Transparent);
+
+	const char *string;
+	uint32_t x;
+	uint32_t y;
+	Color color;
+	Color bg;
+
+  private:
+	void draw(VideoKit &screen) final;
+};
+
 class Image : public Drawable
 {
   public:

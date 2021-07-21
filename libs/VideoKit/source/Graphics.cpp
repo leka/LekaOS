@@ -35,7 +35,19 @@ void Rectangle::draw(VideoKit &screen)
 	screen.drawRectangle(x, y, width, height, color);
 }
 
-// --- gfx::Image -------------------------------------
+// --- gfx::Text ----------------------------------------
+
+Text::Text(const char *text, uint32_t posx, uint32_t posy, Color col, Color bg_col = Color::Transparent)
+	: string(std::move(text)), x(posx), y(posy), color(std::move(col)), bg(std::move(bg_col))
+{
+}
+
+void Text::draw(VideoKit &screen)
+{
+	screen.drawText(string, x, y, color, bg);
+}
+
+// --- gfx::Image ---------------------------------------
 Image::Image(const char *path)
 {
 	_file.open(path);
