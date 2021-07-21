@@ -3,6 +3,8 @@
 
 #include <cstdint>
 
+#include "rtos/Kernel.h"
+
 #include "CoreJPEG.h"
 #include "LKCoreFatFs.h"
 
@@ -91,7 +93,9 @@ class Video : public Drawable
 
 	void nextFrame();
 
+	auto getTime() -> int64_t;
 	auto getProgress() -> float;
+
 	auto hasEnded() -> bool;
 	void restart();
 
@@ -103,6 +107,8 @@ class Video : public Drawable
 
 	uint32_t _frame_index  = 0;
 	uint32_t _frame_offset = 0;
+
+	rtos::Kernel::Clock::time_point _start_time;
 
 	bool _ended = false;
 };
