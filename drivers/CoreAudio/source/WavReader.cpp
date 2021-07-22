@@ -3,6 +3,7 @@
 namespace leka {
 auto WavReader::loadSector(WavFile *wavfile, uint16_t *buffer, uint16_t sectorSize) -> bool
 {
+	// TODO(samhadjes) handle less samples read (e.g. writing 0 on rest of buffer)
 	bool eof = false;
 	if (_readSector(wavfile, buffer, sectorSize) != sectorSize) {
 		eof = true;

@@ -22,14 +22,12 @@ void CoreDACTimer::initialize(float frequency)
 	_registerMspCallbacks();
 
 	_hal.HAL_TIM_Base_Init(&_htim);	  // TODO : handle errors if necessary
-	printf("Call to HAL_TIM_init passed\n");
 
 	TIM_MasterConfigTypeDef sMasterConfig = {0};
 
 	sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;				  // trigger used for DAC
 	sMasterConfig.MasterSlaveMode	  = TIM_MASTERSLAVEMODE_DISABLE;	  // TODO verify utility of this parameter
 	_hal.HAL_TIMEx_MasterConfigSynchronization(&_htim, &sMasterConfig);	  // TODO : handle errors if necessary
-	printf("Call to HAL_TIMx_Masterblabla passed\n");
 }
 
 void CoreDACTimer::start()
