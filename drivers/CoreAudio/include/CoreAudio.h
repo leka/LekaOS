@@ -7,6 +7,10 @@
 
 #include <cmath>
 
+#include "events/EventQueue.h"
+#include "platform/mbed_wait_api.h"
+#include "rtos/Thread.h"
+
 #include "CoreDAC.h"
 #include "CoreDACTimer.h"
 #include "LKCoreFatFs.h"
@@ -18,8 +22,17 @@ namespace leka {
 
 class CoreAudio
 {
+  private:
+	enum EndOfFileState
+	{
+		NotFinished,
+		LastBuffer,
+		Finished
+	};
+
   public:
-	CoreAudio(LKCoreSTM32HalBase &hal, interface::Dac &dac, interface::DacTimer &timer);
+	CoreAudio(LKCoreSTM32HalBase &hal, interface::Dac &dac, interface::DacTimer &timer, rtos::Thread &thread,
+			  events::EventQueue &eventQueue);
 	void playFile(FIL *file);
 	void pause();
 	void resume();
@@ -30,22 +43,30 @@ class CoreAudio
 							   uint16_t maxValue = 0xFFFF, uint16_t minValue = 0x0);
 	void fillBufferWithSquare(uint16_t *buffer, uint32_t bufferSize, uint16_t maxValue, uint16_t minValue);
 
+	bool playing;
+
   private:
 	static uint16_t _waveBuffer[512];
+	// static CoreAudio *_self;
 
 	LKCoreSTM32HalBase &_hal;
 	interface::Dac &_coreDac;
 	interface::DacTimer &_coreTimer;
 
-	float _volume;
+	static WavFile *_wavFile;
 
-	bool _playing;
+	rtos::Thread &_thread;
+	static events::EventQueue *_eventQueue;
+
+	float _volume;
+	static EndOfFileState _eofFlag;
 
 	void _initialize(float frequency);
 	void _align12bR(uint16_t *buffer, uint16_t length);
 	void _scaleToVolume(uint16_t *buffer, uint16_t length);
 	void _halfCptCallback();
 	void _cptCallback();
+	void _handleCallback(uint16_t *buffer);
 };
 
 }	// namespace leka

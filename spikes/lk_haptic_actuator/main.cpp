@@ -5,6 +5,9 @@
 #include "mbed.h"
 #include <string>
 
+#include "events/EventQueue.h"
+#include "rtos/Thread.h"
+
 #include "CoreAudio.h"
 #include "FATFileSystem.h"
 #include "FileManager.h"
@@ -18,13 +21,18 @@ leka::FileManager sd_card;
 mbed::DigitalOut audio_enable(SOUND_ENABLE, 1);
 static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 
+rtos::Thread audioThread;
+events::EventQueue audioEventQueue;
+
 LKCoreSTM32Hal hal;
 CoreDACTimer coreDACTimer(hal);
 CoreDAC coreDAC(hal);
-CoreAudio coreAudio(hal, coreDAC, coreDACTimer);
+CoreAudio coreAudio(hal, coreDAC, coreDACTimer, audioThread, audioEventQueue);
 
 // Initialise the digital pin LED1 as an output
 mbed::DigitalOut led(LED1);
+
+FIL file;
 
 /**
  * @brief This function handles DMA1 stream5 global interrupt.
@@ -41,7 +49,6 @@ auto main() -> int
 	led.write(0);
 	printf("\n\nHello, on a mis autre chose!\n\n");
 
-	FIL file;
 	std::string filename = "test-voix.wav";	  // sawtooth10_44ksamp_mono_5sec.wav
 
 	while (true) {
@@ -53,6 +60,14 @@ auto main() -> int
 		} else {
 			printf("Could not open file\n");
 		}
+		int i = 0;
+		printf("playing : %d\n", static_cast<int>(coreAudio.playing));
+		while (coreAudio.playing) {
+			// printf("waiting\n");
+			// rtos::ThisThread::sleep_for(50ms);
+			i++;
+		}
+		printf("playing should be zero : %d\n", static_cast<int>(coreAudio.playing));
 
 		f_close(&file);
 
@@ -64,6 +79,10 @@ auto main() -> int
 			coreAudio.playFile(&file);
 		} else {
 			printf("Could not open file\n");
+		}
+
+		while (coreAudio.playing) {
+			rtos::ThisThread::sleep_for(50ms);
 		}
 
 		f_close(&file);
