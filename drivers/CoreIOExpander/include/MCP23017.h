@@ -35,15 +35,24 @@ class MCP23017
 	// };
 	enum Pin
 	{
-		Pin_GP0 = 0x01,
-		Pin_GP1 = 0x02,
-		Pin_GP2 = 0x04,
-		Pin_GP3 = 0x08,
-		Pin_GP4 = 0x10,
-		Pin_GP5 = 0x20,
-		Pin_GP6 = 0x40,
-		Pin_GP7 = 0x80,
-		Pin_All = 0xFF
+		Pin_PA0 = 0x0001,
+		Pin_PA1 = 0x0002,
+		Pin_PA2 = 0x0004,
+		Pin_PA3 = 0x0008,
+		Pin_PA4 = 0x0010,
+		Pin_PA5 = 0x0020,
+		Pin_PA6 = 0x0040,
+		Pin_PA7 = 0x0080,
+
+		Pin_PB0 = 0x0100,
+		Pin_PB1 = 0x0200,
+		Pin_PB2 = 0x0400,
+		Pin_PB3 = 0x0800,
+		Pin_PB4 = 0x1000,
+		Pin_PB5 = 0x2000,
+		Pin_PB6 = 0x4000,
+		Pin_PB7 = 0x8000,
+		Pin_All = 0xFFFF
 	};
 
   protected:
