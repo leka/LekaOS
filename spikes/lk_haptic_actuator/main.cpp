@@ -29,11 +29,6 @@ CoreDACTimer coreDACTimer(hal);
 CoreDAC coreDAC(hal);
 CoreAudio coreAudio(hal, coreDAC, coreDACTimer, audioThread, audioEventQueue);
 
-// Initialise the digital pin LED1 as an output
-mbed::DigitalOut led(LED1);
-
-FIL file;
-
 /**
  * @brief This function handles DMA1 stream5 global interrupt.
  */
@@ -46,9 +41,9 @@ void DMA1_Stream5_IRQHandler()
 
 auto main() -> int
 {
-	led.write(0);
-	printf("\n\nHello, on a mis autre chose!\n\n");
+	printf("\n\nHello, investigation day!\n\n");
 
+	FIL file;
 	std::string filename = "test-voix.wav";	  // sawtooth10_44ksamp_mono_5sec.wav
 
 	while (true) {
@@ -60,14 +55,10 @@ auto main() -> int
 		} else {
 			printf("Could not open file\n");
 		}
-		int i = 0;
-		printf("playing : %d\n", static_cast<int>(coreAudio.playing));
+
 		while (coreAudio.playing) {
-			// printf("waiting\n");
-			// rtos::ThisThread::sleep_for(50ms);
-			i++;
+			rtos::ThisThread::sleep_for(50ms);
 		}
-		printf("playing should be zero : %d\n", static_cast<int>(coreAudio.playing));
 
 		f_close(&file);
 
