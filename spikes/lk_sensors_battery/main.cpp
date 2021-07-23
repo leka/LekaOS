@@ -11,10 +11,11 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
+#include "CoreBattery.h"
 #include "CoreMotor.h"
+#include "CorePwm.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
-#include "LKCoreBattery.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 #include "Utils.h"
@@ -38,12 +39,12 @@ auto main() -> int
 	HelloWorld hello;
 	hello.start();
 
-	auto battery = LKCoreBattery {PinName::BATTERY_VOLTAGE};
+	auto battery = CoreBattery {PinName::BATTERY_VOLTAGE};
 
 	auto battery_thread = rtos::Thread {};
 	auto battery_lambda = [&battery] {
 		auto now	 = [] { return static_cast<int>(rtos::Kernel::Clock::now().time_since_epoch().count()); };
-		auto voltage = [&] { return battery.readVoltage(); };
+		auto voltage = [&] { return battery.getVoltage(); };
 
 		auto buffer = std::array<char, 64> {};
 
@@ -54,8 +55,16 @@ auto main() -> int
 		}
 	};
 
-	auto motor_right = CoreMotor {MOTOR_RIGHT_DIRECTION_1, MOTOR_RIGHT_DIRECTION_2, MOTOR_RIGHT_PWM};
-	auto motor_left	 = CoreMotor {MOTOR_LEFT_DIRECTION_1, MOTOR_LEFT_DIRECTION_2, MOTOR_LEFT_PWM};
+	auto motor_left_dir_1 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
+	auto morot_left_dir_2 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
+	auto morot_left_speed = CorePwm {MOTOR_LEFT_PWM};
+
+	auto motor_right_dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
+	auto morot_right_dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
+	auto morot_right_speed = CorePwm {MOTOR_RIGHT_PWM};
+
+	auto motor_left	 = CoreMotor {motor_left_dir_1, morot_left_dir_2, morot_left_speed};
+	auto motor_right = CoreMotor {motor_right_dir_1, morot_right_dir_2, morot_right_speed};
 
 	auto motors_thread = rtos::Thread {};
 	auto motors_lambda = [&motor_left, &motor_right] {

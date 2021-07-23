@@ -11,16 +11,14 @@ using namespace leka;
 
 TEST(CorePwmTest, initialisation)
 {
-	auto pwm	 = mbed::PwmOut {NC};
-	auto corepwm = CorePwm {pwm};
+	auto corepwm = CorePwm {NC};
 
 	ASSERT_NE(&corepwm, nullptr);
 }
 
 TEST(CorePwmTest, write)
 {
-	auto pwm	 = mbed::PwmOut {NC};
-	auto corepwm = CorePwm {pwm};
+	auto corepwm = CorePwm {NC};
 
 	corepwm.write(0.5f);
 
@@ -33,8 +31,7 @@ TEST(CorePwmTest, write)
 
 TEST(CorePwmTest, read)
 {
-	auto pwm	 = mbed::PwmOut {NC};
-	auto corepwm = CorePwm {pwm};
+	auto corepwm = CorePwm {NC};
 
 	corepwm.write(0.5f);
 

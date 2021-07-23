@@ -25,32 +25,22 @@ void CoreMotor::stop()
 	setSpeed(0);
 }
 
-auto CoreMotor::getStatus() const -> CoreMotor::Status
-{
-	return _status;
-}
-
 void CoreMotor::setDirections(int dir_1, int dir_2)
 {
 	_dir_1.write(dir_1);
-	_status.dir_1 = dir_1;
-
 	_dir_2.write(dir_2);
-	_status.dir_2 = dir_2;
 }
 
 void CoreMotor::setSpeed(float speed)
 {
-	if (speed < 0.0f) {
+	if (speed < 0.0F) {
 		_speed.write(0);
-		_status.speed = 0;
 
-	} else if (speed > 1.0f) {
-		_speed.write(1.0f);
-		_status.speed = 1.0f;
+	} else if (speed > 1.0F) {
+		_speed.write(1.0F);
+
 	} else {
 		_speed.write(speed);
-		_status.speed = speed;
 	}
 }
 

@@ -50,6 +50,7 @@ add_compile_options(
 # Before all, set ROOT_DIR, MBED_OS_DIR
 set(ROOT_DIR    ${CMAKE_CURRENT_LIST_DIR})
 set(MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
+set(MCUBOOT_DIR ${ROOT_DIR}/extern/mcuboot/boot)
 
 # Bootloader option
 option(ENABLE_BOOTLOADER "Build LekaOS with bootloader" OFF)
@@ -112,6 +113,9 @@ link_libraries(
 	CircularBuffer
 	CriticalSection
 )
+
+# Add external libraries
+add_subdirectory(${MCUBOOT_DIR})
 
 # Add drivers & libraries
 add_subdirectory(${DRIVERS_DIR})

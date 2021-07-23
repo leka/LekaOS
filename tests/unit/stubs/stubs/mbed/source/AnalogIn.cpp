@@ -8,32 +8,47 @@ SingletonPtr<PlatformMutex> mbed::AnalogIn::_mutex;
 
 mbed::AnalogIn::AnalogIn(PinName pin, float vref)
 {
-	return;
+	// nothing to do
 }
 
-float mbed::AnalogIn::read()
+void mbed::AnalogIn::set_reference_voltage(float vref)
+{
+	// nothing to do
+}
+
+auto mbed::AnalogIn::read() -> float
 {
 	return leka::spy_AnalogIn_value;
 }
 
-unsigned short mbed::AnalogIn::read_u16()
+auto mbed::AnalogIn::read_voltage() -> float
+{
+	return leka::spy_AnalogIn_voltage_value;
+}
+
+auto mbed::AnalogIn::read_u16() -> unsigned short
 {
 	return static_cast<uint16_t>(leka::spy_AnalogIn_value);
 }
 
 void analogin_free(analogin_t *obj)
 {
-	return;
+	// nothing to do
 }
 
 namespace leka {
 
-float spy_AnalogIn_value = -42.0;
+float spy_AnalogIn_value		 = -42.0;
+float spy_AnalogIn_voltage_value = -42.0;
 
-float spy_AnalogIn_setValue(float value)
+void spy_AnalogIn_setValue(float value)
 {
 	spy_AnalogIn_value = value;
-	return spy_AnalogIn_value;
+}
+
+void spy_AnalogIn_setVoltageValue(float value)
+{
+	spy_AnalogIn_voltage_value = value;
 }
 
 }	// namespace leka

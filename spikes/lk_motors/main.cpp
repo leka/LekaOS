@@ -5,13 +5,14 @@
 #include "PinNames.h"
 
 #include "drivers/BufferedSerial.h"
+#include "drivers/DigitalOut.h"
 #include "drivers/PwmOut.h"
 #include "platform/Callback.h"
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
 #include "CoreMotor.h"
-#include "CoreMotorBase.h"
+#include "CorePwm.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
 
@@ -20,14 +21,14 @@ using namespace std::chrono;
 
 void spinLeft(CoreMotorBase &left, CoreMotorBase &right)
 {
-	left.spin(Rotation::clockwise, 0.5f);
-	right.spin(Rotation::clockwise, 0.5f);
+	left.spin(Rotation::clockwise, 0.5F);
+	right.spin(Rotation::clockwise, 0.5F);
 }
 
 void spinRight(CoreMotorBase &left, CoreMotorBase &right)
 {
-	left.spin(Rotation::counterClockwise, 0.5f);
-	right.spin(Rotation::counterClockwise, 0.5f);
+	left.spin(Rotation::counterClockwise, 0.5F);
+	right.spin(Rotation::counterClockwise, 0.5F);
 }
 
 void stop(CoreMotorBase &left, CoreMotorBase &right)
@@ -50,8 +51,16 @@ auto main() -> int
 	HelloWorld hello;
 	hello.start();
 
-	CoreMotor motor_right(MOTOR_RIGHT_DIRECTION_1, MOTOR_RIGHT_DIRECTION_2, MOTOR_RIGHT_PWM);
-	CoreMotor motor_left(MOTOR_LEFT_DIRECTION_1, MOTOR_LEFT_DIRECTION_2, MOTOR_LEFT_PWM);
+	auto motor_left_dir_1 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
+	auto motor_left_dir_2 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
+	auto motor_left_speed = CorePwm {MOTOR_LEFT_PWM};
+
+	auto motor_right_dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
+	auto motor_right_dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
+	auto motor_right_speed = CorePwm {MOTOR_RIGHT_PWM};
+
+	auto motor_left	 = CoreMotor {motor_left_dir_1, motor_left_dir_2, motor_left_speed};
+	auto motor_right = CoreMotor {motor_right_dir_1, motor_right_dir_2, motor_right_speed};
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
