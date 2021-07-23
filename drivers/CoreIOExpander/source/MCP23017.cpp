@@ -70,3 +70,10 @@ void MCP23017::setInputPin(uint8_t pins)
 
 	writeRegister(mcp23017::registers::IODIR, value | pins);
 }
+
+void MCP23017::setOutputPin(uint8_t pins)
+{
+	auto value = readRegister(mcp23017::registers::IODIR);
+
+	writeRegister(mcp23017::registers::IODIR, value & ~pins);
+}

@@ -237,7 +237,7 @@ class MCP23017
 	 *
 	 * @param pins A bitmask of pins to set to output mode.
 	 */
-	// void set_output_pins(uint8_t pins);
+	void setOutputPin(uint8_t pins);
 
 	/** Write to the output pins.
 	 *
