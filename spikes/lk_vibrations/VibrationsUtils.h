@@ -43,4 +43,15 @@ void fillEnvelop(uint16_t *buffer, uint32_t bufferSize, uint16_t envelopMaxVal);
 void playPattern(uint16_t *buffer, uint32_t bufferSize, EnvelopType eType, uint16_t numTimes, CoreDACTimer &dtimer,
 				 CoreDAC &dac);
 
+void halfBufferCallback(DAC_HandleTypeDef *hdac);
+void cptBufferCallback(DAC_HandleTypeDef *hdac);
+
+auto createSinWavePeriod(uint16_t *sinBuffer, uint32_t samplesPerPeriod) -> uint32_t;
+
+void playVib(uint16_t);
+
+extern int32_t _endOfVibCounter;
+extern uint32_t _samplesPerPeriod;
+extern bool _vibrationFinished;
+
 #endif	 // _LEKA_OS_SPIKE_VIBRATION_UTILS_H_

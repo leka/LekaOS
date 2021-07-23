@@ -4,6 +4,7 @@
 
 #include "drivers/BufferedSerial.h"
 
+#include "CoreAudio.h"
 #include "HelloWorld.h"
 #include "LKCoreSTM32Hal.h"
 #include "VibrationsUtils.h"
@@ -21,6 +22,9 @@ LKCoreSTM32Hal hal;
 CoreDACTimer coreDACTimer(hal);
 CoreDAC coreDAC(hal);
 
+rtos::Thread vibrationsThread;
+events::EventQueue vibrationsEventQueue;
+
 /**
  * @brief This function handles DMA1 stream5 global interrupt.
  */
@@ -35,43 +39,67 @@ auto main() -> int
 {
 	printf("\n\nStarting vibration process, hold your kids\n\n\n");
 
+	coreDAC.setCptCallbackPtr(&cptBufferCallback);
+	coreDAC.setHalfCptCallbackPtr(&halfBufferCallback);
+
 	coreDACTimer.initialize(SAMPLING_RATE);
 	coreDAC.initialize();
 
-	// fillBufferWithEnvelop(_outBuffer.data(), OUT_BUFF_SIZE, Buzz, 0xFFFF);
-	// fillEnvelop(_outBuffer.data(), OUT_BUFF_SIZE, 0xFFFF);
+	float lengthInSecs = 4;
+	uint16_t length	   = lengthInSecs * SAMPLING_RATE;
+	uint32_t freq	   = 60;
+	float amplitude	   = 1.f;
+	bool smoothTransi  = false;
 
-	// coreDAC.start(_outBuffer.data(), OUT_BUFF_SIZE);
-	// coreDACTimer.start();
+	// std::vector<uint16_t> sinPeriod(SAMPLING_RATE / freq);
+	// // sinPeriod.reserve(SAMPLING_RATE / freq);
+	// fillBufferWithSinWave(sinPeriod.data(), sinPeriod.size(), freq);
+	uint32_t samplesPerPeriod = SAMPLING_RATE / freq;
+	uint16_t *sinPeriod		  = new uint16_t[samplesPerPeriod];
 
-	// int count = 0;
-	// printf("Start of loop\n");
-	// while (count < 20) {
-	// 	if (coreDAC.dmaFlag() == CoreDAC::Cpt) {
-	// 		count++;
-	// 		coreDACTimer.stop();
-	// 		wait_us(500000);
-	// 		coreDACTimer.start();
-	// 		printf("count : %d\n", count);
-	// 		coreDAC.dmaFlag() = CoreDAC::None;
-	// 	}
+	// init globals
+
+	_samplesPerPeriod  = samplesPerPeriod;
+	_vibrationFinished = false;
+	_endOfVibCounter   = length;
+
+	createSinWavePeriod(sinPeriod, samplesPerPeriod);
+	// printf("out of function\n");
+	// for (uint32_t i = 0; i < samplesPerPeriod; ++i) {
+	// 	printf("%d\n", sinPeriod[i]);
 	// }
-	// printf("End of loop\n");
-	// coreDACTimer.stop();
-	// coreDAC.stop();
 
-	std::array<EnvelopType, 4> types = {Window, Sawtooth, Triangular, Buzz};
-	int numTimes					 = 10;
-	for (auto t: types) {
-		playPattern(_outBuffer.data(), OUT_BUFF_SIZE / 2, t, numTimes, coreDACTimer, coreDAC);
-		rtos::ThisThread::sleep_for(2s);
+	auto *vibrationBuffer		= new uint16_t[samplesPerPeriod * 2];
+	uint16_t *vibrationBuffer_2 = vibrationBuffer + samplesPerPeriod;
+
+	for (uint32_t i = 0; i < samplesPerPeriod * 2; ++i) {
+		vibrationBuffer[i] = sinPeriod[i % samplesPerPeriod] >> 4;
 	}
-	rtos::ThisThread::sleep_for(4s);
-	for (auto t: types) {
-		playPattern(_outBuffer.data(), OUT_BUFF_SIZE, t, numTimes, coreDACTimer, coreDAC);
-		rtos::ThisThread::sleep_for(2s);
+
+	coreDAC.start(vibrationBuffer, samplesPerPeriod * 2);
+	coreDACTimer.start();
+
+	printf("Vib started\n");
+	while (!_vibrationFinished) {
+		rtos::ThisThread::sleep_for(50ms);
 	}
+	printf("Vib ended\n");
+
+	coreDAC.stop();
+	coreDACTimer.stop();
 
 	coreDACTimer.deInitialize();
 	coreDAC.deInitialize();
 }
+
+// std::array<EnvelopType, 4> types = {Window, Sawtooth, Triangular, Buzz};
+// int numTimes					 = 10;
+// for (auto t: types) {
+// 	playPattern(_outBuffer.data(), OUT_BUFF_SIZE / 2, t, numTimes, coreDACTimer, coreDAC);
+// 	rtos::ThisThread::sleep_for(2s);
+// }
+// rtos::ThisThread::sleep_for(4s);
+// for (auto t: types) {
+// 	playPattern(_outBuffer.data(), OUT_BUFF_SIZE, t, numTimes, coreDACTimer, coreDAC);
+// 	rtos::ThisThread::sleep_for(2s);
+// }

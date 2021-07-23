@@ -3,6 +3,10 @@
 using namespace leka;
 using namespace std::chrono;
 
+int32_t _endOfVibCounter   = 0;
+uint32_t _samplesPerPeriod = 0;
+bool _vibrationFinished	   = false;
+
 void playPattern(uint16_t *buffer, uint32_t bufferSize, EnvelopType eType, uint16_t numTimes, CoreDACTimer &dtimer,
 				 CoreDAC &dac)
 {
@@ -14,33 +18,19 @@ void playPattern(uint16_t *buffer, uint32_t bufferSize, EnvelopType eType, uint1
 
 	int count = 0;
 	// printf("Start of loop\n");
-	while (count < numTimes) {
-		if (dac.dmaFlag() == CoreDAC::Cpt) {
-			dtimer.stop();
-			count++;
-			dac.dmaFlag() = CoreDAC::None;
-			rtos::ThisThread::sleep_for(500ms);
-			dtimer.start();
-			// printf("count : %d\n", count);
-		}
-	}
+	// while (count < numTimes) {
+	// 	if (dac.dmaFlag() == CoreDAC::Cpt) {
+	// 		dtimer.stop();
+	// 		count++;
+	// 		dac.dmaFlag() = CoreDAC::None;
+	// 		rtos::ThisThread::sleep_for(500ms);
+	// 		dtimer.start();
+	// 		// printf("count : %d\n", count);
+	// 	}
+	// }
 	// printf("End of loop\n");
 	dtimer.stop();
 	dac.stop();
-}
-
-// Fill buffer with sin wave at given frequency and sampling rate
-// Values can be limited between maxValue and minValue
-void fillBufferWithSinWave(uint16_t *buffer, uint32_t bufferSize, uint32_t frequency, uint32_t samplingRate,
-						   uint16_t maxValue, uint16_t minValue)
-{
-	uint32_t samplesPerPeriod = (samplingRate / frequency);
-
-	for (uint32_t i = 0; i < bufferSize; ++i) {
-		float tmp = 0.5 * sin(i * 2.0 * M_PI / samplesPerPeriod) + 0.5;
-		tmp *= maxValue - minValue;
-		buffer[i] = tmp + minValue;
-	}
 }
 
 void fillBufferWithEnvelop(uint16_t *buffer, uint32_t bufferSize, EnvelopType eType, uint16_t maxVal)
@@ -95,4 +85,36 @@ void fillEnvelop(uint16_t *buffer, uint32_t bufferSize, uint16_t envelopMaxVal)
 			i++;
 		}
 	}
+}
+
+void halfBufferCallback(DAC_HandleTypeDef *hdac)
+{
+	_endOfVibCounter -= _samplesPerPeriod;
+	if (_endOfVibCounter <= 0) {
+		_vibrationFinished = true;
+	}
+}
+
+void cptBufferCallback(DAC_HandleTypeDef *hdac)
+{
+	_endOfVibCounter -= _samplesPerPeriod;
+	if (_endOfVibCounter <= 0) {
+		_vibrationFinished = true;
+	}
+}
+
+auto createSinWavePeriod(uint16_t *sinBuffer, uint32_t samplesPerPeriod) -> uint32_t
+{
+	// offset and coef to have a positive sinwave of amplitude 1
+	double normalizeCoef   = 0.4;
+	double normalizeOffset = 0.45;
+
+	for (uint32_t i = 0; i < samplesPerPeriod; ++i) {
+		double tmp = normalizeCoef * sin(i * 2.0 * M_PI / samplesPerPeriod) + normalizeOffset;
+
+		sinBuffer[i] = static_cast<uint16_t>(tmp * UINT16_MAX);
+		printf("%d\n", sinBuffer[i]);
+	}
+
+	return samplesPerPeriod;
 }
