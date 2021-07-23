@@ -133,3 +133,33 @@ TEST_F(CoreMCP23017Test, getInputPolarity)
 	auto actual_polarity_values = coreIOExpander.getInputPolarity();
 	ASSERT_EQ(actual_polarity_values, expected_polarity_value);
 }
+
+TEST_F(CoreMCP23017Test, setPullups)
+{
+	uint16_t polarity_value = MCP23017::Pin::Pin_PA0 | MCP23017::Pin::Pin_PB5;
+
+	const auto expected_pin_values =
+		ElementsAre(mcp23017::registers::GPPU, MCP23017::Pin::Pin_PA0, MCP23017::Pin::Pin_PB5 >> 8);
+	EXPECT_CALL(i2cMock, write).With(Args<1, 2>(expected_pin_values));
+
+	coreIOExpander.setPullups(polarity_value);
+}
+
+TEST_F(CoreMCP23017Test, getPullups)
+{
+	uint16_t expected_pullups_value = MCP23017::Pin::Pin_PA0 | MCP23017::Pin::Pin_PB5;
+	coreIOExpander.setPullups(expected_pullups_value);
+
+	{
+		InSequence seq;
+		const auto expected_pin_values = ElementsAre(mcp23017::registers::GPPU);
+		EXPECT_CALL(i2cMock, write).With(Args<1, 2>(expected_pin_values));
+
+		std::array<uint8_t, 2> returned_values = {0x01, 0x20};
+		EXPECT_CALL(i2cMock, read)
+			.WillOnce(DoAll(SetArrayArgument<1>(begin(returned_values), end(returned_values)), Return(0)));
+	}
+
+	auto actual_pullups_values = coreIOExpander.getPullups();
+	ASSERT_EQ(actual_pullups_values, expected_pullups_value);
+}

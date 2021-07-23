@@ -285,12 +285,12 @@ class MCP23017
 	 *
 	 * @param values A bitmask indicating which pull-up resistors should be enabled/disabled.
 	 */
-	void set_pullups(uint8_t values);
+	void setPullups(uint16_t values);
 	/** Get the current state of the internal pull-up resistors.
 	 *
 	 * @returns The current state of the pull-up resistors.
 	 */
-	uint8_t get_pullups();
+	auto getPullups() -> uint16_t;
 
 	/** Generate an interrupt when a pin changes.
 	 *

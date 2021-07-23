@@ -92,3 +92,13 @@ auto MCP23017::getInputPolarity() -> uint16_t
 {
 	return readRegister(mcp23017::registers::IPOL);
 }
+
+void MCP23017::setPullups(uint16_t values)
+{
+	writeRegister(mcp23017::registers::GPPU, values);
+}
+
+auto MCP23017::getPullups() -> uint16_t
+{
+	return readRegister(mcp23017::registers::GPPU);
+}
