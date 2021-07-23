@@ -23,6 +23,33 @@ namespace leka {
  *
  */
 
+namespace mcp23017 {
+
+	namespace registers {
+		constexpr uint8_t IODIR	  = 0x00;
+		constexpr uint8_t IPOL	  = 0x02;
+		constexpr uint8_t GPINTEN = 0x04;
+		constexpr uint8_t DEFVAL  = 0x06;
+		constexpr uint8_t INTCON  = 0x08;
+		constexpr uint8_t IOCON	  = 0x0A;
+		constexpr uint8_t GPPU	  = 0x0C;
+		constexpr uint8_t INTF	  = 0x0E;
+		constexpr uint8_t INTCAP  = 0x10;
+		constexpr uint8_t GPIO	  = 0x12;
+		constexpr uint8_t OLAT	  = 0x14;
+	}	// namespace registers
+
+	// namespace register
+
+	namespace directory {
+
+		constexpr uint8_t DIR_OUTPUT = 0x00;
+		constexpr uint8_t DIR_INPUT	 = 0x01;
+
+	}	// namespace directory
+
+}	// namespace mcp23017
+
 class MCP23017
 {
   public:
@@ -146,7 +173,8 @@ class MCP23017
 	 * value that is physically set via A0, A1, and A2.
 	 * @param freq The I2C frequency. Should probably be 100KHz or 400KHz.
 	 */
-	MCP23017(interface::I2C &i2c);
+
+	MCP23017(interface::I2C &i2c) : _i2c(i2c) {};
 
 	/** Set the registers associated with each port as being separated into different banks or in the same bank
 	 *
@@ -157,6 +185,8 @@ class MCP23017
 	 * @param separated True if registers of each port are separated.
 	 */
 	void set_register_mapping(bool separated);
+
+	void init();
 
 	/**
 	 * Convenience function to create a DigitalIn object for a given pin
@@ -194,7 +224,7 @@ class MCP23017
 	 *
 	 * @param pins A bitmask of pins to set to input mode.
 	 */
-	void set_input_pins(uint8_t pins);
+	void setInputPin(uint8_t pins);
 	/** Set pins to output mode
 	 *
 	 * This function is used to set which pins are outputs (if any). Example:
@@ -299,8 +329,8 @@ class MCP23017
 	void acknowledge_interrupt(uint8_t &pin, uint8_t &values);
 
   protected:
-	uint8_t read_register(uint8_t reg);
-	void write_register(uint8_t reg, uint8_t value);
+	auto readRegister(uint8_t reg) -> uint16_t;
+	void writeRegister(uint8_t reg, uint16_t value);
 
 	void reset();
 
@@ -308,6 +338,10 @@ class MCP23017
 	const uint8_t _I2C_ADDRESS = 0x4E;
 
 	PlatformMutex mutex;
+
+  private:
+	unsigned short shadow_GPIO, shadow_IODIR, shadow_GPPU, shadow_IPOL,
+		shadow_GPINTEN;	  // Cached copies of the register values
 };
 
 }	// namespace leka
