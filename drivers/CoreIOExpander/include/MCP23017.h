@@ -269,7 +269,7 @@ class MCP23017
 	 *
 	 * @param values A bitmask of the input polarity.
 	 */
-	void set_input_polarity(uint8_t values);
+	void setInputPolarity(uint16_t values);
 	/** Read back the current input pin polarity.
 	 *
 	 * This function reads the current state of the input pin polarity.

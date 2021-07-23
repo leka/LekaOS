@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "MCP23017.h"
+#include <cstdint>
 
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreI2C.h"
@@ -101,4 +102,15 @@ TEST_F(CoreMCP23017Test, readInputs)
 
 	auto GPOI_values = coreIOExpander.readInputs();
 	ASSERT_EQ(GPOI_values, 0xff00);
+}
+
+TEST_F(CoreMCP23017Test, setInputPolarity)
+{
+	uint16_t polarity_value = MCP23017::Pin::Pin_PA0 | MCP23017::Pin::Pin_PB5;
+
+	const auto expected_pin_values =
+		ElementsAre(mcp23017::registers::IPOL, MCP23017::Pin::Pin_PA0, MCP23017::Pin::Pin_PB5 >> 8);
+	EXPECT_CALL(i2cMock, write).With(Args<1, 2>(expected_pin_values));
+
+	coreIOExpander.setInputPolarity(polarity_value);
 }
