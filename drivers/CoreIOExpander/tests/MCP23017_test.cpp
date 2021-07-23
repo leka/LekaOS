@@ -114,3 +114,22 @@ TEST_F(CoreMCP23017Test, setInputPolarity)
 
 	coreIOExpander.setInputPolarity(polarity_value);
 }
+
+TEST_F(CoreMCP23017Test, getInputPolarity)
+{
+	uint16_t expected_polarity_value = MCP23017::Pin::Pin_PA0 | MCP23017::Pin::Pin_PB5;
+	coreIOExpander.setInputPolarity(expected_polarity_value);
+
+	{
+		InSequence seq;
+		const auto expected_pin_values = ElementsAre(mcp23017::registers::IPOL);
+		EXPECT_CALL(i2cMock, write).With(Args<1, 2>(expected_pin_values));
+
+		std::array<uint8_t, 2> returned_values = {0x01, 0x20};
+		EXPECT_CALL(i2cMock, read)
+			.WillOnce(DoAll(SetArrayArgument<1>(begin(returned_values), end(returned_values)), Return(0)));
+	}
+
+	auto actual_polarity_values = coreIOExpander.getInputPolarity();
+	ASSERT_EQ(actual_polarity_values, expected_polarity_value);
+}

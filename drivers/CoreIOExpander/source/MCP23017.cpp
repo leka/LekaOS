@@ -87,3 +87,8 @@ void MCP23017::setInputPolarity(uint16_t values)
 {
 	writeRegister(mcp23017::registers::IPOL, values);
 }
+
+auto MCP23017::getInputPolarity() -> uint16_t
+{
+	return readRegister(mcp23017::registers::IPOL);
+}

@@ -276,7 +276,7 @@ class MCP23017
 	 *
 	 * @returns The value from the IPOL register.
 	 */
-	uint8_t get_input_polarity();
+	auto getInputPolarity() -> uint16_t;
 
 	/** Enable and disable the internal pull-up resistors for input pins.
 	 *
