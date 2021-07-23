@@ -77,3 +77,8 @@ void MCP23017::setOutputPin(uint8_t pins)
 
 	writeRegister(mcp23017::registers::IODIR, value & ~pins);
 }
+
+uint16_t MCP23017::readInputs()
+{
+	return readRegister(mcp23017::registers::GPIO);
+}

@@ -260,7 +260,7 @@ class MCP23017
 	 *
 	 * @returns A bitmask of the current state of the input pins.
 	 */
-	uint8_t read_inputs();
+	uint16_t readInputs();
 
 	/** Set the input pin polarity.
 	 *

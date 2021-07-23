@@ -85,3 +85,20 @@ TEST_F(CoreMCP23017Test, setOutputPin)
 
 	coreIOExpander.setOutputPin(MCP23017::Pin::Pin_PA0);
 }
+
+TEST_F(CoreMCP23017Test, readInputs)
+{
+	coreIOExpander.setInputPin(MCP23017::Pin::Pin_PA0);
+	{
+		InSequence seq;
+		const auto expected_pin_values = ElementsAre(mcp23017::registers::GPIO);
+		EXPECT_CALL(i2cMock, write).With(Args<1, 2>(expected_pin_values));
+
+		std::array<uint8_t, 2> returned_values = {0x00, 0xff};
+		EXPECT_CALL(i2cMock, read)
+			.WillOnce(DoAll(SetArrayArgument<1>(begin(returned_values), end(returned_values)), Return(0)));
+	}
+
+	auto GPOI_values = coreIOExpander.readInputs();
+	ASSERT_EQ(GPOI_values, 0xff00);
+}
