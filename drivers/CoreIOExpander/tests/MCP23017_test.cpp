@@ -35,6 +35,14 @@ TEST_F(CoreMCP23017Test, instantiation)
 	ASSERT_NE(&coreIOExpander, nullptr);
 }
 
+TEST_F(CoreMCP23017Test, setRegisterMapping)
+{
+	const auto expected_IODIR_values = ElementsAre(mcp23017::registers::IOCON, 0x00, 0x00);
+	EXPECT_CALL(i2cMock, write).With(Args<1, 2>(expected_IODIR_values));
+
+	coreIOExpander.setRegisterMapping();
+}
+
 TEST_F(CoreMCP23017Test, reset)
 {
 	{
@@ -54,8 +62,8 @@ TEST_F(CoreMCP23017Test, setInputPin)
 {
 	{
 		InSequence seq;
-		const auto expected_pin_values = ElementsAre(mcp23017::registers::IODIR);
-		EXPECT_CALL(i2cMock, write).With(Args<1, 2>(expected_pin_values));
+		const auto expected_register = ElementsAre(mcp23017::registers::IODIR);
+		EXPECT_CALL(i2cMock, write).With(Args<1, 2>(expected_register));
 
 		std::array<uint8_t, 2> returned_values = {0x00, 0x0A};
 		EXPECT_CALL(i2cMock, read)
@@ -73,8 +81,8 @@ TEST_F(CoreMCP23017Test, setOutputPin)
 	coreIOExpander.setInputPin(MCP23017::Pin::Pin_PA0);
 	{
 		InSequence seq;
-		const auto expected_pin_values = ElementsAre(mcp23017::registers::IODIR);
-		EXPECT_CALL(i2cMock, write).With(Args<1, 2>(expected_pin_values));
+		const auto expected_register = ElementsAre(mcp23017::registers::IODIR);
+		EXPECT_CALL(i2cMock, write).With(Args<1, 2>(expected_register));
 
 		std::array<uint8_t, 2> returned_values = {0x01, 0x0A};
 		EXPECT_CALL(i2cMock, read)
@@ -92,8 +100,8 @@ TEST_F(CoreMCP23017Test, readInputs)
 	coreIOExpander.setInputPin(MCP23017::Pin::Pin_PA0);
 	{
 		InSequence seq;
-		const auto expected_pin_values = ElementsAre(mcp23017::registers::GPIO);
-		EXPECT_CALL(i2cMock, write).With(Args<1, 2>(expected_pin_values));
+		const auto expected_register = ElementsAre(mcp23017::registers::GPIO);
+		EXPECT_CALL(i2cMock, write).With(Args<1, 2>(expected_register));
 
 		std::array<uint8_t, 2> returned_values = {0x00, 0xff};
 		EXPECT_CALL(i2cMock, read)

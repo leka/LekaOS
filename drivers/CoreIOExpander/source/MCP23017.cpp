@@ -13,6 +13,11 @@ void MCP23017::init()
 	reset();
 }
 
+void MCP23017::setRegisterMapping(bool separated)
+{
+	writeRegister(mcp23017::registers::IOCON, static_cast<uint8_t>(separated));
+}
+
 void MCP23017::reset()
 {
 	//
@@ -47,6 +52,7 @@ void MCP23017::writeRegister(uint8_t reg, uint16_t value)
 	buffer[1] = (0x00FF & value);
 	buffer[2] = (0xFF00 & value) >> 8;
 
+	printf("value : %i %i %i\n", buffer[0], buffer[1], buffer[2]);
 	_i2c.write(_I2C_ADDRESS, buffer.data(), buffer.size());
 }
 

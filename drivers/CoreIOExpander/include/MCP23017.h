@@ -184,7 +184,7 @@ class MCP23017
 	 *
 	 * @param separated True if registers of each port are separated.
 	 */
-	void set_register_mapping(bool separated);
+	void setRegisterMapping(bool separated = false);
 
 	void init();
 
@@ -311,7 +311,7 @@ class MCP23017
 	 *
 	 * @param pins A bitmask of the pins that may generate an interrupt.
 	 */
-	void interrupt_on_changes(uint8_t pins);
+	void interrupt_on_changes(uint16_t pins);
 	/** Disables interrupts for the specified pins.
 	 *
 	 * @param values A bitmask indicating which interrupts should be disabled.
