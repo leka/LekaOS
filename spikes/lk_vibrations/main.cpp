@@ -3,9 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "drivers/BufferedSerial.h"
-#include "rtos/ThisThread.h"
 
-#include "CoreAudio.h"
 #include "HelloWorld.h"
 #include "LKCoreSTM32Hal.h"
 #include "VibrationsUtils.h"
@@ -22,7 +20,6 @@ auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 LKCoreSTM32Hal hal;
 CoreDACTimer coreDACTimer(hal);
 CoreDAC coreDAC(hal);
-CoreAudio coreAudio(hal, coreDAC, coreDACTimer);
 
 /**
  * @brief This function handles DMA1 stream5 global interrupt.

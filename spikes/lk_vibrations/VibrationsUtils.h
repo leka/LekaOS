@@ -10,7 +10,11 @@
 #define SIN_FREQUENCY	128
 #define OUT_BUFF_SIZE	512
 #define SAMPLING_RATE	2048
+<<<<<<< HEAD
 #define DAC_MAX_VAL		0xAAA
+=======
+#define DAC_MAX_VAL		0x3FF
+>>>>>>> Create vibration patterns and implement them in a test to run on the robot
 
 #include <array>
 #include <cmath>
