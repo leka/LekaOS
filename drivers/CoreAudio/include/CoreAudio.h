@@ -46,20 +46,19 @@ class CoreAudio
 	bool playing;
 
   private:
-	static uint16_t _waveBuffer[512];
-	// static CoreAudio *_self;
-
+	// TODO(samhadjes) : understand why changing size of waveBuffer from 512 to 768 or more allows to use eventQueue
+	static uint16_t _waveBuffer[768];
 	LKCoreSTM32HalBase &_hal;
 	interface::Dac &_coreDac;
 	interface::DacTimer &_coreTimer;
 
-	static WavFile *_wavFile;
+	WavFile *_wavFile;
 
 	rtos::Thread &_thread;
-	static events::EventQueue *_eventQueue;
+	events::EventQueue &_eventQueue;
 
 	float _volume;
-	static EndOfFileState _eofFlag;
+	EndOfFileState _eofFlag;
 
 	void _initialize(float frequency);
 	void _align12bR(uint16_t *buffer, uint16_t length);
@@ -67,6 +66,7 @@ class CoreAudio
 	void _halfCptCallback();
 	void _cptCallback();
 	void _handleCallback(uint16_t *buffer);
+	void _handleNextSector(uint16_t *buffer);
 };
 
 }	// namespace leka

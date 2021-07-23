@@ -8,11 +8,7 @@
 
 namespace leka {
 
-uint16_t CoreAudio::_waveBuffer[512];
-// CoreAudio *CoreAudio::_self					  = nullptr;
-events::EventQueue *CoreAudio::_eventQueue	  = nullptr;
-CoreAudio::EndOfFileState CoreAudio::_eofFlag = NotFinished;
-WavFile *CoreAudio::_wavFile				  = nullptr;
+uint16_t CoreAudio::_waveBuffer[768];
 
 CoreAudio::CoreAudio(LKCoreSTM32HalBase &hal, interface::Dac &dac, interface::DacTimer &timer, rtos::Thread &thread,
 					 events::EventQueue &eventQueue)
@@ -21,14 +17,11 @@ CoreAudio::CoreAudio(LKCoreSTM32HalBase &hal, interface::Dac &dac, interface::Da
 	  _coreDac(dac),
 	  _coreTimer(timer),
 	  _thread(thread),
-	  //_eventQueue(eventQueue),
-	  _volume(100)
-//_eofFlag(EndOfFileState::NotFinished)
+	  _eventQueue(eventQueue),
+	  _volume(100),
+	  _eofFlag(EndOfFileState::NotFinished)
 {
-	//_self		= this;
-	_eventQueue = &eventQueue;
-	_thread.start({_eventQueue, &events::EventQueue::dispatch_forever});
-	// printf("CoreAudio constructed\n");
+	_thread.start({&_eventQueue, &events::EventQueue::dispatch_forever});
 }
 
 void CoreAudio::playFile(FIL *file)
@@ -36,50 +29,15 @@ void CoreAudio::playFile(FIL *file)
 	playing					= true;
 	_eofFlag				= NotFinished;
 	_wavFile				= new WavFile(file);
-	uint16_t *_waveBuffer_2 = _waveBuffer + 256;
+	uint16_t *_waveBuffer_2 = &_waveBuffer[256];
 
-	// fillBufferWithSinWave(_waveBuffer, 512, 220 , 44100, 0xFFF, 0);
-	// fillBufferWithSquare(_waveBuffer, 512, uint16_t maxValue, uint16_t minValue)
+	_initialize(_wavFile->header().SamplingRate);
 
-	_initialize(CoreAudio::_wavFile->header().SamplingRate);
-	printf("This :  : %p\n", this);
-	WavReader::loadSector(CoreAudio::_wavFile, _waveBuffer, 512);
-	_scaleToVolume(_waveBuffer, 256);
-	_align12bR(_waveBuffer, 256);
-	// bool eof = false;
-	bool eof = WavReader::loadSector(CoreAudio::_wavFile, _waveBuffer_2, 512);
-	_scaleToVolume(_waveBuffer_2, 256);
-	_align12bR(_waveBuffer_2, 256);
-	if (eof) {
-		_eofFlag = LastBuffer;
-	}
-	// printf("about to start \n");
+	_handleNextSector(_waveBuffer);
+	_handleNextSector(_waveBuffer_2);
+
 	_coreTimer.start();
 	_coreDac.start(_waveBuffer, 512);
-	// printf("has started \n");
-
-	// while (!eof) {
-	// 	TODO update method
-	// 	if (_coreDac.dmaFlag() == CoreDAC::Half_cpt) {
-	// 		eof = WavReader::loadSector(&wavFile, _waveBuffer, 512);
-	// 		_scaleToVolume(_waveBuffer, 256);
-	// 		_align12bR(_waveBuffer, 256);
-	// 		_coreDac.dmaFlag() = CoreDAC::None;
-	// 		// printf("half DMA\n");
-	// 	}
-
-	// 	if (_coreDac.dmaFlag() == CoreDAC::Cpt) {
-	// 		if (!eof) {
-	// 			eof = WavReader::loadSector(&wavFile, _waveBuffer_2, 512);
-	// 			_scaleToVolume(_waveBuffer_2, 256);
-	// 			_align12bR(_waveBuffer_2, 256);
-	// 		}
-	// 		_coreDac.dmaFlag() = CoreDAC::None;
-	// 		// printf("cpt DMA\n");
-	// 	}
-	// }
-
-	// stop();
 }
 
 void CoreAudio::pause()
@@ -94,7 +52,6 @@ void CoreAudio::resume()
 
 void CoreAudio::stop()
 {
-	printf("Stopping all\n");
 	_coreTimer.stop();
 	_coreDac.stop();
 	playing = false;
@@ -123,9 +80,7 @@ void CoreAudio::_scaleToVolume(uint16_t *buffer, uint16_t length)
 {
 	for (int i = 0; i < length; ++i) {
 		buffer[i] = static_cast<double>(buffer[i]) * (_volume / 100.F);
-		//*buffer = static_cast<double>(*buffer) /6.F;
 		buffer[i] += 0x7FFF * (1.F - _volume / 100.F);
-		// buffer[i] = buffer[i] / 2;
 	}
 }
 
@@ -155,33 +110,33 @@ void CoreAudio::fillBufferWithSquare(uint16_t *buffer, uint32_t bufferSize, uint
 
 void CoreAudio::_halfCptCallback()
 {
-	_eventQueue->call(this, &CoreAudio::_handleCallback, _waveBuffer);
+	_eventQueue.call(this, &CoreAudio::_handleCallback, _waveBuffer);
 }
 
 void CoreAudio::_cptCallback()
 {
-	_eventQueue->call(this, &CoreAudio::_handleCallback, _waveBuffer + 256);
+	_eventQueue.call(this, &CoreAudio::_handleCallback, &(_waveBuffer[256]));
 }
 
 void CoreAudio::_handleCallback(uint16_t *buffer)
 {
-	buffer == _waveBuffer ? printf("Callback half complete handled\n") : printf("Callback complete handled\n");
-
 	if (_eofFlag == NotFinished) {
-		printf("case NotFinished\n");
-		bool eof = WavReader::loadSector(_wavFile, buffer, 512);
-		_scaleToVolume(buffer, 256);
-		_align12bR(buffer, 256);
-		if (eof) {
-			_eofFlag = LastBuffer;
-		}
+		_handleNextSector(buffer);
 	} else if (_eofFlag == LastBuffer) {
-		printf("case LastBuffer\n");
 		_eofFlag = Finished;
 
 	} else if (_eofFlag == Finished) {
-		printf("case Finished\n");
 		stop();
+	}
+}
+
+void CoreAudio::_handleNextSector(uint16_t *buffer)
+{
+	bool eof = WavReader::loadSector(_wavFile, buffer, 512);
+	_scaleToVolume(buffer, 256);
+	_align12bR(buffer, 256);
+	if (eof) {
+		_eofFlag = LastBuffer;
 	}
 }
 }	// namespace leka
