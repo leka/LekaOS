@@ -8,7 +8,7 @@
 
 namespace leka {
 
-uint16_t CoreAudio::_waveBuffer[768];
+uint16_t CoreAudio::_waveBuffer[512];
 
 CoreAudio::CoreAudio(LKCoreSTM32HalBase &hal, interface::Dac &dac, interface::DacTimer &timer, rtos::Thread &thread,
 					 events::EventQueue &eventQueue)

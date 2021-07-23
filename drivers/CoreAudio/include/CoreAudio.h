@@ -47,7 +47,7 @@ class CoreAudio
 
   private:
 	// TODO(samhadjes) : understand why changing size of waveBuffer from 512 to 768 or more allows to use eventQueue
-	static uint16_t _waveBuffer[768];
+	static uint16_t _waveBuffer[512];
 	LKCoreSTM32HalBase &_hal;
 	interface::Dac &_coreDac;
 	interface::DacTimer &_coreTimer;
