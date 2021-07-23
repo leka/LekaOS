@@ -8,7 +8,7 @@ auto WavReader::loadSector(WavFile *wavfile, uint16_t *buffer, uint16_t sectorSi
 	if (_readSector(wavfile, buffer, sectorSize) != sectorSize) {
 		eof = true;
 	}
-	_convertSectorData(buffer, sectorSize);
+	_convertSectorData(buffer, sectorSize / 2);
 
 	return eof;
 }
