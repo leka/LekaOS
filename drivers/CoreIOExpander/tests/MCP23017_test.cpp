@@ -170,3 +170,22 @@ TEST_F(CoreMCP23017Test, getPullups)
 	auto actual_pullups_values = coreIOExpander.getPullups();
 	ASSERT_EQ(actual_pullups_values, expected_pullups_value);
 }
+
+TEST_F(CoreMCP23017Test, interruptOnChanges)
+{
+	{
+		InSequence seq;
+
+		std::array<uint8_t, 2> expected_INTCON_values = {0x00, 0x00};
+		std::array<uint8_t, 2> actual_INTCON_values	  = {0x00, 0x00};
+		readRegister(mcp23017::registers::INTCON, expected_INTCON_values);
+		writeRegister(mcp23017::registers::INTCON, actual_INTCON_values);
+
+		std::array<uint8_t, 2> expected_GPINTEN_values = {0x00, 0x00};
+		std::array<uint8_t, 2> actual_GPINTEN_values   = {0x03, 0x00};
+		readRegister(mcp23017::registers::GPINTEN, expected_GPINTEN_values);
+		writeRegister(mcp23017::registers::GPINTEN, actual_GPINTEN_values);
+	}
+
+	coreIOExpander.interruptOnChanges(MCP23017::Pin::Pin_PA0 | MCP23017::Pin::Pin_PA1);
+}

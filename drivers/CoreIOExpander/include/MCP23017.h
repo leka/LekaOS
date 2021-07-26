@@ -311,7 +311,7 @@ class MCP23017
 	 *
 	 * @param pins A bitmask of the pins that may generate an interrupt.
 	 */
-	void interrupt_on_changes(uint16_t pins);
+	void interruptOnChanges(uint16_t pins);
 	/** Disables interrupts for the specified pins.
 	 *
 	 * @param values A bitmask indicating which interrupts should be disabled.

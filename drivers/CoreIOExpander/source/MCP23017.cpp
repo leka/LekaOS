@@ -108,3 +108,14 @@ auto MCP23017::getPullups() -> uint16_t
 {
 	return readRegister(mcp23017::registers::GPPU);
 }
+
+void MCP23017::interruptOnChanges(uint16_t pins)
+{
+	uint16_t value = readRegister(mcp23017::registers::INTCON);
+	value &= ~pins;
+	writeRegister(mcp23017::registers::INTCON, value);
+
+	value = readRegister(mcp23017::registers::GPINTEN);
+	value |= pins;
+	writeRegister(mcp23017::registers::GPINTEN, value);
+}
