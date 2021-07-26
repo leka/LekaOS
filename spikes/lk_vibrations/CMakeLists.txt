@@ -12,12 +12,11 @@ target_include_directories(spike_lk_vibrations
 target_sources(spike_lk_vibrations
 	PRIVATE
 		main.cpp
-		VibrationsUtils.cpp
 )
 
 target_link_libraries(spike_lk_vibrations
 	LKCoreSTM32Hal
-	CoreAudio
+	CoreVibration
 )
 
 target_link_custom_leka_targets(spike_lk_vibrations)
