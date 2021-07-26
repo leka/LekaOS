@@ -316,7 +316,7 @@ class MCP23017
 	 *
 	 * @param values A bitmask indicating which interrupts should be disabled.
 	 */
-	void disable_interrupts(uint8_t pins);
+	void disableInterrupts(uint16_t pins);
 
 	/** Acknowledge a generated interrupt.
 	 *

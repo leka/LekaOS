@@ -189,3 +189,17 @@ TEST_F(CoreMCP23017Test, interruptOnChanges)
 
 	coreIOExpander.interruptOnChanges(MCP23017::Pin::Pin_PA0 | MCP23017::Pin::Pin_PA1);
 }
+
+TEST_F(CoreMCP23017Test, disableInterrupts)
+{
+	{
+		InSequence seq;
+
+		std::array<uint8_t, 2> expected_GPINTEN_values = {0xff, 0xff};
+		std::array<uint8_t, 2> actual_GPINTEN_values   = {0xfe, 0xff};
+		readRegister(mcp23017::registers::GPINTEN, expected_GPINTEN_values);
+		writeRegister(mcp23017::registers::GPINTEN, actual_GPINTEN_values);
+	}
+
+	coreIOExpander.disableInterrupts(MCP23017::Pin::Pin_PA0);
+}
