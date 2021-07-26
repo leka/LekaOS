@@ -5,9 +5,10 @@
 #include "drivers/BufferedSerial.h"
 
 #include "CoreAudio.h"
+#include "CoreVibration.h"
 #include "HelloWorld.h"
 #include "LKCoreSTM32Hal.h"
-#include "VibrationsUtils.h"
+//#include "VibrationsUtils.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -15,7 +16,6 @@ using namespace std::chrono;
 // uint16_t _outBuffer[OUT_BUFF_SIZE] = {0};
 
 mbed::DigitalOut audio_enable(SOUND_ENABLE, 1);
-std::array<uint16_t, OUT_BUFF_SIZE> _outBuffer;
 auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 
 LKCoreSTM32Hal hal;
@@ -24,6 +24,8 @@ CoreDAC coreDAC(hal);
 
 rtos::Thread vibrationsThread;
 events::EventQueue vibrationsEventQueue;
+
+CoreVibration coreVib(hal, coreDAC, coreDACTimer, vibrationsThread, vibrationsEventQueue);
 
 /**
  * @brief This function handles DMA1 stream5 global interrupt.
@@ -38,68 +40,42 @@ void DMA1_Stream5_IRQHandler()
 auto main() -> int
 {
 	printf("\n\nStarting vibration process, hold your kids\n\n\n");
+	coreVib.initialize(2048);
 
-	coreDAC.setCptCallbackPtr(&cptBufferCallback);
-	coreDAC.setHalfCptCallbackPtr(&halfBufferCallback);
+	float duration	   = 2.0;
+	uint32_t frequency = 128;
+	float amplitude	   = 0.1;
 
-	coreDACTimer.initialize(SAMPLING_RATE);
-	coreDAC.initialize();
+	VibrationTemplate vib1(duration, frequency, amplitude, false);
+	VibrationTemplate vib2(1, 200, 0.3, false);
+	VibrationTemplate vib3(0.5, 128, 0.1, false);
+	VibrationTemplate pause_1s(1, 1, 0, false);
+	VibrationTemplate pause_2s(2, 1, 0, false);
+	VibrationTemplate pause_500ms(0.5, 1, 0, false);
 
-	float lengthInSecs = 4;
-	uint16_t length	   = lengthInSecs * SAMPLING_RATE;
-	uint32_t freq	   = 60;
-	float amplitude	   = 1.f;
-	bool smoothTransi  = false;
+	vector<VibrationTemplate> sequence;
+	sequence.push_back(vib1);
+	sequence.push_back(pause_2s);
 
-	// std::vector<uint16_t> sinPeriod(SAMPLING_RATE / freq);
-	// // sinPeriod.reserve(SAMPLING_RATE / freq);
-	// fillBufferWithSinWave(sinPeriod.data(), sinPeriod.size(), freq);
-	uint32_t samplesPerPeriod = SAMPLING_RATE / freq;
-	uint16_t *sinPeriod		  = new uint16_t[samplesPerPeriod];
+	sequence.push_back(vib2);
+	sequence.push_back(pause_1s);
+	sequence.push_back(vib2);
+	sequence.push_back(pause_1s);
 
-	// init globals
+	sequence.push_back(vib3);
+	sequence.push_back(pause_500ms);
+	sequence.push_back(vib3);
+	sequence.push_back(pause_500ms);
+	sequence.push_back(vib3);
+	sequence.push_back(pause_500ms);
+	sequence.push_back(vib3);
+	sequence.push_back(pause_500ms);
 
-	_samplesPerPeriod  = samplesPerPeriod;
-	_vibrationFinished = false;
-	_endOfVibCounter   = length;
-
-	createSinWavePeriod(sinPeriod, samplesPerPeriod);
-	// printf("out of function\n");
-	// for (uint32_t i = 0; i < samplesPerPeriod; ++i) {
-	// 	printf("%d\n", sinPeriod[i]);
-	// }
-
-	auto *vibrationBuffer		= new uint16_t[samplesPerPeriod * 2];
-	uint16_t *vibrationBuffer_2 = vibrationBuffer + samplesPerPeriod;
-
-	for (uint32_t i = 0; i < samplesPerPeriod * 2; ++i) {
-		vibrationBuffer[i] = sinPeriod[i % samplesPerPeriod] >> 4;
+	while (true) {
+		printf("Playing vibrations !\n");
+		coreVib.playVibrationSequence(sequence);
+		rtos::ThisThread::sleep_for(1s);
 	}
 
-	coreDAC.start(vibrationBuffer, samplesPerPeriod * 2);
-	coreDACTimer.start();
-
-	printf("Vib started\n");
-	while (!_vibrationFinished) {
-		rtos::ThisThread::sleep_for(50ms);
-	}
-	printf("Vib ended\n");
-
-	coreDAC.stop();
-	coreDACTimer.stop();
-
-	coreDACTimer.deInitialize();
-	coreDAC.deInitialize();
+	coreVib.deInit();
 }
-
-// std::array<EnvelopType, 4> types = {Window, Sawtooth, Triangular, Buzz};
-// int numTimes					 = 10;
-// for (auto t: types) {
-// 	playPattern(_outBuffer.data(), OUT_BUFF_SIZE / 2, t, numTimes, coreDACTimer, coreDAC);
-// 	rtos::ThisThread::sleep_for(2s);
-// }
-// rtos::ThisThread::sleep_for(4s);
-// for (auto t: types) {
-// 	playPattern(_outBuffer.data(), OUT_BUFF_SIZE, t, numTimes, coreDACTimer, coreDAC);
-// 	rtos::ThisThread::sleep_for(2s);
-// }
