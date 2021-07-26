@@ -7,6 +7,8 @@
 #ifndef _LEKA_OS_DRIVER_MCP23017_H_
 #define _LEKA_OS_DRIVER_MCP23017_H_
 
+#include <cstdint>
+
 #include "drivers/DigitalIn.h"
 #include "drivers/interfaces/InterfaceDigitalIn.h"
 
@@ -224,7 +226,7 @@ class MCP23017
 	 *
 	 * @param pins A bitmask of pins to set to input mode.
 	 */
-	void setInputPin(uint8_t pins);
+	void setInputPins(uint8_t pins);
 	/** Set pins to output mode
 	 *
 	 * This function is used to set which pins are outputs (if any). Example:
@@ -237,7 +239,7 @@ class MCP23017
 	 *
 	 * @param pins A bitmask of pins to set to output mode.
 	 */
-	void setOutputPin(uint8_t pins);
+	void setOutputPins(uint8_t pins);
 
 	/** Write to the output pins.
 	 *
@@ -245,14 +247,14 @@ class MCP23017
 	 *
 	 * @param values A bitmask indicating whether a pin should be on or off.
 	 */
-	// void write_outputs(uint8_t values);
+	void writeOutputs(uint16_t values);
 	/** Read back the outputs.
 	 *
 	 * This function is used to read the last values written to the output pins.
 	 *
 	 * @returns The value from the OLAT register.
 	 */
-	// uint8_t read_outputs();
+	auto readOutputs() -> uint16_t;
 
 	/** Read from the input pins.
 	 *

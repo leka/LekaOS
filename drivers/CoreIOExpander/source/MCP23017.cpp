@@ -69,18 +69,28 @@ auto MCP23017::readRegister(uint8_t reg) -> uint16_t
 	return (buffer[0] + (buffer[1] << 8));
 }
 
-void MCP23017::setInputPin(uint8_t pins)
+void MCP23017::setInputPins(uint8_t pins)
 {
 	auto value = readRegister(mcp23017::registers::IODIR);
 
 	writeRegister(mcp23017::registers::IODIR, value | pins);
 }
 
-void MCP23017::setOutputPin(uint8_t pins)
+void MCP23017::setOutputPins(uint8_t pins)
 {
 	auto value = readRegister(mcp23017::registers::IODIR);
 
 	writeRegister(mcp23017::registers::IODIR, value & ~pins);
+}
+
+void MCP23017::writeOutputs(uint16_t values)
+{
+	writeRegister(mcp23017::registers::GPIO, values);
+}
+
+auto MCP23017::readOutputs() -> uint16_t
+{
+	return readRegister(mcp23017::registers::OLAT);
 }
 
 uint16_t MCP23017::readInputs()
