@@ -326,7 +326,7 @@ class MCP23017
 	 * @param pin An output paramter that specifies which pin generated the interrupt.
 	 * @param values The current state of the input pins.
 	 */
-	void acknowledge_interrupt(uint8_t &pin, uint8_t &values);
+	void acknowledgeInterrupt(uint16_t &pin, uint16_t &values);
 
   protected:
 	auto readRegister(uint8_t reg) -> uint16_t;

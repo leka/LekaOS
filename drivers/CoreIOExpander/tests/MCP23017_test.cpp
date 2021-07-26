@@ -203,3 +203,22 @@ TEST_F(CoreMCP23017Test, disableInterrupts)
 
 	coreIOExpander.disableInterrupts(MCP23017::Pin::Pin_PA0);
 }
+
+TEST_F(CoreMCP23017Test, acknowledgeInterrupt)
+{
+	{
+		InSequence seq;
+
+		std::array<uint8_t, 2> expected_INTF_values	  = {0x00, 0x03};
+		std::array<uint8_t, 2> expected_INTCAP_values = {0x00, 0x0f};
+		readRegister(mcp23017::registers::INTF, expected_INTF_values);
+		readRegister(mcp23017::registers::INTCAP, expected_INTCAP_values);
+	}
+
+	uint16_t actual_pin {};
+	uint16_t actual_values {};
+	coreIOExpander.acknowledgeInterrupt(actual_pin, actual_values);
+
+	ASSERT_EQ(actual_pin, 0x0300);
+	ASSERT_EQ(actual_values, 0x0f00);
+}

@@ -52,7 +52,6 @@ void MCP23017::writeRegister(uint8_t reg, uint16_t value)
 	buffer[1] = (0x00FF & value);
 	buffer[2] = (0xFF00 & value) >> 8;
 
-	// printf("value : %i %i %i\n", buffer[0], buffer[1], buffer[2]);
 	_i2c.write(_I2C_ADDRESS, buffer.data(), buffer.size());
 }
 
@@ -125,4 +124,10 @@ void MCP23017::disableInterrupts(uint16_t pins)
 	uint16_t value = readRegister(mcp23017::registers::GPINTEN);
 	value &= ~pins;
 	writeRegister(mcp23017::registers::GPINTEN, value);
+}
+
+void MCP23017::acknowledgeInterrupt(uint16_t &pin, uint16_t &values)
+{
+	pin	   = readRegister(mcp23017::registers::INTF);
+	values = readRegister(mcp23017::registers::INTCAP);
 }
