@@ -8,6 +8,50 @@
 
 using namespace leka;
 
+MCP23017::ExpandedIO::ExpandedIO(MCP23017 &parent, Pin pin) : _parent(parent), _pin(pin) {}
+
+auto MCP23017::ExpandedIO::internalRead() -> int
+{
+	return (_parent.readInputs() & _pin);
+}
+
+void MCP23017::ExpandedIO::internalMode(PinMode pull)
+{
+	if (pull != PullDown) {	  // MCP23017 may not support PullDown mode
+		_parent.mutex.lock();
+		uint8_t pullups = _parent.getPullups();
+
+		if (pull == PullNone) {
+			pullups &= ~_pin;
+		} else if (pull == PullUp) {
+			pullups |= _pin;
+		}
+
+		_parent.setPullups(pullups);
+		_parent.mutex.unlock();
+	}
+}
+
+void MCP23017::ExpandedIO::internalWrite(int value)
+{
+	uint16_t outputs = _parent.readOutputs();
+	if (value) {
+		_parent.writeOutputs((outputs | _pin));
+	} else {
+		_parent.writeOutputs((outputs & (~_pin)));
+	}
+}
+
+void MCP23017::ExpandedIO::internalOutput()
+{
+	_parent.setOutputPins(_pin);
+}
+
+void MCP23017::ExpandedIO::internalInput()
+{
+	_parent.setInputPins(_pin);
+}
+
 void MCP23017::init()
 {
 	reset();

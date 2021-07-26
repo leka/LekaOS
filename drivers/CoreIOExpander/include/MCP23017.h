@@ -101,11 +101,11 @@ class MCP23017
 		ExpandedIO(MCP23017 &parent, Pin pin);
 
 	  protected:
-		int internal_read();
-		void internal_mode(PinMode pull);
-		void internal_write(int value);
-		void internal_output();
-		void internal_input();
+		auto internalRead() -> int;
+		void internalMode(PinMode pull);
+		void internalWrite(int value);
+		void internalOutput();
+		void internalInput();
 
 	  protected:
 		MCP23017 &_parent;
@@ -121,11 +121,11 @@ class MCP23017
 	class ExpandedInput : public ExpandedIO, public mbed::interface::DigitalIn
 	{
 	  public:
-		ExpandedInput(MCP23017 &parent, Pin pin) : ExpandedIO(parent, pin) { internal_input(); }
+		ExpandedInput(MCP23017 &parent, Pin pin) : ExpandedIO(parent, pin) { internalInput(); }
 		virtual ~ExpandedInput() override {}
-		virtual int read() override { return ExpandedIO::internal_read(); }
-		virtual void mode(PinMode pull) override { ExpandedIO::internal_mode(pull); }
-		virtual int is_connected() override { return 1; }
+		virtual auto read() -> int override { return ExpandedIO::internalRead(); }
+		virtual void mode(PinMode pull) override { ExpandedIO::internalMode(pull); }
+		virtual auto isConnected() -> int override { return 1; }
 	};
 
 	/**
