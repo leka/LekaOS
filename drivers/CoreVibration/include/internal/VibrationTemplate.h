@@ -5,7 +5,9 @@
 #ifndef _LEKA_OS_LIB_VIBRATION_TEMPLATE_H_
 #define _LEKA_OS_LIB_VIBRATION_TEMPLATE_H_
 
+#include <chrono>
 #include <cstdint>
+#include <cstdio>
 
 // enum EnvelopType
 // {
@@ -19,18 +21,26 @@
 
 namespace leka {
 
+// TODO : replace these redefines somewhere else
+using fmilliseconds = std::chrono::duration<float, std::milli>;
+using fseconds		= std::chrono::duration<float>;
+using fminutes		= std::chrono::duration<float, std::ratio<60>>;
+/*Redefines taken at : https://philippegroarke.com/posts/2018/chrono_for_humans/
+Allow to easily work with durations
+*/
+
 class VibrationTemplate
 {
   public:
-	VibrationTemplate(float duration, uint32_t frequency, float amplitude, bool smoothTransition);
+	VibrationTemplate(fseconds duration, uint32_t frequency, float amplitude, bool smoothTransition);
 
 	[[nodiscard]] auto getFrequency() const -> const uint32_t &;
-	[[nodiscard]] auto getDuration() const -> const float &;
+	[[nodiscard]] auto getDuration() const -> const fseconds &;
 	[[nodiscard]] auto getAmplitude() const -> const float &;
 	[[nodiscard]] auto isSmooth() const -> const bool &;
 
   private:
-	float _duration;
+	fseconds _duration;
 	uint32_t _frequency;
 	float _amplitude;
 	bool _smoothTransition;

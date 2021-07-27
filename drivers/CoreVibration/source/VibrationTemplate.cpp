@@ -2,9 +2,13 @@
 
 using namespace leka;
 
-VibrationTemplate::VibrationTemplate(float duration, uint32_t frequency, float amplitude, bool smoothTransition)
+VibrationTemplate::VibrationTemplate(fseconds duration, uint32_t frequency, float amplitude, bool smoothTransition)
 	: _duration(duration), _frequency(frequency), _amplitude(amplitude), _smoothTransition(smoothTransition)
 {
+	if (_frequency == 0) {
+		printf("Error, freq can't be 0Hz\n");
+		// TODO() : handle error
+	}
 }
 
 auto VibrationTemplate::getFrequency() const -> const uint32_t &
@@ -12,7 +16,7 @@ auto VibrationTemplate::getFrequency() const -> const uint32_t &
 	return _frequency;
 }
 
-auto VibrationTemplate::getDuration() const -> const float &
+auto VibrationTemplate::getDuration() const -> const fseconds &
 {
 	return _duration;
 }
