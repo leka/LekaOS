@@ -98,7 +98,7 @@ class MCP23017
 	class ExpandedIO
 	{
 	  public:
-		ExpandedIO(MCP23017 &parent, Pin pin);
+		ExpandedIO(MCP23017 &parent, Pin pin) : _parent(parent), _pin(pin) {}
 
 	  protected:
 		auto internalRead() -> int;
@@ -125,7 +125,7 @@ class MCP23017
 		virtual ~ExpandedInput() override {}
 		virtual auto read() -> int override { return ExpandedIO::internalRead(); }
 		virtual void mode(PinMode pull) override { ExpandedIO::internalMode(pull); }
-		virtual auto isConnected() -> int override { return 1; }
+		virtual auto is_connected() -> int override { return 1; }
 	};
 
 	/**
@@ -198,7 +198,7 @@ class MCP23017
 	 * @note you can cast a pointer to the returned object to a DigitalIn*
 	 * to pass it to APIs that require a DigitalIn* object
 	 */
-	ExpandedInput as_input(Pin pin);
+	auto asInput(Pin pin) -> ExpandedInput;
 
 	/**
 	 * Convenience function to create a DigitalOut object for a given pin

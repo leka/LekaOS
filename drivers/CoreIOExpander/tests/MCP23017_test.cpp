@@ -46,7 +46,78 @@ class CoreMCP23017Test : public ::testing::Test
 
 TEST_F(CoreMCP23017Test, mcp23017Instantiation)
 {
+	MCP23017::ExpandedInput coreExpandedInput = coreMCP23017.asInput(MCP23017::Pin_PA0);
+
 	ASSERT_NE(&coreMCP23017, nullptr);
+	ASSERT_NE(&coreExpandedInput, nullptr);
+}
+
+TEST_F(CoreMCP23017Test, inputRead)
+{
+	MCP23017::ExpandedInput coreExpandedInput	 = coreMCP23017.asInput(MCP23017::Pin_PA0);
+	std::array<uint8_t, 2> expected_input_values = {0x01, 0x00};
+
+	{
+		InSequence seq;
+
+		readRegister(mcp23017::registers::GPIO, expected_input_values);
+	}
+
+	auto actual_input_values = coreExpandedInput.read();
+	ASSERT_EQ(actual_input_values,
+			  static_cast<int>(expected_input_values[0]) + (static_cast<int>(expected_input_values[1]) << 8));
+}
+
+TEST_F(CoreMCP23017Test, inputModePullUp)
+{
+	MCP23017::ExpandedInput coreExpandedInput = coreMCP23017.asInput(MCP23017::Pin_PA0);
+
+	{
+		InSequence seq;
+
+		std::array<uint8_t, 2> expected_GPPU_values = {0x00, 0x00};
+		std::array<uint8_t, 2> actual_GPPU_values	= {0x01, 0x00};
+
+		readRegister(mcp23017::registers::GPPU, expected_GPPU_values);
+		writeRegister(mcp23017::registers::GPPU, actual_GPPU_values);
+	}
+
+	coreExpandedInput.mode(PinMode::PullUp);
+}
+
+TEST_F(CoreMCP23017Test, inputModePullNone)
+{
+	MCP23017::ExpandedInput coreExpandedInput = coreMCP23017.asInput(MCP23017::Pin_PA0);
+
+	{
+		InSequence seq;
+
+		std::array<uint8_t, 2> expected_GPPU_values = {0xff, 0x00};
+		std::array<uint8_t, 2> actual_GPPU_values	= {0xfe, 0x00};
+
+		readRegister(mcp23017::registers::GPPU, expected_GPPU_values);
+		writeRegister(mcp23017::registers::GPPU, actual_GPPU_values);
+	}
+
+	coreExpandedInput.mode(PinMode::PullNone);
+}
+
+TEST_F(CoreMCP23017Test, inputModePullDown)
+{
+	MCP23017::ExpandedInput coreExpandedInput = coreMCP23017.asInput(MCP23017::Pin_PA0);
+
+	EXPECT_CALL(i2cMock, write).Times(0);
+	EXPECT_CALL(i2cMock, read).Times(0);
+
+	coreExpandedInput.mode(PinMode::PullDown);
+}
+
+TEST_F(CoreMCP23017Test, isConnected)
+{
+	MCP23017::ExpandedInput coreExpandedInput = coreMCP23017.asInput(MCP23017::Pin_PA0);
+
+	auto is_connected = coreExpandedInput.is_connected();
+	ASSERT_EQ(is_connected, 1);
 }
 
 TEST_F(CoreMCP23017Test, setRegisterMapping)
