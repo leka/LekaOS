@@ -23,10 +23,14 @@ class CoreVibration
 	CoreVibration(LKCoreSTM32HalBase &hal, interface::Dac &dac, interface::DacTimer &timer, rtos::Thread &thread,
 				  events::EventQueue &eventQueue);
 	void initialize(float samplingRate);
-	void playVibrationSequence(std::vector<VibrationTemplate> sequence);
-	void playVibration(VibrationTemplate &vib);
-	void stopVibration();
+	void playPeriodically(VibrationTemplate &vib, fseconds waitTime, uint16_t nbRep);
+	void playSequence(std::vector<VibrationTemplate> sequence);
+	void play(VibrationTemplate &vib);
+	void stop();
 	void deInit();
+
+	[[nodiscard]] auto isPlaying() const -> bool;
+	[[nodiscard]] auto isPlayingPeriodically() const -> bool;
 
   private:
 	uint16_t *_vibBuffer;
@@ -43,6 +47,8 @@ class CoreVibration
 	int32_t _samplesRemaining;
 	float _samplingRate;
 	uint32_t _samplesPerPeriod;
+	bool _isPlaying;
+	bool _isPlayingPeriodically;
 
 	void start();
 
@@ -53,6 +59,10 @@ class CoreVibration
 	void halfBufferCallback();
 	void cptBufferCallback();
 	void handleCallback(u_int16_t *buffer);
+
+	void endPeriodicVib(int eventID);
+	void handlePeriodicCall(VibrationTemplate *vib);
+	void playPtr(VibrationTemplate *vib);
 };
 
 }	// namespace leka
