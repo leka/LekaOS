@@ -50,8 +50,8 @@ void cardiacCoherenceDemo()
 void countVibsDemo()
 {
 	printf("\n\nCount vibrations demo!!\n");
-	VibrationTemplate vib(1s, 128, 0.1, false);
-	for (int i = 0; i < 5; i++) {
+	VibrationTemplate vib(1s, 128, 0.2, false);
+	for (int i = 0; i < 10; i++) {
 		int reps = rand() % 9 + 1;
 		coreVib.playPeriodically(vib, 500ms, reps);
 
@@ -59,6 +59,30 @@ void countVibsDemo()
 			ThisThread::sleep_for(50ms);
 		}
 		printf("The number of times to guess was: %d\n", reps);
+		ThisThread::sleep_for(2s);
+	}
+}
+
+void vibTypeDemo()
+{
+	printf("\n\nVib type demo!!\n");
+	int numFreqs	   = 7;
+	uint32_t freqs[10] = {32, 50, 90, 100, 110, 128, 140};
+
+	int numAmplis	 = 3;
+	float amplis[10] = {0.4, 0.6, 0.8};
+
+	for (int i = 0; i < numFreqs; ++i) {
+		printf("freq: %d\n", freqs[i]);
+		for (int j = 0; j < numAmplis; ++j) {
+			VibrationTemplate vib(1s, freqs[i], amplis[j], false);
+			coreVib.play(vib);
+			while (coreVib.isPlaying()) {
+				ThisThread::sleep_for(50ms);
+			}
+			printf("\tampli: %f\n", amplis[j]);
+			ThisThread::sleep_for(500ms);
+		}
 		ThisThread::sleep_for(2s);
 	}
 }
@@ -99,14 +123,12 @@ auto main() -> int
 
 	// coreVib.play(vib1);
 
-	cardiacCoherenceDemo();
-	countVibsDemo();
-
 	printf("\n\nEnd of demos\n\n");
 	while (true) {
-		// printf("Playing vibrations !\n");
-		// coreVib.playSequence(sequence);
-		rtos::ThisThread::sleep_for(1s);
+		// cardiacCoherenceDemo();
+		// countVibsDemo();
+		vibTypeDemo();
+		rtos::ThisThread::sleep_for(4s);
 	}
 
 	coreVib.deInit();
