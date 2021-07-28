@@ -34,19 +34,26 @@ void CoreVibration::initialize(float samplingRate)
 
 void CoreVibration::playPeriodically(VibrationTemplate &vib, fseconds waitTime, uint16_t nbRep)
 {
-	// getting duration in ms
-	fseconds period = vib.getDuration() + waitTime;
-	// printf("duration : %f\nwaitTime : %f\nperiod : %f\n", vib.getDuration().count(), waitTime.count(),
-	// period.count()); // first immediate call
-	_eventQueue.call(this, &CoreVibration::playPtr, &vib);
-	// periodic call, will start in 1 period
-	int id =
-		_eventQueue.call_every(std::chrono::duration_cast<milliseconds>(period), this, &CoreVibration::playPtr, &vib);
-	// end periodic call after the given time
-	_eventQueue.call_in(std::chrono::duration_cast<milliseconds>(nbRep * period), this, &CoreVibration::endPeriodicVib,
-						id);
-	// TODO : see if there is a way to avoid needing a member function as cancel callback
-	_isPlayingPeriodically = true;
+	if (nbRep > 0) {
+		// getting duration in ms
+		fseconds period = vib.getDuration() + waitTime;
+		// printf("duration : %f\nwaitTime : %f\nperiod : %f\n", vib.getDuration().count(), waitTime.count(),
+		// period.count()); // first immediate call
+		_eventQueue.call(this, &CoreVibration::playPtr, &vib);
+		_isPlayingPeriodically = true;
+
+		if (nbRep > 1) {
+			// periodic call, will start in 1 period
+			int id = _eventQueue.call_every(std::chrono::duration_cast<milliseconds>(period), this,
+											&CoreVibration::playPtr, &vib);
+			// end periodic call after the given time
+			_eventQueue.call_in(std::chrono::duration_cast<milliseconds>(nbRep * period), this,
+								&CoreVibration::endPeriodicVib, id);
+		} else {
+			rtos::ThisThread::sleep_for(std::chrono::duration_cast<milliseconds>(period));
+			_isPlayingPeriodically = false;
+		}
+	}
 }
 
 void CoreVibration::endPeriodicVib(int eventID)
