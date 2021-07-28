@@ -127,6 +127,7 @@ void CoreVibration::deInit()
 
 void CoreVibration::createSinWavePeriod(uint16_t *sinBuffer, VibrationTemplate &vib)
 {
+	// printf("Sinbuffer: \n");
 	// offset and coef to have a positive sinwave of amplitude 1
 	double maxCoef		   = 0.4;
 	double normalizeCoef   = maxCoef * vib.getAmplitude();
@@ -136,6 +137,7 @@ void CoreVibration::createSinWavePeriod(uint16_t *sinBuffer, VibrationTemplate &
 		double tmp = normalizeCoef * sin(i * 2.0 * M_PI / _samplesPerPeriod) + normalizeOffset;
 
 		sinBuffer[i] = static_cast<uint16_t>(tmp * UINT16_MAX);
+		// printf("%d\n", sinBuffer[i]);
 	}
 }
 
@@ -178,8 +180,10 @@ void CoreVibration::handleCallback(u_int16_t *buffer)
 
 void CoreVibration::fillHalfBuffer(uint16_t *buffer, uint32_t numOfSamples)
 {
+	// printf("filling half buff\n");
 	for (uint32_t i = 0; i < numOfSamples; ++i) {
 		buffer[i] = _sinBuffer[i] >> 4;
+		// printf("\tb[%d] : %d\n", i, buffer[i]);
 	}
 	for (uint32_t i = numOfSamples; i < _samplesPerPeriod; ++i) {
 		buffer[i] = 0.45 * 0xFFF;
