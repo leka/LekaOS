@@ -108,8 +108,8 @@ void CoreVibration::start()
 void CoreVibration::stop()
 {
 	// printf("Stoping vib\n");
-	_coreDac.stop();
 	_coreTimer.stop();
+	_coreDac.stop();
 
 	delete[] _sinBuffer;
 	_sinBuffer = nullptr;
@@ -182,7 +182,7 @@ void CoreVibration::fillHalfBuffer(uint16_t *buffer, uint32_t numOfSamples)
 		buffer[i] = _sinBuffer[i] >> 4;
 	}
 	for (uint32_t i = numOfSamples; i < _samplesPerPeriod; ++i) {
-		buffer[i] = 0;
+		buffer[i] = 0.45 * 0xFFF;
 	}
 }
 
