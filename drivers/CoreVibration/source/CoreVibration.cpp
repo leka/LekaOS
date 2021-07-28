@@ -42,17 +42,15 @@ void CoreVibration::playPeriodically(VibrationTemplate &vib, fseconds waitTime, 
 		_eventQueue.call(this, &CoreVibration::playPtr, &vib);
 		_isPlayingPeriodically = true;
 
+		int id = 0;	  // id is null if no periodic call is made
 		if (nbRep > 1) {
 			// periodic call, will start in 1 period
-			int id = _eventQueue.call_every(std::chrono::duration_cast<milliseconds>(period), this,
-											&CoreVibration::playPtr, &vib);
-			// end periodic call after the given time
-			_eventQueue.call_in(std::chrono::duration_cast<milliseconds>(nbRep * period), this,
-								&CoreVibration::endPeriodicVib, id);
-		} else {
-			rtos::ThisThread::sleep_for(std::chrono::duration_cast<milliseconds>(period));
-			_isPlayingPeriodically = false;
+			id = _eventQueue.call_every(std::chrono::duration_cast<milliseconds>(period), this, &CoreVibration::playPtr,
+										&vib);
 		}
+		// end periodic call after the given time
+		_eventQueue.call_in(std::chrono::duration_cast<milliseconds>(nbRep * period), this,
+							&CoreVibration::endPeriodicVib, id);
 	}
 }
 
