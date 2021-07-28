@@ -5,7 +5,7 @@
 			"type": "cortex-debug",
 			"request": "launch",
 			"cwd": "${workspaceRoot}",
-			"executable": "_build/LEKA_V1_2_DEV/spikes/lk_haptic_actuator/spike_lk_haptic_actuator.elf",
+			"executable": "_build/LEKA_V1_2_DEV/spikes/lk_vibrations/spike_lk_vibrations.elf",
 			"servertype": "openocd",
 			"configFiles": [
 				"interface/stlink.cfg",
