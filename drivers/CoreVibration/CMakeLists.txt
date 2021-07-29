@@ -12,6 +12,7 @@ target_include_directories(CoreVibration
 
 target_sources(CoreVibration
 	PRIVATE
+		source/VibrationEnvelope.cpp
 		source/VibrationTemplate.cpp
 		source/CoreVibration.cpp
 )
