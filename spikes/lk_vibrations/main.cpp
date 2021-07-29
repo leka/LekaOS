@@ -40,7 +40,7 @@ void DMA1_Stream5_IRQHandler()
 void cardiacCoherenceDemo()
 {
 	printf("\n\nCardiac coherence demo!!\n");
-	VibrationTemplate vib(5s, 90, 0.2, false);
+	VibrationTemplate vib(5s, 90, 0.2, VibrationEnvelope::Sawtooth);
 	coreVib.playPeriodically(vib, 5s, 6);
 	while (coreVib.isPlayingPeriodically()) {
 		ThisThread::sleep_for(50ms);
@@ -50,7 +50,7 @@ void cardiacCoherenceDemo()
 void countVibsDemo()
 {
 	printf("\n\nCount vibrations demo!!\n");
-	VibrationTemplate vib(1s, 90, 0.2, false);
+	VibrationTemplate vib(1s, 90, 0.2, VibrationEnvelope::Window);
 	for (int i = 0; i < 10; i++) {
 		int reps = rand() % 9 + 1;
 		coreVib.playPeriodically(vib, 500ms, reps);
@@ -66,44 +66,24 @@ void countVibsDemo()
 void vibTypeDemo()
 {
 	printf("\n\nVib type demo!!\n");
-	int numFreqs	   = 6;
-	uint32_t freqs[10] = {50, 90, 100, 110, 128, 140};
+	int numFreqs				   = 6;
+	std::array<uint32_t, 10> freqs = {50, 90, 100, 110, 128, 140};
 
-	int numAmplis	 = 3;
-	float amplis[10] = {0.4, 0.6, 0.8};
+	int numAmplis				 = 3;
+	std::array<float, 10> amplis = {0.4, 0.6, 0.8};
 
 	for (int i = 0; i < numFreqs; ++i) {
-		printf("freq: %d\n", freqs[i]);
+		printf("freq: %d\n", freqs.at(i));
 		for (int j = 0; j < numAmplis; ++j) {
-			VibrationTemplate vib(1s, freqs[i], amplis[j], false);
+			VibrationTemplate vib(1s, freqs.at(i), amplis.at(j), VibrationEnvelope::Window);
 			coreVib.play(vib);
 			while (coreVib.isPlaying()) {
 				ThisThread::sleep_for(50ms);
 			}
-			printf("\tampli: %f\n", amplis[j]);
+			printf("\tampli: %f\n", amplis.at(j));
 			ThisThread::sleep_for(500ms);
 		}
 		ThisThread::sleep_for(2s);
-	}
-}
-
-void brokenFreqTest()
-{
-	printf("\n\nVib type demo!!\n");
-	int numFreqs	   = 5;
-	uint32_t freqs[10] = {78, 79, 80, 81, 82};
-
-	int numAmplis	 = 3;
-	float amplis[10] = {0.4, 0.6, 0.8};
-
-	for (int i = 0; i < numFreqs; ++i) {
-		printf("freq: %d\n", freqs[i]);
-		VibrationTemplate vib(200ms, freqs[i], 0.1, false);
-		coreVib.play(vib);
-		while (coreVib.isPlaying()) {
-			ThisThread::sleep_for(50ms);
-		}
-		ThisThread::sleep_for(500ms);
 	}
 }
 
@@ -114,10 +94,9 @@ auto main() -> int
 
 	printf("\n\nEnd of demos\n\n");
 	while (true) {
-		// cardiacCoherenceDemo();
+		cardiacCoherenceDemo();
 		// countVibsDemo();
 		// vibTypeDemo();
-		brokenFreqTest();
 		rtos::ThisThread::sleep_for(4s);
 	}
 

@@ -33,7 +33,7 @@ class CoreVibration
 	[[nodiscard]] auto isPlayingPeriodically() const -> bool;
 
   private:
-	uint16_t *_vibBuffer;
+	uint16_t *_vibBuffer_1;
 	uint16_t *_vibBuffer_2;
 
 	LKCoreSTM32HalBase &_hal;
@@ -43,10 +43,13 @@ class CoreVibration
 	rtos::Thread &_thread;
 	events::EventQueue &_eventQueue;
 
+	VibrationTemplate *_currentVib;
+
 	uint16_t *_sinBuffer;
-	int32_t _samplesRemaining;
+	// int32_t _samplesRemaining;
 	float _samplingRate;
 	uint32_t _samplesPerPeriod;
+
 	bool _isPlaying;
 	bool _isPlayingPeriodically;
 
@@ -54,7 +57,8 @@ class CoreVibration
 
 	void createSinWavePeriod(uint16_t *sinBuffer, VibrationTemplate &vib);
 	void rescaleVibration();
-	void fillHalfBuffer(uint16_t *buffer, uint32_t numOfSamples);
+	void fillHalfBuffer(uint16_t *buffer, uint32_t nbSamples);
+	void alignU16ToDac(uint16_t *buffer, uint32_t nbSamples);
 
 	void halfBufferCallback();
 	void cptBufferCallback();

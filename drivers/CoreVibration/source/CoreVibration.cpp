@@ -11,9 +11,9 @@ CoreVibration::CoreVibration(LKCoreSTM32HalBase &hal, interface::Dac &dac, inter
 	  _coreTimer(timer),
 	  _thread(thread),
 	  _eventQueue(eventQueue),
-	  _samplesRemaining(0),
 	  _samplingRate(0),
-	  _samplesPerPeriod(0)
+	  _samplesPerPeriod(0),
+	  _currentVib(nullptr)
 {
 	_thread.start({&_eventQueue, &events::EventQueue::dispatch_forever});
 }
@@ -71,6 +71,8 @@ void CoreVibration::play(VibrationTemplate &vib)
 {
 	stop();	  // stop current vib if playing and reset buffers
 
+	_currentVib = &vib;	  // store current vib in order to access it from the callbacks
+
 	_samplesPerPeriod = static_cast<uint32_t>(_samplingRate / vib.getFrequency());
 	// printf("Samples per period: %d\n", _samplesPerPeriod);
 
@@ -78,11 +80,13 @@ void CoreVibration::play(VibrationTemplate &vib)
 
 	createSinWavePeriod(_sinBuffer, vib);
 
-	_samplesRemaining = vib.getDuration().count() * _samplingRate;
+	uint32_t totalSamples = vib.getDuration().count() * _samplingRate;
+	vib.setCurrentSample(0);
+	vib.setTotalSamples(totalSamples);
 	// printf("Samples remaining at start of vib: %d\n", _samplesRemaining);
 
-	_vibBuffer	 = new uint16_t[_samplesPerPeriod * 2];	  // buffer of 2 periods
-	_vibBuffer_2 = _vibBuffer + _samplesPerPeriod;
+	_vibBuffer_1 = new uint16_t[_samplesPerPeriod * 2];	  // buffer of 2 periods
+	_vibBuffer_2 = _vibBuffer_1 + _samplesPerPeriod;
 
 	// printf("Starting vib\n");
 	start();
@@ -97,9 +101,9 @@ void CoreVibration::playPtr(VibrationTemplate *vib)
 
 void CoreVibration::start()
 {
-	fillHalfBuffer(_vibBuffer, _samplesPerPeriod);
+	fillHalfBuffer(_vibBuffer_1, _samplesPerPeriod);
 	fillHalfBuffer(_vibBuffer_2, _samplesPerPeriod);
-	_coreDac.start(_vibBuffer, _samplesPerPeriod * 2);
+	_coreDac.start(_vibBuffer_1, _samplesPerPeriod * 2);
 	_coreTimer.start();
 
 	_isPlaying = true;
@@ -113,10 +117,11 @@ void CoreVibration::stop()
 
 	delete[] _sinBuffer;
 	_sinBuffer = nullptr;
-	delete[] _vibBuffer;
-	_vibBuffer = nullptr;
+	delete[] _vibBuffer_1;
+	_vibBuffer_1 = nullptr;
 
-	_isPlaying = false;
+	_isPlaying	= false;
+	_currentVib = nullptr;
 }
 
 void CoreVibration::deInit()
@@ -143,27 +148,27 @@ void CoreVibration::createSinWavePeriod(uint16_t *sinBuffer, VibrationTemplate &
 
 void CoreVibration::halfBufferCallback()
 {
-	_eventQueue.call(this, &CoreVibration::handleCallback, _vibBuffer);
+	_eventQueue.call(this, &CoreVibration::handleCallback, _vibBuffer_1);
 }
 
 void CoreVibration::cptBufferCallback()
 {
-	_eventQueue.call(this, &CoreVibration::handleCallback, _vibBuffer + _samplesPerPeriod);
+	_eventQueue.call(this, &CoreVibration::handleCallback, _vibBuffer_2);
 }
 
 void CoreVibration::handleCallback(u_int16_t *buffer)
 {
-	static uint8_t callsBeforeStop = 2;
+	static uint8_t callsBeforeStop			  = 2;
+	static const uint32_t lastPeriodThreshold = _currentVib->getTotalSamples() - _samplesPerPeriod;
 
-	if (_samplesRemaining > static_cast<int64_t>(_samplesPerPeriod)) {
+	if (_currentVib->getCurrentSample() < lastPeriodThreshold) {
 		// printf("more than sPP\n");
 		fillHalfBuffer(buffer, _samplesPerPeriod);
-		_samplesRemaining -= _samplesPerPeriod;
 		callsBeforeStop = 2;
-	} else if (_samplesRemaining > 0) {
+	} else if (_currentVib->getCurrentSample() < _currentVib->getTotalSamples()) {
 		// printf("less than sPP\n");
-		fillHalfBuffer(buffer, _samplesRemaining);
-		_samplesRemaining -= _samplesPerPeriod;
+		uint32_t remaining = _currentVib->getTotalSamples() - _currentVib->getCurrentSample();
+		fillHalfBuffer(buffer, remaining);
 		callsBeforeStop = 1;
 	} else if (callsBeforeStop == 1) {
 		// printf("last buff\n");
@@ -178,15 +183,29 @@ void CoreVibration::handleCallback(u_int16_t *buffer)
 	// printf("rem: %d\ncall: %d\n", _samplesRemaining, callsBeforeStop);
 }
 
-void CoreVibration::fillHalfBuffer(uint16_t *buffer, uint32_t numOfSamples)
+void CoreVibration::fillHalfBuffer(uint16_t *buffer, uint32_t nbSamples)
 {
 	// printf("filling half buff\n");
-	for (uint32_t i = 0; i < numOfSamples; ++i) {
-		buffer[i] = _sinBuffer[i] >> 4;
+	for (uint32_t i = 0; i < nbSamples; ++i) {
+		buffer[i] = _sinBuffer[i];
 		// printf("\tb[%d] : %d\n", i, buffer[i]);
 	}
-	for (uint32_t i = numOfSamples; i < _samplesPerPeriod; ++i) {
-		buffer[i] = 0.45 * 0xFFF;
+	for (uint32_t i = nbSamples; i < _samplesPerPeriod; ++i) {
+		buffer[i] = 0.45 * UINT16_MAX;
+	}
+
+	if (nbSamples > 0) {
+		this->_currentVib->applyCurrentEnvelopeSlice(buffer, nbSamples);
+		_currentVib->setCurrentSample(_currentVib->getCurrentSample() + nbSamples);
+	}
+
+	alignU16ToDac(buffer, nbSamples);
+}
+
+void CoreVibration::alignU16ToDac(uint16_t *buffer, uint32_t nbSamples)
+{
+	for (uint32_t i = 0; i < nbSamples; ++i) {
+		buffer[i] = buffer[i] >> 4;
 	}
 }
 
