@@ -73,7 +73,7 @@ void vibTypeDemo()
 	std::array<float, 10> amplis = {0.4, 0.6, 0.8};
 
 	for (int i = 0; i < numFreqs; ++i) {
-		printf("freq: %d\n", freqs.at(i));
+		printf("freq: %lu\n", freqs.at(i));
 		for (int j = 0; j < numAmplis; ++j) {
 			VibrationTemplate vib(1s, freqs.at(i), amplis.at(j), VibrationEnvelope::Window);
 			coreVib.play(vib);
@@ -87,14 +87,126 @@ void vibTypeDemo()
 	}
 }
 
+void testFloatWorkflow(uint16_t *outBuffer)
+{
+	float sinBuffer[16];
+	// printf("Float#############\n");
+
+	// random values
+	float vibAmpli = 0.1;
+	float sinAmpli = 0.4 * 0xFFF;
+	float env	   = 0.3;
+	float offset   = 0.45 * 0xFFF;
+
+	// first calculations of sinus
+	// ampli is calculated here
+	for (uint32_t i = 0; i < 16; ++i) {
+		sinBuffer[i] = vibAmpli * sinAmpli * sin(i * 2.0 * M_PI / 16);
+		//	printf("%.3f\n", sinBuffer[i]);
+	}
+
+	// consider 1000 periods
+
+	for (uint32_t i = 0; i < 10000; ++i) {
+		for (uint32_t j = 0; j < 16; ++j) {
+			outBuffer[j] = env * sinBuffer[j] + offset;
+		}
+	}
+}
+
+void testIntWorkflow(uint16_t *outBuffer)
+{
+	int16_t sinBuffer[16];
+	// printf("Int#############\n");
+
+	// random values
+	float vibAmpli	  = 0.1;
+	uint16_t sinAmpli = 0.4 * 0xFFF;
+	float env		  = 0.3;
+	uint16_t offset	  = 0.45 * 0xFFF;
+
+	// first calculations of sinus
+	// ampli is calculated here
+	for (uint32_t i = 0; i < 16; ++i) {
+		sinBuffer[i] = vibAmpli * sinAmpli * sin(i * 2.0 * M_PI / 16);
+		// printf("%d\n", sinBuffer[i]);
+	}
+
+	// consider 1000 periods
+	for (uint32_t i = 0; i < 10000; ++i) {
+		for (uint32_t j = 0; j < 16; ++j) {
+			outBuffer[j] = sinBuffer[j] * env + offset;
+		}
+	}
+}
+
+void testUintWorkflow(uint16_t *outBuffer)
+{
+	uint16_t sinBuffer[16];
+	// printf("Uint#############\n");
+
+	float vibAmpli = 0.1;
+	float sinAmpli = 0.4;
+	float env	   = 0.3;
+	float offset   = 0.45;
+
+	// first calculations of sinus]
+	for (uint32_t i = 0; i < 16; ++i) {
+		double tmp	 = sinAmpli * vibAmpli * sin(i * 2.0 * M_PI / 16) + offset;
+		sinBuffer[i] = static_cast<uint16_t>(tmp * UINT16_MAX);
+		// printf("%lu\n", sinBuffer[i]);
+	}
+
+	// consider 1000 periods
+	for (uint32_t i = 0; i < 10000; ++i) {
+		for (uint32_t j = 0; j < 16; ++j) {
+			outBuffer[j] = static_cast<uint16_t>((sinBuffer[j] - static_cast<uint16_t>(offset * UINT16_MAX)) * env +
+												 static_cast<uint16_t>(offset * UINT16_MAX)) >>
+						   4;
+		}
+	}
+}
+
+void testWorkflows()
+{
+	uint16_t buff_1[16];
+	uint16_t buff_2[16];
+	uint16_t buff_3[16];
+
+	Timer t;
+	t.start();
+
+	auto start = t.elapsed_time();
+	testFloatWorkflow(buff_1);
+	auto end = t.elapsed_time();
+	printf("Float time ns: \n%lld us\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
+
+	start = t.elapsed_time();
+	testIntWorkflow(buff_2);
+	end = t.elapsed_time();
+	printf("Int time ns: \n%lld us\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
+
+	start = t.elapsed_time();
+	testUintWorkflow(buff_3);
+	end = t.elapsed_time();
+	printf("Uint time ns: \n%lld us\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
+
+	printf("Supposedly equal :\n");
+	for (int i = 0; i < 16; ++i) {
+		printf("%d\t%d\t%d\n", buff_1[i], buff_2[i], buff_3[i]);
+	}
+}
+
 auto main() -> int
 {
 	printf("\n\nStarting vibration process, hold your kids\n\n\n");
 	coreVib.initialize(2048);
 
-	printf("\n\nEnd of demos\n\n");
+	testWorkflows();
+
+	// printf("\n\nEnd of demos\n\n");
 	while (true) {
-		cardiacCoherenceDemo();
+		// cardiacCoherenceDemo();
 		// countVibsDemo();
 		// vibTypeDemo();
 		rtos::ThisThread::sleep_for(4s);
