@@ -7,7 +7,7 @@
 			],
 			"defines": [],
 			"macFrameworkPath": [],
-			"compilerPath": "/home/aermanio/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-g++",
+			"compilerPath": "/home/max/gcc-arm-none-eabi-10-2020-q4-major/bin/arm-none-eabi-g++",
 			"cStandard": "gnu11",
 			"cppStandard": "gnu++17",
 			"intelliSenseMode": "gcc-arm",
