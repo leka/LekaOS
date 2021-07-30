@@ -24,8 +24,13 @@ VibrationTemplate::VibrationTemplate(fseconds duration, uint32_t frequency, floa
 			this->_envelope = std::make_shared<WindowEnvelope>();
 			break;
 		case VibrationEnvelope::Triangular:
-		case VibrationEnvelope::Buzz:
+			this->_envelope = std::make_shared<TriangleEnvelope>();
+			break;
+		case VibrationEnvelope::Smooth:
+			this->_envelope = std::make_shared<SmoothEnvelope>();
+			break;
 		case VibrationEnvelope::Pulse:
+			printf("EnvelopeNotImplemented\n\n");
 			this->_envelope = nullptr;
 			break;
 	}

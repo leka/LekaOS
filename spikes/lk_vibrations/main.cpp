@@ -95,17 +95,17 @@ auto main() -> int
 
 	// testWorkflows();
 
-	VibrationTemplate vib(5s, 90, 0.2, VibrationEnvelope::Window);
+	VibrationTemplate vib(1s, 100, 0.2, VibrationEnvelope::Smooth);
 
 	// printf("\n\nEnd of demos\n\n");
 	while (true) {
-		// coreVib.play(vib);
-		// while (coreVib.isPlaying()) {
-		// 	ThisThread::sleep_for(50ms);
-		// }
+		coreVib.play(vib);
+		while (coreVib.isPlaying()) {
+			ThisThread::sleep_for(50ms);
+		}
 		// cardiacCoherenceDemo();
 		// countVibsDemo();
-		vibTypeDemo();
+		// vibTypeDemo();
 		rtos::ThisThread::sleep_for(4s);
 	}
 

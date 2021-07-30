@@ -17,7 +17,7 @@ class VibrationEnvelope
 		Window,
 		Sawtooth,
 		Triangular,	  // Up 2/3 of the time and down 1/3
-		Buzz,		  // round
+		Smooth,		  // round
 		Pulse		  // multiple maximums
 	};
 
@@ -35,6 +35,20 @@ class SawtoothEnvelope : public VibrationEnvelope
 {
   public:
 	SawtoothEnvelope() = default;
+	void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) final;
+};
+
+class TriangleEnvelope : public VibrationEnvelope
+{
+  public:
+	TriangleEnvelope() = default;
+	void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) final;
+};
+
+class SmoothEnvelope : public VibrationEnvelope
+{
+  public:
+	SmoothEnvelope() = default;
 	void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) final;
 };
 
