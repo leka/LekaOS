@@ -37,7 +37,7 @@ class VibrationTemplate
 	void setCurrentSample(uint32_t currentSample);
 	void setTotalSamples(uint32_t totalSamples);
 
-	void applyCurrentEnvelopeSlice(uint16_t *buffer, uint32_t nbSamples) const;
+	void applyCurrentEnvelopeSlice(float *buffer, uint32_t nbSamples) const;
 
   private:
 	fseconds _duration;

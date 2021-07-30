@@ -21,21 +21,21 @@ class VibrationEnvelope
 		Pulse		  // multiple maximums
 	};
 
-	virtual void apply(uint16_t *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) = 0;
+	virtual void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) = 0;
 };
 
 class WindowEnvelope : public VibrationEnvelope
 {
   public:
 	WindowEnvelope() = default;
-	void apply(uint16_t *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) final;
+	void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) final;
 };
 
 class SawtoothEnvelope : public VibrationEnvelope
 {
   public:
 	SawtoothEnvelope() = default;
-	void apply(uint16_t *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) final;
+	void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) final;
 };
 
 }	// namespace leka

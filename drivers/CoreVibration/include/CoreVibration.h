@@ -45,7 +45,8 @@ class CoreVibration
 
 	VibrationTemplate *_currentVib;
 
-	uint16_t *_sinBuffer;
+	float *_sinBuffer;
+	float *_tmpBuffer;
 	// int32_t _samplesRemaining;
 	float _samplingRate;
 	uint32_t _samplesPerPeriod;
@@ -55,10 +56,9 @@ class CoreVibration
 
 	void start();
 
-	void createSinWavePeriod(uint16_t *sinBuffer, VibrationTemplate &vib);
+	void createSinWavePeriod(float *sinBuffer, VibrationTemplate &vib) const;
 	void rescaleVibration();
 	void fillHalfBuffer(uint16_t *buffer, uint32_t nbSamples);
-	void alignU16ToDac(uint16_t *buffer, uint32_t nbSamples);
 
 	void halfBufferCallback();
 	void cptBufferCallback();

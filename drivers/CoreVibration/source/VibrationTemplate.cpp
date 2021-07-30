@@ -21,6 +21,8 @@ VibrationTemplate::VibrationTemplate(fseconds duration, uint32_t frequency, floa
 			this->_envelope = std::make_shared<SawtoothEnvelope>();
 			break;
 		case VibrationEnvelope::Window:
+			this->_envelope = std::make_shared<WindowEnvelope>();
+			break;
 		case VibrationEnvelope::Triangular:
 		case VibrationEnvelope::Buzz:
 		case VibrationEnvelope::Pulse:
@@ -69,7 +71,7 @@ void VibrationTemplate::setTotalSamples(uint32_t totalSamples)
 	_totalSamples = totalSamples;
 }
 
-void VibrationTemplate::applyCurrentEnvelopeSlice(uint16_t *buffer, uint32_t nbSamples) const
+void VibrationTemplate::applyCurrentEnvelopeSlice(float *buffer, uint32_t nbSamples) const
 {
 	_envelope->apply(buffer, nbSamples, _currentSample, _totalSamples);
 }
