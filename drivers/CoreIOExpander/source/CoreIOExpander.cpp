@@ -31,20 +31,20 @@ void MCP23017::ExpandedIO::internalMode(PinMode pull)
 	}
 }
 
-void MCP23017::ExpandedIO::internalWrite(int value)
-{
-	uint16_t outputs = _parent.readOutputs();
-	if (value) {
-		_parent.writeOutputs((outputs | _pin));
-	} else {
-		_parent.writeOutputs((outputs & (~_pin)));
-	}
-}
+// void MCP23017::ExpandedIO::internalWrite(int value)
+// {
+// 	uint16_t outputs = _parent.readOutputs();
+// 	if (value) {
+// 		_parent.writeOutputs((outputs | _pin));
+// 	} else {
+// 		_parent.writeOutputs((outputs & (~_pin)));
+// 	}
+// }
 
-void MCP23017::ExpandedIO::internalOutput()
-{
-	_parent.setOutputPins(_pin);
-}
+// void MCP23017::ExpandedIO::internalOutput()
+// {
+// 	_parent.setOutputPins(_pin);
+// }
 
 void MCP23017::ExpandedIO::internalInput()
 {

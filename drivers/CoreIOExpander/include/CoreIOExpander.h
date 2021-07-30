@@ -80,8 +80,8 @@ class MCP23017
 	  protected:
 		auto internalRead() -> int;
 		void internalMode(PinMode pull);
-		void internalWrite(int value);
-		void internalOutput();
+		// void internalWrite(int value);
+		// void internalOutput();
 		void internalInput();
 
 	  private:
