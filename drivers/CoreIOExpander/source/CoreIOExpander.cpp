@@ -18,7 +18,7 @@ void MCP23017::ExpandedIO::internalMode(PinMode pull)
 	if (pull != PullDown) {	  // MCP23017 may not support PullDown mode
 
 		_parent.mutex.lock();
-		uint8_t pullups = _parent.getPullups();
+		uint16_t pullups = _parent.getPullups();
 
 		if (pull == PullNone) {
 			pullups &= ~_pin;
@@ -63,12 +63,17 @@ void MCP23017::init()
 
 void MCP23017::setRegisterMapping(bool separated)
 {
-	writeRegister(mcp23017::registers::IOCON, separated << 7);
+	uint16_t IOCON_config = readRegister(mcp23017::registers::IOCON);
+	if (separated) {
+		writeRegister(mcp23017::registers::IOCON, IOCON_config | 0x8080);
+	} else {
+		writeRegister(mcp23017::registers::IOCON, IOCON_config & 0x7F7F);
+	}
 }
 
 void MCP23017::reset()
 {
-	for (int reg_addr = 0; reg_addr <= mcp23017::registers::OLAT; reg_addr += 2) {
+	for (uint8_t reg_addr = 0; reg_addr <= mcp23017::registers::OLAT; reg_addr += 2) {
 		writeRegister(reg_addr, 0x0000);
 	}
 }

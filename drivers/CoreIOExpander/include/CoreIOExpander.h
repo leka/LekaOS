@@ -19,12 +19,6 @@
 
 namespace leka {
 
-/** MCP23017 class
- *
- * Allow access to an I2C connected MCP23017 16-bit I/O extender chip
- *
- */
-
 namespace mcp23017 {
 
 	namespace registers {
@@ -55,13 +49,6 @@ namespace mcp23017 {
 class MCP23017
 {
   public:
-	// enum Frequency
-	// {
-	// 	Frequency_100KHz = 100000,
-	// 	Frequency_400KHz = 400000,
-	// 	/* Note: 1.7MHz probably won't work for mbed */
-	// 	Frequency_1700KHz = 1700000
-	// };
 	enum Pin
 	{
 		Pin_PA0 = 0x0001,
@@ -85,16 +72,6 @@ class MCP23017
 	};
 
   protected:
-	/**
-	 * Expanded IO class implements functionality common to
-	 * ExpandedInput, ExpandedOutput, ExpandedInputOutput
-	 *
-	 * @note Accessing an ExpandedIO from multiple handles
-	 * (ie: using it with both ExpandedInput and ExpandedOutput,
-	 * or using the MCP23017 APIs directly) may cause unexpected
-	 * behavior. The state of an ExpandedIO's direction
-	 * is not maintained past initialization.
-	 */
 	class ExpandedIO
 	{
 	  public:
@@ -107,25 +84,20 @@ class MCP23017
 		void internalOutput();
 		void internalInput();
 
-	  protected:
+	  private:
 		MCP23017 &_parent;
 		Pin _pin;
 	};
 
   public:
-	/**
-	 * ExpandedInput class that implements the mbed::DigitalIn API
-	 *
-	 * @note See mbed::DigitalIn class declaration for API documentation
-	 */
 	class ExpandedInput : public ExpandedIO, public mbed::interface::DigitalIn
 	{
 	  public:
-		ExpandedInput(MCP23017 &parent, Pin pin) : ExpandedIO(parent, pin) { internalInput(); }
-		virtual ~ExpandedInput() override {}
-		virtual auto read() -> int override { return ExpandedIO::internalRead(); }
-		virtual void mode(PinMode pull) override { ExpandedIO::internalMode(pull); }
-		virtual auto is_connected() -> int override { return 1; }
+		explicit ExpandedInput(MCP23017 &parent, Pin pin) : ExpandedIO(parent, pin) { internalInput(); }
+		~ExpandedInput() override {}
+		auto read() -> int override { return ExpandedIO::internalRead(); }
+		void mode(PinMode pull) override { ExpandedIO::internalMode(pull); }
+		auto is_connected() -> int override { return 1; }
 	};
 
 	/**
@@ -167,7 +139,7 @@ class MCP23017
 	friend class ChannelOutput;
 	friend class ChannelInputOutput;
 
-	MCP23017(interface::I2C &i2c) : _i2c(i2c) {};
+	explicit MCP23017(interface::I2C &i2c) : _i2c(i2c) {};
 
 	void setRegisterMapping(bool separated = false);
 
@@ -205,7 +177,7 @@ class MCP23017
 
 	auto readRegister(uint8_t reg) -> uint16_t;
 
-  protected:
+  private:
 	void writeRegister(uint8_t reg, uint16_t value);
 
 	void reset();

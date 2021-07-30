@@ -123,10 +123,30 @@ TEST_F(CoreMCP23017Test, isConnected)
 
 TEST_F(CoreMCP23017Test, setRegisterMapping)
 {
-	std::array<uint8_t, 2> expected_IODIR_values = {0x00, 0x00};
-	writeRegister(mcp23017::registers::IOCON, expected_IODIR_values);
+	{
+		InSequence seq;
+
+		std::array<uint8_t, 2> expected_IOCON_values = {0x80, 0x0F};
+		std::array<uint8_t, 2> actual_IOCON_values	 = {0x00, 0x0F};
+		readRegister(mcp23017::registers::IOCON, expected_IOCON_values);
+		writeRegister(mcp23017::registers::IOCON, actual_IOCON_values);
+	}
 
 	coreMCP23017.setRegisterMapping();
+}
+
+TEST_F(CoreMCP23017Test, setRegisterMappingSeparated)
+{
+	{
+		InSequence seq;
+
+		std::array<uint8_t, 2> expected_IOCON_values = {0x00, 0x0F};
+		std::array<uint8_t, 2> actual_IOCON_values	 = {0x80, 0x8F};
+		readRegister(mcp23017::registers::IOCON, expected_IOCON_values);
+		writeRegister(mcp23017::registers::IOCON, actual_IOCON_values);
+	}
+
+	coreMCP23017.setRegisterMapping(true);
 }
 
 TEST_F(CoreMCP23017Test, reset)
