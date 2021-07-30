@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "MCP23017.h"
+#include "CoreIOExpander.h"
 #include <cstdint>
 
 #include "gtest/gtest.h"
@@ -10,6 +10,7 @@
 
 using namespace leka;
 
+using ::testing::_;
 using ::testing::Args;
 using ::testing::DoAll;
 using ::testing::ElementsAre;
@@ -130,15 +131,8 @@ TEST_F(CoreMCP23017Test, setRegisterMapping)
 
 TEST_F(CoreMCP23017Test, reset)
 {
-	{
-		InSequence seq;
-		EXPECT_CALL(i2cMock, write).Times(1);
-
-		const auto expected_IODIR_values = ElementsAre(mcp23017::registers::IODIR, 0xff, 0xff);
-		EXPECT_CALL(i2cMock, write).With(Args<1, 2>(expected_IODIR_values));
-
-		EXPECT_CALL(i2cMock, write).Times(10);
-	}
+	const auto expected_IODIR_values = ElementsAre(_, 0x00, 0x00);
+	EXPECT_CALL(i2cMock, write).With(Args<1, 2>(expected_IODIR_values)).Times(11);
 
 	coreMCP23017.init();
 }

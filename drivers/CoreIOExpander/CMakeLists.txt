@@ -11,7 +11,7 @@ target_include_directories(CoreIOExpander
 
 target_sources(CoreIOExpander
 	PRIVATE
-		source/MCP23017.cpp
+		source/CoreIOExpander.cpp
 )
 
 target_link_libraries(CoreIOExpander
@@ -22,7 +22,7 @@ target_link_libraries(CoreIOExpander
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
-		tests/MCP23017_test.cpp
+		tests/CoreIOExpander_test.cpp
 	)
 
 endif()

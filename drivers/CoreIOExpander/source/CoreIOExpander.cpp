@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "MCP23017.h"
+#include "CoreIOExpander.h"
 #include <array>
 #include <cstdint>
 
@@ -63,33 +63,14 @@ void MCP23017::init()
 
 void MCP23017::setRegisterMapping(bool separated)
 {
-	writeRegister(mcp23017::registers::IOCON, static_cast<uint8_t>(separated));
+	writeRegister(mcp23017::registers::IOCON, separated << 7);
 }
 
 void MCP23017::reset()
 {
-	//
-	// First make sure that the device is in BANK=0 mode
-	//
-	writeRegister(0x05, (unsigned char)0x00);
-	//
-	// set direction registers to inputs
-	//
-	writeRegister(mcp23017::registers::IODIR, (unsigned short)0xFFFF);
-	//
-	// set all other registers to zero (last of 10 registers is OLAT)
-	//
-	for (int reg_addr = 2; reg_addr <= mcp23017::registers::OLAT; reg_addr += 2) {
-		writeRegister(reg_addr, (unsigned short)0x0000);
+	for (int reg_addr = 0; reg_addr <= mcp23017::registers::OLAT; reg_addr += 2) {
+		writeRegister(reg_addr, 0x0000);
 	}
-	//
-	// Set the shadow registers to power-on state
-	//
-	shadow_IODIR   = 0xFFFF;
-	shadow_GPIO	   = 0;
-	shadow_GPPU	   = 0;
-	shadow_IPOL	   = 0;
-	shadow_GPINTEN = 0;
 }
 
 void MCP23017::writeRegister(uint8_t reg, uint16_t value)
@@ -114,17 +95,17 @@ auto MCP23017::readRegister(uint8_t reg) -> uint16_t
 
 	mutex.unlock();
 
-	return (buffer[0] + (buffer[1] << 8));
+	return static_cast<uint16_t>(buffer[0] + (buffer[1] << 8));
 }
 
-void MCP23017::setInputPins(uint8_t pins)
+void MCP23017::setInputPins(uint16_t pins)
 {
 	auto value = readRegister(mcp23017::registers::IODIR);
 
 	writeRegister(mcp23017::registers::IODIR, value | pins);
 }
 
-void MCP23017::setOutputPins(uint8_t pins)
+void MCP23017::setOutputPins(uint16_t pins)
 {
 	auto value = readRegister(mcp23017::registers::IODIR);
 
