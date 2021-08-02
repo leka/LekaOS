@@ -34,6 +34,16 @@ void CoreDACTimer::deInitialize()
 	_hal.HAL_TIM_Base_DeInit(&_htim);
 }
 
+void CoreDACTimer::start()
+{
+	_hal.HAL_TIM_Base_Start(&_htim);
+}
+
+void CoreDACTimer::stop()
+{
+	_hal.HAL_TIM_Base_Stop(&_htim);
+}
+
 auto CoreDACTimer::getHandle() -> TIM_HandleTypeDef
 {
 	return this->_htim;
