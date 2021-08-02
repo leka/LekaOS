@@ -110,7 +110,6 @@ void CoreDAC::_mspInitCallback()
 	_hal.HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 	/* DAC DMA Init */
-	/* DAC1 Init */
 	_hdma.Init.Channel			   = DMA_CHANNEL_7;
 	_hdma.Init.Direction		   = DMA_MEMORY_TO_PERIPH;
 	_hdma.Init.PeriphInc		   = DMA_PINC_DISABLE;
@@ -118,10 +117,10 @@ void CoreDAC::_mspInitCallback()
 	_hdma.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
 	_hdma.Init.MemDataAlignment	   = DMA_MDATAALIGN_HALFWORD;
 	_hdma.Init.Mode				   = DMA_CIRCULAR;
-	_hdma.Init.Priority			   = DMA_PRIORITY_LOW;		// changed from low to high
-	_hdma.Init.FIFOMode			   = DMA_FIFOMODE_ENABLE;	// enable
+	_hdma.Init.Priority			   = DMA_PRIORITY_LOW;
+	_hdma.Init.FIFOMode			   = DMA_FIFOMODE_ENABLE;
 	_hdma.Init.FIFOThreshold	   = DMA_FIFO_THRESHOLD_HALFFULL;
-	_hdma.Init.MemBurst			   = DMA_MBURST_INC4;	// inc4
+	_hdma.Init.MemBurst			   = DMA_MBURST_INC4;
 	_hdma.Init.PeriphBurst		   = DMA_PBURST_SINGLE;
 
 	_hal.HAL_DMA_Init(&_hdma);
