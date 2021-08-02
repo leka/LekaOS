@@ -46,6 +46,17 @@ void CoreDAC::deInitialize()
 	_hal.HAL_DAC_DeInit(&_hdac);
 }
 
+void CoreDAC::start(uint16_t *pData, uint32_t dataLength)
+{
+	_hal.HAL_DAC_Start(&_hdac, DAC_CHANNEL_1);
+	_hal.HAL_DAC_Start_DMA(&_hdac, DAC_CHANNEL_1, (uint32_t *)pData, dataLength, DAC_ALIGN_12B_R);
+}
+
+void CoreDAC::stop()
+{
+	_hal.HAL_DAC_Stop_DMA(&_hdac, DAC_CHANNEL_1);
+}
+
 auto CoreDAC::getHandle() -> DAC_HandleTypeDef &
 {
 	return this->_hdac;
