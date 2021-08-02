@@ -56,4 +56,14 @@ auto CoreDAC::getDMAHandle() -> DMA_HandleTypeDef &
 	return this->_hdma;
 }
 
+void CoreDAC::setCptCallbackPtr(pDAC_CallbackTypeDef pCallbackCpt)
+{
+	this->_pCallbackCpt = pCallbackCpt;
+}
+
+void CoreDAC::setHalfCptCallbackPtr(pDAC_CallbackTypeDef pCallbackHlfCpt)
+{
+	this->_pCallbackHlfCpt = pCallbackHlfCpt;
+}
+
 }	// namespace leka
