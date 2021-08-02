@@ -50,6 +50,7 @@ class VideoKit
 	LKCoreSTM32HalBase &_hal;
 
 	// peripherals
+	CoreJPEGModeDMA _corejpegmode;
 	CoreJPEG _corejpeg;
 	CoreDMA2D _coredma2d;
 
