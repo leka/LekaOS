@@ -34,6 +34,11 @@ void CoreDACTimer::deInitialize()
 	_hal.HAL_TIM_Base_DeInit(&_htim);
 }
 
+auto CoreDACTimer::getHandle() -> TIM_HandleTypeDef
+{
+	return this->_htim;
+}
+
 auto CoreDACTimer::_calculatePeriod(float frequency) -> uint32_t
 {
 	// TODO : handle frequency in a non-supported range ?
