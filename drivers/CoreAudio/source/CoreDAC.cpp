@@ -72,4 +72,67 @@ void CoreDAC::_registerCallbacks()
 	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_HALF_COMPLETE_CB_ID, _pCallbackHlfCpt);
 }
 
+void CoreDAC::_registerMspCallbacks()
+{
+	static auto *self = this;
+	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_MSP_INIT_CB_ID,
+								  [](DAC_HandleTypeDef *hdac) { self->_mspInitCallback(); });
+	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_MSP_DEINIT_CB_ID,
+								  [](DAC_HandleTypeDef *hdac) { self->_mspDeInitCallback(); });
+}
+
+void CoreDAC::_mspInitCallback()
+{
+	// DAC MSP INIT
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+	/* Peripheral clock enable */
+	_hal.HAL_RCC_DAC_CLK_ENABLE();
+
+	_hal.HAL_RCC_GPIOA_CLK_ENABLE();
+	/**DAC GPIO Configuration
+	PA4     ------> DAC_OUT1
+	*/
+	GPIO_InitStruct.Pin	 = GPIO_PIN_4;
+	GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	_hal.HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+	/* DAC DMA Init */
+	/* DAC1 Init */
+	_hdma.Init.Channel			   = DMA_CHANNEL_7;
+	_hdma.Init.Direction		   = DMA_MEMORY_TO_PERIPH;
+	_hdma.Init.PeriphInc		   = DMA_PINC_DISABLE;
+	_hdma.Init.MemInc			   = DMA_MINC_ENABLE;
+	_hdma.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+	_hdma.Init.MemDataAlignment	   = DMA_MDATAALIGN_HALFWORD;
+	_hdma.Init.Mode				   = DMA_CIRCULAR;
+	_hdma.Init.Priority			   = DMA_PRIORITY_LOW;		// changed from low to high
+	_hdma.Init.FIFOMode			   = DMA_FIFOMODE_ENABLE;	// enable
+	_hdma.Init.FIFOThreshold	   = DMA_FIFO_THRESHOLD_HALFFULL;
+	_hdma.Init.MemBurst			   = DMA_MBURST_INC4;	// inc4
+	_hdma.Init.PeriphBurst		   = DMA_PBURST_SINGLE;
+
+	_hal.HAL_DMA_Init(&_hdma);
+
+	__HAL_LINKDMA(&_hdac, DMA_Handle1, _hdma);
+}
+
+void CoreDAC::_mspDeInitCallback()
+{
+	// MSP Deinit
+	if (_hdac.Instance == DAC) {
+		/* Peripheral clock disable */
+		_hal.HAL_RCC_DAC_CLK_DISABLE();
+
+		/**DAC GPIO Configuration
+		PA4     ------> DAC_OUT1
+		*/
+		_hal.HAL_GPIO_DeInit(GPIOA, GPIO_PIN_4);
+
+		/* DAC DMA DeInit */
+		_hal.HAL_DMA_DeInit(_hdac.DMA_Handle1);
+	}
+}
+
 }	// namespace leka
