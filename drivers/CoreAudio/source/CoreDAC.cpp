@@ -46,4 +46,14 @@ void CoreDAC::deInitialize()
 	_hal.HAL_DAC_DeInit(&_hdac);
 }
 
+auto CoreDAC::getHandle() -> DAC_HandleTypeDef &
+{
+	return this->_hdac;
+}
+
+auto CoreDAC::getDMAHandle() -> DMA_HandleTypeDef &
+{
+	return this->_hdma;
+}
+
 }	// namespace leka
