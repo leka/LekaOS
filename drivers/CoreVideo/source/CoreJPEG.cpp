@@ -8,7 +8,7 @@
 
 using namespace leka;
 
-CoreJPEG::CoreJPEG(LKCoreSTM32HalBase &hal) : _hal(hal)
+CoreJPEG::CoreJPEG(LKCoreSTM32HalBase &hal, interface::CoreJPEGMode &mode) : _hal(hal), _mode(mode)
 {
 	_handle.Instance = JPEG;
 }
