@@ -47,7 +47,7 @@ class CoreMCP23017Test : public ::testing::Test
 
 TEST_F(CoreMCP23017Test, mcp23017Instantiation)
 {
-	MCP23017::ExpandedInput coreExpandedInput = coreMCP23017.asInput(MCP23017::Pin_PA0);
+	MCP23017::ExpandedInput coreExpandedInput = coreMCP23017.asInput(mcp23017::pin::PA0);
 
 	ASSERT_NE(&coreMCP23017, nullptr);
 	ASSERT_NE(&coreExpandedInput, nullptr);
@@ -55,7 +55,7 @@ TEST_F(CoreMCP23017Test, mcp23017Instantiation)
 
 TEST_F(CoreMCP23017Test, inputRead)
 {
-	MCP23017::ExpandedInput coreExpandedInput	 = coreMCP23017.asInput(MCP23017::Pin_PA0);
+	MCP23017::ExpandedInput coreExpandedInput	 = coreMCP23017.asInput(mcp23017::pin::PA0);
 	std::array<uint8_t, 2> expected_input_values = {0x01, 0x00};
 
 	{
@@ -71,7 +71,7 @@ TEST_F(CoreMCP23017Test, inputRead)
 
 TEST_F(CoreMCP23017Test, inputModePullUp)
 {
-	MCP23017::ExpandedInput coreExpandedInput = coreMCP23017.asInput(MCP23017::Pin_PA0);
+	MCP23017::ExpandedInput coreExpandedInput = coreMCP23017.asInput(mcp23017::pin::PA0);
 
 	{
 		InSequence seq;
@@ -88,7 +88,7 @@ TEST_F(CoreMCP23017Test, inputModePullUp)
 
 TEST_F(CoreMCP23017Test, inputModePullNone)
 {
-	MCP23017::ExpandedInput coreExpandedInput = coreMCP23017.asInput(MCP23017::Pin_PA0);
+	MCP23017::ExpandedInput coreExpandedInput = coreMCP23017.asInput(mcp23017::pin::PA0);
 
 	{
 		InSequence seq;
@@ -105,7 +105,7 @@ TEST_F(CoreMCP23017Test, inputModePullNone)
 
 TEST_F(CoreMCP23017Test, inputModePullDown)
 {
-	MCP23017::ExpandedInput coreExpandedInput = coreMCP23017.asInput(MCP23017::Pin_PA0);
+	MCP23017::ExpandedInput coreExpandedInput = coreMCP23017.asInput(mcp23017::pin::PA0);
 
 	EXPECT_CALL(i2cMock, write).Times(0);
 	EXPECT_CALL(i2cMock, read).Times(0);
@@ -115,7 +115,7 @@ TEST_F(CoreMCP23017Test, inputModePullDown)
 
 TEST_F(CoreMCP23017Test, isConnected)
 {
-	MCP23017::ExpandedInput coreExpandedInput = coreMCP23017.asInput(MCP23017::Pin_PA0);
+	MCP23017::ExpandedInput coreExpandedInput = coreMCP23017.asInput(mcp23017::pin::PA0);
 
 	auto is_connected = coreExpandedInput.is_connected();
 	ASSERT_EQ(is_connected, 1);
@@ -161,14 +161,14 @@ TEST_F(CoreMCP23017Test, reset)
 		readRegister(mcp23017::registers::IODIR, expected_IODIR_values);
 		writeRegister(mcp23017::registers::IODIR, actual_IODIR_values);
 
-		std::array<uint8_t, 2> actual_GPPU_values = {MCP23017::Pin::Pin_PA0, 0x00};
+		std::array<uint8_t, 2> actual_GPPU_values = {mcp23017::pin::PA0, 0x00};
 		writeRegister(mcp23017::registers::GPPU, actual_GPPU_values);
 
-		std::array<uint8_t, 2> actual_GPIO_values = {0x00, MCP23017::Pin::Pin_PA0};
+		std::array<uint8_t, 2> actual_GPIO_values = {0x00, mcp23017::pin::PA0};
 		writeRegister(mcp23017::registers::GPIO, actual_GPIO_values);
 	}
 
-	coreMCP23017.init(MCP23017::Pin::Pin_PA0);
+	coreMCP23017.init(mcp23017::pin::PA0);
 }
 
 TEST_F(CoreMCP23017Test, setInputPins)
@@ -182,12 +182,12 @@ TEST_F(CoreMCP23017Test, setInputPins)
 		writeRegister(mcp23017::registers::IODIR, actual_IODIR_values);
 	}
 
-	coreMCP23017.setInputPins(MCP23017::Pin::Pin_PA0);
+	coreMCP23017.setInputPins(mcp23017::pin::PA0);
 }
 
 TEST_F(CoreMCP23017Test, setOutputPins)
 {
-	coreMCP23017.setInputPins(MCP23017::Pin::Pin_PA0);
+	coreMCP23017.setInputPins(mcp23017::pin::PA0);
 	{
 		InSequence seq;
 		std::array<uint8_t, 2> expected_IODIR_values = {0x01, 0x0A};
@@ -196,20 +196,20 @@ TEST_F(CoreMCP23017Test, setOutputPins)
 		writeRegister(mcp23017::registers::IODIR, actual_IODIR_values);
 	}
 
-	coreMCP23017.setOutputPins(MCP23017::Pin::Pin_PA0);
+	coreMCP23017.setOutputPins(mcp23017::pin::PA0);
 }
 
 TEST_F(CoreMCP23017Test, writeOutputs)
 {
-	std::array<uint8_t, 2> actual_GPIO_values = {0x00, MCP23017::Pin::Pin_PA0};
+	std::array<uint8_t, 2> actual_GPIO_values = {0x00, mcp23017::pin::PA0};
 	writeRegister(mcp23017::registers::GPIO, actual_GPIO_values);
 
-	coreMCP23017.writeOutputs(MCP23017::Pin::Pin_PA0);
+	coreMCP23017.writeOutputs(mcp23017::pin::PA0);
 }
 
 TEST_F(CoreMCP23017Test, readOutputs)
 {
-	coreMCP23017.setInputPins(MCP23017::Pin::Pin_PA0);
+	coreMCP23017.setInputPins(mcp23017::pin::PA0);
 	{
 		InSequence seq;
 		std::array<uint8_t, 2> expected_GPIO_values = {0x01, 0x00};
@@ -223,7 +223,7 @@ TEST_F(CoreMCP23017Test, readOutputs)
 
 TEST_F(CoreMCP23017Test, readInputs)
 {
-	coreMCP23017.setInputPins(MCP23017::Pin::Pin_PA0);
+	coreMCP23017.setInputPins(mcp23017::pin::PA0);
 	{
 		InSequence seq;
 
@@ -237,9 +237,9 @@ TEST_F(CoreMCP23017Test, readInputs)
 
 TEST_F(CoreMCP23017Test, setInputPolarity)
 {
-	uint16_t polarity_value = MCP23017::Pin::Pin_PA0 | MCP23017::Pin::Pin_PB5;
+	uint16_t polarity_value = mcp23017::pin::PA0 | mcp23017::pin::PB5;
 
-	std::array<uint8_t, 2> actual_IPOL_values = {MCP23017::Pin::Pin_PA0, MCP23017::Pin::Pin_PB5 >> 8};
+	std::array<uint8_t, 2> actual_IPOL_values = {mcp23017::pin::PA0, mcp23017::pin::PB5 >> 8};
 	writeRegister(mcp23017::registers::IPOL, actual_IPOL_values);
 
 	coreMCP23017.setInputPolarity(polarity_value);
@@ -247,7 +247,7 @@ TEST_F(CoreMCP23017Test, setInputPolarity)
 
 TEST_F(CoreMCP23017Test, getInputPolarity)
 {
-	uint16_t expected_polarity_value = MCP23017::Pin::Pin_PA0 | MCP23017::Pin::Pin_PB5;
+	uint16_t expected_polarity_value = mcp23017::pin::PA0 | mcp23017::pin::PB5;
 	coreMCP23017.setInputPolarity(expected_polarity_value);
 
 	{
@@ -263,9 +263,9 @@ TEST_F(CoreMCP23017Test, getInputPolarity)
 
 TEST_F(CoreMCP23017Test, setPullups)
 {
-	uint16_t polarity_value = MCP23017::Pin::Pin_PA0 | MCP23017::Pin::Pin_PB5;
+	uint16_t polarity_value = mcp23017::pin::PA0 | mcp23017::pin::PB5;
 
-	std::array<uint8_t, 2> actual_GPPU_values = {MCP23017::Pin::Pin_PA0, MCP23017::Pin::Pin_PB5 >> 8};
+	std::array<uint8_t, 2> actual_GPPU_values = {mcp23017::pin::PA0, mcp23017::pin::PB5 >> 8};
 	writeRegister(mcp23017::registers::GPPU, actual_GPPU_values);
 
 	coreMCP23017.setPullups(polarity_value);
@@ -273,7 +273,7 @@ TEST_F(CoreMCP23017Test, setPullups)
 
 TEST_F(CoreMCP23017Test, getPullups)
 {
-	uint16_t expected_pullups_value = MCP23017::Pin::Pin_PA0 | MCP23017::Pin::Pin_PB5;
+	uint16_t expected_pullups_value = mcp23017::pin::PA0 | mcp23017::pin::PB5;
 	coreMCP23017.setPullups(expected_pullups_value);
 
 	{
@@ -303,7 +303,7 @@ TEST_F(CoreMCP23017Test, interruptOnChanges)
 		writeRegister(mcp23017::registers::GPINTEN, actual_GPINTEN_values);
 	}
 
-	coreMCP23017.interruptOnChanges(MCP23017::Pin::Pin_PA0 | MCP23017::Pin::Pin_PA1);
+	coreMCP23017.interruptOnChanges(mcp23017::pin::PA0 | mcp23017::pin::PA1);
 }
 
 TEST_F(CoreMCP23017Test, disableInterrupts)
@@ -317,7 +317,7 @@ TEST_F(CoreMCP23017Test, disableInterrupts)
 		writeRegister(mcp23017::registers::GPINTEN, actual_GPINTEN_values);
 	}
 
-	coreMCP23017.disableInterrupts(MCP23017::Pin::Pin_PA0);
+	coreMCP23017.disableInterrupts(mcp23017::pin::PA0);
 }
 
 TEST_F(CoreMCP23017Test, acknowledgeInterrupt)

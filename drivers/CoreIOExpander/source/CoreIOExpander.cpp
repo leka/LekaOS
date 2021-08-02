@@ -51,7 +51,7 @@ void MCP23017::ExpandedIO::internalInput()
 	_parent.setInputPins(_pin);
 }
 
-MCP23017::ExpandedInput MCP23017::asInput(MCP23017::Pin pin)
+MCP23017::ExpandedInput MCP23017::asInput(uint16_t pin)
 {
 	return ExpandedInput(*this, pin);
 }
@@ -122,7 +122,8 @@ void MCP23017::setOutputPins(uint16_t pins)
 
 void MCP23017::writeOutputs(uint16_t values)
 {
-	auto olat_values = (0xFF00 & values << 8) + (0x00FF & values >> 8);
+	uint16_t olat_values = (0xFF00 & values << 8) + (0x00FF & values >> 8);	  // results from testing the MCP23017
+
 	writeRegister(mcp23017::registers::GPIO, olat_values);
 }
 

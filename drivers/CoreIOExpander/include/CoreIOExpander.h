@@ -21,6 +21,29 @@ namespace leka {
 
 namespace mcp23017 {
 
+	namespace pin {
+
+		constexpr uint16_t PA0 = 0x0001;
+		constexpr uint16_t PA1 = 0x0002;
+		constexpr uint16_t PA2 = 0x0004;
+		constexpr uint16_t PA3 = 0x0008;
+		constexpr uint16_t PA4 = 0x0010;
+		constexpr uint16_t PA5 = 0x0020;
+		constexpr uint16_t PA6 = 0x0040;
+		constexpr uint16_t PA7 = 0x0080;
+
+		constexpr uint16_t PB0 = 0x0100;
+		constexpr uint16_t PB1 = 0x0200;
+		constexpr uint16_t PB2 = 0x0400;
+		constexpr uint16_t PB3 = 0x0800;
+		constexpr uint16_t PB4 = 0x1000;
+		constexpr uint16_t PB5 = 0x2000;
+		constexpr uint16_t PB6 = 0x4000;
+		constexpr uint16_t PB7 = 0x8000;
+		constexpr uint16_t All = 0xFFFF;
+
+	}	// namespace pin
+
 	namespace registers {
 		constexpr uint8_t IODIR	  = 0x00;
 		constexpr uint8_t IPOL	  = 0x02;
@@ -48,34 +71,11 @@ namespace mcp23017 {
 
 class MCP23017
 {
-  public:
-	enum Pin
-	{
-		Pin_PA0 = 0x0001,
-		Pin_PA1 = 0x0002,
-		Pin_PA2 = 0x0004,
-		Pin_PA3 = 0x0008,
-		Pin_PA4 = 0x0010,
-		Pin_PA5 = 0x0020,
-		Pin_PA6 = 0x0040,
-		Pin_PA7 = 0x0080,
-
-		Pin_PB0 = 0x0100,
-		Pin_PB1 = 0x0200,
-		Pin_PB2 = 0x0400,
-		Pin_PB3 = 0x0800,
-		Pin_PB4 = 0x1000,
-		Pin_PB5 = 0x2000,
-		Pin_PB6 = 0x4000,
-		Pin_PB7 = 0x8000,
-		Pin_All = 0xFFFF
-	};
-
   protected:
 	class ExpandedIO
 	{
 	  public:
-		ExpandedIO(MCP23017 &parent, Pin pin) : _parent(parent), _pin(pin) {}
+		ExpandedIO(MCP23017 &parent, uint16_t pin) : _parent(parent), _pin(pin) {}
 
 	  protected:
 		auto internalRead() -> int;
@@ -86,14 +86,14 @@ class MCP23017
 
 	  private:
 		MCP23017 &_parent;
-		Pin _pin;
+		uint16_t _pin;
 	};
 
   public:
 	class ExpandedInput : public ExpandedIO, public mbed::interface::DigitalIn
 	{
 	  public:
-		explicit ExpandedInput(MCP23017 &parent, Pin pin) : ExpandedIO(parent, pin) { internalInput(); }
+		explicit ExpandedInput(MCP23017 &parent, uint16_t pin) : ExpandedIO(parent, pin) { internalInput(); }
 		~ExpandedInput() override {}
 		auto read() -> int override { return ExpandedIO::internalRead(); }
 		void mode(PinMode pull) override { ExpandedIO::internalMode(pull); }
@@ -108,11 +108,10 @@ class MCP23017
 	// class ExpandedOutput : public ExpandedIO, public mbed::DigitalOut
 	// {
 	//   public:
-	// 	ExpandedOutput(MCP23017 &parent, Pin pin) : ExpandedIO(parent, pin), mbed::DigitalOut(NC) { internal_output(); }
-	// 	virtual ~ExpandedOutput() override {}
-	// 	virtual void write(int value) override { ExpandedIO::internal_write(value); }
-	// 	virtual int read() override { return ExpandedIO::internal_read(); }
-	// 	virtual int is_connected() override { return 1; }
+	// 	ExpandedOutput(MCP23017 &parent, uint16_t pin) : ExpandedIO(parent, pin), mbed::DigitalOut(NC) {
+	// internal_output(); } 	virtual ~ExpandedOutput() override {} 	virtual void write(int value) override {
+	// ExpandedIO::internal_write(value); } 	virtual int read() override { return ExpandedIO::internal_read(); }
+	// virtual int is_connected() override { return 1; }
 	// };
 
 	/**
@@ -123,17 +122,14 @@ class MCP23017
 	// class ExpandedInputOutput : public ExpandedIO, public mbed::DigitalInOut
 	// {
 	//   public:
-	// 	ExpandedInputOutput(MCP23017 &parent, Pin pin) : ExpandedIO(parent, pin), mbed::DigitalInOut(NC) { output(); }
-	// 	virtual ~ExpandedInputOutput() override {}
-	// 	virtual void write(int value) override { ExpandedIO::internal_write(value); }
-	// 	virtual int read() override { return ExpandedIO::internal_read(); }
-	// 	virtual void output() override { ExpandedIO::internal_output(); }
-	// 	virtual void input() override { ExpandedIO::internal_input(); }
-	// 	virtual void mode(PinMode pull) override { ExpandedIO::internal_mode(pull); }
+	// 	ExpandedInputOutput(MCP23017 &parent, uint16_t pin) : ExpandedIO(parent, pin), mbed::DigitalInOut(NC) {
+	// output(); } 	virtual ~ExpandedInputOutput() override {} 	virtual void write(int value) override {
+	// ExpandedIO::internal_write(value); } 	virtual int read() override { return ExpandedIO::internal_read(); }
+	// virtual void output() override { ExpandedIO::internal_output(); } 	virtual void input() override {
+	// ExpandedIO::internal_input(); } 	virtual void mode(PinMode pull) override { ExpandedIO::internal_mode(pull); }
 	// 	virtual int is_connected() override { return 1; }
 	// };
 
-  public:
 	/** Allow ExpandedInput/Output/InputOutput to access internal members*/
 	friend class ChannelInput;
 	friend class ChannelOutput;
@@ -145,11 +141,11 @@ class MCP23017
 
 	void init(uint16_t input_pins);
 
-	auto asInput(Pin pin) -> ExpandedInput;
+	auto asInput(uint16_t pin) -> ExpandedInput;
 
-	// ExpandedOutput as_output(Pin pin);
+	// ExpandedOutput as_output(uint16_t pin);
 
-	// ExpandedInputOutput as_input_output(Pin pin);
+	// ExpandedInputOutput as_input_output(uint16_t pin);
 
 	void setInputPins(uint16_t pins);
 
