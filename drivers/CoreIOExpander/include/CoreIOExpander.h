@@ -143,7 +143,7 @@ class MCP23017
 
 	void setRegisterMapping(bool separated = false);
 
-	void init();
+	void init(uint16_t input_pins);
 
 	auto asInput(Pin pin) -> ExpandedInput;
 

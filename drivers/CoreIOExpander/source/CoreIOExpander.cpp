@@ -56,9 +56,12 @@ MCP23017::ExpandedInput MCP23017::asInput(MCP23017::Pin pin)
 	return ExpandedInput(*this, pin);
 }
 
-void MCP23017::init()
+void MCP23017::init(uint16_t input_pins)
 {
 	reset();
+	setInputPins(input_pins);
+	setPullups(input_pins);
+	writeOutputs(input_pins);
 }
 
 void MCP23017::setRegisterMapping(bool separated)
@@ -119,7 +122,8 @@ void MCP23017::setOutputPins(uint16_t pins)
 
 void MCP23017::writeOutputs(uint16_t values)
 {
-	writeRegister(mcp23017::registers::GPIO, values);
+	auto olat_values = (0xFF00 & values << 8) + (0x00FF & values >> 8);
+	writeRegister(mcp23017::registers::GPIO, olat_values);
 }
 
 auto MCP23017::readOutputs() -> uint16_t

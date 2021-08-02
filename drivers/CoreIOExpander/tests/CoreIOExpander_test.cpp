@@ -151,10 +151,24 @@ TEST_F(CoreMCP23017Test, setRegisterMappingSeparated)
 
 TEST_F(CoreMCP23017Test, reset)
 {
-	const auto expected_IODIR_values = ElementsAre(_, 0x00, 0x00);
-	EXPECT_CALL(i2cMock, write).With(Args<1, 2>(expected_IODIR_values)).Times(11);
+	{
+		InSequence seq;
+		const auto expected_reset_IODIR_values = ElementsAre(_, 0x00, 0x00);
+		EXPECT_CALL(i2cMock, write).With(Args<1, 2>(expected_reset_IODIR_values)).Times(11);
 
-	coreMCP23017.init();
+		std::array<uint8_t, 2> expected_IODIR_values = {0x00, 0x00};
+		std::array<uint8_t, 2> actual_IODIR_values	 = {0x01, 0x00};
+		readRegister(mcp23017::registers::IODIR, expected_IODIR_values);
+		writeRegister(mcp23017::registers::IODIR, actual_IODIR_values);
+
+		std::array<uint8_t, 2> actual_GPPU_values = {MCP23017::Pin::Pin_PA0, 0x00};
+		writeRegister(mcp23017::registers::GPPU, actual_GPPU_values);
+
+		std::array<uint8_t, 2> actual_GPIO_values = {0x00, MCP23017::Pin::Pin_PA0};
+		writeRegister(mcp23017::registers::GPIO, actual_GPIO_values);
+	}
+
+	coreMCP23017.init(MCP23017::Pin::Pin_PA0);
 }
 
 TEST_F(CoreMCP23017Test, setInputPins)
@@ -187,7 +201,7 @@ TEST_F(CoreMCP23017Test, setOutputPins)
 
 TEST_F(CoreMCP23017Test, writeOutputs)
 {
-	std::array<uint8_t, 2> actual_GPIO_values = {MCP23017::Pin::Pin_PA0, 0x00};
+	std::array<uint8_t, 2> actual_GPIO_values = {0x00, MCP23017::Pin::Pin_PA0};
 	writeRegister(mcp23017::registers::GPIO, actual_GPIO_values);
 
 	coreMCP23017.writeOutputs(MCP23017::Pin::Pin_PA0);
