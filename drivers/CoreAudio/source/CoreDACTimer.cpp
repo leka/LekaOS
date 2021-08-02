@@ -34,6 +34,20 @@ void CoreDACTimer::deInitialize()
 	_hal.HAL_TIM_Base_DeInit(&_htim);
 }
 
+auto CoreDACTimer::_calculatePeriod(float frequency) -> uint32_t
+{
+	// TODO : handle frequency in a non-supported range ?
+	uint32_t period	   = 0;
+	uint32_t clockFreq = _hal.HAL_RCC_GetPCLK1Freq();
+
+	/* Get PCLK1 prescaler */
+	if ((RCC->CFGR & RCC_CFGR_PPRE1) != 0) {
+		clockFreq *= 2;
+	};
+
+	return period = static_cast<uint32_t>(static_cast<float>(clockFreq) / frequency);
+}
+
 void CoreDACTimer::_registerMspCallbacks()
 {
 	static auto *self = this;
