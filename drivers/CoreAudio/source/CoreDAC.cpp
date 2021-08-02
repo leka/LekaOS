@@ -41,4 +41,9 @@ void CoreDAC::initialize()
 	_hal.HAL_DAC_ConfigChannel(&_hdac, &sConfig, DAC_CHANNEL_1);
 }
 
+void CoreDAC::deInitialize()
+{
+	_hal.HAL_DAC_DeInit(&_hdac);
+}
+
 }	// namespace leka
