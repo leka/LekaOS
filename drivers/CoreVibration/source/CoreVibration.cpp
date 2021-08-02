@@ -143,16 +143,13 @@ void CoreVibration::deInit()
 
 void CoreVibration::createSinWavePeriod(float *sinBuffer, VibrationTemplate &vib) const
 {
-	// printf("Sinbuffer: \n");
 	// offset and coef to have a positive sinwave of amplitude 1
 	const uint16_t maxDacVal = 0xFFF;
 	const double maxCoef	 = 0.4;
 	double normalizeCoef	 = maxCoef * vib.getAmplitude() * maxDacVal;
-	// const double normalizeOffset = 0.45 * maxDacVal;
 
 	for (uint32_t i = 0; i < _samplesPerPeriod; ++i) {
 		sinBuffer[i] = static_cast<float>(normalizeCoef * sin(i * 2 * M_PI / _samplesPerPeriod));
-		// printf("%.2f\n", sinBuffer[i]);
 	}
 }
 
@@ -174,37 +171,28 @@ void CoreVibration::handleCallback(u_int16_t *buffer)
 		lastPeriodThreshold = _currentVib->getTotalSamples() - _samplesPerPeriod;
 	}
 
-	// printf("curr: %d\ttot: %d\n", _currentVib->getCurrentSample(), _currentVib->getTotalSamples());
-
 	if (_currentVib->getCurrentSample() < lastPeriodThreshold) {
-		// printf("more than threshold : %d\n", lastPeriodThreshold);
 		fillHalfBuffer(buffer, _samplesPerPeriod);
 		callsBeforeStop = 2;
 	} else if (_currentVib->getCurrentSample() < _currentVib->getTotalSamples()) {
-		// printf("less than threshold\n");
 		uint32_t remaining = _currentVib->getTotalSamples() - _currentVib->getCurrentSample();
 		fillHalfBuffer(buffer, remaining);
 		callsBeforeStop = 1;
 	} else if (callsBeforeStop == 1) {
-		// printf("last buff\n");
 		fillHalfBuffer(buffer, 0);
 		callsBeforeStop = 0;
 	} else if (callsBeforeStop == 0) {
-		// printf("end\n");
 		this->stop();
 		callsBeforeStop		= 2;
 		lastPeriodThreshold = 0;
 	}
-	// printf("call: %d\n", callsBeforeStop);
 }
 
 void CoreVibration::fillHalfBuffer(uint16_t *buffer, uint32_t nbSamples)
 {
 	const float normalizeOffset = 0.45 * 0xFFF;
-	// printf("filling half buff\n");
 	for (uint32_t i = 0; i < nbSamples; ++i) {
 		_tmpBuffer[i] = _sinBuffer[i];
-		// printf("\tb[%d] : %d\n", i, buffer[i]);
 	}
 	for (uint32_t i = nbSamples; i < _samplesPerPeriod; ++i) {
 		buffer[i] = static_cast<u_int16_t>(normalizeOffset);

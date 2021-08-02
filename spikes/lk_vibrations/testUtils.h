@@ -15,9 +15,7 @@ using namespace std::chrono;
 
 void testFloatWorkflow(std::array<uint16_t, 16> &outBuffer)
 {
-	// float sinBuffer[16];
 	std::array<float, 16> sinBuffer {};
-	// printf("Float#############\n");
 
 	// random values
 	float vibAmpli = 0.1;
@@ -29,7 +27,6 @@ void testFloatWorkflow(std::array<uint16_t, 16> &outBuffer)
 	// ampli is calculated here
 	for (uint32_t i = 0; i < 16; ++i) {
 		sinBuffer.at(i) = static_cast<float>(vibAmpli * sinAmpli * sin(i * 2.0 * M_PI / 16));
-		//	printf("%.3f\n", sinBuffer[i]);
 	}
 
 	// consider 1000 periods
@@ -43,9 +40,7 @@ void testFloatWorkflow(std::array<uint16_t, 16> &outBuffer)
 
 void testIntWorkflow(std::array<uint16_t, 16> &outBuffer)
 {
-	// int16_t sinBuffer[16];
 	std::array<int16_t, 16> sinBuffer {};
-	// printf("Int#############\n");
 
 	// random values
 	float vibAmpli	  = 0.1;
@@ -71,9 +66,7 @@ void testIntWorkflow(std::array<uint16_t, 16> &outBuffer)
 
 void testUintWorkflow(std::array<uint16_t, 16> &outBuffer)
 {
-	// uint16_t sinBuffer[16];
 	std::array<uint16_t, 16> sinBuffer {};
-	// printf("Uint#############\n");
 
 	float vibAmpli = 0.1;
 	float sinAmpli = 0.4;

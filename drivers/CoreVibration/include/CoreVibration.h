@@ -47,7 +47,6 @@ class CoreVibration
 
 	float *_sinBuffer;
 	float *_tmpBuffer;
-	// int32_t _samplesRemaining;
 	float _samplingRate;
 	uint32_t _samplesPerPeriod;
 
