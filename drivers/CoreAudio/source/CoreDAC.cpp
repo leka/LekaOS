@@ -66,4 +66,10 @@ void CoreDAC::setHalfCptCallbackPtr(pDAC_CallbackTypeDef pCallbackHlfCpt)
 	this->_pCallbackHlfCpt = pCallbackHlfCpt;
 }
 
+void CoreDAC::_registerCallbacks()
+{
+	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_COMPLETE_CB_ID, _pCallbackCpt);
+	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_HALF_COMPLETE_CB_ID, _pCallbackHlfCpt);
+}
+
 }	// namespace leka
