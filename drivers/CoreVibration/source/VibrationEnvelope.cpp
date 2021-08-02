@@ -1,30 +1,17 @@
 #include "VibrationEnvelope.h"
 #include <cmath>
+#include <cstdio>
 
 using namespace leka;
 
 void WindowEnvelope::apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) {}
 
-void SawtoothEnvelope::apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples)
-{
-	if (buffer == nullptr || totalSamples == 0) {
-		return;
-	}
-	float increment = (1.F / static_cast<float>(totalSamples));
-	float value		= increment * static_cast<float>(currentSample);
-
-	for (uint32_t i = 0; i < nbSamples; ++i) {
-		buffer[i] = value * buffer[i];
-		value += increment;
-	}
-}
-
 void TriangleEnvelope::apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples)
 {
-	static const float dutyCycle = 2.F / 3;
-	static const auto threshold	 = static_cast<uint32_t>(static_cast<float>(totalSamples) * dutyCycle);
-	float increment				 = NAN;
-	float value					 = NAN;
+	// static const float dutyCycle = 2.F / 3;
+	static const auto threshold = static_cast<uint32_t>(static_cast<float>(totalSamples) * _dutyCycle);
+	float increment				= NAN;
+	float value					= NAN;
 
 	if (buffer == nullptr || totalSamples == 0) {
 		return;
@@ -51,6 +38,6 @@ void SmoothEnvelope::apply(float *buffer, uint32_t nbSamples, uint32_t currentSa
 	}
 	for (uint32_t i = 0; i < nbSamples; ++i) {
 		buffer[i] *= -0.5 * cos((i + currentSample) * sinCoef) + 0.5;
-		// printf("%.2f\n", sinBuffer[i]);
+		// printf("%.2f\n", buffer[i]);
 	}
 }

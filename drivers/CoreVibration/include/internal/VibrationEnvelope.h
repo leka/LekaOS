@@ -6,6 +6,7 @@
 #define _LEKA_OS_LIB_VIBRATION_ENVELOPE_H_
 
 #include <cstdint>
+#include <cstdio>
 
 namespace leka {
 
@@ -15,10 +16,9 @@ class VibrationEnvelope
 	enum EnvelopType
 	{
 		Window,
-		Sawtooth,
-		Triangular,	  // Up 2/3 of the time and down 1/3
-		Smooth,		  // round
-		Pulse		  // multiple maximums
+		Triangle,	// configurable duty cycle
+		Smooth,		// round
+		Pulse		// multiple maximums
 	};
 
 	virtual void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) = 0;
@@ -31,18 +31,20 @@ class WindowEnvelope : public VibrationEnvelope
 	void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) final;
 };
 
-class SawtoothEnvelope : public VibrationEnvelope
-{
-  public:
-	SawtoothEnvelope() = default;
-	void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) final;
-};
-
 class TriangleEnvelope : public VibrationEnvelope
 {
   public:
-	TriangleEnvelope() = default;
+	TriangleEnvelope(float dutyCycle) : _dutyCycle(dutyCycle)
+	{
+		if (dutyCycle > 1.F || dutyCycle < 0.F) {
+			printf("Duty cycle must be between 0 and 1\n");
+			// TODO() : handle error
+		}
+	};
 	void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) final;
+
+  private:
+	float _dutyCycle;
 };
 
 class SmoothEnvelope : public VibrationEnvelope

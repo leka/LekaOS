@@ -3,7 +3,7 @@
 using namespace leka;
 
 VibrationTemplate::VibrationTemplate(fseconds duration, uint32_t frequency, float amplitude,
-									 VibrationEnvelope::EnvelopType eType)
+									 VibrationEnvelope::EnvelopType eType, float triangDutyCycle)
 	: _duration(duration),
 	  _frequency(frequency),
 	  _amplitude(amplitude),
@@ -17,14 +17,11 @@ VibrationTemplate::VibrationTemplate(fseconds duration, uint32_t frequency, floa
 	}
 
 	switch (eType) {
-		case VibrationEnvelope::Sawtooth:
-			this->_envelope = std::make_shared<SawtoothEnvelope>();
-			break;
 		case VibrationEnvelope::Window:
 			this->_envelope = std::make_shared<WindowEnvelope>();
 			break;
-		case VibrationEnvelope::Triangular:
-			this->_envelope = std::make_shared<TriangleEnvelope>();
+		case VibrationEnvelope::Triangle:
+			this->_envelope = std::make_shared<TriangleEnvelope>(triangDutyCycle);
 			break;
 		case VibrationEnvelope::Smooth:
 			this->_envelope = std::make_shared<SmoothEnvelope>();
@@ -32,6 +29,7 @@ VibrationTemplate::VibrationTemplate(fseconds duration, uint32_t frequency, floa
 		case VibrationEnvelope::Pulse:
 			printf("EnvelopeNotImplemented\n\n");
 			this->_envelope = nullptr;
+			// TODO() : change instantiation when pulse is implemented
 			break;
 	}
 }
@@ -60,11 +58,6 @@ auto VibrationTemplate::getTotalSamples() const -> const uint32_t &
 {
 	return _totalSamples;
 }
-
-// auto VibrationTemplate::isSmooth() const -> const bool &
-// {
-// 	return _smoothTransition;
-// }
 
 void VibrationTemplate::setCurrentSample(uint32_t currentSample)
 {

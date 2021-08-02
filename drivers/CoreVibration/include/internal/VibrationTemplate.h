@@ -24,7 +24,8 @@ Allow to easily work with durations
 class VibrationTemplate
 {
   public:
-	VibrationTemplate(fseconds duration, uint32_t frequency, float amplitude, VibrationEnvelope::EnvelopType eType);
+	VibrationTemplate(fseconds duration, uint32_t frequency, float amplitude, VibrationEnvelope::EnvelopType eType,
+					  float triangDutyCycle = 1.F);
 
 	[[nodiscard]] auto getDuration() const -> const fseconds &;
 	[[nodiscard]] auto getFrequency() const -> const uint32_t &;
@@ -44,7 +45,6 @@ class VibrationTemplate
 	uint32_t _frequency;
 	float _amplitude;
 	std::shared_ptr<VibrationEnvelope> _envelope;
-	// bool _smoothTransition;
 
 	uint32_t _currentSample;
 	uint32_t _totalSamples;
