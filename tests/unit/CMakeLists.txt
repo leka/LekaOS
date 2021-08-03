@@ -205,6 +205,8 @@ leka_register_unit_tests_for_driver(LKCoreVideo)
 leka_register_unit_tests_for_driver(LKCoreLightSensor)
 leka_register_unit_tests_for_driver(LKCoreMicrophone)
 leka_register_unit_tests_for_driver(CoreBattery)
+leka_register_unit_tests_for_driver(CoreDACTouch)
+
 
 leka_register_unit_tests_for_driver(CoreHTS)
 leka_register_unit_tests_for_driver(CoreI2C)
