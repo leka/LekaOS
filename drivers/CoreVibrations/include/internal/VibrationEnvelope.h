@@ -47,6 +47,13 @@ class TriangleEnvelope : public VibrationEnvelope
 	float _dutyCycle;
 };
 
+class SmoothEnvelope : public VibrationEnvelope
+{
+  public:
+	SmoothEnvelope() = default;
+	void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) final;
+};
+
 }	// namespace leka
 
 #endif	 // _LEKA_OS_LIB_VIBRATION_ENVELOPE_H_
