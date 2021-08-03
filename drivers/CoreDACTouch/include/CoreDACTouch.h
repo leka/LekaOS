@@ -14,7 +14,8 @@ namespace dac_touch {
 	namespace command {
 
 		constexpr uint8_t setVoltageReference = 0x80;
-		constexpr uint8_t powerMode			  = 0xA0;
+		constexpr uint8_t setPowerMode		  = 0xA0;
+		constexpr uint8_t setGain			  = 0xC0;
 
 	}	// namespace command
 
@@ -24,10 +25,10 @@ namespace dac_touch {
 
 			constexpr uint8_t Vdd		  = 0x00;
 			constexpr uint8_t all_channel = 0x0f;
-			constexpr uint8_t channel_A	  = 0x01;
-			constexpr uint8_t channel_B	  = 0x02;
-			constexpr uint8_t channel_C	  = 0x04;
-			constexpr uint8_t channel_D	  = 0x08;
+			constexpr uint8_t channel_A	  = 0x08;
+			constexpr uint8_t channel_B	  = 0x04;
+			constexpr uint8_t channel_C	  = 0x02;
+			constexpr uint8_t channel_D	  = 0x01;
 
 		}	// namespace voltageReference
 
