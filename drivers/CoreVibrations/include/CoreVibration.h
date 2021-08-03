@@ -43,18 +43,18 @@ class CoreVibration
 	rtos::Thread &_thread;
 	events::EventQueue &_eventQueue;
 
-	uint16_t *_vibBuffer_1;
-	uint16_t *_vibBuffer_2;
+	uint16_t *_vibBuffer_1 = nullptr;
+	uint16_t *_vibBuffer_2 = nullptr;
 
-	VibrationTemplate *_currentVib;
+	VibrationTemplate *_currentVib = nullptr;
 
-	float *_sinBuffer;
-	float *_tmpBuffer;
-	float _samplingRate;
-	uint32_t _samplesPerPeriod;
+	float *_sinBuffer		   = nullptr;
+	float *_tmpBuffer		   = nullptr;
+	float _samplingRate		   = 0.F;
+	uint32_t _samplesPerPeriod = 0;
 
-	bool _isPlaying;
-	bool _isPlayingPeriodically;
+	bool _isPlaying				= false;
+	bool _isPlayingPeriodically = false;
 
 	void start();
 
