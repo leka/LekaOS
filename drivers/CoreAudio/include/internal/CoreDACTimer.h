@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_LIB_DAC_TIMER_H_
 #define _LEKA_OS_LIB_DAC_TIMER_H_
 
+#include <cstdio>
+
 #include "LKCoreSTM32HalBase.h"
 #include "interface/drivers/DacTimer.h"
 
@@ -20,18 +22,18 @@ class CoreDACTimer : public interface::DacTimer
   public:
 	explicit CoreDACTimer(LKCoreSTM32HalBase &hal);
 
-	void initialize(float frequency) final;
+	void initialize(uint32_t frequency) final;
 	void deInitialize() final;
 	void start() final;
 	void stop() final;
 
 	auto getHandle() -> TIM_HandleTypeDef final;
 
-  protected:
+  private:
 	LKCoreSTM32HalBase &_hal;
 	TIM_HandleTypeDef _htim;
 
-	auto _calculatePeriod(float freq) -> uint32_t final;
+	auto _calculatePeriod(uint32_t freq) -> uint32_t final;
 
 	void _registerMspCallbacks() final;
 	void _mspInitCallback() final;

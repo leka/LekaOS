@@ -11,7 +11,7 @@ CoreDACTimer::CoreDACTimer(LKCoreSTM32HalBase &hal) : _hal(hal)
 	_htim.Instance = TIM6;
 }
 
-void CoreDACTimer::initialize(float frequency)
+void CoreDACTimer::initialize(uint32_t frequency)
 {
 	_htim.Init.Prescaler		 = 0;	// no need of prescaler for high frequencies
 	_htim.Init.CounterMode		 = TIM_COUNTERMODE_UP;
@@ -24,8 +24,8 @@ void CoreDACTimer::initialize(float frequency)
 
 	TIM_MasterConfigTypeDef sMasterConfig = {0};
 
-	sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;			   // trigger used for DAC
-	sMasterConfig.MasterSlaveMode	  = TIM_MASTERSLAVEMODE_DISABLE;   // TODO(): verify utility of this parameter
+	sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;   // trigger used for DAC
+	sMasterConfig.MasterSlaveMode	  = TIM_MASTERSLAVEMODE_DISABLE;
 	_hal.HAL_TIMEx_MasterConfigSynchronization(&_htim, &sMasterConfig);
 }
 
@@ -49,27 +49,29 @@ auto CoreDACTimer::getHandle() -> TIM_HandleTypeDef
 	return this->_htim;
 }
 
-auto CoreDACTimer::_calculatePeriod(float frequency) -> uint32_t
+auto CoreDACTimer::_calculatePeriod(uint32_t frequency) -> uint32_t
 {
-	// TODO : handle frequency in a non-supported range ?
-	uint32_t period	   = 0;
 	uint32_t clockFreq = _hal.HAL_RCC_GetPCLK1Freq();
 
 	/* Get PCLK1 prescaler */
 	if ((RCC->CFGR & RCC_CFGR_PPRE1) != 0) {
 		clockFreq *= 2;
-	};
+	}
 
-	return period = static_cast<uint32_t>(static_cast<float>(clockFreq) / frequency);
+	if (frequency < (clockFreq >> 16) || frequency > clockFreq) {
+		printf("Chosen freq out of bounds\n");
+	}
+
+	return (clockFreq / frequency);
 }
 
 void CoreDACTimer::_registerMspCallbacks()
 {
 	static auto *self = this;
 	_hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPINIT_CB_ID,
-								  [](TIM_HandleTypeDef *htim) { self->_mspInitCallback(); });
+								  []([[maybe_unused]] TIM_HandleTypeDef *htim) { self->_mspInitCallback(); });
 	_hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPDEINIT_CB_ID,
-								  [](TIM_HandleTypeDef *htim) { self->_mspDeInitCallback(); });
+								  []([[maybe_unused]] TIM_HandleTypeDef *htim) { self->_mspDeInitCallback(); });
 }
 
 void CoreDACTimer::_mspInitCallback()
