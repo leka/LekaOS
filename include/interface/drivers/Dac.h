@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_INTERFACE_DRIVER_DAC_H_
 #define _LEKA_OS_INTERFACE_DRIVER_DAC_H_
 
+#include <functional>
+
 #include "stm32f7xx_hal.h"
 
 namespace leka::interface {

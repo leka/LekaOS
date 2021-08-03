@@ -2,8 +2,7 @@
 
 namespace leka {
 
-CoreDAC::CoreDAC(LKCoreSTM32HalBase &hal)
-	: _hal(hal), _pCallbackCpt(nullptr), _pCallbackHlfCpt(nullptr)	 //, _dmaFlag(None)
+CoreDAC::CoreDAC(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
 	_hdac.Instance = DAC;
 	_hdma.Instance = DMA1_Stream5;
@@ -21,7 +20,7 @@ void CoreDAC::initialize()
 	/* DMA interrupt init */
 	/* DMA1_Stream5_IRQn interrupt configuration */
 	/** @brief NVIC configuration for DMA1 stream 5 interrupt that is now enabled */
-	_hal.HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 3, 0);	  // TODO : check that prioority level is ok
+	_hal.HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 3, 0);	  // another priority level might be more appropriate
 	_hal.HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
 
 	// DAC INIT
@@ -36,8 +35,7 @@ void CoreDAC::initialize()
 	/** DAC channel OUT1 config
 	 */
 	sConfig.DAC_Trigger		 = DAC_TRIGGER_T6_TRGO;	  // configure the DAC to be triggered by TIM6 through TRGO signal
-	sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;	  // TODO(aermanio): check if need to enable or not seems to
-														  // change output voltage behavior
+	sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;	  // necessary to reach the full voltage range in DAC output
 	_hal.HAL_DAC_ConfigChannel(&_hdac, &sConfig, DAC_CHANNEL_1);
 }
 
@@ -87,9 +85,9 @@ void CoreDAC::_registerMspCallbacks()
 {
 	static auto *self = this;
 	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_MSP_INIT_CB_ID,
-								  [](DAC_HandleTypeDef *hdac) { self->_mspInitCallback(); });
+								  []([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->_mspInitCallback(); });
 	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_MSP_DEINIT_CB_ID,
-								  [](DAC_HandleTypeDef *hdac) { self->_mspDeInitCallback(); });
+								  []([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->_mspDeInitCallback(); });
 }
 
 void CoreDAC::_mspInitCallback()

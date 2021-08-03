@@ -10,7 +10,6 @@
 #include "interface/drivers/Dac.h"
 
 namespace leka {
-
 /**
  * @brief DAC class
  * This class interfaces the hardware DAC with its default DMA channel in order to output data
@@ -33,13 +32,13 @@ class CoreDAC : public interface::Dac
 	void setCptCallbackPtr(pDAC_CallbackTypeDef pCallbackCpt) final;
 	void setHalfCptCallbackPtr(pDAC_CallbackTypeDef pCallbackHlfCpt) final;
 
-  protected:
+  private:
 	LKCoreSTM32HalBase &_hal;
 	DAC_HandleTypeDef _hdac;
 	DMA_HandleTypeDef _hdma;
 
-	pDAC_CallbackTypeDef _pCallbackCpt;
-	pDAC_CallbackTypeDef _pCallbackHlfCpt;
+	pDAC_CallbackTypeDef _pCallbackCpt	  = nullptr;
+	pDAC_CallbackTypeDef _pCallbackHlfCpt = nullptr;
 
 	void _registerCallbacks() final;
 
