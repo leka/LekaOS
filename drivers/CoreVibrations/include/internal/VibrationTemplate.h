@@ -43,10 +43,10 @@ class VibrationTemplate
 	fseconds _duration;
 	uint32_t _frequency;
 	float _amplitude;
-	std::shared_ptr<VibrationEnvelope> _envelope;
+	std::shared_ptr<VibrationEnvelope> _envelope = nullptr;
 
-	uint32_t _currentSample;
-	uint32_t _totalSamples;
+	uint32_t _currentSample = 0;
+	uint32_t _totalSamples	= 0;
 };
 
 }	// namespace leka
