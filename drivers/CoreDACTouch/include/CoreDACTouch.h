@@ -31,6 +31,34 @@ namespace dac_touch {
 
 		}	// namespace voltageReference
 
+		namespace powerMode {
+			constexpr uint8_t normal = 0x00;
+			namespace channelA {
+				constexpr uint8_t normal		= 0x00;
+				constexpr uint8_t powerDown1K	= 0x40;
+				constexpr uint8_t powerDown100K = 0x80;
+				constexpr uint8_t powerDown500K = 0xC0;
+			}	// namespace channelA
+			namespace channelB {
+				constexpr uint8_t normal		= 0x00;
+				constexpr uint8_t powerDown1K	= 0x10;
+				constexpr uint8_t powerDown100K = 0x20;
+				constexpr uint8_t powerDown500K = 0x30;
+			}	// namespace channelB
+			namespace channelC {
+				constexpr uint8_t normal		= 0x00;
+				constexpr uint8_t powerDown1K	= 0x04;
+				constexpr uint8_t powerDown100K = 0x08;
+				constexpr uint8_t powerDown500K = 0x0C;
+			}	// namespace channelC
+			namespace channelD {
+				constexpr uint8_t normal		= 0x00;
+				constexpr uint8_t powerDown1K	= 0x01;
+				constexpr uint8_t powerDown100K = 0x02;
+				constexpr uint8_t powerDown500K = 0x03;
+			}	// namespace channelD
+		}		// namespace powerMode
+
 	}	// namespace data
 
 }	// namespace dac_touch
@@ -40,6 +68,7 @@ class CoreDACTouch
   public:
 	CoreDACTouch(interface::I2C &i2c, uint8_t address) : _i2c(i2c), _address(address) {};
 	void setVoltageReference(uint8_t voltageReference);
+	void setPowerMode(uint8_t powerMode);
 
   private:
 	interface::I2C &_i2c;

@@ -37,3 +37,12 @@ TEST_F(CoreDACTouchTest, setVoltageReference)
 
 	coreADCTouch.setVoltageReference(dac_touch::data::voltageReference::Vdd);
 }
+
+TEST_F(CoreDACTouchTest, setPowerMode)
+{
+	const auto data = ElementsAre(0xAC, 0x40);
+	EXPECT_CALL(i2cMock, write).With(Args<1, 2>(data));
+
+	coreADCTouch.setPowerMode(dac_touch::data::powerMode::channelA::powerDown500K |
+							  dac_touch::data::powerMode::channelC::powerDown1K);
+}
