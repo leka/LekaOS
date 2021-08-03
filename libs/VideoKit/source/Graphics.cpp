@@ -61,10 +61,7 @@ Image::~Image()
 void Image::draw(VideoKit &screen)
 {
 	_file.seek(0);
-	screen.getJPEG().decodeImage(_file);
-
-	auto config = screen.getJPEG().getConfig();
-	screen.getDMA2D().transferImage(config.ImageWidth, config.ImageHeight, config.getWidthOffset());
+	screen.drawImage(_file);
 }
 
 // --- gfx::Video -------------------------------------
@@ -120,17 +117,13 @@ void Video::restart()
 
 void Video::draw(VideoKit &screen)
 {
-	// decode current frame
-	auto frame_size = screen.getJPEG().decodeImage(_file);
-
+	uint32_t frame_size;
 	// get configuration on first frame
 	if (!_config.initialized) {
-		_config = screen.getJPEG().getConfig();
+		frame_size = screen.drawImage(_file, &_config);
+	} else {
+		frame_size = screen.drawImage(_file, _config);
 	}
-
-	// transfer frame to frame buffer
-	screen.getDMA2D().transferImage(_config.ImageWidth, _config.ImageHeight, _config.getWidthOffset());
-
 	// increment frame offset
 	if (!_ended) {
 		_frame_offset = _frame_offset + frame_size + 4;
