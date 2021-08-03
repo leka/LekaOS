@@ -28,3 +28,43 @@ VibrationTemplate::VibrationTemplate(fseconds duration, uint32_t frequency, floa
 			break;
 	}
 }
+
+auto VibrationTemplate::getDuration() const -> const fseconds &
+{
+	return _duration;
+}
+
+auto VibrationTemplate::getFrequency() const -> const uint32_t &
+{
+	return _frequency;
+}
+
+auto VibrationTemplate::getAmplitude() const -> const float &
+{
+	return _amplitude;
+}
+
+auto VibrationTemplate::getCurrentSample() const -> const uint32_t &
+{
+	return _currentSample;
+}
+
+auto VibrationTemplate::getTotalSamples() const -> const uint32_t &
+{
+	return _totalSamples;
+}
+
+void VibrationTemplate::setCurrentSample(uint32_t currentSample)
+{
+	_currentSample = currentSample;
+}
+
+void VibrationTemplate::setTotalSamples(uint32_t totalSamples)
+{
+	_totalSamples = totalSamples;
+}
+
+void VibrationTemplate::applyCurrentEnvelopeSlice(float *buffer, uint32_t nbSamples) const
+{
+	_envelope->apply(buffer, nbSamples, _currentSample, _totalSamples);
+}
