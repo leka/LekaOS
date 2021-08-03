@@ -2,6 +2,7 @@
 #define _LEKA_OS_LIB_LKVIDEOKIT_H_
 
 #include <chrono>
+#include <cstdint>
 
 #include "rtos/ThisThread.h"
 
@@ -40,6 +41,10 @@ class VideoKit
 	void drawRectangle(uint32_t x, uint32_t y, uint32_t w, uint32_t h, gfx::Color color);
 
 	void drawText(const char *text, uint32_t x, uint32_t y, gfx::Color color, gfx::Color bg = gfx::Color::Transparent);
+
+	auto drawImage(LKCoreFatFs &file, CoreJPEG::Config *config = nullptr) -> uint32_t;
+
+	auto drawImage(LKCoreFatFs &file, CoreJPEG::Config &config) -> uint32_t;
 
 	void display();
 
