@@ -9,6 +9,9 @@
 
 using namespace leka;
 
+using ::testing::Args;
+using ::testing::ElementsAre;
+
 class CoreDACTouchTest : public ::testing::Test
 
 {
@@ -25,4 +28,12 @@ class CoreDACTouchTest : public ::testing::Test
 TEST_F(CoreDACTouchTest, DACInstantiation)
 {
 	ASSERT_NE(&coreADCTouch, nullptr);
+}
+
+TEST_F(CoreDACTouchTest, setVoltageReference)
+{
+	const auto data = ElementsAre(0x80);
+	EXPECT_CALL(i2cMock, write).With(Args<1, 2>(data));
+
+	coreADCTouch.setVoltageReference(dac_touch::data::voltageReference::Vdd);
 }
