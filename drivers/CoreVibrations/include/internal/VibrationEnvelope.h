@@ -24,6 +24,13 @@ class VibrationEnvelope
 	virtual void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) = 0;
 };
 
+class WindowEnvelope : public VibrationEnvelope
+{
+  public:
+	WindowEnvelope() = default;
+	void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) final;
+};
+
 }	// namespace leka
 
 #endif	 // _LEKA_OS_LIB_VIBRATION_ENVELOPE_H_
