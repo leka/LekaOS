@@ -31,6 +31,22 @@ class WindowEnvelope : public VibrationEnvelope
 	void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) final;
 };
 
+class TriangleEnvelope : public VibrationEnvelope
+{
+  public:
+	TriangleEnvelope(float dutyCycle) : _dutyCycle(dutyCycle)
+	{
+		if (dutyCycle > 1.F || dutyCycle < 0.F) {
+			printf("Duty cycle must be between 0 and 1\n");
+			// TODO() : handle error
+		}
+	};
+	void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) final;
+
+  private:
+	float _dutyCycle;
+};
+
 }	// namespace leka
 
 #endif	 // _LEKA_OS_LIB_VIBRATION_ENVELOPE_H_
