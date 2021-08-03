@@ -46,3 +46,11 @@ TEST_F(CoreDACTouchTest, setPowerMode)
 	coreADCTouch.setPowerMode(dac_touch::data::powerMode::channelA::powerDown500K |
 							  dac_touch::data::powerMode::channelC::powerDown1K);
 }
+
+TEST_F(CoreDACTouchTest, setGain)
+{
+	const auto data = ElementsAre(0xCF);
+	EXPECT_CALL(i2cMock, write).With(Args<1, 2>(data));
+
+	coreADCTouch.setGain(dac_touch::data::gain2::all);
+}

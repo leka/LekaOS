@@ -60,6 +60,16 @@ namespace dac_touch {
 			}	// namespace channelD
 		}		// namespace powerMode
 
+		namespace gain2 {
+
+			constexpr uint8_t channel_A = 0x08;
+			constexpr uint8_t channel_B = 0x04;
+			constexpr uint8_t channel_C = 0x02;
+			constexpr uint8_t channel_D = 0x01;
+			constexpr uint8_t all		= 0x0f;
+
+		}	// namespace gain2
+
 	}	// namespace data
 
 }	// namespace dac_touch
@@ -70,6 +80,7 @@ class CoreDACTouch
 	CoreDACTouch(interface::I2C &i2c, uint8_t address) : _i2c(i2c), _address(address) {};
 	void setVoltageReference(uint8_t voltageReference);
 	void setPowerMode(uint8_t powerMode);
+	void setGain(uint8_t gain);
 
   private:
 	interface::I2C &_i2c;

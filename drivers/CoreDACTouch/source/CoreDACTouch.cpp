@@ -21,3 +21,9 @@ void CoreDACTouch::setPowerMode(uint8_t powerMode)
 
 	_i2c.write(_address, command.data(), command.size(), false);
 }
+
+void CoreDACTouch::setGain(uint8_t gain)
+{
+	uint8_t command = dac_touch::command::setGain | gain;
+	_i2c.write(_address, &command, 1, false);
+}
