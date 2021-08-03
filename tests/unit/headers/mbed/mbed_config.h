@@ -288,7 +288,9 @@
 #define SMP_DB_MAX_DEVICES												  3			   // set by library:cordio
 #define TARGET_LSE_DRIVE_LOAD_LEVEL										  RCC_LSEDRIVE_LOW	 // set by target:MCU_STM32F7
 // Macros
-#define WSF_MS_PER_TICK 1	// defined by library:cordio
-#define _RTE_				// defined by library:rtos
+#define WSF_MS_PER_TICK 1					// defined by library:cordio
+#define _RTE_								// defined by library:rtos
+#define USE_HAL_DAC_REGISTER_CALLBACKS 1U	// defined by library:leka::CoreAudio
+#define USE_HAL_TIM_REGISTER_CALLBACKS 1U	// defined by library:leka::CoreAudio
 
 #endif
