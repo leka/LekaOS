@@ -10,6 +10,8 @@
 #include <chrono>
 #include <cstdint>
 
+#include "LogKit.h"
+
 using namespace std::chrono;
 
 void testFloatWorkflow(std::array<uint16_t, 16> &outBuffer)
@@ -103,21 +105,20 @@ void testWorkflows()
 	auto start = t.elapsed_time();
 	testFloatWorkflow(buff_1);
 	auto end = t.elapsed_time();
-	printf("Float time ns: \n%lld us\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
-
+	log_info("Float time ns: \n%lld us\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
 	start = t.elapsed_time();
 	testIntWorkflow(buff_2);
 	end = t.elapsed_time();
-	printf("Int time ns: \n%lld us\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
+	log_info("Int time ns: \n%lld us\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
 
 	start = t.elapsed_time();
 	testUintWorkflow(buff_3);
 	end = t.elapsed_time();
-	printf("Uint time ns: \n%lld us\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
+	log_info("Uint time ns: \n%lld us\n", chrono::duration_cast<chrono::microseconds>(end - start).count());
 
-	printf("Supposedly equal :\n");
+	log_info("Supposedly equal :\n");
 	for (int i = 0; i < 16; ++i) {
-		printf("%d\t%d\t%d\n", buff_1.at(i), buff_2.at(i), buff_3.at(i));
+		log_info("%d\t%d\t%d\n", buff_1.at(i), buff_2.at(i), buff_3.at(i));
 	}
 }
 
