@@ -31,6 +31,32 @@ void CoreVibration::deInit()
 	_coreDac.deInitialize();
 }
 
+void CoreVibration::play(VibrationTemplate &vib)
+{
+	stop();	  // stop current vib if playing and reset buffers
+
+	_currentVib = &vib;	  // store current vib in order to access it from the callbacks
+
+	_samplesPerPeriod = static_cast<uint32_t>(_samplingRate / static_cast<float>(vib.getFrequency()));
+	// printf("Samples per period: %d\n", _samplesPerPeriod);
+
+	_sinBuffer = new float[_samplesPerPeriod];
+	_tmpBuffer = new float[_samplesPerPeriod];
+
+	createSinWavePeriod(_sinBuffer, vib);
+
+	uint32_t totalSamples = static_cast<uint16_t>(vib.getDuration().count() * _samplingRate);
+	vib.setCurrentSample(0);
+	vib.setTotalSamples(totalSamples);
+	// printf("Samples remaining at start of vib: %d\n", _samplesRemaining);
+
+	_vibBuffer_1 = new uint16_t[_samplesPerPeriod * 2];	  // buffer of 2 periods
+	_vibBuffer_2 = _vibBuffer_1 + _samplesPerPeriod;
+
+	// printf("Starting vib\n");
+	start();
+}
+
 void CoreVibration::stop()
 {
 	// printf("Stoping vib\n");
