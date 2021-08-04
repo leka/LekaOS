@@ -55,12 +55,22 @@ TEST_F(CoreDACTouchTest, setGain)
 	coreADCTouch.setGain(dac_touch::data::gain2::all);
 }
 
-TEST_F(CoreDACTouchTest, writeToInputRegister)
+TEST_F(CoreDACTouchTest, writeToAllInputRegister)
 {
 	std::array<uint8_t, 2> value_to_write = {0x0f, 0xA8};
 
 	const auto data = ElementsAre(0x0f, 0xA8);
 	EXPECT_CALL(i2cMock, write).With(Args<1, 2>(data));
 
-	coreADCTouch.writeToInputRegister(value_to_write);
+	coreADCTouch.writeToAllInputRegister(value_to_write);
+}
+
+TEST_F(CoreDACTouchTest, writeToSpecificInputRegister)
+{
+	std::array<uint8_t, 2> value_to_write = {0x0f, 0xA8};
+
+	const auto data = ElementsAre(0x46, 0x0f, 0xA8);
+	EXPECT_CALL(i2cMock, write).With(Args<1, 2>(data));
+
+	coreADCTouch.writeToSpecificInputRegister(dac_touch::channel::D, value_to_write);
 }

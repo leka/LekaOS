@@ -13,12 +13,22 @@ namespace dac_touch {
 
 	namespace command {
 
-		constexpr uint8_t setVoltageReference = 0x80;
-		constexpr uint8_t setPowerMode		  = 0xA0;
-		constexpr uint8_t setGain			  = 0xC0;
-		constexpr uint8_t writeInputRegister  = 0x00;
+		constexpr uint8_t setVoltageReference		 = 0x80;
+		constexpr uint8_t setPowerMode				 = 0xA0;
+		constexpr uint8_t setGain					 = 0xC0;
+		constexpr uint8_t writeAllInputRegister		 = 0x00;
+		constexpr uint8_t writeSpecificInputRegister = 0x40;
 
 	}	// namespace command
+
+	namespace channel {
+
+		constexpr uint8_t A = 0x00;
+		constexpr uint8_t B = 0x01;
+		constexpr uint8_t C = 0x02;
+		constexpr uint8_t D = 0x03;
+
+	}	// namespace channel
 
 	namespace data {
 
@@ -83,7 +93,8 @@ class CoreDACTouch
 	void setPowerMode(uint8_t powerMode);
 	void setGain(uint8_t gain);
 
-	void writeToInputRegister(std::array<uint8_t, 2> value);
+	void writeToAllInputRegister(std::array<uint8_t, 2> value);
+	void writeToSpecificInputRegister(uint8_t channel, std::array<uint8_t, 2> value);
 
   private:
 	interface::I2C &_i2c;

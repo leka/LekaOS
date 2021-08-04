@@ -28,9 +28,18 @@ void CoreDACTouch::setGain(uint8_t gain)
 	_i2c.write(_address, &command, 1, false);
 }
 
-void CoreDACTouch::writeToInputRegister(std::array<uint8_t, 2> value)
+void CoreDACTouch::writeToAllInputRegister(std::array<uint8_t, 2> value)
 {
-	value[0] = dac_touch::command::writeInputRegister | (0x3f & value[0]);
+	value[0] = dac_touch::command::writeAllInputRegister | (0x3f & value[0]);
 
 	_i2c.write(_address, value.data(), value.size(), false);
+}
+
+void CoreDACTouch::writeToSpecificInputRegister(uint8_t channel, std::array<uint8_t, 2> value)
+{
+	std::array<uint8_t, 3> command {};
+	command[0] = dac_touch::command::writeSpecificInputRegister | ((0x03 & channel) << 1);
+	std::copy(value.begin(), value.end(), command.begin() + 1);
+
+	_i2c.write(_address, command.data(), command.size(), false);
 }
