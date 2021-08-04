@@ -99,3 +99,60 @@ void CoreVibration::createSinWavePeriod(float *sinBuffer, VibrationTemplate &vib
 		sinBuffer[i] = static_cast<float>(normalizeCoef * sin(i * 2 * M_PI / _samplesPerPeriod));
 	}
 }
+
+void CoreVibration::halfBufferCallback()
+{
+	_eventQueue.call(this, &CoreVibration::handleCallback, _vibBuffer_1);
+}
+
+void CoreVibration::cptBufferCallback()
+{
+	_eventQueue.call(this, &CoreVibration::handleCallback, _vibBuffer_2);
+}
+
+void CoreVibration::handleCallback(u_int16_t *buffer)
+{
+	static uint8_t callsBeforeStop		= 2;
+	static uint32_t lastPeriodThreshold = 0;
+	if (lastPeriodThreshold == 0) {
+		lastPeriodThreshold = _currentVib->getTotalSamples() - _samplesPerPeriod;
+	}
+
+	if (_currentVib->getCurrentSample() < lastPeriodThreshold) {
+		fillHalfBuffer(buffer, _samplesPerPeriod);
+		callsBeforeStop = 2;
+	} else if (_currentVib->getCurrentSample() < _currentVib->getTotalSamples()) {
+		uint32_t remaining = _currentVib->getTotalSamples() - _currentVib->getCurrentSample();
+		fillHalfBuffer(buffer, remaining);
+		callsBeforeStop = 1;
+	} else if (callsBeforeStop == 1) {
+		fillHalfBuffer(buffer, 0);
+		callsBeforeStop = 0;
+	} else if (callsBeforeStop == 0) {
+		this->stop();
+		callsBeforeStop		= 2;
+		lastPeriodThreshold = 0;
+	}
+}
+
+void CoreVibration::fillHalfBuffer(uint16_t *buffer, uint32_t nbSamples)
+{
+	const float normalizeOffset = 0.45 * 0xFFF;
+	for (uint32_t i = 0; i < nbSamples; ++i) {
+		_tmpBuffer[i] = _sinBuffer[i];
+	}
+	for (uint32_t i = nbSamples; i < _samplesPerPeriod; ++i) {
+		buffer[i] = static_cast<u_int16_t>(normalizeOffset);
+	}
+
+	if (nbSamples > 0) {
+		this->_currentVib->applyCurrentEnvelopeSlice(_tmpBuffer, nbSamples);
+		_currentVib->setCurrentSample(_currentVib->getCurrentSample() + nbSamples);
+	}
+
+	for (uint32_t i = 0; i < nbSamples; ++i) {
+		_tmpBuffer[i] += normalizeOffset;
+
+		buffer[i] = static_cast<u_int16_t>(_tmpBuffer[i]);
+	}
+}
