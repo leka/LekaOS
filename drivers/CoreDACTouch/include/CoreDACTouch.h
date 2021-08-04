@@ -34,7 +34,7 @@ namespace dac_touch {
 
 	namespace data {
 
-		namespace voltageReference {
+		namespace voltage_reference {
 
 			constexpr uint8_t Vdd		  = 0x00;
 			constexpr uint8_t all_channel = 0x0f;
@@ -43,37 +43,37 @@ namespace dac_touch {
 			constexpr uint8_t channel_C	  = 0x02;
 			constexpr uint8_t channel_D	  = 0x01;
 
-		}	// namespace voltageReference
+		}	// namespace voltage_reference
 
-		namespace powerMode {
+		namespace power_mode {
 			constexpr uint8_t normal = 0x00;
-			namespace channelA {
+			namespace channel_a {
 				constexpr uint8_t normal		= 0x00;
 				constexpr uint8_t powerDown1K	= 0x40;
 				constexpr uint8_t powerDown100K = 0x80;
 				constexpr uint8_t powerDown500K = 0xC0;
-			}	// namespace channelA
-			namespace channelB {
+			}	// namespace channel_a
+			namespace channel_b {
 				constexpr uint8_t normal		= 0x00;
 				constexpr uint8_t powerDown1K	= 0x10;
 				constexpr uint8_t powerDown100K = 0x20;
 				constexpr uint8_t powerDown500K = 0x30;
-			}	// namespace channelB
-			namespace channelC {
+			}	// namespace channel_b
+			namespace channel_c {
 				constexpr uint8_t normal		= 0x00;
 				constexpr uint8_t powerDown1K	= 0x04;
 				constexpr uint8_t powerDown100K = 0x08;
 				constexpr uint8_t powerDown500K = 0x0C;
-			}	// namespace channelC
-			namespace channelD {
+			}	// namespace channel_c
+			namespace channel_d {
 				constexpr uint8_t normal		= 0x00;
 				constexpr uint8_t powerDown1K	= 0x01;
 				constexpr uint8_t powerDown100K = 0x02;
 				constexpr uint8_t powerDown500K = 0x03;
-			}	// namespace channelD
-		}		// namespace powerMode
+			}	// namespace channel_d
+		}		// namespace power_mode
 
-		namespace gain2 {
+		namespace gain_of_2 {
 
 			constexpr uint8_t channel_A = 0x08;
 			constexpr uint8_t channel_B = 0x04;
@@ -81,7 +81,7 @@ namespace dac_touch {
 			constexpr uint8_t channel_D = 0x01;
 			constexpr uint8_t all		= 0x0f;
 
-		}	// namespace gain2
+		}	// namespace gain_of_2
 
 	}	// namespace data
 

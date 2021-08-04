@@ -16,8 +16,8 @@ void CoreDACTouch::setVoltageReference(uint8_t voltageReference)
 void CoreDACTouch::setPowerMode(uint8_t powerMode)
 {
 	std::array<uint8_t, 2> command;
-	command[0] = dac_touch::command::setPowerMode | ((0xf0 & powerMode) >> 4);
-	command[1] = (0x0f & powerMode) << 4;
+	command[0] = static_cast<uint8_t>(dac_touch::command::setPowerMode | ((0xf0 & powerMode) >> 4));
+	command[1] = static_cast<uint8_t>((0x0f & powerMode) << 4);
 
 	_i2c.write(_address, command.data(), command.size(), false);
 }
@@ -38,7 +38,7 @@ void CoreDACTouch::writeToAllInputRegister(std::array<uint8_t, 2> value)
 void CoreDACTouch::writeToSpecificInputRegister(uint8_t channel, std::array<uint8_t, 2> value)
 {
 	std::array<uint8_t, 3> command {};
-	command[0] = dac_touch::command::writeSpecificInputRegister | ((0x03 & channel) << 1);
+	command[0] = static_cast<uint8_t>(dac_touch::command::writeSpecificInputRegister | ((0x03 & channel) << 1));
 	std::copy(value.begin(), value.end(), command.begin() + 1);
 
 	_i2c.write(_address, command.data(), command.size(), false);
@@ -47,7 +47,8 @@ void CoreDACTouch::writeToSpecificInputRegister(uint8_t channel, std::array<uint
 void CoreDACTouch::writeToMemoryRegisterUntilChannelD(uint8_t starting_channel, std::array<uint8_t, 2> value)
 {
 	std::array<uint8_t, 3> command {};
-	command[0] = dac_touch::command::writeMemoryRegisterUntilChannelD | ((0x03 & starting_channel) << 1);
+	command[0] =
+		static_cast<uint8_t>(dac_touch::command::writeMemoryRegisterUntilChannelD | ((0x03 & starting_channel) << 1));
 	std::copy(value.begin(), value.end(), command.begin() + 1);
 
 	_i2c.write(_address, command.data(), command.size(), false);
@@ -56,7 +57,7 @@ void CoreDACTouch::writeToMemoryRegisterUntilChannelD(uint8_t starting_channel, 
 void CoreDACTouch::writeToSpecificMemoryRegister(uint8_t channel, std::array<uint8_t, 2> value)
 {
 	std::array<uint8_t, 3> command {};
-	command[0] = dac_touch::command::writeSpecificMemoryRegister | ((0x03 & channel) << 1);
+	command[0] = static_cast<uint8_t>(dac_touch::command::writeSpecificMemoryRegister | ((0x03 & channel) << 1));
 	std::copy(value.begin(), value.end(), command.begin() + 1);
 
 	_i2c.write(_address, command.data(), command.size(), false);

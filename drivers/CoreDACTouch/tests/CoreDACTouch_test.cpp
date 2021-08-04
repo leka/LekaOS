@@ -35,7 +35,7 @@ TEST_F(CoreDACTouchTest, setVoltageReference)
 	const auto data = ElementsAre(0x80);
 	EXPECT_CALL(i2cMock, write).With(Args<1, 2>(data));
 
-	coreADCTouch.setVoltageReference(dac_touch::data::voltageReference::Vdd);
+	coreADCTouch.setVoltageReference(dac_touch::data::voltage_reference::Vdd);
 }
 
 TEST_F(CoreDACTouchTest, setPowerMode)
@@ -43,8 +43,8 @@ TEST_F(CoreDACTouchTest, setPowerMode)
 	const auto data = ElementsAre(0xAC, 0x40);
 	EXPECT_CALL(i2cMock, write).With(Args<1, 2>(data));
 
-	coreADCTouch.setPowerMode(dac_touch::data::powerMode::channelA::powerDown500K |
-							  dac_touch::data::powerMode::channelC::powerDown1K);
+	coreADCTouch.setPowerMode(dac_touch::data::power_mode::channel_a::powerDown500K |
+							  dac_touch::data::power_mode::channel_c::powerDown1K);
 }
 
 TEST_F(CoreDACTouchTest, setGain)
@@ -52,7 +52,7 @@ TEST_F(CoreDACTouchTest, setGain)
 	const auto data = ElementsAre(0xCF);
 	EXPECT_CALL(i2cMock, write).With(Args<1, 2>(data));
 
-	coreADCTouch.setGain(dac_touch::data::gain2::all);
+	coreADCTouch.setGain(dac_touch::data::gain_of_2::all);
 }
 
 TEST_F(CoreDACTouchTest, writeToAllInputRegister)
