@@ -101,9 +101,9 @@ void CoreDAC::_msp_onInitializationCb()
 	_hdma.Init.Priority			   = DMA_PRIORITY_LOW;
 	_hdma.Init.FIFOMode			   = DMA_FIFOMODE_ENABLE;
 	_hdma.Init.FIFOThreshold	   = DMA_FIFO_THRESHOLD_HALFFULL;
-	_hdma.Init.MemBurst =
-		DMA_MBURST_SINGLE;	 // TODO change to 4 sample burst if single is not longer needed, but the vibration sine
-							 // wave creation must be 2 period long in order to have a multiple of 4 in the buffer
+	_hdma.Init.MemBurst			   = DMA_MBURST_SINGLE;
+	// Single mem burst is more ressource consuming than 4 burst or more
+	// However the buffer apparently needs to be of a size multiple of the burst mode chosen
 	_hdma.Init.PeriphBurst = DMA_PBURST_SINGLE;
 
 	_hal.HAL_DMA_Init(&_hdma);
