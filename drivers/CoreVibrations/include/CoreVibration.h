@@ -66,7 +66,6 @@ class CoreVibration
 	void cptBufferCallback();
 	void handleCallback(u_int16_t *buffer);
 
-	void handlePeriodicCall(VibrationTemplate *vib);
 	void endPeriodicVib(int eventID);
 	void playPtr(VibrationTemplate *vib);
 };
