@@ -10,3 +10,23 @@ CoreVibration::CoreVibration(LKCoreSTM32HalBase &hal, interface::Dac &dac, inter
 {
 	_thread.start({&_eventQueue, &events::EventQueue::dispatch_forever});
 }
+
+void CoreVibration::initialize(float samplingRate)
+{
+	this->_samplingRate = samplingRate;
+
+	// setup DAC callbacks
+	static auto *self = this;
+	_coreDac.setCptCallbackPtr([](DAC_HandleTypeDef *hdac) { self->cptBufferCallback(); });
+	_coreDac.setHalfCptCallbackPtr([](DAC_HandleTypeDef *hdac) { self->halfBufferCallback(); });
+
+	// initialize components
+	_coreTimer.initialize(samplingRate);
+	_coreDac.initialize();
+}
+
+void CoreVibration::deInit()
+{
+	_coreTimer.deInitialize();
+	_coreDac.deInitialize();
+}
