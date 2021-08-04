@@ -57,6 +57,28 @@ void CoreVibration::play(VibrationTemplate &vib)
 	start();
 }
 
+void CoreVibration::playPeriodically(VibrationTemplate &vib, fseconds waitTime, uint16_t nbRep)
+{
+	if (nbRep > 0) {
+		// getting duration in ms
+		fseconds period = vib.getDuration() + waitTime;
+		// printf("duration : %f\nwaitTime : %f\nperiod : %f\n", vib.getDuration().count(), waitTime.count(),
+		// period.count()); // first immediate call
+		_eventQueue.call(this, &CoreVibration::playPtr, &vib);
+		_isPlayingPeriodically = true;
+
+		int id = 0;	  // id is null if no periodic call is made
+		if (nbRep > 1) {
+			// periodic call, will start in 1 period
+			id = _eventQueue.call_every(std::chrono::duration_cast<milliseconds>(period), this, &CoreVibration::playPtr,
+										&vib);
+		}
+		// end periodic call after the given time
+		_eventQueue.call_in(std::chrono::duration_cast<milliseconds>(nbRep * period), this,
+							&CoreVibration::endPeriodicVib, id);
+	}
+}
+
 void CoreVibration::stop()
 {
 	// printf("Stoping vib\n");
@@ -74,6 +96,16 @@ void CoreVibration::stop()
 
 	_isPlaying	= false;
 	_currentVib = nullptr;
+}
+
+auto CoreVibration::isPlaying() const -> bool
+{
+	return _isPlaying;
+}
+
+auto CoreVibration::isPlayingPeriodically() const -> bool
+{
+	return _isPlayingPeriodically;
 }
 
 // PRIVATE
