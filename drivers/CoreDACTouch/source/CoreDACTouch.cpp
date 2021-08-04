@@ -43,3 +43,12 @@ void CoreDACTouch::writeToSpecificInputRegister(uint8_t channel, std::array<uint
 
 	_i2c.write(_address, command.data(), command.size(), false);
 }
+
+void CoreDACTouch::writeToMemoryRegisterUntilChannelD(uint8_t starting_channel, std::array<uint8_t, 2> value)
+{
+	std::array<uint8_t, 3> command {};
+	command[0] = dac_touch::command::writeMemoryRegisterUntilChannelD | ((0x03 & starting_channel) << 1);
+	std::copy(value.begin(), value.end(), command.begin() + 1);
+
+	_i2c.write(_address, command.data(), command.size(), false);
+}

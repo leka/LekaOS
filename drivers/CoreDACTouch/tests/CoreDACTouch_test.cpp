@@ -74,3 +74,13 @@ TEST_F(CoreDACTouchTest, writeToSpecificInputRegister)
 
 	coreADCTouch.writeToSpecificInputRegister(dac_touch::channel::D, value_to_write);
 }
+
+TEST_F(CoreDACTouchTest, writeToMemoryRegisterUntilChannelD)
+{
+	std::array<uint8_t, 2> value_to_write = {0xFF, 0xAA};
+
+	const auto data = ElementsAre(0x50, 0xFF, 0xAA);
+	EXPECT_CALL(i2cMock, write).With(Args<1, 2>(data));
+
+	coreADCTouch.writeToMemoryRegisterUntilChannelD(dac_touch::channel::A, value_to_write);
+}
