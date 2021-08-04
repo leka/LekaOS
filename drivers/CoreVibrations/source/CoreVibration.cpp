@@ -30,3 +30,34 @@ void CoreVibration::deInit()
 	_coreTimer.deInitialize();
 	_coreDac.deInitialize();
 }
+
+void CoreVibration::stop()
+{
+	// printf("Stoping vib\n");
+	_coreTimer.stop();
+	_coreDac.stop();
+
+	delete[] _sinBuffer;
+	_sinBuffer = nullptr;
+
+	delete[] _tmpBuffer;
+	_tmpBuffer = nullptr;
+
+	delete[] _vibBuffer_1;
+	_vibBuffer_1 = nullptr;
+
+	_isPlaying	= false;
+	_currentVib = nullptr;
+}
+
+// PRIVATE
+
+void CoreVibration::start()
+{
+	fillHalfBuffer(_vibBuffer_1, _samplesPerPeriod);
+	fillHalfBuffer(_vibBuffer_2, _samplesPerPeriod);
+	_coreDac.start(_vibBuffer_1, _samplesPerPeriod * 2);
+	_coreTimer.start();
+
+	_isPlaying = true;
+}
