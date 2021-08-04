@@ -12,19 +12,20 @@ VibrationTemplate::VibrationTemplate(fseconds duration, uint32_t frequency, floa
 	}
 
 	switch (eType) {
-		case VibrationEnvelope::Window:
+		case VibrationEnvelope::EnvelopType::Window:
 			this->_envelope = std::make_shared<WindowEnvelope>();
 			break;
-		case VibrationEnvelope::Triangle:
+		case VibrationEnvelope::EnvelopType::Triangle:
 			this->_envelope = std::make_shared<TriangleEnvelope>(triangDutyCycle);
 			break;
-		case VibrationEnvelope::Smooth:
+		case VibrationEnvelope::EnvelopType::Smooth:
 			this->_envelope = std::make_shared<SmoothEnvelope>();
 			break;
-		case VibrationEnvelope::Pulse:
+		case VibrationEnvelope::EnvelopType::Pulse:
+			// TODO() : change instantiation when pulse is implemented
+		default:
 			printf("Envelope Not Implemented\n\n");
 			this->_envelope = nullptr;
-			// TODO() : change instantiation when pulse is implemented
 			break;
 	}
 }
