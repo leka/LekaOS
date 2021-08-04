@@ -39,17 +39,18 @@ void CoreVibration::play(VibrationTemplate &vib)
 
 	_samplesPerPeriod = _samplingRate / vib.getFrequency();
 
-	_sinBuffer = new float[_samplesPerPeriod];
-	_tmpBuffer = new float[_samplesPerPeriod];
+	_sinBuffer.resize(_samplesPerPeriod, 0.5);
+	_tmpBuffer.resize(_samplesPerPeriod, 0.5);
 
-	createSinWavePeriod(_sinBuffer, vib);
+	createSinWavePeriod(_sinBuffer.data(), vib);
 
 	auto totalSamples = static_cast<uint32_t>(vib.getDuration().count() * static_cast<float>(_samplingRate));
 	vib.setCurrentSample(0);
 	vib.setTotalSamples(totalSamples);
 
-	_vibBuffer_1 = new uint16_t[_samplesPerPeriod * 2];	  // buffer of 2 periods
-	_vibBuffer_2 = _vibBuffer_1 + _samplesPerPeriod;
+	_vibBuffer.resize(_samplesPerPeriod * 2, 0x7FF);
+	_vibBufferPtr_1 = _vibBuffer.data();
+	_vibBufferPtr_2 = _vibBufferPtr_1 + _samplesPerPeriod;
 
 	start();
 }
@@ -59,8 +60,7 @@ void CoreVibration::playPeriodically(VibrationTemplate &vib, fseconds waitTime, 
 	if (nbRep > 0) {
 		// getting duration in ms
 		fseconds period = vib.getDuration() + waitTime;
-		// printf("duration : %f\nwaitTime : %f\nperiod : %f\n", vib.getDuration().count(), waitTime.count(),
-		// period.count()); // first immediate call
+
 		_eventQueue.call(this, &CoreVibration::playPtr, &vib);
 		_isPlayingPeriodically = true;
 
@@ -81,15 +81,6 @@ void CoreVibration::stop()
 	_coreTimer.stop();
 	_coreDac.stop();
 
-	delete[] _sinBuffer;
-	_sinBuffer = nullptr;
-
-	delete[] _tmpBuffer;
-	_tmpBuffer = nullptr;
-
-	delete[] _vibBuffer_1;
-	_vibBuffer_1 = nullptr;
-
 	_isPlaying	= false;
 	_currentVib = nullptr;
 }
@@ -108,9 +99,9 @@ auto CoreVibration::isPlayingPeriodically() const -> bool
 
 void CoreVibration::start()
 {
-	fillHalfBuffer(_vibBuffer_1, _samplesPerPeriod);
-	fillHalfBuffer(_vibBuffer_2, _samplesPerPeriod);
-	_coreDac.start(_vibBuffer_1, _samplesPerPeriod * 2);
+	fillHalfBuffer(_vibBufferPtr_1, _samplesPerPeriod);
+	fillHalfBuffer(_vibBufferPtr_2, _samplesPerPeriod);
+	_coreDac.start(_vibBufferPtr_1, _samplesPerPeriod * 2);
 	_coreTimer.start();
 
 	_isPlaying = true;
@@ -130,12 +121,12 @@ void CoreVibration::createSinWavePeriod(float *sinBuffer, const VibrationTemplat
 
 void CoreVibration::halfBufferCallback()
 {
-	_eventQueue.call(this, &CoreVibration::handleCallback, _vibBuffer_1);
+	_eventQueue.call(this, &CoreVibration::handleCallback, _vibBufferPtr_1);
 }
 
 void CoreVibration::cptBufferCallback()
 {
-	_eventQueue.call(this, &CoreVibration::handleCallback, _vibBuffer_2);
+	_eventQueue.call(this, &CoreVibration::handleCallback, _vibBufferPtr_2);
 }
 
 void CoreVibration::handleCallback(u_int16_t *buffer)
@@ -174,7 +165,7 @@ void CoreVibration::fillHalfBuffer(uint16_t *buffer, uint32_t nbSamples)
 	}
 
 	if (nbSamples > 0) {
-		this->_currentVib->applyCurrentEnvelopeSlice(_tmpBuffer, nbSamples);
+		this->_currentVib->applyCurrentEnvelopeSlice(_tmpBuffer.data(), nbSamples);
 		_currentVib->setCurrentSample(_currentVib->getCurrentSample() + nbSamples);
 	}
 
