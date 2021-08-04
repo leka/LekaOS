@@ -41,13 +41,14 @@ class CoreVibration
 	rtos::Thread &_thread;
 	events::EventQueue &_eventQueue;
 
-	uint16_t *_vibBuffer_1 = nullptr;
-	uint16_t *_vibBuffer_2 = nullptr;
+	std::vector<uint16_t> _vibBuffer;
+	uint16_t *_vibBufferPtr_1 = nullptr;
+	uint16_t *_vibBufferPtr_2 = nullptr;
 
 	VibrationTemplate *_currentVib = nullptr;
 
-	float *_sinBuffer		   = nullptr;
-	float *_tmpBuffer		   = nullptr;
+	std::vector<float> _sinBuffer;
+	std::vector<float> _tmpBuffer;
 	uint32_t _samplingRate	   = 0;
 	uint32_t _samplesPerPeriod = 0;
 
@@ -62,7 +63,7 @@ class CoreVibration
 
 	void halfBufferCallback();
 	void cptBufferCallback();
-	void handleCallback(u_int16_t *buffer);
+	void handleCallback(uint16_t *buffer);
 
 	void endPeriodicVib(int eventID);
 	void playPtr(VibrationTemplate *vib);
