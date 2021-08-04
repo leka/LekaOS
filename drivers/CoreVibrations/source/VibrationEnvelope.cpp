@@ -5,7 +5,11 @@
 
 using namespace leka;
 
-void WindowEnvelope::apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) {}
+void WindowEnvelope::apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples)
+{
+	// Applying window corresponds to keeping the vib signal as it is
+	// No need to process it in any way
+}
 
 void TriangleEnvelope::apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples)
 {

@@ -23,7 +23,7 @@ class CoreVibration
 	CoreVibration(LKCoreSTM32HalBase &hal, interface::Dac &dac, interface::DacTimer &timer, rtos::Thread &thread,
 				  events::EventQueue &eventQueue);
 
-	void initialize(float samplingRate);
+	void initialize(uint32_t samplingRate);
 	void deInit();
 
 	void play(VibrationTemplate &vib);
@@ -32,8 +32,6 @@ class CoreVibration
 
 	[[nodiscard]] auto isPlaying() const -> bool;
 	[[nodiscard]] auto isPlayingPeriodically() const -> bool;
-
-	// void playSequence(std::vector<VibrationTemplate> sequence);
 
   private:
 	LKCoreSTM32HalBase &_hal;
@@ -50,7 +48,7 @@ class CoreVibration
 
 	float *_sinBuffer		   = nullptr;
 	float *_tmpBuffer		   = nullptr;
-	float _samplingRate		   = 0.F;
+	uint32_t _samplingRate	   = 0;
 	uint32_t _samplesPerPeriod = 0;
 
 	bool _isPlaying				= false;
@@ -58,7 +56,7 @@ class CoreVibration
 
 	void start();
 
-	void createSinWavePeriod(float *sinBuffer, VibrationTemplate &vib) const;
+	void createSinWavePeriod(float *sinBuffer, const VibrationTemplate &vib) const;
 	void rescaleVibration();
 	void fillHalfBuffer(uint16_t *buffer, uint32_t nbSamples);
 

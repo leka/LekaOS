@@ -13,12 +13,12 @@ namespace leka {
 class VibrationEnvelope
 {
   public:
-	enum EnvelopType
+	enum class EnvelopType
 	{
 		Window,
-		Triangle,	// configurable duty cycle
-		Smooth,		// round
-		Pulse		// multiple maximums
+		Triangle,	// Configurable duty cycle
+		Smooth,		// Starts and ends smoothly
+		Pulse		// Multiple maximums
 	};
 
 	virtual void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) = 0;
@@ -34,7 +34,7 @@ class WindowEnvelope : public VibrationEnvelope
 class TriangleEnvelope : public VibrationEnvelope
 {
   public:
-	TriangleEnvelope(float dutyCycle) : _dutyCycle(dutyCycle)
+	explicit TriangleEnvelope(float dutyCycle) : _dutyCycle(dutyCycle)
 	{
 		if (dutyCycle > 1.F || dutyCycle < 0.F) {
 			printf("Duty cycle must be between 0 and 1\n");
