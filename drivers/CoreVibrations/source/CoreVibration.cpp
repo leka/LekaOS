@@ -188,3 +188,16 @@ void CoreVibration::fillHalfBuffer(uint16_t *buffer, uint32_t nbSamples)
 		buffer[i] = static_cast<u_int16_t>(_tmpBuffer[i]);
 	}
 }
+
+void CoreVibration::endPeriodicVib(int eventID)
+{
+	_eventQueue.cancel(eventID);
+	_isPlayingPeriodically = false;
+}
+
+void CoreVibration::playPtr(VibrationTemplate *vib)
+{
+	if (vib != nullptr) {
+		play(*vib);
+	}
+}
