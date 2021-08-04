@@ -11,14 +11,14 @@ CoreVibration::CoreVibration(LKCoreSTM32HalBase &hal, interface::Dac &dac, inter
 	_thread.start({&_eventQueue, &events::EventQueue::dispatch_forever});
 }
 
-void CoreVibration::initialize(float samplingRate)
+void CoreVibration::initialize(uint32_t samplingRate)
 {
 	this->_samplingRate = samplingRate;
 
 	// setup DAC callbacks
 	static auto *self = this;
-	_coreDac.setCptCallbackPtr([](DAC_HandleTypeDef *hdac) { self->cptBufferCallback(); });
-	_coreDac.setHalfCptCallbackPtr([](DAC_HandleTypeDef *hdac) { self->halfBufferCallback(); });
+	_coreDac.setCptCallbackPtr([]([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->cptBufferCallback(); });
+	_coreDac.setHalfCptCallbackPtr([]([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->halfBufferCallback(); });
 
 	// initialize components
 	_coreTimer.initialize(samplingRate);
@@ -37,23 +37,20 @@ void CoreVibration::play(VibrationTemplate &vib)
 
 	_currentVib = &vib;	  // store current vib in order to access it from the callbacks
 
-	_samplesPerPeriod = static_cast<uint32_t>(_samplingRate / static_cast<float>(vib.getFrequency()));
-	// printf("Samples per period: %d\n", _samplesPerPeriod);
+	_samplesPerPeriod = _samplingRate / vib.getFrequency();
 
 	_sinBuffer = new float[_samplesPerPeriod];
 	_tmpBuffer = new float[_samplesPerPeriod];
 
 	createSinWavePeriod(_sinBuffer, vib);
 
-	uint32_t totalSamples = static_cast<uint16_t>(vib.getDuration().count() * _samplingRate);
+	auto totalSamples = static_cast<uint32_t>(vib.getDuration().count() * static_cast<float>(_samplingRate));
 	vib.setCurrentSample(0);
 	vib.setTotalSamples(totalSamples);
-	// printf("Samples remaining at start of vib: %d\n", _samplesRemaining);
 
 	_vibBuffer_1 = new uint16_t[_samplesPerPeriod * 2];	  // buffer of 2 periods
 	_vibBuffer_2 = _vibBuffer_1 + _samplesPerPeriod;
 
-	// printf("Starting vib\n");
 	start();
 }
 
@@ -81,7 +78,6 @@ void CoreVibration::playPeriodically(VibrationTemplate &vib, fseconds waitTime, 
 
 void CoreVibration::stop()
 {
-	// printf("Stoping vib\n");
 	_coreTimer.stop();
 	_coreDac.stop();
 
@@ -120,7 +116,7 @@ void CoreVibration::start()
 	_isPlaying = true;
 }
 
-void CoreVibration::createSinWavePeriod(float *sinBuffer, VibrationTemplate &vib) const
+void CoreVibration::createSinWavePeriod(float *sinBuffer, const VibrationTemplate &vib) const
 {
 	// offset and coef to have a positive sinwave of amplitude 1
 	const uint16_t maxDacVal = 0xFFF;
