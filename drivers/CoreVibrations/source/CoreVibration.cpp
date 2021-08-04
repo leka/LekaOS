@@ -61,3 +61,15 @@ void CoreVibration::start()
 
 	_isPlaying = true;
 }
+
+void CoreVibration::createSinWavePeriod(float *sinBuffer, VibrationTemplate &vib) const
+{
+	// offset and coef to have a positive sinwave of amplitude 1
+	const uint16_t maxDacVal = 0xFFF;
+	const double maxCoef	 = 0.4;
+	double normalizeCoef	 = maxCoef * vib.getAmplitude() * maxDacVal;
+
+	for (uint32_t i = 0; i < _samplesPerPeriod; ++i) {
+		sinBuffer[i] = static_cast<float>(normalizeCoef * sin(i * 2 * M_PI / _samplesPerPeriod));
+	}
+}
