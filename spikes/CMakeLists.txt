@@ -21,6 +21,7 @@ add_subdirectory(${SPIKES_DIR}/lk_sensors_light)
 add_subdirectory(${SPIKES_DIR}/lk_file_manager)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_touch)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_temperature_humidity)
+add_subdirectory(${SPIKES_DIR}/lk_sensors_imu)
 
 add_subdirectory(${SPIKES_DIR}/stl_cxxsupport)
 
@@ -42,6 +43,7 @@ add_dependencies( spikes_leka
 	spike_lk_file_manager
 	spike_lk_sensors_touch
 	spike_lk_sensors_temperature_humidity
+	spike_lk_sensors_imu
 )
 
 add_custom_target(spikes_mbed)
