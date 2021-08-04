@@ -7,6 +7,9 @@
 
 #include <cstdint>
 #include <cstdio>
+#include <stdexcept>
+
+#include "LogKit.h"
 
 namespace leka {
 
@@ -17,8 +20,7 @@ class VibrationEnvelope
 	{
 		Window,
 		Triangle,	// Configurable duty cycle
-		Smooth,		// Starts and ends smoothly
-		Pulse		// Multiple maximums
+		Smooth		// Starts and ends smoothly
 	};
 
 	virtual void apply(float *buffer, uint32_t nbSamples, uint32_t currentSample, uint32_t totalSamples) = 0;
@@ -37,7 +39,7 @@ class TriangleEnvelope : public VibrationEnvelope
 	explicit TriangleEnvelope(float dutyCycle) : _dutyCycle(dutyCycle)
 	{
 		if (dutyCycle > 1.F || dutyCycle < 0.F) {
-			printf("Duty cycle must be between 0 and 1\n");
+			log_error("ERROR: Duty cycle must be between 0 and 1");
 			// TODO() : handle error
 		}
 	};
