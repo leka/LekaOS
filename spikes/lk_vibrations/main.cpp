@@ -39,7 +39,7 @@ void DMA1_Stream5_IRQHandler()
 
 void cardiacCoherenceDemo()
 {
-	printf("\n\nCardiac coherence demo!!\n");
+	log_info("\n\nCardiac coherence demo!!\n");
 	VibrationTemplate vib(5s, 100, 0.1, VibrationEnvelope::EnvelopType::Triangle);
 	coreVib.playPeriodically(vib, 5s, 6);
 	while (coreVib.isPlayingPeriodically()) {
@@ -49,7 +49,7 @@ void cardiacCoherenceDemo()
 
 void countVibsDemo()
 {
-	printf("\n\nCount vibrations demo!!\n");
+	log_info("\n\nCount vibrations demo!!\n");
 	VibrationTemplate vib(1s, 100, 0.1, VibrationEnvelope::EnvelopType::Triangle);
 	for (int i = 0; i < 10; i++) {
 		int reps = rand() % 9 + 1;
@@ -58,14 +58,16 @@ void countVibsDemo()
 		while (coreVib.isPlayingPeriodically()) {
 			ThisThread::sleep_for(50ms);
 		}
-		printf("The number of times to guess was: %d\n", reps);
+		log_info("The number of times to guess was: %d\n", reps);
 		ThisThread::sleep_for(2s);
 	}
 }
 
 void vibTypeDemo()
 {
-	printf("\n\nVib type demo!!\n");
+	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+
+	log_info("\n\nVib type demo!!\n");
 	int numFreqs				   = 7;
 	std::array<uint32_t, 10> freqs = {50, 90, 96, 100, 110, 128, 140};
 
@@ -73,14 +75,14 @@ void vibTypeDemo()
 	std::array<float, 10> amplis = {0.4, 0.6, 0.8};
 
 	for (int i = 0; i < numFreqs; ++i) {
-		printf("freq: %lu\n", freqs.at(i));
+		log_info("freq: %lu\n", freqs.at(i));
 		for (int j = 0; j < numAmplis; ++j) {
 			VibrationTemplate vib(1s, freqs.at(i), amplis.at(j), VibrationEnvelope::EnvelopType::Window);
 			coreVib.play(vib);
 			while (coreVib.isPlaying()) {
 				ThisThread::sleep_for(50ms);
 			}
-			printf("\tampli: %f\n", amplis.at(j));
+			log_info("\tampli: %f\n", amplis.at(j));
 			ThisThread::sleep_for(500ms);
 		}
 		ThisThread::sleep_for(2s);
@@ -89,7 +91,7 @@ void vibTypeDemo()
 
 auto main() -> int
 {
-	printf("\n\nStarting vibration process, hold your kids\n\n\n");
+	log_info("\n\nStarting vibration process, hold your kids");
 	coreVib.initialize(2048);
 
 	VibrationTemplate vib(1s, 100, 0.2, VibrationEnvelope::EnvelopType::Triangle);

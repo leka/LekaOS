@@ -6,8 +6,16 @@ VibrationTemplate::VibrationTemplate(fseconds duration, uint32_t frequency, floa
 									 VibrationEnvelope::EnvelopType eType, float triangDutyCycle)
 	: _duration(duration), _frequency(frequency), _amplitude(amplitude)
 {
+	if (_duration.count() < 0) {
+		log_error("ERROR: Vibration duration can't be negative");
+		// TODO() : handle error
+	}
 	if (_frequency == 0) {
-		printf("Error, freq can't be 0Hz\n");
+		log_error("ERROR: Vibration freq can't be 0Hz");
+		// TODO() : handle error
+	}
+	if (_amplitude < 0.F || _amplitude > 1.F) {
+		log_error("ERROR: Vibration amplitude must be between 0 and 1");
 		// TODO() : handle error
 	}
 
@@ -21,10 +29,8 @@ VibrationTemplate::VibrationTemplate(fseconds duration, uint32_t frequency, floa
 		case VibrationEnvelope::EnvelopType::Smooth:
 			this->_envelope = std::make_shared<SmoothEnvelope>();
 			break;
-		case VibrationEnvelope::EnvelopType::Pulse:
-			// TODO() : change instantiation when pulse is implemented
 		default:
-			printf("Envelope Not Implemented\n\n");
+			log_error("ERROR: Envelope Not Implemented");
 			this->_envelope = nullptr;
 			break;
 	}
