@@ -3,6 +3,10 @@
 using namespace leka;
 
 //------------------ Default Callbacks ------------------------
+CoreJPEGMode::CoreJPEGMode(LKCoreSTM32HalBase &hal) : _hal(hal)
+{
+}
+
 void CoreJPEGMode::onMspInitCallback(JPEG_HandleTypeDef *hjpeg) {}
 
 void CoreJPEGMode::onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info)
@@ -53,6 +57,10 @@ void CoreJPEGMode::reset()
 //------------------ DMA Mode ------------------------
 std::array<uint8_t, jpeg::input_chunk_size * jpeg::input_buffers_nb> CoreJPEGModeDMA::BIG_CHUNGUS_OF_MEMORY_IN;
 std::array<uint8_t, jpeg::output_chunk_size * jpeg::output_buffers_nb> CoreJPEGModeDMA::BIG_CHUNGUS_OF_MEMORY_OUT;
+
+CoreJPEGModeDMA::CoreJPEGModeDMA(LKCoreSTM32HalBase &hal) : CoreJPEGMode(hal)
+{
+}
 
 void CoreJPEGModeDMA::onMspInitCallback(JPEG_HandleTypeDef *hjpeg)
 {
@@ -154,16 +162,9 @@ auto CoreJPEGModeDMA::decodeImage(JPEG_HandleTypeDef *hjpeg, LKCoreFatFsBase &fi
 
 	// loop until decode process ends
 	bool process_ended = false;
-	unsigned in_time   = 0;
-	unsigned out_time  = 0;
 	do {
-		unsigned start = HAL_GetTick();
 		decoderInputHandler(hjpeg, file);
-		in_time += HAL_GetTick() - start;
-
-		start		  = HAL_GetTick();
 		process_ended = decoderOutputHandler(hjpeg);
-		out_time += HAL_GetTick() - start;
 	} while (!process_ended);
 
 	return _image_size;

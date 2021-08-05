@@ -7,6 +7,7 @@ using namespace leka;
 VideoKit::VideoKit(LKCoreSTM32HalBase &hal)
 	: _hal(hal),
 	  // peripherals
+	  _corejpegmode(_hal),
 	  _corejpeg(_hal, _corejpegmode),
 	  _coredma2d(_hal),
 	  // screen + dsi + ltdc
@@ -172,7 +173,7 @@ void VideoKit::tick()
 	}
 
 	dt = rtos::Kernel::Clock::now() - _last_time;
-	log_info("(%ld) %ld ms = %f fps", dt.count(), 1000.f / dt.count());
+	// printf("[INFO] [VideoKit.cpp:%d] %lld ms = %f fps \n\r", __LINE__, dt.count(), 1000.f / dt.count());
 
 	_last_time = rtos::Kernel::Clock::now();
 }
