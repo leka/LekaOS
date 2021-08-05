@@ -10,6 +10,8 @@ add_subdirectory(${DRIVERS_DIR}/LKCoreFatFs)
 add_subdirectory(${DRIVERS_DIR}/LKCoreSTM32Hal)
 add_subdirectory(${DRIVERS_DIR}/CoreIOExpander)
 add_subdirectory(${DRIVERS_DIR}/CoreBufferedSerial)
+add_subdirectory(${DRIVERS_DIR}/CoreDACTouch)
+
 
 # LCD drivers
 add_subdirectory(${DRIVERS_DIR}/LKCoreVideo)
