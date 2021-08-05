@@ -36,7 +36,7 @@ LKCoreFatFs corefatfs;
 
 LKCoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);
-CoreJPEGModeDMA corejpegmode;
+CoreJPEGModeDMA corejpegmode(hal);
 CoreJPEG corejpeg(hal, corejpegmode);
 CoreDMA2D coredma2d(hal);
 CoreLTDC coreltdc(hal);
