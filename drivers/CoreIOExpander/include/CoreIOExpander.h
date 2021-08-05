@@ -94,7 +94,7 @@ class MCP23017
 	{
 	  public:
 		explicit ExpandedInput(MCP23017 &parent, uint16_t pin) : ExpandedIO(parent, pin) { internalInput(); }
-		~ExpandedInput() override {}
+		~ExpandedInput() override = default;
 		auto read() -> int override { return ExpandedIO::internalRead(); }
 		void mode(PinMode pull) override { ExpandedIO::internalMode(pull); }
 		auto is_connected() -> int override { return 1; }
@@ -155,7 +155,7 @@ class MCP23017
 
 	auto readOutputs() -> uint16_t;
 
-	uint16_t readInputs();
+	auto readInputs() -> uint16_t;
 
 	void setInputPolarity(uint16_t values);
 
