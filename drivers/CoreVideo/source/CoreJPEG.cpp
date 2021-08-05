@@ -25,8 +25,8 @@ void CoreJPEG::initialize()
 	registerCallbacks();
 
 	// enable JPEG IRQ request
-	HAL_NVIC_SetPriority(JPEG_IRQn, 0x06, 0x0F);
-	HAL_NVIC_EnableIRQ(JPEG_IRQn);
+	_hal.HAL_NVIC_SetPriority(JPEG_IRQn, 0x06, 0x0F);
+	_hal.HAL_NVIC_EnableIRQ(JPEG_IRQn);
 }
 
 auto CoreJPEG::getConfig() -> JPEGConfig
@@ -43,26 +43,26 @@ void CoreJPEG::registerCallbacks()
 	static CoreJPEG *self;
 	self = this;
 
-	HAL_JPEG_RegisterInfoReadyCallback(&self->getHandle(), [](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) {
+	_hal.HAL_JPEG_RegisterInfoReadyCallback(&_handle, [](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) {
 		self->_mode.onInfoReadyCallback(hjpeg, info);
 	});
 
-	HAL_JPEG_RegisterGetDataCallback(&self->getHandle(), [](JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize) {
+	_hal.HAL_JPEG_RegisterGetDataCallback(&_handle, [](JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize) {
 		self->_mode.onGetDataCallback(hjpeg, decoded_datasize);
 	});
 
-	HAL_JPEG_RegisterDataReadyCallback(&self->getHandle(),
+	_hal.HAL_JPEG_RegisterDataReadyCallback(&_handle,
 									   [](JPEG_HandleTypeDef *hjpeg, uint8_t *output_data, uint32_t datasize) {
 										   self->_mode.onDataReadyCallback(hjpeg, output_data, datasize);
 									   });
 
-	HAL_JPEG_RegisterCallback(&self->getHandle(), HAL_JPEG_DECODE_CPLT_CB_ID,
+	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_DECODE_CPLT_CB_ID,
 							  [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onDecodeCompleteCallback(hjpeg); });
 
-	HAL_JPEG_RegisterCallback(&self->getHandle(), HAL_JPEG_ERROR_CB_ID,
+	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_ERROR_CB_ID,
 							  [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onErrorCallback(hjpeg); });
 
-	HAL_JPEG_RegisterCallback(&self->getHandle(), HAL_JPEG_MSPINIT_CB_ID,
+	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_MSPINIT_CB_ID,
 							  [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onMspInitCallback(hjpeg); });
 }
 

@@ -5,7 +5,7 @@
 #include "CoreLCD.h"
 
 #include "gtest/gtest.h"
-#include "mocks/leka/CoreLCDDriver.h"
+#include "mocks/leka/CoreVideo/CoreLCDDriver.h"
 #include "stubs/mbed/PwmOut.h"
 
 using namespace leka;
