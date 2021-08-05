@@ -31,23 +31,19 @@ target_link_libraries(CoreVideo
 		LKCoreLL
 		LKCoreSTM32Hal
 		LKCoreFatFs
+		LogKit
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
-		tests/CGColor_test.cpp
-		tests/CGPixel_test.cpp
 		tests/CoreDMA2D_test.cpp
 		tests/CoreDSI_test.cpp
-		tests/CoreFont_test.cpp
-		tests/CoreGraphics_test.cpp
 		tests/CoreJPEG_test.cpp
 		tests/CoreLCD_test.cpp
 		tests/CoreLTDC_test.cpp
 		tests/CoreLCDDriverOTM8009A_test.cpp
 		tests/CoreSDRAM_test.cpp
-		tests/CoreVideo_test.cpp
 	)
 
 endif()

@@ -22,8 +22,10 @@ struct CoreJPEGMode : interface::CoreJPEGMode {
 	void onErrorCallback(JPEG_HandleTypeDef *hjpeg) override;
 
   protected:
-	CoreJPEGMode() = default;
+	explicit CoreJPEGMode(LKCoreSTM32HalBase &hal);
 	virtual void reset();
+
+	LKCoreSTM32HalBase &_hal;
 
 	// color conversion function pointer, set by onInfoReadyCallback
 	JPEG_YCbCrToRGB_Convert_Function convertMCUBlocks;
@@ -35,7 +37,7 @@ struct CoreJPEGMode : interface::CoreJPEGMode {
 };
 
 struct CoreJPEGModeDMA : CoreJPEGMode {
-	CoreJPEGModeDMA() = default;
+	explicit CoreJPEGModeDMA(LKCoreSTM32HalBase &hal);
 
 	auto decodeImage(JPEG_HandleTypeDef *hjpeg, LKCoreFatFsBase &file) -> uint32_t final;
 

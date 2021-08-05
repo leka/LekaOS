@@ -58,7 +58,7 @@ void CoreDSI::initialize()
 	_hal.HAL_DSI_Init(&_handle, &dsiPllInit);
 
 	// Configure DSI Video mode timings
-	HAL_DSI_ConfigAdaptedCommandMode(&_handle, &_cmdconf);
+	_hal.HAL_DSI_ConfigAdaptedCommandMode(&_handle, &_cmdconf);
 
 	_hal.HAL_DSI_Start(&_handle);
 
@@ -69,7 +69,7 @@ void CoreDSI::initialize()
 	phy_timings.DataLaneLP2HSTime	= 35;
 	phy_timings.DataLaneMaxReadTime = 0;
 	phy_timings.StopWaitTime		= 10;
-	HAL_DSI_ConfigPhyTimer(&_handle, &phy_timings);
+	_hal.HAL_DSI_ConfigPhyTimer(&_handle, &phy_timings);
 
 	static CoreDSI *self;
 	self = this;
@@ -81,21 +81,22 @@ void CoreDSI::initialize()
 
 		// update LTDC layer frame buffer pointer
 		__HAL_DSI_WRAPPER_DISABLE(hdsi);
-		HAL_LTDC_SetAddress(&self->_ltdc.getHandle(), new_address, 0);
+		self->_hal.HAL_LTDC_SetAddress(&self->_ltdc.getHandle(), new_address, 0);
 		__HAL_DSI_WRAPPER_ENABLE(hdsi);
 
 		// update DSI refresh column
-		HAL_DSI_LongWrite(hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 4, lcd::otm8009a::set_address::for_column::command,
-						  self->_columns[self->_current_column].data());
+		const auto &set_clmn_addr_cmd = lcd::otm8009a::set_address::for_column::command;
+		self->_hal.HAL_DSI_LongWrite(hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 4, set_clmn_addr_cmd,
+									 self->_columns[self->_current_column].data());
 
 		if (self->_current_column != 0) {
-			HAL_DSI_Refresh(hdsi);
+			self->_hal.HAL_DSI_Refresh(hdsi);
 		} else {
 			self->_refresh_done = true;
 		}
 	};
 
-	HAL_DSI_RegisterCallback(&_handle, HAL_DSI_ENDOF_REFRESH_CB_ID, refreshCallback);
+	_hal.HAL_DSI_RegisterCallback(&_handle, HAL_DSI_ENDOF_REFRESH_CB_ID, refreshCallback);
 
 	refresh();
 }
@@ -113,7 +114,7 @@ void CoreDSI::enableLPCmd()
 	_lpcmd.LPDcsShortWriteOneP = DSI_LP_DSW1P_ENABLE;
 	_lpcmd.LPDcsShortReadNoP   = DSI_LP_DSR0P_ENABLE;
 	_lpcmd.LPDcsLongWrite	   = DSI_LP_DLW_ENABLE;
-	HAL_DSI_ConfigCommand(&_handle, &_lpcmd);
+	_hal.HAL_DSI_ConfigCommand(&_handle, &_lpcmd);
 }
 
 void CoreDSI::disableLPCmd()
@@ -129,20 +130,22 @@ void CoreDSI::disableLPCmd()
 	_lpcmd.LPDcsShortWriteOneP = DSI_LP_DSW1P_DISABLE;
 	_lpcmd.LPDcsShortReadNoP   = DSI_LP_DSR0P_DISABLE;
 	_lpcmd.LPDcsLongWrite	   = DSI_LP_DLW_DISABLE;
-	HAL_DSI_ConfigCommand(&_handle, &_lpcmd);
+	_hal.HAL_DSI_ConfigCommand(&_handle, &_lpcmd);
 }
 
 void CoreDSI::enableTearingEffectReporting()
 {
-	HAL_DSI_RegisterCallback(&_handle, HAL_DSI_TEARING_EFFECT_CB_ID, [](DSI_HandleTypeDef *hdsi) {
+	static CoreDSI *self;
+	self = this;
+	_hal.HAL_DSI_RegisterCallback(&_handle, HAL_DSI_TEARING_EFFECT_CB_ID, [](DSI_HandleTypeDef *hdsi) {
 		// mask TE pin (automatically unmaksed by refresh)
-		HAL_DSI_ShortWrite(hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, lcd::otm8009a::tearing_effect::off, 0x00);
+		self->_hal.HAL_DSI_ShortWrite(hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, lcd::otm8009a::tearing_effect::off, 0x00);
 		// refresh DSI
-		HAL_DSI_Refresh(hdsi);
+		self->_hal.HAL_DSI_Refresh(hdsi);
 	});
 
 	// enable Bus Turn Around for 2 ways communication (needed for TE signal)
-	HAL_DSI_ConfigFlowControl(&_handle, DSI_FLOW_CONTROL_BTA);
+	_hal.HAL_DSI_ConfigFlowControl(&_handle, DSI_FLOW_CONTROL_BTA);
 
 	// Enable GPIOJ clock
 	__HAL_RCC_GPIOJ_CLK_ENABLE();
@@ -156,7 +159,7 @@ void CoreDSI::enableTearingEffectReporting()
 	GPIO_Init_Structure.Pull	  = GPIO_NOPULL;
 	GPIO_Init_Structure.Speed	  = GPIO_SPEED_HIGH;
 	GPIO_Init_Structure.Alternate = GPIO_AF13_DSI;
-	HAL_GPIO_Init(GPIOJ, &GPIO_Init_Structure);
+	_hal.HAL_GPIO_Init(GPIOJ, &GPIO_Init_Structure);
 
 	refresh();
 	_sync_on_TE = true;
@@ -196,8 +199,9 @@ void CoreDSI::refresh()
 	_refresh_done = false;
 	if (_sync_on_TE) {
 		// request TE pin
-		uint8_t val[] = {0x00, 0x00};
-		HAL_DSI_LongWrite(&_handle, 0, DSI_DCS_LONG_PKT_WRITE, 2, lcd::otm8009a::tearing_effect::write_scanline, val);
+		uint8_t val[]				   = {0x00, 0x00};
+		const auto &write_scanline_cmd = lcd::otm8009a::tearing_effect::write_scanline;
+		_hal.HAL_DSI_LongWrite(&_handle, 0, DSI_DCS_LONG_PKT_WRITE, 2, write_scanline_cmd, val);
 	} else {
 		// normal refresh
 		if (_handle.Lock != HAL_LOCKED) {

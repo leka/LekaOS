@@ -7,6 +7,7 @@ using namespace leka;
 VideoKit::VideoKit(LKCoreSTM32HalBase &hal)
 	: _hal(hal),
 	  // peripherals
+	  _corejpegmode(_hal),
 	  _corejpeg(_hal, _corejpegmode),
 	  _coredma2d(_hal),
 	  // screen + dsi + ltdc

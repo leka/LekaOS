@@ -14,9 +14,12 @@ class CoreDSIMock : public interface::CoreDSI
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));
-	MOCK_METHOD(void, start, (), (override));
 	MOCK_METHOD(void, reset, (), (override));
-	MOCK_METHOD(DSI_VidCfgTypeDef, getConfig, (), (override));
+	MOCK_METHOD(void, refresh, (), (override));
+	MOCK_METHOD(void, enableLPCmd, (), (override));
+	MOCK_METHOD(void, disableLPCmd, (), (override));
+	MOCK_METHOD(void, enableTearingEffectReporting, (), (override));
+	MOCK_METHOD(bool, refreshDone, (), (override));
 	MOCK_METHOD(void, write, (const uint8_t *data, const uint32_t size), (override));
 };
 
