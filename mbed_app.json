@@ -4,6 +4,10 @@
 		"USE_HAL_JPEG_REGISTER_CALLBACKS": {
 			"macro_name": "USE_HAL_JPEG_REGISTER_CALLBACKS",
 			"value": "1U"
+		},
+		"MBED_CONF_PLATFORM_CALLBACK_NONTRIVIAL": {
+			"macro_name": "MBED_CONF_PLATFORM_CALLBACK_NONTRIVIAL",
+			"value": "1U"
 		}
 	},
 	"target_overrides": {

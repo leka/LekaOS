@@ -41,19 +41,29 @@ LSM6DSOX_DataGatherer::LSM6DSOX_DataGatherer(Communication::I2CBase &component_i
  *
  * @retval 0 in case of success, an error code otherwise
  */
-Status LSM6DSOX_DataGatherer::init()
+auto LSM6DSOX_DataGatherer::init() -> Status
 {
 	// Initialize the component for driver usage
-	if (_accelerometer.init() != Status::OK) return Status::ERROR;
-	if (_gyroscope.init() != Status::OK) return Status::ERROR;
+	if (_accelerometer.init() != Status::OK) {
+		return Status::ERROR;
+	}
+	if (_gyroscope.init() != Status::OK) {
+		return Status::ERROR;
+	}
 
 	//// Turn off Sensors
-	if (_accelerometer.setPowerMode(Component::PowerMode::OFF) != Status::OK) return Status::ERROR;
-	if (_gyroscope.setPowerMode(Component::PowerMode::OFF) != Status::OK) return Status::ERROR;
+	if (_accelerometer.setPowerMode(Component::PowerMode::OFF) != Status::OK) {
+		return Status::ERROR;
+	}
+	if (_gyroscope.setPowerMode(Component::PowerMode::OFF) != Status::OK) {
+		return Status::ERROR;
+	}
 
 	// Enable Block Data Update
-	if (lsm6dsox_block_data_update_set(&_register_io_function, PROPERTY_ENABLE) != (int32_t)Communication::Status::OK)
+	if (lsm6dsox_block_data_update_set(&_register_io_function, PROPERTY_ENABLE) !=
+		static_cast<int32_t>(Communication::Status::OK)) {
 		return Status::ERROR;
+	}
 
 	// Configure accelerometer
 	if (_accelerometer.setRange(AccelerometerRange::_2G) != Status::OK) return Status::ERROR;
@@ -83,7 +93,7 @@ Status LSM6DSOX_DataGatherer::init()
  *
  * @retval 0 in case of success, an error code otherwise
  */
-Status LSM6DSOX_DataGatherer::disableI3C()
+auto LSM6DSOX_DataGatherer::disableI3C() -> Status
 {
 	/* Disable I3C interface */
 	if (lsm6dsox_i3c_disable_set(&_register_io_function, LSM6DSOX_I3C_DISABLE) != (int32_t)Communication::Status::OK) {
@@ -98,7 +108,7 @@ Status LSM6DSOX_DataGatherer::disableI3C()
  * @param id where to store the ID
  * @retval 0 in case of success, an error code otherwise
  */
-Status LSM6DSOX_DataGatherer::getID(uint8_t &id)
+auto LSM6DSOX_DataGatherer::getID(uint8_t &id) -> Status
 {
 	uint8_t p_data = 0;
 	if (lsm6dsox_device_id_get(&_register_io_function, &p_data) != (int32_t)Communication::Status::OK) {

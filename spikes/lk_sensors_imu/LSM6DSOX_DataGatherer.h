@@ -87,32 +87,32 @@ class LSM6DSOX_DataGatherer
 	virtual void onSerialReceived();
 	virtual void parseCommand();
 
-	virtual bool isFloat(string s);
+	virtual auto isFloat(string s) -> bool;
 
 	virtual void sendIntBinary(int var);
 
 	virtual void onTick();
 
-	virtual Component::Status init();
-	virtual Component::Status disableI3C();
-	virtual Component::Status restoreDefaultConfiguration();
+	virtual auto init() -> Component::Status;
+	virtual auto disableI3C() -> Component::Status;
+	virtual auto restoreDefaultConfiguration() -> Component::Status;
 
-	virtual Component::Status getID(uint8_t &id);
+	virtual auto getID(uint8_t &id) -> Component::Status;
 
 	// temporary, to simplify developpement
 	// TODO erase this once no more in use
-	virtual stmdev_ctx_t *TMP_getIoFunc();
+	virtual auto TMP_getIoFunc() -> stmdev_ctx_t *;
 
 	virtual void setDataRate(float data_rate);
 	virtual void setDataRateWhileRunning(float data_rate);
 
 	virtual void getDataRate(float &data_rate);
 
-	virtual Component::Status getData(std::array<float, 6> &data);
+	virtual auto getData(std::array<float, 6> &data) -> Component::Status;
 
-	virtual PinName getInterruptPin();
-	virtual Component::Status enableInterrupt();
-	virtual Component::Status disableInterrupt();
+	virtual auto getInterruptPin() -> PinName;
+	virtual auto enableInterrupt() -> Component::Status;
+	virtual auto disableInterrupt() -> Component::Status;
 
 	// virtual Component::Status readInterrupt(uint8_t &interrupt_status);
 	// virtual Component::Status attachInterrupt(Callback<void()> func);
@@ -121,8 +121,10 @@ class LSM6DSOX_DataGatherer
 	virtual void stopTicker();
 
   protected:
-	static int32_t ptr_io_write(void *handle, uint8_t write_address, uint8_t *p_buffer, uint16_t number_bytes_to_write);
-	static int32_t ptr_io_read(void *handle, uint8_t read_address, uint8_t *p_buffer, uint16_t number_bytes_to_read);
+	static auto ptr_io_write(void *handle, uint8_t write_address, uint8_t *p_buffer, uint16_t number_bytes_to_write)
+		-> int32_t;
+	static auto ptr_io_read(void *handle, uint8_t read_address, uint8_t *p_buffer, uint16_t number_bytes_to_read)
+		-> int32_t;
 };
 }	// namespace Component
 #endif	 // __LSM6DSOX_DATAGATHERER_H__

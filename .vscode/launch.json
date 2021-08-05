@@ -5,7 +5,7 @@
 			"type": "cortex-debug",
 			"request": "launch",
 			"cwd": "${workspaceRoot}",
-			"executable": "${command:cmake.launchTargetPath}",
+			"executable": "_build/LEKA_V1_2_DEV/spikes/lk_sensors_imu/spike_lk_sensors_imu.elf",
 			"servertype": "openocd",
 			"configFiles": [
 				"interface/stlink.cfg",
