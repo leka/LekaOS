@@ -29,7 +29,7 @@ void CoreDACTimer::initialize(uint32_t frequency)
 	_hal.HAL_TIMEx_MasterConfigSynchronization(&_htim, &sMasterConfig);
 }
 
-void CoreDACTimer::deInitialize()
+void CoreDACTimer::terminate()
 {
 	_hal.HAL_TIM_Base_DeInit(&_htim);
 }

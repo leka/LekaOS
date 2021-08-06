@@ -79,6 +79,6 @@ auto main() -> int
 
 	printf("End of audio test!\n\n");
 
-	coreDac.deInitialize();
-	coreTimer.deInitialize();
+	coreDac.terminate();
+	coreTimer.terminate();
 }

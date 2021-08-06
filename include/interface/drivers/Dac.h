@@ -17,7 +17,7 @@ class Dac
 	~Dac() = default;
 
 	virtual void initialize()								 = 0;
-	virtual void deInitialize()								 = 0;
+	virtual void terminate()								 = 0;
 	virtual void start(uint16_t *pData, uint32_t dataLength) = 0;
 	virtual void stop()										 = 0;
 
