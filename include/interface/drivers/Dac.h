@@ -11,10 +11,10 @@
 
 namespace leka::interface {
 
-class Dac
+class DACDriver
 {
   public:
-	~Dac() = default;
+	~DACDriver() = default;
 
 	virtual void initialize()								 = 0;
 	virtual void terminate()								 = 0;

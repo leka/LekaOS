@@ -16,7 +16,7 @@ namespace leka {
  * at a high sampling rate without too much impact on performance.
  * The class uses a DACTimer as its trigger to output data
  */
-class CoreDAC : public interface::Dac
+class CoreDAC : public interface::DACDriver
 {
   public:
 	explicit CoreDAC(LKCoreSTM32HalBase &hal);
