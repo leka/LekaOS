@@ -8,7 +8,7 @@
 #include <cstdio>
 
 #include "LKCoreSTM32HalBase.h"
-#include "interface/drivers/DacTimer.h"
+#include "interface/drivers/BasicTimer.h"
 
 namespace leka {
 
