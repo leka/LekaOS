@@ -7,7 +7,7 @@
 
 #include "CoreDACTimer.h"
 #include "LKCoreSTM32HalBase.h"
-#include "interface/drivers/Dac.h"
+#include "interface/drivers/DACDriver.h"
 
 namespace leka {
 /**
