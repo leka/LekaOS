@@ -6,6 +6,7 @@
 #define _LEKA_OS_CORE_DAC_TOUCH_H_
 
 #include "CoreI2C.h"
+#include "interface/drivers/CoreDACTouch.h"
 
 namespace leka {
 
@@ -89,21 +90,21 @@ namespace dac_touch {
 
 }	// namespace dac_touch
 
-class CoreDACTouch
+class CoreDACTouch : public interface::CoreDACTouch
 {
   public:
 	CoreDACTouch(interface::I2C &i2c, uint8_t address) : _i2c(i2c), _address(address) {};
-	void setVoltageReference(uint8_t voltageReference);
-	void setPowerMode(uint8_t powerMode);
-	void setGain(uint8_t gain);
+	void setVoltageReference(uint8_t voltageReference) final;
+	void setPowerMode(uint8_t powerMode) final;
+	void setGain(uint8_t gain) final;
 
-	void writeToAllInputRegister(std::array<uint8_t, 2> value);
-	void writeToSpecificInputRegister(uint8_t channel, std::array<uint8_t, 2> value);
+	void writeToAllInputRegister(std::array<uint8_t, 2> value) final;
+	void writeToSpecificInputRegister(uint8_t channel, std::array<uint8_t, 2> value) final;
 
-	void writeToMemoryRegisterUntilChannelD(uint8_t starting_channel, std::array<uint8_t, 2> value);
-	void writeToSpecificMemoryRegister(uint8_t channel, std::array<uint8_t, 2> value);
+	void writeToMemoryRegisterUntilChannelD(uint8_t starting_channel, std::array<uint8_t, 2> value) final;
+	void writeToSpecificMemoryRegister(uint8_t channel, std::array<uint8_t, 2> value) final;
 
-	void readMemory(std::array<uint8_t, 24> &value);
+	void readMemory(std::array<uint8_t, 24> &value) final;
 
   private:
 	interface::I2C &_i2c;
