@@ -103,6 +103,8 @@ class CoreDACTouch
 	void writeToMemoryRegisterUntilChannelD(uint8_t starting_channel, std::array<uint8_t, 2> value);
 	void writeToSpecificMemoryRegister(uint8_t channel, std::array<uint8_t, 2> value);
 
+	void readMemory(std::array<uint8_t, 24> &value);
+
   private:
 	interface::I2C &_i2c;
 	uint8_t _address;

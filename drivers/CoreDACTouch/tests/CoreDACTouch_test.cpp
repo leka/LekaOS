@@ -10,7 +10,10 @@
 using namespace leka;
 
 using ::testing::Args;
+using ::testing::DoAll;
 using ::testing::ElementsAre;
+using ::testing::Return;
+using ::testing::SetArrayArgument;
 
 class CoreDACTouchTest : public ::testing::Test
 
@@ -93,4 +96,17 @@ TEST_F(CoreDACTouchTest, writeToSpecificMemoryRegister)
 	EXPECT_CALL(i2cMock, write).With(Args<1, 2>(data));
 
 	coreADCTouch.writeToSpecificMemoryRegister(dac_touch::channel::B, value_to_write);
+}
+
+TEST_F(CoreDACTouchTest, readMemory)
+{
+	std::array<uint8_t, 24> data {};
+	std::array<uint8_t, 24> expected_data {0x01, 0x02, 0x03, 0x04};
+
+	EXPECT_CALL(i2cMock, read)
+		.WillOnce(DoAll(SetArrayArgument<1>(begin(expected_data), end(expected_data)), Return(0)));
+
+	coreADCTouch.readMemory(data);
+
+	ASSERT_EQ(data, expected_data);
 }

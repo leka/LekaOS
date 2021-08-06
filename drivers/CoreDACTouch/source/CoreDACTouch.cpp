@@ -62,3 +62,8 @@ void CoreDACTouch::writeToSpecificMemoryRegister(uint8_t channel, std::array<uin
 
 	_i2c.write(_address, command.data(), command.size(), false);
 }
+
+void CoreDACTouch::readMemory(std::array<uint8_t, 24> &value)
+{
+	_i2c.read(_address, value.data(), value.size(), false);
+}
