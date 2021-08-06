@@ -21,7 +21,7 @@ class DacTimer
 
 	virtual auto getHandle() -> TIM_HandleTypeDef = 0;
 
-  protected:
+  private:
 	virtual auto _calculatePeriod(uint32_t freq) -> uint32_t = 0;
 
 	virtual void _registerMspCallbacks() = 0;
