@@ -22,7 +22,7 @@ class CoreDAC : public interface::Dac
 	explicit CoreDAC(LKCoreSTM32HalBase &hal);
 
 	void initialize() final;
-	void deInitialize() final;
+	void terminate() final;
 	void start(uint16_t *pData, uint32_t dataLength) final;
 	void stop() final;
 

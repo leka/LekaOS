@@ -23,7 +23,7 @@ class CoreDACTimer : public interface::DacTimer
 	explicit CoreDACTimer(LKCoreSTM32HalBase &hal);
 
 	void initialize(uint32_t frequency) final;
-	void deInitialize() final;
+	void terminate() final;
 	void start() final;
 	void stop() final;
 

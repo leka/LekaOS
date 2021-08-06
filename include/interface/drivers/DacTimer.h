@@ -15,7 +15,7 @@ class DacTimer
 	~DacTimer() = default;
 
 	virtual void initialize(uint32_t frequency) = 0;
-	virtual void deInitialize()					= 0;
+	virtual void terminate()					= 0;
 	virtual void start()						= 0;
 	virtual void stop()							= 0;
 
