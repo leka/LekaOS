@@ -7,12 +7,12 @@
 
 #include "stm32f7xx_hal.h"
 
-namespace leka::interface {
+namespace leka::interface::stm32 {
 
-class DacTimer
+class BasicTimer
 {
   public:
-	~DacTimer() = default;
+	~BasicTimer() = default;
 
 	virtual void initialize(uint32_t frequency) = 0;
 	virtual void terminate()					= 0;
@@ -29,6 +29,6 @@ class DacTimer
 	virtual void _mspDeInitCallback()	 = 0;
 };
 
-}	// namespace leka::interface
+}	// namespace leka::interface::stm32
 
 #endif	 // _LEKA_OS_INTERFACE_DRIVER_DAC_TIMER_H_

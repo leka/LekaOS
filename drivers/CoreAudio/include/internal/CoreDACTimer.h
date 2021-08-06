@@ -17,7 +17,7 @@ namespace leka {
  * This class configures the hardware timer TIM6 to output trigger signals to the DAC through the TRGO line
  *  and thus without the need of interrupts
  */
-class CoreDACTimer : public interface::DacTimer
+class CoreDACTimer : public interface::stm32::BasicTimer
 {
   public:
 	explicit CoreDACTimer(LKCoreSTM32HalBase &hal);
