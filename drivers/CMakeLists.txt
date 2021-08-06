@@ -21,6 +21,7 @@ add_subdirectory(${DRIVERS_DIR}/CoreWifi)
 
 # Sensors drivers
 add_subdirectory(${DRIVERS_DIR}/CoreHTS)
+add_subdirectory(${DRIVERS_DIR}/CoreTouch)
 add_subdirectory(${DRIVERS_DIR}/CoreBattery)
 add_subdirectory(${DRIVERS_DIR}/LKCoreMicrophone)
 add_subdirectory(${DRIVERS_DIR}/LKCoreLightSensor)

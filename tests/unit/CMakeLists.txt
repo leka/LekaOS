@@ -214,6 +214,8 @@ leka_register_unit_tests_for_driver(CorePwm)
 leka_register_unit_tests_for_driver(CoreMotor)
 leka_register_unit_tests_for_driver(CoreBufferedSerial)
 leka_register_unit_tests_for_driver(CoreIOExpander)
+leka_register_unit_tests_for_driver(CoreTouch)
+
 # Register libraries
 leka_register_unit_tests_for_library(LKAnimationKit)
 leka_register_unit_tests_for_library(LKCalculatorKit)
