@@ -2,8 +2,8 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_INTERFACE_DRIVER_DAC_TIMER_H_
-#define _LEKA_OS_INTERFACE_DRIVER_DAC_TIMER_H_
+#ifndef _LEKA_OS_INTERFACE_DRIVER_BASIC_TIMER_H_
+#define _LEKA_OS_INTERFACE_DRIVER_BASIC_TIMER_H_
 
 #include "stm32f7xx_hal.h"
 
@@ -31,4 +31,4 @@ class BasicTimer
 
 }	// namespace leka::interface::stm32
 
-#endif	 // _LEKA_OS_INTERFACE_DRIVER_DAC_TIMER_H_
+#endif	 // _LEKA_OS_INTERFACE_DRIVER_BASIC_TIMER_H_
