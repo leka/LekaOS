@@ -73,6 +73,8 @@ namespace dac_touch {
 			}	// namespace channel_d
 		}		// namespace power_mode
 
+		constexpr uint8_t gain_of_1_all = 0;
+
 		namespace gain_of_2 {
 
 			constexpr uint8_t channel_A = 0x08;

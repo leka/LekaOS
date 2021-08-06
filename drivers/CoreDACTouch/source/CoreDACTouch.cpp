@@ -9,7 +9,7 @@ using namespace leka;
 
 void CoreDACTouch::setVoltageReference(uint8_t voltageReference)
 {
-	uint8_t command = dac_touch::command::setVoltageReference | voltageReference;
+	uint8_t command = dac_touch::command::setVoltageReference | (0x0f & voltageReference);
 	_i2c.write(_address, &command, 1, false);
 }
 
@@ -24,7 +24,7 @@ void CoreDACTouch::setPowerMode(uint8_t powerMode)
 
 void CoreDACTouch::setGain(uint8_t gain)
 {
-	uint8_t command = dac_touch::command::setGain | gain;
+	uint8_t command = dac_touch::command::setGain | ((0x0f & gain));
 	_i2c.write(_address, &command, 1, false);
 }
 
