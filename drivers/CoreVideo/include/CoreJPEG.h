@@ -16,6 +16,11 @@
 
 namespace leka {
 
+struct JPEGConfig : JPEG_ConfTypeDef {
+	bool initialized = false;
+	auto getWidthOffset() -> uint32_t;
+};
+
 class CoreJPEG : public interface::CoreJPEG
 {
   public:
@@ -27,11 +32,7 @@ class CoreJPEG : public interface::CoreJPEG
 
 	auto decodeImage(LKCoreFatFsBase &file) -> uint32_t final;
 
-	struct Config : JPEG_ConfTypeDef {
-		bool initialized = false;
-		auto getWidthOffset() -> uint32_t;
-	};
-	auto getConfig() -> CoreJPEG::Config;
+	auto getConfig() -> JPEGConfig;
 
 	static auto findFrameOffset(LKCoreFatFsBase &file, uint32_t offset) -> uint32_t;
 
