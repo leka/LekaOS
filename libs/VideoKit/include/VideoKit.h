@@ -22,7 +22,7 @@ namespace leka {
 
 class VideoKit
 {
-	public:
+  public:
 	VideoKit(LKCoreSTM32HalBase &);
 
 	auto getDSI() -> CoreDSI &;
@@ -34,6 +34,8 @@ class VideoKit
 
 	void setFrameRateLimit(uint32_t framerate);
 
+	void fillConfig(LKCoreFatFs &file, JPEGConfig *config);
+
 	void clear(gfx::Color color = gfx::Color::White);
 
 	void draw(gfx::Drawable &drawable);
@@ -42,7 +44,7 @@ class VideoKit
 
 	void drawText(const char *text, uint32_t x, uint32_t y, gfx::Color color, gfx::Color bg = gfx::Color::Transparent);
 
-	auto drawImage(LKCoreFatFs &file, JPEGConfig *config = nullptr) -> uint32_t;
+	auto drawImage(LKCoreFatFs &file) -> uint32_t;
 
 	auto drawImage(LKCoreFatFs &file, JPEGConfig &config) -> uint32_t;
 
