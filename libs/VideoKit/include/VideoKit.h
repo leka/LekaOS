@@ -22,7 +22,7 @@ namespace leka {
 
 class VideoKit
 {
-  public:
+	public:
 	VideoKit(LKCoreSTM32HalBase &);
 
 	auto getDSI() -> CoreDSI &;
@@ -32,7 +32,7 @@ class VideoKit
 
 	void initialize();
 
-	void setFrameRateLimit(unsigned framerate);
+	void setFrameRateLimit(uint32_t framerate);
 
 	void clear(gfx::Color color = gfx::Color::White);
 
@@ -42,9 +42,9 @@ class VideoKit
 
 	void drawText(const char *text, uint32_t x, uint32_t y, gfx::Color color, gfx::Color bg = gfx::Color::Transparent);
 
-	auto drawImage(LKCoreFatFs &file, CoreJPEG::Config *config = nullptr) -> uint32_t;
+	auto drawImage(LKCoreFatFs &file, JPEGConfig *config = nullptr) -> uint32_t;
 
-	auto drawImage(LKCoreFatFs &file, CoreJPEG::Config &config) -> uint32_t;
+	auto drawImage(LKCoreFatFs &file, JPEGConfig &config) -> uint32_t;
 
 	void display();
 
@@ -65,8 +65,8 @@ class VideoKit
 	CoreLCDDriverOTM8009A _coreotm;
 	CoreLCD _corelcd;
 
-	rtos::Kernel::Clock::time_point _last_time = rtos::Kernel::Clock::now();
-	std::chrono::milliseconds _frametime	   = 40ms;
+	rtos::Kernel::Clock::time_point _last_time {};
+	std::chrono::milliseconds _frametime = 40ms;
 };
 
 }	// namespace leka
