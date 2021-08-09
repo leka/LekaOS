@@ -66,16 +66,6 @@ auto CoreDAC::getDMAHandle() -> DMA_HandleTypeDef &
 	return this->_hdma;
 }
 
-void CoreDAC::setOnHalfBufferReadPtr(pDAC_CallbackTypeDef pCallbackHlfCpt)
-{
-	this->_pOnHalfBufferRead = pCallbackHlfCpt;
-}
-
-void CoreDAC::setOnFullBufferReadPtr(pDAC_CallbackTypeDef pCallbackCpt)
-{
-	this->_pOnFullBufferRead = pCallbackCpt;
-}
-
 void CoreDAC::_registerCallbacks()
 {
 	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_HALF_COMPLETE_CB_ID, _pOnHalfBufferRead);

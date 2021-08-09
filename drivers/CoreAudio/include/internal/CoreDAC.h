@@ -28,8 +28,17 @@ class CoreDAC
 	auto getHandle() -> DAC_HandleTypeDef &;
 	auto getDMAHandle() -> DMA_HandleTypeDef &;
 
-	void setOnHalfBufferReadPtr(pDAC_CallbackTypeDef pCallbackHlfCpt);
-	void setOnFullBufferReadPtr(pDAC_CallbackTypeDef pCallbackCpt);
+	template <class ReadBuffCb>
+	void setOnHalfBufferReadPtr(ReadBuffCb cb)
+	{
+		this->_pOnHalfBufferRead = static_cast<pDAC_CallbackTypeDef>(cb);
+	}
+
+	template <class ReadBuffCb>
+	void setOnFullBufferReadPtr(ReadBuffCb cb)
+	{
+		this->_pOnFullBufferRead = static_cast<pDAC_CallbackTypeDef>(cb);
+	}
 
   private:
 	LKCoreSTM32HalBase &_hal;
