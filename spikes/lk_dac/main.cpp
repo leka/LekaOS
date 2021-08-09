@@ -59,8 +59,8 @@ auto main() -> int
 	std::array<uint16_t, 512> outBuff;
 
 	printf("\n\nHello, investigation day!\n\n");
-	coreDac.setCptCallbackPtr(&callbackTest);
-	coreDac.setHalfCptCallbackPtr(&callbackTest);
+	coreDac.setOnHalfBufferReadPtr(&callbackTest);
+	coreDac.setOnFullBufferReadPtr(&callbackTest);
 	// Init
 	coreTimer.initialize(44100);
 	coreDac.initialize();
