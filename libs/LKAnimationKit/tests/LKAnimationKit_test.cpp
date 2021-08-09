@@ -4,8 +4,9 @@
 
 #include "LKAnimationKit.h"
 
-#include "Thread_stub.h"
-#include "UNITTESTS/stubs/EventQueue_stub.h"
+#include "events/tests/UNITTESTS/doubles/EventQueue_stub.h"
+#include "rtos/tests/UNITTESTS/doubles/Thread_stub.h"
+
 #include "gtest/gtest.h"
 #include "mocks/leka/CGAnimation.h"
 

@@ -50,6 +50,7 @@ target_include_directories(mbed-os
 		${EXTERN_MBED_OS_DIR}/events/include/events/internal
 		${EXTERN_MBED_OS_DIR}/events/source
 		${EXTERN_MBED_OS_DIR}/rtos/include
+		${EXTERN_MBED_OS_DIR}/rtos/include/rtos
 		${EXTERN_MBED_OS_DIR}/features/frameworks
 		${EXTERN_MBED_OS_DIR}/connectivity/libraries/nanostack-libservice
 		${EXTERN_MBED_OS_DIR}/connectivity/libraries/nanostack-libservice/mbed-client-libservice

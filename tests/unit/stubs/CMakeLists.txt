@@ -24,15 +24,15 @@ target_sources(stubs
 
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/EventQueue_extension.cpp
 
-		${EXTERN_MBED_OS_DIR}/UNITTESTS/stubs/equeue_stub.c
-		${EXTERN_MBED_OS_DIR}/UNITTESTS/stubs/mbed_rtos_rtx_stub.c
-		${EXTERN_MBED_OS_DIR}/UNITTESTS/stubs/Mutex_stub.cpp
-		${EXTERN_MBED_OS_DIR}/UNITTESTS/stubs/rtx_mutex_stub.c
-		${EXTERN_MBED_OS_DIR}/UNITTESTS/stubs/ThisThread_stub.cpp
-		${EXTERN_MBED_OS_DIR}/UNITTESTS/stubs/Thread_stub.cpp
-		${EXTERN_MBED_OS_DIR}/UNITTESTS/stubs/mbed_assert_stub.cpp
-		${EXTERN_MBED_OS_DIR}/UNITTESTS/stubs/EventQueue_stub.cpp
-		${EXTERN_MBED_OS_DIR}/UNITTESTS/stubs/SerialBase_stub.cpp
-		${EXTERN_MBED_OS_DIR}/UNITTESTS/stubs/FileHandle_stub.cpp
-		${EXTERN_MBED_OS_DIR}/UNITTESTS/stubs/BufferedSerial_stub.cpp
+		${EXTERN_MBED_OS_DIR}/events/tests/UNITTESTS/doubles/equeue_stub.c
+		${EXTERN_MBED_OS_DIR}/rtos/tests/UNITTESTS/doubles/mbed_rtos_rtx_stub.c
+		${EXTERN_MBED_OS_DIR}/rtos/tests/UNITTESTS/doubles/Mutex_stub.cpp
+		${EXTERN_MBED_OS_DIR}/rtos/tests/UNITTESTS/doubles/rtx_mutex_stub.c
+		${EXTERN_MBED_OS_DIR}/rtos/tests/UNITTESTS/doubles/ThisThread_stub.cpp
+		${EXTERN_MBED_OS_DIR}/rtos/tests/UNITTESTS/doubles/Thread_stub.cpp
+		${EXTERN_MBED_OS_DIR}/platform/tests/UNITTESTS/doubles/mbed_assert_stub.cpp
+		${EXTERN_MBED_OS_DIR}/events/tests/UNITTESTS/doubles/EventQueue_stub.cpp
+		${EXTERN_MBED_OS_DIR}/drivers/tests/UNITTESTS/doubles/SerialBase_stub.cpp
+		${EXTERN_MBED_OS_DIR}/platform/tests/UNITTESTS/doubles/FileHandle_stub.cpp
+		${EXTERN_MBED_OS_DIR}/drivers/tests/UNITTESTS/doubles/BufferedSerial_stub.cpp
 )
