@@ -16,7 +16,7 @@ void CoreDACTimer::initialize(uint32_t frequency)
 	_htim.Init.Prescaler		 = 0;	// no need of prescaler for high frequencies
 	_htim.Init.CounterMode		 = TIM_COUNTERMODE_UP;
 	_htim.Init.Period			 = _calculatePeriod(frequency);
-	_htim.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;	 // no need to change counter period while working
+	_htim.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 
 	_registerMspCallbacks();
 
@@ -24,7 +24,7 @@ void CoreDACTimer::initialize(uint32_t frequency)
 
 	TIM_MasterConfigTypeDef sMasterConfig = {0};
 
-	sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;   // trigger used for DAC
+	sMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;   // use hardware trigger on DAC
 	sMasterConfig.MasterSlaveMode	  = TIM_MASTERSLAVEMODE_DISABLE;
 	_hal.HAL_TIMEx_MasterConfigSynchronization(&_htim, &sMasterConfig);
 }
