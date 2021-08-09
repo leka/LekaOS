@@ -13,6 +13,7 @@
 #include "drivers/interfaces/InterfaceDigitalIn.h"
 
 #include "CoreI2C.h"
+#include "interface/drivers/CoreIOExpander.h"
 
 // ? MCP23017 driver datasheet available at:
 // ? https://ww1.microchip.com/downloads/en/DeviceDoc/20001952C.pdf
@@ -69,13 +70,13 @@ namespace mcp23017 {
 
 }	// namespace mcp23017
 
-class MCP23017
+class MCP23017 : public interface::CoreIOExpander
 {
   protected:
 	class ExpandedIO
 	{
 	  public:
-		ExpandedIO(MCP23017 &parent, uint16_t pin) : _parent(parent), _pin(pin) {}
+		ExpandedIO(interface::CoreIOExpander &parent, uint16_t pin) : _parent(parent), _pin(pin) {}
 
 	  protected:
 		auto internalRead() -> int;
@@ -85,7 +86,7 @@ class MCP23017
 		void internalInput();
 
 	  private:
-		MCP23017 &_parent;
+		interface::CoreIOExpander &_parent;
 		uint16_t _pin;
 	};
 
@@ -93,7 +94,10 @@ class MCP23017
 	class ExpandedInput : public ExpandedIO, public mbed::interface::DigitalIn
 	{
 	  public:
-		explicit ExpandedInput(MCP23017 &parent, uint16_t pin) : ExpandedIO(parent, pin) { internalInput(); }
+		explicit ExpandedInput(interface::CoreIOExpander &parent, uint16_t pin) : ExpandedIO(parent, pin)
+		{
+			internalInput();
+		}
 		~ExpandedInput() override = default;
 		auto read() -> int override { return ExpandedIO::internalRead(); }
 		void mode(PinMode pull) override { ExpandedIO::internalMode(pull); }
@@ -130,16 +134,17 @@ class MCP23017
 	// 	virtual int is_connected() override { return 1; }
 	// };
 
+  public:
 	/** Allow ExpandedInput/Output/InputOutput to access internal members*/
-	friend class ChannelInput;
-	friend class ChannelOutput;
-	friend class ChannelInputOutput;
+	// friend class ChannelInput;
+	// friend class ChannelOutput;
+	// friend class ChannelInputOutput;
 
 	explicit MCP23017(interface::I2C &i2c) : _i2c(i2c) {};
 
-	void setRegisterMapping(bool separated = false);
+	void setRegisterMapping(bool separated = false) final;
 
-	void init(uint16_t input_pins);
+	void init(uint16_t input_pins) final;
 
 	auto asInput(uint16_t pin) -> ExpandedInput;
 
@@ -147,34 +152,33 @@ class MCP23017
 
 	// ExpandedInputOutput as_input_output(uint16_t pin);
 
-	void setInputPins(uint16_t pins);
+	void setInputPins(uint16_t pins) final;
 
-	void setOutputPins(uint16_t pins);
+	void setOutputPins(uint16_t pins) final;
 
-	void writeOutputs(uint16_t values);
+	void writeOutputs(uint16_t values) final;
 
-	auto readOutputs() -> uint16_t;
+	auto readOutputs() -> uint16_t final;
 
-	auto readInputs() -> uint16_t;
+	auto readInputs() -> uint16_t final;
 
-	void setInputPolarity(uint16_t values);
+	void setInputPolarity(uint16_t values) final;
 
-	auto getInputPolarity() -> uint16_t;
+	auto getInputPolarity() -> uint16_t final;
 
-	void setPullups(uint16_t values);
+	void setPullups(uint16_t values) final;
 
-	auto getPullups() -> uint16_t;
+	auto getPullups() -> uint16_t final;
 
-	void interruptOnChanges(uint16_t pins);
+	void interruptOnChanges(uint16_t pins) final;
 
-	void disableInterrupts(uint16_t pins);
+	void disableInterrupts(uint16_t pins) final;
 
-	void acknowledgeInterrupt(uint16_t &pin, uint16_t &values);
-
-	auto readRegister(uint8_t reg) -> uint16_t;
+	void acknowledgeInterrupt(uint16_t &pin, uint16_t &values) final;
 
   private:
 	void writeRegister(uint8_t reg, uint16_t value);
+	auto readRegister(uint8_t reg) -> uint16_t;
 
 	void reset();
 
