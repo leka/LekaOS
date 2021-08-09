@@ -5,17 +5,11 @@
 #ifndef _LEKA_OS_LIB_DAC_H_
 #define _LEKA_OS_LIB_DAC_H_
 
-#include "CoreDACTimer.h"
 #include "LKCoreSTM32HalBase.h"
 #include "lstd_span"
 
 namespace leka {
-/**
- * @brief DAC class
- * This class interfaces the hardware DAC with its default DMA channel in order to output data
- * at a high sampling rate without too much impact on performance.
- * The class uses a DACTimer as its trigger to output data
- */
+
 class CoreDAC
 {
   public:

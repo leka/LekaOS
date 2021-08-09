@@ -11,11 +11,6 @@
 
 namespace leka {
 
-/**
- * @brief  Timer class for the DAC
- * This class configures the hardware timer TIM6 to output trigger signals to the DAC through the TRGO line
- *  and thus without the need of interrupts
- */
 class CoreDACTimer
 {
   public:
