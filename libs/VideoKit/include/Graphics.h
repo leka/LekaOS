@@ -20,17 +20,17 @@ struct Color {
 	uint8_t b = 0x00;
 	uint8_t a = 0xff;
 
-	auto toARGB8888() -> uint32_t;
+	inline constexpr auto toARGB8888() -> uint32_t { return (a << 24) | (r << 16) | (g << 8) | (b << 0); };
 
-	static Color Transparent;
-	static Color Black;
-	static Color White;
-	static Color Red;
-	static Color Green;
-	static Color Blue;
-	static Color Yellow;
-	static Color Cyan;
-	static Color Magenta;
+	static const Color Transparent;
+	static const Color Black;
+	static const Color White;
+	static const Color Red;
+	static const Color Green;
+	static const Color Blue;
+	static const Color Yellow;
+	static const Color Cyan;
+	static const Color Magenta;
 };
 
 class Drawable
