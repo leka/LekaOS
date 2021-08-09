@@ -6,21 +6,15 @@ using namespace leka;
 using namespace leka::gfx;
 
 // --- gfx::Color ---------------------------------------
-auto Color::toARGB8888() -> uint32_t
-{
-	return (a << 24) | (r << 16) | (g << 8) | (b << 0);
-}
-
-Color Color::Transparent = {0x00, 0x00, 0x00, 0x00};
-
-Color Color::Black	 = {0x00, 0x00, 0x00};
-Color Color::White	 = {0xff, 0xff, 0xff};
-Color Color::Red	 = {0xff, 0x00, 0x00};
-Color Color::Green	 = {0x00, 0xff, 0x00};
-Color Color::Blue	 = {0x00, 0x00, 0xff};
-Color Color::Yellow	 = {0xff, 0xff, 0x00};
-Color Color::Cyan	 = {0x00, 0xff, 0xff};
-Color Color::Magenta = {0xff, 0x00, 0xff};
+const Color Color::Transparent = {0x00, 0x00, 0x00, 0x00};
+const Color Color::Black	   = {0x00, 0x00, 0x00};
+const Color Color::White	   = {0xff, 0xff, 0xff};
+const Color Color::Red		   = {0xff, 0x00, 0x00};
+const Color Color::Green	   = {0x00, 0xff, 0x00};
+const Color Color::Blue		   = {0x00, 0x00, 0xff};
+const Color Color::Yellow	   = {0xff, 0xff, 0x00};
+const Color Color::Cyan		   = {0x00, 0xff, 0xff};
+const Color Color::Magenta	   = {0xff, 0x00, 0xff};
 
 // --- gfx::Rectangle -----------------------------------
 Rectangle::Rectangle(uint32_t w, uint32_t h, Color color) : Rectangle(0, 0, w, h, std::move(color)) {}
@@ -117,13 +111,13 @@ void Video::restart()
 
 void Video::draw(VideoKit &screen)
 {
-	uint32_t frame_size;
 	// get configuration on first frame
 	if (!_config.initialized) {
-		frame_size = screen.drawImage(_file, &_config);
-	} else {
-		frame_size = screen.drawImage(_file, _config);
+		screen.fillConfig(_file, &_config);
+		restart();
 	}
+
+	uint32_t frame_size = screen.drawImage(_file, _config);
 	// increment frame offset
 	if (!_ended) {
 		_frame_offset = _frame_offset + frame_size + 4;
