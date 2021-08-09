@@ -44,10 +44,11 @@ void CoreDAC::terminate()
 	_hal.HAL_DAC_DeInit(&_hdac);
 }
 
-void CoreDAC::start(uint16_t *pData, uint32_t dataLength)
+void CoreDAC::start(lstd::span<uint16_t> &outBuffer)
 {
 	_hal.HAL_DAC_Start(&_hdac, DAC_CHANNEL_1);
-	_hal.HAL_DAC_Start_DMA(&_hdac, DAC_CHANNEL_1, (uint32_t *)pData, dataLength, DAC_ALIGN_12B_R);
+	_hal.HAL_DAC_Start_DMA(&_hdac, DAC_CHANNEL_1, reinterpret_cast<uint32_t *>(outBuffer.data()), outBuffer.size(),
+						   DAC_ALIGN_12B_R);
 }
 
 void CoreDAC::stop()

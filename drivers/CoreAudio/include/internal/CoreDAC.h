@@ -7,6 +7,7 @@
 
 #include "CoreDACTimer.h"
 #include "LKCoreSTM32HalBase.h"
+#include "lstd_span"
 
 namespace leka {
 /**
@@ -22,7 +23,7 @@ class CoreDAC
 
 	void initialize();
 	void terminate();
-	void start(uint16_t *pData, uint32_t dataLength);
+	void start(lstd::span<uint16_t> &outBuffer);
 	void stop();
 	auto getHandle() -> DAC_HandleTypeDef &;
 	auto getDMAHandle() -> DMA_HandleTypeDef &;

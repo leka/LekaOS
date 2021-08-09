@@ -66,11 +66,12 @@ auto main() -> int
 	coreDac.initialize();
 
 	// generate data
-	fillBufferWithSinWave(outBuff.data(), 512, 440, 44100, 0x999, 0x666);
+	fillBufferWithSinWave(outBuff.data(), 512, 512, 44100, 0x999, 0x666);
 
 	// start
+	auto outSpan = lstd::span {outBuff.data(), outBuff.size()};
 	coreTimer.start();
-	coreDac.start(outBuff.data(), 512);
+	coreDac.start(outSpan);
 
 	// wait preset period
 	while (!ended) {
