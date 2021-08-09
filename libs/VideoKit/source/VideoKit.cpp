@@ -54,6 +54,8 @@ void VideoKit::initialize()
 	_corelcd.setBrightness(0.5f);
 
 	if (dsi::refresh_columns_count > 1) _coredsi.enableTearingEffectReporting();
+
+	_last_time = rtos::Kernel::Clock::now();
 }
 
 auto VideoKit::getDSI() -> CoreDSI &
@@ -76,7 +78,7 @@ auto VideoKit::getJPEG() -> CoreJPEG &
 	return _corejpeg;
 }
 
-void VideoKit::setFrameRateLimit(unsigned framerate)
+void VideoKit::setFrameRateLimit(uint32_t framerate)
 {
 	_frametime = (1000ms / framerate);
 }
@@ -121,7 +123,7 @@ void VideoKit::drawText(const char *text, uint32_t x, uint32_t y, gfx::Color col
 	}
 }
 
-auto VideoKit::drawImage(LKCoreFatFs &file, CoreJPEG::Config *config) -> uint32_t
+auto VideoKit::drawImage(LKCoreFatFs &file, JPEGConfig *config) -> uint32_t
 {
 	auto img_size = _corejpeg.decodeImage(file);
 
@@ -135,7 +137,7 @@ auto VideoKit::drawImage(LKCoreFatFs &file, CoreJPEG::Config *config) -> uint32_
 	return img_size;
 }
 
-auto VideoKit::drawImage(LKCoreFatFs &file, CoreJPEG::Config &config) -> uint32_t
+auto VideoKit::drawImage(LKCoreFatFs &file, JPEGConfig &config) -> uint32_t
 {
 	auto img_size = _corejpeg.decodeImage(file);
 
@@ -172,7 +174,7 @@ void VideoKit::tick()
 	}
 
 	dt = rtos::Kernel::Clock::now() - _last_time;
-	log_info("(%ld) %ld ms = %f fps", dt.count(), 1000.f / dt.count());
+	// log_info("%lld ms = %f fps", dt.count(), (1000.f / dt.count()));
 
 	_last_time = rtos::Kernel::Clock::now();
 }

@@ -29,6 +29,7 @@ CoreDSI::CoreDSI(LKCoreSTM32HalBase &hal, interface::CoreLTDC &ltdc) : _hal(hal)
 	_cmdconf.AutomaticRefresh	   = DSI_AR_DISABLE;
 	_cmdconf.TEAcknowledgeRequest  = DSI_TE_ACKNOWLEDGE_ENABLE;
 
+	// craete columns positions array
 	for (int i = 0; i < dsi::refresh_columns_count; ++i) {
 		auto col_width	= _cmdconf.CommandSize;
 		auto col_offset = i * col_width;
@@ -72,7 +73,8 @@ void CoreDSI::initialize()
 
 	static CoreDSI *self;
 	self = this;
-	HAL_DSI_RegisterCallback(&_handle, HAL_DSI_ENDOF_REFRESH_CB_ID, [](DSI_HandleTypeDef *hdsi) {
+
+	auto refreshCallback = [](DSI_HandleTypeDef *hdsi) {
 		self->_current_column = (self->_current_column + 1) % self->_columns.size();
 
 		auto new_address = lcd::frame_buffer_address + dsi::sync_props.activew * self->_current_column * 4;
@@ -91,7 +93,9 @@ void CoreDSI::initialize()
 		} else {
 			self->_refresh_done = true;
 		}
-	});
+	};
+
+	HAL_DSI_RegisterCallback(&_handle, HAL_DSI_ENDOF_REFRESH_CB_ID, refreshCallback);
 
 	refresh();
 }
