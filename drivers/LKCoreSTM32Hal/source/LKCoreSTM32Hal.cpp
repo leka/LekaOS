@@ -333,11 +333,6 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_RegisterCallback(DAC_HandleTypeDef *hd
 	return ::HAL_DAC_RegisterCallback(hdac, CallbackID, pCallback);
 }
 
-HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_Start(DAC_HandleTypeDef *hdac, uint32_t Channel)
-{
-	return ::HAL_DAC_Start(hdac, Channel);
-}
-
 HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_Start_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t *pData,
 													uint32_t Length, uint32_t Alignment)
 {
