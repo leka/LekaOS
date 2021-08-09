@@ -24,8 +24,8 @@ class DACDriver
 	virtual auto getHandle() -> DAC_HandleTypeDef &	   = 0;
 	virtual auto getDMAHandle() -> DMA_HandleTypeDef & = 0;
 
-	virtual void setCptCallbackPtr(pDAC_CallbackTypeDef pCallbackCpt)	  = 0;
-	virtual void setHalfCptCallbackPtr(pDAC_CallbackTypeDef pCallbackCpt) = 0;
+	virtual void setOnHalfBufferReadPtr(pDAC_CallbackTypeDef pCallbackHlfCpt) = 0;
+	virtual void setOnFullBufferReadPtr(pDAC_CallbackTypeDef pCallbackCpt)	  = 0;
 
   protected:
 	virtual void _registerCallbacks() = 0;

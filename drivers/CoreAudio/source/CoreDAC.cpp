@@ -65,20 +65,20 @@ auto CoreDAC::getDMAHandle() -> DMA_HandleTypeDef &
 	return this->_hdma;
 }
 
-void CoreDAC::setCptCallbackPtr(pDAC_CallbackTypeDef pCallbackCpt)
+void CoreDAC::setOnHalfBufferReadPtr(pDAC_CallbackTypeDef pCallbackHlfCpt)
 {
-	this->_pCallbackCpt = pCallbackCpt;
+	this->_pOnHalfBufferRead = pCallbackHlfCpt;
 }
 
-void CoreDAC::setHalfCptCallbackPtr(pDAC_CallbackTypeDef pCallbackHlfCpt)
+void CoreDAC::setOnFullBufferReadPtr(pDAC_CallbackTypeDef pCallbackCpt)
 {
-	this->_pCallbackHlfCpt = pCallbackHlfCpt;
+	this->_pOnFullBufferRead = pCallbackCpt;
 }
 
 void CoreDAC::_registerCallbacks()
 {
-	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_COMPLETE_CB_ID, _pCallbackCpt);
-	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_HALF_COMPLETE_CB_ID, _pCallbackHlfCpt);
+	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_HALF_COMPLETE_CB_ID, _pOnHalfBufferRead);
+	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_COMPLETE_CB_ID, _pOnFullBufferRead);
 }
 
 void CoreDAC::_registerMspCallbacks()

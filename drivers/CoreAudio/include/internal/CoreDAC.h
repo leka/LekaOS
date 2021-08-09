@@ -29,16 +29,16 @@ class CoreDAC : public interface::DACDriver
 	auto getHandle() -> DAC_HandleTypeDef & final;
 	auto getDMAHandle() -> DMA_HandleTypeDef & final;
 
-	void setCptCallbackPtr(pDAC_CallbackTypeDef pCallbackCpt) final;
-	void setHalfCptCallbackPtr(pDAC_CallbackTypeDef pCallbackHlfCpt) final;
+	void setOnHalfBufferReadPtr(pDAC_CallbackTypeDef pCallbackHlfCpt) final;
+	void setOnFullBufferReadPtr(pDAC_CallbackTypeDef pCallbackCpt) final;
 
   private:
 	LKCoreSTM32HalBase &_hal;
 	DAC_HandleTypeDef _hdac;
 	DMA_HandleTypeDef _hdma;
 
-	pDAC_CallbackTypeDef _pCallbackCpt	  = nullptr;
-	pDAC_CallbackTypeDef _pCallbackHlfCpt = nullptr;
+	pDAC_CallbackTypeDef _pOnHalfBufferRead = nullptr;
+	pDAC_CallbackTypeDef _pOnFullBufferRead = nullptr;
 
 	void _registerCallbacks() final;
 
