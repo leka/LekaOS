@@ -7,7 +7,6 @@
 
 #include "CoreDACTimer.h"
 #include "LKCoreSTM32HalBase.h"
-#include "interface/drivers/DACDriver.h"
 
 namespace leka {
 /**
@@ -16,21 +15,20 @@ namespace leka {
  * at a high sampling rate without too much impact on performance.
  * The class uses a DACTimer as its trigger to output data
  */
-class CoreDAC : public interface::DACDriver
+class CoreDAC
 {
   public:
 	explicit CoreDAC(LKCoreSTM32HalBase &hal);
 
-	void initialize() final;
-	void terminate() final;
-	void start(uint16_t *pData, uint32_t dataLength) final;
-	void stop() final;
+	void initialize();
+	void terminate();
+	void start(uint16_t *pData, uint32_t dataLength);
+	void stop();
+	auto getHandle() -> DAC_HandleTypeDef &;
+	auto getDMAHandle() -> DMA_HandleTypeDef &;
 
-	auto getHandle() -> DAC_HandleTypeDef & final;
-	auto getDMAHandle() -> DMA_HandleTypeDef & final;
-
-	void setOnHalfBufferReadPtr(pDAC_CallbackTypeDef pCallbackHlfCpt) final;
-	void setOnFullBufferReadPtr(pDAC_CallbackTypeDef pCallbackCpt) final;
+	void setOnHalfBufferReadPtr(pDAC_CallbackTypeDef pCallbackHlfCpt);
+	void setOnFullBufferReadPtr(pDAC_CallbackTypeDef pCallbackCpt);
 
   private:
 	LKCoreSTM32HalBase &_hal;
@@ -40,11 +38,11 @@ class CoreDAC : public interface::DACDriver
 	pDAC_CallbackTypeDef _pOnHalfBufferRead = nullptr;
 	pDAC_CallbackTypeDef _pOnFullBufferRead = nullptr;
 
-	void _registerCallbacks() final;
+	void _registerCallbacks();
 
-	void _registerMspCallbacks() final;
-	void _mspInitCallback() final;
-	void _mspDeInitCallback() final;
+	void _registerMspCallbacks();
+	void _mspInitCallback();
+	void _mspDeInitCallback();
 };
 
 }	// namespace leka

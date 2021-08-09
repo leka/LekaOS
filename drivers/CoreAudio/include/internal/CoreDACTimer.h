@@ -8,7 +8,6 @@
 #include <cstdio>
 
 #include "LKCoreSTM32HalBase.h"
-#include "interface/drivers/BasicTimer.h"
 
 namespace leka {
 
@@ -17,27 +16,27 @@ namespace leka {
  * This class configures the hardware timer TIM6 to output trigger signals to the DAC through the TRGO line
  *  and thus without the need of interrupts
  */
-class CoreDACTimer : public interface::stm32::BasicTimer
+class CoreDACTimer
 {
   public:
 	explicit CoreDACTimer(LKCoreSTM32HalBase &hal);
 
-	void initialize(uint32_t frequency) final;
-	void terminate() final;
-	void start() final;
-	void stop() final;
+	void initialize(uint32_t frequency);
+	void terminate();
+	void start();
+	void stop();
 
-	auto getHandle() -> TIM_HandleTypeDef final;
+	auto getHandle() -> TIM_HandleTypeDef;
 
   private:
 	LKCoreSTM32HalBase &_hal;
 	TIM_HandleTypeDef _htim;
 
-	auto _calculatePeriod(uint32_t freq) -> uint32_t final;
+	auto _calculatePeriod(uint32_t freq) -> uint32_t;
 
-	void _registerMspCallbacks() final;
-	void _mspInitCallback() final;
-	void _mspDeInitCallback() final;
+	void _registerMspCallbacks();
+	void _mspInitCallback();
+	void _mspDeInitCallback();
 };
 
 }	// namespace leka
