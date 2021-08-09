@@ -67,11 +67,11 @@ auto CoreDACTimer::_calculatePeriod(uint32_t frequency) -> uint32_t
 
 void CoreDACTimer::_registerMspCallbacks()
 {
-	static auto *self = this;
-	_hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPINIT_CB_ID,
-								  []([[maybe_unused]] TIM_HandleTypeDef *htim) { self->_mspInitCallback(); });
-	_hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPDEINIT_CB_ID,
-								  []([[maybe_unused]] TIM_HandleTypeDef *htim) { self->_mspDeInitCallback(); });
+	static auto *self	= this;
+	auto initCbLambda	= []([[maybe_unused]] TIM_HandleTypeDef *htim) { self->_mspInitCallback(); };
+	auto deInitCbLambda = []([[maybe_unused]] TIM_HandleTypeDef *htim) { self->_mspDeInitCallback(); };
+	_hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPINIT_CB_ID, initCbLambda);
+	_hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPDEINIT_CB_ID, deInitCbLambda);
 }
 
 void CoreDACTimer::_mspInitCallback()
