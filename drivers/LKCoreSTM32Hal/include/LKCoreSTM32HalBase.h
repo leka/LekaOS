@@ -104,7 +104,6 @@ class LKCoreSTM32HalBase
 													uint32_t Channel)					  = 0;
 	virtual HAL_StatusTypeDef HAL_DAC_RegisterCallback(DAC_HandleTypeDef *hdac, HAL_DAC_CallbackIDTypeDef CallbackID,
 													   pDAC_CallbackTypeDef pCallback)	  = 0;
-	virtual HAL_StatusTypeDef HAL_DAC_Start(DAC_HandleTypeDef *hdac, uint32_t Channel)	  = 0;
 	virtual HAL_StatusTypeDef HAL_DAC_Start_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t *pData,
 												uint32_t Length, uint32_t Alignment)	  = 0;
 	virtual HAL_StatusTypeDef HAL_DAC_Stop_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel) = 0;
