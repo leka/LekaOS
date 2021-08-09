@@ -14,7 +14,13 @@ namespace leka {
 class CoreDACTimer
 {
   public:
-	explicit CoreDACTimer(LKCoreSTM32HalBase &hal);
+	enum class HardWareBasicTimer
+	{
+		BasicTimer6,
+		BasicTimer7
+	};
+
+	explicit CoreDACTimer(LKCoreSTM32HalBase &hal, HardWareBasicTimer tim);
 
 	void initialize(uint32_t frequency);
 	void terminate();
@@ -22,6 +28,7 @@ class CoreDACTimer
 	void stop();
 
 	auto getHandle() -> TIM_HandleTypeDef;
+	auto getHardWareBasicTimer() -> HardWareBasicTimer;
 
   private:
 	LKCoreSTM32HalBase &_hal;

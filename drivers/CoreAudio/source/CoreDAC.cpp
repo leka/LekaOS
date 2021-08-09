@@ -8,7 +8,7 @@ CoreDAC::CoreDAC(LKCoreSTM32HalBase &hal) : _hal(hal)
 	_hdma.Instance = DMA1_Stream5;
 }
 
-void CoreDAC::initialize()
+void CoreDAC::initialize(CoreDACTimer &tim)
 {
 	_hal.HAL_RCC_GPIOA_CLK_ENABLE();
 
@@ -21,15 +21,30 @@ void CoreDAC::initialize()
 	_hal.HAL_DAC_Init(&_hdac);
 	_registerCallbacks();	// need to be called after init
 
-	DAC_ChannelConfTypeDef sConfig = {0};
-	sConfig.DAC_Trigger		 = DAC_TRIGGER_T6_TRGO;	  // configure the DAC to be triggered by TIM6 through TRGO signal
-	sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;	  // necessary to reach the full voltage range in DAC output
-	_hal.HAL_DAC_ConfigChannel(&_hdac, &sConfig, DAC_CHANNEL_1);
+	configTimer(tim);
 }
 
 void CoreDAC::terminate()
 {
 	_hal.HAL_DAC_DeInit(&_hdac);
+}
+
+void CoreDAC::configTimer(CoreDACTimer &tim)
+{
+	DAC_ChannelConfTypeDef sConfig = {0};
+	sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;	  // necessary to reach the full voltage range in DAC output
+	switch (tim.getHardWareBasicTimer()) {
+		case CoreDACTimer::HardWareBasicTimer::BasicTimer6:
+			sConfig.DAC_Trigger =
+				DAC_TRIGGER_T6_TRGO;   // configure the DAC to be triggered by TIM6 through TRGO signal
+			break;
+		case CoreDACTimer::HardWareBasicTimer::BasicTimer7:
+			sConfig.DAC_Trigger =
+				DAC_TRIGGER_T7_TRGO;   // configure the DAC to be triggered by TIM7 through TRGO signal
+			break;
+	}
+
+	_hal.HAL_DAC_ConfigChannel(&_hdac, &sConfig, DAC_CHANNEL_1);
 }
 
 void CoreDAC::start(lstd::span<uint16_t> &outBuffer)

@@ -25,7 +25,9 @@ class LKCoreSTM32HalBase
 	virtual void HAL_RCC_GPIOJ_CLK_ENABLE(void) = 0;
 
 	virtual void HAL_RCC_TIM6_CLK_ENABLE(void)													 = 0;
+	virtual void HAL_RCC_TIM7_CLK_ENABLE(void)													 = 0;
 	virtual void HAL_RCC_TIM6_CLK_DISABLE(void)													 = 0;
+	virtual void HAL_RCC_TIM7_CLK_DISABLE(void)													 = 0;
 	virtual void HAL_RCC_FMC_CLK_ENABLE(void)													 = 0;
 	virtual void HAL_RCC_DMA1_CLK_ENABLE(void)													 = 0;
 	virtual void HAL_RCC_DMA2_CLK_ENABLE(void)													 = 0;
