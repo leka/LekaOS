@@ -59,7 +59,7 @@ void CoreCR95HF::setModeTagDetection()
 				  rfid::cr95hf::command::frame::set_mode_tag_detection.size());
 }
 
-std::array<uint8_t, 17> CoreCR95HF::getIDN()
+auto CoreCR95HF::getIDN() -> std::array<uint8_t, 17>
 {
 	std::array<uint8_t, 17> idn {};
 
