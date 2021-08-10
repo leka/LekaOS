@@ -7,8 +7,7 @@
 using namespace leka;
 using namespace std::chrono;
 
-LKAnimationKit::LKAnimationKit(rtos::Thread &thread, events::EventQueue &event_queue)
-	: _thread(thread), _event_queue(event_queue)
+LKAnimationKit::LKAnimationKit(rtos::Thread &thread, events::EventQueue &event_queue) : _thread(thread), _event_queue(event_queue)
 {
 	_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
 }

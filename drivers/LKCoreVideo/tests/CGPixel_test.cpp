@@ -17,9 +17,8 @@ TEST(CGPixelTest, draw)
 	pixel.coordinates.y = 99;
 	CGColor color		= CGColor::magenta;
 
-	uintptr_t expected_address =
-		lcd::frame_buffer_address + (4 * (pixel.coordinates.y * lcd::dimension.width + pixel.coordinates.x));
-	auto expected_data = color.getARGB();
+	uintptr_t expected_address = lcd::frame_buffer_address + (4 * (pixel.coordinates.y * lcd::dimension.width + pixel.coordinates.x));
+	auto expected_data		   = color.getARGB();
 
 	EXPECT_CALL(llmock, rawMemoryWrite(expected_address, expected_data));
 

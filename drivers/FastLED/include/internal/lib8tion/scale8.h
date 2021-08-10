@@ -643,7 +643,8 @@ LIB8STATIC uint8_t dim8_lin(uint8_t x)
 {
 	if (x & 0x80) {
 		x = scale8(x, x);
-	} else {
+	}
+	else {
 		x += 1;
 		x /= 2;
 	}
@@ -670,7 +671,8 @@ LIB8STATIC uint8_t brighten8_lin(uint8_t x)
 	uint8_t ix = 255 - x;
 	if (ix & 0x80) {
 		ix = scale8(ix, ix);
-	} else {
+	}
+	else {
 		ix += 1;
 		ix /= 2;
 	}

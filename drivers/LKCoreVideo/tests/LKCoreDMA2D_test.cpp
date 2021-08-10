@@ -140,8 +140,7 @@ TEST_F(LKCoreDMA2DTest, transferImage)
 
 		EXPECT_CALL(hal, HAL_DMA2D_Init).Times(1).WillRepeatedly(Return(HAL_OK));
 		EXPECT_CALL(hal, HAL_DMA2D_ConfigLayer).Times(1).WillRepeatedly(Return(HAL_OK));
-		EXPECT_CALL(
-			hal, HAL_DMA2D_Start(_, jpeg::decoded_buffer_address, lcd::frame_buffer_address, image_width, image_height))
+		EXPECT_CALL(hal, HAL_DMA2D_Start(_, jpeg::decoded_buffer_address, lcd::frame_buffer_address, image_width, image_height))
 			.Times(1)
 			.WillRepeatedly(Return(HAL_OK));
 		EXPECT_CALL(hal, HAL_DMA2D_PollForTransfer).Times(1);

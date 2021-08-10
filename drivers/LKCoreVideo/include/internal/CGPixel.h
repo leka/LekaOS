@@ -13,12 +13,14 @@
 
 namespace leka {
 
-struct Point {
+struct Point
+{
 	uint32_t x = 0;
 	uint32_t y = 0;
 };
 
-struct CGPixel {
+struct CGPixel
+{
 	explicit CGPixel(LKCoreLL &ll) : corell(ll) {}
 
 	Point coordinates {0, 0};
@@ -26,9 +28,8 @@ struct CGPixel {
 
 	void draw(CGColor color)
 	{
-		uintptr_t destination_address =
-			lcd::frame_buffer_address + (4 * (coordinates.y * lcd::dimension.width + coordinates.x));
-		uint32_t destinationColor = color.getARGB();
+		uintptr_t destination_address = lcd::frame_buffer_address + (4 * (coordinates.y * lcd::dimension.width + coordinates.x));
+		uint32_t destinationColor	  = color.getARGB();
 
 		corell.rawMemoryWrite(destination_address, destinationColor);
 	}

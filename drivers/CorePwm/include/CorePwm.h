@@ -5,9 +5,9 @@
 #ifndef _LEKA_OS_DRIVER_LK_CORE_PWM_OUT_H_
 #define _LEKA_OS_DRIVER_LK_CORE_PWM_OUT_H_
 
-#include "drivers/PwmOut.h"
-
 #include "interface/drivers/PwmOut.h"
+
+#include "drivers/PwmOut.h"
 
 namespace leka {
 

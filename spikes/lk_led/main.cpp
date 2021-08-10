@@ -79,8 +79,8 @@ void SetupPurpleAndGreenPalette()
 
 	CRGB black = CRGB::Black;
 
-	currentPalette = CRGBPalette16(green, green, black, black, purple, purple, black, black, green, green, black, black,
-								   purple, purple, black, black);
+	currentPalette =
+		CRGBPalette16(green, green, black, black, purple, purple, black, black, green, green, black, black, purple, purple, black, black);
 }
 
 // TODO: add the function to the library

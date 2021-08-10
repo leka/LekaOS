@@ -24,9 +24,8 @@ class LKCoreJPEGBase
 
 	virtual uint32_t getWidthOffset(void) = 0;
 
-	virtual void displayImage(FIL *file) = 0;
-	virtual HAL_StatusTypeDef decodeImageWithPolling(
-		void) = 0;	 // TODO: Update Return type with something else than HAL status
+	virtual void displayImage(FIL *file)				   = 0;
+	virtual HAL_StatusTypeDef decodeImageWithPolling(void) = 0;	  // TODO: Update Return type with something else than HAL status
 
 	virtual void onErrorCallback(JPEG_HandleTypeDef *hjpeg)								= 0;
 	virtual void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) = 0;

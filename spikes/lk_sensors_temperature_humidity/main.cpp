@@ -36,8 +36,7 @@ auto main() -> int
 	log_info("Temperature calibration values: slope: %f, y-intercept: %f\n", coefficients_temperature.slope,
 			 coefficients_temperature.y_intercept);
 
-	log_info("Humidity calibration values: slope: %f, y-intercept: %f\n", coefficients_humidity.slope,
-			 coefficients_humidity.y_intercept);
+	log_info("Humidity calibration values: slope: %f, y-intercept: %f\n", coefficients_humidity.slope, coefficients_humidity.y_intercept);
 
 	while (true) {
 		auto temperature = corehts.getTemperatureCelsius();

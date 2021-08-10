@@ -8,12 +8,12 @@
 
 using namespace leka;
 
-auto CoreBufferedSerial::read(uint8_t *buffer, ssize_t length) -> ssize_t
+auto CoreBufferedSerial::read(uint8_t *buffer, size_t length) -> int
 {
 	return _serial.read(buffer, length);
 }
 
-auto CoreBufferedSerial::write(const uint8_t *buffer, ssize_t length) -> ssize_t
+auto CoreBufferedSerial::write(const uint8_t *buffer, size_t length) -> int
 {
 	return _serial.write(buffer, length);
 }

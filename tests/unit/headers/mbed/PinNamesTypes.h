@@ -33,22 +33,23 @@
 #include "cmsis.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #define GPIO_AF_NONE 0
 
-/*  STM PIN data as used in pin_function is coded on 32 bits as below
- *   [2:0]  Function (like in MODER reg) : Input / Output / Alt / Analog
- *     [3]  Output Push-Pull / Open Drain (as in OTYPER reg)
- *   [5:4]  as in PUPDR reg: No Pull, Pull-up, Pull-Donc
- *   [9:6]  speed config (as in OSPEEDR)
- * [13:10]  Alternate Num (as in AFRL/AFRG reg)
- * [17:14]  Channel (Analog/Timer specific)
- *    [18]  Inverted (Analog/Timer specific)
- *    [19]  Analog ADC control - Only valid for specific families
- * [32:21]  Reserved
- */
+	/*  STM PIN data as used in pin_function is coded on 32 bits as below
+	 *   [2:0]  Function (like in MODER reg) : Input / Output / Alt / Analog
+	 *     [3]  Output Push-Pull / Open Drain (as in OTYPER reg)
+	 *   [5:4]  as in PUPDR reg: No Pull, Pull-up, Pull-Donc
+	 *   [9:6]  speed config (as in OSPEEDR)
+	 * [13:10]  Alternate Num (as in AFRL/AFRG reg)
+	 * [17:14]  Channel (Analog/Timer specific)
+	 *    [18]  Inverted (Analog/Timer specific)
+	 *    [19]  Analog ADC control - Only valid for specific families
+	 * [32:21]  Reserved
+	 */
 
 #define STM_PIN_FUNCTION_MASK  0x07
 #define STM_PIN_FUNCTION_SHIFT 0
@@ -91,40 +92,39 @@ extern "C" {
 #define STM_PIN_INVERTED(X)		  (((X) >> STM_PIN_INV_SHIFT) & STM_PIN_INV_MASK)
 #define STM_PIN_ANALOG_CONTROL(X) (((X) >> STM_PIN_AN_CTRL_SHIFT) & STM_PIN_AN_CTRL_MASK)
 
-#define STM_PIN_DEFINE(FUNC_OD, PUPD, AFNUM)                                                                           \
-	((int)(FUNC_OD) | ((STM_PIN_SPEED_MASK & STM_PIN_SPEED_MASK) << STM_PIN_SPEED_SHIFT) |                             \
+#define STM_PIN_DEFINE(FUNC_OD, PUPD, AFNUM)                                                                                               \
+	((int)(FUNC_OD) | ((STM_PIN_SPEED_MASK & STM_PIN_SPEED_MASK) << STM_PIN_SPEED_SHIFT) |                                                 \
 	 (((PUPD)&STM_PIN_PUPD_MASK) << STM_PIN_PUPD_SHIFT) | (((AFNUM)&STM_PIN_AFNUM_MASK) << STM_PIN_AFNUM_SHIFT))
 
-#define STM_PIN_DEFINE_SPEED(FUNC_OD, PUPD, AFNUM, SPEEDV)                                                             \
-	((int)(FUNC_OD) | (((SPEEDV)&STM_PIN_SPEED_MASK) << STM_PIN_SPEED_SHIFT) |                                         \
-	 (((PUPD)&STM_PIN_PUPD_MASK) << STM_PIN_PUPD_SHIFT) | (((AFNUM)&STM_PIN_AFNUM_MASK) << STM_PIN_AFNUM_SHIFT))
+#define STM_PIN_DEFINE_SPEED(FUNC_OD, PUPD, AFNUM, SPEEDV)                                                                                 \
+	((int)(FUNC_OD) | (((SPEEDV)&STM_PIN_SPEED_MASK) << STM_PIN_SPEED_SHIFT) | (((PUPD)&STM_PIN_PUPD_MASK) << STM_PIN_PUPD_SHIFT) |        \
+	 (((AFNUM)&STM_PIN_AFNUM_MASK) << STM_PIN_AFNUM_SHIFT))
 
-#define STM_PIN_DEFINE_EXT(FUNC_OD, PUPD, AFNUM, CHAN, INV)                                                            \
-	((int)(FUNC_OD) | ((STM_PIN_SPEED_MASK & STM_PIN_SPEED_MASK) << STM_PIN_SPEED_SHIFT) |                             \
-	 (((PUPD)&STM_PIN_PUPD_MASK) << STM_PIN_PUPD_SHIFT) | (((AFNUM)&STM_PIN_AFNUM_MASK) << STM_PIN_AFNUM_SHIFT) |      \
+#define STM_PIN_DEFINE_EXT(FUNC_OD, PUPD, AFNUM, CHAN, INV)                                                                                \
+	((int)(FUNC_OD) | ((STM_PIN_SPEED_MASK & STM_PIN_SPEED_MASK) << STM_PIN_SPEED_SHIFT) |                                                 \
+	 (((PUPD)&STM_PIN_PUPD_MASK) << STM_PIN_PUPD_SHIFT) | (((AFNUM)&STM_PIN_AFNUM_MASK) << STM_PIN_AFNUM_SHIFT) |                          \
 	 (((CHAN)&STM_PIN_CHAN_MASK) << STM_PIN_CHAN_SHIFT) | (((INV)&STM_PIN_INV_MASK) << STM_PIN_INV_SHIFT))
 
-#define STM_PIN_DEFINE_SPEED_EXT(FUNC_OD, PUPD, AFNUM, CHAN, INV, SPEEDV)                                              \
-	((int)(FUNC_OD) | (((SPEEDV)&STM_PIN_SPEED_MASK) << STM_PIN_SPEED_SHIFT) |                                         \
-	 (((PUPD)&STM_PIN_PUPD_MASK) << STM_PIN_PUPD_SHIFT) | (((AFNUM)&STM_PIN_AFNUM_MASK) << STM_PIN_AFNUM_SHIFT) |      \
-	 (((CHAN)&STM_PIN_CHAN_MASK) << STM_PIN_CHAN_SHIFT) | (((INV)&STM_PIN_INV_MASK) << STM_PIN_INV_SHIFT))
+#define STM_PIN_DEFINE_SPEED_EXT(FUNC_OD, PUPD, AFNUM, CHAN, INV, SPEEDV)                                                                  \
+	((int)(FUNC_OD) | (((SPEEDV)&STM_PIN_SPEED_MASK) << STM_PIN_SPEED_SHIFT) | (((PUPD)&STM_PIN_PUPD_MASK) << STM_PIN_PUPD_SHIFT) |        \
+	 (((AFNUM)&STM_PIN_AFNUM_MASK) << STM_PIN_AFNUM_SHIFT) | (((CHAN)&STM_PIN_CHAN_MASK) << STM_PIN_CHAN_SHIFT) |                          \
+	 (((INV)&STM_PIN_INV_MASK) << STM_PIN_INV_SHIFT))
 
 /*
  * MACROS to support the legacy definition of PIN formats
  * The STM_MODE_ defines contain the function and the Push-pull/OpenDrain
  * configuration (legacy inheritance).
  */
-#define STM_PIN_DATA(FUNC_OD, PUPD, AFNUM) STM_PIN_DEFINE(FUNC_OD, PUPD, AFNUM)
-#define STM_PIN_DATA_EXT(FUNC_OD, PUPD, AFNUM, CHANNEL, INVERTED)                                                      \
-	STM_PIN_DEFINE_EXT(FUNC_OD, PUPD, AFNUM, CHANNEL, INVERTED)
+#define STM_PIN_DATA(FUNC_OD, PUPD, AFNUM)						  STM_PIN_DEFINE(FUNC_OD, PUPD, AFNUM)
+#define STM_PIN_DATA_EXT(FUNC_OD, PUPD, AFNUM, CHANNEL, INVERTED) STM_PIN_DEFINE_EXT(FUNC_OD, PUPD, AFNUM, CHANNEL, INVERTED)
 
-typedef enum
-{
-	STM_PIN_INPUT	  = 0,
-	STM_PIN_OUTPUT	  = 1,
-	STM_PIN_ALTERNATE = 2,
-	STM_PIN_ANALOG	  = 3,
-} StmPinFunction;
+	typedef enum
+	{
+		STM_PIN_INPUT	  = 0,
+		STM_PIN_OUTPUT	  = 1,
+		STM_PIN_ALTERNATE = 2,
+		STM_PIN_ANALOG	  = 3,
+	} StmPinFunction;
 
 #define STM_MODE_INPUT				(STM_PIN_INPUT)
 #define STM_MODE_OUTPUT_PP			(STM_PIN_OUTPUT)
@@ -139,27 +139,27 @@ typedef enum
 #define STM_PORT(X) (((uint32_t)(X) >> 4) & 0xF)
 #define STM_PIN(X)	((uint32_t)(X)&0xF)
 
-/*  Defines to be used by application */
-typedef enum
-{
-	PIN_INPUT = 0,
-	PIN_OUTPUT
-} PinDirection;
+	/*  Defines to be used by application */
+	typedef enum
+	{
+		PIN_INPUT = 0,
+		PIN_OUTPUT
+	} PinDirection;
 
-typedef enum
-{
-	PullNone		  = 0,
-	PullUp			  = 1,
-	PullDown		  = 2,
-	OpenDrainPullUp	  = 3,
-	OpenDrainNoPull	  = 4,
-	OpenDrainPullDown = 5,
-	PushPullNoPull	  = PullNone,
-	PushPullPullUp	  = PullUp,
-	PushPullPullDown  = PullDown,
-	OpenDrain		  = OpenDrainPullUp,
-	PullDefault		  = PullNone
-} PinMode;
+	typedef enum
+	{
+		PullNone		  = 0,
+		PullUp			  = 1,
+		PullDown		  = 2,
+		OpenDrainPullUp	  = 3,
+		OpenDrainNoPull	  = 4,
+		OpenDrainPullDown = 5,
+		PushPullNoPull	  = PullNone,
+		PushPullPullUp	  = PullUp,
+		PushPullPullDown  = PullDown,
+		OpenDrain		  = OpenDrainPullUp,
+		PullDefault		  = PullNone
+	} PinMode;
 
 #ifdef __cplusplus
 }

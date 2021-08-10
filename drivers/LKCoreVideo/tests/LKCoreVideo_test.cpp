@@ -22,10 +22,7 @@ using ::testing::InSequence;
 class LKCoreVideoTest : public ::testing::Test
 {
   protected:
-	LKCoreVideoTest()
-		: corevideo(halmock, sdrammock, dma2dmock, dsimock, ltdcmock, lcdmock, graphicsmock, fontmock, jpegmock)
-	{
-	}
+	LKCoreVideoTest() : corevideo(halmock, sdrammock, dma2dmock, dsimock, ltdcmock, lcdmock, graphicsmock, fontmock, jpegmock) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}

@@ -27,8 +27,8 @@ void Firmware::init()
 	ext_flash_status_t external_flash_status = EXTERNAL_FLASH_STATUS_OK;
 
 	/* Set QSPI interface configuration */
-	qspi_status = _interface.configure_format(QSPI_CFG_BUS_SINGLE, QSPI_CFG_BUS_SINGLE, QSPI_CFG_ADDR_SIZE_24,
-											  QSPI_CFG_BUS_SINGLE, QSPI_CFG_ALT_SIZE_8, QSPI_CFG_BUS_SINGLE, 0);
+	qspi_status = _interface.configure_format(QSPI_CFG_BUS_SINGLE, QSPI_CFG_BUS_SINGLE, QSPI_CFG_ADDR_SIZE_24, QSPI_CFG_BUS_SINGLE,
+											  QSPI_CFG_ALT_SIZE_8, QSPI_CFG_BUS_SINGLE, 0);
 	if (qspi_status != QSPI_STATUS_OK) {
 		printf("Config format failed\n");
 		return;
@@ -86,7 +86,8 @@ ext_flash_status_t Firmware::initExternalFlash()
 
 	if (status == QSPI_STATUS_OK) {
 		return EXTERNAL_FLASH_STATUS_OK;
-	} else {
+	}
+	else {
 		return EXTERNAL_FLASH_STATUS_ERROR;
 	}
 }
@@ -176,8 +177,7 @@ ext_flash_status_t Firmware::eraseSector(uint8_t sector_address)
 		return EXTERNAL_FLASH_STATUS_ERROR;
 	}
 
-	if (QSPI_STATUS_OK !=
-		_interface.command_transfer(CMD_ERASE, (((int)sector_address) & 0x00FFF000), NULL, 0, NULL, 0)) {
+	if (QSPI_STATUS_OK != _interface.command_transfer(CMD_ERASE, (((int)sector_address) & 0x00FFF000), NULL, 0, NULL, 0)) {
 		printf("Erase failed\n");
 		return EXTERNAL_FLASH_STATUS_ERROR;
 	}
@@ -259,8 +259,7 @@ void Firmware::checkActiveFlash()
 			return;
 		}
 		if (address != 0x0 && address % 0x10000 == 0x0000) {
-			printf("Block(64kB) from 0x%lX to 0x%lX on external memory #%d is fine\n", address - 0x10000, address,
-				   _selected_memory);
+			printf("Block(64kB) from 0x%lX to 0x%lX on external memory #%d is fine\n", address - 0x10000, address, _selected_memory);
 		}
 	}
 

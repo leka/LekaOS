@@ -45,7 +45,8 @@
 	#include "corevideo_config.h"
 
 /* Private typedef -----------------------------------------------------------*/
-typedef struct __JPEG_MCU_RGB_ConvertorTypeDef {
+typedef struct __JPEG_MCU_RGB_ConvertorTypeDef
+{
 	uint32_t ColorSpace;
 	uint32_t ChromaSubsampling;
 
@@ -78,7 +79,7 @@ typedef struct __JPEG_MCU_RGB_ConvertorTypeDef {
 
 	#define GRAY_444_BLOCK_SIZE 64	 // GrayScale MCU : 1 8x8 block of Y
 
-	#define CMYK_444_BLOCK_SIZE                                                                                        \
+	#define CMYK_444_BLOCK_SIZE                                                                                                            \
 		256	  // CMYK MCU : 1 8x8 blocks of Cyan + 1 8x8 block Magenta + 1 8x8 block of Yellow and 1 8x8 block of BlacK
 
 	#if (JPEG_RGB_FORMAT == JPEG_ARGB8888)
@@ -134,30 +135,30 @@ typedef struct __JPEG_MCU_RGB_ConvertorTypeDef {
 
 /* Public function prototypes -----------------------------------------------*/
 
-using JPEG_YCbCrToRGB_Convert_Function = uint32_t (*)(uint8_t *pInBuffer, uint8_t *pOutBuffer, uint32_t BlockIndex,
-													  uint32_t DataCount, uint32_t *ConvertedDataCount);
+using JPEG_YCbCrToRGB_Convert_Function = uint32_t (*)(uint8_t *pInBuffer, uint8_t *pOutBuffer, uint32_t BlockIndex, uint32_t DataCount,
+													  uint32_t *ConvertedDataCount);
 
 void JPEG_InitColorTables(void);
 
-HAL_StatusTypeDef JPEG_GetDecodeColorConvertFunc(JPEG_ConfTypeDef *pJpegInfo,
-												 JPEG_YCbCrToRGB_Convert_Function *pFunction, uint32_t *ImageNbMCUs);
+HAL_StatusTypeDef JPEG_GetDecodeColorConvertFunc(JPEG_ConfTypeDef *pJpegInfo, JPEG_YCbCrToRGB_Convert_Function *pFunction,
+												 uint32_t *ImageNbMCUs);
 
 /* Private function prototypes -----------------------------------------------*/
 
-uint32_t JPEG_MCU_YCbCr420_ARGB_ConvertBlocks(uint8_t *pInBuffer, uint8_t *pOutBuffer, uint32_t BlockIndex,
-											  uint32_t DataCount, uint32_t *ConvertedDataCount);
+uint32_t JPEG_MCU_YCbCr420_ARGB_ConvertBlocks(uint8_t *pInBuffer, uint8_t *pOutBuffer, uint32_t BlockIndex, uint32_t DataCount,
+											  uint32_t *ConvertedDataCount);
 
-uint32_t JPEG_MCU_YCbCr422_ARGB_ConvertBlocks(uint8_t *pInBuffer, uint8_t *pOutBuffer, uint32_t BlockIndex,
-											  uint32_t DataCount, uint32_t *ConvertedDataCount);
+uint32_t JPEG_MCU_YCbCr422_ARGB_ConvertBlocks(uint8_t *pInBuffer, uint8_t *pOutBuffer, uint32_t BlockIndex, uint32_t DataCount,
+											  uint32_t *ConvertedDataCount);
 
-uint32_t JPEG_MCU_YCbCr444_ARGB_ConvertBlocks(uint8_t *pInBuffer, uint8_t *pOutBuffer, uint32_t BlockIndex,
-											  uint32_t DataCount, uint32_t *ConvertedDataCount);
+uint32_t JPEG_MCU_YCbCr444_ARGB_ConvertBlocks(uint8_t *pInBuffer, uint8_t *pOutBuffer, uint32_t BlockIndex, uint32_t DataCount,
+											  uint32_t *ConvertedDataCount);
 
-uint32_t JPEG_MCU_Gray_ARGB_ConvertBlocks(uint8_t *pInBuffer, uint8_t *pOutBuffer, uint32_t BlockIndex,
-										  uint32_t DataCount, uint32_t *ConvertedDataCount);
+uint32_t JPEG_MCU_Gray_ARGB_ConvertBlocks(uint8_t *pInBuffer, uint8_t *pOutBuffer, uint32_t BlockIndex, uint32_t DataCount,
+										  uint32_t *ConvertedDataCount);
 
-uint32_t JPEG_MCU_YCCK_ARGB_ConvertBlocks(uint8_t *pInBuffer, uint8_t *pOutBuffer, uint32_t BlockIndex,
-										  uint32_t DataCount, uint32_t *ConvertedDataCount);
+uint32_t JPEG_MCU_YCCK_ARGB_ConvertBlocks(uint8_t *pInBuffer, uint8_t *pOutBuffer, uint32_t BlockIndex, uint32_t DataCount,
+										  uint32_t *ConvertedDataCount);
 void JPEG_InitPostProcColorTables(void);
 
 #endif /* __JPEG_UTILS_H */

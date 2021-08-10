@@ -5,18 +5,18 @@
 #ifndef _LEKA_OS_LIB_FILE_SYSTEM_KIT_H_
 #define _LEKA_OS_LIB_FILE_SYSTEM_KIT_H_
 
+#include "interface/platform/File.h"
 #include <memory>
 
 #include "platform/NonCopyable.h"
-
-#include "interface/platform/File.h"
 
 namespace leka {
 
 class FileSystemKit
 {
   public:
-	struct File : public interface::File, public mbed::NonCopyable<File> {
+	struct File : public interface::File, public mbed::NonCopyable<File>
+	{
 		File(const char *path = nullptr, const char *mode = "r");
 
 		auto open(const char *path, const char *mode = "r") -> bool final;

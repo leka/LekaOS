@@ -132,8 +132,7 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_SDRAM_Init(SDRAM_HandleTypeDef *hsdram, FM
 	return ::HAL_SDRAM_Init(hsdram, Timing);
 }
 
-HAL_StatusTypeDef LKCoreSTM32Hal::HAL_SDRAM_SendCommand(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_CommandTypeDef *Command,
-														uint32_t Timeout)
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_SDRAM_SendCommand(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_CommandTypeDef *Command, uint32_t Timeout)
 {
 	return ::HAL_SDRAM_SendCommand(hsdram, Command, Timeout);
 }
@@ -163,8 +162,8 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DMA2D_ConfigLayer(DMA2D_HandleTypeDef *hdm
 	return ::HAL_DMA2D_ConfigLayer(hdma2d, LayerIdx);
 }
 
-HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DMA2D_Start(DMA2D_HandleTypeDef *hdma2d, uint32_t pdata, uint32_t DstAddress,
-												  uint32_t Width, uint32_t Height)
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DMA2D_Start(DMA2D_HandleTypeDef *hdma2d, uint32_t pdata, uint32_t DstAddress, uint32_t Width,
+												  uint32_t Height)
 {
 	return ::HAL_DMA2D_Start(hdma2d, pdata, DstAddress, Width, Height);
 }
@@ -194,20 +193,19 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DSI_Start(DSI_HandleTypeDef *hdsi)
 	return ::HAL_DSI_Start(hdsi);
 }
 
-HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DSI_ShortWrite(DSI_HandleTypeDef *hdsi, uint32_t ChannelID, uint32_t Mode,
-													 uint32_t Param1, uint32_t Param2)
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DSI_ShortWrite(DSI_HandleTypeDef *hdsi, uint32_t ChannelID, uint32_t Mode, uint32_t Param1,
+													 uint32_t Param2)
 {
 	return ::HAL_DSI_ShortWrite(hdsi, ChannelID, Mode, Param1, Param2);
 }
 
-HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DSI_LongWrite(DSI_HandleTypeDef *hdsi, uint32_t ChannelID, uint32_t Mode,
-													uint32_t NbParams, uint32_t Param1, uint8_t *ParametersTable)
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DSI_LongWrite(DSI_HandleTypeDef *hdsi, uint32_t ChannelID, uint32_t Mode, uint32_t NbParams,
+													uint32_t Param1, uint8_t *ParametersTable)
 {
 	return ::HAL_DSI_LongWrite(hdsi, ChannelID, Mode, NbParams, Param1, ParametersTable);
 }
 
-HAL_StatusTypeDef LKCoreSTM32Hal::HAL_LTDC_StructInitFromVideoConfig(LTDC_HandleTypeDef *hltdc,
-																	 DSI_VidCfgTypeDef *VidCfg)
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_LTDC_StructInitFromVideoConfig(LTDC_HandleTypeDef *hltdc, DSI_VidCfgTypeDef *VidCfg)
 {
 	return ::HAL_LTDC_StructInitFromVideoConfig(hltdc, VidCfg);
 }
@@ -217,8 +215,7 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_LTDC_Init(LTDC_HandleTypeDef *hltdc)
 	return ::HAL_LTDC_Init(hltdc);
 }
 
-HAL_StatusTypeDef LKCoreSTM32Hal::HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfgTypeDef *pLayerCfg,
-													   uint32_t LayerIdx)
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfgTypeDef *pLayerCfg, uint32_t LayerIdx)
 {
 	return ::HAL_LTDC_ConfigLayer(hltdc, pLayerCfg, LayerIdx);
 }
@@ -231,18 +228,16 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_JPEG_GetInfo(JPEG_HandleTypeDef *hjpeg, JP
 {
 	return ::HAL_JPEG_GetInfo(hjpeg, pInfo);
 }
-HAL_StatusTypeDef LKCoreSTM32Hal::HAL_JPEG_Decode(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataIn, uint32_t InDataLength,
-												  uint8_t *pDataOutMCU, uint32_t OutDataLength, uint32_t Timeout)
+HAL_StatusTypeDef LKCoreSTM32Hal::HAL_JPEG_Decode(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataIn, uint32_t InDataLength, uint8_t *pDataOutMCU,
+												  uint32_t OutDataLength, uint32_t Timeout)
 {
 	return ::HAL_JPEG_Decode(hjpeg, pDataIn, InDataLength, pDataOutMCU, OutDataLength, Timeout);
 }
-void LKCoreSTM32Hal::HAL_JPEG_ConfigInputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewInputBuffer,
-												uint32_t InDataLength)
+void LKCoreSTM32Hal::HAL_JPEG_ConfigInputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewInputBuffer, uint32_t InDataLength)
 {
 	::HAL_JPEG_ConfigInputBuffer(hjpeg, pNewInputBuffer, InDataLength);
 }
-void LKCoreSTM32Hal::HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer,
-												 uint32_t OutDataLength)
+void LKCoreSTM32Hal::HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer, uint32_t OutDataLength)
 {
 	::HAL_JPEG_ConfigOutputBuffer(hjpeg, pNewOutputBuffer, OutDataLength);
 }

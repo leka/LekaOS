@@ -15,7 +15,7 @@ const uint8_t *LKCoreFont::fontGetFirstPixelAddress(char character)
 {
 	uint8_t space_ascii_value	  = 0x20;
 	uint8_t character_ascii_value = character;
-	auto index = (character_ascii_value - space_ascii_value) * graphics::lines_per_char * graphics::bytes_per_line;
+	auto index					  = (character_ascii_value - space_ascii_value) * graphics::lines_per_char * graphics::bytes_per_line;
 	return &LKFontTable[index];
 }
 
@@ -45,7 +45,8 @@ void LKCoreFont::drawChar(Character character, CGColor foreground, CGColor backg
 
 			if (fontPixelIsOn(byte_of_line, pixel_id)) {
 				_pixel_to_draw.draw(foreground);
-			} else {
+			}
+			else {
 				_pixel_to_draw.draw(background);
 			}
 		}
@@ -53,8 +54,7 @@ void LKCoreFont::drawChar(Character character, CGColor foreground, CGColor backg
 	}
 }
 
-void LKCoreFont::display(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,
-						 CGColor background)
+void LKCoreFont::display(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground, CGColor background)
 {
 	if (starting_line < 1 || starting_line > 20) {
 		return;
@@ -68,10 +68,12 @@ void LKCoreFont::display(const char *text, uint32_t size, uint32_t starting_line
 		if (text[char_index] == '\n') {
 			character.origin.y += graphics::font_pixel_height;
 			character.origin.x = 0;
-		} else if (text[char_index] < ' ') {
+		}
+		else if (text[char_index] < ' ') {
 			// Character non supported before first writtable character
 			continue;
-		} else {
+		}
+		else {
 			character.ascii = text[char_index];
 			drawChar(character, foreground, background);
 

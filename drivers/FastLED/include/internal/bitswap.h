@@ -11,9 +11,11 @@
 ///@{
 #if defined(FASTLED_ARM) || defined(FASTLED_ESP8266)
 /// structure representing 8 bits of access
-typedef union {
+typedef union
+{
 	uint8_t raw;
-	struct {
+	struct
+	{
 		uint32_t a0 : 1;
 		uint32_t a1 : 1;
 		uint32_t a2 : 1;
@@ -26,7 +28,8 @@ typedef union {
 } just8bits;
 
 /// structure representing 32 bits of access
-typedef struct {
+typedef struct
+{
 	uint32_t a0 : 1;
 	uint32_t a1 : 1;
 	uint32_t a2 : 1;
@@ -62,35 +65,37 @@ typedef struct {
 } sub4;
 
 /// union containing a full 8 bytes to swap the bit orientation on
-typedef union {
+typedef union
+{
 	uint32_t word[2];
 	uint8_t bytes[8];
-	struct {
+	struct
+	{
 		sub4 a;
 		sub4 b;
 	};
 } bitswap_type;
 
-	#define SWAPSA(X, N)                                                                                               \
-		out.X##0 = in.a.a##N;                                                                                          \
-		out.X##1 = in.a.b##N;                                                                                          \
-		out.X##2 = in.a.c##N;                                                                                          \
+	#define SWAPSA(X, N)                                                                                                                   \
+		out.X##0 = in.a.a##N;                                                                                                              \
+		out.X##1 = in.a.b##N;                                                                                                              \
+		out.X##2 = in.a.c##N;                                                                                                              \
 		out.X##3 = in.a.d##N;
 
-	#define SWAPSB(X, N)                                                                                               \
-		out.X##0 = in.b.a##N;                                                                                          \
-		out.X##1 = in.b.b##N;                                                                                          \
-		out.X##2 = in.b.c##N;                                                                                          \
+	#define SWAPSB(X, N)                                                                                                                   \
+		out.X##0 = in.b.a##N;                                                                                                              \
+		out.X##1 = in.b.b##N;                                                                                                              \
+		out.X##2 = in.b.c##N;                                                                                                              \
 		out.X##3 = in.b.d##N;
 
-	#define SWAPS(X, N)                                                                                                \
-		out.X##0 = in.a.a##N;                                                                                          \
-		out.X##1 = in.a.b##N;                                                                                          \
-		out.X##2 = in.a.c##N;                                                                                          \
-		out.X##3 = in.a.d##N;                                                                                          \
-		out.X##4 = in.b.a##N;                                                                                          \
-		out.X##5 = in.b.b##N;                                                                                          \
-		out.X##6 = in.b.c##N;                                                                                          \
+	#define SWAPS(X, N)                                                                                                                    \
+		out.X##0 = in.a.a##N;                                                                                                              \
+		out.X##1 = in.a.b##N;                                                                                                              \
+		out.X##2 = in.a.c##N;                                                                                                              \
+		out.X##3 = in.a.d##N;                                                                                                              \
+		out.X##4 = in.b.a##N;                                                                                                              \
+		out.X##5 = in.b.b##N;                                                                                                              \
+		out.X##6 = in.b.c##N;                                                                                                              \
 		out.X##7 = in.b.d##N;
 
 /// Do an 8byte by 8bit rotation
@@ -152,7 +157,8 @@ __attribute__((always_inline)) inline void slowswap(unsigned char *A, unsigned c
 		for (uint32_t mask = 1 << 7; mask; mask >>= 1) {
 			if (x & mask) {
 				*p++ |= bit;
-			} else {
+			}
+			else {
 				*p++ &= ~bit;
 			}
 		}
@@ -256,7 +262,8 @@ __attribute__((always_inline)) inline void transpose8(unsigned char *A, unsigned
 	if (m == 1) {
 		y = *(unsigned int *)(A);
 		x = *(unsigned int *)(A + 4);
-	} else {
+	}
+	else {
 		x = (A[0] << 24) | (A[m] << 16) | (A[2 * m] << 8) | A[3 * m];
 		y = (A[4 * m] << 24) | (A[5 * m] << 16) | (A[6 * m] << 8) | A[7 * m];
 	}

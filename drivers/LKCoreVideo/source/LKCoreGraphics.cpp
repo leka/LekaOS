@@ -19,8 +19,7 @@ void LKCoreGraphics::clearScreen(CGColor color)
 
 void LKCoreGraphics::drawRectangle(FilledRectangle rectangle, CGColor color)
 {
-	uintptr_t destination_address =
-		lcd::frame_buffer_address + 4 * (lcd::dimension.width * rectangle.origin.y + rectangle.origin.x);
+	uintptr_t destination_address = lcd::frame_buffer_address + 4 * (lcd::dimension.width * rectangle.origin.y + rectangle.origin.x);
 
 	uint32_t destinationColor = color.getARGB();
 

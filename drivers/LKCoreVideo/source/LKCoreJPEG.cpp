@@ -8,8 +8,7 @@
 
 namespace leka {
 
-LKCoreJPEG::LKCoreJPEG(LKCoreSTM32HalBase &hal, LKCoreDMA2DBase &dma2d, LKCoreFatFsBase &file)
-	: _hal(hal), _dma2d(dma2d), _file(file)
+LKCoreJPEG::LKCoreJPEG(LKCoreSTM32HalBase &hal, LKCoreDMA2DBase &dma2d, LKCoreFatFsBase &file) : _hal(hal), _dma2d(dma2d), _file(file)
 {
 	_hjpeg.Instance = JPEG;
 }
@@ -132,14 +131,14 @@ void LKCoreJPEG::onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t siz
 	if (_file.read(_jpeg_input_buffer.data, leka::jpeg::input_data_buffer_size, &_jpeg_input_buffer.size) == FR_OK) {
 		_input_file_offset += _jpeg_input_buffer.size;
 		_hal.HAL_JPEG_ConfigInputBuffer(hjpeg, _jpeg_input_buffer.data, _jpeg_input_buffer.size);
-	} else {
+	}
+	else {
 		// TODO: handle error
 	}
 }
 void LKCoreJPEG::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t size)
 {
-	_mcu_block_index +=
-		pConvert_Function(pDataOut, (uint8_t *)jpeg::decoded_buffer_address, _mcu_block_index, size, nullptr);
+	_mcu_block_index += pConvert_Function(pDataOut, (uint8_t *)jpeg::decoded_buffer_address, _mcu_block_index, size, nullptr);
 
 	_hal.HAL_JPEG_ConfigOutputBuffer(hjpeg, _mcu_data_output_buffer, leka::jpeg::mcu::output_data_buffer_size);
 }

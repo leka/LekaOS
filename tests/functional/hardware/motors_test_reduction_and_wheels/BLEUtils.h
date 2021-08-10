@@ -28,8 +28,7 @@ class MotorsService
 
 	MotorsService(BLE &_ble, bool initialValueForMotorsCharacteristics)
 		: ble(_ble),
-		  motors_different_movements_state(MOTORS_DIFFERENT_MOVEMENTS_STATE_CHARACTERISTIC_UUID,
-										   &initialValueForMotorsCharacteristics),
+		  motors_different_movements_state(MOTORS_DIFFERENT_MOVEMENTS_STATE_CHARACTERISTIC_UUID, &initialValueForMotorsCharacteristics),
 		  motors_progressive_acceleration_state(MOTORS_PROGRESSIVE_ACCELERATION_STATE_CHARACTERISTIC_UUID,
 												&initialValueForMotorsCharacteristics)
 	{
@@ -39,14 +38,8 @@ class MotorsService
 		ble.gattServer().addService(motorsService);
 	}
 
-	GattAttribute::Handle_t getDifferentMovementsValueHandle() const
-	{
-		return motors_different_movements_state.getValueHandle();
-	}
-	GattAttribute::Handle_t getProgressiveAccelerationValueHandle() const
-	{
-		return motors_progressive_acceleration_state.getValueHandle();
-	}
+	GattAttribute::Handle_t getDifferentMovementsValueHandle() const { return motors_different_movements_state.getValueHandle(); }
+	GattAttribute::Handle_t getProgressiveAccelerationValueHandle() const { return motors_progressive_acceleration_state.getValueHandle(); }
 
   private:
 	BLE &ble;
@@ -58,10 +51,7 @@ class MotorsBLEProgram : ble::Gap::EventHandler
 {
   public:
 	MotorsBLEProgram(BLE &ble, events::EventQueue &event_queue)
-		: _ble(ble),
-		  _event_queue(event_queue),
-		  _motors_service_uuid(MotorsService::MOTORS_SERVICE_UUID),
-		  _adv_data_builder(_adv_buffer)
+		: _ble(ble), _event_queue(event_queue), _motors_service_uuid(MotorsService::MOTORS_SERVICE_UUID), _adv_data_builder(_adv_buffer)
 	{
 	}
 
@@ -118,8 +108,7 @@ class MotorsBLEProgram : ble::Gap::EventHandler
 			return;
 		}
 
-		error =
-			_ble.gap().setAdvertisingPayload(ble::LEGACY_ADVERTISING_HANDLE, _adv_data_builder.getAdvertisingData());
+		error = _ble.gap().setAdvertisingPayload(ble::LEGACY_ADVERTISING_HANDLE, _adv_data_builder.getAdvertisingData());
 
 		if (error) {
 			printf("_ble.gap().setAdvertisingPayload() failed\r\n");

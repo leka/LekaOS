@@ -470,8 +470,7 @@ class CFastLED
 	}
 
 	#if defined(__FASTLED_HAS_FIBCC) && (__FASTLED_HAS_FIBCC == 1)
-	template <uint8_t NUM_LANES, template <uint8_t DATA_PIN, EOrder RGB_ORDER> class CHIPSET, uint8_t DATA_PIN,
-			  EOrder RGB_ORDER = RGB>
+	template <uint8_t NUM_LANES, template <uint8_t DATA_PIN, EOrder RGB_ORDER> class CHIPSET, uint8_t DATA_PIN, EOrder RGB_ORDER = RGB>
 	static CLEDController &addLeds(struct CRGB *data, int nLeds)
 	{
 		static __FIBCC<CHIPSET, DATA_PIN, NUM_LANES, RGB_ORDER> c;
@@ -605,113 +604,93 @@ class CFastLED
 		switch (CHIPSET) {
 	#ifdef PORTA_FIRST_PIN
 			case WS2811_PORTA:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTA_FIRST_PIN, NS(320), NS(320), NS(640),
-																  RGB_ORDER>(),
-							   data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTA_FIRST_PIN, NS(320), NS(320), NS(640), RGB_ORDER>(), data,
+							   nLedsOrOffset, nLedsIfOffset);
 			case WS2811_400_PORTA:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTA_FIRST_PIN, NS(800), NS(800), NS(900),
-																  RGB_ORDER>(),
-							   data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTA_FIRST_PIN, NS(800), NS(800), NS(900), RGB_ORDER>(), data,
+							   nLedsOrOffset, nLedsIfOffset);
 			case WS2813_PORTA:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTA_FIRST_PIN, NS(320), NS(320), NS(640),
-																  RGB_ORDER, 0, false, 300>(),
-							   data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(
+					new InlineBlockClocklessController<NUM_LANES, PORTA_FIRST_PIN, NS(320), NS(320), NS(640), RGB_ORDER, 0, false, 300>(),
+					data, nLedsOrOffset, nLedsIfOffset);
 			case TM1803_PORTA:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTA_FIRST_PIN, NS(700), NS(1100),
-																  NS(700), RGB_ORDER>(),
+				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTA_FIRST_PIN, NS(700), NS(1100), NS(700), RGB_ORDER>(),
 							   data, nLedsOrOffset, nLedsIfOffset);
 			case UCS1903_PORTA:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTA_FIRST_PIN, NS(500), NS(1500),
-																  NS(500), RGB_ORDER>(),
+				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTA_FIRST_PIN, NS(500), NS(1500), NS(500), RGB_ORDER>(),
 							   data, nLedsOrOffset, nLedsIfOffset);
 	#endif
 	#ifdef PORTB_FIRST_PIN
 			case WS2811_PORTB:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTB_FIRST_PIN, NS(320), NS(320), NS(640),
-																  RGB_ORDER>(),
-							   data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTB_FIRST_PIN, NS(320), NS(320), NS(640), RGB_ORDER>(), data,
+							   nLedsOrOffset, nLedsIfOffset);
 			case WS2811_400_PORTB:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTB_FIRST_PIN, NS(800), NS(800), NS(900),
-																  RGB_ORDER>(),
-							   data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTB_FIRST_PIN, NS(800), NS(800), NS(900), RGB_ORDER>(), data,
+							   nLedsOrOffset, nLedsIfOffset);
 			case WS2813_PORTB:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTB_FIRST_PIN, NS(320), NS(320), NS(640),
-																  RGB_ORDER, 0, false, 300>(),
-							   data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(
+					new InlineBlockClocklessController<NUM_LANES, PORTB_FIRST_PIN, NS(320), NS(320), NS(640), RGB_ORDER, 0, false, 300>(),
+					data, nLedsOrOffset, nLedsIfOffset);
 			case TM1803_PORTB:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTB_FIRST_PIN, NS(700), NS(1100),
-																  NS(700), RGB_ORDER>(),
+				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTB_FIRST_PIN, NS(700), NS(1100), NS(700), RGB_ORDER>(),
 							   data, nLedsOrOffset, nLedsIfOffset);
 			case UCS1903_PORTB:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTB_FIRST_PIN, NS(500), NS(1500),
-																  NS(500), RGB_ORDER>(),
+				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTB_FIRST_PIN, NS(500), NS(1500), NS(500), RGB_ORDER>(),
 							   data, nLedsOrOffset, nLedsIfOffset);
 	#endif
 	#ifdef PORTC_FIRST_PIN
 			case WS2811_PORTC:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTC_FIRST_PIN, NS(320), NS(320), NS(640),
-																  RGB_ORDER>(),
-							   data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTC_FIRST_PIN, NS(320), NS(320), NS(640), RGB_ORDER>(), data,
+							   nLedsOrOffset, nLedsIfOffset);
 			case WS2811_400_PORTC:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTC_FIRST_PIN, NS(800), NS(800), NS(900),
-																  RGB_ORDER>(),
-							   data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTC_FIRST_PIN, NS(800), NS(800), NS(900), RGB_ORDER>(), data,
+							   nLedsOrOffset, nLedsIfOffset);
 			case WS2813_PORTC:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTC_FIRST_PIN, NS(320), NS(320), NS(640),
-																  RGB_ORDER, 0, false, 300>(),
-							   data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(
+					new InlineBlockClocklessController<NUM_LANES, PORTC_FIRST_PIN, NS(320), NS(320), NS(640), RGB_ORDER, 0, false, 300>(),
+					data, nLedsOrOffset, nLedsIfOffset);
 			case TM1803_PORTC:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTC_FIRST_PIN, NS(700), NS(1100),
-																  NS(700), RGB_ORDER>(),
+				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTC_FIRST_PIN, NS(700), NS(1100), NS(700), RGB_ORDER>(),
 							   data, nLedsOrOffset, nLedsIfOffset);
 			case UCS1903_PORTC:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTC_FIRST_PIN, NS(500), NS(1500),
-																  NS(500), RGB_ORDER>(),
+				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTC_FIRST_PIN, NS(500), NS(1500), NS(500), RGB_ORDER>(),
 							   data, nLedsOrOffset, nLedsIfOffset);
 	#endif
 	#ifdef PORTD_FIRST_PIN
 			case WS2811_PORTD:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTD_FIRST_PIN, NS(320), NS(320), NS(640),
-																  RGB_ORDER>(),
-							   data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTD_FIRST_PIN, NS(320), NS(320), NS(640), RGB_ORDER>(), data,
+							   nLedsOrOffset, nLedsIfOffset);
 			case WS2811_400_PORTD:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTD_FIRST_PIN, NS(800), NS(800), NS(900),
-																  RGB_ORDER>(),
-							   data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTD_FIRST_PIN, NS(800), NS(800), NS(900), RGB_ORDER>(), data,
+							   nLedsOrOffset, nLedsIfOffset);
 			case WS2813_PORTD:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTD_FIRST_PIN, NS(320), NS(320), NS(640),
-																  RGB_ORDER, 0, false, 300>(),
-							   data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(
+					new InlineBlockClocklessController<NUM_LANES, PORTD_FIRST_PIN, NS(320), NS(320), NS(640), RGB_ORDER, 0, false, 300>(),
+					data, nLedsOrOffset, nLedsIfOffset);
 			case TM1803_PORTD:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTD_FIRST_PIN, NS(700), NS(1100),
-																  NS(700), RGB_ORDER>(),
+				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTD_FIRST_PIN, NS(700), NS(1100), NS(700), RGB_ORDER>(),
 							   data, nLedsOrOffset, nLedsIfOffset);
 			case UCS1903_PORTD:
-				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTD_FIRST_PIN, NS(500), NS(1500),
-																  NS(500), RGB_ORDER>(),
+				return addLeds(new InlineBlockClocklessController<NUM_LANES, PORTD_FIRST_PIN, NS(500), NS(1500), NS(500), RGB_ORDER>(),
 							   data, nLedsOrOffset, nLedsIfOffset);
 	#endif
 	#ifdef HAS_PORTDC
 			case WS2811_PORTDC:
-				return addLeds(
-					new SixteenWayInlineBlockClocklessController<NUM_LANES, NS(320), NS(320), NS(640), RGB_ORDER>(),
-					data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(new SixteenWayInlineBlockClocklessController<NUM_LANES, NS(320), NS(320), NS(640), RGB_ORDER>(), data,
+							   nLedsOrOffset, nLedsIfOffset);
 			case WS2811_400_PORTDC:
-				return addLeds(
-					new SixteenWayInlineBlockClocklessController<NUM_LANES, NS(800), NS(800), NS(900), RGB_ORDER>(),
-					data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(new SixteenWayInlineBlockClocklessController<NUM_LANES, NS(800), NS(800), NS(900), RGB_ORDER>(), data,
+							   nLedsOrOffset, nLedsIfOffset);
 			case WS2813_PORTDC:
-				return addLeds(new SixteenWayInlineBlockClocklessController<NUM_LANES, NS(320), NS(320), NS(640),
-																			RGB_ORDER, 0, false, 300>(),
-							   data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(
+					new SixteenWayInlineBlockClocklessController<NUM_LANES, NS(320), NS(320), NS(640), RGB_ORDER, 0, false, 300>(), data,
+					nLedsOrOffset, nLedsIfOffset);
 			case TM1803_PORTDC:
-				return addLeds(
-					new SixteenWayInlineBlockClocklessController<NUM_LANES, NS(700), NS(1100), NS(700), RGB_ORDER>(),
-					data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(new SixteenWayInlineBlockClocklessController<NUM_LANES, NS(700), NS(1100), NS(700), RGB_ORDER>(), data,
+							   nLedsOrOffset, nLedsIfOffset);
 			case UCS1903_PORTDC:
-				return addLeds(
-					new SixteenWayInlineBlockClocklessController<NUM_LANES, NS(500), NS(1500), NS(500), RGB_ORDER>(),
-					data, nLedsOrOffset, nLedsIfOffset);
+				return addLeds(new SixteenWayInlineBlockClocklessController<NUM_LANES, NS(500), NS(1500), NS(500), RGB_ORDER>(), data,
+							   nLedsOrOffset, nLedsIfOffset);
 	#endif
 		}
 	}
@@ -735,10 +714,7 @@ class CFastLED
 	/// Set the maximum power to be used, given in volts and milliamps.
 	/// @param volts - how many volts the leds are being driven at (usually 5)
 	/// @param milliamps - the maximum milliamps of power draw you want
-	inline void setMaxPowerInVoltsAndMilliamps(uint8_t volts, uint32_t milliamps)
-	{
-		setMaxPowerInMilliWatts(volts * milliamps);
-	}
+	inline void setMaxPowerInVoltsAndMilliamps(uint8_t volts, uint32_t milliamps) { setMaxPowerInMilliWatts(volts * milliamps); }
 
 	/// Set the maximum power to be used, given in milliwatts
 	/// @param milliwatts - the max power draw desired, in milliwatts

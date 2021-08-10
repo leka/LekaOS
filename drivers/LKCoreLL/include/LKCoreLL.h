@@ -12,10 +12,7 @@ namespace leka {
 class LKCoreLL
 {
   public:
-	virtual void rawMemoryWrite(uintptr_t destination, uint32_t data)
-	{
-		*reinterpret_cast<uintptr_t *>(destination) = data;
-	}
+	virtual void rawMemoryWrite(uintptr_t destination, uint32_t data) { *reinterpret_cast<uintptr_t *>(destination) = data; }
 };
 
 }	// namespace leka

@@ -18,19 +18,25 @@ struct CHSV;
 extern void hsv2rgb_rainbow(const CHSV &hsv, CRGB &rgb);
 
 /// Representation of an HSV pixel (hue, saturation, value (aka brightness)).
-struct CHSV {
-	union {
-		struct {
-			union {
+struct CHSV
+{
+	union
+	{
+		struct
+		{
+			union
+			{
 				uint8_t hue;
 				uint8_t h;
 			};
-			union {
+			union
+			{
 				uint8_t saturation;
 				uint8_t sat;
 				uint8_t s;
 			};
-			union {
+			union
+			{
 				uint8_t value;
 				uint8_t val;
 				uint8_t v;
@@ -79,18 +85,24 @@ typedef enum
 } HSVHue;
 
 /// Representation of an RGB pixel (Red, Green, Blue)
-struct CRGB {
-	union {
-		struct {
-			union {
+struct CRGB
+{
+	union
+	{
+		struct
+		{
+			union
+			{
 				uint8_t r;
 				uint8_t red;
 			};
-			union {
+			union
+			{
 				uint8_t g;
 				uint8_t green;
 			};
-			union {
+			union
+			{
 				uint8_t b;
 				uint8_t blue;
 			};
@@ -414,8 +426,7 @@ struct CRGB {
 		// Y' = 0.2126 R' + 0.7152 G' + 0.0722 B'
 		//     54            183       18 (!)
 
-		uint8_t luma =
-			scale8_LEAVING_R1_DIRTY(r, 54) + scale8_LEAVING_R1_DIRTY(g, 183) + scale8_LEAVING_R1_DIRTY(b, 18);
+		uint8_t luma = scale8_LEAVING_R1_DIRTY(r, 54) + scale8_LEAVING_R1_DIRTY(g, 183) + scale8_LEAVING_R1_DIRTY(b, 18);
 		cleanup_R1();
 		return luma;
 	}
@@ -428,8 +439,8 @@ struct CRGB {
 #else
 		const uint8_t eightyfive = 86;
 #endif
-		uint8_t avg = scale8_LEAVING_R1_DIRTY(r, eightyfive) + scale8_LEAVING_R1_DIRTY(g, eightyfive) +
-					  scale8_LEAVING_R1_DIRTY(b, eightyfive);
+		uint8_t avg =
+			scale8_LEAVING_R1_DIRTY(r, eightyfive) + scale8_LEAVING_R1_DIRTY(g, eightyfive) + scale8_LEAVING_R1_DIRTY(b, eightyfive);
 		cleanup_R1();
 		return avg;
 	}
@@ -519,18 +530,22 @@ struct CRGB {
 					g++;
 				}
 				b++;
-			} else if ((r > 0) && (r < 255)) {
+			}
+			else if ((r > 0) && (r < 255)) {
 				r++;
-			} else if ((g > 0) && (g < 255)) {
+			}
+			else if ((g > 0) && (g < 255)) {
 				g++;
-			} else {
+			}
+			else {
 				if (r == g && g == b) {
 					r ^= 0x01;
 					g ^= 0x01;
 				}
 				b ^= 0x01;
 			}
-		} else {
+		}
+		else {
 			// going 'down'
 			if (b > 1) {
 				if (r == g && g == b) {
@@ -538,11 +553,14 @@ struct CRGB {
 					g--;
 				}
 				b--;
-			} else if (g > 1) {
+			}
+			else if (g > 1) {
 				g--;
-			} else if (r > 1) {
+			}
+			else if (r > 1) {
 				r--;
-			} else {
+			}
+			else {
 				if (r == g && g == b) {
 					r ^= 0x01;
 					g ^= 0x01;

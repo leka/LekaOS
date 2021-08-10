@@ -9,7 +9,8 @@
 
 #include "CoreMotor.h"
 
-struct Motors {
+struct Motors
+{
 	leka::CoreMotor &left;
 	leka::CoreMotor &right;
 };

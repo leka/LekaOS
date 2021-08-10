@@ -9,7 +9,8 @@
 
 namespace leka::interface {
 
-struct File {
+struct File
+{
 	virtual ~File() = default;
 
 	virtual auto open(const char *path, const char *mode) -> bool = 0;

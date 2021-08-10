@@ -87,8 +87,7 @@ class LekaLCD
 	 * @param offset      : offset = screen_width - rectangle_width
 	 * @param color       : Color in ARGB8888 format
 	 */
-	void fillBuffer(uint32_t layer_index, void *dest_addr, uint32_t width, uint32_t height, uint32_t offset,
-					uint32_t color);
+	void fillBuffer(uint32_t layer_index, void *dest_addr, uint32_t width, uint32_t height, uint32_t offset, uint32_t color);
 
 	// internal init functions
 	void reset();

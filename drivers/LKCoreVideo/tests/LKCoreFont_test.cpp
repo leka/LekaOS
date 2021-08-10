@@ -108,7 +108,8 @@ TEST_F(LKCoreFontTest, fontPixelIsOnWithPattern)
 	for (uint8_t pixel_id = 0; pixel_id < graphics::pixels_per_line; pixel_id++) {
 		if (pixel_id % 2 == 0) {
 			ASSERT_TRUE(font.fontPixelIsOn(byte_of_line, pixel_id));
-		} else {
+		}
+		else {
 			ASSERT_FALSE(font.fontPixelIsOn(byte_of_line, pixel_id));
 		}
 	}
@@ -263,10 +264,9 @@ TEST_F(LKCoreFontTest, displayWithScreenWidthReached)
 	// ARRANGE
 	constexpr uint8_t buff_size = 128;
 	char buff[buff_size] {};
-	uint8_t text_length =
-		sprintf(buff,
-				"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
-				"only one line of the screen.");
+	uint8_t text_length		  = sprintf(buff,
+									"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
+									"only one line of the screen.");
 	uint8_t max_char_per_line = lcd::dimension.width / graphics::font_pixel_width;
 	ASSERT_GT(text_length, max_char_per_line);	 // Text to display MUST exceed 47 characters for this test
 

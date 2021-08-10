@@ -68,7 +68,8 @@ void FileManager::testWorkingToRemove()
 		while ((p = readdir(dir)) != nullptr) {
 			printf(" - %s\n", p->d_name);
 		}
-	} else {
+	}
+	else {
 		printf("Could not open directory!\n");
 	}
 	closedir(dir);

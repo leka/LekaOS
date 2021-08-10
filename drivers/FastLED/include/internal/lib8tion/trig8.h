@@ -29,9 +29,8 @@
 /// @returns sin of theta, value between -32767 to 32767.
 LIB8STATIC int16_t sin16_avr(uint16_t theta)
 {
-	static const uint8_t data[] = {0,			0,			 49, 0, 6393 % 256,	 6393 / 256,  48, 0,
-								   12539 % 256, 12539 / 256, 44, 0, 18204 % 256, 18204 / 256, 38, 0,
-								   23170 % 256, 23170 / 256, 31, 0, 27245 % 256, 27245 / 256, 23, 0,
+	static const uint8_t data[] = {0,			0,			 49, 0, 6393 % 256,	 6393 / 256,  48, 0, 12539 % 256, 12539 / 256, 44, 0,
+								   18204 % 256, 18204 / 256, 38, 0, 23170 % 256, 23170 / 256, 31, 0, 27245 % 256, 27245 / 256, 23, 0,
 								   30273 % 256, 30273 / 256, 14, 0, 32137 % 256, 32137 / 256, 4 /*,0*/};
 
 	uint16_t offset = (theta & 0x3FFF);
@@ -54,9 +53,11 @@ LIB8STATIC int16_t sin16_avr(uint16_t theta)
 
 	uint8_t m;
 
-	union {
+	union
+	{
 		uint16_t b;
-		struct {
+		struct
+		{
 			uint8_t blo;
 			uint8_t bhi;
 		};

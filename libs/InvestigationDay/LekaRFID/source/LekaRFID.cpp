@@ -122,9 +122,11 @@ void RFID::sendReceive(uint8_t val)
 
 	if (val == 1) {
 		_interface.write(_send_receive_cmd, _send_receive_cmd_length);
-	} else if (val == 2) {
+	}
+	else if (val == 2) {
 		_interface.write(_send_receive2_cmd, _send_receive2_cmd_length);
-	} else if (val == 3) {
+	}
+	else if (val == 3) {
 		_interface.write(_send_receive3_cmd, _send_receive3_cmd_length);
 	}
 	rtos::ThisThread::sleep_for(10ms);

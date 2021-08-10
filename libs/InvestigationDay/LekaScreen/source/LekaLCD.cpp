@@ -60,13 +60,12 @@ LekaLCD::LekaLCD()
 	_handle_dsivideo.LPLargestPacketSize	 = 16;	 // low power largest packet
 	_handle_dsivideo.LPVACTLargestPacketSize = 0;	 // low power largest packet during VACT period
 
-	_handle_dsivideo.LPHorizontalFrontPorchEnable = DSI_LP_HFP_ENABLE;	 // Allow sending LP commands during HFP period
-	_handle_dsivideo.LPHorizontalBackPorchEnable  = DSI_LP_HBP_ENABLE;	 // Allow sending LP commands during HBP period
-	_handle_dsivideo.LPVerticalActiveEnable		= DSI_LP_VACT_ENABLE;	 // Allow sending LP commands during VACT period
-	_handle_dsivideo.LPVerticalFrontPorchEnable = DSI_LP_VFP_ENABLE;	 // Allow sending LP commands during VFP period
-	_handle_dsivideo.LPVerticalBackPorchEnable	= DSI_LP_VBP_ENABLE;	 // Allow sending LP commands during VBP period
-	_handle_dsivideo.LPVerticalSyncActiveEnable =
-		DSI_LP_VSYNC_ENABLE;   // Allow sending LP commands during VSync = VSA period
+	_handle_dsivideo.LPHorizontalFrontPorchEnable = DSI_LP_HFP_ENABLE;	   // Allow sending LP commands during HFP period
+	_handle_dsivideo.LPHorizontalBackPorchEnable  = DSI_LP_HBP_ENABLE;	   // Allow sending LP commands during HBP period
+	_handle_dsivideo.LPVerticalActiveEnable		  = DSI_LP_VACT_ENABLE;	   // Allow sending LP commands during VACT period
+	_handle_dsivideo.LPVerticalFrontPorchEnable	  = DSI_LP_VFP_ENABLE;	   // Allow sending LP commands during VFP period
+	_handle_dsivideo.LPVerticalBackPorchEnable	  = DSI_LP_VBP_ENABLE;	   // Allow sending LP commands during VBP period
+	_handle_dsivideo.LPVerticalSyncActiveEnable	  = DSI_LP_VSYNC_ENABLE;   // Allow sending LP commands during VSync = VSA period
 
 	// configure DSI Video Mode timings with all the settings we defined
 	val = HAL_DSI_ConfigVideoMode(&_handle_dsi, &_handle_dsivideo);
@@ -175,8 +174,7 @@ void LekaLCD::setActiveLayer(uint16_t layer_index)
 
 void LekaLCD::clear(uint32_t color)
 {
-	fillBuffer(_active_layer, (uint32_t *)(_handle_ltdc.LayerCfg[_active_layer].FBStartAdress), _screen_width,
-			   _screen_height, 0, color);
+	fillBuffer(_active_layer, (uint32_t *)(_handle_ltdc.LayerCfg[_active_layer].FBStartAdress), _screen_width, _screen_height, 0, color);
 }
 
 void LekaLCD::drawPixel(uint32_t x, uint32_t y, uint32_t color)
@@ -200,8 +198,7 @@ void LekaLCD::fillRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height, 
 	fillBuffer(_active_layer, (uint32_t *)dest_address, width, height, offset, color);
 }
 
-void LekaLCD::fillBuffer(uint32_t layer_index, void *dest_addr, uint32_t width, uint32_t height, uint32_t offset,
-						 uint32_t color)
+void LekaLCD::fillBuffer(uint32_t layer_index, void *dest_addr, uint32_t width, uint32_t height, uint32_t offset, uint32_t color)
 {
 	_handle_dma2d.Init.Mode			= DMA2D_R2M;
 	_handle_dma2d.Init.ColorMode	= DMA2D_OUTPUT_ARGB8888;
@@ -290,7 +287,8 @@ void LekaLCD::DSI_IO_WriteCmd(uint32_t NbrParams, uint8_t *pParams)
 {
 	if (NbrParams <= 1) {
 		HAL_DSI_ShortWrite(&_handle_dsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, pParams[0], pParams[1]);
-	} else {
+	}
+	else {
 		HAL_DSI_LongWrite(&_handle_dsi, 0, DSI_DCS_LONG_PKT_WRITE, NbrParams, pParams[NbrParams], pParams);
 	}
 }
@@ -587,20 +585,19 @@ void LekaLCD::SDRAM_init()
 	gpio_init_structure.Alternate = GPIO_AF12_FMC;
 
 	// GPIOD configuration
-	gpio_init_structure.Pin =
-		GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_14 | GPIO_PIN_15;
+	gpio_init_structure.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_14 | GPIO_PIN_15;
 
 	HAL_GPIO_Init(GPIOD, &gpio_init_structure);
 
 	// GPIOE configuration */
-	gpio_init_structure.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 |
-							  GPIO_PIN_11 | GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
+	gpio_init_structure.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 |
+							  GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
 
 	HAL_GPIO_Init(GPIOE, &gpio_init_structure);
 
 	// GPIOF configuration */
-	gpio_init_structure.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5 |
-							  GPIO_PIN_11 | GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
+	gpio_init_structure.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_11 | GPIO_PIN_12 |
+							  GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
 
 	HAL_GPIO_Init(GPIOF, &gpio_init_structure);
 
@@ -609,13 +606,13 @@ void LekaLCD::SDRAM_init()
 	HAL_GPIO_Init(GPIOG, &gpio_init_structure);
 
 	// GPIOH configuration */
-	gpio_init_structure.Pin = GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_5 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 |
-							  GPIO_PIN_11 | GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
+	gpio_init_structure.Pin = GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_5 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 |
+							  GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
 	HAL_GPIO_Init(GPIOH, &gpio_init_structure);
 
 	// GPIOI configuration */
-	gpio_init_structure.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 |
-							  GPIO_PIN_7 | GPIO_PIN_9 | GPIO_PIN_10;
+	gpio_init_structure.Pin =
+		GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_9 | GPIO_PIN_10;
 	HAL_GPIO_Init(GPIOI, &gpio_init_structure);
 
 	// Configure common DMA parameters

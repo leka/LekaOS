@@ -24,8 +24,7 @@ using namespace leka;
 using namespace std::chrono;
 
 constexpr auto PRINT_BATTERY_VOLTAGE_LOG = false;
-constexpr auto fileName =
-	std::array<char, 36> {"2021_03_30-Battery-Voltage-Log.csv"};   // YYYY_MM_DD-Battery-Voltage-Log.csv
+constexpr auto fileName = std::array<char, 36> {"2021_03_30-Battery-Voltage-Log.csv"};	 // YYYY_MM_DD-Battery-Voltage-Log.csv
 
 const FileManager sd;
 
@@ -93,7 +92,8 @@ auto main() -> int
 
 		log_info("Battery data:\n");
 		serial.write(buffer.data(), length);
-	} else {
+	}
+	else {
 		battery_thread.start(battery_lambda);
 		motors_thread.start(motors_lambda);
 	}

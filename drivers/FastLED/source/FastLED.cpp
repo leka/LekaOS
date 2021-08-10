@@ -107,7 +107,8 @@ CLEDController &CFastLED::operator[](int x)
 	}
 	if (pCur == NULL) {
 		return *(CLEDController::head());
-	} else {
+	}
+	else {
 		return *pCur;
 	}
 }
@@ -268,9 +269,11 @@ void CFastLED::setMaxRefreshRate(uint16_t refresh, bool constrain)
 		if (refresh > 0) {
 			m_nMinMicros = ((1000000 / refresh) > m_nMinMicros) ? (1000000 / refresh) : m_nMinMicros;
 		}
-	} else if (refresh > 0) {
+	}
+	else if (refresh > 0) {
 		m_nMinMicros = 1000000 / refresh;
-	} else {
+	}
+	else {
 		m_nMinMicros = 0;
 	}
 }

@@ -66,8 +66,7 @@ TEST_F(LKCoreDSITest, handleConfigurationVideoConfigHorizontal)
 	auto horizontalSyncActive = (lcd::property.HSA * dsi::laneByteClock_kHz) / dsi::lcdClock;
 	auto horizontalBackPorch  = (lcd::property.HBP * dsi::laneByteClock_kHz) / dsi::lcdClock;
 	auto horizontalLine =
-		((lcd::property.HACT + lcd::property.HSA + lcd::property.HBP + lcd::property.HFP) * dsi::laneByteClock_kHz) /
-		dsi::lcdClock;
+		((lcd::property.HACT + lcd::property.HSA + lcd::property.HBP + lcd::property.HFP) * dsi::laneByteClock_kHz) / dsi::lcdClock;
 
 	ASSERT_EQ(config.HorizontalSyncActive, horizontalSyncActive);
 	ASSERT_EQ(config.HorizontalBackPorch, horizontalBackPorch);

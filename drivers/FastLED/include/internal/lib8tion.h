@@ -382,21 +382,25 @@ typedef uint16_t accum124;	  ///< no direct ANSI counterpart. 12 bits int, 4 bit
 typedef int32_t saccum114;	  ///< no direct ANSI counterpart. 1 bit int, 14 bits fraction
 
 /// typedef for IEEE754 "binary32" float type internals
-typedef union {
+typedef union
+{
 	uint32_t i;
 	float f;
-	struct {
+	struct
+	{
 		uint32_t mantissa : 23;
 		uint32_t exponent : 8;
 		uint32_t signbit : 1;
 	};
-	struct {
+	struct
+	{
 		uint32_t mant7 : 7;
 		uint32_t mant16 : 16;
 		uint32_t exp_ : 8;
 		uint32_t sb_ : 1;
 	};
-	struct {
+	struct
+	{
 		uint32_t mant_lo8 : 8;
 		uint32_t mant_hi16_exp_lo1 : 16;
 		uint32_t sb_exphi7 : 8;
@@ -439,10 +443,11 @@ LIB8STATIC sfract15 floatToSfract15(float f)
 //   faster on AVR than standard avr-libc 1.8
 
 #if defined(__AVR__)
-extern "C" {
-void *memmove8(void *dst, const void *src, uint16_t num);
-void *memcpy8(void *dst, const void *src, uint16_t num) __attribute__((noinline));
-void *memset8(void *ptr, uint8_t value, uint16_t num) __attribute__((noinline));
+extern "C"
+{
+	void *memmove8(void *dst, const void *src, uint16_t num);
+	void *memcpy8(void *dst, const void *src, uint16_t num) __attribute__((noinline));
+	void *memset8(void *ptr, uint8_t value, uint16_t num) __attribute__((noinline));
 }
 #else
 	// on non-AVR platforms, these names just call standard libc.
@@ -474,7 +479,8 @@ LIB8STATIC uint8_t lerp8by8(uint8_t a, uint8_t b, fract8 frac)
 		uint8_t delta  = b - a;
 		uint8_t scaled = scale8(delta, frac);
 		result		   = a + scaled;
-	} else {
+	}
+	else {
 		uint8_t delta  = a - b;
 		uint8_t scaled = scale8(delta, frac);
 		result		   = a - scaled;
@@ -491,7 +497,8 @@ LIB8STATIC uint16_t lerp16by16(uint16_t a, uint16_t b, fract16 frac)
 		uint16_t delta	= b - a;
 		uint16_t scaled = scale16(delta, frac);
 		result			= a + scaled;
-	} else {
+	}
+	else {
 		uint16_t delta	= a - b;
 		uint16_t scaled = scale16(delta, frac);
 		result			= a - scaled;
@@ -508,7 +515,8 @@ LIB8STATIC uint16_t lerp16by8(uint16_t a, uint16_t b, fract8 frac)
 		uint16_t delta	= b - a;
 		uint16_t scaled = scale16by8(delta, frac);
 		result			= a + scaled;
-	} else {
+	}
+	else {
 		uint16_t delta	= a - b;
 		uint16_t scaled = scale16by8(delta, frac);
 		result			= a - scaled;
@@ -525,7 +533,8 @@ LIB8STATIC int16_t lerp15by8(int16_t a, int16_t b, fract8 frac)
 		uint16_t delta	= b - a;
 		uint16_t scaled = scale16by8(delta, frac);
 		result			= a + scaled;
-	} else {
+	}
+	else {
 		uint16_t delta	= a - b;
 		uint16_t scaled = scale16by8(delta, frac);
 		result			= a - scaled;
@@ -542,7 +551,8 @@ LIB8STATIC int16_t lerp15by16(int16_t a, int16_t b, fract16 frac)
 		uint16_t delta	= b - a;
 		uint16_t scaled = scale16(delta, frac);
 		result			= a + scaled;
-	} else {
+	}
+	else {
 		uint16_t delta	= a - b;
 		uint16_t scaled = scale16(delta, frac);
 		result			= a - scaled;
@@ -678,12 +688,14 @@ LIB8STATIC fract8 ease8InOutApprox(fract8 i)
 	if (i < 64) {
 		// start with slope 0.5
 		i /= 2;
-	} else if (i > (255 - 64)) {
+	}
+	else if (i > (255 - 64)) {
 		// end with slope 0.5
 		i = 255 - i;
 		i /= 2;
 		i = 255 - i;
-	} else {
+	}
+	else {
 		// in the middle, use slope 192/128 = 1.5
 		i -= 64;
 		i += (i / 2);
@@ -795,7 +807,8 @@ LIB8STATIC uint8_t squarewave8(uint8_t in, uint8_t pulsewidth = 128)
 {
 	if (in < pulsewidth || (pulsewidth == 255)) {
 		return 255;
-	} else {
+	}
+	else {
 		return 0;
 	}
 }
@@ -973,8 +986,8 @@ LIB8STATIC uint8_t beat8(accum88 beats_per_minute, uint32_t timebase = 0)
 ///           a Q8.8 fixed-point value; e.g. 120BPM must be
 ///           specified as 120*256 = 30720.
 ///           If you just want to specify "120", use beatsin16 or beatsin8.
-LIB8STATIC uint16_t beatsin88(accum88 beats_per_minute_88, uint16_t lowest = 0, uint16_t highest = 65535,
-							  uint32_t timebase = 0, uint16_t phase_offset = 0)
+LIB8STATIC uint16_t beatsin88(accum88 beats_per_minute_88, uint16_t lowest = 0, uint16_t highest = 65535, uint32_t timebase = 0,
+							  uint16_t phase_offset = 0)
 {
 	uint16_t beat		= beat88(beats_per_minute_88, timebase);
 	uint16_t beatsin	= (sin16(beat + phase_offset) + 32768);
@@ -986,8 +999,8 @@ LIB8STATIC uint16_t beatsin88(accum88 beats_per_minute_88, uint16_t lowest = 0, 
 
 /// beatsin16 generates a 16-bit sine wave at a given BPM,
 ///           that oscillates within a given range.
-LIB8STATIC uint16_t beatsin16(accum88 beats_per_minute, uint16_t lowest = 0, uint16_t highest = 65535,
-							  uint32_t timebase = 0, uint16_t phase_offset = 0)
+LIB8STATIC uint16_t beatsin16(accum88 beats_per_minute, uint16_t lowest = 0, uint16_t highest = 65535, uint32_t timebase = 0,
+							  uint16_t phase_offset = 0)
 {
 	uint16_t beat		= beat16(beats_per_minute, timebase);
 	uint16_t beatsin	= (sin16(beat + phase_offset) + 32768);
@@ -1084,41 +1097,41 @@ LIB8STATIC uint16_t bseconds16()
 // Classes to implement "Every N Milliseconds", "Every N Seconds",
 // "Every N Minutes", "Every N Hours", and "Every N BSeconds".
 #if 1
-	#define INSTANTIATE_EVERY_N_TIME_PERIODS(NAME, TIMETYPE, TIMEGETTER)                                               \
-		class NAME                                                                                                     \
-		{                                                                                                              \
-		  public:                                                                                                      \
-			TIMETYPE mPrevTrigger;                                                                                     \
-			TIMETYPE mPeriod;                                                                                          \
-                                                                                                                       \
-			NAME()                                                                                                     \
-			{                                                                                                          \
-				reset();                                                                                               \
-				mPeriod = 1;                                                                                           \
-			};                                                                                                         \
-			NAME(TIMETYPE period)                                                                                      \
-			{                                                                                                          \
-				reset();                                                                                               \
-				setPeriod(period);                                                                                     \
-			};                                                                                                         \
-			void setPeriod(TIMETYPE period) { mPeriod = period; };                                                     \
-			TIMETYPE getTime() { return (TIMETYPE)(TIMEGETTER()); };                                                   \
-			TIMETYPE getPeriod() { return mPeriod; };                                                                  \
-			TIMETYPE getElapsed() { return getTime() - mPrevTrigger; }                                                 \
-			TIMETYPE getRemaining() { return mPeriod - getElapsed(); }                                                 \
-			TIMETYPE getLastTriggerTime() { return mPrevTrigger; }                                                     \
-			bool ready()                                                                                               \
-			{                                                                                                          \
-				bool isReady = (getElapsed() >= mPeriod);                                                              \
-				if (isReady) {                                                                                         \
-					reset();                                                                                           \
-				}                                                                                                      \
-				return isReady;                                                                                        \
-			}                                                                                                          \
-			void reset() { mPrevTrigger = getTime(); };                                                                \
-			void trigger() { mPrevTrigger = getTime() - mPeriod; };                                                    \
-                                                                                                                       \
-			operator bool() { return ready(); }                                                                        \
+	#define INSTANTIATE_EVERY_N_TIME_PERIODS(NAME, TIMETYPE, TIMEGETTER)                                                                   \
+		class NAME                                                                                                                         \
+		{                                                                                                                                  \
+		  public:                                                                                                                          \
+			TIMETYPE mPrevTrigger;                                                                                                         \
+			TIMETYPE mPeriod;                                                                                                              \
+                                                                                                                                           \
+			NAME()                                                                                                                         \
+			{                                                                                                                              \
+				reset();                                                                                                                   \
+				mPeriod = 1;                                                                                                               \
+			};                                                                                                                             \
+			NAME(TIMETYPE period)                                                                                                          \
+			{                                                                                                                              \
+				reset();                                                                                                                   \
+				setPeriod(period);                                                                                                         \
+			};                                                                                                                             \
+			void setPeriod(TIMETYPE period) { mPeriod = period; };                                                                         \
+			TIMETYPE getTime() { return (TIMETYPE)(TIMEGETTER()); };                                                                       \
+			TIMETYPE getPeriod() { return mPeriod; };                                                                                      \
+			TIMETYPE getElapsed() { return getTime() - mPrevTrigger; }                                                                     \
+			TIMETYPE getRemaining() { return mPeriod - getElapsed(); }                                                                     \
+			TIMETYPE getLastTriggerTime() { return mPrevTrigger; }                                                                         \
+			bool ready()                                                                                                                   \
+			{                                                                                                                              \
+				bool isReady = (getElapsed() >= mPeriod);                                                                                  \
+				if (isReady) {                                                                                                             \
+					reset();                                                                                                               \
+				}                                                                                                                          \
+				return isReady;                                                                                                            \
+			}                                                                                                                              \
+			void reset() { mPrevTrigger = getTime(); };                                                                                    \
+			void trigger() { mPrevTrigger = getTime() - mPeriod; };                                                                        \
+                                                                                                                                           \
+			operator bool() { return ready(); }                                                                                            \
 		};
 INSTANTIATE_EVERY_N_TIME_PERIODS(CEveryNMillis, uint32_t, GET_MILLIS);
 INSTANTIATE_EVERY_N_TIME_PERIODS(CEveryNSeconds, uint16_t, seconds16);
@@ -1180,24 +1193,24 @@ typedef CEveryNTimePeriods<uint8_t, hours8> CEveryNHours;
 #define CONCAT_HELPER(x, y) x##y
 #define CONCAT_MACRO(x, y)	CONCAT_HELPER(x, y)
 #define EVERY_N_MILLIS(N)	EVERY_N_MILLIS_I(CONCAT_MACRO(PER, __COUNTER__), N)
-#define EVERY_N_MILLIS_I(NAME, N)                                                                                      \
-	static CEveryNMillis NAME(N);                                                                                      \
+#define EVERY_N_MILLIS_I(NAME, N)                                                                                                          \
+	static CEveryNMillis NAME(N);                                                                                                          \
 	if (NAME)
 #define EVERY_N_SECONDS(N) EVERY_N_SECONDS_I(CONCAT_MACRO(PER, __COUNTER__), N)
-#define EVERY_N_SECONDS_I(NAME, N)                                                                                     \
-	static CEveryNSeconds NAME(N);                                                                                     \
+#define EVERY_N_SECONDS_I(NAME, N)                                                                                                         \
+	static CEveryNSeconds NAME(N);                                                                                                         \
 	if (NAME)
 #define EVERY_N_BSECONDS(N) EVERY_N_BSECONDS_I(CONCAT_MACRO(PER, __COUNTER__), N)
-#define EVERY_N_BSECONDS_I(NAME, N)                                                                                    \
-	static CEveryNBSeconds NAME(N);                                                                                    \
+#define EVERY_N_BSECONDS_I(NAME, N)                                                                                                        \
+	static CEveryNBSeconds NAME(N);                                                                                                        \
 	if (NAME)
 #define EVERY_N_MINUTES(N) EVERY_N_MINUTES_I(CONCAT_MACRO(PER, __COUNTER__), N)
-#define EVERY_N_MINUTES_I(NAME, N)                                                                                     \
-	static CEveryNMinutes NAME(N);                                                                                     \
+#define EVERY_N_MINUTES_I(NAME, N)                                                                                                         \
+	static CEveryNMinutes NAME(N);                                                                                                         \
 	if (NAME)
 #define EVERY_N_HOURS(N) EVERY_N_HOURS_I(CONCAT_MACRO(PER, __COUNTER__), N)
-#define EVERY_N_HOURS_I(NAME, N)                                                                                       \
-	static CEveryNHours NAME(N);                                                                                       \
+#define EVERY_N_HOURS_I(NAME, N)                                                                                                           \
+	static CEveryNHours NAME(N);                                                                                                           \
 	if (NAME)
 
 #define CEveryNMilliseconds				CEveryNMillis

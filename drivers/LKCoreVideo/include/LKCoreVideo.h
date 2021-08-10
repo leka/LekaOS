@@ -21,8 +21,8 @@ class LKCoreVideo
 {
   public:
 	LKCoreVideo(LKCoreSTM32HalBase &hal, LKCoreSDRAMBase &coresdram, LKCoreDMA2DBase &coredma2d, LKCoreDSIBase &coredsi,
-				LKCoreLTDCBase &coreltdc, LKCoreLCDBase &corelcd, LKCoreGraphicsBase &coregraphics,
-				LKCoreFontBase &corefont, LKCoreJPEGBase &corejpeg);
+				LKCoreLTDCBase &coreltdc, LKCoreLCDBase &corelcd, LKCoreGraphicsBase &coregraphics, LKCoreFontBase &corefont,
+				LKCoreJPEGBase &corejpeg);
 
 	void initialize(void);
 

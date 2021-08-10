@@ -13,12 +13,14 @@ auto map(IntputType x, IntputType in_min, IntputType in_max, OutputType out_min,
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-struct Point {
+struct Point
+{
 	float x {0};
 	float y {0};
 };
 
-struct LinearCoefficients {
+struct LinearCoefficients
+{
 	float slope {0};
 	float y_intercept {0};
 };

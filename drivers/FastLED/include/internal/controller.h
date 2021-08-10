@@ -91,19 +91,13 @@ class CLEDController
 	void show(const struct CRGB *data, int nLeds, uint8_t brightness) { show(data, nLeds, getAdjustment(brightness)); }
 
 	/// show function w/integer brightness, will scale for color correction and temperature
-	void showColor(const struct CRGB &data, int nLeds, uint8_t brightness)
-	{
-		showColor(data, nLeds, getAdjustment(brightness));
-	}
+	void showColor(const struct CRGB &data, int nLeds, uint8_t brightness) { showColor(data, nLeds, getAdjustment(brightness)); }
 
 	/// show function using the "attached to this controller" led data
 	void showLeds(uint8_t brightness = 255) { show(m_Data, m_nLeds, getAdjustment(brightness)); }
 
 	/// show the given color on the led strip
-	void showColor(const struct CRGB &data, uint8_t brightness = 255)
-	{
-		showColor(data, m_nLeds, getAdjustment(brightness));
-	}
+	void showColor(const struct CRGB &data, uint8_t brightness = 255) { showColor(data, m_nLeds, getAdjustment(brightness)); }
 
 	/// get the first led controller in the chain of controllers
 	static CLEDController *head() { return m_pHead; }
@@ -206,7 +200,8 @@ class CLEDController
 // support for things like RGB reordering, scaling, dithering, skipping (for ARGB data), and eventually, we will
 // centralize 8/12/16 conversions here as well.
 template <EOrder RGB_ORDER, int LANES = 1, uint32_t MASK = 0xFFFFFFFF>
-struct PixelController {
+struct PixelController
+{
 	const uint8_t *mData;
 	int mLen, mLenRemaining;
 	uint8_t d[3];
@@ -243,8 +238,7 @@ struct PixelController {
 		}
 	}
 
-	PixelController(const uint8_t *d, int len, CRGB &s, EDitherMode dither = BINARY_DITHER, bool advance = true,
-					uint8_t skip = 0)
+	PixelController(const uint8_t *d, int len, CRGB &s, EDitherMode dither = BINARY_DITHER, bool advance = true, uint8_t skip = 0)
 		: mData(d), mLen(len), mLenRemaining(len), mScale(s)
 	{
 		enable_dithering(dither);
@@ -288,10 +282,9 @@ struct PixelController {
 	#define MAX_LIKELY_UPDATE_RATE_HZ	  400
 	#define MIN_ACCEPTABLE_DITHER_RATE_HZ 50
 	#define UPDATES_PER_FULL_DITHER_CYCLE (MAX_LIKELY_UPDATE_RATE_HZ / MIN_ACCEPTABLE_DITHER_RATE_HZ)
-	#define RECOMMENDED_VIRTUAL_BITS                                                                                   \
-		((UPDATES_PER_FULL_DITHER_CYCLE > 1) + (UPDATES_PER_FULL_DITHER_CYCLE > 2) +                                   \
-		 (UPDATES_PER_FULL_DITHER_CYCLE > 4) + (UPDATES_PER_FULL_DITHER_CYCLE > 8) +                                   \
-		 (UPDATES_PER_FULL_DITHER_CYCLE > 16) + (UPDATES_PER_FULL_DITHER_CYCLE > 32) +                                 \
+	#define RECOMMENDED_VIRTUAL_BITS                                                                                                       \
+		((UPDATES_PER_FULL_DITHER_CYCLE > 1) + (UPDATES_PER_FULL_DITHER_CYCLE > 2) + (UPDATES_PER_FULL_DITHER_CYCLE > 4) +                 \
+		 (UPDATES_PER_FULL_DITHER_CYCLE > 8) + (UPDATES_PER_FULL_DITHER_CYCLE > 16) + (UPDATES_PER_FULL_DITHER_CYCLE > 32) +               \
 		 (UPDATES_PER_FULL_DITHER_CYCLE > 64) + (UPDATES_PER_FULL_DITHER_CYCLE > 128))
 	#define VIRTUAL_BITS RECOMMENDED_VIRTUAL_BITS
 
@@ -448,8 +441,7 @@ struct PixelController {
 		return scale<SLOT>(pc, pc.dither<SLOT>(pc, pc.loadByte<SLOT>(pc, lane)));
 	}
 	template <int SLOT>
-	__attribute__((always_inline)) inline static uint8_t loadAndScale(PixelController &pc, int lane, uint8_t d,
-																	  uint8_t scale)
+	__attribute__((always_inline)) inline static uint8_t loadAndScale(PixelController &pc, int lane, uint8_t d, uint8_t scale)
 	{
 		return scale8(pc.dither<SLOT>(pc, pc.loadByte<SLOT>(pc, lane), d), scale);
 	}
@@ -472,8 +464,7 @@ struct PixelController {
 		return pc.loadAndScale<SLOT>(pc, lane);
 	}
 	template <int SLOT>
-	__attribute__((always_inline)) inline static uint8_t advanceAndLoadAndScale(PixelController &pc, int lane,
-																				uint8_t scale)
+	__attribute__((always_inline)) inline static uint8_t advanceAndLoadAndScale(PixelController &pc, int lane, uint8_t scale)
 	{
 		pc.advanceData();
 		return pc.loadAndScale<SLOT>(pc, lane, scale);
@@ -491,18 +482,9 @@ struct PixelController {
 	}
 
 	// Helper functions to get around gcc stupidities
-	__attribute__((always_inline)) inline uint8_t loadAndScale0(int lane, uint8_t scale)
-	{
-		return loadAndScale<0>(*this, lane, scale);
-	}
-	__attribute__((always_inline)) inline uint8_t loadAndScale1(int lane, uint8_t scale)
-	{
-		return loadAndScale<1>(*this, lane, scale);
-	}
-	__attribute__((always_inline)) inline uint8_t loadAndScale2(int lane, uint8_t scale)
-	{
-		return loadAndScale<2>(*this, lane, scale);
-	}
+	__attribute__((always_inline)) inline uint8_t loadAndScale0(int lane, uint8_t scale) { return loadAndScale<0>(*this, lane, scale); }
+	__attribute__((always_inline)) inline uint8_t loadAndScale1(int lane, uint8_t scale) { return loadAndScale<1>(*this, lane, scale); }
+	__attribute__((always_inline)) inline uint8_t loadAndScale2(int lane, uint8_t scale) { return loadAndScale<2>(*this, lane, scale); }
 	__attribute__((always_inline)) inline uint8_t advanceAndLoadAndScale0(int lane, uint8_t scale)
 	{
 		return advanceAndLoadAndScale<0>(*this, lane, scale);
@@ -516,10 +498,7 @@ struct PixelController {
 	__attribute__((always_inline)) inline uint8_t loadAndScale0(int lane) { return loadAndScale<0>(*this, lane); }
 	__attribute__((always_inline)) inline uint8_t loadAndScale1(int lane) { return loadAndScale<1>(*this, lane); }
 	__attribute__((always_inline)) inline uint8_t loadAndScale2(int lane) { return loadAndScale<2>(*this, lane); }
-	__attribute__((always_inline)) inline uint8_t advanceAndLoadAndScale0(int lane)
-	{
-		return advanceAndLoadAndScale<0>(*this, lane);
-	}
+	__attribute__((always_inline)) inline uint8_t advanceAndLoadAndScale0(int lane) { return advanceAndLoadAndScale<0>(*this, lane); }
 	__attribute__((always_inline)) inline uint8_t stepAdvanceAndLoadAndScale0(int lane)
 	{
 		stepDithering();

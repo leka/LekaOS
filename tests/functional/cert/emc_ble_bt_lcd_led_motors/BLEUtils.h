@@ -29,10 +29,7 @@ void schedule_ble_events(BLE::OnEventsToProcessCallbackContext *context)
 class BeaconDemo : ble::Gap::EventHandler
 {
   public:
-	BeaconDemo(BLE &ble, events::EventQueue &event_queue)
-		: _ble(ble), _event_queue(event_queue), _adv_data_builder(_adv_buffer)
-	{
-	}
+	BeaconDemo(BLE &ble, events::EventQueue &event_queue) : _ble(ble), _event_queue(event_queue), _adv_data_builder(_adv_buffer) {}
 
 	void start()
 	{
@@ -52,12 +49,14 @@ class BeaconDemo : ble::Gap::EventHandler
 	 * injecting the raw field into the GAP advertising payload as a
 	 * GapAdvertisingData::MANUFACTURER_SPECIFIC_DATA.
 	 */
-	union Payload {
+	union Payload
+	{
 		/**
 		 * Raw data of the payload.
 		 */
 		uint8_t raw[25];
-		struct {
+		struct
+		{
 			/**
 			 * Beacon manufacturer identifier.
 			 */
@@ -156,8 +155,7 @@ class BeaconDemo : ble::Gap::EventHandler
 		 *
 		 * Note: please remember to calibrate your beacons TX Power for more accurate results.
 		 */
-		static const uint8_t uuid[] = {0xE2, 0x0A, 0x39, 0xF4, 0x73, 0xF5, 0x4B, 0xC4,
-									   0xA1, 0x2F, 0x17, 0xD1, 0xAD, 0x07, 0xA9, 0x61};
+		static const uint8_t uuid[] = {0xE2, 0x0A, 0x39, 0xF4, 0x73, 0xF5, 0x4B, 0xC4, 0xA1, 0x2F, 0x17, 0xD1, 0xAD, 0x07, 0xA9, 0x61};
 		uint16_t major_number		= 1122;
 		uint16_t minor_number		= 3344;
 		uint16_t tx_power			= 0xC8;
@@ -176,8 +174,7 @@ class BeaconDemo : ble::Gap::EventHandler
 			return;
 		}
 
-		error =
-			_ble.gap().setAdvertisingPayload(ble::LEGACY_ADVERTISING_HANDLE, _adv_data_builder.getAdvertisingData());
+		error = _ble.gap().setAdvertisingPayload(ble::LEGACY_ADVERTISING_HANDLE, _adv_data_builder.getAdvertisingData());
 
 		if (error) {
 			leka::ble::printError(error, "_ble.gap().setAdvertisingPayload() failed");

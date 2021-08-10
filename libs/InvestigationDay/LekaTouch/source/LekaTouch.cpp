@@ -132,14 +132,16 @@ void Touch::calibrateTwoSensors(bool &sensor_left, bool &sensor_right, uint8_t c
 		if (!sensor_left) {
 			if (value_left_calib - step > 0x0FFF) {
 				value_left_calib = 0x0FFF;
-			} else {
+			}
+			else {
 				value_left_calib -= step;
 			}
 		}
 		if (!sensor_right) {
 			if (value_right_calib - step > 0x0FFF) {
 				value_right_calib = 0x0FFF;
-			} else {
+			}
+			else {
 				value_right_calib -= step;
 			}
 		}

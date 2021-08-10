@@ -11,23 +11,21 @@
 // in your PROGMEM (flash) storage unless you specifically
 // use each one, so you only 'pay for' those you actually use.
 
-extern const TProgmemRGBPalette16 CloudColors_p FL_PROGMEM = {
-	CRGB::Blue,		 CRGB::DarkBlue, CRGB::DarkBlue,  CRGB::DarkBlue,
+extern const TProgmemRGBPalette16 CloudColors_p FL_PROGMEM = {CRGB::Blue,	   CRGB::DarkBlue, CRGB::DarkBlue,	CRGB::DarkBlue,
 
-	CRGB::DarkBlue,	 CRGB::DarkBlue, CRGB::DarkBlue,  CRGB::DarkBlue,
+															  CRGB::DarkBlue,  CRGB::DarkBlue, CRGB::DarkBlue,	CRGB::DarkBlue,
 
-	CRGB::Blue,		 CRGB::DarkBlue, CRGB::SkyBlue,	  CRGB::SkyBlue,
+															  CRGB::Blue,	   CRGB::DarkBlue, CRGB::SkyBlue,	CRGB::SkyBlue,
 
-	CRGB::LightBlue, CRGB::White,	 CRGB::LightBlue, CRGB::SkyBlue};
+															  CRGB::LightBlue, CRGB::White,	   CRGB::LightBlue, CRGB::SkyBlue};
 
-extern const TProgmemRGBPalette16 LavaColors_p FL_PROGMEM = {
-	CRGB::Black,   CRGB::Maroon,  CRGB::Black,	 CRGB::Maroon,
+extern const TProgmemRGBPalette16 LavaColors_p FL_PROGMEM = {CRGB::Black,	CRGB::Maroon,  CRGB::Black,	  CRGB::Maroon,
 
-	CRGB::DarkRed, CRGB::Maroon,  CRGB::DarkRed,
+															 CRGB::DarkRed, CRGB::Maroon,  CRGB::DarkRed,
 
-	CRGB::DarkRed, CRGB::DarkRed, CRGB::Red,	 CRGB::Orange,
+															 CRGB::DarkRed, CRGB::DarkRed, CRGB::Red,	  CRGB::Orange,
 
-	CRGB::White,   CRGB::Orange,  CRGB::Red,	 CRGB::DarkRed};
+															 CRGB::White,	CRGB::Orange,  CRGB::Red,	  CRGB::DarkRed};
 
 extern const TProgmemRGBPalette16 OceanColors_p FL_PROGMEM = {
 	CRGB::MidnightBlue, CRGB::DarkBlue,	  CRGB::MidnightBlue, CRGB::Navy,
@@ -48,23 +46,23 @@ extern const TProgmemRGBPalette16 ForestColors_p FL_PROGMEM = {
 	CRGB::LightGreen, CRGB::LawnGreen,		  CRGB::MediumAquamarine, CRGB::ForestGreen};
 
 /// HSV Rainbow
-extern const TProgmemRGBPalette16 RainbowColors_p FL_PROGMEM = {
-	0xFF0000, 0xD52A00, 0xAB5500, 0xAB7F00, 0xABAB00, 0x56D500, 0x00FF00, 0x00D52A,
-	0x00AB55, 0x0056AA, 0x0000FF, 0x2A00D5, 0x5500AB, 0x7F0081, 0xAB0055, 0xD5002B};
+extern const TProgmemRGBPalette16 RainbowColors_p FL_PROGMEM = {0xFF0000, 0xD52A00, 0xAB5500, 0xAB7F00, 0xABAB00, 0x56D500,
+																0x00FF00, 0x00D52A, 0x00AB55, 0x0056AA, 0x0000FF, 0x2A00D5,
+																0x5500AB, 0x7F0081, 0xAB0055, 0xD5002B};
 
 /// HSV Rainbow colors with alternatating stripes of black
 #define RainbowStripesColors_p RainbowStripeColors_p
-extern const TProgmemRGBPalette16 RainbowStripeColors_p FL_PROGMEM = {
-	0xFF0000, 0x000000, 0xAB5500, 0x000000, 0xABAB00, 0x000000, 0x00FF00, 0x000000,
-	0x00AB55, 0x000000, 0x0000FF, 0x000000, 0x5500AB, 0x000000, 0xAB0055, 0x000000};
+extern const TProgmemRGBPalette16 RainbowStripeColors_p FL_PROGMEM = {0xFF0000, 0x000000, 0xAB5500, 0x000000, 0xABAB00, 0x000000,
+																	  0x00FF00, 0x000000, 0x00AB55, 0x000000, 0x0000FF, 0x000000,
+																	  0x5500AB, 0x000000, 0xAB0055, 0x000000};
 
 /// HSV color ramp: blue purple ping red orange yellow (and back)
 /// Basically, everything but the greens, which tend to make
 /// people's skin look unhealthy.  This palette is good for
 /// lighting at a club or party, where it'll be shining on people.
-extern const TProgmemRGBPalette16 PartyColors_p FL_PROGMEM = {
-	0x5500AB, 0x84007C, 0xB5004B, 0xE5001B, 0xE81700, 0xB84700, 0xAB7700, 0xABAB00,
-	0xAB5500, 0xDD2200, 0xF2000E, 0xC2003E, 0x8F0071, 0x5F00A1, 0x2F00D0, 0x0007F9};
+extern const TProgmemRGBPalette16 PartyColors_p FL_PROGMEM = {0x5500AB, 0x84007C, 0xB5004B, 0xE5001B, 0xE81700, 0xB84700,
+															  0xAB7700, 0xABAB00, 0xAB5500, 0xDD2200, 0xF2000E, 0xC2003E,
+															  0x8F0071, 0x5F00A1, 0x2F00D0, 0x0007F9};
 
 /// Approximate "black body radiation" palette, akin to
 /// the FastLED 'HeatColor' function.

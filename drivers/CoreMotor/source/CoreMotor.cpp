@@ -12,7 +12,8 @@ void CoreMotor::spin(rotation_t rotation, float speed)
 {
 	if (rotation == Rotation::clockwise) {
 		setDirections(1, 0);
-	} else {
+	}
+	else {
 		setDirections(0, 1);
 	}
 
@@ -35,11 +36,11 @@ void CoreMotor::setSpeed(float speed)
 {
 	if (speed < 0.0F) {
 		_speed.write(0);
-
-	} else if (speed > 1.0F) {
+	}
+	else if (speed > 1.0F) {
 		_speed.write(1.0F);
-
-	} else {
+	}
+	else {
 		_speed.write(speed);
 	}
 }

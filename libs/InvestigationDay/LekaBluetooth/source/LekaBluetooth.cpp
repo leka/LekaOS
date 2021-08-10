@@ -7,8 +7,7 @@
 using namespace mbed;
 using namespace std::chrono;
 
-Bluetooth::Bluetooth()
-	: _interface(BT_UART_TX, BT_UART_RX, 115200), _bluetooth_reset(BT_RESET), _bluetooth_wake_up(BT_WAKE_UP)
+Bluetooth::Bluetooth() : _interface(BT_UART_TX, BT_UART_RX, 115200), _bluetooth_reset(BT_RESET), _bluetooth_wake_up(BT_WAKE_UP)
 {
 	// rtos::ThisThread::sleep_for(1s);
 	_bluetooth_wake_up = 1;
@@ -34,7 +33,8 @@ void Bluetooth::pairing()
 		checkResponse();
 		if (_paired) {
 			break;
-		} else {
+		}
+		else {
 			rtos::ThisThread::sleep_for(10s);
 		}
 		attempts++;
@@ -67,10 +67,10 @@ void Bluetooth::checkResponse(bool printResponse)
 
 				if (_buffer[3] == 0x01 && _buffer[4] == 0x06) {
 					_paired = true;
-				} else if (_buffer[3] == 0x22) {   // Value for message
-					_msg_length = _buffer_length > max_buffer_size
-									  ? max_buffer_size - 11
-									  : _buffer_length - 11;   // 11 characters wrap the message
+				}
+				else if (_buffer[3] == 0x22) {	 // Value for message
+					_msg_length =
+						_buffer_length > max_buffer_size ? max_buffer_size - 11 : _buffer_length - 11;	 // 11 characters wrap the message
 					for (uint16_t i = 0; i < _msg_length; i++) {
 						_msg_rcv[i] = _buffer[i + 10];
 					}
@@ -115,14 +115,13 @@ void Bluetooth::sendMessage(char *msg, size_t msg_length)
 {
 	_buffer_length					= 0;
 	const uint16_t msg_cmd_length	= 1 + 1 + 1 + 2 + 2 + msg_length;
-	uint8_t msg_cmd[msg_cmd_length] = {
-		0x12,
-		0x00,
-		0x00,
-		(uint8_t)((uint16_t)msg_length >> 8),
-		(uint8_t)msg_length,
-		(uint8_t)((uint16_t)msg_length >> 8),
-		(uint8_t)msg_length};	// Header of the command, check BM64 docs for more details
+	uint8_t msg_cmd[msg_cmd_length] = {0x12,
+									   0x00,
+									   0x00,
+									   (uint8_t)((uint16_t)msg_length >> 8),
+									   (uint8_t)msg_length,
+									   (uint8_t)((uint16_t)msg_length >> 8),
+									   (uint8_t)msg_length};   // Header of the command, check BM64 docs for more details
 
 	// Copy message
 	for (size_t i = 0; i < msg_length; i++) {

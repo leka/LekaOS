@@ -22,24 +22,23 @@ LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 
 	_hdsi.Init.TXEscapeCkdiv = dsi::txEscapeClockDiv;
 
-	_config.VirtualChannelID = 0;
-	_config.ColorCoding		 = DSI_RGB888;
-	_config.VSPolarity		 = DSI_VSYNC_ACTIVE_HIGH;
-	_config.HSPolarity		 = DSI_HSYNC_ACTIVE_HIGH;
-	_config.DEPolarity		 = DSI_DATA_ENABLE_ACTIVE_HIGH;
-	_config.Mode			 = DSI_VID_MODE_BURST;	 // Mode Video burst ie : one LgP per line
-	_config.NullPacketSize	 = 0xFFF;
-	_config.NumberOfChunks	 = 0;
-	_config.PacketSize		 = lcd::property.HACT;	 // Value depending on display orientation choice portrait/landscape
+	_config.VirtualChannelID	 = 0;
+	_config.ColorCoding			 = DSI_RGB888;
+	_config.VSPolarity			 = DSI_VSYNC_ACTIVE_HIGH;
+	_config.HSPolarity			 = DSI_HSYNC_ACTIVE_HIGH;
+	_config.DEPolarity			 = DSI_DATA_ENABLE_ACTIVE_HIGH;
+	_config.Mode				 = DSI_VID_MODE_BURST;	 // Mode Video burst ie : one LgP per line
+	_config.NullPacketSize		 = 0xFFF;
+	_config.NumberOfChunks		 = 0;
+	_config.PacketSize			 = lcd::property.HACT;	 // Value depending on display orientation choice portrait/landscape
 	_config.HorizontalSyncActive = (lcd::property.HSA * dsi::laneByteClock_kHz) / dsi::lcdClock;
 	_config.HorizontalBackPorch	 = (lcd::property.HBP * dsi::laneByteClock_kHz) / dsi::lcdClock;
-	_config.HorizontalLine =
-		((lcd::property.HACT + lcd::property.HSA + lcd::property.HBP + lcd::property.HFP) * dsi::laneByteClock_kHz) /
-		dsi::lcdClock;	 // Value depending on display orientation choice portrait/landscape
+	_config.HorizontalLine = ((lcd::property.HACT + lcd::property.HSA + lcd::property.HBP + lcd::property.HFP) * dsi::laneByteClock_kHz) /
+							 dsi::lcdClock;	  // Value depending on display orientation choice portrait/landscape
 	_config.VerticalSyncActive = lcd::property.VSA;
 	_config.VerticalBackPorch  = lcd::property.VBP;
 	_config.VerticalFrontPorch = lcd::property.VFP;
-	_config.VerticalActive = lcd::property.VACT;   // Value depending on display orientation choice portrait/landscape
+	_config.VerticalActive	   = lcd::property.VACT;   // Value depending on display orientation choice portrait/landscape
 
 	// Enable or disable sending LP command while streaming is active in video mode
 	_config.LPCommandEnable = DSI_LP_COMMAND_ENABLE;   // Enable sending commands in mode LP (Low Power)
@@ -129,7 +128,8 @@ void LKCoreDSI::write(const uint8_t *data, const uint32_t size)
 {
 	if (size <= 2) {
 		_hal.HAL_DSI_ShortWrite(&_hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, data[0], data[1]);
-	} else {
+	}
+	else {
 		_hal.HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, size, data[size - 1], const_cast<uint8_t *>(data));
 	}
 }

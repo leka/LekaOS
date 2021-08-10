@@ -46,8 +46,7 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 	void HAL_NVIC_EnableIRQ(IRQn_Type IRQn) final;
 
 	HAL_StatusTypeDef HAL_SDRAM_Init(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_TimingTypeDef *Timing) final;
-	HAL_StatusTypeDef HAL_SDRAM_SendCommand(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_CommandTypeDef *Command,
-											uint32_t Timeout) final;
+	HAL_StatusTypeDef HAL_SDRAM_SendCommand(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_CommandTypeDef *Command, uint32_t Timeout) final;
 	HAL_StatusTypeDef HAL_SDRAM_ProgramRefreshRate(SDRAM_HandleTypeDef *hsdram, uint32_t RefreshRate) final;
 
 	HAL_StatusTypeDef HAL_DMA_Init(DMA_HandleTypeDef *hdma) final;
@@ -65,21 +64,19 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 	HAL_StatusTypeDef HAL_DSI_Start(DSI_HandleTypeDef *hdsi) final;
 	HAL_StatusTypeDef HAL_DSI_ShortWrite(DSI_HandleTypeDef *hdsi, uint32_t ChannelID, uint32_t Mode, uint32_t Param1,
 										 uint32_t Param2) final;
-	HAL_StatusTypeDef HAL_DSI_LongWrite(DSI_HandleTypeDef *hdsi, uint32_t ChannelID, uint32_t Mode, uint32_t NbParams,
-										uint32_t Param1, uint8_t *ParametersTable) final;
+	HAL_StatusTypeDef HAL_DSI_LongWrite(DSI_HandleTypeDef *hdsi, uint32_t ChannelID, uint32_t Mode, uint32_t NbParams, uint32_t Param1,
+										uint8_t *ParametersTable) final;
 
 	HAL_StatusTypeDef HAL_LTDC_StructInitFromVideoConfig(LTDC_HandleTypeDef *hltdc, DSI_VidCfgTypeDef *VidCfg) final;
 	HAL_StatusTypeDef HAL_LTDC_Init(LTDC_HandleTypeDef *hltdc) final;
-	HAL_StatusTypeDef HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfgTypeDef *pLayerCfg,
-										   uint32_t LayerIdx) final;
+	HAL_StatusTypeDef HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfgTypeDef *pLayerCfg, uint32_t LayerIdx) final;
 
 	HAL_StatusTypeDef HAL_JPEG_Init(JPEG_HandleTypeDef *hjpeg) final;
 	HAL_StatusTypeDef HAL_JPEG_GetInfo(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *pInfo) final;
-	HAL_StatusTypeDef HAL_JPEG_Decode(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataIn, uint32_t InDataLength,
-									  uint8_t *pDataOutMCU, uint32_t OutDataLength, uint32_t Timeout) final;
+	HAL_StatusTypeDef HAL_JPEG_Decode(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataIn, uint32_t InDataLength, uint8_t *pDataOutMCU,
+									  uint32_t OutDataLength, uint32_t Timeout) final;
 	void HAL_JPEG_ConfigInputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewInputBuffer, uint32_t InDataLength) final;
-	void HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer,
-									 uint32_t OutDataLength) final;
+	void HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer, uint32_t OutDataLength) final;
 };
 
 }	// namespace leka

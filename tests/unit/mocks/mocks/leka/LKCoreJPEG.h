@@ -23,8 +23,7 @@ class LKCoreJPEGMock : public LKCoreJPEGBase
 	MOCK_METHOD(void, onErrorCallback, (JPEG_HandleTypeDef * hjpeg), (override));
 	MOCK_METHOD(void, onInfoReadyCallback, (JPEG_HandleTypeDef * hjpeg, JPEG_ConfTypeDef *info), (override));
 	MOCK_METHOD(void, onDataAvailableCallback, (JPEG_HandleTypeDef * hjpeg, uint32_t size), (override));
-	MOCK_METHOD(void, onDataReadyCallback, (JPEG_HandleTypeDef * hjpeg, uint8_t *output_buffer, uint32_t size),
-				(override));
+	MOCK_METHOD(void, onDataReadyCallback, (JPEG_HandleTypeDef * hjpeg, uint8_t *output_buffer, uint32_t size), (override));
 	MOCK_METHOD(void, onDecodeCompleteCallback, (JPEG_HandleTypeDef * hjpeg), (override));
 };
 

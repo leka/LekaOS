@@ -5,9 +5,9 @@
 #ifndef _LEKA_OS_DRIVER_CORE_BUFFERED_SERIAL_H_
 #define _LEKA_OS_DRIVER_CORE_BUFFERED_SERIAL_H_
 
-#include "drivers/BufferedSerial.h"
-
 #include "interface/drivers/BufferedSerial.h"
+
+#include "drivers/BufferedSerial.h"
 
 namespace leka {
 
@@ -16,8 +16,8 @@ class CoreBufferedSerial : public interface::BufferedSerial
   public:
 	explicit CoreBufferedSerial(mbed::BufferedSerial &serial) : _serial {serial} {};
 
-	auto read(uint8_t *buffer, ssize_t length) -> ssize_t final;
-	auto write(const uint8_t *buffer, ssize_t length) -> ssize_t final;
+	auto read(uint8_t *buffer, size_t length) -> int final;
+	auto write(const uint8_t *buffer, size_t length) -> int final;
 	auto readable() -> bool final;
 
   private:

@@ -5,11 +5,12 @@
 #ifndef _LEKA_OS_LIB_MOTOR_H_
 #define _LEKA_OS_LIB_MOTOR_H_
 
+#include "interface/drivers/PwmOut.h"
+
 #include "drivers/PwmOut.h"
 #include "drivers/interfaces/InterfaceDigitalOut.h"
 
 #include "CoreMotorBase.h"
-#include "interface/drivers/PwmOut.h"
 
 namespace leka {
 

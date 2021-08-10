@@ -5,6 +5,9 @@
 #ifndef _LEKA_OS_INTERFACE_DRIVER_BUFFERED_SERIAL_H_
 #define _LEKA_OS_INTERFACE_DRIVER_BUFFERED_SERIAL_H_
 
+#include <cstddef>
+#include <cstdint>
+
 namespace leka::interface {
 
 class BufferedSerial
@@ -12,9 +15,9 @@ class BufferedSerial
   public:
 	virtual ~BufferedSerial() = default;
 
-	virtual auto read(uint8_t *buffer, ssize_t length) -> ssize_t		 = 0;
-	virtual auto write(const uint8_t *buffer, ssize_t length) -> ssize_t = 0;
-	virtual auto readable() -> bool										 = 0;
+	virtual auto read(uint8_t *buffer, size_t length) -> int		= 0;
+	virtual auto write(const uint8_t *buffer, size_t length) -> int = 0;
+	virtual auto readable() -> bool									= 0;
 };
 
 }	// namespace leka::interface

@@ -18,7 +18,8 @@
 
 #include "MCP23017.h"
 
-union {
+union
+{
 	uint8_t value8[2];
 	uint16_t value16;
 } tmp_data;
@@ -69,7 +70,8 @@ void MCP23017::write_bit(int value, int bit_number)
 {
 	if (value == 0) {
 		shadow_GPIO &= ~(1 << bit_number);
-	} else {
+	}
+	else {
 		shadow_GPIO |= 1 << bit_number;
 	}
 	writeRegister(GPIO, (unsigned short)shadow_GPIO);
@@ -167,7 +169,8 @@ void MCP23017::pinMode(int pin, int mode)
 {
 	if (DIR_INPUT) {
 		shadow_IODIR |= 1 << pin;
-	} else {
+	}
+	else {
 		shadow_IODIR &= ~(1 << pin);
 	}
 	writeRegister(IODIR, (unsigned short)shadow_IODIR);
@@ -181,7 +184,8 @@ int MCP23017::digitalRead(int pin)
 	shadow_GPIO = readRegister(GPIO);
 	if (shadow_GPIO & (1 << pin)) {
 		return 1;
-	} else {
+	}
+	else {
 		return 0;
 	}
 }
@@ -204,11 +208,13 @@ void MCP23017::digitalWrite(int pin, int val)
 		else
 			shadow_GPIO &= ~(1 << pin);
 		writeRegister(GPIO, (unsigned short)shadow_GPIO);
-	} else {
+	}
+	else {
 		// This is an input pin, so we need to enable the pullup
 		if (val) {
 			shadow_GPPU |= 1 << pin;
-		} else {
+		}
+		else {
 			shadow_GPPU &= ~(1 << pin);
 		}
 		writeRegister(GPPU, (unsigned short)shadow_GPPU);

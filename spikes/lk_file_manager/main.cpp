@@ -44,14 +44,14 @@ auto main() -> int
 
 	if (FileSystemKit::File file; file.open(filename2)) {
 		log_info("FileSystemKit::File opened %s. Size : %lu bytes\n", filename2, file.size());
-	} else {
+	}
+	else {
 		log_info("FileSystemKit::File failed to open %s\n", filename2);
 	}
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
-		log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world,
-				 int(t.count() / 1000));
+		log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world, int(t.count() / 1000));
 		rtos::ThisThread::sleep_for(10s);
 	}
 }

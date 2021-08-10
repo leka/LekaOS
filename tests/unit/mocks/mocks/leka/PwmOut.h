@@ -5,8 +5,9 @@
 #ifndef _LEKA_OS_DRIVERS_PWMOUT_H_
 #define _LEKA_OS_DRIVERS_PWMOUT_H_
 
-#include "gmock/gmock.h"
 #include "interface/drivers/PwmOut.h"
+
+#include "gmock/gmock.h"
 
 namespace leka::mock {
 

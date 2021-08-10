@@ -6,9 +6,9 @@
 
 namespace leka {
 
-LKCoreVideo::LKCoreVideo(LKCoreSTM32HalBase &hal, LKCoreSDRAMBase &coresdram, LKCoreDMA2DBase &coredma2d,
-						 LKCoreDSIBase &coredsi, LKCoreLTDCBase &coreltdc, LKCoreLCDBase &corelcd,
-						 LKCoreGraphicsBase &coregraphics, LKCoreFontBase &corefont, LKCoreJPEGBase &corejpeg)
+LKCoreVideo::LKCoreVideo(LKCoreSTM32HalBase &hal, LKCoreSDRAMBase &coresdram, LKCoreDMA2DBase &coredma2d, LKCoreDSIBase &coredsi,
+						 LKCoreLTDCBase &coreltdc, LKCoreLCDBase &corelcd, LKCoreGraphicsBase &coregraphics, LKCoreFontBase &corefont,
+						 LKCoreJPEGBase &corejpeg)
 	: _hal(hal),
 	  _coresdram(coresdram),
 	  _coredma2d(coredma2d),
@@ -103,8 +103,7 @@ void LKCoreVideo::displayImage(FIL *file)
 	_corejpeg.displayImage(file);
 }
 
-void LKCoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,
-							  CGColor background)
+void LKCoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground, CGColor background)
 {
 	_corefont.display(text, size, starting_line, foreground, background);
 }

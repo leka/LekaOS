@@ -22,7 +22,8 @@ class HelloWorld
 	///
 	/// @brief Struct used to hold led pin & sleep time information
 	///
-	struct Data {
+	struct Data
+	{
 		mbed::DigitalOut led;
 		std::chrono::milliseconds sleepTime;
 	};

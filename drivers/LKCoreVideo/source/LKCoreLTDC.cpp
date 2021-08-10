@@ -20,7 +20,7 @@ LKCoreLTDC::LKCoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi) : _hal(hal),
 	_hltdc.Init.HorizontalSync	   = (lcd::property.HSA - 1);
 	_hltdc.Init.AccumulatedHBP	   = (lcd::property.HSA + lcd::property.HBP - 1);
 	_hltdc.Init.AccumulatedActiveW = (lcd::dimension.width + lcd::property.HSA + lcd::property.HBP - 1);
-	_hltdc.Init.TotalWidth = (lcd::dimension.width + lcd::property.HSA + lcd::property.HBP + lcd::property.HFP - 1);
+	_hltdc.Init.TotalWidth		   = (lcd::dimension.width + lcd::property.HSA + lcd::property.HBP + lcd::property.HFP - 1);
 
 	// Background values
 	_hltdc.Init.Backcolor.Blue	= 0;

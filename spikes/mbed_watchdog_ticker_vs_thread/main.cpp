@@ -27,7 +27,8 @@ using namespace std::chrono;
 // MARK:- Variables
 //
 
-struct variables {
+struct variables
+{
 	static inline auto led_main		= mbed::DigitalOut {LED1};
 	static inline auto led_error	= mbed::DigitalOut {LED3};
 	static inline auto led_watchdog = mbed::DigitalOut {LED2};

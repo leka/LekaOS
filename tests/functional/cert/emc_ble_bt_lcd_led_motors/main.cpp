@@ -152,8 +152,7 @@ int main(void)
 		int length = sprintf(buff, "Leka is still alive after: %2i:%2i:%2i\nBattery at 0x%X\n\n",
 							 int(std::chrono::duration_cast<std::chrono::hours>(duration).count()),
 							 int(std::chrono::duration_cast<std::chrono::minutes>(duration).count()) % 60,
-							 int(std::chrono::duration_cast<std::chrono::seconds>(duration).count()) % 60,
-							 batteries_level.read_u16());
+							 int(std::chrono::duration_cast<std::chrono::seconds>(duration).count()) % 60, batteries_level.read_u16());
 #if USE_BLUETOOTH_AS_SERIAL
 		leka_bluetooth.sendMessage(buff, length);
 #else
@@ -161,8 +160,7 @@ int main(void)
 #endif
 
 #if USE_TOUCH
-		length = sprintf(buff, "Touch value: %x | LF(+1) LB(+2) RB(+4) RF(+8) LE(+10) RE(+20)\n",
-						 leka_touch.updateSensorsStatus());
+		length = sprintf(buff, "Touch value: %x | LF(+1) LB(+2) RB(+4) RF(+8) LE(+10) RE(+20)\n", leka_touch.updateSensorsStatus());
 	#if USE_BLUETOOTH_AS_SERIAL
 		leka_bluetooth.sendMessage(buff, length);
 	#else

@@ -29,8 +29,7 @@ class LKCoreJPEG : public LKCoreJPEGBase
 	uint32_t getWidthOffset(void) final;
 
 	void displayImage(FIL *file) final;
-	HAL_StatusTypeDef decodeImageWithPolling(
-		void) final;   // TODO: Update Return type with something else than HAL status
+	HAL_StatusTypeDef decodeImageWithPolling(void) final;	// TODO: Update Return type with something else than HAL status
 
 	void onErrorCallback(JPEG_HandleTypeDef *hjpeg) final;
 	void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) final;
@@ -41,7 +40,8 @@ class LKCoreJPEG : public LKCoreJPEGBase
 	void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) final;
 
   private:
-	struct JPEGDataBuffer {
+	struct JPEGDataBuffer
+	{
 		uint8_t *data;
 		uint32_t size;
 	};

@@ -16,18 +16,21 @@ class CoreBattery
 
 	auto getVoltage() -> float;
 
-	struct capacity {
+	struct capacity
+	{
 		static constexpr auto max = float {12.60};
 		static constexpr auto min = float {7.50};
 	};
 
-	struct resistor {
+	struct resistor
+	{
 		// TODO (@Benjamin) - find the resistor values, call Mikael
 		static constexpr auto r1 = float {47};
 		static constexpr auto r2 = float {169};
 	};
 
-	struct voltage {
+	struct voltage
+	{
 		// TODO (@Benjamin) - should be float {resistor::r1 / (resistor::r1 + resistor::r2)};
 		static constexpr auto divider	= float {0.129};
 		static constexpr auto reference = float {3.33};

@@ -20,9 +20,8 @@ class CircularBuffer
   public:
 	CircularBuffer()
 	{
-		static_assert(
-			(sizeof(CounterType) >= sizeof(uint32_t)) || (BufferSize < (((uint64_t)1) << (sizeof(CounterType) * 8))),
-			"Invalid BufferSize for the CounterType");
+		static_assert((sizeof(CounterType) >= sizeof(uint32_t)) || (BufferSize < (((uint64_t)1) << (sizeof(CounterType) * 8))),
+					  "Invalid BufferSize for the CounterType");
 	}
 
 	~CircularBuffer() = default;
@@ -37,7 +36,8 @@ class CircularBuffer
 
 		if (_full) {
 			_tail = _head;
-		} else if (_head == _tail) {
+		}
+		else if (_head == _tail) {
 			_full = true;
 		}
 	}
@@ -56,7 +56,8 @@ class CircularBuffer
 			_head = 0;
 			_full = true;
 			std::copy(src + len - BufferSize, src + len, _buffer.data());	// LCOV_EXCL_LINE
-		} else {
+		}
+		else {
 			// we need to adjust the tail at the end if we're filling the buffer of overflowing
 			bool adjust_tail = ((BufferSize - non_critical_size()) <= len);
 
@@ -208,9 +209,11 @@ class CircularBuffer
 			if (j == size) {   // if pattern[0...size-1] = _buffer[i, i+1, ...i+size-1]
 				position = i;
 				return true;
-			} else if (j == 0) {
+			}
+			else if (j == 0) {
 				i = i + 1;
-			} else {
+			}
+			else {
 				i = i + j;	 // slide the pattern by j
 			}
 		}

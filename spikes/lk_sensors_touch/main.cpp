@@ -32,8 +32,7 @@ auto main() -> int
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
-		log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world,
-				 int(t.count() / 1000));
+		log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world, int(t.count() / 1000));
 
 		rtos::ThisThread::sleep_for(1s);
 	}

@@ -130,13 +130,15 @@ void hsv2rgb_raw_C(const struct CHSV &hsv, struct CRGB &rgb)
 			rgb.r = brightness_floor;
 			rgb.g = rampdown_adj_with_floor;
 			rgb.b = rampup_adj_with_floor;
-		} else {
+		}
+		else {
 			// section 2; 0x80..0xBF
 			rgb.r = rampup_adj_with_floor;
 			rgb.g = brightness_floor;
 			rgb.b = rampdown_adj_with_floor;
 		}
-	} else {
+	}
+	else {
 		// section 0: 0x00..0x3F
 		rgb.r = rampdown_adj_with_floor;
 		rgb.g = rampup_adj_with_floor;
@@ -212,13 +214,15 @@ void hsv2rgb_raw_avr(const struct CHSV &hsv, struct CRGB &rgb)
 		rgb.r = rampup_adj_with_floor;
 		rgb.g = brightness_floor;
 		rgb.b = rampdown_adj_with_floor;
-	} else {
+	}
+	else {
 		if (hue & 0x40) {
 			// section 1: 0x40..0x7F
 			rgb.r = brightness_floor;
 			rgb.g = rampdown_adj_with_floor;
 			rgb.b = rampup_adj_with_floor;
-		} else {
+		}
+		else {
 			// section 0: 0x00..0x3F
 			rgb.r = rampdown_adj_with_floor;
 			rgb.g = rampup_adj_with_floor;
@@ -313,7 +317,8 @@ void hsv2rgb_rainbow(const CHSV &hsv, CRGB &rgb)
 				g = third;
 				b = 0;
 				FORCE_REFERENCE(b);
-			} else {
+			}
+			else {
 				// 001
 				// case 1: // O -> Y
 				if (Y1) {
@@ -331,7 +336,8 @@ void hsv2rgb_rainbow(const CHSV &hsv, CRGB &rgb)
 					FORCE_REFERENCE(b);
 				}
 			}
-		} else {
+		}
+		else {
 			// 01X
 			// section 2-3
 			if (!(hue & 0x20)) {
@@ -351,7 +357,8 @@ void hsv2rgb_rainbow(const CHSV &hsv, CRGB &rgb)
 					b = 0;
 					FORCE_REFERENCE(b);
 				}
-			} else {
+			}
+			else {
 				// 011
 				// case 3: // G -> A
 				r = 0;
@@ -360,7 +367,8 @@ void hsv2rgb_rainbow(const CHSV &hsv, CRGB &rgb)
 				b = third;
 			}
 		}
-	} else {
+	}
+	else {
 		// section 4-7
 		// 1XX
 		if (!(hue & 0x40)) {
@@ -374,8 +382,8 @@ void hsv2rgb_rainbow(const CHSV &hsv, CRGB &rgb)
 				uint8_t twothirds = scale8(offset8, ((256 * 2) / 3));	// max=170
 				g				  = K171 - twothirds;					// K170?
 				b				  = K85 + twothirds;
-
-			} else {
+			}
+			else {
 				// 101
 				// case 5: // B -> P
 				r = third;
@@ -383,7 +391,8 @@ void hsv2rgb_rainbow(const CHSV &hsv, CRGB &rgb)
 				FORCE_REFERENCE(g);
 				b = K255 - third;
 			}
-		} else {
+		}
+		else {
 			if (!(hue & 0x20)) {
 				// 110
 				// case 6: // P -- K
@@ -391,8 +400,8 @@ void hsv2rgb_rainbow(const CHSV &hsv, CRGB &rgb)
 				g = 0;
 				FORCE_REFERENCE(g);
 				b = K171 - third;
-
-			} else {
+			}
+			else {
 				// 111
 				// case 7: // K -> R
 				r = K170 + third;
@@ -415,7 +424,8 @@ void hsv2rgb_rainbow(const CHSV &hsv, CRGB &rgb)
 			r = 255;
 			b = 255;
 			g = 255;
-		} else {
+		}
+		else {
 			// nscale8x3_video( r, g, b, sat);
 #if (FASTLED_SCALE8_FIXED == 1)
 			if (r) r = scale8_LEAVING_R1_DIRTY(r, sat);
@@ -445,7 +455,8 @@ void hsv2rgb_rainbow(const CHSV &hsv, CRGB &rgb)
 			r = 0;
 			g = 0;
 			b = 0;
-		} else {
+		}
+		else {
 			// nscale8x3_video( r, g, b, val);
 #if (FASTLED_SCALE8_FIXED == 1)
 			if (r) r = scale8_LEAVING_R1_DIRTY(r, val);
@@ -570,7 +581,8 @@ CHSV rgb2hsv_approximate(const CRGB &rgb)
 
 	if (total > 255) {
 		v = 255;
-	} else {
+	}
+	else {
 		v = qadd8(desat, total);
 		// undo 'dimming' of brightness
 		if (v != 255) v = sqrt16(v * 256);
@@ -616,17 +628,19 @@ CHSV rgb2hsv_approximate(const CRGB &rgb)
 			// if green is zero, we're in Purple/Pink-Red
 			h = (HUE_PURPLE + HUE_PINK) / 2;
 			h += scale8(qsub8(r, 128), FIXFRAC8(48, 128));
-		} else if ((r - g) > g) {
+		}
+		else if ((r - g) > g) {
 			// if R-G > G then we're in Red-Orange
 			h = HUE_RED;
 			h += scale8(g, FIXFRAC8(32, 85));
-		} else {
+		}
+		else {
 			// R-G < G, we're in Orange-Yellow
 			h = HUE_ORANGE;
 			h += scale8(qsub8((g - 85) + (171 - r), 4), FIXFRAC8(32, 85));	 // 221
 		}
-
-	} else if (highest == g) {
+	}
+	else if (highest == g) {
 		// Green is highest
 		// Hue could be Yellow-Green, Green-Aqua
 		if (b == 0) {
@@ -641,29 +655,33 @@ CHSV rgb2hsv_approximate(const CRGB &rgb)
 			h += hueadv;
 			// h += scale8( qadd8( 4, qadd8((g - 128), (128 - r))),
 			//             FIXFRAC8(32,255)); //
-		} else {
+		}
+		else {
 			// if Blue is nonzero we're in Green-Aqua
 			if ((g - b) > b) {
 				h = HUE_GREEN;
 				h += scale8(b, FIXFRAC8(32, 85));
-			} else {
+			}
+			else {
 				h = HUE_AQUA;
 				h += scale8(qsub8(b, 85), FIXFRAC8(8, 42));
 			}
 		}
-
-	} else /* highest == b */ {
+	}
+	else /* highest == b */ {
 		// Blue is highest
 		// Hue could be Aqua/Blue-Blue, Blue-Purple, Purple-Pink
 		if (r == 0) {
 			// if red is zero, we're in Aqua/Blue-Blue
 			h = HUE_AQUA + ((HUE_BLUE - HUE_AQUA) / 4);
 			h += scale8(qsub8(b, 128), FIXFRAC8(24, 128));
-		} else if ((b - r) > r) {
+		}
+		else if ((b - r) > r) {
 			// B-R > R, we're in Blue-Purple
 			h = HUE_BLUE;
 			h += scale8(r, FIXFRAC8(32, 85));
-		} else {
+		}
+		else {
 			// B-R < R, we're in Purple-Pink
 			h = HUE_PURPLE;
 			h += scale8(qsub8(r, 85), FIXFRAC8(32, 85));

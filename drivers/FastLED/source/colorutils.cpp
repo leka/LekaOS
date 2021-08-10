@@ -242,16 +242,15 @@ CHSV &nblend(CHSV &existing, const CHSV &overlay, fract8 amountOfOverlay, TGradi
 
 	if (directionCode == FORWARD_HUES) {
 		existing.hue = existing.hue + scale8(huedelta8, amountOfOverlay);
-	} else /* directionCode == BACKWARD_HUES */
+	}
+	else /* directionCode == BACKWARD_HUES */
 	{
 		huedelta8	 = -huedelta8;
 		existing.hue = existing.hue - scale8(huedelta8, amountOfOverlay);
 	}
 
-	existing.sat =
-		scale8_LEAVING_R1_DIRTY(existing.sat, amountOfKeep) + scale8_LEAVING_R1_DIRTY(overlay.sat, amountOfOverlay);
-	existing.val =
-		scale8_LEAVING_R1_DIRTY(existing.val, amountOfKeep) + scale8_LEAVING_R1_DIRTY(overlay.val, amountOfOverlay);
+	existing.sat = scale8_LEAVING_R1_DIRTY(existing.sat, amountOfKeep) + scale8_LEAVING_R1_DIRTY(overlay.sat, amountOfOverlay);
+	existing.val = scale8_LEAVING_R1_DIRTY(existing.val, amountOfKeep) + scale8_LEAVING_R1_DIRTY(overlay.val, amountOfOverlay);
 
 	cleanup_R1();
 
@@ -275,8 +274,7 @@ CHSV blend(const CHSV &p1, const CHSV &p2, fract8 amountOfP2, TGradientDirection
 	return nu;
 }
 
-CHSV *blend(const CHSV *src1, const CHSV *src2, CHSV *dest, uint16_t count, fract8 amountOfsrc2,
-			TGradientDirectionCode directionCode)
+CHSV *blend(const CHSV *src1, const CHSV *src2, CHSV *dest, uint16_t count, fract8 amountOfsrc2, TGradientDirectionCode directionCode)
 {
 	for (uint16_t i = 0; i < count; i++) {
 		dest[i] = blend(src1[i], src2[i], amountOfsrc2, directionCode);
@@ -385,14 +383,14 @@ CRGB HeatColor(uint8_t temperature)
 		heatcolor.r = 255;		  // full red
 		heatcolor.g = 255;		  // full green
 		heatcolor.b = heatramp;	  // ramp up blue
-
-	} else if (t192 & 0x40) {
+	}
+	else if (t192 & 0x40) {
 		// we're in the middle third
 		heatcolor.r = 255;		  // full red
 		heatcolor.g = heatramp;	  // ramp up green
 		heatcolor.b = 0;		  // no blue
-
-	} else {
+	}
+	else {
 		// we're in the coolest third
 		heatcolor.r = heatramp;	  // ramp up red
 		heatcolor.g = 0;		  // no green
@@ -443,7 +441,8 @@ CRGB ColorFromPalette(const CRGBPalette16 &pal, uint8_t index, uint8_t brightnes
 	if (should_blend) {
 		if (hi4 == 15) {
 			entry = &(pal[0]);
-		} else {
+		}
+		else {
 			entry++;
 		}
 
@@ -493,7 +492,8 @@ CRGB ColorFromPalette(const CRGBPalette16 &pal, uint8_t index, uint8_t brightnes
 #endif
 			}
 			cleanup_R1();
-		} else {
+		}
+		else {
 			red1   = 0;
 			green1 = 0;
 			blue1  = 0;
@@ -520,7 +520,8 @@ CRGB ColorFromPalette(const TProgmemRGBPalette16 &pal, uint8_t index, uint8_t br
 	if (should_blend) {
 		if (hi4 == 15) {
 			entry = FL_PGM_READ_DWORD_NEAR(&(pal[0]));
-		} else {
+		}
+		else {
 			entry = FL_PGM_READ_DWORD_NEAR(&(pal[1]) + hi4);
 		}
 
@@ -569,7 +570,8 @@ CRGB ColorFromPalette(const TProgmemRGBPalette16 &pal, uint8_t index, uint8_t br
 #endif
 			}
 			cleanup_R1();
-		} else {
+		}
+		else {
 			red1   = 0;
 			green1 = 0;
 			blue1  = 0;
@@ -608,7 +610,8 @@ CRGB ColorFromPalette(const CRGBPalette32 &pal, uint8_t index, uint8_t brightnes
 	if (should_blend) {
 		if (hi5 == 31) {
 			entry = &(pal[0]);
-		} else {
+		}
+		else {
 			entry++;
 		}
 
@@ -657,7 +660,8 @@ CRGB ColorFromPalette(const CRGBPalette32 &pal, uint8_t index, uint8_t brightnes
 #endif
 			}
 			cleanup_R1();
-		} else {
+		}
+		else {
 			red1   = 0;
 			green1 = 0;
 			blue1  = 0;
@@ -690,7 +694,8 @@ CRGB ColorFromPalette(const TProgmemRGBPalette32 &pal, uint8_t index, uint8_t br
 	if (should_blend) {
 		if (hi5 == 31) {
 			entry = FL_PGM_READ_DWORD_NEAR(&(pal[0]));
-		} else {
+		}
+		else {
 			entry = FL_PGM_READ_DWORD_NEAR(&(pal[1]) + hi5);
 		}
 
@@ -739,7 +744,8 @@ CRGB ColorFromPalette(const TProgmemRGBPalette32 &pal, uint8_t index, uint8_t br
 #endif
 			}
 			cleanup_R1();
-		} else {
+		}
+		else {
 			red1   = 0;
 			green1 = 0;
 			blue1  = 0;
@@ -786,7 +792,8 @@ CHSV ColorFromPalette(const struct CHSVPalette16 &pal, uint8_t index, uint8_t br
 	if (should_blend) {
 		if (hi4 == 15) {
 			entry = &(pal[0]);
-		} else {
+		}
+		else {
 			entry++;
 		}
 
@@ -834,7 +841,8 @@ CHSV ColorFromPalette(const struct CHSVPalette16 &pal, uint8_t index, uint8_t br
 		if (deltaHue & 0x80) {
 			// go backwards
 			hue1 -= scale8(256 - deltaHue, f2);
-		} else {
+		}
+		else {
 			// go forwards
 			hue1 += scale8(deltaHue, f2);
 		}
@@ -873,7 +881,8 @@ CHSV ColorFromPalette(const struct CHSVPalette32 &pal, uint8_t index, uint8_t br
 	if (should_blend) {
 		if (hi5 == 31) {
 			entry = &(pal[0]);
-		} else {
+		}
+		else {
 			entry++;
 		}
 
@@ -921,7 +930,8 @@ CHSV ColorFromPalette(const struct CHSVPalette32 &pal, uint8_t index, uint8_t br
 		if (deltaHue & 0x80) {
 			// go backwards
 			hue1 -= scale8(256 - deltaHue, f2);
-		} else {
+		}
+		else {
 			// go forwards
 			hue1 += scale8(deltaHue, f2);
 		}

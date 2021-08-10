@@ -79,8 +79,7 @@ class HeartrateDemo : ble::Gap::EventHandler
 			return;
 		}
 
-		error =
-			_ble.gap().setAdvertisingPayload(ble::LEGACY_ADVERTISING_HANDLE, _adv_data_builder.getAdvertisingData());
+		error = _ble.gap().setAdvertisingPayload(ble::LEGACY_ADVERTISING_HANDLE, _adv_data_builder.getAdvertisingData());
 
 		if (error) {
 			printf("_ble.gap().setAdvertisingPayload() failed\r\n");

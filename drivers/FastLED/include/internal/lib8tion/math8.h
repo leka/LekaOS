@@ -423,7 +423,8 @@ LIB8STATIC uint8_t sqrt16(uint16_t x)
 
 	if (x > 7904) {
 		hi = 255;
-	} else {
+	}
+	else {
 		hi = (x >> 5) + 8;	 // initial estimate for upper bound
 	}
 
@@ -431,7 +432,8 @@ LIB8STATIC uint8_t sqrt16(uint16_t x)
 		mid = (low + hi) >> 1;
 		if ((uint16_t)(mid * mid) > x) {
 			hi = mid - 1;
-		} else {
+		}
+		else {
 			if (mid == 255) {
 				return 255;
 			}

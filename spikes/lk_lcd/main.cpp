@@ -54,17 +54,14 @@ const auto filename2 = std::array<char, 38> {"assets/images/Leka/emotion-happy.j
 void registerCallbacks()
 {
 	HAL_JPEG_RegisterInfoReadyCallback(
-		corejpeg.getHandlePointer(),
-		[](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) { corejpeg.onInfoReadyCallback(hjpeg, info); });
+		corejpeg.getHandlePointer(), [](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) { corejpeg.onInfoReadyCallback(hjpeg, info); });
 
-	HAL_JPEG_RegisterGetDataCallback(corejpeg.getHandlePointer(), [](JPEG_HandleTypeDef *hjpeg, uint32_t size) {
-		corejpeg.onDataAvailableCallback(hjpeg, size);
+	HAL_JPEG_RegisterGetDataCallback(corejpeg.getHandlePointer(),
+									 [](JPEG_HandleTypeDef *hjpeg, uint32_t size) { corejpeg.onDataAvailableCallback(hjpeg, size); });
+
+	HAL_JPEG_RegisterDataReadyCallback(corejpeg.getHandlePointer(), [](JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t size) {
+		corejpeg.onDataReadyCallback(hjpeg, pDataOut, size);
 	});
-
-	HAL_JPEG_RegisterDataReadyCallback(corejpeg.getHandlePointer(),
-									   [](JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t size) {
-										   corejpeg.onDataReadyCallback(hjpeg, pDataOut, size);
-									   });
 
 	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_DECODE_CPLT_CB_ID,
 							  [](JPEG_HandleTypeDef *hjpeg) { corejpeg.onDecodeCompleteCallback(hjpeg); });
@@ -107,8 +104,7 @@ auto main() -> int
 	static CGColor foreground;
 	static CGColor background = CGColor::white;
 
-	leka::logger::set_print_function(
-		[](const char *str, size_t size) { corevideo.displayText(str, size, line, foreground, background); });
+	leka::logger::set_print_function([](const char *str, size_t size) { corevideo.displayText(str, size, line, foreground, background); });
 
 	for (int i = 1; i <= 10; i++) {
 		foreground = (i % 2 == 0) ? CGColor::black : CGColor::pure_red;
@@ -135,8 +131,7 @@ auto main() -> int
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
-		log_info("A message from your board %s --> \"%s\" at %is", MBED_CONF_APP_TARGET_NAME, hello.world,
-				 int(t.count() / 1000));
+		log_info("A message from your board %s --> \"%s\" at %is", MBED_CONF_APP_TARGET_NAME, hello.world, int(t.count() / 1000));
 
 		rtos::ThisThread::sleep_for(1s);
 

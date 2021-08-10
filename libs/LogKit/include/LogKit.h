@@ -18,12 +18,14 @@
 
 namespace leka {
 
-struct logger {
+struct logger
+{
 	//
 	// MARK: - Buffers
 	//
 
-	struct buffer {
+	struct buffer
+	{
 		static inline auto timestamp = std::array<char, 32> {};
 		static inline auto filename	 = std::array<char, 128> {};
 		static inline auto message	 = std::array<char, 128> {};
@@ -90,14 +92,13 @@ struct logger {
 		auto hour = min / 60;
 
 		// ? Format: hhh:mm:ss:μμμ e.g. 008:15:12:345
-		snprintf(leka::logger::buffer::timestamp.data(), std::size(leka::logger::buffer::timestamp),
-				 "%03lld:%02lld:%02lld:%03lld", hour, min % 60, sec % 60, ms);
+		snprintf(leka::logger::buffer::timestamp.data(), std::size(leka::logger::buffer::timestamp), "%03lld:%02lld:%02lld:%03lld", hour,
+				 min % 60, sec % 60, ms);
 	}
 
 	static void format_filename_line_function(const char *filename, const int line, const char *function)
 	{
-		snprintf(leka::logger::buffer::filename.data(), std::size(leka::logger::buffer::filename), "[%s:%i] %s",
-				 filename, line, function);
+		snprintf(leka::logger::buffer::filename.data(), std::size(leka::logger::buffer::filename), "[%s:%i] %s", filename, line, function);
 	}
 
 	template <typename... Args>
@@ -116,8 +117,7 @@ struct logger {
 		}
 
 		snprintf(format.data(), std::size(format), "> %s", message);
-		snprintf(leka::logger::buffer::message.data(), std::size(leka::logger::buffer::message), format.data(),
-				 args...);
+		snprintf(leka::logger::buffer::message.data(), std::size(leka::logger::buffer::message), format.data(), args...);
 	}
 
 	template <typename... Args>
@@ -135,43 +135,40 @@ struct logger {
 
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 
-#define log_debug(str, ...)                                                                                            \
-	do {                                                                                                               \
-		const std::lock_guard<rtos::Mutex> lock(leka::logger::mutex);                                                  \
-		leka::logger::format_time_human_readable(leka::logger::now());                                                 \
-		leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                             \
-		leka::logger::format_message(str, ##__VA_ARGS__);                                                              \
-		auto length =                                                                                                  \
-			leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                       \
-										leka::logger::level_lut.at(leka::logger::level::debug).data(),                 \
-										leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());  \
-		leka::logger::print(leka::logger::buffer::output.data(), length);                                              \
+#define log_debug(str, ...)                                                                                                                \
+	do {                                                                                                                                   \
+		const std::lock_guard<rtos::Mutex> lock(leka::logger::mutex);                                                                      \
+		leka::logger::format_time_human_readable(leka::logger::now());                                                                     \
+		leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                                                 \
+		leka::logger::format_message(str, ##__VA_ARGS__);                                                                                  \
+		auto length = leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                                 \
+												  leka::logger::level_lut.at(leka::logger::level::debug).data(),                           \
+												  leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());            \
+		leka::logger::print(leka::logger::buffer::output.data(), length);                                                                  \
 	} while (0)
 
-#define log_info(str, ...)                                                                                             \
-	do {                                                                                                               \
-		const std::lock_guard<rtos::Mutex> lock(leka::logger::mutex);                                                  \
-		leka::logger::format_time_human_readable(leka::logger::now());                                                 \
-		leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                             \
-		leka::logger::format_message(str, ##__VA_ARGS__);                                                              \
-		auto length =                                                                                                  \
-			leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                       \
-										leka::logger::level_lut.at(leka::logger::level::info).data(),                  \
-										leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());  \
-		leka::logger::print(leka::logger::buffer::output.data(), length);                                              \
+#define log_info(str, ...)                                                                                                                 \
+	do {                                                                                                                                   \
+		const std::lock_guard<rtos::Mutex> lock(leka::logger::mutex);                                                                      \
+		leka::logger::format_time_human_readable(leka::logger::now());                                                                     \
+		leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                                                 \
+		leka::logger::format_message(str, ##__VA_ARGS__);                                                                                  \
+		auto length = leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                                 \
+												  leka::logger::level_lut.at(leka::logger::level::info).data(),                            \
+												  leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());            \
+		leka::logger::print(leka::logger::buffer::output.data(), length);                                                                  \
 	} while (0)
 
-#define log_error(str, ...)                                                                                            \
-	do {                                                                                                               \
-		const std::lock_guard<rtos::Mutex> lock(leka::logger::mutex);                                                  \
-		leka::logger::format_time_human_readable(leka::logger::now());                                                 \
-		leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                             \
-		leka::logger::format_message(str, ##__VA_ARGS__);                                                              \
-		auto length =                                                                                                  \
-			leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                       \
-										leka::logger::level_lut.at(leka::logger::level::error).data(),                 \
-										leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());  \
-		leka::logger::print(leka::logger::buffer::output.data(), length);                                              \
+#define log_error(str, ...)                                                                                                                \
+	do {                                                                                                                                   \
+		const std::lock_guard<rtos::Mutex> lock(leka::logger::mutex);                                                                      \
+		leka::logger::format_time_human_readable(leka::logger::now());                                                                     \
+		leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                                                 \
+		leka::logger::format_message(str, ##__VA_ARGS__);                                                                                  \
+		auto length = leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                                 \
+												  leka::logger::level_lut.at(leka::logger::level::error).data(),                           \
+												  leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());            \
+		leka::logger::print(leka::logger::buffer::output.data(), length);                                                                  \
 	} while (0)
 
 #endif	 // _LEKA_OS_LIB_LOG_KIT_H_
