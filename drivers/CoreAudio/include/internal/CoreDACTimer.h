@@ -8,6 +8,7 @@
 #include <cstdio>
 
 #include "LKCoreSTM32HalBase.h"
+#include "LogKit.h"
 
 namespace leka {
 
