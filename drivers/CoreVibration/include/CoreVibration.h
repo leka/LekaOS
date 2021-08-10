@@ -20,7 +20,7 @@ namespace leka {
 class CoreVibration
 {
   public:
-	CoreVibration(LKCoreSTM32HalBase &hal, interface::Dac &dac, interface::DacTimer &timer, rtos::Thread &thread,
+	CoreVibration(LKCoreSTM32HalBase &hal, CoreDAC &dac, CoreDACTimer &timer, rtos::Thread &thread,
 				  events::EventQueue &eventQueue);
 
 	void initialize(uint32_t samplingRate);
@@ -35,8 +35,8 @@ class CoreVibration
 
   private:
 	LKCoreSTM32HalBase &_hal;
-	interface::Dac &_coreDac;
-	interface::DacTimer &_coreTimer;
+	CoreDAC &_coreDac;
+	CoreDACTimer &_coreTimer;
 
 	rtos::Thread &_thread;
 	events::EventQueue &_eventQueue;

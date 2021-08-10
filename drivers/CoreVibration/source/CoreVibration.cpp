@@ -4,8 +4,8 @@ using namespace leka;
 
 using namespace std::chrono;
 
-CoreVibration::CoreVibration(LKCoreSTM32HalBase &hal, interface::Dac &dac, interface::DacTimer &timer,
-							 rtos::Thread &thread, events::EventQueue &eventQueue)
+CoreVibration::CoreVibration(LKCoreSTM32HalBase &hal, CoreDAC &dac, CoreDACTimer &timer, rtos::Thread &thread,
+							 events::EventQueue &eventQueue)
 	: _hal(hal), _coreDac(dac), _coreTimer(timer), _thread(thread), _eventQueue(eventQueue)
 {
 	_thread.start({&_eventQueue, &events::EventQueue::dispatch_forever});
@@ -17,18 +17,20 @@ void CoreVibration::initialize(uint32_t samplingRate)
 
 	// setup DAC callbacks
 	static auto *self = this;
-	_coreDac.setCptCallbackPtr([]([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->cptBufferCallback(); });
-	_coreDac.setHalfCptCallbackPtr([]([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->halfBufferCallback(); });
+	auto halfBuffCb =
+		static_cast<pDAC_CallbackTypeDef>([]([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->halfBufferCallback(); });
+	auto fullBuffCb =
+		static_cast<pDAC_CallbackTypeDef>([]([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->cptBufferCallback(); });
 
 	// initialize components
 	_coreTimer.initialize(samplingRate);
-	_coreDac.initialize();
+	_coreDac.initialize(_coreTimer, halfBuffCb, fullBuffCb);
 }
 
 void CoreVibration::deInit()
 {
-	_coreTimer.deInitialize();
-	_coreDac.deInitialize();
+	_coreTimer.terminate();
+	_coreDac.terminate();
 }
 
 void CoreVibration::play(VibrationTemplate &vib)
@@ -101,7 +103,9 @@ void CoreVibration::start()
 {
 	fillHalfBuffer(_vibBufferPtr_1, _samplesPerPeriod);
 	fillHalfBuffer(_vibBufferPtr_2, _samplesPerPeriod);
-	_coreDac.start(_vibBufferPtr_1, _samplesPerPeriod * 2);
+
+	auto outSpan = lstd::span {_vibBufferPtr_1, _samplesPerPeriod * 2};	  // TODO() : check this
+	_coreDac.start(outSpan);
 	_coreTimer.start();
 
 	_isPlaying = true;
