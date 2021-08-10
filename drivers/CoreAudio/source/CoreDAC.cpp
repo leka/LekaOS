@@ -5,7 +5,7 @@ namespace leka {
 CoreDAC::CoreDAC(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
 	_hdac.Instance = DAC;
-	_hdma.Instance = DMA1_Stream5;
+	_hdma.Instance = DMA1_Stream5;	 // DMA1_Stream5 is the only DMA channel for DAC
 }
 
 void CoreDAC::initialize(const CoreDACTimer &tim)
@@ -14,14 +14,14 @@ void CoreDAC::initialize(const CoreDACTimer &tim)
 
 	_hal.HAL_RCC_DMA1_CLK_ENABLE();	  // DAC can only be connected to DMA1
 
-	_hal.HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 3, 0);	  // TODO(): check if another priority level is more appropriate
+	_hal.HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 3, 0);
 	_hal.HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
 
-	_registerMspCallbacks();   // need to be called before init
+	_registerMspCallbacks();   // needs to be called before init
 	_hal.HAL_DAC_Init(&_hdac);
-	_registerCallbacks();	// need to be called after init
+	_registerInterruptCallbacks();	 // needs to be called after init
 
-	configTimer(tim);
+	linkNewTimer(tim);
 }
 
 void CoreDAC::terminate()
@@ -29,19 +29,15 @@ void CoreDAC::terminate()
 	_hal.HAL_DAC_DeInit(&_hdac);
 }
 
-void CoreDAC::configTimer(const CoreDACTimer &tim)
+void CoreDAC::linkNewTimer(const CoreDACTimer &tim)
 {
 	DAC_ChannelConfTypeDef sConfig = {0};
 	sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;	  // necessary to reach the full voltage range in DAC output
-	switch (tim.getHardWareBasicTimer()) {
-		case CoreDACTimer::HardWareBasicTimer::BasicTimer6:
-			sConfig.DAC_Trigger =
-				DAC_TRIGGER_T6_TRGO;   // configure the DAC to be triggered by TIM6 through TRGO signal
-			break;
-		case CoreDACTimer::HardWareBasicTimer::BasicTimer7:
-			sConfig.DAC_Trigger =
-				DAC_TRIGGER_T7_TRGO;   // configure the DAC to be triggered by TIM7 through TRGO signal
-			break;
+
+	if (tim.getHardWareBasicTimer() == CoreDACTimer::HardWareBasicTimer::BasicTimer6) {
+		sConfig.DAC_Trigger = DAC_TRIGGER_T6_TRGO;	 // configure the DAC to be triggered by TIM6 through TRGO signal
+	} else if (tim.getHardWareBasicTimer() == CoreDACTimer::HardWareBasicTimer::BasicTimer7) {
+		sConfig.DAC_Trigger = DAC_TRIGGER_T7_TRGO;	 // configure the DAC to be triggered by TIM7 through TRGO signal
 	}
 
 	_hal.HAL_DAC_ConfigChannel(&_hdac, &sConfig, DAC_CHANNEL_1);
@@ -67,7 +63,7 @@ auto CoreDAC::getDMAHandle() const -> const DMA_HandleTypeDef &
 	return this->_hdma;
 }
 
-void CoreDAC::_registerCallbacks()
+void CoreDAC::_registerInterruptCallbacks()
 {
 	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_HALF_COMPLETE_CB_ID, _pOnHalfBufferRead);
 	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_COMPLETE_CB_ID, _pOnFullBufferRead);
@@ -76,13 +72,13 @@ void CoreDAC::_registerCallbacks()
 void CoreDAC::_registerMspCallbacks()
 {
 	static auto *self	= this;
-	auto initCbLambda	= []([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->_mspInitCallback(); };
-	auto deInitCbLambda = []([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->_mspDeInitCallback(); };
+	auto initCbLambda	= []([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->_msp_onInitializationCb(); };
+	auto deInitCbLambda = []([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->_msp_onTerminationCb(); };
 	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_MSP_INIT_CB_ID, initCbLambda);
 	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_MSP_DEINIT_CB_ID, deInitCbLambda);
 }
 
-void CoreDAC::_mspInitCallback()
+void CoreDAC::_msp_onInitializationCb()
 {
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 
@@ -113,7 +109,7 @@ void CoreDAC::_mspInitCallback()
 	__HAL_LINKDMA(&_hdac, DMA_Handle1, _hdma);
 }
 
-void CoreDAC::_mspDeInitCallback()
+void CoreDAC::_msp_onTerminationCb()
 {
 	if (_hdac.Instance == DAC) {
 		_hal.HAL_RCC_DAC_CLK_DISABLE();

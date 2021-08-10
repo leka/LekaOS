@@ -80,13 +80,13 @@ void CoreDACTimer::_registerMspCallbacks()
 	if (self != this) {
 		self = this;
 	}
-	auto initCbLambda	= []([[maybe_unused]] TIM_HandleTypeDef *htim) { self->_mspInitCallback(); };
-	auto deInitCbLambda = []([[maybe_unused]] TIM_HandleTypeDef *htim) { self->_mspDeInitCallback(); };
+	auto initCbLambda	= []([[maybe_unused]] TIM_HandleTypeDef *htim) { self->_msp_onInitializationCb(); };
+	auto deInitCbLambda = []([[maybe_unused]] TIM_HandleTypeDef *htim) { self->_msp_onTerminationCb(); };
 	_hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPINIT_CB_ID, initCbLambda);
 	_hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPDEINIT_CB_ID, deInitCbLambda);
 }
 
-void CoreDACTimer::_mspInitCallback()
+void CoreDACTimer::_msp_onInitializationCb()
 {
 	if (_hardwareTim == HardWareBasicTimer::BasicTimer6) {
 		_hal.HAL_RCC_TIM6_CLK_ENABLE();
@@ -95,7 +95,7 @@ void CoreDACTimer::_mspInitCallback()
 	}
 }
 
-void CoreDACTimer::_mspDeInitCallback()
+void CoreDACTimer::_msp_onTerminationCb()
 {
 	if (_hardwareTim == HardWareBasicTimer::BasicTimer6) {
 		_hal.HAL_RCC_TIM6_CLK_DISABLE();
