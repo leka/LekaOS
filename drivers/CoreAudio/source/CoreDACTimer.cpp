@@ -68,7 +68,7 @@ auto CoreDACTimer::_calculatePeriod(uint32_t frequency) -> uint32_t
 	}
 
 	if (frequency < (clockFreq >> 16) || frequency > clockFreq) {
-		printf("Chosen freq out of bounds\n");
+		log_error("Chosen freq out of bounds\n");
 	}
 
 	return (clockFreq / frequency);

@@ -82,11 +82,13 @@ void startSound(CoreDACTimer::HardWareBasicTimer tim)
 
 auto main() -> int
 {
+	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+
 	std::array<uint16_t, 512> outBuff {};
 	fillBufferWithSinWave(outBuff.data(), 512, 440, 44100, 0x999, 0x666);
 	auto outSpan = lstd::span {outBuff.data(), outBuff.size()};
 
-	printf("\n\nHello, investigation day!\n\n");
+	log_info("\n\nHello, investigation day!\n\n");
 
 	coreDac.setOnHalfBufferReadPtr(&callbackTest);
 	coreDac.setOnFullBufferReadPtr(&callbackTest);
@@ -99,7 +101,7 @@ auto main() -> int
 	coreDac.start(outSpan);
 
 	// start
-	printf("First timer\n");
+	log_info("First timer\n");
 	startSound(CoreDACTimer::HardWareBasicTimer::BasicTimer6);
 
 	while (!_ended) {
@@ -109,12 +111,12 @@ auto main() -> int
 
 	coreDac.configTimer(coreTimer_7);	// change timer associated to DAC
 
-	printf("Second timer\n");
+	log_info("Second timer\n");
 	startSound(CoreDACTimer::HardWareBasicTimer::BasicTimer7);
 
 	while (!_ended) {
 		rtos::ThisThread::sleep_for(50ms);
 	}
 
-	printf("End of DAC and Timer test!\n\n");
+	log_info("End of DAC and Timer test!\n\n");
 }
