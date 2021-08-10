@@ -39,8 +39,8 @@ class CoreDACTimer
 	auto _calculatePeriod(uint32_t freq) -> uint32_t;
 
 	void _registerMspCallbacks();
-	void _mspInitCallback();
-	void _mspDeInitCallback();
+	void _msp_onInitializationCb();
+	void _msp_onTerminationCb();
 };
 
 }	// namespace leka

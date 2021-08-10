@@ -18,7 +18,7 @@ class CoreDAC
 
 	void initialize(const CoreDACTimer &tim);
 	void terminate();
-	void configTimer(const CoreDACTimer &tim);
+	void linkNewTimer(const CoreDACTimer &tim);
 	void start(const lstd::span<uint16_t> &outBuffer);
 	void stop();
 
@@ -44,11 +44,11 @@ class CoreDAC
 	pDAC_CallbackTypeDef _pOnHalfBufferRead = nullptr;
 	pDAC_CallbackTypeDef _pOnFullBufferRead = nullptr;
 
-	void _registerCallbacks();
+	void _registerInterruptCallbacks();
 
 	void _registerMspCallbacks();
-	void _mspInitCallback();
-	void _mspDeInitCallback();
+	void _msp_onInitializationCb();
+	void _msp_onTerminationCb();
 };
 
 }	// namespace leka

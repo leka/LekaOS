@@ -109,7 +109,7 @@ auto main() -> int
 	}
 	rtos::ThisThread::sleep_for(2s);
 
-	coreDac.configTimer(coreTimer_7);	// change timer associated to DAC
+	coreDac.linkNewTimer(coreTimer_7);	 // change timer associated to DAC
 
 	log_info("Second timer\n");
 	startSound(CoreDACTimer::HardWareBasicTimer::BasicTimer7);
