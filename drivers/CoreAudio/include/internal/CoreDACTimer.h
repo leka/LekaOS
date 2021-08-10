@@ -33,6 +33,7 @@ class CoreDACTimer
   private:
 	LKCoreSTM32HalBase &_hal;
 	TIM_HandleTypeDef _htim;
+	HardWareBasicTimer _hardwareTim;
 
 	auto _calculatePeriod(uint32_t freq) -> uint32_t;
 
