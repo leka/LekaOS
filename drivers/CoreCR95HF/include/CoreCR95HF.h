@@ -58,6 +58,15 @@ namespace rfid::cr95hf {
 
 	}	// namespace tag_answer
 
+	namespace expected_answer_size {
+
+		constexpr size_t idn						= 17;
+		constexpr size_t tag_detection				= 3;
+		constexpr size_t set_baudrate				= 1;
+		constexpr size_t set_communication_protocol = 2;
+
+	}	// namespace expected_answer_size
+
 	namespace protocol {
 
 		constexpr Protocol iso15693 = {

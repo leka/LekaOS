@@ -44,7 +44,7 @@ auto CoreCR95HF::receiveTagDetectionCallback() -> bool
 {
 	std::array<uint8_t, 2> buffer {};
 
-	if (_anwser_size != 3) {
+	if (_anwser_size != rfid::cr95hf::expected_answer_size::tag_detection) {
 		return false;
 	}
 
@@ -80,7 +80,7 @@ void CoreCR95HF::askCR95HFForIDN()
 
 auto CoreCR95HF::didIDNIsCorrect() -> bool
 {
-	if (_anwser_size != 17) {
+	if (_anwser_size != rfid::cr95hf::expected_answer_size::idn) {
 		return false;
 	}
 
@@ -104,7 +104,7 @@ auto CoreCR95HF::setBaudrate(uint8_t baudrate) -> bool
 
 auto CoreCR95HF::didSetBaudrateSucceed(uint8_t baudrate) -> bool
 {
-	if (_anwser_size != 1) {
+	if (_anwser_size != rfid::cr95hf::expected_answer_size::set_baudrate) {
 		return false;
 	}
 
@@ -139,7 +139,7 @@ auto CoreCR95HF::setGainAndModulationISO14443A() -> bool
 
 auto CoreCR95HF::didsetCommunicationProtocolSucceed() -> bool
 {
-	if (_anwser_size != 2) {
+	if (_anwser_size != rfid::cr95hf::expected_answer_size::set_communication_protocol) {
 		return false;
 	}
 
