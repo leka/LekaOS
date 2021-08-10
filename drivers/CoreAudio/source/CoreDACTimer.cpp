@@ -6,16 +6,12 @@
 
 namespace leka {
 
-CoreDACTimer::CoreDACTimer(LKCoreSTM32HalBase &hal, HardWareBasicTimer tim) : _hal(hal)
+CoreDACTimer::CoreDACTimer(LKCoreSTM32HalBase &hal, HardWareBasicTimer tim) : _hal(hal), _hardwareTim(tim)
 {
-	switch (tim) {
-		default:
-		case HardWareBasicTimer::BasicTimer6:
-			_htim.Instance = TIM6;
-			break;
-		case HardWareBasicTimer::BasicTimer7:
-			_htim.Instance = TIM7;
-			break;
+	if (_hardwareTim == HardWareBasicTimer::BasicTimer6) {
+		_htim.Instance = TIM6;
+	} else if (_hardwareTim == HardWareBasicTimer::BasicTimer7) {
+		_htim.Instance = TIM7;
 	}
 }
 
@@ -59,10 +55,7 @@ auto CoreDACTimer::getHandle() -> TIM_HandleTypeDef
 
 auto CoreDACTimer::getHardWareBasicTimer() -> HardWareBasicTimer
 {
-	if (_htim.Instance == TIM6) {
-		return HardWareBasicTimer::BasicTimer6;
-	}
-	return HardWareBasicTimer::BasicTimer7;
+	return _hardwareTim;
 }
 
 auto CoreDACTimer::_calculatePeriod(uint32_t frequency) -> uint32_t
@@ -92,18 +85,18 @@ void CoreDACTimer::_registerMspCallbacks()
 
 void CoreDACTimer::_mspInitCallback()
 {
-	if (_htim.Instance == TIM6) {
+	if (_hardwareTim == HardWareBasicTimer::BasicTimer6) {
 		_hal.HAL_RCC_TIM6_CLK_ENABLE();
-	} else if (_htim.Instance == TIM7) {
+	} else if (_hardwareTim == HardWareBasicTimer::BasicTimer7) {
 		_hal.HAL_RCC_TIM7_CLK_ENABLE();
 	}
 }
 
 void CoreDACTimer::_mspDeInitCallback()
 {
-	if (_htim.Instance == TIM6) {
+	if (_hardwareTim == HardWareBasicTimer::BasicTimer6) {
 		_hal.HAL_RCC_TIM6_CLK_DISABLE();
-	} else if (_htim.Instance == TIM7) {
+	} else if (_hardwareTim == HardWareBasicTimer::BasicTimer7) {
 		_hal.HAL_RCC_TIM7_CLK_DISABLE();
 	}
 }
