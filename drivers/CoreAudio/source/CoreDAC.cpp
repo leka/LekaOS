@@ -8,22 +8,6 @@ CoreDAC::CoreDAC(LKCoreSTM32HalBase &hal) : _hal(hal)
 	_hdma.Instance = DMA1_Stream5;	 // DMA1_Stream5 is the only DMA channel for DAC
 }
 
-void CoreDAC::initialize(const CoreDACTimer &tim)
-{
-	_hal.HAL_RCC_GPIOA_CLK_ENABLE();
-
-	_hal.HAL_RCC_DMA1_CLK_ENABLE();	  // DAC can only be connected to DMA1
-
-	_hal.HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 3, 0);
-	_hal.HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
-
-	_registerMspCallbacks();   // needs to be called before init
-	_hal.HAL_DAC_Init(&_hdac);
-	_registerInterruptCallbacks();	 // needs to be called after init
-
-	linkNewTimer(tim);
-}
-
 void CoreDAC::terminate()
 {
 	_hal.HAL_DAC_DeInit(&_hdac);
@@ -61,6 +45,22 @@ auto CoreDAC::getHandle() const -> const DAC_HandleTypeDef &
 auto CoreDAC::getDMAHandle() const -> const DMA_HandleTypeDef &
 {
 	return this->_hdma;
+}
+
+void CoreDAC::_init(const CoreDACTimer &tim)
+{
+	_hal.HAL_RCC_GPIOA_CLK_ENABLE();
+
+	_hal.HAL_RCC_DMA1_CLK_ENABLE();	  // DAC can only be connected to DMA1
+
+	_hal.HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 3, 0);
+	_hal.HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
+
+	_registerMspCallbacks();   // needs to be called before init
+	_hal.HAL_DAC_Init(&_hdac);
+	_registerInterruptCallbacks();	 // needs to be called after init
+
+	linkNewTimer(tim);
 }
 
 void CoreDAC::_registerInterruptCallbacks()

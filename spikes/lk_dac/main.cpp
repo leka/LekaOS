@@ -91,14 +91,14 @@ auto main() -> int
 
 	log_info("\n\nHello, investigation day!\n\n");
 
-	coreDac.setOnHalfBufferReadPtr(&callbackTest);
-	coreDac.setOnFullBufferReadPtr(&callbackTest);
+	// coreDac.setOnHalfBufferReadPtr(&callbackTest);
+	// coreDac.setOnFullBufferReadPtr(&callbackTest);
 
 	// Init
 	coreTimer_6.initialize(44100);
 	coreTimer_7.initialize(44100);
 
-	coreDac.initialize(coreTimer_6);
+	coreDac.initialize(coreTimer_6, &callbackTest, &callbackTest);
 	coreDac.start(outSpan);
 
 	// start

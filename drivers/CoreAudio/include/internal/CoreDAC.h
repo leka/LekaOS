@@ -16,7 +16,15 @@ class CoreDAC
   public:
 	explicit CoreDAC(LKCoreSTM32HalBase &hal);
 
-	void initialize(const CoreDACTimer &tim);
+	template <class ReadBuffCb>
+	void initialize(const CoreDACTimer &tim, ReadBuffCb onHalfBuffCb, ReadBuffCb onFullBuffCb)
+	{
+		this->_pOnHalfBufferRead = static_cast<pDAC_CallbackTypeDef>(onHalfBuffCb);
+		this->_pOnFullBufferRead = static_cast<pDAC_CallbackTypeDef>(onFullBuffCb);
+
+		_init(tim);
+	}
+
 	void terminate();
 	void linkNewTimer(const CoreDACTimer &tim);
 	void start(const lstd::span<uint16_t> &outBuffer);
@@ -25,17 +33,6 @@ class CoreDAC
 	[[nodiscard]] auto getHandle() const -> const DAC_HandleTypeDef &;
 	[[nodiscard]] auto getDMAHandle() const -> const DMA_HandleTypeDef &;
 
-	template <class ReadBuffCb>
-	void setOnHalfBufferReadPtr(ReadBuffCb cb)
-	{
-		this->_pOnHalfBufferRead = static_cast<pDAC_CallbackTypeDef>(cb);
-	}
-	template <class ReadBuffCb>
-	void setOnFullBufferReadPtr(ReadBuffCb cb)
-	{
-		this->_pOnFullBufferRead = static_cast<pDAC_CallbackTypeDef>(cb);
-	}
-
   private:
 	LKCoreSTM32HalBase &_hal;
 	DAC_HandleTypeDef _hdac;
@@ -43,6 +40,8 @@ class CoreDAC
 
 	pDAC_CallbackTypeDef _pOnHalfBufferRead = nullptr;
 	pDAC_CallbackTypeDef _pOnFullBufferRead = nullptr;
+
+	void _init(const CoreDACTimer &tim);
 
 	void _registerInterruptCallbacks();
 
