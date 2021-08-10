@@ -1,7 +1,7 @@
 BasedOnStyle: Google
 IndentWidth: 4
 TabWidth: 4
-ColumnLimit: 120
+ColumnLimit: 140
 
 Language: Cpp
 Standard: Latest
@@ -9,14 +9,14 @@ Standard: Latest
 IncludeBlocks: Regroup
 
 IncludeCategories:
-  - Regex:           '(<|"mbed)'
+  - Regex:           '(<|"mbed|"interface)'
     Priority:        0
-    SortPriority:    0
-  - Regex:           '"(drivers|rtos|events|platform)'
-    Priority:        2
     SortPriority:    0
   - Regex:           'PinNames.h'
     Priority:        1
+    SortPriority:    0
+  - Regex:           '"(drivers|rtos|events|platform)'
+    Priority:        2
     SortPriority:    0
   - Regex:           '"(connectivity|features|storage|ble)'
     Priority:        3
@@ -57,9 +57,14 @@ AllowShortLambdasOnASingleLine: All
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterClass: true
-  AfterFunction: true
+  AfterStruct: true
   AfterEnum: true
+  AfterUnion: true
+  AfterFunction: true
+  AfterExternBlock: true
+  BeforeElse: true
   AfterNamespace: false
   BeforeLambdaBody: false
+  
 
 IndentPPDirectives: BeforeHash
