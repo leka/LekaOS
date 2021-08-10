@@ -20,7 +20,7 @@ CoreDACTimer coreTimer_6(hal, CoreDACTimer::HardWareBasicTimer::BasicTimer6);
 CoreDACTimer coreTimer_7(hal, CoreDACTimer::HardWareBasicTimer::BasicTimer7);
 CoreDAC coreDac(hal);
 
-uint32_t _count								 = 0;
+uint32_t _countSamples						 = 0;
 bool _ended									 = false;
 CoreDACTimer::HardWareBasicTimer _currentTim = CoreDACTimer::HardWareBasicTimer::BasicTimer6;
 
@@ -46,62 +46,72 @@ void fillBufferWithSinWave(uint16_t *buffer, uint32_t bufferSize, uint32_t frequ
 	}
 }
 
-void callbackTest(DAC_HandleTypeDef *hdac)
+void callbackTest(DAC_HandleTypeDef *)
 {
-	static const int numSecs = 3;
-	if (!_ended) {
-		_count++;
-	} else {
-		_count = 0;
+	static const int numSecs		 = 2;
+	static const uint32_t maxSamples = numSecs * 44100 / 256;	// Num of calls to callback in numSecs seconds
+	if (_countSamples <= maxSamples) {
+		_countSamples++;
 	}
-	if (_count == (numSecs * 44100 / 256)) {
-		// if (_count == 5) {
-		if (_currentTim == CoreDACTimer::HardWareBasicTimer::BasicTimer6) {
-			coreTimer_6.stop();
-		} else {
-			coreTimer_7.stop();
-		}
+	if (_countSamples == maxSamples) {
 		_ended = true;
+
+		switch (_currentTim) {
+			case CoreDACTimer::HardWareBasicTimer::BasicTimer6:
+				coreTimer_6.stop();
+				break;
+			case CoreDACTimer::HardWareBasicTimer::BasicTimer7:
+				coreTimer_7.stop();
+				break;
+		}
+	}
+}
+
+void startSound(CoreDACTimer::HardWareBasicTimer tim)
+{
+	_countSamples = 0;
+	_ended		  = false;
+	if (tim == CoreDACTimer::HardWareBasicTimer::BasicTimer6) {
+		coreTimer_6.start();
+		_currentTim = CoreDACTimer::HardWareBasicTimer::BasicTimer6;
+	} else if (tim == CoreDACTimer::HardWareBasicTimer::BasicTimer7) {
+		coreTimer_7.start();
+		_currentTim = CoreDACTimer::HardWareBasicTimer::BasicTimer7;
 	}
 }
 
 auto main() -> int
 {
 	std::array<uint16_t, 512> outBuff {};
-	fillBufferWithSinWave(outBuff.data(), 512, 512, 44100, 0x999, 0x666);
+	fillBufferWithSinWave(outBuff.data(), 512, 440, 44100, 0x999, 0x666);
+	auto outSpan = lstd::span {outBuff.data(), outBuff.size()};
 
 	printf("\n\nHello, investigation day!\n\n");
 
-	//
 	coreDac.setOnHalfBufferReadPtr(&callbackTest);
 	coreDac.setOnFullBufferReadPtr(&callbackTest);
 
 	// Init
 	coreTimer_6.initialize(44100);
-	coreTimer_7.initialize(22050);
+	coreTimer_7.initialize(44100);
+
 	coreDac.initialize(coreTimer_6);
-
-	// start
-	auto outSpan = lstd::span {outBuff.data(), outBuff.size()};
-
-	printf("First timer\n");
-	coreTimer_6.start();
 	coreDac.start(outSpan);
 
-	// wait preset period
+	// start
+	printf("First timer\n");
+	startSound(CoreDACTimer::HardWareBasicTimer::BasicTimer6);
+
 	while (!_ended) {
 		rtos::ThisThread::sleep_for(50ms);
 	}
-
 	rtos::ThisThread::sleep_for(2s);
+
+	coreDac.configTimer(coreTimer_7);	// change timer associated to DAC
+
 	printf("Second timer\n");
+	startSound(CoreDACTimer::HardWareBasicTimer::BasicTimer7);
 
-	coreDac.stop();
-	// coreDac.configTimer(coreTimer_7);
-	coreTimer_6.start();
-	// coreDac.start(outSpan);
-
-	_ended = false;
 	while (!_ended) {
 		rtos::ThisThread::sleep_for(50ms);
 	}
