@@ -5,6 +5,10 @@
 #ifndef _LEKA_OS_INTERFACE_DRIVER_CORE_IO_EXPANDER_H_
 #define _LEKA_OS_INTERFACE_DRIVER_CORE_IO_EXPANDER_H_
 
+#include <cstdint>
+
+#include "PlatformMutex.h"
+
 namespace leka::interface {
 
 class CoreIOExpander
@@ -27,7 +31,6 @@ class CoreIOExpander
 	virtual void disableInterrupts(uint16_t pins)					   = 0;
 	virtual void acknowledgeInterrupt(uint16_t &pin, uint16_t &values) = 0;
 
-  public:
 	PlatformMutex mutex;
 };
 

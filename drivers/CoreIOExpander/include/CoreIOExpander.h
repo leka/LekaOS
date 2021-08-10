@@ -134,7 +134,6 @@ class MCP23017 : public interface::CoreIOExpander
 	// 	virtual int is_connected() override { return 1; }
 	// };
 
-  public:
 	/** Allow ExpandedInput/Output/InputOutput to access internal members*/
 	// friend class ChannelInput;
 	// friend class ChannelOutput;
@@ -185,7 +184,7 @@ class MCP23017 : public interface::CoreIOExpander
 	interface::I2C &_i2c;
 	const uint8_t _I2C_ADDRESS = 0x4E;
 
-	PlatformMutex mutex;
+	// PlatformMutex mutex;
 };
 
 }	// namespace leka
