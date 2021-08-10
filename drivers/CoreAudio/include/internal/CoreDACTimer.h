@@ -28,8 +28,8 @@ class CoreDACTimer
 	void start();
 	void stop();
 
-	auto getHandle() -> TIM_HandleTypeDef;
-	auto getHardWareBasicTimer() -> HardWareBasicTimer;
+	[[nodiscard]] auto getHandle() const -> const TIM_HandleTypeDef &;
+	[[nodiscard]] auto getHardWareBasicTimer() const -> const HardWareBasicTimer &;
 
   private:
 	LKCoreSTM32HalBase &_hal;

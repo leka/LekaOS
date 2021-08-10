@@ -16,20 +16,20 @@ class CoreDAC
   public:
 	explicit CoreDAC(LKCoreSTM32HalBase &hal);
 
-	void initialize(CoreDACTimer &tim);
+	void initialize(const CoreDACTimer &tim);
 	void terminate();
-	void configTimer(CoreDACTimer &tim);
-	void start(lstd::span<uint16_t> &outBuffer);
+	void configTimer(const CoreDACTimer &tim);
+	void start(const lstd::span<uint16_t> &outBuffer);
 	void stop();
-	auto getHandle() -> DAC_HandleTypeDef &;
-	auto getDMAHandle() -> DMA_HandleTypeDef &;
+
+	[[nodiscard]] auto getHandle() const -> const DAC_HandleTypeDef &;
+	[[nodiscard]] auto getDMAHandle() const -> const DMA_HandleTypeDef &;
 
 	template <class ReadBuffCb>
 	void setOnHalfBufferReadPtr(ReadBuffCb cb)
 	{
 		this->_pOnHalfBufferRead = static_cast<pDAC_CallbackTypeDef>(cb);
 	}
-
 	template <class ReadBuffCb>
 	void setOnFullBufferReadPtr(ReadBuffCb cb)
 	{

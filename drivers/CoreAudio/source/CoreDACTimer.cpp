@@ -48,12 +48,12 @@ void CoreDACTimer::stop()
 	_hal.HAL_TIM_Base_Stop(&_htim);
 }
 
-auto CoreDACTimer::getHandle() -> TIM_HandleTypeDef
+auto CoreDACTimer::getHandle() const -> const TIM_HandleTypeDef &
 {
 	return this->_htim;
 }
 
-auto CoreDACTimer::getHardWareBasicTimer() -> HardWareBasicTimer
+auto CoreDACTimer::getHardWareBasicTimer() const -> const HardWareBasicTimer &
 {
 	return _hardwareTim;
 }
