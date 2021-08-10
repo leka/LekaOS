@@ -8,7 +8,7 @@ CoreDAC::CoreDAC(LKCoreSTM32HalBase &hal) : _hal(hal)
 	_hdma.Instance = DMA1_Stream5;
 }
 
-void CoreDAC::initialize(CoreDACTimer &tim)
+void CoreDAC::initialize(const CoreDACTimer &tim)
 {
 	_hal.HAL_RCC_GPIOA_CLK_ENABLE();
 
@@ -29,7 +29,7 @@ void CoreDAC::terminate()
 	_hal.HAL_DAC_DeInit(&_hdac);
 }
 
-void CoreDAC::configTimer(CoreDACTimer &tim)
+void CoreDAC::configTimer(const CoreDACTimer &tim)
 {
 	DAC_ChannelConfTypeDef sConfig = {0};
 	sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;	  // necessary to reach the full voltage range in DAC output
@@ -47,7 +47,7 @@ void CoreDAC::configTimer(CoreDACTimer &tim)
 	_hal.HAL_DAC_ConfigChannel(&_hdac, &sConfig, DAC_CHANNEL_1);
 }
 
-void CoreDAC::start(lstd::span<uint16_t> &outBuffer)
+void CoreDAC::start(const lstd::span<uint16_t> &outBuffer)
 {
 	_hal.HAL_DAC_Start_DMA(&_hdac, DAC_CHANNEL_1, (uint32_t *)(outBuffer.data()), outBuffer.size(), DAC_ALIGN_12B_R);
 }
@@ -57,12 +57,12 @@ void CoreDAC::stop()
 	_hal.HAL_DAC_Stop_DMA(&_hdac, DAC_CHANNEL_1);
 }
 
-auto CoreDAC::getHandle() -> DAC_HandleTypeDef &
+auto CoreDAC::getHandle() const -> const DAC_HandleTypeDef &
 {
 	return this->_hdac;
 }
 
-auto CoreDAC::getDMAHandle() -> DMA_HandleTypeDef &
+auto CoreDAC::getDMAHandle() const -> const DMA_HandleTypeDef &
 {
 	return this->_hdma;
 }
