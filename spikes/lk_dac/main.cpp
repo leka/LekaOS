@@ -11,14 +11,10 @@
 
 using namespace leka;
 
-mbed::DigitalOut audio_enable(SOUND_ENABLE, 1);
-static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
-
 LKCoreSTM32Hal hal;
-
+CoreDAC coreDac(hal);
 CoreDACTimer coreTimer_6(hal, CoreDACTimer::HardWareBasicTimer::BasicTimer6);
 CoreDACTimer coreTimer_7(hal, CoreDACTimer::HardWareBasicTimer::BasicTimer7);
-CoreDAC coreDac(hal);
 
 uint32_t _countSamples						 = 0;
 bool _ended									 = false;
@@ -40,9 +36,9 @@ void fillBufferWithSinWave(uint16_t *buffer, uint32_t bufferSize, uint32_t frequ
 	uint32_t samplesPerPeriod = (samplingRate / frequency);
 
 	for (uint32_t i = 0; i < bufferSize; ++i) {
-		float tmp = 0.5 * sin(i * 2.0 * M_PI / samplesPerPeriod) + 0.5;
+		double tmp = 0.5 * sin(i * 2.0 * M_PI / samplesPerPeriod) + 0.5;
 		tmp *= maxValue - minValue;
-		buffer[i] = tmp + minValue;
+		buffer[i] = static_cast<uint16_t>(tmp + minValue);
 	}
 }
 
@@ -56,13 +52,10 @@ void callbackTest(DAC_HandleTypeDef *)
 	if (_countSamples == maxSamples) {
 		_ended = true;
 
-		switch (_currentTim) {
-			case CoreDACTimer::HardWareBasicTimer::BasicTimer6:
-				coreTimer_6.stop();
-				break;
-			case CoreDACTimer::HardWareBasicTimer::BasicTimer7:
-				coreTimer_7.stop();
-				break;
+		if (_currentTim == CoreDACTimer::HardWareBasicTimer::BasicTimer6) {
+			coreTimer_6.stop();
+		} else {
+			coreTimer_7.stop();
 		}
 	}
 }
@@ -80,8 +73,16 @@ void startSound(CoreDACTimer::HardWareBasicTimer tim)
 	}
 }
 
+/**
+ * @brief Tests DAC and Timer
+ * Will make the haptic actuator vibrate at a given frequency during 2 phases, one per timer
+ * @return int
+ */
 auto main() -> int
 {
+	mbed::DigitalOut audio_enable(SOUND_ENABLE, 1);
+	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
+
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 
 	std::array<uint16_t, 512> outBuff {};
