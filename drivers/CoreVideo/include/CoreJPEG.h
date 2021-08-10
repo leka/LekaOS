@@ -23,7 +23,7 @@ struct JPEGConfig : JPEG_ConfTypeDef {
 
 class CoreJPEG : public interface::CoreJPEG
 {
-  public:
+	public:
 	CoreJPEG(LKCoreSTM32HalBase &hal, interface::CoreJPEGMode &mode);
 
 	void initialize() final;
@@ -32,11 +32,13 @@ class CoreJPEG : public interface::CoreJPEG
 
 	auto decodeImage(interface::File &file) -> uint32_t final;
 
+	void decodeImageAsync(LKCoreFatFsBase &file, std::function<void(int)>& cb);
+
 	auto getConfig() -> JPEGConfig;
 
 	static auto findFrameOffset(interface::File &file, uint32_t offset) -> uint32_t;
 
-  private:
+	private:
 	LKCoreSTM32HalBase &_hal;
 	interface::CoreJPEGMode &_mode;
 };

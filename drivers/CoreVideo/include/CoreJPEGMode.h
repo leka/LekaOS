@@ -21,7 +21,7 @@ struct CoreJPEGMode : interface::CoreJPEGMode {
 
 	void onErrorCallback(JPEG_HandleTypeDef *hjpeg) override;
 
-  protected:
+	protected:
 	explicit CoreJPEGMode(LKCoreSTM32HalBase &hal);
 	virtual void reset();
 
@@ -40,12 +40,13 @@ struct CoreJPEGModeDMA : CoreJPEGMode {
 	explicit CoreJPEGModeDMA(LKCoreSTM32HalBase &hal);
 
 	auto decodeImage(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> uint32_t final;
+	void decodeImageAsync(JPEG_HandleTypeDef *hjpeg, LKCoreFatFsBase &file, std::function<void(int)>& cb) final;
 
 	void onMspInitCallback(JPEG_HandleTypeDef *hjpeg) final;
 	void onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize) final;
 	void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_data, uint32_t datasize) final;
 
-  private:
+	private:
 	static std::array<uint8_t, jpeg::input_chunk_size * jpeg::input_buffers_nb> BIG_CHUNGUS_OF_MEMORY_IN;
 	static std::array<uint8_t, jpeg::output_chunk_size * jpeg::output_buffers_nb> BIG_CHUNGUS_OF_MEMORY_OUT;
 

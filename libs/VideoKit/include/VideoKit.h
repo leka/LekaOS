@@ -22,7 +22,7 @@ namespace leka {
 
 class VideoKit
 {
-  public:
+	public:
 	VideoKit(LKCoreSTM32HalBase &);
 
 	auto getDSI() -> CoreDSI &;
@@ -48,9 +48,13 @@ class VideoKit
 
 	auto drawImage(FileSystemKit::File &file, JPEGConfig &config) -> uint32_t;
 
+	void drawImageAsync(LKCoreFatFs &file, JPEGConfig &config, std::function<void(int)>& cb);
+
 	void display();
 
-  private:
+	uint32_t async_count = 0;
+
+	private:
 	void refresh();
 	void tick();
 

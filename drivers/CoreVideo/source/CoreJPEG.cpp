@@ -76,6 +76,11 @@ auto CoreJPEG::decodeImage(interface::File &file) -> std::uint32_t
 	return _mode.decodeImage(&_handle, file);
 }
 
+void CoreJPEG::decodeImageAsync(LKCoreFatFsBase &file, std::function<void(int)>& cb)
+{
+	_mode.decodeImageAsync(file, cb);
+}
+
 auto CoreJPEG::findFrameOffset(interface::File &file, uint32_t offset) -> uint32_t
 {
 	std::array<uint8_t, 512> pattern_search_buffer;

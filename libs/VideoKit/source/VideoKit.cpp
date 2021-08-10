@@ -1,3 +1,5 @@
+#include <functional>
+
 #include "VideoKit.h"
 
 using namespace leka;
@@ -126,6 +128,17 @@ auto VideoKit::drawImage(FileSystemKit::File &file, JPEGConfig &config) -> uint3
 	_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, config.getWidthOffset());
 
 	return img_size;
+}
+
+void VideoKit::drawImageAsync(LKCoreFatFs &file, JPEGConfig &config, std::function<void(int)>& cb)
+{
+	auto videoKitCallbackWrapper = [this, &config, cb] (int img_size) {
+        cb(img_size);
+		_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, config.getWidthOffset());
+        this->async_count--;
+    };
+    _corejpeg.decodeImageAsync(file, videoKitCallbackWrapper);
+	async_count++;
 }
 
 void VideoKit::display()

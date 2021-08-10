@@ -141,6 +141,43 @@ void CoreJPEGModeDMA::reset()
 	}
 }
 
+struct DecodeThreadArgs {
+	CoreJPEGModeDMA *self;
+    LKCoreFatFsBase *file;
+    std::function<void(int)> *callback;
+};
+
+void JPEGDecodeThread(DecodeThreadArgs *args) {
+    do {
+        inputHandler();
+        ended = outputHandler();
+        rtos::ThisThread::yield();
+    } while(!ended);
+    
+    callback(image_size);
+}
+
+void CoreJPEGModeDMA::decodeImageAsync(JPEG_HandleTypeDef *hjpeg, LKCoreFatFsBase &file, std::function<void(int)> &cb)
+{
+	reset();
+
+	// read file and fill input buffers
+	for (auto &buffer: _input_buffers) {
+		if (file.read(buffer.data, jpeg::input_chunk_size, &buffer.datasize) == FR_OK) {
+			buffer.state = Buffer::State::Full;
+		}
+	}
+
+	// start JPEG decoding with DMA method
+	HAL_JPEG_Decode_DMA(hjpeg, _input_buffers[0].data, _input_buffers[0].datasize, _output_buffers[0].data,
+						jpeg::output_chunk_size);
+
+	DecodeThreadArgs args;
+	args.self = this;
+	args.file = &file;
+	args.callback = &cb;
+}
+
 auto CoreJPEGModeDMA::decodeImage(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> uint32_t
 {
 	reset();
