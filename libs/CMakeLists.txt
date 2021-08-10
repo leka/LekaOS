@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 add_subdirectory(${LIBS_DIR}/FileManager)
+add_subdirectory(${LIBS_DIR}/FileSystemKit)
 
 add_subdirectory(${LIBS_DIR}/HardwareTest/LekaSD)
 add_subdirectory(${LIBS_DIR}/HardwareTest/LekaMotors)

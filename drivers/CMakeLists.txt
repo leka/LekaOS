@@ -6,7 +6,7 @@
 add_subdirectory(${DRIVERS_DIR}/CoreI2C)
 add_subdirectory(${DRIVERS_DIR}/CorePwm)
 add_subdirectory(${DRIVERS_DIR}/LKCoreLL)
-add_subdirectory(${DRIVERS_DIR}/LKCoreFatFs)
+add_subdirectory(${DRIVERS_DIR}/CoreFs)
 add_subdirectory(${DRIVERS_DIR}/LKCoreSTM32Hal)
 add_subdirectory(${DRIVERS_DIR}/CoreBufferedSerial)
 
