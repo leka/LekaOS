@@ -62,7 +62,7 @@ namespace interface {
 
 		virtual void sendCommandToTag(lstd::span<uint8_t> cmd) = 0;
 
-		virtual auto receiveDataFromTag(lstd::span<uint8_t> data) -> size_t = 0;
+		virtual auto receiveDataFromTag(lstd::span<uint8_t> data) -> bool = 0;
 
 		class ISO14443
 		{
