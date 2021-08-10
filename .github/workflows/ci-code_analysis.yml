@@ -339,3 +339,205 @@ jobs:
                | grep -E -v "_test" \
                | grep -E    "\.h$|\.cpp$" \
                | xargs --no-run-if-empty clang-tidy-12 -p=. --quiet
+
+  build_compare_leka:
+    name: Build & Compare
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      #
+      # Mark: - Install ARM GCC Toolchain
+      #
+
+      - name: Cache ARM GCC Toolchain
+        id: cache_arm_toolchain
+        uses: actions/cache@v2
+        with:
+          path: ~/gcc-arm-none-eabi
+          key: ${{ runner.os }}-global_cache-arm_toolchain-${{ steps.cache_variables.outputs.arm_toolchain_url_sha }}
+
+      - name: Install ARM GCC Toolchain
+        if: steps.cache_arm_toolchain.outputs.cache-hit != 'true'
+        run: |
+          wget ${{ env.ARM_TOOLCHAIN_URL }}
+          tar -xjf ${{ env.ARM_TOOLCHAIN_FILENAME }} && rm -rf ${{ env.ARM_TOOLCHAIN_FILENAME }}
+          mv ${{ env.ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} ~/gcc-arm-none-eabi
+
+      - name: Add ARM GCC Toolchain to path
+        run: |
+          echo "~/gcc-arm-none-eabi/bin" >> $GITHUB_PATH
+
+      - name: Test ARM GCC Toolchain
+        run: |
+          ls -al ~/gcc-arm-none-eabi/bin
+          arm-none-eabi-gcc -v
+
+      #
+      # Mark: - Install misc. tools
+      #
+
+      - name: Install tools
+        run: |
+          sudo apt-get install -y --no-install-recommends ninja-build ccache
+
+      #
+      # Mark: - Download `extern` dependencies
+      #
+
+      - name: Cache extern dependencies
+        id: cache_extern_dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            extern/mbed-os
+            extern/mcuboot
+          key: ${{ runner.os }}-global_cache-extern_dependencies-${{ hashFiles('.mbed_version', '.mcuboot_version') }}
+
+      - name: Pull extern dependencies
+        if: steps.cache_extern_dependencies.outputs.cache-hit != 'true'
+        run: |
+          make mbed_curl
+          make mcuboot_clone
+
+      - name: Cache ccache
+        id: cache_ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR}}
+          key: ${{ runner.os }}-cache-cross_compilation-${{ matrix.custom_target }}-ccache-${{ steps.cache_variables.outputs.date }}
+          restore-keys: |
+            ${{ runner.os }}-cache-cross_compilation-${{ matrix.custom_target }}-ccache-
+
+      #
+      # Mark: - Install python/pip dependencies
+      #
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.x"
+
+      - name: Cache pip dependencies
+        id: cache_pip_dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/pip
+            ${{ env.pythonLocation }}
+          key: ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-${{ hashFiles('extern/mbed-os/requirements.txt', '.mbed_version') }}
+
+      - name: Install pip packages
+        run: |
+          pip install --upgrade --upgrade-strategy eager mbed-cli
+          pip install --upgrade --upgrade-strategy eager -r ./extern/mbed-os/requirements.txt
+
+      - name: Test pip packages
+        run: |
+          pip list -v
+          mbed-cli --help
+
+      #
+      # Mark: - Prepare, config, compile
+      #
+
+      - name: Create base & head sha variables
+        id: create_sha_variables
+        run: |
+          git checkout ${{ github.base_ref }}
+          echo "base_sha=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          git checkout ${{ github.head_ref }}
+          echo "head_sha=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Create temporary directories
+        run: |
+          mkdir -p _mbed_tmp/${{ env.base_sha }}
+          mkdir -p _mbed_tmp/${{ env.head_sha }}
+
+      - name: Compile base branch
+        run: |
+          git checkout ${{ github.base_ref }}
+          make deep_clean
+          make config
+          make
+
+      - name: Move ${{ github.base_ref }}:${{ env.base_sha }} bin & map files to temporary directory
+        run: |
+          find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _mbed_tmp/${{ env.base_sha }}
+          find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _mbed_tmp/${{ env.base_sha }}
+
+      - name: Compile pr branch
+        run: |
+          git checkout ${{ github.head_ref }}
+          make deep_clean
+          make config
+          make
+
+      - name: Move ${{ github.head_ref }}:${{ env.head_sha }} bin & map files to temporary directory
+        run: |
+          find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _mbed_tmp/${{ env.head_sha }}
+          find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _mbed_tmp/${{ env.head_sha }}
+
+      - name: Compare bin files
+        run: |
+          echo 'bin_diff_list<<eof' >> $GITHUB_ENV
+          echo "| File  | Status |" >> $GITHUB_ENV
+          echo "|-------|:------:|" >> $GITHUB_ENV
+          for f in $( find _mbed_tmp/${{ env.base_sha }} -name '*.bin'); do
+            file_name=$(basename $f)
+            if ! diff _mbed_tmp/${{ env.base_sha }}/$file_name _mbed_tmp/${{ env.head_sha }}/$file_name 2>/dev/null; then
+              echo "| $file_name | ❌ |"  >> $GITHUB_ENV
+            else
+              echo "| $file_name | ✅ |"  >> $GITHUB_ENV
+            fi
+          done
+          echo 'eof' >> $GITHUB_ENV
+
+      - name: Compare maps files
+        run: |
+          echo 'map_diff_list<<eof' >> $GITHUB_ENV
+          for f in $( find _mbed_tmp/${{ env.base_sha }} -name '*.map'); do
+            file_name=$(basename $f)
+            python3 extern/mbed-os/tools/memap.py -t GCC_ARM _mbed_tmp/${{ env.base_sha }}/$file_name > _mbed_tmp/${{ env.base_sha }}/$file_name.txt
+            python3 extern/mbed-os/tools/memap.py -t GCC_ARM _mbed_tmp/${{ env.head_sha }}/$file_name > _mbed_tmp/${{ env.head_sha }}/$file_name.txt
+            echo "### \`$file_name\`"  >> $GITHUB_ENV
+            if ! diff_output=$(diff --unified=150 _mbed_tmp/${{ env.base_sha }}/$file_name.txt _mbed_tmp/${{ env.head_sha }}/$file_name.txt); then
+              echo $diff_output
+              echo "" >> $GITHUB_ENV
+              echo "\`\`\`diff" >> $GITHUB_ENV
+              echo "$diff_output" >> $GITHUB_ENV
+              echo "\`\`\`" >> $GITHUB_ENV
+            else
+              echo "No \`.map\` differences found." >> $GITHUB_ENV
+            fi
+            echo "" >> $GITHUB_ENV
+          done
+          echo 'eof' >> $GITHUB_ENV
+
+      - name: Publish differences
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          recreate: true
+          message: |
+            #  Build & Compare Report
+
+            ## Commits
+
+            - base: `${{ github.base_ref }}:${{ env.base_sha }}`
+            - head:   `${{ github.head_ref }}:${{ env.head_sha }}`
+
+            ## Binary files diff output
+
+            - ✅ - files are the same
+            - ❌ - files are different
+
+            ${{ env.bin_diff_list }}
+
+            ## Map files diff output
+
+            ${{ env.map_diff_list }}
