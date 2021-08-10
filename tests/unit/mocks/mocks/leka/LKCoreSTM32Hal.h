@@ -42,7 +42,8 @@ class LKCoreSTM32HalMock : public LKCoreSTM32HalBase
 	MOCK_METHOD(void, HAL_NVIC_EnableIRQ, (IRQn_Type IRQn), (override));
 
 	MOCK_METHOD(HALStatus, HAL_SDRAM_Init, (SDRAM_HandleTypeDef *, FMC_SDRAM_TimingTypeDef *), (override));
-	MOCK_METHOD(HALStatus, HAL_SDRAM_SendCommand, (SDRAM_HandleTypeDef *, FMC_SDRAM_CommandTypeDef *, uint32_t), (override));
+	MOCK_METHOD(HALStatus, HAL_SDRAM_SendCommand, (SDRAM_HandleTypeDef *, FMC_SDRAM_CommandTypeDef *, uint32_t),
+				(override));
 	MOCK_METHOD(HALStatus, HAL_SDRAM_ProgramRefreshRate, (SDRAM_HandleTypeDef *, uint32_t), (override));
 
 	MOCK_METHOD(HALStatus, HAL_DMA_Init, (DMA_HandleTypeDef *), (override));
@@ -70,7 +71,8 @@ class LKCoreSTM32HalMock : public LKCoreSTM32HalBase
 	MOCK_METHOD(HALStatus, HAL_DSI_LongWrite, (DSI_HandleTypeDef *, uint32_t, uint32_t, uint32_t, uint32_t, uint8_t *),
 				(override));
 
-	MOCK_METHOD(HALStatus, HAL_DSI_RegisterCallback, (DSI_HandleTypeDef *, HAL_DSI_CallbackIDTypeDef, pDSI_CallbackTypeDef), (override));
+	MOCK_METHOD(HALStatus, HAL_DSI_RegisterCallback,
+				(DSI_HandleTypeDef *, HAL_DSI_CallbackIDTypeDef, pDSI_CallbackTypeDef), (override));
 
 	MOCK_METHOD(HALStatus, HAL_LTDC_Init, (LTDC_HandleTypeDef *), (override));
 	MOCK_METHOD(HALStatus, HAL_LTDC_ConfigLayer, (LTDC_HandleTypeDef *, LTDC_LayerCfgTypeDef *, uint32_t), (override));
@@ -79,14 +81,18 @@ class LKCoreSTM32HalMock : public LKCoreSTM32HalBase
 
 	MOCK_METHOD(HALStatus, HAL_JPEG_Init, (JPEG_HandleTypeDef *), (override));
 	MOCK_METHOD(HALStatus, HAL_JPEG_GetInfo, (JPEG_HandleTypeDef *, JPEG_ConfTypeDef *), (override));
-	MOCK_METHOD(HALStatus, HAL_JPEG_Decode,
-				(JPEG_HandleTypeDef *, uint8_t *, uint32_t InDataLength, uint8_t *, uint32_t, uint32_t), (override));
+	MOCK_METHOD(HALStatus, HAL_JPEG_Decode, (JPEG_HandleTypeDef *, uint8_t *, uint32_t, uint8_t *, uint32_t, uint32_t),
+				(override));
 	MOCK_METHOD(void, HAL_JPEG_ConfigInputBuffer, (JPEG_HandleTypeDef *, uint8_t *, uint32_t), (override));
 	MOCK_METHOD(void, HAL_JPEG_ConfigOutputBuffer, (JPEG_HandleTypeDef *, uint8_t *, uint32_t), (override));
-	MOCK_METHOD(HALStatus, HAL_JPEG_RegisterInfoReadyCallback, (JPEG_HandleTypeDef *, pJPEG_InfoReadyCallbackTypeDef), (override));
-	MOCK_METHOD(HALStatus, HAL_JPEG_RegisterGetDataCallback, (JPEG_HandleTypeDef *, pJPEG_GetDataCallbackTypeDef), (override));
-	MOCK_METHOD(HALStatus, HAL_JPEG_RegisterDataReadyCallback, (JPEG_HandleTypeDef *, pJPEG_DataReadyCallbackTypeDef), (override));
-	MOCK_METHOD(HALStatus, HAL_JPEG_RegisterCallback, (JPEG_HandleTypeDef *, HAL_JPEG_CallbackIDTypeDef, pJPEG_CallbackTypeDef), (override));
+	MOCK_METHOD(HALStatus, HAL_JPEG_RegisterInfoReadyCallback, (JPEG_HandleTypeDef *, pJPEG_InfoReadyCallbackTypeDef),
+				(override));
+	MOCK_METHOD(HALStatus, HAL_JPEG_RegisterGetDataCallback, (JPEG_HandleTypeDef *, pJPEG_GetDataCallbackTypeDef),
+				(override));
+	MOCK_METHOD(HALStatus, HAL_JPEG_RegisterDataReadyCallback, (JPEG_HandleTypeDef *, pJPEG_DataReadyCallbackTypeDef),
+				(override));
+	MOCK_METHOD(HALStatus, HAL_JPEG_RegisterCallback,
+				(JPEG_HandleTypeDef *, HAL_JPEG_CallbackIDTypeDef, pJPEG_CallbackTypeDef), (override));
 };
 
 }	// namespace leka

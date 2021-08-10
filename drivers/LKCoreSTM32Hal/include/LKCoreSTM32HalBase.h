@@ -62,15 +62,15 @@ class LKCoreSTM32HalBase
 	virtual HALStatus HAL_DMA2D_Start_IT(DMA2D_HandleTypeDef *, uint32_t, uint32_t, uint32_t, uint32_t) = 0;
 	virtual HALStatus HAL_DMA2D_PollForTransfer(DMA2D_HandleTypeDef *, uint32_t)						= 0;
 
-	virtual HALStatus HAL_DSI_Init(DSI_HandleTypeDef *, DSI_PLLInitTypeDef *)									= 0;
-	virtual HALStatus HAL_DSI_DeInit(DSI_HandleTypeDef *)														= 0;
-	virtual HALStatus HAL_DSI_Start(DSI_HandleTypeDef *)														= 0;
-	virtual HALStatus HAL_DSI_Refresh(DSI_HandleTypeDef *)														= 0;
-	virtual HALStatus HAL_DSI_ConfigVideoMode(DSI_HandleTypeDef *, DSI_VidCfgTypeDef *)							= 0;
-	virtual HALStatus HAL_DSI_ConfigAdaptedCommandMode(DSI_HandleTypeDef *, DSI_CmdCfgTypeDef *)				= 0;
-	virtual HALStatus HAL_DSI_ConfigCommand(DSI_HandleTypeDef *, DSI_LPCmdTypeDef *)							= 0;
-	virtual HALStatus HAL_DSI_ConfigFlowControl(DSI_HandleTypeDef *, uint32_t)									= 0;
-	virtual HALStatus HAL_DSI_ConfigPhyTimer(DSI_HandleTypeDef *, DSI_PHY_TimerTypeDef *)						= 0;
+	virtual HALStatus HAL_DSI_Init(DSI_HandleTypeDef *, DSI_PLLInitTypeDef *)					 = 0;
+	virtual HALStatus HAL_DSI_DeInit(DSI_HandleTypeDef *)										 = 0;
+	virtual HALStatus HAL_DSI_Start(DSI_HandleTypeDef *)										 = 0;
+	virtual HALStatus HAL_DSI_Refresh(DSI_HandleTypeDef *)										 = 0;
+	virtual HALStatus HAL_DSI_ConfigVideoMode(DSI_HandleTypeDef *, DSI_VidCfgTypeDef *)			 = 0;
+	virtual HALStatus HAL_DSI_ConfigAdaptedCommandMode(DSI_HandleTypeDef *, DSI_CmdCfgTypeDef *) = 0;
+	virtual HALStatus HAL_DSI_ConfigCommand(DSI_HandleTypeDef *, DSI_LPCmdTypeDef *)			 = 0;
+	virtual HALStatus HAL_DSI_ConfigFlowControl(DSI_HandleTypeDef *, uint32_t)					 = 0;
+	virtual HALStatus HAL_DSI_ConfigPhyTimer(DSI_HandleTypeDef *, DSI_PHY_TimerTypeDef *)		 = 0;
 
 	virtual HALStatus HAL_DSI_ShortWrite(DSI_HandleTypeDef *, uint32_t, uint32_t, uint32_t, uint32_t)			= 0;
 	virtual HALStatus HAL_DSI_LongWrite(DSI_HandleTypeDef *, uint32_t, uint32_t, uint32_t, uint32_t, uint8_t *) = 0;
@@ -89,10 +89,11 @@ class LKCoreSTM32HalBase
 	virtual void HAL_JPEG_ConfigInputBuffer(JPEG_HandleTypeDef *, uint8_t *, uint32_t)							= 0;
 	virtual void HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *, uint8_t *, uint32_t)							= 0;
 
-	virtual HALStatus HAL_JPEG_RegisterInfoReadyCallback(JPEG_HandleTypeDef *, pJPEG_InfoReadyCallbackTypeDef ) 		 = 0;
-	virtual HALStatus HAL_JPEG_RegisterGetDataCallback(JPEG_HandleTypeDef *, pJPEG_GetDataCallbackTypeDef ) 			 = 0;
-	virtual HALStatus HAL_JPEG_RegisterDataReadyCallback(JPEG_HandleTypeDef *, pJPEG_DataReadyCallbackTypeDef ) 		 = 0;
-	virtual HALStatus HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *, HAL_JPEG_CallbackIDTypeDef, pJPEG_CallbackTypeDef) = 0;
+	virtual HALStatus HAL_JPEG_RegisterInfoReadyCallback(JPEG_HandleTypeDef *, pJPEG_InfoReadyCallbackTypeDef) = 0;
+	virtual HALStatus HAL_JPEG_RegisterGetDataCallback(JPEG_HandleTypeDef *, pJPEG_GetDataCallbackTypeDef)	   = 0;
+	virtual HALStatus HAL_JPEG_RegisterDataReadyCallback(JPEG_HandleTypeDef *, pJPEG_DataReadyCallbackTypeDef) = 0;
+	virtual HALStatus HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *, HAL_JPEG_CallbackIDTypeDef,
+												pJPEG_CallbackTypeDef)										   = 0;
 };
 
 }	// namespace leka

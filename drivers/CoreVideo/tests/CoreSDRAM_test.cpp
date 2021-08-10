@@ -1,6 +1,6 @@
-// // Leka - LekaOS
-// // Copyright 2021 APF France handicap
-// // SPDX-License-Identifier: Apache-2.0
+// Leka - LekaOS
+// Copyright 2021 APF France handicap
+// SPDX-License-Identifier: Apache-2.0
 
 #include "CoreSDRAM.h"
 
@@ -17,9 +17,6 @@ class CoreSDRAMTest : public ::testing::Test
 {
   protected:
 	CoreSDRAMTest() : coresdram(halmock) {}
-
-	// void SetUp() override {}
-	// void TearDown() override {}
 
 	LKCoreSTM32HalMock halmock;
 	CoreSDRAM coresdram;

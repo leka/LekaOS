@@ -219,7 +219,8 @@ HALStatus LKHal::HAL_DSI_ConfigPhyTimer(DSI_HandleTypeDef *hdsi, DSI_PHY_TimerTy
 	return ::HAL_DSI_ConfigPhyTimer(hdsi, PhyTimers);
 }
 
-HALStatus LKHal::HAL_DSI_RegisterCallback(DSI_HandleTypeDef *hdsi, HAL_DSI_CallbackIDTypeDef id, pDSI_CallbackTypeDef cb)
+HALStatus LKHal::HAL_DSI_RegisterCallback(DSI_HandleTypeDef *hdsi, HAL_DSI_CallbackIDTypeDef id,
+										  pDSI_CallbackTypeDef cb)
 {
 	return ::HAL_DSI_RegisterCallback(hdsi, id, cb);
 }
@@ -293,8 +294,8 @@ HALStatus LKHal::HAL_JPEG_RegisterDataReadyCallback(JPEG_HandleTypeDef *hjpeg, p
 	return ::HAL_JPEG_RegisterDataReadyCallback(hjpeg, pCallback);
 }
 
-
-HALStatus LKHal::HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *hjpeg, HAL_JPEG_CallbackIDTypeDef id, pJPEG_CallbackTypeDef cb)
+HALStatus LKHal::HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *hjpeg, HAL_JPEG_CallbackIDTypeDef id,
+										   pJPEG_CallbackTypeDef cb)
 {
 	return ::HAL_JPEG_RegisterCallback(hjpeg, id, cb);
 }

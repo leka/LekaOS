@@ -43,27 +43,30 @@ void CoreJPEG::registerCallbacks()
 	static CoreJPEG *self;
 	self = this;
 
-	_hal.HAL_JPEG_RegisterInfoReadyCallback(&_handle, [](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) {
+	auto info_ready_cb = [](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) {
 		self->_mode.onInfoReadyCallback(hjpeg, info);
-	});
+	};
 
-	_hal.HAL_JPEG_RegisterGetDataCallback(&_handle, [](JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize) {
+	auto get_data_cb = [](JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize) {
 		self->_mode.onGetDataCallback(hjpeg, decoded_datasize);
-	});
+	};
 
-	_hal.HAL_JPEG_RegisterDataReadyCallback(&_handle,
-									   [](JPEG_HandleTypeDef *hjpeg, uint8_t *output_data, uint32_t datasize) {
-										   self->_mode.onDataReadyCallback(hjpeg, output_data, datasize);
-									   });
+	auto data_ready_cb = [](JPEG_HandleTypeDef *hjpeg, uint8_t *output_data, uint32_t datasize) {
+		self->_mode.onDataReadyCallback(hjpeg, output_data, datasize);
+	};
 
-	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_DECODE_CPLT_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onDecodeCompleteCallback(hjpeg); });
+	auto decode_cmplt_cb = [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onDecodeCompleteCallback(hjpeg); };
 
-	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_ERROR_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onErrorCallback(hjpeg); });
+	auto error_cb = [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onErrorCallback(hjpeg); };
 
-	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_MSPINIT_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onMspInitCallback(hjpeg); });
+	auto mspinit_cb = [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onMspInitCallback(hjpeg); };
+
+	_hal.HAL_JPEG_RegisterInfoReadyCallback(&_handle, info_ready_cb);
+	_hal.HAL_JPEG_RegisterGetDataCallback(&_handle, get_data_cb);
+	_hal.HAL_JPEG_RegisterDataReadyCallback(&_handle, data_ready_cb);
+	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_DECODE_CPLT_CB_ID, decode_cmplt_cb);
+	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_ERROR_CB_ID, error_cb);
+	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_MSPINIT_CB_ID, mspinit_cb);
 }
 
 auto CoreJPEG::decodeImage(LKCoreFatFsBase &file) -> std::uint32_t

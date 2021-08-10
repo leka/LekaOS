@@ -22,9 +22,6 @@ class LKCoreOTM8009ATest : public ::testing::Test
   protected:
 	LKCoreOTM8009ATest() : otm(dsimock, PinName::SCREEN_BACKLIGHT_PWM) {}
 
-	// void SetUp() override {}
-	// void TearDown() override {}
-
 	CoreDSIMock dsimock;
 	CoreLCDDriverOTM8009A otm;
 };

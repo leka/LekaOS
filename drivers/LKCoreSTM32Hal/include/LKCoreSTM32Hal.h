@@ -91,11 +91,13 @@ class LKCoreSTM32Hal : public LKCoreSTM32HalBase
 	void HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer,
 									 uint32_t OutDataLength) final;
 
-	HALStatus HAL_JPEG_RegisterInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_InfoReadyCallbackTypeDef pCallback) final;
+	HALStatus HAL_JPEG_RegisterInfoReadyCallback(JPEG_HandleTypeDef *hjpeg,
+												 pJPEG_InfoReadyCallbackTypeDef pCallback) final;
 	HALStatus HAL_JPEG_RegisterGetDataCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_GetDataCallbackTypeDef pCallback) final;
-	HALStatus HAL_JPEG_RegisterDataReadyCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_DataReadyCallbackTypeDef pCallback) final;
-	HALStatus HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *hjpeg, HAL_JPEG_CallbackIDTypeDef CallbackID, pJPEG_CallbackTypeDef pCallback) final;
-
+	HALStatus HAL_JPEG_RegisterDataReadyCallback(JPEG_HandleTypeDef *hjpeg,
+												 pJPEG_DataReadyCallbackTypeDef pCallback) final;
+	HALStatus HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *hjpeg, HAL_JPEG_CallbackIDTypeDef CallbackID,
+										pJPEG_CallbackTypeDef pCallback) final;
 };
 
 }	// namespace leka

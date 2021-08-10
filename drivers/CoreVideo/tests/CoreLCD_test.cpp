@@ -20,9 +20,6 @@ class CoreLCDTest : public ::testing::Test
   protected:
 	CoreLCDTest() : corelcd(lcddrivermock) {}
 
-	// void SetUp() override {}
-	// void TearDown() override {}
-
 	CoreLCD corelcd;
 	CoreLCDDriverMock lcddrivermock;
 };
