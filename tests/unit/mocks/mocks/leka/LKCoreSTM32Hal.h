@@ -23,7 +23,9 @@ class LKCoreSTM32HalMock : public LKCoreSTM32HalBase
 	MOCK_METHOD(void, HAL_RCC_GPIOJ_CLK_ENABLE, (), (override));
 
 	MOCK_METHOD(void, HAL_RCC_TIM6_CLK_ENABLE, (), (override));
+	MOCK_METHOD(void, HAL_RCC_TIM7_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_TIM6_CLK_DISABLE, (), (override));
+	MOCK_METHOD(void, HAL_RCC_TIM7_CLK_DISABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_FMC_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_DMA1_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_DMA2_CLK_ENABLE, (), (override));
@@ -117,7 +119,6 @@ class LKCoreSTM32HalMock : public LKCoreSTM32HalBase
 	MOCK_METHOD(HAL_StatusTypeDef, HAL_DAC_RegisterCallback,
 				(DAC_HandleTypeDef * hdac, HAL_DAC_CallbackIDTypeDef CallbackID, pDAC_CallbackTypeDef pCallback),
 				(override));
-	MOCK_METHOD(HAL_StatusTypeDef, HAL_DAC_Start, (DAC_HandleTypeDef * hdac, uint32_t Channel), (override));
 	MOCK_METHOD(HAL_StatusTypeDef, HAL_DAC_Start_DMA,
 				(DAC_HandleTypeDef * hdac, uint32_t Channel, uint32_t *pData, uint32_t Length, uint32_t Alignment),
 				(override));
