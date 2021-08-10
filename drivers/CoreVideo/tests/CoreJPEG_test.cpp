@@ -29,7 +29,6 @@ class CoreJPEGTest : public ::testing::Test
 	CoreJPEG corejpeg;
 };
 
-
 TEST_F(CoreJPEGTest, instantiation)
 {
 	ASSERT_NE(&corejpeg, nullptr);

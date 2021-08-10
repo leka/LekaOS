@@ -15,14 +15,14 @@ namespace lcd {
 
 	// TODO : this should not depend on OTM driver,
 	// TODO : it should be instanciated and passed to objects that need it
-	const struct {
+	constexpr struct {
 		uint16_t width	= lcd::otm8009a::landscape::width;
 		uint16_t height = lcd::otm8009a::landscape::height;
 	} dimension;
 
 	// TODO : this should not depend on OTM driver,
 	// TODO : it should be instanciated and passed to objects that need it
-	const struct {
+	constexpr struct {
 		uint16_t VSA  = lcd::otm8009a::landscape::vsync;	// Vertical start active time in units of lines
 		uint16_t VBP  = lcd::otm8009a::landscape::vbp;		// Vertical Back Porch time in units of lines
 		uint16_t VFP  = lcd::otm8009a::landscape::vfp;		// Vertical Front Porch time in units of lines
