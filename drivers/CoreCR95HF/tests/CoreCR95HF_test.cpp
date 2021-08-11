@@ -335,7 +335,7 @@ TEST_F(CoreCR95HFSensorTest, receiveDataSuccess)
 
 	receiveCR95HFAnswer(read_values);
 
-	corecr95hf.onTagAvailable();
+	corecr95hf.onDataAvailable();
 	uint8_t is_communication_succeed = corecr95hf.receiveDataFromTag(&span);
 
 	ASSERT_EQ(is_communication_succeed, true);

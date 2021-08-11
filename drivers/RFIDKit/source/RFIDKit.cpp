@@ -8,12 +8,27 @@
 #include <iterator>
 
 namespace leka {
-void RFIDKit::init()
+
+RFIDKit::RFIDKit(interface::RFID &rfid_reader, rtos::Thread &thread, events::EventQueue &event_queue)
+	: _rfid_reader(rfid_reader), _thread(thread), _event_queue(event_queue)
+{
+	_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
+}
+
+void RFIDKit::getTagDataCallback()
 {
 	static auto *self		= this;
 	auto getTagDataCallback = []() { self->getTagData(); };
 
-	_rfid_reader.registerTagAvailableCallback(getTagDataCallback);
+	_event_queue.call(getTagDataCallback);
+}
+
+void RFIDKit::init()
+{
+	static auto *self = this;
+	auto onCallback	  = []() { self->getTagDataCallback(); };
+
+	_rfid_reader.registerTagAvailableCallback(onCallback);
 	_rfid_reader.init();
 }
 

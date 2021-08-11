@@ -25,13 +25,17 @@ using ::testing::SetArgPointee;
 class CoreRFIDKitTest : public ::testing::Test
 {
   protected:
-	CoreRFIDKitTest() : coreRfid(mockCR95HF) {};
+	CoreRFIDKitTest() : coreRfid(mockCR95HF, thread, event_queue) {};
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
 	RFIDKit coreRfid;
 	CoreRFIDMock mockCR95HF;
+
+	rtos::Thread thread;
+	events::EventQueue event_queue;
+
 	CoreBufferedSerialMock mockBufferedSerial;
 
 	template <size_t size>

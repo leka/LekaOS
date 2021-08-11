@@ -8,6 +8,9 @@
 #include <cstdint>
 #include <lstd_span>
 
+#include "events/EventQueue.h"
+#include "rtos/Thread.h"
+
 #include "interface/drivers/RFID.h"
 
 namespace leka {
@@ -15,7 +18,7 @@ namespace leka {
 class RFIDKit : public interface::RFID::ISO14443
 {
   public:
-	explicit RFIDKit(interface::RFID &rfid_reader) : _rfid_reader(rfid_reader) {};
+	explicit RFIDKit(interface::RFID &rfid_reader, rtos::Thread &thread, events::EventQueue &event_queue);
 
 	void init() final;
 
@@ -34,6 +37,8 @@ class RFIDKit : public interface::RFID::ISO14443
 		span.data()[SIZE] = static_cast<uint8_t>(command.flags);
 	}
 
+	void getTagDataCallback();
+
 	void sendREQA();
 	void sendReadRegister8();
 
@@ -45,6 +50,9 @@ class RFIDKit : public interface::RFID::ISO14443
 
 	interface::RFID &_rfid_reader;
 	rfid::Tag _tag {};
+
+	rtos::Thread &_thread;
+	events::EventQueue &_event_queue;
 };
 
 }	// namespace leka
