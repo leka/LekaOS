@@ -22,6 +22,20 @@ CoreAudio::CoreAudio(LKCoreSTM32HalBase &hal, CoreDAC &dac, CoreDACTimer &timer,
 	_thread.start({&_eventQueue, &events::EventQueue::dispatch_forever});
 }
 
+void CoreAudio::_initialize(float frequency)
+{
+	// setup DAC callbacks
+	static auto *self = this;
+	auto halfBuffCb =
+		static_cast<pDAC_CallbackTypeDef>([]([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->_halfCptCallback(); });
+	auto fullBuffCb =
+		static_cast<pDAC_CallbackTypeDef>([]([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->_cptCallback(); });
+
+	// initialize components
+	_coreTimer.initialize(frequency);
+	_coreDac.initialize(_coreTimer, halfBuffCb, fullBuffCb);
+}
+
 void CoreAudio::_align12bR(uint16_t *buffer, uint16_t length)
 {
 	for (int i = 0; i < length; ++i) {
