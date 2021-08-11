@@ -19,7 +19,7 @@ target_sources(LKAnimationKit
 target_link_libraries(LKAnimationKit
 	LKCoreLL
 	LKCoreSTM32Hal
-	LKCoreVideo
+	CoreVideo
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
