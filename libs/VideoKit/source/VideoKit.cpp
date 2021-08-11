@@ -143,6 +143,10 @@ void VideoKit::drawImageAsync(LKCoreFatFs &file, JPEGConfig &config, std::functi
 
 void VideoKit::display()
 {
+	while (async_count != 0) {
+		log_info("waiting %d threads", async_count);
+		//rtos::ThisThread::yield();
+	}
 	// wait for DMA2D to finish transfer
 	while (!_coredma2d.isReady())
 		;

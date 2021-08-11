@@ -4,6 +4,9 @@
 #include <array>
 #include <cstdint>
 
+#include "rtos/Thread.h"
+#include "rtos/ThisThread.h"
+
 #include "LKCoreSTM32HalBase.h"
 #include "corevideo_config.h"
 #include "interface/CoreJPEGMode.h"
@@ -49,10 +52,13 @@ struct CoreJPEGModeDMA : CoreJPEGMode {
 	private:
 	static std::array<uint8_t, jpeg::input_chunk_size * jpeg::input_buffers_nb> BIG_CHUNGUS_OF_MEMORY_IN;
 	static std::array<uint8_t, jpeg::output_chunk_size * jpeg::output_buffers_nb> BIG_CHUNGUS_OF_MEMORY_OUT;
+	static void JPEGDecodeThread(void* args);
 
 	void reset() final;
 	void decoderInputHandler(JPEG_HandleTypeDef *hjpeg, interface::File &file);
 	auto decoderOutputHandler(JPEG_HandleTypeDef *hjpeg) -> bool;
+
+	rtos::Thread *_thread = nullptr;
 
 	DMA_HandleTypeDef _hdma_in;
 	DMA_HandleTypeDef _hdma_out;

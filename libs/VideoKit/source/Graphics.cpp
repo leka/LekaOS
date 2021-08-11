@@ -107,7 +107,18 @@ void Video::draw(VideoKit &screen)
 		restart();
 	}
 
-	uint32_t frame_size = screen.drawImage(_file, _config);
+	static std::function<void(int)> drawEndCallback;
+
+	drawEndCallback = [this](int img_size) {
+		if (!_ended) {
+			_frame_offset = _frame_offset + img_size + 4;
+		}
+
+		nextFrame();
+	};
+
+	auto frame_size = screen.drawImage(_file, _config);
+	
 	// increment frame offset
 	if (!_ended) {
 		_frame_offset = _frame_offset + frame_size + 4;

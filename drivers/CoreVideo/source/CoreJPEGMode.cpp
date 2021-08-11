@@ -1,4 +1,5 @@
 #include "CoreJPEGMode.h"
+#include "LogKit.h"
 
 using namespace leka;
 
@@ -143,21 +144,26 @@ void CoreJPEGModeDMA::reset()
 
 struct DecodeThreadArgs {
 	CoreJPEGModeDMA *self;
+	JPEG_HandleTypeDef *handle;
     LKCoreFatFsBase *file;
     std::function<void(int)> *callback;
 };
 
-void JPEGDecodeThread(DecodeThreadArgs *args) {
-    do {
-        inputHandler();
-        ended = outputHandler();
-        rtos::ThisThread::yield();
+void CoreJPEGModeDMA::JPEGDecodeThread(void *voidargs) {
+	auto args = (DecodeThreadArgs *)voidargs;
+	log_info("thread self : %x", args->self);
+    bool ended = false;
+	do {
+        args->self->decoderInputHandler(args->handle, *args->file);
+        ended = args->self->decoderOutputHandler(args->handle);
+        log_info("decoder thread name : %s", rtos::ThisThread::get_name());
+		// rtos::ThisThread::yield();
     } while(!ended);
-    
-    callback(image_size);
+	log_info("Calling callback");
+    (*args->callback)(args->self->_image_size);
 }
 
-void CoreJPEGModeDMA::decodeImageAsync(JPEG_HandleTypeDef *hjpeg, LKCoreFatFsBase &file, std::function<void(int)> &cb)
+void CoreJPEGModeDMA::decodeImageAsync(JPEG_HandleTypeDef *hjpeg, LKCoreFatFsBase &file, std::function<void(int)> cb)
 {
 	reset();
 
@@ -172,10 +178,34 @@ void CoreJPEGModeDMA::decodeImageAsync(JPEG_HandleTypeDef *hjpeg, LKCoreFatFsBas
 	HAL_JPEG_Decode_DMA(hjpeg, _input_buffers[0].data, _input_buffers[0].datasize, _output_buffers[0].data,
 						jpeg::output_chunk_size);
 
-	DecodeThreadArgs args;
+	static DecodeThreadArgs args;
+	static std::function<void(int)> endOfDecodeCallback;
+	endOfDecodeCallback = cb;
 	args.self = this;
+	args.handle = hjpeg;
 	args.file = &file;
-	args.callback = &cb;
+	args.callback = &endOfDecodeCallback;
+
+	if (_thread) {
+		_thread->join();
+		delete _thread;
+	}
+	_thread = new rtos::Thread();
+
+	_thread->start(mbed::callback(&CoreJPEGModeDMA::JPEGDecodeThread, &args));
+
+	log_info("real this : %x", this);
+	
+	/*
+	bool ended = false;
+	do {
+        decoderInputHandler(hjpeg, file);
+        ended = decoderOutputHandler(hjpeg);
+        //log_info("decoder thread name : %ld", rtos::ThisThread::get_id());
+		rtos::ThisThread::yield();
+    } while(!ended);
+	// cb(_image_size);
+	*/
 }
 
 auto CoreJPEGModeDMA::decodeImage(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> uint32_t

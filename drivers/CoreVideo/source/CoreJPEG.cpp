@@ -76,9 +76,9 @@ auto CoreJPEG::decodeImage(interface::File &file) -> std::uint32_t
 	return _mode.decodeImage(&_handle, file);
 }
 
-void CoreJPEG::decodeImageAsync(LKCoreFatFsBase &file, std::function<void(int)>& cb)
+void CoreJPEG::decodeImageAsync(LKCoreFatFsBase &file, std::function<void(int)> cb)
 {
-	_mode.decodeImageAsync(file, cb);
+	_mode.decodeImageAsync(&_handle, file, cb);
 }
 
 auto CoreJPEG::findFrameOffset(interface::File &file, uint32_t offset) -> uint32_t
