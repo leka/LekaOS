@@ -22,4 +22,19 @@ CoreAudio::CoreAudio(LKCoreSTM32HalBase &hal, CoreDAC &dac, CoreDACTimer &timer,
 	_thread.start({&_eventQueue, &events::EventQueue::dispatch_forever});
 }
 
+void CoreAudio::_align12bR(uint16_t *buffer, uint16_t length)
+{
+	for (int i = 0; i < length; ++i) {
+		buffer[i] = buffer[i] >> 4;
+	}
+}
+
+void CoreAudio::_scaleToVolume(uint16_t *buffer, uint16_t length)
+{
+	for (int i = 0; i < length; ++i) {
+		buffer[i] = static_cast<double>(buffer[i]) * (_volume / 100.F);
+		buffer[i] += 0x7FFF * (1.F - _volume / 100.F);
+	}
+}
+
 }	// namespace leka
