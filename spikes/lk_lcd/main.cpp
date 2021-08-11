@@ -105,8 +105,8 @@ auto main() -> int
 	screen.initialize();
 	screen.setFrameRateLimit(25);
 
-	gfx::Image image1("assets/images/Leka/logo.jpg");
-	gfx::Image image2("assets/images/Leka/image.jpg");
+	gfx::Image image1("/fs/assets/images/Leka/logo.jpg");
+	gfx::Image image2("/fs/assets/images/Leka/image.jpg");
 
 	screen.draw(image1);
 	screen.display();
@@ -116,8 +116,8 @@ auto main() -> int
 	screen.display();
 	rtos::ThisThread::sleep_for(2s);
 
-	gfx::Video video_joie("assets/video/20fps_low10.avi");
-	gfx::Video video_birds("assets/video/BirdsAndFeeder_low.avi");
+	gfx::Video video_joie("fs/assets/video/20fps_low10.avi");
+	gfx::Video video_birds("fs/assets/video/BirdsAndFeeder_low20.avi");
 
 	gfx::Rectangle progress_bar_bg(0, 460, 800, 20, {190, 250, 230});
 	gfx::Rectangle progress_bar(0, 460, 0, 20, {20, 240, 165});

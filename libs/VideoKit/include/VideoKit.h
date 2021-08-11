@@ -12,8 +12,10 @@
 #include "CoreLCD.h"
 #include "CoreLCDDriverOTM8009A.h"
 #include "CoreLTDC.h"
+#include "FileSystemKit.h"
 #include "Font.h"
 #include "Graphics.h"
+#include "LKCoreFatFs.h"
 #include "LKCoreSTM32Hal.h"
 
 using namespace std::chrono_literals;
@@ -34,7 +36,8 @@ class VideoKit
 
 	void setFrameRateLimit(uint32_t framerate);
 
-	void fillConfig(LKCoreFatFs &file, JPEGConfig *config);
+	void fillJPEGConfig(LKCoreFatFs &file, JPEGConfig *config);
+	void fillJPEGConfig(FileSystemKit::File &file, JPEGConfig *config);
 
 	void clear(gfx::Color color = gfx::Color::White);
 
@@ -47,6 +50,10 @@ class VideoKit
 	auto drawImage(LKCoreFatFs &file) -> uint32_t;
 
 	auto drawImage(LKCoreFatFs &file, JPEGConfig &config) -> uint32_t;
+
+	auto drawImage(FileSystemKit::File &file) -> uint32_t;
+
+	auto drawImage(FileSystemKit::File &file, JPEGConfig &config) -> uint32_t;
 
 	void display();
 

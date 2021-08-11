@@ -30,11 +30,11 @@ class CoreJPEG : public interface::CoreJPEG
 
 	void registerCallbacks() final;
 
-	auto decodeImage(LKCoreFatFsBase &file) -> uint32_t final;
+	auto decodeImage(interface::File &file) -> uint32_t final;
 
 	auto getConfig() -> JPEGConfig;
 
-	static auto findFrameOffset(LKCoreFatFsBase &file, uint32_t offset) -> uint32_t;
+	static auto findFrameOffset(interface::File &file, uint32_t offset) -> uint32_t;
 
   private:
 	LKCoreSTM32HalBase &_hal;

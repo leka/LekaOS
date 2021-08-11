@@ -47,11 +47,6 @@ Image::Image(const char *path)
 	_file.open(path);
 }
 
-Image::~Image()
-{
-	_file.close();
-}
-
 void Image::draw(VideoKit &screen)
 {
 	_file.seek(0);
@@ -63,11 +58,6 @@ Video::Video(const char *path)
 {
 	_file.open(path);
 	restart();
-}
-
-Video::~Video()
-{
-	_file.close();
 }
 
 void Video::nextFrame()
@@ -89,7 +79,7 @@ auto Video::getTime() -> int64_t
 
 auto Video::getProgress() -> float
 {
-	auto progress = float(_frame_offset) / _file.getSize();
+	auto progress = float(_frame_offset) / _file.size();
 	// clamp progress to be in range [0.f, 1.f]
 	return progress > 1.f ? 1.f : progress < 0.f ? 0.f : progress;
 }
@@ -113,7 +103,7 @@ void Video::draw(VideoKit &screen)
 {
 	// get configuration on first frame
 	if (!_config.initialized) {
-		screen.fillConfig(_file, &_config);
+		screen.fillJPEGConfig(_file, &_config);
 		restart();
 	}
 

@@ -16,7 +16,7 @@ target_sources(VideoKit
 		source/VideoKit.cpp
 )
 
-target_link_libraries(VideoKit CoreVideo LKCoreSTM32Hal LKCoreFatFs)
+target_link_libraries(VideoKit CoreVideo LKCoreSTM32Hal CoreFs FileSystemKit)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 

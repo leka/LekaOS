@@ -22,7 +22,7 @@ struct File {
 	virtual auto read(uint8_t *buffer, uint32_t size) -> size_t = 0;
 	virtual auto write(uint8_t *data, uint32_t size) -> size_t	= 0;
 
-	virtual void seek(size_t pos, int origin) = 0;
+	virtual void seek(size_t pos, int origin = SEEK_SET) = 0;
 
 	virtual void rewind() = 0;
 

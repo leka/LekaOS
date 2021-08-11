@@ -30,7 +30,8 @@ target_link_libraries(CoreVideo
 		mbed-os
 		LKCoreLL
 		LKCoreSTM32Hal
-		LKCoreFatFs
+		CoreFs
+		FileSystemKit
 		LogKit
 )
 
