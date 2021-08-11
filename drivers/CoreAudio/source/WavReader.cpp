@@ -5,32 +5,38 @@
 #include "WavReader.h"
 
 namespace leka {
-auto WavReader::loadSector(WavFile *wavfile, uint16_t *buffer, uint16_t sectorSize) -> bool
+auto WavReader::loadSector(const WavFile &wavfile, uint16_t *dstBuffer, uint16_t sectorSizeBytes) -> bool
 {
-	// TODO(samhadjes) handle less samples read (e.g. writing 0 on rest of buffer)
 	bool eof = false;
-	if (_readSector(wavfile, buffer, sectorSize) != sectorSize) {
+
+	UINT bytesRead = _readSector(wavfile, dstBuffer, sectorSizeBytes);
+
+	if (bytesRead != sectorSizeBytes) {
+		for (uint16_t i = bytesRead; i < sectorSizeBytes; ++i) {
+			dstBuffer[i] = 0;
+		}
+
 		eof = true;
 	}
-	_convertSectorData(buffer, sectorSize / 2);
+
+	_convertSectorData(dstBuffer, sectorSizeBytes / 2);
 
 	return eof;
 }
 
-// Read next sector to specified buffer
-auto WavReader::_readSector(WavFile *wavfile, uint16_t *buffer, uint16_t sectorSize) -> int
+auto WavReader::_readSector(const WavFile &wavfile, uint16_t *dstBuffer, uint16_t sectorSizeBytes) -> UINT
 {
-	int bytesRead = 0;
-	if (f_read(wavfile->getFile(), buffer, sectorSize, (UINT *)&bytesRead) != FR_OK) {
-		// TODO(samhadjes) : check if there should be error control here
+	UINT bytesRead = 0;
+	if (f_read(wavfile.getFile(), dstBuffer, sectorSizeBytes, &bytesRead) != FR_OK) {
+		log_error("Error while reading wav file sector");
 	}
 	return bytesRead;
 }
 
-void WavReader::_convertSectorData(uint16_t *buffer, uint16_t sectorSize)
+void WavReader::_convertSectorData(uint16_t *buffer, uint16_t sectorSizeSamples)
 {
 	int16_t tmp = 0;
-	for (uint16_t i = 0; i < sectorSize; ++i) {
+	for (uint16_t i = 0; i < sectorSizeSamples; ++i) {
 		tmp = 0x0 | buffer[i];	 // cast bits from uint to int
 		tmp += 0x8000;			 // rescale to uint scale
 		buffer[i] = 0x0 | tmp;
