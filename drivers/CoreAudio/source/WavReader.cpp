@@ -21,7 +21,7 @@ auto WavReader::loadSector(WavFile *wavfile, uint16_t *buffer, uint16_t sectorSi
 auto WavReader::_readSector(WavFile *wavfile, uint16_t *buffer, uint16_t sectorSize) -> int
 {
 	int bytesRead = 0;
-	if (f_read(wavfile->file(), buffer, sectorSize, (UINT *)&bytesRead) != FR_OK) {
+	if (f_read(wavfile->getFile(), buffer, sectorSize, (UINT *)&bytesRead) != FR_OK) {
 		// TODO(samhadjes) : check if there should be error control here
 	}
 	return bytesRead;
