@@ -152,10 +152,25 @@ jobs:
         run: |
           make ccache_prebuild
 
-      - name: Config, build LekaOS & al.
+      - name: Config
         run: |
           make config TARGET_BOARD=${{ matrix.custom_target }}
-          make TARGET_BOARD=${{ matrix.custom_target }}
+
+      - name: Build LekaOS
+        run: |
+          make os TARGET_BOARD=${{ matrix.custom_target }}
+
+      - name: Build spikes
+        run: |
+          make spikes TARGET_BOARD=${{ matrix.custom_target }}
+
+      - name: Build functional tests
+        run: |
+          make tests_functional TARGET_BOARD=${{ matrix.custom_target }}
+
+      - name: Build misc
+        run: |
+          make all TARGET_BOARD=${{ matrix.custom_target }}
 
       - name: Ccache post build
         run: |
