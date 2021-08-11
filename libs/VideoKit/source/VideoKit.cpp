@@ -84,7 +84,7 @@ void VideoKit::setFrameRateLimit(uint32_t framerate)
 	_frametime = (1000ms / framerate);
 }
 
-void VideoKit::fillConfig(LKCoreFatFs &file, JPEGConfig *config)
+void VideoKit::fillJPEGConfig(FileSystemKit::File &file, JPEGConfig *config)
 {
 	_corejpeg.decodeImage(file);
 	auto c	= _corejpeg.getConfig();
@@ -131,7 +131,7 @@ void VideoKit::drawText(const char *text, uint32_t x, uint32_t y, gfx::Color col
 	}
 }
 
-auto VideoKit::drawImage(LKCoreFatFs &file) -> uint32_t
+auto VideoKit::drawImage(FileSystemKit::File &file) -> uint32_t
 {
 	auto img_size = _corejpeg.decodeImage(file);
 
@@ -141,7 +141,7 @@ auto VideoKit::drawImage(LKCoreFatFs &file) -> uint32_t
 	return img_size;
 }
 
-auto VideoKit::drawImage(LKCoreFatFs &file, JPEGConfig &config) -> uint32_t
+auto VideoKit::drawImage(FileSystemKit::File &file, JPEGConfig &config) -> uint32_t
 {
 	auto img_size = _corejpeg.decodeImage(file);
 
@@ -162,6 +162,10 @@ void VideoKit::display()
 	// wait for DSI to finish transfer
 	while (_coredsi.isBusy())
 		;
+
+	// wait for DSI to finish refresh, better quality but way slower
+	// while (_coredsi.refreshDone())
+	//	;
 }
 
 void VideoKit::refresh()

@@ -141,13 +141,14 @@ void CoreJPEGModeDMA::reset()
 	}
 }
 
-auto CoreJPEGModeDMA::decodeImage(JPEG_HandleTypeDef *hjpeg, LKCoreFatFsBase &file) -> uint32_t
+auto CoreJPEGModeDMA::decodeImage(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> uint32_t
 {
 	reset();
 
 	// read file and fill input buffers
 	for (auto &buffer: _input_buffers) {
-		if (file.read(buffer.data, jpeg::input_chunk_size, &buffer.datasize) == FR_OK) {
+		buffer.datasize = file.read(buffer.data, jpeg::input_chunk_size);
+		if (buffer.datasize > 0) {
 			buffer.state = Buffer::State::Full;
 		}
 	}
@@ -166,13 +167,14 @@ auto CoreJPEGModeDMA::decodeImage(JPEG_HandleTypeDef *hjpeg, LKCoreFatFsBase &fi
 	return _image_size;
 }
 
-void CoreJPEGModeDMA::decoderInputHandler(JPEG_HandleTypeDef *hjpeg, LKCoreFatFsBase &file)
+void CoreJPEGModeDMA::decoderInputHandler(JPEG_HandleTypeDef *hjpeg, interface::File &file)
 {
 	auto &write_buffer = _input_buffers[_input_buffers_write_index];
 	auto &read_buffer  = _input_buffers[_input_buffers_read_index];
 
 	if (write_buffer.state == Buffer::State::Empty) {
-		if (file.read(write_buffer.data, jpeg::input_chunk_size, &write_buffer.datasize) == FR_OK)
+		write_buffer.datasize = file.read(write_buffer.data, jpeg::input_chunk_size);
+		if (write_buffer.datasize > 0)
 			write_buffer.state = Buffer::State::Full;
 		else
 			while (true)   // TODO (@Madour) - handle error

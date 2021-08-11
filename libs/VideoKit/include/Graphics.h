@@ -6,6 +6,7 @@
 #include "rtos/Kernel.h"
 
 #include "CoreJPEG.h"
+#include "FileSystemKit.h"
 #include "LKCoreFatFs.h"
 
 namespace leka {
@@ -78,18 +79,16 @@ class Image : public Drawable
 {
   public:
 	Image(const char *path);
-	~Image();
 
   private:
 	void draw(VideoKit &screen) final;
-	LKCoreFatFs _file;
+	FileSystemKit::File _file;
 };
 
 class Video : public Drawable
 {
   public:
 	Video(const char *path);
-	~Video();
 
 	void nextFrame();
 
@@ -102,7 +101,7 @@ class Video : public Drawable
   private:
 	void draw(VideoKit &screen) final;
 
-	LKCoreFatFs _file;
+	FileSystemKit::File _file;
 	JPEGConfig _config;
 
 	uint32_t _frame_index  = 0;

@@ -13,7 +13,7 @@ namespace leka {
 class CoreJPEGModeMock : public interface::CoreJPEGMode
 {
   public:
-	MOCK_METHOD(uint32_t, decodeImage, (JPEG_HandleTypeDef * hjpeg, LKCoreFatFsBase &file), (override));
+	MOCK_METHOD(uint32_t, decodeImage, (JPEG_HandleTypeDef * hjpeg, interface::File &file), (override));
 
 	MOCK_METHOD(void, onMspInitCallback, (JPEG_HandleTypeDef * hjpeg), (override));
 

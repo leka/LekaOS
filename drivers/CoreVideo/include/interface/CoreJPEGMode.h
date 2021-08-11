@@ -2,6 +2,7 @@
 #define _LEKA_OS_DRIVER_INTERFACE_JPEG_MODE_H_
 
 #include "LKCoreFatFsBase.h"
+#include "interface/platform/File.h"
 #include "stm32f7xx_hal.h"
 
 namespace leka::interface {
@@ -9,7 +10,7 @@ namespace leka::interface {
 struct CoreJPEGMode {
 	~CoreJPEGMode() = default;
 
-	virtual auto decodeImage(JPEG_HandleTypeDef *hjpeg, LKCoreFatFsBase &file) -> uint32_t = 0;
+	virtual auto decodeImage(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> uint32_t = 0;
 
 	// called when HAL_JPEG_Init is called
 	virtual void onMspInitCallback(JPEG_HandleTypeDef *hjpeg) = 0;

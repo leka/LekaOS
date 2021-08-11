@@ -69,24 +69,25 @@ void CoreJPEG::registerCallbacks()
 	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_MSPINIT_CB_ID, mspinit_cb);
 }
 
-auto CoreJPEG::decodeImage(LKCoreFatFsBase &file) -> std::uint32_t
+auto CoreJPEG::decodeImage(interface::File &file) -> std::uint32_t
 {
 	return _mode.decodeImage(&_handle, file);
 }
 
-auto CoreJPEG::findFrameOffset(LKCoreFatFsBase &file, uint32_t offset) -> uint32_t
+auto CoreJPEG::findFrameOffset(interface::File &file, uint32_t offset) -> uint32_t
 {
 	std::array<uint8_t, 512> pattern_search_buffer;
 
+	size_t file_size   = file.size();
 	uint32_t index	   = offset;
 	uint32_t read_size = 0;
 
 	do {
-		if (file.getSize() <= (index + 1)) {
+		if (file_size <= (index + 1)) {
 			return 0;
 		}
 		file.seek(index);
-		file.read(pattern_search_buffer.data(), pattern_search_buffer.size(), &read_size);
+		read_size = file.read(pattern_search_buffer.data(), pattern_search_buffer.size());
 
 		if (read_size != 0) {
 			for (uint32_t i = 0; i < (read_size - 1); i++) {
