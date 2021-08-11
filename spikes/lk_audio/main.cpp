@@ -56,7 +56,7 @@ auto main() -> int
 			printf("Could not open file\n");
 		}
 
-		while (coreAudio.playing) {
+		while (coreAudio.isPlaying()) {
 			rtos::ThisThread::sleep_for(50ms);
 		}
 
@@ -72,7 +72,7 @@ auto main() -> int
 			printf("Could not open file\n");
 		}
 
-		while (coreAudio.playing) {
+		while (coreAudio.isPlaying()) {
 			rtos::ThisThread::sleep_for(50ms);
 		}
 

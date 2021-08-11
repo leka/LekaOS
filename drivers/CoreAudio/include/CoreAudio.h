@@ -6,6 +6,7 @@
 #define _LEKA_OS_LIB_AUDIO_H_
 
 #include <cmath>
+#include <memory>
 
 #include "events/EventQueue.h"
 #include "platform/mbed_wait_api.h"
@@ -30,40 +31,42 @@ class CoreAudio
 		Finished
 	};
 
+	static constexpr uint16_t sectorSize_Bytes		= 512;
+	static constexpr uint16_t sampleSize_Bytes		= 2;
+	static constexpr uint16_t sectorSize_Samples	= sectorSize_Bytes / sampleSize_Bytes;
+	static constexpr uint16_t outBufferSize_Sectors = 2;
+	static constexpr uint16_t outBufferSize_Samples = 512;
+
   public:
 	CoreAudio(LKCoreSTM32HalBase &hal, CoreDAC &dac, CoreDACTimer &timer, rtos::Thread &thread,
 			  events::EventQueue &eventQueue);
 	void playFile(FIL *file);
-	void pause();
-	void resume();
+	void pause() const;
+	void resume() const;
 	void stop();
 	void setVolume(float volume) { _volume = volume; };
-
-	void fillBufferWithSinWave(uint16_t *buffer, uint32_t bufferSize, uint32_t frequency, uint32_t samplingRate = 44100,
-							   uint16_t maxValue = 0xFFFF, uint16_t minValue = 0x0);
-	void fillBufferWithSquare(uint16_t *buffer, uint32_t bufferSize, uint16_t maxValue, uint16_t minValue);
-
-	bool playing;
+	[[nodiscard]] auto isPlaying() const -> bool { return _playing; };
 
   private:
-	static uint16_t _waveBuffer[512];
+	static std::array<uint16_t, outBufferSize_Samples> _waveBuffer;
 	LKCoreSTM32HalBase &_hal;
 	CoreDAC &_coreDac;
 	CoreDACTimer &_coreTimer;
 
-	WavFile *_wavFile;
-
 	rtos::Thread &_thread;
 	events::EventQueue &_eventQueue;
 
-	float _volume;
-	EndOfFileState _eofFlag;
+	std::unique_ptr<WavFile> _wavFile = nullptr;
 
-	void _initialize(float frequency);
-	void _align12bR(uint16_t *buffer, uint16_t length);
-	void _scaleToVolume(uint16_t *buffer, uint16_t length);
-	void _halfCptCallback();
-	void _cptCallback();
+	float _volume			= 100;
+	EndOfFileState _eofFlag = EndOfFileState::NotFinished;
+	bool _playing			= false;
+
+	void _initialize(uint32_t frequency);
+	void _align12bR(uint16_t *buffer, uint16_t nbSamples) const;
+	void _scaleToVolume(uint16_t *buffer, uint16_t nbSamples) const;
+	void _onHalfBuffRead();
+	void _onFullBuffRead();
 	void _handleCallback(uint16_t *buffer);
 	void _handleNextSector(uint16_t *buffer);
 };
