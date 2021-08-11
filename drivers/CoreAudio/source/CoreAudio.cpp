@@ -37,6 +37,28 @@ void CoreAudio::_scaleToVolume(uint16_t *buffer, uint16_t length)
 	}
 }
 
+void CoreAudio::_halfCptCallback()
+{
+	_eventQueue.call(this, &CoreAudio::_handleCallback, _waveBuffer);
+}
+
+void CoreAudio::_cptCallback()
+{
+	_eventQueue.call(this, &CoreAudio::_handleCallback, &(_waveBuffer[256]));
+}
+
+void CoreAudio::_handleCallback(uint16_t *buffer)
+{
+	if (_eofFlag == NotFinished) {
+		_handleNextSector(buffer);
+	} else if (_eofFlag == LastBuffer) {
+		_eofFlag = Finished;
+
+	} else if (_eofFlag == Finished) {
+		stop();
+	}
+}
+
 void CoreAudio::_handleNextSector(uint16_t *buffer)
 {
 	bool eof = WavReader::loadSector(_wavFile, buffer, 512);
