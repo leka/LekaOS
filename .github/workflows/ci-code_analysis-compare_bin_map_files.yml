@@ -58,7 +58,8 @@ jobs:
 
       - name: Add ARM GCC Toolchain to path
         run: |
-          echo "~/gcc-arm-none-eabi/bin" >> $GITHUB_PATH
+          tmp_home=$(echo ~)
+          echo "$tmp_home/gcc-arm-none-eabi/bin" >> $GITHUB_PATH
 
       - name: Test ARM GCC Toolchain
         run: |
@@ -141,6 +142,14 @@ jobs:
           git checkout ${{ github.head_ref }}
           echo "head_sha=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
+      - name: Create mbed version variables
+        id: create_mbed_version_variables
+        run: |
+          git checkout ${{ github.base_ref }}
+          echo "base_mbed=$(cat .mbed_version)" >> $GITHUB_ENV
+          git checkout ${{ github.head_ref }}
+          echo "head_mbed=$(cat .mbed_version)" >> $GITHUB_ENV
+
       - name: Create temporary directories
         run: |
           mkdir -p _mbed_tmp/${{ env.base_sha }}
@@ -171,40 +180,158 @@ jobs:
           find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _mbed_tmp/${{ env.head_sha }}
 
       - name: Compare bin files
+        shell: bash
         run: |
-          echo 'bin_diff_list<<eof' >> $GITHUB_ENV
-          echo "| File  | Status |" >> $GITHUB_ENV
-          echo "|-------|:------:|" >> $GITHUB_ENV
-          for f in $( find _mbed_tmp/${{ env.base_sha }} -name '*.bin'); do
-            file_name=$(basename $f)
-            if ! diff _mbed_tmp/${{ env.base_sha }}/$file_name _mbed_tmp/${{ env.head_sha }}/$file_name 2>/dev/null; then
-              echo "| $file_name | ❌ |"  >> $GITHUB_ENV
-            else
-              echo "| $file_name | ✅ |"  >> $GITHUB_ENV
+          shopt -s xpg_echo
+
+          echo 'STATUS_DIFF_OUTPUT<<EOF_STATUS_DIFF_OUTPUT' >> $GITHUB_ENV
+
+          base_targets=($(echo $(find _mbed_tmp/${{ env.base_sha }} -name '*.bin' -execdir basename -s '.bin' {} +) | tr ' ' '\n' | sort -du | tr '\n' ' '))
+          head_targets=($(echo $(find _mbed_tmp/${{ env.head_sha }} -name '*.bin' -execdir basename -s '.bin' {} +) | tr ' ' '\n' | sort -du | tr '\n' ' '))
+          all_targets=($(echo "${base_targets[@]} ${head_targets[@]}" | tr ' ' '\n' | sort -du | tr '\n' ' '))
+
+          echo "Set added/deleted targets"
+          added_targets=()
+          deleted_targets=()
+          for target in "${all_targets[@]}"; do
+            if [[ ${base_targets[*]} =~ "$target" ]] && ! [[ ${head_targets[*]} =~ "$target" ]]; then
+              deleted_targets+=($target)
+            elif ! [[ ${base_targets[*]} =~ "$target" ]] && [[ ${head_targets[*]} =~ "$target" ]]; then
+              added_targets+=($target)
             fi
           done
-          echo 'eof' >> $GITHUB_ENV
+
+          echo "all:     ${all_targets[*]}"
+          echo "base:    ${base_targets[*]}"
+          echo "head:    ${head_targets[*]}"
+          echo "added:   ${added_targets[*]}"
+          echo "deleted: ${deleted_targets[*]}"
+
+          echo "| Target | Status | .bin | .map | Static RAM (base/head) | Static RAM Δ | Total Flash (base/head) | Total Flash Δ |" >> $GITHUB_ENV
+          echo "|-------|:------:|:------:|:------:|:------:|:------:|:------:|:------:|" >> $GITHUB_ENV
+
+          for target in "${all_targets[@]}"; do
+            target_name=$target
+
+            echo -n "| $target_name " >> $GITHUB_ENV
+
+            if [[ ${added_targets[*]} =~ "$target" ]]; then
+              echo -n "| :sparkles: | - | - | - | - |\n" >> $GITHUB_ENV
+            elif [[ ${deleted_targets[*]} =~ "$target" ]]; then
+              echo -n "| :coffin: | - | - | - | - |\n" >> $GITHUB_ENV
+            else
+              echo -n "| :heavy_check_mark: " >> $GITHUB_ENV
+
+              if ! output=$(diff _mbed_tmp/${{ env.base_sha }}/$target_name.bin _mbed_tmp/${{ env.head_sha }}/$target_name.bin 2>/dev/null); then
+                echo -n "| :x: " >> $GITHUB_ENV
+              else
+                echo -n "| :white_check_mark: " >> $GITHUB_ENV
+              fi
+
+              python3 extern/mbed-os/tools/memap.py -t GCC_ARM _mbed_tmp/${{ env.base_sha }}/$target_name.map > _mbed_tmp/${{ env.base_sha }}/$target_name.txt
+              python3 extern/mbed-os/tools/memap.py -t GCC_ARM _mbed_tmp/${{ env.head_sha }}/$target_name.map > _mbed_tmp/${{ env.head_sha }}/$target_name.txt
+
+              if ! output=$(diff _mbed_tmp/${{ env.base_sha }}/$target_name.txt _mbed_tmp/${{ env.head_sha }}/$target_name.txt 2>/dev/null); then
+                echo -n "| :x: " >> $GITHUB_ENV
+              else
+                echo -n "| :white_check_mark: " >> $GITHUB_ENV
+              fi
+
+              base_ram=$(grep -Po '(?<=\(data \+ bss\):\s)[[:digit:]]*' _mbed_tmp/${{ env.base_sha }}/$target_name.txt)
+              head_ram=$(grep -Po '(?<=\(data \+ bss\):\s)[[:digit:]]*' _mbed_tmp/${{ env.head_sha }}/$target_name.txt)
+              diff_ram=$(($head_ram - $base_ram))
+
+              if [ $diff_ram -lt 0 ]; then
+                  diff_ram=":chart_with_upwards_trend:  $diff_ram"
+              elif [ $diff_ram -gt 0 ]; then
+                  diff_ram=":chart_with_downwards_trend: $diff_ram"
+              else
+                  diff_ram="0"
+              fi
+
+              base_flash=$(grep -Po '(?<=\(text \+ data\):\s)[[:digit:]]*' _mbed_tmp/${{ env.base_sha }}/$target_name.txt)
+              head_flash=$(grep -Po '(?<=\(text \+ data\):\s)[[:digit:]]*' _mbed_tmp/${{ env.head_sha }}/$target_name.txt)
+              diff_flash=$(($head_flash - $base_flash))
+
+              if [ $diff_flash -lt 0 ]; then
+                  diff_flash=":chart_with_downwards_trend:  $diff_flash"
+              elif [ $diff_flash -gt 0 ]; then
+                  diff_flash=":chart_with_upwards_trend: $diff_flash"
+              else
+                  diff_flash="0"
+              fi
+
+              echo -n "| $base_ram / $head_ram | $diff_ram | $base_flash / $head_flash | $diff_flash " >> $GITHUB_ENV
+
+              echo -n "|\n" >> $GITHUB_ENV
+            fi
+
+          done
+
+          echo 'EOF_STATUS_DIFF_OUTPUT' >> $GITHUB_ENV
 
       - name: Compare maps files
+        shell: bash
         run: |
-          echo 'map_diff_list<<eof' >> $GITHUB_ENV
-          for f in $( find _mbed_tmp/${{ env.base_sha }} -name '*.map'); do
-            file_name=$(basename $f)
-            python3 extern/mbed-os/tools/memap.py -t GCC_ARM _mbed_tmp/${{ env.base_sha }}/$file_name > _mbed_tmp/${{ env.base_sha }}/$file_name.txt
-            python3 extern/mbed-os/tools/memap.py -t GCC_ARM _mbed_tmp/${{ env.head_sha }}/$file_name > _mbed_tmp/${{ env.head_sha }}/$file_name.txt
-            echo "### \`$file_name\`"  >> $GITHUB_ENV
-            if ! diff_output=$(diff --unified=150 _mbed_tmp/${{ env.base_sha }}/$file_name.txt _mbed_tmp/${{ env.head_sha }}/$file_name.txt); then
-              echo $diff_output
-              echo "" >> $GITHUB_ENV
-              echo "\`\`\`diff" >> $GITHUB_ENV
-              echo "$diff_output" >> $GITHUB_ENV
-              echo "\`\`\`" >> $GITHUB_ENV
-            else
-              echo "No \`.map\` differences found." >> $GITHUB_ENV
+          shopt -s xpg_echo
+
+          echo 'MAP_DIFF_OUTPUT<<EOF_MAP_DIFF_OUTPUT' >> $GITHUB_ENV
+
+          base_targets=($(echo $(find _mbed_tmp/${{ env.base_sha }} -name '*.bin' -execdir basename -s '.bin' {} +) | tr ' ' '\n' | sort -du | tr '\n' ' '))
+          head_targets=($(echo $(find _mbed_tmp/${{ env.head_sha }} -name '*.bin' -execdir basename -s '.bin' {} +) | tr ' ' '\n' | sort -du | tr '\n' ' '))
+          all_targets=($(echo "${base_targets[@]} ${head_targets[@]}" | tr ' ' '\n' | sort -du | tr '\n' ' '))
+
+          echo "Set added/deleted targets"
+          added_targets=()
+          deleted_targets=()
+          for target in "${all_targets[@]}"; do
+            if [[ ${base_targets[*]} =~ "$target" ]] && ! [[ ${head_targets[*]} =~ "$target" ]]; then
+              deleted_targets+=($target)
+            elif ! [[ ${base_targets[*]} =~ "$target" ]] && [[ ${head_targets[*]} =~ "$target" ]]; then
+              added_targets+=($target)
             fi
-            echo "" >> $GITHUB_ENV
           done
-          echo 'eof' >> $GITHUB_ENV
+
+          echo "all:     ${all_targets[*]}"
+          echo "base:    ${base_targets[*]}"
+          echo "head:    ${head_targets[*]}"
+          echo "added:   ${added_targets[*]}"
+          echo "deleted: ${deleted_targets[*]}"
+
+          no_map_diff=true
+
+          for target in "${all_targets[@]}"; do
+            target_name=$target
+
+            if ! [[ ${added_targets[*]} =~ "$target" ]] && ! [[ ${deleted_targets[*]} =~ "$target" ]]; then
+              echo "$target not deleted nor new, running diff"
+
+              if ! diff_output=$(diff --unified=150 _mbed_tmp/${{ env.base_sha }}/$target_name.txt _mbed_tmp/${{ env.head_sha }}/$target_name.txt); then
+
+                echo $diff_output
+
+                echo "<details>" >> $GITHUB_ENV
+                echo "<summary><b><code>$target_name</code></b> (click to expand)</summary>" >> $GITHUB_ENV
+                echo "" >> $GITHUB_ENV
+
+                echo "\`\`\`diff" >> $GITHUB_ENV
+                echo "$diff_output" >> $GITHUB_ENV
+                echo "\`\`\`" >> $GITHUB_ENV
+
+                echo "" >> $GITHUB_ENV
+                echo "</details>" >> $GITHUB_ENV
+                echo "" >> $GITHUB_ENV
+
+                no_map_diff=false
+              fi
+            fi
+          done
+
+          if $no_map_diff; then
+              echo "No differenes where found in map files." >> $GITHUB_ENV
+          fi
+
+          echo 'EOF_MAP_DIFF_OUTPUT' >> $GITHUB_ENV
 
       - name: Publish differences
         uses: marocchino/sticky-pull-request-comment@v2
@@ -212,20 +339,28 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           recreate: true
           message: |
-            #  Build & Compare Report
+            #  .map & .bin files analysis report
 
-            ## Commits
+            ## Versions
 
-            - base: `${{ github.base_ref }}:${{ env.base_sha }}`
-            - head:   `${{ github.head_ref }}:${{ env.head_sha }}`
+            - base: `${{ github.base_ref }}:${{ env.base_sha }}` with `${{ env.base_mbed }}`
+            - head: `${{ github.head_ref }}:${{ env.head_sha }}` with `${{ env.head_mbed }}`
 
-            ## Binary files diff output
+            ## Summary
 
-            - ✅ - files are the same
-            - ❌ - files are different
+            - :heavy_check_mark: - existing target
+            - :sparkles: - new target
+            - :coffin: - deleted target
+            - :white_check_mark: - files are the same
+            - :x: - files are different
 
-            ${{ env.bin_diff_list }}
+            ${{ env.STATUS_DIFF_OUTPUT }}
 
             ## Map files diff output
 
-            ${{ env.map_diff_list }}
+            <details>
+            <summary>Click to show diff list</summary>
+
+            ${{ env.MAP_DIFF_OUTPUT }}
+
+            </details>
