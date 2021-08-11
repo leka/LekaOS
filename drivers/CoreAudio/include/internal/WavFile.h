@@ -9,6 +9,7 @@
 #include <cstdint>
 
 #include "LKCoreFatFs.h"
+#include "LogKit.h"
 #include "cstdio"
 
 namespace leka {
@@ -40,8 +41,8 @@ class WavFile
 
 	explicit WavFile(FIL *file);
 
-	auto getFile() -> FIL *;
-	auto getHeader() -> const WavHeader &;
+	[[nodiscard]] auto getFile() const -> FIL *;
+	[[nodiscard]] auto getHeader() const -> const WavHeader &;
 
   private:
 	FIL *_file;

@@ -4,8 +4,6 @@
 
 #include "WavFile.h"
 
-#include "LogKit.h"
-
 namespace leka {
 
 WavFile::WavFile(FIL *file) : _file(file)
@@ -13,12 +11,12 @@ WavFile::WavFile(FIL *file) : _file(file)
 	_readHeader();
 }
 
-auto WavFile::getFile() -> FIL *
+auto WavFile::getFile() const -> FIL *
 {
 	return _file;
 }
 
-auto WavFile::getHeader() -> const WavHeader &
+auto WavFile::getHeader() const -> const WavHeader &
 {
 	return _header;
 };

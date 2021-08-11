@@ -108,7 +108,7 @@ void CoreAudio::_handleCallback(uint16_t *buffer)
 
 void CoreAudio::_handleNextSector(uint16_t *buffer)
 {
-	bool eof = WavReader::loadSector(_wavFile, buffer, 512);
+	bool eof = WavReader::loadSector(*_wavFile, buffer, 512);
 	_scaleToVolume(buffer, 256);
 	_align12bR(buffer, 256);
 	if (eof) {

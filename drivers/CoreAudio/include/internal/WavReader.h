@@ -14,11 +14,11 @@ class WavReader
 {
   public:
 	WavReader() = default;
-	static auto loadSector(WavFile *wavfile, uint16_t *buffer, uint16_t sectorSize) -> bool;
+	static auto loadSector(const WavFile &wavfile, uint16_t *dstBuffer, uint16_t sectorSizeBytes) -> bool;
 
   private:
-	static auto _readSector(WavFile *wavfile, uint16_t *buffer, uint16_t sectorSize) -> int;
-	static void _convertSectorData(uint16_t *buffer, uint16_t sectorSize);
+	static auto _readSector(const WavFile &wavfile, uint16_t *dstBuffer, uint16_t sectorSizeBytes) -> UINT;
+	static void _convertSectorData(uint16_t *buffer, uint16_t sectorSizeSamples);
 };
 
 }	// namespace leka
