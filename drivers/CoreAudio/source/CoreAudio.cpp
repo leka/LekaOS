@@ -29,7 +29,7 @@ void CoreAudio::playFile(FIL *file)
 	_wavFile				= new WavFile(file);
 	uint16_t *_waveBuffer_2 = &_waveBuffer[256];
 
-	_initialize(_wavFile->header().SamplingRate);
+	_initialize(_wavFile->getHeader().SamplingRate);
 
 	_handleNextSector(_waveBuffer);
 	_handleNextSector(_waveBuffer_2);
@@ -59,14 +59,12 @@ void CoreAudio::stop()
 
 void CoreAudio::_initialize(float frequency)
 {
-	// setup DAC callbacks
 	static auto *self = this;
 	auto halfBuffCb =
 		static_cast<pDAC_CallbackTypeDef>([]([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->_halfCptCallback(); });
 	auto fullBuffCb =
 		static_cast<pDAC_CallbackTypeDef>([]([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->_cptCallback(); });
 
-	// initialize components
 	_coreTimer.initialize(frequency);
 	_coreDac.initialize(_coreTimer, halfBuffCb, fullBuffCb);
 }
