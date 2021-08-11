@@ -17,7 +17,7 @@ class BufferedSerial
 	virtual auto read(uint8_t *buffer, ssize_t length) -> ssize_t		 = 0;
 	virtual auto write(const uint8_t *buffer, ssize_t length) -> ssize_t = 0;
 	virtual auto readable() -> bool										 = 0;
-	virtual void sigio(mbed::Callback<void()> func)						 = 0;
+	virtual void registerIOCallback(mbed::Callback<void()> func)		 = 0;
 };
 
 }	// namespace leka::interface

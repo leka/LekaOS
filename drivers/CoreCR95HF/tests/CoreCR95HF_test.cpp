@@ -115,7 +115,7 @@ TEST_F(CoreCR95HFSensorTest, initialization)
 
 TEST_F(CoreCR95HFSensorTest, enableTagDetection)
 {
-	EXPECT_CALL(mockBufferedSerial, sigio).Times(1);
+	EXPECT_CALL(mockBufferedSerial, registerIOCallback).Times(1);
 
 	corecr95hf.init();
 }
@@ -128,7 +128,7 @@ TEST_F(CoreCR95HFSensorTest, registerTagAvailableCallback)
 	corecr95hf.registerTagAvailableCallback(callbackFunction);
 }
 
-TEST_F(CoreCR95HFSensorTest, onTagAvailableSuccess)
+TEST_F(CoreCR95HFSensorTest, onDataAvailableSuccess)
 {
 	std::array<uint8_t, 3> expected_tag_detection_callback = {0x00, 0x01, 0x02};
 
@@ -139,9 +139,9 @@ TEST_F(CoreCR95HFSensorTest, onTagAvailableSuccess)
 		sendSetModeTagDetection();
 	}
 
-	corecr95hf.onTagAvailable();
+	corecr95hf.onDataAvailable();
 }
-TEST_F(CoreCR95HFSensorTest, onTagAvailableWrongCallback)
+TEST_F(CoreCR95HFSensorTest, onDataAvailableWrongCallback)
 {
 	std::array<uint8_t, 3> expected_tag_detection_callback = {0x00, 0x01, 0xff};
 
@@ -149,7 +149,7 @@ TEST_F(CoreCR95HFSensorTest, onTagAvailableWrongCallback)
 
 	receiveCR95HFAnswer(expected_tag_detection_callback);
 
-	corecr95hf.onTagAvailable();
+	corecr95hf.onDataAvailable();
 }
 
 TEST_F(CoreCR95HFSensorTest, getIDNSuccess)
@@ -164,7 +164,7 @@ TEST_F(CoreCR95HFSensorTest, getIDNSuccess)
 		sendAskIdn();
 	}
 
-	corecr95hf.onTagAvailable();
+	corecr95hf.onDataAvailable();
 	auto idn = corecr95hf.getIDN();
 	ASSERT_EQ(idn, expected_idn);
 }
@@ -183,7 +183,7 @@ TEST_F(CoreCR95HFSensorTest, getIDNFailedOnSize)
 		sendAskIdn();
 	}
 
-	corecr95hf.onTagAvailable();
+	corecr95hf.onDataAvailable();
 	auto idn = corecr95hf.getIDN();
 	ASSERT_EQ(idn, expected_idn);
 }
@@ -199,7 +199,7 @@ TEST_F(CoreCR95HFSensorTest, getIDNFailedOnValues)
 		sendAskIdn();
 	}
 
-	corecr95hf.onTagAvailable();
+	corecr95hf.onDataAvailable();
 	auto idn = corecr95hf.getIDN();
 	ASSERT_NE(idn, expected_idn);
 }
@@ -215,7 +215,7 @@ TEST_F(CoreCR95HFSensorTest, setBaudrateSuccess)
 		sendSetBaudrate(expected_baudrate);
 	}
 
-	corecr95hf.onTagAvailable();
+	corecr95hf.onDataAvailable();
 	auto baudrate = corecr95hf.setBaudrate(expected_baudrate);
 	ASSERT_EQ(baudrate, true);
 }
@@ -231,7 +231,7 @@ TEST_F(CoreCR95HFSensorTest, setBaudrateFailedOnSize)
 		sendSetBaudrate(expected_baudrate);
 	}
 
-	corecr95hf.onTagAvailable();
+	corecr95hf.onDataAvailable();
 	auto baudrate = corecr95hf.setBaudrate(expected_baudrate);
 	ASSERT_EQ(baudrate, false);
 }
@@ -248,7 +248,7 @@ TEST_F(CoreCR95HFSensorTest, setBaudrateFailedOnValue)
 		sendSetBaudrate(expected_baudrate);
 	}
 
-	corecr95hf.onTagAvailable();
+	corecr95hf.onDataAvailable();
 	auto baudrate = corecr95hf.setBaudrate(expected_baudrate);
 	ASSERT_EQ(baudrate, false);
 }
@@ -266,7 +266,7 @@ TEST_F(CoreCR95HFSensorTest, setCommunicationProtocolSuccess)
 		sendSetGainAndModulation();
 	}
 
-	corecr95hf.onTagAvailable();
+	corecr95hf.onDataAvailable();
 	auto is_initialized = corecr95hf.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 	ASSERT_EQ(is_initialized, true);
 }
@@ -280,7 +280,7 @@ TEST_F(CoreCR95HFSensorTest, setCommunicationProtocolFailedOnAnswerTooBig)
 		sendSetProtocol();
 	}
 
-	corecr95hf.onTagAvailable();
+	corecr95hf.onDataAvailable();
 	auto is_initialized = corecr95hf.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 	ASSERT_EQ(is_initialized, false);
 }
@@ -295,7 +295,7 @@ TEST_F(CoreCR95HFSensorTest, setCommunicationProtocolFailedOnWrongFirstValue)
 		sendSetProtocol();
 	}
 
-	corecr95hf.onTagAvailable();
+	corecr95hf.onDataAvailable();
 	auto is_initialized = corecr95hf.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 	ASSERT_EQ(is_initialized, false);
 }
@@ -323,7 +323,7 @@ TEST_F(CoreCR95HFSensorTest, receiveDataSuccess)
 
 	setExpectedReveivedData(read_values);
 
-	corecr95hf.onTagAvailable();
+	corecr95hf.onDataAvailable();
 	uint8_t is_communication_succeed = corecr95hf.receiveDataFromTag(actual_values);
 
 	ASSERT_EQ(is_communication_succeed, true);
@@ -337,7 +337,7 @@ TEST_F(CoreCR95HFSensorTest, receiveDataFailedWrongAnswerFlag)
 
 	setExpectedReveivedData(read_values);
 
-	corecr95hf.onTagAvailable();
+	corecr95hf.onDataAvailable();
 
 	uint8_t is_communication_succeed = corecr95hf.receiveDataFromTag(actual_values);
 
@@ -352,7 +352,7 @@ TEST_F(CoreCR95HFSensorTest, receiveDataFailedWrongLength)
 
 	setExpectedReveivedData(read_values);
 
-	corecr95hf.onTagAvailable();
+	corecr95hf.onDataAvailable();
 
 	uint8_t is_communication_succeed = corecr95hf.receiveDataFromTag(actual_values);
 

@@ -17,16 +17,18 @@ namespace leka {
 void CoreCR95HF::registerCallback()
 {
 	static auto *self = this;
-	auto callback	  = []() { self->onTagAvailable(); };
-	_serial.sigio(callback);
+	auto callback	  = []() { self->onDataAvailable(); };
+	_serial.registerIOCallback(callback);
 }
 
-void CoreCR95HF::onTagAvailable()
+void CoreCR95HF::onDataAvailable()
 {
 	read();
+	checkForTagDetection();
 
-	if (receiveTagDetectionCallback()) {
+	if (_tagWasDetected) {
 		_tagAvailableCallback();
+		_tagWasDetected = false;
 	}
 
 	setModeTagDetection();
@@ -40,17 +42,18 @@ void CoreCR95HF::read()
 	}
 }
 
-auto CoreCR95HF::receiveTagDetectionCallback() -> bool
+void CoreCR95HF::checkForTagDetection()
 {
 	std::array<uint8_t, 2> buffer {};
 
 	if (_anwser_size != rfid::cr95hf::expected_answer_size::tag_detection) {
-		return false;
+		_tagWasDetected = false;
+		return;
 	}
 
 	std::copy(_rx_buf.begin() + 1, _rx_buf.begin() + 1 + buffer.size(), buffer.begin());
 
-	return buffer == rfid::cr95hf::status::tag_detection_callback;
+	_tagWasDetected = (buffer == rfid::cr95hf::status::tag_detection_callback);
 }
 
 void CoreCR95HF::setModeTagDetection()

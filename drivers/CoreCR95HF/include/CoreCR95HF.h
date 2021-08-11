@@ -170,7 +170,7 @@ class CoreCR95HF : public interface::RFID
 	void init() final { registerCallback(); }
 
 	void registerTagAvailableCallback(tagAvailableCallback callback) final { _tagAvailableCallback = callback; };
-	void onTagAvailable() final;
+	void onDataAvailable() final;
 
 	auto getIDN() -> std::array<uint8_t, rfid::cr95hf::expected_answer_size::idn> final;
 	auto setBaudrate(uint8_t baudrate) -> bool final;
@@ -181,6 +181,8 @@ class CoreCR95HF : public interface::RFID
 	auto receiveDataFromTag(lstd::span<uint8_t> data) -> bool final;
 
   private:
+	void checkForTagDetection();
+
 	void registerCallback();
 
 	auto receiveTagDetectionCallback() -> bool;
@@ -205,6 +207,7 @@ class CoreCR95HF : public interface::RFID
 	void copyTagDataToSpan(lstd::span<uint8_t> data);
 
 	tagAvailableCallback _tagAvailableCallback;
+	bool _tagWasDetected {false};
 
 	interface::BufferedSerial &_serial;
 

@@ -23,9 +23,9 @@ auto CoreBufferedSerial::readable() -> bool
 	return _serial.readable();
 }
 
-void CoreBufferedSerial::sigio(mbed::Callback<void()> func)
+void CoreBufferedSerial::registerIOCallback(mbed::Callback<void()> callback)
 {
-	return _serial.sigio(func);
+	return _serial.sigio(callback);
 }
 
 // ? LCOV_EXCL_STOP - Exclude from coverage report
