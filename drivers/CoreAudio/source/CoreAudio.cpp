@@ -22,6 +22,41 @@ CoreAudio::CoreAudio(LKCoreSTM32HalBase &hal, CoreDAC &dac, CoreDACTimer &timer,
 	_thread.start({&_eventQueue, &events::EventQueue::dispatch_forever});
 }
 
+void CoreAudio::playFile(FIL *file)
+{
+	playing					= true;
+	_eofFlag				= NotFinished;
+	_wavFile				= new WavFile(file);
+	uint16_t *_waveBuffer_2 = &_waveBuffer[256];
+
+	_initialize(_wavFile->header().SamplingRate);
+
+	_handleNextSector(_waveBuffer);
+	_handleNextSector(_waveBuffer_2);
+
+	auto outSpan = lstd::span {_waveBuffer, 512};	// TODO() : check this
+
+	_coreTimer.start();
+	_coreDac.start(outSpan);
+}
+
+void CoreAudio::pause()
+{
+	_coreTimer.stop();
+}
+
+void CoreAudio::resume()
+{
+	_coreTimer.start();
+}
+
+void CoreAudio::stop()
+{
+	_coreTimer.stop();
+	_coreDac.stop();
+	playing = false;
+}
+
 void CoreAudio::_initialize(float frequency)
 {
 	// setup DAC callbacks
