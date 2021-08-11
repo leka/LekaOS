@@ -9,10 +9,8 @@ auto WavReader::loadSector(const WavFile &wavfile, uint16_t *dstBuffer, uint16_t
 {
 	bool eof = false;
 
-	UINT bytesRead = _readSector(wavfile, dstBuffer, sectorSizeBytes);
-
-	if (bytesRead != sectorSizeBytes) {
-		for (uint16_t i = bytesRead; i < sectorSizeBytes; ++i) {
+	if (UINT bytesRead = _readSector(wavfile, dstBuffer, sectorSizeBytes); bytesRead != sectorSizeBytes) {
+		for (auto i = static_cast<uint16_t>(bytesRead); i < sectorSizeBytes; ++i) {
 			dstBuffer[i] = 0;
 		}
 
