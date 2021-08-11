@@ -37,4 +37,14 @@ void CoreAudio::_scaleToVolume(uint16_t *buffer, uint16_t length)
 	}
 }
 
+void CoreAudio::_handleNextSector(uint16_t *buffer)
+{
+	bool eof = WavReader::loadSector(_wavFile, buffer, 512);
+	_scaleToVolume(buffer, 256);
+	_align12bR(buffer, 256);
+	if (eof) {
+		_eofFlag = LastBuffer;
+	}
+}
+
 }	// namespace leka
