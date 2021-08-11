@@ -154,5 +154,7 @@ jobs:
                ${{ steps.modified_files.outputs.added_modified }}  \
                | xargs -n1 \
                | grep -E -v "_test" \
+               | grep -E -v "gtest" \
+               | grep -E -v "gmock" \
                | grep -E    "\.h$|\.cpp$" \
                | xargs --no-run-if-empty clang-tidy-12 -p=. --quiet
