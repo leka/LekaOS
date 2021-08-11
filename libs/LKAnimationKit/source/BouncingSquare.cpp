@@ -10,7 +10,7 @@
 
 namespace leka::animation {
 
-BouncingSquare::BouncingSquare(interface::LKCoreGraphics &coregraphics) : _coregraphics(coregraphics) {}
+BouncingSquare::BouncingSquare(interface::CoreGraphics &coregraphics) : _coregraphics(coregraphics) {}
 
 void BouncingSquare::start(void)
 {

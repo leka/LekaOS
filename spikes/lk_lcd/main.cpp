@@ -11,20 +11,20 @@
 
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
-#include "LKCoreDMA2D.h"
-#include "LKCoreDSI.h"
+#include "CoreDMA2D.h"
+#include "CoreDSI.h"
 #include "LKCoreFatFs.h"
-#include "LKCoreFont.h"
-#include "LKCoreGraphics.h"
-#include "LKCoreJPEG.h"
-#include "LKCoreLCD.h"
-#include "LKCoreLCDDriverOTM8009A.h"
+#include "CoreFont.h"
+#include "CoreGraphics.h"
+#include "CoreJPEG.h"
+#include "CoreLCD.h"
+#include "CoreLCDDriverOTM8009A.h"
 #include "LKCoreLL.h"
-#include "LKCoreLTDC.h"
-#include "LKCoreSDRAM.h"
+#include "CoreLTDC.h"
+#include "CoreSDRAM.h"
 #include "LKCoreSTM32Hal.h"
-#include "LKCoreVideo.h"
-#include "LKVideoKit.h"
+#include "CoreVideo.h"
+#include "VideoKit.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 
@@ -36,27 +36,27 @@ FATFileSystem fatfs("fs");
 LKCoreFatFs file;
 
 LKCoreSTM32Hal hal;
-LKCoreSDRAM coresdram(hal);
+CoreSDRAM coresdram(hal);
 
 // screen + dsi + ltdc
-LKCoreLTDC coreltdc(hal);
-LKCoreDSI coredsi(hal, coreltdc);
-LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
-LKCoreLCD corelcd(coreotm);
+CoreLTDC coreltdc(hal);
+CoreDSI coredsi(hal, coreltdc);
+CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
+CoreLCD corelcd(coreotm);
 
 // peripherals
-LKCoreDMA2D coredma2d(hal);
-LKCoreJPEG corejpeg(hal, std::make_unique<LKCoreJPEGDMAMode>());
+CoreDMA2D coredma2d(hal);
+CoreJPEG corejpeg(hal, std::make_unique<CoreJPEGDMAMode>());
 
 // graphics (will move to libs/VideoKit)
 LKCoreLL corell;
 CGPixel pixel(corell);
-LKCoreFont corefont(pixel);
-LKCoreGraphics coregraphics(coredma2d);
+CoreFont corefont(pixel);
+CoreGraphics coregraphics(coredma2d);
 
-LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
+CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
-LKVideoKit screen;
+VideoKit screen;
 
 std::vector<const char *> images = {"assets/images/Leka/logo.jpg", "assets/images/Leka/image.jpg"};
 
