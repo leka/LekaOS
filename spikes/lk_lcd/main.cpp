@@ -24,7 +24,9 @@ FATFileSystem fatfs("fs");
 
 LKCoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);
+
 VideoKit screen(hal);
+VideoKit_DeclareIRQHandlers(screen);
 
 std::vector<const char *> images = {"assets/images/Leka/logo.jpg", "assets/images/Leka/image.jpg"};
 
@@ -41,37 +43,6 @@ std::vector<const char *> videos = {
 	//"assets/video/20fps_s100.avi"
 	"assets/video/Perplex_10.avi",
 };
-
-extern "C" {
-void DSI_IRQHandler(void)
-{
-	HAL_DSI_IRQHandler(&screen.getDSI().getHandle());
-}
-
-void JPEG_IRQHandler(void)
-{
-	HAL_JPEG_IRQHandler(&screen.getJPEG().getHandle());
-}
-
-void DMA2_Stream0_IRQHandler(void)
-{
-	HAL_DMA_IRQHandler(screen.getJPEG().getHandle().hdmain);
-}
-
-void DMA2_Stream1_IRQHandler(void)
-{
-	HAL_DMA_IRQHandler(screen.getJPEG().getHandle().hdmaout);
-}
-
-void DMA2D_IRQHandler(void)
-{
-	HAL_DMA2D_IRQHandler(&screen.getDMA2D().getHandle());
-}
-void LTDC_IRQHandler(void)
-{
-	HAL_LTDC_IRQHandler(&screen.getLTDC().getHandle());
-}
-}
 
 void initializeSD()
 {

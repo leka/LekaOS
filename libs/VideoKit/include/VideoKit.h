@@ -47,10 +47,6 @@ class VideoKit
 
 	void drawText(const char *text, uint32_t x, uint32_t y, gfx::Color color, gfx::Color bg = gfx::Color::Transparent);
 
-	auto drawImage(LKCoreFatFs &file) -> uint32_t;
-
-	auto drawImage(LKCoreFatFs &file, JPEGConfig &config) -> uint32_t;
-
 	auto drawImage(FileSystemKit::File &file) -> uint32_t;
 
 	auto drawImage(FileSystemKit::File &file, JPEGConfig &config) -> uint32_t;
@@ -77,6 +73,16 @@ class VideoKit
 	rtos::Kernel::Clock::time_point _last_time {};
 	std::chrono::milliseconds _frametime = 40ms;
 };
+
+#define VideoKit_DeclareIRQHandlers(instance)                                                                          \
+	extern "C" {                                                                                                       \
+	void DSI_IRQHandler(void) { HAL_DSI_IRQHandler(&instance.getDSI().getHandle()); }                                  \
+	void JPEG_IRQHandler(void) { HAL_JPEG_IRQHandler(&instance.getJPEG().getHandle()); }                               \
+	void DMA2_Stream0_IRQHandler(void) { HAL_DMA_IRQHandler(instance.getJPEG().getHandle().hdmain); }                  \
+	void DMA2_Stream1_IRQHandler(void) { HAL_DMA_IRQHandler(instance.getJPEG().getHandle().hdmaout); }                 \
+	void DMA2D_IRQHandler(void) { HAL_DMA2D_IRQHandler(&instance.getDMA2D().getHandle()); }                            \
+	void LTDC_IRQHandler(void) { HAL_LTDC_IRQHandler(&instance.getLTDC().getHandle()); }                               \
+	}
 
 }	// namespace leka
 
