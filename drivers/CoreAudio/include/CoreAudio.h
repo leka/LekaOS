@@ -63,8 +63,8 @@ class CoreAudio
 	bool _playing			= false;
 
 	void _initialize(uint32_t frequency);
-	void _align12bR(uint16_t *buffer, uint16_t nbSamples) const;
-	void _scaleToVolume(uint16_t *buffer, uint16_t nbSamples) const;
+	void _align12bR(lstd::span<uint16_t> samplesBuffer) const;
+	void _scaleToVolume(lstd::span<uint16_t> samplesBuffer) const;
 	void _onHalfBuffRead();
 	void _onFullBuffRead();
 	void _handleCallback(uint16_t *buffer);

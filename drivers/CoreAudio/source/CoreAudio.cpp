@@ -27,10 +27,8 @@ void CoreAudio::playFile(FIL *file)
 	_handleNextSector(_waveBuffer.data());
 	_handleNextSector(_waveBuffer_2);
 
-	auto outSpan = lstd::span {_waveBuffer.data(), outBufferSize_Samples};
-
 	_coreTimer.start();
-	_coreDac.start(outSpan);   // TODO() : check if span shouldn't be copied instead of given by ref
+	_coreDac.start(lstd::span {_waveBuffer.data(), outBufferSize_Samples});
 }
 
 void CoreAudio::pause() const
@@ -62,19 +60,19 @@ void CoreAudio::_initialize(uint32_t frequency)
 	_coreDac.initialize(_coreTimer, halfBuffCb, fullBuffCb);
 }
 
-void CoreAudio::_align12bR(uint16_t *buffer, uint16_t nbSamples) const
+void CoreAudio::_align12bR(lstd::span<uint16_t> samplesBuffer) const
 {
-	for (int i = 0; i < nbSamples; ++i) {
-		buffer[i] = buffer[i] >> 4;
+	for (auto &sample: samplesBuffer) {
+		sample = sample >> 4;
 	}
 }
 
-void CoreAudio::_scaleToVolume(uint16_t *buffer, uint16_t nbSamples) const
+void CoreAudio::_scaleToVolume(lstd::span<uint16_t> samplesBuffer) const
 {
-	static const uint16_t offset = 0x7FFF;
-	for (int i = 0; i < nbSamples; ++i) {
-		buffer[i] = static_cast<uint16_t>((static_cast<float>(buffer[i]) * _volume) / 100);
-		buffer[i] += static_cast<uint16_t>(offset * (1.F - _volume / 100.F));
+	constexpr uint16_t offset = 0x7FFF;
+	for (auto &sample: samplesBuffer) {
+		sample = static_cast<uint16_t>((static_cast<float>(sample) * _volume) / 100);
+		sample += static_cast<uint16_t>(offset * (1.F - _volume / 100.F));
 	}
 }
 
@@ -103,9 +101,10 @@ void CoreAudio::_handleCallback(uint16_t *buffer)
 
 void CoreAudio::_handleNextSector(uint16_t *buffer)
 {
-	bool eof = WavReader::loadSector(*_wavFile, buffer, sectorSize_Bytes);
-	_scaleToVolume(buffer, sectorSize_Samples);
-	_align12bR(buffer, sectorSize_Samples);	  // DAC configured to work with the 12 rightmost bits of uint16_t
+	bool eof		 = WavReader::loadSector(*_wavFile, buffer, sectorSize_Bytes);
+	auto samplesBuff = lstd::span {buffer, sectorSize_Samples};
+	_scaleToVolume(samplesBuff);
+	_align12bR(samplesBuff);   // DAC configured to work with the 12 rightmost bits of uint16_t
 	if (eof) {
 		_eofFlag = LastBuffer;
 	}
