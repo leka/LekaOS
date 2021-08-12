@@ -14,11 +14,22 @@ using namespace std::chrono;
 
 namespace leka {
 
+void CoreCR95HF::init()
+{
+	registerCallback();
+	_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
+}
+
 void CoreCR95HF::registerCallback()
 {
-	static auto *self = this;
-	auto callback	  = []() { self->onDataAvailable(); };
+	auto callback = [this]() { this->onCallback(); };
 	_serial.registerIOCallback(callback);
+}
+
+void CoreCR95HF::onCallback()
+{
+	auto callback = [this]() { this->onDataAvailable(); };
+	_event_queue.call(callback);
 }
 
 void CoreCR95HF::onDataAvailable()

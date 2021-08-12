@@ -8,6 +8,9 @@
 #include <cstdint>
 #include <lstd_span>
 
+#include "events/EventQueue.h"
+#include "rtos/Thread.h"
+
 #include "interface/drivers/BufferedSerial.h"
 #include "interface/drivers/RFID.h"
 
@@ -165,9 +168,10 @@ namespace rfid::cr95hf {
 class CoreCR95HF : public interface::RFID
 {
   public:
-	explicit CoreCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
+	explicit CoreCR95HF(interface::BufferedSerial &serial, rtos::Thread &thread, events::EventQueue &event_queue)
+		: _serial(serial), _thread(thread), _event_queue(event_queue) {};
 
-	void init() final { registerCallback(); }
+	void init() final;
 
 	void registerTagAvailableCallback(tagAvailableCallback callback) final { _tagAvailableCallback = callback; };
 	void onDataAvailable() final;
@@ -184,6 +188,7 @@ class CoreCR95HF : public interface::RFID
 	void checkForTagDetection();
 
 	void registerCallback();
+	void onCallback();
 
 	auto receiveTagDetectionCallback() -> bool;
 	void setModeTagDetection();
@@ -210,6 +215,8 @@ class CoreCR95HF : public interface::RFID
 	bool _tagWasDetected {false};
 
 	interface::BufferedSerial &_serial;
+	rtos::Thread &_thread;
+	events::EventQueue &_event_queue;
 
 	size_t _anwser_size {0};
 	std::array<uint8_t, rfid::cr95hf::max_tx_length> _tx_buf {};
