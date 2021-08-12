@@ -290,7 +290,9 @@
 #define USE_HAL_DSI_REGISTER_CALLBACKS									  1U				 // set by application
 #define USE_HAL_JPEG_REGISTER_CALLBACKS									  1U				 // set by application
 // Macros
-#define WSF_MS_PER_TICK 1	// defined by library:cordio
-#define _RTE_				// defined by library:rtos
+#define WSF_MS_PER_TICK 1					// defined by library:cordio
+#define _RTE_								// defined by library:rtos
+#define USE_HAL_DAC_REGISTER_CALLBACKS 1U	// defined by library:leka::CoreAudio
+#define USE_HAL_TIM_REGISTER_CALLBACKS 1U	// defined by library:leka::CoreAudio
 
 #endif
