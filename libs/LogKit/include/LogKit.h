@@ -27,7 +27,7 @@ struct logger {
 		static inline auto timestamp = std::array<char, 32> {};
 		static inline auto filename	 = std::array<char, 128> {};
 		static inline auto message	 = std::array<char, 128> {};
-		static inline auto output	 = std::array<char, 256> {};
+		static inline auto output	 = std::array<char, 1024> {};
 	};
 
 	//
