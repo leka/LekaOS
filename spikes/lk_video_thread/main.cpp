@@ -25,7 +25,7 @@ VideoKit screen(hal);
 VideoKit_DeclareIRQHandlers(screen);
 
 rtos::Thread video_thread;
-auto delay = HAL_GetTick(); 
+auto delay = HAL_GetTick();
 
 void initializeSD()
 {
@@ -52,8 +52,7 @@ void videoThread()
 
 		video.nextFrame();
 
-		if (video.hasEnded())
-			video.restart();
+		if (video.hasEnded()) video.restart();
 
 		screen.display();
 	}
@@ -68,7 +67,7 @@ auto main() -> int
 
 	coresdram.initialize();
 	screen.initialize();
-	
+
 	// start video thread that plays a video
 	video_thread.start(&videoThread);
 

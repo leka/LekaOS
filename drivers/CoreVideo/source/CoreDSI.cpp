@@ -211,9 +211,9 @@ void CoreDSI::refresh()
 	} else {
 		// normal refresh
 		if (_handle.Lock != HAL_LOCKED) {
-			_handle.Lock = HAL_LOCKED;
+			_handle.Lock		  = HAL_LOCKED;
 			_handle.Instance->WCR = _handle.Instance->WCR | DSI_WCR_LTDCEN;
-			_handle.Lock = HAL_UNLOCKED;
+			_handle.Lock		  = HAL_UNLOCKED;
 		}
 	}
 }

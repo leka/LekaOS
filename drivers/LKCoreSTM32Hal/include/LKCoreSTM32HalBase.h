@@ -81,25 +81,25 @@ class LKCoreSTM32HalBase
 	virtual HALStatus HAL_JPEG_RegisterDataReadyCallback(JPEG_HandleTypeDef *, pJPEG_DataReadyCallbackTypeDef) = 0;
 	virtual HALStatus HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *, HAL_JPEG_CallbackIDTypeDef,
 												pJPEG_CallbackTypeDef)										   = 0;
-	virtual void HAL_RCC_TIM6_CLK_ENABLE(void)													 = 0;
-	virtual void HAL_RCC_TIM7_CLK_ENABLE(void)													 = 0;
-	virtual void HAL_RCC_TIM6_CLK_DISABLE(void)													 = 0;
-	virtual void HAL_RCC_TIM7_CLK_DISABLE(void)													 = 0;
-	virtual void HAL_RCC_FMC_CLK_ENABLE(void)													 = 0;
-	virtual void HAL_RCC_DMA1_CLK_ENABLE(void)													 = 0;
-	virtual void HAL_RCC_DMA2_CLK_ENABLE(void)													 = 0;
-	virtual void HAL_RCC_JPEG_CLK_ENABLE(void)													 = 0;
-	virtual void HAL_RCC_LTDC_CLK_ENABLE(void)													 = 0;
-	virtual void HAL_RCC_LTDC_FORCE_RESET(void)													 = 0;
-	virtual void HAL_RCC_LTDC_RELEASE_RESET(void)												 = 0;
-	virtual void HAL_RCC_DMA2D_CLK_ENABLE(void)													 = 0;
-	virtual void HAL_RCC_DMA2D_FORCE_RESET(void)												 = 0;
-	virtual void HAL_RCC_DMA2D_RELEASE_RESET(void)												 = 0;
-	virtual void HAL_RCC_DSI_CLK_ENABLE(void)													 = 0;
-	virtual void HAL_RCC_DSI_FORCE_RESET(void)													 = 0;
-	virtual void HAL_RCC_DSI_RELEASE_RESET(void)												 = 0;
-	virtual void HAL_RCC_DAC_CLK_ENABLE(void)													 = 0;
-	virtual void HAL_RCC_DAC_CLK_DISABLE(void)													 = 0;
+	virtual void HAL_RCC_TIM6_CLK_ENABLE(void)																   = 0;
+	virtual void HAL_RCC_TIM7_CLK_ENABLE(void)																   = 0;
+	virtual void HAL_RCC_TIM6_CLK_DISABLE(void)																   = 0;
+	virtual void HAL_RCC_TIM7_CLK_DISABLE(void)																   = 0;
+	virtual void HAL_RCC_FMC_CLK_ENABLE(void)																   = 0;
+	virtual void HAL_RCC_DMA1_CLK_ENABLE(void)																   = 0;
+	virtual void HAL_RCC_DMA2_CLK_ENABLE(void)																   = 0;
+	virtual void HAL_RCC_JPEG_CLK_ENABLE(void)																   = 0;
+	virtual void HAL_RCC_LTDC_CLK_ENABLE(void)																   = 0;
+	virtual void HAL_RCC_LTDC_FORCE_RESET(void)																   = 0;
+	virtual void HAL_RCC_LTDC_RELEASE_RESET(void)															   = 0;
+	virtual void HAL_RCC_DMA2D_CLK_ENABLE(void)																   = 0;
+	virtual void HAL_RCC_DMA2D_FORCE_RESET(void)															   = 0;
+	virtual void HAL_RCC_DMA2D_RELEASE_RESET(void)															   = 0;
+	virtual void HAL_RCC_DSI_CLK_ENABLE(void)																   = 0;
+	virtual void HAL_RCC_DSI_FORCE_RESET(void)																   = 0;
+	virtual void HAL_RCC_DSI_RELEASE_RESET(void)															   = 0;
+	virtual void HAL_RCC_DAC_CLK_ENABLE(void)																   = 0;
+	virtual void HAL_RCC_DAC_CLK_DISABLE(void)																   = 0;
 
 	virtual HAL_StatusTypeDef HAL_TIM_Base_Init(TIM_HandleTypeDef *htim)									= 0;
 	virtual HAL_StatusTypeDef HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,

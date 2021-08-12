@@ -1,5 +1,7 @@
 #include "CoreJPEGMode.h"
 
+#include "rtos/ThisThread.h"
+
 using namespace leka;
 
 //------------------ Default Callbacks ------------------------
@@ -162,6 +164,7 @@ auto CoreJPEGModeDMA::decodeImage(JPEG_HandleTypeDef *hjpeg, interface::File &fi
 	do {
 		decoderInputHandler(hjpeg, file);
 		process_ended = decoderOutputHandler(hjpeg);
+		rtos::ThisThread::yield();
 	} while (!process_ended);
 
 	return _image_size;
