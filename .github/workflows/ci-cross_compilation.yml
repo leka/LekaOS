@@ -33,7 +33,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        custom_target: ["LEKA_V1_2_DEV"]
+        custom_target: ["LEKA_V1_2_DEV", "LEKA_DISCO"]
 
     steps:
       - uses: actions/checkout@v2
