@@ -159,6 +159,9 @@ jobs:
         run: |
           git checkout ${{ github.base_ref }}
           make deep_clean
+          if [[ "$base_mbed" != "$head_mbed" ]]; then
+            make mbed_curl VERSION=${{ env.base_mbed }}
+          fi
           make config
           make
 
@@ -171,6 +174,9 @@ jobs:
         run: |
           git checkout ${{ github.head_ref }}
           make deep_clean
+          if [[ "$base_mbed" != "$head_mbed" ]]; then
+            make mbed_curl VERSION=${{ env.head_mbed }}
+          fi
           make config
           make
 
