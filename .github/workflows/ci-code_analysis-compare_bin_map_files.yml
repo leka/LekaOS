@@ -98,9 +98,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ env.CCACHE_DIR}}
-          key: ${{ runner.os }}-cache-cross_compilation-${{ matrix.custom_target }}-ccache-${{ steps.cache_variables.outputs.date }}
+          key: ${{ runner.os }}-cache-code_analysis-compare_bin_map_files-${{ matrix.custom_target }}-ccache-${{ steps.cache_variables.outputs.date }}
           restore-keys: |
-            ${{ runner.os }}-cache-cross_compilation-${{ matrix.custom_target }}-ccache-
+            ${{ runner.os }}-cache-code_analysis-compare_bin_map_files-${{ matrix.custom_target }}-ccache-
 
       #
       # Mark: - Install python/pip dependencies
