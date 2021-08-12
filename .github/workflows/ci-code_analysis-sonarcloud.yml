@@ -35,6 +35,8 @@ env:
   SONARCLOUD_BUILD_WRAPPER_FILENAME: "build-wrapper-linux-x86.zip"
   SONARCLOUD_BUILD_WRAPPER_EXTRACT_DIRECTORY: "build-wrapper-linux-x86"
 
+  SONARCLOUD_CACHE_DIR: /home/runner/work/sonarcloud
+
 jobs:
   sonarcloud:
     name: sonarcloud
@@ -138,6 +140,15 @@ jobs:
           key: ${{ runner.os }}-cache-code_analysis-sonarcloud-ccache-${{ steps.cache_variables.outputs.date }}
           restore-keys: |
             ${{ runner.os }}-cache-code_analysis-sonarcloud-ccache-
+
+      - name: Cache sonarcloud cache
+        id: cache_sonarcloud_cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.SONARCLOUD_CACHE_DIR}}
+          key: ${{ runner.os }}-cache-code_analysis-sonarcloud-sonarcloud_cache-${{ steps.cache_variables.outputs.date }}
+          restore-keys: |
+            ${{ runner.os }}-cache-code_analysis-sonarcloud-sonarcloud_cache-
 
       #
       # Mark: - Install python/pip dependencies
