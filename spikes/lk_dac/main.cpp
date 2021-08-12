@@ -6,19 +6,25 @@
 #include <sys/types.h>
 
 #include "CoreDAC.h"
-#include "CoreDACTimer.h"
 #include "LKCoreSTM32Hal.h"
 
 using namespace leka;
 
+// Components
 LKCoreSTM32Hal hal;
 CoreDAC coreDac(hal);
 CoreDACTimer coreTimer_6(hal, CoreDACTimer::HardWareBasicTimer::BasicTimer6);
 CoreDACTimer coreTimer_7(hal, CoreDACTimer::HardWareBasicTimer::BasicTimer7);
 
-uint32_t _countSamples						 = 0;
-bool _ended									 = false;
+// Globals
+uint32_t _countCbCalls						 = 0;
+bool _vibEnded								 = false;
 CoreDACTimer::HardWareBasicTimer _currentTim = CoreDACTimer::HardWareBasicTimer::BasicTimer6;
+
+// Preset values
+constexpr uint32_t _samplingRate_hertz = 44100;
+constexpr int _vibDuration_seconds	   = 2;
+constexpr int _outBufferSize_samples   = 512;
 
 /**
  * @brief This function handles DMA1 stream5 global interrupt.
@@ -30,10 +36,10 @@ void DMA1_Stream5_IRQHandler()
 }
 }
 
-void fillBufferWithSinWave(uint16_t *buffer, uint32_t bufferSize, uint32_t frequency, uint32_t samplingRate,
+void fillBufferWithSinWave(uint16_t *buffer, uint32_t bufferSize, uint32_t sinFreq, uint32_t samplingRate,
 						   uint16_t maxValue, uint16_t minValue)
 {
-	uint32_t samplesPerPeriod = (samplingRate / frequency);
+	uint32_t samplesPerPeriod = (samplingRate / sinFreq);
 
 	for (uint32_t i = 0; i < bufferSize; ++i) {
 		double tmp = 0.5 * sin(i * 2.0 * M_PI / samplesPerPeriod) + 0.5;
@@ -44,13 +50,13 @@ void fillBufferWithSinWave(uint16_t *buffer, uint32_t bufferSize, uint32_t frequ
 
 void callbackTest(DAC_HandleTypeDef *)
 {
-	static const int numSecs		 = 2;
-	static const uint32_t maxSamples = numSecs * 44100 / 256;	// Num of calls to callback in numSecs seconds
-	if (_countSamples <= maxSamples) {
-		_countSamples++;
+	static const int samplesPerHalfBuff		= _outBufferSize_samples / 2;
+	static const uint32_t nbCallsInDuration = _vibDuration_seconds * _samplingRate_hertz / samplesPerHalfBuff;
+	if (_countCbCalls <= nbCallsInDuration) {
+		_countCbCalls++;
 	}
-	if (_countSamples == maxSamples) {
-		_ended = true;
+	if (_countCbCalls == nbCallsInDuration) {
+		_vibEnded = true;
 
 		if (_currentTim == CoreDACTimer::HardWareBasicTimer::BasicTimer6) {
 			coreTimer_6.stop();
@@ -62,8 +68,8 @@ void callbackTest(DAC_HandleTypeDef *)
 
 void startSound(CoreDACTimer::HardWareBasicTimer tim)
 {
-	_countSamples = 0;
-	_ended		  = false;
+	_countCbCalls = 0;
+	_vibEnded	  = false;
 	if (tim == CoreDACTimer::HardWareBasicTimer::BasicTimer6) {
 		coreTimer_6.start();
 		_currentTim = CoreDACTimer::HardWareBasicTimer::BasicTimer6;
@@ -86,35 +92,39 @@ auto main() -> int
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 
 	std::array<uint16_t, 512> outBuff {};
-	fillBufferWithSinWave(outBuff.data(), 512, 440, 44100, 0x999, 0x666);
+	const uint32_t sinFreq = 440;
+	const uint16_t maxVal  = 0x999;
+	const uint16_t minVal  = 0x666;
+	fillBufferWithSinWave(outBuff.data(), outBuff.size(), sinFreq, _samplingRate_hertz, maxVal, minVal);
 	auto outSpan = lstd::span {outBuff.data(), outBuff.size()};
 
-	log_info("\n\nHello, investigation day!\n\n");
+	log_info("Hello, investigation day!");
 
 	// Init
-	coreTimer_6.initialize(44100);
-	coreTimer_7.initialize(44100);
+	coreTimer_6.initialize(_samplingRate_hertz);
+	coreTimer_7.initialize(_samplingRate_hertz);
 
 	coreDac.initialize(coreTimer_6, &callbackTest, &callbackTest);
 	coreDac.start(outSpan);
 
 	// start
-	log_info("First timer\n");
+	log_info("First timer for %ds", _vibDuration_seconds);
 	startSound(CoreDACTimer::HardWareBasicTimer::BasicTimer6);
 
-	while (!_ended) {
+	while (!_vibEnded) {
 		rtos::ThisThread::sleep_for(50ms);
 	}
+	log_info("Pause");
 	rtos::ThisThread::sleep_for(2s);
 
 	coreDac.linkNewTimer(coreTimer_7);	 // change timer associated to DAC
 
-	log_info("Second timer\n");
+	log_info("Second timer for %ds", _vibDuration_seconds);
 	startSound(CoreDACTimer::HardWareBasicTimer::BasicTimer7);
 
-	while (!_ended) {
+	while (!_vibEnded) {
 		rtos::ThisThread::sleep_for(50ms);
 	}
 
-	log_info("End of DAC and Timer test!\n\n");
+	log_info("End of DAC and Timer test!");
 }
