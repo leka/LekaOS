@@ -27,7 +27,7 @@ void CoreDAC::linkNewTimer(const CoreDACTimer &tim)
 	_hal.HAL_DAC_ConfigChannel(&_hdac, &sConfig, DAC_CHANNEL_1);
 }
 
-void CoreDAC::start(const lstd::span<uint16_t> &outBuffer)
+void CoreDAC::start(lstd::span<uint16_t> outBuffer)
 {
 	_hal.HAL_DAC_Start_DMA(&_hdac, DAC_CHANNEL_1, (uint32_t *)(outBuffer.data()), outBuffer.size(), DAC_ALIGN_12B_R);
 }

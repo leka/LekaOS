@@ -27,7 +27,7 @@ class CoreDAC
 
 	void terminate();
 	void linkNewTimer(const CoreDACTimer &tim);
-	void start(const lstd::span<uint16_t> &outBuffer);
+	void start(lstd::span<uint16_t> outBuffer);
 	void stop();
 
 	[[nodiscard]] auto getHandle() const -> const DAC_HandleTypeDef &;
