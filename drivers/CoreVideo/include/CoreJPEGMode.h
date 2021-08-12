@@ -43,7 +43,7 @@ struct CoreJPEGModeDMA : CoreJPEGMode {
 	explicit CoreJPEGModeDMA(LKCoreSTM32HalBase &hal);
 
 	auto decodeImage(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> uint32_t final;
-	void decodeImageAsync(JPEG_HandleTypeDef *hjpeg, LKCoreFatFsBase &file, std::function<void(int)>& cb) final;
+	void decodeImageAsync(JPEG_HandleTypeDef *hjpeg, interface::File &file, std::function<void(int)> cb) final;
 
 	void onMspInitCallback(JPEG_HandleTypeDef *hjpeg) final;
 	void onGetDataCallback(JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize) final;

@@ -117,10 +117,12 @@ void Video::draw(VideoKit &screen)
 		nextFrame();
 	};
 
-	auto frame_size = screen.drawImage(_file, _config);
+	/*auto frame_size = */screen.drawImageAsync(_file, _config, drawEndCallback);
 	
+	/*
 	// increment frame offset
 	if (!_ended) {
 		_frame_offset = _frame_offset + frame_size + 4;
 	}
+	*/
 }

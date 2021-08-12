@@ -145,38 +145,37 @@ void CoreJPEGModeDMA::reset()
 struct DecodeThreadArgs {
 	CoreJPEGModeDMA *self;
 	JPEG_HandleTypeDef *handle;
-    LKCoreFatFsBase *file;
-    std::function<void(int)> *callback;
+	interface::File *file;
+	std::function<void(int)> *callback;
 };
 
 void CoreJPEGModeDMA::JPEGDecodeThread(void *voidargs) {
 	auto args = (DecodeThreadArgs *)voidargs;
 	log_info("thread self : %x", args->self);
-    bool ended = false;
+	bool ended = false;
 	do {
-        args->self->decoderInputHandler(args->handle, *args->file);
-        ended = args->self->decoderOutputHandler(args->handle);
-        log_info("decoder thread name : %s", rtos::ThisThread::get_name());
+		args->self->decoderInputHandler(args->handle, *args->file);
+		ended = args->self->decoderOutputHandler(args->handle);
+		log_info("decoder thread name : %s", rtos::ThisThread::get_name());
 		// rtos::ThisThread::yield();
-    } while(!ended);
+	} while(!ended);
 	log_info("Calling callback");
-    (*args->callback)(args->self->_image_size);
+	(*args->callback)(args->self->_image_size);
 }
 
-void CoreJPEGModeDMA::decodeImageAsync(JPEG_HandleTypeDef *hjpeg, LKCoreFatFsBase &file, std::function<void(int)> cb)
+void CoreJPEGModeDMA::decodeImageAsync(JPEG_HandleTypeDef *hjpeg, interface::File &file, std::function<void(int)> cb)
 {
 	reset();
 
 	// read file and fill input buffers
 	for (auto &buffer: _input_buffers) {
-		if (file.read(buffer.data, jpeg::input_chunk_size, &buffer.datasize) == FR_OK) {
+		buffer.datasize = file.read(buffer.data, jpeg::input_chunk_size);
+		if (buffer.datasize > 0)
 			buffer.state = Buffer::State::Full;
-		}
 	}
 
 	// start JPEG decoding with DMA method
-	HAL_JPEG_Decode_DMA(hjpeg, _input_buffers[0].data, _input_buffers[0].datasize, _output_buffers[0].data,
-						jpeg::output_chunk_size);
+	HAL_JPEG_Decode_DMA(hjpeg, _input_buffers[0].data, _input_buffers[0].datasize, _output_buffers[0].data, jpeg::output_chunk_size);
 
 	static DecodeThreadArgs args;
 	static std::function<void(int)> endOfDecodeCallback;
@@ -195,15 +194,15 @@ void CoreJPEGModeDMA::decodeImageAsync(JPEG_HandleTypeDef *hjpeg, LKCoreFatFsBas
 	_thread->start(mbed::callback(&CoreJPEGModeDMA::JPEGDecodeThread, &args));
 
 	log_info("real this : %x", this);
-	
+
 	/*
 	bool ended = false;
 	do {
-        decoderInputHandler(hjpeg, file);
-        ended = decoderOutputHandler(hjpeg);
-        //log_info("decoder thread name : %ld", rtos::ThisThread::get_id());
+		decoderInputHandler(hjpeg, file);
+		ended = decoderOutputHandler(hjpeg);
+		//log_info("decoder thread name : %ld", rtos::ThisThread::get_id());
 		rtos::ThisThread::yield();
-    } while(!ended);
+	} while(!ended);
 	// cb(_image_size);
 	*/
 }

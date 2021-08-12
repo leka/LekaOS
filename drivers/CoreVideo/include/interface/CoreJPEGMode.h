@@ -3,7 +3,6 @@
 
 #include <functional>
 
-#include "LKCoreFatFsBase.h"
 #include "interface/platform/File.h"
 #include "stm32f7xx_hal.h"
 
@@ -14,7 +13,7 @@ struct CoreJPEGMode {
 
 	virtual auto decodeImage(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> uint32_t = 0;
 
-	virtual void decodeImageAsync(JPEG_HandleTypeDef *hjpeg, LKCoreFatFsBase &file, std::function<void(int)> cb) = 0;
+	virtual void decodeImageAsync(JPEG_HandleTypeDef *hjpeg, interface::File &file, std::function<void(int)> cb) = 0;
 
 	// called when HAL_JPEG_Init is called
 	virtual void onMspInitCallback(JPEG_HandleTypeDef *hjpeg) = 0;

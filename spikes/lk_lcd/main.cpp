@@ -10,7 +10,6 @@
 #include "CoreSDRAM.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
-#include "LKCoreFatFs.h"
 #include "LKCoreSTM32Hal.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"

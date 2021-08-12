@@ -7,7 +7,6 @@
 
 #include "CoreJPEG.h"
 #include "FileSystemKit.h"
-#include "LKCoreFatFs.h"
 
 namespace leka {
 class VideoKit;

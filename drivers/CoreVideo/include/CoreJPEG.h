@@ -9,7 +9,6 @@
 #include <memory>
 
 #include "CoreJPEGMode.h"
-#include "LKCoreFatFsBase.h"
 #include "LKCoreSTM32HalBase.h"
 #include "interface/CoreJPEG.h"
 #include "st_jpeg_utils.h"
@@ -32,7 +31,7 @@ class CoreJPEG : public interface::CoreJPEG
 
 	auto decodeImage(interface::File &file) -> uint32_t final;
 
-	void decodeImageAsync(LKCoreFatFsBase &file, std::function<void(int)>& cb);
+	void decodeImageAsync(interface::File &file, std::function<void(int)> cb);
 
 	auto getConfig() -> JPEGConfig;
 

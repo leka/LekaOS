@@ -15,7 +15,6 @@
 #include "FileSystemKit.h"
 #include "Font.h"
 #include "Graphics.h"
-#include "LKCoreFatFs.h"
 #include "LKCoreSTM32Hal.h"
 
 namespace leka {
@@ -48,7 +47,7 @@ class VideoKit
 
 	auto drawImage(FileSystemKit::File &file, JPEGConfig &config) -> uint32_t;
 
-	void drawImageAsync(LKCoreFatFs &file, JPEGConfig &config, std::function<void(int)>& cb);
+	void drawImageAsync(FileSystemKit::File &file, JPEGConfig &config, std::function<void(int)>& cb);
 
 	void display();
 

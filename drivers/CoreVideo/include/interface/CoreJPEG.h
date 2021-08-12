@@ -6,7 +6,6 @@
 #define _LEKA_OS_DRIVER_JPEG_BASE_H_
 
 #include "ComponentHandler.h"
-#include "LKCoreFatFsBase.h"
 #include "interface/platform/File.h"
 #include "stm32f7xx_hal.h"
 #include "stm32f7xx_hal_jpeg.h"
@@ -15,7 +14,7 @@ namespace leka::interface {
 
 class CoreJPEG : public ComponentHandler<JPEG_HandleTypeDef>
 {
-  public:
+	public:
 	~CoreJPEG() = default;
 
 	virtual void initialize() = 0;
