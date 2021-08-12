@@ -42,6 +42,13 @@ CoreDSI::CoreDSI(LKCoreSTM32HalBase &hal, interface::CoreLTDC &ltdc) : _hal(hal)
 
 void CoreDSI::initialize()
 {
+	__HAL_RCC_DSI_CLK_ENABLE();
+	__HAL_RCC_DSI_FORCE_RESET();
+	__HAL_RCC_DSI_RELEASE_RESET();
+
+	_hal.HAL_NVIC_SetPriority(DSI_IRQn, 3, 0);
+	_hal.HAL_NVIC_EnableIRQ(DSI_IRQn);
+
 	reset();
 
 	_hal.HAL_DSI_DeInit(&_handle);
@@ -56,10 +63,7 @@ void CoreDSI::initialize()
 	// DO NOT MOVE to the constructor as LCD initialization
 	// must be performed in a very specific order
 	_hal.HAL_DSI_Init(&_handle, &dsiPllInit);
-
-	// Configure DSI Video mode timings
 	_hal.HAL_DSI_ConfigAdaptedCommandMode(&_handle, &_cmdconf);
-
 	_hal.HAL_DSI_Start(&_handle);
 
 	DSI_PHY_TimerTypeDef phy_timings;
@@ -74,7 +78,7 @@ void CoreDSI::initialize()
 	static CoreDSI *self;
 	self = this;
 
-	auto refreshCallback = [](DSI_HandleTypeDef *hdsi) {
+	auto endOfRefreshCallback = [](DSI_HandleTypeDef *hdsi) {
 		self->_current_column = (self->_current_column + 1) % self->_columns.size();
 
 		auto new_address = lcd::frame_buffer_address + dsi::sync_props.activew * self->_current_column * 4;
@@ -84,19 +88,21 @@ void CoreDSI::initialize()
 		self->_hal.HAL_LTDC_SetAddress(&self->_ltdc.getHandle(), new_address, 0);
 		__HAL_DSI_WRAPPER_ENABLE(hdsi);
 
-		// update DSI refresh column
+		// update current DSI refresh column
 		const auto &set_clmn_addr_cmd = lcd::otm8009a::set_address::for_column::command;
 		self->_hal.HAL_DSI_LongWrite(hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 4, set_clmn_addr_cmd,
 									 self->_columns[self->_current_column].data());
 
-		if (self->_current_column != 0) {
-			self->_hal.HAL_DSI_Refresh(hdsi);
-		} else {
+		// if we are back to column 0, it means the full refresh is done
+		if (self->_current_column == 0) {
 			self->_refresh_done = true;
+		} else {
+			// refresh current column
+			self->_hal.HAL_DSI_Refresh(hdsi);
 		}
 	};
 
-	_hal.HAL_DSI_RegisterCallback(&_handle, HAL_DSI_ENDOF_REFRESH_CB_ID, refreshCallback);
+	_hal.HAL_DSI_RegisterCallback(&_handle, HAL_DSI_ENDOF_REFRESH_CB_ID, endOfRefreshCallback);
 
 	refresh();
 }
@@ -147,7 +153,7 @@ void CoreDSI::enableTearingEffectReporting()
 	// enable Bus Turn Around for 2 ways communication (needed for TE signal)
 	_hal.HAL_DSI_ConfigFlowControl(&_handle, DSI_FLOW_CONTROL_BTA);
 
-	// Enable GPIOJ clock
+	// enable GPIOJ clock
 	__HAL_RCC_GPIOJ_CLK_ENABLE();
 
 	// Configure DSI_TE pin from MB1166 : Tearing effect on separated GPIO from KoD LCD
@@ -199,22 +205,22 @@ void CoreDSI::refresh()
 	_refresh_done = false;
 	if (_sync_on_TE) {
 		// request TE pin
-		uint8_t val[]				   = {0x00, 0x00};
+		std::array<uint8_t, 2> val	   = {0x00, 0x00};
 		const auto &write_scanline_cmd = lcd::otm8009a::tearing_effect::write_scanline;
-		_hal.HAL_DSI_LongWrite(&_handle, 0, DSI_DCS_LONG_PKT_WRITE, 2, write_scanline_cmd, val);
+		_hal.HAL_DSI_LongWrite(&_handle, 0, DSI_DCS_LONG_PKT_WRITE, 2, write_scanline_cmd, val.data());
 	} else {
 		// normal refresh
 		if (_handle.Lock != HAL_LOCKED) {
-			_handle.Lock = HAL_LOCKED;
-			_handle.Instance->WCR |= DSI_WCR_LTDCEN;
-			_handle.Lock = HAL_UNLOCKED;
+			_handle.Lock		  = HAL_LOCKED;
+			_handle.Instance->WCR = _handle.Instance->WCR | DSI_WCR_LTDCEN;
+			_handle.Lock		  = HAL_UNLOCKED;
 		}
 	}
 }
 
 auto CoreDSI::refreshDone() -> bool
 {
-	return !_refresh_done;
+	return _refresh_done;
 }
 
 void CoreDSI::write(const uint8_t *data, uint32_t size)
