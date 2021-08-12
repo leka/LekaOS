@@ -1,0 +1,99 @@
+# Leka - LekaOS
+# Copyright 2021 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: Unit Tests
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+
+  pull_request:
+    branches:
+      - develop
+      - "feature/**"
+      - "bugfix/**"
+
+env:
+  CLICOLOR_FORCE: true # ninja
+
+  CCACHE_DIR: /home/runner/work/ccache
+  CCACHE_COMPRESS: true
+  CCACHE_COMPRESSLEVEL: 6
+
+jobs:
+  clang:
+    name: clang
+    runs-on: ubuntu-latest
+
+    env:
+      CC: /usr/bin/clang
+      CXX: /usr/bin/clang++
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      #
+      # Mark: - Create cache variables
+      #
+
+      - name: Create cache variables
+        id: cache_variables
+        shell: bash
+        run: |
+          echo "::set-output name=date::$(date +%s)"
+
+      #
+      # Mark: - Install misc. tools
+      #
+
+      - name: Install tools
+        run: |
+          sudo apt-get install -y --no-install-recommends ninja-build ccache
+
+      #
+      # Mark: - Download mbed-os & ccache
+      #
+
+      - name: Cache Mbed OS
+        id: cache_mbed_os
+        uses: actions/cache@v2
+        with:
+          path: extern/mbed-os
+          key: ${{ runner.os }}-global_cache-mbed_os-${{ hashFiles('extern/mbed-os/platform/include/platform/mbed_version.h', '.mbed_version') }}
+
+      - name: Curl Mbed OS
+        if: steps.cache_mbed_os.outputs.cache-hit != 'true'
+        run: |
+          make mbed_curl
+
+      - name: Cache ccache
+        id: cache_ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR}}
+          key: ${{ runner.os }}-cache-unit_tests-clang-ccache-${{ steps.cache_variables.outputs.date }}
+          restore-keys: |
+            ${{ runner.os }}-cache-unit_tests-clang-ccache-
+
+      #
+      # Mark: - Config, build & run unit tests
+      #
+
+      - name: Ccache pre build
+        run: |
+          make ccache_prebuild
+
+      - name: Config, build & run
+        run: |
+          make config_unit_tests
+          make unit_tests
+
+      - name: Ccache post build
+        run: |
+          make ccache_postbuild
+          ccache -z
