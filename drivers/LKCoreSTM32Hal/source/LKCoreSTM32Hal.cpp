@@ -44,9 +44,6 @@ void LKHal::HAL_RCC_GPIOJ_CLK_ENABLE(void)
 	__HAL_RCC_GPIOJ_CLK_ENABLE();
 }
 
-<<<<<<< HEAD
-void LKHal::HAL_RCC_FMC_CLK_ENABLE(void)
-=======
 void LKCoreSTM32Hal::HAL_RCC_TIM6_CLK_ENABLE(void)
 {
 	__HAL_RCC_TIM6_CLK_ENABLE();
@@ -67,22 +64,17 @@ void LKCoreSTM32Hal::HAL_RCC_TIM7_CLK_DISABLE(void)
 	__HAL_RCC_TIM7_CLK_DISABLE();
 }
 
-void LKCoreSTM32Hal::HAL_RCC_FMC_CLK_ENABLE(void)
->>>>>>> samuel/clean/audio
+void LKHal::HAL_RCC_FMC_CLK_ENABLE(void)
 {
 	__HAL_RCC_FMC_CLK_ENABLE();
 }
 
-<<<<<<< HEAD
-void LKHal::HAL_RCC_DMA2_CLK_ENABLE(void)
-=======
 void LKCoreSTM32Hal::HAL_RCC_DMA1_CLK_ENABLE(void)
 {
 	__HAL_RCC_DMA1_CLK_ENABLE();
 }
 
-void LKCoreSTM32Hal::HAL_RCC_DMA2_CLK_ENABLE(void)
->>>>>>> samuel/clean/audio
+void LKHal::HAL_RCC_DMA2_CLK_ENABLE(void)
 {
 	__HAL_RCC_DMA2_CLK_ENABLE();
 }
@@ -137,9 +129,6 @@ void LKHal::HAL_RCC_DSI_RELEASE_RESET(void)
 	__HAL_RCC_DSI_RELEASE_RESET();
 }
 
-<<<<<<< HEAD
-HALStatus LKHal::HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef *PeriphClkInit)
-=======
 void LKCoreSTM32Hal::HAL_RCC_DAC_CLK_ENABLE(void)
 {
 	__HAL_RCC_DAC_CLK_ENABLE();
@@ -150,8 +139,7 @@ void LKCoreSTM32Hal::HAL_RCC_DAC_CLK_DISABLE(void)
 	__HAL_RCC_DAC_CLK_DISABLE();
 }
 
-HAL_StatusTypeDef LKCoreSTM32Hal::HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef *PeriphClkInit)
->>>>>>> samuel/clean/audio
+HALStatus LKHal::HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef *PeriphClkInit)
 {
 	return ::HAL_RCCEx_PeriphCLKConfig(PeriphClkInit);
 }
@@ -166,16 +154,12 @@ void LKHal::HAL_GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, GPIO_PinSt
 	::HAL_GPIO_WritePin(GPIOx, GPIO_Pin, PinState);
 }
 
-<<<<<<< HEAD
-void LKHal::HAL_NVIC_SetPriority(IRQn_Type IRQn, uint32_t PreemptPriority, uint32_t SubPriority)
-=======
 void LKCoreSTM32Hal::HAL_GPIO_DeInit(GPIO_TypeDef *GPIOx, uint32_t GPIO_Pin)
 {
 	::HAL_GPIO_DeInit(GPIOx, GPIO_Pin);
 }
 
-void LKCoreSTM32Hal::HAL_NVIC_SetPriority(IRQn_Type IRQn, uint32_t PreemptPriority, uint32_t SubPriority)
->>>>>>> samuel/clean/audio
+void LKHal::HAL_NVIC_SetPriority(IRQn_Type IRQn, uint32_t PreemptPriority, uint32_t SubPriority)
 {
 	::HAL_NVIC_SetPriority(IRQn, PreemptPriority, SubPriority);
 }
@@ -340,7 +324,6 @@ void LKHal::HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNew
 	::HAL_JPEG_ConfigOutputBuffer(hjpeg, pNewOutputBuffer, OutDataLength);
 }
 
-<<<<<<< HEAD
 HALStatus LKHal::HAL_JPEG_RegisterInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_InfoReadyCallbackTypeDef pCallback)
 {
 	return ::HAL_JPEG_RegisterInfoReadyCallback(hjpeg, pCallback);
@@ -360,7 +343,8 @@ HALStatus LKHal::HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *hjpeg, HAL_JPEG_C
 										   pJPEG_CallbackTypeDef cb)
 {
 	return ::HAL_JPEG_RegisterCallback(hjpeg, id, cb);
-=======
+}
+
 HAL_StatusTypeDef LKCoreSTM32Hal::HAL_TIM_Base_Init(TIM_HandleTypeDef *htim)
 {
 	return ::HAL_TIM_Base_Init(htim);
@@ -431,7 +415,6 @@ HAL_StatusTypeDef LKCoreSTM32Hal::HAL_DAC_DeInit(DAC_HandleTypeDef *hdac)
 uint32_t LKCoreSTM32Hal::HAL_RCC_GetPCLK1Freq(void)
 {
 	return ::HAL_RCC_GetPCLK1Freq();
->>>>>>> samuel/clean/audio
 }
 
 }	// namespace leka

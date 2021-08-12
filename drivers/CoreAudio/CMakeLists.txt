@@ -22,5 +22,5 @@ target_sources(CoreAudio
 target_link_libraries(CoreAudio
 		mbed-os
 		LKCoreSTM32Hal
-		LKCoreFatFs
+		CoreFs
 )
