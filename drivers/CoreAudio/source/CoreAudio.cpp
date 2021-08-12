@@ -21,7 +21,7 @@ void CoreAudio::playFile(FIL *file)
 {
 	_playing			  = true;
 	_fileReadingStateFlag = Reading;
-	_wavFile			  = make_unique<WavFile>(file);
+	_wavFile			  = std::make_unique<WavFile>(file);
 
 	_initialize(_wavFile->getHeader().SamplingRate);
 

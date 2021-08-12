@@ -2,19 +2,17 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "mbed.h"
-#include <string>
+#include <chrono>
 
-#include "events/EventQueue.h"
-#include "rtos/Thread.h"
+#include "drivers/BufferedSerial.h"
+#include "rtos/ThisThread.h"
 
 #include "CoreAudio.h"
-#include "FATFileSystem.h"
 #include "FileManager.h"
 #include "LKCoreSTM32Hal.h"
-#include "SDBlockDevice.h"
 
 using namespace leka;
+using namespace std::chrono;
 
 LKCoreSTM32Hal hal;
 CoreDAC coreDAC(hal);

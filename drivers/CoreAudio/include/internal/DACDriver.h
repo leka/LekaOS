@@ -6,7 +6,6 @@
 #define _LEKA_OS_LIB_DAC_H_
 
 #include "DACTimer.h"
-#include "LKCoreSTM32HalBase.h"
 #include "lstd_span"
 
 namespace leka {

@@ -5,12 +5,8 @@
 #ifndef _LEKA_OS_LIB_WAVFILE_H_
 #define _LEKA_OS_LIB_WAVFILE_H_
 
-#include "mbed.h"
-#include <cstdint>
-
 #include "LKCoreFatFs.h"
 #include "LogKit.h"
-#include "cstdio"
 
 namespace leka {
 

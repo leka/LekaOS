@@ -5,18 +5,12 @@
 #ifndef _LEKA_OS_LIB_AUDIO_H_
 #define _LEKA_OS_LIB_AUDIO_H_
 
-#include <cmath>
 #include <memory>
 
 #include "events/EventQueue.h"
-#include "platform/mbed_wait_api.h"
 #include "rtos/Thread.h"
 
 #include "CoreDAC.h"
-#include "CoreDACTimer.h"
-#include "LKCoreFatFs.h"
-#include "LKCoreSTM32HalBase.h"
-#include "WavFile.h"
 #include "WavReader.h"
 
 namespace leka {

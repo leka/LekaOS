@@ -5,7 +5,6 @@
 #ifndef _LEKA_OS_LIB_WAVREADER_H_
 #define _LEKA_OS_LIB_WAVREADER_H_
 
-#include "LKCoreFatFs.h"
 #include "WavFile.h"
 
 namespace leka {
