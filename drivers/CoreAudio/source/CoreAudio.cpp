@@ -6,29 +6,30 @@
 
 namespace leka {
 
-std::array<uint16_t, CoreAudio::outBufferSize_Samples> CoreAudio::_waveBuffer;
+std::array<uint16_t, CoreAudio::_outBufferSize_Samples> CoreAudio::_outBuffer;
 
 CoreAudio::CoreAudio(LKCoreSTM32HalBase &hal, CoreDAC &dac, CoreDACTimer &timer, rtos::Thread &thread,
 					 events::EventQueue &eventQueue)
 	: _hal(hal), _coreDac(dac), _coreTimer(timer), _thread(thread), _eventQueue(eventQueue)
 {
 	_thread.start({&_eventQueue, &events::EventQueue::dispatch_forever});
+	_outBuffStartPtr  = _outBuffer.data();
+	_outBuffMiddlePtr = _outBuffer.data() + (_outBufferSize_Samples / 2);
 }
 
 void CoreAudio::playFile(FIL *file)
 {
-	_playing				= true;
-	_eofFlag				= NotFinished;
-	_wavFile				= make_unique<WavFile>(file);
-	uint16_t *_waveBuffer_2 = _waveBuffer.data() + (outBufferSize_Samples / 2);
+	_playing			  = true;
+	_fileReadingStateFlag = Reading;
+	_wavFile			  = make_unique<WavFile>(file);
 
 	_initialize(_wavFile->getHeader().SamplingRate);
 
-	_handleNextSector(_waveBuffer.data());
-	_handleNextSector(_waveBuffer_2);
+	_handleNextSector(_outBuffStartPtr);
+	_handleNextSector(_outBuffMiddlePtr);
 
+	_coreDac.start(lstd::span {_outBuffStartPtr, _outBufferSize_Samples});
 	_coreTimer.start();
-	_coreDac.start(lstd::span {_waveBuffer.data(), outBufferSize_Samples});
 }
 
 void CoreAudio::pause() const
@@ -48,7 +49,17 @@ void CoreAudio::stop()
 	_playing = false;
 }
 
-void CoreAudio::_initialize(uint32_t frequency)
+void CoreAudio::setVolume(float volume)
+{
+	_volume = volume;
+}
+
+auto CoreAudio::isPlaying() const -> bool
+{
+	return _playing;
+}
+
+void CoreAudio::_initialize(uint32_t samplingFreq)
 {
 	static auto *self = this;
 	auto halfBuffCb =
@@ -56,7 +67,7 @@ void CoreAudio::_initialize(uint32_t frequency)
 	auto fullBuffCb =
 		static_cast<pDAC_CallbackTypeDef>([]([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->_onFullBuffRead(); });
 
-	_coreTimer.initialize(frequency);
+	_coreTimer.initialize(samplingFreq);
 	_coreDac.initialize(_coreTimer, halfBuffCb, fullBuffCb);
 }
 
@@ -70,6 +81,7 @@ void CoreAudio::_align12bR(lstd::span<uint16_t> samplesBuffer) const
 void CoreAudio::_scaleToVolume(lstd::span<uint16_t> samplesBuffer) const
 {
 	constexpr uint16_t offset = 0x7FFF;
+
 	for (auto &sample: samplesBuffer) {
 		sample = static_cast<uint16_t>((static_cast<float>(sample) * _volume) / 100);
 		sample += static_cast<uint16_t>(offset * (1.F - _volume / 100.F));
@@ -78,35 +90,35 @@ void CoreAudio::_scaleToVolume(lstd::span<uint16_t> samplesBuffer) const
 
 void CoreAudio::_onHalfBuffRead()
 {
-	_eventQueue.call(this, &CoreAudio::_handleCallback, _waveBuffer.data());
+	_eventQueue.call(this, &CoreAudio::_handleCallback, _outBuffStartPtr);
 }
 
 void CoreAudio::_onFullBuffRead()
 {
-	uint16_t *_waveBuffer_2 = _waveBuffer.data() + (outBufferSize_Samples / 2);
-	_eventQueue.call(this, &CoreAudio::_handleCallback, _waveBuffer_2);
+	_eventQueue.call(this, &CoreAudio::_handleCallback, _outBuffMiddlePtr);
 }
 
 void CoreAudio::_handleCallback(uint16_t *buffer)
 {
-	if (_eofFlag == NotFinished) {
+	if (_fileReadingStateFlag == Reading) {
 		_handleNextSector(buffer);
-	} else if (_eofFlag == LastBuffer) {
-		_eofFlag = Finished;
 
-	} else if (_eofFlag == Finished) {
+	} else if (_fileReadingStateFlag == LastBuffer) {
+		_fileReadingStateFlag = Finished;
+
+	} else if (_fileReadingStateFlag == Finished) {
 		stop();
 	}
 }
 
 void CoreAudio::_handleNextSector(uint16_t *buffer)
 {
-	bool eof		 = WavReader::loadSector(*_wavFile, buffer, sectorSize_Bytes);
-	auto samplesBuff = lstd::span {buffer, sectorSize_Samples};
+	bool eof		 = WavReader::loadSector(*_wavFile, buffer, _sectorSize_Bytes);
+	auto samplesBuff = lstd::span {buffer, _sectorSize_Samples};
 	_scaleToVolume(samplesBuff);
 	_align12bR(samplesBuff);   // DAC configured to work with the 12 rightmost bits of uint16_t
 	if (eof) {
-		_eofFlag = LastBuffer;
+		_fileReadingStateFlag = LastBuffer;
 	}
 }
 

@@ -24,31 +24,33 @@ namespace leka {
 class CoreAudio
 {
   private:
-	enum EndOfFileState
+	enum FileReadingState
 	{
-		NotFinished,
+		Reading,
 		LastBuffer,
 		Finished
 	};
 
-	static constexpr uint16_t sectorSize_Bytes		= 512;	 // SD card sectors are 512B in size
-	static constexpr uint16_t sampleSize_Bytes		= 2;	 // Supported wav files have a 16 bit sampling
-	static constexpr uint16_t sectorSize_Samples	= sectorSize_Bytes / sampleSize_Bytes;
-	static constexpr uint16_t outBufferSize_Sectors = 2;   // This should be an even number to split easily in 2
-	static constexpr uint16_t outBufferSize_Samples = outBufferSize_Sectors * sectorSize_Samples;
+	static constexpr uint16_t _sectorSize_Bytes		 = 512;	  // SD card sectors are 512B in size
+	static constexpr uint16_t _sampleSize_Bytes		 = 2;	  // Supported wav files have a 16 bit sampling
+	static constexpr uint16_t _sectorSize_Samples	 = _sectorSize_Bytes / _sampleSize_Bytes;
+	static constexpr uint16_t _outBufferSize_Sectors = 2;	// This should be an even number to split easily in 2
+	static constexpr uint16_t _outBufferSize_Samples = _outBufferSize_Sectors * _sectorSize_Samples;
 
   public:
 	CoreAudio(LKCoreSTM32HalBase &hal, CoreDAC &dac, CoreDACTimer &timer, rtos::Thread &thread,
 			  events::EventQueue &eventQueue);
+
 	void playFile(FIL *file);
 	void pause() const;
 	void resume() const;
 	void stop();
-	void setVolume(float volume) { _volume = volume; };
-	[[nodiscard]] auto isPlaying() const -> bool { return _playing; };
+
+	void setVolume(float volume);
+
+	[[nodiscard]] auto isPlaying() const -> bool;
 
   private:
-	static std::array<uint16_t, outBufferSize_Samples> _waveBuffer;
 	LKCoreSTM32HalBase &_hal;
 	CoreDAC &_coreDac;
 	CoreDACTimer &_coreTimer;
@@ -56,13 +58,17 @@ class CoreAudio
 	rtos::Thread &_thread;
 	events::EventQueue &_eventQueue;
 
+	static std::array<uint16_t, _outBufferSize_Samples> _outBuffer;
+	uint16_t *_outBuffStartPtr	= nullptr;
+	uint16_t *_outBuffMiddlePtr = nullptr;
+
 	std::unique_ptr<WavFile> _wavFile = nullptr;
 
-	float _volume			= 100;
-	EndOfFileState _eofFlag = EndOfFileState::NotFinished;
-	bool _playing			= false;
+	float _volume						   = 100;
+	bool _playing						   = false;
+	FileReadingState _fileReadingStateFlag = FileReadingState::Finished;
 
-	void _initialize(uint32_t frequency);
+	void _initialize(uint32_t samplingFreq);
 	void _align12bR(lstd::span<uint16_t> samplesBuffer) const;
 	void _scaleToVolume(lstd::span<uint16_t> samplesBuffer) const;
 	void _onHalfBuffRead();
