@@ -42,6 +42,13 @@ CoreDMA2D::CoreDMA2D(LKCoreSTM32HalBase &hal) : _hal(hal)
 
 void CoreDMA2D::initialize()
 {
+	__HAL_RCC_DMA2D_CLK_ENABLE();
+	__HAL_RCC_DMA2D_FORCE_RESET();
+	__HAL_RCC_DMA2D_RELEASE_RESET();
+
+	_hal.HAL_NVIC_SetPriority(DMA2D_IRQn, 3, 0);
+	_hal.HAL_NVIC_EnableIRQ(DMA2D_IRQn);
+
 	// MARK: Initializer DMA2D
 	// This part **must not** be moved to the constructor as LCD
 	// initialization must be performed in a very specific order
@@ -55,7 +62,7 @@ void CoreDMA2D::setFrameBufferAddress(uintptr_t address)
 	_frame_buffer_address = address;
 }
 
-auto CoreDMA2D::getPixelAddress(uint32_t x, uint32_t y) -> uintptr_t
+auto CoreDMA2D::getPixelAddress(uint32_t x, uint32_t y) const -> uintptr_t
 {
 	return _frame_buffer_address + 4 * (x + y * lcd::dimension.width);
 }
@@ -63,7 +70,7 @@ auto CoreDMA2D::getPixelAddress(uint32_t x, uint32_t y) -> uintptr_t
 void CoreDMA2D::transferData(uintptr_t src, uintptr_t dst_address, uint32_t width, uint32_t height)
 {
 	// wait for previous transfer to finish
-	while (isBusy())
+	while (!isReady())
 		;
 
 	if (width == 0) return;
@@ -102,7 +109,7 @@ void CoreDMA2D::fillRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_
 
 void CoreDMA2D::setPixel(uint32_t x, uint32_t y, uint32_t color)
 {
-	while (isBusy())
+	while (!isReady())
 		;
 	*((uintptr_t *)getPixelAddress(x, y)) = color;
 }
