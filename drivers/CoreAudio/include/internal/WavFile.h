@@ -17,10 +17,10 @@ namespace leka {
 class WavFile
 {
   private:
-	constexpr static uint32_t blockID_fileType	 = 0x46464952;	 // correspond to the letters 'RIFF' in reverse order
-	constexpr static uint32_t blockID_fileFormat = 0x45564157;	 // correspond to the letters 'WAVE' in reverse order
-	constexpr static uint32_t blockID_format	 = 0x20746D66;	 // correspond to the letters 'fmt ' in reverse order
-	constexpr static uint32_t blockID_data		 = 0x61746164;	 // correspond to the letters 'data' in reverse order
+	constexpr static uint32_t blockID_fileType	 = 0x46464952;	 // corresponds to the letters 'RIFF' in reverse order
+	constexpr static uint32_t blockID_fileFormat = 0x45564157;	 // corresponds to the letters 'WAVE' in reverse order
+	constexpr static uint32_t blockID_format	 = 0x20746D66;	 // corresponds to the letters 'fmt ' in reverse order
+	constexpr static uint32_t blockID_data		 = 0x61746164;	 // corresponds to the letters 'data' in reverse order
 
   public:
 	using WavHeader = struct wavHeader {

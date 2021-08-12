@@ -31,11 +31,11 @@ class CoreAudio
 		Finished
 	};
 
-	static constexpr uint16_t sectorSize_Bytes		= 512;
-	static constexpr uint16_t sampleSize_Bytes		= 2;
+	static constexpr uint16_t sectorSize_Bytes		= 512;	 // SD card sectors are 512B in size
+	static constexpr uint16_t sampleSize_Bytes		= 2;	 // Supported wav files have a 16 bit sampling
 	static constexpr uint16_t sectorSize_Samples	= sectorSize_Bytes / sampleSize_Bytes;
-	static constexpr uint16_t outBufferSize_Sectors = 2;
-	static constexpr uint16_t outBufferSize_Samples = 512;
+	static constexpr uint16_t outBufferSize_Sectors = 2;   // This should be an even number to split easily in 2
+	static constexpr uint16_t outBufferSize_Samples = outBufferSize_Sectors * sectorSize_Samples;
 
   public:
 	CoreAudio(LKCoreSTM32HalBase &hal, CoreDAC &dac, CoreDACTimer &timer, rtos::Thread &thread,

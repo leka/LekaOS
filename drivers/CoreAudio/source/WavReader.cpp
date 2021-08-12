@@ -35,9 +35,9 @@ void WavReader::_convertSectorData(uint16_t *buffer, uint16_t sectorSizeSamples)
 {
 	int16_t tmp = 0;
 	for (uint16_t i = 0; i < sectorSizeSamples; ++i) {
-		tmp = 0x0 | buffer[i];	 // cast bits from uint to int
-		tmp += 0x8000;			 // rescale to uint scale
-		buffer[i] = 0x0 | tmp;
+		tmp = 0x0 | buffer[i];	 // cast bits in int format (native format from file)
+		tmp += 0x8000;			 // apply offset to center values for uint16_t scale
+		buffer[i] = 0x0 | tmp;	 // cast bits of converted value in uint format
 	}
 }
 

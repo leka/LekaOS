@@ -105,7 +105,7 @@ void CoreAudio::_handleNextSector(uint16_t *buffer)
 {
 	bool eof = WavReader::loadSector(*_wavFile, buffer, sectorSize_Bytes);
 	_scaleToVolume(buffer, sectorSize_Samples);
-	_align12bR(buffer, sectorSize_Samples);
+	_align12bR(buffer, sectorSize_Samples);	  // DAC configured to work with the 12 rightmost bits of uint16_t
 	if (eof) {
 		_eofFlag = LastBuffer;
 	}
