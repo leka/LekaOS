@@ -1,8 +1,7 @@
 #include "VideoKit.h"
 
-#include "LogKit.h"
-
 using namespace leka;
+using namespace std::chrono_literals;
 
 VideoKit::VideoKit(LKCoreSTM32HalBase &hal)
 	: _hal(hal),
@@ -14,36 +13,13 @@ VideoKit::VideoKit(LKCoreSTM32HalBase &hal)
 	  _coreltdc(_hal),
 	  _coredsi(_hal, _coreltdc),
 	  _coreotm(_coredsi, PinName::SCREEN_BACKLIGHT_PWM),
-	  _corelcd(_coreotm)
+	  _corelcd(_coreotm),
+	  _frametime(40ms)
 {
 }
 
 void VideoKit::initialize()
 {
-	__HAL_RCC_LTDC_CLK_ENABLE();
-
-	__HAL_RCC_LTDC_FORCE_RESET();
-	__HAL_RCC_LTDC_RELEASE_RESET();
-
-	__HAL_RCC_DMA2D_CLK_ENABLE();
-
-	__HAL_RCC_DMA2D_FORCE_RESET();
-	__HAL_RCC_DMA2D_RELEASE_RESET();
-
-	__HAL_RCC_DSI_CLK_ENABLE();
-
-	__HAL_RCC_DSI_FORCE_RESET();
-	__HAL_RCC_DSI_RELEASE_RESET();
-
-	HAL_NVIC_SetPriority(LTDC_IRQn, 3, 0);
-	HAL_NVIC_EnableIRQ(LTDC_IRQn);
-
-	HAL_NVIC_SetPriority(DMA2D_IRQn, 3, 0);
-	HAL_NVIC_EnableIRQ(DMA2D_IRQn);
-
-	HAL_NVIC_SetPriority(DSI_IRQn, 3, 0);
-	HAL_NVIC_EnableIRQ(DSI_IRQn);
-
 	_corejpeg.initialize();
 	_coredma2d.initialize();
 
@@ -52,9 +28,11 @@ void VideoKit::initialize()
 	_coredsi.initialize();
 
 	_corelcd.initialize();
-	_corelcd.setBrightness(0.5f);
+	_corelcd.setBrightness(1.f);
 
-	if (dsi::refresh_columns_count > 1) _coredsi.enableTearingEffectReporting();
+	if (dsi::refresh_columns_count > 1) {
+		_coredsi.enableTearingEffectReporting();
+	}
 
 	_last_time = rtos::Kernel::Clock::now();
 }
@@ -153,18 +131,19 @@ auto VideoKit::drawImage(FileSystemKit::File &file, JPEGConfig &config) -> uint3
 void VideoKit::display()
 {
 	// wait for DMA2D to finish transfer
-	while (_coredma2d.isBusy())
+	while (!_coredma2d.isReady())
 		;
 
 	refresh();
 	tick();
 
 	// wait for DSI to finish transfer
-	while (_coredsi.isBusy())
+	while (!_coredsi.isReady())
 		;
 
-	// wait for DSI to finish refresh, better quality but way slower
-	// while (_coredsi.refreshDone())
+	// wait for DSI to finish refresh, very slow but provides
+	// better quality when clearing full screen or using 4 DSI refresh columns
+	// while (!_coredsi.refreshDone())
 	//	;
 }
 
@@ -182,7 +161,7 @@ void VideoKit::tick()
 	}
 
 	dt = rtos::Kernel::Clock::now() - _last_time;
-	log_info("%lld ms = %f fps", dt.count(), (1000.f / dt.count()));
+	printf("[INFO] [VideoKit.cpp:%d] %lld ms = %.3f fps\n\r", __LINE__, dt.count(), (1000.f / dt.count()));
 
 	_last_time = rtos::Kernel::Clock::now();
 }

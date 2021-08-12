@@ -18,7 +18,7 @@ namespace leka {
 
 struct JPEGConfig : JPEG_ConfTypeDef {
 	bool initialized = false;
-	auto getWidthOffset() -> uint32_t;
+	auto getWidthOffset() const -> uint32_t;
 };
 
 class CoreJPEG : public interface::CoreJPEG

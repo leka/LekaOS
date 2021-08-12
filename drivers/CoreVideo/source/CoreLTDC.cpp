@@ -12,7 +12,8 @@ CoreLTDC::CoreLTDC(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
 	_handle.Instance = LTDC;
 
-	auto props = dsi::sync_props;
+	const auto &props = dsi::sync_props;
+
 	// Timing and synchronization
 	_handle.Init.HorizontalSync		= props.hsync;
 	_handle.Init.AccumulatedHBP		= props.hsync + props.hbp;
@@ -24,12 +25,12 @@ CoreLTDC::CoreLTDC(LKCoreSTM32HalBase &hal) : _hal(hal)
 	_handle.Init.AccumulatedActiveH = props.vsync + props.vbp + props.activeh;
 	_handle.Init.TotalHeigh			= props.vsync + props.vbp + props.activeh + props.vfp;
 
-	// Background values
+	// Background color
 	_handle.Init.Backcolor.Blue	 = 0;
 	_handle.Init.Backcolor.Green = 0;
 	_handle.Init.Backcolor.Red	 = 0;
 
-	// Misc
+	// Polarity
 	_handle.Init.HSPolarity = LTDC_HSPOLARITY_AL;
 	_handle.Init.VSPolarity = LTDC_VSPOLARITY_AL;
 	_handle.Init.DEPolarity = LTDC_DEPOLARITY_AL;
@@ -61,19 +62,21 @@ CoreLTDC::CoreLTDC(LKCoreSTM32HalBase &hal) : _hal(hal)
 
 void CoreLTDC::initialize()
 {
+	__HAL_RCC_LTDC_CLK_ENABLE();
+	__HAL_RCC_LTDC_FORCE_RESET();
+	__HAL_RCC_LTDC_RELEASE_RESET();
+
+	_hal.HAL_NVIC_SetPriority(LTDC_IRQn, 3, 0);
+	_hal.HAL_NVIC_EnableIRQ(LTDC_IRQn);
+
 	configurePeriphClock();
 
 	// Initialize LTDC
 	// This part **must not** be moved to the constructor as LCD
 	// initialization must be performed in a very specific order
 	_hal.HAL_LTDC_Init(&_handle);
-
-	// Initialize LTDC layer
-	// This part **must not** be moved to the constructor as LCD
-	// initialization must be performed in a very specific order
 	_hal.HAL_LTDC_ConfigLayer(&_handle, &_layerConfig, 0);
-
-	_hal.HAL_LTDC_SetPitch(&_handle, 800, 0);
+	_hal.HAL_LTDC_SetPitch(&_handle, lcd::dimension.width, 0);
 }
 
 void CoreLTDC::configurePeriphClock()

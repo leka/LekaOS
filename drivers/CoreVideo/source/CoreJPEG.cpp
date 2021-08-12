@@ -15,18 +15,20 @@ CoreJPEG::CoreJPEG(LKCoreSTM32HalBase &hal, interface::CoreJPEGMode &mode) : _ha
 
 void CoreJPEG::initialize()
 {
+	__HAL_RCC_JPEG_CLK_ENABLE();
+	__HAL_RCC_JPEG_FORCE_RESET();
+	__HAL_RCC_JPEG_RELEASE_RESET();
+
+	_hal.HAL_NVIC_SetPriority(JPEG_IRQn, 0x06, 0x0F);
+	_hal.HAL_NVIC_EnableIRQ(JPEG_IRQn);
+
 	registerCallbacks();
 
 	JPEG_InitColorTables();
-	_hal.HAL_RCC_JPEG_CLK_ENABLE();
 	_hal.HAL_JPEG_Init(&_handle);
 
 	// need to be called again because JPEG_Init resets the callbacks
 	registerCallbacks();
-
-	// enable JPEG IRQ request
-	_hal.HAL_NVIC_SetPriority(JPEG_IRQn, 0x06, 0x0F);
-	_hal.HAL_NVIC_EnableIRQ(JPEG_IRQn);
 }
 
 auto CoreJPEG::getConfig() -> JPEGConfig
@@ -103,7 +105,7 @@ auto CoreJPEG::findFrameOffset(interface::File &file, uint32_t offset) -> uint32
 	return 0;
 }
 
-auto JPEGConfig::getWidthOffset() -> uint32_t
+auto JPEGConfig::getWidthOffset() const -> uint32_t
 {
 	uint32_t width_offset = 0;
 

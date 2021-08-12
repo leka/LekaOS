@@ -21,7 +21,7 @@ struct Color {
 	uint8_t b = 0x00;
 	uint8_t a = 0xff;
 
-	inline constexpr auto toARGB8888() -> uint32_t { return (a << 24) | (r << 16) | (g << 8) | (b << 0); };
+	constexpr auto toARGB8888() -> uint32_t { return (a << 24) | (r << 16) | (g << 8) | (b << 0); };
 
 	static const Color Transparent;
 	static const Color Black;
@@ -78,7 +78,7 @@ class Text : public Drawable
 class Image : public Drawable
 {
   public:
-	Image(const char *path);
+	explicit Image(const char *path);
 
   private:
 	void draw(VideoKit &screen) final;
@@ -88,14 +88,14 @@ class Image : public Drawable
 class Video : public Drawable
 {
   public:
-	Video(const char *path);
+	explicit Video(const char *path);
 
 	void nextFrame();
 
-	auto getTime() -> int64_t;
+	auto getTime() const -> int64_t;
 	auto getProgress() -> float;
 
-	auto hasEnded() -> bool;
+	auto hasEnded() const -> bool;
 	void restart();
 
   private:
