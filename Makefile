@@ -16,6 +16,7 @@ MCUBOOT_DIR       := $(ROOT_DIR)/extern/mcuboot
 #
 
 PORT            ?= /dev/tty.usbmodem14303
+MBED_GIT_URL    ?= $(shell cat $(ROOT_DIR)/.mbed_git_url)
 MBED_BRANCH     ?= $(shell cat $(ROOT_DIR)/.mbed_version)
 MBED_VERSION    ?= $(shell cat $(ROOT_DIR)/.mbed_version)
 MCUBOOT_VERSION ?= $(shell cat $(ROOT_DIR)/.mcuboot_version)
@@ -256,7 +257,7 @@ mbed_clone:
 	@echo ""
 	@echo "🧬 Cloning Mbed OS 📦"
 	@rm -rf $(MBED_OS_DIR)
-	git clone --depth=1 --branch=$(MBED_BRANCH) https://github.com/ARMmbed/mbed-os $(MBED_OS_DIR)
+	git clone --depth=1 --branch=$(MBED_BRANCH) $(MBED_GIT_URL) $(MBED_OS_DIR)
 	@$(MAKE) mbed_symlink_files
 
 mbed_curl:
@@ -264,7 +265,7 @@ mbed_curl:
 	@echo "🧬 Curling Mbed OS 📦"
 	@rm -rf $(MBED_OS_DIR)
 	@mkdir -p $(MBED_OS_DIR)
-	curl -O -L https://github.com/ARMmbed/mbed-os/archive/$(MBED_VERSION).tar.gz
+	curl -O -L $(MBED_GIT_URL)/archive/$(MBED_VERSION).tar.gz
 	tar -xzf $(MBED_VERSION).tar.gz --strip-components=1 -C extern/mbed-os
 	rm -rf $(MBED_VERSION).tar.gz
 	@$(MAKE) mbed_symlink_files
