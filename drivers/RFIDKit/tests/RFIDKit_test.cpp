@@ -25,18 +25,13 @@ using ::testing::SetArgPointee;
 class CoreRFIDKitTest : public ::testing::Test
 {
   protected:
-	CoreRFIDKitTest() : coreRfid(mockCR95HF, thread, event_queue) {};
+	CoreRFIDKitTest() : coreRfid(mockCR95HF) {};
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
 	RFIDKit coreRfid;
 	CoreRFIDMock mockCR95HF;
-
-	rtos::Thread thread;
-	events::EventQueue event_queue;
-
-	CoreBufferedSerialMock mockBufferedSerial;
 
 	template <size_t size>
 	void receive(std::array<uint8_t, size> &data)
@@ -106,6 +101,7 @@ TEST_F(CoreRFIDKitTest, getTagDataSuccess)
 	std::array<uint8_t, 16> expected_values = {0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04,
 											   0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04};
 
+	coreRfid.setState(state::WAIT_FOR_ATQA_RESPONSE);
 	coreRfid.getTagData();
 	rfid::Tag tag = coreRfid.getTag();
 

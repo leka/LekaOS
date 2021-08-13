@@ -33,6 +33,8 @@ class RFIDKit : public interface::RFID::ISO14443
 
 	auto getTag() -> rfid::Tag final { return _tag; };
 
+	void setState(state new_state) { _state = new_state; };
+
   private:
 	template <size_t SIZE>
 	void commandToArray(Command<SIZE> command, lstd::span<uint8_t> span) const
