@@ -35,14 +35,7 @@ void CoreCR95HF::onCallback()
 void CoreCR95HF::onDataAvailable()
 {
 	read();
-	checkForTagDetection();
-
-	if (_tagWasDetected) {
-		_tagAvailableCallback();
-		_tagWasDetected = false;
-	}
-
-	setModeTagDetection();
+	_tagAvailableCallback();
 }
 
 void CoreCR95HF::read()
@@ -53,18 +46,17 @@ void CoreCR95HF::read()
 	}
 }
 
-void CoreCR95HF::checkForTagDetection()
+auto CoreCR95HF::checkForTagDetection() -> bool
 {
 	std::array<uint8_t, 2> buffer {};
 
 	if (_anwser_size != rfid::cr95hf::expected_answer_size::tag_detection) {
-		_tagWasDetected = false;
-		return;
+		return false;
 	}
 
 	std::copy(_rx_buf.begin() + 1, _rx_buf.begin() + 1 + buffer.size(), buffer.begin());
 
-	_tagWasDetected = (buffer == rfid::cr95hf::status::tag_detection_callback);
+	return buffer == rfid::cr95hf::status::tag_detection_callback;
 }
 
 void CoreCR95HF::setModeTagDetection()
@@ -73,18 +65,16 @@ void CoreCR95HF::setModeTagDetection()
 				  rfid::cr95hf::command::frame::set_mode_tag_detection.size());
 }
 
-auto CoreCR95HF::getIDN() -> std::array<uint8_t, rfid::cr95hf::expected_answer_size::idn>
+auto CoreCR95HF::getIDN(std::array<uint8_t, rfid::cr95hf::expected_answer_size::idn> &idn) -> bool
 {
-	std::array<uint8_t, rfid::cr95hf::expected_answer_size::idn> idn {};
-
 	askCR95HFForIDN();
-	if (!didIDNIsCorrect()) {
-		return idn;
+
+	if (didIDNIsCorrect()) {
+		std::copy(_rx_buf.begin(), _rx_buf.begin() + idn.size(), idn.begin());
+		return true;
 	}
 
-	std::copy(_rx_buf.begin(), _rx_buf.begin() + idn.size(), idn.begin());
-
-	return idn;
+	return false;
 }
 
 void CoreCR95HF::askCR95HFForIDN()
@@ -94,6 +84,7 @@ void CoreCR95HF::askCR95HFForIDN()
 
 auto CoreCR95HF::didIDNIsCorrect() -> bool
 {
+	read();
 	if (_anwser_size != rfid::cr95hf::expected_answer_size::idn) {
 		return false;
 	}
@@ -115,11 +106,12 @@ auto CoreCR95HF::setBaudrate(uint8_t baudrate) -> bool
 
 auto CoreCR95HF::didSetBaudrateSucceed(uint8_t baudrate) -> bool
 {
+	read();
 	if (_anwser_size != rfid::cr95hf::expected_answer_size::set_baudrate) {
 		return false;
 	}
 
-	return _rx_buf[0] == baudrate;
+	return _rx_buf[0] == 0x55;
 }
 
 auto CoreCR95HF::setCommunicationProtocol(rfid::Protocol protocol) -> bool

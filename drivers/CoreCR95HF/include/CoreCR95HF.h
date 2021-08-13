@@ -176,7 +176,7 @@ class CoreCR95HF : public interface::RFID
 	void registerTagAvailableCallback(tagAvailableCallback callback) final { _tagAvailableCallback = callback; };
 	void onDataAvailable() final;
 
-	auto getIDN() -> std::array<uint8_t, rfid::cr95hf::expected_answer_size::idn> final;
+	auto getIDN(std::array<uint8_t, rfid::cr95hf::expected_answer_size::idn> &idn) -> bool final;
 	auto setBaudrate(uint8_t baudrate) -> bool final;
 
 	auto setCommunicationProtocol(rfid::Protocol protocol) -> bool final;
@@ -184,14 +184,15 @@ class CoreCR95HF : public interface::RFID
 	void sendCommandToTag(lstd::span<uint8_t> cmd) final;
 	auto receiveDataFromTag(lstd::span<uint8_t> data) -> bool final;
 
-  private:
-	void checkForTagDetection();
+	void setModeTagDetection() final;
 
+	auto checkForTagDetection() -> bool final;
+
+  private:
 	void registerCallback();
 	void onCallback();
 
 	auto receiveTagDetectionCallback() -> bool;
-	void setModeTagDetection();
 
 	auto writeConfiguration(lstd::span<uint8_t> conf) -> size_t;
 
