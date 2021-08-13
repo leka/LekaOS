@@ -1,21 +1,15 @@
-// #include "mbed.h"
-
-#include "PinNames.h"
+// Leka - LekaOS
+// Copyright 2021 APF France handicap
+// SPDX-License-Identifier: Apache-2.0
 
 #include "drivers/BufferedSerial.h"
-#include "drivers/DigitalOut.h"
-#include "drivers/PwmOut.h"
 #include "platform/Callback.h"
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
 #include "CoreMotor.h"
 #include "CorePwm.h"
-#include "DigitalOut.h"
-#include "HelloWorld.h"
 #include "LSM6DSOX_CommunicationI2C.h"
-#include "LSM6DSOX_ComponentAccelerometer.h"
-#include "LSM6DSOX_ComponentGyroscope.h"
 #include "LSM6DSOX_DataGatherer.h"
 #include "LogKit.h"
 
@@ -35,16 +29,12 @@ void tickerCB();
 I2C i2c1(PIN_I2C1_SDA, PIN_I2C1_SCL);
 Communication::LSM6DSOX_I2C lsm6dsox_i2c(i2c1);
 
-// Component::LSM6DSOX_DataGatherer dataGatherer(lsm6dsox_i2c, PIN_LSM6DSOX_INT1, 10.0f, USBTX, USBRX,
-// MBED_CONF_PLATFORM_DEFAULT_SERIAL_BAUD_RATE, tickerCB);
 Component::LSM6DSOX_DataGatherer dataGatherer(lsm6dsox_i2c, PIN_LSM6DSOX_INT1, 10.0f, USBTX, USBRX, 115200, tickerCB);
 
-// DigitalInOut INT_1_LSM6DSOX(PIN_LSM6DSOX_INT1, PIN_OUTPUT, PullNone,
-// 							0);	  // This line fix the use of LSM6DSOX on X-NUCLEO_IKS01A2
+// DigitalInOut INT_1_LSM6DSOX(PIN_LSM6DSOX_INT1, PIN_OUTPUT, PullNone, 0);	  // This line fixes the use of LSM6DSOX on
+// X-NUCLEO_IKS01A2
 
-DigitalIn INT_1_LSM6DSOX(PIN_LSM6DSOX_INT1, PullNone);
-
-// UnbufferedSerial serial(USBTX, USBRX);
+DigitalIn INT_1_LSM6DSOX(PIN_LSM6DSOX_INT1, PullNone);	 // interrupt pin for LSM6DSOX
 
 void spinLeft(CoreMotorBase &left, CoreMotorBase &right, float speed)
 {
@@ -96,7 +86,7 @@ auto main() -> int
 	ThisThread::sleep_for(10ms);   // waiting for sensor startup
 
 	// Greetings
-	printf("  Starting a new run\n\n");
+	log_info("Starting a new run");
 
 	// Restore default configuration
 	dataGatherer.restoreDefaultConfiguration();
@@ -105,7 +95,6 @@ auto main() -> int
 	// dataGatherer.disableI3C();
 	// INT_1_LSM6DSOX.input();	  // setting up INT1 pin as input (for interrupts to work)
 
-	// Components init
 	dataGatherer.init();
 
 	// Enable Block Data Update
@@ -113,37 +102,23 @@ auto main() -> int
 
 	dataGatherer.setDataRate(26);
 
-	printf("Start by configuring the data gathering. Then call \"start\" to start receiving data\n");
-	printf("Write \"help\" for info on the functionnalities\n");
-	printf(
-		"If you are using mbed sterm don't forget to type \"CTRL + E\" to disable local echo and avoid corrupting the "
-		"data\n");
-	printf("\n\n");
-
-	std::array<float, 6> data;
+	Component::DataGathererData data;
 
 	while (true) {
-		//	dataGatherer.onTick();
-		dataGatherer.getData(data);
+		dataGatherer.getData(data.array);
+		dataGatherer.printData(data);
 
-		// for (int i = 0; i < 5; i++) {
-		// 	printf("%f ", data.at(i));
-		// }
-		// printf("\n");
-
-		// rtos::ThisThread::sleep_for(50ms);
-
-		while (abs(data[1]) > 100) {
-			if (data[1] < 0) {		 // tilted on the right
-				if (data[1] < 0) {	 // tilted forward
+		while (abs(data.array[1]) > 100) {
+			if (data.array[1] < 0) {	   // tilted on the right
+				if (data.array[1] < 0) {   // tilted forward
 					motor_right.spin(Rotation::counterClockwise, 0.5);
 					motor_left.spin(Rotation::clockwise, 0.5);
 				} else {   // tilted backward
 					motor_right.spin(Rotation::clockwise, 0.5);
 					motor_left.spin(Rotation::counterClockwise, 0.5);
 				}
-			} else {				 // tilted on the left
-				if (data[1] > 0) {	 // tilted forward
+			} else {					   // tilted on the left
+				if (data.array[1] > 0) {   // tilted forward
 					motor_left.spin(Rotation::clockwise, 0.5);
 					motor_right.spin(Rotation::counterClockwise, 0.5);
 				} else {   // tilted backward
@@ -152,20 +127,20 @@ auto main() -> int
 				}
 			}
 
-			dataGatherer.getData(data);
+			dataGatherer.getData(data.array);
 			rtos::ThisThread::sleep_for(50ms);
 		}
 
-		if (abs(data[0]) > 100) {
-			while (abs(data[0]) > 80) {
-				dataGatherer.getData(data);
+		if (abs(data.array[0]) > 100) {
+			while (abs(data.array[0]) > 80) {
+				dataGatherer.getData(data.array);
 				// printf("speed : %f\n", abs(data[0]) / 1000.f + 0.2 * (1000 - abs(data[0])) / 1000);
 				rtos::ThisThread::sleep_for(50ms);
-				float speed = abs(data[0]) / 1000.f;
-				if (data[0] < 0) {
-					goForward(motor_left, motor_right, abs(data[0]) / 1000.f);
+				float speed = abs(data.array[0]) / 1000.f;
+				if (data.array[0] < 0) {
+					goForward(motor_left, motor_right, abs(data.array[0]) / 1000.f);
 				} else {
-					goBackward(motor_left, motor_right, abs(data[0]) / 1000.f);
+					goBackward(motor_left, motor_right, abs(data.array[0]) / 1000.f);
 				}
 			}
 		}
@@ -177,5 +152,6 @@ auto main() -> int
 
 void tickerCB()
 {
+	// we are bending the use of data gatherer and there is no need for a precise ticker in our application
 	// dataGatherer.onTick();
 }
