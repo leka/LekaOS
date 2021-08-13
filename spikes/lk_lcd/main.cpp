@@ -28,22 +28,6 @@ CoreSDRAM coresdram(hal);
 VideoKit screen(hal);
 VideoKit_DeclareIRQHandlers(screen);
 
-std::vector<const char *> images = {"assets/images/Leka/logo.jpg", "assets/images/Leka/image.jpg"};
-
-std::vector<const char *> videos = {
-	//"assets/video/20fps.avi",
-	"assets/video/20fps_low10.avi",
-	//"assets/video/20fps_s700.avi",
-	//"assets/video/20fps_s600.avi",
-	//"assets/video/20fps_s500.avi",
-	//"assets/video/20fps_s400.avi",
-	//"assets/video/BirdsAndFeeder.avi",
-	//"assets/video/20fps_s300.avi",
-	//"assets/video/20fps_s200.avi",
-	//"assets/video/20fps_s100.avi"
-	"assets/video/Perplex_10.avi",
-};
-
 void initializeSD()
 {
 	sd_blockdevice.init();
@@ -74,7 +58,7 @@ auto main() -> int
 	coresdram.initialize();
 
 	screen.initialize();
-	screen.setFrameRateLimit(25);
+	screen.setFrameRateLimit(15);
 
 	gfx::Image image1("/fs/assets/images/Leka/logo.jpg");
 	gfx::Image image2("/fs/assets/images/Leka/image.jpg");
@@ -87,8 +71,11 @@ auto main() -> int
 	screen.display();
 	rtos::ThisThread::sleep_for(2s);
 
-	gfx::Video video_joie("fs/assets/video/20fps_low10.avi");
-	gfx::Video video_birds("fs/assets/video/BirdsAndFeeder_low20.avi");
+	gfx::Video video_joie("/fs/assets/video/joie_15fps_10.avi");
+	gfx::Video video_perplex("/fs/assets/video/perplex_15fps_10.avi");
+	gfx::Video video_birds("/fs/assets/video/BirdsAndFeeder_15fps_10.avi");
+
+	std::array<gfx::Video *, 3> videos = {&video_joie, &video_perplex, &video_birds};
 
 	gfx::Rectangle progress_bar_bg(0, 460, 800, 20, {190, 250, 230});
 	gfx::Rectangle progress_bar(0, 460, 0, 20, {20, 240, 165});
@@ -96,36 +83,23 @@ auto main() -> int
 	char buff[128];
 
 	while (true) {
-		while (!video_joie.hasEnded()) {
-			screen.draw(video_joie);
+		for (auto *video_ptr: videos) {
+			auto &video = *video_ptr;
+			video.restart();
+			while (!video.hasEnded()) {
+				screen.draw(video);
 
-			video_joie.nextFrame();
-			progress_bar.width = video_joie.getProgress() * lcd::dimension.width;
+				video.nextFrame();
+				progress_bar.width = video.getProgress() * lcd::dimension.width;
 
-			screen.draw(progress_bar_bg);
-			screen.draw(progress_bar);
+				screen.draw(progress_bar_bg);
+				screen.draw(progress_bar);
 
-			formatTime(buff, video_joie.getTime());
-			screen.drawText(buff, 20, 460, {250, 60, 150});
+				formatTime(buff, video.getTime());
+				screen.drawText(buff, 20, 460, {250, 60, 150});
 
-			screen.display();
+				screen.display();
+			}
 		}
-		video_joie.restart();
-
-		while (!video_birds.hasEnded()) {
-			screen.draw(video_birds);
-
-			video_birds.nextFrame();
-			int w = video_birds.getProgress() * lcd::dimension.width;
-
-			screen.drawRectangle(0, 460, 800, 20, {250, 190, 230});
-			screen.drawRectangle(0, 460, w, 20, {185, 20, 230});
-
-			formatTime(buff, video_birds.getTime());
-			screen.drawText(buff, 20, 460, {60, 200, 150});
-
-			screen.display();
-		}
-		video_birds.restart();
 	}
 }
