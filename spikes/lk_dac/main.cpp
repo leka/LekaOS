@@ -5,7 +5,7 @@
 #include "mbed.h"
 #include <sys/types.h>
 
-#include "CoreDAC.h"
+#include "DACDriver.h"
 #include "LKCoreSTM32Hal.h"
 
 using namespace leka;

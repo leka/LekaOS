@@ -5,7 +5,7 @@
 #ifndef _LEKA_OS_LIB_DAC_H_
 #define _LEKA_OS_LIB_DAC_H_
 
-#include "CoreDACTimer.h"
+#include "DACTimer.h"
 #include "LKCoreSTM32HalBase.h"
 #include "lstd_span"
 

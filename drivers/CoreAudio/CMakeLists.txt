@@ -12,8 +12,8 @@ target_include_directories(CoreAudio
 
 target_sources(CoreAudio
 	PRIVATE
-		source/CoreDACTimer.cpp
-		source/CoreDAC.cpp
+		source/DACTimer.cpp
+		source/DACDriver.cpp
 )
 
 target_link_libraries(CoreAudio
