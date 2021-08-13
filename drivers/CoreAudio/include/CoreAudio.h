@@ -46,8 +46,8 @@ class CoreAudio
 
   private:
 	LKCoreSTM32HalBase &_hal;
-	DACDriver &_coreDac;
-	DACTimer &_coreTimer;
+	DACDriver &_dac;
+	DACTimer &_dacTimer;
 
 	rtos::Thread &_thread;
 	events::EventQueue &_eventQueue;

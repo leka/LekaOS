@@ -15,7 +15,7 @@ using namespace leka;
 using namespace std::chrono;
 
 LKCoreSTM32Hal hal;
-DACDriver coreDAC(hal);
+DACDriver dacDriver(hal);
 
 /**
  * @brief This function handles DMA1 stream5 global interrupt.
@@ -23,7 +23,7 @@ DACDriver coreDAC(hal);
 extern "C" {
 void DMA1_Stream5_IRQHandler()
 {
-	HAL_DMA_IRQHandler(coreDAC.getHandle().DMA_Handle1);
+	HAL_DMA_IRQHandler(dacDriver.getHandle().DMA_Handle1);
 }
 }
 
@@ -37,8 +37,8 @@ auto main() -> int
 	rtos::Thread audioThread;
 	events::EventQueue audioEventQueue;
 
-	DACTimer coreDACTimer(hal, DACTimer::HardWareBasicTimer::BasicTimer6);
-	CoreAudio coreAudio(hal, coreDAC, coreDACTimer, audioThread, audioEventQueue);
+	DACTimer dacTimer(hal, DACTimer::HardwareBasicTimer::BasicTimer6);
+	CoreAudio coreAudio(hal, dacDriver, dacTimer, audioThread, audioEventQueue);
 
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 	log_info("\n\tHello, investigation day!");

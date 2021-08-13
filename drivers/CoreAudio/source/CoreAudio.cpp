@@ -10,7 +10,7 @@ std::array<uint16_t, CoreAudio::_outBufferSize_Samples> CoreAudio::_outBuffer;
 
 CoreAudio::CoreAudio(LKCoreSTM32HalBase &hal, DACDriver &dac, DACTimer &timer, rtos::Thread &thread,
 					 events::EventQueue &eventQueue)
-	: _hal(hal), _coreDac(dac), _coreTimer(timer), _thread(thread), _eventQueue(eventQueue)
+	: _hal(hal), _dac(dac), _dacTimer(timer), _thread(thread), _eventQueue(eventQueue)
 {
 	_thread.start({&_eventQueue, &events::EventQueue::dispatch_forever});
 	_outBuffStartPtr  = _outBuffer.data();
@@ -28,24 +28,24 @@ void CoreAudio::playFile(FIL *file)
 	_handleNextSector(_outBuffStartPtr);
 	_handleNextSector(_outBuffMiddlePtr);
 
-	_coreDac.start(lstd::span {_outBuffStartPtr, _outBufferSize_Samples});
-	_coreTimer.start();
+	_dac.start(lstd::span {_outBuffStartPtr, _outBufferSize_Samples});
+	_dacTimer.start();
 }
 
 void CoreAudio::pause() const
 {
-	_coreTimer.stop();
+	_dacTimer.stop();
 }
 
 void CoreAudio::resume() const
 {
-	_coreTimer.start();
+	_dacTimer.start();
 }
 
 void CoreAudio::stop()
 {
-	_coreTimer.stop();
-	_coreDac.stop();
+	_dacTimer.stop();
+	_dac.stop();
 	_playing = false;
 }
 
@@ -67,8 +67,8 @@ void CoreAudio::_initialize(uint32_t samplingFreq)
 	auto fullBuffCb =
 		static_cast<pDAC_CallbackTypeDef>([]([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->_onFullBuffRead(); });
 
-	_coreTimer.initialize(samplingFreq);
-	_coreDac.initialize(_coreTimer, halfBuffCb, fullBuffCb);
+	_dacTimer.initialize(samplingFreq);
+	_dac.initialize(_dacTimer, halfBuffCb, fullBuffCb);
 }
 
 void CoreAudio::_align12bR(lstd::span<uint16_t> samplesBuffer) const
