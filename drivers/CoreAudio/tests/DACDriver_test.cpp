@@ -2,7 +2,7 @@
 // // Copyright 2021 APF France handicap
 // // SPDX-License-Identifier: Apache-2.0
 
-#include "CoreDAC.h"
+#include "DACDriver.h"
 
 #include "gtest/gtest.h"
 #include "mocks/leka/LKCoreSTM32Hal.h"
@@ -13,21 +13,21 @@ using ::testing::AnyNumber;
 using ::testing::InSequence;
 using ::testing::Return;
 
-class CoreDACTest : public ::testing::Test
+class DACDriver : public ::testing::Test
 {
   protected:
-	CoreDACTest() : coredac(halmock) {}
+	DACDriver() : coredac(halmock) {}
 
 	LKCoreSTM32HalMock halmock;
-	CoreDAC coredac;
+	DACDriver coredac;
 };
 
-TEST_F(CoreDACTest, instantiation)
+TEST_F(DACDriver, instantiation)
 {
 	ASSERT_NE(&coredac, nullptr);
 }
 
-TEST_F(CoreDACTest, handleConfigurationInstance)
+TEST_F(DACDriver, handleConfigurationInstance)
 {
 	auto hdac = coredac.getHandle();
 	auto hdma = coredac.getDMAHandle();
@@ -36,7 +36,7 @@ TEST_F(CoreDACTest, handleConfigurationInstance)
 	ASSERT_EQ(hdma.Instance, DMA1_Stream5);
 }
 
-TEST_F(CoreDACTest, initialize)
+TEST_F(DACDriver, initialize)
 {
 	auto handle = coredac.getHandle();
 	auto timer	= CoreDACTimer(halmock, CoreDACTimer::HardWareBasicTimer::BasicTimer6);
@@ -55,7 +55,7 @@ TEST_F(CoreDACTest, initialize)
 	coredac.initialize(timer, nullptr, nullptr);
 }
 
-TEST_F(CoreDACTest, terminate)
+TEST_F(DACDriver, terminate)
 {
 	{
 		EXPECT_CALL(halmock, HAL_DAC_DeInit).Times(1);
@@ -63,7 +63,7 @@ TEST_F(CoreDACTest, terminate)
 	coredac.terminate();
 }
 
-// TEST_F(CoreDACTest, mspInitCallback)
+// TEST_F(DACDriver, mspInitCallback)
 // {
 // 	{
 // 		InSequence seq;
@@ -95,7 +95,7 @@ TEST_F(CoreDACTest, terminate)
 // 	// ASSERT_EQ(hdac.DMA_Handle1, &hdma);
 // }
 
-// TEST_F(CoreDACTest, start)
+// TEST_F(DACDriver, start)
 // {
 // 	{
 // 		InSequence seq;
@@ -106,7 +106,7 @@ TEST_F(CoreDACTest, terminate)
 // 	coredac.start(nullptr, 0);
 // }
 
-// TEST_F(CoreDACTest, stop)
+// TEST_F(DACDriver, stop)
 // {
 // 	{
 // 		EXPECT_CALL(halmock, HAL_DAC_Stop_DMA).Times(1);
@@ -114,20 +114,20 @@ TEST_F(CoreDACTest, terminate)
 // 	coredac.stop();
 // }
 
-// TEST_F(CoreDACTest, halfCptCallback)
+// TEST_F(DACDriver, halfCptCallback)
 // {
 // 	coredac._halfCptCallback();
 // 	ASSERT_EQ(coredac.dmaFlag(), interface::Dac::DMA_Flag::Half_cpt);
 // }
 
-// TEST_F(CoreDACTest, _cptCallback)
+// TEST_F(DACDriver, _cptCallback)
 // {
 // 	coredac._cptCallback();
 
 // 	ASSERT_EQ(coredac.dmaFlag(), interface::Dac::DMA_Flag::Cpt);
 // }
 
-// TEST_F(CoreDACTest, mspDeInitCallback)
+// TEST_F(DACDriver, mspDeInitCallback)
 // {
 // 	{
 // 		InSequence seq;

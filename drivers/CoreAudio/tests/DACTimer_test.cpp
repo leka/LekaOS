@@ -2,7 +2,7 @@
 // // Copyright 2021 APF France handicap
 // // SPDX-License-Identifier: Apache-2.0
 
-#include "CoreDACTimer.h"
+#include "DACTimer.h"
 
 #include "gtest/gtest.h"
 #include "mocks/leka/LKCoreSTM32Hal.h"
@@ -13,21 +13,21 @@ using ::testing::AnyNumber;
 using ::testing::InSequence;
 using ::testing::Return;
 
-class CoreDACTimerTest : public ::testing::Test
+class DACTimerTest : public ::testing::Test
 {
   protected:
-	CoreDACTimerTest() : coredactimer(halmock, CoreDACTimer::HardWareBasicTimer::BasicTimer6) {}
+	DACTimerTest() : coredactimer(halmock, DACTimer::HardWareBasicTimer::BasicTimer6) {}
 
 	LKCoreSTM32HalMock halmock;
-	CoreDACTimer coredactimer;
+	DACTimer coredactimer;
 };
 
-TEST_F(CoreDACTimerTest, instantiation)
+TEST_F(DACTimerTest, instantiation)
 {
 	ASSERT_NE(&coredactimer, nullptr);
 }
 
-TEST_F(CoreDACTimerTest, handleConfigurationInstance)
+TEST_F(DACTimerTest, handleConfigurationInstance)
 {
 	auto handle = coredactimer.getHandle();
 
@@ -35,7 +35,7 @@ TEST_F(CoreDACTimerTest, handleConfigurationInstance)
 	// TODO() : make another test case with the TIM7
 }
 
-// TEST_F(CoreDACTimerTest, initialize)
+// TEST_F(DACTimerTest, initialize)
 // {
 // 	float frequency = 44100;
 
@@ -54,7 +54,7 @@ TEST_F(CoreDACTimerTest, handleConfigurationInstance)
 // 	ASSERT_EQ(handle.Init.AutoReloadPreload, TIM_AUTORELOAD_PRELOAD_DISABLE);
 // }
 
-TEST_F(CoreDACTimerTest, deInitialize)
+TEST_F(DACTimerTest, deInitialize)
 {
 	{
 		EXPECT_CALL(halmock, HAL_TIM_Base_DeInit).Times(1);
@@ -62,7 +62,7 @@ TEST_F(CoreDACTimerTest, deInitialize)
 	coredactimer.terminate();
 }
 
-TEST_F(CoreDACTimerTest, start)
+TEST_F(DACTimerTest, start)
 {
 	{
 		EXPECT_CALL(halmock, HAL_TIM_Base_Start).Times(1);
@@ -70,7 +70,7 @@ TEST_F(CoreDACTimerTest, start)
 	coredactimer.start();
 }
 
-TEST_F(CoreDACTimerTest, stop)
+TEST_F(DACTimerTest, stop)
 {
 	{
 		EXPECT_CALL(halmock, HAL_TIM_Base_Stop).Times(1);
