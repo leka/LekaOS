@@ -16,21 +16,21 @@ using ::testing::Return;
 class DACDriver : public ::testing::Test
 {
   protected:
-	DACDriver() : coredac(halmock) {}
+	DACDriver() : dacDriver(halmock) {}
 
 	LKCoreSTM32HalMock halmock;
-	DACDriver coredac;
+	DACDriver dacDriver;
 };
 
 TEST_F(DACDriver, instantiation)
 {
-	ASSERT_NE(&coredac, nullptr);
+	ASSERT_NE(&dacDriver, nullptr);
 }
 
 TEST_F(DACDriver, handleConfigurationInstance)
 {
-	auto hdac = coredac.getHandle();
-	auto hdma = coredac.getDMAHandle();
+	auto hdac = dacDriver.getHandle();
+	auto hdma = dacDriver.getDMAHandle();
 
 	ASSERT_EQ(hdac.Instance, DAC);
 	ASSERT_EQ(hdma.Instance, DMA1_Stream5);
@@ -38,8 +38,8 @@ TEST_F(DACDriver, handleConfigurationInstance)
 
 TEST_F(DACDriver, initialize)
 {
-	auto handle = coredac.getHandle();
-	auto timer	= CoreDACTimer(halmock, CoreDACTimer::HardWareBasicTimer::BasicTimer6);
+	auto handle = dacDriver.getHandle();
+	auto timer	= DACTimer(halmock, DACTimer::HardwareBasicTimer::BasicTimer6);
 	{
 		InSequence seq;
 
@@ -52,7 +52,7 @@ TEST_F(DACDriver, initialize)
 		EXPECT_CALL(halmock, HAL_DAC_RegisterCallback).Times(2);
 		EXPECT_CALL(halmock, HAL_DAC_ConfigChannel).Times(1);
 	}
-	coredac.initialize(timer, nullptr, nullptr);
+	dacDriver.initialize(timer, nullptr, nullptr);
 }
 
 TEST_F(DACDriver, terminate)
@@ -60,7 +60,7 @@ TEST_F(DACDriver, terminate)
 	{
 		EXPECT_CALL(halmock, HAL_DAC_DeInit).Times(1);
 	}
-	coredac.terminate();
+	dacDriver.terminate();
 }
 
 // TEST_F(DACDriver, mspInitCallback)
@@ -73,9 +73,9 @@ TEST_F(DACDriver, terminate)
 // 		EXPECT_CALL(halmock, HAL_GPIO_Init).Times(1);
 // 		EXPECT_CALL(halmock, HAL_DMA_Init).Times(1);
 // 	}
-// 	coredac._mspInitCallback();
+// 	dacDriver._mspInitCallback();
 
-// 	auto hdma = coredac.getDMAHandle();
+// 	auto hdma = dacDriver.getDMAHandle();
 
 // 	ASSERT_EQ(hdma.Init.Channel, DMA_CHANNEL_7);
 // 	ASSERT_EQ(hdma.Init.Direction, DMA_MEMORY_TO_PERIPH);
@@ -91,7 +91,7 @@ TEST_F(DACDriver, terminate)
 // 	ASSERT_EQ(hdma.Init.PeriphBurst, DMA_PBURST_SINGLE);
 
 // 	// NOT EASILY TESTABLE
-// 	// auto hdac = coredac.getHandle();
+// 	// auto hdac = dacDriver.getHandle();
 // 	// ASSERT_EQ(hdac.DMA_Handle1, &hdma);
 // }
 
@@ -103,7 +103,7 @@ TEST_F(DACDriver, terminate)
 // 		EXPECT_CALL(halmock, HAL_DAC_Start).Times(1);
 // 		EXPECT_CALL(halmock, HAL_DAC_Start_DMA).Times(1);
 // 	}
-// 	coredac.start(nullptr, 0);
+// 	dacDriver.start(nullptr, 0);
 // }
 
 // TEST_F(DACDriver, stop)
@@ -111,20 +111,20 @@ TEST_F(DACDriver, terminate)
 // 	{
 // 		EXPECT_CALL(halmock, HAL_DAC_Stop_DMA).Times(1);
 // 	}
-// 	coredac.stop();
+// 	dacDriver.stop();
 // }
 
 // TEST_F(DACDriver, halfCptCallback)
 // {
-// 	coredac._halfCptCallback();
-// 	ASSERT_EQ(coredac.dmaFlag(), interface::Dac::DMA_Flag::Half_cpt);
+// 	dacDriver._halfCptCallback();
+// 	ASSERT_EQ(dacDriver.dmaFlag(), interface::Dac::DMA_Flag::Half_cpt);
 // }
 
 // TEST_F(DACDriver, _cptCallback)
 // {
-// 	coredac._cptCallback();
+// 	dacDriver._cptCallback();
 
-// 	ASSERT_EQ(coredac.dmaFlag(), interface::Dac::DMA_Flag::Cpt);
+// 	ASSERT_EQ(dacDriver.dmaFlag(), interface::Dac::DMA_Flag::Cpt);
 // }
 
 // TEST_F(DACDriver, mspDeInitCallback)
@@ -136,5 +136,5 @@ TEST_F(DACDriver, terminate)
 // 		EXPECT_CALL(halmock, HAL_GPIO_DeInit).Times(1);
 // 		EXPECT_CALL(halmock, HAL_DMA_DeInit).Times(1);
 // 	}
-// 	coredac._mspDeInitCallback();
+// 	dacDriver._mspDeInitCallback();
 // }
