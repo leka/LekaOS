@@ -74,8 +74,8 @@ void CoreDAC::_registerMspCallbacks()
 	static auto *self	= this;
 	auto initCbLambda	= []([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->_msp_onInitializationCb(); };
 	auto deInitCbLambda = []([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->_msp_onTerminationCb(); };
-	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_MSP_INIT_CB_ID, initCbLambda);
-	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_MSP_DEINIT_CB_ID, deInitCbLambda);
+	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_MSPINIT_CB_ID, initCbLambda);
+	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_MSPDEINIT_CB_ID, deInitCbLambda);
 }
 
 void CoreDAC::_msp_onInitializationCb()
