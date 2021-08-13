@@ -23,21 +23,24 @@ using ::testing::SetArrayArgument;
 class CoreCR95HFSensorTest : public ::testing::Test
 {
   protected:
-	CoreCR95HFSensorTest() : corecr95hf(mockBufferedSerial) {};
+	CoreCR95HFSensorTest() : corecr95hf(mockBufferedSerial, thread, event_queue) {};
 
 	// void SetUp() override {}
 	// void TearDown() override {}
-
-	CoreCR95HF corecr95hf;
 	CoreBufferedSerialMock mockBufferedSerial;
+	rtos::Thread thread;
+	events::EventQueue event_queue;
+	CoreCR95HF corecr95hf;
 
-	template <size_t size>
+	bool _callbackCalled {false};
+	void isCallbackCalled() { _callbackCalled = true; };
 
-	void setExpectedReveivedData(const std::array<uint8_t, size> &returned_values)
+	void setFakeCallback()
 	{
-		receiveCR95HFAnswer(returned_values);
-		sendSetModeTagDetection();
-	};
+		_callbackCalled = false;
+		auto callback	= [this]() { this->isCallbackCalled(); };
+		corecr95hf.registerTagAvailableCallback(callback);
+	}
 
 	void sendSetModeTagDetection()
 	{
@@ -130,19 +133,21 @@ TEST_F(CoreCR95HFSensorTest, registerTagAvailableCallback)
 
 TEST_F(CoreCR95HFSensorTest, onDataAvailableSuccess)
 {
+	setFakeCallback();
+
 	std::array<uint8_t, 3> expected_tag_detection_callback = {0x00, 0x01, 0x02};
 
 	corecr95hf.registerTagAvailableCallback(callbackFunction);
-	{
-		InSequence seq;
-		receiveCR95HFAnswer(expected_tag_detection_callback);
-		sendSetModeTagDetection();
-	}
+
+	receiveCR95HFAnswer(expected_tag_detection_callback);
 
 	corecr95hf.onDataAvailable();
 }
+
 TEST_F(CoreCR95HFSensorTest, onDataAvailableWrongCallback)
 {
+	setFakeCallback();
+
 	std::array<uint8_t, 3> expected_tag_detection_callback = {0x00, 0x01, 0xff};
 
 	corecr95hf.registerTagAvailableCallback(callbackFunction);
@@ -159,14 +164,15 @@ TEST_F(CoreCR95HFSensorTest, getIDNSuccess)
 
 	{
 		InSequence seq;
-		setExpectedReveivedData(expected_idn);
-
 		sendAskIdn();
+		receiveCR95HFAnswer(expected_idn);
 	}
 
-	corecr95hf.onDataAvailable();
-	auto idn = corecr95hf.getIDN();
-	ASSERT_EQ(idn, expected_idn);
+	std::array<uint8_t, rfid::cr95hf::expected_answer_size::idn> actual_idn {};
+	auto getIDNSucceed = corecr95hf.getIDN(actual_idn);
+
+	ASSERT_EQ(getIDNSucceed, true);
+	ASSERT_EQ(actual_idn, expected_idn);
 }
 
 TEST_F(CoreCR95HFSensorTest, getIDNFailedOnSize)
@@ -179,29 +185,36 @@ TEST_F(CoreCR95HFSensorTest, getIDNFailedOnSize)
 
 	{
 		InSequence seq;
-		setExpectedReveivedData(wrong_idn);
 		sendAskIdn();
+		receiveCR95HFAnswer(wrong_idn);
 	}
 
-	corecr95hf.onDataAvailable();
-	auto idn = corecr95hf.getIDN();
-	ASSERT_EQ(idn, expected_idn);
+	std::array<uint8_t, rfid::cr95hf::expected_answer_size::idn> actual_idn {};
+	auto getIDNSucceed = corecr95hf.getIDN(actual_idn);
+
+	ASSERT_EQ(getIDNSucceed, false);
+	ASSERT_EQ(actual_idn, expected_idn);
 }
 
 TEST_F(CoreCR95HFSensorTest, getIDNFailedOnValues)
 {
-	std::array<uint8_t, 17> expected_idn = {0xFF, 0xFF, 0x4E, 0x46, 0x43, 0x20, 0x46, 0x53, 0x32,
-											0x4A, 0x41, 0x53, 0x54, 0x34, 0x00, 0x2A, 0xCE};
+	std::array<uint8_t, 17> wrong_idn = {0xFF, 0xFF, 0x4E, 0x46, 0x43, 0x20, 0x46, 0x53, 0x32,
+										 0x4A, 0x41, 0x53, 0x54, 0x34, 0x00, 0x2A, 0xCE};
+
+	std::array<uint8_t, 17> expected_idn = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+											0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 	{
 		InSequence seq;
-		setExpectedReveivedData(expected_idn);
 		sendAskIdn();
+		receiveCR95HFAnswer(expected_idn);
 	}
 
-	corecr95hf.onDataAvailable();
-	auto idn = corecr95hf.getIDN();
-	ASSERT_NE(idn, expected_idn);
+	std::array<uint8_t, rfid::cr95hf::expected_answer_size::idn> actual_idn {};
+	auto getIDNSucceed = corecr95hf.getIDN(actual_idn);
+
+	ASSERT_EQ(getIDNSucceed, false);
+	ASSERT_EQ(actual_idn, expected_idn);
 }
 
 TEST_F(CoreCR95HFSensorTest, setBaudrateSuccess)
@@ -210,12 +223,10 @@ TEST_F(CoreCR95HFSensorTest, setBaudrateSuccess)
 
 	{
 		InSequence seq;
-		receiveSetBaudrate(expected_baudrate, 1);
-		sendSetModeTagDetection();
 		sendSetBaudrate(expected_baudrate);
+		receiveSetBaudrate(expected_baudrate, 1);
 	}
 
-	corecr95hf.onDataAvailable();
 	auto baudrate = corecr95hf.setBaudrate(expected_baudrate);
 	ASSERT_EQ(baudrate, true);
 }
@@ -226,12 +237,10 @@ TEST_F(CoreCR95HFSensorTest, setBaudrateFailedOnSize)
 
 	{
 		InSequence seq;
-		receiveSetBaudrate(expected_baudrate, 2);
-		sendSetModeTagDetection();
 		sendSetBaudrate(expected_baudrate);
+		receiveSetBaudrate(expected_baudrate, 2);
 	}
 
-	corecr95hf.onDataAvailable();
 	auto baudrate = corecr95hf.setBaudrate(expected_baudrate);
 	ASSERT_EQ(baudrate, false);
 }
@@ -243,25 +252,24 @@ TEST_F(CoreCR95HFSensorTest, setBaudrateFailedOnValue)
 
 	{
 		InSequence seq;
-		receiveSetBaudrate(wrong_baudrate, 1);
-		sendSetModeTagDetection();
 		sendSetBaudrate(expected_baudrate);
+		receiveSetBaudrate(wrong_baudrate, 1);
 	}
 
-	corecr95hf.onDataAvailable();
 	auto baudrate = corecr95hf.setBaudrate(expected_baudrate);
 	ASSERT_EQ(baudrate, false);
 }
 
 TEST_F(CoreCR95HFSensorTest, setCommunicationProtocolSuccess)
 {
+	setFakeCallback();
+
 	std::array<uint8_t, 2> set_protocol_success_answer			  = {0x00, 0x00};
 	std::array<uint8_t, 2> set_gain_and_modulation_success_answer = {0x00, 0x00};
 
 	{
 		InSequence seq;
-
-		setExpectedReveivedData(set_protocol_success_answer);
+		receiveCR95HFAnswer(set_protocol_success_answer);
 		sendSetProtocol();
 		sendSetGainAndModulation();
 	}
@@ -273,10 +281,11 @@ TEST_F(CoreCR95HFSensorTest, setCommunicationProtocolSuccess)
 
 TEST_F(CoreCR95HFSensorTest, setCommunicationProtocolFailedOnAnswerTooBig)
 {
+	setFakeCallback();
 	std::array<uint8_t, 3> set_protocol_failed_answer = {0x00, 0x00, 0x00};
 	{
 		InSequence seq;
-		setExpectedReveivedData(set_protocol_failed_answer);
+		receiveCR95HFAnswer(set_protocol_failed_answer);
 		sendSetProtocol();
 	}
 
@@ -287,11 +296,11 @@ TEST_F(CoreCR95HFSensorTest, setCommunicationProtocolFailedOnAnswerTooBig)
 
 TEST_F(CoreCR95HFSensorTest, setCommunicationProtocolFailedOnWrongFirstValue)
 {
+	setFakeCallback();
 	std::array<uint8_t, 2> set_protocol_failed_answer = {0x82, 0x00};
 	{
 		InSequence seq;
-
-		setExpectedReveivedData(set_protocol_failed_answer);
+		receiveCR95HFAnswer(set_protocol_failed_answer);
 		sendSetProtocol();
 	}
 
@@ -313,6 +322,8 @@ TEST_F(CoreCR95HFSensorTest, sendCommandSuccess)
 
 TEST_F(CoreCR95HFSensorTest, receiveDataSuccess)
 {
+	setFakeCallback();
+
 	std::array<uint8_t, 23> read_values = {0x80, 0x15, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02,
 										   0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0xDA, 0x48, 0x28, 0x00, 0x00};
 
@@ -321,7 +332,7 @@ TEST_F(CoreCR95HFSensorTest, receiveDataSuccess)
 
 	std::array<uint8_t, 18> actual_values {0};
 
-	setExpectedReveivedData(read_values);
+	receiveCR95HFAnswer(read_values);
 
 	corecr95hf.onDataAvailable();
 	uint8_t is_communication_succeed = corecr95hf.receiveDataFromTag(actual_values);
@@ -332,10 +343,12 @@ TEST_F(CoreCR95HFSensorTest, receiveDataSuccess)
 
 TEST_F(CoreCR95HFSensorTest, receiveDataFailedWrongAnswerFlag)
 {
+	setFakeCallback();
+
 	std::array<uint8_t, 7> read_values = {0xff, 0x05, 0x44, 0x00, 0x28, 0x00, 0x00};
 	std::array<uint8_t, 7> actual_values {0};
 
-	setExpectedReveivedData(read_values);
+	receiveCR95HFAnswer(read_values);
 
 	corecr95hf.onDataAvailable();
 
@@ -347,10 +360,12 @@ TEST_F(CoreCR95HFSensorTest, receiveDataFailedWrongAnswerFlag)
 
 TEST_F(CoreCR95HFSensorTest, receiveDataFailedWrongLength)
 {
+	setFakeCallback();
+
 	std::array<uint8_t, 7> read_values = {0x80, 0x02, 0x44, 0x00, 0x28, 0x00, 0x00};
 	std::array<uint8_t, 7> actual_values {0};
 
-	setExpectedReveivedData(read_values);
+	receiveCR95HFAnswer(read_values);
 
 	corecr95hf.onDataAvailable();
 
