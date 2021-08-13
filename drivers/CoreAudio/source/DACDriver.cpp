@@ -18,9 +18,9 @@ void DACDriver::linkNewTimer(const DACTimer &tim)
 	DAC_ChannelConfTypeDef sConfig = {0};
 	sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;	  // necessary to reach the full voltage range in DAC output
 
-	if (tim.getHardWareBasicTimer() == DACTimer::HardWareBasicTimer::BasicTimer6) {
+	if (tim.getHardWareBasicTimer() == DACTimer::HardwareBasicTimer::BasicTimer6) {
 		sConfig.DAC_Trigger = DAC_TRIGGER_T6_TRGO;	 // configure the DAC to be triggered by TIM6 through TRGO signal
-	} else if (tim.getHardWareBasicTimer() == DACTimer::HardWareBasicTimer::BasicTimer7) {
+	} else if (tim.getHardWareBasicTimer() == DACTimer::HardwareBasicTimer::BasicTimer7) {
 		sConfig.DAC_Trigger = DAC_TRIGGER_T7_TRGO;	 // configure the DAC to be triggered by TIM7 through TRGO signal
 	}
 

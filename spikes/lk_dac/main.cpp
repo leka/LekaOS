@@ -12,14 +12,14 @@ using namespace leka;
 
 // Components
 LKCoreSTM32Hal hal;
-DACDriver coreDac(hal);
-DACTimer coreTimer_6(hal, DACTimer::HardWareBasicTimer::BasicTimer6);
-DACTimer coreTimer_7(hal, DACTimer::HardWareBasicTimer::BasicTimer7);
+DACDriver dac(hal);
+DACTimer dacTimer_6(hal, DACTimer::HardwareBasicTimer::BasicTimer6);
+DACTimer dacTimer_7(hal, DACTimer::HardwareBasicTimer::BasicTimer7);
 
 // Globals
 uint32_t _countCbCalls					 = 0;
 bool _vibEnded							 = false;
-DACTimer::HardWareBasicTimer _currentTim = DACTimer::HardWareBasicTimer::BasicTimer6;
+DACTimer::HardwareBasicTimer _currentTim = DACTimer::HardwareBasicTimer::BasicTimer6;
 
 // Preset values
 constexpr uint32_t _samplingRate_hertz = 44100;
@@ -32,7 +32,7 @@ constexpr int _outBufferSize_samples   = 512;
 extern "C" {
 void DMA1_Stream5_IRQHandler()
 {
-	HAL_DMA_IRQHandler(coreDac.getHandle().DMA_Handle1);
+	HAL_DMA_IRQHandler(dac.getHandle().DMA_Handle1);
 }
 }
 
@@ -58,24 +58,24 @@ void callbackTest(DAC_HandleTypeDef *)
 	if (_countCbCalls == nbCallsInDuration) {
 		_vibEnded = true;
 
-		if (_currentTim == DACTimer::HardWareBasicTimer::BasicTimer6) {
-			coreTimer_6.stop();
+		if (_currentTim == DACTimer::HardwareBasicTimer::BasicTimer6) {
+			dacTimer_6.stop();
 		} else {
-			coreTimer_7.stop();
+			dacTimer_7.stop();
 		}
 	}
 }
 
-void startSound(DACTimer::HardWareBasicTimer tim)
+void startSound(DACTimer::HardwareBasicTimer tim)
 {
 	_countCbCalls = 0;
 	_vibEnded	  = false;
-	if (tim == DACTimer::HardWareBasicTimer::BasicTimer6) {
-		coreTimer_6.start();
-		_currentTim = DACTimer::HardWareBasicTimer::BasicTimer6;
-	} else if (tim == DACTimer::HardWareBasicTimer::BasicTimer7) {
-		coreTimer_7.start();
-		_currentTim = DACTimer::HardWareBasicTimer::BasicTimer7;
+	if (tim == DACTimer::HardwareBasicTimer::BasicTimer6) {
+		dacTimer_6.start();
+		_currentTim = DACTimer::HardwareBasicTimer::BasicTimer6;
+	} else if (tim == DACTimer::HardwareBasicTimer::BasicTimer7) {
+		dacTimer_7.start();
+		_currentTim = DACTimer::HardwareBasicTimer::BasicTimer7;
 	}
 }
 
@@ -101,15 +101,15 @@ auto main() -> int
 	log_info("Hello, investigation day!");
 
 	// Init
-	coreTimer_6.initialize(_samplingRate_hertz);
-	coreTimer_7.initialize(_samplingRate_hertz);
+	dacTimer_6.initialize(_samplingRate_hertz);
+	dacTimer_7.initialize(_samplingRate_hertz);
 
-	coreDac.initialize(coreTimer_6, &callbackTest, &callbackTest);
-	coreDac.start(outSpan);
+	dac.initialize(dacTimer_6, &callbackTest, &callbackTest);
+	dac.start(outSpan);
 
 	// start
 	log_info("First timer for %ds", _vibDuration_seconds);
-	startSound(DACTimer::HardWareBasicTimer::BasicTimer6);
+	startSound(DACTimer::HardwareBasicTimer::BasicTimer6);
 
 	while (!_vibEnded) {
 		rtos::ThisThread::sleep_for(50ms);
@@ -117,10 +117,10 @@ auto main() -> int
 	log_info("Pause");
 	rtos::ThisThread::sleep_for(2s);
 
-	coreDac.linkNewTimer(coreTimer_7);	 // change timer associated to DAC
+	dac.linkNewTimer(dacTimer_7);	// change timer associated to DAC
 
 	log_info("Second timer for %ds", _vibDuration_seconds);
-	startSound(DACTimer::HardWareBasicTimer::BasicTimer7);
+	startSound(DACTimer::HardwareBasicTimer::BasicTimer7);
 
 	while (!_vibEnded) {
 		rtos::ThisThread::sleep_for(50ms);

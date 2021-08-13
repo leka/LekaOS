@@ -15,13 +15,13 @@ namespace leka {
 class DACTimer
 {
   public:
-	enum class HardWareBasicTimer
+	enum class HardwareBasicTimer
 	{
 		BasicTimer6,
 		BasicTimer7
 	};
 
-	explicit DACTimer(LKCoreSTM32HalBase &hal, HardWareBasicTimer tim);
+	explicit DACTimer(LKCoreSTM32HalBase &hal, HardwareBasicTimer tim);
 
 	void initialize(uint32_t frequency);
 	void terminate();
@@ -29,12 +29,12 @@ class DACTimer
 	void stop();
 
 	[[nodiscard]] auto getHandle() const -> const TIM_HandleTypeDef &;
-	[[nodiscard]] auto getHardWareBasicTimer() const -> const HardWareBasicTimer &;
+	[[nodiscard]] auto getHardWareBasicTimer() const -> const HardwareBasicTimer &;
 
   private:
 	LKCoreSTM32HalBase &_hal;
 	TIM_HandleTypeDef _htim;
-	HardWareBasicTimer _hardwareTim;
+	HardwareBasicTimer _hardwareTim;
 
 	auto _calculatePeriod(uint32_t freq) -> uint32_t;
 

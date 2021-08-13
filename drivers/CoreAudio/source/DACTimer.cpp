@@ -6,11 +6,11 @@
 
 namespace leka {
 
-DACTimer::DACTimer(LKCoreSTM32HalBase &hal, HardWareBasicTimer tim) : _hal(hal), _hardwareTim(tim)
+DACTimer::DACTimer(LKCoreSTM32HalBase &hal, HardwareBasicTimer tim) : _hal(hal), _hardwareTim(tim)
 {
-	if (_hardwareTim == HardWareBasicTimer::BasicTimer6) {
+	if (_hardwareTim == HardwareBasicTimer::BasicTimer6) {
 		_htim.Instance = TIM6;
-	} else if (_hardwareTim == HardWareBasicTimer::BasicTimer7) {
+	} else if (_hardwareTim == HardwareBasicTimer::BasicTimer7) {
 		_htim.Instance = TIM7;
 	}
 }
@@ -53,7 +53,7 @@ auto DACTimer::getHandle() const -> const TIM_HandleTypeDef &
 	return this->_htim;
 }
 
-auto DACTimer::getHardWareBasicTimer() const -> const HardWareBasicTimer &
+auto DACTimer::getHardWareBasicTimer() const -> const HardwareBasicTimer &
 {
 	return _hardwareTim;
 }
@@ -88,18 +88,18 @@ void DACTimer::_registerMspCallbacks()
 
 void DACTimer::_msp_onInitializationCb()
 {
-	if (_hardwareTim == HardWareBasicTimer::BasicTimer6) {
+	if (_hardwareTim == HardwareBasicTimer::BasicTimer6) {
 		_hal.HAL_RCC_TIM6_CLK_ENABLE();
-	} else if (_hardwareTim == HardWareBasicTimer::BasicTimer7) {
+	} else if (_hardwareTim == HardwareBasicTimer::BasicTimer7) {
 		_hal.HAL_RCC_TIM7_CLK_ENABLE();
 	}
 }
 
 void DACTimer::_msp_onTerminationCb()
 {
-	if (_hardwareTim == HardWareBasicTimer::BasicTimer6) {
+	if (_hardwareTim == HardwareBasicTimer::BasicTimer6) {
 		_hal.HAL_RCC_TIM6_CLK_DISABLE();
-	} else if (_hardwareTim == HardWareBasicTimer::BasicTimer7) {
+	} else if (_hardwareTim == HardwareBasicTimer::BasicTimer7) {
 		_hal.HAL_RCC_TIM7_CLK_DISABLE();
 	}
 }
