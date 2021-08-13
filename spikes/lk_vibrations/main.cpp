@@ -19,7 +19,7 @@ mbed::DigitalOut audio_enable(SOUND_ENABLE, 1);
 auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 
 LKCoreSTM32Hal hal;
-DACTimer coreDACTimer(hal, DACTimer::HardWareBasicTimer::BasicTimer6);
+DACTimer coreDACTimer(hal, DACTimer::HardwareBasicTimer::BasicTimer6);
 DACDriver coreDAC(hal);
 
 rtos::Thread vibrationsThread;
