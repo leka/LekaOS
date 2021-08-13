@@ -6,8 +6,12 @@
 			"value": "1U"
 		}
 	},
+	"macros": [
+		"MBEDTLS_SHA1_C=1"
+	],
 	"target_overrides": {
 		"*": {
+			"rtos.main-thread-stack-size": 8192,
 			"bluenrg_ms.SPI_IRQ": "BLE_IRQ",
 			"bluenrg_ms.SPI_RESET": "BLE_RESET",
 			"bluenrg_ms.SPI_MISO": "BLE_SPI_MISO",
