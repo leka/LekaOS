@@ -8,39 +8,49 @@
 #include <iterator>
 
 namespace leka {
-
-RFIDKit::RFIDKit(interface::RFID &rfid_reader, rtos::Thread &thread, events::EventQueue &event_queue)
-	: _rfid_reader(rfid_reader), _thread(thread), _event_queue(event_queue)
-{
-	_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
-}
-
-void RFIDKit::getTagDataCallback()
-{
-	static auto *self		= this;
-	auto getTagDataCallback = []() { self->getTagData(); };
-
-	_event_queue.call(getTagDataCallback);
-}
-
 void RFIDKit::init()
 {
-	static auto *self = this;
-	auto onCallback	  = []() { self->getTagDataCallback(); };
+	static auto getTagDataCallback = [this]() { this->getTagData(); };
 
-	_rfid_reader.registerTagAvailableCallback(onCallback);
+	_rfid_reader.registerTagAvailableCallback(getTagDataCallback);
 	_rfid_reader.init();
 }
 
 void RFIDKit::getTagData()
 {
-	_rfid_reader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
+	switch (_state) {
+		case state::TAG_DETECTED: {
+			if (_rfid_reader.checkForTagDetection()) {
+				_rfid_reader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
+				_state = state::TAG_PROTOCOL_SET;
+			} else {
+				_rfid_reader.setModeTagDetection();
+			}
 
-	sendREQA();
-	receiveATQA();
+		} break;
 
-	sendReadRegister8();
-	receiveReadTagData();
+		case state::TAG_PROTOCOL_SET: {
+			sendREQA();
+			_state = state::WAIT_FOR_ATQA_RESPONSE;
+
+		} break;
+
+		case state::WAIT_FOR_ATQA_RESPONSE: {
+			if (receiveATQA()) {
+				sendReadRegister();
+				_state = state::TAG_IDENTIFIED;
+			} else {
+				_rfid_reader.setModeTagDetection();
+				_state = state::TAG_DETECTED;
+			}
+		} break;
+
+		case state::TAG_IDENTIFIED: {
+			_rfid_reader.setModeTagDetection();
+			_state = state::TAG_DETECTED;
+
+		} break;
+	}
 }
 
 void RFIDKit::sendREQA()
@@ -52,13 +62,58 @@ void RFIDKit::sendREQA()
 	_rfid_reader.sendCommandToTag(array);
 }
 
-void RFIDKit::sendReadRegister8()
+void RFIDKit::sendReadRegister()
 {
 	std::array<uint8_t, 3> array {};
 
 	commandToArray(command_read_register_8, array);
 
 	_rfid_reader.sendCommandToTag(array);
+}
+
+void RFIDKit::sendWriteRegister(uint8_t registerToWrite, std::array<uint8_t, 4> data)
+{
+	std::array<uint8_t, 7> array {};
+
+	array[0] = 0xA2;
+	array[1] = registerToWrite;
+
+	for (int i = 0; i < 4; ++i) {
+		array[i + 2] = data[i];
+	}
+	array[6] = 0x28;
+
+	_rfid_reader.sendCommandToTag(array);
+}
+
+void RFIDKit::receiveWriteTagData()
+{
+	std::array<uint8_t, 2> ATQA_answer {};
+	lstd::span<uint8_t> span = {ATQA_answer};
+
+	_rfid_reader.receiveDataFromTag(&span);
+}
+
+void RFIDKit::sendAuthentificate()
+{
+	std::array<uint8_t, 6> array {};
+
+	array[0] = 0x1B;
+	array[1] = 0xff;
+	array[2] = 0xff;
+	array[3] = 0xff;
+	array[4] = 0xff;
+	array[5] = 0x28;
+
+	_rfid_reader.sendCommandToTag(array);
+}
+
+void RFIDKit::receiveAuthentificate()
+{
+	std::array<uint8_t, 4> authentificate_answer {};
+	lstd::span<uint8_t> span = {authentificate_answer};
+
+	_rfid_reader.receiveDataFromTag(&span);
 }
 
 auto RFIDKit::receiveATQA() -> bool
@@ -69,9 +124,7 @@ auto RFIDKit::receiveATQA() -> bool
 	_rfid_reader.receiveDataFromTag(&span);
 
 	return (span[0] == interface::RFID::ISO14443::ATQA_answer[0] &&
-			span[1] == interface::RFID::ISO14443::ATQA_answer[1])
-			   ? true
-			   : false;
+			span[1] == interface::RFID::ISO14443::ATQA_answer[1]);
 }
 
 auto RFIDKit::receiveReadTagData() -> bool
@@ -83,9 +136,9 @@ auto RFIDKit::receiveReadTagData() -> bool
 		_tag.data[i] = span.data()[i];
 	}
 
-	std::array<uint8_t, 2> received_crc = {span.data()[16], span.data()[17]};
+	std::array<uint8_t, 2> received_crc = {span[16], span[17]};
 
-	return received_crc == computeCRC(_tag_data.data()) ? true : false;
+	return received_crc == computeCRC(span.data()) ? true : false;
 }
 
 auto RFIDKit::computeCRC(uint8_t const *data) const -> std::array<uint8_t, 2>

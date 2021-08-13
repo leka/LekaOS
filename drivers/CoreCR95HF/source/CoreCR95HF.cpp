@@ -1,14 +1,16 @@
+
 // Leka - LekaOS
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "CoreCR95HF.h"
 #include <array>
 #include <cstddef>
 #include <cstdint>
 #include <lstd_span>
 
 #include "rtos/ThisThread.h"
+
+#include "CoreCR95HF.h"
 
 using namespace std::chrono;
 
@@ -170,10 +172,10 @@ auto CoreCR95HF::formatCommand(lstd::span<uint8_t> cmd) -> size_t
 	return cmd.size() + rfid::cr95hf::tag_answer::heading_size;
 }
 
-auto CoreCR95HF::receiveDataFromTag(lstd::span<uint8_t> *data) -> size_t
+auto CoreCR95HF::receiveDataFromTag(lstd::span<uint8_t> *data) -> bool
 {
 	if (!DataFromTagIsCorrect((*data).size())) {
-		return 0;
+		return false;
 	}
 
 	copyTagDataToSpan(*data);

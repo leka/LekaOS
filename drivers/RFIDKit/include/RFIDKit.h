@@ -8,17 +8,24 @@
 #include <cstdint>
 #include <lstd_span>
 
-#include "events/EventQueue.h"
-#include "rtos/Thread.h"
-
 #include "interface/drivers/RFID.h"
 
 namespace leka {
 
+enum class state : uint8_t
+{
+
+	TAG_DETECTED		   = 0x00,
+	TAG_PROTOCOL_SET	   = 0x01,
+	WAIT_FOR_ATQA_RESPONSE = 0x02,
+	TAG_IDENTIFIED		   = 0x03,
+
+};
+
 class RFIDKit : public interface::RFID::ISO14443
 {
   public:
-	explicit RFIDKit(interface::RFID &rfid_reader, rtos::Thread &thread, events::EventQueue &event_queue);
+	explicit RFIDKit(interface::RFID &rfid_reader) : _rfid_reader(rfid_reader) {};
 
 	void init() final;
 
@@ -37,22 +44,24 @@ class RFIDKit : public interface::RFID::ISO14443
 		span.data()[SIZE] = static_cast<uint8_t>(command.flags);
 	}
 
-	void getTagDataCallback();
-
 	void sendREQA();
-	void sendReadRegister8();
+	void sendReadRegister();
+	void sendWriteRegister(uint8_t registerToWrite, std::array<uint8_t, 4> data);
 
 	auto receiveATQA() -> bool;
 	auto receiveReadTagData() -> bool;
+	void receiveWriteTagData();
+
+	void sendAuthentificate();
+	void receiveAuthentificate();
+
 	auto computeCRC(uint8_t const *data) const -> std::array<uint8_t, 2>;
 
 	void getData(std::array<uint8_t, 16> &tag_data);
 
 	interface::RFID &_rfid_reader;
 	rfid::Tag _tag {};
-
-	rtos::Thread &_thread;
-	events::EventQueue &_event_queue;
+	state _state = state::TAG_DETECTED;
 };
 
 }	// namespace leka
