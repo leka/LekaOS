@@ -12,14 +12,14 @@ using namespace leka;
 
 // Components
 LKCoreSTM32Hal hal;
-CoreDAC coreDac(hal);
-CoreDACTimer coreTimer_6(hal, CoreDACTimer::HardWareBasicTimer::BasicTimer6);
-CoreDACTimer coreTimer_7(hal, CoreDACTimer::HardWareBasicTimer::BasicTimer7);
+DACDriver coreDac(hal);
+DACTimer coreTimer_6(hal, DACTimer::HardWareBasicTimer::BasicTimer6);
+DACTimer coreTimer_7(hal, DACTimer::HardWareBasicTimer::BasicTimer7);
 
 // Globals
-uint32_t _countCbCalls						 = 0;
-bool _vibEnded								 = false;
-CoreDACTimer::HardWareBasicTimer _currentTim = CoreDACTimer::HardWareBasicTimer::BasicTimer6;
+uint32_t _countCbCalls					 = 0;
+bool _vibEnded							 = false;
+DACTimer::HardWareBasicTimer _currentTim = DACTimer::HardWareBasicTimer::BasicTimer6;
 
 // Preset values
 constexpr uint32_t _samplingRate_hertz = 44100;
@@ -58,7 +58,7 @@ void callbackTest(DAC_HandleTypeDef *)
 	if (_countCbCalls == nbCallsInDuration) {
 		_vibEnded = true;
 
-		if (_currentTim == CoreDACTimer::HardWareBasicTimer::BasicTimer6) {
+		if (_currentTim == DACTimer::HardWareBasicTimer::BasicTimer6) {
 			coreTimer_6.stop();
 		} else {
 			coreTimer_7.stop();
@@ -66,16 +66,16 @@ void callbackTest(DAC_HandleTypeDef *)
 	}
 }
 
-void startSound(CoreDACTimer::HardWareBasicTimer tim)
+void startSound(DACTimer::HardWareBasicTimer tim)
 {
 	_countCbCalls = 0;
 	_vibEnded	  = false;
-	if (tim == CoreDACTimer::HardWareBasicTimer::BasicTimer6) {
+	if (tim == DACTimer::HardWareBasicTimer::BasicTimer6) {
 		coreTimer_6.start();
-		_currentTim = CoreDACTimer::HardWareBasicTimer::BasicTimer6;
-	} else if (tim == CoreDACTimer::HardWareBasicTimer::BasicTimer7) {
+		_currentTim = DACTimer::HardWareBasicTimer::BasicTimer6;
+	} else if (tim == DACTimer::HardWareBasicTimer::BasicTimer7) {
 		coreTimer_7.start();
-		_currentTim = CoreDACTimer::HardWareBasicTimer::BasicTimer7;
+		_currentTim = DACTimer::HardWareBasicTimer::BasicTimer7;
 	}
 }
 
@@ -109,7 +109,7 @@ auto main() -> int
 
 	// start
 	log_info("First timer for %ds", _vibDuration_seconds);
-	startSound(CoreDACTimer::HardWareBasicTimer::BasicTimer6);
+	startSound(DACTimer::HardWareBasicTimer::BasicTimer6);
 
 	while (!_vibEnded) {
 		rtos::ThisThread::sleep_for(50ms);
@@ -120,7 +120,7 @@ auto main() -> int
 	coreDac.linkNewTimer(coreTimer_7);	 // change timer associated to DAC
 
 	log_info("Second timer for %ds", _vibDuration_seconds);
-	startSound(CoreDACTimer::HardWareBasicTimer::BasicTimer7);
+	startSound(DACTimer::HardWareBasicTimer::BasicTimer7);
 
 	while (!_vibEnded) {
 		rtos::ThisThread::sleep_for(50ms);

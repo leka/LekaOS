@@ -2,52 +2,52 @@
 
 namespace leka {
 
-CoreDAC::CoreDAC(LKCoreSTM32HalBase &hal) : _hal(hal)
+DACDriver::DACDriver(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
 	_hdac.Instance = DAC;
 	_hdma.Instance = DMA1_Stream5;	 // DMA1_Stream5 is the only DMA channel for DAC
 }
 
-void CoreDAC::terminate()
+void DACDriver::terminate()
 {
 	_hal.HAL_DAC_DeInit(&_hdac);
 }
 
-void CoreDAC::linkNewTimer(const CoreDACTimer &tim)
+void DACDriver::linkNewTimer(const DACTimer &tim)
 {
 	DAC_ChannelConfTypeDef sConfig = {0};
 	sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;	  // necessary to reach the full voltage range in DAC output
 
-	if (tim.getHardWareBasicTimer() == CoreDACTimer::HardWareBasicTimer::BasicTimer6) {
+	if (tim.getHardWareBasicTimer() == DACTimer::HardWareBasicTimer::BasicTimer6) {
 		sConfig.DAC_Trigger = DAC_TRIGGER_T6_TRGO;	 // configure the DAC to be triggered by TIM6 through TRGO signal
-	} else if (tim.getHardWareBasicTimer() == CoreDACTimer::HardWareBasicTimer::BasicTimer7) {
+	} else if (tim.getHardWareBasicTimer() == DACTimer::HardWareBasicTimer::BasicTimer7) {
 		sConfig.DAC_Trigger = DAC_TRIGGER_T7_TRGO;	 // configure the DAC to be triggered by TIM7 through TRGO signal
 	}
 
 	_hal.HAL_DAC_ConfigChannel(&_hdac, &sConfig, DAC_CHANNEL_1);
 }
 
-void CoreDAC::start(lstd::span<uint16_t> outBuffer)
+void DACDriver::start(lstd::span<uint16_t> outBuffer)
 {
 	_hal.HAL_DAC_Start_DMA(&_hdac, DAC_CHANNEL_1, (uint32_t *)(outBuffer.data()), outBuffer.size(), DAC_ALIGN_12B_R);
 }
 
-void CoreDAC::stop()
+void DACDriver::stop()
 {
 	_hal.HAL_DAC_Stop_DMA(&_hdac, DAC_CHANNEL_1);
 }
 
-auto CoreDAC::getHandle() const -> const DAC_HandleTypeDef &
+auto DACDriver::getHandle() const -> const DAC_HandleTypeDef &
 {
 	return this->_hdac;
 }
 
-auto CoreDAC::getDMAHandle() const -> const DMA_HandleTypeDef &
+auto DACDriver::getDMAHandle() const -> const DMA_HandleTypeDef &
 {
 	return this->_hdma;
 }
 
-void CoreDAC::_init(const CoreDACTimer &tim)
+void DACDriver::_init(const DACTimer &tim)
 {
 	_hal.HAL_RCC_GPIOA_CLK_ENABLE();
 
@@ -63,13 +63,13 @@ void CoreDAC::_init(const CoreDACTimer &tim)
 	linkNewTimer(tim);
 }
 
-void CoreDAC::_registerInterruptCallbacks()
+void DACDriver::_registerInterruptCallbacks()
 {
 	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_HALF_COMPLETE_CB_ID, _pOnHalfBufferRead);
 	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_CH1_COMPLETE_CB_ID, _pOnFullBufferRead);
 }
 
-void CoreDAC::_registerMspCallbacks()
+void DACDriver::_registerMspCallbacks()
 {
 	static auto *self	= this;
 	auto initCbLambda	= []([[maybe_unused]] DAC_HandleTypeDef *hdac) { self->_msp_onInitializationCb(); };
@@ -78,7 +78,7 @@ void CoreDAC::_registerMspCallbacks()
 	_hal.HAL_DAC_RegisterCallback(&_hdac, HAL_DAC_MSPDEINIT_CB_ID, deInitCbLambda);
 }
 
-void CoreDAC::_msp_onInitializationCb()
+void DACDriver::_msp_onInitializationCb()
 {
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 
@@ -109,7 +109,7 @@ void CoreDAC::_msp_onInitializationCb()
 	__HAL_LINKDMA(&_hdac, DMA_Handle1, _hdma);
 }
 
-void CoreDAC::_msp_onTerminationCb()
+void DACDriver::_msp_onTerminationCb()
 {
 	if (_hdac.Instance == DAC) {
 		_hal.HAL_RCC_DAC_CLK_DISABLE();

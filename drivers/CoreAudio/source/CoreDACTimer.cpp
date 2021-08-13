@@ -6,7 +6,7 @@
 
 namespace leka {
 
-CoreDACTimer::CoreDACTimer(LKCoreSTM32HalBase &hal, HardWareBasicTimer tim) : _hal(hal), _hardwareTim(tim)
+DACTimer::DACTimer(LKCoreSTM32HalBase &hal, HardWareBasicTimer tim) : _hal(hal), _hardwareTim(tim)
 {
 	if (_hardwareTim == HardWareBasicTimer::BasicTimer6) {
 		_htim.Instance = TIM6;
@@ -15,7 +15,7 @@ CoreDACTimer::CoreDACTimer(LKCoreSTM32HalBase &hal, HardWareBasicTimer tim) : _h
 	}
 }
 
-void CoreDACTimer::initialize(uint32_t frequency)
+void DACTimer::initialize(uint32_t frequency)
 {
 	_htim.Init.Prescaler		 = 0;	// no need of prescaler for high frequencies
 	_htim.Init.CounterMode		 = TIM_COUNTERMODE_UP;
@@ -33,32 +33,32 @@ void CoreDACTimer::initialize(uint32_t frequency)
 	_hal.HAL_TIMEx_MasterConfigSynchronization(&_htim, &sMasterConfig);
 }
 
-void CoreDACTimer::terminate()
+void DACTimer::terminate()
 {
 	_hal.HAL_TIM_Base_DeInit(&_htim);
 }
 
-void CoreDACTimer::start()
+void DACTimer::start()
 {
 	_hal.HAL_TIM_Base_Start(&_htim);
 }
 
-void CoreDACTimer::stop()
+void DACTimer::stop()
 {
 	_hal.HAL_TIM_Base_Stop(&_htim);
 }
 
-auto CoreDACTimer::getHandle() const -> const TIM_HandleTypeDef &
+auto DACTimer::getHandle() const -> const TIM_HandleTypeDef &
 {
 	return this->_htim;
 }
 
-auto CoreDACTimer::getHardWareBasicTimer() const -> const HardWareBasicTimer &
+auto DACTimer::getHardWareBasicTimer() const -> const HardWareBasicTimer &
 {
 	return _hardwareTim;
 }
 
-auto CoreDACTimer::_calculatePeriod(uint32_t frequency) -> uint32_t
+auto DACTimer::_calculatePeriod(uint32_t frequency) -> uint32_t
 {
 	uint32_t clockFreq = _hal.HAL_RCC_GetPCLK1Freq();
 
@@ -74,7 +74,7 @@ auto CoreDACTimer::_calculatePeriod(uint32_t frequency) -> uint32_t
 	return (clockFreq / frequency);
 }
 
-void CoreDACTimer::_registerMspCallbacks()
+void DACTimer::_registerMspCallbacks()
 {
 	static auto *self = this;
 	if (self != this) {
@@ -86,7 +86,7 @@ void CoreDACTimer::_registerMspCallbacks()
 	_hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPDEINIT_CB_ID, deInitCbLambda);
 }
 
-void CoreDACTimer::_msp_onInitializationCb()
+void DACTimer::_msp_onInitializationCb()
 {
 	if (_hardwareTim == HardWareBasicTimer::BasicTimer6) {
 		_hal.HAL_RCC_TIM6_CLK_ENABLE();
@@ -95,7 +95,7 @@ void CoreDACTimer::_msp_onInitializationCb()
 	}
 }
 
-void CoreDACTimer::_msp_onTerminationCb()
+void DACTimer::_msp_onTerminationCb()
 {
 	if (_hardwareTim == HardWareBasicTimer::BasicTimer6) {
 		_hal.HAL_RCC_TIM6_CLK_DISABLE();

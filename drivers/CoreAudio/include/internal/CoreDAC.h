@@ -11,13 +11,13 @@
 
 namespace leka {
 
-class CoreDAC
+class DACDriver
 {
   public:
-	explicit CoreDAC(LKCoreSTM32HalBase &hal);
+	explicit DACDriver(LKCoreSTM32HalBase &hal);
 
 	template <class ReadBuffCb>
-	void initialize(const CoreDACTimer &tim, ReadBuffCb onHalfBuffCb, ReadBuffCb onFullBuffCb)
+	void initialize(const DACTimer &tim, ReadBuffCb onHalfBuffCb, ReadBuffCb onFullBuffCb)
 	{
 		this->_pOnHalfBufferRead = static_cast<pDAC_CallbackTypeDef>(onHalfBuffCb);
 		this->_pOnFullBufferRead = static_cast<pDAC_CallbackTypeDef>(onFullBuffCb);
@@ -26,7 +26,7 @@ class CoreDAC
 	}
 
 	void terminate();
-	void linkNewTimer(const CoreDACTimer &tim);
+	void linkNewTimer(const DACTimer &tim);
 	void start(lstd::span<uint16_t> outBuffer);
 	void stop();
 
@@ -41,7 +41,7 @@ class CoreDAC
 	pDAC_CallbackTypeDef _pOnHalfBufferRead = nullptr;
 	pDAC_CallbackTypeDef _pOnFullBufferRead = nullptr;
 
-	void _init(const CoreDACTimer &tim);
+	void _init(const DACTimer &tim);
 
 	void _registerInterruptCallbacks();
 
