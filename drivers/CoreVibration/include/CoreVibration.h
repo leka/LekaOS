@@ -12,7 +12,7 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
-#include "CoreDAC.h"
+#include "DACDriver.h"
 #include "VibrationTemplate.h"
 
 namespace leka {
@@ -20,7 +20,7 @@ namespace leka {
 class CoreVibration
 {
   public:
-	CoreVibration(LKCoreSTM32HalBase &hal, CoreDAC &dac, CoreDACTimer &timer, rtos::Thread &thread,
+	CoreVibration(LKCoreSTM32HalBase &hal, DACDriver &dac, DACTimer &timer, rtos::Thread &thread,
 				  events::EventQueue &eventQueue);
 
 	void initialize(uint32_t samplingRate);
@@ -35,8 +35,8 @@ class CoreVibration
 
   private:
 	LKCoreSTM32HalBase &_hal;
-	CoreDAC &_coreDac;
-	CoreDACTimer &_coreTimer;
+	DACDriver &_coreDac;
+	DACTimer &_coreTimer;
 
 	rtos::Thread &_thread;
 	events::EventQueue &_eventQueue;
