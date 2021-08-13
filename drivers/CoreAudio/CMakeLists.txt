@@ -12,15 +12,15 @@ target_include_directories(CoreAudio
 
 target_sources(CoreAudio
 	PRIVATE
-		source/CoreAudio.cpp
-		source/CoreDACTimer.cpp
-		source/CoreDAC.cpp
+		source/DACTimer.cpp
+		source/DACDriver.cpp
 		source/WavFile.cpp
 		source/WavReader.cpp
+		source/CoreAudio.cpp
 )
 
 target_link_libraries(CoreAudio
 		mbed-os
 		LKCoreSTM32Hal
-		LKCoreFatFs
+		CoreFs
 )
