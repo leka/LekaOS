@@ -5,6 +5,8 @@
 add_subdirectory(${LIBS_DIR}/FileManager)
 add_subdirectory(${LIBS_DIR}/FileSystemKit)
 
+add_subdirectory(${LIBS_DIR}/IOKit)
+
 add_subdirectory(${LIBS_DIR}/HardwareTest/LekaSD)
 add_subdirectory(${LIBS_DIR}/HardwareTest/LekaMotors)
 
