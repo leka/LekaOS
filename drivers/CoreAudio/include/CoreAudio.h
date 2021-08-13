@@ -10,7 +10,7 @@
 #include "events/EventQueue.h"
 #include "rtos/Thread.h"
 
-#include "CoreDAC.h"
+#include "DACDriver.h"
 #include "WavReader.h"
 
 namespace leka {
@@ -32,7 +32,7 @@ class CoreAudio
 	static constexpr uint16_t _outBufferSize_Samples = _outBufferSize_Sectors * _sectorSize_Samples;
 
   public:
-	CoreAudio(LKCoreSTM32HalBase &hal, CoreDAC &dac, CoreDACTimer &timer, rtos::Thread &thread,
+	CoreAudio(LKCoreSTM32HalBase &hal, DACDriver &dac, DACTimer &timer, rtos::Thread &thread,
 			  events::EventQueue &eventQueue);
 
 	void playFile(FIL *file);
@@ -46,8 +46,8 @@ class CoreAudio
 
   private:
 	LKCoreSTM32HalBase &_hal;
-	CoreDAC &_coreDac;
-	CoreDACTimer &_coreTimer;
+	DACDriver &_coreDac;
+	DACTimer &_coreTimer;
 
 	rtos::Thread &_thread;
 	events::EventQueue &_eventQueue;

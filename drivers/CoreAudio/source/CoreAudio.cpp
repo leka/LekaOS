@@ -8,7 +8,7 @@ namespace leka {
 
 std::array<uint16_t, CoreAudio::_outBufferSize_Samples> CoreAudio::_outBuffer;
 
-CoreAudio::CoreAudio(LKCoreSTM32HalBase &hal, CoreDAC &dac, CoreDACTimer &timer, rtos::Thread &thread,
+CoreAudio::CoreAudio(LKCoreSTM32HalBase &hal, DACDriver &dac, DACTimer &timer, rtos::Thread &thread,
 					 events::EventQueue &eventQueue)
 	: _hal(hal), _coreDac(dac), _coreTimer(timer), _thread(thread), _eventQueue(eventQueue)
 {
