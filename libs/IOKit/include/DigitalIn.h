@@ -13,11 +13,10 @@ namespace leka::io::expanded {
 
 class DigitalIn : public mbed::interface::DigitalIn, private internal::IO
 {
-	using IO = internal::IO;
-
   public:
 	explicit DigitalIn(interface::IOExpander &parent, uint16_t pin);
 	~DigitalIn() override = default;
+
 	auto read() -> int override;
 	void mode(PinMode mode) override;
 	auto is_connected() -> int override;

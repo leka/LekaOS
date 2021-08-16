@@ -15,9 +15,9 @@ class IO
 	IO(interface::IOExpander &parent, uint16_t pin) : _parent(parent), _pin(pin) {}
 
   protected:
-	auto internalRead() -> int;
-	void internalMode(PinMode mode);
-	void internalInput();
+	auto read() -> int;
+	void setMode(PinMode mode);
+	void setAsInput();
 
   private:
 	interface::IOExpander &_parent;

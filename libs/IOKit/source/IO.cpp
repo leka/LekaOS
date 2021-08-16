@@ -6,13 +6,13 @@
 
 using namespace leka::io::expanded::internal;
 
-auto IO::internalRead() -> int
+auto IO::read() -> int
 {
 	auto val = _parent.readInputs() & _pin;
 	return val;
 }
 
-void IO::internalMode(PinMode mode)
+void IO::setMode(PinMode mode)
 {
 	if (mode == PullDown) {	  // ? MCP23017 may not support PullDown mode
 		return;
@@ -31,7 +31,7 @@ void IO::internalMode(PinMode mode)
 	_mutex.unlock();
 }
 
-void IO::internalInput()
+void IO::setAsInput()
 {
 	_parent.setInputPins(_pin);
 }
