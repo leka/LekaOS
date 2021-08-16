@@ -7,34 +7,22 @@
 
 #include <cstdint>
 
+#include "PinNames.h"
+
 namespace leka::interface {
 
+template <typename PinType>
 class IOExpander
 {
   public:
 	virtual ~IOExpander() = default;
 
-	virtual void init(uint16_t input_pins) = 0;
+	virtual void setPinAsInput(PinType pin) = 0;
 
-	virtual void setRegisterMapping(bool separated = false) = 0;
+	virtual auto readInputPin(PinType pin) -> int = 0;
 
-	virtual void setInputPins(uint16_t pins)  = 0;
-	virtual void setOutputPins(uint16_t pins) = 0;
-
-	virtual void writeOutputs(uint16_t values) = 0;
-
-	virtual auto readOutputs() -> uint16_t = 0;
-	virtual auto readInputs() -> uint16_t  = 0;
-
-	virtual void setInputPolarity(uint16_t values) = 0;
-	virtual auto getInputPolarity() -> uint16_t	   = 0;
-
-	virtual void setPullups(uint16_t values) = 0;
-	virtual auto getPullups() -> uint16_t	 = 0;
-
-	virtual void interruptOnChanges(uint16_t pins)					   = 0;
-	virtual void disableInterrupts(uint16_t pins)					   = 0;
-	virtual void acknowledgeInterrupt(uint16_t &pin, uint16_t &values) = 0;
+	virtual void setModeForPin(PinType pin, PinMode mode) = 0;
+	virtual auto getModeForPin(PinType pin) -> PinMode	  = 0;
 };
 
 }	// namespace leka::interface
