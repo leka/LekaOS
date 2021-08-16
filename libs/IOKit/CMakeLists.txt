@@ -26,7 +26,7 @@ target_link_libraries(IOKit
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
-		tests/IO_test.cpp
+		tests/DigitalIn_test.cpp
 	)
 
 endif()
