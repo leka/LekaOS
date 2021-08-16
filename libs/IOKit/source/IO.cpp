@@ -8,18 +8,18 @@ using namespace leka::io::expanded::internal;
 
 auto IO::read() -> int
 {
-	auto val = _parent.readInputs() & _pin;
+	auto val = expander.readInputs() & _pin;
 	return val;
 }
 
-void IO::setMode(PinMode mode)
+void IO::setMode(const PinMode mode)
 {
 	if (mode == PullDown) {	  // ? MCP23017 may not support PullDown mode
 		return;
 	}
 
 	_mutex.lock();
-	uint16_t pullups = _parent.getPullups();
+	uint16_t pullups = expander.getPullups();
 
 	if (mode == PullNone) {
 		pullups &= ~_pin;
@@ -27,11 +27,11 @@ void IO::setMode(PinMode mode)
 		pullups |= _pin;
 	}
 
-	_parent.setPullups(pullups);
+	expander.setPullups(pullups);
 	_mutex.unlock();
 }
 
 void IO::setAsInput()
 {
-	_parent.setInputPins(_pin);
+	expander.setInputPins(_pin);
 }

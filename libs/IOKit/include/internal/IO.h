@@ -12,15 +12,14 @@ namespace leka::io::expanded::internal {
 class IO
 {
   public:
-	IO(interface::IOExpander &parent, uint16_t pin) : _parent(parent), _pin(pin) {}
+	IO(interface::IOExpander &expander, uint16_t pin) : expander(expander), _pin(pin) {}
 
-  protected:
 	auto read() -> int;
 	void setMode(PinMode mode);
 	void setAsInput();
 
   private:
-	interface::IOExpander &_parent;
+	interface::IOExpander &expander;
 	uint16_t _pin;
 
 	PlatformMutex _mutex;

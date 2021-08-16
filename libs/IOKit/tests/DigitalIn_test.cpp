@@ -28,3 +28,12 @@ TEST_F(DigitalInTest, instantiation)
 
 	ASSERT_NE(&pin, nullptr);
 }
+
+TEST_F(DigitalInTest, setMode)
+{
+	EXPECT_CALL(mockIOExpander, setInputPins(pin_number)).Times(1);
+
+	leka::io::expanded::DigitalIn pin {mockIOExpander, pin_number};
+
+	ASSERT_NE(&pin, nullptr);
+}
