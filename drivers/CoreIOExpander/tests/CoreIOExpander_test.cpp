@@ -132,7 +132,7 @@ TEST_F(CoreMCP23017Test, setRegisterMapping)
 		writeRegister(mcp23017::registers::IOCON, actual_IOCON_values);
 	}
 
-	coreMCP23017.setRegisterMapping();
+	coreMCP23017.setRegisterMappingUnified();
 }
 
 TEST_F(CoreMCP23017Test, setRegisterMappingSeparated)
@@ -146,7 +146,7 @@ TEST_F(CoreMCP23017Test, setRegisterMappingSeparated)
 		writeRegister(mcp23017::registers::IOCON, actual_IOCON_values);
 	}
 
-	coreMCP23017.setRegisterMapping(true);
+	coreMCP23017.setRegisterMappingSeparated();
 }
 
 TEST_F(CoreMCP23017Test, reset)

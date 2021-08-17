@@ -48,12 +48,13 @@ void MCP23017::init(uint16_t input_pins)
 	setPullups(input_pins);
 	writeOutputs(input_pins);
 }
-void MCP23017::setRegisterMappingUnified(){
+void MCP23017::setRegisterMappingSeparated(){
 	uint16_t IOCON_config = readRegister(mcp23017::registers::IOCON);
 	writeRegister(mcp23017::registers::IOCON, IOCON_config | 0x8080);
+
 }
 
-void MCP23017::setRegisterMappingSeparated(){
+void MCP23017::setRegisterMappingUnified(){
 	uint16_t IOCON_config = readRegister(mcp23017::registers::IOCON);
 	writeRegister(mcp23017::registers::IOCON, IOCON_config & 0x7F7F);
 }
@@ -70,12 +71,21 @@ void MCP23017::writeRegister(uint8_t reg, uint16_t value)
 	std::array<uint8_t, 3> buffer {};
 
 	buffer[0] = reg;
-	// TODO (@benjamin) - create small private function for this and use constexpr variable for mask
-	buffer[1] = (0x00FF & value);
-	// TODO (@benjamin) - create small private function for this and use constexpr variable for mask
-	buffer[2] = (0xFF00 & value) >> 8;
+	buffer[1] = getFirstUint8ValueFromUint16Value(value);
+	buffer[2] = getSecondUint8ValueFromUint16Value(value);
 
 	_i2c.write(_I2C_ADDRESS, buffer.data(), buffer.size());
+}
+
+auto MCP23017::getFirstUint8ValueFromUint16Value(uint16_t value) -> uint8_t{
+	constexpr uint16_t mask = 0x00FF;
+	return (mask & value);
+}
+
+
+auto MCP23017::getSecondUint8ValueFromUint16Value(uint16_t value) -> uint8_t{
+	constexpr uint16_t mask = 0xFF00;
+	return (mask & value) >> 8;
 }
 
 auto MCP23017::readRegister(uint8_t reg) -> uint16_t
@@ -89,35 +99,47 @@ auto MCP23017::readRegister(uint8_t reg) -> uint16_t
 
 	mutex.unlock();
 
-	// TODO (@benjamin) - create small private function for this as it's unclear what it does
-	auto val = static_cast<uint16_t>(buffer[0] + (buffer[1] << 8));
-
-	return val;
+	return getReadValueAsUint16(buffer);
 }
+
+auto MCP23017::getReadValueAsUint16(std::array<uint8_t, 2> &buffer) -> uint16_t{
+	return static_cast<uint16_t>(buffer[0] + (buffer[1] << 8));
+}
+
+
 
 void MCP23017::setInputPins(uint16_t pins)
 {
 	auto value = readRegister(mcp23017::registers::IODIR);
 
-	// TODO (@benjamin) - explain what happens here with small function
-	writeRegister(mcp23017::registers::IODIR, value | pins);
+	updateInputPins(value, pins);
+	writeRegister(mcp23017::registers::IODIR, value);
+}
+
+void MCP23017::updateInputPins(uint16_t &value, uint16_t pins){
+	value |= pins;
 }
 
 void MCP23017::setOutputPins(uint16_t pins)
 {
 	auto value = readRegister(mcp23017::registers::IODIR);
 
-	// TODO (@benjamin) - explain what happens here with small function
+	updateOutputPins(value, pins);
 	writeRegister(mcp23017::registers::IODIR, value & ~pins);
+}
+
+void MCP23017::updateOutputPins(uint16_t &value, uint16_t pins){
+	value &= ~pins;
 }
 
 void MCP23017::writeOutputs(uint16_t values)
 {
-	// TODO (@benjamin) - explain what happens here with small function
-	// TODO (@benjamin) - olat?
-	uint16_t olat_values = (0xFF00 & values << 8) + (0x00FF & values >> 8);	  // results from testing the MCP23017
+	uint16_t outputs_values = getOutputsValue(values);
+	writeRegister(mcp23017::registers::GPIO, outputs_values);
+}
 
-	writeRegister(mcp23017::registers::GPIO, olat_values);
+auto MCP23017::getOutputsValue(uint16_t value) -> uint16_t{
+	return (0xFF00 & value << 8) + (0x00FF & value >> 8);
 }
 
 auto MCP23017::readOutputs() -> uint16_t
@@ -152,23 +174,29 @@ auto MCP23017::getPullups() -> uint16_t
 
 void MCP23017::interruptOnChanges(uint16_t pins)
 {
-	uint16_t value = readRegister(mcp23017::registers::INTCON);
-	// TODO (@benjamin) - explain what happens here with small function
-	value &= ~pins;
-	writeRegister(mcp23017::registers::INTCON, value);
+	uint16_t source_interrupt = readRegister(mcp23017::registers::INTCON);
+	updateSourceOfInterrupt(source_interrupt, pins);
+	writeRegister(mcp23017::registers::INTCON, source_interrupt);
 
-	value = readRegister(mcp23017::registers::GPINTEN);
-	// TODO (@benjamin) - explain what happens here with small function
+	uint16_t interrupt_enable = readRegister(mcp23017::registers::GPINTEN);
+	updateInterruptEnable(interrupt_enable, pins);
+	writeRegister(mcp23017::registers::GPINTEN, interrupt_enable);
+}
+
+void MCP23017::updateSourceOfInterrupt(uint16_t &value, uint16_t pins){
+	value &= ~pins;
+}
+
+void MCP23017::updateInterruptEnable(uint16_t &value, uint16_t pins){
 	value |= pins;
-	writeRegister(mcp23017::registers::GPINTEN, value);
 }
 
 void MCP23017::disableInterrupts(uint16_t pins)
 {
-	uint16_t value = readRegister(mcp23017::registers::GPINTEN);
-	// TODO (@benjamin) - explain what happens here with small function
-	value &= ~pins;
-	writeRegister(mcp23017::registers::GPINTEN, value);
+	uint16_t interrup_value = readRegister(mcp23017::registers::GPINTEN);
+	updateSourceOfInterrupt(interrup_value, pins);
+
+	writeRegister(mcp23017::registers::GPINTEN, interrup_value);
 }
 
 void MCP23017::acknowledgeInterrupt(uint16_t &pin, uint16_t &values)

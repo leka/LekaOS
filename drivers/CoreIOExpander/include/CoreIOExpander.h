@@ -132,11 +132,27 @@ class MCP23017 : public interface::CoreIOExpander
 
 	void acknowledgeInterrupt(uint16_t &pin, uint16_t &values) final;
 
+
+
   private:
 	void writeRegister(uint8_t reg, uint16_t value);
 	auto readRegister(uint8_t reg) -> uint16_t;
 
 	void reset();
+
+
+	auto getFirstUint8ValueFromUint16Value(uint16_t value) -> uint8_t;
+	auto getSecondUint8ValueFromUint16Value(uint16_t value) -> uint8_t;
+
+	auto getReadValueAsUint16(std::array<uint8_t,2>&buffer)->uint16_t;
+
+	void updateInputPins(uint16_t &value, uint16_t pins);
+	void updateOutputPins(uint16_t &value, uint16_t pins);
+
+	auto getOutputsValue(uint16_t value) -> uint16_t;
+
+	void updateSourceOfInterrupt(uint16_t &value, uint16_t pins);
+	void updateInterruptEnable(uint16_t &value, uint16_t pins);
 
 	interface::I2C &_i2c;
 	const uint8_t _I2C_ADDRESS = 0x4E;
