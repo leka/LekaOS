@@ -106,7 +106,8 @@ class MCP23017 : public interface::CoreIOExpander
 
 	explicit MCP23017(interface::I2C &i2c) : _i2c(i2c) {};
 
-	void setRegisterMapping(bool separated = false) final;
+	void setRegisterMappingUnified() final;
+	void setRegisterMappingSeparated() final;
 
 	void init(uint16_t input_pins) final;
 

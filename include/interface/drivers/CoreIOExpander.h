@@ -16,7 +16,8 @@ class CoreIOExpander
   public:
 	virtual ~CoreIOExpander() = default;
 
-	virtual void setRegisterMapping(bool separated = false)			   = 0;
+	virtual void setRegisterMappingUnified() = 0;
+	virtual void setRegisterMappingSeparated() = 0;
 	virtual void init(uint16_t input_pins)							   = 0;
 	virtual void setInputPins(uint16_t pins)						   = 0;
 	virtual void setOutputPins(uint16_t pins)						   = 0;

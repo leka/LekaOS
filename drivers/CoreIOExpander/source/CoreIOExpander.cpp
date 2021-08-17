@@ -48,18 +48,14 @@ void MCP23017::init(uint16_t input_pins)
 	setPullups(input_pins);
 	writeOutputs(input_pins);
 }
-
-// TODO (@benjamin) - make two functions: setRegisterMappingSeparated() and setRegisterMappingUnified()
-void MCP23017::setRegisterMapping(bool separated)
-{
+void MCP23017::setRegisterMappingUnified(){
 	uint16_t IOCON_config = readRegister(mcp23017::registers::IOCON);
-	if (separated) {
-		// TODO (@benjamin) - create small private function for this and use constexpr variable for mask
-		writeRegister(mcp23017::registers::IOCON, IOCON_config | 0x8080);
-	} else {
-		// TODO (@benjamin) - create small private function for this and use constexpr variable for mask
-		writeRegister(mcp23017::registers::IOCON, IOCON_config & 0x7F7F);
-	}
+	writeRegister(mcp23017::registers::IOCON, IOCON_config | 0x8080);
+}
+
+void MCP23017::setRegisterMappingSeparated(){
+	uint16_t IOCON_config = readRegister(mcp23017::registers::IOCON);
+	writeRegister(mcp23017::registers::IOCON, IOCON_config & 0x7F7F);
 }
 
 void MCP23017::reset()
