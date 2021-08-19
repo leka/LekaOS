@@ -168,7 +168,7 @@ namespace rfid::cr95hf {
 class CoreCR95HF : public interface::RFID
 {
   public:
-	explicit CoreCR95HF(interface::BufferedSerial &serial, rtos::Thread &thread, events::EventQueue &event_queue)
+	explicit CoreCR95HF(interface::BufferedSerial &serial, rtos::Thread &thread, events::EventQueue &event_queue )
 		: _serial(serial), _thread(thread), _event_queue(event_queue) {};
 
 	void init() final;

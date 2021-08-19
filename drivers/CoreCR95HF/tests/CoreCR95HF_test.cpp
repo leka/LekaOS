@@ -20,6 +20,7 @@ using ::testing::Return;
 using ::testing::SetArgPointee;
 using ::testing::SetArrayArgument;
 
+
 class CoreCR95HFSensorTest : public ::testing::Test
 {
   protected:

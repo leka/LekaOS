@@ -16,7 +16,7 @@ class CoreBufferedSerialMock : public interface::BufferedSerial
 	MOCK_METHOD(ssize_t, read, (uint8_t *, ssize_t), (override));
 	MOCK_METHOD(ssize_t, write, (const uint8_t *, ssize_t), (override));
 	MOCK_METHOD(bool, readable, (), (override));
-	MOCK_METHOD(void, registerIOCallback, (mbed::Callback<void()> func), (const));
+	MOCK_METHOD(void, registerIOCallback, (mbed::Callback<void()> const &func), (override));
 };
 
 }	// namespace leka
