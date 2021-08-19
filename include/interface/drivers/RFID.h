@@ -8,7 +8,7 @@
 #include <cstdint>
 #include <functional>
 
-using tagAvailableCallback = std::function<void()>;
+using tagAvailableCallback =  std::function<void()> ;
 
 namespace leka {
 

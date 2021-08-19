@@ -199,7 +199,7 @@ class CoreCR95HF : public interface::RFID
 	void askCR95HFForIDN();
 	auto didIDNIsCorrect() -> bool;
 
-	auto didSetBaudrateSucceed(uint8_t baudrate) -> bool;
+	auto didSetBaudrateSucceed() -> bool;
 
 	auto setProtocolISO14443A() -> bool;
 	auto setGainAndModulationISO14443A() -> bool;

@@ -23,7 +23,7 @@ auto CoreBufferedSerial::readable() -> bool
 	return _serial.readable();
 }
 
-void CoreBufferedSerial::registerIOCallback(mbed::Callback<void()> callback)
+void CoreBufferedSerial::registerIOCallback( mbed::Callback<void()> callback) const
 {
 	return _serial.sigio(callback);
 }

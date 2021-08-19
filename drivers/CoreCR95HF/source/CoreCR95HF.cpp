@@ -101,10 +101,10 @@ auto CoreCR95HF::setBaudrate(uint8_t baudrate) -> bool
 
 	_serial.write(set_baudrate_frame.data(), set_baudrate_frame.size());
 
-	return (didSetBaudrateSucceed(baudrate));
+	return (didSetBaudrateSucceed());
 }
 
-auto CoreCR95HF::didSetBaudrateSucceed(uint8_t baudrate) -> bool
+auto CoreCR95HF::didSetBaudrateSucceed() -> bool
 {
 	read();
 	if (_anwser_size != rfid::cr95hf::expected_answer_size::set_baudrate) {
