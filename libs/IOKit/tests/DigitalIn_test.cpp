@@ -20,11 +20,37 @@ class DigitalInTest : public ::testing::Test
 	uint16_t pin_number = 0;
 };
 
-TEST_F(DigitalInTest, instantiation)
+TEST_F(DigitalInTest, instantiationDefaultPinType)
 {
 	EXPECT_CALL(mockIOExpander, setPinAsInput(pin_number)).Times(1);
 
-	leka::io::expanded::DigitalIn<uint16_t> pin {mockIOExpander, pin_number};
+	leka::io::expanded::DigitalIn pin {mockIOExpander, pin_number};
+
+	ASSERT_NE(&pin, nullptr);
+}
+
+TEST_F(DigitalInTest, instantiationExplicitPinTypeUint16t)
+
+{
+	leka::mock::IOExpander<uint16_t> expander {};
+	auto pin_num = uint16_t {0};
+
+	EXPECT_CALL(expander, setPinAsInput(pin_num)).Times(1);
+
+	leka::io::expanded::DigitalIn<uint16_t> pin {expander, pin_num};
+
+	ASSERT_NE(&pin, nullptr);
+}
+
+TEST_F(DigitalInTest, instantiationExplicitPinTypeUint8t)
+
+{
+	leka::mock::IOExpander<uint8_t> expander {};
+	auto pin_num = uint8_t {0};
+
+	EXPECT_CALL(expander, setPinAsInput(pin_num)).Times(1);
+
+	leka::io::expanded::DigitalIn<uint8_t> pin {expander, pin_num};
 
 	ASSERT_NE(&pin, nullptr);
 }
