@@ -69,13 +69,13 @@ jobs:
       # Mark: - Install clang-tidy
       #
 
-      - name: Install clang-tidy 12
+      - name: Install clang-tidy 13
         run: |
-          sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-12 main"
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
+          sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main"
           sudo apt update -y
-          sudo apt install -y --no-install-recommends clang-tidy-12
-          clang-tidy-12 --version
+          sudo apt install -y --no-install-recommends clang-tidy-13
+          clang-tidy-13 --version
 
       #
       # Mark: - Install misc. tools
@@ -157,4 +157,4 @@ jobs:
                | grep -E -v "gtest" \
                | grep -E -v "gmock" \
                | grep -E    "\.h$|\.cpp$" \
-               | xargs --no-run-if-empty clang-tidy-12 -p=. --quiet
+               | xargs --no-run-if-empty clang-tidy-13 -p=. --quiet
