@@ -13,6 +13,7 @@ target_sources(Utils
 	PRIVATE
 		source/Utils.cpp
 		source/MathUtils.cpp
+		source/MemoryUtils.cpp
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
@@ -20,6 +21,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/MathUtils_test_map.cpp
 		tests/MathUtils_test_linear_function.cpp
+		tests/MemoryUtils_test.cpp
 	)
 
 endif()

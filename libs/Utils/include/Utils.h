@@ -6,5 +6,6 @@
 #define _LEKA_OS_LIB_UTILS_H_
 
 #include "MathUtils.h"
+#include "MemoryUtils.h"
 
 #endif	 // _LEKA_OS_LIB_UTILS_H_
