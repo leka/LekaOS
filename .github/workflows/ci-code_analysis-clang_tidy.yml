@@ -156,5 +156,7 @@ jobs:
                | grep -E -v "_test" \
                | grep -E -v "gtest" \
                | grep -E -v "gmock" \
+               | grep -E -v "mocks" \
+               | grep -E -v "stubs" \
                | grep -E    "\.h$|\.cpp$" \
                | xargs --no-run-if-empty clang-tidy-13 -p=. --quiet
