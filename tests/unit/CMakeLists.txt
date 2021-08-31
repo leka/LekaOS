@@ -216,6 +216,7 @@ leka_register_unit_tests_for_driver(CoreBufferedSerial)
 leka_register_unit_tests_for_library(LKAnimationKit)
 leka_register_unit_tests_for_library(LKCalculatorKit)
 leka_register_unit_tests_for_library(FileSystemKit)
+leka_register_unit_tests_for_library(IOKit)
 
 #
 # Mark: - Finish up
