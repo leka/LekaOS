@@ -11,6 +11,7 @@
 #include "BouncingSquare.h"
 #include "CoreDMA2D.h"
 #include "CoreDSI.h"
+#include "CoreFont.h"
 #include "CoreGraphics.h"
 #include "CoreJPEG.h"
 #include "CoreLCD.h"
@@ -21,7 +22,6 @@
 #include "HelloWorld.h"
 #include "LKAnimationKit.h"
 #include "LKCoreFatFs.h"
-#include "LKCoreFont.h"
 #include "LKCoreLL.h"
 #include "LKCoreSTM32Hal.h"
 #include "LKCoreVideo.h"
@@ -45,7 +45,7 @@ CoreDMA2D coredma2d(hal);
 CoreDSI coredsi(hal);
 CoreLTDC coreltdc(hal, coredsi);
 CoreGraphics coregraphics(coredma2d);
-LKCoreFont corefont(pixel);
+CoreFont corefont(pixel);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 CoreLCD corelcd(coreotm);
 CoreJPEG corejpeg(hal, coredma2d, corefatfs);

@@ -2,16 +2,16 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreFont.h"
+#include "CoreFont.h"
 
 #include "LKFont.h"
 #include "corevideo_config.h"
 
 namespace leka {
 
-LKCoreFont::LKCoreFont(CGPixel &pixel_to_draw) : _pixel_to_draw(pixel_to_draw) {}
+CoreFont::CoreFont(CGPixel &pixel_to_draw) : _pixel_to_draw(pixel_to_draw) {}
 
-const uint8_t *LKCoreFont::fontGetFirstPixelAddress(char character)
+const uint8_t *CoreFont::fontGetFirstPixelAddress(char character)
 {
 	uint8_t space_ascii_value	  = 0x20;
 	uint8_t character_ascii_value = character;
@@ -19,18 +19,18 @@ const uint8_t *LKCoreFont::fontGetFirstPixelAddress(char character)
 	return &LKFontTable[index];
 }
 
-uint32_t LKCoreFont::fontGetPixelBytes(const uint8_t *line_address)
+uint32_t CoreFont::fontGetPixelBytes(const uint8_t *line_address)
 {
 	return (line_address[0] << 16) | (line_address[1] << 8) | line_address[2];
 }
 
-bool LKCoreFont::fontPixelIsOn(uint32_t byte_of_line, uint8_t pixel_id)
+bool CoreFont::fontPixelIsOn(uint32_t byte_of_line, uint8_t pixel_id)
 {
 	uint32_t pixel_id_mask = (0x01 << ((graphics::pixels_per_line - 1) - pixel_id + graphics::unused_bits));
 	return byte_of_line & pixel_id_mask;   // Return true if different of 0x00
 }
 
-void LKCoreFont::drawChar(Character character, CGColor foreground, CGColor background)
+void CoreFont::drawChar(Character character, CGColor foreground, CGColor background)
 {
 	_pixel_to_draw.coordinates.x = character.origin.x;
 	_pixel_to_draw.coordinates.y = character.origin.y;
@@ -53,8 +53,7 @@ void LKCoreFont::drawChar(Character character, CGColor foreground, CGColor backg
 	}
 }
 
-void LKCoreFont::display(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,
-						 CGColor background)
+void CoreFont::display(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground, CGColor background)
 {
 	if (starting_line < 1 || starting_line > 20) {
 		return;
@@ -88,7 +87,7 @@ void LKCoreFont::display(const char *text, uint32_t size, uint32_t starting_line
 	}
 }
 
-CGPixel LKCoreFont::getLastDrawnPixel() const
+CGPixel CoreFont::getLastDrawnPixel() const
 {
 	return _pixel_to_draw;
 }

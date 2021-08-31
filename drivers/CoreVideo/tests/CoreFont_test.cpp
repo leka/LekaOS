@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreFont.h"
+#include "CoreFont.h"
 
 #include "LKFont.h"
 #include "corevideo_config.h"
@@ -17,25 +17,25 @@ using ::testing::Matcher;
 using ::testing::WithArg;
 using ::testing::WithArgs;
 
-class LKCoreFontTest : public ::testing::Test
+class CoreFontTest : public ::testing::Test
 {
   protected:
-	LKCoreFontTest() : pixel(llmock), font(pixel) {}
+	CoreFontTest() : pixel(llmock), font(pixel) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
 	LKCoreLLMock llmock;
 	CGPixel pixel;
-	LKCoreFont font;
+	CoreFont font;
 };
 
-TEST_F(LKCoreFontTest, instantiation)
+TEST_F(CoreFontTest, instantiation)
 {
 	ASSERT_NE(&font, nullptr);
 }
 
-TEST_F(LKCoreFontTest, fontGetFirstPixelAddressOf$)
+TEST_F(CoreFontTest, fontGetFirstPixelAddressOf$)
 {
 	char character = '$';
 	auto index	   = 288;	// See LKCoreTable, index is given before start of character
@@ -50,7 +50,7 @@ TEST_F(LKCoreFontTest, fontGetFirstPixelAddressOf$)
 	}
 }
 
-TEST_F(LKCoreFontTest, fontGetFirstPixelAddressOfA)
+TEST_F(CoreFontTest, fontGetFirstPixelAddressOfA)
 {
 	char character = 'A';
 	auto index	   = 2376;	 // See LKCoreTable, index is given before start of character
@@ -65,7 +65,7 @@ TEST_F(LKCoreFontTest, fontGetFirstPixelAddressOfA)
 	}
 }
 
-TEST_F(LKCoreFontTest, fontGetFirstPixelAddressOfz)
+TEST_F(CoreFontTest, fontGetFirstPixelAddressOfz)
 {
 	char character = 'z';
 	auto index	   = 6480;	 // See LKCoreTable, index is given before start of character
@@ -80,7 +80,7 @@ TEST_F(LKCoreFontTest, fontGetFirstPixelAddressOfz)
 	}
 }
 
-TEST_F(LKCoreFontTest, fontGetPixelBytes)
+TEST_F(CoreFontTest, fontGetPixelBytes)
 {
 	uint8_t line_to_convert[3] = {0x2A, 0x2B, 0x2C};
 	auto expected_conversion   = 0x002A2B2C;
@@ -90,7 +90,7 @@ TEST_F(LKCoreFontTest, fontGetPixelBytes)
 	ASSERT_EQ(expected_conversion, actual_conversion);
 }
 
-TEST_F(LKCoreFontTest, fontGetPixelBytesFailed)
+TEST_F(CoreFontTest, fontGetPixelBytesFailed)
 {
 	uint8_t line_to_convert[3] = {0x2A, 0x2B, 0x2C};
 	auto expected_conversion   = 0x002A2B2D;   // Note 2D at the end
@@ -100,7 +100,7 @@ TEST_F(LKCoreFontTest, fontGetPixelBytesFailed)
 	ASSERT_NE(expected_conversion, actual_conversion);
 }
 
-TEST_F(LKCoreFontTest, fontPixelIsOnWithPattern)
+TEST_F(CoreFontTest, fontPixelIsOnWithPattern)
 {
 	const uint32_t byte_of_line = 0x00AAAAAA;	// 0xA = 1010
 
@@ -114,7 +114,7 @@ TEST_F(LKCoreFontTest, fontPixelIsOnWithPattern)
 	}
 }
 
-TEST_F(LKCoreFontTest, fontPixelIsOnWithC00010FF)
+TEST_F(CoreFontTest, fontPixelIsOnWithC00010FF)
 {
 	const uint32_t byte_of_line			  = 0xC00010FF;
 	const uint8_t max_bit_index_of_a_line = graphics::bytes_per_line * 8 - 1;	// = 23
@@ -127,9 +127,9 @@ TEST_F(LKCoreFontTest, fontPixelIsOnWithC00010FF)
 	}
 }
 
-TEST_F(LKCoreFontTest, drawCharacter)
+TEST_F(CoreFontTest, drawCharacter)
 {
-	LKCoreFont::Character character;
+	CoreFont::Character character;
 	character.ascii = '.';
 
 	auto pixels_per_char = graphics::font_pixel_width * graphics::font_pixel_height;   // 17 * 24 = 408
@@ -139,11 +139,11 @@ TEST_F(LKCoreFontTest, drawCharacter)
 	font.drawChar(character);
 }
 
-TEST_F(LKCoreFontTest, drawCharacterWithColor)
+TEST_F(CoreFontTest, drawCharacterWithColor)
 {
 	// ENHANCEMENT: Set pixels_lit by checking number of bit set.
 
-	LKCoreFont::Character character;
+	CoreFont::Character character;
 	character.ascii			 = '.';
 	CGColor foreground_color = CGColor::pure_red;
 	CGColor background_color = CGColor::black;
@@ -157,7 +157,7 @@ TEST_F(LKCoreFontTest, drawCharacterWithColor)
 	font.drawChar(character, foreground_color, background_color);
 }
 
-TEST_F(LKCoreFontTest, displayNormalSentence)
+TEST_F(CoreFontTest, displayNormalSentence)
 {
 	constexpr uint8_t buff_size = 128;
 	char buff[buff_size] {};
@@ -176,7 +176,7 @@ TEST_F(LKCoreFontTest, displayNormalSentence)
 	font.display(buff, text_length, starting_line, foreground_color, background_color);
 }
 
-TEST_F(LKCoreFontTest, displayPositiveStartingLine)
+TEST_F(CoreFontTest, displayPositiveStartingLine)
 {
 	constexpr uint8_t buff_size = 128;
 	char buff[buff_size] {};
@@ -189,7 +189,7 @@ TEST_F(LKCoreFontTest, displayPositiveStartingLine)
 	font.display(buff, text_length, starting_line);
 }
 
-TEST_F(LKCoreFontTest, displayExceededStartingLine)
+TEST_F(CoreFontTest, displayExceededStartingLine)
 {
 	constexpr uint8_t buff_size = 128;
 	char buff[buff_size] {};
@@ -202,13 +202,13 @@ TEST_F(LKCoreFontTest, displayExceededStartingLine)
 	font.display(buff, text_length, starting_line);
 }
 
-TEST_F(LKCoreFontTest, displayWithNewLine)
+TEST_F(CoreFontTest, displayWithNewLine)
 {
 	// ? # Explanation
 	// To check the correct behavior we spy on the coordinates of the last drawn pixel
 	// The expected final height is equal to the height of a character on the selected
 	// line to which we add the height of a character on the next line once drawn
-	// actual_last_drawn_pixel is calculate after we call LKCoreFont::display(_, _, _).
+	// actual_last_drawn_pixel is calculate after we call CoreFont::display(_, _, _).
 
 	// ARRANGE
 	constexpr uint8_t buff_size = 128;
@@ -231,7 +231,7 @@ TEST_F(LKCoreFontTest, displayWithNewLine)
 	ASSERT_EQ(actual_last_drawn_pixel.coordinates.y, expected_last_pixel_y_position);
 }
 
-TEST_F(LKCoreFontTest, displayUnwrittableAsciiCharacter)
+TEST_F(CoreFontTest, displayUnwrittableAsciiCharacter)
 {
 	// ARRANGE
 	constexpr uint8_t buff_size = 128;
@@ -258,7 +258,7 @@ TEST_F(LKCoreFontTest, displayUnwrittableAsciiCharacter)
 	ASSERT_EQ(actual_last_drawn_pixel.coordinates.y, expected_last_pixel.y);
 }
 
-TEST_F(LKCoreFontTest, displayWithScreenWidthReached)
+TEST_F(CoreFontTest, displayWithScreenWidthReached)
 {
 	// ARRANGE
 	constexpr uint8_t buff_size = 128;
@@ -288,7 +288,7 @@ TEST_F(LKCoreFontTest, displayWithScreenWidthReached)
 	ASSERT_EQ(actual_last_drawn_pixel.coordinates.y, expected_last_pixel.y);
 }
 
-TEST_F(LKCoreFontTest, displayWithScreenHeightReached)
+TEST_F(CoreFontTest, displayWithScreenHeightReached)
 {
 	// ARRANGE
 	constexpr uint8_t buff_size = 128;
