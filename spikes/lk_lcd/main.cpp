@@ -63,7 +63,7 @@ auto main() -> int
 	coresdram.initialize();
 
 	screen.initialize();
-	screen.setFrameRateLimit(15);
+	screen.setFrameRateLimit(30);
 
 	gfx::Image image1("/fs/images/activity-color_quest.jpg");
 	gfx::Image image2("/fs/images/color-black.jpg");
@@ -89,6 +89,7 @@ auto main() -> int
 	while (true) {
 		for (auto *video_ptr: videos) {
 			auto &video = *video_ptr;
+			screen.resetCounters();
 			video.restart();
 			while (!video.hasEnded()) {
 				screen.draw(video);
@@ -100,6 +101,7 @@ auto main() -> int
 
 				screen.display();
 			}
+			screen.displayCounters();
 		}
 	}
 }

@@ -153,7 +153,28 @@ void VideoKit::tick()
 	}
 
 	dt = rtos::Kernel::Clock::now() - _last_time;
-	printf("[INFO] [VideoKit.cpp:%d] %lld ms = %.3f fps\n\r", __LINE__, dt.count(), (1000.f / dt.count()));
+	// printf("Frame loaded in %lld ms = %.3f fps\n", dt.count(), (1000.f / dt.count()));
+
+	_whole_duration += dt;
+	_whole_tick += 1;
+	if (dt > _maximum) {
+		printf("Frame loaded in %lld ms = %.3f fps\n", dt.count(), (1000.f / dt.count()));
+		_maximum = dt;
+	}
 
 	_last_time = rtos::Kernel::Clock::now();
+}
+
+void VideoKit::resetCounters()
+{
+	_whole_duration = rtos::Kernel::Clock::now() - rtos::Kernel::Clock::now();
+	_whole_tick		= 0;
+	_maximum		= rtos::Kernel::Clock::now() - rtos::Kernel::Clock::now();
+}
+
+void VideoKit::displayCounters()
+{
+	printf("Duration: %lld ms with %ld frames - Mean is %.3f fps\n", _whole_duration.count(), _whole_tick,
+		   1000.f * _whole_tick / _whole_duration.count());
+	printf("Minimal fps is %.3f fps\n\n", (1000.f / _maximum.count()));
 }

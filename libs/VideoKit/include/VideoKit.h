@@ -62,6 +62,9 @@ class VideoKit
 
 	void display();
 
+	void resetCounters();
+	void displayCounters();
+
   private:
 	void refresh();
 	void tick();
@@ -81,6 +84,10 @@ class VideoKit
 
 	rtos::Kernel::Clock::time_point _last_time {};
 	std::chrono::milliseconds _frametime;
+
+	std::chrono::milliseconds _whole_duration;
+	uint32_t _whole_tick;
+	std::chrono::milliseconds _maximum;
 };
 
 #define VideoKit_DeclareIRQHandlers(instance)                                                                          \

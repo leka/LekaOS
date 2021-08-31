@@ -31,10 +31,31 @@ void CoreJPEG::initialize()
 	registerCallbacks();
 }
 
+void displayInformation(JPEGConfig config)
+{
+	printf("JPEG file configuration:\n");
+
+	printf("ColorSpace: %ld\n", config.ColorSpace);
+	printf("ChromaSubsampling: %ld [0 -> 4:4:4 | 1 -> 4:2:0 | 2 -> 4:2:2]\n", config.ChromaSubsampling);
+	printf("ImageHeight: %ld\n", config.ImageHeight);
+	printf("ImageWidth: %ld\n", config.ImageWidth);
+	printf("ImageQuality: %ld\n\n", config.ImageQuality);
+
+	//   uint32_t ColorSpace;               /*!< Image Color space : gray-scale, YCBCR, RGB or CMYK
+	//                                            This parameter can be a value of @ref JPEG_ColorSpace */
+	//   uint32_t ChromaSubsampling;        /*!< Chroma Subsampling in case of YCBCR or CMYK color space, 0-> 4:4:4 ,
+	//   1-> 4:2:2, 2 -> 4:1:1, 3 -> 4:2:0        This parameter can be a value of @ref JPEG_ChromaSubsampling */
+	//   uint32_t ImageHeight;              /*!< Image height : number of lines */
+	//   uint32_t ImageWidth;               /*!< Image width : number of pixels per line */
+	//   uint32_t ImageQuality;             /*!< Quality of the JPEG encoding : from 1 to 100 */
+}
+
 auto CoreJPEG::getConfig() -> JPEGConfig
 {
 	JPEGConfig config;
 	_hal.HAL_JPEG_GetInfo(&_hjpeg, &config);
+
+	displayInformation(config);
 
 	config.initialized = true;
 	return config;
