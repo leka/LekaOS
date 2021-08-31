@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_FONT_MOCK_H_
 #define _LEKA_OS_FONT_MOCK_H_
 
-#include "LKCoreFontBase.h"
 #include "gmock/gmock.h"
+#include "interface/CoreFont.h"
 
 namespace leka {
 
-class LKCoreFontMock : public LKCoreFontBase
+class LKCoreFontMock : public interface::CoreFont
 {
   public:
 	MOCK_METHOD(void, drawChar, (Character character, CGColor foreground, CGColor background), (override));
