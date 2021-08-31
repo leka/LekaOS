@@ -2,41 +2,41 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreJPEG.h"
+#include "CoreJPEG.h"
 
 #include "corevideo_config.h"
 
 namespace leka {
 
-LKCoreJPEG::LKCoreJPEG(LKCoreSTM32HalBase &hal, interface::CoreDMA2D &dma2d, LKCoreFatFsBase &file)
+CoreJPEG::CoreJPEG(LKCoreSTM32HalBase &hal, interface::CoreDMA2D &dma2d, LKCoreFatFsBase &file)
 	: _hal(hal), _dma2d(dma2d), _file(file)
 {
 	_hjpeg.Instance = JPEG;
 }
 
-void LKCoreJPEG::initialize()
+void CoreJPEG::initialize()
 {
 	JPEG_InitColorTables();
 	_hal.HAL_RCC_JPEG_CLK_ENABLE();
 	_hal.HAL_JPEG_Init(&_hjpeg);
 }
 
-JPEG_ConfTypeDef LKCoreJPEG::getConfig(void)
+JPEG_ConfTypeDef CoreJPEG::getConfig(void)
 {
 	return _config;
 }
 
-JPEG_HandleTypeDef LKCoreJPEG::getHandle(void)
+JPEG_HandleTypeDef CoreJPEG::getHandle(void)
 {
 	return _hjpeg;
 }
 
-JPEG_HandleTypeDef *LKCoreJPEG::getHandlePointer(void)
+JPEG_HandleTypeDef *CoreJPEG::getHandlePointer(void)
 {
 	return &_hjpeg;
 }
 
-uint32_t LKCoreJPEG::getWidthOffset(void)
+uint32_t CoreJPEG::getWidthOffset(void)
 {
 	uint32_t width_offset = 0;
 
@@ -64,7 +64,7 @@ uint32_t LKCoreJPEG::getWidthOffset(void)
 	return width_offset;
 }
 
-void LKCoreJPEG::displayImage(FIL *file)
+void CoreJPEG::displayImage(FIL *file)
 {
 	decodeImageWithPolling();	// TODO: handle errors
 
@@ -73,7 +73,7 @@ void LKCoreJPEG::displayImage(FIL *file)
 	_dma2d.transferImage(_config.ImageWidth, _config.ImageHeight, getWidthOffset());
 }
 
-HAL_StatusTypeDef LKCoreJPEG::decodeImageWithPolling(void)
+HAL_StatusTypeDef CoreJPEG::decodeImageWithPolling(void)
 {
 	// WARNING: DO NOT REMOVE
 	_mcu_block_index = 0;
@@ -91,12 +91,12 @@ HAL_StatusTypeDef LKCoreJPEG::decodeImageWithPolling(void)
 	return HAL_OK;
 }
 
-void LKCoreJPEG::onErrorCallback(JPEG_HandleTypeDef *hjpeg)
+void CoreJPEG::onErrorCallback(JPEG_HandleTypeDef *hjpeg)
 {
 	// TODO: handle errors
 }
 
-void LKCoreJPEG::onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info)
+void CoreJPEG::onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info)
 {
 	if (info->ChromaSubsampling == JPEG_420_SUBSAMPLING) {
 		if ((info->ImageWidth % 16) != 0) info->ImageWidth += (16 - (info->ImageWidth % 16));
@@ -121,7 +121,7 @@ void LKCoreJPEG::onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef
 	}
 }
 
-void LKCoreJPEG::onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size)
+void CoreJPEG::onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size)
 {
 	// TODO: rely on LKFileSystemKit to handle open/read/close
 	if (size != _jpeg_input_buffer.size) {
@@ -136,7 +136,7 @@ void LKCoreJPEG::onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t siz
 		// TODO: handle error
 	}
 }
-void LKCoreJPEG::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t size)
+void CoreJPEG::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t size)
 {
 	_mcu_block_index +=
 		pConvert_Function(pDataOut, (uint8_t *)jpeg::decoded_buffer_address, _mcu_block_index, size, nullptr);
@@ -144,7 +144,7 @@ void LKCoreJPEG::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOu
 	_hal.HAL_JPEG_ConfigOutputBuffer(hjpeg, _mcu_data_output_buffer, leka::jpeg::mcu::output_data_buffer_size);
 }
 
-void LKCoreJPEG::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
+void CoreJPEG::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
 {
 	// TODO: implement flag
 }

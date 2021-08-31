@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreJPEG.h"
+#include "CoreJPEG.h"
 
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreDMA2D.h"
@@ -19,10 +19,10 @@ using ::testing::InSequence;
 using ::testing::Return;
 using ::testing::SetArgPointee;
 
-class LKCoreJPEGTest : public ::testing::Test
+class CoreJPEGTest : public ::testing::Test
 {
   protected:
-	LKCoreJPEGTest() : corejpeg(halmock, dma2dmock, filemock) {}
+	CoreJPEGTest() : corejpeg(halmock, dma2dmock, filemock) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}
@@ -30,7 +30,7 @@ class LKCoreJPEGTest : public ::testing::Test
 	LKCoreSTM32HalMock halmock;
 	CoreDMA2DMock dma2dmock;
 	LKCoreFatFsMock filemock;
-	LKCoreJPEG corejpeg;
+	CoreJPEG corejpeg;
 
 	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call
 	// TODO: Remove them in the future
@@ -57,26 +57,26 @@ class LKCoreJPEGTest : public ::testing::Test
 	}
 };
 
-TEST_F(LKCoreJPEGTest, instantiation)
+TEST_F(CoreJPEGTest, instantiation)
 {
 	ASSERT_NE(&corejpeg, nullptr);
 }
 
-TEST_F(LKCoreJPEGTest, handleConfigurationInstance)
+TEST_F(CoreJPEGTest, handleConfigurationInstance)
 {
 	auto handle = corejpeg.getHandle();
 
 	ASSERT_EQ(handle.Instance, JPEG);
 }
 
-TEST_F(LKCoreJPEGTest, handlePointerConfigurationInstance)
+TEST_F(CoreJPEGTest, handlePointerConfigurationInstance)
 {
 	auto handle = corejpeg.getHandlePointer();
 
 	ASSERT_EQ(handle->Instance, JPEG);
 }
 
-TEST_F(LKCoreJPEGTest, getConfiguration)
+TEST_F(CoreJPEGTest, getConfiguration)
 {
 	JPEG_ConfTypeDef expected_config;
 
@@ -99,7 +99,7 @@ TEST_F(LKCoreJPEGTest, getConfiguration)
 	ASSERT_EQ(config.ImageHeight, expected_config.ImageHeight);
 }
 
-TEST_F(LKCoreJPEGTest, initializationSequence)
+TEST_F(CoreJPEGTest, initializationSequence)
 {
 	{
 		InSequence seq;
@@ -110,7 +110,7 @@ TEST_F(LKCoreJPEGTest, initializationSequence)
 	corejpeg.initialize();
 }
 
-TEST_F(LKCoreJPEGTest, decodeImageWithPollingDecodeCalledSuccess)
+TEST_F(CoreJPEGTest, decodeImageWithPollingDecodeCalledSuccess)
 {
 	EXPECT_CALL(filemock, read).Times(1);
 	EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(1);
@@ -120,7 +120,7 @@ TEST_F(LKCoreJPEGTest, decodeImageWithPollingDecodeCalledSuccess)
 	ASSERT_EQ(status, HAL_OK);
 }
 
-TEST_F(LKCoreJPEGTest, decodeImageWithPollingDecodeCalledFailed)
+TEST_F(CoreJPEGTest, decodeImageWithPollingDecodeCalledFailed)
 {
 	EXPECT_CALL(filemock, read).WillOnce(Return(FR_NO_FILE));
 
@@ -129,7 +129,7 @@ TEST_F(LKCoreJPEGTest, decodeImageWithPollingDecodeCalledFailed)
 	ASSERT_NE(status, HAL_OK);
 }
 
-TEST_F(LKCoreJPEGTest, getWidthOffsetNoChromaSubsampling)
+TEST_F(CoreJPEGTest, getWidthOffsetNoChromaSubsampling)
 {
 	JPEG_ConfTypeDef config;
 	config.ChromaSubsampling = 3;
@@ -148,7 +148,7 @@ TEST_F(LKCoreJPEGTest, getWidthOffsetNoChromaSubsampling)
 	ASSERT_EQ(0, width_offset);
 }
 
-TEST_F(LKCoreJPEGTest, getWidthOffsetChromaSubsampling420)
+TEST_F(CoreJPEGTest, getWidthOffsetChromaSubsampling420)
 {
 	JPEG_ConfTypeDef config;
 	config.ChromaSubsampling = JPEG_420_SUBSAMPLING;
@@ -158,7 +158,7 @@ TEST_F(LKCoreJPEGTest, getWidthOffsetChromaSubsampling420)
 	TEST_FUNCTION_WidthOffsetFromChromaSubsampling(config);
 }
 
-TEST_F(LKCoreJPEGTest, getWidthOffsetChromaSubsampling422)
+TEST_F(CoreJPEGTest, getWidthOffsetChromaSubsampling422)
 {
 	JPEG_ConfTypeDef config;
 	config.ChromaSubsampling = JPEG_422_SUBSAMPLING;
@@ -168,7 +168,7 @@ TEST_F(LKCoreJPEGTest, getWidthOffsetChromaSubsampling422)
 	TEST_FUNCTION_WidthOffsetFromChromaSubsampling(config);
 }
 
-TEST_F(LKCoreJPEGTest, getWidthOffsetChromaSubsampling444)
+TEST_F(CoreJPEGTest, getWidthOffsetChromaSubsampling444)
 {
 	JPEG_ConfTypeDef config;
 	config.ChromaSubsampling = JPEG_444_SUBSAMPLING;
@@ -191,7 +191,7 @@ TEST_F(LKCoreJPEGTest, getWidthOffsetChromaSubsampling444)
 	}
 }
 
-TEST_F(LKCoreJPEGTest, displaySequence)
+TEST_F(CoreJPEGTest, displaySequence)
 {
 	{
 		InSequence seq;
@@ -205,14 +205,14 @@ TEST_F(LKCoreJPEGTest, displaySequence)
 	corejpeg.displayImage(&image);
 }
 
-TEST_F(LKCoreJPEGTest, onErroCallback)
+TEST_F(CoreJPEGTest, onErroCallback)
 {
 	JPEG_HandleTypeDef hjpeg;
 
 	corejpeg.onErrorCallback(&hjpeg);
 }
 
-TEST_F(LKCoreJPEGTest, onInfoReadyCallback420ChromSubsamplingDimensionsMultiple)
+TEST_F(CoreJPEGTest, onInfoReadyCallback420ChromSubsamplingDimensionsMultiple)
 {
 	JPEG_HandleTypeDef hjpeg;
 	JPEG_ConfTypeDef config;
@@ -227,7 +227,7 @@ TEST_F(LKCoreJPEGTest, onInfoReadyCallback420ChromSubsamplingDimensionsMultiple)
 	ASSERT_EQ(config.ImageHeight, 480);
 }
 
-TEST_F(LKCoreJPEGTest, onInfoReadyCallback420ChromSubsamplingDimensionsNotMultiple)
+TEST_F(CoreJPEGTest, onInfoReadyCallback420ChromSubsamplingDimensionsNotMultiple)
 {
 	JPEG_HandleTypeDef hjpeg;
 	JPEG_ConfTypeDef config;
@@ -248,7 +248,7 @@ TEST_F(LKCoreJPEGTest, onInfoReadyCallback420ChromSubsamplingDimensionsNotMultip
 	}
 }
 
-TEST_F(LKCoreJPEGTest, onInfoReadyCallback422ChromSubsamplingDimensionsMultiple)
+TEST_F(CoreJPEGTest, onInfoReadyCallback422ChromSubsamplingDimensionsMultiple)
 {
 	JPEG_HandleTypeDef hjpeg;
 	JPEG_ConfTypeDef config;
@@ -263,7 +263,7 @@ TEST_F(LKCoreJPEGTest, onInfoReadyCallback422ChromSubsamplingDimensionsMultiple)
 	ASSERT_EQ(config.ImageHeight, 480);
 }
 
-TEST_F(LKCoreJPEGTest, onInfoReadyCallback422ChromSubsamplingDimensionsNotMultiple)
+TEST_F(CoreJPEGTest, onInfoReadyCallback422ChromSubsamplingDimensionsNotMultiple)
 {
 	JPEG_HandleTypeDef hjpeg;
 	JPEG_ConfTypeDef config;
@@ -284,7 +284,7 @@ TEST_F(LKCoreJPEGTest, onInfoReadyCallback422ChromSubsamplingDimensionsNotMultip
 	}
 }
 
-TEST_F(LKCoreJPEGTest, onInfoReadyCallback444ChromSubsamplingDimensionsMultiple)
+TEST_F(CoreJPEGTest, onInfoReadyCallback444ChromSubsamplingDimensionsMultiple)
 {
 	JPEG_HandleTypeDef hjpeg;
 	JPEG_ConfTypeDef config;
@@ -299,7 +299,7 @@ TEST_F(LKCoreJPEGTest, onInfoReadyCallback444ChromSubsamplingDimensionsMultiple)
 	ASSERT_EQ(config.ImageHeight, 480);
 }
 
-TEST_F(LKCoreJPEGTest, onInfoReadyCallback444ChromSubsamplingDimensionsNotMultiple)
+TEST_F(CoreJPEGTest, onInfoReadyCallback444ChromSubsamplingDimensionsNotMultiple)
 {
 	JPEG_HandleTypeDef hjpeg;
 	JPEG_ConfTypeDef config;
@@ -320,7 +320,7 @@ TEST_F(LKCoreJPEGTest, onInfoReadyCallback444ChromSubsamplingDimensionsNotMultip
 	}
 }
 
-TEST_F(LKCoreJPEGTest, onDataAvailableCallback)
+TEST_F(CoreJPEGTest, onDataAvailableCallback)
 {
 	JPEG_HandleTypeDef hjpeg;
 	uint32_t size {2};
@@ -335,7 +335,7 @@ TEST_F(LKCoreJPEGTest, onDataAvailableCallback)
 	corejpeg.onDataAvailableCallback(&hjpeg, size);
 }
 
-TEST_F(LKCoreJPEGTest, onDataAvailableCallbackSizeEqual)
+TEST_F(CoreJPEGTest, onDataAvailableCallbackSizeEqual)
 {
 	JPEG_HandleTypeDef hjpeg;
 	uint32_t size {0};
@@ -350,7 +350,7 @@ TEST_F(LKCoreJPEGTest, onDataAvailableCallbackSizeEqual)
 	corejpeg.onDataAvailableCallback(&hjpeg, size);
 }
 
-TEST_F(LKCoreJPEGTest, onDataAvailableCallbackCannotReadFile)
+TEST_F(CoreJPEGTest, onDataAvailableCallbackCannotReadFile)
 {
 	JPEG_HandleTypeDef hjpeg;
 	uint32_t size {2};
@@ -365,7 +365,7 @@ TEST_F(LKCoreJPEGTest, onDataAvailableCallbackCannotReadFile)
 	corejpeg.onDataAvailableCallback(&hjpeg, size);
 }
 
-TEST_F(LKCoreJPEGTest, onDataReadyCallback)
+TEST_F(CoreJPEGTest, onDataReadyCallback)
 {
 	JPEG_HandleTypeDef hjpeg;
 	uint8_t *pDataOut;
@@ -382,7 +382,7 @@ TEST_F(LKCoreJPEGTest, onDataReadyCallback)
 	corejpeg.onDataReadyCallback(&hjpeg, pDataOut, size);
 }
 
-TEST_F(LKCoreJPEGTest, onDecodeCompleteCallback)
+TEST_F(CoreJPEGTest, onDecodeCompleteCallback)
 {
 	JPEG_HandleTypeDef hjpeg;
 

@@ -11,6 +11,7 @@
 #include "BouncingSquare.h"
 #include "CoreDMA2D.h"
 #include "CoreDSI.h"
+#include "CoreJPEG.h"
 #include "CoreLCD.h"
 #include "CoreLCDDriverOTM8009A.h"
 #include "CoreLTDC.h"
@@ -21,7 +22,6 @@
 #include "LKCoreFatFs.h"
 #include "LKCoreFont.h"
 #include "LKCoreGraphics.h"
-#include "LKCoreJPEG.h"
 #include "LKCoreLL.h"
 #include "LKCoreSTM32Hal.h"
 #include "LKCoreVideo.h"
@@ -48,7 +48,7 @@ LKCoreGraphics coregraphics(coredma2d);
 LKCoreFont corefont(pixel);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 CoreLCD corelcd(coreotm);
-LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
+CoreJPEG corejpeg(hal, coredma2d, corefatfs);
 LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 rtos::Thread animation_thread;

@@ -16,10 +16,9 @@ target_sources(CoreVideo
 	source/CoreDMA2D.cpp
 	source/LKCoreFont.cpp
 	source/LKCoreGraphics.cpp
-	source/LKCoreJPEG.cpp
+	source/CoreJPEG.cpp
 	source/CoreLTDC.cpp
 	source/CoreDSI.cpp
-	source/LKCoreJPEG.cpp
 	source/CoreLCD.cpp
 	source/CoreLCDDriverOTM8009A.cpp
 	source/CoreSDRAM.cpp
@@ -44,7 +43,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/CoreDSI_test.cpp
 		tests/LKCoreFont_test.cpp
 		tests/LKCoreGraphics_test.cpp
-		tests/LKCoreJPEG_test.cpp
+		tests/CoreJPEG_test.cpp
 		tests/CoreLCD_test.cpp
 		tests/CoreLTDC_test.cpp
 		tests/CoreLCDDriverOTM8009A_test.cpp

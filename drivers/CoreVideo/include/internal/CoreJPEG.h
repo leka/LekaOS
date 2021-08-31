@@ -15,10 +15,10 @@
 
 namespace leka {
 
-class LKCoreJPEG : public LKCoreJPEGBase
+class CoreJPEG : public LKCoreJPEGBase
 {
   public:
-	LKCoreJPEG(LKCoreSTM32HalBase &hal, interface::CoreDMA2D &dma2d, LKCoreFatFsBase &file);
+	CoreJPEG(LKCoreSTM32HalBase &hal, interface::CoreDMA2D &dma2d, LKCoreFatFsBase &file);
 
 	void initialize(void) final;
 
