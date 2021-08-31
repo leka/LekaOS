@@ -10,12 +10,12 @@
 #include "LKCoreSTM32HalBase.h"
 // #include "stm32f7xx_hal_jpeg.h"
 
-namespace leka {
+namespace leka::interface {
 
-class LKCoreJPEGBase
+class CoreJPEG
 {
   public:
-	~LKCoreJPEGBase() = default;
+	~CoreJPEG() = default;
 
 	virtual void initialize(void) = 0;
 
@@ -38,6 +38,6 @@ class LKCoreJPEGBase
 	virtual void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface
 
 #endif	 // _LEKA_OS_DRIVER_JPEG_BASE_H_

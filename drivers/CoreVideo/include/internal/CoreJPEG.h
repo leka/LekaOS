@@ -8,14 +8,14 @@
 #include <cstdint>
 
 #include "LKCoreFatFsBase.h"
-#include "LKCoreJPEGBase.h"
 #include "LKCoreSTM32HalBase.h"
 #include "interface/CoreDMA2D.h"
+#include "interface/CoreJPEG.h"
 #include "st_jpeg_utils.h"
 
 namespace leka {
 
-class CoreJPEG : public LKCoreJPEGBase
+class CoreJPEG : public interface::CoreJPEG
 {
   public:
 	CoreJPEG(LKCoreSTM32HalBase &hal, interface::CoreDMA2D &dma2d, LKCoreFatFsBase &file);
