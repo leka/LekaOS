@@ -11,7 +11,7 @@ add_subdirectory(${DRIVERS_DIR}/LKCoreSTM32Hal)
 add_subdirectory(${DRIVERS_DIR}/CoreBufferedSerial)
 
 # LCD drivers
-add_subdirectory(${DRIVERS_DIR}/LKCoreVideo)
+add_subdirectory(${DRIVERS_DIR}/CoreVideo)
 
 # Connectivity drivers
 add_subdirectory(${DRIVERS_DIR}/CoreWifi)

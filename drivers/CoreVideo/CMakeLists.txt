@@ -2,16 +2,16 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(LKCoreVideo STATIC)
+add_library(CoreVideo STATIC)
 
-target_include_directories(LKCoreVideo
+target_include_directories(CoreVideo
 	PUBLIC
 		include
 		include/internal
 		external/include
 )
 
-target_sources(LKCoreVideo
+target_sources(CoreVideo
   PRIVATE
 	source/LKCoreDMA2D.cpp
 	source/LKCoreFont.cpp
@@ -28,7 +28,7 @@ target_sources(LKCoreVideo
 	external/source/st_jpeg_utils.cpp
 )
 
-target_link_libraries(LKCoreVideo
+target_link_libraries(CoreVideo
 	PRIVATE
 		mbed-os
 		LKCoreLL
