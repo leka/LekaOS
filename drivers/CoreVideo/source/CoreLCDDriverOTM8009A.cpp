@@ -6,29 +6,29 @@
 
 #include "rtos/ThisThread.h"
 
-#include "LKCoreLCDDriverOTM8009A.h"
+#include "CoreLCDDriverOTM8009A.h"
 
 namespace leka {
 
 using namespace std::chrono;
 using namespace lcd::otm8009a;
 
-void LKCoreLCDDriverOTM8009A::turnOn()
+void CoreLCDDriverOTM8009A::turnOn()
 {
 	_dsi.write(display::turn_on::array, std::size(display::turn_on::array));
 }
 
-void LKCoreLCDDriverOTM8009A::turnOff()
+void CoreLCDDriverOTM8009A::turnOff()
 {
 	_dsi.write(display::turn_off::array, std::size(display::turn_off::array));
 }
 
-void LKCoreLCDDriverOTM8009A::setBrightness(float brightness)
+void CoreLCDDriverOTM8009A::setBrightness(float brightness)
 {
 	_backlight.write(brightness);
 }
 
-void LKCoreLCDDriverOTM8009A::initialize()
+void CoreLCDDriverOTM8009A::initialize()
 {
 	_backlight.period(0.01f);	// Set PWM at 1/(0.01 seconds) = 100Hz
 
@@ -258,7 +258,7 @@ void LKCoreLCDDriverOTM8009A::initialize()
 	_dsi.write(register_data::short45, std::size(register_data::short45));
 }
 
-void LKCoreLCDDriverOTM8009A::setLandscapeOrientation()
+void CoreLCDDriverOTM8009A::setLandscapeOrientation()
 {
 	// ? Following code is implemented based on OTM8009A driver datasheet
 	// ? register 36H (Memory Data Access Control)

@@ -4,7 +4,7 @@
 
 #include <array>
 
-#include "LKCoreLCDDriverOTM8009A.h"
+#include "CoreLCDDriverOTM8009A.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreDSI.h"
 #include "mocks/leka/LKCoreSTM32Hal.h"
@@ -26,7 +26,7 @@ class LKCoreOTM8009ATest : public ::testing::Test
 	// void TearDown() override {}
 
 	CoreDSIMock dsimock;
-	LKCoreLCDDriverOTM8009A otm;
+	CoreLCDDriverOTM8009A otm;
 };
 
 TEST_F(LKCoreOTM8009ATest, instantiation)
