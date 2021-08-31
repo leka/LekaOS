@@ -11,6 +11,7 @@
 
 #include "CoreDMA2D.h"
 #include "CoreDSI.h"
+#include "CoreLCD.h"
 #include "CoreLTDC.h"
 #include "CoreSDRAM.h"
 #include "FATFileSystem.h"
@@ -19,7 +20,6 @@
 #include "LKCoreFont.h"
 #include "LKCoreGraphics.h"
 #include "LKCoreJPEG.h"
-#include "LKCoreLCD.h"
 #include "LKCoreLCDDriverOTM8009A.h"
 #include "LKCoreLL.h"
 #include "LKCoreSTM32Hal.h"
@@ -44,7 +44,7 @@ CoreLTDC coreltdc(hal, coredsi);
 LKCoreGraphics coregraphics(coredma2d);
 LKCoreFont corefont(pixel);
 LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
-LKCoreLCD corelcd(coreotm);
+CoreLCD corelcd(coreotm);
 LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
 LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 

@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreLCD.h"
+#include "CoreLCD.h"
 
 #include "gtest/gtest.h"
 #include "mocks/leka/LKCoreLCDDriver.h"
@@ -15,24 +15,24 @@ using ::testing::AtLeast;
 using ::testing::ElementsAre;
 using ::testing::InSequence;
 
-class LKCoreLCDTest : public ::testing::Test
+class CoreLCDTest : public ::testing::Test
 {
   protected:
-	LKCoreLCDTest() : corelcd(lcddrivermock) {}
+	CoreLCDTest() : corelcd(lcddrivermock) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	LKCoreLCD corelcd;
+	CoreLCD corelcd;
 	LKCoreLCDDriverMock lcddrivermock;
 };
 
-TEST_F(LKCoreLCDTest, instantiation)
+TEST_F(CoreLCDTest, instantiation)
 {
 	ASSERT_NE(&corelcd, nullptr);
 }
 
-TEST_F(LKCoreLCDTest, initialization)
+TEST_F(CoreLCDTest, initialization)
 {
 	{
 		InSequence seq;
@@ -43,21 +43,21 @@ TEST_F(LKCoreLCDTest, initialization)
 	corelcd.initialize();
 }
 
-TEST_F(LKCoreLCDTest, turnOn)
+TEST_F(CoreLCDTest, turnOn)
 {
 	EXPECT_CALL(lcddrivermock, turnOn).Times(1);
 
 	corelcd.turnOn();
 }
 
-TEST_F(LKCoreLCDTest, turnOff)
+TEST_F(CoreLCDTest, turnOff)
 {
 	EXPECT_CALL(lcddrivermock, turnOff).Times(1);
 
 	corelcd.turnOff();
 }
 
-TEST_F(LKCoreLCDTest, setBrightness)
+TEST_F(CoreLCDTest, setBrightness)
 {
 	float any_value;
 

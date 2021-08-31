@@ -12,10 +12,10 @@
 
 namespace leka {
 
-class LKCoreLCD : public LKCoreLCDBase
+class CoreLCD : public LKCoreLCDBase
 {
   public:
-	explicit LKCoreLCD(LKCoreLCDDriverBase &driver);
+	explicit CoreLCD(LKCoreLCDDriverBase &driver);
 
 	void initialize() final;
 

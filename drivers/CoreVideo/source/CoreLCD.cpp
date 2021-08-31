@@ -2,34 +2,34 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreLCD.h"
+#include "CoreLCD.h"
 
 #include "rtos/ThisThread.h"
 
 namespace leka {
 
-LKCoreLCD::LKCoreLCD(LKCoreLCDDriverBase &driver) : _driver(driver)
+CoreLCD::CoreLCD(LKCoreLCDDriverBase &driver) : _driver(driver)
 {
 	// nothing to do
 }
 
-void LKCoreLCD::initialize()
+void CoreLCD::initialize()
 {
 	_driver.initialize();
 	_driver.setLandscapeOrientation();
 }
 
-void LKCoreLCD::turnOn()
+void CoreLCD::turnOn()
 {
 	_driver.turnOn();
 }
 
-void LKCoreLCD::turnOff()
+void CoreLCD::turnOff()
 {
 	_driver.turnOff();
 }
 
-void LKCoreLCD::setBrightness(float brightness)
+void CoreLCD::setBrightness(float brightness)
 {
 	_driver.setBrightness(brightness);
 }
