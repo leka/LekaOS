@@ -7,15 +7,15 @@
 
 #include "drivers/PwmOut.h"
 
-#include "LKCoreLCDDriverBase.h"
 #include "interface/CoreDSI.h"
+#include "interface/CoreLCDDriver.h"
 
 namespace leka {
 
 // ? OTM8009A LCD driver datasheet available at:
 // ? http://www.orientdisplay.com/pdf/OTM8009A.pdf
 
-class CoreLCDDriverOTM8009A : public LKCoreLCDDriverBase
+class CoreLCDDriverOTM8009A : public interface::CoreLCDDriver
 {
   public:
 	CoreLCDDriverOTM8009A(interface::CoreDSI &dsi, PinName backlight) : _dsi {dsi}, _backlight {backlight} {};
