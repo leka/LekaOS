@@ -51,7 +51,6 @@ Checks: " \
   , bugprone-use-after-move \
   , bugprone-virtual-near-miss \
   , cppcoreguidelines-avoid-goto \
-  , cppcoreguidelines-avoid-non-const-global-variables \
   , cppcoreguidelines-init-variables \
   , cppcoreguidelines-interfaces-global-init \
   , cppcoreguidelines-macro-usage \
@@ -96,8 +95,7 @@ CheckOptions:
   - key: readability-function-cognitive-complexity.IgnoreMacros
     value: true
   - key: readability-magic-numbers.IgnoredIntegerValues
-    value: '1;2;3;4;10;100;1000;60;3600;9600;115200'
-
+    value: "1;2;3;4;10;100;1000;60;3600;9600;115200;128;255"
 
 WarningsAsErrors: " \
   modernize-*
