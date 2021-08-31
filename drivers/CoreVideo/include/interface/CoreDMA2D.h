@@ -7,12 +7,12 @@
 
 #include "LKCoreSTM32HalBase.h"
 
-namespace leka {
+namespace leka::interface {
 
-class LKCoreDMA2DBase
+class CoreDMA2D
 {
   public:
-	virtual ~LKCoreDMA2DBase() = default;
+	virtual ~CoreDMA2D() = default;
 
 	virtual void initialize() = 0;
 
@@ -24,6 +24,6 @@ class LKCoreDMA2DBase
 	virtual DMA2D_HandleTypeDef getHandle(void) = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface
 
 #endif	 // _LEKA_OS_LIB_DMA2D_BASE_H_

@@ -5,11 +5,11 @@
 #ifndef _LEKA_OS_LIB_DMA2D_H_
 #define _LEKA_OS_LIB_DMA2D_H_
 
-#include "LKCoreDMA2DBase.h"
+#include "interface/CoreDMA2D.h"
 
 namespace leka {
 
-class CoreDMA2D : public LKCoreDMA2DBase
+class CoreDMA2D : public interface::CoreDMA2D
 {
   public:
 	explicit CoreDMA2D(LKCoreSTM32HalBase &hal);

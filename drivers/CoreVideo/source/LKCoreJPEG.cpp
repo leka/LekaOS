@@ -8,7 +8,7 @@
 
 namespace leka {
 
-LKCoreJPEG::LKCoreJPEG(LKCoreSTM32HalBase &hal, LKCoreDMA2DBase &dma2d, LKCoreFatFsBase &file)
+LKCoreJPEG::LKCoreJPEG(LKCoreSTM32HalBase &hal, interface::CoreDMA2D &dma2d, LKCoreFatFsBase &file)
 	: _hal(hal), _dma2d(dma2d), _file(file)
 {
 	_hjpeg.Instance = JPEG;

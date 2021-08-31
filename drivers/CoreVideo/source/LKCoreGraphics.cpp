@@ -6,7 +6,7 @@
 
 namespace leka {
 
-LKCoreGraphics::LKCoreGraphics(LKCoreDMA2DBase &dma2d) : _dma2d(dma2d) {}
+LKCoreGraphics::LKCoreGraphics(interface::CoreDMA2D &dma2d) : _dma2d(dma2d) {}
 
 void LKCoreGraphics::clearScreen(CGColor color)
 {
