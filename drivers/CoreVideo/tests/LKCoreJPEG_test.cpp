@@ -5,7 +5,7 @@
 #include "LKCoreJPEG.h"
 
 #include "gtest/gtest.h"
-#include "mocks/leka/LKCoreDMA2D.h"
+#include "mocks/leka/CoreDMA2D.h"
 #include "mocks/leka/LKCoreFatFs.h"
 #include "mocks/leka/LKCoreSTM32Hal.h"
 #include "st_jpeg_utils.h"
@@ -28,7 +28,7 @@ class LKCoreJPEGTest : public ::testing::Test
 	// void TearDown() override {}
 
 	LKCoreSTM32HalMock halmock;
-	LKCoreDMA2DMock dma2dmock;
+	CoreDMA2DMock dma2dmock;
 	LKCoreFatFsMock filemock;
 	LKCoreJPEG corejpeg;
 

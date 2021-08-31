@@ -6,7 +6,7 @@
 
 #include "corevideo_config.h"
 #include "gtest/gtest.h"
-#include "mocks/leka/LKCoreDMA2D.h"
+#include "mocks/leka/CoreDMA2D.h"
 
 using namespace leka;
 using ::testing::_;
@@ -19,7 +19,7 @@ class LKCoreGraphicsTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	LKCoreDMA2DMock dma2dmock;
+	CoreDMA2DMock dma2dmock;
 	LKCoreGraphics graphics;
 };
 
