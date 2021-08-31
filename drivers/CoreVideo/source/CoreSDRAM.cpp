@@ -1,4 +1,4 @@
-#include "LKCoreSDRAM.h"
+#include "CoreSDRAM.h"
 
 #include "rtos/ThisThread.h"
 
@@ -6,14 +6,14 @@ using namespace std::chrono;
 
 namespace leka {
 
-LKCoreSDRAM::LKCoreSDRAM(LKCoreSTM32HalBase &hal) : _hal(hal)
+CoreSDRAM::CoreSDRAM(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
 	_hsdram.Instance = FMC_SDRAM_DEVICE;
 
 	setupSDRAMConfig();
 }
 
-void LKCoreSDRAM::setupSDRAMConfig()
+void CoreSDRAM::setupSDRAMConfig()
 {
 	_hsdram.Init.SDBank				= FMC_SDRAM_BANK1;
 	_hsdram.Init.ColumnBitsNumber	= FMC_SDRAM_COLUMN_BITS_NUM_8;
@@ -27,7 +27,7 @@ void LKCoreSDRAM::setupSDRAMConfig()
 	_hsdram.Init.ReadPipeDelay		= FMC_SDRAM_RPIPE_DELAY_0;
 }
 
-FMC_SDRAM_TimingTypeDef LKCoreSDRAM::setupTimingConfig()
+FMC_SDRAM_TimingTypeDef CoreSDRAM::setupTimingConfig()
 {
 	FMC_SDRAM_TimingTypeDef timing;
 
@@ -43,7 +43,7 @@ FMC_SDRAM_TimingTypeDef LKCoreSDRAM::setupTimingConfig()
 	return timing;
 }
 
-DMA_HandleTypeDef LKCoreSDRAM::setupDMA()
+DMA_HandleTypeDef CoreSDRAM::setupDMA()
 {
 	DMA_HandleTypeDef hdma;
 
@@ -65,7 +65,7 @@ DMA_HandleTypeDef LKCoreSDRAM::setupDMA()
 	return hdma;
 }
 
-uint8_t LKCoreSDRAM::initialize(void)
+uint8_t CoreSDRAM::initialize(void)
 {
 	static uint8_t sdram_status = sdram::status::error;
 
@@ -86,7 +86,7 @@ uint8_t LKCoreSDRAM::initialize(void)
 	return sdram_status;
 }
 
-void LKCoreSDRAM::initializeController()
+void CoreSDRAM::initializeController()
 {
 	GPIO_InitTypeDef gpio_init_structure;
 
@@ -160,7 +160,7 @@ void LKCoreSDRAM::initializeController()
 	_hal.HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
 }
 
-void LKCoreSDRAM::initializationSequence()
+void CoreSDRAM::initializationSequence()
 {
 	FMC_SDRAM_CommandTypeDef command;
 
@@ -213,7 +213,7 @@ void LKCoreSDRAM::initializationSequence()
 	_hal.HAL_SDRAM_ProgramRefreshRate(&_hsdram, sdram::refresh_count);
 }
 
-SDRAM_HandleTypeDef LKCoreSDRAM::getHandle(void) const
+SDRAM_HandleTypeDef CoreSDRAM::getHandle(void) const
 {
 	return _hsdram;
 }

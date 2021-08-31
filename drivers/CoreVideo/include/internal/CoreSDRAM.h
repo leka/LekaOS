@@ -12,10 +12,10 @@
 
 namespace leka {
 
-class LKCoreSDRAM : public LKCoreSDRAMBase
+class CoreSDRAM : public LKCoreSDRAMBase
 {
   public:
-	explicit LKCoreSDRAM(LKCoreSTM32HalBase &hal);
+	explicit CoreSDRAM(LKCoreSTM32HalBase &hal);
 
 	void setupSDRAMConfig() final;
 	FMC_SDRAM_TimingTypeDef setupTimingConfig(void) final;

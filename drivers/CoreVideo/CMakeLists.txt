@@ -23,7 +23,7 @@ target_sources(CoreVideo
 	source/LKCoreLCD.cpp
 	source/LKCoreLTDC.cpp
 	source/LKCoreLCDDriverOTM8009A.cpp
-	source/LKCoreSDRAM.cpp
+	source/CoreSDRAM.cpp
 	source/LKCoreVideo.cpp
 	external/source/st_jpeg_utils.cpp
 )
@@ -49,7 +49,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/LKCoreLCD_test.cpp
 		tests/LKCoreLTDC_test.cpp
 		tests/LKCoreLCDDriverOTM8009A_test.cpp
-		tests/LKCoreSDRAM_test.cpp
+		tests/CoreSDRAM_test.cpp
 		tests/LKCoreVideo_test.cpp
 	)
 

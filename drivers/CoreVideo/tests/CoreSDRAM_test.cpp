@@ -2,7 +2,7 @@
 // // Copyright 2021 APF France handicap
 // // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreSDRAM.h"
+#include "CoreSDRAM.h"
 
 #include "gtest/gtest.h"
 #include "mocks/leka/LKCoreSTM32Hal.h"
@@ -13,16 +13,16 @@ using ::testing::AnyNumber;
 using ::testing::InSequence;
 using ::testing::Return;
 
-class LKCoreSDRAMTest : public ::testing::Test
+class CoreSDRAMTest : public ::testing::Test
 {
   protected:
-	LKCoreSDRAMTest() : coresdram(halmock) {}
+	CoreSDRAMTest() : coresdram(halmock) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
 	LKCoreSTM32HalMock halmock;
-	LKCoreSDRAM coresdram;
+	CoreSDRAM coresdram;
 
 	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call
 	// TODO: Remove them in the future
@@ -45,19 +45,19 @@ class LKCoreSDRAMTest : public ::testing::Test
 	};
 };
 
-TEST_F(LKCoreSDRAMTest, instantiation)
+TEST_F(CoreSDRAMTest, instantiation)
 {
 	ASSERT_NE(&coresdram, nullptr);
 }
 
-TEST_F(LKCoreSDRAMTest, handleConfigurationInstance)
+TEST_F(CoreSDRAMTest, handleConfigurationInstance)
 {
 	auto handle = coresdram.getHandle();
 
 	ASSERT_EQ(handle.Instance, FMC_SDRAM_DEVICE);
 }
 
-TEST_F(LKCoreSDRAMTest, setupSDRAMConfiguration)
+TEST_F(CoreSDRAMTest, setupSDRAMConfiguration)
 {
 	coresdram.setupSDRAMConfig();
 	auto handle = coresdram.getHandle();
@@ -74,7 +74,7 @@ TEST_F(LKCoreSDRAMTest, setupSDRAMConfiguration)
 	ASSERT_EQ(handle.Init.ReadPipeDelay, FMC_SDRAM_RPIPE_DELAY_0);
 }
 
-TEST_F(LKCoreSDRAMTest, setupTimingConfiguration)
+TEST_F(CoreSDRAMTest, setupTimingConfiguration)
 {
 	FMC_SDRAM_TimingTypeDef actual_timing = coresdram.setupTimingConfig();
 
@@ -87,7 +87,7 @@ TEST_F(LKCoreSDRAMTest, setupTimingConfiguration)
 	ASSERT_EQ(actual_timing.RCDDelay, 2);
 }
 
-TEST_F(LKCoreSDRAMTest, setupDMA)
+TEST_F(CoreSDRAMTest, setupDMA)
 {
 	DMA_HandleTypeDef actual_dma = coresdram.setupDMA();
 
@@ -106,7 +106,7 @@ TEST_F(LKCoreSDRAMTest, setupDMA)
 	ASSERT_EQ(actual_dma.Init.PeriphBurst, DMA_PBURST_SINGLE);
 }
 
-TEST_F(LKCoreSDRAMTest, initializeController)
+TEST_F(CoreSDRAMTest, initializeController)
 {
 	{
 		InSequence seq;
@@ -139,7 +139,7 @@ TEST_F(LKCoreSDRAMTest, initializeController)
 	coresdram.initializeController();
 }
 
-TEST_F(LKCoreSDRAMTest, initializationSequence)
+TEST_F(CoreSDRAMTest, initializationSequence)
 {
 	{
 		InSequence seq;
@@ -151,7 +151,7 @@ TEST_F(LKCoreSDRAMTest, initializationSequence)
 	coresdram.initializationSequence();
 }
 
-TEST_F(LKCoreSDRAMTest, initializeSDRAMInitSuccess)
+TEST_F(CoreSDRAMTest, initializeSDRAMInitSuccess)
 {
 	{
 		InSequence seq;
@@ -168,7 +168,7 @@ TEST_F(LKCoreSDRAMTest, initializeSDRAMInitSuccess)
 	ASSERT_EQ(actual_status, sdram::status::ok);
 }
 
-TEST_F(LKCoreSDRAMTest, initializeSDRAMInitFailed)
+TEST_F(CoreSDRAMTest, initializeSDRAMInitFailed)
 {
 	{
 		InSequence seq;
