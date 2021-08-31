@@ -7,12 +7,12 @@
 #ifndef _LEKA_OS_LIB_SDRAM_H_
 #define _LEKA_OS_LIB_SDRAM_H_
 
-#include "LKCoreSDRAMBase.h"
 #include "LKCoreSTM32HalBase.h"
+#include "interface/CoreSDRAM.h"
 
 namespace leka {
 
-class CoreSDRAM : public LKCoreSDRAMBase
+class CoreSDRAM : public interface::CoreSDRAM
 {
   public:
 	explicit CoreSDRAM(LKCoreSTM32HalBase &hal);

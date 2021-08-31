@@ -9,9 +9,9 @@
 
 #include "stm32f7xx_hal.h"
 
-namespace leka {
+namespace leka::interface {
 
-class LKCoreSDRAMBase
+class CoreSDRAM
 {
   public:
 	virtual void setupSDRAMConfig()							= 0;
@@ -23,6 +23,6 @@ class LKCoreSDRAMBase
 	virtual void initializationSequence(void) = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface
 
 #endif
