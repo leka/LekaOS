@@ -7,7 +7,7 @@
 
 #include "drivers/PwmOut.h"
 
-#include "LKCoreDSI.h"
+#include "LKCoreDSIBase.h"
 #include "LKCoreLCDDriverBase.h"
 
 namespace leka {

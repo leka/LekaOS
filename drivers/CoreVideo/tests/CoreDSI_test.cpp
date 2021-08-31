@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreDSI.h"
+#include "CoreDSI.h"
 
 #include "corevideo_config.h"
 #include "gtest/gtest.h"
@@ -12,31 +12,31 @@ using namespace leka;
 using ::testing::_;
 using ::testing::InSequence;
 
-class LKCoreDSITest : public ::testing::Test
+class CoreDSITest : public ::testing::Test
 {
   protected:
-	LKCoreDSITest() : coredsi(halmock) {}
+	CoreDSITest() : coredsi(halmock) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
 	LKCoreSTM32HalMock halmock;
-	LKCoreDSI coredsi;
+	CoreDSI coredsi;
 };
 
-TEST_F(LKCoreDSITest, instantiation)
+TEST_F(CoreDSITest, instantiation)
 {
 	ASSERT_NE(&coredsi, nullptr);
 }
 
-TEST_F(LKCoreDSITest, handleConfigurationInstance)
+TEST_F(CoreDSITest, handleConfigurationInstance)
 {
 	auto handle = coredsi.getHandle();
 
 	ASSERT_EQ(handle.Instance, DSI);
 }
 
-TEST_F(LKCoreDSITest, handleConfigurationInit)
+TEST_F(CoreDSITest, handleConfigurationInit)
 {
 	auto handle = coredsi.getHandle();
 
@@ -44,7 +44,7 @@ TEST_F(LKCoreDSITest, handleConfigurationInit)
 	ASSERT_EQ(handle.Init.TXEscapeCkdiv, dsi::txEscapeClockDiv);
 }
 
-TEST_F(LKCoreDSITest, handleConfigurationVideoConfigGeneral)
+TEST_F(CoreDSITest, handleConfigurationVideoConfigGeneral)
 {
 	auto config = coredsi.getConfig();
 
@@ -59,7 +59,7 @@ TEST_F(LKCoreDSITest, handleConfigurationVideoConfigGeneral)
 	ASSERT_EQ(config.PacketSize, lcd::property.HACT);
 }
 
-TEST_F(LKCoreDSITest, handleConfigurationVideoConfigHorizontal)
+TEST_F(CoreDSITest, handleConfigurationVideoConfigHorizontal)
 {
 	auto config = coredsi.getConfig();
 
@@ -74,7 +74,7 @@ TEST_F(LKCoreDSITest, handleConfigurationVideoConfigHorizontal)
 	ASSERT_EQ(config.HorizontalLine, horizontalLine);
 }
 
-TEST_F(LKCoreDSITest, handleConfigurationVideoConfigVertical)
+TEST_F(CoreDSITest, handleConfigurationVideoConfigVertical)
 {
 	auto config = coredsi.getConfig();
 
@@ -84,7 +84,7 @@ TEST_F(LKCoreDSITest, handleConfigurationVideoConfigVertical)
 	ASSERT_EQ(config.VerticalActive, lcd::property.VACT);
 }
 
-TEST_F(LKCoreDSITest, handleConfigurationVideoConfigLowPower)
+TEST_F(CoreDSITest, handleConfigurationVideoConfigLowPower)
 {
 	auto config = coredsi.getConfig();
 
@@ -99,7 +99,7 @@ TEST_F(LKCoreDSITest, handleConfigurationVideoConfigLowPower)
 	ASSERT_EQ(config.LPVerticalSyncActiveEnable, DSI_LP_VSYNC_ENABLE);
 }
 
-TEST_F(LKCoreDSITest, initializationSequence)
+TEST_F(CoreDSITest, initializationSequence)
 {
 	{
 		InSequence seq;
@@ -111,14 +111,14 @@ TEST_F(LKCoreDSITest, initializationSequence)
 	coredsi.initialize();
 }
 
-TEST_F(LKCoreDSITest, start)
+TEST_F(CoreDSITest, start)
 {
 	EXPECT_CALL(halmock, HAL_DSI_Start).Times(1);
 
 	coredsi.start();
 }
 
-TEST_F(LKCoreDSITest, resetSequence)
+TEST_F(CoreDSITest, resetSequence)
 {
 	{
 		InSequence seq;
@@ -130,7 +130,7 @@ TEST_F(LKCoreDSITest, resetSequence)
 	coredsi.reset();
 }
 
-TEST_F(LKCoreDSITest, ioWriteShortCommand)
+TEST_F(CoreDSITest, ioWriteShortCommand)
 {
 	uint8_t command[] = {0x2A, 0x2B};
 	auto config		  = coredsi.getConfig();
@@ -141,7 +141,7 @@ TEST_F(LKCoreDSITest, ioWriteShortCommand)
 	coredsi.write(command, std::size(command));
 }
 
-TEST_F(LKCoreDSITest, ioWriteLongCommand)
+TEST_F(CoreDSITest, ioWriteLongCommand)
 {
 	auto config = coredsi.getConfig();
 

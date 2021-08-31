@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreDSI.h"
+#include "CoreDSI.h"
 
 #include "rtos/ThisThread.h"
 
@@ -12,7 +12,7 @@ using namespace std::chrono;
 
 namespace leka {
 
-LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
+CoreDSI::CoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 {
 	// Base address of DSI Host/Wrapper registers to be set before calling De-Init
 	_hdsi.Instance = DSI;
@@ -62,7 +62,7 @@ LKCoreDSI::LKCoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 	_config.LPVerticalSyncActiveEnable	 = DSI_LP_VSYNC_ENABLE;	  // Allow sending LP commands during VSync = VSA period
 }
 
-void LKCoreDSI::initialize()
+void CoreDSI::initialize()
 {
 	DSI_PLLInitTypeDef dsiPllInit;
 
@@ -81,12 +81,12 @@ void LKCoreDSI::initialize()
 	_hal.HAL_DSI_ConfigVideoMode(&_hdsi, &_config);
 }
 
-void LKCoreDSI::start()
+void CoreDSI::start()
 {
 	_hal.HAL_DSI_Start(&_hdsi);
 }
 
-void LKCoreDSI::reset(void)
+void CoreDSI::reset(void)
 {
 	// Reset DSI configuration
 	// DO NOT CHANGE this function
@@ -115,17 +115,17 @@ void LKCoreDSI::reset(void)
 	rtos::ThisThread::sleep_for(10ms);
 }
 
-DSI_HandleTypeDef LKCoreDSI::getHandle() const
+DSI_HandleTypeDef CoreDSI::getHandle() const
 {
 	return _hdsi;
 }
 
-DSI_VidCfgTypeDef LKCoreDSI::getConfig()
+DSI_VidCfgTypeDef CoreDSI::getConfig()
 {
 	return _config;
 }
 
-void LKCoreDSI::write(const uint8_t *data, const uint32_t size)
+void CoreDSI::write(const uint8_t *data, const uint32_t size)
 {
 	if (size <= 2) {
 		_hal.HAL_DSI_ShortWrite(&_hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, data[0], data[1]);

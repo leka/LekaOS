@@ -10,11 +10,11 @@
 #include "rtos/Thread.h"
 
 #include "CoreDMA2D.h"
+#include "CoreDSI.h"
 #include "CoreLTDC.h"
 #include "CoreSDRAM.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
-#include "LKCoreDSI.h"
 #include "LKCoreFatFs.h"
 #include "LKCoreFont.h"
 #include "LKCoreGraphics.h"
@@ -39,7 +39,7 @@ CGPixel pixel(corell);
 LKCoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);
 CoreDMA2D coredma2d(hal);
-LKCoreDSI coredsi(hal);
+CoreDSI coredsi(hal);
 CoreLTDC coreltdc(hal, coredsi);
 LKCoreGraphics coregraphics(coredma2d);
 LKCoreFont corefont(pixel);
