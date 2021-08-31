@@ -2,13 +2,13 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreGraphics.h"
+#include "CoreGraphics.h"
 
 namespace leka {
 
-LKCoreGraphics::LKCoreGraphics(interface::CoreDMA2D &dma2d) : _dma2d(dma2d) {}
+CoreGraphics::CoreGraphics(interface::CoreDMA2D &dma2d) : _dma2d(dma2d) {}
 
-void LKCoreGraphics::clearScreen(CGColor color)
+void CoreGraphics::clearScreen(CGColor color)
 {
 	FilledRectangle rect;
 	rect.width	= lcd::dimension.width;
@@ -17,7 +17,7 @@ void LKCoreGraphics::clearScreen(CGColor color)
 	drawRectangle(rect, color);
 }
 
-void LKCoreGraphics::drawRectangle(FilledRectangle rectangle, CGColor color)
+void CoreGraphics::drawRectangle(FilledRectangle rectangle, CGColor color)
 {
 	uintptr_t destination_address =
 		lcd::frame_buffer_address + 4 * (lcd::dimension.width * rectangle.origin.y + rectangle.origin.x);

@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreGraphics.h"
+#include "CoreGraphics.h"
 
 #include "corevideo_config.h"
 #include "gtest/gtest.h"
@@ -11,24 +11,24 @@
 using namespace leka;
 using ::testing::_;
 
-class LKCoreGraphicsTest : public ::testing::Test
+class CoreGraphicsTest : public ::testing::Test
 {
   protected:
-	LKCoreGraphicsTest() : graphics(dma2dmock) {}
+	CoreGraphicsTest() : graphics(dma2dmock) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
 	CoreDMA2DMock dma2dmock;
-	LKCoreGraphics graphics;
+	CoreGraphics graphics;
 };
 
-TEST_F(LKCoreGraphicsTest, instantiation)
+TEST_F(CoreGraphicsTest, instantiation)
 {
 	ASSERT_NE(&graphics, nullptr);
 }
 
-TEST_F(LKCoreGraphicsTest, drawRectangle)
+TEST_F(CoreGraphicsTest, drawRectangle)
 {
 	// ENHANCEMENT: Do for any origin and any width/height
 
@@ -39,7 +39,7 @@ TEST_F(LKCoreGraphicsTest, drawRectangle)
 	auto rectangle_height	   = 40;
 	auto expected_color		   = CGColor::magenta;
 
-	LKCoreGraphics::FilledRectangle rectangle;
+	CoreGraphics::FilledRectangle rectangle;
 	rectangle.origin.x = starting_pixel_column;
 	rectangle.origin.y = starting_pixel_line;
 	rectangle.width	   = rectangle_width;
@@ -55,7 +55,7 @@ TEST_F(LKCoreGraphicsTest, drawRectangle)
 	graphics.drawRectangle(rectangle, CGColor::magenta);
 }
 
-TEST_F(LKCoreGraphicsTest, clearScreenDefaultColor)
+TEST_F(CoreGraphicsTest, clearScreenDefaultColor)
 {
 	uintptr_t expected_address = lcd::frame_buffer_address + 0;
 	auto expected_color		   = CGColor::white;
@@ -67,7 +67,7 @@ TEST_F(LKCoreGraphicsTest, clearScreenDefaultColor)
 	graphics.clearScreen();
 }
 
-TEST_F(LKCoreGraphicsTest, clearScreenOtherColor)
+TEST_F(CoreGraphicsTest, clearScreenOtherColor)
 {
 	uintptr_t expected_address = lcd::frame_buffer_address + 0;
 	auto expected_color		   = CGColor::magenta;

@@ -15,7 +15,7 @@ target_sources(CoreVideo
   PRIVATE
 	source/CoreDMA2D.cpp
 	source/LKCoreFont.cpp
-	source/LKCoreGraphics.cpp
+	source/CoreGraphics.cpp
 	source/CoreJPEG.cpp
 	source/CoreLTDC.cpp
 	source/CoreDSI.cpp
@@ -42,7 +42,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/CoreDMA2D_test.cpp
 		tests/CoreDSI_test.cpp
 		tests/LKCoreFont_test.cpp
-		tests/LKCoreGraphics_test.cpp
+		tests/CoreGraphics_test.cpp
 		tests/CoreJPEG_test.cpp
 		tests/CoreLCD_test.cpp
 		tests/CoreLTDC_test.cpp
