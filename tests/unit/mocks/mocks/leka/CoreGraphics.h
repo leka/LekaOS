@@ -10,7 +10,7 @@
 
 namespace leka {
 
-class LKCoreGraphicsMock : public interface::CoreGraphics
+class CoreGraphicsMock : public interface::CoreGraphics
 {
   public:
 	MOCK_METHOD(void, clearScreen, (CGColor color), (override));
