@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_DSI_MOCK_H_
 #define _LEKA_OS_DSI_MOCK_H_
 
-#include "LKCoreDSIBase.h"
 #include "gmock/gmock.h"
+#include "interface/CoreDSI.h"
 
 namespace leka {
 
-class LKCoreDSIMock : public LKCoreDSIBase
+class LKCoreDSIMock : public interface::CoreDSI
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));

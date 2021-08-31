@@ -5,13 +5,13 @@
 #ifndef _LEKA_OS_DRIVER_LKCOREVIDEO_H_
 #define _LEKA_OS_DRIVER_LKCOREVIDEO_H_
 
-#include "LKCoreDSIBase.h"
 #include "LKCoreFontBase.h"
 #include "LKCoreGraphicsBase.h"
 #include "LKCoreJPEGBase.h"
 #include "LKCoreLCDBase.h"
 #include "LKCoreSTM32HalBase.h"
 #include "interface/CoreDMA2D.h"
+#include "interface/CoreDSI.h"
 #include "interface/CoreLTDC.h"
 #include "interface/CoreSDRAM.h"
 
@@ -21,7 +21,7 @@ class LKCoreVideo
 {
   public:
 	LKCoreVideo(LKCoreSTM32HalBase &hal, interface::CoreSDRAM &coresdram, interface::CoreDMA2D &coredma2d,
-				LKCoreDSIBase &coredsi, interface::CoreLTDC &coreltdc, LKCoreLCDBase &corelcd,
+				interface::CoreDSI &coredsi, interface::CoreLTDC &coreltdc, LKCoreLCDBase &corelcd,
 				LKCoreGraphicsBase &coregraphics, LKCoreFontBase &corefont, LKCoreJPEGBase &corejpeg);
 
 	void initialize(void);
@@ -41,7 +41,7 @@ class LKCoreVideo
 	LKCoreSTM32HalBase &_hal;
 	interface::CoreSDRAM &_coresdram;
 	interface::CoreDMA2D &_coredma2d;
-	LKCoreDSIBase &_coredsi;
+	interface::CoreDSI &_coredsi;
 	interface::CoreLTDC &_coreltdc;
 	LKCoreLCDBase &_corelcd;
 	LKCoreGraphicsBase &_coregraphics;

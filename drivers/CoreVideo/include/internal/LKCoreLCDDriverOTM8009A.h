@@ -7,8 +7,8 @@
 
 #include "drivers/PwmOut.h"
 
-#include "LKCoreDSIBase.h"
 #include "LKCoreLCDDriverBase.h"
+#include "interface/CoreDSI.h"
 
 namespace leka {
 
@@ -18,7 +18,7 @@ namespace leka {
 class LKCoreLCDDriverOTM8009A : public LKCoreLCDDriverBase
 {
   public:
-	LKCoreLCDDriverOTM8009A(LKCoreDSIBase &dsi, PinName backlight) : _dsi {dsi}, _backlight {backlight} {};
+	LKCoreLCDDriverOTM8009A(interface::CoreDSI &dsi, PinName backlight) : _dsi {dsi}, _backlight {backlight} {};
 
 	void initialize() final;
 	void setLandscapeOrientation() final;
@@ -29,7 +29,7 @@ class LKCoreLCDDriverOTM8009A : public LKCoreLCDDriverBase
 	void setBrightness(float value) final;
 
   private:
-	LKCoreDSIBase &_dsi;
+	interface::CoreDSI &_dsi;
 	mbed::PwmOut _backlight;
 };
 

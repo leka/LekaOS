@@ -7,12 +7,12 @@
 
 #include "stm32f7xx_hal.h"
 
-namespace leka {
+namespace leka::interface {
 
-class LKCoreDSIBase
+class CoreDSI
 {
   public:
-	virtual ~LKCoreDSIBase() = default;
+	virtual ~CoreDSI() = default;
 
 	virtual void initialize() = 0;
 	virtual void start()	  = 0;
@@ -23,6 +23,6 @@ class LKCoreDSIBase
 	virtual void write(const uint8_t *data, const uint32_t size) = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface
 
 #endif	 // _LEKA_OS_DRIVER_DSI_BASE_H_

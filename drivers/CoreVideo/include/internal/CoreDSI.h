@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_DRIVER_DSI_H_
 #define _LEKA_OS_DRIVER_DSI_H_
 
-#include "LKCoreDSIBase.h"
 #include "LKCoreSTM32HalBase.h"
+#include "interface/CoreDSI.h"
 
 namespace leka {
 
-class CoreDSI : public LKCoreDSIBase
+class CoreDSI : public interface::CoreDSI
 {
   public:
 	explicit CoreDSI(LKCoreSTM32HalBase &hal);
