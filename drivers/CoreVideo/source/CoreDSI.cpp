@@ -6,7 +6,7 @@
 
 #include "rtos/ThisThread.h"
 
-#include "corevideo_config.h"
+#include "internal/corevideo_config.h"
 
 using namespace std::chrono;
 

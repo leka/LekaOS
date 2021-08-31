@@ -4,8 +4,8 @@
 
 #include "CoreDMA2D.h"
 
-#include "corevideo_config.h"
 #include "gtest/gtest.h"
+#include "internal/corevideo_config.h"
 #include "mocks/leka/LKCoreSTM32Hal.h"
 
 using namespace leka;

@@ -5,8 +5,8 @@
 #include "CoreFont.h"
 
 #include "LKFont.h"
-#include "corevideo_config.h"
 #include "gtest/gtest.h"
+#include "internal/corevideo_config.h"
 #include "mocks/leka/LKCoreLL.h"
 
 using namespace leka;
