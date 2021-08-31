@@ -6,7 +6,7 @@
 
 #include "LKCoreLCDDriverOTM8009A.h"
 #include "gtest/gtest.h"
-#include "mocks/leka/LKCoreDSI.h"
+#include "mocks/leka/CoreDSI.h"
 #include "mocks/leka/LKCoreSTM32Hal.h"
 #include "stubs/mbed/PwmOut.h"
 
@@ -25,7 +25,7 @@ class LKCoreOTM8009ATest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	LKCoreDSIMock dsimock;
+	CoreDSIMock dsimock;
 	LKCoreLCDDriverOTM8009A otm;
 };
 

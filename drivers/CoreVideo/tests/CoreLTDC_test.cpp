@@ -6,7 +6,7 @@
 
 #include "corevideo_config.h"
 #include "gtest/gtest.h"
-#include "mocks/leka/LKCoreDSI.h"
+#include "mocks/leka/CoreDSI.h"
 #include "mocks/leka/LKCoreSTM32Hal.h"
 
 using namespace leka;
@@ -25,7 +25,7 @@ class CoreLTDCTest : public ::testing::Test
 	// void TearDown() override {}
 
 	LKCoreSTM32HalMock halmock;
-	LKCoreDSIMock dsimock;
+	CoreDSIMock dsimock;
 	CoreLTDC coreltdc;
 };
 

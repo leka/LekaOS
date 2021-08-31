@@ -10,7 +10,7 @@
 
 namespace leka {
 
-class LKCoreDSIMock : public interface::CoreDSI
+class CoreDSIMock : public interface::CoreDSI
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));
