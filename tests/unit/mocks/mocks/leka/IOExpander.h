@@ -10,15 +10,15 @@
 
 namespace leka::mock {
 
-template <typename PinType>
-class IOExpander : public interface::IOExpander<PinType>
+template <typename pin_underlying_type_t>
+class IOExpander : public interface::IOExpander<pin_underlying_type_t>
 {
   public:
-	MOCK_METHOD(void, setPinAsInput, (PinType), (override));
-	MOCK_METHOD(int, readInputPin, (PinType), (override));
+	MOCK_METHOD(void, setPinAsInput, (pin_underlying_type_t), (override));
+	MOCK_METHOD(int, readInputPin, (pin_underlying_type_t), (override));
 
-	MOCK_METHOD(void, setModeForPin, (PinType, PinMode), ());
-	MOCK_METHOD(PinMode, getModeForPin, (PinType), (override));
+	MOCK_METHOD(void, setModeForPin, (pin_underlying_type_t, PinMode), ());
+	MOCK_METHOD(PinMode, getModeForPin, (pin_underlying_type_t), (override));
 };
 
 }	// namespace leka::mock

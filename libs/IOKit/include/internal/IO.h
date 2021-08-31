@@ -2,15 +2,20 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#include <type_traits>
+
 #include "interface/drivers/IOExpander.h"
 
 namespace leka::io::expanded::internal {
 
-template <typename PinType>
+template <typename pin_underlying_type_t>
 class IO
 {
   public:
-	IO(interface::IOExpander<PinType> &expander, PinType pin) : _expander(expander), _pin(pin) {}
+	IO(interface::IOExpander<pin_underlying_type_t> &expander, pin_underlying_type_t pin)
+		: _expander(expander), _pin(pin)
+	{
+	}
 
 	auto read() -> int
 	{
@@ -23,8 +28,8 @@ class IO
 	void setAsInput() { _expander.setPinAsInput(_pin); }
 
   private:
-	interface::IOExpander<PinType> &_expander;
-	PinType _pin;
+	interface::IOExpander<pin_underlying_type_t> &_expander;
+	pin_underlying_type_t _pin;
 };
 
 }	// namespace leka::io::expanded::internal

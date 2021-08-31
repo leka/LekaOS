@@ -6,23 +6,24 @@
 #define _LEKA_OS_INTERFACE_DRIVER_IO_EXPANDER_H_
 
 #include <cstdint>
+#include <type_traits>
 
 #include "PinNames.h"
 
 namespace leka::interface {
 
-template <typename PinType>
+template <typename pin_underlying_type_t>
 class IOExpander
 {
   public:
 	virtual ~IOExpander() = default;
 
-	virtual void setPinAsInput(PinType pin) = 0;
+	virtual void setPinAsInput(pin_underlying_type_t pin) = 0;
 
-	virtual auto readInputPin(PinType pin) -> int = 0;
+	virtual auto readInputPin(pin_underlying_type_t pin) -> int = 0;
 
-	virtual void setModeForPin(PinType pin, PinMode mode) = 0;
-	virtual auto getModeForPin(PinType pin) -> PinMode	  = 0;
+	virtual void setModeForPin(pin_underlying_type_t pin, PinMode mode) = 0;
+	virtual auto getModeForPin(pin_underlying_type_t pin) -> PinMode	= 0;
 };
 
 }	// namespace leka::interface
