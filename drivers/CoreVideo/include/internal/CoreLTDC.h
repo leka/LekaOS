@@ -11,10 +11,10 @@
 
 namespace leka {
 
-class LKCoreLTDC : public LKCoreLTDCBase
+class CoreLTDC : public LKCoreLTDCBase
 {
   public:
-	LKCoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi);
+	CoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi);
 
 	void initialize(void) final;
 

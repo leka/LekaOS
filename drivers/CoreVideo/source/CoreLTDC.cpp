@@ -2,13 +2,13 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreLTDC.h"
+#include "CoreLTDC.h"
 
 #include "corevideo_config.h"
 
 namespace leka {
 
-LKCoreLTDC::LKCoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi) : _hal(hal), _dsi(dsi)
+CoreLTDC::CoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi) : _hal(hal), _dsi(dsi)
 {
 	_hltdc.Instance = LTDC;
 
@@ -54,7 +54,7 @@ LKCoreLTDC::LKCoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi) : _hal(hal),
 	_layerConfig.ImageHeight = lcd::dimension.height;
 }
 
-void LKCoreLTDC::initialize()
+void CoreLTDC::initialize()
 {
 	configurePeriphClock();
 
@@ -73,7 +73,7 @@ void LKCoreLTDC::initialize()
 	_hal.HAL_LTDC_ConfigLayer(&_hltdc, &_layerConfig, 1);
 }
 
-void LKCoreLTDC::configurePeriphClock()
+void CoreLTDC::configurePeriphClock()
 {
 	RCC_PeriphCLKInitTypeDef PeriphClkInitStruct;
 
@@ -92,12 +92,12 @@ void LKCoreLTDC::configurePeriphClock()
 	_hal.HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 }
 
-LTDC_HandleTypeDef LKCoreLTDC::getHandle() const
+LTDC_HandleTypeDef CoreLTDC::getHandle() const
 {
 	return _hltdc;
 }
 
-LTDC_LayerCfgTypeDef LKCoreLTDC::getLayerConfig() const
+LTDC_LayerCfgTypeDef CoreLTDC::getLayerConfig() const
 {
 	return _layerConfig;
 }

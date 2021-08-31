@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreLTDC.h"
+#include "CoreLTDC.h"
 
 #include "corevideo_config.h"
 #include "gtest/gtest.h"
@@ -16,32 +16,32 @@ using ::testing::InSequence;
 using ::testing::Pointee;
 using ::testing::Property;
 
-class LKCoreLTDCTest : public ::testing::Test
+class CoreLTDCTest : public ::testing::Test
 {
   protected:
-	LKCoreLTDCTest() : coreltdc(halmock, dsimock) {}
+	CoreLTDCTest() : coreltdc(halmock, dsimock) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
 	LKCoreSTM32HalMock halmock;
 	LKCoreDSIMock dsimock;
-	LKCoreLTDC coreltdc;
+	CoreLTDC coreltdc;
 };
 
-TEST_F(LKCoreLTDCTest, instantiation)
+TEST_F(CoreLTDCTest, instantiation)
 {
 	ASSERT_NE(&coreltdc, nullptr);
 }
 
-TEST_F(LKCoreLTDCTest, handleConfigurationInstance)
+TEST_F(CoreLTDCTest, handleConfigurationInstance)
 {
 	auto handle = coreltdc.getHandle();
 
 	ASSERT_EQ(handle.Instance, LTDC);
 }
 
-TEST_F(LKCoreLTDCTest, handleConfigurationLayerCfg)
+TEST_F(CoreLTDCTest, handleConfigurationLayerCfg)
 {
 	auto handle = coreltdc.getHandle();
 
@@ -49,7 +49,7 @@ TEST_F(LKCoreLTDCTest, handleConfigurationLayerCfg)
 	ASSERT_EQ(handle.LayerCfg->ImageHeight, lcd::dimension.height);
 }
 
-TEST_F(LKCoreLTDCTest, handleConfigurationSetupTimingConfig)
+TEST_F(CoreLTDCTest, handleConfigurationSetupTimingConfig)
 {
 	auto handle = coreltdc.getHandle();
 
@@ -64,7 +64,7 @@ TEST_F(LKCoreLTDCTest, handleConfigurationSetupTimingConfig)
 	ASSERT_EQ(handle.Init.TotalWidth, total_width);
 }
 
-TEST_F(LKCoreLTDCTest, handleConfigurationSetupBackgroundConfig)
+TEST_F(CoreLTDCTest, handleConfigurationSetupBackgroundConfig)
 {
 	auto handle = coreltdc.getHandle();
 
@@ -74,7 +74,7 @@ TEST_F(LKCoreLTDCTest, handleConfigurationSetupBackgroundConfig)
 	ASSERT_EQ(handle.Init.PCPolarity, LTDC_PCPOLARITY_IPC);
 }
 
-TEST_F(LKCoreLTDCTest, setupLayerConfig)
+TEST_F(CoreLTDCTest, setupLayerConfig)
 {
 	auto layer_config = coreltdc.getLayerConfig();
 
@@ -118,7 +118,7 @@ MATCHER_P(WithStructEqualTo, expected, "Compare RCC_PeriphCLKInitTypeDef")
 	return true;
 }
 
-TEST_F(LKCoreLTDCTest, initializationSequence)
+TEST_F(CoreLTDCTest, initializationSequence)
 {
 	uint8_t default_layer_id = 1;	// Foreground
 

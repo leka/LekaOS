@@ -10,6 +10,7 @@
 
 #include "BouncingSquare.h"
 #include "CoreDMA2D.h"
+#include "CoreLTDC.h"
 #include "CoreSDRAM.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
@@ -22,7 +23,6 @@
 #include "LKCoreLCD.h"
 #include "LKCoreLCDDriverOTM8009A.h"
 #include "LKCoreLL.h"
-#include "LKCoreLTDC.h"
 #include "LKCoreSTM32Hal.h"
 #include "LKCoreVideo.h"
 #include "LogKit.h"
@@ -43,7 +43,7 @@ LKCoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);
 CoreDMA2D coredma2d(hal);
 LKCoreDSI coredsi(hal);
-LKCoreLTDC coreltdc(hal, coredsi);
+CoreLTDC coreltdc(hal, coredsi);
 LKCoreGraphics coregraphics(coredma2d);
 LKCoreFont corefont(pixel);
 LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
