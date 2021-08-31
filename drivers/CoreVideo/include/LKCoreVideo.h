@@ -6,10 +6,10 @@
 #define _LEKA_OS_DRIVER_LKCOREVIDEO_H_
 
 #include "LKCoreFontBase.h"
-#include "LKCoreGraphicsBase.h"
 #include "LKCoreSTM32HalBase.h"
 #include "interface/CoreDMA2D.h"
 #include "interface/CoreDSI.h"
+#include "interface/CoreGraphics.h"
 #include "interface/CoreJPEG.h"
 #include "interface/CoreLCD.h"
 #include "interface/CoreLTDC.h"
@@ -22,7 +22,7 @@ class LKCoreVideo
   public:
 	LKCoreVideo(LKCoreSTM32HalBase &hal, interface::CoreSDRAM &coresdram, interface::CoreDMA2D &coredma2d,
 				interface::CoreDSI &coredsi, interface::CoreLTDC &coreltdc, interface::CoreLCD &corelcd,
-				LKCoreGraphicsBase &coregraphics, LKCoreFontBase &corefont, interface::CoreJPEG &corejpeg);
+				interface::CoreGraphics &coregraphics, LKCoreFontBase &corefont, interface::CoreJPEG &corejpeg);
 
 	void initialize(void);
 
@@ -32,7 +32,7 @@ class LKCoreVideo
 	void setBrightness(float value);
 
 	void clearScreen(CGColor color = CGColor::white);
-	void displayRectangle(LKCoreGraphicsBase::FilledRectangle rectangle, CGColor color);
+	void displayRectangle(interface::CoreGraphics::FilledRectangle rectangle, CGColor color);
 	void displayImage(FIL *file);
 	void displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
 					 CGColor background = CGColor::white);
@@ -44,7 +44,7 @@ class LKCoreVideo
 	interface::CoreDSI &_coredsi;
 	interface::CoreLTDC &_coreltdc;
 	interface::CoreLCD &_corelcd;
-	LKCoreGraphicsBase &_coregraphics;
+	interface::CoreGraphics &_coregraphics;
 	LKCoreFontBase &_corefont;
 	interface::CoreJPEG &_corejpeg;
 };

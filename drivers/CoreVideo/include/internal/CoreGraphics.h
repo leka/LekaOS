@@ -6,14 +6,14 @@
 #define _LEKA_OS_LIB_GRAPHICS_H_
 
 #include "CGColor.h"
-#include "LKCoreGraphicsBase.h"
 #include "LKCoreLL.h"
 #include "corevideo_config.h"
 #include "interface/CoreDMA2D.h"
+#include "interface/CoreGraphics.h"
 
 namespace leka {
 
-class CoreGraphics : public LKCoreGraphicsBase
+class CoreGraphics : public interface::CoreGraphics
 {
   public:
 	explicit CoreGraphics(interface::CoreDMA2D &dma2d);

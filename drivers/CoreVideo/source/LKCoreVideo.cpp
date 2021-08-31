@@ -8,7 +8,7 @@ namespace leka {
 
 LKCoreVideo::LKCoreVideo(LKCoreSTM32HalBase &hal, interface::CoreSDRAM &coresdram, interface::CoreDMA2D &coredma2d,
 						 interface::CoreDSI &coredsi, interface::CoreLTDC &coreltdc, interface::CoreLCD &corelcd,
-						 LKCoreGraphicsBase &coregraphics, LKCoreFontBase &corefont, interface::CoreJPEG &corejpeg)
+						 interface::CoreGraphics &coregraphics, LKCoreFontBase &corefont, interface::CoreJPEG &corejpeg)
 	: _hal(hal),
 	  _coresdram(coresdram),
 	  _coredma2d(coredma2d),
@@ -93,7 +93,7 @@ void LKCoreVideo::clearScreen(CGColor color)
 	_coregraphics.clearScreen(color);
 }
 
-void LKCoreVideo::displayRectangle(LKCoreGraphicsBase::FilledRectangle rectangle, CGColor color)
+void LKCoreVideo::displayRectangle(interface::CoreGraphics::FilledRectangle rectangle, CGColor color)
 {
 	_coregraphics.drawRectangle(rectangle, color);
 }

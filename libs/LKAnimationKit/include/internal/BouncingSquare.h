@@ -10,14 +10,14 @@
 #include <cstdint>
 
 #include "CGAnimation.h"
-#include "LKCoreGraphicsBase.h"
+#include "interface/CoreGraphics.h"
 
 namespace leka::animation {
 
 class BouncingSquare : public interface::CGAnimation
 {
   public:
-	explicit BouncingSquare(LKCoreGraphicsBase &coregraphics);
+	explicit BouncingSquare(interface::CoreGraphics &coregraphics);
 
 	void start(void) final;
 	void run(void) final;
@@ -31,9 +31,9 @@ class BouncingSquare : public interface::CGAnimation
 	void updateSquareColor();
 	void drawSquare();
 
-	LKCoreGraphicsBase &_coregraphics;
+	interface::CoreGraphics &_coregraphics;
 
-	LKCoreGraphicsBase::FilledRectangle _square {{0, 0}, 100, 100};
+	interface::CoreGraphics::FilledRectangle _square {{0, 0}, 100, 100};
 	CGColor _color {.red = 0xFF, .green = 0x00, .blue = 0x00};
 
 	struct Shift {
