@@ -13,7 +13,7 @@ target_include_directories(CoreVideo
 
 target_sources(CoreVideo
   PRIVATE
-	source/LKCoreDMA2D.cpp
+	source/CoreDMA2D.cpp
 	source/LKCoreFont.cpp
 	source/LKCoreGraphics.cpp
 	source/LKCoreJPEG.cpp
@@ -41,7 +41,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/CGColor_test.cpp
 		tests/CGPixel_test.cpp
-		tests/LKCoreDMA2D_test.cpp
+		tests/CoreDMA2D_test.cpp
 		tests/LKCoreDSI_test.cpp
 		tests/LKCoreFont_test.cpp
 		tests/LKCoreGraphics_test.cpp

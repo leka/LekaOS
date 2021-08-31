@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreDMA2D.h"
+#include "CoreDMA2D.h"
 
 #include "corevideo_config.h"
 #include "gtest/gtest.h"
@@ -13,31 +13,31 @@ using ::testing::_;
 using ::testing::InSequence;
 using ::testing::Return;
 
-class LKCoreDMA2DTest : public ::testing::Test
+class CoreDMA2DTest : public ::testing::Test
 {
   protected:
-	LKCoreDMA2DTest() : dma2d(hal) {}
+	CoreDMA2DTest() : dma2d(hal) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
 	LKCoreSTM32HalMock hal;
-	LKCoreDMA2D dma2d;
+	CoreDMA2D dma2d;
 };
 
-TEST_F(LKCoreDMA2DTest, instantiation)
+TEST_F(CoreDMA2DTest, instantiation)
 {
 	ASSERT_NE(&dma2d, nullptr);
 }
 
-TEST_F(LKCoreDMA2DTest, handleConfigurationInstance)
+TEST_F(CoreDMA2DTest, handleConfigurationInstance)
 {
 	auto handle = dma2d.getHandle();
 
 	ASSERT_EQ(handle.Instance, DMA2D);
 }
 
-TEST_F(LKCoreDMA2DTest, handleConfigurationInit)
+TEST_F(CoreDMA2DTest, handleConfigurationInit)
 {
 	auto handle = dma2d.getHandle();
 
@@ -46,7 +46,7 @@ TEST_F(LKCoreDMA2DTest, handleConfigurationInit)
 	ASSERT_EQ(handle.Init.RedBlueSwap, DMA2D_RB_REGULAR);
 }
 
-TEST_F(LKCoreDMA2DTest, handleConfigurationLayerConfig)
+TEST_F(CoreDMA2DTest, handleConfigurationLayerConfig)
 {
 	auto handle = dma2d.getHandle();
 
@@ -63,7 +63,7 @@ TEST_F(LKCoreDMA2DTest, handleConfigurationLayerConfig)
 	ASSERT_EQ(handle.LayerCfg[1].AlphaInverted, DMA2D_REGULAR_ALPHA);
 }
 
-TEST_F(LKCoreDMA2DTest, initializationSequence)
+TEST_F(CoreDMA2DTest, initializationSequence)
 {
 	{
 		InSequence seq;
@@ -74,7 +74,7 @@ TEST_F(LKCoreDMA2DTest, initializationSequence)
 	dma2d.initialize();
 }
 
-TEST_F(LKCoreDMA2DTest, transferDataSequence)
+TEST_F(CoreDMA2DTest, transferDataSequence)
 {
 	{
 		InSequence seq;
@@ -88,7 +88,7 @@ TEST_F(LKCoreDMA2DTest, transferDataSequence)
 	dma2d.transferData(0, 0, 0, 0);
 }
 
-TEST_F(LKCoreDMA2DTest, transferDataWithFailureForHALDMA2DInit)
+TEST_F(CoreDMA2DTest, transferDataWithFailureForHALDMA2DInit)
 {
 	{
 		InSequence seq;
@@ -102,7 +102,7 @@ TEST_F(LKCoreDMA2DTest, transferDataWithFailureForHALDMA2DInit)
 	dma2d.transferData(0, 0, 0, 0);
 }
 
-TEST_F(LKCoreDMA2DTest, transferDataWithFailureForHALDMA2DConfigLayer)
+TEST_F(CoreDMA2DTest, transferDataWithFailureForHALDMA2DConfigLayer)
 {
 	{
 		InSequence seq;
@@ -116,7 +116,7 @@ TEST_F(LKCoreDMA2DTest, transferDataWithFailureForHALDMA2DConfigLayer)
 	dma2d.transferData(0, 0, 0, 0);
 }
 
-TEST_F(LKCoreDMA2DTest, transferDataWithFailureForHALDMA2DStart)
+TEST_F(CoreDMA2DTest, transferDataWithFailureForHALDMA2DStart)
 {
 	{
 		InSequence seq;
@@ -130,7 +130,7 @@ TEST_F(LKCoreDMA2DTest, transferDataWithFailureForHALDMA2DStart)
 	dma2d.transferData(0, 0, 0, 0);
 }
 
-TEST_F(LKCoreDMA2DTest, transferImage)
+TEST_F(CoreDMA2DTest, transferImage)
 {
 	uint16_t image_width  = 800;
 	uint16_t image_height = 480;
@@ -155,7 +155,7 @@ TEST_F(LKCoreDMA2DTest, transferImage)
 	ASSERT_EQ(handle.Init.OutputOffset, 0);
 }
 
-TEST_F(LKCoreDMA2DTest, transferDrawing)
+TEST_F(CoreDMA2DTest, transferDrawing)
 {
 	{
 		InSequence seq;

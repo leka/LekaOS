@@ -9,10 +9,10 @@
 #include "rtos/Thread.h"
 
 #include "BouncingSquare.h"
+#include "CoreDMA2D.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LKAnimationKit.h"
-#include "LKCoreDMA2D.h"
 #include "LKCoreDSI.h"
 #include "LKCoreFatFs.h"
 #include "LKCoreFont.h"
@@ -41,7 +41,7 @@ LKCoreLL corell;
 CGPixel pixel(corell);
 LKCoreSTM32Hal hal;
 LKCoreSDRAM coresdram(hal);
-LKCoreDMA2D coredma2d(hal);
+CoreDMA2D coredma2d(hal);
 LKCoreDSI coredsi(hal);
 LKCoreLTDC coreltdc(hal, coredsi);
 LKCoreGraphics coregraphics(coredma2d);

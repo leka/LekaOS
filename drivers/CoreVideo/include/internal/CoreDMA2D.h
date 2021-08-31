@@ -9,10 +9,10 @@
 
 namespace leka {
 
-class LKCoreDMA2D : public LKCoreDMA2DBase
+class CoreDMA2D : public LKCoreDMA2DBase
 {
   public:
-	explicit LKCoreDMA2D(LKCoreSTM32HalBase &hal);
+	explicit CoreDMA2D(LKCoreSTM32HalBase &hal);
 
 	void initialize() final;
 
