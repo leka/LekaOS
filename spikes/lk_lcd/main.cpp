@@ -18,12 +18,12 @@
 #include "CoreLCDDriverOTM8009A.h"
 #include "CoreLTDC.h"
 #include "CoreSDRAM.h"
+#include "CoreVideo.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LKCoreFatFs.h"
 #include "LKCoreLL.h"
 #include "LKCoreSTM32Hal.h"
-#include "LKCoreVideo.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 
@@ -46,7 +46,7 @@ CoreFont corefont(pixel);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 CoreLCD corelcd(coreotm);
 CoreJPEG corejpeg(hal, coredma2d, corefatfs);
-LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
+CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 const auto filename1 = std::array<char, 32> {"assets/images/Leka/logo.jpg"};
 const auto filename2 = std::array<char, 38> {"assets/images/Leka/emotion-happy.jpg"};

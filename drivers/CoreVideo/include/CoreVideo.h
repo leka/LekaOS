@@ -17,12 +17,12 @@
 
 namespace leka {
 
-class LKCoreVideo
+class CoreVideo
 {
   public:
-	LKCoreVideo(LKCoreSTM32HalBase &hal, interface::CoreSDRAM &coresdram, interface::CoreDMA2D &coredma2d,
-				interface::CoreDSI &coredsi, interface::CoreLTDC &coreltdc, interface::CoreLCD &corelcd,
-				interface::CoreGraphics &coregraphics, interface::CoreFont &corefont, interface::CoreJPEG &corejpeg);
+	CoreVideo(LKCoreSTM32HalBase &hal, interface::CoreSDRAM &coresdram, interface::CoreDMA2D &coredma2d,
+			  interface::CoreDSI &coredsi, interface::CoreLTDC &coreltdc, interface::CoreLCD &corelcd,
+			  interface::CoreGraphics &coregraphics, interface::CoreFont &corefont, interface::CoreJPEG &corejpeg);
 
 	void initialize(void);
 

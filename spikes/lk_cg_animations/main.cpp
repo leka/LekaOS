@@ -18,13 +18,13 @@
 #include "CoreLCDDriverOTM8009A.h"
 #include "CoreLTDC.h"
 #include "CoreSDRAM.h"
+#include "CoreVideo.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LKAnimationKit.h"
 #include "LKCoreFatFs.h"
 #include "LKCoreLL.h"
 #include "LKCoreSTM32Hal.h"
-#include "LKCoreVideo.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 
@@ -49,7 +49,7 @@ CoreFont corefont(pixel);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 CoreLCD corelcd(coreotm);
 CoreJPEG corejpeg(hal, coredma2d, corefatfs);
-LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
+CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 rtos::Thread animation_thread;
 events::EventQueue animation_event_queue;

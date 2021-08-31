@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreVideo.h"
+#include "CoreVideo.h"
 
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreDMA2D.h"
@@ -19,10 +19,10 @@ using namespace leka;
 using ::testing::_;
 using ::testing::InSequence;
 
-class LKCoreVideoTest : public ::testing::Test
+class CoreVideoTest : public ::testing::Test
 {
   protected:
-	LKCoreVideoTest()
+	CoreVideoTest()
 		: corevideo(halmock, sdrammock, dma2dmock, dsimock, ltdcmock, lcdmock, graphicsmock, fontmock, jpegmock)
 	{
 	}
@@ -40,7 +40,7 @@ class LKCoreVideoTest : public ::testing::Test
 	CoreFontMock fontmock;
 	CoreJPEGMock jpegmock;
 
-	LKCoreVideo corevideo;
+	CoreVideo corevideo;
 };
 
 MATCHER_P(compareColor, expected_color, "")
@@ -64,12 +64,12 @@ MATCHER_P(compareFilledRectangle, expected_rectangle, "")
 	return (same_origin && same_dimensions);
 }
 
-TEST_F(LKCoreVideoTest, instantiation)
+TEST_F(CoreVideoTest, instantiation)
 {
 	ASSERT_NE(&corevideo, nullptr);
 }
 
-TEST_F(LKCoreVideoTest, initialization)
+TEST_F(CoreVideoTest, initialization)
 {
 	{
 		InSequence seq;
@@ -103,21 +103,21 @@ TEST_F(LKCoreVideoTest, initialization)
 	corevideo.initialize();
 }
 
-TEST_F(LKCoreVideoTest, turnOff)
+TEST_F(CoreVideoTest, turnOff)
 {
 	EXPECT_CALL(lcdmock, turnOff).Times(1);
 
 	corevideo.turnOff();
 }
 
-TEST_F(LKCoreVideoTest, turnOn)
+TEST_F(CoreVideoTest, turnOn)
 {
 	EXPECT_CALL(lcdmock, turnOn).Times(1);
 
 	corevideo.turnOn();
 }
 
-TEST_F(LKCoreVideoTest, setBrightness)
+TEST_F(CoreVideoTest, setBrightness)
 {
 	float brightness_value;
 
@@ -126,14 +126,14 @@ TEST_F(LKCoreVideoTest, setBrightness)
 	corevideo.setBrightness(brightness_value);
 }
 
-TEST_F(LKCoreVideoTest, clearScreen)
+TEST_F(CoreVideoTest, clearScreen)
 {
 	EXPECT_CALL(graphicsmock, clearScreen).Times(1);
 
 	corevideo.clearScreen();
 }
 
-TEST_F(LKCoreVideoTest, clearScreenWithColor)
+TEST_F(CoreVideoTest, clearScreenWithColor)
 {
 	CGColor clear_color {0x2A, 0x2B, 0x2C};
 
@@ -142,7 +142,7 @@ TEST_F(LKCoreVideoTest, clearScreenWithColor)
 	corevideo.clearScreen(clear_color);
 }
 
-TEST_F(LKCoreVideoTest, drawRectangle)
+TEST_F(CoreVideoTest, drawRectangle)
 {
 	interface::CoreGraphics::FilledRectangle rectangle;
 	rectangle.origin.x = 200;
@@ -157,7 +157,7 @@ TEST_F(LKCoreVideoTest, drawRectangle)
 	corevideo.displayRectangle(rectangle, rectangle_color);
 }
 
-TEST_F(LKCoreVideoTest, drawRectangleWithColor)
+TEST_F(CoreVideoTest, drawRectangleWithColor)
 {
 	interface::CoreGraphics::FilledRectangle rectangle;
 	CGColor rectangle_color {0x2A, 0x2B, 0x2C};
@@ -167,7 +167,7 @@ TEST_F(LKCoreVideoTest, drawRectangleWithColor)
 	corevideo.displayRectangle(rectangle, rectangle_color);
 }
 
-TEST_F(LKCoreVideoTest, displayImage)
+TEST_F(CoreVideoTest, displayImage)
 {
 	FIL file;
 	EXPECT_CALL(jpegmock, displayImage(&file)).Times(1);
@@ -175,7 +175,7 @@ TEST_F(LKCoreVideoTest, displayImage)
 	corevideo.displayImage(&file);
 }
 
-TEST_F(LKCoreVideoTest, displayText)
+TEST_F(CoreVideoTest, displayText)
 {
 	constexpr uint8_t buff_size = 128;
 	char buff[buff_size] {};
@@ -188,7 +188,7 @@ TEST_F(LKCoreVideoTest, displayText)
 	corevideo.displayText(buff, text_length, starting_line);
 }
 
-TEST_F(LKCoreVideoTest, displayTextWithColor)
+TEST_F(CoreVideoTest, displayTextWithColor)
 {
 	constexpr uint8_t buff_size = 128;
 	char buff[buff_size] {};

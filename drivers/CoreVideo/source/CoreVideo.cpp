@@ -2,14 +2,14 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreVideo.h"
+#include "CoreVideo.h"
 
 namespace leka {
 
-LKCoreVideo::LKCoreVideo(LKCoreSTM32HalBase &hal, interface::CoreSDRAM &coresdram, interface::CoreDMA2D &coredma2d,
-						 interface::CoreDSI &coredsi, interface::CoreLTDC &coreltdc, interface::CoreLCD &corelcd,
-						 interface::CoreGraphics &coregraphics, interface::CoreFont &corefont,
-						 interface::CoreJPEG &corejpeg)
+CoreVideo::CoreVideo(LKCoreSTM32HalBase &hal, interface::CoreSDRAM &coresdram, interface::CoreDMA2D &coredma2d,
+					 interface::CoreDSI &coredsi, interface::CoreLTDC &coreltdc, interface::CoreLCD &corelcd,
+					 interface::CoreGraphics &coregraphics, interface::CoreFont &corefont,
+					 interface::CoreJPEG &corejpeg)
 	: _hal(hal),
 	  _coresdram(coresdram),
 	  _coredma2d(coredma2d),
@@ -22,7 +22,7 @@ LKCoreVideo::LKCoreVideo(LKCoreSTM32HalBase &hal, interface::CoreSDRAM &coresdra
 {
 }
 
-void LKCoreVideo::initialize(void)
+void CoreVideo::initialize(void)
 {
 	_coredsi.reset();
 
@@ -74,38 +74,38 @@ void LKCoreVideo::initialize(void)
 	_corelcd.setBrightness(0.5f);
 }
 
-void LKCoreVideo::turnOff()
+void CoreVideo::turnOff()
 {
 	_corelcd.turnOff();
 }
 
-void LKCoreVideo::turnOn()
+void CoreVideo::turnOn()
 {
 	_corelcd.turnOn();
 }
 
-void LKCoreVideo::setBrightness(float value)
+void CoreVideo::setBrightness(float value)
 {
 	_corelcd.setBrightness(value);
 }
 
-void LKCoreVideo::clearScreen(CGColor color)
+void CoreVideo::clearScreen(CGColor color)
 {
 	_coregraphics.clearScreen(color);
 }
 
-void LKCoreVideo::displayRectangle(interface::CoreGraphics::FilledRectangle rectangle, CGColor color)
+void CoreVideo::displayRectangle(interface::CoreGraphics::FilledRectangle rectangle, CGColor color)
 {
 	_coregraphics.drawRectangle(rectangle, color);
 }
 
-void LKCoreVideo::displayImage(FIL *file)
+void CoreVideo::displayImage(FIL *file)
 {
 	_corejpeg.displayImage(file);
 }
 
-void LKCoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,
-							  CGColor background)
+void CoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,
+							CGColor background)
 {
 	_corefont.display(text, size, starting_line, foreground, background);
 }
