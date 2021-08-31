@@ -4,8 +4,8 @@
 
 #include "CoreGraphics.h"
 
-#include "corevideo_config.h"
 #include "gtest/gtest.h"
+#include "internal/corevideo_config.h"
 #include "mocks/leka/CoreDMA2D.h"
 
 using namespace leka;

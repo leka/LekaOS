@@ -9,7 +9,7 @@
 
 #include "CGColor.h"
 #include "LKCoreLL.h"
-#include "corevideo_config.h"
+#include "internal/corevideo_config.h"
 
 namespace leka {
 

@@ -6,8 +6,6 @@
 
 #include "BouncingSquare.h"
 
-#include "corevideo_config.h"
-
 namespace leka::animation {
 
 BouncingSquare::BouncingSquare(interface::CoreGraphics &coregraphics) : _coregraphics(coregraphics) {}

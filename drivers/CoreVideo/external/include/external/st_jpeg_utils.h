@@ -42,7 +42,7 @@
 /* Includes ------------------------------------------------------------------*/
 	#include "stm32f7xx_hal.h"
 	#include "stm32f7xx_hal_jpeg.h"
-	#include "corevideo_config.h"
+	#include "internal/corevideo_config.h"
 
 /* Private typedef -----------------------------------------------------------*/
 typedef struct __JPEG_MCU_RGB_ConvertorTypeDef {
