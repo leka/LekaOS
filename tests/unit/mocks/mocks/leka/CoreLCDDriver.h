@@ -10,7 +10,7 @@
 
 namespace leka {
 
-class LKCoreLCDDriverMock : public interface::CoreLCDDriver
+class CoreLCDDriverMock : public interface::CoreLCDDriver
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));

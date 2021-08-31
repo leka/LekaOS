@@ -5,7 +5,7 @@
 #include "CoreLCD.h"
 
 #include "gtest/gtest.h"
-#include "mocks/leka/LKCoreLCDDriver.h"
+#include "mocks/leka/CoreLCDDriver.h"
 #include "stubs/mbed/PwmOut.h"
 
 using namespace leka;
@@ -24,7 +24,7 @@ class CoreLCDTest : public ::testing::Test
 	// void TearDown() override {}
 
 	CoreLCD corelcd;
-	LKCoreLCDDriverMock lcddrivermock;
+	CoreLCDDriverMock lcddrivermock;
 };
 
 TEST_F(CoreLCDTest, instantiation)
