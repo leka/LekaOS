@@ -9,9 +9,9 @@
 
 #include "LKCoreFatFsBase.h"
 #include "LKCoreSTM32HalBase.h"
+#include "external/st_jpeg_utils.h"
 #include "interface/CoreDMA2D.h"
 #include "interface/CoreJPEG.h"
-#include "st_jpeg_utils.h"
 
 namespace leka {
 

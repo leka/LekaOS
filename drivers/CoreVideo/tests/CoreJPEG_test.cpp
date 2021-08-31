@@ -4,11 +4,11 @@
 
 #include "CoreJPEG.h"
 
+#include "external/st_jpeg_utils.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreDMA2D.h"
 #include "mocks/leka/LKCoreFatFs.h"
 #include "mocks/leka/LKCoreSTM32Hal.h"
-#include "st_jpeg_utils.h"
 
 using namespace leka;
 using ::testing::_;
