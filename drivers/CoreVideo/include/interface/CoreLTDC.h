@@ -5,15 +5,15 @@
 #ifndef _LEKA_OS_LIB_LTDC_BASE_H_
 #define _LEKA_OS_LIB_LTDC_BASE_H_
 
-namespace leka {
+namespace leka::interface {
 
-class LKCoreLTDCBase
+class CoreLTDC
 {
   public:
-	virtual ~LKCoreLTDCBase()	  = default;
+	virtual ~CoreLTDC()			  = default;
 	virtual void initialize(void) = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface
 
 #endif	 // _LEKA_OS_LIB_LTDC_BASE_H_

@@ -6,12 +6,12 @@
 #define _LEKA_OS_LIB_LTDC_H_
 
 #include "LKCoreDSIBase.h"
-#include "LKCoreLTDCBase.h"
 #include "LKCoreSTM32HalBase.h"
+#include "interface/CoreLTDC.h"
 
 namespace leka {
 
-class CoreLTDC : public LKCoreLTDCBase
+class CoreLTDC : public interface::CoreLTDC
 {
   public:
 	CoreLTDC(LKCoreSTM32HalBase &hal, LKCoreDSIBase &dsi);
