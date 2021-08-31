@@ -7,7 +7,7 @@
 namespace leka {
 
 LKCoreVideo::LKCoreVideo(LKCoreSTM32HalBase &hal, interface::CoreSDRAM &coresdram, interface::CoreDMA2D &coredma2d,
-						 interface::CoreDSI &coredsi, interface::CoreLTDC &coreltdc, LKCoreLCDBase &corelcd,
+						 interface::CoreDSI &coredsi, interface::CoreLTDC &coreltdc, interface::CoreLCD &corelcd,
 						 LKCoreGraphicsBase &coregraphics, LKCoreFontBase &corefont, LKCoreJPEGBase &corejpeg)
 	: _hal(hal),
 	  _coresdram(coresdram),

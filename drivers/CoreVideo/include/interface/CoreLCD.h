@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_DRIVER_LCD_BASE_H_
 #define _LEKA_OS_DRIVER_LCD_BASE_H_
 
-namespace leka {
+namespace leka::interface {
 
-class LKCoreLCDBase
+class CoreLCD
 {
   public:
-	~LKCoreLCDBase() = default;
+	~CoreLCD() = default;
 
 	virtual void initialize() = 0;
 
@@ -20,6 +20,6 @@ class LKCoreLCDBase
 	virtual void setBrightness(float value) = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface
 
 #endif	 // _LEKA_OS_DRIVER_LCD_BASE_H_

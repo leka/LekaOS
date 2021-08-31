@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_LCD_MOCK_H_
 #define _LEKA_OS_LCD_MOCK_H_
 
-#include "LKCoreLCDBase.h"
 #include "gmock/gmock.h"
+#include "interface/CoreLCD.h"
 
 namespace leka {
 
-class LKCoreLCDMock : public LKCoreLCDBase
+class LKCoreLCDMock : public interface::CoreLCD
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));

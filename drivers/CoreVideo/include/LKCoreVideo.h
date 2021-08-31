@@ -8,10 +8,10 @@
 #include "LKCoreFontBase.h"
 #include "LKCoreGraphicsBase.h"
 #include "LKCoreJPEGBase.h"
-#include "LKCoreLCDBase.h"
 #include "LKCoreSTM32HalBase.h"
 #include "interface/CoreDMA2D.h"
 #include "interface/CoreDSI.h"
+#include "interface/CoreLCD.h"
 #include "interface/CoreLTDC.h"
 #include "interface/CoreSDRAM.h"
 
@@ -21,7 +21,7 @@ class LKCoreVideo
 {
   public:
 	LKCoreVideo(LKCoreSTM32HalBase &hal, interface::CoreSDRAM &coresdram, interface::CoreDMA2D &coredma2d,
-				interface::CoreDSI &coredsi, interface::CoreLTDC &coreltdc, LKCoreLCDBase &corelcd,
+				interface::CoreDSI &coredsi, interface::CoreLTDC &coreltdc, interface::CoreLCD &corelcd,
 				LKCoreGraphicsBase &coregraphics, LKCoreFontBase &corefont, LKCoreJPEGBase &corejpeg);
 
 	void initialize(void);
@@ -43,7 +43,7 @@ class LKCoreVideo
 	interface::CoreDMA2D &_coredma2d;
 	interface::CoreDSI &_coredsi;
 	interface::CoreLTDC &_coreltdc;
-	LKCoreLCDBase &_corelcd;
+	interface::CoreLCD &_corelcd;
 	LKCoreGraphicsBase &_coregraphics;
 	LKCoreFontBase &_corefont;
 	LKCoreJPEGBase &_corejpeg;
