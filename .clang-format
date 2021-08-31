@@ -9,18 +9,18 @@ Standard: Latest
 IncludeBlocks: Regroup
 
 IncludeCategories:
-  - Regex:           '(<|"mbed)'
-    Priority:        0
-    SortPriority:    0
-  - Regex:           '"(drivers|rtos|events|platform)'
-    Priority:        2
-    SortPriority:    0
-  - Regex:           'PinNames.h'
-    Priority:        1
-    SortPriority:    0
-  - Regex:           '"(connectivity|features|storage|ble)'
-    Priority:        3
-    SortPriority:    0
+  - Regex: '(<|"mbed)'
+    Priority: 0
+    SortPriority: 0
+  - Regex: '"(drivers|rtos|events|platform)'
+    Priority: 2
+    SortPriority: 0
+  - Regex: "PinNames.h"
+    Priority: 1
+    SortPriority: 0
+  - Regex: '"(connectivity|features|storage|ble)'
+    Priority: 3
+    SortPriority: 0
 
 AccessModifierOffset: -2
 
