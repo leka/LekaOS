@@ -12,17 +12,17 @@ namespace leka::animation {
 
 BouncingSquare::BouncingSquare(interface::CoreGraphics &coregraphics) : _coregraphics(coregraphics) {}
 
-void BouncingSquare::start(void)
+void BouncingSquare::start()
 {
 	_coregraphics.clearScreen(CGColor::yellow);
 }
 
-void BouncingSquare::stop(void)
+void BouncingSquare::stop()
 {
 	_coregraphics.clearScreen(CGColor::black);
 }
 
-void BouncingSquare::run(void)
+void BouncingSquare::run()
 {
 	updateSquareDirection();
 	updateSquarePosition();
@@ -41,7 +41,7 @@ void BouncingSquare::updateSquareDirection()
 	}
 }
 
-bool BouncingSquare::squareWillBeOutOfBoundHorizontal() const
+auto BouncingSquare::squareWillBeOutOfBoundHorizontal() const -> bool
 {
 	if (_square.origin.x + _shift.horizontal <= 0) {
 		return true;
@@ -52,7 +52,7 @@ bool BouncingSquare::squareWillBeOutOfBoundHorizontal() const
 	return false;
 }
 
-bool BouncingSquare::squareWillBeOutOfBoundVertical() const
+auto BouncingSquare::squareWillBeOutOfBoundVertical() const -> bool
 {
 	if (_square.origin.y + _shift.vertical <= 0) {
 		return true;

@@ -19,13 +19,13 @@ class BouncingSquare : public interface::CGAnimation
   public:
 	explicit BouncingSquare(interface::CoreGraphics &coregraphics);
 
-	void start(void) final;
-	void run(void) final;
-	void stop(void) final;
+	void start() final;
+	void run() final;
+	void stop() final;
 
   private:
-	bool squareWillBeOutOfBoundVertical() const;
-	bool squareWillBeOutOfBoundHorizontal() const;
+	[[nodiscard]] auto squareWillBeOutOfBoundVertical() const -> bool;
+	[[nodiscard]] auto squareWillBeOutOfBoundHorizontal() const -> bool;
 	void updateSquareDirection();
 	void updateSquarePosition();
 	void updateSquareColor();

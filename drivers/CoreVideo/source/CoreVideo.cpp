@@ -22,7 +22,7 @@ CoreVideo::CoreVideo(LKCoreSTM32HalBase &hal, interface::CoreSDRAM &coresdram, i
 {
 }
 
-void CoreVideo::initialize(void)
+void CoreVideo::initialize()
 {
 	_coredsi.reset();
 

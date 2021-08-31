@@ -24,7 +24,7 @@ class CoreVideo
 			  interface::CoreDSI &coredsi, interface::CoreLTDC &coreltdc, interface::CoreLCD &corelcd,
 			  interface::CoreGraphics &coregraphics, interface::CoreFont &corefont, interface::CoreJPEG &corejpeg);
 
-	void initialize(void);
+	void initialize();
 
 	void turnOff();
 	void turnOn();
