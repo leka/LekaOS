@@ -6,13 +6,13 @@
 
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreDMA2D.h"
+#include "mocks/leka/CoreLTDC.h"
 #include "mocks/leka/CoreSDRAM.h"
 #include "mocks/leka/LKCoreDSI.h"
 #include "mocks/leka/LKCoreFont.h"
 #include "mocks/leka/LKCoreGraphics.h"
 #include "mocks/leka/LKCoreJPEG.h"
 #include "mocks/leka/LKCoreLCD.h"
-#include "mocks/leka/LKCoreLTDC.h"
 #include "mocks/leka/LKCoreSTM32Hal.h"
 
 using namespace leka;
@@ -34,7 +34,7 @@ class LKCoreVideoTest : public ::testing::Test
 	CoreSDRAMMock sdrammock;
 	CoreDMA2DMock dma2dmock;
 	LKCoreDSIMock dsimock;
-	LKCoreLTDCMock ltdcmock;
+	CoreLTDCMock ltdcmock;
 	LKCoreLCDMock lcdmock;
 	LKCoreGraphicsMock graphicsmock;
 	LKCoreFontMock fontmock;
