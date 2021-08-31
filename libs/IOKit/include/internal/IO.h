@@ -24,7 +24,7 @@ class IO
 
   private:
 	interface::IOExpander<PinType> &_expander;
-	uint16_t _pin;
+	PinType _pin;
 };
 
 }	// namespace leka::io::expanded::internal

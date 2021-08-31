@@ -30,7 +30,6 @@ TEST_F(DigitalInTest, instantiationDefaultPinType)
 }
 
 TEST_F(DigitalInTest, instantiationExplicitPinTypeUint16t)
-
 {
 	leka::mock::IOExpander<uint16_t> expander {};
 	auto pin_num = uint16_t {0};
@@ -43,7 +42,6 @@ TEST_F(DigitalInTest, instantiationExplicitPinTypeUint16t)
 }
 
 TEST_F(DigitalInTest, instantiationExplicitPinTypeUint8t)
-
 {
 	leka::mock::IOExpander<uint8_t> expander {};
 	auto pin_num = uint8_t {0};
@@ -51,6 +49,60 @@ TEST_F(DigitalInTest, instantiationExplicitPinTypeUint8t)
 	EXPECT_CALL(expander, setPinAsInput(pin_num)).Times(1);
 
 	leka::io::expanded::DigitalIn<uint8_t> pin {expander, pin_num};
+
+	ASSERT_NE(&pin, nullptr);
+}
+
+TEST_F(DigitalInTest, instantiationExplicitPinTypeEnumDefault)
+{
+	enum class TestPinNames
+	{
+		PA_0 = 0,
+		PA_1 = 1
+	};
+
+	leka::mock::IOExpander<TestPinNames> expander {};
+	auto pin_num = TestPinNames::PA_0;
+
+	EXPECT_CALL(expander, setPinAsInput(pin_num)).Times(1);
+
+	leka::io::expanded::DigitalIn<TestPinNames> pin {expander, pin_num};
+
+	ASSERT_NE(&pin, nullptr);
+}
+
+TEST_F(DigitalInTest, instantiationExplicitPinTypeEnumUint16t)
+{
+	enum class TestPinNames : uint16_t
+	{
+		PA_0 = 0,
+		PA_1 = 1
+	};
+
+	leka::mock::IOExpander<TestPinNames> expander {};
+	auto pin_num = TestPinNames::PA_0;
+
+	EXPECT_CALL(expander, setPinAsInput(pin_num)).Times(1);
+
+	leka::io::expanded::DigitalIn<TestPinNames> pin {expander, pin_num};
+
+	ASSERT_NE(&pin, nullptr);
+}
+
+TEST_F(DigitalInTest, instantiationExplicitPinTypeEnumUint8t)
+{
+	enum class TestPinNames : uint8_t
+	{
+		PA_0 = 0,
+		PA_1 = 1
+	};
+
+	leka::mock::IOExpander<TestPinNames> expander {};
+	auto pin_num = TestPinNames::PA_0;
+
+	EXPECT_CALL(expander, setPinAsInput(pin_num)).Times(1);
+
+	leka::io::expanded::DigitalIn<TestPinNames> pin {expander, pin_num};
 
 	ASSERT_NE(&pin, nullptr);
 }
