@@ -10,9 +10,8 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-# Trailing whitespace is significant in markdown files.
 [*.md]
-trim_trailing_whitespace = false
+trim_trailing_whitespace = false # Trailing whitespace is significant in markdown files
 
 [*.cmake]
 indent_style = tab
@@ -30,7 +29,11 @@ indent_size = 4
 indent_style = space
 indent_size = 2
 
-[{settings,c_cpp_properties.json}.json]
+[.clang-{format,tidy}]
+indent_style = space
+indent_size = 2
+
+[{settings,c_cpp_properties}.json]
 indent_style = tab
 indent_size = 4
 
