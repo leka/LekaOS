@@ -85,7 +85,7 @@ HAL_StatusTypeDef CoreJPEG::decodeImageWithPolling(void)
 
 	_input_file_offset = _jpeg_input_buffer.size;
 
-	_hal.HAL_JPEG_Decode(&_hjpeg, _jpeg_input_buffer.data, _jpeg_input_buffer.size, _mcu_data_output_buffer,
+	_hal.HAL_JPEG_Decode(&_hjpeg, _jpeg_input_buffer.data, _jpeg_input_buffer.size, _mcu_data_output_buffer.data(),
 						 leka::jpeg::mcu::output_data_buffer_size, HAL_MAX_DELAY);
 
 	return HAL_OK;
@@ -141,7 +141,7 @@ void CoreJPEG::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut,
 	_mcu_block_index +=
 		pConvert_Function(pDataOut, (uint8_t *)jpeg::decoded_buffer_address, _mcu_block_index, size, nullptr);
 
-	_hal.HAL_JPEG_ConfigOutputBuffer(hjpeg, _mcu_data_output_buffer, leka::jpeg::mcu::output_data_buffer_size);
+	_hal.HAL_JPEG_ConfigOutputBuffer(hjpeg, _mcu_data_output_buffer.data(), leka::jpeg::mcu::output_data_buffer_size);
 }
 
 void CoreJPEG::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)

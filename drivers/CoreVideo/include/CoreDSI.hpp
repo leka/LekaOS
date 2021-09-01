@@ -19,10 +19,10 @@ class CoreDSI : public interface::CoreDSI
 	void start() final;
 	void reset() final;
 
-	DSI_HandleTypeDef getHandle() const;
-	DSI_VidCfgTypeDef getConfig() final;
+	[[nodiscard]] auto getHandle() const -> DSI_HandleTypeDef;
+	[[nodiscard]] auto getConfig() -> DSI_VidCfgTypeDef final;
 
-	void write(const uint8_t *data, const uint32_t size) final;
+	void write(const uint8_t *data, uint32_t size) final;
 
   private:
 	LKCoreSTM32HalBase &_hal;

@@ -27,9 +27,9 @@ class CoreFont
 	virtual void display(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
 						 CGColor background = CGColor::white)  = 0;
 
-	virtual const uint8_t *fontGetFirstPixelAddress(char character)		= 0;
-	virtual uint32_t fontGetPixelBytes(const uint8_t *line_address)		= 0;
-	virtual bool fontPixelIsOn(uint32_t byte_of_line, uint8_t pixel_id) = 0;
+	virtual auto fontGetFirstPixelAddress(char character) -> const uint8_t *	= 0;
+	virtual auto fontGetPixelBytes(const uint8_t *line_address) -> uint32_t		= 0;
+	virtual auto fontPixelIsOn(uint32_t byte_of_line, uint8_t pixel_id) -> bool = 0;
 };
 
 }	// namespace leka::interface

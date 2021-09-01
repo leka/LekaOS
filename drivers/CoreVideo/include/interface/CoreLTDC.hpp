@@ -10,8 +10,8 @@ namespace leka::interface {
 class CoreLTDC
 {
   public:
-	virtual ~CoreLTDC()			  = default;
-	virtual void initialize(void) = 0;
+	virtual ~CoreLTDC()		  = default;
+	virtual void initialize() = 0;
 };
 
 }	// namespace leka::interface

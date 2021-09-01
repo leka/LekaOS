@@ -5,17 +5,17 @@
 #ifndef _LEKA_OS_LIB_CGCOLOR_H_
 #define _LEKA_OS_LIB_CGCOLOR_H_
 
-#include <stdint.h>
+#include <cstdint>
 
 namespace leka {
 
 struct CGColor {
-	uint8_t red;
-	uint8_t green;
-	uint8_t blue;
-	uint8_t alpha = 0xFF;
+	uint8_t red {};
+	uint8_t green {};
+	uint8_t blue {};
+	uint8_t alpha {0xFF};
 
-	uint32_t getARGB() const { return alpha << 24 | red << 16 | green << 8 | blue; }
+	[[nodiscard]] auto getARGB() const -> uint32_t { return alpha << 24 | red << 16 | green << 8 | blue; }
 
 	static const CGColor white;
 	static const CGColor black;
