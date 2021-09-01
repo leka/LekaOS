@@ -4,7 +4,7 @@
 
 #include "CoreFont.hpp"
 
-#include "LKFont.hpp"
+#include "CGFont.hpp"
 #include "internal/corevideo_config.h"
 
 namespace leka {
@@ -16,7 +16,7 @@ const uint8_t *CoreFont::fontGetFirstPixelAddress(char character)
 	uint8_t space_ascii_value	  = 0x20;
 	uint8_t character_ascii_value = character;
 	auto index = (character_ascii_value - space_ascii_value) * graphics::lines_per_char * graphics::bytes_per_line;
-	return &LKFontTable[index];
+	return &CGFontTable[index];
 }
 
 uint32_t CoreFont::fontGetPixelBytes(const uint8_t *line_address)

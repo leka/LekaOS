@@ -4,7 +4,7 @@
 
 #include "CoreFont.hpp"
 
-#include "LKFont.hpp"
+#include "CGFont.hpp"
 #include "gtest/gtest.h"
 #include "internal/corevideo_config.h"
 #include "mocks/leka/LKCoreLL.h"
@@ -40,7 +40,7 @@ TEST_F(CoreFontTest, fontGetFirstPixelAddressOf$)
 	char character = '$';
 	auto index	   = 288;	// See LKCoreTable, index is given before start of character
 
-	auto expected_address = &LKFontTable[index];
+	auto expected_address = &CGFontTable[index];
 
 	auto actual_address = font.fontGetFirstPixelAddress(character);
 
@@ -55,7 +55,7 @@ TEST_F(CoreFontTest, fontGetFirstPixelAddressOfA)
 	char character = 'A';
 	auto index	   = 2376;	 // See LKCoreTable, index is given before start of character
 
-	auto expected_address = &LKFontTable[index];
+	auto expected_address = &CGFontTable[index];
 
 	auto actual_address = font.fontGetFirstPixelAddress(character);
 
@@ -70,7 +70,7 @@ TEST_F(CoreFontTest, fontGetFirstPixelAddressOfz)
 	char character = 'z';
 	auto index	   = 6480;	 // See LKCoreTable, index is given before start of character
 
-	auto expected_address = &LKFontTable[index];
+	auto expected_address = &CGFontTable[index];
 
 	auto actual_address = font.fontGetFirstPixelAddress(character);
 
