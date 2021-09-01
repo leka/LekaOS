@@ -29,9 +29,9 @@ void CoreLCD::turnOff()
 	_driver.turnOff();
 }
 
-void CoreLCD::setBrightness(float brightness)
+void CoreLCD::setBrightness(float value)
 {
-	_driver.setBrightness(brightness);
+	_driver.setBrightness(value);
 }
 
 }	// namespace leka

@@ -51,12 +51,12 @@ void CoreDMA2D::initialize()
 
 void CoreDMA2D::transferData(uintptr_t input, uintptr_t output, uint32_t width, uint32_t height)
 {
-	// TODO: Check if init and config are needed everytime
-	auto init	= [&] { return _hal.HAL_DMA2D_Init(&_hdma2d) == HAL_OK; };
-	auto config = [&] { return _hal.HAL_DMA2D_ConfigLayer(&_hdma2d, 1) == HAL_OK; };
-	auto start	= [&] { return _hal.HAL_DMA2D_Start(&_hdma2d, input, output, width, height) == HAL_OK; };
+	// TODO(@yann): Check if init and config are needed everytime
+	auto is_initialized = [&] { return _hal.HAL_DMA2D_Init(&_hdma2d) == HAL_OK; };
+	auto is_configured	= [&] { return _hal.HAL_DMA2D_ConfigLayer(&_hdma2d, 1) == HAL_OK; };
+	auto is_started		= [&] { return _hal.HAL_DMA2D_Start(&_hdma2d, input, output, width, height) == HAL_OK; };
 
-	if (init() && config() && start()) {
+	if (is_initialized() && is_configured() && is_started()) {
 		_hal.HAL_DMA2D_PollForTransfer(&_hdma2d, 100);
 	}
 }
@@ -65,12 +65,12 @@ void CoreDMA2D::transferImage(uint32_t width, uint32_t height, uint32_t width_of
 {
 	_hdma2d.Init.Mode				= DMA2D_M2M_PFC;
 	_hdma2d.LayerCfg[1].InputOffset = width_offset;
-	_hdma2d.Init.OutputOffset		= 0;   // TODO: Check if needed
+	_hdma2d.Init.OutputOffset		= 0;   // TODO(@yann): Check if needed
 
 	transferData(jpeg::decoded_buffer_address, lcd::frame_buffer_address, width, height);
 }
 
-DMA2D_HandleTypeDef CoreDMA2D::getHandle(void)
+auto CoreDMA2D::getHandle() -> DMA2D_HandleTypeDef
 {
 	return _hdma2d;
 }

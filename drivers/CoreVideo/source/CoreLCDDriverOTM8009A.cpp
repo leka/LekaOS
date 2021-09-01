@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <array>
+#include <lstd_array>
 
 #include "rtos/ThisThread.h"
 
@@ -23,14 +24,14 @@ void CoreLCDDriverOTM8009A::turnOff()
 	_dsi.write(display::turn_off::array, std::size(display::turn_off::array));
 }
 
-void CoreLCDDriverOTM8009A::setBrightness(float brightness)
+void CoreLCDDriverOTM8009A::setBrightness(float value)
 {
-	_backlight.write(brightness);
+	_backlight.write(value);
 }
 
 void CoreLCDDriverOTM8009A::initialize()
 {
-	_backlight.period(0.01f);	// Set PWM at 1/(0.01 seconds) = 100Hz
+	_backlight.period(0.01F);	// Set PWM at 1/(0.01 seconds) = 100Hz
 
 	// Enable CMD2 to access vendor specific commands
 	// Enter in command 2 mode and set EXTC to enable address shift function (0x00)
@@ -263,19 +264,29 @@ void CoreLCDDriverOTM8009A::setLandscapeOrientation()
 	// ? Following code is implemented based on OTM8009A driver datasheet
 	// ? register 36H (Memory Data Access Control)
 
-	std::byte settings {0x00};
+	auto settings = []() constexpr
+	{
+		// settings |= std::byte {1 << 7};	  // Set vertical symmetry - needed
+		// settings |= std::byte {1 << 5};	  // Set landscape mode - needed
 
-	settings |= std::byte {1 << 7};	  // Set vertical symmetry - needed
-	settings |= std::byte {1 << 5};	  // Set landscape mode - needed
+		// settings |= std::byte {1 << 6};	// Set horizontal symmetry - not needed
+		// settings |= std::byte {1 << 4};	// Set reverse refresh top to bottom - not needed
+		// settings |= std::byte {1 << 3};	// Set use BGR (Blue Green Red) - not needed
 
-	// settings |= std::byte {1 << 6};	// Set horizontal symmetry - not needed
-	// settings |= std::byte {1 << 4};	// Set reverse refresh top to bottom - not needed
-	// settings |= std::byte {1 << 3};	// Set use BGR (Blue Green Red) - not needed
+		auto set_vertical_symmetry = [](std::byte settings) constexpr { return settings | std::byte {1 << 7}; };
+		auto set_landscape_mode	   = [](std::byte settings) constexpr { return settings | std::byte {1 << 5}; };
 
-	const uint8_t command[] = {madctr::command, std::to_integer<uint8_t>(settings)};
+		std::byte settings {0x00};
 
-	// Set landscape mode
-	_dsi.write(command, std::size(command));
+		settings = set_vertical_symmetry(settings);
+		settings = set_landscape_mode(settings);
+
+		return std::to_integer<uint8_t>(settings);
+	};
+
+	constexpr auto command = lstd::to_array<uint8_t>({madctr::command, settings()});
+
+	_dsi.write(command.data(), std::size(command));
 
 	//	Set address for columns and pages
 	_dsi.write(set_address::for_column::array, std::size(set_address::for_column::array));

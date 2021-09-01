@@ -21,10 +21,10 @@ class CoreDMA2D : public interface::CoreDMA2D
 	void transferImage(uint32_t width, uint32_t height, uint32_t width_offset) final;
 	void transferDrawing(uintptr_t first_pixel_address, uint32_t width, uint32_t height, uint32_t color) final;
 
-	DMA2D_HandleTypeDef getHandle(void) final;
+	auto getHandle() -> DMA2D_HandleTypeDef final;
 
   private:
-	DMA2D_HandleTypeDef _hdma2d;
+	DMA2D_HandleTypeDef _hdma2d {};
 	LKCoreSTM32HalBase &_hal;
 };
 

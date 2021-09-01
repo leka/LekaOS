@@ -92,12 +92,12 @@ void CoreLTDC::configurePeriphClock()
 	_hal.HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 }
 
-LTDC_HandleTypeDef CoreLTDC::getHandle() const
+auto CoreLTDC::getHandle() const -> LTDC_HandleTypeDef
 {
 	return _hltdc;
 }
 
-LTDC_LayerCfgTypeDef CoreLTDC::getLayerConfig() const
+auto CoreLTDC::getLayerConfig() const -> LTDC_LayerCfgTypeDef
 {
 	return _layerConfig;
 }

@@ -86,7 +86,7 @@ void CoreDSI::start()
 	_hal.HAL_DSI_Start(&_hdsi);
 }
 
-void CoreDSI::reset(void)
+void CoreDSI::reset()
 {
 	// Reset DSI configuration
 	// DO NOT CHANGE this function
@@ -115,12 +115,12 @@ void CoreDSI::reset(void)
 	rtos::ThisThread::sleep_for(10ms);
 }
 
-DSI_HandleTypeDef CoreDSI::getHandle() const
+auto CoreDSI::getHandle() const -> DSI_HandleTypeDef
 {
 	return _hdsi;
 }
 
-DSI_VidCfgTypeDef CoreDSI::getConfig()
+auto CoreDSI::getConfig() -> DSI_VidCfgTypeDef
 {
 	return _config;
 }

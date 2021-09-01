@@ -27,7 +27,7 @@ void CoreSDRAM::setupSDRAMConfig()
 	_hsdram.Init.ReadPipeDelay		= FMC_SDRAM_RPIPE_DELAY_0;
 }
 
-FMC_SDRAM_TimingTypeDef CoreSDRAM::setupTimingConfig()
+auto CoreSDRAM::setupTimingConfig() -> FMC_SDRAM_TimingTypeDef
 {
 	FMC_SDRAM_TimingTypeDef timing;
 
@@ -43,7 +43,7 @@ FMC_SDRAM_TimingTypeDef CoreSDRAM::setupTimingConfig()
 	return timing;
 }
 
-DMA_HandleTypeDef CoreSDRAM::setupDMA()
+auto CoreSDRAM::setupDMA() -> DMA_HandleTypeDef
 {
 	DMA_HandleTypeDef hdma;
 
@@ -65,7 +65,7 @@ DMA_HandleTypeDef CoreSDRAM::setupDMA()
 	return hdma;
 }
 
-uint8_t CoreSDRAM::initialize(void)
+auto CoreSDRAM::initialize() -> uint8_t
 {
 	static uint8_t sdram_status = sdram::status::error;
 
@@ -196,9 +196,9 @@ void CoreSDRAM::initializationSequence()
 	_hal.HAL_SDRAM_SendCommand(&_hsdram, &command, sdram::timeout);
 
 	// Step 5: Program the external memory mode register
-	uint32_t mode_register_definition = (uint32_t)sdram::mode::burst::length1 | sdram::mode::burst::type::sequential |
-										sdram::mode::cas::latency3 | sdram::mode::operating_mode::standard |
-										sdram::mode::writeburst_mode::single;
+	constexpr auto mode_register_definition =
+		uint32_t {sdram::mode::burst::length1 | sdram::mode::burst::type::sequential | sdram::mode::cas::latency3 |
+				  sdram::mode::operating_mode::standard | sdram::mode::writeburst_mode::single};
 
 	command.CommandMode			   = FMC_SDRAM_CMD_LOAD_MODE;
 	command.CommandTarget		   = FMC_SDRAM_CMD_TARGET_BANK1;
@@ -213,7 +213,7 @@ void CoreSDRAM::initializationSequence()
 	_hal.HAL_SDRAM_ProgramRefreshRate(&_hsdram, sdram::refresh_count);
 }
 
-SDRAM_HandleTypeDef CoreSDRAM::getHandle(void) const
+auto CoreSDRAM::getHandle() const -> SDRAM_HandleTypeDef
 {
 	return _hsdram;
 }
