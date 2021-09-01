@@ -21,7 +21,7 @@ class CoreDMA2D
 	virtual void transferImage(uint32_t width, uint32_t height, uint32_t width_offset)							 = 0;
 	virtual void transferDrawing(uintptr_t first_pixel_address, uint32_t width, uint32_t height, uint32_t color) = 0;
 
-	virtual DMA2D_HandleTypeDef getHandle(void) = 0;
+	virtual auto getHandle() -> DMA2D_HandleTypeDef = 0;
 };
 
 }	// namespace leka::interface

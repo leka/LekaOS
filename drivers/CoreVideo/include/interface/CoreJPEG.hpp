@@ -17,17 +17,17 @@ class CoreJPEG
   public:
 	~CoreJPEG() = default;
 
-	virtual void initialize(void) = 0;
+	virtual void initialize() = 0;
 
-	virtual JPEG_ConfTypeDef getConfig(void)		   = 0;
-	virtual JPEG_HandleTypeDef getHandle(void)		   = 0;
-	virtual JPEG_HandleTypeDef *getHandlePointer(void) = 0;
+	virtual auto getConfig() -> JPEG_ConfTypeDef			= 0;
+	virtual auto getHandle() -> JPEG_HandleTypeDef			= 0;
+	virtual auto getHandlePointer() -> JPEG_HandleTypeDef * = 0;
 
-	virtual uint32_t getWidthOffset(void) = 0;
+	virtual auto getWidthOffset() -> uint32_t = 0;
 
 	virtual void displayImage(FIL *file) = 0;
-	virtual HAL_StatusTypeDef decodeImageWithPolling(
-		void) = 0;	 // TODO: Update Return type with something else than HAL status
+	// TODO(@yann): Update Return type with something else than HAL status
+	virtual auto decodeImageWithPolling() -> HAL_StatusTypeDef = 0;
 
 	virtual void onErrorCallback(JPEG_HandleTypeDef *hjpeg)								= 0;
 	virtual void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) = 0;

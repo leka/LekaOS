@@ -5,6 +5,7 @@
 #ifndef _LEKA_OS_DRIVER_JPEG_H_
 #define _LEKA_OS_DRIVER_JPEG_H_
 
+#include <array>
 #include <cstdint>
 
 #include "LKCoreFatFsBase.h"
@@ -20,17 +21,17 @@ class CoreJPEG : public interface::CoreJPEG
   public:
 	CoreJPEG(LKCoreSTM32HalBase &hal, interface::CoreDMA2D &dma2d, LKCoreFatFsBase &file);
 
-	void initialize(void) final;
+	void initialize() final;
 
-	JPEG_ConfTypeDef getConfig(void) final;
-	JPEG_HandleTypeDef getHandle(void) final;
-	JPEG_HandleTypeDef *getHandlePointer(void) final;
+	auto getConfig() -> JPEG_ConfTypeDef final;
+	auto getHandle() -> JPEG_HandleTypeDef final;
+	auto getHandlePointer() -> JPEG_HandleTypeDef * final;
 
-	uint32_t getWidthOffset(void) final;
+	auto getWidthOffset() -> uint32_t final;
 
 	void displayImage(FIL *file) final;
-	HAL_StatusTypeDef decodeImageWithPolling(
-		void) final;   // TODO: Update Return type with something else than HAL status
+	// TODO(@yann): Update Return type with something else than HAL status
+	auto decodeImageWithPolling() -> HAL_StatusTypeDef final;
 
 	void onErrorCallback(JPEG_HandleTypeDef *hjpeg) final;
 	void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) final;
@@ -46,10 +47,11 @@ class CoreJPEG : public interface::CoreJPEG
 		uint32_t size;
 	};
 
-	uint8_t _mcu_data_output_buffer[leka::jpeg::mcu::output_data_buffer_size] {0};
-	uint8_t _jpeg_data_output_buffer[leka::jpeg::input_data_buffer_size] {0};
+	std::array<uint8_t, leka::jpeg::mcu::output_data_buffer_size> _mcu_data_output_buffer {0};
+	std::array<uint8_t, leka::jpeg::input_data_buffer_size> _jpeg_data_output_buffer {0};
 
-	JPEGDataBuffer _jpeg_input_buffer = {_jpeg_data_output_buffer, 0};	 // TODO: do we really need this struct?
+	// TODO(@yann): do we really need this struct?
+	JPEGDataBuffer _jpeg_input_buffer = {_jpeg_data_output_buffer.data(), 0};
 
 	JPEG_HandleTypeDef _hjpeg;
 	JPEG_ConfTypeDef _config;

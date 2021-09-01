@@ -18,14 +18,14 @@ class CoreSDRAM : public interface::CoreSDRAM
 	explicit CoreSDRAM(LKCoreSTM32HalBase &hal);
 
 	void setupSDRAMConfig() final;
-	FMC_SDRAM_TimingTypeDef setupTimingConfig(void) final;
-	DMA_HandleTypeDef setupDMA() final;
+	auto setupTimingConfig() -> FMC_SDRAM_TimingTypeDef final;
+	auto setupDMA() -> DMA_HandleTypeDef final;
 
-	uint8_t initialize(void) final;
+	auto initialize() -> uint8_t final;
 	void initializeController() final;
-	void initializationSequence(void) final;
+	void initializationSequence() final;
 
-	SDRAM_HandleTypeDef getHandle(void) const;
+	[[nodiscard]] auto getHandle() const -> SDRAM_HandleTypeDef;
 
   private:
 	LKCoreSTM32HalBase &_hal;

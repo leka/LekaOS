@@ -14,9 +14,9 @@ class CoreGraphics
 {
   public:
 	struct FilledRectangle {
-		CGPoint origin;	  // Top left corner by convention
-		uint16_t width;
-		uint16_t height;
+		CGPoint origin {0, 0};	 // * Top left corner by convention
+		uint16_t width {};
+		uint16_t height {};
 	};
 
 	virtual ~CoreGraphics() = default;
