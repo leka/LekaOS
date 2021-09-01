@@ -3,6 +3,11 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // Original file: https://github.com/STMicroelectronics/STM32CubeF7/blob/master/Utilities/Fonts/font24.c
 
+#ifndef _LEKA_OS_DRIVER_CORE_VIDEO_FONT_TABLE_H_
+#define _LEKA_OS_DRIVER_CORE_VIDEO_FONT_TABLE_H_
+
+#include <cstdint>
+
 namespace leka {
 
 // LKFontTable contains pixels to draw for character from 0x20 (space) to 0x7E (~) in ascii value.
@@ -12,7 +17,8 @@ namespace leka {
 // Reading has to be done row of pixel by row of pixel. Hence, the row of 17 pixels is encoded on 3 bytes.
 // As consequence of the 2 previous sentences, the last 7 bits are not used in the third byte.
 
-constexpr uint8_t LKFontTable[] = {
+constexpr uint8_t CGFontTable[] = {
+
 	// @0 ' ' (17 pixels wide)
 	0x00, 0x00, 0x00,	//
 	0x00, 0x00, 0x00,	//
@@ -2485,3 +2491,5 @@ constexpr uint8_t LKFontTable[] = {
 };
 
 }	// namespace leka
+
+#endif	 // _LEKA_OS_DRIVER_CORE_VIDEO_FONT_TABLE_H_
