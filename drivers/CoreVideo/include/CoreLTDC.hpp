@@ -25,8 +25,8 @@ class CoreLTDC : public interface::CoreLTDC
 	LKCoreSTM32HalBase &_hal;
 	interface::CoreDSI &_dsi;
 
-	LTDC_HandleTypeDef _hltdc;
-	LTDC_LayerCfgTypeDef _layerConfig;
+	LTDC_HandleTypeDef _hltdc {};
+	LTDC_LayerCfgTypeDef _layerConfig {};
 
 	void configurePeriphClock();
 };

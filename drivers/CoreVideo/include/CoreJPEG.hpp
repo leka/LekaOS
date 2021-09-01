@@ -53,13 +53,13 @@ class CoreJPEG : public interface::CoreJPEG
 	// TODO(@yann): do we really need this struct?
 	JPEGDataBuffer _jpeg_input_buffer = {_jpeg_data_output_buffer.data(), 0};
 
-	JPEG_HandleTypeDef _hjpeg;
-	JPEG_ConfTypeDef _config;
+	JPEG_HandleTypeDef _hjpeg {};
+	JPEG_ConfTypeDef _config {};
 	LKCoreSTM32HalBase &_hal;
 	interface::CoreDMA2D &_dma2d;
 	LKCoreFatFsBase &_file;
 
-	JPEG_YCbCrToRGB_Convert_Function pConvert_Function;
+	JPEG_YCbCrToRGB_Convert_Function pConvert_Function {};
 
 	uint32_t _mcu_number		= 0;
 	uint32_t _mcu_block_index	= 0;

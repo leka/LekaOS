@@ -26,8 +26,8 @@ class CoreDSI : public interface::CoreDSI
 
   private:
 	LKCoreSTM32HalBase &_hal;
-	DSI_HandleTypeDef _hdsi;
-	DSI_VidCfgTypeDef _config;
+	DSI_HandleTypeDef _hdsi {};
+	DSI_VidCfgTypeDef _config {};
 };
 
 }	// namespace leka

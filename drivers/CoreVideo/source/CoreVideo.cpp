@@ -71,7 +71,7 @@ void CoreVideo::initialize()
 	_corejpeg.initialize();
 	_coredma2d.initialize();
 
-	_corelcd.setBrightness(0.5f);
+	_corelcd.setBrightness(0.5F);
 }
 
 void CoreVideo::turnOff()

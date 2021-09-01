@@ -30,7 +30,7 @@ class CoreSDRAM : public interface::CoreSDRAM
   private:
 	LKCoreSTM32HalBase &_hal;
 
-	SDRAM_HandleTypeDef _hsdram;
+	SDRAM_HandleTypeDef _hsdram {};
 };
 
 }	// namespace leka
