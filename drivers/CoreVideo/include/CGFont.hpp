@@ -7,17 +7,18 @@
 #define _LEKA_OS_DRIVER_CORE_VIDEO_FONT_TABLE_H_
 
 #include <cstdint>
+#include <lstd_array>
 
 namespace leka {
 
-// LKFontTable contains pixels to draw for character from 0x20 (space) to 0x7E (~) in ascii value.
-// Each character in LKFontTable is based on Font24: 24 pixels height and 17 pixels wide.
+// CGFontTable contains pixels to draw for character from 0x20 (space) to 0x7E (~) in ascii value.
+// Each character in CGFontTable is based on Font24: 24 pixels height and 17 pixels wide.
 // Each pixel is coded on 1 bit. Thus, 8 pixels are coded on 1 byte.
 // Pixel are definied in little endian bytes, for instance the first pixel is encoded as 0b10000000 = 0x80.
 // Reading has to be done row of pixel by row of pixel. Hence, the row of 17 pixels is encoded on 3 bytes.
 // As consequence of the 2 previous sentences, the last 7 bits are not used in the third byte.
 
-constexpr uint8_t CGFontTable[] = {
+constexpr auto CGFontTable = lstd::to_array<uint8_t>({
 
 	// @0 ' ' (17 pixels wide)
 	0x00, 0x00, 0x00,	//
@@ -2488,7 +2489,7 @@ constexpr uint8_t CGFontTable[] = {
 	0x00, 0x00, 0x00,	//
 	0x00, 0x00, 0x00,	//
 	0x00, 0x00, 0x00,	//
-};
+});
 
 }	// namespace leka
 
