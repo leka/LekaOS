@@ -7,7 +7,7 @@
 
 #include <cstdint>
 
-#include "CGColor.h"
+#include "CGColor.hpp"
 #include "LKCoreLL.h"
 #include "internal/corevideo_config.h"
 

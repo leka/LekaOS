@@ -1,4 +1,4 @@
-#include "CoreSDRAM.h"
+#include "CoreSDRAM.hpp"
 
 #include "rtos/ThisThread.h"
 

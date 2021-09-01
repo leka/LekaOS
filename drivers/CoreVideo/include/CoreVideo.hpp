@@ -6,14 +6,14 @@
 #define _LEKA_OS_DRIVER_LKCOREVIDEO_H_
 
 #include "LKCoreSTM32HalBase.h"
-#include "interface/CoreDMA2D.h"
-#include "interface/CoreDSI.h"
-#include "interface/CoreFont.h"
-#include "interface/CoreGraphics.h"
-#include "interface/CoreJPEG.h"
-#include "interface/CoreLCD.h"
-#include "interface/CoreLTDC.h"
-#include "interface/CoreSDRAM.h"
+#include "interface/CoreDMA2D.hpp"
+#include "interface/CoreDSI.hpp"
+#include "interface/CoreFont.hpp"
+#include "interface/CoreGraphics.hpp"
+#include "interface/CoreJPEG.hpp"
+#include "interface/CoreLCD.hpp"
+#include "interface/CoreLTDC.hpp"
+#include "interface/CoreSDRAM.hpp"
 
 namespace leka {
 

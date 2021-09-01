@@ -6,7 +6,7 @@
 
 #include "rtos/ThisThread.h"
 
-#include "CoreLCDDriverOTM8009A.h"
+#include "CoreLCDDriverOTM8009A.hpp"
 
 namespace leka {
 

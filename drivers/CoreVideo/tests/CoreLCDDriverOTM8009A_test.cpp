@@ -4,7 +4,7 @@
 
 #include <array>
 
-#include "CoreLCDDriverOTM8009A.h"
+#include "CoreLCDDriverOTM8009A.hpp"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreDSI.h"
 #include "mocks/leka/LKCoreSTM32Hal.h"

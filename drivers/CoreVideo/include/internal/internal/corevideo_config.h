@@ -5,7 +5,7 @@
 #ifndef _LEKA_OS_LCD_PROPERTIES_H_
 #define _LEKA_OS_LCD_PROPERTIES_H_
 
-#include "CoreLCDDriverOTM8009A.h"
+#include "CoreLCDDriverOTM8009A.hpp"
 
 namespace leka {
 

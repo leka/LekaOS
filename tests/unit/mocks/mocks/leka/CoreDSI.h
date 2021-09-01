@@ -6,7 +6,7 @@
 #define _LEKA_OS_DSI_MOCK_H_
 
 #include "gmock/gmock.h"
-#include "interface/CoreDSI.h"
+#include "interface/CoreDSI.hpp"
 
 namespace leka {
 

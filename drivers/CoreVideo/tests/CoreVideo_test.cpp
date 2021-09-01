@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "CoreVideo.h"
+#include "CoreVideo.hpp"
 
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreDMA2D.h"

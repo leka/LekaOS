@@ -6,7 +6,7 @@
 #define _LEKA_OS_SDRAM_MOCK_H_
 
 #include "gmock/gmock.h"
-#include "interface/CoreSDRAM.h"
+#include "interface/CoreSDRAM.hpp"
 
 namespace leka {
 

@@ -2,9 +2,9 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "CoreFont.h"
+#include "CoreFont.hpp"
 
-#include "LKFont.h"
+#include "LKFont.hpp"
 #include "internal/corevideo_config.h"
 
 namespace leka {

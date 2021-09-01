@@ -5,10 +5,10 @@
 #ifndef _LEKA_OS_LIB_GRAPHICS_H_
 #define _LEKA_OS_LIB_GRAPHICS_H_
 
-#include "CGColor.h"
+#include "CGColor.hpp"
 #include "LKCoreLL.h"
-#include "interface/CoreDMA2D.h"
-#include "interface/CoreGraphics.h"
+#include "interface/CoreDMA2D.hpp"
+#include "interface/CoreGraphics.hpp"
 #include "internal/corevideo_config.h"
 
 namespace leka {

@@ -5,8 +5,8 @@
 #ifndef _LEKA_OS_LIB_GRAPHICS_BASE_H_
 #define _LEKA_OS_LIB_GRAPHICS_BASE_H_
 
-#include "CGColor.h"
-#include "CGPixel.h"
+#include "CGColor.hpp"
+#include "CGPixel.hpp"
 
 namespace leka::interface {
 

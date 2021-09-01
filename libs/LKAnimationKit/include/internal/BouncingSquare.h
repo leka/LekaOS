@@ -10,7 +10,7 @@
 #include <cstdint>
 
 #include "CGAnimation.h"
-#include "interface/CoreGraphics.h"
+#include "interface/CoreGraphics.hpp"
 
 namespace leka::animation {
 

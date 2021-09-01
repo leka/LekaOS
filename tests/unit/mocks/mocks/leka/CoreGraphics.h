@@ -6,7 +6,7 @@
 #define _LEKA_OS_GRAPHICS_MOCK_H_
 
 #include "gmock/gmock.h"
-#include "interface/CoreGraphics.h"
+#include "interface/CoreGraphics.hpp"
 
 namespace leka {
 
