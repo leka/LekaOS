@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "CoreVideo.h"
+#include "CoreVideo.hpp"
 
 namespace leka {
 

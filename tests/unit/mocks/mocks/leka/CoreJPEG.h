@@ -6,7 +6,7 @@
 #define _LEKA_OS_JPEG_MOCK_H_
 
 #include "gmock/gmock.h"
-#include "interface/CoreJPEG.h"
+#include "interface/CoreJPEG.hpp"
 
 namespace leka {
 

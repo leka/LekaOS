@@ -6,7 +6,7 @@
 #define _LEKA_OS_DRIVER_DSI_H_
 
 #include "LKCoreSTM32HalBase.h"
-#include "interface/CoreDSI.h"
+#include "interface/CoreDSI.hpp"
 
 namespace leka {
 

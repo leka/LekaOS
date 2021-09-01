@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "CoreJPEG.h"
+#include "CoreJPEG.hpp"
 
 #include "external/st_jpeg_utils.h"
 #include "gtest/gtest.h"

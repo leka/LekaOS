@@ -5,7 +5,7 @@
 #ifndef _LEKA_OS_LIB_DMA2D_H_
 #define _LEKA_OS_LIB_DMA2D_H_
 
-#include "interface/CoreDMA2D.h"
+#include "interface/CoreDMA2D.hpp"
 
 namespace leka {
 

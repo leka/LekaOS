@@ -5,9 +5,9 @@
 #ifndef _LEKA_OS_LIB_FONT_H_
 #define _LEKA_OS_LIB_FONT_H_
 
-#include "CGColor.h"
-#include "CGPixel.h"
-#include "interface/CoreFont.h"
+#include "CGColor.hpp"
+#include "CGPixel.hpp"
+#include "interface/CoreFont.hpp"
 
 namespace leka {
 

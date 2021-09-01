@@ -7,8 +7,8 @@
 
 // #include <cstdint>
 
-#include "CGColor.h"
-#include "CGPixel.h"
+#include "CGColor.hpp"
+#include "CGPixel.hpp"
 
 namespace leka::interface {
 
