@@ -16,8 +16,8 @@ class CoreFont
 {
   public:
 	struct Character {
-		Point origin;	 // Top left corner by convention
-		uint8_t ascii;	 // From 0x20 to 0x7F
+		CGPoint origin {};	 // Top left corner by convention
+		uint8_t ascii {};	 // From 0x20 to 0x7F
 	};
 
 	virtual ~CoreFont() = default;

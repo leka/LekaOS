@@ -13,7 +13,7 @@
 
 namespace leka {
 
-struct Point {
+struct CGPoint {
 	uint32_t x = 0;
 	uint32_t y = 0;
 };
@@ -21,7 +21,7 @@ struct Point {
 struct CGPixel {
 	explicit CGPixel(LKCoreLL &ll) : corell(ll) {}
 
-	Point coordinates {0, 0};
+	CGPoint coordinates {0, 0};
 	LKCoreLL &corell;
 
 	void draw(CGColor color)
