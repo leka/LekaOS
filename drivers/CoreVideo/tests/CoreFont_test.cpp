@@ -242,7 +242,7 @@ TEST_F(CoreFontTest, displayUnwrittableAsciiCharacter)
 
 	text_length = sprintf(buff, "\tThis is the first line");
 
-	Point expected_last_pixel;
+	CGPoint expected_last_pixel;
 	expected_last_pixel.x = (graphics::font_pixel_width * (text_length - 1)) - 1;
 	expected_last_pixel.y = graphics::font_pixel_height;
 
@@ -272,7 +272,7 @@ TEST_F(CoreFontTest, displayWithScreenWidthReached)
 
 	auto starting_line = 1;
 
-	Point expected_last_pixel;
+	CGPoint expected_last_pixel;
 	expected_last_pixel.x = (text_length % max_char_per_line) * graphics::font_pixel_width - 1;
 	expected_last_pixel.y = ((text_length / max_char_per_line) + 1) * graphics::font_pixel_height;
 
