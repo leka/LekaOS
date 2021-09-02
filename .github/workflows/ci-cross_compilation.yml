@@ -11,8 +11,8 @@ on:
   pull_request:
     branches:
       - develop
-      - "feature/**"
-      - "bugfix/**"
+      - "**/feature/**"
+      - "**/bugfix/**"
 
 jobs:
   leka_os_and_al:
