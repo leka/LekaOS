@@ -17,7 +17,7 @@ namespace leka::animation {
 class BouncingSquare : public interface::CGAnimation
 {
   public:
-	explicit BouncingSquare(interface::CoreGraphics &coregraphics);
+	explicit BouncingSquare(interface::Graphics &coregraphics);
 
 	void start() final;
 	void run() final;
@@ -31,9 +31,9 @@ class BouncingSquare : public interface::CGAnimation
 	void updateSquareColor();
 	void drawSquare();
 
-	interface::CoreGraphics &_coregraphics;
+	interface::Graphics &_coregraphics;
 
-	interface::CoreGraphics::FilledRectangle _square {{0, 0}, 100, 100};
+	interface::Graphics::FilledRectangle _square {{0, 0}, 100, 100};
 	CGColor _color {.red = 0xFF, .green = 0x00, .blue = 0x00};
 
 	struct Shift {

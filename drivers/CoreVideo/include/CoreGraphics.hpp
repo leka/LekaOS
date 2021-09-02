@@ -7,13 +7,13 @@
 
 #include "CGColor.hpp"
 #include "LKCoreLL.h"
-#include "interface/Graphics.hpp"
 #include "interface/DMA2D.hpp"
+#include "interface/Graphics.hpp"
 #include "internal/corevideo_config.h"
 
 namespace leka {
 
-class CoreGraphics : public interface::CoreGraphics
+class CoreGraphics : public interface::Graphics
 {
   public:
 	explicit CoreGraphics(interface::DMA2DBase &dma2d);
