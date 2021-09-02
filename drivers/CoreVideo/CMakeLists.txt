@@ -12,18 +12,18 @@ target_include_directories(CoreVideo
 )
 
 target_sources(CoreVideo
-  PRIVATE
-	source/CoreDMA2D.cpp
-	source/CoreFont.cpp
-	source/CoreGraphics.cpp
-	source/CoreJPEG.cpp
-	source/CoreLTDC.cpp
-	source/CoreDSI.cpp
-	source/CoreLCD.cpp
-	source/CoreLCDDriverOTM8009A.cpp
-	source/CoreSDRAM.cpp
-	source/CoreVideo.cpp
-	external/source/st_jpeg_utils.cpp
+	PRIVATE
+		source/CoreDMA2D.cpp
+		source/CoreFont.cpp
+		source/CoreGraphics.cpp
+		source/CoreJPEG.cpp
+		source/CoreLTDC.cpp
+		source/CoreDSI.cpp
+		source/CoreLCD.cpp
+		source/CoreLCDDriverOTM8009A.cpp
+		source/CoreSDRAM.cpp
+		source/CoreVideo.cpp
+		external/source/st_jpeg_utils.cpp
 )
 
 target_link_libraries(CoreVideo
