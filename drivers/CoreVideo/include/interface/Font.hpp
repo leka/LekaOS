@@ -2,8 +2,8 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_FONT_BASE_H_
-#define _LEKA_OS_LIB_FONT_BASE_H_
+#ifndef _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_FONT_H_
+#define _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_FONT_H_
 
 // #include <cstdint>
 
@@ -12,7 +12,7 @@
 
 namespace leka::interface {
 
-class CoreFont
+class Font
 {
   public:
 	struct Character {
@@ -20,7 +20,7 @@ class CoreFont
 		uint8_t ascii {};	 // From 0x20 to 0x7F
 	};
 
-	virtual ~CoreFont() = default;
+	virtual ~Font() = default;
 
 	virtual void drawChar(Character character, CGColor foreground = CGColor::black,
 						  CGColor background = CGColor::white) = 0;
@@ -34,4 +34,4 @@ class CoreFont
 
 }	// namespace leka::interface
 
-#endif
+#endif	 // _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_FONT_H_
