@@ -7,20 +7,20 @@
 
 #include "LKCoreSTM32HalBase.h"
 #include "interface/CoreGraphics.hpp"
-#include "interface/SDRAM.hpp"
 #include "interface/DMA2D.hpp"
 #include "interface/DSI.hpp"
 #include "interface/Font.hpp"
 #include "interface/JPEG.hpp"
 #include "interface/LCD.hpp"
 #include "interface/LTDC.hpp"
+#include "interface/SDRAM.hpp"
 
 namespace leka {
 
 class CoreVideo
 {
   public:
-	CoreVideo(LKCoreSTM32HalBase &hal, interface::CoreSDRAM &coresdram, interface::DMA2DBase &coredma2d,
+	CoreVideo(LKCoreSTM32HalBase &hal, interface::SDRAM &coresdram, interface::DMA2DBase &coredma2d,
 			  interface::DSIBase &coredsi, interface::LTDCBase &coreltdc, interface::LCD &corelcd,
 			  interface::CoreGraphics &coregraphics, interface::Font &corefont, interface::JPEGBase &corejpeg);
 
@@ -39,7 +39,7 @@ class CoreVideo
 
   private:
 	LKCoreSTM32HalBase &_hal;
-	interface::CoreSDRAM &_coresdram;
+	interface::SDRAM &_coresdram;
 	interface::DMA2DBase &_coredma2d;
 	interface::DSIBase &_coredsi;
 	interface::LTDCBase &_coreltdc;

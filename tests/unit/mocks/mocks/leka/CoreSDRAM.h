@@ -10,7 +10,7 @@
 
 namespace leka {
 
-class CoreSDRAMMock : public interface::CoreSDRAM
+class CoreSDRAMMock : public interface::SDRAM
 {
   public:
 	MOCK_METHOD(void, setupSDRAMConfig, (), (override));
