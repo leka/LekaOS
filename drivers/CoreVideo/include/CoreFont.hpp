@@ -11,7 +11,7 @@
 
 namespace leka {
 
-class CoreFont : public interface::CoreFont
+class CoreFont : public interface::Font
 {
   public:
 	explicit CoreFont(CGPixel &pixel_to_draw);

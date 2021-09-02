@@ -10,7 +10,7 @@
 
 namespace leka {
 
-class CoreFontMock : public interface::CoreFont
+class CoreFontMock : public interface::Font
 {
   public:
 	MOCK_METHOD(void, drawChar, (Character character, CGColor foreground, CGColor background), (override));
