@@ -10,7 +10,7 @@
 
 namespace leka {
 
-class CoreLCDMock : public interface::CoreLCD
+class CoreLCDMock : public interface::LCD
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));
