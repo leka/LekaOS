@@ -10,7 +10,7 @@
 
 namespace leka {
 
-class CoreDMA2DMock : public interface::CoreDMA2D
+class CoreDMA2DMock : public interface::DMA2DBase
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));

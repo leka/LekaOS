@@ -2,17 +2,17 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_DMA2D_BASE_H_
-#define _LEKA_OS_LIB_DMA2D_BASE_H_
+#ifndef _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_DMA2D_BASE_H_
+#define _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_DMA2D_BASE_H_
 
 #include "LKCoreSTM32HalBase.h"
 
 namespace leka::interface {
 
-class CoreDMA2D
+class DMA2DBase
 {
   public:
-	virtual ~CoreDMA2D() = default;
+	virtual ~DMA2DBase() = default;
 
 	virtual void initialize() = 0;
 
@@ -26,4 +26,4 @@ class CoreDMA2D
 
 }	// namespace leka::interface
 
-#endif	 // _LEKA_OS_LIB_DMA2D_BASE_H_
+#endif	 // _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_DMA2D_BASE_H_
