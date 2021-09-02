@@ -6,7 +6,7 @@
 #define _LEKA_OS_LTDC_MOCK_H_
 
 #include "gmock/gmock.h"
-#include "interface/CoreLTDC.hpp"
+#include "interface/LTDC.hpp"
 
 namespace leka {
 

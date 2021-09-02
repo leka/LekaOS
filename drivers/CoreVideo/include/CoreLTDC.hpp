@@ -6,7 +6,7 @@
 #define _LEKA_OS_LIB_LTDC_H_
 
 #include "LKCoreSTM32HalBase.h"
-#include "interface/CoreLTDC.hpp"
+#include "interface/LTDC.hpp"
 #include "interface/DSI.hpp"
 
 namespace leka {

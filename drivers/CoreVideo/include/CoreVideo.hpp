@@ -9,7 +9,7 @@
 #include "interface/CoreGraphics.hpp"
 #include "interface/CoreJPEG.hpp"
 #include "interface/CoreLCD.hpp"
-#include "interface/CoreLTDC.hpp"
+#include "interface/LTDC.hpp"
 #include "interface/CoreSDRAM.hpp"
 #include "interface/DMA2D.hpp"
 #include "interface/DSI.hpp"
