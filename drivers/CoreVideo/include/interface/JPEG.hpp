@@ -2,8 +2,8 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_JPEG_BASE_H_
-#define _LEKA_OS_DRIVER_JPEG_BASE_H_
+#ifndef _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_JPEG_BASE_H_
+#define _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_JPEG_BASE_H_
 
 #include "storage/filesystem/fat/ChaN/ff.h"
 
@@ -12,10 +12,10 @@
 
 namespace leka::interface {
 
-class CoreJPEG
+class JPEGBase
 {
   public:
-	~CoreJPEG() = default;
+	~JPEGBase() = default;
 
 	virtual void initialize() = 0;
 
@@ -40,4 +40,4 @@ class CoreJPEG
 
 }	// namespace leka::interface
 
-#endif	 // _LEKA_OS_DRIVER_JPEG_BASE_H_
+#endif	 // _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_JPEG_BASE_H_
