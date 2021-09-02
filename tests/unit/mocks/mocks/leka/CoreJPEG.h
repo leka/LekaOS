@@ -10,7 +10,7 @@
 
 namespace leka {
 
-class CoreJPEGMock : public interface::CoreJPEG
+class CoreJPEGMock : public interface::JPEGBase
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));

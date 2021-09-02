@@ -11,12 +11,12 @@
 #include "LKCoreFatFsBase.h"
 #include "LKCoreSTM32HalBase.h"
 #include "external/st_jpeg_utils.h"
-#include "interface/JPEG.hpp"
 #include "interface/DMA2D.hpp"
+#include "interface/JPEG.hpp"
 
 namespace leka {
 
-class CoreJPEG : public interface::CoreJPEG
+class CoreJPEG : public interface::JPEGBase
 {
   public:
 	CoreJPEG(LKCoreSTM32HalBase &hal, interface::DMA2DBase &dma2d, LKCoreFatFsBase &file);
