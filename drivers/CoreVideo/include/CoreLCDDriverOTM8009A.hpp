@@ -18,7 +18,7 @@ namespace leka {
 class CoreLCDDriverOTM8009A : public interface::CoreLCDDriver
 {
   public:
-	CoreLCDDriverOTM8009A(interface::CoreDSI &dsi, PinName backlight) : _dsi {dsi}, _backlight {backlight} {};
+	CoreLCDDriverOTM8009A(interface::DSIBase &dsi, PinName backlight) : _dsi {dsi}, _backlight {backlight} {};
 
 	void initialize() final;
 	void setLandscapeOrientation() final;
@@ -29,7 +29,7 @@ class CoreLCDDriverOTM8009A : public interface::CoreLCDDriver
 	void setBrightness(float value) final;
 
   private:
-	interface::CoreDSI &_dsi;
+	interface::DSIBase &_dsi;
 	mbed::PwmOut _backlight;
 };
 

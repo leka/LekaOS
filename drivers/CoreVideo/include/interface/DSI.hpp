@@ -2,17 +2,17 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_DSI_BASE_H_
-#define _LEKA_OS_DRIVER_DSI_BASE_H_
+#ifndef _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_DSI_BASE_H_
+#define _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_DSI_BASE_H_
 
 #include "stm32f7xx_hal.h"
 
 namespace leka::interface {
 
-class CoreDSI
+class DSIBase
 {
   public:
-	virtual ~CoreDSI() = default;
+	virtual ~DSIBase() = default;
 
 	virtual void initialize() = 0;
 	virtual void start()	  = 0;
@@ -25,4 +25,4 @@ class CoreDSI
 
 }	// namespace leka::interface
 
-#endif	 // _LEKA_OS_DRIVER_DSI_BASE_H_
+#endif	 // _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_DSI_BASE_H_
