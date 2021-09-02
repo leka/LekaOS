@@ -13,8 +13,8 @@ on:
   pull_request:
     branches:
       - develop
-      - "feature/**"
-      - "bugfix/**"
+      - "**/feature/**"
+      - "**/bugfix/**"
 
 env:
   CLICOLOR_FORCE: true # ninja
