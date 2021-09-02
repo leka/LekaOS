@@ -6,7 +6,7 @@
 #define _LEKA_OS_LCD_MOCK_H_
 
 #include "gmock/gmock.h"
-#include "interface/CoreLCD.hpp"
+#include "interface/LCD.hpp"
 
 namespace leka {
 
