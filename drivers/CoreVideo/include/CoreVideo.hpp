@@ -7,7 +7,7 @@
 
 #include "LKCoreSTM32HalBase.h"
 #include "interface/CoreGraphics.hpp"
-#include "interface/CoreSDRAM.hpp"
+#include "interface/SDRAM.hpp"
 #include "interface/DMA2D.hpp"
 #include "interface/DSI.hpp"
 #include "interface/Font.hpp"

@@ -8,7 +8,7 @@
 #define _LEKA_OS_LIB_SDRAM_H_
 
 #include "LKCoreSTM32HalBase.h"
-#include "interface/CoreSDRAM.hpp"
+#include "interface/SDRAM.hpp"
 
 namespace leka {
 
