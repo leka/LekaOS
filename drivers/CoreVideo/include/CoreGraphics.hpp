@@ -7,7 +7,7 @@
 
 #include "CGColor.hpp"
 #include "LKCoreLL.h"
-#include "interface/CoreGraphics.hpp"
+#include "interface/Graphics.hpp"
 #include "interface/DMA2D.hpp"
 #include "internal/corevideo_config.h"
 
