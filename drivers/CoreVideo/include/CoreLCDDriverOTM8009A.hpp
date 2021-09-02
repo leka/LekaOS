@@ -15,7 +15,7 @@ namespace leka {
 // ? OTM8009A LCD driver datasheet available at:
 // ? http://www.orientdisplay.com/pdf/OTM8009A.pdf
 
-class CoreLCDDriverOTM8009A : public interface::CoreLCDDriver
+class CoreLCDDriverOTM8009A : public interface::LCDDriver
 {
   public:
 	CoreLCDDriverOTM8009A(interface::DSIBase &dsi, PinName backlight) : _dsi {dsi}, _backlight {backlight} {};
