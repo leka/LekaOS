@@ -8,7 +8,7 @@
 #include "drivers/PwmOut.h"
 
 #include "interface/DSI.hpp"
-#include "interface/CoreLCDDriver.hpp"
+#include "interface/LCDDriver.hpp"
 
 namespace leka {
 
