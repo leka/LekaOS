@@ -9,11 +9,11 @@
 #include "interface/CoreGraphics.hpp"
 #include "interface/CoreJPEG.hpp"
 #include "interface/CoreLCD.hpp"
-#include "interface/LTDC.hpp"
 #include "interface/CoreSDRAM.hpp"
 #include "interface/DMA2D.hpp"
 #include "interface/DSI.hpp"
 #include "interface/Font.hpp"
+#include "interface/LTDC.hpp"
 
 namespace leka {
 
@@ -21,7 +21,7 @@ class CoreVideo
 {
   public:
 	CoreVideo(LKCoreSTM32HalBase &hal, interface::CoreSDRAM &coresdram, interface::DMA2DBase &coredma2d,
-			  interface::DSIBase &coredsi, interface::CoreLTDC &coreltdc, interface::CoreLCD &corelcd,
+			  interface::DSIBase &coredsi, interface::LTDCBase &coreltdc, interface::CoreLCD &corelcd,
 			  interface::CoreGraphics &coregraphics, interface::Font &corefont, interface::CoreJPEG &corejpeg);
 
 	void initialize();
@@ -42,7 +42,7 @@ class CoreVideo
 	interface::CoreSDRAM &_coresdram;
 	interface::DMA2DBase &_coredma2d;
 	interface::DSIBase &_coredsi;
-	interface::CoreLTDC &_coreltdc;
+	interface::LTDCBase &_coreltdc;
 	interface::CoreLCD &_corelcd;
 	interface::CoreGraphics &_coregraphics;
 	interface::Font &_corefont;
