@@ -11,7 +11,7 @@
 #include "LKCoreFatFsBase.h"
 #include "LKCoreSTM32HalBase.h"
 #include "external/st_jpeg_utils.h"
-#include "interface/CoreDMA2D.hpp"
+#include "interface/DMA2D.hpp"
 #include "interface/CoreJPEG.hpp"
 
 namespace leka {

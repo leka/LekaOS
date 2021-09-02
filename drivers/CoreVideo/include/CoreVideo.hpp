@@ -6,7 +6,7 @@
 #define _LEKA_OS_DRIVER_LKCOREVIDEO_H_
 
 #include "LKCoreSTM32HalBase.h"
-#include "interface/CoreDMA2D.hpp"
+#include "interface/DMA2D.hpp"
 #include "interface/CoreDSI.hpp"
 #include "interface/CoreFont.hpp"
 #include "interface/CoreGraphics.hpp"
