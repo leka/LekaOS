@@ -28,11 +28,9 @@ auto CoreFont::fontPixelIsOn(uint32_t byte_of_line, uint8_t pixel_id) -> bool
 {
 	uint32_t pixel_id_mask = (0x01 << ((graphics::pixels_per_line - 1) - pixel_id + graphics::unused_bits));
 
-	if ((byte_of_line & pixel_id_mask) == 0U) {
-		return false;
-	};
+	auto is_on = (byte_of_line & pixel_id_mask) != 0U;
 
-	return true;
+	return is_on;
 }
 
 void CoreFont::drawChar(Character character, CGColor foreground, CGColor background)
