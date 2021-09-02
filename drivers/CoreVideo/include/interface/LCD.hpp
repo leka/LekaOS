@@ -2,15 +2,15 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_LCD_BASE_H_
-#define _LEKA_OS_DRIVER_LCD_BASE_H_
+#ifndef _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_LCD_BASE_H_
+#define _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_LCD_BASE_H_
 
 namespace leka::interface {
 
-class CoreLCD
+class LCD
 {
   public:
-	~CoreLCD() = default;
+	~LCD() = default;
 
 	virtual void initialize() = 0;
 
@@ -22,4 +22,4 @@ class CoreLCD
 
 }	// namespace leka::interface
 
-#endif	 // _LEKA_OS_DRIVER_LCD_BASE_H_
+#endif	 // _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_LCD_BASE_H_

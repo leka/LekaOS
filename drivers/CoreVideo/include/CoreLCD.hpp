@@ -7,12 +7,12 @@
 
 #include "drivers/PwmOut.h"
 
-#include "interface/LCD.hpp"
 #include "interface/CoreLCDDriver.hpp"
+#include "interface/LCD.hpp"
 
 namespace leka {
 
-class CoreLCD : public interface::CoreLCD
+class CoreLCD : public interface::LCD
 {
   public:
 	explicit CoreLCD(interface::CoreLCDDriver &driver);
