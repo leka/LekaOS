@@ -354,6 +354,9 @@ jobs:
 
             ## Summary
 
+            <details>
+            <summary>Click to show summary</summary>
+
             - :heavy_check_mark: - existing target
             - :sparkles: - new target
             - :coffin: - deleted target
@@ -361,6 +364,8 @@ jobs:
             - :x: - files are different
 
             ${{ env.STATUS_DIFF_OUTPUT }}
+
+            </details>
 
             ## Map files diff output
 
