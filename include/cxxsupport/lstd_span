@@ -39,51 +39,51 @@ using std::span;
 
 #else	//__cpp_lib_span >= 202002L
 
-#include "mbed_assert.h"
 #include <array>
+#include <iterator>
 #include <mstd_iterator>
 #include <mstd_type_traits>
+#include <type_traits>
 
 // clang-format on
 
 namespace lstd {
 
-using namespace mstd;
+constexpr std::size_t dynamic_extent = -1;
 
-constexpr size_t dynamic_extent = -1;
-
-template <typename, size_t = dynamic_extent>
+template <typename, std::size_t = dynamic_extent>
 class span;
 
 namespace detail {
 
-	template <typename ElementType, size_t Extent>
+	template <typename ElementType, std::size_t Extent>
 	struct storage {
 		constexpr storage() noexcept = default;
 
-		constexpr storage(ElementType *ptr, size_t) noexcept : _data(ptr) {}
+		constexpr storage(ElementType *ptr, std::size_t size) noexcept : _data(ptr) {}
 
-		ElementType *_data			  = nullptr;
-		static constexpr size_t _size = Extent;
+		ElementType *_data				   = nullptr;
+		static constexpr std::size_t _size = Extent;
 	};
-	template <typename ElementType, size_t Extent>
-	constexpr size_t storage<ElementType, Extent>::_size;
+
+	template <typename ElementType, std::size_t Extent>
+	constexpr std::size_t storage<ElementType, Extent>::_size;
 
 	template <typename ElementType>
 	struct storage<ElementType, dynamic_extent> {
 		constexpr storage() noexcept = default;
 
-		constexpr storage(ElementType *ptr, size_t size) noexcept : _data(ptr), _size(size) {}
+		constexpr storage(ElementType *ptr, std::size_t size) noexcept : _data(ptr), _size(size) {}
 
 		ElementType *_data = nullptr;
-		size_t _size	   = 0;
+		std::size_t _size  = 0;
 	};
 
 	template <typename>
 	struct is_span : std::false_type {
 	};
 
-	template <typename T, size_t E>
+	template <typename T, std::size_t E>
 	struct is_span<span<T, E>> : std::true_type {
 	};
 
@@ -91,7 +91,7 @@ namespace detail {
 	struct is_std_array : std::false_type {
 	};
 
-	template <typename T, size_t N>
+	template <typename T, std::size_t N>
 	struct is_std_array<std::array<T, N>> : std::true_type {
 	};
 
@@ -100,7 +100,7 @@ namespace detail {
 	};
 
 	template <typename T>
-	struct has_size<T, void_t<decltype(mstd::size(std::declval<T>()))>> : std::true_type {
+	struct has_size<T, std::void_t<decltype(std::size(std::declval<T>()))>> : std::true_type {
 	};
 
 	template <typename, typename = void>
@@ -108,7 +108,7 @@ namespace detail {
 	};
 
 	template <typename T>
-	struct has_data<T, void_t<decltype(mstd::data(std::declval<T>()))>> : std::true_type {
+	struct has_data<T, std::void_t<decltype(std::data(std::declval<T>()))>> : std::true_type {
 	};
 
 	template <typename T, typename U = mstd::remove_cvref_t<T>>
@@ -118,7 +118,7 @@ namespace detail {
 	};
 
 	template <class T>
-	using iterator_t = decltype(mstd::begin(std::declval<T &>()));
+	using iterator_t = decltype(std::begin(std::declval<T &>()));
 
 	template <class R>
 	using range_reference_t = mstd::iter_reference_t<iterator_t<R>>;
@@ -129,20 +129,20 @@ namespace detail {
 
 	template <typename T, typename E>
 	struct is_compatible<T, E,
-						 typename mstd::enable_if_t<!mstd::is_same<
-							 typename mstd::remove_cv_t<decltype(mstd::data(std::declval<T>()))>, void>::value>>
-		: mstd::is_convertible<remove_pointer_t<decltype(mstd::data(std::declval<T>()))> (*)[], E (*)[]> {
+						 typename std::enable_if_t<!std::is_same<
+							 typename std::remove_cv_t<decltype(std::data(std::declval<T>()))>, void>::value>>
+		: std::is_convertible<std::remove_pointer_t<decltype(std::data(std::declval<T>()))> (*)[], E (*)[]> {
 	};
 
 }	// namespace detail
 
-template <typename ElementType, size_t Extent>
+template <typename ElementType, std::size_t Extent>
 class span
 {
   public:
 	using element_type	   = ElementType;
-	using value_type	   = typename mstd::remove_cv_t<element_type>;
-	using index_type	   = size_t;
+	using value_type	   = typename std::remove_cv_t<element_type>;
+	using index_type	   = std::size_t;
 	using difference_type  = ptrdiff_t;
 	using pointer		   = element_type *;
 	using const_pointer	   = const element_type *;
@@ -154,77 +154,77 @@ class span
 	static constexpr index_type extent = Extent;
 
 	// Constructors, copy and assignment
-	template <size_t E = Extent, typename mstd::enable_if_t<E == dynamic_extent, int> = 0>
+	template <std::size_t E = Extent, typename std::enable_if_t<E == dynamic_extent, int> = 0>
 	constexpr span() noexcept
 	{
 	}
 
-	template <class It, size_t E = Extent,
-			  typename mstd::enable_if_t<
-				  mstd::is_convertible<remove_reference_t<mstd::iter_reference_t<It>> (*)[], ElementType (*)[]>::value,
-				  int> = 0>
+	template <class It, std::size_t E = Extent,
+			  typename std::enable_if_t<std::is_convertible<std::remove_reference_t<mstd::iter_reference_t<It>> (*)[],
+															ElementType (*)[]>::value,
+										int> = 0>
 	constexpr span(It ptr, index_type count) : _storage(ptr, count)
 	{
-		MBED_ASSERT(extent == dynamic_extent || extent == count);
+		static_assert(extent == dynamic_extent || extent == count);
 	}
 
 	template <class It,
-			  typename mstd::enable_if_t<
-				  mstd::is_convertible<remove_reference_t<mstd::iter_reference_t<It>> (*)[], ElementType (*)[]>::value,
-				  int> = 0>
+			  typename std::enable_if_t<std::is_convertible<std::remove_reference_t<mstd::iter_reference_t<It>> (*)[],
+															ElementType (*)[]>::value,
+										int> = 0>
 	constexpr span(It first, It last) : _storage(first, last - first)
 	{
-		MBED_ASSERT(first <= last);
-		MBED_ASSERT(extent == dynamic_extent || extent == last - first);
-		MBED_ASSERT(extent == 0 || nullptr != first);
+		static_assert(first <= last);
+		static_assert(extent == dynamic_extent || extent == last - first);
+		static_assert(extent == 0 || nullptr != first);
 	}
 
-	template <size_t N>
+	template <std::size_t N>
 	constexpr span(
-		type_identity_t<element_type> (&arr)[N],
-		typename mstd::enable_if_t<
+		mstd::type_identity_t<element_type> (&arr)[N],
+		typename std::enable_if_t<
 			(Extent == dynamic_extent || Extent == N) &&
-				mstd::is_convertible<remove_pointer_t<decltype(mstd::data(arr))> (*)[], ElementType (*)[]>::value,
+				std::is_convertible<std::remove_pointer_t<decltype(std::data(arr))> (*)[], ElementType (*)[]>::value,
 			int> = 0) noexcept
 		: _storage(arr, N)
 	{
 	}
 
-	template <class T, size_t N>
+	template <class T, std::size_t N>
 	constexpr span(
 		std::array<T, N> &arr,
-		typename mstd::enable_if_t<
+		typename std::enable_if_t<
 			(Extent == dynamic_extent || Extent == N) &&
-				mstd::is_convertible<remove_pointer_t<decltype(mstd::data(arr))> (*)[], ElementType (*)[]>::value,
+				std::is_convertible<std::remove_pointer_t<decltype(std::data(arr))> (*)[], ElementType (*)[]>::value,
 			int> = 0) noexcept
 		: _storage(arr.data(), N)
 	{
 	}
 
-	template <class T, size_t N>
+	template <class T, std::size_t N>
 	constexpr span(
 		const std::array<T, N> &arr,
-		typename mstd::enable_if_t<
+		typename std::enable_if_t<
 			(Extent == dynamic_extent || Extent == N) &&
-				mstd::is_convertible<remove_pointer_t<decltype(mstd::data(arr))> (*)[], ElementType (*)[]>::value,
+				std::is_convertible<std::remove_pointer_t<decltype(std::data(arr))> (*)[], ElementType (*)[]>::value,
 			int> = 0) noexcept
 		: _storage(arr.data(), N)
 	{
 	}
 
-	template <class R, typename mstd::enable_if_t<
+	template <class R, typename std::enable_if_t<
 						   detail::is_container<R>::value && detail::is_compatible<R &, ElementType>::value, int> = 0>
-	constexpr span(R &&r) : _storage(mstd::data(r), mstd::size(r))
+	constexpr span(R &&r) : _storage(std::data(r), std::size(r))
 	{
-		MBED_ASSERT(extent == dynamic_extent || extent == mstd::size(r));
+		static_assert(extent == dynamic_extent || extent == std::size(r));
 	}
 
 	constexpr span(const span &other) noexcept = default;
 
-	template <class OtherElementType, size_t OtherExtent,
-			  typename mstd::enable_if_t<(Extent == dynamic_extent || OtherExtent == Extent) &&
-											 mstd::is_convertible<OtherElementType (*)[], ElementType (*)[]>::value,
-										 int> = 0>
+	template <class OtherElementType, std::size_t OtherExtent,
+			  typename std::enable_if_t<(Extent == dynamic_extent || OtherExtent == Extent) &&
+											std::is_convertible<OtherElementType (*)[], ElementType (*)[]>::value,
+										int> = 0>
 	constexpr span(const span<OtherElementType, OtherExtent> &s) noexcept : _storage(s.data(), s.size())
 	{
 	}
@@ -234,48 +234,48 @@ class span
 	constexpr span &operator=(const span &other) noexcept = default;
 
 	// Subviews
-	template <size_t Count>
+	template <std::size_t Count>
 	constexpr span<element_type, Count> first() const
 	{
 		static_assert(Count <= extent);
-		MBED_ASSERT(Count <= size());
+		static_assert(Count <= size());
 		return {data(), Count};
 	}
 
-	template <size_t Count>
+	template <std::size_t Count>
 	constexpr span<element_type, Count> last() const
 	{
 		static_assert(Count <= extent);
-		MBED_ASSERT(Count <= size());
+		static_assert(Count <= size());
 		return {data() + (size() - Count), Count};
 	}
 
-	template <size_t Offset, size_t Count = dynamic_extent>
+	template <std::size_t Offset, std::size_t Count = dynamic_extent>
 	constexpr span<element_type,
 				   Count != dynamic_extent ? Count : (Extent != dynamic_extent ? Extent - Offset : dynamic_extent)>
 	subspan() const
 	{
 		static_assert(Offset <= extent && (Count == dynamic_extent || Count <= extent - Offset));
 		// Only check against Offset == 0 to prevent a warning for subspan<0, N>
-		MBED_ASSERT((Offset == 0 || Offset <= size()) && (Count == dynamic_extent || Count <= size() - Offset));
+		static_assert((Offset == 0 || Offset <= size()) && (Count == dynamic_extent || Count <= size() - Offset));
 		return {data() + Offset, Count != dynamic_extent ? Count : size() - Offset};
 	}
 
 	constexpr span<element_type, dynamic_extent> first(index_type count) const
 	{
-		MBED_ASSERT(count <= size());
+		static_assert(count <= size());
 		return {data(), count};
 	}
 
 	constexpr span<element_type, dynamic_extent> last(index_type count) const
 	{
-		MBED_ASSERT(count <= size());
+		static_assert(count <= size());
 		return {data() + (size() - count), count};
 	}
 
 	constexpr span<element_type, dynamic_extent> subspan(index_type offset, index_type count = dynamic_extent) const
 	{
-		MBED_ASSERT(offset <= size() && (count == dynamic_extent || count <= size() - offset));
+		static_assert(offset <= size() && (count == dynamic_extent || count <= size() - offset));
 		return {data() + offset, count == dynamic_extent ? size() - offset : count};
 	}
 
@@ -289,19 +289,19 @@ class span
 	// Element access
 	constexpr reference operator[](index_type idx) const
 	{
-		MBED_ASSERT(idx < size());
+		static_assert(idx < size());
 		return *(data() + idx);
 	}
 
 	constexpr reference front() const
 	{
-		MBED_ASSERT(!empty());
+		static_assert(!empty());
 		return *data();
 	}
 
 	constexpr reference back() const
 	{
-		MBED_ASSERT(!empty());
+		static_assert(!empty());
 		return *(data() + (size() - 1));
 	}
 
@@ -322,26 +322,26 @@ class span
 
 // clang-format off
 
-template <typename ElementType, size_t Extent>
+template <typename ElementType, std::size_t Extent>
 constexpr typename span<ElementType, Extent>::index_type span<ElementType, Extent>::extent;
 
 #if __cplusplus >= 201703L || __cpp_deduction_guides >= 201703L
 
 // Deduction guides
 template <class It, class EndOrSize>
-span(It, EndOrSize) -> span<remove_reference_t<iter_reference_t<It>>>;
+span(It, EndOrSize) -> span<std::remove_reference_t<mstd::iter_reference_t<It>>>;
 
-template <class T, size_t N>
+template <class T, std::size_t N>
 span(T (&)[N]) -> span<T, N>;
 
-template <class T, size_t N>
+template <class T, std::size_t N>
 span(std::array<T, N> &) -> span<T, N>;
 
-template <class T, size_t N>
+template <class T, std::size_t N>
 span(const std::array<T, N> &) -> span<const T, N>;
 
 template <class R>
-span(R &&) -> span<remove_reference_t<detail::range_reference_t<R>>>;
+span(R &&) -> span<std::remove_reference_t<detail::range_reference_t<R>>>;
 
 #endif	 //__cplusplus >= 201703L || __cpp_deduction_guides >= 201703L
 
