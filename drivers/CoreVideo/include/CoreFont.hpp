@@ -7,7 +7,7 @@
 
 #include "CGColor.hpp"
 #include "CGPixel.hpp"
-#include "interface/CoreFont.hpp"
+#include "interface/Font.hpp"
 
 namespace leka {
 

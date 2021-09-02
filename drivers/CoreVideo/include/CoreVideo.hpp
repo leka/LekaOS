@@ -6,7 +6,7 @@
 #define _LEKA_OS_DRIVER_LKCOREVIDEO_H_
 
 #include "LKCoreSTM32HalBase.h"
-#include "interface/CoreFont.hpp"
+#include "interface/Font.hpp"
 #include "interface/CoreGraphics.hpp"
 #include "interface/CoreJPEG.hpp"
 #include "interface/CoreLCD.hpp"
