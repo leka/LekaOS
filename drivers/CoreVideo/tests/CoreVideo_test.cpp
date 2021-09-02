@@ -144,7 +144,7 @@ TEST_F(CoreVideoTest, clearScreenWithColor)
 
 TEST_F(CoreVideoTest, drawRectangle)
 {
-	interface::CoreGraphics::FilledRectangle rectangle;
+	interface::Graphics::FilledRectangle rectangle;
 	rectangle.origin.x = 200;
 	rectangle.origin.y = 369;
 	rectangle.width	   = 11;
@@ -159,7 +159,7 @@ TEST_F(CoreVideoTest, drawRectangle)
 
 TEST_F(CoreVideoTest, drawRectangleWithColor)
 {
-	interface::CoreGraphics::FilledRectangle rectangle;
+	interface::Graphics::FilledRectangle rectangle;
 	CGColor rectangle_color {0x2A, 0x2B, 0x2C};
 
 	EXPECT_CALL(graphicsmock, drawRectangle(_, compareColor(rectangle_color))).Times(1);

@@ -2,15 +2,15 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_GRAPHICS_BASE_H_
-#define _LEKA_OS_LIB_GRAPHICS_BASE_H_
+#ifndef _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_GRAPHICS_H_
+#define _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_GRAPHICS_H_
 
 #include "CGColor.hpp"
 #include "CGPixel.hpp"
 
 namespace leka::interface {
 
-class CoreGraphics
+class Graphics
 {
   public:
 	struct FilledRectangle {
@@ -19,7 +19,7 @@ class CoreGraphics
 		uint16_t height {};
 	};
 
-	virtual ~CoreGraphics() = default;
+	virtual ~Graphics() = default;
 
 	virtual void clearScreen(CGColor color = CGColor::white) = 0;
 
@@ -28,4 +28,4 @@ class CoreGraphics
 
 }	// namespace leka::interface
 
-#endif
+#endif	 // _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_GRAPHICS_H_
