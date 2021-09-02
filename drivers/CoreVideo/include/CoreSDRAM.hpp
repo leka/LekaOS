@@ -12,7 +12,7 @@
 
 namespace leka {
 
-class CoreSDRAM : public interface::CoreSDRAM
+class CoreSDRAM : public interface::SDRAM
 {
   public:
 	explicit CoreSDRAM(LKCoreSTM32HalBase &hal);

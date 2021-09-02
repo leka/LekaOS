@@ -1,17 +1,18 @@
 // Leka - LekaOS
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
-// Original file:
-// https://github.com/STMicroelectronics/STM32CubeF7/blob/master/Drivers/BSP/STM32F769I-Discovery/stm32f769i_discovery_sdram.h
 
-#ifndef _LEKA_OS_LIB_SDRAM_BASE_H_
-#define _LEKA_OS_LIB_SDRAM_BASE_H_
+// * Original file:
+// * https://github.com/STMicroelectronics/STM32CubeF7/blob/master/Drivers/BSP/STM32F769I-Discovery/stm32f769i_discovery_sdram.h
+
+#ifndef _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_SDRAM_H_
+#define _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_SDRAM_H_
 
 #include "stm32f7xx_hal.h"
 
 namespace leka::interface {
 
-class CoreSDRAM
+class SDRAM
 {
   public:
 	virtual void setupSDRAMConfig()								= 0;
@@ -25,4 +26,4 @@ class CoreSDRAM
 
 }	// namespace leka::interface
 
-#endif
+#endif	 // _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_SDRAM_H_
