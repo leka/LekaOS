@@ -10,7 +10,7 @@
 
 namespace leka {
 
-class CoreLTDCMock : public interface::CoreLTDC
+class CoreLTDCMock : public interface::LTDCBase
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));
