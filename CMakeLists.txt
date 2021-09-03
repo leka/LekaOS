@@ -93,6 +93,7 @@ endif()
 # Add c++ support, include directories
 include_directories(BEFORE SYSTEM
 	${INCLUDE_DIR}/cxxsupport
+	${MBED_OS_DIR}/platform/cxxsupport
 )
 
 include_directories(BEFORE
