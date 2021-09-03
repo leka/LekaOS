@@ -19,6 +19,7 @@ target_sources(Utils
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
+		tests/MathUtils_test_checksum.cpp
 		tests/MathUtils_test_map.cpp
 		tests/MathUtils_test_linear_function.cpp
 		tests/MemoryUtils_test.cpp

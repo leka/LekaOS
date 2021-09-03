@@ -4,9 +4,9 @@
 
 #include "MathUtils.h"
 
-namespace leka::utils::math {
+using namespace leka::utils;
 
-auto computeLinearCoefficients(Point p1, Point p2) -> LinearCoefficients
+auto math::computeLinearCoefficients(Point p1, Point p2) -> LinearCoefficients
 {
 	if (p2.x == p1.x) {
 		return {0, 0};
@@ -19,4 +19,13 @@ auto computeLinearCoefficients(Point p1, Point p2) -> LinearCoefficients
 	return coeffs;
 }
 
-}	// namespace leka::utils::math
+auto math::checksum8(lstd::span<uint8_t> data) -> uint8_t
+{
+	uint8_t checksum = 0;
+
+	for (auto v: data) {
+		checksum = (v + checksum) % 256;
+	}
+
+	return checksum;
+}

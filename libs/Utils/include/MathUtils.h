@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_LIB_UTILS_MATH_H_
 #define _LEKA_OS_LIB_UTILS_MATH_H_
 
+#include <lstd_span>
+
 namespace leka::utils::math {
 
 template <typename OutputType, typename IntputType>
@@ -24,6 +26,8 @@ struct LinearCoefficients {
 };
 
 auto computeLinearCoefficients(Point p1, Point p2) -> LinearCoefficients;
+
+auto checksum8(lstd::span<uint8_t> data) -> uint8_t;
 
 }	// namespace leka::utils::math
 
