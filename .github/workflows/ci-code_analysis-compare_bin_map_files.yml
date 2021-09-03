@@ -248,11 +248,11 @@ jobs:
               diff_ram=$(($head_ram - $base_ram))
 
               if [ $diff_ram -lt 0 ]; then
-                  diff_ram=":chart_with_downwards_trend:  $diff_ram"
+                  diff_ram=":chart_with_downwards_trend: $diff_ram"
               elif [ $diff_ram -gt 0 ]; then
                   diff_ram=":chart_with_upwards_trend: $diff_ram"
               else
-                  diff_ram="0"
+                  diff_ram="ø"
               fi
 
               base_flash=$(grep -Po '(?<=\(text \+ data\):\s)[[:digit:]]*' _mbed_tmp/${{ env.base_sha }}/$target_name.txt)
@@ -264,7 +264,7 @@ jobs:
               elif [ $diff_flash -gt 0 ]; then
                   diff_flash=":chart_with_upwards_trend: $diff_flash"
               else
-                  diff_flash="0"
+                  diff_flash="ø"
               fi
 
               echo -n "| $base_ram / $head_ram | $diff_ram | $base_flash / $head_flash | $diff_flash " >> $GITHUB_ENV
