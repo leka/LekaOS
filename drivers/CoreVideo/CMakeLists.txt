@@ -7,7 +7,6 @@ add_library(CoreVideo STATIC)
 target_include_directories(CoreVideo
 	PUBLIC
 		include
-		include/internal
 		external/include
 )
 
