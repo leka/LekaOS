@@ -28,7 +28,7 @@ env:
 
 jobs:
   compare_bin_map_files:
-    name: Compare bin/map files
+    name: Compare .bin & .map files
     runs-on: ubuntu-latest
 
     steps:
