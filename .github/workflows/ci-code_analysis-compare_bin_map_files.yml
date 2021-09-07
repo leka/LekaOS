@@ -145,13 +145,14 @@ jobs:
           git checkout ${{ github.head_ref }}
           echo "head_sha=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
-      - name: Create mbed version variables
+      - name: Create mbed/toolchain version variables
         id: create_mbed_version_variables
         run: |
           git checkout ${{ github.base_ref }}
           echo "base_mbed=$(cat .mbed_version)" >> $GITHUB_ENV
           git checkout ${{ github.head_ref }}
           echo "head_mbed=$(cat .mbed_version)" >> $GITHUB_ENV
+          echo "toolchain_version=$(arm-none-eabi-gcc --version | grep -Po '(?<=arm-none-eabi-gcc ).*' | sed 's/(G/G/g' | sed 's/r)/r -/g')" >> $GITHUB_ENV
 
       - name: Create temporary directories
         run: |
@@ -352,6 +353,7 @@ jobs:
 
             ## Versions
 
+            - toolchain: `${{ env.toolchain_version }}`
             - base: `${{ github.base_ref }}:${{ env.base_sha }}` with `${{ env.base_mbed }}`
             - head: `${{ github.head_ref }}:${{ env.head_sha }}` with `${{ env.head_mbed }}`
 
