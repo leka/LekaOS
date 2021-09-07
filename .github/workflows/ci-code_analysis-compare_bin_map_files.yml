@@ -23,7 +23,6 @@ env:
   CCACHE_COMPRESS: true
   CCACHE_COMPRESSLEVEL: 6
 
-  ARM_TOOLCHAIN_URL: "https://developer.arm.com/-/media/Files/downloads/gnu-rm/10-2020q4/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2"
   ARM_TOOLCHAIN_FILENAME: "gcc-arm-none-eabi-*-x86_64-linux.tar.bz2"
   ARM_TOOLCHAIN_EXTRACT_DIRECTORY: "gcc-arm-none-eabi-*"
 
@@ -42,12 +41,16 @@ jobs:
       # Mark: - Install ARM GCC Toolchain
       #
 
+      - name: Create ARM GCC Toolchain env variables
+        run: |
+          echo "ARM_TOOLCHAIN_URL=$(cat .gcc_arm_none_eabi_url)" >> $GITHUB_ENV
+
       - name: Cache ARM GCC Toolchain
         id: cache_arm_toolchain
         uses: actions/cache@v2
         with:
           path: ~/gcc-arm-none-eabi
-          key: ${{ runner.os }}-global_cache-arm_toolchain-${{ steps.cache_variables.outputs.arm_toolchain_url_sha }}
+          key: ${{ runner.os }}-global_cache-arm_toolchain-${{ hashFiles('.gcc_arm_none_eabi_url') }}
 
       - name: Install ARM GCC Toolchain
         if: steps.cache_arm_toolchain.outputs.cache-hit != 'true'
@@ -142,13 +145,14 @@ jobs:
           git checkout ${{ github.head_ref }}
           echo "head_sha=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
-      - name: Create mbed version variables
+      - name: Create mbed/toolchain version variables
         id: create_mbed_version_variables
         run: |
           git checkout ${{ github.base_ref }}
           echo "base_mbed=$(cat .mbed_version)" >> $GITHUB_ENV
           git checkout ${{ github.head_ref }}
           echo "head_mbed=$(cat .mbed_version)" >> $GITHUB_ENV
+          echo "toolchain_version=$(arm-none-eabi-gcc --version | grep -Po '(?<=arm-none-eabi-gcc ).*' | sed 's/(G/G/g' | sed 's/r)/r -/g')" >> $GITHUB_ENV
 
       - name: Create temporary directories
         run: |
@@ -347,12 +351,13 @@ jobs:
           message: |
             #  .map & .bin files analysis report
 
-            ## Versions
+            ## Versions :bookmark:
 
+            - toolchain: `${{ env.toolchain_version }}`
             - base: `${{ github.base_ref }}:${{ env.base_sha }}` with `${{ env.base_mbed }}`
             - head: `${{ github.head_ref }}:${{ env.head_sha }}` with `${{ env.head_mbed }}`
 
-            ## Summary
+            ## Summary :memo:
 
             <details>
             <summary>Click to show summary</summary>
@@ -367,7 +372,7 @@ jobs:
 
             </details>
 
-            ## Map files diff output
+            ## Map files diff output :world_map:
 
             <details>
             <summary>Click to show diff list</summary>

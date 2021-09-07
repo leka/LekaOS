@@ -26,7 +26,6 @@ jobs:
       CCACHE_COMPRESS: true
       CCACHE_COMPRESSLEVEL: 6
 
-      ARM_TOOLCHAIN_URL: "https://developer.arm.com/-/media/Files/downloads/gnu-rm/10-2020q4/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2"
       ARM_TOOLCHAIN_FILENAME: "gcc-arm-none-eabi-*-x86_64-linux.tar.bz2"
       ARM_TOOLCHAIN_EXTRACT_DIRECTORY: "gcc-arm-none-eabi-*"
 
@@ -50,19 +49,20 @@ jobs:
         run: |
           echo "::set-output name=date::$(date +%s)"
 
-          sha=($(echo -n ${{ env.ARM_TOOLCHAIN_URL }} | sha1sum ))
-          echo "::set-output name=arm_toolchain_url_sha::$sha"
-
       #
       # Mark: - Install ARM GCC Toolchain
       #
+
+      - name: Create ARM GCC Toolchain env variables
+        run: |
+          echo "ARM_TOOLCHAIN_URL=$(cat .gcc_arm_none_eabi_url)" >> $GITHUB_ENV
 
       - name: Cache ARM GCC Toolchain
         id: cache_arm_toolchain
         uses: actions/cache@v2
         with:
           path: ~/gcc-arm-none-eabi
-          key: ${{ runner.os }}-global_cache-arm_toolchain-${{ steps.cache_variables.outputs.arm_toolchain_url_sha }}
+          key: ${{ runner.os }}-global_cache-arm_toolchain-${{ hashFiles('.gcc_arm_none_eabi_url') }}
 
       - name: Install ARM GCC Toolchain
         if: steps.cache_arm_toolchain.outputs.cache-hit != 'true'
