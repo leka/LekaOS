@@ -351,13 +351,13 @@ jobs:
           message: |
             #  .map & .bin files analysis report
 
-            ## Versions
+            ## Versions :bookmark:
 
             - toolchain: `${{ env.toolchain_version }}`
             - base: `${{ github.base_ref }}:${{ env.base_sha }}` with `${{ env.base_mbed }}`
             - head: `${{ github.head_ref }}:${{ env.head_sha }}` with `${{ env.head_mbed }}`
 
-            ## Summary
+            ## Summary :memo:
 
             <details>
             <summary>Click to show summary</summary>
@@ -372,7 +372,7 @@ jobs:
 
             </details>
 
-            ## Map files diff output
+            ## Map files diff output :world_map:
 
             <details>
             <summary>Click to show diff list</summary>
