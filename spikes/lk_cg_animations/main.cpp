@@ -9,22 +9,22 @@
 #include "rtos/Thread.h"
 
 #include "BouncingSquare.h"
+#include "CoreDMA2D.hpp"
+#include "CoreDSI.hpp"
+#include "CoreFont.hpp"
+#include "CoreGraphics.hpp"
+#include "CoreJPEG.hpp"
+#include "CoreLCD.hpp"
+#include "CoreLCDDriverOTM8009A.hpp"
+#include "CoreLTDC.hpp"
+#include "CoreSDRAM.hpp"
+#include "CoreVideo.hpp"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LKAnimationKit.h"
-#include "LKCoreDMA2D.h"
-#include "LKCoreDSI.h"
 #include "LKCoreFatFs.h"
-#include "LKCoreFont.h"
-#include "LKCoreGraphics.h"
-#include "LKCoreJPEG.h"
-#include "LKCoreLCD.h"
-#include "LKCoreLCDDriverOTM8009A.h"
 #include "LKCoreLL.h"
-#include "LKCoreLTDC.h"
-#include "LKCoreSDRAM.h"
 #include "LKCoreSTM32Hal.h"
-#include "LKCoreVideo.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 
@@ -40,16 +40,16 @@ LKCoreFatFs corefatfs;
 LKCoreLL corell;
 CGPixel pixel(corell);
 LKCoreSTM32Hal hal;
-LKCoreSDRAM coresdram(hal);
-LKCoreDMA2D coredma2d(hal);
-LKCoreDSI coredsi(hal);
-LKCoreLTDC coreltdc(hal, coredsi);
-LKCoreGraphics coregraphics(coredma2d);
-LKCoreFont corefont(pixel);
-LKCoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
-LKCoreLCD corelcd(coreotm);
-LKCoreJPEG corejpeg(hal, coredma2d, corefatfs);
-LKCoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
+CoreSDRAM coresdram(hal);
+CoreDMA2D coredma2d(hal);
+CoreDSI coredsi(hal);
+CoreLTDC coreltdc(hal, coredsi);
+CoreGraphics coregraphics(coredma2d);
+CoreFont corefont(pixel);
+CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
+CoreLCD corelcd(coreotm);
+CoreJPEG corejpeg(hal, coredma2d, corefatfs);
+CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 rtos::Thread animation_thread;
 events::EventQueue animation_event_queue;
