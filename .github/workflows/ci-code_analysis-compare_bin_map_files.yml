@@ -152,7 +152,7 @@ jobs:
           echo "BASE_MBED_VERSION=$(cat .mbed_version)" >> $GITHUB_ENV
           git checkout ${{ github.head_ref }}
           echo "HEAD_MBED_VERSION=$(cat .mbed_version)" >> $GITHUB_ENV
-          echo "TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=arm-none-eabi-gcc ).*' | sed 's/(G/G/g' | sed 's/r)/r -/g')" >> $GITHUB_ENV
+          echo "TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc \().*(?= \(re)' | sed 's/)/ -/g'" >> $GITHUB_ENV
 
       - name: Create temporary directories
         run: |
