@@ -186,10 +186,12 @@ jobs:
           make
           rm -rf ~/gcc-arm-none-eabi
 
-      - name: Move base bin & map files to temporary directory
+      - name: Move base build artifacts to temporary directory
         run: |
           find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
           find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
 
       - name: Compile with head toolchain ${{ env.HEAD_TOOLCHAIN_VERSION }}
         run: |
@@ -200,10 +202,12 @@ jobs:
           make
           rm -rf ~/gcc-arm-none-eabi
 
-      - name: Move head bin & map files to temporary directory
+      - name: Move head build artifacts to temporary directory
         run: |
           find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
           find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
 
       #
       # Mark: - Compare
@@ -402,3 +406,18 @@ jobs:
             ${{ env.MAP_DIFF_OUTPUT }}
 
             </details>
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Toolchain-Upgrade-Build-Artifacts
+          retention-days: 7
+          path: |
+            _build_tmp/${{ env.BASE_SHA }}/**/*.bin
+            _build_tmp/${{ env.BASE_SHA }}/**/*.map
+            _build_tmp/${{ env.BASE_SHA }}/**/*.hex
+            _build_tmp/${{ env.BASE_SHA }}/**/*.elf
+            _build_tmp/${{ env.HEAD_SHA }}/**/*.bin
+            _build_tmp/${{ env.HEAD_SHA }}/**/*.map
+            _build_tmp/${{ env.HEAD_SHA }}/**/*.hex
+            _build_tmp/${{ env.HEAD_SHA }}/**/*.elf
