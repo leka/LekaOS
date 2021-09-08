@@ -28,7 +28,7 @@ env:
 
 jobs:
   compare_bin_map_files:
-    name: Compare bin/map files
+    name: Compare .bin & .map files
     runs-on: ubuntu-latest
 
     steps:
@@ -101,9 +101,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ env.CCACHE_DIR}}
-          key: ${{ runner.os }}-cache-code_analysis-compare_bin_map_files-${{ matrix.custom_target }}-ccache-${{ steps.cache_variables.outputs.date }}
+          key: ${{ runner.os }}-cache-code_analysis-compare_bin_map_files-ccache-${{ steps.cache_variables.outputs.date }}
           restore-keys: |
-            ${{ runner.os }}-cache-code_analysis-compare_bin_map_files-${{ matrix.custom_target }}-ccache-
+            ${{ runner.os }}-cache-code_analysis-compare_bin_map_files-ccache-
 
       #
       # Mark: - Install python/pip dependencies
@@ -141,53 +141,58 @@ jobs:
         id: create_sha_variables
         run: |
           git checkout ${{ github.base_ref }}
-          echo "base_sha=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "BASE_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           git checkout ${{ github.head_ref }}
-          echo "head_sha=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "HEAD_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
-      - name: Create mbed/toolchain version variables
+      - name: Create mbed version variables
         id: create_mbed_version_variables
         run: |
           git checkout ${{ github.base_ref }}
-          echo "base_mbed=$(cat .mbed_version)" >> $GITHUB_ENV
+          echo "BASE_MBED_VERSION=$(cat .mbed_version)" >> $GITHUB_ENV
           git checkout ${{ github.head_ref }}
-          echo "head_mbed=$(cat .mbed_version)" >> $GITHUB_ENV
-          echo "toolchain_version=$(arm-none-eabi-gcc --version | grep -Po '(?<=arm-none-eabi-gcc ).*' | sed 's/(G/G/g' | sed 's/r)/r -/g')" >> $GITHUB_ENV
+          echo "HEAD_MBED_VERSION=$(cat .mbed_version)" >> $GITHUB_ENV
+
+      - name: Create toolchain version variables
+        id: create_toolchain_version_variables
+        run: |
+          TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc \().*(?= \(re)' | sed 's/)/ -/g')
+          echo "TOOLCHAIN_VERSION=$TOOLCHAIN_VERSION" >> $GITHUB_ENV
 
       - name: Create temporary directories
         run: |
-          mkdir -p _mbed_tmp/${{ env.base_sha }}
-          mkdir -p _mbed_tmp/${{ env.head_sha }}
+          mkdir -p _build_tmp/${{ env.BASE_SHA }}
+          mkdir -p _build_tmp/${{ env.HEAD_SHA }}
 
       - name: Compile base branch
         run: |
           git checkout ${{ github.base_ref }}
           make deep_clean
-          if [[ "$base_mbed" != "$head_mbed" ]]; then
-            make mbed_curl VERSION=${{ env.base_mbed }}
+          if [[ "$BASE_MBED_VERSION" != "$HEAD_MBED_VERSION" ]]; then
+            make mbed_curl VERSION=${{ env.BASE_MBED_VERSION }}
           fi
           make config
           make
 
-      - name: Move ${{ github.base_ref }}:${{ env.base_sha }} bin & map files to temporary directory
+      - name: Move ${{ github.base_ref }}:${{ env.BASE_SHA }} bin & map files to temporary directory
         run: |
-          find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _mbed_tmp/${{ env.base_sha }}
-          find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _mbed_tmp/${{ env.base_sha }}
+          find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
 
       - name: Compile pr branch
         run: |
           git checkout ${{ github.head_ref }}
           make deep_clean
-          if [[ "$base_mbed" != "$head_mbed" ]]; then
-            make mbed_curl VERSION=${{ env.head_mbed }}
+          if [[ "$BASE_MBED_VERSION" != "$HEAD_MBED_VERSION" ]]; then
+            make mbed_curl VERSION=${{ env.HEAD_MBED_VERSION }}
           fi
           make config
           make
 
-      - name: Move ${{ github.head_ref }}:${{ env.head_sha }} bin & map files to temporary directory
+      - name: Move ${{ github.head_ref }}:${{ env.HEAD_SHA }} bin & map files to temporary directory
         run: |
-          find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _mbed_tmp/${{ env.head_sha }}
-          find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _mbed_tmp/${{ env.head_sha }}
+          find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
 
       - name: Compare bin files
         shell: bash
@@ -196,8 +201,8 @@ jobs:
 
           echo 'STATUS_DIFF_OUTPUT<<EOF_STATUS_DIFF_OUTPUT' >> $GITHUB_ENV
 
-          base_targets=($(echo $(find _mbed_tmp/${{ env.base_sha }} -name '*.bin' -execdir basename -s '.bin' {} +) | tr ' ' '\n' | sort -du | tr '\n' ' '))
-          head_targets=($(echo $(find _mbed_tmp/${{ env.head_sha }} -name '*.bin' -execdir basename -s '.bin' {} +) | tr ' ' '\n' | sort -du | tr '\n' ' '))
+          base_targets=($(echo $(find _build_tmp/${{ env.BASE_SHA }} -name '*.bin' -execdir basename -s '.bin' {} +) | tr ' ' '\n' | sort -du | tr '\n' ' '))
+          head_targets=($(echo $(find _build_tmp/${{ env.HEAD_SHA }} -name '*.bin' -execdir basename -s '.bin' {} +) | tr ' ' '\n' | sort -du | tr '\n' ' '))
           all_targets=($(echo "${base_targets[@]} ${head_targets[@]}" | tr ' ' '\n' | sort -du | tr '\n' ' '))
 
           echo "Set added/deleted targets"
@@ -232,23 +237,23 @@ jobs:
             else
               echo -n "| :heavy_check_mark: " >> $GITHUB_ENV
 
-              if ! output=$(diff _mbed_tmp/${{ env.base_sha }}/$target_name.bin _mbed_tmp/${{ env.head_sha }}/$target_name.bin 2>/dev/null); then
+              if ! output=$(diff _build_tmp/${{ env.BASE_SHA }}/$target_name.bin _build_tmp/${{ env.HEAD_SHA }}/$target_name.bin 2>/dev/null); then
                 echo -n "| :x: " >> $GITHUB_ENV
               else
                 echo -n "| :white_check_mark: " >> $GITHUB_ENV
               fi
 
-              python3 extern/mbed-os/tools/memap.py -t GCC_ARM _mbed_tmp/${{ env.base_sha }}/$target_name.map > _mbed_tmp/${{ env.base_sha }}/$target_name.txt
-              python3 extern/mbed-os/tools/memap.py -t GCC_ARM _mbed_tmp/${{ env.head_sha }}/$target_name.map > _mbed_tmp/${{ env.head_sha }}/$target_name.txt
+              python3 extern/mbed-os/tools/memap.py -t GCC_ARM _build_tmp/${{ env.BASE_SHA }}/$target_name.map > _build_tmp/${{ env.BASE_SHA }}/$target_name.txt
+              python3 extern/mbed-os/tools/memap.py -t GCC_ARM _build_tmp/${{ env.HEAD_SHA }}/$target_name.map > _build_tmp/${{ env.HEAD_SHA }}/$target_name.txt
 
-              if ! output=$(diff _mbed_tmp/${{ env.base_sha }}/$target_name.txt _mbed_tmp/${{ env.head_sha }}/$target_name.txt 2>/dev/null); then
+              if ! output=$(diff _build_tmp/${{ env.BASE_SHA }}/$target_name.txt _build_tmp/${{ env.HEAD_SHA }}/$target_name.txt 2>/dev/null); then
                 echo -n "| :x: " >> $GITHUB_ENV
               else
                 echo -n "| :white_check_mark: " >> $GITHUB_ENV
               fi
 
-              base_ram=$(grep -Po '(?<=\(data \+ bss\):\s)[[:digit:]]*' _mbed_tmp/${{ env.base_sha }}/$target_name.txt)
-              head_ram=$(grep -Po '(?<=\(data \+ bss\):\s)[[:digit:]]*' _mbed_tmp/${{ env.head_sha }}/$target_name.txt)
+              base_ram=$(grep -Po '(?<=\(data \+ bss\):\s)[[:digit:]]*' _build_tmp/${{ env.BASE_SHA }}/$target_name.txt)
+              head_ram=$(grep -Po '(?<=\(data \+ bss\):\s)[[:digit:]]*' _build_tmp/${{ env.HEAD_SHA }}/$target_name.txt)
               diff_ram=$(($head_ram - $base_ram))
 
               if [ $diff_ram -lt 0 ]; then
@@ -259,8 +264,8 @@ jobs:
                   diff_ram="ø"
               fi
 
-              base_flash=$(grep -Po '(?<=\(text \+ data\):\s)[[:digit:]]*' _mbed_tmp/${{ env.base_sha }}/$target_name.txt)
-              head_flash=$(grep -Po '(?<=\(text \+ data\):\s)[[:digit:]]*' _mbed_tmp/${{ env.head_sha }}/$target_name.txt)
+              base_flash=$(grep -Po '(?<=\(text \+ data\):\s)[[:digit:]]*' _build_tmp/${{ env.BASE_SHA }}/$target_name.txt)
+              head_flash=$(grep -Po '(?<=\(text \+ data\):\s)[[:digit:]]*' _build_tmp/${{ env.HEAD_SHA }}/$target_name.txt)
               diff_flash=$(($head_flash - $base_flash))
 
               if [ $diff_flash -lt 0 ]; then
@@ -287,8 +292,8 @@ jobs:
 
           echo 'MAP_DIFF_OUTPUT<<EOF_MAP_DIFF_OUTPUT' >> $GITHUB_ENV
 
-          base_targets=($(echo $(find _mbed_tmp/${{ env.base_sha }} -name '*.bin' -execdir basename -s '.bin' {} +) | tr ' ' '\n' | sort -du | tr '\n' ' '))
-          head_targets=($(echo $(find _mbed_tmp/${{ env.head_sha }} -name '*.bin' -execdir basename -s '.bin' {} +) | tr ' ' '\n' | sort -du | tr '\n' ' '))
+          base_targets=($(echo $(find _build_tmp/${{ env.BASE_SHA }} -name '*.bin' -execdir basename -s '.bin' {} +) | tr ' ' '\n' | sort -du | tr '\n' ' '))
+          head_targets=($(echo $(find _build_tmp/${{ env.HEAD_SHA }} -name '*.bin' -execdir basename -s '.bin' {} +) | tr ' ' '\n' | sort -du | tr '\n' ' '))
           all_targets=($(echo "${base_targets[@]} ${head_targets[@]}" | tr ' ' '\n' | sort -du | tr '\n' ' '))
 
           echo "Set added/deleted targets"
@@ -316,7 +321,7 @@ jobs:
             if ! [[ ${added_targets[*]} =~ "$target" ]] && ! [[ ${deleted_targets[*]} =~ "$target" ]]; then
               echo "$target not deleted nor new, running diff"
 
-              if ! diff_output=$(diff --unified=150 _mbed_tmp/${{ env.base_sha }}/$target_name.txt _mbed_tmp/${{ env.head_sha }}/$target_name.txt); then
+              if ! diff_output=$(diff --unified=150 _build_tmp/${{ env.BASE_SHA }}/$target_name.txt _build_tmp/${{ env.HEAD_SHA }}/$target_name.txt); then
 
                 echo $diff_output
 
@@ -347,15 +352,16 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          header: analysis_bin_map_files
           recreate: true
           message: |
             #  .map & .bin files analysis report
 
             ## Versions :bookmark:
 
-            - toolchain: `${{ env.toolchain_version }}`
-            - base: `${{ github.base_ref }}:${{ env.base_sha }}` with `${{ env.base_mbed }}`
-            - head: `${{ github.head_ref }}:${{ env.head_sha }}` with `${{ env.head_mbed }}`
+            - base: [`${{ github.base_ref }}`](https://github.com/leka/LekaOS/tree/${{ github.base_ref }}) / ${{ env.BASE_SHA }} + `${{ env.BASE_MBED_VERSION }}`
+            - head: [`${{ github.head_ref }}`](https://github.com/leka/LekaOS/tree/${{ github.head_ref }}) / ${{ env.HEAD_SHA }} + `${{ env.HEAD_MBED_VERSION }}`
+            - toolchain: `${{ env.TOOLCHAIN_VERSION }}`
 
             ## Summary :memo:
 
