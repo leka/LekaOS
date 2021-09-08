@@ -145,14 +145,19 @@ jobs:
           git checkout ${{ github.head_ref }}
           echo "HEAD_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
-      - name: Create mbed/toolchain version variables
+      - name: Create mbed version variables
         id: create_mbed_version_variables
         run: |
           git checkout ${{ github.base_ref }}
           echo "BASE_MBED_VERSION=$(cat .mbed_version)" >> $GITHUB_ENV
           git checkout ${{ github.head_ref }}
           echo "HEAD_MBED_VERSION=$(cat .mbed_version)" >> $GITHUB_ENV
-          echo "TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=arm-none-eabi-gcc ).*' | sed 's/(G/G/g' | sed 's/r)/r -/g')" >> $GITHUB_ENV
+
+      - name: Create toolchain version variables
+        id: create_toolchain_version_variables
+        run: |
+          TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc \().*(?= \(re)' | sed 's/)/ -/g')
+          echo "TOOLCHAIN_VERSION=$TOOLCHAIN_VERSION" >> $GITHUB_ENV
 
       - name: Create temporary directories
         run: |
@@ -353,9 +358,9 @@ jobs:
 
             ## Versions :bookmark:
 
+            - base: [`${{ github.base_ref }}`](https://github.com/leka/LekaOS/tree/${{ github.base_ref }}) / ${{ env.BASE_SHA }} + `${{ env.BASE_MBED_VERSION }}`
+            - head: [`${{ github.head_ref }}`](https://github.com/leka/LekaOS/tree/${{ github.head_ref }}) / ${{ env.HEAD_SHA }} + `${{ env.HEAD_MBED_VERSION }}`
             - toolchain: `${{ env.TOOLCHAIN_VERSION }}`
-            - base: `${{ github.base_ref }}:${{ env.BASE_SHA }}` with `${{ env.BASE_MBED_VERSION }}`
-            - head: `${{ github.head_ref }}:${{ env.HEAD_SHA }}` with `${{ env.HEAD_MBED_VERSION }}`
 
             ## Summary :memo:
 
