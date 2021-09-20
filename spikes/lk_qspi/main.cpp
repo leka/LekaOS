@@ -4,10 +4,9 @@
 
 #include "drivers/BufferedSerial.h"
 #include "rtos/ThisThread.h"
-#include "rtos/Thread.h"
 
+#include "CoreQSPI.h"
 #include "HelloWorld.h"
-#include "LekaFirmware.h"
 #include "LogKit.h"
 
 using namespace leka;
@@ -20,12 +19,9 @@ auto main() -> int
 
 	auto start = rtos::Kernel::Clock::now();
 
-	log_info("Hello, World!\n\n");
+	log_info("Hello, World!\n");
 
-	rtos::Thread qspi_thread;
-	Firmware qspi;
-
-	qspi_thread.start({&qspi, &Firmware::start});
+	auto coreqspi = CoreQSPI {};
 
 	rtos::ThisThread::sleep_for(2s);
 
