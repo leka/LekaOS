@@ -17,6 +17,9 @@ add_subdirectory(${DRIVERS_DIR}/CoreVideo)
 # Connectivity drivers
 add_subdirectory(${DRIVERS_DIR}/CoreWifi)
 
+# Memory drivers
+add_subdirectory(${DRIVERS_DIR}/CoreFlashMemory)
+
 # Sensors drivers
 add_subdirectory(${DRIVERS_DIR}/CoreHTS)
 add_subdirectory(${DRIVERS_DIR}/CoreBattery)
