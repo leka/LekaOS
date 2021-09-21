@@ -21,6 +21,7 @@ target_link_libraries(CoreFlashMemory
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
+		tests/CoreFlashMemoryIS25LP016D_test.cpp
 	)
 
 endif()
