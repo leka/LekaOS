@@ -6,29 +6,26 @@
 
 namespace mbed {
 
-QSPI::QSPI(PinName, PinName, PinName, PinName, PinName, PinName, int)
+QSPI::QSPI(PinName io0, PinName io1, PinName io2, PinName io3, PinName sclk, PinName ssel, int mode)
 {
-	return;
+	// nothing do to
 }
 
-QSPI::~QSPI()
+QSPI::~QSPI() = default;
+
+void QSPI::lock()
 {
-	return;
+	// nothing do to
 }
 
-void QSPI::lock(void)
+void QSPI::unlock()
 {
-	return;
+	// nothing do to
 }
 
-void QSPI::unlock(void)
-{
-	return;
-}
-
-qspi_status_t QSPI::configure_format(qspi_bus_width_t inst_width, qspi_bus_width_t address_width,
-									 qspi_address_size_t address_size, qspi_bus_width_t alt_width,
-									 qspi_alt_size_t alt_size, qspi_bus_width_t data_width, int dummy_cycles)
+auto QSPI::configure_format(qspi_bus_width_t inst_width, qspi_bus_width_t address_width,
+							qspi_address_size_t address_size, qspi_bus_width_t alt_width, qspi_alt_size_t alt_size,
+							qspi_bus_width_t data_width, int dummy_cycles) -> qspi_status_t
 {
 	leka::spy_QSPI_command_width		 = inst_width;
 	leka::spy_QSPI_address_width		 = address_width;
@@ -41,14 +38,14 @@ qspi_status_t QSPI::configure_format(qspi_bus_width_t inst_width, qspi_bus_width
 	return QSPI_STATUS_OK;
 }
 
-qspi_status_t QSPI::set_frequency(int value)
+auto QSPI::set_frequency(int value) -> qspi_status_t
 {
 	leka::spy_QSPI_frequency = value;
 
 	return QSPI_STATUS_OK;
 }
 
-qspi_status_t QSPI::read(qspi_inst_t instruction, int alt, int address, char *rx_buffer, size_t *rx_length)
+auto QSPI::read(qspi_inst_t instruction, int alt, int address, char *rx_buffer, size_t *rx_length) -> qspi_status_t
 {
 	leka::spy_QSPI_command		   = instruction;
 	leka::spy_QSPI_alternate_phase = alt;
@@ -66,7 +63,8 @@ qspi_status_t QSPI::read(qspi_inst_t instruction, int alt, int address, char *rx
 	return QSPI_STATUS_OK;
 }
 
-qspi_status_t QSPI::write(qspi_inst_t instruction, int alt, int address, const char *tx_buffer, size_t *tx_length)
+auto QSPI::write(qspi_inst_t instruction, int alt, int address, const char *tx_buffer, size_t *tx_length)
+	-> qspi_status_t
 {
 	leka::spy_QSPI_command		   = instruction;
 	leka::spy_QSPI_alternate_phase = alt;
@@ -84,8 +82,8 @@ qspi_status_t QSPI::write(qspi_inst_t instruction, int alt, int address, const c
 	return QSPI_STATUS_OK;
 }
 
-qspi_status_t QSPI::command_transfer(qspi_inst_t instruction, int address, const char *tx_buffer, size_t tx_length,
-									 const char *rx_buffer, size_t rx_length)
+auto QSPI::command_transfer(qspi_inst_t instruction, int address, const char *tx_buffer, size_t tx_length,
+							const char *rx_buffer, size_t rx_length) -> qspi_status_t
 {
 	leka::spy_QSPI_command			= instruction;
 	leka::spy_QSPI_address			= address;
