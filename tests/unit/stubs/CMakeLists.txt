@@ -16,7 +16,6 @@ target_include_directories(stubs
 target_sources(stubs
 	INTERFACE
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/gpio_api.cpp
-		${UNIT_TESTS_STUBS_MBED_DIR}/source/qspi_api.cpp
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/AnalogIn.cpp
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/PwmOut.cpp
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/QSPI.cpp
