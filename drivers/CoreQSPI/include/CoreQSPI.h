@@ -21,10 +21,10 @@ class CoreQSPI : public interface::QSPI
 	void setDataTransmissionFormat(DataTransmissionFormat &data_transmission_format) final;
 	void setFrequency(int hz = ONE_MHZ) final;
 
-	auto read(uint8_t command, int alternate_phase, int address, lstd::span<char> rx_buffer) -> size_t final;
-	auto write(uint8_t command, int alternate_phase, int address, const lstd::span<char> tx_buffer) -> size_t final;
+	auto read(uint8_t command, int alternate_phase, int address, lstd::span<uint8_t> rx_buffer) -> size_t final;
+	auto write(uint8_t command, int alternate_phase, int address, const lstd::span<uint8_t> tx_buffer) -> size_t final;
 
-	auto sendCommand(uint8_t command, int address, const lstd::span<char> tx_buffer, lstd::span<char> rx_buffer)
+	auto sendCommand(uint8_t command, int address, const lstd::span<uint8_t> tx_buffer, lstd::span<uint8_t> rx_buffer)
 		-> std::tuple<size_t, size_t> final;
 
   private:

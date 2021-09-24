@@ -143,7 +143,7 @@ TEST(CoreQSPITest, write)
 {
 	auto coreqspi = CoreQSPI {};
 
-	char data[] = "This is a test";
+	uint8_t data[] = "This is a test";
 
 	auto bytes_written = coreqspi.write(0x2A, -1, 0x2B, data);
 
@@ -161,7 +161,7 @@ TEST(CoreQSPITest, read)
 {
 	auto coreqspi = CoreQSPI {};
 
-	char buffer[0x10];
+	std::array<uint8_t, 0x10> buffer;
 
 	auto bytes_read = coreqspi.read(0x2C, -2, 0x2D, buffer);
 
@@ -179,8 +179,8 @@ TEST(CoreQSPITest, sendCommand)
 {
 	auto coreqspi = CoreQSPI {};
 
-	char tx_data[] = "Another test";
-	char rx_data[0x15];
+	uint8_t tx_data[] = "Another test";
+	std::array<uint8_t, 0x15> rx_data;
 
 	auto bytes_written_read = coreqspi.sendCommand(0x2E, 0x2F, tx_data, rx_data);
 

@@ -16,11 +16,11 @@ class QSPI : public interface::QSPI
 	MOCK_METHOD(void, setDataTransmissionFormat, (DataTransmissionFormat &), (override));
 	MOCK_METHOD(void, setFrequency, (int), (override));
 
-	MOCK_METHOD(size_t, read, (uint8_t, int, int, lstd::span<char>), (override));
-	MOCK_METHOD(size_t, write, (uint8_t, int, int, const lstd::span<char>), (override));
+	MOCK_METHOD(size_t, read, (uint8_t, int, int, lstd::span<uint8_t>), (override));
+	MOCK_METHOD(size_t, write, (uint8_t, int, int, const lstd::span<uint8_t>), (override));
 
-	MOCK_METHOD((std::tuple<size_t, size_t>), sendCommand, (uint8_t, int, const lstd::span<char>, lstd::span<char>),
-				(override));
+	MOCK_METHOD((std::tuple<size_t, size_t>), sendCommand,
+				(uint8_t, int, const lstd::span<uint8_t>, lstd::span<uint8_t>), (override));
 };
 
 }	// namespace leka::mock
