@@ -11,6 +11,11 @@ QSPI::QSPI(PinName, PinName, PinName, PinName, PinName, PinName, int)
 	return;
 }
 
+QSPI::~QSPI()
+{
+	return;
+}
+
 void QSPI::lock(void)
 {
 	return;
