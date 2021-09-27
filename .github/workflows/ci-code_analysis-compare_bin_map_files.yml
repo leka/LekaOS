@@ -159,6 +159,14 @@ jobs:
           TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc \().*(?= \(re)' | sed 's/)/ -/g')
           echo "TOOLCHAIN_VERSION=$TOOLCHAIN_VERSION" >> $GITHUB_ENV
 
+      - name: Create C++ standard variables
+        id: create_cxx_standard_variables
+        run: |
+          BASE_CXX_STANDARD="-std=c++$(cat CMakeLists.txt | grep -Po '(?<=CMAKE_CXX_STANDARD\s)[0-9]*')"
+          echo "BASE_CXX_STANDARD=$BASE_CXX_STANDARD" >> $GITHUB_ENV
+          HEAD_CXX_STANDARD="-std=c++$(cat CMakeLists.txt | grep -Po '(?<=CMAKE_CXX_STANDARD\s)[0-9]*')"
+          echo "HEAD_CXX_STANDARD=$HEAD_CXX_STANDARD" >> $GITHUB_ENV
+
       - name: Create temporary directories
         run: |
           mkdir -p _build_tmp/${{ env.BASE_SHA }}
@@ -359,8 +367,8 @@ jobs:
 
             ## Versions :bookmark:
 
-            - base: [`${{ github.base_ref }}`](https://github.com/leka/LekaOS/tree/${{ github.base_ref }}) / ${{ env.BASE_SHA }} + `${{ env.BASE_MBED_VERSION }}`
-            - head: [`${{ github.head_ref }}`](https://github.com/leka/LekaOS/tree/${{ github.head_ref }}) / ${{ env.HEAD_SHA }} + `${{ env.HEAD_MBED_VERSION }}`
+            - base: [`${{ github.base_ref }}`](https://github.com/leka/LekaOS/tree/${{ github.base_ref }}) / ${{ env.BASE_SHA }} + `${{ env.BASE_MBED_VERSION }}` + `${{ env.BASE_CXX_STANDARD }}`
+            - head: [`${{ github.head_ref }}`](https://github.com/leka/LekaOS/tree/${{ github.head_ref }}) / ${{ env.HEAD_SHA }} + `${{ env.HEAD_MBED_VERSION }}` + `${{ env.HEAD_CXX_STANDARD }}`
             - toolchain: `${{ env.TOOLCHAIN_VERSION }}`
 
             ## Summary :memo:
