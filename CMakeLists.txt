@@ -43,7 +43,6 @@ set(CMAKE_C_EXTENSIONS TRUE)
 # Add custom flags
 add_compile_options(
 	-fdiagnostics-color=always
-	$<$<COMPILE_LANGUAGE:CXX>:-Wno-register>
 )
 
 # Before all, set ROOT_DIR, MBED_OS_DIR
