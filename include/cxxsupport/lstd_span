@@ -287,23 +287,11 @@ class span
 	constexpr bool empty() const noexcept { return size() == 0; }
 
 	// Element access
-	constexpr reference operator[](index_type idx) const
-	{
-		static_assert(idx < size());
-		return *(data() + idx);
-	}
+	constexpr reference operator[](index_type idx) const { return *(data() + idx); }
 
-	constexpr reference front() const
-	{
-		static_assert(!empty());
-		return *data();
-	}
+	constexpr reference front() const { return *data(); }
 
-	constexpr reference back() const
-	{
-		static_assert(!empty());
-		return *(data() + (size() - 1));
-	}
+	constexpr reference back() const { return *(data() + (size() - 1)); }
 
 	constexpr pointer data() const noexcept { return _storage._data; }
 
