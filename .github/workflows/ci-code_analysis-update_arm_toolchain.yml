@@ -128,8 +128,10 @@ jobs:
       - name: Create C++ standard variables
         id: create_cxx_standard_variables
         run: |
+          git checkout ${{ github.base_ref }}
           BASE_CXX_STANDARD="-std=c++$(cat CMakeLists.txt | grep -Po '(?<=CMAKE_CXX_STANDARD\s)[0-9]*')"
           echo "BASE_CXX_STANDARD=$BASE_CXX_STANDARD" >> $GITHUB_ENV
+          git checkout ${{ github.head_ref }}
           HEAD_CXX_STANDARD="-std=c++$(cat CMakeLists.txt | grep -Po '(?<=CMAKE_CXX_STANDARD\s)[0-9]*')"
           echo "HEAD_CXX_STANDARD=$HEAD_CXX_STANDARD" >> $GITHUB_ENV
 
