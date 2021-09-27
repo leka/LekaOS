@@ -16,13 +16,13 @@ using namespace std::chrono;
 
 void foo(lstd::span<int> span)
 {
-	log_info("from foo! span size: %i", span.size());
+	log_info("from foo span size: %i", span.size());
 	for (const auto &v: span) {
 		log_info("v: %i", v);
 	}
 }
 
-int main(void)
+auto main() -> int
 {
 	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
@@ -83,6 +83,17 @@ int main(void)
 	}
 
 	foo(span2);
+
+	log_info("Test span features");
+
+	auto value = span0[3];
+	log_info("span0[3] = %i", value);
+
+	auto front = span0.front();
+	log_info("span0.front() = %i", front);
+
+	auto back = span0.back();
+	log_info("span0.back() = %i", back);
 
 	return 1;
 }
