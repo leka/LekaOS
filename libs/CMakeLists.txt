@@ -4,6 +4,7 @@
 
 add_subdirectory(${LIBS_DIR}/ContainerKit)
 add_subdirectory(${LIBS_DIR}/FileManager)
+add_subdirectory(${LIBS_DIR}/FileReception)
 add_subdirectory(${LIBS_DIR}/FileSystemKit)
 
 add_subdirectory(${LIBS_DIR}/IOKit)
