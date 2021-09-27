@@ -5,6 +5,7 @@
 #ifndef _LEKA_OS_LIB_UTILS_MATH_H_
 #define _LEKA_OS_LIB_UTILS_MATH_H_
 
+#include <cstdint>
 #include <lstd_span>
 
 namespace leka::utils::math {
