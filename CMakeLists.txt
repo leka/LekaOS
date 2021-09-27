@@ -2,8 +2,7 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-# mbed-cmake requires at least CMake 3.18
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.21)
 
 # Activate ccache if available
 find_program(CCACHE "ccache")
