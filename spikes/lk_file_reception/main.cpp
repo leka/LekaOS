@@ -8,6 +8,7 @@
 #include "FileReception.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
+#include "SerialKit.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -16,6 +17,7 @@ auto main() -> int
 {
 	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+	auto serial_kit = SerialKit(serial);
 
 	log_info("Hello, World!\n\n");
 
