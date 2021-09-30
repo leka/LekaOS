@@ -29,11 +29,12 @@ class QSPI
 	virtual void setDataTransmissionFormat(DataTransmissionFormat &data_transmission_format) = 0;
 	virtual void setFrequency(int hz = 1'000'000)											 = 0;
 
-	virtual auto read(uint8_t command, int alternate_phase, int address, lstd::span<uint8_t> rx_buffer) -> size_t = 0;
-	virtual auto write(uint8_t command, int alternate_phase, int address, const lstd::span<uint8_t> tx_buffer)
+	virtual auto read(uint8_t command, int alternate_phase, uint32_t address, lstd::span<uint8_t> rx_buffer)
+		-> size_t = 0;
+	virtual auto write(uint8_t command, int alternate_phase, uint32_t address, const lstd::span<uint8_t> tx_buffer)
 		-> size_t = 0;
 
-	virtual auto sendCommand(uint8_t command, int address, const lstd::span<uint8_t> tx_buffer,
+	virtual auto sendCommand(uint8_t command, uint32_t address, const lstd::span<uint8_t> tx_buffer,
 							 lstd::span<uint8_t> rx_buffer) -> std::tuple<size_t, size_t> = 0;
 };
 
