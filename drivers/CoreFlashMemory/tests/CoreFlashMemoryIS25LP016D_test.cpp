@@ -6,26 +6,15 @@
 #include <lstd_array>
 
 #include "gtest/gtest.h"
+#include "mocks/leka/FlashManager.h"
 #include "mocks/leka/QSPI.h"
 
 using namespace leka;
+using namespace flash::is25lp016d;
 
 using ::testing::_;
-using ::testing::AnyNumber;
 using ::testing::InSequence;
 using ::testing::Return;
-
-MATCHER_P(setArray, expected_array, "")
-{
-	if (arg.size() < expected_array.size()) {
-		return false;
-	}
-
-	for (int i = 0; i < expected_array.size(); i++) {
-		arg[i] = expected_array[i];
-	}
-	return true;
-}
 
 MATCHER_P(compareArray, expected_array, "")
 {
@@ -44,60 +33,13 @@ MATCHER_P(compareArray, expected_array, "")
 class CoreFlashMemoryIS25LP016DTest : public ::testing::Test
 {
   protected:
-	CoreFlashMemoryIS25LP016DTest() : flash_memory_is25lp(qspimock) {}
+	CoreFlashMemoryIS25LP016DTest() : flash_memory_is25lp(qspimock, flash_manager_is25lp) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	void MOCK_FUNCTION_get_status_register(uint8_t expected_value, int times)
-	{
-		auto returned_value = lstd::to_array({expected_value});
-
-		EXPECT_CALL(qspimock,
-					sendCommand(flash_memory::is25lp016d::command::read_status, _, _, _, setArray(returned_value), _))
-			.Times(times);
-	}
-
-	void MOCK_FUNCTION_chip_available(int times = 1) { MOCK_FUNCTION_get_status_register(0x00, times); }
-	void MOCK_FUNCTION_chip_not_available(int times = 1) { MOCK_FUNCTION_get_status_register(0x01, times); }
-	void MOCK_FUNCTION_wait_chip_available_and_is_available() { MOCK_FUNCTION_chip_available(2); }
-	void MOCK_FUNCTION_wait_chip_available_and_is_not_available(int times = 1)
-	{
-		{
-			InSequence seq;
-			for (int i = 0; i < times; i++) {
-				MOCK_FUNCTION_chip_available();
-				MOCK_FUNCTION_chip_not_available();
-			}
-		}
-	}
-
-	void MOCK_FUNCTION_write_enabled() { MOCK_FUNCTION_get_status_register(0x02, 1); }
-	void MOCK_FUNCTION_write_not_enabled() { MOCK_FUNCTION_get_status_register(0x00, 1); }
-	void MOCK_FUNCTION_enable_write()
-	{
-		{
-			InSequence seq;
-
-			MOCK_FUNCTION_wait_chip_available_and_is_available();
-			EXPECT_CALL(qspimock, sendCommand(flash_memory::is25lp016d::command::write_enable, _, _, _, _, _)).Times(1);
-			MOCK_FUNCTION_wait_chip_available_and_is_available();
-			MOCK_FUNCTION_write_enabled();
-		}
-	}
-	void MOCK_FUNCTION_enable_write_fail()
-	{
-		{
-			InSequence seq;
-
-			MOCK_FUNCTION_wait_chip_available_and_is_available();
-			EXPECT_CALL(qspimock, sendCommand(flash_memory::is25lp016d::command::write_enable, _, _, _, _, _)).Times(1);
-			MOCK_FUNCTION_wait_chip_available_and_is_available();
-			MOCK_FUNCTION_write_not_enabled();
-		}
-	}
-
 	mock::QSPI qspimock;
+	mock::FlashManager flash_manager_is25lp;
 	CoreFlashMemoryIS25LP016D flash_memory_is25lp;
 };
 
@@ -208,171 +150,84 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, spiModeDefault)
 TEST_F(CoreFlashMemoryIS25LP016DTest, readModeNormal)
 {
 	auto read_mode = ReadMode::Normal;
-	std::array<uint8_t, 10> buffer;
+	std::array<uint8_t, 0x10> buffer {};
 
-	auto expected_command_read = flash_memory::is25lp016d::command::read;
-	EXPECT_CALL(qspimock, read(expected_command_read, _, _, _, _)).Times(1);
-	MOCK_FUNCTION_wait_chip_available_and_is_available();
+	auto expected_command_read = command::read;
+	{
+		InSequence seq;
+
+		EXPECT_CALL(flash_manager_is25lp, waitForChipAvailable).Times(1);
+		EXPECT_CALL(flash_manager_is25lp, chipIsNotAvailable).WillOnce(Return(false));
+		EXPECT_CALL(qspimock, read(expected_command_read, _, _, _, _)).Times(1);
+	}
 
 	flash_memory_is25lp.setReadMode(read_mode);
-	flash_memory_is25lp.read(0x00, buffer, std::size(buffer));
+	flash_memory_is25lp.read(0x00, buffer, 0x10);
 }
 
 TEST_F(CoreFlashMemoryIS25LP016DTest, readModeFast)
 {
 	auto read_mode = ReadMode::Fast;
-	std::array<uint8_t, 10> buffer;
+	std::array<uint8_t, 0x10> buffer {};
 
-	EXPECT_CALL(qspimock, read).Times(1);
-	MOCK_FUNCTION_wait_chip_available_and_is_available();
+	{
+		InSequence seq;
+
+		EXPECT_CALL(flash_manager_is25lp, waitForChipAvailable).Times(1);
+		EXPECT_CALL(flash_manager_is25lp, chipIsNotAvailable).WillOnce(Return(false));
+		EXPECT_CALL(qspimock, read).Times(1);
+	}
 
 	flash_memory_is25lp.setReadMode(read_mode);
-	flash_memory_is25lp.read(0x00, buffer, std::size(buffer));
+	flash_memory_is25lp.read(0x00, buffer, 0x10);
 }
 
 TEST_F(CoreFlashMemoryIS25LP016DTest, readModeDefault)
 {
 	auto read_mode = static_cast<read_mode_t>(99);
-	std::array<uint8_t, 10> buffer;
+	std::array<uint8_t, 0x10> buffer {};
 
-	auto expected_command_read = flash_memory::is25lp016d::command::read;
-	EXPECT_CALL(qspimock, read(expected_command_read, _, _, _, _)).Times(1);
-	MOCK_FUNCTION_wait_chip_available_and_is_available();
+	auto expected_command_read = command::read;
+	{
+		InSequence seq;
+
+		EXPECT_CALL(flash_manager_is25lp, waitForChipAvailable).Times(1);
+		EXPECT_CALL(flash_manager_is25lp, chipIsNotAvailable).WillOnce(Return(false));
+		EXPECT_CALL(qspimock, read(expected_command_read, _, _, _, _)).Times(1);
+	}
 
 	flash_memory_is25lp.setReadMode(read_mode);
-	flash_memory_is25lp.read(0x00, buffer, std::size(buffer));
+	flash_memory_is25lp.read(0x00, buffer, 0x10);
 }
 
 TEST_F(CoreFlashMemoryIS25LP016DTest, getSize)
 {
-	auto expected_size = flash_memory::is25lp016d::size;
+	auto expected_size = flash::is25lp016d::size;
 	auto actual_size   = flash_memory_is25lp.getSize();
 
 	ASSERT_EQ(expected_size, actual_size);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, waitForChipAvailableAndIsNotAvailable)
-{
-	{
-		InSequence seq;
-
-		MOCK_FUNCTION_chip_not_available();
-		MOCK_FUNCTION_chip_available();
-		MOCK_FUNCTION_chip_not_available();
-	}
-
-	flash_memory_is25lp.reset();
-}
-
 TEST_F(CoreFlashMemoryIS25LP016DTest, reset)
 {
-	{
-		InSequence seq;
-
-		MOCK_FUNCTION_wait_chip_available_and_is_available();
-		EXPECT_CALL(qspimock, sendCommand(flash_memory::is25lp016d::command::reset_enable, _, _, _, _, _)).Times(1);
-		MOCK_FUNCTION_wait_chip_available_and_is_available();
-		EXPECT_CALL(qspimock, sendCommand(flash_memory::is25lp016d::command::reset, _, _, _, _, _)).Times(1);
-	}
+	EXPECT_CALL(flash_manager_is25lp, reset).Times(1);
 
 	flash_memory_is25lp.reset();
-}
-
-TEST_F(CoreFlashMemoryIS25LP016DTest, resetFailBeforeResetEnable)
-{
-	{
-		InSequence seq;
-
-		MOCK_FUNCTION_wait_chip_available_and_is_not_available();
-		EXPECT_CALL(qspimock, sendCommand(flash_memory::is25lp016d::command::reset_enable, _, _, _, _, _)).Times(0);
-		EXPECT_CALL(qspimock, sendCommand(flash_memory::is25lp016d::command::reset, _, _, _, _, _)).Times(0);
-	}
-
-	flash_memory_is25lp.reset();
-}
-
-TEST_F(CoreFlashMemoryIS25LP016DTest, resetFailBeforeReset)
-{
-	{
-		InSequence seq;
-
-		MOCK_FUNCTION_wait_chip_available_and_is_available();
-		EXPECT_CALL(qspimock, sendCommand(flash_memory::is25lp016d::command::reset_enable, _, _, _, _, _)).Times(1);
-		MOCK_FUNCTION_wait_chip_available_and_is_not_available();
-		EXPECT_CALL(qspimock, sendCommand(flash_memory::is25lp016d::command::reset, _, _, _, _, _)).Times(0);
-	}
-
-	flash_memory_is25lp.reset();
-}
-
-TEST_F(CoreFlashMemoryIS25LP016DTest, enableWrite)
-{
-	auto buffer		 = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	// "abcdef"
-	uint32_t address = 0x2A;
-	{
-		InSequence seq;
-
-		MOCK_FUNCTION_wait_chip_available_and_is_available();
-		EXPECT_CALL(qspimock, sendCommand(flash_memory::is25lp016d::command::write_enable, _, _, _, _, _)).Times(1);
-		MOCK_FUNCTION_wait_chip_available_and_is_available();
-		MOCK_FUNCTION_write_enabled();
-
-		MOCK_FUNCTION_wait_chip_available_and_is_available();
-		EXPECT_CALL(qspimock, write).Times(1);
-	}
-
-	flash_memory_is25lp.write(address, buffer, std::size(buffer));
-}
-
-TEST_F(CoreFlashMemoryIS25LP016DTest, enableWriteFailChipIsNotAvailableBeforeSendingCommand)
-{
-	auto buffer		 = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	// "abcdef"
-	uint32_t address = 0x2A;
-
-	{
-		InSequence seq;
-
-		MOCK_FUNCTION_wait_chip_available_and_is_not_available();
-		EXPECT_CALL(qspimock, sendCommand(flash_memory::is25lp016d::command::write_enable, _, _, _, _, _)).Times(0);
-		MOCK_FUNCTION_wait_chip_available_and_is_available();
-		MOCK_FUNCTION_write_not_enabled();
-
-		EXPECT_CALL(qspimock, write).Times(0);
-	}
-
-	flash_memory_is25lp.write(address, buffer, std::size(buffer));
-}
-
-TEST_F(CoreFlashMemoryIS25LP016DTest, enableWriteFailChipIsNotAvilableBeforeReadingStatusRegister)
-{
-	auto buffer		 = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	// "abcdef"
-	uint32_t address = 0x2A;
-
-	{
-		InSequence seq;
-
-		MOCK_FUNCTION_wait_chip_available_and_is_available();
-		EXPECT_CALL(qspimock, sendCommand(flash_memory::is25lp016d::command::write_enable, _, _, _, _, _)).Times(1);
-		MOCK_FUNCTION_wait_chip_available_and_is_not_available(2);
-
-		EXPECT_CALL(qspimock, write).Times(0);
-	}
-
-	flash_memory_is25lp.write(address, buffer, std::size(buffer));
 }
 
 TEST_F(CoreFlashMemoryIS25LP016DTest, read)
 {
+	uint32_t address		   = 0x2A;
 	const size_t bytes_to_read = 0x10;
 	std::array<uint8_t, bytes_to_read> buffer {};
-	uint32_t address = 0x2A;
 
 	size_t expected_bytes_read = bytes_to_read;
 	{
 		InSequence seq;
 
-		MOCK_FUNCTION_wait_chip_available_and_is_available();
-		EXPECT_CALL(qspimock, read(flash_memory::is25lp016d::command::read, _, address, compareArray(buffer), _))
+		EXPECT_CALL(flash_manager_is25lp, waitForChipAvailable).Times(1);
+		EXPECT_CALL(flash_manager_is25lp, chipIsNotAvailable).WillOnce(Return(false));
+		EXPECT_CALL(qspimock, read(command::read, _, address, compareArray(buffer), bytes_to_read))
 			.WillOnce(Return(expected_bytes_read));
 	}
 
@@ -383,12 +238,12 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, read)
 
 TEST_F(CoreFlashMemoryIS25LP016DTest, readOverSize)
 {
+	uint32_t address		   = flash::is25lp016d::size;
 	const size_t bytes_to_read = 0x10;
-	std::array<uint8_t, bytes_to_read> buffer;
-	uint32_t address = flash_memory::is25lp016d::size;
+	std::array<uint8_t, bytes_to_read> buffer {};
 
 	size_t expected_bytes_read = 0;
-	EXPECT_CALL(qspimock, read(flash_memory::is25lp016d::command::read, _, address, _, _)).Times(0);
+	EXPECT_CALL(qspimock, read(command::read, _, _, _, _)).Times(0);
 
 	auto actual_bytes_read = flash_memory_is25lp.read(address, buffer, bytes_to_read);
 
@@ -397,16 +252,17 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, readOverSize)
 
 TEST_F(CoreFlashMemoryIS25LP016DTest, readFailChipIsNotAvailable)
 {
+	uint32_t address		   = 0x2A;
 	const size_t bytes_to_read = 0x10;
 	std::array<uint8_t, bytes_to_read> buffer {};
-	uint32_t address = 0x2A;
 
 	size_t expected_bytes_read = 0;
 	{
 		InSequence seq;
 
-		MOCK_FUNCTION_wait_chip_available_and_is_not_available();
-		EXPECT_CALL(qspimock, read(flash_memory::is25lp016d::command::read, _, _, _, _)).Times(0);
+		EXPECT_CALL(flash_manager_is25lp, waitForChipAvailable).Times(1);
+		EXPECT_CALL(flash_manager_is25lp, chipIsNotAvailable).WillOnce(Return(true));
+		EXPECT_CALL(qspimock, read(command::read, _, _, _, _)).Times(0);
 	}
 
 	auto actual_bytes_read = flash_memory_is25lp.read(address, buffer, bytes_to_read);
@@ -416,109 +272,87 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, readFailChipIsNotAvailable)
 
 TEST_F(CoreFlashMemoryIS25LP016DTest, write)
 {
-	auto buffer		 = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	// "abcdef"
-	uint32_t address = 0x2A;
+	uint32_t address		  = 0x2A;
+	auto buffer				  = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	 // "abcdef"
+	const auto bytes_to_write = 5;
 
-	size_t expected_bytes_written	  = 0x10;
+	size_t expected_bytes_written	  = bytes_to_write;
 	auto returned_buffer_read_written = std::tuple<size_t, size_t> {0x00, 0x01};
 	{
 		InSequence seq;
 
-		MOCK_FUNCTION_enable_write();
-		MOCK_FUNCTION_wait_chip_available_and_is_available();
-		EXPECT_CALL(qspimock, write(flash_memory::is25lp016d::command::write, _, address, compareArray(buffer), _))
+		EXPECT_CALL(flash_manager_is25lp, enableWrite).Times(1);
+		EXPECT_CALL(flash_manager_is25lp, writeIsNotEnabled).WillOnce(Return(false));
+		EXPECT_CALL(flash_manager_is25lp, waitForChipAvailable).Times(1);
+		EXPECT_CALL(flash_manager_is25lp, chipIsNotAvailable).WillOnce(Return(false));
+		EXPECT_CALL(qspimock, write(command::write, _, address, compareArray(buffer), bytes_to_write))
 			.WillOnce(Return(expected_bytes_written));
 	}
 
-	auto actual_bytes_write = flash_memory_is25lp.write(address, buffer, std::size(buffer));
+	auto actual_bytes_write = flash_memory_is25lp.write(address, buffer, bytes_to_write);
 
 	ASSERT_EQ(expected_bytes_written, actual_bytes_write);
 }
 
 TEST_F(CoreFlashMemoryIS25LP016DTest, writeOverSize)
 {
-	auto buffer		 = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	// "abcdef"
-	uint32_t address = flash_memory::is25lp016d::size;
+	uint32_t address		  = flash::is25lp016d::size;
+	auto buffer				  = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	 // "abcdef"
+	const auto bytes_to_write = 5;
 
 	size_t expected_bytes_written = 0;
-	EXPECT_CALL(qspimock, write(flash_memory::is25lp016d::command::write, _, address, _, _)).Times(0);
+	EXPECT_CALL(qspimock, write(command::write, _, address, _, _)).Times(0);
 
-	auto actual_bytes_write = flash_memory_is25lp.write(address, buffer, std::size(buffer));
+	auto actual_bytes_write = flash_memory_is25lp.write(address, buffer, bytes_to_write);
 
 	ASSERT_EQ(expected_bytes_written, actual_bytes_write);
 }
 
 TEST_F(CoreFlashMemoryIS25LP016DTest, writeFailNotEnableToWrite)
 {
-	auto buffer		 = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	// "abcdef"
-	uint32_t address = 0x2A;
+	uint32_t address		  = 0x2A;
+	auto buffer				  = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	 // "abcdef"
+	const auto bytes_to_write = 5;
 
 	size_t expected_bytes_written = 0;
 	{
 		InSequence seq;
 
-		MOCK_FUNCTION_enable_write_fail();
-		EXPECT_CALL(qspimock, write(flash_memory::is25lp016d::command::write, _, _, _, _)).Times(0);
+		EXPECT_CALL(flash_manager_is25lp, enableWrite).Times(1);
+		EXPECT_CALL(flash_manager_is25lp, writeIsNotEnabled).WillOnce(Return(true));
+		EXPECT_CALL(qspimock, write(command::write, _, _, _, _)).Times(0);
 	}
 
-	auto actual_bytes_write = flash_memory_is25lp.write(address, buffer, std::size(buffer));
+	auto actual_bytes_write = flash_memory_is25lp.write(address, buffer, bytes_to_write);
 
 	ASSERT_EQ(expected_bytes_written, actual_bytes_write);
 }
 
 TEST_F(CoreFlashMemoryIS25LP016DTest, writeFailChipIsNotAvailable)
 {
-	auto buffer		 = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	// "abcdef"
-	uint32_t address = 0x2A;
+	uint32_t address		  = 0x2A;
+	auto buffer				  = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	 // "abcdef"
+	const auto bytes_to_write = 5;
 
 	size_t expected_bytes_written = 0;
 	{
 		InSequence seq;
 
-		MOCK_FUNCTION_enable_write();
-		MOCK_FUNCTION_wait_chip_available_and_is_not_available();
-		EXPECT_CALL(qspimock, write(flash_memory::is25lp016d::command::write, _, _, _, _)).Times(0);
+		EXPECT_CALL(flash_manager_is25lp, enableWrite).Times(1);
+		EXPECT_CALL(flash_manager_is25lp, writeIsNotEnabled).WillOnce(Return(false));
+		EXPECT_CALL(flash_manager_is25lp, waitForChipAvailable).Times(1);
+		EXPECT_CALL(flash_manager_is25lp, chipIsNotAvailable).WillOnce(Return(true));
+		EXPECT_CALL(qspimock, write(command::write, _, _, _, _)).Times(0);
 	}
 
-	auto actual_bytes_write = flash_memory_is25lp.write(address, buffer, std::size(buffer));
+	auto actual_bytes_write = flash_memory_is25lp.write(address, buffer, bytes_to_write);
 
 	ASSERT_EQ(expected_bytes_written, actual_bytes_write);
 }
 
 TEST_F(CoreFlashMemoryIS25LP016DTest, erase)
 {
-	{
-		InSequence seq;
-
-		MOCK_FUNCTION_enable_write();
-		MOCK_FUNCTION_wait_chip_available_and_is_available();
-		EXPECT_CALL(qspimock, sendCommand(flash_memory::is25lp016d::command::erase_chip, _, _, _, _, _)).Times(1);
-	}
-
-	flash_memory_is25lp.erase();
-}
-
-TEST_F(CoreFlashMemoryIS25LP016DTest, eraseFailNotEnableWrite)
-{
-	{
-		InSequence seq;
-
-		MOCK_FUNCTION_enable_write_fail();
-		EXPECT_CALL(qspimock, sendCommand(flash_memory::is25lp016d::command::erase_chip, _, _, _, _, _)).Times(0);
-	}
-
-	flash_memory_is25lp.erase();
-}
-
-TEST_F(CoreFlashMemoryIS25LP016DTest, eraseFailChipNotAvailable)
-{
-	{
-		InSequence seq;
-
-		MOCK_FUNCTION_enable_write();
-		MOCK_FUNCTION_wait_chip_available_and_is_not_available();
-		EXPECT_CALL(qspimock, sendCommand(flash_memory::is25lp016d::command::erase_chip, _, _, _, _, _)).Times(0);
-	}
+	EXPECT_CALL(flash_manager_is25lp, erase).Times(1);
 
 	flash_memory_is25lp.erase();
 }
