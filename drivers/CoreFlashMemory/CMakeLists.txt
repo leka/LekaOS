@@ -12,6 +12,7 @@ target_include_directories(CoreFlashMemory
 target_sources(CoreFlashMemory
 	PRIVATE
 		source/CoreFlashMemoryIS25LP016D.cpp
+		source/CoreFlashManagerIS25LP016D.cpp
 )
 
 target_link_libraries(CoreFlashMemory
@@ -22,6 +23,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
 		tests/CoreFlashMemoryIS25LP016D_test.cpp
+		tests/CoreFlashManagerIS25LP016D_test.cpp
 	)
 
 endif()
