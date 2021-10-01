@@ -12,6 +12,7 @@ target_include_directories(bootloader
 target_sources(bootloader
 	PRIVATE
 		main.cpp
+		default_bd.cpp
 )
 
 target_link_libraries(bootloader
