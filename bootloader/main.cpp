@@ -16,6 +16,10 @@
  * limitations under the License
  */
 
+#include "drivers/BufferedSerial.h"
+
+static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
+
 #if MCUBOOT_BOOTLOADER_BUILD
 
 	#include "mbed_application.h"
