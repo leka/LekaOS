@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "CoreFlashMemoryIS25LP016D.h"
+#include "CoreFlashIS25LP016D.h"
 #include <lstd_array>
 
 #include "gtest/gtest.h"
@@ -30,17 +30,17 @@ MATCHER_P(compareArray, expected_array, "")
 	return same_content;
 }
 
-class CoreFlashMemoryIS25LP016DTest : public ::testing::Test
+class CoreFlashIS25LP016DTest : public ::testing::Test
 {
   protected:
-	CoreFlashMemoryIS25LP016DTest() : flash_memory_is25lp(qspimock, flash_manager_is25lp) {}
+	CoreFlashIS25LP016DTest() : flash_memory_is25lp(qspimock, flash_manager_is25lp) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
 	mock::QSPI qspimock;
 	mock::FlashManager flash_manager_is25lp;
-	CoreFlashMemoryIS25LP016D flash_memory_is25lp;
+	CoreFlashIS25LP016D flash_memory_is25lp;
 };
 
 ACTION_TEMPLATE(getDataTransmissionFormat, HAS_1_TEMPLATE_PARAMS(int, k), AND_1_VALUE_PARAMS(returned_format))
@@ -56,12 +56,12 @@ ACTION_TEMPLATE(getDataTransmissionFormat, HAS_1_TEMPLATE_PARAMS(int, k), AND_1_
 	returned_format->dummy_cycles		   = actual_format.dummy_cycles;
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, instantiation)
+TEST_F(CoreFlashIS25LP016DTest, instantiation)
 {
 	ASSERT_NE(&flash_memory_is25lp, nullptr);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, spiModeStandard)
+TEST_F(CoreFlashIS25LP016DTest, spiModeStandard)
 {
 	auto spi_mode = SPIMode::Standard;
 
@@ -94,7 +94,7 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, spiModeStandard)
 	ASSERT_EQ(expected_data_transmission_format.dummy_cycles, actual_data_transmission_format.dummy_cycles);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, spiModeDual)
+TEST_F(CoreFlashIS25LP016DTest, spiModeDual)
 {
 	auto spi_mode = SPIMode::Dual;
 
@@ -104,7 +104,7 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, spiModeDual)
 	flash_memory_is25lp.setSPIMode(spi_mode);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, spiModeQuad)
+TEST_F(CoreFlashIS25LP016DTest, spiModeQuad)
 {
 	auto spi_mode = SPIMode::Quad;
 
@@ -114,7 +114,7 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, spiModeQuad)
 	flash_memory_is25lp.setSPIMode(spi_mode);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, spiModeDefault)
+TEST_F(CoreFlashIS25LP016DTest, spiModeDefault)
 {
 	auto spi_mode = static_cast<spi_mode_t>(99);
 
@@ -147,7 +147,7 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, spiModeDefault)
 	ASSERT_EQ(expected_data_transmission_format.dummy_cycles, actual_data_transmission_format.dummy_cycles);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, readModeNormal)
+TEST_F(CoreFlashIS25LP016DTest, readModeNormal)
 {
 	auto read_mode = ReadMode::Normal;
 	std::array<uint8_t, 0x10> buffer {};
@@ -165,7 +165,7 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, readModeNormal)
 	flash_memory_is25lp.read(0x00, buffer, 0x10);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, readModeFast)
+TEST_F(CoreFlashIS25LP016DTest, readModeFast)
 {
 	auto read_mode = ReadMode::Fast;
 	std::array<uint8_t, 0x10> buffer {};
@@ -182,7 +182,7 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, readModeFast)
 	flash_memory_is25lp.read(0x00, buffer, 0x10);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, readModeDefault)
+TEST_F(CoreFlashIS25LP016DTest, readModeDefault)
 {
 	auto read_mode = static_cast<read_mode_t>(99);
 	std::array<uint8_t, 0x10> buffer {};
@@ -200,7 +200,7 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, readModeDefault)
 	flash_memory_is25lp.read(0x00, buffer, 0x10);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, getSize)
+TEST_F(CoreFlashIS25LP016DTest, getSize)
 {
 	auto expected_size = flash::is25lp016d::size;
 	auto actual_size   = flash_memory_is25lp.getSize();
@@ -208,14 +208,14 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, getSize)
 	ASSERT_EQ(expected_size, actual_size);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, reset)
+TEST_F(CoreFlashIS25LP016DTest, reset)
 {
 	EXPECT_CALL(flash_manager_is25lp, reset).Times(1);
 
 	flash_memory_is25lp.reset();
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, read)
+TEST_F(CoreFlashIS25LP016DTest, read)
 {
 	uint32_t address		   = 0x2A;
 	const size_t bytes_to_read = 0x10;
@@ -236,7 +236,7 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, read)
 	ASSERT_EQ(expected_bytes_read, actual_bytes_read);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, readOverSize)
+TEST_F(CoreFlashIS25LP016DTest, readOverSize)
 {
 	uint32_t address		   = flash::is25lp016d::size;
 	const size_t bytes_to_read = 0x10;
@@ -250,7 +250,7 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, readOverSize)
 	ASSERT_EQ(expected_bytes_read, actual_bytes_read);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, readFailChipIsNotAvailable)
+TEST_F(CoreFlashIS25LP016DTest, readFailChipIsNotAvailable)
 {
 	uint32_t address		   = 0x2A;
 	const size_t bytes_to_read = 0x10;
@@ -270,7 +270,7 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, readFailChipIsNotAvailable)
 	ASSERT_EQ(expected_bytes_read, actual_bytes_read);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, write)
+TEST_F(CoreFlashIS25LP016DTest, write)
 {
 	uint32_t address		  = 0x2A;
 	auto buffer				  = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	 // "abcdef"
@@ -294,7 +294,7 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, write)
 	ASSERT_EQ(expected_bytes_written, actual_bytes_write);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, writeOverSize)
+TEST_F(CoreFlashIS25LP016DTest, writeOverSize)
 {
 	uint32_t address		  = flash::is25lp016d::size;
 	auto buffer				  = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	 // "abcdef"
@@ -308,7 +308,7 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, writeOverSize)
 	ASSERT_EQ(expected_bytes_written, actual_bytes_write);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, writeFailNotEnableToWrite)
+TEST_F(CoreFlashIS25LP016DTest, writeFailNotEnableToWrite)
 {
 	uint32_t address		  = 0x2A;
 	auto buffer				  = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	 // "abcdef"
@@ -328,7 +328,7 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, writeFailNotEnableToWrite)
 	ASSERT_EQ(expected_bytes_written, actual_bytes_write);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, writeFailChipIsNotAvailable)
+TEST_F(CoreFlashIS25LP016DTest, writeFailChipIsNotAvailable)
 {
 	uint32_t address		  = 0x2A;
 	auto buffer				  = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	 // "abcdef"
@@ -350,7 +350,7 @@ TEST_F(CoreFlashMemoryIS25LP016DTest, writeFailChipIsNotAvailable)
 	ASSERT_EQ(expected_bytes_written, actual_bytes_write);
 }
 
-TEST_F(CoreFlashMemoryIS25LP016DTest, erase)
+TEST_F(CoreFlashIS25LP016DTest, erase)
 {
 	EXPECT_CALL(flash_manager_is25lp, erase).Times(1);
 

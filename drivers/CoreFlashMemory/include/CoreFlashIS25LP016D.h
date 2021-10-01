@@ -28,10 +28,10 @@ enum class ReadMode
 };
 using read_mode_t = ReadMode;
 
-class CoreFlashMemoryIS25LP016D : public interface::FlashMemory
+class CoreFlashIS25LP016D : public interface::FlashMemory
 {
   public:
-	explicit CoreFlashMemoryIS25LP016D(interface::QSPI &qspi, interface::FlashManager &flash_manager)
+	explicit CoreFlashIS25LP016D(interface::QSPI &qspi, interface::FlashManager &flash_manager)
 		: _qspi(qspi), _flash_manager(flash_manager) {};
 
 	void setSPIMode(spi_mode_t mode);

@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "CoreFlashMemoryIS25LP016D.h"
+#include "CoreFlashIS25LP016D.h"
 
 #include "rtos/ThisThread.h"
 
@@ -11,7 +11,7 @@ using namespace flash::is25lp016d;
 
 namespace leka {
 
-void CoreFlashMemoryIS25LP016D::setSPIMode(spi_mode_t mode)
+void CoreFlashIS25LP016D::setSPIMode(spi_mode_t mode)
 {
 	_spi_mode = mode;
 
@@ -35,22 +35,22 @@ void CoreFlashMemoryIS25LP016D::setSPIMode(spi_mode_t mode)
 	_qspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
 }
 
-void CoreFlashMemoryIS25LP016D::setReadMode(read_mode_t mode)
+void CoreFlashIS25LP016D::setReadMode(read_mode_t mode)
 {
 	_read_mode = mode;
 }
 
-auto CoreFlashMemoryIS25LP016D::getSize() -> size_t
+auto CoreFlashIS25LP016D::getSize() -> size_t
 {
 	return flash::is25lp016d::size;
 }
 
-void CoreFlashMemoryIS25LP016D::reset()
+void CoreFlashIS25LP016D::reset()
 {
 	_flash_manager.reset();
 }
 
-auto CoreFlashMemoryIS25LP016D::read(uint32_t address, lstd::span<uint8_t> rx_buffer, size_t rx_buffer_size) -> size_t
+auto CoreFlashIS25LP016D::read(uint32_t address, lstd::span<uint8_t> rx_buffer, size_t rx_buffer_size) -> size_t
 {
 	if (address + rx_buffer.size() > flash::is25lp016d::size) {
 		return 0;
@@ -76,8 +76,7 @@ auto CoreFlashMemoryIS25LP016D::read(uint32_t address, lstd::span<uint8_t> rx_bu
 	return bytes_read;
 }
 
-auto CoreFlashMemoryIS25LP016D::write(uint32_t address, const lstd::span<uint8_t> tx_buffer, size_t tx_buffer_size)
-	-> size_t
+auto CoreFlashIS25LP016D::write(uint32_t address, const lstd::span<uint8_t> tx_buffer, size_t tx_buffer_size) -> size_t
 {
 	if (address + tx_buffer.size() > getSize()) {
 		return 0;
@@ -97,7 +96,7 @@ auto CoreFlashMemoryIS25LP016D::write(uint32_t address, const lstd::span<uint8_t
 	return bytes_write;
 }
 
-void CoreFlashMemoryIS25LP016D::erase()
+void CoreFlashIS25LP016D::erase()
 {
 	_flash_manager.erase();
 }

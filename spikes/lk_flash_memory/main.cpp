@@ -7,8 +7,8 @@
 #include "drivers/BufferedSerial.h"
 #include "rtos/ThisThread.h"
 
+#include "CoreFlashIS25LP016D.h"
 #include "CoreFlashManagerIS25LP016D.h"
-#include "CoreFlashMemoryIS25LP016D.h"
 #include "CoreQSPI.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
@@ -28,7 +28,7 @@ auto main() -> int
 	auto coreqspi = CoreQSPI();
 
 	auto coremanageris25lp = CoreFlashManagerIS25LP016D(coreqspi);
-	auto coreis25lp		   = CoreFlashMemoryIS25LP016D(coreqspi, coremanageris25lp);
+	auto coreis25lp		   = CoreFlashIS25LP016D(coreqspi, coremanageris25lp);
 	coreis25lp.reset();
 
 	rtos::ThisThread::sleep_for(2s);
