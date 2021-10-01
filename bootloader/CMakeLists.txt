@@ -13,6 +13,7 @@ target_sources(bootloader
 	PRIVATE
 		main.cpp
 		default_bd.cpp
+		signing_keys.c
 )
 
 target_link_libraries(bootloader
