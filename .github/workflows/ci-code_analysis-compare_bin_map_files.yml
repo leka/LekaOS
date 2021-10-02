@@ -241,9 +241,15 @@ jobs:
             echo -n "| $target_name " >> $GITHUB_ENV
 
             if [[ ${added_targets[*]} =~ "$target" ]]; then
-              echo -n "| :sparkles: | - | - | - | - |\n" >> $GITHUB_ENV
+              echo -n "| :sparkles: | - | - " >> $GITHUB_ENV
+
+              python3 extern/mbed-os/tools/memap.py -t GCC_ARM _build_tmp/${{ env.HEAD_SHA }}/$target_name.map > _build_tmp/${{ env.HEAD_SHA }}/$target_name.txt
+              head_ram=$(grep -Po '(?<=\(data \+ bss\):\s)[[:digit:]]*' _build_tmp/${{ env.HEAD_SHA }}/$target_name.txt)
+              head_flash=$(grep -Po '(?<=\(text \+ data\):\s)[[:digit:]]*' _build_tmp/${{ env.HEAD_SHA }}/$target_name.txt)
+
+              echo -n "| $head_ram | - | $head_flash | - |\n" >> $GITHUB_ENV
             elif [[ ${deleted_targets[*]} =~ "$target" ]]; then
-              echo -n "| :coffin: | - | - | - | - |\n" >> $GITHUB_ENV
+              echo -n "| :coffin: | - | - | - | - | - | - |\n" >> $GITHUB_ENV
             else
               echo -n "| :heavy_check_mark: " >> $GITHUB_ENV
 
