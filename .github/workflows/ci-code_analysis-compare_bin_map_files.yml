@@ -354,6 +354,24 @@ jobs:
 
                 no_map_diff=false
               fi
+
+            elif [[ " ${added_targets[*]} " =~ " $target " ]]; then
+              echo "$target added, showing map information"
+              map_output=$(cat _build_tmp/${{ env.HEAD_SHA }}/$target_name.txt)
+
+              echo "<details>" >> $GITHUB_ENV
+              echo "<summary><b><code>$target_name</code></b> (click to expand)</summary>" >> $GITHUB_ENV
+              echo "" >> $GITHUB_ENV
+
+              echo "\`\`\`" >> $GITHUB_ENV
+              echo "$map_output" >> $GITHUB_ENV
+              echo "\`\`\`" >> $GITHUB_ENV
+
+              echo "" >> $GITHUB_ENV
+              echo "</details>" >> $GITHUB_ENV
+              echo "" >> $GITHUB_ENV
+
+              no_map_diff=false
             fi
           done
 
