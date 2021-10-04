@@ -1,36 +1,103 @@
 // Leka - LekaOS
-// Copyright 2020 APF France handicap
+// Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
 #include "drivers/BufferedSerial.h"
-#include "rtos/Kernel.h"
-#include "rtos/ThisThread.h"
-#include "rtos/Thread.h"
 
+#include "CoreFlashIS25LP016D.h"
+#include "CoreFlashManagerIS25LP016D.h"
+#include "CoreQSPI.h"
+#include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
+#include "QSPIFBlockDevice.h"
+#include "SDBlockDevice.h"
+#include "SlicingBlockDevice.h"
+#include "bootutil/bootutil.h"
+
+#define TRACE_GROUP "main"
+#include "mbed-trace/mbed_trace.h"
 
 using namespace leka;
 using namespace std::chrono;
 
+HelloWorld hello;
+
+static mbed::BufferedSerial serial(USBTX, USBRX, 115200);
+
+SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
+FATFileSystem fatfs("fs");
+
+auto coreqspi		   = CoreQSPI();
+auto coremanageris25lp = CoreFlashManagerIS25LP016D(coreqspi);
+auto coreis25lp		   = CoreFlashIS25LP016D(coreqspi, coremanageris25lp);
+
+mbed::BlockDevice *get_secondary_bd(void)
+{
+	static QSPIFBlockDevice _bd;
+
+	static mbed::SlicingBlockDevice sliced_bd(&_bd, 0x0, MCUBOOT_SLOT_SIZE);
+	return &sliced_bd;
+}
+
+void initializeSD()
+{
+	sd_blockdevice.init();
+	sd_blockdevice.frequency(25'000'000);
+
+	fatfs.mount(&sd_blockdevice);
+}
+
 auto main() -> int
 {
-	static auto serial = mbed::BufferedSerial(USBTX, USBRX);
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+	log_info("Hello, Application!\n");
 
-	rtos::ThisThread::sleep_for(1s);
+	// Enable traces from relevant trace groups
+	mbed_trace_init();
+	mbed_trace_include_filters_set("main,MCUb,BL");
 
-	log_info("\n\n");
-	log_info("Hello, LekaOS!\n");
-
-	rtos::ThisThread::sleep_for(2s);
-
-	auto hello = HelloWorld();
+	// Initialization
 	hello.start();
 
-	while (true) {
-		log_debug("A message from your board %s --> \"%s\" at %ims", MBED_CONF_APP_TARGET_NAME, hello.world,
-				  int(rtos::Kernel::Clock::now().time_since_epoch().count()));
-		rtos::ThisThread::sleep_for(1s);
+	initializeSD();
+
+	coreis25lp.reset();
+	coreis25lp.setSPIMode(SPIMode::Standard);
+	coreis25lp.setReadMode(ReadMode::Normal);
+	coreis25lp.erase();
+
+	// Open file and initialize tools
+	fflush(stdout);
+	FILE *f = fopen("/fs/update.bin", "r+");
+	log_debug("%s", (!f ? "Fail :(" : "OK"));
+	uint32_t address		 = 0x0;
+	const size_t packet_size = 0x100;
+	std::array<uint8_t, packet_size> buffer {};
+
+	// Transfer update file into external flash memory
+	while (!feof(f)) {
+		for (uint16_t i = 0; i < packet_size; i++) {
+			buffer[i] = fgetc(f);
+		}
+		coreis25lp.write(address, buffer, packet_size);
+		address += packet_size;
+	}
+
+	// Close the file which also flushes any cached writes
+	log_debug("Closing \"/fs/update.bin\"... ");
+	fflush(stdout);
+	int err = fclose(f);
+	log_debug("%s", (err < 0 ? "Fail :(" : "OK"));
+	if (err < 0) {
+		log_error("error: %s (%d)\n", strerror(errno), -errno);
+	}
+
+	// Set ready for reboot
+	int ret = boot_set_pending(0);
+	if (ret == 0) {
+		log_info("> Secondary image pending, reboot to update");
+	} else {
+		log_error("Failed to set secondary image pending: %d", ret);
 	}
 }
