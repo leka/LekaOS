@@ -56,6 +56,9 @@ class SerialKit
 	void dispatcher(file_reception_operation_t operation, lstd::span<uint8_t> data);
 	void receiveFile();
 
+	void receiveData();
+	void calibrate();
+
   private:
 	mbed::BufferedSerial &_serial;
 	FileSystemKit::File file;

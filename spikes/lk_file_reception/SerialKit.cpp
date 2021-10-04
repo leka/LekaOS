@@ -97,23 +97,29 @@ void SerialKit::testWrite()
 	log_debug("Operation duration: %llums", duration_cast<milliseconds>(_timer.elapsed_time()).count());
 }
 
+void SerialKit::receiveData()
+{
+	while (_serial.readable()) {
+		uint32_t num = _serial.read(_reception_buffer.data(), _reception_buffer.size());
+		file.write(_reception_buffer.data(), num);
+		reception_bytes += num;
+
+		rtos::ThisThread::sleep_for(1ms);
+	}
+}
+
 void SerialKit::receiveFile()
 {
-	while (true) {
+	while (reception_bytes != _expected_file_size) {
 		file.open(_path.data(), "a+");
 
 		_timer.reset();
 		_timer.start();
 
-		while (_serial.readable()) {
-			uint32_t num = _serial.read(_reception_buffer.data(), _reception_buffer.size());
-			file.write(_reception_buffer.data(), num);
-			reception_bytes += num;
-
-			rtos::ThisThread::sleep_for(1ms);
-		}
+		receiveData();
 
 		_timer.stop();
+
 		file.close();
 
 		auto duration = duration_cast<milliseconds>(_timer.elapsed_time()).count();
@@ -122,16 +128,13 @@ void SerialKit::receiveFile()
 			log_debug("Operation duration: %llums (%llums) | Bytes received %ldB", duration, total_duration,
 					  reception_bytes);
 		}
-		if (reception_bytes == _expected_file_size) {
-			break;
-		}
 	}
 	log_info("Download ended !");
 }
 
 auto getMinimalDelayBetweenPacket() -> std::chrono::milliseconds {}
 
-void calibration();
+void calibrate() {}
 
 // void SerialKit::receiveFile()
 // {
