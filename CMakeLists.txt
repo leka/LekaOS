@@ -76,13 +76,14 @@ if(CMAKE_EXPORT_COMPILE_COMMANDS)
 endif()
 
 # For convenience you can define useful variables
-set(OS_DIR      ${ROOT_DIR}/src)
-set(LIBS_DIR    ${ROOT_DIR}/libs)
-set(TESTS_DIR   ${ROOT_DIR}/tests)
-set(SPIKES_DIR  ${ROOT_DIR}/spikes)
-set(DRIVERS_DIR ${ROOT_DIR}/drivers)
-set(TARGETS_DIR ${ROOT_DIR}/targets)
-set(INCLUDE_DIR ${ROOT_DIR}/include)
+set(OS_DIR         ${ROOT_DIR}/src)
+set(LIBS_DIR       ${ROOT_DIR}/libs)
+set(TESTS_DIR      ${ROOT_DIR}/tests)
+set(SPIKES_DIR     ${ROOT_DIR}/spikes)
+set(DRIVERS_DIR    ${ROOT_DIR}/drivers)
+set(TARGETS_DIR    ${ROOT_DIR}/targets)
+set(INCLUDE_DIR    ${ROOT_DIR}/include)
+set(BOOTLOADER_DIR ${ROOT_DIR}/bootloader)
 
 # Add custom target subdirectory
 set(AVAILABLE_CUSTOM_TARGETS DISCO_ORIGINAL LEKA_V1_0_DEV LEKA_V1_1_DEV LEKA_V1_2_DEV)
@@ -129,6 +130,9 @@ add_subdirectory(${LIBS_DIR})
 # Add spikes, functional tests
 add_subdirectory(${SPIKES_DIR})
 add_subdirectory(${TESTS_DIR}/functional)
+
+# Add bootloader
+add_subdirectory(${BOOTLOADER_DIR})
 
 # Add LekaOS
 add_subdirectory(${OS_DIR})
