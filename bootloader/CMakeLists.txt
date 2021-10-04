@@ -1,0 +1,21 @@
+# Leka - LekaOS
+# Copyright 2020 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+add_mbed_executable(bootloader)
+
+target_include_directories(bootloader
+	PRIVATE
+		.
+)
+
+target_sources(bootloader
+	PRIVATE
+		main.cpp
+)
+
+target_link_libraries(bootloader
+	bootutil
+)
+
+target_link_custom_leka_targets(bootloader)
