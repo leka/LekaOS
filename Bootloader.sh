@@ -18,3 +18,10 @@ imgtool sign -k signing-keys.pem --align 4 -v 1.2.3+4 --header-size 4096 --pad-h
 # Merge bootloader and application
 hexmerge.py -o firmware.hex --no-start-addr bootloader/bootloader.hex src/LekaOS-signed.hex
 arm-none-eabi-objcopy -I ihex -O binary firmware.hex firmware.bin
+
+# Get update binary
+cp _build/LEKA_V1_2_DEV/spikes/lk_ble/spike_lk_ble.hex update.hex
+
+# Sign update with private key
+imgtool sign -k signing-keys.pem --align 4 -v 1.2.3+5 --header-size 4096 --pad-header -S 0x180000 update.hex update-signed.hex
+arm-none-eabi-objcopy -I ihex -O binary update-signed.hex update.bin
