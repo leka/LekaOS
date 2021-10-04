@@ -57,8 +57,8 @@ option(ENABLE_BOOTLOADER "Build LekaOS with bootloader" OFF)
 message(STATUS "ENABLE_BOOTLOADER (Build LekaOS with bootloader) --> ${ENABLE_BOOTLOADER}")
 if (ENABLE_BOOTLOADER)
 	set(MBED_APP_FLAGS
-		-DMBED_APP_START=0x08040000
-		-DMBED_APP_SIZE=0x180000
+		-DMBED_APP_START=0x08041000
+		-DMBED_APP_SIZE=0x17E000
 	)
 endif(ENABLE_BOOTLOADER)
 
@@ -114,6 +114,12 @@ link_libraries(
 )
 
 # Add external libraries
+add_compile_definitions(MCUBOOT_BOOTLOADER_SIZE=0x40000)
+add_compile_definitions(MCUBOOT_SCRATCH_SIZE=0x40000)
+add_compile_definitions(MCUBOOT_SCRATCH_START_ADDR=0x081C0000)
+add_compile_definitions(MCUBOOT_RSA_SIGNATURE_LENGTH=2048)
+add_compile_definitions(MCUBOOT_SLOT_SIZE=0x200000-MCUBOOT_BOOTLOADER_SIZE-MCUBOOT_SCRATCH_SIZE)
+
 add_subdirectory(${MCUBOOT_DIR})
 
 # Add drivers & libraries
