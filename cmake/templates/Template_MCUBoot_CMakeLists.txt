@@ -24,7 +24,7 @@ add_compile_definitions(MCUBOOT_SLOT_SIZE=0x200000-MCUBOOT_BOOTLOADER_SIZE-MCUBO
 add_compile_definitions(MCUBOOT_VALIDATE_PRIMARY_SLOT=true)
 
 add_compile_definitions(MCUBOOT_READ_GRANULARITY=1)
-add_compile_definitions(MCUBOOT_MAX_IMG_SECTORS=256)
+add_compile_definitions(MCUBOOT_MAX_IMG_SECTORS=512)
 
 add_subdirectory(${MCUBOOT_DIR}/bootutil)
 add_subdirectory(${MCUBOOT_DIR}/mbed)
