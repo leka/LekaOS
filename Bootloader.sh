@@ -23,10 +23,9 @@ hexmerge.py -o _tmp/firmware.hex --no-start-addr _tmp/bootloader.hex _tmp/applic
 arm-none-eabi-objcopy -I ihex -O binary _tmp/firmware.hex release/firmware.bin
 
 # Get update binary
-cp _build/LEKA_V1_2_DEV/spikes/lk_ble/spike_lk_ble.hex _tmp/update.hex
+cp _build/LEKA_V1_2_DEV/spikes/lk_ble/spike_lk_ble.bin _tmp/update.bin
 
 # Sign update with private key
-imgtool sign -k signing-keys.pem --align 4 -v 1.2.3+5 --header-size 4096 --pad-header -S 0x180000 _tmp/update.hex _tmp/update-signed.hex
-arm-none-eabi-objcopy -I ihex -O binary _tmp/update-signed.hex release/update.bin
+imgtool sign -k signing-keys.pem --align 4 -v 1.2.3+5 --header-size 4096 --pad-header -S 0x180000 _tmp/update.bin release/update-signed.bin
 
 rm -rf _tmp
