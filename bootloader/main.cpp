@@ -96,11 +96,4 @@ int main()
 	mbed_start_application(address);
 }
 
-#else
-
-auto main() -> int
-{
-	return 0;
-}
-
 #endif	 // MCUBOOT_BOOTLOADER_BUILD
