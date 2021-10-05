@@ -135,7 +135,9 @@ add_subdirectory(${SPIKES_DIR})
 add_subdirectory(${TESTS_DIR}/functional)
 
 # Add bootloader
-add_subdirectory(${BOOT_DIR})
+if (ENABLE_BOOTLOADER==OFF)
+	add_subdirectory(${BOOT_DIR})
+endif()
 
 # Add LekaOS
 add_subdirectory(${OS_DIR})
