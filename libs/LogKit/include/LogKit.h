@@ -9,9 +9,12 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <experimental/source_location>
+#include <filesystem>
 #include <mutex>
 #include <string_view>
 #include <unordered_map>
+#include <utility>
 
 #include "rtos/Kernel.h"
 #include "rtos/Mutex.h"
@@ -132,6 +135,41 @@ struct logger {
 //
 // MARK: - Macros
 //
+
+namespace lstd {
+using source_location = std::experimental::source_location;
+}
+constexpr auto get_file_name(const char *path) -> const char *
+{
+	const char *file = path;
+	while (*path != 0U) {
+		if (*path++ == '/') {
+			file = path;
+		}
+	}
+	return file;
+
+	// return std::filesystem::path(path).filename().c_str();
+}
+// inline void log_format(const char *message, const lstd::source_location &location = lstd::source_location::current())
+// {
+// 	auto get_file_name = [&location]() constexpr
+// 	{
+// 		const char *path = location.file_name();
+// 		const char *file = path;
+// 		while (*path != 0U) {
+// 			if (*path++ == '/') {
+// 				file = path;
+// 			}
+// 		}
+// 		return file;
+// 	};
+
+// 	constexpr auto *filename = get_file_name();
+// 	// const auto *filename = std::filesystem::path(location.function_name()).filename().c_str();
+
+// 	printf("[%s:%u] %s --> %s\n", filename, location.line(), location.function_name(), message);
+// }
 
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 
