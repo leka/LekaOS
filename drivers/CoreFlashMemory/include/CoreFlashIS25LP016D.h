@@ -13,29 +13,12 @@
 
 namespace leka {
 
-enum class SPIMode
-{
-	Standard,
-	Dual,
-	Quad
-};
-using spi_mode_t = SPIMode;
-
-enum class ReadMode
-{
-	Normal,
-	Fast
-};
-using read_mode_t = ReadMode;
-
 class CoreFlashIS25LP016D : public interface::FlashMemory
 {
   public:
 	explicit CoreFlashIS25LP016D(interface::QSPI &qspi, interface::FlashManager &flash_manager)
 		: _qspi(qspi), _flash_manager(flash_manager) {};
 
-	void setSPIMode(spi_mode_t mode);
-	void setReadMode(read_mode_t mode);
 	auto getSize() -> size_t final;
 
 	void reset();
@@ -48,9 +31,6 @@ class CoreFlashIS25LP016D : public interface::FlashMemory
   private:
 	interface::QSPI &_qspi;
 	interface::FlashManager &_flash_manager;
-
-	spi_mode_t _spi_mode   = SPIMode::Standard;
-	read_mode_t _read_mode = ReadMode::Normal;
 };
 
 }	// namespace leka

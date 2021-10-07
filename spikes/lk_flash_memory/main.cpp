@@ -36,8 +36,9 @@ auto main() -> int
 	HelloWorld hello;
 	hello.start();
 
-	coreis25lp.setSPIMode(SPIMode::Standard);
-	coreis25lp.setReadMode(ReadMode::Normal);
+	auto data_transmission_format = interface::QSPI::DataTransmissionFormat {};
+	coreqspi.setDataTransmissionFormat(data_transmission_format);
+	coreqspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
 
 	const size_t bytes_to_read = 0x20;
 	std::array<uint8_t, bytes_to_read> buffer {};
