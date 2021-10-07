@@ -177,7 +177,7 @@ add_subdirectory(./mocks)
 
 leka_register_unit_tests_for_library(Utils)
 leka_register_unit_tests_for_library(LogKit)
-leka_register_unit_tests_for_library(CircularBuffer)
+leka_register_unit_tests_for_library(ContainerKit)
 leka_register_unit_tests_for_library(CriticalSection)
 
 #
@@ -187,7 +187,7 @@ leka_register_unit_tests_for_library(CriticalSection)
 link_libraries(
 	Utils
 	LogKit
-	CircularBuffer
+	ContainerKit
 	CriticalSection
 )
 

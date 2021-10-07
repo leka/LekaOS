@@ -2,19 +2,19 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CircularBuffer STATIC)
+add_library(ContainerKit STATIC)
 
-target_include_directories(CircularBuffer
+target_include_directories(ContainerKit
 	PUBLIC
 		include
 )
 
-target_sources(CircularBuffer
+target_sources(ContainerKit
 	PRIVATE
 		source/CircularBuffer.cpp
 )
 
-target_link_libraries(CircularBuffer
+target_link_libraries(ContainerKit
 	PRIVATE
 		mbed-os
 		CriticalSection
