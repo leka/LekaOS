@@ -20,9 +20,9 @@ class CircularQueue
   public:
 	CircularQueue()
 	{
-		static_assert(
-			(sizeof(CounterType) >= sizeof(uint32_t)) || (BufferSize < (((uint64_t)1) << (sizeof(CounterType) * 8))),
-			"Invalid BufferSize for the CounterType");
+		static_assert((sizeof(CounterType) >= sizeof(uint32_t)) ||
+						  (BufferSize < ((static_cast<uint64_t>(1)) << (sizeof(CounterType) * 8))),
+					  "Invalid BufferSize for the CounterType");
 	}
 
 	~CircularQueue() = default;
@@ -194,7 +194,7 @@ class CircularQueue
 
 		auto i = 0;
 		while (i <= non_critical_size() - size) {
-			uint8_t j;
+			auto j = 0;
 
 			// for current index i, check for pattern match
 			for (j = 0; j < size; j++) {
@@ -208,7 +208,8 @@ class CircularQueue
 			if (j == size) {   // if pattern[0...size-1] = _buffer[i, i+1, ...i+size-1]
 				position = i;
 				return true;
-			} else if (j == 0) {
+			}
+			if (j == 0) {
 				i = i + 1;
 			} else {
 				i = i + j;	 // slide the pattern by j
@@ -221,7 +222,7 @@ class CircularQueue
   private:
 	[[nodiscard]] auto non_critical_empty() const -> bool
 	{
-		if (_full || _head != _tail) {
+		if (_full || (_head != _tail)) {
 			return false;
 		}
 
