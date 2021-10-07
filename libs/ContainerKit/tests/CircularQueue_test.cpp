@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap (based on work by Mbed-OS)
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../include/CircularBuffer.h"
+#include "CircularQueue.h"
 #include <array>
 #include <memory>
 
@@ -11,7 +11,7 @@
 
 using namespace leka;
 
-class CircularBufferTest : public testing::Test
+class CircularQueueTest : public testing::Test
 {
   protected:
 	void SetUp() override
@@ -22,15 +22,15 @@ class CircularBufferTest : public testing::Test
 	// void TearDown() override {}
 
 	static constexpr auto TEST_BUFFER_SIZE {10};
-	CircularBuffer<int, TEST_BUFFER_SIZE> buf {};
+	CircularQueue<int, TEST_BUFFER_SIZE> buf {};
 };
 
-TEST_F(CircularBufferTest, initialization)
+TEST_F(CircularQueueTest, initialization)
 {
 	EXPECT_NE(&buf, nullptr);
 }
 
-TEST_F(CircularBufferTest, pushOneItemPopOneItem)
+TEST_F(CircularQueueTest, pushOneItemPopOneItem)
 {
 	int item = 0;
 
@@ -41,7 +41,7 @@ TEST_F(CircularBufferTest, pushOneItemPopOneItem)
 	EXPECT_EQ(item, 1);
 }
 
-TEST_F(CircularBufferTest, reset)
+TEST_F(CircularQueueTest, reset)
 {
 	buf.push(1);
 	EXPECT_EQ(buf.size(), 1);
@@ -50,14 +50,14 @@ TEST_F(CircularBufferTest, reset)
 	EXPECT_EQ(buf.size(), 0);
 }
 
-TEST_F(CircularBufferTest, sizeWhenEmpty)
+TEST_F(CircularQueueTest, sizeWhenEmpty)
 {
 	auto size = buf.size();
 
 	EXPECT_EQ(size, 0);
 }
 
-TEST_F(CircularBufferTest, sizeWhenNotEmpty)
+TEST_F(CircularQueueTest, sizeWhenNotEmpty)
 {
 	buf.push(1);
 	auto size = buf.size();
@@ -65,7 +65,7 @@ TEST_F(CircularBufferTest, sizeWhenNotEmpty)
 	EXPECT_EQ(size, 1);
 }
 
-TEST_F(CircularBufferTest, sizeWhenFull)
+TEST_F(CircularQueueTest, sizeWhenFull)
 {
 	auto items = std::array<int, TEST_BUFFER_SIZE> {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	buf.push(items.data(), std::size(items));
@@ -75,14 +75,14 @@ TEST_F(CircularBufferTest, sizeWhenFull)
 	EXPECT_EQ(size, TEST_BUFFER_SIZE);
 }
 
-TEST_F(CircularBufferTest, isEmptyWhenEmpty)
+TEST_F(CircularQueueTest, isEmptyWhenEmpty)
 {
 	auto is_empty = buf.empty();
 
 	EXPECT_TRUE(is_empty);
 }
 
-TEST_F(CircularBufferTest, isEmptyWhenNotEmpty)
+TEST_F(CircularQueueTest, isEmptyWhenNotEmpty)
 {
 	buf.push(1);
 	auto is_empty = buf.empty();
@@ -90,7 +90,7 @@ TEST_F(CircularBufferTest, isEmptyWhenNotEmpty)
 	EXPECT_FALSE(is_empty);
 }
 
-TEST_F(CircularBufferTest, isEmptyWhenFull)
+TEST_F(CircularQueueTest, isEmptyWhenFull)
 {
 	auto items = std::array<int, TEST_BUFFER_SIZE> {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	buf.push(items.data(), std::size(items));
@@ -100,21 +100,21 @@ TEST_F(CircularBufferTest, isEmptyWhenFull)
 	EXPECT_FALSE(is_empty);
 }
 
-TEST_F(CircularBufferTest, popOneItemWhenEmpty)
+TEST_F(CircularQueueTest, popOneItemWhenEmpty)
 {
 	int item = 0;
 	bool ret = buf.pop(item);
 	EXPECT_FALSE(ret);
 }
 
-TEST_F(CircularBufferTest, popMutipleItemsWhenEmpty)
+TEST_F(CircularQueueTest, popMutipleItemsWhenEmpty)
 {
 	std::array<int, 3> items {};
 	bool ret = buf.pop(items.data(), std::size(items));
 	EXPECT_FALSE(ret);
 }
 
-TEST_F(CircularBufferTest, pushPopMultipleItems)
+TEST_F(CircularQueueTest, pushPopMultipleItems)
 {
 	auto items = std::array<int, TEST_BUFFER_SIZE> {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
@@ -133,7 +133,7 @@ TEST_F(CircularBufferTest, pushPopMultipleItems)
 	}
 }
 
-TEST_F(CircularBufferTest, pushOneItemToMakeFull)
+TEST_F(CircularQueueTest, pushOneItemToMakeFull)
 {
 	auto items = std::array<int, TEST_BUFFER_SIZE - 1> {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
@@ -153,7 +153,7 @@ TEST_F(CircularBufferTest, pushOneItemToMakeFull)
 	EXPECT_EQ(actual_items, expected_items);
 }
 
-TEST_F(CircularBufferTest, pushOneItemWhenAlreadyFull)
+TEST_F(CircularQueueTest, pushOneItemWhenAlreadyFull)
 {
 	auto items = std::array<int, TEST_BUFFER_SIZE - 1> {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
@@ -177,7 +177,7 @@ TEST_F(CircularBufferTest, pushOneItemWhenAlreadyFull)
 	EXPECT_EQ(actual_items, expected_items);
 }
 
-TEST_F(CircularBufferTest, pushItemsWithOverflow)
+TEST_F(CircularQueueTest, pushItemsWithOverflow)
 {
 	auto items		  = std::array<int, TEST_BUFFER_SIZE> {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 	auto items_popped = std::array<int, TEST_BUFFER_SIZE> {};
@@ -207,7 +207,7 @@ TEST_F(CircularBufferTest, pushItemsWithOverflow)
 	EXPECT_TRUE(0 == memcmp(items.data(), items_popped.data(), TEST_BUFFER_SIZE - 1));
 }
 
-TEST_F(CircularBufferTest, pushMoreItemsThanBufferCapacity)
+TEST_F(CircularQueueTest, pushMoreItemsThanBufferCapacity)
 {
 	auto items		  = std::array<int, TEST_BUFFER_SIZE + 1> {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 	auto items_popped = std::array<int, TEST_BUFFER_SIZE> {};
@@ -227,7 +227,7 @@ TEST_F(CircularBufferTest, pushMoreItemsThanBufferCapacity)
 	}
 }
 
-TEST_F(CircularBufferTest, peekOneItem)
+TEST_F(CircularQueueTest, peekOneItem)
 {
 	buf.push(42);
 	EXPECT_EQ(buf.size(), 1);
@@ -240,7 +240,7 @@ TEST_F(CircularBufferTest, peekOneItem)
 	EXPECT_EQ(buf.size(), 1);
 }
 
-TEST_F(CircularBufferTest, peekOneItemWhenEmpty)
+TEST_F(CircularQueueTest, peekOneItemWhenEmpty)
 {
 	EXPECT_EQ(buf.size(), 0);
 
@@ -252,7 +252,7 @@ TEST_F(CircularBufferTest, peekOneItemWhenEmpty)
 	EXPECT_EQ(buf.size(), 0);
 }
 
-TEST_F(CircularBufferTest, peekOneItemAtPosition)
+TEST_F(CircularQueueTest, peekOneItemAtPosition)
 {
 	buf.push(42);
 	buf.push(43);
@@ -282,7 +282,7 @@ TEST_F(CircularBufferTest, peekOneItemAtPosition)
 	EXPECT_EQ(buf.size(), 3);
 }
 
-TEST_F(CircularBufferTest, peekOneItemAtPositionWhenEmpty)
+TEST_F(CircularQueueTest, peekOneItemAtPositionWhenEmpty)
 {
 	EXPECT_EQ(buf.size(), 0);
 
@@ -300,7 +300,7 @@ TEST_F(CircularBufferTest, peekOneItemAtPositionWhenEmpty)
 	EXPECT_EQ(item, 0);
 }
 
-TEST_F(CircularBufferTest, peekOneItemAtPositionBiggerThanSize)
+TEST_F(CircularQueueTest, peekOneItemAtPositionBiggerThanSize)
 {
 	buf.push(42);
 	buf.push(43);
@@ -322,7 +322,7 @@ TEST_F(CircularBufferTest, peekOneItemAtPositionBiggerThanSize)
 	EXPECT_EQ(item, 0);
 }
 
-TEST_F(CircularBufferTest, criticalSectionForPush)
+TEST_F(CircularQueueTest, criticalSectionForPush)
 {
 	buf.push(1);
 
@@ -330,7 +330,7 @@ TEST_F(CircularBufferTest, criticalSectionForPush)
 	EXPECT_TRUE(spy_mbed_critical_exit_was_called());
 }
 
-TEST_F(CircularBufferTest, criticalSectionForPop)
+TEST_F(CircularQueueTest, criticalSectionForPop)
 {
 	int item = 0;
 	bool ret = buf.pop(item);
@@ -339,7 +339,7 @@ TEST_F(CircularBufferTest, criticalSectionForPop)
 	EXPECT_TRUE(spy_mbed_critical_exit_was_called());
 }
 
-TEST_F(CircularBufferTest, hasPattern)
+TEST_F(CircularQueueTest, hasPattern)
 {
 	auto items	 = std::array {0, 1, 2, 0x2A, 0x2B, 0x2C, 0x2D, 7, 8, 9};
 	auto pattern = std::array {0x2A, 0x2B, 0x2C, 0x2D};
@@ -354,7 +354,7 @@ TEST_F(CircularBufferTest, hasPattern)
 	EXPECT_EQ(pos, 3);
 }
 
-TEST_F(CircularBufferTest, hasNotPattern)
+TEST_F(CircularQueueTest, hasNotPattern)
 {
 	auto items	 = std::array {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	auto pattern = std::array {0x2A, 0x2B, 0x2C, 0x2D};
@@ -369,7 +369,7 @@ TEST_F(CircularBufferTest, hasNotPattern)
 	EXPECT_EQ(pos, 0);
 }
 
-TEST_F(CircularBufferTest, hasOnlyPartOfPattern)
+TEST_F(CircularQueueTest, hasOnlyPartOfPattern)
 {
 	auto items	 = std::array {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	auto pattern = std::array {2, 3, 4, 0x2D};

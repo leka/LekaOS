@@ -2,8 +2,8 @@
 // Copyright 2021 APF France handicap (based on work by Mbed-OS)
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_CIRCULAR_BUFFER_H_
-#define _LEKA_OS_LIB_CIRCULAR_BUFFER_H_
+#ifndef _LEKA_OS_LIB_CIRCULAR_QUEUE_H_
+#define _LEKA_OS_LIB_CIRCULAR_QUEUE_H_
 
 #include <array>
 #include <mutex>
@@ -15,17 +15,17 @@
 namespace leka {
 
 template <typename T, uint32_t BufferSize, typename CounterType = uint32_t>
-class CircularBuffer
+class CircularQueue
 {
   public:
-	CircularBuffer()
+	CircularQueue()
 	{
 		static_assert(
 			(sizeof(CounterType) >= sizeof(uint32_t)) || (BufferSize < (((uint64_t)1) << (sizeof(CounterType) * 8))),
 			"Invalid BufferSize for the CounterType");
 	}
 
-	~CircularBuffer() = default;
+	~CircularQueue() = default;
 
 	void push(const T &data)
 	{
@@ -261,4 +261,4 @@ class CircularBuffer
 
 }	// namespace leka
 
-#endif	 // _LEKA_OS_LIB_CIRCULAR_BUFFER_H_
+#endif	 // _LEKA_OS_LIB_CIRCULAR_QUEUE_H_

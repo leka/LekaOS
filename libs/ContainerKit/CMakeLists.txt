@@ -11,7 +11,7 @@ target_include_directories(ContainerKit
 
 target_sources(ContainerKit
 	PRIVATE
-		source/CircularBuffer.cpp
+		source/CircularQueue.cpp
 )
 
 target_link_libraries(ContainerKit
@@ -23,7 +23,7 @@ target_link_libraries(ContainerKit
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
-		tests/CircularBuffer_test.cpp
+		tests/CircularQueue_test.cpp
 	)
 
 endif()
