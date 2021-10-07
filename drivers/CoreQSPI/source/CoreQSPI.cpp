@@ -70,24 +70,23 @@ void CoreQSPI::setFrequency(int hz)
 	_qspi.set_frequency(hz);
 }
 
-auto CoreQSPI::read(uint8_t command, int alternate_phase, uint32_t address, lstd::span<uint8_t> rx_buffer,
-					size_t rx_buffer_size) -> size_t
+auto CoreQSPI::read(uint8_t command, uint32_t address, lstd::span<uint8_t> rx_buffer, size_t rx_buffer_size) -> size_t
 {
 	// ? Use local variable as Mbed's QSPI driver returns the number of bytes read as an in/out parameter
 	auto size = rx_buffer_size;
 
-	_qspi.read(command, alternate_phase, address, reinterpret_cast<char *>(rx_buffer.data()), &size);
+	_qspi.read(command, -1, address, reinterpret_cast<char *>(rx_buffer.data()), &size);
 
 	return size;
 }
 
-auto CoreQSPI::write(uint8_t command, int alternate_phase, uint32_t address, const lstd::span<uint8_t> tx_buffer,
-					 size_t tx_buffer_size) -> size_t
+auto CoreQSPI::write(uint8_t command, uint32_t address, const lstd::span<uint8_t> tx_buffer, size_t tx_buffer_size)
+	-> size_t
 {
 	// ? Use local variable as Mbed's QSPI driver returns the number of bytes written as an in/out parameter
 	auto size = tx_buffer_size;
 
-	_qspi.write(command, alternate_phase, address, reinterpret_cast<char *>(tx_buffer.data()), &size);
+	_qspi.write(command, -1, address, reinterpret_cast<char *>(tx_buffer.data()), &size);
 
 	return size;
 }

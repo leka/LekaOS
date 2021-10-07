@@ -75,7 +75,7 @@ TEST_F(CoreFlashIS25LP016DTest, read)
 
 		EXPECT_CALL(flash_manager_is25lp, waitForChipAvailable).Times(1);
 		EXPECT_CALL(flash_manager_is25lp, chipIsNotAvailable).WillOnce(Return(false));
-		EXPECT_CALL(qspimock, read(command::read, _, address, compareArray(buffer), bytes_to_read))
+		EXPECT_CALL(qspimock, read(command::read, address, compareArray(buffer), bytes_to_read))
 			.WillOnce(Return(expected_bytes_read));
 	}
 
@@ -91,7 +91,7 @@ TEST_F(CoreFlashIS25LP016DTest, readOverSize)
 	std::array<uint8_t, bytes_to_read> buffer {};
 
 	size_t expected_bytes_read = 0;
-	EXPECT_CALL(qspimock, read(command::read, _, _, _, _)).Times(0);
+	EXPECT_CALL(qspimock, read(command::read, _, _, _)).Times(0);
 
 	auto actual_bytes_read = flash_memory_is25lp.read(address, buffer, bytes_to_read);
 
@@ -110,7 +110,7 @@ TEST_F(CoreFlashIS25LP016DTest, readFailChipIsNotAvailable)
 
 		EXPECT_CALL(flash_manager_is25lp, waitForChipAvailable).Times(1);
 		EXPECT_CALL(flash_manager_is25lp, chipIsNotAvailable).WillOnce(Return(true));
-		EXPECT_CALL(qspimock, read(command::read, _, _, _, _)).Times(0);
+		EXPECT_CALL(qspimock, read(command::read, _, _, _)).Times(0);
 	}
 
 	auto actual_bytes_read = flash_memory_is25lp.read(address, buffer, bytes_to_read);
@@ -133,7 +133,7 @@ TEST_F(CoreFlashIS25LP016DTest, write)
 		EXPECT_CALL(flash_manager_is25lp, writeIsNotEnabled).WillOnce(Return(false));
 		EXPECT_CALL(flash_manager_is25lp, waitForChipAvailable).Times(1);
 		EXPECT_CALL(flash_manager_is25lp, chipIsNotAvailable).WillOnce(Return(false));
-		EXPECT_CALL(qspimock, write(command::write, _, address, compareArray(buffer), bytes_to_write))
+		EXPECT_CALL(qspimock, write(command::write, address, compareArray(buffer), bytes_to_write))
 			.WillOnce(Return(expected_bytes_written));
 	}
 
@@ -149,7 +149,7 @@ TEST_F(CoreFlashIS25LP016DTest, writeOverSize)
 	const auto bytes_to_write = 5;
 
 	size_t expected_bytes_written = 0;
-	EXPECT_CALL(qspimock, write(command::write, _, address, _, _)).Times(0);
+	EXPECT_CALL(qspimock, write(command::write, address, _, _)).Times(0);
 
 	auto actual_bytes_write = flash_memory_is25lp.write(address, buffer, bytes_to_write);
 
@@ -168,7 +168,7 @@ TEST_F(CoreFlashIS25LP016DTest, writeFailNotEnableToWrite)
 
 		EXPECT_CALL(flash_manager_is25lp, enableWrite).Times(1);
 		EXPECT_CALL(flash_manager_is25lp, writeIsNotEnabled).WillOnce(Return(true));
-		EXPECT_CALL(qspimock, write(command::write, _, _, _, _)).Times(0);
+		EXPECT_CALL(qspimock, write(command::write, _, _, _)).Times(0);
 	}
 
 	auto actual_bytes_write = flash_memory_is25lp.write(address, buffer, bytes_to_write);
@@ -190,7 +190,7 @@ TEST_F(CoreFlashIS25LP016DTest, writeFailChipIsNotAvailable)
 		EXPECT_CALL(flash_manager_is25lp, writeIsNotEnabled).WillOnce(Return(false));
 		EXPECT_CALL(flash_manager_is25lp, waitForChipAvailable).Times(1);
 		EXPECT_CALL(flash_manager_is25lp, chipIsNotAvailable).WillOnce(Return(true));
-		EXPECT_CALL(qspimock, write(command::write, _, _, _, _)).Times(0);
+		EXPECT_CALL(qspimock, write(command::write, _, _, _)).Times(0);
 	}
 
 	auto actual_bytes_write = flash_memory_is25lp.write(address, buffer, bytes_to_write);

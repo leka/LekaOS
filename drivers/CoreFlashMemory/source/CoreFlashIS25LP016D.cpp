@@ -31,7 +31,7 @@ auto CoreFlashIS25LP016D::read(uint32_t address, lstd::span<uint8_t> rx_buffer, 
 	if (_flash_manager.chipIsNotAvailable()) {
 		return 0;
 	}
-	auto bytes_read = _qspi.read(command::read, -1, address, rx_buffer, rx_buffer_size);
+	auto bytes_read = _qspi.read(command::read, address, rx_buffer, rx_buffer_size);
 
 	return bytes_read;
 }
@@ -51,7 +51,7 @@ auto CoreFlashIS25LP016D::write(uint32_t address, const lstd::span<uint8_t> tx_b
 	if (_flash_manager.chipIsNotAvailable()) {
 		return 0;
 	}
-	auto bytes_write = _qspi.write(command::write, -1, address, tx_buffer, tx_buffer_size);
+	auto bytes_write = _qspi.write(command::write, address, tx_buffer, tx_buffer_size);
 
 	return bytes_write;
 }

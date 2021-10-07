@@ -145,10 +145,9 @@ TEST(CoreQSPITest, write)
 
 	uint8_t data[] = "This is a test";
 
-	auto bytes_written = coreqspi.write(0x2A, -1, 0x2B, data, std::size(data));
+	auto bytes_written = coreqspi.write(0x2A, 0x2B, data, std::size(data));
 
 	ASSERT_EQ(spy_QSPI_command, 0x2A);
-	ASSERT_EQ(spy_QSPI_alternate_phase, -1);
 	ASSERT_EQ(spy_QSPI_address, 0x2B);
 	ASSERT_EQ(spy_QSPI_tx_buffer_length, bytes_written);
 
@@ -164,10 +163,9 @@ TEST(CoreQSPITest, read)
 	constexpr size_t buffer_size = 0x10;
 	std::array<uint8_t, buffer_size> buffer;
 
-	auto bytes_read = coreqspi.read(0x2C, -2, 0x2D, buffer, buffer_size);
+	auto bytes_read = coreqspi.read(0x2C, 0x2D, buffer, buffer_size);
 
 	ASSERT_EQ(spy_QSPI_command, 0x2C);
-	ASSERT_EQ(spy_QSPI_alternate_phase, -2);
 	ASSERT_EQ(spy_QSPI_address, 0x2D);
 	ASSERT_EQ(spy_QSPI_rx_buffer_length, bytes_read);
 
