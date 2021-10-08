@@ -33,12 +33,23 @@ class LogKitFormatTest : public ::testing::Test
 		std::cout << spy_string;
 	}
 
+	static void pull_data_from_fifo_buffer()
+	{
+		while (!logger::buffer::fifo.empty()) {
+			char c {};
+			logger::buffer::fifo.pop(c);
+			spy_string.append({c});
+		}
+	}
+
 	static inline auto spy_string = std::string {};
 };
 
 TEST_F(LogKitFormatTest, formatFullContentStringOnly)
 {
 	log_info("Hello, World");
+
+	pull_data_from_fifo_buffer();
 
 	ASSERT_THAT(spy_string, MatchesRegex("[0-9:]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+() > .+"));
 }
@@ -47,12 +58,16 @@ TEST_F(LogKitFormatTest, formatFullContentStringAdditionalArguments)
 {
 	log_info("Hello, World. %i %s!", 42, "FTW");
 
+	pull_data_from_fifo_buffer();
+
 	ASSERT_THAT(spy_string, MatchesRegex("[0-9:]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+() > .+"));
 }
 
 TEST_F(LogKitFormatTest, formatFullContentStringEmpty)
 {
 	log_info("");
+
+	pull_data_from_fifo_buffer();
 
 	ASSERT_THAT(spy_string, Not(HasSubstr(" > ")));
 	ASSERT_THAT(spy_string, MatchesRegex("[0-9:]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+()"));

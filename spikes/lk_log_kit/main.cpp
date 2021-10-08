@@ -14,23 +14,59 @@ using namespace leka;
 using namespace mbed;
 using namespace std::chrono;
 
-[[noreturn]] void log_thread()
+[[noreturn]] void log_thread_debug()
 {
 	while (true) {
 		auto start = rtos::Kernel::Clock::now();
-		log_debug("%s debug message", "First:");
-		log_info("%s information message", "Second:");
-		log_error("%s error message", "Third:");
+		for (auto i = 1; i <= 10; ++i) {
+			auto start_run = rtos::Kernel::Clock::now();
+			log_debug("Run number: %i", i);
+			log_debug("%s debug message", "First:");
+			log_info("%s information message", "Second:");
+			log_error("%s error message", "Third:");
+			auto stop_run = rtos::Kernel::Clock::now();
+			log_info("Total time to log the %i message --> %ims\n", 4, int((stop_run - start_run).count()));
+		}
 		auto stop = rtos::Kernel::Clock::now();
-		log_info("Total time to log the %i message --> %ims\n", 3, int((stop - start).count()));
-		rtos::ThisThread::sleep_for(4000ms);
+
+		log_info("Total time to log the for loop --> %ims\n", int((stop - start).count()));
+
+		rtos::ThisThread::sleep_for(3s);
 	}
 }
 
+[[noreturn]] void log_thread_printf()
+{
+	while (true) {
+		auto start = rtos::Kernel::Clock::now();
+		for (auto i = 1; i <= 10; ++i) {
+			auto start_run = rtos::Kernel::Clock::now();
+			printf("Run number: %i\n", i);
+			printf("%s debug message\n", "First:");
+			printf("%s information message\n", "Second:");
+			printf("%s error message\n", "Third:");
+			auto stop_run = rtos::Kernel::Clock::now();
+			printf("Total time to log the %i message --> %ims\n\n", 4, int((stop_run - start_run).count()));
+		}
+		auto stop = rtos::Kernel::Clock::now();
+
+		printf("Total time to log the for loop --> %ims\n\n", int((stop - start).count()));
+
+		rtos::ThisThread::sleep_for(3s);
+	}
+}
+
+auto hello = HelloWorld {};
+
+auto thread_log_debug  = rtos::Thread {};
+auto thread_log_printf = rtos::Thread {};
+
+static auto serial = BufferedSerial(USBTX, USBRX, 115200);
+
 auto main() -> int
 {
-	static auto serial = BufferedSerial(USBTX, USBRX, 115200);
-	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+	logger::filehandle = &serial;
+	logger::start_event_queue();
 
 	rtos::ThisThread::sleep_for(1s);
 
@@ -39,11 +75,11 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(2s);
 
-	auto hello = HelloWorld();
 	hello.start();
 
-	auto thread_log = rtos::Thread();
-	thread_log.start(log_thread);
+	thread_log_debug.start(log_thread_debug);
+	rtos::ThisThread::sleep_for(1s);
+	thread_log_printf.start(log_thread_printf);
 
 	while (true) {
 		auto start = rtos::Kernel::Clock::now();

@@ -13,8 +13,13 @@
 #include <string_view>
 #include <unordered_map>
 
+#include "events/EventQueue.h"
+#include "platform/FileHandle.h"
 #include "rtos/Kernel.h"
 #include "rtos/Mutex.h"
+#include "rtos/Thread.h"
+
+#include "CircularQueue.h"
 
 namespace leka {
 
@@ -28,26 +33,58 @@ struct logger {
 		static inline auto filename	 = std::array<char, 128> {};
 		static inline auto message	 = std::array<char, 128> {};
 		static inline auto output	 = std::array<char, 256> {};
+
+		static inline auto fifo = CircularQueue<char, 4096> {};
 	};
+
+	//
+	// MARK: - Event Queue
+	//
+
+	static inline auto event_queue = events::EventQueue {32 * EVENTS_EVENT_SIZE};
+	static inline auto thread	   = rtos::Thread {osPriorityLow};
+
+	static void start_event_queue()
+	{
+		logger::thread.start(callback(&logger::event_queue, &events::EventQueue::dispatch_forever));
+	}
 
 	//
 	// MARK: - Variables
 	//
 
 	static rtos::Mutex mutex;
+	static inline mbed::FileHandle *filehandle = nullptr;
 
 	//
 	// MARK: - Functions
 	//
 
-	using print_function_t = void (*)(const char *, size_t);
 	using now_function_t   = int64_t (*)();
+	using print_function_t = void (*)(const char *, std::size_t);
 
-	static void default_printf(const char *str, [[maybe_unused]] size_t size) { ::printf("%s", str); }
 	static auto default_now() -> int64_t { return rtos::Kernel::Clock::now().time_since_epoch().count(); }
+	static void default_printf(const char *str, [[maybe_unused]] std::size_t size) { ::printf("%s", str); }
 
-	static inline print_function_t print = default_printf;
+	static void default_printf_fifo(const char *str, std::size_t size)
+	{
+		while (!logger::buffer::fifo.empty()) {
+			char c {};
+			logger::buffer::fifo.pop(c);
+			// if (filehandle != nullptr) {
+			filehandle->write(&c, 1);
+			// }
+		}
+	}
+
+	static void push_to_print(const char *str, std::size_t size)
+	{
+		logger::buffer::fifo.push(str, size);
+		logger::event_queue.call(print, str, size);
+	}
+
 	static inline now_function_t now	 = default_now;
+	static inline print_function_t print = default_printf_fifo;
 
 	//
 	// MARK: - Structs
@@ -145,7 +182,7 @@ struct logger {
 			leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                       \
 										leka::logger::level_lut.at(leka::logger::level::debug).data(),                 \
 										leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());  \
-		leka::logger::print(leka::logger::buffer::output.data(), length);                                              \
+		leka::logger::push_to_print(leka::logger::buffer::output.data(), length);                                      \
 	} while (0)
 
 #define log_info(str, ...)                                                                                             \
@@ -158,7 +195,7 @@ struct logger {
 			leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                       \
 										leka::logger::level_lut.at(leka::logger::level::info).data(),                  \
 										leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());  \
-		leka::logger::print(leka::logger::buffer::output.data(), length);                                              \
+		leka::logger::push_to_print(leka::logger::buffer::output.data(), length);                                      \
 	} while (0)
 
 #define log_error(str, ...)                                                                                            \
@@ -171,7 +208,7 @@ struct logger {
 			leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                       \
 										leka::logger::level_lut.at(leka::logger::level::error).data(),                 \
 										leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());  \
-		leka::logger::print(leka::logger::buffer::output.data(), length);                                              \
+		leka::logger::push_to_print(leka::logger::buffer::output.data(), length);                                      \
 	} while (0)
 
 #endif	 // _LEKA_OS_LIB_LOG_KIT_H_

@@ -7,40 +7,38 @@
 #include "gtest/gtest.h"
 
 using ::testing::HasSubstr;
+using ::testing::MockFunction;
 
 using namespace leka;
 
 class LogKitPrintTest : public ::testing::Test
 {
   protected:
-	void SetUp() override
-	{
-		spy_string = "";
-		logger::set_print_function(test_printf);
-	}
+	void SetUp() override { spy_string = ""; }
 
 	void TearDown() override { logger::set_print_function(logger::default_printf); }
 
-	static void test_printf(const char *str, size_t size)
-	{
-		spy_string = "Custom print function: " + std::string {str};
-		std::cout << spy_string;
-	}
+	static void custom_printf(const char *str, std::size_t size) { has_custom_printf_been_called = true; }
 
-	static void test_default_printf(const char *str, size_t size)
+	static void pull_data_from_fifo_buffer()
 	{
-		spy_string = std::string {str};
-		logger::default_printf(str, size);
+		while (!logger::buffer::fifo.empty()) {
+			char c {};
+			logger::buffer::fifo.pop(c);
+			spy_string.append({c});
+		}
 	}
 
 	static inline auto spy_string = std::string {};
+
+	static inline auto has_custom_printf_been_called = bool {false};
 };
 
 TEST_F(LogKitPrintTest, useDefaultPrintFunction)
 {
-	logger::set_print_function(test_default_printf);
-
 	log_info("Hello, World");
+
+	pull_data_from_fifo_buffer();
 
 	ASSERT_THAT(spy_string, HasSubstr("[INFO]"));
 	ASSERT_THAT(spy_string, HasSubstr("Hello, World"));
@@ -48,9 +46,9 @@ TEST_F(LogKitPrintTest, useDefaultPrintFunction)
 
 TEST_F(LogKitPrintTest, setCustomPrintFunction)
 {
-	logger::set_print_function(test_printf);
+	logger::set_print_function(custom_printf);
 
 	log_info("Hello, World");
 
-	ASSERT_THAT(spy_string, HasSubstr("Custom print function: "));
+	ASSERT_TRUE(has_custom_printf_been_called);
 }
