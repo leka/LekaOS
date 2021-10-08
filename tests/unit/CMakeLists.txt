@@ -177,7 +177,6 @@ add_subdirectory(./mocks)
 
 leka_register_unit_tests_for_library(Utils)
 leka_register_unit_tests_for_library(LogKit)
-leka_register_unit_tests_for_library(CircularBuffer)
 leka_register_unit_tests_for_library(CriticalSection)
 
 #
@@ -187,7 +186,6 @@ leka_register_unit_tests_for_library(CriticalSection)
 link_libraries(
 	Utils
 	LogKit
-	CircularBuffer
 	CriticalSection
 )
 
@@ -217,6 +215,7 @@ leka_register_unit_tests_for_driver(CoreBufferedSerial)
 # Register libraries
 leka_register_unit_tests_for_library(LKAnimationKit)
 leka_register_unit_tests_for_library(LKCalculatorKit)
+leka_register_unit_tests_for_library(ContainerKit)
 leka_register_unit_tests_for_library(FileSystemKit)
 leka_register_unit_tests_for_library(IOKit)
 

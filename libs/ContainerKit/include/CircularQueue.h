@@ -2,8 +2,8 @@
 // Copyright 2021 APF France handicap (based on work by Mbed-OS)
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_CIRCULAR_BUFFER_H_
-#define _LEKA_OS_LIB_CIRCULAR_BUFFER_H_
+#ifndef _LEKA_OS_LIB_CIRCULAR_QUEUE_H_
+#define _LEKA_OS_LIB_CIRCULAR_QUEUE_H_
 
 #include <array>
 #include <mutex>
@@ -15,17 +15,17 @@
 namespace leka {
 
 template <typename T, uint32_t BufferSize, typename CounterType = uint32_t>
-class CircularBuffer
+class CircularQueue
 {
   public:
-	CircularBuffer()
+	CircularQueue()
 	{
-		static_assert(
-			(sizeof(CounterType) >= sizeof(uint32_t)) || (BufferSize < (((uint64_t)1) << (sizeof(CounterType) * 8))),
-			"Invalid BufferSize for the CounterType");
+		static_assert((sizeof(CounterType) >= sizeof(uint32_t)) ||
+						  (BufferSize < ((static_cast<uint64_t>(1)) << (sizeof(CounterType) * 8))),
+					  "Invalid BufferSize for the CounterType");
 	}
 
-	~CircularBuffer() = default;
+	~CircularQueue() = default;
 
 	void push(const T &data)
 	{
@@ -194,7 +194,7 @@ class CircularBuffer
 
 		auto i = 0;
 		while (i <= non_critical_size() - size) {
-			uint8_t j;
+			auto j = 0;
 
 			// for current index i, check for pattern match
 			for (j = 0; j < size; j++) {
@@ -208,7 +208,8 @@ class CircularBuffer
 			if (j == size) {   // if pattern[0...size-1] = _buffer[i, i+1, ...i+size-1]
 				position = i;
 				return true;
-			} else if (j == 0) {
+			}
+			if (j == 0) {
 				i = i + 1;
 			} else {
 				i = i + j;	 // slide the pattern by j
@@ -221,7 +222,7 @@ class CircularBuffer
   private:
 	[[nodiscard]] auto non_critical_empty() const -> bool
 	{
-		if (_full || _head != _tail) {
+		if (_full || (_head != _tail)) {
 			return false;
 		}
 
@@ -261,4 +262,4 @@ class CircularBuffer
 
 }	// namespace leka
 
-#endif	 // _LEKA_OS_LIB_CIRCULAR_BUFFER_H_
+#endif	 // _LEKA_OS_LIB_CIRCULAR_QUEUE_H_
