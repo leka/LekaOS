@@ -2,6 +2,7 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
+add_subdirectory(${LIBS_DIR}/ContainerKit)
 add_subdirectory(${LIBS_DIR}/FileManager)
 add_subdirectory(${LIBS_DIR}/FileSystemKit)
 

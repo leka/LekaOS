@@ -104,14 +104,12 @@ include_directories(BEFORE
 add_subdirectory(${LIBS_DIR}/Utils)
 add_subdirectory(${LIBS_DIR}/LogKit)
 add_subdirectory(${LIBS_DIR}/HelloWorld)
-add_subdirectory(${LIBS_DIR}/ContainerKit)
 add_subdirectory(${LIBS_DIR}/CriticalSection)
 
 link_libraries(
 	Utils
 	LogKit
 	HelloWorld
-	ContainerKit
 	CriticalSection
 )
 
