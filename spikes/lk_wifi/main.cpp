@@ -22,7 +22,7 @@ void runExample(WiFiInterface &wifi_interface, mbed::BufferedSerial &serial);
 auto main() -> int
 {
 	static auto serial = mbed::BufferedSerial(CONSOLE_TX, CONSOLE_RX, 115200);
-	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+	leka::logger::set_trace_function([](const char *str, size_t size) { serial.write(str, size); });
 
 	log_info("Hello, World!\n\n");
 

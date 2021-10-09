@@ -22,10 +22,10 @@ class LogKitFormatTest : public ::testing::Test
 	void SetUp() override
 	{
 		spy_string = "";
-		logger::set_print_function(test_printf);
+		logger::set_trace_function(test_printf);
 	}
 
-	void TearDown() override { logger::set_print_function(logger::default_printf); }
+	void TearDown() override { logger::set_trace_function(logger::default_trace_function); }
 
 	static void test_printf(const char *str, size_t size)
 	{
