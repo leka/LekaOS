@@ -6,51 +6,24 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-using ::testing::HasSubstr;
+using ::testing::MockFunction;
 
 using namespace leka;
 
 class LogKitTraceTest : public ::testing::Test
 {
   protected:
-	void SetUp() override
-	{
-		spy_string = "";
-		logger::set_trace_function(test_trace);
-	}
-
+	// void SetUp() override {}
 	void TearDown() override { logger::set_trace_function(logger::default_trace_function); }
-
-	static void test_trace(const char *str, size_t size)
-	{
-		spy_string = "Custom print function: " + std::string {str};
-		std::cout << spy_string;
-	}
-
-	static void test_default_trace(const char *str, size_t size)
-	{
-		spy_string = std::string {str};
-		logger::default_trace_function(str, size);
-	}
-
-	static inline auto spy_string = std::string {};
 };
 
-TEST_F(LogKitTraceTest, useDefaultTraceFunction)
+TEST_F(LogKitTraceTest, useCustomTraceFunction)
 {
-	logger::set_trace_function(test_default_trace);
+	MockFunction<int64_t()> mock_trace;
+
+	EXPECT_CALL(mock_trace, Call()).Times(1);
+
+	logger::set_now_function(mock_trace.AsStdFunction());
 
 	log_info("Hello, World");
-
-	ASSERT_THAT(spy_string, HasSubstr("[INFO]"));
-	ASSERT_THAT(spy_string, HasSubstr("Hello, World"));
-}
-
-TEST_F(LogKitTraceTest, setCustomTraceFunction)
-{
-	logger::set_trace_function(test_trace);
-
-	log_info("Hello, World");
-
-	ASSERT_THAT(spy_string, HasSubstr("Custom print function: "));
 }
