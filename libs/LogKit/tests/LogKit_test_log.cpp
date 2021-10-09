@@ -23,7 +23,7 @@ class LogKitTest : public ::testing::Test
 		logger::set_print_function(test_printf);
 	}
 
-	// void TearDown() override {}
+	void TearDown() override { logger::set_print_function(logger::default_printf); }
 
 	static void test_printf(const char *str, size_t size)
 	{
