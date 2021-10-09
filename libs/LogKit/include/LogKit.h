@@ -24,19 +24,19 @@
 
 namespace leka {
 
-struct logger {
+namespace logger {
 	//
 	// MARK: - Buffers
 	//
 
-	struct buffer {
+	namespace buffer {
 		static inline auto timestamp = std::array<char, 32> {};
 		static inline auto filename	 = std::array<char, 64> {};
 		static inline auto message	 = std::array<char, 128> {};
 		static inline auto output	 = std::array<char, 256> {};
 
 		static inline auto fifo = CircularQueue<char, 4096> {};
-	};
+	};	 // namespace buffer
 
 	//
 	// MARK: - Levels
@@ -63,7 +63,7 @@ struct logger {
 	static inline auto thread	   = rtos::Thread {osPriorityLow};
 	static inline auto event_queue = events::EventQueue {32 * EVENTS_EVENT_SIZE};
 
-	static void start_event_queue()
+	[[maybe_unused]] static void start_event_queue()
 	{
 		logger::thread.start(callback(&logger::event_queue, &events::EventQueue::dispatch_forever));
 	}
@@ -76,7 +76,7 @@ struct logger {
 
 	static inline filehandle_ptr filehandle = nullptr;
 
-	static void set_filehandle_pointer(filehandle_ptr fh) { filehandle = fh; }
+	[[maybe_unused]] static void set_filehandle_pointer(filehandle_ptr fh) { filehandle = fh; }
 
 	static void process_fifo()
 	{
@@ -96,15 +96,13 @@ struct logger {
 	static auto default_now_function() -> int64_t { return rtos::Kernel::Clock::now().time_since_epoch().count(); }
 	static inline now_function_t now = default_now_function;
 
-	static void set_now_function(const now_function_t &func) { now = func; }
+	[[maybe_unused]] static void set_now_function(const now_function_t &func) { now = func; }
 
 	//
 	// MARK: - Sink
 	//
 
 	using sink_function_t = std::function<void(const char *, size_t)>;
-
-	static void set_sink_function(const sink_function_t &func) { sink = func; }
 
 	static void default_sink_function(const char *str, [[maybe_unused]] size_t size)
 	{
@@ -114,11 +112,13 @@ struct logger {
 
 	static inline sink_function_t sink = default_sink_function;
 
+	[[maybe_unused]] static void set_sink_function(const sink_function_t &func) { logger::sink = func; }
+
 	//
 	// MARK: - Format functions
 	//
 
-	static void format_time_human_readable(int64_t now)
+	[[maybe_unused]] static void format_time_human_readable(int64_t now)
 	{
 		auto ms	  = now % 1000;
 		auto sec  = now / 1000;
@@ -130,7 +130,8 @@ struct logger {
 				 "%03lld:%02lld:%02lld:%03lld", hour, min % 60, sec % 60, ms);
 	}
 
-	static void format_filename_line_function(const char *filename, const int line, const char *function)
+	[[maybe_unused]] static void format_filename_line_function(const char *filename, const int line,
+															   const char *function)
 	{
 		snprintf(leka::logger::buffer::filename.data(), std::size(leka::logger::buffer::filename), "[%s:%i] %s",
 				 filename, line, function);
@@ -161,7 +162,7 @@ struct logger {
 	{
 		return snprintf(leka::logger::buffer::output.data(), std::size(leka::logger::buffer::output), message, args...);
 	}
-};
+};	 // namespace logger
 
 }	// namespace leka
 
