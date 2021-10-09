@@ -41,13 +41,17 @@ struct logger {
 		error,
 	};
 
-	static const std::unordered_map<level, std::string_view> level_lut;
+	static inline const std::unordered_map<logger::level, std::string_view> level_lut = {
+		{logger::level::debug, "[DBUG]"},
+		{logger::level::info, "[INFO]"},
+		{logger::level::error, "[ERR ]"},
+	};
 
 	//
 	// MARK: - Variables
 	//
 
-	static rtos::Mutex mutex;
+	static inline auto mutex = rtos::Mutex {};
 
 	//
 	// MARK: - Now
