@@ -25,7 +25,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/LogKit_test_log.cpp
 		tests/LogKit_test_format.cpp
 		tests/LogKit_test_now.cpp
-		tests/LogKit_test_trace.cpp
+		tests/LogKit_test_sink.cpp
 	)
 
 endif()
