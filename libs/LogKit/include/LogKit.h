@@ -14,8 +14,13 @@
 #include <string_view>
 #include <unordered_map>
 
+#include "events/EventQueue.h"
+#include "platform/FileHandle.h"
 #include "rtos/Kernel.h"
 #include "rtos/Mutex.h"
+#include "rtos/Thread.h"
+
+#include "CircularQueue.h"
 
 namespace leka {
 
@@ -26,13 +31,15 @@ struct logger {
 
 	struct buffer {
 		static inline auto timestamp = std::array<char, 32> {};
-		static inline auto filename	 = std::array<char, 128> {};
+		static inline auto filename	 = std::array<char, 64> {};
 		static inline auto message	 = std::array<char, 128> {};
 		static inline auto output	 = std::array<char, 256> {};
+
+		static inline auto fifo = CircularQueue<char, 4096> {};
 	};
 
 	//
-	// MARK: - Structs
+	// MARK: - Levels
 	//
 
 	enum class level
@@ -49,10 +56,36 @@ struct logger {
 	};
 
 	//
-	// MARK: - Variables
+	// MARK: - Events, threads & locks
 	//
 
-	static inline auto mutex = rtos::Mutex {};
+	static inline auto mutex	   = rtos::Mutex {};
+	static inline auto thread	   = rtos::Thread {osPriorityLow};
+	static inline auto event_queue = events::EventQueue {32 * EVENTS_EVENT_SIZE};
+
+	static void start_event_queue()
+	{
+		logger::thread.start(callback(&logger::event_queue, &events::EventQueue::dispatch_forever));
+	}
+
+	//
+	// MARK: - FIFO processing
+	//
+
+	using filehandle_ptr = mbed::FileHandle *;
+
+	static inline filehandle_ptr filehandle = nullptr;
+
+	static void set_filehandle_pointer(filehandle_ptr fh) { filehandle = fh; }
+
+	static void process_fifo()
+	{
+		while (!logger::buffer::fifo.empty()) {
+			auto c = char {};
+			logger::buffer::fifo.pop(c);
+			filehandle->write(&c, 1);
+		}
+	}
 
 	//
 	// MARK: - Now
@@ -71,10 +104,15 @@ struct logger {
 
 	using sink_function_t = std::function<void(const char *, size_t)>;
 
-	static void default_sink_function(const char *str, [[maybe_unused]] size_t size) { ::printf("%s", str); }
-	static inline sink_function_t sink = default_sink_function;
-
 	static void set_sink_function(const sink_function_t &func) { sink = func; }
+
+	static void default_sink_function(const char *str, [[maybe_unused]] size_t size)
+	{
+		logger::buffer::fifo.push(str, size);
+		logger::event_queue.call(process_fifo);
+	}
+
+	static inline sink_function_t sink = default_sink_function;
 
 	//
 	// MARK: - Format functions
