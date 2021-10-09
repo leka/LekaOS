@@ -86,7 +86,7 @@ auto main() -> int
 	auto start = rtos::Kernel::Clock::now();
 
 	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
-	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+	leka::logger::set_trace_function([](const char *str, size_t size) { serial.write(str, size); });
 
 	log_info("Hello, World!\n\n");
 
@@ -107,7 +107,7 @@ auto main() -> int
 	static CGColor foreground;
 	static CGColor background = CGColor::white;
 
-	leka::logger::set_print_function(
+	leka::logger::set_trace_function(
 		[](const char *str, size_t size) { corevideo.displayText(str, size, line, foreground, background); });
 
 	for (int i = 1; i <= 10; i++) {
@@ -119,7 +119,7 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(5s);
 
-	leka::logger::set_print_function([](const char *str, size_t size) {
+	leka::logger::set_trace_function([](const char *str, size_t size) {
 		corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
 	});
 
@@ -129,7 +129,7 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(10s);
 
-	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+	leka::logger::set_trace_function([](const char *str, size_t size) { serial.write(str, size); });
 
 	auto JPEG_File = std::make_unique<FIL>();
 

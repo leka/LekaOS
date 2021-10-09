@@ -30,7 +30,7 @@ using namespace std::chrono;
 auto main() -> int
 {
 	static auto serial = BufferedSerial(USBTX, USBRX, 115200);
-	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+	leka::logger::set_trace_function([](const char *str, size_t size) { serial.write(str, size); });
 
 	rtos::ThisThread::sleep_for(1s);
 

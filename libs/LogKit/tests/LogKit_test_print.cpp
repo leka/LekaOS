@@ -10,35 +10,35 @@ using ::testing::HasSubstr;
 
 using namespace leka;
 
-class LogKitPrintTest : public ::testing::Test
+class LogKitTraceTest : public ::testing::Test
 {
   protected:
 	void SetUp() override
 	{
 		spy_string = "";
-		logger::set_print_function(test_printf);
+		logger::set_trace_function(test_trace);
 	}
 
-	void TearDown() override { logger::set_print_function(logger::default_printf); }
+	void TearDown() override { logger::set_trace_function(logger::default_trace_function); }
 
-	static void test_printf(const char *str, size_t size)
+	static void test_trace(const char *str, size_t size)
 	{
 		spy_string = "Custom print function: " + std::string {str};
 		std::cout << spy_string;
 	}
 
-	static void test_default_printf(const char *str, size_t size)
+	static void test_default_trace(const char *str, size_t size)
 	{
 		spy_string = std::string {str};
-		logger::default_printf(str, size);
+		logger::default_trace_function(str, size);
 	}
 
 	static inline auto spy_string = std::string {};
 };
 
-TEST_F(LogKitPrintTest, useDefaultPrintFunction)
+TEST_F(LogKitTraceTest, useDefaultTraceFunction)
 {
-	logger::set_print_function(test_default_printf);
+	logger::set_trace_function(test_default_trace);
 
 	log_info("Hello, World");
 
@@ -46,9 +46,9 @@ TEST_F(LogKitPrintTest, useDefaultPrintFunction)
 	ASSERT_THAT(spy_string, HasSubstr("Hello, World"));
 }
 
-TEST_F(LogKitPrintTest, setCustomPrintFunction)
+TEST_F(LogKitTraceTest, setCustomTraceFunction)
 {
-	logger::set_print_function(test_printf);
+	logger::set_trace_function(test_trace);
 
 	log_info("Hello, World");
 

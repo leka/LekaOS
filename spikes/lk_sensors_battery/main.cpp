@@ -16,7 +16,7 @@ using namespace std::chrono;
 auto main() -> int
 {
 	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
-	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+	leka::logger::set_trace_function([](const char *str, size_t size) { serial.write(str, size); });
 
 	auto charge_input = mbed::DigitalIn {PinName::BATTERY_CHARGE_STATUS};
 	auto corebattery  = leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_input};
