@@ -66,15 +66,15 @@ struct logger {
 	static void set_now_function(const now_function_t &func) { now = func; }
 
 	//
-	// MARK: - Trace
+	// MARK: - Sink
 	//
 
-	using trace_function_t = std::function<void(const char *, size_t)>;
+	using sink_function_t = std::function<void(const char *, size_t)>;
 
-	static void default_trace_function(const char *str, [[maybe_unused]] size_t size) { ::printf("%s", str); }
-	static inline trace_function_t trace = default_trace_function;
+	static void default_sink_function(const char *str, [[maybe_unused]] size_t size) { ::printf("%s", str); }
+	static inline sink_function_t sink = default_sink_function;
 
-	static void set_trace_function(const trace_function_t &func) { trace = func; }
+	static void set_sink_function(const sink_function_t &func) { sink = func; }
 
 	//
 	// MARK: - Format functions
@@ -143,7 +143,7 @@ struct logger {
 			leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                       \
 										leka::logger::level_lut.at(leka::logger::level::debug).data(),                 \
 										leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());  \
-		leka::logger::trace(leka::logger::buffer::output.data(), length);                                              \
+		leka::logger::sink(leka::logger::buffer::output.data(), length);                                               \
 	} while (0)
 
 #define log_info(str, ...)                                                                                             \
@@ -156,7 +156,7 @@ struct logger {
 			leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                       \
 										leka::logger::level_lut.at(leka::logger::level::info).data(),                  \
 										leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());  \
-		leka::logger::trace(leka::logger::buffer::output.data(), length);                                              \
+		leka::logger::sink(leka::logger::buffer::output.data(), length);                                               \
 	} while (0)
 
 #define log_error(str, ...)                                                                                            \
@@ -169,7 +169,7 @@ struct logger {
 			leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                       \
 										leka::logger::level_lut.at(leka::logger::level::error).data(),                 \
 										leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());  \
-		leka::logger::trace(leka::logger::buffer::output.data(), length);                                              \
+		leka::logger::sink(leka::logger::buffer::output.data(), length);                                               \
 	} while (0)
 
 #endif	 // _LEKA_OS_LIB_LOG_KIT_H_
