@@ -20,29 +20,19 @@ class LogKitNowTest : public ::testing::Test
 	void SetUp() override
 	{
 		spy_string = "";
-		logger::set_print_function(test_printf);
+		spy_now	   = 0;
 	}
 
-	void TearDown() override
-	{
-		logger::set_print_function(logger::default_printf);
-		logger::set_now_function(logger::default_now);
-	}
+	void TearDown() override { logger::set_now_function(logger::default_now); }
 
-	static void test_printf(const char *str, size_t size)
-	{
-		spy_string = std::string {str};
-		std::cout << spy_string;
-	}
-
-	static auto test_dynamic_now() -> int64_t
+	static auto dynamic_now() -> int64_t
 	{
 		spy_now = std::chrono::system_clock::now().time_since_epoch().count();
 		return spy_now;
 	}
 
 	static inline auto spy_string = std::string {};
-	static inline auto spy_now	  = int64_t {0};
+	static inline auto spy_now	  = int64_t {};
 };
 
 TEST_F(LogKitNowTest, useDefaultNowFunction)
@@ -52,14 +42,16 @@ TEST_F(LogKitNowTest, useDefaultNowFunction)
 
 TEST_F(LogKitNowTest, setConstNowFunction)
 {
-	logger::set_now_function([]() { return int64_t {1619354279231635}; });
+	auto const_now = []() { return int64_t {1619354279231635}; };
+
+	logger::set_now_function(const_now);
 
 	ASSERT_EQ(1619354279231635, leka::logger::now());
 }
 
 TEST_F(LogKitNowTest, setDynamicNowFunction)
 {
-	logger::set_now_function(test_dynamic_now);
+	logger::set_now_function(dynamic_now);
 
 	auto expected = logger::now();
 
