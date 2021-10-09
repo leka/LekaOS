@@ -63,7 +63,7 @@ struct logger {
 	static auto default_now() -> int64_t { return rtos::Kernel::Clock::now().time_since_epoch().count(); }
 	static inline now_function_t now = default_now;
 
-	static void set_now_function(now_function_t func) { now = func; }
+	static void set_now_function(const now_function_t &func) { now = func; }
 
 	//
 	// MARK: - Print
