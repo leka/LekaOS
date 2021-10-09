@@ -60,8 +60,8 @@ struct logger {
 
 	using now_function_t = std::function<int64_t()>;
 
-	static auto default_now() -> int64_t { return rtos::Kernel::Clock::now().time_since_epoch().count(); }
-	static inline now_function_t now = default_now;
+	static auto default_now_function() -> int64_t { return rtos::Kernel::Clock::now().time_since_epoch().count(); }
+	static inline now_function_t now = default_now_function;
 
 	static void set_now_function(const now_function_t &func) { now = func; }
 
