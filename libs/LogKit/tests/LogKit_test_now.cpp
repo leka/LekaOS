@@ -17,7 +17,7 @@ class LogKitNowTest : public ::testing::Test
 {
   protected:
 	// void SetUp() override {}
-	void TearDown() override { logger::set_now_function(logger::default_now); }
+	void TearDown() override { logger::set_now_function(logger::default_now_function); }
 };
 
 TEST_F(LogKitNowTest, useDefaultNowFunction)
