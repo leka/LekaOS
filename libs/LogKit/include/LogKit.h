@@ -69,15 +69,12 @@ struct logger {
 	// MARK: - Trace
 	//
 
-	using trace_function_t = void (*)(const char *, size_t);
+	using trace_function_t = std::function<void(const char *, size_t)>;
+
 	static void default_trace_function(const char *str, [[maybe_unused]] size_t size) { ::printf("%s", str); }
 	static inline trace_function_t trace = default_trace_function;
 
-	template <typename trace_function_t>
-	static void set_trace_function(trace_function_t func)
-	{
-		trace = func;
-	}
+	static void set_trace_function(trace_function_t func) { trace = func; }
 
 	//
 	// MARK: - Format functions
