@@ -31,25 +31,6 @@ struct logger {
 	};
 
 	//
-	// MARK: - Variables
-	//
-
-	static rtos::Mutex mutex;
-
-	//
-	// MARK: - Functions
-	//
-
-	using print_function_t = void (*)(const char *, size_t);
-	using now_function_t   = int64_t (*)();
-
-	static void default_printf(const char *str, [[maybe_unused]] size_t size) { ::printf("%s", str); }
-	static auto default_now() -> int64_t { return rtos::Kernel::Clock::now().time_since_epoch().count(); }
-
-	static inline print_function_t print = default_printf;
-	static inline now_function_t now	 = default_now;
-
-	//
 	// MARK: - Structs
 	//
 
@@ -63,19 +44,37 @@ struct logger {
 	static const std::unordered_map<level, std::string_view> level_lut;
 
 	//
-	// MARK: - Setters
+	// MARK: - Variables
 	//
 
-	template <typename print_function_t>
-	static void set_print_function(print_function_t func)
-	{
-		print = func;
-	}
+	static rtos::Mutex mutex;
+
+	//
+	// MARK: - Now
+	//
+
+	using now_function_t = int64_t (*)();
+	static auto default_now() -> int64_t { return rtos::Kernel::Clock::now().time_since_epoch().count(); }
+	static inline now_function_t now = default_now;
 
 	template <typename now_function_t>
 	static void set_now_function(now_function_t func)
 	{
 		now = func;
+	}
+
+	//
+	// MARK: - Print
+	//
+
+	using print_function_t = void (*)(const char *, size_t);
+	static void default_printf(const char *str, [[maybe_unused]] size_t size) { ::printf("%s", str); }
+	static inline print_function_t print = default_printf;
+
+	template <typename print_function_t>
+	static void set_print_function(print_function_t func)
+	{
+		print = func;
 	}
 
 	//
