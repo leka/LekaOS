@@ -2,21 +2,22 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(LogKit STATIC)
+add_library(LogKit INTERFACE)
 
 target_include_directories(LogKit
-	PUBLIC
+	INTERFACE
 		include
 )
 
-target_sources(LogKit
-	PRIVATE
-		source/LogKit.cpp
-)
+# target_sources(LogKit
+# 	PRIVATE
+# 		source/LogKit.cpp
+# )
 
 target_link_libraries(LogKit
-	mbed-os
-	ContainerKit
+	INTERFACE
+		mbed-os
+		ContainerKit
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
