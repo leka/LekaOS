@@ -37,20 +37,22 @@ using namespace std::chrono;
 
 [[noreturn]] void log_thread_printf()
 {
+	auto log_printf = [](const char *str, auto... params) { printf(str, params...); };
+
 	while (true) {
 		auto start = rtos::Kernel::Clock::now();
 		for (auto i = 1; i <= 10; ++i) {
 			auto start_run = rtos::Kernel::Clock::now();
-			printf("Run number: %i\n", i);
-			printf("%s debug message\n", "First:");
-			printf("%s information message\n", "Second:");
-			printf("%s error message\n", "Third:");
+			log_printf("Run number: %i\n", i);
+			log_printf("%s debug message\n", "First:");
+			log_printf("%s information message\n", "Second:");
+			log_printf("%s error message\n", "Third:");
 			auto stop_run = rtos::Kernel::Clock::now();
-			printf("Total time to log the %i message --> %ims\n\n", 4, int((stop_run - start_run).count()));
+			log_printf("Total time to log the %i message --> %ims\n\n", 4, int((stop_run - start_run).count()));
 		}
 		auto stop = rtos::Kernel::Clock::now();
 
-		printf("Total time to log the for loop --> %ims\n\n", int((stop - start).count()));
+		log_printf("Total time to log the for loop --> %ims\n\n", int((stop - start).count()));
 
 		rtos::ThisThread::sleep_for(3s);
 	}
