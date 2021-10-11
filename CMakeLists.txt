@@ -60,9 +60,6 @@ if (ENABLE_BOOTLOADER)
 		-DMBED_APP_START=0x08041000
 		-DMBED_APP_SIZE=0x180000
 	)
-	add_compile_definitions(MCUBOOT_BOOTLOADER_BUILD=false)
-else()
-	add_compile_definitions(MCUBOOT_BOOTLOADER_BUILD=true)
 endif(ENABLE_BOOTLOADER)
 
 # And include mbed-cmake.cmake
@@ -135,9 +132,7 @@ add_subdirectory(${SPIKES_DIR})
 add_subdirectory(${TESTS_DIR}/functional)
 
 # Add bootloader
-if (ENABLE_BOOTLOADER==OFF)
-	add_subdirectory(${BOOTLOADER_DIR})
-endif()
+add_subdirectory(${BOOTLOADER_DIR})
 
 # Add LekaOS
 add_subdirectory(${OS_DIR})

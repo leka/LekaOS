@@ -20,26 +20,24 @@
 
 static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 
-#if MCUBOOT_BOOTLOADER_BUILD
+#include "mbed_application.h"
+#include <stdlib.h>
 
-	#include "mbed_application.h"
-	#include <stdlib.h>
+#include "bootutil/bootutil.h"
+#include "bootutil/image.h"
+#include "hal/serial_api.h"
 
-	#include "bootutil/bootutil.h"
-	#include "bootutil/image.h"
-	#include "hal/serial_api.h"
+#if (MCUBOOT_CRYPTO_BACKEND == MBEDTLS)
+	#include "mbedtls/platform.h"
+#elif (MCUBOOT_CRYPTO_BACKEND == TINYCRYPT)
+	#include "tinycrypt/ecc.h"
+#endif
 
-	#if (MCUBOOT_CRYPTO_BACKEND == MBEDTLS)
-		#include "mbedtls/platform.h"
-	#elif (MCUBOOT_CRYPTO_BACKEND == TINYCRYPT)
-		#include "tinycrypt/ecc.h"
-	#endif
+#define MBED_TRACE_MAX_LEVEL TRACE_LEVEL_DEBUG
+#define TRACE_GROUP			 "BL"
+#include "mbed-trace/mbed_trace.h"
 
-	#define MBED_TRACE_MAX_LEVEL TRACE_LEVEL_DEBUG
-	#define TRACE_GROUP			 "BL"
-	#include "mbed-trace/mbed_trace.h"
-
-	#if (MCUBOOT_CRYPTO_BACKEND == TINYCRYPT)
+#if (MCUBOOT_CRYPTO_BACKEND == TINYCRYPT)
 /* XXX add this global definition for linking only
  * TinyCrypt is used for signature verification and ECIES using secp256r1 and AES encryption;
  * RNG is not required. So here we provide a stub.
@@ -52,20 +50,20 @@ int default_CSPRNG(uint8_t *dest, unsigned int size)
 	return 0;
 }
 }
-	#endif
+#endif
 
 int main()
 {
 	int rc;
 
 	mbed_trace_init();
-	#if MCUBOOT_LOG_BOOTLOADER_ONLY
+#if MCUBOOT_LOG_BOOTLOADER_ONLY
 	mbed_trace_include_filters_set("MCUb,BL");
-	#endif
+#endif
 
 	tr_info("Starting MCUboot");
 
-	#if (MCUBOOT_CRYPTO_BACKEND == MBEDTLS)
+#if (MCUBOOT_CRYPTO_BACKEND == MBEDTLS)
 	// Initialize mbedtls crypto for use by MCUboot
 	mbedtls_platform_context unused_ctx;
 	rc = mbedtls_platform_setup(&unused_ctx);
@@ -73,9 +71,9 @@ int main()
 		tr_error("Failed to setup Mbed TLS, error: %d", rc);
 		exit(rc);
 	}
-	#elif (MCUBOOT_CRYPTO_BACKEND == TINYCRYPT)
+#elif (MCUBOOT_CRYPTO_BACKEND == TINYCRYPT)
 	uECC_set_rng(0);
-	#endif
+#endif
 
 	struct boot_rsp rsp;
 	rc = boot_go(&rsp);
@@ -95,5 +93,3 @@ int main()
 	// Add header size offset to calculate the actual start address of application
 	mbed_start_application(address);
 }
-
-#endif	 // MCUBOOT_BOOTLOADER_BUILD
