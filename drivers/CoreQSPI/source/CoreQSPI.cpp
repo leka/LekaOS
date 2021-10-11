@@ -10,7 +10,7 @@ void CoreQSPI::setDataTransmissionFormat()
 {
 	auto _command_width					  = QSPI_CFG_BUS_SINGLE;
 	auto _address_width					  = QSPI_CFG_BUS_SINGLE;
-	auto _address_size					  = QSPI_CFG_ADDR_SIZE_8;
+	auto _address_size					  = QSPI_CFG_ADDR_SIZE_24;
 	auto _alternate_phase_width			  = QSPI_CFG_BUS_SINGLE;
 	qspi_alt_size_t _alternate_phase_size = QSPI_CFG_ALT_SIZE_8;
 	auto _data_width					  = QSPI_CFG_BUS_SINGLE;
