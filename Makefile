@@ -29,7 +29,7 @@ TARGET_BOARD    ?= LEKA_V1_2_DEV
 #
 
 ENABLE_CODE_ANALYSIS ?= OFF
-USE_BOOTLOADER       ?= FALSE
+ENABLE_BOOTLOADER    ?= OFF
 
 #
 # MARK: - Build dirs
@@ -121,7 +121,7 @@ config_tools_target: mkdir_cmake_config
 config_cmake_build: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
-	@cmake -S . -B $(TARGET_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=$(ENABLE_CODE_ANALYSIS) -DUSE_BOOTLOADER=$(USE_BOOTLOADER)
+	@cmake -S . -B $(TARGET_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=$(ENABLE_CODE_ANALYSIS) -DENABLE_BOOTLOADER=$(ENABLE_BOOTLOADER)
 
 config_tools_build: mkdir_tools_config
 	@echo ""

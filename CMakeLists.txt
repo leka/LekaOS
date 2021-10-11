@@ -53,9 +53,9 @@ set(MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
 set(MCUBOOT_DIR ${ROOT_DIR}/extern/mcuboot/boot)
 
 # Bootloader option
-option(USE_BOOTLOADER "Build LekaOS with bootloader" TRUE)
-message(STATUS "USE_BOOTLOADER (Build LekaOS with bootloader) --> ${USE_BOOTLOADER}")
-if (USE_BOOTLOADER)
+option(ENABLE_BOOTLOADER "Build LekaOS with bootloader" OFF)
+message(STATUS "ENABLE_BOOTLOADER (Build LekaOS with bootloader) --> ${ENABLE_BOOTLOADER}")
+if (ENABLE_BOOTLOADER)
 	set(MBED_APP_FLAGS
 		-DMBED_APP_START=0x08041000
 		-DMBED_APP_SIZE=0x180000
@@ -63,7 +63,7 @@ if (USE_BOOTLOADER)
 	add_compile_definitions(MCUBOOT_BOOTLOADER_BUILD=false)
 else()
 	add_compile_definitions(MCUBOOT_BOOTLOADER_BUILD=true)
-endif(USE_BOOTLOADER)
+endif(ENABLE_BOOTLOADER)
 
 # And include mbed-cmake.cmake
 include(./mbed-cmake.cmake)
@@ -135,7 +135,7 @@ add_subdirectory(${SPIKES_DIR})
 add_subdirectory(${TESTS_DIR}/functional)
 
 # Add bootloader
-if (NOT USE_BOOTLOADER)
+if (ENABLE_BOOTLOADER==OFF)
 	add_subdirectory(${BOOTLOADER_DIR})
 endif()
 
