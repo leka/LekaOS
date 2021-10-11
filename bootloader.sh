@@ -5,7 +5,7 @@ mkdir release
 
 # Compile bootloader
 make deep_clean
-make config ENABLE_BOOTLOADER=OFF
+make config USE_BOOTLOADER=FALSE
 make
 
 # Get bootloader binary
@@ -13,7 +13,7 @@ cp _build/LEKA_V1_2_DEV/bootloader/bootloader.hex _tmp/bootloader.hex
 
 # Compile applications
 make deep_clean
-make config ENABLE_BOOTLOADER=ON
+make config USE_BOOTLOADER=TRUE
 make
 
 # Get application binary
