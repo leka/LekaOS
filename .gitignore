@@ -12,6 +12,8 @@ cmake/config/
 .clangd
 *.ioc.csv
 cube_path.json
+_release
+_tmp
 
 
 #
