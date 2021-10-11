@@ -14,20 +14,10 @@ namespace leka::interface {
 class QSPI
 {
   public:
-	struct DataTransmissionFormat {
-		int command_width			= 1;
-		int address_width			= 1;
-		size_t address_size			= 8;
-		int alternate_phase_width	= 1;
-		size_t alternate_phase_size = 8;
-		int data_width				= 1;
-		int dummy_cycles			= 0;
-	};
-
 	virtual ~QSPI() = default;
 
-	virtual void setDataTransmissionFormat(DataTransmissionFormat &data_transmission_format) = 0;
-	virtual void setFrequency(int hz = 1'000'000)											 = 0;
+	virtual void setDataTransmissionFormat()	  = 0;
+	virtual void setFrequency(int hz = 1'000'000) = 0;
 
 	virtual auto read(uint8_t command, uint32_t address, lstd::span<uint8_t> rx_buffer, size_t rx_buffer_size)
 		-> size_t = 0;

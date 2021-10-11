@@ -6,63 +6,18 @@
 
 using namespace leka;
 
-void CoreQSPI::setDataTransmissionFormat(DataTransmissionFormat &data_transmission_format)
+void CoreQSPI::setDataTransmissionFormat()
 {
-	auto _command_width			= getBusWidthEnum(data_transmission_format.command_width);
-	auto _address_width			= getBusWidthEnum(data_transmission_format.address_width);
-	auto _address_size			= getAddressSizeEnum(data_transmission_format.address_size);
-	auto _alternate_phase_width = getBusWidthEnum(data_transmission_format.alternate_phase_width);
-	auto _alternate_phase_size	= getAlternatePhaseSizeEnum(data_transmission_format.alternate_phase_size);
-	auto _data_width			= getBusWidthEnum(data_transmission_format.data_width);
+	auto _command_width					  = QSPI_CFG_BUS_SINGLE;
+	auto _address_width					  = QSPI_CFG_BUS_SINGLE;
+	auto _address_size					  = QSPI_CFG_ADDR_SIZE_8;
+	auto _alternate_phase_width			  = QSPI_CFG_BUS_SINGLE;
+	qspi_alt_size_t _alternate_phase_size = QSPI_CFG_ALT_SIZE_8;
+	auto _data_width					  = QSPI_CFG_BUS_SINGLE;
+	auto _dummy_cycles					  = 0;
 
 	_qspi.configure_format(_command_width, _address_width, _address_size, _alternate_phase_width, _alternate_phase_size,
-						   _data_width, data_transmission_format.dummy_cycles);
-}
-
-auto CoreQSPI::getBusWidthEnum(int width) -> qspi_bus_width_t
-{
-	switch (width) {
-		case 1:
-			return QSPI_CFG_BUS_SINGLE;
-		case 2:
-			return QSPI_CFG_BUS_DUAL;
-		case 4:
-			return QSPI_CFG_BUS_QUAD;
-		default:
-			return QSPI_CFG_BUS_SINGLE;
-	}
-}
-
-auto CoreQSPI::getAddressSizeEnum(size_t size) -> qspi_address_size_t
-{
-	switch (size) {
-		case 8:
-			return QSPI_CFG_ADDR_SIZE_8;
-		case 16:
-			return QSPI_CFG_ADDR_SIZE_16;
-		case 24:
-			return QSPI_CFG_ADDR_SIZE_24;
-		case 32:
-			return QSPI_CFG_ADDR_SIZE_32;
-		default:
-			return QSPI_CFG_ADDR_SIZE_8;
-	}
-}
-
-auto CoreQSPI::getAlternatePhaseSizeEnum(size_t size) -> qspi_alt_size_t
-{
-	switch (size) {
-		case 8:
-			return QSPI_CFG_ALT_SIZE_8;
-		case 16:
-			return QSPI_CFG_ALT_SIZE_16;
-		case 24:
-			return QSPI_CFG_ALT_SIZE_24;
-		case 32:
-			return QSPI_CFG_ALT_SIZE_32;
-		default:
-			return QSPI_CFG_ALT_SIZE_8;
-	}
+						   _data_width, _dummy_cycles);
 }
 
 void CoreQSPI::setFrequency(int hz)
