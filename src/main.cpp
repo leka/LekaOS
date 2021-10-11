@@ -63,8 +63,8 @@ auto main() -> int
 	initializeSD();
 
 	coreis25lp.reset();
-	coreis25lp.setSPIMode(SPIMode::Standard);
-	coreis25lp.setReadMode(ReadMode::Normal);
+	coreqspi.setDataTransmissionFormat();
+	coreqspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
 	coreis25lp.erase();
 
 	// Open file and initialize tools
