@@ -1,72 +1,75 @@
 // Leka - LekaOS
-// Copyright 2020 APF France handicap
+// Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "mbed.h"
+#include "drivers/BufferedSerial.h"
+#include "drivers/Ticker.h"
+#include "drivers/Watchdog.h"
+#include "rtos/ThisThread.h"
+#include "rtos/Thread.h"
 
+#include "CoreFlashUtils.h"
 #include "HelloWorld.h"
 #include "LekaBluetooth.h"
-#include "LekaFirmware.h"
 #include "LekaRFID.h"
 #include "LekaScreen.h"
 #include "LekaTouch.h"
 #include "LekaWifi.h"
+#include "LogKit.h"
 
 using namespace leka;
+using namespace std::chrono;
 
 HelloWorld hello;
 Bluetooth leka_bluetooth;
-Firmware leka_firmware;
 RFID leka_rfid;
 Screen leka_screen;
 Touch leka_touch;
 Wifi leka_wifi;
 
-static BufferedSerial serial(USBTX, USBRX, 9600);
+static mbed::BufferedSerial serial(USBTX, USBRX, 115200);
 
 constexpr uint8_t buff_size = 128;
-char buff[buff_size] {};
+std::array<char, buff_size> buff {};
 
-Thread bluetooth_thread;
-Thread firmware_thread;
-Thread rfid_thread;
-Thread screen_thread;
-Thread touch_thread;
-Thread wifi_thread;
+rtos::Thread bluetooth_thread;
+rtos::Thread flash_thread;
+rtos::Thread rfid_thread;
+rtos::Thread screen_thread;
+rtos::Thread touch_thread;
+rtos::Thread wifi_thread;
 
-Ticker kicker;
+mbed::Ticker kicker;
 const uint32_t TIMEOUT_MS = 5000;
 
 void watchdogKick()
 {
-	Watchdog::get_instance().kick();
+	mbed::Watchdog::get_instance().kick();
 }
 
-int main(void)
+auto main() -> int
 {
-	auto start = Kernel::Clock::now();
+	log_info("Hello, Investigation Day!\n\n");
 
-	printf("\nHello, Investigation Day!\n\n");
+	auto start = rtos::Kernel::Clock::now();
 
-	rtos::ThisThread::sleep_for(2s);
-
-	Watchdog &watchdog = Watchdog::get_instance();
+	auto &watchdog = mbed::Watchdog::get_instance();
 	watchdog.start(TIMEOUT_MS);
 	kicker.attach_us(watchdogKick, 1000);
 
-	bluetooth_thread.start(callback(&leka_bluetooth, &Bluetooth::start));
-	// firmware_thread.start(callback(&leka_firmware, &Firmware::start));
-	rfid_thread.start(callback(&leka_rfid, &RFID::start));
-	screen_thread.start(callback(&leka_screen, &Screen::start));
-	touch_thread.start(callback(&leka_touch, &Touch::start));
-	wifi_thread.start(callback(&leka_wifi, &Wifi::start));
+	bluetooth_thread.start(mbed::callback(&leka_bluetooth, &Bluetooth::start));
+	flash_thread.start(flash_loop);
+	rfid_thread.start(mbed::callback(&leka_rfid, &RFID::start));
+	screen_thread.start(mbed::callback(&leka_screen, &Screen::start));
+	touch_thread.start(mbed::callback(&leka_touch, &Touch::start));
+	wifi_thread.start(mbed::callback(&leka_wifi, &Wifi::start));
 	hello.start();
 
 	while (true) {
-		auto t	   = Kernel::Clock::now() - start;
-		int length = sprintf(buff, "A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME,
-							 hello.world, int(t.count() / 1000));
-		serial.write(buff, length);
+		auto t = rtos::Kernel::Clock::now() - start;
+		log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world,
+				 int(t.count() / 1000));
+
 		rtos::ThisThread::sleep_for(1s);
 	}
 }

@@ -23,111 +23,27 @@ TEST(CoreQSPITest, initialisationWithparameters)
 	ASSERT_NE(&coreqspi, nullptr);
 }
 
-TEST(CoreQSPITest, checkBusWidthEnum)
-{
-	auto coreqspi				  = CoreQSPI {};
-	auto data_transmission_format = interface::QSPI::DataTransmissionFormat {};
-
-	data_transmission_format.command_width		   = 1;	   // QSPI_CFG_BUS_SINGLE
-	data_transmission_format.address_width		   = 2;	   // QSPI_CFG_BUS_DUAL
-	data_transmission_format.alternate_phase_width = 4;	   // QSPI_CFG_BUS_QUAD
-	data_transmission_format.data_width			   = 42;   // QSPI_CFG_BUS_SINGLE
-
-	coreqspi.setDataTransmissionFormat(data_transmission_format);
-
-	ASSERT_EQ(spy_QSPI_command_width, QSPI_CFG_BUS_SINGLE);
-	ASSERT_EQ(spy_QSPI_address_width, QSPI_CFG_BUS_DUAL);
-	ASSERT_EQ(spy_QSPI_alternate_phase_width, QSPI_CFG_BUS_QUAD);
-	ASSERT_EQ(spy_QSPI_data_width, QSPI_CFG_BUS_SINGLE);
-}
-
-TEST(CoreQSPITest, checkAddressSizeEnum)
-{
-	auto coreqspi				  = CoreQSPI {};
-	auto data_transmission_format = interface::QSPI::DataTransmissionFormat {};
-	auto expected_value			  = QSPI_CFG_ADDR_SIZE_8;
-
-	data_transmission_format.address_size = 8;	 // QSPI_CFG_ADDR_SIZE_8
-	expected_value						  = QSPI_CFG_ADDR_SIZE_8;
-	coreqspi.setDataTransmissionFormat(data_transmission_format);
-	ASSERT_EQ(spy_QSPI_address_size, expected_value);
-
-	data_transmission_format.address_size = 16;	  // QSPI_CFG_ADDR_SIZE_16
-	expected_value						  = QSPI_CFG_ADDR_SIZE_16;
-	coreqspi.setDataTransmissionFormat(data_transmission_format);
-	ASSERT_EQ(spy_QSPI_address_size, expected_value);
-
-	data_transmission_format.address_size = 24;	  // QSPI_CFG_ADDR_SIZE_24
-	expected_value						  = QSPI_CFG_ADDR_SIZE_24;
-	coreqspi.setDataTransmissionFormat(data_transmission_format);
-	ASSERT_EQ(spy_QSPI_address_size, expected_value);
-
-	data_transmission_format.address_size = 32;	  // QSPI_CFG_ADDR_SIZE_32
-	expected_value						  = QSPI_CFG_ADDR_SIZE_32;
-	coreqspi.setDataTransmissionFormat(data_transmission_format);
-	ASSERT_EQ(spy_QSPI_address_size, expected_value);
-
-	data_transmission_format.address_size = 100;   // QSPI_CFG_ADDR_SIZE_8
-	expected_value						  = QSPI_CFG_ADDR_SIZE_8;
-	coreqspi.setDataTransmissionFormat(data_transmission_format);
-	ASSERT_EQ(spy_QSPI_address_size, expected_value);
-}
-
-TEST(CoreQSPITest, checkAlternatePhaseSizeEnum)
-{
-	auto coreqspi				  = CoreQSPI {};
-	auto data_transmission_format = interface::QSPI::DataTransmissionFormat {};
-	auto expected_value			  = QSPI_CFG_ALT_SIZE_8;
-
-	data_transmission_format.alternate_phase_size = 8;	 // QSPI_CFG_ALT_SIZE_8
-	expected_value								  = QSPI_CFG_ALT_SIZE_8;
-	coreqspi.setDataTransmissionFormat(data_transmission_format);
-	ASSERT_EQ(spy_QSPI_alternate_phase_size, expected_value);
-
-	data_transmission_format.alternate_phase_size = 16;	  // QSPI_CFG_ALT_SIZE_16
-	expected_value								  = QSPI_CFG_ALT_SIZE_16;
-	coreqspi.setDataTransmissionFormat(data_transmission_format);
-	ASSERT_EQ(spy_QSPI_alternate_phase_size, expected_value);
-
-	data_transmission_format.alternate_phase_size = 24;	  // QSPI_CFG_ALT_SIZE_24
-	expected_value								  = QSPI_CFG_ALT_SIZE_24;
-	coreqspi.setDataTransmissionFormat(data_transmission_format);
-	ASSERT_EQ(spy_QSPI_alternate_phase_size, expected_value);
-
-	data_transmission_format.alternate_phase_size = 32;	  // QSPI_CFG_ALT_SIZE_32
-	expected_value								  = QSPI_CFG_ALT_SIZE_32;
-	coreqspi.setDataTransmissionFormat(data_transmission_format);
-	ASSERT_EQ(spy_QSPI_alternate_phase_size, expected_value);
-
-	data_transmission_format.alternate_phase_size = 100;   // QSPI_CFG_ALT_SIZE_8
-	expected_value								  = QSPI_CFG_ALT_SIZE_8;
-	coreqspi.setDataTransmissionFormat(data_transmission_format);
-	ASSERT_EQ(spy_QSPI_alternate_phase_size, expected_value);
-}
-
 TEST(CoreQSPITest, setDataTransmissionFormat)
 {
 	auto coreqspi = CoreQSPI {};
 
-	auto data_transmission_format = interface::QSPI::DataTransmissionFormat {};
+	auto expected_command_width			= QSPI_CFG_BUS_SINGLE;
+	auto expected_address_width			= QSPI_CFG_BUS_SINGLE;
+	auto expected_address_size			= QSPI_CFG_ADDR_SIZE_8;
+	auto expected_alternate_phase_width = QSPI_CFG_BUS_SINGLE;
+	auto expected_alternate_phase_size	= QSPI_CFG_ALT_SIZE_8;
+	auto expected_data_width			= QSPI_CFG_BUS_SINGLE;
+	auto expected_dummy_cycles			= 0;
 
-	data_transmission_format.command_width		   = 1;	   // QSPI_CFG_BUS_SINGLE
-	data_transmission_format.address_width		   = 1;	   // QSPI_CFG_BUS_SINGLE
-	data_transmission_format.address_size		   = 24;   // QSPI_CFG_ADDR_SIZE_24
-	data_transmission_format.alternate_phase_width = 1;	   // QSPI_CFG_BUS_SINGLE
-	data_transmission_format.alternate_phase_size  = 8;	   // QSPI_CFG_ALT_SIZE_8
-	data_transmission_format.data_width			   = 1;	   // QSPI_CFG_BUS_SINGLE
-	data_transmission_format.dummy_cycles		   = 0;
+	coreqspi.setDataTransmissionFormat();
 
-	coreqspi.setDataTransmissionFormat(data_transmission_format);
-
-	ASSERT_EQ(spy_QSPI_command_width, QSPI_CFG_BUS_SINGLE);
-	ASSERT_EQ(spy_QSPI_address_width, QSPI_CFG_BUS_SINGLE);
-	ASSERT_EQ(spy_QSPI_address_size, QSPI_CFG_ADDR_SIZE_24);
-	ASSERT_EQ(spy_QSPI_alternate_phase_width, QSPI_CFG_BUS_SINGLE);
-	ASSERT_EQ(spy_QSPI_alternate_phase_size, QSPI_CFG_ALT_SIZE_8);
-	ASSERT_EQ(spy_QSPI_data_width, QSPI_CFG_BUS_SINGLE);
-	ASSERT_EQ(spy_QSPI_dummy_cycle, 0);
+	ASSERT_EQ(spy_QSPI_command_width, expected_command_width);
+	ASSERT_EQ(spy_QSPI_address_width, expected_address_width);
+	ASSERT_EQ(spy_QSPI_address_size, expected_address_size);
+	ASSERT_EQ(spy_QSPI_alternate_phase_width, expected_alternate_phase_width);
+	ASSERT_EQ(spy_QSPI_alternate_phase_size, expected_alternate_phase_size);
+	ASSERT_EQ(spy_QSPI_data_width, expected_data_width);
+	ASSERT_EQ(spy_QSPI_dummy_cycle, expected_dummy_cycles);
 }
 
 TEST(CoreQSPITest, setFrequency)
@@ -145,10 +61,9 @@ TEST(CoreQSPITest, write)
 
 	uint8_t data[] = "This is a test";
 
-	auto bytes_written = coreqspi.write(0x2A, -1, 0x2B, data, std::size(data));
+	auto bytes_written = coreqspi.write(0x2A, 0x2B, data, std::size(data));
 
 	ASSERT_EQ(spy_QSPI_command, 0x2A);
-	ASSERT_EQ(spy_QSPI_alternate_phase, -1);
 	ASSERT_EQ(spy_QSPI_address, 0x2B);
 	ASSERT_EQ(spy_QSPI_tx_buffer_length, bytes_written);
 
@@ -164,10 +79,9 @@ TEST(CoreQSPITest, read)
 	constexpr size_t buffer_size = 0x10;
 	std::array<uint8_t, buffer_size> buffer;
 
-	auto bytes_read = coreqspi.read(0x2C, -2, 0x2D, buffer, buffer_size);
+	auto bytes_read = coreqspi.read(0x2C, 0x2D, buffer, buffer_size);
 
 	ASSERT_EQ(spy_QSPI_command, 0x2C);
-	ASSERT_EQ(spy_QSPI_alternate_phase, -2);
 	ASSERT_EQ(spy_QSPI_address, 0x2D);
 	ASSERT_EQ(spy_QSPI_rx_buffer_length, bytes_read);
 

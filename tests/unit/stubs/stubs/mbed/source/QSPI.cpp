@@ -47,9 +47,8 @@ auto QSPI::set_frequency(int value) -> qspi_status_t
 
 auto QSPI::read(qspi_inst_t instruction, int alt, int address, char *rx_buffer, size_t *rx_length) -> qspi_status_t
 {
-	leka::spy_QSPI_command		   = instruction;
-	leka::spy_QSPI_alternate_phase = alt;
-	leka::spy_QSPI_address		   = address;
+	leka::spy_QSPI_command = instruction;
+	leka::spy_QSPI_address = address;
 
 	if (*rx_length > 2) {
 		*rx_length = *rx_length - 1;
@@ -66,9 +65,8 @@ auto QSPI::read(qspi_inst_t instruction, int alt, int address, char *rx_buffer, 
 auto QSPI::write(qspi_inst_t instruction, int alt, int address, const char *tx_buffer, size_t *tx_length)
 	-> qspi_status_t
 {
-	leka::spy_QSPI_command		   = instruction;
-	leka::spy_QSPI_alternate_phase = alt;
-	leka::spy_QSPI_address		   = address;
+	leka::spy_QSPI_command = instruction;
+	leka::spy_QSPI_address = address;
 
 	if (*tx_length > 3) {
 		*tx_length = *tx_length - 2;

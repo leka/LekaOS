@@ -19,7 +19,6 @@ extern int spy_QSPI_dummy_cycle;
 extern int spy_QSPI_frequency;
 
 extern mbed::qspi_inst_t spy_QSPI_command;
-extern int spy_QSPI_alternate_phase;
 extern int spy_QSPI_address;
 extern std::string spy_QSPI_rx_buffer;
 extern size_t spy_QSPI_rx_buffer_length;

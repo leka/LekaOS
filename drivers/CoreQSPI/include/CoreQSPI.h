@@ -18,22 +18,16 @@ class CoreQSPI : public interface::QSPI
 					  PinName io3 = QSPI_FLASH_IO3, PinName sclk = QSPI_FLASH_CLK, PinName ssel = QSPI_FLASH_nCS)
 		: _qspi(io0, io1, io2, io3, sclk, ssel) {};
 
-	void setDataTransmissionFormat(DataTransmissionFormat &data_transmission_format) final;
+	void setDataTransmissionFormat() final;
 	void setFrequency(int hz = ONE_MHZ) final;
 
-	auto read(uint8_t command, int alternate_phase, uint32_t address, lstd::span<uint8_t> rx_buffer,
-			  size_t rx_buffer_size) -> size_t final;
-	auto write(uint8_t command, int alternate_phase, uint32_t address, lstd::span<uint8_t> tx_buffer,
-			   size_t tx_buffer_size) -> size_t final;
+	auto read(uint8_t command, uint32_t address, lstd::span<uint8_t> rx_buffer, size_t rx_buffer_size) -> size_t final;
+	auto write(uint8_t command, uint32_t address, lstd::span<uint8_t> tx_buffer, size_t tx_buffer_size) -> size_t final;
 
 	auto sendCommand(uint8_t command, uint32_t address, lstd::span<uint8_t> tx_buffer, size_t tx_buffer_size,
 					 lstd::span<uint8_t> rx_buffer, size_t rx_buffer_size) -> std::tuple<size_t, size_t> final;
 
   private:
-	static auto getBusWidthEnum(int width) -> qspi_bus_width_t;
-	static auto getAddressSizeEnum(size_t size) -> qspi_address_size_t;
-	static auto getAlternatePhaseSizeEnum(size_t size) -> qspi_alt_size_t;
-
 	mbed::QSPI _qspi;
 };
 
