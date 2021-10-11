@@ -4,13 +4,17 @@ mkdir _tmp
 mkdir release
 
 # Compile bootloader
-make deep_clean && make config ENABLE_BOOTLOADER=OFF && make
+make deep_clean
+make config ENABLE_BOOTLOADER=OFF
+make
 
 # Get bootloader binary
 cp _build/LEKA_V1_2_DEV/bootloader/bootloader.hex _tmp/bootloader.hex
 
 # Compile applications
-make deep_clean && make config ENABLE_BOOTLOADER=ON && make
+make deep_clean
+make config ENABLE_BOOTLOADER=ON
+make
 
 # Get application binary
 cp _build/LEKA_V1_2_DEV/src/LekaOS.hex _tmp/application.hex
