@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mkdir _tmp
+mkdir _tmp > /dev/null 2> /dev/null
 
 # Variables
 BOOTLOADER_HEX_SOURCE="$1"

@@ -1,13 +1,15 @@
 #!/bin/bash
 
-mkdir _tmp
-mkdir _release
+mkdir _tmp > /dev/null 2> /dev/null
+mkdir _release > /dev/null 2> /dev/null
 
 # Variables
-APPLICATION_HEX_SOURCE="$1"
-APPLICATION_VERSION="$2"
+RECOMPILE_APPLICATIONS="$1"
+
+APPLICATION_HEX_SOURCE="$2"
+APPLICATION_VERSION="$3"
 APPLICATION_HEX="_tmp/application.hex"
-APPLICATION_SIGNED_HEX="$3"
+APPLICATION_SIGNED_HEX="$4"
 APPLICATION_SIGNED_BIN="_release/application-signed.bin"
 
 if [ -z "$APPLICATION_HEX_SOURCE" ]; then
@@ -26,8 +28,11 @@ if [ -z "$APPLICATION_SIGNED_HEX" ]; then
 fi
 
 # Compile applications
-make deep_clean
-make config ENABLE_BOOTLOADER=ON
+if [ "$RECOMPILE_APPLICATIONS" = "true" ];
+then
+	make deep_clean
+	make config ENABLE_BOOTLOADER=ON
+fi;
 make
 
 # Get application binary
