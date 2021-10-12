@@ -52,7 +52,7 @@ int default_CSPRNG(uint8_t *dest, unsigned int size)
 }
 #endif
 
-int main()
+auto main() -> int
 {
 	int rc;
 

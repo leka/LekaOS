@@ -42,8 +42,7 @@ auto main() -> int
 	hello.start();
 
 	//    run_self_test();
-	int ret = boot_set_confirmed();
-	if (ret == 0) {
+	if (int ret = boot_set_confirmed(); ret == 0) {
 		log_info("Boot confirmed");
 	} else {
 		log_error("Failed to confirm boot: %d", ret);

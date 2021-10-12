@@ -94,8 +94,7 @@ auto main() -> int
 	}
 
 	// Set ready for reboot
-	int ret = boot_set_pending(0);
-	if (ret == 0) {
+	if (int ret = boot_set_pending(0); ret == 0) {
 		log_info("> Secondary image pending, reboot to update");
 	} else {
 		log_error("Failed to set secondary image pending: %d", ret);

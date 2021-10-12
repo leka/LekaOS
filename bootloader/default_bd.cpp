@@ -5,7 +5,7 @@
 #include "QSPIFBlockDevice.h"
 #include "SlicingBlockDevice.h"
 
-mbed::BlockDevice *get_secondary_bd(void)
+auto get_secondary_bd() -> mbed::BlockDevice *
 {
 	// In this case, our flash is much larger than a single image so
 	// slice it into the size of an image slot
