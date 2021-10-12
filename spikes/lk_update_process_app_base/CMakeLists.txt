@@ -18,6 +18,7 @@ target_link_libraries(spike_lk_update_process_app_base
 	bootutil
 	CoreQSPI
 	CoreFlashMemory
+	FileSystemKit
 )
 
 target_link_custom_leka_targets(spike_lk_update_process_app_base)

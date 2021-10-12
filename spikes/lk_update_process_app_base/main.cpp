@@ -8,15 +8,13 @@
 #include "CoreFlashManagerIS25LP016D.h"
 #include "CoreQSPI.h"
 #include "FATFileSystem.h"
+#include "FileSystemKit.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "QSPIFBlockDevice.h"
 #include "SDBlockDevice.h"
 #include "SlicingBlockDevice.h"
 #include "bootutil/bootutil.h"
-
-#define TRACE_GROUP "main"
-#include "mbed-trace/mbed_trace.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -54,10 +52,6 @@ auto main() -> int
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 	log_info("Hello, Application!\n");
 
-	// Enable traces from relevant trace groups
-	mbed_trace_init();
-	mbed_trace_include_filters_set("main,MCUb,BL");
-
 	// Initialization
 	hello.start();
 
@@ -69,30 +63,24 @@ auto main() -> int
 	coreis25lp.erase();
 
 	// Open file and initialize tools
-	fflush(stdout);
-	FILE *f = fopen("/fs/update.bin", "r+");
-	log_debug("%s", (!f ? "Fail :(" : "OK"));
 	uint32_t address		 = 0x0;
 	const size_t packet_size = 0x100;
+	auto packet_read		 = packet_size;
 	std::array<uint8_t, packet_size> buffer {};
 
+	fflush(stdout);
+	auto update_file = FileSystemKit::File("/fs/update.bin");
+
 	// Transfer update file into external flash memory
-	while (!feof(f)) {
-		for (uint16_t i = 0; i < packet_size; i++) {
-			buffer[i] = fgetc(f);
-		}
-		coreis25lp.write(address, buffer, packet_size);
-		address += packet_size;
+	while (packet_read != 0) {
+		packet_read = update_file.read(buffer.data(), packet_size);
+		coreis25lp.write(address, buffer, packet_read);
+		address += packet_read;
 	}
 
 	// Close the file which also flushes any cached writes
-	log_debug("Closing \"/fs/update.bin\"... ");
 	fflush(stdout);
-	int err = fclose(f);
-	log_debug("%s", (err < 0 ? "Fail :(" : "OK"));
-	if (err < 0) {
-		log_error("error: %s (%d)\n", strerror(errno), -errno);
-	}
+	update_file.close();
 
 	// Set ready for reboot
 	if (int ret = boot_set_pending(0); ret == 0) {

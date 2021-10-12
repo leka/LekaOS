@@ -30,9 +30,6 @@ auto main() -> int
 	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 
-	rtos::ThisThread::sleep_for(1s);
-
-	log_info("\n\n");
 	log_info("Hello, Update!\n");
 
 	auto start = rtos::Kernel::Clock::now();
