@@ -18,9 +18,10 @@ using namespace std::chrono;
 
 auto get_secondary_bd() -> mbed::BlockDevice *
 {
-	static QSPIFBlockDevice _bd;
+	static auto _bd = QSPIFBlockDevice {};
 
-	static mbed::SlicingBlockDevice sliced_bd(&_bd, 0x0, MCUBOOT_SLOT_SIZE);
+	static auto sliced_bd = mbed::SlicingBlockDevice {&_bd, 0x0, MCUBOOT_SLOT_SIZE};
+
 	return &sliced_bd;
 }
 
