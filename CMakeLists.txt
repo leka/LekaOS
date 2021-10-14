@@ -53,14 +53,14 @@ set(MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
 set(MCUBOOT_DIR ${ROOT_DIR}/extern/mcuboot/boot)
 
 # Bootloader option
-option(ENABLE_BOOTLOADER "Build LekaOS with bootloader" OFF)
-message(STATUS "ENABLE_BOOTLOADER (Build LekaOS with bootloader) --> ${ENABLE_BOOTLOADER}")
-if (ENABLE_BOOTLOADER)
+option(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER "Build targets with padding to use with bootloader" OFF)
+message(STATUS "Build targets with padding to use with bootloader --> ${BUILD_TARGETS_TO_USE_WITH_BOOTLOADER}")
+if (BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
 	set(MBED_APP_FLAGS
 		-DMBED_APP_START=0x08041000
 		-DMBED_APP_SIZE=0x17E000
 	)
-endif(ENABLE_BOOTLOADER)
+endif(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
 
 # And include mbed-cmake.cmake
 include(./mbed-cmake.cmake)
