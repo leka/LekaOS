@@ -12,12 +12,10 @@ target_include_directories(FileSystemKit
 target_sources(FileSystemKit
 	PRIVATE
 		source/File.cpp
-		source/FileSystemKit.cpp
 )
 
 target_link_libraries(FileSystemKit
 	mbed-os
-	CoreFlashMemory
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

@@ -9,7 +9,6 @@
 
 #include "platform/NonCopyable.h"
 
-#include "interface/drivers/FlashMemory.h"
 #include "interface/platform/File.h"
 
 namespace leka {
@@ -38,10 +37,6 @@ class FileSystemKit
 	  private:
 		std::unique_ptr<FILE, decltype(&fclose)> _file {nullptr, fclose};
 	};
-
-	FileSystemKit() = default;
-
-	void sendFileToFlash(File &file_sent, interface::FlashMemory &flash);
 };
 
 }	// namespace leka
