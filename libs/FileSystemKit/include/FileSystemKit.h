@@ -32,7 +32,7 @@ class FileSystemKit
 		void rewind() final;
 		auto size() -> size_t final;
 
-		[[nodiscard]] auto is_open() const -> bool;
+		[[nodiscard]] auto is_open() const -> bool final;
 
 	  private:
 		std::unique_ptr<FILE, decltype(&fclose)> _file {nullptr, fclose};

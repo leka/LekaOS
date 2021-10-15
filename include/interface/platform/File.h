@@ -27,6 +27,8 @@ struct File {
 	virtual void rewind() = 0;
 
 	virtual auto size() -> size_t = 0;
+
+	[[nodiscard]] virtual auto is_open() const -> bool = 0;
 };
 
 }	// namespace leka::interface
