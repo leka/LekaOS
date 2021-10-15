@@ -45,7 +45,7 @@ TEST_F(FirmwareKitTest, loadUpdateCheckPackets)
 		EXPECT_CALL(flash_memory, write(_, _, actual_read_packet_size_first_loop)).Times(1);
 
 		EXPECT_CALL(file, read(_, expected_packet_size)).WillOnce(Return(actual_read_packet_size_second_loop));
-		EXPECT_CALL(flash_memory, write(_, _, actual_read_packet_size_second_loop)).Times(1);
+		EXPECT_CALL(flash_memory, write(_, _, actual_read_packet_size_second_loop)).Times(0);
 
 		EXPECT_CALL(file, close).Times(1);
 	}
@@ -67,7 +67,7 @@ TEST_F(FirmwareKitTest, loadUpdateCheckAddress)
 		expected_adress += actual_read_packet_size_first_loop;
 
 		EXPECT_CALL(file, read(_, _)).WillOnce(Return(0));
-		EXPECT_CALL(flash_memory, write(expected_adress, _, _)).Times(1);
+		EXPECT_CALL(flash_memory, write(expected_adress, _, _)).Times(0);
 
 		EXPECT_CALL(file, close).Times(1);
 	}
