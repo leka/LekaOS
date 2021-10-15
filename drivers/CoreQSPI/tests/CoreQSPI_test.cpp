@@ -29,7 +29,7 @@ TEST(CoreQSPITest, setDataTransmissionFormat)
 
 	auto expected_command_width			= QSPI_CFG_BUS_SINGLE;
 	auto expected_address_width			= QSPI_CFG_BUS_SINGLE;
-	auto expected_address_size			= QSPI_CFG_ADDR_SIZE_8;
+	auto expected_address_size			= QSPI_CFG_ADDR_SIZE_24;
 	auto expected_alternate_phase_width = QSPI_CFG_BUS_SINGLE;
 	auto expected_alternate_phase_size	= QSPI_CFG_ALT_SIZE_8;
 	auto expected_data_width			= QSPI_CFG_BUS_SINGLE;
