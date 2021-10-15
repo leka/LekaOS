@@ -25,6 +25,8 @@ class FirmwareKitTest : public ::testing::Test
 	mock::FlashMemory flash_memory;
 	mock::File file;
 	FirmwareKit firmwarekit;
+
+	void MOCK_FUNCTION_end_of_file_reached() { EXPECT_CALL(file, read(_, _)).WillOnce(Return(0)); }
 };
 
 TEST_F(FirmwareKitTest, instantiation)
@@ -34,20 +36,18 @@ TEST_F(FirmwareKitTest, instantiation)
 
 TEST_F(FirmwareKitTest, loadUpdateCheckPackets)
 {
-	auto expected_packet_size				 = 0x100;
-	auto actual_read_packet_size_first_loop	 = 0x80;
-	auto actual_read_packet_size_second_loop = 0;
+	auto expected_packet_size	 = 256;
+	auto actual_some_packet_read = 200;
 
 	{
 		InSequence seq;
 
 		EXPECT_CALL(file, is_open).WillOnce(Return(true));
 
-		EXPECT_CALL(file, read(_, expected_packet_size)).WillOnce(Return(actual_read_packet_size_first_loop));
-		EXPECT_CALL(flash_memory, write(_, _, actual_read_packet_size_first_loop)).Times(1);
+		EXPECT_CALL(file, read(_, expected_packet_size)).WillOnce(Return(actual_some_packet_read));
+		EXPECT_CALL(flash_memory, write(_, _, actual_some_packet_read)).Times(1);
 
-		EXPECT_CALL(file, read(_, expected_packet_size)).WillOnce(Return(actual_read_packet_size_second_loop));
-		EXPECT_CALL(flash_memory, write(_, _, actual_read_packet_size_second_loop)).Times(0);
+		MOCK_FUNCTION_end_of_file_reached();
 
 		EXPECT_CALL(file, close).Times(1);
 	}
@@ -57,21 +57,22 @@ TEST_F(FirmwareKitTest, loadUpdateCheckPackets)
 
 TEST_F(FirmwareKitTest, loadUpdateCheckAddress)
 {
-	auto expected_packet_size				= 0x100;
-	auto expected_adress					= 0x0;
-	auto actual_read_packet_size_first_loop = 0x80;
+	auto expected_adress		 = 0x0;
+	auto actual_some_packet_read = 200;
 
 	{
 		InSequence seq;
 
 		EXPECT_CALL(file, is_open).WillOnce(Return(true));
 
-		EXPECT_CALL(file, read(_, _)).WillOnce(Return(actual_read_packet_size_first_loop));
+		EXPECT_CALL(file, read(_, _)).WillOnce(Return(actual_some_packet_read));
 		EXPECT_CALL(flash_memory, write(expected_adress, _, _)).Times(1);
-		expected_adress += actual_read_packet_size_first_loop;
+		expected_adress += actual_some_packet_read;
 
-		EXPECT_CALL(file, read(_, _)).WillOnce(Return(0));
-		EXPECT_CALL(flash_memory, write(expected_adress, _, _)).Times(0);
+		EXPECT_CALL(file, read(_, _)).WillOnce(Return(actual_some_packet_read));
+		EXPECT_CALL(flash_memory, write(expected_adress, _, _)).Times(1);
+
+		MOCK_FUNCTION_end_of_file_reached();
 
 		EXPECT_CALL(file, close).Times(1);
 	}
@@ -79,7 +80,7 @@ TEST_F(FirmwareKitTest, loadUpdateCheckAddress)
 	firmwarekit.loadUpdate(file);
 }
 
-TEST_F(FirmwareKitTest, loadUpdateFileNotOpen)
+TEST_F(FirmwareKitTest, loadUpdateFileNotOpened)
 {
 	{
 		InSequence seq;
