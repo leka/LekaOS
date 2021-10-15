@@ -28,6 +28,8 @@ class File : public interface::File
 	MOCK_METHOD(void, rewind, (), (override));
 
 	MOCK_METHOD(size_t, size, (), (override));
+
+	MOCK_METHOD(bool, is_open, (), (const override));
 };
 
 }	// namespace leka::mock
