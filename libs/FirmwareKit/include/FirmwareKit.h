@@ -13,7 +13,7 @@ namespace leka {
 class FirmwareKit
 {
   public:
-	FirmwareKit(interface::FlashMemory &flash) : _update_container(flash) {};
+	explicit FirmwareKit(interface::FlashMemory &flash) : _update_container(flash) {};
 
 	void loadUpdate(interface::File &update_file);
 
