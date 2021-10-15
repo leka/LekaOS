@@ -16,12 +16,9 @@ void FirmwareKit::loadUpdate(interface::File &update_file)
 		std::vector<uint8_t> buffer {};
 		buffer.resize(packet_size);
 
-		auto packet_read = update_file.read(buffer.data(), std::size(buffer));
-		while (packet_read != 0) {
+		while (auto packet_read = update_file.read(buffer.data(), std::size(buffer))) {
 			_update_container.write(address, buffer, packet_read);
 			address += packet_read;
-
-			packet_read = update_file.read(buffer.data(), std::size(buffer));
 		}
 
 		update_file.close();
