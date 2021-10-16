@@ -15,7 +15,7 @@ class FirmwareKit
   public:
 	explicit FirmwareKit(interface::FlashMemory &flash) : _update_container(flash) {};
 
-	void loadUpdate(interface::File &update_file);
+	void loadUpdate(interface::File &file);
 
   private:
 	interface::FlashMemory &_update_container;

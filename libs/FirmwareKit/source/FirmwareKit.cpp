@@ -7,20 +7,20 @@
 
 using namespace leka;
 
-void FirmwareKit::loadUpdate(interface::File &update_file)
+void FirmwareKit::loadUpdate(interface::File &file)
 {
-	if (update_file.is_open()) {
+	if (file.is_open()) {
 		auto address			   = uint32_t {0x0};
 		constexpr auto packet_size = std::size_t {256};
 
 		std::vector<uint8_t> buffer {};
 		buffer.resize(packet_size);
 
-		while (auto packet_read = update_file.read(buffer.data(), std::size(buffer))) {
+		while (auto packet_read = file.read(buffer.data(), std::size(buffer))) {
 			_update_container.write(address, buffer, packet_read);
 			address += packet_read;
 		}
 
-		update_file.close();
+		file.close();
 	}
 }
