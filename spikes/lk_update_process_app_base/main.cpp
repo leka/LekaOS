@@ -65,9 +65,11 @@ auto main() -> int
 	coreis25lp.erase();
 
 	// Load file
-	auto update_file = FileSystemKit::File("/fs/update.bin");
+	auto update_file = FileSystemKit::File();
 
-	firmwarekit.loadUpdate(update_file);
+	if (auto is_open = update_file.open("/fs/update.bin"); is_open) {
+		firmwarekit.loadUpdate(update_file);
+	}
 
 	// Set ready for reboot
 	if (int ret = boot_set_pending(0); ret == 0) {
