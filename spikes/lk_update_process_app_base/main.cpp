@@ -67,7 +67,9 @@ auto main() -> int
 	// Load file
 	auto update_file = FileSystemKit::File();
 
-	firmwarekit.loadUpdate(update_file, "/fs/update.bin");
+	if (auto is_loaded = firmwarekit.loadUpdate(update_file, "/fs/update.bin"); is_loaded) {
+		log_info("Update file is loaded in external flash.");
+	}
 
 	// Set ready for reboot
 	if (int ret = boot_set_pending(0); ret == 0) {
