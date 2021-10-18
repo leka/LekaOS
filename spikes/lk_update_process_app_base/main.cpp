@@ -67,9 +67,7 @@ auto main() -> int
 	// Load file
 	auto update_file = FileSystemKit::File();
 
-	if (auto is_open = update_file.open("/fs/update.bin"); is_open) {
-		firmwarekit.loadUpdate(update_file);
-	}
+	firmwarekit.loadUpdate(update_file, "/fs/update.bin");
 
 	// Set ready for reboot
 	if (int ret = boot_set_pending(0); ret == 0) {
