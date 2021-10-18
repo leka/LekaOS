@@ -6,7 +6,7 @@
 
 using namespace leka;
 
-void FirmwareKit::loadUpdate(interface::File &file, const char *path)
+auto FirmwareKit::loadUpdate(interface::File &file, const char *path) -> bool
 {
 	if (auto is_open = file.open(path, "r"); is_open) {
 		auto address			   = uint32_t {0x0};
@@ -20,5 +20,8 @@ void FirmwareKit::loadUpdate(interface::File &file, const char *path)
 		}
 
 		file.close();
+
+		return true;
 	}
+	return false;
 }
