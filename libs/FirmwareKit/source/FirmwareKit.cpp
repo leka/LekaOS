@@ -6,9 +6,9 @@
 
 using namespace leka;
 
-void FirmwareKit::loadUpdate(interface::File &file)
+void FirmwareKit::loadUpdate(interface::File &file, const char *path)
 {
-	if (file.is_open()) {
+	if (auto is_open = file.open(path, "r"); is_open) {
 		auto address			   = uint32_t {0x0};
 		constexpr auto packet_size = std::size_t {256};
 
