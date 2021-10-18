@@ -14,7 +14,7 @@ cmake/config/
 cube_path.json
 _release
 _tmp
-
+*.pem
 
 #
 # MARK:- macOS
