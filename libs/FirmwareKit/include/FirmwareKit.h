@@ -5,20 +5,28 @@
 #ifndef _LEKA_OS_LIB_FIRMWARE_KIT_H_
 #define _LEKA_OS_LIB_FIRMWARE_KIT_H_
 
+#include <string>
+
+#include "FileSystemKit.h"
+#include "interface/drivers/FirmwareUpdate.h"
 #include "interface/drivers/FlashMemory.h"
-#include "interface/platform/File.h"
 
 namespace leka {
 
-class FirmwareKit
+class FirmwareKit : public interface::FirmwareUpdate
 {
   public:
 	explicit FirmwareKit(interface::FlashMemory &flash) : _update_container(flash) {};
 
-	auto loadUpdate(interface::File &file, const char *path) -> bool;
+	void loadUpdateLatest() final;
 
   private:
+	void loadUpdate(std::string path);
+
 	interface::FlashMemory &_update_container;
+	FileSystemKit::File _file {};
+
+	const std::string _path_latest_update = "/fs/updates/update.bin";
 };
 
 }	// namespace leka

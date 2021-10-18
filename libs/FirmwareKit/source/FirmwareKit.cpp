@@ -6,22 +6,24 @@
 
 using namespace leka;
 
-auto FirmwareKit::loadUpdate(interface::File &file, const char *path) -> bool
+void FirmwareKit::loadUpdateLatest()
 {
-	if (auto is_open = file.open(path, "r"); is_open) {
+	loadUpdate(_path_latest_update);
+}
+
+void FirmwareKit::loadUpdate(std::string path)
+{
+	if (auto is_open = _file.open(path.data()); is_open) {
 		auto address			   = uint32_t {0x0};
 		constexpr auto packet_size = std::size_t {256};
 
 		std::array<uint8_t, packet_size> buffer {};
 
-		while (auto packet_read = file.read(buffer.data(), std::size(buffer))) {
+		while (auto packet_read = _file.read(buffer.data(), std::size(buffer))) {
 			_update_container.write(address, buffer, packet_read);
 			address += packet_read;
 		}
 
-		file.close();
-
-		return true;
+		_file.close();
 	}
-	return false;
 }
