@@ -36,6 +36,7 @@ TEST_F(FirmwareKitTest, instantiation)
 
 TEST_F(FirmwareKitTest, loadUpdateCheckPackets)
 {
+	auto expected_load_update	 = true;
 	auto expected_packet_size	 = 256;
 	auto actual_some_packet_read = 200;
 	auto path					 = "/fs/some_path_to_update.bin";
@@ -53,11 +54,14 @@ TEST_F(FirmwareKitTest, loadUpdateCheckPackets)
 		EXPECT_CALL(file, close).Times(1);
 	}
 
-	firmwarekit.loadUpdate(file, path);
+	auto actual_load_update = firmwarekit.loadUpdate(file, path);
+
+	ASSERT_EQ(actual_load_update, expected_load_update);
 }
 
 TEST_F(FirmwareKitTest, loadUpdateCheckAddress)
 {
+	auto expected_load_update	 = true;
 	auto expected_adress		 = 0x0;
 	auto actual_some_packet_read = 200;
 	auto path					 = "/fs/some_path_to_update.bin";
@@ -79,12 +83,15 @@ TEST_F(FirmwareKitTest, loadUpdateCheckAddress)
 		EXPECT_CALL(file, close).Times(1);
 	}
 
-	firmwarekit.loadUpdate(file, path);
+	auto actual_load_update = firmwarekit.loadUpdate(file, path);
+
+	ASSERT_EQ(actual_load_update, expected_load_update);
 }
 
 TEST_F(FirmwareKitTest, loadUpdateFileNotOpened)
 {
-	auto path = "/fs/some_path_to_update.bin";
+	auto expected_load_update = false;
+	auto path				  = "/fs/some_path_to_update.bin";
 	{
 		InSequence seq;
 
@@ -94,5 +101,7 @@ TEST_F(FirmwareKitTest, loadUpdateFileNotOpened)
 		EXPECT_CALL(flash_memory, write).Times(0);
 	}
 
-	firmwarekit.loadUpdate(file, path);
+	auto actual_load_update = firmwarekit.loadUpdate(file, path);
+
+	ASSERT_EQ(actual_load_update, expected_load_update);
 }
