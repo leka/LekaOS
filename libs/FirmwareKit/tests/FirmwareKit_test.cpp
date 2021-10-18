@@ -29,6 +29,17 @@ class FirmwareKitTest : public ::testing::Test
 	void MOCK_FUNCTION_end_of_file_reached() { EXPECT_CALL(file, read(_, _)).WillOnce(Return(0)); }
 };
 
+MATCHER_P(compareStrings, expected_string, "")
+{
+	bool same_content = true;
+
+	for (int i = 0; i < std::size(expected_string); i++) {
+		same_content &= expected_string[i] == arg[i];
+	}
+
+	return same_content;
+}
+
 TEST_F(FirmwareKitTest, instantiation)
 {
 	ASSERT_NE(&firmwarekit, nullptr);
@@ -39,12 +50,13 @@ TEST_F(FirmwareKitTest, loadUpdateCheckPackets)
 	auto expected_load_update	 = true;
 	auto expected_packet_size	 = 256;
 	auto actual_some_packet_read = 200;
-	auto path					 = "/fs/some_path_to_update.bin";
+	std::string expected_path	 = "/fs/some_path_to_update.bin";
+	std::string expected_mode	 = "r";
 
 	{
 		InSequence seq;
 
-		EXPECT_CALL(file, open(path, "r")).WillOnce(Return(true));
+		EXPECT_CALL(file, open(compareStrings(expected_path), compareStrings(expected_mode))).WillOnce(Return(true));
 
 		EXPECT_CALL(file, read(_, expected_packet_size)).WillOnce(Return(actual_some_packet_read));
 		EXPECT_CALL(flash_memory, write(_, _, actual_some_packet_read)).Times(1);
@@ -54,7 +66,7 @@ TEST_F(FirmwareKitTest, loadUpdateCheckPackets)
 		EXPECT_CALL(file, close).Times(1);
 	}
 
-	auto actual_load_update = firmwarekit.loadUpdate(file, path);
+	auto actual_load_update = firmwarekit.loadUpdate(file, expected_path.data());
 
 	ASSERT_EQ(actual_load_update, expected_load_update);
 }
@@ -64,12 +76,13 @@ TEST_F(FirmwareKitTest, loadUpdateCheckAddress)
 	auto expected_load_update	 = true;
 	auto expected_adress		 = 0x0;
 	auto actual_some_packet_read = 200;
-	auto path					 = "/fs/some_path_to_update.bin";
+	std::string expected_path	 = "/fs/some_path_to_update.bin";
+	std::string expected_mode	 = "r";
 
 	{
 		InSequence seq;
 
-		EXPECT_CALL(file, open(path, "r")).WillOnce(Return(true));
+		EXPECT_CALL(file, open(compareStrings(expected_path), compareStrings(expected_mode))).WillOnce(Return(true));
 
 		EXPECT_CALL(file, read(_, _)).WillOnce(Return(actual_some_packet_read));
 		EXPECT_CALL(flash_memory, write(expected_adress, _, _)).Times(1);
@@ -83,7 +96,7 @@ TEST_F(FirmwareKitTest, loadUpdateCheckAddress)
 		EXPECT_CALL(file, close).Times(1);
 	}
 
-	auto actual_load_update = firmwarekit.loadUpdate(file, path);
+	auto actual_load_update = firmwarekit.loadUpdate(file, expected_path.data());
 
 	ASSERT_EQ(actual_load_update, expected_load_update);
 }
@@ -91,17 +104,18 @@ TEST_F(FirmwareKitTest, loadUpdateCheckAddress)
 TEST_F(FirmwareKitTest, loadUpdateFileNotOpened)
 {
 	auto expected_load_update = false;
-	auto path				  = "/fs/some_path_to_update.bin";
+	std::string expected_path = "/fs/some_path_to_update.bin";
+	std::string expected_mode = "r";
 	{
 		InSequence seq;
 
-		EXPECT_CALL(file, open(path, "r")).WillOnce(Return(false));
+		EXPECT_CALL(file, open(compareStrings(expected_path), compareStrings(expected_mode))).WillOnce(Return(false));
 
 		EXPECT_CALL(file, read(_, _)).Times(0);
 		EXPECT_CALL(flash_memory, write).Times(0);
 	}
 
-	auto actual_load_update = firmwarekit.loadUpdate(file, path);
+	auto actual_load_update = firmwarekit.loadUpdate(file, expected_path.data());
 
 	ASSERT_EQ(actual_load_update, expected_load_update);
 }
