@@ -63,7 +63,8 @@ auto main() -> int
 	coreqspi.setDataTransmissionFormat();
 	coreqspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
 
-	firmwarekit.setDefaultPath("/fs/os/");
+	std::string path = "/fs/os/";
+	firmwarekit.setDefaultPath(path);
 
 	// Load file
 	auto version = FirmwareVersion {.major = 1, .minor = 2, .revision = 3};

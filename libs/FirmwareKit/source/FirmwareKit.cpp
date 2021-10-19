@@ -6,7 +6,7 @@
 
 using namespace leka;
 
-void FirmwareKit::setDefaultPath(std::string path)
+void FirmwareKit::setDefaultPath(std::string &path)
 {
 	_default_path = path;
 }
@@ -21,7 +21,7 @@ auto FirmwareKit::loadUpdate(FirmwareVersion &version) -> bool
 	return loadUpdate(full_path);
 }
 
-auto FirmwareKit::loadUpdate(std::string path) -> bool
+auto FirmwareKit::loadUpdate(std::string &path) -> bool
 {
 	if (auto is_open = _file.open(path.data()); is_open) {
 		auto address			   = uint32_t {0x0};
