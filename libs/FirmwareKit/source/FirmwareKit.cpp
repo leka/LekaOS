@@ -11,17 +11,17 @@ void FirmwareKit::setDefaultPath(std::string path)
 	_default_path = path;
 }
 
-void FirmwareKit::loadUpdate(FirmwareVersion &version)
+auto FirmwareKit::loadUpdate(FirmwareVersion &version) -> bool
 {
 	std::string file_name;
 	snprintf(file_name.data(), 100, "LekaOS-%i.%i.%i.bin", version.major, version.minor, version.revision);
 
 	std::string full_path = _default_path + file_name;
 
-	loadUpdate(full_path);
+	return loadUpdate(full_path);
 }
 
-void FirmwareKit::loadUpdate(std::string path)
+auto FirmwareKit::loadUpdate(std::string path) -> bool
 {
 	if (auto is_open = _file.open(path.data()); is_open) {
 		auto address			   = uint32_t {0x0};
@@ -35,5 +35,9 @@ void FirmwareKit::loadUpdate(std::string path)
 		}
 
 		_file.close();
+
+		return true;
 	}
+
+	return false;
 }
