@@ -8,15 +8,19 @@ using namespace leka;
 
 void FirmwareKit::setDefaultPath(const std::string_view &path)
 {
-	_default_path = path;
+	std::copy(path.begin(), path.end(), _default_path.begin());
 }
 
 auto FirmwareKit::loadUpdate(FirmwareVersion &version) -> bool
 {
-	lstd::span<char> file_name {};
-	snprintf(file_name.data(), 28, "LekaOS-%i.%i.%i.bin", version.major, version.minor, version.revision);
+	std::array<char, 28> file_name {};
+	snprintf(file_name.data(), file_name.size(), "LekaOS-%i.%i.%i.bin", version.major, version.minor, version.revision);
 
-	std::string_view full_path(file_name.begin(), file_name.size());
+	std::array<char, 128> concatene_path {};
+	std::copy(_default_path.begin(), _default_path.end(), concatene_path.begin());
+	std::copy(file_name.begin(), file_name.end(), concatene_path.begin() + _default_path.size());
+
+	std::string_view full_path(concatene_path.begin(), concatene_path.size());
 
 	return loadUpdate(full_path);
 }

@@ -15,6 +15,11 @@ void TmpFile::createTempFile()
 	mkstemp(tempFilename);
 }
 
+void TmpFile::deleteTempFile()
+{
+	remove(tempFilename);
+}
+
 auto TmpFile::getPath() -> std::string
 {
 	return std::string(tempFilename);

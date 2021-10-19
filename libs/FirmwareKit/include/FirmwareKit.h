@@ -28,7 +28,7 @@ class FirmwareKit : public interface::FirmwareUpdate
 	interface::FlashMemory &_update_container;
 	FileSystemKit::File _file {};
 
-	std::string_view _default_path;
+	std::array<char, 100> _default_path;
 };
 
 }	// namespace leka

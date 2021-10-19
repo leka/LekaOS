@@ -21,7 +21,7 @@ class FirmwareKitTest : public ::testing::Test
 	FirmwareKitTest() : firmwarekit(flash_memory) {}
 
 	void SetUp() override { tmp_file.createTempFile(); }
-	// void TearDown() override {}
+	void TearDown() override { tmp_file.deleteTempFile(); }
 
 	TmpFile tmp_file;
 	mock::FlashMemory flash_memory;
