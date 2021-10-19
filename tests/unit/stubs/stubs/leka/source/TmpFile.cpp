@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "../TmpFile.h"
+#include <cstring>
 #include <fstream>
 #include <sstream>
 
