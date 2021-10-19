@@ -13,6 +13,7 @@ class TmpFile
 	TmpFile() = default;
 
 	void createTempFile();
+	void deleteTempFile();
 	auto getPath() -> std::string;
 
 	auto readTempFile() -> std::string;
