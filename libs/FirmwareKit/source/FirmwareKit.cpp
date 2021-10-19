@@ -29,6 +29,8 @@ auto FirmwareKit::loadUpdate(std::string path) -> bool
 
 		std::array<uint8_t, packet_size> buffer {};
 
+		_update_container.erase();
+
 		while (auto packet_read = _file.read(buffer.data(), std::size(buffer))) {
 			_update_container.write(address, buffer, packet_read);
 			address += packet_read;

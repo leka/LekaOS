@@ -62,7 +62,6 @@ auto main() -> int
 	coreis25lp.reset();
 	coreqspi.setDataTransmissionFormat();
 	coreqspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
-	coreis25lp.erase();
 
 	firmwarekit.setDefaultPath("/fs/os/");
 
