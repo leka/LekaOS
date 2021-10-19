@@ -6,22 +6,21 @@
 
 using namespace leka;
 
-void FirmwareKit::setDefaultPath(std::string &path)
+void FirmwareKit::setDefaultPath(const lstd::span<char> &path)
 {
 	_default_path = path;
 }
 
 auto FirmwareKit::loadUpdate(FirmwareVersion &version) -> bool
 {
-	std::string file_name;
-	snprintf(file_name.data(), 100, "LekaOS-%i.%i.%i.bin", version.major, version.minor, version.revision);
-
-	std::string full_path = _default_path + file_name;
+	lstd::span<char> full_path = _default_path;
+	snprintf(full_path.data() + _default_path.size(), 28, "LekaOS-%i.%i.%i.bin", version.major, version.minor,
+			 version.revision);
 
 	return loadUpdate(full_path);
 }
 
-auto FirmwareKit::loadUpdate(std::string &path) -> bool
+auto FirmwareKit::loadUpdate(lstd::span<char> &path) -> bool
 {
 	if (auto is_open = _file.open(path.data()); is_open) {
 		auto address			   = uint32_t {0x0};
