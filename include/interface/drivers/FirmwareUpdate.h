@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_INTERFACE_DRIVERS_FIRMWARE_UPDATE_H_
 #define _LEKA_OS_INTERFACE_DRIVERS_FIRMWARE_UPDATE_H_
 
+#include "FirmwareVersion.h"
+
 namespace leka::interface {
 
 class FirmwareUpdate
@@ -12,7 +14,7 @@ class FirmwareUpdate
   public:
 	virtual ~FirmwareUpdate() = default;
 
-	virtual void loadUpdateLatest() = 0;
+	virtual void loadUpdate(FirmwareVersion &version) = 0;
 };
 
 }	// namespace leka::interface

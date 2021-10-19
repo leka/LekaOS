@@ -6,7 +6,7 @@
 
 using namespace leka;
 
-void FirmwareKit::loadUpdateLatest()
+void FirmwareKit::loadUpdate(FirmwareVersion &version)
 {
 	loadUpdate(_path_latest_update);
 }

@@ -65,7 +65,8 @@ auto main() -> int
 	coreis25lp.erase();
 
 	// Load file
-	firmwarekit.loadUpdateLatest();
+	auto version = FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
+	firmwarekit.loadUpdate(version);
 
 	// Set ready for reboot
 	if (int ret = boot_set_pending(0); ret == 0) {
