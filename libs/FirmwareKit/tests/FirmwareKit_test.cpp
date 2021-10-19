@@ -3,6 +3,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "FirmwareKit.h"
+#include <fstream>
+#include <iostream>
+#include <lstd_array>
+#include <lstd_span>
+#include <string>
 
 #include "gtest/gtest.h"
 // #include "mocks/leka/File.h"
@@ -20,14 +25,28 @@ class FirmwareKitTest : public ::testing::Test
   protected:
 	FirmwareKitTest() : firmwarekit(flash_memory) {}
 
-	// void SetUp() override {}
+	void SetUp() override
+	{
+		strcpy(tempFilename, "/tmp/updateXXXXXX");
+		// strcpy(tempFilename, "/fs/updates/updateXXXXXX");
+		mkstemp(tempFilename);
+	}
 	// void TearDown() override {}
+
+	void writeTempFile(lstd::span<uint8_t> data)
+	{
+		auto *file = fopen(tempFilename, "wb");
+		fwrite(data.data(), sizeof(uint8_t), data.size(), file);
+		fclose(file);
+	}
 
 	mock::FlashMemory flash_memory;
 	// mock::File file;
 	FirmwareKit firmwarekit;
 
 	// void MOCK_FUNCTION_end_of_file_reached() { EXPECT_CALL(file, read(_, _)).WillOnce(Return(0)); }
+
+	char tempFilename[L_tmpnam];   // NOLINT
 };
 
 MATCHER_P(compareStrings, expected_string, "")
@@ -48,6 +67,10 @@ TEST_F(FirmwareKitTest, instantiation)
 
 TEST_F(FirmwareKitTest, loadUpdateLatest)
 {
+	auto input_data = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});   // "abcdef"
+
+	writeTempFile(input_data);
+
 	firmwarekit.loadUpdateLatest();
 }
 
