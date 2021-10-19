@@ -18,18 +18,17 @@ class FirmwareKit : public interface::FirmwareUpdate
   public:
 	explicit FirmwareKit(interface::FlashMemory &flash) : _update_container(flash) {};
 
-	void setDefaultPath(const lstd::span<char> &path);
+	void setDefaultPath(const std::string_view &path);
 
 	auto loadUpdate(leka::FirmwareVersion &version) -> bool final;
 
   private:
-	auto loadUpdate(const lstd::span<char> &path) -> bool;
+	auto loadUpdate(const std::string_view &path) -> bool;
 
 	interface::FlashMemory &_update_container;
 	FileSystemKit::File _file {};
 
-	// lstd::span<char> _default_path;
-	std::array<char, 100> _default_path;
+	std::string_view _default_path;
 };
 
 }	// namespace leka
