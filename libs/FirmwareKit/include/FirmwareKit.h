@@ -18,7 +18,7 @@ class FirmwareKit : public interface::FirmwareUpdate
   public:
 	explicit FirmwareKit(interface::FlashMemory &flash) : _update_container(flash) {};
 
-	void loadUpdateLatest() final;
+	void loadUpdate(leka::FirmwareVersion &version) final;
 
   private:
 	void loadUpdate(std::string path);
