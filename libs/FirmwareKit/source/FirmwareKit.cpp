@@ -6,9 +6,19 @@
 
 using namespace leka;
 
+void FirmwareKit::setDefaultPath(std::string path)
+{
+	_default_path = path;
+}
+
 void FirmwareKit::loadUpdate(FirmwareVersion &version)
 {
-	loadUpdate(_path_latest_update);
+	std::string file_name;
+	snprintf(file_name.data(), 100, "LekaOS-%i.%i.%i.bin", version.major, version.minor, version.revision);
+
+	std::string full_path = _default_path + file_name;
+
+	loadUpdate(full_path);
 }
 
 void FirmwareKit::loadUpdate(std::string path)
