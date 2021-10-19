@@ -4,7 +4,6 @@
 
 set(UNIT_TESTS_STUBS_DIR      ${CMAKE_CURRENT_SOURCE_DIR})
 set(UNIT_TESTS_STUBS_MBED_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stubs/mbed)
-set(UNIT_TESTS_STUBS_LEKA_DIR ${CMAKE_CURRENT_SOURCE_DIR}/stubs/leka)
 
 add_library(stubs INTERFACE)
 
@@ -26,8 +25,6 @@ target_sources(stubs
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/mbed_critical.cpp
 
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/EventQueue_extension.cpp
-
-		${UNIT_TESTS_STUBS_LEKA_DIR}/source/TmpFile.cpp
 
 		${EXTERN_MBED_OS_DIR}/events/tests/UNITTESTS/doubles/equeue_stub.c
 		${EXTERN_MBED_OS_DIR}/rtos/tests/UNITTESTS/doubles/mbed_rtos_rtx_stub.c
