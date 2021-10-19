@@ -20,10 +20,10 @@ class FirmwareKit : public interface::FirmwareUpdate
 
 	void setDefaultPath(std::string path);
 
-	void loadUpdate(leka::FirmwareVersion &version) final;
+	auto loadUpdate(leka::FirmwareVersion &version) -> bool final;
 
   private:
-	void loadUpdate(std::string path);
+	auto loadUpdate(std::string path) -> bool;
 
 	interface::FlashMemory &_update_container;
 	FileSystemKit::File _file {};
