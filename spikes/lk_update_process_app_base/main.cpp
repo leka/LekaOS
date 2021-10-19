@@ -64,9 +64,13 @@ auto main() -> int
 	coreqspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
 	coreis25lp.erase();
 
+	firmwarekit.setDefaultPath("/fs/os/");
+
 	// Load file
 	auto version = FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
-	firmwarekit.loadUpdate(version);
+	if (auto is_loaded = firmwarekit.loadUpdate(version); is_loaded) {
+		log_info("New update is loaded in external flash");
+	}
 
 	// Set ready for reboot
 	if (int ret = boot_set_pending(0); ret == 0) {
