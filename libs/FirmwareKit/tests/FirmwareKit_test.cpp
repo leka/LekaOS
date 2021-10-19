@@ -3,16 +3,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "FirmwareKit.h"
-#include <fstream>
-#include <iostream>
 #include <lstd_array>
-#include <lstd_span>
-#include <string>
 
 #include "gtest/gtest.h"
-// #include "mocks/leka/File.h"
 #include "mocks/leka/FlashMemory.h"
-// #include "stubs/mbed/File.h"
+#include "stubs/leka/TmpFile.h"
 
 using namespace leka;
 
@@ -25,36 +20,20 @@ class FirmwareKitTest : public ::testing::Test
   protected:
 	FirmwareKitTest() : firmwarekit(flash_memory) {}
 
-	void SetUp() override
-	{
-		strcpy(tempFilename, "/tmp/updateXXXXXX");
-		// strcpy(tempFilename, "/fs/updates/updateXXXXXX");
-		mkstemp(tempFilename);
-	}
+	void SetUp() override { tmp_file.createTempFile(); }
 	// void TearDown() override {}
 
-	void writeTempFile(lstd::span<uint8_t> data)
-	{
-		auto *file = fopen(tempFilename, "wb");
-		fwrite(data.data(), sizeof(uint8_t), data.size(), file);
-		fclose(file);
-	}
-
+	TmpFile tmp_file;
 	mock::FlashMemory flash_memory;
-	// mock::File file;
 	FirmwareKit firmwarekit;
-
-	// void MOCK_FUNCTION_end_of_file_reached() { EXPECT_CALL(file, read(_, _)).WillOnce(Return(0)); }
-
-	char tempFilename[L_tmpnam];   // NOLINT
 };
 
-MATCHER_P(compareStrings, expected_string, "")
+MATCHER_P2(compareArray, expected_array, useless_var, "")
 {
 	bool same_content = true;
 
-	for (int i = 0; i < std::size(expected_string); i++) {
-		same_content &= expected_string[i] == arg[i];
+	for (int i = 0; i < expected_array.size(); i++) {
+		same_content &= expected_array[i] == arg[i];
 	}
 
 	return same_content;
@@ -65,86 +44,61 @@ TEST_F(FirmwareKitTest, instantiation)
 	ASSERT_NE(&firmwarekit, nullptr);
 }
 
-TEST_F(FirmwareKitTest, loadUpdateLatest)
+TEST_F(FirmwareKitTest, loadUpdate)
 {
-	auto input_data = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});   // "abcdef"
+	auto expected_is_loaded			  = true;
+	auto version					  = FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
+	std::array<uint8_t, 6> input_data = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};	// "abcdef"
 
-	writeTempFile(input_data);
+	firmwarekit.setDefaultPath(tmp_file.getPath());
+	tmp_file.writeTempFile(input_data);
 
-	firmwarekit.loadUpdateLatest();
+	{
+		InSequence seq;
+
+		EXPECT_CALL(flash_memory, erase).Times(1);
+		EXPECT_CALL(flash_memory, write(_, compareArray(input_data, _), std::size(input_data))).Times(1);
+	}
+
+	auto actual_is_loaded = firmwarekit.loadUpdate(version);
+
+	ASSERT_EQ(actual_is_loaded, expected_is_loaded);
 }
 
-// TEST_F(FirmwareKitTest, loadUpdateCheckPackets)
-// {
-// 	auto expected_load_update	 = true;
-// 	auto expected_packet_size	 = 256;
-// 	auto actual_some_packet_read = 200;
-// 	std::string expected_path	 = "/fs/some_path_to_update.bin";
-// 	std::string expected_mode	 = "r";
+TEST_F(FirmwareKitTest, loadUpdateExpectedMaxStep)
+{
+	auto expected_is_loaded = true;
+	auto expected_adress	= 0x0;
+	auto expected_max_step	= 0x100;
+	auto version			= FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
+	std::array<uint8_t, 0x110> input_data;
 
-// 	{
-// 		InSequence seq;
+	firmwarekit.setDefaultPath(tmp_file.getPath());
+	tmp_file.writeTempFile(input_data);
 
-// 		EXPECT_CALL(file, open(compareStrings(expected_path), compareStrings(expected_mode))).WillOnce(Return(true));
+	{
+		InSequence seq;
 
-// 		EXPECT_CALL(file, read(_, expected_packet_size)).WillOnce(Return(actual_some_packet_read));
-// 		EXPECT_CALL(flash_memory, write(_, _, actual_some_packet_read)).Times(1);
+		EXPECT_CALL(flash_memory, erase).Times(1);
 
-// 		MOCK_FUNCTION_end_of_file_reached();
+		EXPECT_CALL(flash_memory, write(expected_adress, _, _)).Times(1);
+		expected_adress += expected_max_step;
+		EXPECT_CALL(flash_memory, write(expected_adress, _, _)).Times(1);
+	}
 
-// 		EXPECT_CALL(file, close).Times(1);
-// 	}
+	auto actual_is_loaded = firmwarekit.loadUpdate(version);
 
-// 	auto actual_load_update = firmwarekit.loadUpdate(file, expected_path.data());
+	ASSERT_EQ(actual_is_loaded, expected_is_loaded);
+}
 
-// 	ASSERT_EQ(actual_load_update, expected_load_update);
-// }
+TEST_F(FirmwareKitTest, loadUpdateEmptyPath)
+{
+	auto expected_is_loaded = false;
+	auto version			= FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
 
-// TEST_F(FirmwareKitTest, loadUpdateCheckAddress)
-// {
-// 	auto expected_load_update	 = true;
-// 	auto expected_adress		 = 0x0;
-// 	auto actual_some_packet_read = 200;
-// 	std::string expected_path	 = "/fs/some_path_to_update.bin";
-// 	std::string expected_mode	 = "r";
+	firmwarekit.setDefaultPath("");
 
-// 	{
-// 		InSequence seq;
+	auto actual_is_loaded = firmwarekit.loadUpdate(version);
 
-// 		EXPECT_CALL(file, open(compareStrings(expected_path), compareStrings(expected_mode))).WillOnce(Return(true));
-
-// 		EXPECT_CALL(file, read(_, _)).WillOnce(Return(actual_some_packet_read));
-// 		EXPECT_CALL(flash_memory, write(expected_adress, _, _)).Times(1);
-// 		expected_adress += actual_some_packet_read;
-
-// 		EXPECT_CALL(file, read(_, _)).WillOnce(Return(actual_some_packet_read));
-// 		EXPECT_CALL(flash_memory, write(expected_adress, _, _)).Times(1);
-
-// 		MOCK_FUNCTION_end_of_file_reached();
-
-// 		EXPECT_CALL(file, close).Times(1);
-// 	}
-
-// 	auto actual_load_update = firmwarekit.loadUpdate(file, expected_path.data());
-
-// 	ASSERT_EQ(actual_load_update, expected_load_update);
-// }
-
-// TEST_F(FirmwareKitTest, loadUpdateFileNotOpened)
-// {
-// 	auto expected_load_update = false;
-// 	std::string expected_path = "/fs/some_path_to_update.bin";
-// 	std::string expected_mode = "r";
-// 	{
-// 		InSequence seq;
-
-// 		EXPECT_CALL(file, open(compareStrings(expected_path), compareStrings(expected_mode))).WillOnce(Return(false));
-
-// 		EXPECT_CALL(file, read(_, _)).Times(0);
-// 		EXPECT_CALL(flash_memory, write).Times(0);
-// 	}
-
-// 	auto actual_load_update = firmwarekit.loadUpdate(file, expected_path.data());
-
-// 	ASSERT_EQ(actual_load_update, expected_load_update);
-// }
+	ASSERT_EQ(actual_is_loaded, expected_is_loaded);
+}
