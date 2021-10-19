@@ -23,12 +23,13 @@ class FirmwareKit : public interface::FirmwareUpdate
 	auto loadUpdate(leka::FirmwareVersion &version) -> bool final;
 
   private:
-	auto loadUpdate(lstd::span<char> &path) -> bool;
+	auto loadUpdate(const lstd::span<char> &path) -> bool;
 
 	interface::FlashMemory &_update_container;
 	FileSystemKit::File _file {};
 
-	lstd::span<char> _default_path;
+	// lstd::span<char> _default_path;
+	std::array<char, 100> _default_path;
 };
 
 }	// namespace leka
