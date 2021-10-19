@@ -50,7 +50,9 @@ TEST_F(FirmwareKitTest, loadUpdate)
 	auto version					  = FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
 	std::array<uint8_t, 6> input_data = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};	// "abcdef"
 
-	firmwarekit.setDefaultPath(tmp_file.getPath());
+	auto path = tmp_file.getPath();
+
+	firmwarekit.setDefaultPath(path);
 	tmp_file.writeTempFile(input_data);
 
 	{
@@ -73,7 +75,9 @@ TEST_F(FirmwareKitTest, loadUpdateExpectedMaxStep)
 	auto version			= FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
 	std::array<uint8_t, 0x110> input_data;
 
-	firmwarekit.setDefaultPath(tmp_file.getPath());
+	auto path = tmp_file.getPath();
+
+	firmwarekit.setDefaultPath(path);
 	tmp_file.writeTempFile(input_data);
 
 	{
@@ -96,7 +100,9 @@ TEST_F(FirmwareKitTest, loadUpdateEmptyPath)
 	auto expected_is_loaded = false;
 	auto version			= FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
 
-	firmwarekit.setDefaultPath("");
+	std::string path = "";
+
+	firmwarekit.setDefaultPath(path);
 
 	auto actual_is_loaded = firmwarekit.loadUpdate(version);
 
