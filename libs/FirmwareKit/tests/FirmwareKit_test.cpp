@@ -46,6 +46,11 @@ TEST_F(FirmwareKitTest, instantiation)
 	ASSERT_NE(&firmwarekit, nullptr);
 }
 
+TEST_F(FirmwareKitTest, loadUpdateLatest)
+{
+	firmwarekit.loadUpdateLatest();
+}
+
 // TEST_F(FirmwareKitTest, loadUpdateCheckPackets)
 // {
 // 	auto expected_load_update	 = true;
