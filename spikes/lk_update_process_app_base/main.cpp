@@ -64,9 +64,12 @@ auto main() -> int
 	coreqspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
 
 	firmwarekit.setDefaultPath("/fs/os/");
-	firmwarekit.setFileNameFormat([](char *file_name, size_t max_file_name_size, const leka::FirmwareVersion &version) {
-		snprintf(file_name, max_file_name_size, "LekaOS-%i.%i.%i.bin", version.major, version.minor, version.revision);
-	});
+	std::function<void(char *, size_t, const leka::FirmwareVersion &)> file_name_format =
+		[](char *file_name, size_t max_file_name_size, const leka::FirmwareVersion &version) {
+			snprintf(file_name, max_file_name_size, "LekaOS-%i.%i.%i.bin", version.major, version.minor,
+					 version.revision);
+		};
+	firmwarekit.setFileNameFormat(file_name_format);
 
 	// Load file
 	auto version = FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
