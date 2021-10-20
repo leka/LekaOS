@@ -6,32 +6,22 @@
 
 using namespace leka;
 
-void FirmwareKit::setDefaultPath(const lstd::span<char> &path)
+void FirmwareKit::setDefaultPath(const char *path)
 {
-	_default_path = path;
+	_default_path_size = snprintf(_full_path.begin(), _full_path.size(), "%s", path);
 }
 
 auto FirmwareKit::loadUpdate(FirmwareVersion &version) -> bool
 {
-	std::array<char, 28> file_name {};
-	auto file_name_size = snprintf(file_name.data(), file_name.size(), "LekaOS-%i.%i.%i.bin", version.major,
-								   version.minor, version.revision);
+	snprintf(_full_path.begin() + _default_path_size, _full_path.size() - _default_path_size, "LekaOS-%i.%i.%i.bin",
+			 version.major, version.minor, version.revision);
 
-	std::array<char, 128> concatene_path {};
-	std::copy(_default_path.begin(), _default_path.end(), concatene_path.begin());
-	std::copy(file_name.begin(), file_name.begin() + file_name_size, concatene_path.begin() + _default_path.size());
-
-	return loadUpdate(concatene_path);
+	return loadUpdate(_full_path.data());
 }
 
-auto FirmwareKit::loadUpdate(const lstd::span<const char> &path) -> bool
+auto FirmwareKit::loadUpdate(const char *path) -> bool
 {
-	for (auto elem: path) {
-		printf("%c", elem);
-	}
-	printf("\n");
-
-	if (auto is_open = _file.open(path.data()); is_open) {
+	if (auto is_open = _file.open(path); is_open) {
 		auto address			   = uint32_t {0x0};
 		constexpr auto packet_size = std::size_t {256};
 
