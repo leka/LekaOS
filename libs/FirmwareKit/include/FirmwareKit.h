@@ -5,6 +5,7 @@
 #ifndef _LEKA_OS_LIB_FIRMWARE_KIT_H_
 #define _LEKA_OS_LIB_FIRMWARE_KIT_H_
 
+#include <functional>
 #include <string>
 
 #include "FileSystemKit.h"
@@ -13,7 +14,8 @@
 
 namespace leka {
 
-using pGetFileName = void (*)(char *file_name, size_t max_file_name_size, const leka::FirmwareVersion &version);
+using pGetFileName =
+	std::function<void(char *file_name, size_t max_file_name_size, const leka::FirmwareVersion &version)>;
 
 class FirmwareKit : public interface::FirmwareUpdate
 {
