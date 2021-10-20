@@ -20,9 +20,9 @@ void TmpFile::deleteTempFile()
 	remove(tempFilename);
 }
 
-auto TmpFile::getPath() -> std::string
+auto TmpFile::getPath() -> char *
 {
-	return std::string(tempFilename);
+	return tempFilename;
 }
 
 auto TmpFile::readTempFile() -> std::string

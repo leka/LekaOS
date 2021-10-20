@@ -11,10 +11,16 @@ void FirmwareKit::setDefaultPath(const char *path)
 	_default_path_size = snprintf(_full_path.begin(), _full_path.size(), "%s", path);
 }
 
+void FirmwareKit::setFileNameFormat(pGetFileName const &p_get_file_name)
+{
+	if (p_get_file_name != nullptr) {
+		getFileName = p_get_file_name;
+	}
+}
+
 auto FirmwareKit::loadUpdate(FirmwareVersion &version) -> bool
 {
-	snprintf(_full_path.begin() + _default_path_size, _full_path.size() - _default_path_size, "LekaOS-%i.%i.%i.bin",
-			 version.major, version.minor, version.revision);
+	getFileName(_full_path.begin() + _default_path_size, _full_path.size() - _default_path_size, version);
 
 	return loadUpdate(_full_path.data());
 }
