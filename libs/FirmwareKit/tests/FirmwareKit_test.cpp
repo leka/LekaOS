@@ -53,6 +53,7 @@ TEST_F(FirmwareKitTest, loadUpdate)
 	auto path = tmp_file.getPath();
 
 	firmwarekit.setDefaultPath(path);
+	firmwarekit.setFileNameFormat([](char *file_name, size_t max_file_name_size, leka::FirmwareVersion &version) {});
 	tmp_file.writeTempFile(input_data);
 
 	{
@@ -77,7 +78,8 @@ TEST_F(FirmwareKitTest, loadUpdateExpectedMaxStep)
 
 	auto path = tmp_file.getPath();
 
-	firmwarekit.setDefaultPath(path);
+	firmwarekit.setDefaultPath(tmp_file.getPath());
+	firmwarekit.setFileNameFormat([](char *file_name, size_t max_file_name_size, leka::FirmwareVersion &version) {});
 	tmp_file.writeTempFile(input_data);
 
 	{
@@ -100,9 +102,8 @@ TEST_F(FirmwareKitTest, loadUpdateEmptyPath)
 	auto expected_is_loaded = false;
 	auto version			= FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
 
-	std::string path = "";
-
-	firmwarekit.setDefaultPath(path);
+	firmwarekit.setDefaultPath("");
+	firmwarekit.setFileNameFormat([](char *file_name, size_t max_file_name_size, leka::FirmwareVersion &version) {});
 
 	auto actual_is_loaded = firmwarekit.loadUpdate(version);
 

@@ -14,7 +14,7 @@ class TmpFile
 
 	void createTempFile();
 	void deleteTempFile();
-	auto getPath() -> std::string;
+	auto getPath() -> char *;
 
 	auto readTempFile() -> std::string;
 	void writeTempFile(lstd::span<uint8_t> data);
