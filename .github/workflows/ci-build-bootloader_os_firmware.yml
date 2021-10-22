@@ -1,0 +1,151 @@
+# Leka - LekaOS
+# Copyright 2021 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  CC: /usr/bin/gcc
+  CXX: /usr/bin/g++
+
+  CLICOLOR_FORCE: true # ninja
+
+  CCACHE_DIR: /home/runner/work/ccache
+  CCACHE_COMPRESS: true
+  CCACHE_COMPRESSLEVEL: 6
+
+  ARM_TOOLCHAIN_FILENAME: "gcc-arm-none-eabi-*-x86_64-linux.tar.bz2"
+  ARM_TOOLCHAIN_EXTRACT_DIRECTORY: "gcc-arm-none-eabi-*"
+
+jobs:
+  bootloader_os_firmware:
+    name: Bootloader + OS = Firmware
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      #
+      # Mark: - Install ARM GCC Toolchain
+      #
+
+      - name: Create ARM GCC Toolchain env variables
+        run: |
+          echo "ARM_TOOLCHAIN_URL=$(cat .gcc_arm_none_eabi_url)" >> $GITHUB_ENV
+
+      - name: Cache ARM GCC Toolchain
+        id: cache_arm_toolchain
+        uses: actions/cache@v2
+        with:
+          path: ~/gcc-arm-none-eabi
+          key: ${{ runner.os }}-global_cache-arm_toolchain-${{ hashFiles('.gcc_arm_none_eabi_url') }}
+
+      - name: Install ARM GCC Toolchain
+        if: steps.cache_arm_toolchain.outputs.cache-hit != 'true'
+        run: |
+          wget ${{ env.ARM_TOOLCHAIN_URL }}
+          tar -xjf ${{ env.ARM_TOOLCHAIN_FILENAME }} && rm -rf ${{ env.ARM_TOOLCHAIN_FILENAME }}
+          mv ${{ env.ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} ~/gcc-arm-none-eabi
+
+      - name: Add ARM GCC Toolchain to path
+        run: |
+          tmp_home=$(echo ~)
+          echo "$tmp_home/gcc-arm-none-eabi/bin" >> $GITHUB_PATH
+
+      - name: Test ARM GCC Toolchain
+        run: |
+          ls -al ~/gcc-arm-none-eabi/bin
+          arm-none-eabi-gcc -v
+
+      #
+      # Mark: - Install misc. tools
+      #
+
+      - name: Install tools
+        run: |
+          sudo apt-get install -y --no-install-recommends ninja-build ccache
+
+      #
+      # Mark: - Download `extern` dependencies
+      #
+
+      - name: Cache extern dependencies
+        id: cache_extern_dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            extern/mbed-os
+            extern/mcuboot
+          key: ${{ runner.os }}-global_cache-extern_dependencies-${{ hashFiles('.mbed_version', '.mbed_git_url', '.mcuboot_version') }}
+
+      - name: Pull extern dependencies
+        if: steps.cache_extern_dependencies.outputs.cache-hit != 'true'
+        run: |
+          make mbed_curl
+          make mcuboot_clone
+
+      #
+      # Mark: - Install python/pip dependencies
+      #
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9.7"
+
+      - name: Cache pip dependencies
+        id: cache_pip_dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cache/pip
+            ${{ env.pythonLocation }}
+          key: ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-${{ hashFiles('extern/mbed-os/requirements.txt', '.mbed_version') }}
+
+      - name: Install pip packages
+        run: |
+          pip install --upgrade --upgrade-strategy eager mbed-cli imgtool
+          pip install --upgrade --upgrade-strategy eager -r ./extern/mbed-os/requirements.txt
+          pip install --upgrade --upgrade-strategy eager -r ./extern/mcuboot/scripts/requirements.txt
+
+      - name: Test pip packages
+        run: |
+          pip list -v
+          mbed-cli --help
+          imgtool --help
+
+      #
+      # Mark: - Config, Compile
+      #
+
+      - name: Get key to sign
+        run: |
+          echo "${{ secrets.FIRMWARE_SIGNING_KEY }}" > signing-keys.pem
+
+      - name: Build firmware, os, bootloader
+        run: |
+          ./generate_firmware.sh -r
+
+      #
+      # Mark: - Generate Firmware artifacts
+      #
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: bootloader_os_firmware
+          retention-days: 7
+          path: |
+            _release/firmware.bin
