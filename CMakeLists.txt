@@ -76,7 +76,7 @@ if(CMAKE_EXPORT_COMPILE_COMMANDS)
 endif()
 
 # For convenience you can define useful variables
-set(OS_DIR         ${ROOT_DIR}/src)
+set(OS_DIR         ${ROOT_DIR}/app/os)
 set(LIBS_DIR       ${ROOT_DIR}/libs)
 set(TESTS_DIR      ${ROOT_DIR}/tests)
 set(SPIKES_DIR     ${ROOT_DIR}/spikes)
