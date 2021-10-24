@@ -83,7 +83,7 @@ set(SPIKES_DIR     ${ROOT_DIR}/spikes)
 set(DRIVERS_DIR    ${ROOT_DIR}/drivers)
 set(TARGETS_DIR    ${ROOT_DIR}/targets)
 set(INCLUDE_DIR    ${ROOT_DIR}/include)
-set(BOOTLOADER_DIR ${ROOT_DIR}/bootloader)
+set(BOOTLOADER_DIR ${ROOT_DIR}/app/bootloader)
 
 # Add custom target subdirectory
 set(AVAILABLE_CUSTOM_TARGETS DISCO_ORIGINAL LEKA_V1_0_DEV LEKA_V1_1_DEV LEKA_V1_2_DEV)
