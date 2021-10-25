@@ -17,8 +17,8 @@ namespace leka {
 class FirmwareKit : public interface::FirmwareUpdate
 {
   public:
-	explicit FirmwareKit(interface::FlashMemory &flash, const char *root, const char *format)
-		: _flash(flash), _root(root), _format(format) {};
+	explicit FirmwareKit(interface::FlashMemory &flash, const char *format = "/fs/os/LekaOS-%i.%i.%i.bin")
+		: _flash(flash), _path_format(format) {};
 
 	auto loadUpdate(leka::FirmwareVersion &version) -> bool final;
 
@@ -28,8 +28,7 @@ class FirmwareKit : public interface::FirmwareUpdate
 	interface::FlashMemory &_flash;
 	FileSystemKit::File _file {};
 
-	const char *_root;
-	const char *_format;
+	const char *_path_format;
 };
 
 }	// namespace leka

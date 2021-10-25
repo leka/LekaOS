@@ -19,7 +19,7 @@ using ::testing::Return;
 class FirmwareKitTest : public ::testing::Test
 {
   protected:
-	FirmwareKitTest() : firmwarekit(mock_flash, "/tmp", "update-v%i.%i.%i") {}
+	FirmwareKitTest() : firmwarekit(mock_flash, "/tmp/update-v%i.%i.%i") {}
 
 	void SetUp() override
 	{
