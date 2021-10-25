@@ -136,7 +136,7 @@ jobs:
 
       - name: Build firmware, os, bootloader
         run: |
-          ./generate_firmware.sh -r
+          ./build_firmware.sh -r
 
       #
       # Mark: - Generate Firmware artifacts
