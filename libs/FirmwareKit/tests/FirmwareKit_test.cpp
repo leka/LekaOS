@@ -2,12 +2,13 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "FirmwareKit.h"
+#include <fstream>
+#include <iostream>
 #include <lstd_array>
 
+#include "FirmwareKit.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/FlashMemory.h"
-#include "stubs/leka/TmpFile.h"
 
 using namespace leka;
 
@@ -18,14 +19,20 @@ using ::testing::Return;
 class FirmwareKitTest : public ::testing::Test
 {
   protected:
-	FirmwareKitTest() : firmwarekit(flash_memory) {}
+	FirmwareKitTest() : firmwarekit(mock_flash, "/tmp", "update-v%i.%i.%i") {}
 
-	void SetUp() override { tmp_file.createTempFile(); }
-	void TearDown() override { tmp_file.deleteTempFile(); }
+	void SetUp() override
+	{
+		std::ofstream update {"/tmp/update-v1.2.3", std::ios::binary};
+		update.write(content.data(), std::size(content));
+		update.close();
+	}
+	void TearDown() override { std::remove("/tmp/update-v1.2.3"); }
 
-	TmpFile tmp_file;
-	mock::FlashMemory flash_memory;
+	mock::FlashMemory mock_flash;
 	FirmwareKit firmwarekit;
+
+	std::array<char, 6> content = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};	  // "abcdef"
 };
 
 MATCHER_P2(compareArray, expected_array, useless_var, "")
@@ -46,72 +53,27 @@ TEST_F(FirmwareKitTest, instantiation)
 
 TEST_F(FirmwareKitTest, loadUpdate)
 {
-	auto expected_is_loaded			  = true;
-	auto version					  = FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
-	std::array<uint8_t, 6> input_data = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};	// "abcdef"
-
-	auto path = tmp_file.getPath();
-
-	firmwarekit.setDefaultPath(path);
-	std::function<void(char *, size_t, const leka::FirmwareVersion &)> file_name_format =
-		[](char *file_name, size_t max_file_name_size, const leka::FirmwareVersion &version) {};
-	firmwarekit.setFileNameFormat(file_name_format);
-	tmp_file.writeTempFile(input_data);
+	auto version = FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
 
 	{
 		InSequence seq;
 
-		EXPECT_CALL(flash_memory, erase).Times(1);
-		EXPECT_CALL(flash_memory, write(_, compareArray(input_data, _), std::size(input_data))).Times(1);
+		EXPECT_CALL(mock_flash, erase).Times(1);
+		EXPECT_CALL(mock_flash, write(_, compareArray(content, _), std::size(content))).Times(1);
 	}
 
-	auto actual_is_loaded = firmwarekit.loadUpdate(version);
+	auto did_load_firmware = firmwarekit.loadUpdate(version);
 
-	ASSERT_EQ(actual_is_loaded, expected_is_loaded);
+	ASSERT_TRUE(did_load_firmware);
 }
 
-TEST_F(FirmwareKitTest, loadUpdateExpectedMaxStep)
+TEST_F(FirmwareKitTest, loadUpdateFileNotFound)
 {
-	auto expected_is_loaded = true;
-	auto expected_adress	= 0x0;
-	auto expected_max_step	= 0x100;
-	auto version			= FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
-	std::array<uint8_t, 0x110> input_data;
+	auto version = FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
 
-	auto path = tmp_file.getPath();
+	std::remove("/tmp/update-v1.2.3");
 
-	firmwarekit.setDefaultPath(tmp_file.getPath());
-	std::function<void(char *, size_t, const leka::FirmwareVersion &)> file_name_format =
-		[](char *file_name, size_t max_file_name_size, const leka::FirmwareVersion &version) {};
-	firmwarekit.setFileNameFormat(file_name_format);
-	tmp_file.writeTempFile(input_data);
+	auto did_load_firmware = firmwarekit.loadUpdate(version);
 
-	{
-		InSequence seq;
-
-		EXPECT_CALL(flash_memory, erase).Times(1);
-
-		EXPECT_CALL(flash_memory, write(expected_adress, _, _)).Times(1);
-		expected_adress += expected_max_step;
-		EXPECT_CALL(flash_memory, write(expected_adress, _, _)).Times(1);
-	}
-
-	auto actual_is_loaded = firmwarekit.loadUpdate(version);
-
-	ASSERT_EQ(actual_is_loaded, expected_is_loaded);
-}
-
-TEST_F(FirmwareKitTest, loadUpdateEmptyPath)
-{
-	auto expected_is_loaded = false;
-	auto version			= FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
-
-	firmwarekit.setDefaultPath("");
-	std::function<void(char *, size_t, const leka::FirmwareVersion &)> file_name_format =
-		[](char *file_name, size_t max_file_name_size, const leka::FirmwareVersion &version) {};
-	firmwarekit.setFileNameFormat(file_name_format);
-
-	auto actual_is_loaded = firmwarekit.loadUpdate(version);
-
-	ASSERT_EQ(actual_is_loaded, expected_is_loaded);
+	ASSERT_FALSE(did_load_firmware);
 }

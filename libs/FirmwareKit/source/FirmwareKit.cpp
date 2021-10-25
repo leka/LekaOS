@@ -6,42 +6,32 @@
 
 using namespace leka;
 
-void FirmwareKit::setDefaultPath(const char *path)
-{
-	_default_path_size = snprintf(_full_path.begin(), _full_path.size(), "%s", path);
-}
-
-void FirmwareKit::setFileNameFormat(pGetFileName const &p_get_file_name)
-{
-	if (p_get_file_name != nullptr) {
-		getFileName = p_get_file_name;
-	}
-}
-
 auto FirmwareKit::loadUpdate(FirmwareVersion &version) -> bool
 {
-	getFileName(_full_path.begin() + _default_path_size, _full_path.size() - _default_path_size, version);
+	auto path_format = std::array<char, 64> {};
+	snprintf(path_format.data(), std::size(path_format), "%s/%s", _root, _format);
 
-	return loadUpdate(_full_path.data());
+	auto full_path = std::array<char, 64> {};
+	snprintf(full_path.data(), std::size(full_path), path_format.data(), version.major, version.minor,
+			 version.revision);
+
+	return loadUpdate(full_path.data());
 }
 
 auto FirmwareKit::loadUpdate(const char *path) -> bool
 {
 	if (auto is_open = _file.open(path); is_open) {
-		auto address			   = uint32_t {0x0};
-		constexpr auto packet_size = std::size_t {256};
+		auto address = uint32_t {0x0};
+		auto buffer	 = std::array<uint8_t, 256> {};
 
-		std::array<uint8_t, packet_size> buffer {};
+		_flash.erase();
 
-		_update_container.erase();
-
-		while (auto packet_read = _file.read(buffer.data(), std::size(buffer))) {
-			_update_container.write(address, buffer, packet_read);
-			address += packet_read;
+		while (auto bytes_read = _file.read(buffer.data(), std::size(buffer))) {
+			_flash.write(address, buffer, bytes_read);
+			address += bytes_read;
 		}
 
 		_file.close();
-
 		return true;
 	}
 
