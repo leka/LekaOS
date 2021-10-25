@@ -126,7 +126,7 @@ config_cmake_build: mkdir_tools_config
 config_tools_build: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
-	@cmake -S . -B $(CMAKE_TOOLS_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_TOOLS_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=Debug -DENABLE_CODE_ANALYSIS=$(ENABLE_CODE_ANALYSIS)
+	@cmake -S . -B $(CMAKE_TOOLS_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_TOOLS_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=$(ENABLE_CODE_ANALYSIS)
 	@ln -sf $(CMAKE_TOOLS_BUILD_DIR)/compile_commands.json ./
 
 #

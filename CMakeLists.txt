@@ -8,8 +8,8 @@ cmake_minimum_required(VERSION 3.18)
 # Activate ccache if available
 find_program(CCACHE "ccache")
 if(CCACHE)
-    set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE}")
-    set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE}")
+	set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE}")
+	set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE}")
 endif(CCACHE)
 
 option(ENABLE_CODE_ANALYSIS "Run code analysis" OFF)
@@ -48,9 +48,10 @@ add_compile_options(
 )
 
 # Before all, set ROOT_DIR, MBED_OS_DIR
-set(ROOT_DIR    ${CMAKE_CURRENT_LIST_DIR})
-set(MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
-set(MCUBOOT_DIR ${ROOT_DIR}/extern/mcuboot/boot)
+set(ROOT_DIR      ${CMAKE_CURRENT_LIST_DIR})
+set(MBED_OS_DIR   ${ROOT_DIR}/extern/mbed-os)
+set(MCUBOOT_DIR   ${ROOT_DIR}/extern/mcuboot/boot)
+set(MBED_HTTP_DIR ${ROOT_DIR}/extern/mbed-http)
 
 # Bootloader option
 option(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER "Build targets with padding to use with bootloader" OFF)
@@ -72,7 +73,7 @@ project(LekaOS LANGUAGES C CXX ASM)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
 if(CMAKE_EXPORT_COMPILE_COMMANDS)
-    set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
+	set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
 endif()
 
 # For convenience you can define useful variables
@@ -122,6 +123,7 @@ add_compile_definitions(MCUBOOT_RSA_SIGNATURE_LENGTH=2048)
 add_compile_definitions(MCUBOOT_SLOT_SIZE=0x200000-MCUBOOT_BOOTLOADER_SIZE-MCUBOOT_SCRATCH_SIZE)
 
 add_subdirectory(${MCUBOOT_DIR})
+add_subdirectory(${MBED_HTTP_DIR})
 
 # Add drivers & libraries
 add_subdirectory(${DRIVERS_DIR})
