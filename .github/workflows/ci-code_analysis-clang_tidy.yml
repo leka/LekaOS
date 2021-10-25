@@ -157,6 +157,7 @@ jobs:
                ${{ steps.modified_files.outputs.added_modified }}  \
                | xargs -n1 \
                | grep -E -v "_test" \
+               | grep -E -v "extern" \
                | grep -E -v "gtest" \
                | grep -E -v "gmock" \
                | grep -E -v "mocks" \
