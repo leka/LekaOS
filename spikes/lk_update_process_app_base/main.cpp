@@ -30,7 +30,7 @@ FATFileSystem fatfs("fs");
 auto coreqspi		   = CoreQSPI();
 auto coremanageris25lp = CoreFlashManagerIS25LP016D(coreqspi);
 auto coreis25lp		   = CoreFlashIS25LP016D(coreqspi, coremanageris25lp);
-auto firmwarekit	   = FirmwareKit(coreis25lp);
+auto firmwarekit	   = FirmwareKit(coreis25lp, "/fs/os", "LekaOS-%i.%i.%i.bin");
 
 auto get_secondary_bd() -> mbed::BlockDevice *
 {
@@ -63,18 +63,10 @@ auto main() -> int
 	coreqspi.setDataTransmissionFormat();
 	coreqspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
 
-	firmwarekit.setDefaultPath("/fs/os/");
-	std::function<void(char *, size_t, const leka::FirmwareVersion &)> file_name_format =
-		[](char *file_name, size_t max_file_name_size, const leka::FirmwareVersion &version) {
-			snprintf(file_name, max_file_name_size, "LekaOS-%i.%i.%i.bin", version.major, version.minor,
-					 version.revision);
-		};
-	firmwarekit.setFileNameFormat(file_name_format);
-
 	// Load file
 	auto version = FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
-	if (auto is_loaded = firmwarekit.loadUpdate(version); is_loaded) {
-		log_info("New update is loaded in external flash");
+	if (auto did_load = firmwarekit.loadUpdate(version); did_load) {
+		log_info("New update was loaded in external flash");
 	}
 
 	// Set ready for reboot
