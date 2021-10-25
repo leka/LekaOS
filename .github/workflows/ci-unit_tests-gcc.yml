@@ -100,7 +100,9 @@ jobs:
           ccache -z
 
       - name: Upload Codecov code coverage
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: |
-          bash <(curl -s https://codecov.io/bash) -f ${{github.workspace}}/_build_unit_tests/_coverage/coverage.info || echo "Codecov did not collect coverage reports"
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./_build_unit_tests/_coverage/coverage.info
+          fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
