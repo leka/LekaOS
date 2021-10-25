@@ -8,12 +8,9 @@ using namespace leka;
 
 auto FirmwareKit::loadUpdate(FirmwareVersion &version) -> bool
 {
-	auto path_format = std::array<char, 64> {};
-	snprintf(path_format.data(), std::size(path_format), "%s", _path_format);
-
 	auto full_path = std::array<char, 64> {};
-	snprintf(full_path.data(), std::size(full_path), path_format.data(), version.major, version.minor,
-			 version.revision);
+	snprintf(full_path.data(), std::size(full_path), "%s", _path_format);
+	snprintf(full_path.data(), std::size(full_path), full_path.data(), version.major, version.minor, version.revision);
 
 	return loadUpdate(full_path.data());
 }
