@@ -14,7 +14,7 @@ APPLICATION_SIGNED_BIN="_release/application-signed.bin"
 
 if [ -z "$APPLICATION_HEX_SOURCE" ]; then
 	echo "APPLICATION_HEX_SOURCE is unset"
-	APPLICATION_HEX_SOURCE="_build/LEKA_V1_2_DEV/src/LekaOS.hex"
+	APPLICATION_HEX_SOURCE="_build/LEKA_V1_2_DEV/app/os/LekaOS.hex"
 fi
 
 if [ -z "$APPLICATION_VERSION" ]; then
