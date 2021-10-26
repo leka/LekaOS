@@ -17,4 +17,4 @@ jobs:
 
       - name: Run clang-format
         run: |
-          python3 tools/run-clang-format.py -r --extension=h,c,cpp --color=always --style=file ./src ./drivers ./libs ./spikes ./tests
+          python3 tools/run-clang-format.py -r --extension=h,hpp,c,cpp --color=always --style=file ./app ./drivers ./libs ./spikes ./tests

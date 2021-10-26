@@ -8,7 +8,7 @@ BOOTLOADER_HEX="$2"
 
 if [ -z "$BOOTLOADER_HEX_SOURCE" ]; then
 	echo "BOOTLOADER_HEX_SOURCE is unset"
-	BOOTLOADER_HEX_SOURCE="_build/LEKA_V1_2_DEV/bootloader/bootloader.hex"
+	BOOTLOADER_HEX_SOURCE="_build/LEKA_V1_2_DEV/app/bootloader/bootloader.hex"
 fi
 
 if [ -z "$BOOTLOADER_HEX" ]; then
