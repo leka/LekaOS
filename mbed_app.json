@@ -27,8 +27,12 @@
 			"qspif.QSPI_MIN_PROG_SIZE": 1,
 			"target.printf_lib": "std",
 			"target.features_add": [
-				"EXPERIMENTAL_API"
-			]
+				"EXPERIMENTAL_API",
+				"STORAGE"
+			],
+			"storage.storage_type": "TDB_INTERNAL",
+			"storage_tdb_internal.internal_size": "0x80000",
+			"storage_tdb_internal.internal_base_address": "0x08040000"
 		},
 		"LEKA_DISCO": {
 			"target_name": "\"LEKA_DISCO\""

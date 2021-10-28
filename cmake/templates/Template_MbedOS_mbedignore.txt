@@ -13,5 +13,3 @@ connectivity/drivers/mbedtls/*
 connectivity/drivers/nfc/*
 
 features/*
-storage/kvstore/*
-drivers/device_key/*
