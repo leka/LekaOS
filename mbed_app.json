@@ -30,9 +30,7 @@
 				"EXPERIMENTAL_API",
 				"STORAGE"
 			],
-			"storage.storage_type": "TDB_INTERNAL",
-			"storage_tdb_internal.internal_size": "0x80000",
-			"storage_tdb_internal.internal_base_address": "0x08040000"
+			"storage.storage_type": "TDB_INTERNAL"
 		},
 		"LEKA_DISCO": {
 			"target_name": "\"LEKA_DISCO\""
