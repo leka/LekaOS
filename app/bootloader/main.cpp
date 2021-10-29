@@ -32,31 +32,31 @@ auto main() -> int
 {
 	int rc;
 
-	log_info("Starting MCUboot");
+	// log_info("Starting MCUboot");
 
-	// Initialize mbedtls crypto for use by MCUboot
-	mbedtls_platform_context unused_ctx;
-	rc = mbedtls_platform_setup(&unused_ctx);
-	if (rc != 0) {
-		log_error("Failed to setup Mbed TLS, error: %d", rc);
-		exit(rc);
-	}
+	// // Initialize mbedtls crypto for use by MCUboot
+	// mbedtls_platform_context unused_ctx;
+	// rc = mbedtls_platform_setup(&unused_ctx);
+	// if (rc != 0) {
+	// 	log_error("Failed to setup Mbed TLS, error: %d", rc);
+	// 	exit(rc);
+	// }
 
-	struct boot_rsp rsp;
-	rc = boot_go(&rsp);
-	if (rc != 0) {
-		log_error("Failed to locate firmware image, error: %d", rc);
-		exit(rc);
-	}
+	// struct boot_rsp rsp;
+	// rc = boot_go(&rsp);
+	// if (rc != 0) {
+	// 	log_error("Failed to locate firmware image, error: %d", rc);
+	// 	exit(rc);
+	// }
 
-	uint32_t address = rsp.br_image_off + rsp.br_hdr->ih_hdr_size;
+	// uint32_t address = rsp.br_image_off + rsp.br_hdr->ih_hdr_size;
 
-	// Workaround: The extra \n ensures the last trace gets flushed
-	// before mbed_start_application() destroys the stack and jumps
-	// to the application
-	log_info("Booting firmware image at 0x%x\n", address);
+	// // Workaround: The extra \n ensures the last trace gets flushed
+	// // before mbed_start_application() destroys the stack and jumps
+	// // to the application
+	// log_info("Booting firmware image at 0x%x\n", address);
 
-	// Run the application in the primary slot
-	// Add header size offset to calculate the actual start address of application
-	mbed_start_application(address);
+	// // Run the application in the primary slot
+	// // Add header size offset to calculate the actual start address of application
+	// mbed_start_application(address);
 }
