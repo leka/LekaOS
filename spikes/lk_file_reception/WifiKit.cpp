@@ -52,10 +52,8 @@ void WifiKit::updateURL(HttpResponse *response)
 	const auto header_fields  = response->get_headers_fields();
 	auto containLocationField = [](const std::string *header_field) { return *header_field == "Location"; };
 
-	for (auto index = 0; index < response->get_headers_length(); index++) {
-		if (containLocationField(header_fields[index])) {
-			_url = *response->get_headers_values()[index];
-			break;
-		}
-	}
+	auto location_field_iterator = std::find_if(header_fields.begin(), header_fields.end(), containLocationField);
+	auto location_field_index	 = std::distance(header_fields.begin(), location_field_iterator);
+
+	_url = *response->get_headers_values()[location_field_index];
 }
