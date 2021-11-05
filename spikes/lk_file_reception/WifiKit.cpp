@@ -40,20 +40,21 @@ void WifiKit::downloadFile(const char *url, const char *path)
 
 auto WifiKit::isRedirected(HttpResponse *response) const -> bool
 {
-	for (const auto *header_field: response->get_headers_fields()) {
-		if (auto is_redirected = !(header_field->compare("Location")); is_redirected) {
-			return true;
-		}
-	}
-	return false;
+	const auto header_fields  = response->get_headers_fields();
+	auto containLocationField = [](const std::string *header_field) { return *header_field == "Location"; };
+
+	auto is_redirected = std::any_of(header_fields.begin(), header_fields.end(), containLocationField);
+	return is_redirected;
 }
 
 void WifiKit::updateURL(HttpResponse *response)
 {
-	for (size_t ix = 0; ix < response->get_headers_length(); ix++) {
-		if (auto header_contain_new_url = !(response->get_headers_fields()[ix]->compare("Location"));
-			header_contain_new_url) {
-			_url = *response->get_headers_values()[ix];
+	const auto header_fields  = response->get_headers_fields();
+	auto containLocationField = [](const std::string *header_field) { return *header_field == "Location"; };
+
+	for (auto index = 0; index < response->get_headers_length(); index++) {
+		if (containLocationField(header_fields[index])) {
+			_url = *response->get_headers_values()[index];
 			break;
 		}
 	}
