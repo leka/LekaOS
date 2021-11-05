@@ -49,7 +49,7 @@ auto FileSystemKit::File::read(uint8_t *buffer, uint32_t size) -> size_t
 	return std::fread(buffer, sizeof(uint8_t), size, _file.get());
 }
 
-auto FileSystemKit::File::write(uint8_t *data, uint32_t size) -> size_t
+auto FileSystemKit::File::write(const uint8_t *data, uint32_t size) -> size_t
 {
 	return std::fwrite(data, sizeof(uint8_t), size, _file.get());
 }

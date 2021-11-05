@@ -26,7 +26,7 @@ class FileSystemKit
 		auto write(lstd::span<uint8_t> data) -> size_t final;
 
 		auto read(uint8_t *buffer, uint32_t size) -> size_t final;
-		auto write(uint8_t *data, uint32_t size) -> size_t final;
+		auto write(const uint8_t *data, uint32_t size) -> size_t final;
 
 		void seek(size_t pos, int origin = SEEK_SET) final;
 		void rewind() final;
