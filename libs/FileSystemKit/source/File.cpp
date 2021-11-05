@@ -44,6 +44,16 @@ auto FileSystemKit::File::write(lstd::span<uint8_t> data) -> size_t
 	return std::fwrite(data.data(), sizeof(uint8_t), data.size(), _file.get());
 }
 
+auto FileSystemKit::File::read(lstd::span<char> buffer) -> size_t
+{
+	return std::fread(buffer.data(), sizeof(char), buffer.size(), _file.get());
+}
+
+auto FileSystemKit::File::write(lstd::span<char> data) -> size_t
+{
+	return std::fwrite(data.data(), sizeof(char), data.size(), _file.get());
+}
+
 auto FileSystemKit::File::read(uint8_t *buffer, uint32_t size) -> size_t
 {
 	return std::fread(buffer, sizeof(uint8_t), size, _file.get());
@@ -52,6 +62,16 @@ auto FileSystemKit::File::read(uint8_t *buffer, uint32_t size) -> size_t
 auto FileSystemKit::File::write(const uint8_t *data, uint32_t size) -> size_t
 {
 	return std::fwrite(data, sizeof(uint8_t), size, _file.get());
+}
+
+auto FileSystemKit::File::read(char *buffer, uint32_t size) -> size_t
+{
+	return std::fread(buffer, sizeof(char), size, _file.get());
+}
+
+auto FileSystemKit::File::write(const char *data, uint32_t size) -> size_t
+{
+	return std::fwrite(data, sizeof(char), size, _file.get());
 }
 
 void FileSystemKit::File::seek(size_t pos, int origin)
