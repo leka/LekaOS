@@ -43,10 +43,10 @@ class FileTest : public ::testing::Test
 		fclose(file);
 	}
 
-	void writeTempFile(uint8_t *data, uint32_t size)
+	void writeTempFile(lstd::span<char> data)
 	{
-		auto *file = fopen(tempFilename, "wb");
-		fwrite(data, sizeof(uint8_t), size, file);
+		auto *file = fopen(tempFilename, "w");
+		fwrite(data.data(), sizeof(char), data.size(), file);
 		fclose(file);
 	}
 
@@ -154,6 +154,38 @@ TEST_F(FileTest, writeSpanBinary)
 	ASSERT_EQ("abcdef", actual_data);
 }
 
+TEST_F(FileTest, writeCharSpan)
+{
+	auto input_data = lstd::to_array<char>({'a', 'b', 'c', 'd', 'e', 'f'});
+
+	file.open(tempFilename, "w");
+	auto size = file.write(input_data);
+
+	ASSERT_EQ(size, std::size(input_data));
+
+	file.close();
+
+	auto actual_data = readTempFile();
+
+	ASSERT_EQ("abcdef", actual_data);
+}
+
+TEST_F(FileTest, writeCharSpanBinary)
+{
+	auto input_data = lstd::to_array<char>({'a', 'b', 'c', 'd', 'e', 'f'});
+
+	file.open(tempFilename, "wb");
+	auto size = file.write(input_data);
+
+	ASSERT_EQ(size, std::size(input_data));
+
+	file.close();
+
+	auto actual_data = readTempFile();
+
+	ASSERT_EQ("abcdef", actual_data);
+}
+
 TEST_F(FileTest, writeBufferAndSize)
 {
 	uint8_t input_data[] = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};   // "abcdef"
@@ -173,6 +205,38 @@ TEST_F(FileTest, writeBufferAndSize)
 TEST_F(FileTest, writeBufferAndSizeBinary)
 {
 	uint8_t input_data[] = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};   // "abcdef"
+
+	file.open(tempFilename, "wb");
+	auto size = file.write(input_data, std::size(input_data));
+
+	ASSERT_EQ(size, std::size(input_data));
+
+	file.close();
+
+	auto actual_data = readTempFile();
+
+	ASSERT_EQ("abcdef", actual_data);
+}
+
+TEST_F(FileTest, writeCharBufferAndSize)
+{
+	char input_data[] = {'a', 'b', 'c', 'd', 'e', 'f'};
+
+	file.open(tempFilename, "w");
+	auto size = file.write(input_data, std::size(input_data));
+
+	ASSERT_EQ(size, std::size(input_data));
+
+	file.close();
+
+	auto actual_data = readTempFile();
+
+	ASSERT_EQ("abcdef", actual_data);
+}
+
+TEST_F(FileTest, writeCharBufferAndSizeBinary)
+{
+	char input_data[] = {'a', 'b', 'c', 'd', 'e', 'f'};
 
 	file.open(tempFilename, "wb");
 	auto size = file.write(input_data, std::size(input_data));
@@ -218,11 +282,43 @@ TEST_F(FileTest, readSpanBinary)
 	ASSERT_EQ(input_data, output_data);
 }
 
+TEST_F(FileTest, readCharSpan)
+{
+	auto input_data = lstd::to_array<char>({'a', 'b', 'c', 'd', 'e', 'f'});
+
+	writeTempFile(input_data);
+
+	file.open(tempFilename, "r");
+
+	auto output_data = std::array<char, 6> {};
+
+	auto size = file.read(output_data);
+
+	ASSERT_EQ(std::size(output_data), size);
+	ASSERT_EQ(input_data, output_data);
+}
+
+TEST_F(FileTest, readCharSpanBinary)
+{
+	auto input_data = lstd::to_array<char>({'a', 'b', 'c', 'd', 'e', 'f'});
+
+	writeTempFile(input_data);
+
+	file.open(tempFilename, "rb");
+
+	auto output_data = std::array<char, 6> {};
+
+	auto size = file.read(output_data);
+
+	ASSERT_EQ(std::size(output_data), size);
+	ASSERT_EQ(input_data, output_data);
+}
+
 TEST_F(FileTest, readBufferAndSize)
 {
 	uint8_t input_data[] = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};   // "abcdef"
 
-	writeTempFile(input_data, std::size(input_data));
+	writeTempFile(input_data);
 
 	file.open(tempFilename, "r");
 
@@ -240,11 +336,47 @@ TEST_F(FileTest, readBufferAndSizeBinary)
 {
 	uint8_t input_data[] = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};   // "abcdef"
 
-	writeTempFile(input_data, std::size(input_data));
+	writeTempFile(input_data);
 
 	file.open(tempFilename, "rb");
 
 	uint8_t output_data[6];
+
+	auto size = file.read(output_data, std::size(output_data));
+
+	ASSERT_EQ(std::size(output_data), size);
+	for (uint32_t i = 0; i < size; ++i) {
+		ASSERT_EQ(input_data[i], output_data[i]);
+	}
+}
+
+TEST_F(FileTest, readCharBufferAndSize)
+{
+	char input_data[] = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};	// "abcdef"
+
+	writeTempFile(input_data);
+
+	file.open(tempFilename, "r");
+
+	char output_data[6];
+
+	auto size = file.read(output_data, std::size(output_data));
+
+	ASSERT_EQ(std::size(output_data), size);
+	for (uint32_t i = 0; i < size; ++i) {
+		ASSERT_EQ(input_data[i], output_data[i]);
+	}
+}
+
+TEST_F(FileTest, readCharBufferAndSizeBinary)
+{
+	char input_data[] = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};	// "abcdef"
+
+	writeTempFile(input_data);
+
+	file.open(tempFilename, "rb");
+
+	char output_data[6];
 
 	auto size = file.read(output_data, std::size(output_data));
 

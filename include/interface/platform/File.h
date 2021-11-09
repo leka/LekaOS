@@ -19,8 +19,14 @@ struct File {
 	virtual auto read(lstd::span<uint8_t> buffer) -> size_t = 0;
 	virtual auto write(lstd::span<uint8_t> data) -> size_t	= 0;
 
-	virtual auto read(uint8_t *buffer, uint32_t size) -> size_t = 0;
-	virtual auto write(uint8_t *data, uint32_t size) -> size_t	= 0;
+	virtual auto read(lstd::span<char> buffer) -> size_t = 0;
+	virtual auto write(lstd::span<char> data) -> size_t	 = 0;
+
+	virtual auto read(uint8_t *buffer, uint32_t size) -> size_t		 = 0;
+	virtual auto write(const uint8_t *data, uint32_t size) -> size_t = 0;
+
+	virtual auto read(char *buffer, uint32_t size) -> size_t	  = 0;
+	virtual auto write(const char *data, uint32_t size) -> size_t = 0;
 
 	virtual void seek(size_t pos, int origin) = 0;
 
