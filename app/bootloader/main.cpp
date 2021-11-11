@@ -33,20 +33,24 @@ auto main() -> int
 		rtos::ThisThread::sleep_for(1min);
 	}
 
-	// Initialize mbedtls crypto for use by MCUboot
-	mbedtls_platform_context unused_ctx;
-	if (auto ret = mbedtls_platform_setup(&unused_ctx); ret != 0) {
-		log_error("Failed to setup Mbed TLS, error: %d", ret);
-		exit(ret);
-	}
+	uint32_t address = 0x8041000;
 
-	struct boot_rsp rsp;
-	if (auto ret = boot_go(&rsp); ret != FIH_SUCCESS) {
-		log_error("Failed to locate firmware image, error: %d", ret);
-		exit(ret);
-	}
+	if (battery.isCharging() && battery.getVoltage() > CoreBattery::Capacity::quarter) {
+		// Initialize mbedtls crypto for use by MCUboot
+		mbedtls_platform_context unused_ctx;
+		if (auto ret = mbedtls_platform_setup(&unused_ctx); ret != 0) {
+			log_error("Failed to setup Mbed TLS, error: %d", ret);
+			exit(ret);
+		}
 
-	uint32_t address = rsp.br_image_off + rsp.br_hdr->ih_hdr_size;
+		struct boot_rsp rsp;
+		if (auto ret = boot_go(&rsp); ret != FIH_SUCCESS) {
+			log_error("Failed to locate firmware image, error: %d", ret);
+			exit(ret);
+		}
+
+		address = rsp.br_image_off + rsp.br_hdr->ih_hdr_size;
+	}
 
 	// Workaround: The extra \n ensures the last trace gets flushed
 	// before mbed_start_application() destroys the stack and jumps
