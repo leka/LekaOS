@@ -25,23 +25,3 @@ TEST(CoreBatteryTest, getVoltage)
 
 	ASSERT_FLOAT_EQ(expected, corebattery.getVoltage());
 }
-
-TEST(CoreBatteryTest, getVoltageLowest)
-{
-	auto AnalogIn_read_voltage_value = float {0};
-	spy_AnalogIn_setVoltageValue(AnalogIn_read_voltage_value);
-
-	auto expected = AnalogIn_read_voltage_value / CoreBattery::voltage::divider;
-
-	ASSERT_FLOAT_EQ(expected, corebattery.getVoltage());
-}
-
-TEST(CoreBatteryTest, getVoltageHighest)
-{
-	auto AnalogIn_read_voltage_value = float {1.65};
-	spy_AnalogIn_setVoltageValue(AnalogIn_read_voltage_value);
-
-	auto expected = AnalogIn_read_voltage_value / CoreBattery::voltage::divider;
-
-	ASSERT_FLOAT_EQ(expected, corebattery.getVoltage());
-}
