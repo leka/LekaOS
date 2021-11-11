@@ -17,8 +17,11 @@ class CoreBattery
 	auto getVoltage() -> float;
 
 	struct capacity {
-		static constexpr auto max = float {12.60};
-		static constexpr auto min = float {7.50};
+		static constexpr auto full			= float {12.52};
+		static constexpr auto three_quarter = float {11.73};
+		static constexpr auto half			= float {11.08};
+		static constexpr auto quarter		= float {10.47};
+		static constexpr auto empty			= float {09.00};
 	};
 
 	struct voltage {
