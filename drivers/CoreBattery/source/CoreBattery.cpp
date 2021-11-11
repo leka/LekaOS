@@ -8,7 +8,14 @@ namespace leka {
 
 auto CoreBattery::getVoltage() -> float
 {
-	auto raw	 = readRawVoltage();
+	auto raw			  = 0.f;
+	const auto interation = 10;
+
+	for (int i = 0; i < interation; i++) {
+		raw += readRawVoltage();
+	}
+	raw /= interation;
+
 	auto voltage = convertToRealVoltage(raw);
 	return voltage;
 }
