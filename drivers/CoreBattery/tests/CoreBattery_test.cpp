@@ -18,10 +18,12 @@ TEST(CoreBatteryTest, initialization)
 
 TEST(CoreBatteryTest, getVoltage)
 {
-	auto AnalogIn_read_voltage_value = float {1.2};
-	spy_AnalogIn_setVoltageValue(AnalogIn_read_voltage_value);
+	auto AnalogIn_voltage_value = float {1.2};
+	spy_AnalogIn_setVoltageValue(AnalogIn_voltage_value);
 
-	auto expected = AnalogIn_read_voltage_value / CoreBattery::voltage::divider;
+	auto expected_voltage = CoreBattery::polynomial::degree_0 +
+							CoreBattery::polynomial::degree_1 * AnalogIn_voltage_value +
+							CoreBattery::polynomial::degree_2 * AnalogIn_voltage_value * AnalogIn_voltage_value;
 
-	ASSERT_FLOAT_EQ(expected, corebattery.getVoltage());
+	ASSERT_FLOAT_EQ(expected_voltage, corebattery.getVoltage());
 }

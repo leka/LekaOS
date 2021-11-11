@@ -9,8 +9,13 @@ namespace leka {
 auto CoreBattery::getVoltage() -> float
 {
 	auto raw	 = readRawVoltage();
-	auto voltage = raw / voltage::divider;
+	auto voltage = convertToRealVoltage(raw);
 	return voltage;
+}
+
+auto CoreBattery::convertToRealVoltage(float value) const -> float
+{
+	return polynomial::degree_0 + polynomial::degree_1 * value + polynomial::degree_2 * value * value;
 }
 
 auto CoreBattery::readRawVoltage() -> float
