@@ -25,12 +25,18 @@ class CoreBattery
 	};
 
 	struct voltage {
-		static constexpr auto divider	= float {0.129};
 		static constexpr auto reference = float {3.33};
+	};
+
+	struct polynomial {
+		static constexpr auto degree_0 = float {47.5};
+		static constexpr auto degree_1 = float {-50.7};
+		static constexpr auto degree_2 = float {15.8};
 	};
 
   private:
 	auto readRawVoltage() -> float;
+	[[nodiscard]] auto convertToRealVoltage(float value) const -> float;
 
 	mbed::AnalogIn _pin;
 };
