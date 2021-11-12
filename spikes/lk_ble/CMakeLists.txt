@@ -15,7 +15,7 @@ target_sources(spike_lk_ble
 )
 
 target_link_libraries(spike_lk_ble
-	lib_BLE
+	BLEKit
 )
 
 target_link_custom_leka_targets(spike_lk_ble)
