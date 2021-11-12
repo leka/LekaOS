@@ -19,7 +19,8 @@ auto main() -> int
 
 	log_info("Hello, World!");
 
-	auto ble_gap = BLEGap {};
+	auto &ble	 = BLE::Instance();
+	auto ble_gap = BLEGap {ble};
 
 	while (true) {
 		log_info("Main thread running...");
