@@ -5,9 +5,11 @@
 #ifndef _LEKA_OS_LIB_BLE_GAP_H_
 #define _LEKA_OS_LIB_BLE_GAP_H_
 
+#include "ble/Gap.h"
+
 namespace leka {
 
-class BLEGap
+class BLEGap : public ble::Gap::EventHandler
 {
   public:
 	explicit BLEGap() = default;
