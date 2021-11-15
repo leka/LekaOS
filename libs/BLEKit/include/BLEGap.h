@@ -23,6 +23,15 @@ class BLEGap : public ble::Gap::EventHandler
 	void start();
 	void stop();
 
+	void onInit(mbed::Callback<void(BLE &, events::EventQueue &)> cb);
+	void onConnect(mbed::Callback<void(BLE &, events::EventQueue &, const ble::ConnectionCompleteEvent &event)> cb);
+
+  protected:
+	virtual void startActivity()
+	{
+		_event_queue.call([this]() { startAdvertising(); });
+	}
+
   private:
 	void onInitComplete(BLE::InitializationCompleteCallbackContext *params);
 	void onConnectionComplete(const ble::ConnectionCompleteEvent &event) override;
@@ -42,6 +51,9 @@ class BLEGap : public ble::Gap::EventHandler
 	ble::advertising_handle_t _advertising_handle = ble::LEGACY_ADVERTISING_HANDLE;
 
 	events::EventQueue &_event_queue;
+
+	mbed::Callback<void(BLE &, events::EventQueue &)> _post_init_cb;
+	mbed::Callback<void(BLE &, events::EventQueue &, const ble::ConnectionCompleteEvent &event)> _post_connect_cb;
 };
 
 }	// namespace leka
