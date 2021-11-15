@@ -28,30 +28,48 @@ void BLEGap::stop()
 	}
 }
 
+void BLEGap::onInit(mbed::Callback<void(BLE &, events::EventQueue &)> cb)
+{
+	_post_init_cb = cb;
+}
+
+void BLEGap::onConnect(mbed::Callback<void(BLE &, events::EventQueue &, const ble::ConnectionCompleteEvent &event)> cb)
+{
+	_post_connect_cb = cb;
+}
+
 void BLEGap::onInitComplete(BLE::InitializationCompleteCallbackContext *params)
 {
 	if (params->error != BLE_ERROR_NONE) {
 		return;
 	}
 
-	startAdvertising();
+	startActivity();
+
+	if (_post_init_cb) {
+		_post_init_cb(_ble, _event_queue);
+	}
 }
 
 void BLEGap::onConnectionComplete(const ble::ConnectionCompleteEvent &event)
 {
-	if (event.getStatus() != BLE_ERROR_NONE) {
-		startAdvertising();
+	if (event.getStatus() == BLE_ERROR_NONE) {
+		if (_post_connect_cb) {
+			_post_connect_cb(_ble, _event_queue, event);
+		}
+	} else {
+		startActivity();
 	}
 }
 
 void BLEGap::onDisconnectionComplete(const ble::DisconnectionCompleteEvent &event)
 {
-	startAdvertising();
+	startActivity();
 }
 
 void BLEGap::onAdvertisingEnd(const ble::AdvertisingEndEvent &event)
 {
-	startAdvertising();
+	startActivity();
 }
 
 void BLEGap::scheduleBLEEvents(BLE::OnEventsToProcessCallbackContext *event)
