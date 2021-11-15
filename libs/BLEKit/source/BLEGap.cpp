@@ -12,6 +12,10 @@ void BLEGap::start()
 		return;
 	}
 
+	_ble_gap.setEventHandler(this);
+
+	_ble.onEventsToProcess({this, &BLEGap::scheduleBLEEvents});
+
 	if (auto error = _ble.init(this, &BLEGap::onInitComplete); error != BLE_ERROR_NONE) {
 		return;
 	}
@@ -48,6 +52,11 @@ void BLEGap::onDisconnectionComplete(const ble::DisconnectionCompleteEvent &even
 void BLEGap::onAdvertisingEnd(const ble::AdvertisingEndEvent &event)
 {
 	startAdvertising();
+}
+
+void BLEGap::scheduleBLEEvents(BLE::OnEventsToProcessCallbackContext *event)
+{
+	_event_queue.call(mbed::callback(&event->ble, &BLE::processEvents));
 }
 
 void BLEGap::startAdvertising()
