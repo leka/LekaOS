@@ -4,6 +4,8 @@
 
 #include "BLEGap.h"
 
+#include "LogKit.h"
+
 using namespace leka;
 
 void BLEGap::setDeviceName(const lstd::span<const char> name)
@@ -55,6 +57,7 @@ void BLEGap::onConnect(mbed::Callback<void(BLE &, events::EventQueue &, const bl
 void BLEGap::onInitComplete(BLE::InitializationCompleteCallbackContext *params)
 {
 	if (params->error != BLE_ERROR_NONE) {
+		log_error("Ble initialization failed.");
 		return;
 	}
 
@@ -104,6 +107,7 @@ void BLEGap::startAdvertising()
 
 	if (auto error = _ble_gap.setAdvertisingParameters(_advertising_handle, advertising_params);
 		error != BLE_ERROR_NONE) {
+		log_error("_ble.gap().setAdvertisingParameters() failed");
 		return;
 	}
 
@@ -123,11 +127,13 @@ void BLEGap::startAdvertising()
 	if (auto error =
 			_ble_gap.setAdvertisingPayload(_advertising_handle, _advertising_data_builder.getAdvertisingData());
 		error != BLE_ERROR_NONE) {
+		log_error("Gap::setAdvertisingPayload() failed");
 		return;
 	}
 
 	if (auto error = _ble_gap.startAdvertising(_advertising_handle, ble::adv_duration_t(ble::millisecond_t(4000)));
 		error != BLE_ERROR_NONE) {
+		log_error("Gap::startAdvertising() failed");
 		return;
 	}
 }
