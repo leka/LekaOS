@@ -22,6 +22,8 @@ auto main() -> int
 	auto &ble	 = BLE::Instance();
 	auto ble_gap = BLEGap {ble};
 
+	ble_gap.start();
+
 	while (true) {
 		log_info("Main thread running...");
 		rtos::ThisThread::sleep_for(5s);
