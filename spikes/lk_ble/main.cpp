@@ -7,6 +7,7 @@
 #include "rtos/ThisThread.h"
 
 #include "BLEGap.h"
+#include "BLEGatt.h"
 
 #include "LogKit.h"
 
@@ -24,6 +25,9 @@ auto main() -> int
 
 	auto &ble	 = BLE::Instance();
 	auto ble_gap = BLEGap {ble, event_queue};
+
+	BLEGatt demo;
+	ble_gap.onInit(mbed::Callback(&demo, &BLEGatt::start));
 
 	ble_gap.start();
 
