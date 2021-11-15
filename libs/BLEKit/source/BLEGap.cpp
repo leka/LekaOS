@@ -61,32 +61,40 @@ void BLEGap::scheduleBLEEvents(BLE::OnEventsToProcessCallbackContext *event)
 
 void BLEGap::startAdvertising()
 {
-	if (_ble_gap.isAdvertisingActive(ble::LEGACY_ADVERTISING_HANDLE)) {
+	if (_ble_gap.isAdvertisingActive(_advertising_handle)) {
 		// We are already advertising
 		return;
 	}
 
-	ble::AdvertisingParameters advertising_params(ble::advertising_type_t::CONNECTABLE_UNDIRECTED);
-	if (auto error = _ble_gap.setAdvertisingParameters(ble::LEGACY_ADVERTISING_HANDLE, advertising_params);
+	ble::AdvertisingParameters advertising_params(ble::advertising_type_t::CONNECTABLE_UNDIRECTED,
+												  ble::adv_interval_t(ble::millisecond_t(40)));
+	advertising_params.setTxPower(-126);
+
+	if (auto error = _ble_gap.setAdvertisingParameters(_advertising_handle, advertising_params);
 		error != BLE_ERROR_NONE) {
 		return;
 	}
 
-	constexpr auto MAX_ADVERTISING_PAYLOAD_SIZE {50};
-	uint8_t _advertising_buffer[MAX_ADVERTISING_PAYLOAD_SIZE] {};
-	ble::AdvertisingDataBuilder _advertising_data_builder {_advertising_buffer};
 	_advertising_data_builder.clear();
+	// _advertising_data_builder.setAppearance(ble::adv_data_appearance_t::GENERIC_HEART_RATE_SENSOR);
 	_advertising_data_builder.setFlags();
+	// _advertising_data_builder.setTxPowerAdvertised(126);
 	_advertising_data_builder.setName("Leka_BLEGap");
-
-	if (auto error = _ble_gap.setAdvertisingPayload(ble::LEGACY_ADVERTISING_HANDLE,
-													_advertising_data_builder.getAdvertisingData());
-		error != BLE_ERROR_NONE) {
-		return;
-	}
+	// const uint8_t specific_data[] = {0x2A, 0x2B, 0x2C, 0x2D};
+	// _advertising_data_builder.setManufacturerSpecificData(specific_data);
+	// _advertising_data_builder.setAdvertisingInterval(ble::adv_interval_t::min());
+	// _advertising_data_builder.setConnectionIntervalPreference(ble::conn_interval_t::min(),
+	// ble::conn_interval_t::max());
+	// setServiceData // Some data in payload (not a real service)
+	// setLocalServiceList // Available services
 
 	if (auto error =
-			_ble_gap.startAdvertising(ble::LEGACY_ADVERTISING_HANDLE, ble::adv_duration_t(ble::millisecond_t(4000)));
+			_ble_gap.setAdvertisingPayload(_advertising_handle, _advertising_data_builder.getAdvertisingData());
+		error != BLE_ERROR_NONE) {
+		return;
+	}
+
+	if (auto error = _ble_gap.startAdvertising(_advertising_handle, ble::adv_duration_t(ble::millisecond_t(4000)));
 		error != BLE_ERROR_NONE) {
 		return;
 	}

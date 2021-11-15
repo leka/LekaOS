@@ -12,11 +12,13 @@
 
 namespace leka {
 
+static constexpr uint16_t MAX_ADVERTISING_PAYLOAD_SIZE = 50;
+
 class BLEGap : public ble::Gap::EventHandler
 {
   public:
 	explicit BLEGap(BLE &ble, events::EventQueue &event_queue)
-		: _ble(ble), _ble_gap(ble.gap()), _event_queue(event_queue) {};
+		: _ble(ble), _ble_gap(ble.gap()), _advertising_data_builder(_advertising_buffer), _event_queue(event_queue) {};
 
 	void start();
 	void stop();
@@ -30,9 +32,14 @@ class BLEGap : public ble::Gap::EventHandler
 	void scheduleBLEEvents(BLE::OnEventsToProcessCallbackContext *event);
 
 	void startAdvertising();
+	// void stopAdvertising();
 
 	BLE &_ble;
 	ble::Gap &_ble_gap;
+
+	uint8_t _advertising_buffer[MAX_ADVERTISING_PAYLOAD_SIZE] {};
+	ble::AdvertisingDataBuilder _advertising_data_builder;
+	ble::advertising_handle_t _advertising_handle = ble::LEGACY_ADVERTISING_HANDLE;
 
 	events::EventQueue &_event_queue;
 };
