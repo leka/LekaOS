@@ -8,21 +8,22 @@ namespace leka {
 
 auto CoreBattery::getVoltage() -> float
 {
-	auto raw			  = 0.f;
-	const auto interation = 10;
+	auto raw_sum		  = float {};
+	const auto iterations = 10;
 
-	for (int i = 0; i < interation; i++) {
-		raw += readRawVoltage();
+	for (int i = 0; i < iterations; i++) {
+		raw_sum += readRawVoltage();
 	}
-	raw /= interation;
+	auto raw_average = raw_sum / iterations;
 
-	auto voltage = convertToRealVoltage(raw);
+	auto voltage = convertToRealVoltage(raw_average);
 	return voltage;
 }
 
 auto CoreBattery::convertToRealVoltage(float value) const -> float
 {
-	return polynomial::degree_0 + polynomial::degree_1 * value + polynomial::degree_2 * value * value;
+	return PolynomialCoefficient::degree_0 + PolynomialCoefficient::degree_1 * value +
+		   PolynomialCoefficient::degree_2 * value * value;
 }
 
 auto CoreBattery::readRawVoltage() -> float
