@@ -30,4 +30,9 @@ auto CoreBattery::readRawVoltage() -> float
 	return _pin.read_voltage();
 }
 
+auto CoreBattery::isInCharge() -> bool
+{
+	return _charge_input.read() == 1;
+}
+
 }	// namespace leka
