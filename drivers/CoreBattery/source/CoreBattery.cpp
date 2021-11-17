@@ -16,7 +16,7 @@ auto CoreBattery::getVoltage() -> float
 
 auto CoreBattery::readRawVoltage() -> float
 {
-	return _pin.read_voltage();
+	return _voltage_pin.read_voltage();
 }
 
 auto CoreBattery::getAverageVoltage(const int iterations) -> float
@@ -37,7 +37,7 @@ auto CoreBattery::convertToRealVoltage(float value) const -> float
 
 auto CoreBattery::isInCharge() -> bool
 {
-	return _charge_input.read() == 1;
+	return _status_pin.read() == 1;
 }
 
 }	// namespace leka

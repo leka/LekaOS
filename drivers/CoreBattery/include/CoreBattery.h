@@ -13,8 +13,8 @@ namespace leka {
 class CoreBattery
 {
   public:
-	explicit CoreBattery(PinName pin, mbed::interface::DigitalIn &charge_input)
-		: _pin {mbed::AnalogIn(pin, Voltage::reference)}, _charge_input(charge_input) {};
+	explicit CoreBattery(PinName voltage_pin, mbed::interface::DigitalIn &status_pin)
+		: _voltage_pin {mbed::AnalogIn(voltage_pin, Voltage::reference)}, _status_pin(status_pin) {};
 
 	auto getVoltage() -> float;
 	auto isInCharge() -> bool;
@@ -42,8 +42,8 @@ class CoreBattery
 	auto getAverageVoltage(int iterations) -> float;
 	[[nodiscard]] auto convertToRealVoltage(float value) const -> float;
 
-	mbed::AnalogIn _pin;
-	mbed::interface::DigitalIn &_charge_input;
+	mbed::AnalogIn _voltage_pin;
+	mbed::interface::DigitalIn &_status_pin;
 };
 
 }	// namespace leka
