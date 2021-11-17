@@ -6,15 +6,19 @@
 #define _LEKA_OS_DRIVER_CORE_BATTERY_H_
 
 #include "drivers/AnalogIn.h"
+#include "drivers/interfaces/InterfaceDigitalIn.h"
 
 namespace leka {
 
 class CoreBattery
 {
   public:
-	explicit CoreBattery(PinName voltage_pin) : _voltage_pin {mbed::AnalogIn(voltage_pin, analog_voltage_reference)} {};
+	explicit CoreBattery(PinName voltage_pin, mbed::interface::DigitalIn &charge_status_input)
+		: _voltage_pin {mbed::AnalogIn(voltage_pin, analog_voltage_reference)},
+		  _charge_status_input(charge_status_input) {};
 
 	auto getVoltage() -> float;
+	auto isCharging() -> bool;
 
 	struct Capacity {
 		static constexpr auto full			= float {12.52};
@@ -38,6 +42,7 @@ class CoreBattery
 	[[nodiscard]] auto convertToRealVoltage(float value) const -> float;
 
 	mbed::AnalogIn _voltage_pin;
+	mbed::interface::DigitalIn &_charge_status_input;
 };
 
 }	// namespace leka

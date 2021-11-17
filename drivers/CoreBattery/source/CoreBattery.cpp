@@ -36,4 +36,9 @@ auto CoreBattery::convertToRealVoltage(float value) const -> float
 		   PolynomialCoefficient::degree_2 * value * value;
 }
 
+auto CoreBattery::isCharging() -> bool
+{
+	return _charge_status_input.read() == 1;
+}
+
 }	// namespace leka
