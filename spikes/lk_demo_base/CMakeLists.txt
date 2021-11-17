@@ -12,6 +12,7 @@ target_include_directories(spike_lk_demo_base
 target_sources(spike_lk_demo_base
 	PRIVATE
 		main.cpp
+		WatchdogUtils.cpp
 )
 
 target_link_libraries(spike_lk_demo_base
