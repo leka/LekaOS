@@ -78,7 +78,7 @@ namespace rfid::cr95hf {
 		constexpr Protocol iso15693 = {
 			.id = 0x01, .gain = std::byte {0x00}, .modulation = std::byte {0xD0}};	 // gain = 34 dB, modulation = 95%
 		constexpr Protocol iso14443A = {
-			.id = 0x02, .gain = std::byte {0x01}, .modulation = std::byte {0xD0}};	 // gain = 32 dB, modulation = 95%
+			.id = 0x02, .gain = std::byte {0x00}, .modulation = std::byte {0xD0}};	 // gain = 34 dB, modulation = 95%
 		constexpr Protocol iso14443B = {
 			.id = 0x03, .gain = std::byte {0x00}, .modulation = std::byte {0x20}};	 // gain = 34 dB, modulation = 17%
 		constexpr Protocol iso18092 = {

@@ -10,7 +10,7 @@
 namespace leka {
 void RFIDKit::init()
 {
-	printf("init \n");
+	// printf("init \n");
 	static auto getTagDataCallback = [this]() { this->getTagData(); };
 
 	_rfid_reader.registerTagAvailableCallback(getTagDataCallback);
@@ -21,7 +21,7 @@ void RFIDKit::getTagData()
 {
 	switch (_state) {
 		case state::SENSOR_WAKE_UP: {
-			printf("CURRENT STATE : SENSOR_SLEEP\n");
+			// printf("CURRENT STATE : SENSOR_SLEEP\n");
 			if (_rfid_reader.checkForTagDetection()) {
 				_rfid_reader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 				_state = state::TAG_COMMUNICATION_PROTOCOL_SET;
@@ -32,7 +32,7 @@ void RFIDKit::getTagData()
 		} break;
 
 		case state::TAG_COMMUNICATION_PROTOCOL_SET: {
-			printf("CURRENT STATE : TAG_PROTOCOL_SET\n");
+			// printf("CURRENT STATE : TAG_PROTOCOL_SET\n");
 			sendREQA();
 			_state = state::WAIT_FOR_ATQA_RESPONSE;
 
@@ -49,7 +49,7 @@ void RFIDKit::getTagData()
 		} break;
 
 		case state::TAG_IDENTIFIED: {
-			printf("CURRENT STATE : TAG_IDENTIFIED\n");
+			// printf("CURRENT STATE : TAG_IDENTIFIED\n");
 
 			if (receiveReadTagData()) {
 				sendReadRegister6();
@@ -60,14 +60,14 @@ void RFIDKit::getTagData()
 			}
 		} break;
 		case state::TAG_ACTIVATED: {
-			printf("CURRENT STATE : TAG_ACTIVATED\n");
+			// printf("CURRENT STATE : TAG_ACTIVATED\n");
 
 			if (receiveReadTagData()) {
-				printf("Data : ");
-				for (int i = 0; i < _tag.data.size(); ++i) {
-					printf("%c, ", _tag.data[i]);
-				}
-				printf("\n");
+				// 	printf("Data : ");
+				// 	for (int i = 0; i < _tag.data.size(); ++i) {
+				// 		printf("%x, ", _tag.data[i]);
+				// 	}
+				// 	printf("\n");
 			}
 
 			_rfid_reader.setModeTagDetection();
