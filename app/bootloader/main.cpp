@@ -1,20 +1,8 @@
-/*
- * Copyright (c) 2020 Embedded Planet
- * Copyright (c) 2020 ARM Limited
- * SPDX-License-Identifier: Apache-2.0
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License
- */
+// Leka - LekaOS
+// Copyright 2020 Embedded Planet
+// Copyright 2020 ARM Limited
+// SPDX-License-Identifier: Apache-2.0
+// Original file: https://github.com/mcu-tools/mcuboot/blob/main/boot/mbed/mcuboot_main.cpp
 
 #include "mbed_application.h"
 #include "mbedtls/platform.h"
@@ -24,29 +12,26 @@
 #include "LogKit.h"
 #include "bootutil/bootutil.h"
 #include "bootutil/image.h"
-#include "hal/serial_api.h"
 
-static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
+static auto serial = mbed::BufferedSerial(CONSOLE_TX, CONSOLE_RX, 115200);
 
 auto main() -> int
 {
-	int rc;
+	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 
 	log_info("Starting MCUboot");
 
 	// Initialize mbedtls crypto for use by MCUboot
 	mbedtls_platform_context unused_ctx;
-	rc = mbedtls_platform_setup(&unused_ctx);
-	if (rc != 0) {
-		log_error("Failed to setup Mbed TLS, error: %d", rc);
-		exit(rc);
+	if (auto ret = mbedtls_platform_setup(&unused_ctx); ret != 0) {
+		log_error("Failed to setup Mbed TLS, error: %d", ret);
+		exit(ret);
 	}
 
 	struct boot_rsp rsp;
-	rc = boot_go(&rsp);
-	if (rc != 0) {
-		log_error("Failed to locate firmware image, error: %d", rc);
-		exit(rc);
+	if (auto ret = boot_go(&rsp); ret != FIH_SUCCESS) {
+		log_error("Failed to locate firmware image, error: %d", ret);
+		exit(ret);
 	}
 
 	uint32_t address = rsp.br_image_off + rsp.br_hdr->ih_hdr_size;
