@@ -8,7 +8,7 @@ namespace leka {
 
 auto CoreBattery::getVoltage() -> float
 {
-	auto raw_average = getAverageVoltage(100);
+	auto raw_average = getAverageVoltage();
 	auto voltage	 = convertToRealVoltage(raw_average);
 
 	return voltage;
@@ -19,9 +19,10 @@ auto CoreBattery::readRawVoltage() -> float
 	return _voltage_pin.read_voltage();
 }
 
-auto CoreBattery::getAverageVoltage(const int iterations) -> float
+auto CoreBattery::getAverageVoltage() -> float
 {
-	auto raw_sum = float {};
+	constexpr auto iterations = int {100};
+	auto raw_sum			  = float {};
 
 	for (int i = 0; i < iterations; i++) {
 		raw_sum += readRawVoltage();

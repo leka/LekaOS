@@ -37,7 +37,7 @@ class CoreBattery
 	};
 
 	auto readRawVoltage() -> float;
-	auto getAverageVoltage(int iterations) -> float;
+	auto getAverageVoltage() -> float;
 	[[nodiscard]] auto convertToRealVoltage(float value) const -> float;
 
 	mbed::AnalogIn _voltage_pin;
