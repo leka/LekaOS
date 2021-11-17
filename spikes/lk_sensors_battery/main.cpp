@@ -2,104 +2,36 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include <array>
-#include <cstdint>
-
-#include "PinNames.h"
-
 #include "drivers/BufferedSerial.h"
+#include "drivers/DigitalIn.h"
 #include "rtos/ThisThread.h"
-#include "rtos/Thread.h"
 
 #include "CoreBattery.h"
-#include "CoreMotor.h"
-#include "CorePwm.h"
-#include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
-#include "SDBlockDevice.h"
-#include "Utils.h"
 
 using namespace leka;
 using namespace std::chrono;
-
-constexpr auto PRINT_BATTERY_VOLTAGE_LOG = false;
-constexpr auto fileName =
-	std::array<char, 36> {"2021_03_30-Battery-Voltage-Log.csv"};   // YYYY_MM_DD-Battery-Voltage-Log.csv
-
-const FileManager sd;
 
 auto main() -> int
 {
 	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
 
+	auto charge_input = mbed::DigitalIn {PinName::BATTERY_CHARGE_STATUS};
+	auto corebattery  = leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_input};
+
 	log_info("Hello, World!\n\n");
 
 	HelloWorld hello;
 	hello.start();
 
-	auto battery = CoreBattery {PinName::BATTERY_VOLTAGE};
-
-	auto battery_thread = rtos::Thread {};
-	auto battery_lambda = [&battery] {
-		auto now	 = [] { return static_cast<int>(rtos::Kernel::Clock::now().time_since_epoch().count()); };
-		auto voltage = [&] { return battery.getVoltage(); };
-
-		auto buffer = std::array<char, 64> {};
-
-		while (true) {
-			auto length = snprintf(buffer.data(), std::size(buffer), "%i, %f\n", now(), voltage());
-			writeSDFile(fileName.data(), buffer.data(), length);
-			rtos::ThisThread::sleep_for(30s);
-		}
-	};
-
-	auto motor_left_dir_1 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
-	auto morot_left_dir_2 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
-	auto morot_left_speed = CorePwm {MOTOR_LEFT_PWM};
-
-	auto motor_right_dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
-	auto morot_right_dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
-	auto morot_right_speed = CorePwm {MOTOR_RIGHT_PWM};
-
-	auto motor_left	 = CoreMotor {motor_left_dir_1, morot_left_dir_2, morot_left_speed};
-	auto motor_right = CoreMotor {motor_right_dir_1, morot_right_dir_2, morot_right_speed};
-
-	auto motors_thread = rtos::Thread {};
-	auto motors_lambda = [&motor_left, &motor_right] {
-		while (true) {
-			motor_left.spin(Rotation::counterClockwise, 1.0f);
-			motor_right.spin(Rotation::counterClockwise, 1.0f);
-
-			rtos::ThisThread::sleep_for(50s);
-
-			motor_left.stop();
-			motor_right.stop();
-
-			rtos::ThisThread::sleep_for(10s);
-		}
-	};
-
-	rtos::ThisThread::sleep_for(2s);
-
-	log_info("Starting...");
-
-	rtos::ThisThread::sleep_for(1s);
-
-	if (PRINT_BATTERY_VOLTAGE_LOG) {
-		auto buffer = std::array<char, 2048> {};
-		auto length = readSdFile(fileName.data(), buffer.data(), std::size(buffer));
-
-		log_info("Battery data:\n");
-		serial.write(buffer.data(), length);
-	} else {
-		battery_thread.start(battery_lambda);
-		motors_thread.start(motors_lambda);
-	}
-
 	while (true) {
-		log_info("Main thread is running...");
-		rtos::ThisThread::sleep_for(5s);
+		if (corebattery.isCharging()) {
+			log_info("Battery at %.2fV and in charge.", corebattery.getVoltage());
+		} else {
+			log_info("Battery at %.2fV.", corebattery.getVoltage());
+		}
+		rtos::ThisThread::sleep_for(1s);
 	}
 }
