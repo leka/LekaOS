@@ -14,7 +14,7 @@ class CoreBattery
 {
   public:
 	explicit CoreBattery(PinName voltage_pin, mbed::interface::DigitalIn &status_pin)
-		: _voltage_pin {mbed::AnalogIn(voltage_pin, Voltage::reference)}, _status_pin(status_pin) {};
+		: _voltage_pin {mbed::AnalogIn(voltage_pin, analog_voltage_reference)}, _status_pin(status_pin) {};
 
 	auto getVoltage() -> float;
 	auto isInCharge() -> bool;
@@ -28,9 +28,7 @@ class CoreBattery
 	};
 
   private:
-	struct Voltage {
-		static constexpr auto reference = float {3.33};
-	};
+	static constexpr auto analog_voltage_reference = float {3.33};
 
 	struct PolynomialCoefficient {
 		static constexpr auto degree_0 = float {47.5};
