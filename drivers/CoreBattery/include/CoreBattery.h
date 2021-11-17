@@ -17,7 +17,7 @@ class CoreBattery
 		: _voltage_pin {mbed::AnalogIn(voltage_pin, analog_voltage_reference)}, _status_pin(status_pin) {};
 
 	auto getVoltage() -> float;
-	auto isInCharge() -> bool;
+	auto isCharging() -> bool;
 
 	struct Capacity {
 		static constexpr auto full			= float {12.52};

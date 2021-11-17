@@ -35,7 +35,7 @@ auto CoreBattery::convertToRealVoltage(float value) const -> float
 		   PolynomialCoefficient::degree_2 * value * value;
 }
 
-auto CoreBattery::isInCharge() -> bool
+auto CoreBattery::isCharging() -> bool
 {
 	return _status_pin.read() == 1;
 }

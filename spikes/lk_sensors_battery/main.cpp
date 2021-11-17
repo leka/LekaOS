@@ -27,7 +27,7 @@ auto main() -> int
 	hello.start();
 
 	while (true) {
-		if (corebattery.isInCharge()) {
+		if (corebattery.isCharging()) {
 			log_info("Battery at %.2fV and in charge.", corebattery.getVoltage());
 		} else {
 			log_info("Battery at %.2fV.", corebattery.getVoltage());

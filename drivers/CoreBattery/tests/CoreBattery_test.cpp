@@ -94,16 +94,16 @@ TEST_F(CoreBatteryTest, getVoltageBelowEmpty)
 	ASSERT_LT(battery.getVoltage(), CoreBattery::Capacity::empty);
 }
 
-TEST_F(CoreBatteryTest, isInCharge)
+TEST_F(CoreBatteryTest, isCharging)
 {
 	EXPECT_CALL(charge_input, read).WillOnce(Return(1));
 
-	ASSERT_TRUE(battery.isInCharge());
+	ASSERT_TRUE(battery.isCharging());
 }
 
 TEST_F(CoreBatteryTest, isNotInCharge)
 {
 	EXPECT_CALL(charge_input, read).WillOnce(Return(0));
 
-	ASSERT_FALSE(battery.isInCharge());
+	ASSERT_FALSE(battery.isCharging());
 }
