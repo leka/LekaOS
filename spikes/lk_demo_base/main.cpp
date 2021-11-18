@@ -12,6 +12,7 @@
 #include "DisplayUtils.h"
 #include "Flags.h"
 #include "HelloWorld.h"
+#include "LedsUtils.h"
 #include "LogKit.h"
 #include "RFIDUtils.h"
 #include "WatchdogUtils.h"
@@ -30,6 +31,8 @@ auto hello = HelloWorld {};
 
 auto battery_utils = BatteryUtils {};
 
+auto leds_utils = LedsUtils {};
+
 auto hal	   = LKCoreSTM32Hal {};
 auto coresdram = CoreSDRAM {hal};
 auto display   = VideoKit {hal};
@@ -37,6 +40,13 @@ VideoKit_DeclareIRQHandlers(display);
 auto display_utils = DisplayUtils {thread_video, event_flags_external_interaction, hal, coresdram, display};
 
 auto rfid_utils = RFIDUtils {event_flags_external_interaction};
+
+void useLeds()
+{
+	leds_utils.setBrightness(0x08);
+	leds_utils.runReinforcer(LedsReinforcer::rainbow);
+	leds_utils.turnOff(LedsRange::all);
+}
 
 void useDisplay()
 {
@@ -69,6 +79,8 @@ auto main() -> int
 	log_info("Hello, World!\n\n");
 	hello.start();
 
+	leds_utils.initialize();
+
 	battery_utils.registerEventQueue(event_queue);
 
 	display_utils.initializeSD();
@@ -77,6 +89,8 @@ auto main() -> int
 	rfid_utils.initialize();
 	rfid_utils.registerEventQueue(event_queue);
 
+	leds_utils.initializationAnimation();
+
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
 		log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world,
@@ -84,6 +98,7 @@ auto main() -> int
 
 		rtos::ThisThread::sleep_for(1s);
 
+		useLeds();
 		useDisplay();
 		useRFID();
 	}
