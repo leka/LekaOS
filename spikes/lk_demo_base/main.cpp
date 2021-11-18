@@ -8,6 +8,8 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
+#include "BLEUtils.h"
+
 #include "BatteryUtils.h"
 #include "DisplayUtils.h"
 #include "Flags.h"
@@ -23,6 +25,7 @@ using namespace std::chrono_literals;
 
 auto thread_watchdog	= rtos::Thread {osPriorityNormal};
 auto thread_event_queue = rtos::Thread {osPriorityNormal};
+auto thread_ble			= rtos::Thread {osPriorityNormal};
 auto thread_video		= rtos::Thread {osPriorityNormal};
 
 auto event_queue					  = events::EventQueue {};
@@ -43,6 +46,8 @@ auto motor_right_speed = CorePwm {MOTOR_RIGHT_PWM};
 auto motor_left		   = CoreMotor {motor_left_dir_1, motor_left_dir_2, motor_left_speed};
 auto motor_right	   = CoreMotor {motor_right_dir_1, motor_right_dir_2, motor_right_speed};
 auto motors_utils	   = MotorsUtils {motor_left, motor_right, motor_left_speed, motor_right_speed};
+
+auto ble_utils = BLEUtils {event_flags_external_interaction};
 
 auto hal	   = LKCoreSTM32Hal {};
 auto coresdram = CoreSDRAM {hal};
@@ -96,6 +101,9 @@ auto main() -> int
 	battery_utils.registerEventQueue(event_queue);
 
 	motors_utils.setSpeed(1.0F, 1.0F);
+
+	ble_utils.setDeviceName("LekaDemo");
+	thread_ble.start({&ble_utils, &BLEUtils::startAdvertising});
 
 	display_utils.initializeSD();
 	display_utils.initializeScreen();

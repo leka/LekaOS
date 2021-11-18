@@ -12,6 +12,7 @@ target_include_directories(spike_lk_demo_base
 target_sources(spike_lk_demo_base
 	PRIVATE
 		main.cpp
+		BLEUtils.cpp
 		LedsUtils.cpp
 		RFIDUtils.cpp
 		MotorsUtils.cpp
@@ -28,6 +29,7 @@ target_link_libraries(spike_lk_demo_base
 	driver_FastLED
 	CorePwm
 	CoreMotor
+	BLEKit
 	CoreVideo
 	VideoKit
 	CoreCR95HF
