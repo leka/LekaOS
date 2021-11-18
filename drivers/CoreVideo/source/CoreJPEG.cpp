@@ -55,7 +55,7 @@ auto CoreJPEG::getConfig() -> JPEGConfig
 	JPEGConfig config;
 	_hal.HAL_JPEG_GetInfo(&_handle, &config);
 
-	displayInformation(config);
+	// displayInformation(config);
 
 	config.initialized = true;
 	return config;
