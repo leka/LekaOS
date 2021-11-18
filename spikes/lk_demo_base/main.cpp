@@ -9,6 +9,7 @@
 #include "rtos/Thread.h"
 
 #include "BatteryUtils.h"
+#include "DisplayUtils.h"
 #include "Flags.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
@@ -20,6 +21,7 @@ using namespace std::chrono_literals;
 
 auto thread_watchdog	= rtos::Thread {osPriorityNormal};
 auto thread_event_queue = rtos::Thread {osPriorityNormal};
+auto thread_video		= rtos::Thread {osPriorityNormal};
 
 auto event_queue					  = events::EventQueue {};
 auto event_flags_external_interaction = rtos::EventFlags {};
@@ -28,7 +30,24 @@ auto hello = HelloWorld {};
 
 auto battery_utils = BatteryUtils {};
 
+auto hal	   = LKCoreSTM32Hal {};
+auto coresdram = CoreSDRAM {hal};
+auto display   = VideoKit {hal};
+VideoKit_DeclareIRQHandlers(display);
+auto display_utils = DisplayUtils {thread_video, event_flags_external_interaction, hal, coresdram, display};
+
 auto rfid_utils = RFIDUtils {event_flags_external_interaction};
+
+void useDisplay()
+{
+	display_utils.setOn();
+
+	display_utils.displayImage("leka-logo");
+	rtos::ThisThread::sleep_for(5s);
+	display_utils.displayVideo("animation-idle");
+	rtos::ThisThread::sleep_for(10s);
+	display_utils.setOff();
+}
 
 void useRFID()
 {
@@ -52,6 +71,9 @@ auto main() -> int
 
 	battery_utils.registerEventQueue(event_queue);
 
+	display_utils.initializeSD();
+	display_utils.initializeScreen();
+
 	rfid_utils.initialize();
 	rfid_utils.registerEventQueue(event_queue);
 
@@ -62,6 +84,7 @@ auto main() -> int
 
 		rtos::ThisThread::sleep_for(1s);
 
+		useDisplay();
 		useRFID();
 	}
 }
