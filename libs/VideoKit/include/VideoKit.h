@@ -44,6 +44,8 @@ class VideoKit
 
 	void initialize();
 
+	void setBrightness(float value);
+
 	void setFrameRateLimit(uint32_t framerate);
 
 	void fillJPEGConfig(interface::File &file, JPEGConfig *config);
