@@ -37,6 +37,11 @@ void VideoKit::initialize()
 	_last_time = rtos::Kernel::Clock::now();
 }
 
+void VideoKit::setBrightness(float value)
+{
+	_corelcd.setBrightness(value);
+}
+
 auto VideoKit::getDSI() -> CoreDSI &
 {
 	return _coredsi;
