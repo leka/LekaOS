@@ -7,7 +7,8 @@
 #include "rtos/ThisThread.h"
 
 #include "BLEGap.h"
-#include "BLEGatt.h"
+#include "BLEGattServer.h"
+#include "BLEServiceExample.h"
 
 #include "LogKit.h"
 
@@ -27,8 +28,11 @@ auto main() -> int
 	auto ble_gap = BLEGap {ble, event_queue};
 	ble_gap.setDeviceName("Leka_BLEGap");
 
-	BLEGatt demo;
-	ble_gap.onInit(mbed::Callback(&demo, &BLEGatt::start));
+	BLEGattServer ble_server {ble};
+	BLEServiceExample ble_service;
+	std::array<interface::BLEService *, 1> services = {&ble_service};
+	ble_server.addServices(services);
+	ble_gap.onInit(mbed::Callback(&ble_server, &BLEGattServer::start));
 
 	ble_gap.start();
 
