@@ -10,6 +10,8 @@
 #include "ble/BLE.h"
 #include "ble/Gap.h"
 
+#include "cxxsupport/lstd_span"
+
 namespace leka {
 
 static constexpr uint16_t MAX_ADVERTISING_PAYLOAD_SIZE = 50;
@@ -19,6 +21,8 @@ class BLEGap : public ble::Gap::EventHandler
   public:
 	explicit BLEGap(BLE &ble, events::EventQueue &event_queue)
 		: _ble(ble), _ble_gap(ble.gap()), _advertising_data_builder(_advertising_buffer), _event_queue(event_queue) {};
+
+	void setDeviceName(lstd::span<const char> name);
 
 	void start();
 	void stop();
@@ -45,6 +49,8 @@ class BLEGap : public ble::Gap::EventHandler
 
 	BLE &_ble;
 	ble::Gap &_ble_gap;
+
+	lstd::span<const char> _device_name;
 
 	uint8_t _advertising_buffer[MAX_ADVERTISING_PAYLOAD_SIZE] {};
 	ble::AdvertisingDataBuilder _advertising_data_builder;
