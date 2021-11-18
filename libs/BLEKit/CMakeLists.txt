@@ -12,6 +12,7 @@ target_include_directories(BLEKit
 target_sources(BLEKit
 	PRIVATE
 		source/BLEGap.cpp
+		source/BLEGattServer.cpp
 )
 
 target_link_libraries(BLEKit
