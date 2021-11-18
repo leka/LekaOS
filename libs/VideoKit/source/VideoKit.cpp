@@ -163,7 +163,7 @@ void VideoKit::tick()
 	_whole_duration += dt;
 	_whole_tick += 1;
 	if (dt > _maximum) {
-		printf("Frame loaded in %lld ms = %.3f fps\n", dt.count(), (1000.f / dt.count()));
+		// printf("Frame loaded in %lld ms = %.3f fps\n", dt.count(), (1000.f / dt.count()));
 		_maximum = dt;
 	}
 

@@ -101,7 +101,7 @@ auto main() -> int
 
 				screen.display();
 			}
-			screen.displayCounters();
+			// screen.displayCounters();
 		}
 	}
 }
