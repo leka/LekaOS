@@ -24,6 +24,7 @@ auto main() -> int
 
 	auto &ble	 = BLE::Instance();
 	auto ble_gap = BLEGap {ble, event_queue};
+	ble_gap.setDeviceName("Leka_BLEGap");
 
 	ble_gap.start();
 
