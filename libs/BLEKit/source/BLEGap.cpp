@@ -8,6 +8,11 @@
 
 using namespace leka;
 
+void BLEGap::setDeviceName(const lstd::span<const char> name)
+{
+	_device_name = name;
+}
+
 void BLEGap::start()
 {
 	if (_ble.hasInitialized()) {
@@ -103,7 +108,7 @@ void BLEGap::startAdvertising()
 	// _advertising_data_builder.setAppearance(ble::adv_data_appearance_t::GENERIC_HEART_RATE_SENSOR);
 	_advertising_data_builder.setFlags();
 	// _advertising_data_builder.setTxPowerAdvertised(126);
-	_advertising_data_builder.setName("Leka_BLEGap");
+	_advertising_data_builder.setName(_device_name.data());
 	// const uint8_t specific_data[] = {0x2A, 0x2B, 0x2C, 0x2D};
 	// _advertising_data_builder.setManufacturerSpecificData(specific_data);
 	// _advertising_data_builder.setAdvertisingInterval(ble::adv_interval_t::min());
