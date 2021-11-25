@@ -263,8 +263,58 @@ auto main() -> int
 
 		rtos::ThisThread::sleep_for(1s);
 
-		useLeds();
-		useDisplay();
-		useRFID();
+		// useLeds();
+		// useDisplay();
+		// useRFID();
+
+		display_utils.displayImage("demo-main-menu");
+		leds_utils.turnOff(LedsRange::all);
+
+		event_flags_external_interaction.wait_any(NEW_RFID_TAG_FLAG);
+		event_flags_external_interaction.set(KICK_TURN_OFF_FLAG | KICK_WAITING_FLAG);
+		auto tag_value = rfid_utils.getTag();
+		switch (tag_value) {
+			case Tag::number_0_zero:
+				selectReinforcer(event_flags_external_interaction, display_utils, leds_utils, motors_utils, rfid_utils);
+				break;
+			case Tag::number_1_one:
+				activityRecognitionColor(event_flags_external_interaction, display_utils, leds_utils, motors_utils,
+										 rfid_utils);
+				break;
+			case Tag::number_2_two:
+				activityRecognitionShapes(event_flags_external_interaction, display_utils, leds_utils, motors_utils,
+										  rfid_utils);
+				break;
+			case Tag::number_3_three:
+				activityRecognitionNumbers(event_flags_external_interaction, display_utils, leds_utils, motors_utils,
+										   rfid_utils);
+				break;
+			case Tag::number_4_four:
+				activityRecognitionEmotions(event_flags_external_interaction, display_utils, leds_utils, motors_utils,
+											rfid_utils);
+				break;
+			case Tag::number_5_five:
+				displayEmotions(event_flags_external_interaction, display_utils, leds_utils, rfid_utils);
+				break;
+			case Tag::number_6_six:
+				activityColorLeka1(event_flags_external_interaction, display_utils, leds_utils, rfid_utils);
+				break;
+			case Tag::number_7_seven:
+				twoNumbersAdditionCalculator(event_flags_external_interaction, display_utils, leds_utils, motors_utils,
+											 rfid_utils);
+				break;
+			case Tag::number_8_eight:
+				activityRecognitionColoredForms(event_flags_external_interaction, display_utils, leds_utils,
+												motors_utils, rfid_utils);
+				break;
+			case Tag::number_9_nine:
+				activityColorLeka2(event_flags_external_interaction, display_utils, leds_utils, rfid_utils);
+				break;
+			case Tag::number_10_ten:
+				displayTags(event_flags_external_interaction, display_utils, leds_utils, rfid_utils);
+				break;
+			default:
+				break;
+		}
 	}
 }
