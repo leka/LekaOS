@@ -17,10 +17,11 @@ class BLEServiceMonitoring : public interface::BLEService
 	const static uint16_t SERVICE_MONITORING_UUID						  = 0xA000;
 	const static uint16_t PING_WRITABLE_CHARACTERISTIC_UUID				  = 0xA001;
 	const static uint16_t REBOOT_INSTRUCTION_WRITABLE_CHARACTERISTIC_UUID = 0xA002;
-	const static uint16_t LEDS_INTENSITY_WRITABLE_CHARACTERISTIC_UUID	  = 0xA003;
-	const static uint16_t LCD_INTENSITY_WRITABLE_CHARACTERISTIC_UUID	  = 0xA004;
+	const static uint16_t DISABLE_WAITING_WRITABLE_CHARACTERISTIC_UUID	  = 0xA003;
+	const static uint16_t LEDS_INTENSITY_WRITABLE_CHARACTERISTIC_UUID	  = 0xAAA1;
+	const static uint16_t LCD_INTENSITY_WRITABLE_CHARACTERISTIC_UUID	  = 0xAAA2;
 
-	const static uint8_t CHARACTERISTICS_COUNT = 4;
+	const static uint8_t CHARACTERISTICS_COUNT = 5;
 
   public:
 	BLEServiceMonitoring(rtos::EventFlags &event_flags)
@@ -42,6 +43,13 @@ class BLEServiceMonitoring : public interface::BLEService
 			std::fill_n(&_reboot_instruction_characteristic_value, 1, '\0');
 			std::copy(params.data, params.data + 1, &_reboot_instruction_characteristic_value);
 			_event_flags.set(BLE_REBOOT_INSTRUCTION_FLAG);
+		} else if (params.handle == _disable_waiting_writable_characteristic.getValueHandle()) {
+			std::copy(params.data, params.data + 1, &_disable_waiting_characteristic_value);
+			if (_disable_waiting_characteristic_value == 0x01) {
+				_event_flags.set(DISABLE_WAITING_FLAG);
+			} else {
+				_event_flags.clear(DISABLE_WAITING_FLAG);
+			}
 		} else if (params.handle == _leds_intensity_writable_characteristic.getValueHandle()) {
 			std::fill_n(&_leds_intensity_characteristic_value, 1, '\0');
 			std::copy(params.data, params.data + 1, &_leds_intensity_characteristic_value);
@@ -66,6 +74,10 @@ class BLEServiceMonitoring : public interface::BLEService
 	WriteOnlyGattCharacteristic<bool> _reboot_instruction_writable_characteristic {
 		REBOOT_INSTRUCTION_WRITABLE_CHARACTERISTIC_UUID, &_reboot_instruction_characteristic_value};
 
+	bool _disable_waiting_characteristic_value {};
+	WriteOnlyGattCharacteristic<bool> _disable_waiting_writable_characteristic {
+		DISABLE_WAITING_WRITABLE_CHARACTERISTIC_UUID, &_disable_waiting_characteristic_value};
+
 	uint8_t _leds_intensity_characteristic_value {};
 	WriteOnlyGattCharacteristic<uint8_t> _leds_intensity_writable_characteristic {
 		LEDS_INTENSITY_WRITABLE_CHARACTERISTIC_UUID, &_leds_intensity_characteristic_value};
@@ -76,7 +88,8 @@ class BLEServiceMonitoring : public interface::BLEService
 
 	std::array<GattCharacteristic *, CHARACTERISTICS_COUNT> _characteristic_table {
 		&_ping_writable_characteristic, &_reboot_instruction_writable_characteristic,
-		&_leds_intensity_writable_characteristic, &_lcd_intensity_writable_characteristic};
+		&_disable_waiting_writable_characteristic, &_leds_intensity_writable_characteristic,
+		&_lcd_intensity_writable_characteristic};
 };
 
 }	// namespace leka

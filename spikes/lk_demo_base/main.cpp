@@ -25,6 +25,8 @@ using namespace std::chrono_literals;
 
 auto thread_watchdog		  = rtos::Thread {osPriorityNormal};
 auto thread_event_queue		  = rtos::Thread {osPriorityNormal};
+auto thread_deep_sleep		  = rtos::Thread {osPriorityNormal};
+auto thread_waiting			  = rtos::Thread {osPriorityNormal};
 auto thread_ble				  = rtos::Thread {osPriorityNormal};
 auto thread_ble_notifications = rtos::Thread {osPriorityNormal};
 auto thread_video			  = rtos::Thread {osPriorityNormal};
@@ -57,6 +59,88 @@ VideoKit_DeclareIRQHandlers(display);
 auto display_utils = DisplayUtils {thread_video, event_flags_external_interaction, hal, coresdram, display};
 
 auto rfid_utils = RFIDUtils {event_flags_external_interaction};
+
+void deepSleepLoop()
+{
+	auto is_kick_turn_off_flag = []() {
+		return (event_flags_external_interaction.get() & KICK_TURN_OFF_FLAG) == KICK_TURN_OFF_FLAG;
+	};
+
+	while (true) {
+		if (!is_kick_turn_off_flag()) {
+			event_flags_external_interaction.set(STOP_VIDEO_FLAG | KICK_WAITING_FLAG);
+			rtos::ThisThread::sleep_for(20s);
+			leds_utils.turnOff(LedsRange::all);
+			display_utils.setOff();
+
+			event_flags_external_interaction.wait_any(KICK_TURN_OFF_FLAG);
+		}
+		event_flags_external_interaction.clear(KICK_TURN_OFF_FLAG);
+		rtos::ThisThread::sleep_for(5min);
+	}
+}
+
+void waitingLoop()
+{
+	auto is_kick_waiting_flag = []() {
+		return (event_flags_external_interaction.get() & KICK_WAITING_FLAG) == KICK_WAITING_FLAG;
+	};
+	auto is_disable_waiting_flag = []() {
+		return (event_flags_external_interaction.get() & DISABLE_WAITING_FLAG) == DISABLE_WAITING_FLAG;
+	};
+	auto is_end_of_video_flag = []() {
+		return (event_flags_external_interaction.get() & END_OF_VIDEO_FLAG) == END_OF_VIDEO_FLAG;
+	};
+
+	while (true) {
+		if (is_kick_waiting_flag()) {
+			event_flags_external_interaction.clear(KICK_WAITING_FLAG);
+		} else {
+			while (!is_kick_waiting_flag()) {
+				display_utils.displayVideo("animation-face-state-waiting");
+
+				for (int i = 0; i < 13; i++) {
+					if (is_kick_waiting_flag()) {
+						continue;
+					}
+					leds_utils.pulsation();
+				}
+				if (is_kick_waiting_flag()) {
+					continue;
+				}
+				while (!is_end_of_video_flag() && !is_kick_waiting_flag()) {
+					rtos::ThisThread::sleep_for(1s);
+				}
+
+				if (is_kick_waiting_flag()) {
+					continue;
+				}
+				display_utils.displayVideo("animation-face-action-wink");
+
+				for (int i = 0; i < 2; i++) {
+					if (is_kick_waiting_flag()) {
+						continue;
+					}
+					leds_utils.pulsation();
+					log_info("Pulsation");
+				}
+				if (is_kick_waiting_flag()) {
+					continue;
+				}
+				while (!is_end_of_video_flag() && !is_kick_waiting_flag()) {
+					rtos::ThisThread::sleep_for(1s);
+				}
+			}
+			leds_utils.turnOff(LedsRange::all);
+			event_flags_external_interaction.clear(KICK_WAITING_FLAG);
+			event_flags_external_interaction.wait_any(KICK_WAITING_FLAG);
+		}
+		while (is_disable_waiting_flag()) {
+			rtos::ThisThread::sleep_for(1s);
+		}
+		rtos::ThisThread::sleep_for(15s);
+	}
+}
 
 void useLeds()
 {
@@ -152,6 +236,9 @@ auto main() -> int
 
 	battery_utils.registerEventQueue(event_queue);
 
+	event_flags_external_interaction.set(KICK_TURN_OFF_FLAG | KICK_WAITING_FLAG);
+	thread_deep_sleep.start(deepSleepLoop);
+
 	motors_utils.setSpeed(1.0F, 1.0F);
 
 	ble_utils.setDeviceName("LekaDemo");
@@ -165,6 +252,8 @@ auto main() -> int
 	rfid_utils.registerEventQueue(event_queue);
 
 	leds_utils.initializationAnimation();
+	thread_waiting.start(waitingLoop);
+	event_flags_external_interaction.set(KICK_TURN_OFF_FLAG | KICK_WAITING_FLAG);
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
