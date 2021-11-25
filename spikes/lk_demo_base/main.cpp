@@ -10,6 +10,7 @@
 
 #include "BLEUtils.h"
 
+#include "Activities.h"
 #include "BatteryUtils.h"
 #include "DisplayUtils.h"
 #include "Flags.h"
