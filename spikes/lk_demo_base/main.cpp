@@ -23,10 +23,11 @@
 using namespace leka;
 using namespace std::chrono_literals;
 
-auto thread_watchdog	= rtos::Thread {osPriorityNormal};
-auto thread_event_queue = rtos::Thread {osPriorityNormal};
-auto thread_ble			= rtos::Thread {osPriorityNormal};
-auto thread_video		= rtos::Thread {osPriorityNormal};
+auto thread_watchdog		  = rtos::Thread {osPriorityNormal};
+auto thread_event_queue		  = rtos::Thread {osPriorityNormal};
+auto thread_ble				  = rtos::Thread {osPriorityNormal};
+auto thread_ble_notifications = rtos::Thread {osPriorityNormal};
+auto thread_video			  = rtos::Thread {osPriorityNormal};
 
 auto event_queue					  = events::EventQueue {};
 auto event_flags_external_interaction = rtos::EventFlags {};
@@ -81,6 +82,57 @@ void useRFID()
 	log_info("Data: %x", rfid_utils.getTag());
 }
 
+void updateBLENotifications()
+{
+	auto ping_flag_is_set = [&]() { return (event_flags_external_interaction.get() & BLE_PING_FLAG) == BLE_PING_FLAG; };
+	auto reboot_instruction_flag_is_set = [&]() {
+		return (event_flags_external_interaction.get() & BLE_REBOOT_INSTRUCTION_FLAG) == BLE_REBOOT_INSTRUCTION_FLAG;
+	};
+	auto leds_intensity_flag_is_set = [&]() {
+		return (event_flags_external_interaction.get() & BLE_LEDS_INTENSITY_FLAG) == BLE_LEDS_INTENSITY_FLAG;
+	};
+	auto lcd_intensity_flag_is_set = [&]() {
+		return (event_flags_external_interaction.get() & BLE_LCD_INTENSITY_FLAG) == BLE_LCD_INTENSITY_FLAG;
+	};
+
+	auto update_battery_level = [&]() { ble_utils.setBatteryLevel(battery_utils.getBatteryLevel()); };
+	event_queue.call_every(1s, update_battery_level);
+
+	while (true) {
+		event_flags_external_interaction.clear(BLE_PING_FLAG | BLE_REBOOT_INSTRUCTION_FLAG | BLE_LEDS_INTENSITY_FLAG |
+											   BLE_LCD_INTENSITY_FLAG);
+		event_flags_external_interaction.wait_any(NEW_BLE_MESSAGE_FLAG);
+
+		if (ping_flag_is_set()) {
+			for (int i = 0; i < 3; i++) {
+				leds_utils.turnOn(LedsRange::belt, CRGB::RoyalBlue);
+				rtos::ThisThread::sleep_for(400ms);
+				leds_utils.turnOff(LedsRange::all);
+				rtos::ThisThread::sleep_for(400ms);
+			}
+		}
+		if (reboot_instruction_flag_is_set()) {
+			if (auto has_to_reboot = ble_utils.getRebootInstruction(); has_to_reboot) {
+				event_flags_external_interaction.set(STOP_VIDEO_FLAG);
+				leds_utils.turnOff(LedsRange::all);
+				display_utils.setOff();
+
+				rtos::ThisThread::sleep_for(500ms);
+
+				NVIC_SystemReset();
+			}
+		}
+		if (leds_intensity_flag_is_set()) {
+			auto new_value = ble_utils.getLedsIntensity();
+			leds_utils.setBrightness(new_value);
+		}
+		if (lcd_intensity_flag_is_set()) {
+			auto new_value = (float(ble_utils.getLCDIntensity()) / 255.F);
+			display_utils.setBrightness(new_value);
+		}
+	}
+}
+
 auto main() -> int
 {
 	startWatchdog(thread_watchdog);
@@ -104,6 +156,7 @@ auto main() -> int
 
 	ble_utils.setDeviceName("LekaDemo");
 	thread_ble.start({&ble_utils, &BLEUtils::startAdvertising});
+	thread_ble_notifications.start(updateBLENotifications);
 
 	display_utils.initializeSD();
 	display_utils.initializeScreen();
