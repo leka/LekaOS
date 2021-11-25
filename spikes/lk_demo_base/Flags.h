@@ -7,4 +7,6 @@
 
 #include <cstdint>
 
+constexpr uint32_t NEW_RFID_TAG_FLAG(1UL << 6);
+
 #endif	 // _LEKA_OS_FLAGS_H_
