@@ -12,10 +12,12 @@ target_include_directories(spike_lk_demo_base
 target_sources(spike_lk_demo_base
 	PRIVATE
 		main.cpp
+		BatteryUtils.cpp
 		WatchdogUtils.cpp
 )
 
 target_link_libraries(spike_lk_demo_base
+	CoreBattery
 )
 
 target_link_custom_leka_targets(spike_lk_demo_base)
