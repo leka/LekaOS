@@ -26,6 +26,7 @@ class BLEGattServer : public ble::GattServer::EventHandler
 
   private:
 	void onDataWritten(const GattWriteCallbackParams &params) override;
+	void updateData();
 
 	BLE &_ble;
 	ble::GattServer &_server;

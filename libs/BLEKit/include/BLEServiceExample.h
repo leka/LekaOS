@@ -20,7 +20,7 @@ class BLEServiceExample : public interface::BLEService
   public:
 	BLEServiceExample() : interface::BLEService(SERVICE_UUID, _characteristic_table.data(), CHARACTERITICS_COUNT) {};
 
-	void onDataUpdated(const GattWriteCallbackParams &params) final
+	void onDataWritten(const GattWriteCallbackParams &params) final
 	{
 		if (params.offset == 0) {
 			std::fill_n(_characteristic_value.begin(), std::size(_characteristic_value), '\0');
@@ -29,6 +29,7 @@ class BLEServiceExample : public interface::BLEService
 		log_info("Data received: length: %d, offset: %d, data: \n%s", params.len, params.offset,
 				 _characteristic_value.data());
 	};
+	void updateData(updateServiceFunction &update) final {};
 
   private:
 	std::array<char, 100> _characteristic_value {};
