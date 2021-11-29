@@ -14,6 +14,7 @@
 #include "HelloWorld.h"
 #include "LedsUtils.h"
 #include "LogKit.h"
+#include "MotorsUtils.h"
 #include "RFIDUtils.h"
 #include "WatchdogUtils.h"
 
@@ -32,6 +33,16 @@ auto hello = HelloWorld {};
 auto battery_utils = BatteryUtils {};
 
 auto leds_utils = LedsUtils {};
+
+auto motor_left_dir_1  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
+auto motor_left_dir_2  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
+auto motor_left_speed  = CorePwm {MOTOR_LEFT_PWM};
+auto motor_right_dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
+auto motor_right_dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
+auto motor_right_speed = CorePwm {MOTOR_RIGHT_PWM};
+auto motor_left		   = CoreMotor {motor_left_dir_1, motor_left_dir_2, motor_left_speed};
+auto motor_right	   = CoreMotor {motor_right_dir_1, motor_right_dir_2, motor_right_speed};
+auto motors_utils	   = MotorsUtils {motor_left, motor_right, motor_left_speed, motor_right_speed};
 
 auto hal	   = LKCoreSTM32Hal {};
 auto coresdram = CoreSDRAM {hal};
@@ -80,8 +91,11 @@ auto main() -> int
 	hello.start();
 
 	leds_utils.initialize();
+	motors_utils.stop();
 
 	battery_utils.registerEventQueue(event_queue);
+
+	motors_utils.setSpeed(1.0F, 1.0F);
 
 	display_utils.initializeSD();
 	display_utils.initializeScreen();

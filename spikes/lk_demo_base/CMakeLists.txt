@@ -14,6 +14,7 @@ target_sources(spike_lk_demo_base
 		main.cpp
 		LedsUtils.cpp
 		RFIDUtils.cpp
+		MotorsUtils.cpp
 		DisplayUtils.cpp
 		BatteryUtils.cpp
 		WatchdogUtils.cpp
@@ -25,6 +26,8 @@ target_link_libraries(spike_lk_demo_base
 	LKCoreSTM32Hal
 	CoreBattery
 	driver_FastLED
+	CorePwm
+	CoreMotor
 	CoreVideo
 	VideoKit
 	CoreCR95HF
