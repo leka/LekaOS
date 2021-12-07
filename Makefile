@@ -59,7 +59,7 @@ EXCLUDE_FROM_LCOV_COVERAGE  = '*Xcode*' '*_build*' '*extern*' '*tests/unit*' '*_
 # MARK: - .bin path
 #
 
-LEKA_OS_BIN_PATH := $(TARGET_BUILD_DIR)/src/LekaOS.bin
+LEKA_OS_BIN_PATH := $(TARGET_BUILD_DIR)/app/os/LekaOS.bin
 BIN_PATH         ?= $(LEKA_OS_BIN_PATH)
 
 #
