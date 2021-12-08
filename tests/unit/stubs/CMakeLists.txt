@@ -37,4 +37,6 @@ target_sources(stubs
 		${EXTERN_MBED_OS_DIR}/drivers/tests/UNITTESTS/doubles/SerialBase_stub.cpp
 		${EXTERN_MBED_OS_DIR}/platform/tests/UNITTESTS/doubles/FileHandle_stub.cpp
 		${EXTERN_MBED_OS_DIR}/drivers/tests/UNITTESTS/doubles/BufferedSerial_stub.cpp
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/tests/UNITTESTS/doubles/fakes/BLE.cpp
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/tests/UNITTESTS/doubles/fakes/source/GattServerImpl_mock.cpp
 )

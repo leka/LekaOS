@@ -43,6 +43,14 @@ target_include_directories(mbed-os
 		${EXTERN_MBED_OS_DIR}/connectivity
 		${EXTERN_MBED_OS_DIR}/connectivity/include
 		${EXTERN_MBED_OS_DIR}/connectivity/include/connectivity
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/include
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/include/ble
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source/generic
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/tests/UNITTESTS/doubles
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/tests/UNITTESTS/doubles/fakes
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/tests/UNITTESTS/doubles/fakes/source
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/tests/UNITTESTS/doubles/fakes/source/generic
 
 		${EXTERN_MBED_OS_DIR}/drivers
 		${EXTERN_MBED_OS_DIR}/drivers/include
@@ -51,6 +59,7 @@ target_include_directories(mbed-os
 		${EXTERN_MBED_OS_DIR}/events
 		${EXTERN_MBED_OS_DIR}/events/include
 		${EXTERN_MBED_OS_DIR}/events/include/events
+		${EXTERN_MBED_OS_DIR}/events/tests/UNITTESTS/doubles
 
 		${EXTERN_MBED_OS_DIR}/hal
 		${EXTERN_MBED_OS_DIR}/hal/include

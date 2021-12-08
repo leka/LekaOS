@@ -222,6 +222,7 @@ leka_register_unit_tests_for_library(ContainerKit)
 leka_register_unit_tests_for_library(FileSystemKit)
 leka_register_unit_tests_for_library(FirmwareKit)
 leka_register_unit_tests_for_library(IOKit)
+leka_register_unit_tests_for_library(BLEKit)
 
 #
 # Mark: - Finish up
