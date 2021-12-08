@@ -30,7 +30,7 @@ auto main() -> int
 	log_info("Starting MCUboot");
 
 	while (battery.getVoltage() < CoreBattery::Capacity::empty) {
-		rtos::ThisThread::sleep_for(1min);
+		rtos::ThisThread::sleep_for(10s);
 	}
 
 	uint32_t address = 0x8041000;
