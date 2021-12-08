@@ -129,7 +129,7 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(10s);
 
-	leka::logger::set_sink_function([](const char *str, size_t size) { serial.write(str, size); });
+	leka::logger::set_sink_function(logger::default_sink_function);
 
 	auto JPEG_File = std::make_unique<FIL>();
 

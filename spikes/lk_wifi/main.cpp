@@ -21,8 +21,7 @@ void runExample(WiFiInterface &wifi_interface, mbed::BufferedSerial &serial);
 
 auto main() -> int
 {
-	static auto serial = mbed::BufferedSerial(CONSOLE_TX, CONSOLE_RX, 115200);
-	leka::logger::set_sink_function([](const char *str, size_t size) { serial.write(str, size); });
+	logger::init();
 
 	log_info("Hello, World!\n\n");
 
@@ -50,7 +49,7 @@ auto main() -> int
 				 int(t.count() / 1000));
 		rtos::ThisThread::sleep_for(500ms);
 
-		runExample(corewifi, serial);
+		runExample(corewifi, logger::default_serial);
 		rtos::ThisThread::sleep_for(500ms);
 	}
 }
