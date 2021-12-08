@@ -11,6 +11,15 @@ void BLEGap::setDeviceName(const lstd::span<const char> name)
 	_device_name = name;
 }
 
+void BLEGap::setBatteryLevel(uint8_t value)
+{
+	if (value < 100) {
+		_battery_level_attribute[0] = value;
+	} else {
+		_battery_level_attribute[0] = 100;
+	}
+}
+
 void BLEGap::start()
 {
 	if (_ble.hasInitialized()) {
@@ -108,7 +117,7 @@ void BLEGap::startAdvertising()
 	// _advertising_data_builder.setAdvertisingInterval(ble::adv_interval_t::min());
 	// _advertising_data_builder.setConnectionIntervalPreference(ble::conn_interval_t::min(),
 	// ble::conn_interval_t::max());
-	// setServiceData // Some data in payload (not a real service)
+	_advertising_data_builder.setServiceData(GattService::UUID_BATTERY_SERVICE, _battery_level_attribute);
 	// setLocalServiceList // Available services
 
 	if (auto error =

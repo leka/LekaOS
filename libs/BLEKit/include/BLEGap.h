@@ -23,6 +23,7 @@ class BLEGap : public ble::Gap::EventHandler
 		: _ble(ble), _ble_gap(ble.gap()), _advertising_data_builder(_advertising_buffer), _event_queue(event_queue) {};
 
 	void setDeviceName(lstd::span<const char> name);
+	void setBatteryLevel(uint8_t value);
 
 	void start();
 	void stop();
@@ -51,6 +52,7 @@ class BLEGap : public ble::Gap::EventHandler
 	ble::Gap &_ble_gap;
 
 	lstd::span<const char> _device_name;
+	uint8_t _battery_level_attribute[1] {0};
 
 	uint8_t _advertising_buffer[MAX_ADVERTISING_PAYLOAD_SIZE] {};
 	ble::AdvertisingDataBuilder _advertising_data_builder;
