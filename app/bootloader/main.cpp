@@ -19,9 +19,9 @@
 using namespace std::chrono;
 using namespace leka;
 
-static auto serial		 = mbed::BufferedSerial {CONSOLE_TX, CONSOLE_RX, 115200};
-auto charge_status_input = mbed::DigitalIn {PinName::BATTERY_CHARGE_STATUS};
-auto battery			 = leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_status_input};
+static auto serial				= mbed::BufferedSerial {CONSOLE_TX, CONSOLE_RX, 115200};
+static auto charge_status_input = mbed::DigitalIn {PinName::BATTERY_CHARGE_STATUS};
+static auto battery				= leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_status_input};
 
 auto main() -> int
 {
