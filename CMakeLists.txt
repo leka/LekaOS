@@ -2,8 +2,7 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-# mbed-cmake requires at least CMake 3.18
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.21)
 
 # Activate ccache if available
 find_program(CCACHE "ccache")
@@ -36,7 +35,7 @@ if(ENABLE_CODE_ANALYSIS)
 endif(ENABLE_CODE_ANALYSIS)
 
 # Set C/C++ standard
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS TRUE)
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_EXTENSIONS TRUE)
@@ -44,7 +43,6 @@ set(CMAKE_C_EXTENSIONS TRUE)
 # Add custom flags
 add_compile_options(
 	-fdiagnostics-color=always
-	$<$<COMPILE_LANGUAGE:CXX>:-Wno-register>
 )
 
 # Before all, set ROOT_DIR, MBED_OS_DIR
