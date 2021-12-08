@@ -42,8 +42,8 @@ TEST_F(CoreBatteryTest, getVoltageAboveFull)
 
 TEST_F(CoreBatteryTest, getVoltageBetweenThreeQuarterAndFull)
 {
-	auto AnalogIn_voltage_value	  = float {2.183};
-	auto expected_battery_voltage = float {12.1};
+	auto AnalogIn_voltage_value	  = float {2.166};
+	auto expected_battery_voltage = float {11.8};
 	spy_AnalogIn_setVoltageValue(AnalogIn_voltage_value);
 
 	ASSERT_NEAR(battery.getVoltage(), expected_battery_voltage, 0.1);

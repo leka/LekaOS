@@ -21,7 +21,7 @@ class CoreBattery
 	auto isCharging() -> bool;
 
 	struct Capacity {
-		static constexpr auto full			= float {12.52};
+		static constexpr auto full			= float {12.00};
 		static constexpr auto three_quarter = float {11.73};
 		static constexpr auto half			= float {11.08};
 		static constexpr auto quarter		= float {10.47};
