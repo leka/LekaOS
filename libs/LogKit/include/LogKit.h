@@ -14,6 +14,7 @@
 #include <string_view>
 #include <unordered_map>
 
+#include "drivers/BufferedSerial.h"
 #include "events/EventQueue.h"
 #include "platform/FileHandle.h"
 #include "rtos/Kernel.h"
@@ -86,6 +87,12 @@ namespace logger {
 			filehandle->write(&c, 1);
 		}
 	}
+
+	//
+	// MARK: - Serial
+	//
+
+	static auto default_serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 
 	//
 	// MARK: - Now
@@ -162,6 +169,19 @@ namespace logger {
 	{
 		return snprintf(leka::logger::buffer::output.data(), std::size(leka::logger::buffer::output), message, args...);
 	}
+
+	//
+	// MARK: - Public functions
+	//
+
+	static void init(const filehandle_ptr fh	 = &logger::default_serial,
+					 const sink_function_t &sink = logger::default_sink_function)
+	{
+		logger::set_filehandle_pointer(fh);
+		logger::set_sink_function(sink);
+		logger::start_event_queue();
+	}
+
 };	 // namespace logger
 
 }	// namespace leka
