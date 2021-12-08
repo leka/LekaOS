@@ -43,13 +43,14 @@ auto main() -> int
 			exit(ret);
 		}
 
-		struct boot_rsp rsp;
-		if (auto ret = boot_go(&rsp); ret != FIH_SUCCESS) {
+		// Create handler to get application information
+		auto boot_handler = boot_rsp {};
+		if (auto ret = boot_go(&boot_handler); ret != FIH_SUCCESS) {
 			log_error("Failed to locate firmware image, error: %d", ret);
 			exit(ret);
 		}
 
-		address = rsp.br_image_off + rsp.br_hdr->ih_hdr_size;
+		address = boot_handler.br_image_off + boot_handler.br_hdr->ih_hdr_size;
 	}
 
 	// Workaround: The extra \n ensures the last trace gets flushed
