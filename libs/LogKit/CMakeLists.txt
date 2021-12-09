@@ -23,6 +23,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
 		tests/LogKit_test_log.cpp
+		tests/LogKit_test_fifo.cpp
 		tests/LogKit_test_format.cpp
 		tests/LogKit_test_now.cpp
 		tests/LogKit_test_sink.cpp

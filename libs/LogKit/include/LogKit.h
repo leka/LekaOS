@@ -101,7 +101,7 @@ namespace logger {
 	// MARK: - Now
 	//
 
-	using now_function_t = std::function<int64_t()>;
+	using now_function_t = std::function<int64_t()>;   // LCOV_EXCL_LINE
 
 	static auto default_now_function() -> int64_t { return rtos::Kernel::Clock::now().time_since_epoch().count(); }
 	static inline now_function_t now = default_now_function;
@@ -112,7 +112,7 @@ namespace logger {
 	// MARK: - Sink
 	//
 
-	using sink_function_t = std::function<void(const char *, size_t)>;
+	using sink_function_t = std::function<void(const char *, size_t)>;	 // LCOV_EXCL_LINE
 
 	static void default_sink_function(const char *str, [[maybe_unused]] size_t size)
 	{
