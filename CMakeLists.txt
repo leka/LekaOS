@@ -11,6 +11,7 @@ if(CCACHE)
 	set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE}")
 endif(CCACHE)
 
+# Activate code analysis
 option(ENABLE_CODE_ANALYSIS "Run code analysis" OFF)
 message(STATUS "ENABLE_CODE_ANALYSIS --> ${ENABLE_CODE_ANALYSIS}")
 
@@ -33,6 +34,13 @@ if(ENABLE_CODE_ANALYSIS)
 		)
 	endif(CPPCHECK)
 endif(ENABLE_CODE_ANALYSIS)
+
+# Activate LogKit
+option(ENABLE_LOG_DEBUG "Enable LogKit output" OFF)
+message(STATUS "ENABLE_LOG_DEBUG --> ${ENABLE_LOG_DEBUG}")
+if(ENABLE_LOG_DEBUG)
+	add_definitions(-DENABLE_LOG_DEBUG)
+endif(ENABLE_LOG_DEBUG)
 
 # Set C/C++ standard
 set(CMAKE_CXX_STANDARD 20)
