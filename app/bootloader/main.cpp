@@ -19,6 +19,8 @@
 using namespace std::chrono;
 using namespace leka;
 
+constexpr auto default_address = uint32_t {0x8040000 + 0x1000};	  // Start application address + header
+
 static auto serial				= mbed::BufferedSerial {CONSOLE_TX, CONSOLE_RX, 115200};
 static auto charge_status_input = mbed::DigitalIn {PinName::BATTERY_CHARGE_STATUS};
 static auto battery				= leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_status_input};
@@ -33,21 +35,25 @@ auto main() -> int
 		rtos::ThisThread::sleep_for(10s);
 	}
 
-	// Initialize mbedtls crypto for use by MCUboot
-	mbedtls_platform_context unused_ctx;
-	if (auto ret = mbedtls_platform_setup(&unused_ctx); ret != 0) {
-		log_error("Failed to setup Mbed TLS, error: %d", ret);
-		exit(ret);
-	}
+	auto address = default_address;
 
-	// Create handler to get application information
-	auto boot_handler = boot_rsp {};
-	if (auto ret = boot_go(&boot_handler); ret != FIH_SUCCESS) {
-		log_error("Failed to locate firmware image, error: %d", ret);
-		exit(ret);
-	}
+	if (battery.isCharging() && battery.getVoltage() > CoreBattery::Capacity::quarter) {
+		// Initialize mbedtls crypto for use by MCUboot
+		mbedtls_platform_context unused_ctx;
+		if (auto ret = mbedtls_platform_setup(&unused_ctx); ret != 0) {
+			log_error("Failed to setup Mbed TLS, error: %d", ret);
+			exit(ret);
+		}
 
-	uint32_t address = boot_handler.br_image_off + boot_handler.br_hdr->ih_hdr_size;
+		// Create handler to get application information
+		auto boot_handler = boot_rsp {};
+		if (auto ret = boot_go(&boot_handler); ret != FIH_SUCCESS) {
+			log_error("Failed to locate firmware image, error: %d", ret);
+			exit(ret);
+		}
+
+		address = boot_handler.br_image_off + boot_handler.br_hdr->ih_hdr_size;
+	}
 
 	// Workaround: The extra \n ensures the last trace gets flushed
 	// before mbed_start_application() destroys the stack and jumps
