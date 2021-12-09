@@ -204,8 +204,10 @@ namespace logger {
 
 #if defined(ENABLE_LOG_DEBUG)	// defined (ENABLE_LOG_DEBUG)
 
+	// NOLINTNEXTLINE
 	#define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 
+	// NOLINTNEXTLINE
 	#define log_debug(str, ...)                                                                                        \
 		do {                                                                                                           \
 			const std::lock_guard<rtos::Mutex> lock(leka::logger::mutex);                                              \
@@ -219,6 +221,7 @@ namespace logger {
 			leka::logger::sink(leka::logger::buffer::output.data(), length);                                           \
 		} while (0)
 
+	// NOLINTNEXTLINE
 	#define log_info(str, ...)                                                                                         \
 		do {                                                                                                           \
 			const std::lock_guard<rtos::Mutex> lock(leka::logger::mutex);                                              \
@@ -232,6 +235,7 @@ namespace logger {
 			leka::logger::sink(leka::logger::buffer::output.data(), length);                                           \
 		} while (0)
 
+	// NOLINTNEXTLINE
 	#define log_error(str, ...)                                                                                        \
 		do {                                                                                                           \
 			const std::lock_guard<rtos::Mutex> lock(leka::logger::mutex);                                              \
