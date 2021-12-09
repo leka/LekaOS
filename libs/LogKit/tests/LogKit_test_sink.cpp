@@ -18,9 +18,14 @@ class LogKitSinkTest : public ::testing::Test
 	void TearDown() override { logger::set_sink_function(logger::default_sink_function); }
 };
 
+TEST_F(LogKitSinkTest, useDefaultSinkFunction)
+{
+	log_info("Hello, World");
+}
+
 TEST_F(LogKitSinkTest, useCustomSinkFunction)
 {
-	MockFunction<void(const char *, size_t)> mock_sink;
+	MockFunction<logger::sink_function_t> mock_sink;
 
 	EXPECT_CALL(mock_sink, Call(_, _)).Times(1);
 

@@ -34,6 +34,11 @@ class LogKitTest : public ::testing::Test
 	static inline auto spy_sink_output = std::string {};
 };
 
+TEST_F(LogKitTest, init)
+{
+	logger::init();
+}
+
 TEST_F(LogKitTest, logDebug)
 {
 	log_debug("Hello, World");

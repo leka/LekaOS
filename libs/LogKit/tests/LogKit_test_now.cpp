@@ -27,11 +27,13 @@ TEST_F(LogKitNowTest, useDefaultNowFunction)
 
 TEST_F(LogKitNowTest, useCustomNowFunction)
 {
-	MockFunction<int64_t()> mock_now;
+	MockFunction<logger::now_function_t> mock_now;
 
 	EXPECT_CALL(mock_now, Call()).Times(1);
 
 	logger::set_now_function(mock_now.AsStdFunction());
 
 	logger::now();
+
+	logger::set_now_function(logger::default_now_function);
 }
