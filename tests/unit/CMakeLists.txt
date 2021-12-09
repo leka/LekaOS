@@ -55,6 +55,9 @@ if (COVERAGE)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COVERAGE_COMPILER_FLAGS}")
 endif(COVERAGE)
 
+# Enable logging for tests
+add_definitions(-DENABLE_LOG_DEBUG)
+
 # Generate compile commands database
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
 
