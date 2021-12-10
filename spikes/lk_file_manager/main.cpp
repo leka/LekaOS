@@ -39,7 +39,7 @@ auto main() -> int
 
 	sd_card.close();
 
-	auto *filename2 = "/fs/assets/images/emotion-happy.jpg";
+	const auto *filename2 = "/fs/assets/images/emotion-happy.jpg";
 
 	if (FileSystemKit::File file; file.open(filename2)) {
 		log_info("FileSystemKit::File opened %s. Size : %lu bytes\n", filename2, file.size());

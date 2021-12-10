@@ -21,8 +21,10 @@ FATFileSystem fatfs("fs");
 
 void initializeSD()
 {
+	constexpr auto default_sd_blockdevice_frequency = uint64_t {25'000'000};
+
 	sd_blockdevice.init();
-	sd_blockdevice.frequency(25'000'000);
+	sd_blockdevice.frequency(default_sd_blockdevice_frequency);
 
 	fatfs.mount(&sd_blockdevice);
 }

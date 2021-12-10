@@ -74,8 +74,10 @@ void registerCallbacks()
 
 void initializeSD()
 {
+	constexpr auto default_sd_blockdevice_frequency = uint64_t {25'000'000};
+
 	sd_blockdevice.init();
-	sd_blockdevice.frequency(25'000'000);
+	sd_blockdevice.frequency(default_sd_blockdevice_frequency);
 
 	fatfs.mount(&sd_blockdevice);
 }
@@ -140,7 +142,7 @@ auto main() -> int
 
 		if (corefatfs.open(filename1.data()) == FR_OK) {
 			corevideo.displayImage(JPEG_File.get());
-			corevideo.setBrightness(0.2f);
+			corevideo.setBrightness(0.2F);
 
 			corevideo.turnOn();
 
@@ -150,7 +152,7 @@ auto main() -> int
 
 		if (corefatfs.open(filename2.data()) == FR_OK) {
 			corevideo.displayImage(JPEG_File.get());
-			corevideo.setBrightness(0.9f);
+			corevideo.setBrightness(0.9F);
 
 			corefatfs.close();
 			rtos::ThisThread::sleep_for(2s);
