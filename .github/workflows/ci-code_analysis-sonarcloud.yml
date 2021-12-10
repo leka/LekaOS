@@ -69,7 +69,7 @@ jobs:
 
       - name: Config, build LekaOS & al.
         run: |
-          make config config_tools
+          make config config_tools ENABLE_LOG_DEBUG=ON
           build-wrapper-linux-x86-64 --out-dir bw-output make
 
       - name: Ccache post build
