@@ -31,6 +31,11 @@ jobs:
     name: Compare .bin & .map files
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        enable_log_debug: ["ENABLE_LOG_DEBUG=ON", "ENABLE_LOG_DEBUG=OFF"]
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -181,7 +186,7 @@ jobs:
           if [[ "$BASE_MBED_VERSION" != "$HEAD_MBED_VERSION" ]]; then
             make mbed_curl VERSION=${{ env.BASE_MBED_VERSION }}
           fi
-          make config
+          make config ${{ matrix.enable_log_debug }}
           make
 
       - name: Move ${{ github.event.pull_request.base.ref }}:${{ env.BASE_SHA }} bin & map files to temporary directory
@@ -196,7 +201,7 @@ jobs:
           if [[ "$BASE_MBED_VERSION" != "$HEAD_MBED_VERSION" ]]; then
             make mbed_curl VERSION=${{ env.HEAD_MBED_VERSION }}
           fi
-          make config
+          make config ${{ matrix.enable_log_debug }}
           make
 
       - name: Move ${{ github.head_ref }}:${{ env.HEAD_SHA }} bin & map files to temporary directory
@@ -385,7 +390,7 @@ jobs:
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          header: analysis_bin_map_files
+          header: analysis_bin_map_files_log_debug_${{ matrix.enable_log_debug }}
           recreate: true
           message: |
             #  .map & .bin files analysis report
@@ -395,6 +400,7 @@ jobs:
             - base: [`${{ github.event.pull_request.base.ref }}`](https://github.com/leka/LekaOS/tree/${{ github.event.pull_request.base.ref }}) / ${{ env.BASE_SHA }} + `${{ env.BASE_MBED_VERSION }}` + `${{ env.BASE_CXX_STANDARD }}`
             - head: [`${{ github.head_ref }}`](https://github.com/leka/LekaOS/tree/${{ github.head_ref }}) / ${{ env.HEAD_SHA }} + `${{ env.HEAD_MBED_VERSION }}` + `${{ env.HEAD_CXX_STANDARD }}`
             - toolchain: `${{ env.TOOLCHAIN_VERSION }}`
+            - enable_log_debug: `${{ matrix.enable_log_debug }}`
 
             ## Summary :memo:
 
