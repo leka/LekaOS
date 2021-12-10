@@ -14,8 +14,7 @@
 using namespace leka;
 using namespace std::chrono;
 
-static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
-auto web_kit	   = WebKit();
+auto web_kit = WebKit();
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
@@ -30,7 +29,7 @@ void initializeSD()
 
 auto main() -> int
 {
-	leka::logger::set_sink_function([](const char *str, size_t size) { serial.write(str, size); });
+	logger::init();
 
 	log_info("Hello, World!\n\n");
 

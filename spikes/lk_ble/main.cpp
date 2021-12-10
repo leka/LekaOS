@@ -9,6 +9,7 @@
 
 #include "LKBLE.h"
 
+using namespace leka;
 using namespace std::chrono;
 
 void schedule_ble_events(BLE::OnEventsToProcessCallbackContext *context)
@@ -18,8 +19,7 @@ void schedule_ble_events(BLE::OnEventsToProcessCallbackContext *context)
 
 auto main() -> int
 {
-	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
-	leka::logger::set_sink_function([](const char *str, size_t size) { serial.write(str, size); });
+	logger::init();
 
 	log_info("Hello, World!\n\n");
 
