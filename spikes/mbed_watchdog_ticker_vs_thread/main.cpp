@@ -13,6 +13,7 @@
 
 #include "LogKit.h"
 
+using namespace leka;
 using namespace std::chrono;
 
 ///
@@ -104,6 +105,8 @@ void initWatchdog()
 
 auto main() -> int
 {
+	logger::init();
+
 	log_info("Hello, World!\n\n");
 
 	variables::led_error = 0;

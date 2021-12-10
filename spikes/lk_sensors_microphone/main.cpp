@@ -70,8 +70,7 @@ auto RMS(std::array<int, 10> &data, int newvalue) -> int
 
 auto main() -> int
 {
-	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
-	leka::logger::set_sink_function([](const char *str, size_t size) { serial.write(str, size); });
+	logger::init();
 
 	HelloWorld hello;
 	hello.start();

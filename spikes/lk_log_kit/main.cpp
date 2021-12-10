@@ -63,12 +63,9 @@ auto hello = HelloWorld {};
 auto thread_log_debug  = rtos::Thread {};
 auto thread_log_printf = rtos::Thread {};
 
-static auto serial = BufferedSerial(USBTX, USBRX, 115200);
-
 auto main() -> int
 {
-	logger::set_filehandle_pointer(&serial);
-	logger::start_event_queue();
+	logger::init();
 
 	rtos::ThisThread::sleep_for(1s);
 
