@@ -30,7 +30,9 @@ class SMA
 		sum -= previousInputs[index];
 		sum += input;
 		previousInputs[index] = input;
-		if (++index == N) index = 0;
+		if (++index == N) {
+			index = 0;
+		}
 		return (sum + (N / 2)) / N;
 	}
 
@@ -53,11 +55,11 @@ auto RMS(std::array<int, 10> &data, int newvalue) -> int
 	float root = 0;
 
 	for (auto i: data) {
-		square += data[i] * data[i];
-		data[i] = data[i + 1];
+		square += data.at(i) * data.at(i);
+		data.at(i) = data.at(i + 1);
 	}
 
-	data[data.size() - 1] = newvalue;
+	data.at(data.size() - 1) = newvalue;
 
 	square += newvalue * newvalue;
 
@@ -96,7 +98,7 @@ auto main() -> int
 		// auto output = sma_filter(rawValue)
 		auto output = RMS(rms_buffer, rawValue);
 
-		// TODO: print floats
+		// TODO (@john_doe): print floats
 		log_info("%d", output);
 
 		wait_us(250);

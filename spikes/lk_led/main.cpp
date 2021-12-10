@@ -83,7 +83,7 @@ void SetupPurpleAndGreenPalette()
 								   purple, purple, black, black);
 }
 
-// TODO: add the function to the library
+// TODO (@ladislas): add the function to the library
 // void turnOff()
 // {
 // 	CRGB black = CRGB::Black;
