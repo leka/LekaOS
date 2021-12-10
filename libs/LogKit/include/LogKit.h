@@ -187,10 +187,14 @@ namespace logger {
 
 #else
 
-	static void init(...) {}
-	static void set_now_function(...) {}
-	static void set_sink_function(...) {}
-	static void set_print_function(...) {}
+	// ? No op versions when debug is off
+	static void init(...) {}					 // NOSONAR
+	static void set_now_function(...) {}		 // NOSONAR
+	static void set_sink_function(...) {}		 // NOSONAR
+	static void set_print_function(...) {}		 // NOSONAR
+	static void default_now_function(...) {}	 // NOSONAR
+	static void default_sink_function(...) {}	 // NOSONAR
+	static void set_filehandle_pointer(...) {}	 // NOSONAR
 
 #endif	 // ENABLE_LOG_DEBUG
 
