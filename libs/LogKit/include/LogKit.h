@@ -29,7 +29,7 @@ namespace logger {
 	// MARK: - Buffers
 	//
 
-	namespace buffer {
+	struct buffer {
 		static inline auto timestamp = std::array<char, 32> {};
 		static inline auto filename	 = std::array<char, 128> {};
 		static inline auto message	 = std::array<char, 128> {};
