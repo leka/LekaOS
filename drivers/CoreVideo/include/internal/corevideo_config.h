@@ -15,25 +15,29 @@ namespace lcd {
 
 	// TODO : this should not depend on OTM driver,
 	// TODO : it should be instanciated and passed to objects that need it
-	const struct {
-		uint16_t width	= lcd::otm8009a::landscape::width;
-		uint16_t height = lcd::otm8009a::landscape::height;
-	} dimension;
+	namespace dimension {
+
+		constexpr uint16_t width  = lcd::otm8009a::landscape::width;
+		constexpr uint16_t height = lcd::otm8009a::landscape::height;
+
+	}	// namespace dimension
 
 	// TODO : this should not depend on OTM driver,
 	// TODO : it should be instanciated and passed to objects that need it
-	const struct {
-		uint16_t VSA  = lcd::otm8009a::landscape::vsync;	// Vertical start active time in units of lines
-		uint16_t VBP  = lcd::otm8009a::landscape::vbp;		// Vertical Back Porch time in units of lines
-		uint16_t VFP  = lcd::otm8009a::landscape::vfp;		// Vertical Front Porch time in units of lines
-		uint16_t VACT = lcd::otm8009a::landscape::height;	// Vertical Active time in units of lines = imageSize Y in
-															// pixels to display
-		uint16_t HSA  = lcd::otm8009a::landscape::hsync;	// Horizontal start active time in units of lcdClk
-		uint16_t HBP  = lcd::otm8009a::landscape::hbp;		// Horizontal Back Porch time in units of lcdClk
-		uint16_t HFP  = lcd::otm8009a::landscape::hfp;		// Horizontal Front Porch time in units of lcdClk
-		uint16_t HACT = lcd::otm8009a::landscape::width;   // Horizontal Active time in units of lcdClk = imageSize X in
-														   // pixels to display
-	} property;
+	namespace property {
+
+		constexpr uint16_t VSA	= lcd::otm8009a::landscape::vsync;	  // Vertical start active time in units of lines
+		constexpr uint16_t VBP	= lcd::otm8009a::landscape::vbp;	  // Vertical Back Porch time in units of lines
+		constexpr uint16_t VFP	= lcd::otm8009a::landscape::vfp;	  // Vertical Front Porch time in units of lines
+		constexpr uint16_t VACT = lcd::otm8009a::landscape::height;	  // Vertical Active time in units of lines =
+																	  // imageSize Y in pixels to display
+		constexpr uint16_t HSA	= lcd::otm8009a::landscape::hsync;	  // Horizontal start active time in units of lcdClk
+		constexpr uint16_t HBP	= lcd::otm8009a::landscape::hbp;	  // Horizontal Back Porch time in units of lcdClk
+		constexpr uint16_t HFP	= lcd::otm8009a::landscape::hfp;	  // Horizontal Front Porch time in units of lcdClk
+		constexpr uint16_t HACT = lcd::otm8009a::landscape::width;	  // Horizontal Active time in units of lcdClk =
+																	  // imageSize X in pixels to display
+
+	}	// namespace property
 
 }	// namespace lcd
 

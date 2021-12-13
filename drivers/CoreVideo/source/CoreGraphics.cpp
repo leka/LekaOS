@@ -11,8 +11,8 @@ CoreGraphics::CoreGraphics(interface::DMA2DBase &dma2d) : _dma2d(dma2d) {}
 void CoreGraphics::clearScreen(CGColor color)
 {
 	FilledRectangle rect;
-	rect.width	= lcd::dimension.width;
-	rect.height = lcd::dimension.height;
+	rect.width	= lcd::dimension::width;
+	rect.height = lcd::dimension::height;
 
 	drawRectangle(rect, color);
 }
@@ -20,7 +20,7 @@ void CoreGraphics::clearScreen(CGColor color)
 void CoreGraphics::drawRectangle(FilledRectangle rectangle, CGColor color)
 {
 	uintptr_t destination_address =
-		lcd::frame_buffer_address + 4 * (lcd::dimension.width * rectangle.origin.y + rectangle.origin.x);
+		lcd::frame_buffer_address + 4 * (lcd::dimension::width * rectangle.origin.y + rectangle.origin.x);
 
 	uint32_t destinationColor = color.getARGB();
 

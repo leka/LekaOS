@@ -267,7 +267,7 @@ TEST_F(CoreFontTest, displayWithScreenWidthReached)
 		sprintf(buff,
 				"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
 				"only one line of the screen.");
-	uint8_t max_char_per_line = lcd::dimension.width / graphics::font_pixel_width;
+	uint8_t max_char_per_line = lcd::dimension::width / graphics::font_pixel_width;
 	ASSERT_GT(text_length, max_char_per_line);	 // Text to display MUST exceed 47 characters for this test
 
 	auto starting_line = 1;
@@ -297,7 +297,7 @@ TEST_F(CoreFontTest, displayWithScreenHeightReached)
 
 	auto starting_line = 20;
 
-	auto expected_last_pixel_y_position = lcd::dimension.height;
+	auto expected_last_pixel_y_position = lcd::dimension::height;
 
 	// TODO: This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove it in the future
 	EXPECT_CALL(llmock, rawMemoryWrite).Times(AnyNumber());
