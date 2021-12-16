@@ -45,18 +45,18 @@ TEST_F(CoreLTDCTest, handleConfigurationLayerCfg)
 {
 	auto handle = coreltdc.getHandle();
 
-	ASSERT_EQ(handle.LayerCfg->ImageWidth, lcd::dimension.width);
-	ASSERT_EQ(handle.LayerCfg->ImageHeight, lcd::dimension.height);
+	ASSERT_EQ(handle.LayerCfg->ImageWidth, lcd::dimension::width);
+	ASSERT_EQ(handle.LayerCfg->ImageHeight, lcd::dimension::height);
 }
 
 TEST_F(CoreLTDCTest, handleConfigurationSetupTimingConfig)
 {
 	auto handle = coreltdc.getHandle();
 
-	auto horizontal_sync	 = (lcd::property.HSA - 1);
-	auto accumulated_HBP	 = (lcd::property.HSA + lcd::property.HBP - 1);
-	auto accumulated_activeW = (lcd::dimension.width + lcd::property.HSA + lcd::property.HBP - 1);
-	auto total_width		 = (lcd::dimension.width + lcd::property.HSA + lcd::property.HBP + lcd::property.HFP - 1);
+	auto horizontal_sync	 = (lcd::property::HSA - 1);
+	auto accumulated_HBP	 = (lcd::property::HSA + lcd::property::HBP - 1);
+	auto accumulated_activeW = (lcd::dimension::width + lcd::property::HSA + lcd::property::HBP - 1);
+	auto total_width = (lcd::dimension::width + lcd::property::HSA + lcd::property::HBP + lcd::property::HFP - 1);
 
 	ASSERT_EQ(handle.Init.HorizontalSync, horizontal_sync);
 	ASSERT_EQ(handle.Init.AccumulatedHBP, accumulated_HBP);
@@ -79,9 +79,9 @@ TEST_F(CoreLTDCTest, setupLayerConfig)
 	auto layer_config = coreltdc.getLayerConfig();
 
 	ASSERT_EQ(layer_config.WindowX0, 0);
-	ASSERT_EQ(layer_config.WindowX1, lcd::dimension.width);
+	ASSERT_EQ(layer_config.WindowX1, lcd::dimension::width);
 	ASSERT_EQ(layer_config.WindowY0, 0);
-	ASSERT_EQ(layer_config.WindowY1, lcd::dimension.height);
+	ASSERT_EQ(layer_config.WindowY1, lcd::dimension::height);
 
 	ASSERT_EQ(layer_config.PixelFormat, LTDC_PIXEL_FORMAT_ARGB8888);
 
@@ -97,8 +97,8 @@ TEST_F(CoreLTDCTest, setupLayerConfig)
 	ASSERT_EQ(layer_config.BlendingFactor1, LTDC_BLENDING_FACTOR1_PAxCA);
 	ASSERT_EQ(layer_config.BlendingFactor2, LTDC_BLENDING_FACTOR2_PAxCA);
 
-	ASSERT_EQ(layer_config.ImageWidth, lcd::dimension.width);
-	ASSERT_EQ(layer_config.ImageHeight, lcd::dimension.height);
+	ASSERT_EQ(layer_config.ImageWidth, lcd::dimension::width);
+	ASSERT_EQ(layer_config.ImageHeight, lcd::dimension::height);
 }
 
 MATCHER_P(WithStructEqualTo, expected, "Compare RCC_PeriphCLKInitTypeDef")

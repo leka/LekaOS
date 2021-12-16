@@ -13,14 +13,14 @@ CoreLTDC::CoreLTDC(LKCoreSTM32HalBase &hal, interface::DSIBase &dsi) : _hal(hal)
 	_hltdc.Instance = LTDC;
 
 	// LCD pixel width/height
-	_hltdc.LayerCfg->ImageWidth	 = lcd::dimension.width;
-	_hltdc.LayerCfg->ImageHeight = lcd::dimension.height;
+	_hltdc.LayerCfg->ImageWidth	 = lcd::dimension::width;
+	_hltdc.LayerCfg->ImageHeight = lcd::dimension::height;
 
 	// Timing and synchronization
-	_hltdc.Init.HorizontalSync	   = (lcd::property.HSA - 1);
-	_hltdc.Init.AccumulatedHBP	   = (lcd::property.HSA + lcd::property.HBP - 1);
-	_hltdc.Init.AccumulatedActiveW = (lcd::dimension.width + lcd::property.HSA + lcd::property.HBP - 1);
-	_hltdc.Init.TotalWidth = (lcd::dimension.width + lcd::property.HSA + lcd::property.HBP + lcd::property.HFP - 1);
+	_hltdc.Init.HorizontalSync	   = (lcd::property::HSA - 1);
+	_hltdc.Init.AccumulatedHBP	   = (lcd::property::HSA + lcd::property::HBP - 1);
+	_hltdc.Init.AccumulatedActiveW = (lcd::dimension::width + lcd::property::HSA + lcd::property::HBP - 1);
+	_hltdc.Init.TotalWidth = (lcd::dimension::width + lcd::property::HSA + lcd::property::HBP + lcd::property::HFP - 1);
 
 	// Background values
 	_hltdc.Init.Backcolor.Blue	= 0;
@@ -32,9 +32,9 @@ CoreLTDC::CoreLTDC(LKCoreSTM32HalBase &hal, interface::DSIBase &dsi) : _hal(hal)
 
 	// Layer config
 	_layerConfig.WindowX0 = 0;
-	_layerConfig.WindowX1 = lcd::dimension.width;
+	_layerConfig.WindowX1 = lcd::dimension::width;
 	_layerConfig.WindowY0 = 0;
-	_layerConfig.WindowY1 = lcd::dimension.height;
+	_layerConfig.WindowY1 = lcd::dimension::height;
 
 	_layerConfig.PixelFormat = LTDC_PIXEL_FORMAT_ARGB8888;
 
@@ -50,8 +50,8 @@ CoreLTDC::CoreLTDC(LKCoreSTM32HalBase &hal, interface::DSIBase &dsi) : _hal(hal)
 	_layerConfig.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;
 	_layerConfig.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;
 
-	_layerConfig.ImageWidth	 = lcd::dimension.width;
-	_layerConfig.ImageHeight = lcd::dimension.height;
+	_layerConfig.ImageWidth	 = lcd::dimension::width;
+	_layerConfig.ImageHeight = lcd::dimension::height;
 }
 
 void CoreLTDC::initialize()

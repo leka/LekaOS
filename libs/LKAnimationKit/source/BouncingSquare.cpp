@@ -44,7 +44,7 @@ auto BouncingSquare::squareWillBeOutOfBoundHorizontal() const -> bool
 	if (_square.origin.x + _shift.horizontal <= 0) {
 		return true;
 	}
-	if (_square.origin.x + _square.width + _shift.horizontal > static_cast<uint32_t>(lcd::dimension.width - 1)) {
+	if (_square.origin.x + _square.width + _shift.horizontal > static_cast<uint32_t>(lcd::dimension::width - 1)) {
 		return true;
 	}
 	return false;
@@ -55,7 +55,7 @@ auto BouncingSquare::squareWillBeOutOfBoundVertical() const -> bool
 	if (_square.origin.y + _shift.vertical <= 0) {
 		return true;
 	}
-	if (_square.origin.y + _square.height + _shift.vertical > static_cast<uint32_t>(lcd::dimension.height - 1)) {
+	if (_square.origin.y + _square.height + _shift.vertical > static_cast<uint32_t>(lcd::dimension::height - 1)) {
 		return true;
 	}
 	return false;

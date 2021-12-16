@@ -27,7 +27,7 @@ struct CGPixel {
 	void draw(CGColor color)
 	{
 		uintptr_t destination_address =
-			lcd::frame_buffer_address + (4 * (coordinates.y * lcd::dimension.width + coordinates.x));
+			lcd::frame_buffer_address + (4 * (coordinates.y * lcd::dimension::width + coordinates.x));
 		uint32_t destinationColor = color.getARGB();
 
 		corell.rawMemoryWrite(destination_address, destinationColor);

@@ -78,7 +78,7 @@ auto CoreDMA2D::getHandle() -> DMA2D_HandleTypeDef
 void CoreDMA2D::transferDrawing(uintptr_t first_pixel_address, uint32_t width, uint32_t height, uint32_t color)
 {
 	_hdma2d.Init.Mode		  = DMA2D_R2M;
-	_hdma2d.Init.OutputOffset = lcd::dimension.width - width;
+	_hdma2d.Init.OutputOffset = lcd::dimension::width - width;
 
 	transferData(color, first_pixel_address, width, height);
 }

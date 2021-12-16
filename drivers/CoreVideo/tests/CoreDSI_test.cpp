@@ -56,18 +56,18 @@ TEST_F(CoreDSITest, handleConfigurationVideoConfigGeneral)
 	ASSERT_EQ(config.Mode, DSI_VID_MODE_BURST);
 	ASSERT_EQ(config.NullPacketSize, 0xFFF);
 	ASSERT_EQ(config.NumberOfChunks, 0);
-	ASSERT_EQ(config.PacketSize, lcd::property.HACT);
+	ASSERT_EQ(config.PacketSize, lcd::property::HACT);
 }
 
 TEST_F(CoreDSITest, handleConfigurationVideoConfigHorizontal)
 {
 	auto config = coredsi.getConfig();
 
-	auto horizontalSyncActive = (lcd::property.HSA * dsi::laneByteClock_kHz) / dsi::lcdClock;
-	auto horizontalBackPorch  = (lcd::property.HBP * dsi::laneByteClock_kHz) / dsi::lcdClock;
-	auto horizontalLine =
-		((lcd::property.HACT + lcd::property.HSA + lcd::property.HBP + lcd::property.HFP) * dsi::laneByteClock_kHz) /
-		dsi::lcdClock;
+	auto horizontalSyncActive = (lcd::property::HSA * dsi::laneByteClock_kHz) / dsi::lcdClock;
+	auto horizontalBackPorch  = (lcd::property::HBP * dsi::laneByteClock_kHz) / dsi::lcdClock;
+	auto horizontalLine		  = ((lcd::property::HACT + lcd::property::HSA + lcd::property::HBP + lcd::property::HFP) *
+							 dsi::laneByteClock_kHz) /
+						  dsi::lcdClock;
 
 	ASSERT_EQ(config.HorizontalSyncActive, horizontalSyncActive);
 	ASSERT_EQ(config.HorizontalBackPorch, horizontalBackPorch);
@@ -78,10 +78,10 @@ TEST_F(CoreDSITest, handleConfigurationVideoConfigVertical)
 {
 	auto config = coredsi.getConfig();
 
-	ASSERT_EQ(config.VerticalSyncActive, lcd::property.VSA);
-	ASSERT_EQ(config.VerticalBackPorch, lcd::property.VBP);
-	ASSERT_EQ(config.VerticalFrontPorch, lcd::property.VFP);
-	ASSERT_EQ(config.VerticalActive, lcd::property.VACT);
+	ASSERT_EQ(config.VerticalSyncActive, lcd::property::VSA);
+	ASSERT_EQ(config.VerticalBackPorch, lcd::property::VBP);
+	ASSERT_EQ(config.VerticalFrontPorch, lcd::property::VFP);
+	ASSERT_EQ(config.VerticalActive, lcd::property::VACT);
 }
 
 TEST_F(CoreDSITest, handleConfigurationVideoConfigLowPower)

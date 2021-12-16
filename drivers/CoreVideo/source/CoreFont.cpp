@@ -80,11 +80,11 @@ void CoreFont::display(const char *text, uint32_t size, uint32_t starting_line, 
 			character.origin.x += graphics::font_pixel_width;
 		}
 
-		if ((character.origin.x + graphics::font_pixel_width) > lcd::dimension.width) {
+		if ((character.origin.x + graphics::font_pixel_width) > lcd::dimension::width) {
 			character.origin.y += graphics::font_pixel_height;
 			character.origin.x = 0;
 		}
-		if ((character.origin.y + graphics::font_pixel_height) > lcd::dimension.height) {
+		if ((character.origin.y + graphics::font_pixel_height) > lcd::dimension::height) {
 			return;
 		}
 	}

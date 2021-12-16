@@ -30,16 +30,16 @@ CoreDSI::CoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
 	_config.Mode			 = DSI_VID_MODE_BURST;	 // Mode Video burst ie : one LgP per line
 	_config.NullPacketSize	 = 0xFFF;
 	_config.NumberOfChunks	 = 0;
-	_config.PacketSize		 = lcd::property.HACT;	 // Value depending on display orientation choice portrait/landscape
-	_config.HorizontalSyncActive = (lcd::property.HSA * dsi::laneByteClock_kHz) / dsi::lcdClock;
-	_config.HorizontalBackPorch	 = (lcd::property.HBP * dsi::laneByteClock_kHz) / dsi::lcdClock;
-	_config.HorizontalLine =
-		((lcd::property.HACT + lcd::property.HSA + lcd::property.HBP + lcd::property.HFP) * dsi::laneByteClock_kHz) /
-		dsi::lcdClock;	 // Value depending on display orientation choice portrait/landscape
-	_config.VerticalSyncActive = lcd::property.VSA;
-	_config.VerticalBackPorch  = lcd::property.VBP;
-	_config.VerticalFrontPorch = lcd::property.VFP;
-	_config.VerticalActive = lcd::property.VACT;   // Value depending on display orientation choice portrait/landscape
+	_config.PacketSize = lcd::property::HACT;	// Value depending on display orientation choice portrait/landscape
+	_config.HorizontalSyncActive = (lcd::property::HSA * dsi::laneByteClock_kHz) / dsi::lcdClock;
+	_config.HorizontalBackPorch	 = (lcd::property::HBP * dsi::laneByteClock_kHz) / dsi::lcdClock;
+	_config.HorizontalLine = ((lcd::property::HACT + lcd::property::HSA + lcd::property::HBP + lcd::property::HFP) *
+							  dsi::laneByteClock_kHz) /
+							 dsi::lcdClock;	  // Value depending on display orientation choice portrait/landscape
+	_config.VerticalSyncActive = lcd::property::VSA;
+	_config.VerticalBackPorch  = lcd::property::VBP;
+	_config.VerticalFrontPorch = lcd::property::VFP;
+	_config.VerticalActive = lcd::property::VACT;	// Value depending on display orientation choice portrait/landscape
 
 	// Enable or disable sending LP command while streaming is active in video mode
 	_config.LPCommandEnable = DSI_LP_COMMAND_ENABLE;   // Enable sending commands in mode LP (Low Power)

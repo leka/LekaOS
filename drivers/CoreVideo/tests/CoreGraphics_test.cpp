@@ -46,7 +46,7 @@ TEST_F(CoreGraphicsTest, drawRectangle)
 	rectangle.height   = rectangle_height;
 
 	uintptr_t expected_address =
-		lcd::frame_buffer_address + n_channel * (lcd::dimension.width * starting_pixel_line + starting_pixel_column);
+		lcd::frame_buffer_address + n_channel * (lcd::dimension::width * starting_pixel_line + starting_pixel_column);
 
 	EXPECT_CALL(dma2dmock,
 				transferDrawing(expected_address, rectangle_width, rectangle_height, expected_color.getARGB()))
@@ -60,7 +60,7 @@ TEST_F(CoreGraphicsTest, clearScreenDefaultColor)
 	uintptr_t expected_address = lcd::frame_buffer_address + 0;
 	auto expected_color		   = CGColor::white;
 
-	EXPECT_CALL(dma2dmock, transferDrawing(expected_address, lcd::dimension.width, lcd::dimension.height,
+	EXPECT_CALL(dma2dmock, transferDrawing(expected_address, lcd::dimension::width, lcd::dimension::height,
 										   expected_color.getARGB()))
 		.Times(1);
 
@@ -72,7 +72,7 @@ TEST_F(CoreGraphicsTest, clearScreenOtherColor)
 	uintptr_t expected_address = lcd::frame_buffer_address + 0;
 	auto expected_color		   = CGColor::magenta;
 
-	EXPECT_CALL(dma2dmock, transferDrawing(expected_address, lcd::dimension.width, lcd::dimension.height,
+	EXPECT_CALL(dma2dmock, transferDrawing(expected_address, lcd::dimension::width, lcd::dimension::height,
 										   expected_color.getARGB()))
 		.Times(1);
 
