@@ -202,7 +202,7 @@ namespace logger {
 
 #endif	 // ENABLE_LOG_DEBUG
 
-};	 // namespace logger
+}	// namespace logger
 
 }	// namespace leka
 
