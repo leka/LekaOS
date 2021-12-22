@@ -185,6 +185,11 @@ namespace logger {
 		logger::start_event_queue();
 	}
 
+	inline void filehandle_low_level_write(const char *data, const size_t size)
+	{
+		logger::filehandle->write(data, size);
+	}
+
 #else
 
 	// ? No op versions when debug is off
@@ -252,11 +257,18 @@ namespace logger {
 			leka::logger::sink(leka::logger::buffer::output.data(), length);                                           \
 		} while (0)
 
+	// NOLINTNEXTLINE
+	#define log_ll(data, size)                                                                                         \
+		do {                                                                                                           \
+			logger::filehandle_low_level_write(data, size);                                                            \
+		} while (0)
+
 #else	// not defined (ENABLE_LOG_DEBUG)
 
 	#define log_debug(str, ...)
 	#define log_info(str, ...)
 	#define log_error(str, ...)
+	#define log_ll(data, size)
 
 #endif	 // not defined (ENABLE_LOG_DEBUG)
 
