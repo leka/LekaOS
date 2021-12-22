@@ -8,7 +8,7 @@
 
 void leka::ble::printError(ble_error_t error, const char *msg)
 {
-	printf("%s: ", msg);
+	log_debug("%s: ", msg);
 	switch (error) {
 		case BLE_ERROR_NONE:
 			log_error("BLE_ERROR_NONE: No error");
