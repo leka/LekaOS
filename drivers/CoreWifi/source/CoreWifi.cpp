@@ -6,8 +6,6 @@
 
 #include "CoreWifi.h"
 
-#include "LogKit.h"
-
 using namespace leka;
 
 auto CoreWifi::set_credentials(const char *ssid, const char *password, nsapi_security_t security) -> int

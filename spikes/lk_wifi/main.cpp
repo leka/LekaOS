@@ -14,10 +14,10 @@
 using namespace leka;
 using namespace std::chrono;
 
-constexpr auto network_ssid		= "USER_SSID";
-constexpr auto network_password = "USER_PASSWORD";
+constexpr auto network_ssid {"USER_SSID"};
+constexpr auto network_password {"USER_PASSWORD"};
 
-void runExample(WiFiInterface &wifi_interface, mbed::BufferedSerial &serial);
+void runExample(WiFiInterface &wifi_interface);
 
 auto main() -> int
 {
@@ -49,12 +49,12 @@ auto main() -> int
 				 int(t.count() / 1000));
 		rtos::ThisThread::sleep_for(500ms);
 
-		runExample(corewifi, logger::default_serial);
+		runExample(corewifi);
 		rtos::ThisThread::sleep_for(500ms);
 	}
 }
 
-void runExample(WiFiInterface &wifi_interface, mbed::BufferedSerial &serial)
+void runExample(WiFiInterface &wifi_interface)
 {
 	// Get information online
 	// Open a socket on the network interface, and create a TCP connection to ifconfig.io
@@ -72,13 +72,16 @@ void runExample(WiFiInterface &wifi_interface, mbed::BufferedSerial &serial)
 	socket.send(tx_buffer.data(), tx_buffer.size());
 
 	// Receive a simple http response and print out the response line
-	std::string rx_buffer(32, ' ');
-	auto available_data = socket.recv(rx_buffer.data(), rx_buffer.size());
-	do {
-		serial.write(rx_buffer.data(), available_data);	  // Print only received data
+	std::array<char, 64> rx_buffer {};
+
+	log_ll("\n", 1);
+
+	for (auto available_data = socket.recv(rx_buffer.data(), rx_buffer.size()); available_data > 0;) {
+		log_ll(rx_buffer.data(), available_data);
 		available_data = socket.recv(rx_buffer.data(), rx_buffer.size());
-	} while (available_data > 0);
-	serial.write("\n", 1);
+	}
+
+	log_ll("\n", 1);
 
 	// Close the socket to return its memory and bring down the network interface
 	socket.close();
