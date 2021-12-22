@@ -2,6 +2,8 @@
 // Copyright 2018 ARM Limited
 // SPDX-License-Identifier: Apache-2.0
 
+// ? LCOV_EXCL_START - Exclude from coverage report
+
 #include "PrettyPrinter.h"
 
 #include "LogKit.h"
@@ -77,7 +79,7 @@ void leka::ble::printMacAddress()
 	leka::ble::printAddress(address);
 }
 
-auto phy_to_string(::ble::phy_t phy) -> const char *
+auto leka::ble::phy_to_string(::ble::phy_t phy) -> const char *
 {
 	switch (phy.value()) {
 		case ::ble::phy_t::LE_1M:
@@ -91,5 +93,4 @@ auto phy_to_string(::ble::phy_t phy) -> const char *
 	}
 }
 
-// }	// namespace ble
-// }	// namespace pp
+// ? LCOV_EXCL_STOP - Exclude from coverage report
