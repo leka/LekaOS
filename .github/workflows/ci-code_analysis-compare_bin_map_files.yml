@@ -13,178 +13,37 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
-env:
-  CC: /usr/bin/gcc
-  CXX: /usr/bin/g++
-
-  CLICOLOR_FORCE: true # ninja
-
-  CCACHE_DIR: /home/runner/work/ccache
-  CCACHE_COMPRESS: true
-  CCACHE_COMPRESSLEVEL: 6
-
-  ARM_TOOLCHAIN_FILENAME: "gcc-arm-none-eabi-*-x86_64-linux.tar.bz2"
-  ARM_TOOLCHAIN_EXTRACT_DIRECTORY: "gcc-arm-none-eabi-*"
-
 jobs:
   compare_bin_map_files:
     name: Compare .bin & .map files
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      #
+      # Mark: - Setup
+      #
+      - uses: actions/checkout@v2
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup CI
+        uses: ./.github/actions/setup
 
       #
-      # Mark: - Install ARM GCC Toolchain
+      # Mark: - Config & compile
       #
-
-      - name: Create ARM GCC Toolchain env variables
-        run: |
-          echo "ARM_TOOLCHAIN_URL=$(cat .gcc_arm_none_eabi_url)" >> $GITHUB_ENV
-
-      - name: Cache ARM GCC Toolchain
-        id: cache_arm_toolchain
-        uses: actions/cache@v2
-        with:
-          path: ~/gcc-arm-none-eabi
-          key: ${{ runner.os }}-global_cache-arm_toolchain-${{ hashFiles('.gcc_arm_none_eabi_url') }}
-
-      - name: Install ARM GCC Toolchain
-        if: steps.cache_arm_toolchain.outputs.cache-hit != 'true'
-        run: |
-          wget ${{ env.ARM_TOOLCHAIN_URL }}
-          tar -xjf ${{ env.ARM_TOOLCHAIN_FILENAME }} && rm -rf ${{ env.ARM_TOOLCHAIN_FILENAME }}
-          mv ${{ env.ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} ~/gcc-arm-none-eabi
-
-      - name: Add ARM GCC Toolchain to path
-        run: |
-          tmp_home=$(echo ~)
-          echo "$tmp_home/gcc-arm-none-eabi/bin" >> $GITHUB_PATH
-
-      - name: Test ARM GCC Toolchain
-        run: |
-          ls -al ~/gcc-arm-none-eabi/bin
-          arm-none-eabi-gcc -v
-
-      #
-      # Mark: - Install misc. tools
-      #
-
-      - name: Install tools
-        run: |
-          sudo apt-get install -y --no-install-recommends ninja-build ccache
-
-      #
-      # Mark: - Download `extern` dependencies
-      #
-
-      - name: Cache extern dependencies
-        id: cache_extern_dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            extern/mbed-os
-            extern/mcuboot
-          key: ${{ runner.os }}-global_cache-extern_dependencies-${{ hashFiles('.mbed_version', '.mbed_git_url', '.mcuboot_version') }}
-
-      - name: Pull extern dependencies
-        if: steps.cache_extern_dependencies.outputs.cache-hit != 'true'
-        run: |
-          make mbed_curl
-          make mcuboot_clone
-
-      - name: Cache ccache
-        id: cache_ccache
-        uses: actions/cache@v2
-        with:
-          path: ${{ env.CCACHE_DIR}}
-          key: ${{ runner.os }}-cache-code_analysis-compare_bin_map_files-ccache-${{ steps.cache_variables.outputs.date }}
-          restore-keys: |
-            ${{ runner.os }}-cache-code_analysis-compare_bin_map_files-ccache-
-
-      #
-      # Mark: - Install python/pip dependencies
-      #
-
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.9.7"
-
-      - name: Cache pip dependencies
-        id: cache_pip_dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cache/pip
-            ${{ env.pythonLocation }}
-          key: ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-${{ hashFiles('extern/mbed-os/requirements.txt', '.mbed_version') }}
-
-      - name: Install pip packages
-        run: |
-          pip install --upgrade --upgrade-strategy eager mbed-cli
-          pip install --upgrade --upgrade-strategy eager -r ./extern/mbed-os/requirements.txt
-
-      - name: Test pip packages
-        run: |
-          pip list -v
-          mbed-cli --help
-
-      #
-      # Mark: - Prepare, config, compile
-      #
-
-      - name: Create base & head sha variables
-        id: create_sha_variables
-        run: |
-          git checkout ${{ github.event.pull_request.base.ref }}
-          echo "BASE_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          git checkout ${{ github.head_ref }}
-          echo "HEAD_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
-      - name: Create mbed version variables
-        id: create_mbed_version_variables
-        run: |
-          git checkout ${{ github.event.pull_request.base.ref }}
-          echo "BASE_MBED_VERSION=$(cat .mbed_version)" >> $GITHUB_ENV
-          git checkout ${{ github.head_ref }}
-          echo "HEAD_MBED_VERSION=$(cat .mbed_version)" >> $GITHUB_ENV
-
-      - name: Create C++ standard variables
-        id: create_cxx_standard_variables
-        run: |
-          git checkout ${{ github.event.pull_request.base.ref }}
-          BASE_CXX_STANDARD="-std=c++$(cat CMakeLists.txt | grep -Po '(?<=CMAKE_CXX_STANDARD\s)[0-9]*')"
-          echo "BASE_CXX_STANDARD=$BASE_CXX_STANDARD" >> $GITHUB_ENV
-          git checkout ${{ github.head_ref }}
-          HEAD_CXX_STANDARD="-std=c++$(cat CMakeLists.txt | grep -Po '(?<=CMAKE_CXX_STANDARD\s)[0-9]*')"
-          echo "HEAD_CXX_STANDARD=$HEAD_CXX_STANDARD" >> $GITHUB_ENV
-
-      - name: Create toolchain version variables
-        id: create_toolchain_version_variables
-        run: |
-          TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc \().*(?= \(re)' | sed 's/)/ -/g')
-          echo "TOOLCHAIN_VERSION=$TOOLCHAIN_VERSION" >> $GITHUB_ENV
-
-      - name: Create temporary directories
-        run: |
-          mkdir -p _build_tmp/${{ env.BASE_SHA }}
-          mkdir -p _build_tmp/${{ env.HEAD_SHA }}
 
       - name: Compile base branch
         run: |
           git checkout ${{ github.event.pull_request.base.ref }}
           make deep_clean
           if [[ "$BASE_MBED_VERSION" != "$HEAD_MBED_VERSION" ]]; then
-            make mbed_curl VERSION=${{ env.BASE_MBED_VERSION }}
+            make mbed_curl VERSION=${{ env.BASE_MBED_VERSION }}
           fi
           make config
           make
 
-      - name: Move ${{ github.event.pull_request.base.ref }}:${{ env.BASE_SHA }} bin & map files to temporary directory
+      - name: Move ${{ github.event.pull_request.base.ref }}:${{ env.BASE_SHA }} bin & map files to temporary directory
         run: |
           find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
           find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
@@ -194,12 +53,12 @@ jobs:
           git checkout ${{ github.head_ref }}
           make deep_clean
           if [[ "$BASE_MBED_VERSION" != "$HEAD_MBED_VERSION" ]]; then
-            make mbed_curl VERSION=${{ env.HEAD_MBED_VERSION }}
+            make mbed_curl VERSION=${{ env.HEAD_MBED_VERSION }}
           fi
           make config
           make
 
-      - name: Move ${{ github.head_ref }}:${{ env.HEAD_SHA }} bin & map files to temporary directory
+      - name: Move ${{ github.head_ref }}:${{ env.HEAD_SHA }} bin & map files to temporary directory
         run: |
           find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
           find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
@@ -392,8 +251,8 @@ jobs:
 
             ## Versions :bookmark:
 
-            - base: [`${{ github.event.pull_request.base.ref }}`](https://github.com/leka/LekaOS/tree/${{ github.event.pull_request.base.ref }}) / ${{ env.BASE_SHA }} + `${{ env.BASE_MBED_VERSION }}` + `${{ env.BASE_CXX_STANDARD }}`
-            - head: [`${{ github.head_ref }}`](https://github.com/leka/LekaOS/tree/${{ github.head_ref }}) / ${{ env.HEAD_SHA }} + `${{ env.HEAD_MBED_VERSION }}` + `${{ env.HEAD_CXX_STANDARD }}`
+            - base: [`${{ github.event.pull_request.base.ref }}`](https://github.com/leka/LekaOS/tree/${{ github.event.pull_request.base.ref }}) / ${{ env.BASE_SHA }} + `${{ env.BASE_MBED_VERSION }}` + `${{ env.BASE_CXX_STANDARD }}`
+            - head: [`${{ github.head_ref }}`](https://github.com/leka/LekaOS/tree/${{ github.head_ref }}) / ${{ env.HEAD_SHA }} + `${{ env.HEAD_MBED_VERSION }}` + `${{ env.HEAD_CXX_STANDARD }}`
             - toolchain: `${{ env.TOOLCHAIN_VERSION }}`
 
             ## Summary :memo:
