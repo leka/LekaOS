@@ -13,85 +13,25 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
-env:
-  CC: /usr/bin/gcc
-  CXX: /usr/bin/g++
-
-  CLICOLOR_FORCE: true # ninja
-
-  CCACHE_DIR: /home/runner/work/ccache
-  CCACHE_COMPRESS: true
-  CCACHE_COMPRESSLEVEL: 6
-
-  ARM_TOOLCHAIN_FILENAME: "gcc-arm-none-eabi-*-x86_64-linux.tar.bz2"
-  ARM_TOOLCHAIN_EXTRACT_DIRECTORY: "gcc-arm-none-eabi-*"
-
-  SONARCLOUD_CLI_URL: "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472.zip"
-  SONARCLOUD_CLI_FILENAME: "sonar-scanner-cli-*.zip"
-  SONARCLOUD_CLI_EXTRACT_DIRECTORY: "sonar-scanner-*"
-
-  SONARCLOUD_BUILD_WRAPPER_URL: "https://sonarcloud.io/static/cpp/build-wrapper-linux-x86.zip"
-  SONARCLOUD_BUILD_WRAPPER_FILENAME: "build-wrapper-linux-x86.zip"
-  SONARCLOUD_BUILD_WRAPPER_EXTRACT_DIRECTORY: "build-wrapper-linux-x86"
-
-  SONARCLOUD_CACHE_DIR: /home/runner/work/sonarcloud
-
 jobs:
   sonarcloud:
     name: sonarcloud
     runs-on: ubuntu-latest
 
     steps:
+      #
+      # Mark: - Setup
+      #
+
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
-      #
-      # Mark: - Create cache variables
-      #
-
-      - name: Create cache variables
-        id: cache_variables
-        shell: bash
-        run: |
-          echo "::set-output name=date::$(date +%s)"
-
-          sha=($(echo -n ${{ env.ARM_TOOLCHAIN_URL }} | sha1sum ))
-          echo "::set-output name=arm_toolchain_url_sha::$sha"
+      - name: Setup CI
+        uses: ./.github/actions/setup
 
       #
-      # Mark: - Install ARM GCC Toolchain
-      #
-
-      - name: Create ARM GCC Toolchain env variables
-        run: |
-          echo "ARM_TOOLCHAIN_URL=$(cat .gcc_arm_none_eabi_url)" >> $GITHUB_ENV
-
-      - name: Cache ARM GCC Toolchain
-        id: cache_arm_toolchain
-        uses: actions/cache@v2
-        with:
-          path: ~/gcc-arm-none-eabi
-          key: ${{ runner.os }}-global_cache-arm_toolchain-${{ hashFiles('.gcc_arm_none_eabi_url') }}
-
-      - name: Install ARM GCC Toolchain
-        if: steps.cache_arm_toolchain.outputs.cache-hit != 'true'
-        run: |
-          wget ${{ env.ARM_TOOLCHAIN_URL }}
-          tar -xjf ${{ env.ARM_TOOLCHAIN_FILENAME }} && rm -rf ${{ env.ARM_TOOLCHAIN_FILENAME }}
-          mv ${{ env.ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} ~/gcc-arm-none-eabi
-
-      - name: Add ARM GCC Toolchain to path
-        run: |
-          echo "~/gcc-arm-none-eabi/bin" >> $GITHUB_PATH
-
-      - name: Test ARM GCC Toolchain
-        run: |
-          ls -al ~/gcc-arm-none-eabi/bin
-          arm-none-eabi-gcc -v
-
-      #
-      # Mark: - Install SonarCloud tools
+      # Mark: - SonarCloud
       #
 
       - name: Download SonarCloud build wrapper
@@ -108,81 +48,17 @@ jobs:
           mv ${{ env.SONARCLOUD_CLI_EXTRACT_DIRECTORY }} ~/sonar-scanner
           echo "~/sonar-scanner/bin" >> $GITHUB_PATH
 
-      #
-      # Mark: - Install misc. tools
-      #
-
-      - name: Install tools
-        run: |
-          sudo apt-get install -y --no-install-recommends ninja-build ccache lcov gcovr
-
-      #
-      # Mark: - Download `extern` dependencies & ccache
-      #
-
-      - name: Cache extern dependencies
-        id: cache_extern_dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            extern/mbed-os
-            extern/mcuboot
-          key: ${{ runner.os }}-global_cache-extern_dependencies-${{ hashFiles('.mbed_version', '.mbed_git_url', '.mcuboot_version') }}
-
-      - name: Pull extern dependencies
-        if: steps.cache_extern_dependencies.outputs.cache-hit != 'true'
-        run: |
-          make mbed_curl
-          make mcuboot_clone
-
-      - name: Cache ccache
-        id: cache_ccache
-        uses: actions/cache@v2
-        with:
-          path: ${{ env.CCACHE_DIR}}
-          key: ${{ runner.os }}-cache-code_analysis-sonarcloud-ccache-${{ steps.cache_variables.outputs.date }}
-          restore-keys: |
-            ${{ runner.os }}-cache-code_analysis-sonarcloud-ccache-
-
       - name: Cache sonarcloud cache
-        id: cache_sonarcloud_cache
+        id: global_cache-sonarcloud
         uses: actions/cache@v2
         with:
           path: ${{ env.SONARCLOUD_CACHE_DIR}}
-          key: ${{ runner.os }}-cache-code_analysis-sonarcloud-sonarcloud_cache-${{ steps.cache_variables.outputs.date }}
+          key: ${{ runner.os }}-global_cache-sonarcloud-${{ env.CACHE_NOW_TIME }}
           restore-keys: |
-            ${{ runner.os }}-cache-code_analysis-sonarcloud-sonarcloud_cache-
+            ${{ runner.os }}-global_cache-sonarcloud-
 
       #
-      # Mark: - Install python/pip dependencies
-      #
-
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.9.7"
-
-      - name: Cache pip dependencies
-        id: cache_pip_dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.cache/pip
-            ${{ env.pythonLocation }}
-          key: ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-${{ hashFiles('extern/mbed-os/requirements.txt', '.mbed_version') }}
-
-      - name: Install pip packages
-        run: |
-          pip install --upgrade --upgrade-strategy eager mbed-cli
-          pip install --upgrade --upgrade-strategy eager -r ./extern/mbed-os/requirements.txt
-
-      - name: Test pip packages
-        run: |
-          pip list -v
-          mbed-cli --help
-
-      #
-      # Mark: - Build & analyze
+      # Mark: - Build
       #
 
       - name: Ccache pre build
@@ -213,6 +89,10 @@ jobs:
         run: |
           make ccache_postbuild
           ccache -z
+
+      #
+      # Mark: - Analyze
+      #
 
       - name: Upload compilation database
         uses: actions/upload-artifact@v2
