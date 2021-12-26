@@ -16,6 +16,9 @@ runs:
       id: setup_env_variables
       shell: bash
       run: ${{ github.action_path }}/setup_env.sh
+      env:
+        BASE_REF: ${{ github.event.pull_request.base.ref }}
+        HEAD_REF: ${{ github.head_ref }}
 
     - name: Create temporary directories
       shell: bash
