@@ -1,0 +1,56 @@
+# Leka - LekaOS
+# Copyright 2021 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: "Compare files"
+description: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Compare bin files
+      id: compare_files_bin
+      shell: bash
+      run: ${{ github.action_path }}/compare_files_bin.sh
+
+    - name: Compare bin files
+      id: compare_files_map
+      shell: bash
+      run: ${{ github.action_path }}/compare_files_map.sh
+
+    - name: Publish differences
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        header: analysis_bin_map_files
+        message: |
+          # File comparision analysis report
+
+          ## :bookmark: Info
+
+          - base: [`${{ env.BASE_REF}}`](https://github.com/leka/LekaOS/tree/${{ env.BASE_REF}}) / ${{ env.BASE_SHA }} + `${{ env.BASE_MBED_VERSION }}` + `${{ env.BASE_CXX_STANDARD }}`
+          - head: [`${{ env.HEAD_REF }}`](https://github.com/leka/LekaOS/tree/${{ env.HEAD_REF }}) / ${{ env.HEAD_SHA }} + `${{ env.HEAD_MBED_VERSION }}` + `${{ env.HEAD_CXX_STANDARD }}`
+          - toolchain: `${{ env.TOOLCHAIN_VERSION }}`
+
+          ## :memo: Summary
+
+          <details>
+          <summary>Click to show summary</summary>
+
+          - :heavy_check_mark: - existing target
+          - :sparkles: - new target
+          - :coffin: - deleted target
+          - :white_check_mark: - files are the same
+          - :x: - files are different
+
+          ${{ env.STATUS_DIFF_OUTPUT }}
+
+          </details>
+
+          ## :world_map: Map files diff output
+
+          <details>
+          <summary>Click to show diff list</summary>
+
+          ${{ env.MAP_DIFF_OUTPUT }}
+
+          </details>
