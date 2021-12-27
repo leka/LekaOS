@@ -29,6 +29,8 @@ jobs:
 
       - name: Setup CI
         uses: ./.github/actions/setup
+        with:
+          ccache_name: code_analysis-sonarcloud
 
       #
       # Mark: - SonarCloud

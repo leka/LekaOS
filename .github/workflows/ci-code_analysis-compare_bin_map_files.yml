@@ -28,6 +28,8 @@ jobs:
 
       - name: Setup CI
         uses: ./.github/actions/setup
+        with:
+          ccache_name: code_analysis-compare_files
 
       #
       # Mark: - Config & compile

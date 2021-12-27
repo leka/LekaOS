@@ -5,6 +5,12 @@
 name: "CI Setup"
 description: ""
 
+inputs:
+  ccache_name:
+    description: "action/cache name for ccache"
+    required: true
+    default: "global_cache"
+
 runs:
   using: "composite"
   steps:
@@ -89,9 +95,9 @@ runs:
       uses: actions/cache@v2
       with:
         path: ${{ env.CCACHE_DIR}}
-        key: ${{ runner.os }}-global_cache-ccache-${{ env.CACHE_NOW_TIME }}
+        key: ${{ runner.os }}-${{ inputs.ccache_name }}-ccache-${{ env.CACHE_NOW_TIME }}
         restore-keys: |
-          ${{ runner.os }}-global_cache-ccache-
+          ${{ runner.os }}-${{ inputs.ccache_name }}-ccache-
 
     #
     # Mark: - Python/pip

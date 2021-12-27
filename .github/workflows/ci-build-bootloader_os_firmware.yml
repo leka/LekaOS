@@ -28,6 +28,8 @@ jobs:
 
       - name: Setup CI
         uses: ./.github/actions/setup
+        with:
+          ccache_name: build-bootloader_os_firmware
 
       #
       # Mark: - Config & build
