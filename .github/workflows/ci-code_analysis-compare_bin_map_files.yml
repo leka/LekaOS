@@ -35,7 +35,7 @@ jobs:
 
       - name: Compile base branch
         run: |
-          git checkout ${{ github.event.pull_request.base.ref }}
+          git checkout ${{ env.BASE_REF }}
           make deep_clean
           if [[ "$BASE_MBED_VERSION" != "$HEAD_MBED_VERSION" ]]; then
             make mbed_curl VERSION=${{ env.BASE_MBED_VERSION }}
@@ -43,14 +43,14 @@ jobs:
           make config
           make
 
-      - name: Move ${{ github.event.pull_request.base.ref }}:${{ env.BASE_SHA }} bin & map files to temporary directory
+      - name: Move ${{ env.BASE_REF }}:${{ env.BASE_SHA }} bin & map files to temporary directory
         run: |
           find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
           find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
 
       - name: Compile pr branch
         run: |
-          git checkout ${{ github.head_ref }}
+          git checkout ${{ env.HEAD_REF }}
           make deep_clean
           if [[ "$BASE_MBED_VERSION" != "$HEAD_MBED_VERSION" ]]; then
             make mbed_curl VERSION=${{ env.HEAD_MBED_VERSION }}
@@ -58,7 +58,7 @@ jobs:
           make config
           make
 
-      - name: Move ${{ github.head_ref }}:${{ env.HEAD_SHA }} bin & map files to temporary directory
+      - name: Move ${{ env.HEAD_REF }}:${{ env.HEAD_SHA }} bin & map files to temporary directory
         run: |
           find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
           find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}

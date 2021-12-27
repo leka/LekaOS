@@ -53,9 +53,9 @@ jobs:
       - name: Create toolchain url variables
         id: create_toolchain_url_variables
         run: |
-          git checkout ${{ github.event.pull_request.base.ref }}
+          git checkout ${{ env.BASE_REF }}
           echo "BASE_TOOLCHAIN_URL=$(cat .gcc_arm_none_eabi_url)" >> $GITHUB_ENV
-          git checkout ${{ github.head_ref }}
+          git checkout ${{ env.HEAD_REF }}
           echo "HEAD_TOOLCHAIN_URL=$(cat .gcc_arm_none_eabi_url)" >> $GITHUB_ENV
 
       - name: Download toolchains
@@ -95,7 +95,7 @@ jobs:
 
       - name: Compile with base toolchain ${{ env.BASE_TOOLCHAIN_VERSION }}
         run: |
-          git checkout ${{ github.event.pull_request.base.ref }}
+          git checkout ${{ env.BASE_REF }}
           mv ~/base-toolchain ~/gcc-arm-none-eabi
           make deep_clean
           make config
@@ -111,7 +111,7 @@ jobs:
 
       - name: Compile with head toolchain ${{ env.HEAD_TOOLCHAIN_VERSION }}
         run: |
-          git checkout ${{ github.head_ref }}
+          git checkout ${{ env.HEAD_REF }}
           mv ~/head-toolchain ~/gcc-arm-none-eabi
           make deep_clean
           make config
@@ -294,9 +294,9 @@ jobs:
 
             ## Versions :bookmark:
 
-            - base: [`${{ github.event.pull_request.base.ref }}`](https://github.com/leka/LekaOS/tree/${{ github.event.pull_request.base.ref }}) / ${{ env.BASE_SHA }} + `${{ env.BASE_MBED_VERSION }}` + `${{ env.BASE_CXX_STANDARD }}`
+            - base: [`${{ env.BASE_REF }}`](https://github.com/leka/LekaOS/tree/${{ env.BASE_REF }}) / ${{ env.BASE_SHA }} + `${{ env.BASE_MBED_VERSION }}` + `${{ env.BASE_CXX_STANDARD }}`
             - base toolchain: `${{ env.BASE_TOOLCHAIN_VERSION }}`
-            - head: [`${{ github.head_ref }}`](https://github.com/leka/LekaOS/tree/${{ github.head_ref }}) / ${{ env.HEAD_SHA }} + `${{ env.HEAD_MBED_VERSION }}` + `${{ env.HEAD_CXX_STANDARD }}`
+            - head: [`${{ env.HEAD_REF }}`](https://github.com/leka/LekaOS/tree/${{ env.HEAD_REF }}) / ${{ env.HEAD_SHA }} + `${{ env.HEAD_MBED_VERSION }}` + `${{ env.HEAD_CXX_STANDARD }}`
             - head toolchain: `${{ env.HEAD_TOOLCHAIN_VERSION }}`
 
             ## Summary :memo:
