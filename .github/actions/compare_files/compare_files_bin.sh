@@ -3,7 +3,7 @@ source ./.github/actions/compare_files/get_all_targets.sh
 
 echo 'STATUS_DIFF_OUTPUT<<EOF_STATUS_DIFF_OUTPUT' >> $GITHUB_ENV
 
-echo "| Target | Status | .bin | .map | Static RAM (base/head) | Static RAM Δ | Total Flash (base/head) | Total Flash Δ |" >> $GITHUB_ENV
+echo "| Target | Status | .bin | .map | Total Flash (base/head) | Total Flash Δ | Static RAM (base/head) | Static RAM Δ |" >> $GITHUB_ENV
 echo "|-------|:------:|:------:|:------:|:------:|:------:|:------:|:------:|" >> $GITHUB_ENV
 
 for target in "${all_targets[@]}"; do
@@ -25,30 +25,18 @@ else
 	echo -n "| :heavy_check_mark: " >> $GITHUB_ENV
 
 	if ! output=$(diff _build_tmp/$BASE_SHA/$target_name.bin _build_tmp/$HEAD_SHA/$target_name.bin 2>/dev/null); then
-	echo -n "| :x: " >> $GITHUB_ENV
+		echo -n "| :x: " >> $GITHUB_ENV
 	else
-	echo -n "| :white_check_mark: " >> $GITHUB_ENV
+		echo -n "| :white_check_mark: " >> $GITHUB_ENV
 	fi
 
 	python3 extern/mbed-os/tools/memap.py -t GCC_ARM _build_tmp/$BASE_SHA/$target_name.map > _build_tmp/$BASE_SHA/$target_name.txt
 	python3 extern/mbed-os/tools/memap.py -t GCC_ARM _build_tmp/$HEAD_SHA/$target_name.map > _build_tmp/$HEAD_SHA/$target_name.txt
 
 	if ! output=$(diff _build_tmp/$BASE_SHA/$target_name.txt _build_tmp/$HEAD_SHA/$target_name.txt 2>/dev/null); then
-	echo -n "| :x: " >> $GITHUB_ENV
+		echo -n "| :x: " >> $GITHUB_ENV
 	else
-	echo -n "| :white_check_mark: " >> $GITHUB_ENV
-	fi
-
-	base_ram=$(grep -Po '(?<=\(data \+ bss\):\s)[[:digit:]]*' _build_tmp/$BASE_SHA/$target_name.txt)
-	head_ram=$(grep -Po '(?<=\(data \+ bss\):\s)[[:digit:]]*' _build_tmp/$HEAD_SHA/$target_name.txt)
-	diff_ram=$(($head_ram - $base_ram))
-
-	if [ $diff_ram -lt 0 ]; then
-		diff_ram=":chart_with_downwards_trend: $diff_ram"
-	elif [ $diff_ram -gt 0 ]; then
-		diff_ram=":chart_with_upwards_trend: $diff_ram"
-	else
-		diff_ram="ø"
+		echo -n "| :white_check_mark: " >> $GITHUB_ENV
 	fi
 
 	base_flash=$(grep -Po '(?<=\(text \+ data\):\s)[[:digit:]]*' _build_tmp/$BASE_SHA/$target_name.txt)
@@ -63,7 +51,19 @@ else
 		diff_flash="ø"
 	fi
 
-	echo -n "| $base_ram / $head_ram | $diff_ram | $base_flash / $head_flash | $diff_flash " >> $GITHUB_ENV
+	base_ram=$(grep -Po '(?<=\(data \+ bss\):\s)[[:digit:]]*' _build_tmp/$BASE_SHA/$target_name.txt)
+	head_ram=$(grep -Po '(?<=\(data \+ bss\):\s)[[:digit:]]*' _build_tmp/$HEAD_SHA/$target_name.txt)
+	diff_ram=$(($head_ram - $base_ram))
+
+	if [ $diff_ram -lt 0 ]; then
+		diff_ram=":chart_with_downwards_trend: $diff_ram"
+	elif [ $diff_ram -gt 0 ]; then
+		diff_ram=":chart_with_upwards_trend: $diff_ram"
+	else
+		diff_ram="ø"
+	fi
+
+	echo -n "| $base_flash / $head_flash | $diff_flash | $base_ram / $head_ram | $diff_ram " >> $GITHUB_ENV
 
 	echo -n "|\n" >> $GITHUB_ENV
 fi
