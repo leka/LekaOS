@@ -1,3 +1,7 @@
+# Leka - LekaOS
+# Copyright 2021 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
 shopt -s xpg_echo
 source ./.github/actions/compare_files/get_all_targets.sh
 
@@ -12,16 +16,22 @@ target_name=$target
 echo -n "| $target_name " >> $GITHUB_ENV
 
 if [[ " ${added_targets[*]} " =~ " $target " ]]; then
+
 	echo -n "| :sparkles: | - | - " >> $GITHUB_ENV
 
-	python3 extern/mbed-os/tools/memap.py -t GCC_ARM _build_tmp/$HEAD_SHA/$target_name.map > _build_tmp/$HEAD_SHA/$target_name.txt
-	head_ram=$(grep -Po '(?<=\(data \+ bss\):\s)[[:digit:]]*' _build_tmp/$HEAD_SHA/$target_name.txt)
-	head_flash=$(grep -Po '(?<=\(text \+ data\):\s)[[:digit:]]*' _build_tmp/$HEAD_SHA/$target_name.txt)
+	createSizeTextFile $HEAD_SHA $target_name
 
-	echo -n "| $head_ram | - | $head_flash | - |\n" >> $GITHUB_ENV
+	head_flash_with_percentage="$(getUsedFlashSizeWithPercentage $HEAD_SHA $target_name)"
+	head_ram_with_percentage="$(getUsedRamSizeWithPercentage $HEAD_SHA $target_name)"
+
+	echo -n "| $head_flash_with_percentage | - | $head_ram_with_percentage | - |\n" >> $GITHUB_ENV
+
 elif [[ " ${deleted_targets[*]} " =~ " $target " ]]; then
+
 	echo -n "| :coffin: | - | - | - | - | - | - |\n" >> $GITHUB_ENV
+
 else
+
 	echo -n "| :heavy_check_mark: " >> $GITHUB_ENV
 
 	if ! output=$(diff _build_tmp/$BASE_SHA/$target_name.bin _build_tmp/$HEAD_SHA/$target_name.bin 2>/dev/null); then
@@ -30,40 +40,65 @@ else
 		echo -n "| :white_check_mark: " >> $GITHUB_ENV
 	fi
 
-	python3 extern/mbed-os/tools/memap.py -t GCC_ARM _build_tmp/$BASE_SHA/$target_name.map > _build_tmp/$BASE_SHA/$target_name.txt
-	python3 extern/mbed-os/tools/memap.py -t GCC_ARM _build_tmp/$HEAD_SHA/$target_name.map > _build_tmp/$HEAD_SHA/$target_name.txt
+	createMapTextFile $BASE_SHA $target_name
+	createMapTextFile $HEAD_SHA $target_name
 
-	if ! output=$(diff _build_tmp/$BASE_SHA/$target_name.txt _build_tmp/$HEAD_SHA/$target_name.txt 2>/dev/null); then
+	createSizeTextFile $BASE_SHA $target_name
+	createSizeTextFile $HEAD_SHA $target_name
+
+
+	if ! output=$(diff _build_tmp/$BASE_SHA/$target_name-map.txt _build_tmp/$HEAD_SHA/$target_name-map.txt 2>/dev/null); then
 		echo -n "| :x: " >> $GITHUB_ENV
 	else
 		echo -n "| :white_check_mark: " >> $GITHUB_ENV
 	fi
 
-	base_flash=$(grep -Po '(?<=\(text \+ data\):\s)[[:digit:]]*' _build_tmp/$BASE_SHA/$target_name.txt)
-	head_flash=$(grep -Po '(?<=\(text \+ data\):\s)[[:digit:]]*' _build_tmp/$HEAD_SHA/$target_name.txt)
+	base_flash_with_percentage="$(getUsedFlashSizeWithPercentage $BASE_SHA $target_name)"
+	head_flash_with_percentage="$(getUsedFlashSizeWithPercentage $HEAD_SHA $target_name)"
+
+	base_flash="$(getUsedFlashSize $BASE_SHA $target_name)"
+	head_flash="$(getUsedFlashSize $HEAD_SHA $target_name)"
+
 	diff_flash=$(($head_flash - $base_flash))
+	diff_flash_percentage="$((100 * ($head_flash - $base_flash) / $base_flash))%"
+
+	output_flash="$base_flash_with_percentage<br>$head_flash_with_percentage"
+	output_flash_delta=""
 
 	if [ $diff_flash -lt 0 ]; then
-		diff_flash=":chart_with_downwards_trend:  $diff_flash"
+		output_flash_delta=":chart_with_downwards_trend:<br>$diff_flash&nbsp;($diff_flash_percentage)"
 	elif [ $diff_flash -gt 0 ]; then
-		diff_flash=":chart_with_upwards_trend: $diff_flash"
+		output_flash_delta=":chart_with_upwards_trend:<br>$diff_flash&nbsp;($diff_flash_percentage)"
 	else
-		diff_flash="ø"
+		output_flash="$base_flash_with_percentage"
+		output_flash_delta="ø"
 	fi
 
-	base_ram=$(grep -Po '(?<=\(data \+ bss\):\s)[[:digit:]]*' _build_tmp/$BASE_SHA/$target_name.txt)
-	head_ram=$(grep -Po '(?<=\(data \+ bss\):\s)[[:digit:]]*' _build_tmp/$HEAD_SHA/$target_name.txt)
+	base_ram_with_percentage="$(getUsedRamSizeWithPercentage $BASE_SHA $target_name)"
+	head_ram_with_percentage="$(getUsedRamSizeWithPercentage $HEAD_SHA $target_name)"
+
+	base_ram_percentage=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*\s\([[:digit:]]*%\)' _build_tmp/$HEAD_SHA/$BASE_SHA-code_size.txt)
+	head_ram_percentage=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*\s\([[:digit:]]*%\)' _build_tmp/$HEAD_SHA/$target_name-code_size.txt)
+
+	base_ram="$(getUsedRamSize $BASE_SHA $target_name)"
+	head_ram="$(getUsedRamSize $HEAD_SHA $target_name)"
+
 	diff_ram=$(($head_ram - $base_ram))
+	diff_ram_percentage="$((100 * ($head_ram - $base_ram) / $base_ram))%"
+
+	output_ram="$base_ram_with_percentage<br>$head_ram_with_percentage"
+	output_ram_delta=""
 
 	if [ $diff_ram -lt 0 ]; then
-		diff_ram=":chart_with_downwards_trend: $diff_ram"
+		output_ram_delta=":chart_with_downwards_trend:<br>$diff_ram&nbsp;($diff_ram_percentage)"
 	elif [ $diff_ram -gt 0 ]; then
-		diff_ram=":chart_with_upwards_trend: $diff_ram"
+		output_ram_delta=":chart_with_upwards_trend:<br>$diff_ram&nbsp;($diff_ram_percentage)"
 	else
-		diff_ram="ø"
+		output_ram="$base_ram_with_percentage"
+		output_ram_delta="ø"
 	fi
 
-	echo -n "| $base_flash / $head_flash | $diff_flash | $base_ram / $head_ram | $diff_ram " >> $GITHUB_ENV
+	echo -n "| $output_flash | $output_flash_delta | $output_ram | $output_ram_delta " >> $GITHUB_ENV
 
 	echo -n "|\n" >> $GITHUB_ENV
 fi

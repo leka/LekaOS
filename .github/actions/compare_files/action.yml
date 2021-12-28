@@ -27,6 +27,7 @@ runs:
 
           ## :bookmark: Info
 
+          - Flash: 2 097 152 Bytes (2048 KiB) / SRAM: 524 288 Bytes (512 KiB)
           - base: [`${{ env.BASE_REF}}`](https://github.com/leka/LekaOS/tree/${{ env.BASE_REF}}) / ${{ env.BASE_SHA }} + `${{ env.BASE_MBED_VERSION }}` + `${{ env.BASE_CXX_STANDARD }}`
           - head: [`${{ env.HEAD_REF }}`](https://github.com/leka/LekaOS/tree/${{ env.HEAD_REF }}) / ${{ env.HEAD_SHA }} + `${{ env.HEAD_MBED_VERSION }}` + `${{ env.HEAD_CXX_STANDARD }}`
           - toolchain: `${{ env.TOOLCHAIN_VERSION }}`
