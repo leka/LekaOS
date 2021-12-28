@@ -23,188 +23,194 @@
 
 #include "CircularQueue.h"
 
-namespace leka {
-
-namespace logger {
+namespace leka::logger {
 
 #if defined(ENABLE_LOG_DEBUG)
 
-	//
-	// MARK: - Buffers
-	//
+//
+// MARK: - Buffers
+//
 
-	namespace buffer {
-		inline auto timestamp = std::array<char, 32> {};
-		inline auto filename  = std::array<char, 128> {};
-		inline auto message	  = std::array<char, 128> {};
-		inline auto output	  = std::array<char, 256> {};
+namespace buffer {
+	inline auto timestamp = std::array<char, 32> {};
+	inline auto filename  = std::array<char, 128> {};
+	inline auto message	  = std::array<char, 128> {};
+	inline auto output	  = std::array<char, 256> {};
 
-		inline auto fifo = CircularQueue<char, 4096> {};
-	};	 // namespace buffer
+	inline auto fifo = CircularQueue<char, 4096> {};
+};	 // namespace buffer
 
-	//
-	// MARK: - Levels
-	//
+//
+// MARK: - Levels
+//
 
-	enum class level
-	{
-		debug,
-		info,
-		error,
-	};
+enum class level
+{
+	debug,
+	info,
+	error,
+};
 
-	inline const std::unordered_map<logger::level, std::string_view> level_lut = {
-		{logger::level::debug, "[DBUG]"},
-		{logger::level::info, "[INFO]"},
-		{logger::level::error, "[ERR ]"},
-	};
+inline const std::unordered_map<logger::level, std::string_view> level_lut = {
+	{logger::level::debug, "[DBUG]"},
+	{logger::level::info, "[INFO]"},
+	{logger::level::error, "[ERR ]"},
+};
 
-	//
-	// MARK: - Events, threads & locks
-	//
+//
+// MARK: - Events, threads & locks
+//
 
-	inline auto mutex		= rtos::Mutex {};
-	inline auto thread		= rtos::Thread {osPriorityLow};
-	inline auto event_queue = events::EventQueue {32 * EVENTS_EVENT_SIZE};
+inline auto mutex		= rtos::Mutex {};
+inline auto thread		= rtos::Thread {osPriorityLow};
+inline auto event_queue = events::EventQueue {32 * EVENTS_EVENT_SIZE};
 
-	[[maybe_unused]] inline void start_event_queue()
-	{
-		logger::thread.start(callback(&logger::event_queue, &events::EventQueue::dispatch_forever));
+[[maybe_unused]] inline void start_event_queue()
+{
+	logger::thread.start(callback(&logger::event_queue, &events::EventQueue::dispatch_forever));
+}
+
+//
+// MARK: - FIFO processing
+//
+
+using filehandle_ptr = mbed::FileHandle *;
+
+inline filehandle_ptr filehandle = nullptr;
+
+[[maybe_unused]] inline void set_filehandle_pointer(filehandle_ptr fh)
+{
+	filehandle = fh;
+}
+
+inline void process_fifo()
+{
+	while (!logger::buffer::fifo.empty()) {
+		auto c = char {};
+		logger::buffer::fifo.pop(c);
+		filehandle->write(&c, 1);
 	}
+}
 
-	//
-	// MARK: - FIFO processing
-	//
+//
+// MARK: - Serial
+//
 
-	using filehandle_ptr = mbed::FileHandle *;
+inline auto default_serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 
-	inline filehandle_ptr filehandle = nullptr;
+//
+// MARK: - Now
+//
 
-	[[maybe_unused]] inline void set_filehandle_pointer(filehandle_ptr fh) { filehandle = fh; }
+using now_function_t = std::function<int64_t()>;   // LCOV_EXCL_LINE
 
-	inline void process_fifo()
-	{
-		while (!logger::buffer::fifo.empty()) {
-			auto c = char {};
-			logger::buffer::fifo.pop(c);
-			filehandle->write(&c, 1);
-		}
-	}
+inline auto default_now_function() -> int64_t
+{
+	return rtos::Kernel::Clock::now().time_since_epoch().count();
+}
+inline now_function_t now = default_now_function;
 
-	//
-	// MARK: - Serial
-	//
+[[maybe_unused]] inline void set_now_function(const now_function_t &func)
+{
+	now = func;
+}
 
-	inline auto default_serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
+//
+// MARK: - Sink
+//
 
-	//
-	// MARK: - Now
-	//
+using sink_function_t = std::function<void(const char *, size_t)>;	 // LCOV_EXCL_LINE
 
-	using now_function_t = std::function<int64_t()>;   // LCOV_EXCL_LINE
+inline void default_sink_function(const char *str, [[maybe_unused]] size_t size)
+{
+	logger::buffer::fifo.push(str, size);
+	logger::event_queue.call(process_fifo);
+}
 
-	inline auto default_now_function() -> int64_t { return rtos::Kernel::Clock::now().time_since_epoch().count(); }
-	inline now_function_t now = default_now_function;
+inline sink_function_t sink = default_sink_function;
 
-	[[maybe_unused]] inline void set_now_function(const now_function_t &func) { now = func; }
+[[maybe_unused]] inline void set_sink_function(const sink_function_t &func)
+{
+	logger::sink = func;
+}
 
-	//
-	// MARK: - Sink
-	//
+//
+// MARK: - Format functions
+//
 
-	using sink_function_t = std::function<void(const char *, size_t)>;	 // LCOV_EXCL_LINE
+[[maybe_unused]] inline void format_time_human_readable(int64_t now)
+{
+	auto ms	  = now % 1000;
+	auto sec  = now / 1000;
+	auto min  = sec / 60;
+	auto hour = min / 60;
 
-	inline void default_sink_function(const char *str, [[maybe_unused]] size_t size)
-	{
-		logger::buffer::fifo.push(str, size);
-		logger::event_queue.call(process_fifo);
-	}
+	// ? Format: hhh:mm:ss:μμμ e.g. 008:15:12:345
+	snprintf(leka::logger::buffer::timestamp.data(), std::size(leka::logger::buffer::timestamp),
+			 "%03lld:%02lld:%02lld:%03lld", hour, min % 60, sec % 60, ms);
+}
 
-	inline sink_function_t sink = default_sink_function;
+[[maybe_unused]] inline void format_filename_line_function(const char *filename, const int line, const char *function)
+{
+	snprintf(leka::logger::buffer::filename.data(), std::size(leka::logger::buffer::filename), "[%s:%i] %s", filename,
+			 line, function);
+}
 
-	[[maybe_unused]] inline void set_sink_function(const sink_function_t &func) { logger::sink = func; }
+template <typename... Args>
+void format_message(const char *message = nullptr, Args... args)
+{
+	static auto format = std::array<char, 64> {};
 
-	//
-	// MARK: - Format functions
-	//
-
-	[[maybe_unused]] inline void format_time_human_readable(int64_t now)
-	{
-		auto ms	  = now % 1000;
-		auto sec  = now / 1000;
-		auto min  = sec / 60;
-		auto hour = min / 60;
-
-		// ? Format: hhh:mm:ss:μμμ e.g. 008:15:12:345
-		snprintf(leka::logger::buffer::timestamp.data(), std::size(leka::logger::buffer::timestamp),
-				 "%03lld:%02lld:%02lld:%03lld", hour, min % 60, sec % 60, ms);
-	}
-
-	[[maybe_unused]] inline void format_filename_line_function(const char *filename, const int line,
-															   const char *function)
-	{
-		snprintf(leka::logger::buffer::filename.data(), std::size(leka::logger::buffer::filename), "[%s:%i] %s",
-				 filename, line, function);
-	}
-
-	template <typename... Args>
-	void format_message(const char *message = nullptr, Args... args)
-	{
-		static auto format = std::array<char, 64> {};
-
-		if (sizeof...(args) == 0) {
-			if (message == nullptr || *message == '\0') {
-				leka::logger::buffer::message.at(0) = '\0';
-				return;
-			}
-
-			snprintf(leka::logger::buffer::message.data(), std::size(leka::logger::buffer::message), "> %s", message);
+	if (sizeof...(args) == 0) {
+		if (message == nullptr || *message == '\0') {
+			leka::logger::buffer::message.at(0) = '\0';
 			return;
 		}
 
-		snprintf(format.data(), std::size(format), "> %s", message);
-		snprintf(leka::logger::buffer::message.data(), std::size(leka::logger::buffer::message), format.data(),
-				 args...);
+		snprintf(leka::logger::buffer::message.data(), std::size(leka::logger::buffer::message), "> %s", message);
+		return;
 	}
 
-	template <typename... Args>
-	auto format_output(const char *message = nullptr, Args... args) -> int
-	{
-		return snprintf(leka::logger::buffer::output.data(), std::size(leka::logger::buffer::output), message, args...);
-	}
+	snprintf(format.data(), std::size(format), "> %s", message);
+	snprintf(leka::logger::buffer::message.data(), std::size(leka::logger::buffer::message), format.data(), args...);
+}
 
-	//
-	// MARK: - Public functions
-	//
+template <typename... Args>
+auto format_output(const char *message = nullptr, Args... args) -> int
+{
+	return snprintf(leka::logger::buffer::output.data(), std::size(leka::logger::buffer::output), message, args...);
+}
 
-	inline void init(const filehandle_ptr fh	 = &logger::default_serial,
-					 const sink_function_t &sink = logger::default_sink_function)
-	{
-		logger::set_filehandle_pointer(fh);
-		logger::set_sink_function(sink);
-		logger::start_event_queue();
-	}
+//
+// MARK: - Public functions
+//
 
-	inline void filehandle_low_level_write(const char *data, const size_t size)
-	{
-		logger::filehandle->write(data, size);
-	}
+inline void init(filehandle_ptr fh			 = &logger::default_serial,
+				 const sink_function_t &sink = logger::default_sink_function)
+{
+	logger::set_filehandle_pointer(fh);
+	logger::set_sink_function(sink);
+	logger::start_event_queue();
+}
+
+inline void filehandle_low_level_write(const char *data, const size_t size)
+{
+	logger::filehandle->write(data, size);
+}
 
 #else
 
-	// ? No op versions when debug is off
-	inline void init(...) {}					 // NOSONAR
-	inline void set_now_function(...) {}		 // NOSONAR
-	inline void set_sink_function(...) {}		 // NOSONAR
-	inline void set_print_function(...) {}		 // NOSONAR
-	inline void set_filehandle_pointer(...) {}	 // NOSONAR
-	inline void default_sink_function(...) {}	 // NOSONAR
+// ? No op versions when debug is off
+inline void init(...) {}					 // NOSONAR
+inline void set_now_function(...) {}		 // NOSONAR
+inline void set_sink_function(...) {}		 // NOSONAR
+inline void set_print_function(...) {}		 // NOSONAR
+inline void set_filehandle_pointer(...) {}	 // NOSONAR
+inline void default_sink_function(...) {}	 // NOSONAR
 
 #endif	 // ENABLE_LOG_DEBUG
 
-}	// namespace logger
-
-}	// namespace leka
+}	// namespace leka::logger
 
 //
 // MARK: - Macros
