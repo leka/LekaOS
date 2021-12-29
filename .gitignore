@@ -16,6 +16,9 @@ _release
 _tmp
 *.pem
 
+cmake_build
+.mbedbuild
+
 #
 # MARK:- macOS
 #
