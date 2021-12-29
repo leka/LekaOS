@@ -17,8 +17,7 @@ using namespace std::chrono;
 
 auto main() -> int
 {
-	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
-	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+	logger::init();
 
 	auto start = rtos::Kernel::Clock::now();
 
@@ -40,7 +39,7 @@ auto main() -> int
 
 	sd_card.close();
 
-	auto *filename2 = "/fs/assets/images/emotion-happy.jpg";
+	const auto *filename2 = "/fs/assets/images/emotion-happy.jpg";
 
 	if (FileSystemKit::File file; file.open(filename2)) {
 		log_info("FileSystemKit::File opened %s. Size : %lu bytes\n", filename2, file.size());

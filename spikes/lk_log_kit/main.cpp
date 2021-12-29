@@ -9,28 +9,20 @@
 
 #include "HelloWorld.h"
 #include "LogKit.h"
+#include "include/utils.h"
 
 using namespace leka;
 using namespace mbed;
 using namespace std::chrono;
 
-[[noreturn]] void log_thread()
-{
-	while (true) {
-		auto start = rtos::Kernel::Clock::now();
-		log_debug("%s debug message", "First:");
-		log_info("%s information message", "Second:");
-		log_error("%s error message", "Third:");
-		auto stop = rtos::Kernel::Clock::now();
-		log_info("Total time to log the %i message --> %ims\n", 3, int((stop - start).count()));
-		rtos::ThisThread::sleep_for(4000ms);
-	}
-}
+auto hello = HelloWorld {};
+
+auto thread_log_debug  = rtos::Thread {};
+auto thread_log_printf = rtos::Thread {};
 
 auto main() -> int
 {
-	static auto serial = BufferedSerial(USBTX, USBRX, 115200);
-	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+	logger::init();
 
 	rtos::ThisThread::sleep_for(1s);
 
@@ -39,11 +31,11 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(2s);
 
-	auto hello = HelloWorld();
 	hello.start();
 
-	auto thread_log = rtos::Thread();
-	thread_log.start(log_thread);
+	thread_log_debug.start(log_thread_debug);
+	rtos::ThisThread::sleep_for(1s);
+	thread_log_printf.start(log_thread_printf);
 
 	while (true) {
 		auto start = rtos::Kernel::Clock::now();

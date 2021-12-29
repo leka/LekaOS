@@ -83,7 +83,7 @@ void SetupPurpleAndGreenPalette()
 								   purple, purple, black, black);
 }
 
-// TODO: add the function to the library
+// TODO (@ladislas): add the function to the library
 // void turnOff()
 // {
 // 	CRGB black = CRGB::Black;
@@ -166,8 +166,7 @@ auto main() -> int
 	auto leds = std::array<CRGB, NUM_LEDS> {};
 	mbed::SPI spi(LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK);
 
-	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
-	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+	logger::init();
 
 	HelloWorld hello;
 	hello.start();

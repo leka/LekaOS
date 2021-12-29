@@ -21,41 +21,41 @@ class LogKitFormatTest : public ::testing::Test
   protected:
 	void SetUp() override
 	{
-		spy_string = "";
-		logger::set_print_function(test_printf);
+		spy_sink_output = "";
+		logger::set_sink_function(spy_sink_function);
 	}
 
-	// void TearDown() override {}
+	void TearDown() override { logger::set_sink_function(logger::default_sink_function); }
 
-	static void test_printf(const char *str, size_t size)
+	static void spy_sink_function(const char *str, size_t size)
 	{
-		spy_string = std::string {str};
-		std::cout << spy_string;
+		spy_sink_output = std::string {str};
+		std::cout << spy_sink_output;
 	}
 
-	static inline auto spy_string = std::string {};
+	static inline auto spy_sink_output = std::string {};
 };
 
 TEST_F(LogKitFormatTest, formatFullContentStringOnly)
 {
 	log_info("Hello, World");
 
-	ASSERT_THAT(spy_string, MatchesRegex("[0-9:]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+	ASSERT_THAT(spy_sink_output, MatchesRegex("[0-9:]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+() > .+"));
 }
 
 TEST_F(LogKitFormatTest, formatFullContentStringAdditionalArguments)
 {
 	log_info("Hello, World. %i %s!", 42, "FTW");
 
-	ASSERT_THAT(spy_string, MatchesRegex("[0-9:]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+	ASSERT_THAT(spy_sink_output, MatchesRegex("[0-9:]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+() > .+"));
 }
 
 TEST_F(LogKitFormatTest, formatFullContentStringEmpty)
 {
 	log_info("");
 
-	ASSERT_THAT(spy_string, Not(HasSubstr(" > ")));
-	ASSERT_THAT(spy_string, MatchesRegex("[0-9:]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+()"));
+	ASSERT_THAT(spy_sink_output, Not(HasSubstr(" > ")));
+	ASSERT_THAT(spy_sink_output, MatchesRegex("[0-9:]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+()"));
 }
 
 TEST_F(LogKitFormatTest, formatTimeHumanReadable)

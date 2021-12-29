@@ -14,23 +14,24 @@
 using namespace leka;
 using namespace std::chrono;
 
-static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
-auto web_kit	   = WebKit();
+auto web_kit = WebKit();
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 
 void initializeSD()
 {
+	constexpr auto default_sd_blockdevice_frequency = uint64_t {25'000'000};
+
 	sd_blockdevice.init();
-	sd_blockdevice.frequency(25'000'000);
+	sd_blockdevice.frequency(default_sd_blockdevice_frequency);
 
 	fatfs.mount(&sd_blockdevice);
 }
 
 auto main() -> int
 {
-	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+	logger::init();
 
 	log_info("Hello, World!\n\n");
 

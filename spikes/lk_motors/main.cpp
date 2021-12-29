@@ -39,8 +39,7 @@ void stop(CoreMotorBase &left, CoreMotorBase &right)
 
 auto main() -> int
 {
-	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
-	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+	logger::init();
 
 	auto start = rtos::Kernel::Clock::now();
 

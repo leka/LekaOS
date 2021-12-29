@@ -18,8 +18,7 @@ using namespace std::chrono;
 
 auto main() -> int
 {
-	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
-	leka::logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
+	logger::init();
 
 	log_info("Hello, World!\n\n");
 	rtos::ThisThread::sleep_for(2s);

@@ -19,43 +19,48 @@ class LogKitTest : public ::testing::Test
   protected:
 	void SetUp() override
 	{
-		spy_string = "";
-		logger::set_print_function(test_printf);
+		spy_sink_output = "";
+		logger::set_sink_function(spy_sink_function);
 	}
 
-	// void TearDown() override {}
+	void TearDown() override { logger::set_sink_function(logger::default_sink_function); }
 
-	static void test_printf(const char *str, size_t size)
+	static void spy_sink_function(const char *str, size_t size)
 	{
-		spy_string = std::string {str};
-		std::cout << spy_string;
+		spy_sink_output = std::string {str};
+		std::cout << spy_sink_output;
 	}
 
-	static inline auto spy_string = std::string {};
+	static inline auto spy_sink_output = std::string {};
 };
+
+TEST_F(LogKitTest, init)
+{
+	logger::init();
+}
 
 TEST_F(LogKitTest, logDebug)
 {
 	log_debug("Hello, World");
 
-	ASSERT_THAT(spy_string, HasSubstr("[DBUG]"));
-	ASSERT_THAT(spy_string, HasSubstr("Hello, World"));
+	ASSERT_THAT(spy_sink_output, HasSubstr("[DBUG]"));
+	ASSERT_THAT(spy_sink_output, HasSubstr("Hello, World"));
 }
 
 TEST_F(LogKitTest, logInfo)
 {
 	log_info("Hello, World");
 
-	ASSERT_THAT(spy_string, HasSubstr("[INFO]"));
-	ASSERT_THAT(spy_string, HasSubstr("Hello, World"));
+	ASSERT_THAT(spy_sink_output, HasSubstr("[INFO]"));
+	ASSERT_THAT(spy_sink_output, HasSubstr("Hello, World"));
 }
 
 TEST_F(LogKitTest, logError)
 {
 	log_error("Hello, World");
 
-	ASSERT_THAT(spy_string, HasSubstr("[ERR ]"));
-	ASSERT_THAT(spy_string, HasSubstr("Hello, World"));
+	ASSERT_THAT(spy_sink_output, HasSubstr("[ERR ]"));
+	ASSERT_THAT(spy_sink_output, HasSubstr("Hello, World"));
 }
 
 TEST_F(LogKitTest, correctLineNumber)
@@ -63,12 +68,61 @@ TEST_F(LogKitTest, correctLineNumber)
 	auto line = std::to_string(__LINE__ + 1);	// + 1 to count the next line
 	log_info("Line number: %s", line.c_str());
 
-	ASSERT_THAT(spy_string, MatchesRegex(".+ \\[.+[.h|.cpp]:" + line + "\\] .*"));
+	ASSERT_THAT(spy_sink_output, MatchesRegex(".+ \\[.+[.h|.cpp]:" + line + "\\] .*"));
 }
 
 TEST_F(LogKitTest, variadicArguments)
 {
 	log_info("%s, %s with %i %s", "Hello", "World", 4, "variadic arguments");
 
-	ASSERT_THAT(spy_string, MatchesRegex(".+ \\[INFO\\] \\[.*\\] .* > .* with 4 variadic arguments\n"));
+	ASSERT_THAT(spy_sink_output, MatchesRegex(".+ \\[INFO\\] \\[.*\\] .* > .* with 4 variadic arguments\n"));
+}
+
+TEST_F(LogKitTest, formatFullContentStringOnly)
+{
+	log_debug("Hello, World");
+
+	ASSERT_THAT(spy_sink_output, MatchesRegex("[0-9:]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+
+	log_info("Hello, World");
+
+	ASSERT_THAT(spy_sink_output, MatchesRegex("[0-9:]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+
+	log_error("Hello, World");
+
+	ASSERT_THAT(spy_sink_output, MatchesRegex("[0-9:]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+}
+
+TEST_F(LogKitTest, formatFullContentStringAdditionalArguments)
+
+{
+	log_debug("Hello, World. %i %s!", 42, "FTW");
+
+	ASSERT_THAT(spy_sink_output, MatchesRegex("[0-9:]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+
+	log_info("Hello, World. %i %s!", 42, "FTW");
+
+	ASSERT_THAT(spy_sink_output, MatchesRegex("[0-9:]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+
+	log_error("Hello, World. %i %s!", 42, "FTW");
+
+	ASSERT_THAT(spy_sink_output, MatchesRegex("[0-9:]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+}
+
+TEST_F(LogKitTest, formatFullContentStringEmpty)
+{
+	log_debug("");
+
+	ASSERT_THAT(spy_sink_output, Not(HasSubstr(" > ")));
+	ASSERT_THAT(spy_sink_output, MatchesRegex("[0-9:]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+()"));
+
+	log_info("");
+
+	ASSERT_THAT(spy_sink_output, Not(HasSubstr(" > ")));
+	ASSERT_THAT(spy_sink_output, MatchesRegex("[0-9:]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+()"));
+
+	log_error("");
+
+	ASSERT_THAT(spy_sink_output, Not(HasSubstr(" > ")));
+	ASSERT_THAT(spy_sink_output, MatchesRegex("[0-9:]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+()"));
 }

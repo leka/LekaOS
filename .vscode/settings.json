@@ -74,6 +74,7 @@
 	"cmake.buildDirectory": "${workspaceFolder}/_build_cmake_tools",
 	"cmake.configureArgs": [
 		"-DTARGET_BOARD=LEKA_V1_2_DEV",
+		"-DENABLE_LOG_DEBUG=ON",
 		"-DCMAKE_CONFIG_DIR=${workspaceFolder}/_build_cmake_tools/cmake_config"
 	],
 	"markdownlint.config": {
