@@ -54,10 +54,11 @@ add_compile_options(
 )
 
 # Before all, set ROOT_DIR, MBED_OS_DIR
-set(ROOT_DIR      ${CMAKE_CURRENT_LIST_DIR})
-set(MBED_OS_DIR   ${ROOT_DIR}/extern/mbed-os)
-set(MCUBOOT_DIR   ${ROOT_DIR}/extern/mcuboot/boot)
-set(MBED_HTTP_DIR ${ROOT_DIR}/extern/mbed-http)
+set(ROOT_DIR         ${CMAKE_CURRENT_LIST_DIR})
+set(MBED_PATH        ${ROOT_DIR}/extern/mbed-os CACHE INTERNAL "")
+set(MBED_CONFIG_PATH ${ROOT_DIR}/.mbedbuild CACHE INTERNAL "")
+set(MCUBOOT_DIR      ${ROOT_DIR}/extern/mcuboot/boot)
+set(MBED_HTTP_DIR    ${ROOT_DIR}/extern/mbed-http)
 
 # Bootloader option
 option(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER "Build targets with padding to use with bootloader" OFF)
@@ -69,8 +70,8 @@ if (BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
 	)
 endif(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
 
-# And include mbed-cmake.cmake
-include(./mbed-cmake.cmake)
+# Include mbed os cmake logic
+include(${MBED_PATH}/tools/cmake/app.cmake)
 
 # Then configure name of the project
 project(LekaOS LANGUAGES C CXX ASM)
@@ -92,11 +93,15 @@ set(TARGETS_DIR    ${ROOT_DIR}/targets)
 set(INCLUDE_DIR    ${ROOT_DIR}/include)
 set(BOOTLOADER_DIR ${ROOT_DIR}/app/bootloader)
 
+# Add mbed-os
+add_subdirectory(${MBED_PATH})
+
 # Add custom target subdirectory
 set(AVAILABLE_CUSTOM_TARGETS DISCO_ORIGINAL LEKA_V1_0_DEV LEKA_V1_1_DEV LEKA_V1_2_DEV)
 if (${TARGET_BOARD} IN_LIST AVAILABLE_CUSTOM_TARGETS)
 	add_subdirectory(${TARGETS_DIR}/TARGET_${TARGET_BOARD})
 endif()
+
 
 # Add c++ support, include directories
 include_directories(BEFORE SYSTEM
@@ -145,5 +150,7 @@ add_subdirectory(${BOOTLOADER_DIR})
 # Add LekaOS
 add_subdirectory(${OS_DIR})
 
-# Finally print the mbed-cmake build report
-mbed_cmake_print_build_report()
+option(VERBOSE_BUILD "Have a verbose build process")
+if(VERBOSE_BUILD)
+    set(CMAKE_VERBOSE_MAKEFILE ON)
+endif()
