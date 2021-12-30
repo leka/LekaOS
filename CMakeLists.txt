@@ -11,30 +11,6 @@ if(CCACHE)
 	set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE}")
 endif(CCACHE)
 
-# Activate code analysis
-option(ENABLE_CODE_ANALYSIS "Run code analysis" OFF)
-message(STATUS "ENABLE_CODE_ANALYSIS --> ${ENABLE_CODE_ANALYSIS}")
-
-if(ENABLE_CODE_ANALYSIS)
-	find_program(CPPCHECK "cppcheck")
-	if(CPPCHECK)
-		set(CMAKE_CXX_CPPCHECK "${CPPCHECK}"
-			"--platform=${CMAKE_CURRENT_SOURCE_DIR}/tools/config/cppcheck_leka_platform.xml"
-			"--std=c++17"
-			"--cppcheck-build-dir=build/cppcheck"
-			"--enable=all"
-			"--inconclusive"
-			"--inline-suppr"
-			"--quiet"
-			"--suppress=unmatchedSuppression"
-			"--suppress=missingIncludeSystem"
-			"--suppress=*:*extern/mbed-os\*"
-			"--template=🔥 warning: {id} ({severity}): {message}\\n    in {file}:{line}\\n{code}"
-			# "--check-config"
-		)
-	endif(CPPCHECK)
-endif(ENABLE_CODE_ANALYSIS)
-
 # Activate LogKit
 option(ENABLE_LOG_DEBUG "Enable LogKit output" OFF)
 message(STATUS "ENABLE_LOG_DEBUG --> ${ENABLE_LOG_DEBUG}")
