@@ -5,16 +5,19 @@
 add_library(LKCoreLL STATIC)
 
 target_include_directories(LKCoreLL
-  PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
+	PUBLIC
+		include
 )
 
 target_sources(LKCoreLL
-  PRIVATE
-    source/LKCoreLL.cpp
+	PRIVATE
+    	source/LKCoreLL.cpp
 )
 
-target_link_libraries(LKCoreLL mbed-os)
+target_link_libraries(LKCoreLL
+	PUBLIC
+		mbed-os-static
+)
 
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

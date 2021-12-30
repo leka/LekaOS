@@ -26,8 +26,8 @@ target_sources(CoreVideo
 )
 
 target_link_libraries(CoreVideo
-	PRIVATE
-		mbed-os
+	PUBLIC
+		mbed-os-static
 		LKCoreLL
 		LKCoreSTM32Hal
 		CoreFs

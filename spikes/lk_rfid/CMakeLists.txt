@@ -2,7 +2,7 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_mbed_executable(spike_lk_rfid)
+add_executable(spike_lk_rfid)
 
 target_include_directories(spike_lk_rfid
 	PRIVATE
@@ -15,7 +15,7 @@ target_sources(spike_lk_rfid
 )
 
 target_link_libraries(spike_lk_rfid
-	lib_LekaRFID
+	PUBLIC
+		mbed-os-static
+		lib_LekaRFID
 )
-
-target_link_custom_leka_targets(spike_lk_rfid)

@@ -17,9 +17,11 @@ target_sources(LKAnimationKit
 )
 
 target_link_libraries(LKAnimationKit
-	LKCoreLL
-	LKCoreSTM32Hal
-	CoreVideo
+	PUBLIC
+		mbed-os-static
+		LKCoreLL
+		LKCoreSTM32Hal
+		CoreVideo
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

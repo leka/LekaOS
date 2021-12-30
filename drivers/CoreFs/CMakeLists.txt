@@ -14,4 +14,7 @@ target_sources(CoreFs
 		source/LKCoreFatFs.cpp
 )
 
-target_link_libraries(CoreFs mbed-os)
+target_link_libraries(CoreFs
+	PUBLIC
+		mbed-os-static
+)

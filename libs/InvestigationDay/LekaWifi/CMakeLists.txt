@@ -14,4 +14,7 @@ target_sources(lib_LekaWifi
   	source/LekaWifi.cpp
 )
 
-target_link_libraries(lib_LekaWifi mbed-os)
+target_link_libraries(lib_LekaWifi
+	PUBLIC
+		mbed-os-static
+)

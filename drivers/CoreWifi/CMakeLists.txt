@@ -16,5 +16,6 @@ target_sources(CoreWifi
 )
 
 target_link_libraries(CoreWifi
-	mbed-os
+	PUBLIC
+		mbed-os-static
 )

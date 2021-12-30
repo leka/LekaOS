@@ -199,29 +199,29 @@ link_libraries(
 add_subdirectory(template)
 
 # Register drivers
-leka_register_unit_tests_for_driver(CoreFs)
-leka_register_unit_tests_for_driver(LKCoreLL)
-leka_register_unit_tests_for_driver(LKCoreSTM32Hal)
-leka_register_unit_tests_for_driver(CoreVideo)
-leka_register_unit_tests_for_driver(LKCoreLightSensor)
-leka_register_unit_tests_for_driver(LKCoreMicrophone)
-leka_register_unit_tests_for_driver(CoreBattery)
+# leka_register_unit_tests_for_driver(CoreFs)
+# leka_register_unit_tests_for_driver(LKCoreLL)
+# leka_register_unit_tests_for_driver(LKCoreSTM32Hal)
+# leka_register_unit_tests_for_driver(CoreVideo)
+# leka_register_unit_tests_for_driver(LKCoreLightSensor)
+# leka_register_unit_tests_for_driver(LKCoreMicrophone)
+# leka_register_unit_tests_for_driver(CoreBattery)
 
-leka_register_unit_tests_for_driver(CoreHTS)
-leka_register_unit_tests_for_driver(CoreI2C)
-leka_register_unit_tests_for_driver(CorePwm)
-leka_register_unit_tests_for_driver(CoreQSPI)
-leka_register_unit_tests_for_driver(CoreMotor)
-leka_register_unit_tests_for_driver(CoreFlashMemory)
-leka_register_unit_tests_for_driver(CoreBufferedSerial)
+# leka_register_unit_tests_for_driver(CoreHTS)
+# leka_register_unit_tests_for_driver(CoreI2C)
+# leka_register_unit_tests_for_driver(CorePwm)
+# leka_register_unit_tests_for_driver(CoreQSPI)
+# leka_register_unit_tests_for_driver(CoreMotor)
+# leka_register_unit_tests_for_driver(CoreFlashMemory)
+# leka_register_unit_tests_for_driver(CoreBufferedSerial)
 
-# Register libraries
-leka_register_unit_tests_for_library(LKAnimationKit)
-leka_register_unit_tests_for_library(LKCalculatorKit)
+# # Register libraries
+# leka_register_unit_tests_for_library(LKAnimationKit)
+# leka_register_unit_tests_for_library(LKCalculatorKit)
 leka_register_unit_tests_for_library(ContainerKit)
-leka_register_unit_tests_for_library(FileSystemKit)
-leka_register_unit_tests_for_library(FirmwareKit)
-leka_register_unit_tests_for_library(IOKit)
+# leka_register_unit_tests_for_library(FileSystemKit)
+# leka_register_unit_tests_for_library(FirmwareKit)
+# leka_register_unit_tests_for_library(IOKit)
 
 #
 # Mark: - Finish up
@@ -231,7 +231,7 @@ target_link_libraries(LekaOSUnitTestsExec
 	PRIVATE
 		gtest_main
 		gmock_main
-		mbed-os
+		mbed-os-static
 		mocks
 		stubs
 )

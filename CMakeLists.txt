@@ -66,7 +66,7 @@ add_compile_options(
 # Before all
 set(ROOT_DIR         ${CMAKE_CURRENT_LIST_DIR})
 set(MBED_PATH        ${ROOT_DIR}/extern/mbed-os CACHE INTERNAL "")
-set(MBED_CONFIG_PATH ${ROOT_DIR}/_build/${TARGET_BOARD}/cmake_config CACHE INTERNAL "")
+set(MBED_CONFIG_PATH ${CMAKE_CONFIG_DIR} CACHE INTERNAL "")
 
 # extern
 set(MCUBOOT_DIR   ${ROOT_DIR}/extern/mcuboot/boot)
@@ -106,30 +106,40 @@ endif()
 add_subdirectory(${MBED_PATH})
 
 # Create distro
-mbed_create_distro(mbed-os-lib mbed-os)
+mbed_create_distro(mbed-os-static
+	mbed-os
+	mbed-events
+	mbed-ble
+	mbed-wifi
+	mbed-storage-sd
+	mbed-storage-fat
+	mbed-storage-flashiap
+	mbed-storage-filesystem
+	mbed-storage-blockdevice
+)
 
-# # Add c++ support, include directories
-# include_directories(BEFORE SYSTEM
-# 	${INCLUDE_DIR}/cxxsupport
-# 	${MBED_OS_DIR}/platform/cxxsupport
-# )
+# Add c++ support, include directories
+include_directories(BEFORE SYSTEM
+	${INCLUDE_DIR}/cxxsupport
+	${MBED_OS_DIR}/platform/cxxsupport
+)
 
-# include_directories(BEFORE
-# 	${INCLUDE_DIR}
-# )
+include_directories(BEFORE
+	${INCLUDE_DIR}
+)
 
 # Link libraries to all targets
-# add_subdirectory(${LIBS_DIR}/Utils)
-# add_subdirectory(${LIBS_DIR}/LogKit)
-# add_subdirectory(${LIBS_DIR}/HelloWorld)
-# add_subdirectory(${LIBS_DIR}/CriticalSection)
+add_subdirectory(${LIBS_DIR}/Utils)
+add_subdirectory(${LIBS_DIR}/LogKit)
+add_subdirectory(${LIBS_DIR}/HelloWorld)
+add_subdirectory(${LIBS_DIR}/CriticalSection)
 
-# link_libraries(
-# 	Utils
-# 	LogKit
-# 	HelloWorld
-# 	CriticalSection
-# )
+link_libraries(
+	Utils
+	LogKit
+	HelloWorld
+	CriticalSection
+)
 
 # Add external libraries
 add_compile_definitions(MCUBOOT_BOOTLOADER_SIZE=0x40000)
@@ -138,15 +148,15 @@ add_compile_definitions(MCUBOOT_SCRATCH_START_ADDR=0x081C0000)
 add_compile_definitions(MCUBOOT_RSA_SIGNATURE_LENGTH=2048)
 add_compile_definitions(MCUBOOT_SLOT_SIZE=0x200000-MCUBOOT_BOOTLOADER_SIZE-MCUBOOT_SCRATCH_SIZE)
 
-# add_subdirectory(${MCUBOOT_DIR})
-# add_subdirectory(${MBED_HTTP_DIR})
+add_subdirectory(${MCUBOOT_DIR})
+add_subdirectory(${MBED_HTTP_DIR})
 
 # Add drivers & libraries
-# add_subdirectory(${DRIVERS_DIR})
-# add_subdirectory(${LIBS_DIR})
+add_subdirectory(${DRIVERS_DIR})
+add_subdirectory(${LIBS_DIR})
 
 # Add spikes, functional tests
-# add_subdirectory(${SPIKES_DIR})
+add_subdirectory(${SPIKES_DIR})
 # add_subdirectory(${FUNCTIONAL_TESTS_DIR})
 
 # Add bootloader

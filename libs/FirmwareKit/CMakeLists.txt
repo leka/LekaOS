@@ -15,9 +15,10 @@ target_sources(FirmwareKit
 )
 
 target_link_libraries(FirmwareKit
-	mbed-os
-	FileSystemKit
-	CoreFlashMemory
+	PUBLIC
+		mbed-os-static
+		FileSystemKit
+		CoreFlashMemory
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

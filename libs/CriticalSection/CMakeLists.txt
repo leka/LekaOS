@@ -15,7 +15,8 @@ target_sources(CriticalSection
 )
 
 target_link_libraries(CriticalSection
-	mbed-os
+	PUBLIC
+		mbed-os-static
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

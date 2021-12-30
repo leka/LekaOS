@@ -14,4 +14,8 @@ target_sources(FileManager
 		source/FileManager.cpp
 )
 
-target_link_libraries(FileManager CoreFs mbed-os)
+target_link_libraries(FileManager
+	PUBLIC
+		mbed-os-static
+		CoreFs
+)

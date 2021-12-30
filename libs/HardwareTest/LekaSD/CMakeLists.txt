@@ -14,4 +14,7 @@ target_sources(lib_LekaSD
 	source/LekaSD.cpp
 )
 
-target_link_libraries(lib_LekaSD mbed-os)
+target_link_libraries(lib_LekaSD
+	PUBLIC
+		mbed-os-static
+)

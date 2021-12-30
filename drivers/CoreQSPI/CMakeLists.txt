@@ -15,7 +15,8 @@ target_sources(CoreQSPI
 )
 
 target_link_libraries(CoreQSPI
-	mbed-os
+	PUBLIC
+		mbed-os-static
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

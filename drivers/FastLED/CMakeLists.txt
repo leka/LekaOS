@@ -21,4 +21,7 @@ target_sources(driver_FastLED
 	source/lib8tion.cpp
 )
 
-target_link_libraries(driver_FastLED mbed-os)
+target_link_libraries(driver_FastLED
+	PUBLIC
+		mbed-os-static
+)

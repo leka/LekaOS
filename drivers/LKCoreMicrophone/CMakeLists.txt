@@ -14,7 +14,10 @@ target_sources(LKCoreMicrophone
 		source/LKCoreMicrophone.cpp
 )
 
-target_link_libraries(LKCoreMicrophone mbed-os)
+target_link_libraries(LKCoreMicrophone
+	PUBLIC
+		mbed-os-static
+)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 

@@ -16,4 +16,7 @@ target_sources(lib_LekaScreen
   	source/LekaScreen.cpp
 )
 
-target_link_libraries(lib_LekaScreen mbed-os)
+target_link_libraries(lib_LekaScreen
+	PUBLIC
+		mbed-os-static
+)

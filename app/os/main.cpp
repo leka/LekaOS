@@ -20,7 +20,7 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(1s);
 
 	log_info("\n\n");
-	log_info("Hello, LekaOS!\n");
+	log_info("Hello, LekaOS! This is a tst for recompilation and now with more storng\n");
 
 	rtos::ThisThread::sleep_for(2s);
 

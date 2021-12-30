@@ -22,5 +22,6 @@ target_sources(bootutil
 )
 
 target_link_libraries(bootutil
-	mbed-os
+	PUBLIC
+		mbed-os-static
 )

@@ -14,7 +14,10 @@ target_sources(CoreBattery
 		source/CoreBattery.cpp
 )
 
-target_link_libraries(CoreBattery mbed-os)
+target_link_libraries(CoreBattery
+	PUBLIC
+		mbed-os-static
+)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 

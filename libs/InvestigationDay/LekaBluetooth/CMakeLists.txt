@@ -16,4 +16,7 @@ target_sources(lib_LekaBluetooth
 	source/LekaBluetooth.cpp
 )
 
-target_link_libraries(lib_LekaBluetooth mbed-os)
+target_link_libraries(lib_LekaBluetooth
+	PUBLIC
+		mbed-os-static
+)

@@ -17,7 +17,8 @@ target_sources(CoreHTS
 )
 
 target_link_libraries(CoreHTS
-		mbed-os
+	PUBLIC
+		mbed-os-static
 		CoreI2C
 		Utils
 )

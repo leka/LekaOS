@@ -18,9 +18,8 @@ target_sources(IOKit
 )
 
 target_link_libraries(IOKit
-	PRIVATE
-		mbed-os
-
+	PUBLIC
+		mbed-os-static
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

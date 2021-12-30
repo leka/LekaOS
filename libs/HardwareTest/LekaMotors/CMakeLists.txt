@@ -15,6 +15,7 @@ target_sources(lib_LekaMotors
 )
 
 target_link_libraries(lib_LekaMotors
-	mbed-os
-	CoreMotor
+	PUBLIC
+		mbed-os-static
+		CoreMotor
 )

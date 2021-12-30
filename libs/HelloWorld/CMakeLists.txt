@@ -15,5 +15,6 @@ target_sources(HelloWorld
 )
 
 target_link_libraries(HelloWorld
-	mbed-os
+	PUBLIC
+		mbed-os-static
 )

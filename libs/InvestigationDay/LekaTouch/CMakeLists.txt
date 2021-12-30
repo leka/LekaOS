@@ -17,6 +17,7 @@ target_sources(lib_LekaTouch
 )
 
 target_link_libraries(lib_LekaTouch
-	mbed-os
-	LogKit
+	PUBLIC
+		mbed-os-static
+		LogKit
 )

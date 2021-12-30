@@ -15,7 +15,8 @@ target_sources(FileSystemKit
 )
 
 target_link_libraries(FileSystemKit
-	mbed-os
+	PUBLIC
+		mbed-os-static
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

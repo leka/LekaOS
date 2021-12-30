@@ -15,7 +15,8 @@ target_sources(CoreMotor
 )
 
 target_link_libraries(CoreMotor
-	mbed-os
+	PUBLIC
+		mbed-os-static
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

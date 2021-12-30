@@ -15,8 +15,8 @@ target_sources(ContainerKit
 )
 
 target_link_libraries(ContainerKit
-	PRIVATE
-		mbed-os
+	PUBLIC
+		mbed-os-static
 		CriticalSection
 )
 

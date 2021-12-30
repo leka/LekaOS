@@ -16,7 +16,9 @@ target_sources(CoreFlashMemory
 )
 
 target_link_libraries(CoreFlashMemory
-	CoreQSPI
+	PUBLIC
+		mbed-os-static
+		CoreQSPI
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

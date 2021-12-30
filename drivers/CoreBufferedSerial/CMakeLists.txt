@@ -15,7 +15,8 @@ target_sources(CoreBufferedSerial
 )
 
 target_link_libraries(CoreBufferedSerial
-	mbed-os
+	PUBLIC
+		mbed-os-static
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

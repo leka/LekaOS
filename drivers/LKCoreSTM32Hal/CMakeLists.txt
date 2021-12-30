@@ -14,4 +14,7 @@ target_sources(LKCoreSTM32Hal
     source/LKCoreSTM32Hal.cpp
 )
 
-target_link_libraries(LKCoreSTM32Hal mbed-os)
+target_link_libraries(LKCoreSTM32Hal
+	PUBLIC
+		mbed-os-static
+)

@@ -14,7 +14,10 @@ target_sources(CoreI2C
 		source/CoreI2C.cpp
 )
 
-target_link_libraries(CoreI2C mbed-os)
+target_link_libraries(CoreI2C
+	PUBLIC
+		mbed-os-static
+)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 

@@ -15,8 +15,9 @@ target_sources(LogKit
 )
 
 target_link_libraries(LogKit
-	mbed-os
-	ContainerKit
+	PUBLIC
+		mbed-os-static
+		ContainerKit
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

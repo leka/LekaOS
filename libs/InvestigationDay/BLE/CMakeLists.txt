@@ -15,8 +15,8 @@ target_sources(lib_BLE
 )
 
 target_link_libraries(lib_BLE
-	mbed-os
-	LogKit
-	lib_PrettyPrinter
+	PUBLIC
+		mbed-os-static
+		LogKit
+		lib_PrettyPrinter
 )
-

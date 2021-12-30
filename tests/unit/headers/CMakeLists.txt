@@ -6,9 +6,9 @@ set(HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 project(mbed-os)
 
-add_library(mbed-os INTERFACE)
+add_library(mbed-os-static INTERFACE)
 
-target_include_directories(mbed-os
+target_include_directories(mbed-os-static
 	INTERFACE
 		${HEADERS_DIR}/mbed
 
@@ -76,7 +76,7 @@ target_include_directories(mbed-os
 		${EXTERN_MBED_OS_DIR}/targets/TARGET_STM/TARGET_STM32F7/STM32Cube_FW/STM32F7xx_HAL_Driver/Legacy
 )
 
-target_compile_options(mbed-os
+target_compile_options(mbed-os-static
 	INTERFACE
 		-include${HEADERS_DIR}/mbed/mbed_config.h
 		-include${HEADERS_DIR}/mbed/mbed_target_config.h

@@ -14,7 +14,10 @@ target_sources(LKCoreLightSensor
 		source/LKCoreLightSensor.cpp
 )
 
-target_link_libraries(LKCoreLightSensor mbed-os)
+target_link_libraries(LKCoreLightSensor
+	PUBLIC
+		mbed-os-static
+)
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 

@@ -14,4 +14,7 @@ target_sources(lib_LekaRFID
   	source/LekaRFID.cpp
 )
 
-target_link_libraries(lib_LekaRFID mbed-os)
+target_link_libraries(lib_LekaRFID
+	PUBLIC
+		mbed-os-static
+)
