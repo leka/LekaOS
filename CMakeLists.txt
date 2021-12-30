@@ -50,6 +50,8 @@ set(CMAKE_C_EXTENSIONS TRUE)
 
 # Add custom flags
 add_compile_options(
+	$<$<COMPILE_LANGUAGE:CXX>:-Wno-register>
+	$<$<COMPILE_LANGUAGE:CXX>:-Wno-volatile>
 	-fdiagnostics-color=always
 )
 
