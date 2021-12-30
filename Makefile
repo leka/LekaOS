@@ -111,22 +111,22 @@ clean_config:
 config_cmake_target: mkdir_cmake_config
 	@echo ""
 	@echo "🏃 Running configuration script for target $(TARGET_BOARD) 📝"
-	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_CONFIG_DIR) -a $(ROOT_DIR)/mbed_app.json
+	mbed-tools configure -t GCC_ARM -m $(TARGET_BOARD) --mbed-os-path=$(ROOT_DIR)/extern/mbed-os --custom-targets-json=$(ROOT_DIR)/targets/custom_targets.json --app-config=$(ROOT_DIR)/mbed_app.json --output-dir=$(CMAKE_CONFIG_DIR)
 
 config_tools_target: mkdir_cmake_config
 	@echo ""
 	@echo "🏃 Running configuration script for VSCode CMake Tools 📝"
-	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_TOOLS_CONFIG_DIR) -a $(ROOT_DIR)/mbed_app.json
+	mbed-tools configure -t GCC_ARM -m $(TARGET_BOARD) --mbed-os-path=$(ROOT_DIR)/extern/mbed-os --custom-targets-json=$(ROOT_DIR)/targets/custom_targets.json --app-config=$(ROOT_DIR)/mbed_app.json --output-dir=$(CMAKE_TOOLS_CONFIG_DIR)
 
 config_cmake_build: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
-	@cmake -S . -B $(TARGET_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=$(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
+	@cmake -S . -B $(TARGET_BUILD_DIR) -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=$(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
 
 config_tools_build: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
-	@cmake -S . -B $(CMAKE_TOOLS_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_TOOLS_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=ON
+	@cmake -S . -B $(CMAKE_TOOLS_BUILD_DIR) -GNinja  -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=ON
 	@ln -sf $(CMAKE_TOOLS_BUILD_DIR)/compile_commands.json ./
 
 #
@@ -251,7 +251,6 @@ mbed_clone:
 	@echo "🧬 Cloning Mbed OS 📦"
 	@rm -rf $(MBED_OS_DIR)
 	git clone --depth=1 --branch=$(MBED_BRANCH) $(MBED_GIT_URL) $(MBED_OS_DIR)
-	@$(MAKE) mbed_symlink_files
 
 mbed_curl:
 	@echo ""
@@ -261,7 +260,6 @@ mbed_curl:
 	curl -O -L $(MBED_GIT_URL)/archive/$(MBED_VERSION).tar.gz
 	tar -xzf $(MBED_VERSION).tar.gz --strip-components=1 -C extern/mbed-os
 	rm -rf $(MBED_VERSION).tar.gz
-	@$(MAKE) mbed_symlink_files
 
 mbed_symlink_files:
 	@echo ""
