@@ -71,12 +71,20 @@
 		".cache": true,
 		".clangd": true
 	},
+	"cmake.configureOnOpen": true,
+	"cmake.ignoreKitEnv": true,
+	"cmake.copyCompileCommands": "${workspaceFolder}/compile_commands.json",
 	"cmake.buildDirectory": "${workspaceFolder}/_build_cmake_tools",
 	"cmake.configureArgs": [
-		"-DTARGET_BOARD=LEKA_V1_2_DEV",
-		"-DENABLE_LOG_DEBUG=ON",
-		"-DCMAKE_CONFIG_DIR=${workspaceFolder}/_build_cmake_tools/cmake_config"
+		"-GNinja",
 	],
+	"cmake.configureSettings": {
+		"TARGET_BOARD": "LEKA_V1_2_DEV",
+		"ENABLE_LOG_DEBUG": "ON",
+		"MBED_PATH": "${workspaceFolder}/extern/mbed-os",
+		"CMAKE_CONFIG_DIR": "${workspaceFolder}/_build_cmake_tools/cmake_config",
+		"MBED_CONFIG_PATH": "${workspaceFolder}/_build_cmake_tools/cmake_config"
+	},
 	"markdownlint.config": {
 		"MD002": false,
 		"MD007": {
@@ -91,7 +99,6 @@
 		"MD033": false
 	},
 	"editor.formatOnSave": true,
-	"cmake.configureOnOpen": true,
 	"clangd.checkUpdates": true,
 	"clangd.arguments": [
 		"--query-driver=/usr/local/bin/arm-none-eabi*",
