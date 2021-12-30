@@ -2,17 +2,20 @@
 # Copyright 2020 Ladislas de Toldi (ladislas [at] detoldi.me)
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(target_DISCO_ORIGINAL STATIC)
+add_library(mbed-leka-disco INTERFACE)
 
-target_include_directories(target_DISCO_ORIGINAL
-	PUBLIC
+target_include_directories(mbed-leka-disco
+	INTERFACE
 	.
 )
 
-target_sources(target_DISCO_ORIGINAL
-	PRIVATE
-	PeripheralPins.c
-	system_clock.c
+target_sources(mbed-leka-disco
+	INTERFACE
+		PeripheralPins.c
+		system_clock.c
 )
 
-target_link_libraries(target_DISCO_ORIGINAL mbed-os)
+target_link_libraries(mbed-leka-disco
+	INTERFACE
+		mbed-stm32f769xi
+)
