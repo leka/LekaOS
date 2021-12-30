@@ -114,7 +114,7 @@ set(AVAILABLE_CUSTOM_TARGETS LEKA_DISCO LEKA_V1_2_DEV)
 
 if(${TARGET_BOARD} IN_LIST AVAILABLE_CUSTOM_TARGETS)
 	message(STATUS "Add subdirectory for hardware target ${TARGET_BOARD}")
-	add_subdirectory(${TARGETS_DIR}/TARGET_${TARGET_BOARD})
+	add_subdirectory(${TARGETS_DIR}/${TARGET_BOARD})
 else()
 	message(FATAL_ERROR "Target ${TARGET_BOARD} is not available.")
 endif()
