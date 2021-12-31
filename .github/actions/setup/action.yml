@@ -139,7 +139,7 @@ runs:
     #
 
     - name: Pull extern dependencies
-      if: steps.global_cache-extern_dependencies.outputs.cache-hit != 'true'
+      #if: steps.global_cache-extern_dependencies.outputs.cache-hit != 'true'
       shell: bash
       run: |
         make mbed_curl
