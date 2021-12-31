@@ -116,6 +116,7 @@ mbed_create_distro(mbed-os-static
 	mbed-storage-flashiap
 	mbed-storage-filesystem
 	mbed-storage-blockdevice
+	mbed-leka-v1-2-dev
 )
 
 # Add c++ support, include directories

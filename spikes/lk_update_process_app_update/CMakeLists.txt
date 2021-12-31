@@ -19,3 +19,5 @@ target_link_libraries(spike_lk_update_process_app_update
 		mbed-os-static
 		bootutil
 )
+
+mbed_set_post_build(spike_lk_update_process_app_update)

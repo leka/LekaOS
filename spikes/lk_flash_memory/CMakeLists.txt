@@ -20,3 +20,5 @@ target_link_libraries(spike_lk_flash_memory
 		CoreQSPI
 		CoreFlashMemory
 )
+
+mbed_set_post_build(spike_lk_flash_memory)

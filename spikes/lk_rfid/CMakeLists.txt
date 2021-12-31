@@ -19,3 +19,5 @@ target_link_libraries(spike_lk_rfid
 		mbed-os-static
 		lib_LekaRFID
 )
+
+mbed_set_post_build(spike_lk_rfid)

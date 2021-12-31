@@ -19,3 +19,5 @@ target_link_libraries(spike_lk_bluetooth
 		mbed-os-static
 		lib_LekaBluetooth
 )
+
+mbed_set_post_build(spike_lk_bluetooth)

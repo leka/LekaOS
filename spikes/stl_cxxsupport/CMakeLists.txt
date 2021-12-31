@@ -18,3 +18,5 @@ target_link_libraries(spike_stl_cxxsupport
 	PUBLIC
 		mbed-os-static
 )
+
+mbed_set_post_build(spike_stl_cxxsupport)

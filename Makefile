@@ -110,7 +110,7 @@ clean_config:
 config_cmake_target: mkdir_cmake_config
 	@echo ""
 	@echo "🏃 Running configuration script for target $(TARGET_BOARD) 📝"
-	mbed-tools configure -t GCC_ARM -m $(TARGET_BOARD) --mbed-os-path=$(ROOT_DIR)/extern/mbed-os --custom-targets-json=$(ROOT_DIR)/targets/custom_targets.json --app-config=$(ROOT_DIR)/mbed_app.json --output-dir=$(CMAKE_CONFIG_DIR)
+	mbed-tools configure -t GCC_ARM -m $(TARGET_BOARD) --profile=release --mbed-os-path=$(ROOT_DIR)/extern/mbed-os --custom-targets-json=$(ROOT_DIR)/targets/custom_targets.json --app-config=$(ROOT_DIR)/mbed_app.json --output-dir=$(CMAKE_CONFIG_DIR)
 
 config_tools_target: mkdir_cmake_config
 	@echo ""
@@ -120,7 +120,7 @@ config_tools_target: mkdir_cmake_config
 config_cmake_build: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
-	@cmake -S . -B $(TARGET_BUILD_DIR) -DCMAKE_VERBOSE_MAKEFILE=ON -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=$(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
+	@cmake -S . -B $(TARGET_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=$(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
 
 config_tools_build: mkdir_tools_config
 	@echo ""

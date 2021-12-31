@@ -4,8 +4,6 @@
 
 add_executable(LekaOS)
 
-mbed_configure_app_target(LekaOS)
-
 target_include_directories(LekaOS
 	PRIVATE
 		.

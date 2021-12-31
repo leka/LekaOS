@@ -22,3 +22,5 @@ target_link_libraries(spike_lk_sensors_battery
 		CorePwm
 		CoreMotor
 )
+
+mbed_set_post_build(spike_lk_sensors_battery)

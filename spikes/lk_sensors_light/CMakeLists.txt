@@ -19,3 +19,5 @@ target_link_libraries(spike_lk_sensors_light
 		mbed-os-static
 		LKCoreLightSensor
 )
+
+mbed_set_post_build(spike_lk_sensors_light)

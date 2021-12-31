@@ -19,3 +19,5 @@ target_link_libraries(spike_lk_log_kit
 	PUBLIC
 		mbed-os-static
 )
+
+mbed_set_post_build(spike_lk_log_kit)

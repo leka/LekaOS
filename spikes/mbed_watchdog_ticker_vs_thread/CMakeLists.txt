@@ -18,3 +18,5 @@ target_link_libraries(spike_mbed_watchdog_ticker_vs_thread
 	PUBLIC
 		mbed-os-static
 )
+
+mbed_set_post_build(spike_mbed_watchdog_ticker_vs_thread)

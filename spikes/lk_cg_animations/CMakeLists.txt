@@ -23,3 +23,5 @@ target_link_libraries(spike_lk_cg_animations
 		LKCoreSTM32Hal
 		LKAnimationKit
 )
+
+mbed_set_post_build(spike_lk_cg_animations)

@@ -20,3 +20,5 @@ target_link_libraries(spike_lk_sensors_temperature_humidity
 		CoreHTS
 		CoreI2C
 )
+
+mbed_set_post_build(spike_lk_sensors_temperature_humidity)

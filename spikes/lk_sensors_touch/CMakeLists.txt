@@ -19,3 +19,5 @@ target_link_libraries(spike_lk_sensors_touch
 		mbed-os-static
 		lib_LekaTouch
 )
+
+mbed_set_post_build(spike_lk_sensors_touch)

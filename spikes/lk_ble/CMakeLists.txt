@@ -19,3 +19,5 @@ target_link_libraries(spike_lk_ble
 		mbed-os-static
 		lib_BLE
 )
+
+mbed_set_post_build(spike_lk_ble)

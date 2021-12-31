@@ -18,7 +18,9 @@ target_sources(bootloader
 
 target_link_libraries(bootloader
 	PUBLIC
+		mbed-os-static
 		bootutil
 		CoreBattery
 )
 
+mbed_set_post_build(bootloader)

@@ -23,3 +23,5 @@ target_link_libraries(spike_lk_lcd
 		LKCoreLL
 		LKCoreSTM32Hal
 )
+
+mbed_set_post_build(spike_lk_lcd)

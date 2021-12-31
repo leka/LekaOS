@@ -19,3 +19,5 @@ target_link_libraries(spike_lk_wifi
 		mbed-os-static
 		CoreWifi
 )
+
+mbed_set_post_build(spike_lk_wifi)

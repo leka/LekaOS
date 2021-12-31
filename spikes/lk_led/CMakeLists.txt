@@ -19,3 +19,5 @@ target_link_libraries(spike_lk_led
 		mbed-os-static
 		driver_FastLED
 )
+
+mbed_set_post_build(spike_lk_led)

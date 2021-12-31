@@ -22,3 +22,5 @@ target_link_libraries(spike_lk_file_reception
 		CoreWifi
 		mbed-http
 )
+
+mbed_set_post_build(spike_lk_file_reception)
