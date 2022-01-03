@@ -12,6 +12,7 @@ target_include_directories(LekaOS
 target_sources(LekaOS
 	PRIVATE
 		main.cpp
+		StateMachine.cpp
 )
 
 target_link_custom_leka_targets(LekaOS)
