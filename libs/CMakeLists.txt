@@ -6,6 +6,7 @@ add_subdirectory(${LIBS_DIR}/ContainerKit)
 add_subdirectory(${LIBS_DIR}/FileManager)
 add_subdirectory(${LIBS_DIR}/FileSystemKit)
 add_subdirectory(${LIBS_DIR}/FirmwareKit)
+add_subdirectory(${LIBS_DIR}/StateMachineKit)
 
 add_subdirectory(${LIBS_DIR}/IOKit)
 
