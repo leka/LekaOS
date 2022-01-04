@@ -37,12 +37,12 @@ struct StateMachine {
 		using namespace boost::sml;
 
 		auto action_start_system = [](interface::StateMachineManager &manager) { manager.startSystem(); };
-		auto action_stop_system	 = [](interface::StateMachineManager &manager) { manager.startSystem(); };
+		auto action_stop_system	 = [](interface::StateMachineManager &manager) { manager.stopSystem(); };
 
 		return make_transition_table(
 			// clang-format off
-			 * "idle"_s    + event<sml::event::start> / action_start_system  = "running"_s
-			,  "running"_s + event<sml::event::timeout> / action_stop_system = "idle"_s
+			 * "idle"_s    + event<sml::event::start>   / action_start_system = "running"_s
+			,  "running"_s + event<sml::event::timeout> / action_stop_system  = "idle"_s
 			// clang-format on
 		);
 	}
