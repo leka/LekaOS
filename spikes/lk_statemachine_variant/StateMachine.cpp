@@ -2,7 +2,8 @@
 
 using namespace leka;
 
-auto WaitingForCommands::processEvent(Events event) -> interface::State {
+auto RobotState::WaitingForCommands::processEvent(Events event) -> State
+{
 	switch (event) {
 		case Events::TIMEOUT:
 			// Turn off every actuators
@@ -14,7 +15,8 @@ auto WaitingForCommands::processEvent(Events event) -> interface::State {
 	return WaitingForCommands();
 }
 
-auto Sleep::processEvent(Events event) -> interface::State {
+auto RobotState::Sleep::processEvent(Events event) -> State
+{
 	switch (event) {
 		case Events::WAKEUP:
 			// event [conditional] \ action
@@ -30,9 +32,9 @@ auto Sleep::processEvent(Events event) -> interface::State {
 void RobotState::StateLoop()
 {
 	// wait any flag
-	event_flags.wait_any(static_cast<uint32_t>(Events::ALL));
+	_event_flags.wait_any(static_cast<uint32_t>(Events::ALL));
 	event = Events::WAKEUP;
 
 	// _state = std::visit([](auto &&state) -> interface::State { return state.processEvent(Events::WAKEUP); }, _state);
-	_state = std::visit([&](auto &&state) -> interface::State { return state.processEvent(event); }, _state);
+	_state = std::visit([&](auto &&state) -> State { return state.processEvent(event); }, _state);
 }
