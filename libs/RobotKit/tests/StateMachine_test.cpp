@@ -7,17 +7,12 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "interface/RobotController.h"
+#include "mocks/RobotController.h"
 
 using namespace leka;
 using namespace leka::system;
 namespace lksm = leka::system::robot::sm;
 namespace bsml = boost::sml;
-
-struct MockRobotController : public interface::RobotController {
-  public:
-	MOCK_METHOD(void, startSystem, (), (override));
-	MOCK_METHOD(void, stopSystem, (), (override));
-};
 
 class StateMachineTest : public testing::Test
 {
@@ -25,7 +20,7 @@ class StateMachineTest : public testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	MockRobotController mock_rc {};
+	mock::RobotController mock_rc {};
 	boost::sml::sm<robot::StateMachine, boost::sml::testing> sm {static_cast<interface::RobotController &>(mock_rc)};
 };
 
@@ -42,7 +37,7 @@ TEST_F(StateMachineTest, initialState)
 	EXPECT_FALSE(sm.is(lksm::state::running));
 }
 
-TEST_F(StateMachineTest, statieIdleEventStart)
+TEST_F(StateMachineTest, stateIdleEventStart)
 {
 	sm.set_current_states(lksm::state::idle);
 

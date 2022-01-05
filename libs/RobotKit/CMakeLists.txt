@@ -7,6 +7,8 @@ add_library(RobotKit STATIC)
 target_include_directories(RobotKit
 	PUBLIC
 		include
+	PRIVATE
+		tests
 )
 
 target_sources(RobotKit
