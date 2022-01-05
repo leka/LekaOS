@@ -20,27 +20,57 @@ enum class Events : uint32_t
 	ALL		= 0xFFFFFFFF
 };
 
-class RobotState
+class Robot
 {
   public:
-	RobotState(rtos::EventFlags &event_flags) : _event_flags(event_flags) {};
+	Robot(rtos::EventFlags &event_flags) : _event_flags(event_flags) {};
 
-	void StateLoop();
+	void StateLoop()
+	{
+		_event_flags.wait_any(static_cast<uint32_t>(Events::ALL), osWaitForever, false);
+		event = static_cast<Events>(_event_flags.get());
+		_event_flags.clear(static_cast<uint32_t>(event));
+
+		_state = std::visit([](auto &&state) -> State { return state.ProcessEvent(); }, _state);
+	};
 
   private:
 	struct State {
-		virtual auto processEvent(Events event) -> State { return State(); };
+		virtual auto ProcessEvent() -> State { return State(); };
 	};
 
 	struct WaitingForCommands : State {
-		auto processEvent(Events event) -> State final;
+		auto ProcessEvent() -> State final
+		{
+			switch (event) {
+				case Events::TIMEOUT:
+					// Turn off every actuators
+					return Sleep();
+					break;
+				default:
+					break;
+			}
+			return WaitingForCommands();
+		};
 	};
 
 	struct Sleep : State {
-		auto processEvent(Events event) -> State final;
+		auto ProcessEvent() -> State final
+		{
+			switch (event) {
+				case Events::WAKEUP:
+					// event [conditional] \ action
+					// Turn on screen
+					return WaitingForCommands();
+					break;
+				default:
+					break;
+			}
+			return Sleep();
+		};
 	};
 
-	Events event = Events::NONE;
+	inline static Events event = Events::NONE;
 	rtos::EventFlags &_event_flags;
 
 	std::variant<State, WaitingForCommands, Sleep> _state = WaitingForCommands();

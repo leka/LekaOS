@@ -7,12 +7,16 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
+#include "EventFlags.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "StateMachine.h"
 
 using namespace leka;
 using namespace std::chrono;
+
+auto event_flags_main_state_machine = rtos::EventFlags {};
+auto state_machine					= Robot {event_flags_main_state_machine};
 
 auto main() -> int
 {
@@ -27,6 +31,8 @@ auto main() -> int
 
 	auto hello = HelloWorld();
 	hello.start();
+
+	state_machine.StateLoop();
 
 	while (true) {
 		log_debug("A message from your board %s --> \"%s\" at %ims", MBED_CONF_APP_TARGET_NAME, hello.world,
