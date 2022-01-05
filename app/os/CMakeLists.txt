@@ -14,4 +14,8 @@ target_sources(LekaOS
 		main.cpp
 )
 
+target_link_libraries(LekaOS
+	RobotKit
+)
+
 target_link_custom_leka_targets(LekaOS)

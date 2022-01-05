@@ -9,9 +9,12 @@
 
 #include "HelloWorld.h"
 #include "LogKit.h"
+#include "StateMachine.h"
 
 using namespace leka;
 using namespace std::chrono;
+
+auto sm = system::robot::StateMachine {};
 
 auto main() -> int
 {
