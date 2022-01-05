@@ -22,6 +22,7 @@ add_subdirectory(${SPIKES_DIR}/lk_file_manager)
 add_subdirectory(${SPIKES_DIR}/lk_file_reception)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_touch)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_temperature_humidity)
+add_subdirectory(${SPIKES_DIR}/lk_statemachine_variant)
 
 add_subdirectory(${SPIKES_DIR}/lk_update_process_app_base)
 add_subdirectory(${SPIKES_DIR}/lk_update_process_app_update)
@@ -47,6 +48,7 @@ add_dependencies( spikes_leka
 	spike_lk_file_reception
 	spike_lk_sensors_touch
 	spike_lk_sensors_temperature_humidity
+	spike_lk_statemachine_variant
 	spike_lk_update_process_app_base
 	spike_lk_update_process_app_update
 )
