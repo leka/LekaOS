@@ -1,9 +1,9 @@
 // Leka - LekaOS
-// Copyright 2021 APF France handicap (based on work by Mbed-OS)
+// Copyright 2022 APF France handicap (based on work by Mbed-OS)
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_STATE_MACHINE_KIT_H_
-#define _LEKA_OS_LIB_STATE_MACHINE_KIT_H_
+#ifndef _LEKA_OS_LIB_ROBOT_KIT_STATE_MACHINE_H_
+#define _LEKA_OS_LIB_ROBOT_KIT_STATE_MACHINE_H_
 
 #include "boost/sml.hpp"
 
@@ -49,4 +49,4 @@ struct StateMachine {
 };
 }	// namespace leka
 
-#endif	 // _LEKA_OS_LIB_STATE_MACHINE_KIT_H_
+#endif	 // _LEKA_OS_LIB_ROBOT_KIT_STATE_MACHINE_H_

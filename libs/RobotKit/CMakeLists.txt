@@ -1,20 +1,20 @@
 # Leka - LekaOS
-# Copyright 2021 APF France handicap
+# Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(StateMachineKit STATIC)
+add_library(RobotKit STATIC)
 
-target_include_directories(StateMachineKit
+target_include_directories(RobotKit
 	PUBLIC
 		include
 )
 
-target_sources(StateMachineKit
+target_sources(RobotKit
 	PRIVATE
 		source/StateMachine.cpp
 )
 
-target_link_libraries(StateMachineKit
+target_link_libraries(RobotKit
 	PRIVATE
 
 )
