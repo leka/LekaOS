@@ -5,7 +5,7 @@
 #ifndef _LEKA_OS_DRIVERS_FIRMWARE_VERSION_H_
 #define _LEKA_OS_DRIVERS_FIRMWARE_VERSION_H_
 
-#include <cinttypes>
+#include <cstdint>
 
 namespace leka {
 
