@@ -38,28 +38,28 @@ TEST_F(StateMachineTest, initialization)
 
 TEST_F(StateMachineTest, initialState)
 {
-	EXPECT_TRUE(sm.is("idle"_s));
-	EXPECT_FALSE(sm.is("running"_s));
+	EXPECT_TRUE(sm.is(lksm::state::idle));
+	EXPECT_FALSE(sm.is(lksm::state::running));
 }
 
 TEST_F(StateMachineTest, statieIdleEventStart)
 {
-	sm.set_current_states("idle"_s);
+	sm.set_current_states(lksm::state::idle);
 
 	EXPECT_CALL(mock_rc, startSystem()).Times(1);
 
 	sm.process_event(lksm::event::start {});
 
-	EXPECT_TRUE(sm.is("running"_s));
+	EXPECT_TRUE(sm.is(lksm::state::running));
 }
 
 TEST_F(StateMachineTest, stateRunningEventTimeout)
 {
-	sm.set_current_states("running"_s);
+	sm.set_current_states(lksm::state::running);
 
 	EXPECT_CALL(mock_rc, stopSystem()).Times(1);
 
 	sm.process_event(lksm::event::timeout {});
 
-	EXPECT_TRUE(sm.is("idle"_s));
+	EXPECT_TRUE(sm.is(lksm::state::idle));
 }

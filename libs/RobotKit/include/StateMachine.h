@@ -19,6 +19,13 @@ namespace sm::event {
 
 }	// namespace sm::event
 
+namespace sm::state {
+
+	inline auto idle	= boost::sml::state<class idle>;
+	inline auto running = boost::sml::state<class running>;
+
+}	// namespace sm::state
+
 struct StateMachine {
 	auto operator()() const
 	{
@@ -29,8 +36,8 @@ struct StateMachine {
 
 		return make_transition_table(
 			// clang-format off
-			 * "idle"_s    + event<sm::event::start>   / action_start_system = "running"_s
-			,  "running"_s + event<sm::event::timeout> / action_stop_system  = "idle"_s
+			 * sm::state::idle    + event<sm::event::start>   / action_start_system = sm::state::running
+			,  sm::state::running + event<sm::event::timeout> / action_stop_system  = sm::state::idle
 			// clang-format on
 		);
 	}
