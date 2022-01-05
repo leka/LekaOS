@@ -5,6 +5,9 @@
 // * Project based on work by @AGlass0fMilk
 // * https://github.com/AGlass0fMilk/ep-oc-mcu/blob/refine-io-drivers/devices/MCP23008/
 
+#ifndef _LEKA_OS_LIB_IO_KIT_DIGITAL_IN_H_
+#define _LEKA_OS_LIB_IO_KIT_DIGITAL_IN_H_
+
 #include <type_traits>
 
 #include "drivers/interfaces/InterfaceDigitalIn.h"
@@ -31,3 +34,5 @@ class DigitalIn : public mbed::interface::DigitalIn, private internal::IO<pin_un
 };
 
 }	// namespace leka::io::expanded
+
+#endif	 // _LEKA_OS_LIB_IO_KIT_DIGITAL_IN_H_
