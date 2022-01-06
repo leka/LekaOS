@@ -32,6 +32,26 @@ auto BLEUtils::getLCDIntensity() -> uint8_t
 	return _ble_service_monitoring.getLCDIntensity();
 }
 
+auto BLEUtils::getEnableLeds() -> uint8_t
+{
+	return _ble_service_monitoring.getEnableLeds();
+}
+
+auto BLEUtils::getEnableScreen() -> uint8_t
+{
+	return _ble_service_monitoring.getEnableScreen();
+}
+
+auto BLEUtils::getEnableMotors() -> uint8_t
+{
+	return _ble_service_monitoring.getEnableMotors();
+}
+
+auto BLEUtils::getTurnOffAll() -> bool
+{
+	return _ble_service_monitoring.getTurnOffAll();
+}
+
 void BLEUtils::startAdvertising()
 {
 	std::array<interface::BLEService *, 2> services = {&_ble_service_battery, &_ble_service_monitoring};

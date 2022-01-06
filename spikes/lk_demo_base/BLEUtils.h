@@ -35,6 +35,11 @@ class BLEUtils
 	auto getLedsIntensity() -> uint8_t;
 	auto getLCDIntensity() -> uint8_t;
 
+	auto getEnableLeds() -> uint8_t;
+	auto getEnableScreen() -> uint8_t;
+	auto getEnableMotors() -> uint8_t;
+	auto getTurnOffAll() -> bool;
+
 	void startAdvertising();
 
   private:
