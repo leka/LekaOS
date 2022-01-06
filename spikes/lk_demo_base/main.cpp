@@ -10,7 +10,6 @@
 
 #include "BLEUtils.h"
 
-#include "Activities.h"
 #include "BatteryUtils.h"
 #include "DisplayUtils.h"
 #include "Flags.h"
@@ -27,7 +26,6 @@ using namespace std::chrono_literals;
 auto thread_watchdog		  = rtos::Thread {osPriorityNormal};
 auto thread_event_queue		  = rtos::Thread {osPriorityNormal};
 auto thread_deep_sleep		  = rtos::Thread {osPriorityNormal};
-auto thread_waiting			  = rtos::Thread {osPriorityNormal};
 auto thread_ble				  = rtos::Thread {osPriorityNormal};
 auto thread_ble_notifications = rtos::Thread {osPriorityNormal};
 auto thread_video			  = rtos::Thread {osPriorityNormal};
@@ -69,7 +67,7 @@ void deepSleepLoop()
 
 	while (true) {
 		if (!is_kick_turn_off_flag()) {
-			event_flags_external_interaction.set(STOP_VIDEO_FLAG | KICK_WAITING_FLAG);
+			event_flags_external_interaction.set(STOP_VIDEO_FLAG);
 			rtos::ThisThread::sleep_for(20s);
 			leds_utils.turnOff(LedsRange::all);
 			display_utils.setOff();
@@ -78,68 +76,6 @@ void deepSleepLoop()
 		}
 		event_flags_external_interaction.clear(KICK_TURN_OFF_FLAG);
 		rtos::ThisThread::sleep_for(5min);
-	}
-}
-
-void waitingLoop()
-{
-	auto is_kick_waiting_flag = []() {
-		return (event_flags_external_interaction.get() & KICK_WAITING_FLAG) == KICK_WAITING_FLAG;
-	};
-	auto is_disable_waiting_flag = []() {
-		return (event_flags_external_interaction.get() & DISABLE_WAITING_FLAG) == DISABLE_WAITING_FLAG;
-	};
-	auto is_end_of_video_flag = []() {
-		return (event_flags_external_interaction.get() & END_OF_VIDEO_FLAG) == END_OF_VIDEO_FLAG;
-	};
-
-	while (true) {
-		if (is_kick_waiting_flag()) {
-			event_flags_external_interaction.clear(KICK_WAITING_FLAG);
-		} else {
-			while (!is_kick_waiting_flag()) {
-				display_utils.displayVideo("animation-face-state-waiting");
-
-				for (int i = 0; i < 13; i++) {
-					if (is_kick_waiting_flag()) {
-						continue;
-					}
-					leds_utils.pulsation();
-				}
-				if (is_kick_waiting_flag()) {
-					continue;
-				}
-				while (!is_end_of_video_flag() && !is_kick_waiting_flag()) {
-					rtos::ThisThread::sleep_for(1s);
-				}
-
-				if (is_kick_waiting_flag()) {
-					continue;
-				}
-				display_utils.displayVideo("animation-face-action-wink");
-
-				for (int i = 0; i < 2; i++) {
-					if (is_kick_waiting_flag()) {
-						continue;
-					}
-					leds_utils.pulsation();
-					log_info("Pulsation");
-				}
-				if (is_kick_waiting_flag()) {
-					continue;
-				}
-				while (!is_end_of_video_flag() && !is_kick_waiting_flag()) {
-					rtos::ThisThread::sleep_for(1s);
-				}
-			}
-			leds_utils.turnOff(LedsRange::all);
-			event_flags_external_interaction.clear(KICK_WAITING_FLAG);
-			event_flags_external_interaction.wait_any(KICK_WAITING_FLAG);
-		}
-		while (is_disable_waiting_flag()) {
-			rtos::ThisThread::sleep_for(1s);
-		}
-		rtos::ThisThread::sleep_for(15s);
 	}
 }
 
@@ -237,7 +173,7 @@ auto main() -> int
 
 	battery_utils.registerEventQueue(event_queue);
 
-	event_flags_external_interaction.set(KICK_TURN_OFF_FLAG | KICK_WAITING_FLAG);
+	event_flags_external_interaction.set(KICK_TURN_OFF_FLAG);
 	thread_deep_sleep.start(deepSleepLoop);
 
 	motors_utils.setSpeed(1.0F, 1.0F);
@@ -253,8 +189,7 @@ auto main() -> int
 	rfid_utils.registerEventQueue(event_queue);
 
 	leds_utils.initializationAnimation();
-	thread_waiting.start(waitingLoop);
-	event_flags_external_interaction.set(KICK_TURN_OFF_FLAG | KICK_WAITING_FLAG);
+	event_flags_external_interaction.set(KICK_TURN_OFF_FLAG);
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
@@ -271,47 +206,11 @@ auto main() -> int
 		leds_utils.turnOff(LedsRange::all);
 
 		event_flags_external_interaction.wait_any(NEW_RFID_TAG_FLAG);
-		event_flags_external_interaction.set(KICK_TURN_OFF_FLAG | KICK_WAITING_FLAG);
+		event_flags_external_interaction.set(KICK_TURN_OFF_FLAG);
 		auto tag_value = rfid_utils.getTag();
 		switch (tag_value) {
 			case Tag::number_0_zero:
 				selectReinforcer(event_flags_external_interaction, display_utils, leds_utils, motors_utils, rfid_utils);
-				break;
-			case Tag::number_1_one:
-				activityRecognitionColor(event_flags_external_interaction, display_utils, leds_utils, motors_utils,
-										 rfid_utils);
-				break;
-			case Tag::number_2_two:
-				activityRecognitionShapes(event_flags_external_interaction, display_utils, leds_utils, motors_utils,
-										  rfid_utils);
-				break;
-			case Tag::number_3_three:
-				activityRecognitionNumbers(event_flags_external_interaction, display_utils, leds_utils, motors_utils,
-										   rfid_utils);
-				break;
-			case Tag::number_4_four:
-				activityRecognitionEmotions(event_flags_external_interaction, display_utils, leds_utils, motors_utils,
-											rfid_utils);
-				break;
-			case Tag::number_5_five:
-				displayEmotions(event_flags_external_interaction, display_utils, leds_utils, rfid_utils);
-				break;
-			case Tag::number_6_six:
-				activityColorLeka1(event_flags_external_interaction, display_utils, leds_utils, rfid_utils);
-				break;
-			case Tag::number_7_seven:
-				twoNumbersAdditionCalculator(event_flags_external_interaction, display_utils, leds_utils, motors_utils,
-											 rfid_utils);
-				break;
-			case Tag::number_8_eight:
-				activityRecognitionColoredForms(event_flags_external_interaction, display_utils, leds_utils,
-												motors_utils, rfid_utils);
-				break;
-			case Tag::number_9_nine:
-				activityColorLeka2(event_flags_external_interaction, display_utils, leds_utils, rfid_utils);
-				break;
-			case Tag::number_10_ten:
-				displayTags(event_flags_external_interaction, display_utils, leds_utils, rfid_utils);
 				break;
 			default:
 				break;

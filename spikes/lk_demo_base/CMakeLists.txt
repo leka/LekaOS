@@ -15,7 +15,6 @@ target_sources(spike_lk_demo_base
 		BLEUtils.cpp
 		LedsUtils.cpp
 		RFIDUtils.cpp
-		Activities.cpp
 		MotorsUtils.cpp
 		DisplayUtils.cpp
 		BatteryUtils.cpp

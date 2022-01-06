@@ -11,28 +11,9 @@
 
 namespace leka {
 
-constexpr auto emotions_table =
-	lstd::to_array<const char *>({"robot-emotion-happy", "robot-emotion-angry", "robot-emotion-affraid",
-								  "robot-emotion-disgusted", "robot-emotion-sad_tears"});
-
 constexpr auto video_table =
 	lstd::to_array<const char *>({"animation-idle", "animation-joy", "animation-perplexity",
 								  "animation-face-state-waiting", "animation-face-action-wink"});
-
-const auto object_colored_family_table = lstd::to_array<std::string>(
-	{"animal-fish", "clothes-socks_pair", "clothes-tshirt", "object-balloon", "object-beach_bucket", "object-house",
-	 "plant-flower-5_petals", "vehicule-aerial-hot_air_balloon"});
-
-constexpr auto numbers_table = lstd::to_array<const char *>(
-	{"number-0_zero", "number-1_one", "number-2_two", "number-3_three", "number-4_four", "number-5_five",
-	 "number-6_six", "number-7_seven", "number-8_eight", "number-9_nine", "number-10_ten"});
-
-const auto shapes_table = lstd::to_array<const char *>(
-	{"shape-circle-plain_line", "shape-square-plain_line", "shape-triangle-plain_line", "shape-star-plain_line",
-	 "shape-circle-dotted_line", "shape-square-dotted_line", "shape-triangle-dotted_line", "shape-star-dotted_line"});
-
-const auto shapes_to_color_table = lstd::to_array<std::string>(
-	{"shape-circle-filled", "shape-square-filled", "shape-triangle-filled", "shape-star-filled"});
 
 constexpr auto rfid_image_table = lstd::to_array<const char *>({"shape-circle-plain_line",
 																"shape-square-plain_line",
