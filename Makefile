@@ -284,8 +284,8 @@ mcuboot_clone:
 mcuboot_symlink_files:
 	@echo ""
 	@echo "🔗 Symlinking CMakeLists.txt to MCUBoot directory 🗂️"
-	ln -srf $(CMAKE_DIR)/templates/Template_MCUBoot_CMakeLists.txt $(MCUBOOT_DIR)/boot/CMakeLists.txt
-	ln -srf $(CMAKE_DIR)/templates/Template_MCUBoot_mbed_CMakeLists.txt $(MCUBOOT_DIR)/boot/mbed/CMakeLists.txt
+	ln -srf $(CMAKE_DIR)/templates/mcuboot/boot.cmake $(MCUBOOT_DIR)/boot/CMakeLists.txt
+	ln -srf $(CMAKE_DIR)/templates/mcuboot/mbed.cmake $(MCUBOOT_DIR)/boot/mbed/CMakeLists.txt
 
 #
 # MARK: - Utils targets
