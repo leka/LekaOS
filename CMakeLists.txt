@@ -94,13 +94,6 @@ link_libraries(
 	CriticalSection
 )
 
-# Add external libraries
-add_compile_definitions(MCUBOOT_BOOTLOADER_SIZE=0x40000)
-add_compile_definitions(MCUBOOT_SCRATCH_SIZE=0x40000)
-add_compile_definitions(MCUBOOT_SCRATCH_START_ADDR=0x081C0000)
-add_compile_definitions(MCUBOOT_RSA_SIGNATURE_LENGTH=2048)
-add_compile_definitions(MCUBOOT_SLOT_SIZE=0x200000-MCUBOOT_BOOTLOADER_SIZE-MCUBOOT_SCRATCH_SIZE)
-
 add_subdirectory(${MCUBOOT_DIR})
 add_subdirectory(${MBED_HTTP_DIR})
 
