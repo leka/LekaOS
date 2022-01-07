@@ -266,8 +266,8 @@ mbed_curl:
 mbed_symlink_files:
 	@echo ""
 	@echo "🔗 Symlinking templates to Mbed OS directory 🗂️"
-	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_CMakelists.txt $(MBED_OS_DIR)/CMakeLists.txt
-	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_mbedignore.txt $(MBED_OS_DIR)/.mbedignore
+	ln -srf $(CMAKE_DIR)/templates/mbed/CMakeLists.txt $(MBED_OS_DIR)/CMakeLists.txt
+	ln -srf $(CMAKE_DIR)/templates/mbed/.mbedignore    $(MBED_OS_DIR)/.mbedignore
 
 #
 # MARK: - Mcuboot targets
