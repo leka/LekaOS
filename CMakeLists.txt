@@ -49,8 +49,11 @@ endif(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
 # Set C/C++ standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS TRUE)
+
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_EXTENSIONS TRUE)
+
+set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
 # Add custom flags
 add_compile_options(
@@ -106,7 +109,7 @@ endif()
 add_subdirectory(${MBED_PATH})
 
 # Create distro
-mbed_create_distro(mbed-os-static
+mbed_create_distro(mbed-os-static-raw
 	mbed-os
 	mbed-events
 	mbed-ble
@@ -116,6 +119,14 @@ mbed_create_distro(mbed-os-static
 	mbed-storage-flashiap
 	mbed-storage-filesystem
 	mbed-storage-blockdevice
+)
+
+add_library(mbed-os-static INTERFACE)
+
+target_link_libraries(mbed-os-static INTERFACE
+	-Wl,--whole-archive
+	mbed-os-static-raw
+	-Wl,--no-whole-archive
 )
 
 # Add c++ support, include directories

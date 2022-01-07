@@ -71,7 +71,7 @@ BIN_PATH         ?= $(LEKA_OS_BIN_PATH)
 all:
 	@echo ""
 	@echo "🏗️  Building everything! 🌈"
-	cmake --build $(TARGET_BUILD_DIR)
+	cmake --build $(TARGET_BUILD_DIR) --verbose
 
 os:
 	@echo ""
