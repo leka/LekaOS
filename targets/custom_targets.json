@@ -37,7 +37,7 @@
 			"USBDEVICE",
 			"QSPI"
 		],
-		"device_name": "STM32F769NI",
+		"device_name": "STM32F769NIHx",
 		"overrides": {
 			"network-default-interface-type": "ETHERNET"
 		}
@@ -165,7 +165,7 @@
 			"SPISLAVE",
 			"CAN"
 		],
-		"device_name": "STM32F769NI",
+		"device_name": "STM32F769BITx",
 		"overrides": {
 			"network-default-interface-type": "WIFI",
 			"lse_available": false
