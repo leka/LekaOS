@@ -107,38 +107,15 @@ endif()
 
 find_package(Python3 COMPONENTS Interpreter)
 
-# Configure unit tests
-# -------------------------------------------------------------
-
-if(MBED_UNITTESTS)
-	# Build internal GTest.
-	# We use an internal GTest because hardly any platform has a complete package available
-	# for it for some reason.
-	# add_subdirectory(${MBED_CMAKE_SOURCE_DIR}/gtest-external-project)
-	# include(GoogleTest)
-	# enable_testing()
-endif()
-
 # load the Mbed CMake functions
 # -------------------------------------------------------------
 
-if(MBED_UNITTESTS)
-	include(AddMbedUnitTestsExecutable)
-else()
-	include(AddMbedExecutable)
-endif()
+include(AddMbedExecutable)
 
 # Configure upload methods
 # -------------------------------------------------------------
 
-if(NOT MBED_UNITTESTS)
-	set(CMAKE_EXECUTABLE_SUFFIX .elf)
-
-	# find upload tools
-	# find_package(OpenOCD)
-	# find_package(JLINK)
-	# include(SetUploadMethod)
-endif()
+set(CMAKE_EXECUTABLE_SUFFIX .elf)
 
 # add Mbed OS source
 # -------------------------------------------------------------
