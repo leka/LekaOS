@@ -69,9 +69,12 @@ set(INCLUDE_DIR    ${ROOT_DIR}/include)
 set(BOOTLOADER_DIR ${ROOT_DIR}/app/bootloader)
 
 # Add custom target subdirectory
-set(AVAILABLE_CUSTOM_TARGETS DISCO_ORIGINAL LEKA_V1_0_DEV LEKA_V1_1_DEV LEKA_V1_2_DEV)
+set(AVAILABLE_CUSTOM_TARGETS LEKA_DISCO LEKA_V1_2_DEV)
 if (${TARGET_BOARD} IN_LIST AVAILABLE_CUSTOM_TARGETS)
+	message(STATUS "Add subdirectory for hardware target ${TARGET_BOARD}")
 	add_subdirectory(${TARGETS_DIR}/TARGET_${TARGET_BOARD})
+else()
+	message(FATAL_ERROR "Target ${TARGET_BOARD} is not available.")
 endif()
 
 include_directories(BEFORE

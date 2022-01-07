@@ -33,12 +33,6 @@
 		"LEKA_DISCO": {
 			"target_name": "\"LEKA_DISCO\""
 		},
-		"LEKA_V1_0_DEV": {
-			"target_name": "\"LEKA_V1_0_DEV\""
-		},
-		"LEKA_V1_1_DEV": {
-			"target_name": "\"LEKA_V1_1_DEV\""
-		},
 		"LEKA_V1_2_DEV": {
 			"target_name": "\"LEKA_V1_2_DEV\""
 		}
