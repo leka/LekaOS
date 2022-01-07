@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_DRIVERS_QSPI_H_
 #define _LEKA_OS_DRIVERS_QSPI_H_
 
+#include <span>
+
 #include "gmock/gmock.h"
 #include "interface/drivers/QSPI.h"
 
@@ -16,11 +18,11 @@ class QSPI : public interface::QSPI
 	MOCK_METHOD(void, setDataTransmissionFormat, (), (override));
 	MOCK_METHOD(void, setFrequency, (int), (override));
 
-	MOCK_METHOD(size_t, read, (uint8_t, uint32_t, lstd::span<uint8_t>, size_t), (override));
-	MOCK_METHOD(size_t, write, (uint8_t, uint32_t, const lstd::span<uint8_t>, size_t), (override));
+	MOCK_METHOD(size_t, read, (uint8_t, uint32_t, std::span<uint8_t>, size_t), (override));
+	MOCK_METHOD(size_t, write, (uint8_t, uint32_t, const std::span<uint8_t>, size_t), (override));
 
 	MOCK_METHOD((std::tuple<size_t, size_t>), sendCommand,
-				(uint8_t, uint32_t, const lstd::span<uint8_t>, size_t, lstd::span<uint8_t>, size_t), (override));
+				(uint8_t, uint32_t, const std::span<uint8_t>, size_t, std::span<uint8_t>, size_t), (override));
 };
 
 }	// namespace leka::mock

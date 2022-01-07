@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_PLATFORM_FILE_MOCK_H_
 #define _LEKA_OS_PLATFORM_FILE_MOCK_H_
 
+#include <span>
+
 #include "gmock/gmock.h"
 #include "interface/platform/File.h"
 
@@ -17,8 +19,8 @@ class File : public interface::File
 
 	MOCK_METHOD(void, close, (), (override));
 
-	MOCK_METHOD(size_t, read, (lstd::span<uint8_t>), (override));
-	MOCK_METHOD(size_t, write, (lstd::span<uint8_t>), (override));
+	MOCK_METHOD(size_t, read, (std::span<uint8_t>), (override));
+	MOCK_METHOD(size_t, write, (std::span<uint8_t>), (override));
 
 	MOCK_METHOD(size_t, read, (uint8_t *, uint32_t), (override));
 	MOCK_METHOD(size_t, write, (uint8_t *, uint32_t), (override));

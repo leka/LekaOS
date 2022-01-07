@@ -5,7 +5,7 @@
 #include <array>
 #include <fstream>
 #include <iostream>
-#include <lstd_span>
+#include <span>
 #include <string>
 
 #include "FileSystemKit.h"
@@ -36,14 +36,14 @@ class FileTest : public ::testing::Test
 		return out.str();
 	}
 
-	void writeTempFile(lstd::span<uint8_t> data)
+	void writeTempFile(std::span<uint8_t> data)
 	{
 		auto *file = fopen(tempFilename, "wb");
 		fwrite(data.data(), sizeof(uint8_t), data.size(), file);
 		fclose(file);
 	}
 
-	void writeTempFile(lstd::span<char> data)
+	void writeTempFile(std::span<char> data)
 	{
 		auto *file = fopen(tempFilename, "w");
 		fwrite(data.data(), sizeof(char), data.size(), file);

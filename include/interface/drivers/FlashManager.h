@@ -5,7 +5,7 @@
 #ifndef _LEKA_OS_DRIVER_INTERFACE_FLASH_MANAGER_H_
 #define _LEKA_OS_DRIVER_INTERFACE_FLASH_MANAGER_H_
 
-#include <cinttypes>
+#include <cstdint>
 
 namespace leka::interface {
 

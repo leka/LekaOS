@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "MathUtils.h"
+#include <span>
 
 using namespace leka::utils;
 
@@ -19,7 +20,7 @@ auto math::computeLinearCoefficients(Point p1, Point p2) -> LinearCoefficients
 	return coeffs;
 }
 
-auto math::checksum8(lstd::span<uint8_t> data) -> uint8_t
+auto math::checksum8(std::span<uint8_t> data) -> uint8_t
 {
 	uint8_t checksum = 0;
 

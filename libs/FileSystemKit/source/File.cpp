@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
+#include <span>
 
 #include "FileSystemKit.h"
 
@@ -34,22 +35,22 @@ void FileSystemKit::File::close()
 	_file.reset(nullptr);
 }
 
-auto FileSystemKit::File::read(lstd::span<uint8_t> buffer) -> size_t
+auto FileSystemKit::File::read(std::span<uint8_t> buffer) -> size_t
 {
 	return std::fread(buffer.data(), sizeof(uint8_t), buffer.size(), _file.get());
 }
 
-auto FileSystemKit::File::write(lstd::span<uint8_t> data) -> size_t
+auto FileSystemKit::File::write(std::span<uint8_t> data) -> size_t
 {
 	return std::fwrite(data.data(), sizeof(uint8_t), data.size(), _file.get());
 }
 
-auto FileSystemKit::File::read(lstd::span<char> buffer) -> size_t
+auto FileSystemKit::File::read(std::span<char> buffer) -> size_t
 {
 	return std::fread(buffer.data(), sizeof(char), buffer.size(), _file.get());
 }
 
-auto FileSystemKit::File::write(lstd::span<char> data) -> size_t
+auto FileSystemKit::File::write(std::span<char> data) -> size_t
 {
 	return std::fwrite(data.data(), sizeof(char), data.size(), _file.get());
 }

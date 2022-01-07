@@ -6,7 +6,7 @@
 #define _LEKA_OS_LIB_UTILS_MATH_H_
 
 #include <cstdint>
-#include <lstd_span>
+#include <span>
 
 namespace leka::utils::math {
 
@@ -28,7 +28,7 @@ struct LinearCoefficients {
 
 auto computeLinearCoefficients(Point p1, Point p2) -> LinearCoefficients;
 
-auto checksum8(lstd::span<uint8_t> data) -> uint8_t;
+auto checksum8(std::span<uint8_t> data) -> uint8_t;
 
 }	// namespace leka::utils::math
 

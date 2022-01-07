@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_DRIVER_CORE_QSPI_H_
 #define _LEKA_OS_DRIVER_CORE_QSPI_H_
 
+#include <span>
+
 #include "drivers/QSPI.h"
 
 #include "interface/drivers/QSPI.h"
@@ -21,11 +23,11 @@ class CoreQSPI : public interface::QSPI
 	void setDataTransmissionFormat() final;
 	void setFrequency(int hz = ONE_MHZ) final;
 
-	auto read(uint8_t command, uint32_t address, lstd::span<uint8_t> rx_buffer, size_t rx_buffer_size) -> size_t final;
-	auto write(uint8_t command, uint32_t address, lstd::span<uint8_t> tx_buffer, size_t tx_buffer_size) -> size_t final;
+	auto read(uint8_t command, uint32_t address, std::span<uint8_t> rx_buffer, size_t rx_buffer_size) -> size_t final;
+	auto write(uint8_t command, uint32_t address, std::span<uint8_t> tx_buffer, size_t tx_buffer_size) -> size_t final;
 
-	auto sendCommand(uint8_t command, uint32_t address, lstd::span<uint8_t> tx_buffer, size_t tx_buffer_size,
-					 lstd::span<uint8_t> rx_buffer, size_t rx_buffer_size) -> std::tuple<size_t, size_t> final;
+	auto sendCommand(uint8_t command, uint32_t address, std::span<uint8_t> tx_buffer, size_t tx_buffer_size,
+					 std::span<uint8_t> rx_buffer, size_t rx_buffer_size) -> std::tuple<size_t, size_t> final;
 
   private:
 	mbed::QSPI _qspi;
