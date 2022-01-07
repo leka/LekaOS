@@ -2,9 +2,9 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#include <array>
 #include <fstream>
 #include <iostream>
-#include <lstd_array>
 
 #include "FirmwareKit.h"
 #include "gtest/gtest.h"

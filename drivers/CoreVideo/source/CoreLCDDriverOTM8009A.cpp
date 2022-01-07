@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <array>
-#include <lstd_array>
 
 #include "rtos/ThisThread.h"
 
@@ -284,7 +283,7 @@ void CoreLCDDriverOTM8009A::setLandscapeOrientation()
 		return std::to_integer<uint8_t>(_settings);
 	};
 
-	constexpr auto command = lstd::to_array<uint8_t>({madctr::command, settings()});
+	constexpr auto command = std::to_array<uint8_t>({madctr::command, settings()});
 
 	_dsi.write(command.data(), std::size(command));
 

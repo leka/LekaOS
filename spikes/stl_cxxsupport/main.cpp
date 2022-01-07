@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include <lstd_array>
+#include <array>
 #include <lstd_span>
 
 #include "drivers/BufferedSerial.h"
@@ -34,12 +34,12 @@ auto main() -> int
 	hello.start();
 
 	//
-	// MARK: - lstd::to_array
+	// MARK: - std::to_array
 	//
 
-	log_info("Create array with lstd::to_array");
+	log_info("Create array with std::to_array");
 
-	auto arr = lstd::to_array({1, 2, 3, 4});
+	auto arr = std::to_array({1, 2, 3, 4});
 
 	for (const auto &v: arr) {
 		log_info("v: %i", v);
