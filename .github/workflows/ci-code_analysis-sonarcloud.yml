@@ -82,6 +82,9 @@ jobs:
           make ccache_prebuild
 
       - name: Config, build & run unit tests
+        env:
+          CC: /usr/bin/gcc-10
+          CXX: /usr/bin/g++-10
         run: |
           make config_unit_tests
           make unit_tests
