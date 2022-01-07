@@ -88,7 +88,7 @@ runs:
         path: |
           extern/mbed-os
           extern/mcuboot
-        key: ${{ runner.os }}-global_cache-extern_dependencies-${{ hashFiles('.mbed_version', '.mbed_git_url', '.mcuboot_version', 'cmake/templates/mbed/.mbedignore', 'cmake/templates/mbed/CMakeLists.txt', 'cmake/templates/mcuboot/boot.cmake', 'cmake/templates/mcuboot/mbed.cmake') }}
+        key: ${{ runner.os }}-global_cache-extern_dependencies-${{ hashFiles('.mbed_version', '.mbed_git_url', '.mcuboot_version', 'cmake/templates/**') }}
 
     - name: Pull extern dependencies
       if: steps.global_cache-extern_dependencies.outputs.cache-hit != 'true'

@@ -32,6 +32,7 @@ jobs:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Setup CI
+        id: setup_ci
         uses: ./.github/actions/setup
         with:
           ccache_name: code_analysis-compare_files
@@ -44,9 +45,8 @@ jobs:
         run: |
           git checkout ${{ env.BASE_REF }}
           make deep_clean
-          if [[ "$BASE_MBED_VERSION" != "$HEAD_MBED_VERSION" ]]; then
-            make mbed_curl VERSION=${{ env.BASE_MBED_VERSION }}
-          fi
+          make mbed_curl VERSION=${{ env.BASE_MBED_VERSION }}
+          make mcuboot_clone
           make config ${{ matrix.enable_log_debug }}
           make
 
@@ -61,9 +61,8 @@ jobs:
         run: |
           git checkout ${{ env.HEAD_REF }}
           make deep_clean
-          if [[ "$BASE_MBED_VERSION" != "$HEAD_MBED_VERSION" ]]; then
-            make mbed_curl VERSION=${{ env.HEAD_MBED_VERSION }}
-          fi
+          make mbed_curl VERSION=${{ env.HEAD_MBED_VERSION }}
+          make mcuboot_clone
           make config ${{ matrix.enable_log_debug }}
           make
 
