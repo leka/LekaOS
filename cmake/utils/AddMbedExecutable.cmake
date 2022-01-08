@@ -11,22 +11,13 @@ if(NOT (HAVE_INTELHEX AND HAVE_PRETTYTABLE))
 	set(CAN_RUN_MEMAP FALSE)
 endif()
 
-# Why doesn't memap use the same toolchain names as the rest of the Mbed build system?
-# Don't ask me!
-if("${MBED_TOOLCHAIN_NAME}" STREQUAL "ARMC6")
-	set(MEMAP_TOOLCHAIN_NAME "ARM_STD")
-else()
-	set(MEMAP_TOOLCHAIN_NAME ${MBED_TOOLCHAIN_NAME})
-endif()
+# Set memap toolchain name
+set(MEMAP_TOOLCHAIN_NAME ${MBED_TOOLCHAIN_NAME})
+
 
 # figure out objcopy command
 get_filename_component(TOOLCHAIN_BIN_DIR ${CMAKE_C_COMPILER} DIRECTORY)
-
-if("${MBED_TOOLCHAIN_NAME}" STREQUAL "ARMC6")
-	set(OBJCOPY_NAME fromelf)
-elseif("${MBED_TOOLCHAIN_NAME}" STREQUAL "GCC_ARM")
-	set(OBJCOPY_NAME arm-none-eabi-objcopy)
-endif()
+set(OBJCOPY_NAME arm-none-eabi-objcopy)
 
 find_program(
 	OBJCOPY_EXECUTABLE
@@ -48,25 +39,13 @@ function(add_mbed_executable EXECUTABLE)
 	set(BIN_FILE ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE}.bin)
 	set(HEX_FILE ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE}.hex)
 
-	if("${MBED_TOOLCHAIN_NAME}" STREQUAL "ARMC6")
-		# the ArmClang CMake platform files automatically generate a memory map
-		target_link_libraries(${EXECUTABLE} --info=totals --map)
-		set(MAP_FILE ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE}${CMAKE_EXECUTABLE_SUFFIX}.map)
+	set(MAP_FILE ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE}.map)
 
-		set(OBJCOPY_ELF_TO_BIN_COMMAND ${OBJCOPY_EXECUTABLE} --bin -o ${BIN_FILE} $<TARGET_FILE:${EXECUTABLE}>)
-		set(OBJCOPY_ELF_TO_HEX_COMMAND ${OBJCOPY_EXECUTABLE} --i32 -o ${HEX_FILE} $<TARGET_FILE:${EXECUTABLE}>)
+	# add link options to generate memory map
+	target_link_libraries(${EXECUTABLE} -Wl,\"-Map=${MAP_FILE}\",--cref)
 
-	elseif("${MBED_TOOLCHAIN_NAME}" STREQUAL "GCC_ARM")
-
-		set(MAP_FILE ${CMAKE_CURRENT_BINARY_DIR}/${EXECUTABLE}.map)
-
-		# add link options to generate memory map
-		target_link_libraries(${EXECUTABLE} -Wl,\"-Map=${MAP_FILE}\",--cref)
-
-		set(OBJCOPY_ELF_TO_BIN_COMMAND ${OBJCOPY_EXECUTABLE} -O binary $<TARGET_FILE:${EXECUTABLE}> ${BIN_FILE})
-		set(OBJCOPY_ELF_TO_HEX_COMMAND ${OBJCOPY_EXECUTABLE} -O ihex   $<TARGET_FILE:${EXECUTABLE}> ${HEX_FILE})
-
-	endif()
+	set(OBJCOPY_ELF_TO_BIN_COMMAND ${OBJCOPY_EXECUTABLE} -O binary $<TARGET_FILE:${EXECUTABLE}> ${BIN_FILE})
+	set(OBJCOPY_ELF_TO_HEX_COMMAND ${OBJCOPY_EXECUTABLE} -O ihex   $<TARGET_FILE:${EXECUTABLE}> ${HEX_FILE})
 
 	# generate .bin firmware file
 	add_custom_command(
@@ -91,8 +70,5 @@ function(add_mbed_executable EXECUTABLE)
 			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 			COMMENT "Displaying memory map for ${EXECUTABLE}")
 	endif()
-
-	# add upload target
-	# gen_upload_target(${EXECUTABLE} ${BIN_FILE})
 
 endfunction(add_mbed_executable)
