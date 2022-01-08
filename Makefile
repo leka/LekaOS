@@ -103,7 +103,7 @@ config:
 
 config_tools:
 	@$(MAKE) config_tools_target
-	@$(MAKE) config_tools_build
+# @$(MAKE) config_tools_build
 
 clean:
 	@$(MAKE) rm_build
@@ -118,12 +118,12 @@ config_cmake_target: mkdir_cmake_config
 	@echo "🏃 Running configuration script for target $(TARGET_BOARD) 📝"
 	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_CONFIG_DIR) -a $(ROOT_DIR)/mbed_app.json
 
-config_tools_target: mkdir_cmake_config
+config_tools_target: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running configuration script for VSCode CMake Tools 📝"
 	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_TOOLS_CONFIG_DIR) -a $(ROOT_DIR)/mbed_app.json
 
-config_cmake_build: mkdir_tools_config
+config_cmake_build: mkdir_cmake_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
 	@cmake -S . -B $(TARGET_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=$(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
@@ -132,7 +132,6 @@ config_tools_build: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
 	@cmake -S . -B $(CMAKE_TOOLS_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_TOOLS_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=ON
-	@ln -sf $(CMAKE_TOOLS_BUILD_DIR)/compile_commands.json ./
 
 #
 # MARK: - Tests targets
@@ -202,6 +201,8 @@ config_unit_tests: mkdir_build_unit_tests
 	@echo ""
 	@echo "🏃 Running unit tests cmake configuration script 📝"
 	cmake -S ./tests/unit -B $(UNIT_TESTS_BUILD_DIR) -GNinja -DCMAKE_BUILD_TYPE=Debug -DCOVERAGE=ON
+	@mkdir -p $(CMAKE_TOOLS_BUILD_DIR)/unit_tests
+	@ln -sf $(UNIT_TESTS_BUILD_DIR)/compile_commands.json $(CMAKE_TOOLS_BUILD_DIR)/unit_tests/compile_commands.json
 
 clean_unit_tests:
 	@$(MAKE) rm_unit_tests
@@ -300,7 +301,7 @@ mkdir_cmake_config:
 	@mkdir -p $(CMAKE_CONFIG_DIR)
 
 mkdir_tools_config:
-	@mkdir -p $(CMAKE_CONFIG_DIR)
+	@mkdir -p $(CMAKE_TOOLS_CONFIG_DIR)
 
 mkdir_build_unit_tests:
 	@mkdir -p $(UNIT_TESTS_BUILD_DIR)
