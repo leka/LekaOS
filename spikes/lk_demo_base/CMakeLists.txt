@@ -15,6 +15,7 @@ target_sources(spike_lk_demo_base
 		BLEUtils.cpp
 		LedsUtils.cpp
 		RFIDUtils.cpp
+		WifiUtils.cpp
 		MotorsUtils.cpp
 		DisplayUtils.cpp
 		BatteryUtils.cpp
@@ -34,6 +35,8 @@ target_link_libraries(spike_lk_demo_base
 	VideoKit
 	CoreCR95HF
 	RFIDKit
+	CoreWifi
+	mbed-http
 )
 
 target_link_custom_leka_targets(spike_lk_demo_base)

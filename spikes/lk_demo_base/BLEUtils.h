@@ -35,6 +35,9 @@ class BLEUtils
 	auto getRebootInstruction() -> bool;
 	auto getMode() -> uint8_t;
 
+	auto getWifiSSID() -> std::string;
+	auto getWifiPass() -> std::string;
+
 	void startAdvertising();
 
   private:

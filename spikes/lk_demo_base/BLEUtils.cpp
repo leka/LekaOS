@@ -27,6 +27,16 @@ auto BLEUtils::getMode() -> uint8_t
 	return _ble_service_monitoring.getMode();
 }
 
+auto BLEUtils::getWifiSSID() -> std::string
+{
+	return _ble_service_monitoring.getWifiSSID();
+}
+
+auto BLEUtils::getWifiPass() -> std::string
+{
+	return _ble_service_monitoring.getWifiPass();
+}
+
 void BLEUtils::startAdvertising()
 {
 	std::array<interface::BLEService *, 2> services = {&_ble_service_battery, &_ble_service_monitoring};

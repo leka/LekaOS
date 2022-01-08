@@ -46,7 +46,7 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(1s);
 
-	if (auto is_connected = web_kit.connect("USER_SSID", "USER_PASS"); is_connected) {
+	if (auto is_connected = web_kit.connect("RUT950_LEKA", "Leka2021"); is_connected) {
 		log_info("Start downloading file via wifi...");
 		web_kit.downloadFile("https://github.com/leka/LekaOS/releases/download/1.2.3/LekaOS-1.2.3.bin",
 							 "/fs/os/LekaOS-1.2.3.bin");

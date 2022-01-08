@@ -20,6 +20,7 @@
 #include "MotorsUtils.h"
 #include "RFIDUtils.h"
 #include "WatchdogUtils.h"
+#include "WifiUtils.h"
 
 using namespace leka;
 using namespace std::chrono_literals;
@@ -30,6 +31,7 @@ auto thread_ble			= rtos::Thread {osPriorityNormal};
 auto thread_video		= rtos::Thread {osPriorityNormal};
 auto thread_leds		= rtos::Thread {osPriorityNormal};
 auto thread_rfid		= rtos::Thread {osPriorityNormal};
+auto thread_wifi		= rtos::Thread {osPriorityNormal};
 
 auto event_queue					  = events::EventQueue {};
 auto event_flags_external_interaction = rtos::EventFlags {};
@@ -59,7 +61,8 @@ auto display   = VideoKit {hal};
 VideoKit_DeclareIRQHandlers(display);
 auto display_utils = DisplayUtils {thread_video, event_flags_external_interaction, hal, coresdram, display};
 
-auto rfid_utils = RFIDUtils {event_flags_external_interaction};
+std::string wifi_ssid = "RUT950_LEKA";
+std::string wifi_pass = "Leka2021";
 
 void ledsLoop()
 {
@@ -107,19 +110,52 @@ void enableVideo()
 	event_flags_external_interaction.set(START_VIDEO_FLAG);
 }
 
-void enableRFID()
+void rfidLoop()
 {
 	event_flags_external_interaction.wait_any(ENABLE_RFID_FLAG);
 
+	auto rfid_utils = RFIDUtils {event_flags_external_interaction};
+
 	rfid_utils.initialize();
 	rfid_utils.registerEventQueue(event_queue);
+
+	while (true) {
+		rtos::ThisThread::sleep_for(10min);
+	}
+}
+
+void wifiLoop()
+{
+	auto enable_wifi_flag_is_set = []() {
+		return (event_flags_external_interaction.get() & ENABLE_WIFI_FLAG) == ENABLE_WIFI_FLAG;
+	};
+
+	event_flags_external_interaction.wait_any(ENABLE_WIFI_FLAG, osWaitForever, false);
+
+	auto wifi_utils = WifiUtils {};
+
+	while (true) {
+		event_flags_external_interaction.wait_any(ENABLE_WIFI_FLAG, osWaitForever, false);
+		if (wifi_utils.connect(wifi_ssid.data(), wifi_pass.data())) {
+			while (enable_wifi_flag_is_set()) {
+				wifi_utils.pingPage("https://github.com/leka/LekaOS/releases/download/1.2.3/LekaOS-1.2.3.bin");
+
+				rtos::ThisThread::sleep_for(1s);
+			}
+			wifi_utils.disconnect();
+		} else {
+			event_flags_external_interaction.clear(ENABLE_WIFI_FLAG);
+		}
+	}
 }
 
 auto ping_flag_is_set = []() { return (event_flags_external_interaction.get() & BLE_PING_FLAG) == BLE_PING_FLAG; };
 auto reboot_instruction_flag_is_set = []() {
 	return (event_flags_external_interaction.get() & BLE_REBOOT_INSTRUCTION_FLAG) == BLE_REBOOT_INSTRUCTION_FLAG;
 };
-auto mode_flag_is_set = []() { return (event_flags_external_interaction.get() & BLE_MODE_FLAG) == BLE_MODE_FLAG; };
+
+auto wifi_ssid_flag_is_set = []() { return (event_flags_external_interaction.get() & WIFI_SSID) == WIFI_SSID; };
+auto wifi_pass_flag_is_set = []() { return (event_flags_external_interaction.get() & WIFI_PASS) == WIFI_PASS; };
 
 auto enable_screen_flag_is_set = []() {
 	return (event_flags_external_interaction.get() & ENABLE_SCREEN_FLAG) == ENABLE_SCREEN_FLAG;
@@ -156,7 +192,9 @@ auto main() -> int
 
 	motors_utils.setSpeed(1.0F, 1.0F);
 
-	thread_rfid.start(enableRFID);
+	thread_rfid.start(rfidLoop);
+
+	thread_wifi.start(wifiLoop);
 
 	// ON EXIT INITIALIZATION
 	thread_leds.start(ledsLoop);
@@ -175,7 +213,8 @@ auto main() -> int
 		log_info("Still alive...");
 		rtos::ThisThread::sleep_for(100ms);
 
-		event_flags_external_interaction.clear(BLE_PING_FLAG | BLE_REBOOT_INSTRUCTION_FLAG | BLE_MODE_FLAG);
+		event_flags_external_interaction.clear(BLE_PING_FLAG | BLE_REBOOT_INSTRUCTION_FLAG | BLE_MODE_FLAG | WIFI_SSID |
+											   WIFI_PASS);
 		event_flags_external_interaction.wait_any(NEW_BLE_MESSAGE_FLAG);
 
 		if (ping_flag_is_set()) {
@@ -184,19 +223,27 @@ auto main() -> int
 		if (reboot_instruction_flag_is_set()) {
 			NVIC_SystemReset();
 		}
+		if (wifi_ssid_flag_is_set()) {
+			wifi_ssid = ble_utils.getWifiSSID();
+		}
+		if (wifi_pass_flag_is_set()) {
+			wifi_pass = ble_utils.getWifiPass();
+		}
 
 		auto currentMode = ble_utils.getMode();
 		if (battery_utils.isInCharge()) {
 			if (currentMode == 0x10) {
 				enableVideo();
-				// enableWifi();
+				event_flags_external_interaction.set(ENABLE_WIFI_FLAG);
 				// disableBLE();
 			} else {
+				event_flags_external_interaction.clear(ENABLE_WIFI_FLAG);
 				turnOffAllActuators();
 			}
 
 		} else {
 			battery_utils.setUserMode();
+			event_flags_external_interaction.clear(ENABLE_WIFI_FLAG);
 
 			if (currentMode == 0x01) {
 				event_flags_external_interaction.set(MODE_USER1_FLAG);
