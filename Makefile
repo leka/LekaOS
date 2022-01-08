@@ -78,6 +78,11 @@ os:
 	@echo "🏗️  Building LekaOS 🤖"
 	cmake --build $(TARGET_BUILD_DIR) -t LekaOS
 
+bootloader:
+	@echo ""
+	@echo "🏗️  Building Bootloader 🤖"
+	cmake --build $(TARGET_BUILD_DIR) -t bootloader
+
 spikes:
 	@echo ""
 	@echo "🏗️  Building spikes 🍱"
