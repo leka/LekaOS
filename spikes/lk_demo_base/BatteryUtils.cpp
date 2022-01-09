@@ -11,7 +11,7 @@ void BatteryUtils::registerEventQueue(events::EventQueue &event_queue)
 		rtos::ThisThread::sleep_for(1s);
 	}
 
-	event_queue.call_every(1s, this, &BatteryUtils::checkReboot);
+	event_queue.call_every(500ms, this, &BatteryUtils::checkReboot);
 }
 
 auto BatteryUtils::getBatteryLevel() -> float
@@ -51,6 +51,10 @@ void BatteryUtils::checkReboot()
 	if (checkRaiseAndDrop()) {
 		NVIC_SystemReset();
 	}
+
+	if (was_in_user_mode && battery.isCharging()) {
+		NVIC_SystemReset();
+	}
 }
 
 auto BatteryUtils::checkRaiseAndDrop() -> bool
@@ -58,11 +62,21 @@ auto BatteryUtils::checkRaiseAndDrop() -> bool
 	if (last_charge_status != battery.isCharging()) {
 		raise_and_drop_counter++;
 		loop_since_charge = 0;
-	} else if (battery.isCharging() and ++loop_since_charge > 60) {
+	} else if (battery.isCharging() and ++loop_since_charge > 120) {
 		raise_and_drop_counter = 0;
 	}
 
 	last_charge_status = battery.isCharging();
 
-	return raise_and_drop_counter > 10;
+	return raise_and_drop_counter > 4;
+}
+
+auto BatteryUtils::isInCharge() -> bool
+{
+	return battery.isCharging();
+}
+
+void BatteryUtils::setUserMode()
+{
+	was_in_user_mode = true;
 }

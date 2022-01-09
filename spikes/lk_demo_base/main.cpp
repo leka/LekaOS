@@ -24,12 +24,12 @@
 using namespace leka;
 using namespace std::chrono_literals;
 
-auto thread_watchdog		  = rtos::Thread {osPriorityNormal};
-auto thread_event_queue		  = rtos::Thread {osPriorityNormal};
-auto thread_deep_sleep		  = rtos::Thread {osPriorityNormal};
-auto thread_ble				  = rtos::Thread {osPriorityNormal};
-auto thread_ble_notifications = rtos::Thread {osPriorityNormal};
-auto thread_video			  = rtos::Thread {osPriorityNormal};
+auto thread_watchdog	= rtos::Thread {osPriorityNormal};
+auto thread_event_queue = rtos::Thread {osPriorityNormal};
+auto thread_ble			= rtos::Thread {osPriorityNormal};
+auto thread_video		= rtos::Thread {osPriorityNormal};
+auto thread_leds		= rtos::Thread {osPriorityNormal};
+auto thread_rfid		= rtos::Thread {osPriorityNormal};
 
 auto event_queue					  = events::EventQueue {};
 auto event_flags_external_interaction = rtos::EventFlags {};
@@ -61,146 +61,80 @@ auto display_utils = DisplayUtils {thread_video, event_flags_external_interactio
 
 auto rfid_utils = RFIDUtils {event_flags_external_interaction};
 
-void deepSleepLoop()
+void ledsLoop()
 {
-	auto is_kick_turn_off_flag = []() {
-		return (event_flags_external_interaction.get() & KICK_TURN_OFF_FLAG) == KICK_TURN_OFF_FLAG;
-	};
-
 	while (true) {
-		if (!is_kick_turn_off_flag()) {
-			event_flags_external_interaction.set(STOP_VIDEO_FLAG);
-			rtos::ThisThread::sleep_for(20s);
-			leds_utils.turnOff(LedsRange::all);
-			display_utils.setOff();
+		event_flags_external_interaction.wait_any(ENABLE_LEDS_FLAG);
+		event_flags_external_interaction.set(ENABLE_LEDS_FLAG);
 
-			event_flags_external_interaction.wait_any(KICK_TURN_OFF_FLAG);
-		}
-		event_flags_external_interaction.clear(KICK_TURN_OFF_FLAG);
-		rtos::ThisThread::sleep_for(10min);
+		leds_utils.runReinforcer(selected_reinforcer);
+
+		// rtos::ThisThread::sleep_for(300ms);
 	}
 }
 
-void updateBLENotifications()
+void turnOffAllActuators()
 {
-	auto ping_flag_is_set = [&]() { return (event_flags_external_interaction.get() & BLE_PING_FLAG) == BLE_PING_FLAG; };
-	auto reboot_instruction_flag_is_set = [&]() {
-		return (event_flags_external_interaction.get() & BLE_REBOOT_INSTRUCTION_FLAG) == BLE_REBOOT_INSTRUCTION_FLAG;
-	};
-	auto leds_intensity_flag_is_set = [&]() {
-		return (event_flags_external_interaction.get() & BLE_LEDS_INTENSITY_FLAG) == BLE_LEDS_INTENSITY_FLAG;
-	};
-	auto lcd_intensity_flag_is_set = [&]() {
-		return (event_flags_external_interaction.get() & BLE_LCD_INTENSITY_FLAG) == BLE_LCD_INTENSITY_FLAG;
-	};
+	motors_utils.stop();
 
-	auto enable_leds_flag_is_set = [&]() {
-		return (event_flags_external_interaction.get() & BLE_ENABLE_LEDS_FLAG) == BLE_ENABLE_LEDS_FLAG;
-	};
-	auto enable_screen_flag_is_set = [&]() {
-		return (event_flags_external_interaction.get() & BLE_ENABLE_SCREEN_FLAG) == BLE_ENABLE_SCREEN_FLAG;
-	};
-	auto enable_motors_flag_is_set = [&]() {
-		return (event_flags_external_interaction.get() & BLE_ENABLE_MOTORS_FLAG) == BLE_ENABLE_MOTORS_FLAG;
-	};
-	auto turn_off_all_flag_is_set = [&]() {
-		return (event_flags_external_interaction.get() & BLE_TURN_OFF_ALL_FLAG) == BLE_TURN_OFF_ALL_FLAG;
-	};
+	event_flags_external_interaction.set(STOP_VIDEO_FLAG);
+	for (int i = 0; i < 3; i++) {
+		event_flags_external_interaction.clear(MODE_USER2_FLAG);
+		rtos::ThisThread::sleep_for(500ms);
+	}
+	rtos::ThisThread::sleep_for(500ms);
+	display_utils.setOff();
+	leds_utils.turnOff(LedsRange::all);
 
-	auto update_battery_level = [&]() { ble_utils.setBatteryLevel(battery_utils.getBatteryLevel()); };
-	event_queue.call_every(1s, update_battery_level);
+	rtos::ThisThread::sleep_for(100ms);
+}
 
-	while (true) {
-		event_flags_external_interaction.clear(BLE_PING_FLAG | BLE_REBOOT_INSTRUCTION_FLAG | BLE_LEDS_INTENSITY_FLAG |
-											   BLE_LCD_INTENSITY_FLAG | BLE_ENABLE_LEDS_FLAG | BLE_ENABLE_SCREEN_FLAG |
-											   BLE_ENABLE_MOTORS_FLAG | BLE_TURN_OFF_ALL_FLAG);
-		event_flags_external_interaction.wait_any(NEW_BLE_MESSAGE_FLAG);
-		event_flags_external_interaction.set(KICK_TURN_OFF_FLAG);
+void pingRobot()
+{
+	turnOffAllActuators();
 
-		if (ping_flag_is_set()) {
-			for (int i = 0; i < 3; i++) {
-				leds_utils.turnOn(LedsRange::belt, CRGB::RoyalBlue);
-				rtos::ThisThread::sleep_for(400ms);
-				leds_utils.turnOff(LedsRange::all);
-				rtos::ThisThread::sleep_for(400ms);
-			}
-		}
-		if (reboot_instruction_flag_is_set()) {
-			if (auto has_to_reboot = ble_utils.getRebootInstruction(); has_to_reboot) {
-				event_flags_external_interaction.set(STOP_VIDEO_FLAG);
-				leds_utils.turnOff(LedsRange::all);
-				display_utils.setOff();
-
-				rtos::ThisThread::sleep_for(500ms);
-
-				NVIC_SystemReset();
-			}
-		}
-		if (leds_intensity_flag_is_set()) {
-			auto new_value = ble_utils.getLedsIntensity();
-			leds_utils.setBrightness(new_value);
-		}
-		if (lcd_intensity_flag_is_set()) {
-			auto new_value = (float(ble_utils.getLCDIntensity()) / 255.F);
-			display_utils.setBrightness(new_value);
-		}
-
-		if (turn_off_all_flag_is_set()) {
-			event_flags_external_interaction.set(STOP_VIDEO_FLAG);
-			event_flags_external_interaction.clear(START_LEDS_FLAG);
-			rtos::ThisThread::sleep_for(1s);
-			motors_utils.stop();
-			display_utils.setOff();
-			leds_utils.turnOff(LedsRange::all);
-		}
-		if (enable_leds_flag_is_set() && !turn_off_all_flag_is_set()) {
-			if (auto enable_leds = ble_utils.getEnableLeds(); enable_leds) {
-				if (enable_leds < 6) {
-					selected_reinforcer = LedsReinforcer(enable_leds - 1);
-				}
-				auto new_value = (float(ble_utils.getLCDIntensity()) / 255.F);
-				display_utils.setBrightness(new_value);
-				event_flags_external_interaction.set(START_LEDS_FLAG);
-			} else {
-				event_flags_external_interaction.clear(START_LEDS_FLAG);
-				rtos::ThisThread::sleep_for(1s);
-				leds_utils.turnOff(LedsRange::all);
-			}
-		}
-		if (enable_screen_flag_is_set() && !turn_off_all_flag_is_set()) {
-			if (auto enable_screen = ble_utils.getEnableScreen(); enable_screen) {
-				if (enable_screen < video_table.size() + 1) {
-					display_utils.displayVideo(video_table.at(enable_screen - 1));
-				}
-				event_flags_external_interaction.set(START_VIDEO_FLAG);
-			} else {
-				event_flags_external_interaction.set(STOP_VIDEO_FLAG);
-				rtos::ThisThread::sleep_for(1s);
-				display_utils.setOff();
-			}
-		}
-		if (enable_motors_flag_is_set()) {
-			if (auto enable_motors = ble_utils.getEnableMotors(); enable_motors) {
-				if (enable_motors == 0x01) {
-					motors_utils.spin(MotorsUtils::SpinDirection::Left);
-				} else if (enable_motors == 0x10) {
-					motors_utils.spin(MotorsUtils::SpinDirection::Right);
-				} else {
-					motors_utils.stop();
-				}
-			}
-		}
+	for (int i = 0; i < 3; i++) {
+		leds_utils.turnOn(LedsRange::belt, CRGB::RoyalBlue);
+		rtos::ThisThread::sleep_for(400ms);
+		leds_utils.turnOff(LedsRange::all);
+		rtos::ThisThread::sleep_for(400ms);
 	}
 }
+
+void enableVideo()
+{
+	display_utils.displayVideo("animation-face-state-waiting");
+	event_flags_external_interaction.set(START_VIDEO_FLAG);
+}
+
+void enableRFID()
+{
+	event_flags_external_interaction.wait_any(ENABLE_RFID_FLAG);
+
+	rfid_utils.initialize();
+	rfid_utils.registerEventQueue(event_queue);
+}
+
+auto ping_flag_is_set = []() { return (event_flags_external_interaction.get() & BLE_PING_FLAG) == BLE_PING_FLAG; };
+auto reboot_instruction_flag_is_set = []() {
+	return (event_flags_external_interaction.get() & BLE_REBOOT_INSTRUCTION_FLAG) == BLE_REBOOT_INSTRUCTION_FLAG;
+};
+auto mode_flag_is_set = []() { return (event_flags_external_interaction.get() & BLE_MODE_FLAG) == BLE_MODE_FLAG; };
+
+auto enable_screen_flag_is_set = []() {
+	return (event_flags_external_interaction.get() & ENABLE_SCREEN_FLAG) == ENABLE_SCREEN_FLAG;
+};
+auto enable_motors_flag_is_set = []() {
+	return (event_flags_external_interaction.get() & ENABLE_MOTORS_FLAG) == ENABLE_MOTORS_FLAG;
+};
 
 auto main() -> int
 {
+	// COMMON INITILIZATION
 	startWatchdog(thread_watchdog);
 
 	static auto serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 	logger::set_print_function([](const char *str, size_t size) { serial.write(str, size); });
-
-	// auto start = rtos::Kernel::Clock::now();
 
 	thread_event_queue.start({&event_queue, &events::EventQueue::dispatch_forever});
 
@@ -212,39 +146,82 @@ auto main() -> int
 
 	battery_utils.registerEventQueue(event_queue);
 
-	event_flags_external_interaction.set(KICK_TURN_OFF_FLAG);
-	thread_deep_sleep.start(deepSleepLoop);
-
-	motors_utils.setSpeed(1.0F, 1.0F);
-
 	ble_utils.setDeviceName("LekaNormesElec");
 	thread_ble.start({&ble_utils, &BLEUtils::startAdvertising});
-	thread_ble_notifications.start(updateBLENotifications);
+	auto update_battery_level = [&]() { ble_utils.setBatteryLevel(battery_utils.getBatteryLevel()); };
+	event_queue.call_every(1s, update_battery_level);
 
 	display_utils.initializeSD();
 	display_utils.initializeScreen();
 
-	rfid_utils.initialize();
-	rfid_utils.registerEventQueue(event_queue);
+	motors_utils.setSpeed(1.0F, 1.0F);
 
+	thread_rfid.start(enableRFID);
+
+	// ON EXIT INITIALIZATION
+	thread_leds.start(ledsLoop);
 	leds_utils.initializationAnimation();
-	event_flags_external_interaction.set(KICK_TURN_OFF_FLAG);
-
 	leds_utils.setBrightness(0xFF);
-	event_flags_external_interaction.set(START_LEDS_FLAG);
-	display_utils.displayVideo("animation-face-state-waiting");
+
+	//
+
+	//
+
+	//
+
+	turnOffAllActuators();
 
 	while (true) {
-		// auto t = rtos::Kernel::Clock::now() - start;
-		// log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world,
-		// 		 int(t.count() / 1000));
+		log_info("Still alive...");
+		rtos::ThisThread::sleep_for(100ms);
 
-		rtos::ThisThread::sleep_for(200ms);
+		event_flags_external_interaction.clear(BLE_PING_FLAG | BLE_REBOOT_INSTRUCTION_FLAG | BLE_MODE_FLAG);
+		event_flags_external_interaction.wait_any(NEW_BLE_MESSAGE_FLAG);
 
-		event_flags_external_interaction.wait_any(START_LEDS_FLAG);
-		event_flags_external_interaction.set(START_LEDS_FLAG);
-		event_flags_external_interaction.set(KICK_TURN_OFF_FLAG);
+		if (ping_flag_is_set()) {
+			pingRobot();
+		}
+		if (reboot_instruction_flag_is_set()) {
+			NVIC_SystemReset();
+		}
 
-		leds_utils.runReinforcer(selected_reinforcer);
+		auto currentMode = ble_utils.getMode();
+		if (battery_utils.isInCharge()) {
+			if (currentMode == 0x10) {
+				enableVideo();
+				// enableWifi();
+				// disableBLE();
+			} else {
+				turnOffAllActuators();
+			}
+
+		} else {
+			battery_utils.setUserMode();
+
+			if (currentMode == 0x01) {
+				event_flags_external_interaction.set(MODE_USER1_FLAG);
+			} else if (currentMode == 0x02) {
+				event_flags_external_interaction.set(MODE_USER2_FLAG);
+			} else {
+				turnOffAllActuators();
+			}
+
+			if (enable_screen_flag_is_set()) {
+				enableVideo();
+			}
+
+			if (enable_motors_flag_is_set()) {
+				motors_utils.spin(MotorsUtils::SpinDirection::Left);
+				// if (auto enable_motors = ble_utils.getModeMotors(); enable_motors) {
+				// 	if (enable_motors == 0x01) {
+				// 		motors_utils.spin(MotorsUtils::SpinDirection::Left);
+				// 	} else if (enable_motors == 0x10) {
+				// 		motors_utils.spin(MotorsUtils::SpinDirection::Right);
+				// 	} else {
+				// 		motors_utils.stop();
+				// 	}
+				// }
+			}
+		}
 	}
 }

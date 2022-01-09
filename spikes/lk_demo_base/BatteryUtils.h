@@ -21,6 +21,9 @@ class BatteryUtils
 
 	auto getBatteryLevel() -> float;
 
+	auto isInCharge() -> bool;
+	void setUserMode();
+
   private:
 	void checkReboot();
 	auto checkRaiseAndDrop() -> bool;
@@ -31,6 +34,8 @@ class BatteryUtils
 	int loop_since_charge {0};
 	int raise_and_drop_counter {0};
 	bool last_charge_status {false};
+
+	bool was_in_user_mode {false};
 };
 
 }	// namespace leka

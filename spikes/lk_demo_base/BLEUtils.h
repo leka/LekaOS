@@ -18,8 +18,9 @@ namespace leka {
 class BLEUtils
 {
   public:
-	explicit BLEUtils(rtos::EventFlags &event_flags)
+	explicit BLEUtils(rtos::EventFlags &event_flags, bool in_charge = false)
 		: _event_flags(event_flags),
+		  _in_charge(in_charge),
 		  _ble {BLE::Instance()},
 		  _ble_gap {_ble, _event_queue},
 		  _ble_server(_ble),
@@ -32,19 +33,15 @@ class BLEUtils
 
 	auto getPing() -> bool;
 	auto getRebootInstruction() -> bool;
-	auto getLedsIntensity() -> uint8_t;
-	auto getLCDIntensity() -> uint8_t;
-
-	auto getEnableLeds() -> uint8_t;
-	auto getEnableScreen() -> uint8_t;
-	auto getEnableMotors() -> uint8_t;
-	auto getTurnOffAll() -> bool;
+	auto getMode() -> uint8_t;
 
 	void startAdvertising();
 
   private:
 	rtos::EventFlags &_event_flags;
 	events::EventQueue _event_queue {16 * EVENTS_EVENT_SIZE};
+
+	bool _in_charge;
 
 	BLE &_ble;
 	BLEGap _ble_gap;

@@ -22,34 +22,9 @@ auto BLEUtils::getRebootInstruction() -> bool
 	return _ble_service_monitoring.getRebootInstruction();
 }
 
-auto BLEUtils::getLedsIntensity() -> uint8_t
+auto BLEUtils::getMode() -> uint8_t
 {
-	return _ble_service_monitoring.getLedsIntenisty();
-}
-
-auto BLEUtils::getLCDIntensity() -> uint8_t
-{
-	return _ble_service_monitoring.getLCDIntensity();
-}
-
-auto BLEUtils::getEnableLeds() -> uint8_t
-{
-	return _ble_service_monitoring.getEnableLeds();
-}
-
-auto BLEUtils::getEnableScreen() -> uint8_t
-{
-	return _ble_service_monitoring.getEnableScreen();
-}
-
-auto BLEUtils::getEnableMotors() -> uint8_t
-{
-	return _ble_service_monitoring.getEnableMotors();
-}
-
-auto BLEUtils::getTurnOffAll() -> bool
-{
-	return _ble_service_monitoring.getTurnOffAll();
+	return _ble_service_monitoring.getMode();
 }
 
 void BLEUtils::startAdvertising()

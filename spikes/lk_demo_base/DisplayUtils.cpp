@@ -116,6 +116,8 @@ void DisplayUtils::runVideo()
 			if (!hasToStopVideo()) {
 				_event_flags.set(START_VIDEO_FLAG);
 			}
+		} else {
+			setOff();
 		}
 	}
 }

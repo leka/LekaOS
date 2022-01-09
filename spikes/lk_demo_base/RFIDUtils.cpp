@@ -26,8 +26,8 @@ void RFIDUtils::checkNewTag()
 		tag_id		  = Tag(tag_container.data[7]);
 		rfidkit.resetTag();
 
-		_event_flags.set(NEW_RFID_TAG_FLAG);
+		// _event_flags.set(NEW_RFID_TAG_FLAG);
 	} else {
-		_event_flags.clear(NEW_RFID_TAG_FLAG);
+		// _event_flags.clear(NEW_RFID_TAG_FLAG);
 	}
 }
