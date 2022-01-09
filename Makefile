@@ -252,6 +252,10 @@ clang_tidy_diff_fix:
 # MARK: - Mbed targets
 #
 
+pull_deps:
+	@$(MAKE) mbed_clone
+	@$(MAKE) mcuboot_clone
+
 mbed_clone:
 	@echo ""
 	@echo "🧬 Cloning Mbed OS 📦"
