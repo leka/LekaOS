@@ -16,6 +16,14 @@ namespace leka {
 
 static constexpr uint16_t MAX_ADVERTISING_PAYLOAD_SIZE = 50;
 
+enum class PrimaryChannel
+{
+	channel37 = 37,
+	channel38 = 38,
+	channel39 = 39,
+	None
+};
+
 class BLEGap : public ble::Gap::EventHandler
 {
   public:
@@ -26,6 +34,10 @@ class BLEGap : public ble::Gap::EventHandler
 
 	void start();
 	void stop();
+	void startAdvertising();
+	void stopAdvertising();
+
+	void setChannel(PrimaryChannel channel);
 
 	void onInit(mbed::Callback<void(BLE &, events::EventQueue &)> cb);
 	void onConnect(mbed::Callback<void(BLE &, events::EventQueue &, const ble::ConnectionCompleteEvent &event)> cb);
@@ -44,13 +56,12 @@ class BLEGap : public ble::Gap::EventHandler
 
 	void scheduleBLEEvents(BLE::OnEventsToProcessCallbackContext *event);
 
-	void startAdvertising();
-	// void stopAdvertising();
-
 	BLE &_ble;
 	ble::Gap &_ble_gap;
 
 	lstd::span<const char> _device_name;
+
+	PrimaryChannel _selected_channel {PrimaryChannel::None};
 
 	uint8_t _advertising_buffer[MAX_ADVERTISING_PAYLOAD_SIZE] {};
 	ble::AdvertisingDataBuilder _advertising_data_builder;

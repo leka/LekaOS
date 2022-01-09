@@ -37,6 +37,11 @@ void BLEGap::stop()
 	}
 }
 
+void BLEGap::setChannel(PrimaryChannel channel)
+{
+	_selected_channel = channel;
+}
+
 void BLEGap::onInit(mbed::Callback<void(BLE &, events::EventQueue &)> cb)
 {
 	_post_init_cb = cb;
@@ -97,6 +102,21 @@ void BLEGap::startAdvertising()
 	ble::AdvertisingParameters advertising_params(ble::advertising_type_t::CONNECTABLE_UNDIRECTED,
 												  ble::adv_interval_t(ble::millisecond_t(40)));
 	advertising_params.setTxPower(-126);
+	// _selected_channel = PrimaryChannel::channel37;
+	switch (_selected_channel) {
+		case PrimaryChannel::channel37:
+			advertising_params.setPrimaryChannels(true, false, false);
+			break;
+		case PrimaryChannel::channel38:
+			advertising_params.setPrimaryChannels(false, true, false);
+			break;
+		case PrimaryChannel::channel39:
+			advertising_params.setPrimaryChannels(false, false, true);
+			break;
+		default:
+			advertising_params.setPrimaryChannels(true, true, true);
+			break;
+	}
 
 	if (auto error = _ble_gap.setAdvertisingParameters(_advertising_handle, advertising_params);
 		error != BLE_ERROR_NONE) {
@@ -129,4 +149,9 @@ void BLEGap::startAdvertising()
 		log_error("Gap::startAdvertising() failed");
 		return;
 	}
+}
+
+void BLEGap::stopAdvertising()
+{
+	_ble_gap.stopAdvertising(_advertising_handle);
 }

@@ -10,7 +10,6 @@
 #include "CoreBufferedSerial.h"
 #include "CoreCR95HF.h"
 #include "Flags.h"
-#include "LogKit.h"
 #include "RFIDKit.h"
 
 namespace leka {

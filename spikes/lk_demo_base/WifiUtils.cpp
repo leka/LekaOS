@@ -4,6 +4,7 @@
 
 #include "Certificates.h"
 #include "FileSystemKit.h"
+#include "Flags.h"
 
 using namespace leka;
 using namespace std::chrono_literals;
@@ -21,7 +22,7 @@ void WifiUtils::disconnect()
 	corewifi.disconnect();
 }
 
-void WifiUtils::pingPage(const char *url)
+void WifiUtils::downloadFile(const char *url)
 {
 	_url = url;
 

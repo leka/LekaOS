@@ -29,6 +29,11 @@ class BLEUtils
 
 	void setDeviceName(lstd::span<const char> name);
 
+	void stopAdvertising();
+	void shutdown();
+
+	void setChannel(PrimaryChannel channel);
+
 	void setBatteryLevel(float value);
 
 	auto getPing() -> bool;

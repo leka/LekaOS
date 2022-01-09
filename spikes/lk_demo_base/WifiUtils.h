@@ -22,7 +22,7 @@ class WifiUtils
 
 	auto connect(const char *ssid, const char *pass) -> bool;
 	void disconnect();
-	void pingPage(const char *url);
+	void downloadFile(const char *url);
 
   private:
 	mbed::DigitalOut wifi_enable {WIFI_ENABLE, 1};
