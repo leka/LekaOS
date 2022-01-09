@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "CoreFlashIS25LP016D.h"
-#include <lstd_array>
+#include <array>
 
 #include "gtest/gtest.h"
 #include "mocks/leka/FlashManager.h"
@@ -121,7 +121,7 @@ TEST_F(CoreFlashIS25LP016DTest, readFailChipIsNotAvailable)
 TEST_F(CoreFlashIS25LP016DTest, write)
 {
 	uint32_t address		  = 0x2A;
-	auto buffer				  = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	 // "abcdef"
+	auto buffer				  = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	// "abcdef"
 	const auto bytes_to_write = 5;
 
 	size_t expected_bytes_written	  = bytes_to_write;
@@ -145,7 +145,7 @@ TEST_F(CoreFlashIS25LP016DTest, write)
 TEST_F(CoreFlashIS25LP016DTest, writeOverSize)
 {
 	uint32_t address		  = flash::is25lp016d::size;
-	auto buffer				  = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	 // "abcdef"
+	auto buffer				  = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	// "abcdef"
 	const auto bytes_to_write = 5;
 
 	size_t expected_bytes_written = 0;
@@ -159,7 +159,7 @@ TEST_F(CoreFlashIS25LP016DTest, writeOverSize)
 TEST_F(CoreFlashIS25LP016DTest, writeFailNotEnableToWrite)
 {
 	uint32_t address		  = 0x2A;
-	auto buffer				  = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	 // "abcdef"
+	auto buffer				  = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	// "abcdef"
 	const auto bytes_to_write = 5;
 
 	size_t expected_bytes_written = 0;
@@ -179,7 +179,7 @@ TEST_F(CoreFlashIS25LP016DTest, writeFailNotEnableToWrite)
 TEST_F(CoreFlashIS25LP016DTest, writeFailChipIsNotAvailable)
 {
 	uint32_t address		  = 0x2A;
-	auto buffer				  = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	 // "abcdef"
+	auto buffer				  = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	// "abcdef"
 	const auto bytes_to_write = 5;
 
 	size_t expected_bytes_written = 0;

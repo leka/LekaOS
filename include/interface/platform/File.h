@@ -5,7 +5,8 @@
 #ifndef _LEKA_OS_INTERFACE_PLATFORM_FILE_H_
 #define _LEKA_OS_INTERFACE_PLATFORM_FILE_H_
 
-#include "../../cxxsupport/lstd_span"
+#include <cstdint>
+#include <span>
 
 namespace leka::interface {
 
@@ -16,11 +17,11 @@ struct File {
 
 	virtual void close() = 0;
 
-	virtual auto read(lstd::span<uint8_t> buffer) -> size_t = 0;
-	virtual auto write(lstd::span<uint8_t> data) -> size_t	= 0;
+	virtual auto read(std::span<uint8_t> buffer) -> size_t = 0;
+	virtual auto write(std::span<uint8_t> data) -> size_t  = 0;
 
-	virtual auto read(lstd::span<char> buffer) -> size_t = 0;
-	virtual auto write(lstd::span<char> data) -> size_t	 = 0;
+	virtual auto read(std::span<char> buffer) -> size_t = 0;
+	virtual auto write(std::span<char> data) -> size_t	= 0;
 
 	virtual auto read(uint8_t *buffer, uint32_t size) -> size_t		 = 0;
 	virtual auto write(const uint8_t *data, uint32_t size) -> size_t = 0;

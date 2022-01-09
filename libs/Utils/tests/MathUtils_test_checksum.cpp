@@ -2,7 +2,7 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include <lstd_array>
+#include <array>
 
 #include "Utils.h"
 #include "gtest/gtest.h"
@@ -11,7 +11,7 @@ using namespace leka::utils::math;
 
 TEST(MathUtilsTest, checksum8ForOneValue0x00)
 {
-	auto data = lstd::to_array<uint8_t>({0x00});
+	auto data = std::to_array<uint8_t>({0x00});
 
 	auto checksum = checksum8(data);
 
@@ -20,7 +20,7 @@ TEST(MathUtilsTest, checksum8ForOneValue0x00)
 
 TEST(MathUtilsTest, checksum8ForOneValue0xFF)
 {
-	auto data = lstd::to_array<uint8_t>({0xFF});
+	auto data = std::to_array<uint8_t>({0xFF});
 
 	auto checksum = checksum8(data);
 
@@ -29,7 +29,7 @@ TEST(MathUtilsTest, checksum8ForOneValue0xFF)
 
 TEST(MathUtilsTest, checksum8ForOneValueInfoCommand)
 {
-	auto data = lstd::to_array<uint8_t>({0x70});
+	auto data = std::to_array<uint8_t>({0x70});
 
 	auto checksum = checksum8(data);
 
@@ -39,7 +39,7 @@ TEST(MathUtilsTest, checksum8ForOneValueInfoCommand)
 TEST(MathUtilsTest, checksum8ForTwoValues)
 {
 	{
-		auto data = lstd::to_array<uint8_t>({0x00, 0xFF});
+		auto data = std::to_array<uint8_t>({0x00, 0xFF});
 
 		auto checksum = checksum8(data);
 
@@ -47,7 +47,7 @@ TEST(MathUtilsTest, checksum8ForTwoValues)
 	}
 
 	{
-		auto data = lstd::to_array<uint8_t>({0x01, 0xFF});
+		auto data = std::to_array<uint8_t>({0x01, 0xFF});
 
 		auto checksum = checksum8(data);
 
@@ -55,7 +55,7 @@ TEST(MathUtilsTest, checksum8ForTwoValues)
 	}
 
 	{
-		auto data = lstd::to_array<uint8_t>({0xFF, 0x01});
+		auto data = std::to_array<uint8_t>({0xFF, 0x01});
 
 		auto checksum = checksum8(data);
 
@@ -65,7 +65,7 @@ TEST(MathUtilsTest, checksum8ForTwoValues)
 
 TEST(MathUtilsTest, checksum8ForMultipleValuesTurnOneLedOn)
 {
-	auto data = lstd::to_array<uint8_t>({0x15, 0x00, 0xFF, 0x00, 0x00});
+	auto data = std::to_array<uint8_t>({0x15, 0x00, 0xFF, 0x00, 0x00});
 
 	auto checksum = checksum8(data);
 
@@ -74,7 +74,7 @@ TEST(MathUtilsTest, checksum8ForMultipleValuesTurnOneLedOn)
 
 TEST(MathUtilsTest, checksum8ForMultipleValuesTurnAllLedsOn)
 {
-	auto data = lstd::to_array<uint8_t>(
+	auto data = std::to_array<uint8_t>(
 		{0x15, 0x00, 0x33, 0x00, 0x00, 0x15, 0x01, 0x66, 0x00, 0x00, 0x15, 0x02, 0x99, 0x00, 0x00, 0x15, 0x03,
 		 0xCC, 0x00, 0x00, 0x15, 0x04, 0xFF, 0x00, 0x00, 0x15, 0x05, 0x00, 0x00, 0x00, 0x15, 0x06, 0x00, 0x33,
 		 0x00, 0x15, 0x07, 0x00, 0x66, 0x00, 0x15, 0x08, 0x00, 0x99, 0x00, 0x15, 0x09, 0x00, 0xCC, 0x00, 0x15,

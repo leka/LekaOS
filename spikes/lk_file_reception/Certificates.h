@@ -5,11 +5,11 @@
 #ifndef _LEKA_OS_CERTIFICATES_H_
 #define _LEKA_OS_CERTIFICATES_H_
 
-#include <lstd_array>
+#include <array>
 
 namespace leka {
 
-constexpr auto CERTIFICATES = lstd::to_array<const char>(
+constexpr auto CERTIFICATES = std::to_array<const char>(
 	"-----BEGIN CERTIFICATE-----\n"
 	"MIIEGzCCAwOgAwIBAgIQBmcDW7sU/WOvwNaoU07+FjANBgkqhkiG9w0BAQsFADBs\n"
 	"MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3\n"

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "CoreFlashManagerIS25LP016D.h"
-#include <lstd_array>
+#include <array>
 
 #include "gtest/gtest.h"
 #include "mocks/leka/QSPI.h"
@@ -37,12 +37,12 @@ class CoreFlashManagerIS25LP016DTest : public ::testing::Test
 	void MOCK_FUNCTION_chip_available(int times = 1)
 	{
 		auto work_not_in_progress = ~status::work_in_progress;
-		auto returned_value		  = lstd::to_array({work_not_in_progress});
+		auto returned_value		  = std::to_array({work_not_in_progress});
 		EXPECT_CALL(qspimock, sendCommand(command::read_status, _, _, _, setArray(returned_value), _)).Times(times);
 	}
 	void MOCK_FUNCTION_chip_not_available()
 	{
-		auto returned_value = lstd::to_array({status::work_in_progress});
+		auto returned_value = std::to_array({status::work_in_progress});
 		EXPECT_CALL(qspimock, sendCommand(command::read_status, _, _, _, setArray(returned_value), _)).Times(1);
 	}
 
@@ -57,7 +57,7 @@ class CoreFlashManagerIS25LP016DTest : public ::testing::Test
 	}
 	void MOCK_FUNCTION_enable_write_and_write_is_enabled()
 	{
-		auto returned_value = lstd::to_array({status::write_enable_latch});
+		auto returned_value = std::to_array({status::write_enable_latch});
 		{
 			InSequence seq;
 
@@ -73,7 +73,7 @@ class CoreFlashManagerIS25LP016DTest : public ::testing::Test
 	void MOCK_FUNCTION_enable_write_and_write_is_not_enabled()
 	{
 		auto write_not_enabled = ~status::write_enable_latch;
-		auto returned_value	   = lstd::to_array({write_not_enabled});
+		auto returned_value	   = std::to_array({write_not_enabled});
 		{
 			InSequence seq;
 
@@ -98,7 +98,7 @@ TEST_F(CoreFlashManagerIS25LP016DTest, instantiation)
 
 TEST_F(CoreFlashManagerIS25LP016DTest, getStatusRegister)
 {
-	auto returned_value = lstd::to_array({0x2A});
+	auto returned_value = std::to_array({0x2A});
 	auto expected_value = returned_value[0];
 
 	EXPECT_CALL(qspimock, sendCommand(command::read_status, _, _, _, setArray(returned_value), status::register_size))
@@ -113,7 +113,7 @@ TEST_F(CoreFlashManagerIS25LP016DTest, chipIsAvailable)
 	auto expected_not_available = false;
 
 	auto work_not_in_progress = ~status::work_in_progress;
-	auto returned_value		  = lstd::to_array({work_not_in_progress});
+	auto returned_value		  = std::to_array({work_not_in_progress});
 
 	EXPECT_CALL(qspimock, sendCommand(command::read_status, _, _, _, setArray(returned_value), status::register_size))
 		.Times(1);
@@ -126,7 +126,7 @@ TEST_F(CoreFlashManagerIS25LP016DTest, chipIsNotAvailable)
 {
 	auto expected_not_available = true;
 
-	auto returned_value = lstd::to_array({status::work_in_progress});
+	auto returned_value = std::to_array({status::work_in_progress});
 
 	EXPECT_CALL(qspimock, sendCommand(command::read_status, _, _, _, setArray(returned_value), status::register_size))
 		.Times(1);
@@ -223,7 +223,7 @@ TEST_F(CoreFlashManagerIS25LP016DTest, writeIsEnabled)
 {
 	auto expected_not_enabled = false;
 
-	auto returned_value = lstd::to_array({status::write_enable_latch});
+	auto returned_value = std::to_array({status::write_enable_latch});
 
 	{
 		InSequence seq;
@@ -243,7 +243,7 @@ TEST_F(CoreFlashManagerIS25LP016DTest, writeIsNotEnabled)
 	auto expected_not_enabled = true;
 
 	auto write_not_enabled = ~status::write_enable_latch;
-	auto returned_value	   = lstd::to_array({write_not_enabled});
+	auto returned_value	   = std::to_array({write_not_enabled});
 
 	{
 		InSequence seq;
@@ -262,7 +262,7 @@ TEST_F(CoreFlashManagerIS25LP016DTest, writeIsNotEnabledDueToChipNotAvailable)
 {
 	auto expected_not_enabled = true;
 
-	auto returned_value = lstd::to_array({status::write_enable_latch});
+	auto returned_value = std::to_array({status::write_enable_latch});
 
 	{
 		InSequence seq;

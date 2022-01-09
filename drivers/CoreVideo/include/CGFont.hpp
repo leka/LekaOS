@@ -6,8 +6,8 @@
 #ifndef _LEKA_OS_DRIVER_CORE_VIDEO_FONT_TABLE_H_
 #define _LEKA_OS_DRIVER_CORE_VIDEO_FONT_TABLE_H_
 
+#include <array>
 #include <cstdint>
-#include <lstd_array>
 
 namespace leka {
 
@@ -18,7 +18,7 @@ namespace leka {
 // Reading has to be done row of pixel by row of pixel. Hence, the row of 17 pixels is encoded on 3 bytes.
 // As consequence of the 2 previous sentences, the last 7 bits are not used in the third byte.
 
-constexpr auto CGFontTable = lstd::to_array<uint8_t>({
+constexpr auto CGFontTable = std::to_array<uint8_t>({
 
 	// @0 ' ' (17 pixels wide)
 	0x00, 0x00, 0x00,	//

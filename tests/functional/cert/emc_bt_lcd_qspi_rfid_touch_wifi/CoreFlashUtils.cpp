@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include <lstd_array>
+#include <array>
 
 #include "rtos/ThisThread.h"
 
@@ -20,7 +20,7 @@ uint32_t address = 0x00;
 const size_t bytes_to_read = 0x20;
 std::array<uint8_t, bytes_to_read> buffer {};
 
-auto data_to_write = lstd::to_array<uint8_t>({1, 2, 3, 4, 5, 6, 7, 8, 9});
+auto data_to_write = std::to_array<uint8_t>({1, 2, 3, 4, 5, 6, 7, 8, 9});
 
 void flash_loop()
 {

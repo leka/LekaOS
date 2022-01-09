@@ -29,8 +29,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      CC: /usr/bin/gcc
-      CXX: /usr/bin/g++
+      CC: /usr/bin/gcc-10
+      CXX: /usr/bin/g++-10
 
     steps:
       - uses: actions/checkout@v2

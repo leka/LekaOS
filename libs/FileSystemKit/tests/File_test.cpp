@@ -2,10 +2,10 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#include <array>
 #include <fstream>
 #include <iostream>
-#include <lstd_array>
-#include <lstd_span>
+#include <span>
 #include <string>
 
 #include "FileSystemKit.h"
@@ -36,14 +36,14 @@ class FileTest : public ::testing::Test
 		return out.str();
 	}
 
-	void writeTempFile(lstd::span<uint8_t> data)
+	void writeTempFile(std::span<uint8_t> data)
 	{
 		auto *file = fopen(tempFilename, "wb");
 		fwrite(data.data(), sizeof(uint8_t), data.size(), file);
 		fclose(file);
 	}
 
-	void writeTempFile(lstd::span<char> data)
+	void writeTempFile(std::span<char> data)
 	{
 		auto *file = fopen(tempFilename, "w");
 		fwrite(data.data(), sizeof(char), data.size(), file);
@@ -124,7 +124,7 @@ TEST_F(FileTest, closeNoFile)
 
 TEST_F(FileTest, writeSpan)
 {
-	auto input_data = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});   // "abcdef"
+	auto input_data = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	  // "abcdef"
 
 	file.open(tempFilename, "w");
 	auto size = file.write(input_data);
@@ -140,7 +140,7 @@ TEST_F(FileTest, writeSpan)
 
 TEST_F(FileTest, writeSpanBinary)
 {
-	auto input_data = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});   // "abcdef"
+	auto input_data = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	  // "abcdef"
 
 	file.open(tempFilename, "wb");
 	auto size = file.write(input_data);
@@ -156,7 +156,7 @@ TEST_F(FileTest, writeSpanBinary)
 
 TEST_F(FileTest, writeCharSpan)
 {
-	auto input_data = lstd::to_array<char>({'a', 'b', 'c', 'd', 'e', 'f'});
+	auto input_data = std::to_array<char>({'a', 'b', 'c', 'd', 'e', 'f'});
 
 	file.open(tempFilename, "w");
 	auto size = file.write(input_data);
@@ -172,7 +172,7 @@ TEST_F(FileTest, writeCharSpan)
 
 TEST_F(FileTest, writeCharSpanBinary)
 {
-	auto input_data = lstd::to_array<char>({'a', 'b', 'c', 'd', 'e', 'f'});
+	auto input_data = std::to_array<char>({'a', 'b', 'c', 'd', 'e', 'f'});
 
 	file.open(tempFilename, "wb");
 	auto size = file.write(input_data);
@@ -252,7 +252,7 @@ TEST_F(FileTest, writeCharBufferAndSizeBinary)
 
 TEST_F(FileTest, readSpan)
 {
-	auto input_data = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});   // "abcdef"
+	auto input_data = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	  // "abcdef"
 
 	writeTempFile(input_data);
 
@@ -268,7 +268,7 @@ TEST_F(FileTest, readSpan)
 
 TEST_F(FileTest, readSpanBinary)
 {
-	auto input_data = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});   // "abcdef"
+	auto input_data = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	  // "abcdef"
 
 	writeTempFile(input_data);
 
@@ -284,7 +284,7 @@ TEST_F(FileTest, readSpanBinary)
 
 TEST_F(FileTest, readCharSpan)
 {
-	auto input_data = lstd::to_array<char>({'a', 'b', 'c', 'd', 'e', 'f'});
+	auto input_data = std::to_array<char>({'a', 'b', 'c', 'd', 'e', 'f'});
 
 	writeTempFile(input_data);
 
@@ -300,7 +300,7 @@ TEST_F(FileTest, readCharSpan)
 
 TEST_F(FileTest, readCharSpanBinary)
 {
-	auto input_data = lstd::to_array<char>({'a', 'b', 'c', 'd', 'e', 'f'});
+	auto input_data = std::to_array<char>({'a', 'b', 'c', 'd', 'e', 'f'});
 
 	writeTempFile(input_data);
 
@@ -401,7 +401,7 @@ TEST_F(FileTest, sizeEmptyFile)
 
 TEST_F(FileTest, sizeFile)
 {
-	auto input_data = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});   // "abcdef"
+	auto input_data = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	  // "abcdef"
 
 	file.open(tempFilename);
 	auto expected_size = file.write(input_data);
@@ -413,7 +413,7 @@ TEST_F(FileTest, sizeFile)
 
 TEST_F(FileTest, writeThenRead)
 {
-	auto input_data	 = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	// "abcdef"
+	auto input_data	 = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});   // "abcdef"
 	auto output_data = std::array<uint8_t, 6> {};
 
 	file.open(tempFilename, "w+");
@@ -428,7 +428,7 @@ TEST_F(FileTest, writeThenRead)
 
 TEST_F(FileTest, seek)
 {
-	auto input_data	   = lstd::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	  // "abcdef"
+	auto input_data	   = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	 // "abcdef"
 	auto output_data   = std::array<uint8_t, 6> {};
 	auto expected_data = std::array<uint8_t, 6> {0x64, 0x65, 0x66, 0x00, 0x00, 0x00};
 

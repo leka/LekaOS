@@ -30,9 +30,13 @@ message(STATUS "")
 
 project(LekaOSUnitTests LANGUAGES C CXX)
 
-# Set -std=gnu++17
-set(CMAKE_CXX_STANDARD 17)
+# Set C/C++ standard
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_EXTENSIONS TRUE)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_EXTENSIONS TRUE)
+set(CMAKE_C_STANDARD_REQUIRED ON)
 
 # Colored output for compilation
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
@@ -155,9 +159,7 @@ endfunction()
 #
 
 include_directories(BEFORE SYSTEM
-	${EXTERN_MBED_OS_DIR}/UNITTESTS/target_h/platform/cxxsupport
 	${EXTERN_MBED_OS_DIR}/platform/cxxsupport
-	${INCLUDE_DIR}/cxxsupport
 	${INCLUDE_DIR}
 )
 

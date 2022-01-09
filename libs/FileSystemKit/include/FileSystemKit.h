@@ -6,6 +6,7 @@
 #define _LEKA_OS_LIB_FILE_SYSTEM_KIT_H_
 
 #include <memory>
+#include <span>
 
 #include "platform/NonCopyable.h"
 
@@ -22,11 +23,11 @@ class FileSystemKit
 		auto open(const char *path, const char *mode = "r") -> bool final;
 		void close() final;
 
-		auto read(lstd::span<uint8_t> buffer) -> size_t final;
-		auto write(lstd::span<uint8_t> data) -> size_t final;
+		auto read(std::span<uint8_t> buffer) -> size_t final;
+		auto write(std::span<uint8_t> data) -> size_t final;
 
-		auto read(lstd::span<char> buffer) -> size_t final;
-		auto write(lstd::span<char> data) -> size_t final;
+		auto read(std::span<char> buffer) -> size_t final;
+		auto write(std::span<char> data) -> size_t final;
 
 		auto read(uint8_t *buffer, uint32_t size) -> size_t final;
 		auto write(const uint8_t *data, uint32_t size) -> size_t final;

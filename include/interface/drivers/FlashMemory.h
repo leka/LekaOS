@@ -5,9 +5,8 @@
 #ifndef _LEKA_OS_DRIVER_INTERFACE_FLASH_MEMORY_DRIVER_H_
 #define _LEKA_OS_DRIVER_INTERFACE_FLASH_MEMORY_DRIVER_H_
 
-#include <cinttypes>
-
-#include "../../cxxsupport/lstd_span"
+#include <cstdint>
+#include <span>
 
 namespace leka::interface {
 
@@ -18,8 +17,8 @@ class FlashMemory
 
 	virtual auto getSize() -> size_t = 0;
 
-	virtual auto read(uint32_t address, lstd::span<uint8_t> rx_buffer, size_t rx_buffer_size) -> size_t	 = 0;
-	virtual auto write(uint32_t address, lstd::span<uint8_t> tx_buffer, size_t tx_buffer_size) -> size_t = 0;
+	virtual auto read(uint32_t address, std::span<uint8_t> rx_buffer, size_t rx_buffer_size) -> size_t	= 0;
+	virtual auto write(uint32_t address, std::span<uint8_t> tx_buffer, size_t tx_buffer_size) -> size_t = 0;
 
 	virtual void erase() = 0;
 };
