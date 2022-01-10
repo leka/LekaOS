@@ -61,7 +61,7 @@ class BLEGap : public ble::Gap::EventHandler
 
 	lstd::span<const char> _device_name;
 
-	PrimaryChannel _selected_channel {PrimaryChannel::None};
+	PrimaryChannel _selected_channel {PrimaryChannel::channel37};
 
 	uint8_t _advertising_buffer[MAX_ADVERTISING_PAYLOAD_SIZE] {};
 	ble::AdvertisingDataBuilder _advertising_data_builder;

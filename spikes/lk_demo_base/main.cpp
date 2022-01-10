@@ -213,7 +213,7 @@ auto main() -> int
 
 	battery_utils.registerEventQueue(event_queue);
 
-	ble_utils.setDeviceName("LekaRadioCEM");
+	ble_utils.setDeviceName("LekaRadioCEM37");
 	thread_ble.start({&ble_utils, &BLEUtils::startAdvertising});
 	event_flags_external_interaction.set(ENABLE_BLE_FLAG);
 	auto update_battery_level = [&]() { ble_utils.setBatteryLevel(battery_utils.getBatteryLevel()); };
@@ -273,7 +273,7 @@ auto main() -> int
 			} else if (currentMode == 0x92) {
 				event_flags_external_interaction.set(MODE_USER1_FLAG + ENABLE_MOTORS_ONE_SPIN_FLAG);
 				event_flags_external_interaction.set(ENABLE_WIFI_FLAG);
-			} else if (currentMode == 0x92) {
+			} else if (currentMode == 0x93) {
 				event_flags_external_interaction.set(MODE_USER1_FLAG + ENABLE_MOTORS_ALT_SPIN_FLAG);
 				event_flags_external_interaction.set(ENABLE_WIFI_FLAG);
 			} else {
@@ -286,6 +286,9 @@ auto main() -> int
 			event_flags_external_interaction.clear(ENABLE_WIFI_FLAG);
 
 			if (currentMode == 0x01) {
+				motors_utils.stop();
+				event_flags_external_interaction.clear(ENABLE_MOTORS_ONE_SPIN_FLAG + ENABLE_MOTORS_ALT_SPIN_FLAG);
+
 				event_flags_external_interaction.set(MODE_USER1_FLAG);
 			} else if (currentMode == 0x02) {
 				event_flags_external_interaction.set(MODE_USER1_FLAG + ENABLE_MOTORS_ONE_SPIN_FLAG);
@@ -315,7 +318,7 @@ auto main() -> int
 			} else if (currentMode == 0x92) {
 				event_flags_external_interaction.set(MODE_USER1_FLAG + ENABLE_MOTORS_ONE_SPIN_FLAG);
 				event_flags_external_interaction.set(ENABLE_WIFI_FLAG);
-			} else if (currentMode == 0x92) {
+			} else if (currentMode == 0x93) {
 				event_flags_external_interaction.set(MODE_USER1_FLAG + ENABLE_MOTORS_ALT_SPIN_FLAG);
 				event_flags_external_interaction.set(ENABLE_WIFI_FLAG);
 			} else {
