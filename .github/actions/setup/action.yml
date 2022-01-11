@@ -18,23 +18,19 @@ runs:
     # Mark: - Setup
     #
 
-    - name: Tests
+    - name: Get base & head refs
       shell: bash
       run: |
-        echo "github.ref: ${{ github.ref }}"
-        echo "github.event.pull_request.base.ref: ${{ github.event.pull_request.base.ref }}"
-        echo "github.head_ref: ${{ github.head_ref }}"
-
-        branch_regex=$(echo "${{ github.ref }}" | sed 's#refs/pull#refs/remotes/pull#g')
-        echo "branch_regex: $branch_regex"
+        echo "tmp_BASE_REF=${{ github.event.pull_request.base.ref }}" >> $GITHUB_ENV
+        echo "tmp_HEAD_REF=$(echo "${{ github.ref }}" | sed 's#refs/pull#refs/remotes/pull#g')" >> $GITHUB_ENV
 
     - name: Setup ENV variables
       id: setup_env_variables
       shell: bash
       run: ${{ github.action_path }}/setup_env.sh
       env:
-        BASE_REF: ${{ github.event.pull_request.base.ref }}
-        HEAD_REF: refs/remotes/pull/407/merge
+        BASE_REF: ${{ env.tmp_BASE_REF }}
+        HEAD_REF: ${{ env.tmp_HEAD_REF }}
 
     - name: Create temporary directories
       shell: bash
