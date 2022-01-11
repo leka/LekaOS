@@ -36,6 +36,15 @@ jobs:
         with:
           ccache_name: code_analysis-compare_files
 
+      - name: Publish differences
+        uses: marocchino/sticky-pull-request-comment@v2
+        env:
+          GITHUB_TOKEN: "test"
+        with:
+          header: simple_test
+          message: |
+            # Hello World!
+
       #
       # Mark: - Config & compile
       #
