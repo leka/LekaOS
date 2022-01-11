@@ -2,25 +2,25 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(LKCoreLL STATIC)
+add_library(CoreLL STATIC)
 
-target_include_directories(LKCoreLL
+target_include_directories(CoreLL
   PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-target_sources(LKCoreLL
+target_sources(CoreLL
   PRIVATE
-    source/LKCoreLL.cpp
+    source/CoreLL.cpp
 )
 
-target_link_libraries(LKCoreLL mbed-os)
+target_link_libraries(CoreLL mbed-os)
 
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
-		tests/LKCoreLL_test.cpp
+		tests/CoreLL_test.cpp
 	)
 
 endif()

@@ -9,7 +9,7 @@
 
 namespace leka {
 
-class LKCoreLL
+class CoreLL
 {
   public:
 	virtual void rawMemoryWrite(uintptr_t destination, uint32_t data)

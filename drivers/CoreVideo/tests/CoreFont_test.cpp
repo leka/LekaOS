@@ -7,7 +7,7 @@
 #include "CGFont.hpp"
 #include "gtest/gtest.h"
 #include "internal/corevideo_config.h"
-#include "mocks/leka/LKCoreLL.h"
+#include "mocks/leka/CoreLL.h"
 
 using namespace leka;
 using ::testing::_;
@@ -25,7 +25,7 @@ class CoreFontTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	LKCoreLLMock llmock;
+	CoreLLMock llmock;
 	CGPixel pixel;
 	CoreFont font;
 };

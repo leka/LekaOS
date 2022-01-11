@@ -5,13 +5,13 @@
 #include "CGPixel.hpp"
 
 #include "gtest/gtest.h"
-#include "mocks/leka/LKCoreLL.h"
+#include "mocks/leka/CoreLL.h"
 
 using namespace leka;
 
 TEST(CGPixelTest, draw)
 {
-	LKCoreLLMock llmock;
+	CoreLLMock llmock;
 	CGPixel pixel(llmock);
 	pixel.coordinates.x = 42;
 	pixel.coordinates.y = 99;

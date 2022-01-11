@@ -18,7 +18,7 @@ target_link_libraries(spike_lk_lcd
 	lib_LekaScreen
 	CoreFs
 	CoreVideo
-	LKCoreLL
+	CoreLL
 	LKCoreSTM32Hal
 )
 
