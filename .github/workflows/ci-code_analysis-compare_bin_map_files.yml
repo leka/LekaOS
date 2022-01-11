@@ -31,19 +31,18 @@ jobs:
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
+      - name: Publish differences
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: simple_test
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          message: |
+            # Hello World!
+
       - name: Setup CI
         uses: ./.github/actions/setup
         with:
           ccache_name: code_analysis-compare_files
-
-      - name: Publish differences
-        uses: marocchino/sticky-pull-request-comment@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          header: simple_test
-          message: |
-            # Hello World!
 
       #
       # Mark: - Config & compile
