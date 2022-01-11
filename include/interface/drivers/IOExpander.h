@@ -6,9 +6,8 @@
 #define _LEKA_OS_INTERFACE_DRIVER_IO_EXPANDER_H_
 
 #include <cstdint>
-#include <type_traits>
 
-#include "PinNames.h"
+#include "PinNamesTypes.h"
 
 namespace leka::interface {
 

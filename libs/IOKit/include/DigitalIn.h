@@ -8,8 +8,6 @@
 #ifndef _LEKA_OS_LIB_IO_KIT_DIGITAL_IN_H_
 #define _LEKA_OS_LIB_IO_KIT_DIGITAL_IN_H_
 
-#include <type_traits>
-
 #include "drivers/interfaces/InterfaceDigitalIn.h"
 
 #include "internal/IO.h"
