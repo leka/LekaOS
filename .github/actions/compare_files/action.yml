@@ -28,6 +28,8 @@ runs:
       uses: marocchino/sticky-pull-request-comment@v2
       with:
         header: analysis_bin_map_files${{ inputs.comment_header }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         message: |
           # File comparision analysis report
 
