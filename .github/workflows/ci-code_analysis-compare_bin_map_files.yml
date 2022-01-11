@@ -39,7 +39,7 @@ jobs:
       - name: Publish differences
         uses: marocchino/sticky-pull-request-comment@v2
         env:
-          GITHUB_TOKEN: "test"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           header: simple_test
           message: |
