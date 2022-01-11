@@ -5,6 +5,9 @@
 #ifndef _LEKA_OS_INTERFACE_DRIVER_BUFFERED_SERIAL_H_
 #define _LEKA_OS_INTERFACE_DRIVER_BUFFERED_SERIAL_H_
 
+#include <cstdint>
+#include <unistd.h>
+
 namespace leka::interface {
 
 class BufferedSerial
