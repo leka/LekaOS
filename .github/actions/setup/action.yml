@@ -24,10 +24,9 @@ runs:
         echo "github.ref: ${{ github.ref }}"
         echo "github.event.pull_request.base.ref: ${{ github.event.pull_request.base.ref }}"
         echo "github.head_ref: ${{ github.head_ref }}"
-        branch_show=$(git branch --show)
-        branch_show_current=$(git branch --show-current)
-        echo "branch_show: $branch_show"
-        echo "branch_show_current: $branch_show_current
+
+        branch_regex=$(echo "${{ github.ref }}" | sed 's#refs/pull#refs/remotes/pull#g')
+        echo "branch_regex: $branch_regex"
 
     - name: Setup ENV variables
       id: setup_env_variables
@@ -35,7 +34,7 @@ runs:
       run: ${{ github.action_path }}/setup_env.sh
       env:
         BASE_REF: ${{ github.event.pull_request.base.ref }}
-        HEAD_REF: "refs/remotes/pull/407/merge"
+        HEAD_REF: refs/remotes/pull/407/merge
 
     - name: Create temporary directories
       shell: bash
