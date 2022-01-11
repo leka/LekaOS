@@ -23,7 +23,7 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(1s);
 
 	log_info("\n\n");
-	log_info("Hello, LekaOS!\n");
+	log_info("Hello, Hugo!\n");
 
 	rtos::ThisThread::sleep_for(2s);
 
