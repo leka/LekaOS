@@ -23,6 +23,7 @@ echo "BASE_REF=$BASE_REF" >> $GITHUB_ENV
 echo "HEAD_REF=$HEAD_REF" >> $GITHUB_ENV
 
 git checkout $BASE_REF
+git show
 
 BASE_SHA=$(git rev-parse --short HEAD)
 BASE_MBED_VERSION=$(cat .mbed_version)
@@ -33,6 +34,7 @@ echo "BASE_MBED_VERSION=$BASE_MBED_VERSION" >> $GITHUB_ENV
 echo "BASE_CXX_STANDARD=$BASE_CXX_STANDARD" >> $GITHUB_ENV
 
 git checkout $HEAD_REF
+git show
 
 HEAD_CXX_STANDARD="-std=c++$(cat CMakeLists.txt | grep -Po '(?<=CMAKE_CXX_STANDARD\s)[0-9]*')"
 HEAD_SHA=$(git rev-parse --short HEAD)

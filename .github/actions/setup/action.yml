@@ -27,7 +27,7 @@ runs:
         branch_show=$(git branch --show)
         branch_show_current=$(git branch --show-current)
         echo "branch_show: $branch_show"
-        echo "branch_show_current: $branch_show_current"
+        echo "branch_show_current: $branch_show_current
 
     - name: Setup ENV variables
       id: setup_env_variables
