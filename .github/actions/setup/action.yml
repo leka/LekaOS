@@ -35,7 +35,7 @@ runs:
       run: ${{ github.action_path }}/setup_env.sh
       env:
         BASE_REF: ${{ github.event.pull_request.base.ref }}
-        HEAD_REF: ${{ github.head_ref }}
+        HEAD_REF: ${{ github.ref }}
 
     - name: Create temporary directories
       shell: bash
