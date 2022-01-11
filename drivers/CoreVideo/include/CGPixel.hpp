@@ -8,7 +8,7 @@
 #include <cstdint>
 
 #include "CGColor.hpp"
-#include "LKCoreLL.h"
+#include "CoreLL.h"
 #include "internal/corevideo_config.h"
 
 namespace leka {
@@ -19,10 +19,10 @@ struct CGPoint {
 };
 
 struct CGPixel {
-	explicit CGPixel(LKCoreLL &ll) : corell(ll) {}
+	explicit CGPixel(CoreLL &ll) : corell(ll) {}
 
 	CGPoint coordinates {0, 0};
-	LKCoreLL &corell;
+	CoreLL &corell;
 
 	void draw(CGColor color)
 	{

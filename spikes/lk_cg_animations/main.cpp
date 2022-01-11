@@ -23,7 +23,7 @@
 #include "HelloWorld.h"
 #include "LKAnimationKit.h"
 #include "LKCoreFatFs.h"
-#include "LKCoreLL.h"
+#include "CoreLL.h"
 #include "LKCoreSTM32Hal.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
@@ -37,7 +37,7 @@ SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 LKCoreFatFs corefatfs;
 
-LKCoreLL corell;
+CoreLL corell;
 CGPixel pixel(corell);
 LKCoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);

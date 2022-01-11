@@ -6,7 +6,7 @@
 #define _LEKA_OS_LIB_GRAPHICS_H_
 
 #include "CGColor.hpp"
-#include "LKCoreLL.h"
+#include "CoreLL.h"
 #include "interface/DMA2D.hpp"
 #include "interface/Graphics.hpp"
 #include "internal/corevideo_config.h"

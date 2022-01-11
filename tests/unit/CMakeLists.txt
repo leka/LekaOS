@@ -219,7 +219,7 @@ add_subdirectory(template)
 
 # Register drivers
 leka_register_unit_tests_for_driver(CoreFs)
-leka_register_unit_tests_for_driver(LKCoreLL)
+leka_register_unit_tests_for_driver(CoreLL)
 leka_register_unit_tests_for_driver(LKCoreSTM32Hal)
 leka_register_unit_tests_for_driver(CoreVideo)
 leka_register_unit_tests_for_driver(LKCoreLightSensor)

@@ -2,15 +2,15 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKCoreLL.h"
+#include "CoreLL.h"
 
 #include "gtest/gtest.h"
 
 using namespace leka;
 
-TEST(LKCoreLLTest, rawMemoryWriteToBuffer)
+TEST(CoreLLTest, rawMemoryWriteToBuffer)
 {
-	LKCoreLL ll;
+	CoreLL ll;
 
 	uint32_t buffer[5] {0};
 	uintptr_t buffer_address = reinterpret_cast<uintptr_t>(&buffer);

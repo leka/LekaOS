@@ -9,7 +9,7 @@
 
 namespace leka {
 
-class LKCoreLLMock : public LKCoreLL
+class CoreLLMock : public CoreLL
 {
   public:
 	MOCK_METHOD(void, rawMemoryWrite, (uintptr_t destination, uint32_t data), (override));
