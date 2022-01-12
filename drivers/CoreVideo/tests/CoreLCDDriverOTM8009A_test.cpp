@@ -17,10 +17,10 @@ using ::testing::Args;
 using ::testing::ElementsAre;
 using ::testing::InSequence;
 
-class LKCoreOTM8009ATest : public ::testing::Test
+class CoreOTM8009ATest : public ::testing::Test
 {
   protected:
-	LKCoreOTM8009ATest() : otm(dsimock, PinName::SCREEN_BACKLIGHT_PWM) {}
+	CoreOTM8009ATest() : otm(dsimock, PinName::SCREEN_BACKLIGHT_PWM) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}
@@ -29,12 +29,12 @@ class LKCoreOTM8009ATest : public ::testing::Test
 	CoreLCDDriverOTM8009A otm;
 };
 
-TEST_F(LKCoreOTM8009ATest, instantiation)
+TEST_F(CoreOTM8009ATest, instantiation)
 {
 	ASSERT_NE(&otm, nullptr);
 }
 
-TEST_F(LKCoreOTM8009ATest, initialize)
+TEST_F(CoreOTM8009ATest, initialize)
 {
 	EXPECT_CALL(dsimock, write).Times(101);
 
@@ -43,7 +43,7 @@ TEST_F(LKCoreOTM8009ATest, initialize)
 	ASSERT_EQ(spy_PwmOut_getPeriod(), 0.01f);
 }
 
-TEST_F(LKCoreOTM8009ATest, setLandscapeOrientation)
+TEST_F(CoreOTM8009ATest, setLandscapeOrientation)
 {
 	auto expected_instruction_array = ElementsAre(lcd::otm8009a::madctr::command, 0xA0);
 	auto expected_set_address_for_column_array =
@@ -62,7 +62,7 @@ TEST_F(LKCoreOTM8009ATest, setLandscapeOrientation)
 	otm.setLandscapeOrientation();
 }
 
-TEST_F(LKCoreOTM8009ATest, turnOn)
+TEST_F(CoreOTM8009ATest, turnOn)
 {
 	auto expected_instruction_array = ElementsAre(lcd::otm8009a::display::turn_on::command, 0x00);
 
@@ -71,7 +71,7 @@ TEST_F(LKCoreOTM8009ATest, turnOn)
 	otm.turnOn();
 }
 
-TEST_F(LKCoreOTM8009ATest, turnOff)
+TEST_F(CoreOTM8009ATest, turnOff)
 {
 	auto expected_instruction_array = ElementsAre(lcd::otm8009a::display::turn_off::command, 0x00);
 
@@ -80,7 +80,7 @@ TEST_F(LKCoreOTM8009ATest, turnOff)
 	otm.turnOff();
 }
 
-TEST_F(LKCoreOTM8009ATest, setBrightness)
+TEST_F(CoreOTM8009ATest, setBrightness)
 {
 	otm.setBrightness(0.5);
 
