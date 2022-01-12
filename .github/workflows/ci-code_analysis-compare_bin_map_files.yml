@@ -53,10 +53,12 @@ jobs:
       #
 
       - name: Compile base branch
+        shell: bash
         run: |
-          ls -al
+          pwd
+          ls
           cd $GITHUB_WORKSPACE/base_ref
-          ls -al
+          pwd
           # make deep_clean
           # make pull_deps
           # make config ${{ matrix.enable_log_debug }}
@@ -70,10 +72,12 @@ jobs:
       #     find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
 
       - name: Compile pr branch
+        shell: bash
         run: |
-          ls -al
+          pwd
+          ls
           cd $GITHUB_WORKSPACE/head_ref
-          ls -al
+          pwd
           # make deep_clean
           # make pull_deps
           # make config ${{ matrix.enable_log_debug }}
