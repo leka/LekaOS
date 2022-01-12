@@ -29,7 +29,7 @@ target_link_libraries(CoreVideo
 	PRIVATE
 		mbed-os
 		CoreLL
-		LKCoreSTM32Hal
+		CoreSTM32Hal
 		CoreFs
 )
 

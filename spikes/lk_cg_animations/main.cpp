@@ -24,7 +24,7 @@
 #include "LKAnimationKit.h"
 #include "LKCoreFatFs.h"
 #include "CoreLL.h"
-#include "LKCoreSTM32Hal.h"
+#include "CoreSTM32Hal.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 
@@ -39,7 +39,7 @@ LKCoreFatFs corefatfs;
 
 CoreLL corell;
 CGPixel pixel(corell);
-LKCoreSTM32Hal hal;
+CoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);
 CoreDMA2D coredma2d(hal);
 CoreDSI coredsi(hal);

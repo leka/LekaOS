@@ -5,7 +5,7 @@
 #include "CoreSDRAM.hpp"
 
 #include "gtest/gtest.h"
-#include "mocks/leka/LKCoreSTM32Hal.h"
+#include "mocks/leka/CoreSTM32Hal.h"
 
 using namespace leka;
 using ::testing::_;
@@ -21,7 +21,7 @@ class CoreSDRAMTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	LKCoreSTM32HalMock halmock;
+	CoreSTM32HalMock halmock;
 	CoreSDRAM coresdram;
 
 	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call

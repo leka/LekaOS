@@ -9,10 +9,10 @@
 
 namespace leka {
 
-class LKCoreSTM32HalBase
+class CoreSTM32HalBase
 {
   public:
-	virtual ~LKCoreSTM32HalBase() = default;
+	virtual ~CoreSTM32HalBase() = default;
 
 	virtual void HAL_RCC_GPIOD_CLK_ENABLE(void) = 0;
 	virtual void HAL_RCC_GPIOE_CLK_ENABLE(void) = 0;

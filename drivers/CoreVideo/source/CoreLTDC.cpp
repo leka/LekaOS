@@ -8,7 +8,7 @@
 
 namespace leka {
 
-CoreLTDC::CoreLTDC(LKCoreSTM32HalBase &hal, interface::DSIBase &dsi) : _hal(hal), _dsi(dsi)
+CoreLTDC::CoreLTDC(CoreSTM32HalBase &hal, interface::DSIBase &dsi) : _hal(hal), _dsi(dsi)
 {
 	_hltdc.Instance = LTDC;
 
