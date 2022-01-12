@@ -5,15 +5,15 @@
 #ifndef _LEKA_OS_STM32_HAL_H_
 #define _LEKA_OS_STM32_HAL_H_
 
-#include "LKCoreSTM32HalBase.h"
+#include "CoreSTM32HalBase.h"
 #include "stm32f7xx_hal.h"
 
 namespace leka {
 
-class LKCoreSTM32Hal : public LKCoreSTM32HalBase
+class CoreSTM32Hal : public CoreSTM32HalBase
 {
   public:
-	LKCoreSTM32Hal() = default;
+	CoreSTM32Hal() = default;
 
 	void HAL_RCC_GPIOD_CLK_ENABLE(void) final;
 	void HAL_RCC_GPIOE_CLK_ENABLE(void) final;

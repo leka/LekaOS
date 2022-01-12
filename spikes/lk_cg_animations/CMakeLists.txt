@@ -18,7 +18,7 @@ target_link_libraries(spike_lk_cg_animations
 	CoreFs
 	CoreVideo
 	CoreLL
-	LKCoreSTM32Hal
+	CoreSTM32Hal
 	LKAnimationKit
 )
 

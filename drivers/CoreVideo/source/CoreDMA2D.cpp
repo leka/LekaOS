@@ -8,7 +8,7 @@
 
 namespace leka {
 
-CoreDMA2D::CoreDMA2D(LKCoreSTM32HalBase &hal) : _hal(hal)
+CoreDMA2D::CoreDMA2D(CoreSTM32HalBase &hal) : _hal(hal)
 {
 	// MARK: Configure DMA2D mode, color mode and output offset
 	_hdma2d.Init.Mode		   = DMA2D_M2M_PFC;

@@ -7,7 +7,7 @@
 #ifndef _LEKA_OS_LIB_SDRAM_H_
 #define _LEKA_OS_LIB_SDRAM_H_
 
-#include "LKCoreSTM32HalBase.h"
+#include "CoreSTM32HalBase.h"
 #include "interface/SDRAM.hpp"
 
 namespace leka {
@@ -15,7 +15,7 @@ namespace leka {
 class CoreSDRAM : public interface::SDRAM
 {
   public:
-	explicit CoreSDRAM(LKCoreSTM32HalBase &hal);
+	explicit CoreSDRAM(CoreSTM32HalBase &hal);
 
 	void setupSDRAMConfig() final;
 	auto setupTimingConfig() -> FMC_SDRAM_TimingTypeDef final;
@@ -28,7 +28,7 @@ class CoreSDRAM : public interface::SDRAM
 	[[nodiscard]] auto getHandle() const -> SDRAM_HandleTypeDef;
 
   private:
-	LKCoreSTM32HalBase &_hal;
+	CoreSTM32HalBase &_hal;
 
 	SDRAM_HandleTypeDef _hsdram {};
 };

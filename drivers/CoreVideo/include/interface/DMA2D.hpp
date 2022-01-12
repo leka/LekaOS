@@ -5,7 +5,7 @@
 #ifndef _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_DMA2D_BASE_H_
 #define _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_DMA2D_BASE_H_
 
-#include "LKCoreSTM32HalBase.h"
+#include "CoreSTM32HalBase.h"
 
 namespace leka::interface {
 

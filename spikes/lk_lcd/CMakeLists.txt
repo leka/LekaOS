@@ -19,7 +19,7 @@ target_link_libraries(spike_lk_lcd
 	CoreFs
 	CoreVideo
 	CoreLL
-	LKCoreSTM32Hal
+	CoreSTM32Hal
 )
 
 target_link_custom_leka_targets(spike_lk_lcd)

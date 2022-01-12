@@ -5,7 +5,7 @@
 #ifndef _LEKA_OS_DRIVER_DSI_H_
 #define _LEKA_OS_DRIVER_DSI_H_
 
-#include "LKCoreSTM32HalBase.h"
+#include "CoreSTM32HalBase.h"
 #include "interface/DSI.hpp"
 
 namespace leka {
@@ -13,7 +13,7 @@ namespace leka {
 class CoreDSI : public interface::DSIBase
 {
   public:
-	explicit CoreDSI(LKCoreSTM32HalBase &hal);
+	explicit CoreDSI(CoreSTM32HalBase &hal);
 
 	void initialize() final;
 	void start() final;
@@ -25,7 +25,7 @@ class CoreDSI : public interface::DSIBase
 	void write(const uint8_t *data, uint32_t size) final;
 
   private:
-	LKCoreSTM32HalBase &_hal;
+	CoreSTM32HalBase &_hal;
 	DSI_HandleTypeDef _hdsi {};
 	DSI_VidCfgTypeDef _config {};
 };

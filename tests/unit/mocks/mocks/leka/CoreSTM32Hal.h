@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_STM32_HAL_MOCK_H_
 #define _LEKA_OS_STM32_HAL_MOCK_H_
 
-#include "LKCoreSTM32HalBase.h"
+#include "CoreSTM32HalBase.h"
 #include "gmock/gmock.h"
 
 namespace leka {
 
-class LKCoreSTM32HalMock : public LKCoreSTM32HalBase
+class CoreSTM32HalMock : public CoreSTM32HalBase
 {
   public:
 	MOCK_METHOD(void, HAL_RCC_GPIOD_CLK_ENABLE, (), (override));
