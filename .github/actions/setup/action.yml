@@ -26,11 +26,11 @@ runs:
         BASE_REF: ${{ github.event.pull_request.base.ref }}
         HEAD_REF: ${{ github.head_ref }}
 
-    # - name: Create temporary directories
-    #   shell: bash
-    #   run: |
-    #     mkdir -p _build_tmp/${{ env.BASE_SHA }}
-    #     mkdir -p _build_tmp/${{ env.HEAD_SHA }}
+    - name: Create temporary directories
+      shell: bash
+      run: |
+        mkdir -p _build_tmp/${{ env.BASE_SHA }}
+        mkdir -p _build_tmp/${{ env.HEAD_SHA }}
 
     #
     # Mark: - ARM GCC Toolchain

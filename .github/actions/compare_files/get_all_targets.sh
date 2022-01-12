@@ -8,8 +8,8 @@ shopt -s xpg_echo
 # MARK: - Find all targets
 #
 
-base_targets=($(echo $(find base_ref/_build -name '*.bin' -execdir basename -s '.bin' {} +) | tr ' ' '\n' | sort -du | tr '\n' ' '))
-head_targets=($(echo $(find head_ref/_build -name '*.bin' -execdir basename -s '.bin' {} +) | tr ' ' '\n' | sort -du | tr '\n' ' '))
+base_targets=($(echo $(find _build_tmp/$BASE_SHA -name '*.bin' -execdir basename -s '.bin' {} +) | tr ' ' '\n' | sort -du | tr '\n' ' '))
+head_targets=($(echo $(find _build_tmp/$HEAD_SHA -name '*.bin' -execdir basename -s '.bin' {} +) | tr ' ' '\n' | sort -du | tr '\n' ' '))
 all_targets=($(echo "${base_targets[@]} ${head_targets[@]}" | tr ' ' '\n' | sort -du | tr '\n' ' '))
 
 echo "Set added/deleted targets"
@@ -36,47 +36,47 @@ echo "deleted: ${deleted_targets[*]}"
 #
 
 function createMapTextFile() {
-	local REF=$1
+	local SHA=$1
     local TARGET_NAME=$2
-	python3 ./extern/mbed-os/tools/memap.py -t GCC_ARM $REF/_build/$TARGET_NAME.map > $REF/_build/$TARGET_NAME-map.txt
+	python3 ./extern/mbed-os/tools/memap.py -t GCC_ARM _build_tmp/$SHA/$TARGET_NAME.map > _build_tmp/$SHA/$TARGET_NAME-map.txt
 }
 
 function createSizeTextFile() {
-	local REF=$1
+	local SHA=$1
     local TARGET_NAME=$2
-	bash ./tools/get_code_size.sh $REF/_build/$TARGET_NAME.elf --markdown > $REF/_build/$TARGET_NAME-code_size.txt
+	bash ./tools/get_code_size.sh _build_tmp/$SHA/$TARGET_NAME.elf --markdown > _build_tmp/$SHA/$TARGET_NAME-code_size.txt
 }
 
 function getUsedFlashSize() {
-	local REF=$1
+	local SHA=$1
     local TARGET_NAME=$2
 
-	size=$(grep -Po '(?<=Flash used:\s)[[:digit:]]*' $REF/_build/$TARGET_NAME-code_size.txt)
+	size=$(grep -Po '(?<=Flash used:\s)[[:digit:]]*' _build_tmp/$SHA/$TARGET_NAME-code_size.txt)
 	echo $size
 }
 
 
 function getUsedFlashSizeWithPercentage() {
-	local REF=$1
+	local SHA=$1
     local TARGET_NAME=$2
 
-	size=$(grep -Po '(?<=Flash used:\s)[[:digit:]]*&nbsp;\([[:digit:]]*%\)' $REF/_build/$TARGET_NAME-code_size.txt)
+	size=$(grep -Po '(?<=Flash used:\s)[[:digit:]]*&nbsp;\([[:digit:]]*%\)' _build_tmp/$SHA/$TARGET_NAME-code_size.txt)
 	echo $size
 }
 
 function getUsedRamSize() {
-	local REF=$1
+	local SHA=$1
     local TARGET_NAME=$2
 
-	size=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*' $REF/_build/$TARGET_NAME-code_size.txt)
+	size=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*' _build_tmp/$SHA/$TARGET_NAME-code_size.txt)
 	echo $size
 }
 
 
 function getUsedRamSizeWithPercentage() {
-	local REF=$1
+	local SHA=$1
     local TARGET_NAME=$2
 
-	size=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*&nbsp;\([[:digit:]]*%\)' $REF/_build/$TARGET_NAME-code_size.txt)
+	size=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*&nbsp;\([[:digit:]]*%\)' _build_tmp/$SHA/$TARGET_NAME-code_size.txt)
 	echo $size
 }
