@@ -2,14 +2,27 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.21)
 
-# Activate ccache if available
+#
+# MARK: - External tools
+#
+
 find_program(CCACHE "ccache")
 if(CCACHE)
-    set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE}")
-    set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE}")
+	set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE}")
+	set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE}")
 endif(CCACHE)
+
+# Compile commands database
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
+if(CMAKE_EXPORT_COMPILE_COMMANDS)
+	set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
+endif()
+
+#
+# MARK: - Shiny output
+#
 
 message(STATUS "")
 
@@ -30,10 +43,15 @@ message(STATUS "")
 
 project(LekaOSUnitTests LANGUAGES C CXX)
 
+#
+# MARK: - Compilation flags/options
+#
+
 # Set C/C++ standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS TRUE)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_EXTENSIONS TRUE)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -45,12 +63,14 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 	message(STATUS "Clang found! Adding -fcolor-diagnostics compile option")
 	add_compile_options("-fcolor-diagnostics")
+else()
+	message(FATAL_ERROR "No suitable compiler found...")
 endif()
 
 # Add code coverage
 if (COVERAGE)
 	if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-		message(WARNING "Non-debug build may result in misleading code coverage results.")
+		message(FATAL_ERROR "Non-debug build may result in misleading code coverage results.")
 	endif()
 
 	# Append coverage compiler flags
@@ -62,11 +82,8 @@ endif(COVERAGE)
 # Enable logging for tests
 add_definitions(-DENABLE_LOG_DEBUG)
 
-# Generate compile commands database
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
-
 #
-# Mark: - Define directories
+# MARK: - Directories
 #
 
 set(UNIT_TESTS_DIR     ${CMAKE_CURRENT_LIST_DIR})
@@ -118,7 +135,7 @@ enable_testing()
 add_executable(LekaOSUnitTestsExec)
 
 #
-# Mark: - Define functions
+# Mark: - Define macros, functions, custom commands
 #
 
 add_custom_command(
@@ -167,14 +184,14 @@ include_directories(BEFORE SYSTEM
 # Mark: - Headers
 #
 
-add_subdirectory(./headers)
+add_subdirectory(${UNIT_TESTS_DIR}/headers)
 
 #
 # Mark: - Add fakes, stubs & mocks
 #
 
-add_subdirectory(./stubs)
-add_subdirectory(./mocks)
+add_subdirectory(${UNIT_TESTS_DIR}/stubs)
+add_subdirectory(${UNIT_TESTS_DIR}/mocks)
 
 #
 # Mark: - Register tests for util libraries
@@ -240,3 +257,19 @@ target_link_libraries(LekaOSUnitTestsExec
 )
 
 add_test(NAME LekaOSUnitTests COMMAND LekaOSUnitTestsExec)
+
+#
+# MARK: - Options
+#
+
+option(VERBOSE_BUILD "Have a verbose build process")
+if(VERBOSE_BUILD)
+	set(CMAKE_VERBOSE_MAKEFILE ON)
+endif()
+
+# Print options
+message(STATUS "")
+message(STATUS "CMAKE_EXPORT_COMPILE_COMMANDS --> ${CMAKE_EXPORT_COMPILE_COMMANDS}")
+message(STATUS "CODE_COVERAGE                 --> ${COVERAGE}")
+message(STATUS "CMAKE_VERBOSE_MAKEFILE        --> ${VERBOSE_BUILD}")
+message(STATUS "")

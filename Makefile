@@ -29,7 +29,6 @@ TARGET_BOARD    ?= LEKA_V1_2_DEV
 #
 
 ENABLE_LOG_DEBUG                     ?= OFF
-ENABLE_CODE_ANALYSIS                 ?= OFF
 BUILD_TARGETS_TO_USE_WITH_BOOTLOADER ?= OFF
 
 #
@@ -79,6 +78,11 @@ os:
 	@echo "🏗️  Building LekaOS 🤖"
 	cmake --build $(TARGET_BUILD_DIR) -t LekaOS
 
+bootloader:
+	@echo ""
+	@echo "🏗️  Building Bootloader 🤖"
+	cmake --build $(TARGET_BUILD_DIR) -t bootloader
+
 spikes:
 	@echo ""
 	@echo "🏗️  Building spikes 🍱"
@@ -99,7 +103,7 @@ config:
 
 config_tools:
 	@$(MAKE) config_tools_target
-	@$(MAKE) config_tools_build
+# @$(MAKE) config_tools_build
 
 clean:
 	@$(MAKE) rm_build
@@ -114,21 +118,20 @@ config_cmake_target: mkdir_cmake_config
 	@echo "🏃 Running configuration script for target $(TARGET_BOARD) 📝"
 	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_CONFIG_DIR) -a $(ROOT_DIR)/mbed_app.json
 
-config_tools_target: mkdir_cmake_config
+config_tools_target: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running configuration script for VSCode CMake Tools 📝"
 	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_TOOLS_CONFIG_DIR) -a $(ROOT_DIR)/mbed_app.json
 
-config_cmake_build: mkdir_tools_config
+config_cmake_build: mkdir_cmake_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
-	@cmake -S . -B $(TARGET_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DENABLE_CODE_ANALYSIS=$(ENABLE_CODE_ANALYSIS) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=$(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
+	@cmake -S . -B $(TARGET_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=$(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
 
 config_tools_build: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
-	@cmake -S . -B $(CMAKE_TOOLS_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_TOOLS_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=ON -DENABLE_CODE_ANALYSIS=$(ENABLE_CODE_ANALYSIS)
-	@ln -sf $(CMAKE_TOOLS_BUILD_DIR)/compile_commands.json ./
+	@cmake -S . -B $(CMAKE_TOOLS_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_TOOLS_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=ON
 
 #
 # MARK: - Tests targets
@@ -197,7 +200,9 @@ run_unit_tests:
 config_unit_tests: mkdir_build_unit_tests
 	@echo ""
 	@echo "🏃 Running unit tests cmake configuration script 📝"
-	cmake -S ./tests/unit -B $(UNIT_TESTS_BUILD_DIR) -GNinja -DCMAKE_BUILD_TYPE=Debug -DCOVERAGE=True
+	cmake -S ./tests/unit -B $(UNIT_TESTS_BUILD_DIR) -GNinja -DCMAKE_BUILD_TYPE=Debug -DCOVERAGE=ON
+	@mkdir -p $(CMAKE_TOOLS_BUILD_DIR)/unit_tests
+	@ln -sf $(UNIT_TESTS_BUILD_DIR)/compile_commands.json $(CMAKE_TOOLS_BUILD_DIR)/unit_tests/compile_commands.json
 
 clean_unit_tests:
 	@$(MAKE) rm_unit_tests
@@ -243,16 +248,13 @@ clang_tidy_diff_fix:
 		| grep -E -v "_test" | grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$" \
 		| xargs /usr/local/opt/llvm/bin/clang-tidy -p=. --quiet --fix --fix-errors
 
-code_analysis: mkdir_build
-	@echo ""
-	@echo "🏃‍♂️ Running cppcheck code analysis 🔬"
-	@mkdir -p $(PROJECT_BUILD_DIR)/cppcheck
-	cmake -S . -B $(PROJECT_BUILD_DIR)/cppcheck -GNinja -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_CODE_ANALYSIS=ON
-	cmake --build $(PROJECT_BUILD_DIR)/cppcheck
-
 #
 # MARK: - Mbed targets
 #
+
+pull_deps:
+	@$(MAKE) mbed_clone
+	@$(MAKE) mcuboot_clone
 
 mbed_clone:
 	@echo ""
@@ -274,8 +276,8 @@ mbed_curl:
 mbed_symlink_files:
 	@echo ""
 	@echo "🔗 Symlinking templates to Mbed OS directory 🗂️"
-	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_CMakelists.txt $(MBED_OS_DIR)/CMakeLists.txt
-	ln -srf $(CMAKE_DIR)/templates/Template_MbedOS_mbedignore.txt $(MBED_OS_DIR)/.mbedignore
+	ln -srf $(CMAKE_DIR)/templates/mbed/CMakeLists.txt $(MBED_OS_DIR)/CMakeLists.txt
+	ln -srf $(CMAKE_DIR)/templates/mbed/.mbedignore    $(MBED_OS_DIR)/.mbedignore
 
 #
 # MARK: - Mcuboot targets
@@ -292,8 +294,8 @@ mcuboot_clone:
 mcuboot_symlink_files:
 	@echo ""
 	@echo "🔗 Symlinking CMakeLists.txt to MCUBoot directory 🗂️"
-	ln -srf $(CMAKE_DIR)/templates/Template_MCUBoot_CMakeLists.txt $(MCUBOOT_DIR)/boot/CMakeLists.txt
-	ln -srf $(CMAKE_DIR)/templates/Template_MCUBoot_mbed_CMakeLists.txt $(MCUBOOT_DIR)/boot/mbed/CMakeLists.txt
+	ln -srf $(CMAKE_DIR)/templates/mcuboot/boot.cmake $(MCUBOOT_DIR)/boot/CMakeLists.txt
+	ln -srf $(CMAKE_DIR)/templates/mcuboot/mbed.cmake $(MCUBOOT_DIR)/boot/mbed/CMakeLists.txt
 
 #
 # MARK: - Utils targets
@@ -303,7 +305,7 @@ mkdir_cmake_config:
 	@mkdir -p $(CMAKE_CONFIG_DIR)
 
 mkdir_tools_config:
-	@mkdir -p $(CMAKE_CONFIG_DIR)
+	@mkdir -p $(CMAKE_TOOLS_CONFIG_DIR)
 
 mkdir_build_unit_tests:
 	@mkdir -p $(UNIT_TESTS_BUILD_DIR)

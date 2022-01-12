@@ -62,10 +62,6 @@ if(NOT EXISTS ${MBED_CMAKE_GENERATED_CONFIG_PATH}/cmake/MbedOSConfig.cmake)
 	message(FATAL_ERROR "Mbed config files and headers do not exist! You need to run mbed-cmake/configure_for_target.py from the top source dir!")
 endif()
 
-# unit test config
-# -------------------------------------------------------------
-option(MBED_UNITTESTS "If true, compile for the local system and run unit tests" FALSE)
-
 # load compilers and flags
 # -------------------------------------------------------------
 
@@ -73,16 +69,7 @@ option(MBED_UNITTESTS "If true, compile for the local system and run unit tests"
 include(${MBED_CMAKE_GENERATED_CONFIG_PATH}/cmake/MbedOSConfig.cmake)
 
 # load toolchain
-if(MBED_UNITTESTS)
-	message(STATUS "Unit tests enabled, not loading mbed-cmake toolchain file")
-elseif("${MBED_TOOLCHAIN_NAME}" STREQUAL "ARMC6")
-
-	if(${CMAKE_VERSION} VERSION_LESS 3.15.0)
-		message(FATAL_ERROR "CMake >= 3.15.0 is required for Arm Compiler support")
-	endif()
-
-	include(ToolchainArmClangDefine)
-elseif("${MBED_TOOLCHAIN_NAME}" STREQUAL "GCC_ARM")
+if("${MBED_TOOLCHAIN_NAME}" STREQUAL "GCC_ARM")
 	include(ToolchainGCCArmDefine)
 else()
 	message(FATAL_ERROR "Unknown toolchain \"${MBED_TOOLCHAIN_NAME}\"")
@@ -91,54 +78,28 @@ endif()
 # search for and load compilers
 enable_language(C CXX ASM)
 
-if(NOT MBED_UNITTESTS)
-	# Set config-specific flags
-	# Note: unlike CMAKE_C_FLAGS etc, we need to set these AFTER the project() call in order to override CMake's default values for these flags.
-	# CMAKE_C_FLAGS_INIT etc need to be set BEFORE the project() call so that it's used when CMake scans compiler properties.
-	foreach(BUILD_TYPE RELWITHDEBINFO DEBUG RELEASE)
-		list_to_space_separated(CMAKE_C_FLAGS_${BUILD_TYPE} ${MCU_COMPILE_OPTIONS_${BUILD_TYPE}})
-		list_to_space_separated(CMAKE_CXX_FLAGS_${BUILD_TYPE} ${MCU_COMPILE_OPTIONS_${BUILD_TYPE}})
-		list_to_space_separated(CMAKE_ASM_FLAGS_${BUILD_TYPE} ${MCU_COMPILE_OPTIONS_${BUILD_TYPE}})
-	endforeach()
-endif()
+
+foreach(BUILD_TYPE RELWITHDEBINFO DEBUG RELEASE)
+	list_to_space_separated(CMAKE_C_FLAGS_${BUILD_TYPE} ${MCU_COMPILE_OPTIONS_${BUILD_TYPE}})
+	list_to_space_separated(CMAKE_CXX_FLAGS_${BUILD_TYPE} ${MCU_COMPILE_OPTIONS_${BUILD_TYPE}})
+	list_to_space_separated(CMAKE_ASM_FLAGS_${BUILD_TYPE} ${MCU_COMPILE_OPTIONS_${BUILD_TYPE}})
+endforeach()
+
 
 # find python (used for memap and several upload methods)
 # -------------------------------------------------------------
 
 find_package(Python3 COMPONENTS Interpreter)
 
-# Configure unit tests
-# -------------------------------------------------------------
-
-if(MBED_UNITTESTS)
-	# Build internal GTest.
-	# We use an internal GTest because hardly any platform has a complete package available
-	# for it for some reason.
-	# add_subdirectory(${MBED_CMAKE_SOURCE_DIR}/gtest-external-project)
-	# include(GoogleTest)
-	# enable_testing()
-endif()
-
 # load the Mbed CMake functions
 # -------------------------------------------------------------
 
-if(MBED_UNITTESTS)
-	include(AddMbedUnitTestsExecutable)
-else()
-	include(AddMbedExecutable)
-endif()
+include(AddMbedExecutable)
 
 # Configure upload methods
 # -------------------------------------------------------------
 
-if(NOT MBED_UNITTESTS)
-	set(CMAKE_EXECUTABLE_SUFFIX .elf)
-
-	# find upload tools
-	# find_package(OpenOCD)
-	# find_package(JLINK)
-	# include(SetUploadMethod)
-endif()
+set(CMAKE_EXECUTABLE_SUFFIX .elf)
 
 # add Mbed OS source
 # -------------------------------------------------------------

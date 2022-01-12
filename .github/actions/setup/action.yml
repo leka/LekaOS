@@ -88,7 +88,14 @@ runs:
         path: |
           extern/mbed-os
           extern/mcuboot
-        key: ${{ runner.os }}-global_cache-extern_dependencies-${{ hashFiles('.mbed_version', '.mbed_git_url', '.mcuboot_version') }}
+        key: ${{ runner.os }}-global_cache-extern_dependencies-${{ hashFiles('.mbed_version', '.mbed_git_url', '.mcuboot_version', 'cmake/templates/**') }}
+
+    - name: Pull extern dependencies
+      if: steps.global_cache-extern_dependencies.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        make mbed_curl
+        make mcuboot_clone
 
     - name: Cache ccache
       id: global_cache-ccache
@@ -133,14 +140,3 @@ runs:
         mbed-cli --help
         mbed-tools --help
         imgtool --help
-
-    #
-    # Mark: - Extern dependencies
-    #
-
-    - name: Pull extern dependencies
-      if: steps.global_cache-extern_dependencies.outputs.cache-hit != 'true'
-      shell: bash
-      run: |
-        make mbed_curl
-        make mcuboot_clone

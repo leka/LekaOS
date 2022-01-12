@@ -1,7 +1,7 @@
 #!/bin/bash
 
-mkdir _tmp > /dev/null 2> /dev/null
-mkdir _release > /dev/null 2> /dev/null
+mkdir -p _tmp
+mkdir -p _release
 
 # Variables
 RECOMPILE_APPLICATIONS="$1"
@@ -33,6 +33,7 @@ then
 	make deep_clean
 	make config BUILD_TARGETS_TO_USE_WITH_BOOTLOADER=ON
 fi;
+
 make
 
 # Get application binary
