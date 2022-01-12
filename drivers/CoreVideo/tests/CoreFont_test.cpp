@@ -38,7 +38,7 @@ TEST_F(CoreFontTest, instantiation)
 TEST_F(CoreFontTest, fontGetFirstPixelAddressOf$)
 {
 	char character = '$';
-	auto index	   = 288;	// See LKCoreTable, index is given before start of character
+	auto index	   = 288;	// See CoreTable, index is given before start of character
 
 	auto expected_address = &CGFontTable[index];
 
@@ -53,7 +53,7 @@ TEST_F(CoreFontTest, fontGetFirstPixelAddressOf$)
 TEST_F(CoreFontTest, fontGetFirstPixelAddressOfA)
 {
 	char character = 'A';
-	auto index	   = 2376;	 // See LKCoreTable, index is given before start of character
+	auto index	   = 2376;	 // See CoreTable, index is given before start of character
 
 	auto expected_address = &CGFontTable[index];
 
@@ -68,7 +68,7 @@ TEST_F(CoreFontTest, fontGetFirstPixelAddressOfA)
 TEST_F(CoreFontTest, fontGetFirstPixelAddressOfz)
 {
 	char character = 'z';
-	auto index	   = 6480;	 // See LKCoreTable, index is given before start of character
+	auto index	   = 6480;	 // See CoreTable, index is given before start of character
 
 	auto expected_address = &CGFontTable[index];
 
