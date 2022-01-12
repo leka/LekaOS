@@ -20,7 +20,7 @@
 #include "CoreVideo.hpp"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
-#include "LKCoreFatFs.h"
+#include "CoreFatFs.h"
 #include "CoreLL.h"
 #include "CoreSTM32Hal.h"
 #include "LogKit.h"
@@ -31,7 +31,7 @@ using namespace std::chrono;
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
-LKCoreFatFs corefatfs;
+CoreFatFs corefatfs;
 
 CoreLL corell;
 CGPixel pixel(corell);

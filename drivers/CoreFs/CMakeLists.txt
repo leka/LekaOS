@@ -11,7 +11,7 @@ target_include_directories(CoreFs
 
 target_sources(CoreFs
 	PRIVATE
-		source/LKCoreFatFs.cpp
+		source/CoreFatFs.cpp
 )
 
 target_link_libraries(CoreFs mbed-os)

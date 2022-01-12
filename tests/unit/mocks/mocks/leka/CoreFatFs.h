@@ -5,12 +5,12 @@
 #ifndef _LEKA_OS_FATFS_MOCK_H_
 #define _LEKA_OS_FATFS_MOCK_H_
 
-#include "LKCoreFatFsBase.h"
+#include "CoreFatFsBase.h"
 #include "gmock/gmock.h"
 
 namespace leka {
 
-class LKCoreFatFsMock : public LKCoreFatFsBase
+class CoreFatFsMock : public CoreFatFsBase
 {
   public:
 	MOCK_METHOD(FRESULT, open, (const char *path), (override));
