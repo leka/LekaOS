@@ -24,7 +24,7 @@ add_subdirectory(${DRIVERS_DIR}/CoreFlashMemory)
 add_subdirectory(${DRIVERS_DIR}/CoreHTS)
 add_subdirectory(${DRIVERS_DIR}/CoreBattery)
 add_subdirectory(${DRIVERS_DIR}/LKCoreMicrophone)
-add_subdirectory(${DRIVERS_DIR}/LKCoreLightSensor)
+add_subdirectory(${DRIVERS_DIR}/CoreLightSensor)
 
 # Actuators drivers
 add_subdirectory(${DRIVERS_DIR}/FastLED)

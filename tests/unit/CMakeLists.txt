@@ -222,7 +222,7 @@ leka_register_unit_tests_for_driver(CoreFs)
 leka_register_unit_tests_for_driver(CoreLL)
 leka_register_unit_tests_for_driver(LKCoreSTM32Hal)
 leka_register_unit_tests_for_driver(CoreVideo)
-leka_register_unit_tests_for_driver(LKCoreLightSensor)
+leka_register_unit_tests_for_driver(CoreLightSensor)
 leka_register_unit_tests_for_driver(LKCoreMicrophone)
 leka_register_unit_tests_for_driver(CoreBattery)
 

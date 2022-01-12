@@ -1,18 +1,18 @@
-#include "LKCoreLightSensor.h"
+#include "CoreLightSensor.h"
 
 namespace leka {
 
-float LKCoreLightSensor::readRawValue(void)
+float CoreLightSensor::readRawValue(void)
 {
 	return _pin.read();
 }
 
-float LKCoreLightSensor::readLuminosity(void)
+float CoreLightSensor::readLuminosity(void)
 {
 	return (1.0 - readRawValue());
 }
 
-LKCoreLightSensor::LuminosityLevel LKCoreLightSensor::getLuminosityLevel()
+CoreLightSensor::LuminosityLevel CoreLightSensor::getLuminosityLevel()
 {
 	auto luminosity = readLuminosity();
 

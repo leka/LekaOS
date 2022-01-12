@@ -9,7 +9,7 @@
 
 namespace leka {
 
-class LKCoreLightSensor
+class CoreLightSensor
 {
   public:
 	enum class LuminosityLevel
@@ -20,7 +20,7 @@ class LKCoreLightSensor
 		sunny
 	};
 
-	explicit LKCoreLightSensor(PinName pin) : _pin {mbed::AnalogIn(pin)} {};
+	explicit CoreLightSensor(PinName pin) : _pin {mbed::AnalogIn(pin)} {};
 
 	float readLuminosity(void);
 

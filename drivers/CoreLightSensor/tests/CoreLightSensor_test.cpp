@@ -1,11 +1,11 @@
-#include "LKCoreLightSensor.h"
+#include "CoreLightSensor.h"
 
 #include "gtest/gtest.h"
 #include "stubs/mbed/AnalogIn.h"
 
 using namespace leka;
 
-LKCoreLightSensor sensor(PinName::SENSOR_LIGHT_ADC_INPUT);
+CoreLightSensor sensor(PinName::SENSOR_LIGHT_ADC_INPUT);
 
 float test_set_luminosity(float value)
 {
@@ -13,60 +13,60 @@ float test_set_luminosity(float value)
 	return value;
 }
 
-TEST(LKCoreLuminositySensorTest, initialization)
+TEST(CoreLuminositySensorTest, initialization)
 {
 	ASSERT_NE(&sensor, nullptr);
 }
 
-TEST(LKCoreLuminositySensorTest, readMinLuminosity)
+TEST(CoreLuminositySensorTest, readMinLuminosity)
 {
 	auto expected = test_set_luminosity(0.0f);
 
 	ASSERT_EQ(expected, sensor.readLuminosity());
 }
 
-TEST(LKCoreLuminositySensorTest, readMiddleLuminosity)
+TEST(CoreLuminositySensorTest, readMiddleLuminosity)
 {
 	auto expected = test_set_luminosity(0.25f);
 
 	ASSERT_EQ(expected, sensor.readLuminosity());
 }
 
-TEST(LKCoreLuminositySensorTest, readMaxLuminosity)
+TEST(CoreLuminositySensorTest, readMaxLuminosity)
 {
 	auto expected = test_set_luminosity(1.0f);
 
 	ASSERT_EQ(expected, sensor.readLuminosity());
 }
 
-TEST(LKCoreLuminosityTest, getLuminosityLevelDark)
+TEST(CoreLuminosityTest, getLuminosityLevelDark)
 {
 	test_set_luminosity(0.10f);
 	auto level = sensor.getLuminosityLevel();
 
-	ASSERT_EQ(LKCoreLightSensor::LuminosityLevel::dark, level);
+	ASSERT_EQ(CoreLightSensor::LuminosityLevel::dark, level);
 }
 
-TEST(LKCoreLuminosityTest, getLuminosityLevelShadow)
+TEST(CoreLuminosityTest, getLuminosityLevelShadow)
 {
 	test_set_luminosity(0.34f);
 	auto level = sensor.getLuminosityLevel();
 
-	ASSERT_EQ(LKCoreLightSensor::LuminosityLevel::shadow, level);
+	ASSERT_EQ(CoreLightSensor::LuminosityLevel::shadow, level);
 }
 
-TEST(LKCoreLuminosityTest, getLuminosityLevelAmbient)
+TEST(CoreLuminosityTest, getLuminosityLevelAmbient)
 {
 	test_set_luminosity(0.68f);
 	auto level = sensor.getLuminosityLevel();
 
-	ASSERT_EQ(LKCoreLightSensor::LuminosityLevel::ambient, level);
+	ASSERT_EQ(CoreLightSensor::LuminosityLevel::ambient, level);
 }
 
-TEST(LKCoreLuminosityTest, getLuminosityLevelSunny)
+TEST(CoreLuminosityTest, getLuminosityLevelSunny)
 {
 	test_set_luminosity(0.89f);
 	auto level = sensor.getLuminosityLevel();
 
-	ASSERT_EQ(LKCoreLightSensor::LuminosityLevel::sunny, level);
+	ASSERT_EQ(CoreLightSensor::LuminosityLevel::sunny, level);
 }

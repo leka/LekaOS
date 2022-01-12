@@ -10,7 +10,7 @@
 #include "rtos/Thread.h"
 
 #include "HelloWorld.h"
-#include "LKCoreLightSensor.h"
+#include "CoreLightSensor.h"
 #include "LogKit.h"
 
 using namespace leka;
@@ -26,7 +26,7 @@ auto main() -> int
 	HelloWorld hello;
 	hello.start();
 
-	LKCoreLightSensor lightSensor(SENSOR_LIGHT_ADC_INPUT);
+	CoreLightSensor lightSensor(SENSOR_LIGHT_ADC_INPUT);
 
 	while (true) {
 		log_info("Current luminosity: %.4f", lightSensor.readLuminosity());
