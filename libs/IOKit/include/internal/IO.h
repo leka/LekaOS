@@ -5,8 +5,6 @@
 #ifndef _LEKA_OS_LIB_IO_KIT_INTERNAL_IO_H_
 #define _LEKA_OS_LIB_IO_KIT_INTERNAL_IO_H_
 
-#include <type_traits>
-
 #include "interface/drivers/IOExpander.h"
 
 namespace leka::io::expanded::internal {
