@@ -58,14 +58,16 @@ jobs:
           cd $GITHUB_WORKSPACE/base_ref
           make pull_deps
           make config ${{ matrix.enable_log_debug }}
+          make ccache_prebuild
           make
+          make ccache_postbuild
 
       - name: Move ${{ env.BASE_REF }}:${{ env.BASE_SHA }} bin & map files to temporary directory
         run: |
-          find $GITHUB_WORKSPACE/base_ref ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
-          find $GITHUB_WORKSPACE/base_ref ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
-          find $GITHUB_WORKSPACE/base_ref ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
-          find $GITHUB_WORKSPACE/base_ref ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+          find $GITHUB_WORKSPACE/base_ref/_build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+          find $GITHUB_WORKSPACE/base_ref/_build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+          find $GITHUB_WORKSPACE/base_ref/_build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+          find $GITHUB_WORKSPACE/base_ref/_build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
 
       - name: Compile pr branch
         shell: bash
@@ -74,14 +76,16 @@ jobs:
           make deep_clean
           make pull_deps
           make config ${{ matrix.enable_log_debug }}
+          make ccache_prebuild
           make
+          make ccache_postbuild
 
       - name: Move ${{ env.HEAD_REF }}:${{ env.HEAD_SHA }} bin & map files to temporary directory
         run: |
-          find $GITHUB_WORKSPACE/head_ref ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
-          find $GITHUB_WORKSPACE/head_ref ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
-          find $GITHUB_WORKSPACE/head_ref ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
-          find $GITHUB_WORKSPACE/head_ref ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+          find $GITHUB_WORKSPACE/head_ref/_build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+          find $GITHUB_WORKSPACE/head_ref/_build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+          find $GITHUB_WORKSPACE/head_ref/_build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+          find $GITHUB_WORKSPACE/head_ref/_build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
 
       - name: Compare files
         uses: ./.github/actions/compare_files
