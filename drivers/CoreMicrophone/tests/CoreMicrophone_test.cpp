@@ -1,11 +1,11 @@
-#include "LKCoreMicrophone.h"
+#include "CoreMicrophone.h"
 
 #include "gtest/gtest.h"
 #include "stubs/mbed/AnalogIn.h"
 
 using namespace leka;
 
-LKCoreMicrophone micro(PinName::MCU_MIC_INPUT);
+CoreMicrophone micro(PinName::MCU_MIC_INPUT);
 
 float test_set_sound(float value)
 {
@@ -13,26 +13,26 @@ float test_set_sound(float value)
 	return value;
 }
 
-TEST(LKCoreMicrophoneTest, initialization)
+TEST(CoreMicrophoneTest, initialization)
 {
 	ASSERT_NE(&micro, nullptr);
 }
 
-TEST(LKCoreMicrophoneTest, readMinSound)
+TEST(CoreMicrophoneTest, readMinSound)
 {
 	auto expected = test_set_sound(0.0f);
 
 	ASSERT_EQ(expected, micro.readVolume());
 }
 
-TEST(LKCoreMicrophoneTest, readAverageSound)
+TEST(CoreMicrophoneTest, readAverageSound)
 {
 	auto expected = test_set_sound(0.50f);
 
 	ASSERT_EQ(expected, micro.readVolume());
 }
 
-TEST(LKCoreMicrophoneTest, readMaxSound)
+TEST(CoreMicrophoneTest, readMaxSound)
 {
 	auto expected = test_set_sound(1.0f);
 

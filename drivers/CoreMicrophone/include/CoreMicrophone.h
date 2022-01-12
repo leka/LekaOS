@@ -9,10 +9,10 @@
 
 namespace leka {
 
-class LKCoreMicrophone
+class CoreMicrophone
 {
   public:
-	explicit LKCoreMicrophone(PinName pin) : _pin {mbed::AnalogIn(pin)} {};
+	explicit CoreMicrophone(PinName pin) : _pin {mbed::AnalogIn(pin)} {};
 
 	float readVolume(void);
 
