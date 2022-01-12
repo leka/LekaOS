@@ -42,11 +42,11 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           path: head_ref
 
-      # - name: Setup CI
-      #   id: setup_ci
-      #   uses: ./.github/actions/setup
-      #   with:
-      #     ccache_name: code_analysis-compare_files
+      - name: Setup CI
+        id: setup_ci
+        uses: ./.github/actions/setup
+        with:
+          ccache_name: code_analysis-compare_files
 
       #
       # Mark: - Config & compile
@@ -59,10 +59,10 @@ jobs:
           ls
           cd $GITHUB_WORKSPACE/base_ref
           pwd
-          # make deep_clean
-          # make pull_deps
-          # make config ${{ matrix.enable_log_debug }}
-          # make
+          make deep_clean
+          make pull_deps
+          make config ${{ matrix.enable_log_debug }}
+          make
 
       # - name: Move ${{ env.BASE_REF }}:${{ env.BASE_SHA }} bin & map files to temporary directory
       #   run: |
@@ -78,10 +78,10 @@ jobs:
           ls
           cd $GITHUB_WORKSPACE/head_ref
           pwd
-          # make deep_clean
-          # make pull_deps
-          # make config ${{ matrix.enable_log_debug }}
-          # make
+          make deep_clean
+          make pull_deps
+          make config ${{ matrix.enable_log_debug }}
+          make
 
       # - name: Move ${{ env.HEAD_REF }}:${{ env.HEAD_SHA }} bin & map files to temporary directory
       #   run: |
