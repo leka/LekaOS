@@ -19,10 +19,10 @@ if [[ " ${added_targets[*]} " =~ " $target " ]]; then
 
 	echo -n "| :sparkles: | - | - " >> $GITHUB_ENV
 
-	createSizeTextFile $HEAD_SHA $target_name
+	createSizeTextFile head_ref $target_name
 
-	head_flash_with_percentage="$(getUsedFlashSizeWithPercentage $HEAD_SHA $target_name)"
-	head_ram_with_percentage="$(getUsedRamSizeWithPercentage $HEAD_SHA $target_name)"
+	head_flash_with_percentage="$(getUsedFlashSizeWithPercentage head_ref $target_name)"
+	head_ram_with_percentage="$(getUsedRamSizeWithPercentage head_ref $target_name)"
 
 	echo -n "| $head_flash_with_percentage | - | $head_ram_with_percentage | - |\n" >> $GITHUB_ENV
 
@@ -34,30 +34,30 @@ else
 
 	echo -n "| :heavy_check_mark: " >> $GITHUB_ENV
 
-	if ! output=$(diff _build_tmp/$BASE_SHA/$target_name.bin _build_tmp/$HEAD_SHA/$target_name.bin 2>/dev/null); then
+	if ! output=$(diff base_ref/_build/$target_name.bin head_ref/_build/$target_name.bin 2>/dev/null); then
 		echo -n "| :x: " >> $GITHUB_ENV
 	else
 		echo -n "| :white_check_mark: " >> $GITHUB_ENV
 	fi
 
-	createMapTextFile $BASE_SHA $target_name
-	createMapTextFile $HEAD_SHA $target_name
+	createMapTextFile base_ref $target_name
+	createMapTextFile head_ref $target_name
 
-	createSizeTextFile $BASE_SHA $target_name
-	createSizeTextFile $HEAD_SHA $target_name
+	createSizeTextFile base_ref $target_name
+	createSizeTextFile head_ref $target_name
 
 
-	if ! output=$(diff _build_tmp/$BASE_SHA/$target_name-map.txt _build_tmp/$HEAD_SHA/$target_name-map.txt 2>/dev/null); then
+	if ! output=$(diff base_ref/_build/$target_name-map.txt head_ref/_build/$target_name-map.txt 2>/dev/null); then
 		echo -n "| :x: " >> $GITHUB_ENV
 	else
 		echo -n "| :white_check_mark: " >> $GITHUB_ENV
 	fi
 
-	base_flash_with_percentage="$(getUsedFlashSizeWithPercentage $BASE_SHA $target_name)"
-	head_flash_with_percentage="$(getUsedFlashSizeWithPercentage $HEAD_SHA $target_name)"
+	base_flash_with_percentage="$(getUsedFlashSizeWithPercentage base_ref $target_name)"
+	head_flash_with_percentage="$(getUsedFlashSizeWithPercentage head_ref $target_name)"
 
-	base_flash="$(getUsedFlashSize $BASE_SHA $target_name)"
-	head_flash="$(getUsedFlashSize $HEAD_SHA $target_name)"
+	base_flash="$(getUsedFlashSize base_ref $target_name)"
+	head_flash="$(getUsedFlashSize head_ref $target_name)"
 
 	diff_flash=$(($head_flash - $base_flash))
 	diff_flash_percentage="$((100 * ($head_flash - $base_flash) / $base_flash))%"
@@ -74,14 +74,14 @@ else
 		output_flash_delta="ø"
 	fi
 
-	base_ram_with_percentage="$(getUsedRamSizeWithPercentage $BASE_SHA $target_name)"
-	head_ram_with_percentage="$(getUsedRamSizeWithPercentage $HEAD_SHA $target_name)"
+	base_ram_with_percentage="$(getUsedRamSizeWithPercentage base_ref $target_name)"
+	head_ram_with_percentage="$(getUsedRamSizeWithPercentage head_ref $target_name)"
 
-	base_ram_percentage=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*\s\([[:digit:]]*%\)' _build_tmp/$HEAD_SHA/$BASE_SHA-code_size.txt)
-	head_ram_percentage=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*\s\([[:digit:]]*%\)' _build_tmp/$HEAD_SHA/$target_name-code_size.txt)
+	base_ram_percentage=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*\s\([[:digit:]]*%\)' head_ref/_build/$BASE_SHA-code_size.txt)
+	head_ram_percentage=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*\s\([[:digit:]]*%\)' head_ref/_build/$target_name-code_size.txt)
 
-	base_ram="$(getUsedRamSize $BASE_SHA $target_name)"
-	head_ram="$(getUsedRamSize $HEAD_SHA $target_name)"
+	base_ram="$(getUsedRamSize base_ref $target_name)"
+	head_ram="$(getUsedRamSize head_ref $target_name)"
 
 	diff_ram=$(($head_ram - $base_ram))
 	diff_ram_percentage="$((100 * ($head_ram - $base_ram) / $base_ram))%"
