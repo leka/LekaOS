@@ -11,10 +11,10 @@
 
 namespace leka {
 
-class LKCoreFatFsBase
+class CoreFatFsBase
 {
   public:
-	virtual ~LKCoreFatFsBase() = default;
+	virtual ~CoreFatFsBase() = default;
 
 	virtual FRESULT open(const char *path)																			= 0;
 	virtual FRESULT close()																							= 0;

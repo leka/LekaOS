@@ -8,7 +8,7 @@
 #include <array>
 #include <cstdint>
 
-#include "LKCoreFatFsBase.h"
+#include "CoreFatFsBase.h"
 #include "CoreSTM32HalBase.h"
 #include "external/st_jpeg_utils.h"
 #include "interface/DMA2D.hpp"
@@ -19,7 +19,7 @@ namespace leka {
 class CoreJPEG : public interface::JPEGBase
 {
   public:
-	CoreJPEG(CoreSTM32HalBase &hal, interface::DMA2DBase &dma2d, LKCoreFatFsBase &file);
+	CoreJPEG(CoreSTM32HalBase &hal, interface::DMA2DBase &dma2d, CoreFatFsBase &file);
 
 	void initialize() final;
 
@@ -57,7 +57,7 @@ class CoreJPEG : public interface::JPEGBase
 	JPEG_ConfTypeDef _config {};
 	CoreSTM32HalBase &_hal;
 	interface::DMA2DBase &_dma2d;
-	LKCoreFatFsBase &_file;
+	CoreFatFsBase &_file;
 
 	JPEG_YCbCrToRGB_Convert_Function pConvert_Function {};
 

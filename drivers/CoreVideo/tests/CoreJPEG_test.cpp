@@ -7,7 +7,7 @@
 #include "external/st_jpeg_utils.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreDMA2D.h"
-#include "mocks/leka/LKCoreFatFs.h"
+#include "mocks/leka/CoreFatFs.h"
 #include "mocks/leka/CoreSTM32Hal.h"
 
 using namespace leka;
@@ -29,7 +29,7 @@ class CoreJPEGTest : public ::testing::Test
 
 	CoreSTM32HalMock halmock;
 	CoreDMA2DMock dma2dmock;
-	LKCoreFatFsMock filemock;
+	CoreFatFsMock filemock;
 	CoreJPEG corejpeg;
 
 	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call

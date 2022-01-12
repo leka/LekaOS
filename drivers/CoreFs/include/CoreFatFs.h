@@ -5,14 +5,14 @@
 #ifndef _LEKA_OS_LIB_FATFS_H_
 #define _LEKA_OS_LIB_FATFS_H_
 
-#include "LKCoreFatFsBase.h"
+#include "CoreFatFsBase.h"
 
 namespace leka {
 
-class LKCoreFatFs : public LKCoreFatFsBase
+class CoreFatFs : public CoreFatFsBase
 {
   public:
-	LKCoreFatFs() = default;   // SDBlockDevice must be initialized and mounted before using LKCoreFatFs
+	CoreFatFs() = default;	 // SDBlockDevice must be initialized and mounted before using CoreFatFs
 
 	FRESULT open(const char *path) final;
 	FRESULT close() final;
