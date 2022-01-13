@@ -36,21 +36,19 @@ jobs:
           ccache_name: code_analysis-build_base_ref-enable_log_debug-${{ matrix.enable_log_debug }}
 
       #
-      # Mark: - Config & compile
+      # Mark: - Config & build
       #
 
-      - name: Config
-        run: |
-          git checkout ${{ env.BASE_REF }}
-          make deep_clean
-          make pull_deps
-          make config ENABLE_LOG_DEBUG=${{ matrix.enable_log_debug }}
+      - name: Config & build
+        id: config_build
+        uses: ./.github/actions/config_build
+        with:
+          enable_log_debug: ${{ matrix.enable_log_debug }}
+          checkout_base_ref: true
 
-      - name: Build
-        run: |
-          make ccache_prebuild
-          make
-          make ccache_postbuild
+      #
+      # Mark: - Move files
+      #
 
       - name: Move ${{ env.BASE_REF }}:${{ env.BASE_SHA }} bin & map files to temporary directory
         run: |
@@ -58,6 +56,10 @@ jobs:
           find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
           find _build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
           find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+
+      #
+      # Mark: - Upload artifacts
+      #
 
       - uses: actions/upload-artifact@v2
         with:
@@ -92,20 +94,19 @@ jobs:
           ccache_name: code_analysis-build_head_ref-enable_log_debug-${{ matrix.enable_log_debug }}
 
       #
-      # Mark: - Config & compile
+      # Mark: - Config & build
       #
 
-      - name: Config
-        run: |
-          make deep_clean
-          make pull_deps
-          make config ENABLE_LOG_DEBUG=${{ matrix.enable_log_debug }}
+      - name: Config & build
+        id: config_build
+        uses: ./.github/actions/config_build
+        with:
+          enable_log_debug: ${{ matrix.enable_log_debug }}
+          checkout_base_ref: false
 
-      - name: Build
-        run: |
-          make ccache_prebuild
-          make
-          make ccache_postbuild
+      #
+      # Mark: - Move files
+      #
 
       - name: Move ${{ env.HEAD_REF }}:${{ env.HEAD_SHA }} bin & map files to temporary directory
         run: |
@@ -113,6 +114,10 @@ jobs:
           find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
           find _build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
           find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+
+      #
+      # Mark: - Upload artifacts
+      #
 
       - uses: actions/upload-artifact@v2
         with:
