@@ -1,0 +1,120 @@
+# Leka - LekaOS
+# Copyright 2021 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: Build
+
+on: pull_request
+
+jobs:
+  #
+  # Mark: - build_base_ref
+  #
+
+  build_base_ref:
+    name: base_ref - enable_log_debug
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        enable_log_debug: ["ON", "OFF"]
+
+    steps:
+      #
+      # Mark: - Setup
+      #
+
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup CI
+        id: setup_ci
+        uses: ./.github/actions/setup
+        with:
+          ccache_name: code_analysis-build_base_ref-enable_log_debug-${{ matrix.enable_log_debug }}
+
+      #
+      # Mark: - Config & compile
+      #
+
+      - name: Config
+        run: |
+          git checkout ${{ env.BASE_REF }}
+          make deep_clean
+          make pull_deps
+          make config ENABLE_LOG_DEBUG=${{ matrix.enable_log_debug }}
+
+      - name: Build
+        run: |
+          make ccache_prebuild
+          make
+          make ccache_postbuild
+
+      - name: Move ${{ env.BASE_REF }}:${{ env.BASE_SHA }} bin & map files to temporary directory
+        run: |
+          find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: base_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
+          path: _build_tmp/${{ env.BASE_SHA }}
+
+  #
+  # Mark: - build_head_ref
+  #
+
+  build_head_ref:
+    name: head_ref - enable_log_debug
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        enable_log_debug: ["ON", "OFF"]
+
+    steps:
+      #
+      # Mark: - Setup
+      #
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup CI
+        id: setup_ci
+        uses: ./.github/actions/setup
+        with:
+          ccache_name: code_analysis-build_head_ref-enable_log_debug-${{ matrix.enable_log_debug }}
+
+      #
+      # Mark: - Config & compile
+      #
+
+      - name: Config
+        run: |
+          make deep_clean
+          make pull_deps
+          make config ENABLE_LOG_DEBUG=${{ matrix.enable_log_debug }}
+
+      - name: Build
+        run: |
+          make ccache_prebuild
+          make
+          make ccache_postbuild
+
+      - name: Move ${{ env.HEAD_REF }}:${{ env.HEAD_SHA }} bin & map files to temporary directory
+        run: |
+          find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: head_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
+          path: _build_tmp/${{ env.HEAD_SHA }}
