@@ -38,51 +38,11 @@ jobs:
           ccache_name: cross_compilation-${{ matrix.custom_target }}
 
       #
-      # Mark: - Build
+      # Mark: - Config & build
       #
 
-      - name: Ccache pre build
-        run: |
-          make ccache_prebuild
-
-      - name: Config
-        run: |
-          make config TARGET_BOARD=${{ matrix.custom_target }}
-
-      - name: Build LekaOS
-        run: |
-          make os TARGET_BOARD=${{ matrix.custom_target }}
-
-      - name: Build spikes
-        run: |
-          make spikes TARGET_BOARD=${{ matrix.custom_target }}
-
-      - name: Build functional tests
-        run: |
-          make tests_functional TARGET_BOARD=${{ matrix.custom_target }}
-
-      - name: Build misc
-        run: |
-          make all TARGET_BOARD=${{ matrix.custom_target }}
-
-      - name: Ccache post build
-        run: |
-          make ccache_postbuild
-          ccache -z
-
-      #
-      # Mark: - Upload
-      #
-
-      - name: Upload build artifacts
-        if: |
-          contains(matrix.custom_target, 'LEKA_V1_2_DEV') &&
-          (contains(github.ref, 'develop') || contains(github.ref, 'master'))
-        uses: actions/upload-artifact@v2
+      - name: Config & build
+        id: config_build
+        uses: ./.github/actions/config_build
         with:
-          name: LEKA_V1_2_DEV-Build-Artifacts
-          retention-days: 7
-          path: |
-            _build/LEKA_V1_2_DEV/**/*.bin
-            _build/LEKA_V1_2_DEV/**/*.hex
-            _build/LEKA_V1_2_DEV/**/*.elf
+          target_board: ${{ matrix.custom_target }}
