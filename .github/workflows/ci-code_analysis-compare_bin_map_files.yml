@@ -35,7 +35,7 @@ jobs:
         id: setup_ci
         uses: ./.github/actions/setup
         with:
-          ccache_name: code_analysis-compare_files
+          ccache_name: code_analysis-compare_files-enable_log_debug-${{ matrix.enable_log_debug }}
 
       #
       # Mark: - Config & compile
