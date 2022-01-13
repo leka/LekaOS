@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        enable_log_debug: ["ENABLE_LOG_DEBUG=ON", "ENABLE_LOG_DEBUG=OFF"]
+        enable_log_debug: ["ON", "OFF"]
 
     steps:
       #
@@ -47,7 +47,7 @@ jobs:
           make deep_clean
           make mbed_curl VERSION=${{ env.BASE_MBED_VERSION }}
           make mcuboot_clone
-          make config ${{ matrix.enable_log_debug }}
+          make config ENABLE_LOG_DEBUG=${{ matrix.enable_log_debug }}
           make ccache_prebuild
           make
           make ccache_postbuild
@@ -67,7 +67,7 @@ jobs:
           make ccache_postbuild
           make mbed_curl VERSION=${{ env.HEAD_MBED_VERSION }}
           make mcuboot_clone
-          make config ${{ matrix.enable_log_debug }}
+          make config ENABLE_LOG_DEBUG=${{ matrix.enable_log_debug }}
           make ccache_prebuild
           make
           make ccache_postbuild
@@ -84,4 +84,4 @@ jobs:
         env:
           ENABLE_LOG_DEBUG: ${{ matrix.enable_log_debug }}
         with:
-          comment_header: ${{ matrix.enable_log_debug }}
+          comment_header: enable_log_debug-${{ matrix.enable_log_debug }}
