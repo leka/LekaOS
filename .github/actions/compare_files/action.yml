@@ -37,7 +37,7 @@ runs:
           - base: [`${{ env.BASE_REF}}`](https://github.com/leka/LekaOS/tree/${{ env.BASE_REF}}) / ${{ env.BASE_SHA }} + `${{ env.BASE_MBED_VERSION }}` + `${{ env.BASE_CXX_STANDARD }}`
           - head: [`${{ env.HEAD_REF }}`](https://github.com/leka/LekaOS/tree/${{ env.HEAD_REF }}) / ${{ env.HEAD_SHA }} + `${{ env.HEAD_MBED_VERSION }}` + `${{ env.HEAD_CXX_STANDARD }}`
           - toolchain: `${{ env.TOOLCHAIN_VERSION }}`
-          - `${{ env.ENABLE_LOG_DEBUG }}`
+          - enable_log_debug: `${{ env.ENABLE_LOG_DEBUG }}`
 
           ## :memo: Summary
 

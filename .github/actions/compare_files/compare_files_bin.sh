@@ -77,7 +77,7 @@ else
 	base_ram_with_percentage="$(getUsedRamSizeWithPercentage $BASE_SHA $target_name)"
 	head_ram_with_percentage="$(getUsedRamSizeWithPercentage $HEAD_SHA $target_name)"
 
-	base_ram_percentage=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*\s\([[:digit:]]*%\)' _build_tmp/$HEAD_SHA/$BASE_SHA-code_size.txt)
+	base_ram_percentage=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*\s\([[:digit:]]*%\)' _build_tmp/$BASE_SHA/$target_name-code_size.txt)
 	head_ram_percentage=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*\s\([[:digit:]]*%\)' _build_tmp/$HEAD_SHA/$target_name-code_size.txt)
 
 	base_ram="$(getUsedRamSize $BASE_SHA $target_name)"
