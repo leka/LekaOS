@@ -27,20 +27,9 @@ jobs:
       #
       # Mark: - Setup
       #
-
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
-
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.base.sha }}
-          path: base_ref
-
-      - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          path: head_ref
 
       - name: Setup CI
         id: setup_ci
@@ -53,39 +42,36 @@ jobs:
       #
 
       - name: Compile base branch
-        shell: bash
         run: |
-          cd $GITHUB_WORKSPACE/base_ref
-          make pull_deps
+          git checkout ${{ env.BASE_REF }}
+          make deep_clean
+          make mbed_curl VERSION=${{ env.BASE_MBED_VERSION }}
+          make mcuboot_clone
           make config ${{ matrix.enable_log_debug }}
-          make ccache_prebuild
           make
-          make ccache_postbuild
 
       - name: Move ${{ env.BASE_REF }}:${{ env.BASE_SHA }} bin & map files to temporary directory
         run: |
-          find $GITHUB_WORKSPACE/base_ref/_build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
-          find $GITHUB_WORKSPACE/base_ref/_build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
-          find $GITHUB_WORKSPACE/base_ref/_build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
-          find $GITHUB_WORKSPACE/base_ref/_build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
 
       - name: Compile pr branch
-        shell: bash
         run: |
-          cd $GITHUB_WORKSPACE/head_ref
+          git checkout ${{ env.HEAD_REF }}
           make deep_clean
-          make pull_deps
+          make mbed_curl VERSION=${{ env.HEAD_MBED_VERSION }}
+          make mcuboot_clone
           make config ${{ matrix.enable_log_debug }}
-          make ccache_prebuild
           make
-          make ccache_postbuild
 
       - name: Move ${{ env.HEAD_REF }}:${{ env.HEAD_SHA }} bin & map files to temporary directory
         run: |
-          find $GITHUB_WORKSPACE/head_ref/_build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
-          find $GITHUB_WORKSPACE/head_ref/_build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
-          find $GITHUB_WORKSPACE/head_ref/_build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
-          find $GITHUB_WORKSPACE/head_ref/_build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+          find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
 
       - name: Compare files
         uses: ./.github/actions/compare_files
