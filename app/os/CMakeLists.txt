@@ -12,6 +12,7 @@ target_include_directories(LekaOS
 target_sources(LekaOS
 	PRIVATE
 		main.cpp
+		RobotController.cpp
 )
 
 target_link_libraries(LekaOS
