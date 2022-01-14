@@ -1,0 +1,31 @@
+# Leka - LekaOS
+# Copyright 2021 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: Build - test
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  #
+  # Mark: - build_targets
+  #
+
+  build_target:
+    name: target
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - run: |
+          echo "Hello, build test"

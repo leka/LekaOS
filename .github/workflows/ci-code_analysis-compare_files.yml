@@ -6,15 +6,15 @@ name: Code Analysis
 
 on:
   workflow_run:
-    workflows: [Build]
+    workflows: ["Build - test"]
     types:
       - completed
 
 jobs:
   compare_bin_map_files:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: Compare .bin & .map files
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       #
@@ -25,14 +25,14 @@ jobs:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
       - run: |
-          echo Hello World
+          echo "Hello code analysis triggered by build test"
 
-      - uses: actions/download-artifact@v2
-        with:
-          name: head_ref-build-enable_log_debug-ON
+      # - uses: actions/download-artifact@v2
+      #   with:
+      #     name: my-artifact
 
-      - name: Display structure of downloaded files
-        run: ls -R
+      # - name: Display structure of downloaded files
+      #   run: ls -R
 
       # - name: Setup CI
       #   id: setup_ci
