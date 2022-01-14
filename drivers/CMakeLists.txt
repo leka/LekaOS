@@ -30,3 +30,4 @@ add_subdirectory(${DRIVERS_DIR}/CoreLightSensor)
 # Actuators drivers
 add_subdirectory(${DRIVERS_DIR}/FastLED)
 add_subdirectory(${DRIVERS_DIR}/CoreMotor)
+add_subdirectory(${DRIVERS_DIR}/CoreLED)
