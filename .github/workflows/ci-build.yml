@@ -15,7 +15,7 @@ on:
 
 jobs:
   #
-  # Mark: - build_targets
+  # Mark: - Job - build_targets
   #
 
   build_target:
@@ -52,7 +52,7 @@ jobs:
           enable_log_debug: ON
 
   #
-  # Mark: - build_base_ref
+  # Mark: - Job - build_base_ref
   #
 
   build_base_ref:
@@ -111,7 +111,7 @@ jobs:
           path: _build_tmp/${{ env.BASE_SHA }}
 
   #
-  # Mark: - build_head_ref
+  # Mark: - Job - build_head_ref
   #
 
   build_head_ref:
@@ -167,3 +167,33 @@ jobs:
         with:
           name: head_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
           path: _build_tmp/${{ env.HEAD_SHA }}
+
+  #
+  # Mark: - Job - compare_bin_map_files
+  #
+
+  compare_base_head_files:
+    name: Compare base/head files
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    needs: [build_base_ref, build_head_ref]
+
+    steps:
+      #
+      # Mark: - Setup
+      #
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup CI
+        id: setup_ci
+        uses: ./.github/actions/setup
+
+      - uses: actions/download-artifact@v2
+        with:
+          path: build_artifacts
+
+      - name: Display structure of downloaded files
+        working-directory: build_artifacts
+        run: ls -R
