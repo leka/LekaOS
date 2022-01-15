@@ -1,0 +1,212 @@
+# Leka - LekaOS
+# Copyright 2021 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: Build
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  test:
+    name: target
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - run: |
+          echo "Hello, build test"
+  #
+  # Mark: - Job - build_targets
+  #
+
+  # build_target:
+  #   name: target
+  #   runs-on: ubuntu-latest
+
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       custom_target: ["LEKA_V1_2_DEV", "LEKA_DISCO"]
+
+  #   steps:
+  #     #
+  #     # Mark: - Setup
+  #     #
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+  #     - name: Setup CI
+  #       uses: ./.github/actions/setup
+  #       with:
+  #         ccache_name: build-target-${{ matrix.custom_target }}
+
+  #     #
+  #     # Mark: - Config & build
+  #     #
+
+  #     - name: Config & build
+  #       id: config_build
+  #       uses: ./.github/actions/config_build
+  #       with:
+  #         target_board: ${{ matrix.custom_target }}
+  #         enable_log_debug: ON
+
+  # #
+  # # Mark: - Job - build_base_ref
+  # #
+
+  # build_base_ref:
+  #   name: base_ref - enable_log_debug
+  #   runs-on: ubuntu-latest
+
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       enable_log_debug: ["ON", "OFF"]
+
+  #   steps:
+  #     #
+  #     # Mark: - Setup
+  #     #
+
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+  #     - name: Setup CI
+  #       id: setup_ci
+  #       uses: ./.github/actions/setup
+  #       with:
+  #         ccache_name: build-base_ref-enable_log_debug-${{ matrix.enable_log_debug }}
+
+  #     #
+  #     # Mark: - Config & build
+  #     #
+
+  #     - name: Config & build
+  #       id: config_build
+  #       uses: ./.github/actions/config_build
+  #       with:
+  #         enable_log_debug: ${{ matrix.enable_log_debug }}
+  #         checkout_base_ref: true
+
+  #     #
+  #     # Mark: - Move files
+  #     #
+
+  #     - name: Move ${{ env.BASE_REF }}:${{ env.BASE_SHA }} bin & map files to temporary directory
+  #       run: |
+  #         find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+  #         find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+  #         find _build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+  #         find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+
+  #     #
+  #     # Mark: - Upload artifacts
+  #     #
+
+  #     - uses: actions/upload-artifact@v2
+  #       with:
+  #         name: base_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
+  #         path: _build_tmp/${{ env.BASE_SHA }}
+
+  # #
+  # # Mark: - Job - build_head_ref
+  # #
+
+  # build_head_ref:
+  #   name: head_ref - enable_log_debug
+  #   runs-on: ubuntu-latest
+
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       enable_log_debug: ["ON", "OFF"]
+
+  #   steps:
+  #     #
+  #     # Mark: - Setup
+  #     #
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+  #     - name: Setup CI
+  #       id: setup_ci
+  #       uses: ./.github/actions/setup
+  #       with:
+  #         ccache_name: build-head_ref-enable_log_debug-${{ matrix.enable_log_debug }}
+
+  #     #
+  #     # Mark: - Config & build
+  #     #
+
+  #     - name: Config & build
+  #       id: config_build
+  #       uses: ./.github/actions/config_build
+  #       with:
+  #         enable_log_debug: ${{ matrix.enable_log_debug }}
+  #         checkout_base_ref: false
+
+  #     #
+  #     # Mark: - Move files
+  #     #
+
+  #     - name: Move ${{ env.HEAD_REF }}:${{ env.HEAD_SHA }} bin & map files to temporary directory
+  #       run: |
+  #         find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+  #         find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+  #         find _build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+  #         find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+
+  #     #
+  #     # Mark: - Upload artifacts
+  #     #
+
+  #     - uses: actions/upload-artifact@v2
+  #       with:
+  #         name: head_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
+  #         path: _build_tmp/${{ env.HEAD_SHA }}
+
+  # #
+  # # Mark: - Job - compare_bin_map_files
+  # #
+
+  # compare_bin_map_files:
+  #   if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  #   name: Compare .bin & .map files
+  #   runs-on: ubuntu-latest
+
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       enable_log_debug: ["ON", "OFF"]
+
+  #   steps:
+  #     #
+  #     # Mark: - Setup
+  #     #
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+  #     - run: |
+  #         echo Hello World
+
+  #     - uses: actions/download-artifact@v2
+  #       with:
+  #         name: head_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
+
+  #     - name: Display structure of downloaded files
+  #       run: ls -R
