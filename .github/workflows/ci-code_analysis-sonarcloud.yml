@@ -95,16 +95,6 @@ jobs:
           make ccache_postbuild
           ccache -z
 
-      #
-      # Mark: - Analyze
-      #
-
-      - name: Upload compilation database
-        uses: actions/upload-artifact@v2
-        with:
-          name: compile_commands.json
-          path: ./_build_cmake_tools/compile_commands.json
-
       - name: Run sonar-scanner
         run: |
           sonar-scanner -X -Dsonar.login=${{ secrets.SONAR_TOKEN }}
