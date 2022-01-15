@@ -178,6 +178,11 @@ jobs:
     if: github.event.pull_request.head.repo.full_name == github.repository
     needs: [build_base_ref, build_head_ref]
 
+    strategy:
+      fail-fast: true
+      matrix:
+        enable_log_debug: ["ON", "OFF"]
+
     steps:
       #
       # Mark: - Setup
@@ -197,3 +202,11 @@ jobs:
       - name: Display structure of downloaded files
         working-directory: build_artifacts
         run: ls -R
+
+      - name: Compare files
+        uses: ./.github/actions/compare_files
+        with:
+          comment_header: enable_log_debug-${{ matrix.enable_log_debug }}
+          enable_log_debug: ${{ matrix.enable_log_debug }}
+          base_dir: build_artifacts/base_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
+          head_dir: build_artifacts/head_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
