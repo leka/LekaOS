@@ -1,0 +1,48 @@
+# Leka - LekaOS
+# Copyright 2021 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: Code Analysis
+
+on:
+  workflow_run:
+    workflows: ["Build - test"]
+    types:
+      - completed
+
+jobs:
+  compare_bin_map_files:
+    name: Compare .bin & .map files
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      #
+      # Mark: - Setup
+      #
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - run: |
+          echo "Hello code analysis triggered by build test, yah"
+
+      # - uses: actions/download-artifact@v2
+      #   with:
+      #     name: my-artifact
+
+      # - name: Display structure of downloaded files
+      #   run: ls -R
+
+      # - name: Setup CI
+      #   id: setup_ci
+      #   uses: ./.github/actions/setup
+      #   with:
+      #     ccache_name: code_analysis-compare_files-enable_log_debug-${{ matrix.enable_log_debug }}
+
+      # - name: Compare files
+      #   uses: ./.github/actions/compare_files
+      #   env:
+      #     ENABLE_LOG_DEBUG: ${{ matrix.enable_log_debug }}
+      #   with:
+      #     comment_header: enable_log_debug-${{ matrix.enable_log_debug }}
