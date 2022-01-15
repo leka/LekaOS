@@ -2,7 +2,7 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-name: Code Analysis
+name: Code Analysis - test
 
 on:
   workflow_run:
