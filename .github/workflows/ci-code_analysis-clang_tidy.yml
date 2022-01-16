@@ -47,7 +47,6 @@ jobs:
 
       - name: Generate compile_commands.json
         run: |
-          make pull_deps
           make config_tools
           make config_tools_build
 
