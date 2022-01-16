@@ -69,6 +69,7 @@ jobs:
 
       - name: Config, build LekaOS & al.
         run: |
+          make pull_deps
           make config config_tools ENABLE_LOG_DEBUG=ON
           build-wrapper-linux-x86-64 --out-dir bw-output make
 
