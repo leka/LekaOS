@@ -47,6 +47,7 @@ jobs:
 
       - name: Generate compile_commands.json
         run: |
+          make pull_deps
           make config_tools
 
       #
@@ -55,7 +56,7 @@ jobs:
 
       - name: Get modified files
         id: modified_files
-        uses: Ana06/get-changed-files@v1.2
+        uses: Ana06/get-changed-files@v2.1.0
         with:
           format: "space-delimited"
           filter: "*"
