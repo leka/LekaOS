@@ -1,0 +1,63 @@
+# Leka - LekaOS
+# Copyright 2022 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: Unit Tests
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  run_unit_tests:
+    name: Run with
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+          - name: Clang
+            cc_bin: /usr/bin/clang
+            cxx_bin: /usr/bin/clang++
+          - name: GCC
+            cc_bin: /usr/bin/gcc-10
+            cxx_bin: /usr/bin/g++-10
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set CC & CXX env
+        id: set_cc_cxx_env
+        shell: bash
+        run: |
+          echo "CC=${{ matrix.cc_bin }}" >> $GITHUB_ENV
+          echo "CXX=${{ matrix.cxx_bin }}" >> $GITHUB_ENV
+
+      - name: Setup CI
+        uses: ./.github/actions/setup
+        with:
+          ccache_name: unit_tests-${{ matrix.name }}
+
+      #
+      # Mark: - Config, build & run unit tests
+      #
+
+      - name: Ccache pre build
+        run: |
+          make ccache_prebuild
+
+      - name: Config, build & run
+        run: |
+          make pull_deps
+          make config_unit_tests
+          make unit_tests
+
+      - name: Ccache post build
+        run: |
+          make ccache_postbuild
+          ccache -z
