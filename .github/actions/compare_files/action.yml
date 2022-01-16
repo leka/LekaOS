@@ -26,14 +26,14 @@ runs:
   using: "composite"
   steps:
     - name: Compare bin files
-      id: compare_files_bin
+      id: compare_files
       shell: bash
-      run: ${{ github.action_path }}/compare_files_bin.sh ${{ inputs.base_dir }} ${{ inputs.head_dir }}
+      run: ${{ github.action_path }}/compare_files.sh ${{ inputs.base_dir }} ${{ inputs.head_dir }}
 
-    - name: Compare bin files
-      id: compare_files_map
+    - name: Get diffs
+      id: get_diffs
       shell: bash
-      run: ${{ github.action_path }}/compare_files_map.sh ${{ inputs.base_dir }} ${{ inputs.head_dir }}
+      run: ${{ github.action_path }}/get_diffs.sh ${{ inputs.base_dir }} ${{ inputs.head_dir }}
 
     - name: Publish differences
       uses: marocchino/sticky-pull-request-comment@v2
