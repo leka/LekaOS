@@ -96,10 +96,11 @@ jobs:
 
       - name: Move ${{ env.BASE_REF }}:${{ env.BASE_SHA }} bin & map files to temporary directory
         run: |
-          find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
-          find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
-          find _build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
-          find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.BASE_SHA }}
+          mkdir -p build_artifacts
+          find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} build_artifacts
+          find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} build_artifacts
+          find _build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} build_artifacts
+          find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} build_artifacts
 
       #
       # Mark: - Upload artifacts
@@ -108,7 +109,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: base_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
-          path: _build_tmp/${{ env.BASE_SHA }}
+          path: build_artifacts
 
   #
   # Mark: - Job - build_head_ref
@@ -154,10 +155,11 @@ jobs:
 
       - name: Move ${{ env.HEAD_REF }}:${{ env.HEAD_SHA }} bin & map files to temporary directory
         run: |
-          find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
-          find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
-          find _build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
-          find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} _build_tmp/${{ env.HEAD_SHA }}
+          mkdir -p build_artifacts
+          find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} build_artifacts
+          find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} build_artifacts
+          find _build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} build_artifacts
+          find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} build_artifacts
 
       #
       # Mark: - Upload artifacts
@@ -166,7 +168,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: head_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
-          path: _build_tmp/${{ env.HEAD_SHA }}
+          path: build_artifacts
 
   #
   # Mark: - Job - compare_bin_map_files
