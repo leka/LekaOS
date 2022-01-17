@@ -16,6 +16,8 @@ class RobotController
 
 	virtual void startSystem() = 0;
 	virtual void stopSystem()  = 0;
+
+	virtual void onRunningEntry() = 0;
 };
 
 }	// namespace leka::interface

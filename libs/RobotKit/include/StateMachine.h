@@ -34,10 +34,13 @@ struct StateMachine {
 		auto action_start_system = [](interface::RobotController &rc) { rc.startSystem(); };
 		auto action_stop_system	 = [](interface::RobotController &rc) { rc.stopSystem(); };
 
+		auto on_running_entry = [](interface::RobotController &rc) { rc.onRunningEntry(); };
+
 		return make_transition_table(
 			// clang-format off
 			 * sm::state::idle    + event<sm::event::start>   / action_start_system = sm::state::running
 			,  sm::state::running + event<sm::event::timeout> / action_stop_system  = sm::state::idle
+			,  sm::state::running + boost::sml::on_entry<_>   / on_running_entry
 			// clang-format on
 		);
 	}

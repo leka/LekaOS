@@ -42,6 +42,7 @@ TEST_F(StateMachineTest, stateIdleEventStart)
 	sm.set_current_states(lksm::state::idle);
 
 	EXPECT_CALL(mock_rc, startSystem()).Times(1);
+	EXPECT_CALL(mock_rc, onRunningEntry()).Times(1);
 
 	sm.process_event(lksm::event::start {});
 
