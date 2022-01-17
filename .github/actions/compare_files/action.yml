@@ -9,25 +9,36 @@ inputs:
   comment_header:
     description: "Specify comment header if needed"
     required: true
-    default: ""
+
+  enable_log_debug:
+    description: "ENABLE_LOG_DEBUG=[ON, OFF]"
+    required: true
+
+  base_dir:
+    description: "Path to base files"
+    required: true
+
+  head_dir:
+    description: "Path to head files"
+    required: true
 
 runs:
   using: "composite"
   steps:
     - name: Compare bin files
-      id: compare_files_bin
+      id: compare_files
       shell: bash
-      run: ${{ github.action_path }}/compare_files_bin.sh
+      run: ${{ github.action_path }}/compare_files.sh ${{ inputs.base_dir }} ${{ inputs.head_dir }}
 
-    - name: Compare bin files
-      id: compare_files_map
+    - name: Get diffs
+      id: get_diffs
       shell: bash
-      run: ${{ github.action_path }}/compare_files_map.sh
+      run: ${{ github.action_path }}/get_diffs.sh ${{ inputs.base_dir }} ${{ inputs.head_dir }}
 
     - name: Publish differences
       uses: marocchino/sticky-pull-request-comment@v2
       with:
-        header: analysis_bin_map_files${{ inputs.comment_header }}
+        header: compare_files-${{ inputs.comment_header }}
         message: |
           # File comparision analysis report
 
@@ -37,7 +48,7 @@ runs:
           - base: [`${{ env.BASE_REF}}`](https://github.com/leka/LekaOS/tree/${{ env.BASE_REF}}) / ${{ env.BASE_SHA }} + `${{ env.BASE_MBED_VERSION }}` + `${{ env.BASE_CXX_STANDARD }}`
           - head: [`${{ env.HEAD_REF }}`](https://github.com/leka/LekaOS/tree/${{ env.HEAD_REF }}) / ${{ env.HEAD_SHA }} + `${{ env.HEAD_MBED_VERSION }}` + `${{ env.HEAD_CXX_STANDARD }}`
           - toolchain: `${{ env.TOOLCHAIN_VERSION }}`
-          - enable_log_debug: `${{ env.ENABLE_LOG_DEBUG }}`
+          - enable_log_debug: `${{ inputs.enable_log_debug }}`
 
           ## :memo: Summary
 

@@ -15,7 +15,31 @@ runs:
   using: "composite"
   steps:
     #
-    # Mark: - Setup
+    # Mark: - Checkout dependencies
+    #
+
+    - name: Checkout mbed-os
+      uses: actions/checkout@v2
+      with:
+        repository: ARMmbed/mbed-os
+        ref: ${{ env.HEAD_MBED_VERSION }}
+        path: extern/mbed-os
+
+    - name: Checkout mcuboot
+      uses: actions/checkout@v2
+      with:
+        repository: mcu-tools/mcuboot
+        ref: ${{ env.HEAD_MCUBOOT_VERSION }}
+        path: extern/mcuboot
+
+    - name: Symlink deps files
+      shell: bash
+      run: |
+        make mbed_symlink_files
+        make mcuboot_symlink_files
+
+    #
+    # Mark: - Setup env
     #
 
     - name: Setup ENV variables
@@ -25,12 +49,6 @@ runs:
       env:
         BASE_REF: ${{ github.event.pull_request.base.ref }}
         HEAD_REF: ${{ github.head_ref }}
-
-    - name: Create temporary directories
-      shell: bash
-      run: |
-        mkdir -p _build_tmp/${{ env.BASE_SHA }}
-        mkdir -p _build_tmp/${{ env.HEAD_SHA }}
 
     #
     # Mark: - ARM GCC Toolchain
@@ -75,27 +93,8 @@ runs:
     - name: Install tools
       shell: bash
       run: |
+        sudo apt-get update
         sudo apt-get install -y --no-install-recommends ninja-build ccache lcov gcovr
-
-    #
-    # Mark: - Cache
-    #
-
-    - name: Cache extern dependencies
-      id: global_cache-extern_dependencies
-      uses: actions/cache@v2
-      with:
-        path: |
-          extern/mbed-os
-          extern/mcuboot
-        key: ${{ runner.os }}-global_cache-extern_dependencies-${{ hashFiles('.mbed_version', '.mbed_git_url', '.mcuboot_version', 'cmake/templates/**') }}
-
-    - name: Pull extern dependencies
-      if: steps.global_cache-extern_dependencies.outputs.cache-hit != 'true'
-      shell: bash
-      run: |
-        make mbed_curl
-        make mcuboot_clone
 
     - name: Cache ccache
       id: global_cache-ccache
@@ -122,7 +121,7 @@ runs:
         path: |
           ${{ env.RUNNER_HOME }}/.cache/pip
           ${{ env.pythonLocation }}
-        key: ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-${{ hashFiles('extern/mbed-os/requirements.txt', '.mbed_version') }}
+        key: ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-${{ hashFiles('.mbed_version') }}
         restore-keys: |
           ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-
 

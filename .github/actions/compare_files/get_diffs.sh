@@ -1,4 +1,8 @@
 shopt -s xpg_echo
+
+BASE_DIR=$1
+HEAD_DIR=$2
+
 source ./.github/actions/compare_files/get_all_targets.sh
 
 no_map_diff=true
@@ -12,8 +16,8 @@ target_name=$target
 
 		echo "$target not deleted nor new, running diff"
 
-		if ! diff_map_output=$(diff --unified=150 _build_tmp/$BASE_SHA/$target_name-map.txt _build_tmp/$HEAD_SHA/$target_name-map.txt); then
-			diff_size_output=$(diff --unified=150 _build_tmp/$BASE_SHA/$target_name-code_size.txt _build_tmp/$HEAD_SHA/$target_name-code_size.txt)
+		if ! diff_map_output=$(diff --unified=150 $BASE_DIR/$target_name-map.txt $HEAD_DIR/$target_name-map.txt); then
+			diff_size_output=$(diff --unified=150 $BASE_DIR/$target_name-code_size.txt $HEAD_DIR/$target_name-code_size.txt)
 
 			echo $diff_map_output
 			echo $diff_size_output
@@ -41,8 +45,8 @@ target_name=$target
 
 		echo "$target added, showing map information"
 
-		map_output=$(cat _build_tmp/$HEAD_SHA/$target_name-map.txt)
-		size_output=$(cat _build_tmp/$HEAD_SHA/$target_name-code_size.txt)
+		map_output=$(cat $HEAD_DIR/$target_name-map.txt)
+		size_output=$(cat $HEAD_DIR/$target_name-code_size.txt)
 
 		echo "<details>" >> $GITHUB_ENV
 		echo "<summary><b><code>$target_name</code></b> (click to expand)</summary>" >> $GITHUB_ENV

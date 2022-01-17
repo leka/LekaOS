@@ -2,7 +2,7 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-name: Code Analysis
+name: Code Analysis - Clang-Tidy
 
 on:
   push:
@@ -14,8 +14,7 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  clang_tidy:
-    name: clang-tidy
+  run:
     runs-on: ubuntu-latest
 
     steps:
@@ -48,6 +47,7 @@ jobs:
       - name: Generate compile_commands.json
         run: |
           make config_tools
+          make config_tools_build
 
       #
       # Mark: - Analyze
@@ -55,7 +55,7 @@ jobs:
 
       - name: Get modified files
         id: modified_files
-        uses: Ana06/get-changed-files@v1.2
+        uses: Ana06/get-changed-files@v2.1.0
         with:
           format: "space-delimited"
           filter: "*"
@@ -73,4 +73,4 @@ jobs:
                | grep -E -v "mocks" \
                | grep -E -v "stubs" \
                | grep -E    "\.h$|\.cpp$" \
-               | xargs --no-run-if-empty clang-tidy-13 -p=. --quiet
+               | xargs --no-run-if-empty clang-tidy-13 -p=_build_cmake_tools --quiet

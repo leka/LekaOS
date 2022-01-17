@@ -2,7 +2,7 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-name: Code Analysis
+name: Code Analysis - Sonarcloud
 
 on:
   push:
@@ -13,9 +13,11 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
 jobs:
-  sonarcloud:
-    name: sonarcloud
+  run:
     runs-on: ubuntu-latest
 
     steps:
@@ -94,16 +96,6 @@ jobs:
         run: |
           make ccache_postbuild
           ccache -z
-
-      #
-      # Mark: - Analyze
-      #
-
-      - name: Upload compilation database
-        uses: actions/upload-artifact@v2
-        with:
-          name: compile_commands.json
-          path: ./_build_cmake_tools/compile_commands.json
 
       - name: Run sonar-scanner
         run: |
