@@ -5,10 +5,47 @@
 
 using namespace leka;
 using namespace std::chrono_literals;
+using namespace system::robot;
+
+void RobotController::setStateMachine(boost::sml::sm<StateMachine> *sm)
+{
+	_sm = sm;
+}
 
 void RobotController::startEventQueueDispatch()
 {
 	_thread_event_queue.start({&_event_queue, &events::EventQueue::dispatch_forever});
+}
+
+void RobotController::startMainLoop()
+{
+	if (_sm == nullptr) {
+		return;
+	}
+
+	auto timeout_flag_is_set = [&]() {
+		return (_event_flags.get() & RobotController::Flags::TIMEOUT) == RobotController::Flags::TIMEOUT;
+	};
+
+	auto start_flag_is_set = [&]() {
+		return (_event_flags.get() & RobotController::Flags::START) == RobotController::Flags::START;
+	};
+
+	startEventQueueDispatch();
+	_sm->process_event(sm::event::start {});
+
+	while (true) {
+		_event_flags.wait_any(RobotController::Flags::ALL, osWaitForever, false);
+
+		if (timeout_flag_is_set()) {
+			_sm->process_event(sm::event::timeout {});
+
+		} else if (start_flag_is_set()) {
+			_sm->process_event(sm::event::start {});
+		}
+
+		_event_flags.clear(RobotController::Flags::ALL);
+	}
 }
 
 void RobotController::startSystem()

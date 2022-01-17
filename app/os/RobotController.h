@@ -9,6 +9,7 @@
 #include "rtos/EventFlags.h"
 #include "rtos/Thread.h"
 
+#include "StateMachine.h"
 #include "interface/RobotController.h"
 
 namespace leka {
@@ -23,9 +24,12 @@ class RobotController : public interface::RobotController
 		ALL		= 0x7FFFFFFF
 	};
 
-	RobotController(rtos::EventFlags &event_flags) : _event_flags(event_flags) {}
+	RobotController() = default;
+
+	void setStateMachine(boost::sml::sm<system::robot::StateMachine> *sm);
 
 	void startEventQueueDispatch();
+	void startMainLoop();
 
 	void startSystem() final;
 	void stopSystem() final;
@@ -36,7 +40,9 @@ class RobotController : public interface::RobotController
 	rtos::Thread _thread_event_queue {};
 	events::EventQueue _event_queue {};
 
-	rtos::EventFlags &_event_flags;
+	rtos::EventFlags _event_flags;
+
+	boost::sml::sm<system::robot::StateMachine> *_sm = nullptr;
 };
 
 }	// namespace leka
