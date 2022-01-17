@@ -15,7 +15,7 @@ on:
 
 jobs:
   run_unit_tests:
-    name: Run with
+    name: Build & run
     runs-on: ubuntu-latest
 
     strategy:
