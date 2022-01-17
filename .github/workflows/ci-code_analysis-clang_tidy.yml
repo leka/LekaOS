@@ -2,7 +2,7 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-name: Code Analysis
+name: Code Analysis - Clang-Tidy
 
 on:
   push:
@@ -14,8 +14,7 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  clang_tidy:
-    name: clang-tidy
+  run:
     runs-on: ubuntu-latest
 
     steps:
