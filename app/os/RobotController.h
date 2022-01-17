@@ -9,6 +9,7 @@
 #include "rtos/EventFlags.h"
 #include "rtos/Thread.h"
 
+#include "CircularQueue.h"
 #include "StateMachine.h"
 #include "interface/RobotController.h"
 
@@ -41,6 +42,8 @@ class RobotController : public interface::RobotController
 	events::EventQueue _event_queue {};
 
 	rtos::EventFlags _event_flags;
+
+	CircularQueue<int, 32> process_id {};
 
 	boost::sml::sm<system::robot::StateMachine> *_sm = nullptr;
 };

@@ -34,8 +34,15 @@ void RobotController::startMainLoop()
 	startEventQueueDispatch();
 	_sm->process_event(sm::event::start {});
 
+	int id = 0;
+
 	while (true) {
 		_event_flags.wait_any(RobotController::Flags::ALL, osWaitForever, false);
+
+		while (!process_id.empty()) {
+			process_id.pop(id);
+			_event_queue.cancel(id);
+		}
 
 		if (timeout_flag_is_set()) {
 			_sm->process_event(sm::event::timeout {});
@@ -57,7 +64,8 @@ void RobotController::stopSystem()
 {
 	log_info("Stop System.");
 
-	_event_queue.call_in(1s, &_event_flags, &rtos::EventFlags::set, static_cast<uint32_t>(Flags::START));
+	process_id.push(
+		_event_queue.call_in(1s, &_event_flags, &rtos::EventFlags::set, static_cast<uint32_t>(Flags::START)));
 }
 
 void RobotController::onRunningEntry()
@@ -75,5 +83,6 @@ void RobotController::onRunningEntry()
 	// Run processes
 	// Let main loop handle the rest
 
-	_event_queue.call_in(5s, &_event_flags, &rtos::EventFlags::set, static_cast<uint32_t>(Flags::TIMEOUT));
+	process_id.push(
+		_event_queue.call_in(5s, &_event_flags, &rtos::EventFlags::set, static_cast<uint32_t>(Flags::TIMEOUT)));
 }
