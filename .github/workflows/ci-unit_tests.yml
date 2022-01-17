@@ -61,3 +61,17 @@ jobs:
         run: |
           make ccache_postbuild
           ccache -z
+
+      - name: Generate coverage
+        if: ${{ matrix.name == 'GCC' }}
+        run: |
+          make coverage_lcov
+
+      - name: Upload coverage to Codecov
+        if: ${{ matrix.name == 'GCC' }}
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./_build_unit_tests/_coverage/coverage.info
+          fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
