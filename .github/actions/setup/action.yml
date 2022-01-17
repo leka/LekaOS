@@ -39,7 +39,7 @@ runs:
         make mcuboot_symlink_files
 
     #
-    # Mark: - Setup
+    # Mark: - Setup env
     #
 
     - name: Setup ENV variables
@@ -49,12 +49,6 @@ runs:
       env:
         BASE_REF: ${{ github.event.pull_request.base.ref }}
         HEAD_REF: ${{ github.head_ref }}
-
-    - name: Create temporary directories
-      shell: bash
-      run: |
-        mkdir -p _build_tmp/${{ env.BASE_SHA }}
-        mkdir -p _build_tmp/${{ env.HEAD_SHA }}
 
     #
     # Mark: - ARM GCC Toolchain
