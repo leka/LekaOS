@@ -2,7 +2,7 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-name: Build
+name: Code Analysis - Compare base/head
 
 on:
   push:
@@ -19,7 +19,7 @@ jobs:
   #
 
   build_base_ref:
-    name: base_ref - enable_log_debug
+    name: build base_ref w/ debug
     runs-on: ubuntu-latest
 
     strategy:
@@ -79,7 +79,7 @@ jobs:
   #
 
   build_head_ref:
-    name: head_ref - enable_log_debug
+    name: build head_ref w/ debug
     runs-on: ubuntu-latest
 
     strategy:
