@@ -15,43 +15,6 @@ on:
 
 jobs:
   #
-  # Mark: - Job - build_targets
-  #
-
-  build_target:
-    name: target
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        custom_target: ["LEKA_V1_2_DEV", "LEKA_DISCO"]
-
-    steps:
-      #
-      # Mark: - Setup
-      #
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
-
-      - name: Setup CI
-        uses: ./.github/actions/setup
-        with:
-          ccache_name: build-target-${{ matrix.custom_target }}
-
-      #
-      # Mark: - Config & build
-      #
-
-      - name: Config & build
-        id: config_build
-        uses: ./.github/actions/config_build
-        with:
-          target_board: ${{ matrix.custom_target }}
-          enable_log_debug: ON
-
-  #
   # Mark: - Job - build_base_ref
   #
 
