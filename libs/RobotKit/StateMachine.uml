@@ -1,0 +1,10 @@
+@startuml
+
+[*] --> WaitingForCommands
+
+WaitingForCommands : Entry; on_entry_waiting_for_commands()
+WaitingForCommands --> Sleeping : timeout / action_fall_asleep_system()
+
+Sleeping --> WaitingForCommands : wakeup / action_wakeup_system()
+
+@enduml
