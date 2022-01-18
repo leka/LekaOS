@@ -37,7 +37,7 @@ namespace buffer {
 	inline auto message	  = std::array<char, 128> {};
 	inline auto output	  = std::array<char, 256> {};
 
-	inline auto fifo = CircularQueue<char, 4096> {};
+	inline auto fifo = CircularQueue<char, 8192> {};
 };	 // namespace buffer
 
 //
