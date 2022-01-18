@@ -9,8 +9,8 @@
 
 #include "rtos/ThisThread.h"
 
-#include "HelloWorld.h"
 #include "CoreMicrophone.h"
+#include "HelloWorld.h"
 #include "LogKit.h"
 
 using namespace leka;

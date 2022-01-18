@@ -9,8 +9,8 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
-#include "HelloWorld.h"
 #include "CoreLightSensor.h"
+#include "HelloWorld.h"
 #include "LogKit.h"
 
 using namespace leka;
