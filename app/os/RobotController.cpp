@@ -27,12 +27,12 @@ void RobotController::startMainLoop()
 		return (_event_flags.get() & RobotController::Flags::TIMEOUT) == RobotController::Flags::TIMEOUT;
 	};
 
-	auto start_flag_is_set = [&]() {
-		return (_event_flags.get() & RobotController::Flags::START) == RobotController::Flags::START;
+	auto wakeup_flag_is_set = [&]() {
+		return (_event_flags.get() & RobotController::Flags::WAKEUP) == RobotController::Flags::WAKEUP;
 	};
 
 	startEventQueueDispatch();
-	_sm->process_event(sm::event::start {});
+	_sm->process_event(sm::event::wakeup {});
 
 	int id = 0;
 
@@ -47,30 +47,30 @@ void RobotController::startMainLoop()
 		if (timeout_flag_is_set()) {
 			_sm->process_event(sm::event::timeout {});
 
-		} else if (start_flag_is_set()) {
-			_sm->process_event(sm::event::start {});
+		} else if (wakeup_flag_is_set()) {
+			_sm->process_event(sm::event::wakeup {});
 		}
 
 		_event_flags.clear(RobotController::Flags::ALL);
 	}
 }
 
-void RobotController::startSystem()
+void RobotController::wakeupSystem()
 {
-	log_info("Start System.");
+	log_info("Wakeup System.");
 }
 
-void RobotController::stopSystem()
+void RobotController::fallAsleepSystem()
 {
-	log_info("Stop System.");
+	log_info("Fall asleep System.");
 
 	process_id.push(
-		_event_queue.call_in(1s, &_event_flags, &rtos::EventFlags::set, static_cast<uint32_t>(Flags::START)));
+		_event_queue.call_in(1s, &_event_flags, &rtos::EventFlags::set, static_cast<uint32_t>(Flags::WAKEUP)));
 }
 
-void RobotController::onRunningEntry()
+void RobotController::onEntryWaitingForCommands()
 {
-	log_info("On Running Entry.");
+	log_info("On Entry Waiting For Commands.");
 
 	// METHOD 1
 	// Run processes

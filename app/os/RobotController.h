@@ -21,7 +21,7 @@ class RobotController : public interface::RobotController
 	enum Flags : uint32_t
 	{
 		TIMEOUT = (1UL << 0),
-		START	= (1UL << 1),
+		WAKEUP	= (1UL << 1),
 		ALL		= 0x7FFFFFFF
 	};
 
@@ -32,10 +32,10 @@ class RobotController : public interface::RobotController
 	void startEventQueueDispatch();
 	void startMainLoop();
 
-	void startSystem() final;
-	void stopSystem() final;
+	void wakeupSystem() final;
+	void fallAsleepSystem() final;
 
-	void onRunningEntry() final;
+	void onEntryWaitingForCommands() final;
 
   private:
 	rtos::Thread _thread_event_queue {};

@@ -12,7 +12,7 @@ namespace leka::system::robot {
 
 namespace sm::event {
 
-	struct start {
+	struct wakeup {
 	};
 	struct timeout {
 	};
@@ -21,8 +21,8 @@ namespace sm::event {
 
 namespace sm::state {
 
-	inline auto idle	= boost::sml::state<class idle>;
-	inline auto running = boost::sml::state<class running>;
+	inline auto sleeping			 = boost::sml::state<class sleeping>;
+	inline auto waiting_for_commands = boost::sml::state<class waiting_for_commands>;
 
 }	// namespace sm::state
 
@@ -31,16 +31,16 @@ struct StateMachine {
 	{
 		using namespace boost::sml;
 
-		auto action_start_system = [](interface::RobotController &rc) { rc.startSystem(); };
-		auto action_stop_system	 = [](interface::RobotController &rc) { rc.stopSystem(); };
+		auto action_wakeup_system	   = [](interface::RobotController &rc) { rc.wakeupSystem(); };
+		auto action_fall_asleep_system = [](interface::RobotController &rc) { rc.fallAsleepSystem(); };
 
-		auto on_running_entry = [](interface::RobotController &rc) { rc.onRunningEntry(); };
+		auto on_entry_waiting_for_commands = [](interface::RobotController &rc) { rc.onEntryWaitingForCommands(); };
 
 		return make_transition_table(
 			// clang-format off
-			 * sm::state::idle    + event<sm::event::start>   / action_start_system = sm::state::running
-			,  sm::state::running + event<sm::event::timeout> / action_stop_system  = sm::state::idle
-			,  sm::state::running + boost::sml::on_entry<_>   / on_running_entry
+			 * sm::state::sleeping            + event<sm::event::wakeup>  / action_wakeup_system       = sm::state::waiting_for_commands
+			, sm::state::waiting_for_commands + event<sm::event::timeout> / action_fall_asleep_system  = sm::state::sleeping
+			, sm::state::waiting_for_commands + boost::sml::on_entry<_>   / on_entry_waiting_for_commands
 			// clang-format on
 		);
 	}

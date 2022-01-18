@@ -14,10 +14,10 @@ class RobotController
   public:
 	virtual ~RobotController() = default;
 
-	virtual void startSystem() = 0;
-	virtual void stopSystem()  = 0;
+	virtual void wakeupSystem()		= 0;
+	virtual void fallAsleepSystem() = 0;
 
-	virtual void onRunningEntry() = 0;
+	virtual void onEntryWaitingForCommands() = 0;
 };
 
 }	// namespace leka::interface

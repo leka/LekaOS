@@ -33,29 +33,29 @@ TEST_F(StateMachineTest, initialization)
 
 TEST_F(StateMachineTest, initialState)
 {
-	EXPECT_TRUE(sm.is(lksm::state::idle));
-	EXPECT_FALSE(sm.is(lksm::state::running));
+	EXPECT_TRUE(sm.is(lksm::state::sleeping));
+	EXPECT_FALSE(sm.is(lksm::state::waiting_for_commands));
 }
 
-TEST_F(StateMachineTest, stateIdleEventStart)
+TEST_F(StateMachineTest, stateSleepingEventWakeup)
 {
-	sm.set_current_states(lksm::state::idle);
+	sm.set_current_states(lksm::state::sleeping);
 
-	EXPECT_CALL(mock_rc, startSystem()).Times(1);
-	EXPECT_CALL(mock_rc, onRunningEntry()).Times(1);
+	EXPECT_CALL(mock_rc, wakeupSystem()).Times(1);
+	EXPECT_CALL(mock_rc, onEntryWaitingForCommands()).Times(1);
 
-	sm.process_event(lksm::event::start {});
+	sm.process_event(lksm::event::wakeup {});
 
-	EXPECT_TRUE(sm.is(lksm::state::running));
+	EXPECT_TRUE(sm.is(lksm::state::waiting_for_commands));
 }
 
-TEST_F(StateMachineTest, stateRunningEventTimeout)
+TEST_F(StateMachineTest, stateWaitingForCommandsEventTimeout)
 {
-	sm.set_current_states(lksm::state::running);
+	sm.set_current_states(lksm::state::waiting_for_commands);
 
-	EXPECT_CALL(mock_rc, stopSystem()).Times(1);
+	EXPECT_CALL(mock_rc, fallAsleepSystem()).Times(1);
 
 	sm.process_event(lksm::event::timeout {});
 
-	EXPECT_TRUE(sm.is(lksm::state::idle));
+	EXPECT_TRUE(sm.is(lksm::state::sleeping));
 }

@@ -12,10 +12,10 @@ namespace leka::mock {
 
 struct RobotController : public interface::RobotController {
   public:
-	MOCK_METHOD(void, startSystem, (), (override));
-	MOCK_METHOD(void, stopSystem, (), (override));
+	MOCK_METHOD(void, wakeupSystem, (), (override));
+	MOCK_METHOD(void, fallAsleepSystem, (), (override));
 
-	MOCK_METHOD(void, onRunningEntry, (), (override));
+	MOCK_METHOD(void, onEntryWaitingForCommands, (), (override));
 };
 
 }	// namespace leka::mock
