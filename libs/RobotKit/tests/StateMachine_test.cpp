@@ -33,8 +33,8 @@ TEST_F(StateMachineTest, initialization)
 
 TEST_F(StateMachineTest, initialState)
 {
-	EXPECT_TRUE(sm.is(lksm::state::sleeping));
-	EXPECT_FALSE(sm.is(lksm::state::waiting_for_commands));
+	EXPECT_TRUE(sm.is(lksm::state::waiting_for_commands));
+	EXPECT_FALSE(sm.is(lksm::state::sleeping));
 }
 
 TEST_F(StateMachineTest, stateSleepingEventWakeup)
