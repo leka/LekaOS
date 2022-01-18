@@ -5,11 +5,6 @@
 #ifndef _LEKA_OS_ROBOT_CONTROLLER_H_
 #define _LEKA_OS_ROBOT_CONTROLLER_H_
 
-#include "events/EventQueue.h"
-#include "rtos/EventFlags.h"
-#include "rtos/Thread.h"
-
-#include "CircularQueue.h"
 #include "StateMachine.h"
 #include "interface/RobotController.h"
 
@@ -18,19 +13,7 @@ namespace leka {
 class RobotController : public interface::RobotController
 {
   public:
-	enum Flags : uint32_t
-	{
-		TIMEOUT = (1UL << 0),
-		WAKEUP	= (1UL << 1),
-		ALL		= 0x7FFFFFFF
-	};
-
 	RobotController() = default;
-
-	void setStateMachine(boost::sml::sm<system::robot::StateMachine> *sm);
-
-	void startEventQueueDispatch();
-	void startMainLoop();
 
 	void wakeupSystem() final;
 	void fallAsleepSystem() final;
@@ -38,14 +21,7 @@ class RobotController : public interface::RobotController
 	void onEntryWaitingForCommands() final;
 
   private:
-	rtos::Thread _thread_event_queue {};
-	events::EventQueue _event_queue {};
-
-	rtos::EventFlags _event_flags;
-
-	CircularQueue<int, 32> process_id {};
-
-	boost::sml::sm<system::robot::StateMachine> *_sm = nullptr;
+	boost::sml::sm<system::robot::StateMachine> _sm {static_cast<interface::RobotController &>(*this)};
 };
 
 }	// namespace leka
