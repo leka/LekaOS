@@ -38,7 +38,7 @@ for target in "${all_targets[@]}"; do
 
 		echo -n "| :heavy_check_mark: " >> $GITHUB_ENV
 
-		if ! output=$(diff $HEAD_DIR/$target_name.bin $HEAD_DIR/$target_name.bin 2>/dev/null); then
+		if ! output=$(diff $BASE_DIR/$target_name.bin $HEAD_DIR/$target_name.bin 2>/dev/null); then
 			echo -n "| :x: " >> $GITHUB_ENV
 		else
 			echo -n "| :white_check_mark: " >> $GITHUB_ENV
