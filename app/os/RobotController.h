@@ -8,6 +8,7 @@
 #include "events/EventQueue.h"
 #include "rtos/Thread.h"
 
+#include "LedsUtils.h"
 #include "StateMachine.h"
 #include "interface/RobotController.h"
 
@@ -32,6 +33,8 @@ class RobotController : public interface::RobotController
 
 	rtos::Thread _thread {};
 	events::EventQueue _event_queue {};
+
+	LedsUtils _leds_utils {};
 };
 
 }	// namespace leka
