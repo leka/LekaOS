@@ -17,12 +17,12 @@ class LogKitNowTest : public ::testing::Test
 {
   protected:
 	// void SetUp() override {}
-	void TearDown() override { logger::set_now_function(logger::default_now_function); }
+	void TearDown() override { logger::set_now_function(logger::internal::default_now_function); }
 };
 
 TEST_F(LogKitNowTest, useDefaultNowFunction)
 {
-	ASSERT_EQ(spy_kernel_tick_count, logger::now());
+	ASSERT_EQ(spy_kernel_tick_count, logger::internal::now());
 }
 
 TEST_F(LogKitNowTest, useCustomNowFunction)
@@ -33,7 +33,7 @@ TEST_F(LogKitNowTest, useCustomNowFunction)
 
 	logger::set_now_function(mock_now.AsStdFunction());
 
-	logger::now();
+	logger::internal::now();
 
-	logger::set_now_function(logger::default_now_function);
+	logger::set_now_function(logger::internal::default_now_function);
 }

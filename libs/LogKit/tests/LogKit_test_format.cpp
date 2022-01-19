@@ -25,7 +25,7 @@ class LogKitFormatTest : public ::testing::Test
 		logger::set_sink_function(spy_sink_function);
 	}
 
-	void TearDown() override { logger::set_sink_function(logger::default_sink_function); }
+	void TearDown() override { logger::set_sink_function(logger::internal::default_sink_function); }
 
 	static void spy_sink_function(const char *str, size_t size)
 	{
@@ -60,7 +60,7 @@ TEST_F(LogKitFormatTest, formatFullContentStringEmpty)
 
 TEST_F(LogKitFormatTest, formatTimeHumanReadable)
 {
-	logger::format_time_human_readable(logger::now());
+	logger::format_time_human_readable(logger::internal::now());
 
 	auto time = std::string(leka::logger::buffer::timestamp.data());
 
@@ -70,7 +70,7 @@ TEST_F(LogKitFormatTest, formatTimeHumanReadable)
 
 TEST_F(LogKitFormatTest, formatLevel)
 {
-	for (auto const [level, string]: leka::logger::level_lut) {
+	for (auto const [level, string]: leka::logger::level::lut) {
 		// Format: [LEVEL]
 		ASSERT_THAT(string, MatchesRegex("\\[[A-Z[:space:]]+\\]"));
 		ASSERT_THAT(string, MatchesRegex("\\[(INFO|ERR |DBUG)\\]"));

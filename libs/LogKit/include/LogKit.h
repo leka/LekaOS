@@ -32,43 +32,61 @@ namespace leka::logger {
 //
 
 namespace buffer {
+
 	inline auto timestamp = std::array<char, 32> {};
 	inline auto filename  = std::array<char, 128> {};
 	inline auto message	  = std::array<char, 128> {};
 	inline auto output	  = std::array<char, 256> {};
 
 	inline auto fifo = CircularQueue<char, 4096> {};
+
 };	 // namespace buffer
 
 //
 // MARK: - Levels
 //
 
-enum class level
-{
-	debug,
-	info,
-	error,
-};
+namespace level {
 
-inline const std::unordered_map<logger::level, std::string_view> level_lut = {
-	{logger::level::debug, "[DBUG]"},
-	{logger::level::info, "[INFO]"},
-	{logger::level::error, "[ERR ]"},
-};
+	enum class name
+	{
+		debug,
+		info,
+		error,
+	};
+
+	inline const std::unordered_map<logger::level::name, std::string_view> lut = {
+		{logger::level::name::debug, "[DBUG]"},
+		{logger::level::name::info, "[INFO]"},
+		{logger::level::name::error, "[ERR ]"},
+	};
+
+}	// namespace level
+
+namespace test {
+	enum
+	{
+		debug
+	};
+}
 
 //
 // MARK: - Events, threads & locks
 //
 
-inline auto mutex		= rtos::Mutex {};
-inline auto thread		= rtos::Thread {osPriorityLow};
-inline auto event_queue = events::EventQueue {32 * EVENTS_EVENT_SIZE};
+namespace internal {
 
-[[maybe_unused]] inline void start_event_queue()
-{
-	logger::thread.start(callback(&logger::event_queue, &events::EventQueue::dispatch_forever));
-}
+	inline auto mutex		= rtos::Mutex {};
+	inline auto thread		= rtos::Thread {osPriorityLow};
+	inline auto event_queue = events::EventQueue {32 * EVENTS_EVENT_SIZE};
+
+	[[maybe_unused]] inline void start_event_queue()
+	{
+		auto v = test::debug;
+		internal::thread.start(callback(&internal::event_queue, &events::EventQueue::dispatch_forever));
+	}
+
+}	// namespace internal
 
 //
 // MARK: - FIFO processing
@@ -76,11 +94,20 @@ inline auto event_queue = events::EventQueue {32 * EVENTS_EVENT_SIZE};
 
 using filehandle_ptr = mbed::FileHandle *;
 
-inline filehandle_ptr filehandle = nullptr;
+namespace internal {
+
+	inline filehandle_ptr filehandle = nullptr;
+
+	inline void filehandle_low_level_write(const char *data, const size_t size)
+	{
+		internal::filehandle->write(data, size);
+	}
+
+}	// namespace internal
 
 [[maybe_unused]] inline void set_filehandle_pointer(filehandle_ptr fh)
 {
-	filehandle = fh;
+	internal::filehandle = fh;
 }
 
 inline void process_fifo()
@@ -88,7 +115,7 @@ inline void process_fifo()
 	while (!logger::buffer::fifo.empty()) {
 		auto c = char {};
 		logger::buffer::fifo.pop(c);
-		filehandle->write(&c, 1);
+		internal::filehandle->write(&c, 1);
 	}
 }
 
@@ -96,7 +123,11 @@ inline void process_fifo()
 // MARK: - Serial
 //
 
-inline auto default_serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
+namespace internal {
+
+	inline auto default_serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
+
+}	// namespace internal
 
 //
 // MARK: - Now
@@ -104,15 +135,16 @@ inline auto default_serial = mbed::BufferedSerial(USBTX, USBRX, 115200);
 
 using now_function_t = std::function<int64_t()>;   // LCOV_EXCL_LINE
 
-inline auto default_now_function() -> int64_t
-{
-	return rtos::Kernel::Clock::now().time_since_epoch().count();
-}
-inline now_function_t now = default_now_function;
+namespace internal {
+
+	inline auto default_now_function() -> int64_t { return rtos::Kernel::Clock::now().time_since_epoch().count(); }
+	inline now_function_t now = default_now_function;
+
+}	// namespace internal
 
 [[maybe_unused]] inline void set_now_function(const now_function_t &func)
 {
-	now = func;
+	internal::now = func;
 }
 
 //
@@ -121,17 +153,21 @@ inline now_function_t now = default_now_function;
 
 using sink_function_t = std::function<void(const char *, size_t)>;	 // LCOV_EXCL_LINE
 
-inline void default_sink_function(const char *str, [[maybe_unused]] size_t size)
-{
-	logger::buffer::fifo.push(str, size);
-	logger::event_queue.call(process_fifo);
-}
+// using sink_function_t = void(const char *, size_t);
 
-inline sink_function_t sink = default_sink_function;
+namespace internal {
+	inline void default_sink_function(const char *str, [[maybe_unused]] size_t size)
+	{
+		logger::buffer::fifo.push(str, size);
+		internal::event_queue.call(process_fifo);
+	}
+
+	inline sink_function_t sink = default_sink_function;
+}	// namespace internal
 
 [[maybe_unused]] inline void set_sink_function(const sink_function_t &func)
 {
-	logger::sink = func;
+	internal::sink = func;
 }
 
 //
@@ -185,17 +221,12 @@ auto format_output(const char *message = nullptr, Args... args) -> int
 // MARK: - Public functions
 //
 
-inline void init(filehandle_ptr fh			 = &logger::default_serial,
-				 const sink_function_t &sink = logger::default_sink_function)
+inline void init(filehandle_ptr fh			 = &internal::default_serial,
+				 const sink_function_t &sink = internal::default_sink_function)
 {
 	logger::set_filehandle_pointer(fh);
 	logger::set_sink_function(sink);
-	logger::start_event_queue();
-}
-
-inline void filehandle_low_level_write(const char *data, const size_t size)
-{
-	logger::filehandle->write(data, size);
+	internal::start_event_queue();
 }
 
 #else
@@ -224,49 +255,50 @@ inline void default_sink_function(...) {}	 // NOSONAR
 	// NOLINTNEXTLINE
 	#define log_debug(str, ...)                                                                                        \
 		do {                                                                                                           \
-			const std::lock_guard<rtos::Mutex> lock(leka::logger::mutex);                                              \
-			leka::logger::format_time_human_readable(leka::logger::now());                                             \
+			const std::lock_guard<rtos::Mutex> lock(leka::logger::internal::mutex);                                    \
+			leka::logger::format_time_human_readable(leka::logger::internal::now());                                   \
 			leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                         \
 			leka::logger::format_message(str, ##__VA_ARGS__);                                                          \
-			auto length = leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),         \
-													  leka::logger::level_lut.at(leka::logger::level::debug).data(),   \
-													  leka::logger::buffer::filename.data(),                           \
-													  leka::logger::buffer::message.data());                           \
-			leka::logger::sink(leka::logger::buffer::output.data(), length);                                           \
+			auto length = leka::logger::format_output(                                                                 \
+				"%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                                               \
+				leka::logger::level::lut.at(leka::logger::level::name::debug).data(),                                  \
+				leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());                          \
+			leka::logger::internal::sink(leka::logger::buffer::output.data(), length);                                 \
 		} while (0)
 
 	// NOLINTNEXTLINE
 	#define log_info(str, ...)                                                                                         \
 		do {                                                                                                           \
-			const std::lock_guard<rtos::Mutex> lock(leka::logger::mutex);                                              \
-			leka::logger::format_time_human_readable(leka::logger::now());                                             \
+			const std::lock_guard<rtos::Mutex> lock(leka::logger::internal::mutex);                                    \
+			leka::logger::format_time_human_readable(leka::logger::internal::now());                                   \
 			leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                         \
 			leka::logger::format_message(str, ##__VA_ARGS__);                                                          \
-			auto length = leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),         \
-													  leka::logger::level_lut.at(leka::logger::level::info).data(),    \
-													  leka::logger::buffer::filename.data(),                           \
-													  leka::logger::buffer::message.data());                           \
-			leka::logger::sink(leka::logger::buffer::output.data(), length);                                           \
+			auto length = leka::logger::format_output(                                                                 \
+				"%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                                               \
+				leka::logger::level::lut.at(leka::logger::level::name::info).data(),                                   \
+				leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());                          \
+			leka::logger::internal::sink(leka::logger::buffer::output.data(), length);                                 \
 		} while (0)
 
 	// NOLINTNEXTLINE
 	#define log_error(str, ...)                                                                                        \
 		do {                                                                                                           \
-			const std::lock_guard<rtos::Mutex> lock(leka::logger::mutex);                                              \
-			leka::logger::format_time_human_readable(leka::logger::now());                                             \
+			const std::lock_guard<rtos::Mutex> lock(leka::logger::internal::mutex);                                    \
+			leka::logger::format_time_human_readable(leka::logger::internal::now());                                   \
 			leka::logger::format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                         \
 			leka::logger::format_message(str, ##__VA_ARGS__);                                                          \
-			auto length = leka::logger::format_output("%s %s %s %s\n", leka::logger::buffer::timestamp.data(),         \
-													  leka::logger::level_lut.at(leka::logger::level::error).data(),   \
-													  leka::logger::buffer::filename.data(),                           \
-													  leka::logger::buffer::message.data());                           \
-			leka::logger::sink(leka::logger::buffer::output.data(), length);                                           \
+			auto length = leka::logger::format_output(                                                                 \
+				"%s %s %s %s\n", leka::logger::buffer::timestamp.data(),                                               \
+				leka::logger::level::lut.at(leka::logger::level::name::error).data(),                                  \
+				leka::logger::buffer::filename.data(), leka::logger::buffer::message.data());                          \
+			leka::logger::internal::sink(leka::logger::buffer::output.data(), length);                                 \
 		} while (0)
 
 	// NOLINTNEXTLINE
 	#define log_ll(data, size)                                                                                         \
 		do {                                                                                                           \
-			logger::filehandle_low_level_write(data, size);                                                            \
+			using namespace leka::logger;                                                                              \
+			logger::internal::filehandle_low_level_write(data, size);                                                  \
 		} while (0)
 
 #else	// not defined (ENABLE_LOG_DEBUG)
