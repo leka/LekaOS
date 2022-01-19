@@ -14,17 +14,18 @@ class CoreFatFs : public CoreFatFsBase
   public:
 	CoreFatFs() = default;	 // SDBlockDevice must be initialized and mounted before using CoreFatFs
 
-	FRESULT open(const char *path) final;
-	FRESULT close() final;
-	FRESULT read(void *buffer, uint32_t number_of_bytes_to_read, uint32_t *number_of_bytes_read) final;
-	FRESULT write(const void *buffer, uint32_t number_of_bytes_to_write, uint32_t *number_of_bytes_written) final;
-	FRESULT seek(uint32_t bytes_offset_from_top_of_file) final;
-	uint32_t getSize() final;
+	auto open(const char *path) -> FRESULT final;
+	auto close() -> FRESULT final;
+	auto read(void *buffer, uint32_t number_of_bytes_to_read, uint32_t *number_of_bytes_read) -> FRESULT final;
+	auto write(const void *buffer, uint32_t number_of_bytes_to_write, uint32_t *number_of_bytes_written)
+		-> FRESULT final;
+	auto seek(uint32_t byte_offset_from_top_of_file) -> FRESULT final;
+	auto getSize() -> uint32_t final;
 
-	FIL *getPointer() final;
+	auto getPointer() -> FIL * final;
 
   private:
-	FIL _file;
+	FIL _file;	 // TODO (@yann) - _file is not initialized - make it a pointer?
 };
 
 }	// namespace leka

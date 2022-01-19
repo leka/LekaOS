@@ -6,38 +6,40 @@
 
 namespace leka {
 
-FRESULT CoreFatFs::open(const char *path)
+auto CoreFatFs::open(const char *path) -> FRESULT
 {
-	// TODO: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0305r1.html
 	return f_open(&_file, path, FA_READ);
 }
 
-FRESULT CoreFatFs::close()
+auto CoreFatFs::close() -> FRESULT
 {
 	return f_close(&_file);
 }
 
-FRESULT CoreFatFs::read(void *buffer, uint32_t number_of_bytes_to_read, uint32_t *number_of_bytes_read)
+auto CoreFatFs::read(void *buffer, uint32_t number_of_bytes_to_read, uint32_t *number_of_bytes_read) -> FRESULT
 {
+	// ? NOLINTNEXTLINE - allow reinterpret_cast as there are no alternatives
 	return f_read(&_file, buffer, number_of_bytes_to_read, reinterpret_cast<UINT *>(number_of_bytes_read));
 }
 
-FRESULT CoreFatFs::write(const void *buffer, uint32_t number_of_bytes_to_write, uint32_t *number_of_bytes_written)
+auto CoreFatFs::write(const void *buffer, uint32_t number_of_bytes_to_write, uint32_t *number_of_bytes_written)
+	-> FRESULT
 {
+	// ? NOLINTNEXTLINE - allow reinterpret_cast as there are no alternatives
 	return f_write(&_file, buffer, number_of_bytes_to_write, reinterpret_cast<UINT *>(number_of_bytes_written));
 }
 
-FRESULT CoreFatFs::seek(uint32_t byte_offset_from_top_of_file)
+auto CoreFatFs::seek(uint32_t byte_offset_from_top_of_file) -> FRESULT
 {
 	return f_lseek(&_file, byte_offset_from_top_of_file);
 }
 
-uint32_t CoreFatFs::getSize()
+auto CoreFatFs::getSize() -> uint32_t
 {
 	return f_size(&_file);
 }
 
-FIL *CoreFatFs::getPointer()
+auto CoreFatFs::getPointer() -> FIL *
 {
 	return &_file;
 }
