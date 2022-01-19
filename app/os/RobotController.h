@@ -17,7 +17,7 @@ namespace leka {
 class RobotController : public interface::RobotController
 {
   public:
-	RobotController() { _thread.start({&_event_queue, &events::EventQueue::dispatch_forever}); };
+	RobotController() = default;
 
 	void wakeupSystem() final;
 	void fallAsleepSystem() final;
@@ -27,6 +27,8 @@ class RobotController : public interface::RobotController
 
 	template <typename T>
 	void raise();
+
+	void registerEvents();
 
   private:
 	boost::sml::sm<system::robot::StateMachine> _sm {static_cast<interface::RobotController &>(*this)};

@@ -26,24 +26,38 @@ void RobotController::fallAsleepSystem()
 	log_info("Fall asleep System.");
 }
 
+void RobotController::registerEvents()
+{
+	// Allow actions to be
+	_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
+
+	// Initializations
+	_leds_utils.initialize();
+	_leds_utils.initializationAnimation();
+
+	// Setup callbacks for each events
+	mbed::Ticker t_timeout;
+	t_timeout.attach({this, &RobotController::raise<sm::event::timeout>}, 20s);	  // OK
+
+	rtos::ThisThread::sleep_for(10s);
+
+	mbed::Ticker t_wakeup;
+	t_wakeup.attach({this, &RobotController::raise<sm::event::wakeup>}, 20s);	// OK
+
+	// Optional, only for objects that can vanished
+	while (true) {
+		rtos::ThisThread::sleep_for(1s);
+	}
+}
+
 void RobotController::onEntrySleeping()
 {
 	log_info("On Entry Sleeping.");
 
 	rtos::ThisThread::sleep_for(100ms);
 
-	// _sm.process_event(sm::event::wakeup {});
-
-	// raise<sm::event::wakeup>();
-
-	// auto lambda = [&]() { _sm.process_event(sm::event::wakeup {}); };
-	// lambda();
-
-	// auto lambda = [&]<typename T>(T event) { raise<T>(); };
-	// lambda(sm::event::wakeup {});
-
-	// mbed::Callback<void()> c {this, &RobotController::raise<sm::event::wakeup>};
-	// c.call();
+	// _leds_utils.runReinforcer(LedsReinforcer::green);									 // NOK
+	_event_queue.call(&_leds_utils, &LedsUtils::runReinforcer, LedsReinforcer::green);	 // OK
 }
 
 void RobotController::onEntryWaitingForCommands()
@@ -52,29 +66,5 @@ void RobotController::onEntryWaitingForCommands()
 
 	rtos::ThisThread::sleep_for(100ms);
 
-	// _sm.process_event(sm::event::timeout {});	// OK - Overflow
-
-	// raise<sm::event::timeout>();   // OK - Overflow
-
-	// _event_queue.call(this, &RobotController::raise<sm::event::timeout>);	// NOK - Hardfault
-
-	// const auto e = sm::event::timeout {};
-	// _event_queue.call(&_sm, &boost::sml::sm<StateMachine>::process_event<sm::event::timeout, 0>,
-	// 				  e);	// Compilation NOK
-
-	// mbed::Ticker t;
-	// t.attach({this, &RobotController::raise<sm::event::timeout>}, 100ms);	// NOK - Hardfault
-
-	// mbed::Callback<void()> c {this, &RobotController::raise<sm::event::timeout>};
-	// c.call();				// OK - Overflow
-	// _event_queue.call(c);	// NOK - Hardfault
-	// t.attach(c, 100ms);		// NOK - Hardfault
-
-	// auto lambda = [&]() { _sm.process_event(sm::event::timeout {}); };
-	// lambda();					 // OK - Overflow
-	// _event_queue.call(lambda);	 // NOK - Hardfault
-
-	// auto lambda = [&]<typename T>(T event) { raise<T>(); };
-	// lambda(sm::event::timeout {});						// OK - Overflow
-	// _event_queue.call(lambda, sm::event::timeout {});	// NOK - Hardfault
+	_event_queue.call(&_leds_utils, &LedsUtils::runReinforcer, LedsReinforcer::fire);	// OK
 }

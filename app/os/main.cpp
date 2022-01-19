@@ -28,6 +28,8 @@ auto main() -> int
 
 	auto rc = RobotController {};
 
+	rc.registerEvents();
+
 	while (true) {
 		log_debug("A message from your board %s --> \"%s\" at %ims", MBED_CONF_APP_TARGET_NAME, hello.world,
 				  int(rtos::Kernel::Clock::now().time_since_epoch().count()));
