@@ -3,12 +3,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <cmath>
+#include <deque>
 
 #include "PinNames.h"
 
-#include "drivers/BufferedSerial.h"
-#include "drivers/I2C.h"
-#include "platform/mbed_wait_api.h"
 #include "rtos/ThisThread.h"
 
 #include "HelloWorld.h"
@@ -48,20 +46,17 @@ class SMA
 };
 
 // RMS - Root Mean Square
-auto RMS(std::array<int, 10> &data, int newvalue) -> int
+auto RMS(std::deque<int> &data, int newvalue) -> int
 {
 	int square = 0;
 	float mean = 0;
 	float root = 0;
 
-	for (auto i: data) {
-		square += data.at(i) * data.at(i);
-		data.at(i) = data.at(i + 1);
+	data.push_back(newvalue);
+	for (auto value: data) {
+		square += value * value;
 	}
-
-	data.at(data.size() - 1) = newvalue;
-
-	square += newvalue * newvalue;
+	data.pop_front();
 
 	mean = static_cast<float>(square) / static_cast<float>(data.size());
 
@@ -83,7 +78,7 @@ auto main() -> int
 
 	// RMS vs SMA value (un/comment to test)
 	// static auto sma_filter = SMA<5> {};
-	auto rms_buffer = std::array<int, 10> {};
+	auto rms_buffer = std::deque<int> {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	LKCoreMicrophone microphone(MCU_MIC_INPUT);
 
@@ -95,12 +90,13 @@ auto main() -> int
 		}
 
 		// RMS vs SMA value (un/comment to test)
-		// auto output = sma_filter(rawValue)
+		// auto output = sma_filter(rawValue);
 		auto output = RMS(rms_buffer, rawValue);
 
 		// TODO (@john_doe): print floats
-		log_info("%d", output);
-
-		wait_us(250);
+		if (rawValue > 650) {
+			log_info("Peak: %d | Mean: %d", rawValue, output);
+			rtos::ThisThread::sleep_for(6ms);
+		}
 	}
 }
