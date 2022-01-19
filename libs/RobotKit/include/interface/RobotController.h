@@ -18,6 +18,7 @@ class RobotController
 	virtual void fallAsleepSystem() = 0;
 
 	virtual void onEntryWaitingForCommands() = 0;
+	virtual void onEntrySleeping()			 = 0;
 };
 
 }	// namespace leka::interface

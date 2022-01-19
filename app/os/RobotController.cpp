@@ -24,6 +24,11 @@ void RobotController::wakeupSystem()
 void RobotController::fallAsleepSystem()
 {
 	log_info("Fall asleep System.");
+}
+
+void RobotController::onEntrySleeping()
+{
+	log_info("On Entry Sleeping.");
 
 	rtos::ThisThread::sleep_for(100ms);
 

@@ -22,6 +22,7 @@ class RobotController : public interface::RobotController
 	void fallAsleepSystem() final;
 
 	void onEntryWaitingForCommands() final;
+	void onEntrySleeping() final;
 
 	template <typename T>
 	void raise();
