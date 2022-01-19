@@ -1,36 +1,20 @@
 
 #include "RobotController.h"
 
+#include "rtos/ThisThread.h"
+
 #include "LogKit.h"
+#include "Ticker.h"
 
 using namespace leka;
 using namespace std::chrono_literals;
 using namespace system::robot;
 
-void nothing()
+template <typename T>
+void RobotController::raise()
 {
-	log_info("Hello!");
-	return;
+	_sm.process_event(T {});
 }
-
-// RobotController::RobotController()
-// {
-// 	// a = {this, &RobotController::process<sm::event::timeout>};
-// }
-
-void RobotController::start()
-{
-	t.start({&eq, &events::EventQueue::dispatch_forever});
-
-	// eq.call_in(5s, this, &RobotController::processTimeout);
-}
-
-// void RobotController::setCallbacks()
-// {
-// 	// auto low_battery_callback = [&]() { _sm.process_event(sm::event::timeout {}); };
-
-// 	// battery.setLowBatteryCallback(low_battery_callback);
-// }
 
 void RobotController::wakeupSystem()
 {
@@ -41,80 +25,51 @@ void RobotController::fallAsleepSystem()
 {
 	log_info("Fall asleep System.");
 
-	// auto lambda = [&]<typename eventToProcess>(eventToProcess event) { _sm.process_event(event); };
+	rtos::ThisThread::sleep_for(100ms);
 
-	// timeout.attach({this, &RobotController::processEventTimeout}, 5s);
-	// timeout.attach({lambda, sm::event::wakeup {}}, 1s);
-}
+	// _sm.process_event(sm::event::wakeup {});
 
-// template <typename eventToProcess>
-// void processEvent(boost::sml::sm<StateMachine> sm, eventToProcess event)
-// {
-// 	sm.process_event(event);
-// }
+	// raise<sm::event::wakeup>();
 
-// void RobotController::processTimeout()
-// {
-// 	_sm.process_event(sm::event::timeout {});
-// }
+	// auto lambda = [&]() { _sm.process_event(sm::event::wakeup {}); };
+	// lambda();
 
-// void RobotController::process(sm::event::timeout e)
-// {
-// 	_sm.process_event(e);
-// }
+	// auto lambda = [&]<typename T>(T event) { raise<T>(); };
+	// lambda(sm::event::wakeup {});
 
-template <typename T>
-void RobotController::process()
-{
-	_sm.process_event(T {});
+	// mbed::Callback<void()> c {this, &RobotController::raise<sm::event::wakeup>};
+	// c.call();
 }
 
 void RobotController::onEntryWaitingForCommands()
 {
 	log_info("On Entry Waiting For Commands.");
 
-	// timeout.registerCallback(&nothing);
-	// log_info("Registered.");
+	rtos::ThisThread::sleep_for(100ms);
 
-	// auto event = boost::sml::event<sm::event::timeout>;
+	// _sm.process_event(sm::event::timeout {});	// OK - Overflow
 
-	// _lambda = [&]<typename eventToProcess>(eventToProcess event) { _sm.process_event(event); };
+	// raise<sm::event::timeout>();   // OK - Overflow
 
-	// _lambda(sm::event::timeout {});
-	// _lambda()
-	// processEvent(sm::event::timeout {});
+	// _event_queue.call(this, &RobotController::raise<sm::event::timeout>);	// NOK - Hardfault
 
-	// mbed::Callback<void()> a {nothing};
-	// mbed::Callback<void()> b {this, &RobotController::processTimeout};
-	// mbed::Callback<RobotController> c {&RobotController::process, sm::event::timeout {}};
+	// const auto e = sm::event::timeout {};
+	// _event_queue.call(&_sm, &boost::sml::sm<StateMachine>::process_event<sm::event::timeout, 0>,
+	// 				  e);	// Compilation NOK
 
-	// timeout.attach({this, &RobotController::processEventTimeout}, 5s);
-	// timeout.attach({this, &processEvent, sm::event::timeout {}}, 5s);
-	// timeout.attach(b, 5s);
+	// mbed::Ticker t;
+	// t.attach({this, &RobotController::raise<sm::event::timeout>}, 100ms);	// NOK - Hardfault
 
-	// auto lambda = [&]<typename eventToProcess>(eventToProcess event) { _sm.process_event(event); };
+	// mbed::Callback<void()> c {this, &RobotController::raise<sm::event::timeout>};
+	// c.call();				// OK - Overflow
+	// _event_queue.call(c);	// NOK - Hardfault
+	// t.attach(c, 100ms);		// NOK - Hardfault
 
-	// auto now = timeout.scheduled_time();
+	// auto lambda = [&]() { _sm.process_event(sm::event::timeout {}); };
+	// lambda();					 // OK - Overflow
+	// _event_queue.call(lambda);	 // NOK - Hardfault
 
-	// timeout.attach_absolute(lambda, now + 5s);
-
-	// process<sm::event::timeout>();
-
-	// auto aaa = boost::sml::event<system::robot::sm::event::timeout>;
-
-	// a = {this, &RobotController::process<sm::event::timeout>};
-	// a();
-	// process<sm::event::timeout>();
-	// timeout.attach({this, &RobotController::process<sm::event::timeout>}, 5s);
-	// auto l = [&]() { processTimeout(); };
-	// timeout.attach(mbed::callback(this, &RobotController::processTimeout), 5s);
-
-	// timeout.attach({nothing}, 3000ms);
-	// timeout.attach(mbed::callback(this, &RobotController::processTimeout), 5s);
-	// timeout.attach({nothing}, 4s);
-
-	// eq.call_in(5s, this, &RobotController::processTimeout);
-	// eq.call_in(5s, this, &RobotController::process<sm::event::timeout>);
-	eq.call_in(5s, nothing);
-	// _sm.process_event(sm::event::timeout {});
+	// auto lambda = [&]<typename T>(T event) { raise<T>(); };
+	// lambda(sm::event::timeout {});						// OK - Overflow
+	// _event_queue.call(lambda, sm::event::timeout {});	// NOK - Hardfault
 }

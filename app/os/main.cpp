@@ -12,8 +12,6 @@
 using namespace leka;
 using namespace std::chrono;
 
-auto rc = RobotController {};
-
 auto main() -> int
 {
 	logger::init();
@@ -28,7 +26,7 @@ auto main() -> int
 	auto hello = HelloWorld();
 	hello.start();
 
-	rc.start();
+	auto rc = RobotController {};
 
 	while (true) {
 		log_debug("A message from your board %s --> \"%s\" at %ims", MBED_CONF_APP_TARGET_NAME, hello.world,
