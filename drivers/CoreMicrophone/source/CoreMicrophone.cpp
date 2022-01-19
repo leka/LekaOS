@@ -2,7 +2,7 @@
 
 namespace leka {
 
-float CoreMicrophone::readVolume(void)
+auto CoreMicrophone::readVolume() -> float
 {
 	return _pin.read();
 }

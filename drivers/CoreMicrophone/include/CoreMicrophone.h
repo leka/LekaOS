@@ -14,7 +14,7 @@ class CoreMicrophone
   public:
 	explicit CoreMicrophone(PinName pin) : _pin {mbed::AnalogIn(pin)} {};
 
-	float readVolume(void);
+	auto readVolume() -> float;
 
   private:
 	mbed::AnalogIn _pin;
