@@ -2,27 +2,31 @@
 
 namespace leka {
 
-float CoreLightSensor::readRawValue(void)
+auto CoreLightSensor::readRawValue() -> float
 {
 	return _pin.read();
 }
 
-float CoreLightSensor::readLuminosity(void)
+auto CoreLightSensor::readLuminosity() -> float
 {
-	return (1.0 - readRawValue());
+	return static_cast<float>(1.0 - readRawValue());
 }
 
-CoreLightSensor::LuminosityLevel CoreLightSensor::getLuminosityLevel()
+auto CoreLightSensor::CoreLightSensor::getLuminosityLevel() -> LuminosityLevel
 {
 	auto luminosity = readLuminosity();
 
-	if (luminosity <= 0.25f) {
+	constexpr auto luminosity_dark_value	= float {0.25};
+	constexpr auto luminosity_shadow_value	= float {0.50};
+	constexpr auto luminosity_ambient_value = float {0.75};
+
+	if (luminosity <= luminosity_dark_value) {
 		return LuminosityLevel::dark;
 	}
-	if (luminosity <= 0.50f) {
+	if (luminosity <= luminosity_shadow_value) {
 		return LuminosityLevel::shadow;
 	}
-	if (luminosity <= 0.75f) {
+	if (luminosity <= luminosity_ambient_value) {
 		return LuminosityLevel::ambient;
 	}
 
