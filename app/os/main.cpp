@@ -18,15 +18,17 @@ auto main() -> int
 {
 	logger::init();
 
-	rtos::ThisThread::sleep_for(1s);
+	// rtos::ThisThread::sleep_for(1s);
 
 	log_info("\n\n");
 	log_info("Hello, LekaOS!\n");
 
-	rtos::ThisThread::sleep_for(2s);
+	// rtos::ThisThread::sleep_for(2s);
 
 	auto hello = HelloWorld();
 	hello.start();
+
+	rc.start();
 
 	while (true) {
 		log_debug("A message from your board %s --> \"%s\" at %ims", MBED_CONF_APP_TARGET_NAME, hello.world,
