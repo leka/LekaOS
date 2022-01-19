@@ -11,23 +11,23 @@
 
 namespace leka {
 
-// TODO (@ladislas) - move the bd and fs part to FileSystemKit
+// TODO (@yann) - move the bd and fs part to FileSystemKit
 class FileManager
 {
   public:
 	FileManager();
 
-	bool open(const char *filename);
-	bool close();
-	bool write(const char *data, const uint32_t size);
-	uint32_t getFileSize();
+	auto open(const char *filename) -> bool;
+	auto close() -> bool;
+	auto write(const char *data, uint32_t size) -> bool;
+	auto getFileSize() -> uint32_t;
 
 	void testWorkingToRemove();
 
   private:
 	SDBlockDevice _bd;
 	FATFileSystem _fs;
-	FIL _file;
+	FIL _file;	 // TODO (@yann) - _file is not initialized - make it a pointer?
 };
 
 }	// namespace leka
