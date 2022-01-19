@@ -22,12 +22,12 @@ class CoreLightSensor
 
 	explicit CoreLightSensor(PinName pin) : _pin {mbed::AnalogIn(pin)} {};
 
-	float readLuminosity(void);
+	auto readLuminosity() -> float;
 
-	LuminosityLevel getLuminosityLevel();
+	auto getLuminosityLevel() -> LuminosityLevel;
 
   private:
-	float readRawValue(void);
+	auto readRawValue() -> float;
 
 	mbed::AnalogIn _pin;
 };
