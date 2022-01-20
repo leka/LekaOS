@@ -7,7 +7,7 @@
 #include "mbed_application.h"
 #include "mbedtls/platform.h"
 
-#include "drivers/DigitalIn.h"
+#include "drivers/InterruptIn.h"
 #include "rtos/ThisThread.h"
 
 #include "CoreBattery.h"
@@ -19,7 +19,7 @@ using namespace leka;
 
 constexpr auto default_address = uint32_t {0x8040000 + 0x1000};	  // Start application address + header
 
-static auto charge_status_input = mbed::DigitalIn {PinName::BATTERY_CHARGE_STATUS};
+static auto charge_status_input = mbed::InterruptIn {PinName::BATTERY_CHARGE_STATUS};
 static auto battery				= leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_status_input};
 
 auto main() -> int

@@ -6,7 +6,7 @@
 #define _LEKA_OS_DRIVER_CORE_BATTERY_H_
 
 #include "drivers/AnalogIn.h"
-#include "drivers/interfaces/InterfaceDigitalIn.h"
+#include "drivers/InterruptIn.h"
 
 #include "interface/drivers/Battery.h"
 
@@ -15,7 +15,7 @@ namespace leka {
 class CoreBattery : public interface::Battery
 {
   public:
-	explicit CoreBattery(PinName voltage_pin, mbed::interface::DigitalIn &charge_status_input)
+	explicit CoreBattery(PinName voltage_pin, mbed::InterruptIn &charge_status_input)
 		: _voltage_pin {mbed::AnalogIn(voltage_pin, analog_voltage_reference)},
 		  _charge_status_input(charge_status_input) {};
 
@@ -45,7 +45,7 @@ class CoreBattery : public interface::Battery
 	[[nodiscard]] auto convertToRealVoltage(float value) const -> float;
 
 	mbed::AnalogIn _voltage_pin;
-	mbed::interface::DigitalIn &_charge_status_input;
+	mbed::InterruptIn &_charge_status_input;
 };
 
 }	// namespace leka

@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "drivers/BufferedSerial.h"
-#include "drivers/DigitalIn.h"
+#include "drivers/InterruptIn.h"
 #include "rtos/ThisThread.h"
 
 #include "CoreBattery.h"
@@ -17,8 +17,8 @@ auto main() -> int
 {
 	logger::init();
 
-	auto charge_input = mbed::DigitalIn {PinName::BATTERY_CHARGE_STATUS};
-	auto corebattery  = leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_input};
+	auto charge_input  = mbed::InterruptIn {PinName::BATTERY_CHARGE_STATUS};
+	auto corebattery   = leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_input};
 
 	log_info("Hello, World!\n\n");
 

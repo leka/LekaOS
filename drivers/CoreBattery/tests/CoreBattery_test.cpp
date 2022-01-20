@@ -5,12 +5,10 @@
 #include "CoreBattery.h"
 
 #include "gtest/gtest.h"
-#include "mocks/mbed/DigitalIn.h"
 #include "stubs/mbed/AnalogIn.h"
+#include "stubs/mbed/InterruptIn.h"
 
 using namespace leka;
-
-using ::testing::Return;
 
 class CoreBatteryTest : public ::testing::Test
 {
@@ -20,7 +18,7 @@ class CoreBatteryTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	mbed::mock::DigitalIn charge_input = {};
+	mbed::InterruptIn charge_input = {NC};
 
 	CoreBattery battery;
 };
@@ -108,14 +106,14 @@ TEST_F(CoreBatteryTest, voltageBelowEmpty)
 
 TEST_F(CoreBatteryTest, isCharging)
 {
-	EXPECT_CALL(charge_input, read).WillOnce(Return(1));
+	spy_InterruptIn_setValue(1);
 
 	ASSERT_TRUE(battery.isCharging());
 }
 
 TEST_F(CoreBatteryTest, isNotCharging)
 {
-	EXPECT_CALL(charge_input, read).WillOnce(Return(0));
+	spy_InterruptIn_setValue(0);
 
 	ASSERT_FALSE(battery.isCharging());
 }
