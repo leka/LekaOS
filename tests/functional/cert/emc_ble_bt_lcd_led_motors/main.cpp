@@ -9,6 +9,8 @@
 #define USE_BLE		  1
 #define USE_BLUETOOTH 1
 
+#include "LogKit.h"
+
 #if USE_BLUETOOTH
 	#define USE_BLUETOOTH_AS_SERIAL 1
 #endif
@@ -29,8 +31,10 @@ AnalogOut audio_output(MCU_SOUND_OUT);
 #endif
 
 #if USE_SD
-	#include "FileManager.h"
-leka::FileManager sd_card;
+	#include "FATFileSystem.h"
+	#include "SDBlockDevice.h"
+auto sd_bd = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
+auto fatfs = FATFileSystem {"fs"};
 #endif
 
 #if USE_LEDS
@@ -57,15 +61,15 @@ Touch leka_touch;
 
 #if USE_MOTORS
 	#include "MotorsUtils.h"
+	#include "CorePwm.h"
 Thread thread_motors;
 #endif
 
 #if USE_RFID
 	#include "RFIDUtils.h"
-char buff_rfid[40] {};
+auto rfid_buffer = std::array<char, 40> {};
 #endif
 
-#include "CorePwm.h"
 #include "WatchdogUtils.h"
 
 using namespace leka;
@@ -74,13 +78,12 @@ Thread thread_watchdog;
 
 AnalogIn batteries_level(BATTERY_VOLTAGE);
 
-static BufferedSerial serial(USBTX, USBRX, 9600);
-
-constexpr uint8_t buff_size = 128;
-char buff[buff_size] {};
+constexpr auto serial_buffer_size = uint8_t {128};
+auto serial_buffer				  = std::array<char, serial_buffer_size> {};
 
 Watchdog &watchdog = Watchdog::get_instance();
 
+#if USE_BLUETOOTH
 void pairBluetooth()
 {
 	while (!leka_bluetooth.isPaired()) {
@@ -88,10 +91,25 @@ void pairBluetooth()
 		rtos::ThisThread::sleep_for(1s);
 	}
 }
+#endif
 
-int main(void)
+#if USE_SD
+void initializeSD()
 {
-	printf("\nHello, Investigation Day!\n\n");
+	constexpr auto default_sd_bd_frequency = uint64_t {25'000'000};
+
+	sd_bd.init();
+	sd_bd.frequency(default_sd_bd_frequency);
+
+	fatfs.mount(&sd_bd);
+}
+#endif
+
+auto main() -> int
+{
+	logger::init();
+
+	log_info("Hello, Investigation Day!\n");
 
 	auto start	  = Kernel::Clock::now();
 	auto duration = Kernel::Clock::now() - start;
@@ -130,6 +148,10 @@ int main(void)
 	thread_led.start(led_thread);
 #endif
 
+#if USE_SD
+	initializeSD();
+#endif
+
 #if USE_HAPTIC and USE_SD
 	audio_pause_duration = 20s;
 	thread_audio.start(callback(playSoundPeriodically, &audio_output));
@@ -149,34 +171,35 @@ int main(void)
 	rtos::ThisThread::sleep_for(10s);
 	while (true) {
 		duration   = Kernel::Clock::now() - start;
-		int length = sprintf(buff, "Leka is still alive after: %2i:%2i:%2i\nBattery at 0x%X\n\n",
-							 int(std::chrono::duration_cast<std::chrono::hours>(duration).count()),
-							 int(std::chrono::duration_cast<std::chrono::minutes>(duration).count()) % 60,
-							 int(std::chrono::duration_cast<std::chrono::seconds>(duration).count()) % 60,
-							 batteries_level.read_u16());
+		int length = snprintf(
+			serial_buffer.data(), serial_buffer_size, "Leka is still alive after: %2i:%2i:%2i\nBattery at 0x%X\n",
+			int(std::chrono::duration_cast<std::chrono::hours>(duration).count()),
+			int(std::chrono::duration_cast<std::chrono::minutes>(duration).count()) % 60,
+			int(std::chrono::duration_cast<std::chrono::seconds>(duration).count()) % 60, batteries_level.read_u16());
 #if USE_BLUETOOTH_AS_SERIAL
-		leka_bluetooth.sendMessage(buff, length);
+		leka_bluetooth.sendMessage(serial_buffer.data(), length);
 #else
-		serial.write(buff, length);
+		log_info(serial_buffer.data());
 #endif
 
 #if USE_TOUCH
-		length = sprintf(buff, "Touch value: %x | LF(+1) LB(+2) RB(+4) RF(+8) LE(+10) RE(+20)\n",
-						 leka_touch.updateSensorsStatus());
+		length = snprintf(serial_buffer.data(), serial_buffer_size,
+						  "Touch value: %x | LF(+1) LB(+2) RB(+4) RF(+8) LE(+10) RE(+20)\n",
+						  leka_touch.updateSensorsStatus());
 	#if USE_BLUETOOTH_AS_SERIAL
-		leka_bluetooth.sendMessage(buff, length);
+		leka_bluetooth.sendMessage(serial_buffer.data(), length);
 	#else
-		serial.write(buff, length);
+		log_info(serial_buffer.data());
 	#endif
 #endif
 
 #if USE_RFID
-		getRfid(buff_rfid);
-		length = snprintf(buff, buff_size, "RFID response is %s\n\n", buff_rfid);
+		getRfid(rfid_buffer.data());
+		length = snprintf(serial_buffer.data(), serial_buffer_size, "RFID response is %s\n", rfid_buffer.data());
 	#if USE_BLUETOOTH_AS_SERIAL
-		leka_bluetooth.sendMessage(buff, length);
+		leka_bluetooth.sendMessage(serial_buffer.data(), length);
 	#else
-		serial.write(buff, length);
+		log_info(serial_buffer.data());
 	#endif
 #endif
 

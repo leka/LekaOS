@@ -7,11 +7,13 @@
 
 #include "mbed.h"
 
+#include "LogKit.h"
+
 void watchdog_thread()
 {
 	while (true) {
 		Watchdog::get_instance().kick();
-		printf("Watchdog has been kicked\n");
+		log_info("Watchdog has been kicked");
 		rtos::ThisThread::sleep_for(4000ms);
 	}
 }
