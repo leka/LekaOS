@@ -9,8 +9,8 @@
 
 #include "rtos/ThisThread.h"
 
+#include "CoreMicrophone.h"
 #include "HelloWorld.h"
-#include "LKCoreMicrophone.h"
 #include "LogKit.h"
 
 using namespace leka;
@@ -80,7 +80,7 @@ auto main() -> int
 	// static auto sma_filter = SMA<5> {};
 	auto rms_buffer = std::deque<int> {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-	LKCoreMicrophone microphone(MCU_MIC_INPUT);
+	CoreMicrophone microphone(MCU_MIC_INPUT);
 
 	while (true) {
 		auto rawValue = static_cast<int>(1000 * microphone.readVolume());

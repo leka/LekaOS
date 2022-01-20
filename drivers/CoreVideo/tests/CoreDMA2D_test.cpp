@@ -6,7 +6,7 @@
 
 #include "gtest/gtest.h"
 #include "internal/corevideo_config.h"
-#include "mocks/leka/LKCoreSTM32Hal.h"
+#include "mocks/leka/CoreSTM32Hal.h"
 
 using namespace leka;
 using ::testing::_;
@@ -21,7 +21,7 @@ class CoreDMA2DTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	LKCoreSTM32HalMock hal;
+	CoreSTM32HalMock hal;
 	CoreDMA2D dma2d;
 };
 

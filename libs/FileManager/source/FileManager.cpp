@@ -4,19 +4,26 @@
 
 #include "FileManager.h"
 
+#include "LogKit.h"
+
 namespace leka {
+
+namespace {
+	constexpr auto default_bd_frequency = uint64_t {25'000'000};
+}
 
 using namespace mbed;
 
+// TODO (@yann) - _file is not initialized - make it a pointer?
 FileManager::FileManager() : _bd(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK), _fs("fs")
 {
 	_bd.init();
-	_bd.frequency(25'000'000);
+	_bd.frequency(default_bd_frequency);
 
 	_fs.mount(&_bd);
 }
 
-bool FileManager::open(const char *filename)
+auto FileManager::open(const char *filename) -> bool
 {
 	bool file_opened = false;
 
@@ -27,7 +34,7 @@ bool FileManager::open(const char *filename)
 	return file_opened;
 }
 
-bool FileManager::close()
+auto FileManager::close() -> bool
 {
 	bool file_closed = false;
 
@@ -38,16 +45,12 @@ bool FileManager::close()
 	return file_closed;
 }
 
-bool FileManager::write(const char *data, const uint32_t size)
+auto FileManager::write(const char *data, const uint32_t size) -> bool
 {
-	UINT uint_size = static_cast<UINT>(size);
-	if (f_write(&_file, data, uint_size, nullptr) == FR_OK) {
-		return true;
-	}
-	return false;
+	return f_write(&_file, data, static_cast<UINT>(size), nullptr) == FR_OK;
 }
 
-uint32_t FileManager::getFileSize()
+auto FileManager::getFileSize() -> uint32_t
 {
 	uint32_t file_size = 0;
 
@@ -58,22 +61,22 @@ uint32_t FileManager::getFileSize()
 	return file_size;
 }
 
+// TODO (@yann) - remove if not needed + remove include LogKit
 void FileManager::testWorkingToRemove()
 {
 	DIR *dir = opendir("/fs");
 
 	if (dir != nullptr) {
 		struct dirent *p;
-		printf("At root of SD card:\n");
+		log_debug("At root of SD card:");
 		while ((p = readdir(dir)) != nullptr) {
-			printf(" - %s\n", p->d_name);
+			log_debug("\t- %s", p->d_name);
 		}
 	} else {
-		printf("Could not open directory!\n");
+		log_error("Could not open directory!");
 	}
-	closedir(dir);
 
-	return;
+	closedir(dir);
 }
 
 }	// namespace leka

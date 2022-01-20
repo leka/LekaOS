@@ -11,20 +11,20 @@
 #include "BouncingSquare.h"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
+#include "CoreFatFs.h"
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreJPEG.hpp"
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
+#include "CoreLL.h"
 #include "CoreLTDC.hpp"
 #include "CoreSDRAM.hpp"
+#include "CoreSTM32Hal.h"
 #include "CoreVideo.hpp"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LKAnimationKit.h"
-#include "LKCoreFatFs.h"
-#include "LKCoreLL.h"
-#include "LKCoreSTM32Hal.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 
@@ -35,11 +35,11 @@ HelloWorld hello;
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
-LKCoreFatFs corefatfs;
+CoreFatFs corefatfs;
 
-LKCoreLL corell;
+CoreLL corell;
 CGPixel pixel(corell);
-LKCoreSTM32Hal hal;
+CoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);
 CoreDMA2D coredma2d(hal);
 CoreDSI coredsi(hal);

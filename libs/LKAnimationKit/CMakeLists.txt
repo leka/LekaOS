@@ -17,8 +17,8 @@ target_sources(LKAnimationKit
 )
 
 target_link_libraries(LKAnimationKit
-	LKCoreLL
-	LKCoreSTM32Hal
+	CoreLL
+	CoreSTM32Hal
 	CoreVideo
 )
 

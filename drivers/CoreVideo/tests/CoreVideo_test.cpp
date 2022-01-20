@@ -13,7 +13,7 @@
 #include "mocks/leka/CoreLCD.h"
 #include "mocks/leka/CoreLTDC.h"
 #include "mocks/leka/CoreSDRAM.h"
-#include "mocks/leka/LKCoreSTM32Hal.h"
+#include "mocks/leka/CoreSTM32Hal.h"
 
 using namespace leka;
 using ::testing::_;
@@ -30,7 +30,7 @@ class CoreVideoTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	LKCoreSTM32HalMock halmock;
+	CoreSTM32HalMock halmock;
 	CoreSDRAMMock sdrammock;
 	CoreDMA2DMock dma2dmock;
 	CoreDSIMock dsimock;

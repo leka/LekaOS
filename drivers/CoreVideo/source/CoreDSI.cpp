@@ -12,7 +12,7 @@ using namespace std::chrono;
 
 namespace leka {
 
-CoreDSI::CoreDSI(LKCoreSTM32HalBase &hal) : _hal(hal)
+CoreDSI::CoreDSI(CoreSTM32HalBase &hal) : _hal(hal)
 {
 	// Base address of DSI Host/Wrapper registers to be set before calling De-Init
 	_hdsi.Instance = DSI;
