@@ -17,7 +17,10 @@ target_name=$target
 		echo "$target not deleted nor new, running diff"
 
 		if ! diff_map_output=$(diff --unified=150 $BASE_DIR/$target_name-map.txt $HEAD_DIR/$target_name-map.txt); then
-			diff_size_output=$(diff --unified=150 $BASE_DIR/$target_name-code_size.txt $HEAD_DIR/$target_name-code_size.txt)
+
+			if ! diff_size_output=$(diff --unified=150 $BASE_DIR/$target_name-code_size.txt $HEAD_DIR/$target_name-code_size.txt); then
+				diff_size_output=$(cat $HEAD_DIR/$target_name-code_size.txt)
+			fi
 
 			echo $diff_map_output
 			echo $diff_size_output
