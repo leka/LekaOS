@@ -14,11 +14,11 @@ target_include_directories(RobotKit
 target_sources(RobotKit
 	PRIVATE
 		source/StateMachine.cpp
+		source/RobotController.cpp
 )
 
 target_link_libraries(RobotKit
 	PRIVATE
-
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
