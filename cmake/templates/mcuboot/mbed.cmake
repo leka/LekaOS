@@ -27,12 +27,7 @@ target_compile_definitions(bootutil
 
 target_include_directories(bootutil
 	PUBLIC
-		./
 		include
-		include/flash_map_backend
-		include/mcuboot_config
-		include/os
-		include/sysflash
 )
 
 target_sources(bootutil
