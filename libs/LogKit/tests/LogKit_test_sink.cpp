@@ -15,7 +15,7 @@ class LogKitSinkTest : public ::testing::Test
 {
   protected:
 	// void SetUp() override {}
-	void TearDown() override { logger::set_sink_function(logger::default_sink_function); }
+	void TearDown() override { logger::set_sink_function(logger::internal::default_sink_function); }
 };
 
 TEST_F(LogKitSinkTest, useDefaultSinkFunction)

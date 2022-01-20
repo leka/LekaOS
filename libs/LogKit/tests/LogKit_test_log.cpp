@@ -23,7 +23,7 @@ class LogKitTest : public ::testing::Test
 		logger::set_sink_function(spy_sink_function);
 	}
 
-	void TearDown() override { logger::set_sink_function(logger::default_sink_function); }
+	void TearDown() override { logger::set_sink_function(logger::internal::default_sink_function); }
 
 	static void spy_sink_function(const char *str, size_t size)
 	{

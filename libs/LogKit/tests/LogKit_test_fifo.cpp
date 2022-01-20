@@ -27,7 +27,7 @@ class LogKitFifoTest : public ::testing::Test
 
 	void TearDown() override
 	{
-		logger::set_sink_function(logger::default_sink_function);
+		logger::set_sink_function(logger::internal::default_sink_function);
 		logger::set_filehandle_pointer(nullptr);
 	}
 
