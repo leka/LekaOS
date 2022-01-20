@@ -8,18 +8,20 @@
 #include "drivers/AnalogIn.h"
 #include "drivers/interfaces/InterfaceDigitalIn.h"
 
+#include "interface/drivers/Battery.h"
+
 namespace leka {
 
-class CoreBattery
+class CoreBattery : public interface::Battery
 {
   public:
 	explicit CoreBattery(PinName voltage_pin, mbed::interface::DigitalIn &charge_status_input)
 		: _voltage_pin {mbed::AnalogIn(voltage_pin, analog_voltage_reference)},
 		  _charge_status_input(charge_status_input) {};
 
-	auto voltage() -> float;
-	auto level() -> uint8_t;
-	auto isCharging() -> bool;
+	auto voltage() -> float final;
+	auto level() -> uint8_t final;
+	auto isCharging() -> bool final;
 
 	struct Capacity {
 		static constexpr auto full			= float {12.00};
