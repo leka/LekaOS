@@ -25,6 +25,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
 		tests/StateMachine_test.cpp
+		tests/RobotController_test.cpp
 	)
 
 endif()
