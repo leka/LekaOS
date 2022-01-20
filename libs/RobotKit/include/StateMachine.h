@@ -12,6 +12,8 @@ namespace leka::system::robot {
 
 namespace sm::event {
 
+	struct setup_complete {
+	};
 	struct start {
 	};
 	struct timeout {
@@ -21,6 +23,7 @@ namespace sm::event {
 
 namespace sm::state {
 
+	inline auto setup	= boost::sml::state<class setup>;
 	inline auto idle	= boost::sml::state<class idle>;
 	inline auto running = boost::sml::state<class running>;
 
@@ -36,8 +39,9 @@ struct StateMachine {
 
 		return make_transition_table(
 			// clang-format off
-			 * sm::state::idle    + event<sm::event::start>   / action_start_system = sm::state::running
-			,  sm::state::running + event<sm::event::timeout> / action_stop_system  = sm::state::idle
+			 * sm::state::setup   + event<sm::event::setup_complete>                       = sm::state::idle
+			, sm::state::idle     + event<sm::event::start>          / action_start_system = sm::state::running
+			, sm::state::running  + event<sm::event::timeout>        / action_stop_system  = sm::state::idle
 			// clang-format on
 		);
 	}
