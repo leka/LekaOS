@@ -4,6 +4,8 @@
 
 #include "CoreBattery.h"
 
+#include "MathUtils.h"
+
 namespace leka {
 
 auto CoreBattery::voltage() -> float
@@ -34,6 +36,29 @@ auto CoreBattery::convertToRealVoltage(float value) const -> float
 {
 	return PolynomialCoefficient::degree_0 + PolynomialCoefficient::degree_1 * value +
 		   PolynomialCoefficient::degree_2 * value * value;
+}
+
+auto CoreBattery::level() -> uint8_t
+{
+	using namespace utils::math;
+
+	auto level = uint8_t {0};
+
+	if (auto value = voltage(); value < Capacity::empty) {
+		level = 0;
+	} else if (value < Capacity::quarter) {
+		level = map(value, Capacity::empty, Capacity::quarter, uint8_t {0}, uint8_t {25});
+	} else if (value < Capacity::half) {
+		level = 25 + map(value, Capacity::quarter, Capacity::half, uint8_t {0}, uint8_t {25});
+	} else if (value < Capacity::three_quarter) {
+		level = 50 + map(value, Capacity::half, Capacity::three_quarter, uint8_t {0}, uint8_t {25});
+	} else if (value < Capacity::full) {
+		level = 75 + map(value, Capacity::three_quarter, Capacity::full, uint8_t {0}, uint8_t {25});
+	} else {
+		level = 100;
+	}
+
+	return level;
 }
 
 auto CoreBattery::isCharging() -> bool

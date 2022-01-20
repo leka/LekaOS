@@ -1,5 +1,5 @@
 // Leka - LekaOS
-// Copyright 2021 APF France handicap
+// Copyright 2021-2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
 #ifndef _LEKA_OS_DRIVER_CORE_BATTERY_H_
@@ -18,6 +18,7 @@ class CoreBattery
 		  _charge_status_input(charge_status_input) {};
 
 	auto voltage() -> float;
+	auto level() -> uint8_t;
 	auto isCharging() -> bool;
 
 	struct Capacity {
