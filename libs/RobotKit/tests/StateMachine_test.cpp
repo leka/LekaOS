@@ -33,8 +33,18 @@ TEST_F(StateMachineTest, initialization)
 
 TEST_F(StateMachineTest, initialState)
 {
-	EXPECT_TRUE(sm.is(lksm::state::idle));
+	EXPECT_TRUE(sm.is(lksm::state::setup));
+	EXPECT_FALSE(sm.is(lksm::state::idle));
 	EXPECT_FALSE(sm.is(lksm::state::running));
+}
+
+TEST_F(StateMachineTest, stateSetupEventSetupComplete)
+{
+	sm.set_current_states(lksm::state::setup);
+
+	sm.process_event(lksm::event::setup_complete {});
+
+	EXPECT_TRUE(sm.is(lksm::state::idle));
 }
 
 TEST_F(StateMachineTest, stateIdleEventStart)
