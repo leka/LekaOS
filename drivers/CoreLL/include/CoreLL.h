@@ -14,6 +14,7 @@ class CoreLL
   public:
 	virtual void rawMemoryWrite(uintptr_t destination, uint32_t data)
 	{
+		// ? NOLINTNEXTLINE - allow reinterpret_cast as there are no alternatives
 		*reinterpret_cast<uintptr_t *>(destination) = data;
 	}
 };
