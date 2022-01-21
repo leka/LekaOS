@@ -3,6 +3,7 @@
 #
 
 .vscode
+!.vscode/settings.template.json
 extern/mbed-os
 extern/mcuboot
 _build*
