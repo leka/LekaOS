@@ -27,9 +27,9 @@ auto main() -> int
 
 	while (true) {
 		if (corebattery.isCharging()) {
-			log_info("Battery at %.2fV and in charge.", corebattery.getVoltage());
+			log_info("Battery at %.2fV and in charge.", corebattery.voltage());
 		} else {
-			log_info("Battery at %.2fV.", corebattery.getVoltage());
+			log_info("Battery at %.2fV.", corebattery.voltage());
 		}
 		rtos::ThisThread::sleep_for(1s);
 	}

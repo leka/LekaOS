@@ -6,7 +6,7 @@
 
 namespace leka {
 
-auto CoreBattery::getVoltage() -> float
+auto CoreBattery::voltage() -> float
 {
 	auto raw_average = getAverageVoltage();
 	auto voltage	 = convertToRealVoltage(raw_average);
