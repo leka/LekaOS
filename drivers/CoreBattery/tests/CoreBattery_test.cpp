@@ -104,6 +104,36 @@ TEST_F(CoreBatteryTest, voltageBelowEmpty)
 	ASSERT_EQ(battery.level(), expected_battery_level);
 }
 
+TEST_F(CoreBatteryTest, onChargeDidStart)
+{
+	auto lambda_dummy	 = []() {};
+	auto lambda_impostor = []() {};
+
+	mbed::Callback<void()> callback_dummy(lambda_dummy);
+	mbed::Callback<void()> callback_impostor(lambda_impostor);
+
+	battery.onChargeDidStart(callback_dummy);
+
+	ASSERT_NE(callback_impostor, callback_dummy);
+	ASSERT_NE(callback_impostor, spy_InterruptIn_getRiseCallback());
+	ASSERT_EQ(callback_dummy, spy_InterruptIn_getRiseCallback());
+}
+
+TEST_F(CoreBatteryTest, onChargeDidStop)
+{
+	auto lambda_dummy	 = []() {};
+	auto lambda_impostor = []() {};
+
+	mbed::Callback<void()> callback_dummy(lambda_dummy);
+	mbed::Callback<void()> callback_impostor(lambda_impostor);
+
+	battery.onChargeDidStop(callback_dummy);
+
+	ASSERT_NE(callback_impostor, callback_dummy);
+	ASSERT_NE(callback_impostor, spy_InterruptIn_getFallCallback());
+	ASSERT_EQ(callback_dummy, spy_InterruptIn_getFallCallback());
+}
+
 TEST_F(CoreBatteryTest, isCharging)
 {
 	spy_InterruptIn_setValue(1);
