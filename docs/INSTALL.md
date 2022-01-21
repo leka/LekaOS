@@ -146,8 +146,19 @@ We use VSCode and a handful of plugins to work on LekaOS:
 
 It is highly recommended to install them for a better experience and to make sure you comply with our coding style.
 
-Settings for those plugins are shared in the repos and should not be modified.
+### Settings
 
-To configure autocompletion and code checking using `clangd`, simply run `make config_tools` in your terminal. And then in VSCode, run `CMake: Configure`.
+Settings for those plugins are shared in the repos as template files.
 
-💡 **Apple Silicon** - If you're working on an Apple Silicon computer, you'll need to edit the `clangd` settings in [`.vscode/settings.json`](.vscode/settings.json) and comment/uncomment the `--query-driver=/path/to/arm-none-eadi-*` lines.
+To create a local copy of the settings and configure the differents plugins and tools, you must run the following:
+
+```bash
+cp .vscode/settings.template.json .vscode/settings.json
+```
+
+Then, to configure autocompletion and code checking using `clangd`:
+
+- run `make config_tools` in your terminal
+- in VSCode, run `CMake: Configure` from the `Command Palette` (with `Cmd ⌘ + Shift ⇧ + P`)
+
+💡 **Apple Silicon** - If you're working on an Apple Silicon computer, you'll need to edit the `clangd` settings in your local copy of `.vscode/settings.json` and comment/uncomment the `--query-driver=/path/to/arm-none-eadi-*` lines.
