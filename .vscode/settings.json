@@ -86,7 +86,10 @@
 	},
 	"clangd.checkUpdates": true,
 	"clangd.arguments": [
-		"--query-driver=/usr/local/bin/arm-none-eabi*",
+		// On Apple Intel, un comment the following line
+		// "--query-driver=/usr/local/bin/arm-none-eabi*",
+		// On Apple Silicon, un comment the following line
+		"--query-driver=/opt/homebrew/bin/arm-none-eabi*",
 		"--log=verbose",
 		"--completion-style=detailed",
 		"--clang-tidy",
