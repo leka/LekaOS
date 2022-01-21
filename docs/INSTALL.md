@@ -149,3 +149,5 @@ It is highly recommended to install them for a better experience and to make sur
 Settings for those plugins are shared in the repos and should not be modified.
 
 To configure autocompletion and code checking using `clangd`, simply run `make config_tools` in your terminal. And then in VSCode, run `CMake: Configure`.
+
+💡 **Apple Silicon** - If you're working on an Apple Silicon computer, you'll need to edit the `clangd` settings in [`.vscode/settings.json`](.vscode/settings.json) and comment/uncomment the `--query-driver=/path/to/arm-none-eadi-*` lines.
