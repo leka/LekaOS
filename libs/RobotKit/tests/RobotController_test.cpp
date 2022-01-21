@@ -8,6 +8,8 @@
 #include "gtest/gtest.h"
 
 using namespace leka;
+using namespace leka::system;
+namespace bsml = boost::sml;
 
 class RobotControllerTest : public testing::Test
 {
@@ -15,10 +17,20 @@ class RobotControllerTest : public testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	RobotController rc {};
+	RobotController<bsml::sm<robot::StateMachine, bsml::testing>> rc {};
 };
 
 TEST_F(RobotControllerTest, initialization)
 {
 	EXPECT_NE(&rc, nullptr);
+}
+
+TEST_F(RobotControllerTest, startSystemAction)
+{
+	rc.startSystem();
+}
+
+TEST_F(RobotControllerTest, stopSystemAction)
+{
+	rc.stopSystem();
 }

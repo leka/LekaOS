@@ -10,16 +10,16 @@
 
 namespace leka {
 
+template <typename sm_t = boost::sml::sm<system::robot::StateMachine>>
 class RobotController : public interface::RobotController
 {
   public:
+	sm_t state_machine {static_cast<interface::RobotController &>(*this)};
+
 	RobotController() = default;
 
 	void startSystem() final {};
 	void stopSystem() final {};
-
-  private:
-	boost::sml::sm<system::robot::StateMachine> _sm {static_cast<interface::RobotController &>(*this)};
 };
 
 }	// namespace leka
