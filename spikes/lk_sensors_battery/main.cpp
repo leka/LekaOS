@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "drivers/BufferedSerial.h"
+#include "drivers/DigitalOut.h"
 #include "drivers/InterruptIn.h"
 #include "rtos/ThisThread.h"
 
 #include "CoreBattery.h"
-#include "HelloWorld.h"
 #include "LogKit.h"
 
 using namespace leka;
@@ -19,11 +19,17 @@ auto main() -> int
 
 	auto charge_input  = mbed::InterruptIn {PinName::BATTERY_CHARGE_STATUS};
 	auto corebattery   = leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_input};
+	auto mainboard_led = mbed::DigitalOut {LED1};
 
 	log_info("Hello, World!\n\n");
 
-	HelloWorld hello;
-	hello.start();
+	mainboard_led.write(corebattery.isCharging());
+
+	auto on_charge_on = [&mainboard_led]() { mainboard_led.write(1); };
+	corebattery.onChargeDidStart(on_charge_on);
+
+	auto on_charge_off = [&mainboard_led]() { mainboard_led.write(0); };
+	corebattery.onChargeDidStop(on_charge_off);
 
 	while (true) {
 		if (corebattery.isCharging()) {
