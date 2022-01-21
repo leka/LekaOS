@@ -1,5 +1,5 @@
 // Leka - LekaOS
-// Copyright 2021 APF rance handicap
+// Copyright 2021-2022 APF rance handicap
 // SPDX-License-Identifier: Apache-2.0
 
 #include "CoreBattery.h"
@@ -30,68 +30,80 @@ TEST_F(CoreBatteryTest, initialization)
 	ASSERT_NE(&battery, nullptr);
 }
 
-TEST_F(CoreBatteryTest, getVoltageAboveFull)
+TEST_F(CoreBatteryTest, voltageAboveFull)
 {
 	auto AnalogIn_voltage_value	  = float {2.208};
 	auto expected_battery_voltage = float {12.6};
+	auto expected_battery_level	  = uint8_t {100};
 	spy_AnalogIn_setVoltageValue(AnalogIn_voltage_value);
 
-	ASSERT_NEAR(battery.getVoltage(), expected_battery_voltage, 0.1);
-	ASSERT_GT(battery.getVoltage(), CoreBattery::Capacity::full);
+	ASSERT_NEAR(battery.voltage(), expected_battery_voltage, 0.1);
+	ASSERT_GT(battery.voltage(), CoreBattery::Capacity::full);
+	ASSERT_EQ(battery.level(), expected_battery_level);
 }
 
-TEST_F(CoreBatteryTest, getVoltageBetweenThreeQuarterAndFull)
+TEST_F(CoreBatteryTest, voltageBetweenThreeQuarterAndFull)
 {
 	auto AnalogIn_voltage_value	  = float {2.166};
 	auto expected_battery_voltage = float {11.8};
+	auto expected_battery_level	  = uint8_t {80};
 	spy_AnalogIn_setVoltageValue(AnalogIn_voltage_value);
 
-	ASSERT_NEAR(battery.getVoltage(), expected_battery_voltage, 0.1);
-	ASSERT_LT(battery.getVoltage(), CoreBattery::Capacity::full);
-	ASSERT_GT(battery.getVoltage(), CoreBattery::Capacity::three_quarter);
+	ASSERT_NEAR(battery.voltage(), expected_battery_voltage, 0.1);
+	ASSERT_LT(battery.voltage(), CoreBattery::Capacity::full);
+	ASSERT_GT(battery.voltage(), CoreBattery::Capacity::three_quarter);
+	ASSERT_NEAR(battery.level(), expected_battery_level, 5);
 }
 
-TEST_F(CoreBatteryTest, getVoltageBetweenHalfAndThreeQuarter)
+TEST_F(CoreBatteryTest, voltageBetweenHalfAndThreeQuarter)
 {
 	auto AnalogIn_voltage_value	  = float {2.144};
 	auto expected_battery_voltage = float {11.4};
+	auto expected_battery_level	  = uint8_t {65};
 	spy_AnalogIn_setVoltageValue(AnalogIn_voltage_value);
 
-	ASSERT_NEAR(battery.getVoltage(), expected_battery_voltage, 0.1);
-	ASSERT_LT(battery.getVoltage(), CoreBattery::Capacity::three_quarter);
-	ASSERT_GT(battery.getVoltage(), CoreBattery::Capacity::half);
+	ASSERT_NEAR(battery.voltage(), expected_battery_voltage, 0.1);
+	ASSERT_LT(battery.voltage(), CoreBattery::Capacity::three_quarter);
+	ASSERT_GT(battery.voltage(), CoreBattery::Capacity::half);
+	ASSERT_NEAR(battery.level(), expected_battery_level, 5);
 }
 
-TEST_F(CoreBatteryTest, getVoltageBetweenQuarterAndHalf)
+TEST_F(CoreBatteryTest, voltageBetweenQuarterAndHalf)
 {
 	auto AnalogIn_voltage_value	  = float {2.108};
 	auto expected_battery_voltage = float {10.8};
+	auto expected_battery_level	  = uint8_t {42};
 	spy_AnalogIn_setVoltageValue(AnalogIn_voltage_value);
 
-	ASSERT_NEAR(battery.getVoltage(), expected_battery_voltage, 0.1);
-	ASSERT_LT(battery.getVoltage(), CoreBattery::Capacity::half);
-	ASSERT_GT(battery.getVoltage(), CoreBattery::Capacity::quarter);
+	ASSERT_NEAR(battery.voltage(), expected_battery_voltage, 0.1);
+	ASSERT_LT(battery.voltage(), CoreBattery::Capacity::half);
+	ASSERT_GT(battery.voltage(), CoreBattery::Capacity::quarter);
+	ASSERT_NEAR(battery.level(), expected_battery_level, 5);
 }
 
-TEST_F(CoreBatteryTest, getVoltageBetweenEmptyAndQuarter)
+TEST_F(CoreBatteryTest, voltageBetweenEmptyAndQuarter)
 {
 	auto AnalogIn_voltage_value	  = float {2.033};
 	auto expected_battery_voltage = float {9.7};
+	auto expected_battery_level	  = uint8_t {15};
 	spy_AnalogIn_setVoltageValue(AnalogIn_voltage_value);
 
-	ASSERT_NEAR(battery.getVoltage(), expected_battery_voltage, 0.1);
-	ASSERT_LT(battery.getVoltage(), CoreBattery::Capacity::quarter);
-	ASSERT_GT(battery.getVoltage(), CoreBattery::Capacity::empty);
+	ASSERT_NEAR(battery.voltage(), expected_battery_voltage, 0.1);
+	ASSERT_LT(battery.voltage(), CoreBattery::Capacity::quarter);
+	ASSERT_GT(battery.voltage(), CoreBattery::Capacity::empty);
+	ASSERT_NEAR(battery.level(), expected_battery_level, 5);
 }
 
-TEST_F(CoreBatteryTest, getVoltageBelowEmpty)
+TEST_F(CoreBatteryTest, voltageBelowEmpty)
 {
 	auto AnalogIn_voltage_value	  = float {1.82};
 	auto expected_battery_voltage = float {7.5};
+	auto expected_battery_level	  = uint8_t {0};
 	spy_AnalogIn_setVoltageValue(AnalogIn_voltage_value);
 
-	ASSERT_NEAR(battery.getVoltage(), expected_battery_voltage, 0.1);
-	ASSERT_LT(battery.getVoltage(), CoreBattery::Capacity::empty);
+	ASSERT_NEAR(battery.voltage(), expected_battery_voltage, 0.1);
+	ASSERT_LT(battery.voltage(), CoreBattery::Capacity::empty);
+	ASSERT_EQ(battery.level(), expected_battery_level);
 }
 
 TEST_F(CoreBatteryTest, isCharging)

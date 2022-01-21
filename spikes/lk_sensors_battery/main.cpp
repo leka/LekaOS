@@ -1,5 +1,5 @@
 // Leka - LekaOS
-// Copyright 2021 APF France handicap
+// Copyright 2021-2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
 #include "drivers/BufferedSerial.h"
@@ -27,9 +27,9 @@ auto main() -> int
 
 	while (true) {
 		if (corebattery.isCharging()) {
-			log_info("Battery at %.2fV and in charge.", corebattery.getVoltage());
+			log_info("Battery at %.2fV (%d%%) and in charge.", corebattery.voltage(), corebattery.level());
 		} else {
-			log_info("Battery at %.2fV.", corebattery.getVoltage());
+			log_info("Battery at %.2fV (%d%%).", corebattery.voltage(), corebattery.level());
 		}
 		rtos::ThisThread::sleep_for(1s);
 	}

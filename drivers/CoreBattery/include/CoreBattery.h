@@ -1,5 +1,5 @@
 // Leka - LekaOS
-// Copyright 2021 APF France handicap
+// Copyright 2021-2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
 #ifndef _LEKA_OS_DRIVER_CORE_BATTERY_H_
@@ -8,17 +8,20 @@
 #include "drivers/AnalogIn.h"
 #include "drivers/interfaces/InterfaceDigitalIn.h"
 
+#include "interface/drivers/Battery.h"
+
 namespace leka {
 
-class CoreBattery
+class CoreBattery : public interface::Battery
 {
   public:
 	explicit CoreBattery(PinName voltage_pin, mbed::interface::DigitalIn &charge_status_input)
 		: _voltage_pin {mbed::AnalogIn(voltage_pin, analog_voltage_reference)},
 		  _charge_status_input(charge_status_input) {};
 
-	auto getVoltage() -> float;
-	auto isCharging() -> bool;
+	auto voltage() -> float final;
+	auto level() -> uint8_t final;
+	auto isCharging() -> bool final;
 
 	struct Capacity {
 		static constexpr auto full			= float {12.00};

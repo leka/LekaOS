@@ -24,13 +24,13 @@ static auto battery				= leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_sta
 
 auto main() -> int
 {
-	while (battery.getVoltage() < CoreBattery::Capacity::empty) {
+	while (battery.voltage() < CoreBattery::Capacity::empty) {
 		rtos::ThisThread::sleep_for(10s);
 	}
 
 	auto address = default_address;
 
-	if (battery.isCharging() && battery.getVoltage() > CoreBattery::Capacity::quarter) {
+	if (battery.isCharging() && battery.voltage() > CoreBattery::Capacity::quarter) {
 		// Initialize mbedtls crypto for use by MCUboot
 		mbedtls_platform_context unused_ctx;
 		if (auto ret = mbedtls_platform_setup(&unused_ctx); ret != 0) {
