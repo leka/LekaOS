@@ -8,6 +8,7 @@ add_subdirectory(${DRIVERS_DIR}/CorePwm)
 add_subdirectory(${DRIVERS_DIR}/CoreLL)
 add_subdirectory(${DRIVERS_DIR}/CoreFs)
 add_subdirectory(${DRIVERS_DIR}/CoreQSPI)
+add_subdirectory(${DRIVERS_DIR}/CoreSPI)
 add_subdirectory(${DRIVERS_DIR}/CoreSTM32Hal)
 add_subdirectory(${DRIVERS_DIR}/CoreBufferedSerial)
 
