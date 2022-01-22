@@ -20,6 +20,7 @@ target_sources(stubs
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/InterruptIn.cpp
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/PwmOut.cpp
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/QSPI.cpp
+		${UNIT_TESTS_STUBS_MBED_DIR}/source/SPI.cpp
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/I2C.cpp
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/Timer.cpp
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/Kernel.cpp
