@@ -116,12 +116,12 @@ clean_config:
 config_cmake_target: mkdir_cmake_config
 	@echo ""
 	@echo "🏃 Running configuration script for target $(TARGET_BOARD) 📝"
-	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_CONFIG_DIR) -a $(ROOT_DIR)/mbed_app.json
+	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_CONFIG_DIR) -a $(ROOT_DIR)/config/mbed_app.json
 
 config_tools_target: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running configuration script for VSCode CMake Tools 📝"
-	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_TOOLS_CONFIG_DIR) -a $(ROOT_DIR)/mbed_app.json
+	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_TOOLS_CONFIG_DIR) -a $(ROOT_DIR)/config/mbed_app.json
 
 config_cmake_build: mkdir_cmake_config
 	@echo ""
