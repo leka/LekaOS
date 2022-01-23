@@ -25,12 +25,12 @@ FIRMWARE_RELEASE="_release/firmware.bin"
 if [ "$RECOMPILE_BOOTLOADER" = "true" ];
 then
 	echo "Build bootloader"
-	./build_bootloader.sh
+	./tools/firmware/build_bootloader.sh
 fi;
 
 # Get application
 echo "Build application"
-./build_os.sh $RECOMPILE_BOOTLOADER $APPLICATION_HEX_SOURCE $APPLICATION_VERSION $APPLICATION_SIGNED_HEX
+./tools/firmware/build_os.sh $RECOMPILE_BOOTLOADER $APPLICATION_HEX_SOURCE $APPLICATION_VERSION $APPLICATION_SIGNED_HEX
 
 # Merge bootloader and application
 echo "Merge bootloader & applications"
