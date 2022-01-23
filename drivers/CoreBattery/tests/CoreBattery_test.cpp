@@ -5,12 +5,10 @@
 #include "CoreBattery.h"
 
 #include "gtest/gtest.h"
-#include "mocks/mbed/DigitalIn.h"
 #include "stubs/mbed/AnalogIn.h"
+#include "stubs/mbed/InterruptIn.h"
 
 using namespace leka;
-
-using ::testing::Return;
 
 class CoreBatteryTest : public ::testing::Test
 {
@@ -20,7 +18,7 @@ class CoreBatteryTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	mbed::mock::DigitalIn charge_input = {};
+	mbed::InterruptIn charge_input = {NC};
 
 	CoreBattery battery;
 };
@@ -106,16 +104,46 @@ TEST_F(CoreBatteryTest, voltageBelowEmpty)
 	ASSERT_EQ(battery.level(), expected_battery_level);
 }
 
+TEST_F(CoreBatteryTest, onChargeDidStart)
+{
+	auto lambda_dummy	 = []() {};
+	auto lambda_impostor = []() {};
+
+	mbed::Callback<void()> callback_dummy(lambda_dummy);
+	mbed::Callback<void()> callback_impostor(lambda_impostor);
+
+	battery.onChargeDidStart(callback_dummy);
+
+	ASSERT_NE(callback_impostor, callback_dummy);
+	ASSERT_NE(callback_impostor, spy_InterruptIn_getRiseCallback());
+	ASSERT_EQ(callback_dummy, spy_InterruptIn_getRiseCallback());
+}
+
+TEST_F(CoreBatteryTest, onChargeDidStop)
+{
+	auto lambda_dummy	 = []() {};
+	auto lambda_impostor = []() {};
+
+	mbed::Callback<void()> callback_dummy(lambda_dummy);
+	mbed::Callback<void()> callback_impostor(lambda_impostor);
+
+	battery.onChargeDidStop(callback_dummy);
+
+	ASSERT_NE(callback_impostor, callback_dummy);
+	ASSERT_NE(callback_impostor, spy_InterruptIn_getFallCallback());
+	ASSERT_EQ(callback_dummy, spy_InterruptIn_getFallCallback());
+}
+
 TEST_F(CoreBatteryTest, isCharging)
 {
-	EXPECT_CALL(charge_input, read).WillOnce(Return(1));
+	spy_InterruptIn_setValue(1);
 
 	ASSERT_TRUE(battery.isCharging());
 }
 
 TEST_F(CoreBatteryTest, isNotCharging)
 {
-	EXPECT_CALL(charge_input, read).WillOnce(Return(0));
+	spy_InterruptIn_setValue(0);
 
 	ASSERT_FALSE(battery.isCharging());
 }

@@ -8,6 +8,16 @@
 
 namespace leka {
 
+void CoreBattery::onChargeDidStart(mbed::Callback<void()> const &callback)
+{
+	_charge_status_input.rise(callback);
+}
+
+void CoreBattery::onChargeDidStop(mbed::Callback<void()> const &callback)
+{
+	_charge_status_input.fall(callback);
+}
+
 auto CoreBattery::voltage() -> float
 {
 	auto raw_average = getAverageVoltage();
