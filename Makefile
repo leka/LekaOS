@@ -16,10 +16,11 @@ MCUBOOT_DIR       := $(ROOT_DIR)/extern/mcuboot
 #
 
 PORT            ?= /dev/tty.usbmodem14303
-MBED_GIT_URL    ?= $(shell cat $(ROOT_DIR)/.mbed_git_url)
-MBED_BRANCH     ?= $(shell cat $(ROOT_DIR)/.mbed_version)
-MBED_VERSION    ?= $(shell cat $(ROOT_DIR)/.mbed_version)
-MCUBOOT_VERSION ?= $(shell cat $(ROOT_DIR)/.mcuboot_version)
+MBED_GIT_URL    ?= $(shell cat $(ROOT_DIR)/config/mbed_git_url)
+MBED_BRANCH     ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
+MBED_VERSION    ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
+MCUBOOT_GIT_URL ?= $(shell cat $(ROOT_DIR)/config/mcuboot_git_url)
+MCUBOOT_VERSION ?= $(shell cat $(ROOT_DIR)/config/mcuboot_version)
 BAUDRATE        ?= 115200
 BUILD_TYPE      ?= Release
 TARGET_BOARD    ?= LEKA_V1_2_DEV
@@ -116,12 +117,12 @@ clean_config:
 config_cmake_target: mkdir_cmake_config
 	@echo ""
 	@echo "🏃 Running configuration script for target $(TARGET_BOARD) 📝"
-	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_CONFIG_DIR) -a $(ROOT_DIR)/mbed_app.json
+	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_CONFIG_DIR) -a $(ROOT_DIR)/config/mbed_app.json
 
 config_tools_target: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running configuration script for VSCode CMake Tools 📝"
-	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_TOOLS_CONFIG_DIR) -a $(ROOT_DIR)/mbed_app.json
+	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_TOOLS_CONFIG_DIR) -a $(ROOT_DIR)/config/mbed_app.json
 
 config_cmake_build: mkdir_cmake_config
 	@echo ""
@@ -263,16 +264,6 @@ mbed_clone:
 	git clone --depth=1 --branch=$(MBED_BRANCH) $(MBED_GIT_URL) $(MBED_OS_DIR)
 	@$(MAKE) mbed_symlink_files
 
-mbed_curl:
-	@echo ""
-	@echo "🧬 Curling Mbed OS 📦"
-	@rm -rf $(MBED_OS_DIR)
-	@mkdir -p $(MBED_OS_DIR)
-	curl -O -L $(MBED_GIT_URL)/archive/$(MBED_VERSION).tar.gz
-	tar -xzf $(MBED_VERSION).tar.gz --strip-components=1 -C extern/mbed-os
-	rm -rf $(MBED_VERSION).tar.gz
-	@$(MAKE) mbed_symlink_files
-
 mbed_symlink_files:
 	@echo ""
 	@echo "🔗 Symlinking templates to Mbed OS directory 🗂️"
@@ -287,8 +278,7 @@ mcuboot_clone:
 	@echo ""
 	@echo "🧬 Cloning MCUBoot 📦"
 	@rm -rf $(MCUBOOT_DIR)
-	@git clone --single-branch https://github.com/mcu-tools/mcuboot.git $(MCUBOOT_DIR)
-	@cd $(MCUBOOT_DIR) && git reset --hard $(MCUBOOT_VERSION) && cd $(ROOT_DIR)
+	git clone --depth=1 --branch=$(MCUBOOT_VERSION) $(MCUBOOT_GIT_URL) $(MCUBOOT_DIR)
 	@$(MAKE) mcuboot_symlink_files
 
 mcuboot_symlink_files:

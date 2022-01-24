@@ -25,8 +25,8 @@ echo "HEAD_REF=$HEAD_REF" >> $GITHUB_ENV
 git checkout $BASE_REF
 
 BASE_SHA=$(git rev-parse --short HEAD)
-BASE_MBED_VERSION=$(cat .mbed_version)
-BASE_MCUBOOT_VERSION=$(cat .mcuboot_version)
+BASE_MBED_VERSION=$(cat config/mbed_version)
+BASE_MCUBOOT_VERSION=$(cat config/mcuboot_version)
 BASE_CXX_STANDARD="-std=c++$(cat CMakeLists.txt | grep -Po '(?<=CMAKE_CXX_STANDARD\s)[0-9]*')"
 
 echo "BASE_SHA=$BASE_SHA" >> $GITHUB_ENV
@@ -37,8 +37,8 @@ echo "BASE_CXX_STANDARD=$BASE_CXX_STANDARD" >> $GITHUB_ENV
 git checkout $HEAD_REF
 
 HEAD_SHA=$(git rev-parse --short HEAD)
-HEAD_MBED_VERSION=$(cat .mbed_version)
-HEAD_MCUBOOT_VERSION=$(cat .mcuboot_version)
+HEAD_MBED_VERSION=$(cat config/mbed_version)
+HEAD_MCUBOOT_VERSION=$(cat config/mcuboot_version)
 HEAD_CXX_STANDARD="-std=c++$(cat CMakeLists.txt | grep -Po '(?<=CMAKE_CXX_STANDARD\s)[0-9]*')"
 
 echo "HEAD_SHA=$HEAD_SHA" >> $GITHUB_ENV
@@ -66,7 +66,7 @@ echo "CCACHE_COMPILERCHECK=$CCACHE_COMPILERCHECK" >> $GITHUB_ENV
 
 ARM_TOOLCHAIN_FILENAME="gcc-arm-none-eabi-*-x86_64-linux.tar.bz2"
 ARM_TOOLCHAIN_EXTRACT_DIRECTORY="gcc-arm-none-eabi-*"
-ARM_TOOLCHAIN_URL=$(cat .gcc_arm_none_eabi_url)
+ARM_TOOLCHAIN_URL=$(cat config/toolchain_gcc_arm_none_eabi_url)
 
 echo "ARM_TOOLCHAIN_FILENAME=$ARM_TOOLCHAIN_FILENAME" >> $GITHUB_ENV
 echo "ARM_TOOLCHAIN_EXTRACT_DIRECTORY=$ARM_TOOLCHAIN_EXTRACT_DIRECTORY" >> $GITHUB_ENV
