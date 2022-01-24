@@ -15,7 +15,6 @@ target_sources(spike_lk_sensors_battery
 )
 
 target_link_libraries(spike_lk_sensors_battery
-	FileManager
 	CoreBattery
 	CorePwm
 	CoreMotor
