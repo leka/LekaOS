@@ -264,16 +264,6 @@ mbed_clone:
 	git clone --depth=1 --branch=$(MBED_BRANCH) $(MBED_GIT_URL) $(MBED_OS_DIR)
 	@$(MAKE) mbed_symlink_files
 
-mbed_curl:
-	@echo ""
-	@echo "🧬 Curling Mbed OS 📦"
-	@rm -rf $(MBED_OS_DIR)
-	@mkdir -p $(MBED_OS_DIR)
-	curl -O -L $(MBED_GIT_URL)/archive/$(MBED_VERSION).tar.gz
-	tar -xzf $(MBED_VERSION).tar.gz --strip-components=1 -C extern/mbed-os
-	rm -rf $(MBED_VERSION).tar.gz
-	@$(MAKE) mbed_symlink_files
-
 mbed_symlink_files:
 	@echo ""
 	@echo "🔗 Symlinking templates to Mbed OS directory 🗂️"
