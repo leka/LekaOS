@@ -10,12 +10,12 @@ on:
       - master
       - develop
     paths:
-      - ".gcc_arm_none_eabi_url"
+      - "config/toolchain_gcc_arm_none_eabi_url"
 
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - ".gcc_arm_none_eabi_url"
+      - "config/toolchain_gcc_arm_none_eabi_url"
 
 env:
   CC: /usr/bin/gcc
@@ -56,9 +56,9 @@ jobs:
         id: create_toolchain_url_variables
         run: |
           git checkout ${{ env.BASE_REF }}
-          echo "BASE_TOOLCHAIN_URL=$(cat .gcc_arm_none_eabi_url)" >> $GITHUB_ENV
+          echo "BASE_TOOLCHAIN_URL=$(cat config/toolchain_gcc_arm_none_eabi_url)" >> $GITHUB_ENV
           git checkout ${{ env.HEAD_REF }}
-          echo "HEAD_TOOLCHAIN_URL=$(cat .gcc_arm_none_eabi_url)" >> $GITHUB_ENV
+          echo "HEAD_TOOLCHAIN_URL=$(cat config/toolchain_gcc_arm_none_eabi_url)" >> $GITHUB_ENV
 
       - name: Download toolchains
         run: |
