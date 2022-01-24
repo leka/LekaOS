@@ -16,11 +16,8 @@ target_sources(CoreLED
 )
 
 target_link_libraries(CoreLED
-<<<<<<< HEAD
-=======
-	driver_FastLED
->>>>>>> feb9548f (:sparkles: Add CoreLED)
 	mbed-os
+	CoreSPI
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
