@@ -57,7 +57,6 @@ if(ENABLE_LOG_DEBUG)
 	add_definitions(-DENABLE_LOG_DEBUG)
 endif(ENABLE_LOG_DEBUG)
 
-
 #
 # MARK: - Directories
 #
@@ -89,7 +88,7 @@ set(FUNCTIONAL_TESTS_DIR ${ROOT_DIR}/tests/functional)
 #
 
 # And include mbed-cmake.cmake
-include(${ROOT_DIR}/mbed-cmake.cmake)
+include(${ROOT_DIR}/cmake/mbed-cmake.cmake)
 
 project(LekaOS LANGUAGES C CXX ASM)
 
