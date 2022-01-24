@@ -25,7 +25,7 @@ class CoreFatFs : public CoreFatFsBase
 	auto getPointer() -> FIL * final;
 
   private:
-	FIL _file;	 // TODO (@yann) - _file is not initialized - make it a pointer?
+	FIL _file {};
 };
 
 }	// namespace leka

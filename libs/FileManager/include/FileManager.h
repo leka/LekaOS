@@ -27,7 +27,7 @@ class FileManager
   private:
 	SDBlockDevice _bd;
 	FATFileSystem _fs;
-	FIL _file;	 // TODO (@yann) - _file is not initialized - make it a pointer?
+	FIL _file {};
 };
 
 }	// namespace leka
