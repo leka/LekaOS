@@ -16,9 +16,9 @@ MCUBOOT_DIR       := $(ROOT_DIR)/extern/mcuboot
 #
 
 PORT            ?= /dev/tty.usbmodem14303
-MBED_GIT_URL    ?= $(shell cat $(ROOT_DIR)/.mbed_git_url)
-MBED_BRANCH     ?= $(shell cat $(ROOT_DIR)/.mbed_version)
-MBED_VERSION    ?= $(shell cat $(ROOT_DIR)/.mbed_version)
+MBED_GIT_URL    ?= $(shell cat $(ROOT_DIR)/config/mbed_git_url)
+MBED_BRANCH     ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
+MBED_VERSION    ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
 MCUBOOT_VERSION ?= $(shell cat $(ROOT_DIR)/.mcuboot_version)
 BAUDRATE        ?= 115200
 BUILD_TYPE      ?= Release

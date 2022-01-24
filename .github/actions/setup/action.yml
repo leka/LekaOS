@@ -121,7 +121,7 @@ runs:
         path: |
           ${{ env.RUNNER_HOME }}/.cache/pip
           ${{ env.pythonLocation }}
-        key: ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-${{ hashFiles('.mbed_version') }}
+        key: ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-${{ hashFiles('config/mbed_version') }}
         restore-keys: |
           ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-
 
