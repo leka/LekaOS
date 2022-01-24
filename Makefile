@@ -19,6 +19,7 @@ PORT            ?= /dev/tty.usbmodem14303
 MBED_GIT_URL    ?= $(shell cat $(ROOT_DIR)/config/mbed_git_url)
 MBED_BRANCH     ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
 MBED_VERSION    ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
+MCUBOOT_GIT_URL ?= $(shell cat $(ROOT_DIR)/config/mcuboot_git_url)
 MCUBOOT_VERSION ?= $(shell cat $(ROOT_DIR)/config/mcuboot_version)
 BAUDRATE        ?= 115200
 BUILD_TYPE      ?= Release
@@ -287,8 +288,7 @@ mcuboot_clone:
 	@echo ""
 	@echo "🧬 Cloning MCUBoot 📦"
 	@rm -rf $(MCUBOOT_DIR)
-	@git clone --single-branch https://github.com/mcu-tools/mcuboot.git $(MCUBOOT_DIR)
-	@cd $(MCUBOOT_DIR) && git reset --hard $(MCUBOOT_VERSION) && cd $(ROOT_DIR)
+	git clone --depth=1 --branch=$(MCUBOOT_VERSION) $(MCUBOOT_GIT_URL) $(MCUBOOT_DIR)
 	@$(MAKE) mcuboot_symlink_files
 
 mcuboot_symlink_files:
