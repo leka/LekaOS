@@ -20,6 +20,18 @@ class RobotController : public interface::RobotController
 
 	void startSystem() final {};
 	void stopSystem() final {};
+
+	void raise(auto event) { state_machine.process_event(event); };
+
+	void registerEvents()
+	{
+		using namespace system::robot::sm;
+
+		// Initializations
+		// Setup callbacks for each events
+
+		raise(event::setup_complete {});
+	};
 };
 
 }	// namespace leka

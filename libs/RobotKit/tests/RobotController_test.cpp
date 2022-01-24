@@ -9,7 +9,9 @@
 
 using namespace leka;
 using namespace leka::system;
-namespace bsml = boost::sml;
+namespace bsml	= boost::sml;
+namespace lksm	= system::robot::sm;
+namespace event = system::robot::sm::event;
 
 class RobotControllerTest : public testing::Test
 {
@@ -23,6 +25,15 @@ class RobotControllerTest : public testing::Test
 TEST_F(RobotControllerTest, initialization)
 {
 	EXPECT_NE(&rc, nullptr);
+}
+
+TEST_F(RobotControllerTest, stateSetupEventSetupComplete)
+{
+	rc.state_machine.set_current_states(lksm::state::setup);
+
+	rc.registerEvents();
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
 }
 
 TEST_F(RobotControllerTest, startSystemAction)
