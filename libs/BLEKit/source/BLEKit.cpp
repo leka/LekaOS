@@ -8,5 +8,9 @@ void BLEKit::init()
 		return;
 	}
 
+	_ble.onEventsToProcess({this, &BLEKit::processEvents});
+
+	_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
+
 	_ble.init();
 }
