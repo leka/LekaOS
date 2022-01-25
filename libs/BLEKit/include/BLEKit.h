@@ -14,6 +14,8 @@ class BLEKit
   public:
 	BLEKit() = default;
 
+	void init();
+
   private:
 	BLE &_ble = BLE::Instance();
 };
