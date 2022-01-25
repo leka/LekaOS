@@ -14,6 +14,8 @@ using namespace leka::system;
 namespace lksm = leka::system::robot::sm;
 namespace bsml = boost::sml;
 
+using testing::Return;
+
 class StateMachineTest : public testing::Test
 {
   protected:
@@ -33,28 +35,38 @@ TEST_F(StateMachineTest, initialization)
 
 TEST_F(StateMachineTest, initialState)
 {
-	EXPECT_TRUE(sm.is(lksm::state::idle));
-	EXPECT_FALSE(sm.is(lksm::state::running));
+	EXPECT_TRUE(sm.is(lksm::state::setup));
+	EXPECT_FALSE(sm.is(lksm::state::idle));
+	EXPECT_FALSE(sm.is(lksm::state::charging));
 }
 
-TEST_F(StateMachineTest, stateIdleEventStart)
+TEST_F(StateMachineTest, stateSetupEventSetupComplete)
+{
+	sm.set_current_states(lksm::state::setup);
+
+	sm.process_event(lksm::event::setup_complete {});
+
+	EXPECT_TRUE(sm.is(lksm::state::idle));
+}
+
+TEST_F(StateMachineTest, stateIdleEventChargeDidStart)
 {
 	sm.set_current_states(lksm::state::idle);
 
-	EXPECT_CALL(mock_rc, startSystem()).Times(1);
+	EXPECT_CALL(mock_rc, isCharging).WillOnce(Return(true));
 
-	sm.process_event(lksm::event::start {});
+	sm.process_event(lksm::event::charge_did_start {});
 
-	EXPECT_TRUE(sm.is(lksm::state::running));
+	EXPECT_TRUE(sm.is(lksm::state::charging));
 }
 
-TEST_F(StateMachineTest, stateRunningEventTimeout)
+TEST_F(StateMachineTest, stateChargingEventChargeDidStop)
 {
-	sm.set_current_states(lksm::state::running);
+	sm.set_current_states(lksm::state::charging);
 
-	EXPECT_CALL(mock_rc, stopSystem()).Times(1);
+	EXPECT_CALL(mock_rc, isCharging).WillOnce(Return(false));
 
-	sm.process_event(lksm::event::timeout {});
+	sm.process_event(lksm::event::charge_did_stop {});
 
 	EXPECT_TRUE(sm.is(lksm::state::idle));
 }

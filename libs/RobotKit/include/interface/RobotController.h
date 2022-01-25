@@ -14,8 +14,7 @@ class RobotController
   public:
 	virtual ~RobotController() = default;
 
-	virtual void startSystem() = 0;
-	virtual void stopSystem()  = 0;
+	virtual auto isCharging() -> bool = 0;
 };
 
 }	// namespace leka::interface

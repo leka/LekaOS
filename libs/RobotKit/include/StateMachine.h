@@ -12,32 +12,42 @@ namespace leka::system::robot {
 
 namespace sm::event {
 
-	struct start {
+	struct setup_complete {
 	};
-	struct timeout {
+	struct charge_did_start {
+	};
+	struct charge_did_stop {
 	};
 
 }	// namespace sm::event
 
 namespace sm::state {
 
-	inline auto idle	= boost::sml::state<class idle>;
-	inline auto running = boost::sml::state<class running>;
+	inline auto setup	 = boost::sml::state<class setup>;
+	inline auto idle	 = boost::sml::state<class idle>;
+	inline auto charging = boost::sml::state<class charging>;
 
 }	// namespace sm::state
+
+namespace sm::guard {
+
+	using irc = interface::RobotController;
+
+	inline auto is_charging		= [](irc &rc) { return rc.isCharging(); };
+	inline auto is_not_charging = [](irc &rc) { return !rc.isCharging(); };
+
+}	// namespace sm::guard
 
 struct StateMachine {
 	auto operator()() const
 	{
 		using namespace boost::sml;
 
-		auto action_start_system = [](interface::RobotController &rc) { rc.startSystem(); };
-		auto action_stop_system	 = [](interface::RobotController &rc) { rc.stopSystem(); };
-
 		return make_transition_table(
 			// clang-format off
-			 * sm::state::idle    + event<sm::event::start>   / action_start_system = sm::state::running
-			,  sm::state::running + event<sm::event::timeout> / action_stop_system  = sm::state::idle
+			 * sm::state::setup   + event<sm::event::setup_complete>                                = sm::state::idle
+			, sm::state::idle     + event<sm::event::charge_did_start> [sm::guard::is_charging]     = sm::state::charging
+			, sm::state::charging + event<sm::event::charge_did_stop>  [sm::guard::is_not_charging] = sm::state::idle
 			// clang-format on
 		);
 	}

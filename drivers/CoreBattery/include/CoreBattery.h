@@ -20,8 +20,8 @@ class CoreBattery : public interface::Battery
 		: _voltage_pin {mbed::AnalogIn(voltage_pin, analog_voltage_reference)},
 		  _charge_status_input(charge_status_input) {};
 
-	void onChargeDidStart(mbed::Callback<void()> const &callback);
-	void onChargeDidStop(mbed::Callback<void()> const &callback);
+	void onChargeDidStart(mbed::Callback<void()> const &callback) final;
+	void onChargeDidStop(mbed::Callback<void()> const &callback) final;
 
 	auto voltage() -> float final;
 	auto level() -> uint8_t final;

@@ -1,20 +1,22 @@
 // Leka - LekaOS
-// Copyright 2020 APF France handicap
+// Copyright 2020-2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "drivers/BufferedSerial.h"
 #include "rtos/Kernel.h"
 #include "rtos/ThisThread.h"
-#include "rtos/Thread.h"
 
+#include "CoreBattery.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
-#include "StateMachine.h"
+#include "RobotController.h"
 
 using namespace leka;
 using namespace std::chrono;
 
-auto sm = system::robot::StateMachine {};
+auto charge_input = mbed::InterruptIn {PinName::BATTERY_CHARGE_STATUS};
+auto battery	  = leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_input};
+
+auto rc = RobotController {battery};
 
 auto main() -> int
 {
@@ -29,6 +31,8 @@ auto main() -> int
 
 	auto hello = HelloWorld();
 	hello.start();
+
+	rc.registerEvents();
 
 	while (true) {
 		log_debug("A message from your board %s --> \"%s\" at %ims", MBED_CONF_APP_TARGET_NAME, hello.world,

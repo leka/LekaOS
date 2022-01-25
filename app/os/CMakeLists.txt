@@ -16,6 +16,7 @@ target_sources(LekaOS
 
 target_link_libraries(LekaOS
 	RobotKit
+	CoreBattery
 )
 
 target_link_custom_leka_targets(LekaOS)
