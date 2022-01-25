@@ -4,6 +4,7 @@
 
 #include "StateMachine.h"
 
+#include "Logger.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "interface/RobotController.h"
@@ -19,11 +20,20 @@ using testing::Return;
 class StateMachineTest : public testing::Test
 {
   protected:
-	// void SetUp() override {}
+	void SetUp() override { logger::set_sink_function(spy_sink_function); }
 	// void TearDown() override {}
 
+	static void spy_sink_function(const char *str, size_t size)
+	{
+		auto output = std::string {str};
+		std::cout << output;
+	}
+
 	mock::RobotController mock_rc {};
-	boost::sml::sm<robot::StateMachine, boost::sml::testing> sm {static_cast<interface::RobotController &>(mock_rc)};
+	robot::sm::logger logger {};
+
+	boost::sml::sm<robot::StateMachine, boost::sml::testing, boost::sml::logger<robot::sm::logger>> sm {
+		static_cast<interface::RobotController &>(mock_rc), logger};
 };
 
 using namespace bsml;	// ? do not move as it won't compile

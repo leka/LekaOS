@@ -33,8 +33,13 @@ namespace sm::guard {
 
 	using irc = interface::RobotController;
 
-	inline auto is_charging		= [](irc &rc) { return rc.isCharging(); };
-	inline auto is_not_charging = [](irc &rc) { return !rc.isCharging(); };
+	struct is_charging {
+		auto operator()(irc &rc) const { return rc.isCharging(); }
+	};
+
+	struct is_not_charging {
+		auto operator()(irc &rc) const { return !rc.isCharging(); }
+	};
 
 }	// namespace sm::guard
 
@@ -45,9 +50,9 @@ struct StateMachine {
 
 		return make_transition_table(
 			// clang-format off
-			 * sm::state::setup   + event<sm::event::setup_complete>                                = sm::state::idle
-			, sm::state::idle     + event<sm::event::charge_did_start> [sm::guard::is_charging]     = sm::state::charging
-			, sm::state::charging + event<sm::event::charge_did_stop>  [sm::guard::is_not_charging] = sm::state::idle
+			* sm::state::setup    + event<sm::event::setup_complete>                                   = sm::state::idle
+			, sm::state::idle     + event<sm::event::charge_did_start> [sm::guard::is_charging {}]     = sm::state::charging
+			, sm::state::charging + event<sm::event::charge_did_stop>  [sm::guard::is_not_charging {}] = sm::state::idle
 			// clang-format on
 		);
 	}
