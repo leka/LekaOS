@@ -6,6 +6,7 @@
 add_subdirectory(${DRIVERS_DIR}/CoreI2C)
 add_subdirectory(${DRIVERS_DIR}/CorePwm)
 add_subdirectory(${DRIVERS_DIR}/CoreLL)
+add_subdirectory(${DRIVERS_DIR}/CoreTicker)
 add_subdirectory(${DRIVERS_DIR}/CoreFs)
 add_subdirectory(${DRIVERS_DIR}/CoreQSPI)
 add_subdirectory(${DRIVERS_DIR}/CoreSPI)
