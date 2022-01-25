@@ -22,7 +22,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
 		tests/CoreLED_test.cpp
-		tests/RGB_test.cpp
+		tests/CoreLED_RGB_test.cpp
 	)
 
 endif()
