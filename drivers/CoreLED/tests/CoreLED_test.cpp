@@ -8,6 +8,7 @@
 #include "mocks/leka/SPI.h"
 
 using namespace leka;
+using ::testing::_;
 using ::testing::InSequence;
 
 class CoreLEDTests : public ::testing::Test
@@ -34,7 +35,7 @@ TEST_F(CoreLEDTests, turnOff)
 		InSequence seq;
 
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x32, expected_belt_color.red, expected_belt_color.green,
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, expected_belt_color.red, expected_belt_color.green,
 														expected_belt_color.blue)))
 			.Times(20);
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
@@ -52,7 +53,7 @@ TEST_F(CoreLEDTests, turnOn)
 		InSequence seq;
 
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x32, expected_belt_color.red, expected_belt_color.green,
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, expected_belt_color.red, expected_belt_color.green,
 														expected_belt_color.blue)))
 			.Times(20);
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
@@ -70,7 +71,7 @@ TEST_F(CoreLEDTests, turnOff1)
 		InSequence seq;
 
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x32, expected_belt_color.red, expected_belt_color.green,
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, expected_belt_color.red, expected_belt_color.green,
 														expected_belt_color.blue)))
 			.Times(20);
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
@@ -88,7 +89,7 @@ TEST_F(CoreLEDTests, turnOn1)
 		InSequence seq;
 
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x32, expected_belt_color.red, expected_belt_color.green,
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, expected_belt_color.red, expected_belt_color.green,
 														expected_belt_color.blue)))
 			.Times(20);
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
@@ -106,7 +107,7 @@ TEST_F(CoreLEDTests, setImplementedColor)
 		InSequence seq;
 
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x32, expected_belt_color.red, expected_belt_color.green,
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, expected_belt_color.red, expected_belt_color.green,
 														expected_belt_color.blue)))
 			.Times(20);
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
@@ -123,7 +124,7 @@ TEST_F(CoreLEDTests, setUnimplementedBeltColor)
 		InSequence seq;
 
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x32, expected_belt_color.red, expected_belt_color.green,
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, expected_belt_color.red, expected_belt_color.green,
 														expected_belt_color.blue)))
 			.Times(20);
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
