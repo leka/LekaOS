@@ -32,9 +32,11 @@ class CoreLED : public interface::LED
 	int _n_LEDs;
 	static constexpr uint8_t brightness = 0x32;
 
-	std::array<uint8_t, 4> start_frame = std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
-	std::array<uint8_t, 4> reset_frame = std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
-	std::array<uint8_t, 2> end_frame   = std::to_array<uint8_t>({0x00, 0x00});
+	struct frame {
+		static inline auto start = std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
+		static inline auto reset = std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
+		static inline auto end	 = std::to_array<uint8_t>({0x00, 0x00});
+	};
 };
 
 }	// namespace leka

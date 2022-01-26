@@ -19,17 +19,17 @@ auto CoreLED::isOn() const -> bool
 
 void CoreLED::showColor()
 {
-	_spi.write(start_frame);
+	_spi.write(frame::start);
 
 	for (auto i = 0; i < (_n_LEDs * 3); i += 3) {
 		auto data = std::to_array<uint8_t>({brightness, _color.red, _color.green, _color.blue});
 		_spi.write(data);
 	}
 
-	_spi.write(reset_frame);
+	_spi.write(frame::reset);
 
 	// At least N_LEDS/2 bits of 0 for the end frame ()
-	_spi.write(end_frame);
+	_spi.write(frame::end);
 }
 
 void CoreLED::turnOff()
