@@ -41,13 +41,13 @@
 #define TARGET_CORDIO			   1
 #define TARGET_CORTEX			   1
 #define TARGET_CORTEX_M			   1
-#define TARGET_LEKA_V1_0_DEV	   1
+#define TARGET_LEKA_Vx_x_UNIT_TEST 1
 #define TARGET_LIKE_CORTEX_M7	   1
 #define TARGET_LIKE_MBED		   1
 #define TARGET_M7				   1
 #define TARGET_MCU_STM32		   1
 #define TARGET_MCU_STM32F7		   1
-#define TARGET_NAME				   LEKA_V1_0_DEV
+#define TARGET_NAME				   LEKA_Vx_x_UNIT_TEST
 #define TARGET_RELEASE			   1
 #define TARGET_RTOS_M4_M7		   1
 #define TARGET_STM				   1
