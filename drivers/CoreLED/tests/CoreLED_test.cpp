@@ -28,108 +28,76 @@ TEST_F(CoreLEDTests, initialisation)
 	ASSERT_NE(&coreled, nullptr);
 }
 
-TEST_F(CoreLEDTests, turnOff)
+TEST_F(CoreLEDTests, setColorAndShowPredefinedColor)
 {
-	auto expected_belt_color = RGB::black;
+	auto color = RGB::pure_red;
+
 	{
 		InSequence seq;
 
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, expected_belt_color.red, expected_belt_color.green,
-														expected_belt_color.blue)))
-			.Times(20);
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.red, color.green, color.blue))).Times(20);
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00))).Times(1);
 	}
-	coreled.turnOff();
 
-	ASSERT_EQ(false, coreled.isOn());
-}
-
-TEST_F(CoreLEDTests, turnOn)
-{
-	auto expected_belt_color = RGB::pure_green;
-	{
-		InSequence seq;
-
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, expected_belt_color.red, expected_belt_color.green,
-														expected_belt_color.blue)))
-			.Times(20);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00))).Times(1);
-	}
-	coreled.turnOn();
-
-	ASSERT_EQ(true, coreled.isOn());
-}
-
-TEST_F(CoreLEDTests, turnOff1)
-{
-	auto expected_belt_color = RGB::black;
-	{
-		InSequence seq;
-
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, expected_belt_color.red, expected_belt_color.green,
-														expected_belt_color.blue)))
-			.Times(20);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00))).Times(1);
-	}
-	coreled.turnOff();
-
-	ASSERT_EQ(false, coreled.isOn());
-}
-
-TEST_F(CoreLEDTests, turnOn1)
-{
-	auto expected_belt_color = RGB::pure_green;
-	{
-		InSequence seq;
-
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, expected_belt_color.red, expected_belt_color.green,
-														expected_belt_color.blue)))
-			.Times(20);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00))).Times(1);
-	}
-	coreled.turnOn();
-
-	ASSERT_EQ(true, coreled.isOn());
-}
-
-TEST_F(CoreLEDTests, setImplementedColor)
-{
-	auto expected_belt_color = RGB::pure_red;
-	{
-		InSequence seq;
-
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, expected_belt_color.red, expected_belt_color.green,
-														expected_belt_color.blue)))
-			.Times(20);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00))).Times(1);
-	}
-	coreled.setColor(expected_belt_color);
+	coreled.setColor(color);
 	coreled.showColor();
 }
 
-TEST_F(CoreLEDTests, setUnimplementedBeltColor)
+TEST_F(CoreLEDTests, setColorAndShowRandomColor)
 {
-	auto expected_belt_color = RGB {255, 255, 0};
+	auto color = RGB {120, 12, 56};
+
 	{
 		InSequence seq;
 
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, expected_belt_color.red, expected_belt_color.green,
-														expected_belt_color.blue)))
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.red, color.green, color.blue))).Times(20);
+		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
+		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00))).Times(1);
+	}
+
+	coreled.setColor(color);
+	coreled.showColor();
+}
+
+TEST_F(CoreLEDTests, turnOnWithoutSetColor)
+{
+	auto expected_color = RGB::black;
+
+	{
+		InSequence seq;
+
+		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
+		EXPECT_CALL(spimock,
+					write(testing::ElementsAre(_, expected_color.red, expected_color.green, expected_color.blue)))
 			.Times(20);
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
 		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00))).Times(1);
 	}
-	coreled.setColor(expected_belt_color);
-	coreled.showColor();
+
+	coreled.turnOn();
+
+	EXPECT_EQ(coreled.isOn(), true);
+}
+
+TEST_F(CoreLEDTests, turnOffWithoutSetColor)
+{
+	auto expected_color = RGB::black;
+
+	{
+		InSequence seq;
+
+		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
+		EXPECT_CALL(spimock,
+					write(testing::ElementsAre(_, expected_color.red, expected_color.green, expected_color.blue)))
+			.Times(20);
+		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00, 0x00, 0x00))).Times(1);
+		EXPECT_CALL(spimock, write(testing::ElementsAre(0x00, 0x00))).Times(1);
+	}
+
+	coreled.turnOff();
+
+	EXPECT_EQ(coreled.isOn(), false);
 }
