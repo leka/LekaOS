@@ -19,7 +19,7 @@ class CoreLEDTests : public ::testing::Test
 	// void TearDown() override {}
 
 	CoreLED coreled;
-	SPIMock spimock;
+	mock::SPI spimock;
 };
 
 TEST_F(CoreLEDTests, initialisation)

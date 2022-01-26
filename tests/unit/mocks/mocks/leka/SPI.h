@@ -10,14 +10,14 @@
 #include "SPI.h"
 #include "gmock/gmock.h"
 
-namespace leka {
+namespace leka::mock {
 
-class SPIMock : public interface::SPI
+class SPI : public interface::SPI
 {
   public:
 	MOCK_METHOD(size_t, write, (std::span<uint8_t>), (override));
 };
 
-}	// namespace leka
+}	// namespace leka::mock
 
 #endif	 // _LEKA_OS_SPI_MOCK_H_
