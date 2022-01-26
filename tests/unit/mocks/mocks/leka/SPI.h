@@ -15,7 +15,7 @@ namespace leka::mock {
 class SPI : public interface::SPI
 {
   public:
-	MOCK_METHOD(size_t, write, (std::span<uint8_t>), (override));
+	MOCK_METHOD(size_t, write, (std::span<const uint8_t>), (override));
 };
 
 }	// namespace leka::mock
