@@ -20,10 +20,8 @@ class BLEKit
 	void init();
 
   private:
-	void processEvents(BLE::OnEventsToProcessCallbackContext *event)
-	{
-		_event_queue.call(mbed::callback(&event->ble, &BLE::processEvents));
-	}
+	// ? mbed::BLE specific function
+	void processEvents(BLE::OnEventsToProcessCallbackContext *context);
 
 	rtos::Thread _thread {};
 	events::EventQueue _event_queue {};

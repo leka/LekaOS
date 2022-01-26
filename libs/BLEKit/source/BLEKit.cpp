@@ -14,3 +14,8 @@ void BLEKit::init()
 
 	_ble.init();
 }
+
+void leka::BLEKit::processEvents(BLE::OnEventsToProcessCallbackContext *context)
+{
+	_event_queue.call(mbed::callback(&context->ble, &BLE::processEvents));
+}
