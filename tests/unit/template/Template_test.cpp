@@ -13,7 +13,7 @@ using namespace std::chrono;
 TEST(UnitTestsSetup, mbedConfigAvailable)
 {
 	// Test mbed_config.h is available
-	ASSERT_STREQ(MBED_CONF_APP_TARGET_NAME, "LEKA_V1_0_DEV");
+	ASSERT_STREQ(MBED_CONF_APP_TARGET_NAME, "LEKA_Vx_x_UNIT_TEST");
 }
 
 TEST(UnitTestsSetup, mbedTargetConfigAvailable)
