@@ -10,6 +10,7 @@
 using namespace leka;
 using ::testing::_;
 using ::testing::InSequence;
+using ::testing::NiceMock;
 
 class CoreLEDTests : public ::testing::Test
 {
@@ -19,7 +20,7 @@ class CoreLEDTests : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	mock::SPI spimock {};
+	NiceMock<mock::SPI> spimock {};
 	CoreLED coreled {spimock, 20};
 };
 
@@ -60,6 +61,20 @@ TEST_F(CoreLEDTests, setColorAndShowRandomColor)
 
 	coreled.setColor(color);
 	coreled.showColor();
+}
+
+TEST_F(CoreLEDTests, turnOnAfterSetAndShowColor)
+{
+	coreled.setColor(RGB::magenta);
+	coreled.showColor();
+
+	EXPECT_CALL(spimock, write).Times(0);
+
+	// TODO (@hugo) - calling turnOn() when there is already a color displayed must not do anything thus the EXPECT_CALL
+	// Times(0)
+	coreled.turnOn();
+
+	EXPECT_EQ(coreled.isOn(), true);
 }
 
 TEST_F(CoreLEDTests, turnOnWithoutSetColor)
