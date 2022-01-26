@@ -25,8 +25,8 @@ class CoreLED : public interface::LED
 	[[nodiscard]] auto isOn() const -> bool;
 
   private:
-	RGB _color {RGB::pure_green};
-	RGB _previous_color {RGB::pure_green};
+	RGB _color {RGB::black};
+	RGB _previous_color {RGB::black};
 	bool _is_on {false};
 	interface::SPI &_spi;
 	int _n_LEDs;
