@@ -13,13 +13,13 @@ using ::testing::InSequence;
 class CoreLEDTests : public ::testing::Test
 {
   protected:
-	CoreLEDTests() : coreled(spimock, 20) {}
+	CoreLEDTests() = default;
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	CoreLED coreled;
-	mock::SPI spimock;
+	mock::SPI spimock {};
+	CoreLED coreled {spimock, 20};
 };
 
 TEST_F(CoreLEDTests, initialisation)
