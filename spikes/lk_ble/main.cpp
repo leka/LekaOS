@@ -1,21 +1,17 @@
 // Leka - LekaOS
-// Copyright 2020 APF France handicap
+// Copyright 2020-2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "drivers/BufferedSerial.h"
-#include "platform/Callback.h"
 #include "rtos/ThisThread.h"
-#include "rtos/Thread.h"
 
-#include "LKBLE.h"
+#include "BLEKit.h"
+
+#include "LogKit.h"
 
 using namespace leka;
 using namespace std::chrono;
 
-void schedule_ble_events(BLE::OnEventsToProcessCallbackContext *context)
-{
-	event_queue.call(mbed::Callback<void()>(&context->ble, &BLE::processEvents));
-}
+auto blekit = BLEKit {};
 
 auto main() -> int
 {
@@ -23,14 +19,7 @@ auto main() -> int
 
 	log_info("Hello, World!\n\n");
 
-	BLE &ble = BLE::Instance();
-	ble.onEventsToProcess(schedule_ble_events);
-
-	HeartrateDemo demo(ble, event_queue);
-	demo.start();
-
-	rtos::Thread thread_ble_event_queue;
-	thread_ble_event_queue.start(callback(&event_queue, &EventQueue::dispatch_forever));
+	blekit.init();
 
 	while (true) {
 		log_info("Main thread running...");
