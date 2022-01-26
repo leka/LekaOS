@@ -16,11 +16,11 @@ class CoreLED : public interface::LED
   public:
 	explicit CoreLED(interface::SPI &spi, int n_LEDs) : _spi {spi}, _n_LEDs(n_LEDs) {};
 
-	auto setColor(RGB color) -> void override;
-	auto showColor() -> void override;
+	void setColor(RGB color) override;
+	void showColor() override;
 
-	auto turnOn() -> void override;
-	auto turnOff() -> void override;
+	void turnOn() override;
+	void turnOff() override;
 
 	[[nodiscard]] auto isOn() const -> bool;
 

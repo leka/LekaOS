@@ -6,7 +6,7 @@
 
 using namespace leka;
 
-auto CoreLED::setColor(RGB color) -> void
+void CoreLED::setColor(RGB color)
 {
 	_previous_color = _color;
 	_color			= color;
@@ -17,7 +17,7 @@ auto CoreLED::isOn() const -> bool
 	return _is_on;
 }
 
-auto CoreLED::showColor() -> void
+void CoreLED::showColor()
 {
 	_spi.write(start_frame);
 
@@ -32,14 +32,14 @@ auto CoreLED::showColor() -> void
 	_spi.write(end_frame);
 }
 
-auto CoreLED::turnOff() -> void
+void CoreLED::turnOff()
 {
 	_is_on = false;
 	setColor(RGB::black);
 	showColor();
 }
 
-auto CoreLED::turnOn() -> void
+void CoreLED::turnOn()
 {
 	setColor(_previous_color);
 	_is_on = true;
