@@ -33,9 +33,9 @@ class CoreLED : public interface::LED
 	static constexpr uint8_t brightness = 0x32;
 
 	struct frame {
-		static inline auto start = std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
-		static inline auto reset = std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
-		static inline auto end	 = std::to_array<uint8_t>({0x00, 0x00});
+		static constexpr auto start = std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
+		static constexpr auto reset = std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
+		static constexpr auto end	= std::to_array<uint8_t>({0x00, 0x00});
 	};
 };
 
