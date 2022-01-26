@@ -14,7 +14,7 @@ namespace leka {
 class CoreLED : public interface::LED
 {
   public:
-	explicit CoreLED(interface::SPI &spi, int n_LEDs) : _spi {spi}, _n_LEDs(n_LEDs) {};
+	explicit CoreLED(interface::SPI &spi, int size) : _spi {spi}, _size(size) {};
 
 	void setColor(RGB color) override;
 	void showColor() override;
@@ -25,11 +25,14 @@ class CoreLED : public interface::LED
 	[[nodiscard]] auto isOn() const -> bool;
 
   private:
+	interface::SPI &_spi;
+	int _size;
+
 	RGB _color {RGB::black};
 	RGB _previous_color {RGB::black};
+
 	bool _is_on {false};
-	interface::SPI &_spi;
-	int _n_LEDs;
+
 	static constexpr uint8_t brightness = 0x32;
 
 	struct frame {
