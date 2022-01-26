@@ -79,7 +79,9 @@ TEST_F(CoreLEDTests, turnOnWithoutSetColor)
 
 	coreled.turnOn();
 
-	EXPECT_EQ(coreled.isOn(), true);
+	// TODO (@hugo) - in this case, turnOn() shows the color black, thus the leds are not really on, they're balck
+	// TODO (@hugo) - the isOn() implementation needs to change to check for the color being displayed
+	EXPECT_EQ(coreled.isOn(), false);
 }
 
 TEST_F(CoreLEDTests, turnOffWithoutSetColor)
