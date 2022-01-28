@@ -5,6 +5,8 @@
 #ifndef _LEKA_OS_WIFI_KIT_H_
 #define _LEKA_OS_WIFI_KIT_H_
 
+#include <span>
+
 #include "CoreWifi.h"
 #include "ESP8266Interface.h"
 #include "https_request.h"
@@ -18,6 +20,9 @@ class WebKit
 	explicit WebKit() = default;
 
 	auto connect(const char *ssid, const char *pass) -> bool;
+
+	void setCertificateStore(std::span<const char *> const &certificates_path_list);
+
 	void downloadFile(const char *url, const char *path);
 
   private:
@@ -29,6 +34,8 @@ class WebKit
 	leka::CoreWifi corewifi {wifi_module, wifi_enable};
 
 	std::string _url;
+
+	std::array<char, 4000> _certificate_store {};
 };
 
 }	// namespace leka

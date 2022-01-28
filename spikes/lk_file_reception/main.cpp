@@ -48,6 +48,12 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(1s);
 
 	if (auto is_connected = web_kit.connect("USER_SSID", "USER_PASS"); is_connected) {
+		auto certificates_path_list = std::to_array(
+			{"/fs/certificate_store/DigiCert High Assurance TLS Hybrid ECC SHA256 2020 "
+			 "CA1-0667035BBB14FD63AFC0D6A8534EFE16.txt",
+			 "/fs/certificate_store/DigiCert SHA2 High Assurance Server CA-04E1E7A4DC5CF2F36DC02B42B85D159F.txt"});
+		web_kit.setCertificateStore(certificates_path_list);
+
 		log_info("Start downloading file via wifi...");
 		web_kit.downloadFile("https://github.com/leka/LekaOS/releases/download/1.2.3/LekaOS-1.2.3.bin",
 							 "/fs/os/LekaOS-1.2.3.bin");
