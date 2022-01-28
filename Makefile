@@ -153,8 +153,8 @@ coverage:
 	@echo ""
 	@echo "🔬 Generating code coverage 📝"
 	@echo ""
-	@gcovr --root . $(EXCLUDE_FROM_GCOVR_COVERAGE)
-	@gcovr --root . $(EXCLUDE_FROM_GCOVR_COVERAGE) --html-details $(UNIT_TESTS_COVERAGE_DIR)/coverage.html
+	@gcovr --root . $(EXCLUDE_FROM_GCOVR_COVERAGE) --exclude-throw-branches --exclude-unreachable-branches
+	@gcovr --root . $(EXCLUDE_FROM_GCOVR_COVERAGE) --exclude-throw-branches --exclude-unreachable-branches --html-details $(UNIT_TESTS_COVERAGE_DIR)/coverage.html
 	@echo ""
 	@echo "📝 Html report can be viewed with:"
 	@echo "    open $(UNIT_TESTS_COVERAGE_DIR)/coverage.html\n"
@@ -170,7 +170,7 @@ coverage_sonarqube:
 	@echo "🔬 Generating code coverage 📝"
 	@echo ""
 	@gcovr --root . $(EXCLUDE_FROM_GCOVR_COVERAGE)
-	@gcovr --root . $(EXCLUDE_FROM_GCOVR_COVERAGE) --sonarqube $(UNIT_TESTS_COVERAGE_DIR)/coverage.xml
+	@gcovr --root . $(EXCLUDE_FROM_GCOVR_COVERAGE) --exclude-throw-branches --exclude-unreachable-branches --sonarqube $(UNIT_TESTS_COVERAGE_DIR)/coverage.xml
 	@echo ""
 	@echo "📝 SonarQube XML report can be viewed with:"
 	@echo "    open $(UNIT_TESTS_COVERAGE_DIR)/coverage.xml\n"

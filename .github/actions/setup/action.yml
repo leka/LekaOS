@@ -15,13 +15,25 @@ runs:
   using: "composite"
   steps:
     #
+    # Mark: - Setup env
+    #
+
+    - name: Setup ENV variables
+      id: setup_env_variables
+      shell: bash
+      run: ${{ github.action_path }}/setup_env.sh
+      env:
+        BASE_REF: ${{ github.event.pull_request.base.ref }}
+        HEAD_REF: ${{ github.head_ref }}
+
+    #
     # Mark: - Checkout dependencies
     #
 
     - name: Checkout mbed-os
       uses: actions/checkout@v2
       with:
-        repository: ARMmbed/mbed-os
+        repository: leka/mbed-os
         ref: ${{ env.HEAD_MBED_VERSION }}
         path: extern/mbed-os
 
@@ -37,18 +49,6 @@ runs:
       run: |
         make mbed_symlink_files
         make mcuboot_symlink_files
-
-    #
-    # Mark: - Setup env
-    #
-
-    - name: Setup ENV variables
-      id: setup_env_variables
-      shell: bash
-      run: ${{ github.action_path }}/setup_env.sh
-      env:
-        BASE_REF: ${{ github.event.pull_request.base.ref }}
-        HEAD_REF: ${{ github.head_ref }}
 
     #
     # Mark: - ARM GCC Toolchain
