@@ -7,7 +7,11 @@
 
 #include <cstdint>
 
-#include "RGB.h"
+namespace leka {
+
+struct RGB;
+
+}	// namespace leka
 
 namespace leka::interface {
 
