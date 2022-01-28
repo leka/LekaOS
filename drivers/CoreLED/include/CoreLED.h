@@ -18,10 +18,14 @@ class CoreLED : public interface::LED
 
 	void setColor(RGB color) override;
 	void showColor() override;
+	void hideColor() override;
+
+	auto isOn() -> bool override;
 
   private:
 	interface::SPI &_spi;
 	int _size;
+	bool _is_color_shown = false;
 
 	RGB _color {RGB::black};
 
@@ -32,6 +36,8 @@ class CoreLED : public interface::LED
 		static constexpr auto reset = std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
 		static constexpr auto end	= std::to_array<uint8_t>({0x00, 0x00});
 	};
+
+	void sendAndDisplay(RGB color);
 };
 
 }	// namespace leka
