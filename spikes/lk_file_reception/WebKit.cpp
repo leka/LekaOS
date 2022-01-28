@@ -38,6 +38,10 @@ void WebKit::downloadFile(const char *url, const char *path)
 
 auto WebKit::responseHasRedirectionURL(HttpResponse *response) const -> bool
 {
+	if (response == nullptr) {
+		return false;
+	}
+
 	const auto header_fields	 = response->get_headers_fields();
 	auto contains_location_field = [](const std::string *field) { return *field == "Location"; };
 
