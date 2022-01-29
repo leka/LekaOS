@@ -232,11 +232,11 @@ clang_tidy_diff:
 	@echo "🏃‍♂️ Running clang-tidy on modified files 🧹"
 	@echo ""
 	@git diff --name-status develop \
-		| grep -E -v "_test" | grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$"
+		| grep -E -v "_test" | grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$" || echo "No files added nor modified!"
 	@echo ""
 	@git diff --name-status develop \
 		| grep -E -v "_test" | grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$" \
-		| xargs /usr/local/opt/llvm/bin/clang-tidy -p=. --quiet
+		| xargs --no-run-if-empty ruby tools/run-clang-tidy.rb $(CMAKE_TOOLS_BUILD_DIR)
 
 clang_tidy_diff_fix:
 	@echo ""
