@@ -238,17 +238,6 @@ clang_tidy_diff:
 		| grep -E -v "_test" | grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$" \
 		| xargs --no-run-if-empty ruby tools/run-clang-tidy.rb $(CMAKE_TOOLS_BUILD_DIR)
 
-clang_tidy_diff_fix:
-	@echo ""
-	@echo "🏃‍♂️ Running clang-tidy on modified files 🧹"
-	@echo ""
-	@git diff --name-status develop \
-		| grep -E -v "_test" | grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$"
-	@echo ""
-	@git diff --name-status develop \
-		| grep -E -v "_test" | grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$" \
-		| xargs /usr/local/opt/llvm/bin/clang-tidy -p=. --quiet --fix --fix-errors
-
 #
 # MARK: - Mbed targets
 #
