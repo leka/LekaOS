@@ -51,11 +51,11 @@ namespace sm::action {
 	using irc = interface::RobotController;
 
 	struct start_sleep_timeout {
-		auto operator()(irc &rc) const {}
+		auto operator()(irc &rc) const { rc.startSleepTimeout(); }
 	};
 
 	struct stop_sleep_timeout {
-		auto operator()(irc &rc) const {}
+		auto operator()(irc &rc) const { rc.stopSleepTimeout(); }
 	};
 
 }	// namespace sm::action
