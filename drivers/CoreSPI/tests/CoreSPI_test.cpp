@@ -12,12 +12,11 @@ using namespace leka;
 class CoreSPITests : public ::testing::Test
 {
   protected:
-	CoreSPITests() : corespi(spi) {}
+	CoreSPITests() : corespi(NC, NC, NC, NC) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	mbed::SPI spi {NC, NC, NC, NC};
 	CoreSPI corespi;
 };
 

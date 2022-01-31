@@ -23,14 +23,11 @@ constexpr std::array<RGB, 6> colors_available = {
 	RGB::pure_green, RGB::pure_red, RGB::pure_blue, RGB::yellow, RGB::cyan, RGB::magenta,
 };
 
-mbed::SPI spi_belt(LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK);
-mbed::SPI spi_ear(LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK);
-
-CoreSPI corespi_belt(spi_belt);
-CoreSPI corespi_ear(spi_ear);
+CoreSPI corespi_belt(LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK);
+CoreSPI corespi_ears(LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK);
 
 CoreLED belt(corespi_belt, NUM_BELT_LEDS);
-CoreLED ears(corespi_ear, NUM_EAR_LEDS);
+CoreLED ears(corespi_ears, NUM_EAR_LEDS);
 
 void changeColor(interface::LED &ears, interface::LED &belt)
 {
@@ -58,7 +55,6 @@ auto main() -> int
 
 	HelloWorld hello;
 	hello.start();
-
 	log_info("Hello, World!\n\n");
 
 	rtos::ThisThread::sleep_for(2s);
