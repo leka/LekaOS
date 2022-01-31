@@ -7,6 +7,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/Battery.h"
+#include "mocks/leka/Timeout.h"
 
 using namespace leka;
 using namespace leka::system;
@@ -16,9 +17,9 @@ namespace event = system::robot::sm::event;
 
 using testing::Return;
 
-ACTION_P(GetCallback, pointer)
+ACTION_TEMPLATE(GetCallback, HAS_1_TEMPLATE_PARAMS(typename, callback_t), AND_1_VALUE_PARAMS(pointer))
 {
-	*pointer = mbed::Callback<void()>(arg0);
+	*pointer = callback_t(arg0);
 }
 
 class RobotControllerTest : public testing::Test
@@ -26,15 +27,21 @@ class RobotControllerTest : public testing::Test
   protected:
 	void SetUp() override
 	{
-		EXPECT_CALL(battery, onChargeDidStart).WillOnce(GetCallback(&on_charge_did_start));
-		EXPECT_CALL(battery, onChargeDidStop).WillOnce(GetCallback(&on_charge_did_stop));
+		EXPECT_CALL(sleep_timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleep_timeout));
+		EXPECT_CALL(battery, onChargeDidStart).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_start));
+		EXPECT_CALL(battery, onChargeDidStop).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_stop));
 
 		rc.registerEvents();
 	}
 	// void TearDown() override {}
 
+	mock::Timeout sleep_timeout {};
 	mock::Battery battery {};
-	RobotController<bsml::sm<robot::StateMachine, bsml::testing>> rc {battery};
+
+	RobotController<bsml::sm<robot::StateMachine, bsml::testing>> rc {sleep_timeout, battery};
+
+	interface::Timeout::callback_t on_sleep_timeout {
+	};
 
 	mbed::Callback<void()> on_charge_did_start {};
 	mbed::Callback<void()> on_charge_did_stop {};
@@ -49,6 +56,7 @@ TEST_F(RobotControllerTest, stateSetupEventSetupComplete)
 {
 	rc.state_machine.set_current_states(lksm::state::setup);
 
+	EXPECT_CALL(sleep_timeout, onTimeout).Times(1);
 	EXPECT_CALL(battery, onChargeDidStart).Times(1);
 	EXPECT_CALL(battery, onChargeDidStop).Times(1);
 
