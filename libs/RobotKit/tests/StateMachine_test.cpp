@@ -47,6 +47,7 @@ TEST_F(StateMachineTest, initialState)
 {
 	EXPECT_TRUE(sm.is(lksm::state::setup));
 	EXPECT_FALSE(sm.is(lksm::state::idle));
+	EXPECT_FALSE(sm.is(lksm::state::sleeping));
 	EXPECT_FALSE(sm.is(lksm::state::charging));
 }
 
@@ -57,6 +58,26 @@ TEST_F(StateMachineTest, stateSetupEventSetupComplete)
 	sm.process_event(lksm::event::setup_complete {});
 
 	EXPECT_TRUE(sm.is(lksm::state::idle));
+}
+
+TEST_F(StateMachineTest, stateIdleEventTimeout)
+{
+	sm.set_current_states(lksm::state::idle);
+
+	sm.process_event(lksm::event::sleep_timeout_did_end {});
+
+	EXPECT_TRUE(sm.is(lksm::state::sleeping));
+}
+
+TEST_F(StateMachineTest, stateSleepEventChargeDidStart)
+{
+	sm.set_current_states(lksm::state::sleeping);
+
+	EXPECT_CALL(mock_rc, isCharging).WillOnce(Return(true));
+
+	sm.process_event(lksm::event::charge_did_start {});
+
+	EXPECT_TRUE(sm.is(lksm::state::charging));
 }
 
 TEST_F(StateMachineTest, stateIdleEventChargeDidStart)
