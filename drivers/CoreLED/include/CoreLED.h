@@ -34,7 +34,7 @@ class CoreLED : public interface::LED
 	struct frame {
 		static constexpr auto start = std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
 		static constexpr auto reset = std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
-		static constexpr auto end	= std::to_array<uint8_t>({0x00, 0x00});
+		static constexpr auto end	= std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
 	};
 
 	void sendAndDisplay(RGB color);

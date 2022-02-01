@@ -27,7 +27,7 @@ class CoreLEDTests : public ::testing::Test
 	struct frame {
 		static inline auto start = testing::ElementsAre(0x00, 0x00, 0x00, 0x00);
 		static inline auto reset = testing::ElementsAre(0x00, 0x00, 0x00, 0x00);
-		static inline auto end	 = testing::ElementsAre(0x00, 0x00);
+		static inline auto end	 = testing::ElementsAre(0x00, 0x00, 0x00, 0x00);
 	};
 };
 
