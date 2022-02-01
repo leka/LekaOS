@@ -26,10 +26,10 @@ constexpr std::array<RGB, 6> colors_available = {
 CoreSPI corespi_belt(LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK);
 CoreSPI corespi_ears(LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK);
 
-CoreLED belt(corespi_belt, NUM_BELT_LEDS);
-CoreLED ears(corespi_ears, NUM_EAR_LEDS);
+CoreLED<NUM_BELT_LEDS> belt(corespi_belt);
+CoreLED<NUM_EAR_LEDS> ears(corespi_ears);
 
-void changeColor(interface::LED &ears, interface::LED &belt)
+void changeColor(interface::LED<NUM_EAR_LEDS> &ears, interface::LED<NUM_BELT_LEDS> &belt)
 {
 	static auto index = uint8_t {0};
 
@@ -60,7 +60,7 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(2s);
 
 	while (true) {
-		changeColor(belt, ears);
+		changeColor(ears, belt);
 		rtos::ThisThread::sleep_for(1s);
 	}
 }

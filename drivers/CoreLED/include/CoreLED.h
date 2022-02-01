@@ -5,29 +5,56 @@
 #ifndef _LEKA_OS_DRIVER_CORE_LED_H_
 #define _LEKA_OS_DRIVER_CORE_LED_H_
 
+#include <algorithm>
+
 #include "RGB.h"
 #include "interface/drivers/LED.h"
 #include "interface/drivers/SPI.h"
 
 namespace leka {
 
-class CoreLED : public interface::LED
+template <size_t NumberOfLeds>
+class CoreLED : public interface::LED<NumberOfLeds>
 {
   public:
-	explicit CoreLED(interface::SPI &spi, int size) : _spi {spi}, _size(size) {};
+	explicit CoreLED(interface::SPI &spi) : _spi {spi} {};
 
-	void setColor(RGB color) override;
-	void showColor() override;
-	void hideColor() override;
+	void setColor(RGB color) override { std::fill(_color.begin(), _color.end(), color); }
 
-	auto isOn() -> bool override;
+	void setColorAtIndex(int index, RGB color) override { _color.at(index) = color; }
+
+	void setColorWithArray(std::array<RGB, NumberOfLeds> color) override
+	{
+		std::copy(color.begin(), color.end(), _color.begin());
+	}
+
+	void showColor() override
+	{
+		sendAndDisplay(_color);
+
+		auto led_is_not_black		= [](auto c) { return c != RGB::black; };
+		auto all_leds_are_not_black = std::all_of(_color.begin(), _color.end(), led_is_not_black);
+
+		_is_color_shown = all_leds_are_not_black;
+	}
+
+	void hideColor() override
+	{
+		if (isOn()) {
+			auto black = std::array<RGB, NumberOfLeds> {};
+			std::fill(black.begin(), black.end(), RGB::black);
+			sendAndDisplay(black);
+			_is_color_shown = false;
+		}
+	}
+
+	auto isOn() -> bool override { return _is_color_shown; }
 
   private:
 	interface::SPI &_spi;
-	int _size;
 	bool _is_color_shown = false;
 
-	RGB _color {RGB::black};
+	std::array<RGB, NumberOfLeds> _color;
 
 	static constexpr uint8_t brightness = 0xFF;
 
@@ -37,7 +64,19 @@ class CoreLED : public interface::LED
 		static constexpr auto end	= std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
 	};
 
-	void sendAndDisplay(RGB color);
+	void sendAndDisplay(std::array<RGB, NumberOfLeds> color)
+	{
+		_spi.write(frame::start);
+
+		for (auto i = 0; i < NumberOfLeds; i++) {
+			auto data = std::to_array<uint8_t>({brightness, color[i].red, color[i].green, color[i].blue});
+			_spi.write(data);
+		}
+
+		_spi.write(frame::reset);
+
+		_spi.write(frame::end);
+	}
 };
 
 }	// namespace leka
