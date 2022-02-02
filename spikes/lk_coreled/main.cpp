@@ -37,33 +37,33 @@ CoreSPI corespi_ears(LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK);
 CoreLED<NUM_BELT_LEDS> belt(corespi_belt);
 CoreLED<NUM_EARS_LEDS> ears(corespi_ears);
 
-void changeColor(interface::LED<NUM_EARS_LEDS> &ears, interface::LED<NUM_BELT_LEDS> &belt)
+void changeColor(interface::LED<NUM_EARS_LEDS> &e, interface::LED<NUM_BELT_LEDS> &b)
 {
 	static auto index = uint8_t {0};
 
 	if (index < colors_available.size()) {
-		ears.setColor(colors_available.at(index));
-		ears.showColor();
+		e.setColor(colors_available.at(index));
+		e.showColor();
 
-		belt.setColor(colors_available.at(index));
-		belt.showColor();
+		b.setColor(colors_available.at(index));
+		b.showColor();
 
 		index++;
 	} else if (index == colors_available.size()) {
-		ears.setColorWithArray(color_ears_array);
-		ears.showColor();
+		e.setColorWithArray(color_ears_array);
+		e.showColor();
 
-		belt.setColorWithArray(color_belt_array);
-		belt.showColor();
+		b.setColorWithArray(color_belt_array);
+		b.showColor();
 
 		index++;
 	} else {
 		static auto led = uint8_t {0};
-		ears.setColorAtIndex(led / 10, RGB::pure_green);
-		ears.showColor();
+		e.setColorAtIndex(led / 10, RGB::pure_green);
+		e.showColor();
 
-		belt.setColorAtIndex(led, RGB::pure_green);
-		belt.showColor();
+		b.setColorAtIndex(led, RGB::pure_green);
+		b.showColor();
 
 		led++;
 		if (led == NUM_BELT_LEDS) {
