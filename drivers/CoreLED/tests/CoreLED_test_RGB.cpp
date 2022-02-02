@@ -17,5 +17,6 @@ TEST(RGBTest, equalOperator)
 
 	EXPECT_TRUE((color == RGB {255, 215, 0}));
 
+	EXPECT_TRUE((black != RGB {0xFF, 0xFF, 0xFF}));
 	EXPECT_FALSE((black == RGB {0xFF, 0xFF, 0xFF}));
 }

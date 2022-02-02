@@ -14,10 +14,7 @@ struct RGB {
 	uint8_t green {};
 	uint8_t blue {};
 
-	auto operator==(RGB const &a) const -> bool
-	{
-		return (this->red == a.red && this->green == a.green && this->blue == a.blue);
-	}
+	auto operator<=>(RGB const &rhs) const -> bool = default;
 
 	static const RGB white;
 	static const RGB black;
