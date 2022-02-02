@@ -40,12 +40,18 @@ class CoreLED : public interface::LED<NumberOfLeds>
 
 	void hideColor() override
 	{
-		if (isOn()) {
-			auto black = std::array<RGB, NumberOfLeds> {};
-			std::fill(black.begin(), black.end(), RGB::black);
-			sendAndDisplay(black);
-			_is_color_shown = false;
+		if (!isOn()) {
+			return;
 		}
+
+		constexpr auto black = [] {
+			auto colors = std::array<RGB, NumberOfLeds> {};
+			std::fill(colors.begin(), colors.end(), RGB::black);
+			return colors;
+		}();
+
+		sendAndDisplay(black);
+		_is_color_shown = false;
 	}
 
 	auto isOn() -> bool override { return _is_color_shown; }
