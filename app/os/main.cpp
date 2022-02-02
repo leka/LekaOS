@@ -6,6 +6,7 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreBattery.h"
+#include "CoreTimeout.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "RobotController.h"
@@ -13,10 +14,12 @@
 using namespace leka;
 using namespace std::chrono;
 
+auto sleep_timeout = CoreTimeout {};
+
 auto charge_input = mbed::InterruptIn {PinName::BATTERY_CHARGE_STATUS};
 auto battery	  = leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_input};
 
-auto rc = RobotController {battery};
+auto rc = RobotController {sleep_timeout, battery};
 
 auto main() -> int
 {

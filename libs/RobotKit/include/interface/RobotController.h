@@ -14,6 +14,9 @@ class RobotController
   public:
 	virtual ~RobotController() = default;
 
+	virtual void startSleepTimeout() = 0;
+	virtual void stopSleepTimeout()	 = 0;
+
 	virtual auto isCharging() -> bool = 0;
 };
 

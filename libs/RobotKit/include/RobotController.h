@@ -8,6 +8,7 @@
 #include "StateMachine.h"
 #include "interface/RobotController.h"
 #include "interface/drivers/Battery.h"
+#include "interface/drivers/Timeout.h"
 
 namespace leka {
 
@@ -17,7 +18,11 @@ class RobotController : public interface::RobotController
   public:
 	sm_t state_machine {static_cast<interface::RobotController &>(*this)};
 
-	explicit RobotController(interface::Battery &battery) : _battery(battery) {};
+	explicit RobotController(interface::Timeout &sleep_timeout, interface::Battery &battery)
+		: _sleep_timeout(sleep_timeout), _battery(battery) {};
+
+	void startSleepTimeout() final { _sleep_timeout.start(_sleep_timeout_duration); }
+	void stopSleepTimeout() final { _sleep_timeout.stop(); }
 
 	auto isCharging() -> bool final { return _battery.isCharging(); };
 
@@ -30,6 +35,9 @@ class RobotController : public interface::RobotController
 		// Initializations
 		// Setup callbacks for each events
 
+		auto on_sleep_timeout = [this]() { raise(event::sleep_timeout_did_end {}); };
+		_sleep_timeout.onTimeout(on_sleep_timeout);
+
 		auto on_charge_did_start = [this]() { raise(event::charge_did_start {}); };
 		_battery.onChargeDidStart(on_charge_did_start);
 
@@ -40,6 +48,9 @@ class RobotController : public interface::RobotController
 	};
 
   private:
+	std::chrono::seconds _sleep_timeout_duration {10};
+	interface::Timeout &_sleep_timeout;
+
 	interface::Battery &_battery;
 };
 
