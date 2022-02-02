@@ -90,7 +90,7 @@ TEST_F(CoreLEDTests, setOnlyOneLedAndShowColor)
 		EXPECT_CALL(spimock, write(frame::end)).Times(1);
 	}
 
-	belt.setColor(color, 0);
+	belt.setColorAtIndex(0, color);
 	belt.showColor();
 }
 
@@ -113,7 +113,7 @@ TEST_F(CoreLEDTests, setOnlyOneRandomLedAndShowColor)
 		EXPECT_CALL(spimock, write(frame::end)).Times(1);
 	}
 
-	belt.setColor(color, index_colored_led);
+	belt.setColorAtIndex(index_colored_led, color);
 	belt.showColor();
 }
 
@@ -141,8 +141,8 @@ TEST_F(CoreLEDTests, setTwoRandomLedAndShowColor)
 		EXPECT_CALL(spimock, write(frame::end)).Times(1);
 	}
 
-	belt.setColor(color1, index_colored_led1);
-	belt.setColor(color2, index_colored_led2);
+	belt.setColorAtIndex(index_colored_led1, color1);
+	belt.setColorAtIndex(index_colored_led2, color2);
 	belt.showColor();
 }
 
@@ -159,8 +159,8 @@ TEST_F(CoreLEDTests, setAllLedsWithArrayAndShowColor)
 		EXPECT_CALL(spimock, write(frame::start)).Times(1);
 		for (auto i = 0; i < number_of_belt_leds; i++) {
 			EXPECT_CALL(spimock,
-						write(testing::ElementsAre(_, expected_color_array[i].red, expected_color_array[i].green,
-												   expected_color_array[i].blue)))
+						write(testing::ElementsAre(_, expected_color_array.at(i).red, expected_color_array.at(i).green,
+												   expected_color_array.at(i).blue)))
 				.Times(1);
 		}
 
@@ -168,7 +168,7 @@ TEST_F(CoreLEDTests, setAllLedsWithArrayAndShowColor)
 		EXPECT_CALL(spimock, write(frame::end)).Times(1);
 	}
 
-	belt.setColor(expected_color_array);
+	belt.setColorWithArray(expected_color_array);
 	belt.showColor();
 }
 
@@ -218,27 +218,6 @@ TEST_F(CoreLEDTests, setAndShowColorWhenColorHidden)
 
 	belt.setColor(color);
 	belt.showColor();
-}
-
-TEST_F(CoreLEDTests, setAndShowBlackThenCheckIfIsOff)
-{
-	belt.setColor(RGB::black);
-	belt.showColor();
-
-	EXPECT_FALSE(belt.isOn());
-}
-
-TEST_F(CoreLEDTests, setAndShowBlackThenHide)
-{
-	belt.setColor(RGB::black);
-	belt.showColor();
-
-	EXPECT_FALSE(belt.isOn());
-
-	belt.hideColor();
-
-	EXPECT_CALL(spimock, write).Times(0);
-	EXPECT_FALSE(belt.isOn());
 }
 
 TEST_F(CoreLEDTests, showEarAndBeltColor)
