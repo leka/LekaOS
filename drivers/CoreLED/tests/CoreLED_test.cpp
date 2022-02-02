@@ -9,6 +9,7 @@
 
 using namespace leka;
 using ::testing::_;
+using ::testing::AnyNumber;
 using ::testing::InSequence;
 using ::testing::NiceMock;
 
@@ -174,6 +175,8 @@ TEST_F(CoreLEDTests, setAllLedsWithArrayAndShowColor)
 
 TEST_F(CoreLEDTests, setAndShowColorThenHideColor)
 {
+	EXPECT_CALL(spimock, write(_)).Times(AnyNumber());
+
 	belt.setColor(RGB::pure_green);
 	belt.showColor();
 
