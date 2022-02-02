@@ -46,7 +46,7 @@ TEST_F(CoreLEDTests, setAllLedsInOneColorAndShowPredefinedColor)
 		InSequence seq;
 
 		EXPECT_CALL(spimock, write(frame::start)).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.red, color.green, color.blue)))
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.blue, color.green, color.red)))
 			.Times(number_of_belt_leds);
 		EXPECT_CALL(spimock, write(frame::reset)).Times(1);
 		EXPECT_CALL(spimock, write(frame::end)).Times(1);
@@ -64,7 +64,7 @@ TEST_F(CoreLEDTests, setAllLedsInOneColorAndShowRandomColor)
 		InSequence seq;
 
 		EXPECT_CALL(spimock, write(frame::start)).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.red, color.green, color.blue)))
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.blue, color.green, color.red)))
 			.Times(number_of_belt_leds);
 		EXPECT_CALL(spimock, write(frame::reset)).Times(1);
 		EXPECT_CALL(spimock, write(frame::end)).Times(1);
@@ -83,8 +83,8 @@ TEST_F(CoreLEDTests, setOnlyOneLedAndShowColor)
 		InSequence seq;
 
 		EXPECT_CALL(spimock, write(frame::start)).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.red, color.green, color.blue))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, RGB::black.red, RGB::black.green, RGB::black.blue)))
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.blue, color.green, color.red))).Times(1);
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, RGB::black.blue, RGB::black.green, RGB::black.red)))
 			.Times(number_of_belt_leds - 1);
 		EXPECT_CALL(spimock, write(frame::reset)).Times(1);
 		EXPECT_CALL(spimock, write(frame::end)).Times(1);
@@ -104,10 +104,10 @@ TEST_F(CoreLEDTests, setOnlyOneRandomLedAndShowColor)
 		InSequence seq;
 
 		EXPECT_CALL(spimock, write(frame::start)).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, RGB::black.red, RGB::black.green, RGB::black.blue)))
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, RGB::black.blue, RGB::black.green, RGB::black.red)))
 			.Times(index_colored_led);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.red, color.green, color.blue))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, RGB::black.red, RGB::black.green, RGB::black.blue)))
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.blue, color.green, color.red))).Times(1);
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, RGB::black.blue, RGB::black.green, RGB::black.red)))
 			.Times(number_of_belt_leds - index_colored_led - 1);
 		EXPECT_CALL(spimock, write(frame::reset)).Times(1);
 		EXPECT_CALL(spimock, write(frame::end)).Times(1);
@@ -129,13 +129,13 @@ TEST_F(CoreLEDTests, setTwoRandomLedAndShowColor)
 		InSequence seq;
 
 		EXPECT_CALL(spimock, write(frame::start)).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, RGB::black.red, RGB::black.green, RGB::black.blue)))
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, RGB::black.blue, RGB::black.green, RGB::black.red)))
 			.Times(index_colored_led1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color1.red, color1.green, color1.blue))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, RGB::black.red, RGB::black.green, RGB::black.blue)))
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color1.blue, color1.green, color1.red))).Times(1);
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, RGB::black.blue, RGB::black.green, RGB::black.red)))
 			.Times(index_colored_led2 - index_colored_led1 - 1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color2.red, color2.green, color2.blue))).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, RGB::black.red, RGB::black.green, RGB::black.blue)))
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color2.blue, color2.green, color2.red))).Times(1);
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, RGB::black.blue, RGB::black.green, RGB::black.red)))
 			.Times(number_of_belt_leds - index_colored_led2 - 1);
 		EXPECT_CALL(spimock, write(frame::reset)).Times(1);
 		EXPECT_CALL(spimock, write(frame::end)).Times(1);
@@ -159,8 +159,8 @@ TEST_F(CoreLEDTests, setAllLedsWithArrayAndShowColor)
 		EXPECT_CALL(spimock, write(frame::start)).Times(1);
 		for (auto i = 0; i < number_of_belt_leds; i++) {
 			EXPECT_CALL(spimock,
-						write(testing::ElementsAre(_, expected_color_array.at(i).red, expected_color_array.at(i).green,
-												   expected_color_array.at(i).blue)))
+						write(testing::ElementsAre(_, expected_color_array.at(i).blue, expected_color_array.at(i).green,
+												   expected_color_array.at(i).red)))
 				.Times(1);
 		}
 
@@ -183,7 +183,7 @@ TEST_F(CoreLEDTests, setAndShowColorThenHideColor)
 		InSequence seq;
 
 		EXPECT_CALL(spimock, write(frame::start)).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.red, color.green, color.blue)))
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.blue, color.green, color.red)))
 			.Times(number_of_belt_leds);
 		EXPECT_CALL(spimock, write(frame::reset)).Times(1);
 		EXPECT_CALL(spimock, write(frame::end)).Times(1);
@@ -210,7 +210,7 @@ TEST_F(CoreLEDTests, setAndShowColorWhenColorHidden)
 		InSequence seq;
 
 		EXPECT_CALL(spimock, write(frame::start)).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.red, color.green, color.blue)))
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.blue, color.green, color.red)))
 			.Times(number_of_belt_leds);
 		EXPECT_CALL(spimock, write(frame::reset)).Times(1);
 		EXPECT_CALL(spimock, write(frame::end)).Times(1);
@@ -231,13 +231,13 @@ TEST_F(CoreLEDTests, showEarAndBeltColor)
 		InSequence seq;
 
 		EXPECT_CALL(spimock, write(frame::start)).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.red, color.green, color.blue)))
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.blue, color.green, color.red)))
 			.Times(number_of_belt_leds);
 		EXPECT_CALL(spimock, write(frame::reset)).Times(1);
 		EXPECT_CALL(spimock, write(frame::end)).Times(1);
 
 		EXPECT_CALL(spimock, write(frame::start)).Times(1);
-		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.red, color.green, color.blue)))
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.blue, color.green, color.red)))
 			.Times(number_of_ears_leds);
 		EXPECT_CALL(spimock, write(frame::reset)).Times(1);
 		EXPECT_CALL(spimock, write(frame::end)).Times(1);
