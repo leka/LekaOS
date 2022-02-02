@@ -70,13 +70,13 @@ class CoreLED : public interface::LED<NumberOfLeds>
 		static constexpr auto end	= std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
 	};
 
-	void sendAndDisplay(std::array<RGB, NumberOfLeds> color)
+	void sendAndDisplay(std::array<RGB, NumberOfLeds> colors)
 	{
 		_spi.write(frame::start);
 
-		for (auto i = 0; i < NumberOfLeds; i++) {
+		for (const auto &c: colors) {
 			// ? SK9822 LEDS are using BGR
-			auto data = std::to_array<uint8_t>({brightness, color[i].blue, color[i].green, color[i].red});
+			auto data = std::to_array<uint8_t>({brightness, c.blue, c.green, c.red});
 			_spi.write(data);
 		}
 
