@@ -19,26 +19,26 @@ class CoreLED : public interface::LED<NumberOfLeds>
   public:
 	explicit CoreLED(interface::SPI &spi) : _spi {spi} {};
 
-	void setColor(RGB color) override { std::fill(_color.begin(), _color.end(), color); }
+	void setColor(RGB color) override { std::fill(_colors.begin(), _colors.end(), color); }
 
-	void setColorAtIndex(int index, RGB color) override { _color.at(index) = color; }
+	void setColorAtIndex(int index, RGB color) override { _colors.at(index) = color; }
 
 	void setColorWithArray(std::array<RGB, NumberOfLeds> color) override
 	{
-		std::copy(color.begin(), color.end(), _color.begin());
+		std::copy(color.begin(), color.end(), _colors.begin());
 	}
 
 	void setColorRange(int start, int end, RGB color) override
 	{
-		std::fill(_color.begin() + start, _color.end() - (NumberOfLeds - end - 1), color);
+		std::fill(_colors.begin() + start, _colors.end() - (NumberOfLeds - end - 1), color);
 	}
 
 	void showColor() override
 	{
-		sendAndDisplay(_color);
+		sendAndDisplay(_colors);
 
 		auto led_is_not_black		= [](auto c) { return c != RGB::black; };
-		auto all_leds_are_not_black = std::all_of(_color.begin(), _color.end(), led_is_not_black);
+		auto all_leds_are_not_black = std::all_of(_colors.begin(), _colors.end(), led_is_not_black);
 
 		_is_color_shown = all_leds_are_not_black;
 	}
@@ -65,7 +65,7 @@ class CoreLED : public interface::LED<NumberOfLeds>
 	interface::SPI &_spi;
 	bool _is_color_shown = false;
 
-	std::array<RGB, NumberOfLeds> _color;
+	std::array<RGB, NumberOfLeds> _colors;
 
 	static constexpr uint8_t brightness = 0xFF;
 
