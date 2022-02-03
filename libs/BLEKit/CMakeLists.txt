@@ -15,6 +15,6 @@ target_sources(BLEKit
 )
 
 target_link_libraries(BLEKit
-	PRIVATE
-		mbed-os
+	mbed-os
+	CoreEventQueue
 )

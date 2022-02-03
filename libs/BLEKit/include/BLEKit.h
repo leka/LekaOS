@@ -5,10 +5,9 @@
 #ifndef _LEKA_OS_LIB_BLE_KIT_H_
 #define _LEKA_OS_LIB_BLE_KIT_H_
 
-#include "events/EventQueue.h"
-#include "rtos/Thread.h"
-
 #include "ble/BLE.h"
+
+#include "CoreEventQueue.h"
 
 namespace leka {
 
@@ -23,8 +22,7 @@ class BLEKit
 	// ? mbed::BLE specific function
 	void processEvents(BLE::OnEventsToProcessCallbackContext *context);
 
-	rtos::Thread _thread {};
-	events::EventQueue _event_queue {};
+	CoreEventQueue _event_queue {};
 
 	BLE &_ble = BLE::Instance();
 };

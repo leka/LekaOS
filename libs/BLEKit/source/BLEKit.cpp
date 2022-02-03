@@ -10,12 +10,12 @@ void BLEKit::init()
 
 	_ble.onEventsToProcess({this, &BLEKit::processEvents});
 
-	_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
+	_event_queue.dispatch_forever();
 
 	_ble.init();
 }
 
-void leka::BLEKit::processEvents(BLE::OnEventsToProcessCallbackContext *context)
+void BLEKit::processEvents(BLE::OnEventsToProcessCallbackContext *context)
 {
 	_event_queue.call(mbed::callback(&context->ble, &BLE::processEvents));
 }
