@@ -173,6 +173,29 @@ TEST_F(CoreLEDTests, setAllLedsWithArrayAndShowColor)
 	belt.showColor();
 }
 
+TEST_F(CoreLEDTests, setRangeOfLedsAndShowColor)
+{
+	RGB color		= RGB::pure_green;
+	int range_start = 4;
+	int range_end	= 15;
+	{
+		InSequence seq;
+
+		EXPECT_CALL(spimock, write(frame::start)).Times(1);
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, RGB::black.blue, RGB::black.green, RGB::black.red)))
+			.Times(range_start);
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, color.blue, color.green, color.red)))
+			.Times(range_end - range_start + 1);
+		EXPECT_CALL(spimock, write(testing::ElementsAre(_, RGB::black.blue, RGB::black.green, RGB::black.red)))
+			.Times(number_of_belt_leds - range_end - 1);
+		EXPECT_CALL(spimock, write(frame::reset)).Times(1);
+		EXPECT_CALL(spimock, write(frame::end)).Times(1);
+	}
+
+	belt.setColorRange(range_start, range_end, color);
+	belt.showColor();
+}
+
 TEST_F(CoreLEDTests, setAndShowColorThenHideColor)
 {
 	EXPECT_CALL(spimock, write(_)).Times(AnyNumber());

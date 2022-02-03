@@ -26,6 +26,7 @@ class LED
 	virtual auto setColor(RGB color) -> void									= 0;
 	virtual auto setColorAtIndex(int index, RGB color) -> void					= 0;
 	virtual auto setColorWithArray(std::array<RGB, NumberOfLeds> color) -> void = 0;
+	virtual auto setColorRange(int start, int end, RGB color) -> void			= 0;
 	virtual auto showColor() -> void											= 0;
 	virtual auto hideColor() -> void											= 0;
 
