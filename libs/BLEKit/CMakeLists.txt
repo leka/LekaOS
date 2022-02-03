@@ -18,3 +18,11 @@ target_link_libraries(BLEKit
 	mbed-os
 	CoreEventQueue
 )
+
+if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
+
+	leka_unit_tests_sources(
+		tests/BLEKit_test.cpp
+	)
+
+endif()
