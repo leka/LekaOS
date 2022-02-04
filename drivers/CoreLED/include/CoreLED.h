@@ -19,9 +19,9 @@ class CoreLED : public interface::LED<NumberOfLeds>
   public:
 	explicit CoreLED(interface::SPI &spi) : _spi {spi} {};
 
-	void setColor(RGB color) override { std::fill(_colors.begin(), _colors.end(), color); }
+	void setColor(const RGB &color) override { std::fill(_colors.begin(), _colors.end(), color); }
 
-	void setColorAtIndex(int index, RGB color) override
+	void setColorAtIndex(const int index, const RGB &color) override
 	{
 		if (index >= NumberOfLeds) {
 			return;
@@ -29,12 +29,12 @@ class CoreLED : public interface::LED<NumberOfLeds>
 		_colors.at(index) = color;
 	}
 
-	void setColorWithArray(std::array<RGB, NumberOfLeds> color) override
+	void setColorWithArray(const std::array<RGB, NumberOfLeds> &color) override
 	{
 		std::copy(color.begin(), color.end(), _colors.begin());
 	}
 
-	void setColorRange(int start, int end, RGB color) override
+	void setColorRange(const int start, const int end, const RGB &color) override
 	{
 		std::fill(_colors.begin() + start, _colors.end() - (NumberOfLeds - end - 1), color);
 	}
@@ -43,7 +43,7 @@ class CoreLED : public interface::LED<NumberOfLeds>
 	{
 		sendAndDisplay(_colors);
 
-		auto led_is_not_black		= [](auto c) { return c != RGB::black; };
+		auto led_is_not_black		= [](const auto &c) { return c != RGB::black; };
 		auto all_leds_are_not_black = std::all_of(_colors.begin(), _colors.end(), led_is_not_black);
 
 		_is_color_shown = all_leds_are_not_black;
@@ -65,7 +65,7 @@ class CoreLED : public interface::LED<NumberOfLeds>
 		_is_color_shown = false;
 	}
 
-	auto isOn() -> bool override { return _is_color_shown; }
+	[[nodiscard]] auto isOn() const -> bool override { return _is_color_shown; }
 
   private:
 	interface::SPI &_spi;
@@ -81,7 +81,7 @@ class CoreLED : public interface::LED<NumberOfLeds>
 		static constexpr auto end	= std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
 	};
 
-	void sendAndDisplay(std::array<RGB, NumberOfLeds> colors)
+	void sendAndDisplay(const std::array<RGB, NumberOfLeds> &colors)
 	{
 		_spi.write(frame::start);
 

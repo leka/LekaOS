@@ -23,14 +23,16 @@ class LED
   public:
 	virtual ~LED() = default;
 
-	virtual auto setColor(RGB color) -> void									= 0;
-	virtual auto setColorAtIndex(int index, RGB color) -> void					= 0;
-	virtual auto setColorWithArray(std::array<RGB, NumberOfLeds> color) -> void = 0;
-	virtual auto setColorRange(int start, int end, RGB color) -> void			= 0;
-	virtual auto showColor() -> void											= 0;
-	virtual auto hideColor() -> void											= 0;
+	virtual auto setColor(const RGB &color) -> void = 0;
 
-	virtual auto isOn() -> bool = 0;
+	virtual auto setColorRange(int start, int end, const RGB &color) -> void		   = 0;
+	virtual auto setColorAtIndex(int index, const RGB &color) -> void				   = 0;
+	virtual auto setColorWithArray(const std::array<RGB, NumberOfLeds> &color) -> void = 0;
+
+	virtual auto showColor() -> void = 0;
+	virtual auto hideColor() -> void = 0;
+
+	[[nodiscard]] virtual auto isOn() const -> bool = 0;
 };
 
 }	// namespace leka::interface
