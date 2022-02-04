@@ -21,13 +21,15 @@ class WebKit
 
 	auto connect(const char *ssid, const char *pass) -> bool;
 
-	void setCertificateStore(std::span<const char *> const &certificates_path_list);
+	void setCertificateStore(std::span<const char *> certificates_path_list);
 
-	void downloadFile(const char *url, const char *path);
+	auto downloadFile(const char *url, const char *path) -> bool;
 
   private:
 	auto responseHasRedirectionURL(HttpResponse *response) const -> bool;
 	void getRedirectionURL(HttpResponse *response);
+
+	void updateCertificate(const char *certificate_path);
 
 	mbed::DigitalOut wifi_enable {WIFI_ENABLE, 1};
 	CoreESP8266 wifi_module {WIFI_USART_TX, WIFI_USART_RX, false, WIFI_USART_RTS, WIFI_USART_CTS, WIFI_RESET};
@@ -35,7 +37,8 @@ class WebKit
 
 	std::string _url;
 
-	std::array<char, 4000> _certificate_store {};
+	std::array<const char *, 5> _certificates_path_list {};
+	std::array<char, 8192> _certificate {};
 };
 
 }	// namespace leka
