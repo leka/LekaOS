@@ -22,9 +22,9 @@ class LED
 
 	virtual auto setColor(const RGB &color) -> void = 0;
 
-	virtual auto setColorRange(int start, int end, const RGB &color) -> void = 0;
-	virtual auto setColorAtIndex(int index, const RGB &color) -> void		 = 0;
-	virtual auto setColorWithArray(std::span<const RGB> color) -> void		 = 0;
+	virtual auto setColorRange(unsigned start, unsigned end, const RGB &color) -> void = 0;
+	virtual auto setColorAtIndex(unsigned index, const RGB &color) -> void			   = 0;
+	virtual auto setColorWithArray(std::span<const RGB> color) -> void				   = 0;
 
 	virtual auto showColor() -> void = 0;
 	virtual auto hideColor() -> void = 0;

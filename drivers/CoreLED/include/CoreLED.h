@@ -21,7 +21,7 @@ class CoreLED : public interface::LED
 
 	void setColor(const RGB &color) override { std::fill(_colors.begin(), _colors.end(), color); }
 
-	void setColorAtIndex(const int index, const RGB &color) override
+	void setColorAtIndex(const unsigned index, const RGB &color) override
 	{
 		if (index >= NumberOfLeds) {
 			return;
@@ -34,7 +34,7 @@ class CoreLED : public interface::LED
 		std::copy(color.begin(), color.end(), _colors.begin());
 	}
 
-	void setColorRange(int start, int end, const RGB &color) override
+	void setColorRange(unsigned start, unsigned end, const RGB &color) override
 	{
 		if (start >= NumberOfLeds && end >= NumberOfLeds) {
 			return;
