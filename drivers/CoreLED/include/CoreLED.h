@@ -65,6 +65,8 @@ class CoreLED : public interface::LED<NumberOfLeds>
 		_is_color_shown = false;
 	}
 
+	[[nodiscard]] auto getColor() -> std::span<RGB> override { return std::span(_colors); }
+
 	[[nodiscard]] auto isOn() const -> bool override { return _is_color_shown; }
 
   private:
