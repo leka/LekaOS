@@ -3,91 +3,91 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "CoreLED.h"
+#include "CoreSPI.h"
 #include "gtest/gtest.h"
-#include "mocks/leka/SPI.h"
 
 using namespace leka;
-using ::testing::NiceMock;
 
-class CoreLEDTestsStatus : public ::testing::Test
+class CoreLedStatusTest : public ::testing::Test
 {
   protected:
-	CoreLEDTestsStatus() = default;
+	CoreLedStatusTest() = default;
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	static constexpr int number_of_belt_leds = 20;
-	NiceMock<mock::SPI> spimock {};
-	CoreLED<number_of_belt_leds> belt {spimock};
+	static constexpr int number_of_leds = 20;
+
+	CoreSPI spi {NC, NC, NC, NC};
+	CoreLED<number_of_leds> leds {spi};
 };
 
-TEST_F(CoreLEDTestsStatus, isOffAtInstanciation)
+TEST_F(CoreLedStatusTest, isOffAtInstanciation)
 {
-	EXPECT_FALSE(belt.isOn());
+	EXPECT_FALSE(leds.isOn());
 }
 
-TEST_F(CoreLEDTestsStatus, isOffIfColorSetToBlack)
+TEST_F(CoreLedStatusTest, isOffIfColorSetToBlack)
 {
-	belt.setColor(RGB::black);
-	EXPECT_FALSE(belt.isOn());
+	leds.setColor(RGB::black);
+	EXPECT_FALSE(leds.isOn());
 }
 
-TEST_F(CoreLEDTestsStatus, isOffIfColorIsSetToNotBlack)
+TEST_F(CoreLedStatusTest, isOffIfColorIsSetToNotBlack)
 {
-	belt.setColor(RGB::pure_blue);
-	EXPECT_FALSE(belt.isOn());
+	leds.setColor(RGB::pure_blue);
+	EXPECT_FALSE(leds.isOn());
 }
 
-TEST_F(CoreLEDTestsStatus, isOffIfShowAtInstanciation)
+TEST_F(CoreLedStatusTest, isOffIfShowAtInstanciation)
 {
-	belt.showColor();
-	EXPECT_FALSE(belt.isOn());
+	leds.showColor();
+	EXPECT_FALSE(leds.isOn());
 }
 
-TEST_F(CoreLEDTestsStatus, isOffIfSetToBlackAndShow)
+TEST_F(CoreLedStatusTest, isOffIfSetToBlackAndShow)
 {
-	belt.setColor(RGB::black);
-	belt.showColor();
-	EXPECT_FALSE(belt.isOn());
+	leds.setColor(RGB::black);
+	leds.showColor();
+	EXPECT_FALSE(leds.isOn());
 }
 
-TEST_F(CoreLEDTestsStatus, isOnIfSetToNotBlackAndShow)
+TEST_F(CoreLedStatusTest, isOnIfSetToNotBlackAndShow)
 {
-	belt.setColor(RGB::pure_blue);
-	belt.showColor();
-	EXPECT_TRUE(belt.isOn());
+	leds.setColor(RGB::pure_blue);
+	leds.showColor();
+	EXPECT_TRUE(leds.isOn());
 }
 
-TEST_F(CoreLEDTestsStatus, isOffIfSetToBlackAndHide)
+TEST_F(CoreLedStatusTest, isOffIfSetToBlackAndHide)
 {
-	belt.setColor(RGB::pure_blue);
-	belt.hideColor();
-	EXPECT_FALSE(belt.isOn());
+	leds.setColor(RGB::pure_blue);
+	leds.hideColor();
+	EXPECT_FALSE(leds.isOn());
 }
 
-TEST_F(CoreLEDTestsStatus, isOffIfSetToNotBlackAndShowThenHide)
+TEST_F(CoreLedStatusTest, isOffIfSetToNotBlackAndShowThenHide)
 {
-	belt.setColor(RGB::pure_blue);
-	belt.showColor();
-	belt.hideColor();
-	EXPECT_FALSE(belt.isOn());
+	leds.setColor(RGB::pure_blue);
+	leds.showColor();
+	leds.hideColor();
+	EXPECT_FALSE(leds.isOn());
 }
 
-TEST_F(CoreLEDTestsStatus, isOffIfShowBlackAndSetToNotBlack)
+TEST_F(CoreLedStatusTest, isOffIfShowBlackAndSetToNotBlack)
 {
-	belt.setColor(RGB::black);
-	belt.showColor();
-	belt.setColor(RGB::pure_blue);
+	leds.setColor(RGB::black);
+	leds.showColor();
+	leds.setColor(RGB::pure_blue);
 
-	EXPECT_FALSE(belt.isOn());
+	EXPECT_FALSE(leds.isOn());
 }
 
-TEST_F(CoreLEDTestsStatus, isOffIfShowNotBlackAndSetToBlack)
+TEST_F(CoreLedStatusTest, isOffIfShowNotBlackAndSetToBlack)
 {
-	belt.setColor(RGB::pure_blue);
-	belt.showColor();
-	belt.setColor(RGB::black);
+	leds.setColor(RGB::pure_blue);
+	leds.showColor();
+	leds.setColor(RGB::black);
 
-	EXPECT_TRUE(belt.isOn());
+	EXPECT_TRUE(leds.isOn());
 }
