@@ -26,6 +26,7 @@ target_sources(stubs
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/SPI.cpp
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/I2C.cpp
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/Timer.cpp
+		${UNIT_TESTS_STUBS_MBED_DIR}/source/BLE.cpp
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/Kernel.cpp
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/mbed_critical.cpp
 
@@ -44,4 +45,14 @@ target_sources(stubs
 		${EXTERN_MBED_OS_DIR}/drivers/tests/UNITTESTS/doubles/SerialBase_stub.cpp
 		${EXTERN_MBED_OS_DIR}/platform/tests/UNITTESTS/doubles/FileHandle_stub.cpp
 		${EXTERN_MBED_OS_DIR}/drivers/tests/UNITTESTS/doubles/BufferedSerial_stub.cpp
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source/gap/AdvertisingDataBuilder.cpp
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source/gap/AdvertisingParameters.cpp
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source/gap/ConnectionParameters.cpp
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source/gatt/DiscoveredCharacteristic.cpp
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source/Gap.cpp
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source/GattClient.cpp
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source/GattServer.cpp
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source/SecurityManager.cpp
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/tests/UNITTESTS/doubles/fakes/BLE.cpp
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/tests/UNITTESTS/doubles/fakes/source/GattServerImpl_mock.cpp
 )

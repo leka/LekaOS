@@ -21,6 +21,16 @@ target_include_directories(mbed-os
 
 		${EXTERN_MBED_OS_DIR}/connectivity/tests/UNITTESTS/doubles
 		${EXTERN_MBED_OS_DIR}/connectivity/tests/UNITTESTS/doubles/connectivity
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/include
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/include/ble
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/include/ble/gap
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source/gap
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source/generic
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/tests/UNITTESTS/doubles
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/tests/UNITTESTS/doubles/fakes
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/tests/UNITTESTS/doubles/fakes/source
+		${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/tests/UNITTESTS/doubles/fakes/source/generic
 
 		${EXTERN_MBED_OS_DIR}/drivers/tests/UNITTESTS/doubles
 		${EXTERN_MBED_OS_DIR}/drivers/tests/UNITTESTS/doubles/drivers
