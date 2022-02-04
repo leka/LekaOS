@@ -21,7 +21,13 @@ class CoreLED : public interface::LED<NumberOfLeds>
 
 	void setColor(RGB color) override { std::fill(_colors.begin(), _colors.end(), color); }
 
-	void setColorAtIndex(int index, RGB color) override { _colors.at(index) = color; }
+	void setColorAtIndex(int index, RGB color) override
+	{
+		if (index >= NumberOfLeds) {
+			return;
+		}
+		_colors.at(index) = color;
+	}
 
 	void setColorWithArray(std::array<RGB, NumberOfLeds> color) override
 	{
