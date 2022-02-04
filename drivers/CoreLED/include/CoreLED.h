@@ -14,7 +14,7 @@
 namespace leka {
 
 template <size_t NumberOfLeds>
-class CoreLED : public interface::LED<NumberOfLeds>
+class CoreLED : public interface::LED
 {
   public:
 	explicit CoreLED(interface::SPI &spi) : _spi {spi} {};
@@ -29,7 +29,7 @@ class CoreLED : public interface::LED<NumberOfLeds>
 		_colors.at(index) = color;
 	}
 
-	void setColorWithArray(const std::array<RGB, NumberOfLeds> &color) override
+	void setColorWithArray(const std::span<const RGB> color) override
 	{
 		std::copy(color.begin(), color.end(), _colors.begin());
 	}
@@ -77,7 +77,7 @@ class CoreLED : public interface::LED<NumberOfLeds>
 		_is_color_shown = false;
 	}
 
-	[[nodiscard]] auto getColor() -> std::span<RGB> override { return std::span(_colors); }
+	[[nodiscard]] auto getColor() -> std::span<const RGB> override { return std::span(_colors); }
 
 	[[nodiscard]] auto isOn() const -> bool override { return _is_color_shown; }
 

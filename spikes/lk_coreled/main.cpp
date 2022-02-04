@@ -37,7 +37,7 @@ CoreSPI corespi_ears(LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK);
 CoreLED<NUM_BELT_LEDS> belt(corespi_belt);
 CoreLED<NUM_EARS_LEDS> ears(corespi_ears);
 
-void changeColor(interface::LED<NUM_EARS_LEDS> &e, interface::LED<NUM_BELT_LEDS> &b)
+void changeColor(interface::LED &e, interface::LED &b)
 {
 	static auto index = uint8_t {0};
 

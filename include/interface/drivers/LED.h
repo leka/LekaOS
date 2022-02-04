@@ -5,7 +5,6 @@
 #ifndef _LEKA_OS_INTERFACE_DRIVER_LED_H_
 #define _LEKA_OS_INTERFACE_DRIVER_LED_H_
 
-#include <array>
 #include <span>
 
 namespace leka {
@@ -16,7 +15,6 @@ struct RGB;
 
 namespace leka::interface {
 
-template <size_t NumberOfLeds>
 class LED
 {
   public:
@@ -24,14 +22,14 @@ class LED
 
 	virtual auto setColor(const RGB &color) -> void = 0;
 
-	virtual auto setColorRange(int start, int end, const RGB &color) -> void		   = 0;
-	virtual auto setColorAtIndex(int index, const RGB &color) -> void				   = 0;
-	virtual auto setColorWithArray(const std::array<RGB, NumberOfLeds> &color) -> void = 0;
+	virtual auto setColorRange(int start, int end, const RGB &color) -> void = 0;
+	virtual auto setColorAtIndex(int index, const RGB &color) -> void		 = 0;
+	virtual auto setColorWithArray(std::span<const RGB> color) -> void		 = 0;
 
 	virtual auto showColor() -> void = 0;
 	virtual auto hideColor() -> void = 0;
 
-	[[nodiscard]] virtual auto getColor() -> std::span<RGB> = 0;
+	[[nodiscard]] virtual auto getColor() -> std::span<const RGB> = 0;
 
 	[[nodiscard]] virtual auto isOn() const -> bool = 0;
 };
