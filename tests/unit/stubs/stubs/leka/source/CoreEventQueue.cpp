@@ -9,7 +9,13 @@ void CoreEventQueue::dispatch_forever()
 	// do nothing
 }
 
-void CoreEventQueue::call(const std::function<void()> &f)
+void CoreEventQueue::call(std::function<void()> const &f)
+{
+	f();
+	spy_CoreEventQueue_did_call_function = true;
+}
+
+void CoreEventQueue::call(mbed::Callback<void()> const &f)
 {
 	f();
 	spy_CoreEventQueue_did_call_function = true;
