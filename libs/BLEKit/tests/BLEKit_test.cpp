@@ -28,6 +28,15 @@ class BLEKitTest : public testing::Test
 	void TearDown() override { ble::delete_mocks(); }
 
 	BLEKit ble {};
+	GapMock &mock_gap = gap_mock();
+
+	void expectStartAdvertisingCall()
+	{
+		EXPECT_CALL(mock_gap, isAdvertisingActive).WillOnce(Return(false));
+		EXPECT_CALL(mock_gap, startAdvertising).Times(1);
+		EXPECT_CALL(mock_gap, setAdvertisingParameters).Times(1);
+		EXPECT_CALL(mock_gap, setAdvertisingPayload).Times(1);
+	};
 };
 
 TEST_F(BLEKitTest, initialization)
@@ -38,6 +47,9 @@ TEST_F(BLEKitTest, initialization)
 TEST_F(BLEKitTest, init)
 {
 	spy_ble_hasInitialized_return_value = false;
+
+	EXPECT_CALL(mock_gap, setEventHandler).Times(1);
+	expectStartAdvertisingCall();
 
 	ble.init();
 
@@ -63,6 +75,8 @@ TEST_F(BLEKitTest, callOnEventsToProcess)
 {
 	spy_ble_hasInitialized_return_value	 = false;
 	spy_CoreEventQueue_did_call_function = false;
+
+	EXPECT_CALL(mock_gap, setEventHandler).Times(AnyNumber());
 
 	ble.init();
 

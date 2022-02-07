@@ -8,11 +8,16 @@ void BLEKit::init()
 		return;
 	}
 
+	_core_gap.setEventHandler();
+
 	_ble.onEventsToProcess({this, &BLEKit::processEvents});
 
 	_event_queue.dispatch_forever();
 
-	_ble.init();
+	_core_gap.setDefaultAdvertising();
+	_core_gap.setDeviceName("Leka");
+
+	_ble.init(&_core_gap, &CoreGap::onInitializationComplete);
 }
 
 void BLEKit::processEvents(BLE::OnEventsToProcessCallbackContext *context)
