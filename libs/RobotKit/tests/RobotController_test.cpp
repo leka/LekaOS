@@ -41,8 +41,7 @@ class RobotControllerTest : public testing::Test
 
 	RobotController<bsml::sm<robot::StateMachine, bsml::testing>> rc {sleep_timeout, battery};
 
-	interface::Timeout::callback_t on_sleep_timeout {
-	};
+	interface::Timeout::callback_t on_sleep_timeout = {};
 
 	mbed::Callback<void()> on_charge_did_start {};
 	mbed::Callback<void()> on_charge_did_stop {};
