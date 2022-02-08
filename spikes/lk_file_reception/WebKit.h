@@ -17,13 +17,18 @@ namespace leka {
 class WebKit
 {
   public:
+	struct DownloadableFile {
+		const char *url;
+		const char *to_path;
+	};
+
 	explicit WebKit() = default;
 
 	auto connect(const char *ssid, const char *pass) -> bool;
 
 	void setCertificateStore(std::span<const char *> certificates_path_list);
 
-	auto downloadFile(const char *url, const char *path) -> bool;
+	auto downloadFile(DownloadableFile const &downloadable_file) -> bool;
 
   private:
 	auto responseHasRedirectionURL(HttpResponse *response) const -> bool;

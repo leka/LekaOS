@@ -57,8 +57,11 @@ auto main() -> int
 		web_kit.setCertificateStore(certificates_path_list);
 
 		log_info("Start downloading file via wifi...");
-		auto file_downloaded = web_kit.downloadFile(
-			"https://github.com/leka/LekaOS/releases/download/1.2.3/LekaOS-1.2.3.bin", "/fs/os/LekaOS-1.2.3.bin");
+
+		auto downloadable_file =
+			WebKit::DownloadableFile {.url = "https://github.com/leka/LekaOS/releases/download/1.2.3/LekaOS-1.2.3.bin",
+									  .to_path = "/fs/os/LekaOS-1.2.3.bin"};
+		auto file_downloaded = web_kit.downloadFile(downloadable_file);
 
 		if (file_downloaded) {
 			log_info("Success to download file");

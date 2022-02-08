@@ -31,9 +31,9 @@ void WebKit::updateCertificate(const char *certificate_path)
 	_file_certificate.close();
 }
 
-auto WebKit::downloadFile(const char *url, const char *path) -> bool
+auto WebKit::downloadFile(DownloadableFile const &downloadable_file) -> bool
 {
-	_url			   = url;
+	_url = downloadable_file.url;
 
 	FileSystemKit::File _file;
 	HttpResponse *response {nullptr};
@@ -52,7 +52,7 @@ auto WebKit::downloadFile(const char *url, const char *path) -> bool
 	while (should_download()) {
 		updateCertificate(_certificates_path_list.at(certificates_path_list_index));
 
-		if (auto is_open = _file.open(path, "w"); is_open) {
+		if (auto is_open = _file.open(downloadable_file.to_path, "w"); is_open) {
 			auto save_to_file = [&_file](const char *string, uint32_t length) { _file.write(string, length); };
 
 			HttpsRequest request(&corewifi, _certificate.data(), HTTP_GET, _url.data(), save_to_file);
