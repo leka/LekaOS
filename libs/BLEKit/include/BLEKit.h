@@ -4,10 +4,12 @@
 
 #pragma once
 
+#include "BLEServiceBattery.h"
 #include "ble/BLE.h"
 
 #include "CoreEventQueue.h"
 #include "CoreGap.h"
+#include "CoreGattServer.h"
 
 namespace leka {
 
@@ -15,6 +17,8 @@ class BLEKit
 {
   public:
 	BLEKit() = default;
+
+	void setServices(std::span<interface::BLEService *> const &services);
 
 	void init();
 
@@ -26,6 +30,7 @@ class BLEKit
 
 	BLE &_ble = BLE::Instance();
 	CoreGap _core_gap {_ble.gap()};
+	CoreGattServer _core_gatt_server {_ble.gattServer()};
 };
 
 }	// namespace leka
