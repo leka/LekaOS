@@ -54,8 +54,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ env.SONARCLOUD_CACHE_DIR}}
-          key: ${{ runner.os }}-global_cache-sonarcloud-${{ env.CACHE_NOW_TIME }}
+          key: ${{ runner.os }}-global_cache-sonarcloud-${{ github.event.number }}-${{ env.CACHE_NOW_TIME }}
           restore-keys: |
+            ${{ runner.os }}-global_cache-sonarcloud-${{ github.event.number }}
             ${{ runner.os }}-global_cache-sonarcloud-
 
       #
