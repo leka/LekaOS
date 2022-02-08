@@ -8,7 +8,6 @@
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "stubs/leka/CoreEventQueue.h"
 #include "stubs/mbed/BLE.h"
 
 using namespace leka;
@@ -31,8 +30,7 @@ class CoreGapTest : public testing::Test
 
 	BLE &ble		  = BLE::Instance();
 	GapMock &mock_gap = gap_mock();
-	CoreEventQueue eq {};
-	CoreGap coregap {eq, ble.gap()};
+	CoreGap coregap {ble.gap()};
 
 	void expectStartAdvertisingCall(bool expected)
 	{

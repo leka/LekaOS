@@ -26,7 +26,7 @@ class BLEKit
 	CoreEventQueue _event_queue {};
 
 	BLE &_ble = BLE::Instance();
-	CoreGap _core_gap {_event_queue, _ble.gap()};
+	CoreGap _core_gap {_ble.gap()};
 };
 
 }	// namespace leka

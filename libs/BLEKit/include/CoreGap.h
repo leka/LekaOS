@@ -11,14 +11,13 @@
 #include "ble/Gap.h"
 
 #include "CoreGapEventHandler.h"
-#include "interface/drivers/EventQueue.h"
 
 namespace leka {
 
 class CoreGap
 {
   public:
-	explicit CoreGap(interface::EventQueue &event_queue, ble::Gap &gap) : _gap_event_handler(event_queue), _gap(gap) {};
+	explicit CoreGap(ble::Gap &gap) : _gap(gap) {};
 
 	void setDefaultAdvertising();
 

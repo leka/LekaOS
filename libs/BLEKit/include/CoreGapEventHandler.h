@@ -8,14 +8,12 @@
 #include "ble/BLE.h"
 #include "ble/Gap.h"
 
-#include "interface/drivers/EventQueue.h"
-
 namespace leka {
 
 class CoreGapEventHandler : public ble::Gap::EventHandler
 {
   public:
-	explicit CoreGapEventHandler(interface::EventQueue &event_queue) : _event_queue(event_queue) {};
+	explicit CoreGapEventHandler() = default;
 
 	void registerStartAdvertising(std::function<void()> const &function);
 
@@ -26,7 +24,6 @@ class CoreGapEventHandler : public ble::Gap::EventHandler
 	void onAdvertisingEnd(ble::AdvertisingEndEvent const &event) override;
 
   private:
-	interface::EventQueue &_event_queue;
 	std::function<void()> _start_advertising {};
 };
 
