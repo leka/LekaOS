@@ -25,15 +25,10 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Compare bin files
+    - name: Compare files
       id: compare_files
       shell: bash
       run: ${{ github.action_path }}/compare_files.sh ${{ inputs.base_dir }} ${{ inputs.head_dir }}
-
-    - name: Generate statistics
-      id: generate_statistics
-      shell: bash
-      run: ${{ github.action_path }}/generate_statistics.sh ${{ inputs.base_dir }} ${{ inputs.head_dir }}
 
     - name: Get diffs
       id: get_diffs
