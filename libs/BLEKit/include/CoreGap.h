@@ -23,6 +23,7 @@ class CoreGap
 
 	void setEventHandler();
 	void onInitializationComplete(BLE::InitializationCompleteCallbackContext *params);
+	// void onInit(std::function<void()> cb) { _post_init = cb; }
 
 	void setDeviceName(const char *name);
 
@@ -36,6 +37,8 @@ class CoreGap
 
 	CoreGapEventHandler _gap_event_handler;
 	ble::Gap &_gap;
+
+	// std::function<void()> _post_init;
 };
 
 }	// namespace leka

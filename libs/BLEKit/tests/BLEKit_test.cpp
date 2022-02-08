@@ -15,6 +15,7 @@ using namespace leka;
 using namespace ble;
 
 using ::testing::AnyNumber;
+using ::testing::AtLeast;
 using ::testing::Return;
 
 class BLEKitTest : public testing::Test
@@ -28,7 +29,8 @@ class BLEKitTest : public testing::Test
 	void TearDown() override { ble::delete_mocks(); }
 
 	BLEKit ble {};
-	GapMock &mock_gap = gap_mock();
+	GapMock &mock_gap		  = gap_mock();
+	GattServerMock &mock_gatt = gatt_server_mock();
 
 	void expectStartAdvertisingCall()
 	{
@@ -49,6 +51,8 @@ TEST_F(BLEKitTest, init)
 	spy_ble_hasInitialized_return_value = false;
 
 	EXPECT_CALL(mock_gap, setEventHandler).Times(1);
+	EXPECT_CALL(mock_gatt, setEventHandler).Times(1);
+	EXPECT_CALL(mock_gatt, addService).Times(AtLeast(1));
 	expectStartAdvertisingCall();
 
 	ble.init();
@@ -77,6 +81,8 @@ TEST_F(BLEKitTest, callOnEventsToProcess)
 	spy_CoreEventQueue_did_call_function = false;
 
 	EXPECT_CALL(mock_gap, setEventHandler).Times(AnyNumber());
+	EXPECT_CALL(mock_gatt, setEventHandler).Times(AnyNumber());
+	EXPECT_CALL(mock_gatt, addService).Times(AnyNumber());
 
 	ble.init();
 

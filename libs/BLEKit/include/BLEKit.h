@@ -9,6 +9,7 @@
 
 #include "CoreEventQueue.h"
 #include "CoreGap.h"
+#include "CoreGattServer.h"
 
 namespace leka {
 
@@ -27,6 +28,7 @@ class BLEKit
 
 	BLE &_ble = BLE::Instance();
 	CoreGap _core_gap {_ble.gap()};
+	CoreGattServer _core_gatt_server {_ble.gattServer()};
 };
 
 }	// namespace leka
