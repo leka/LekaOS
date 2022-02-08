@@ -7,6 +7,7 @@ add_subdirectory(${SPIKES_DIR}/mbed_watchdog_ticker_vs_thread)
 
 add_subdirectory(${SPIKES_DIR}/lk_ble)
 add_subdirectory(${SPIKES_DIR}/lk_cg_animations)
+add_subdirectory(${SPIKES_DIR}/lk_event_queue)
 add_subdirectory(${SPIKES_DIR}/lk_lcd)
 add_subdirectory(${SPIKES_DIR}/lk_led)
 add_subdirectory(${SPIKES_DIR}/lk_coreled)
@@ -33,6 +34,7 @@ add_custom_target(spikes_leka)
 add_dependencies( spikes_leka
 	spike_lk_ble
 	spike_lk_cg_animations
+	spike_lk_event_queue
 	spike_lk_lcd
 	spike_lk_led
 	spike_lk_rfid
