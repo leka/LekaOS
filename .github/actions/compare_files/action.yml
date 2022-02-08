@@ -30,6 +30,11 @@ runs:
       shell: bash
       run: ${{ github.action_path }}/compare_files.sh ${{ inputs.base_dir }} ${{ inputs.head_dir }}
 
+    - name: Generate statistics
+      id: generate_statistics
+      shell: bash
+      run: ${{ github.action_path }}/generate_statistics.sh ${{ inputs.base_dir }} ${{ inputs.head_dir }}
+
     - name: Get diffs
       id: get_diffs
       shell: bash
@@ -44,11 +49,27 @@ runs:
 
           ## :bookmark: Info
 
-          - Flash: 2 097 152 Bytes (2048 KiB) / SRAM: 524 288 Bytes (512 KiB)
           - base: [`${{ env.BASE_REF}}`](https://github.com/leka/LekaOS/tree/${{ env.BASE_REF}}) / ${{ env.BASE_SHA }} + `${{ env.BASE_MBED_VERSION }}` + `${{ env.BASE_CXX_STANDARD }}`
           - head: [`${{ env.HEAD_REF }}`](https://github.com/leka/LekaOS/tree/${{ env.HEAD_REF }}) / ${{ env.HEAD_SHA }} + `${{ env.HEAD_MBED_VERSION }}` + `${{ env.HEAD_CXX_STANDARD }}`
           - toolchain: `${{ env.TOOLCHAIN_VERSION }}`
           - enable_log_debug: `${{ inputs.enable_log_debug }}`
+
+          <details>
+          <summary>Memory sections</summary>
+
+          ```
+          | -          |      Hex |     Bytes |  KiB |
+          |------------|---------:|----------:|-----:|
+          | Flash      | 0x200000 | 2 097 152 | 2048 |
+          | SRAM       |  0x80000 |   524 288 |  512 |
+          | Bootloader |  0x40000 |   262 144 |  256 |
+          | Header     |   0x1000 |     4 096 |    4 |
+          | OS         | 0x17E000 | 1 564 672 | 1528 |
+          | Tail       |   0x1000 |     4 096 |    4 |
+          | Scratch    |  0x40000 |   262 144 |  256 |
+          ```
+
+          </details>
 
           ## :memo: Summary
 
