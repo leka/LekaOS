@@ -15,6 +15,7 @@ target_sources(BLEKit
 		source/CoreGapEventHandler.cpp
 		source/CoreGap.cpp
 		source/CoreGattServerEventHandler.cpp
+		source/CoreGattServer.cpp
 )
 
 target_link_libraries(BLEKit
@@ -28,6 +29,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/CoreGapEventHandler_test.cpp
 		tests/CoreGap_test.cpp
 		tests/CoreGattServerEventHandler_test.cpp
+		tests/CoreGattServer_test.cpp
 		tests/BLEKit_test.cpp
 	)
 
