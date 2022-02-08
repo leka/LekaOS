@@ -23,6 +23,7 @@ class CoreGap
 
 	void setEventHandler();
 	void onInitializationComplete(BLE::InitializationCompleteCallbackContext *params);
+	// void onInit(std::function<void()> cb) { _post_init = cb; }
 
 	void setDeviceName(const char *name);
 
