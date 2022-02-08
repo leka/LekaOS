@@ -1,5 +1,5 @@
 #include "WebKit.h"
-#include <ranges>
+#include <algorithm>
 
 #include "FileSystemKit.h"
 
@@ -16,12 +16,12 @@ auto WebKit::connect(const char *ssid, const char *pass) -> bool
 
 void WebKit::setCertificateStore(std::span<const char *> certificates_path_list)
 {
-	std::ranges::copy(certificates_path_list.begin(), certificates_path_list.end(), _certificates_path_list.begin());
+	std::copy(certificates_path_list.begin(), certificates_path_list.end(), _certificates_path_list.begin());
 }
 
 void WebKit::updateCertificate(const char *certificate_path)
 {
-	std::ranges::fill(_certificate, '\0');
+	std::fill(_certificate.begin(), _certificate.end(), '\0');
 
 	FileSystemKit::File _file_certificate {certificate_path};
 	auto file_size = _file_certificate.size();
