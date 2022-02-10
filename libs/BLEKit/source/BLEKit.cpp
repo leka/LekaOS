@@ -22,5 +22,5 @@ void BLEKit::init()
 
 void BLEKit::processEvents(BLE::OnEventsToProcessCallbackContext *context)
 {
-	_event_queue.call(mbed::callback(&context->ble, &BLE::processEvents));
+	_event_queue.callMbedCallback(mbed::callback(&context->ble, &BLE::processEvents));
 }

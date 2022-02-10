@@ -15,7 +15,7 @@ void CoreEventQueue::call(std::function<void()> const &f)
 	spy_CoreEventQueue_did_call_function = true;
 }
 
-void CoreEventQueue::call(mbed::Callback<void()> const &f)
+void CoreEventQueue::callMbedCallback(mbed::Callback<void()> const &f)
 {
 	f();
 	spy_CoreEventQueue_did_call_function = true;

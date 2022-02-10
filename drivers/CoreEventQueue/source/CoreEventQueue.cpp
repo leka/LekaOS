@@ -12,7 +12,7 @@ void CoreEventQueue::call(std::function<void()> const &f)
 	_event_queue.call(f);
 }
 
-void CoreEventQueue::call(mbed::Callback<void()> const &f)
+void CoreEventQueue::callMbedCallback(mbed::Callback<void()> const &f)
 {
 	_event_queue.call(f);
 }

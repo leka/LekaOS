@@ -20,13 +20,8 @@ class CoreEventQueue : public interface::EventQueue
 	void dispatch_forever() final;
 
 	void call(std::function<void()> const &f) final;
-	void call(mbed::Callback<void()> const &f);
 
-	template <typename F>
-	void call(F f)
-	{
-		call(std::function<void()>(f));
-	}
+	void callMbedCallback(mbed::Callback<void()> const &f);
 
   private:
 	rtos::Thread _event_queue_thread {};
