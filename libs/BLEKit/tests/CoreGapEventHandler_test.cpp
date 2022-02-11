@@ -8,7 +8,6 @@
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "stubs/leka/CoreEventQueue.h"
 
 using namespace leka;
 using namespace ble;
@@ -25,8 +24,7 @@ class CoreGapEventHandlerTest : public testing::Test
 	void TearDown() override { ble::delete_mocks(); }
 
 	BLE &ble = BLE::Instance();
-	CoreEventQueue core_event_queue {};
-	CoreGapEventHandler core_gap_event_handler {core_event_queue};
+	CoreGapEventHandler core_gap_event_handler {};
 
 	MockFunction<void()> mock_start_advertising_func;
 };

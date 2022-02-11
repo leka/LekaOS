@@ -21,6 +21,8 @@ class CoreEventQueue : public interface::EventQueue
 
 	void call(std::function<void()> const &f) final;
 
+	void callMbedCallback(mbed::Callback<void()> const &f);
+
   private:
 	rtos::Thread _event_queue_thread {};
 	events::EventQueue _event_queue {};
