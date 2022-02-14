@@ -21,6 +21,7 @@ target_link_libraries(CoreLED
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
+		tests/CoreLED_test_setBrightness.cpp
 		tests/CoreLED_test_setColor.cpp
 		tests/CoreLED_test_showHideColor.cpp
 		tests/CoreLED_test_status.cpp
