@@ -5,11 +5,13 @@
 #ifndef _LEKA_OS_INTERFACE_DRIVER_LED_H_
 #define _LEKA_OS_INTERFACE_DRIVER_LED_H_
 
+#include <cstdint>
 #include <span>
 
 namespace leka {
 
 struct RGB;
+struct bRGB;
 
 }	// namespace leka
 
@@ -20,16 +22,21 @@ class LED
   public:
 	virtual ~LED() = default;
 
-	virtual auto setColor(const RGB &color) -> void = 0;
+	static constexpr uint8_t default_brightness = 0xF0;
 
-	virtual auto setColorRange(unsigned start, unsigned end, const RGB &color) -> void = 0;
-	virtual auto setColorAtIndex(unsigned index, const RGB &color) -> void			   = 0;
-	virtual auto setColorWithArray(std::span<const RGB> color) -> void				   = 0;
+	virtual auto setLeds(const RGB &color, const uint8_t &brightness = default_brightness) -> void = 0;
+	virtual auto setBrightness(const uint8_t &brightness) -> void								   = 0;
+	virtual auto reduceBrightnessBy(const uint8_t &fadeBy) -> void								   = 0;
 
-	virtual auto showColor() -> void = 0;
+	virtual auto setLedsRange(unsigned start, unsigned end, const RGB &color,
+							  const uint8_t &brightness = default_brightness) -> void							   = 0;
+	virtual auto setLedsAtIndex(unsigned index, const RGB &color, uint8_t brightness = default_brightness) -> void = 0;
+	virtual auto setLedsWithArray(std::span<const bRGB> leds) -> void											   = 0;
+
+	virtual auto showLeds() -> void	 = 0;
 	virtual auto hideColor() -> void = 0;
 
-	[[nodiscard]] virtual auto getColor() -> std::span<const RGB> = 0;
+	[[nodiscard]] virtual auto getLeds() -> std::span<const bRGB> = 0;
 
 	[[nodiscard]] virtual auto isOn() const -> bool = 0;
 };
