@@ -7,7 +7,7 @@
 
 #include <algorithm>
 
-#include "RGB.h"
+#include "bRGB.h"
 #include "interface/drivers/LED.h"
 #include "interface/drivers/SPI.h"
 
@@ -19,22 +19,40 @@ class CoreLED : public interface::LED
   public:
 	explicit CoreLED(interface::SPI &spi) : _spi {spi} {};
 
-	void setColor(const RGB &color) override { std::fill(_colors.begin(), _colors.end(), color); }
+	void setLeds(const RGB &color, const uint8_t &brightness = default_brightness) override
+	{
+		std::fill(_leds.begin(), _leds.end(), bRGB {brightness, color});
+	}
 
-	void setColorAtIndex(const unsigned index, const RGB &color) override
+	void setBrightness(const uint8_t &brightness) override
+	{
+		for (auto &l: _leds) {
+			l.brightness = brightness;
+		}
+	}
+
+	void reduceBrightnessBy(const uint8_t &fadeBy) override
+	{
+		for (auto &l: _leds) {
+			l.brightness = std::max(l.brightness - fadeBy, 0xE0);
+		}
+	}
+
+	void setLedsAtIndex(const unsigned index, const RGB &color, const uint8_t brightness = default_brightness) override
 	{
 		if (index >= NumberOfLeds) {
 			return;
 		}
-		_colors.at(index) = color;
+		_leds.at(index) = bRGB {brightness, color};
 	}
 
-	void setColorWithArray(const std::span<const RGB> color) override
+	void setLedsWithArray(const std::span<const bRGB> leds) override
 	{
-		std::copy(color.begin(), color.end(), _colors.begin());
+		std::copy(leds.begin(), leds.end(), _leds.begin());
 	}
 
-	void setColorRange(unsigned start, unsigned end, const RGB &color) override
+	void setLedsRange(unsigned start, unsigned end, const RGB &color,
+					  const uint8_t &brightness = default_brightness) override
 	{
 		if (start >= NumberOfLeds && end >= NumberOfLeds) {
 			return;
@@ -48,15 +66,15 @@ class CoreLED : public interface::LED
 			end = NumberOfLeds - 1;
 		}
 
-		std::fill(_colors.begin() + start, _colors.begin() + end + 1, color);
+		std::fill(_leds.begin() + start, _leds.begin() + end + 1, bRGB {brightness, color});
 	}
 
-	void showColor() override
+	void showLeds() override
 	{
-		sendAndDisplay(_colors);
+		sendAndDisplay(_leds);
 
-		auto led_is_not_black		= [](const auto &c) { return c != RGB::black; };
-		auto all_leds_are_not_black = std::all_of(_colors.begin(), _colors.end(), led_is_not_black);
+		auto led_is_not_black		= [](const auto &c) { return (c.color != RGB::black) && (c.brightness != 0); };
+		auto all_leds_are_not_black = std::all_of(_leds.begin(), _leds.end(), led_is_not_black);
 
 		_is_color_shown = all_leds_are_not_black;
 	}
@@ -67,17 +85,13 @@ class CoreLED : public interface::LED
 			return;
 		}
 
-		constexpr auto black = [] {
-			auto colors = std::array<RGB, NumberOfLeds> {};
-			std::fill(colors.begin(), colors.end(), RGB::black);
-			return colors;
-		}();
+		setBrightness(0);
 
-		sendAndDisplay(black);
+		sendAndDisplay(_leds);
 		_is_color_shown = false;
 	}
 
-	[[nodiscard]] auto getColor() -> std::span<const RGB> override { return std::span(_colors); }
+	[[nodiscard]] auto getLeds() -> std::span<const bRGB> override { return std::span(_leds); }
 
 	[[nodiscard]] auto isOn() const -> bool override { return _is_color_shown; }
 
@@ -85,9 +99,7 @@ class CoreLED : public interface::LED
 	interface::SPI &_spi;
 	bool _is_color_shown = false;
 
-	std::array<RGB, NumberOfLeds> _colors;
-
-	static constexpr uint8_t brightness = 0xFF;
+	std::array<bRGB, NumberOfLeds> _leds;
 
 	struct frame {
 		static constexpr auto start = std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
@@ -95,13 +107,13 @@ class CoreLED : public interface::LED
 		static constexpr auto end	= std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00});
 	};
 
-	void sendAndDisplay(const std::array<RGB, NumberOfLeds> &colors)
+	void sendAndDisplay(const std::array<bRGB, NumberOfLeds> &leds)
 	{
 		_spi.write(frame::start);
 
-		for (const auto &c: colors) {
+		for (const auto &l: leds) {
 			// ? SK9822 LEDS are using BGR
-			auto data = std::to_array<uint8_t>({brightness, c.blue, c.green, c.red});
+			auto data = std::to_array<uint8_t>({l.brightness, l.color.blue, l.color.green, l.color.red});
 			_spi.write(data);
 		}
 
