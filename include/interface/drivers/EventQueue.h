@@ -16,7 +16,7 @@ class EventQueue
 
 	virtual void dispatch_forever() = 0;
 
-	virtual void call(std::function<void()> const &f) = 0;
+	void call(auto f, auto... params);
 };
 
 }	// namespace leka::interface

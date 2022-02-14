@@ -19,8 +19,9 @@ class CoreEventQueue : public interface::EventQueue
 
 	void dispatch_forever() final;
 
-	void call(std::function<void()> const &f) final;
+	void call(auto f, auto... params) { _event_queue.call(f, params...); }
 
+	// ? Overload needed for mbed::BLE compatibility
 	void callMbedCallback(mbed::Callback<void()> const &f);
 
   private:
