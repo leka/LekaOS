@@ -29,65 +29,65 @@ TEST_F(CoreLedStatusTest, isOffAtInstanciation)
 
 TEST_F(CoreLedStatusTest, isOffIfColorSetToBlack)
 {
-	leds.setColor(RGB::black);
+	leds.setLeds(RGB::black);
 	EXPECT_FALSE(leds.isOn());
 }
 
 TEST_F(CoreLedStatusTest, isOffIfColorIsSetToNotBlack)
 {
-	leds.setColor(RGB::pure_blue);
+	leds.setLeds(RGB::pure_blue);
 	EXPECT_FALSE(leds.isOn());
 }
 
 TEST_F(CoreLedStatusTest, isOffIfShowAtInstanciation)
 {
-	leds.showColor();
+	leds.showLeds();
 	EXPECT_FALSE(leds.isOn());
 }
 
 TEST_F(CoreLedStatusTest, isOffIfSetToBlackAndShow)
 {
-	leds.setColor(RGB::black);
-	leds.showColor();
+	leds.setLeds(RGB::black);
+	leds.showLeds();
 	EXPECT_FALSE(leds.isOn());
 }
 
 TEST_F(CoreLedStatusTest, isOnIfSetToNotBlackAndShow)
 {
-	leds.setColor(RGB::pure_blue);
-	leds.showColor();
+	leds.setLeds(RGB::pure_blue);
+	leds.showLeds();
 	EXPECT_TRUE(leds.isOn());
 }
 
 TEST_F(CoreLedStatusTest, isOffIfSetToBlackAndHide)
 {
-	leds.setColor(RGB::pure_blue);
+	leds.setLeds(RGB::pure_blue);
 	leds.hideColor();
 	EXPECT_FALSE(leds.isOn());
 }
 
 TEST_F(CoreLedStatusTest, isOffIfSetToNotBlackAndShowThenHide)
 {
-	leds.setColor(RGB::pure_blue);
-	leds.showColor();
+	leds.setLeds(RGB::pure_blue);
+	leds.showLeds();
 	leds.hideColor();
 	EXPECT_FALSE(leds.isOn());
 }
 
 TEST_F(CoreLedStatusTest, isOffIfShowBlackAndSetToNotBlack)
 {
-	leds.setColor(RGB::black);
-	leds.showColor();
-	leds.setColor(RGB::pure_blue);
+	leds.setLeds(RGB::black);
+	leds.showLeds();
+	leds.setLeds(RGB::pure_blue);
 
 	EXPECT_FALSE(leds.isOn());
 }
 
 TEST_F(CoreLedStatusTest, isOffIfShowNotBlackAndSetToBlack)
 {
-	leds.setColor(RGB::pure_blue);
-	leds.showColor();
-	leds.setColor(RGB::black);
+	leds.setLeds(RGB::pure_blue);
+	leds.showLeds();
+	leds.setLeds(RGB::black);
 
 	EXPECT_TRUE(leds.isOn());
 }
