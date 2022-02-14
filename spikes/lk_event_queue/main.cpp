@@ -68,6 +68,25 @@ class LEDManager
 
 auto manager = LEDManager {};
 
+static void void_function()
+{
+	log_info("void_function");
+}
+
+auto int_function_with_param(int i) -> int
+{
+	log_info("void_function with param: %i", i);
+	return 1;
+}
+
+auto int_function_with_multiple_params(int i, const std::string &std, bool b) -> int
+{
+	log_info("void_function with param: %i, %s, %i", i, std.c_str(), b);
+	return 1;
+}
+
+CoreEventQueue equeue {};
+
 auto main() -> int
 {
 	logger::init();
@@ -100,5 +119,17 @@ auto main() -> int
 		log_info("Turn blink pointer");
 		manager.blinkPtr(&blinky);
 		rtos::ThisThread::sleep_for(1s);
+
+		log_info("Call others");
+		equeue.dispatch_forever();
+		equeue.call(void_function);
+		equeue.call(int_function_with_param, 42);
+		int a		= 42;
+		auto lambda = [&a] {
+			log_info("lambda with capture: %i", a);
+			return true;
+		};
+		equeue.call(lambda);
+		equeue.call(int_function_with_multiple_params, 42, std::string {"Hello, World"}, true);
 	}
 }
