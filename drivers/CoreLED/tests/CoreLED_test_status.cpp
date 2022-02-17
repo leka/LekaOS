@@ -41,43 +41,43 @@ TEST_F(CoreLedStatusTest, isOffIfColorIsSetToNotBlack)
 
 TEST_F(CoreLedStatusTest, isOffIfShowAtInstanciation)
 {
-	leds.showColor();
+	leds.show();
 	EXPECT_FALSE(leds.isOn());
 }
 
 TEST_F(CoreLedStatusTest, isOffIfSetToBlackAndShow)
 {
 	leds.setColor(RGB::black);
-	leds.showColor();
+	leds.show();
 	EXPECT_FALSE(leds.isOn());
 }
 
 TEST_F(CoreLedStatusTest, isOnIfSetToNotBlackAndShow)
 {
 	leds.setColor(RGB::pure_blue);
-	leds.showColor();
+	leds.show();
 	EXPECT_TRUE(leds.isOn());
 }
 
 TEST_F(CoreLedStatusTest, isOffIfSetToBlackAndHide)
 {
 	leds.setColor(RGB::pure_blue);
-	leds.hideColor();
+	leds.hide();
 	EXPECT_FALSE(leds.isOn());
 }
 
 TEST_F(CoreLedStatusTest, isOffIfSetToNotBlackAndShowThenHide)
 {
 	leds.setColor(RGB::pure_blue);
-	leds.showColor();
-	leds.hideColor();
+	leds.show();
+	leds.hide();
 	EXPECT_FALSE(leds.isOn());
 }
 
 TEST_F(CoreLedStatusTest, isOffIfShowBlackAndSetToNotBlack)
 {
 	leds.setColor(RGB::black);
-	leds.showColor();
+	leds.show();
 	leds.setColor(RGB::pure_blue);
 
 	EXPECT_FALSE(leds.isOn());
@@ -86,7 +86,7 @@ TEST_F(CoreLedStatusTest, isOffIfShowBlackAndSetToNotBlack)
 TEST_F(CoreLedStatusTest, isOffIfShowNotBlackAndSetToBlack)
 {
 	leds.setColor(RGB::pure_blue);
-	leds.showColor();
+	leds.show();
 	leds.setColor(RGB::black);
 
 	EXPECT_TRUE(leds.isOn());

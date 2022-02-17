@@ -51,7 +51,7 @@ class CoreLED : public interface::LED
 		std::fill(_colors.begin() + start, _colors.begin() + end + 1, color);
 	}
 
-	void showColor() override
+	void show() override
 	{
 		sendAndDisplay(_colors);
 
@@ -61,7 +61,7 @@ class CoreLED : public interface::LED
 		_is_color_shown = all_leds_are_not_black;
 	}
 
-	void hideColor() override
+	void hide() override
 	{
 		if (!isOn()) {
 			return;

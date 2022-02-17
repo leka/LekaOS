@@ -43,27 +43,27 @@ void changeColor(interface::LED &e, interface::LED &b)
 
 	if (index < colors_available.size()) {
 		e.setColor(colors_available.at(index));
-		e.showColor();
+		e.show();
 
 		b.setColor(colors_available.at(index));
-		b.showColor();
+		b.show();
 
 		index++;
 	} else if (index == colors_available.size()) {
 		e.setColorWithArray(color_ears_array);
-		e.showColor();
+		e.show();
 
 		b.setColorWithArray(color_belt_array);
-		b.showColor();
+		b.show();
 
 		index++;
 	} else {
 		static auto led = uint8_t {0};
 		e.setColorAtIndex(led / 10, RGB::pure_green);
-		e.showColor();
+		e.show();
 
 		b.setColorAtIndex(led, RGB::pure_green);
-		b.showColor();
+		b.show();
 
 		led++;
 		if (led == NUM_BELT_LEDS) {
