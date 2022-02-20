@@ -38,9 +38,12 @@ class FileSystemKit
 		void rewind() final;
 		auto size() -> size_t final;
 
+		auto new_line() -> size_t;
+		auto carriage_return() -> size_t;
+
 		[[nodiscard]] auto is_open() const -> bool final;
 
-	  private:
+	  protected:
 		std::unique_ptr<FILE, decltype(&fclose)> _file {nullptr, fclose};
 	};
 };
