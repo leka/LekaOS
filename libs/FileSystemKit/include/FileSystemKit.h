@@ -40,6 +40,8 @@ class FileSystemKit
 
 		auto tell() -> size_t final;
 
+		auto rename(const char * new_name) -> size_t final;
+
 		auto new_line() -> size_t;
 		auto carriage_return() -> size_t;
 

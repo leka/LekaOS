@@ -6,6 +6,9 @@
 #include <cstdint>
 #include <cstdio>
 #include <span>
+#include <unistd.h>
+
+
 
 #include "FileSystemKit.h"
 
@@ -109,6 +112,21 @@ auto FileSystemKit::File::tell() -> size_t
 		return 0;
 	}
 	return std::ftell(_file.get());
+}
+
+auto FileSystemKit::File::rename(const char * new_name) -> size_t
+{
+	if (_file == nullptr) {
+		return 0;
+	}
+
+    char proclnk[0xFFF];
+    char filename[0xFFF];
+	int fd = fileno(_file.get());
+    sprintf(proclnk, "/proc/self/fd/%d", fd);
+    readlink(proclnk, filename, 0xFFF);
+
+	return std::rename(filename, new_name);
 }
 
 auto FileSystemKit::File::new_line() -> size_t
