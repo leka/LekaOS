@@ -103,6 +103,14 @@ auto FileSystemKit::File::is_open() const -> bool
 	return _file != nullptr;
 }
 
+auto FileSystemKit::File::tell() -> size_t
+{
+	if (_file == nullptr) {
+		return 0;
+	}
+	return std::ftell(_file.get());
+}
+
 auto FileSystemKit::File::new_line() -> size_t
 {
 	auto data = std::to_array<uint8_t>({0x0a, 0x0d});
