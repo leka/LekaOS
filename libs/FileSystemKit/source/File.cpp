@@ -102,3 +102,11 @@ auto FileSystemKit::File::is_open() const -> bool
 {
 	return _file != nullptr;
 }
+
+auto FileSystemKit::File::tell() -> size_t
+{
+	if (_file == nullptr) {
+		return 0;
+	}
+	return std::ftell(_file.get());
+}
