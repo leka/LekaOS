@@ -39,6 +39,10 @@ struct File {
 
 	virtual auto rename(const char * new_name) -> size_t = 0;
 
+	virtual auto new_line() -> size_t = 0;
+
+	virtual auto carriage_return() -> size_t = 0;
+
 	[[nodiscard]] virtual auto is_open() const -> bool = 0;
 };
 

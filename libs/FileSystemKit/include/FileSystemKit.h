@@ -43,8 +43,9 @@ class FileSystemKit
 
 		auto rename(const char * new_name) -> size_t final;
 
-		auto new_line() -> size_t;
-		auto carriage_return() -> size_t;
+		auto new_line() -> size_t final;
+
+		auto carriage_return() -> size_t final;
 
 		[[nodiscard]] auto is_open() const -> bool final;
 
