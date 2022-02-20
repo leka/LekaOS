@@ -37,6 +37,8 @@ struct File {
 
 	virtual auto tell() -> size_t = 0;
 
+	virtual auto rename(const char * new_name) -> size_t = 0;
+
 	[[nodiscard]] virtual auto is_open() const -> bool = 0;
 };
 
