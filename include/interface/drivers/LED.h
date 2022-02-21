@@ -5,6 +5,7 @@
 #ifndef _LEKA_OS_INTERFACE_DRIVER_LED_H_
 #define _LEKA_OS_INTERFACE_DRIVER_LED_H_
 
+#include <cstdint>
 #include <span>
 
 namespace leka {
@@ -26,10 +27,13 @@ class LED
 	virtual auto setColorAtIndex(unsigned index, const RGB &color) -> void			   = 0;
 	virtual auto setColorWithArray(std::span<const RGB> color) -> void				   = 0;
 
-	virtual auto showColor() -> void = 0;
-	virtual auto hideColor() -> void = 0;
+	virtual auto fadeToBlackBy(const uint8_t &value) -> void = 0;
 
-	[[nodiscard]] virtual auto getColor() -> std::span<const RGB> = 0;
+	virtual auto show() -> void = 0;
+	virtual auto hide() -> void = 0;
+
+	[[nodiscard]] virtual auto getColor() -> std::span<const RGB>		   = 0;
+	[[nodiscard]] virtual auto getBrightness() -> std::span<const uint8_t> = 0;
 
 	[[nodiscard]] virtual auto isOn() const -> bool = 0;
 };

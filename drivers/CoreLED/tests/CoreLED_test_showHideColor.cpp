@@ -55,7 +55,7 @@ TEST_F(CoreLedShowHideColorTest, showPredefinedColor)
 	}
 
 	belt.setColor(color);
-	belt.showColor();
+	belt.show();
 }
 
 TEST_F(CoreLedShowHideColorTest, showUserDefinedColor)
@@ -73,14 +73,14 @@ TEST_F(CoreLedShowHideColorTest, showUserDefinedColor)
 	}
 
 	belt.setColor(color);
-	belt.showColor();
+	belt.show();
 }
 
 TEST_F(CoreLedShowHideColorTest, hideColorAfterInit)
 {
 	EXPECT_CALL(belt_spimock, write).Times(0);
 
-	belt.hideColor();
+	belt.hide();
 }
 
 TEST_F(CoreLedShowHideColorTest, hideColorAfterShow)
@@ -88,7 +88,7 @@ TEST_F(CoreLedShowHideColorTest, hideColorAfterShow)
 	EXPECT_CALL(belt_spimock, write(_)).Times(AnyNumber());
 
 	belt.setColor(RGB::pure_green);
-	belt.showColor();
+	belt.show();
 
 	{
 		InSequence seq;
@@ -100,21 +100,21 @@ TEST_F(CoreLedShowHideColorTest, hideColorAfterShow)
 		EXPECT_CALL(belt_spimock, write(frame::end)).Times(1);
 	}
 
-	belt.hideColor();
+	belt.hide();
 }
 
 TEST_F(CoreLedShowHideColorTest, hideColorWhenAlreadyHidden)
 {
-	belt.hideColor();
+	belt.hide();
 
 	EXPECT_CALL(belt_spimock, write).Times(0);
 
-	belt.hideColor();
+	belt.hide();
 }
 
 TEST_F(CoreLedShowHideColorTest, showColorAfterHideAndSet)
 {
-	belt.hideColor();
+	belt.hide();
 
 	RGB color = RGB::pure_blue;
 	belt.setColor(color);
@@ -129,7 +129,7 @@ TEST_F(CoreLedShowHideColorTest, showColorAfterHideAndSet)
 		EXPECT_CALL(belt_spimock, write(frame::end)).Times(1);
 	}
 
-	belt.showColor();
+	belt.show();
 }
 
 TEST_F(CoreLedShowHideColorTest, showEarAndBeltColor)
@@ -155,6 +155,6 @@ TEST_F(CoreLedShowHideColorTest, showEarAndBeltColor)
 		EXPECT_CALL(ears_spimock, write(frame::end)).Times(1);
 	}
 
-	belt.showColor();
-	ears.showColor();
+	belt.show();
+	ears.show();
 }
