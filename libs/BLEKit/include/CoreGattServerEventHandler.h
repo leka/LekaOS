@@ -10,7 +10,7 @@
 #include "ble/BLE.h"
 #include "ble/GattServer.h"
 
-#include "interface/drivers/BLEService.h"
+#include "internal/BLEService.h"
 
 namespace leka {
 
@@ -21,14 +21,9 @@ class CoreGattServerEventHandler : public ble::GattServer::EventHandler
 
 	void setServices(std::span<interface::BLEService *> const &services);
 
-	void registerServerWrite(updateServiceFunction const &function);
-
 	void onDataWritten(const GattWriteCallbackParams &params) override;
-	void updateData();
 
   private:
-	updateServiceFunction update_server_data {};
-
 	std::span<interface::BLEService *> _services {};
 };
 
