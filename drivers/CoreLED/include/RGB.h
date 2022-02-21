@@ -5,6 +5,7 @@
 #ifndef _LEKA_OS_DRIVER_CORE_LED_RGB_H_
 #define _LEKA_OS_DRIVER_CORE_LED_RGB_H_
 
+#include <algorithm>
 #include <cstdint>
 
 namespace leka {
@@ -15,6 +16,21 @@ struct RGB {
 	uint8_t blue {};
 
 	auto operator<=>(RGB const &rhs) const -> bool = default;
+
+	auto operator+=(RGB const &rhs) -> RGB
+	{
+		red	  = std::min(red + rhs.red, 255);
+		green = std::min(green + rhs.green, 255);
+		blue  = std::min(blue + rhs.blue, 255);
+		return *this;
+	}
+
+	auto operator+(const RGB &rhs) const -> RGB
+	{
+		auto color = *this;
+		color += rhs;
+		return color;
+	}
 
 	static const RGB white;
 	static const RGB black;
