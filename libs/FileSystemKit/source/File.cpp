@@ -115,39 +115,6 @@ auto FileSystemKit::File::tell() -> size_t
 	return std::ftell(_file.get());
 }
 
-auto FileSystemKit::File::rename(const char * new_name) -> size_t
-{
-	if (_file == nullptr) {
-		return 0;
-	}
-
-    char proclnk[0xFFF];
-    char result[0xFFF];
-	int fd = fileno(_file.get());
-    sprintf(proclnk, "/proc/self/fd/%d", fd);
-    auto r = readlink(proclnk, result, 0xFFF);
-	result[r]='\0';
-
-	return std::rename(result, new_name);
-}
-
-auto FileSystemKit::File::get_filename() -> std::string
-{
-	if (_file == nullptr) {
-		return 0;
-	}
-
-    char proclnk[0xFFF];
-    char result[0xFFF];
-	int fd = fileno(_file.get());
-    sprintf(proclnk, "/proc/self/fd/%d", fd);
-    auto r = readlink(proclnk, result, 0xFFF);
-	result[r]='\0';
-	std::string filename(result);
-
-	return filename;
-}
-
 auto FileSystemKit::File::new_line() -> size_t
 {
 	auto data = std::to_array<uint8_t>({0x0A, 0x0D});

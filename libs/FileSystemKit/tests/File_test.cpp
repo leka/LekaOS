@@ -468,16 +468,6 @@ TEST_F(FileTest, tellFile)
 	ASSERT_EQ(3, actual_pos);
 }
 
-TEST_F(FileTest, getFilename)
-{
-	std::string expected_value = tempFilename;
-
-	auto new_file = FileSystemKit::File {tempFilename};
-	auto output_value=new_file.get_filename();
-
-	ASSERT_EQ(expected_value, output_value);
-}
-
 TEST_F(FileTest, newLine)
 {
 	auto input_data_first_line = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	  // "abcdef"
