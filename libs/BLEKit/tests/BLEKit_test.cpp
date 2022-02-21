@@ -8,6 +8,7 @@
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "mocks/leka/BLEService.h"
 #include "stubs/leka/CoreEventQueue.h"
 #include "stubs/mbed/BLE.h"
 
@@ -15,7 +16,6 @@ using namespace leka;
 using namespace ble;
 
 using ::testing::AnyNumber;
-using ::testing::AtLeast;
 using ::testing::Return;
 
 class BLEKitTest : public testing::Test
@@ -52,7 +52,6 @@ TEST_F(BLEKitTest, init)
 
 	EXPECT_CALL(mock_gap, setEventHandler).Times(1);
 	EXPECT_CALL(mock_gatt, setEventHandler).Times(1);
-	EXPECT_CALL(mock_gatt, addService).Times(AtLeast(1));
 	expectStartAdvertisingCall();
 
 	ble.init();
@@ -73,6 +72,24 @@ TEST_F(BLEKitTest, initBLEAlreadyInitialized)
 	spy_ble_on_initialization_complete_callback(&context);
 
 	EXPECT_FALSE(spy_ble_did_call_initialization);
+}
+
+TEST_F(BLEKitTest, setServices)
+{
+	auto characteristic_value		  = uint8_t {};
+	auto characteristic				  = GattCharacteristic {0x1234, &characteristic_value};
+	auto service_characteristic_table = std::to_array<GattCharacteristic *>({&characteristic});
+
+	auto mock_service_1 = mock::BLEService(0x01, service_characteristic_table);
+	auto mock_service_2 = mock::BLEService(0x02, service_characteristic_table);
+
+	auto services = std::to_array<interface::BLEService *>({&mock_service_1, &mock_service_2});
+
+	EXPECT_CALL(mock_gatt, addService).Times(std::size(services));
+	EXPECT_CALL(mock_service_1, onDataReadyToSend).Times(1);
+	EXPECT_CALL(mock_service_2, onDataReadyToSend).Times(1);
+
+	ble.setServices(services);
 }
 
 TEST_F(BLEKitTest, callOnEventsToProcess)

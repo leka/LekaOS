@@ -5,6 +5,7 @@
 #ifndef _LEKA_OS_LIB_BLE_KIT_H_
 #define _LEKA_OS_LIB_BLE_KIT_H_
 
+#include "BLEServiceBattery.h"
 #include "ble/BLE.h"
 
 #include "CoreEventQueue.h"
@@ -17,6 +18,8 @@ class BLEKit
 {
   public:
 	BLEKit() = default;
+
+	void setServices(std::span<interface::BLEService *> const &services);
 
 	void init();
 
