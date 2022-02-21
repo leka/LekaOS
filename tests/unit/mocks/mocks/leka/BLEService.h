@@ -6,23 +6,22 @@
 #define _LEKA_OS_BLE_SERVICE_MOCK_H_
 
 #include "gmock/gmock.h"
-#include "interface/drivers/BLEService.h"
+#include "internal/BLEService.h"
 
 namespace leka::mock {
 
 class BLEService : public interface::BLEService
 {
   public:
-	BLEService(const UUID &uuid, std::span<GattCharacteristic *> characteristics, unsigned characteristics_count)
-		: interface::BLEService(uuid, characteristics, characteristics_count)
+	BLEService(const UUID &uuid, std::span<GattCharacteristic *> characteristics)
+		: interface::BLEService(uuid, characteristics)
 	{
 	}
 
 	MOCK_METHOD(void, onDataWritten, (const GattWriteCallbackParams &params), (override));
-	MOCK_METHOD(void, updateData, (updateServiceFunction & update), (override));
 
-	MOCK_METHOD(uint8_t, getCharacteristicCount, (), ());
-	MOCK_METHOD(GattCharacteristic *, getCharacteristic, (uint8_t index), ());
+	MOCK_METHOD(void, registerUpdateDataFunction, (update_data_function_t const &function), (override));
+	MOCK_METHOD(void, updateData, (), (override));
 };
 
 }	// namespace leka::mock
