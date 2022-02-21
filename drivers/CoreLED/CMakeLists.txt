@@ -16,6 +16,7 @@ target_sources(CoreLED
 
 target_link_libraries(CoreLED
 	CoreSPI
+	ColorKit
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
@@ -26,7 +27,6 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/CoreLED_test_showHideColor.cpp
 		tests/CoreLED_test_status.cpp
 		tests/CoreLED_test.cpp
-		tests/RGB_test.cpp
 	)
 
 endif()

@@ -4,5 +4,6 @@
 
 #pragma once
 
+#include "RGB.h"
 namespace leka::ColorKit {
 }	// namespace leka::ColorKit
