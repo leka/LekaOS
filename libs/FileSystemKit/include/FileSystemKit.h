@@ -42,6 +42,8 @@ class FileSystemKit
 
 		auto rename(const char * new_name) -> size_t final;
 
+		auto get_filename() -> std::string final;
+
 		auto new_line() -> size_t final;
 
 		auto carriage_return() -> size_t final;
