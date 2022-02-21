@@ -90,7 +90,7 @@ class CoreLED : public interface::LED
 			return;
 		}
 
-		auto black = [] {
+		constexpr auto black = [] {
 			auto colors = std::array<RGB, NumberOfLeds> {};
 			std::fill(colors.begin(), colors.end(), RGB::black);
 			return colors;
