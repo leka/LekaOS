@@ -6,8 +6,6 @@
 #include <cstdint>
 #include <cstdio>
 #include <span>
-#include <unistd.h>
-#include <string>
 
 
 
@@ -113,16 +111,4 @@ auto FileSystemKit::File::tell() -> size_t
 		return 0;
 	}
 	return std::ftell(_file.get());
-}
-
-auto FileSystemKit::File::new_line() -> size_t
-{
-	auto data = std::to_array<uint8_t>({0x0A, 0x0D});
-	return std::fwrite(data.data(), sizeof(uint8_t), data.size(), _file.get());
-}
-
-auto FileSystemKit::File::carriage_return() -> size_t
-{
-	auto data = std::to_array<uint8_t>({0x0D});
-	return std::fwrite(data.data(), sizeof(uint8_t), data.size(), _file.get());
 }
