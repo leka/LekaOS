@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <span>
 #include <unistd.h>
+#include <string>
 
 
 
@@ -121,12 +122,30 @@ auto FileSystemKit::File::rename(const char * new_name) -> size_t
 	}
 
     char proclnk[0xFFF];
-    char filename[0xFFF];
+    char result[0xFFF];
 	int fd = fileno(_file.get());
     sprintf(proclnk, "/proc/self/fd/%d", fd);
-    readlink(proclnk, filename, 0xFFF);
+    auto r = readlink(proclnk, result, 0xFFF);
+	result[r]='\0';
 
-	return std::rename(filename, new_name);
+	return std::rename(result, new_name);
+}
+
+auto FileSystemKit::File::get_filename() -> std::string
+{
+	if (_file == nullptr) {
+		return 0;
+	}
+
+    char proclnk[0xFFF];
+    char result[0xFFF];
+	int fd = fileno(_file.get());
+    sprintf(proclnk, "/proc/self/fd/%d", fd);
+    auto r = readlink(proclnk, result, 0xFFF);
+	result[r]='\0';
+	std::string filename(result);
+
+	return filename;
 }
 
 auto FileSystemKit::File::new_line() -> size_t
