@@ -39,9 +39,9 @@ TEST_F(CoreGattServerEventHandlerTest, initialization)
 	EXPECT_NE(&gatt_event_handler, nullptr);
 }
 
-TEST_F(CoreGattServerEventHandlerTest, onDataWritten)
+TEST_F(CoreGattServerEventHandlerTest, onDataReceived)
 {
-	auto characteristic_value		  = uint8_t {};
+	auto characteristic_value		  = uint8_t {0};
 	auto characteristic				  = GattCharacteristic {0x1234, &characteristic_value};
 	auto service_characteristic_table = std::to_array<GattCharacteristic *>({&characteristic});
 	auto mock_service				  = mock::BLEService(0x01, service_characteristic_table);
@@ -50,18 +50,16 @@ TEST_F(CoreGattServerEventHandlerTest, onDataWritten)
 
 	gatt_event_handler.setServices(services);
 
-	//
-
 	auto expected_params   = GattWriteCallbackParams {};
 	expected_params.handle = characteristic.getValueHandle();
 
-	EXPECT_CALL(mock_service, onDataWritten(compareParams(expected_params)))
+	EXPECT_CALL(mock_service, onDataReceived(compareParams(expected_params)))
 		.Times(std::size(service_characteristic_table));
 
 	gatt_event_handler.onDataWritten(expected_params);
 }
 
-TEST_F(CoreGattServerEventHandlerTest, onDataWrittenMultipleServices)
+TEST_F(CoreGattServerEventHandlerTest, onDataReceivedMultipleServices)
 {
 	auto characteristic_value			= uint8_t {};
 	auto characteristic					= GattCharacteristic {0x1234, &characteristic_value};
@@ -74,20 +72,18 @@ TEST_F(CoreGattServerEventHandlerTest, onDataWrittenMultipleServices)
 
 	gatt_event_handler.setServices(services);
 
-	//
-
 	auto expected_params   = GattWriteCallbackParams {};
 	expected_params.handle = characteristic.getValueHandle();
 
-	EXPECT_CALL(mock_service_1, onDataWritten(compareParams(expected_params)))
+	EXPECT_CALL(mock_service_1, onDataReceived(compareParams(expected_params)))
 		.Times(std::size(service_1_characteristic_table));
-	EXPECT_CALL(mock_service_2, onDataWritten(compareParams(expected_params)))
+	EXPECT_CALL(mock_service_2, onDataReceived(compareParams(expected_params)))
 		.Times(std::size(service_2_characteristic_table));
 
 	gatt_event_handler.onDataWritten(expected_params);
 }
 
-TEST_F(CoreGattServerEventHandlerTest, onDataWrittenParamsHandleDifferent)
+TEST_F(CoreGattServerEventHandlerTest, onDataReceivedParamsHandleDifferent)
 {
 	auto characteristic_value		  = uint8_t {};
 	auto characteristic				  = GattCharacteristic {0x1234, &characteristic_value};
@@ -98,12 +94,10 @@ TEST_F(CoreGattServerEventHandlerTest, onDataWrittenParamsHandleDifferent)
 
 	gatt_event_handler.setServices(services);
 
-	//
-
 	auto params	  = GattWriteCallbackParams {};
 	params.handle = characteristic.getValueHandle() + 1;
 
-	EXPECT_CALL(mock_service, onDataWritten).Times(0);
+	EXPECT_CALL(mock_service, onDataReceived).Times(0);
 
 	gatt_event_handler.onDataWritten(params);
 }
