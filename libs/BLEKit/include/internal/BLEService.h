@@ -15,19 +15,23 @@ namespace leka::interface {
 class BLEService : public GattService
 {
   public:
-	using update_data_function_t =
+	using data_received_handle_t = GattWriteCallbackParams;
+	using data_to_send_handle_t =
 		std::function<void(GattAttribute::Handle_t characteristic_updated, const uint8_t *data, uint16_t n_data_bytes)>;
 
 	BLEService(const UUID &uuid, std::span<GattCharacteristic *> characteristics)
 		: GattService(uuid, characteristics.data(), std::size(characteristics)) {};
 
 	[[nodiscard]] auto getCharacteristicCount() const -> uint8_t { return GattService::getCharacteristicCount(); };
-	auto getCharacteristic(uint8_t index) -> GattCharacteristic * { return GattService::getCharacteristic(index); };
+	[[nodiscard]] auto getCharacteristic(uint8_t index) -> GattCharacteristic *
+	{
+		return GattService::getCharacteristic(index);
+	};
 
-	virtual void onDataWritten(const GattWriteCallbackParams &params) = 0;
+	virtual void onDataReceived(const data_received_handle_t &handle) = 0;
 
-	virtual void registerUpdateDataFunction(update_data_function_t const &function) = 0;
-	virtual void updateData()														= 0;
+	virtual void onDataReadyToSend(const data_to_send_handle_t &function) = 0;
+	virtual void sendData()												  = 0;
 };
 
 }	// namespace leka::interface
