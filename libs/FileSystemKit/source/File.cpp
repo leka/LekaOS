@@ -7,8 +7,6 @@
 #include <cstdio>
 #include <span>
 
-
-
 #include "FileSystemKit.h"
 
 using namespace leka;
