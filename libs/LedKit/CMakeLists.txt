@@ -19,6 +19,7 @@ target_sources(LedKit
 		source/LedKit.cpp
 		source/LedKit.cpp
 		source/Singing.cpp
+		source/Sleeping.cpp
 )
 
 target_link_libraries(LedKit
