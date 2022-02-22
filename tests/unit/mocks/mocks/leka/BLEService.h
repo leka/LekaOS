@@ -18,10 +18,10 @@ class BLEService : public interface::BLEService
 	{
 	}
 
-	MOCK_METHOD(void, onDataWritten, (const GattWriteCallbackParams &params), (override));
+	MOCK_METHOD(void, onDataReceived, (const data_received_handle_t &params), (override));
 
-	MOCK_METHOD(void, registerUpdateDataFunction, (update_data_function_t const &function), (override));
-	MOCK_METHOD(void, updateData, (), (override));
+	MOCK_METHOD(void, onDataReadyToSend, (const data_to_send_handle_t &function), (override));
+	MOCK_METHOD(void, sendData, (), (override));
 };
 
 }	// namespace leka::mock
