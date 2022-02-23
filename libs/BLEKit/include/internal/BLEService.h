@@ -2,8 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_BLE_SERVICE_INTERFACE_H_
-#define _LEKA_OS_LIB_BLE_SERVICE_INTERFACE_H_
+#pragma once
 
 #include <span>
 
@@ -35,5 +34,3 @@ class BLEService : public GattService
 };
 
 }	// namespace leka::interface
-
-#endif	 // _LEKA_OS_LIB_BLE_SERVICE_INTERFACE_H_
