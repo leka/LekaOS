@@ -23,10 +23,8 @@ class BLEService : public GattService
 	BLEService(const UUID &uuid, std::span<GattCharacteristic *> characteristics)
 		: GattService(uuid, characteristics.data(), std::size(characteristics)) {};
 
-	virtual void onDataReceived(const data_received_handle_t &handle) = 0;
-
+	virtual void onDataReceived(const data_received_handle_t &handle)	   = 0;
 	virtual void onDataReadyToSend(const data_to_send_handler_t &function) = 0;
-	virtual void sendData()												   = 0;
 };
 
 }	// namespace leka::interface
