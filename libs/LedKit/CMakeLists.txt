@@ -23,6 +23,7 @@ target_link_libraries(LedKit
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
+		tests/LedKit_test.cpp
 	)
 
 endif()
