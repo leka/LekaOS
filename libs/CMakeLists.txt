@@ -26,3 +26,5 @@ add_subdirectory(${LIBS_DIR}/LKCalculatorKit)
 add_subdirectory(${LIBS_DIR}/PrettyPrinter)
 
 add_subdirectory(${LIBS_DIR}/BLEKit)
+
+add_subdirectory(${LIBS_DIR}/ColorKit)

@@ -2,8 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_CORE_LED_RGB_H_
-#define _LEKA_OS_DRIVER_CORE_LED_RGB_H_
+#pragma once
 
 #include <algorithm>
 #include <cstdint>
@@ -54,5 +53,3 @@ constexpr RGB RGB::cyan {0x00, 0xFF, 0xFF};
 constexpr RGB RGB::magenta {0xFF, 0x00, 0xFF};
 
 }	// namespace leka
-
-#endif	 //_LEKA_OS_DRIVER_CORE_LED_RGB_H_
