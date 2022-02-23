@@ -13,6 +13,7 @@ target_include_directories(LedKit
 target_sources(LedKit
 	PRIVATE
 		source/Bubbles.cpp
+		source/Disgusted.cpp
 		source/Fly.cpp
 		source/LedKit.cpp
 		source/Singing.cpp
