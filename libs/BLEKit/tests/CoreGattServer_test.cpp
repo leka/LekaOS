@@ -55,7 +55,6 @@ TEST_F(CoreGattServerTest, setServices)
 	auto services = std::to_array<interface::BLEService *>({&mock_service});
 
 	EXPECT_CALL(mock_gatt, addService).Times(std::size(services));
-	EXPECT_CALL(mock_service, onDataReadyToSend).Times(1);
 
 	gatt_server.setServices(services);
 }
@@ -73,7 +72,6 @@ TEST_F(CoreGattServerTest, writeOnDataUpdate)
 	};
 
 	EXPECT_CALL(mock_gatt, addService).Times(AnyNumber());
-	EXPECT_CALL(mock_service, onDataReadyToSend).WillOnce(GetUpdateDataFunction(&registered_update_data_function));
 
 	gatt_server.setServices(services);
 
@@ -84,5 +82,5 @@ TEST_F(CoreGattServerTest, writeOnDataUpdate)
 
 	EXPECT_CALL(mock_gatt, write(handle, data.data(), std::size(data), _)).Times(1);
 
-	registered_update_data_function(handle, data.data(), std::size(data));
+	mock_service.dataReadyToSend(std::make_tuple(handle, data.data(), std::size(data)));
 }

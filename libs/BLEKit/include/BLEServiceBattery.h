@@ -29,12 +29,11 @@ class BLEServiceBattery : public interface::BLEService
 		// do nothing
 	};
 
-	void onDataReadyToSend(const data_to_send_handle_t &function) final { send_data_function = function; };
-
-	void sendData() final
+	void sendData()
 	{
-		send_data_function(_battery_level_writable_characteristic.getValueHandle(),
-						   &_battery_level_characteristic_value, 1);
+		auto data = std::make_tuple(_battery_level_writable_characteristic.getValueHandle(),
+									&_battery_level_characteristic_value, 1);
+		_callback_on_data_ready_to_send(data);
 	};
 
   private:

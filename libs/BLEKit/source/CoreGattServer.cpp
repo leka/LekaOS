@@ -13,8 +13,9 @@ void CoreGattServer::setServices(std::span<interface::BLEService *> services)
 	for (auto &service: services) {
 		_gatt_server.addService(*service);
 
-		service->onDataReadyToSend([this](GattAttribute::Handle_t &&PH1, const uint8_t *&&PH2, uint16_t &&PH3) {
-			write(std::forward<decltype(PH1)>(PH1), std::forward<decltype(PH2)>(PH2), std::forward<decltype(PH3)>(PH3));
+		service->onDataReadyToSend([this](const interface::BLEService::data_to_send_handle_t &handle) {
+			auto [h, d, s] = handle;
+			write(h, d, s);
 		});
 	}
 	_gatt_server_event_handler.setServices(services);

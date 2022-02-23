@@ -27,7 +27,7 @@ class BLEService : public GattService
 		_callback_on_data_ready_to_send = callback;
 	};
 
-  private:
+  protected:
 	std::function<void(const data_to_send_handle_t &)> _callback_on_data_ready_to_send {};
 };
 

@@ -86,8 +86,6 @@ TEST_F(BLEKitTest, setServices)
 	auto services = std::to_array<interface::BLEService *>({&mock_service_1, &mock_service_2});
 
 	EXPECT_CALL(mock_gatt, addService).Times(std::size(services));
-	EXPECT_CALL(mock_service_1, onDataReadyToSend).Times(1);
-	EXPECT_CALL(mock_service_2, onDataReadyToSend).Times(1);
 
 	ble.setServices(services);
 }
