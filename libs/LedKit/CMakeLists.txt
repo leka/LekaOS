@@ -15,6 +15,8 @@ target_sources(LedKit
 		source/Bubbles.cpp
 		source/Disgusted.cpp
 		source/Fly.cpp
+		source/Happy.cpp
+		source/LedKit.cpp
 		source/LedKit.cpp
 		source/Singing.cpp
 )
