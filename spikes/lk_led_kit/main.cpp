@@ -17,6 +17,7 @@
 #include "LedKit.h"
 #include "LogKit.h"
 #include "Singing.h"
+#include "Sleeping.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -31,12 +32,13 @@ auto animation_thread	   = rtos::Thread {};
 auto animation_event_queue = events::EventQueue {};
 
 auto ledkit = LedKit {animation_thread, animation_event_queue, ears, belt};
-led::animation::Happy animation_happy(ears, belt);
-led::animation::Disgusted animation_disgusted(ears, belt);
 
 led::animation::Bubbles animation_bubbles(ears, belt);
-led::animation::Singing animation_singing(ears, belt);
+led::animation::Disgusted animation_disgusted(ears, belt);
 led::animation::Fly animation_fly {ears, belt};
+led::animation::Happy animation_happy(ears, belt);
+led::animation::Singing animation_singing(ears, belt);
+led::animation::Sleeping animation_sleeping(ears, belt);
 
 HelloWorld hello;
 
@@ -51,9 +53,14 @@ auto main() -> int
 	while (true) {
 		ledkit.start(animation_singing);
 		rtos::ThisThread::sleep_for(10s);
+
 		ledkit.start(animation_fly);
 		rtos::ThisThread::sleep_for(10s);
+
 		ledkit.start(animation_happy);
+		rtos::ThisThread::sleep_for(10s);
+
+		ledkit.start(animation_sleeping);
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.stop();
