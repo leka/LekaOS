@@ -14,8 +14,9 @@ void CoreGattServerEventHandler::setServices(std::span<interface::BLEService *> 
 
 void CoreGattServerEventHandler::onDataWritten(const GattWriteCallbackParams &params)
 {
-	auto call_on_data_written = [&params](interface::BLEService *service) {
+	auto on_data_received = [&params](interface::BLEService *service) {
 		auto characteristics_count = service->getCharacteristicCount();
+
 		for (uint8_t index = 0; index < characteristics_count; index++) {
 			if (params.handle == service->getCharacteristic(index)->getValueHandle()) {
 				service->onDataReceived(params);
@@ -23,5 +24,5 @@ void CoreGattServerEventHandler::onDataWritten(const GattWriteCallbackParams &pa
 		}
 	};
 
-	std::for_each(_services.begin(), _services.end(), call_on_data_written);
+	std::for_each(_services.begin(), _services.end(), on_data_received);
 }
