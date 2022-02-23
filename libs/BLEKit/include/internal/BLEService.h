@@ -14,17 +14,21 @@ namespace leka::interface {
 class BLEService : public GattService
 {
   public:
-	// ! first line is handlE, second line is handlER --> high risk of confusion
-	// ! it would be better to use handlE for bother, with a tuple for the second line
-	using data_received_handle_t = GattWriteCallbackParams;
-	using data_to_send_handler_t =
-		std::function<void(GattAttribute::Handle_t characteristic_updated, const uint8_t *data, uint16_t n_data_bytes)>;
-
 	BLEService(const UUID &uuid, std::span<GattCharacteristic *> characteristics)
 		: GattService(uuid, characteristics.data(), std::size(characteristics)) {};
 
-	virtual void onDataReceived(const data_received_handle_t &handle)	   = 0;
-	virtual void onDataReadyToSend(const data_to_send_handler_t &function) = 0;
+	using data_received_handle_t = GattWriteCallbackParams;
+	using data_to_send_handle_t	 = std::tuple<GattAttribute::Handle_t, const uint8_t *, uint16_t>;
+
+	virtual void onDataReceived(const data_received_handle_t &handle) = 0;
+
+	void onDataReadyToSend(std::function<void(const data_to_send_handle_t &)> callback)
+	{
+		_callback_on_data_ready_to_send = callback;
+	};
+
+  private:
+	std::function<void(const data_to_send_handle_t &)> _callback_on_data_ready_to_send {};
 };
 
 }	// namespace leka::interface
