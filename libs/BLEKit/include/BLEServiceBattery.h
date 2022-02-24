@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_BLE_SERVICE_BATTERY_H_
-#define _LEKA_OS_LIB_BLE_SERVICE_BATTERY_H_
+#pragma once
 
 #include "internal/BLEService.h"
 
@@ -43,5 +42,3 @@ class BLEServiceBattery : public interface::BLEService
 };
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_LIB_BLE_SERVICE_BATTERY_H_
