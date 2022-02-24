@@ -24,6 +24,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
 		tests/LedKit_test.cpp
+		tests/LedKit_test_animations.cpp
 	)
 
 endif()
