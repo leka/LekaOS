@@ -2,6 +2,11 @@
 
 using namespace leka;
 
+void BLEKit::setServices(std::span<interface::BLEService *> const &services)
+{
+	_core_gatt_server.setServices(services);
+}
+
 void BLEKit::init()
 {
 	if (_ble.hasInitialized()) {
@@ -9,15 +14,16 @@ void BLEKit::init()
 	}
 
 	_core_gap.setEventHandler();
+	_core_gatt_server.setEventHandler();
 
 	_ble.onEventsToProcess({this, &BLEKit::processEvents});
-
-	_event_queue.dispatch_forever();
 
 	_core_gap.setDefaultAdvertising();
 	_core_gap.setDeviceName("Leka");
 
 	_ble.init(&_core_gap, &CoreGap::onInitializationComplete);
+
+	_event_queue.dispatch_forever();
 }
 
 void BLEKit::processEvents(BLE::OnEventsToProcessCallbackContext *context)

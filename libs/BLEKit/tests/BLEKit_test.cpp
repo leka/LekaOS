@@ -8,6 +8,7 @@
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "mocks/leka/BLEService.h"
 #include "stubs/leka/CoreEventQueue.h"
 #include "stubs/mbed/BLE.h"
 
@@ -28,14 +29,15 @@ class BLEKitTest : public testing::Test
 	void TearDown() override { ble::delete_mocks(); }
 
 	BLEKit ble {};
-	GapMock &mock_gap = gap_mock();
+	GapMock &mbed_mock_gap		   = gap_mock();
+	GattServerMock &mbed_mock_gatt = gatt_server_mock();
 
 	void expectStartAdvertisingCall()
 	{
-		EXPECT_CALL(mock_gap, isAdvertisingActive).WillOnce(Return(false));
-		EXPECT_CALL(mock_gap, startAdvertising).Times(1);
-		EXPECT_CALL(mock_gap, setAdvertisingParameters).Times(1);
-		EXPECT_CALL(mock_gap, setAdvertisingPayload).Times(1);
+		EXPECT_CALL(mbed_mock_gap, isAdvertisingActive).WillOnce(Return(false));
+		EXPECT_CALL(mbed_mock_gap, startAdvertising).Times(1);
+		EXPECT_CALL(mbed_mock_gap, setAdvertisingParameters).Times(1);
+		EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).Times(1);
 	};
 };
 
@@ -48,7 +50,8 @@ TEST_F(BLEKitTest, init)
 {
 	spy_ble_hasInitialized_return_value = false;
 
-	EXPECT_CALL(mock_gap, setEventHandler).Times(1);
+	EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(1);
+	EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(1);
 	expectStartAdvertisingCall();
 
 	ble.init();
@@ -71,12 +74,30 @@ TEST_F(BLEKitTest, initBLEAlreadyInitialized)
 	EXPECT_FALSE(spy_ble_did_call_initialization);
 }
 
+TEST_F(BLEKitTest, setServices)
+{
+	auto characteristic_value		  = uint8_t {};
+	auto characteristic				  = GattCharacteristic {0x1234, &characteristic_value};
+	auto service_characteristic_table = std::to_array<GattCharacteristic *>({&characteristic});
+
+	auto mock_service_1 = mock::BLEService(0x01, service_characteristic_table);
+	auto mock_service_2 = mock::BLEService(0x02, service_characteristic_table);
+
+	auto services = std::to_array<interface::BLEService *>({&mock_service_1, &mock_service_2});
+
+	EXPECT_CALL(mbed_mock_gatt, addService).Times(std::size(services));
+
+	ble.setServices(services);
+}
+
 TEST_F(BLEKitTest, callOnEventsToProcess)
 {
 	spy_ble_hasInitialized_return_value	 = false;
 	spy_CoreEventQueue_did_call_function = false;
 
-	EXPECT_CALL(mock_gap, setEventHandler).Times(AnyNumber());
+	EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(AnyNumber());
+	EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(AnyNumber());
+	EXPECT_CALL(mbed_mock_gatt, addService).Times(AnyNumber());
 
 	ble.init();
 
