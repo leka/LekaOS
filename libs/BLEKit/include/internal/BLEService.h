@@ -22,7 +22,7 @@ class BLEService : public GattService
 
 	virtual void onDataReceived(const data_received_handle_t &handle) = 0;
 
-	void onDataReadyToSend(std::function<void(const data_to_send_handle_t &)> callback)
+	void onDataReadyToSend(const std::function<void(const data_to_send_handle_t &)> &callback)
 	{
 		_callback_on_data_ready_to_send = callback;
 	};
