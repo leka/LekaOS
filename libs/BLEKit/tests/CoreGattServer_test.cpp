@@ -23,8 +23,8 @@ class CoreGattServerTest : public testing::Test
 	void SetUp() override { ble::init_mocks(); }
 	void TearDown() override { ble::delete_mocks(); }
 
-	BLE &ble				  = BLE::Instance();
-	GattServerMock &mock_gatt = gatt_server_mock();
+	BLE &ble					   = BLE::Instance();
+	GattServerMock &mbed_mock_gatt = gatt_server_mock();
 	CoreGattServer gatt_server {ble.gattServer()};
 };
 
@@ -40,7 +40,7 @@ TEST_F(CoreGattServerTest, initialization)
 
 TEST_F(CoreGattServerTest, setEventHandler)
 {
-	EXPECT_CALL(mock_gatt, setEventHandler).Times(1);
+	EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(1);
 
 	gatt_server.setEventHandler();
 }
@@ -54,12 +54,12 @@ TEST_F(CoreGattServerTest, setServices)
 
 	auto services = std::to_array<interface::BLEService *>({&mock_service});
 
-	EXPECT_CALL(mock_gatt, addService).Times(std::size(services));
+	EXPECT_CALL(mbed_mock_gatt, addService).Times(std::size(services));
 
 	gatt_server.setServices(services);
 }
 
-TEST_F(CoreGattServerTest, writeOnDataUpdate)
+TEST_F(CoreGattServerTest, onDataReadyToSend)
 {
 	auto characteristic_value		  = uint8_t {};
 	auto characteristic				  = GattCharacteristic {0x1234, &characteristic_value};
@@ -68,7 +68,7 @@ TEST_F(CoreGattServerTest, writeOnDataUpdate)
 
 	auto services = std::to_array<interface::BLEService *>({&mock_service});
 
-	EXPECT_CALL(mock_gatt, addService).Times(AnyNumber());
+	EXPECT_CALL(mbed_mock_gatt, addService).Times(AnyNumber());
 
 	gatt_server.setServices(services);
 
@@ -78,12 +78,7 @@ TEST_F(CoreGattServerTest, writeOnDataUpdate)
 	auto tuple		   = std::make_tuple(handle, data_to_send);
 	const auto &[h, d] = tuple;	  // need for the EXPECT_CALL: addresses must be the same
 
-	EXPECT_CALL(mock_gatt, write(h, d.data(), std::size(d), _)).Times(1);
-
-	mock_service.onDataReadyToSend([this](const interface::BLEService::data_to_send_handle_t &handle) {
-		const auto &[h, d] = handle;
-		mock_gatt.write(h, d.data(), std::size(d), true);
-	});
+	EXPECT_CALL(mbed_mock_gatt, write(h, d.data(), std::size(d), _)).Times(1);
 
 	mock_service.sendData(tuple);
 }
