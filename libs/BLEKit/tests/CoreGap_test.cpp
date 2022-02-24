@@ -23,27 +23,27 @@ class CoreGapTest : public testing::Test
 	{
 		ble::init_mocks();
 
-		EXPECT_CALL(mock_gap, setEventHandler).Times(1);
+		EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(1);
 		coregap.setEventHandler();
 	}
 	void TearDown() override { ble::delete_mocks(); }
 
-	BLE &ble		  = BLE::Instance();
-	GapMock &mock_gap = gap_mock();
+	BLE &ble			   = BLE::Instance();
+	GapMock &mbed_mock_gap = gap_mock();
 	CoreGap coregap {ble.gap()};
 
 	void expectStartAdvertisingCall(bool expected)
 	{
 		if (expected) {
-			EXPECT_CALL(mock_gap, isAdvertisingActive).WillOnce(Return(false));
-			EXPECT_CALL(mock_gap, startAdvertising).Times(1);
-			EXPECT_CALL(mock_gap, setAdvertisingParameters).Times(1);
-			EXPECT_CALL(mock_gap, setAdvertisingPayload).Times(1);
+			EXPECT_CALL(mbed_mock_gap, isAdvertisingActive).WillOnce(Return(false));
+			EXPECT_CALL(mbed_mock_gap, startAdvertising).Times(1);
+			EXPECT_CALL(mbed_mock_gap, setAdvertisingParameters).Times(1);
+			EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).Times(1);
 		} else {
-			EXPECT_CALL(mock_gap, isAdvertisingActive).Times(0);
-			EXPECT_CALL(mock_gap, startAdvertising).Times(0);
-			EXPECT_CALL(mock_gap, setAdvertisingParameters).Times(0);
-			EXPECT_CALL(mock_gap, setAdvertisingPayload).Times(0);
+			EXPECT_CALL(mbed_mock_gap, isAdvertisingActive).Times(0);
+			EXPECT_CALL(mbed_mock_gap, startAdvertising).Times(0);
+			EXPECT_CALL(mbed_mock_gap, setAdvertisingParameters).Times(0);
+			EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).Times(0);
 		}
 	};
 };
@@ -70,7 +70,7 @@ TEST_F(CoreGapTest, initialization)
 
 TEST_F(CoreGapTest, setEventHandler)
 {
-	EXPECT_CALL(mock_gap, setEventHandler).Times(1);
+	EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(1);
 
 	coregap.setEventHandler();
 }
@@ -79,11 +79,12 @@ TEST_F(CoreGapTest, defaultAdvertisingParameters)
 {
 	auto params = AdvertisingParameters {};
 
-	EXPECT_CALL(mock_gap, setAdvertisingParameters(LEGACY_ADVERTISING_HANDLE, compareAdvertisingParameters(params)))
+	EXPECT_CALL(mbed_mock_gap,
+				setAdvertisingParameters(LEGACY_ADVERTISING_HANDLE, compareAdvertisingParameters(params)))
 		.Times(1);
-	EXPECT_CALL(mock_gap, isAdvertisingActive).WillOnce(Return(false));
-	EXPECT_CALL(mock_gap, startAdvertising).Times(1);
-	EXPECT_CALL(mock_gap, setAdvertisingPayload).Times(1);
+	EXPECT_CALL(mbed_mock_gap, isAdvertisingActive).WillOnce(Return(false));
+	EXPECT_CALL(mbed_mock_gap, startAdvertising).Times(1);
+	EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).Times(1);
 
 	coregap.startAdvertising();
 }
@@ -99,11 +100,12 @@ TEST_F(CoreGapTest, defaultAdvertisingPayload)
 	data_builder.setAdvertisingInterval(ble::adv_interval_t::min());
 	data_builder.setServiceData(GattService::UUID_BATTERY_SERVICE, {{0x42}});
 
-	EXPECT_CALL(mock_gap, setAdvertisingPayload(LEGACY_ADVERTISING_HANDLE, compareAdvertisingPayload(data_builder)))
+	EXPECT_CALL(mbed_mock_gap,
+				setAdvertisingPayload(LEGACY_ADVERTISING_HANDLE, compareAdvertisingPayload(data_builder)))
 		.Times(1);
-	EXPECT_CALL(mock_gap, isAdvertisingActive).WillOnce(Return(false));
-	EXPECT_CALL(mock_gap, startAdvertising).Times(1);
-	EXPECT_CALL(mock_gap, setAdvertisingParameters).Times(1);
+	EXPECT_CALL(mbed_mock_gap, isAdvertisingActive).WillOnce(Return(false));
+	EXPECT_CALL(mbed_mock_gap, startAdvertising).Times(1);
+	EXPECT_CALL(mbed_mock_gap, setAdvertisingParameters).Times(1);
 
 	coregap.setDefaultAdvertising();
 	coregap.startAdvertising();
@@ -118,11 +120,12 @@ TEST_F(CoreGapTest, setDeviceName)
 
 	data_builder.setName(expected_device_name);
 
-	EXPECT_CALL(mock_gap, setAdvertisingPayload(LEGACY_ADVERTISING_HANDLE, compareAdvertisingPayload(data_builder)))
+	EXPECT_CALL(mbed_mock_gap,
+				setAdvertisingPayload(LEGACY_ADVERTISING_HANDLE, compareAdvertisingPayload(data_builder)))
 		.Times(1);
-	EXPECT_CALL(mock_gap, isAdvertisingActive).WillOnce(Return(false));
-	EXPECT_CALL(mock_gap, startAdvertising).Times(1);
-	EXPECT_CALL(mock_gap, setAdvertisingParameters).Times(1);
+	EXPECT_CALL(mbed_mock_gap, isAdvertisingActive).WillOnce(Return(false));
+	EXPECT_CALL(mbed_mock_gap, startAdvertising).Times(1);
+	EXPECT_CALL(mbed_mock_gap, setAdvertisingParameters).Times(1);
 
 	coregap.setDeviceName(expected_device_name);
 	coregap.startAdvertising();
@@ -132,20 +135,20 @@ TEST_F(CoreGapTest, startAdvertisingAdvertisingWasInactive)
 {
 	Sequence seq1, seq2;
 
-	EXPECT_CALL(mock_gap, isAdvertisingActive).InSequence(seq1, seq2).WillOnce(Return(false));
-	EXPECT_CALL(mock_gap, setAdvertisingParameters).Times(1).InSequence(seq1);
-	EXPECT_CALL(mock_gap, setAdvertisingPayload).Times(1).InSequence(seq2);
-	EXPECT_CALL(mock_gap, startAdvertising).Times(1).InSequence(seq1, seq2);
+	EXPECT_CALL(mbed_mock_gap, isAdvertisingActive).InSequence(seq1, seq2).WillOnce(Return(false));
+	EXPECT_CALL(mbed_mock_gap, setAdvertisingParameters).Times(1).InSequence(seq1);
+	EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).Times(1).InSequence(seq2);
+	EXPECT_CALL(mbed_mock_gap, startAdvertising).Times(1).InSequence(seq1, seq2);
 
 	coregap.startAdvertising();
 }
 
 TEST_F(CoreGapTest, startAdvertisingAdvertisingWasActive)
 {
-	EXPECT_CALL(mock_gap, isAdvertisingActive).WillOnce(Return(true));
-	EXPECT_CALL(mock_gap, startAdvertising).Times(0);
-	EXPECT_CALL(mock_gap, setAdvertisingParameters).Times(0);
-	EXPECT_CALL(mock_gap, setAdvertisingPayload).Times(0);
+	EXPECT_CALL(mbed_mock_gap, isAdvertisingActive).WillOnce(Return(true));
+	EXPECT_CALL(mbed_mock_gap, startAdvertising).Times(0);
+	EXPECT_CALL(mbed_mock_gap, setAdvertisingParameters).Times(0);
+	EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).Times(0);
 
 	coregap.startAdvertising();
 }
