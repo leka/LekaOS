@@ -82,5 +82,5 @@ TEST_F(CoreGattServerTest, writeOnDataUpdate)
 
 	EXPECT_CALL(mock_gatt, write(handle, data.data(), std::size(data), _)).Times(1);
 
-	mock_service.dataReadyToSend(std::make_tuple(handle, data.data(), std::size(data)));
+	mock_service.sendData(std::make_tuple(handle, data.data(), std::size(data)));
 }
