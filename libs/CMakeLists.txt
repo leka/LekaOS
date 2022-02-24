@@ -28,3 +28,5 @@ add_subdirectory(${LIBS_DIR}/PrettyPrinter)
 add_subdirectory(${LIBS_DIR}/BLEKit)
 
 add_subdirectory(${LIBS_DIR}/ColorKit)
+
+add_subdirectory(${LIBS_DIR}/LedKit)
