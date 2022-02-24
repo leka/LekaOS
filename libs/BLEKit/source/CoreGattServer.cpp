@@ -13,13 +13,12 @@ void CoreGattServer::setServices(std::span<interface::BLEService *> services)
 	for (auto &service: services) {
 		_gatt_server.addService(*service);
 
-		static auto callback_send_data = [this](const interface::BLEService::data_to_send_handle_t &handle) {
+		service->onDataReadyToSend([this](const interface::BLEService::data_to_send_handle_t &handle) {
 			const auto &[h, d, s] = handle;
 			write(h, d, s);
-		};
-
-		service->onDataReadyToSend(callback_send_data);
+		});
 	}
+
 	_gatt_server_event_handler.setServices(services);
 }
 
