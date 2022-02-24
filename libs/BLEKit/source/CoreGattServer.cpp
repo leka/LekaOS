@@ -24,5 +24,5 @@ void CoreGattServer::setServices(std::span<interface::BLEService *> services)
 
 void CoreGattServer::write(GattAttribute::Handle_t characteristic_updated, std::span<const uint8_t> data)
 {
-	_gatt_server.write(characteristic_updated, data.data(), std::size(data));
+	_gatt_server.write(characteristic_updated, data.data(), static_cast<uint16_t>(std::size(data)));
 }

@@ -12,7 +12,7 @@
 using namespace leka;
 using namespace std::chrono;
 
-auto level			 = 0;
+auto level			 = uint8_t {0};
 auto service_battery = BLEServiceBattery {};
 
 auto services = std::to_array<interface::BLEService *>({&service_battery});
@@ -33,6 +33,7 @@ auto main() -> int
 		log_info("Main thread running...");
 		rtos::ThisThread::sleep_for(5s);
 
-		service_battery.setBatteryLevel(level++);
+		service_battery.setBatteryLevel(level);
+		++level;
 	}
 }

@@ -36,8 +36,6 @@ class CoreGap
 
 	CoreGapEventHandler _gap_event_handler;
 	ble::Gap &_gap;
-
-	// std::function<void()> _post_init;
 };
 
 }	// namespace leka

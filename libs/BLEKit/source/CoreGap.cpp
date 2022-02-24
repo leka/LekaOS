@@ -22,10 +22,6 @@ void CoreGap::setEventHandler()
 void CoreGap::onInitializationComplete(BLE::InitializationCompleteCallbackContext *params)
 {
 	_gap_event_handler.onInitializationComplete(params);
-
-	// if (_post_init) {
-	// 	_post_init();
-	// }
 }
 
 void CoreGap::setDeviceName(const char *name)
