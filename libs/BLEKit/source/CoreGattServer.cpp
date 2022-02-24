@@ -14,15 +14,15 @@ void CoreGattServer::setServices(std::span<interface::BLEService *> services)
 		_gatt_server.addService(*service);
 
 		service->onDataReadyToSend([this](const interface::BLEService::data_to_send_handle_t &handle) {
-			const auto &[h, d, s] = handle;
-			write(h, d, s);
+			const auto &[h, d] = handle;
+			write(h, d);
 		});
 	}
 
 	_gatt_server_event_handler.setServices(services);
 }
 
-void CoreGattServer::write(GattAttribute::Handle_t characteristic_updated, const uint8_t *data, uint16_t n_data_bytes)
+void CoreGattServer::write(GattAttribute::Handle_t characteristic_updated, std::span<const uint8_t> data)
 {
-	_gatt_server.write(characteristic_updated, data, n_data_bytes);
+	_gatt_server.write(characteristic_updated, data.data(), std::size(data));
 }

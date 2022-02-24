@@ -23,7 +23,7 @@ class BLEServiceBattery : public interface::BLEService
 			_battery_level_characteristic_value = value;
 		}
 		auto data = std::make_tuple(_battery_level_writable_characteristic.getValueHandle(),
-									&_battery_level_characteristic_value, 1);
+									std::span(&_battery_level_characteristic_value, 1));
 		sendData(data);
 	}
 

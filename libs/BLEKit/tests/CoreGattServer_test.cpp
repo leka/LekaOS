@@ -68,19 +68,22 @@ TEST_F(CoreGattServerTest, writeOnDataUpdate)
 
 	auto services = std::to_array<interface::BLEService *>({&mock_service});
 
-	auto registered_update_data_function = interface::BLEService::data_to_send_handle_t {
-	};
-
 	EXPECT_CALL(mock_gatt, addService).Times(AnyNumber());
 
 	gatt_server.setServices(services);
 
-	//
+	auto handle		  = GattAttribute::Handle_t {};
+	auto data_to_send = std::to_array<const uint8_t>({0x2A, 0x2B, 0x2C, 0x2D});
 
-	auto handle = GattAttribute::Handle_t {};
-	auto data	= std::to_array<const uint8_t>({0x2A, 0x2B, 0x2C, 0x2D});
+	auto tuple		   = std::make_tuple(handle, data_to_send);
+	const auto &[h, d] = tuple;	  // need for the EXPECT_CALL: addresses must be the same
 
-	EXPECT_CALL(mock_gatt, write(handle, data.data(), std::size(data), _)).Times(1);
+	EXPECT_CALL(mock_gatt, write(h, d.data(), std::size(d), _)).Times(1);
 
-	mock_service.sendData(std::make_tuple(handle, data.data(), std::size(data)));
+	mock_service.onDataReadyToSend([this](const interface::BLEService::data_to_send_handle_t &handle) {
+		const auto &[h, d] = handle;
+		mock_gatt.write(h, d.data(), std::size(d), true);
+	});
+
+	mock_service.sendData(tuple);
 }
