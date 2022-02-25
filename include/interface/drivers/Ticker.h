@@ -2,8 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_INTERFACE_LIB_TICKER_H_
-#define _LEKA_OS_INTERFACE_LIB_TICKER_H_
+#pragma once
 
 #include <chrono>
 #include <functional>
@@ -24,5 +23,3 @@ class Ticker
 };
 
 }	// namespace leka::interface
-
-#endif	 // _LEKA_OS_INTERFACE_LIB_TICKER_H_

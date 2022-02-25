@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_CGCOLOR_H_
-#define _LEKA_OS_LIB_CGCOLOR_H_
+#pragma once
 
 #include <cstdint>
 
@@ -39,5 +38,3 @@ constexpr CGColor CGColor::cyan {0x00, 0xFF, 0xFF};
 constexpr CGColor CGColor::magenta {0xFF, 0x00, 0xFF};
 
 }	// namespace leka
-
-#endif

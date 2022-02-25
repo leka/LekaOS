@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_I2C_MOCK_H_
-#define _LEKA_OS_I2C_MOCK_H_
+#pragma once
 
 #include "CoreI2C.h"
 #include "gmock/gmock.h"
@@ -18,5 +17,3 @@ class CoreI2CMock : public interface::I2C
 };
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_I2C_MOCK_H_

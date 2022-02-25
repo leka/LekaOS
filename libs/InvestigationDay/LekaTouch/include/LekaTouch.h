@@ -1,14 +1,8 @@
-/**
- * @file LekaTouch.h
- * @author Yann Locatelli
- *
- * @version 0.1
- * @date 2020-09-20
- *
- * @copyright Copyright (c) 2020
- */
-#ifndef _LEKA_OS_LIB_LEKATOUCH_H_
-#define _LEKA_OS_LIB_LEKATOUCH_H_
+// Leka - LekaOS
+// Copyright 2020 APF France handicap
+// SPDX-License-Identifier: Apache-2.0
+
+#pragma once
 
 // #include "LekaTouchPins.h"
 
@@ -61,5 +55,3 @@ class Touch
 	const uint8_t _write_address_right = 0xC2;
 	const uint8_t _read_address		   = 0x4E;
 };
-
-#endif

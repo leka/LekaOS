@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_FILE_SYSTEM_KIT_H_
-#define _LEKA_OS_LIB_FILE_SYSTEM_KIT_H_
+#pragma once
 
 #include <memory>
 #include <span>
@@ -47,5 +46,3 @@ class FileSystemKit
 };
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_LIB_FILE_SYSTEM_KIT_H_

@@ -2,8 +2,7 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_BM64_CONVERTER_H_
-#define _LEKA_OS_LIB_BM64_CONVERTER_H_
+#pragma once
 
 #include <cstddef>
 #include <cstdint>
@@ -35,5 +34,3 @@ size_t getCommand(const uint8_t *cmd, const size_t cmd_length, uint8_t *buffer);
 // void convertResponse();	  // Events in datasheet
 
 };	 // namespace BM64
-
-#endif

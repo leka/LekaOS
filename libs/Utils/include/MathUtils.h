@@ -2,8 +2,7 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_UTILS_MATH_H_
-#define _LEKA_OS_LIB_UTILS_MATH_H_
+#pragma once
 
 #include <cstdint>
 #include <span>
@@ -31,5 +30,3 @@ auto computeLinearCoefficients(Point p1, Point p2) -> LinearCoefficients;
 auto checksum8(std::span<uint8_t> data) -> uint8_t;
 
 }	// namespace leka::utils::math
-
-#endif	 // _LEKA_OS_LIB_UTILS_MATH_H_

@@ -4,8 +4,7 @@
 // Original file:
 // https://github.com/STMicroelectronics/STM32CubeF7/blob/master/Drivers/BSP/STM32F769I-Discovery/stm32f769i_discovery_sdram.h
 
-#ifndef _LEKA_OS_LIB_SDRAM_H_
-#define _LEKA_OS_LIB_SDRAM_H_
+#pragma once
 
 #include "CoreSTM32HalBase.h"
 #include "interface/SDRAM.hpp"
@@ -119,5 +118,3 @@ namespace mode {
 // #define SDRAM_MEMORY_WIDTH FMC_SDRAM_MEM_BUS_WIDTH_16
 
 // #define SDCLOCK_PERIOD FMC_SDRAM_CLOCK_PERIOD_3
-
-#endif

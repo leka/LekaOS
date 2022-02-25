@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_CORE_VIDEO_H_
-#define _LEKA_OS_DRIVER_CORE_VIDEO_H_
+#pragma once
 
 #include "CoreSTM32HalBase.h"
 #include "interface/DMA2D.hpp"
@@ -50,5 +49,3 @@ class CoreVideo
 };
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_DRIVER_CORE_VIDEO_H_

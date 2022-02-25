@@ -2,8 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_ROBOT_KIT_STATE_MACHINE_LOGGER_H_
-#define _LEKA_OS_LIB_ROBOT_KIT_STATE_MACHINE_LOGGER_H_
+#pragma once
 
 #include "LogKit.h"
 #include "boost/sml.hpp"
@@ -43,5 +42,3 @@ struct logger {
 };
 
 }	// namespace leka::system::robot::sm
-
-#endif	 // _LEKA_OS_LIB_ROBOT_KIT_STATE_MACHINE_LOGGER_H_

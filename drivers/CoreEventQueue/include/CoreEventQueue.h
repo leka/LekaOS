@@ -2,8 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_CORE_EVENT_QUEUE_H_
-#define _LEKA_OS_DRIVER_CORE_EVENT_QUEUE_H_
+#pragma once
 
 #include "events/EventQueue.h"
 #include "rtos/Thread.h"
@@ -30,5 +29,3 @@ class CoreEventQueue : public interface::EventQueue
 };
 
 }	// namespace leka
-
-#endif	 //_LEKA_OS_DRIVER_CORE_EVENT_QUEUE_H_

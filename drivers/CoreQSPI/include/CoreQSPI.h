@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_CORE_QSPI_H_
-#define _LEKA_OS_DRIVER_CORE_QSPI_H_
+#pragma once
 
 #include <span>
 
@@ -34,5 +33,3 @@ class CoreQSPI : public interface::QSPI
 };
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_DRIVER_CORE_QSPI_H_

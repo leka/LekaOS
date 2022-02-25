@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVERS_FLASH_MEMORY_MOCK_H_
-#define _LEKA_OS_DRIVERS_FLASH_MEMORY_MOCK_H_
+#pragma once
 
 #include <span>
 
@@ -24,5 +23,3 @@ class FlashMemory : public interface::FlashMemory
 };
 
 }	// namespace leka::mock
-
-#endif	 // _LEKA_OS_DRIVERS_FLASH_MEMORY_MOCK_H_

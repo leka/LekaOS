@@ -2,8 +2,7 @@
 // Copyright 2021-2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_CORE_BATTERY_H_
-#define _LEKA_OS_DRIVER_CORE_BATTERY_H_
+#pragma once
 
 #include "drivers/AnalogIn.h"
 #include "drivers/InterruptIn.h"
@@ -53,5 +52,3 @@ class CoreBattery : public interface::Battery
 };
 
 }	// namespace leka
-
-#endif	 //_LEKA_OS_DRIVER_CORE_BATTERY_H_

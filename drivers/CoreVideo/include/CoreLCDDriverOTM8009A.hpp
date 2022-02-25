@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_LK_CORE_OTM8009A_H_
-#define _LEKA_OS_DRIVER_LK_CORE_OTM8009A_H_
+#pragma once
 
 #include "drivers/PwmOut.h"
 
@@ -343,5 +342,3 @@ namespace lcd::otm8009a {
 
 // #define OTM8009A_CMD_WRTESCN 0x44 // Write Tearing Effect Scan line command
 // #define OTM8009A_CMD_RDSCNL	 0x45 // Read  Tearing Effect Scan line command
-
-#endif	 // _LEKA_OS_DRIVER_LK_CORE_OTM8009A_H_

@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_STM32_HAL_MOCK_H_
-#define _LEKA_OS_STM32_HAL_MOCK_H_
+#pragma once
 
 #include "CoreSTM32HalBase.h"
 #include "gmock/gmock.h"
@@ -96,5 +95,3 @@ class CoreSTM32HalMock : public CoreSTM32HalBase
 };
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_STM32_HAL_H_

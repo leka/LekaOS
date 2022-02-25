@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LL_H_
-#define _LEKA_OS_LL_H_
+#pragma once
 
 #include <cstdint>
 
@@ -20,5 +19,3 @@ class CoreLL
 };
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_LL_H_

@@ -3,8 +3,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // Original file: https://github.com/STMicroelectronics/STM32CubeF7/blob/master/Utilities/Fonts/font24.c
 
-#ifndef _LEKA_OS_DRIVER_CORE_VIDEO_FONT_TABLE_H_
-#define _LEKA_OS_DRIVER_CORE_VIDEO_FONT_TABLE_H_
+#pragma once
 
 #include <array>
 #include <cstdint>
@@ -2492,5 +2491,3 @@ constexpr auto CGFontTable = std::to_array<uint8_t>({
 });
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_DRIVER_CORE_VIDEO_FONT_TABLE_H_

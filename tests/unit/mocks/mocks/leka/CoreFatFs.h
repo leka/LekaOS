@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_FATFS_MOCK_H_
-#define _LEKA_OS_FATFS_MOCK_H_
+#pragma once
 
 #include "CoreFatFsBase.h"
 #include "gmock/gmock.h"
@@ -25,5 +24,3 @@ class CoreFatFsMock : public CoreFatFsBase
 };
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_FATFS_MOCK_H_

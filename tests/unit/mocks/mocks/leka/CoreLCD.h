@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LCD_MOCK_H_
-#define _LEKA_OS_LCD_MOCK_H_
+#pragma once
 
 #include "gmock/gmock.h"
 #include "interface/LCD.hpp"
@@ -20,5 +19,3 @@ class CoreLCDMock : public interface::LCD
 };
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_LCD_MOCK_H_

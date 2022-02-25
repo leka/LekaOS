@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_STM32_HAL_BASE_H_
-#define _LEKA_OS_STM32_HAL_BASE_H_
+#pragma once
 
 #include "stm32f7xx_hal.h"
 
@@ -92,5 +91,3 @@ class CoreSTM32HalBase
 };
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_STM32_HAL_BASE_H_

@@ -2,8 +2,7 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_WIFI_H_
-#define _LEKA_OS_LIB_WIFI_H_
+#pragma once
 
 #include <chrono>
 
@@ -35,5 +34,3 @@ class Wifi
 	char const *_network_name = "HUAWEI P smart 2019";
 	char const *_network_password;
 };
-
-#endif

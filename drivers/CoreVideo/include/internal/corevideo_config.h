@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LCD_PROPERTIES_H_
-#define _LEKA_OS_LCD_PROPERTIES_H_
+#pragma once
 
 #include "CoreLCDDriverOTM8009A.hpp"
 
@@ -83,5 +82,3 @@ namespace graphics {
 }	// namespace graphics
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_LCD_PROPERTIES_H_

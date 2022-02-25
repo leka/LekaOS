@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_CORE_BUFFERED_SERIAL_H_
-#define _LEKA_OS_DRIVER_CORE_BUFFERED_SERIAL_H_
+#pragma once
 
 #include "drivers/BufferedSerial.h"
 
@@ -25,5 +24,3 @@ class CoreBufferedSerial : public interface::BufferedSerial
 };
 
 }	// namespace leka
-
-#endif	 //_LEKA_OS_DRIVER_CORE_BUFFERED_SERIAL_H_

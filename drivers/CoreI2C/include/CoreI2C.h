@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_LK_CORE_I2C_H_
-#define _LEKA_OS_DRIVER_LK_CORE_I2C_H_
+#pragma once
 
 #include "drivers/I2C.h"
 
@@ -35,5 +34,3 @@ class CoreI2C : public interface::I2C
 };
 
 }	// namespace leka
-
-#endif	 //_LEKA_OS_DRIVER_LK_CORE_I2C_H_

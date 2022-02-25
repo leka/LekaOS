@@ -2,8 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_CORE_GATT_SERVER_H_
-#define _LEKA_OS_LIB_CORE_GATT_SERVER_H_
+#pragma once
 
 #include <span>
 
@@ -32,5 +31,3 @@ class CoreGattServer
 };
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_LIB_CORE_GATT_SERVER_H_

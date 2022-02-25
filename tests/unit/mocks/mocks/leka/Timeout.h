@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_MOCK_DRIVERS_TIMEOUT_H_
-#define _LEKA_OS_MOCK_DRIVERS_TIMEOUT_H_
+#pragma once
 
 #include "gmock/gmock.h"
 #include "interface/drivers/Timeout.h"
@@ -20,5 +19,3 @@ class Timeout : public interface::Timeout
 };
 
 }	// namespace leka::mock
-
-#endif	 // _LEKA_OS_MOCK_DRIVERS_TIMEOUT_H_
