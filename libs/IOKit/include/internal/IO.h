@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_IO_KIT_INTERNAL_IO_H_
-#define _LEKA_OS_LIB_IO_KIT_INTERNAL_IO_H_
+#pragma once
 
 #include "interface/drivers/IOExpander.h"
 
@@ -34,5 +33,3 @@ class IO
 };
 
 }	// namespace leka::io::expanded::internal
-
-#endif	 // _LEKA_OS_LIB_IO_KIT_INTERNAL_IO_H_

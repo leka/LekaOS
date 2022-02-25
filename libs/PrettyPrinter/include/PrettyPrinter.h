@@ -2,8 +2,7 @@
 // Copyright 2018 ARM Limited
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_BLE_PRETTY_PRINTER_H_
-#define _LEKA_OS_LIB_BLE_PRETTY_PRINTER_H_
+#pragma once
 
 #include "ble/BLE.h"
 
@@ -15,5 +14,3 @@ void printMacAddress();
 auto phy_to_string(::ble::phy_t phy) -> const char *;
 
 }	// namespace leka::ble
-
-#endif	 // _LEKA_OS_LIB_BLE_PRETTY_PRINTER_H_

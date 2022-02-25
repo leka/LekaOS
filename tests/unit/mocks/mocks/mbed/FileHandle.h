@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_MBED_MOCK_FILE_HANDLE_H_
-#define _LEKA_OS_MBED_MOCK_FILE_HANDLE_H_
+#pragma once
 
 #include "PinNames.h"
 
@@ -23,5 +22,3 @@ class FileHandle : public mbed::FileHandle
 };
 
 }	// namespace mbed::mock
-
-#endif	 // _LEKA_OS_MBED_MOCK_FILE_HANDLE_H_

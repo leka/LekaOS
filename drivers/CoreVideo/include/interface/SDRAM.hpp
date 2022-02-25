@@ -5,8 +5,7 @@
 // * Original file:
 // * https://github.com/STMicroelectronics/STM32CubeF7/blob/master/Drivers/BSP/STM32F769I-Discovery/stm32f769i_discovery_sdram.h
 
-#ifndef _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_SDRAM_H_
-#define _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_SDRAM_H_
+#pragma once
 
 #include "stm32f7xx_hal.h"
 
@@ -25,5 +24,3 @@ class SDRAM
 };
 
 }	// namespace leka::interface
-
-#endif	 // _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_SDRAM_H_

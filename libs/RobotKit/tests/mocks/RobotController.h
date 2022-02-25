@@ -2,8 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_ROBOT_KIT_TESTS_MOCK_ROBOT_CONTROLLER_H_
-#define _LEKA_OS_LIB_ROBOT_KIT_TESTS_MOCK_ROBOT_CONTROLLER_H_
+#pragma once
 
 #include "gmock/gmock.h"
 #include "interface/RobotController.h"
@@ -19,5 +18,3 @@ struct RobotController : public interface::RobotController {
 };
 
 }	// namespace leka::mock
-
-#endif	 // _LEKA_OS_LIB_ROBOT_KIT_TESTS_MOCK_ROBOT_CONTROLLER_H_

@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_GRAPHICS_MOCK_H_
-#define _LEKA_OS_GRAPHICS_MOCK_H_
+#pragma once
 
 #include "gmock/gmock.h"
 #include "interface/Graphics.hpp"
@@ -18,5 +17,3 @@ class CoreGraphicsMock : public interface::Graphics
 };
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_GRAPHICS_MOCK_H_

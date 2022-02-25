@@ -2,8 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_ROBOT_KIT_INTERFACE_ROBOT_CONTROLLER_H_
-#define _LEKA_OS_LIB_ROBOT_KIT_INTERFACE_ROBOT_CONTROLLER_H_
+#pragma once
 
 #include "boost/sml.hpp"
 
@@ -21,5 +20,3 @@ class RobotController
 };
 
 }	// namespace leka::interface
-
-#endif	 // _LEKA_OS_LIB_ROBOT_KIT_INTERFACE_ROBOT_CONTROLLER_H_

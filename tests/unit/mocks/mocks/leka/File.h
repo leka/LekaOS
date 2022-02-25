@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_PLATFORM_FILE_MOCK_H_
-#define _LEKA_OS_PLATFORM_FILE_MOCK_H_
+#pragma once
 
 #include <span>
 
@@ -35,5 +34,3 @@ class File : public interface::File
 };
 
 }	// namespace leka::mock
-
-#endif	 // _LEKA_OS_PLATFORM_FILE_MOCK_H_

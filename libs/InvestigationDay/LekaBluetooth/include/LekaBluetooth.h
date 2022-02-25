@@ -2,8 +2,7 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_BLUETOOTH_H_
-#define _LEKA_OS_LIB_BLUETOOTH_H_
+#pragma once
 
 #include <chrono>
 
@@ -47,5 +46,3 @@ class Bluetooth
 	bool _paired	  = false;	 // Check simultaneous pairing is possible
 	bool _new_message = true;
 };
-
-#endif

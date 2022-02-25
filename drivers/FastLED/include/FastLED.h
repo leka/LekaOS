@@ -2,8 +2,7 @@
 // Copyright 2020 APF France handicap & FastLED (https://github.com/FastLED/FastLED)
 // SPDX-License-Identifier: MIT
 
-#ifndef _LEKA_OS_LIB_LED_H_
-#define _LEKA_OS_LIB_LED_H_
+#pragma once
 
 #include <chrono>
 #include <cstdint>
@@ -491,7 +490,7 @@ class CFastLED
 		}
 	}
 	#endif
-		//@}
+	//@}
 #endif
 
 	/// @name Adding 3rd party library controllers
@@ -721,7 +720,7 @@ class CFastLED
 	{
 		return addLeds<CHIPSET, NUM_LANES, GRB>(data, nLedsOrOffset, nLedsIfOffset);
 	}
-		//@}
+	//@}
 #endif
 
 	/// Set the global brightness scaling
@@ -843,5 +842,3 @@ extern CFastLED FastLED;
 #endif
 
 // FASTLED_NAMESPACE_END
-
-#endif	 // _LEKA_OS_LIB_LED_H_

@@ -2,8 +2,7 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_SPIKE_BLE_UTILS_H_
-#define _LEKA_OS_SPIKE_BLE_UTILS_H_
+#pragma once
 
 #include <events/mbed_events.h>
 #include <mbed.h>
@@ -171,5 +170,3 @@ class MotorsBLEProgram : ble::Gap::EventHandler
 	uint8_t _adv_buffer[ble::LEGACY_ADVERTISING_MAX_SIZE];
 	ble::AdvertisingDataBuilder _adv_data_builder;
 };
-
-#endif

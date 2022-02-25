@@ -2,8 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_CORE_LED_H_
-#define _LEKA_OS_DRIVER_CORE_LED_H_
+#pragma once
 
 #include <algorithm>
 
@@ -138,5 +137,3 @@ class CoreLED : public interface::LED
 };
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_DRIVER_CORE_LED_H_

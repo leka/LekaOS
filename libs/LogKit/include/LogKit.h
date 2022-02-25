@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_LOG_KIT_H_
-#define _LEKA_OS_LIB_LOG_KIT_H_
+#pragma once
 
 #include <array>
 #include <cstdint>
@@ -301,5 +300,3 @@ namespace internal {
 	#define log_ll(data, size)
 
 #endif	 // not defined (ENABLE_LOG_DEBUG)
-
-#endif	 // _LEKA_OS_LIB_LOG_KIT_H_

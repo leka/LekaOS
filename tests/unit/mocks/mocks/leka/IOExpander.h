@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_MOCK_DRIVERS_IO_EXPANDER_H_
-#define _LEKA_OS_MOCK_DRIVERS_IO_EXPANDER_H_
+#pragma once
 
 #include "gmock/gmock.h"
 #include "interface/drivers/IOExpander.h"
@@ -22,5 +21,3 @@ class IOExpander : public interface::IOExpander<pin_underlying_type_t>
 };
 
 }	// namespace leka::mock
-
-#endif	 // _LEKA_OS_MOCK_DRIVERS_IO_EXPANDER_H_

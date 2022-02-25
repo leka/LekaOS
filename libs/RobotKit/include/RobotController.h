@@ -2,8 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_ROBOT_CONTROLLER_H_
-#define _LEKA_OS_ROBOT_CONTROLLER_H_
+#pragma once
 
 #include "StateMachine.h"
 #include "interface/RobotController.h"
@@ -55,5 +54,3 @@ class RobotController : public interface::RobotController
 };
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_ROBOT_CONTROLLER_H_

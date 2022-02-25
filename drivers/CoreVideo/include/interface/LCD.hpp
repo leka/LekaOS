@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_LCD_BASE_H_
-#define _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_LCD_BASE_H_
+#pragma once
 
 namespace leka::interface {
 
@@ -21,5 +20,3 @@ class LCD
 };
 
 }	// namespace leka::interface
-
-#endif	 // _LEKA_OS_DRIVER_CORE_VIDEO_INTERFACE_LCD_BASE_H_

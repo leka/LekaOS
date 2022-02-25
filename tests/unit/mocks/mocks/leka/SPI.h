@@ -2,8 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_SPI_MOCK_H_
-#define _LEKA_OS_SPI_MOCK_H_
+#pragma once
 
 #include <span>
 
@@ -19,5 +18,3 @@ class SPI : public interface::SPI
 };
 
 }	// namespace leka::mock
-
-#endif	 // _LEKA_OS_SPI_MOCK_H_

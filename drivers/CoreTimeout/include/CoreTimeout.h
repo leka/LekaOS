@@ -2,8 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_CORE_TIMEOUT_H_
-#define _LEKA_OS_DRIVER_CORE_TIMEOUT_H_
+#pragma once
 
 #include "drivers/LowPowerTimeout.h"
 
@@ -30,5 +29,3 @@ class CoreTimeout : public interface::Timeout
 };
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_DRIVER_CORE_TIMEOUT_H_

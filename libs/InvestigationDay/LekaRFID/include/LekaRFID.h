@@ -2,8 +2,7 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_RFID_H_
-#define _LEKA_OS_LIB_RFID_H_
+#pragma once
 
 #include <chrono>
 
@@ -58,5 +57,3 @@ class RFID
 	uint8_t _answer[64];
 	size_t _answer_length = 0;
 };
-
-#endif

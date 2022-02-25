@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_LK_CORE_HTS221_DRIVER_H_
-#define _LEKA_OS_DRIVER_LK_CORE_HTS221_DRIVER_H_
+#pragma once
 
 #include <array>
 #include <tuple>
@@ -83,5 +82,3 @@ class CoreHTS : public interface::TemperatureSensor, public interface::HumidityS
 	std::array<uint8_t, 32> _buffer {0};
 };
 }	// namespace leka
-
-#endif	 //_LEKA_OS_DRIVER_LK_CORE_HTS221_DRIVER_H_

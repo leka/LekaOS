@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_INTERFACE_DRIVERS_FIRMWARE_UPDATE_H_
-#define _LEKA_OS_INTERFACE_DRIVERS_FIRMWARE_UPDATE_H_
+#pragma once
 
 #include "FirmwareVersion.h"
 
@@ -18,5 +17,3 @@ class FirmwareUpdate
 };
 
 }	// namespace leka::interface
-
-#endif	 // _LEKA_OS_INTERFACE_DRIVERS_FIRMWARE_UPDATE_H_

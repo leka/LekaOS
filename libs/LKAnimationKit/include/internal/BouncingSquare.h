@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_ANIMATION_BOUNCINGSQUARE_H_
-#define _LEKA_OS_LIB_ANIMATION_BOUNCINGSQUARE_H_
+#pragma once
 
 // ? LCOV_EXCL_START - Exclude from coverage report
 
@@ -46,5 +45,3 @@ class BouncingSquare : public interface::CGAnimation
 }	// namespace leka::animation
 
 // ? LCOV_EXCL_STOP - Exclude from coverage report
-
-#endif

@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap (based on work by Mbed-OS)
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_LIB_CIRCULAR_QUEUE_H_
-#define _LEKA_OS_LIB_CIRCULAR_QUEUE_H_
+#pragma once
 
 #include <array>
 #include <mutex>
@@ -261,5 +260,3 @@ class CircularQueue
 };
 
 }	// namespace leka
-
-#endif	 // _LEKA_OS_LIB_CIRCULAR_QUEUE_H_

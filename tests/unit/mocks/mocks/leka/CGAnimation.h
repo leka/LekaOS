@@ -3,8 +3,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_ANIMATION_MOCK_H_
-#define _LEKA_OS_ANIMATION_MOCK_H_
+#pragma once
 
 #include "CGAnimation.h"
 #include "gmock/gmock.h"
@@ -20,5 +19,3 @@ class CGAnimationMock : public interface::CGAnimation
 };
 
 }	// namespace leka::animation
-
-#endif	 // _LEKA_OS_ANIMATION_MOCK_H_

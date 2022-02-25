@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_MBED_MOCK_DIGITAL_IN_H_
-#define _LEKA_OS_MBED_MOCK_DIGITAL_IN_H_
+#pragma once
 
 #include "PinNames.h"
 
@@ -22,5 +21,3 @@ class DigitalIn : public mbed::interface::DigitalIn
 };
 
 }	// namespace mbed::mock
-
-#endif	 // _LEKA_OS_MBED_MOCK_DIGITAL_IN_H_

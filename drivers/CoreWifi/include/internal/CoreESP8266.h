@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_CORE_WIFI_ESP8266_H_
-#define _LEKA_OS_DRIVER_CORE_WIFI_ESP8266_H_
+#pragma once
 
 // ? LCOV_EXCL_START - Exclude from coverage report
 
@@ -22,5 +21,3 @@ class CoreESP8266 : public ESP8266Interface
 }	// namespace leka
 
 // ? LCOV_EXCL_STOP - Exclude from coverage report
-
-#endif	 // _LEKA_OS_DRIVER_CORE_WIFI_ESP8266_H_

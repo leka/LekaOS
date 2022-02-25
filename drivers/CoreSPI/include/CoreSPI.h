@@ -2,8 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_CORE_SPI_H_
-#define _LEKA_OS_DRIVER_CORE_SPI_H_
+#pragma once
 
 #include "drivers/SPI.h"
 
@@ -23,5 +22,3 @@ class CoreSPI : public interface::SPI
 };
 
 }	// namespace leka
-
-#endif	 //_LEKA_OS_DRIVER_CORE_SPI_H_
