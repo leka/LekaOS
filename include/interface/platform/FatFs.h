@@ -8,13 +8,13 @@
 
 #include "storage/filesystem/fat/ChaN/ff.h"
 
-namespace leka {
+namespace leka::interface {
 
 // TODO (@ladislas) - return int, bool or std::optional instead of FRESULT
-class CoreFatFsBase
+class FatFs
 {
   public:
-	virtual ~CoreFatFsBase() = default;
+	virtual ~FatFs() = default;
 
 	virtual auto open(const char *path) -> FRESULT																 = 0;
 	virtual auto close() -> FRESULT																				 = 0;
@@ -27,4 +27,4 @@ class CoreFatFsBase
 	virtual auto getPointer() -> FIL * = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface

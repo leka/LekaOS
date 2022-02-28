@@ -4,11 +4,11 @@
 
 #pragma once
 
-#include "CoreFatFsBase.h"
+#include "interface/platform/FatFs.h"
 
 namespace leka {
 
-class CoreFatFs : public CoreFatFsBase
+class CoreFatFs : public interface::FatFs
 {
   public:
 	CoreFatFs() = default;	 // SDBlockDevice must be initialized and mounted before using CoreFatFs
