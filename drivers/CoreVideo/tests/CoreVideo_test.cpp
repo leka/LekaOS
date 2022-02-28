@@ -37,7 +37,7 @@ class CoreVideoTest : public ::testing::Test
 	CoreLTDCMock ltdcmock;
 	CoreLCDMock lcdmock;
 	CoreGraphicsMock graphicsmock;
-	CoreFontMock fontmock;
+	mock::CoreFont fontmock;
 	CoreJPEGMock jpegmock;
 
 	CoreVideo corevideo;

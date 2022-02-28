@@ -7,9 +7,9 @@
 #include "gmock/gmock.h"
 #include "interface/Font.hpp"
 
-namespace leka {
+namespace leka::mock {
 
-class CoreFontMock : public interface::Font
+class CoreFont : public interface::Font
 {
   public:
 	MOCK_METHOD(void, drawChar, (Character character, CGColor foreground, CGColor background), (override));
@@ -21,4 +21,4 @@ class CoreFontMock : public interface::Font
 	MOCK_METHOD(bool, fontPixelIsOn, (uint32_t byte_of_line, uint8_t pixel_id), (override));
 };
 
-}	// namespace leka
+}	// namespace leka::mock
