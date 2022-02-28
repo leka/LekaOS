@@ -32,7 +32,7 @@ class CoreVideoTest : public ::testing::Test
 
 	CoreSTM32HalMock halmock;
 	CoreSDRAMMock sdrammock;
-	CoreDMA2DMock dma2dmock;
+	mock::CoreDMA2D dma2dmock;
 	CoreDSIMock dsimock;
 	CoreLTDCMock ltdcmock;
 	CoreLCDMock lcdmock;

@@ -7,9 +7,9 @@
 #include "gmock/gmock.h"
 #include "interface/DMA2D.hpp"
 
-namespace leka {
+namespace leka::mock {
 
-class CoreDMA2DMock : public interface::DMA2DBase
+class CoreDMA2D : public interface::DMA2DBase
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));
@@ -22,4 +22,4 @@ class CoreDMA2DMock : public interface::DMA2DBase
 	MOCK_METHOD(DMA2D_HandleTypeDef, getHandle, (), (override));
 };
 
-}	// namespace leka
+}	// namespace leka::mock

@@ -19,7 +19,7 @@ class CoreGraphicsTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	CoreDMA2DMock dma2dmock;
+	mock::CoreDMA2D dma2dmock;
 	CoreGraphics graphics;
 };
 

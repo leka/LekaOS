@@ -28,7 +28,7 @@ class CoreJPEGTest : public ::testing::Test
 	// void TearDown() override {}
 
 	CoreSTM32HalMock halmock;
-	CoreDMA2DMock dma2dmock;
+	mock::CoreDMA2D dma2dmock;
 	CoreFatFsMock filemock;
 	CoreJPEG corejpeg;
 
