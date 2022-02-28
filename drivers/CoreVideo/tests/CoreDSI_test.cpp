@@ -20,7 +20,7 @@ class CoreDSITest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	CoreSTM32HalMock halmock;
+	mock::CoreSTM32Hal halmock;
 	CoreDSI coredsi;
 };
 
