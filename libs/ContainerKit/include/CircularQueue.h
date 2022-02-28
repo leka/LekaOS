@@ -13,6 +13,12 @@
 
 namespace leka {
 
+// TODO (@ladislas) - push() should use std::span
+// TODO (@ladislas) - hasPattern() should use std::span
+// TODO (@ladislas) - pop() should return something
+// TODO (@ladislas) - add drop() method
+// TODO (@ladislas) - rename reset() --> clear()
+
 template <typename T, uint32_t BufferSize, typename CounterType = uint32_t>
 class CircularQueue
 {

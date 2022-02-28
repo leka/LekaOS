@@ -1,0 +1,28 @@
+# Leka - LekaOS
+# Copyright 2022 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+add_library(CommandKit STATIC)
+
+target_include_directories(CommandKit
+	PUBLIC
+		include
+)
+
+target_sources(CommandKit
+	PRIVATE
+		source/CommandKit.cpp
+)
+
+target_link_libraries(CommandKit
+	CoreEventQueue
+	mbed-os
+)
+
+if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
+
+	leka_unit_tests_sources(
+		tests/CommandKit_test.cpp
+	)
+
+endif()
