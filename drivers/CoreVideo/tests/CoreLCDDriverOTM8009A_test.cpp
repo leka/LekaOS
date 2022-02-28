@@ -25,7 +25,7 @@ class CoreOTM8009ATest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	CoreDSIMock dsimock;
+	mock::CoreDSI dsimock;
 	CoreLCDDriverOTM8009A otm;
 };
 

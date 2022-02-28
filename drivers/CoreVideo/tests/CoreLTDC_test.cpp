@@ -25,7 +25,7 @@ class CoreLTDCTest : public ::testing::Test
 	// void TearDown() override {}
 
 	CoreSTM32HalMock halmock;
-	CoreDSIMock dsimock;
+	mock::CoreDSI dsimock;
 	CoreLTDC coreltdc;
 };
 
