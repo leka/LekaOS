@@ -11,10 +11,10 @@
 
 namespace leka {
 
-class LKAnimationKit
+class UIAnimationKit
 {
   public:
-	LKAnimationKit(rtos::Thread &thread, events::EventQueue &event_queue);
+	UIAnimationKit(rtos::Thread &thread, events::EventQueue &event_queue);
 
 	void start(interface::CGAnimation &animation);
 	void stop();

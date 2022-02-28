@@ -2,18 +2,18 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKAnimationKit.h"
+#include "UIAnimationKit.h"
 
 using namespace leka;
 using namespace std::chrono;
 
-LKAnimationKit::LKAnimationKit(rtos::Thread &thread, events::EventQueue &event_queue)
+UIAnimationKit::UIAnimationKit(rtos::Thread &thread, events::EventQueue &event_queue)
 	: _thread(thread), _event_queue(event_queue)
 {
 	_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
 }
 
-void LKAnimationKit::start(interface::CGAnimation &animation)
+void UIAnimationKit::start(interface::CGAnimation &animation)
 {
 	stop();
 
@@ -23,7 +23,7 @@ void LKAnimationKit::start(interface::CGAnimation &animation)
 	_animation_queue_id = _event_queue.call_every(25ms, _animation, &interface::CGAnimation::run);
 }
 
-void LKAnimationKit::stop()
+void UIAnimationKit::stop()
 {
 	_event_queue.cancel(_animation_queue_id);
 

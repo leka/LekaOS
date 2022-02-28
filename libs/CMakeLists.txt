@@ -19,9 +19,7 @@ add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaTouch)
 add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaScreen)
 add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaBluetooth)
 
-add_subdirectory(${LIBS_DIR}/LKAnimationKit)
-
-add_subdirectory(${LIBS_DIR}/LKCalculatorKit)
+add_subdirectory(${LIBS_DIR}/UIAnimationKit)
 
 add_subdirectory(${LIBS_DIR}/PrettyPrinter)
 
