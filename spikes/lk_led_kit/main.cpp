@@ -7,11 +7,13 @@
 #include "drivers/HighResClock.h"
 #include "rtos/ThisThread.h"
 
+#include "Bubbles.h"
 #include "CoreLED.h"
 #include "CoreSPI.h"
 #include "HelloWorld.h"
 #include "LedKit.h"
 #include "LogKit.h"
+#include "Singing.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -26,6 +28,8 @@ auto animation_thread	   = rtos::Thread {};
 auto animation_event_queue = events::EventQueue {};
 
 auto ledkit = LedKit {animation_thread, animation_event_queue, ears, belt};
+led::animation::Bubbles animation_bubbles(ears, belt);
+led::animation::Singing animation_singing(ears, belt);
 
 HelloWorld hello;
 
@@ -38,6 +42,7 @@ auto main() -> int
 	hello.start();
 
 	while (true) {
+		ledkit.start(animation_singing);
 		rtos::ThisThread::sleep_for(40s);
 
 		ledkit.stop();
