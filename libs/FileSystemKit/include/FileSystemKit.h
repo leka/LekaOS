@@ -40,7 +40,7 @@ class FileSystemKit
 
 		auto tell() -> size_t final;
 
-		auto reopen(const char *path, const char * mode) -> bool final;
+		auto reopen(const char *path, const char *mode) -> bool final;
 
 		auto eof() -> size_t final;
 

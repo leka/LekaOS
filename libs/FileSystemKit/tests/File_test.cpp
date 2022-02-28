@@ -472,18 +472,18 @@ TEST_F(FileTest, reopen)
 {
 	auto input_data = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	  // "abcdef"
 
-	auto output_data_r = std::array<uint8_t, 6> {};
+	auto output_data_r	 = std::array<uint8_t, 6> {};
 	auto expected_data_r = std::array<uint8_t, 6> {};
 
-	auto output_data_w_plus = std::array<uint8_t, 6> {};
+	auto output_data_w_plus	  = std::array<uint8_t, 6> {};
 	auto expected_data_w_plus = std::array<uint8_t, 6> {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};
 
-	file.open(tempFilename,"r");
+	file.open(tempFilename, "r");
 	auto bytes_written_r = file.write(input_data);
 	file.rewind();
 	auto bytes_read_r = file.read(output_data_r);
 
-	file.reopen(tempFilename,"w+");
+	file.reopen(tempFilename, "w+");
 	auto bytes_written_w_plus = file.write(input_data);
 	file.rewind();
 	auto bytes_read_w_plus = file.read(output_data_w_plus);
@@ -495,7 +495,7 @@ TEST_F(FileTest, reopen)
 TEST_F(FileTest, eof)
 {
 	{
-		auto input_data = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	  // "abcdef"
+		auto input_data	 = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});   // "abcdef"
 		auto output_data = std::array<uint8_t, 6> {};
 
 		file.open(tempFilename, "w+");
@@ -505,11 +505,11 @@ TEST_F(FileTest, eof)
 
 		auto end_of_file = file.eof() ? true : false;
 
-		ASSERT_FALSE(end_of_file );
+		ASSERT_FALSE(end_of_file);
 	}
 	{
-		auto input_data = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	  // "abcdef"
-		auto output_data = std::array<uint8_t, 1> {}; // array size = 1
+		auto input_data	 = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});   // "abcdef"
+		auto output_data = std::array<uint8_t, 1> {};									   // array size = 1
 
 		file.open(tempFilename, "w+");
 		auto bytes_written = file.write(input_data);
@@ -518,18 +518,18 @@ TEST_F(FileTest, eof)
 
 		auto end_of_file = file.eof() ? true : false;
 
-		ASSERT_FALSE(end_of_file );
+		ASSERT_FALSE(end_of_file);
 	}
 	{
-		auto input_data = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	  // "abcdef"
+		auto input_data	 = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});   // "abcdef"
 		auto output_data = std::array<uint8_t, 6> {};
 
 		file.open(tempFilename, "w+");
 		auto bytes_written = file.write(input_data);
-		auto bytes_read = file.read(output_data);
+		auto bytes_read	   = file.read(output_data);
 
 		auto end_of_file = file.eof() ? true : false;
 
-		ASSERT_TRUE(end_of_file );
+		ASSERT_TRUE(end_of_file);
 	}
 }

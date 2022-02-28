@@ -7,12 +7,11 @@
 #include "drivers/BufferedSerial.h"
 #include "rtos/ThisThread.h"
 
+#include "FATFileSystem.h"
+#include "FileSystemKit.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
-#include "FATFileSystem.h"
-
-#include "FileSystemKit.h"
 
 using namespace leka;
 
@@ -55,10 +54,11 @@ auto main() -> int
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
-		log_info("A message from your board %s --> \"%s\" at %i s", MBED_CONF_APP_TARGET_NAME, hello.world,int(t.count() / 1000));
+		log_info("A message from your board %s --> \"%s\" at %i s", MBED_CONF_APP_TARGET_NAME, hello.world,
+				 int(t.count() / 1000));
 		rtos::ThisThread::sleep_for(10s);
 
-		auto opened=file.open(filename, "w+");
+		auto opened = file.open(filename, "w+");
 
 		if (opened) {
 			log_info("File opened");
@@ -68,7 +68,7 @@ auto main() -> int
 		}
 
 		auto input_data = std::to_array({"My name is leka"});
-		char * buffer;
+		char *buffer;
 
 		auto bytes_written = file.write(input_data);
 		if (bytes_written) {
@@ -78,8 +78,8 @@ auto main() -> int
 			break;
 		}
 
-		auto size=file.size();
-		buffer = (char*) malloc (sizeof(char)*size);
+		auto size = file.size();
+		buffer	  = (char *)malloc(sizeof(char) * size);
 		if (buffer == NULL) {
 			log_error("Memory error");
 			break;
@@ -105,7 +105,7 @@ auto main() -> int
 			break;
 		}
 
-		auto closed=file.close();
+		auto closed = file.close();
 
 		if (closed) {
 			log_info("File closed");
@@ -114,7 +114,7 @@ auto main() -> int
 			break;
 		}
 
-		free (buffer);
+		free(buffer);
 	}
 
 	return 0;
