@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "BLEKit.h"
+
 #include "StateMachine.h"
 #include "interface/RobotController.h"
 #include "interface/drivers/Battery.h"
@@ -27,11 +29,12 @@ class RobotController : public interface::RobotController
 
 	void raise(auto event) { state_machine.process_event(event); };
 
+	void initializeComponents() { _ble.init(); }
+
 	void registerEvents()
 	{
 		using namespace system::robot::sm;
 
-		// Initializations
 		// Setup callbacks for each events
 
 		auto on_sleep_timeout = [this]() { raise(event::sleep_timeout_did_end {}); };
@@ -51,6 +54,8 @@ class RobotController : public interface::RobotController
 	interface::Timeout &_sleep_timeout;
 
 	interface::Battery &_battery;
+
+	BLEKit _ble;
 };
 
 }	// namespace leka

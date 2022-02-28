@@ -4,6 +4,8 @@
 
 #include "RobotController.h"
 
+#include "ble_mocks.h"
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/Battery.h"
@@ -27,6 +29,8 @@ class RobotControllerTest : public testing::Test
   protected:
 	void SetUp() override
 	{
+		ble::init_mocks();
+
 		EXPECT_CALL(sleep_timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleep_timeout));
 		EXPECT_CALL(battery, onChargeDidStart).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_start));
 		EXPECT_CALL(battery, onChargeDidStop).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_stop));
@@ -34,7 +38,7 @@ class RobotControllerTest : public testing::Test
 
 		rc.registerEvents();
 	}
-	// void TearDown() override {}
+	void TearDown() override { ble::delete_mocks(); }
 
 	mock::Timeout sleep_timeout {};
 	mock::Battery battery {};
@@ -50,6 +54,17 @@ class RobotControllerTest : public testing::Test
 TEST_F(RobotControllerTest, initialization)
 {
 	EXPECT_NE(&rc, nullptr);
+}
+
+TEST_F(RobotControllerTest, initializeComponents)
+{
+	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
+	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
+
+	EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(1);
+	EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(1);
+
+	rc.initializeComponents();
 }
 
 TEST_F(RobotControllerTest, stateSetupEventSetupComplete)
