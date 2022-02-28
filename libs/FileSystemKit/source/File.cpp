@@ -116,3 +116,8 @@ auto FileSystemKit::File::reopen(const char *path, const char * mode) -> bool
 	auto r = std::freopen(path, mode,_file.get());
 	return is_open();
 }
+
+auto FileSystemKit::File::eof() -> size_t
+{
+	return std::feof(_file.get());
+}

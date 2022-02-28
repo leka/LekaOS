@@ -38,6 +38,8 @@ struct File {
 
 	virtual auto reopen(const char *path, const char * mode) -> bool = 0;
 
+	virtual auto eof() -> size_t = 0;
+
 	[[nodiscard]] virtual auto is_open() const -> bool = 0;
 };
 
