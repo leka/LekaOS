@@ -13,6 +13,7 @@ target_include_directories(LedKit
 target_sources(LedKit
 	PRIVATE
 		source/LedKit.cpp
+		source/Waiting.cpp
 )
 
 target_link_libraries(LedKit
