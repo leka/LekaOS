@@ -4,16 +4,16 @@
 
 #pragma once
 
-#include "CoreSTM32HalBase.h"
 #include "interface/DSI.hpp"
 #include "interface/LTDC.hpp"
+#include "interface/drivers/STM32Hal.h"
 
 namespace leka {
 
 class CoreLTDC : public interface::LTDCBase
 {
   public:
-	CoreLTDC(CoreSTM32HalBase &hal, interface::DSIBase &dsi);
+	CoreLTDC(interface::STM32Hal &hal, interface::DSIBase &dsi);
 
 	void initialize() final;
 
@@ -21,7 +21,7 @@ class CoreLTDC : public interface::LTDCBase
 	[[nodiscard]] auto getLayerConfig() const -> LTDC_LayerCfgTypeDef;
 
   private:
-	CoreSTM32HalBase &_hal;
+	interface::STM32Hal &_hal;
 	interface::DSIBase &_dsi;
 
 	LTDC_HandleTypeDef _hltdc {};

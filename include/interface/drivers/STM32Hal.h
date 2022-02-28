@@ -6,12 +6,12 @@
 
 #include "stm32f7xx_hal.h"
 
-namespace leka {
+namespace leka::interface {
 
-class CoreSTM32HalBase
+class STM32Hal
 {
   public:
-	virtual ~CoreSTM32HalBase() = default;
+	virtual ~STM32Hal() = default;
 
 	virtual void HAL_RCC_GPIOD_CLK_ENABLE() = 0;
 	virtual void HAL_RCC_GPIOE_CLK_ENABLE() = 0;
@@ -90,4 +90,4 @@ class CoreSTM32HalBase
 											 uint32_t OutDataLength) = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface

@@ -4,12 +4,12 @@
 
 #pragma once
 
-#include "CoreSTM32HalBase.h"
 #include "gmock/gmock.h"
+#include "interface/drivers/STM32Hal.h"
 
 namespace leka::mock {
 
-class CoreSTM32Hal : public CoreSTM32HalBase
+class CoreSTM32Hal : public interface::STM32Hal
 {
   public:
 	MOCK_METHOD(void, HAL_RCC_GPIOD_CLK_ENABLE, (), (override));

@@ -6,8 +6,7 @@
 
 #include "storage/filesystem/fat/ChaN/ff.h"
 
-#include "CoreSTM32HalBase.h"
-// #include "stm32f7xx_hal_jpeg.h"
+#include "interface/drivers/STM32Hal.h"
 
 namespace leka::interface {
 

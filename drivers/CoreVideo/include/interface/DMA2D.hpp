@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "CoreSTM32HalBase.h"
+#include "interface/drivers/STM32Hal.h"
 
 namespace leka::interface {
 
