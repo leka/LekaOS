@@ -7,13 +7,13 @@
 #include "CoreI2C.h"
 #include "gmock/gmock.h"
 
-namespace leka {
+namespace leka::mock {
 
-class CoreI2CMock : public interface::I2C
+class CoreI2C : public interface::I2C
 {
   public:
 	MOCK_METHOD(int, read, (int, uint8_t *, int, bool), (override));
 	MOCK_METHOD(int, write, (int, const uint8_t *, int, bool), (override));
 };
 
-}	// namespace leka
+}	// namespace leka::mock

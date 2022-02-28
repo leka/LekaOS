@@ -35,7 +35,7 @@ class CoreHTSTest : public ::testing::Test
 	const uint8_t i2c_address {0xBF};
 
 	CoreHTS corehts;
-	CoreI2CMock mocki2c;
+	mock::CoreI2C mocki2c;
 };
 
 TEST_F(CoreHTSTest, initialization)
