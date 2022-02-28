@@ -31,7 +31,7 @@ class CoreVideoTest : public ::testing::Test
 	// void TearDown() override {}
 
 	CoreSTM32HalMock halmock;
-	CoreSDRAMMock sdrammock;
+	mock::CoreSDRAM sdrammock;
 	mock::CoreDMA2D dma2dmock;
 	mock::CoreDSI dsimock;
 	mock::CoreLTDC ltdcmock;
