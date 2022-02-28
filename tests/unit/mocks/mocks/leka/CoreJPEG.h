@@ -7,9 +7,9 @@
 #include "gmock/gmock.h"
 #include "interface/JPEG.hpp"
 
-namespace leka {
+namespace leka::mock {
 
-class CoreJPEGMock : public interface::JPEGBase
+class CoreJPEG : public interface::JPEGBase
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));
@@ -27,4 +27,4 @@ class CoreJPEGMock : public interface::JPEGBase
 	MOCK_METHOD(void, onDecodeCompleteCallback, (JPEG_HandleTypeDef * hjpeg), (override));
 };
 
-}	// namespace leka
+}	// namespace leka::mock
