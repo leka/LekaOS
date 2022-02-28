@@ -26,7 +26,7 @@ class UIAnimationKitTest : public ::testing::Test
 	events::EventQueue event_queue;
 	UIAnimationKit animationkit;
 
-	animation::CGAnimationMock animation;
+	mock::CGAnimation animation;
 
 	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call
 	// TODO: Remove them in the future
@@ -44,7 +44,7 @@ TEST_F(UIAnimationKitTest, startNewAnimationSequence)
 {
 	MOCK_FUNCTION_silenceUnexpectedCalls();
 
-	animation::CGAnimationMock new_animation;
+	mock::CGAnimation new_animation;
 
 	{
 		InSequence seq;
