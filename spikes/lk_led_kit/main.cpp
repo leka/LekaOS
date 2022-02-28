@@ -12,6 +12,7 @@
 #include "HelloWorld.h"
 #include "LedKit.h"
 #include "LogKit.h"
+#include "Waiting.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -26,6 +27,7 @@ auto animation_thread	   = rtos::Thread {};
 auto animation_event_queue = events::EventQueue {};
 
 auto ledkit = LedKit {animation_thread, animation_event_queue, ears, belt};
+animation::Waiting animation_waiting {ears, belt};
 
 auto colors_available = std::to_array({
 	RGB::pure_green,
@@ -53,7 +55,8 @@ auto main() -> int
 
 	log_info("Hello, World!\n\n");
 
-	auto start = rtos::Kernel::Clock::now();
+	auto start	  = rtos::Kernel::Clock::now();
+	uint8_t index = 0;
 
 	rtos::ThisThread::sleep_for(2s);
 
@@ -61,7 +64,11 @@ auto main() -> int
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
-		log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world,
-				 int(t.count() / 1000));
+
+		ledkit.start(animation_waiting);
+		rtos::ThisThread::sleep_for(40s);
+
+		ledkit.stop();
+		rtos::ThisThread::sleep_for(1s);
 	}
 }
