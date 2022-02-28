@@ -29,7 +29,7 @@ class CoreJPEGTest : public ::testing::Test
 
 	CoreSTM32HalMock halmock;
 	mock::CoreDMA2D dma2dmock;
-	CoreFatFsMock filemock;
+	mock::CoreFatFs filemock;
 	CoreJPEG corejpeg;
 
 	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call
