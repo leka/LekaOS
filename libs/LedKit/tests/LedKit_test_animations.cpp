@@ -34,26 +34,26 @@ class LedKitTestAnimations : public ::testing::Test
 
 	LedKit ledkit {animation_thread, event_queue, ears, belt};
 
-	animation::LEDAnimationMock animation {};
+	mock::LEDAnimation mock_animation {};
 
-	void MOCK_FUNCTION_silenceUnexpectedCalls() { EXPECT_CALL(animation, start); }
+	void MOCK_FUNCTION_silenceUnexpectedCalls() { EXPECT_CALL(mock_animation, start); }
 };
 
 TEST_F(LedKitTestAnimations, initialization)
 {
-	EXPECT_NE(&animation, nullptr);
+	EXPECT_NE(&mock_animation, nullptr);
 }
 
 TEST_F(LedKitTestAnimations, startFirstAnimation)
 {
-	EXPECT_CALL(animation, start);
+	EXPECT_CALL(mock_animation, start);
 
-	ledkit.start(animation);
+	ledkit.start(mock_animation);
 }
 
 TEST_F(LedKitTestAnimations, stopWithoutAnimation)
 {
-	EXPECT_CALL(animation, stop).Times(0);
+	EXPECT_CALL(mock_animation, stop).Times(0);
 
 	ledkit.stop();
 }
@@ -62,9 +62,9 @@ TEST_F(LedKitTestAnimations, stopStartedAnimation)
 {
 	MOCK_FUNCTION_silenceUnexpectedCalls();
 
-	EXPECT_CALL(animation, stop).Times(1);
+	EXPECT_CALL(mock_animation, stop).Times(1);
 
-	ledkit.start(animation);
+	ledkit.start(mock_animation);
 	ledkit.stop();
 }
 
@@ -72,16 +72,16 @@ TEST_F(LedKitTestAnimations, startNewAnimationSequence)
 {
 	MOCK_FUNCTION_silenceUnexpectedCalls();
 
-	animation::LEDAnimationMock new_animation;
+	mock::LEDAnimation mock_new_animation;
 
 	{
 		InSequence seq;
 
-		EXPECT_CALL(animation, stop);
-		EXPECT_CALL(new_animation, start);
+		EXPECT_CALL(mock_animation, stop);
+		EXPECT_CALL(mock_new_animation, start);
 	}
 
-	ledkit.start(animation);
+	ledkit.start(mock_animation);
 
-	ledkit.start(new_animation);
+	ledkit.start(mock_new_animation);
 }
