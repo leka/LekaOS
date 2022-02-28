@@ -11,6 +11,7 @@
 namespace leka {
 
 // TODO (@ladislas) - return int, bool or std::optional instead of FRESULT
+//  test comment for CI
 class CoreFatFsBase
 {
   public:
