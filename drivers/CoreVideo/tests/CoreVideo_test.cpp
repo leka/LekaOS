@@ -35,7 +35,7 @@ class CoreVideoTest : public ::testing::Test
 	mock::CoreDMA2D dma2dmock;
 	mock::CoreDSI dsimock;
 	CoreLTDCMock ltdcmock;
-	CoreLCDMock lcdmock;
+	mock::CoreLCD lcdmock;
 	mock::CoreGraphics graphicsmock;
 	mock::CoreFont fontmock;
 	mock::CoreJPEG jpegmock;
