@@ -7,9 +7,9 @@
 #include "CoreBufferedSerial.h"
 #include "gmock/gmock.h"
 
-namespace leka {
+namespace leka::mock {
 
-class CoreBufferedSerialMock : public interface::BufferedSerial
+class CoreBufferedSerial : public interface::BufferedSerial
 {
   public:
 	MOCK_METHOD(ssize_t, read, (uint8_t *, ssize_t), (override));
@@ -17,4 +17,4 @@ class CoreBufferedSerialMock : public interface::BufferedSerial
 	MOCK_METHOD(bool, readable, (), (override));
 };
 
-}	// namespace leka
+}	// namespace leka::mock
