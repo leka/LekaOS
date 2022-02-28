@@ -25,7 +25,7 @@ class CoreFontTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	CoreLLMock llmock;
+	mock::CoreLLMock llmock;
 	CGPixel pixel;
 	CoreFont font;
 };

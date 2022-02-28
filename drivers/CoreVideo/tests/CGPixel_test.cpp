@@ -11,7 +11,7 @@ using namespace leka;
 
 TEST(CGPixelTest, draw)
 {
-	CoreLLMock llmock;
+	mock::CoreLLMock llmock;
 	CGPixel pixel(llmock);
 	pixel.coordinates.x = 42;
 	pixel.coordinates.y = 99;
