@@ -110,3 +110,9 @@ auto FileSystemKit::File::tell() -> size_t
 	}
 	return std::ftell(_file.get());
 }
+
+auto FileSystemKit::File::reopen(const char *path, const char * mode) -> bool
+{
+	auto r = std::freopen(path, mode,_file.get());
+	return is_open();
+}
