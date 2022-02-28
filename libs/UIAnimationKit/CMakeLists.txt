@@ -2,21 +2,21 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(LKAnimationKit STATIC)
+add_library(UIAnimationKit STATIC)
 
-target_include_directories(LKAnimationKit
+target_include_directories(UIAnimationKit
 	PUBLIC
 		include
 		include/internal
 )
 
-target_sources(LKAnimationKit
+target_sources(UIAnimationKit
 	PRIVATE
 		source/BouncingSquare.cpp
-		source/LKAnimationKit.cpp
+		source/UIAnimationKit.cpp
 )
 
-target_link_libraries(LKAnimationKit
+target_link_libraries(UIAnimationKit
 	CoreLL
 	CoreSTM32Hal
 	CoreVideo
@@ -25,7 +25,7 @@ target_link_libraries(LKAnimationKit
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
-		tests/LKAnimationKit_test.cpp
+		tests/UIAnimationKit_test.cpp
 	)
 
 endif()

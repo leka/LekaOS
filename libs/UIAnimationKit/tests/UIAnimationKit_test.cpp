@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "LKAnimationKit.h"
+#include "UIAnimationKit.h"
 
 #include "events/tests/UNITTESTS/doubles/EventQueue_stub.h"
 #include "rtos/tests/UNITTESTS/doubles/Thread_stub.h"
@@ -14,17 +14,17 @@ using namespace leka;
 
 using ::testing::InSequence;
 
-class LKAnimationKitTest : public ::testing::Test
+class UIAnimationKitTest : public ::testing::Test
 {
   protected:
-	LKAnimationKitTest() : animationkit(animation_thread, event_queue) {}
+	UIAnimationKitTest() : animationkit(animation_thread, event_queue) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
 	rtos::Thread animation_thread;
 	events::EventQueue event_queue;
-	LKAnimationKit animationkit;
+	UIAnimationKit animationkit;
 
 	animation::CGAnimationMock animation;
 
@@ -33,14 +33,14 @@ class LKAnimationKitTest : public ::testing::Test
 	void MOCK_FUNCTION_silenceUnexpectedCalls(void) { EXPECT_CALL(animation, start); }
 };
 
-TEST_F(LKAnimationKitTest, startFirstAnimation)
+TEST_F(UIAnimationKitTest, startFirstAnimation)
 {
 	EXPECT_CALL(animation, start);
 
 	animationkit.start(animation);
 }
 
-TEST_F(LKAnimationKitTest, startNewAnimationSequence)
+TEST_F(UIAnimationKitTest, startNewAnimationSequence)
 {
 	MOCK_FUNCTION_silenceUnexpectedCalls();
 
@@ -58,14 +58,14 @@ TEST_F(LKAnimationKitTest, startNewAnimationSequence)
 	animationkit.start(new_animation);
 }
 
-TEST_F(LKAnimationKitTest, stopWithoutAnimation)
+TEST_F(UIAnimationKitTest, stopWithoutAnimation)
 {
 	EXPECT_CALL(animation, stop).Times(0);
 
 	animationkit.stop();
 }
 
-TEST_F(LKAnimationKitTest, stopStartedAnimation)
+TEST_F(UIAnimationKitTest, stopStartedAnimation)
 {
 	MOCK_FUNCTION_silenceUnexpectedCalls();
 

@@ -24,9 +24,9 @@
 #include "CoreVideo.hpp"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
-#include "LKAnimationKit.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
+#include "UIAnimationKit.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -55,7 +55,7 @@ rtos::Thread animation_thread;
 events::EventQueue animation_event_queue;
 
 animation::BouncingSquare animation_bouncing_square(coregraphics);
-LKAnimationKit animationkit(animation_thread, animation_event_queue);
+UIAnimationKit animationkit(animation_thread, animation_event_queue);
 
 auto main() -> int
 {
