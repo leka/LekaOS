@@ -1,0 +1,121 @@
+// Leka - LekaOS
+// Copyright 2020 APF France handicap
+// SPDX-License-Identifier: Apache-2.0
+
+#include <cstddef>
+
+#include "drivers/BufferedSerial.h"
+#include "rtos/ThisThread.h"
+
+#include "HelloWorld.h"
+#include "LogKit.h"
+#include "SDBlockDevice.h"
+#include "FATFileSystem.h"
+
+#include "FileSystemKit.h"
+
+using namespace leka;
+
+auto new_file = FileSystemKit::File {};
+char filename[L_tmpnam];
+
+SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
+FATFileSystem fatfs("fs");
+
+void initializeSD()
+{
+	constexpr auto default_sd_blockdevice_frequency = uint64_t {25'000'000};
+
+	sd_blockdevice.init();
+	sd_blockdevice.frequency(default_sd_blockdevice_frequency);
+
+	fatfs.mount(&sd_blockdevice);
+}
+
+auto main() -> int
+{
+	logger::init();
+
+	log_info("Hello, World!\n\n");
+
+	auto start = rtos::Kernel::Clock::now();
+
+	auto hello = HelloWorld();
+
+	rtos::ThisThread::sleep_for(1s);
+
+	hello.start();
+
+	initializeSD();
+
+	rtos::ThisThread::sleep_for(1s);
+
+	strcpy(filename, "/tmp/XXXXXX");
+	mkstemp(filename);
+
+	while (true) {
+		auto t = rtos::Kernel::Clock::now() - start;
+		log_info("A message from your board %s --> \"%s\" at %i s", MBED_CONF_APP_TARGET_NAME, hello.world,int(t.count() / 1000));
+		rtos::ThisThread::sleep_for(10s);
+
+		auto opened=file.open(filename, "w+");
+
+		if (opened) {
+			log_info("File opened");
+		} else {
+			log_error("Fail to open file");
+			break;
+		}
+
+		auto input_data = std::to_array({"My name is leka"});
+		char * buffer;
+
+		auto bytes_written = file.write(input_data);
+		if (bytes_written) {
+			log_info("File edited");
+		} else {
+			log_error("Fail to edit file");
+			break;
+		}
+
+		auto size=file.size();
+		buffer = (char*) malloc (sizeof(char)*size);
+		if (buffer == NULL) {
+			log_error("Memory error");
+			break;
+		}
+
+		file.rewind();
+		auto bytes_read = file.read(buffer);
+		if (bytes_read) {
+			log_info("Reading...");
+			log_info("Data : %s", buffer);
+		} else {
+			log_error("Fail to read file");
+			break;
+		}
+
+		file.seek(11);
+		bytes_read = file.read(buffer);
+		if (bytes_read) {
+			log_info("Reading...");
+			log_info("Data after seeking: %s", buffer);
+		} else {
+			log_error("Fail to read file");
+			break;
+		}
+
+		auto closed=file.close();
+
+		if (closed) {
+			log_info("File closed");
+		} else {
+			log_error("Fail to close file");
+			break;
+		}
+
+		free (buffer);
+	}
+
+	return 0;
+}
