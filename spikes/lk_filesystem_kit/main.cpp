@@ -14,9 +14,11 @@
 #include "SDBlockDevice.h"
 
 using namespace leka;
+using namespace std::chrono_literals;
 
-auto new_file = FileSystemKit::File {};
-char filename[L_tmpnam];
+auto file				= FileSystemKit::File {};
+constexpr auto kTmpfile = std::to_array("/tmp/XXXXXX");
+auto filename			= std::array<char, L_tmpnam> {};
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
@@ -49,8 +51,8 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(1s);
 
-	strcpy(filename, "/tmp/XXXXXX");
-	mkstemp(filename);
+	std::copy(std::begin(kTmpfile), std::end(kTmpfile), filename.begin());
+	mkstemp(filename.data());
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
@@ -58,7 +60,7 @@ auto main() -> int
 				 int(t.count() / 1000));
 		rtos::ThisThread::sleep_for(10s);
 
-		auto opened = file.open(filename, "w+");
+		auto opened = file.open(filename.data(), "w+");
 
 		if (opened) {
 			log_info("File opened");
@@ -67,11 +69,11 @@ auto main() -> int
 			break;
 		}
 
-		auto input_data = std::to_array({"My name is leka"});
-		char *buffer;
+		auto input_data = std::to_array({'h', 'e', 'l', 'l', 'o', ' ', 'l', 'e', 'k', 'a'});
+		auto buffer		= std::array<char, 1024> {};
 
 		auto bytes_written = file.write(input_data);
-		if (bytes_written) {
+		if (bytes_written != 0U) {
 			log_info("File edited");
 		} else {
 			log_error("Fail to edit file");
@@ -79,42 +81,34 @@ auto main() -> int
 		}
 
 		auto size = file.size();
-		buffer	  = (char *)malloc(sizeof(char) * size);
-		if (buffer == NULL) {
-			log_error("Memory error");
-			break;
-		}
-
-		file.rewind();
-		auto bytes_read = file.read(buffer);
-		if (bytes_read) {
-			log_info("Reading...");
-			log_info("Data : %s", buffer);
+		if (size == 0U) {
+			log_info("File empty");
 		} else {
-			log_error("Fail to read file");
-			break;
+			log_info("Size : %d", size);
+
+			file.rewind();
+			auto bytes_read = file.read(buffer);
+			if (bytes_read != 0U) {
+				log_info("Reading...");
+				log_info("Data : %s", buffer);
+			} else {
+				log_error("Fail to read file");
+				break;
+			}
+
+			file.seek(6);
+			bytes_read = file.read(buffer);
+			if (bytes_read != 0U) {
+				log_info("Reading...");
+				log_info("Data after seeking: %s", buffer);
+			} else {
+				log_error("Fail to read file");
+				break;
+			}
 		}
 
-		file.seek(11);
-		bytes_read = file.read(buffer);
-		if (bytes_read) {
-			log_info("Reading...");
-			log_info("Data after seeking: %s", buffer);
-		} else {
-			log_error("Fail to read file");
-			break;
-		}
-
-		auto closed = file.close();
-
-		if (closed) {
-			log_info("File closed");
-		} else {
-			log_error("Fail to close file");
-			break;
-		}
-
-		free(buffer);
+		file.close();
+		log_info("File closed");
 	}
 
 	return 0;
