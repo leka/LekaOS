@@ -7,6 +7,8 @@
 #include <cstdint>
 #include <span>
 
+#include "storage/filesystem/fat/ChaN/ff.h"
+
 namespace leka::interface {
 
 struct File {
