@@ -7,11 +7,11 @@
 #include <array>
 #include <cstdint>
 
-#include "CoreFatFsBase.h"
 #include "CoreSTM32HalBase.h"
 #include "external/st_jpeg_utils.h"
 #include "interface/DMA2D.hpp"
 #include "interface/JPEG.hpp"
+#include "interface/platform/FatFs.h"
 
 namespace leka {
 

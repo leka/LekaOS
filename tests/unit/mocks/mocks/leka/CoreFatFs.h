@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "CoreFatFsBase.h"
 #include "gmock/gmock.h"
+#include "interface/platform/FatFs.h"
 
 namespace leka {
 
