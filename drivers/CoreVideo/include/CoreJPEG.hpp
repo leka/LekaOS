@@ -11,7 +11,7 @@
 #include "external/st_jpeg_utils.h"
 #include "interface/DMA2D.hpp"
 #include "interface/JPEG.hpp"
-#include "interface/platform/FatFs.h"
+#include "interface/drivers/FatFs.h"
 
 namespace leka {
 
