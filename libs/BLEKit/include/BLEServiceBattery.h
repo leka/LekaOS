@@ -5,16 +5,14 @@
 #pragma once
 
 #include "internal/BLEService.h"
+#include "internal/ServicesCharacteristics.h"
 
 namespace leka {
 
 class BLEServiceBattery : public interface::BLEService
 {
-	const static uint16_t SERVICE_BATTERY_UUID						 = GattService::UUID_BATTERY_SERVICE;
-	const static uint16_t BATTERY_LEVEL_WRITABLE_CHARACTERISTIC_UUID = GattCharacteristic::UUID_BATTERY_LEVEL_CHAR;
-
   public:
-	BLEServiceBattery() : interface::BLEService(SERVICE_BATTERY_UUID, _characteristic_table) {};
+	BLEServiceBattery() : interface::BLEService(service::battery::uuid, _characteristic_table) {};
 
 	void setBatteryLevel(uint8_t value)
 	{
@@ -35,7 +33,7 @@ class BLEServiceBattery : public interface::BLEService
 
 	uint8_t _battery_level_characteristic_value {};
 	ReadOnlyGattCharacteristic<uint8_t> _battery_level_writable_characteristic {
-		BATTERY_LEVEL_WRITABLE_CHARACTERISTIC_UUID, &_battery_level_characteristic_value,
+		service::battery::characteristic::level, &_battery_level_characteristic_value,
 		GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
 
 	std::array<GattCharacteristic *, 1> _characteristic_table {&_battery_level_writable_characteristic};
