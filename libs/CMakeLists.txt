@@ -4,6 +4,7 @@
 
 add_subdirectory(${LIBS_DIR}/BLEKit)
 add_subdirectory(${LIBS_DIR}/ColorKit)
+add_subdirectory(${LIBS_DIR}/BatteryKit)
 add_subdirectory(${LIBS_DIR}/ContainerKit)
 add_subdirectory(${LIBS_DIR}/FileSystemKit)
 add_subdirectory(${LIBS_DIR}/FirmwareKit)
