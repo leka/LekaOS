@@ -98,7 +98,7 @@ else()
 	message(FATAL_ERROR "Target ${TARGET_BOARD} is not available.")
 endif()
 
-include_directories(BEFORE
+include_directories(AFTER
 	${INCLUDE_DIR}
 )
 
