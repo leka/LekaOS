@@ -9,7 +9,7 @@
 
 namespace leka {
 
-class CoreFatFsMock : public CoreFatFsBase
+class CoreFatFsMock : public interface::CoreFatFsBase
 {
   public:
 	MOCK_METHOD(FRESULT, open, (const char *path), (override));

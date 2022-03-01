@@ -8,7 +8,7 @@
 
 #include "storage/filesystem/fat/ChaN/ff.h"
 
-namespace leka {
+namespace leka::interface {
 
 // TODO (@ladislas) - return int, bool or std::optional instead of FRESULT
 //  test comment for CI
@@ -28,4 +28,4 @@ class CoreFatFsBase
 	virtual auto getPointer() -> FIL * = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface

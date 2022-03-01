@@ -8,7 +8,7 @@
 
 namespace leka {
 
-class CoreFatFs : public CoreFatFsBase
+class CoreFatFs : public interface::CoreFatFsBase
 {
   public:
 	CoreFatFs() = default;	 // SDBlockDevice must be initialized and mounted before using CoreFatFs

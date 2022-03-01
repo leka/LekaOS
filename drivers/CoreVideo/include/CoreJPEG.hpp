@@ -18,7 +18,7 @@ namespace leka {
 class CoreJPEG : public interface::JPEGBase
 {
   public:
-	CoreJPEG(CoreSTM32HalBase &hal, interface::DMA2DBase &dma2d, CoreFatFsBase &file);
+	CoreJPEG(CoreSTM32HalBase &hal, interface::DMA2DBase &dma2d, interface::CoreFatFsBase &file);
 
 	void initialize() final;
 
@@ -56,7 +56,7 @@ class CoreJPEG : public interface::JPEGBase
 	JPEG_ConfTypeDef _config {};
 	CoreSTM32HalBase &_hal;
 	interface::DMA2DBase &_dma2d;
-	CoreFatFsBase &_file;
+	interface::CoreFatFsBase &_file;
 
 	JPEG_YCbCrToRGB_Convert_Function pConvert_Function {};
 
