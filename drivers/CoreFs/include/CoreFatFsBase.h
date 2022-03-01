@@ -12,10 +12,10 @@ namespace leka::interface {
 
 // TODO (@ladislas) - return int, bool or std::optional instead of FRESULT
 //  test comment for CI
-class CoreFatFsBase
+class FatFs
 {
   public:
-	virtual ~CoreFatFsBase() = default;
+	virtual ~FatFs() = default;
 
 	virtual auto open(const char *path) -> FRESULT																 = 0;
 	virtual auto close() -> FRESULT																				 = 0;
