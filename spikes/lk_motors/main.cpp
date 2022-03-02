@@ -37,6 +37,11 @@ void stop(CoreMotorBase &left, CoreMotorBase &right)
 	right.stop();
 }
 
+auto f() -> uint8_t
+{
+	return 3;
+}
+
 auto main() -> int
 {
 	logger::init();
