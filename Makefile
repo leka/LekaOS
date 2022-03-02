@@ -231,11 +231,26 @@ clang_tidy_diff:
 	@echo ""
 	@echo "🏃‍♂️ Running clang-tidy on modified files 🧹"
 	@echo ""
-	@git diff --name-status develop \
-		| grep -E -v "_test" | grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$" || echo "No files added nor modified!"
+	@git diff --name-status develop            \
+		| grep -E -v "_test"                   \
+		| grep -E -v "extern"                  \
+		| grep -E -v "gtest"                   \
+		| grep -E -v "gmock"                   \
+		| grep -E -v "mocks"                   \
+		| grep -E -v "stubs"                   \
+		| grep -E "^A|^M" | sed "s/^[AM]\t//g" \
+		| grep -E "\.h\$$|\.cpp\$$"            \
+		|| echo "No files added nor modified!"
 	@echo ""
-	@git diff --name-status develop \
-		| grep -E -v "_test" | grep -E "^A|^M" | sed "s/^[AM]\t//g" | grep -E "\.h\$$|\.cpp\$$" \
+	@git diff --name-status develop            \
+		| grep -E -v "_test"                   \
+		| grep -E -v "extern"                  \
+		| grep -E -v "gtest"                   \
+		| grep -E -v "gmock"                   \
+		| grep -E -v "mocks"                   \
+		| grep -E -v "stubs"                   \
+		| grep -E "^A|^M" | sed "s/^[AM]\t//g" \
+		| grep -E "\.h\$$|\.cpp\$$"            \
 		| xargs --no-run-if-empty ruby tools/run-clang-tidy.rb $(CMAKE_TOOLS_BUILD_DIR)
 
 #
