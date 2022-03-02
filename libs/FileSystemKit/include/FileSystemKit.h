@@ -42,8 +42,6 @@ class FileSystemKit
 
 		auto reopen(const char *path, const char *mode) -> bool final;
 
-		auto eof() -> size_t final;
-
 		[[nodiscard]] auto is_open() const -> bool final;
 
 	  private:
