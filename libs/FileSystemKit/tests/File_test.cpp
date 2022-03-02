@@ -475,20 +475,23 @@ TEST_F(FileTest, reopen)
 	auto output_data_r	 = std::array<uint8_t, 6> {};
 	auto expected_data_r = std::array<uint8_t, 6> {};
 
-	auto output_data_w_plus	  = std::array<uint8_t, 6> {};
-	auto expected_data_w_plus = std::array<uint8_t, 6> {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};
-
 	file.open(tempFilename, "r");
 	auto bytes_written_r = file.write(input_data);
 	file.rewind();
 	auto bytes_read_r = file.read(output_data_r);
+
+	ASSERT_EQ(0,bytes_read_r);
+	ASSERT_EQ(expected_data_r, output_data_r);
+
+	auto output_data_w_plus	  = std::array<uint8_t, 6> {};
+	auto expected_data_w_plus = std::array<uint8_t, 6> {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};
 
 	file.reopen(tempFilename, "w+");
 	auto bytes_written_w_plus = file.write(input_data);
 	file.rewind();
 	auto bytes_read_w_plus = file.read(output_data_w_plus);
 
-	ASSERT_EQ(expected_data_r, output_data_r);
+	ASSERT_EQ(bytes_written_w_plus,bytes_read_w_plus);
 	ASSERT_EQ(expected_data_w_plus, output_data_w_plus);
 }
 
