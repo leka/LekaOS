@@ -12,7 +12,8 @@
 #include "interface/DMA2D.hpp"
 #include "interface/JPEG.hpp"
 // #include "interface/drivers/FatFs.h"
-#include "interface/platform/FatFs.h"
+// #include "interface/platform/FatFs.h"
+#include "interface/platformm/FatFs.h"
 
 namespace leka {
 
