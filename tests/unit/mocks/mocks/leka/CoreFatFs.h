@@ -4,12 +4,12 @@
 
 #pragma once
 
-#include "CoreFatFsBase.h"
 #include "gmock/gmock.h"
+#include "interface/platform/FatFs.h"
 
-namespace leka {
+namespace leka::mock {
 
-class CoreFatFsMock : public CoreFatFsBase
+class CoreFatFs : public interface::FatFs
 {
   public:
 	MOCK_METHOD(FRESULT, open, (const char *path), (override));
@@ -23,4 +23,4 @@ class CoreFatFsMock : public CoreFatFsBase
 	MOCK_METHOD(FIL *, getPointer, (), (override));
 };
 
-}	// namespace leka
+}	// namespace leka::mock

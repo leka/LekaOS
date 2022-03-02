@@ -21,7 +21,7 @@ class CoreSDRAMTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	CoreSTM32HalMock halmock;
+	mock::CoreSTM32Hal halmock;
 	CoreSDRAM coresdram;
 
 	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call

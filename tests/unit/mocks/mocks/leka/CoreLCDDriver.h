@@ -7,9 +7,9 @@
 #include "gmock/gmock.h"
 #include "interface/LCDDriver.hpp"
 
-namespace leka {
+namespace leka::mock {
 
-class CoreLCDDriverMock : public interface::LCDDriver
+class CoreLCDDriver : public interface::LCDDriver
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));
@@ -19,4 +19,4 @@ class CoreLCDDriverMock : public interface::LCDDriver
 	MOCK_METHOD(void, setBrightness, (float value), (override));
 };
 
-}	// namespace leka
+}	// namespace leka::mock

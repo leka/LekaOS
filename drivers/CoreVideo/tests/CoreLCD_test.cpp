@@ -24,7 +24,7 @@ class CoreLCDTest : public ::testing::Test
 	// void TearDown() override {}
 
 	CoreLCD corelcd;
-	CoreLCDDriverMock lcddrivermock;
+	mock::CoreLCDDriver lcddrivermock;
 };
 
 TEST_F(CoreLCDTest, instantiation)

@@ -7,9 +7,9 @@
 #include "gmock/gmock.h"
 #include "interface/SDRAM.hpp"
 
-namespace leka {
+namespace leka::mock {
 
-class CoreSDRAMMock : public interface::SDRAM
+class CoreSDRAM : public interface::SDRAM
 {
   public:
 	MOCK_METHOD(void, setupSDRAMConfig, (), (override));
@@ -21,4 +21,4 @@ class CoreSDRAMMock : public interface::SDRAM
 	MOCK_METHOD(void, initializationSequence, (), (override));
 };
 
-}	// namespace leka
+}	// namespace leka::mock

@@ -4,15 +4,15 @@
 
 #pragma once
 
-#include "CoreSTM32HalBase.h"
 #include "interface/DSI.hpp"
+#include "interface/drivers/STM32Hal.h"
 
 namespace leka {
 
 class CoreDSI : public interface::DSIBase
 {
   public:
-	explicit CoreDSI(CoreSTM32HalBase &hal);
+	explicit CoreDSI(interface::STM32Hal &hal);
 
 	void initialize() final;
 	void start() final;
@@ -24,7 +24,7 @@ class CoreDSI : public interface::DSIBase
 	void write(const uint8_t *data, uint32_t size) final;
 
   private:
-	CoreSTM32HalBase &_hal;
+	interface::STM32Hal &_hal;
 	DSI_HandleTypeDef _hdsi {};
 	DSI_VidCfgTypeDef _config {};
 };

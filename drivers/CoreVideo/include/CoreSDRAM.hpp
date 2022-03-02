@@ -6,15 +6,15 @@
 
 #pragma once
 
-#include "CoreSTM32HalBase.h"
 #include "interface/SDRAM.hpp"
+#include "interface/drivers/STM32Hal.h"
 
 namespace leka {
 
 class CoreSDRAM : public interface::SDRAM
 {
   public:
-	explicit CoreSDRAM(CoreSTM32HalBase &hal);
+	explicit CoreSDRAM(interface::STM32Hal &hal);
 
 	void setupSDRAMConfig() final;
 	auto setupTimingConfig() -> FMC_SDRAM_TimingTypeDef final;
@@ -27,7 +27,7 @@ class CoreSDRAM : public interface::SDRAM
 	[[nodiscard]] auto getHandle() const -> SDRAM_HandleTypeDef;
 
   private:
-	CoreSTM32HalBase &_hal;
+	interface::STM32Hal &_hal;
 
 	SDRAM_HandleTypeDef _hsdram {};
 };

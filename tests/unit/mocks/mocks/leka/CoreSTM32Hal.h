@@ -4,12 +4,12 @@
 
 #pragma once
 
-#include "CoreSTM32HalBase.h"
 #include "gmock/gmock.h"
+#include "interface/drivers/STM32Hal.h"
 
-namespace leka {
+namespace leka::mock {
 
-class CoreSTM32HalMock : public CoreSTM32HalBase
+class CoreSTM32Hal : public interface::STM32Hal
 {
   public:
 	MOCK_METHOD(void, HAL_RCC_GPIOD_CLK_ENABLE, (), (override));
@@ -94,4 +94,4 @@ class CoreSTM32HalMock : public CoreSTM32HalBase
 				(JPEG_HandleTypeDef * hjpeg, uint8_t *pNewOutputBuffer, uint32_t OutDataLength), (override));
 };
 
-}	// namespace leka
+}	// namespace leka::mock

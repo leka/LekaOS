@@ -7,9 +7,9 @@
 #include "LedKit.h"
 #include "gmock/gmock.h"
 
-namespace leka::animation {
+namespace leka::mock {
 
-class LEDAnimationMock : public interface::LEDAnimation
+class LEDAnimation : public interface::LEDAnimation
 {
   public:
 	MOCK_METHOD(void, start, (), (override));
@@ -17,4 +17,4 @@ class LEDAnimationMock : public interface::LEDAnimation
 	MOCK_METHOD(void, run, (), (override));
 };
 
-}	// namespace leka::animation
+}	// namespace leka::mock

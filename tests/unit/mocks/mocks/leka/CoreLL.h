@@ -4,9 +4,10 @@
 
 #pragma once
 
+#include "CoreLL.h"
 #include "gmock/gmock.h"
 
-namespace leka {
+namespace leka::mock {
 
 class CoreLLMock : public CoreLL
 {
@@ -14,4 +15,4 @@ class CoreLLMock : public CoreLL
 	MOCK_METHOD(void, rawMemoryWrite, (uintptr_t destination, uint32_t data), (override));
 };
 
-}	// namespace leka
+}	// namespace leka::mock

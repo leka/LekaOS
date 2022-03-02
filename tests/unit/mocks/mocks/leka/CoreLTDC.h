@@ -7,12 +7,12 @@
 #include "gmock/gmock.h"
 #include "interface/LTDC.hpp"
 
-namespace leka {
+namespace leka::mock {
 
-class CoreLTDCMock : public interface::LTDCBase
+class CoreLTDC : public interface::LTDCBase
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));
 };
 
-}	// namespace leka
+}	// namespace leka::mock

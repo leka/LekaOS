@@ -7,13 +7,13 @@
 #include "gmock/gmock.h"
 #include "interface/Graphics.hpp"
 
-namespace leka {
+namespace leka::mock {
 
-class CoreGraphicsMock : public interface::Graphics
+class CoreGraphics : public interface::Graphics
 {
   public:
 	MOCK_METHOD(void, clearScreen, (CGColor color), (override));
 	MOCK_METHOD(void, drawRectangle, (FilledRectangle rectangle, CGColor color), (override));
 };
 
-}	// namespace leka
+}	// namespace leka::mock

@@ -7,9 +7,9 @@
 #include "gmock/gmock.h"
 #include "interface/DSI.hpp"
 
-namespace leka {
+namespace leka::mock {
 
-class CoreDSIMock : public interface::DSIBase
+class CoreDSI : public interface::DSIBase
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));
@@ -19,4 +19,4 @@ class CoreDSIMock : public interface::DSIBase
 	MOCK_METHOD(void, write, (const uint8_t *data, const uint32_t size), (override));
 };
 
-}	// namespace leka
+}	// namespace leka::mock

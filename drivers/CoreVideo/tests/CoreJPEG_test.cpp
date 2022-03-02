@@ -27,9 +27,9 @@ class CoreJPEGTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	CoreSTM32HalMock halmock;
-	CoreDMA2DMock dma2dmock;
-	CoreFatFsMock filemock;
+	mock::CoreSTM32Hal halmock;
+	mock::CoreDMA2D dma2dmock;
+	mock::CoreFatFs filemock;
 	CoreJPEG corejpeg;
 
 	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call

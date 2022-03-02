@@ -6,7 +6,7 @@ using namespace std::chrono;
 
 namespace leka {
 
-CoreSDRAM::CoreSDRAM(CoreSTM32HalBase &hal) : _hal(hal)
+CoreSDRAM::CoreSDRAM(interface::STM32Hal &hal) : _hal(hal)
 {
 	_hsdram.Instance = FMC_SDRAM_DEVICE;
 

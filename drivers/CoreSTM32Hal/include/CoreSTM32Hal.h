@@ -4,12 +4,12 @@
 
 #pragma once
 
-#include "CoreSTM32HalBase.h"
+#include "interface/drivers/STM32Hal.h"
 #include "stm32f7xx_hal.h"
 
 namespace leka {
 
-class CoreSTM32Hal : public CoreSTM32HalBase
+class CoreSTM32Hal : public interface::STM32Hal
 {
   public:
 	CoreSTM32Hal() = default;
