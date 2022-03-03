@@ -31,6 +31,7 @@ target_sources(LedKit
 		source/Sick.cpp
 		source/Singing.cpp
 		source/Sleeping.cpp
+		source/Sneeze.cpp
 		source/Waiting.cpp
 		source/WakeUp.cpp
 		source/Wink.cpp
