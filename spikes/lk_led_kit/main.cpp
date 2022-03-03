@@ -27,6 +27,7 @@
 #include "LogKit.h"
 #include "Sad.h"
 #include "SadCry.h"
+#include "Sick.h"
 #include "Singing.h"
 #include "Sleeping.h"
 #include "Waiting.h"
@@ -61,6 +62,7 @@ led::animation::LoadingRed animation_loading_red(ears, belt);
 led::animation::LoadingYellow animation_loading_yellow(ears, belt);
 led::animation::Sad animation_sad(ears, belt);
 led::animation::SadCry animation_sad_cry(ears, belt);
+led::animation::Sick animation_sick {ears, belt};
 led::animation::Singing animation_singing(ears, belt);
 led::animation::Sleeping animation_sleeping(ears, belt);
 led::animation::Waiting animation_waiting(ears, belt);
@@ -126,6 +128,9 @@ auto main() -> int
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.start(animation_waiting);
+		rtos::ThisThread::sleep_for(10s);
+
+		ledkit.start(animation_sick);
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.stop();
