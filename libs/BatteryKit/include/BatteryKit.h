@@ -4,18 +4,17 @@
 
 #pragma once
 
+#include "CoreEventQueue.h"
 #include "interface/drivers/Battery.h"
-#include "interface/drivers/Ticker.h"
 
 namespace leka {
 
 class BatteryKit
 {
   public:
-	explicit BatteryKit(interface::Battery &battery, interface::Ticker &ticker) : _battery(battery), _ticker(ticker) {};
+	explicit BatteryKit(interface::Battery &battery) : _battery(battery) {};
 
 	void start();
-	void stop();
 
 	auto level() -> uint8_t;
 	auto isCharging() -> bool;
@@ -28,7 +27,7 @@ class BatteryKit
   private:
 	interface::Battery &_battery;
 
-	interface::Ticker &_ticker;
+	CoreEventQueue _event_queue {};
 
 	std::function<void(uint8_t)> _on_data_updated {};
 	std::function<void()> _on_low_battery {};

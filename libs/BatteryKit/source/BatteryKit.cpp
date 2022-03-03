@@ -10,20 +10,19 @@ using namespace std::chrono_literals;
 void BatteryKit::start()
 {
 	auto on_tick = [this] {
-		// if (level() == 0) {
-		on_low_battery();
-		// }
-		// on_data_updated(level());
+		if (_on_low_battery && level() == 0) {
+			_on_low_battery();
+		}
+
+		if (_on_data_updated) {
+			_on_data_updated(level());
+		}
 	};
 
-	_ticker.onTick(on_tick);
+	on_tick();	 // TODO (@john_doe): only for unit tests. Due to event_queue that does not make the call
+	_event_queue.call_every(1s, on_tick);
 
-	_ticker.start(1s);
-}
-
-void BatteryKit::stopRoutine()
-{
-	_ticker.stop();
+	_event_queue.dispatch_forever();
 }
 
 auto BatteryKit::level() -> uint8_t

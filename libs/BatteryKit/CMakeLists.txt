@@ -15,8 +15,8 @@ target_sources(BatteryKit
 )
 
 target_link_libraries(BatteryKit
-	PRIVATE
-		mbed-os
+	mbed-os
+	CoreEventQueue
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

@@ -14,11 +14,9 @@
 using namespace leka;
 using namespace std::chrono;
 
-auto battery_ticker = CoreTicker {};
-
 auto charge_input  = mbed::InterruptIn {PinName::BATTERY_CHARGE_STATUS};
 auto corebattery   = CoreBattery {PinName::BATTERY_VOLTAGE, charge_input};
-auto batterykit	   = BatteryKit {corebattery, battery_ticker};
+auto batterykit	   = BatteryKit {corebattery};
 auto mainboard_led = mbed::DigitalOut {LED1};
 
 void logBatteryNewLevel(uint8_t battery_new_level)
