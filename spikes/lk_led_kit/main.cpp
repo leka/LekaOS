@@ -32,6 +32,7 @@
 #include "Sleeping.h"
 #include "Waiting.h"
 #include "WakeUp.h"
+#include "Yawn.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -67,6 +68,7 @@ led::animation::Singing animation_singing(ears, belt);
 led::animation::Sleeping animation_sleeping(ears, belt);
 led::animation::Waiting animation_waiting(ears, belt);
 led::animation::WakeUp animation_wake_up(ears, belt);
+led::animation::Yawn animation_yawn {ears, belt};
 
 HelloWorld hello;
 
@@ -131,6 +133,9 @@ auto main() -> int
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.start(animation_sick);
+		rtos::ThisThread::sleep_for(10s);
+
+		ledkit.start(animation_yawn);
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.stop();
