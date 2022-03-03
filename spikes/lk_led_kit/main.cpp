@@ -30,6 +30,7 @@
 #include "Sick.h"
 #include "Singing.h"
 #include "Sleeping.h"
+#include "Sneeze.h"
 #include "Waiting.h"
 #include "WakeUp.h"
 #include "Wink.h"
@@ -67,6 +68,7 @@ led::animation::SadCry animation_sad_cry(ears, belt);
 led::animation::Sick animation_sick {ears, belt};
 led::animation::Singing animation_singing(ears, belt);
 led::animation::Sleeping animation_sleeping(ears, belt);
+led::animation::Sneeze animation_sneeze {ears, belt};
 led::animation::Waiting animation_waiting(ears, belt);
 led::animation::WakeUp animation_wake_up(ears, belt);
 led::animation::Wink animation_wink {ears, belt};
@@ -141,6 +143,9 @@ auto main() -> int
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.start(animation_wink);
+		rtos::ThisThread::sleep_for(10s);
+
+		ledkit.start(animation_sneeze);
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.stop();
