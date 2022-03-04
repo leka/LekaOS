@@ -9,13 +9,25 @@
 
 namespace leka::service {
 
+namespace device_information {
+
+	constexpr uint16_t uuid = GattService::UUID_DEVICE_INFORMATION_SERVICE;
+
+	namespace characteristic {
+		constexpr uint16_t manufacturer_name = GattCharacteristic::UUID_MANUFACTURER_NAME_STRING_CHAR;
+		constexpr uint16_t model_number		 = GattCharacteristic::UUID_MODEL_NUMBER_STRING_CHAR;
+		constexpr uint16_t serial_number	 = GattCharacteristic::UUID_SERIAL_NUMBER_STRING_CHAR;
+	}	// namespace characteristic
+
+}	// namespace device_information
+
 namespace battery {
 
 	constexpr uint16_t uuid = GattService::UUID_BATTERY_SERVICE;
 
 	namespace characteristic {
 		constexpr uint16_t level = GattCharacteristic::UUID_BATTERY_LEVEL_CHAR;
-	}
+	}	// namespace characteristic
 
 }	// namespace battery
 
