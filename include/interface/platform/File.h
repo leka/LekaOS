@@ -46,6 +46,10 @@ struct File {
 
 	virtual auto flush() -> bool = 0;
 
+	virtual auto error() -> bool = 0;
+
+	virtual void clearerr() = 0;
+
 	[[nodiscard]] virtual auto is_open() const -> bool = 0;
 };
 

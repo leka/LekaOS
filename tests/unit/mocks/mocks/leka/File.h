@@ -48,6 +48,10 @@ class File : public interface::File
 
 	MOCK_METHOD(bool, flush, (), (override));
 
+	MOCK_METHOD(bool, error, (), (override));
+
+	MOCK_METHOD(void, clearerr, (), (override));
+
 	MOCK_METHOD(bool, is_open, (), (const override));
 };
 
