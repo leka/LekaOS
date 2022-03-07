@@ -119,3 +119,32 @@ auto FileSystemKit::File::reopen(const char *path, const char *mode) -> bool
 	std::freopen(path, mode, _file.get());
 	return is_open();
 }
+
+auto FileSystemKit::File::setBuffer(std::span<char> buffer, int mode) -> bool
+{
+	if (_file == nullptr) {
+		return false;
+	}
+	return (0 == std::setvbuf(_file.get(), buffer.data(), mode, buffer.size()));
+}
+
+auto FileSystemKit::File::setBuffer(char *buffer, uint32_t size, int mode) -> bool
+{
+	return setBuffer(std::span<char>({buffer, size}), mode);
+}
+
+auto FileSystemKit::File::unsetBuffer() -> bool
+{
+	if (_file == nullptr) {
+		return false;
+	}
+	return (0 == std::setvbuf(_file.get(), nullptr, _IONBF, 0));
+}
+
+auto FileSystemKit::File::flush() -> bool
+{
+	if (_file == nullptr) {
+		return false;
+	}
+	return (0 == std::fflush(_file.get()));
+}

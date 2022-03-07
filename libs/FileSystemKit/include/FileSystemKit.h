@@ -42,6 +42,11 @@ class FileSystemKit
 
 		auto reopen(const char *path, const char *mode = "r") -> bool final;
 
+		auto setBuffer(std::span<char> buffer, int mode = _IOFBF) -> bool final;
+		auto setBuffer(char *buffer, uint32_t size = BUFSIZ, int mode = _IOFBF) -> bool final;
+		auto unsetBuffer() -> bool final;
+		auto flush() -> bool final;
+
 		[[nodiscard]] auto is_open() const -> bool final;
 
 	  private:

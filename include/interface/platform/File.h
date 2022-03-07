@@ -38,6 +38,14 @@ struct File {
 
 	virtual auto reopen(const char *path, const char *mode) -> bool = 0;
 
+	virtual auto setBuffer(std::span<char> buffer, int mode) -> bool = 0;
+
+	virtual auto setBuffer(char *buffer, uint32_t size, int mode) -> bool = 0;
+
+	virtual auto unsetBuffer() -> bool = 0;
+
+	virtual auto flush() -> bool = 0;
+
 	[[nodiscard]] virtual auto is_open() const -> bool = 0;
 };
 
