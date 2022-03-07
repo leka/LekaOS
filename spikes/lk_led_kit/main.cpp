@@ -9,6 +9,7 @@
 
 #include "AfraidBlue.h"
 #include "AfraidRed.h"
+#include "AngryShort.h"
 #include "Bubbles.h"
 #include "CoreLED.h"
 #include "CoreSPI.h"
@@ -38,6 +39,7 @@ auto ledkit = LedKit {animation_thread, animation_event_queue, ears, belt};
 
 led::animation::AfraidBlue animation_afraid_blue(ears, belt);
 led::animation::AfraidRed animation_afraid_red(ears, belt);
+led::animation::AngryShort animation_angry_short(ears, belt);
 led::animation::Bubbles animation_bubbles(ears, belt);
 led::animation::Disgusted animation_disgusted(ears, belt);
 led::animation::Fly animation_fly {ears, belt};
@@ -76,6 +78,9 @@ auto main() -> int
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.start(animation_afraid_blue);
+		rtos::ThisThread::sleep_for(10s);
+
+		ledkit.start(animation_angry_short);
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.stop();
