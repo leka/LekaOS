@@ -4,12 +4,11 @@
 
 #pragma once
 
+#include <array>
 #include <span>
 
-#include "CoreWifi.h"
-#include "ESP8266Interface.h"
-#include "https_request.h"
-#include "netsocket/TCPSocket.h"
+#include "interface/drivers/Network.h"
+#include "interface/platform/File.h"
 
 namespace leka {
 
@@ -21,23 +20,25 @@ class WebKit
 		const char *to_path;
 	};
 
-	explicit WebKit() = default;
+	explicit WebKit(interface::Network &network, interface::File &file_handler)
+		: _network(network), _file_handle(file_handler) {};
 
-	auto connect(const char *ssid, const char *pass) -> bool;
+	[[nodiscard]] auto connect(const char *ssid, const char *pass) -> bool;
 
 	void setCertificateStore(std::span<const char *> certificates_path_list);
 
-	auto downloadFile(DownloadableFile const &downloadable_file) -> bool;
+	auto downloadFile(DownloadableFile const &file) -> bool;
+
+	[[nodiscard]] auto responseHasRedirectionUrl(HttpResponse const &response) const -> bool;
+	void getRedirectionUrl(HttpResponse const &response);
+
+	auto updateCertificate(const char *certificate_path) -> bool;
+
+	[[nodiscard]] auto getUrl() const -> const std::string &;
 
   private:
-	auto responseHasRedirectionURL(HttpResponse *response) const -> bool;
-	void getRedirectionURL(HttpResponse *response);
-
-	void updateCertificate(const char *certificate_path);
-
-	mbed::DigitalOut wifi_enable {WIFI_ENABLE, 1};
-	CoreESP8266 wifi_module {WIFI_USART_TX, WIFI_USART_RX, false, WIFI_USART_RTS, WIFI_USART_CTS, WIFI_RESET};
-	leka::CoreWifi corewifi {wifi_module, wifi_enable};
+	interface::Network &_network;
+	interface::File &_file_handle;
 
 	std::string _url;
 

@@ -4,14 +4,10 @@
 #include "FileSystemKit.h"
 
 using namespace leka;
-using namespace std::chrono;
 
 auto WebKit::connect(const char *ssid, const char *pass) -> bool
 {
-	auto wifi_network = leka::CoreWifi::Network {ssid, pass};
-
-	auto is_connected = corewifi.connect(wifi_network);
-	return is_connected;
+	return _network.connect(ssid, pass);
 }
 
 void WebKit::setCertificateStore(std::span<const char *> certificates_path_list)
@@ -19,29 +15,33 @@ void WebKit::setCertificateStore(std::span<const char *> certificates_path_list)
 	std::copy(certificates_path_list.begin(), certificates_path_list.end(), _certificates_path_list.begin());
 }
 
-void WebKit::updateCertificate(const char *certificate_path)
+auto WebKit::updateCertificate(const char *certificate_path) -> bool
 {
 	std::fill(_certificate.begin(), _certificate.end(), '\0');
 
-	FileSystemKit::File _file_certificate {certificate_path};
-	auto file_size = _file_certificate.size();
+	if (auto is_open = _file_handle.open(certificate_path, "r"); is_open) {
+		auto size = _file_handle.size();
 
-	_file_certificate.read(_certificate.begin(), file_size);
+		_file_handle.read(_certificate.begin(), size);
 
-	_file_certificate.close();
+		_file_handle.close();
+	}
+
+	return _certificate[0] != '\0';
 }
 
-auto WebKit::downloadFile(DownloadableFile const &downloadable_file) -> bool
+auto WebKit::downloadFile(DownloadableFile const &file) -> bool
 {
-	_url = downloadable_file.url;
+	_url = file.url;
 
-	FileSystemKit::File _file;
-	HttpResponse *response {nullptr};
+	auto response = HttpResponse {};
 
 	auto is_redirected				  = false;
 	auto certificates_path_list_index = 0;
 
-	auto did_download_file = [&is_redirected, &response] { return !is_redirected && response != nullptr; };
+	auto did_download_file = [&is_redirected, &response] {
+		return !is_redirected && std::size(response.headers_fields) != 0;
+	};
 	auto did_use_all_certs = [this, &certificates_path_list_index] {
 		return certificates_path_list_index >= std::size(_certificates_path_list);
 	};
@@ -50,48 +50,58 @@ auto WebKit::downloadFile(DownloadableFile const &downloadable_file) -> bool
 	};
 
 	while (should_download()) {
-		updateCertificate(_certificates_path_list.at(certificates_path_list_index));
+		if (auto valid_certificate = updateCertificate(_certificates_path_list.at(certificates_path_list_index));
+			!valid_certificate) {
+			certificates_path_list_index++;
+			continue;
+		}
 
-		if (auto is_open = _file.open(downloadable_file.to_path, "w"); is_open) {
-			auto save_to_file = [&_file](const char *string, uint32_t length) { _file.write(string, length); };
+		if (auto is_open = _file_handle.open(file.to_path, "w"); is_open) {
+			auto save_to_file = [this](const char *string, uint32_t length) { _file_handle.write(string, length); };
 
-			HttpsRequest request(&corewifi, _certificate.data(), HTTP_GET, _url.data(), save_to_file);
-			response = request.send();
+			response = _network.sendRequest(_certificate.data(), _url.data(), save_to_file);
 
-			if (is_redirected = responseHasRedirectionURL(response); is_redirected) {
-				getRedirectionURL(response);
+			if (is_redirected = responseHasRedirectionUrl(response); is_redirected) {
+				getRedirectionUrl(response);
 				certificates_path_list_index = 0;
 			} else {
 				certificates_path_list_index++;
 			}
 
-			_file.close();
+			_file_handle.close();
+		} else {
+			break;
 		}
 	}
 
 	return did_download_file();
 }
 
-auto WebKit::responseHasRedirectionURL(HttpResponse *response) const -> bool
+auto WebKit::responseHasRedirectionUrl(HttpResponse const &response) const -> bool
 {
-	if (response == nullptr) {
+	if (std::size(response.headers_fields) == 0) {
 		return false;
 	}
 
-	const auto header_fields	 = response->get_headers_fields();
+	auto header_fields			 = response.headers_fields;
 	auto contains_location_field = [](const std::string *field) { return *field == "Location"; };
 
 	auto is_redirected = std::any_of(header_fields.begin(), header_fields.end(), contains_location_field);
 	return is_redirected;
 }
 
-void WebKit::getRedirectionURL(HttpResponse *response)
+void WebKit::getRedirectionUrl(HttpResponse const &response)
 {
-	const auto header_fields  = response->get_headers_fields();
-	auto containLocationField = [](const std::string *header_field) { return *header_field == "Location"; };
+	auto header_fields			 = response.headers_fields;
+	auto contains_location_field = [](const std::string *field) { return *field == "Location"; };
 
-	auto location_field_iterator = std::find_if(header_fields.begin(), header_fields.end(), containLocationField);
+	auto location_field_iterator = std::find_if(header_fields.begin(), header_fields.end(), contains_location_field);
 	auto location_field_index	 = std::distance(header_fields.begin(), location_field_iterator);
 
-	_url = *response->get_headers_values()[location_field_index];
+	_url = *response.headers_values[location_field_index];
+}
+
+auto WebKit::getUrl() const -> const std::string &
+{
+	return _url;
 }

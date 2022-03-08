@@ -15,6 +15,7 @@ target_sources(spike_lk_file_reception
 )
 
 target_link_libraries(spike_lk_file_reception
+	CoreWifi
 	WebKit
 )
 
