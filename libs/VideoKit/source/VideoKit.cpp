@@ -113,6 +113,29 @@ void VideoKit::drawText(const char *text, uint32_t x, uint32_t y, gfx::Color col
 	font.display(text, size, static_cast<int>(y / graphics::font_pixel_height), foreground_color, background_color);
 }
 
+auto VideoKit::drawImage(interface::File &file, CoreJPEG::Config *config) -> uint32_t
+{
+	auto img_size = _corejpeg.decodeImage(file);
+
+	auto c = _corejpeg.getConfig();
+	_coredma2d.transferImage(c.ImageWidth, c.ImageHeight, c.getWidthOffset());
+
+	if (config) {
+		*config = c;
+	}
+
+	return img_size;
+}
+
+auto VideoKit::drawImage(interface::File &file, CoreJPEG::Config &config) -> uint32_t
+{
+	auto img_size = _corejpeg.decodeImage(file);
+
+	_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, config.getWidthOffset());
+
+	return img_size;
+}
+
 void VideoKit::display()
 {
 	// wait for DMA2D to finish transfer
