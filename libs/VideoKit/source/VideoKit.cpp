@@ -11,6 +11,7 @@ using namespace leka;
 VideoKit::VideoKit(interface::STM32Hal &hal)
 	: _hal(hal),
 	  // peripherals
+	  _corejpegmode(_hal),
 	  _corejpeg(_hal, _corejpegmode),
 	  _coredma2d(_hal),
 	  // screen + dsi + ltdc

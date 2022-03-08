@@ -94,7 +94,7 @@ void CoreDMA2D::transferData(uintptr_t src, uintptr_t dst_address, uint32_t widt
 		log_error("DMA2D config layer error");
 		return;
 	}
-	if (HAL_DMA2D_Start_IT(&_hdma2d, src, dst_address, width, height) != HAL_OK) {
+	if (_hal.HAL_DMA2D_Start_IT(&_hdma2d, src, dst_address, width, height) != HAL_OK) {
 		log_error("DMA2D Start IT error");
 	}
 }

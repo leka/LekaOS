@@ -41,8 +41,6 @@ class STM32Hal
 
 	virtual auto HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef *PeriphClkInit) -> HAL_StatusTypeDef = 0;
 
-	virtual void HAL_LINKDMA(SDRAM_HandleTypeDef *hsdram, DMA_HandleTypeDef *hdma, DMA_HandleTypeDef dma_handle) = 0;
-
 	virtual void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init)				   = 0;
 	virtual void HAL_GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState) = 0;
 
@@ -74,12 +72,20 @@ class STM32Hal
 									uint32_t Param2) -> HAL_StatusTypeDef										  = 0;
 	virtual auto HAL_DSI_LongWrite(DSI_HandleTypeDef *hdsi, uint32_t ChannelID, uint32_t Mode, uint32_t NbParams,
 								   uint32_t Param1, uint8_t *ParametersTable) -> HAL_StatusTypeDef				  = 0;
+	virtual auto HAL_DSI_Refresh(DSI_HandleTypeDef *hdsi) -> HAL_StatusTypeDef									  = 0;
+	virtual auto HAL_DSI_ConfigAdaptedCommandMode(DSI_HandleTypeDef *hdsi, DSI_CmdCfgTypeDef *)
+		-> HAL_StatusTypeDef																				  = 0;
+	virtual auto HAL_DSI_ConfigCommand(DSI_HandleTypeDef *hdsi, DSI_LPCmdTypeDef *) -> HAL_StatusTypeDef	  = 0;
+	virtual auto HAL_DSI_ConfigFlowControl(DSI_HandleTypeDef *hdsi, uint32_t) -> HAL_StatusTypeDef			  = 0;
+	virtual auto HAL_DSI_ConfigPhyTimer(DSI_HandleTypeDef *hdsi, DSI_PHY_TimerTypeDef *) -> HAL_StatusTypeDef = 0;
+	virtual auto HAL_DSI_RegisterCallback(DSI_HandleTypeDef *, HAL_DSI_CallbackIDTypeDef, pDSI_CallbackTypeDef)
+		-> HAL_StatusTypeDef = 0;
 
-	virtual auto HAL_LTDC_StructInitFromVideoConfig(LTDC_HandleTypeDef *hltdc, DSI_VidCfgTypeDef *VidCfg)
-		-> HAL_StatusTypeDef												   = 0;
 	virtual auto HAL_LTDC_Init(LTDC_HandleTypeDef *hltdc) -> HAL_StatusTypeDef = 0;
 	virtual auto HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfgTypeDef *pLayerCfg, uint32_t LayerIdx)
-		-> HAL_StatusTypeDef = 0;
+		-> HAL_StatusTypeDef																			 = 0;
+	virtual auto HAL_LTDC_SetPitch(LTDC_HandleTypeDef *hltdc, uint32_t, uint32_t) -> HAL_StatusTypeDef	 = 0;
+	virtual auto HAL_LTDC_SetAddress(LTDC_HandleTypeDef *hltdc, uint32_t, uint32_t) -> HAL_StatusTypeDef = 0;
 
 	virtual auto HAL_JPEG_Init(JPEG_HandleTypeDef *hjpeg) -> HAL_StatusTypeDef							   = 0;
 	virtual auto HAL_JPEG_GetInfo(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *pInfo) -> HAL_StatusTypeDef = 0;
@@ -90,6 +96,15 @@ class STM32Hal
 											uint32_t InDataLength)	 = 0;
 	virtual void HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer,
 											 uint32_t OutDataLength) = 0;
+
+	virtual auto HAL_JPEG_RegisterInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_InfoReadyCallbackTypeDef)
+		-> HAL_StatusTypeDef = 0;
+	virtual auto HAL_JPEG_RegisterGetDataCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_GetDataCallbackTypeDef)
+		-> HAL_StatusTypeDef = 0;
+	virtual auto HAL_JPEG_RegisterDataReadyCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_DataReadyCallbackTypeDef)
+		-> HAL_StatusTypeDef = 0;
+	virtual auto HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *hjpeg, HAL_JPEG_CallbackIDTypeDef, pJPEG_CallbackTypeDef)
+		-> HAL_StatusTypeDef = 0;
 };
 
 }	// namespace leka::interface

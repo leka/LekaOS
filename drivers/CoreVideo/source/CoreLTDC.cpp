@@ -82,7 +82,7 @@ void CoreLTDC::initialize()
 	// initialization must be performed in a very specific order
 	_hal.HAL_LTDC_ConfigLayer(&_hltdc, &_layerConfig, 0);
 
-	HAL_LTDC_SetPitch(&_hltdc, 800, 0);
+	_hal.HAL_LTDC_SetPitch(&_hltdc, 800, 0);
 }
 
 void CoreLTDC::configurePeriphClock()
