@@ -63,6 +63,7 @@ class VideoKit
 	interface::STM32Hal &_hal;
 
 	// peripherals
+	CoreJPEGModeDMA _corejpegmode;
 	CoreJPEG _corejpeg;
 	CoreDMA2D _coredma2d;
 

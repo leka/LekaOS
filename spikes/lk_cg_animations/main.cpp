@@ -35,7 +35,8 @@ FATFileSystem fatfs("fs");
 
 CoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);
-CoreJPEG corejpeg(hal);
+CoreJPEGModeDMA corejpegmode;
+CoreJPEG corejpeg(hal, corejpegmode);
 CoreDMA2D coredma2d(hal);
 CoreLTDC coreltdc(hal);
 CoreDSI coredsi(hal, coreltdc);
