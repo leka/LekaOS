@@ -19,4 +19,14 @@ namespace battery {
 
 }	// namespace battery
 
+namespace monitoring {
+
+	constexpr uint16_t uuid = 0x7779;
+
+	namespace characteristic {
+		constexpr uint16_t charging_status = 0x6783;
+	}	// namespace characteristic
+
+}	// namespace monitoring
+
 }	// namespace leka::service

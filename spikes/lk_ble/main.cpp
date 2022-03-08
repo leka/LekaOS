@@ -6,6 +6,7 @@
 
 #include "BLEKit.h"
 #include "BLEServiceBattery.h"
+#include "BLEServiceMonitoring.h"
 
 #include "LogKit.h"
 
@@ -13,9 +14,12 @@ using namespace leka;
 using namespace std::chrono;
 
 auto level			 = uint8_t {0};
-auto service_battery = BLEServiceBattery {};
+auto charging_status = bool {false};
 
-auto services = std::to_array<interface::BLEService *>({&service_battery});
+auto service_battery	= BLEServiceBattery {};
+auto service_monitoring = BLEServiceMonitoring {};
+
+auto services = std::to_array<interface::BLEService *>({&service_battery, &service_monitoring});
 
 auto blekit = BLEKit {};
 
@@ -35,5 +39,8 @@ auto main() -> int
 
 		service_battery.setBatteryLevel(level);
 		++level;
+
+		charging_status = !charging_status;
+		service_monitoring.setChargingStatus(charging_status);
 	}
 }
