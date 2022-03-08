@@ -18,7 +18,7 @@ target_sources(LedKit
 		source/Fly.cpp
 		source/Happy.cpp
 		source/LedKit.cpp
-		source/LedKit.cpp
+		source/SadCry.cpp
 		source/Singing.cpp
 		source/Sleeping.cpp
 )
