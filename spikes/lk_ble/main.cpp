@@ -6,6 +6,7 @@
 
 #include "BLEKit.h"
 #include "BLEServiceBattery.h"
+#include "BLEServiceRobot.h"
 
 #include "LogKit.h"
 
@@ -14,8 +15,9 @@ using namespace std::chrono;
 
 auto level			 = uint8_t {0};
 auto service_battery = BLEServiceBattery {};
+auto service_robot	 = BLEServiceRobot {};
 
-auto services = std::to_array<interface::BLEService *>({&service_battery});
+auto services = std::to_array<interface::BLEService *>({&service_battery, &service_robot});
 
 auto blekit = BLEKit {};
 
@@ -32,6 +34,8 @@ auto main() -> int
 	while (true) {
 		log_info("Main thread running...");
 		rtos::ThisThread::sleep_for(5s);
+
+		log_info("Sleep set to %d", service_robot.getSleepValue());
 
 		service_battery.setBatteryLevel(level);
 		++level;

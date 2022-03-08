@@ -19,4 +19,14 @@ namespace battery {
 
 }	// namespace battery
 
+namespace robot {
+
+	constexpr uint16_t uuid = 0x8279;
+
+	namespace characteristic {
+		constexpr uint16_t sleep = 0x8376;
+	}	// namespace characteristic
+
+}	// namespace robot
+
 }	// namespace leka::service
