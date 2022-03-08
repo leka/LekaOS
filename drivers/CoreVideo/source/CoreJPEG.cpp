@@ -31,10 +31,11 @@ void CoreJPEG::initialize()
 
 auto CoreJPEG::getConfig() -> CoreJPEG::Config
 {
-	JPEG_ConfTypeDef config;
+	CoreJPEG::Config config;
 	_hal.HAL_JPEG_GetInfo(&_hjpeg, &config);
 
-	return CoreJPEG::Config {config};
+	config.initialized = true;
+	return config;
 }
 
 auto CoreJPEG::getHandle() -> JPEG_HandleTypeDef &

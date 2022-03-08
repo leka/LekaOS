@@ -95,11 +95,12 @@ auto main() -> int
 	screen.setFrameRateLimit(25);
 
 	gfx::Image image1("/fs/images/activity-color_quest.jpg");
+	gfx::Image image2("/fs/images/color-black.jpg");
+
 	screen.draw(image1);
 	screen.display();
 	rtos::ThisThread::sleep_for(2s);
 
-	gfx::Image image2("/fs/images/color-black.jpg");
 	screen.draw(image2);
 	screen.display();
 	rtos::ThisThread::sleep_for(2s);
@@ -112,21 +113,19 @@ auto main() -> int
 
 	while (true) {
 		while (!video_joie.hasEnded()) {
-			progress_bar.width = video_joie.getProgress() * lcd::dimension::width;
-
 			screen.draw(video_joie);
-			screen.draw(progress_bar_bg);
-			screen.draw(progress_bar);
+
+			video_joie.nextFrame();
+
 			screen.display();
 		}
 		video_joie.restart();
 
 		while (!video_perplex.hasEnded()) {
-			int w = video_perplex.getProgress() * lcd::dimension::width;
-
 			screen.draw(video_perplex);
-			screen.drawRectangle(0, 460, 800, 20, {250, 190, 230});
-			screen.drawRectangle(0, 460, w, 20, {185, 20, 230});
+
+			video_perplex.nextFrame();
+
 			screen.display();
 		}
 		video_perplex.restart();
