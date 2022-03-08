@@ -4,12 +4,12 @@
 
 #pragma once
 
-#include "LKComponentHandler.h"
+#include "interface/ComponentHandler.h"
 #include "stm32f7xx_hal.h"
 
 namespace leka::interface {
 
-class DMA2DBase : public LKComponentHandler<DMA2D_HandleTypeDef>
+class DMA2DBase : public ComponentHandler<DMA2D_HandleTypeDef>
 {
   public:
 	virtual ~DMA2DBase() = default;

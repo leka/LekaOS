@@ -4,12 +4,12 @@
 
 #pragma once
 
-#include "LKComponentHandler.h"
+#include "interface/ComponentHandler.h"
 #include "stm32f7xx_hal.h"
 
 namespace leka::interface {
 
-class DSIBase : public LKComponentHandler<DSI_HandleTypeDef>
+class DSIBase : public ComponentHandler<DSI_HandleTypeDef>
 {
   public:
 	virtual ~DSIBase() = default;

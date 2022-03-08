@@ -1,5 +1,5 @@
-#ifndef _LEKA_OS_LIB_LKVIDEOKIT_H_
-#define _LEKA_OS_LIB_LKVIDEOKIT_H_
+#ifndef _LEKA_OS_LIB_VIDEOKIT_H_
+#define _LEKA_OS_LIB_VIDEOKIT_H_
 
 #include <chrono>
 
@@ -16,10 +16,10 @@
 
 namespace leka {
 
-class LKVideoKit
+class VideoKit
 {
   public:
-	LKVideoKit();
+	VideoKit();
 
 	void clear();
 	void display();
@@ -43,4 +43,4 @@ class LKVideoKit
 
 }	// namespace leka
 
-#endif	 // _LEKA_OS_LIB_LKVIDEOKIT_H_
+#endif	 // _LEKA_OS_LIB_VIDEOKIT_H_

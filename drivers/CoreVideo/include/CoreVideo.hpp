@@ -38,7 +38,6 @@ class CoreVideo
 	void displayVideo(interface::File &file);
 	void displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
 					 CGColor background = CGColor::white);
-
 	void display();
 
   private:

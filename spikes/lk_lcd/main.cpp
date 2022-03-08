@@ -23,9 +23,9 @@
 #include "FATFileSystem.h"
 #include "FileManagerKit.h"
 #include "HelloWorld.h"
-#include "LKVideoKit.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
+#include "VideoKit.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -54,7 +54,7 @@ CoreFont corefont(pixel);
 CoreGraphics coregraphics(coredma2d);
 CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
-LKVideoKit screen;
+VideoKit screen;
 
 auto images = std::to_array({"/fs/images/activity-color_quest.jpg", "/fs/images/color-black.jpg"});
 auto videos = std::to_array({"/fs/videos/animation-joy.avi", "/fs/videos/animation-idle.avi"});

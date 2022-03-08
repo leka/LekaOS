@@ -4,12 +4,12 @@
 
 #pragma once
 
-#include "LKComponentHandler.h"
+#include "interface/ComponentHandler.h"
 #include "stm32f7xx_hal.h"
 
 namespace leka::interface {
 
-class LTDCBase : public LKComponentHandler<LTDC_HandleTypeDef>
+class LTDCBase : public ComponentHandler<LTDC_HandleTypeDef>
 {
   public:
 	virtual ~LTDCBase()		  = default;

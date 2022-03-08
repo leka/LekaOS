@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "LKComponentHandler.h"
+#include "interface/ComponentHandler.h"
 #include "interface/drivers/STM32Hal.h"
 #include "interface/platform/File.h"
 #include "stm32f7xx_hal.h"
@@ -12,7 +12,7 @@
 
 namespace leka::interface {
 
-class JPEGBase : public LKComponentHandler<JPEG_HandleTypeDef>
+class JPEGBase : public ComponentHandler<JPEG_HandleTypeDef>
 {
   public:
 	~JPEGBase() = default;

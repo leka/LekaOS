@@ -4,7 +4,7 @@
 namespace leka {
 
 template <typename T>
-class LKComponentHandler
+class ComponentHandler
 {
   public:
 	virtual auto getHandle() -> T &;
@@ -14,7 +14,7 @@ class LKComponentHandler
 };
 
 template <typename T>
-auto LKComponentHandler<T>::getHandle() -> T &
+auto ComponentHandler<T>::getHandle() -> T &
 {
 	return _handle;
 }
