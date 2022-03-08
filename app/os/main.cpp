@@ -149,7 +149,11 @@ namespace motors {
 
 }	// namespace motors
 
-auto videokit	 = VideoKit {};
+auto hal	  = CoreSTM32Hal {};
+auto videokit = VideoKit {hal};
+
+VideoKit_DeclareIRQHandlers(videokit);
+
 auto behaviorkit = BehaviorKit {videokit, leds::kit, motors::left::motor, motors::right::motor};
 
 namespace command {

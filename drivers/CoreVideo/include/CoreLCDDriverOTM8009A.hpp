@@ -10,7 +10,6 @@
 #include "interface/LCDDriver.hpp"
 
 namespace leka {
-
 // ? OTM8009A LCD driver datasheet available at:
 // ? http://www.orientdisplay.com/pdf/OTM8009A.pdf
 
@@ -206,6 +205,13 @@ namespace lcd::otm8009a {
 
 	}	// namespace set_address
 
+	namespace tearing_effect {
+		constexpr uint8_t off			 = 0x34;
+		constexpr uint8_t on			 = 0x35;
+		constexpr uint8_t write_scanline = 0x44;
+		constexpr uint8_t read_scanline	 = 0x45;
+	}	// namespace tearing_effect
+
 	namespace register_data {
 
 		constexpr uint8_t long01[] = {0x80, 0x09, 0x01, 0xFF};
@@ -325,9 +331,6 @@ namespace lcd::otm8009a {
 
 // #define OTM8009A_CMD_PLTAR 0x30 // Partial area command (4 parameters)
 
-// #define OTM8009A_CMD_TEOFF 0x34 // Tearing Effect Line Off command : command with no parameter
-// #define OTM8009A_CMD_TEEON 0x35 // Tearing Effect Line On command : command with 1 parameter 'TELOM'
-
 // // Parameter TELOM : Tearing Effect Line Output Mode : possible values
 // #define OTM8009A_TEEON_TELOM_VBLANKING_INFO_ONLY		  0x00
 // #define OTM8009A_TEEON_TELOM_VBLANKING_AND_HBLANKING_INFO 0x01
@@ -339,6 +342,3 @@ namespace lcd::otm8009a {
 
 // #define OTM8009A_CMD_RAMWRC 0x3C // Memory write continue command
 // #define OTM8009A_CMD_RAMRDC 0x3E // Memory read continue command
-
-// #define OTM8009A_CMD_WRTESCN 0x44 // Write Tearing Effect Scan line command
-// #define OTM8009A_CMD_RDSCNL	 0x45 // Read  Tearing Effect Scan line command
