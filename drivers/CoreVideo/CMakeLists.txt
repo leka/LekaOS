@@ -16,6 +16,7 @@ target_sources(CoreVideo
 		source/CoreFont.cpp
 		source/CoreGraphics.cpp
 		source/CoreJPEG.cpp
+		source/CoreJPEGMode.cpp
 		source/CoreLTDC.cpp
 		source/CoreDSI.cpp
 		source/CoreLCD.cpp

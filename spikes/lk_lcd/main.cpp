@@ -31,6 +31,7 @@ using namespace std::chrono;
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
+auto file = FileManagerKit::File {};
 
 CoreLL corell;
 CGPixel pixel(corell);
@@ -43,12 +44,11 @@ CoreGraphics coregraphics(coredma2d);
 CoreFont corefont(pixel);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 CoreLCD corelcd(coreotm);
-CoreJPEG corejpeg(hal, coredma2d);
+CoreJPEG corejpeg(hal, std::make_unique<CoreJPEGDMAMode>());
 CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
-auto file = FileManagerKit::File {};
-
-auto image_names = std::to_array({"/fs/assets/images/Leka/logo.jpg", "/fs/assets/images/Leka/emotion-happy.jpg"});
+auto images = std::to_array({"/fs/images/activity-color_quest.jpg", "/fs/images/color-black.jpg"});
+auto videos = std::to_array({"/fs/videos/animation-joy.avi", "/fs/videos/animation-idle.avi"});
 
 extern "C" {
 void DMA2D_IRQHandler(void)
@@ -60,28 +60,21 @@ void LTDC_IRQHandler(void)
 {
 	HAL_LTDC_IRQHandler(&coreltdc.getHandle());
 }
+
+void JPEG_IRQHandler(void)
+{
+	HAL_JPEG_IRQHandler(&corejpeg.getHandle());
 }
 
-void registerCallbacks()
+void DMA2_Stream0_IRQHandler(void)
 {
-	HAL_JPEG_RegisterInfoReadyCallback(
-		corejpeg.getHandlePointer(),
-		[](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) { corejpeg.onInfoReadyCallback(hjpeg, info); });
+	HAL_DMA_IRQHandler(corejpeg.getHandle().hdmain);
+}
 
-	HAL_JPEG_RegisterGetDataCallback(corejpeg.getHandlePointer(), [](JPEG_HandleTypeDef *hjpeg, uint32_t size) {
-		corejpeg.onDataAvailableCallback(hjpeg, size);
-	});
-
-	HAL_JPEG_RegisterDataReadyCallback(corejpeg.getHandlePointer(),
-									   [](JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t size) {
-										   corejpeg.onDataReadyCallback(hjpeg, pDataOut, size);
-									   });
-
-	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_DECODE_CPLT_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { corejpeg.onDecodeCompleteCallback(hjpeg); });
-
-	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_ERROR_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { corejpeg.onErrorCallback(hjpeg); });
+void DMA2_Stream1_IRQHandler(void)
+{
+	HAL_DMA_IRQHandler(corejpeg.getHandle().hdmaout);
+}
 }
 
 void initializeSD()
@@ -105,7 +98,6 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(2s);
 
 	corevideo.initialize();
-	registerCallbacks();
 
 	initializeSD();
 
@@ -148,16 +140,21 @@ auto main() -> int
 		log_info("A message from your board %s --> \"%s\" at %is", MBED_CONF_APP_TARGET_NAME, hello.world,
 				 int(t.count() / 1000));
 
-		rtos::ThisThread::sleep_for(1s);
-
-		corevideo.setBrightness(0.9F);
-		corevideo.turnOn();
-		for (const auto &image_name: image_names) {
+		for (const auto &image_name: images) {
 			if (file.open(image_name)) {
-				log_info("File opened");
-				corevideo.displayImage(&file);
+				log_info("open");
+				corevideo.displayImage(file);
+				corevideo.turnOn();
 				file.close();
-				rtos::ThisThread::sleep_for(1s);
+				rtos::ThisThread::sleep_for(2s);
+			}
+		}
+
+		for (const auto &video_name: videos) {
+			if (file.open(video_name)) {
+				corevideo.displayVideo(file);
+				file.close();
+				rtos::ThisThread::sleep_for(2s);
 			}
 		}
 
