@@ -25,7 +25,10 @@ using namespace std::chrono;
 auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
 auto fatfs			= FATFileSystem {"fs"};
 
-auto videokit = VideoKit {};
+auto hal = CoreSTM32Hal {};
+
+auto videokit = VideoKit {hal};
+VideoKit_DeclareIRQHandlers(videokit);
 
 auto corespi_belt		   = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
 auto corespi_ears		   = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};

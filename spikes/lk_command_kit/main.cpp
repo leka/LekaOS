@@ -69,7 +69,9 @@ auto right = CoreMotor {internal::right::dir_1, internal::right::dir_2, internal
 
 }	// namespace motor
 
-auto videokit = VideoKit {};
+auto hal	  = CoreSTM32Hal {};
+auto videokit = VideoKit {hal};
+VideoKit_DeclareIRQHandlers(videokit);
 
 auto behaviorkit = BehaviorKit {videokit, ledkit, motor::left, motor::right};
 

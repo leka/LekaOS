@@ -17,9 +17,10 @@ CoreLTDC::CoreLTDC(interface::STM32Hal &hal) : _hal(hal)
 	_hltdc.LayerCfg->ImageHeight = lcd::dimension::height;
 
 	// Timing and synchronization
-	_hltdc.Init.HorizontalSync	   = (lcd::property::HSA - 1);
-	_hltdc.Init.AccumulatedHBP	   = (lcd::property::HSA + lcd::property::HBP - 1);
-	_hltdc.Init.AccumulatedActiveW = (lcd::dimension::width + lcd::property::HSA + lcd::property::HBP - 1);
+	_hltdc.Init.HorizontalSync = (lcd::property::HSA - 1);
+	_hltdc.Init.AccumulatedHBP = (lcd::property::HSA + lcd::property::HBP - 1);
+	_hltdc.Init.AccumulatedActiveW =
+		(lcd::dimension::width / dsi::refresh_columns_count + lcd::property::HSA + lcd::property::HBP - 1);
 	_hltdc.Init.TotalWidth = (lcd::dimension::width + lcd::property::HSA + lcd::property::HBP + lcd::property::HFP - 1);
 
 	_hltdc.Init.VerticalSync	   = (lcd::property::VSA - 1);
@@ -28,15 +29,15 @@ CoreLTDC::CoreLTDC(interface::STM32Hal &hal) : _hal(hal)
 	_hltdc.Init.TotalHeigh =
 		(lcd::dimension::height + lcd::property::VSA + lcd::property::VBP + lcd::property::VFP - 1);
 
-	// Background values
+	// Background color
 	_hltdc.Init.Backcolor.Blue	= 0;
 	_hltdc.Init.Backcolor.Green = 0;
 	_hltdc.Init.Backcolor.Red	= 0;
 
 	// Polarity
-	_hltdc.Init.HSPolarity = LTDC_HSPOLARITY_AH;
-	_hltdc.Init.VSPolarity = LTDC_VSPOLARITY_AH;
-	_hltdc.Init.DEPolarity = LTDC_DEPOLARITY_AH;
+	_hltdc.Init.HSPolarity = LTDC_HSPOLARITY_AL;
+	_hltdc.Init.VSPolarity = LTDC_VSPOLARITY_AL;
+	_hltdc.Init.DEPolarity = LTDC_DEPOLARITY_AL;
 	_hltdc.Init.PCPolarity = LTDC_PCPOLARITY_IPC;
 
 	// Layer config
@@ -65,7 +66,10 @@ CoreLTDC::CoreLTDC(interface::STM32Hal &hal) : _hal(hal)
 
 void CoreLTDC::initialize()
 {
-	/** @brief NVIC configuration for LTDC interrupt that is now enabled */
+	__HAL_RCC_LTDC_CLK_ENABLE();
+	__HAL_RCC_LTDC_FORCE_RESET();
+	__HAL_RCC_LTDC_RELEASE_RESET();
+
 	_hal.HAL_NVIC_SetPriority(LTDC_IRQn, 3, 0);
 	_hal.HAL_NVIC_EnableIRQ(LTDC_IRQn);
 
@@ -75,11 +79,8 @@ void CoreLTDC::initialize()
 	// This part **must not** be moved to the constructor as LCD
 	// initialization must be performed in a very specific order
 	_hal.HAL_LTDC_Init(&_hltdc);
-
-	// Initialize LTDC layer
-	// This part **must not** be moved to the constructor as LCD
-	// initialization must be performed in a very specific order
-	_hal.HAL_LTDC_ConfigLayer(&_hltdc, &_layerConfig, 1);
+	_hal.HAL_LTDC_ConfigLayer(&_hltdc, &_layerConfig, 0);
+	_hal.HAL_LTDC_SetPitch(&_hltdc, lcd::dimension::width, 0);
 }
 
 void CoreLTDC::configurePeriphClock()
@@ -104,9 +105,4 @@ void CoreLTDC::configurePeriphClock()
 auto CoreLTDC::getHandle() -> LTDC_HandleTypeDef &
 {
 	return _hltdc;
-}
-
-auto CoreLTDC::getLayerConfig() const -> LTDC_LayerCfgTypeDef
-{
-	return _layerConfig;
 }

@@ -60,8 +60,6 @@ auto serialnumberkit = SerialNumberKit {mcu};
 auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
 auto fatfs			= FATFileSystem {"fs"};
 
-auto videokit = VideoKit {};
-
 auto corespi_belt		   = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
 auto corespi_ears		   = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
 auto ears				   = CoreLED<LedKit::kNumberOfLedsEars> {corespi_ears};
@@ -81,8 +79,6 @@ auto motor_right_speed = CorePwm {MOTOR_RIGHT_PWM};
 auto motor_left	 = CoreMotor {motor_left_dir_1, motor_left_dir_2, motor_left_speed};
 auto motor_right = CoreMotor {motor_right_dir_2, motor_right_dir_1, motor_right_speed};
 
-auto behaviorkit = BehaviorKit {videokit, ledkit, motor_left, motor_right};
-
 auto charge_input = mbed::InterruptIn {PinName::BATTERY_CHARGE_STATUS};
 auto battery	  = leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_input};
 
@@ -90,6 +86,12 @@ auto coreqspi		  = CoreQSPI();
 auto coreflashmanager = CoreFlashManagerIS25LP016D(coreqspi);
 auto coreflash		  = CoreFlashIS25LP016D(coreqspi, coreflashmanager);
 auto firmwarekit	  = FirmwareKit(coreflash);
+
+auto hal	  = CoreSTM32Hal {};
+auto videokit = VideoKit {hal};
+VideoKit_DeclareIRQHandlers(videokit);
+
+auto behaviorkit = BehaviorKit {videokit, ledkit, motor_left, motor_right};
 
 namespace command {
 

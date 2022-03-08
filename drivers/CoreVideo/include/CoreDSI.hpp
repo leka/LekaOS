@@ -4,29 +4,50 @@
 
 #pragma once
 
+#include <array>
+
 #include "interface/DSI.hpp"
+#include "interface/LTDC.hpp"
 #include "interface/drivers/STM32Hal.h"
+#include "internal/corevideo_config.h"
 
 namespace leka {
 
 class CoreDSI : public interface::DSIBase
 {
   public:
-	explicit CoreDSI(interface::STM32Hal &hal);
+	explicit CoreDSI(interface::STM32Hal &hal, interface::LTDCBase &ltdc);
 
 	void initialize() final;
-	void start() final;
 	void reset() final;
+	void refresh() final;
 
-	[[nodiscard]] auto getHandle() const -> DSI_HandleTypeDef;
-	[[nodiscard]] auto getConfig() -> DSI_VidCfgTypeDef final;
+	void enableLPCmd() final;
+	void disableLPCmd() final;
+
+	void enableTearingEffectReporting() final;
+
+	[[nodiscard]] auto getHandle() -> DSI_HandleTypeDef & final;
+
+	auto isReady() const -> bool final;
+
+	auto refreshDone() -> bool final;
 
 	void write(const uint8_t *data, uint32_t size) final;
 
   private:
 	interface::STM32Hal &_hal;
-	DSI_HandleTypeDef _hdsi {};
-	DSI_VidCfgTypeDef _config {};
+	interface::LTDCBase &_ltdc;
+
+	DSI_HandleTypeDef _hdsi;
+	DSI_CmdCfgTypeDef _cmdconf;
+	DSI_LPCmdTypeDef _lpcmd;
+
+	std::array<std::array<uint8_t, 4>, dsi::refresh_columns_count> _columns;
+	int _current_column = 0;
+
+	bool _sync_on_TE   = false;
+	bool _refresh_done = true;
 };
 
 }	// namespace leka

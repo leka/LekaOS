@@ -7,11 +7,12 @@
 
 #pragma once
 
+#include "interface/ComponentHandler.h"
 #include "stm32f7xx_hal.h"
 
 namespace leka::interface {
 
-class SDRAM
+class SDRAM : public ComponentHandler<SDRAM_HandleTypeDef>
 {
   public:
 	virtual void setupSDRAMConfig()								= 0;

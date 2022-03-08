@@ -22,7 +22,7 @@ FileSystemKit::File::File(const char *path, const char *mode)
 
 auto FileSystemKit::File::open(const char *path, const char *mode) -> bool
 {
-	_file.reset(std::fopen(path, mode));
+	_file.reset(fopen(path, mode));
 	return is_open();
 }
 

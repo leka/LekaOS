@@ -16,12 +16,12 @@ target_sources(CoreVideo
 		source/CoreFont.cpp
 		source/CoreGraphics.cpp
 		source/CoreJPEG.cpp
+		source/CoreJPEGMode.cpp
 		source/CoreLTDC.cpp
 		source/CoreDSI.cpp
 		source/CoreLCD.cpp
 		source/CoreLCDDriverOTM8009A.cpp
 		source/CoreSDRAM.cpp
-		source/CoreVideo.cpp
 		external/source/st_jpeg_utils.cpp
 )
 
@@ -31,6 +31,7 @@ target_link_libraries(CoreVideo
 		CoreLL
 		CoreSTM32Hal
 		FileSystemKit
+		LogKit
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
@@ -47,7 +48,6 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/CoreLTDC_test.cpp
 		tests/CoreLCDDriverOTM8009A_test.cpp
 		tests/CoreSDRAM_test.cpp
-		tests/CoreVideo_test.cpp
 	)
 
 endif()
