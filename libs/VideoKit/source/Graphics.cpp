@@ -35,7 +35,19 @@ void Rectangle::draw(VideoKit &screen)
 	screen.drawRectangle(x, y, width, height, color);
 }
 
-// --- gfx::Image -------------------------------------
+// --- gfx::Text ----------------------------------------
+
+Text::Text(const char *text, uint32_t posx, uint32_t posy, Color col, Color bg_col)
+	: string(std::move(text)), x(posx), y(posy), color(std::move(col)), bg(std::move(bg_col))
+{
+}
+
+void Text::draw(VideoKit &screen)
+{
+	screen.drawText(string, x, y, color, bg);
+}
+
+// --- gfx::Image ---------------------------------------
 Image::Image(const char *path)
 {
 	_file.open(path);
@@ -79,6 +91,11 @@ void Video::nextFrame()
 	}
 }
 
+auto Video::getTime() -> int64_t
+{
+	return (rtos::Kernel::Clock::now() - _start_time).count();
+}
+
 auto Video::getProgress() -> float
 {
 	auto progress = static_cast<float>(_frame_offset) / static_cast<float>(_file.size());
@@ -97,6 +114,7 @@ void Video::restart()
 	_frame_offset = 0;
 	_frame_index  = 0;
 	_ended		  = false;
+	_start_time	  = rtos::Kernel::Clock::now();
 	nextFrame();
 }
 

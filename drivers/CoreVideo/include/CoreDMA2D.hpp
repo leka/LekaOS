@@ -29,6 +29,7 @@ class CoreDMA2D : public interface::DMA2DBase
 
 	auto getHandle() -> DMA2D_HandleTypeDef & final;
 	void setHandle(const DMA2D_HandleTypeDef &hdma2d) { _hdma2d = hdma2d; }
+	auto isBusy() -> bool final;
 
   private:
 	DMA2D_HandleTypeDef _hdma2d {};

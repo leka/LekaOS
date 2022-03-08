@@ -8,6 +8,7 @@ class ComponentHandler
 {
   public:
 	virtual auto getHandle() -> T &;
+	virtual auto isBusy() -> bool;
 
   protected:
 	T _handle;
@@ -17,6 +18,12 @@ template <typename T>
 auto ComponentHandler<T>::getHandle() -> T &
 {
 	return _handle;
+}
+
+template <typename T>
+auto ComponentHandler<T>::isBusy() -> bool
+{
+	return _handle.State != 1;	 // 0x01 == READY_STATE
 }
 
 }	// namespace leka

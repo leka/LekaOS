@@ -116,15 +116,15 @@ void VideoKit::drawText(const char *text, uint32_t x, uint32_t y, gfx::Color col
 void VideoKit::display()
 {
 	// wait for DMA2D to finish transfer
-	while (_coredma2d.getHandle().State != HAL_DMA2D_STATE_READY)
+	while (_coredma2d.isBusy())
 		;
 
 	refresh();
 	tick();
 
-	// wait for DSI to finish refresh before starting the new frame
-	// while (_coredsi.isBusy())
-	;
+	// wait for DSI to finish transfer
+	while (_coredsi.isBusy())
+		;
 }
 
 void VideoKit::refresh()

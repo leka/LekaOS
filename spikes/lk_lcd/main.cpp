@@ -70,6 +70,13 @@ void initializeSD()
 	fatfs.mount(&sd_blockdevice);
 }
 
+void formatTime(char *buffer, int64_t time)
+{
+	int ds	= (time / 1000);
+	int dms = (time / 1000.f - ds) * 100;
+	sprintf(buffer, "%02d:%02d,%02d", ds / 60, ds % 60, dms);
+}
+
 auto main() -> int
 {
 	HelloWorld hello;
@@ -107,11 +114,16 @@ auto main() -> int
 	gfx::Rectangle progress_bar_bg(0, 460, 800, 20, {190, 250, 230});
 	gfx::Rectangle progress_bar(0, 460, 0, 20, {20, 240, 165});
 
+	char buff[128];
+
 	while (true) {
 		while (!video_joie.hasEnded()) {
 			screen.draw(video_joie);
 
 			video_joie.nextFrame();
+
+			formatTime(buff, video_joie.getTime());
+			screen.drawText(buff, 20, 460, {250, 60, 150});
 
 			screen.display();
 		}
@@ -122,14 +134,11 @@ auto main() -> int
 
 			video_perplex.nextFrame();
 
-			screen.drawText("#Bonjour je suis Leka~0123456789", 50, 50, {140, 200, 200});
+			formatTime(buff, video_perplex.getTime());
+			screen.drawText(buff, 20, 460, {60, 200, 150});
 
 			screen.display();
 		}
 		video_perplex.restart();
 	}
-
-	leka::logger::set_sink_function([](const char *str, size_t size) {
-		// corevideo.displayText(str, size, line, foreground, CGColor::white);
-	});
 }

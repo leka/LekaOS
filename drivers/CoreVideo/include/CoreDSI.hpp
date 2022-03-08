@@ -31,6 +31,8 @@ class CoreDSI : public interface::DSIBase
 
 	auto isBusy() -> bool final;
 
+	auto refreshDone() -> bool final;
+
 	void write(const uint8_t *data, uint32_t size) final;
 
   private:

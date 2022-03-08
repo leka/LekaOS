@@ -228,6 +228,10 @@ auto CoreDSI::isBusy() -> bool
 {
 	return _hdsi.State == HAL_DSI_STATE_BUSY || !_refresh_done;
 }
+auto CoreDSI::refreshDone() -> bool
+{
+	return !_refresh_done;
+}
 
 void CoreDSI::write(const uint8_t *data, uint32_t size)
 {
