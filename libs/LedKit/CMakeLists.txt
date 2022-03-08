@@ -15,6 +15,7 @@ target_sources(LedKit
 		source/AfraidBlue.cpp
 		source/AfraidRed.cpp
 		source/AfraidRedBlue.cpp
+		source/Amazed.cpp
 		source/Angry.cpp
 		source/AngryShort.cpp
 		source/Bubbles.cpp
