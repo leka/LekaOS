@@ -38,6 +38,8 @@ class FileSystemKit
 		void rewind() final;
 		auto size() -> size_t final;
 
+		auto clear() -> bool final;
+
 		[[nodiscard]] auto is_open() const -> bool final;
 
 	  private:

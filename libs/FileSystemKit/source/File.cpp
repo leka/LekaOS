@@ -102,3 +102,17 @@ auto FileSystemKit::File::is_open() const -> bool
 {
 	return _file != nullptr;
 }
+
+auto FileSystemKit::File::clear() -> bool
+{
+	if (_file == nullptr) {
+		return false;
+	}
+
+	auto size_file = size();
+
+	for (int i = 0; i < size_file; i++) {
+		std::fputc(0, _file.get());
+	}
+	return true;
+}

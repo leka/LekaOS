@@ -34,6 +34,8 @@ struct File {
 
 	virtual auto size() -> size_t = 0;
 
+	virtual auto clear() -> bool = 0;
+
 	[[nodiscard]] virtual auto is_open() const -> bool = 0;
 };
 

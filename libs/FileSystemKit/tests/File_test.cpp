@@ -441,3 +441,42 @@ TEST_F(FileTest, seek)
 	ASSERT_EQ(3, bytes_read);
 	ASSERT_EQ(expected_data, output_data);
 }
+
+TEST_F(FileTest, clearNoFile)
+{
+	auto clear = file.clear();
+
+	ASSERT_FALSE(clear);
+}
+
+TEST_F(FileTest, clearEmptyFile)
+{
+	file.open(tempFilename, "w");
+
+	auto clear = file.clear();
+
+	ASSERT_TRUE(clear);
+}
+
+TEST_F(FileTest, clearWrittenFileThenRead)
+{
+	auto input_data	   = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	 // "abcdef"
+	auto output_data   = std::array<uint8_t, 6> {};
+	auto expected_data = std::array<uint8_t, 6> {};
+
+	file.open(tempFilename, "w+");
+
+	auto bytes_written = file.write(input_data);
+
+	ASSERT_EQ(std::size(input_data), bytes_written);
+
+	auto clear = file.clear();
+
+	ASSERT_TRUE(clear);
+
+	file.rewind();
+	auto bytes_read = file.read(output_data);
+
+	ASSERT_EQ(std::size(input_data), bytes_read);
+	ASSERT_EQ(expected_data, output_data);
+}
