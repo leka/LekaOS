@@ -30,6 +30,7 @@ target_sources(LedKit
 		source/SadCry.cpp
 		source/Singing.cpp
 		source/Sleeping.cpp
+		source/WakeUp.cpp
 )
 
 target_link_libraries(LedKit
