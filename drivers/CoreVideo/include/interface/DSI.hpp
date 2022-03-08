@@ -4,11 +4,12 @@
 
 #pragma once
 
+#include "LKComponentHandler.h"
 #include "stm32f7xx_hal.h"
 
 namespace leka::interface {
 
-class DSIBase
+class DSIBase : public LKComponentHandler<DSI_HandleTypeDef>
 {
   public:
 	virtual ~DSIBase() = default;
@@ -21,8 +22,6 @@ class DSIBase
 	virtual void disableLPCmd() = 0;
 
 	virtual void enableTearingEffectReporting() = 0;
-
-	virtual auto getHandle() -> DSI_HandleTypeDef & = 0;
 
 	virtual auto isBusy() -> bool = 0;
 

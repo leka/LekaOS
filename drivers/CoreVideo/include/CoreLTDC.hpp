@@ -22,7 +22,7 @@ class CoreLTDC : public interface::LTDCBase
 	interface::STM32Hal &_hal;
 
 	LTDC_HandleTypeDef _hltdc {};
-	LTDC_LayerCfgTypeDef _layerConfig {};
+	LTDC_LayerCfgTypeDef _layerConfig;
 
 	void configurePeriphClock();
 };

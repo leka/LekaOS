@@ -5,6 +5,7 @@
 #pragma once
 
 #include "interface/DMA2D.hpp"
+#include "interface/drivers/STM32Hal.h"
 #include "internal/corevideo_config.h"
 
 namespace leka {
