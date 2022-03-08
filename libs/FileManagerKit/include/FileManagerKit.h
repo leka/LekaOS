@@ -55,6 +55,8 @@ struct File : public interface::File, public mbed::NonCopyable<File> {
 
   private:
 	std::unique_ptr<FILE, decltype(&fclose)> _file {nullptr, &fclose};
+	uint32_t _size;
+	bool _size_changed;
 };
 
 }	// namespace leka::FileManagerKit

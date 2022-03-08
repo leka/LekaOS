@@ -31,7 +31,7 @@ struct File {
 	virtual auto read(char *buffer, uint32_t size) -> size_t	  = 0;
 	virtual auto write(const char *data, uint32_t size) -> size_t = 0;
 
-	virtual void seek(size_t pos, int origin) = 0;
+	virtual void seek(size_t pos, int origin = SEEK_SET) = 0;
 
 	virtual void rewind() = 0;
 

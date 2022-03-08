@@ -47,11 +47,6 @@ Image::Image(const char *path)
 	_file.open(path);
 }
 
-Image::~Image()
-{
-	_file.close();
-}
-
 void Image::draw(VideoKit &screen)
 {
 	_file.seek(0);
@@ -63,11 +58,6 @@ Video::Video(const char *path)
 {
 	_file.open(path);
 	restart();
-}
-
-Video::~Video()
-{
-	_file.close();
 }
 
 void Video::nextFrame()
@@ -113,7 +103,7 @@ void Video::draw(VideoKit &screen)
 {
 	// get configuration on first frame
 	if (!_config.initialized) {
-		screen.fillConfig(_file, &_config);
+		screen.fillJPEGConfig(_file, &_config);
 		restart();
 	}
 

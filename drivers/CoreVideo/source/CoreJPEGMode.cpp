@@ -152,7 +152,6 @@ auto CoreJPEGModeDMA::decodeImage(JPEG_HandleTypeDef *hjpeg, interface::File &fi
 	// read file and fill input buffers
 	for (auto &buffer: _input_buffers) {
 		buffer.datasize = file.read(buffer.data, jpeg::input_chunk_size);
-		// if (file.read(buffer.data, jpeg::input_chunk_size, &buffer.datasize) == FR_OK) {
 		if (buffer.datasize > 0) {
 			buffer.state = Buffer::State::Full;
 		}
@@ -179,7 +178,6 @@ void CoreJPEGModeDMA::decoderInputHandler(JPEG_HandleTypeDef *hjpeg, interface::
 
 	if (write_buffer.state == Buffer::State::Empty) {
 		write_buffer.datasize = file.read(write_buffer.data, jpeg::input_chunk_size);
-		// if (file.read(write_buffer.data, jpeg::input_chunk_size, &write_buffer.datasize))
 		if (write_buffer.datasize > 0) {
 			write_buffer.state = Buffer::State::Full;
 		} else

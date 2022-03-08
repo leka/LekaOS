@@ -88,7 +88,7 @@ void VideoKit::setFrameRateLimit(uint32_t framerate)
 	_frametime = (1000ms / framerate);
 }
 
-void VideoKit::fillConfig(interface::File &file, JPEGConfig *config)
+void VideoKit::fillJPEGConfig(interface::File &file, JPEGConfig *config)
 {
 	_corejpeg.decodeImage(file);
 	auto c	= _corejpeg.getConfig();
@@ -154,6 +154,10 @@ void VideoKit::display()
 	// wait for DSI to finish transfer
 	while (_coredsi.isBusy())
 		;
+
+	// wait for DSI to finish refresh, better quality but way slower
+	// while (_coredsi.refreshDone())
+	//	;
 }
 
 void VideoKit::refresh()

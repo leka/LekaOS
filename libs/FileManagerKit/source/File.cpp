@@ -8,6 +8,7 @@
 #include <span>
 
 #include "FileManagerKit.h"
+#include "stm32f7xx_hal.h"
 
 using namespace leka::FileManagerKit;
 
@@ -31,7 +32,8 @@ File::File(const std::filesystem::path &path, const char *mode)
 
 auto File::open(const char *path, const char *mode) -> bool
 {
-	_file.reset(std::fopen(path, mode));
+	_file.reset(fopen(path, mode));
+	_size_changed = true;
 	return is_open();
 }
 
@@ -77,6 +79,7 @@ auto File::read(uint8_t *buffer, uint32_t size) -> size_t
 
 auto File::write(const uint8_t *data, uint32_t size) -> size_t
 {
+	_size_changed = true;
 	return std::fwrite(data, sizeof(uint8_t), size, _file.get());
 }
 
@@ -106,11 +109,18 @@ auto File::size() -> size_t
 		return 0;
 	}
 
-	std::fseek(_file.get(), 0, SEEK_END);
-	auto size = std::ftell(_file.get());
-	std::fseek(_file.get(), 0, SEEK_SET);
+	if (!_size_changed) {
+		return _size;
+	}
 
-	return size;
+	_size_changed = false;
+
+	auto pos = std::ftell(_file.get());
+	std::fseek(_file.get(), 0, SEEK_END);
+	_size = std::ftell(_file.get());
+	std::fseek(_file.get(), pos, SEEK_SET);
+
+	return _size;
 }
 
 auto File::is_open() const -> bool

@@ -17,6 +17,7 @@
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLTDC.hpp"
 #include "CoreSTM32Hal.h"
+#include "FileManagerKit.h"
 #include "Graphics.h"
 
 using namespace std::chrono_literals;
@@ -47,7 +48,7 @@ class VideoKit
 
 	void setFrameRateLimit(uint32_t framerate);
 
-	void fillConfig(interface::File &file, JPEGConfig *config);
+	void fillJPEGConfig(interface::File &file, JPEGConfig *config);
 
 	void clear(gfx::Color color = gfx::Color::White);
 

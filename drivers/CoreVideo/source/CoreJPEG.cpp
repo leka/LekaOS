@@ -88,8 +88,7 @@ auto CoreJPEG::findFrameOffset(interface::File &file, uint32_t offset) -> uint32
 		if (file_size <= (index + 1)) {
 			return 0;
 		}
-		file.seek(index, SEEK_SET);
-		// file.read(pattern_search_buffer.data(), pattern_search_buffer.size(), &read_size);
+		file.seek(index);
 		read_size = file.read(pattern_search_buffer.data(), pattern_search_buffer.size());
 
 		if (read_size != 0) {
