@@ -4,20 +4,26 @@
 
 #pragma once
 
+#include "interface/ComponentHandler.h"
 #include "stm32f7xx_hal.h"
 
 namespace leka::interface {
 
-class DSIBase
+class DSIBase : public ComponentHandler<DSI_HandleTypeDef>
 {
   public:
 	virtual ~DSIBase() = default;
 
 	virtual void initialize() = 0;
-	virtual void start()	  = 0;
 	virtual void reset()	  = 0;
+	virtual void refresh()	  = 0;
 
-	virtual auto getConfig() -> DSI_VidCfgTypeDef = 0;
+	virtual void enableLPCmd()	= 0;
+	virtual void disableLPCmd() = 0;
+
+	virtual void enableTearingEffectReporting() = 0;
+
+	virtual auto refreshDone() -> bool = 0;
 
 	virtual void write(const uint8_t *data, uint32_t size) = 0;
 };

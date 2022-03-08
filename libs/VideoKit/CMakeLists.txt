@@ -11,6 +11,7 @@ target_include_directories(VideoKit
 
 target_sources(VideoKit
 	PRIVATE
+		source/Graphics.cpp
 		source/VideoKit.cpp
 )
 
@@ -18,6 +19,7 @@ target_link_libraries(VideoKit
 	CoreLL
 	CoreSTM32Hal
 	CoreVideo
+	FileSystemKit
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "interface/DSI.hpp"
 #include "interface/LTDC.hpp"
 #include "interface/drivers/STM32Hal.h"
 
@@ -17,14 +16,13 @@ class CoreLTDC : public interface::LTDCBase
 
 	void initialize() final;
 
-	[[nodiscard]] auto getHandle() -> LTDC_HandleTypeDef &;
-	[[nodiscard]] auto getLayerConfig() const -> LTDC_LayerCfgTypeDef;
+	[[nodiscard]] auto getHandle() -> LTDC_HandleTypeDef & final;
 
   private:
 	interface::STM32Hal &_hal;
 
 	LTDC_HandleTypeDef _hltdc {};
-	LTDC_LayerCfgTypeDef _layerConfig {};
+	LTDC_LayerCfgTypeDef _layerConfig;
 
 	void configurePeriphClock();
 };
