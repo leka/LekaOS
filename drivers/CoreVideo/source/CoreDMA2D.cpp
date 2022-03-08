@@ -77,6 +77,9 @@ void CoreDMA2D::transferData(uintptr_t src, uintptr_t dst_address, uint32_t widt
 	while (_hdma2d.State != HAL_DMA2D_STATE_READY)
 		;
 
+	if (width == 0) width = 1;
+	_hdma2d.Init.OutputOffset = lcd::dimension::width - width;	 // TODO(@yann): Check if needed
+
 	if (_hal.HAL_DMA2D_Init(&_hdma2d) != HAL_OK) {
 		log_error("DMA2D Init error");
 		return;
@@ -94,7 +97,6 @@ void CoreDMA2D::transferImage(uint32_t width, uint32_t height, uint32_t width_of
 {
 	_hdma2d.Init.Mode				= DMA2D_M2M_PFC;
 	_hdma2d.LayerCfg[1].InputOffset = width_offset;
-	_hdma2d.Init.OutputOffset		= lcd::dimension::width - width;
 
 	auto x = (lcd::dimension::width - width) / 2;
 	auto y = (lcd::dimension::height - height) / 2;
@@ -109,16 +111,12 @@ auto CoreDMA2D::getHandle() -> DMA2D_HandleTypeDef &
 
 void CoreDMA2D::transferDrawing(uintptr_t first_pixel_address, uint32_t width, uint32_t height, uint32_t color)
 {
-	_hdma2d.Init.Mode		  = DMA2D_R2M;
-	_hdma2d.Init.OutputOffset = lcd::dimension::width - width;
-
+	_hdma2d.Init.Mode = DMA2D_R2M;
 	transferData(color, first_pixel_address, width, height);
 }
 
 void CoreDMA2D::fillRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
 {
-	_handle.Init.Mode		  = DMA2D_R2M;
-	_handle.Init.OutputOffset = lcd::dimension::width - w;
-
+	_hdma2d.Init.Mode = DMA2D_R2M;
 	transferData(color, getPositionAddress(x, y), w, h);
 }
