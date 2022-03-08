@@ -103,7 +103,7 @@ class Video : public Drawable
 	void draw(VideoKit &screen) final;
 
 	FileSystemKit::File _file;
-	CoreJPEG::Config _config;
+	JPEGConfig _config;
 
 	uint32_t _frame_index  = 0;
 	uint32_t _frame_offset = 0;

@@ -160,16 +160,9 @@ auto CoreJPEGModeDMA::decodeImage(JPEG_HandleTypeDef *hjpeg, interface::File &fi
 
 	// loop until decode process ends
 	bool process_ended = false;
-	unsigned in_time   = 0;
-	unsigned out_time  = 0;
 	do {
-		unsigned start = HAL_GetTick();
 		decoderInputHandler(hjpeg, file);
-		in_time += HAL_GetTick() - start;
-
-		start		  = HAL_GetTick();
 		process_ended = decoderOutputHandler(hjpeg);
-		out_time += HAL_GetTick() - start;
 	} while (!process_ended);
 
 	return _image_size;

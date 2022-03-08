@@ -29,9 +29,9 @@ void CoreJPEG::initialize()
 	HAL_NVIC_EnableIRQ(JPEG_IRQn);
 }
 
-auto CoreJPEG::getConfig() -> CoreJPEG::Config
+auto CoreJPEG::getConfig() -> JPEGConfig
 {
-	CoreJPEG::Config config;
+	JPEGConfig config;
 	_hal.HAL_JPEG_GetInfo(&_hjpeg, &config);
 
 	config.initialized = true;
@@ -106,7 +106,7 @@ auto CoreJPEG::findFrameOffset(interface::File &file, uint32_t offset) -> uint32
 	return 0;
 }
 
-auto CoreJPEG::Config::getWidthOffset() -> uint32_t
+auto JPEGConfig::getWidthOffset() -> uint32_t
 {
 	uint32_t width_offset = 0;
 
