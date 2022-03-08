@@ -1,5 +1,5 @@
-#ifndef _LEKA_OS_DRIVER_COMPONENT_HANDLER_H
-#define _LEKA_OS_DRIVER_COMPONENT_HANDLER_H
+#ifndef _LEKA_OS_DRIVER_COMPONENT_HANDLER_H_
+#define _LEKA_OS_DRIVER_COMPONENT_HANDLER_H_
 
 namespace leka {
 
@@ -21,4 +21,4 @@ auto ComponentHandler<T>::getHandle() -> T &
 
 }	// namespace leka
 
-#endif	 // _LEKA_OS_DRIVER_COMPONENT_HANDLER_H
+#endif	 // _LEKA_OS_DRIVER_COMPONENT_HANDLER_H_

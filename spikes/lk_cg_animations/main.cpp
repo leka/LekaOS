@@ -36,7 +36,7 @@ FATFileSystem fatfs("fs");
 
 CoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);
-CoreJPEG corejpeg(hal, std::make_unique<CoreJPEGDMAMode>());
+CoreJPEG corejpeg(hal);
 CoreDMA2D coredma2d(hal);
 CoreLTDC coreltdc(hal);
 CoreDSI coredsi(hal, coreltdc);

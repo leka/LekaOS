@@ -11,7 +11,7 @@ using namespace leka;
 VideoKit::VideoKit()
 	: _coresdram(_hal),
 	  // peripherals
-	  _corejpeg(_hal, std::make_unique<CoreJPEGDMAMode>()),
+	  _corejpeg(_hal),
 	  _coredma2d(_hal),
 	  // screen + dsi + ltdc
 	  _coreltdc(_hal),

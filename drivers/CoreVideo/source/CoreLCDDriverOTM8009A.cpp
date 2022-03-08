@@ -9,8 +9,8 @@
 #include "CoreLCDDriverOTM8009A.hpp"
 
 using namespace leka;
-using namespace std::chrono_literals;
 using namespace lcd::otm8009a;
+using namespace std::chrono_literals;
 
 void CoreLCDDriverOTM8009A::turnOn()
 {
