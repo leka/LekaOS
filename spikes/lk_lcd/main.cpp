@@ -96,6 +96,9 @@ void initializeSD()
 
 auto main() -> int
 {
+	HelloWorld hello;
+	hello.start();
+
 	auto start = rtos::Kernel::Clock::now();
 
 	logger::init();
@@ -108,16 +111,13 @@ auto main() -> int
 
 	// corevideo.initialize();
 	screen.initialize();
-	memset((uint8_t *)lcd::frame_buffer_address, 0x5f, 800 * 480 * 4);
+	screen.setFrameRateLimit(25);
 
-	HelloWorld hello;
-	hello.start();
-
-	uint32_t y = 0;
-	uint32_t w = 1;
+	file.open(images[0]);
 	while (true) {
-		screen.clear(gfx::Color::Yellow);
-		screen.drawRectangle({std::min(800ul, ++w), 20, gfx::Color::Blue}, 0, std::min(400ul, ++y));
+		screen.clear(gfx::Color::White);
+		screen.drawImage(file);
+		screen.drawRectangle({400, 20, gfx::Color::Green}, 195, 400);
 		screen.display();
 	}
 
