@@ -42,8 +42,6 @@ class CoreSTM32Hal : public interface::STM32Hal
 
 	auto HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef *PeriphClkInit) -> HAL_StatusTypeDef final;
 
-	void HAL_LINKDMA(SDRAM_HandleTypeDef *hsdram, DMA_HandleTypeDef *hdma, DMA_HandleTypeDef dma_handle) final;
-
 	void HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init) final;
 	void HAL_GPIO_WritePin(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState) final;
 
@@ -70,16 +68,26 @@ class CoreSTM32Hal : public interface::STM32Hal
 	auto HAL_DSI_DeInit(DSI_HandleTypeDef *hdsi) -> HAL_StatusTypeDef final;
 	auto HAL_DSI_ConfigVideoMode(DSI_HandleTypeDef *hdsi, DSI_VidCfgTypeDef *VidCfg) -> HAL_StatusTypeDef final;
 	auto HAL_DSI_Start(DSI_HandleTypeDef *hdsi) -> HAL_StatusTypeDef final;
+	auto HAL_DSI_Refresh(DSI_HandleTypeDef *hdsi) -> HAL_StatusTypeDef final;
+	auto HAL_DSI_ConfigAdaptedCommandMode(DSI_HandleTypeDef *hdsi, DSI_CmdCfgTypeDef *CmdCfg)
+		-> HAL_StatusTypeDef final;
+	auto HAL_DSI_ConfigCommand(DSI_HandleTypeDef *hdsi, DSI_LPCmdTypeDef *LPCmd) -> HAL_StatusTypeDef final;
+	auto HAL_DSI_ConfigFlowControl(DSI_HandleTypeDef *hdsi, uint32_t FlowControl) -> HAL_StatusTypeDef final;
+	auto HAL_DSI_ConfigPhyTimer(DSI_HandleTypeDef *hdsi, DSI_PHY_TimerTypeDef *PhyTimers) -> HAL_StatusTypeDef final;
+
 	auto HAL_DSI_ShortWrite(DSI_HandleTypeDef *hdsi, uint32_t ChannelID, uint32_t Mode, uint32_t Param1,
 							uint32_t Param2) -> HAL_StatusTypeDef final;
 	auto HAL_DSI_LongWrite(DSI_HandleTypeDef *hdsi, uint32_t ChannelID, uint32_t Mode, uint32_t NbParams,
 						   uint32_t Param1, uint8_t *ParametersTable) -> HAL_StatusTypeDef final;
 
-	auto HAL_LTDC_StructInitFromVideoConfig(LTDC_HandleTypeDef *hltdc, DSI_VidCfgTypeDef *VidCfg)
-		-> HAL_StatusTypeDef final;
+	auto HAL_DSI_RegisterCallback(DSI_HandleTypeDef *hdsi, HAL_DSI_CallbackIDTypeDef CallbackID,
+								  pDSI_CallbackTypeDef pCallback) -> HAL_StatusTypeDef final;
+
 	auto HAL_LTDC_Init(LTDC_HandleTypeDef *hltdc) -> HAL_StatusTypeDef final;
 	auto HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfgTypeDef *pLayerCfg, uint32_t LayerIdx)
 		-> HAL_StatusTypeDef final;
+	auto HAL_LTDC_SetPitch(LTDC_HandleTypeDef *hltdc, uint32_t LinePitch, uint32_t LayerIdx) -> HAL_StatusTypeDef final;
+	auto HAL_LTDC_SetAddress(LTDC_HandleTypeDef *hltdc, uint32_t Address, uint32_t LayerIdx) -> HAL_StatusTypeDef final;
 
 	auto HAL_JPEG_Init(JPEG_HandleTypeDef *hjpeg) -> HAL_StatusTypeDef final;
 	auto HAL_JPEG_GetInfo(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *pInfo) -> HAL_StatusTypeDef final;
@@ -88,6 +96,15 @@ class CoreSTM32Hal : public interface::STM32Hal
 	void HAL_JPEG_ConfigInputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewInputBuffer, uint32_t InDataLength) final;
 	void HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer,
 									 uint32_t OutDataLength) final;
+
+	auto HAL_JPEG_RegisterInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_InfoReadyCallbackTypeDef pCallback)
+		-> HAL_StatusTypeDef final;
+	auto HAL_JPEG_RegisterGetDataCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_GetDataCallbackTypeDef pCallback)
+		-> HAL_StatusTypeDef final;
+	auto HAL_JPEG_RegisterDataReadyCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_DataReadyCallbackTypeDef pCallback)
+		-> HAL_StatusTypeDef final;
+	auto HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *hjpeg, HAL_JPEG_CallbackIDTypeDef CallbackID,
+								   pJPEG_CallbackTypeDef pCallback) -> HAL_StatusTypeDef final;
 };
 
 }	// namespace leka

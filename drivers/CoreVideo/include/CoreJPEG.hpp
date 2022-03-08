@@ -6,63 +6,44 @@
 
 #include <array>
 #include <cstdint>
+#include <memory>
 
+#include "CoreJPEGMode.h"
 #include "external/st_jpeg_utils.h"
-#include "interface/DMA2D.hpp"
 #include "interface/JPEG.hpp"
 #include "interface/drivers/STM32Hal.h"
 #include "interface/platform/File.h"
 
 namespace leka {
 
+struct JPEGConfig : JPEG_ConfTypeDef {
+	bool initialized = false;
+	auto getWidthOffset() const -> uint32_t;
+};
+
 class CoreJPEG : public interface::JPEGBase
 {
   public:
-	CoreJPEG(interface::STM32Hal &hal, interface::DMA2DBase &dma2d);
+	CoreJPEG(interface::STM32Hal &hal, interface::JPEGMode &mode);
 
 	void initialize() final;
 
-	auto getConfig() -> JPEG_ConfTypeDef final;
-	auto getHandle() -> JPEG_HandleTypeDef final;
-	auto getHandlePointer() -> JPEG_HandleTypeDef * final;
+	auto getHandle() -> JPEG_HandleTypeDef & final;
 
-	auto getWidthOffset() -> uint32_t final;
+	void registerCallbacks() final;
 
-	void displayImage(interface::File *file) final;
-	// TODO(@yann): Update Return type with something else than HAL status
-	auto decodeImageWithPolling() -> HAL_StatusTypeDef final;
+	auto decodeImage(interface::File &file) -> uint32_t final;
 
-	void onErrorCallback(JPEG_HandleTypeDef *hjpeg) final;
-	void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) final;
+	auto getConfig() -> JPEGConfig;
 
-	void onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size) final;
-	void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size) final;
-
-	void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) final;
+	static auto findFrameOffset(interface::File &file, uint32_t offset) -> uint32_t;
 
   private:
-	struct JPEGDataBuffer {
-		uint8_t *data;
-		uint32_t size;
-	};
-
-	std::array<uint8_t, leka::jpeg::mcu::output_data_buffer_size> _mcu_data_output_buffer {0};
-	std::array<uint8_t, leka::jpeg::input_data_buffer_size> _jpeg_data_output_buffer {0};
-
-	// TODO(@yann): do we really need this struct?
-	JPEGDataBuffer _jpeg_input_buffer = {_jpeg_data_output_buffer.data(), 0};
-
-	JPEG_HandleTypeDef _hjpeg {};
-	JPEG_ConfTypeDef _config {};
 	interface::STM32Hal &_hal;
-	interface::DMA2DBase &_dma2d;
-	interface::File *_file;
 
-	JPEG_YCbCrToRGB_Convert_Function pConvert_Function {};
+	interface::JPEGMode &_mode;
 
-	uint32_t _mcu_number		= 0;
-	uint32_t _mcu_block_index	= 0;
-	uint32_t _input_file_offset = 0;
+	JPEG_HandleTypeDef _hjpeg;
 };
 
 }	// namespace leka

@@ -9,8 +9,8 @@
 #include "CoreLCDDriverOTM8009A.hpp"
 
 using namespace leka;
-using namespace std::chrono_literals;
 using namespace lcd::otm8009a;
+using namespace std::chrono_literals;
 
 void CoreLCDDriverOTM8009A::turnOn()
 {
@@ -29,6 +29,8 @@ void CoreLCDDriverOTM8009A::setBrightness(float value)
 
 void CoreLCDDriverOTM8009A::initialize()
 {
+	_dsi.enableLPCmd();
+
 	_backlight.period(0.01F);	// Set PWM at 1/(0.01 seconds) = 100Hz
 
 	// Enable CMD2 to access vendor specific commands
@@ -255,6 +257,8 @@ void CoreLCDDriverOTM8009A::initialize()
 	// Send Command GRAM memory write (no parameters) : this initiates frame write via other DSI commands sent by
 	// DSI host from LTDC incoming pixels in video mode
 	_dsi.write(register_data::short45, std::size(register_data::short45));
+
+	_dsi.disableLPCmd();
 }
 
 void CoreLCDDriverOTM8009A::setLandscapeOrientation()
@@ -264,11 +268,11 @@ void CoreLCDDriverOTM8009A::setLandscapeOrientation()
 
 	auto settings = []() constexpr
 	{
-		// settings |= std::byte {1 << 7};	  // Set vertical symmetry - needed
-		// settings |= std::byte {1 << 5};	  // Set landscape mode - needed
+		// settings |= std::byte {1 << 5};	// Set landscape mode - needed
+		// settings |= std::byte {1 << 6};	// Set horizontal symmetry - needed
+		// settings |= std::byte {1 << 4};	// Set reverse refresh top to bottom - needed
 
-		// settings |= std::byte {1 << 6};	// Set horizontal symmetry - not needed
-		// settings |= std::byte {1 << 4};	// Set reverse refresh top to bottom - not needed
+		// settings |= std::byte {1 << 7};	// Set vertical symmetry - not needed
 		// settings |= std::byte {1 << 3};	// Set use BGR (Blue Green Red) - not needed
 
 		std::byte _settings {0x00};
@@ -281,9 +285,14 @@ void CoreLCDDriverOTM8009A::setLandscapeOrientation()
 		{
 			_settings |= std::byte {1 << 6};
 		};
+		auto set_reverse_refresh = [&]() constexpr
+		{
+			_settings |= std::byte {1 << 4};
+		};
 
 		set_landscape_mode();
 		set_horizontal_symmetry();
+		set_reverse_refresh();
 
 		return std::to_integer<uint8_t>(_settings);
 	};

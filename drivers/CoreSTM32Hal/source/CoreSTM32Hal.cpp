@@ -102,11 +102,6 @@ auto CoreSTM32Hal::HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef *PeriphClk
 	return ::HAL_RCCEx_PeriphCLKConfig(PeriphClkInit);
 }
 
-void CoreSTM32Hal::HAL_LINKDMA(SDRAM_HandleTypeDef *hsdram, DMA_HandleTypeDef *hdma, DMA_HandleTypeDef dma_handle)
-{
-	__HAL_LINKDMA(hsdram, hdma, dma_handle);
-}
-
 void CoreSTM32Hal::HAL_GPIO_Init(GPIO_TypeDef *GPIOx, GPIO_InitTypeDef *GPIO_Init)
 {
 	::HAL_GPIO_Init(GPIOx, GPIO_Init);
@@ -200,6 +195,38 @@ auto CoreSTM32Hal::HAL_DSI_Start(DSI_HandleTypeDef *hdsi) -> HAL_StatusTypeDef
 	return ::HAL_DSI_Start(hdsi);
 }
 
+auto CoreSTM32Hal::HAL_DSI_Refresh(DSI_HandleTypeDef *hdsi) -> HAL_StatusTypeDef
+{
+	return ::HAL_DSI_Refresh(hdsi);
+}
+
+auto CoreSTM32Hal::HAL_DSI_ConfigAdaptedCommandMode(DSI_HandleTypeDef *hdsi, DSI_CmdCfgTypeDef *CmdCfg)
+	-> HAL_StatusTypeDef
+{
+	return ::HAL_DSI_ConfigAdaptedCommandMode(hdsi, CmdCfg);
+}
+
+auto CoreSTM32Hal::HAL_DSI_ConfigCommand(DSI_HandleTypeDef *hdsi, DSI_LPCmdTypeDef *LPCmd) -> HAL_StatusTypeDef
+{
+	return ::HAL_DSI_ConfigCommand(hdsi, LPCmd);
+}
+
+auto CoreSTM32Hal::HAL_DSI_ConfigFlowControl(DSI_HandleTypeDef *hdsi, uint32_t FlowControl) -> HAL_StatusTypeDef
+{
+	return ::HAL_DSI_ConfigFlowControl(hdsi, FlowControl);
+}
+
+auto CoreSTM32Hal::HAL_DSI_ConfigPhyTimer(DSI_HandleTypeDef *hdsi, DSI_PHY_TimerTypeDef *PhyTimers) -> HAL_StatusTypeDef
+{
+	return ::HAL_DSI_ConfigPhyTimer(hdsi, PhyTimers);
+}
+
+auto CoreSTM32Hal::HAL_DSI_RegisterCallback(DSI_HandleTypeDef *hdsi, HAL_DSI_CallbackIDTypeDef id,
+											pDSI_CallbackTypeDef cb) -> HAL_StatusTypeDef
+{
+	return ::HAL_DSI_RegisterCallback(hdsi, id, cb);
+}
+
 auto CoreSTM32Hal::HAL_DSI_ShortWrite(DSI_HandleTypeDef *hdsi, uint32_t ChannelID, uint32_t Mode, uint32_t Param1,
 									  uint32_t Param2) -> HAL_StatusTypeDef
 {
@@ -212,12 +239,6 @@ auto CoreSTM32Hal::HAL_DSI_LongWrite(DSI_HandleTypeDef *hdsi, uint32_t ChannelID
 	return ::HAL_DSI_LongWrite(hdsi, ChannelID, Mode, NbParams, Param1, ParametersTable);
 }
 
-auto CoreSTM32Hal::HAL_LTDC_StructInitFromVideoConfig(LTDC_HandleTypeDef *hltdc, DSI_VidCfgTypeDef *VidCfg)
-	-> HAL_StatusTypeDef
-{
-	return ::HAL_LTDC_StructInitFromVideoConfig(hltdc, VidCfg);
-}
-
 auto CoreSTM32Hal::HAL_LTDC_Init(LTDC_HandleTypeDef *hltdc) -> HAL_StatusTypeDef
 {
 	return ::HAL_LTDC_Init(hltdc);
@@ -227,6 +248,18 @@ auto CoreSTM32Hal::HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfg
 	-> HAL_StatusTypeDef
 {
 	return ::HAL_LTDC_ConfigLayer(hltdc, pLayerCfg, LayerIdx);
+}
+
+auto CoreSTM32Hal::HAL_LTDC_SetPitch(LTDC_HandleTypeDef *hltdc, uint32_t LinePitch, uint32_t LayerIdx)
+	-> HAL_StatusTypeDef
+{
+	return ::HAL_LTDC_SetPitch(hltdc, LinePitch, LayerIdx);
+}
+
+auto CoreSTM32Hal::HAL_LTDC_SetAddress(LTDC_HandleTypeDef *hltdc, uint32_t Address, uint32_t LayerIdx)
+	-> HAL_StatusTypeDef
+{
+	return ::HAL_LTDC_SetAddress(hltdc, Address, LayerIdx);
 }
 
 auto CoreSTM32Hal::HAL_JPEG_Init(JPEG_HandleTypeDef *hjpeg) -> HAL_StatusTypeDef
@@ -251,6 +284,30 @@ void CoreSTM32Hal::HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_
 											   uint32_t OutDataLength)
 {
 	::HAL_JPEG_ConfigOutputBuffer(hjpeg, pNewOutputBuffer, OutDataLength);
+}
+
+auto CoreSTM32Hal::HAL_JPEG_RegisterInfoReadyCallback(JPEG_HandleTypeDef *hjpeg,
+													  pJPEG_InfoReadyCallbackTypeDef pCallback) -> HAL_StatusTypeDef
+{
+	return ::HAL_JPEG_RegisterInfoReadyCallback(hjpeg, pCallback);
+}
+
+auto CoreSTM32Hal::HAL_JPEG_RegisterGetDataCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_GetDataCallbackTypeDef pCallback)
+	-> HAL_StatusTypeDef
+{
+	return ::HAL_JPEG_RegisterGetDataCallback(hjpeg, pCallback);
+}
+
+auto CoreSTM32Hal::HAL_JPEG_RegisterDataReadyCallback(JPEG_HandleTypeDef *hjpeg,
+													  pJPEG_DataReadyCallbackTypeDef pCallback) -> HAL_StatusTypeDef
+{
+	return ::HAL_JPEG_RegisterDataReadyCallback(hjpeg, pCallback);
+}
+
+auto CoreSTM32Hal::HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *hjpeg, HAL_JPEG_CallbackIDTypeDef id,
+											 pJPEG_CallbackTypeDef cb) -> HAL_StatusTypeDef
+{
+	return ::HAL_JPEG_RegisterCallback(hjpeg, id, cb);
 }
 
 }	// namespace leka
