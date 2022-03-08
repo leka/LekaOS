@@ -21,6 +21,7 @@
 #include "LedKit.h"
 #include "LoadingGreen.h"
 #include "LoadingOrange.h"
+#include "LoadingRed.h"
 #include "LoadingYellow.h"
 #include "LogKit.h"
 #include "Sad.h"
@@ -52,6 +53,7 @@ led::animation::Fly animation_fly {ears, belt};
 led::animation::Happy animation_happy(ears, belt);
 led::animation::LoadingGreen animation_loading_green(ears, belt);
 led::animation::LoadingOrange animation_loading_orange(ears, belt);
+led::animation::LoadingRed animation_loading_red(ears, belt);
 led::animation::LoadingYellow animation_loading_yellow(ears, belt);
 led::animation::Sad animation_sad(ears, belt);
 led::animation::SadCry animation_sad_cry(ears, belt);
@@ -106,6 +108,9 @@ auto main() -> int
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.start(animation_loading_orange);
+		rtos::ThisThread::sleep_for(10s);
+
+		ledkit.start(animation_loading_red);
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.stop();
