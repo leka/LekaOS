@@ -109,7 +109,6 @@ auto main() -> int
 
 	initializeSD();
 
-	// corevideo.initialize();
 	screen.initialize();
 	screen.setFrameRateLimit(25);
 
@@ -125,35 +124,35 @@ auto main() -> int
 
 	gfx::Video video_perplex("/fs/videos/animation-idle.avi");
 	gfx::Video video_joie("/fs/videos/animation-joy.avi");
-	int w = 0;
+
+	gfx::Rectangle progress_bar_bg(0, 460, 800, 20, {190, 250, 230});
+	gfx::Rectangle progress_bar(0, 460, 0, 20, {20, 240, 165});
+
 	while (true) {
 		while (!video_joie.hasEnded()) {
-			w = video_joie.getProgress() * lcd::dimension::width;
+			progress_bar.width = video_joie.getProgress() * lcd::dimension::width;
 
 			screen.draw(video_joie);
-			screen.drawRectangle({800, 20, {250, 190, 230}}, 0, 460);
-			screen.drawRectangle({w, 20, {185, 20, 230}}, 0, 460);
+			screen.draw(progress_bar_bg);
+			screen.draw(progress_bar);
 			screen.display();
 		}
 		video_joie.restart();
 
 		while (!video_perplex.hasEnded()) {
-			w = video_perplex.getProgress() * lcd::dimension::width;
+			int w = video_perplex.getProgress() * lcd::dimension::width;
 
 			screen.draw(video_perplex);
-			screen.drawRectangle({800, 20, {250, 190, 230}}, 0, 460);
-			screen.drawRectangle({w, 20, {185, 20, 230}}, 0, 460);
+			screen.drawRectangle(0, 460, 800, 20, {250, 190, 230});
+			screen.drawRectangle(0, 460, w, 20, {185, 20, 230});
 			screen.display();
 		}
 		video_perplex.restart();
 	}
 
-	static auto line = 1;
-	// static CGColor foreground;
-	// static CGColor background = CGColor::white;
-
-	// leka::logger::set_sink_function(
-	// [](const char *str, size_t size) { corevideo.displayText(str, size, line, foreground, background); });
+	leka::logger::set_sink_function([](const char *str, size_t size) {
+		// corevideo.displayText(str, size, line, foreground, CGColor::white);
+	});
 
 	/*
 	for (int i = 1; i <= 10; i++) {
@@ -173,9 +172,9 @@ auto main() -> int
 		"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
 		"only one line of the screen.");
 
-	// coredsi.refresh();
-
 	rtos::ThisThread::sleep_for(1s);
+
+displayImage from videoKit :art: Reoarganize methods)
 	*/
 
 	leka::logger::set_sink_function(logger::internal::default_sink_function);

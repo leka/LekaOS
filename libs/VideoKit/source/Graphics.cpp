@@ -5,6 +5,7 @@
 using namespace leka;
 using namespace leka::gfx;
 
+// --- gfx::Color ---------------------------------------
 auto Color::toARGB8888() -> uint32_t
 {
 	return (a << 24) | (r << 16) | (g << 8) | (b << 0);
@@ -19,9 +20,28 @@ Color Color::Yellow	 = {0xff, 0xff, 0x00};
 Color Color::Cyan	 = {0x00, 0xff, 0xff};
 Color Color::Magenta = {0xff, 0x00, 0xff};
 
+// --- gfx::Rectangle -----------------------------------
+Rectangle::Rectangle(uint32_t w, uint32_t h, Color color) : Rectangle(0, 0, w, h, std::move(color)) {}
+
+Rectangle::Rectangle(uint32_t posx, uint32_t posy, uint32_t w, uint32_t h, Color col)
+	: x(posx), y(posy), width(w), height(h), color(std::move(col))
+{
+}
+
+void Rectangle::draw(VideoKit &screen)
+{
+	screen.getDMA2D().fillRect(x, y, width, height, color.toARGB8888());
+}
+
+// --- gfx::Image -------------------------------------
 Image::Image(const char *path)
 {
 	_file.open(path);
+}
+
+Image::~Image()
+{
+	_file.close();
 }
 
 void Image::draw(VideoKit &screen)
@@ -33,10 +53,21 @@ void Image::draw(VideoKit &screen)
 	screen.getDMA2D().transferImage(config.ImageWidth, config.ImageHeight, CoreJPEG::getWidthOffset(config));
 }
 
+// --- gfx::Video -------------------------------------
 Video::Video(const char *path)
 {
 	_file.open(path);
 	_frame_offset = CoreJPEG::findFrameOffset(_file, 0);
+}
+
+Video::~Video()
+{
+	_file.close();
+}
+
+auto Video::getProgress() -> float
+{
+	return (float(_frame_offset) / _file.size());
 }
 
 auto Video::hasEnded() -> bool
@@ -50,11 +81,6 @@ void Video::restart()
 	_frame_offset = CoreJPEG::findFrameOffset(_file, 0);
 	_frame_index  = 0;
 	_ended		  = false;
-}
-
-auto Video::getProgress() -> float
-{
-	return (float(_frame_offset) / _file.size());
 }
 
 void Video::draw(VideoKit &screen)
