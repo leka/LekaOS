@@ -48,6 +48,7 @@ class VideoKit
 
 	void clear(gfx::Color color = gfx::Color::White);
 
+	void draw(gfx::Drawable &drawable);
 	void drawRectangle(gfx::Rectangle rect, uint32_t x, uint32_t y);
 
 	// temporary
