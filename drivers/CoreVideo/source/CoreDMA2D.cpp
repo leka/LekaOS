@@ -66,7 +66,12 @@ void CoreDMA2D::setFrameBufferAddress(uintptr_t address)
 	_frame_buffer_address = address;
 }
 
-void CoreDMA2D::transferData(uintptr_t input, uintptr_t output, uint32_t width, uint32_t height)
+auto CoreDMA2D::getPositionAddress(uint32_t x, uint32_t y) -> uintptr_t
+{
+	return _frame_buffer_address + 4 * (x + y * lcd::dimension::width);
+}
+
+void CoreDMA2D::transferData(uintptr_t src, uintptr_t dst_address, uint32_t width, uint32_t height)
 {
 	if (_hal.HAL_DMA2D_Init(&_hdma2d) != HAL_OK) {
 		log_error("DMA2D Init error");
@@ -76,7 +81,7 @@ void CoreDMA2D::transferData(uintptr_t input, uintptr_t output, uint32_t width, 
 		log_error("DMA2D config layer error");
 		return;
 	}
-	if (HAL_DMA2D_Start_IT(&_hdma2d, input, output, width, height) != HAL_OK) {
+	if (HAL_DMA2D_Start_IT(&_hdma2d, src, dst_address, width, height) != HAL_OK) {
 		log_error("DMA2D Start IT error");
 	}
 }
@@ -87,7 +92,10 @@ void CoreDMA2D::transferImage(uint32_t width, uint32_t height, uint32_t width_of
 	_hdma2d.LayerCfg[1].InputOffset = width_offset;
 	_hdma2d.Init.OutputOffset		= lcd::dimension::width - width;
 
-	transferData(jpeg::decoded_buffer_address, _frame_buffer_address, width, height);
+	auto x = (lcd::dimension::width - width) / 2;
+	auto y = (lcd::dimension::height - height) / 2;
+
+	transferData(jpeg::decoded_buffer_address, getPositionAddress(x, y), width, height);
 }
 
 auto CoreDMA2D::getHandle() -> DMA2D_HandleTypeDef &
@@ -101,4 +109,12 @@ void CoreDMA2D::transferDrawing(uintptr_t first_pixel_address, uint32_t width, u
 	_hdma2d.Init.OutputOffset = lcd::dimension::width - width;
 
 	transferData(color, first_pixel_address, width, height);
+}
+
+void CoreDMA2D::fillRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
+{
+	_handle.Init.Mode		  = DMA2D_R2M;
+	_handle.Init.OutputOffset = lcd::dimension::width - w;
+
+	transferData(color, getPositionAddress(x, y), w, h);
 }
