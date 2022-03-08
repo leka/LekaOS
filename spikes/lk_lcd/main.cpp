@@ -1,11 +1,6 @@
 // Leka - LekaOS
-// Copyright 2020 APF France handicap
+// Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
-
-#include "drivers/BufferedSerial.h"
-#include "platform/Callback.h"
-#include "rtos/ThisThread.h"
-#include "rtos/Thread.h"
 
 #include "CoreSDRAM.hpp"
 #include "CoreSTM32Hal.h"
@@ -17,15 +12,14 @@
 #include "VideoKit.h"
 
 using namespace leka;
-using namespace std::chrono;
 
-SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
-FATFileSystem fatfs("fs");
+auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
+auto fatfs			= FATFileSystem {"fs"};
 
-CoreSTM32Hal hal;
-CoreSDRAM coresdram(hal);
+auto hal	   = CoreSTM32Hal {};
+auto coresdram = CoreSDRAM {hal};
 
-VideoKit screen(hal);
+auto screen = VideoKit {hal};
 VideoKit_DeclareIRQHandlers(screen);
 
 void initializeSD()
@@ -38,25 +32,14 @@ void initializeSD()
 	fatfs.mount(&sd_blockdevice);
 }
 
-void formatTime(char *buffer, int64_t time)
-{
-	int ds	= (time / 1000);
-	int dms = (time / 1000.f - ds) * 100;
-	sprintf(buffer, "%02d:%02d,%02d", ds / 60, ds % 60, dms);
-}
-
 auto main() -> int
 {
 	HelloWorld hello;
 	hello.start();
 
-	auto start = rtos::Kernel::Clock::now();
-
 	logger::init();
 
 	log_info("Hello, World!\n\n");
-
-	rtos::ThisThread::sleep_for(2s);
 
 	initializeSD();
 
@@ -65,43 +48,17 @@ auto main() -> int
 	screen.initialize();
 	screen.setFrameRateLimit(30);
 
-	gfx::Image image1("/fs/images/activity-color_quest.jpg");
-	gfx::Image image2("/fs/images/color-black.jpg");
-
-	screen.draw(image1);
-	screen.display();
-	rtos::ThisThread::sleep_for(2s);
-
-	screen.draw(image2);
-	screen.display();
-	rtos::ThisThread::sleep_for(2s);
-
-	gfx::Video video_perplex("/fs/videos/animation-perplexity.avi");
-	gfx::Video video_joie("/fs/videos/animation-joy.avi");
-
-	auto videos = std::to_array<gfx::Video *, 2>({&video_joie, &video_perplex});
-
-	gfx::Rectangle progress_bar_bg(0, 460, 800, 20, {190, 250, 230});
-	gfx::Rectangle progress_bar(0, 460, 0, 20, {20, 240, 165});
-
-	char buff[128];
+	auto video_names = std::to_array({"/fs/videos/animation-joy.avi", "/fs/videos/animation-perplexity.avi"});
 
 	while (true) {
-		for (auto *video_ptr: videos) {
-			auto &video = *video_ptr;
-			screen.resetCounters();
-			video.restart();
+		for (auto &name: video_names) {
+			auto video = gfx::Video {name};
+
 			while (!video.hasEnded()) {
 				screen.draw(video);
-
 				video.nextFrame();
-
-				formatTime(buff, video.getTime());
-				screen.drawText(buff, 20, 460, {250, 60, 150});
-
 				screen.display();
 			}
-			// screen.displayCounters();
 		}
 	}
 }
