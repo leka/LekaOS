@@ -66,7 +66,7 @@ void CoreDMA2D::setFrameBufferAddress(uintptr_t address)
 	_frame_buffer_address = address;
 }
 
-auto CoreDMA2D::getPositionAddress(uint32_t x, uint32_t y) -> uintptr_t
+auto CoreDMA2D::getPixelAddress(uint32_t x, uint32_t y) -> uintptr_t
 {
 	return _frame_buffer_address + 4 * (x + y * lcd::dimension::width);
 }
@@ -77,7 +77,8 @@ void CoreDMA2D::transferData(uintptr_t src, uintptr_t dst_address, uint32_t widt
 	while (_hdma2d.State != HAL_DMA2D_STATE_READY)
 		;
 
-	if (width == 0) width = 1;
+	if (width == 0) return;
+
 	_hdma2d.Init.OutputOffset = lcd::dimension::width - width;	 // TODO(@yann): Check if needed
 
 	if (_hal.HAL_DMA2D_Init(&_hdma2d) != HAL_OK) {
@@ -101,7 +102,7 @@ void CoreDMA2D::transferImage(uint32_t width, uint32_t height, uint32_t width_of
 	auto x = (lcd::dimension::width - width) / 2;
 	auto y = (lcd::dimension::height - height) / 2;
 
-	transferData(jpeg::decoded_buffer_address, getPositionAddress(x, y), width, height);
+	transferData(jpeg::decoded_buffer_address, getPixelAddress(x, y), width, height);
 }
 
 auto CoreDMA2D::getHandle() -> DMA2D_HandleTypeDef &
@@ -118,5 +119,10 @@ void CoreDMA2D::transferDrawing(uintptr_t first_pixel_address, uint32_t width, u
 void CoreDMA2D::fillRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_t color)
 {
 	_hdma2d.Init.Mode = DMA2D_R2M;
-	transferData(color, getPositionAddress(x, y), w, h);
+	transferData(color, getPixelAddress(x, y), w, h);
+}
+
+void CoreDMA2D::setPixel(uint32_t x, uint32_t y, uint32_t color)
+{
+	*((uintptr_t *)getPixelAddress(x, y)) = color;
 }

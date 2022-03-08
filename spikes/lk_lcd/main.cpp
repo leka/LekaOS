@@ -122,6 +122,8 @@ auto main() -> int
 
 			video_perplex.nextFrame();
 
+			screen.drawText("#Bonjour je suis Leka~0123456789", 50, 50, {140, 200, 200});
+
 			screen.display();
 		}
 		video_perplex.restart();

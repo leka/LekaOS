@@ -25,6 +25,8 @@ class DMA2DBase : public ComponentHandler<DMA2D_HandleTypeDef>
 	virtual auto getHandle() -> DMA2D_HandleTypeDef & = 0;
 
 	virtual void fillRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height, uint32_t color) = 0;
+
+	virtual void setPixel(uint32_t x, uint32_t y, uint32_t color) = 0;
 };
 
 }	// namespace leka::interface

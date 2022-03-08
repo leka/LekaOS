@@ -8,6 +8,7 @@
 
 #include "rtos/ThisThread.h"
 
+#include "CGFont.hpp"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
 #include "CoreJPEG.hpp"
@@ -50,6 +51,8 @@ class VideoKit
 	void draw(gfx::Drawable &drawable);
 
 	void drawRectangle(uint32_t x, uint32_t y, uint32_t w, uint32_t h, gfx::Color color);
+
+	void drawText(const char *text, uint32_t x, uint32_t y, gfx::Color color, gfx::Color bg = gfx::Color::Transparent);
 
 	void display();
 

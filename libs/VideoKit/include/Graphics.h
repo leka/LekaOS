@@ -20,8 +20,9 @@ struct Color {
 
 	auto toARGB8888() -> uint32_t;
 
-	static Color White;
+	static Color Transparent;
 	static Color Black;
+	static Color White;
 	static Color Red;
 	static Color Green;
 	static Color Blue;
