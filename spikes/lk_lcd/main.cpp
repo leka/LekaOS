@@ -7,13 +7,6 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
-#include "CoreDMA2D.hpp"
-#include "CoreDSI.hpp"
-#include "CoreJPEG.hpp"
-#include "CoreLCD.hpp"
-#include "CoreLCDDriverOTM8009A.hpp"
-#include "CoreLL.h"
-#include "CoreLTDC.hpp"
 #include "CoreSDRAM.hpp"
 #include "CoreSTM32Hal.h"
 #include "FATFileSystem.h"
@@ -28,9 +21,10 @@ using namespace std::chrono;
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
-auto file = FileManagerKit::File {};
 
-VideoKit screen;
+CoreSTM32Hal hal;
+CoreSDRAM coresdram(hal);
+VideoKit screen(hal);
 
 auto images = std::to_array({"/fs/images/activity-color_quest.jpg", "/fs/images/color-black.jpg"});
 auto videos = std::to_array({"/fs/videos/animation-joy.avi", "/fs/videos/animation-idle.avi"});
@@ -90,6 +84,8 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(2s);
 
 	initializeSD();
+
+	coresdram.initialize();
 
 	screen.initialize();
 	screen.setFrameRateLimit(25);
