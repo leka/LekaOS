@@ -28,9 +28,6 @@ CoreSDRAM coresdram(hal);
 VideoKit screen(hal);
 VideoKit_DeclareIRQHandlers(screen);
 
-auto images = std::to_array({"/fs/images/activity-color_quest.jpg", "/fs/images/color-black.jpg"});
-auto videos = std::to_array({"/fs/videos/animation-joy.avi", "/fs/videos/animation-idle.avi"});
-
 void initializeSD()
 {
 	constexpr auto default_sd_blockdevice_frequency = uint64_t {25'000'000};
@@ -66,7 +63,7 @@ auto main() -> int
 	coresdram.initialize();
 
 	screen.initialize();
-	screen.setFrameRateLimit(25);
+	screen.setFrameRateLimit(15);
 
 	gfx::Image image1("/fs/images/activity-color_quest.jpg");
 	gfx::Image image2("/fs/images/color-black.jpg");
@@ -82,34 +79,27 @@ auto main() -> int
 	gfx::Video video_perplex("/fs/videos/animation-perplexity.avi");
 	gfx::Video video_joie("/fs/videos/animation-joy.avi");
 
+	auto videos = std::to_array<gfx::Video *, 2>({&video_joie, &video_perplex});
+
 	gfx::Rectangle progress_bar_bg(0, 460, 800, 20, {190, 250, 230});
 	gfx::Rectangle progress_bar(0, 460, 0, 20, {20, 240, 165});
 
 	char buff[128];
 
 	while (true) {
-		while (!video_joie.hasEnded()) {
-			screen.draw(video_joie);
+		for (auto *video_ptr: videos) {
+			auto &video = *video_ptr;
+			video.restart();
+			while (!video.hasEnded()) {
+				screen.draw(video);
 
-			video_joie.nextFrame();
+				video.nextFrame();
 
-			formatTime(buff, video_joie.getTime());
-			screen.drawText(buff, 20, 460, {250, 60, 150});
+				formatTime(buff, video.getTime());
+				screen.drawText(buff, 20, 460, {250, 60, 150});
 
-			screen.display();
+				screen.display();
+			}
 		}
-		video_joie.restart();
-
-		while (!video_perplex.hasEnded()) {
-			screen.draw(video_perplex);
-
-			video_perplex.nextFrame();
-
-			formatTime(buff, video_perplex.getTime());
-			screen.drawText(buff, 20, 460, {60, 200, 150});
-
-			screen.display();
-		}
-		video_perplex.restart();
 	}
 }
