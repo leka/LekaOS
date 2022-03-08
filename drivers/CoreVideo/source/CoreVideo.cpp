@@ -2,11 +2,15 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "CoreVideo.hpp"
+#include <chrono>
 
+#include "rtos/ThisThread.h"
+
+#include "CoreVideo.hpp"
 #include "LogKit.h"
 
 using namespace leka;
+using namespace std::chrono_literals;
 
 CoreVideo::CoreVideo(interface::STM32Hal &hal, interface::SDRAM &coresdram, interface::DMA2DBase &coredma2d,
 					 interface::DSIBase &coredsi, interface::LTDCBase &coreltdc, interface::LCD &corelcd,
@@ -40,11 +44,31 @@ void CoreVideo::initialize()
 
 	_coresdram.initialize();
 
+	_coredsi.enableLPCmd();
 	_corelcd.initialize();
+	_coredsi.disableLPCmd();
+
+	_coredsi.enableTearingEffectReporting();
+
 	_corejpeg.initialize();
 	_coredma2d.initialize();
 
 	_corelcd.setBrightness(0.5F);
+
+	uint8_t pColLeft[]		  = {0x00, 0x00, 0x03, 0x20}; /*   0 -> 399 */
+	uint8_t pColRight[]		  = {0x01, 0x90, 0x03, 0x1F}; /* 400 -> 799 */
+	uint8_t pPage[]			  = {0x00, 0x00, 0x01, 0xDF}; /*   0 -> 479 */
+	uint8_t pScanCol[]		  = {0x02, 0x15};			  /* Scan @ 533 */
+	auto OTM8009A_CMD_CASET	  = 0x2A;
+	auto OTM8009A_CMD_PASET	  = 0x2B;
+	auto OTM8009A_CMD_WRTESCN = 0x44;
+
+	HAL_DSI_LongWrite(&_coredsi.getHandle(), 0, DSI_DCS_LONG_PKT_WRITE, 4, OTM8009A_CMD_CASET, pColLeft);
+	HAL_DSI_LongWrite(&_coredsi.getHandle(), 0, DSI_DCS_LONG_PKT_WRITE, 4, OTM8009A_CMD_PASET, pPage);
+
+	HAL_LTDC_SetPitch(&_coreltdc.getHandle(), 800, 0);
+
+	HAL_DSI_LongWrite(&_coredsi.getHandle(), 0, DSI_DCS_LONG_PKT_WRITE, 2, OTM8009A_CMD_WRTESCN, pScanCol);
 }
 
 void CoreVideo::turnOff()
@@ -79,6 +103,7 @@ void CoreVideo::displayImage(interface::File &file)
 	auto config = _corejpeg.getConfig();
 
 	_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, CoreJPEG::getWidthOffset(config));
+	_coredsi.refresh();
 }
 
 void CoreVideo::displayVideo(interface::File &file)
@@ -91,7 +116,7 @@ void CoreVideo::displayVideo(interface::File &file)
 	while (frame_offset != 0) {
 		file.seek(frame_offset, SEEK_SET);
 
-		auto start_time = HAL_GetTick();
+		auto start_time = rtos::Kernel::Clock::now();
 		frame_size		= _corejpeg.decodeImage(file);
 
 		// if first frame, get file info
@@ -100,15 +125,19 @@ void CoreVideo::displayVideo(interface::File &file)
 		frame_index += 1;
 
 		_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, CoreJPEG::getWidthOffset(config));
+		_coredsi.refresh();
 
 		// get next frame offset
 		frame_offset = CoreJPEG::findFrameOffset(file, frame_offset + frame_size + 4);
 
-		auto dt = HAL_GetTick() - start_time;
-		if (dt < 1000.f / 25.f) HAL_Delay(1000.f / 25.f - dt);
+		// temporaire
+		auto dt = rtos::Kernel::Clock::now() - start_time;
+		if (dt < 40ms) {
+			rtos::ThisThread::sleep_for(40ms - dt);
+		}
 
 		std::array<char, 32> buff;
-		sprintf(buff.data(), "%3lu ms = %5.2f fps", dt, 1000.f / dt);
+		sprintf(buff.data(), "%3lu ms = %5.2f fps", dt.count(), 1000.f / dt.count());
 		// displayText(buff, strlen(buff), 20);
 		log_info("%s", buff.data());
 	}

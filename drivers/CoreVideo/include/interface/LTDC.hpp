@@ -11,6 +11,7 @@ class LTDCBase
   public:
 	virtual ~LTDCBase()		  = default;
 	virtual void initialize() = 0;
+	virtual LTDC_HandleTypeDef &getHandle();
 };
 
 }	// namespace leka::interface

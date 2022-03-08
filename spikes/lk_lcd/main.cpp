@@ -61,6 +61,11 @@ void LTDC_IRQHandler(void)
 	HAL_LTDC_IRQHandler(&coreltdc.getHandle());
 }
 
+void DSI_IRQHandler(void)
+{
+	HAL_DSI_IRQHandler(&coredsi.getHandle());
+}
+
 void JPEG_IRQHandler(void)
 {
 	HAL_JPEG_IRQHandler(&corejpeg.getHandle());

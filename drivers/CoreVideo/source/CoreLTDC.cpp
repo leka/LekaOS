@@ -34,9 +34,9 @@ CoreLTDC::CoreLTDC(interface::STM32Hal &hal) : _hal(hal)
 	_hltdc.Init.Backcolor.Red	= 0;
 
 	// Polarity
-	_hltdc.Init.HSPolarity = LTDC_HSPOLARITY_AH;
-	_hltdc.Init.VSPolarity = LTDC_VSPOLARITY_AH;
-	_hltdc.Init.DEPolarity = LTDC_DEPOLARITY_AH;
+	_hltdc.Init.HSPolarity = LTDC_HSPOLARITY_AL;
+	_hltdc.Init.VSPolarity = LTDC_VSPOLARITY_AL;
+	_hltdc.Init.DEPolarity = LTDC_DEPOLARITY_AL;
 	_hltdc.Init.PCPolarity = LTDC_PCPOLARITY_IPC;
 
 	// Layer config

@@ -17,16 +17,26 @@ class CoreDSI : public interface::DSIBase
 	void initialize() final;
 	void start() final;
 	void reset() final;
+	void refresh() final;
 
-	[[nodiscard]] auto getHandle() const -> DSI_HandleTypeDef;
-	[[nodiscard]] auto getConfig() -> DSI_VidCfgTypeDef final;
+	auto getSyncProps() -> SyncProps final;
+
+	void enableLPCmd() final;
+	void disableLPCmd() final;
+
+	void enableTearingEffectReporting() final;
+
+	[[nodiscard]] auto getHandle() -> DSI_HandleTypeDef & final;
 
 	void write(const uint8_t *data, uint32_t size) final;
 
   private:
 	interface::STM32Hal &_hal;
-	DSI_HandleTypeDef _hdsi {};
-	DSI_VidCfgTypeDef _config {};
+	DSI_HandleTypeDef _hdsi;
+	DSI_CmdCfgTypeDef _cmdconf;
+	DSI_LPCmdTypeDef _lpcmd;
+
+	int _screen_sections = 1;
 };
 
 }	// namespace leka
