@@ -20,6 +20,7 @@
 #include "HelloWorld.h"
 #include "LedKit.h"
 #include "LoadingGreen.h"
+#include "LoadingYellow.h"
 #include "LogKit.h"
 #include "Sad.h"
 #include "SadCry.h"
@@ -40,8 +41,6 @@ auto animation_event_queue = events::EventQueue {};
 
 auto ledkit = LedKit {animation_thread, animation_event_queue, ears, belt};
 
-led::animation::LoadingGreen animation_loading_green(ears, belt);
-led::animation::Sad animation_sad(ears, belt);
 led::animation::AfraidBlue animation_afraid_blue(ears, belt);
 led::animation::AfraidRed animation_afraid_red(ears, belt);
 led::animation::Angry animation_angry(ears, belt);
@@ -50,6 +49,9 @@ led::animation::Bubbles animation_bubbles(ears, belt);
 led::animation::Disgusted animation_disgusted(ears, belt);
 led::animation::Fly animation_fly {ears, belt};
 led::animation::Happy animation_happy(ears, belt);
+led::animation::LoadingGreen animation_loading_green(ears, belt);
+led::animation::LoadingYellow animation_loading_yellow(ears, belt);
+led::animation::Sad animation_sad(ears, belt);
 led::animation::SadCry animation_sad_cry(ears, belt);
 led::animation::Singing animation_singing(ears, belt);
 led::animation::Sleeping animation_sleeping(ears, belt);
@@ -96,6 +98,9 @@ auto main() -> int
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.start(animation_loading_green);
+		rtos::ThisThread::sleep_for(10s);
+
+		ledkit.start(animation_loading_yellow);
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.stop();
