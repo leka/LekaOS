@@ -85,4 +85,14 @@ class VideoKit
 	std::chrono::milliseconds _frametime = 40ms;
 };
 
+#define VideoKit_DeclareIRQHandlers(instance)                                                                          \
+	extern "C" {                                                                                                       \
+	void DSI_IRQHandler(void) { HAL_DSI_IRQHandler(&instance.getDSI().getHandle()); }                                  \
+	void JPEG_IRQHandler(void) { HAL_JPEG_IRQHandler(&instance.getJPEG().getHandle()); }                               \
+	void DMA2_Stream0_IRQHandler(void) { HAL_DMA_IRQHandler(instance.getJPEG().getHandle().hdmain); }                  \
+	void DMA2_Stream1_IRQHandler(void) { HAL_DMA_IRQHandler(instance.getJPEG().getHandle().hdmaout); }                 \
+	void DMA2D_IRQHandler(void) { HAL_DMA2D_IRQHandler(&instance.getDMA2D().getHandle()); }                            \
+	void LTDC_IRQHandler(void) { HAL_LTDC_IRQHandler(&instance.getLTDC().getHandle()); }                               \
+	}
+
 }	// namespace leka

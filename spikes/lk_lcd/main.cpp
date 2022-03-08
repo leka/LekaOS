@@ -24,41 +24,12 @@ FATFileSystem fatfs("fs");
 
 CoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);
+
 VideoKit screen(hal);
+VideoKit_DeclareIRQHandlers(screen);
 
 auto images = std::to_array({"/fs/images/activity-color_quest.jpg", "/fs/images/color-black.jpg"});
 auto videos = std::to_array({"/fs/videos/animation-joy.avi", "/fs/videos/animation-idle.avi"});
-
-extern "C" {
-void DSI_IRQHandler(void)
-{
-	HAL_DSI_IRQHandler(&screen.getDSI().getHandle());
-}
-
-void JPEG_IRQHandler(void)
-{
-	HAL_JPEG_IRQHandler(&screen.getJPEG().getHandle());
-}
-
-void DMA2_Stream0_IRQHandler(void)
-{
-	HAL_DMA_IRQHandler(screen.getJPEG().getHandle().hdmain);
-}
-
-void DMA2_Stream1_IRQHandler(void)
-{
-	HAL_DMA_IRQHandler(screen.getJPEG().getHandle().hdmaout);
-}
-
-void DMA2D_IRQHandler(void)
-{
-	HAL_DMA2D_IRQHandler(&screen.getDMA2D().getHandle());
-}
-void LTDC_IRQHandler(void)
-{
-	HAL_LTDC_IRQHandler(&screen.getLTDC().getHandle());
-}
-}
 
 void initializeSD()
 {
