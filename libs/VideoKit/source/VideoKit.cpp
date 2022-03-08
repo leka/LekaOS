@@ -87,6 +87,13 @@ void VideoKit::setFrameRateLimit(uint32_t framerate)
 	_frametime = (1000ms / framerate);
 }
 
+void VideoKit::fillConfig(interface::File &file, JPEGConfig *config)
+{
+	_corejpeg.decodeImage(file);
+	auto c	= _corejpeg.getConfig();
+	*config = c;
+}
+
 void VideoKit::clear(gfx::Color color)
 {
 	_coredma2d.fillRect(0, 0, lcd::dimension::width, lcd::dimension::height, color.toARGB8888());
@@ -115,16 +122,12 @@ void VideoKit::drawText(const char *text, uint32_t x, uint32_t y, gfx::Color col
 	font.display(text, size, static_cast<int>(y / graphics::font_pixel_height), foreground_color, background_color);
 }
 
-auto VideoKit::drawImage(interface::File &file, JPEGConfig *config) -> uint32_t
+auto VideoKit::drawImage(interface::File &file) -> uint32_t
 {
 	auto img_size = _corejpeg.decodeImage(file);
 
 	auto c = _corejpeg.getConfig();
 	_coredma2d.transferImage(c.ImageWidth, c.ImageHeight, c.getWidthOffset());
-
-	if (config) {
-		*config = c;
-	}
 
 	return img_size;
 }
@@ -166,7 +169,7 @@ void VideoKit::tick()
 	}
 
 	dt = rtos::Kernel::Clock::now() - _last_time;
-	// log_info("%lld ms = %f fps", dt.count(), (1000.f / dt.count()));
+	log_info("%lld ms = %f fps", dt.count(), (1000.f / dt.count()));
 
 	_last_time = rtos::Kernel::Clock::now();
 }
