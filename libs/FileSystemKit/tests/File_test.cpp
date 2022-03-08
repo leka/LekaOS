@@ -467,3 +467,44 @@ TEST_F(FileTest, tellFile)
 
 	ASSERT_EQ(3, actual_pos);
 }
+
+TEST_F(FileTest, reopenNoFile)
+{
+	auto reopen = file.reopen(tempFilename, "w");
+
+	ASSERT_FALSE(reopen);
+}
+
+TEST_F(FileTest, openThenReopenFile)
+{
+	file.open(tempFilename, "r");
+
+	auto reopen = file.reopen(tempFilename, "w");
+
+	ASSERT_TRUE(reopen);
+}
+
+TEST_F(FileTest, closeThenReopenFile)
+{
+	file.open(tempFilename, "r");
+
+	file.close();
+
+	auto reopen = file.reopen(tempFilename, "w");
+
+	ASSERT_FALSE(reopen);
+}
+
+TEST_F(FileTest, reopen)
+{
+	auto input_data = std::to_array<char>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});   // "abcdef"
+
+	file.open(tempFilename, "r");
+	file.reopen(tempFilename, "w");
+	file.write(input_data);
+	file.close();
+
+	auto output_data_w = readTempFile();
+
+	ASSERT_EQ("abcdef", output_data_w);
+}

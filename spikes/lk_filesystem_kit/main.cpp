@@ -56,12 +56,12 @@ auto main() -> int
 		log_info("A message from your board %s --> \"%s\" at %i s", MBED_CONF_APP_TARGET_NAME, hello.world,
 				 int(t.count() / 1000));
 
-		if (auto open = file.open(filename.data(), "w+"); !open) {
+		if (auto open = file.open(filename.data(), "w"); !open) {
 			log_error("Fail to open file");
 			return EXIT_FAILURE;
 		}
 
-		log_info("File opened");
+		log_info("File opened in mode 'w'");
 
 		auto input_data = std::to_array("Hello, Leka!");
 		auto buffer		= std::array<char, 1024> {};
@@ -78,6 +78,12 @@ auto main() -> int
 			return EXIT_FAILURE;
 		}
 		log_info("Size : %d", size);
+
+		if (auto open = file.reopen(filename.data(), "r"); !open) {
+			log_error("Fail to re-open file");
+			return EXIT_FAILURE;
+		}
+		log_info("File re-opened in mode 'r'");
 
 		file.rewind();
 		log_info("Reading...");
