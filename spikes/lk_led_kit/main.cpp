@@ -7,6 +7,7 @@
 #include "drivers/HighResClock.h"
 #include "rtos/ThisThread.h"
 
+#include "AfraidRed.h"
 #include "Bubbles.h"
 #include "CoreLED.h"
 #include "CoreSPI.h"
@@ -33,6 +34,7 @@ auto animation_event_queue = events::EventQueue {};
 
 auto ledkit = LedKit {animation_thread, animation_event_queue, ears, belt};
 
+led::animation::AfraidRed animation_afraid_red(ears, belt);
 led::animation::Bubbles animation_bubbles(ears, belt);
 led::animation::Disgusted animation_disgusted(ears, belt);
 led::animation::Fly animation_fly {ears, belt};
@@ -61,6 +63,9 @@ auto main() -> int
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.start(animation_sleeping);
+		rtos::ThisThread::sleep_for(10s);
+
+		ledkit.start(animation_afraid_red);
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.stop();
