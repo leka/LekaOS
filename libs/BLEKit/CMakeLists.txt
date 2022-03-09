@@ -34,6 +34,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/BLEServiceDeviceInformation_test.cpp
 		tests/BLEServiceBattery_test.cpp
 		tests/BLEServiceMonitoring_test.cpp
+		tests/BLEServiceUpdate_test.cpp
 	)
 
 endif()

@@ -41,4 +41,14 @@ namespace monitoring {
 
 }	// namespace monitoring
 
+namespace firmware_update {
+
+	constexpr uint16_t uuid = 0x7085;
+
+	namespace characteristic {
+		constexpr uint16_t apply_update = 0x6585;
+	}	// namespace characteristic
+
+}	// namespace firmware_update
+
 }	// namespace leka::service
