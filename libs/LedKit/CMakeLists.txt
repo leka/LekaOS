@@ -33,6 +33,7 @@ target_sources(LedKit
 		source/Sleeping.cpp
 		source/Waiting.cpp
 		source/WakeUp.cpp
+		source/Wink.cpp
 		source/Yawn.cpp
 )
 
