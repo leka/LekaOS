@@ -29,6 +29,7 @@
 #include "SadCry.h"
 #include "Singing.h"
 #include "Sleeping.h"
+#include "WakeUp.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -60,6 +61,7 @@ led::animation::LoadingYellow animation_loading_yellow(ears, belt);
 led::animation::Sad animation_sad(ears, belt);
 led::animation::SadCry animation_sad_cry(ears, belt);
 led::animation::Singing animation_singing(ears, belt);
+led::animation::WakeUp animation_wake_up(ears, belt);
 led::animation::Sleeping animation_sleeping(ears, belt);
 
 HelloWorld hello;
@@ -116,6 +118,9 @@ auto main() -> int
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.start(animation_afraid_red_blue);
+		rtos::ThisThread::sleep_for(10s);
+
+		ledkit.start(animation_wake_up);
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.stop();
