@@ -12,6 +12,7 @@ target_include_directories(LedKit
 
 target_sources(LedKit
 	PRIVATE
+		source/AfraidBlue.cpp
 		source/AfraidRed.cpp
 		source/Bubbles.cpp
 		source/Disgusted.cpp
