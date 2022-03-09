@@ -17,6 +17,7 @@
 #include "HelloWorld.h"
 #include "LedKit.h"
 #include "LogKit.h"
+#include "SadCry.h"
 #include "Singing.h"
 #include "Sleeping.h"
 
@@ -34,6 +35,7 @@ auto animation_event_queue = events::EventQueue {};
 
 auto ledkit = LedKit {animation_thread, animation_event_queue, ears, belt};
 
+led::animation::SadCry animation_sad_cry(ears, belt);
 led::animation::AfraidRed animation_afraid_red(ears, belt);
 led::animation::Bubbles animation_bubbles(ears, belt);
 led::animation::Disgusted animation_disgusted(ears, belt);
@@ -66,6 +68,9 @@ auto main() -> int
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.start(animation_afraid_red);
+		rtos::ThisThread::sleep_for(10s);
+
+		ledkit.start(animation_sad_cry);
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.stop();
