@@ -13,6 +13,8 @@ target_include_directories(LedKit
 target_sources(LedKit
 	PRIVATE
 		source/LedKit.cpp
+		source/Singing.cpp
+		source/Bubbles.cpp
 )
 
 target_link_libraries(LedKit
