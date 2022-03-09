@@ -21,6 +21,7 @@ target_sources(LedKit
 		source/Fly.cpp
 		source/Happy.cpp
 		source/LedKit.cpp
+		source/LoadingGreen.cpp
 		source/Sad.cpp
 		source/SadCry.cpp
 		source/Singing.cpp
