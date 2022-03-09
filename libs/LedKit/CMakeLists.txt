@@ -28,6 +28,7 @@ target_sources(LedKit
 		source/LoadingYellow.cpp
 		source/Sad.cpp
 		source/SadCry.cpp
+		source/Sick.cpp
 		source/Singing.cpp
 		source/Sleeping.cpp
 		source/Waiting.cpp
