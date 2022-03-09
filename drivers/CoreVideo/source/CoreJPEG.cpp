@@ -57,18 +57,18 @@ void CoreJPEG::registerCallbacks()
 	});
 
 	_hal.HAL_JPEG_RegisterDataReadyCallback(&_handle,
-									   [](JPEG_HandleTypeDef *hjpeg, uint8_t *output_data, uint32_t datasize) {
-										   self->_mode.onDataReadyCallback(hjpeg, output_data, datasize);
-									   });
+											[](JPEG_HandleTypeDef *hjpeg, uint8_t *output_data, uint32_t datasize) {
+												self->_mode.onDataReadyCallback(hjpeg, output_data, datasize);
+											});
 
 	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_DECODE_CPLT_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onDecodeCompleteCallback(hjpeg); });
+								   [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onDecodeCompleteCallback(hjpeg); });
 
 	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_ERROR_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onErrorCallback(hjpeg); });
+								   [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onErrorCallback(hjpeg); });
 
 	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_MSPINIT_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onMspInitCallback(hjpeg); });
+								   [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onMspInitCallback(hjpeg); });
 }
 
 auto CoreJPEG::decodeImage(interface::File &file) -> std::uint32_t
@@ -88,7 +88,7 @@ auto CoreJPEG::findFrameOffset(interface::File &file, uint32_t offset) -> uint32
 		if (file_size <= (index + 1)) {
 			return 0;
 		}
-		file.seek(index);
+		file.seek(index, SEEK_SET);
 		read_size = file.read(pattern_search_buffer.data(), pattern_search_buffer.size());
 
 		if (read_size != 0) {
