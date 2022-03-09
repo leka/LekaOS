@@ -38,6 +38,12 @@ class FileSystemKit
 		void rewind() final;
 		auto size() -> size_t final;
 
+		auto no() -> size_t final;
+
+		auto path(uint32_t fd, char *bufferpath, uint32_t size) -> size_t final;
+
+		auto path(uint32_t fd, std::span<char> bufferpath) -> size_t final;
+
 		[[nodiscard]] auto is_open() const -> bool final;
 
 	  private:

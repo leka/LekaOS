@@ -441,3 +441,43 @@ TEST_F(FileTest, seek)
 	ASSERT_EQ(3, bytes_read);
 	ASSERT_EQ(expected_data, output_data);
 }
+
+TEST_F(FileTest, filenoEmptyFile)
+{
+	auto fd = file.no();
+	ASSERT_EQ(-1, fd);
+}
+
+TEST_F(FileTest, fileno)
+{
+	file.open(tempFilename);
+
+	auto fd = file.no();
+	ASSERT_NE(fd, -1);
+}
+
+TEST_F(FileTest, pathChar)
+{
+	file.open(tempFilename);
+
+	auto fd = file.no();
+
+	char bufferpath[50];
+
+	auto path = file.path(fd, bufferpath, 50);
+
+	ASSERT_NE(path, -1);
+}
+
+TEST_F(FileTest, pathSpan)
+{
+	file.open(tempFilename);
+
+	auto fd = file.no();
+
+	auto bufferpath = std::array<char, 50> {};
+
+	auto path = file.path(fd, bufferpath);
+
+	ASSERT_NE(path, -1);
+}

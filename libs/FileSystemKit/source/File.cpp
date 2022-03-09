@@ -2,9 +2,11 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#define _DARWIN_C_SOURCE
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
+#include <fcntl.h>
 #include <span>
 
 #include "FileSystemKit.h"
@@ -101,4 +103,22 @@ auto FileSystemKit::File::size() -> size_t
 auto FileSystemKit::File::is_open() const -> bool
 {
 	return _file != nullptr;
+}
+
+auto FileSystemKit::File::no() -> size_t
+{
+	if (_file == nullptr) {
+		return -1;
+	}
+	return fileno(_file.get());
+}
+
+auto FileSystemKit::File::path(uint32_t fd, char *bufferpath, uint32_t size) -> size_t
+{
+	return fcntl(fd, size, bufferpath);
+}
+
+auto FileSystemKit::File::path(uint32_t fd, std::span<char> bufferpath) -> size_t
+{
+	return fcntl(fd, bufferpath.size(), bufferpath.data());
 }

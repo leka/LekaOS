@@ -34,6 +34,12 @@ struct File {
 
 	virtual auto size() -> size_t = 0;
 
+	virtual auto no() -> size_t = 0;
+
+	virtual auto path(uint32_t fd, char *bufferpath, uint32_t size) -> size_t = 0;
+
+	virtual auto path(uint32_t fd, std::span<char> bufferpath) -> size_t = 0;
+
 	[[nodiscard]] virtual auto is_open() const -> bool = 0;
 };
 
