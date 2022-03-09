@@ -13,6 +13,7 @@ target_include_directories(CoreVideo
 target_sources(CoreVideo
 	PRIVATE
 		source/CoreDMA2D.cpp
+		source/CoreFont.cpp
 		source/CoreGraphics.cpp
 		source/CoreJPEG.cpp
 		source/CoreJPEGMode.cpp

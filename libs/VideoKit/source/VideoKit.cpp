@@ -102,22 +102,15 @@ void VideoKit::drawRectangle(uint32_t x, uint32_t y, uint32_t w, uint32_t h, gfx
 
 void VideoKit::drawText(const char *text, uint32_t x, uint32_t y, gfx::Color color, gfx::Color bg_color)
 {
-	auto posx = x;
-	auto posy = y;
-	while (*text != '\0') {
-		char letter = *text++;
-		auto *addr	= CGFont::getCharAddress(letter);
-		for (int j = 0; j < CGFont::character_height; ++j) {
-			for (int i = 0; i < CGFont::character_width; ++i) {
-				if (CGFont::isPixelOn(addr, i, j)) {
-					_coredma2d.setPixel(posx + i, posy + j, color.toARGB8888());
-				} else if (bg_color.a > 0) {
-					_coredma2d.setPixel(posx + i, posy + j, bg_color.toARGB8888());
-				}
-			}
-		}
-		posx += CGFont::character_width - 1;
-	}
+	auto size			  = strlen(text);
+	auto foreground_color = CGColor {color.r, color.g, color.b, color.a};
+	auto background_color = CGColor {bg_color.r, bg_color.g, bg_color.b, bg_color.a};
+
+	auto ll	   = CoreLL {};
+	auto pixel = CGPixel {ll};
+	auto font  = CoreFont {pixel};
+
+	font.display(text, size, static_cast<int>(y / graphics::font_pixel_height), foreground_color, background_color);
 }
 
 void VideoKit::display()

@@ -8,9 +8,9 @@
 
 #include "rtos/ThisThread.h"
 
-#include "CGFont.hpp"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
+#include "CoreFont.hpp"
 #include "CoreJPEG.hpp"
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
