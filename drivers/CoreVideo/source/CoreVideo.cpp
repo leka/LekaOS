@@ -4,7 +4,7 @@
 
 #include "CoreVideo.hpp"
 
-namespace leka {
+using namespace leka;
 
 CoreVideo::CoreVideo(interface::STM32Hal &hal, interface::SDRAM &coresdram, interface::DMA2DBase &coredma2d,
 					 interface::DSIBase &coredsi, interface::LTDCBase &coreltdc, interface::LCD &corelcd,
@@ -108,5 +108,3 @@ void CoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_l
 {
 	_corefont.display(text, size, starting_line, foreground, background);
 }
-
-}	// namespace leka

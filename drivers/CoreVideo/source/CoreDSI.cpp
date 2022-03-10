@@ -8,9 +8,8 @@
 
 #include "internal/corevideo_config.h"
 
-using namespace std::chrono;
-
-namespace leka {
+using namespace leka;
+using namespace std::chrono_literals;
 
 CoreDSI::CoreDSI(interface::STM32Hal &hal) : _hal(hal)
 {
@@ -133,5 +132,3 @@ void CoreDSI::write(const uint8_t *data, const uint32_t size)
 		_hal.HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, size, data[size - 1], const_cast<uint8_t *>(data));
 	}
 }
-
-}	// namespace leka

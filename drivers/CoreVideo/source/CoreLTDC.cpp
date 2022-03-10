@@ -6,7 +6,7 @@
 
 #include "internal/corevideo_config.h"
 
-namespace leka {
+using namespace leka;
 
 CoreLTDC::CoreLTDC(interface::STM32Hal &hal, interface::DSIBase &dsi) : _hal(hal), _dsi(dsi)
 {
@@ -101,5 +101,3 @@ auto CoreLTDC::getLayerConfig() const -> LTDC_LayerCfgTypeDef
 {
 	return _layerConfig;
 }
-
-}	// namespace leka
