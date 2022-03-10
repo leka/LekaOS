@@ -5,7 +5,9 @@
 #include "drivers/BufferedSerial.h"
 #include "rtos/ThisThread.h"
 
+#include "CoreNetwork.h"
 #include "FATFileSystem.h"
+#include "FileSystemKit.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
@@ -14,7 +16,9 @@
 using namespace leka;
 using namespace std::chrono;
 
-auto web_kit = WebKit();
+auto web_access		 = CoreNetwork {};
+auto web_file_handle = FileSystemKit::File {};
+auto web_kit		 = WebKit(web_access, web_file_handle);
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");

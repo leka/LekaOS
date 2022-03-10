@@ -12,13 +12,11 @@ target_include_directories(spike_lk_file_reception
 target_sources(spike_lk_file_reception
 	PRIVATE
 		main.cpp
-		WebKit.cpp
 )
 
 target_link_libraries(spike_lk_file_reception
-	FileSystemKit
 	CoreWifi
-	mbed-http
+	WebKit
 )
 
 target_link_custom_leka_targets(spike_lk_file_reception)
