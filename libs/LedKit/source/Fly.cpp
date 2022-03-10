@@ -55,14 +55,14 @@ void Fly::run()
 	_belt.show();
 }
 
-auto Fly::mapStep(uint8_t step, uint8_t val) const -> float
+auto Fly::mapStep(uint8_t step, uint8_t max_input_value) const -> float
 {
-	return utils::math::map(step, uint8_t {0}, val, 0.F, 1.F);
+	return utils::math::map(step, uint8_t {0}, max_input_value, 0.F, 1.F);
 }
 
 void Fly::stage0()
 {
-	static constexpr auto kInputMaxStage0 = 50;
+	static constexpr auto kInputMaxStage0 = 70;
 	if (auto pos = mapStep(_step, kInputMaxStage0); pos != 1.F) {
 		++_step;
 	} else {
@@ -73,7 +73,7 @@ void Fly::stage0()
 
 void Fly::stage1()
 {
-	static constexpr auto kInputMaxStage1to2 = 30;
+	static constexpr auto kInputMaxStage1to2 = 20;
 	if (auto pos = mapStep(_step, kInputMaxStage1to2); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
@@ -85,7 +85,7 @@ void Fly::stage1()
 
 void Fly::stage2()
 {
-	static constexpr auto kInputMaxStage1to2 = 30;
+	static constexpr auto kInputMaxStage1to2 = 20;
 	if (auto pos = mapStep(_step, kInputMaxStage1to2); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
@@ -98,7 +98,7 @@ void Fly::stage2()
 
 void Fly::stage3()
 {
-	static constexpr auto kInputMaxStage3 = 10;
+	static constexpr auto kInputMaxStage3 = 30;
 	if (auto pos = mapStep(_step, kInputMaxStage3); pos != 1.F) {
 		++_step;
 	} else {

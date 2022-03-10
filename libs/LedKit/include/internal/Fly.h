@@ -45,7 +45,7 @@ class Fly : public interface::LEDAnimation
 	uint8_t _step  = 0;
 	uint8_t _stage = 0;
 
-	[[nodiscard]] auto mapStep(uint8_t step, uint8_t val) const -> float;
+	[[nodiscard]] auto mapStep(uint8_t step, uint8_t max_input_value) const -> float;
 
 	void stage0();
 	void stage1();
