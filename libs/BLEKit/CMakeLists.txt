@@ -31,6 +31,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/CoreGattServerEventHandler_test.cpp
 		tests/CoreGattServer_test.cpp
 		tests/BLEKit_test.cpp
+		tests/BLEServiceMonitoring_test.cpp
 	)
 
 endif()
