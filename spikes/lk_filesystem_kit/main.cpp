@@ -89,7 +89,7 @@ auto main() -> int
 		log_info("Data : %s", buffer.data());
 
 		file.seek(seek_temp);
-		log_info("Position indicator set to %d", seek_temp);
+		log_info("Position indicator set to %d", file.tell());
 		log_info("Reading...");
 		if (auto bytes = file.read(buffer); bytes != (size - seek_temp)) {
 			log_error("Fail to read file");
