@@ -35,6 +35,7 @@ auto main() -> int
 	auto hello = HelloWorld();
 	hello.start();
 
+	rc.initializeComponents();
 	rc.registerEvents();
 
 	while (true) {
