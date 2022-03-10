@@ -237,6 +237,7 @@ leka_register_unit_tests_for_driver(CoreSTM32Hal)
 leka_register_unit_tests_for_driver(CoreVideo)
 
 # Register libraries
+leka_register_unit_tests_for_library(BatteryKit)
 leka_register_unit_tests_for_library(BLEKit)
 leka_register_unit_tests_for_library(ColorKit)
 leka_register_unit_tests_for_library(ContainerKit)
