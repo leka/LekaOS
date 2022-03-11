@@ -6,6 +6,7 @@
 
 #include "BLEKit.h"
 
+#include "BatteryKit.h"
 #include "StateMachine.h"
 #include "interface/RobotController.h"
 #include "interface/drivers/Battery.h"
@@ -35,7 +36,11 @@ class RobotController : public interface::RobotController
 	{
 		using namespace system::robot::sm;
 
-		// Setup callbacks for each events
+		// Setup callbacks for monitoring
+
+		_battery_kit.start();
+
+		// Setup callbacks for each State Machine events
 
 		auto on_sleep_timeout = [this]() { raise(event::sleep_timeout_did_end {}); };
 		_sleep_timeout.onTimeout(on_sleep_timeout);
@@ -54,6 +59,7 @@ class RobotController : public interface::RobotController
 	interface::Timeout &_sleep_timeout;
 
 	interface::Battery &_battery;
+	BatteryKit _battery_kit {_battery};
 
 	BLEKit _ble;
 };
