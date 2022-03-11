@@ -80,7 +80,7 @@ TEST_F(BatteryKitTest, onDataUpdated)
 	EXPECT_CALL(mock_battery, level).WillRepeatedly(Return(battery_level));
 	EXPECT_CALL(mock_on_data_updated_callback, Call(battery_level)).Times(1);
 
-	batterykit.start();
+	batterykit.startEventHandler();
 }
 
 TEST_F(BatteryKitTest, onLowBattery)
@@ -93,7 +93,7 @@ TEST_F(BatteryKitTest, onLowBattery)
 	EXPECT_CALL(mock_battery, level).WillRepeatedly(Return(battery_level));
 	EXPECT_CALL(mock_on_low_battery_callback, Call).Times(0);
 
-	batterykit.start();
+	batterykit.startEventHandler();
 }
 
 TEST_F(BatteryKitTest, onLowBatteryLevelAtZero)
@@ -106,5 +106,5 @@ TEST_F(BatteryKitTest, onLowBatteryLevelAtZero)
 	EXPECT_CALL(mock_battery, level).WillRepeatedly(Return(battery_level));
 	EXPECT_CALL(mock_on_low_battery_callback, Call).Times(1);
 
-	batterykit.start();
+	batterykit.startEventHandler();
 }

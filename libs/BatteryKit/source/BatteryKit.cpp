@@ -7,7 +7,7 @@
 using namespace leka;
 using namespace std::chrono_literals;
 
-void BatteryKit::start()
+void BatteryKit::startEventHandler()
 {
 	auto on_tick = [this] {
 		if (_on_low_battery && level() == 0) {

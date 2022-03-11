@@ -14,7 +14,7 @@ class BatteryKit
   public:
 	explicit BatteryKit(interface::Battery &battery) : _battery(battery) {};
 
-	void start();
+	void startEventHandler();
 
 	auto level() -> uint8_t;
 	auto isCharging() -> bool;
