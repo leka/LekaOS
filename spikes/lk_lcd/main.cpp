@@ -55,6 +55,11 @@ void DMA2D_IRQHandler(void)
 {
 	HAL_DMA2D_IRQHandler(&coredma2d.getHandle());
 }
+
+void LTDC_IRQHandler(void)
+{
+	HAL_LTDC_IRQHandler(&coreltdc.getHandle());
+}
 }
 
 void registerCallbacks()

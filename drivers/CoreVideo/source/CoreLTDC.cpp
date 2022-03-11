@@ -101,7 +101,7 @@ void CoreLTDC::configurePeriphClock()
 	_hal.HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 }
 
-auto CoreLTDC::getHandle() const -> LTDC_HandleTypeDef
+auto CoreLTDC::getHandle() -> LTDC_HandleTypeDef &
 {
 	return _hltdc;
 }
