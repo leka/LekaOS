@@ -5,7 +5,9 @@
 #pragma once
 
 #include "BLEKit.h"
+#include "BLEServiceBattery.h"
 
+#include "BatteryKit.h"
 #include "StateMachine.h"
 #include "interface/RobotController.h"
 #include "interface/drivers/Battery.h"
@@ -29,13 +31,23 @@ class RobotController : public interface::RobotController
 
 	void raise(auto event) { state_machine.process_event(event); };
 
-	void initializeComponents() { _ble.init(); }
+	void initializeComponents()
+	{
+		_ble.setServices(services);
+		_ble.init();
+	}
 
 	void registerEvents()
 	{
 		using namespace system::robot::sm;
 
-		// Setup callbacks for each events
+		// Setup callbacks for monitoring
+
+		_battery_kit.onDataUpdated([this](uint8_t level) { _service_battery.setBatteryLevel(level); });
+
+		_battery_kit.startEventHandler();
+
+		// Setup callbacks for each State Machine events
 
 		auto on_sleep_timeout = [this]() { raise(event::sleep_timeout_did_end {}); };
 		_sleep_timeout.onTimeout(on_sleep_timeout);
@@ -54,8 +66,11 @@ class RobotController : public interface::RobotController
 	interface::Timeout &_sleep_timeout;
 
 	interface::Battery &_battery;
+	BatteryKit _battery_kit {_battery};
 
-	BLEKit _ble;
+	BLEKit _ble {};
+	BLEServiceBattery _service_battery {};
+	std::array<interface::BLEService *, 1> services = {&_service_battery};
 };
 
 }	// namespace leka

@@ -45,7 +45,7 @@ auto main() -> int
 	batterykit.onDataUpdated(logBatteryNewLevel);
 	batterykit.onLowBattery([] { mainboard_led = !mainboard_led; });
 
-	batterykit.start();
+	batterykit.startEventHandler();
 
 	while (true) {
 		rtos::ThisThread::sleep_for(1s);

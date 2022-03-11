@@ -17,11 +17,20 @@ namespace bsml	= boost::sml;
 namespace lksm	= system::robot::sm;
 namespace event = system::robot::sm::event;
 
+using testing::_;
+using testing::AnyNumber;
 using testing::Return;
 
 ACTION_TEMPLATE(GetCallback, HAS_1_TEMPLATE_PARAMS(typename, callback_t), AND_1_VALUE_PARAMS(pointer))
 {
 	*pointer = callback_t(arg0);
+}
+
+MATCHER_P(sameValue, expected_value, "")
+{
+	auto same_value = arg[0] == expected_value;
+
+	return same_value;
 }
 
 class RobotControllerTest : public testing::Test
@@ -31,6 +40,17 @@ class RobotControllerTest : public testing::Test
 	{
 		ble::init_mocks();
 
+		ble::GapMock &mbed_mock_gap			= ble::gap_mock();
+		ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
+
+		EXPECT_CALL(mbed_mock_gatt, addService).Times(AnyNumber());
+		EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(AnyNumber());
+		EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(AnyNumber());
+
+		rc.initializeComponents();
+
+		EXPECT_CALL(battery, level).Times(1);
+		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
 		EXPECT_CALL(sleep_timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleep_timeout));
 		EXPECT_CALL(battery, onChargeDidStart).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_start));
 		EXPECT_CALL(battery, onChargeDidStop).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_stop));
@@ -61,6 +81,7 @@ TEST_F(RobotControllerTest, initializeComponents)
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
 
+	EXPECT_CALL(mbed_mock_gatt, addService).Times(AnyNumber());
 	EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(1);
 	EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(1);
 
@@ -69,7 +90,14 @@ TEST_F(RobotControllerTest, initializeComponents)
 
 TEST_F(RobotControllerTest, stateSetupEventSetupComplete)
 {
+	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
+	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
+
 	rc.state_machine.set_current_states(lksm::state::setup);
+
+	auto expected_level = 0x2A;
+	EXPECT_CALL(battery, level).WillOnce(Return(expected_level));
+	EXPECT_CALL(mbed_mock_gatt, write(_, sameValue(expected_level), _, _)).Times(1);
 
 	EXPECT_CALL(sleep_timeout, onTimeout).Times(1);
 	EXPECT_CALL(battery, onChargeDidStart).Times(1);
