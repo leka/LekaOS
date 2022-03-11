@@ -40,6 +40,14 @@ class File : public interface::File
 
 	MOCK_METHOD(bool, reopen, (const char *, const char *), (override));
 
+	MOCK_METHOD(bool, setBuffer, (std::span<char> buffer, int mode), (override));
+
+	MOCK_METHOD(bool, setBuffer, (char *buffer, uint32_t size, int mode), (override));
+
+	MOCK_METHOD(bool, unsetBuffer, (), (override));
+
+	MOCK_METHOD(bool, flush, (), (override));
+
 	MOCK_METHOD(bool, is_open, (), (const override));
 };
 
