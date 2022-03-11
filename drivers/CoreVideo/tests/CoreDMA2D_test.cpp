@@ -160,7 +160,32 @@ TEST_F(CoreDMA2DTest, transferImage)
 
 	ASSERT_EQ(handle.Init.Mode, DMA2D_M2M_PFC);
 	ASSERT_EQ(handle.LayerCfg[1].InputOffset, 100);
-	ASSERT_EQ(handle.Init.OutputOffset, 0);
+	ASSERT_EQ(handle.Init.OutputOffset, lcd::dimension::width - image_width);
+}
+
+TEST_F(CoreDMA2DTest, transferImageDifferentWidth)
+{
+	uint16_t image_width  = 400;
+	uint16_t image_height = 400;
+
+	{
+		InSequence seq;
+
+		EXPECT_CALL(halmock, HAL_DMA2D_Init).Times(1).WillRepeatedly(Return(HAL_OK));
+		EXPECT_CALL(halmock, HAL_DMA2D_ConfigLayer).Times(1).WillRepeatedly(Return(HAL_OK));
+		EXPECT_CALL(halmock, HAL_DMA2D_Start(_, jpeg::decoded_buffer_address, lcd::frame_buffer_address, image_width,
+											 image_height))
+			.Times(1)
+			.WillRepeatedly(Return(HAL_OK));
+		EXPECT_CALL(halmock, HAL_DMA2D_PollForTransfer).Times(1);
+	}
+
+	dma2d.transferImage(image_width, image_height, 100);
+	auto handle = dma2d.getHandle();
+
+	ASSERT_EQ(handle.Init.Mode, DMA2D_M2M_PFC);
+	ASSERT_EQ(handle.LayerCfg[1].InputOffset, 100);
+	ASSERT_EQ(handle.Init.OutputOffset, lcd::dimension::width - image_width);
 }
 
 TEST_F(CoreDMA2DTest, transferDrawing)
