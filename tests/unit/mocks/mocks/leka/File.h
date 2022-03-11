@@ -38,6 +38,8 @@ class File : public interface::File
 
 	MOCK_METHOD(size_t, tell, (), (override));
 
+	MOCK_METHOD(bool, reopen, (const char *, const char *), (override));
+
 	MOCK_METHOD(bool, is_open, (), (const override));
 };
 
