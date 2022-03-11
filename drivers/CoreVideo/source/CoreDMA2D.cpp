@@ -6,7 +6,7 @@
 
 #include "internal/corevideo_config.h"
 
-namespace leka {
+using namespace leka;
 
 CoreDMA2D::CoreDMA2D(interface::STM32Hal &hal) : _hal(hal)
 {
@@ -82,5 +82,3 @@ void CoreDMA2D::transferDrawing(uintptr_t first_pixel_address, uint32_t width, u
 
 	transferData(color, first_pixel_address, width, height);
 }
-
-}	// namespace leka

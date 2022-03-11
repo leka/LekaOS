@@ -6,7 +6,7 @@
 
 #include "internal/corevideo_config.h"
 
-namespace leka {
+using namespace leka;
 
 CoreJPEG::CoreJPEG(interface::STM32Hal &hal, interface::DMA2DBase &dma2d, interface::FatFs &file)
 	: _hal(hal), _dma2d(dma2d), _file(file)
@@ -156,5 +156,3 @@ void CoreJPEG::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
 {
 	// TODO(@yann): implement flag
 }
-
-}	// namespace leka

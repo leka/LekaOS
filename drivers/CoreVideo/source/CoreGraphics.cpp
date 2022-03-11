@@ -4,7 +4,7 @@
 
 #include "CoreGraphics.hpp"
 
-namespace leka {
+using namespace leka;
 
 CoreGraphics::CoreGraphics(interface::DMA2DBase &dma2d) : _dma2d(dma2d) {}
 
@@ -26,5 +26,3 @@ void CoreGraphics::drawRectangle(FilledRectangle rectangle, CGColor color)
 
 	_dma2d.transferDrawing(destination_address, rectangle.width, rectangle.height, destinationColor);
 }
-
-}	// namespace leka

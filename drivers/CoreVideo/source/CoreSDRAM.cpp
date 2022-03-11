@@ -2,9 +2,8 @@
 
 #include "rtos/ThisThread.h"
 
-using namespace std::chrono;
-
-namespace leka {
+using namespace leka;
+using namespace std::chrono_literals;
 
 CoreSDRAM::CoreSDRAM(interface::STM32Hal &hal) : _hal(hal)
 {
@@ -217,5 +216,3 @@ auto CoreSDRAM::getHandle() const -> SDRAM_HandleTypeDef
 {
 	return _hsdram;
 }
-
-}	// namespace leka

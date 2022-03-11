@@ -7,7 +7,7 @@
 #include "CGFont.hpp"
 #include "internal/corevideo_config.h"
 
-namespace leka {
+using namespace leka;
 
 CoreFont::CoreFont(CGPixel &pixel_to_draw) : _pixel_to_draw(pixel_to_draw) {}
 
@@ -94,5 +94,3 @@ auto CoreFont::getLastDrawnPixel() const -> CGPixel
 {
 	return _pixel_to_draw;
 }
-
-}	// namespace leka
