@@ -41,6 +41,17 @@ CoreDMA2D::CoreDMA2D(interface::STM32Hal &hal) : _hal(hal)
 
 void CoreDMA2D::initialize()
 {
+	/** @brief Enable the DMA2D clock */
+	_hal.HAL_RCC_DMA2D_CLK_ENABLE();
+
+	/** @brief Toggle Sw reset of DMA2D IP */
+	_hal.HAL_RCC_DMA2D_FORCE_RESET();
+	_hal.HAL_RCC_DMA2D_RELEASE_RESET();
+
+	/** @brief NVIC configuration for DMA2D interrupt that is now enabled */
+	_hal.HAL_NVIC_SetPriority(DMA2D_IRQn, 3, 0);
+	_hal.HAL_NVIC_EnableIRQ(DMA2D_IRQn);
+
 	// MARK: Initializer DMA2D
 	// This part **must not** be moved to the constructor as LCD
 	// initialization must be performed in a very specific order

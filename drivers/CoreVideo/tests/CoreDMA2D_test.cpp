@@ -67,6 +67,14 @@ TEST_F(CoreDMA2DTest, initializationSequence)
 {
 	{
 		InSequence seq;
+
+		EXPECT_CALL(halmock, HAL_RCC_DMA2D_CLK_ENABLE).Times(1);
+		EXPECT_CALL(halmock, HAL_RCC_DMA2D_FORCE_RESET).Times(1);
+		EXPECT_CALL(halmock, HAL_RCC_DMA2D_RELEASE_RESET).Times(1);
+
+		EXPECT_CALL(halmock, HAL_NVIC_SetPriority(DMA2D_IRQn, _, _)).Times(1);
+		EXPECT_CALL(halmock, HAL_NVIC_EnableIRQ(DMA2D_IRQn)).Times(1);
+
 		EXPECT_CALL(halmock, HAL_DMA2D_Init).Times(1);
 		EXPECT_CALL(halmock, HAL_DMA2D_ConfigLayer).Times(2);
 	}
