@@ -18,6 +18,8 @@ class BLEServiceBattery : public interface::BLEService
 	{
 		if (value <= 100) {
 			_battery_level_characteristic_value = value;
+		} else {
+			_battery_level_characteristic_value = 100;
 		}
 		auto data = std::make_tuple(_battery_level_writable_characteristic.getValueHandle(),
 									std::span(&_battery_level_characteristic_value, 1));
