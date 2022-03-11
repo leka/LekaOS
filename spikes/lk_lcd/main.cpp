@@ -39,7 +39,7 @@ CoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);
 CoreDMA2D coredma2d(hal);
 CoreDSI coredsi(hal);
-CoreLTDC coreltdc(hal, coredsi);
+CoreLTDC coreltdc(hal);
 CoreGraphics coregraphics(coredma2d);
 CoreFont corefont(pixel);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
