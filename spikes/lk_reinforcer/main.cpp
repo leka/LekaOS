@@ -13,6 +13,7 @@
 #include "HelloWorld.h"
 #include "LedKit.h"
 #include "LogKit.h"
+#include "SpinBlink.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -28,6 +29,8 @@ auto animation_event_queue = events::EventQueue {};
 
 auto ledkit = LedKit {animation_thread, animation_event_queue, ears, belt};
 led::animation::BlinkGreen animation_blink_green(ears, belt);
+led::animation::SpinBlink animation_spin_blink(ears, belt);
+
 HelloWorld hello;
 
 auto main() -> int
@@ -39,6 +42,12 @@ auto main() -> int
 	hello.start();
 
 	while (true) {
+		ledkit.start(animation_spin_blink);
+		rtos::ThisThread::sleep_for(40s);
+
+		ledkit.stop();
+		rtos::ThisThread::sleep_for(1s);
+
 		ledkit.start(animation_blink_green);
 		rtos::ThisThread::sleep_for(40s);
 
