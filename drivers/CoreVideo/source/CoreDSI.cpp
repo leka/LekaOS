@@ -63,13 +63,26 @@ CoreDSI::CoreDSI(interface::STM32Hal &hal) : _hal(hal)
 
 void CoreDSI::initialize()
 {
+	/** @brief Enable DSI Host and wrapper clocks */
+	_hal.HAL_RCC_DSI_CLK_ENABLE();
+
+	/** @brief Soft Reset the DSI Host and wrapper */
+	_hal.HAL_RCC_DSI_FORCE_RESET();
+	_hal.HAL_RCC_DSI_RELEASE_RESET();
+
+	/** @brief NVIC configuration for DSI interrupt that is now enabled */
+	_hal.HAL_NVIC_SetPriority(DSI_IRQn, 3, 0);
+	_hal.HAL_NVIC_EnableIRQ(DSI_IRQn);
+
+	reset();
+
+	_hal.HAL_DSI_DeInit(&_hdsi);
+
 	DSI_PLLInitTypeDef dsiPllInit;
 
 	dsiPllInit.PLLNDIV = 100;
 	dsiPllInit.PLLIDF  = DSI_PLL_IN_DIV5;
 	dsiPllInit.PLLODF  = DSI_PLL_OUT_DIV1;
-
-	_hal.HAL_DSI_DeInit(&_hdsi);
 
 	// Initialize DSI
 	// DO NOT MOVE to the constructor as LCD initialization

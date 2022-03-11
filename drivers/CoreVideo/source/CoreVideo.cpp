@@ -23,29 +23,12 @@ CoreVideo::CoreVideo(interface::STM32Hal &hal, interface::SDRAM &coresdram, inte
 
 void CoreVideo::initialize()
 {
-	_coredsi.reset();
-
 	/** @brief Enable the LTDC clock */
 	_hal.HAL_RCC_LTDC_CLK_ENABLE();
 
 	/** @brief Toggle Sw reset of LTDC IP */
 	_hal.HAL_RCC_LTDC_FORCE_RESET();
 	_hal.HAL_RCC_LTDC_RELEASE_RESET();
-
-	/** @brief Enable DSI Host and wrapper clocks */
-	_hal.HAL_RCC_DSI_CLK_ENABLE();
-
-	/** @brief Soft Reset the DSI Host and wrapper */
-	_hal.HAL_RCC_DSI_FORCE_RESET();
-	_hal.HAL_RCC_DSI_RELEASE_RESET();
-
-	/** @brief NVIC configuration for LTDC interrupt that is now enabled */
-	_hal.HAL_NVIC_SetPriority(LTDC_IRQn, 3, 0);
-	_hal.HAL_NVIC_EnableIRQ(LTDC_IRQn);
-
-	/** @brief NVIC configuration for DSI interrupt that is now enabled */
-	_hal.HAL_NVIC_SetPriority(DSI_IRQn, 3, 0);
-	_hal.HAL_NVIC_EnableIRQ(DSI_IRQn);
 
 	_coredsi.initialize();
 

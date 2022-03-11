@@ -56,6 +56,10 @@ CoreLTDC::CoreLTDC(interface::STM32Hal &hal, interface::DSIBase &dsi) : _hal(hal
 
 void CoreLTDC::initialize()
 {
+	/** @brief NVIC configuration for LTDC interrupt that is now enabled */
+	_hal.HAL_NVIC_SetPriority(LTDC_IRQn, 3, 0);
+	_hal.HAL_NVIC_EnableIRQ(LTDC_IRQn);
+
 	configurePeriphClock();
 
 	// Get LTDC config from DSI

@@ -74,17 +74,9 @@ TEST_F(CoreVideoTest, initialization)
 	{
 		InSequence seq;
 
-		EXPECT_CALL(dsimock, reset).Times(1);
 		EXPECT_CALL(halmock, HAL_RCC_LTDC_CLK_ENABLE).Times(1);
 		EXPECT_CALL(halmock, HAL_RCC_LTDC_FORCE_RESET).Times(1);
 		EXPECT_CALL(halmock, HAL_RCC_LTDC_RELEASE_RESET).Times(1);
-		EXPECT_CALL(halmock, HAL_RCC_DSI_CLK_ENABLE).Times(1);
-		EXPECT_CALL(halmock, HAL_RCC_DSI_FORCE_RESET).Times(1);
-		EXPECT_CALL(halmock, HAL_RCC_DSI_RELEASE_RESET).Times(1);
-		EXPECT_CALL(halmock, HAL_NVIC_SetPriority(LTDC_IRQn, _, _)).Times(1);
-		EXPECT_CALL(halmock, HAL_NVIC_EnableIRQ(LTDC_IRQn)).Times(1);
-		EXPECT_CALL(halmock, HAL_NVIC_SetPriority(DSI_IRQn, _, _)).Times(1);
-		EXPECT_CALL(halmock, HAL_NVIC_EnableIRQ(DSI_IRQn)).Times(1);
 		EXPECT_CALL(dsimock, initialize).Times(1);
 		EXPECT_CALL(ltdcmock, initialize).Times(1);
 		EXPECT_CALL(dsimock, start).Times(1);

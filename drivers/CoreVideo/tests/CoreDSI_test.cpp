@@ -103,6 +103,18 @@ TEST_F(CoreDSITest, initializationSequence)
 {
 	{
 		InSequence seq;
+
+		EXPECT_CALL(halmock, HAL_RCC_DSI_CLK_ENABLE).Times(1);
+		EXPECT_CALL(halmock, HAL_RCC_DSI_FORCE_RESET).Times(1);
+		EXPECT_CALL(halmock, HAL_RCC_DSI_RELEASE_RESET).Times(1);
+
+		EXPECT_CALL(halmock, HAL_NVIC_SetPriority(DSI_IRQn, _, _)).Times(1);
+		EXPECT_CALL(halmock, HAL_NVIC_EnableIRQ(DSI_IRQn)).Times(1);
+
+		EXPECT_CALL(halmock, HAL_RCC_GPIOJ_CLK_ENABLE).Times(1);
+		EXPECT_CALL(halmock, HAL_GPIO_Init).Times(1);
+		EXPECT_CALL(halmock, HAL_GPIO_WritePin).Times(2);
+
 		EXPECT_CALL(halmock, HAL_DSI_DeInit).Times(1);
 		EXPECT_CALL(halmock, HAL_DSI_Init).Times(1);
 		EXPECT_CALL(halmock, HAL_DSI_ConfigVideoMode).Times(1);

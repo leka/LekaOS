@@ -131,6 +131,10 @@ TEST_F(CoreLTDCTest, initializationSequence)
 
 	{
 		InSequence seq;
+
+		EXPECT_CALL(halmock, HAL_NVIC_SetPriority(LTDC_IRQn, _, _)).Times(1);
+		EXPECT_CALL(halmock, HAL_NVIC_EnableIRQ(LTDC_IRQn)).Times(1);
+
 		EXPECT_CALL(halmock, HAL_RCCEx_PeriphCLKConfig(WithStructEqualTo(expected))).Times(1);
 		EXPECT_CALL(dsimock, getConfig).Times(1);
 		EXPECT_CALL(halmock, HAL_LTDC_StructInitFromVideoConfig).Times(1);
