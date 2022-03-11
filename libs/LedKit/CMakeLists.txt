@@ -18,6 +18,7 @@ target_sources(LedKit
 		source/Amazed.cpp
 		source/Angry.cpp
 		source/AngryShort.cpp
+		source/BlinkGreen.cpp
 		source/Bubbles.cpp
 		source/Disgusted.cpp
 		source/Fly.cpp
@@ -38,6 +39,7 @@ target_sources(LedKit
 		source/WakeUp.cpp
 		source/Wink.cpp
 		source/Yawn.cpp
+		source/Yellow.cpp
 )
 
 target_link_libraries(LedKit
