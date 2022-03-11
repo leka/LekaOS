@@ -47,6 +47,9 @@ class FileSystemKit
 		auto unsetBuffer() -> bool final;
 		auto flush() -> bool final;
 
+		auto error() -> bool final;
+		void clearerr() final;
+
 		[[nodiscard]] auto is_open() const -> bool final;
 
 	  private:

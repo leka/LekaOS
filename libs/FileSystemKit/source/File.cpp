@@ -148,3 +148,20 @@ auto FileSystemKit::File::flush() -> bool
 	}
 	return (0 == std::fflush(_file.get()));
 }
+
+auto FileSystemKit::File::error() -> bool
+{
+	if (_file == nullptr) {
+		return false;
+	}
+	return static_cast<bool>(std::ferror(_file.get()));
+}
+
+void FileSystemKit::File::clearerr()
+{
+	if (_file == nullptr) {
+		return;
+	}
+
+	std::clearerr(_file.get());
+}
