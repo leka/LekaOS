@@ -50,6 +50,13 @@ CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coreg
 const auto filename1 = std::array<char, 32> {"assets/images/Leka/logo.jpg"};
 const auto filename2 = std::array<char, 38> {"assets/images/Leka/emotion-happy.jpg"};
 
+extern "C" {
+void DMA2D_IRQHandler(void)
+{
+	HAL_DMA2D_IRQHandler(&coredma2d.getHandle());
+}
+}
+
 void registerCallbacks()
 {
 	HAL_JPEG_RegisterInfoReadyCallback(

@@ -60,6 +60,9 @@ class CoreSTM32Hal : public interface::STM32Hal
 	MOCK_METHOD(HAL_StatusTypeDef, HAL_DMA2D_Start,
 				(DMA2D_HandleTypeDef * hdma2d, uint32_t pdata, uint32_t DstAddress, uint32_t Width, uint32_t Height),
 				(override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_DMA2D_Start_IT,
+				(DMA2D_HandleTypeDef * hdma2d, uint32_t pdata, uint32_t DstAddress, uint32_t Width, uint32_t Height),
+				(override));
 	MOCK_METHOD(HAL_StatusTypeDef, HAL_DMA2D_PollForTransfer, (DMA2D_HandleTypeDef * hdma2d, uint32_t Timeout),
 				(override));
 

@@ -169,6 +169,12 @@ auto CoreSTM32Hal::HAL_DMA2D_Start(DMA2D_HandleTypeDef *hdma2d, uint32_t pdata, 
 	return ::HAL_DMA2D_Start(hdma2d, pdata, DstAddress, Width, Height);
 }
 
+auto CoreSTM32Hal::HAL_DMA2D_Start_IT(DMA2D_HandleTypeDef *hdma2d, uint32_t pdata, uint32_t DstAddress, uint32_t Width,
+									  uint32_t Height) -> HAL_StatusTypeDef
+{
+	return ::HAL_DMA2D_Start_IT(hdma2d, pdata, DstAddress, Width, Height);
+}
+
 auto CoreSTM32Hal::HAL_DMA2D_PollForTransfer(DMA2D_HandleTypeDef *hdma2d, uint32_t Timeout) -> HAL_StatusTypeDef
 {
 	return ::HAL_DMA2D_PollForTransfer(hdma2d, Timeout);

@@ -20,7 +20,8 @@ class CoreDMA2D : public interface::DMA2DBase
 	void transferImage(uint32_t width, uint32_t height, uint32_t width_offset) final;
 	void transferDrawing(uintptr_t first_pixel_address, uint32_t width, uint32_t height, uint32_t color) final;
 
-	auto getHandle() -> DMA2D_HandleTypeDef final;
+	auto getHandle() -> DMA2D_HandleTypeDef & final;
+	void setHandle(const DMA2D_HandleTypeDef &hdma2d) { _hdma2d = hdma2d; }
 
   private:
 	DMA2D_HandleTypeDef _hdma2d {};

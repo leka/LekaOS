@@ -62,13 +62,16 @@ void CoreDMA2D::initialize()
 
 void CoreDMA2D::transferData(uintptr_t input, uintptr_t output, uint32_t width, uint32_t height)
 {
+	auto isNotReady = [this] { return _hdma2d.State != HAL_DMA2D_STATE_READY; };
+	while (isNotReady())
+		;
+
 	// TODO(@yann): Check if init and config are needed everytime
 	auto is_initialized = [&] { return _hal.HAL_DMA2D_Init(&_hdma2d) == HAL_OK; };
 	auto is_configured	= [&] { return _hal.HAL_DMA2D_ConfigLayer(&_hdma2d, 1) == HAL_OK; };
-	auto is_started		= [&] { return _hal.HAL_DMA2D_Start(&_hdma2d, input, output, width, height) == HAL_OK; };
 
-	if (is_initialized() && is_configured() && is_started()) {
-		_hal.HAL_DMA2D_PollForTransfer(&_hdma2d, 100);
+	if (is_initialized() && is_configured()) {
+		_hal.HAL_DMA2D_Start_IT(&_hdma2d, input, output, width, height);
 	}
 }
 
@@ -81,7 +84,7 @@ void CoreDMA2D::transferImage(uint32_t width, uint32_t height, uint32_t width_of
 	transferData(jpeg::decoded_buffer_address, lcd::frame_buffer_address, width, height);
 }
 
-auto CoreDMA2D::getHandle() -> DMA2D_HandleTypeDef
+auto CoreDMA2D::getHandle() -> DMA2D_HandleTypeDef &
 {
 	return _hdma2d;
 }

@@ -58,10 +58,12 @@ class STM32Hal
 	virtual auto HAL_DMA_Init(DMA_HandleTypeDef *hdma) -> HAL_StatusTypeDef	  = 0;
 	virtual auto HAL_DMA_DeInit(DMA_HandleTypeDef *hdma) -> HAL_StatusTypeDef = 0;
 
-	virtual auto HAL_DMA2D_Init(DMA2D_HandleTypeDef *hdma2d) -> HAL_StatusTypeDef							   = 0;
-	virtual auto HAL_DMA2D_ConfigLayer(DMA2D_HandleTypeDef *hdma2d, uint32_t LayerIdx) -> HAL_StatusTypeDef	   = 0;
+	virtual auto HAL_DMA2D_Init(DMA2D_HandleTypeDef *hdma2d) -> HAL_StatusTypeDef							= 0;
+	virtual auto HAL_DMA2D_ConfigLayer(DMA2D_HandleTypeDef *hdma2d, uint32_t LayerIdx) -> HAL_StatusTypeDef = 0;
 	virtual auto HAL_DMA2D_Start(DMA2D_HandleTypeDef *hdma2d, uint32_t pdata, uint32_t DstAddress, uint32_t Width,
-								 uint32_t Height) -> HAL_StatusTypeDef										   = 0;
+								 uint32_t Height) -> HAL_StatusTypeDef										= 0;
+	virtual auto HAL_DMA2D_Start_IT(DMA2D_HandleTypeDef *hdma2d, uint32_t, uint32_t, uint32_t, uint32_t)
+		-> HAL_StatusTypeDef																				   = 0;
 	virtual auto HAL_DMA2D_PollForTransfer(DMA2D_HandleTypeDef *hdma2d, uint32_t Timeout) -> HAL_StatusTypeDef = 0;
 
 	virtual auto HAL_DSI_Init(DSI_HandleTypeDef *hdsi, DSI_PLLInitTypeDef *PLLInit) -> HAL_StatusTypeDef		  = 0;
