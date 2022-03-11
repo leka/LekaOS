@@ -43,6 +43,8 @@ class RobotController : public interface::RobotController
 
 		// Setup callbacks for monitoring
 
+		_battery_kit.onDataUpdated([this](uint8_t level) { _service_battery.setBatteryLevel(level); });
+
 		_battery_kit.start();
 
 		// Setup callbacks for each State Machine events
