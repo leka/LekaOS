@@ -6,6 +6,7 @@
 
 #include "BLEKit.h"
 #include "BLEServiceBattery.h"
+#include "BLEServiceDeviceInformation.h"
 #include "BLEServiceMonitoring.h"
 
 #include "LogKit.h"
@@ -16,10 +17,12 @@ using namespace std::chrono;
 auto level			 = uint8_t {0};
 auto charging_status = bool {false};
 
-auto service_battery	= BLEServiceBattery {};
-auto service_monitoring = BLEServiceMonitoring {};
+auto service_device_information = BLEServiceDeviceInformation {};
+auto service_battery			= BLEServiceBattery {};
+auto service_monitoring			= BLEServiceMonitoring {};
 
-auto services = std::to_array<interface::BLEService *>({&service_battery, &service_monitoring});
+auto services =
+	std::to_array<interface::BLEService *>({&service_device_information, &service_battery, &service_monitoring});
 
 auto blekit = BLEKit {};
 
@@ -30,6 +33,8 @@ auto main() -> int
 	log_info("Hello, World!\n\n");
 
 	blekit.setServices(services);
+	std::array<uint8_t, 33> serial_number = {"LK-2202-003300294E5350092038384B"};
+	service_device_information.setSerialNumber(serial_number);
 
 	blekit.init();
 

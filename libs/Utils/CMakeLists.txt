@@ -12,6 +12,7 @@ target_include_directories(Utils
 target_sources(Utils
 	PRIVATE
 		source/Utils.cpp
+		source/CastUtils.cpp
 		source/MathUtils.cpp
 		source/MemoryUtils.cpp
 )
@@ -19,6 +20,7 @@ target_sources(Utils
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
+		tests/CastUtils_test.cpp
 		tests/MathUtils_test_checksum.cpp
 		tests/MathUtils_test_map.cpp
 		tests/MathUtils_test_linear_function.cpp

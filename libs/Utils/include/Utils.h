@@ -4,5 +4,6 @@
 
 #pragma once
 
+#include "CastUtils.h"
 #include "MathUtils.h"
 #include "MemoryUtils.h"
