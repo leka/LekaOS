@@ -17,6 +17,7 @@ namespace bsml	= boost::sml;
 namespace lksm	= system::robot::sm;
 namespace event = system::robot::sm::event;
 
+using testing::AnyNumber;
 using testing::Return;
 
 ACTION_TEMPLATE(GetCallback, HAS_1_TEMPLATE_PARAMS(typename, callback_t), AND_1_VALUE_PARAMS(pointer))
@@ -61,6 +62,7 @@ TEST_F(RobotControllerTest, initializeComponents)
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
 
+	EXPECT_CALL(mbed_mock_gatt, addService).Times(AnyNumber());
 	EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(1);
 	EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(1);
 

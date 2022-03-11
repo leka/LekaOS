@@ -5,6 +5,7 @@
 #pragma once
 
 #include "BLEKit.h"
+#include "BLEServiceBattery.h"
 
 #include "BatteryKit.h"
 #include "StateMachine.h"
@@ -30,7 +31,11 @@ class RobotController : public interface::RobotController
 
 	void raise(auto event) { state_machine.process_event(event); };
 
-	void initializeComponents() { _ble.init(); }
+	void initializeComponents()
+	{
+		_ble.setServices(services);
+		_ble.init();
+	}
 
 	void registerEvents()
 	{
@@ -61,7 +66,9 @@ class RobotController : public interface::RobotController
 	interface::Battery &_battery;
 	BatteryKit _battery_kit {_battery};
 
-	BLEKit _ble;
+	BLEKit _ble {};
+	BLEServiceBattery _service_battery {};
+	std::array<interface::BLEService *, 1> services = {&_service_battery};
 };
 
 }	// namespace leka
