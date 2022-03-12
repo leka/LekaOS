@@ -6,6 +6,7 @@
 
 #include "BLEKit.h"
 #include "BLEServiceBattery.h"
+#include "BLEServiceDeviceInformation.h"
 
 #include "BatteryKit.h"
 #include "StateMachine.h"
@@ -69,8 +70,9 @@ class RobotController : public interface::RobotController
 	BatteryKit _battery_kit {_battery};
 
 	BLEKit _ble {};
+	BLEServiceDeviceInformation _service_device_information {};
 	BLEServiceBattery _service_battery {};
-	std::array<interface::BLEService *, 1> services = {&_service_battery};
+	std::array<interface::BLEService *, 2> services = {&_service_device_information, &_service_battery};
 };
 
 }	// namespace leka
