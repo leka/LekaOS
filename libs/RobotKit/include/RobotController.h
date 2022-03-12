@@ -44,7 +44,7 @@ class RobotController : public interface::RobotController
 
 		// Setup callbacks for monitoring
 
-		_battery_kit.onDataUpdated([this](uint8_t level) { _service_battery.setBatteryLevel(level); });
+		_battery_kit.onDataUpdated([](uint8_t level) { _service_battery.setBatteryLevel(level); });
 
 		_battery_kit.startEventHandler();
 
@@ -70,9 +70,10 @@ class RobotController : public interface::RobotController
 	BatteryKit _battery_kit {_battery};
 
 	BLEKit _ble {};
-	BLEServiceDeviceInformation _service_device_information {};
-	BLEServiceBattery _service_battery {};
-	std::array<interface::BLEService *, 2> services = {&_service_device_information, &_service_battery};
+	inline static BLEServiceDeviceInformation _service_device_information {};
+	inline static BLEServiceBattery _service_battery {};
+	inline static auto services =
+		std::to_array<interface::BLEService *>({&_service_device_information, &_service_battery});
 };
 
 }	// namespace leka
