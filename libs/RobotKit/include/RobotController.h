@@ -25,6 +25,11 @@ class RobotController : public interface::RobotController
 	explicit RobotController(interface::Timeout &sleep_timeout, interface::Battery &battery)
 		: _sleep_timeout(sleep_timeout), _battery(battery) {};
 
+	void runLaunchingBehavior() final
+	{
+		// TODO (@yann): Display Leka x APF logo image
+	}
+
 	void startSleepTimeout() final { _sleep_timeout.start(_sleep_timeout_duration); }
 	void stopSleepTimeout() final { _sleep_timeout.stop(); }
 

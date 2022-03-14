@@ -49,6 +49,10 @@ namespace sm::action {
 
 	using irc = interface::RobotController;
 
+	struct run_launching_behavior {
+		auto operator()(irc &rc) const { rc.runLaunchingBehavior(); }
+	};
+
 	struct start_sleep_timeout {
 		auto operator()(irc &rc) const { rc.startSleepTimeout(); }
 	};
@@ -67,6 +71,7 @@ struct StateMachine {
 		return make_transition_table(
 			// clang-format off
 			* sm::state::setup    + event<sm::event::setup_complete>                                   = sm::state::idle
+			, sm::state::setup    + boost::sml::on_exit<_>  / sm::action::run_launching_behavior {}
 
 			, sm::state::idle     + boost::sml::on_entry<_> / sm::action::start_sleep_timeout {}
 			, sm::state::idle     + boost::sml::on_exit<_>  / sm::action::stop_sleep_timeout  {}

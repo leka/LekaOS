@@ -13,6 +13,8 @@ class RobotController
   public:
 	virtual ~RobotController() = default;
 
+	virtual void runLaunchingBehavior() = 0;
+
 	virtual void startSleepTimeout() = 0;
 	virtual void stopSleepTimeout()	 = 0;
 

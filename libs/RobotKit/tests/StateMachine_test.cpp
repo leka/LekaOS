@@ -56,6 +56,7 @@ TEST_F(StateMachineTest, stateSetupEventSetupComplete)
 	sm.set_current_states(lksm::state::setup);
 
 	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, runLaunchingBehavior).Times(1);
 
 	sm.process_event(lksm::event::setup_complete {});
 
