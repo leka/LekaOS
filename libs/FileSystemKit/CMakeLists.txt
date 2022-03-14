@@ -12,6 +12,7 @@ target_include_directories(FileSystemKit
 target_sources(FileSystemKit
 	PRIVATE
 		source/File.cpp
+		source/Config.cpp
 )
 
 target_link_libraries(FileSystemKit

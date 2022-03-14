@@ -8,6 +8,7 @@
 #include <span>
 #include <string>
 
+#include "ConfigKit.h"
 #include "FileSystemKit.h"
 #include "LogKit.h"
 #include "gtest/gtest.h"
@@ -21,6 +22,7 @@ class FileTest : public ::testing::Test
 	{
 		strcpy(tempFilename, "/tmp/XXXXXX");
 		mkstemp(tempFilename);
+		tempFilenameFS = tempFilename;
 	}
 	// void TearDown() override {}
 
@@ -52,6 +54,7 @@ class FileTest : public ::testing::Test
 
 	FileSystemKit::File file {};
 	char tempFilename[L_tmpnam];   // NOLINT
+	std::filesystem::path tempFilenameFS;
 };
 
 TEST_F(FileTest, initializationDefault)
@@ -799,4 +802,156 @@ TEST_F(FileTest, clearError)
 	auto error_after_clear = file.error();
 
 	ASSERT_FALSE(error_after_clear);
+}
+
+TEST_F(FileTest, getConfigEmptyFile)
+{
+	auto output_data = FileSystemKit::config::get(nullptr);
+	ASSERT_EQ(-1, output_data);
+}
+
+TEST_F(FileTest, getConfigUnwrittenFile)
+{
+	auto output_data = FileSystemKit::config::get(tempFilename);
+	ASSERT_EQ(0, output_data);
+}
+
+TEST_F(FileTest, getConfigWrittenFile)
+{
+	auto input_data = std::to_array<uint8_t>({0x05});	// 5
+	writeTempFile(input_data);
+	auto output_data = FileSystemKit::config::get(tempFilename);
+	ASSERT_EQ(5, output_data);
+}
+
+TEST_F(FileTest, getConfigWrittenFileAtPos)
+{
+	auto input_data = std::to_array<uint8_t>({0x05, 0x06});	  // 5,6
+	writeTempFile(input_data);
+	auto output_data = FileSystemKit::config::get(tempFilename, 1);
+	ASSERT_EQ(6, output_data);
+}
+
+TEST_F(FileTest, getConfigWrittenFileOutOfRange)
+{
+	auto input_data = std::to_array<uint8_t>({0x05, 0x06});	  // 5,6
+	writeTempFile(input_data);
+	auto output_data = FileSystemKit::config::get(tempFilename, 2);
+	ASSERT_EQ(0, output_data);
+}
+
+TEST_F(FileTest, getConfigWrittenFileOutOfRangeMaxBufferSize)
+{
+	auto input_data = std::to_array<uint8_t>({0x05, 0x06});	  // 5,6
+	writeTempFile(input_data);
+	auto output_data = FileSystemKit::config::get(tempFilename, FileSystemKit::config::max_buffer_size);
+	ASSERT_EQ(-1, output_data);
+}
+
+TEST_F(FileTest, setConfigEmptyFile)
+{
+	FileSystemKit::config::set(nullptr, 5);
+	auto expected_data = std::array<uint8_t, 16> {};
+	auto output_data   = std::array<uint8_t, 16> {};
+	file.open(tempFilename);
+	file.read(output_data);
+	ASSERT_EQ(expected_data, output_data);
+}
+
+TEST_F(FileTest, setConfigFile)
+{
+	FileSystemKit::config::set(tempFilename, 5);
+	auto expected_data = std::array<uint8_t, 16> {0x05};   // 5
+	auto output_data   = std::array<uint8_t, 16> {};
+	file.open(tempFilename);
+	file.read(output_data);
+	ASSERT_EQ(expected_data, output_data);
+}
+
+TEST_F(FileTest, setConfigFileAtPos)
+{
+	FileSystemKit::config::set(tempFilename, 6, 1);
+	auto expected_data = std::array<uint8_t, 16> {0x00, 0x06};	 // 5,6
+	auto output_data   = std::array<uint8_t, 16> {};
+	file.open(tempFilename);
+	file.read(output_data);
+	ASSERT_EQ(expected_data, output_data);
+}
+
+TEST_F(FileTest, setConfigFileOutOfRangeMaxBufferSize)
+{
+	FileSystemKit::config::set(tempFilename, 6, FileSystemKit::config::max_buffer_size);
+	auto expected_data = std::array<uint8_t, 16> {};
+	auto output_data   = std::array<uint8_t, 16> {};
+	file.open(tempFilename);
+	file.read(output_data);
+	ASSERT_EQ(expected_data, output_data);
+}
+
+TEST_F(FileTest, getConfigUnwrittenFileFS)
+{
+	auto output_data = FileSystemKit::config::get(tempFilenameFS);
+	ASSERT_EQ(0, output_data);
+}
+
+TEST_F(FileTest, getConfigWrittenFileFS)
+{
+	auto input_data = std::to_array<uint8_t>({0x05});	// 5
+	writeTempFile(input_data);
+	auto output_data = FileSystemKit::config::get(tempFilenameFS);
+	ASSERT_EQ(5, output_data);
+}
+
+TEST_F(FileTest, getConfigWrittenFileAtPosFS)
+{
+	auto input_data = std::to_array<uint8_t>({0x05, 0x06});	  // 5,6
+	writeTempFile(input_data);
+	auto output_data = FileSystemKit::config::get(tempFilenameFS, 1);
+	ASSERT_EQ(6, output_data);
+}
+
+TEST_F(FileTest, getConfigWrittenFileOutOfRangeFS)
+{
+	auto input_data = std::to_array<uint8_t>({0x05, 0x06});	  // 5,6
+	writeTempFile(input_data);
+	auto output_data = FileSystemKit::config::get(tempFilenameFS, 2);
+	ASSERT_EQ(0, output_data);
+}
+
+TEST_F(FileTest, getConfigWrittenFileOutOfRangeMaxBufferSizeFS)
+{
+	auto input_data = std::to_array<uint8_t>({0x05, 0x06});	  // 5,6
+	writeTempFile(input_data);
+	auto output_data = FileSystemKit::config::get(tempFilenameFS, FileSystemKit::config::max_buffer_size);
+	ASSERT_EQ(-1, output_data);
+}
+
+TEST_F(FileTest, setConfigFileFS)
+{
+	FileSystemKit::config::set(tempFilenameFS, 5);
+	auto expected_data = std::array<uint8_t, 16> {0x05};   // 5
+	auto output_data   = std::array<uint8_t, 16> {};
+	file.open(tempFilename);
+	file.read(output_data);
+	ASSERT_EQ(expected_data, output_data);
+}
+
+TEST_F(FileTest, setConfigFileAtPosFS)
+{
+	FileSystemKit::config::set(tempFilenameFS, 6, 1);
+	auto expected_data = std::array<uint8_t, 16> {0x00, 0x06};	 // 5,6
+	auto output_data   = std::array<uint8_t, 16> {};
+	file.open(tempFilename);
+	file.read(output_data);
+	ASSERT_EQ(expected_data, output_data);
+}
+
+TEST_F(FileTest, setConfigFileOutOfRangeMaxBufferSizeFS)
+{
+	FileSystemKit::config::set(tempFilenameFS, 6, FileSystemKit::config::max_buffer_size);
+	auto expected_data = std::array<uint8_t, 16> {};
+	auto output_data   = std::array<uint8_t, 16> {};
+	file.open(tempFilename);
+	file.read(output_data);
+	ASSERT_EQ(expected_data, output_data);
 }
