@@ -53,6 +53,16 @@ class RobotController : public interface::RobotController
 		// TODO (@yann): Stop animation video
 	}
 
+	auto isReadyToUpdate() -> bool final
+	{
+		return (_battery.isCharging() && _battery.level() > _minimal_battery_level_to_update);
+	};
+
+	void applyUpdate() final
+	{
+		// TODO (@yann): Run FirmwareKit load update
+	}
+
 	void raise(auto event) { state_machine.process_event(event); };
 
 	void initializeComponents()
@@ -91,6 +101,7 @@ class RobotController : public interface::RobotController
 
 	interface::Battery &_battery;
 	BatteryKit _battery_kit {_battery};
+	uint8_t _minimal_battery_level_to_update {25};
 
 	BLEKit _ble {};
 	inline static BLEServiceDeviceInformation _service_device_information {};

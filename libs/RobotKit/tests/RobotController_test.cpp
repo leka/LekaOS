@@ -187,3 +187,47 @@ TEST_F(RobotControllerTest, stateChargingEventChargeDidStopGuardIsChargingFalse)
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
 }
+
+TEST_F(RobotControllerTest, stateChargingEventUpdateRequestedGuardIsReadyToUpdateFalseNotCharging)
+{
+	rc.state_machine.set_current_states(lksm::state::charging);
+
+	uint8_t returned_level {100};
+
+	// TODO (@yann): Trigger update_requested in StateMachine from BLE and remove isReadyToUpdate call
+	EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
+	rc.isReadyToUpdate();
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
+}
+
+TEST_F(RobotControllerTest, stateChargingEventUpdateRequestedGuardIsReadyToUpdateFalseBelowMinimalBatteryLevel)
+{
+	rc.state_machine.set_current_states(lksm::state::charging);
+
+	uint8_t returned_level {0};
+
+	// TODO (@yann): Trigger update_requested in StateMachine from BLE and remove isReadyToUpdate call
+	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
+	EXPECT_CALL(battery, level).WillOnce(Return(returned_level));
+	rc.isReadyToUpdate();
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
+}
+
+TEST_F(RobotControllerTest, stateChargingEventUpdateRequestedGuardIsReadyToUpdateTrue)
+{
+	rc.state_machine.set_current_states(lksm::state::charging);
+
+	uint8_t returned_level {100};
+
+	// TODO (@yann): Trigger update_requested in StateMachine from BLE and remove isReadyToUpdate and applyUpdate calls
+	// TODO (@yann): EXPECT_CALL from FirmwareKit applyUpdate action
+
+	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
+	EXPECT_CALL(battery, level).WillOnce(Return(returned_level));
+	rc.isReadyToUpdate();
+	rc.applyUpdate();
+
+	// EXPECT_TRUE(rc.state_machine.is(lksm::state::updating));
+}
