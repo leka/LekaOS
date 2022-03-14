@@ -2,6 +2,9 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#include "rtos/ThisThread.h"
+
+#include "Assets.h"
 #include "CoreSDRAM.hpp"
 #include "CoreSTM32Hal.h"
 #include "FATFileSystem.h"
@@ -12,6 +15,7 @@
 #include "VideoKit.h"
 
 using namespace leka;
+using namespace std::chrono_literals;
 
 auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
 auto fatfs			= FATFileSystem {"fs"};
@@ -48,7 +52,14 @@ auto main() -> int
 	screen.initialize();
 	screen.setFrameRateLimit(30);
 
-	auto video_names = std::to_array({"/fs/videos/animation-joy.avi", "/fs/videos/animation-perplexity.avi"});
+	for (auto &name: image_names) {
+		auto image = gfx::Image {name};
+
+		screen.draw(image);
+		screen.display();
+
+		rtos::ThisThread::sleep_for(250ms);
+	}
 
 	while (true) {
 		for (auto &name: video_names) {
