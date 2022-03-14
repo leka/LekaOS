@@ -68,6 +68,7 @@ TEST_F(StateMachineTest, stateIdleEventTimeout)
 	sm.set_current_states(lksm::state::idle);
 
 	EXPECT_CALL(mock_rc, stopSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startSleepingBehavior).Times(1);
 
 	sm.process_event(lksm::event::sleep_timeout_did_end {});
 
@@ -78,6 +79,7 @@ TEST_F(StateMachineTest, stateSleepEventChargeDidStart)
 {
 	sm.set_current_states(lksm::state::sleeping);
 
+	EXPECT_CALL(mock_rc, stopSleepingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, isCharging).WillOnce(Return(true));
 
 	sm.process_event(lksm::event::charge_did_start {});

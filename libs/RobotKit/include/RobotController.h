@@ -33,6 +33,15 @@ class RobotController : public interface::RobotController
 	void startSleepTimeout() final { _sleep_timeout.start(_sleep_timeout_duration); }
 	void stopSleepTimeout() final { _sleep_timeout.stop(); }
 
+	void startSleepingBehavior() final
+	{
+		// TODO (@yann): Start YawningSleeping animation video
+	}
+	void stopSleepingBehavior() final
+	{
+		// TODO (@yann): Stop animation video
+	}
+
 	auto isCharging() -> bool final { return _battery.isCharging(); };
 
 	void raise(auto event) { state_machine.process_event(event); };

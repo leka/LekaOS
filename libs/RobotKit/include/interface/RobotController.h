@@ -18,6 +18,9 @@ class RobotController
 	virtual void startSleepTimeout() = 0;
 	virtual void stopSleepTimeout()	 = 0;
 
+	virtual void startSleepingBehavior() = 0;
+	virtual void stopSleepingBehavior()	 = 0;
+
 	virtual auto isCharging() -> bool = 0;
 };
 
