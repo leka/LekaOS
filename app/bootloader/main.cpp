@@ -45,7 +45,15 @@ void initializeSD()
 auto main() -> int
 {
 	while (battery.voltage() < CoreBattery::Capacity::empty + static_cast<float>(battery_level_hysteresis_offset)) {
-		rtos::ThisThread::sleep_for(10s);
+		if (battery.voltage() < 8.0) {
+			// 1 Flash
+		} else if (battery.voltage() < CoreBattery::Capacity::empty) {
+			// 2 Flashs
+		} else {
+			// 3 Flashs
+		}
+
+		rtos::ThisThread::sleep_for(5s);
 	}
 
 	initializeSD();
