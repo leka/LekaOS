@@ -25,6 +25,8 @@ constexpr auto default_address = uint32_t {0x8040000 + 0x1000};	  // Start appli
 static auto charge_status_input = mbed::InterruptIn {PinName::BATTERY_CHARGE_STATUS};
 static auto battery				= leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_status_input};
 
+auto battery_level_hysteresis_offset = uint8_t {5};
+
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 
@@ -42,7 +44,7 @@ void initializeSD()
 
 auto main() -> int
 {
-	while (battery.voltage() < CoreBattery::Capacity::empty) {
+	while (battery.voltage() < CoreBattery::Capacity::empty + static_cast<float>(battery_level_hysteresis_offset)) {
 		rtos::ThisThread::sleep_for(10s);
 	}
 
