@@ -18,11 +18,18 @@ class CoreDMA2DTest : public ::testing::Test
   protected:
 	CoreDMA2DTest() = default;
 
-	// void SetUp() override {}
+	void SetUp() override { setHandleDMA2DReady(); }
 	// void TearDown() override {}
 
 	mock::CoreSTM32Hal halmock;
 	CoreDMA2D dma2d {halmock};
+
+	void setHandleDMA2DReady()
+	{
+		auto handle	 = dma2d.getHandle();
+		handle.State = HAL_DMA2D_STATE_READY;
+		dma2d.setHandle(handle);
+	}
 };
 
 TEST_F(CoreDMA2DTest, instantiation)
@@ -67,6 +74,14 @@ TEST_F(CoreDMA2DTest, initializationSequence)
 {
 	{
 		InSequence seq;
+
+		EXPECT_CALL(halmock, HAL_RCC_DMA2D_CLK_ENABLE).Times(1);
+		EXPECT_CALL(halmock, HAL_RCC_DMA2D_FORCE_RESET).Times(1);
+		EXPECT_CALL(halmock, HAL_RCC_DMA2D_RELEASE_RESET).Times(1);
+
+		EXPECT_CALL(halmock, HAL_NVIC_SetPriority(DMA2D_IRQn, _, _)).Times(1);
+		EXPECT_CALL(halmock, HAL_NVIC_EnableIRQ(DMA2D_IRQn)).Times(1);
+
 		EXPECT_CALL(halmock, HAL_DMA2D_Init).Times(1);
 		EXPECT_CALL(halmock, HAL_DMA2D_ConfigLayer).Times(2);
 	}
@@ -81,8 +96,7 @@ TEST_F(CoreDMA2DTest, transferDataSequence)
 
 		EXPECT_CALL(halmock, HAL_DMA2D_Init).Times(1).WillRepeatedly(Return(HAL_OK));
 		EXPECT_CALL(halmock, HAL_DMA2D_ConfigLayer).Times(1).WillRepeatedly(Return(HAL_OK));
-		EXPECT_CALL(halmock, HAL_DMA2D_Start).Times(1).WillRepeatedly(Return(HAL_OK));
-		EXPECT_CALL(halmock, HAL_DMA2D_PollForTransfer).Times(1);
+		EXPECT_CALL(halmock, HAL_DMA2D_Start_IT).Times(1);
 	}
 
 	dma2d.transferData(0, 0, 0, 0);
@@ -95,8 +109,7 @@ TEST_F(CoreDMA2DTest, transferDataWithFailureForHALDMA2DInit)
 
 		EXPECT_CALL(halmock, HAL_DMA2D_Init).Times(1).WillRepeatedly(Return(HAL_ERROR));
 		EXPECT_CALL(halmock, HAL_DMA2D_ConfigLayer).Times(0);
-		EXPECT_CALL(halmock, HAL_DMA2D_Start).Times(0);
-		EXPECT_CALL(halmock, HAL_DMA2D_PollForTransfer).Times(0);
+		EXPECT_CALL(halmock, HAL_DMA2D_Start_IT).Times(0);
 	}
 
 	dma2d.transferData(0, 0, 0, 0);
@@ -109,22 +122,7 @@ TEST_F(CoreDMA2DTest, transferDataWithFailureForHALDMA2DConfigLayer)
 
 		EXPECT_CALL(halmock, HAL_DMA2D_Init).Times(1).WillRepeatedly(Return(HAL_OK));
 		EXPECT_CALL(halmock, HAL_DMA2D_ConfigLayer).Times(1).WillRepeatedly(Return(HAL_ERROR));
-		EXPECT_CALL(halmock, HAL_DMA2D_Start).Times(0);
-		EXPECT_CALL(halmock, HAL_DMA2D_PollForTransfer).Times(0);
-	}
-
-	dma2d.transferData(0, 0, 0, 0);
-}
-
-TEST_F(CoreDMA2DTest, transferDataWithFailureForHALDMA2DStart)
-{
-	{
-		InSequence seq;
-
-		EXPECT_CALL(halmock, HAL_DMA2D_Init).Times(1).WillRepeatedly(Return(HAL_OK));
-		EXPECT_CALL(halmock, HAL_DMA2D_ConfigLayer).Times(1).WillRepeatedly(Return(HAL_OK));
-		EXPECT_CALL(halmock, HAL_DMA2D_Start).Times(1).WillRepeatedly(Return(HAL_ERROR));
-		EXPECT_CALL(halmock, HAL_DMA2D_PollForTransfer).Times(0);
+		EXPECT_CALL(halmock, HAL_DMA2D_Start_IT).Times(0);
 	}
 
 	dma2d.transferData(0, 0, 0, 0);
@@ -140,11 +138,9 @@ TEST_F(CoreDMA2DTest, transferImage)
 
 		EXPECT_CALL(halmock, HAL_DMA2D_Init).Times(1).WillRepeatedly(Return(HAL_OK));
 		EXPECT_CALL(halmock, HAL_DMA2D_ConfigLayer).Times(1).WillRepeatedly(Return(HAL_OK));
-		EXPECT_CALL(halmock, HAL_DMA2D_Start(_, jpeg::decoded_buffer_address, lcd::frame_buffer_address, image_width,
-											 image_height))
-			.Times(1)
-			.WillRepeatedly(Return(HAL_OK));
-		EXPECT_CALL(halmock, HAL_DMA2D_PollForTransfer).Times(1);
+		EXPECT_CALL(halmock, HAL_DMA2D_Start_IT(_, jpeg::decoded_buffer_address, lcd::frame_buffer_address, image_width,
+												image_height))
+			.Times(1);
 	}
 
 	dma2d.transferImage(image_width, image_height, 100);
@@ -152,7 +148,30 @@ TEST_F(CoreDMA2DTest, transferImage)
 
 	ASSERT_EQ(handle.Init.Mode, DMA2D_M2M_PFC);
 	ASSERT_EQ(handle.LayerCfg[1].InputOffset, 100);
-	ASSERT_EQ(handle.Init.OutputOffset, 0);
+	ASSERT_EQ(handle.Init.OutputOffset, lcd::dimension::width - image_width);
+}
+
+TEST_F(CoreDMA2DTest, transferImageDifferentWidth)
+{
+	uint16_t image_width  = 400;
+	uint16_t image_height = 400;
+
+	{
+		InSequence seq;
+
+		EXPECT_CALL(halmock, HAL_DMA2D_Init).Times(1).WillRepeatedly(Return(HAL_OK));
+		EXPECT_CALL(halmock, HAL_DMA2D_ConfigLayer).Times(1).WillRepeatedly(Return(HAL_OK));
+		EXPECT_CALL(halmock, HAL_DMA2D_Start_IT(_, jpeg::decoded_buffer_address, lcd::frame_buffer_address, image_width,
+												image_height))
+			.Times(1);
+	}
+
+	dma2d.transferImage(image_width, image_height, 100);
+	auto handle = dma2d.getHandle();
+
+	ASSERT_EQ(handle.Init.Mode, DMA2D_M2M_PFC);
+	ASSERT_EQ(handle.LayerCfg[1].InputOffset, 100);
+	ASSERT_EQ(handle.Init.OutputOffset, lcd::dimension::width - image_width);
 }
 
 TEST_F(CoreDMA2DTest, transferDrawing)
@@ -162,8 +181,7 @@ TEST_F(CoreDMA2DTest, transferDrawing)
 
 		EXPECT_CALL(halmock, HAL_DMA2D_Init).Times(1).WillRepeatedly(Return(HAL_OK));
 		EXPECT_CALL(halmock, HAL_DMA2D_ConfigLayer).Times(1).WillRepeatedly(Return(HAL_OK));
-		EXPECT_CALL(halmock, HAL_DMA2D_Start).Times(1).WillRepeatedly(Return(HAL_OK));
-		EXPECT_CALL(halmock, HAL_DMA2D_PollForTransfer).Times(1);
+		EXPECT_CALL(halmock, HAL_DMA2D_Start_IT).Times(1);
 	}
 
 	dma2d.transferDrawing(0x0, 100, 100, 0xFFFF0000);	// Draw a red square of side 100 pixels in the top left corner

@@ -62,6 +62,8 @@ class CoreSTM32Hal : public interface::STM32Hal
 	auto HAL_DMA2D_ConfigLayer(DMA2D_HandleTypeDef *hdma2d, uint32_t LayerIdx) -> HAL_StatusTypeDef final;
 	auto HAL_DMA2D_Start(DMA2D_HandleTypeDef *hdma2d, uint32_t pdata, uint32_t DstAddress, uint32_t Width,
 						 uint32_t Height) -> HAL_StatusTypeDef final;
+	auto HAL_DMA2D_Start_IT(DMA2D_HandleTypeDef *hdma2d, uint32_t pdata, uint32_t DstAddress, uint32_t Width,
+							uint32_t Height) -> HAL_StatusTypeDef final;
 	auto HAL_DMA2D_PollForTransfer(DMA2D_HandleTypeDef *hdma2d, uint32_t Timeout) -> HAL_StatusTypeDef final;
 
 	auto HAL_DSI_Init(DSI_HandleTypeDef *hdsi, DSI_PLLInitTypeDef *PLLInit) -> HAL_StatusTypeDef final;

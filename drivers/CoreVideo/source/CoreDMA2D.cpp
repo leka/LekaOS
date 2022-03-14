@@ -41,6 +41,17 @@ CoreDMA2D::CoreDMA2D(interface::STM32Hal &hal) : _hal(hal)
 
 void CoreDMA2D::initialize()
 {
+	/** @brief Enable the DMA2D clock */
+	_hal.HAL_RCC_DMA2D_CLK_ENABLE();
+
+	/** @brief Toggle Sw reset of DMA2D IP */
+	_hal.HAL_RCC_DMA2D_FORCE_RESET();
+	_hal.HAL_RCC_DMA2D_RELEASE_RESET();
+
+	/** @brief NVIC configuration for DMA2D interrupt that is now enabled */
+	_hal.HAL_NVIC_SetPriority(DMA2D_IRQn, 3, 0);
+	_hal.HAL_NVIC_EnableIRQ(DMA2D_IRQn);
+
 	// MARK: Initializer DMA2D
 	// This part **must not** be moved to the constructor as LCD
 	// initialization must be performed in a very specific order
@@ -51,13 +62,16 @@ void CoreDMA2D::initialize()
 
 void CoreDMA2D::transferData(uintptr_t input, uintptr_t output, uint32_t width, uint32_t height)
 {
+	auto isNotReady = [this] { return _hdma2d.State != HAL_DMA2D_STATE_READY; };
+	while (isNotReady())
+		;
+
 	// TODO(@yann): Check if init and config are needed everytime
 	auto is_initialized = [&] { return _hal.HAL_DMA2D_Init(&_hdma2d) == HAL_OK; };
 	auto is_configured	= [&] { return _hal.HAL_DMA2D_ConfigLayer(&_hdma2d, 1) == HAL_OK; };
-	auto is_started		= [&] { return _hal.HAL_DMA2D_Start(&_hdma2d, input, output, width, height) == HAL_OK; };
 
-	if (is_initialized() && is_configured() && is_started()) {
-		_hal.HAL_DMA2D_PollForTransfer(&_hdma2d, 100);
+	if (is_initialized() && is_configured()) {
+		_hal.HAL_DMA2D_Start_IT(&_hdma2d, input, output, width, height);
 	}
 }
 
@@ -65,12 +79,12 @@ void CoreDMA2D::transferImage(uint32_t width, uint32_t height, uint32_t width_of
 {
 	_hdma2d.Init.Mode				= DMA2D_M2M_PFC;
 	_hdma2d.LayerCfg[1].InputOffset = width_offset;
-	_hdma2d.Init.OutputOffset		= 0;   // TODO(@yann): Check if needed
+	_hdma2d.Init.OutputOffset		= lcd::dimension::width - width;
 
 	transferData(jpeg::decoded_buffer_address, lcd::frame_buffer_address, width, height);
 }
 
-auto CoreDMA2D::getHandle() -> DMA2D_HandleTypeDef
+auto CoreDMA2D::getHandle() -> DMA2D_HandleTypeDef &
 {
 	return _hdma2d;
 }
