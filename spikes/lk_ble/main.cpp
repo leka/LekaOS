@@ -8,6 +8,7 @@
 #include "BLEServiceBattery.h"
 #include "BLEServiceDeviceInformation.h"
 #include "BLEServiceMonitoring.h"
+#include "BLEServiceUpdate.h"
 
 #include "LogKit.h"
 
@@ -20,9 +21,10 @@ auto charging_status = bool {false};
 auto service_device_information = BLEServiceDeviceInformation {};
 auto service_battery			= BLEServiceBattery {};
 auto service_monitoring			= BLEServiceMonitoring {};
+auto service_update				= BLEServiceUpdate {};
 
-auto services =
-	std::to_array<interface::BLEService *>({&service_device_information, &service_battery, &service_monitoring});
+auto services = std::to_array<interface::BLEService *>(
+	{&service_device_information, &service_battery, &service_monitoring, &service_update});
 
 auto blekit = BLEKit {};
 
@@ -47,5 +49,12 @@ auto main() -> int
 
 		charging_status = !charging_status;
 		service_monitoring.setChargingStatus(charging_status);
+
+		auto version = service_update.getVersion();
+
+		auto apply_update = service_update.getApplyUpdateValue();
+
+		log_info("Requested version: %d.%d.%d | Apply Update? %d", version.major, version.minor, version.revision,
+				 apply_update);
 	}
 }
