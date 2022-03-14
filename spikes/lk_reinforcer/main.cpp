@@ -14,6 +14,7 @@
 #include "HelloWorld.h"
 #include "LedKit.h"
 #include "LogKit.h"
+#include "Rainbow.h"
 #include "SpinBlink.h"
 #include "Sprinkles.h"
 
@@ -34,6 +35,7 @@ led::animation::BlinkGreen animation_blink_green(ears, belt);
 led::animation::SpinBlink animation_spin_blink(ears, belt);
 led::animation::Sprinkles animation_sprinkles(ears, belt);
 led::animation::Fire animation_fire(ears, belt);
+led::animation::Rainbow animation_rainbow(ears, belt);
 
 HelloWorld hello;
 
@@ -46,6 +48,12 @@ auto main() -> int
 	hello.start();
 
 	while (true) {
+		ledkit.start(animation_rainbow);
+		rtos::ThisThread::sleep_for(10s);
+
+		ledkit.stop();
+		rtos::ThisThread::sleep_for(1s);
+
 		ledkit.start(animation_fire);
 		rtos::ThisThread::sleep_for(10s);
 

@@ -29,6 +29,7 @@ target_sources(LedKit
 		source/LoadingOrange.cpp
 		source/LoadingRed.cpp
 		source/LoadingYellow.cpp
+		source/Rainbow.cpp
 		source/Sad.cpp
 		source/SadCry.cpp
 		source/Sick.cpp
