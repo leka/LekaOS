@@ -22,6 +22,9 @@ class RobotController
 	virtual void stopSleepingBehavior()	 = 0;
 
 	virtual auto isCharging() -> bool = 0;
+
+	virtual void startChargingBehavior() = 0;
+	virtual void stopChargingBehavior()	 = 0;
 };
 
 }	// namespace leka::interface

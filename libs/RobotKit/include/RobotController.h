@@ -44,6 +44,15 @@ class RobotController : public interface::RobotController
 
 	auto isCharging() -> bool final { return _battery.isCharging(); };
 
+	void startChargingBehavior() final
+	{
+		// TODO (@yann): Display battery state image
+	}
+	void stopChargingBehavior() final
+	{
+		// TODO (@yann): Stop animation video
+	}
+
 	void raise(auto event) { state_machine.process_event(event); };
 
 	void initializeComponents()

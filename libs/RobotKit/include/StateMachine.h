@@ -69,6 +69,14 @@ namespace sm::action {
 		auto operator()(irc &rc) const { rc.stopSleepingBehavior(); }
 	};
 
+	struct start_charging_behavior {
+		auto operator()(irc &rc) const { rc.startChargingBehavior(); }
+	};
+
+	struct stop_charging_behavior {
+		auto operator()(irc &rc) const { rc.stopChargingBehavior(); }
+	};
+
 }	// namespace sm::action
 
 struct StateMachine {
@@ -91,6 +99,9 @@ struct StateMachine {
 			, sm::state::sleeping + boost::sml::on_exit<_>  / sm::action::stop_sleeping_behavior {}
 
 			, sm::state::sleeping + event<sm::event::charge_did_start> [sm::guard::is_charging {}]     = sm::state::charging
+
+			, sm::state::charging + boost::sml::on_entry<_> / sm::action::start_charging_behavior {}
+			, sm::state::charging + boost::sml::on_exit<_>  / sm::action::stop_charging_behavior {}
 
 			, sm::state::charging + event<sm::event::charge_did_stop>  [sm::guard::is_not_charging {}] = sm::state::idle
 			// clang-format on

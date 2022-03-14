@@ -20,6 +20,9 @@ struct RobotController : public interface::RobotController {
 	MOCK_METHOD(void, stopSleepingBehavior, (), (override));
 
 	MOCK_METHOD(bool, isCharging, (), (override));
+
+	MOCK_METHOD(void, startChargingBehavior, (), (override));
+	MOCK_METHOD(void, stopChargingBehavior, (), (override));
 };
 
 }	// namespace leka::mock
