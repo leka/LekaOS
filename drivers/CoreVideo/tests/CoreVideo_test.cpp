@@ -14,6 +14,7 @@
 #include "mocks/leka/CoreLTDC.h"
 #include "mocks/leka/CoreSDRAM.h"
 #include "mocks/leka/CoreSTM32Hal.h"
+#include "mocks/leka/File.h"
 
 using namespace leka;
 using ::testing::_;
@@ -39,6 +40,8 @@ class CoreVideoTest : public ::testing::Test
 	mock::CoreGraphics graphicsmock;
 	mock::CoreFont fontmock;
 	mock::CoreJPEG jpegmock;
+
+	mock::File filemock;
 
 	CoreVideo corevideo;
 };
@@ -157,9 +160,9 @@ TEST_F(CoreVideoTest, drawRectangleWithColor)
 TEST_F(CoreVideoTest, displayImage)
 {
 	FIL file;
-	EXPECT_CALL(jpegmock, displayImage(&file)).Times(1);
+	EXPECT_CALL(jpegmock, displayImage(&filemock)).Times(1);
 
-	corevideo.displayImage(&file);
+	corevideo.displayImage(&filemock);
 }
 
 TEST_F(CoreVideoTest, displayText)

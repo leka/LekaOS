@@ -35,7 +35,6 @@ HelloWorld hello;
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
-CoreFatFs corefatfs;
 
 CoreLL corell;
 CGPixel pixel(corell);
@@ -48,7 +47,7 @@ CoreGraphics coregraphics(coredma2d);
 CoreFont corefont(pixel);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 CoreLCD corelcd(coreotm);
-CoreJPEG corejpeg(hal, coredma2d, corefatfs);
+CoreJPEG corejpeg(hal, coredma2d);
 CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 rtos::Thread animation_thread;

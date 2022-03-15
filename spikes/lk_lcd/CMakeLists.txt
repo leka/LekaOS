@@ -15,11 +15,10 @@ target_sources(spike_lk_lcd
 )
 
 target_link_libraries(spike_lk_lcd
-	lib_LekaScreen
-	CoreFs
 	CoreVideo
 	CoreLL
 	CoreSTM32Hal
+	FileSystemKit
 )
 
 target_link_custom_leka_targets(spike_lk_lcd)

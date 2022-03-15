@@ -7,8 +7,8 @@
 #include "external/st_jpeg_utils.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreDMA2D.h"
-#include "mocks/leka/CoreFatFs.h"
 #include "mocks/leka/CoreSTM32Hal.h"
+#include "mocks/leka/File.h"
 
 using namespace leka;
 using ::testing::_;
@@ -16,27 +16,28 @@ using ::testing::AnyNumber;
 using ::testing::AtLeast;
 using ::testing::DoAll;
 using ::testing::InSequence;
+using ::testing::Matcher;
 using ::testing::Return;
 using ::testing::SetArgPointee;
 
 class CoreJPEGTest : public ::testing::Test
 {
   protected:
-	CoreJPEGTest() : corejpeg(halmock, dma2dmock, filemock) {}
+	CoreJPEGTest() : corejpeg(halmock, dma2dmock) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
 	mock::CoreSTM32Hal halmock;
 	mock::CoreDMA2D dma2dmock;
-	mock::CoreFatFs filemock;
+	mock::File filemock;
 	CoreJPEG corejpeg;
 
 	// TODO: These EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call
 	// TODO: Remove them in the future
-	void MOCK_FUNCTION_silenceUnexpectedCalls(void)
+	void MOCK_FUNCTION_silenceUnexpectedCalls()
 	{
-		EXPECT_CALL(filemock, read).Times(AnyNumber());
+		EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillRepeatedly(Return(42));
 		EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(AnyNumber());
 		EXPECT_CALL(dma2dmock, transferImage).Times(AnyNumber());
 	}
@@ -48,12 +49,24 @@ class CoreJPEGTest : public ::testing::Test
 			config.ImageWidth = 16 * 50 + offset;	// =800 + i
 			EXPECT_CALL(halmock, HAL_JPEG_GetInfo(_, _)).WillOnce(DoAll(SetArgPointee<1>(config), Return(HAL_OK)));
 			// Apply setup
-			FIL image;
-			corejpeg.displayImage(&image);
+			corejpeg.displayImage(&filemock);
 			// Test
 			auto width_offset = corejpeg.getWidthOffset();
 			ASSERT_EQ((16 - offset) % 16, width_offset);
 		}
+	}
+
+	void setFile()
+	{
+		{
+			InSequence seq;
+			EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillOnce(Return(42));
+			EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(1);
+			EXPECT_CALL(halmock, HAL_JPEG_GetInfo).Times(1);
+			EXPECT_CALL(dma2dmock, transferImage).Times(1);
+		}
+
+		corejpeg.displayImage(&filemock);
 	}
 };
 
@@ -89,8 +102,7 @@ TEST_F(CoreJPEGTest, getConfiguration)
 	MOCK_FUNCTION_silenceUnexpectedCalls();
 
 	// Apply setup
-	FIL image;
-	corejpeg.displayImage(&image);
+	corejpeg.displayImage(&filemock);
 
 	// Test
 	auto config = corejpeg.getConfig();
@@ -112,7 +124,9 @@ TEST_F(CoreJPEGTest, initializationSequence)
 
 TEST_F(CoreJPEGTest, decodeImageWithPollingDecodeCalledSuccess)
 {
-	EXPECT_CALL(filemock, read).Times(1);
+	setFile();
+
+	EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillOnce(Return(42));
 	EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(1);
 
 	auto status = corejpeg.decodeImageWithPolling();
@@ -122,7 +136,9 @@ TEST_F(CoreJPEGTest, decodeImageWithPollingDecodeCalledSuccess)
 
 TEST_F(CoreJPEGTest, decodeImageWithPollingDecodeCalledFailed)
 {
-	EXPECT_CALL(filemock, read).WillOnce(Return(FR_NO_FILE));
+	setFile();
+
+	EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillOnce(Return(0));
 
 	auto status = corejpeg.decodeImageWithPolling();
 
@@ -139,8 +155,7 @@ TEST_F(CoreJPEGTest, getWidthOffsetNoChromaSubsampling)
 	MOCK_FUNCTION_silenceUnexpectedCalls();
 
 	// Apply setup
-	FIL image;
-	corejpeg.displayImage(&image);
+	corejpeg.displayImage(&filemock);
 
 	// Test
 	auto width_offset = corejpeg.getWidthOffset();
@@ -181,8 +196,7 @@ TEST_F(CoreJPEGTest, getWidthOffsetChromaSubsampling444)
 		EXPECT_CALL(halmock, HAL_JPEG_GetInfo(_, _)).WillOnce(DoAll(SetArgPointee<1>(config), Return(HAL_OK)));
 
 		// Apply setup
-		FIL image;
-		corejpeg.displayImage(&image);
+		corejpeg.displayImage(&filemock);
 
 		// Test
 		auto width_offset = corejpeg.getWidthOffset();
@@ -195,14 +209,13 @@ TEST_F(CoreJPEGTest, displaySequence)
 {
 	{
 		InSequence seq;
-		EXPECT_CALL(filemock, read).Times(1);
+		EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillOnce(Return(42));
 		EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(1);
 		EXPECT_CALL(halmock, HAL_JPEG_GetInfo).Times(1);
 		EXPECT_CALL(dma2dmock, transferImage).Times(1);
 	}
 
-	FIL image;
-	corejpeg.displayImage(&image);
+	corejpeg.displayImage(&filemock);
 }
 
 TEST_F(CoreJPEGTest, onErroCallback)
@@ -325,10 +338,12 @@ TEST_F(CoreJPEGTest, onDataAvailableCallback)
 	JPEG_HandleTypeDef hjpeg;
 	uint32_t size {2};
 
+	setFile();
+
 	{
 		InSequence seq;
 		EXPECT_CALL(filemock, seek).Times(1);
-		EXPECT_CALL(filemock, read).Times(1);
+		EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillOnce(Return(42));
 		EXPECT_CALL(halmock, HAL_JPEG_ConfigInputBuffer).Times(1);
 	}
 
@@ -338,12 +353,14 @@ TEST_F(CoreJPEGTest, onDataAvailableCallback)
 TEST_F(CoreJPEGTest, onDataAvailableCallbackSizeEqual)
 {
 	JPEG_HandleTypeDef hjpeg;
-	uint32_t size {0};
+	uint32_t size {42};
+
+	setFile();
 
 	{
 		InSequence seq;
 		EXPECT_CALL(filemock, seek).Times(0);
-		EXPECT_CALL(filemock, read).Times(1);
+		EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillOnce(Return(42));
 		EXPECT_CALL(halmock, HAL_JPEG_ConfigInputBuffer).Times(1);
 	}
 
@@ -355,10 +372,12 @@ TEST_F(CoreJPEGTest, onDataAvailableCallbackCannotReadFile)
 	JPEG_HandleTypeDef hjpeg;
 	uint32_t size {2};
 
+	setFile();
+
 	{
 		InSequence seq;
 		EXPECT_CALL(filemock, seek).Times(1);
-		EXPECT_CALL(filemock, read).WillOnce(Return(FR_NO_FILE));
+		EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillOnce(Return(0));
 		EXPECT_CALL(halmock, HAL_JPEG_ConfigInputBuffer).Times(0);
 	}
 
