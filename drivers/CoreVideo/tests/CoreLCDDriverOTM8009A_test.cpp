@@ -45,7 +45,13 @@ TEST_F(CoreOTM8009ATest, initialize)
 
 TEST_F(CoreOTM8009ATest, setLandscapeOrientation)
 {
-	auto expected_instruction_array = ElementsAre(lcd::otm8009a::madctr::command, 0xA0);
+	auto _settings				 = uint8_t {0x00};
+	auto set_landscape_mode		 = [&] { _settings |= (1 << 5); };
+	auto set_horizontal_symmetry = [&] { _settings |= (1 << 6); };
+	set_landscape_mode();
+	set_horizontal_symmetry();
+
+	auto expected_instruction_array = ElementsAre(lcd::otm8009a::madctr::command, _settings);
 	auto expected_set_address_for_column_array =
 		ElementsAre(0x00, 0x00, 0x03, 0x1F, lcd::otm8009a::set_address::for_column::command);
 	auto expected_set_address_for_page_array =

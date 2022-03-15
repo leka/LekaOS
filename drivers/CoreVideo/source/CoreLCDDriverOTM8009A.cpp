@@ -273,11 +273,11 @@ void CoreLCDDriverOTM8009A::setLandscapeOrientation()
 
 		std::byte _settings {0x00};
 
-		auto set_vertical_symmetry = [&]() constexpr { _settings |= std::byte {1 << 7}; };
-		auto set_landscape_mode	   = [&]() constexpr { _settings |= std::byte {1 << 5}; };
+		auto set_landscape_mode		 = [&]() constexpr { _settings |= std::byte {1 << 5}; };
+		auto set_horizontal_symmetry = [&]() constexpr { _settings |= std::byte {1 << 6}; };
 
-		set_vertical_symmetry();
 		set_landscape_mode();
+		set_horizontal_symmetry();
 
 		return std::to_integer<uint8_t>(_settings);
 	};
