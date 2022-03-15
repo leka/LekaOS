@@ -62,7 +62,7 @@ void Wink::stage1()
 void Wink::stage2()
 {
 	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
-	static constexpr auto kInputMaxValue2	= uint8_t {30};
+	static constexpr auto kInputMaxValue2	= uint8_t {40};
 	static constexpr auto pink				= RGB {255, 98, 98};
 	if (auto pos = mapStep(_step, kInputMaxValue2); pos != 1.F) {
 		_belt.setColorAtIndex(0, pink);
