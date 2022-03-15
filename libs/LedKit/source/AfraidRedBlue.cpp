@@ -111,7 +111,7 @@ void AfraidRedBlue::stage5()
 void AfraidRedBlue::stage6()
 {
 	if (auto pos = mapStep(_step); pos != 0.F) {
-		RGB color = ColorKit::colorGradient(RGB::pure_blue, RGB::pure_red, pos);
+		RGB color = ColorKit::colorGradient(RGB {0, 128, 255}, RGB::pure_red, pos);
 		_belt.setColor(color);
 		_step--;
 	} else {
@@ -123,28 +123,28 @@ void AfraidRedBlue::stage6()
 void AfraidRedBlue::stage7()
 {
 	static constexpr auto kTreshold = 0.4F;
-	decreaseBrightness(RGB::pure_blue, kTreshold);
+	decreaseBrightness(RGB {0, 128, 255}, kTreshold);
 }
 
 void AfraidRedBlue::stage8()
 {
-	increaseBrightness(RGB::pure_blue);
+	increaseBrightness(RGB {0, 128, 255});
 }
 
 void AfraidRedBlue::stage9()
 {
 	static constexpr auto kTreshold = 0.4F;
-	decreaseBrightness(RGB::pure_blue, kTreshold);
+	decreaseBrightness(RGB {0, 128, 255}, kTreshold);
 }
 
 void AfraidRedBlue::stage10()
 {
-	increaseBrightness(RGB::pure_blue);
+	increaseBrightness(RGB {0, 128, 255});
 }
 
 void AfraidRedBlue::stage11()
 {
-	decreaseBrightness(RGB::pure_blue, 0.F);
+	decreaseBrightness(RGB {0, 128, 255}, 0.F);
 }
 
 void AfraidRedBlue::turnLedBlack()
