@@ -20,6 +20,7 @@ target_link_libraries(bootloader
 	bootutil
 	CoreBattery
 	FileSystemKit
+	CoreLED
 )
 
 target_link_custom_leka_targets(bootloader)
