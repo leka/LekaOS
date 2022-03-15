@@ -6,8 +6,6 @@
 
 #include "SpinBlink.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 void SpinBlink::start()
@@ -27,7 +25,7 @@ void SpinBlink::run()
 	static constexpr auto kLastStage = uint8_t {41};
 	auto is_belt_cyan				 = [this] { return (_stage % 2) == 0; };
 	if (_stage > kLastStage) {
-		return;
+		turnLedBlack();
 	}
 	if (is_belt_cyan()) {
 		stagesBeltCyan();
@@ -38,15 +36,10 @@ void SpinBlink::run()
 	_belt.show();
 }
 
-auto SpinBlink::mapStep(uint8_t step) const -> float
-{
-	static constexpr auto kInputMaxValue = uint8_t {10};
-	return utils::math::map(step, uint8_t {0}, kInputMaxValue, 0.F, 1.F);
-}
-
 void SpinBlink::stagesBeltCyan()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {10};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		_ears.setColor(RGB::magenta);
 		_belt.setColor(RGB::cyan);
 		++_step;
@@ -58,7 +51,8 @@ void SpinBlink::stagesBeltCyan()
 
 void SpinBlink::stagesBeltMagenta()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {10};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		_ears.setColor(RGB::cyan);
 		_belt.setColor(RGB::magenta);
 		++_step;
