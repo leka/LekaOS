@@ -29,7 +29,7 @@ class CoreDSI : public interface::DSIBase
 
 	[[nodiscard]] auto getHandle() -> DSI_HandleTypeDef & final;
 
-	auto isBusy() -> bool final;
+	auto isReady() const -> bool final;
 
 	auto refreshDone() -> bool final;
 

@@ -15,18 +15,20 @@ CoreJPEG::CoreJPEG(interface::STM32Hal &hal, interface::JPEGMode &mode) : _hal(h
 
 void CoreJPEG::initialize()
 {
+	__HAL_RCC_JPEG_CLK_ENABLE();
+	__HAL_RCC_JPEG_FORCE_RESET();
+	__HAL_RCC_JPEG_RELEASE_RESET();
+
+	_hal.HAL_NVIC_SetPriority(JPEG_IRQn, 0x06, 0x0F);
+	_hal.HAL_NVIC_EnableIRQ(JPEG_IRQn);
+
 	registerCallbacks();
 
 	JPEG_InitColorTables();
-	_hal.HAL_RCC_JPEG_CLK_ENABLE();
 	_hal.HAL_JPEG_Init(&_hjpeg);
 
 	// need to be called again because JPEG_Init resets the callbacks
 	registerCallbacks();
-
-	// enable JPEG IRQ request
-	_hal.HAL_NVIC_SetPriority(JPEG_IRQn, 0x06, 0x0F);
-	_hal.HAL_NVIC_EnableIRQ(JPEG_IRQn);
 }
 
 auto CoreJPEG::getConfig() -> JPEGConfig
@@ -48,26 +50,26 @@ void CoreJPEG::registerCallbacks()
 	static CoreJPEG *self;
 	self = this;
 
-	_hal.HAL_JPEG_RegisterInfoReadyCallback(&_handle, [](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) {
+	_hal.HAL_JPEG_RegisterInfoReadyCallback(&_hjpeg, [](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) {
 		self->_mode.onInfoReadyCallback(hjpeg, info);
 	});
 
-	_hal.HAL_JPEG_RegisterGetDataCallback(&_handle, [](JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize) {
+	_hal.HAL_JPEG_RegisterGetDataCallback(&_hjpeg, [](JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize) {
 		self->_mode.onGetDataCallback(hjpeg, decoded_datasize);
 	});
 
-	_hal.HAL_JPEG_RegisterDataReadyCallback(&_handle,
+	_hal.HAL_JPEG_RegisterDataReadyCallback(&_hjpeg,
 											[](JPEG_HandleTypeDef *hjpeg, uint8_t *output_data, uint32_t datasize) {
 												self->_mode.onDataReadyCallback(hjpeg, output_data, datasize);
 											});
 
-	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_DECODE_CPLT_CB_ID,
+	_hal.HAL_JPEG_RegisterCallback(&_hjpeg, HAL_JPEG_DECODE_CPLT_CB_ID,
 								   [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onDecodeCompleteCallback(hjpeg); });
 
-	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_ERROR_CB_ID,
+	_hal.HAL_JPEG_RegisterCallback(&_hjpeg, HAL_JPEG_ERROR_CB_ID,
 								   [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onErrorCallback(hjpeg); });
 
-	_hal.HAL_JPEG_RegisterCallback(&_handle, HAL_JPEG_MSPINIT_CB_ID,
+	_hal.HAL_JPEG_RegisterCallback(&_hjpeg, HAL_JPEG_MSPINIT_CB_ID,
 								   [](JPEG_HandleTypeDef *hjpeg) { self->_mode.onMspInitCallback(hjpeg); });
 }
 
@@ -105,7 +107,7 @@ auto CoreJPEG::findFrameOffset(interface::File &file, uint32_t offset) -> uint32
 	return 0;
 }
 
-auto JPEGConfig::getWidthOffset() -> uint32_t
+auto JPEGConfig::getWidthOffset() const -> uint32_t
 {
 	uint32_t width_offset = 0;
 

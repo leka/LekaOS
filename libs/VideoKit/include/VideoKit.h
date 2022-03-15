@@ -20,8 +20,6 @@
 #include "FileManagerKit.h"
 #include "Graphics.h"
 
-using namespace std::chrono_literals;
-
 namespace leka {
 
 class VideoKit
@@ -82,7 +80,7 @@ class VideoKit
 	CoreLCD _corelcd;
 
 	rtos::Kernel::Clock::time_point _last_time {};
-	std::chrono::milliseconds _frametime = 40ms;
+	std::chrono::milliseconds _frametime;
 };
 
 #define VideoKit_DeclareIRQHandlers(instance)                                                                          \

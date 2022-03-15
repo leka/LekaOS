@@ -72,7 +72,7 @@ void Video::nextFrame()
 	}
 }
 
-auto Video::getTime() -> int64_t
+auto Video::getTime() const -> int64_t
 {
 	return (rtos::Kernel::Clock::now() - _start_time).count();
 }
@@ -84,7 +84,7 @@ auto Video::getProgress() -> float
 	return progress > 1.f ? 1.f : progress < 0.f ? 0.f : progress;
 }
 
-auto Video::hasEnded() -> bool
+auto Video::hasEnded() const -> bool
 {
 	return _ended;
 }

@@ -61,9 +61,9 @@ void CoreDMA2D::initialize()
 	_hal.HAL_DMA2D_ConfigLayer(&_hdma2d, 1);
 }
 
-auto CoreDMA2D::isBusy() -> bool
+auto CoreDMA2D::isReady() const -> bool
 {
-	return _hdma2d.State != 1;	 // 0x01 == READY_STATE
+	return _hdma2d.State == 1;	 // 0x01 == READY_STATE
 }
 
 void CoreDMA2D::setFrameBufferAddress(uintptr_t address)
@@ -71,7 +71,7 @@ void CoreDMA2D::setFrameBufferAddress(uintptr_t address)
 	_frame_buffer_address = address;
 }
 
-auto CoreDMA2D::getPixelAddress(uint32_t x, uint32_t y) -> uintptr_t
+auto CoreDMA2D::getPixelAddress(uint32_t x, uint32_t y) const -> uintptr_t
 {
 	return _frame_buffer_address + 4 * (x + y * lcd::dimension::width);
 }
@@ -79,7 +79,7 @@ auto CoreDMA2D::getPixelAddress(uint32_t x, uint32_t y) -> uintptr_t
 void CoreDMA2D::transferData(uintptr_t src, uintptr_t dst_address, uint32_t width, uint32_t height)
 {
 	// wait for previous transfer to finish
-	while (isBusy())
+	while (!isReady())
 		;
 
 	if (width == 0) return;
@@ -129,7 +129,7 @@ void CoreDMA2D::fillRect(uint32_t x, uint32_t y, uint32_t w, uint32_t h, uint32_
 
 void CoreDMA2D::setPixel(uint32_t x, uint32_t y, uint32_t color)
 {
-	while (isBusy())
+	while (!isReady())
 		;
 	*((uintptr_t *)getPixelAddress(x, y)) = color;
 }

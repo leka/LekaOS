@@ -18,7 +18,7 @@ class CoreDMA2D : public interface::DMA2DBase
 	void initialize() final;
 
 	void setFrameBufferAddress(uintptr_t address) final;
-	auto getPixelAddress(uint32_t x, uint32_t y) -> uintptr_t;
+	auto getPixelAddress(uint32_t x, uint32_t y) const -> uintptr_t;
 
 	void transferData(uintptr_t src, uintptr_t dst_address, uint32_t width, uint32_t height) final;
 	void transferImage(uint32_t width, uint32_t height, uint32_t width_offset) final;
@@ -29,7 +29,7 @@ class CoreDMA2D : public interface::DMA2DBase
 
 	auto getHandle() -> DMA2D_HandleTypeDef & final;
 	void setHandle(const DMA2D_HandleTypeDef &hdma2d) { _hdma2d = hdma2d; }
-	auto isBusy() -> bool final;
+	auto isReady() const -> bool final;
 
   private:
 	DMA2D_HandleTypeDef _hdma2d {};
