@@ -122,6 +122,7 @@ TEST_F(StateMachineTest, stateChargingEventUpdateRequestedGuardTrue)
 {
 	sm.set_current_states(lksm::state::charging);
 
+	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, isReadyToUpdate).WillOnce(Return(true));
 	EXPECT_CALL(mock_rc, applyUpdate).Times(1);
 
