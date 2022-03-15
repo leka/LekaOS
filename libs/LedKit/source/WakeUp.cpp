@@ -6,8 +6,6 @@
 
 #include "WakeUp.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 void WakeUp::start()
@@ -53,15 +51,10 @@ void WakeUp::run()
 	_belt.show();
 }
 
-auto WakeUp::mapStep(uint8_t step) const -> float
-{
-	constexpr auto kMaxInputValue = uint8_t {25};
-	return utils::math::map(step, uint8_t {0}, kMaxInputValue, 0.F, 1.F);
-}
-
 void WakeUp::stage0()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {24};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		_step++;
 	} else {
 		_step = 0;
@@ -95,7 +88,8 @@ void WakeUp::stage4()
 
 void WakeUp::stage5()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {24};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		_step++;
@@ -107,23 +101,34 @@ void WakeUp::stage5()
 
 void WakeUp::stage6()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue1 = uint8_t {6};
+	static constexpr auto kMaxInputValue2 = uint8_t {35};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue1); pos != 1.F) {
 		RGB color = RGB::white;
 		_belt.setColor(color);
 		_step++;
 	} else {
+		_step = kMaxInputValue2;
 		_stage++;
 	}
 }
 
 void WakeUp::stage7()
 {
-	decreaseBrightness(0.F);
+	static constexpr auto kMaxInputValue = uint8_t {35};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 0.F) {
+		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
+		_belt.setColor(color);
+		_step--;
+	} else {
+		_stage++;
+	}
 }
 
 void WakeUp::increaseBrightness(float treshold)
 {
-	if (auto pos = mapStep(_step); pos < treshold) {
+	static constexpr auto kMaxInputValue = uint8_t {24};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos < treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		_step++;
@@ -134,7 +139,8 @@ void WakeUp::increaseBrightness(float treshold)
 
 void WakeUp::decreaseBrightness(float treshold)
 {
-	if (auto pos = mapStep(_step); pos > treshold) {
+	static constexpr auto kMaxInputValue = uint8_t {24};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos > treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		_step--;

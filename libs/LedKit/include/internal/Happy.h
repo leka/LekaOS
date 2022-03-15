@@ -50,8 +50,6 @@ class Happy : public interface::LEDAnimation
 	uint8_t _step  = 0;
 	uint8_t _stage = 1;
 
-	[[nodiscard]] auto mapStep(uint8_t step) const -> float;
-
 	void stage1();
 	void stage2();
 	void stage3();

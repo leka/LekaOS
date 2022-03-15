@@ -6,8 +6,6 @@
 
 #include "Singing.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 static constexpr auto kNumberOfNotes = uint8_t {16};
@@ -33,15 +31,10 @@ void Singing::run()
 	_belt.show();
 }
 
-auto Singing::mapStep(uint8_t max_input_value) const -> float
-{
-	return utils::math::map(_step, uint8_t {0}, max_input_value, 0.F, 1.F);
-}
-
 void Singing::stage1()
 {
 	static constexpr auto kMaxInputValueStage1 = uint8_t {20};
-	if (auto pos = mapStep(kMaxInputValueStage1); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStage1); pos != 1.F) {
 		++_step;
 	} else {
 		_step = 0;
@@ -62,7 +55,7 @@ void Singing::stage2()
 	static constexpr std::array<uint8_t, kNumberOfNotes> kNotePosition = {2,  17, 9,  5,  13, 19, 7,  1,
 																		  18, 8,  16, 11, 4,  19, 14, 0};
 
-	if (auto pos = mapStep(kMaxInputValueStage2); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStage2); pos != 1.F) {
 		if (_note_number - 2 >= 0) {
 			auto previous_note_index = kNotePosition.at(_note_number - 2);
 			auto previous_note_color = kNoteColors.at(_note_number - 2);

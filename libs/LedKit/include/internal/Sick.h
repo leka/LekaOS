@@ -27,16 +27,12 @@ class Sick : public interface::LEDAnimation
 	uint8_t _sneeze_index_1 = 0;
 	uint8_t _sneeze_index_2 = 0;
 	uint8_t _sneeze_index_3 = 0;
-	uint8_t _sneeze_index_4 = 0;
-
-	[[nodiscard]] auto mapStep(uint8_t step) const -> float;
 
 	void stage1();
-	void stage2and6();
-	void stage3and7();
-	void stage4and8();
-	void stage5and9();
-	void stage10();
+	void stage2and5();
+	void stage3and6();
+	void stage4and7();
+	void stage8();
 
 	void turnLedBlack();
 };

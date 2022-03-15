@@ -6,8 +6,6 @@
 
 #include "Amazed.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 void Amazed::start()
@@ -41,15 +39,10 @@ void Amazed::run()
 	_belt.show();
 }
 
-auto Amazed::mapStep(uint8_t step) const -> float
-{
-	constexpr auto kMaxInputValue = uint8_t {30};
-	return utils::math::map(step, uint8_t {0}, kMaxInputValue, 0.F, 1.F);
-}
-
 void Amazed::stage0()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {30};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		_step++;
 	} else {
 		_step = 0;
@@ -59,7 +52,8 @@ void Amazed::stage0()
 
 void Amazed::stage1()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {30};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		_step++;
@@ -71,7 +65,8 @@ void Amazed::stage1()
 
 void Amazed::stage2()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {30};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		_belt.setColor(RGB::white);
 		_step++;
 	} else {
@@ -81,7 +76,8 @@ void Amazed::stage2()
 
 void Amazed::stage3()
 {
-	if (auto pos = mapStep(_step); pos != 0.F) {
+	static constexpr auto kMaxInputValue = uint8_t {30};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		_step--;

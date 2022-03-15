@@ -6,8 +6,6 @@
 
 #include "Sneeze.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 void Sneeze::start()
@@ -44,15 +42,10 @@ void Sneeze::run()
 	_belt.show();
 }
 
-auto Sneeze::mapStep(uint8_t step) const -> float
-{
-	static constexpr auto kInputMaxValue = uint8_t {20};
-	return utils::math::map(step, uint8_t {0}, kInputMaxValue, 0.F, 1.F);
-}
-
 void Sneeze::stage1()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {15};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		++_step;
 	} else {
 		_step = 0;
@@ -77,8 +70,9 @@ void Sneeze::stage3()
 {
 	static constexpr auto green_sick = RGB {0x10, 0xF0, 0x30};
 
+	static constexpr auto kMaxInputValue	= uint8_t {15};
 	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, green_sick, pos);
 		_belt.setColorAtIndex(_sneeze_position, color);
 		_belt.setColorAtIndex(kNumberOfLedsBelt - (_sneeze_position + 1), color);

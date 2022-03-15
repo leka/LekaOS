@@ -6,8 +6,6 @@
 
 #include "AfraidRedBlue.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 void AfraidRedBlue::start()
@@ -65,15 +63,10 @@ void AfraidRedBlue::run()
 	_belt.show();
 }
 
-auto AfraidRedBlue::mapStep(uint8_t step) const -> float
-{
-	constexpr auto kMaxInputValue = uint8_t {20};
-	return utils::math::map(step, uint8_t {0}, kMaxInputValue, 0.F, 1.F);
-}
-
 void AfraidRedBlue::stage0()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {20};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		_step++;
 	} else {
 		_step = 0;
@@ -110,8 +103,9 @@ void AfraidRedBlue::stage5()
 
 void AfraidRedBlue::stage6()
 {
-	if (auto pos = mapStep(_step); pos != 0.F) {
-		RGB color = ColorKit::colorGradient(RGB::pure_blue, RGB::pure_red, pos);
+	static constexpr auto kMaxInputValue = uint8_t {20};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 0.F) {
+		RGB color = ColorKit::colorGradient(RGB {0, 128, 255}, RGB::pure_red, pos);
 		_belt.setColor(color);
 		_step--;
 	} else {
@@ -123,28 +117,28 @@ void AfraidRedBlue::stage6()
 void AfraidRedBlue::stage7()
 {
 	static constexpr auto kTreshold = 0.4F;
-	decreaseBrightness(RGB::pure_blue, kTreshold);
+	decreaseBrightness(RGB {0, 128, 255}, kTreshold);
 }
 
 void AfraidRedBlue::stage8()
 {
-	increaseBrightness(RGB::pure_blue);
+	increaseBrightness(RGB {0, 128, 255});
 }
 
 void AfraidRedBlue::stage9()
 {
 	static constexpr auto kTreshold = 0.4F;
-	decreaseBrightness(RGB::pure_blue, kTreshold);
+	decreaseBrightness(RGB {0, 128, 255}, kTreshold);
 }
 
 void AfraidRedBlue::stage10()
 {
-	increaseBrightness(RGB::pure_blue);
+	increaseBrightness(RGB {0, 128, 255});
 }
 
 void AfraidRedBlue::stage11()
 {
-	decreaseBrightness(RGB::pure_blue, 0.F);
+	decreaseBrightness(RGB {0, 128, 255}, 0.F);
 }
 
 void AfraidRedBlue::turnLedBlack()
@@ -157,7 +151,8 @@ void AfraidRedBlue::turnLedBlack()
 
 void AfraidRedBlue::increaseBrightness(const RGB &color)
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {20};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB col = ColorKit::colorGradient(RGB::black, color, pos);
 		_belt.setColor(col);
 		_step++;
@@ -168,7 +163,8 @@ void AfraidRedBlue::increaseBrightness(const RGB &color)
 
 void AfraidRedBlue::decreaseBrightness(const RGB &color, float treshold)
 {
-	if (auto pos = mapStep(_step); pos > treshold) {
+	static constexpr auto kMaxInputValue = uint8_t {20};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos > treshold) {
 		RGB col = ColorKit::colorGradient(RGB::black, color, pos);
 		_belt.setColor(col);
 		_step--;

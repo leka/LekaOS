@@ -6,9 +6,6 @@
 
 #include "SadCry.h"
 
-#include "LogKit.h"
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 void SadCry::start()
@@ -66,21 +63,14 @@ void SadCry::run()
 		default:
 			break;
 	}
-	log_debug("_step = %i", _step);
-	log_debug("_stage = %i", _stage);
 	_belt.show();
-}
-
-auto SadCry::mapStep(uint8_t step, uint8_t max_input_value) const -> float
-{
-	return utils::math::map(step, uint8_t {0}, max_input_value, 0.F, 1.F);
 }
 
 void SadCry::stage1()
 {
 	static constexpr auto kMaxInputValueFirstStages = uint8_t {90};
-	if (auto pos = mapStep(_step, kMaxInputValueFirstStages); pos != 1.F) {
-		RGB shade_of_blue = ColorKit::colorGradient(RGB::black, RGB::pure_blue, pos);
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValueFirstStages); pos != 1.F) {
+		RGB shade_of_blue = ColorKit::colorGradient(RGB::black, RGB {0, 128, 255}, pos);
 		_belt.setColor(shade_of_blue);
 		_step++;
 	} else {
@@ -92,7 +82,7 @@ void SadCry::stage1()
 void SadCry::stage2()
 {
 	static constexpr auto kMaxInputValueFirstStages = uint8_t {90};
-	if (auto pos = mapStep(_step, kMaxInputValueFirstStages); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValueFirstStages); pos != 1.F) {
 		_step++;
 	} else {
 		_step = 0;
@@ -103,14 +93,12 @@ void SadCry::stage2()
 void SadCry::stage3()
 {
 	static constexpr auto kNumberOfLedsBelt		   = uint8_t {20};
-	static constexpr auto kMaxInputValueLastStages = uint8_t {30};
+	static constexpr auto kMaxInputValueLastStages = uint8_t {25};
 
-	static constexpr auto pink = RGB {255, 98, 98};
-
-	if (auto pos = mapStep(_step, kMaxInputValueLastStages); pos != 1.F) {
-		RGB shade_of_pink = ColorKit::colorGradient(RGB::pure_blue, pink, pos);
-		_belt.setColorAtIndex(0, shade_of_pink);
-		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, shade_of_pink);
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValueLastStages); pos != 1.F) {
+		RGB color = ColorKit::colorGradient(RGB {0, 128, 255}, RGB::pure_red, pos);
+		_belt.setColorAtIndex(0, color);
+		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, color);
 		_step++;
 	} else {
 		_step = kMaxInputValueLastStages;
@@ -164,8 +152,8 @@ void SadCry::stage11()
 
 void SadCry::stage12()
 {
-	static constexpr auto kMaxInputValueLastStages = uint8_t {30};
-	if (auto pos = mapStep(_step, 2 * kMaxInputValueLastStages); pos != 1.F) {
+	static constexpr auto kMaxInputValueLastStages = uint8_t {25};
+	if (auto pos = utils::normalizeStep(_step, 2 * kMaxInputValueLastStages); pos != 1.F) {
 		_step++;
 	} else {
 		_step = kMaxInputValueLastStages;
@@ -180,17 +168,15 @@ void SadCry::stage13()
 
 void SadCry::increaseBrightness()
 {
-	static constexpr auto kMaxInputValueLastStages = uint8_t {30};
+	static constexpr auto kMaxInputValueLastStages = uint8_t {25};
 	static constexpr auto kNumberOfLedsBelt		   = uint8_t {20};
 
-	static constexpr auto pink = RGB {255, 98, 98};
-
-	if (auto pos = mapStep(_step, kMaxInputValueLastStages); pos != 1.F) {
-		RGB shade_of_blue = ColorKit::colorGradient(RGB::black, RGB::pure_blue, pos);
-		RGB shade_of_pink = ColorKit::colorGradient(RGB::black, pink, pos);
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValueLastStages); pos != 1.F) {
+		RGB shade_of_blue = ColorKit::colorGradient(RGB::black, RGB {0, 128, 255}, pos);
+		RGB shade_of_red  = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt.setColor(shade_of_blue);
-		_belt.setColorAtIndex(0, shade_of_pink);
-		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, shade_of_pink);
+		_belt.setColorAtIndex(0, shade_of_red);
+		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, shade_of_red);
 		_step++;
 	} else {
 		_stage++;
@@ -199,17 +185,15 @@ void SadCry::increaseBrightness()
 
 void SadCry::decreaseBrightness(float threshold)
 {
-	static constexpr auto kMaxInputValueLastStages = uint8_t {30};
+	static constexpr auto kMaxInputValueLastStages = uint8_t {25};
 	static constexpr auto kNumberOfLedsBelt		   = uint8_t {20};
 
-	static constexpr auto pink = RGB {255, 98, 98};
-
-	if (auto pos = mapStep(_step, kMaxInputValueLastStages); pos > threshold) {
-		RGB shade_of_blue = ColorKit::colorGradient(RGB::black, RGB::pure_blue, pos);
-		RGB shade_of_pink = ColorKit::colorGradient(RGB::black, pink, pos);
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValueLastStages); pos > threshold) {
+		RGB shade_of_blue = ColorKit::colorGradient(RGB::black, RGB {0, 128, 255}, pos);
+		RGB shade_of_red  = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt.setColor(shade_of_blue);
-		_belt.setColorAtIndex(0, shade_of_pink);
-		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, shade_of_pink);
+		_belt.setColorAtIndex(0, shade_of_red);
+		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, shade_of_red);
 		_step--;
 	} else {
 		_stage++;
