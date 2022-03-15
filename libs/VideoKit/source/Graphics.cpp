@@ -50,7 +50,7 @@ void Image::draw(VideoKit &screen)
 	screen.getJPEG().decodeImage(_file);
 
 	auto config = screen.getJPEG().getConfig();
-	screen.getDMA2D().transferImage(config.ImageWidth, config.ImageHeight, CoreJPEG::getWidthOffset(config));
+	screen.getDMA2D().transferImage(config.ImageWidth, config.ImageHeight, config.getWidthOffset());
 }
 
 // --- gfx::Video -------------------------------------
@@ -94,7 +94,7 @@ void Video::draw(VideoKit &screen)
 	if (_frame_index == 0) {
 		_config = screen.getJPEG().getConfig();
 	}
-	screen.getDMA2D().transferImage(_config.ImageWidth, _config.ImageHeight, CoreJPEG::getWidthOffset(_config));
+	screen.getDMA2D().transferImage(_config.ImageWidth, _config.ImageHeight, _config.getWidthOffset());
 
 	_frame_index += 1;
 	_frame_offset = CoreJPEG::findFrameOffset(_file, _frame_offset + frame_size + 4);

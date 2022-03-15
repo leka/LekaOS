@@ -24,13 +24,16 @@ class CoreJPEG : public interface::JPEGBase
 	void initialize() final;
 
 	auto getHandle() -> JPEG_HandleTypeDef & final;
-	auto getConfig() -> JPEG_ConfTypeDef final;
 
 	void registerCallbacks() final;
 
 	auto decodeImage(interface::File &file) -> uint32_t final;
 
-	static auto getWidthOffset(JPEG_ConfTypeDef &config) -> uint32_t;
+	struct Config : JPEG_ConfTypeDef {
+		auto getWidthOffset() -> uint32_t;
+	};
+	auto getConfig() -> CoreJPEG::Config;
+
 	static auto findFrameOffset(interface::File &file, uint32_t offset) -> uint32_t;
 
   private:

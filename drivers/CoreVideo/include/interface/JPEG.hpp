@@ -19,8 +19,6 @@ class JPEGBase : public ComponentHandler<JPEG_HandleTypeDef>
 
 	virtual void initialize() = 0;
 
-	virtual auto getConfig() -> JPEG_ConfTypeDef = 0;
-
 	virtual void registerCallbacks() = 0;
 
 	virtual auto decodeImage(interface::File &) -> uint32_t = 0;

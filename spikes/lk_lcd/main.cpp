@@ -16,7 +16,6 @@
 #include "CoreLTDC.hpp"
 #include "CoreSDRAM.hpp"
 #include "CoreSTM32Hal.h"
-#include "CoreVideo.hpp"
 #include "FATFileSystem.h"
 #include "FileManagerKit.h"
 #include "HelloWorld.h"
@@ -30,23 +29,6 @@ using namespace std::chrono;
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 auto file = FileManagerKit::File {};
-
-/*
-CoreSTM32Hal hal;
-CoreSDRAM coresdram(hal);
-
-// screen + dsi + ltdc
-CoreLTDC coreltdc(hal);
-CoreDSI coredsi(hal, coreltdc);
-CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
-CoreLCD corelcd(coreotm);
-
-// peripherals
-CoreDMA2D coredma2d(hal);
-CoreJPEG corejpeg(hal, std::make_unique<CoreJPEGDMAMode>());
-
-CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
-*/
 
 VideoKit screen;
 
@@ -122,7 +104,7 @@ auto main() -> int
 	screen.display();
 	rtos::ThisThread::sleep_for(2s);
 
-	gfx::Video video_perplex("/fs/videos/animation-idle.avi");
+	gfx::Video video_perplex("/fs/videos/animation-perplexity.avi");
 	gfx::Video video_joie("/fs/videos/animation-joy.avi");
 
 	gfx::Rectangle progress_bar_bg(0, 460, 800, 20, {190, 250, 230});
@@ -153,60 +135,4 @@ auto main() -> int
 	leka::logger::set_sink_function([](const char *str, size_t size) {
 		// corevideo.displayText(str, size, line, foreground, CGColor::white);
 	});
-
-	/*
-	for (int i = 1; i <= 10; i++) {
-		foreground = (i % 2 == 0) ? CGColor::black : CGColor::pure_red;
-		line	   = i * 2;
-		log_info("Line #%i", i);
-		rtos::ThisThread::sleep_for(100ms);
-	}
-
-	rtos::ThisThread::sleep_for(500ms);
-
-	leka::logger::set_sink_function([](const char *str, size_t size) {
-		corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
-	});
-
-	log_info(
-		"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
-		"only one line of the screen.");
-
-	rtos::ThisThread::sleep_for(1s);
-
-displayImage from videoKit :art: Reoarganize methods)
-	*/
-
-	leka::logger::set_sink_function(logger::internal::default_sink_function);
-
-	// HAL_LTDC_ProgramLineEvent(&coreltdc.getHandle(), 0);
-	// corevideo.setBrightness(0.6f);
-	while (true) {
-		auto t = rtos::Kernel::Clock::now() - start;
-		log_info("A message from your board %s --> \"%s\" at %is", MBED_CONF_APP_TARGET_NAME, hello.world,
-				 int(t.count() / 1000));
-
-		for (const auto &image_name: images) {
-			if (file.open(image_name)) {
-				log_info("open");
-				// corevideo.displayImage(file);
-				// corevideo.display();
-				// corevideo.turnOn();
-				file.close();
-				rtos::ThisThread::sleep_for(1s);
-			}
-		}
-		//}
-
-		for (const auto &video_name: videos) {
-			if (file.open(video_name)) {
-				// corevideo.displayVideo(file);
-				file.close();
-				rtos::ThisThread::sleep_for(500ms);
-			}
-		}
-
-		// corevideo.turnOff();
-		rtos::ThisThread::sleep_for(500ms);
-	}
 }
