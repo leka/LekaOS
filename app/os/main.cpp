@@ -36,7 +36,7 @@ auto coreflashmanager = CoreFlashManagerIS25LP016D(coreqspi);
 auto coreflash		  = CoreFlashIS25LP016D(coreqspi, coreflashmanager);
 auto firmwarekit	  = FirmwareKit(coreflash);
 
-auto rc = RobotController {sleep_timeout, battery};
+auto rc = RobotController {sleep_timeout, battery, firmwarekit};
 
 void initializeSD()
 {
@@ -87,7 +87,7 @@ auto main() -> int
 	initializeUpdateFlash();
 
 	rc.initializeComponents();
-	// rc.registerOnUpdateLoadedCallback(setPendingUpdate);
+	rc.registerOnUpdateLoadedCallback(setPendingUpdate);
 	rc.registerEvents();
 
 	while (true) {

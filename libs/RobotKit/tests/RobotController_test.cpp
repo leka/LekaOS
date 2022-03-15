@@ -9,6 +9,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/Battery.h"
+#include "mocks/leka/FirmwareUpdate.h"
 #include "mocks/leka/Timeout.h"
 
 using namespace leka;
@@ -19,6 +20,7 @@ namespace event = system::robot::sm::event;
 
 using testing::_;
 using testing::AnyNumber;
+using ::testing::MockFunction;
 using testing::Return;
 
 ACTION_TEMPLATE(GetCallback, HAS_1_TEMPLATE_PARAMS(typename, callback_t), AND_1_VALUE_PARAMS(pointer))
@@ -62,8 +64,9 @@ class RobotControllerTest : public testing::Test
 
 	mock::Timeout sleep_timeout {};
 	mock::Battery battery {};
+	mock::FirmwareUpdate firmware_update {};
 
-	RobotController<bsml::sm<robot::StateMachine, bsml::testing>> rc {sleep_timeout, battery};
+	RobotController<bsml::sm<robot::StateMachine, bsml::testing>> rc {sleep_timeout, battery, firmware_update};
 
 	interface::Timeout::callback_t on_sleep_timeout = {};
 
@@ -196,6 +199,7 @@ TEST_F(RobotControllerTest, stateChargingEventUpdateRequestedGuardIsReadyToUpdat
 
 	// TODO (@yann): Trigger update_requested in StateMachine from BLE and remove isReadyToUpdate call
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
+	EXPECT_CALL(firmware_update, loadUpdate).Times(0);
 	rc.isReadyToUpdate();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
@@ -210,22 +214,68 @@ TEST_F(RobotControllerTest, stateChargingEventUpdateRequestedGuardIsReadyToUpdat
 	// TODO (@yann): Trigger update_requested in StateMachine from BLE and remove isReadyToUpdate call
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
 	EXPECT_CALL(battery, level).WillOnce(Return(returned_level));
+	EXPECT_CALL(firmware_update, loadUpdate).Times(0);
 	rc.isReadyToUpdate();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
 }
 
-TEST_F(RobotControllerTest, stateChargingEventUpdateRequestedGuardIsReadyToUpdateTrue)
+TEST_F(RobotControllerTest, stateChargingEventUpdateRequestedGuardIsReadyToUpdateTrueLoadUpdateSuccess)
 {
 	rc.state_machine.set_current_states(lksm::state::charging);
 
 	uint8_t returned_level {100};
 
+	MockFunction<void()> mock_on_update_loaded_callback;
+	rc.registerOnUpdateLoadedCallback(mock_on_update_loaded_callback.AsStdFunction());
+
 	// TODO (@yann): Trigger update_requested in StateMachine from BLE and remove isReadyToUpdate and applyUpdate calls
-	// TODO (@yann): EXPECT_CALL from FirmwareKit applyUpdate action
 
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
 	EXPECT_CALL(battery, level).WillOnce(Return(returned_level));
+	EXPECT_CALL(firmware_update, loadUpdate).WillOnce(Return(true));
+	EXPECT_CALL(mock_on_update_loaded_callback, Call).Times(1);
+	rc.isReadyToUpdate();
+	rc.applyUpdate();
+
+	// EXPECT_TRUE(rc.state_machine.is(lksm::state::updating));
+}
+
+TEST_F(RobotControllerTest,
+	   stateChargingEventUpdateRequestedGuardIsReadyToUpdateTrueLoadUpdateSuccessOnUpdateLoadedCallbackFail)
+{
+	rc.state_machine.set_current_states(lksm::state::charging);
+
+	uint8_t returned_level {100};
+
+	rc.registerOnUpdateLoadedCallback(nullptr);
+
+	// TODO (@yann): Trigger update_requested in StateMachine from BLE and remove isReadyToUpdate and applyUpdate calls
+
+	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
+	EXPECT_CALL(battery, level).WillOnce(Return(returned_level));
+	EXPECT_CALL(firmware_update, loadUpdate).WillOnce(Return(true));
+	rc.isReadyToUpdate();
+	rc.applyUpdate();
+
+	// EXPECT_TRUE(rc.state_machine.is(lksm::state::updating));
+}
+
+TEST_F(RobotControllerTest, stateChargingEventUpdateRequestedGuardIsReadyToUpdateTrueLoadUpdateFail)
+{
+	rc.state_machine.set_current_states(lksm::state::charging);
+
+	uint8_t returned_level {100};
+
+	MockFunction<void()> mock_on_update_loaded_callback;
+	rc.registerOnUpdateLoadedCallback(mock_on_update_loaded_callback.AsStdFunction());
+
+	// TODO (@yann): Trigger update_requested in StateMachine from BLE and remove isReadyToUpdate and applyUpdate calls
+
+	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
+	EXPECT_CALL(battery, level).WillOnce(Return(returned_level));
+	EXPECT_CALL(firmware_update, loadUpdate).WillOnce(Return(false));
+	EXPECT_CALL(mock_on_update_loaded_callback, Call).Times(0);
 	rc.isReadyToUpdate();
 	rc.applyUpdate();
 
