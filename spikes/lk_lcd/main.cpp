@@ -2,16 +2,13 @@
 // Copyright 2020 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include <memory>
-
+#include "drivers/BufferedSerial.h"
 #include "platform/Callback.h"
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
-#include "CoreFont.hpp"
-#include "CoreGraphics.hpp"
 #include "CoreJPEG.hpp"
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
@@ -34,6 +31,7 @@ SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 auto file = FileManagerKit::File {};
 
+/*
 CoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);
 
@@ -47,12 +45,8 @@ CoreLCD corelcd(coreotm);
 CoreDMA2D coredma2d(hal);
 CoreJPEG corejpeg(hal, std::make_unique<CoreJPEGDMAMode>());
 
-// graphics (will move to libs/VideoKit)
-CoreLL corell;
-CGPixel pixel(corell);
-CoreFont corefont(pixel);
-CoreGraphics coregraphics(coredma2d);
 CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
+*/
 
 VideoKit screen;
 
@@ -62,31 +56,31 @@ auto videos = std::to_array({"/fs/videos/animation-joy.avi", "/fs/videos/animati
 extern "C" {
 void DSI_IRQHandler(void)
 {
-	HAL_DSI_IRQHandler(&coredsi.getHandle());
+	HAL_DSI_IRQHandler(&screen.getDSI().getHandle());
 }
 
 void JPEG_IRQHandler(void)
 {
-	HAL_JPEG_IRQHandler(&corejpeg.getHandle());
+	HAL_JPEG_IRQHandler(&screen.getJPEG().getHandle());
 }
 
 void DMA2_Stream0_IRQHandler(void)
 {
-	HAL_DMA_IRQHandler(corejpeg.getHandle().hdmain);
+	HAL_DMA_IRQHandler(screen.getJPEG().getHandle().hdmain);
 }
 
 void DMA2_Stream1_IRQHandler(void)
 {
-	HAL_DMA_IRQHandler(corejpeg.getHandle().hdmaout);
+	HAL_DMA_IRQHandler(screen.getJPEG().getHandle().hdmaout);
 }
 
 void DMA2D_IRQHandler(void)
 {
-	HAL_DMA2D_IRQHandler(&coredma2d.getHandle());
+	HAL_DMA2D_IRQHandler(&screen.getDMA2D().getHandle());
 }
 void LTDC_IRQHandler(void)
 {
-	HAL_LTDC_IRQHandler(&coreltdc.getHandle());
+	HAL_LTDC_IRQHandler(&screen.getLTDC().getHandle());
 }
 }
 
@@ -112,21 +106,29 @@ auto main() -> int
 
 	initializeSD();
 
-	corevideo.initialize();
+	// corevideo.initialize();
+	screen.initialize();
 	memset((uint8_t *)lcd::frame_buffer_address, 0x5f, 800 * 480 * 4);
 
 	HelloWorld hello;
 	hello.start();
 
-	// corevideo.clearScreen();
+	uint32_t y = 0;
+	uint32_t w = 1;
+	while (true) {
+		screen.clear(gfx::Color::Yellow);
+		screen.drawRectangle({std::min(800ul, ++w), 20, gfx::Color::Blue}, 0, std::min(400ul, ++y));
+		screen.display();
+	}
 
 	static auto line = 1;
-	static CGColor foreground;
-	static CGColor background = CGColor::white;
+	// static CGColor foreground;
+	// static CGColor background = CGColor::white;
 
-	leka::logger::set_sink_function(
-		[](const char *str, size_t size) { corevideo.displayText(str, size, line, foreground, background); });
+	// leka::logger::set_sink_function(
+	// [](const char *str, size_t size) { corevideo.displayText(str, size, line, foreground, background); });
 
+	/*
 	for (int i = 1; i <= 10; i++) {
 		foreground = (i % 2 == 0) ? CGColor::black : CGColor::pure_red;
 		line	   = i * 2;
@@ -147,11 +149,12 @@ auto main() -> int
 	// coredsi.refresh();
 
 	rtos::ThisThread::sleep_for(1s);
+	*/
 
 	leka::logger::set_sink_function(logger::internal::default_sink_function);
 
 	// HAL_LTDC_ProgramLineEvent(&coreltdc.getHandle(), 0);
-	corevideo.setBrightness(0.6f);
+	// corevideo.setBrightness(0.6f);
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
 		log_info("A message from your board %s --> \"%s\" at %is", MBED_CONF_APP_TARGET_NAME, hello.world,
@@ -160,9 +163,9 @@ auto main() -> int
 		for (const auto &image_name: images) {
 			if (file.open(image_name)) {
 				log_info("open");
-				corevideo.displayImage(file);
-				corevideo.display();
-				corevideo.turnOn();
+				// corevideo.displayImage(file);
+				// corevideo.display();
+				// corevideo.turnOn();
 				file.close();
 				rtos::ThisThread::sleep_for(1s);
 			}
@@ -171,13 +174,13 @@ auto main() -> int
 
 		for (const auto &video_name: videos) {
 			if (file.open(video_name)) {
-				corevideo.displayVideo(file);
+				// corevideo.displayVideo(file);
 				file.close();
 				rtos::ThisThread::sleep_for(500ms);
 			}
 		}
 
-		corevideo.turnOff();
+		// corevideo.turnOff();
 		rtos::ThisThread::sleep_for(500ms);
 	}
 }

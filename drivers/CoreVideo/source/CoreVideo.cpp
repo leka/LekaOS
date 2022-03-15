@@ -12,18 +12,16 @@
 using namespace leka;
 using namespace std::chrono_literals;
 
-CoreVideo::CoreVideo(interface::STM32Hal &hal, interface::SDRAM &coresdram, interface::DMA2DBase &coredma2d,
-					 interface::DSIBase &coredsi, interface::LTDCBase &coreltdc, interface::LCD &corelcd,
-					 interface::Graphics &coregraphics, interface::Font &corefont, interface::JPEGBase &corejpeg)
+CoreVideo::CoreVideo(interface::STM32Hal &hal, interface::LCD &corelcd, interface::DSIBase &coredsi,
+					 interface::LTDCBase &coreltdc, interface::DMA2DBase &coredma2d, interface::JPEGBase &corejpeg,
+					 interface::SDRAM &coresdram)
 	: _hal(hal),
-	  _coresdram(coresdram),
-	  _coredma2d(coredma2d),
-	  _coreltdc(coreltdc),
-	  _coredsi(coredsi),
 	  _corelcd(corelcd),
-	  _coregraphics(coregraphics),
-	  _corefont(corefont),
-	  _corejpeg(corejpeg)
+	  _coredsi(coredsi),
+	  _coreltdc(coreltdc),
+	  _coredma2d(coredma2d),
+	  _corejpeg(corejpeg),
+	  _coresdram(coresdram)
 {
 }
 
@@ -66,16 +64,6 @@ void CoreVideo::setBrightness(float value)
 	_corelcd.setBrightness(value);
 }
 
-void CoreVideo::clearScreen(CGColor color)
-{
-	_coregraphics.clearScreen(color);
-}
-
-void CoreVideo::displayRectangle(interface::Graphics::FilledRectangle rectangle, CGColor color)
-{
-	_coregraphics.drawRectangle(rectangle, color);
-}
-
 void CoreVideo::displayImage(interface::File &file)
 {
 	_corejpeg.decodeImage(file);
@@ -112,12 +100,6 @@ void CoreVideo::displayVideo(interface::File &file)
 		display();
 	}
 	log_info("%d frames", frame_index);
-}
-
-void CoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,
-							CGColor background)
-{
-	_corefont.display(text, size, starting_line, foreground, background);
 }
 
 void CoreVideo::display()

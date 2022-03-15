@@ -73,6 +73,10 @@ auto CoreDMA2D::getPositionAddress(uint32_t x, uint32_t y) -> uintptr_t
 
 void CoreDMA2D::transferData(uintptr_t src, uintptr_t dst_address, uint32_t width, uint32_t height)
 {
+	// wait for previous transfer to finish
+	while (_hdma2d.State != HAL_DMA2D_STATE_READY)
+		;
+
 	if (_hal.HAL_DMA2D_Init(&_hdma2d) != HAL_OK) {
 		log_error("DMA2D Init error");
 		return;
