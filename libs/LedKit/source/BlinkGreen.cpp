@@ -6,8 +6,6 @@
 
 #include "BlinkGreen.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 static constexpr auto green1 = RGB {0, 170, 0};
@@ -44,15 +42,10 @@ void BlinkGreen::run()
 	_ears.show();
 }
 
-auto BlinkGreen::mapStep(uint8_t step) const -> float
-{
-	static constexpr auto kInputMaxValue = uint8_t {6};
-	return utils::math::map(step, uint8_t {0}, kInputMaxValue, 0.F, 1.F);
-}
-
 void BlinkGreen::stagesBlack()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {6};
+	if (auto pos = utils::mapStep(_step, kMaxInputValue); pos != 1.F) {
 		_belt.setColor(RGB::black);
 		_ears.setColor(RGB::black);
 		++_step;
@@ -64,7 +57,8 @@ void BlinkGreen::stagesBlack()
 
 void BlinkGreen::stagesGreen1()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {6};
+	if (auto pos = utils::mapStep(_step, kMaxInputValue); pos != 1.F) {
 		_belt.setColor(green1);
 		_ears.setColor(green1);
 		++_step;
@@ -76,7 +70,8 @@ void BlinkGreen::stagesGreen1()
 
 void BlinkGreen::stagesGreen2()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {6};
+	if (auto pos = utils::mapStep(_step, kMaxInputValue); pos != 1.F) {
 		_belt.setColor(green2);
 		_ears.setColor(green2);
 		++_step;
