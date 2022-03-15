@@ -126,10 +126,10 @@ auto main() -> int
 		foreground = (i % 2 == 0) ? CGColor::black : CGColor::pure_red;
 		line	   = i * 2;
 		log_info("Line #%i", i);
-		rtos::ThisThread::sleep_for(1s);
+		rtos::ThisThread::sleep_for(100ms);
 	}
 
-	rtos::ThisThread::sleep_for(5s);
+	rtos::ThisThread::sleep_for(500ms);
 
 	leka::logger::set_sink_function([](const char *str, size_t size) {
 		corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
@@ -139,7 +139,7 @@ auto main() -> int
 		"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
 		"only one line of the screen.");
 
-	rtos::ThisThread::sleep_for(10s);
+	rtos::ThisThread::sleep_for(1s);
 
 	leka::logger::set_sink_function(logger::internal::default_sink_function);
 
