@@ -50,10 +50,9 @@ void Angry::run()
 	_belt.show();
 }
 
-auto Angry::mapStep(uint8_t step) const -> float
+auto Angry::mapStep(uint8_t step, uint8_t max_input_value) const -> float
 {
-	constexpr auto kMaxInputValue = uint8_t {60};
-	return utils::math::map(step, uint8_t {0}, kMaxInputValue, 0.F, 1.F);
+	return utils::math::map(step, uint8_t {0}, max_input_value, 0.F, 1.F);
 }
 
 void Angry::stage1()
@@ -80,27 +79,46 @@ void Angry::stage4()
 
 void Angry::stage5()
 {
-	increaseBrightness(1.F);
+	static constexpr auto kMaxInputValue	   = uint8_t {60};
+	static constexpr auto kMaxInputValueStage6 = uint8_t {110};
+	if (auto pos = mapStep(_step, kMaxInputValue); pos != 1.F) {
+		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
+		_belt.setColor(color);
+		_step++;
+	} else {
+		_step = kMaxInputValueStage6;
+		_stage++;
+	}
 }
 
 void Angry::stage6()
 {
-	if (auto pos = mapStep(_step); pos != 0.F) {
+	static constexpr auto kMaxInputValue	   = uint8_t {30};
+	static constexpr auto kMaxInputValueStage6 = uint8_t {110};
+	if (auto pos = mapStep(_step, kMaxInputValueStage6); pos != 0.F) {
 		_step--;
 	} else {
-		_step = 60;
+		_step = kMaxInputValue;
 		_stage++;
 	}
 }
 
 void Angry::stage7()
 {
-	decreaseBrightness(0.F);
+	static constexpr auto kMaxInputValue = uint8_t {30};
+	if (auto pos = mapStep(_step, kMaxInputValue); pos != 0.F) {
+		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
+		_belt.setColor(color);
+		_step--;
+	} else {
+		_stage++;
+	}
 }
 
 void Angry::increaseBrightness(float treshold)
 {
-	if (auto pos = mapStep(_step); pos != treshold) {
+	static constexpr auto kMaxInputValue = uint8_t {60};
+	if (auto pos = mapStep(_step, kMaxInputValue); pos != treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt.setColor(color);
 		_step++;
@@ -111,7 +129,8 @@ void Angry::increaseBrightness(float treshold)
 
 void Angry::decreaseBrightness(float treshold)
 {
-	if (auto pos = mapStep(_step); pos > treshold) {
+	static constexpr auto kMaxInputValue = uint8_t {60};
+	if (auto pos = mapStep(_step, kMaxInputValue); pos > treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt.setColor(color);
 		_step--;
