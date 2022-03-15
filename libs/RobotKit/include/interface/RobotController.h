@@ -13,10 +13,18 @@ class RobotController
   public:
 	virtual ~RobotController() = default;
 
+	virtual void runLaunchingBehavior() = 0;
+
 	virtual void startSleepTimeout() = 0;
 	virtual void stopSleepTimeout()	 = 0;
 
+	virtual void startSleepingBehavior() = 0;
+	virtual void stopSleepingBehavior()	 = 0;
+
 	virtual auto isCharging() -> bool = 0;
+
+	virtual void startChargingBehavior() = 0;
+	virtual void stopChargingBehavior()	 = 0;
 };
 
 }	// namespace leka::interface

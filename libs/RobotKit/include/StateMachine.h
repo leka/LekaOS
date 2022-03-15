@@ -49,12 +49,32 @@ namespace sm::action {
 
 	using irc = interface::RobotController;
 
+	struct run_launching_behavior {
+		auto operator()(irc &rc) const { rc.runLaunchingBehavior(); }
+	};
+
 	struct start_sleep_timeout {
 		auto operator()(irc &rc) const { rc.startSleepTimeout(); }
 	};
 
 	struct stop_sleep_timeout {
 		auto operator()(irc &rc) const { rc.stopSleepTimeout(); }
+	};
+
+	struct start_sleeping_behavior {
+		auto operator()(irc &rc) const { rc.startSleepingBehavior(); }
+	};
+
+	struct stop_sleeping_behavior {
+		auto operator()(irc &rc) const { rc.stopSleepingBehavior(); }
+	};
+
+	struct start_charging_behavior {
+		auto operator()(irc &rc) const { rc.startChargingBehavior(); }
+	};
+
+	struct stop_charging_behavior {
+		auto operator()(irc &rc) const { rc.stopChargingBehavior(); }
 	};
 
 }	// namespace sm::action
@@ -67,6 +87,7 @@ struct StateMachine {
 		return make_transition_table(
 			// clang-format off
 			* sm::state::setup    + event<sm::event::setup_complete>                                   = sm::state::idle
+			, sm::state::setup    + boost::sml::on_exit<_>  / sm::action::run_launching_behavior {}
 
 			, sm::state::idle     + boost::sml::on_entry<_> / sm::action::start_sleep_timeout {}
 			, sm::state::idle     + boost::sml::on_exit<_>  / sm::action::stop_sleep_timeout  {}
@@ -74,7 +95,13 @@ struct StateMachine {
 			, sm::state::idle     + event<sm::event::sleep_timeout_did_end>                            = sm::state::sleeping
 			, sm::state::idle     + event<sm::event::charge_did_start> [sm::guard::is_charging {}]     = sm::state::charging
 
+			, sm::state::sleeping + boost::sml::on_entry<_> / sm::action::start_sleeping_behavior {}
+			, sm::state::sleeping + boost::sml::on_exit<_>  / sm::action::stop_sleeping_behavior {}
+
 			, sm::state::sleeping + event<sm::event::charge_did_start> [sm::guard::is_charging {}]     = sm::state::charging
+
+			, sm::state::charging + boost::sml::on_entry<_> / sm::action::start_charging_behavior {}
+			, sm::state::charging + boost::sml::on_exit<_>  / sm::action::stop_charging_behavior {}
 
 			, sm::state::charging + event<sm::event::charge_did_stop>  [sm::guard::is_not_charging {}] = sm::state::idle
 			// clang-format on
