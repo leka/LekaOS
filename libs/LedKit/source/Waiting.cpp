@@ -18,6 +18,8 @@ void Waiting::start()
 void Waiting::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 1;
 }
 
 void Waiting::run()
@@ -35,36 +37,36 @@ void Waiting::run()
 		case 4:
 			stage4();
 			break;
+		case 5:
+			_stage = 1;
+			break;
 		default:
 			break;
 	}
 	_belt.show();
 }
 
-auto Waiting::mapStep(uint8_t step, uint8_t max_input_value) const -> float
+auto Waiting::mapStep(uint8_t step) const -> float
 {
-	return utils::math::map(step, uint8_t {0}, max_input_value, 0.F, 1.F);
+	static constexpr auto kMaxInputValue = uint8_t {40};
+	return utils::math::map(step, uint8_t {0}, kMaxInputValue, 0.F, 1.F);
 }
 
 void Waiting::stage1()
 {
-	static constexpr auto kMaxInputValue1 = uint8_t {70};
-	static constexpr auto kMaxInputValue2 = uint8_t {50};
-	if (auto pos = mapStep(_step, kMaxInputValue1); pos != 1.F) {
+	if (auto pos = mapStep(_step); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		_step++;
 	} else {
-		_step = kMaxInputValue2;
 		_stage++;
 	}
 }
 
 void Waiting::stage2()
 {
-	static constexpr auto tresholdDown	  = 0.3F;
-	static constexpr auto kMaxInputValue2 = uint8_t {50};
-	if (auto pos = mapStep(_step, kMaxInputValue2); pos >= tresholdDown) {
+	static constexpr auto tresholdDown = 0.3F;
+	if (auto pos = mapStep(_step); pos >= tresholdDown) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		_step--;
@@ -75,22 +77,18 @@ void Waiting::stage2()
 
 void Waiting::stage3()
 {
-	static constexpr auto kMaxInputValue1 = uint8_t {70};
-	static constexpr auto kMaxInputValue2 = uint8_t {50};
-	if (auto pos = mapStep(_step, kMaxInputValue2); pos != 1.F) {
+	if (auto pos = mapStep(_step); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		_step++;
 	} else {
-		_step = kMaxInputValue1;
 		_stage++;
 	}
 }
 
 void Waiting::stage4()
 {
-	static constexpr auto kMaxInputValue1 = uint8_t {70};
-	if (auto pos = mapStep(_step, kMaxInputValue1); pos != 0.F) {
+	if (auto pos = mapStep(_step); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		_step--;

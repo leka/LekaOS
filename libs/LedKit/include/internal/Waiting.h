@@ -45,7 +45,7 @@ class Waiting : public interface::LEDAnimation
 	uint8_t _step  = 0;
 	uint8_t _stage = 1;
 
-	[[nodiscard]] auto mapStep(uint8_t step, uint8_t max_input_value) const -> float;
+	[[nodiscard]] auto mapStep(uint8_t step) const -> float;
 
 	void stage1();
 	void stage2();
