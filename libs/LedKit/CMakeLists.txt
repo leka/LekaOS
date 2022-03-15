@@ -18,8 +18,10 @@ target_sources(LedKit
 		source/Amazed.cpp
 		source/Angry.cpp
 		source/AngryShort.cpp
+		source/BlinkGreen.cpp
 		source/Bubbles.cpp
 		source/Disgusted.cpp
+		source/Fire.cpp
 		source/Fly.cpp
 		source/Happy.cpp
 		source/LedKit.cpp
@@ -27,12 +29,15 @@ target_sources(LedKit
 		source/LoadingOrange.cpp
 		source/LoadingRed.cpp
 		source/LoadingYellow.cpp
+		source/Rainbow.cpp
 		source/Sad.cpp
 		source/SadCry.cpp
 		source/Sick.cpp
 		source/Singing.cpp
 		source/Sleeping.cpp
 		source/Sneeze.cpp
+		source/SpinBlink.cpp
+		source/Sprinkles.cpp
 		source/Underwater.cpp
 		source/Waiting.cpp
 		source/WakeUp.cpp
