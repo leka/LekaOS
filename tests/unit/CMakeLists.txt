@@ -249,6 +249,7 @@ leka_register_unit_tests_for_library(IOKit)
 leka_register_unit_tests_for_library(LedKit)
 leka_register_unit_tests_for_library(RobotKit)
 leka_register_unit_tests_for_library(UIAnimationKit)
+leka_register_unit_tests_for_library(VideoKit)
 
 #
 # Mark: - Finish up
