@@ -15,10 +15,10 @@ target_sources(spike_lk_cg_animations
 )
 
 target_link_libraries(spike_lk_cg_animations
-	CoreFs
 	CoreVideo
 	CoreLL
 	CoreSTM32Hal
+	FileSystemKit
 	UIAnimationKit
 )
 
