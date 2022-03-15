@@ -63,8 +63,16 @@ auto main() -> int
 
 		log_info("File opened in mode 'w'");
 
+		auto buffer = std::array<char, BUFSIZ> {};
+
+		if (auto buffering = file.setBuffer(buffer); !buffering) {
+			log_error("Fail to set buffer");
+			return EXIT_FAILURE;
+		}
+
+		log_info("Setting buffer");
+
 		auto input_data = std::to_array("Hello, Leka!");
-		auto buffer		= std::array<char, 1024> {};
 
 		if (auto bytes = file.write(input_data); bytes != std::size(input_data)) {
 			log_error("Fail to edit file");
@@ -79,6 +87,8 @@ auto main() -> int
 		}
 		log_info("Size : %d", size);
 
+		auto output_data = std::array<char, 1024> {};
+
 		if (auto open = file.reopen(filename.data(), "r"); !open) {
 			log_error("Fail to re-open file");
 			return EXIT_FAILURE;
@@ -87,22 +97,22 @@ auto main() -> int
 
 		file.rewind();
 		log_info("Reading...");
-		if (auto bytes = file.read(buffer); bytes != size) {
+		if (auto bytes = file.read(output_data); bytes != size) {
 			log_error("Fail to read file");
 			return EXIT_FAILURE;
 		}
 		log_info("File read");
-		log_info("Data : %s", buffer.data());
+		log_info("Data : %s", output_data.data());
 
 		file.seek(seek_temp);
 		log_info("Position indicator set to %d", file.tell());
 		log_info("Reading...");
-		if (auto bytes = file.read(buffer); bytes != (size - seek_temp)) {
+		if (auto bytes = file.read(output_data); bytes != (size - seek_temp)) {
 			log_error("Fail to read file");
 			return EXIT_FAILURE;
 		}
 		log_info("File read");
-		log_info("Data : %s", buffer.data());
+		log_info("Data : %s", output_data.data());
 
 		file.close();
 		log_info("File closed");
