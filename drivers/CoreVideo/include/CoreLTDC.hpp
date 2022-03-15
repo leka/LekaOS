@@ -13,16 +13,15 @@ namespace leka {
 class CoreLTDC : public interface::LTDCBase
 {
   public:
-	CoreLTDC(interface::STM32Hal &hal, interface::DSIBase &dsi);
+	explicit CoreLTDC(interface::STM32Hal &hal);
 
 	void initialize() final;
 
-	[[nodiscard]] auto getHandle() const -> LTDC_HandleTypeDef;
+	[[nodiscard]] auto getHandle() -> LTDC_HandleTypeDef &;
 	[[nodiscard]] auto getLayerConfig() const -> LTDC_LayerCfgTypeDef;
 
   private:
 	interface::STM32Hal &_hal;
-	interface::DSIBase &_dsi;
 
 	LTDC_HandleTypeDef _hltdc {};
 	LTDC_LayerCfgTypeDef _layerConfig {};

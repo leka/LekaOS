@@ -8,7 +8,7 @@
 
 using namespace leka;
 
-CoreLTDC::CoreLTDC(interface::STM32Hal &hal, interface::DSIBase &dsi) : _hal(hal), _dsi(dsi)
+CoreLTDC::CoreLTDC(interface::STM32Hal &hal) : _hal(hal)
 {
 	_hltdc.Instance = LTDC;
 
@@ -22,12 +22,21 @@ CoreLTDC::CoreLTDC(interface::STM32Hal &hal, interface::DSIBase &dsi) : _hal(hal
 	_hltdc.Init.AccumulatedActiveW = (lcd::dimension::width + lcd::property::HSA + lcd::property::HBP - 1);
 	_hltdc.Init.TotalWidth = (lcd::dimension::width + lcd::property::HSA + lcd::property::HBP + lcd::property::HFP - 1);
 
+	_hltdc.Init.VerticalSync	   = (lcd::property::VSA - 1);
+	_hltdc.Init.AccumulatedVBP	   = (lcd::property::VSA + lcd::property::VBP - 1);
+	_hltdc.Init.AccumulatedActiveH = (lcd::dimension::height + lcd::property::VSA + lcd::property::VBP - 1);
+	_hltdc.Init.TotalHeigh =
+		(lcd::dimension::height + lcd::property::VSA + lcd::property::VBP + lcd::property::VFP - 1);
+
 	// Background values
 	_hltdc.Init.Backcolor.Blue	= 0;
 	_hltdc.Init.Backcolor.Green = 0;
 	_hltdc.Init.Backcolor.Red	= 0;
 
-	// Misc
+	// Polarity
+	_hltdc.Init.HSPolarity = LTDC_HSPOLARITY_AH;
+	_hltdc.Init.VSPolarity = LTDC_VSPOLARITY_AH;
+	_hltdc.Init.DEPolarity = LTDC_DEPOLARITY_AH;
 	_hltdc.Init.PCPolarity = LTDC_PCPOLARITY_IPC;
 
 	// Layer config
@@ -56,11 +65,11 @@ CoreLTDC::CoreLTDC(interface::STM32Hal &hal, interface::DSIBase &dsi) : _hal(hal
 
 void CoreLTDC::initialize()
 {
-	configurePeriphClock();
+	/** @brief NVIC configuration for LTDC interrupt that is now enabled */
+	_hal.HAL_NVIC_SetPriority(LTDC_IRQn, 3, 0);
+	_hal.HAL_NVIC_EnableIRQ(LTDC_IRQn);
 
-	// Get LTDC config from DSI
-	DSI_VidCfgTypeDef dsi_video_config = _dsi.getConfig();
-	_hal.HAL_LTDC_StructInitFromVideoConfig(&_hltdc, &dsi_video_config);
+	configurePeriphClock();
 
 	// Initialize LTDC
 	// This part **must not** be moved to the constructor as LCD
@@ -92,7 +101,7 @@ void CoreLTDC::configurePeriphClock()
 	_hal.HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 }
 
-auto CoreLTDC::getHandle() const -> LTDC_HandleTypeDef
+auto CoreLTDC::getHandle() -> LTDC_HandleTypeDef &
 {
 	return _hltdc;
 }

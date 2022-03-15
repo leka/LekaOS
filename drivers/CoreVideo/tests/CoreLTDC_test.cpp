@@ -19,13 +19,12 @@ using ::testing::Property;
 class CoreLTDCTest : public ::testing::Test
 {
   protected:
-	CoreLTDCTest() : coreltdc(halmock, dsimock) {}
+	CoreLTDCTest() : coreltdc(halmock) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
 	mock::CoreSTM32Hal halmock;
-	mock::CoreDSI dsimock;
 	CoreLTDC coreltdc;
 };
 
@@ -53,15 +52,25 @@ TEST_F(CoreLTDCTest, handleConfigurationSetupTimingConfig)
 {
 	auto handle = coreltdc.getHandle();
 
-	auto horizontal_sync	 = (lcd::property::HSA - 1);
-	auto accumulated_HBP	 = (lcd::property::HSA + lcd::property::HBP - 1);
-	auto accumulated_activeW = (lcd::dimension::width + lcd::property::HSA + lcd::property::HBP - 1);
+	auto horizontal_sync		  = (lcd::property::HSA - 1);
+	auto accumulated_HBP		  = (lcd::property::HSA + lcd::property::HBP - 1);
+	auto accumulated_active_width = (lcd::dimension::width + lcd::property::HSA + lcd::property::HBP - 1);
 	auto total_width = (lcd::dimension::width + lcd::property::HSA + lcd::property::HBP + lcd::property::HFP - 1);
+
+	auto vertical_sync			   = (lcd::property::VSA - 1);
+	auto accumulated_VBP		   = (lcd::property::VSA + lcd::property::VBP - 1);
+	auto accumulated_active_height = (lcd::dimension::height + lcd::property::VSA + lcd::property::VBP - 1);
+	auto total_height = (lcd::dimension::height + lcd::property::VSA + lcd::property::VBP + lcd::property::VFP - 1);
 
 	ASSERT_EQ(handle.Init.HorizontalSync, horizontal_sync);
 	ASSERT_EQ(handle.Init.AccumulatedHBP, accumulated_HBP);
-	ASSERT_EQ(handle.Init.AccumulatedActiveW, accumulated_activeW);
+	ASSERT_EQ(handle.Init.AccumulatedActiveW, accumulated_active_width);
 	ASSERT_EQ(handle.Init.TotalWidth, total_width);
+
+	ASSERT_EQ(handle.Init.VerticalSync, vertical_sync);
+	ASSERT_EQ(handle.Init.AccumulatedVBP, accumulated_VBP);
+	ASSERT_EQ(handle.Init.AccumulatedActiveH, accumulated_active_height);
+	ASSERT_EQ(handle.Init.TotalHeigh, total_height);
 }
 
 TEST_F(CoreLTDCTest, handleConfigurationSetupBackgroundConfig)
@@ -71,6 +80,15 @@ TEST_F(CoreLTDCTest, handleConfigurationSetupBackgroundConfig)
 	ASSERT_EQ(handle.Init.Backcolor.Blue, 0);
 	ASSERT_EQ(handle.Init.Backcolor.Green, 0);
 	ASSERT_EQ(handle.Init.Backcolor.Red, 0);
+}
+
+TEST_F(CoreLTDCTest, handleConfigurationSetupPolarityConfig)
+{
+	auto handle = coreltdc.getHandle();
+
+	ASSERT_EQ(handle.Init.HSPolarity, LTDC_HSPOLARITY_AH);
+	ASSERT_EQ(handle.Init.VSPolarity, LTDC_VSPOLARITY_AH);
+	ASSERT_EQ(handle.Init.DEPolarity, LTDC_DEPOLARITY_AH);
 	ASSERT_EQ(handle.Init.PCPolarity, LTDC_PCPOLARITY_IPC);
 }
 
@@ -131,10 +149,14 @@ TEST_F(CoreLTDCTest, initializationSequence)
 
 	{
 		InSequence seq;
+
+		EXPECT_CALL(halmock, HAL_NVIC_SetPriority(LTDC_IRQn, _, _)).Times(1);
+		EXPECT_CALL(halmock, HAL_NVIC_EnableIRQ(LTDC_IRQn)).Times(1);
+
 		EXPECT_CALL(halmock, HAL_RCCEx_PeriphCLKConfig(WithStructEqualTo(expected))).Times(1);
-		EXPECT_CALL(dsimock, getConfig).Times(1);
-		EXPECT_CALL(halmock, HAL_LTDC_StructInitFromVideoConfig).Times(1);
+
 		EXPECT_CALL(halmock, HAL_LTDC_Init).Times(1);
+
 		EXPECT_CALL(halmock, HAL_LTDC_ConfigLayer(_, _, default_layer_id)).Times(1);
 	}
 
