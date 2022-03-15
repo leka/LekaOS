@@ -16,6 +16,8 @@ void Angry::start()
 void Angry::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 1;
 }
 
 void Angry::run()

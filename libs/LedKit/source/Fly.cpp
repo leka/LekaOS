@@ -18,6 +18,8 @@ void Fly::start()
 void Fly::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 0;
 }
 
 void Fly::run()

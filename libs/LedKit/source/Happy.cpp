@@ -18,6 +18,8 @@ void Happy::start()
 void Happy::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 1;
 }
 
 void Happy::run()

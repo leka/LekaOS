@@ -16,6 +16,11 @@ void Sick::start()
 void Sick::stop()
 {
 	turnLedBlack();
+	_step			= 0;
+	_stage			= 1;
+	_sneeze_index_1 = 0;
+	_sneeze_index_2 = 0;
+	_sneeze_index_3 = 0;
 }
 
 void Sick::run()

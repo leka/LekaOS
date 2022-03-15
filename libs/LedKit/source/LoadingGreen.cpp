@@ -16,6 +16,8 @@ void LoadingGreen::start()
 void LoadingGreen::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 1;
 }
 
 void LoadingGreen::run()

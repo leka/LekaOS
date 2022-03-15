@@ -16,6 +16,8 @@ void SadCry::start()
 void SadCry::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 1;
 }
 
 void SadCry::run()

@@ -16,6 +16,8 @@ void WakeUp::start()
 void WakeUp::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 0;
 }
 
 void WakeUp::run()

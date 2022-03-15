@@ -16,6 +16,8 @@ void AfraidRed::start()
 void AfraidRed::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 1;
 }
 
 void AfraidRed::run()

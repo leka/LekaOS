@@ -18,6 +18,9 @@ void Bubbles::start()
 void Bubbles::stop()
 {
 	turnLedBlack();
+	_step		   = 0;
+	_stage		   = 1;
+	_bubble_number = 0;
 }
 
 void Bubbles::run()

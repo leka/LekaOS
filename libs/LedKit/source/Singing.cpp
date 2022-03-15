@@ -18,6 +18,9 @@ void Singing::start()
 void Singing::stop()
 {
 	turnLedBlack();
+	_step		 = 0;
+	_stage		 = 1;
+	_note_number = 0;
 }
 
 void Singing::run()

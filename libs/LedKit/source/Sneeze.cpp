@@ -16,6 +16,9 @@ void Sneeze::start()
 void Sneeze::stop()
 {
 	turnLedBlack();
+	_step			 = 0;
+	_stage			 = 1;
+	_sneeze_position = 0;
 }
 
 void Sneeze::run()

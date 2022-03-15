@@ -16,6 +16,8 @@ void AngryShort::start()
 void AngryShort::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 1;
 }
 
 void AngryShort::run()

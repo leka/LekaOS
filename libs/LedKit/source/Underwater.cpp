@@ -18,6 +18,16 @@ void Underwater::start()
 void Underwater::stop()
 {
 	turnLedBlack();
+	_step			= 0;
+	_stage			= 0;
+	step_fish_1		= 0;
+	step_fish_2		= 0;
+	step_fish_3		= 0;
+	step_fish_4		= 0;
+	position_fish_1 = -2;
+	position_fish_2 = -2;
+	position_fish_3 = -2;
+	position_fish_4 = -2;
 }
 
 void Underwater::run()
