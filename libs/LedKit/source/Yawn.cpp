@@ -48,7 +48,7 @@ auto Yawn::mapStep(uint8_t step, uint8_t max_input_value) const -> float
 
 void Yawn::stage0()
 {
-	static constexpr auto kInputMaxValue1 = uint8_t {20};
+	static constexpr auto kInputMaxValue1 = uint8_t {18};
 	if (auto pos = mapStep(_step, kInputMaxValue1); pos != 1.F) {
 		++_step;
 	} else {
@@ -59,7 +59,7 @@ void Yawn::stage0()
 
 void Yawn::stage1()
 {
-	static constexpr auto kInputMaxValue1 = uint8_t {20};
+	static constexpr auto kInputMaxValue1 = uint8_t {18};
 	if (auto pos = mapStep(_step, kInputMaxValue1); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
@@ -72,7 +72,7 @@ void Yawn::stage1()
 
 void Yawn::stage2()
 {
-	static constexpr auto kInputMaxValue1 = uint8_t {20};
+	static constexpr auto kInputMaxValue1 = uint8_t {18};
 	static constexpr auto kInputMaxValue2 = uint8_t {5};
 	if (auto pos = mapStep(_step, kInputMaxValue2); pos != 1.F) {
 		++_step;
@@ -84,7 +84,7 @@ void Yawn::stage2()
 
 void Yawn::stage3()
 {
-	static constexpr auto kInputMaxValue1 = uint8_t {20};
+	static constexpr auto kInputMaxValue1 = uint8_t {18};
 	if (auto pos = mapStep(_step, kInputMaxValue1); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
