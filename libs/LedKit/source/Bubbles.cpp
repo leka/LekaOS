@@ -24,10 +24,10 @@ void Bubbles::stop()
 
 void Bubbles::run()
 {
-	static constexpr auto last_stage = kNumberOfBubbles + 2;
+	static constexpr auto kLastStage = 12;
 	if (_stage == 1) {
 		stage1();
-	} else if (_stage <= last_stage) {
+	} else if (_stage <= kLastStage) {
 		stage2();
 	}
 	_belt.show();
@@ -51,7 +51,7 @@ void Bubbles::stage1()
 
 void Bubbles::stage2()
 {
-	static constexpr auto kMaxInputValueStage2 = uint8_t {10};
+	static constexpr auto kMaxInputValueStage2 = uint8_t {15};
 
 	static constexpr std::array<uint8_t, kNumberOfBubbles> kBubblesIndex = {2,	17, 9, 5,  13, 19, 7, 1,  18, 8,
 																			16, 11, 4, 19, 14, 0,  2, 17, 9,  5};
