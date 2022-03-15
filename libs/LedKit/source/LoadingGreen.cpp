@@ -67,7 +67,7 @@ void LoadingGreen::run()
 
 auto LoadingGreen::mapStep(uint8_t step) const -> float
 {
-	constexpr auto kMaxInputValue = uint8_t {20};
+	constexpr auto kMaxInputValue = uint8_t {10};
 	return utils::math::map(step, uint8_t {0}, kMaxInputValue, 0.F, 1.F);
 }
 

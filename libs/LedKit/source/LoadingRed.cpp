@@ -55,7 +55,7 @@ void LoadingRed::run()
 
 auto LoadingRed::mapStep(uint8_t step) const -> float
 {
-	constexpr auto kMaxInputValue = uint8_t {60};
+	constexpr auto kMaxInputValue = uint8_t {100};
 	return utils::math::map(step, uint8_t {0}, kMaxInputValue, 0.F, 1.F);
 }
 

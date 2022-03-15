@@ -55,7 +55,7 @@ void LoadingOrange::run()
 
 auto LoadingOrange::mapStep(uint8_t step) const -> float
 {
-	constexpr auto kMaxInputValue = uint8_t {40};
+	constexpr auto kMaxInputValue = uint8_t {50};
 	return utils::math::map(step, uint8_t {0}, kMaxInputValue, 0.F, 1.F);
 }
 
@@ -104,7 +104,7 @@ void LoadingOrange::stage8()
 
 void LoadingOrange::increaseBrightness()
 {
-	static constexpr auto orange = RGB {0xFF, 0xA5, 0x00};
+	static constexpr auto orange = RGB {0xFF, 0x65, 0x00};
 	if (auto pos = mapStep(_step); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, orange, pos);
 		_belt.setColor(color);
@@ -116,7 +116,7 @@ void LoadingOrange::increaseBrightness()
 
 void LoadingOrange::decreaseBrightness(float treshold)
 {
-	static constexpr auto orange = RGB {0xFF, 0xA5, 0x00};
+	static constexpr auto orange = RGB {0xFF, 0x65, 0x00};
 	if (auto pos = mapStep(_step); pos != treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, orange, pos);
 		_belt.setColor(color);
