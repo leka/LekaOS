@@ -12,6 +12,7 @@ add_subdirectory(${LIBS_DIR}/IOKit)
 add_subdirectory(${LIBS_DIR}/LedKit)
 add_subdirectory(${LIBS_DIR}/RobotKit)
 add_subdirectory(${LIBS_DIR}/UIAnimationKit)
+add_subdirectory(${LIBS_DIR}/VideoKit)
 add_subdirectory(${LIBS_DIR}/WebKit)
 
 add_subdirectory(${LIBS_DIR}/PrettyPrinter)
