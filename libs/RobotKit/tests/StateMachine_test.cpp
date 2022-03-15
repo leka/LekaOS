@@ -118,13 +118,26 @@ TEST_F(StateMachineTest, stateChargingEventChargeDidStop)
 	EXPECT_TRUE(sm.is(lksm::state::idle));
 }
 
-TEST_F(StateMachineTest, stateChargingEventUpdateRequested)
+TEST_F(StateMachineTest, stateChargingEventUpdateRequestedGuardTrue)
 {
 	sm.set_current_states(lksm::state::charging);
 
+	EXPECT_CALL(mock_rc, isReadyToUpdate).WillOnce(Return(true));
 	EXPECT_CALL(mock_rc, applyUpdate).Times(1);
 
 	sm.process_event(lksm::event::update_requested {});
 
 	EXPECT_TRUE(sm.is(lksm::state::updating));
+}
+
+TEST_F(StateMachineTest, stateChargingEventUpdateRequestedGuardFalse)
+{
+	sm.set_current_states(lksm::state::charging);
+
+	EXPECT_CALL(mock_rc, isReadyToUpdate).WillOnce(Return(false));
+	EXPECT_CALL(mock_rc, applyUpdate).Times(0);
+
+	sm.process_event(lksm::event::update_requested {});
+
+	EXPECT_TRUE(sm.is(lksm::state::charging));
 }

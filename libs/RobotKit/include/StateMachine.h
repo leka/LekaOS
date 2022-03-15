@@ -47,7 +47,7 @@ namespace sm::guard {
 	};
 
 	struct is_ready_to_update {
-		auto operator()(irc &rc) const { return !rc.isReadyToUpdate(); }
+		auto operator()(irc &rc) const { return rc.isReadyToUpdate(); }
 	};
 
 }	// namespace sm::guard
