@@ -17,6 +17,8 @@ class BLEService : public GattService
 	BLEService(const UUID &uuid, std::span<GattCharacteristic *> characteristics)
 		: GattService(uuid, characteristics.data(), std::size(characteristics)) {};
 
+	virtual ~BLEService() = default;
+
 	using data_received_handle_t = GattWriteCallbackParams;
 	using data_to_send_handle_t	 = std::tuple<GattAttribute::Handle_t, std::span<const uint8_t>>;
 
