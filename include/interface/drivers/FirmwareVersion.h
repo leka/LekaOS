@@ -11,7 +11,8 @@ namespace leka {
 struct FirmwareVersion {
 	uint8_t major;
 	uint8_t minor;
-	uint16_t revision;
+	uint16_t revision;	 // ? Use uint16_t instead of uint8_t for compatibility w/ MCUBoot Image format, see
+						 // ? https://docs.mcuboot.com/design.html
 };
 
 }	// namespace leka
