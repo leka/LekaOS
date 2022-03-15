@@ -28,41 +28,50 @@ class RobotController : public interface::RobotController
 							 interface::FirmwareUpdate &firmware_update, VideoKit &video_kit)
 		: _sleep_timeout(sleep_timeout), _battery(battery), _firmware_update(firmware_update), _videokit(video_kit) {};
 
-	void runLaunchingBehavior() final
-	{
-		// TODO (@yann): Display Leka x APF logo image
-	}
+	void runLaunchingBehavior() final { _videokit.displayImage("/fs/images/logo.jpg"); }
 
 	void startSleepTimeout() final { _sleep_timeout.start(_sleep_timeout_duration); }
 	void stopSleepTimeout() final { _sleep_timeout.stop(); }
 
 	void startWaitingBehavior() final
 	{
-		// TODO: Start Waiting animation video
+		_videokit.playVideo(
+			"/fs/videos/2022_02_14-animation-face-state-waiting-looking-top-right-to-left-without-eyebrows.avi");
 	}
-	void stopWaitingBehavior() final
-	{
-		// TODO: Stop animation video
-	}
+	void stopWaitingBehavior() final { _videokit.stopVideo(); }
 
 	void startSleepingBehavior() final
 	{
-		// TODO (@yann): Start YawningSleeping animation video
+		_videokit.playVideo("/fs/videos/2022_01_17-animation-face-state-yawning-sleeping_without_eyebrows.avi");
 	}
-	void stopSleepingBehavior() final
-	{
-		// TODO (@yann): Stop animation video
-	}
+	void stopSleepingBehavior() final { _videokit.stopVideo(); }
 
 	auto isCharging() -> bool final { return _battery.isCharging(); };
 
+	void onStartChargingBehavior(uint8_t level)
+	{
+		_service_battery.setBatteryLevel(level);
+
+		if (level < 25) {
+			_videokit.displayImage("/fs/images/battery_0.jpg");
+		} else if (level < 50) {
+			_videokit.displayImage("/fs/images/battery_red.jpg");
+		} else if (level < 75) {
+			_videokit.displayImage("/fs/images/battery_yellow_2.jpg");
+		} else if (level < 100) {
+			_videokit.displayImage("/fs/images/battery_green_3.jpg");
+		} else {
+			_videokit.displayImage("/fs/images/battery_green_4.jpg");
+		}
+	}
+
 	void startChargingBehavior() final
 	{
-		// TODO (@yann): Display battery state image
+		_battery_kit.onDataUpdated([this](uint8_t level) { onStartChargingBehavior(level); });
 	}
 	void stopChargingBehavior() final
 	{
-		// TODO (@yann): Stop animation video
+		_battery_kit.onDataUpdated([](uint8_t level) { _service_battery.setBatteryLevel(level); });
 	}
 
 	auto isReadyToUpdate() -> bool final
@@ -82,6 +91,8 @@ class RobotController : public interface::RobotController
 
 	void initializeComponents()
 	{
+		_videokit.initializeScreen();
+
 		_ble.setServices(services);
 		_ble.init();
 	}

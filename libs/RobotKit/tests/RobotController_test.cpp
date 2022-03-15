@@ -52,7 +52,7 @@ class RobotControllerTest : public testing::Test
 		rc.initializeComponents();
 
 		EXPECT_CALL(battery, level).Times(1);
-		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
+		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber());
 		EXPECT_CALL(sleep_timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleep_timeout));
 		EXPECT_CALL(battery, onChargeDidStart).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_start));
 		EXPECT_CALL(battery, onChargeDidStop).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_stop));
@@ -92,6 +92,51 @@ TEST_F(RobotControllerTest, initializeComponents)
 	EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(1);
 
 	rc.initializeComponents();
+}
+
+TEST_F(RobotControllerTest, onStartChargingBehaviorLevelBelow25)
+{
+	auto battery_level = 0;
+
+	rc.onStartChargingBehavior(battery_level);
+
+	// nohting expected
+}
+
+TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove25Below50)
+{
+	auto battery_level = 42;
+
+	rc.onStartChargingBehavior(battery_level);
+
+	// nohting expected
+}
+
+TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove50Below75)
+{
+	auto battery_level = 66;
+
+	rc.onStartChargingBehavior(battery_level);
+
+	// nohting expected
+}
+
+TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove75Below100)
+{
+	auto battery_level = 90;
+
+	rc.onStartChargingBehavior(battery_level);
+
+	// nohting expected
+}
+
+TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAt100)
+{
+	auto battery_level = 100;
+
+	rc.onStartChargingBehavior(battery_level);
+
+	// nohting expected
 }
 
 TEST_F(RobotControllerTest, stateSetupEventSetupComplete)
