@@ -52,7 +52,7 @@ void AfraidRed::run()
 
 auto AfraidRed::mapStep(uint8_t step) const -> float
 {
-	constexpr auto kMaxInputValue = uint8_t {30};
+	constexpr auto kMaxInputValue = uint8_t {34};
 	return utils::math::map(step, uint8_t {0}, kMaxInputValue, 0.F, 1.F);
 }
 
@@ -118,7 +118,7 @@ void AfraidRed::increaseBrightness()
 
 void AfraidRed::decreaseBrightness(float treshold)
 {
-	if (auto pos = mapStep(_step); pos != treshold) {
+	if (auto pos = mapStep(_step); pos >= treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt.setColor(color);
 		_step--;
