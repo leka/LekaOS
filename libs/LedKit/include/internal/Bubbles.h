@@ -47,8 +47,6 @@ class Bubbles : public interface::LEDAnimation
 	uint8_t _stage		   = 1;
 	uint8_t _bubble_number = 0;
 
-	[[nodiscard]] auto mapStep(uint8_t max_input_value) const -> float;
-
 	void stage1();
 	void stage2();
 

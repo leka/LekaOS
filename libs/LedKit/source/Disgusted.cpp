@@ -6,8 +6,6 @@
 
 #include "Disgusted.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 static constexpr auto kNumberOfLedsBelt = uint8_t {20};
@@ -42,15 +40,10 @@ void Disgusted::run()
 	_belt.show();
 }
 
-auto Disgusted::mapStep(uint8_t step) const -> float
-{
-	constexpr auto kMaxInputValue = uint8_t {50};
-	return utils::math::map(step, uint8_t {0}, kMaxInputValue, 0.F, 1.F);
-}
-
 void Disgusted::stage1()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {50};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, green_sick, pos);
 		_belt.setColorAtIndex(0, color);
 		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, color);
@@ -63,7 +56,8 @@ void Disgusted::stage1()
 
 void Disgusted::stage2()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {50};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		_belt.setColorAtIndex(0, green_sick);
 		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, green_sick);
 		_step++;
@@ -74,7 +68,8 @@ void Disgusted::stage2()
 
 void Disgusted::stage3()
 {
-	if (auto pos = mapStep(_step); pos != 0.F) {
+	static constexpr auto kMaxInputValue = uint8_t {50};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, green_sick, pos);
 		_belt.setColorAtIndex(0, color);
 		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, color);

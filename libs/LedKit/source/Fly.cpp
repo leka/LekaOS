@@ -6,8 +6,6 @@
 
 #include "Fly.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 static constexpr auto kThresholdDown = 0.3F;
@@ -55,15 +53,10 @@ void Fly::run()
 	_belt.show();
 }
 
-auto Fly::mapStep(uint8_t step, uint8_t max_input_value) const -> float
-{
-	return utils::math::map(step, uint8_t {0}, max_input_value, 0.F, 1.F);
-}
-
 void Fly::stage0()
 {
 	static constexpr auto kInputMaxStage0 = 70;
-	if (auto pos = mapStep(_step, kInputMaxStage0); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kInputMaxStage0); pos != 1.F) {
 		++_step;
 	} else {
 		_step = 0;
@@ -74,7 +67,7 @@ void Fly::stage0()
 void Fly::stage1()
 {
 	static constexpr auto kInputMaxStage1to2 = 20;
-	if (auto pos = mapStep(_step, kInputMaxStage1to2); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kInputMaxStage1to2); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		++_step;
@@ -86,7 +79,7 @@ void Fly::stage1()
 void Fly::stage2()
 {
 	static constexpr auto kInputMaxStage1to2 = 20;
-	if (auto pos = mapStep(_step, kInputMaxStage1to2); pos != 0.F) {
+	if (auto pos = utils::normalizeStep(_step, kInputMaxStage1to2); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		--_step;
@@ -99,7 +92,7 @@ void Fly::stage2()
 void Fly::stage3()
 {
 	static constexpr auto kInputMaxStage3 = 30;
-	if (auto pos = mapStep(_step, kInputMaxStage3); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kInputMaxStage3); pos != 1.F) {
 		++_step;
 	} else {
 		_step = 0;
@@ -110,7 +103,7 @@ void Fly::stage3()
 void Fly::stage4()
 {
 	static constexpr auto kInputMaxValue4to7 = 6;
-	if (auto pos = mapStep(_step, kInputMaxValue4to7); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kInputMaxValue4to7); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		++_step;
@@ -122,7 +115,7 @@ void Fly::stage4()
 void Fly::stage5()
 {
 	static constexpr auto kInputMaxValue4to7 = 6;
-	if (auto pos = mapStep(_step, kInputMaxValue4to7); pos >= kThresholdDown) {
+	if (auto pos = utils::normalizeStep(_step, kInputMaxValue4to7); pos >= kThresholdDown) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		--_step;
@@ -134,7 +127,7 @@ void Fly::stage5()
 void Fly::stage6()
 {
 	static constexpr auto kInputMaxValue4to7 = 6;
-	if (auto pos = mapStep(_step, kInputMaxValue4to7); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kInputMaxValue4to7); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		++_step;
@@ -146,7 +139,7 @@ void Fly::stage6()
 void Fly::stage7()
 {
 	static constexpr auto kInputMaxValue4to7 = 6;
-	if (auto pos = mapStep(_step, kInputMaxValue4to7); pos != 0.F) {
+	if (auto pos = utils::normalizeStep(_step, kInputMaxValue4to7); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		--_step;

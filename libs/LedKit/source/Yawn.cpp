@@ -6,8 +6,6 @@
 
 #include "Yawn.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 void Yawn::start()
@@ -41,15 +39,10 @@ void Yawn::run()
 	_belt.show();
 }
 
-auto Yawn::mapStep(uint8_t step, uint8_t max_input_value) const -> float
-{
-	return utils::math::map(step, uint8_t {0}, max_input_value, 0.F, 1.F);
-}
-
 void Yawn::stage0()
 {
 	static constexpr auto kInputMaxValue1 = uint8_t {18};
-	if (auto pos = mapStep(_step, kInputMaxValue1); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kInputMaxValue1); pos != 1.F) {
 		++_step;
 	} else {
 		_step = 0;
@@ -60,7 +53,7 @@ void Yawn::stage0()
 void Yawn::stage1()
 {
 	static constexpr auto kInputMaxValue1 = uint8_t {18};
-	if (auto pos = mapStep(_step, kInputMaxValue1); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kInputMaxValue1); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		++_step;
@@ -74,7 +67,7 @@ void Yawn::stage2()
 {
 	static constexpr auto kInputMaxValue1 = uint8_t {18};
 	static constexpr auto kInputMaxValue2 = uint8_t {5};
-	if (auto pos = mapStep(_step, kInputMaxValue2); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kInputMaxValue2); pos != 1.F) {
 		++_step;
 	} else {
 		_step = kInputMaxValue1;
@@ -85,7 +78,7 @@ void Yawn::stage2()
 void Yawn::stage3()
 {
 	static constexpr auto kInputMaxValue1 = uint8_t {18};
-	if (auto pos = mapStep(_step, kInputMaxValue1); pos != 0.F) {
+	if (auto pos = utils::normalizeStep(_step, kInputMaxValue1); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		--_step;

@@ -6,8 +6,6 @@
 
 #include "Sick.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 void Sick::start()
@@ -53,18 +51,13 @@ void Sick::run()
 	_belt.show();
 }
 
-auto Sick::mapStep(uint8_t step, uint8_t max_input_value) const -> float
-{
-	return utils::math::map(step, uint8_t {0}, max_input_value, 0.F, 1.F);
-}
-
 void Sick::stage1()
 {
 	static constexpr auto green_sick = RGB {0x10, 0xF0, 0x30};
 
 	static constexpr auto kMaxInputValue	= uint8_t {120};
 	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
-	if (auto pos = mapStep(_step, kMaxInputValue); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, green_sick, pos);
 		_belt.setColorAtIndex(0, color);
 		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, color);
@@ -81,7 +74,7 @@ void Sick::stage2and5()
 
 	static constexpr auto kMaxInputValue2	= uint8_t {1};
 	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
-	if (auto pos = mapStep(_step, kMaxInputValue2); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue2); pos != 1.F) {
 		_belt.setColorAtIndex(_sneeze_index_1, green_sick);
 		_belt.setColorAtIndex(kNumberOfLedsBelt - (_sneeze_index_1 + 1), green_sick);
 		_step++;
@@ -101,7 +94,7 @@ void Sick::stage3and6()
 
 	static constexpr auto kMaxInputValue2	= uint8_t {1};
 	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
-	if (auto pos = mapStep(_step, kMaxInputValue2); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue2); pos != 1.F) {
 		_belt.setColorAtIndex(_sneeze_index_1, green_sick);
 		_belt.setColorAtIndex(kNumberOfLedsBelt - (_sneeze_index_1 + 1), green_sick);
 		_belt.setColorAtIndex(_sneeze_index_2, deep_green_sick);
@@ -125,7 +118,7 @@ void Sick::stage4and7()
 
 	static constexpr auto kMaxInputValue2	= uint8_t {1};
 	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
-	if (auto pos = mapStep(_step, kMaxInputValue2); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue2); pos != 1.F) {
 		_belt.setColorAtIndex(_sneeze_index_1, green_sick);
 		_belt.setColorAtIndex(kNumberOfLedsBelt - (_sneeze_index_1 + 1), green_sick);
 		_belt.setColorAtIndex(_sneeze_index_2, deep_green_sick);

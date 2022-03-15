@@ -28,8 +28,6 @@ class Sick : public interface::LEDAnimation
 	uint8_t _sneeze_index_2 = 0;
 	uint8_t _sneeze_index_3 = 0;
 
-	[[nodiscard]] auto mapStep(uint8_t step, uint8_t max_input_value) const -> float;
-
 	void stage1();
 	void stage2and5();
 	void stage3and6();

@@ -6,8 +6,6 @@
 
 #include "Bubbles.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 static constexpr auto kNumberOfBubbles = uint8_t {20};
@@ -33,15 +31,10 @@ void Bubbles::run()
 	_belt.show();
 }
 
-auto Bubbles::mapStep(uint8_t max_input_value) const -> float
-{
-	return utils::math::map(_step, uint8_t {0}, max_input_value, 0.F, 1.F);
-}
-
 void Bubbles::stage1()
 {
 	static constexpr auto kMaxInputValueStage1 = uint8_t {60};
-	if (auto pos = mapStep(kMaxInputValueStage1); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStage1); pos != 1.F) {
 		++_step;
 	} else {
 		_step = 0;
@@ -56,7 +49,7 @@ void Bubbles::stage2()
 	static constexpr std::array<uint8_t, kNumberOfBubbles> kBubblesIndex = {2,	17, 9, 5,  13, 19, 7, 1,  18, 8,
 																			16, 11, 4, 19, 14, 0,  2, 17, 9,  5};
 
-	if (auto pos = mapStep(kMaxInputValueStage2); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStage2); pos != 1.F) {
 		if (_bubble_number - 2 >= 0) {
 			auto previous_bubble_index = kBubblesIndex.at(_bubble_number - 2);
 			decreaseBrightnessAtIndex(previous_bubble_index, pos);

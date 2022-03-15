@@ -6,8 +6,6 @@
 
 #include "AngryShort.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 void AngryShort::start()
@@ -47,12 +45,6 @@ void AngryShort::run()
 	_belt.show();
 }
 
-auto AngryShort::mapStep(uint8_t step) const -> float
-{
-	constexpr auto kMaxInputValue = uint8_t {47};
-	return utils::math::map(step, uint8_t {0}, kMaxInputValue, 0.F, 1.F);
-}
-
 void AngryShort::stage1()
 {
 	increaseBrightness(1.F);
@@ -87,7 +79,8 @@ void AngryShort::stage6()
 
 void AngryShort::increaseBrightness(float treshold)
 {
-	if (auto pos = mapStep(_step); pos != treshold) {
+	static constexpr auto kMaxInputValue = uint8_t {47};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt.setColor(color);
 		_step++;
@@ -98,7 +91,8 @@ void AngryShort::increaseBrightness(float treshold)
 
 void AngryShort::decreaseBrightness(float treshold)
 {
-	if (auto pos = mapStep(_step); pos >= treshold) {
+	static constexpr auto kMaxInputValue = uint8_t {47};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos >= treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt.setColor(color);
 		_step--;

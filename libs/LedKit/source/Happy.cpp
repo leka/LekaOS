@@ -6,8 +6,6 @@
 
 #include "Happy.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 static constexpr auto kNumberOfLedsBelt = uint8_t {20};
@@ -46,16 +44,11 @@ void Happy::run()
 	_belt.show();
 }
 
-auto Happy::mapStep(uint8_t step) const -> float
-{
-	constexpr auto kMaxInputValue = uint8_t {20};
-	return utils::math::map(step, uint8_t {0}, kMaxInputValue, 0.F, 1.F);
-}
-
 void Happy::stage1()
 {
-	static constexpr auto pink_happy = RGB {255, 98, 98};
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {20};
+	static constexpr auto pink_happy	 = RGB {255, 98, 98};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, pink_happy, pos);
 		_belt.setColorAtIndex(0, color);
 		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, color);
@@ -68,8 +61,9 @@ void Happy::stage1()
 
 void Happy::stage2()
 {
-	static constexpr auto pink_happy = RGB {255, 98, 98};
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {20};
+	static constexpr auto pink_happy	 = RGB {255, 98, 98};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		_belt.setColorAtIndex(0, pink_happy);
 		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, pink_happy);
 		_step++;
@@ -81,8 +75,9 @@ void Happy::stage2()
 
 void Happy::stage3()
 {
-	static constexpr auto pink_happy = RGB {255, 98, 98};
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {20};
+	static constexpr auto pink_happy	 = RGB {255, 98, 98};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(pink_happy, RGB::pure_red, pos);
 		_belt.setColorAtIndex(0, color);
 		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, color);
@@ -95,7 +90,8 @@ void Happy::stage3()
 
 void Happy::stage4()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {20};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		_belt.setColorAtIndex(0, RGB::pure_red);
 		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, RGB::pure_red);
 		_step++;
@@ -106,7 +102,8 @@ void Happy::stage4()
 
 void Happy::stage5()
 {
-	if (auto pos = mapStep(_step); pos != 0.F) {
+	static constexpr auto kMaxInputValue = uint8_t {20};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt.setColorAtIndex(0, color);
 		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, color);

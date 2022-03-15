@@ -52,8 +52,6 @@ class Underwater : public interface::LEDAnimation
 	int position_fish_3 = -2;
 	int position_fish_4 = -2;
 
-	[[nodiscard]] auto mapStep(uint8_t step, uint8_t max_input_value) const -> float;
-
 	void stage0();
 	void stage1();
 	void stage2();

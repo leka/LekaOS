@@ -6,8 +6,6 @@
 
 #include "Sleeping.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 void Sleeping::start()
@@ -53,15 +51,10 @@ void Sleeping::run()
 	_belt.show();
 }
 
-auto Sleeping::mapStep(uint8_t step, uint8_t max_input_value) const -> float
-{
-	return utils::math::map(step, uint8_t {0}, max_input_value, 0.F, 1.F);
-}
-
 void Sleeping::stage0()
 {
 	static constexpr auto kMaxInputValueStage0 = uint8_t {20};
-	if (auto pos = mapStep(_step, kMaxInputValueStage0); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStage0); pos != 1.F) {
 		_step++;
 	} else {
 		_step = 0;
@@ -72,7 +65,7 @@ void Sleeping::stage0()
 void Sleeping::stage1()
 {
 	static constexpr auto kMaxInputValueStage1 = uint8_t {40};
-	if (auto pos = mapStep(_step, kMaxInputValueStage1); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStage1); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		_step++;
@@ -86,7 +79,7 @@ void Sleeping::stage2()
 {
 	static constexpr auto kMaxInputValueStage2	 = uint8_t {20};
 	static constexpr auto kMaxInputValueStage4_6 = uint8_t {45};
-	if (auto pos = mapStep(_step, kMaxInputValueStage2); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStage2); pos != 1.F) {
 		RGB color = RGB::white;
 		_belt.setColor(color);
 		_step++;
@@ -128,7 +121,7 @@ void Sleeping::stage7()
 void Sleeping::increaseBrightness(float treshold)
 {
 	static constexpr auto kMaxInputValueStage3to7 = uint8_t {45};
-	if (auto pos = mapStep(_step, kMaxInputValueStage3to7); pos < treshold) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStage3to7); pos < treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		_step++;
@@ -140,7 +133,7 @@ void Sleeping::increaseBrightness(float treshold)
 void Sleeping::decreaseBrightness(float treshold)
 {
 	static constexpr auto kMaxInputValueStage3to7 = uint8_t {45};
-	if (auto pos = mapStep(_step, kMaxInputValueStage3to7); pos > treshold) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStage3to7); pos > treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		_step--;

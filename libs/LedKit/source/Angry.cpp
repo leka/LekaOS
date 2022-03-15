@@ -6,8 +6,6 @@
 
 #include "Angry.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 void Angry::start()
@@ -50,11 +48,6 @@ void Angry::run()
 	_belt.show();
 }
 
-auto Angry::mapStep(uint8_t step, uint8_t max_input_value) const -> float
-{
-	return utils::math::map(step, uint8_t {0}, max_input_value, 0.F, 1.F);
-}
-
 void Angry::stage1()
 {
 	increaseBrightness(1.F);
@@ -81,7 +74,7 @@ void Angry::stage5()
 {
 	static constexpr auto kMaxInputValue	   = uint8_t {60};
 	static constexpr auto kMaxInputValueStage6 = uint8_t {110};
-	if (auto pos = mapStep(_step, kMaxInputValue); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt.setColor(color);
 		_step++;
@@ -95,7 +88,7 @@ void Angry::stage6()
 {
 	static constexpr auto kMaxInputValue	   = uint8_t {30};
 	static constexpr auto kMaxInputValueStage6 = uint8_t {110};
-	if (auto pos = mapStep(_step, kMaxInputValueStage6); pos != 0.F) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStage6); pos != 0.F) {
 		_step--;
 	} else {
 		_step = kMaxInputValue;
@@ -106,7 +99,7 @@ void Angry::stage6()
 void Angry::stage7()
 {
 	static constexpr auto kMaxInputValue = uint8_t {30};
-	if (auto pos = mapStep(_step, kMaxInputValue); pos != 0.F) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt.setColor(color);
 		_step--;
@@ -118,7 +111,7 @@ void Angry::stage7()
 void Angry::increaseBrightness(float treshold)
 {
 	static constexpr auto kMaxInputValue = uint8_t {60};
-	if (auto pos = mapStep(_step, kMaxInputValue); pos != treshold) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt.setColor(color);
 		_step++;
@@ -130,7 +123,7 @@ void Angry::increaseBrightness(float treshold)
 void Angry::decreaseBrightness(float treshold)
 {
 	static constexpr auto kMaxInputValue = uint8_t {60};
-	if (auto pos = mapStep(_step, kMaxInputValue); pos > treshold) {
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos > treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt.setColor(color);
 		_step--;

@@ -6,8 +6,6 @@
 
 #include "Waiting.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 void Waiting::start()
@@ -46,15 +44,10 @@ void Waiting::run()
 	_belt.show();
 }
 
-auto Waiting::mapStep(uint8_t step) const -> float
-{
-	static constexpr auto kMaxInputValue = uint8_t {40};
-	return utils::math::map(step, uint8_t {0}, kMaxInputValue, 0.F, 1.F);
-}
-
 void Waiting::stage1()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {40};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		_step++;
@@ -65,8 +58,9 @@ void Waiting::stage1()
 
 void Waiting::stage2()
 {
-	static constexpr auto tresholdDown = 0.3F;
-	if (auto pos = mapStep(_step); pos >= tresholdDown) {
+	static constexpr auto kMaxInputValue = uint8_t {40};
+	static constexpr auto tresholdDown	 = 0.3F;
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos >= tresholdDown) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		_step--;
@@ -77,7 +71,8 @@ void Waiting::stage2()
 
 void Waiting::stage3()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {40};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		_step++;
@@ -88,7 +83,8 @@ void Waiting::stage3()
 
 void Waiting::stage4()
 {
-	if (auto pos = mapStep(_step); pos != 0.F) {
+	static constexpr auto kMaxInputValue = uint8_t {40};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
 		_belt.setColor(color);
 		_step--;

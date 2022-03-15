@@ -6,8 +6,6 @@
 
 #include "AfraidBlue.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 void AfraidBlue::start()
@@ -51,12 +49,6 @@ void AfraidBlue::run()
 	_belt.show();
 }
 
-auto AfraidBlue::mapStep(uint8_t step) const -> float
-{
-	constexpr auto kMaxInputValue = uint8_t {30};
-	return utils::math::map(step, uint8_t {0}, kMaxInputValue, 0.F, 1.F);
-}
-
 void AfraidBlue::stage1()
 {
 	increaseBrightness();
@@ -81,7 +73,8 @@ void AfraidBlue::stage4()
 
 void AfraidBlue::stage5()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {30};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB {0, 128, 255}, pos);
 		_belt.setColor(color);
 		_ears.setColor(color);
@@ -94,7 +87,8 @@ void AfraidBlue::stage5()
 
 void AfraidBlue::stage6()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {30};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		_belt.setColor(RGB {0, 128, 255});
 		_ears.setColor(RGB {0, 128, 255});
 		_step++;
@@ -110,7 +104,8 @@ void AfraidBlue::stage7()
 
 void AfraidBlue::increaseBrightness()
 {
-	if (auto pos = mapStep(_step); pos != 1.F) {
+	static constexpr auto kMaxInputValue = uint8_t {30};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB {0, 128, 255}, pos);
 		_belt.setColor(color);
 		_ears.setColor(color);
@@ -122,7 +117,8 @@ void AfraidBlue::increaseBrightness()
 
 void AfraidBlue::decreaseBrightness(float treshold)
 {
-	if (auto pos = mapStep(_step); pos > treshold) {
+	static constexpr auto kMaxInputValue = uint8_t {30};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos > treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB {0, 128, 255}, pos);
 		_belt.setColor(color);
 		_ears.setColor(color);

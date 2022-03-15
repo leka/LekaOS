@@ -6,8 +6,6 @@
 
 #include "Wink.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
 
 void Wink::start()
@@ -38,17 +36,12 @@ void Wink::run()
 	_belt.show();
 }
 
-auto Wink::mapStep(uint8_t step, uint8_t max_input_value) const -> float
-{
-	return utils::math::map(step, uint8_t {0}, max_input_value, 0.F, 1.F);
-}
-
 void Wink::stage1()
 {
 	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
 	static constexpr auto kInputMaxValue1	= uint8_t {20};
 	static constexpr auto pink				= RGB {255, 98, 98};
-	if (auto pos = mapStep(_step, kInputMaxValue1); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kInputMaxValue1); pos != 1.F) {
 		auto color = ColorKit::colorGradient(RGB::black, pink, pos);
 		_belt.setColorAtIndex(0, color);
 		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, color);
@@ -64,7 +57,7 @@ void Wink::stage2()
 	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
 	static constexpr auto kInputMaxValue2	= uint8_t {40};
 	static constexpr auto pink				= RGB {255, 98, 98};
-	if (auto pos = mapStep(_step, kInputMaxValue2); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kInputMaxValue2); pos != 1.F) {
 		_belt.setColorAtIndex(0, pink);
 		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, pink);
 		++_step;
@@ -79,7 +72,7 @@ void Wink::stage3()
 	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
 	static constexpr auto kInputMaxValue1	= uint8_t {20};
 	static constexpr auto pink				= RGB {255, 98, 98};
-	if (auto pos = mapStep(_step, kInputMaxValue1); pos != 1.F) {
+	if (auto pos = utils::normalizeStep(_step, kInputMaxValue1); pos != 1.F) {
 		auto color = ColorKit::colorGradient(pink, RGB::black, pos);
 		_belt.setColorAtIndex(0, color);
 		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, color);
