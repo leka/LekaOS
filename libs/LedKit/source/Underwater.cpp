@@ -10,7 +10,7 @@
 
 namespace leka::led::animation {
 
-static constexpr auto blue_water = RGB {0x30, 0x2D, 0xAD};
+static constexpr auto blue_water = RGB {0x00, 128, 255};
 
 void Underwater::start()
 {
@@ -74,7 +74,7 @@ auto Underwater::mapStep(uint8_t step, uint8_t max_input_value) const -> float
 
 void Underwater::stage0()
 {
-	static constexpr auto kMaxInputValueStageWater = uint8_t {60};
+	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = mapStep(_step, kMaxInputValueStageWater); pos <= 1.F) {
 		++_step;
 	} else {
@@ -86,7 +86,7 @@ void Underwater::stage0()
 void Underwater::stage1()
 {
 	static constexpr auto kTresholdStage1		   = 0.5F / 2;
-	static constexpr auto kMaxInputValueStageWater = uint8_t {60};
+	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = mapStep(_step, kMaxInputValueStageWater); pos <= kTresholdStage1) {
 		RGB color = ColorKit::colorGradient(RGB::black, blue_water, pos);
 		_belt.setColor(color);
@@ -99,7 +99,7 @@ void Underwater::stage1()
 void Underwater::stage2()
 {
 	static constexpr auto kTresholdStage2		   = 0.4F;
-	static constexpr auto kMaxInputValueStageWater = uint8_t {60};
+	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = mapStep(_step, kMaxInputValueStageWater); pos >= kTresholdStage2) {
 		RGB color = ColorKit::colorGradient(RGB::black, blue_water, pos);
 		_belt.setColor(color);
@@ -112,7 +112,7 @@ void Underwater::stage2()
 void Underwater::stage3()
 {
 	static constexpr auto kTresholdStage3		   = 0.85F;
-	static constexpr auto kMaxInputValueStageWater = uint8_t {60};
+	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = mapStep(_step, kMaxInputValueStageWater); pos <= kTresholdStage3) {
 		RGB color = ColorKit::colorGradient(RGB::black, blue_water, pos);
 		_belt.setColor(color);
@@ -125,7 +125,7 @@ void Underwater::stage3()
 void Underwater::stage4()
 {
 	static constexpr auto kTresholdStage4		   = 0.6F;
-	static constexpr auto kMaxInputValueStageWater = uint8_t {60};
+	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = mapStep(_step, kMaxInputValueStageWater); pos >= kTresholdStage4) {
 		RGB color = ColorKit::colorGradient(RGB::black, blue_water, pos);
 		_belt.setColor(color);
@@ -138,7 +138,7 @@ void Underwater::stage4()
 void Underwater::stage5()
 {
 	static constexpr auto kTresholdStage5		   = 0.9F;
-	static constexpr auto kMaxInputValueStageWater = uint8_t {60};
+	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = mapStep(_step, kMaxInputValueStageWater); pos <= kTresholdStage5) {
 		RGB color = ColorKit::colorGradient(RGB::black, blue_water, pos);
 		_belt.setColor(color);
@@ -150,8 +150,8 @@ void Underwater::stage5()
 
 void Underwater::stage6()
 {
-	static constexpr auto kTresholdStage6		   = 0.8F;
-	static constexpr auto kMaxInputValueStageWater = uint8_t {60};
+	static constexpr auto kTresholdStage6		   = 0.6F;
+	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = mapStep(_step, kMaxInputValueStageWater); pos >= kTresholdStage6) {
 		RGB color = ColorKit::colorGradient(RGB::black, blue_water, pos);
 		_belt.setColor(color);
@@ -163,7 +163,7 @@ void Underwater::stage6()
 
 void Underwater::stage7()
 {
-	static constexpr auto kMaxInputValueStageWater = uint8_t {60};
+	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = mapStep(_step, kMaxInputValueStageWater); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, blue_water, pos);
 		_belt.setColor(color);
@@ -176,7 +176,7 @@ void Underwater::stage7()
 
 void Underwater::stage8()
 {
-	static constexpr auto kMaxInputValueStageWater = uint8_t {60};
+	static constexpr auto kMaxInputValueStageWater = uint8_t {20};
 	if (auto pos = mapStep(_step, kMaxInputValueStageWater); pos != 1.F) {
 		_belt.setColor(blue_water);
 		++_step;
@@ -188,14 +188,14 @@ void Underwater::stage8()
 
 void Underwater::stage9()
 {
-	static constexpr auto kFishSpeed1			  = uint8_t {5};
-	static constexpr auto kFishSpeed2			  = uint8_t {10};
+	static constexpr auto kFishSpeed1			  = uint8_t {15};
+	static constexpr auto kFishSpeed2			  = uint8_t {18};
 	static constexpr auto kMaxInputValueStageFish = uint8_t {160};
 	if (auto pos = mapStep(_step, kMaxInputValueStageFish); pos >= 0.F) {
 		showFishAtRight(RGB::pure_blue, position_fish_1, kFishSpeed1, step_fish_1);
 	}
 	if (auto pos = mapStep(_step, kMaxInputValueStageFish); pos >= 1.F / 4) {
-		showFishAtRight(RGB::pure_red, position_fish_3, kFishSpeed2, step_fish_3);
+		showFishAtLeft(RGB::pure_red, position_fish_2, kFishSpeed2, step_fish_3);
 	}
 	if (auto pos = mapStep(_step, kMaxInputValueStageFish); pos == 1.F) {
 		++_stage;
@@ -207,15 +207,16 @@ void Underwater::stage9()
 
 void Underwater::stage10()
 {
-	static constexpr auto kFishSpeed1			   = uint8_t {5};
-	static constexpr auto kFishSpeed2			   = uint8_t {10};
-	static constexpr auto kMaxInputValueStageWater = uint8_t {60};
+	static constexpr auto kFishSpeed1 = uint8_t {15};
+	static constexpr auto kFishSpeed2 = uint8_t {18};
+
 	static constexpr auto kMaxInputValueStageFish  = uint8_t {160};
+	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = mapStep(_step, kMaxInputValueStageFish); pos >= 0.F) {
-		showFishAtLeft(RGB::pure_red, position_fish_3, kFishSpeed1, step_fish_1);
+		showFishAtLeft(RGB::yellow, position_fish_3, kFishSpeed1, step_fish_1);
 	}
 	if (auto pos = mapStep(_step, kMaxInputValueStageFish); pos >= 1.F / 4) {
-		showFishAtLeft(RGB::yellow, position_fish_4, kFishSpeed2, step_fish_2);
+		showFishAtRight(RGB::pure_red, position_fish_4, kFishSpeed2, step_fish_2);
 	}
 	if (auto pos = mapStep(_step, kMaxInputValueStageFish); pos == 1.F) {
 		++_stage;
@@ -227,7 +228,7 @@ void Underwater::stage10()
 
 void Underwater::stage11()
 {
-	static constexpr auto kMaxInputValueStageWater = uint8_t {60};
+	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = mapStep(_step, kMaxInputValueStageWater); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, blue_water, pos);
 		_belt.setColor(color);
@@ -239,12 +240,23 @@ void Underwater::stage11()
 
 void Underwater::showFishAtRight(const RGB &fish_color, int &fish_position, uint8_t fish_speed, uint8_t &step_fish)
 {
+	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
 	if (auto pos = mapStep(step_fish, fish_speed); pos != 1.F) {
-		setColorCurrentMinusOne(fish_position - 1, pos, fish_color);
-		setColorCurrent(fish_position, pos, fish_color);
-		setColorCurrentPlusOne(fish_position + 1, pos, fish_color);
-		setColorCurrentPlusTwo(fish_position + 2, pos, fish_color);
-		setColorCurrentPlusThree(fish_position + 3, pos, fish_color);
+		if (fish_position - 1 >= 0 && fish_position - 1 < kNumberOfLedsBelt / 2 && pos <= 1.F / 2) {
+			setColorCurrentMinusOne(fish_position - 1, pos, fish_color);
+		}
+		if (fish_position >= 0 && fish_position < kNumberOfLedsBelt / 2) {
+			setColorCurrent(fish_position, pos, fish_color);
+		}
+		if (fish_position + 1 >= 0 && fish_position + 1 < kNumberOfLedsBelt / 2) {
+			setColorCurrentPlusOne(fish_position + 1, pos, fish_color);
+		}
+		if (fish_position + 2 >= 0 && fish_position + 2 < kNumberOfLedsBelt / 2) {
+			setColorCurrentPlusTwo(fish_position + 2, pos, fish_color);
+		}
+		if (fish_position + 3 >= 0 && fish_position + 3 < kNumberOfLedsBelt / 2 && pos >= 1.F / 2) {
+			setColorCurrentPlusThree(fish_position + 3, pos, fish_color);
+		}
 		++step_fish;
 	} else {
 		step_fish = 0;
@@ -256,11 +268,21 @@ void Underwater::showFishAtLeft(const RGB &fish_color, int &fish_position, uint8
 {
 	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
 	if (auto pos = mapStep(step_fish, fish_speed); pos != 1.F) {
-		setColorCurrentMinusOne(kNumberOfLedsBelt - (fish_position - 1), pos, fish_color);
-		setColorCurrent(kNumberOfLedsBelt - fish_position, pos, fish_color);
-		setColorCurrentPlusOne(kNumberOfLedsBelt - (fish_position + 1), pos, fish_color);
-		setColorCurrentPlusTwo(kNumberOfLedsBelt - (fish_position + 2), pos, fish_color);
-		setColorCurrentPlusThree(kNumberOfLedsBelt - (fish_position + 3), pos, fish_color);
+		if (fish_position - 1 >= 0 && fish_position - 1 < kNumberOfLedsBelt / 2 && pos <= 1.F / 2) {
+			setColorCurrentMinusOne(kNumberOfLedsBelt - (fish_position - 1), pos, fish_color);
+		}
+		if (fish_position >= 0 && fish_position < kNumberOfLedsBelt / 2) {
+			setColorCurrent(kNumberOfLedsBelt - fish_position, pos, fish_color);
+		}
+		if (fish_position + 1 >= 0 && fish_position + 1 < kNumberOfLedsBelt / 2) {
+			setColorCurrentPlusOne(kNumberOfLedsBelt - (fish_position + 1), pos, fish_color);
+		}
+		if (fish_position + 2 >= 0 && fish_position + 2 < kNumberOfLedsBelt / 2) {
+			setColorCurrentPlusTwo(kNumberOfLedsBelt - (fish_position + 2), pos, fish_color);
+		}
+		if (fish_position + 3 >= 0 && fish_position + 3 < kNumberOfLedsBelt / 2 && pos >= 1.F / 2) {
+			setColorCurrentPlusThree(kNumberOfLedsBelt - (fish_position + 3), pos, fish_color);
+		}
 		++step_fish;
 	} else {
 		step_fish = 0;
@@ -270,52 +292,38 @@ void Underwater::showFishAtLeft(const RGB &fish_color, int &fish_position, uint8
 
 void Underwater::setColorCurrentMinusOne(int index, float pos, const RGB &color_movement)
 {
-	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
-	if (index >= 0 && index < kNumberOfLedsBelt && pos <= 1.F / 2) {
-		RGB color = ColorKit::colorGradient(blue_water, color_movement, 1.F / 2 - pos);
-		_belt.setColorAtIndex(index, color);
-	}
+	RGB color = ColorKit::colorGradient(blue_water, color_movement, 1.F / 2 - pos);
+	_belt.setColorAtIndex(index, color);
 }
 
 void Underwater::setColorCurrent(int index, float pos, const RGB &color_movement)
 {
-	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
-	if (index >= 0 && index < kNumberOfLedsBelt) {
-		RGB color = ColorKit::colorGradient(blue_water, color_movement, 1.F - pos);
-		_belt.setColorAtIndex(index, color);
-	}
+	RGB color = ColorKit::colorGradient(blue_water, color_movement, 1.F - pos);
+
+	_belt.setColorAtIndex(index, color);
 }
 
 void Underwater::setColorCurrentPlusOne(int index, float pos, const RGB &color_movement)
 {
-	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
-	if (index >= 0 && index < kNumberOfLedsBelt) {
-		if (pos <= 1.F / 2) {
-			RGB color = ColorKit::colorGradient(blue_water, color_movement, pos + 1.F / 2);
-			_belt.setColorAtIndex(index, color);
-		} else {
-			RGB color = ColorKit::colorGradient(blue_water, color_movement, 1.F + 1.F / 2 - pos);
-			_belt.setColorAtIndex(index, color);
-		}
+	if (pos <= 1.F / 2) {
+		RGB color = ColorKit::colorGradient(blue_water, color_movement, pos + 1.F / 2);
+		_belt.setColorAtIndex(index, color);
+	} else {
+		RGB color = ColorKit::colorGradient(blue_water, color_movement, 1.F + 1.F / 2 - pos);
+		_belt.setColorAtIndex(index, color);
 	}
 }
 
 void Underwater::setColorCurrentPlusTwo(int index, float pos, const RGB &color_movement)
 {
-	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
-	if (index >= 0 && index < kNumberOfLedsBelt) {
-		RGB color = ColorKit::colorGradient(blue_water, color_movement, pos);
-		_belt.setColorAtIndex(index, color);
-	}
+	RGB color = ColorKit::colorGradient(blue_water, color_movement, pos);
+	_belt.setColorAtIndex(index, color);
 }
 
 void Underwater::setColorCurrentPlusThree(int index, float pos, const RGB &color_movement)
 {
-	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
-	if (index >= 0 && index < kNumberOfLedsBelt && pos >= 1.F / 2) {
-		RGB color = ColorKit::colorGradient(blue_water, color_movement, pos - 1.F / 2);
-		_belt.setColorAtIndex(index, color);
-	}
+	RGB color = ColorKit::colorGradient(blue_water, color_movement, pos - 1.F / 2);
+	_belt.setColorAtIndex(index, color);
 }
 
 void Underwater::turnLedBlack()
