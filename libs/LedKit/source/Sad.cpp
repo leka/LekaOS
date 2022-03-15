@@ -55,7 +55,7 @@ void Sad::run()
 
 auto Sad::mapStep(uint8_t step) const -> float
 {
-	constexpr auto kMaxInputValue = uint8_t {55};
+	constexpr auto kMaxInputValue = uint8_t {52};
 	return utils::math::map(step, uint8_t {0}, kMaxInputValue, 0.F, 1.F);
 }
 
@@ -105,7 +105,7 @@ void Sad::stage8()
 void Sad::increaseBrightness()
 {
 	if (auto pos = mapStep(_step); pos != 1.F) {
-		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_blue, pos);
+		RGB color = ColorKit::colorGradient(RGB::black, RGB {0, 128, 255}, pos);
 		_belt.setColor(color);
 		_step++;
 	} else {
@@ -116,7 +116,7 @@ void Sad::increaseBrightness()
 void Sad::decreaseBrightness(float treshold)
 {
 	if (auto pos = mapStep(_step); pos > treshold) {
-		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_blue, pos);
+		RGB color = ColorKit::colorGradient(RGB::black, RGB {0, 128, 255}, pos);
 		_belt.setColor(color);
 		_step--;
 	} else {
