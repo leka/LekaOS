@@ -13,6 +13,7 @@
 #include "interface/LTDC.hpp"
 #include "interface/SDRAM.hpp"
 #include "interface/drivers/STM32Hal.h"
+#include "interface/platform/File.h"
 
 namespace leka {
 
@@ -32,7 +33,7 @@ class CoreVideo
 
 	void clearScreen(CGColor color = CGColor::white);
 	void displayRectangle(interface::Graphics::FilledRectangle rectangle, CGColor color);
-	void displayImage(FIL *file);
+	void displayImage(interface::File *file);
 	void displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
 					 CGColor background = CGColor::white);
 

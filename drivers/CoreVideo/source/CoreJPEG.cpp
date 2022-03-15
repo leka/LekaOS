@@ -8,8 +8,7 @@
 
 using namespace leka;
 
-CoreJPEG::CoreJPEG(interface::STM32Hal &hal, interface::DMA2DBase &dma2d, interface::FatFs &file)
-	: _hal(hal), _dma2d(dma2d), _file(file)
+CoreJPEG::CoreJPEG(interface::STM32Hal &hal, interface::DMA2DBase &dma2d) : _hal(hal), _dma2d(dma2d)
 {
 	_hjpeg.Instance = JPEG;
 }
@@ -60,8 +59,9 @@ auto CoreJPEG::getWidthOffset() -> uint32_t
 	return width_offset;
 }
 
-void CoreJPEG::displayImage(FIL *file)
+void CoreJPEG::displayImage(interface::File *file)
 {
+	_file = file;
 	decodeImageWithPolling();	// TODO(@yann): handle errors
 
 	_hal.HAL_JPEG_GetInfo(&_hjpeg, &_config);
@@ -74,8 +74,8 @@ auto CoreJPEG::decodeImageWithPolling() -> HAL_StatusTypeDef
 	// WARNING: DO NOT REMOVE
 	_mcu_block_index = 0;
 
-	// TODO(@yann): rely on LKFileSystemKit to handle open/read/close
-	if (_file.read(_jpeg_input_buffer.data, leka::jpeg::input_data_buffer_size, &_jpeg_input_buffer.size) != FR_OK) {
+	if (_jpeg_input_buffer.size = _file->read(_jpeg_input_buffer.data, leka::jpeg::input_data_buffer_size);
+		_jpeg_input_buffer.size == 0) {
 		return HAL_ERROR;
 	}
 
@@ -131,13 +131,13 @@ void CoreJPEG::onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *
 
 void CoreJPEG::onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size)
 {
-	// TODO(@yann): rely on LKFileSystemKit to handle open/read/close
 	if (size != _jpeg_input_buffer.size) {
 		_input_file_offset = _input_file_offset - _jpeg_input_buffer.size + size;
-		_file.seek(_input_file_offset);
+		_file->seek(_input_file_offset, SEEK_SET);
 	}
 
-	if (_file.read(_jpeg_input_buffer.data, leka::jpeg::input_data_buffer_size, &_jpeg_input_buffer.size) == FR_OK) {
+	if (_jpeg_input_buffer.size = _file->read(_jpeg_input_buffer.data, leka::jpeg::input_data_buffer_size);
+		_jpeg_input_buffer.size != 0) {
 		_input_file_offset += _jpeg_input_buffer.size;
 		_hal.HAL_JPEG_ConfigInputBuffer(hjpeg, _jpeg_input_buffer.data, _jpeg_input_buffer.size);
 	} else {

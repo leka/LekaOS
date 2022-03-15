@@ -10,7 +10,6 @@
 
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
-#include "CoreFatFs.h"
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreJPEG.hpp"
@@ -22,6 +21,7 @@
 #include "CoreSTM32Hal.h"
 #include "CoreVideo.hpp"
 #include "FATFileSystem.h"
+#include "FileSystemKit.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
@@ -31,7 +31,6 @@ using namespace std::chrono;
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
-CoreFatFs corefatfs;
 
 CoreLL corell;
 CGPixel pixel(corell);
@@ -44,11 +43,12 @@ CoreGraphics coregraphics(coredma2d);
 CoreFont corefont(pixel);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 CoreLCD corelcd(coreotm);
-CoreJPEG corejpeg(hal, coredma2d, corefatfs);
+CoreJPEG corejpeg(hal, coredma2d);
 CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
-const auto filename1 = std::array<char, 32> {"assets/images/Leka/logo.jpg"};
-const auto filename2 = std::array<char, 38> {"assets/images/Leka/emotion-happy.jpg"};
+auto file = FileSystemKit::File {};
+
+auto image_names = std::to_array({"/fs/assets/images/Leka/logo.jpg", "/fs/assets/images/Leka/emotion-happy.jpg"});
 
 extern "C" {
 void DMA2D_IRQHandler(void)
@@ -126,10 +126,10 @@ auto main() -> int
 		foreground = (i % 2 == 0) ? CGColor::black : CGColor::pure_red;
 		line	   = i * 2;
 		log_info("Line #%i", i);
-		rtos::ThisThread::sleep_for(1s);
+		rtos::ThisThread::sleep_for(100ms);
 	}
 
-	rtos::ThisThread::sleep_for(5s);
+	rtos::ThisThread::sleep_for(500ms);
 
 	leka::logger::set_sink_function([](const char *str, size_t size) {
 		corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
@@ -139,11 +139,9 @@ auto main() -> int
 		"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
 		"only one line of the screen.");
 
-	rtos::ThisThread::sleep_for(10s);
+	rtos::ThisThread::sleep_for(1s);
 
 	leka::logger::set_sink_function(logger::internal::default_sink_function);
-
-	auto JPEG_File = std::make_unique<FIL>();
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
@@ -152,24 +150,17 @@ auto main() -> int
 
 		rtos::ThisThread::sleep_for(1s);
 
-		if (corefatfs.open(filename1.data()) == FR_OK) {
-			corevideo.displayImage(JPEG_File.get());
-			corevideo.setBrightness(0.2F);
-
-			corevideo.turnOn();
-
-			corefatfs.close();
-			rtos::ThisThread::sleep_for(2s);
+		corevideo.setBrightness(0.9F);
+		corevideo.turnOn();
+		for (const auto &image_name: image_names) {
+			if (file.open(image_name)) {
+				log_info("File opened");
+				corevideo.displayImage(&file);
+				file.close();
+				rtos::ThisThread::sleep_for(1s);
+			}
 		}
 
-		if (corefatfs.open(filename2.data()) == FR_OK) {
-			corevideo.displayImage(JPEG_File.get());
-			corevideo.setBrightness(0.9F);
-
-			corefatfs.close();
-			rtos::ThisThread::sleep_for(2s);
-
-			corevideo.turnOff();
-		}
+		corevideo.turnOff();
 	}
 }
