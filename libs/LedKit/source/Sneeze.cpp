@@ -46,7 +46,7 @@ void Sneeze::run()
 
 auto Sneeze::mapStep(uint8_t step) const -> float
 {
-	static constexpr auto kInputMaxValue = uint8_t {20};
+	static constexpr auto kInputMaxValue = uint8_t {15};
 	return utils::math::map(step, uint8_t {0}, kInputMaxValue, 0.F, 1.F);
 }
 
