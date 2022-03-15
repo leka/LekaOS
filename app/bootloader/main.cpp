@@ -11,6 +11,8 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreBattery.h"
+#include "CoreLED.h"
+#include "CoreSPI.h"
 #include "FATFileSystem.h"
 #include "FileSystemKit.h"
 #include "SDBlockDevice.h"
@@ -20,7 +22,7 @@
 using namespace std::chrono;
 using namespace leka;
 
-constexpr auto default_address = uint32_t {0x8040000 + 0x1000};	  // Start application address + header
+static constexpr auto default_address = uint32_t {0x8040000 + 0x1000};	 // Start application address + header
 
 static auto charge_status_input = mbed::InterruptIn {PinName::BATTERY_CHARGE_STATUS};
 static auto battery				= leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_status_input};
@@ -32,6 +34,12 @@ FATFileSystem fatfs("fs");
 
 FileSystemKit::File _configuration_file {"/fs/conf/bootloader.conf"};
 
+static constexpr auto NUM_EARS_LEDS = 2;
+
+auto corespi_ears = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+
+auto ears = CoreLED<NUM_EARS_LEDS> {corespi_ears};
+
 void initializeSD()
 {
 	constexpr auto default_sd_blockdevice_frequency = uint64_t {25'000'000};
@@ -42,15 +50,48 @@ void initializeSD()
 	fatfs.mount(&sd_blockdevice);
 }
 
+void blink()
+{
+	ears.setColor(RGB::pure_red);
+	ears.show();
+	rtos::ThisThread::sleep_for(100ms);
+	ears.setColor(RGB::black);
+	ears.show();
+}
+
+void blinkLowEnergy()
+{
+	blink();
+	rtos::ThisThread::sleep_for(2s);
+}
+
+void blinkMediumEnergy()
+{
+	blink();
+	rtos::ThisThread::sleep_for(100ms);
+	blink();
+	rtos::ThisThread::sleep_for(2s);
+}
+
+void blinkHighEnergy()
+{
+	blink();
+	rtos::ThisThread::sleep_for(100ms);
+	blink();
+	rtos::ThisThread::sleep_for(100ms);
+	blink();
+	rtos::ThisThread::sleep_for(2s);
+}
+
 auto main() -> int
 {
 	while (battery.voltage() < CoreBattery::Capacity::empty + static_cast<float>(battery_level_hysteresis_offset)) {
 		if (battery.voltage() < 8.0) {
-			// 1 Flash
+			blinkLowEnergy();
 		} else if (battery.voltage() < CoreBattery::Capacity::empty) {
-			// 2 Flashs
+			blinkMediumEnergy();
 		} else {
-			// 3 Flashs
+			blinkHighEnergy();
 		}
 
 		rtos::ThisThread::sleep_for(5s);
