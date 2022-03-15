@@ -2,26 +2,26 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-//  Stage 1       +     Stage 2       +    3    +   4   +   5   +  6   +     7     +
-//                |                   |         |       |       |      |           |
-//                |                   |         |       |       |      |           |
-//                |-------------------|         |       |       |      |           |  --- White
-//               /|                   |\        |       |       |      |           |
-//              / |                   | \       |       |       |      |           |
-//             /  |                   |  \      |       |\      |      |           |
-//            /   |                   |   \     |      /| \     |      |\          |
-//           /    |                   |    \    |     / |  \    |     /| \         |
-//          /     |                   |     \   |    /  |   \   |    / |  \        |
-//         /      |                   |      \  |   /   |    \  |   /  |   \       |
-//        /       |                   |       \ |  /    |     \ |  /   |    \      |
-//       /        |                   |        \| /     |      \| /    |     \     |
-//      /         |                   |         |/      |       |/     |      \    |
-//     /          |                   |         |       |       |      |       \   |
-//    /           |                   |         |       |       |      |        \  |
-//   /            |                   |         |       |       |      |         \ |
-//  /             |                   |         |       |       |      |          \|
-// /              |                   |         |       |       |      |           |  --- Black
-//                |                   |         |       |       |      |           |
+//  Stage 0 +  Stage 1       +     Stage 2       +    3    +   4   +   5   +  6   +     7     +
+//          |                |                   |         |       |       |      |           |
+//          |                |                   |         |       |       |      |           |
+//          |                |-------------------|         |       |       |      |           |  --- White
+//          |               /|                   |\        |       |       |      |           |
+//          |              / |                   | \       |       |       |      |           |
+//          |             /  |                   |  \      |       |\      |      |           |
+//          |            /   |                   |   \     |      /| \     |      |\          |
+//          |           /    |                   |    \    |     / |  \    |     /| \         |
+//          |          /     |                   |     \   |    /  |   \   |    / |  \        |
+//          |         /      |                   |      \  |   /   |    \  |   /  |   \       |
+//          |        /       |                   |       \ |  /    |     \ |  /   |    \      |
+//          |       /        |                   |        \| /     |      \| /    |     \     |
+//          |      /         |                   |         |/      |       |/     |      \    |
+//          |     /          |                   |         |       |       |      |       \   |
+//          |    /           |                   |         |       |       |      |        \  |
+//          |   /            |                   |         |       |       |      |         \ |
+//          |  /             |                   |         |       |       |      |          \|
+//          | /              |                   |         |       |       |      |           |  --- Black
+// ---------|/               |                   |         |       |       |      |           |
 
 #pragma once
 
@@ -44,10 +44,11 @@ class Sleeping : public interface::LEDAnimation
 	interface::LED &_ears;
 	interface::LED &_belt;
 	uint8_t _step  = 0;
-	uint8_t _stage = 1;
+	uint8_t _stage = 0;
 
-	[[nodiscard]] auto mapStep(uint8_t step) const -> float;
+	[[nodiscard]] auto mapStep(uint8_t step, uint8_t max_input_value) const -> float;
 
+	void stage0();
 	void stage1();
 	void stage2();
 	void stage3();
