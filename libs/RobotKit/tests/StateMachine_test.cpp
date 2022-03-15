@@ -113,3 +113,14 @@ TEST_F(StateMachineTest, stateChargingEventChargeDidStop)
 
 	EXPECT_TRUE(sm.is(lksm::state::idle));
 }
+
+TEST_F(StateMachineTest, stateChargingEventUpdateRequested)
+{
+	sm.set_current_states(lksm::state::charging);
+
+	EXPECT_CALL(mock_rc, applyUpdate).Times(1);
+
+	sm.process_event(lksm::event::update_requested {});
+
+	EXPECT_TRUE(sm.is(lksm::state::updating));
+}
