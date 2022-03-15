@@ -11,7 +11,7 @@
 using namespace leka;
 using namespace std::chrono_literals;
 
-CoreDSI::CoreDSI(interface::STM32Hal &hal) : _hal(hal)
+CoreDSI::CoreDSI(interface::STM32Hal &hal, interface::LTDCBase &ltdc) : _hal(hal), _ltdc(ltdc)
 {
 	// Base address of DSI Host/Wrapper registers to be set before calling De-Init
 	_hdsi.Instance = DSI;
@@ -21,19 +21,26 @@ CoreDSI::CoreDSI(interface::STM32Hal &hal) : _hal(hal)
 
 	_hdsi.Init.TXEscapeCkdiv = dsi::txEscapeClockDiv;
 
-	_screen_sections = 1;
-
 	_cmdconf.VirtualChannelID	   = 0;
 	_cmdconf.HSPolarity			   = DSI_HSYNC_ACTIVE_HIGH;
 	_cmdconf.VSPolarity			   = DSI_VSYNC_ACTIVE_HIGH;
 	_cmdconf.DEPolarity			   = DSI_DATA_ENABLE_ACTIVE_HIGH;
 	_cmdconf.ColorCoding		   = DSI_RGB888;
-	_cmdconf.CommandSize		   = lcd::dimension::width / _screen_sections;
+	_cmdconf.CommandSize		   = lcd::dimension::width / dsi::refresh_columns_count;
 	_cmdconf.TearingEffectSource   = DSI_TE_DSILINK;
 	_cmdconf.TearingEffectPolarity = DSI_TE_RISING_EDGE;
 	_cmdconf.VSyncPol			   = DSI_VSYNC_FALLING;
 	_cmdconf.AutomaticRefresh	   = DSI_AR_DISABLE;
 	_cmdconf.TEAcknowledgeRequest  = DSI_TE_ACKNOWLEDGE_ENABLE;
+
+	for (int i = 0; i < dsi::refresh_columns_count; ++i) {
+		auto col_width	= _cmdconf.CommandSize;
+		auto col_offset = i * col_width;
+		_columns[i][0]	= (col_offset & 0xff00) >> 8;
+		_columns[i][1]	= (col_offset & 0x00ff) >> 0;
+		_columns[i][2]	= ((col_offset + col_width - 1) & 0xff00) >> 8;
+		_columns[i][3]	= ((col_offset + col_width - 1) & 0x00ff) >> 0;
+	}
 }
 
 void CoreDSI::initialize()
@@ -66,10 +73,7 @@ void CoreDSI::initialize()
 
 	// Configure DSI Video mode timings
 	HAL_DSI_ConfigAdaptedCommandMode(&_hdsi, &_cmdconf);
-}
 
-void CoreDSI::start()
-{
 	_hal.HAL_DSI_Start(&_hdsi);
 
 	DSI_PHY_TimerTypeDef phy_timings;
@@ -80,20 +84,28 @@ void CoreDSI::start()
 	phy_timings.DataLaneMaxReadTime = 0;
 	phy_timings.StopWaitTime		= 10;
 	HAL_DSI_ConfigPhyTimer(&_hdsi, &phy_timings);
-}
 
-void CoreDSI::refresh()
-{
-	if (_hdsi.Lock == HAL_LOCKED) return;
+	static auto &self = *this;
+	HAL_DSI_RegisterCallback(&_hdsi, HAL_DSI_ENDOF_REFRESH_CB_ID, [](DSI_HandleTypeDef *hdsi) {
+		self._current_column = (self._current_column + 1) % self._columns.size();
 
-	_hdsi.Lock = HAL_LOCKED;
-	_hdsi.Instance->WCR |= DSI_WCR_LTDCEN;
-	_hdsi.Lock = HAL_UNLOCKED;
-}
+		auto new_address = lcd::frame_buffer_address + dsi::sync_props.activew * self._current_column * 4;
 
-auto CoreDSI::getSyncProps() -> CoreDSI::SyncProps
-{
-	return {1, 1, lcd::dimension::width / _screen_sections, 1, 1, 1, lcd::dimension::height, 1};
+		// update LTDC layer frame buffer pointer
+		__HAL_DSI_WRAPPER_DISABLE(hdsi);
+		HAL_LTDC_SetAddress(&self._ltdc.getHandle(), new_address, 0);
+		__HAL_DSI_WRAPPER_ENABLE(hdsi);
+
+		// update DSI refresh column
+		HAL_DSI_LongWrite(hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 4, lcd::otm8009a::set_address::for_column::command,
+						  self._columns[self._current_column].data());
+
+		if (self._current_column != 0) {
+			HAL_DSI_Refresh(hdsi);
+		}
+	});
+
+	refresh();
 }
 
 void CoreDSI::enableLPCmd()
@@ -130,6 +142,14 @@ void CoreDSI::disableLPCmd()
 
 void CoreDSI::enableTearingEffectReporting()
 {
+	HAL_DSI_RegisterCallback(&_hdsi, HAL_DSI_TEARING_EFFECT_CB_ID, [](DSI_HandleTypeDef *hdsi) {
+		// mask TE pin (automatically unmaksed by refresh)
+		HAL_DSI_ShortWrite(hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, lcd::otm8009a::tearing_effect::off, 0x00);
+		// refresh DSI
+		HAL_DSI_Refresh(hdsi);
+	});
+
+	// enable Bus Turn Around for 2 ways communication (needed for TE signal)
 	HAL_DSI_ConfigFlowControl(&_hdsi, DSI_FLOW_CONTROL_BTA);
 
 	// Enable GPIOJ clock
@@ -146,8 +166,8 @@ void CoreDSI::enableTearingEffectReporting()
 	GPIO_Init_Structure.Alternate = GPIO_AF13_DSI;
 	HAL_GPIO_Init(GPIOJ, &GPIO_Init_Structure);
 
-	// maskTE();
-	HAL_DSI_Refresh(&_hdsi);
+	refresh();
+	_sync_on_TE = true;
 }
 
 void CoreDSI::reset()
@@ -179,12 +199,33 @@ void CoreDSI::reset()
 	rtos::ThisThread::sleep_for(10ms);
 }
 
+void CoreDSI::refresh()
+{
+	if (_sync_on_TE) {
+		// request TE pin
+		uint8_t val[] = {0x00, 0x00};
+		HAL_DSI_LongWrite(&_hdsi, 0, DSI_DCS_LONG_PKT_WRITE, 2, lcd::otm8009a::tearing_effect::write_scanline, val);
+	} else {
+		// normal refresh
+		if (_hdsi.Lock != HAL_LOCKED) {
+			_hdsi.Lock = HAL_LOCKED;
+			_hdsi.Instance->WCR |= DSI_WCR_LTDCEN;
+			_hdsi.Lock = HAL_UNLOCKED;
+		}
+	}
+}
+
 auto CoreDSI::getHandle() -> DSI_HandleTypeDef &
 {
 	return _hdsi;
 }
 
-void CoreDSI::write(const uint8_t *data, const uint32_t size)
+auto CoreDSI::isBusy() -> bool
+{
+	return _hdsi.State == HAL_DSI_STATE_BUSY;
+}
+
+void CoreDSI::write(const uint8_t *data, uint32_t size)
 {
 	if (size <= 2) {
 		_hal.HAL_DSI_ShortWrite(&_hdsi, 0, DSI_DCS_SHORT_PKT_WRITE_P1, data[0], data[1]);

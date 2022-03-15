@@ -23,6 +23,7 @@
 #include "FATFileSystem.h"
 #include "FileManagerKit.h"
 #include "HelloWorld.h"
+#include "LKVideoKit.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 
@@ -33,34 +34,32 @@ SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 auto file = FileManagerKit::File {};
 
-CoreLL corell;
-CGPixel pixel(corell);
 CoreSTM32Hal hal;
 CoreSDRAM coresdram(hal);
-CoreDMA2D coredma2d(hal);
-CoreDSI coredsi(hal);
+
+// screen + dsi + ltdc
 CoreLTDC coreltdc(hal);
-CoreGraphics coregraphics(coredma2d);
-CoreFont corefont(pixel);
+CoreDSI coredsi(hal, coreltdc);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 CoreLCD corelcd(coreotm);
+
+// peripherals
+CoreDMA2D coredma2d(hal);
 CoreJPEG corejpeg(hal, std::make_unique<CoreJPEGDMAMode>());
+
+// graphics (will move to libs/VideoKit)
+CoreLL corell;
+CGPixel pixel(corell);
+CoreFont corefont(pixel);
+CoreGraphics coregraphics(coredma2d);
 CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
+
+LKVideoKit screen;
 
 auto images = std::to_array({"/fs/images/activity-color_quest.jpg", "/fs/images/color-black.jpg"});
 auto videos = std::to_array({"/fs/videos/animation-joy.avi", "/fs/videos/animation-idle.avi"});
 
 extern "C" {
-void DMA2D_IRQHandler(void)
-{
-	HAL_DMA2D_IRQHandler(&coredma2d.getHandle());
-}
-
-void LTDC_IRQHandler(void)
-{
-	HAL_LTDC_IRQHandler(&coreltdc.getHandle());
-}
-
 void DSI_IRQHandler(void)
 {
 	HAL_DSI_IRQHandler(&coredsi.getHandle());
@@ -79,6 +78,15 @@ void DMA2_Stream0_IRQHandler(void)
 void DMA2_Stream1_IRQHandler(void)
 {
 	HAL_DMA_IRQHandler(corejpeg.getHandle().hdmaout);
+}
+
+void DMA2D_IRQHandler(void)
+{
+	HAL_DMA2D_IRQHandler(&coredma2d.getHandle());
+}
+void LTDC_IRQHandler(void)
+{
+	HAL_LTDC_IRQHandler(&coreltdc.getHandle());
 }
 }
 
@@ -102,15 +110,15 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(2s);
 
-	corevideo.initialize();
-
 	initializeSD();
+
+	corevideo.initialize();
+	memset((uint8_t *)lcd::frame_buffer_address, 0x5f, 800 * 480 * 4);
 
 	HelloWorld hello;
 	hello.start();
 
-	corevideo.clearScreen();
-	rtos::ThisThread::sleep_for(1s);
+	// corevideo.clearScreen();
 
 	static auto line = 1;
 	static CGColor foreground;
@@ -136,10 +144,14 @@ auto main() -> int
 		"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
 		"only one line of the screen.");
 
+	// coredsi.refresh();
+
 	rtos::ThisThread::sleep_for(1s);
 
 	leka::logger::set_sink_function(logger::internal::default_sink_function);
 
+	// HAL_LTDC_ProgramLineEvent(&coreltdc.getHandle(), 0);
+	corevideo.setBrightness(0.6f);
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
 		log_info("A message from your board %s --> \"%s\" at %is", MBED_CONF_APP_TARGET_NAME, hello.world,
@@ -149,20 +161,23 @@ auto main() -> int
 			if (file.open(image_name)) {
 				log_info("open");
 				corevideo.displayImage(file);
+				corevideo.display();
 				corevideo.turnOn();
 				file.close();
-				rtos::ThisThread::sleep_for(2s);
+				rtos::ThisThread::sleep_for(1s);
 			}
 		}
+		//}
 
 		for (const auto &video_name: videos) {
 			if (file.open(video_name)) {
 				corevideo.displayVideo(file);
 				file.close();
-				rtos::ThisThread::sleep_for(2s);
+				rtos::ThisThread::sleep_for(500ms);
 			}
 		}
 
 		corevideo.turnOff();
+		rtos::ThisThread::sleep_for(500ms);
 	}
 }

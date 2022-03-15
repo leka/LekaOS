@@ -39,12 +39,14 @@ class CoreVideo
 	void displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
 					 CGColor background = CGColor::white);
 
+	void display();
+
   private:
 	interface::STM32Hal &_hal;
 	interface::SDRAM &_coresdram;
 	interface::DMA2DBase &_coredma2d;
-	interface::DSIBase &_coredsi;
 	interface::LTDCBase &_coreltdc;
+	interface::DSIBase &_coredsi;
 	interface::LCD &_corelcd;
 	interface::Graphics &_coregraphics;
 	interface::Font &_corefont;

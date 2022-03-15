@@ -29,6 +29,8 @@ void CoreLCDDriverOTM8009A::setBrightness(float value)
 
 void CoreLCDDriverOTM8009A::initialize()
 {
+	_dsi.enableLPCmd();
+
 	_backlight.period(0.01F);	// Set PWM at 1/(0.01 seconds) = 100Hz
 
 	// Enable CMD2 to access vendor specific commands
@@ -255,6 +257,8 @@ void CoreLCDDriverOTM8009A::initialize()
 	// Send Command GRAM memory write (no parameters) : this initiates frame write via other DSI commands sent by
 	// DSI host from LTDC incoming pixels in video mode
 	_dsi.write(register_data::short45, std::size(register_data::short45));
+
+	_dsi.disableLPCmd();
 }
 
 void CoreLCDDriverOTM8009A::setLandscapeOrientation()

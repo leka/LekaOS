@@ -143,10 +143,10 @@ void CoreSDRAM::initializeController()
 
 	// Configure common DMA parameters
 
-	DMA_HandleTypeDef dma_handle = setupDMA();
+	static DMA_HandleTypeDef dma_handle = setupDMA();
 
 	// Associate the DMA handle
-	_hal.HAL_LINKDMA(&_hsdram, _hsdram.hdma, dma_handle);
+	__HAL_LINKDMA(&_hsdram, hdma, dma_handle);
 
 	// Deinitialize the stream for new transfer
 	_hal.HAL_DMA_DeInit(&dma_handle);

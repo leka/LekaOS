@@ -46,16 +46,31 @@ namespace dsi {
 	constexpr uint32_t laneByteClock_kHz = 62500;	// 500 MHz / 8 = 62.5 MHz = 62500 kHz
 	constexpr uint32_t txEscapeClockDiv	 = laneByteClock_kHz / 15620;
 
+	constexpr uint16_t refresh_columns_count = 2;	// allowed value : 1
+
+	struct SyncProps {
+		int hsync;
+		int hbp;
+		int activew;
+		int hfp;
+		int vsync;
+		int vbp;
+		int activeh;
+		int vfp;
+	};
+	constexpr SyncProps sync_props = {
+		1, 1, lcd::dimension::width / refresh_columns_count, 1, 1, 1, lcd::dimension::height, 1};
+
 }	// namespace dsi
 
 namespace jpeg {
 
-	constexpr uintptr_t decoded_buffer_address = 0xC0200000;
+	constexpr uintptr_t decoded_buffer_address = lcd::frame_buffer_address + 800 * 480 * 4;	  // 0xC0200000;
 
 	constexpr uint32_t chunk_size_in  = 2048;
 	constexpr uint32_t chunk_size_out = 768 * 4;
 	constexpr uint32_t in_buffers_nb  = 1;
-	constexpr uint32_t out_buffers_nb = 4;
+	constexpr uint32_t out_buffers_nb = 8;
 
 	constexpr uint8_t JPEG_ARGB8888 = 0;   // ARGB8888 Color Format
 	constexpr uint8_t JPEG_RGB888	= 1;   // RGB888 Color Format

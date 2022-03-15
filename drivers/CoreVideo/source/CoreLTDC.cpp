@@ -17,9 +17,10 @@ CoreLTDC::CoreLTDC(interface::STM32Hal &hal) : _hal(hal)
 	_hltdc.LayerCfg->ImageHeight = lcd::dimension::height;
 
 	// Timing and synchronization
-	_hltdc.Init.HorizontalSync	   = (lcd::property::HSA - 1);
-	_hltdc.Init.AccumulatedHBP	   = (lcd::property::HSA + lcd::property::HBP - 1);
-	_hltdc.Init.AccumulatedActiveW = (lcd::dimension::width + lcd::property::HSA + lcd::property::HBP - 1);
+	_hltdc.Init.HorizontalSync = (lcd::property::HSA - 1);
+	_hltdc.Init.AccumulatedHBP = (lcd::property::HSA + lcd::property::HBP - 1);
+	_hltdc.Init.AccumulatedActiveW =
+		(lcd::dimension::width / dsi::refresh_columns_count + lcd::property::HSA + lcd::property::HBP - 1);
 	_hltdc.Init.TotalWidth = (lcd::dimension::width + lcd::property::HSA + lcd::property::HBP + lcd::property::HFP - 1);
 
 	_hltdc.Init.VerticalSync	   = (lcd::property::VSA - 1);
@@ -79,7 +80,9 @@ void CoreLTDC::initialize()
 	// Initialize LTDC layer
 	// This part **must not** be moved to the constructor as LCD
 	// initialization must be performed in a very specific order
-	_hal.HAL_LTDC_ConfigLayer(&_hltdc, &_layerConfig, 1);
+	_hal.HAL_LTDC_ConfigLayer(&_hltdc, &_layerConfig, 0);
+
+	HAL_LTDC_SetPitch(&_hltdc, 800, 0);
 }
 
 void CoreLTDC::configurePeriphClock()
@@ -104,9 +107,4 @@ void CoreLTDC::configurePeriphClock()
 auto CoreLTDC::getHandle() -> LTDC_HandleTypeDef &
 {
 	return _hltdc;
-}
-
-auto CoreLTDC::getLayerConfig() const -> LTDC_LayerCfgTypeDef
-{
-	return _layerConfig;
 }

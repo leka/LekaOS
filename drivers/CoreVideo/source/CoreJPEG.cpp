@@ -99,7 +99,7 @@ auto CoreJPEG::getWidthOffset(JPEG_ConfTypeDef &config) -> uint32_t
 
 auto CoreJPEG::findFrameOffset(interface::File &file, uint32_t offset) -> uint32_t
 {
-	static std::array<uint8_t, 512> pattern_search_buffer;
+	std::array<uint8_t, 512> pattern_search_buffer;
 
 	size_t file_size   = file.size();
 	uint32_t index	   = offset;

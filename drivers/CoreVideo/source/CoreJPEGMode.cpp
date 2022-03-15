@@ -4,7 +4,7 @@
 
 #include "CoreJPEGMode.h"
 
-namespace leka {
+using namespace leka;
 
 //------------------ Default Callbacks ------------------------
 void CoreJPEGMode::onMspInitCallback(JPEG_HandleTypeDef *hjpeg) {}
@@ -251,5 +251,3 @@ auto CoreJPEGDMAMode::decoderOutputHandler(JPEG_HandleTypeDef *hjpeg) -> bool
 
 	return _mcu_block_index == _mcu_number;
 }
-
-}	// namespace leka

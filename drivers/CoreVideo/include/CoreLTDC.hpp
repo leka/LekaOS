@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "interface/DSI.hpp"
 #include "interface/LTDC.hpp"
 #include "interface/drivers/STM32Hal.h"
 
@@ -18,7 +17,6 @@ class CoreLTDC : public interface::LTDCBase
 	void initialize() final;
 
 	[[nodiscard]] auto getHandle() -> LTDC_HandleTypeDef & final;
-	[[nodiscard]] auto getLayerConfig() const -> LTDC_LayerCfgTypeDef;
 
   private:
 	interface::STM32Hal &_hal;
