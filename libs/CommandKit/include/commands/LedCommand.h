@@ -12,12 +12,12 @@
 
 namespace leka {
 
-struct LedCommand : Command {
+struct LedCommand : interface::Command {
 	auto id() -> uint8_t override { return cmd::id; }
 	auto data() -> uint8_t * override { return args.data(); };
 	[[nodiscard]] auto size() const -> std::size_t override { return std::size(args); };
 
-	void operator()() override
+	void execute() override
 	{
 		auto [pos, id, r, g, b, chcksm] = std::tuple_cat(args);
 

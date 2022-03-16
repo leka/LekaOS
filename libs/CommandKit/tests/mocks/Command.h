@@ -6,21 +6,21 @@
 
 #include <span>
 
-#include "Command.h"
+#include "../../include/Command.h"
 #include "LogKit.h"
 #include "Utils.h"
 #include "gmock/gmock.h"
 
-namespace leka {
+namespace leka::mock {
 
-struct MockCommand : Command {
-	MockCommand(uint8_t id) : _cmd(cmd {id}) {}
+struct Command : interface::Command {
+	Command(uint8_t id) : _cmd(cmd {id}) {}
 
 	auto id() -> uint8_t override { return _cmd.id; }
 	auto data() -> uint8_t * override { return args.data(); };
 	[[nodiscard]] auto size() const -> std::size_t override { return std::size(args); };
 
-	void operator()() override
+	void execute() override
 	{
 		auto [pos, id, r, g, b, chcksm] = std::tuple_cat(args);
 
@@ -64,4 +64,4 @@ struct MockCommand : Command {
 	std::array<uint8_t, cmd::size> args {};
 };
 
-}	// namespace leka
+}	// namespace leka::mock

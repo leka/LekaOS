@@ -19,7 +19,7 @@ class CommandKit
 	CommandKit();
 
 	void push(std::span<uint8_t> data);
-	void registerCommand(std::span<Command *> cmds);
+	void registerCommand(std::span<interface::Command *> cmds);
 
 	struct command {
 		static inline auto led = LedCommand {};
@@ -33,7 +33,7 @@ class CommandKit
 
 	CircularQueue<uint8_t, 256> _input_buffer {};
 
-	std::span<Command *> _commands {};
+	std::span<interface::Command *> _commands {};
 };
 
 }	// namespace leka

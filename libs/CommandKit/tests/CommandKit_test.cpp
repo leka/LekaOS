@@ -4,7 +4,7 @@
 
 #include "CommandKit.h"
 
-#include "./MockCommand.h"
+#include "./mocks/Command.h"
 #include "LogKit.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -50,9 +50,9 @@ TEST_F(CommandKitTest, registerZeroCommand)
 
 TEST_F(CommandKitTest, registerOneCommand)
 {
-	auto cmd = MockCommand {0x01};
+	auto cmd = mock::Command {0x01};
 
-	auto cmds = std::to_array<Command *>({&cmd});
+	auto cmds = std::to_array<interface::Command *>({&cmd});
 
 	cmdkit.registerCommand(cmds);
 
@@ -61,8 +61,8 @@ TEST_F(CommandKitTest, registerOneCommand)
 
 TEST_F(CommandKitTest, pushDataGood)
 {
-	auto cmd  = MockCommand {0x42};
-	auto cmds = std::to_array<Command *>({&cmd});
+	auto cmd  = mock::Command {0x42};
+	auto cmds = std::to_array<interface::Command *>({&cmd});
 
 	cmdkit.registerCommand(cmds);
 
@@ -75,8 +75,8 @@ TEST_F(CommandKitTest, pushDataGood)
 
 TEST_F(CommandKitTest, pushDataBadWrongChecksum)
 {
-	auto cmd  = MockCommand {0x42};
-	auto cmds = std::to_array<Command *>({&cmd});
+	auto cmd  = mock::Command {0x42};
+	auto cmds = std::to_array<interface::Command *>({&cmd});
 
 	cmdkit.registerCommand(cmds);
 

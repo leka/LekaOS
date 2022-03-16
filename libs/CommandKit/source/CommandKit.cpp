@@ -21,7 +21,7 @@ void CommandKit::push(std::span<uint8_t> data)
 	}
 }
 
-void CommandKit::registerCommand(std::span<Command *> cmds)
+void CommandKit::registerCommand(std::span<interface::Command *> cmds)
 {
 	_commands = cmds;
 }
@@ -59,10 +59,10 @@ void CommandKit::executeCommands()
 		uint8_t current_command {};
 		_input_buffer.pop(current_command);
 
-		for (Command *cmd: _commands) {
+		for (auto *cmd: _commands) {
 			if (current_command == cmd->id()) {
 				_input_buffer.pop(cmd->data(), cmd->size());
-				cmd->operator()();
+				cmd->execute();
 			}
 		}
 	}

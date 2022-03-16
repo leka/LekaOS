@@ -7,7 +7,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace leka {
+namespace leka::interface {
 
 struct Command {
 	virtual ~Command() = default;
@@ -18,7 +18,7 @@ struct Command {
 
 	[[nodiscard]] virtual auto size() const -> std::size_t = 0;
 
-	virtual void operator()() = 0;
+	virtual void execute() = 0;
 };
 
-}	// namespace leka
+}	// namespace leka::interface
