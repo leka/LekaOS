@@ -15,9 +15,14 @@ target_sources(LekaOS
 )
 
 target_link_libraries(LekaOS
+	bootutil
 	RobotKit
 	CoreTimeout
 	CoreBattery
+	CoreQSPI
+	CoreFlashMemory
+	FileSystemKit
+	FirmwareKit
 )
 
 target_link_custom_leka_targets(LekaOS)

@@ -12,6 +12,7 @@
 #include "StateMachine.h"
 #include "interface/RobotController.h"
 #include "interface/drivers/Battery.h"
+#include "interface/drivers/FirmwareUpdate.h"
 #include "interface/drivers/Timeout.h"
 
 namespace leka {
@@ -22,8 +23,9 @@ class RobotController : public interface::RobotController
   public:
 	sm_t state_machine {static_cast<interface::RobotController &>(*this)};
 
-	explicit RobotController(interface::Timeout &sleep_timeout, interface::Battery &battery)
-		: _sleep_timeout(sleep_timeout), _battery(battery) {};
+	explicit RobotController(interface::Timeout &sleep_timeout, interface::Battery &battery,
+							 interface::FirmwareUpdate &firmware_update)
+		: _sleep_timeout(sleep_timeout), _battery(battery), _firmware_update(firmware_update) {};
 
 	void runLaunchingBehavior() final
 	{
@@ -69,7 +71,10 @@ class RobotController : public interface::RobotController
 
 	void applyUpdate() final
 	{
-		// TODO (@yann): Run FirmwareKit load update
+		auto firmware_version = FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
+		if (_firmware_update.loadUpdate(firmware_version) && _on_update_loaded_callback != nullptr) {
+			_on_update_loaded_callback();
+		}
 	}
 
 	void raise(auto event) { state_machine.process_event(event); };
@@ -78,6 +83,11 @@ class RobotController : public interface::RobotController
 	{
 		_ble.setServices(services);
 		_ble.init();
+	}
+
+	void registerOnUpdateLoadedCallback(std::function<void()> const &on_update_loaded_callback)
+	{
+		_on_update_loaded_callback = on_update_loaded_callback;
 	}
 
 	void registerEvents()
@@ -111,6 +121,9 @@ class RobotController : public interface::RobotController
 	interface::Battery &_battery;
 	BatteryKit _battery_kit {_battery};
 	uint8_t _minimal_battery_level_to_update {25};
+
+	interface::FirmwareUpdate &_firmware_update;
+	std::function<void()> _on_update_loaded_callback {};
 
 	BLEKit _ble {};
 	inline static BLEServiceDeviceInformation _service_device_information {};
