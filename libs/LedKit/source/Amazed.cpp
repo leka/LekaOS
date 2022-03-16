@@ -16,6 +16,8 @@ void Amazed::start()
 void Amazed::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 0;
 }
 
 void Amazed::run()

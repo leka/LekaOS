@@ -2,7 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-// +   Stage 1          +                Stage 2                  +
+// +     Stage 0        +                Stage 1                  +
 // |                    |                                         |
 // |                    |              -----                      |
 // |                    |-----                           -----    |
@@ -44,11 +44,11 @@ class Bubbles : public interface::LEDAnimation
 	interface::LED &_ears;
 	interface::LED &_belt;
 	uint8_t _step		   = 0;
-	uint8_t _stage		   = 1;
+	uint8_t _stage		   = 0;
 	uint8_t _bubble_number = 0;
 
+	void stage0();
 	void stage1();
-	void stage2();
 
 	void increaseBrightnessAtIndex(uint8_t index, float position);
 	void decreaseBrightnessAtIndex(uint8_t index, float position);

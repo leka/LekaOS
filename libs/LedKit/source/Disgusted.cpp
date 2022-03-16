@@ -20,19 +20,21 @@ void Disgusted::start()
 void Disgusted::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 0;
 }
 
 void Disgusted::run()
 {
 	switch (_stage) {
+		case 0:
+			stage0();
+			break;
 		case 1:
 			stage1();
 			break;
 		case 2:
 			stage2();
-			break;
-		case 3:
-			stage3();
 			break;
 		default:
 			break;
@@ -40,7 +42,7 @@ void Disgusted::run()
 	_belt.show();
 }
 
-void Disgusted::stage1()
+void Disgusted::stage0()
 {
 	static constexpr auto kMaxInputValue = uint8_t {50};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
@@ -54,7 +56,7 @@ void Disgusted::stage1()
 	}
 }
 
-void Disgusted::stage2()
+void Disgusted::stage1()
 {
 	static constexpr auto kMaxInputValue = uint8_t {50};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
@@ -66,7 +68,7 @@ void Disgusted::stage2()
 	}
 }
 
-void Disgusted::stage3()
+void Disgusted::stage2()
 {
 	static constexpr auto kMaxInputValue = uint8_t {50};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 0.F) {

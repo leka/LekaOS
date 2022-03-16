@@ -16,11 +16,16 @@ void Angry::start()
 void Angry::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 0;
 }
 
 void Angry::run()
 {
 	switch (_stage) {
+		case 0:
+			stage0();
+			break;
 		case 1:
 			stage1();
 			break;
@@ -39,38 +44,35 @@ void Angry::run()
 		case 6:
 			stage6();
 			break;
-		case 7:
-			stage7();
-			break;
 		default:
 			break;
 	}
 	_belt.show();
 }
 
-void Angry::stage1()
+void Angry::stage0()
 {
 	increaseBrightness(1.F);
+}
+
+void Angry::stage1()
+{
+	static constexpr auto kTreshold = 0.7F;
+	decreaseBrightness(kTreshold);
 }
 
 void Angry::stage2()
 {
-	static constexpr auto kTreshold = 0.7F;
-	decreaseBrightness(kTreshold);
+	increaseBrightness(1.F);
 }
 
 void Angry::stage3()
 {
-	increaseBrightness(1.F);
-}
-
-void Angry::stage4()
-{
 	static constexpr auto kTreshold = 0.7F;
 	decreaseBrightness(kTreshold);
 }
 
-void Angry::stage5()
+void Angry::stage4()
 {
 	static constexpr auto kMaxInputValue	   = uint8_t {60};
 	static constexpr auto kMaxInputValueStage6 = uint8_t {110};
@@ -84,7 +86,7 @@ void Angry::stage5()
 	}
 }
 
-void Angry::stage6()
+void Angry::stage5()
 {
 	static constexpr auto kMaxInputValue	   = uint8_t {30};
 	static constexpr auto kMaxInputValueStage6 = uint8_t {110};
@@ -96,7 +98,7 @@ void Angry::stage6()
 	}
 }
 
-void Angry::stage7()
+void Angry::stage6()
 {
 	static constexpr auto kMaxInputValue = uint8_t {30};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 0.F) {

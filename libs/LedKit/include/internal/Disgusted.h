@@ -23,11 +23,11 @@ class Disgusted : public interface::LEDAnimation
 	interface::LED &_ears;
 	interface::LED &_belt;
 	uint8_t _step  = 0;
-	uint8_t _stage = 1;
+	uint8_t _stage = 0;
 
+	void stage0();
 	void stage1();
 	void stage2();
-	void stage3();
 
 	void turnLedBlack();
 };

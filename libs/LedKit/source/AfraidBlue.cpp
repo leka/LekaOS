@@ -16,11 +16,16 @@ void AfraidBlue::start()
 void AfraidBlue::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 0;
 }
 
 void AfraidBlue::run()
 {
 	switch (_stage) {
+		case 0:
+			stage0();
+			break;
 		case 1:
 			stage1();
 			break;
@@ -39,9 +44,6 @@ void AfraidBlue::run()
 		case 6:
 			stage6();
 			break;
-		case 7:
-			stage7();
-			break;
 		default:
 			break;
 	}
@@ -49,29 +51,29 @@ void AfraidBlue::run()
 	_belt.show();
 }
 
-void AfraidBlue::stage1()
+void AfraidBlue::stage0()
 {
 	increaseBrightness();
+}
+
+void AfraidBlue::stage1()
+{
+	static constexpr auto kTreshold = 0.7F;
+	decreaseBrightness(kTreshold);
 }
 
 void AfraidBlue::stage2()
 {
-	static constexpr auto kTreshold = 0.7F;
-	decreaseBrightness(kTreshold);
+	increaseBrightness();
 }
 
 void AfraidBlue::stage3()
 {
-	increaseBrightness();
-}
-
-void AfraidBlue::stage4()
-{
 	static constexpr auto kTreshold = 0.7F;
 	decreaseBrightness(kTreshold);
 }
 
-void AfraidBlue::stage5()
+void AfraidBlue::stage4()
 {
 	static constexpr auto kMaxInputValue = uint8_t {30};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
@@ -85,7 +87,7 @@ void AfraidBlue::stage5()
 	}
 }
 
-void AfraidBlue::stage6()
+void AfraidBlue::stage5()
 {
 	static constexpr auto kMaxInputValue = uint8_t {30};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
@@ -97,7 +99,7 @@ void AfraidBlue::stage6()
 	}
 }
 
-void AfraidBlue::stage7()
+void AfraidBlue::stage6()
 {
 	decreaseBrightness(0.F);
 }

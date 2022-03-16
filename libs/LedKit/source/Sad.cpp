@@ -16,11 +16,16 @@ void Sad::start()
 void Sad::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 0;
 }
 
 void Sad::run()
 {
 	switch (_stage) {
+		case 0:
+			stage0();
+			break;
 		case 1:
 			stage1();
 			break;
@@ -42,54 +47,51 @@ void Sad::run()
 		case 7:
 			stage7();
 			break;
-		case 8:
-			stage8();
-			break;
 		default:
 			break;
 	}
 	_belt.show();
 }
 
-void Sad::stage1()
+void Sad::stage0()
 {
 	increaseBrightness();
+}
+
+void Sad::stage1()
+{
+	static constexpr auto kTreshold = 0.5F;
+	decreaseBrightness(kTreshold);
 }
 
 void Sad::stage2()
 {
-	static constexpr auto kTreshold = 0.5F;
-	decreaseBrightness(kTreshold);
+	increaseBrightness();
 }
 
 void Sad::stage3()
 {
-	increaseBrightness();
+	static constexpr auto kTreshold = 0.5F;
+	decreaseBrightness(kTreshold);
 }
 
 void Sad::stage4()
 {
-	static constexpr auto kTreshold = 0.5F;
-	decreaseBrightness(kTreshold);
+	increaseBrightness();
 }
 
 void Sad::stage5()
 {
-	increaseBrightness();
-}
-
-void Sad::stage6()
-{
 	static constexpr auto kTreshold = 0.5F;
 	decreaseBrightness(kTreshold);
 }
 
-void Sad::stage7()
+void Sad::stage6()
 {
 	increaseBrightness();
 }
 
-void Sad::stage8()
+void Sad::stage7()
 {
 	decreaseBrightness(0.F);
 }

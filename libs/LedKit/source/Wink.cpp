@@ -16,19 +16,21 @@ void Wink::start()
 void Wink::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 0;
 }
 
 void Wink::run()
 {
 	switch (_stage) {
+		case 0:
+			stage0();
+			break;
 		case 1:
 			stage1();
 			break;
 		case 2:
 			stage2();
-			break;
-		case 3:
-			stage3();
 			break;
 		default:
 			break;
@@ -36,7 +38,7 @@ void Wink::run()
 	_belt.show();
 }
 
-void Wink::stage1()
+void Wink::stage0()
 {
 	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
 	static constexpr auto kInputMaxValue1	= uint8_t {20};
@@ -52,7 +54,7 @@ void Wink::stage1()
 	}
 }
 
-void Wink::stage2()
+void Wink::stage1()
 {
 	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
 	static constexpr auto kInputMaxValue2	= uint8_t {40};
@@ -67,7 +69,7 @@ void Wink::stage2()
 	}
 }
 
-void Wink::stage3()
+void Wink::stage2()
 {
 	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
 	static constexpr auto kInputMaxValue1	= uint8_t {20};

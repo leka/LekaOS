@@ -18,20 +18,23 @@ void Bubbles::start()
 void Bubbles::stop()
 {
 	turnLedBlack();
+	_step		   = 0;
+	_stage		   = 0;
+	_bubble_number = 0;
 }
 
 void Bubbles::run()
 {
 	static constexpr auto kLastStage = 12;
-	if (_stage == 1) {
-		stage1();
+	if (_stage == 0) {
+		stage0();
 	} else if (_stage <= kLastStage) {
-		stage2();
+		stage1();
 	}
 	_belt.show();
 }
 
-void Bubbles::stage1()
+void Bubbles::stage0()
 {
 	static constexpr auto kMaxInputValueStage1 = uint8_t {60};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStage1); pos != 1.F) {
@@ -42,7 +45,7 @@ void Bubbles::stage1()
 	}
 }
 
-void Bubbles::stage2()
+void Bubbles::stage1()
 {
 	static constexpr auto kMaxInputValueStage2 = uint8_t {15};
 

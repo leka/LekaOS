@@ -16,11 +16,16 @@ void AngryShort::start()
 void AngryShort::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 0;
 }
 
 void AngryShort::run()
 {
 	switch (_stage) {
+		case 0:
+			stage0();
+			break;
 		case 1:
 			stage1();
 			break;
@@ -36,43 +41,40 @@ void AngryShort::run()
 		case 5:
 			stage5();
 			break;
-		case 6:
-			stage6();
-			break;
 		default:
 			break;
 	}
 	_belt.show();
 }
 
-void AngryShort::stage1()
+void AngryShort::stage0()
 {
 	increaseBrightness(1.F);
+}
+
+void AngryShort::stage1()
+{
+	static constexpr auto kTreshold = 0.7F;
+	decreaseBrightness(kTreshold);
 }
 
 void AngryShort::stage2()
 {
-	static constexpr auto kTreshold = 0.7F;
-	decreaseBrightness(kTreshold);
+	increaseBrightness(1.F);
 }
 
 void AngryShort::stage3()
 {
-	increaseBrightness(1.F);
-}
-
-void AngryShort::stage4()
-{
 	static constexpr auto kTreshold = 0.7F;
 	decreaseBrightness(kTreshold);
 }
 
-void AngryShort::stage5()
+void AngryShort::stage4()
 {
 	increaseBrightness(1.F);
 }
 
-void AngryShort::stage6()
+void AngryShort::stage5()
 {
 	decreaseBrightness(0.F);
 }

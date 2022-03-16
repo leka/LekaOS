@@ -2,7 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-// +  Stage 1   +  2  +  3  +  4  +  5  +  6  +  7  +  8  +  9  +    10      +
+// +  Stage 0   +  1  +  2  +  3  +  4  +  5  +  6  +  7  +  8  +     9      +
 // |            |     |     |     |     |     |     |     |     |            |
 // |            |\    |     |\    |     |\    |     |\    |     |\           | --- Yellow
 // |           /| \   |    /| \   |    /| \   |    /| \   |    /| \          |
@@ -40,8 +40,9 @@ class LoadingYellow : public interface::LEDAnimation
 	interface::LED &_ears;
 	interface::LED &_belt;
 	uint8_t _step  = 0;
-	uint8_t _stage = 1;
+	uint8_t _stage = 0;
 
+	void stage0();
 	void stage1();
 	void stage2();
 	void stage3();
@@ -51,7 +52,6 @@ class LoadingYellow : public interface::LEDAnimation
 	void stage7();
 	void stage8();
 	void stage9();
-	void stage10();
 
 	void increaseBrightness();
 	void decreaseBrightness(float treshold);

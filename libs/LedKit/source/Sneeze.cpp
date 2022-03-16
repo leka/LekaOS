@@ -16,11 +16,17 @@ void Sneeze::start()
 void Sneeze::stop()
 {
 	turnLedBlack();
+	_step			 = 0;
+	_stage			 = 0;
+	_sneeze_position = 0;
 }
 
 void Sneeze::run()
 {
 	switch (_stage) {
+		case 0:
+			stage0();
+			break;
 		case 1:
 			stage1();
 			break;
@@ -33,16 +39,13 @@ void Sneeze::run()
 		case 4:
 			stage4();
 			break;
-		case 5:
-			stage5();
-			break;
 		default:
 			break;
 	}
 	_belt.show();
 }
 
-void Sneeze::stage1()
+void Sneeze::stage0()
 {
 	static constexpr auto kMaxInputValue = uint8_t {15};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
@@ -53,7 +56,7 @@ void Sneeze::stage1()
 	}
 }
 
-void Sneeze::stage2()
+void Sneeze::stage1()
 {
 	static constexpr auto green_sick = RGB {0x10, 0xF0, 0x30};
 
@@ -66,7 +69,7 @@ void Sneeze::stage2()
 	}
 }
 
-void Sneeze::stage3()
+void Sneeze::stage2()
 {
 	static constexpr auto green_sick = RGB {0x10, 0xF0, 0x30};
 
@@ -82,7 +85,7 @@ void Sneeze::stage3()
 	}
 }
 
-void Sneeze::stage4()
+void Sneeze::stage3()
 {
 	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
 	_belt.setColorAtIndex(_sneeze_position, RGB::black);
@@ -93,7 +96,7 @@ void Sneeze::stage4()
 	}
 }
 
-void Sneeze::stage5()
+void Sneeze::stage4()
 {
 	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
 	_belt.setColorAtIndex(_sneeze_position, RGB::black);

@@ -16,11 +16,16 @@ void LoadingYellow::start()
 void LoadingYellow::stop()
 {
 	turnLedBlack();
+	_step  = 0;
+	_stage = 0;
 }
 
 void LoadingYellow::run()
 {
 	switch (_stage) {
+		case 0:
+			stage0();
+			break;
 		case 1:
 			stage1();
 			break;
@@ -48,65 +53,62 @@ void LoadingYellow::run()
 		case 9:
 			stage9();
 			break;
-		case 10:
-			stage10();
-			break;
 		default:
 			break;
 	}
 	_belt.show();
 }
 
-void LoadingYellow::stage1()
+void LoadingYellow::stage0()
 {
 	increaseBrightness();
+}
+
+void LoadingYellow::stage1()
+{
+	static constexpr auto kTreshold = 0.4F;
+	decreaseBrightness(kTreshold);
 }
 
 void LoadingYellow::stage2()
 {
-	static constexpr auto kTreshold = 0.4F;
-	decreaseBrightness(kTreshold);
+	increaseBrightness();
 }
 
 void LoadingYellow::stage3()
 {
-	increaseBrightness();
+	static constexpr auto kTreshold = 0.4F;
+	decreaseBrightness(kTreshold);
 }
 
 void LoadingYellow::stage4()
 {
-	static constexpr auto kTreshold = 0.4F;
-	decreaseBrightness(kTreshold);
+	increaseBrightness();
 }
 
 void LoadingYellow::stage5()
 {
-	increaseBrightness();
+	static constexpr auto kTreshold = 0.4F;
+	decreaseBrightness(kTreshold);
 }
 
 void LoadingYellow::stage6()
 {
-	static constexpr auto kTreshold = 0.4F;
-	decreaseBrightness(kTreshold);
+	increaseBrightness();
 }
 
 void LoadingYellow::stage7()
 {
-	increaseBrightness();
-}
-
-void LoadingYellow::stage8()
-{
 	static constexpr auto kTreshold = 0.4F;
 	decreaseBrightness(kTreshold);
 }
 
-void LoadingYellow::stage9()
+void LoadingYellow::stage8()
 {
 	increaseBrightness();
 }
 
-void LoadingYellow::stage10()
+void LoadingYellow::stage9()
 {
 	decreaseBrightness(0.F);
 }

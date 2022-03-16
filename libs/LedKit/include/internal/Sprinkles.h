@@ -23,7 +23,7 @@ class Sprinkles : public interface::LEDAnimation
 	interface::LED &_ears;
 	interface::LED &_belt;
 	uint8_t _step			 = 0;
-	uint8_t _stage			 = 1;
+	uint8_t _stage			 = 0;
 	uint8_t _wave_tail_index = 0;
 
 	void moveWave(uint8_t &wave_tail_index);

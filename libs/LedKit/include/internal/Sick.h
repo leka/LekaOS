@@ -23,16 +23,16 @@ class Sick : public interface::LEDAnimation
 	interface::LED &_ears;
 	interface::LED &_belt;
 	uint8_t _step			= 0;
-	uint8_t _stage			= 1;
+	uint8_t _stage			= 0;
 	uint8_t _sneeze_index_1 = 0;
 	uint8_t _sneeze_index_2 = 0;
 	uint8_t _sneeze_index_3 = 0;
 
-	void stage1();
+	void stage0();
+	void stage1and4();
 	void stage2and5();
 	void stage3and6();
-	void stage4and7();
-	void stage8();
+	void stage7();
 
 	void turnLedBlack();
 };
