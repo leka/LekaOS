@@ -19,7 +19,7 @@ void Rainbow::stop()
 {
 	turnLedBlack();
 	_step				= 0;
-	_stage				= 1;
+	_stage				= 0;
 	_rainbow_tail_index = 0;
 }
 

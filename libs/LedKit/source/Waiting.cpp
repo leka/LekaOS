@@ -17,12 +17,15 @@ void Waiting::stop()
 {
 	turnLedBlack();
 	_step  = 0;
-	_stage = 1;
+	_stage = 0;
 }
 
 void Waiting::run()
 {
 	switch (_stage) {
+		case 0:
+			stage0();
+			break;
 		case 1:
 			stage1();
 			break;
@@ -33,9 +36,6 @@ void Waiting::run()
 			stage3();
 			break;
 		case 4:
-			stage4();
-			break;
-		case 5:
 			_stage = 1;
 			break;
 		default:
@@ -44,7 +44,7 @@ void Waiting::run()
 	_belt.show();
 }
 
-void Waiting::stage1()
+void Waiting::stage0()
 {
 	static constexpr auto kMaxInputValue = uint8_t {40};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
@@ -56,7 +56,7 @@ void Waiting::stage1()
 	}
 }
 
-void Waiting::stage2()
+void Waiting::stage1()
 {
 	static constexpr auto kMaxInputValue = uint8_t {40};
 	static constexpr auto tresholdDown	 = 0.3F;
@@ -69,7 +69,7 @@ void Waiting::stage2()
 	}
 }
 
-void Waiting::stage3()
+void Waiting::stage2()
 {
 	static constexpr auto kMaxInputValue = uint8_t {40};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
@@ -81,7 +81,7 @@ void Waiting::stage3()
 	}
 }
 
-void Waiting::stage4()
+void Waiting::stage3()
 {
 	static constexpr auto kMaxInputValue = uint8_t {40};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 0.F) {

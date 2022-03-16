@@ -17,12 +17,15 @@ void LoadingOrange::stop()
 {
 	turnLedBlack();
 	_step  = 0;
-	_stage = 1;
+	_stage = 0;
 }
 
 void LoadingOrange::run()
 {
 	switch (_stage) {
+		case 0:
+			stage0();
+			break;
 		case 1:
 			stage1();
 			break;
@@ -44,54 +47,51 @@ void LoadingOrange::run()
 		case 7:
 			stage7();
 			break;
-		case 8:
-			stage8();
-			break;
 		default:
 			break;
 	}
 	_belt.show();
 }
 
-void LoadingOrange::stage1()
+void LoadingOrange::stage0()
 {
 	increaseBrightness();
+}
+
+void LoadingOrange::stage1()
+{
+	static constexpr auto kTreshold = 0.4F;
+	decreaseBrightness(kTreshold);
 }
 
 void LoadingOrange::stage2()
 {
-	static constexpr auto kTreshold = 0.4F;
-	decreaseBrightness(kTreshold);
+	increaseBrightness();
 }
 
 void LoadingOrange::stage3()
 {
-	increaseBrightness();
+	static constexpr auto kTreshold = 0.4F;
+	decreaseBrightness(kTreshold);
 }
 
 void LoadingOrange::stage4()
 {
-	static constexpr auto kTreshold = 0.4F;
-	decreaseBrightness(kTreshold);
+	increaseBrightness();
 }
 
 void LoadingOrange::stage5()
 {
-	increaseBrightness();
-}
-
-void LoadingOrange::stage6()
-{
 	static constexpr auto kTreshold = 0.4F;
 	decreaseBrightness(kTreshold);
 }
 
-void LoadingOrange::stage7()
+void LoadingOrange::stage6()
 {
 	increaseBrightness();
 }
 
-void LoadingOrange::stage8()
+void LoadingOrange::stage7()
 {
 	decreaseBrightness(0.F);
 }

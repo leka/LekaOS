@@ -17,7 +17,7 @@ void Sleeping::stop()
 {
 	turnLedBlack();
 	_step  = 0;
-	_stage = 1;
+	_stage = 0;
 }
 
 void Sleeping::run()

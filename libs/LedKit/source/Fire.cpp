@@ -19,7 +19,7 @@ void Fire::stop()
 {
 	turnLedBlack();
 	_step			 = 0;
-	_stage			 = 1;
+	_stage			 = 0;
 	_wave_tail_index = 0;
 }
 

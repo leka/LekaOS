@@ -17,7 +17,7 @@ void Sick::stop()
 {
 	turnLedBlack();
 	_step			= 0;
-	_stage			= 1;
+	_stage			= 0;
 	_sneeze_index_1 = 0;
 	_sneeze_index_2 = 0;
 	_sneeze_index_3 = 0;
@@ -26,8 +26,11 @@ void Sick::stop()
 void Sick::run()
 {
 	switch (_stage) {
+		case 0:
+			stage0();
+			break;
 		case 1:
-			stage1();
+			stage1and4();
 			break;
 		case 2:
 			stage2and5();
@@ -36,7 +39,7 @@ void Sick::run()
 			stage3and6();
 			break;
 		case 4:
-			stage4and7();
+			stage1and4();
 			break;
 		case 5:
 			stage2and5();
@@ -45,10 +48,7 @@ void Sick::run()
 			stage3and6();
 			break;
 		case 7:
-			stage4and7();
-			break;
-		case 8:
-			stage8();
+			stage7();
 			break;
 		default:
 			break;
@@ -56,7 +56,7 @@ void Sick::run()
 	_belt.show();
 }
 
-void Sick::stage1()
+void Sick::stage0()
 {
 	static constexpr auto green_sick = RGB {0x10, 0xF0, 0x30};
 
@@ -73,7 +73,7 @@ void Sick::stage1()
 	}
 }
 
-void Sick::stage2and5()
+void Sick::stage1and4()
 {
 	static constexpr auto green_sick = RGB {0x10, 0xF0, 0x30};
 
@@ -92,7 +92,7 @@ void Sick::stage2and5()
 	}
 }
 
-void Sick::stage3and6()
+void Sick::stage2and5()
 {
 	static constexpr auto green_sick	  = RGB {0x10, 0xF0, 0x30};
 	static constexpr auto deep_green_sick = RGB {0, 0x64, 0x10};
@@ -115,7 +115,7 @@ void Sick::stage3and6()
 	}
 }
 
-void Sick::stage4and7()
+void Sick::stage3and6()
 {
 	static constexpr auto green_sick		= RGB {0x10, 0xF0, 0x30};
 	static constexpr auto deep_green_sick	= RGB {0, 0x64, 0x10};
@@ -145,7 +145,7 @@ void Sick::stage4and7()
 	}
 }
 
-void Sick::stage8()
+void Sick::stage7()
 {
 	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
 	_belt.setColorAtIndex(_sneeze_index_1, RGB::black);

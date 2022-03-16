@@ -19,12 +19,15 @@ void Happy::stop()
 {
 	turnLedBlack();
 	_step  = 0;
-	_stage = 1;
+	_stage = 0;
 }
 
 void Happy::run()
 {
 	switch (_stage) {
+		case 0:
+			stage0();
+			break;
 		case 1:
 			stage1();
 			break;
@@ -37,16 +40,13 @@ void Happy::run()
 		case 4:
 			stage4();
 			break;
-		case 5:
-			stage5();
-			break;
 		default:
 			break;
 	}
 	_belt.show();
 }
 
-void Happy::stage1()
+void Happy::stage0()
 {
 	static constexpr auto kMaxInputValue = uint8_t {20};
 	static constexpr auto pink_happy	 = RGB {255, 98, 98};
@@ -61,7 +61,7 @@ void Happy::stage1()
 	}
 }
 
-void Happy::stage2()
+void Happy::stage1()
 {
 	static constexpr auto kMaxInputValue = uint8_t {20};
 	static constexpr auto pink_happy	 = RGB {255, 98, 98};
@@ -75,7 +75,7 @@ void Happy::stage2()
 	}
 }
 
-void Happy::stage3()
+void Happy::stage2()
 {
 	static constexpr auto kMaxInputValue = uint8_t {20};
 	static constexpr auto pink_happy	 = RGB {255, 98, 98};
@@ -90,7 +90,7 @@ void Happy::stage3()
 	}
 }
 
-void Happy::stage4()
+void Happy::stage3()
 {
 	static constexpr auto kMaxInputValue = uint8_t {20};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
@@ -102,7 +102,7 @@ void Happy::stage4()
 	}
 }
 
-void Happy::stage5()
+void Happy::stage4()
 {
 	static constexpr auto kMaxInputValue = uint8_t {20};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 0.F) {

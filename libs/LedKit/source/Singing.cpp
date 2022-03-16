@@ -19,22 +19,22 @@ void Singing::stop()
 {
 	turnLedBlack();
 	_step		 = 0;
-	_stage		 = 1;
+	_stage		 = 0;
 	_note_number = 0;
 }
 
 void Singing::run()
 {
 	static constexpr auto kLastStage = kNumberOfNotes + 2;
-	if (_stage == 1) {
-		stage1();
+	if (_stage == 0) {
+		stage0();
 	} else if (_stage <= kLastStage) {
-		stage2();
+		stage1();
 	}
 	_belt.show();
 }
 
-void Singing::stage1()
+void Singing::stage0()
 {
 	static constexpr auto kMaxInputValueStage1 = uint8_t {20};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStage1); pos != 1.F) {
@@ -45,7 +45,7 @@ void Singing::stage1()
 	}
 }
 
-void Singing::stage2()
+void Singing::stage1()
 {
 	static constexpr auto kMaxInputValueStage2 = uint8_t {25};
 

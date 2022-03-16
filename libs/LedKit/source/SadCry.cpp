@@ -17,12 +17,15 @@ void SadCry::stop()
 {
 	turnLedBlack();
 	_step  = 0;
-	_stage = 1;
+	_stage = 0;
 }
 
 void SadCry::run()
 {
 	switch (_stage) {
+		case 0:
+			stage0();
+			break;
 		case 1:
 			stage1();
 			break;
@@ -59,16 +62,13 @@ void SadCry::run()
 		case 12:
 			stage12();
 			break;
-		case 13:
-			stage13();
-			break;
 		default:
 			break;
 	}
 	_belt.show();
 }
 
-void SadCry::stage1()
+void SadCry::stage0()
 {
 	static constexpr auto kMaxInputValueFirstStages = uint8_t {90};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueFirstStages); pos != 1.F) {
@@ -81,7 +81,7 @@ void SadCry::stage1()
 	}
 }
 
-void SadCry::stage2()
+void SadCry::stage1()
 {
 	static constexpr auto kMaxInputValueFirstStages = uint8_t {90};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueFirstStages); pos != 1.F) {
@@ -92,7 +92,7 @@ void SadCry::stage2()
 	}
 }
 
-void SadCry::stage3()
+void SadCry::stage2()
 {
 	static constexpr auto kNumberOfLedsBelt		   = uint8_t {20};
 	static constexpr auto kMaxInputValueLastStages = uint8_t {25};
@@ -108,51 +108,51 @@ void SadCry::stage3()
 	}
 }
 
-void SadCry::stage4()
+void SadCry::stage3()
 {
 	static constexpr auto kThreshold = 0.5F;
 	decreaseBrightness(kThreshold);
+}
+
+void SadCry::stage4()
+{
+	increaseBrightness();
 }
 
 void SadCry::stage5()
 {
-	increaseBrightness();
+	static constexpr auto kThreshold = 0.5F;
+	decreaseBrightness(kThreshold);
 }
 
 void SadCry::stage6()
 {
-	static constexpr auto kThreshold = 0.5F;
-	decreaseBrightness(kThreshold);
+	increaseBrightness();
 }
 
 void SadCry::stage7()
 {
-	increaseBrightness();
+	static constexpr auto kThreshold = 0.5F;
+	decreaseBrightness(kThreshold);
 }
 
 void SadCry::stage8()
 {
-	static constexpr auto kThreshold = 0.5F;
-	decreaseBrightness(kThreshold);
+	increaseBrightness();
 }
 
 void SadCry::stage9()
 {
-	increaseBrightness();
-}
-
-void SadCry::stage10()
-{
 	static constexpr auto kThreshold = 0.5F;
 	decreaseBrightness(kThreshold);
 }
 
-void SadCry::stage11()
+void SadCry::stage10()
 {
 	increaseBrightness();
 }
 
-void SadCry::stage12()
+void SadCry::stage11()
 {
 	static constexpr auto kMaxInputValueLastStages = uint8_t {25};
 	if (auto pos = utils::normalizeStep(_step, 2 * kMaxInputValueLastStages); pos != 1.F) {
@@ -163,7 +163,7 @@ void SadCry::stage12()
 	}
 }
 
-void SadCry::stage13()
+void SadCry::stage12()
 {
 	decreaseBrightness(0.F);
 }
