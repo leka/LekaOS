@@ -10,6 +10,7 @@
 
 #include "BatteryKit.h"
 #include "StateMachine.h"
+#include "VideoKit.h"
 #include "interface/RobotController.h"
 #include "interface/drivers/Battery.h"
 #include "interface/drivers/FirmwareUpdate.h"
@@ -24,8 +25,8 @@ class RobotController : public interface::RobotController
 	sm_t state_machine {static_cast<interface::RobotController &>(*this)};
 
 	explicit RobotController(interface::Timeout &sleep_timeout, interface::Battery &battery,
-							 interface::FirmwareUpdate &firmware_update)
-		: _sleep_timeout(sleep_timeout), _battery(battery), _firmware_update(firmware_update) {};
+							 interface::FirmwareUpdate &firmware_update, VideoKit &video_kit)
+		: _sleep_timeout(sleep_timeout), _battery(battery), _firmware_update(firmware_update), _videokit(video_kit) {};
 
 	void runLaunchingBehavior() final
 	{
@@ -124,6 +125,8 @@ class RobotController : public interface::RobotController
 
 	interface::FirmwareUpdate &_firmware_update;
 	std::function<void()> _on_update_loaded_callback {};
+
+	VideoKit &_videokit;
 
 	BLEKit _ble {};
 	inline static BLEServiceDeviceInformation _service_device_information {};

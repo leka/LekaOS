@@ -18,8 +18,9 @@ target_sources(RobotKit
 )
 
 target_link_libraries(RobotKit
-	BLEKit
 	BatteryKit
+	BLEKit
+	VideoKit
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

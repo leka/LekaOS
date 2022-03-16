@@ -66,7 +66,10 @@ class RobotControllerTest : public testing::Test
 	mock::Battery battery {};
 	mock::FirmwareUpdate firmware_update {};
 
-	RobotController<bsml::sm<robot::StateMachine, bsml::testing>> rc {sleep_timeout, battery, firmware_update};
+	VideoKit videokit {};
+
+	RobotController<bsml::sm<robot::StateMachine, bsml::testing>> rc {sleep_timeout, battery, firmware_update,
+																	  videokit};
 
 	interface::Timeout::callback_t on_sleep_timeout = {};
 
