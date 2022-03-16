@@ -5,7 +5,7 @@
 #include "CommandKit.h"
 
 #include "LogKit.h"
-#include "MathUtils.h"
+#include "Utils.h"
 
 using namespace leka;
 

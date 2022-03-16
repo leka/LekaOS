@@ -6,10 +6,10 @@
 
 #include <span>
 
-#include "../../include/Command.h"
 #include "LogKit.h"
 #include "Utils.h"
 #include "gmock/gmock.h"
+#include "interface/Command.h"
 
 namespace leka::mock {
 

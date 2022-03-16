@@ -8,8 +8,8 @@
 #include <span>
 
 #include "CircularQueue.h"
-#include "Command.h"
 #include "commands/LedCommand.h"
+#include "interface/Command.h"
 
 namespace leka {
 
