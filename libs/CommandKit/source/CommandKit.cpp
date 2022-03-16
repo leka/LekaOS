@@ -52,11 +52,11 @@ void CommandKit::processCommands()
 
 void CommandKit::executeCommands()
 {
-	uint8_t number_of_commands {};
+	auto number_of_commands = uint8_t {};
 	_input_buffer.pop(number_of_commands);
 
 	for (auto i = 0; i < number_of_commands; ++i) {
-		uint8_t current_command {};
+		auto current_command = uint8_t {};
 		_input_buffer.pop(current_command);
 
 		for (auto *cmd: _commands) {

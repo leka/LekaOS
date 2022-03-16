@@ -19,13 +19,14 @@ class CommandKit
 	CommandKit();
 
 	void push(std::span<uint8_t> data);
+
 	void registerCommand(std::span<interface::Command *> cmds);
+
+	auto size() const -> std::size_t;
 
 	struct command {
 		static inline auto led = LedCommand {};
 	};
-
-	auto size() const -> std::size_t;
 
   private:
 	void processCommands();
