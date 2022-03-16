@@ -8,17 +8,22 @@
 
 using namespace leka;
 
-TEST(BLEServiceMonitoringTest, initialisation)
+class BLEServiceMonitoringTest : public testing::Test
 {
-	auto service_monitoring = BLEServiceMonitoring {};
+  protected:
+	// void SetUp() override {}
+	// void TearDown() override {}
 
+	BLEServiceMonitoring service_monitoring {};
+};
+
+TEST_F(BLEServiceMonitoringTest, initialisation)
+{
 	EXPECT_NE(&service_monitoring, nullptr);
 }
 
-TEST(BLEServiceMonitoringTest, setChargingStatus)
+TEST_F(BLEServiceMonitoringTest, setChargingStatus)
 {
-	auto service_monitoring = BLEServiceMonitoring {};
-
 	uint8_t actual_charging_status {};
 
 	auto spy_callback = [&actual_charging_status](const BLEServiceMonitoring::data_to_send_handle_t &handle) {
@@ -33,10 +38,8 @@ TEST(BLEServiceMonitoringTest, setChargingStatus)
 	EXPECT_FALSE(actual_charging_status);
 }
 
-TEST(BLEServiceMonitoringTest, onDataReceived)
+TEST_F(BLEServiceMonitoringTest, onDataReceived)
 {
-	auto service_monitoring = BLEServiceMonitoring {};
-
 	auto dummy_params = BLEServiceMonitoring::data_received_handle_t {};
 	service_monitoring.onDataReceived(dummy_params);
 
