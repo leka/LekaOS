@@ -9,6 +9,7 @@
 #include "CoreFlashIS25LP016D.h"
 #include "CoreFlashManagerIS25LP016D.h"
 #include "CoreQSPI.h"
+#include "CoreSPI.h"
 #include "CoreTimeout.h"
 #include "FATFileSystem.h"
 #include "FirmwareKit.h"
@@ -36,7 +37,18 @@ auto coreflashmanager = CoreFlashManagerIS25LP016D(coreqspi);
 auto coreflash		  = CoreFlashIS25LP016D(coreqspi, coreflashmanager);
 auto firmwarekit	  = FirmwareKit(coreflash);
 
-auto rc = RobotController {sleep_timeout, battery, firmwarekit};
+auto corespi_belt = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+auto corespi_ears = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+
+auto ears = CoreLED<LedKit::kNumberOfLedsEars> {corespi_ears};
+auto belt = CoreLED<LedKit::kNumberOfLedsBelt> {corespi_belt};
+
+auto animation_thread	   = rtos::Thread {};
+auto animation_event_queue = events::EventQueue {};
+
+auto ledkit = LedKit {animation_thread, animation_event_queue, ears, belt};
+
+auto rc = RobotController {sleep_timeout, battery, firmwarekit, ears, belt, ledkit};
 
 void initializeSD()
 {
