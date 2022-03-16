@@ -9,6 +9,13 @@
 #include "BLEServiceDeviceInformation.h"
 
 #include "BatteryKit.h"
+#include "CoreLED.h"
+#include "LedKit.h"
+#include "LoadingGreen.h"
+#include "LoadingOrange.h"
+#include "LoadingRed.h"
+#include "LoadingYellow.h"
+#include "Sleeping.h"
 #include "StateMachine.h"
 #include "interface/RobotController.h"
 #include "interface/drivers/Battery.h"
@@ -24,8 +31,14 @@ class RobotController : public interface::RobotController
 	sm_t state_machine {static_cast<interface::RobotController &>(*this)};
 
 	explicit RobotController(interface::Timeout &sleep_timeout, interface::Battery &battery,
-							 interface::FirmwareUpdate &firmware_update)
-		: _sleep_timeout(sleep_timeout), _battery(battery), _firmware_update(firmware_update) {};
+							 interface::FirmwareUpdate &firmware_update, CoreLED<LedKit::kNumberOfLedsEars> &ears,
+							 CoreLED<LedKit::kNumberOfLedsBelt> &belt, LedKit &ledkit)
+		: _sleep_timeout(sleep_timeout),
+		  _battery(battery),
+		  _firmware_update(firmware_update),
+		  _ears(ears),
+		  _belt(belt),
+		  _ledkit(ledkit) {};
 
 	void runLaunchingBehavior() final
 	{
@@ -47,10 +60,14 @@ class RobotController : public interface::RobotController
 	void startSleepingBehavior() final
 	{
 		// TODO (@yann): Start YawningSleeping animation video
+
+		led::animation::Sleeping animation_sleeping(_ears, _belt);
+		_ledkit.start(animation_sleeping);
 	}
 	void stopSleepingBehavior() final
 	{
 		// TODO (@yann): Stop animation video
+		_ledkit.stop();
 	}
 
 	auto isCharging() -> bool final { return _battery.isCharging(); };
@@ -58,10 +75,30 @@ class RobotController : public interface::RobotController
 	void startChargingBehavior() final
 	{
 		// TODO (@yann): Display battery state image
+		_battery_kit.onDataUpdated([this](uint8_t level) {
+			_service_battery.setBatteryLevel(level);
+			if (level < 25) {
+				led::animation::LoadingRed animation_loading_red(_ears, _belt);
+				_ledkit.start(animation_loading_red);
+			} else if (level < 50) {
+				led::animation::LoadingRed animation_loading_red(_ears, _belt);
+				_ledkit.start(animation_loading_red);
+			} else if (level < 75) {
+				led::animation::LoadingOrange animation_loading_orange(_ears, _belt);
+				_ledkit.start(animation_loading_orange);
+			} else if (level < 100) {
+				led::animation::LoadingYellow animation_loading_yellow(_ears, _belt);
+				_ledkit.start(animation_loading_yellow);
+			} else {
+				led::animation::LoadingGreen animation_loading_green(_ears, _belt);
+				_ledkit.start(animation_loading_green);
+			}
+		});
 	}
 	void stopChargingBehavior() final
 	{
 		// TODO (@yann): Stop animation video
+		_ledkit.stop();
 	}
 
 	auto isReadyToUpdate() -> bool final
@@ -130,6 +167,11 @@ class RobotController : public interface::RobotController
 	inline static BLEServiceBattery _service_battery {};
 	inline static auto services =
 		std::to_array<interface::BLEService *>({&_service_device_information, &_service_battery});
+
+	CoreLED<LedKit::kNumberOfLedsBelt> &_belt;
+	CoreLED<LedKit::kNumberOfLedsEars> &_ears;
+
+	LedKit &_ledkit;
 };
 
 }	// namespace leka
