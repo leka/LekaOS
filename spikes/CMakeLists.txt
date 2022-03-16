@@ -48,18 +48,22 @@ add_dependencies( spikes_leka
 	spike_lk_flash_memory
 	spike_lk_lcd
 	spike_lk_led
+	spike_lk_led_kit
 	spike_lk_log_kit
 	spike_lk_motors
+	spike_lk_reinforcer
 	spike_lk_rfid
 	spike_lk_sensors_battery
 	spike_lk_sensors_light
 	spike_lk_sensors_microphone
 	spike_lk_sensors_temperature_humidity
 	spike_lk_sensors_touch
+	spike_lk_serial_number
 	spike_lk_ticker_timeout
+	spike_lk_wifi
+
 	spike_lk_update_process_app_base
 	spike_lk_update_process_app_update
-	spike_lk_wifi
 )
 
 add_custom_target(spikes_mbed)
