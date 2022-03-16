@@ -47,7 +47,7 @@ namespace sm::guard {
 	};
 
 	struct is_ready_to_update {
-		auto operator()(irc &rc) const { return !rc.isReadyToUpdate(); }
+		auto operator()(irc &rc) const { return rc.isReadyToUpdate(); }
 	};
 
 }	// namespace sm::guard
@@ -66,6 +66,14 @@ namespace sm::action {
 
 	struct stop_sleep_timeout {
 		auto operator()(irc &rc) const { rc.stopSleepTimeout(); }
+	};
+
+	struct start_waiting_behavior {
+		auto operator()(irc &rc) const { rc.startWaitingBehavior(); }
+	};
+
+	struct stop_waiting_behavior {
+		auto operator()(irc &rc) const { rc.stopWaitingBehavior(); }
 	};
 
 	struct start_sleeping_behavior {
@@ -100,8 +108,8 @@ struct StateMachine {
 			* sm::state::setup    + event<sm::event::setup_complete>                                     = sm::state::idle
 			, sm::state::setup    + boost::sml::on_exit<_>  / sm::action::run_launching_behavior {}
 
-			, sm::state::idle     + boost::sml::on_entry<_> / sm::action::start_sleep_timeout {}
-			, sm::state::idle     + boost::sml::on_exit<_>  / sm::action::stop_sleep_timeout  {}
+			, sm::state::idle     + boost::sml::on_entry<_> / (sm::action::start_sleep_timeout {}, sm::action::start_waiting_behavior {})
+			, sm::state::idle     + boost::sml::on_exit<_>  / (sm::action::stop_sleep_timeout  {}, sm::action::stop_waiting_behavior  {})
 
 			, sm::state::idle     + event<sm::event::sleep_timeout_did_end>                              = sm::state::sleeping
 			, sm::state::idle     + event<sm::event::charge_did_start> [sm::guard::is_charging {}]       = sm::state::charging

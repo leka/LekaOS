@@ -55,8 +55,9 @@ TEST_F(StateMachineTest, stateSetupEventSetupComplete)
 {
 	sm.set_current_states(lksm::state::setup);
 
-	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, runLaunchingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startWaitingBehavior).Times(1);
 
 	sm.process_event(lksm::event::setup_complete {});
 
@@ -68,6 +69,7 @@ TEST_F(StateMachineTest, stateIdleEventTimeout)
 	sm.set_current_states(lksm::state::idle);
 
 	EXPECT_CALL(mock_rc, stopSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, stopWaitingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, startSleepingBehavior).Times(1);
 
 	sm.process_event(lksm::event::sleep_timeout_did_end {});
@@ -94,6 +96,7 @@ TEST_F(StateMachineTest, stateIdleEventChargeDidStart)
 
 	EXPECT_CALL(mock_rc, isCharging).WillOnce(Return(true));
 	EXPECT_CALL(mock_rc, stopSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, stopWaitingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
 
 	sm.process_event(lksm::event::charge_did_start {});
@@ -107,6 +110,7 @@ TEST_F(StateMachineTest, stateChargingEventChargeDidStop)
 
 	EXPECT_CALL(mock_rc, isCharging).WillOnce(Return(false));
 	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startWaitingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
 
 	sm.process_event(lksm::event::charge_did_stop {});
@@ -114,13 +118,27 @@ TEST_F(StateMachineTest, stateChargingEventChargeDidStop)
 	EXPECT_TRUE(sm.is(lksm::state::idle));
 }
 
-TEST_F(StateMachineTest, stateChargingEventUpdateRequested)
+TEST_F(StateMachineTest, stateChargingEventUpdateRequestedGuardTrue)
 {
 	sm.set_current_states(lksm::state::charging);
 
+	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, isReadyToUpdate).WillOnce(Return(true));
 	EXPECT_CALL(mock_rc, applyUpdate).Times(1);
 
 	sm.process_event(lksm::event::update_requested {});
 
 	EXPECT_TRUE(sm.is(lksm::state::updating));
+}
+
+TEST_F(StateMachineTest, stateChargingEventUpdateRequestedGuardFalse)
+{
+	sm.set_current_states(lksm::state::charging);
+
+	EXPECT_CALL(mock_rc, isReadyToUpdate).WillOnce(Return(false));
+	EXPECT_CALL(mock_rc, applyUpdate).Times(0);
+
+	sm.process_event(lksm::event::update_requested {});
+
+	EXPECT_TRUE(sm.is(lksm::state::charging));
 }

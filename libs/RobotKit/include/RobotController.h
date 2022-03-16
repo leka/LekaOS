@@ -33,6 +33,15 @@ class RobotController : public interface::RobotController
 	void startSleepTimeout() final { _sleep_timeout.start(_sleep_timeout_duration); }
 	void stopSleepTimeout() final { _sleep_timeout.stop(); }
 
+	void startWaitingBehavior() final
+	{
+		// TODO: Start Waiting animation video
+	}
+	void stopWaitingBehavior() final
+	{
+		// TODO: Stop animation video
+	}
+
 	void startSleepingBehavior() final
 	{
 		// TODO (@yann): Start YawningSleeping animation video
