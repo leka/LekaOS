@@ -40,6 +40,8 @@ add_dependencies( spikes_leka
 	spike_lk_ble
 	spike_lk_bluetooth
 	spike_lk_cg_animations
+	spike_lk_color_kit
+	spike_lk_coreled
 	spike_lk_event_queue
 	spike_lk_file_reception
 	spike_lk_filesystem_kit
@@ -54,6 +56,7 @@ add_dependencies( spikes_leka
 	spike_lk_sensors_microphone
 	spike_lk_sensors_temperature_humidity
 	spike_lk_sensors_touch
+	spike_lk_ticker_timeout
 	spike_lk_update_process_app_base
 	spike_lk_update_process_app_update
 	spike_lk_wifi
