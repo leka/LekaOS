@@ -4,12 +4,18 @@
 
 #include "RobotController.h"
 
+#include "events/tests/UNITTESTS/doubles/EventQueue_stub.h"
+#include "rtos/tests/UNITTESTS/doubles/Thread_stub.h"
+
 #include "ble_mocks.h"
 
+#include "LedKit.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/Battery.h"
 #include "mocks/leka/FirmwareUpdate.h"
+#include "mocks/leka/LEDAnimation.h"
+#include "mocks/leka/SPI.h"
 #include "mocks/leka/Timeout.h"
 
 using namespace leka;
@@ -62,11 +68,22 @@ class RobotControllerTest : public testing::Test
 	}
 	void TearDown() override { ble::delete_mocks(); }
 
+	rtos::Thread animation_thread;
+	events::EventQueue event_queue;
+
 	mock::Timeout sleep_timeout {};
 	mock::Battery battery {};
 	mock::FirmwareUpdate firmware_update {};
+	mock::SPI belt_spimock {};
+	mock::SPI ears_spimock {};
 
-	RobotController<bsml::sm<robot::StateMachine, bsml::testing>> rc {sleep_timeout, battery, firmware_update};
+	CoreLED<LedKit::kNumberOfLedsBelt> belt {belt_spimock};
+	CoreLED<LedKit::kNumberOfLedsEars> ears {ears_spimock};
+
+	LedKit ledkit {animation_thread, event_queue, ears, belt};
+
+	RobotController<bsml::sm<robot::StateMachine, bsml::testing>> rc {sleep_timeout, battery, firmware_update,
+																	  ears,			 belt,	  ledkit};
 
 	interface::Timeout::callback_t on_sleep_timeout = {};
 
