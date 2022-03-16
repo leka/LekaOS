@@ -56,6 +56,7 @@ class RobotControllerTest : public testing::Test
 		EXPECT_CALL(sleep_timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleep_timeout));
 		EXPECT_CALL(battery, onChargeDidStart).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_start));
 		EXPECT_CALL(battery, onChargeDidStop).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_stop));
+		EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
 		EXPECT_CALL(sleep_timeout, start).Times(1);	  // Hide Uninteresting mock function call
 
 		rc.registerEvents();
@@ -139,7 +140,7 @@ TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAt100)
 	// nohting expected
 }
 
-TEST_F(RobotControllerTest, stateSetupEventSetupComplete)
+TEST_F(RobotControllerTest, stateSetupEventSetupCompleteGuardIsChargingFalse)
 {
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
@@ -153,11 +154,33 @@ TEST_F(RobotControllerTest, stateSetupEventSetupComplete)
 	EXPECT_CALL(sleep_timeout, onTimeout).Times(1);
 	EXPECT_CALL(battery, onChargeDidStart).Times(1);
 	EXPECT_CALL(battery, onChargeDidStop).Times(1);
+	EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
 	EXPECT_CALL(sleep_timeout, start).Times(1);
 
 	rc.registerEvents();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
+}
+
+TEST_F(RobotControllerTest, stateSetupEventSetupCompleteGuardIsChargingTrue)
+{
+	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
+	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
+
+	rc.state_machine.set_current_states(lksm::state::setup);
+
+	auto expected_level = 0x2A;
+	EXPECT_CALL(battery, level).WillOnce(Return(expected_level));
+	EXPECT_CALL(mbed_mock_gatt, write(_, sameValue(expected_level), _, _)).Times(1);
+
+	EXPECT_CALL(sleep_timeout, onTimeout).Times(1);
+	EXPECT_CALL(battery, onChargeDidStart).Times(1);
+	EXPECT_CALL(battery, onChargeDidStop).Times(1);
+	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
+
+	rc.registerEvents();
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
 }
 
 TEST_F(RobotControllerTest, stateIdleEventTimeout)
