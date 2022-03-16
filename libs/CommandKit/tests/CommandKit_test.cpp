@@ -36,13 +36,6 @@ TEST_F(CommandKitTest, initialization)
 	EXPECT_NE(&cmdkit, nullptr);
 }
 
-TEST_F(CommandKitTest, pushData)
-{
-	auto data = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 6, 1, 2, 3, 4, 5, 6});
-
-	cmdkit.push(data);
-}
-
 TEST_F(CommandKitTest, registerZeroCommand)
 {
 	EXPECT_EQ(0, cmdkit.size());
@@ -69,6 +62,20 @@ TEST_F(CommandKitTest, pushDataGood)
 	auto data = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x42, 0x11, 0x02, 0x00, 0x7F, 0xFF, 0x91});
 
 	EXPECT_CALL(cmd, HasBeenCalled).Times(1);
+
+	cmdkit.push(data);
+}
+
+TEST_F(CommandKitTest, pushDataBadNoFramePattern)
+{
+	auto cmd  = mock::Command {0x42};
+	auto cmds = std::to_array<interface::Command *>({&cmd});
+
+	cmdkit.registerCommand(cmds);
+
+	auto data = std::to_array<uint8_t>({0x01, 0x42, 0x11, 0x02, 0x00, 0x7F, 0xFF, 0x91});
+
+	EXPECT_CALL(cmd, HasBeenCalled).Times(0);
 
 	cmdkit.push(data);
 }
