@@ -23,6 +23,8 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
 		tests/CommandKit_test.cpp
+		tests/CommandKit_test_push.cpp
+		tests/CommandKit_test_register.cpp
 	)
 
 endif()
