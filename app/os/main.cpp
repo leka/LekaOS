@@ -2,8 +2,10 @@
 // Copyright 2020-2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#include "drivers/Watchdog.h"
 #include "rtos/Kernel.h"
 #include "rtos/ThisThread.h"
+#include "rtos/Thread.h"
 
 #include "CoreBattery.h"
 #include "CoreFlashIS25LP016D.h"
@@ -23,6 +25,28 @@
 
 using namespace leka;
 using namespace std::chrono;
+
+namespace watchdog {
+
+auto &instance		   = mbed::Watchdog::get_instance();
+constexpr auto timeout = 30000ms;
+auto thread			   = rtos::Thread {osPriorityLow};
+
+__attribute__((noreturn)) void kick()
+{
+	while (true) {
+		watchdog::instance.kick();
+		rtos::ThisThread::sleep_for(5s);
+	}
+}
+
+void start()
+{
+	watchdog::instance.start(watchdog::timeout.count());
+	watchdog::thread.start(watchdog::kick);
+}
+
+}	// namespace watchdog
 
 auto sleep_timeout = CoreTimeout {};
 
@@ -74,6 +98,8 @@ void setPendingUpdate()
 
 auto main() -> int
 {
+	watchdog::start();
+
 	logger::init();
 
 	rtos::ThisThread::sleep_for(1s);
