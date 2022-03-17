@@ -10,37 +10,61 @@
 namespace leka::system::robot::sm {
 
 struct logger {
-	// ? prefix_size is used to remove the long leka::system::robot:: namespace from the output
-	static constexpr auto prefix_size = std::size(std::string_view {"leka::system::robot::"});
+	auto trim_namespaces(const char *str) const
+	{
+		auto sstr = std::string {str};
+
+		static const auto namespaces = std::to_array<const std::string>({
+			std::string {"leka::system::robot::"},
+			std::string {"boost::sml::back::"},
+			std::string {"boost::ext::sml::v1_1_4::back::"},
+		});
+
+		for (const auto &nmspc: namespaces) {
+			auto pos = std::string::npos;
+			while ((pos = sstr.find(nmspc)) != std::string::npos) {
+				sstr.erase(pos, nmspc.length());
+			}
+		}
+
+		return sstr;
+	}
 
 	template <typename T>
 	auto name()
 	{
-		return boost::sml::aux::get_type_name<T>() + prefix_size;
+		auto name = trim_namespaces(boost::sml::aux::get_type_name<T>());
+		return name;
 	}
 
 	template <typename SM, typename TEvent>
-	void log_process_event(const TEvent &event)
+	void log_process_event([[maybe_unused]] const TEvent &event)
 	{
-		log_debug("%s", name<TEvent>());
+		auto e = name<TEvent>();
+		log_info("%s", e.c_str());
 	}
 
 	template <typename SM, typename TGuard, typename TEvent>
-	void log_guard(const TGuard &guard, const TEvent &event, bool result)
+	void log_guard([[maybe_unused]] const TGuard &guard, [[maybe_unused]] const TEvent &event, bool result)
 	{
-		log_debug("%s [%s == %s]", name<TEvent>(), name<TGuard>(), (result ? "(true)" : "(false)"));
+		auto e = name<TEvent>();
+		auto g = name<TGuard>();
+		log_info("%s [%s == %s]", e.c_str(), g.c_str(), (result ? "true" : "false"));
 	}
 
 	template <typename SM, typename TAction, typename TEvent>
-	void log_action(const TAction &action, const TEvent &event)
+	void log_action([[maybe_unused]] const TAction &action, [[maybe_unused]] const TEvent &event)
 	{
-		log_debug("%s", name<TAction>());
+		auto a = name<TAction>();
+		log_info("%s", a.c_str());
 	}
 
 	template <typename SM, typename TSrcState, typename TDstState>
-	void log_state_change(const TSrcState &src, const TDstState &dst)
+	void log_state_change(const TSrcState &src, const TDstState &dst) const
 	{
-		log_debug("%s -> %s", src.c_str() + prefix_size, dst.c_str() + prefix_size);
+		auto s = trim_namespaces(src.c_str());
+		auto d = trim_namespaces(dst.c_str());
+		log_info("%s -> %s", s.c_str(), d.c_str());
 	}
 };
 
