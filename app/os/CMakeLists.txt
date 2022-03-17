@@ -23,6 +23,7 @@ target_link_libraries(LekaOS
 	CoreFlashMemory
 	FileSystemKit
 	FirmwareKit
+	VideoKit
 )
 
 target_link_custom_leka_targets(LekaOS)

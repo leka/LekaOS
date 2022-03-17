@@ -18,6 +18,7 @@
 #include "RobotController.h"
 #include "SDBlockDevice.h"
 #include "SlicingBlockDevice.h"
+#include "VideoKit.h"
 #include "bootutil/bootutil.h"
 
 using namespace leka;
@@ -36,7 +37,9 @@ auto coreflashmanager = CoreFlashManagerIS25LP016D(coreqspi);
 auto coreflash		  = CoreFlashIS25LP016D(coreqspi, coreflashmanager);
 auto firmwarekit	  = FirmwareKit(coreflash);
 
-auto rc = RobotController {sleep_timeout, battery, firmwarekit};
+auto videokit = VideoKit {};
+
+auto rc = RobotController {sleep_timeout, battery, firmwarekit, videokit};
 
 void initializeSD()
 {
