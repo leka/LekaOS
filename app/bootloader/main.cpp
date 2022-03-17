@@ -10,6 +10,7 @@
 #include "drivers/InterruptIn.h"
 #include "rtos/ThisThread.h"
 
+#include "ConfigKit.h"
 #include "CoreBattery.h"
 #include "CoreLED.h"
 #include "CoreMotor.h"
@@ -30,12 +31,6 @@ using namespace leka;
 
 namespace {
 
-namespace config {
-
-	const auto file = FileManagerKit::File {"/fs/conf/bootloader.conf"};
-
-}
-
 namespace os {
 
 	constexpr auto start_address = uint32_t {0x8040000 + 0x1000};	// Start application address + header
@@ -50,8 +45,8 @@ namespace battery {
 
 	}
 
-	constexpr auto hysteresis_offset	 = uint8_t {5};
-	constexpr auto minimum_working_level = float {8.0};
+	constexpr auto default_hysteresis_offset = uint8_t {5};
+	constexpr auto minimum_working_level	 = float {8.0};
 
 	auto cells = CoreBattery {PinName::BATTERY_VOLTAGE, battery::charge::status_input};
 
@@ -76,6 +71,20 @@ namespace sd {
 	}
 
 }	// namespace sd
+
+namespace config {
+
+	auto battery_hysteresis_offset =
+		Config {"/fs/conf/bootloader_battery_hysteresis_offset", battery::default_hysteresis_offset};
+
+	auto configkit = ConfigKit {};
+
+	auto batteryHysteresisOffset() -> uint8_t
+	{
+		return configkit.read(config::battery_hysteresis_offset);
+	}
+
+}	// namespace config
 
 namespace leds {
 
@@ -202,7 +211,9 @@ auto main() -> int
 	leds::turnOff();
 	motors::turnOff();
 
-	while (battery::cells.level() < 0 + battery::hysteresis_offset) {
+	sd::init();
+
+	while (battery::cells.level() < 0 + config::batteryHysteresisOffset()) {
 		if (battery::cells.isCharging() && battery::cells.voltage() < battery::minimum_working_level) {
 			leds::blink::lowEnergy();
 		} else if (battery::cells.isCharging() && battery::cells.voltage() < leka::CoreBattery::Capacity::empty) {
@@ -213,8 +224,6 @@ auto main() -> int
 
 		rtos::ThisThread::sleep_for(5s);
 	}
-
-	sd::init();
 
 	auto start_address = os::start_address;
 
