@@ -13,6 +13,9 @@ class VideoKit
 
 	void initializeScreen() {};
 
+	void turnOn() {};
+	void turnOff() {};
+
 	void displayImage(const char *path) {};
 
 	void playVideo(const char *path) {};

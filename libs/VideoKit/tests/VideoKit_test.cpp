@@ -24,6 +24,16 @@ TEST_F(VideoKitTest, initialization)
 	EXPECT_NE(&video_kit, nullptr);
 }
 
+TEST_F(VideoKitTest, turnOn)
+{
+	video_kit.turnOn();
+}
+
+TEST_F(VideoKitTest, turnOff)
+{
+	video_kit.turnOff();
+}
+
 TEST_F(VideoKitTest, initializeScreen)
 {
 	video_kit.initializeScreen();
