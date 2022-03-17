@@ -14,8 +14,8 @@ done
 
 BOOTLOADER_HEX="_tmp/bootloader.hex"
 
-APPLICATION_HEX_SOURCE="_build/LEKA_V1_2_DEV/spikes/lk_update_process_app_base/spike_lk_update_process_app_base.hex"
-APPLICATION_VERSION="1.2.3+4"
+APPLICATION_HEX_SOURCE="_build/LEKA_V1_2_DEV/app/os/LekaOS.hex"
+APPLICATION_VERSION="1.0.0+0"
 APPLICATION_SIGNED_HEX="_tmp/application-signed.hex"
 
 FIRMWARE_HEX="_tmp/firmware.hex"
