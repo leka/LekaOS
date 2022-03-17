@@ -17,6 +17,7 @@
 #include "BehaviorKit.h"
 #include "CommandKit.h"
 #include "CoreMotor.h"
+#include "CoreMutex.h"
 #include "LedKit.h"
 #include "RCLogger.h"
 #include "SerialNumberKit.h"
@@ -28,7 +29,9 @@
 #include "interface/drivers/Timeout.h"
 
 namespace leka {
-template <typename sm_t = boost::sml::sm<system::robot::StateMachine, boost::sml::logger<system::robot::sm::logger>>>
+
+template <typename sm_t = boost::sml::sm<system::robot::StateMachine, boost::sml::logger<system::robot::sm::logger>,
+										 boost::sml::thread_safe<CoreMutex>>>
 class RobotController : public interface::RobotController
 {
   public:
