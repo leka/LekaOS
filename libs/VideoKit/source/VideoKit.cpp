@@ -10,6 +10,7 @@ using namespace std::chrono_literals;
 constexpr uint32_t START_VIDEO_FLAG(1UL << 1);
 constexpr uint32_t STOP_VIDEO_FLAG(1UL << 2);
 constexpr uint32_t END_OF_VIDEO_FLAG(1UL << 3);
+constexpr uint32_t PLAY_ONCE_VIDEO_FLAG(1UL << 4);
 
 VideoKit::VideoKit(interface::STM32Hal &hal)
 	: _hal(hal),
@@ -65,6 +66,12 @@ void VideoKit::playVideo(const char *path, bool must_loop)
 	stopVideo();
 	rtos::ThisThread::sleep_for(100ms);
 
+	if (must_loop) {
+		_event_flags.clear(PLAY_ONCE_VIDEO_FLAG);
+	} else {
+		_event_flags.set(PLAY_ONCE_VIDEO_FLAG);
+	}
+
 	_full_path_video = path;
 	_event_flags.set(START_VIDEO_FLAG);
 };
@@ -76,7 +83,8 @@ void VideoKit::stopVideo()
 
 void VideoKit::runVideo()
 {
-	auto hasToStopVideo = [&]() { return (_event_flags.get() & STOP_VIDEO_FLAG) == STOP_VIDEO_FLAG; };
+	auto hasToStopVideo		= [&]() { return (_event_flags.get() & STOP_VIDEO_FLAG) == STOP_VIDEO_FLAG; };
+	auto hasToPlayOnceVideo = [&]() { return (_event_flags.get() & PLAY_ONCE_VIDEO_FLAG) == PLAY_ONCE_VIDEO_FLAG; };
 
 	while (true) {
 		_event_flags.wait_any(START_VIDEO_FLAG);
@@ -93,7 +101,7 @@ void VideoKit::runVideo()
 		if (video.hasEnded()) {
 			_event_flags.set(END_OF_VIDEO_FLAG);
 			rtos::ThisThread::sleep_for(300ms);
-			if (!hasToStopVideo()) {
+			if (!hasToPlayOnceVideo() && !hasToStopVideo()) {
 				_event_flags.set(START_VIDEO_FLAG);
 			}
 		}
