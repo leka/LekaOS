@@ -15,6 +15,8 @@ class LEDAnimation : public interface::LEDAnimation
 	MOCK_METHOD(void, start, (), (override));
 	MOCK_METHOD(void, stop, (), (override));
 	MOCK_METHOD(void, run, (), (override));
+
+	MOCK_METHOD(void, setLeds, (interface::LED &, interface::LED &), (override));
 };
 
 }	// namespace leka::mock
