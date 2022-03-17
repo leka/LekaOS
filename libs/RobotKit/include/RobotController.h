@@ -7,6 +7,7 @@
 #include "BLEKit.h"
 #include "BLEServiceBattery.h"
 #include "BLEServiceDeviceInformation.h"
+#include "BLEServiceMonitoring.h"
 
 #include "BatteryKit.h"
 #include "StateMachine.h"
@@ -46,7 +47,14 @@ class RobotController : public interface::RobotController
 	}
 	void stopSleepingBehavior() final { _videokit.stopVideo(); }
 
-	auto isCharging() -> bool final { return _battery.isCharging(); };
+	auto isCharging() -> bool final
+	{
+		auto is_charging = _battery.isCharging();
+
+		_service_monitoring.setChargingStatus(is_charging);
+
+		return is_charging;
+	};
 
 	void onStartChargingBehavior(uint8_t level)
 	{
@@ -142,8 +150,9 @@ class RobotController : public interface::RobotController
 	BLEKit _ble {};
 	inline static BLEServiceDeviceInformation _service_device_information {};
 	inline static BLEServiceBattery _service_battery {};
+	inline static BLEServiceMonitoring _service_monitoring {};
 	inline static auto services =
-		std::to_array<interface::BLEService *>({&_service_device_information, &_service_battery});
+		std::to_array<interface::BLEService *>({&_service_device_information, &_service_battery, &_service_monitoring});
 };
 
 }	// namespace leka
