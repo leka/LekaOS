@@ -22,8 +22,13 @@ class BLEServiceMonitoring : public interface::BLEService
 		sendData(data);
 	}
 
-	void onDataReceived(const data_received_handle_t &params) final {
-		// do nothing
+	auto isScreensaverEnable() const -> bool { return screensaver_enable; }
+
+	void onDataReceived(const data_received_handle_t &params) final
+	{
+		if (params.handle == screensaver_enable_characteristic.getValueHandle()) {
+			screensaver_enable = static_cast<bool>(params.data[0]);
+		}
 	};
 
   private:
@@ -32,7 +37,12 @@ class BLEServiceMonitoring : public interface::BLEService
 		service::monitoring::characteristic::charging_status, &charging_status,
 		GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
 
-	std::array<GattCharacteristic *, 1> _characteristic_table {&_charging_status_characteristic};
+	bool screensaver_enable {true};
+	WriteOnlyGattCharacteristic<bool> screensaver_enable_characteristic {
+		service::monitoring::characteristic::screensaver_enable, &screensaver_enable};
+
+	std::array<GattCharacteristic *, 2> _characteristic_table {&_charging_status_characteristic,
+															   &screensaver_enable_characteristic};
 };
 
 }	// namespace leka

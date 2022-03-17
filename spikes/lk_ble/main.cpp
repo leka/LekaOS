@@ -50,6 +50,8 @@ auto main() -> int
 		charging_status = !charging_status;
 		service_monitoring.setChargingStatus(charging_status);
 
+		log_info("Screensaver enable: %d", service_monitoring.isScreensaverEnable());
+
 		auto version = service_update.getVersion();
 
 		auto apply_update = service_update.getApplyUpdateValue();

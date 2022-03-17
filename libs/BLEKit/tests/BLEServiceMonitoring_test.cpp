@@ -8,17 +8,33 @@
 
 using namespace leka;
 
-TEST(BLEServiceMonitoringTest, initialisation)
+class BLEServiceMonitoringTest : public testing::Test
 {
-	auto service_monitoring = BLEServiceMonitoring {};
+  protected:
+	// void SetUp() override {}
+	// void TearDown() override {}
 
+	BLEServiceMonitoring service_monitoring {};
+
+	BLEServiceMonitoring::data_received_handle_t data_received_handle {};
+
+	bool default_is_screensaver_enable {true};
+
+	void onDataReceivedProcess(const uint8_t *data)
+	{
+		data_received_handle.data = data;
+
+		service_monitoring.onDataReceived(data_received_handle);
+	}
+};
+
+TEST_F(BLEServiceMonitoringTest, initialisation)
+{
 	EXPECT_NE(&service_monitoring, nullptr);
 }
 
-TEST(BLEServiceMonitoringTest, setChargingStatus)
+TEST_F(BLEServiceMonitoringTest, setChargingStatus)
 {
-	auto service_monitoring = BLEServiceMonitoring {};
-
 	uint8_t actual_charging_status {};
 
 	auto spy_callback = [&actual_charging_status](const BLEServiceMonitoring::data_to_send_handle_t &handle) {
@@ -33,12 +49,34 @@ TEST(BLEServiceMonitoringTest, setChargingStatus)
 	EXPECT_FALSE(actual_charging_status);
 }
 
-TEST(BLEServiceMonitoringTest, onDataReceived)
+TEST_F(BLEServiceMonitoringTest, isScreensaverEnableDefault)
 {
-	auto service_monitoring = BLEServiceMonitoring {};
+	auto actual_is_screensaver_enable = service_monitoring.isScreensaverEnable();
+	EXPECT_EQ(actual_is_screensaver_enable, default_is_screensaver_enable);
+}
 
-	auto dummy_params = BLEServiceMonitoring::data_received_handle_t {};
-	service_monitoring.onDataReceived(dummy_params);
+TEST_F(BLEServiceMonitoringTest, isScreensaverEnableFalse)
+{
+	bool expected_is_screensaver_enable = false;
 
-	// nothing expected
+	auto convert_to_handle_data_type = [](bool value) { return std::make_shared<uint8_t>(value).get(); };
+	onDataReceivedProcess(convert_to_handle_data_type(expected_is_screensaver_enable));
+
+	auto actual_is_screensaver_enable = service_monitoring.isScreensaverEnable();
+	EXPECT_EQ(actual_is_screensaver_enable, expected_is_screensaver_enable);
+}
+
+TEST_F(BLEServiceMonitoringTest, isScreensaverEnableNotSameHandle)
+{
+	bool expected_is_screensaver_enable = default_is_screensaver_enable;
+	bool sent_value						= false;
+
+	data_received_handle.handle = 0xFFFF;
+
+	auto convert_to_handle_data_type = [](bool value) { return std::make_shared<uint8_t>(value).get(); };
+	onDataReceivedProcess(convert_to_handle_data_type(sent_value));
+
+	auto actual_is_screensaver_enable = service_monitoring.isScreensaverEnable();
+	EXPECT_EQ(actual_is_screensaver_enable, expected_is_screensaver_enable);
+	EXPECT_NE(actual_is_screensaver_enable, sent_value);
 }
