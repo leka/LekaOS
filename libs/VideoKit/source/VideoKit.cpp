@@ -33,6 +33,7 @@ void VideoKit::initializeScreen()
 	_coresdram.initialize();
 
 	initialize();
+	turnOff();
 	setFrameRateLimit(30);
 
 	_video_thread.start(mbed::Callback(this, &VideoKit::runVideo));
@@ -41,11 +42,13 @@ void VideoKit::initializeScreen()
 void VideoKit::turnOn()
 {
 	_corelcd.turnOn();
+	setBrightness(1.F);
 }
 
 void VideoKit::turnOff()
 {
 	_corelcd.turnOff();
+	setBrightness(0.F);
 }
 
 void VideoKit::displayImage(const char *path)
@@ -56,6 +59,8 @@ void VideoKit::displayImage(const char *path)
 	stopVideo();
 	rtos::ThisThread::sleep_for(100ms);
 
+	turnOn();
+
 	draw(image);
 	display();
 }
@@ -65,6 +70,8 @@ void VideoKit::playVideo(const char *path, bool must_loop)
 	rtos::ThisThread::sleep_for(100ms);
 	stopVideo();
 	rtos::ThisThread::sleep_for(100ms);
+
+	turnOn();
 
 	if (must_loop) {
 		_event_flags.clear(PLAY_ONCE_VIDEO_FLAG);
