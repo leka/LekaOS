@@ -7,11 +7,13 @@
 #include "CoreMCU.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
+#include "SerialNumberKit.h"
 
 using namespace leka;
 using namespace std::chrono_literals;
 
-auto mcu = CoreMCU {};
+auto mcu			 = CoreMCU {};
+auto serialnumberkit = SerialNumberKit {mcu};
 
 auto main() -> int
 {
@@ -31,6 +33,9 @@ auto main() -> int
 
 	auto mcu_id = mcu.getID();
 	log_info("MCU ID: %08lx %08lx %08lx", mcu_id.front, mcu_id.middle, mcu_id.back);
+
+	auto serial_number = serialnumberkit.getSerialNumber();
+	log_info("S/N: %s", serial_number.data());
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
