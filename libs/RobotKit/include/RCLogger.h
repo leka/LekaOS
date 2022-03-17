@@ -24,16 +24,19 @@ struct logger {
 	{
 		log_debug("%s", name<TEvent>());
 	}
+
 	template <typename SM, typename TGuard, typename TEvent>
 	void log_guard(const TGuard &guard, const TEvent &event, bool result)
 	{
 		log_debug("%s [%s == %s]", name<TEvent>(), name<TGuard>(), (result ? "(true)" : "(false)"));
 	}
+
 	template <typename SM, typename TAction, typename TEvent>
 	void log_action(const TAction &action, const TEvent &event)
 	{
 		log_debug("%s", name<TAction>());
 	}
+
 	template <typename SM, typename TSrcState, typename TDstState>
 	void log_state_change(const TSrcState &src, const TDstState &dst)
 	{
