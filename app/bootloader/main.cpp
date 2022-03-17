@@ -85,12 +85,12 @@ void blinkHighEnergy()
 
 auto main() -> int
 {
-	while (battery.voltage() < CoreBattery::Capacity::empty + static_cast<float>(battery_level_hysteresis_offset)) {
-		if (battery.voltage() < 8.0) {
+	while (battery.level() < 0 + battery_level_hysteresis_offset) {
+		if (battery.isCharging() && battery.voltage() < 8.0) {
 			blinkLowEnergy();
-		} else if (battery.voltage() < CoreBattery::Capacity::empty) {
+		} else if (battery.isCharging() && battery.voltage() < CoreBattery::Capacity::empty) {
 			blinkMediumEnergy();
-		} else {
+		} else if (battery.isCharging()) {
 			blinkHighEnergy();
 		}
 
