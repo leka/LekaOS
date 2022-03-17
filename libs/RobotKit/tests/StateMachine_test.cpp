@@ -51,17 +51,31 @@ TEST_F(StateMachineTest, initialState)
 	EXPECT_FALSE(sm.is(lksm::state::charging));
 }
 
-TEST_F(StateMachineTest, stateSetupEventSetupComplete)
+TEST_F(StateMachineTest, stateSetupEventSetupCompleteGuardIsChargingFalse)
 {
 	sm.set_current_states(lksm::state::setup);
 
 	EXPECT_CALL(mock_rc, runLaunchingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
 	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startWaitingBehavior).Times(1);
 
 	sm.process_event(lksm::event::setup_complete {});
 
 	EXPECT_TRUE(sm.is(lksm::state::idle));
+}
+
+TEST_F(StateMachineTest, stateSetupEventSetupCompleteGuardIsChargingTrue)
+{
+	sm.set_current_states(lksm::state::setup);
+
+	EXPECT_CALL(mock_rc, runLaunchingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
+	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+
+	sm.process_event(lksm::event::setup_complete {});
+
+	EXPECT_TRUE(sm.is(lksm::state::charging));
 }
 
 TEST_F(StateMachineTest, stateIdleEventTimeout)
