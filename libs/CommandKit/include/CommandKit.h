@@ -24,10 +24,6 @@ class CommandKit
 
 	auto size() const -> std::size_t;
 
-	struct command {
-		static inline auto led = LedCommand {};
-	};
-
   private:
 	void processCommands();
 	void executeCommands();

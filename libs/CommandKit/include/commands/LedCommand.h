@@ -9,10 +9,13 @@
 #include "LogKit.h"
 #include "Utils.h"
 #include "interface/Command.h"
+#include "interface/drivers/LED.h"
 
 namespace leka {
 
 struct LedCommand : interface::Command {
+	LedCommand(auto ears, auto belt) : _ears(ears), _belt(belt) {}
+
 	auto id() -> uint8_t override { return cmd::id; }
 	auto data() -> uint8_t * override { return args.data(); };
 	[[nodiscard]] auto size() const -> std::size_t override { return std::size(args); };
@@ -53,6 +56,8 @@ struct LedCommand : interface::Command {
 	};
 
 	std::array<uint8_t, cmd::size> args {};
+	interface::LED &_ears;
+	interface::LED &_belt;
 };
 
 }	// namespace leka
