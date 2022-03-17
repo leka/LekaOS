@@ -26,7 +26,7 @@ class LedKit
 		_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
 	};
 
-	void start(interface::LEDAnimation &animation);
+	void start(interface::LEDAnimation *animation);
 	void stop();
 
   private:

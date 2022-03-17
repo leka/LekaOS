@@ -8,20 +8,38 @@
 
 namespace leka::led::animation {
 
-void SpinBlink::start()
+void SpinBlink::setLeds(interface::LED &ears, interface::LED &belt)
 {
-	turnLedBlack();
+	_ears = &ears;
+	_belt = &belt;
 }
 
-void SpinBlink::stop()
+void SpinBlink::start()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	turnLedBlack();
 	_step  = 0;
 	_stage = 0;
 }
 
+void SpinBlink::stop()
+{
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
+	turnLedBlack();
+}
+
 void SpinBlink::run()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	static constexpr auto kLastStage = uint8_t {41};
 	auto is_belt_cyan				 = [this] { return (_stage % 2) == 0; };
 	if (_stage > kLastStage) {
@@ -32,16 +50,16 @@ void SpinBlink::run()
 	} else {
 		stagesBeltMagenta();
 	}
-	_ears.show();
-	_belt.show();
+	_ears->show();
+	_belt->show();
 }
 
 void SpinBlink::stagesBeltCyan()
 {
 	static constexpr auto kMaxInputValue = uint8_t {10};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
-		_ears.setColor(RGB::magenta);
-		_belt.setColor(RGB::cyan);
+		_ears->setColor(RGB::magenta);
+		_belt->setColor(RGB::cyan);
 		++_step;
 	} else {
 		_step = 0;
@@ -53,8 +71,8 @@ void SpinBlink::stagesBeltMagenta()
 {
 	static constexpr auto kMaxInputValue = uint8_t {10};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
-		_ears.setColor(RGB::cyan);
-		_belt.setColor(RGB::magenta);
+		_ears->setColor(RGB::cyan);
+		_belt->setColor(RGB::magenta);
 		++_step;
 	} else {
 		_step = 0;
@@ -64,10 +82,10 @@ void SpinBlink::stagesBeltMagenta()
 
 void SpinBlink::turnLedBlack()
 {
-	_ears.setColor(RGB::black);
-	_belt.setColor(RGB::black);
-	_ears.show();
-	_belt.show();
+	_ears->setColor(RGB::black);
+	_belt->setColor(RGB::black);
+	_ears->show();
+	_belt->show();
 }
 
 }	// namespace leka::led::animation

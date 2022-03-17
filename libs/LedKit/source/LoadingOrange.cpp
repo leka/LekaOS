@@ -8,20 +8,38 @@
 
 namespace leka::led::animation {
 
-void LoadingOrange::start()
+void LoadingOrange::setLeds(interface::LED &ears, interface::LED &belt)
 {
-	turnLedBlack();
+	_ears = &ears;
+	_belt = &belt;
 }
 
-void LoadingOrange::stop()
+void LoadingOrange::start()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	turnLedBlack();
 	_step  = 0;
 	_stage = 0;
 }
 
+void LoadingOrange::stop()
+{
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
+	turnLedBlack();
+}
+
 void LoadingOrange::run()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	switch (_stage) {
 		case 0:
 			stage0();
@@ -50,7 +68,7 @@ void LoadingOrange::run()
 		default:
 			break;
 	}
-	_belt.show();
+	_belt->show();
 }
 
 void LoadingOrange::stage0()
@@ -102,7 +120,7 @@ void LoadingOrange::increaseBrightness()
 	static constexpr auto orange		 = RGB {0xFF, 0x65, 0x00};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, orange, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		_step++;
 	} else {
 		_stage++;
@@ -115,7 +133,7 @@ void LoadingOrange::decreaseBrightness(float treshold)
 	static constexpr auto orange		 = RGB {0xFF, 0x65, 0x00};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, orange, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		_step--;
 	} else {
 		_stage++;
@@ -124,10 +142,10 @@ void LoadingOrange::decreaseBrightness(float treshold)
 
 void LoadingOrange::turnLedBlack()
 {
-	_ears.setColor(RGB::black);
-	_belt.setColor(RGB::black);
-	_ears.show();
-	_belt.show();
+	_ears->setColor(RGB::black);
+	_belt->setColor(RGB::black);
+	_ears->show();
+	_belt->show();
 }
 
 }	// namespace leka::led::animation

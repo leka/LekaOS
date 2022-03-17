@@ -32,17 +32,19 @@ namespace leka::led::animation {
 class BlinkGreen : public interface::LEDAnimation
 {
   public:
-	explicit BlinkGreen(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {};
+	explicit BlinkGreen() = default;
 
 	void start() final;
 	void run() final;
 	void stop() final;
 
+	void setLeds(interface::LED &ears, interface::LED &belt) final;
+
   private:
-	interface::LED &_ears;
-	interface::LED &_belt;
-	uint8_t _step  = 0;
-	uint8_t _stage = 0;
+	interface::LED *_ears = nullptr;
+	interface::LED *_belt = nullptr;
+	uint8_t _step		  = 0;
+	uint8_t _stage		  = 0;
 
 	void stagesBlack();
 	void stagesGreen1();

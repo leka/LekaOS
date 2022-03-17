@@ -8,20 +8,38 @@
 
 namespace leka::led::animation {
 
-void Waiting::start()
+void Waiting::setLeds(interface::LED &ears, interface::LED &belt)
 {
-	turnLedBlack();
+	_ears = &ears;
+	_belt = &belt;
 }
 
-void Waiting::stop()
+void Waiting::start()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	turnLedBlack();
 	_step  = 0;
 	_stage = 0;
 }
 
+void Waiting::stop()
+{
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
+	turnLedBlack();
+}
+
 void Waiting::run()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	switch (_stage) {
 		case 0:
 			stage0();
@@ -41,7 +59,7 @@ void Waiting::run()
 		default:
 			break;
 	}
-	_belt.show();
+	_belt->show();
 }
 
 void Waiting::stage0()
@@ -49,7 +67,7 @@ void Waiting::stage0()
 	static constexpr auto kMaxInputValue = uint8_t {40};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		_step++;
 	} else {
 		_stage++;
@@ -62,7 +80,7 @@ void Waiting::stage1()
 	static constexpr auto tresholdDown	 = 0.3F;
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos >= tresholdDown) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		_step--;
 	} else {
 		_stage++;
@@ -74,7 +92,7 @@ void Waiting::stage2()
 	static constexpr auto kMaxInputValue = uint8_t {40};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		_step++;
 	} else {
 		_stage++;
@@ -86,7 +104,7 @@ void Waiting::stage3()
 	static constexpr auto kMaxInputValue = uint8_t {40};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		_step--;
 	} else {
 		_stage++;
@@ -95,10 +113,10 @@ void Waiting::stage3()
 
 void Waiting::turnLedBlack()
 {
-	_ears.setColor(RGB::black);
-	_belt.setColor(RGB::black);
-	_ears.show();
-	_belt.show();
+	_ears->setColor(RGB::black);
+	_belt->setColor(RGB::black);
+	_ears->show();
+	_belt->show();
 }
 
 }	// namespace leka::led::animation
