@@ -44,9 +44,16 @@ TEST_F(VideoKitTest, displayImage)
 	video_kit.displayImage("some_image");
 }
 
-TEST_F(VideoKitTest, playVideo)
+TEST_F(VideoKitTest, playVideoInALoopFalse)
 {
-	video_kit.playVideo("some_video");
+	auto play_in_a_loop = false;
+	video_kit.playVideo("some_video", play_in_a_loop);
+}
+
+TEST_F(VideoKitTest, playVideoInALoopTrue)
+{
+	auto play_in_a_loop = true;
+	video_kit.playVideo("some_video", play_in_a_loop);
 }
 
 TEST_F(VideoKitTest, stopVideo)

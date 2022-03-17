@@ -18,7 +18,7 @@ class VideoKit
 
 	void displayImage(const char *path) {};
 
-	void playVideo(const char *path) {};
+	void playVideo(const char *path, bool must_loop = false) {};
 	void stopVideo() {};
 };
 
