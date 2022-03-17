@@ -29,6 +29,7 @@ target_sources(stubs
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/BLE.cpp
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/Kernel.cpp
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/mbed_critical.cpp
+		${UNIT_TESTS_STUBS_MBED_DIR}/source/mbed_power_mgmt.cpp
 
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/EventQueue_extension.cpp
 
