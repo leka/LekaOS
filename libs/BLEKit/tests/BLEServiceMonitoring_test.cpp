@@ -15,6 +15,17 @@ class BLEServiceMonitoringTest : public testing::Test
 	// void TearDown() override {}
 
 	BLEServiceMonitoring service_monitoring {};
+
+	BLEServiceMonitoring::data_received_handle_t data_received_handle {};
+
+	bool default_is_screensaver_enable {true};
+
+	void onDataReceivedProcess(const uint8_t *data)
+	{
+		data_received_handle.data = data;
+
+		service_monitoring.onDataReceived(data_received_handle);
+	}
 };
 
 TEST_F(BLEServiceMonitoringTest, initialisation)
@@ -38,10 +49,34 @@ TEST_F(BLEServiceMonitoringTest, setChargingStatus)
 	EXPECT_FALSE(actual_charging_status);
 }
 
-TEST_F(BLEServiceMonitoringTest, onDataReceived)
+TEST_F(BLEServiceMonitoringTest, isScreensaverEnableDefault)
 {
-	auto dummy_params = BLEServiceMonitoring::data_received_handle_t {};
-	service_monitoring.onDataReceived(dummy_params);
+	auto actual_is_screensaver_enable = service_monitoring.isScreensaverEnable();
+	EXPECT_EQ(actual_is_screensaver_enable, default_is_screensaver_enable);
+}
 
-	// nothing expected
+TEST_F(BLEServiceMonitoringTest, isScreensaverEnableFalse)
+{
+	bool expected_is_screensaver_enable = false;
+
+	auto convert_to_handle_data_type = [](bool value) { return std::make_shared<uint8_t>(value).get(); };
+	onDataReceivedProcess(convert_to_handle_data_type(expected_is_screensaver_enable));
+
+	auto actual_is_screensaver_enable = service_monitoring.isScreensaverEnable();
+	EXPECT_EQ(actual_is_screensaver_enable, expected_is_screensaver_enable);
+}
+
+TEST_F(BLEServiceMonitoringTest, isScreensaverEnableNotSameHandle)
+{
+	bool expected_is_screensaver_enable = default_is_screensaver_enable;
+	bool sent_value						= false;
+
+	data_received_handle.handle = 0xFFFF;
+
+	auto convert_to_handle_data_type = [](bool value) { return std::make_shared<uint8_t>(value).get(); };
+	onDataReceivedProcess(convert_to_handle_data_type(sent_value));
+
+	auto actual_is_screensaver_enable = service_monitoring.isScreensaverEnable();
+	EXPECT_EQ(actual_is_screensaver_enable, expected_is_screensaver_enable);
+	EXPECT_NE(actual_is_screensaver_enable, sent_value);
 }
