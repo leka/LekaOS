@@ -6,17 +6,21 @@
 
 #include <cstdint>
 
+namespace leka {
+
+struct MCUID {
+	uint32_t front;
+	uint32_t middle;
+	uint32_t back;
+};
+
+}	// namespace leka
+
 namespace leka::interface {
 
 class MCU
 {
   public:
-	struct MCUID {
-		uint32_t front;
-		uint32_t middle;
-		uint32_t back;
-	};
-
 	virtual ~MCU() = default;
 
 	virtual auto getID() -> MCUID = 0;
