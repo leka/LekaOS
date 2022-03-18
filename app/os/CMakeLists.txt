@@ -23,7 +23,12 @@ target_link_libraries(LekaOS
 	CoreFlashMemory
 	FileSystemKit
 	FirmwareKit
+	BehaviorKit
+	CorePwm
+	CoreMotor
 	VideoKit
+	LedKit
+	CoreLED
 )
 
 target_link_custom_leka_targets(LekaOS)

@@ -66,6 +66,13 @@ TEST_F(LedKitTestAnimations, stopWithoutAnimation)
 	ledkit.stop();
 }
 
+TEST_F(LedKitTestAnimations, setLedsAnimation)
+{
+	EXPECT_CALL(mock_animation, setLeds).Times(1);
+
+	mock_animation.setLeds(ears, belt);
+}
+
 TEST_F(LedKitTestAnimations, stopStartedAnimation)
 {
 	MOCK_FUNCTION_silenceUnexpectedCalls();

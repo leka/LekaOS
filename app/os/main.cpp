@@ -10,7 +10,9 @@
 #include "CoreBattery.h"
 #include "CoreFlashIS25LP016D.h"
 #include "CoreFlashManagerIS25LP016D.h"
+#include "CorePwm.h"
 #include "CoreQSPI.h"
+#include "CoreSPI.h"
 #include "CoreTimeout.h"
 #include "FATFileSystem.h"
 #include "FirmwareKit.h"
@@ -50,20 +52,41 @@ void start()
 
 auto sleep_timeout = CoreTimeout {};
 
-auto charge_input = mbed::InterruptIn {PinName::BATTERY_CHARGE_STATUS};
-auto battery	  = leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_input};
-
 auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
 auto fatfs			= FATFileSystem {"fs"};
+
+auto videokit = VideoKit {};
+
+auto corespi_belt		   = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+auto corespi_ears		   = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+auto ears				   = CoreLED<LedKit::kNumberOfLedsEars> {corespi_ears};
+auto belt				   = CoreLED<LedKit::kNumberOfLedsBelt> {corespi_belt};
+auto animation_thread	   = rtos::Thread {};
+auto animation_event_queue = events::EventQueue {};
+
+auto ledkit = LedKit {animation_thread, animation_event_queue, ears, belt};
+
+auto motor_left_dir_1  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
+auto motor_left_dir_2  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
+auto motor_left_speed  = CorePwm {MOTOR_LEFT_PWM};
+auto motor_right_dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
+auto motor_right_dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
+auto motor_right_speed = CorePwm {MOTOR_RIGHT_PWM};
+
+auto motor_left	 = CoreMotor {motor_left_dir_1, motor_left_dir_2, motor_left_speed};
+auto motor_right = CoreMotor {motor_right_dir_1, motor_right_dir_2, motor_right_speed};
+
+auto behaviorkit = BehaviorKit {videokit, ledkit, motor_left, motor_right};
+
+auto charge_input = mbed::InterruptIn {PinName::BATTERY_CHARGE_STATUS};
+auto battery	  = leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_input};
 
 auto coreqspi		  = CoreQSPI();
 auto coreflashmanager = CoreFlashManagerIS25LP016D(coreqspi);
 auto coreflash		  = CoreFlashIS25LP016D(coreqspi, coreflashmanager);
 auto firmwarekit	  = FirmwareKit(coreflash);
 
-auto videokit = VideoKit {};
-
-auto rc = RobotController {sleep_timeout, battery, firmwarekit, videokit};
+auto rc = RobotController {sleep_timeout, battery, firmwarekit, behaviorkit};
 
 void initializeSD()
 {
@@ -114,6 +137,7 @@ auto main() -> int
 
 	initializeSD();
 	initializeUpdateFlash();
+	videokit.initializeScreen();
 
 	rc.initializeComponents();
 	rc.registerOnUpdateLoadedCallback(setPendingUpdate);

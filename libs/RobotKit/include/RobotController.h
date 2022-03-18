@@ -12,8 +12,8 @@
 #include "BLEServiceMonitoring.h"
 
 #include "BatteryKit.h"
+#include "BehaviorKit.h"
 #include "StateMachine.h"
-#include "VideoKit.h"
 #include "interface/RobotController.h"
 #include "interface/drivers/Battery.h"
 #include "interface/drivers/FirmwareUpdate.h"
@@ -28,26 +28,22 @@ class RobotController : public interface::RobotController
 	sm_t state_machine {static_cast<interface::RobotController &>(*this)};
 
 	explicit RobotController(interface::Timeout &sleep_timeout, interface::Battery &battery,
-							 interface::FirmwareUpdate &firmware_update, VideoKit &video_kit)
-		: _sleep_timeout(sleep_timeout), _battery(battery), _firmware_update(firmware_update), _videokit(video_kit) {};
+							 interface::FirmwareUpdate &firmware_update, BehaviorKit &behaviorkit)
+		: _sleep_timeout(sleep_timeout),
+		  _battery(battery),
+		  _firmware_update(firmware_update),
+		  _behaviorkit(behaviorkit) {};
 
-	void runLaunchingBehavior() final { _videokit.displayImage("/fs/images/logo.jpg"); }
+	void runLaunchingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::launching); }
 
 	void startSleepTimeout() final { _sleep_timeout.start(_sleep_timeout_duration); }
 	void stopSleepTimeout() final { _sleep_timeout.stop(); }
 
-	void startWaitingBehavior() final
-	{
-		_videokit.playVideo(
-			"/fs/videos/2022_02_14-animation-face-state-waiting-looking-top-right-to-left-without-eyebrows.avi");
-	}
-	void stopWaitingBehavior() final { _videokit.stopVideo(); }
+	void startWaitingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::waiting); }
+	void stopWaitingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::stop); }
 
-	void startSleepingBehavior() final
-	{
-		_videokit.playVideo("/fs/videos/2022_01_17-animation-face-state-yawning-sleeping_without_eyebrows.avi");
-	}
-	void stopSleepingBehavior() final { _videokit.stopVideo(); }
+	void startSleepingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::sleeping); }
+	void stopSleepingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::stop); }
 
 	auto isCharging() -> bool final
 	{
@@ -63,15 +59,15 @@ class RobotController : public interface::RobotController
 		_service_battery.setBatteryLevel(level);
 
 		if (level < 25) {
-			_videokit.displayImage("/fs/images/battery_0.jpg");
+			_event_queue.call(&_behaviorkit, &BehaviorKit::chargingZero);
 		} else if (level < 50) {
-			_videokit.displayImage("/fs/images/battery_red.jpg");
+			_event_queue.call(&_behaviorkit, &BehaviorKit::chargingRed);
 		} else if (level < 75) {
-			_videokit.displayImage("/fs/images/battery_yellow_2.jpg");
+			_event_queue.call(&_behaviorkit, &BehaviorKit::chargingOrange);
 		} else if (level < 100) {
-			_videokit.displayImage("/fs/images/battery_green_3.jpg");
+			_event_queue.call(&_behaviorkit, &BehaviorKit::chargingYellow);
 		} else {
-			_videokit.displayImage("/fs/images/battery_green_4.jpg");
+			_event_queue.call(&_behaviorkit, &BehaviorKit::chargingGreen);
 		}
 	}
 
@@ -103,7 +99,7 @@ class RobotController : public interface::RobotController
 
 	void initializeComponents()
 	{
-		_videokit.initializeScreen();
+		_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
 
 		_ble.setServices(services);
 		_ble.init();
@@ -149,7 +145,10 @@ class RobotController : public interface::RobotController
 	interface::FirmwareUpdate &_firmware_update;
 	std::function<void()> _on_update_loaded_callback {};
 
-	VideoKit &_videokit;
+	BehaviorKit &_behaviorkit;
+
+	rtos::Thread _thread {};
+	events::EventQueue _event_queue {};
 
 	BLEKit _ble {};
 	inline static BLEServiceDeviceInformation _service_device_information {};
