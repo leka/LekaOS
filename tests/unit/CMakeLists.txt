@@ -238,6 +238,7 @@ leka_register_unit_tests_for_driver(CoreVideo)
 
 # Register libraries
 leka_register_unit_tests_for_library(BatteryKit)
+leka_register_unit_tests_for_library(BehaviorKit)
 leka_register_unit_tests_for_library(BLEKit)
 leka_register_unit_tests_for_library(ColorKit)
 leka_register_unit_tests_for_library(ContainerKit)
