@@ -6,11 +6,18 @@
 
 #include "ble_mocks.h"
 
+#include "BehaviorKit.h"
+#include "CoreMotor.h"
+#include "CorePwm.h"
+#include "CoreSPI.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/Battery.h"
 #include "mocks/leka/FirmwareUpdate.h"
+#include "mocks/leka/LEDAnimation.h"
+#include "mocks/leka/PwmOut.h"
 #include "mocks/leka/Timeout.h"
+#include "mocks/mbed/DigitalOut.h"
 
 using namespace leka;
 using namespace leka::system;
@@ -67,10 +74,32 @@ class RobotControllerTest : public testing::Test
 	mock::Battery battery {};
 	mock::FirmwareUpdate firmware_update {};
 
+	CoreSPI spi {NC, NC, NC, NC};
+	CoreLED<LedKit::kNumberOfLedsBelt> belt {spi};
+	CoreLED<LedKit::kNumberOfLedsEars> ears {spi};
+	rtos::Thread animation_thread;
+	events::EventQueue animation_event_queue;
+
+	LedKit ledkit {animation_thread, animation_event_queue, ears, belt};
+
+	mock::LEDAnimation mock_animation {};
+
+	mbed::mock::DigitalOut dir_1_left = {};
+	mbed::mock::DigitalOut dir_2_left = {};
+	mock::PwmOut speed_left			  = {};
+
+	mbed::mock::DigitalOut dir_1_right = {};
+	mbed::mock::DigitalOut dir_2_right = {};
+	mock::PwmOut speed_right		   = {};
+
+	CoreMotor motor_left {dir_1_left, dir_2_left, speed_left};
+	CoreMotor motor_right {dir_1_right, dir_2_right, speed_right};
+
 	VideoKit videokit {};
 
-	RobotController<bsml::sm<robot::StateMachine, bsml::testing>> rc {sleep_timeout, battery, firmware_update,
-																	  videokit};
+	BehaviorKit bhvkit {videokit, ledkit, motor_left, motor_right};
+
+	RobotController<bsml::sm<robot::StateMachine, bsml::testing>> rc {sleep_timeout, battery, firmware_update, bhvkit};
 
 	interface::Timeout::callback_t on_sleep_timeout = {};
 
