@@ -16,6 +16,7 @@ target_sources(spike_lk_serial_number
 
 target_link_libraries(spike_lk_serial_number
 	CoreMCU
+	SerialNumberKit
 )
 
 target_link_custom_leka_targets(spike_lk_serial_number)
