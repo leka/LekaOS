@@ -13,7 +13,10 @@
 
 #include "BatteryKit.h"
 #include "BehaviorKit.h"
+#include "CoreMotor.h"
+#include "LedKit.h"
 #include "StateMachine.h"
+#include "VideoKit.h"
 #include "interface/RobotController.h"
 #include "interface/drivers/Battery.h"
 #include "interface/drivers/FirmwareUpdate.h"
@@ -28,10 +31,15 @@ class RobotController : public interface::RobotController
 	sm_t state_machine {static_cast<interface::RobotController &>(*this)};
 
 	explicit RobotController(interface::Timeout &sleep_timeout, interface::Battery &battery,
-							 interface::FirmwareUpdate &firmware_update, BehaviorKit &behaviorkit)
+							 interface::FirmwareUpdate &firmware_update, CoreMotor &motor_left, CoreMotor &motor_right,
+							 LedKit &ledkit, VideoKit &videokit, BehaviorKit &behaviorkit)
 		: _sleep_timeout(sleep_timeout),
 		  _battery(battery),
 		  _firmware_update(firmware_update),
+		  _motor_left(motor_left),
+		  _motor_right(motor_right),
+		  _ledkit(ledkit),
+		  _videokit(videokit),
 		  _behaviorkit(behaviorkit) {};
 
 	void runLaunchingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::launching); }
@@ -144,6 +152,11 @@ class RobotController : public interface::RobotController
 
 	interface::FirmwareUpdate &_firmware_update;
 	std::function<void()> _on_update_loaded_callback {};
+
+	CoreMotor &_motor_left;
+	CoreMotor &_motor_right;
+	LedKit &_ledkit;
+	VideoKit &_videokit;
 
 	BehaviorKit &_behaviorkit;
 

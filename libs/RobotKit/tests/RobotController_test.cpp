@@ -99,7 +99,8 @@ class RobotControllerTest : public testing::Test
 
 	BehaviorKit bhvkit {videokit, ledkit, motor_left, motor_right};
 
-	RobotController<bsml::sm<robot::StateMachine, bsml::testing>> rc {sleep_timeout, battery, firmware_update, bhvkit};
+	RobotController<bsml::sm<robot::StateMachine, bsml::testing>> rc {
+		sleep_timeout, battery, firmware_update, motor_left, motor_right, ledkit, videokit, bhvkit};
 
 	interface::Timeout::callback_t on_sleep_timeout = {};
 
