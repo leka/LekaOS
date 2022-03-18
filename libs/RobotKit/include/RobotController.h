@@ -189,7 +189,7 @@ class RobotController : public interface::RobotController
 	};
 
   private:
-	std::chrono::seconds _sleep_timeout_duration {10};
+	std::chrono::seconds _sleep_timeout_duration {300};
 	interface::Timeout &_sleep_timeout;
 
 	interface::Battery &_battery;
