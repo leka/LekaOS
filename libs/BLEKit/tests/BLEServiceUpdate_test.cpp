@@ -4,9 +4,12 @@
 
 #include "BLEServiceUpdate.h"
 
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 using namespace leka;
+
+using ::testing::MockFunction;
 
 class BLEServiceUpdateTest : public testing::Test
 {
@@ -18,7 +21,7 @@ class BLEServiceUpdateTest : public testing::Test
 
 	BLEServiceUpdate::data_received_handle_t data_received_handle {};
 
-	bool default_apply_update_value {false};
+	bool default_request_update_sent {false};
 	FirmwareVersion default_version {0x00, 0x00, 0x0000};
 
 	void onDataReceivedProcess(const uint8_t *data)
@@ -34,36 +37,46 @@ TEST_F(BLEServiceUpdateTest, initialisation)
 	EXPECT_NE(&service_update, nullptr);
 }
 
-TEST_F(BLEServiceUpdateTest, getApplyUpdateValueDefault)
+TEST_F(BLEServiceUpdateTest, onRequestUpdateReceivedTrue)
 {
-	auto actual_apply_update_value = service_update.getApplyUpdateValue();
-	EXPECT_EQ(actual_apply_update_value, default_apply_update_value);
-}
+	bool request_update_sent = true;
 
-TEST_F(BLEServiceUpdateTest, getApplyUpdateValueTrue)
-{
-	bool expected_apply_update_value = true;
+	testing::MockFunction<void()> mock_callback;
+	service_update.onUpdateRequested(mock_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_callback, Call).Times(1);
 
 	auto convert_to_handle_data_type = [](bool value) { return std::make_shared<uint8_t>(value).get(); };
-	onDataReceivedProcess(convert_to_handle_data_type(expected_apply_update_value));
-
-	auto actual_apply_update_value = service_update.getApplyUpdateValue();
-	EXPECT_EQ(actual_apply_update_value, expected_apply_update_value);
+	onDataReceivedProcess(convert_to_handle_data_type(request_update_sent));
 }
 
-TEST_F(BLEServiceUpdateTest, getApplyUpdateValueNotSameHandle)
+TEST_F(BLEServiceUpdateTest, onRequestUpdateReceivedFalse)
 {
-	bool expected_apply_update_value = default_apply_update_value;
-	bool sent_value					 = true;
+	bool request_update_sent = false;
+
+	testing::MockFunction<void()> mock_callback;
+	service_update.onUpdateRequested(mock_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_callback, Call).Times(0);
+
+	auto convert_to_handle_data_type = [](bool value) { return std::make_shared<uint8_t>(value).get(); };
+	onDataReceivedProcess(convert_to_handle_data_type(request_update_sent));
+}
+
+TEST_F(BLEServiceUpdateTest, onRequestUpdateReceivedNotSameHandle)
+{
+	bool request_update_sent = default_request_update_sent;
+	bool sent_value			 = true;
 
 	data_received_handle.handle = 0xFFFF;
 
+	testing::MockFunction<void()> mock_callback;
+	service_update.onUpdateRequested(mock_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_callback, Call).Times(0);
+
 	auto convert_to_handle_data_type = [](bool value) { return std::make_shared<uint8_t>(value).get(); };
 	onDataReceivedProcess(convert_to_handle_data_type(sent_value));
-
-	auto actual_apply_update_value = service_update.getApplyUpdateValue();
-	EXPECT_EQ(actual_apply_update_value, expected_apply_update_value);
-	EXPECT_NE(actual_apply_update_value, sent_value);
 }
 
 TEST_F(BLEServiceUpdateTest, getVersionMajorDefault)
