@@ -42,15 +42,31 @@ class RobotController : public interface::RobotController
 		  _videokit(videokit),
 		  _behaviorkit(behaviorkit) {};
 
-	void runLaunchingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::launching); }
+	void runLaunchingBehavior() final
+	{
+		_event_queue.call(&_behaviorkit, &BehaviorKit::launching);
+		_event_queue.call(&_videokit, &VideoKit::turnOn);
+	}
 
 	void startSleepTimeout() final { _sleep_timeout.start(_sleep_timeout_duration); }
 	void stopSleepTimeout() final { _sleep_timeout.stop(); }
 
-	void startWaitingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::waiting); }
+	void startWaitingBehavior() final
+	{
+		_event_queue.call(&_behaviorkit, &BehaviorKit::waiting);
+		_event_queue.call(&_videokit, &VideoKit::turnOn);
+	}
 	void stopWaitingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::stop); }
 
-	void startSleepingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::sleeping); }
+	void startSleepingBehavior() final
+	{
+		using namespace std::chrono_literals;
+
+		_event_queue.call(&_behaviorkit, &BehaviorKit::sleeping);
+		_event_queue.call(&_videokit, &VideoKit::turnOn);
+
+		_event_queue.call_in(20s, &_videokit, &VideoKit::turnOff);
+	}
 	void stopSleepingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::stop); }
 
 	auto isCharging() -> bool final
@@ -81,7 +97,12 @@ class RobotController : public interface::RobotController
 
 	void startChargingBehavior() final
 	{
+		using namespace std::chrono_literals;
+
 		_battery_kit.onDataUpdated([this](uint8_t level) { onStartChargingBehavior(level); });
+		_event_queue.call(&_videokit, &VideoKit::turnOn);
+
+		_event_queue.call_in(1min, &_videokit, &VideoKit::turnOff);
 	}
 	void stopChargingBehavior() final
 	{
