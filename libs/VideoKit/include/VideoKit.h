@@ -7,7 +7,9 @@
 #include <chrono>
 #include <cstdint>
 
+#include "rtos/EventFlags.h"
 #include "rtos/ThisThread.h"
+#include "rtos/Thread.h"
 
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
@@ -16,6 +18,7 @@
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLTDC.hpp"
+#include "CoreSDRAM.hpp"
 #include "CoreSTM32Hal.h"
 #include "FileManagerKit.h"
 #include "Graphics.h"
@@ -27,15 +30,15 @@ class VideoKit
   public:
 	explicit VideoKit(interface::STM32Hal &);
 
-	void initializeScreen() {};
+	void initializeScreen();
 
-	void turnOn() {};
-	void turnOff() {};
+	void turnOn();
+	void turnOff();
 
-	void displayImage(const char *path) {};
+	void displayImage(const char *path);
 
-	void playVideo(const char *path, bool must_loop = false) {};
-	void stopVideo() {};
+	void playVideo(const char *path, bool must_loop = false);
+	void stopVideo();
 
 	auto getDSI() -> CoreDSI &;
 	auto getLTDC() -> CoreLTDC &;
@@ -71,9 +74,12 @@ class VideoKit
 	void refresh();
 	void tick();
 
+	void runVideo();
+
 	interface::STM32Hal &_hal;
 
 	// peripherals
+	CoreSDRAM _coresdram;
 	CoreJPEGModeDMA _corejpegmode;
 	CoreJPEG _corejpeg;
 	CoreDMA2D _coredma2d;
@@ -90,6 +96,10 @@ class VideoKit
 	std::chrono::milliseconds _whole_duration;
 	uint32_t _whole_tick;
 	std::chrono::milliseconds _maximum;
+
+	const char *_full_path_video;
+	rtos::Thread _video_thread {};
+	rtos::EventFlags _event_flags;
 };
 
 #define VideoKit_DeclareIRQHandlers(instance)                                                                          \

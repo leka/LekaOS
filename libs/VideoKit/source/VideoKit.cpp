@@ -7,9 +7,14 @@
 using namespace leka;
 using namespace std::chrono_literals;
 
+constexpr uint32_t START_VIDEO_FLAG(1UL << 1);
+constexpr uint32_t STOP_VIDEO_FLAG(1UL << 2);
+constexpr uint32_t END_OF_VIDEO_FLAG(1UL << 3);
+
 VideoKit::VideoKit(interface::STM32Hal &hal)
 	: _hal(hal),
 	  // peripherals
+	  _coresdram(_hal),
 	  _corejpegmode(_hal),
 	  _corejpeg(_hal, _corejpegmode),
 	  _coredma2d(_hal),
@@ -21,6 +26,79 @@ VideoKit::VideoKit(interface::STM32Hal &hal)
 	  _frametime(40ms)
 {
 }
+
+void VideoKit::initializeScreen()
+{
+	_coresdram.initialize();
+
+	initialize();
+	setFrameRateLimit(30);
+
+	_video_thread.start(mbed::Callback(this, &VideoKit::runVideo));
+}
+
+void VideoKit::turnOn()
+{
+	_corelcd.turnOn();
+}
+
+void VideoKit::turnOff()
+{
+	_corelcd.turnOff();
+}
+
+void VideoKit::displayImage(const char *path)
+{
+	auto image = gfx::Image {path};
+
+	rtos::ThisThread::sleep_for(100ms);
+	stopVideo();
+	rtos::ThisThread::sleep_for(100ms);
+
+	draw(image);
+	display();
+}
+
+void VideoKit::playVideo(const char *path, bool must_loop)
+{
+	rtos::ThisThread::sleep_for(100ms);
+	stopVideo();
+	rtos::ThisThread::sleep_for(100ms);
+
+	_full_path_video = path;
+	_event_flags.set(START_VIDEO_FLAG);
+};
+
+void VideoKit::stopVideo()
+{
+	_event_flags.set(STOP_VIDEO_FLAG);
+};
+
+void VideoKit::runVideo()
+{
+	auto hasToStopVideo = [&]() { return (_event_flags.get() & STOP_VIDEO_FLAG) == STOP_VIDEO_FLAG; };
+
+	while (true) {
+		_event_flags.wait_any(START_VIDEO_FLAG);
+
+		gfx::Video video(_full_path_video);
+
+		video.restart();
+		_event_flags.clear(STOP_VIDEO_FLAG | END_OF_VIDEO_FLAG);
+		while (!hasToStopVideo() && !video.hasEnded()) {
+			draw(video);
+			video.nextFrame();
+			display();
+		}
+		if (video.hasEnded()) {
+			_event_flags.set(END_OF_VIDEO_FLAG);
+			rtos::ThisThread::sleep_for(300ms);
+			if (!hasToStopVideo()) {
+				_event_flags.set(START_VIDEO_FLAG);
+			}
+		}
+	}
+};
 
 void VideoKit::initialize()
 {

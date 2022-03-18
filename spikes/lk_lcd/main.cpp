@@ -5,7 +5,6 @@
 #include "rtos/ThisThread.h"
 
 #include "Assets.h"
-#include "CoreSDRAM.hpp"
 #include "CoreSTM32Hal.h"
 #include "FATFileSystem.h"
 #include "FileManagerKit.h"
@@ -20,8 +19,7 @@ using namespace std::chrono_literals;
 auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
 auto fatfs			= FATFileSystem {"fs"};
 
-auto hal	   = CoreSTM32Hal {};
-auto coresdram = CoreSDRAM {hal};
+auto hal = CoreSTM32Hal {};
 
 auto screen = VideoKit {hal};
 VideoKit_DeclareIRQHandlers(screen);
@@ -47,29 +45,16 @@ auto main() -> int
 
 	initializeSD();
 
-	coresdram.initialize();
-
-	screen.initialize();
-	screen.setFrameRateLimit(30);
+	screen.initializeScreen();
 
 	for (auto &name: image_names) {
-		auto image = gfx::Image {name};
-
-		screen.draw(image);
-		screen.display();
-
-		rtos::ThisThread::sleep_for(250ms);
+		screen.displayImage(name);
 	}
 
 	while (true) {
 		for (auto &name: video_names) {
-			auto video = gfx::Video {name};
-
-			while (!video.hasEnded()) {
-				screen.draw(video);
-				video.nextFrame();
-				screen.display();
-			}
+			screen.playVideo(name);
+			rtos::ThisThread::sleep_for(3s);
 		}
 	}
 }
