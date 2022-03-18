@@ -16,6 +16,7 @@
 #include "BehaviorKit.h"
 #include "CoreMotor.h"
 #include "LedKit.h"
+#include "SerialNumberKit.h"
 #include "StateMachine.h"
 #include "VideoKit.h"
 #include "interface/RobotController.h"
@@ -32,10 +33,12 @@ class RobotController : public interface::RobotController
 	sm_t state_machine {static_cast<interface::RobotController &>(*this)};
 
 	explicit RobotController(interface::Timeout &sleep_timeout, interface::Battery &battery,
-							 interface::FirmwareUpdate &firmware_update, CoreMotor &motor_left, CoreMotor &motor_right,
-							 LedKit &ledkit, VideoKit &videokit, BehaviorKit &behaviorkit)
+							 SerialNumberKit &serialnumberkit, interface::FirmwareUpdate &firmware_update,
+							 CoreMotor &motor_left, CoreMotor &motor_right, LedKit &ledkit, VideoKit &videokit,
+							 BehaviorKit &behaviorkit)
 		: _sleep_timeout(sleep_timeout),
 		  _battery(battery),
+		  _serialnumberkit(serialnumberkit),
 		  _firmware_update(firmware_update),
 		  _motor_left(motor_left),
 		  _motor_right(motor_right),
@@ -139,6 +142,9 @@ class RobotController : public interface::RobotController
 		_ble.setServices(services);
 		_ble.init();
 
+		auto _serial_number = _serialnumberkit.getSerialNumber();
+		_service_device_information.setSerialNumber(_serial_number);
+
 		_motor_left.stop();
 		_motor_right.stop();
 
@@ -195,6 +201,8 @@ class RobotController : public interface::RobotController
 	interface::Battery &_battery;
 	BatteryKit _battery_kit {_battery};
 	uint8_t _minimal_battery_level_to_update {25};
+
+	SerialNumberKit &_serialnumberkit;
 
 	interface::FirmwareUpdate &_firmware_update;
 	std::function<void()> _on_update_loaded_callback {};

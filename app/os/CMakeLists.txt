@@ -17,11 +17,13 @@ target_sources(LekaOS
 target_link_libraries(LekaOS
 	bootutil
 	RobotKit
+	CoreMCU
 	CoreTimeout
 	CoreBattery
 	CoreQSPI
 	CoreFlashMemory
 	FileSystemKit
+	SerialNumberKit
 	FirmwareKit
 	BehaviorKit
 	CorePwm
