@@ -137,7 +137,6 @@ auto main() -> int
 
 	initializeSD();
 	initializeUpdateFlash();
-	videokit.initializeScreen();
 
 	rc.initializeComponents();
 	rc.registerOnUpdateLoadedCallback(setPendingUpdate);

@@ -111,6 +111,15 @@ class RobotController : public interface::RobotController
 
 		_ble.setServices(services);
 		_ble.init();
+
+		_motor_left.stop();
+		_motor_right.stop();
+
+		_ledkit.stop();
+
+		_videokit.initializeScreen();
+		_videokit.turnOff();
+		_videokit.stopVideo();
 	}
 
 	void registerOnUpdateLoadedCallback(std::function<void()> const &on_update_loaded_callback)
