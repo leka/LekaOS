@@ -38,6 +38,8 @@ namespace monitoring {
 	namespace characteristic {
 		constexpr uint16_t charging_status	  = 0x6783;
 		constexpr uint16_t screensaver_enable = 0x8369;
+		constexpr uint16_t soft_reboot		  = 0x8382;
+		constexpr uint16_t hard_reboot		  = 0x7282;
 	}	// namespace characteristic
 
 }	// namespace monitoring
