@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "platform/mbed_power_mgmt.h"
+
 #include "BLEKit.h"
 #include "BLEServiceBattery.h"
 #include "BLEServiceDeviceInformation.h"
@@ -93,6 +95,8 @@ class RobotController : public interface::RobotController
 		if (_firmware_update.loadUpdate(firmware_version) && _on_update_loaded_callback != nullptr) {
 			_on_update_loaded_callback();
 		}
+
+		system_reset();
 	}
 
 	void raise(auto event) { state_machine.process_event(event); };
