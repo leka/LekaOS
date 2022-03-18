@@ -7,16 +7,16 @@
 #include "drivers/HighResClock.h"
 #include "rtos/ThisThread.h"
 
-#include "BlinkGreen.h"
 #include "CoreLED.h"
 #include "CoreSPI.h"
-#include "Fire.h"
 #include "HelloWorld.h"
 #include "LedKit.h"
 #include "LogKit.h"
-#include "Rainbow.h"
-#include "SpinBlink.h"
-#include "Sprinkles.h"
+#include "animations/BlinkGreen.h"
+#include "animations/Fire.h"
+#include "animations/Rainbow.h"
+#include "animations/SpinBlink.h"
+#include "animations/Sprinkles.h"
 
 using namespace leka;
 using namespace std::chrono;
