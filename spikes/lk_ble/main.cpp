@@ -7,6 +7,7 @@
 #include "BLEKit.h"
 #include "BLEServiceBattery.h"
 #include "BLEServiceDeviceInformation.h"
+#include "BLEServiceFileReception.h"
 #include "BLEServiceMonitoring.h"
 #include "BLEServiceUpdate.h"
 
@@ -21,10 +22,11 @@ auto charging_status = bool {false};
 auto service_device_information = BLEServiceDeviceInformation {};
 auto service_battery			= BLEServiceBattery {};
 auto service_monitoring			= BLEServiceMonitoring {};
+auto service_file_reception		= BLEServiceFileReception {};
 auto service_update				= BLEServiceUpdate {};
 
 auto services = std::to_array<interface::BLEService *>(
-	{&service_device_information, &service_battery, &service_monitoring, &service_update});
+	{&service_device_information, &service_battery, &service_monitoring, &service_update, &service_file_reception});
 
 auto blekit = BLEKit {};
 

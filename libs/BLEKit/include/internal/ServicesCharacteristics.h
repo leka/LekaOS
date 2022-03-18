@@ -44,6 +44,17 @@ namespace monitoring {
 
 }	// namespace monitoring
 
+namespace receive_file {
+
+	constexpr uint16_t uuid = 0x8270;
+
+	namespace characteristic {
+		constexpr uint16_t file_path			 = 0x7080;
+		constexpr uint16_t file_reception_buffer = 0x8283;
+	}	// namespace characteristic
+
+}	// namespace receive_file
+
 namespace firmware_update {
 
 	constexpr uint16_t uuid = 0x7085;
