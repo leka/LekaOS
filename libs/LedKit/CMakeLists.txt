@@ -12,37 +12,37 @@ target_include_directories(LedKit
 
 target_sources(LedKit
 	PRIVATE
-		source/AfraidBlue.cpp
-		source/AfraidRed.cpp
-		source/AfraidRedBlue.cpp
-		source/Amazed.cpp
-		source/Angry.cpp
-		source/AngryShort.cpp
+		# source/AfraidBlue.cpp
+		# source/AfraidRed.cpp
+		# source/AfraidRedBlue.cpp
+		# source/Amazed.cpp
+		# source/Angry.cpp
+		# source/AngryShort.cpp
 		source/BlinkGreen.cpp
-		source/Bubbles.cpp
-		source/Disgusted.cpp
+		# source/Bubbles.cpp
+		# source/Disgusted.cpp
 		source/Fire.cpp
-		source/Fly.cpp
-		source/Happy.cpp
+		# source/Fly.cpp
+		# source/Happy.cpp
 		source/LedKit.cpp
 		source/LoadingGreen.cpp
 		source/LoadingOrange.cpp
 		source/LoadingRed.cpp
 		source/LoadingYellow.cpp
 		source/Rainbow.cpp
-		source/Sad.cpp
-		source/SadCry.cpp
-		source/Sick.cpp
-		source/Singing.cpp
+		# source/Sad.cpp
+		# source/SadCry.cpp
+		# source/Sick.cpp
+		# source/Singing.cpp
 		source/Sleeping.cpp
-		source/Sneeze.cpp
+		# source/Sneeze.cpp
 		source/SpinBlink.cpp
 		source/Sprinkles.cpp
-		source/Underwater.cpp
+		# source/Underwater.cpp
 		source/Waiting.cpp
-		source/WakeUp.cpp
-		source/Wink.cpp
-		source/Yawn.cpp
+		# source/WakeUp.cpp
+		# source/Wink.cpp
+		# source/Yawn.cpp
 )
 
 target_link_libraries(LedKit
@@ -55,6 +55,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/LedKit_test.cpp
 		tests/LedKit_test_animations.cpp
+		tests/LedKit_test_normalizeStep.cpp
 	)
 
 endif()

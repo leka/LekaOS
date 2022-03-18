@@ -6,31 +6,47 @@
 
 #include "Fire.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
+
+void Fire::setLeds(interface::LED &ears, interface::LED &belt)
+{
+	_ears = &ears;
+	_belt = &belt;
+}
 
 void Fire::start()
 {
-	turnLedBlack();
-}
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
 
-void Fire::stop()
-{
 	turnLedBlack();
 	_step			 = 0;
 	_stage			 = 0;
 	_wave_tail_index = 0;
 }
 
+void Fire::stop()
+{
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
+	turnLedBlack();
+}
+
 void Fire::run()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	if (auto kLastStage = 255; _stage < kLastStage) {
 		stageWaves();
 	} else {
-		_belt.setColor(RGB::black);
+		_belt->setColor(RGB::black);
 	}
-	_belt.show();
+	_belt->show();
 }
 
 void Fire::stageWaves()
@@ -43,10 +59,10 @@ void Fire::stageWaves()
 	for (auto i = _wave_tail_index; i < _wave_tail_index + kNumberOfLedsBelt; i++) {
 		if (i < kNumberOfLedsBelt) {
 			RGB color = getFireColor(i - _wave_tail_index);
-			_belt.setColorAtIndex(i, color);
+			_belt->setColorAtIndex(i, color);
 		} else {
 			RGB color = getFireColor(i - _wave_tail_index);
-			_belt.setColorAtIndex(i - kNumberOfLedsBelt, color);
+			_belt->setColorAtIndex(i - kNumberOfLedsBelt, color);
 		}
 	}
 	++_wave_tail_index;
@@ -62,10 +78,10 @@ auto Fire::getFireColor(uint8_t index) const -> RGB
 
 void Fire::turnLedBlack()
 {
-	_ears.setColor(RGB::black);
-	_belt.setColor(RGB::black);
-	_ears.show();
-	_belt.show();
+	_ears->setColor(RGB::black);
+	_belt->setColor(RGB::black);
+	_ears->show();
+	_belt->show();
 }
 
 }	// namespace leka::led::animation

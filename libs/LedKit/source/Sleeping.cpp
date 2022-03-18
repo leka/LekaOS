@@ -8,20 +8,38 @@
 
 namespace leka::led::animation {
 
-void Sleeping::start()
+void Sleeping::setLeds(interface::LED &ears, interface::LED &belt)
 {
-	turnLedBlack();
+	_ears = &ears;
+	_belt = &belt;
 }
 
-void Sleeping::stop()
+void Sleeping::start()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	turnLedBlack();
 	_step  = 0;
 	_stage = 0;
 }
 
+void Sleeping::stop()
+{
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
+	turnLedBlack();
+}
+
 void Sleeping::run()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	switch (_stage) {
 		case 0:
 			stage0();
@@ -50,7 +68,7 @@ void Sleeping::run()
 		default:
 			break;
 	}
-	_belt.show();
+	_belt->show();
 }
 
 void Sleeping::stage0()
@@ -69,7 +87,7 @@ void Sleeping::stage1()
 	static constexpr auto kMaxInputValueStage1 = uint8_t {40};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStage1); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		_step++;
 	} else {
 		_step = 0;
@@ -83,7 +101,7 @@ void Sleeping::stage2()
 	static constexpr auto kMaxInputValueStage4_6 = uint8_t {45};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStage2); pos != 1.F) {
 		RGB color = RGB::white;
-		_belt.setColor(color);
+		_belt->setColor(color);
 		_step++;
 	} else {
 		_step = kMaxInputValueStage4_6;
@@ -125,7 +143,7 @@ void Sleeping::increaseBrightness(float treshold)
 	static constexpr auto kMaxInputValueStage3to7 = uint8_t {45};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStage3to7); pos < treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		_step++;
 	} else {
 		_stage++;
@@ -137,7 +155,7 @@ void Sleeping::decreaseBrightness(float treshold)
 	static constexpr auto kMaxInputValueStage3to7 = uint8_t {45};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStage3to7); pos > treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		_step--;
 	} else {
 		_stage++;
@@ -146,10 +164,10 @@ void Sleeping::decreaseBrightness(float treshold)
 
 void Sleeping::turnLedBlack()
 {
-	_ears.setColor(RGB::black);
-	_belt.setColor(RGB::black);
-	_ears.show();
-	_belt.show();
+	_ears->setColor(RGB::black);
+	_belt->setColor(RGB::black);
+	_ears->show();
+	_belt->show();
 }
 
 }	// namespace leka::led::animation

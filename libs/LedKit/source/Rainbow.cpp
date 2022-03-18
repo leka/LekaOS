@@ -6,31 +6,47 @@
 
 #include "Rainbow.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
+
+void Rainbow::setLeds(interface::LED &ears, interface::LED &belt)
+{
+	_ears = &ears;
+	_belt = &belt;
+}
 
 void Rainbow::start()
 {
-	turnLedBlack();
-}
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
 
-void Rainbow::stop()
-{
 	turnLedBlack();
 	_step				= 0;
 	_stage				= 0;
 	_rainbow_tail_index = 0;
 }
 
+void Rainbow::stop()
+{
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
+	turnLedBlack();
+}
+
 void Rainbow::run()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	if (auto kLastStage = uint8_t {255}; _stage <= kLastStage) {
 		stagesRainbow();
 	} else {
-		_belt.setColor(RGB::black);
+		_belt->setColor(RGB::black);
 	}
-	_belt.show();
+	_belt->show();
 }
 
 void Rainbow::stagesRainbow()
@@ -42,10 +58,10 @@ void Rainbow::stagesRainbow()
 	for (auto i = _rainbow_tail_index; i < _rainbow_tail_index + kNumberOfLedsBelt; i++) {
 		if (i < kNumberOfLedsBelt) {
 			RGB color = getRainbowColor(i - _rainbow_tail_index);
-			_belt.setColorAtIndex(i, color);
+			_belt->setColorAtIndex(i, color);
 		} else {
 			RGB color = getRainbowColor(i - _rainbow_tail_index);
-			_belt.setColorAtIndex(i - kNumberOfLedsBelt, color);
+			_belt->setColorAtIndex(i - kNumberOfLedsBelt, color);
 		}
 	}
 	++_rainbow_tail_index;
@@ -71,10 +87,10 @@ auto Rainbow::getRainbowColor(uint8_t index) const -> RGB
 
 void Rainbow::turnLedBlack()
 {
-	_ears.setColor(RGB::black);
-	_belt.setColor(RGB::black);
-	_ears.show();
-	_belt.show();
+	_ears->setColor(RGB::black);
+	_belt->setColor(RGB::black);
+	_ears->show();
+	_belt->show();
 }
 
 }	// namespace leka::led::animation

@@ -31,11 +31,6 @@ auto animation_thread	   = rtos::Thread {};
 auto animation_event_queue = events::EventQueue {};
 
 auto ledkit = LedKit {animation_thread, animation_event_queue, ears, belt};
-led::animation::BlinkGreen animation_blink_green(ears, belt);
-led::animation::SpinBlink animation_spin_blink(ears, belt);
-led::animation::Sprinkles animation_sprinkles(ears, belt);
-led::animation::Fire animation_fire(ears, belt);
-led::animation::Rainbow animation_rainbow(ears, belt);
 
 HelloWorld hello;
 
@@ -48,31 +43,31 @@ auto main() -> int
 	hello.start();
 
 	while (true) {
-		ledkit.start(animation_rainbow);
+		ledkit.start(&LedKit::animation::rainbow);
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.stop();
 		rtos::ThisThread::sleep_for(1s);
 
-		ledkit.start(animation_fire);
+		ledkit.start(&LedKit::animation::fire);
 		rtos::ThisThread::sleep_for(10s);
 
 		ledkit.stop();
 		rtos::ThisThread::sleep_for(1s);
 
-		ledkit.start(animation_sprinkles);
+		ledkit.start(&LedKit::animation::sprinkles);
 		rtos::ThisThread::sleep_for(5s);
 
 		ledkit.stop();
 		rtos::ThisThread::sleep_for(1s);
 
-		ledkit.start(animation_spin_blink);
+		ledkit.start(&LedKit::animation::spin_blink);
 		rtos::ThisThread::sleep_for(40s);
 
 		ledkit.stop();
 		rtos::ThisThread::sleep_for(1s);
 
-		ledkit.start(animation_blink_green);
+		ledkit.start(&LedKit::animation::blink_green);
 		rtos::ThisThread::sleep_for(40s);
 
 		ledkit.stop();

@@ -13,15 +13,17 @@ namespace leka::led::animation {
 class Rainbow : public interface::LEDAnimation
 {
   public:
-	explicit Rainbow(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {};
+	explicit Rainbow() = default;
 
 	void start() final;
 	void run() final;
 	void stop() final;
 
+	void setLeds(interface::LED &ears, interface::LED &belt) final;
+
   private:
-	interface::LED &_ears;
-	interface::LED &_belt;
+	interface::LED *_ears		= nullptr;
+	interface::LED *_belt		= nullptr;
 	uint8_t _step				= 0;
 	uint8_t _stage				= 0;
 	uint8_t _rainbow_tail_index = 0;

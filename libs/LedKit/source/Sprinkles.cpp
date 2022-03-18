@@ -6,37 +6,53 @@
 
 #include "Sprinkles.h"
 
-#include "MathUtils.h"
-
 namespace leka::led::animation {
+
+void Sprinkles::setLeds(interface::LED &ears, interface::LED &belt)
+{
+	_ears = &ears;
+	_belt = &belt;
+}
 
 void Sprinkles::start()
 {
-	turnLedBlack();
-}
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
 
-void Sprinkles::stop()
-{
 	turnLedBlack();
 	_step			 = 0;
 	_stage			 = 0;
 	_wave_tail_index = 0;
 }
 
+void Sprinkles::stop()
+{
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
+	turnLedBlack();
+}
+
 void Sprinkles::run()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	static constexpr auto kLastStage = uint8_t {255};
 	auto is_wave_moving				 = [this] { return (_stage % 2) == 0; };
 	if (is_wave_moving() && _stage <= kLastStage) {
-		_belt.setColor(RGB::black);
+		_belt->setColor(RGB::black);
 		moveWave(_wave_tail_index);
 		++_stage;
 	} else if (_stage <= kLastStage) {
 		++_stage;
 	} else {
-		_belt.setColor(RGB::black);
+		_belt->setColor(RGB::black);
 	}
-	_belt.show();
+	_belt->show();
 }
 
 void Sprinkles::moveWave(uint8_t &wave_tail_index)
@@ -48,9 +64,9 @@ void Sprinkles::moveWave(uint8_t &wave_tail_index)
 	}
 	for (auto i = wave_tail_index; i < kNumberOfLedsBelt + wave_tail_index; i += 3) {
 		if (i < kNumberOfLedsBelt) {
-			_belt.setColorAtIndex(i, getSprinklesColor());
+			_belt->setColorAtIndex(i, getSprinklesColor());
 		} else {
-			_belt.setColorAtIndex(i - kNumberOfLedsBelt, getSprinklesColor());
+			_belt->setColorAtIndex(i - kNumberOfLedsBelt, getSprinklesColor());
 		}
 	}
 	++wave_tail_index;
@@ -67,10 +83,10 @@ auto Sprinkles::getSprinklesColor() const -> RGB
 
 void Sprinkles::turnLedBlack()
 {
-	_ears.setColor(RGB::black);
-	_belt.setColor(RGB::black);
-	_ears.show();
-	_belt.show();
+	_ears->setColor(RGB::black);
+	_belt->setColor(RGB::black);
+	_ears->show();
+	_belt->show();
 }
 
 }	// namespace leka::led::animation

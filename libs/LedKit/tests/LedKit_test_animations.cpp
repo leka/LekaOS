@@ -47,8 +47,16 @@ TEST_F(LedKitTestAnimations, initialization)
 TEST_F(LedKitTestAnimations, startFirstAnimation)
 {
 	EXPECT_CALL(mock_animation, start);
+	EXPECT_CALL(mock_animation, setLeds).Times(1);
 
-	ledkit.start(mock_animation);
+	ledkit.start(&mock_animation);
+}
+
+TEST_F(LedKitTestAnimations, startNullPtr)
+{
+	EXPECT_CALL(mock_animation, setLeds).Times(0);
+
+	ledkit.start(nullptr);
 }
 
 TEST_F(LedKitTestAnimations, stopWithoutAnimation)
@@ -64,7 +72,7 @@ TEST_F(LedKitTestAnimations, stopStartedAnimation)
 
 	EXPECT_CALL(mock_animation, stop).Times(1);
 
-	ledkit.start(mock_animation);
+	ledkit.start(&mock_animation);
 	ledkit.stop();
 }
 
@@ -81,7 +89,7 @@ TEST_F(LedKitTestAnimations, startNewAnimationSequence)
 		EXPECT_CALL(mock_new_animation, start);
 	}
 
-	ledkit.start(mock_animation);
+	ledkit.start(&mock_animation);
 
-	ledkit.start(mock_new_animation);
+	ledkit.start(&mock_new_animation);
 }
