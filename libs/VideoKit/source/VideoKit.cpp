@@ -59,8 +59,6 @@ void VideoKit::displayImage(const char *path)
 	stopVideo();
 	rtos::ThisThread::sleep_for(100ms);
 
-	turnOn();
-
 	draw(image);
 	display();
 }
@@ -70,8 +68,6 @@ void VideoKit::playVideo(const char *path, bool must_loop)
 	rtos::ThisThread::sleep_for(100ms);
 	stopVideo();
 	rtos::ThisThread::sleep_for(100ms);
-
-	turnOn();
 
 	if (must_loop) {
 		_event_flags.clear(PLAY_ONCE_VIDEO_FLAG);
@@ -104,6 +100,7 @@ void VideoKit::runVideo()
 			draw(video);
 			video.nextFrame();
 			display();
+			turnOn();
 		}
 		if (video.hasEnded()) {
 			_event_flags.set(END_OF_VIDEO_FLAG);
