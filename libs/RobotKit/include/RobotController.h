@@ -158,6 +158,9 @@ class RobotController : public interface::RobotController
 
 		_battery_kit.onDataUpdated([](uint8_t level) { _service_battery.setBatteryLevel(level); });
 
+		auto on_low_battery = [this] { system_reset(); };
+		_battery_kit.onLowBattery(on_low_battery);
+
 		_battery_kit.startEventHandler();
 
 		// Setup callbacks for each State Machine events
