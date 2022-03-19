@@ -23,6 +23,8 @@ class BehaviorKit
 	void sleeping();
 	void waiting();
 
+	void lowBattery();
+
 	void chargingZero();
 	void chargingRed();
 	void chargingOrange();

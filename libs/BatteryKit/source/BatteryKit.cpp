@@ -10,7 +10,7 @@ using namespace std::chrono_literals;
 void BatteryKit::startEventHandler()
 {
 	auto on_tick = [this] {
-		if (_on_low_battery && level() == 0) {
+		if (_on_low_battery && level() <= 5) {
 			_on_low_battery();
 		}
 
