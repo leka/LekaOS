@@ -14,18 +14,25 @@
 namespace leka {
 
 struct LedCommand : interface::Command {
-	LedCommand(auto ears, auto belt) : _ears(ears), _belt(belt) {}
+	LedCommand(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {}
 
 	auto id() -> uint8_t override { return cmd::id; }
-	auto data() -> uint8_t * override { return args.data(); };
+
+	auto data() -> uint8_t * override
+	{
+		args = {};
+		return args.data();
+	};
+
 	[[nodiscard]] auto size() const -> std::size_t override { return std::size(args); };
 
 	void execute() override
 	{
 		auto [pos, id, r, g, b, chcksm] = std::tuple_cat(args);
 
-		if (chcksm != utils::math::checksum8(std::span {args.data(), args.size() - 1})) {
-			log_error("wrong checksum");
+		auto expected = utils::math::checksum8(std::span {args.data(), args.size() - 1});
+		if (chcksm != expected) {
+			log_error("wrong checksum, should be: %i", expected);
 			return;
 		}
 
