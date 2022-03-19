@@ -16,7 +16,7 @@ void CommandKit::push(std::span<uint8_t> data)
 	_input_buffer.push(data.data(), data.size());
 
 	constexpr auto kMinCommandSize = 7;
-	if (_input_buffer.size() >= kMinCommandSize) {
+	if (_input_buffer.size() >= kMinCommandSize && _is_ready_to_process) {
 		processCommands();
 	}
 }
@@ -33,14 +33,20 @@ auto CommandKit::size() const -> std::size_t
 
 void CommandKit::processCommands()
 {
-	auto kStartPattern = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A});
+	static auto kStartPattern = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A});
+
+	_is_ready_to_process = false;
 
 	auto pos = int {};
 
 	if (!_input_buffer.hasPattern(kStartPattern.data(), kStartPattern.size(), pos)) {
+		log_debug("start fram NOT found, resetting");
 		_input_buffer.reset();
+		_is_ready_to_process = true;
 		return;
 	}
+
+	log_debug("start frame found at %i", pos);
 
 	for (auto i = 0; i < pos + kStartPattern.size(); ++i) {
 		auto _ = uint8_t {};
@@ -54,6 +60,7 @@ void CommandKit::executeCommands()
 {
 	auto number_of_commands = uint8_t {};
 	_input_buffer.pop(number_of_commands);
+	log_debug("number of commands %i", number_of_commands);
 
 	for (auto i = 0; i < number_of_commands; ++i) {
 		auto current_command = uint8_t {};
@@ -66,4 +73,6 @@ void CommandKit::executeCommands()
 			}
 		}
 	}
+
+	_is_ready_to_process = true;
 }

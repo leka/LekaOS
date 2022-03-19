@@ -31,6 +31,8 @@ class CommandKit
 	CircularQueue<uint8_t, 256> _input_buffer {};
 
 	std::span<interface::Command *> _commands {};
+
+	bool _is_ready_to_process = true;
 };
 
 }	// namespace leka
