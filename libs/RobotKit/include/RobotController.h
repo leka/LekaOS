@@ -13,7 +13,10 @@
 
 #include "BatteryKit.h"
 #include "BehaviorKit.h"
+#include "CoreMotor.h"
+#include "LedKit.h"
 #include "StateMachine.h"
+#include "VideoKit.h"
 #include "interface/RobotController.h"
 #include "interface/drivers/Battery.h"
 #include "interface/drivers/FirmwareUpdate.h"
@@ -28,21 +31,43 @@ class RobotController : public interface::RobotController
 	sm_t state_machine {static_cast<interface::RobotController &>(*this)};
 
 	explicit RobotController(interface::Timeout &sleep_timeout, interface::Battery &battery,
-							 interface::FirmwareUpdate &firmware_update, BehaviorKit &behaviorkit)
+							 interface::FirmwareUpdate &firmware_update, CoreMotor &motor_left, CoreMotor &motor_right,
+							 LedKit &ledkit, VideoKit &videokit, BehaviorKit &behaviorkit)
 		: _sleep_timeout(sleep_timeout),
 		  _battery(battery),
 		  _firmware_update(firmware_update),
+		  _motor_left(motor_left),
+		  _motor_right(motor_right),
+		  _ledkit(ledkit),
+		  _videokit(videokit),
 		  _behaviorkit(behaviorkit) {};
 
-	void runLaunchingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::launching); }
+	void runLaunchingBehavior() final
+	{
+		_event_queue.call(&_behaviorkit, &BehaviorKit::launching);
+		_event_queue.call(&_videokit, &VideoKit::turnOn);
+	}
 
 	void startSleepTimeout() final { _sleep_timeout.start(_sleep_timeout_duration); }
 	void stopSleepTimeout() final { _sleep_timeout.stop(); }
 
-	void startWaitingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::waiting); }
+	void startWaitingBehavior() final
+	{
+		_event_queue.call(&_behaviorkit, &BehaviorKit::waiting);
+		_event_queue.call(&_videokit, &VideoKit::turnOn);
+	}
 	void stopWaitingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::stop); }
 
-	void startSleepingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::sleeping); }
+	void startSleepingBehavior() final
+	{
+		using namespace std::chrono_literals;
+
+		_event_queue.call(&_behaviorkit, &BehaviorKit::sleeping);
+		_event_queue.call(&_videokit, &VideoKit::turnOn);
+
+		_event_queue.call_in(20s, &_videokit, &VideoKit::turnOff);
+		_event_queue.call_in(20s, &_ledkit, &LedKit::stop);
+	}
 	void stopSleepingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::stop); }
 
 	auto isCharging() -> bool final
@@ -73,7 +98,13 @@ class RobotController : public interface::RobotController
 
 	void startChargingBehavior() final
 	{
+		using namespace std::chrono_literals;
+
 		_battery_kit.onDataUpdated([this](uint8_t level) { onStartChargingBehavior(level); });
+		_event_queue.call(&_videokit, &VideoKit::turnOn);
+
+		_event_queue.call_in(1min, &_videokit, &VideoKit::turnOff);
+		_event_queue.call_in(1min, &_ledkit, &LedKit::stop);
 	}
 	void stopChargingBehavior() final
 	{
@@ -103,6 +134,15 @@ class RobotController : public interface::RobotController
 
 		_ble.setServices(services);
 		_ble.init();
+
+		_motor_left.stop();
+		_motor_right.stop();
+
+		_ledkit.stop();
+
+		_videokit.initializeScreen();
+		_videokit.turnOff();
+		_videokit.stopVideo();
 	}
 
 	void registerOnUpdateLoadedCallback(std::function<void()> const &on_update_loaded_callback)
@@ -144,6 +184,11 @@ class RobotController : public interface::RobotController
 
 	interface::FirmwareUpdate &_firmware_update;
 	std::function<void()> _on_update_loaded_callback {};
+
+	CoreMotor &_motor_left;
+	CoreMotor &_motor_right;
+	LedKit &_ledkit;
+	VideoKit &_videokit;
 
 	BehaviorKit &_behaviorkit;
 

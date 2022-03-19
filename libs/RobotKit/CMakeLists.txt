@@ -20,6 +20,9 @@ target_sources(RobotKit
 target_link_libraries(RobotKit
 	BatteryKit
 	BLEKit
+	CoreMotor
+	LedKit
+	VideoKit
 	BehaviorKit
 )
 
