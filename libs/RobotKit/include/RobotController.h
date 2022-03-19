@@ -66,6 +66,7 @@ class RobotController : public interface::RobotController
 		_event_queue.call(&_videokit, &VideoKit::turnOn);
 
 		_event_queue.call_in(20s, &_videokit, &VideoKit::turnOff);
+		_event_queue.call_in(20s, &_ledkit, &LedKit::stop);
 	}
 	void stopSleepingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::stop); }
 
@@ -103,6 +104,7 @@ class RobotController : public interface::RobotController
 		_event_queue.call(&_videokit, &VideoKit::turnOn);
 
 		_event_queue.call_in(1min, &_videokit, &VideoKit::turnOff);
+		_event_queue.call_in(1min, &_ledkit, &LedKit::stop);
 	}
 	void stopChargingBehavior() final
 	{
