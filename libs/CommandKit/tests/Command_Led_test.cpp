@@ -16,7 +16,7 @@ class LedCommandTest : public testing::Test
 
 	mock::CoreLED mockled {};
 
-	LedCommand ledcmd {mockled};
+	LedCommand ledcmd {mockled, mockled};
 };
 
 TEST(LedCommandTest, initialization)

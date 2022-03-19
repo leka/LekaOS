@@ -183,3 +183,56 @@ TEST_F(CommandKitPushTest, pushDataMissingData)
 
 	cmdkit.push(data);
 }
+
+TEST_F(CommandKitPushTest, pushDataGeneric)
+{
+	auto cmd  = mock::Command {0x42};
+	auto cmds = std::to_array<interface::Command *>({&cmd});
+
+	cmdkit.registerCommand(cmds);
+
+	// clang-format off
+	auto test_cmd_0         = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x42, 0x11, 0x00, 0x00, 0x7F, 0xFF, 0x8F});
+	auto test_cmd_1         = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x42, 0x12, 0x02, 0x00, 0x7F, 0xFF, 0x92});
+
+	auto bad_chcksm         = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x42, 0x11, 0x00, 0x00, 0x7F, 0xFF, 0x00});
+	auto start_frame_only   = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A,                                               });
+
+	auto bad_missing_data_1 = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x42, 0x11, 0x00, 0x00, 0x7F, 0xFF,     });
+	auto bad_missing_data_2 = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x42, 0x11, 0x00, 0x00, 0x7F,           });
+	auto bad_missing_data_3 = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x42, 0x11, 0x00, 0x00,                 });
+	auto bad_missing_data_4 = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x42, 0x11, 0x00,                       });
+
+	auto random_data        = std::to_array<uint8_t>({0x43, 0x2A, 0xB4, 0xCC, 0x54, 0x00, 0x11, 0x22, 0x9F, 0x00, 0xFF, 0x8F});
+	// clang-format on
+
+	auto all = std::to_array<std::span<uint8_t>>({test_cmd_0, random_data, test_cmd_1, bad_chcksm, start_frame_only,
+												  random_data, bad_missing_data_1, random_data, bad_missing_data_2,
+												  test_cmd_1, bad_missing_data_3, random_data, bad_missing_data_4,
+												  random_data, test_cmd_0});
+
+	EXPECT_CALL(cmd, HasBeenCalled).Times(4);
+
+	for (auto i = 0; const auto &data: all) {
+		cmdkit.push(data);
+	}
+}
+
+TEST_F(CommandKitPushTest, pushDataPureRandom)
+{
+	auto cmd  = mock::Command {0x42};
+	auto cmds = std::to_array<interface::Command *>({&cmd});
+
+	cmdkit.registerCommand(cmds);
+
+	auto random_data = std::to_array<uint8_t>({0x43, 0x2A, 0xB4, 0xCC, 0x54, 0x00, 0x11, 0x22, 0x9F, 0x00, 0xFF, 0x8F});
+
+	auto random = std::to_array<std::span<uint8_t>>({random_data, random_data, random_data, random_data, random_data,
+													 random_data, random_data, random_data, random_data, random_data});
+
+	EXPECT_CALL(cmd, HasBeenCalled).Times(0);
+
+	for (auto i = 0; const auto &data: random) {
+		cmdkit.push(data);
+	}
+}

@@ -9,6 +9,7 @@
 
 #include "CircularQueue.h"
 #include "commands/LedCommand.h"
+#include "commands/TestCommand.h"
 #include "interface/Command.h"
 
 namespace leka {

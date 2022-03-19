@@ -17,31 +17,37 @@ struct Command : interface::Command {
 	Command(uint8_t id) : _cmd(cmd {id}) {}
 
 	auto id() -> uint8_t override { return _cmd.id; }
-	auto data() -> uint8_t * override { return args.data(); };
+
+	auto data() -> uint8_t * override
+	{
+		args = {};
+		return args.data();
+	};
+
 	[[nodiscard]] auto size() const -> std::size_t override { return std::size(args); };
 
 	void execute() override
 	{
-		auto [pos, id, r, g, b, chcksm] = std::tuple_cat(args);
+		auto [param1, param2, data1, data2, data3, chcksm] = std::tuple_cat(args);
 
-		if (chcksm != utils::math::checksum8(std::span {args.data(), args.size() - 1})) {
-			log_error("wrong checksum, got 0x%02hX, should be 0x%02hX", chcksm,
-					  utils::math::checksum8(std::span {args.data(), args.size() - 1}));
+		auto expected = utils::math::checksum8(std::span {args.data(), args.size() - 1});
+		if (chcksm != expected) {
+			log_error("wrong checksum, expected: 0x%02hX", expected);
 			return;
 		}
 
-		switch (pos) {
-			case cmd::position::ears: {
-				log_debug("turn on ear id 0x%02hX with 0x%02hX / 0x%02hX / 0x%02hX", id, r, g, b);
+		switch (param1) {
+			case cmd::param::one: {
+				log_debug("TestCommand cmd::param::one p2: %i - d1: %i, d2: %i, d3: %i", param2, data1, data2, data3);
 				break;
 			}
-			case cmd::position::belt: {
-				log_debug("turn on belt id 0x%02hX with 0x%02hX / 0x%02hX / 0x%02hX", id, r, g, b);
+			case cmd::param::two: {
+				log_debug("TestCommand cmd::param::two p2: %i - d1: %i, d2: %i, d3: %i", param2, data1, data2, data3);
 				break;
 			}
-			default:
-				log_error("pos not found");
-				return;
+			default: {
+				break;
+			}
 		}
 
 		HasBeenCalled();   // ? Call Mock method
@@ -49,17 +55,17 @@ struct Command : interface::Command {
 
 	MOCK_METHOD(void, HasBeenCalled, (), ());
 
+  private:
 	struct cmd {
 		uint8_t id;
-		static constexpr auto size = uint8_t {1 + 1 + 3 + 1};	// EAR/BELT + Id + R, G, B + Checksum
+		static constexpr auto size = uint8_t {1 + 1 + 3 + 1};	// p1 (ONE/TWO) + p2 + d{1, 2, 3} + Checksum
 
-		struct position {
-			static constexpr auto ears = uint8_t {0x11};
-			static constexpr auto belt = uint8_t {0x12};
+		struct param {
+			static constexpr auto one = uint8_t {0x11};
+			static constexpr auto two = uint8_t {0x12};
 		};
 	};
 
-  private:
 	cmd _cmd;
 	std::array<uint8_t, cmd::size> args {};
 };
