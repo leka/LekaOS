@@ -36,6 +36,11 @@ void BehaviorKit::waiting()
 		"/fs/videos/2022_02_14-animation-face-state-waiting-looking-top-right-to-left-without-eyebrows.avi");
 }
 
+void BehaviorKit::lowBattery()
+{
+	_videokit.displayImage("/fs/images/loading.jpg");
+}
+
 void BehaviorKit::chargingZero()
 {
 	_ledkit.start(&LedKit::animation::charging_red);

@@ -86,6 +86,11 @@ TEST_F(BehaviorKitTest, spinRight)
 	behaviorkit.spinBlink();
 }
 
+TEST_F(BehaviorKitTest, lowBattery)
+{
+	behaviorkit.lowBattery();
+}
+
 TEST_F(BehaviorKitTest, stop)
 {
 	static constexpr auto speed = 0.5;

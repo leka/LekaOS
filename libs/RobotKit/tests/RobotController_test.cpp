@@ -58,7 +58,7 @@ class RobotControllerTest : public testing::Test
 
 		rc.initializeComponents();
 
-		EXPECT_CALL(battery, level).Times(1);
+		EXPECT_CALL(battery, level).Times(AnyNumber());
 		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber());
 		EXPECT_CALL(sleep_timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleep_timeout));
 		EXPECT_CALL(battery, onChargeDidStart).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_start));
@@ -178,7 +178,7 @@ TEST_F(RobotControllerTest, stateSetupEventSetupCompleteGuardIsChargingFalse)
 	rc.state_machine.set_current_states(lksm::state::setup);
 
 	auto expected_level = 0x2A;
-	EXPECT_CALL(battery, level).WillOnce(Return(expected_level));
+	EXPECT_CALL(battery, level).WillRepeatedly(Return(expected_level));
 	EXPECT_CALL(mbed_mock_gatt, write(_, sameValue(expected_level), _, _)).Times(1);
 
 	EXPECT_CALL(sleep_timeout, onTimeout).Times(1);
@@ -200,7 +200,7 @@ TEST_F(RobotControllerTest, stateSetupEventSetupCompleteGuardIsChargingTrue)
 	rc.state_machine.set_current_states(lksm::state::setup);
 
 	auto expected_level = 0x2A;
-	EXPECT_CALL(battery, level).WillOnce(Return(expected_level));
+	EXPECT_CALL(battery, level).WillRepeatedly(Return(expected_level));
 	EXPECT_CALL(mbed_mock_gatt, write(_, sameValue(expected_level), _, _)).Times(1);
 
 	EXPECT_CALL(sleep_timeout, onTimeout).Times(1);
