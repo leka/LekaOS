@@ -7,6 +7,7 @@
 #include <span>
 
 #include "LogKit.h"
+#include "RGB.h"
 #include "Utils.h"
 #include "interface/Command.h"
 #include "interface/drivers/LED.h"
@@ -32,21 +33,21 @@ struct LedCommand : interface::Command {
 
 		auto expected = utils::math::checksum8(std::span {args.data(), args.size() - 1});
 		if (chcksm != expected) {
-			log_error("wrong checksum, should be: %i", expected);
 			return;
 		}
 
 		switch (pos) {
 			case cmd::position::ears: {
-				log_debug("turn on ear id %i with %i / %i / %i", id, r, g, b);
+				_ears.setColorAtIndex(id, RGB {r, g, b});
+				_ears.show();
 				break;
 			}
 			case cmd::position::belt: {
-				log_debug("turn on belt id %i with %i / %i / %i", id, r, g, b);
+				_belt.setColorAtIndex(id, RGB {r, g, b});
+				_belt.show();
 				break;
 			}
 			default:
-				log_error("pos not found");
 				break;
 		}
 	}
