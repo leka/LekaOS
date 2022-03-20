@@ -44,31 +44,26 @@ void BehaviorKit::lowBattery()
 
 void BehaviorKit::chargingZero()
 {
-	_ledkit.start(&LedKit::animation::charging_red);
 	_videokit.displayImage("/fs/images/low_battery.jpg");
 }
 
 void BehaviorKit::chargingRed()
 {
-	_ledkit.start(&LedKit::animation::charging_red);
 	_videokit.displayImage("/fs/images/battery_red.jpg");
 }
 
 void BehaviorKit::chargingOrange()
 {
-	_ledkit.start(&LedKit::animation::charging_orange);
 	_videokit.displayImage("/fs/images/battery_yellow_2.jpg");
 }
 
 void BehaviorKit::chargingYellow()
 {
-	_ledkit.start(&LedKit::animation::charging_yellow);
 	_videokit.displayImage("/fs/images/battery_green_3.jpg");
 }
 
 void BehaviorKit::chargingGreen()
 {
-	_ledkit.start(&LedKit::animation::charging_green);
 	_videokit.displayImage("/fs/images/battery_green_4.jpg");
 }
 
