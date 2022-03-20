@@ -31,8 +31,9 @@ struct LedCommand : interface::Command {
 	{
 		auto [pos, id, r, g, b, chcksm] = std::tuple_cat(args);
 
-		auto expected = utils::math::checksum8(std::span {args.data(), args.size() - 1});
-		if (chcksm != expected) {
+		auto expected = [&] { return utils::math::checksum8(std::span {args.data(), args.size() - 1}); };
+
+		if (chcksm != expected()) {
 			return;
 		}
 

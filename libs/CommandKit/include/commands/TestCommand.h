@@ -30,24 +30,24 @@ struct TestCommand : interface::Command {
 	{
 		auto [param1, param2, data1, data2, data3, chcksm] = std::tuple_cat(args);
 
-		auto expected = utils::math::checksum8(std::span {args.data(), args.size() - 1});
-		if (chcksm != expected) {
-			log_error("wrong checksum, expected: 0x%02hX", expected);
+		auto expected = [&] { return utils::math::checksum8(std::span {args.data(), args.size() - 1}); };
+
+		if (chcksm != expected()) {
+			log_error("wrong checksum, expected: 0x%02hX", expected());
 			return;
 		}
 
 		switch (param1) {
-			case cmd::param::one: {
+			case cmd::param::one:
 				log_debug("TestCommand cmd::param::one p2: %i - d1: %i, d2: %i, d3: %i", param2, data1, data2, data3);
 				break;
-			}
-			case cmd::param::two: {
+
+			case cmd::param::two:
 				log_debug("TestCommand cmd::param::two p2: %i - d1: %i, d2: %i, d3: %i", param2, data1, data2, data3);
 				break;
-			}
-			default: {
+
+			default:
 				break;
-			}
 		}
 	}
 
