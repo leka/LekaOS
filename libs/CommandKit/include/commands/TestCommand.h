@@ -26,7 +26,7 @@ struct TestCommand : interface::Command {
 
 	[[nodiscard]] auto size() const -> std::size_t override { return std::size(args); };
 
-	void execute() override
+	auto execute() -> bool override
 	{
 		auto [param1, param2, data1, data2, data3, chcksm] = std::tuple_cat(args);
 
@@ -34,7 +34,7 @@ struct TestCommand : interface::Command {
 
 		if (chcksm != expected()) {
 			log_error("wrong checksum, expected: 0x%02hX", expected());
-			return;
+			return false;
 		}
 
 		switch (param1) {
@@ -49,6 +49,8 @@ struct TestCommand : interface::Command {
 			default:
 				break;
 		}
+
+		return true;
 	}
 
   private:

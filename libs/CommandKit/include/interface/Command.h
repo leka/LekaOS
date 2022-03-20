@@ -18,7 +18,7 @@ struct Command {
 
 	[[nodiscard]] virtual auto size() const -> std::size_t = 0;
 
-	virtual void execute() = 0;
+	virtual auto execute() -> bool = 0;
 };
 
 }	// namespace leka::interface

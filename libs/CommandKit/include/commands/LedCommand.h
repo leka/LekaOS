@@ -27,30 +27,32 @@ struct LedCommand : interface::Command {
 
 	[[nodiscard]] auto size() const -> std::size_t override { return std::size(args); };
 
-	void execute() override
+	auto execute() -> bool override
 	{
 		auto [pos, id, r, g, b, chcksm] = std::tuple_cat(args);
 
 		auto expected = [&] { return utils::math::checksum8(std::span {args.data(), args.size() - 1}); };
 
 		if (chcksm != expected()) {
-			return;
+			return false;
 		}
 
 		switch (pos) {
-			case cmd::position::ears: {
+			case cmd::position::ears:
 				_ears.setColorAtIndex(id, RGB {r, g, b});
 				_ears.show();
 				break;
-			}
-			case cmd::position::belt: {
+
+			case cmd::position::belt:
 				_belt.setColorAtIndex(id, RGB {r, g, b});
 				_belt.show();
 				break;
-			}
+
 			default:
 				break;
 		}
+
+		return true;
 	}
 
   private:
