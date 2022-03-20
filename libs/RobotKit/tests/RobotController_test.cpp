@@ -241,6 +241,15 @@ TEST_F(RobotControllerTest, stateIdleEventTimeout)
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::sleeping));
 }
 
+TEST_F(RobotControllerTest, stateSleepingEventCommandReceived)
+{
+	rc.state_machine.set_current_states(lksm::state::sleeping);
+
+	// TODO: Trigger command_received in StateMachine from BLE
+
+	// EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
+}
+
 TEST_F(RobotControllerTest, stateSleepingEventChargeDidStartGuardIsChargingTrue)
 {
 	rc.state_machine.set_current_states(lksm::state::sleeping);
