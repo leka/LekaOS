@@ -66,6 +66,8 @@ void CommandKit::executeCommands()
 		auto current_command = uint8_t {};
 		_input_buffer.pop(current_command);
 
+		log_error("current command; 0x%02hX", current_command);
+
 		for (auto *cmd: _commands) {
 			if (current_command == cmd->id()) {
 				_input_buffer.pop(cmd->data(), cmd->size());

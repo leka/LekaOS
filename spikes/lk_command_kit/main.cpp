@@ -28,15 +28,25 @@ namespace spi {
 
 }	// namespace spi
 
-auto ears = CoreLED<LedKit::kNumberOfLedsEars> {spi::ears};
-auto belt = CoreLED<LedKit::kNumberOfLedsBelt> {spi::belt};
-
 namespace animations {
 
 	auto thread = rtos::Thread {};
 	auto eq		= events::EventQueue {};
 
 }	// namespace animations
+
+auto ears = CoreLED<LedKit::kNumberOfLedsEars> {spi::ears};
+auto belt = CoreLED<LedKit::kNumberOfLedsBelt> {spi::belt};
+
+void turnOff()
+{
+	log_debug("turn off start");
+	leds::ears.setColor(RGB::black);
+	leds::ears.show();
+	leds::belt.setColor(RGB::black);
+	leds::belt.show();
+	log_debug("turn off end");
+};
 
 }	// namespace leds
 
@@ -74,8 +84,10 @@ namespace command {
 
 namespace internal {
 
-	// auto led  = LedCommand {leds::ears, leds::belt};
-	auto test = TestCommand {};
+	auto led	   = LedCommand {leds::ears, leds::belt};
+	auto led_full  = LedFullCommand {leds::ears, leds::belt};
+	auto led_range = LedRangeCommand {leds::ears, leds::belt};
+	auto test	   = TestCommand {};
 
 }	// namespace internal
 
@@ -83,48 +95,39 @@ namespace data {
 
 	// clang-format off
 
-	auto test_cmd_0         = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x00, 0x11, 0x00, 0x00, 0x7F, 0xFF, 0x8F});
-	auto test_cmd_1         = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x00, 0x12, 0x02, 0x00, 0x7F, 0xFF, 0x92});
+	auto test_cmd_0 = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x42, 0x11, 0x00, 0x00, 0x7F, 0xFF, 0x8F});
+	auto test_cmd_1 = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x42, 0x12, 0x02, 0x00, 0x7F, 0xFF, 0x92});
 
-	auto bad_chcksm         = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x00, 0x11, 0x00, 0x00, 0x7F, 0xFF, 0x00});
-	auto start_frame_only   = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A,                                               });
+	auto led_single_ears_0 = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x10, 0x11, 0x00, 0x00, 0x7F, 0xFF, 0x8F});
+	auto led_single_belt_3 = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x10, 0x12, 0x02, 0x00, 0x7F, 0xFF, 0x92});
 
-	auto bad_missing_data_1 = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x00, 0x11, 0x00, 0x00, 0x7F, 0xFF,     });
-	auto bad_missing_data_2 = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x00, 0x11, 0x00, 0x00, 0x7F,           });
-	auto bad_missing_data_3 = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x00, 0x11, 0x00, 0x00,                 });
-	auto bad_missing_data_4 = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x00, 0x11, 0x00,                       });
+	auto led_full_ears = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x13, 0x14, 0x00, 0x7F, 0xFF, 0x92});
+	auto led_full_belt = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x13, 0x15, 0x00, 0x7F, 0xFF, 0x93});
 
-	auto random_data        = std::to_array<uint8_t>({0x43, 0x2A, 0xB4, 0xCC, 0x54, 0x00, 0x11, 0x22, 0x9F, 0x00, 0xFF, 0x8F});
+	auto led_range_ears = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x16, 0x17, 0x00, 0x01, 0x00, 0x7F, 0xFF, 0x96});
+	auto led_range_belt = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x16, 0x18, 0x04, 0x0A, 0x00, 0x7F, 0xFF, 0xA4});
 
 	// clang-format on
 
-	auto all = std::to_array<std::span<uint8_t>>({
+	auto list = std::to_array<std::span<uint8_t>>({
 		test_cmd_0,
-		random_data,
 		test_cmd_1,
-		bad_chcksm,
-		start_frame_only,
-		random_data,
-		bad_missing_data_1,
-		random_data,
-		bad_missing_data_2,
-		test_cmd_1,
-		bad_missing_data_3,
-		random_data,
-		bad_missing_data_4,
-		random_data,
-		test_cmd_0,
+		led_single_ears_0,
+		led_single_belt_3,
+		led_full_ears,
+		led_full_belt,
+		led_range_ears,
+		led_range_belt,
 	});
-
-	auto working = std::to_array<std::span<uint8_t>>({test_cmd_0, random_data, test_cmd_1, bad_chcksm, random_data,
-													  test_cmd_1, random_data, random_data, test_cmd_0, random_data});
-
-	auto random = std::to_array<std::span<uint8_t>>({random_data, random_data, random_data, random_data, random_data,
-													 random_data, random_data, random_data, random_data, random_data});
 
 }	// namespace data
 
-auto list = std::to_array<interface::Command *>({&internal::test});
+auto list = std::to_array<interface::Command *>({
+	&internal::test,
+	&internal::led,
+	&internal::led_full,
+	&internal::led_range,
+});
 
 }	// namespace command
 
@@ -138,7 +141,13 @@ auto main() -> int
 
 	cmdkit.registerCommand(command::list);
 
-	log_info("Hello, spike CommandKit!\n\n");
+	leds::turnOff();
+
+	log_info();
+	log_info();
+	log_info("Hello, spike CommandKit!");
+	log_info();
+	log_info();
 
 	auto start = rtos::Kernel::Clock::now();
 
@@ -150,16 +159,11 @@ auto main() -> int
 		log_debug("A message from your board %s --> \"%s\" at %ims", MBED_CONF_APP_TARGET_NAME, hello.world,
 				  int(rtos::Kernel::Clock::now().time_since_epoch().count()));
 
-		std::random_device rd;
-		std::minstd_rand g(rd());
-
-		// std::shuffle(command::data::all.begin(), command::data::all.end(), g);
-
-		for (auto i = 0; const auto &data: command::data::all) {
+		for (auto i = 0; const auto &data: command::data::list) {
 			log_debug("index: %i", i++);
 			cmdkit.push(data);
+			rtos::ThisThread::sleep_for(1500ms);
+			leds::turnOff();
 		}
-
-		rtos::ThisThread::sleep_for(1s);
 	}
 }

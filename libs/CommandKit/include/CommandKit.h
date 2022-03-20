@@ -9,6 +9,8 @@
 
 #include "CircularQueue.h"
 #include "commands/LedCommand.h"
+#include "commands/LedFullCommand.h"
+#include "commands/LedRangeCommand.h"
 #include "commands/TestCommand.h"
 #include "interface/Command.h"
 
