@@ -5,6 +5,7 @@
 #pragma once
 
 #include "platform/mbed_power_mgmt.h"
+#include "rtos/ThisThread.h"
 
 #include "BLEKit.h"
 #include "BLEServiceBattery.h"
@@ -44,8 +45,11 @@ class RobotController : public interface::RobotController
 
 	void runLaunchingBehavior() final
 	{
+		using namespace std::chrono_literals;
+
 		_event_queue.call(&_behaviorkit, &BehaviorKit::launching);
 		_event_queue.call(&_videokit, &VideoKit::turnOn);
+		rtos::ThisThread::sleep_for(3s);
 	}
 
 	void startSleepTimeout() final { _sleep_timeout.start(_sleep_timeout_duration); }
@@ -185,7 +189,7 @@ class RobotController : public interface::RobotController
 	};
 
   private:
-	std::chrono::seconds _sleep_timeout_duration {10};
+	std::chrono::seconds _sleep_timeout_duration {300};
 	interface::Timeout &_sleep_timeout;
 
 	interface::Battery &_battery;
