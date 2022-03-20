@@ -12,6 +12,8 @@
 
 #include "CoreBattery.h"
 #include "CoreLED.h"
+#include "CoreMotor.h"
+#include "CorePwm.h"
 #include "CoreSPI.h"
 #include "FATFileSystem.h"
 #include "FileSystemKit.h"
@@ -35,10 +37,22 @@ FATFileSystem fatfs("fs");
 FileSystemKit::File _configuration_file {"/fs/conf/bootloader.conf"};
 
 static constexpr auto NUM_EARS_LEDS = 2;
+static constexpr auto NUM_BELT_LEDS = 20;
 
 auto corespi_ears = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+auto corespi_belt = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+auto ears		  = CoreLED<NUM_EARS_LEDS> {corespi_ears};
+auto belt		  = CoreLED<NUM_BELT_LEDS> {corespi_belt};
 
-auto ears = CoreLED<NUM_EARS_LEDS> {corespi_ears};
+auto motor_left_dir_1  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
+auto motor_left_dir_2  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
+auto motor_left_speed  = CorePwm {MOTOR_LEFT_PWM};
+auto motor_right_dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
+auto motor_right_dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
+auto motor_right_speed = CorePwm {MOTOR_RIGHT_PWM};
+
+auto motor_left	 = CoreMotor {motor_left_dir_1, motor_left_dir_2, motor_left_speed};
+auto motor_right = CoreMotor {motor_right_dir_1, motor_right_dir_2, motor_right_speed};
 
 void initializeSD()
 {
@@ -48,6 +62,20 @@ void initializeSD()
 	sd_blockdevice.frequency(default_sd_blockdevice_frequency);
 
 	fatfs.mount(&sd_blockdevice);
+}
+
+void turnOffLeds()
+{
+	ears.setColor(RGB::black);
+	belt.setColor(RGB::black);
+	ears.show();
+	belt.show();
+}
+
+void turnOffMotors()
+{
+	motor_left.stop();
+	motor_right.stop();
 }
 
 void blink()
@@ -85,6 +113,9 @@ void blinkHighEnergy()
 
 auto main() -> int
 {
+	turnOffLeds();
+	turnOffMotors();
+
 	while (battery.level() < 0 + battery_level_hysteresis_offset) {
 		if (battery.isCharging() && battery.voltage() < 8.0) {
 			blinkLowEnergy();

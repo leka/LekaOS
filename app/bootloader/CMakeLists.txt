@@ -21,6 +21,8 @@ target_link_libraries(bootloader
 	CoreBattery
 	FileSystemKit
 	CoreLED
+	CoreMotor
+	CorePwm
 )
 
 target_link_custom_leka_targets(bootloader)
