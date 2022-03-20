@@ -19,6 +19,7 @@ target_sources(RobotKit
 
 target_link_libraries(RobotKit
 	BatteryKit
+	SerialNumberKit
 	BLEKit
 	CoreMotor
 	LedKit

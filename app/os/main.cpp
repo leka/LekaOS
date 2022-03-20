@@ -10,6 +10,7 @@
 #include "CoreBattery.h"
 #include "CoreFlashIS25LP016D.h"
 #include "CoreFlashManagerIS25LP016D.h"
+#include "CoreMCU.h"
 #include "CorePwm.h"
 #include "CoreQSPI.h"
 #include "CoreSPI.h"
@@ -21,6 +22,7 @@
 #include "QSPIFBlockDevice.h"
 #include "RobotController.h"
 #include "SDBlockDevice.h"
+#include "SerialNumberKit.h"
 #include "SlicingBlockDevice.h"
 #include "VideoKit.h"
 #include "bootutil/bootutil.h"
@@ -51,6 +53,9 @@ void start()
 }	// namespace watchdog
 
 auto sleep_timeout = CoreTimeout {};
+
+auto mcu			 = CoreMCU {};
+auto serialnumberkit = SerialNumberKit {mcu};
 
 auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
 auto fatfs			= FATFileSystem {"fs"};
@@ -86,7 +91,8 @@ auto coreflashmanager = CoreFlashManagerIS25LP016D(coreqspi);
 auto coreflash		  = CoreFlashIS25LP016D(coreqspi, coreflashmanager);
 auto firmwarekit	  = FirmwareKit(coreflash);
 
-auto rc = RobotController {sleep_timeout, battery, firmwarekit, motor_left, motor_right, ledkit, videokit, behaviorkit};
+auto rc = RobotController {sleep_timeout, battery, serialnumberkit, firmwarekit, motor_left,
+						   motor_right,	  ledkit,  videokit,		behaviorkit};
 
 void initializeSD()
 {

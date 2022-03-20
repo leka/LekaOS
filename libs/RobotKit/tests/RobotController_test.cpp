@@ -10,11 +10,13 @@
 #include "CoreMotor.h"
 #include "CorePwm.h"
 #include "CoreSPI.h"
+#include "SerialNumberKit.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/Battery.h"
 #include "mocks/leka/FirmwareUpdate.h"
 #include "mocks/leka/LEDAnimation.h"
+#include "mocks/leka/MCU.h"
 #include "mocks/leka/PwmOut.h"
 #include "mocks/leka/Timeout.h"
 #include "mocks/mbed/DigitalOut.h"
@@ -55,6 +57,7 @@ class RobotControllerTest : public testing::Test
 		EXPECT_CALL(mbed_mock_gatt, addService).Times(AnyNumber());
 		EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(AnyNumber());
 		EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(AnyNumber());
+		EXPECT_CALL(mock_mcu, getID).Times(AnyNumber());
 
 		rc.initializeComponents();
 
@@ -72,6 +75,10 @@ class RobotControllerTest : public testing::Test
 
 	mock::Timeout sleep_timeout {};
 	mock::Battery battery {};
+
+	mock::MCU mock_mcu {};
+	SerialNumberKit serialnumberkit {mock_mcu};
+
 	mock::FirmwareUpdate firmware_update {};
 
 	CoreSPI spi {NC, NC, NC, NC};
@@ -100,7 +107,7 @@ class RobotControllerTest : public testing::Test
 	BehaviorKit bhvkit {videokit, ledkit, motor_left, motor_right};
 
 	RobotController<bsml::sm<robot::StateMachine, bsml::testing>> rc {
-		sleep_timeout, battery, firmware_update, motor_left, motor_right, ledkit, videokit, bhvkit};
+		sleep_timeout, battery, serialnumberkit, firmware_update, motor_left, motor_right, ledkit, videokit, bhvkit};
 
 	interface::Timeout::callback_t on_sleep_timeout = {};
 
