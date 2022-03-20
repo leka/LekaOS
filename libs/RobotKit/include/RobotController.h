@@ -169,8 +169,9 @@ class RobotController : public interface::RobotController
 		_battery_kit.onDataUpdated([](uint8_t level) { _service_battery.setBatteryLevel(level); });
 
 		auto on_low_battery = [this] {
-			_event_queue.call(&_behaviorkit, &BehaviorKit::lowBattery);
-			// TODO: Add turn on screen
+			if (!_battery.isCharging()) {
+				_event_queue.call(&_behaviorkit, &BehaviorKit::lowBattery);
+			}
 
 			if (_battery.level() == 0) {
 				system_reset();

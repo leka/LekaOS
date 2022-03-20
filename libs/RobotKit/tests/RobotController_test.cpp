@@ -63,11 +63,13 @@ class RobotControllerTest : public testing::Test
 
 		EXPECT_CALL(battery, level).Times(AnyNumber());
 		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber());
-		EXPECT_CALL(sleep_timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleep_timeout));
-		EXPECT_CALL(battery, onChargeDidStart).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_start));
-		EXPECT_CALL(battery, onChargeDidStop).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_stop));
-		EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
-		EXPECT_CALL(sleep_timeout, start).Times(1);	  // Hide Uninteresting mock function call
+		EXPECT_CALL(sleep_timeout, onTimeout)
+			.WillRepeatedly(GetCallback<interface::Timeout::callback_t>(&on_sleep_timeout));
+		EXPECT_CALL(battery, onChargeDidStart)
+			.WillRepeatedly(GetCallback<mbed::Callback<void()>>(&on_charge_did_start));
+		EXPECT_CALL(battery, onChargeDidStop).WillRepeatedly(GetCallback<mbed::Callback<void()>>(&on_charge_did_stop));
+		EXPECT_CALL(battery, isCharging).Times(2).WillRepeatedly(Return(false));
+		EXPECT_CALL(sleep_timeout, start).Times(AnyNumber());	// Hide Uninteresting mock function call
 
 		rc.registerEvents();
 	}
@@ -132,7 +134,15 @@ TEST_F(RobotControllerTest, initializeComponents)
 	rc.initializeComponents();
 }
 
-TEST_F(RobotControllerTest, onStartChargingBehaviorLevelBelow5)
+TEST_F(RobotControllerTest, onLowBatteryBatteryIsCharging)
+{
+	EXPECT_CALL(battery, isCharging).Times(1).WillOnce(Return(true));
+	EXPECT_CALL(battery, level).Times(AnyNumber());
+
+	rc.registerEvents();
+}
+
+TEST_F(RobotControllerTest, onStartChargingBehaviorLevelBelow25)
 {
 	auto battery_level = 0;
 
