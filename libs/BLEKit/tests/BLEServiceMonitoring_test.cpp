@@ -4,9 +4,12 @@
 
 #include "BLEServiceMonitoring.h"
 
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 using namespace leka;
+
+using ::testing::MockFunction;
 
 class BLEServiceMonitoringTest : public testing::Test
 {
@@ -79,4 +82,53 @@ TEST_F(BLEServiceMonitoringTest, isScreensaverEnableNotSameHandle)
 	auto actual_is_screensaver_enable = service_monitoring.isScreensaverEnable();
 	EXPECT_EQ(actual_is_screensaver_enable, expected_is_screensaver_enable);
 	EXPECT_NE(actual_is_screensaver_enable, sent_value);
+}
+
+TEST_F(BLEServiceMonitoringTest, onSoftRebootUnset)
+{
+	bool sent_value = true;
+
+	auto convert_to_handle_data_type = [](bool value) { return std::make_shared<uint8_t>(value).get(); };
+	onDataReceivedProcess(convert_to_handle_data_type(sent_value));
+}
+
+TEST_F(BLEServiceMonitoringTest, onSoftRebootReceivedFalse)
+{
+	bool sent_value = false;
+
+	testing::MockFunction<void()> mock_callback {};
+	service_monitoring.onSoftReboot(mock_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_callback, Call).Times(0);
+
+	auto convert_to_handle_data_type = [](bool value) { return std::make_shared<uint8_t>(value).get(); };
+	onDataReceivedProcess(convert_to_handle_data_type(sent_value));
+}
+
+TEST_F(BLEServiceMonitoringTest, onSoftRebootReceivedTrue)
+{
+	bool sent_value = true;
+
+	testing::MockFunction<void()> mock_callback {};
+	service_monitoring.onSoftReboot(mock_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_callback, Call).Times(1);
+
+	auto convert_to_handle_data_type = [](bool value) { return std::make_shared<uint8_t>(value).get(); };
+	onDataReceivedProcess(convert_to_handle_data_type(sent_value));
+}
+
+TEST_F(BLEServiceMonitoringTest, onSoftRebootNotSameHandle)
+{
+	bool sent_value = true;
+
+	data_received_handle.handle = 0xFFFF;
+
+	testing::MockFunction<void()> mock_callback {};
+	service_monitoring.onSoftReboot(mock_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_callback, Call).Times(0);
+
+	auto convert_to_handle_data_type = [](bool value) { return std::make_shared<uint8_t>(value).get(); };
+	onDataReceivedProcess(convert_to_handle_data_type(sent_value));
 }

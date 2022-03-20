@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "platform/mbed_power_mgmt.h"
+
 #include "internal/BLEService.h"
 #include "internal/ServicesCharacteristics.h"
 
@@ -29,7 +31,21 @@ class BLEServiceMonitoring : public interface::BLEService
 		if (params.handle == screensaver_enable_characteristic.getValueHandle()) {
 			screensaver_enable = static_cast<bool>(params.data[0]);
 		}
+		if (params.handle == soft_reboot_characteristic.getValueHandle()) {
+			soft_reboot = static_cast<bool>(params.data[0]);
+			if (soft_reboot && _on_soft_reboot) {
+				_on_soft_reboot();
+			}
+		}
+		if (params.handle == hard_reboot_characteristic.getValueHandle()) {
+			hard_reboot = static_cast<bool>(params.data[0]);
+			if (soft_reboot) {
+				system_reset();
+			}
+		}
 	};
+
+	void onSoftReboot(const std::function<void()> &callback) { _on_soft_reboot = callback; }
 
   private:
 	uint8_t charging_status {0x00};
@@ -41,8 +57,18 @@ class BLEServiceMonitoring : public interface::BLEService
 	WriteOnlyGattCharacteristic<bool> screensaver_enable_characteristic {
 		service::monitoring::characteristic::screensaver_enable, &screensaver_enable};
 
-	std::array<GattCharacteristic *, 2> _characteristic_table {&_charging_status_characteristic,
-															   &screensaver_enable_characteristic};
+	bool soft_reboot {false};
+	WriteOnlyGattCharacteristic<bool> soft_reboot_characteristic {service::monitoring::characteristic::soft_reboot,
+																  &soft_reboot};
+	std::function<void()> _on_soft_reboot {};
+
+	bool hard_reboot {false};
+	WriteOnlyGattCharacteristic<bool> hard_reboot_characteristic {service::monitoring::characteristic::hard_reboot,
+																  &hard_reboot};
+
+	std::array<GattCharacteristic *, 4> _characteristic_table {
+		&_charging_status_characteristic, &screensaver_enable_characteristic, &soft_reboot_characteristic,
+		&hard_reboot_characteristic};
 };
 
 }	// namespace leka
