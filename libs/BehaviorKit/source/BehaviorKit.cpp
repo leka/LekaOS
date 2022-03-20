@@ -33,18 +33,19 @@ void BehaviorKit::waiting()
 {
 	_ledkit.start(&LedKit::animation::waiting);
 	_videokit.playVideo(
-		"/fs/videos/2022_02_14-animation-face-state-waiting-looking-top-right-to-left-without-eyebrows.avi");
+		"/fs/videos/2022_02_14-animation-face-state-waiting-looking-top-right-to-left-without-eyebrows.avi", true);
 }
 
 void BehaviorKit::lowBattery()
 {
+	_ledkit.stop();
 	_videokit.displayImage("/fs/images/loading.jpg");
 }
 
 void BehaviorKit::chargingZero()
 {
 	_ledkit.start(&LedKit::animation::charging_red);
-	_videokit.displayImage("/fs/images/battery_0.jpg");
+	_videokit.displayImage("/fs/images/low_battery.jpg");
 }
 
 void BehaviorKit::chargingRed()
