@@ -132,9 +132,18 @@ TEST_F(RobotControllerTest, initializeComponents)
 	rc.initializeComponents();
 }
 
-TEST_F(RobotControllerTest, onStartChargingBehaviorLevelBelow25)
+TEST_F(RobotControllerTest, onStartChargingBehaviorLevelBelow5)
 {
 	auto battery_level = 0;
+
+	rc.onStartChargingBehavior(battery_level);
+
+	// nohting expected
+}
+
+TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove5Below25)
+{
+	auto battery_level = 22;
 
 	rc.onStartChargingBehavior(battery_level);
 
@@ -159,18 +168,9 @@ TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove50Below75)
 	// nohting expected
 }
 
-TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove75Below100)
+TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove75)
 {
 	auto battery_level = 90;
-
-	rc.onStartChargingBehavior(battery_level);
-
-	// nohting expected
-}
-
-TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAt100)
-{
-	auto battery_level = 100;
 
 	rc.onStartChargingBehavior(battery_level);
 

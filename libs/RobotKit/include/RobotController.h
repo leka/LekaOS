@@ -90,13 +90,13 @@ class RobotController : public interface::RobotController
 	{
 		_service_battery.setBatteryLevel(level);
 
-		if (level < 25) {
+		if (level < 5) {
 			_event_queue.call(&_behaviorkit, &BehaviorKit::chargingZero);
-		} else if (level < 50) {
+		} else if (level < 25) {
 			_event_queue.call(&_behaviorkit, &BehaviorKit::chargingRed);
-		} else if (level < 75) {
+		} else if (level < 50) {
 			_event_queue.call(&_behaviorkit, &BehaviorKit::chargingOrange);
-		} else if (level < 100) {
+		} else if (level < 75) {
 			_event_queue.call(&_behaviorkit, &BehaviorKit::chargingYellow);
 		} else {
 			_event_queue.call(&_behaviorkit, &BehaviorKit::chargingGreen);
