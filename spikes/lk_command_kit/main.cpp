@@ -38,16 +38,6 @@ namespace animations {
 auto ears = CoreLED<LedKit::kNumberOfLedsEars> {spi::ears};
 auto belt = CoreLED<LedKit::kNumberOfLedsBelt> {spi::belt};
 
-void turnOff()
-{
-	log_debug("turn off start");
-	leds::ears.setColor(RGB::black);
-	leds::ears.show();
-	leds::belt.setColor(RGB::black);
-	leds::belt.show();
-	log_debug("turn off end");
-};
-
 }	// namespace leds
 
 auto ledkit = LedKit {leds::animations::thread, leds::animations::eq, leds::ears, leds::belt};
@@ -77,17 +67,18 @@ auto right = CoreMotor {internal::right::dir_1, internal::right::dir_2, internal
 
 }	// namespace motor
 
-// auto videokit	 = VideoKit {};
-// auto behaviorkit = BehaviorKit {videokit, ledkit, motor::left, motor::right};
+auto videokit	 = VideoKit {};
+auto behaviorkit = BehaviorKit {videokit, ledkit, motor::left, motor::right};
 
 namespace command {
 
 namespace internal {
 
-	auto led	   = LedSingleCommand {leds::ears, leds::belt};
-	auto led_full  = LedFullCommand {leds::ears, leds::belt};
-	auto led_range = LedRangeCommand {leds::ears, leds::belt};
-	auto test	   = TestCommand {};
+	auto test		= TestCommand {};
+	auto led		= LedSingleCommand {leds::ears, leds::belt};
+	auto led_full	= LedFullCommand {leds::ears, leds::belt};
+	auto led_range	= LedRangeCommand {leds::ears, leds::belt};
+	auto reinforcer = ReinforcerCommand {behaviorkit};
 
 }	// namespace internal
 
@@ -107,6 +98,9 @@ namespace data {
 	auto led_range_ears = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x16, 0x17, 0x00, 0x01, 0x00, 0x7F, 0xFF, 0x96});
 	auto led_range_belt = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x16, 0x18, 0x04, 0x0A, 0x00, 0x7F, 0xFF, 0xA4});
 
+	auto reinforcer_rainbow   = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x50, 0x51, 0x51});
+	auto reinforcer_sprinkles = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A, 0x01, 0x50, 0x53, 0x53});
+
 	// clang-format on
 
 	auto list = std::to_array<std::span<uint8_t>>({
@@ -118,6 +112,8 @@ namespace data {
 		led_full_belt,
 		led_range_ears,
 		led_range_belt,
+		reinforcer_rainbow,
+		reinforcer_sprinkles,
 	});
 
 }	// namespace data
@@ -127,9 +123,21 @@ auto list = std::to_array<interface::Command *>({
 	&internal::led,
 	&internal::led_full,
 	&internal::led_range,
+	&internal::reinforcer,
 });
 
 }	// namespace command
+
+void turnOff()
+{
+	log_debug("turn off start");
+	leds::ears.setColor(RGB::black);
+	leds::ears.show();
+	leds::belt.setColor(RGB::black);
+	leds::belt.show();
+	behaviorkit.stop();
+	log_debug("turn off end");
+};
 
 auto cmdkit = CommandKit {};
 
@@ -141,7 +149,7 @@ auto main() -> int
 
 	cmdkit.registerCommand(command::list);
 
-	leds::turnOff();
+	turnOff();
 
 	log_info();
 	log_info();
@@ -163,7 +171,7 @@ auto main() -> int
 			log_debug("index: %i", i++);
 			cmdkit.push(data);
 			rtos::ThisThread::sleep_for(1500ms);
-			leds::turnOff();
+			turnOff();
 		}
 	}
 }
