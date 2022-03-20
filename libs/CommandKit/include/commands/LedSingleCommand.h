@@ -14,8 +14,8 @@
 
 namespace leka {
 
-struct LedCommand : interface::Command {
-	LedCommand(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {}
+struct LedSingleCommand : interface::Command {
+	LedSingleCommand(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {}
 
 	auto id() -> uint8_t override { return cmd::id; }
 

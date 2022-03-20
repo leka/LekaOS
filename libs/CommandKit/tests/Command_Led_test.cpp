@@ -2,7 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "commands/LedCommand.h"
+#include "commands/LedSingleCommand.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreLED.h"
 
@@ -16,7 +16,7 @@ class LedCommandTest : public testing::Test
 
 	mock::CoreLED mockled {};
 
-	LedCommand ledcmd {mockled, mockled};
+	LedSingleCommand ledcmd {mockled, mockled};
 };
 
 TEST(LedCommandTest, initialization)

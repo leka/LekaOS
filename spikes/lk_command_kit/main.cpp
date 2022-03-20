@@ -84,7 +84,7 @@ namespace command {
 
 namespace internal {
 
-	auto led	   = LedCommand {leds::ears, leds::belt};
+	auto led	   = LedSingleCommand {leds::ears, leds::belt};
 	auto led_full  = LedFullCommand {leds::ears, leds::belt};
 	auto led_range = LedRangeCommand {leds::ears, leds::belt};
 	auto test	   = TestCommand {};
