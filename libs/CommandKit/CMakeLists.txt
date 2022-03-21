@@ -17,6 +17,7 @@ target_sources(CommandKit
 target_link_libraries(CommandKit
 	CoreEventQueue
 	CoreLED
+	CoreMotor
 	BehaviorKit
 	mbed-os
 )
