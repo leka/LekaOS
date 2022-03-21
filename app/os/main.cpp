@@ -79,7 +79,7 @@ auto motor_right_dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
 auto motor_right_speed = CorePwm {MOTOR_RIGHT_PWM};
 
 auto motor_left	 = CoreMotor {motor_left_dir_1, motor_left_dir_2, motor_left_speed};
-auto motor_right = CoreMotor {motor_right_dir_1, motor_right_dir_2, motor_right_speed};
+auto motor_right = CoreMotor {motor_right_dir_2, motor_right_dir_1, motor_right_speed};
 
 auto behaviorkit = BehaviorKit {videokit, ledkit, motor_left, motor_right};
 
@@ -109,6 +109,7 @@ auto list = std::to_array<interface::Command *>({
 	&internal::led,
 	&internal::led_full,
 	&internal::led_range,
+	&internal::motors,
 	&internal::reinforcer,
 });
 
