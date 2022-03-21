@@ -58,4 +58,14 @@ namespace firmware_update {
 
 }	// namespace firmware_update
 
+namespace commands {
+
+	constexpr const char *uuid = "0000dfb0-0000-1000-8000-00805f9b34fb";
+
+	namespace characteristic {
+		constexpr const char *tx = "0000dfb1-0000-1000-8000-00805f9b34fb";
+	}	// namespace characteristic
+
+}	// namespace commands
+
 }	// namespace leka::service

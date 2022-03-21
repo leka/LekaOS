@@ -9,6 +9,7 @@
 
 #include "BLEKit.h"
 #include "BLEServiceBattery.h"
+#include "BLEServiceCommands.h"
 #include "BLEServiceDeviceInformation.h"
 #include "BLEServiceMonitoring.h"
 
@@ -224,6 +225,7 @@ class RobotController : public interface::RobotController
 	inline static BLEServiceDeviceInformation _service_device_information {};
 	inline static BLEServiceBattery _service_battery {};
 	inline static BLEServiceMonitoring _service_monitoring {};
+	inline static BLEServiceCommands _service_commands {};
 	inline static auto services =
 		std::to_array<interface::BLEService *>({&_service_device_information, &_service_battery, &_service_monitoring});
 };
