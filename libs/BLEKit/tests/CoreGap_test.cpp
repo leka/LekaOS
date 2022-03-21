@@ -8,6 +8,7 @@
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "internal/ServicesCharacteristics.h"
 #include "stubs/mbed/BLE.h"
 
 using namespace leka;
@@ -99,6 +100,7 @@ TEST_F(CoreGapTest, defaultAdvertisingPayload)
 	data_builder.setManufacturerSpecificData({{0x2A, 0x2B, 0x2C, 0x2D}});
 	data_builder.setAdvertisingInterval(ble::adv_interval_t::min());
 	data_builder.setServiceData(GattService::UUID_BATTERY_SERVICE, {{0x42}});
+	data_builder.setServiceData(service::commands::uuid, {{0}});
 
 	EXPECT_CALL(mbed_mock_gap,
 				setAdvertisingPayload(LEGACY_ADVERTISING_HANDLE, compareAdvertisingPayload(data_builder)))
