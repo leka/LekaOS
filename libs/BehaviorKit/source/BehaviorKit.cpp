@@ -35,7 +35,7 @@ void BehaviorKit::sleeping()
 
 void BehaviorKit::waiting()
 {
-	_ledkit.start(&LedKit::animation::waiting);
+	_ledkit.stop();
 	_videokit.playVideo(
 		"/fs/videos/2022_02_14-animation-face-state-waiting-looking-top-right-to-left-without-eyebrows.avi", true);
 }
@@ -78,6 +78,8 @@ void BehaviorKit::blinkGreen()
 	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi");
 	rtos::ThisThread::sleep_for(3s);
 	_ledkit.stop();
+	_motor_left.stop();
+	_motor_right.stop();
 }
 
 void BehaviorKit::spinBlink()
@@ -87,6 +89,8 @@ void BehaviorKit::spinBlink()
 	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi");
 	rtos::ThisThread::sleep_for(3s);
 	_ledkit.stop();
+	_motor_left.stop();
+	_motor_right.stop();
 }
 
 void BehaviorKit::fire()

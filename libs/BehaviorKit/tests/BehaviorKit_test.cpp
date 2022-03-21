@@ -19,6 +19,8 @@
 
 using namespace leka;
 
+using ::testing::InSequence;
+
 class BehaviorKitTest : public ::testing::Test
 {
   protected:
@@ -60,30 +62,80 @@ TEST_F(BehaviorKitTest, initialization)
 
 TEST_F(BehaviorKitTest, spinBlink)
 {
-	static constexpr auto speed = 0.5;
+	static constexpr auto expected_speed = 0.5;
 
-	EXPECT_CALL(dir_1_left, write(1));
-	EXPECT_CALL(dir_2_left, write(0));
-	EXPECT_CALL(speed_left, write(speed));
-	EXPECT_CALL(dir_1_right, write(1));
-	EXPECT_CALL(dir_2_right, write(0));
-	EXPECT_CALL(speed_right, write(speed));
+	{
+		InSequence seq;
+
+		EXPECT_CALL(dir_1_left, write(0));
+		EXPECT_CALL(dir_2_left, write(1));
+		EXPECT_CALL(speed_left, write(expected_speed));
+		EXPECT_CALL(dir_1_right, write(0));
+		EXPECT_CALL(dir_2_right, write(1));
+		EXPECT_CALL(speed_right, write(expected_speed));
+
+		EXPECT_CALL(dir_1_left, write(0));
+		EXPECT_CALL(dir_2_left, write(0));
+		EXPECT_CALL(speed_left, write(0));
+		EXPECT_CALL(dir_1_right, write(0));
+		EXPECT_CALL(dir_2_right, write(0));
+		EXPECT_CALL(speed_right, write(0));
+	}
+
+	behaviorkit.spinBlink();
+}
+
+TEST_F(BehaviorKitTest, blinkGreen)
+{
+	static constexpr auto expected_speed = 0.5;
+
+	{
+		InSequence seq;
+
+		EXPECT_CALL(dir_1_left, write(1));
+		EXPECT_CALL(dir_2_left, write(0));
+		EXPECT_CALL(speed_left, write(expected_speed));
+		EXPECT_CALL(dir_1_right, write(1));
+		EXPECT_CALL(dir_2_right, write(0));
+		EXPECT_CALL(speed_right, write(expected_speed));
+
+		EXPECT_CALL(dir_1_left, write(0));
+		EXPECT_CALL(dir_2_left, write(0));
+		EXPECT_CALL(speed_left, write(0));
+		EXPECT_CALL(dir_1_right, write(0));
+		EXPECT_CALL(dir_2_right, write(0));
+		EXPECT_CALL(speed_right, write(0));
+	}
 
 	behaviorkit.blinkGreen();
 }
 
+TEST_F(BehaviorKitTest, spinLeft)
+{
+	static constexpr auto expected_speed = 0.5;
+
+	EXPECT_CALL(dir_1_left, write(1));
+	EXPECT_CALL(dir_2_left, write(0));
+	EXPECT_CALL(speed_left, write(expected_speed));
+	EXPECT_CALL(dir_1_right, write(1));
+	EXPECT_CALL(dir_2_right, write(0));
+	EXPECT_CALL(speed_right, write(expected_speed));
+
+	behaviorkit.spinLeft(expected_speed);
+}
+
 TEST_F(BehaviorKitTest, spinRight)
 {
-	static constexpr auto speed = 0.5;
+	static constexpr auto expected_speed = 0.5;
 
 	EXPECT_CALL(dir_1_left, write(0));
 	EXPECT_CALL(dir_2_left, write(1));
-	EXPECT_CALL(speed_left, write(speed));
+	EXPECT_CALL(speed_left, write(expected_speed));
 	EXPECT_CALL(dir_1_right, write(0));
 	EXPECT_CALL(dir_2_right, write(1));
-	EXPECT_CALL(speed_right, write(speed));
+	EXPECT_CALL(speed_right, write(expected_speed));
 
-	behaviorkit.spinBlink();
+	behaviorkit.spinRight(expected_speed);
 }
 
 TEST_F(BehaviorKitTest, lowBattery)
