@@ -20,11 +20,26 @@ using namespace std::chrono;
 auto constexpr NUM_BELT_LEDS = 20;
 auto constexpr NUM_EARS_LEDS = 2;
 
-CoreSPI corespi_belt(LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK);
-CoreSPI corespi_ears(LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK);
+namespace leds {
 
-CoreLED<NUM_BELT_LEDS> belt(corespi_belt);
-CoreLED<NUM_EARS_LEDS> ears(corespi_ears);
+namespace spi {
+
+	auto belt = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+	auto ears = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+
+}	// namespace spi
+
+namespace animations {
+
+	auto thread		 = rtos::Thread {};
+	auto event_queue = events::EventQueue {};
+
+}	// namespace animations
+
+auto ears = CoreLED<NUM_EARS_LEDS> {spi::ears};
+auto belt = CoreLED<NUM_BELT_LEDS> {spi::belt};
+
+}	// namespace leds
 
 void doGradient(interface::LED &e, interface::LED &b)
 {
@@ -53,7 +68,7 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(2s);
 
 	while (true) {
-		doGradient(ears, belt);
+		doGradient(leds::ears, leds::belt);
 		rtos::ThisThread::sleep_for(1s);
 	}
 }
