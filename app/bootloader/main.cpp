@@ -39,20 +39,44 @@ FileManagerKit::File _configuration_file {"/fs/conf/bootloader.conf"};
 static constexpr auto NUM_EARS_LEDS = 2;
 static constexpr auto NUM_BELT_LEDS = 20;
 
-auto corespi_ears = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
-auto corespi_belt = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
-auto ears		  = CoreLED<NUM_EARS_LEDS> {corespi_ears};
-auto belt		  = CoreLED<NUM_BELT_LEDS> {corespi_belt};
+namespace leds {
 
-auto motor_left_dir_1  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
-auto motor_left_dir_2  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
-auto motor_left_speed  = CorePwm {MOTOR_LEFT_PWM};
-auto motor_right_dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
-auto motor_right_dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
-auto motor_right_speed = CorePwm {MOTOR_RIGHT_PWM};
+namespace spi {
 
-auto motor_left	 = CoreMotor {motor_left_dir_1, motor_left_dir_2, motor_left_speed};
-auto motor_right = CoreMotor {motor_right_dir_1, motor_right_dir_2, motor_right_speed};
+	auto belt = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+	auto ears = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+
+}	// namespace spi
+
+auto ears = CoreLED<NUM_EARS_LEDS> {spi::ears};
+auto belt = CoreLED<NUM_BELT_LEDS> {spi::belt};
+
+}	// namespace leds
+
+namespace motor {
+
+namespace internal {
+
+	namespace left {
+
+		auto dir_1 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
+		auto dir_2 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
+		auto speed = CorePwm {MOTOR_LEFT_PWM};
+
+	}	// namespace left
+	namespace right {
+
+		auto dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
+		auto dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
+		auto speed = CorePwm {MOTOR_RIGHT_PWM};
+
+	}	// namespace right
+}	// namespace internal
+
+auto left  = CoreMotor {internal::left::dir_1, internal::left::dir_2, internal::left::speed};
+auto right = CoreMotor {internal::right::dir_1, internal::right::dir_2, internal::right::speed};
+
+}	// namespace motor
 
 void initializeSD()
 {
@@ -66,25 +90,25 @@ void initializeSD()
 
 void turnOffLeds()
 {
-	ears.setColor(RGB::black);
-	belt.setColor(RGB::black);
-	ears.show();
-	belt.show();
+	leds::ears.setColor(RGB::black);
+	leds::belt.setColor(RGB::black);
+	leds::ears.show();
+	leds::belt.show();
 }
 
 void turnOffMotors()
 {
-	motor_left.stop();
-	motor_right.stop();
+	motor::left.stop();
+	motor::right.stop();
 }
 
 void blink()
 {
-	ears.setColor(RGB::pure_red);
-	ears.show();
+	leds::ears.setColor(RGB::pure_red);
+	leds::ears.show();
 	rtos::ThisThread::sleep_for(100ms);
-	ears.setColor(RGB::black);
-	ears.show();
+	leds::ears.setColor(RGB::black);
+	leds::ears.show();
 }
 
 void blinkLowEnergy()
