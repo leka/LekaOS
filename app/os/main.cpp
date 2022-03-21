@@ -58,31 +58,60 @@ auto sleep_timeout = CoreTimeout {};
 auto mcu			 = CoreMCU {};
 auto serialnumberkit = SerialNumberKit {mcu};
 
+namespace leds {
+
+namespace spi {
+
+	auto belt = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+	auto ears = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+
+}	// namespace spi
+
+namespace animations {
+
+	auto thread		 = rtos::Thread {};
+	auto event_flags = CoreEventFlags {};
+
+}	// namespace animations
+
+auto ears = CoreLED<LedKit::kNumberOfLedsEars> {spi::ears};
+auto belt = CoreLED<LedKit::kNumberOfLedsBelt> {spi::belt};
+
+}	// namespace leds
+
+auto ledkit = LedKit {leds::animations::thread, leds::animations::event_flags, leds::ears, leds::belt};
+
+namespace motor {
+
+namespace internal {
+
+	namespace left {
+
+		auto dir_1 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
+		auto dir_2 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
+		auto speed = CorePwm {MOTOR_LEFT_PWM};
+
+	}	// namespace left
+	namespace right {
+
+		auto dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
+		auto dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
+		auto speed = CorePwm {MOTOR_RIGHT_PWM};
+
+	}	// namespace right
+}	// namespace internal
+
+auto left  = CoreMotor {internal::left::dir_1, internal::left::dir_2, internal::left::speed};
+auto right = CoreMotor {internal::right::dir_1, internal::right::dir_2, internal::right::speed};
+
+}	// namespace motor
+
 auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
 auto fatfs			= FATFileSystem {"fs"};
 
 auto videokit = VideoKit {};
 
-auto corespi_belt	  = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
-auto corespi_ears	  = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
-auto ears			  = CoreLED<LedKit::kNumberOfLedsEars> {corespi_ears};
-auto belt			  = CoreLED<LedKit::kNumberOfLedsBelt> {corespi_belt};
-auto animation_thread = rtos::Thread {};
-auto event_flags	  = CoreEventFlags {};
-
-auto ledkit = LedKit {animation_thread, event_flags, ears, belt};
-
-auto motor_left_dir_1  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
-auto motor_left_dir_2  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
-auto motor_left_speed  = CorePwm {MOTOR_LEFT_PWM};
-auto motor_right_dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
-auto motor_right_dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
-auto motor_right_speed = CorePwm {MOTOR_RIGHT_PWM};
-
-auto motor_left	 = CoreMotor {motor_left_dir_1, motor_left_dir_2, motor_left_speed};
-auto motor_right = CoreMotor {motor_right_dir_1, motor_right_dir_2, motor_right_speed};
-
-auto behaviorkit = BehaviorKit {videokit, ledkit, motor_left, motor_right};
+auto behaviorkit = BehaviorKit {videokit, ledkit, motor::left, motor::right};
 
 auto charge_input = mbed::InterruptIn {PinName::BATTERY_CHARGE_STATUS};
 auto battery	  = leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_input};
@@ -97,10 +126,10 @@ namespace command {
 namespace internal {
 
 	auto test		= TestCommand {};
-	auto led		= LedSingleCommand {ears, belt};
-	auto led_full	= LedFullCommand {ears, belt};
-	auto led_range	= LedRangeCommand {ears, belt};
-	auto motors		= MotorsCommand {motor_left, motor_right};
+	auto led		= LedSingleCommand {leds::ears, leds::belt};
+	auto led_full	= LedFullCommand {leds::ears, leds::belt};
+	auto led_range	= LedRangeCommand {leds::ears, leds::belt};
+	auto motors		= MotorsCommand {motor::left, motor::right};
 	auto reinforcer = ReinforcerCommand {behaviorkit};
 
 }	// namespace internal
@@ -118,8 +147,8 @@ auto list = std::to_array<interface::Command *>({
 
 auto commandkit = CommandKit {};
 
-auto rc = RobotController {sleep_timeout, battery, serialnumberkit, firmwarekit, motor_left,
-						   motor_right,	  ledkit,  videokit,		behaviorkit, commandkit};
+auto rc = RobotController {sleep_timeout, battery, serialnumberkit, firmwarekit, motor::left,
+						   motor::right,  ledkit,  videokit,		behaviorkit, commandkit};
 
 void initializeSD()
 {
