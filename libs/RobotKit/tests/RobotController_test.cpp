@@ -7,6 +7,7 @@
 #include "ble_mocks.h"
 
 #include "BehaviorKit.h"
+#include "CommandKit.h"
 #include "CoreMotor.h"
 #include "CorePwm.h"
 #include "CoreSPI.h"
@@ -111,8 +112,11 @@ class RobotControllerTest : public testing::Test
 
 	BehaviorKit bhvkit {videokit, ledkit, motor_left, motor_right};
 
+	CommandKit cmdkit {};
+
 	RobotController<bsml::sm<robot::StateMachine, bsml::testing>> rc {
-		sleep_timeout, battery, serialnumberkit, firmware_update, motor_left, motor_right, ledkit, videokit, bhvkit};
+		sleep_timeout, battery, serialnumberkit, firmware_update, motor_left,
+		motor_right,   ledkit,	videokit,		 bhvkit,		  cmdkit};
 
 	interface::Timeout::callback_t on_sleep_timeout = {};
 
