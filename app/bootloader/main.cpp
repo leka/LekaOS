@@ -24,115 +24,199 @@
 using namespace std::chrono;
 using namespace leka;
 
-static constexpr auto default_address = uint32_t {0x8040000 + 0x1000};	 // Start application address + header
+//
+// MARK: - Global definitions
+//
 
-static auto charge_status_input = mbed::InterruptIn {PinName::BATTERY_CHARGE_STATUS};
-static auto battery				= leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_status_input};
+namespace {
 
-auto battery_level_hysteresis_offset = uint8_t {5};
+namespace config {
 
-SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
-FATFileSystem fatfs("fs");
+	const auto file = FileManagerKit::File {"/fs/conf/bootloader.conf"};
 
-FileManagerKit::File _configuration_file {"/fs/conf/bootloader.conf"};
-
-static constexpr auto NUM_EARS_LEDS = 2;
-static constexpr auto NUM_BELT_LEDS = 20;
-
-auto corespi_ears = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
-auto corespi_belt = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
-auto ears		  = CoreLED<NUM_EARS_LEDS> {corespi_ears};
-auto belt		  = CoreLED<NUM_BELT_LEDS> {corespi_belt};
-
-auto motor_left_dir_1  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
-auto motor_left_dir_2  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
-auto motor_left_speed  = CorePwm {MOTOR_LEFT_PWM};
-auto motor_right_dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
-auto motor_right_dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
-auto motor_right_speed = CorePwm {MOTOR_RIGHT_PWM};
-
-auto motor_left	 = CoreMotor {motor_left_dir_1, motor_left_dir_2, motor_left_speed};
-auto motor_right = CoreMotor {motor_right_dir_1, motor_right_dir_2, motor_right_speed};
-
-void initializeSD()
-{
-	constexpr auto default_sd_blockdevice_frequency = uint64_t {25'000'000};
-
-	sd_blockdevice.init();
-	sd_blockdevice.frequency(default_sd_blockdevice_frequency);
-
-	fatfs.mount(&sd_blockdevice);
 }
 
-void turnOffLeds()
-{
-	ears.setColor(RGB::black);
-	belt.setColor(RGB::black);
-	ears.show();
-	belt.show();
-}
+namespace os {
 
-void turnOffMotors()
-{
-	motor_left.stop();
-	motor_right.stop();
-}
+	constexpr auto start_address = uint32_t {0x8040000 + 0x1000};	// Start application address + header
 
-void blink()
-{
-	ears.setColor(RGB::pure_red);
-	ears.show();
-	rtos::ThisThread::sleep_for(100ms);
-	ears.setColor(RGB::black);
-	ears.show();
-}
+}	// namespace os
 
-void blinkLowEnergy()
-{
-	blink();
-	rtos::ThisThread::sleep_for(2s);
-}
+namespace battery {
 
-void blinkMediumEnergy()
-{
-	blink();
-	rtos::ThisThread::sleep_for(100ms);
-	blink();
-	rtos::ThisThread::sleep_for(2s);
-}
+	namespace charge {
 
-void blinkHighEnergy()
-{
-	blink();
-	rtos::ThisThread::sleep_for(100ms);
-	blink();
-	rtos::ThisThread::sleep_for(100ms);
-	blink();
-	rtos::ThisThread::sleep_for(2s);
-}
+		auto status_input = mbed::InterruptIn {PinName::BATTERY_CHARGE_STATUS};
+
+	}
+
+	constexpr auto hysteresis_offset	 = uint8_t {5};
+	constexpr auto minimum_working_level = float {8.0};
+
+	auto cells = CoreBattery {PinName::BATTERY_VOLTAGE, battery::charge::status_input};
+
+}	// namespace battery
+
+namespace sd {
+
+	namespace internal {
+
+		auto bd = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
+		auto fs = FATFileSystem {"fs"};
+
+		constexpr auto default_frequency = uint64_t {25'000'000};
+
+	}	// namespace internal
+
+	void init()
+	{
+		internal::bd.init();
+		internal::bd.frequency(internal::default_frequency);
+		internal::fs.mount(&internal::bd);
+	}
+
+}	// namespace sd
+
+namespace leds {
+
+	namespace internal {
+
+		namespace ears {
+
+			auto spi			= CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+			constexpr auto size = 2;
+
+		}	// namespace ears
+
+		namespace belt {
+
+			auto spi			= CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+			constexpr auto size = 20;
+
+		}	// namespace belt
+
+	}	// namespace internal
+
+	auto ears = CoreLED<internal::ears::size> {internal::ears::spi};
+	auto belt = CoreLED<internal::belt::size> {internal::belt::spi};
+
+	namespace internal {
+
+		void blink()
+		{
+			leds::ears.setColor(RGB::pure_red);
+			leds::ears.show();
+			rtos::ThisThread::sleep_for(100ms);
+			leds::ears.setColor(RGB::black);
+			leds::ears.show();
+		}
+
+	}	// namespace internal
+
+	namespace blink {
+
+		void lowEnergy()
+		{
+			internal::blink();
+			rtos::ThisThread::sleep_for(2s);
+		}
+
+		void mediumEnergy()
+		{
+			internal::blink();
+			rtos::ThisThread::sleep_for(100ms);
+			internal::blink();
+			rtos::ThisThread::sleep_for(2s);
+		}
+
+		void highEnergy()
+		{
+			internal::blink();
+			rtos::ThisThread::sleep_for(100ms);
+			internal::blink();
+			rtos::ThisThread::sleep_for(100ms);
+			internal::blink();
+			rtos::ThisThread::sleep_for(2s);
+		}
+
+	}	// namespace blink
+
+	void turnOff()
+	{
+		ears.setColor(RGB::black);
+		belt.setColor(RGB::black);
+		ears.show();
+		belt.show();
+	}
+
+}	// namespace leds
+
+namespace motors {
+
+	namespace left {
+
+		namespace internal {
+
+			auto dir_1 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
+			auto dir_2 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
+			auto speed = CorePwm {MOTOR_LEFT_PWM};
+
+		}	// namespace internal
+
+		auto motor = CoreMotor {internal::dir_1, internal::dir_2, internal::speed};
+
+	}	// namespace left
+
+	namespace right {
+
+		namespace internal {
+
+			auto dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
+			auto dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
+			auto speed = CorePwm {MOTOR_RIGHT_PWM};
+
+		}	// namespace internal
+
+		auto motor = CoreMotor {internal::dir_1, internal::dir_2, internal::speed};
+
+	}	// namespace right
+
+	void turnOff()
+	{
+		left::motor.stop();
+		right::motor.stop();
+	}
+
+}	// namespace motors
+
+}	// namespace
+
+//
+// MARK: - main()
+//
 
 auto main() -> int
 {
-	turnOffLeds();
-	turnOffMotors();
+	leds::turnOff();
+	motors::turnOff();
 
-	while (battery.level() < 0 + battery_level_hysteresis_offset) {
-		if (battery.isCharging() && battery.voltage() < 8.0) {
-			blinkLowEnergy();
-		} else if (battery.isCharging() && battery.voltage() < CoreBattery::Capacity::empty) {
-			blinkMediumEnergy();
-		} else if (battery.isCharging()) {
-			blinkHighEnergy();
+	while (battery::cells.level() < 0 + battery::hysteresis_offset) {
+		if (battery::cells.isCharging() && battery::cells.voltage() < battery::minimum_working_level) {
+			leds::blink::lowEnergy();
+		} else if (battery::cells.isCharging() && battery::cells.voltage() < leka::CoreBattery::Capacity::empty) {
+			leds::blink::mediumEnergy();
+		} else if (battery::cells.isCharging()) {
+			leds::blink::highEnergy();
 		}
 
 		rtos::ThisThread::sleep_for(5s);
 	}
 
-	initializeSD();
+	sd::init();
 
-	auto address = default_address;
+	auto start_address = os::start_address;
 
-	if (battery.isCharging() && battery.voltage() > CoreBattery::Capacity::quarter) {
+	if (battery::cells.isCharging() && battery::cells.voltage() > CoreBattery::Capacity::quarter) {
 		// Initialize mbedtls crypto for use by MCUboot
 		mbedtls_platform_context unused_ctx;
 		if (auto ret = mbedtls_platform_setup(&unused_ctx); ret != 0) {
@@ -145,10 +229,10 @@ auto main() -> int
 			exit(ret);
 		}
 
-		address = boot_handler.br_image_off + boot_handler.br_hdr->ih_hdr_size;
+		start_address = boot_handler.br_image_off + boot_handler.br_hdr->ih_hdr_size;
 	}
 
 	// Run the application in the primary slot
 	// Add header size offset to calculate the actual start address of application
-	mbed_start_application(address);
+	mbed_start_application(start_address);
 }
