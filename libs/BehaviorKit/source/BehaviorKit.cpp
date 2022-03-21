@@ -4,7 +4,11 @@
 
 #include "BehaviorKit.h"
 
+#include "rtos/ThisThread.h"
+
 namespace leka {
+
+using namespace std::chrono;
 
 void BehaviorKit::spinLeft(float speed)
 {
@@ -72,6 +76,8 @@ void BehaviorKit::blinkGreen()
 	spinLeft(0.5);
 	_ledkit.start(&LedKit::animation::blink_green);
 	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi");
+	rtos::ThisThread::sleep_for(3s);
+	_ledkit.stop();
 }
 
 void BehaviorKit::spinBlink()
@@ -79,24 +85,32 @@ void BehaviorKit::spinBlink()
 	spinRight(0.5);
 	_ledkit.start(&LedKit::animation::spin_blink);
 	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi");
+	rtos::ThisThread::sleep_for(3s);
+	_ledkit.stop();
 }
 
 void BehaviorKit::fire()
 {
 	_ledkit.start(&LedKit::animation::fire);
 	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi");
+	rtos::ThisThread::sleep_for(3s);
+	_ledkit.stop();
 }
 
 void BehaviorKit::sprinkles()
 {
 	_ledkit.start(&LedKit::animation::sprinkles);
 	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi");
+	rtos::ThisThread::sleep_for(3s);
+	_ledkit.stop();
 }
 
 void BehaviorKit::rainbow()
 {
 	_ledkit.start(&LedKit::animation::rainbow);
 	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi");
+	rtos::ThisThread::sleep_for(3s);
+	_ledkit.stop();
 }
 
 void BehaviorKit::stop()
