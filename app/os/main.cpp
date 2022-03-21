@@ -91,8 +91,6 @@ auto coreflashmanager = CoreFlashManagerIS25LP016D(coreqspi);
 auto coreflash		  = CoreFlashIS25LP016D(coreqspi, coreflashmanager);
 auto firmwarekit	  = FirmwareKit(coreflash);
 
-<<<<<<< HEAD
-=======
 auto hal	  = CoreSTM32Hal {};
 auto videokit = VideoKit {hal};
 VideoKit_DeclareIRQHandlers(videokit);
@@ -124,7 +122,6 @@ auto list = std::to_array<interface::Command *>({
 
 auto commandkit = CommandKit {};
 
->>>>>>> 78e293f5 (FIXUP - changes to make it work)
 auto rc = RobotController {sleep_timeout, battery, serialnumberkit, firmwarekit, motor_left,
 						   motor_right,	  ledkit,  videokit,		behaviorkit, commandkit};
 
