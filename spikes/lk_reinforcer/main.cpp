@@ -17,16 +17,28 @@
 using namespace leka;
 using namespace std::chrono;
 
-auto corespi_belt = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
-auto corespi_ears = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+namespace leds {
 
-auto ears = CoreLED<LedKit::kNumberOfLedsEars> {corespi_ears};
-auto belt = CoreLED<LedKit::kNumberOfLedsBelt> {corespi_belt};
+namespace spi {
 
-auto animation_thread = rtos::Thread {};
-auto event_flags	  = CoreEventFlags {};
+	auto belt = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+	auto ears = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
 
-auto ledkit = LedKit {animation_thread, event_flags, ears, belt};
+}	// namespace spi
+
+namespace animations {
+
+	auto thread		 = rtos::Thread {};
+	auto event_flags = CoreEventFlags {};
+
+}	// namespace animations
+
+auto ears = CoreLED<LedKit::kNumberOfLedsEars> {spi::ears};
+auto belt = CoreLED<LedKit::kNumberOfLedsBelt> {spi::belt};
+
+}	// namespace leds
+
+auto ledkit = LedKit {leds::animations::thread, leds::animations::event_flags, leds::ears, leds::belt};
 
 HelloWorld hello;
 
