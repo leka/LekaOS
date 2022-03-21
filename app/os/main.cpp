@@ -91,12 +91,6 @@ auto coreflashmanager = CoreFlashManagerIS25LP016D(coreqspi);
 auto coreflash		  = CoreFlashIS25LP016D(coreqspi, coreflashmanager);
 auto firmwarekit	  = FirmwareKit(coreflash);
 
-auto hal	  = CoreSTM32Hal {};
-auto videokit = VideoKit {hal};
-VideoKit_DeclareIRQHandlers(videokit);
-
-auto behaviorkit = BehaviorKit {videokit, ledkit, motor_left, motor_right};
-
 namespace command {
 
 namespace internal {
