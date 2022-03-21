@@ -58,4 +58,14 @@ namespace firmware_update {
 
 }	// namespace firmware_update
 
+namespace commands {
+
+	constexpr uint16_t uuid = 0xDFB0;
+
+	namespace characteristic {
+		constexpr uint16_t tx = 0xDFB1;
+	}	// namespace characteristic
+
+}	// namespace commands
+
 }	// namespace leka::service
