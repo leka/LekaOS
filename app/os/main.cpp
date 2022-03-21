@@ -31,132 +31,252 @@
 using namespace leka;
 using namespace std::chrono;
 
-namespace watchdog {
+//
+// MARK: - Global definitions
+//
 
-auto &instance		   = mbed::Watchdog::get_instance();
-constexpr auto timeout = 30000ms;
-auto thread			   = rtos::Thread {osPriorityLow};
+namespace {
 
-__attribute__((noreturn)) void kick()
-{
-	while (true) {
-		watchdog::instance.kick();
-		rtos::ThisThread::sleep_for(5s);
+namespace battery {
+
+	namespace charge {
+
+		auto status_input = mbed::InterruptIn {PinName::BATTERY_CHARGE_STATUS};
+
 	}
-}
 
-void start()
-{
-	watchdog::instance.start(watchdog::timeout.count());
-	watchdog::thread.start(watchdog::kick);
-}
+	auto cells = CoreBattery {PinName::BATTERY_VOLTAGE, battery::charge::status_input};
 
-}	// namespace watchdog
+}	// namespace battery
 
-auto sleep_timeout = CoreTimeout {};
+namespace sd {
 
-auto mcu			 = CoreMCU {};
-auto serialnumberkit = SerialNumberKit {mcu};
+	namespace internal {
 
-auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
-auto fatfs			= FATFileSystem {"fs"};
+		auto bd = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
+		auto fs = FATFileSystem {"fs"};
 
-auto videokit = VideoKit {};
+		constexpr auto default_frequency = uint64_t {25'000'000};
 
-auto corespi_belt	  = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
-auto corespi_ears	  = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
-auto ears			  = CoreLED<LedKit::kNumberOfLedsEars> {corespi_ears};
-auto belt			  = CoreLED<LedKit::kNumberOfLedsBelt> {corespi_belt};
-auto animation_thread = rtos::Thread {};
-auto event_flags	  = CoreEventFlags {};
+	}	// namespace internal
 
-auto ledkit = LedKit {animation_thread, event_flags, ears, belt};
+	void init()
+	{
+		internal::bd.init();
+		internal::bd.frequency(internal::default_frequency);
+		internal::fs.mount(&internal::bd);
+	}
 
-auto motor_left_dir_1  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
-auto motor_left_dir_2  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
-auto motor_left_speed  = CorePwm {MOTOR_LEFT_PWM};
-auto motor_right_dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
-auto motor_right_dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
-auto motor_right_speed = CorePwm {MOTOR_RIGHT_PWM};
+}	// namespace sd
 
-auto motor_left	 = CoreMotor {motor_left_dir_1, motor_left_dir_2, motor_left_speed};
-auto motor_right = CoreMotor {motor_right_dir_1, motor_right_dir_2, motor_right_speed};
+namespace leds {
 
-auto behaviorkit = BehaviorKit {videokit, ledkit, motor_left, motor_right};
+	namespace internal {
 
-auto charge_input = mbed::InterruptIn {PinName::BATTERY_CHARGE_STATUS};
-auto battery	  = leka::CoreBattery {PinName::BATTERY_VOLTAGE, charge_input};
+		namespace ears {
 
-auto coreqspi		  = CoreQSPI();
-auto coreflashmanager = CoreFlashManagerIS25LP016D(coreqspi);
-auto coreflash		  = CoreFlashIS25LP016D(coreqspi, coreflashmanager);
-auto firmwarekit	  = FirmwareKit(coreflash);
+			auto spi			= CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+			constexpr auto size = 2;
+
+		}	// namespace ears
+
+		namespace belt {
+
+			auto spi			= CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+			constexpr auto size = 20;
+
+		}	// namespace belt
+
+		namespace animations {
+
+			auto thread		 = rtos::Thread {};
+			auto event_flags = CoreEventFlags {};
+
+		}	// namespace animations
+
+	}	// namespace internal
+
+	auto ears = CoreLED<internal::ears::size> {internal::ears::spi};
+	auto belt = CoreLED<internal::belt::size> {internal::belt::spi};
+
+	auto kit = LedKit {internal::animations::thread, internal::animations::event_flags, ears, belt};
+
+	void turnOff()
+	{
+		ears.setColor(RGB::black);
+		belt.setColor(RGB::black);
+		ears.show();
+		belt.show();
+	}
+
+}	// namespace leds
+
+namespace motors {
+
+	namespace left {
+
+		namespace internal {
+
+			auto dir_1 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
+			auto dir_2 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
+			auto speed = CorePwm {MOTOR_LEFT_PWM};
+
+		}	// namespace internal
+
+		auto motor = CoreMotor {internal::dir_1, internal::dir_2, internal::speed};
+
+	}	// namespace left
+
+	namespace right {
+
+		namespace internal {
+
+			auto dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
+			auto dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
+			auto speed = CorePwm {MOTOR_RIGHT_PWM};
+
+		}	// namespace internal
+
+		auto motor = CoreMotor {internal::dir_1, internal::dir_2, internal::speed};
+
+	}	// namespace right
+
+	void turnOff()
+	{
+		left::motor.stop();
+		right::motor.stop();
+	}
+
+}	// namespace motors
+
+auto videokit	 = VideoKit {};
+auto behaviorkit = BehaviorKit {videokit, leds::kit, motors::left::motor, motors::right::motor};
 
 namespace command {
 
-namespace internal {
+	namespace internal {
 
-	auto test		= TestCommand {};
-	auto led		= LedSingleCommand {ears, belt};
-	auto led_full	= LedFullCommand {ears, belt};
-	auto led_range	= LedRangeCommand {ears, belt};
-	auto motors		= MotorsCommand {motor_left, motor_right};
-	auto reinforcer = ReinforcerCommand {behaviorkit};
+		auto led_single = LedSingleCommand {leds::ears, leds::belt};
+		auto led_full	= LedFullCommand {leds::ears, leds::belt};
+		auto led_range	= LedRangeCommand {leds::ears, leds::belt};
+		auto motors		= MotorsCommand {motors::left::motor, motors::right::motor};
+		auto reinforcer = ReinforcerCommand {behaviorkit};
 
-}	// namespace internal
+	}	// namespace internal
 
-auto list = std::to_array<interface::Command *>({
-	&internal::test,
-	&internal::led,
-	&internal::led_full,
-	&internal::led_range,
-	&internal::motors,
-	&internal::reinforcer,
-});
+	auto list = std::to_array<interface::Command *>({
+		&internal::led_single,
+		&internal::led_full,
+		&internal::led_range,
+		&internal::motors,
+		&internal::reinforcer,
+	});
 
 }	// namespace command
 
 auto commandkit = CommandKit {};
 
-auto rc = RobotController {sleep_timeout, battery, serialnumberkit, firmwarekit, motor_left,
-						   motor_right,	  ledkit,  videokit,		behaviorkit, commandkit};
+namespace firmware {
 
-void initializeSD()
-{
-	constexpr auto default_sd_blockdevice_frequency = uint64_t {25'000'000};
+	namespace internal {
 
-	sd_blockdevice.init();
-	sd_blockdevice.frequency(default_sd_blockdevice_frequency);
+		auto qspi	 = CoreQSPI();
+		auto manager = CoreFlashManagerIS25LP016D(qspi);
+		auto flash	 = CoreFlashIS25LP016D(qspi, manager);
 
-	fatfs.mount(&sd_blockdevice);
-}
+	}	// namespace internal
 
-void initializeUpdateFlash()
-{
-	coreflash.reset();
-	coreqspi.setDataTransmissionFormat();
-	coreqspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
-}
+	auto kit = FirmwareKit(internal::flash);
+
+	void initializeFlash()
+	{
+		internal::flash.reset();
+		internal::qspi.setDataTransmissionFormat();
+		internal::qspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
+	}
+
+	void setPendingUpdate()
+	{
+		boot_set_pending(1);
+	}
+
+}	// namespace firmware
+
+namespace mcuboot {
+
+	// namespace internal {
+
+	auto qspi_bd   = QSPIFBlockDevice {};
+	auto sliced_bd = mbed::SlicingBlockDevice {&qspi_bd, 0x0, MCUBOOT_SLOT_SIZE};
+
+	// }	// namespace internal
+
+}	// namespace mcuboot
+
+namespace watchdog {
+
+	namespace internal {
+
+		auto &instance		   = mbed::Watchdog::get_instance();
+		constexpr auto timeout = 30000ms;
+		auto thread			   = rtos::Thread {osPriorityLow};
+
+	}	// namespace internal
+
+	__attribute__((noreturn)) void kick()
+	{
+		while (true) {
+			internal::instance.kick();
+			rtos::ThisThread::sleep_for(5s);
+		}
+	}
+
+	void start()
+	{
+		internal::instance.start(internal::timeout.count());
+		internal::thread.start(watchdog::kick);
+	}
+
+}	// namespace watchdog
+
+namespace robot {
+
+	namespace internal {
+
+		auto sleep_timeout = CoreTimeout {};
+
+		auto mcu			 = CoreMCU {};
+		auto serialnumberkit = SerialNumberKit {mcu};
+
+	}	// namespace internal
+
+	auto controller = RobotController {internal::sleep_timeout,
+									   battery::cells,
+									   internal::serialnumberkit,
+									   firmware::kit,
+									   motors::left::motor,
+									   motors::right::motor,
+									   leds::kit,
+									   videokit,
+									   behaviorkit,
+									   commandkit};
+
+}	// namespace robot
+
+}	// namespace
 
 auto get_secondary_bd() -> mbed::BlockDevice *
 {
-	static auto _bd = QSPIFBlockDevice {};
-
-	static auto sliced_bd = mbed::SlicingBlockDevice {&_bd, 0x0, MCUBOOT_SLOT_SIZE};
-
-	return &sliced_bd;
-}
-
-void setPendingUpdate()
-{
-	boot_set_pending(1);
+	return &mcuboot::sliced_bd;
 }
 
 auto main() -> int
 {
 	watchdog::start();
-
 	logger::init();
+
+	leds::turnOff();
+	motors::turnOff();
 
 	rtos::ThisThread::sleep_for(1s);
 
@@ -168,14 +288,14 @@ auto main() -> int
 	auto hello = HelloWorld();
 	hello.start();
 
-	initializeSD();
-	initializeUpdateFlash();
+	sd::init();
+	firmware::initializeFlash();
 
 	commandkit.registerCommand(command::list);
 
-	rc.initializeComponents();
-	rc.registerOnUpdateLoadedCallback(setPendingUpdate);
-	rc.registerEvents();
+	robot::controller.initializeComponents();
+	robot::controller.registerOnUpdateLoadedCallback(firmware::setPendingUpdate);
+	robot::controller.registerEvents();
 
 	while (true) {
 		log_debug("A message from your board %s --> \"%s\" at %ims", MBED_CONF_APP_TARGET_NAME, hello.world,
