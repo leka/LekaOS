@@ -43,10 +43,11 @@ void BlinkGreen::run()
 		return;
 	}
 
-	static constexpr auto kLastStage = uint8_t {41};
+	static constexpr auto kLastStage = uint8_t {20};
 	auto is_green2_stage			 = [this] { return (_stage % 4) == 0; };
 	auto is_green1_stage			 = [this] { return (_stage % 2) == 0; };
 	if (_stage > kLastStage) {
+		turnLedBlack();
 		return;
 	}
 	if (is_green2_stage()) {

@@ -41,10 +41,10 @@ void Rainbow::run()
 		return;
 	}
 
-	if (auto kLastStage = uint8_t {255}; _stage <= kLastStage) {
+	if (auto kLastStage = uint8_t {150}; _stage <= kLastStage) {
 		stagesRainbow();
 	} else {
-		_belt->setColor(RGB::black);
+		turnLedBlack();
 	}
 	_belt->show();
 }

@@ -41,10 +41,10 @@ void Fire::run()
 		return;
 	}
 
-	if (auto kLastStage = 255; _stage < kLastStage) {
+	if (auto kLastStage = 150; _stage < kLastStage) {
 		stageWaves();
 	} else {
-		_belt->setColor(RGB::black);
+		turnLedBlack();
 	}
 	_belt->show();
 }
