@@ -33,21 +33,23 @@ struct MotorsCommand : interface::Command {
 		auto expected = [&] { return utils::math::checksum8(std::span {args.data(), args.size() - 1}); };
 
 		if (chcksm != expected()) {
+			log_error("wrong checksum, expected: 0x%02hX", expected());
 			return false;
 		}
 
 		const auto kInt2Float = float {255.F};
 
+		auto spd = float {static_cast<float>(speed) / kInt2Float};
+
+		log_debug("motor %i / %i / %f", motor, dir, spd);
+
 		switch (motor) {
 			case cmd::motor::left:
-				_left.spin(static_cast<rotation_t>(dir), static_cast<float>(speed) / kInt2Float);
+				_left.spin(static_cast<rotation_t>(dir), spd);
 				break;
 
 			case cmd::motor::right:
-				_right.spin(static_cast<rotation_t>(dir), static_cast<float>(speed) / kInt2Float);
-				break;
-
-			default:
+				_right.spin(static_cast<rotation_t>(dir), spd);
 				break;
 		}
 
