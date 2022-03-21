@@ -40,10 +40,11 @@ void SpinBlink::run()
 		return;
 	}
 
-	static constexpr auto kLastStage = uint8_t {41};
+	static constexpr auto kLastStage = uint8_t {10};
 	auto is_belt_cyan				 = [this] { return (_stage % 2) == 0; };
 	if (_stage > kLastStage) {
 		turnLedBlack();
+		return;
 	}
 	if (is_belt_cyan()) {
 		stagesBeltCyan();

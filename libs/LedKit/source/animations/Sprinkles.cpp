@@ -41,7 +41,7 @@ void Sprinkles::run()
 		return;
 	}
 
-	static constexpr auto kLastStage = uint8_t {255};
+	static constexpr auto kLastStage = uint8_t {150};
 	auto is_wave_moving				 = [this] { return (_stage % 2) == 0; };
 	if (is_wave_moving() && _stage <= kLastStage) {
 		_belt->setColor(RGB::black);
@@ -50,7 +50,7 @@ void Sprinkles::run()
 	} else if (_stage <= kLastStage) {
 		++_stage;
 	} else {
-		_belt->setColor(RGB::black);
+		turnLedBlack();
 	}
 	_belt->show();
 }
