@@ -204,6 +204,18 @@ class RobotController : public interface::RobotController
 
 		_service_monitoring.onSoftReboot([] { system_reset(); });
 
+		auto on_commands_received = [this](std::span<uint8_t> _buffer) {
+			raise(event::command_received {});
+
+			if (!isCharging()) {
+				stopSleepTimeout();
+				startSleepTimeout();
+
+				_cmdkit.push(std::span {_buffer.data(), std::size(_buffer)});
+			}
+		};
+		_service_commands.onCommandsReceived(on_commands_received);
+
 		raise(event::setup_complete {});
 	};
 
