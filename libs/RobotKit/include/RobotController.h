@@ -15,6 +15,7 @@
 
 #include "BatteryKit.h"
 #include "BehaviorKit.h"
+#include "CommandKit.h"
 #include "CoreMotor.h"
 #include "LedKit.h"
 #include "SerialNumberKit.h"
@@ -36,7 +37,7 @@ class RobotController : public interface::RobotController
 	explicit RobotController(interface::Timeout &sleep_timeout, interface::Battery &battery,
 							 SerialNumberKit &serialnumberkit, interface::FirmwareUpdate &firmware_update,
 							 CoreMotor &motor_left, CoreMotor &motor_right, LedKit &ledkit, VideoKit &videokit,
-							 BehaviorKit &behaviorkit)
+							 BehaviorKit &behaviorkit, CommandKit &cmdkit)
 		: _sleep_timeout(sleep_timeout),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
@@ -45,7 +46,8 @@ class RobotController : public interface::RobotController
 		  _motor_right(motor_right),
 		  _ledkit(ledkit),
 		  _videokit(videokit),
-		  _behaviorkit(behaviorkit) {};
+		  _behaviorkit(behaviorkit),
+		  _cmdkit(cmdkit) {};
 
 	void runLaunchingBehavior() final
 	{
@@ -116,7 +118,7 @@ class RobotController : public interface::RobotController
 	}
 	void stopChargingBehavior() final
 	{
-		_battery_kit.onDataUpdated([](uint8_t level) { _service_battery.setBatteryLevel(level); });
+		_battery_kit.onDataUpdated([this](uint8_t level) { _service_battery.setBatteryLevel(level); });
 	}
 
 	auto isReadyToUpdate() -> bool final
@@ -167,7 +169,7 @@ class RobotController : public interface::RobotController
 
 		// Setup callbacks for monitoring
 
-		_battery_kit.onDataUpdated([](uint8_t level) { _service_battery.setBatteryLevel(level); });
+		_battery_kit.onDataUpdated([this](uint8_t level) { _service_battery.setBatteryLevel(level); });
 
 		auto on_low_battery = [this] {
 			if (!_battery.isCharging()) {
@@ -217,17 +219,24 @@ class RobotController : public interface::RobotController
 	VideoKit &_videokit;
 
 	BehaviorKit &_behaviorkit;
+	CommandKit &_cmdkit;
 
 	rtos::Thread _thread {};
 	events::EventQueue _event_queue {};
 
 	BLEKit _ble {};
-	inline static BLEServiceDeviceInformation _service_device_information {};
-	inline static BLEServiceBattery _service_battery {};
-	inline static BLEServiceMonitoring _service_monitoring {};
-	inline static BLEServiceCommands _service_commands {};
-	inline static auto services =
-		std::to_array<interface::BLEService *>({&_service_device_information, &_service_battery, &_service_monitoring});
+
+	BLEServiceDeviceInformation _service_device_information {};
+	BLEServiceBattery _service_battery {};
+	BLEServiceMonitoring _service_monitoring {};
+	BLEServiceCommands _service_commands {_cmdkit};
+
+	std::array<interface::BLEService *, 4> services = {
+		&_service_commands,
+		&_service_device_information,
+		&_service_battery,
+		&_service_monitoring,
+	};
 };
 
 }	// namespace leka

@@ -91,8 +91,42 @@ auto coreflashmanager = CoreFlashManagerIS25LP016D(coreqspi);
 auto coreflash		  = CoreFlashIS25LP016D(coreqspi, coreflashmanager);
 auto firmwarekit	  = FirmwareKit(coreflash);
 
+<<<<<<< HEAD
+=======
+auto hal	  = CoreSTM32Hal {};
+auto videokit = VideoKit {hal};
+VideoKit_DeclareIRQHandlers(videokit);
+
+auto behaviorkit = BehaviorKit {videokit, ledkit, motor_left, motor_right};
+
+namespace command {
+
+namespace internal {
+
+	auto test		= TestCommand {};
+	auto led		= LedSingleCommand {ears, belt};
+	auto led_full	= LedFullCommand {ears, belt};
+	auto led_range	= LedRangeCommand {ears, belt};
+	auto motors		= MotorsCommand {motor_left, motor_right};
+	auto reinforcer = ReinforcerCommand {behaviorkit};
+
+}	// namespace internal
+
+auto list = std::to_array<interface::Command *>({
+	&internal::test,
+	&internal::led,
+	&internal::led_full,
+	&internal::led_range,
+	&internal::reinforcer,
+});
+
+}	// namespace command
+
+auto commandkit = CommandKit {};
+
+>>>>>>> 78e293f5 (FIXUP - changes to make it work)
 auto rc = RobotController {sleep_timeout, battery, serialnumberkit, firmwarekit, motor_left,
-						   motor_right,	  ledkit,  videokit,		behaviorkit};
+						   motor_right,	  ledkit,  videokit,		behaviorkit, commandkit};
 
 void initializeSD()
 {
@@ -143,6 +177,8 @@ auto main() -> int
 
 	initializeSD();
 	initializeUpdateFlash();
+
+	commandkit.registerCommand(command::list);
 
 	rc.initializeComponents();
 	rc.registerOnUpdateLoadedCallback(setPendingUpdate);

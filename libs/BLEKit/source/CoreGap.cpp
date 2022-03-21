@@ -1,5 +1,7 @@
 #include "CoreGap.h"
 
+#include "internal/ServicesCharacteristics.h"
+
 using namespace leka;
 using namespace ble;
 
@@ -10,6 +12,7 @@ void CoreGap::setDefaultAdvertising()
 	_advertising_data_builder.setManufacturerSpecificData({{0x2A, 0x2B, 0x2C, 0x2D}});
 	_advertising_data_builder.setAdvertisingInterval(adv_interval_t::min());
 	_advertising_data_builder.setServiceData(GattService::UUID_BATTERY_SERVICE, {{0x42}});
+	_advertising_data_builder.setServiceData(leka::service::commands::uuid, {{0}});
 }
 
 void CoreGap::setEventHandler()

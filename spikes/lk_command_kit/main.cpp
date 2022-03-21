@@ -12,8 +12,10 @@
 #include "CoreLED.h"
 #include "CorePwm.h"
 #include "CoreSPI.h"
+#include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
+#include "SDBlockDevice.h"
 #include "VideoKit.h"
 
 using namespace leka;
@@ -67,7 +69,11 @@ auto right = CoreMotor {internal::right::dir_1, internal::right::dir_2, internal
 
 }	// namespace motor
 
-auto videokit	 = VideoKit {};
+auto hal	  = CoreSTM32Hal {};
+auto videokit = VideoKit {hal};
+
+VideoKit_DeclareIRQHandlers(videokit);
+
 auto behaviorkit = BehaviorKit {videokit, ledkit, motor::left, motor::right};
 
 namespace command {
@@ -145,6 +151,19 @@ void turnOff()
 	log_debug("turn off end");
 };
 
+auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
+auto fatfs			= FATFileSystem {"fs"};
+
+void initializeSD()
+{
+	constexpr auto default_sd_blockdevice_frequency = uint64_t {25'000'000};
+
+	sd_blockdevice.init();
+	sd_blockdevice.frequency(default_sd_blockdevice_frequency);
+
+	fatfs.mount(&sd_blockdevice);
+}
+
 auto cmdkit = CommandKit {};
 
 HelloWorld hello;
@@ -153,6 +172,8 @@ auto main() -> int
 {
 	logger::init();
 
+	initializeSD();
+	videokit.initializeScreen();
 	cmdkit.registerCommand(command::list);
 
 	turnOff();

@@ -72,45 +72,45 @@ auto main() -> int
 	hello.start();
 
 	while (true) {
-		behaviorkit.launching();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
+		// behaviorkit.launching();
+		// rtos::ThisThread::sleep_for(10s);
+		// behaviorkit.stop();
+		// rtos::ThisThread::sleep_for(3s);
 
-		behaviorkit.sleeping();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
+		// behaviorkit.sleeping();
+		// rtos::ThisThread::sleep_for(10s);
+		// behaviorkit.stop();
+		// rtos::ThisThread::sleep_for(3s);
 
-		behaviorkit.waiting();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
+		// behaviorkit.waiting();
+		// rtos::ThisThread::sleep_for(10s);
+		// behaviorkit.stop();
+		// rtos::ThisThread::sleep_for(3s);
 
-		behaviorkit.chargingZero();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
+		// behaviorkit.chargingZero();
+		// rtos::ThisThread::sleep_for(10s);
+		// behaviorkit.stop();
+		// rtos::ThisThread::sleep_for(3s);
 
-		behaviorkit.chargingRed();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
+		// behaviorkit.chargingRed();
+		// rtos::ThisThread::sleep_for(10s);
+		// behaviorkit.stop();
+		// rtos::ThisThread::sleep_for(3s);
 
-		behaviorkit.chargingOrange();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
+		// behaviorkit.chargingOrange();
+		// rtos::ThisThread::sleep_for(10s);
+		// behaviorkit.stop();
+		// rtos::ThisThread::sleep_for(3s);
 
-		behaviorkit.chargingYellow();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
+		// behaviorkit.chargingYellow();
+		// rtos::ThisThread::sleep_for(10s);
+		// behaviorkit.stop();
+		// rtos::ThisThread::sleep_for(3s);
 
-		behaviorkit.chargingGreen();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
+		// behaviorkit.chargingGreen();
+		// rtos::ThisThread::sleep_for(10s);
+		// behaviorkit.stop();
+		// rtos::ThisThread::sleep_for(3s);
 
 		behaviorkit.blinkGreen();
 		rtos::ThisThread::sleep_for(10s);

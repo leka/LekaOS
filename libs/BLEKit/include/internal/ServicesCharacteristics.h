@@ -60,10 +60,16 @@ namespace firmware_update {
 
 namespace commands {
 
-	constexpr const char *uuid = "0000dfb0-0000-1000-8000-00805f9b34fb";
+	// constexpr auto uuid = "0000DFB0-0000-1000-8000-00805F9B34FB";
+	// constexpr auto uuid = "dfb0";
+	// constexpr auto uuid = "DFB0";
+	constexpr uint16_t uuid = 0xDFB0;
 
 	namespace characteristic {
-		constexpr const char *tx = "0000dfb1-0000-1000-8000-00805f9b34fb";
+		constexpr uint16_t tx = 0xDFB1;
+		// constexpr auto bluno = "dfb1";
+		// constexpr auto tx	 = "0000dfb1-0000-1000-8000-00805f9b34fb";
+
 	}	// namespace characteristic
 
 }	// namespace commands
