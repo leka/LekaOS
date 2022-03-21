@@ -121,7 +121,7 @@ class CircularQueue
 		_tail = incrementCounter(_tail, data_popped);
 
 		// if we looped over the end we may need to pop again
-		if (CounterType items_left_to_pop = len - data_popped) {
+		if (auto items_left_to_pop = len - data_popped; items_left_to_pop != 0) {
 			std::copy(_buffer.begin(), _buffer.begin() + items_left_to_pop, dest + data_popped);   // LCOV_EXCL_LINE
 			_tail = items_left_to_pop;
 			data_popped += items_left_to_pop;
@@ -182,7 +182,17 @@ class CircularQueue
 			return false;
 		}
 
-		data = _buffer[position];
+		auto index = position;
+
+		if (_tail + index == BufferSize) {
+			index = 0;
+		} else if ((_tail + index) > BufferSize - 1) {
+			index = BufferSize - _tail;
+		} else {
+			index = _tail + index;
+		}
+
+		data = _buffer[index];
 
 		return true;
 	}
