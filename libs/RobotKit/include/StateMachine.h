@@ -15,6 +15,8 @@ namespace sm::event {
 	};
 	struct sleep_timeout_did_end {
 	};
+	struct command_received {
+	};
 	struct charge_did_start {
 	};
 	struct charge_did_stop {
@@ -118,6 +120,7 @@ struct StateMachine {
 			, sm::state::sleeping + boost::sml::on_entry<_> / sm::action::start_sleeping_behavior {}
 			, sm::state::sleeping + boost::sml::on_exit<_>  / sm::action::stop_sleeping_behavior {}
 
+			, sm::state::sleeping + event<sm::event::command_received>                                   = sm::state::idle
 			, sm::state::sleeping + event<sm::event::charge_did_start> [sm::guard::is_charging {}]       = sm::state::charging
 
 			, sm::state::charging + boost::sml::on_entry<_> / sm::action::start_charging_behavior {}

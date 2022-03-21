@@ -91,6 +91,19 @@ TEST_F(StateMachineTest, stateIdleEventTimeout)
 	EXPECT_TRUE(sm.is(lksm::state::sleeping));
 }
 
+TEST_F(StateMachineTest, stateSleepEventCommandReceived)
+{
+	sm.set_current_states(lksm::state::sleeping);
+
+	EXPECT_CALL(mock_rc, stopSleepingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startWaitingBehavior).Times(1);
+
+	sm.process_event(lksm::event::command_received {});
+
+	EXPECT_TRUE(sm.is(lksm::state::idle));
+}
+
 TEST_F(StateMachineTest, stateSleepEventChargeDidStart)
 {
 	sm.set_current_states(lksm::state::sleeping);
