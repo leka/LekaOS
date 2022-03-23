@@ -50,8 +50,8 @@ class RobotController : public interface::RobotController
 	{
 		using namespace std::chrono_literals;
 
-		_event_queue.call(&_behaviorkit, &BehaviorKit::launching);
-		_event_queue.call(&_videokit, &VideoKit::turnOn);
+		_behaviorkit.launching();
+		_videokit.turnOn();
 		rtos::ThisThread::sleep_for(3s);
 	}
 
@@ -60,22 +60,22 @@ class RobotController : public interface::RobotController
 
 	void startWaitingBehavior() final
 	{
-		_event_queue.call(&_behaviorkit, &BehaviorKit::waiting);
-		_event_queue.call(&_videokit, &VideoKit::turnOn);
+		_behaviorkit.waiting();
+		_videokit.turnOn();
 	}
-	void stopWaitingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::stop); }
+	void stopWaitingBehavior() final { _behaviorkit.stop(); }
 
 	void startSleepingBehavior() final
 	{
 		using namespace std::chrono_literals;
 
-		_event_queue.call(&_behaviorkit, &BehaviorKit::sleeping);
-		_event_queue.call(&_videokit, &VideoKit::turnOn);
+		_behaviorkit.sleeping();
+		_videokit.turnOn();
 
 		_event_queue.call_in(20s, &_videokit, &VideoKit::turnOff);
 		_event_queue.call_in(20s, &_ledkit, &LedKit::stop);
 	}
-	void stopSleepingBehavior() final { _event_queue.call(&_behaviorkit, &BehaviorKit::stop); }
+	void stopSleepingBehavior() final { _behaviorkit.stop(); }
 
 	auto isCharging() -> bool final
 	{
@@ -91,15 +91,15 @@ class RobotController : public interface::RobotController
 		_service_battery.setBatteryLevel(level);
 
 		if (level < 5) {
-			_event_queue.call(&_behaviorkit, &BehaviorKit::chargingZero);
+			_behaviorkit.chargingZero();
 		} else if (level < 25) {
-			_event_queue.call(&_behaviorkit, &BehaviorKit::chargingRed);
+			_behaviorkit.chargingRed();
 		} else if (level < 50) {
-			_event_queue.call(&_behaviorkit, &BehaviorKit::chargingOrange);
+			_behaviorkit.chargingOrange();
 		} else if (level < 75) {
-			_event_queue.call(&_behaviorkit, &BehaviorKit::chargingYellow);
+			_behaviorkit.chargingYellow();
 		} else {
-			_event_queue.call(&_behaviorkit, &BehaviorKit::chargingGreen);
+			_behaviorkit.chargingGreen();
 		}
 	}
 
@@ -108,11 +108,12 @@ class RobotController : public interface::RobotController
 		using namespace std::chrono_literals;
 
 		_battery_kit.onDataUpdated([this](uint8_t level) { onStartChargingBehavior(level); });
-		_event_queue.call(&_videokit, &VideoKit::turnOn);
+		_videokit.turnOn();
 
 		_event_queue.call_in(1min, &_videokit, &VideoKit::turnOff);
 		_event_queue.call_in(1min, &_ledkit, &LedKit::stop);
 	}
+
 	void stopChargingBehavior() final
 	{
 		_battery_kit.onDataUpdated([](uint8_t level) { _service_battery.setBatteryLevel(level); });
@@ -133,7 +134,10 @@ class RobotController : public interface::RobotController
 		system_reset();
 	}
 
-	void raise(auto event) { state_machine.process_event(event); };
+	void raise(auto event)
+	{
+		_event_queue.call([this, &event] { state_machine.process_event(event); });
+	};
 
 	void initializeComponents()
 	{
