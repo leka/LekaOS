@@ -46,6 +46,7 @@ void LedKit::runAnimation()
 		auto flags = _event_flags.get();
 		return (flags != flags::STOP_LED_ANIMATION_FLAG);
 	};
+
 	while (keep_running() && _animation->isRunning()) {
 		_animation->run();
 		rtos::ThisThread::sleep_for(40ms);
