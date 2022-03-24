@@ -10,20 +10,45 @@ namespace leka::led::animation {
 
 static constexpr auto kThresholdDown = 0.3F;
 
+void Fly::setLeds(interface::LED &ears, interface::LED &belt)
+{
+	_ears = &ears;
+	_belt = &belt;
+}
+
+auto Fly::isRunning() -> bool
+{
+	return _running;
+}
+
 void Fly::start()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	turnLedBlack();
+	_step	 = 0;
+	_stage	 = 0;
+	_running = true;
 }
 
 void Fly::stop()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	turnLedBlack();
-	_step  = 0;
-	_stage = 0;
+	_running = false;
 }
 
 void Fly::run()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	switch (_stage) {
 		case 0:
 			stage0();
@@ -50,9 +75,10 @@ void Fly::run()
 			stage7();
 			break;
 		default:
+			_running = false;
 			break;
 	}
-	_belt.show();
+	_belt->show();
 }
 
 void Fly::stage0()
@@ -71,7 +97,7 @@ void Fly::stage1()
 	static constexpr auto kInputMaxStage1to2 = 20;
 	if (auto pos = utils::normalizeStep(_step, kInputMaxStage1to2); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		++_step;
 	} else {
 		++_stage;
@@ -83,7 +109,7 @@ void Fly::stage2()
 	static constexpr auto kInputMaxStage1to2 = 20;
 	if (auto pos = utils::normalizeStep(_step, kInputMaxStage1to2); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		--_step;
 	} else {
 		_step = 0;
@@ -107,7 +133,7 @@ void Fly::stage4()
 	static constexpr auto kInputMaxValue4to7 = 6;
 	if (auto pos = utils::normalizeStep(_step, kInputMaxValue4to7); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		++_step;
 	} else {
 		++_stage;
@@ -119,7 +145,7 @@ void Fly::stage5()
 	static constexpr auto kInputMaxValue4to7 = 6;
 	if (auto pos = utils::normalizeStep(_step, kInputMaxValue4to7); pos >= kThresholdDown) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		--_step;
 	} else {
 		++_stage;
@@ -131,7 +157,7 @@ void Fly::stage6()
 	static constexpr auto kInputMaxValue4to7 = 6;
 	if (auto pos = utils::normalizeStep(_step, kInputMaxValue4to7); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		++_step;
 	} else {
 		++_stage;
@@ -143,21 +169,21 @@ void Fly::stage7()
 	static constexpr auto kInputMaxValue4to7 = 6;
 	if (auto pos = utils::normalizeStep(_step, kInputMaxValue4to7); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		--_step;
 	} else {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::white, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		++_stage;
 	}
 }
 
 void Fly::turnLedBlack()
 {
-	_ears.setColor(RGB::black);
-	_belt.setColor(RGB::black);
-	_ears.show();
-	_belt.show();
+	_ears->setColor(RGB::black);
+	_belt->setColor(RGB::black);
+	_ears->show();
+	_belt->show();
 }
 
 }	// namespace leka::led::animation

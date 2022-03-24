@@ -8,20 +8,45 @@
 
 namespace leka::led::animation {
 
+void SadCry::setLeds(interface::LED &ears, interface::LED &belt)
+{
+	_ears = &ears;
+	_belt = &belt;
+}
+
+auto SadCry::isRunning() -> bool
+{
+	return _running;
+}
+
 void SadCry::start()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	turnLedBlack();
+	_step	 = 0;
+	_stage	 = 0;
+	_running = true;
 }
 
 void SadCry::stop()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	turnLedBlack();
-	_step  = 0;
-	_stage = 0;
+	_running = false;
 }
 
 void SadCry::run()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	switch (_stage) {
 		case 0:
 			stage0();
@@ -63,9 +88,10 @@ void SadCry::run()
 			stage12();
 			break;
 		default:
+			_running = false;
 			break;
 	}
-	_belt.show();
+	_belt->show();
 }
 
 void SadCry::stage0()
@@ -73,7 +99,7 @@ void SadCry::stage0()
 	static constexpr auto kMaxInputValueFirstStages = uint8_t {90};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueFirstStages); pos != 1.F) {
 		RGB shade_of_blue = ColorKit::colorGradient(RGB::black, RGB {0, 128, 255}, pos);
-		_belt.setColor(shade_of_blue);
+		_belt->setColor(shade_of_blue);
 		_step++;
 	} else {
 		_step = 0;
@@ -99,8 +125,8 @@ void SadCry::stage2()
 
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueLastStages); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB {0, 128, 255}, RGB::pure_red, pos);
-		_belt.setColorAtIndex(0, color);
-		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, color);
+		_belt->setColorAtIndex(0, color);
+		_belt->setColorAtIndex(kNumberOfLedsBelt - 1, color);
 		_step++;
 	} else {
 		_step = kMaxInputValueLastStages;
@@ -176,9 +202,9 @@ void SadCry::increaseBrightness()
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueLastStages); pos != 1.F) {
 		RGB shade_of_blue = ColorKit::colorGradient(RGB::black, RGB {0, 128, 255}, pos);
 		RGB shade_of_red  = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
-		_belt.setColor(shade_of_blue);
-		_belt.setColorAtIndex(0, shade_of_red);
-		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, shade_of_red);
+		_belt->setColor(shade_of_blue);
+		_belt->setColorAtIndex(0, shade_of_red);
+		_belt->setColorAtIndex(kNumberOfLedsBelt - 1, shade_of_red);
 		_step++;
 	} else {
 		_stage++;
@@ -193,9 +219,9 @@ void SadCry::decreaseBrightness(float threshold)
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueLastStages); pos > threshold) {
 		RGB shade_of_blue = ColorKit::colorGradient(RGB::black, RGB {0, 128, 255}, pos);
 		RGB shade_of_red  = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
-		_belt.setColor(shade_of_blue);
-		_belt.setColorAtIndex(0, shade_of_red);
-		_belt.setColorAtIndex(kNumberOfLedsBelt - 1, shade_of_red);
+		_belt->setColor(shade_of_blue);
+		_belt->setColorAtIndex(0, shade_of_red);
+		_belt->setColorAtIndex(kNumberOfLedsBelt - 1, shade_of_red);
 		_step--;
 	} else {
 		_stage++;
@@ -204,10 +230,10 @@ void SadCry::decreaseBrightness(float threshold)
 
 void SadCry::turnLedBlack()
 {
-	_ears.setColor(RGB::black);
-	_belt.setColor(RGB::black);
-	_ears.show();
-	_belt.show();
+	_ears->setColor(RGB::black);
+	_belt->setColor(RGB::black);
+	_ears->show();
+	_belt->show();
 }
 
 }	// namespace leka::led::animation

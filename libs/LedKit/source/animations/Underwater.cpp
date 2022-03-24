@@ -10,13 +10,23 @@ namespace leka::led::animation {
 
 static constexpr auto blue_water = RGB {0x00, 128, 255};
 
-void Underwater::start()
+void Underwater::setLeds(interface::LED &ears, interface::LED &belt)
 {
-	turnLedBlack();
+	_ears = &ears;
+	_belt = &belt;
 }
 
-void Underwater::stop()
+auto Underwater::isRunning() -> bool
 {
+	return _running;
+}
+
+void Underwater::start()
+{
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	turnLedBlack();
 	_step			= 0;
 	_stage			= 0;
@@ -28,10 +38,25 @@ void Underwater::stop()
 	position_fish_2 = -2;
 	position_fish_3 = -2;
 	position_fish_4 = -2;
+	_running		= true;
+}
+
+void Underwater::stop()
+{
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
+	turnLedBlack();
+	_running = false;
 }
 
 void Underwater::run()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	switch (_stage) {
 		case 0:
 			stage0();
@@ -70,9 +95,10 @@ void Underwater::run()
 			stage11();
 			break;
 		default:
+			_running = false;
 			break;
 	}
-	_belt.show();
+	_belt->show();
 }
 
 void Underwater::stage0()
@@ -92,7 +118,7 @@ void Underwater::stage1()
 	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStageWater); pos <= kTresholdStage1) {
 		RGB color = ColorKit::colorGradient(RGB::black, blue_water, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		++_step;
 	} else {
 		++_stage;
@@ -105,7 +131,7 @@ void Underwater::stage2()
 	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStageWater); pos >= kTresholdStage2) {
 		RGB color = ColorKit::colorGradient(RGB::black, blue_water, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		--_step;
 	} else {
 		++_stage;
@@ -118,7 +144,7 @@ void Underwater::stage3()
 	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStageWater); pos <= kTresholdStage3) {
 		RGB color = ColorKit::colorGradient(RGB::black, blue_water, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		++_step;
 	} else {
 		++_stage;
@@ -131,7 +157,7 @@ void Underwater::stage4()
 	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStageWater); pos >= kTresholdStage4) {
 		RGB color = ColorKit::colorGradient(RGB::black, blue_water, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		--_step;
 	} else {
 		++_stage;
@@ -144,7 +170,7 @@ void Underwater::stage5()
 	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStageWater); pos <= kTresholdStage5) {
 		RGB color = ColorKit::colorGradient(RGB::black, blue_water, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		++_step;
 	} else {
 		++_stage;
@@ -157,7 +183,7 @@ void Underwater::stage6()
 	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStageWater); pos >= kTresholdStage6) {
 		RGB color = ColorKit::colorGradient(RGB::black, blue_water, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		--_step;
 	} else {
 		++_stage;
@@ -169,7 +195,7 @@ void Underwater::stage7()
 	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStageWater); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, blue_water, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		++_step;
 	} else {
 		_step = 0;
@@ -181,7 +207,7 @@ void Underwater::stage8()
 {
 	static constexpr auto kMaxInputValueStageWater = uint8_t {20};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStageWater); pos != 1.F) {
-		_belt.setColor(blue_water);
+		_belt->setColor(blue_water);
 		++_step;
 	} else {
 		_step = 0;
@@ -234,7 +260,7 @@ void Underwater::stage11()
 	static constexpr auto kMaxInputValueStageWater = uint8_t {80};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValueStageWater); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, blue_water, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		--_step;
 	} else {
 		++_stage;
@@ -296,45 +322,45 @@ void Underwater::showFishAtLeft(const RGB &fish_color, int &fish_position, uint8
 void Underwater::setColorCurrentMinusOne(int index, float pos, const RGB &color_movement)
 {
 	RGB color = ColorKit::colorGradient(blue_water, color_movement, 1.F / 2 - pos);
-	_belt.setColorAtIndex(index, color);
+	_belt->setColorAtIndex(index, color);
 }
 
 void Underwater::setColorCurrent(int index, float pos, const RGB &color_movement)
 {
 	RGB color = ColorKit::colorGradient(blue_water, color_movement, 1.F - pos);
 
-	_belt.setColorAtIndex(index, color);
+	_belt->setColorAtIndex(index, color);
 }
 
 void Underwater::setColorCurrentPlusOne(int index, float pos, const RGB &color_movement)
 {
 	if (pos <= 1.F / 2) {
 		RGB color = ColorKit::colorGradient(blue_water, color_movement, pos + 1.F / 2);
-		_belt.setColorAtIndex(index, color);
+		_belt->setColorAtIndex(index, color);
 	} else {
 		RGB color = ColorKit::colorGradient(blue_water, color_movement, 1.F + 1.F / 2 - pos);
-		_belt.setColorAtIndex(index, color);
+		_belt->setColorAtIndex(index, color);
 	}
 }
 
 void Underwater::setColorCurrentPlusTwo(int index, float pos, const RGB &color_movement)
 {
 	RGB color = ColorKit::colorGradient(blue_water, color_movement, pos);
-	_belt.setColorAtIndex(index, color);
+	_belt->setColorAtIndex(index, color);
 }
 
 void Underwater::setColorCurrentPlusThree(int index, float pos, const RGB &color_movement)
 {
 	RGB color = ColorKit::colorGradient(blue_water, color_movement, pos - 1.F / 2);
-	_belt.setColorAtIndex(index, color);
+	_belt->setColorAtIndex(index, color);
 }
 
 void Underwater::turnLedBlack()
 {
-	_ears.setColor(RGB::black);
-	_belt.setColor(RGB::black);
-	_ears.show();
-	_belt.show();
+	_ears->setColor(RGB::black);
+	_belt->setColor(RGB::black);
+	_ears->show();
+	_belt->show();
 }
 
 }	// namespace leka::led::animation
