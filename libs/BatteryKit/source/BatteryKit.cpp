@@ -19,7 +19,6 @@ void BatteryKit::startEventHandler()
 		}
 	};
 
-	on_tick();	 // TODO (@john_doe): only for unit tests. Due to event_queue that does not make the call
 	_event_queue.call_every(1s, on_tick);
 
 	_event_queue.dispatch_forever();
