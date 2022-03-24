@@ -14,9 +14,6 @@ target_include_directories(mbed-os
 
 		${EXTERN_MBED_OS_DIR}
 
-		${EXTERN_MBED_OS_DIR}/events/tests/UNITTESTS/doubles
-		${EXTERN_MBED_OS_DIR}/events/tests/UNITTESTS/doubles/equeue
-
 		${EXTERN_MBED_OS_DIR}/cmsis/tests/UNITTESTS/doubles
 
 		${EXTERN_MBED_OS_DIR}/connectivity/tests/UNITTESTS/doubles
@@ -60,7 +57,6 @@ target_include_directories(mbed-os
 
 		${EXTERN_MBED_OS_DIR}/events
 		${EXTERN_MBED_OS_DIR}/events/include
-		${EXTERN_MBED_OS_DIR}/events/include/events
 
 		${EXTERN_MBED_OS_DIR}/hal
 		${EXTERN_MBED_OS_DIR}/hal/include
