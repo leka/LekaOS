@@ -8,20 +8,45 @@
 
 namespace leka::led::animation {
 
+void Angry::setLeds(interface::LED &ears, interface::LED &belt)
+{
+	_ears = &ears;
+	_belt = &belt;
+}
+
+auto Angry::isRunning() -> bool
+{
+	return _running;
+}
+
 void Angry::start()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	turnLedBlack();
+	_step	 = 0;
+	_stage	 = 0;
+	_running = true;
 }
 
 void Angry::stop()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	turnLedBlack();
-	_step  = 0;
-	_stage = 0;
+	_running = false;
 }
 
 void Angry::run()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	switch (_stage) {
 		case 0:
 			stage0();
@@ -45,9 +70,10 @@ void Angry::run()
 			stage6();
 			break;
 		default:
+			_running = false;
 			break;
 	}
-	_belt.show();
+	_belt->show();
 }
 
 void Angry::stage0()
@@ -78,7 +104,7 @@ void Angry::stage4()
 	static constexpr auto kMaxInputValueStage6 = uint8_t {110};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		_step++;
 	} else {
 		_step = kMaxInputValueStage6;
@@ -103,7 +129,7 @@ void Angry::stage6()
 	static constexpr auto kMaxInputValue = uint8_t {30};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		_step--;
 	} else {
 		_stage++;
@@ -115,7 +141,7 @@ void Angry::increaseBrightness(float treshold)
 	static constexpr auto kMaxInputValue = uint8_t {60};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		_step++;
 	} else {
 		_stage++;
@@ -127,7 +153,7 @@ void Angry::decreaseBrightness(float treshold)
 	static constexpr auto kMaxInputValue = uint8_t {60};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos > treshold) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		_step--;
 	} else {
 		_stage++;
@@ -136,10 +162,10 @@ void Angry::decreaseBrightness(float treshold)
 
 void Angry::turnLedBlack()
 {
-	_ears.setColor(RGB::black);
-	_belt.setColor(RGB::black);
-	_ears.show();
-	_belt.show();
+	_ears->setColor(RGB::black);
+	_belt->setColor(RGB::black);
+	_ears->show();
+	_belt->show();
 }
 
 }	// namespace leka::led::animation
