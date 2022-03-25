@@ -308,13 +308,9 @@ TEST_F(CircularQueueTest, peekOneItemAtPosition)
 
 TEST_F(CircularQueueTest, peekOneItemAtPositionLoopOver)
 {
-	// auto items_offset = std::array<int, 9> {0, 1, 2, 3, 4, 5, 6, 7, 8};
+	CircularQueue<int, 4> buff {};
 
 	// ? push/pop to create offset
-	// buf.push(items_offset.data(), items_offset.size());
-	// buf.pop(items_offset.data(), items_offset.size());
-
-	CircularQueue<int, 4> buff {};
 
 	buff.push(1);
 	buff.push(2);
@@ -342,10 +338,8 @@ TEST_F(CircularQueueTest, peekOneItemAtPositionLoopOver)
 
 		ret = buff.peekAt(0, item);
 
-		std::cout << "item: " << item << '\n';
-
 		EXPECT_TRUE(ret);
-		EXPECT_EQ(item, 42) << "index 0";
+		EXPECT_EQ(item, 42);
 		EXPECT_EQ(buff.size(), 3);
 	}
 
@@ -355,10 +349,8 @@ TEST_F(CircularQueueTest, peekOneItemAtPositionLoopOver)
 
 		ret = buff.peekAt(1, item);
 
-		std::cout << "item: " << item << '\n';
-
 		EXPECT_TRUE(ret);
-		EXPECT_EQ(item, 43) << "index 1";
+		EXPECT_EQ(item, 43);
 		EXPECT_EQ(buff.size(), 3);
 	}
 
@@ -368,10 +360,8 @@ TEST_F(CircularQueueTest, peekOneItemAtPositionLoopOver)
 
 		ret = buff.peekAt(2, item);
 
-		std::cout << "item: " << item << '\n';
-
 		EXPECT_TRUE(ret);
-		EXPECT_EQ(item, 44) << "index 2";
+		EXPECT_EQ(item, 44);
 		EXPECT_EQ(buff.size(), 3);
 	}
 }
