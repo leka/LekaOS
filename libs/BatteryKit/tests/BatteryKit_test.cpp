@@ -7,6 +7,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/Battery.h"
+#include "mocks/leka/EventQueue.h"
 
 using namespace leka;
 
@@ -20,6 +21,8 @@ class BatteryKitTest : public ::testing::Test
 
 	// void SetUp() override {}
 	// void TearDown() override {}
+
+	mock::EventQueue event_queue {};
 
 	mock::Battery mock_battery;
 	BatteryKit batterykit;

@@ -14,6 +14,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/Battery.h"
+#include "mocks/leka/EventQueue.h"
 #include "mocks/leka/FirmwareUpdate.h"
 #include "mocks/leka/LEDAnimation.h"
 #include "mocks/leka/MCU.h"
@@ -74,6 +75,8 @@ class RobotControllerTest : public testing::Test
 		rc.registerEvents();
 	}
 	void TearDown() override { ble::delete_mocks(); }
+
+	mock::EventQueue event_queue {};
 
 	mock::Timeout sleep_timeout {};
 	mock::Battery battery {};

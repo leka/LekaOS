@@ -9,6 +9,8 @@ using namespace std::chrono_literals;
 
 void BatteryKit::startEventHandler()
 {
+	_event_queue.dispatch_forever();
+
 	auto on_tick = [this] {
 		if (_on_low_battery && level() <= 5) {
 			_on_low_battery();
@@ -19,10 +21,7 @@ void BatteryKit::startEventHandler()
 		}
 	};
 
-	on_tick();	 // TODO (@john_doe): only for unit tests. Due to event_queue that does not make the call
 	_event_queue.call_every(1s, on_tick);
-
-	_event_queue.dispatch_forever();
 }
 
 auto BatteryKit::level() -> uint8_t
