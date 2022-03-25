@@ -197,7 +197,7 @@ class CircularQueue
 		return true;
 	}
 
-	auto hasPattern(T *pattern, size_t size, int &position) -> bool
+	auto hasPattern(const T *pattern, size_t size, int &position) -> bool
 	{
 		const std::scoped_lock<CriticalSection> lock(_lock);
 
