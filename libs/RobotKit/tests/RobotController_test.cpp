@@ -11,10 +11,10 @@
 #include "CorePwm.h"
 #include "CoreSPI.h"
 #include "SerialNumberKit.h"
-#include "equeue_stub.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/Battery.h"
+#include "mocks/leka/EventQueue.h"
 #include "mocks/leka/FirmwareUpdate.h"
 #include "mocks/leka/LEDAnimation.h"
 #include "mocks/leka/MCU.h"
@@ -50,9 +50,6 @@ class RobotControllerTest : public testing::Test
   protected:
 	void SetUp() override
 	{
-		equeue_stub.void_ptr			= &ptr;
-		equeue_stub.call_cb_immediately = true;
-
 		ble::init_mocks();
 
 		ble::GapMock &mbed_mock_gap			= ble::gap_mock();
@@ -77,15 +74,9 @@ class RobotControllerTest : public testing::Test
 
 		rc.registerEvents();
 	}
-	void TearDown() override
-	{
-		equeue_stub.void_ptr			= nullptr;
-		equeue_stub.call_cb_immediately = false;
+	void TearDown() override { ble::delete_mocks(); }
 
-		ble::delete_mocks();
-	}
-
-	struct equeue_event ptr;
+	mock::EventQueue event_queue {};
 
 	mock::Timeout sleep_timeout {};
 	mock::Battery battery {};

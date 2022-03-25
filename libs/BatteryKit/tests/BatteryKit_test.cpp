@@ -4,10 +4,10 @@
 
 #include "BatteryKit.h"
 
-#include "equeue_stub.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/Battery.h"
+#include "mocks/leka/EventQueue.h"
 
 using namespace leka;
 
@@ -19,18 +19,10 @@ class BatteryKitTest : public ::testing::Test
   protected:
 	BatteryKitTest() : batterykit(mock_battery) {}
 
-	void SetUp() override
-	{
-		equeue_stub.void_ptr			= &ptr;
-		equeue_stub.call_cb_immediately = true;
-	}
-	void TearDown() override
-	{
-		equeue_stub.void_ptr			= nullptr;
-		equeue_stub.call_cb_immediately = false;
-	}
+	// void SetUp() override {}
+	// void TearDown() override {}
 
-	struct equeue_event ptr;
+	mock::EventQueue event_queue {};
 
 	mock::Battery mock_battery;
 	BatteryKit batterykit;
