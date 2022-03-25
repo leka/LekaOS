@@ -5,6 +5,7 @@
 #pragma once
 
 #include <array>
+#include <concepts>
 #include <mutex>
 
 #include "platform/mbed_atomic.h"
@@ -197,17 +198,18 @@ class CircularQueue
 		return true;
 	}
 
-	auto hasPattern(const T *pattern, size_t size, int &position) -> bool
+	auto hasPattern(const T *pattern, std::size_t size, std::unsigned_integral auto &position) -> bool
 	{
 		const std::scoped_lock<CriticalSection> lock(_lock);
 
-		auto i = 0;
+		auto i = 0U;
+
 		while (i <= non_critical_size() - size) {
-			auto j = 0;
+			auto j = 0U;
 
 			// for current index i, check for pattern match
 			for (j = 0; j < size; j++) {
-				T d;
+				T d {};
 				peekAt(i + j, d);	// LCOV_EXCL_LINE
 				if (d != pattern[j]) {
 					break;
@@ -218,6 +220,7 @@ class CircularQueue
 				position = i;
 				return true;
 			}
+
 			if (j == 0) {
 				i = i + 1;
 			} else {

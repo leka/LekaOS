@@ -430,7 +430,7 @@ TEST_F(CircularQueueTest, hasPattern)
 
 	buf.push(items.data(), std::size(items));
 
-	int pos = 0;
+	auto pos = uint8_t {};
 
 	auto ret = buf.hasPattern(pattern.data(), std::size(pattern), pos);
 
@@ -445,7 +445,7 @@ TEST_F(CircularQueueTest, hasPatternLoopOver)
 
 	buf.push(items.data(), std::size(items));
 
-	int pos = 0;
+	auto pos = uint8_t {};
 
 	auto ret = buf.hasPattern(pattern.data(), std::size(pattern), pos);
 
@@ -460,7 +460,7 @@ TEST_F(CircularQueueTest, hasNotPattern)
 
 	buf.push(items.data(), std::size(items));
 
-	int pos = 0;
+	auto pos = uint8_t {};
 
 	auto ret = buf.hasPattern(pattern.data(), std::size(pattern), pos);
 
@@ -475,7 +475,7 @@ TEST_F(CircularQueueTest, hasOnlyPartOfPattern)
 
 	buf.push(items.data(), std::size(items));
 
-	int pos = 0;
+	auto pos = uint8_t {};
 
 	auto ret = buf.hasPattern(pattern.data(), std::size(pattern), pos);
 
