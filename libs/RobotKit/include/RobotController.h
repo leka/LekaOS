@@ -180,7 +180,7 @@ class RobotController : public interface::RobotController
 
 		auto on_low_battery = [this] {
 			if (!_battery.isCharging()) {
-				_event_queue.call(&_behaviorkit, &BehaviorKit::lowBattery);
+				_behaviorkit.lowBattery();
 			}
 
 			if (_battery.level() == 0) {
