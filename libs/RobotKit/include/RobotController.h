@@ -9,11 +9,13 @@
 
 #include "BLEKit.h"
 #include "BLEServiceBattery.h"
+#include "BLEServiceCommands.h"
 #include "BLEServiceDeviceInformation.h"
 #include "BLEServiceMonitoring.h"
 
 #include "BatteryKit.h"
 #include "BehaviorKit.h"
+#include "CommandKit.h"
 #include "CoreMotor.h"
 #include "LedKit.h"
 #include "SerialNumberKit.h"
@@ -35,7 +37,7 @@ class RobotController : public interface::RobotController
 	explicit RobotController(interface::Timeout &sleep_timeout, interface::Battery &battery,
 							 SerialNumberKit &serialnumberkit, interface::FirmwareUpdate &firmware_update,
 							 CoreMotor &motor_left, CoreMotor &motor_right, LedKit &ledkit, VideoKit &videokit,
-							 BehaviorKit &behaviorkit)
+							 BehaviorKit &behaviorkit, CommandKit &cmdkit)
 		: _sleep_timeout(sleep_timeout),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
@@ -44,7 +46,11 @@ class RobotController : public interface::RobotController
 		  _motor_right(motor_right),
 		  _ledkit(ledkit),
 		  _videokit(videokit),
-		  _behaviorkit(behaviorkit) {};
+		  _behaviorkit(behaviorkit),
+		  _cmdkit(cmdkit)
+	{
+		// nothing to do
+	}
 
 	void runLaunchingBehavior() final
 	{
@@ -116,7 +122,7 @@ class RobotController : public interface::RobotController
 
 	void stopChargingBehavior() final
 	{
-		_battery_kit.onDataUpdated([](uint8_t level) { _service_battery.setBatteryLevel(level); });
+		_battery_kit.onDataUpdated([this](uint8_t level) { _service_battery.setBatteryLevel(level); });
 	}
 
 	auto isReadyToUpdate() -> bool final
@@ -170,11 +176,11 @@ class RobotController : public interface::RobotController
 
 		// Setup callbacks for monitoring
 
-		_battery_kit.onDataUpdated([](uint8_t level) { _service_battery.setBatteryLevel(level); });
+		_battery_kit.onDataUpdated([this](uint8_t level) { _service_battery.setBatteryLevel(level); });
 
 		auto on_low_battery = [this] {
 			if (!_battery.isCharging()) {
-				_event_queue.call(&_behaviorkit, &BehaviorKit::lowBattery);
+				_behaviorkit.lowBattery();
 			}
 
 			if (_battery.level() == 0) {
@@ -198,6 +204,18 @@ class RobotController : public interface::RobotController
 
 		_service_monitoring.onSoftReboot([] { system_reset(); });
 
+		auto on_commands_received = [this](std::span<uint8_t> _buffer) {
+			raise(event::command_received {});
+
+			if (!isCharging()) {
+				stopSleepTimeout();
+				startSleepTimeout();
+
+				_cmdkit.push(std::span {_buffer.data(), std::size(_buffer)});
+			}
+		};
+		_service_commands.onCommandsReceived(on_commands_received);
+
 		raise(event::setup_complete {});
 	};
 
@@ -220,16 +238,24 @@ class RobotController : public interface::RobotController
 	VideoKit &_videokit;
 
 	BehaviorKit &_behaviorkit;
+	CommandKit &_cmdkit;
 
 	rtos::Thread _thread {};
 	events::EventQueue _event_queue {};
 
 	BLEKit _ble {};
-	inline static BLEServiceDeviceInformation _service_device_information {};
-	inline static BLEServiceBattery _service_battery {};
-	inline static BLEServiceMonitoring _service_monitoring {};
-	inline static auto services =
-		std::to_array<interface::BLEService *>({&_service_device_information, &_service_battery, &_service_monitoring});
+
+	BLEServiceBattery _service_battery {};
+	BLEServiceCommands _service_commands {};
+	BLEServiceDeviceInformation _service_device_information {};
+	BLEServiceMonitoring _service_monitoring {};
+
+	std::array<interface::BLEService *, 4> services = {
+		&_service_battery,
+		&_service_commands,
+		&_service_device_information,
+		&_service_monitoring,
+	};
 };
 
 }	// namespace leka
