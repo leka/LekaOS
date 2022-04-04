@@ -37,7 +37,7 @@ namespace leka::led::animation {
 class Angry : public interface::LEDAnimation
 {
   public:
-	explicit Angry(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {};
+	explicit Angry(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {}
 
 	void start() final;
 	void run() final;

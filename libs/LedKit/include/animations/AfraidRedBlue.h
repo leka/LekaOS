@@ -30,7 +30,7 @@ namespace leka::led::animation {
 class AfraidRedBlue : public interface::LEDAnimation
 {
   public:
-	explicit AfraidRedBlue(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {};
+	explicit AfraidRedBlue(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {}
 
 	void start() final;
 	void run() final;

@@ -21,7 +21,10 @@ class WebKit
 	};
 
 	explicit WebKit(interface::Network &network, interface::File &file_handler)
-		: _network(network), _file_handle(file_handler) {};
+		: _network(network), _file_handle(file_handler)
+	{
+		// nothing do to
+	}
 
 	[[nodiscard]] auto connect(const char *ssid, const char *pass) -> bool;
 

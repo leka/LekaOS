@@ -16,7 +16,7 @@ template <size_t NumberOfLeds>
 class CoreLED : public interface::LED
 {
   public:
-	explicit CoreLED(interface::SPI &spi) : _spi {spi}
+	explicit CoreLED(interface::SPI &spi) : _spi(spi)
 	{
 		std::fill(_brightness.begin(), _brightness.end(), kBrightnessDefault);
 	};

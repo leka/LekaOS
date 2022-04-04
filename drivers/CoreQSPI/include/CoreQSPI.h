@@ -17,7 +17,10 @@ class CoreQSPI : public interface::QSPI
   public:
 	explicit CoreQSPI(PinName io0 = QSPI_FLASH_IO0, PinName io1 = QSPI_FLASH_IO1, PinName io2 = QSPI_FLASH_IO2,
 					  PinName io3 = QSPI_FLASH_IO3, PinName sclk = QSPI_FLASH_CLK, PinName ssel = QSPI_FLASH_nCS)
-		: _qspi(io0, io1, io2, io3, sclk, ssel) {};
+		: _qspi(io0, io1, io2, io3, sclk, ssel)
+	{
+		// nothing do to
+	}
 
 	void setDataTransmissionFormat() final;
 	void setFrequency(int hz = ONE_MHZ) final;

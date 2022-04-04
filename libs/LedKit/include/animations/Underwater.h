@@ -32,7 +32,7 @@ namespace leka::led::animation {
 class Underwater : public interface::LEDAnimation
 {
   public:
-	explicit Underwater(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {};
+	explicit Underwater(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {}
 
 	void start() final;
 	void run() final;

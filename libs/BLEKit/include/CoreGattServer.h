@@ -18,7 +18,7 @@ namespace leka {
 class CoreGattServer
 {
   public:
-	explicit CoreGattServer(ble::GattServer &gatt_server) : _gatt_server(gatt_server) {};
+	explicit CoreGattServer(ble::GattServer &gatt_server) : _gatt_server(gatt_server) {}
 
 	void setEventHandler();
 	void setServices(std::span<interface::BLEService *> services);

@@ -14,7 +14,7 @@ class SerialNumberKit
 	static constexpr size_t SN_SIZE = 33;
 
   public:
-	explicit SerialNumberKit(interface::MCU &mcu) : _mcu(mcu) {};
+	explicit SerialNumberKit(interface::MCU &mcu) : _mcu(mcu) {}
 
 	auto getSerialNumber() -> std::array<uint8_t, SN_SIZE>;
 

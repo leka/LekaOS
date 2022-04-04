@@ -34,7 +34,7 @@ namespace leka::led::animation {
 class Singing : public interface::LEDAnimation
 {
   public:
-	explicit Singing(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {};
+	explicit Singing(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {}
 
 	void start() final;
 	void run() final;

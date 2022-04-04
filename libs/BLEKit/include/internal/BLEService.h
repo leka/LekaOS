@@ -15,7 +15,10 @@ class BLEService : public GattService
 {
   public:
 	BLEService(const UUID &uuid, std::span<GattCharacteristic *> characteristics)
-		: GattService(uuid, characteristics.data(), std::size(characteristics)) {};
+		: GattService(uuid, characteristics.data(), std::size(characteristics))
+	{
+		// nothing do to
+	}
 
 	virtual ~BLEService() = default;
 

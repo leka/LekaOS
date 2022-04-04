@@ -16,8 +16,7 @@ namespace leka {
 class CoreWifi : public WiFiInterface
 {
   public:
-	CoreWifi(CoreESP8266 &wifi_module, mbed::interface::DigitalOut &enable)
-		: _module {wifi_module}, _enable {enable} {};
+	CoreWifi(CoreESP8266 &wifi_module, mbed::interface::DigitalOut &enable) : _module(wifi_module), _enable(enable) {}
 
 	struct Network {
 		const char *ssid {};

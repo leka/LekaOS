@@ -13,7 +13,7 @@ namespace leka {
 class BLEServiceDeviceInformation : public interface::BLEService
 {
   public:
-	BLEServiceDeviceInformation() : interface::BLEService(service::device_information::uuid, _characteristic_table) {};
+	BLEServiceDeviceInformation() : interface::BLEService(service::device_information::uuid, _characteristic_table) {}
 
 	void setSerialNumber(std::span<uint8_t> const &value) const
 	{

@@ -24,7 +24,7 @@ namespace leka {
 class CoreI2C : public interface::I2C
 {
   public:
-	explicit CoreI2C(mbed::I2C &i2c) : _i2c {i2c} {};
+	explicit CoreI2C(mbed::I2C &i2c) : _i2c(i2c) {}
 
 	auto read(int address, uint8_t *data, int length, bool repeated) -> int final;
 	auto write(int address, const uint8_t *data, int length, bool repeated) -> int final;

@@ -36,7 +36,7 @@ namespace leka::led::animation {
 class Wink : public interface::LEDAnimation
 {
   public:
-	explicit Wink(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {};
+	explicit Wink(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {}
 
 	void start() final;
 	void run() final;

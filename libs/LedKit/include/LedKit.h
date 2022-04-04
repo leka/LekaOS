@@ -32,10 +32,10 @@ class LedKit
 
 	LedKit(rtos::Thread &thread, events::EventQueue &event_queue, const CoreLED<kNumberOfLedsEars> &ears,
 		   const CoreLED<kNumberOfLedsBelt> &belt)
-		: _thread(thread), _event_queue(event_queue), _ears {ears}, _belt {belt}
+		: _thread(thread), _event_queue(event_queue), _ears(ears), _belt(belt)
 	{
 		_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
-	};
+	}
 
 	void start(interface::LEDAnimation *animation);
 	void stop();

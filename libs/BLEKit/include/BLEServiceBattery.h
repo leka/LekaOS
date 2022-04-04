@@ -12,7 +12,7 @@ namespace leka {
 class BLEServiceBattery : public interface::BLEService
 {
   public:
-	BLEServiceBattery() : interface::BLEService(service::battery::uuid, _characteristic_table) {};
+	BLEServiceBattery() : interface::BLEService(service::battery::uuid, _characteristic_table) {}
 
 	void setBatteryLevel(uint8_t value)
 	{
