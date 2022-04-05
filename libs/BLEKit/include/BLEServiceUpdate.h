@@ -33,7 +33,7 @@ class BLEServiceUpdate : public interface::BLEService
 		if (params.handle == version_revision_characteristic.getValueHandle()) {
 			version.revision = static_cast<uint16_t>(params.data[0] << 8 | params.data[1]);
 		}
-	};
+	}
 
   private:
 	bool apply_update_value {false};

@@ -30,7 +30,7 @@ class BLEService : public GattService
 	void onDataReadyToSend(const std::function<void(const data_to_send_handle_t &)> &callback)
 	{
 		_callback_on_data_ready_to_send = callback;
-	};
+	}
 
 	void sendData(const data_to_send_handle_t &handle) const { _callback_on_data_ready_to_send(handle); }
 

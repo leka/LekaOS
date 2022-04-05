@@ -43,7 +43,7 @@ class BLEServiceMonitoring : public interface::BLEService
 				system_reset();
 			}
 		}
-	};
+	}
 
 	void onSoftReboot(const std::function<void()> &callback) { _on_soft_reboot = callback; }
 

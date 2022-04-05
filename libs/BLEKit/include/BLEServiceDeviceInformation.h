@@ -23,9 +23,10 @@ class BLEServiceDeviceInformation : public interface::BLEService
 		sendData(data);
 	}
 
-	void onDataReceived(const data_received_handle_t &params) final {
+	void onDataReceived(const data_received_handle_t &params) final
+	{
 		// do nothing
-	};
+	}
 
   private:
 	inline static auto _manufacturer = utils::cast::from_c_string_to_uint8_t_array("APF France handicap");

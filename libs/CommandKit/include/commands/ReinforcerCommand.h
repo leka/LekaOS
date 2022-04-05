@@ -21,9 +21,9 @@ struct ReinforcerCommand : interface::Command {
 	{
 		args = {};
 		return args.data();
-	};
+	}
 
-	[[nodiscard]] auto size() const -> std::size_t override { return std::size(args); };
+	[[nodiscard]] auto size() const -> std::size_t override { return std::size(args); }
 
 	auto execute() -> bool override
 	{
