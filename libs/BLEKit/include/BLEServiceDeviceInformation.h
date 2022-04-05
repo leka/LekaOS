@@ -13,7 +13,7 @@ namespace leka {
 class BLEServiceDeviceInformation : public interface::BLEService
 {
   public:
-	BLEServiceDeviceInformation() : interface::BLEService(service::device_information::uuid, _characteristic_table) {};
+	BLEServiceDeviceInformation() : interface::BLEService(service::device_information::uuid, _characteristic_table) {}
 
 	void setSerialNumber(std::span<uint8_t> const &value) const
 	{
@@ -23,9 +23,10 @@ class BLEServiceDeviceInformation : public interface::BLEService
 		sendData(data);
 	}
 
-	void onDataReceived(const data_received_handle_t &params) final {
+	void onDataReceived(const data_received_handle_t &params) final
+	{
 		// do nothing
-	};
+	}
 
   private:
 	inline static auto _manufacturer = utils::cast::from_c_string_to_uint8_t_array("APF France handicap");

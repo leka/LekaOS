@@ -19,7 +19,10 @@ class CoreLightSensor
 		sunny
 	};
 
-	explicit CoreLightSensor(PinName pin) : _pin {mbed::AnalogIn(pin)} {};
+	explicit CoreLightSensor(PinName pin) : _pin(mbed::AnalogIn(pin))
+	{
+		// nothing do to
+	}
 
 	auto readLuminosity() -> float;
 

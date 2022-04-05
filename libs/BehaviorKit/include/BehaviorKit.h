@@ -14,7 +14,10 @@ class BehaviorKit
 {
   public:
 	explicit BehaviorKit(VideoKit &videokit, LedKit &ledkit, CoreMotor &motor_left, CoreMotor &motor_right)
-		: _videokit(videokit), _ledkit(ledkit), _motor_left(motor_left), _motor_right(motor_right) {};
+		: _videokit(videokit), _ledkit(ledkit), _motor_left(motor_left), _motor_right(motor_right)
+	{
+		// nothing do to
+	}
 
 	void spinLeft(float speed);
 	void spinRight(float speed);

@@ -16,8 +16,10 @@ class CoreBattery : public interface::Battery
 {
   public:
 	explicit CoreBattery(PinName voltage_pin, mbed::InterruptIn &charge_status_input)
-		: _voltage_pin {mbed::AnalogIn(voltage_pin, analog_voltage_reference)},
-		  _charge_status_input(charge_status_input) {};
+		: _voltage_pin(mbed::AnalogIn(voltage_pin, analog_voltage_reference)), _charge_status_input(charge_status_input)
+	{
+		// nothing do to
+	}
 
 	void onChargeDidStart(mbed::Callback<void()> const &callback) final;
 	void onChargeDidStop(mbed::Callback<void()> const &callback) final;

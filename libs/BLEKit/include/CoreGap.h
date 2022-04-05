@@ -16,7 +16,7 @@ namespace leka {
 class CoreGap
 {
   public:
-	explicit CoreGap(ble::Gap &gap) : _gap(gap) {};
+	explicit CoreGap(ble::Gap &gap) : _gap(gap) {}
 
 	void setDefaultAdvertising();
 

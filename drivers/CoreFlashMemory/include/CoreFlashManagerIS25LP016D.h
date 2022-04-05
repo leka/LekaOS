@@ -16,7 +16,7 @@ namespace leka {
 class CoreFlashManagerIS25LP016D : public interface::FlashManager
 {
   public:
-	explicit CoreFlashManagerIS25LP016D(interface::QSPI &qspi) : _qspi(qspi) {};
+	explicit CoreFlashManagerIS25LP016D(interface::QSPI &qspi) : _qspi(qspi) {}
 
 	auto getStatusRegister() -> uint8_t final;
 

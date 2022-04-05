@@ -13,7 +13,7 @@ namespace leka::led::animation {
 class Sick : public interface::LEDAnimation
 {
   public:
-	explicit Sick(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {};
+	explicit Sick(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {}
 
 	void start() final;
 	void run() final;

@@ -14,7 +14,7 @@ namespace leka {
 class BLEServiceMonitoring : public interface::BLEService
 {
   public:
-	BLEServiceMonitoring() : interface::BLEService(service::monitoring::uuid, _characteristic_table) {};
+	BLEServiceMonitoring() : interface::BLEService(service::monitoring::uuid, _characteristic_table) {}
 
 	void setChargingStatus(bool value)
 	{
@@ -43,7 +43,7 @@ class BLEServiceMonitoring : public interface::BLEService
 				system_reset();
 			}
 		}
-	};
+	}
 
 	void onSoftReboot(const std::function<void()> &callback) { _on_soft_reboot = callback; }
 

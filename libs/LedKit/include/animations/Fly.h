@@ -33,7 +33,7 @@ namespace leka::led::animation {
 class Fly : public interface::LEDAnimation
 {
   public:
-	explicit Fly(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {};
+	explicit Fly(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {}
 
 	void start() final;
 	void run() final;

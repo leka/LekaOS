@@ -69,6 +69,7 @@ class RobotController : public interface::RobotController
 		_behaviorkit.waiting();
 		_videokit.turnOn();
 	}
+
 	void stopWaitingBehavior() final { _behaviorkit.stop(); }
 
 	void startSleepingBehavior() final
@@ -81,6 +82,7 @@ class RobotController : public interface::RobotController
 		_event_queue.call_in(20s, &_videokit, &VideoKit::turnOff);
 		_event_queue.call_in(20s, &_ledkit, &LedKit::stop);
 	}
+
 	void stopSleepingBehavior() final { _behaviorkit.stop(); }
 
 	auto isCharging() -> bool final
@@ -90,7 +92,7 @@ class RobotController : public interface::RobotController
 		_service_monitoring.setChargingStatus(is_charging);
 
 		return is_charging;
-	};
+	}
 
 	void onStartChargingBehavior(uint8_t level)
 	{
@@ -128,7 +130,7 @@ class RobotController : public interface::RobotController
 	auto isReadyToUpdate() -> bool final
 	{
 		return (_battery.isCharging() && _battery.level() > _minimal_battery_level_to_update);
-	};
+	}
 
 	void applyUpdate() final
 	{
@@ -143,7 +145,7 @@ class RobotController : public interface::RobotController
 	void raise(auto event)
 	{
 		_event_queue.call([this, &event] { state_machine.process_event(event); });
-	};
+	}
 
 	void initializeComponents()
 	{
@@ -217,7 +219,7 @@ class RobotController : public interface::RobotController
 		_service_commands.onCommandsReceived(on_commands_received);
 
 		raise(event::setup_complete {});
-	};
+	}
 
   private:
 	std::chrono::seconds _sleep_timeout_duration {300};

@@ -23,7 +23,7 @@ class BLEServiceCommands : public interface::BLEService
 				_on_commands_received(std::span {_buffer.data(), params.len});
 			}
 		}
-	};
+	}
 
 	void onCommandsReceived(const std::function<void(std::span<uint8_t>)> &callback)
 	{

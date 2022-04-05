@@ -31,7 +31,7 @@ namespace leka::led::animation {
 class Sad : public interface::LEDAnimation
 {
   public:
-	explicit Sad(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {};
+	explicit Sad(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {}
 
 	void start() final;
 	void run() final;

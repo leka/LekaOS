@@ -17,7 +17,10 @@ class CoreFlashIS25LP016D : public interface::FlashMemory
 {
   public:
 	explicit CoreFlashIS25LP016D(interface::QSPI &qspi, interface::FlashManager &flash_manager)
-		: _qspi(qspi), _flash_manager(flash_manager) {};
+		: _qspi(qspi), _flash_manager(flash_manager)
+	{
+		// nothing do to
+	}
 
 	auto getSize() -> size_t final;
 

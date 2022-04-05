@@ -12,7 +12,7 @@ namespace leka {
 class BatteryKit
 {
   public:
-	explicit BatteryKit(interface::Battery &battery) : _battery(battery) {};
+	explicit BatteryKit(interface::Battery &battery) : _battery(battery) {}
 
 	void startEventHandler();
 

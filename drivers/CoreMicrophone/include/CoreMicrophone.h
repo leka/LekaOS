@@ -11,7 +11,7 @@ namespace leka {
 class CoreMicrophone
 {
   public:
-	explicit CoreMicrophone(PinName pin) : _pin {mbed::AnalogIn(pin)} {};
+	explicit CoreMicrophone(PinName pin) : _pin(mbed::AnalogIn(pin)) {}
 
 	auto readVolume() -> float;
 

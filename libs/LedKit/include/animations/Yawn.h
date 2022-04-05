@@ -33,7 +33,7 @@ namespace leka::led::animation {
 class Yawn : public interface::LEDAnimation
 {
   public:
-	explicit Yawn(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {};
+	explicit Yawn(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {}
 
 	void start() final;
 	void run() final;

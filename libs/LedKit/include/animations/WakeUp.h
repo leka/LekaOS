@@ -35,7 +35,7 @@ namespace leka::led::animation {
 class WakeUp : public interface::LEDAnimation
 {
   public:
-	explicit WakeUp(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {};
+	explicit WakeUp(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {}
 
 	void start() final;
 	void run() final;

@@ -15,7 +15,7 @@ class CoreESP8266 : public ESP8266Interface
 	using ESP8266Interface::ESP8266Interface;
 
   public:
-	auto get_stack() -> NetworkStack * override { return this; };
+	auto get_stack() -> NetworkStack * override { return this; }
 };
 
 }	// namespace leka
