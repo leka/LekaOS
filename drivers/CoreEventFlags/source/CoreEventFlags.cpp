@@ -27,11 +27,7 @@ auto CoreEventFlags::clear(eventflags_t flags) -> std::optional<eventflags_t>
 	return flags;
 }
 
-auto CoreEventFlags::get() const -> std::optional<eventflags_t>
+auto CoreEventFlags::get() const -> eventflags_t
 {
-	auto flags = _event_flags.get();
-	if (flags == 0U) {
-		return {};
-	}
-	return flags;
+	return _event_flags.get();
 }

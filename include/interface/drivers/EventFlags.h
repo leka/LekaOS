@@ -20,7 +20,7 @@ class EventFlags
 	virtual auto set(eventflags_t flag) -> std::optional<eventflags_t>	 = 0;
 	virtual auto clear(eventflags_t flag) -> std::optional<eventflags_t> = 0;
 
-	[[nodiscard]] virtual auto get() const -> std::optional<eventflags_t> = 0;
+	[[nodiscard]] virtual auto get() const -> eventflags_t = 0;
 };
 
 }	// namespace leka::interface

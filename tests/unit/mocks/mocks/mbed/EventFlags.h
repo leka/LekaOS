@@ -17,7 +17,7 @@ class EventFlags : public leka::interface::EventFlags
 	MOCK_METHOD(void, wait_any, (eventflags_t), (override));
 	MOCK_METHOD(std::optional<eventflags_t>, set, (eventflags_t), (override));
 	MOCK_METHOD(std::optional<eventflags_t>, clear, (eventflags_t), (override));
-	MOCK_METHOD(std::optional<eventflags_t>, get, (), (const, override));
+	MOCK_METHOD(eventflags_t, get, (), (const, override));
 };
 
 }	// namespace mbed::mock
