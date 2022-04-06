@@ -23,82 +23,130 @@
 using namespace leka;
 using namespace std::chrono;
 
+//
+// MARK: - Global definitions
+//
+
+namespace {
+
+namespace sd {
+
+	namespace internal {
+
+		auto bd = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
+		auto fs = FATFileSystem {"fs"};
+
+		constexpr auto default_frequency = uint64_t {25'000'000};
+
+	}	// namespace internal
+
+	void init()
+	{
+		internal::bd.init();
+		internal::bd.frequency(internal::default_frequency);
+		internal::fs.mount(&internal::bd);
+	}
+
+}	// namespace sd
+
 namespace leds {
 
-namespace spi {
+	namespace internal {
 
-	auto belt = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
-	auto ears = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+		namespace ears {
 
-}	// namespace spi
+			auto spi			= CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+			constexpr auto size = 2;
 
-namespace animations {
+		}	// namespace ears
 
-	auto thread		 = rtos::Thread {};
-	auto event_flags = CoreEventFlags {};
+		namespace belt {
 
-}	// namespace animations
+			auto spi			= CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+			constexpr auto size = 20;
 
-auto ears = CoreLED<LedKit::kNumberOfLedsEars> {spi::ears};
-auto belt = CoreLED<LedKit::kNumberOfLedsBelt> {spi::belt};
+		}	// namespace belt
+
+		namespace animations {
+
+			auto thread		 = rtos::Thread {};
+			auto event_flags = CoreEventFlags {};
+
+		}	// namespace animations
+
+	}	// namespace internal
+
+	auto ears = CoreLED<internal::ears::size> {internal::ears::spi};
+	auto belt = CoreLED<internal::belt::size> {internal::belt::spi};
+
+	auto kit = LedKit {internal::animations::thread, internal::animations::event_flags, ears, belt};
+
+	void turnOff()
+	{
+		ears.setColor(RGB::black);
+		belt.setColor(RGB::black);
+		ears.show();
+		belt.show();
+	}
 
 }	// namespace leds
 
-auto ledkit = LedKit {leds::animations::thread, leds::animations::event_flags, leds::ears, leds::belt};
-
-namespace motor {
-
-namespace internal {
+namespace motors {
 
 	namespace left {
 
-		auto dir_1 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
-		auto dir_2 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
-		auto speed = CorePwm {MOTOR_LEFT_PWM};
+		namespace internal {
+
+			auto dir_1 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
+			auto dir_2 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
+			auto speed = CorePwm {MOTOR_LEFT_PWM};
+
+		}	// namespace internal
+
+		auto motor = CoreMotor {internal::dir_1, internal::dir_2, internal::speed};
 
 	}	// namespace left
+
 	namespace right {
 
-		auto dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
-		auto dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
-		auto speed = CorePwm {MOTOR_RIGHT_PWM};
+		namespace internal {
+
+			auto dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
+			auto dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
+			auto speed = CorePwm {MOTOR_RIGHT_PWM};
+
+		}	// namespace internal
+
+		auto motor = CoreMotor {internal::dir_1, internal::dir_2, internal::speed};
 
 	}	// namespace right
-}	// namespace internal
 
-auto left  = CoreMotor {internal::left::dir_1, internal::left::dir_2, internal::left::speed};
-auto right = CoreMotor {internal::right::dir_1, internal::right::dir_2, internal::right::speed};
+	void turnOff()
+	{
+		left::motor.stop();
+		right::motor.stop();
+	}
 
-}	// namespace motor
+}	// namespace motors
 
-auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
-auto fatfs			= FATFileSystem {"fs"};
+auto videokit	 = VideoKit {};
+auto behaviorkit = BehaviorKit {videokit, leds::kit, motors::left::motor, motors::right::motor};
+auto hello		 = HelloWorld {};
 
-auto videokit = VideoKit {};
-
-auto behaviorkit = BehaviorKit {videokit, ledkit, motor::left, motor::right};
-
-HelloWorld hello;
-
-void initializeSD()
-{
-	constexpr auto default_sd_blockdevice_frequency = uint64_t {25'000'000};
-
-	sd_blockdevice.init();
-	sd_blockdevice.frequency(default_sd_blockdevice_frequency);
-
-	fatfs.mount(&sd_blockdevice);
-}
+}	// namespace
 
 auto main() -> int
 {
 	logger::init();
 
-	log_info("Hello, World!\n\n");
+	leds::turnOff();
+	motors::turnOff();
 
-	initializeSD();
-	ledkit.init();
+	leds::kit.init();
+	sd::init();
 	videokit.initializeScreen();
+
+	log_info("Hello, World!\n\n");
 
 	hello.start();
 
