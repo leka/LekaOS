@@ -4,7 +4,7 @@
 
 #include "StateMachine.h"
 
-#include "Logger.h"
+#include "RCLogger.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "interface/RobotController.h"

@@ -18,6 +18,7 @@
 #include "CommandKit.h"
 #include "CoreMotor.h"
 #include "LedKit.h"
+#include "RCLogger.h"
 #include "SerialNumberKit.h"
 #include "StateMachine.h"
 #include "VideoKit.h"
@@ -27,12 +28,11 @@
 #include "interface/drivers/Timeout.h"
 
 namespace leka {
-
-template <typename sm_t = boost::sml::sm<system::robot::StateMachine>>
+template <typename sm_t = boost::sml::sm<system::robot::StateMachine, boost::sml::logger<system::robot::sm::logger>>>
 class RobotController : public interface::RobotController
 {
   public:
-	sm_t state_machine {static_cast<interface::RobotController &>(*this)};
+	sm_t state_machine {static_cast<interface::RobotController &>(*this), logger};
 
 	explicit RobotController(interface::Timeout &sleep_timeout, interface::Battery &battery,
 							 SerialNumberKit &serialnumberkit, interface::FirmwareUpdate &firmware_update,
@@ -222,6 +222,8 @@ class RobotController : public interface::RobotController
 	}
 
   private:
+	system::robot::sm::logger logger {};
+
 	std::chrono::seconds _sleep_timeout_duration {300};
 	interface::Timeout &_sleep_timeout;
 
