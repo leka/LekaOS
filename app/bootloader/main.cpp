@@ -16,7 +16,7 @@
 #include "CorePwm.h"
 #include "CoreSPI.h"
 #include "FATFileSystem.h"
-#include "FileSystemKit.h"
+#include "FileManagerKit.h"
 #include "SDBlockDevice.h"
 #include "bootutil/bootutil.h"
 #include "bootutil/image.h"
@@ -34,7 +34,7 @@ auto battery_level_hysteresis_offset = uint8_t {5};
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 
-FileSystemKit::File _configuration_file {"/fs/conf/bootloader.conf"};
+FileManagerKit::File _configuration_file {"/fs/conf/bootloader.conf"};
 
 static constexpr auto NUM_EARS_LEDS = 2;
 static constexpr auto NUM_BELT_LEDS = 20;

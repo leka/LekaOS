@@ -22,7 +22,7 @@ target_link_libraries(LekaOS
 	CoreBattery
 	CoreQSPI
 	CoreFlashMemory
-	FileSystemKit
+	FileManagerKit
 	SerialNumberKit
 	FirmwareKit
 	BehaviorKit

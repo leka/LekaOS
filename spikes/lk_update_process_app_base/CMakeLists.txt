@@ -18,7 +18,7 @@ target_link_libraries(spike_lk_update_process_app_base
 	bootutil
 	CoreQSPI
 	CoreFlashMemory
-	FileSystemKit
+	FileManagerKit
 	FirmwareKit
 )
 

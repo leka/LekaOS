@@ -22,7 +22,7 @@
 #include "CoreSTM32Hal.h"
 #include "CoreVideo.hpp"
 #include "FATFileSystem.h"
-#include "FileSystemKit.h"
+#include "FileManagerKit.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"

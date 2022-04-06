@@ -6,6 +6,7 @@
 
 #include <span>
 
+#include "filesystem"
 #include "gmock/gmock.h"
 #include "interface/platform/File.h"
 
@@ -15,6 +16,7 @@ class File : public interface::File
 {
   public:
 	MOCK_METHOD(bool, open, (const char *, const char *), (override));
+	MOCK_METHOD(bool, open, (const std::filesystem::path &, const char *), (override));
 
 	MOCK_METHOD(void, close, (), (override));
 
@@ -39,6 +41,7 @@ class File : public interface::File
 	MOCK_METHOD(size_t, tell, (), (override));
 
 	MOCK_METHOD(bool, reopen, (const char *, const char *), (override));
+	MOCK_METHOD(bool, reopen, (const std::filesystem::path &, const char *), (override));
 
 	MOCK_METHOD(bool, setBuffer, (std::span<char> buffer, int mode), (override));
 

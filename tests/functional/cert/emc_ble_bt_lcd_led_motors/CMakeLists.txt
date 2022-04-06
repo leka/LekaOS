@@ -20,7 +20,7 @@ target_link_libraries(certs_emc_ble_bt_lcd_led_motors
 	CoreMotor
 	driver_FastLED
 	lib_BLE
-	FileSystemKit
+	FileManagerKit
 	lib_LekaBluetooth
 	lib_LekaRFID
 	lib_LekaScreen

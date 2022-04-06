@@ -30,7 +30,7 @@ target_link_libraries(CoreVideo
 		mbed-os
 		CoreLL
 		CoreSTM32Hal
-		FileSystemKit
+		FileManagerKit
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

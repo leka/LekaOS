@@ -41,7 +41,7 @@ TEST_F(WebKitDownloadFileTest, downloadFileUnsetCertificatesStore)
 	auto downloadable_file =
 		WebKit::DownloadableFile {.url = "https://url/to/download/file.bin", .to_path = "path/to/downloaded/file.bin"};
 
-	EXPECT_CALL(web_file_handler_mock, open).WillRepeatedly(Return(false));
+	EXPECT_CALL(web_file_handler_mock, open(Matcher<const char *>(_), _)).WillRepeatedly(Return(false));
 
 	auto actual_file_downloaded = web_kit.downloadFile(downloadable_file);
 
@@ -59,14 +59,15 @@ TEST_F(WebKitDownloadFileTest, downloadFileCannotOpenFile)
 
 	web_kit.setCertificateStore(certificates_path_list);
 
-	EXPECT_CALL(web_file_handler_mock, open(_, StrEq("r"))).WillRepeatedly(Return(true));
+	EXPECT_CALL(web_file_handler_mock, open(Matcher<const char *>(_), StrEq("r"))).WillRepeatedly(Return(true));
 	EXPECT_CALL(web_file_handler_mock, size).Times(AnyNumber());
 	EXPECT_CALL(web_file_handler_mock, read(Matcher<char *>(_), _))
 		.WillRepeatedly(DoAll(::testing::SetArrayArgument<0>(certificate.begin(), certificate.end()),
 							  Return(std::size(certificate))));
 	EXPECT_CALL(web_file_handler_mock, close).Times(AnyNumber());
 
-	EXPECT_CALL(web_file_handler_mock, open(StrEq(downloadable_file.to_path), StrEq("w"))).WillOnce(Return(false));
+	EXPECT_CALL(web_file_handler_mock, open(Matcher<const char *>(StrEq(downloadable_file.to_path)), StrEq("w")))
+		.WillOnce(Return(false));
 
 	auto actual_file_downloaded = web_kit.downloadFile(downloadable_file);
 
@@ -95,14 +96,15 @@ TEST_F(WebKitDownloadFileTest, downloadFile)
 
 	web_kit.setCertificateStore(certificates_path_list);
 
-	EXPECT_CALL(web_file_handler_mock, open(_, StrEq("r"))).WillRepeatedly(Return(true));
+	EXPECT_CALL(web_file_handler_mock, open(Matcher<const char *>(_), StrEq("r"))).WillRepeatedly(Return(true));
 	EXPECT_CALL(web_file_handler_mock, size).Times(AnyNumber());
 	EXPECT_CALL(web_file_handler_mock, read(Matcher<char *>(_), _))
 		.WillRepeatedly(DoAll(::testing::SetArrayArgument<0>(certificate.begin(), certificate.end()),
 							  Return(std::size(certificate))));
 	EXPECT_CALL(web_file_handler_mock, close).Times(AnyNumber());
 
-	EXPECT_CALL(web_file_handler_mock, open(StrEq(downloadable_file.to_path), StrEq("w"))).WillRepeatedly(Return(true));
+	EXPECT_CALL(web_file_handler_mock, open(Matcher<const char *>(StrEq(downloadable_file.to_path)), StrEq("w")))
+		.WillRepeatedly(Return(true));
 
 	{
 		InSequence seq;

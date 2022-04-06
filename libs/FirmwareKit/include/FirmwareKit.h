@@ -7,7 +7,7 @@
 #include <functional>
 #include <string>
 
-#include "FileSystemKit.h"
+#include "FileManagerKit.h"
 #include "interface/drivers/FirmwareUpdate.h"
 #include "interface/drivers/FlashMemory.h"
 
@@ -28,7 +28,7 @@ class FirmwareKit : public interface::FirmwareUpdate
 	auto loadUpdate(const char *path) -> bool;
 
 	interface::FlashMemory &_flash;
-	FileSystemKit::File _file {};
+	FileManagerKit::File _file {};
 
 	const char *_path_format;
 };

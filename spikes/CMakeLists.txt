@@ -11,7 +11,7 @@ add_subdirectory(${SPIKES_DIR}/lk_command_kit)
 add_subdirectory(${SPIKES_DIR}/lk_coreled)
 add_subdirectory(${SPIKES_DIR}/lk_event_queue)
 add_subdirectory(${SPIKES_DIR}/lk_file_reception)
-add_subdirectory(${SPIKES_DIR}/lk_filesystem_kit)
+add_subdirectory(${SPIKES_DIR}/lk_file_manager_kit)
 add_subdirectory(${SPIKES_DIR}/lk_flash_memory)
 add_subdirectory(${SPIKES_DIR}/lk_lcd)
 add_subdirectory(${SPIKES_DIR}/lk_led_kit)
@@ -47,7 +47,7 @@ add_dependencies( spikes_leka
 	spike_lk_coreled
 	spike_lk_event_queue
 	spike_lk_file_reception
-	spike_lk_filesystem_kit
+	spike_lk_file_manager_kit
 	spike_lk_flash_memory
 	spike_lk_lcd
 	spike_lk_led
