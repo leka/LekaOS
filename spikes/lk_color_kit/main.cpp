@@ -17,58 +17,80 @@
 using namespace leka;
 using namespace std::chrono;
 
-auto constexpr NUM_BELT_LEDS = 20;
-auto constexpr NUM_EARS_LEDS = 2;
+//
+// MARK: - Global definitions
+//
+
+namespace {
 
 namespace leds {
 
-namespace spi {
+	namespace internal {
 
-	auto belt = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
-	auto ears = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+		namespace ears {
 
-}	// namespace spi
+			auto spi			= CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+			constexpr auto size = 2;
 
-namespace animations {
+		}	// namespace ears
 
-	auto thread		 = rtos::Thread {};
-	auto event_queue = events::EventQueue {};
+		namespace belt {
 
-}	// namespace animations
+			auto spi			= CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+			constexpr auto size = 20;
 
-auto ears = CoreLED<NUM_EARS_LEDS> {spi::ears};
-auto belt = CoreLED<NUM_BELT_LEDS> {spi::belt};
+		}	// namespace belt
+
+	}	// namespace internal
+
+	auto ears = CoreLED<internal::ears::size> {internal::ears::spi};
+	auto belt = CoreLED<internal::belt::size> {internal::belt::spi};
+
+	void turnOff()
+	{
+		ears.setColor(RGB::black);
+		belt.setColor(RGB::black);
+		ears.show();
+		belt.show();
+	}
+
+	void changeColors()
+	{
+		RGB col1 = RGB::pure_blue;
+		RGB col2 = RGB::pure_red;
+
+		ears.setColorAtIndex(0, col1);
+		ears.setColorAtIndex(1, col2);
+
+		for (auto i = 0; i < internal::belt::size; i++) {
+			RGB col = ColorKit::colorGradient(col1, col2, static_cast<float>(i) / (internal::belt::size - 1));
+			belt.setColorAtIndex(i, col);
+		}
+
+		ears.show();
+		belt.show();
+	}
 
 }	// namespace leds
 
-void doGradient(interface::LED &e, interface::LED &b)
-{
-	RGB col1 = RGB::pure_blue;
-	RGB col2 = RGB::pure_red;
+auto hello = HelloWorld {};
 
-	e.setColorAtIndex(0, col1);
-	e.setColorAtIndex(1, col2);
-
-	for (auto i = 0; i < NUM_BELT_LEDS; i++) {
-		RGB col = ColorKit::colorGradient(col1, col2, static_cast<float>(i) / (NUM_BELT_LEDS - 1));
-		b.setColorAtIndex(i, col);
-	}
-	e.show();
-	b.show();
-}
+}	// namespace
 
 auto main() -> int
 {
 	logger::init();
+	leds::turnOff();
 
-	HelloWorld hello;
 	hello.start();
 	log_info("Hello, World!\n\n");
 
 	rtos::ThisThread::sleep_for(2s);
 
 	while (true) {
-		doGradient(leds::ears, leds::belt);
+		leds::changeColors();
+		rtos::ThisThread::sleep_for(1s);
+		leds::turnOff();
 		rtos::ThisThread::sleep_for(1s);
 	}
 }
