@@ -4,6 +4,7 @@
 
 # C++ wrappers & low level drivers
 add_subdirectory(${DRIVERS_DIR}/CoreBufferedSerial)
+add_subdirectory(${DRIVERS_DIR}/CoreEventFlags)
 add_subdirectory(${DRIVERS_DIR}/CoreEventQueue)
 add_subdirectory(${DRIVERS_DIR}/CoreI2C)
 add_subdirectory(${DRIVERS_DIR}/CoreLL)
