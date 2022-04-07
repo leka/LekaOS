@@ -14,6 +14,11 @@ void Fire::setLeds(interface::LED &ears, interface::LED &belt)
 	_belt = &belt;
 }
 
+auto Fire::isRunning() -> bool
+{
+	return _running;
+}
+
 void Fire::start()
 {
 	if (_ears == nullptr || _belt == nullptr) {
@@ -24,6 +29,7 @@ void Fire::start()
 	_step			 = 0;
 	_stage			 = 0;
 	_wave_tail_index = 0;
+	_running		 = true;
 }
 
 void Fire::stop()
@@ -33,6 +39,7 @@ void Fire::stop()
 	}
 
 	turnLedBlack();
+	_running = false;
 }
 
 void Fire::run()
@@ -45,6 +52,7 @@ void Fire::run()
 		stageWaves();
 	} else {
 		turnLedBlack();
+		_running = false;
 	}
 	_belt->show();
 }

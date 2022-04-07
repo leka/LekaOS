@@ -17,6 +17,11 @@ void BlinkGreen::setLeds(interface::LED &ears, interface::LED &belt)
 	_belt = &belt;
 }
 
+auto BlinkGreen::isRunning() -> bool
+{
+	return _running;
+}
+
 void BlinkGreen::start()
 {
 	if (_ears == nullptr || _belt == nullptr) {
@@ -24,8 +29,9 @@ void BlinkGreen::start()
 	}
 
 	turnLedBlack();
-	_step  = 0;
-	_stage = 0;
+	_step	 = 0;
+	_stage	 = 0;
+	_running = true;
 }
 
 void BlinkGreen::stop()
@@ -35,6 +41,7 @@ void BlinkGreen::stop()
 	}
 
 	turnLedBlack();
+	_running = false;
 }
 
 void BlinkGreen::run()
@@ -48,6 +55,7 @@ void BlinkGreen::run()
 	auto is_green1_stage			 = [this] { return (_stage % 2) == 0; };
 	if (_stage > kLastStage) {
 		turnLedBlack();
+		_running = false;
 		return;
 	}
 	if (is_green2_stage()) {

@@ -14,6 +14,11 @@ void Sleeping::setLeds(interface::LED &ears, interface::LED &belt)
 	_belt = &belt;
 }
 
+auto Sleeping::isRunning() -> bool
+{
+	return _running;
+}
+
 void Sleeping::start()
 {
 	if (_ears == nullptr || _belt == nullptr) {
@@ -21,8 +26,9 @@ void Sleeping::start()
 	}
 
 	turnLedBlack();
-	_step  = 0;
-	_stage = 0;
+	_step	 = 0;
+	_stage	 = 0;
+	_running = true;
 }
 
 void Sleeping::stop()
@@ -32,6 +38,7 @@ void Sleeping::stop()
 	}
 
 	turnLedBlack();
+	_running = false;
 }
 
 void Sleeping::run()
@@ -66,6 +73,7 @@ void Sleeping::run()
 			stage7();
 			break;
 		default:
+			_running = false;
 			break;
 	}
 	_belt->show();

@@ -14,6 +14,11 @@ void SpinBlink::setLeds(interface::LED &ears, interface::LED &belt)
 	_belt = &belt;
 }
 
+auto SpinBlink::isRunning() -> bool
+{
+	return _running;
+}
+
 void SpinBlink::start()
 {
 	if (_ears == nullptr || _belt == nullptr) {
@@ -21,8 +26,9 @@ void SpinBlink::start()
 	}
 
 	turnLedBlack();
-	_step  = 0;
-	_stage = 0;
+	_step	 = 0;
+	_stage	 = 0;
+	_running = true;
 }
 
 void SpinBlink::stop()
@@ -32,6 +38,7 @@ void SpinBlink::stop()
 	}
 
 	turnLedBlack();
+	_running = false;
 }
 
 void SpinBlink::run()
@@ -44,6 +51,7 @@ void SpinBlink::run()
 	auto is_belt_cyan				 = [this] { return (_stage % 2) == 0; };
 	if (_stage > kLastStage) {
 		turnLedBlack();
+		_running = false;
 		return;
 	}
 	if (is_belt_cyan()) {

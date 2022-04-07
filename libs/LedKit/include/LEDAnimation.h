@@ -29,6 +29,7 @@ class LEDAnimation
 	virtual void run()	 = 0;
 
 	virtual void setLeds(interface::LED &ears, interface::LED &belt) = 0;
+	virtual auto isRunning() -> bool								 = 0;
 };
 
 }	// namespace leka::interface
