@@ -14,6 +14,11 @@ void Sprinkles::setLeds(interface::LED &ears, interface::LED &belt)
 	_belt = &belt;
 }
 
+auto Sprinkles::isRunning() -> bool
+{
+	return _running;
+}
+
 void Sprinkles::start()
 {
 	if (_ears == nullptr || _belt == nullptr) {
@@ -24,6 +29,7 @@ void Sprinkles::start()
 	_step			 = 0;
 	_stage			 = 0;
 	_wave_tail_index = 0;
+	_running		 = true;
 }
 
 void Sprinkles::stop()
@@ -33,6 +39,7 @@ void Sprinkles::stop()
 	}
 
 	turnLedBlack();
+	_running = false;
 }
 
 void Sprinkles::run()
@@ -50,6 +57,7 @@ void Sprinkles::run()
 	} else if (_stage <= kLastStage) {
 		++_stage;
 	} else {
+		_running = false;
 		turnLedBlack();
 	}
 	_belt->show();

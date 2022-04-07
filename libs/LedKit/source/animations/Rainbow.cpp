@@ -14,6 +14,11 @@ void Rainbow::setLeds(interface::LED &ears, interface::LED &belt)
 	_belt = &belt;
 }
 
+auto Rainbow::isRunning() -> bool
+{
+	return _running;
+}
+
 void Rainbow::start()
 {
 	if (_ears == nullptr || _belt == nullptr) {
@@ -24,6 +29,7 @@ void Rainbow::start()
 	_step				= 0;
 	_stage				= 0;
 	_rainbow_tail_index = 0;
+	_running			= true;
 }
 
 void Rainbow::stop()
@@ -33,6 +39,7 @@ void Rainbow::stop()
 	}
 
 	turnLedBlack();
+	_running = false;
 }
 
 void Rainbow::run()
@@ -45,6 +52,7 @@ void Rainbow::run()
 		stagesRainbow();
 	} else {
 		turnLedBlack();
+		_running = false;
 	}
 	_belt->show();
 }

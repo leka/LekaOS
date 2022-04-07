@@ -12,15 +12,10 @@
 #include "LEDAnimation.h"
 #include "animations/BlinkGreen.h"
 #include "animations/Fire.h"
-#include "animations/LoadingGreen.h"
-#include "animations/LoadingOrange.h"
-#include "animations/LoadingRed.h"
-#include "animations/LoadingYellow.h"
 #include "animations/Rainbow.h"
 #include "animations/Sleeping.h"
 #include "animations/SpinBlink.h"
 #include "animations/Sprinkles.h"
-#include "animations/Waiting.h"
 
 namespace leka {
 
@@ -41,17 +36,12 @@ class LedKit
 	void stop();
 
 	struct animation {
-		static inline auto sleeping		   = led::animation::Sleeping {};
-		static inline auto charging_green  = led::animation::LoadingGreen {};
-		static inline auto charging_yellow = led::animation::LoadingYellow {};
-		static inline auto charging_orange = led::animation::LoadingOrange {};
-		static inline auto charging_red	   = led::animation::LoadingRed {};
-		static inline auto blink_green	   = led::animation::BlinkGreen {};
-		static inline auto spin_blink	   = led::animation::SpinBlink {};
-		static inline auto fire			   = led::animation::Fire {};
-		static inline auto sprinkles	   = led::animation::Sprinkles {};
-		static inline auto rainbow		   = led::animation::Rainbow {};
-		static inline auto waiting		   = led::animation::Waiting {};
+		static inline auto sleeping	   = led::animation::Sleeping {};
+		static inline auto blink_green = led::animation::BlinkGreen {};
+		static inline auto spin_blink  = led::animation::SpinBlink {};
+		static inline auto fire		   = led::animation::Fire {};
+		static inline auto sprinkles   = led::animation::Sprinkles {};
+		static inline auto rainbow	   = led::animation::Rainbow {};
 	};
 
   private:
