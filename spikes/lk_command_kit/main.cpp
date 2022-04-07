@@ -9,6 +9,7 @@
 
 #include "BehaviorKit.h"
 #include "CommandKit.h"
+#include "CoreEventFlags.h"
 #include "CoreLED.h"
 #include "CorePwm.h"
 #include "CoreSPI.h"
@@ -33,7 +34,7 @@ namespace spi {
 namespace animations {
 
 	auto thread = rtos::Thread {};
-	auto eq		= events::EventQueue {};
+	auto ef		= CoreEventFlags {};
 
 }	// namespace animations
 
@@ -42,7 +43,7 @@ auto belt = CoreLED<LedKit::kNumberOfLedsBelt> {spi::belt};
 
 }	// namespace leds
 
-auto ledkit = LedKit {leds::animations::thread, leds::animations::eq, leds::ears, leds::belt};
+auto ledkit = LedKit {leds::animations::thread, leds::animations::ef, leds::ears, leds::belt};
 
 namespace motor {
 

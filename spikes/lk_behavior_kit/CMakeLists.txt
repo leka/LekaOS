@@ -17,6 +17,7 @@ target_sources(spike_lk_behavior_kit
 target_link_libraries(spike_lk_behavior_kit
 	BehaviorKit
 	CorePwm
+	CoreEventFlags
 )
 
 target_link_custom_leka_targets(spike_lk_behavior_kit)

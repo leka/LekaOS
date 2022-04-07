@@ -8,6 +8,7 @@
 #include "rtos/ThisThread.h"
 
 #include "BehaviorKit.h"
+#include "CoreEventFlags.h"
 #include "CoreLED.h"
 #include "CoreMotor.h"
 #include "CorePwm.h"
@@ -27,14 +28,14 @@ auto fatfs			= FATFileSystem {"fs"};
 
 auto videokit = VideoKit {};
 
-auto corespi_belt		   = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
-auto corespi_ears		   = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
-auto ears				   = CoreLED<LedKit::kNumberOfLedsEars> {corespi_ears};
-auto belt				   = CoreLED<LedKit::kNumberOfLedsBelt> {corespi_belt};
-auto animation_thread	   = rtos::Thread {};
-auto animation_event_queue = events::EventQueue {};
+auto corespi_belt	  = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+auto corespi_ears	  = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+auto ears			  = CoreLED<LedKit::kNumberOfLedsEars> {corespi_ears};
+auto belt			  = CoreLED<LedKit::kNumberOfLedsBelt> {corespi_belt};
+auto animation_thread = rtos::Thread {};
+auto event_flags	  = CoreEventFlags {};
 
-auto ledkit = LedKit {animation_thread, animation_event_queue, ears, belt};
+auto ledkit = LedKit {animation_thread, event_flags, ears, belt};
 
 auto motor_left_dir_1  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
 auto motor_left_dir_2  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
@@ -67,6 +68,7 @@ auto main() -> int
 	log_info("Hello, World!\n\n");
 
 	initializeSD();
+	ledkit.init();
 	videokit.initializeScreen();
 
 	hello.start();
@@ -78,36 +80,6 @@ auto main() -> int
 		rtos::ThisThread::sleep_for(3s);
 
 		behaviorkit.sleeping();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
-
-		behaviorkit.waiting();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
-
-		behaviorkit.chargingZero();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
-
-		behaviorkit.chargingRed();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
-
-		behaviorkit.chargingOrange();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
-
-		behaviorkit.chargingYellow();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
-
-		behaviorkit.chargingGreen();
 		rtos::ThisThread::sleep_for(10s);
 		behaviorkit.stop();
 		rtos::ThisThread::sleep_for(3s);
