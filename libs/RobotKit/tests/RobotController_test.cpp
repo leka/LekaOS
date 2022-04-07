@@ -22,6 +22,7 @@
 #include "mocks/leka/PwmOut.h"
 #include "mocks/leka/Timeout.h"
 #include "mocks/mbed/DigitalOut.h"
+#include "mocks/mbed/EventFlags.h"
 
 using namespace leka;
 using namespace leka::system;
@@ -74,9 +75,9 @@ class RobotControllerTest : public testing::Test
 	CoreLED<LedKit::kNumberOfLedsBelt> belt {spi};
 	CoreLED<LedKit::kNumberOfLedsEars> ears {spi};
 	rtos::Thread animation_thread;
-	events::EventQueue animation_event_queue;
+	mbed::mock::EventFlags mock_event_flags;
 
-	LedKit ledkit {animation_thread, animation_event_queue, ears, belt};
+	LedKit ledkit {animation_thread, mock_event_flags, ears, belt};
 
 	mock::LEDAnimation mock_animation {};
 

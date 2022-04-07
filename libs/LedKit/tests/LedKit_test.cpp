@@ -4,13 +4,13 @@
 
 #include "LedKit.h"
 
-#include "events/tests/UNITTESTS/doubles/EventQueue_stub.h"
 #include "rtos/tests/UNITTESTS/doubles/Thread_stub.h"
 
 #include "CoreLED.h"
 #include "CoreSPI.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/LEDAnimation.h"
+#include "mocks/mbed/EventFlags.h"
 
 using namespace leka;
 
@@ -25,7 +25,7 @@ class LedKitTest : public ::testing::Test
 	// void TearDown() override {}
 
 	rtos::Thread animation_thread;
-	events::EventQueue event_queue;
+	mbed::mock::EventFlags mock_event_flags;
 
 	std::array<RGB, LedKit::kNumberOfLedsBelt> expected_colors {};
 
@@ -33,7 +33,7 @@ class LedKitTest : public ::testing::Test
 	CoreLED<LedKit::kNumberOfLedsBelt> belt {spi};
 	CoreLED<LedKit::kNumberOfLedsEars> ears {spi};
 
-	LedKit ledkit {animation_thread, event_queue, ears, belt};
+	LedKit ledkit {animation_thread, mock_event_flags, ears, belt};
 };
 
 TEST_F(LedKitTest, initialization)
