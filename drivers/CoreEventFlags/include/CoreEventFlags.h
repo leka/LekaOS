@@ -22,7 +22,7 @@ class CoreEventFlags : public interface::EventFlags
 	auto set(eventflags_t flag) -> std::optional<eventflags_t> final;
 	auto clear(eventflags_t flag) -> std::optional<eventflags_t> final;
 
-	[[nodiscard]] auto get() const -> std::optional<eventflags_t> final;
+	[[nodiscard]] auto get() const -> eventflags_t final;
 
   private:
 	rtos::EventFlags _event_flags {};
