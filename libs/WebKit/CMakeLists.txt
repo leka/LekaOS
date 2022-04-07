@@ -16,7 +16,7 @@ target_sources(WebKit
 
 target_link_libraries(WebKit
 	mbed-os
-	FileSystemKit
+	FileManagerKit
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

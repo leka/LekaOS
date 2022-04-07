@@ -8,7 +8,7 @@
 #include "rtos/ThisThread.h"
 
 #include "FATFileSystem.h"
-#include "FileSystemKit.h"
+#include "FileManagerKit.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
@@ -16,7 +16,7 @@
 using namespace leka;
 using namespace std::chrono_literals;
 
-auto file				= FileSystemKit::File {};
+auto file				= FileManagerKit::File {};
 auto filename			= std::to_array("/fs/tmp/test_spike_lk_filesystem_kit");
 const uint8_t seek_temp = 7;
 

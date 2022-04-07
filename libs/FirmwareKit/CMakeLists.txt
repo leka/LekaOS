@@ -16,7 +16,7 @@ target_sources(FirmwareKit
 
 target_link_libraries(FirmwareKit
 	mbed-os
-	FileSystemKit
+	FileManagerKit
 	CoreFlashMemory
 )
 

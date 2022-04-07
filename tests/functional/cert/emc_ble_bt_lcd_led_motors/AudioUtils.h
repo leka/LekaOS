@@ -4,11 +4,11 @@
 #include "drivers/AnalogOut.h"
 #include "rtos/ThisThread.h"
 
-#include "FileSystemKit.h"
+#include "FileManagerKit.h"
 
 auto audio_pause_duration = std::chrono::seconds(5);
 
-void playSound(mbed::AnalogOut *output, leka::FileSystemKit::File &_file)
+void playSound(mbed::AnalogOut *output, leka::FileManagerKit::File &_file)
 {
 	static const auto _n_bytes_to_read = int {512};	  // arbitrary
 	auto _buffer					   = std::array<uint8_t, _n_bytes_to_read> {0};
@@ -36,7 +36,7 @@ void playSound(mbed::AnalogOut *output, leka::FileSystemKit::File &_file)
 void playSoundPeriodically(AnalogOut *audio_output)
 {
 	constexpr auto filename = std::to_array("/fs/sounds/fur-elise-100Hzmin.wav");
-	auto file				= leka::FileSystemKit::File {};
+	auto file				= leka::FileManagerKit::File {};
 
 	while (true) {
 		if (auto is_open = file.open(filename.data()); is_open) {

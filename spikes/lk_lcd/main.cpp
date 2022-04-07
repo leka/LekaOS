@@ -21,7 +21,7 @@
 #include "CoreSTM32Hal.h"
 #include "CoreVideo.hpp"
 #include "FATFileSystem.h"
-#include "FileSystemKit.h"
+#include "FileManagerKit.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
@@ -46,7 +46,7 @@ CoreLCD corelcd(coreotm);
 CoreJPEG corejpeg(hal, coredma2d);
 CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
-auto file = FileSystemKit::File {};
+auto file = FileManagerKit::File {};
 
 auto image_names = std::to_array({"/fs/assets/images/Leka/logo.jpg", "/fs/assets/images/Leka/emotion-happy.jpg"});
 

@@ -7,12 +7,15 @@
 #include <cstdint>
 #include <span>
 
+#include "filesystem"
+
 namespace leka::interface {
 
 struct File {
 	virtual ~File() = default;
 
-	virtual auto open(const char *path, const char *mode) -> bool = 0;
+	virtual auto open(const char *path, const char *mode) -> bool				   = 0;
+	virtual auto open(const std::filesystem::path &path, const char *mode) -> bool = 0;
 
 	virtual void close() = 0;
 
@@ -36,7 +39,8 @@ struct File {
 
 	virtual auto tell() -> size_t = 0;
 
-	virtual auto reopen(const char *path, const char *mode) -> bool = 0;
+	virtual auto reopen(const char *path, const char *mode) -> bool					 = 0;
+	virtual auto reopen(const std::filesystem::path &path, const char *mode) -> bool = 0;
 
 	virtual auto setBuffer(std::span<char> buffer, int mode) -> bool = 0;
 

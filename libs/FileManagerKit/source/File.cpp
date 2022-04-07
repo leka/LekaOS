@@ -7,11 +7,11 @@
 #include <cstdio>
 #include <span>
 
-#include "FileSystemKit.h"
+#include "FileManagerKit.h"
 
-using namespace leka;
+using namespace leka::FileManagerKit;
 
-FileSystemKit::File::File(const char *path, const char *mode)
+File::File(const char *path, const char *mode)
 {
 	if (path == nullptr || mode == nullptr) {
 		return;
@@ -20,13 +20,28 @@ FileSystemKit::File::File(const char *path, const char *mode)
 	open(path, mode);
 }
 
-auto FileSystemKit::File::open(const char *path, const char *mode) -> bool
+File::File(const std::filesystem::path &path, const char *mode)
+{
+	if (path.empty() || mode == nullptr) {
+		return;
+	}
+
+	open(path.c_str(), mode);
+}
+
+auto File::open(const char *path, const char *mode) -> bool
 {
 	_file.reset(std::fopen(path, mode));
 	return is_open();
 }
 
-void FileSystemKit::File::close()
+auto File::open(const std::filesystem::path &path, const char *mode) -> bool
+{
+	_file.reset(std::fopen(path.c_str(), mode));
+	return is_open();
+}
+
+void File::close()
 {
 	if (_file == nullptr) {
 		return;
@@ -35,57 +50,57 @@ void FileSystemKit::File::close()
 	_file.reset(nullptr);
 }
 
-auto FileSystemKit::File::read(std::span<uint8_t> buffer) -> size_t
+auto File::read(std::span<uint8_t> buffer) -> size_t
 {
 	return std::fread(buffer.data(), sizeof(uint8_t), buffer.size(), _file.get());
 }
 
-auto FileSystemKit::File::write(std::span<uint8_t> data) -> size_t
+auto File::write(std::span<uint8_t> data) -> size_t
 {
 	return std::fwrite(data.data(), sizeof(uint8_t), data.size(), _file.get());
 }
 
-auto FileSystemKit::File::read(std::span<char> buffer) -> size_t
+auto File::read(std::span<char> buffer) -> size_t
 {
 	return std::fread(buffer.data(), sizeof(char), buffer.size(), _file.get());
 }
 
-auto FileSystemKit::File::write(std::span<char> data) -> size_t
+auto File::write(std::span<char> data) -> size_t
 {
 	return std::fwrite(data.data(), sizeof(char), data.size(), _file.get());
 }
 
-auto FileSystemKit::File::read(uint8_t *buffer, uint32_t size) -> size_t
+auto File::read(uint8_t *buffer, uint32_t size) -> size_t
 {
 	return std::fread(buffer, sizeof(uint8_t), size, _file.get());
 }
 
-auto FileSystemKit::File::write(const uint8_t *data, uint32_t size) -> size_t
+auto File::write(const uint8_t *data, uint32_t size) -> size_t
 {
 	return std::fwrite(data, sizeof(uint8_t), size, _file.get());
 }
 
-auto FileSystemKit::File::read(char *buffer, uint32_t size) -> size_t
+auto File::read(char *buffer, uint32_t size) -> size_t
 {
 	return std::fread(buffer, sizeof(char), size, _file.get());
 }
 
-auto FileSystemKit::File::write(const char *data, uint32_t size) -> size_t
+auto File::write(const char *data, uint32_t size) -> size_t
 {
 	return std::fwrite(data, sizeof(char), size, _file.get());
 }
 
-void FileSystemKit::File::seek(size_t pos, int origin)
+void File::seek(size_t pos, int origin)
 {
 	std::fseek(_file.get(), static_cast<long>(pos), origin);
 }
 
-void FileSystemKit::File::rewind()
+void File::rewind()
 {
 	seek(0);
 }
 
-auto FileSystemKit::File::size() -> size_t
+auto File::size() -> size_t
 {
 	if (_file == nullptr) {
 		return 0;
@@ -98,12 +113,12 @@ auto FileSystemKit::File::size() -> size_t
 	return size;
 }
 
-auto FileSystemKit::File::is_open() const -> bool
+auto File::is_open() const -> bool
 {
 	return _file != nullptr;
 }
 
-auto FileSystemKit::File::tell() -> size_t
+auto File::tell() -> size_t
 {
 	if (_file == nullptr) {
 		return 0;
@@ -111,7 +126,7 @@ auto FileSystemKit::File::tell() -> size_t
 	return std::ftell(_file.get());
 }
 
-auto FileSystemKit::File::reopen(const char *path, const char *mode) -> bool
+auto File::reopen(const char *path, const char *mode) -> bool
 {
 	if (_file == nullptr) {
 		return false;
@@ -120,7 +135,16 @@ auto FileSystemKit::File::reopen(const char *path, const char *mode) -> bool
 	return is_open();
 }
 
-auto FileSystemKit::File::setBuffer(std::span<char> buffer, int mode) -> bool
+auto File::reopen(const std::filesystem::path &path, const char *mode) -> bool
+{
+	if (_file == nullptr) {
+		return false;
+	}
+	std::freopen(path.c_str(), mode, _file.get());
+	return is_open();
+}
+
+auto File::setBuffer(std::span<char> buffer, int mode) -> bool
 {
 	if (_file == nullptr) {
 		return false;
@@ -128,12 +152,12 @@ auto FileSystemKit::File::setBuffer(std::span<char> buffer, int mode) -> bool
 	return (0 == std::setvbuf(_file.get(), buffer.data(), mode, buffer.size()));
 }
 
-auto FileSystemKit::File::setBuffer(char *buffer, uint32_t size, int mode) -> bool
+auto File::setBuffer(char *buffer, uint32_t size, int mode) -> bool
 {
 	return setBuffer(std::span<char>({buffer, size}), mode);
 }
 
-auto FileSystemKit::File::unsetBuffer() -> bool
+auto File::unsetBuffer() -> bool
 {
 	if (_file == nullptr) {
 		return false;
@@ -141,7 +165,7 @@ auto FileSystemKit::File::unsetBuffer() -> bool
 	return (0 == std::setvbuf(_file.get(), nullptr, _IONBF, 0));
 }
 
-auto FileSystemKit::File::flush() -> bool
+auto File::flush() -> bool
 {
 	if (_file == nullptr) {
 		return false;
@@ -149,7 +173,7 @@ auto FileSystemKit::File::flush() -> bool
 	return (0 == std::fflush(_file.get()));
 }
 
-auto FileSystemKit::File::error() -> bool
+auto File::error() -> bool
 {
 	if (_file == nullptr) {
 		return false;
@@ -157,7 +181,7 @@ auto FileSystemKit::File::error() -> bool
 	return static_cast<bool>(std::ferror(_file.get()));
 }
 
-void FileSystemKit::File::clearerr()
+void File::clearerr()
 {
 	if (_file == nullptr) {
 		return;

@@ -19,7 +19,7 @@ target_sources(bootloader
 target_link_libraries(bootloader
 	bootutil
 	CoreBattery
-	FileSystemKit
+	FileManagerKit
 	CoreLED
 	CoreMotor
 	CorePwm

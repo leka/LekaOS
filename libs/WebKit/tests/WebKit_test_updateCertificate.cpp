@@ -33,7 +33,8 @@ TEST_F(WebKitUpdateCertificateTest, updateCertificateFailOpenFile)
 
 	const auto *certificates_path = "certificate/path/1.txt";
 
-	EXPECT_CALL(web_file_handler_mock, open(StrEq(certificates_path), StrEq("r"))).WillOnce(Return(false));
+	EXPECT_CALL(web_file_handler_mock, open(Matcher<const char *>(StrEq(certificates_path)), StrEq("r")))
+		.WillOnce(Return(false));
 	EXPECT_CALL(web_file_handler_mock, size).Times(0);
 	EXPECT_CALL(web_file_handler_mock, read(Matcher<char *>(_), _)).Times(0);
 	EXPECT_CALL(web_file_handler_mock, close).Times(0);
@@ -54,7 +55,8 @@ TEST_F(WebKitUpdateCertificateTest, updateCertificateFailEmptyCertificate)
 	{
 		InSequence seq;
 
-		EXPECT_CALL(web_file_handler_mock, open(StrEq(certificates_path), StrEq("r"))).WillOnce(Return(true));
+		EXPECT_CALL(web_file_handler_mock, open(Matcher<const char *>(StrEq(certificates_path)), StrEq("r")))
+			.WillOnce(Return(true));
 		EXPECT_CALL(web_file_handler_mock, size).WillOnce(Return(certificate_size));
 		EXPECT_CALL(web_file_handler_mock, read(Matcher<char *>(_), certificate_size))
 			.WillOnce(DoAll(::testing::SetArrayArgument<0>(certificate.begin(), certificate.end()),
@@ -78,7 +80,8 @@ TEST_F(WebKitUpdateCertificateTest, updateCertificate)
 	{
 		InSequence seq;
 
-		EXPECT_CALL(web_file_handler_mock, open(StrEq(certificates_path), StrEq("r"))).WillOnce(Return(true));
+		EXPECT_CALL(web_file_handler_mock, open(Matcher<const char *>(StrEq(certificates_path)), StrEq("r")))
+			.WillOnce(Return(true));
 		EXPECT_CALL(web_file_handler_mock, size).WillOnce(Return(certificate_size));
 		EXPECT_CALL(web_file_handler_mock, read(Matcher<char *>(_), certificate_size))
 			.WillOnce(DoAll(::testing::SetArrayArgument<0>(certificate.begin(), certificate.end()),

@@ -8,8 +8,9 @@
 #include <span>
 #include <string>
 
-#include "FileSystemKit.h"
+#include "FileManagerKit.h"
 #include "LogKit.h"
+#include "filesystem"
 #include "gtest/gtest.h"
 
 using namespace leka;
@@ -21,6 +22,7 @@ class FileTest : public ::testing::Test
 	{
 		strcpy(tempFilename, "/tmp/XXXXXX");
 		mkstemp(tempFilename);
+		tempFilename_filesystem_path = tempFilename;
 	}
 	// void TearDown() override {}
 
@@ -50,52 +52,91 @@ class FileTest : public ::testing::Test
 		fclose(file);
 	}
 
-	FileSystemKit::File file {};
+	FileManagerKit::File file {};
 	char tempFilename[L_tmpnam];   // NOLINT
+	std::filesystem::path tempFilename_filesystem_path;
 };
 
 TEST_F(FileTest, initializationDefault)
 {
-	auto new_file = FileSystemKit::File {};
+	auto new_file = FileManagerKit::File {};
 	ASSERT_NE(&new_file, nullptr);
 	ASSERT_FALSE(new_file.is_open());
 }
 
 TEST_F(FileTest, initializationWithPath)
 {
-	auto new_file = FileSystemKit::File {tempFilename};
+	auto new_file = FileManagerKit::File {tempFilename};
 	ASSERT_NE(&new_file, nullptr);
 	ASSERT_TRUE(new_file.is_open());
 }
 
 TEST_F(FileTest, initializationWithPathAndMode)
 {
-	auto new_file = FileSystemKit::File {tempFilename, "r"};
+	auto new_file = FileManagerKit::File {tempFilename, "r"};
 
 	ASSERT_NE(&new_file, nullptr);
 	ASSERT_TRUE(new_file.is_open());
 }
 
-TEST_F(FileTest, initializationWithNullptr)
+TEST_F(FileTest, initializationWithFileSystemPath)
+{
+	auto new_file = FileManagerKit::File {tempFilename_filesystem_path};
+	ASSERT_NE(&new_file, nullptr);
+	ASSERT_TRUE(new_file.is_open());
+}
+
+TEST_F(FileTest, initializationWithFileSystemPathAndMode)
+{
+	auto new_file = FileManagerKit::File {tempFilename_filesystem_path, "r"};
+
+	ASSERT_NE(&new_file, nullptr);
+	ASSERT_TRUE(new_file.is_open());
+}
+
+TEST_F(FileTest, initializationWithFileSystemPathAndNullPtrMode)
+{
+	auto new_file = FileManagerKit::File {tempFilename_filesystem_path, nullptr};
+
+	ASSERT_NE(&new_file, nullptr);
+	ASSERT_FALSE(new_file.is_open());
+}
+
+TEST_F(FileTest, initializationWithEmptyAndNullptr)
 {
 	{
-		auto f = FileSystemKit::File {"tempFilename", "r"};
+		auto f = FileManagerKit::File {"tempFilename", "r"};
 		ASSERT_FALSE(f.is_open());
 	}
 	{
-		auto f = FileSystemKit::File {nullptr, nullptr};
+		auto f = FileManagerKit::File {nullptr, nullptr};
 		ASSERT_FALSE(f.is_open());
 	}
 	{
-		auto f = FileSystemKit::File {"nullptr", nullptr};
+		auto f = FileManagerKit::File {"nullptr", nullptr};
 		ASSERT_FALSE(f.is_open());
 	}
 	{
-		auto f = FileSystemKit::File {nullptr, "r"};
+		auto f = FileManagerKit::File {nullptr, "r"};
 		ASSERT_FALSE(f.is_open());
 	}
 	{
-		auto f = FileSystemKit::File {nullptr};
+		auto f = FileManagerKit::File {nullptr};
+		ASSERT_FALSE(f.is_open());
+	}
+	{
+		auto empty_path = std::filesystem::path {};
+		auto f			= FileManagerKit::File {empty_path};
+		ASSERT_FALSE(f.is_open());
+	}
+	{
+		auto empty_path = std::filesystem::path {};
+		auto f			= FileManagerKit::File {empty_path, "r"};
+		ASSERT_FALSE(f.is_open());
+	}
+	{
+		auto empty_path = std::filesystem::path {};
+		auto f			= FileManagerKit::File {empty_path, nullptr};
 		ASSERT_FALSE(f.is_open());
 	}
 }
@@ -103,6 +144,13 @@ TEST_F(FileTest, initializationWithNullptr)
 TEST_F(FileTest, open)
 {
 	file.open(tempFilename);
+
+	ASSERT_TRUE(file.is_open());
+}
+
+TEST_F(FileTest, openByFileSystemPath)
+{
+	file.open(tempFilename_filesystem_path);
 
 	ASSERT_TRUE(file.is_open());
 }
@@ -480,6 +528,22 @@ TEST_F(FileTest, openThenReopenFile)
 	file.open(tempFilename, "r");
 
 	auto reopen = file.reopen(tempFilename, "w");
+
+	ASSERT_TRUE(reopen);
+}
+
+TEST_F(FileTest, reopenNoFileWithFileSystemPath)
+{
+	auto reopen = file.reopen(tempFilename_filesystem_path, "w");
+
+	ASSERT_FALSE(reopen);
+}
+
+TEST_F(FileTest, openThenReopenFileWithFileSystemPath)
+{
+	file.open(tempFilename_filesystem_path, "r");
+
+	auto reopen = file.reopen(tempFilename_filesystem_path, "w");
 
 	ASSERT_TRUE(reopen);
 }
