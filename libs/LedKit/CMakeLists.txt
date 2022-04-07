@@ -25,10 +25,6 @@ target_sources(LedKit
 		# source/animations/Fly.cpp
 		# source/animations/Happy.cpp
 		source/LedKit.cpp
-		source/animations/LoadingGreen.cpp
-		source/animations/LoadingOrange.cpp
-		source/animations/LoadingRed.cpp
-		source/animations/LoadingYellow.cpp
 		source/animations/Rainbow.cpp
 		# source/animations/Sad.cpp
 		# source/animations/SadCry.cpp
@@ -39,7 +35,6 @@ target_sources(LedKit
 		source/animations/SpinBlink.cpp
 		source/animations/Sprinkles.cpp
 		# source/animations/Underwater.cpp
-		source/animations/Waiting.cpp
 		# source/animations/WakeUp.cpp
 		# source/animations/Wink.cpp
 		# source/animations/Yawn.cpp
