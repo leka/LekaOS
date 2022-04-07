@@ -160,7 +160,7 @@ class RobotController : public interface::RobotController
 		_motor_left.stop();
 		_motor_right.stop();
 
-		_ledkit.stop();
+		_ledkit.init();
 
 		_videokit.initializeScreen();
 		_videokit.turnOff();
