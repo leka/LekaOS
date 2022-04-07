@@ -8,6 +8,7 @@
 #include "rtos/Thread.h"
 
 #include "CoreBattery.h"
+#include "CoreEventFlags.h"
 #include "CoreFlashIS25LP016D.h"
 #include "CoreFlashManagerIS25LP016D.h"
 #include "CoreMCU.h"
@@ -62,14 +63,14 @@ auto fatfs			= FATFileSystem {"fs"};
 
 auto videokit = VideoKit {};
 
-auto corespi_belt		   = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
-auto corespi_ears		   = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
-auto ears				   = CoreLED<LedKit::kNumberOfLedsEars> {corespi_ears};
-auto belt				   = CoreLED<LedKit::kNumberOfLedsBelt> {corespi_belt};
-auto animation_thread	   = rtos::Thread {};
-auto animation_event_queue = events::EventQueue {};
+auto corespi_belt	  = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+auto corespi_ears	  = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+auto ears			  = CoreLED<LedKit::kNumberOfLedsEars> {corespi_ears};
+auto belt			  = CoreLED<LedKit::kNumberOfLedsBelt> {corespi_belt};
+auto animation_thread = rtos::Thread {};
+auto event_flags	  = CoreEventFlags {};
 
-auto ledkit = LedKit {animation_thread, animation_event_queue, ears, belt};
+auto ledkit = LedKit {animation_thread, event_flags, ears, belt};
 
 auto motor_left_dir_1  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
 auto motor_left_dir_2  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
