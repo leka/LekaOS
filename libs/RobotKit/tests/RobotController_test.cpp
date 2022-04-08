@@ -29,10 +29,12 @@ namespace bsml	= boost::sml;
 namespace lksm	= system::robot::sm;
 namespace event = system::robot::sm::event;
 
-using testing::_;
-using testing::AnyNumber;
+using ::testing::_;
+using ::testing::AnyNumber;
+using ::testing::InSequence;
 using ::testing::MockFunction;
-using testing::Return;
+using ::testing::Return;
+using ::testing::Sequence;
 
 ACTION_TEMPLATE(GetCallback, HAS_1_TEMPLATE_PARAMS(typename, callback_t), AND_1_VALUE_PARAMS(pointer))
 {
