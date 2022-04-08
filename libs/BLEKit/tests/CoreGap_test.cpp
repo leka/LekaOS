@@ -95,11 +95,6 @@ TEST_F(CoreGapTest, defaultAdvertisingPayload)
 	std::array<uint8_t, 64> buffer {};
 	auto data_builder = AdvertisingDataBuilder {{buffer.begin(), buffer.end()}};
 
-	data_builder.setAppearance(ble::adv_data_appearance_t::GENERIC_HEART_RATE_SENSOR);
-	data_builder.setFlags();
-	data_builder.setManufacturerSpecificData({{0x2A, 0x2B, 0x2C, 0x2D}});
-	data_builder.setAdvertisingInterval(ble::adv_interval_t::min());
-	data_builder.setServiceData(GattService::UUID_BATTERY_SERVICE, {{0x42}});
 	data_builder.setServiceData(service::commands::uuid, {{0}});
 
 	EXPECT_CALL(mbed_mock_gap,
