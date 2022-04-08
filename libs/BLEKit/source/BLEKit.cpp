@@ -29,3 +29,15 @@ void BLEKit::processEvents(BLE::OnEventsToProcessCallbackContext *context)
 {
 	_event_queue.callMbedCallback(mbed::callback(&context->ble, &BLE::processEvents));
 }
+
+void BLEKit::setAdvertisingData(const AdvertisingData &advertising_data)
+{
+	_advertising_data = advertising_data;
+
+	_core_gap.setAdvertising(_advertising_data);
+}
+
+auto BLEKit::getAdvertisingData() const -> AdvertisingData
+{
+	return _advertising_data;
+}

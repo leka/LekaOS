@@ -107,3 +107,13 @@ TEST_F(BLEKitTest, callOnEventsToProcess)
 
 	EXPECT_TRUE(spy_CoreEventQueue_did_call_function);
 }
+
+TEST_F(BLEKitTest, getAdvertisingDataThenSetAdvertisingData)
+{
+	auto advertising_data = ble.getAdvertisingData();
+	advertising_data.name = "NewLeka";
+
+	EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).Times(1);
+
+	ble.setAdvertisingData(advertising_data);
+}

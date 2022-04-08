@@ -26,6 +26,7 @@ class CoreGap
 	// void onInit(std::function<void()> cb) { _post_init = cb; }
 
 	void startAdvertising();
+	void setAdvertising(AdvertisingData advertising_data);
 
   private:
 	ble::advertising_handle_t _advertising_handle {ble::LEGACY_ADVERTISING_HANDLE};

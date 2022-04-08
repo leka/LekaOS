@@ -144,3 +144,19 @@ TEST_F(CoreGapTest, onInitializationComplete)
 
 	// coregap.onInitializationComplete(&context);   // Alternative
 }
+
+TEST_F(CoreGapTest, setAdvertising)
+{
+	std::array<uint8_t, 64> buffer {};
+	auto data_builder		  = AdvertisingDataBuilder {{buffer.begin(), buffer.end()}};
+	auto new_advertising_data = AdvertisingData {.name = "NewLeka", .battery = 0x42, .is_charging = 0x01};
+
+	data_builder.setName(new_advertising_data.name);
+	data_builder.setServiceData(service::commands::uuid, {new_advertising_data.data(), new_advertising_data.size()});
+
+	EXPECT_CALL(mbed_mock_gap,
+				setAdvertisingPayload(LEGACY_ADVERTISING_HANDLE, compareAdvertisingPayload(data_builder)))
+		.Times(1);
+
+	coregap.setAdvertising(new_advertising_data);
+}

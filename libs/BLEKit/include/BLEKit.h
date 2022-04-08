@@ -22,11 +22,16 @@ class BLEKit
 
 	void init();
 
+	void setAdvertisingData(const AdvertisingData &advertising_data);
+	[[nodiscard]] auto getAdvertisingData() const -> AdvertisingData;
+
   private:
 	// ? mbed::BLE specific function
 	void processEvents(BLE::OnEventsToProcessCallbackContext *context);
 
 	CoreEventQueue _event_queue {};
+
+	AdvertisingData _advertising_data {};
 
 	BLE &_ble = BLE::Instance();
 	CoreGap _core_gap {_ble.gap()};

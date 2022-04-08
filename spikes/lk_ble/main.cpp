@@ -106,5 +106,11 @@ auto main() -> int
 		auto version = service_update.getVersion();
 
 		log_info("Requested version: %d.%d.%d", version.major, version.minor, version.revision);
+
+		auto advertising_data		 = blekit.getAdvertisingData();
+		advertising_data.name		 = "NewLeka";
+		advertising_data.battery	 = level;
+		advertising_data.is_charging = charging_status;
+		blekit.setAdvertisingData(advertising_data);
 	}
 }
