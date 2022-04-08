@@ -111,6 +111,16 @@ class RobotControllerTest : public testing::Test
 
 	bool spy_isCharging_return_value = false;
 
+	void expectedCallsStopMotors()
+	{
+		EXPECT_CALL(dir_1_left, write(0));
+		EXPECT_CALL(dir_2_left, write(0));
+		EXPECT_CALL(speed_left, write(0));
+		EXPECT_CALL(dir_1_right, write(0));
+		EXPECT_CALL(dir_2_right, write(0));
+		EXPECT_CALL(speed_right, write(0));
+	}
+
 	void expectedCallsInitializeComponents()
 	{
 		{
@@ -122,6 +132,8 @@ class RobotControllerTest : public testing::Test
 
 			EXPECT_CALL(mock_mcu, getID).Times(1);
 			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
+
+			expectedCallsStopMotors();
 		}
 
 		rc.initializeComponents();
@@ -203,6 +215,8 @@ TEST_F(RobotControllerTest, initializeComponents)
 		EXPECT_CALL(mock_mcu, getID).Times(1);
 		// TODO: Specify which BLE service and what is expected if necessary
 		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
+
+		expectedCallsStopMotors();
 	}
 
 	rc.initializeComponents();
@@ -363,6 +377,8 @@ TEST_F(RobotControllerTest, stateIdleEventTimeout)
 
 	EXPECT_CALL(sleep_timeout, stop).Times(1);
 
+	expectedCallsStopMotors();
+
 	on_sleep_timeout();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::sleeping));
@@ -385,6 +401,7 @@ TEST_F(RobotControllerTest, stateSleepingEventChargeDidStartGuardIsChargingTrue)
 
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
+	expectedCallsStopMotors();
 
 	on_charge_did_start();
 
@@ -414,6 +431,7 @@ TEST_F(RobotControllerTest, stateIdleEventChargeDidStartGuardIsChargingTrue)
 
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
+	expectedCallsStopMotors();
 
 	on_charge_did_start();
 
