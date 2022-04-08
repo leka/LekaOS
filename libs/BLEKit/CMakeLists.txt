@@ -26,6 +26,7 @@ target_link_libraries(BLEKit
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
+		tests/AdvertisingData_test.cpp
 		tests/CoreGapEventHandler_test.cpp
 		tests/CoreGap_test.cpp
 		tests/CoreGattServerEventHandler_test.cpp

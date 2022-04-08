@@ -7,7 +7,12 @@ using namespace ble;
 
 void CoreGap::setDefaultAdvertising()
 {
-	_advertising_data_builder.setServiceData(leka::service::commands::uuid, {{0}});
+	auto default_advertising_data = AdvertisingData {};
+
+	_advertising_data_builder.setName(default_advertising_data.name);
+	_advertising_data_builder.setServiceData(
+		leka::service::commands::uuid,	 // TODO: commands::uuid only for compatibility with LekaApp
+		{default_advertising_data.data(), default_advertising_data.size()});
 }
 
 void CoreGap::setEventHandler()
@@ -20,11 +25,6 @@ void CoreGap::setEventHandler()
 void CoreGap::onInitializationComplete(BLE::InitializationCompleteCallbackContext *params)
 {
 	_gap_event_handler.onInitializationComplete(params);
-}
-
-void CoreGap::setDeviceName(const char *name)
-{
-	_advertising_data_builder.setName(name);
 }
 
 void CoreGap::startAdvertising()

@@ -19,7 +19,6 @@ void BLEKit::init()
 	_ble.onEventsToProcess({this, &BLEKit::processEvents});
 
 	_core_gap.setDefaultAdvertising();
-	_core_gap.setDeviceName("Leka");
 
 	_ble.init(&_core_gap, &CoreGap::onInitializationComplete);
 
