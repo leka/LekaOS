@@ -29,10 +29,12 @@ namespace bsml	= boost::sml;
 namespace lksm	= system::robot::sm;
 namespace event = system::robot::sm::event;
 
-using testing::_;
-using testing::AnyNumber;
+using ::testing::_;
+using ::testing::AnyNumber;
+using ::testing::InSequence;
 using ::testing::MockFunction;
-using testing::Return;
+using ::testing::Return;
+using ::testing::Sequence;
 
 ACTION_TEMPLATE(GetCallback, HAS_1_TEMPLATE_PARAMS(typename, callback_t), AND_1_VALUE_PARAMS(pointer))
 {
@@ -53,27 +55,8 @@ class RobotControllerTest : public testing::Test
 	{
 		ble::init_mocks();
 
-		ble::GapMock &mbed_mock_gap			= ble::gap_mock();
-		ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
-
-		EXPECT_CALL(mbed_mock_gatt, addService).Times(AnyNumber());
-		EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(AnyNumber());
-		EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(AnyNumber());
-		EXPECT_CALL(mock_mcu, getID).Times(AnyNumber());
-
-		rc.initializeComponents();
-
-		EXPECT_CALL(battery, level).Times(AnyNumber());
-		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber());
-		EXPECT_CALL(sleep_timeout, onTimeout)
-			.WillRepeatedly(GetCallback<interface::Timeout::callback_t>(&on_sleep_timeout));
-		EXPECT_CALL(battery, onChargeDidStart)
-			.WillRepeatedly(GetCallback<mbed::Callback<void()>>(&on_charge_did_start));
-		EXPECT_CALL(battery, onChargeDidStop).WillRepeatedly(GetCallback<mbed::Callback<void()>>(&on_charge_did_stop));
-		EXPECT_CALL(battery, isCharging).Times(2).WillRepeatedly(Return(false));
-		EXPECT_CALL(sleep_timeout, start).Times(AnyNumber());	// Hide Uninteresting mock function call
-
-		rc.registerEvents();
+		expectedCallsInitializeComponents();
+		expectedCallsRegisterEvents();
 	}
 	void TearDown() override { ble::delete_mocks(); }
 
@@ -118,10 +101,101 @@ class RobotControllerTest : public testing::Test
 		sleep_timeout, battery, serialnumberkit, firmware_update, motor_left,
 		motor_right,   ledkit,	videokit,		 bhvkit,		  cmdkit};
 
+	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
+	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
+
 	interface::Timeout::callback_t on_sleep_timeout = {};
 
 	mbed::Callback<void()> on_charge_did_start {};
 	mbed::Callback<void()> on_charge_did_stop {};
+
+	bool spy_isCharging_return_value = false;
+
+	void expectedCallsStopMotors()
+	{
+		EXPECT_CALL(dir_1_left, write(0));
+		EXPECT_CALL(dir_2_left, write(0));
+		EXPECT_CALL(speed_left, write(0));
+		EXPECT_CALL(dir_1_right, write(0));
+		EXPECT_CALL(dir_2_right, write(0));
+		EXPECT_CALL(speed_right, write(0));
+	}
+
+	void expectedCallsInitializeComponents()
+	{
+		{
+			InSequence seq;
+
+			EXPECT_CALL(mbed_mock_gatt, addService).Times(4);
+			EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(1);
+			EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(1);
+
+			EXPECT_CALL(mock_mcu, getID).Times(1);
+			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
+
+			expectedCallsStopMotors();
+		}
+
+		rc.initializeComponents();
+	}
+
+	void expectedCallsRegisterEvents()
+	{
+		{
+			InSequence seq;
+
+			Sequence on_low_battery_sequence;
+			EXPECT_CALL(battery, level).InSequence(on_low_battery_sequence);
+			EXPECT_CALL(battery, isCharging)
+				.InSequence(on_low_battery_sequence)
+				.WillOnce(Return(spy_isCharging_return_value));
+			EXPECT_CALL(battery, level).InSequence(on_low_battery_sequence);
+
+			Sequence on_data_updated_sequence;
+			EXPECT_CALL(battery, level).InSequence(on_data_updated_sequence);
+			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(on_data_updated_sequence);
+
+			EXPECT_CALL(sleep_timeout, onTimeout)
+				.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleep_timeout));
+
+			EXPECT_CALL(battery, onChargeDidStart).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_start));
+
+			EXPECT_CALL(battery, onChargeDidStop).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_stop));
+
+			{
+				InSequence event_setup_complete;
+
+				if (spy_isCharging_return_value == true) {
+					expectedCallsTransitionSetupToCharging();
+				} else {
+					expectedCallsTransitionSetupToIdle();
+				}
+			}
+		}
+
+		rc.registerEvents();
+	}
+
+	void expectedCallsTransitionSetupToIdle()
+	{
+		Sequence is_charging_sequence;
+
+		EXPECT_CALL(battery, isCharging).InSequence(is_charging_sequence).WillOnce(Return(spy_isCharging_return_value));
+		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(is_charging_sequence);
+
+		EXPECT_CALL(sleep_timeout, start);
+	}
+
+	void expectedCallsTransitionSetupToCharging()
+	{
+		Sequence is_charging_sequence;
+
+		EXPECT_CALL(battery, isCharging).InSequence(is_charging_sequence).WillOnce(Return(spy_isCharging_return_value));
+		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(is_charging_sequence);
+
+		EXPECT_CALL(battery, isCharging).InSequence(is_charging_sequence).WillOnce(Return(spy_isCharging_return_value));
+		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(is_charging_sequence);
+	}
 };
 
 TEST_F(RobotControllerTest, initialization)
@@ -131,20 +205,98 @@ TEST_F(RobotControllerTest, initialization)
 
 TEST_F(RobotControllerTest, initializeComponents)
 {
-	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
-	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
+	{
+		InSequence seq;
 
-	EXPECT_CALL(mbed_mock_gatt, addService).Times(AnyNumber());
-	EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(1);
-	EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(1);
+		EXPECT_CALL(mbed_mock_gatt, addService).Times(4);
+		EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(1);
+		EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(1);
+
+		EXPECT_CALL(mock_mcu, getID).Times(1);
+		// TODO: Specify which BLE service and what is expected if necessary
+		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
+
+		expectedCallsStopMotors();
+	}
 
 	rc.initializeComponents();
 }
 
-TEST_F(RobotControllerTest, onLowBatteryBatteryIsCharging)
+TEST_F(RobotControllerTest, registerEventsBatteryIsNotCharging)
 {
-	EXPECT_CALL(battery, isCharging).Times(1).WillOnce(Return(true));
-	EXPECT_CALL(battery, level).Times(AnyNumber());
+	rc.state_machine.set_current_states(lksm::state::setup);
+
+	{
+		InSequence seq;
+
+		Sequence on_low_battery_sequence;
+		EXPECT_CALL(battery, level).InSequence(on_low_battery_sequence);
+		EXPECT_CALL(battery, isCharging).InSequence(on_low_battery_sequence).WillOnce(Return(false));
+		EXPECT_CALL(battery, level).InSequence(on_low_battery_sequence);
+
+		Sequence on_data_updated_sequence;
+		EXPECT_CALL(battery, level).InSequence(on_data_updated_sequence);
+		// TODO: Specify which BLE service and what is expected if necessary
+		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(on_data_updated_sequence);
+
+		EXPECT_CALL(sleep_timeout, onTimeout);
+
+		EXPECT_CALL(battery, onChargeDidStart);
+
+		EXPECT_CALL(battery, onChargeDidStop);
+
+		{
+			InSequence event_setup_complete;
+
+			Sequence is_charging_sequence;
+
+			EXPECT_CALL(battery, isCharging).InSequence(is_charging_sequence).WillOnce(Return(false));
+			// TODO: Specify which BLE service and what is expected if necessary
+			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(is_charging_sequence);
+
+			EXPECT_CALL(sleep_timeout, start);
+		}
+	}
+
+	rc.registerEvents();
+}
+
+TEST_F(RobotControllerTest, registerEventsBatteryIsCharging)
+{
+	rc.state_machine.set_current_states(lksm::state::setup);
+
+	{
+		InSequence seq;
+
+		Sequence on_low_battery_sequence;
+		EXPECT_CALL(battery, level).InSequence(on_low_battery_sequence);
+		EXPECT_CALL(battery, isCharging).InSequence(on_low_battery_sequence).WillOnce(Return(true));
+		EXPECT_CALL(battery, level).InSequence(on_low_battery_sequence);
+
+		Sequence on_data_updated_sequence;
+		EXPECT_CALL(battery, level).InSequence(on_data_updated_sequence);
+		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(on_data_updated_sequence);
+
+		EXPECT_CALL(sleep_timeout, onTimeout);
+
+		EXPECT_CALL(battery, onChargeDidStart);
+
+		EXPECT_CALL(battery, onChargeDidStop);
+
+		{
+			InSequence event_setup_complete;
+
+			Sequence is_charging_sequence;
+
+			EXPECT_CALL(battery, isCharging).InSequence(is_charging_sequence).WillOnce(Return(true));
+			// TODO: Specify which BLE service and what is expected if necessary
+			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(is_charging_sequence);
+
+			EXPECT_CALL(battery, isCharging).InSequence(is_charging_sequence).WillOnce(Return(true));
+			// TODO: Specify which BLE service and what is expected if necessary
+			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(is_charging_sequence);
+		}
+	}
 
 	rc.registerEvents();
 }
@@ -153,86 +305,68 @@ TEST_F(RobotControllerTest, onStartChargingBehaviorLevelBelow25)
 {
 	auto battery_level = 0;
 
-	rc.onStartChargingBehavior(battery_level);
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
-	// nohting expected
+	rc.onStartChargingBehavior(battery_level);
 }
 
 TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove5Below25)
 {
 	auto battery_level = 22;
 
-	rc.onStartChargingBehavior(battery_level);
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
-	// nohting expected
+	rc.onStartChargingBehavior(battery_level);
 }
 
 TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove25Below50)
 {
 	auto battery_level = 42;
 
-	rc.onStartChargingBehavior(battery_level);
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
-	// nohting expected
+	rc.onStartChargingBehavior(battery_level);
 }
 
 TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove50Below75)
 {
 	auto battery_level = 66;
 
-	rc.onStartChargingBehavior(battery_level);
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
-	// nohting expected
+	rc.onStartChargingBehavior(battery_level);
 }
 
 TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove75)
 {
 	auto battery_level = 90;
 
-	rc.onStartChargingBehavior(battery_level);
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
-	// nohting expected
+	rc.onStartChargingBehavior(battery_level);
 }
 
 TEST_F(RobotControllerTest, stateSetupEventSetupCompleteGuardIsChargingFalse)
 {
-	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
-	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
-
 	rc.state_machine.set_current_states(lksm::state::setup);
 
-	auto expected_level = 0x2A;
-	EXPECT_CALL(battery, level).WillRepeatedly(Return(expected_level));
-	EXPECT_CALL(mbed_mock_gatt, write(_, sameValue(expected_level), _, _)).Times(1);
-
-	EXPECT_CALL(sleep_timeout, onTimeout).Times(1);
-	EXPECT_CALL(battery, onChargeDidStart).Times(1);
-	EXPECT_CALL(battery, onChargeDidStop).Times(1);
-	EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
-	EXPECT_CALL(sleep_timeout, start).Times(1);
-
-	rc.registerEvents();
+	spy_isCharging_return_value = false;
+	expectedCallsRegisterEvents();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
 }
 
 TEST_F(RobotControllerTest, stateSetupEventSetupCompleteGuardIsChargingTrue)
 {
-	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
-	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
-
 	rc.state_machine.set_current_states(lksm::state::setup);
 
-	auto expected_level = 0x2A;
-	EXPECT_CALL(battery, level).WillRepeatedly(Return(expected_level));
-	EXPECT_CALL(mbed_mock_gatt, write(_, sameValue(expected_level), _, _)).Times(1);
-
-	EXPECT_CALL(sleep_timeout, onTimeout).Times(1);
-	EXPECT_CALL(battery, onChargeDidStart).Times(1);
-	EXPECT_CALL(battery, onChargeDidStop).Times(1);
-	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
-
-	rc.registerEvents();
+	spy_isCharging_return_value = true;
+	expectedCallsRegisterEvents();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
 }
@@ -242,6 +376,8 @@ TEST_F(RobotControllerTest, stateIdleEventTimeout)
 	rc.state_machine.set_current_states(lksm::state::idle);
 
 	EXPECT_CALL(sleep_timeout, stop).Times(1);
+
+	expectedCallsStopMotors();
 
 	on_sleep_timeout();
 
@@ -263,6 +399,10 @@ TEST_F(RobotControllerTest, stateSleepingEventChargeDidStartGuardIsChargingTrue)
 
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
 
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
+	expectedCallsStopMotors();
+
 	on_charge_did_start();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
@@ -273,6 +413,9 @@ TEST_F(RobotControllerTest, stateSleepingEventChargeDidStartGuardIsChargingFalse
 	rc.state_machine.set_current_states(lksm::state::sleeping);
 
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
+
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
 	on_charge_did_start();
 
@@ -286,6 +429,10 @@ TEST_F(RobotControllerTest, stateIdleEventChargeDidStartGuardIsChargingTrue)
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
 	EXPECT_CALL(sleep_timeout, stop).Times(1);
 
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
+	expectedCallsStopMotors();
+
 	on_charge_did_start();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
@@ -296,6 +443,9 @@ TEST_F(RobotControllerTest, stateIdleEventChargeDidStartGuardIsChargingFalse)
 	rc.state_machine.set_current_states(lksm::state::idle);
 
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
+
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
 	on_charge_did_start();
 
@@ -308,6 +458,9 @@ TEST_F(RobotControllerTest, stateChargingEventChargeDidStopGuardIsChargingTrue)
 
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
 
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
+
 	on_charge_did_stop();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
@@ -319,6 +472,9 @@ TEST_F(RobotControllerTest, stateChargingEventChargeDidStopGuardIsChargingFalse)
 
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
 	EXPECT_CALL(sleep_timeout, start).Times(1);
+
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
 	on_charge_did_stop();
 
