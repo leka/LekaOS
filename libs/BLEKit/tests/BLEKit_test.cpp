@@ -97,7 +97,6 @@ TEST_F(BLEKitTest, callOnEventsToProcess)
 
 	EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(AnyNumber());
 	EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(AnyNumber());
-	EXPECT_CALL(mbed_mock_gatt, addService).Times(AnyNumber());
 
 	ble.init();
 
