@@ -41,19 +41,17 @@ namespace leds {
 
 		}	// namespace belt
 
-		namespace animations {
-
-			auto thread		 = rtos::Thread {};
-			auto event_flags = CoreEventFlags {};
-
-		}	// namespace animations
-
 	}	// namespace internal
+
+	namespace animations {
+
+		auto thread		 = rtos::Thread {};
+		auto event_flags = CoreEventFlags {};
+
+	}	// namespace animations
 
 	auto ears = CoreLED<internal::ears::size> {internal::ears::spi};
 	auto belt = CoreLED<internal::belt::size> {internal::belt::spi};
-
-	auto kit = LedKit {internal::animations::thread, internal::animations::event_flags, ears, belt};
 
 	void turnOff()
 	{
@@ -65,7 +63,8 @@ namespace leds {
 
 }	// namespace leds
 
-auto hello = HelloWorld {};
+auto hello	= HelloWorld {};
+auto ledkit = LedKit {leds::animations::thread, leds::animations::event_flags, leds::ears, leds::belt};
 
 }	// namespace
 
@@ -79,34 +78,34 @@ auto main() -> int
 	hello.start();
 
 	while (true) {
-		leds::kit.start(&LedKit::animation::rainbow);
+		ledkit.start(&LedKit::animation::rainbow);
 		rtos::ThisThread::sleep_for(10s);
 
-		leds::kit.stop();
+		ledkit.stop();
 		rtos::ThisThread::sleep_for(1s);
 
-		leds::kit.start(&LedKit::animation::fire);
+		ledkit.start(&LedKit::animation::fire);
 		rtos::ThisThread::sleep_for(10s);
 
-		leds::kit.stop();
+		ledkit.stop();
 		rtos::ThisThread::sleep_for(1s);
 
-		leds::kit.start(&LedKit::animation::sprinkles);
+		ledkit.start(&LedKit::animation::sprinkles);
 		rtos::ThisThread::sleep_for(5s);
 
-		leds::kit.stop();
+		ledkit.stop();
 		rtos::ThisThread::sleep_for(1s);
 
-		leds::kit.start(&LedKit::animation::spin_blink);
+		ledkit.start(&LedKit::animation::spin_blink);
 		rtos::ThisThread::sleep_for(40s);
 
-		leds::kit.stop();
+		ledkit.stop();
 		rtos::ThisThread::sleep_for(1s);
 
-		leds::kit.start(&LedKit::animation::blink_green);
+		ledkit.start(&LedKit::animation::blink_green);
 		rtos::ThisThread::sleep_for(40s);
 
-		leds::kit.stop();
+		ledkit.stop();
 		rtos::ThisThread::sleep_for(1s);
 	}
 }
