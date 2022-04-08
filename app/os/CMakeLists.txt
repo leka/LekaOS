@@ -31,6 +31,7 @@ target_link_libraries(LekaOS
 	VideoKit
 	LedKit
 	CoreLED
+	CoreEventFlags
 )
 
 target_link_custom_leka_targets(LekaOS)

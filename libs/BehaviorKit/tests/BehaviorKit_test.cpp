@@ -4,7 +4,6 @@
 
 #include "BehaviorKit.h"
 
-#include "events/tests/UNITTESTS/doubles/EventQueue_stub.h"
 #include "rtos/tests/UNITTESTS/doubles/Thread_stub.h"
 
 #include "CoreMotor.h"
@@ -12,10 +11,12 @@
 #include "CoreSPI.h"
 #include "LedKit.h"
 #include "VideoKit.h"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/LEDAnimation.h"
 #include "mocks/leka/PwmOut.h"
 #include "mocks/mbed/DigitalOut.h"
+#include "mocks/mbed/EventFlags.h"
 
 using namespace leka;
 
@@ -35,9 +36,9 @@ class BehaviorKitTest : public ::testing::Test
 	CoreLED<LedKit::kNumberOfLedsBelt> belt {spi};
 	CoreLED<LedKit::kNumberOfLedsEars> ears {spi};
 	rtos::Thread animation_thread;
-	events::EventQueue animation_event_queue;
+	mbed::mock::EventFlags mock_event_flags;
 
-	LedKit ledkit {animation_thread, animation_event_queue, ears, belt};
+	LedKit ledkit {animation_thread, mock_event_flags, ears, belt};
 
 	mock::LEDAnimation mock_animation {};
 
