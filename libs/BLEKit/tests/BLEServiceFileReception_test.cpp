@@ -9,6 +9,17 @@
 
 using namespace leka;
 
+using ::testing::MockFunction;
+
+MATCHER_P(compareArray, expected_array, "")
+{
+	bool same_content = true;
+	for (int i = 0; i < std::size(expected_array); i++) {
+		same_content &= expected_array[i] == arg[i];
+	}
+	return same_content;
+}
+
 auto compareSpan(std::span<const char> actual_span, std::span<const char> expected_span) -> bool
 {
 	bool same_content = true;
@@ -100,4 +111,30 @@ TEST_F(BLEServiceFileReceptionTest, getFilePathNotSameHandle)
 	auto actual_file_path = service_file_reception.getFilePath();
 	EXPECT_TRUE(compareSpan(actual_file_path, default_expected_file_path));
 	EXPECT_FALSE(compareSpan(actual_file_path, sent_file_path));
+}
+
+TEST_F(BLEServiceFileReceptionTest, onFileDataReceivedCallback)
+{
+	auto expected_array = std::to_array<uint8_t>({0x2A, 0x2B, 0x2C, 0x2D, 0x2E});
+
+	testing::MockFunction<void(std::span<uint8_t>)> mock_callback {};
+	service_file_reception.onFileDataReceived(mock_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_callback, Call(compareArray(expected_array))).Times(1);
+
+	onDataReceivedProcess(expected_array);
+}
+
+TEST_F(BLEServiceFileReceptionTest, onFileDataReceivedCallbackNotSameHandle)
+{
+	auto sent_data = std::to_array<uint8_t>({0x2A, 0x2B, 0x2C, 0x2D, 0x2E});
+
+	testing::MockFunction<void(std::span<uint8_t>)> mock_callback {};
+	service_file_reception.onFileDataReceived(mock_callback.AsStdFunction());
+
+	data_received_handle.handle = 0xFFFF;
+
+	EXPECT_CALL(mock_callback, Call).Times(0);
+
+	onDataReceivedProcess(sent_data);
 }
