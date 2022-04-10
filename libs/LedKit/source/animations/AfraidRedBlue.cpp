@@ -8,20 +8,45 @@
 
 namespace leka::led::animation {
 
+void AfraidRedBlue::setLeds(interface::LED &ears, interface::LED &belt)
+{
+	_ears = &ears;
+	_belt = &belt;
+}
+
+auto AfraidRedBlue::isRunning() -> bool
+{
+	return _running;
+}
+
 void AfraidRedBlue::start()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	turnLedBlack();
+	_step	 = 0;
+	_stage	 = 0;
+	_running = true;
 }
 
 void AfraidRedBlue::stop()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	turnLedBlack();
-	_step  = 0;
-	_stage = 0;
+	_running = false;
 }
 
 void AfraidRedBlue::run()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	switch (_stage) {
 		case 0:
 			stage0();
@@ -60,9 +85,10 @@ void AfraidRedBlue::run()
 			stage11();
 			break;
 		default:
+			_running = false;
 			break;
 	}
-	_belt.show();
+	_belt->show();
 }
 
 void AfraidRedBlue::stage0()
@@ -108,7 +134,7 @@ void AfraidRedBlue::stage6()
 	static constexpr auto kMaxInputValue = uint8_t {20};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 0.F) {
 		RGB color = ColorKit::colorGradient(RGB {0, 128, 255}, RGB::pure_red, pos);
-		_belt.setColor(color);
+		_belt->setColor(color);
 		_step--;
 	} else {
 		_step = 20;
@@ -145,10 +171,10 @@ void AfraidRedBlue::stage11()
 
 void AfraidRedBlue::turnLedBlack()
 {
-	_ears.setColor(RGB::black);
-	_belt.setColor(RGB::black);
-	_ears.show();
-	_belt.show();
+	_ears->setColor(RGB::black);
+	_belt->setColor(RGB::black);
+	_ears->show();
+	_belt->show();
 }
 
 void AfraidRedBlue::increaseBrightness(const RGB &color)
@@ -156,7 +182,7 @@ void AfraidRedBlue::increaseBrightness(const RGB &color)
 	static constexpr auto kMaxInputValue = uint8_t {20};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB col = ColorKit::colorGradient(RGB::black, color, pos);
-		_belt.setColor(col);
+		_belt->setColor(col);
 		_step++;
 	} else {
 		_stage++;
@@ -168,7 +194,7 @@ void AfraidRedBlue::decreaseBrightness(const RGB &color, float treshold)
 	static constexpr auto kMaxInputValue = uint8_t {20};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos > treshold) {
 		RGB col = ColorKit::colorGradient(RGB::black, color, pos);
-		_belt.setColor(col);
+		_belt->setColor(col);
 		_step--;
 	} else {
 		_stage++;

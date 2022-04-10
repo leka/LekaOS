@@ -10,28 +10,56 @@ namespace leka::led::animation {
 
 static constexpr auto kNumberOfNotes = uint8_t {16};
 
-void Singing::start()
+void Singing::setLeds(interface::LED &ears, interface::LED &belt)
 {
-	turnLedBlack();
+	_ears = &ears;
+	_belt = &belt;
 }
 
-void Singing::stop()
+auto Singing::isRunning() -> bool
 {
+	return _running;
+}
+
+void Singing::start()
+{
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	turnLedBlack();
 	_step		 = 0;
 	_stage		 = 0;
 	_note_number = 0;
+	_running	 = true;
+}
+
+void Singing::stop()
+{
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
+	turnLedBlack();
+	_running = false;
 }
 
 void Singing::run()
 {
+	if (_ears == nullptr || _belt == nullptr) {
+		return;
+	}
+
 	static constexpr auto kLastStage = kNumberOfNotes + 2;
 	if (_stage == 0) {
 		stage0();
 	} else if (_stage <= kLastStage) {
 		stage1();
+	} else {
+		_running = false;
+		return;
 	}
-	_belt.show();
+	_belt->show();
 }
 
 void Singing::stage0()
@@ -90,21 +118,21 @@ void Singing::stage1()
 void Singing::increaseBrightnessAtIndex(uint8_t index, RGB color, float position)
 {
 	auto col = ColorKit::colorGradient(RGB::black, color, position);
-	_belt.setColorAtIndex(index, col);
+	_belt->setColorAtIndex(index, col);
 }
 
 void Singing::decreaseBrightnessAtIndex(uint8_t index, RGB color, float position)
 {
 	auto col = ColorKit::colorGradient(color, RGB::black, position);
-	_belt.setColorAtIndex(index, col);
+	_belt->setColorAtIndex(index, col);
 }
 
 void Singing::turnLedBlack()
 {
-	_ears.setColor(RGB::black);
-	_belt.setColor(RGB::black);
-	_ears.show();
-	_belt.show();
+	_ears->setColor(RGB::black);
+	_belt->setColor(RGB::black);
+	_ears->show();
+	_belt->show();
 }
 
 }	// namespace leka::led::animation

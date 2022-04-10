@@ -31,17 +31,21 @@ namespace leka::led::animation {
 class AfraidRed : public interface::LEDAnimation
 {
   public:
-	explicit AfraidRed(interface::LED &ears, interface::LED &belt) : _ears(ears), _belt(belt) {}
+	explicit AfraidRed() = default;
 
 	void start() final;
 	void run() final;
 	void stop() final;
 
+	void setLeds(interface::LED &ears, interface::LED &belt) final;
+	auto isRunning() -> bool final;
+
   private:
-	interface::LED &_ears;
-	interface::LED &_belt;
-	uint8_t _step  = 0;
-	uint8_t _stage = 0;
+	interface::LED *_ears = nullptr;
+	interface::LED *_belt = nullptr;
+	bool _running		  = false;
+	uint8_t _step		  = 0;
+	uint8_t _stage		  = 0;
 
 	void stage0();
 	void stage1();
