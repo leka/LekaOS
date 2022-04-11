@@ -23,53 +23,130 @@
 using namespace leka;
 using namespace std::chrono;
 
-auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
-auto fatfs			= FATFileSystem {"fs"};
+//
+// MARK: - Global definitions
+//
 
-auto videokit = VideoKit {};
+namespace {
 
-auto corespi_belt	  = CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
-auto corespi_ears	  = CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
-auto ears			  = CoreLED<LedKit::kNumberOfLedsEars> {corespi_ears};
-auto belt			  = CoreLED<LedKit::kNumberOfLedsBelt> {corespi_belt};
-auto animation_thread = rtos::Thread {};
-auto event_flags	  = CoreEventFlags {};
+namespace sd {
 
-auto ledkit = LedKit {animation_thread, event_flags, ears, belt};
+	namespace internal {
 
-auto motor_left_dir_1  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
-auto motor_left_dir_2  = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
-auto motor_left_speed  = CorePwm {MOTOR_LEFT_PWM};
-auto motor_right_dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
-auto motor_right_dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
-auto motor_right_speed = CorePwm {MOTOR_RIGHT_PWM};
+		auto bd = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
+		auto fs = FATFileSystem {"fs"};
 
-auto motor_left	 = CoreMotor {motor_left_dir_1, motor_left_dir_2, motor_left_speed};
-auto motor_right = CoreMotor {motor_right_dir_1, motor_right_dir_2, motor_right_speed};
+		constexpr auto default_frequency = uint64_t {25'000'000};
 
-auto behaviorkit = BehaviorKit {videokit, ledkit, motor_left, motor_right};
+	}	// namespace internal
 
-HelloWorld hello;
+	void init()
+	{
+		internal::bd.init();
+		internal::bd.frequency(internal::default_frequency);
+		internal::fs.mount(&internal::bd);
+	}
 
-void initializeSD()
-{
-	constexpr auto default_sd_blockdevice_frequency = uint64_t {25'000'000};
+}	// namespace sd
 
-	sd_blockdevice.init();
-	sd_blockdevice.frequency(default_sd_blockdevice_frequency);
+namespace leds {
 
-	fatfs.mount(&sd_blockdevice);
-}
+	namespace internal {
+
+		namespace ears {
+
+			auto spi			= CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+			constexpr auto size = 2;
+
+		}	// namespace ears
+
+		namespace belt {
+
+			auto spi			= CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+			constexpr auto size = 20;
+
+		}	// namespace belt
+
+		namespace animations {
+
+			auto thread		 = rtos::Thread {};
+			auto event_flags = CoreEventFlags {};
+
+		}	// namespace animations
+
+	}	// namespace internal
+
+	auto ears = CoreLED<internal::ears::size> {internal::ears::spi};
+	auto belt = CoreLED<internal::belt::size> {internal::belt::spi};
+
+	auto kit = LedKit {internal::animations::thread, internal::animations::event_flags, ears, belt};
+
+	void turnOff()
+	{
+		ears.setColor(RGB::black);
+		belt.setColor(RGB::black);
+		ears.show();
+		belt.show();
+	}
+
+}	// namespace leds
+
+namespace motors {
+
+	namespace left {
+
+		namespace internal {
+
+			auto dir_1 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
+			auto dir_2 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
+			auto speed = CorePwm {MOTOR_LEFT_PWM};
+
+		}	// namespace internal
+
+		auto motor = CoreMotor {internal::dir_1, internal::dir_2, internal::speed};
+
+	}	// namespace left
+
+	namespace right {
+
+		namespace internal {
+
+			auto dir_1 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_1};
+			auto dir_2 = mbed::DigitalOut {MOTOR_RIGHT_DIRECTION_2};
+			auto speed = CorePwm {MOTOR_RIGHT_PWM};
+
+		}	// namespace internal
+
+		auto motor = CoreMotor {internal::dir_1, internal::dir_2, internal::speed};
+
+	}	// namespace right
+
+	void turnOff()
+	{
+		left::motor.stop();
+		right::motor.stop();
+	}
+
+}	// namespace motors
+
+auto videokit	 = VideoKit {};
+auto behaviorkit = BehaviorKit {videokit, leds::kit, motors::left::motor, motors::right::motor};
+auto hello		 = HelloWorld {};
+
+}	// namespace
 
 auto main() -> int
 {
 	logger::init();
 
-	log_info("Hello, World!\n\n");
+	leds::turnOff();
+	motors::turnOff();
 
-	initializeSD();
-	ledkit.init();
+	leds::kit.init();
+	sd::init();
 	videokit.initializeScreen();
+
+	log_info("Hello, World!\n\n");
 
 	hello.start();
 
