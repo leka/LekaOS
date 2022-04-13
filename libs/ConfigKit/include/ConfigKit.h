@@ -34,8 +34,8 @@ class ConfigKit
 {
   public:
 	explicit ConfigKit() = default;
-	auto read(Config const &config) -> uint8_t;
-	auto write(Config const &config, uint8_t data) -> bool;
+	auto read(Config const &config) const -> uint8_t;
+	auto write(Config const &config, uint8_t data) const -> bool;
 };
 
 }	// namespace leka

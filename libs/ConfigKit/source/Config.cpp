@@ -8,29 +8,33 @@
 #include <span>
 
 #include "ConfigKit.h"
-#include "LogKit.h"
 
 using namespace leka;
 
-auto ConfigKit::read(Config const &config) -> uint8_t
+auto ConfigKit::read(Config const &config) const -> uint8_t
 {
 	FileManagerKit::File file {config.path(), "r"};
+
 	if (!file.is_open()) {
 		return config.default_value();
 	}
-	auto input = std::array<uint8_t, 1> {};
-	file.read(input);
-	auto data = input.front();
-	return data;
+
+	auto data = std::array<uint8_t, 1> {};
+	file.read(data);
+
+	return data.front();
 }
 
-auto ConfigKit::write(Config const &config, uint8_t data) -> bool
+auto ConfigKit::write(Config const &config, uint8_t data) const -> bool
 {
 	FileManagerKit::File file {config.path(), "r+"};
+
 	if (!file.is_open()) {
 		return false;
 	}
-	auto output = std::array<uint8_t, 1> {data};
+
+	auto output = std::to_array<uint8_t>({data});
 	file.write(output);
+
 	return true;
 }
