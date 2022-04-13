@@ -29,7 +29,7 @@ TARGET_BOARD    ?= LEKA_V1_2_DEV
 # MARK: - Options
 #
 
-ENABLE_LOG_DEBUG                     ?= OFF
+ENABLE_LOG_DEBUG                     ?= ON
 BUILD_TARGETS_TO_USE_WITH_BOOTLOADER ?= OFF
 
 #
