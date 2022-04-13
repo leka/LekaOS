@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "drivers/BufferedSerial.h"
+#include "drivers/Ticker.h"
 #include "rtos/Kernel.h"
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
@@ -20,6 +21,8 @@ auto hello = HelloWorld {};
 auto thread_log_debug  = rtos::Thread {};
 auto thread_log_printf = rtos::Thread {};
 
+auto ticker_log_from_isr = Ticker {};
+
 auto main() -> int
 {
 	logger::init();
@@ -33,9 +36,11 @@ auto main() -> int
 
 	hello.start();
 
-	thread_log_debug.start(log_thread_debug);
+	// thread_log_debug.start(log_thread_debug);
 	rtos::ThisThread::sleep_for(1s);
-	thread_log_printf.start(log_thread_printf);
+	// thread_log_printf.start(log_thread_printf);
+
+	ticker_log_from_isr.attach(&log_from_isr, 2s);
 
 	while (true) {
 		auto start = rtos::Kernel::Clock::now();
