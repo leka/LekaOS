@@ -725,11 +725,17 @@ class CFastLED
 
 	/// Set the global brightness scaling
 	/// @param scale a 0-255 value for how much to scale all leds before writing them out
-	void setBrightness(uint8_t scale) { m_Scale = scale; }
+	void setBrightness(uint8_t scale)
+	{
+		m_Scale = scale;
+	}
 
 	/// Get the current global brightness setting
 	/// @returns the current global brightness value
-	uint8_t getBrightness() { return m_Scale; }
+	uint8_t getBrightness()
+	{
+		return m_Scale;
+	}
 
 	/// Set the maximum power to be used, given in volts and milliamps.
 	/// @param volts - how many volts the leds are being driven at (usually 5)
@@ -752,7 +758,10 @@ class CFastLED
 	void show(uint8_t scale);
 
 	/// Update all our controllers with the current led colors
-	void show() { show(m_Scale); }
+	void show()
+	{
+		show(m_Scale);
+	}
 
 	/// clear the leds, wiping the local array of data, optionally black out the leds as well
 	/// @param writeData whether or not to write out to the leds as well
@@ -768,7 +777,10 @@ class CFastLED
 
 	/// Set all leds on all controllers to the given color
 	/// @param color what color to set the leds to
-	void showColor(const struct CRGB &color) { showColor(color, m_Scale); }
+	void showColor(const struct CRGB &color)
+	{
+		showColor(color, m_Scale);
+	}
 
 	/// Delay for the given number of milliseconds.  Provided to allow the library to be used on platforms
 	/// that don't have a delay function (to allow code to be more portable).  Note: this will call show
@@ -808,7 +820,10 @@ class CFastLED
 
 	/// Get the number of frames/second being written out
 	/// @returns the most recently computed FPS value
-	uint16_t getFPS() { return m_nFPS; }
+	uint16_t getFPS()
+	{
+		return m_nFPS;
+	}
 
 	/// Get how many controllers have been registered
 	/// @returns the number of controllers (strips) that have been added with addLeds
@@ -820,11 +835,17 @@ class CFastLED
 
 	/// Get the number of leds in the first controller
 	/// @returns the number of LEDs in the first controller
-	int size() { return (*this)[0].size(); }
+	int size()
+	{
+		return (*this)[0].size();
+	}
 
 	/// Get a pointer to led data for the first controller
 	/// @returns pointer to the CRGB buffer for the first controller
-	CRGB *leds() { return (*this)[0].leds(); }
+	CRGB *leds()
+	{
+		return (*this)[0].leds();
+	}
 };
 
 #define FastSPI_LED	 FastLED
