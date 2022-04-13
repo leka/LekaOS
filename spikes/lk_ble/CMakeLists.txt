@@ -16,6 +16,9 @@ target_sources(spike_lk_ble
 
 target_link_libraries(spike_lk_ble
 	BLEKit
+	FileManagerKit
+	ContainerKit
+	CoreEventQueue
 )
 
 target_link_custom_leka_targets(spike_lk_ble)
