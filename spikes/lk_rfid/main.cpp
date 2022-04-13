@@ -1,14 +1,17 @@
 // Leka - LekaOS
-// Copyright 2020 APF France handicap
+// Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "drivers/BufferedSerial.h"
-#include "rtos/ThisThread.h"
-#include "rtos/Thread.h"
+#include <cstddef>
+#include <cstdint>
 
+#include "rtos/ThisThread.h"
+
+#include "CoreBufferedSerial.h"
+#include "CoreRFIDReader.h"
 #include "HelloWorld.h"
-#include "LekaRFID.h"
 #include "LogKit.h"
+#include "RFIDKit.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -17,24 +20,20 @@ auto main() -> int
 {
 	logger::init();
 
-	auto start = rtos::Kernel::Clock::now();
-
 	log_info("Hello, World!\n\n");
+
+	auto core_buffered_serial = CoreBufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
+	auto core_rfid_reader	  = CoreRFIDReader(core_buffered_serial);
+	auto rfid_kit			  = RFIDKit(core_rfid_reader);
 
 	rtos::ThisThread::sleep_for(2s);
 
-	RFID leka_rfid;
-	rtos::Thread rfid_thread;
-	rfid_thread.start({&leka_rfid, &RFID::start});
+	rfid_kit.init();
 
 	HelloWorld hello;
 	hello.start();
 
 	while (true) {
-		auto t = rtos::Kernel::Clock::now() - start;
-		log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world,
-				 int(t.count() / 1000));
-
-		rtos::ThisThread::sleep_for(1s);
+		rtos::ThisThread::sleep_for(10ms);
 	}
 }
