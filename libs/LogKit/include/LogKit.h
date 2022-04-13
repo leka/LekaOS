@@ -128,7 +128,10 @@ using now_function_t = std::function<int64_t()>;   // LCOV_EXCL_LINE
 
 namespace internal {
 
-	inline auto default_now_function() -> int64_t { return rtos::Kernel::Clock::now().time_since_epoch().count(); }
+	inline auto default_now_function() -> int64_t
+	{
+		return rtos::Kernel::Clock::now().time_since_epoch().count();
+	}
 	inline now_function_t now = default_now_function;
 
 }	// namespace internal
