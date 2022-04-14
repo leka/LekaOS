@@ -49,3 +49,21 @@ using namespace std::chrono;
 		rtos::ThisThread::sleep_for(3s);
 	}
 }
+
+void log_from_isr()
+{
+	log_info("Log from ISR");
+	auto start = rtos::Kernel::Clock::now();
+	for (auto i = 1; i <= 10; ++i) {
+		auto start_run = rtos::Kernel::Clock::now();
+		log_debug("Run debug number: %i", i);
+		log_debug("%s debug message", "First:");
+		log_info("%s information message", "Second:");
+		log_error("%s error message", "Third:");
+		auto stop_run = rtos::Kernel::Clock::now();
+		log_info("Total time to log the %i messages --> %ims\n", 4, int((stop_run - start_run).count()));
+	}
+	auto stop = rtos::Kernel::Clock::now();
+
+	log_info("Total time to LOG the for loop --> %ims\n", int((stop - start).count()));
+}
