@@ -78,13 +78,12 @@ void Rainbow::stagesRainbow()
 
 auto Rainbow::getRainbowColor(uint8_t index) const -> RGB
 {
-	static constexpr auto kRainbowColorNumber						   = 7;
-	static constexpr std::array<RGB, kRainbowColorNumber> rainbowColor = {
-		RGB::pure_red,	RGB {180, 50, 0},	 RGB {100, 100, 0}, RGB::pure_green,
-		RGB::pure_blue, RGB {0x4b, 0, 0x82}, RGB::magenta};
+	static constexpr auto kRainbowColorNumber						   = 5;
+	static constexpr std::array<RGB, kRainbowColorNumber> rainbowColor = {RGB::pure_red, RGB::pure_green,
+																		  RGB::pure_blue, RGB::magenta, RGB::pure_red};
 
-	auto part_of_rainbow = index / 3;
-	auto position		 = static_cast<float>(index % 3) / 3;
+	auto part_of_rainbow = index / 4;
+	auto position		 = static_cast<float>(index % 4) / 4;
 	if (part_of_rainbow < kRainbowColorNumber - 1) {
 		RGB color =
 			ColorKit::colorGradient(rainbowColor.at(part_of_rainbow), rainbowColor.at(part_of_rainbow + 1), position);
