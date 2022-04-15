@@ -8,11 +8,6 @@
 
 using namespace leka;
 
-CoreJPEG::CoreJPEG(interface::STM32Hal &hal, interface::DMA2DBase &dma2d) : _hal(hal), _dma2d(dma2d)
-{
-	_hjpeg.Instance = JPEG;
-}
-
 void CoreJPEG::initialize()
 {
 	JPEG_InitColorTables();
@@ -22,6 +17,8 @@ void CoreJPEG::initialize()
 
 auto CoreJPEG::getConfig() -> JPEG_ConfTypeDef
 {
+	_hal.HAL_JPEG_GetInfo(&_hjpeg, &_config);
+
 	return _config;
 }
 
@@ -59,14 +56,10 @@ auto CoreJPEG::getWidthOffset() -> uint32_t
 	return width_offset;
 }
 
-void CoreJPEG::displayImage(interface::File *file)
+void CoreJPEG::decodeImage(interface::File *file)
 {
 	_file = file;
 	decodeImageWithPolling();	// TODO(@yann): handle errors
-
-	_hal.HAL_JPEG_GetInfo(&_hjpeg, &_config);
-
-	_dma2d.transferImage(_config.ImageWidth, _config.ImageHeight, getWidthOffset());
 }
 
 auto CoreJPEG::decodeImageWithPolling() -> HAL_StatusTypeDef

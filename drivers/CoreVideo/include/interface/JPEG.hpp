@@ -23,7 +23,7 @@ class JPEGBase
 
 	virtual auto getWidthOffset() -> uint32_t = 0;
 
-	virtual void displayImage(interface::File *file) = 0;
+	virtual void decodeImage(interface::File *file) = 0;
 	// TODO(@yann): Update Return type with something else than HAL status
 	virtual auto decodeImageWithPolling() -> HAL_StatusTypeDef = 0;
 

@@ -8,7 +8,6 @@
 #include <cstdint>
 
 #include "external/st_jpeg_utils.h"
-#include "interface/DMA2D.hpp"
 #include "interface/JPEG.hpp"
 #include "interface/drivers/STM32Hal.h"
 #include "interface/platform/File.h"
@@ -18,7 +17,7 @@ namespace leka {
 class CoreJPEG : public interface::JPEGBase
 {
   public:
-	CoreJPEG(interface::STM32Hal &hal, interface::DMA2DBase &dma2d);
+	explicit CoreJPEG(interface::STM32Hal &hal) : _hal(hal) { _hjpeg.Instance = JPEG; }
 
 	void initialize() final;
 
@@ -28,7 +27,7 @@ class CoreJPEG : public interface::JPEGBase
 
 	auto getWidthOffset() -> uint32_t final;
 
-	void displayImage(interface::File *file) final;
+	void decodeImage(interface::File *file) final;
 	// TODO(@yann): Update Return type with something else than HAL status
 	auto decodeImageWithPolling() -> HAL_StatusTypeDef final;
 
@@ -55,7 +54,6 @@ class CoreJPEG : public interface::JPEGBase
 	JPEG_HandleTypeDef _hjpeg {};
 	JPEG_ConfTypeDef _config {};
 	interface::STM32Hal &_hal;
-	interface::DMA2DBase &_dma2d;
 	interface::File *_file;
 
 	JPEG_YCbCrToRGB_Convert_Function pConvert_Function {};
