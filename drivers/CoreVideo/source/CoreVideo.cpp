@@ -74,10 +74,10 @@ void CoreVideo::displayImage(interface::File *file)
 {
 	_corejpeg.decodeImage(file);
 
-	auto image_properties	= _corejpeg.getConfig();
-	auto image_width_offset = _corejpeg.getWidthOffset();
+	auto image_properties = _corejpeg.getImageProperties();
 
-	_coredma2d.transferImage(image_properties.ImageWidth, image_properties.ImageHeight, image_width_offset);
+	_coredma2d.transferImage(image_properties.ImageWidth, image_properties.ImageHeight,
+							 image_properties.getWidthOffset());
 }
 
 void CoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,

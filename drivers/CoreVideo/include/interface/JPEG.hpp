@@ -5,6 +5,7 @@
 #pragma once
 
 
+#include "JPEGImageProperties.hpp"
 #include "interface/drivers/STM32Hal.h"
 #include "interface/platform/File.h"
 
@@ -17,15 +18,14 @@ class JPEGBase
 
 	virtual void initialize() = 0;
 
-	virtual auto getConfig() -> JPEG_ConfTypeDef			= 0;
 	virtual auto getHandle() -> JPEG_HandleTypeDef			= 0;
 	virtual auto getHandlePointer() -> JPEG_HandleTypeDef * = 0;
-
-	virtual auto getWidthOffset() -> uint32_t = 0;
 
 	virtual void decodeImage(interface::File *file) = 0;
 	// TODO(@yann): Update Return type with something else than HAL status
 	virtual auto decodeImageWithPolling() -> HAL_StatusTypeDef = 0;
+
+	virtual auto getImageProperties() -> JPEGImageProperties = 0;
 
 	virtual void onErrorCallback(JPEG_HandleTypeDef *hjpeg)								= 0;
 	virtual void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) = 0;

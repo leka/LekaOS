@@ -7,6 +7,7 @@
 #include <array>
 #include <cstdint>
 
+#include "JPEGImageProperties.hpp"
 #include "external/st_jpeg_utils.h"
 #include "interface/JPEG.hpp"
 #include "interface/drivers/STM32Hal.h"
@@ -21,15 +22,14 @@ class CoreJPEG : public interface::JPEGBase
 
 	void initialize() final;
 
-	auto getConfig() -> JPEG_ConfTypeDef final;
 	auto getHandle() -> JPEG_HandleTypeDef final;
 	auto getHandlePointer() -> JPEG_HandleTypeDef * final;
-
-	auto getWidthOffset() -> uint32_t final;
 
 	void decodeImage(interface::File *file) final;
 	// TODO(@yann): Update Return type with something else than HAL status
 	auto decodeImageWithPolling() -> HAL_StatusTypeDef final;
+
+	auto getImageProperties() -> JPEGImageProperties final;
 
 	void onErrorCallback(JPEG_HandleTypeDef *hjpeg) final;
 	void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) final;

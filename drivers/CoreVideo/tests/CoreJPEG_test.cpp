@@ -31,20 +31,6 @@ class CoreJPEGTest : public ::testing::Test
 	mock::File filemock;
 	CoreJPEG corejpeg;
 
-	void TEST_FUNCTION_WidthOffsetFromChromaSubsampling(JPEG_ConfTypeDef config)
-	{
-		for (int offset = 0; offset < 16; offset++) {
-			// Setup
-			config.ImageWidth = 16 * 50 + offset;	// =800 + i
-			EXPECT_CALL(halmock, HAL_JPEG_GetInfo(_, _)).WillOnce(DoAll(SetArgPointee<1>(config), Return(HAL_OK)));
-			// Apply setup
-			corejpeg.getConfig();
-			// Test
-			auto width_offset = corejpeg.getWidthOffset();
-			ASSERT_EQ((16 - offset) % 16, width_offset);
-		}
-	}
-
 	void setFile()
 	{
 		{
@@ -76,21 +62,20 @@ TEST_F(CoreJPEGTest, handlePointerConfigurationInstance)
 	ASSERT_EQ(handle->Instance, JPEG);
 }
 
-TEST_F(CoreJPEGTest, getConfiguration)
+TEST_F(CoreJPEGTest, getImageProperties)
 {
-	JPEG_ConfTypeDef expected_config;
+	auto expected_properties = JPEGImageProperties {};
 
-	expected_config.ImageWidth	= 800;
-	expected_config.ImageHeight = 480;
+	expected_properties.ImageWidth	= 800;
+	expected_properties.ImageHeight = 480;
 
-	// Setup
-	EXPECT_CALL(halmock, HAL_JPEG_GetInfo(_, _)).WillOnce(DoAll(SetArgPointee<1>(expected_config), Return(HAL_OK)));
+	EXPECT_CALL(halmock, HAL_JPEG_GetInfo(_, _)).WillOnce(DoAll(SetArgPointee<1>(expected_properties), Return(HAL_OK)));
 
-	// Test
-	auto config = corejpeg.getConfig();
+	auto actual_properties = corejpeg.getImageProperties();
 
-	ASSERT_EQ(config.ImageWidth, expected_config.ImageWidth);
-	ASSERT_EQ(config.ImageHeight, expected_config.ImageHeight);
+	EXPECT_EQ(actual_properties.ImageWidth, expected_properties.ImageWidth);
+	EXPECT_EQ(actual_properties.ImageHeight, expected_properties.ImageHeight);
+	EXPECT_EQ(actual_properties.getWidthOffset(), expected_properties.getWidthOffset());
 }
 
 TEST_F(CoreJPEGTest, initializationSequence)
@@ -125,59 +110,6 @@ TEST_F(CoreJPEGTest, decodeImageWithPollingDecodeCalledFailed)
 	auto status = corejpeg.decodeImageWithPolling();
 
 	ASSERT_NE(status, HAL_OK);
-}
-
-TEST_F(CoreJPEGTest, getWidthOffsetNoChromaSubsampling)
-{
-	JPEG_ConfTypeDef config;
-	config.ChromaSubsampling = 3;
-
-	// Setup
-	EXPECT_CALL(halmock, HAL_JPEG_GetInfo(_, _)).WillOnce(DoAll(SetArgPointee<1>(config), Return(HAL_OK)));
-
-	// Apply setup
-	corejpeg.getConfig();
-
-	// Test
-	auto width_offset = corejpeg.getWidthOffset();
-
-	ASSERT_EQ(0, width_offset);
-}
-
-TEST_F(CoreJPEGTest, getWidthOffsetChromaSubsampling420)
-{
-	JPEG_ConfTypeDef config;
-	config.ChromaSubsampling = JPEG_420_SUBSAMPLING;
-
-	TEST_FUNCTION_WidthOffsetFromChromaSubsampling(config);
-}
-
-TEST_F(CoreJPEGTest, getWidthOffsetChromaSubsampling422)
-{
-	JPEG_ConfTypeDef config;
-	config.ChromaSubsampling = JPEG_422_SUBSAMPLING;
-
-	TEST_FUNCTION_WidthOffsetFromChromaSubsampling(config);
-}
-
-TEST_F(CoreJPEGTest, getWidthOffsetChromaSubsampling444)
-{
-	JPEG_ConfTypeDef config;
-	config.ChromaSubsampling = JPEG_444_SUBSAMPLING;
-
-	for (int offset = 0; offset < 8; offset++) {
-		// Setup
-		config.ImageWidth = 8 * 100 + offset;	// =800 + i
-		EXPECT_CALL(halmock, HAL_JPEG_GetInfo(_, _)).WillOnce(DoAll(SetArgPointee<1>(config), Return(HAL_OK)));
-
-		// Apply setup
-		corejpeg.getConfig();
-
-		// Test
-		auto width_offset = corejpeg.getWidthOffset();
-
-		ASSERT_EQ(offset % 8, width_offset);
-	}
 }
 
 TEST_F(CoreJPEGTest, decodeImage)
