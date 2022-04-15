@@ -13,6 +13,7 @@
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreJPEG.hpp"
+#include "CoreJPEGModePolling.hpp"
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLL.h"
@@ -43,7 +44,8 @@ CoreGraphics coregraphics(coredma2d);
 CoreFont corefont(pixel);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 CoreLCD corelcd(coreotm);
-CoreJPEG corejpeg {hal};
+CoreJPEGModePolling _corejpegmode {hal};
+CoreJPEG corejpeg {hal, _corejpegmode};
 CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 auto file = FileManagerKit::File {};
@@ -66,22 +68,25 @@ void registerCallbacks()
 {
 	HAL_JPEG_RegisterInfoReadyCallback(
 		corejpeg.getHandlePointer(),
-		[](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) { corejpeg.onInfoReadyCallback(hjpeg, info); });
+		[](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) { _corejpegmode.onInfoReadyCallback(hjpeg, info); });
 
 	HAL_JPEG_RegisterGetDataCallback(corejpeg.getHandlePointer(), [](JPEG_HandleTypeDef *hjpeg, uint32_t size) {
-		corejpeg.onDataAvailableCallback(hjpeg, size);
+		_corejpegmode.onDataAvailableCallback(hjpeg, size);
 	});
 
 	HAL_JPEG_RegisterDataReadyCallback(corejpeg.getHandlePointer(),
 									   [](JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t size) {
-										   corejpeg.onDataReadyCallback(hjpeg, pDataOut, size);
+										   _corejpegmode.onDataReadyCallback(hjpeg, pDataOut, size);
 									   });
 
+	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_MSPINIT_CB_ID,
+							  [](JPEG_HandleTypeDef *hjpeg) { _corejpegmode.onMspInitCallback(hjpeg); });
+
 	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_DECODE_CPLT_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { corejpeg.onDecodeCompleteCallback(hjpeg); });
+							  [](JPEG_HandleTypeDef *hjpeg) { _corejpegmode.onDecodeCompleteCallback(hjpeg); });
 
 	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_ERROR_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { corejpeg.onErrorCallback(hjpeg); });
+							  [](JPEG_HandleTypeDef *hjpeg) { _corejpegmode.onErrorCallback(hjpeg); });
 }
 
 void initializeSD()
