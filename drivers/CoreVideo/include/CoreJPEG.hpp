@@ -45,8 +45,8 @@ class CoreJPEG : public interface::JPEGBase
 		uint32_t size;
 	};
 
-	std::array<uint8_t, leka::jpeg::mcu::output_data_buffer_size> _mcu_data_output_buffer {0};
-	std::array<uint8_t, leka::jpeg::input_data_buffer_size> _jpeg_data_output_buffer {0};
+	std::array<uint8_t, leka::jpeg::output_chunk_size> _mcu_data_output_buffer {0};
+	std::array<uint8_t, leka::jpeg::input_chunk_size> _jpeg_data_output_buffer {0};
 
 	// TODO(@yann): do we really need this struct?
 	JPEGDataBuffer _jpeg_input_buffer = {_jpeg_data_output_buffer.data(), 0};

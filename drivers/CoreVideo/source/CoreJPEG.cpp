@@ -44,7 +44,7 @@ auto CoreJPEG::decodeImageWithPolling() -> HAL_StatusTypeDef
 	// WARNING: DO NOT REMOVE
 	_mcu_block_index = 0;
 
-	if (_jpeg_input_buffer.size = _file->read(_jpeg_input_buffer.data, leka::jpeg::input_data_buffer_size);
+	if (_jpeg_input_buffer.size = _file->read(_jpeg_input_buffer.data, leka::jpeg::input_chunk_size);
 		_jpeg_input_buffer.size == 0) {
 		return HAL_ERROR;
 	}
@@ -52,7 +52,7 @@ auto CoreJPEG::decodeImageWithPolling() -> HAL_StatusTypeDef
 	_input_file_offset = _jpeg_input_buffer.size;
 
 	_hal.HAL_JPEG_Decode(&_hjpeg, _jpeg_input_buffer.data, _jpeg_input_buffer.size, _mcu_data_output_buffer.data(),
-						 leka::jpeg::mcu::output_data_buffer_size, HAL_MAX_DELAY);
+						 leka::jpeg::output_chunk_size, HAL_MAX_DELAY);
 
 	return HAL_OK;
 }
@@ -106,7 +106,7 @@ void CoreJPEG::onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t size)
 		_file->seek(_input_file_offset, SEEK_SET);
 	}
 
-	if (_jpeg_input_buffer.size = _file->read(_jpeg_input_buffer.data, leka::jpeg::input_data_buffer_size);
+	if (_jpeg_input_buffer.size = _file->read(_jpeg_input_buffer.data, leka::jpeg::input_chunk_size);
 		_jpeg_input_buffer.size != 0) {
 		_input_file_offset += _jpeg_input_buffer.size;
 		_hal.HAL_JPEG_ConfigInputBuffer(hjpeg, _jpeg_input_buffer.data, _jpeg_input_buffer.size);
@@ -119,7 +119,7 @@ void CoreJPEG::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_bu
 	_mcu_block_index += pConvert_Function(output_buffer, reinterpret_cast<uint8_t *>(jpeg::decoded_buffer_address),
 										  _mcu_block_index, size, nullptr);
 
-	_hal.HAL_JPEG_ConfigOutputBuffer(hjpeg, _mcu_data_output_buffer.data(), leka::jpeg::mcu::output_data_buffer_size);
+	_hal.HAL_JPEG_ConfigOutputBuffer(hjpeg, _mcu_data_output_buffer.data(), leka::jpeg::output_chunk_size);
 }
 
 void CoreJPEG::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
