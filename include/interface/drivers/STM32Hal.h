@@ -25,7 +25,9 @@ class STM32Hal
 
 	virtual void HAL_RCC_DMA2_CLK_ENABLE() = 0;
 
-	virtual void HAL_RCC_JPEG_CLK_ENABLE() = 0;
+	virtual void HAL_RCC_JPEG_CLK_ENABLE()	  = 0;
+	virtual void HAL_RCC_JPEG_FORCE_RESET()	  = 0;
+	virtual void HAL_RCC_JPEG_RELEASE_RESET() = 0;
 
 	virtual void HAL_RCC_LTDC_CLK_ENABLE()	  = 0;
 	virtual void HAL_RCC_LTDC_FORCE_RESET()	  = 0;
@@ -90,6 +92,15 @@ class STM32Hal
 											uint32_t InDataLength)	 = 0;
 	virtual void HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer,
 											 uint32_t OutDataLength) = 0;
+
+	virtual auto HAL_JPEG_RegisterInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_InfoReadyCallbackTypeDef)
+		-> HAL_StatusTypeDef = 0;
+	virtual auto HAL_JPEG_RegisterGetDataCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_GetDataCallbackTypeDef)
+		-> HAL_StatusTypeDef = 0;
+	virtual auto HAL_JPEG_RegisterDataReadyCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_DataReadyCallbackTypeDef)
+		-> HAL_StatusTypeDef = 0;
+	virtual auto HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *hjpeg, HAL_JPEG_CallbackIDTypeDef, pJPEG_CallbackTypeDef)
+		-> HAL_StatusTypeDef = 0;
 };
 
 }	// namespace leka::interface

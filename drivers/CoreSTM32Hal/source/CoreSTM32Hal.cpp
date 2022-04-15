@@ -52,6 +52,16 @@ void CoreSTM32Hal::HAL_RCC_JPEG_CLK_ENABLE()
 	__HAL_RCC_JPEG_CLK_ENABLE();   // NOLINT
 }
 
+void CoreSTM32Hal::HAL_RCC_JPEG_FORCE_RESET()
+{
+	__HAL_RCC_JPEG_FORCE_RESET();	// NOLINT
+}
+
+void CoreSTM32Hal::HAL_RCC_JPEG_RELEASE_RESET()
+{
+	__HAL_RCC_JPEG_RELEASE_RESET();	  // NOLINT
+}
+
 void CoreSTM32Hal::HAL_RCC_LTDC_CLK_ENABLE()
 {
 	__HAL_RCC_LTDC_CLK_ENABLE();   // NOLINT
@@ -251,6 +261,30 @@ void CoreSTM32Hal::HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_
 											   uint32_t OutDataLength)
 {
 	::HAL_JPEG_ConfigOutputBuffer(hjpeg, pNewOutputBuffer, OutDataLength);
+}
+
+auto CoreSTM32Hal::HAL_JPEG_RegisterInfoReadyCallback(JPEG_HandleTypeDef *hjpeg,
+													  pJPEG_InfoReadyCallbackTypeDef pCallback) -> HAL_StatusTypeDef
+{
+	return ::HAL_JPEG_RegisterInfoReadyCallback(hjpeg, pCallback);
+}
+
+auto CoreSTM32Hal::HAL_JPEG_RegisterGetDataCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_GetDataCallbackTypeDef pCallback)
+	-> HAL_StatusTypeDef
+{
+	return ::HAL_JPEG_RegisterGetDataCallback(hjpeg, pCallback);
+}
+
+auto CoreSTM32Hal::HAL_JPEG_RegisterDataReadyCallback(JPEG_HandleTypeDef *hjpeg,
+													  pJPEG_DataReadyCallbackTypeDef pCallback) -> HAL_StatusTypeDef
+{
+	return ::HAL_JPEG_RegisterDataReadyCallback(hjpeg, pCallback);
+}
+
+auto CoreSTM32Hal::HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *hjpeg, HAL_JPEG_CallbackIDTypeDef callbackID,
+											 pJPEG_CallbackTypeDef pCallback) -> HAL_StatusTypeDef
+{
+	return ::HAL_JPEG_RegisterCallback(hjpeg, callbackID, pCallback);
 }
 
 }	// namespace leka
