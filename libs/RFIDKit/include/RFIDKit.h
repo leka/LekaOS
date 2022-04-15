@@ -2,8 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#ifndef _LEKA_OS_DRIVER_LK_RFID_KIT_H_
-#define _LEKA_OS_DRIVER_LK_RFID_KIT_H_
+#pragma once
 
 #include <cstddef>
 #include <span>
@@ -58,6 +57,8 @@ class RFIDKit : public interface::RFIDReader::ISO14443
 	auto receiveReadTagData() -> bool;
 	void receiveWriteTagData();
 
+	auto isTagSignatureValid() -> bool;
+
 	void sendAuthentificate();
 	void receiveAuthentificate();
 
@@ -72,5 +73,3 @@ class RFIDKit : public interface::RFIDReader::ISO14443
 };
 
 }	// namespace leka
-
-#endif	 //_LEKA_OS_DRIVER_LK_RFID_KIT_H_
