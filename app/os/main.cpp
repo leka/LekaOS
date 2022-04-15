@@ -8,12 +8,14 @@
 #include "rtos/Thread.h"
 
 #include "CoreBattery.h"
+#include "CoreBufferedSerial.h"
 #include "CoreEventFlags.h"
 #include "CoreFlashIS25LP016D.h"
 #include "CoreFlashManagerIS25LP016D.h"
 #include "CoreMCU.h"
 #include "CorePwm.h"
 #include "CoreQSPI.h"
+#include "CoreRFIDReader.h"
 #include "CoreSPI.h"
 #include "CoreTimeout.h"
 #include "FATFileSystem.h"
@@ -21,6 +23,7 @@
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "QSPIFBlockDevice.h"
+#include "RFIDKit.h"
 #include "RobotController.h"
 #include "SDBlockDevice.h"
 #include "SerialNumberKit.h"
@@ -202,6 +205,15 @@ namespace firmware {
 
 }	// namespace firmware
 
+namespace rfid {
+
+	auto core_buffered_serial = CoreBufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
+	auto reader				  = CoreRFIDReader(core_buffered_serial);
+
+}	// namespace rfid
+
+auto rfidkit = RFIDKit(rfid::reader);
+
 namespace mcuboot {
 
 	// namespace internal {
@@ -266,16 +278,32 @@ namespace robot {
 
 	}	// namespace internal
 
-	auto controller = RobotController {internal::sleep_timeout,
-									   battery::cells,
-									   internal::serialnumberkit,
-									   firmware::kit,
-									   motors::left::motor,
-									   motors::right::motor,
-									   leds::kit,
-									   videokit,
-									   behaviorkit,
-									   commandkit};
+	auto controller = RobotController {
+		internal::sleep_timeout,
+		battery::cells,
+		internal::serialnumberkit,
+		firmware::kit,
+		motors::left::motor,
+		motors::right::motor,
+		leds::kit,
+		videokit,
+		behaviorkit,
+		commandkit,
+	};
+
+	void emergencyStop(MagicCard &_magic_card)
+	{
+		static auto emergency_stop_iteration = 0;
+		if (_magic_card == MagicCard::emergency_stop) {
+			// TODO (@yann) ajouter videokit stop()
+			leds::turnOff();
+			motors::turnOff();
+			++emergency_stop_iteration;
+			if (emergency_stop_iteration == 7) {
+				system_reset();
+			}
+		}
+	}
 
 }	// namespace robot
 
@@ -305,6 +333,7 @@ auto main() -> int
 	hello.start();
 
 	sd::init();
+	rfidkit.init();
 	firmware::initializeFlash();
 
 	commandkit.registerCommand(command::list);
@@ -312,6 +341,8 @@ auto main() -> int
 	robot::controller.initializeComponents();
 	robot::controller.registerOnUpdateLoadedCallback(firmware::setPendingUpdate);
 	robot::controller.registerEvents();
+
+	rfidkit.onTagActivated([](MagicCard _magic_card) { robot::emergencyStop(_magic_card); });
 
 	while (true) {
 		rtos::ThisThread::sleep_for(1s);
