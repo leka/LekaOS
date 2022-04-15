@@ -4,10 +4,12 @@
 
 #include "RFIDKit.h"
 
+#include "LogKit.h"
+
 namespace leka {
 void RFIDKit::init()
 {
-	// printf("init \n");
+	// log_debug("init \n");
 	static auto getTagDataCallback = [this]() { this->getTagData(); };
 
 	_rfid_reader.registerTagAvailableCallback(getTagDataCallback);
@@ -18,7 +20,7 @@ void RFIDKit::getTagData()
 {
 	switch (_state) {
 		case state::SENSOR_SLEEP: {
-			printf("CURRENT STATE : SENSOR_SLEEP\n");
+			log_debug("CURRENT STATE : SENSOR_SLEEP\n");
 			if (_rfid_reader.checkForTagDetection()) {
 				_rfid_reader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 				_state = state::TAG_COMMUNICATION_PROTOCOL_SET;
@@ -29,7 +31,7 @@ void RFIDKit::getTagData()
 		} break;
 
 		case state::TAG_COMMUNICATION_PROTOCOL_SET: {
-			printf("CURRENT STATE : TAG_PROTOCOL_SET\n");
+			log_debug("CURRENT STATE : TAG_PROTOCOL_SET\n");
 			sendREQA();
 			_state = state::WAIT_FOR_ATQA_RESPONSE;
 
@@ -46,10 +48,11 @@ void RFIDKit::getTagData()
 		} break;
 
 		case state::TAG_IDENTIFIED: {
-			printf("CURRENT STATE : TAG_IDENTIFIED\n");
+			log_debug("CURRENT STATE : TAG_IDENTIFIED\n");
 
 			if (receiveReadTagData()) {
 				sendReadRegister6();
+				isTagSignatureValid();
 				_state = state::TAG_ACTIVATED;
 			} else {
 				_rfid_reader.setModeTagDetection();
@@ -57,16 +60,16 @@ void RFIDKit::getTagData()
 			}
 		} break;
 		case state::TAG_ACTIVATED: {
-			printf("CURRENT STATE : TAG_ACTIVATED\n");
+			log_debug("CURRENT STATE : TAG_ACTIVATED\n");
 
-			if (receiveReadTagData()) {
-				printf("Data : ");
+			if (receiveReadTagData() && isTagSignatureValid()) {
+				log_debug("Data : ");
 				for (unsigned char i: _tag.data) {
-					printf("%x, ", i);
+					log_debug("%x, ", i);
 				}
-				printf("\n");
+				log_debug("\n");
 			}
-
+			_on_tag_activated_callback(_tag);
 			_rfid_reader.setModeTagDetection();
 			_state = state::SENSOR_SLEEP;
 
@@ -104,6 +107,14 @@ void RFIDKit::sendReadRegister6()
 	commandToArray(command_read_register_4, array);
 
 	_rfid_reader.sendCommandToTag(array);
+}
+
+auto RFIDKit::isTagSignatureValid() -> bool
+{
+	auto lambda = [this]() {
+		return (_tag.data[0] == 0x4C && _tag.data[1] == 0x45 && _tag.data[2] == 0x4B && _tag.data[3] == 0x41);
+	};
+	return lambda();
 }
 
 void RFIDKit::sendWriteRegister(uint8_t registerToWrite, std::array<uint8_t, 4> data)
