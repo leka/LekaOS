@@ -47,9 +47,9 @@ auto main() -> int
 
 	screen.initializeScreen();
 
-	for (auto &name: image_names) {
-		screen.displayImage(name);
-	}
+	// for (auto &name: image_names) {
+	// 	screen.displayImage(name);
+	// }
 
 	while (true) {
 		for (auto &name: video_names) {

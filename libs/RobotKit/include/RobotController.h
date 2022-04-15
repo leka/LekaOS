@@ -182,11 +182,11 @@ class RobotController : public interface::RobotController
 
 		auto on_low_battery = [this] {
 			if (!_battery.isCharging()) {
-				_behaviorkit.lowBattery();
+				// _behaviorkit.lowBattery();
 			}
 
 			if (_battery.level() == 0) {
-				system_reset();
+				// system_reset();
 			}
 		};
 		_battery_kit.onLowBattery(on_low_battery);
