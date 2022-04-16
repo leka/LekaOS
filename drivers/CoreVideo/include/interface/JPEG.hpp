@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "storage/filesystem/fat/ChaN/ff.h"
 
 #include "interface/drivers/STM32Hal.h"
 #include "interface/platform/File.h"

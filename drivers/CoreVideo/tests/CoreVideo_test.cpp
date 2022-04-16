@@ -159,7 +159,6 @@ TEST_F(CoreVideoTest, drawRectangleWithColor)
 
 TEST_F(CoreVideoTest, displayImage)
 {
-	FIL file;
 	EXPECT_CALL(jpegmock, displayImage(&filemock)).Times(1);
 
 	corevideo.displayImage(&filemock);
