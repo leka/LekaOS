@@ -4,6 +4,7 @@
 
 #include "StateMachine.h"
 
+#include "CoreMutex.h"
 #include "RCLogger.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -32,8 +33,9 @@ class StateMachineTest : public testing::Test
 	mock::RobotController mock_rc {};
 	robot::sm::logger logger {};
 
-	boost::sml::sm<robot::StateMachine, boost::sml::testing, boost::sml::logger<robot::sm::logger>> sm {
-		static_cast<interface::RobotController &>(mock_rc), logger};
+	boost::sml::sm<robot::StateMachine, boost::sml::testing, boost::sml::logger<robot::sm::logger>,
+				   boost::sml::thread_safe<CoreMutex>>
+		sm {static_cast<interface::RobotController &>(mock_rc), logger};
 };
 
 using namespace bsml;	// ? do not move as it won't compile
