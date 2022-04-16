@@ -71,8 +71,22 @@ TEST_F(CoreJPEGTest, initializationSequence)
 {
 	{
 		InSequence seq;
+
 		EXPECT_CALL(halmock, HAL_RCC_JPEG_CLK_ENABLE).Times(1);
+		EXPECT_CALL(halmock, HAL_RCC_JPEG_FORCE_RESET).Times(1);
+		EXPECT_CALL(halmock, HAL_RCC_JPEG_RELEASE_RESET).Times(1);
+
+		EXPECT_CALL(halmock, HAL_NVIC_SetPriority).Times(1);
+		EXPECT_CALL(halmock, HAL_NVIC_EnableIRQ).Times(1);
+
+		EXPECT_CALL(halmock, HAL_JPEG_RegisterCallback(_, HAL_JPEG_MSPINIT_CB_ID, _)).Times(1);
 		EXPECT_CALL(halmock, HAL_JPEG_Init).Times(1);
+
+		EXPECT_CALL(halmock, HAL_JPEG_RegisterInfoReadyCallback).Times(1);
+		EXPECT_CALL(halmock, HAL_JPEG_RegisterGetDataCallback).Times(1);
+		EXPECT_CALL(halmock, HAL_JPEG_RegisterDataReadyCallback).Times(1);
+		EXPECT_CALL(halmock, HAL_JPEG_RegisterCallback(_, HAL_JPEG_DECODE_CPLT_CB_ID, _)).Times(1);
+		EXPECT_CALL(halmock, HAL_JPEG_RegisterCallback(_, HAL_JPEG_ERROR_CB_ID, _)).Times(1);
 	}
 
 	corejpeg.initialize();
