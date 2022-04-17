@@ -144,7 +144,7 @@ class CircularQueue
 
 	[[nodiscard]] auto full() const -> bool { return core_util_atomic_load_bool(&_full); }
 
-	void reset()
+	void clear()
 	{
 		const std::scoped_lock<CriticalSection> lock(_lock);
 

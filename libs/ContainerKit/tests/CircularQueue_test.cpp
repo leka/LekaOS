@@ -41,12 +41,12 @@ TEST_F(CircularQueueTest, pushOneItemPopOneItem)
 	EXPECT_EQ(item, 1);
 }
 
-TEST_F(CircularQueueTest, reset)
+TEST_F(CircularQueueTest, clear)
 {
 	buf.push(1);
 	EXPECT_EQ(buf.size(), 1);
 
-	buf.reset();
+	buf.clear();
 	EXPECT_EQ(buf.size(), 0);
 }
 

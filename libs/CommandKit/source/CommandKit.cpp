@@ -37,7 +37,7 @@ void CommandKit::processCommands()
 	auto pos = 0U;
 
 	if (!_input_buffer.hasPattern(kStartPattern.data(), kStartPattern.size(), pos)) {
-		_input_buffer.reset();
+		_input_buffer.clear();
 		_is_ready_to_process = true;
 		return;
 	}
