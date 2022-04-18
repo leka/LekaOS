@@ -7,6 +7,7 @@
 #include <array>
 #include <concepts>
 #include <mutex>
+#include <span>
 
 #include "platform/mbed_atomic.h"
 
@@ -41,6 +42,8 @@ class CircularQueue
 			_full = true;
 		}
 	}
+
+	void push(std::span<const T> items) { push(items.data(), items.size()); }
 
 	void push(const T *src, CounterType len)
 	{
@@ -81,6 +84,18 @@ class CircularQueue
 				_full = true;
 			}
 		}
+	}
+
+	void drop()
+	{
+		const std::scoped_lock<CriticalSection> lock(_lock);
+
+		if (non_critical_empty()) {	  // LCOV_EXCL_LINE
+			return;
+		}
+
+		_tail = incrementCounter(_tail);
+		_full = false;
 	}
 
 	auto pop(T &data) -> bool
@@ -144,7 +159,7 @@ class CircularQueue
 
 	[[nodiscard]] auto full() const -> bool { return core_util_atomic_load_bool(&_full); }
 
-	void reset()
+	void clear()
 	{
 		const std::scoped_lock<CriticalSection> lock(_lock);
 
@@ -196,6 +211,11 @@ class CircularQueue
 		data = _buffer[index];
 
 		return true;
+	}
+
+	auto hasPattern(std::span<const T> pattern, std::unsigned_integral auto &position) -> bool
+	{
+		return hasPattern(pattern.data(), pattern.size(), position);
 	}
 
 	auto hasPattern(const T *pattern, std::size_t size, std::unsigned_integral auto &position) -> bool
