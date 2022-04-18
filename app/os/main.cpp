@@ -227,6 +227,8 @@ namespace watchdog {
 	{
 		while (true) {
 			internal::instance.kick();
+			log_info("Robot still alive after: %ims",
+					 static_cast<int>(rtos::Kernel::Clock::now().time_since_epoch().count()));
 			rtos::ThisThread::sleep_for(5s);
 		}
 	}
@@ -298,8 +300,6 @@ auto main() -> int
 	robot::controller.registerEvents();
 
 	while (true) {
-		log_debug("A message from your board %s --> \"%s\" at %ims", MBED_CONF_APP_TARGET_NAME, hello.world,
-				  int(rtos::Kernel::Clock::now().time_since_epoch().count()));
 		rtos::ThisThread::sleep_for(1s);
 	}
 }
