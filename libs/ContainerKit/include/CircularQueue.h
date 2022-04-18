@@ -83,6 +83,18 @@ class CircularQueue
 		}
 	}
 
+	void drop()
+	{
+		const std::scoped_lock<CriticalSection> lock(_lock);
+
+		if (non_critical_empty()) {	  // LCOV_EXCL_LINE
+			return;
+		}
+
+		_tail = incrementCounter(_tail);
+		_full = false;
+	}
+
 	auto pop(T &data) -> bool
 	{
 		const std::scoped_lock<CriticalSection> lock(_lock);
