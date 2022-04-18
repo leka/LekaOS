@@ -71,11 +71,9 @@ TEST_F(CircularQueueTest, peekOneItemAtPositionLoopOver)
 
 	EXPECT_EQ(buff.size(), 3);
 
-	auto _ = int {};
-
-	buff.pop(_);
-	buff.pop(_);
-	buff.pop(_);
+	buff.drop();
+	buff.drop();
+	buff.drop();
 
 	EXPECT_EQ(buff.size(), 0);
 
