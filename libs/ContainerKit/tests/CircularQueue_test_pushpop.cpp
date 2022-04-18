@@ -15,6 +15,55 @@ TEST_F(CircularQueueTest, pushOneItemPopOneItem)
 	EXPECT_EQ(item, 1);
 }
 
+TEST_F(CircularQueueTest, pushPopMultipleItemsSpan)
+{
+	auto items		  = std::array<int, TEST_BUFFER_SIZE> {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	auto items_popped = std::array<int, TEST_BUFFER_SIZE> {};
+
+	buf.push(items);
+
+	EXPECT_EQ(buf.size(), 10);
+
+	int number_of_items = buf.pop(items_popped.data(), 10);
+
+	EXPECT_EQ(buf.size(), 0);
+	EXPECT_EQ(number_of_items, 10);
+	EXPECT_TRUE(0 == memcmp(items.data(), items_popped.data(), 10));
+}
+
+TEST_F(CircularQueueTest, pushPopMultipleItemsSpanTwice)
+{
+	auto items		  = std::array<int, TEST_BUFFER_SIZE> {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+	auto items_1	  = std::array<int, 5> {1, 2, 3, 4, 5};
+	auto items_2	  = std::array<int, 5> {6, 7, 8, 9, 10};
+	auto items_popped = std::array<int, TEST_BUFFER_SIZE> {};
+
+	{
+		buf.push(items_1);
+
+		EXPECT_EQ(buf.size(), 5);
+
+		int number_of_items = buf.pop(items_popped.data(), 5);
+
+		EXPECT_EQ(buf.size(), 0);
+		EXPECT_EQ(number_of_items, 5);
+		EXPECT_TRUE(0 == memcmp(items_1.data(), items_popped.data(), 5));
+	}
+
+	{
+		buf.push(items_1);
+		buf.push(items_2);
+
+		EXPECT_EQ(buf.size(), 10);
+
+		int number_of_items = buf.pop(items_popped.data(), 10);
+
+		EXPECT_EQ(buf.size(), 0);
+		EXPECT_EQ(number_of_items, 10);
+		EXPECT_TRUE(0 == memcmp(items.data(), items_popped.data(), 10));
+	}
+}
+
 TEST_F(CircularQueueTest, pushPopMultipleItems)
 {
 	auto items = std::array<int, TEST_BUFFER_SIZE> {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};

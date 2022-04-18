@@ -7,6 +7,7 @@
 #include <array>
 #include <concepts>
 #include <mutex>
+#include <span>
 
 #include "platform/mbed_atomic.h"
 
@@ -41,6 +42,8 @@ class CircularQueue
 			_full = true;
 		}
 	}
+
+	void push(std::span<const T> items) { push(items.data(), items.size()); }
 
 	void push(const T *src, CounterType len)
 	{
