@@ -213,6 +213,11 @@ class CircularQueue
 		return true;
 	}
 
+	auto hasPattern(std::span<const T> pattern, std::unsigned_integral auto &position) -> bool
+	{
+		return hasPattern(pattern.data(), pattern.size(), position);
+	}
+
 	auto hasPattern(const T *pattern, std::size_t size, std::unsigned_integral auto &position) -> bool
 	{
 		const std::scoped_lock<CriticalSection> lock(_lock);

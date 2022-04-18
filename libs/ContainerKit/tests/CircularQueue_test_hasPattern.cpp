@@ -19,6 +19,21 @@ TEST_F(CircularQueueTest, hasPattern)
 	EXPECT_EQ(pos, 3);
 }
 
+TEST_F(CircularQueueTest, hasPatternSpan)
+{
+	auto items	 = std::array {0, 1, 2, 0x2A, 0x2B, 0x2C, 0x2D, 7, 8, 9};
+	auto pattern = std::array {0x2A, 0x2B, 0x2C, 0x2D};
+
+	buf.push(items);
+
+	auto pos = uint8_t {};
+
+	auto ret = buf.hasPattern(pattern, pos);
+
+	EXPECT_TRUE(ret);
+	EXPECT_EQ(pos, 3);
+}
+
 TEST_F(CircularQueueTest, hasPatternLoopOver)
 {
 	auto items	 = std::array {0, 1, 2, 3, 4, 5, 6, 7, 0x2A, 0x2B, 0x2C, 0x2D};
