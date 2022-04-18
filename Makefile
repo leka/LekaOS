@@ -53,8 +53,8 @@ CMAKE_TOOLS_CONFIG_DIR := $(CMAKE_TOOLS_BUILD_DIR)/cmake_config
 # MARK: - Coverage exclusions
 #
 
-EXCLUDE_FROM_GCOVR_COVERAGE = -e '.*_build.*' -e '.*extern.*' -e '.*tests/unit.*' -e '.*tests/mocks.*' -e '.*_test.*\.cpp' -e '.*include/boost.*' -e '.*include/interface.*' -e '.*CoreSTM32Hal.*' -e '.*CoreTicker.*' -e '.*CoreTimeout.*'
-EXCLUDE_FROM_LCOV_COVERAGE  = '*Xcode*' '*_build*' '*extern*' '*tests/unit*' '*tests/mocks*' '*_test*.cpp' '*include/boost*' '*include/interface*' '*CoreSTM32Hal*' '.*CoreTicker.*' '.*CoreTimeout.*'
+EXCLUDE_FROM_GCOVR_COVERAGE = -e '.*Xcode.*' -e '.*_build.*' -e '.*extern.*' -e '.*tests/unit.*' -e '.*tests/mocks.*' -e '.*_test.*\..*' -e '.*include/boost.*' -e '.*include/interface.*' -e '.*CoreSTM32Hal.*' -e '.*CoreTicker.*' -e '.*CoreTimeout.*'
+EXCLUDE_FROM_LCOV_COVERAGE  =     '*Xcode*'      '*_build*'      '*extern*'      '*tests/unit*'      '*tests/mocks*'      '*_test*.*'        '*include/boost*'      '*include/interface*'      '*CoreSTM32Hal*'     '.*CoreTicker.*'    '.*CoreTimeout.*'
 
 #
 # MARK: - .bin path
