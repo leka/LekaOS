@@ -93,6 +93,10 @@ class CoreSTM32Hal : public interface::STM32Hal
 				(JPEG_HandleTypeDef * hjpeg, uint8_t *pDataIn, uint32_t InDataLength, uint8_t *pDataOutMCU,
 				 uint32_t OutDataLength, uint32_t Timeout),
 				(override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_JPEG_Decode_DMA,
+				(JPEG_HandleTypeDef * hjpeg, uint8_t *pDataIn, uint32_t InDataLength, uint8_t *pDataOutMCU,
+				 uint32_t OutDataLength),
+				(override));
 	MOCK_METHOD(void, HAL_JPEG_ConfigInputBuffer,
 				(JPEG_HandleTypeDef * hjpeg, uint8_t *pNewInputBuffer, uint32_t InDataLength), (override));
 	MOCK_METHOD(void, HAL_JPEG_ConfigOutputBuffer,
@@ -106,6 +110,9 @@ class CoreSTM32Hal : public interface::STM32Hal
 				(JPEG_HandleTypeDef *, pJPEG_DataReadyCallbackTypeDef), (override));
 	MOCK_METHOD(HAL_StatusTypeDef, HAL_JPEG_RegisterCallback,
 				(JPEG_HandleTypeDef *, HAL_JPEG_CallbackIDTypeDef, pJPEG_CallbackTypeDef), (override));
+
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_JPEG_Pause, (JPEG_HandleTypeDef *, uint32_t), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_JPEG_Resume, (JPEG_HandleTypeDef *, uint32_t), (override));
 };
 
 }	// namespace leka::mock

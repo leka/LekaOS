@@ -243,20 +243,30 @@ auto CoreSTM32Hal::HAL_JPEG_Init(JPEG_HandleTypeDef *hjpeg) -> HAL_StatusTypeDef
 {
 	return ::HAL_JPEG_Init(hjpeg);
 }
+
 auto CoreSTM32Hal::HAL_JPEG_GetInfo(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *pInfo) -> HAL_StatusTypeDef
 {
 	return ::HAL_JPEG_GetInfo(hjpeg, pInfo);
 }
+
 auto CoreSTM32Hal::HAL_JPEG_Decode(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataIn, uint32_t InDataLength,
 								   uint8_t *pDataOutMCU, uint32_t OutDataLength, uint32_t Timeout) -> HAL_StatusTypeDef
 {
 	return ::HAL_JPEG_Decode(hjpeg, pDataIn, InDataLength, pDataOutMCU, OutDataLength, Timeout);
 }
+
+auto CoreSTM32Hal::HAL_JPEG_Decode_DMA(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataIn, uint32_t InDataLength,
+									   uint8_t *pDataOutMCU, uint32_t OutDataLength) -> HAL_StatusTypeDef
+{
+	return ::HAL_JPEG_Decode_DMA(hjpeg, pDataIn, InDataLength, pDataOutMCU, OutDataLength);
+}
+
 void CoreSTM32Hal::HAL_JPEG_ConfigInputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewInputBuffer,
 											  uint32_t InDataLength)
 {
 	::HAL_JPEG_ConfigInputBuffer(hjpeg, pNewInputBuffer, InDataLength);
 }
+
 void CoreSTM32Hal::HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer,
 											   uint32_t OutDataLength)
 {
@@ -285,6 +295,16 @@ auto CoreSTM32Hal::HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *hjpeg, HAL_JPEG
 											 pJPEG_CallbackTypeDef pCallback) -> HAL_StatusTypeDef
 {
 	return ::HAL_JPEG_RegisterCallback(hjpeg, callbackID, pCallback);
+}
+
+auto CoreSTM32Hal::HAL_JPEG_Pause(JPEG_HandleTypeDef *hjpeg, uint32_t XferSelection) -> HAL_StatusTypeDef
+{
+	return ::HAL_JPEG_Pause(hjpeg, XferSelection);
+}
+
+auto CoreSTM32Hal::HAL_JPEG_Resume(JPEG_HandleTypeDef *hjpeg, uint32_t XferSelection) -> HAL_StatusTypeDef
+{
+	return ::HAL_JPEG_Resume(hjpeg, XferSelection);
 }
 
 }	// namespace leka

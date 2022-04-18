@@ -87,6 +87,8 @@ class CoreSTM32Hal : public interface::STM32Hal
 	auto HAL_JPEG_GetInfo(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *pInfo) -> HAL_StatusTypeDef final;
 	auto HAL_JPEG_Decode(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataIn, uint32_t InDataLength, uint8_t *pDataOutMCU,
 						 uint32_t OutDataLength, uint32_t Timeout) -> HAL_StatusTypeDef final;
+	auto HAL_JPEG_Decode_DMA(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataIn, uint32_t InDataLength, uint8_t *pDataOutMCU,
+							 uint32_t OutDataLength) -> HAL_StatusTypeDef final;
 	void HAL_JPEG_ConfigInputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewInputBuffer, uint32_t InDataLength) final;
 	void HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer,
 									 uint32_t OutDataLength) final;
@@ -99,6 +101,9 @@ class CoreSTM32Hal : public interface::STM32Hal
 		-> HAL_StatusTypeDef final;
 	auto HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *hjpeg, HAL_JPEG_CallbackIDTypeDef callbackID,
 								   pJPEG_CallbackTypeDef pCallback) -> HAL_StatusTypeDef final;
+
+	auto HAL_JPEG_Pause(JPEG_HandleTypeDef *hjpeg, uint32_t XferSelection) -> HAL_StatusTypeDef final;
+	auto HAL_JPEG_Resume(JPEG_HandleTypeDef *hjpeg, uint32_t XferSelection) -> HAL_StatusTypeDef final;
 };
 
 }	// namespace leka
