@@ -17,6 +17,7 @@ target_sources(CoreVideo
 		source/CoreGraphics.cpp
 		source/JPEGImageProperties.cpp
 		source/CoreJPEGModePolling.cpp
+		source/CoreJPEGModeDMA.cpp
 		source/CoreJPEG.cpp
 		source/CoreLTDC.cpp
 		source/CoreDSI.cpp
@@ -46,6 +47,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/CoreGraphics_test.cpp
 		tests/JPEGImageProperties_test.cpp
 		tests/CoreJPEGModePolling_test.cpp
+		tests/CoreJPEGModeDMA_test.cpp
 		tests/CoreJPEG_test.cpp
 		tests/CoreLCD_test.cpp
 		tests/CoreLTDC_test.cpp

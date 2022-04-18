@@ -17,6 +17,8 @@ class CoreJPEG : public interface::JPEGBase
 	MOCK_METHOD(JPEG_HandleTypeDef, getHandle, (), (override));
 	MOCK_METHOD(JPEG_HandleTypeDef *, getHandlePointer, (), (override));
 
+	MOCK_METHOD(void, registerCallbacks, (), (override));
+
 	MOCK_METHOD(void, decodeImage, (interface::File * file), (override));
 
 	MOCK_METHOD(JPEGImageProperties, getImageProperties, (), (override));

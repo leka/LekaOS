@@ -61,6 +61,8 @@ namespace jpeg {
 
 	inline constexpr uint32_t input_chunk_size	= 2048;
 	inline constexpr uint32_t output_chunk_size = mcu::output_chunk_multiplier * 4;
+	inline constexpr uint32_t input_buffers_nb	= 1;
+	inline constexpr uint32_t output_buffers_nb = 8;
 
 	inline constexpr uint8_t JPEG_ARGB8888 = 0;	  // ARGB8888 Color Format
 	inline constexpr uint8_t JPEG_RGB888   = 1;	  // RGB888 Color Format

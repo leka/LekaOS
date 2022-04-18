@@ -13,6 +13,7 @@
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreJPEG.hpp"
+#include "CoreJPEGModeDMA.hpp"
 #include "CoreJPEGModePolling.hpp"
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
@@ -44,7 +45,7 @@ CoreGraphics coregraphics(coredma2d);
 CoreFont corefont(pixel);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 CoreLCD corelcd(coreotm);
-CoreJPEGModePolling _corejpegmode {hal};
+CoreJPEGModeDMA _corejpegmode {hal};
 CoreJPEG corejpeg {hal, _corejpegmode};
 CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
@@ -62,31 +63,21 @@ void LTDC_IRQHandler(void)
 {
 	HAL_LTDC_IRQHandler(&coreltdc.getHandle());
 }
+
+void JPEG_IRQHandler(void)
+{
+	HAL_JPEG_IRQHandler(corejpeg.getHandlePointer());
 }
 
-void registerCallbacks()
+void DMA2_Stream0_IRQHandler(void)
 {
-	HAL_JPEG_RegisterInfoReadyCallback(
-		corejpeg.getHandlePointer(),
-		[](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) { _corejpegmode.onInfoReadyCallback(hjpeg, info); });
+	HAL_DMA_IRQHandler(corejpeg.getHandle().hdmain);
+}
 
-	HAL_JPEG_RegisterGetDataCallback(corejpeg.getHandlePointer(), [](JPEG_HandleTypeDef *hjpeg, uint32_t size) {
-		_corejpegmode.onDataAvailableCallback(hjpeg, size);
-	});
-
-	HAL_JPEG_RegisterDataReadyCallback(corejpeg.getHandlePointer(),
-									   [](JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t size) {
-										   _corejpegmode.onDataReadyCallback(hjpeg, pDataOut, size);
-									   });
-
-	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_MSPINIT_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { _corejpegmode.onMspInitCallback(hjpeg); });
-
-	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_DECODE_CPLT_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { _corejpegmode.onDecodeCompleteCallback(hjpeg); });
-
-	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_ERROR_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { _corejpegmode.onErrorCallback(hjpeg); });
+void DMA2_Stream1_IRQHandler(void)
+{
+	HAL_DMA_IRQHandler(corejpeg.getHandle().hdmaout);
+}
 }
 
 void initializeSD()
@@ -110,7 +101,6 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(2s);
 
 	corevideo.initialize();
-	registerCallbacks();
 
 	initializeSD();
 
