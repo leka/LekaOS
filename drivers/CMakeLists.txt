@@ -37,3 +37,6 @@ add_subdirectory(${DRIVERS_DIR}/CoreMicrophone)
 add_subdirectory(${DRIVERS_DIR}/CoreLED)
 add_subdirectory(${DRIVERS_DIR}/CoreMotor)
 add_subdirectory(${DRIVERS_DIR}/FastLED)
+
+# Expander drivers
+add_subdirectory(${DRIVERS_DIR}/CoreIOExpander)
