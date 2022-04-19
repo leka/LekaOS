@@ -96,5 +96,5 @@ TEST_F(CoreJPEGTest, decodeImage)
 {
 	EXPECT_CALL(modemock, decode).Times(1);
 
-	corejpeg.decodeImage(&filemock);
+	corejpeg.decodeImage(filemock);
 }

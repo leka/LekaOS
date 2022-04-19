@@ -19,7 +19,7 @@ class CoreJPEGMode : public interface::JPEGMode
 	MOCK_METHOD(void, onDataAvailableCallback, (JPEG_HandleTypeDef *, uint32_t), (override));
 	MOCK_METHOD(void, onDecodeCompleteCallback, (JPEG_HandleTypeDef *), (override));
 
-	MOCK_METHOD(HAL_StatusTypeDef, decode, (JPEG_HandleTypeDef *, interface::File *), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, decode, (JPEG_HandleTypeDef *, interface::File &), (override));
 };
 
 }	// namespace leka::mock

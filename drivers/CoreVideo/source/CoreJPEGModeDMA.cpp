@@ -148,13 +148,13 @@ void CoreJPEGModeDMA::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
 	_hw_decode_ended = true;
 }
 
-auto CoreJPEGModeDMA::decode(JPEG_HandleTypeDef *hjpeg, interface::File *file) -> HAL_StatusTypeDef
+auto CoreJPEGModeDMA::decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> HAL_StatusTypeDef
 {
 	reset();
 
 	// read file and fill input buffers
 	for (auto &buffer: _input_buffers) {
-		buffer.datasize = file->read(buffer.data, jpeg::input_chunk_size);
+		buffer.datasize = file.read(buffer.data, jpeg::input_chunk_size);
 		if (buffer.datasize > 0) {
 			buffer.state = Buffer::State::Full;
 		}
@@ -215,13 +215,13 @@ void CoreJPEGModeDMA::reset()
 	}
 }
 
-void CoreJPEGModeDMA::decoderInputHandler(JPEG_HandleTypeDef *hjpeg, interface::File *file)
+void CoreJPEGModeDMA::decoderInputHandler(JPEG_HandleTypeDef *hjpeg, interface::File &file)
 {
 	auto &write_buffer = _input_buffers[_input_buffers_write_index];
 	auto &read_buffer  = _input_buffers[_input_buffers_read_index];
 
 	if (write_buffer.state == Buffer::State::Empty) {
-		write_buffer.datasize = file->read(write_buffer.data, jpeg::input_chunk_size);
+		write_buffer.datasize = file.read(write_buffer.data, jpeg::input_chunk_size);
 		if (write_buffer.datasize > 0) {
 			write_buffer.state = Buffer::State::Full;
 		} else {

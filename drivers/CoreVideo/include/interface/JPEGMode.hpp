@@ -20,7 +20,7 @@ struct JPEGMode {
 	virtual void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)									 = 0;
 
 	// TODO(@yann): Update Return type with something else than HAL status
-	virtual auto decode(JPEG_HandleTypeDef *hjpeg, interface::File *file) -> HAL_StatusTypeDef = 0;
+	virtual auto decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> HAL_StatusTypeDef = 0;
 };
 
 }	// namespace leka::interface

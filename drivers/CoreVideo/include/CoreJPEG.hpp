@@ -28,7 +28,7 @@ class CoreJPEG : public interface::JPEGBase
 	auto getHandle() -> JPEG_HandleTypeDef final;
 	auto getHandlePointer() -> JPEG_HandleTypeDef * final;
 
-	void decodeImage(interface::File *file) final;
+	void decodeImage(interface::File &file) final;
 
 	auto getImageProperties() -> JPEGImageProperties final;
 

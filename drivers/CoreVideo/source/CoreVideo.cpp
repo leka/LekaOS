@@ -70,7 +70,7 @@ void CoreVideo::displayRectangle(interface::Graphics::FilledRectangle rectangle,
 	_coregraphics.drawRectangle(rectangle, color);
 }
 
-void CoreVideo::displayImage(interface::File *file)
+void CoreVideo::displayImage(interface::File &file)
 {
 	_corejpeg.decodeImage(file);
 

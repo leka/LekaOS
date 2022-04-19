@@ -162,12 +162,12 @@ TEST_F(CoreVideoTest, displayImage)
 	{
 		InSequence seq;
 
-		EXPECT_CALL(jpegmock, decodeImage(&filemock)).Times(1);
+		EXPECT_CALL(jpegmock, decodeImage).Times(1);
 		EXPECT_CALL(jpegmock, getImageProperties).Times(1);
 		EXPECT_CALL(dma2dmock, transferImage).Times(1);
 	}
 
-	corevideo.displayImage(&filemock);
+	corevideo.displayImage(filemock);
 }
 
 TEST_F(CoreVideoTest, displayText)

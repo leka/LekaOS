@@ -82,14 +82,14 @@ void CoreJPEGModePolling::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
 	// TODO(@yann): implement flag
 }
 
-auto CoreJPEGModePolling::decode(JPEG_HandleTypeDef *hjpeg, interface::File *file) -> HAL_StatusTypeDef
+auto CoreJPEGModePolling::decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> HAL_StatusTypeDef
 {
-	_file = file;
+	_file = &file;
 
 	// WARNING: DO NOT REMOVE
 	_mcu_block_index = 0;
 
-	if (_jpeg_input_buffer.size = file->read(_jpeg_input_buffer.data, leka::jpeg::input_chunk_size);
+	if (_jpeg_input_buffer.size = _file->read(_jpeg_input_buffer.data, leka::jpeg::input_chunk_size);
 		_jpeg_input_buffer.size == 0) {
 		return HAL_ERROR;
 	}

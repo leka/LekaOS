@@ -150,7 +150,7 @@ auto main() -> int
 		for (const auto &image_name: image_names) {
 			if (file.open(image_name)) {
 				log_info("File opened");
-				corevideo.displayImage(&file);
+				corevideo.displayImage(file);
 				file.close();
 				rtos::ThisThread::sleep_for(1s);
 			}

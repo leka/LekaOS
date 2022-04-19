@@ -76,7 +76,7 @@ void CoreJPEG::registerProcessCallbacks()
 								   [](JPEG_HandleTypeDef *hjpeg) { self._mode.onErrorCallback(hjpeg); });
 }
 
-void CoreJPEG::decodeImage(interface::File *file)
+void CoreJPEG::decodeImage(interface::File &file)
 {
 	_mode.decode(&_hjpeg, file);
 }

@@ -26,14 +26,14 @@ struct CoreJPEGModeDMA : interface::JPEGMode {
 	void onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize) final;
 	void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) final;
 
-	auto decode(JPEG_HandleTypeDef *hjpeg, interface::File *file) -> HAL_StatusTypeDef final;
+	auto decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> HAL_StatusTypeDef final;
 
   private:
 	static std::array<uint8_t, jpeg::input_chunk_size * jpeg::input_buffers_nb> BIG_CHUNGUS_OF_MEMORY_IN;
 	static std::array<uint8_t, jpeg::output_chunk_size * jpeg::output_buffers_nb> BIG_CHUNGUS_OF_MEMORY_OUT;
 
 	void reset();
-	void decoderInputHandler(JPEG_HandleTypeDef *hjpeg, interface::File *file);
+	void decoderInputHandler(JPEG_HandleTypeDef *hjpeg, interface::File &file);
 	auto decoderOutputHandler(JPEG_HandleTypeDef *hjpeg) -> bool;
 
 	interface::STM32Hal &_hal;

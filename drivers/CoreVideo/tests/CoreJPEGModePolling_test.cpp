@@ -24,7 +24,7 @@ class CoreJPEGModePollingTest : public ::testing::Test
 	void SetUp() override
 	{
 		EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).Times(1);
-		corejpegmode.decode(&hjpeg, &filemock);
+		corejpegmode.decode(&hjpeg, filemock);
 	}
 	// void TearDown() override {}
 
@@ -45,7 +45,7 @@ TEST_F(CoreJPEGModePollingTest, decodeSuccess)
 	EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillOnce(Return(42));
 	EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(1);
 
-	auto status = corejpegmode.decode(&hjpeg, &filemock);
+	auto status = corejpegmode.decode(&hjpeg, filemock);
 
 	EXPECT_EQ(status, HAL_OK);
 }
@@ -55,7 +55,7 @@ TEST_F(CoreJPEGModePollingTest, decodeFailed)
 	EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillOnce(Return(0));
 	EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(0);
 
-	auto status = corejpegmode.decode(&hjpeg, &filemock);
+	auto status = corejpegmode.decode(&hjpeg, filemock);
 
 	EXPECT_NE(status, HAL_OK);
 }
@@ -191,7 +191,7 @@ TEST_F(CoreJPEGModePollingTest, onDataAvailableCallbackSizeEqual)
 
 	EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillOnce(Return(42));
 	EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(1);
-	corejpegmode.decode(&hjpeg, &filemock);
+	corejpegmode.decode(&hjpeg, filemock);
 
 	{
 		InSequence seq;
