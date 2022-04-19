@@ -272,8 +272,8 @@ auto get_secondary_bd() -> mbed::BlockDevice *
 
 auto main() -> int
 {
-	watchdog::start();
 	logger::init();
+	watchdog::start();
 
 	leds::turnOff();
 	motors::turnOff();
