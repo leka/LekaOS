@@ -221,12 +221,26 @@ namespace watchdog {
 		constexpr auto timeout = 30000ms;
 		auto thread			   = rtos::Thread {osPriorityLow};
 
-		__attribute__((noreturn)) void kick()
+		__attribute__((noreturn)) void watchdog_kick()
 		{
+			static auto kick_count = uint32_t {0};
+
+			static auto start = rtos::Kernel::Clock::now();
+			static auto stop  = rtos::Kernel::Clock::now();
+			static auto now	  = static_cast<int>(stop.time_since_epoch().count());
+			static auto delta = static_cast<int>((stop - start).count());
+
 			while (true) {
 				internal::instance.kick();
-				log_info("Robot still alive after: %ims",
-						 static_cast<int>(rtos::Kernel::Clock::now().time_since_epoch().count()));
+				++kick_count;
+
+				stop  = rtos::Kernel::Clock::now();
+				now	  = static_cast<int>(stop.time_since_epoch().count());
+				delta = static_cast<int>((stop - start).count());
+
+				log_info("kicks: %i, delta: %ims, time: %ims", kick_count, delta, now);
+
+				start = rtos::Kernel::Clock::now();
 				rtos::ThisThread::sleep_for(5s);
 			}
 		}
@@ -236,7 +250,7 @@ namespace watchdog {
 	void start()
 	{
 		internal::instance.start(internal::timeout.count());
-		internal::thread.start(watchdog::internal::kick);
+		internal::thread.start(watchdog::internal::watchdog_kick);
 	}
 
 }	// namespace watchdog
