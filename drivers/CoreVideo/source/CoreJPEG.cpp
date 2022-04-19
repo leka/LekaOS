@@ -34,14 +34,9 @@ auto CoreJPEG::getImageProperties() -> JPEGImageProperties
 	return image_properties;
 }
 
-auto CoreJPEG::getHandle() -> JPEG_HandleTypeDef
+auto CoreJPEG::getHandle() -> JPEG_HandleTypeDef &
 {
 	return _hjpeg;
-}
-
-auto CoreJPEG::getHandlePointer() -> JPEG_HandleTypeDef *
-{
-	return &_hjpeg;
 }
 
 void CoreJPEG::registerInitializationCallbacks()

@@ -66,7 +66,7 @@ void LTDC_IRQHandler(void)
 
 void JPEG_IRQHandler(void)
 {
-	HAL_JPEG_IRQHandler(corejpeg.getHandlePointer());
+	HAL_JPEG_IRQHandler(&corejpeg.getHandle());
 }
 
 void DMA2_Stream0_IRQHandler(void)

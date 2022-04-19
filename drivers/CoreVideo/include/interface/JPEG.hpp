@@ -17,8 +17,7 @@ class JPEGBase
 
 	virtual void initialize() = 0;
 
-	virtual auto getHandle() -> JPEG_HandleTypeDef			= 0;
-	virtual auto getHandlePointer() -> JPEG_HandleTypeDef * = 0;
+	virtual auto getHandle() -> JPEG_HandleTypeDef & = 0;
 
 	virtual void decodeImage(interface::File &) = 0;
 

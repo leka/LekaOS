@@ -44,13 +44,6 @@ TEST_F(CoreJPEGTest, handleConfigurationInstance)
 	ASSERT_EQ(handle.Instance, JPEG);
 }
 
-TEST_F(CoreJPEGTest, handlePointerConfigurationInstance)
-{
-	auto handle = corejpeg.getHandlePointer();
-
-	ASSERT_EQ(handle->Instance, JPEG);
-}
-
 TEST_F(CoreJPEGTest, getImageProperties)
 {
 	auto expected_properties = JPEGImageProperties {};
