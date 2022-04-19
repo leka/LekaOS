@@ -11,70 +11,70 @@ namespace leka::service {
 
 namespace device_information {
 
-	constexpr uint16_t uuid = GattService::UUID_DEVICE_INFORMATION_SERVICE;
+	inline constexpr uint16_t uuid = GattService::UUID_DEVICE_INFORMATION_SERVICE;
 
 	namespace characteristic {
-		constexpr uint16_t manufacturer_name = GattCharacteristic::UUID_MANUFACTURER_NAME_STRING_CHAR;
-		constexpr uint16_t model_number		 = GattCharacteristic::UUID_MODEL_NUMBER_STRING_CHAR;
-		constexpr uint16_t serial_number	 = GattCharacteristic::UUID_SERIAL_NUMBER_STRING_CHAR;
+		inline constexpr uint16_t manufacturer_name = GattCharacteristic::UUID_MANUFACTURER_NAME_STRING_CHAR;
+		inline constexpr uint16_t model_number		= GattCharacteristic::UUID_MODEL_NUMBER_STRING_CHAR;
+		inline constexpr uint16_t serial_number		= GattCharacteristic::UUID_SERIAL_NUMBER_STRING_CHAR;
 	}	// namespace characteristic
 
 }	// namespace device_information
 
 namespace battery {
 
-	constexpr uint16_t uuid = GattService::UUID_BATTERY_SERVICE;
+	inline constexpr uint16_t uuid = GattService::UUID_BATTERY_SERVICE;
 
 	namespace characteristic {
-		constexpr uint16_t level = GattCharacteristic::UUID_BATTERY_LEVEL_CHAR;
+		inline constexpr uint16_t level = GattCharacteristic::UUID_BATTERY_LEVEL_CHAR;
 	}	// namespace characteristic
 
 }	// namespace battery
 
 namespace monitoring {
 
-	constexpr uint16_t uuid = 0x7779;
+	inline constexpr uint16_t uuid = 0x7779;
 
 	namespace characteristic {
-		constexpr uint16_t charging_status	  = 0x6783;
-		constexpr uint16_t screensaver_enable = 0x8369;
-		constexpr uint16_t soft_reboot		  = 0x8382;
-		constexpr uint16_t hard_reboot		  = 0x7282;
+		inline constexpr uint16_t charging_status	 = 0x6783;
+		inline constexpr uint16_t screensaver_enable = 0x8369;
+		inline constexpr uint16_t soft_reboot		 = 0x8382;
+		inline constexpr uint16_t hard_reboot		 = 0x7282;
 	}	// namespace characteristic
 
 }	// namespace monitoring
 
 namespace receive_file {
 
-	constexpr uint16_t uuid = 0x8270;
+	inline constexpr uint16_t uuid = 0x8270;
 
 	namespace characteristic {
-		constexpr uint16_t file_path			 = 0x7080;
-		constexpr uint16_t file_reception_buffer = 0x8283;
+		inline constexpr uint16_t file_path				= 0x7080;
+		inline constexpr uint16_t file_reception_buffer = 0x8283;
 	}	// namespace characteristic
 
 }	// namespace receive_file
 
 namespace firmware_update {
 
-	constexpr uint16_t uuid = 0x7085;
+	inline constexpr uint16_t uuid = 0x7085;
 
 	namespace characteristic {
-		constexpr uint16_t apply_update = 0x6585;
+		inline constexpr uint16_t apply_update = 0x6585;
 
-		constexpr uint16_t version_major	= 0x7765;
-		constexpr uint16_t version_minor	= 0x7773;
-		constexpr uint16_t version_revision = 0x8269;
+		inline constexpr uint16_t version_major	   = 0x7765;
+		inline constexpr uint16_t version_minor	   = 0x7773;
+		inline constexpr uint16_t version_revision = 0x8269;
 	}	// namespace characteristic
 
 }	// namespace firmware_update
 
 namespace commands {
 
-	constexpr uint16_t uuid = 0xDFB0;
+	inline constexpr uint16_t uuid = 0xDFB0;
 
 	namespace characteristic {
-		constexpr uint16_t tx = 0xDFB1;
+		inline constexpr uint16_t tx = 0xDFB1;
 	}	// namespace characteristic
 
 }	// namespace commands

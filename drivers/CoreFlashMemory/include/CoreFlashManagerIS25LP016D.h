@@ -44,28 +44,28 @@ class CoreFlashManagerIS25LP016D : public interface::FlashManager
 
 namespace flash::is25lp016d {
 
-constexpr auto max_waiting_operation_duration = std::chrono::seconds(12);
+inline constexpr auto max_waiting_operation_duration = std::chrono::seconds(12);
 
 namespace command {
-	constexpr uint8_t reset = 0x99;
+	inline constexpr uint8_t reset = 0x99;
 
-	constexpr uint8_t read_status = 0x05;
+	inline constexpr uint8_t read_status = 0x05;
 
-	constexpr uint8_t reset_enable = 0x66;
-	constexpr uint8_t write_enable = 0x06;
+	inline constexpr uint8_t reset_enable = 0x66;
+	inline constexpr uint8_t write_enable = 0x06;
 
-	constexpr uint8_t erase_chip = 0x60;
+	inline constexpr uint8_t erase_chip = 0x60;
 }	// namespace command
 
 namespace status {
-	constexpr size_t register_size = 0x01;
+	inline constexpr size_t register_size = 0x01;
 
-	constexpr uint8_t work_in_progress	 = 0x01;
-	constexpr uint8_t write_enable_latch = 0x02;
+	inline constexpr uint8_t work_in_progress	= 0x01;
+	inline constexpr uint8_t write_enable_latch = 0x02;
 
 	namespace mask {
-		constexpr uint8_t work_in_progress	 = 0x01;
-		constexpr uint8_t write_enable_latch = 0x02;
+		inline constexpr uint8_t work_in_progress	= 0x01;
+		inline constexpr uint8_t write_enable_latch = 0x02;
 	}	// namespace mask
 }	// namespace status
 

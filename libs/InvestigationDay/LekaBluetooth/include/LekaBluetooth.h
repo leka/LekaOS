@@ -15,7 +15,7 @@
 
 #include "BM64Converter.h"
 
-constexpr uint8_t max_buffer_size = 128;
+inline constexpr uint8_t max_buffer_size = 128;
 
 class Bluetooth
 {

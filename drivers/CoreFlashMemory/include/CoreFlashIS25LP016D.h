@@ -40,12 +40,12 @@ class CoreFlashIS25LP016D : public interface::FlashMemory
 
 namespace flash::is25lp016d {
 
-constexpr size_t size					 = 0x00200000;
-constexpr auto max_clock_frequency_in_hz = 133'000'000;
+inline constexpr size_t size					= 0x00200000;
+inline constexpr auto max_clock_frequency_in_hz = 133'000'000;
 
 namespace command {
-	constexpr uint8_t write = 0x02;
-	constexpr uint8_t read	= 0x03;
+	inline constexpr uint8_t write = 0x02;
+	inline constexpr uint8_t read  = 0x03;
 }	// namespace command
 
 // }	// namespace status

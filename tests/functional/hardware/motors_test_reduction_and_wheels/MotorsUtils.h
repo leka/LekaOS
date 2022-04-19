@@ -25,7 +25,7 @@ auto motor_right = CoreMotor {motor_right_dir_1, morot_right_dir_2, morot_right_
 
 Motors motors(motor_right, motor_left);
 
-constexpr uint8_t MAX_SPEED = 0xFF;
+inline constexpr uint8_t MAX_SPEED = 0xFF;
 
 void turnForwardLeft()
 {

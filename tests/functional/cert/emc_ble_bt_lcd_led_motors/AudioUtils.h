@@ -36,7 +36,8 @@ void playSound(mbed::AnalogOut *output, leka::FileManagerKit::File &_file)
 void playSoundPeriodically(AnalogOut *audio_output)
 {
 	constexpr auto filename = std::to_array("/fs/sounds/fur-elise-100Hzmin.wav");
-	auto file				= leka::FileManagerKit::File {};
+
+	auto file = leka::FileManagerKit::File {};
 
 	while (true) {
 		if (auto is_open = file.open(filename.data()); is_open) {
