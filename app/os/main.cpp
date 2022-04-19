@@ -221,22 +221,22 @@ namespace watchdog {
 		constexpr auto timeout = 30000ms;
 		auto thread			   = rtos::Thread {osPriorityLow};
 
-	}	// namespace internal
-
-	__attribute__((noreturn)) void kick()
-	{
-		while (true) {
-			internal::instance.kick();
-			log_info("Robot still alive after: %ims",
-					 static_cast<int>(rtos::Kernel::Clock::now().time_since_epoch().count()));
-			rtos::ThisThread::sleep_for(5s);
+		__attribute__((noreturn)) void kick()
+		{
+			while (true) {
+				internal::instance.kick();
+				log_info("Robot still alive after: %ims",
+						 static_cast<int>(rtos::Kernel::Clock::now().time_since_epoch().count()));
+				rtos::ThisThread::sleep_for(5s);
+			}
 		}
-	}
+
+	}	// namespace internal
 
 	void start()
 	{
 		internal::instance.start(internal::timeout.count());
-		internal::thread.start(watchdog::kick);
+		internal::thread.start(watchdog::internal::kick);
 	}
 
 }	// namespace watchdog
