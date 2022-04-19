@@ -70,9 +70,14 @@ void CoreVideo::displayRectangle(interface::Graphics::FilledRectangle rectangle,
 	_coregraphics.drawRectangle(rectangle, color);
 }
 
-void CoreVideo::displayImage(interface::File *file)
+void CoreVideo::displayImage(interface::File &file)
 {
-	_corejpeg.displayImage(file);
+	_corejpeg.decodeImage(file);
+
+	auto image_properties = _corejpeg.getImageProperties();
+
+	_coredma2d.transferImage(image_properties.ImageWidth, image_properties.ImageHeight,
+							 image_properties.getWidthOffset());
 }
 
 void CoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,

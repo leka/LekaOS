@@ -14,6 +14,8 @@
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreJPEG.hpp"
+#include "CoreJPEGModeDMA.hpp"
+#include "CoreJPEGModePolling.hpp"
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLL.h"
@@ -47,7 +49,8 @@ CoreGraphics coregraphics(coredma2d);
 CoreFont corefont(pixel);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 CoreLCD corelcd(coreotm);
-CoreJPEG corejpeg(hal, coredma2d);
+CoreJPEGModeDMA _corejpegmode {hal};
+CoreJPEG corejpeg {hal, _corejpegmode};
 CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 rtos::Thread animation_thread;

@@ -13,6 +13,8 @@
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreJPEG.hpp"
+#include "CoreJPEGModeDMA.hpp"
+#include "CoreJPEGModePolling.hpp"
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLL.h"
@@ -43,12 +45,13 @@ CoreGraphics coregraphics(coredma2d);
 CoreFont corefont(pixel);
 CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
 CoreLCD corelcd(coreotm);
-CoreJPEG corejpeg(hal, coredma2d);
+CoreJPEGModeDMA _corejpegmode {hal};
+CoreJPEG corejpeg {hal, _corejpegmode};
 CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
 auto file = FileManagerKit::File {};
 
-auto image_names = std::to_array({"/fs/assets/images/Leka/logo.jpg", "/fs/assets/images/Leka/emotion-happy.jpg"});
+auto images = std::to_array({"/fs/images/logo.jpg", "/fs/images/robot-emotion-happy.jpg"});
 
 extern "C" {
 void DMA2D_IRQHandler(void)
@@ -60,28 +63,21 @@ void LTDC_IRQHandler(void)
 {
 	HAL_LTDC_IRQHandler(&coreltdc.getHandle());
 }
+
+void JPEG_IRQHandler(void)
+{
+	HAL_JPEG_IRQHandler(&corejpeg.getHandle());
 }
 
-void registerCallbacks()
+void DMA2_Stream0_IRQHandler(void)
 {
-	HAL_JPEG_RegisterInfoReadyCallback(
-		corejpeg.getHandlePointer(),
-		[](JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) { corejpeg.onInfoReadyCallback(hjpeg, info); });
+	HAL_DMA_IRQHandler(corejpeg.getHandle().hdmain);
+}
 
-	HAL_JPEG_RegisterGetDataCallback(corejpeg.getHandlePointer(), [](JPEG_HandleTypeDef *hjpeg, uint32_t size) {
-		corejpeg.onDataAvailableCallback(hjpeg, size);
-	});
-
-	HAL_JPEG_RegisterDataReadyCallback(corejpeg.getHandlePointer(),
-									   [](JPEG_HandleTypeDef *hjpeg, uint8_t *pDataOut, uint32_t size) {
-										   corejpeg.onDataReadyCallback(hjpeg, pDataOut, size);
-									   });
-
-	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_DECODE_CPLT_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { corejpeg.onDecodeCompleteCallback(hjpeg); });
-
-	HAL_JPEG_RegisterCallback(corejpeg.getHandlePointer(), HAL_JPEG_ERROR_CB_ID,
-							  [](JPEG_HandleTypeDef *hjpeg) { corejpeg.onErrorCallback(hjpeg); });
+void DMA2_Stream1_IRQHandler(void)
+{
+	HAL_DMA_IRQHandler(corejpeg.getHandle().hdmaout);
+}
 }
 
 void initializeSD()
@@ -105,7 +101,6 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(2s);
 
 	corevideo.initialize();
-	registerCallbacks();
 
 	initializeSD();
 
@@ -152,10 +147,10 @@ auto main() -> int
 
 		corevideo.setBrightness(0.9F);
 		corevideo.turnOn();
-		for (const auto &image_name: image_names) {
+		for (const auto &image_name: images) {
 			if (file.open(image_name)) {
 				log_info("File opened");
-				corevideo.displayImage(&file);
+				corevideo.displayImage(file);
 				file.close();
 				rtos::ThisThread::sleep_for(1s);
 			}

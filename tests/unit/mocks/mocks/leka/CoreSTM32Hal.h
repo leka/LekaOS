@@ -23,6 +23,8 @@ class CoreSTM32Hal : public interface::STM32Hal
 	MOCK_METHOD(void, HAL_RCC_FMC_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_DMA2_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_JPEG_CLK_ENABLE, (), (override));
+	MOCK_METHOD(void, HAL_RCC_JPEG_FORCE_RESET, (), (override));
+	MOCK_METHOD(void, HAL_RCC_JPEG_RELEASE_RESET, (), (override));
 	MOCK_METHOD(void, HAL_RCC_LTDC_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_LTDC_FORCE_RESET, (), (override));
 	MOCK_METHOD(void, HAL_RCC_LTDC_RELEASE_RESET, (), (override));
@@ -91,10 +93,26 @@ class CoreSTM32Hal : public interface::STM32Hal
 				(JPEG_HandleTypeDef * hjpeg, uint8_t *pDataIn, uint32_t InDataLength, uint8_t *pDataOutMCU,
 				 uint32_t OutDataLength, uint32_t Timeout),
 				(override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_JPEG_Decode_DMA,
+				(JPEG_HandleTypeDef * hjpeg, uint8_t *pDataIn, uint32_t InDataLength, uint8_t *pDataOutMCU,
+				 uint32_t OutDataLength),
+				(override));
 	MOCK_METHOD(void, HAL_JPEG_ConfigInputBuffer,
 				(JPEG_HandleTypeDef * hjpeg, uint8_t *pNewInputBuffer, uint32_t InDataLength), (override));
 	MOCK_METHOD(void, HAL_JPEG_ConfigOutputBuffer,
 				(JPEG_HandleTypeDef * hjpeg, uint8_t *pNewOutputBuffer, uint32_t OutDataLength), (override));
+
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_JPEG_RegisterInfoReadyCallback,
+				(JPEG_HandleTypeDef *, pJPEG_InfoReadyCallbackTypeDef), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_JPEG_RegisterGetDataCallback,
+				(JPEG_HandleTypeDef *, pJPEG_GetDataCallbackTypeDef), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_JPEG_RegisterDataReadyCallback,
+				(JPEG_HandleTypeDef *, pJPEG_DataReadyCallbackTypeDef), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_JPEG_RegisterCallback,
+				(JPEG_HandleTypeDef *, HAL_JPEG_CallbackIDTypeDef, pJPEG_CallbackTypeDef), (override));
+
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_JPEG_Pause, (JPEG_HandleTypeDef *, uint32_t), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_JPEG_Resume, (JPEG_HandleTypeDef *, uint32_t), (override));
 };
 
 }	// namespace leka::mock

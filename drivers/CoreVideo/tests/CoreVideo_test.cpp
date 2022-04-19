@@ -159,10 +159,15 @@ TEST_F(CoreVideoTest, drawRectangleWithColor)
 
 TEST_F(CoreVideoTest, displayImage)
 {
-	FIL file;
-	EXPECT_CALL(jpegmock, displayImage(&filemock)).Times(1);
+	{
+		InSequence seq;
 
-	corevideo.displayImage(&filemock);
+		EXPECT_CALL(jpegmock, decodeImage).Times(1);
+		EXPECT_CALL(jpegmock, getImageProperties).Times(1);
+		EXPECT_CALL(dma2dmock, transferImage).Times(1);
+	}
+
+	corevideo.displayImage(filemock);
 }
 
 TEST_F(CoreVideoTest, displayText)
