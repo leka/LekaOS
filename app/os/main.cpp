@@ -221,20 +221,36 @@ namespace watchdog {
 		constexpr auto timeout = 30000ms;
 		auto thread			   = rtos::Thread {osPriorityLow};
 
-	}	// namespace internal
+		__attribute__((noreturn)) void watchdog_kick()
+		{
+			static auto kick_count = uint32_t {0};
 
-	__attribute__((noreturn)) void kick()
-	{
-		while (true) {
-			internal::instance.kick();
-			rtos::ThisThread::sleep_for(5s);
+			static auto start = rtos::Kernel::Clock::now();
+			static auto stop  = rtos::Kernel::Clock::now();
+			static auto now	  = static_cast<int>(stop.time_since_epoch().count());
+			static auto delta = static_cast<int>((stop - start).count());
+
+			while (true) {
+				internal::instance.kick();
+				++kick_count;
+
+				stop  = rtos::Kernel::Clock::now();
+				now	  = static_cast<int>(stop.time_since_epoch().count());
+				delta = static_cast<int>((stop - start).count());
+
+				log_info("kicks: %i, delta: %ims, time: %ims", kick_count, delta, now);
+
+				start = rtos::Kernel::Clock::now();
+				rtos::ThisThread::sleep_for(5s);
+			}
 		}
-	}
+
+	}	// namespace internal
 
 	void start()
 	{
 		internal::instance.start(internal::timeout.count());
-		internal::thread.start(watchdog::kick);
+		internal::thread.start(watchdog::internal::watchdog_kick);
 	}
 
 }	// namespace watchdog
@@ -298,8 +314,6 @@ auto main() -> int
 	robot::controller.registerEvents();
 
 	while (true) {
-		log_debug("A message from your board %s --> \"%s\" at %ims", MBED_CONF_APP_TARGET_NAME, hello.world,
-				  int(rtos::Kernel::Clock::now().time_since_epoch().count()));
 		rtos::ThisThread::sleep_for(1s);
 	}
 }
