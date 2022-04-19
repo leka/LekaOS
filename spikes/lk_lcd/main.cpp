@@ -51,7 +51,7 @@ CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coreg
 
 auto file = FileManagerKit::File {};
 
-auto image_names = std::to_array({"/fs/assets/images/Leka/logo.jpg", "/fs/assets/images/Leka/emotion-happy.jpg"});
+auto images = std::to_array({"/fs/images/logo.jpg", "/fs/images/robot-emotion-happy.jpg"});
 
 extern "C" {
 void DMA2D_IRQHandler(void)
@@ -147,7 +147,7 @@ auto main() -> int
 
 		corevideo.setBrightness(0.9F);
 		corevideo.turnOn();
-		for (const auto &image_name: image_names) {
+		for (const auto &image_name: images) {
 			if (file.open(image_name)) {
 				log_info("File opened");
 				corevideo.displayImage(file);
