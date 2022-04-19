@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap (based on work by Mbed-OS)
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../include/DigitalIn.h"
+#include "IOKit/DigitalIn.h"
 
 #include "gtest/gtest.h"
 #include "mocks/leka/IOExpander.h"
