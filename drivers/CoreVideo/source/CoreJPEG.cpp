@@ -71,9 +71,9 @@ void CoreJPEG::registerProcessCallbacks()
 								   [](JPEG_HandleTypeDef *hjpeg) { self._mode.onErrorCallback(hjpeg); });
 }
 
-void CoreJPEG::decodeImage(interface::File &file)
+auto CoreJPEG::decodeImage(interface::File &file) -> size_t
 {
-	_mode.decode(&_hjpeg, file);
+	return _mode.decode(&_hjpeg, file);
 }
 
 auto CoreJPEG::findSOIMarker(interface::File &file, size_t start_index) -> size_t

@@ -19,7 +19,7 @@ class JPEGBase
 
 	virtual auto getHandle() -> JPEG_HandleTypeDef & = 0;
 
-	virtual void decodeImage(interface::File &) = 0;
+	virtual auto decodeImage(interface::File &) -> size_t							= 0;
 	virtual auto findSOIMarker(interface::File &file, size_t start_index) -> size_t = 0;
 
 	virtual auto getImageProperties() -> JPEGImageProperties = 0;

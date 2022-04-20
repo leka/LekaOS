@@ -27,7 +27,7 @@ class CoreJPEG : public interface::JPEGBase
 
 	auto getHandle() -> JPEG_HandleTypeDef & final;
 
-	void decodeImage(interface::File &file) final;
+	auto decodeImage(interface::File &file) -> size_t final;
 	auto findSOIMarker(interface::File &file, size_t start_index) -> size_t final;
 
 	auto getImageProperties() -> JPEGImageProperties final;

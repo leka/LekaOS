@@ -148,7 +148,7 @@ void CoreJPEGModeDMA::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
 	_hw_decode_ended = true;
 }
 
-auto CoreJPEGModeDMA::decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> HAL_StatusTypeDef
+auto CoreJPEGModeDMA::decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> size_t
 {
 	reset();
 
@@ -171,12 +171,7 @@ auto CoreJPEGModeDMA::decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -
 		process_ended = decoderOutputHandler(hjpeg);
 	} while (!process_ended);
 
-	auto ret = HAL_OK;
-	if (_image_size == 0) {
-		ret = HAL_ERROR;
-	}
-
-	return ret;
+	return _image_size;
 }
 
 std::array<uint8_t, jpeg::input_chunk_size * jpeg::input_buffers_nb> CoreJPEGModeDMA::BIG_CHUNGUS_OF_MEMORY_IN;

@@ -26,7 +26,7 @@ struct CoreJPEGModeDMA : interface::JPEGMode {
 	void onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize) final;
 	void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) final;
 
-	auto decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> HAL_StatusTypeDef final;
+	auto decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> size_t final;
 
   private:
 	static std::array<uint8_t, jpeg::input_chunk_size * jpeg::input_buffers_nb> BIG_CHUNGUS_OF_MEMORY_IN;
@@ -66,7 +66,7 @@ struct CoreJPEGModeDMA : interface::JPEGMode {
 	// color conversion function pointer, set by onInfoReadyCallback
 	JPEG_YCbCrToRGB_Convert_Function convertMCUBlocks;
 
-	uint32_t _image_size	  = 0;
+	size_t _image_size		  = 0;
 	uint32_t _mcu_number	  = 0;
 	uint32_t _mcu_block_index = 0;
 	bool _hw_decode_ended	  = false;
