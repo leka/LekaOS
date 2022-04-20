@@ -13,10 +13,13 @@
 using namespace leka;
 
 using ::testing::_;
+using ::testing::AnyNumber;
 using ::testing::DoAll;
 using ::testing::InSequence;
+using ::testing::Matcher;
 using ::testing::Return;
 using ::testing::SetArgPointee;
+using ::testing::SetArrayArgument;
 
 class CoreJPEGTest : public ::testing::Test
 {
@@ -90,4 +93,136 @@ TEST_F(CoreJPEGTest, decodeImage)
 	EXPECT_CALL(modemock, decode).Times(1);
 
 	corejpeg.decodeImage(filemock);
+}
+
+TEST_F(CoreJPEGTest, findSOIMarkerFileIsEmpty)
+{
+	EXPECT_CALL(filemock, size).WillOnce(Return(0));
+
+	corejpeg.findSOIMarker(filemock, 0);
+}
+
+TEST_F(CoreJPEGTest, findSOIMarkerBase)
+{
+	auto start_index		  = 0;
+	auto expected_frame_index = 0;
+
+	EXPECT_CALL(filemock, size).WillRepeatedly(Return(1024));
+	// EXPECT_CALL(filemock, seek(start_index, _)).Times(AnyNumber());
+	EXPECT_CALL(filemock, seek).Times(AnyNumber());
+
+	EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillRepeatedly(Return(512));
+
+	auto actual_frame_index = corejpeg.findSOIMarker(filemock, start_index);
+	EXPECT_EQ(actual_frame_index, expected_frame_index);
+}
+
+TEST_F(CoreJPEGTest, findSOIMarkerPresent)
+{
+	auto start_index = 0;
+
+	std::array<uint8_t, 1024> data {};
+	std::fill(std::begin(data), std::end(data), 0);
+
+	const auto expected_frame_index	  = size_t {218};
+	data.at(expected_frame_index)	  = (jpeg::JPEG_SOI_MARKER >> 8) & 0xFF;
+	data.at(expected_frame_index + 1) = jpeg::JPEG_SOI_MARKER & 0xFF;
+
+	EXPECT_CALL(filemock, size).Times(1).WillRepeatedly(Return(1024));
+	EXPECT_CALL(filemock, seek(start_index, _)).Times(1);
+
+	auto read_bytes = 512;
+	EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _))
+		.Times(1)
+		.WillRepeatedly(
+			DoAll(SetArrayArgument<0>(std::begin(data), std::begin(data) + read_bytes), Return(read_bytes)));
+
+	auto actual_frame_index = corejpeg.findSOIMarker(filemock, start_index);
+	EXPECT_EQ(actual_frame_index, expected_frame_index);
+}
+
+TEST_F(CoreJPEGTest, findSOIMarkerAbsent)
+{
+	auto start_index = 0;
+
+	std::array<uint8_t, 1024> data {};
+	std::fill(std::begin(data), std::end(data), 0);
+
+	const auto expected_frame_index = size_t {0};
+
+	EXPECT_CALL(filemock, size).Times(AnyNumber()).WillRepeatedly(Return(1024));
+	EXPECT_CALL(filemock, seek).Times(AnyNumber());
+
+	auto read_bytes = 256;
+	EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _))
+		.Times(4)
+		.WillOnce(DoAll(SetArrayArgument<0>(std::begin(data) + 0 * read_bytes, std::begin(data) + 1 * read_bytes),
+						Return(read_bytes)))
+		.WillOnce(DoAll(SetArrayArgument<0>(std::begin(data) + 1 * read_bytes, std::begin(data) + 2 * read_bytes),
+						Return(read_bytes)))
+		.WillOnce(DoAll(SetArrayArgument<0>(std::begin(data) + 2 * read_bytes, std::begin(data) + 3 * read_bytes),
+						Return(read_bytes)))
+		.WillOnce(DoAll(SetArrayArgument<0>(std::begin(data) + 3 * read_bytes, std::begin(data) + 4 * read_bytes),
+						Return(read_bytes)));
+
+	auto actual_frame_index = corejpeg.findSOIMarker(filemock, start_index);
+	EXPECT_EQ(actual_frame_index, expected_frame_index);
+}
+
+TEST_F(CoreJPEGTest, findSOIMarkerPresentInLastPacket)
+{
+	auto start_index = 0;
+
+	std::array<uint8_t, 1024> data {};
+	std::fill(std::begin(data), std::end(data), 0);
+
+	const auto expected_frame_index	  = size_t {1001};
+	data.at(expected_frame_index)	  = (jpeg::JPEG_SOI_MARKER >> 8) & 0xFF;
+	data.at(expected_frame_index + 1) = jpeg::JPEG_SOI_MARKER & 0xFF;
+
+	EXPECT_CALL(filemock, size).Times(AnyNumber()).WillRepeatedly(Return(1024));
+	EXPECT_CALL(filemock, seek).Times(AnyNumber());
+
+	auto read_bytes = 256;
+	EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _))
+		.Times(4)
+		.WillOnce(DoAll(SetArrayArgument<0>(std::begin(data) + 0 * read_bytes, std::begin(data) + 1 * read_bytes),
+						Return(read_bytes)))
+		.WillOnce(DoAll(SetArrayArgument<0>(std::begin(data) + 1 * read_bytes, std::begin(data) + 2 * read_bytes),
+						Return(read_bytes)))
+		.WillOnce(DoAll(SetArrayArgument<0>(std::begin(data) + 2 * read_bytes, std::begin(data) + 3 * read_bytes),
+						Return(read_bytes)))
+		.WillOnce(DoAll(SetArrayArgument<0>(std::begin(data) + 3 * read_bytes, std::begin(data) + 4 * read_bytes),
+						Return(read_bytes)));
+
+	auto actual_frame_index = corejpeg.findSOIMarker(filemock, start_index);
+	EXPECT_EQ(actual_frame_index, expected_frame_index);
+}
+
+TEST_F(CoreJPEGTest, findSOIMarkerPresentInLastPacketStartingIndexWithOffset)
+{
+	auto start_index = 512;
+
+	std::array<uint8_t, 1024> data {};
+	std::fill(std::begin(data), std::end(data), 0);
+
+	const auto expected_frame_index	  = size_t {1001};
+	data.at(expected_frame_index)	  = (jpeg::JPEG_SOI_MARKER >> 8) & 0xFF;
+	data.at(expected_frame_index + 1) = jpeg::JPEG_SOI_MARKER & 0xFF;
+
+	EXPECT_CALL(filemock, size).Times(AnyNumber()).WillRepeatedly(Return(1024));
+	EXPECT_CALL(filemock, seek).Times(AnyNumber());
+
+	auto read_bytes = 256;
+	EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _))
+		.Times(2)
+		.WillOnce(DoAll(SetArrayArgument<0>(std::begin(data) + start_index + 0 * read_bytes,
+											std::begin(data) + start_index + 1 * read_bytes),
+						Return(read_bytes)))
+		.WillOnce(DoAll(SetArrayArgument<0>(std::begin(data) + start_index + 1 * read_bytes,
+											std::begin(data) + start_index + 2 * read_bytes),
+						Return(read_bytes)));
+
+	auto actual_frame_index = corejpeg.findSOIMarker(filemock, start_index);
+	EXPECT_EQ(actual_frame_index, expected_frame_index);
 }
