@@ -15,14 +15,15 @@ class BLEServiceUpdate : public interface::BLEService
   public:
 	BLEServiceUpdate() : interface::BLEService(service::firmware_update::uuid, _characteristic_table) {}
 
-	auto getApplyUpdateValue() const -> bool { return apply_update_value; }
-
 	auto getVersion() const -> FirmwareVersion { return version; }
 
 	void onDataReceived(const data_received_handle_t &params) final
 	{
 		if (params.handle == apply_update_characteristic.getValueHandle()) {
-			apply_update_value = static_cast<bool>(params.data[0]);
+			must_apply_update = static_cast<bool>(params.data[0]);
+			if (must_apply_update && _on_update_requested_callback != nullptr) {
+				_on_update_requested_callback();
+			}
 		}
 		if (params.handle == version_major_characteristic.getValueHandle()) {
 			version.major = params.data[0];
@@ -35,10 +36,13 @@ class BLEServiceUpdate : public interface::BLEService
 		}
 	}
 
+	void onUpdateRequested(const std::function<void()> &callback) { _on_update_requested_callback = callback; }
+
   private:
-	bool apply_update_value {false};
+	bool must_apply_update {false};
 	WriteOnlyGattCharacteristic<bool> apply_update_characteristic {
-		service::firmware_update::characteristic::apply_update, &apply_update_value};
+		service::firmware_update::characteristic::request_update, &must_apply_update};
+	std::function<void()> _on_update_requested_callback {};
 
 	FirmwareVersion version {};
 

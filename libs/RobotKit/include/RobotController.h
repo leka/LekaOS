@@ -12,6 +12,7 @@
 #include "BLEServiceCommands.h"
 #include "BLEServiceDeviceInformation.h"
 #include "BLEServiceMonitoring.h"
+#include "BLEServiceUpdate.h"
 
 #include "BatteryKit.h"
 #include "BehaviorKit.h"
@@ -137,7 +138,7 @@ class RobotController : public interface::RobotController
 
 	void applyUpdate() final
 	{
-		auto firmware_version = FirmwareVersion {.major = 1, .minor = 2, .revision = 3};
+		auto firmware_version = _service_update.getVersion();
 		if (_firmware_update.loadUpdate(firmware_version) && _on_update_loaded_callback != nullptr) {
 			_on_update_loaded_callback();
 		}
@@ -221,6 +222,9 @@ class RobotController : public interface::RobotController
 		};
 		_service_commands.onCommandsReceived(on_commands_received);
 
+		auto on_update_requested = [this]() { raise(event::update_requested {}); };
+		_service_update.onUpdateRequested(on_update_requested);
+
 		raise(event::setup_complete {});
 	}
 
@@ -256,12 +260,10 @@ class RobotController : public interface::RobotController
 	BLEServiceCommands _service_commands {};
 	BLEServiceDeviceInformation _service_device_information {};
 	BLEServiceMonitoring _service_monitoring {};
+	BLEServiceUpdate _service_update {};
 
-	std::array<interface::BLEService *, 4> services = {
-		&_service_battery,
-		&_service_commands,
-		&_service_device_information,
-		&_service_monitoring,
+	std::array<interface::BLEService *, 5> services = {
+		&_service_battery, &_service_commands, &_service_device_information, &_service_monitoring, &_service_update,
 	};
 };
 

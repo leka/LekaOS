@@ -127,7 +127,7 @@ class RobotControllerTest : public testing::Test
 		{
 			InSequence seq;
 
-			EXPECT_CALL(mbed_mock_gatt, addService).Times(4);
+			EXPECT_CALL(mbed_mock_gatt, addService).Times(5);
 			EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(1);
 			EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(1);
 
@@ -209,7 +209,7 @@ TEST_F(RobotControllerTest, initializeComponents)
 	{
 		InSequence seq;
 
-		EXPECT_CALL(mbed_mock_gatt, addService).Times(4);
+		EXPECT_CALL(mbed_mock_gatt, addService).Times(5);
 		EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(1);
 		EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(1);
 

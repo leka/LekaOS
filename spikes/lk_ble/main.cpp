@@ -105,9 +105,6 @@ auto main() -> int
 
 		auto version = service_update.getVersion();
 
-		auto apply_update = service_update.getApplyUpdateValue();
-
-		log_info("Requested version: %d.%d.%d | Apply Update? %d", version.major, version.minor, version.revision,
-				 apply_update);
+		log_info("Requested version: %d.%d.%d", version.major, version.minor, version.revision);
 	}
 }
