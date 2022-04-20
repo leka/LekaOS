@@ -93,14 +93,12 @@ TEST_F(CoreGapTest, defaultAdvertisingParameters)
 TEST_F(CoreGapTest, defaultAdvertisingPayload)
 {
 	std::array<uint8_t, 64> buffer {};
-	auto data_builder = AdvertisingDataBuilder {{buffer.begin(), buffer.end()}};
+	auto data_builder			  = AdvertisingDataBuilder {{buffer.begin(), buffer.end()}};
+	auto default_advertising_data = AdvertisingData {};
 
-	data_builder.setAppearance(ble::adv_data_appearance_t::GENERIC_HEART_RATE_SENSOR);
-	data_builder.setFlags();
-	data_builder.setManufacturerSpecificData({{0x2A, 0x2B, 0x2C, 0x2D}});
-	data_builder.setAdvertisingInterval(ble::adv_interval_t::min());
-	data_builder.setServiceData(GattService::UUID_BATTERY_SERVICE, {{0x42}});
-	data_builder.setServiceData(service::commands::uuid, {{0}});
+	data_builder.setName(default_advertising_data.name);
+	data_builder.setServiceData(service::commands::uuid,
+								{{default_advertising_data.battery, default_advertising_data.is_charging}});
 
 	EXPECT_CALL(mbed_mock_gap,
 				setAdvertisingPayload(LEGACY_ADVERTISING_HANDLE, compareAdvertisingPayload(data_builder)))
@@ -110,26 +108,6 @@ TEST_F(CoreGapTest, defaultAdvertisingPayload)
 	EXPECT_CALL(mbed_mock_gap, setAdvertisingParameters).Times(1);
 
 	coregap.setDefaultAdvertising();
-	coregap.startAdvertising();
-}
-
-TEST_F(CoreGapTest, setDeviceName)
-{
-	auto expected_device_name = "LekaCoreGap";
-
-	std::array<uint8_t, 64> buffer {};
-	auto data_builder = AdvertisingDataBuilder {{buffer.begin(), buffer.end()}};
-
-	data_builder.setName(expected_device_name);
-
-	EXPECT_CALL(mbed_mock_gap,
-				setAdvertisingPayload(LEGACY_ADVERTISING_HANDLE, compareAdvertisingPayload(data_builder)))
-		.Times(1);
-	EXPECT_CALL(mbed_mock_gap, isAdvertisingActive).WillOnce(Return(false));
-	EXPECT_CALL(mbed_mock_gap, startAdvertising).Times(1);
-	EXPECT_CALL(mbed_mock_gap, setAdvertisingParameters).Times(1);
-
-	coregap.setDeviceName(expected_device_name);
 	coregap.startAdvertising();
 }
 
@@ -165,4 +143,20 @@ TEST_F(CoreGapTest, onInitializationComplete)
 	spy_ble_on_initialization_complete_callback(&context);
 
 	// coregap.onInitializationComplete(&context);   // Alternative
+}
+
+TEST_F(CoreGapTest, setAdvertising)
+{
+	std::array<uint8_t, 64> buffer {};
+	auto data_builder		  = AdvertisingDataBuilder {{buffer.begin(), buffer.end()}};
+	auto new_advertising_data = AdvertisingData {.name = "NewLeka", .battery = 0x42, .is_charging = 0x01};
+
+	data_builder.setName(new_advertising_data.name);
+	data_builder.setServiceData(service::commands::uuid, {new_advertising_data.data(), new_advertising_data.size()});
+
+	EXPECT_CALL(mbed_mock_gap,
+				setAdvertisingPayload(LEGACY_ADVERTISING_HANDLE, compareAdvertisingPayload(data_builder)))
+		.Times(1);
+
+	coregap.setAdvertising(new_advertising_data);
 }

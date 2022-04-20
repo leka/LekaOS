@@ -9,6 +9,7 @@
 #include "ble/BLE.h"
 #include "ble/Gap.h"
 
+#include "AdvertisingData.h"
 #include "CoreGapEventHandler.h"
 
 namespace leka {
@@ -24,9 +25,8 @@ class CoreGap
 	void onInitializationComplete(BLE::InitializationCompleteCallbackContext *params);
 	// void onInit(std::function<void()> cb) { _post_init = cb; }
 
-	void setDeviceName(const char *name);
-
 	void startAdvertising();
+	void setAdvertising(AdvertisingData advertising_data);
 
   private:
 	ble::advertising_handle_t _advertising_handle {ble::LEGACY_ADVERTISING_HANDLE};

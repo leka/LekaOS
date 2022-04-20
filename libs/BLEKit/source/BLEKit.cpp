@@ -19,7 +19,6 @@ void BLEKit::init()
 	_ble.onEventsToProcess({this, &BLEKit::processEvents});
 
 	_core_gap.setDefaultAdvertising();
-	_core_gap.setDeviceName("Leka");
 
 	_ble.init(&_core_gap, &CoreGap::onInitializationComplete);
 
@@ -29,4 +28,16 @@ void BLEKit::init()
 void BLEKit::processEvents(BLE::OnEventsToProcessCallbackContext *context)
 {
 	_event_queue.callMbedCallback(mbed::callback(&context->ble, &BLE::processEvents));
+}
+
+void BLEKit::setAdvertisingData(const AdvertisingData &advertising_data)
+{
+	_advertising_data = advertising_data;
+
+	_core_gap.setAdvertising(_advertising_data);
+}
+
+auto BLEKit::getAdvertisingData() const -> AdvertisingData
+{
+	return _advertising_data;
 }

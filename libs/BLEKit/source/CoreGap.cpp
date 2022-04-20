@@ -7,12 +7,12 @@ using namespace ble;
 
 void CoreGap::setDefaultAdvertising()
 {
-	_advertising_data_builder.setAppearance(adv_data_appearance_t::GENERIC_HEART_RATE_SENSOR);
-	_advertising_data_builder.setFlags();
-	_advertising_data_builder.setManufacturerSpecificData({{0x2A, 0x2B, 0x2C, 0x2D}});
-	_advertising_data_builder.setAdvertisingInterval(adv_interval_t::min());
-	_advertising_data_builder.setServiceData(GattService::UUID_BATTERY_SERVICE, {{0x42}});
-	_advertising_data_builder.setServiceData(leka::service::commands::uuid, {{0}});
+	auto default_advertising_data = AdvertisingData {};
+
+	_advertising_data_builder.setName(default_advertising_data.name);
+	_advertising_data_builder.setServiceData(
+		leka::service::commands::uuid,	 // TODO: commands::uuid only for compatibility with LekaApp
+		{default_advertising_data.data(), default_advertising_data.size()});
 }
 
 void CoreGap::setEventHandler()
@@ -27,11 +27,6 @@ void CoreGap::onInitializationComplete(BLE::InitializationCompleteCallbackContex
 	_gap_event_handler.onInitializationComplete(params);
 }
 
-void CoreGap::setDeviceName(const char *name)
-{
-	_advertising_data_builder.setName(name);
-}
-
 void CoreGap::startAdvertising()
 {
 	if (_gap.isAdvertisingActive(_advertising_handle)) {
@@ -42,4 +37,14 @@ void CoreGap::startAdvertising()
 	_gap.setAdvertisingPayload(_advertising_handle, _advertising_data_builder.getAdvertisingData());
 
 	_gap.startAdvertising(_advertising_handle, adv_duration_t(millisecond_t(4000)));
+}
+
+void CoreGap::setAdvertising(AdvertisingData advertising_data)
+{
+	_advertising_data_builder.setName(advertising_data.name);
+	_advertising_data_builder.setServiceData(
+		leka::service::commands::uuid,	 // TODO: commands::uuid only for compatibility with LekaApp
+		{advertising_data.data(), advertising_data.size()});
+
+	_gap.setAdvertisingPayload(_advertising_handle, _advertising_data_builder.getAdvertisingData());
 }
