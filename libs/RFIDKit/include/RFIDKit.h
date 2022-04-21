@@ -50,17 +50,12 @@ class RFIDKit : public interface::RFIDReader::ISO14443
 
 	void sendREQA();
 	void sendReadRegister0();
-	void sendReadRegister6();
-	void sendWriteRegister(uint8_t registerToWrite, std::array<uint8_t, 4> data);
+	void sendReadRegister4();
 
 	auto receiveATQA() -> bool;
 	auto receiveReadTagData() -> bool;
-	void receiveWriteTagData();
 
 	auto isTagSignatureValid() -> bool;
-
-	void sendAuthentificate();
-	void receiveAuthentificate();
 
 	auto computeCRC(uint8_t const *data) const -> std::array<uint8_t, 2>;
 

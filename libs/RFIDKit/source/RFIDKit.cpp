@@ -51,7 +51,7 @@ void RFIDKit::getTagData()
 			log_debug("CURRENT STATE : TAG_IDENTIFIED\n");
 
 			if (receiveReadTagData()) {
-				sendReadRegister6();
+				sendReadRegister4();
 				isTagSignatureValid();
 				_state = state::TAG_ACTIVATED;
 			} else {
@@ -100,7 +100,7 @@ void RFIDKit::sendReadRegister0()
 	_rfid_reader.sendCommandToTag(array);
 }
 
-void RFIDKit::sendReadRegister6()
+void RFIDKit::sendReadRegister4()
 {
 	std::array<uint8_t, 3> array {};
 
@@ -111,55 +111,7 @@ void RFIDKit::sendReadRegister6()
 
 auto RFIDKit::isTagSignatureValid() -> bool
 {
-	auto lambda = [this]() {
 		return (_tag.data[0] == 0x4C && _tag.data[1] == 0x45 && _tag.data[2] == 0x4B && _tag.data[3] == 0x41);
-	};
-	return lambda();
-}
-
-void RFIDKit::sendWriteRegister(uint8_t registerToWrite, std::array<uint8_t, 4> data)
-{
-	std::array<uint8_t, 7> array {};
-
-	array[0] = 0xA2;
-	array[1] = registerToWrite;
-
-	for (int i = 0; i < 4; ++i) {
-		array[i + 2] = data[i];
-	}
-	array[6] = 0x28;
-
-	_rfid_reader.sendCommandToTag(array);
-}
-
-void RFIDKit::receiveWriteTagData()
-{
-	std::array<uint8_t, 2> ATQA_answer {};
-	std::span<uint8_t> span = {ATQA_answer};
-
-	_rfid_reader.receiveDataFromTag(span);
-}
-
-void RFIDKit::sendAuthentificate()
-{
-	std::array<uint8_t, 6> array {};
-
-	array[0] = 0x1B;
-	array[1] = 0xff;
-	array[2] = 0xff;
-	array[3] = 0xff;
-	array[4] = 0xff;
-	array[5] = 0x28;
-
-	_rfid_reader.sendCommandToTag(array);
-}
-
-void RFIDKit::receiveAuthentificate()
-{
-	std::array<uint8_t, 4> authentificate_answer {};
-	std::span<uint8_t> span = {authentificate_answer};
-
-	_rfid_reader.receiveDataFromTag(span);
 }
 
 auto RFIDKit::receiveATQA() -> bool
