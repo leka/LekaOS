@@ -19,6 +19,7 @@
 using namespace leka;
 using ::testing::_;
 using ::testing::InSequence;
+using ::testing::Return;
 
 class CoreVideoTest : public ::testing::Test
 {
@@ -197,4 +198,26 @@ TEST_F(CoreVideoTest, displayTextWithColor)
 	EXPECT_CALL(fontmock, display(_, _, _, compareColor(foreground_color), compareColor(background_color))).Times(1);
 
 	corevideo.displayText(buff, text_length, starting_line, foreground_color, background_color);
+}
+
+TEST_F(CoreVideoTest, playVideo)
+{
+	const auto any_frame_index = 218;
+	const auto any_frame_size  = 27;
+
+	{
+		InSequence seq;
+
+		EXPECT_CALL(jpegmock, getImageProperties);
+		EXPECT_CALL(jpegmock, findSOIMarker).WillOnce(Return(any_frame_index));
+
+		EXPECT_CALL(filemock, seek(any_frame_index, SEEK_SET));
+
+		EXPECT_CALL(jpegmock, decodeImage).WillOnce(Return(any_frame_size));
+		EXPECT_CALL(dma2dmock, transferImage);
+
+		EXPECT_CALL(jpegmock, findSOIMarker(_, any_frame_index + any_frame_size)).WillOnce(Return(0));
+	}
+
+	corevideo.playVideo(filemock);
 }

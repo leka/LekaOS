@@ -24,7 +24,7 @@ class CoreJPEGModePolling : public interface::JPEGMode
 	void onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize) final;
 	void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) final;
 
-	auto decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> HAL_StatusTypeDef final;
+	auto decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> size_t final;
 
   private:
 	struct JPEGDataBuffer {
@@ -35,6 +35,7 @@ class CoreJPEGModePolling : public interface::JPEGMode
 	interface::STM32Hal &_hal;
 	interface::File *_file {};
 
+	size_t _image_size			= 0;
 	uint32_t _mcu_number		= 0;
 	uint32_t _mcu_block_index	= 0;
 	uint32_t _input_file_offset = 0;

@@ -75,6 +75,8 @@ void CoreJPEGModePolling::onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uin
 	} else {
 		// TODO(@yann): handle error
 	}
+
+	_image_size += _jpeg_input_buffer.size;
 }
 
 void CoreJPEGModePolling::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
@@ -82,11 +84,12 @@ void CoreJPEGModePolling::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
 	// TODO(@yann): implement flag
 }
 
-auto CoreJPEGModePolling::decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> HAL_StatusTypeDef
+auto CoreJPEGModePolling::decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> size_t
 {
 	_file = &file;
 
 	// WARNING: DO NOT REMOVE
+	_image_size		 = 0;
 	_mcu_block_index = 0;
 
 	if (_jpeg_input_buffer.size = _file->read(_jpeg_input_buffer.data, leka::jpeg::input_chunk_size);
@@ -99,5 +102,5 @@ auto CoreJPEGModePolling::decode(JPEG_HandleTypeDef *hjpeg, interface::File &fil
 	_hal.HAL_JPEG_Decode(hjpeg, _jpeg_input_buffer.data, _jpeg_input_buffer.size, _mcu_data_output_buffer.data(),
 						 leka::jpeg::output_chunk_size, HAL_MAX_DELAY);
 
-	return HAL_OK;
+	return _image_size;
 }

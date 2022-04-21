@@ -71,7 +71,33 @@ void CoreJPEG::registerProcessCallbacks()
 								   [](JPEG_HandleTypeDef *hjpeg) { self._mode.onErrorCallback(hjpeg); });
 }
 
-void CoreJPEG::decodeImage(interface::File &file)
+auto CoreJPEG::decodeImage(interface::File &file) -> size_t
 {
-	_mode.decode(&_hjpeg, file);
+	return _mode.decode(&_hjpeg, file);
+}
+
+auto CoreJPEG::findSOIMarker(interface::File &file, size_t start_index) -> size_t
+{
+	auto buffer = std::array<uint8_t, 512> {};
+
+	auto is_jpeg_soi_marker_predicate = [](uint8_t val1, uint8_t val2) {
+		return (static_cast<uint16_t>((val1 << 8) + val2)) == jpeg::JPEG_SOI_MARKER;
+	};
+
+	while (file.size() > start_index) {
+		file.seek(start_index, SEEK_SET);
+		auto bytes_read = file.read(buffer.data(), buffer.size());
+
+		auto *buffer_end_index = std::begin(buffer) + bytes_read;
+		auto *find_index	   = std::adjacent_find(std::begin(buffer), buffer_end_index, is_jpeg_soi_marker_predicate);
+
+		if (auto marker_found = (find_index != buffer_end_index)) {
+			auto marker_index = start_index + std::distance(std::begin(buffer), find_index);
+			return marker_index;
+		}
+
+		start_index += bytes_read;
+	}
+
+	return 0;
 }

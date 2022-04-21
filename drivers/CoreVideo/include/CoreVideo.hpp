@@ -34,6 +34,7 @@ class CoreVideo
 	void clearScreen(CGColor color = CGColor::white);
 	void displayRectangle(interface::Graphics::FilledRectangle rectangle, CGColor color);
 	void displayImage(interface::File &file);
+	void playVideo(interface::File &file);
 	void displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
 					 CGColor background = CGColor::white);
 

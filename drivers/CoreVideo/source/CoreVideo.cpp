@@ -80,6 +80,23 @@ void CoreVideo::displayImage(interface::File &file)
 							 image_properties.getWidthOffset());
 }
 
+void CoreVideo::playVideo(interface::File &file)
+{
+	auto config = _corejpeg.getImageProperties();
+
+	auto frame_index = _corejpeg.findSOIMarker(file, 0);
+	auto frame_size	 = size_t {0};
+
+	while (frame_index != 0) {
+		file.seek(frame_index, SEEK_SET);
+
+		frame_size = _corejpeg.decodeImage(file);
+		_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, config.getWidthOffset());
+
+		frame_index = _corejpeg.findSOIMarker(file, frame_index + frame_size);
+	}
+}
+
 void CoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,
 							CGColor background)
 {

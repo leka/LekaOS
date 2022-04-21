@@ -52,6 +52,10 @@ CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coreg
 auto file = FileManagerKit::File {};
 
 auto images = std::to_array({"/fs/images/logo.jpg", "/fs/images/robot-emotion-happy.jpg"});
+auto videos = std::to_array({
+	"/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi",
+	"/fs/videos/2022_01_17-animation-face-state-yawning-sleeping_without_eyebrows.avi",
+});
 
 extern "C" {
 void DMA2D_IRQHandler(void)
@@ -147,12 +151,21 @@ auto main() -> int
 
 		corevideo.setBrightness(0.9F);
 		corevideo.turnOn();
+
 		for (const auto &image_name: images) {
 			if (file.open(image_name)) {
 				log_info("File opened");
 				corevideo.displayImage(file);
 				file.close();
 				rtos::ThisThread::sleep_for(1s);
+			}
+		}
+
+		for (const auto &video_name: videos) {
+			if (file.open(video_name)) {
+				corevideo.playVideo(file);
+				file.close();
+				rtos::ThisThread::sleep_for(2s);
 			}
 		}
 

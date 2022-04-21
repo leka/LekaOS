@@ -71,6 +71,8 @@ namespace jpeg {
 	inline constexpr uint8_t JPEG_RGB_FORMAT = JPEG_ARGB8888;	// Select RGB format: ARGB8888, RGB888, RBG565
 	inline constexpr uint8_t JPEG_SWAP_RB	 = 0;				// Change color order to BGR
 
+	inline constexpr uint16_t JPEG_SOI_MARKER = 0xFFD8;	  // JPEG Start of Image marker
+
 }	// namespace jpeg
 
 namespace graphics {
