@@ -56,10 +56,9 @@ namespace interface {
 
 		virtual void init() = 0;
 
-		virtual void registerTagAvailableCallback(tagAvailableCallback callback) = 0;
-		virtual void onDataAvailable()											 = 0;
+		virtual void registerTagAvailableCallback(tagAvailableCallback rfid_kit_callback) = 0;
+		virtual void onDataAvailable()													  = 0;
 
-		// virtual auto getIDN(std::array<uint8_t, 17> &) -> bool = 0;
 		virtual auto setBaudrate(uint8_t baudrate) -> bool = 0;
 
 		virtual auto setCommunicationProtocol(rfid::Protocol protocol) -> bool = 0;
