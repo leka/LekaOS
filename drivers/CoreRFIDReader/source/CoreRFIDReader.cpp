@@ -19,9 +19,9 @@ void CoreRFIDReader::init()
 	registerCallback();
 }
 
-void CoreRFIDReader::registerTagAvailableCallback(tagAvailableCallback rfid_kit_callback)
+void CoreRFIDReader::registerTagAvailableCallback(tag_available_callback_t callback)
 {
-	_tagAvailableCallback = rfid_kit_callback;
+	_tagAvailableCallback = callback;
 };
 
 void CoreRFIDReader::registerCallback()
@@ -58,10 +58,10 @@ auto CoreRFIDReader::checkForTagDetection() -> bool
 	return buffer == rfid::status::tag_detection_callback;
 }
 
-void CoreRFIDReader::setModeTagDetection()
+void CoreRFIDReader::setTagDetectionMode()
 {
-	_serial.write(rfid::command::frame::set_mode_tag_detection.data(),
-				  rfid::command::frame::set_mode_tag_detection.size());
+	_serial.write(rfid::command::frame::set_tag_detection_mode.data(),
+				  rfid::command::frame::set_tag_detection_mode.size());
 }
 
 auto CoreRFIDReader::setBaudrate(uint8_t baudrate) -> bool
@@ -121,14 +121,14 @@ auto CoreRFIDReader::didsetCommunicationProtocolSucceed() -> bool
 	return buffer == rfid::status::setup_success;
 }
 
-void CoreRFIDReader::sendCommandToTag(std::span<uint8_t> cmd)
+void CoreRFIDReader::sendCommandToTag(std::span<const uint8_t> cmd)
 {
 	auto command_size = formatCommand(cmd);
 
 	_serial.write(_tx_buf.data(), command_size);
 }
 
-auto CoreRFIDReader::formatCommand(std::span<uint8_t> cmd) -> size_t
+auto CoreRFIDReader::formatCommand(std::span<const uint8_t> cmd) -> size_t
 {
 	_tx_buf[0] = rfid::command::send_receive;
 	_tx_buf[1] = static_cast<uint8_t>(cmd.size());

@@ -120,7 +120,7 @@ namespace rfid {
 		}	// namespace set_gain_and_modulation
 
 		namespace frame {
-			inline constexpr std::array<uint8_t, 16> set_mode_tag_detection {
+			inline constexpr std::array<uint8_t, 16> set_tag_detection_mode {
 				rfid::settings::idle_tag_detection::tag_detection_command,
 				rfid::settings::idle_tag_detection::length,
 				rfid::settings::idle_tag_detection::wu_source,
@@ -136,19 +136,25 @@ namespace rfid {
 				rfid::settings::idle_tag_detection::digital_to_analog_data[0],
 				rfid::settings::idle_tag_detection::digital_to_analog_data[1],
 				rfid::settings::idle_tag_detection::swing_count,
-				rfid::settings::idle_tag_detection::max_sleep};
+				rfid::settings::idle_tag_detection::max_sleep,
+			};
 
 			inline constexpr std::array<uint8_t, 2> idn {
 				rfid::command::idn::id,
 				rfid::command::idn::length,
 			};
 
-			inline constexpr std::array<uint8_t, 3> set_baudrate {rfid::command::set_baudrate::id,
-																  rfid::command::set_baudrate::length};
+			inline constexpr std::array<uint8_t, 3> set_baudrate {
+				rfid::command::set_baudrate::id,
+				rfid::command::set_baudrate::length,
+			};
 
 			inline constexpr std::array<uint8_t, 4> set_protocol_iso14443 {
-				rfid::command::set_protocol::id, rfid::command::set_protocol::length, rfid::protocol::iso14443A.id,
-				rfid::settings::default_rx_tx_speed};
+				rfid::command::set_protocol::id,
+				rfid::command::set_protocol::length,
+				rfid::protocol::iso14443A.id,
+				rfid::settings::default_rx_tx_speed,
+			};
 
 			inline constexpr std::array<uint8_t, 6> set_gain_and_modulation {
 				rfid::command::set_gain_and_modulation::id,
@@ -156,7 +162,8 @@ namespace rfid {
 				rfid::settings::arc_b,
 				rfid::settings::flag_increment,
 				rfid::settings::acr_b_index_for_gain_and_modulation,
-				rfid::protocol::iso14443A.gain_modulation_values()};
+				rfid::protocol::iso14443A.gain_modulation_values(),
+			};
 
 		}	// namespace frame
 
@@ -167,31 +174,26 @@ namespace rfid {
 class CoreRFIDReader : public interface::RFIDReader
 {
   public:
-	explicit CoreRFIDReader(interface::BufferedSerial &serial, rtos::Thread &thread, events::EventQueue &event_queue)
-		: _serial(serial), _thread(thread), _event_queue(event_queue) {};
+	explicit CoreRFIDReader(interface::BufferedSerial &serial) : _serial(serial) {};
 
 	void init() final;
 
-	void registerTagAvailableCallback(tagAvailableCallback rfid_kit_callback) final;
+	void registerTagAvailableCallback(tag_available_callback_t callback) final;
 	void onDataAvailable() final;
 
 	auto setBaudrate(uint8_t baudrate) -> bool final;
 
 	auto setCommunicationProtocol(rfid::Protocol protocol) -> bool final;
 
-	void sendCommandToTag(std::span<uint8_t> cmd) final;
+	void sendCommandToTag(std::span<const uint8_t> cmd) final;
 	auto receiveDataFromTag(std::span<uint8_t> data) -> bool final;
 
-	void setModeTagDetection() final;
+	void setTagDetectionMode() final;
 
 	auto checkForTagDetection() -> bool final;
 
   private:
 	void registerCallback();
-
-	auto receiveTagDetectionCallback() -> bool;
-
-	auto writeConfiguration(std::span<uint8_t> conf) -> size_t;
 
 	auto didSetBaudrateSucceed(uint8_t baudrate) -> bool;
 
@@ -201,17 +203,17 @@ class CoreRFIDReader : public interface::RFIDReader
 	auto didsetCommunicationProtocolSucceed() -> bool;
 	void read();
 
-	auto formatCommand(std::span<uint8_t> cmd) -> size_t;
+	auto formatCommand(std::span<const uint8_t> cmd) -> size_t;
 
 	auto DataFromTagIsCorrect(size_t sizeTagData) -> bool;
 	void copyTagDataToSpan(std::span<uint8_t> data);
 
-	tagAvailableCallback _tagAvailableCallback;
+	tag_available_callback_t _tagAvailableCallback;
 	bool _tagWasDetected {false};
 
 	interface::BufferedSerial &_serial;
-	rtos::Thread &_thread;
-	events::EventQueue &_event_queue;
+	rtos::Thread _thread {};
+	events::EventQueue _event_queue {};
 
 	size_t _anwser_size {0};
 	std::array<uint8_t, rfid::max_tx_length> _tx_buf {};
