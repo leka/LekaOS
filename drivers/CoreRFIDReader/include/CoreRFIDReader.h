@@ -172,10 +172,9 @@ class CoreRFIDReader : public interface::RFIDReader
 
 	void init() final;
 
-	void registerTagAvailableCallback(tagAvailableCallback callback) final;
+	void registerTagAvailableCallback(tagAvailableCallback rfid_kit_callback) final;
 	void onDataAvailable() final;
 
-	// auto getIDN(std::array<uint8_t, rfid::expected_answer_size::idn> &) -> bool final;
 	auto setBaudrate(uint8_t baudrate) -> bool final;
 
 	auto setCommunicationProtocol(rfid::Protocol protocol) -> bool final;
@@ -189,14 +188,10 @@ class CoreRFIDReader : public interface::RFIDReader
 
   private:
 	void registerCallback();
-	void onCallback();
 
 	auto receiveTagDetectionCallback() -> bool;
 
 	auto writeConfiguration(std::span<uint8_t> conf) -> size_t;
-
-	// void askRFIDForIDN();
-	// auto didIDNIsCorrect() -> bool;
 
 	auto didSetBaudrateSucceed(uint8_t baudrate) -> bool;
 

@@ -9,32 +9,26 @@
 #include <span>
 
 #include "rtos/ThisThread.h"
-
 using namespace std::chrono;
 
 namespace leka {
 
 void CoreRFIDReader::init()
 {
-	registerCallback();
 	_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
+	registerCallback();
 }
 
-void CoreRFIDReader::registerTagAvailableCallback(tagAvailableCallback callback)
+void CoreRFIDReader::registerTagAvailableCallback(tagAvailableCallback rfid_kit_callback)
 {
-	_tagAvailableCallback = callback;
+	_tagAvailableCallback = rfid_kit_callback;
 };
 
 void CoreRFIDReader::registerCallback()
 {
-	auto callback = [this]() { this->onCallback(); };
-	_serial.registerIOCallback(callback);
-}
-
-void CoreRFIDReader::onCallback()
-{
-	auto callback = [this]() { this->onDataAvailable(); };
-	_event_queue.call(callback);
+	auto func	  = [this]() { this->onDataAvailable(); };
+	auto callback = [this, func] { _event_queue.call(func); };
+	_serial.sigio(callback);
 }
 
 void CoreRFIDReader::onDataAvailable()
@@ -48,18 +42,11 @@ void CoreRFIDReader::read()
 	rtos::ThisThread::sleep_for(10ms);
 	if (_serial.readable()) {
 		_anwser_size = _serial.read(_rx_buf.data(), _rx_buf.size());
-
-		// printf("Read Values : ");
-		// for (int i = 0; i < _anwser_size; ++i) {
-		// 	printf("%i ", _rx_buf[i]);
-		// }
-		// printf("\n");
 	}
 }
 
 auto CoreRFIDReader::checkForTagDetection() -> bool
 {
-	// printf("Check for tag detection \n");
 	std::array<uint8_t, 2> buffer {};
 
 	if (_anwser_size != rfid::expected_answer_size::tag_detection) {
@@ -76,35 +63,6 @@ void CoreRFIDReader::setModeTagDetection()
 	_serial.write(rfid::command::frame::set_mode_tag_detection.data(),
 				  rfid::command::frame::set_mode_tag_detection.size());
 }
-
-// auto CoreRFIDReader::getIDN(std::array<uint8_t, rfid::expected_answer_size::idn> &idn) -> bool
-// {
-// 	askRFIDForIDN();
-
-// 	if (didIDNIsCorrect()) {
-// 		std::copy(_rx_buf.begin(), _rx_buf.begin() + idn.size(), idn.begin());
-// 		return true;
-// 	}
-
-// 	return false;
-// }
-
-// void CoreRFIDReader::askRFIDForIDN()
-// {
-// 	_serial.write(rfid::command::frame::idn.data(), rfid::command::frame::idn.size());
-// }
-
-// auto CoreRFIDReader::didIDNIsCorrect() -> bool
-// {
-// 	read();
-// 	if (_anwser_size != rfid::expected_answer_size::idn) {
-// 		return false;
-// 	}
-
-// 	std::array<uint8_t, 2> buffer {_rx_buf[0], _rx_buf[1]};
-
-// 	return buffer == rfid::status::idn_success;
-// }
 
 auto CoreRFIDReader::setBaudrate(uint8_t baudrate) -> bool
 {
