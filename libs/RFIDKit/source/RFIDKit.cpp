@@ -9,23 +9,22 @@
 namespace leka {
 void RFIDKit::init()
 {
-	// log_debug("init \n");
-	static auto getTagDataCallback = [this]() { this->getTagData(); };
+	static auto getTagDataCallback = [this]() { this->runStateMachine(); };
 
 	_rfid_reader.registerTagAvailableCallback(getTagDataCallback);
 	_rfid_reader.init();
 }
 
-void RFIDKit::getTagData()
+void RFIDKit::runStateMachine()
 {
 	switch (_state) {
-		case state::SENSOR_SLEEP: {
-			log_debug("CURRENT STATE : SENSOR_SLEEP\n");
+		case state::WAITING_FOR_TAG: {
+			log_debug("CURRENT STATE : WAITING_FOR_TAG\n");
 			if (_rfid_reader.checkForTagDetection()) {
 				_rfid_reader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 				_state = state::TAG_COMMUNICATION_PROTOCOL_SET;
 			} else {
-				_rfid_reader.setModeTagDetection();
+				_rfid_reader.setTagDetectionMode();
 			}
 
 		} break;
@@ -42,8 +41,8 @@ void RFIDKit::getTagData()
 				sendReadRegister0();
 				_state = state::TAG_IDENTIFIED;
 			} else {
-				_rfid_reader.setModeTagDetection();
-				_state = state::SENSOR_SLEEP;
+				_rfid_reader.setTagDetectionMode();
+				_state = state::WAITING_FOR_TAG;
 			}
 		} break;
 
@@ -52,15 +51,14 @@ void RFIDKit::getTagData()
 
 			if (receiveReadTagData()) {
 				sendReadRegister4();
-				isTagSignatureValid();
-				_state = state::TAG_ACTIVATED;
+				_state = state::TAG_AVAILABLE;
 			} else {
-				_rfid_reader.setModeTagDetection();
-				_state = state::SENSOR_SLEEP;
+				_rfid_reader.setTagDetectionMode();
+				_state = state::WAITING_FOR_TAG;
 			}
 		} break;
-		case state::TAG_ACTIVATED: {
-			log_debug("CURRENT STATE : TAG_ACTIVATED\n");
+		case state::TAG_AVAILABLE: {
+			log_debug("CURRENT STATE : TAG_AVAILABLE\n");
 
 			if (receiveReadTagData() && isTagSignatureValid()) {
 				log_debug("Data : ");
@@ -68,46 +66,40 @@ void RFIDKit::getTagData()
 					log_debug("%x, ", i);
 				}
 				log_debug("\n");
-				_tag_action_data = static_cast<Tag>(_tag.data[5]);
-				_on_tag_activated_callback(_tag_action_data);
+				_magic_card = MagicCard {_tag.data[5]};
+				_on_tag_available_callback(_magic_card);
 			}
-			_rfid_reader.setModeTagDetection();
-			_state = state::SENSOR_SLEEP;
+			_rfid_reader.setTagDetectionMode();
+			_state = state::WAITING_FOR_TAG;
 
 		} break;
 	}
 }
 
-void RFIDKit::onTagActivated(std::function<void(Tag &tag_data)> callback)
+void RFIDKit::onTagActivated(std::function<void(MagicCard &_magic_card)> callback)
 {
-	_on_tag_activated_callback = callback;
+	_on_tag_available_callback = callback;
 }
 
 void RFIDKit::sendREQA()
 {
 	std::array<uint8_t, 2> array {};
 
-	commandToArray(command_requestA, array);
-
-	_rfid_reader.sendCommandToTag(array);
+	_rfid_reader.sendCommandToTag(command_requestA.getArray());
 }
 
 void RFIDKit::sendReadRegister0()
 {
 	std::array<uint8_t, 3> array {};
 
-	commandToArray(command_read_register_0, array);
-
-	_rfid_reader.sendCommandToTag(array);
+	_rfid_reader.sendCommandToTag(command_read_register_0.getArray());
 }
 
 void RFIDKit::sendReadRegister4()
 {
 	std::array<uint8_t, 3> array {};
 
-	commandToArray(command_read_register_4, array);
-
-	_rfid_reader.sendCommandToTag(array);
+	_rfid_reader.sendCommandToTag(command_read_register_4.getArray());
 }
 
 auto RFIDKit::isTagSignatureValid() -> bool
