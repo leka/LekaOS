@@ -33,7 +33,12 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
 		tests/StateMachine_test.cpp
-		tests/RobotController_test.cpp
+		tests/RobotController_test_initializeComponents.cpp
+		tests/RobotController_test_registerEvents.cpp
+		tests/RobotController_test_stateSetup.cpp
+		tests/RobotController_test_stateIdle.cpp
+		tests/RobotController_test_stateSleeping.cpp
+		tests/RobotController_test_stateCharging.cpp
 	)
 
 endif()
