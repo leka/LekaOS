@@ -68,8 +68,9 @@ void RFIDKit::getTagData()
 					log_debug("%x, ", i);
 				}
 				log_debug("\n");
+				_tag_action_data = static_cast<Tag>(_tag.data[5]);
+				_on_tag_activated_callback(_tag_action_data);
 			}
-			_on_tag_activated_callback(_tag);
 			_rfid_reader.setModeTagDetection();
 			_state = state::SENSOR_SLEEP;
 
@@ -77,7 +78,7 @@ void RFIDKit::getTagData()
 	}
 }
 
-void RFIDKit::onTagActivated(std::function<void(rfid::Tag &tag)> const &callback)
+void RFIDKit::onTagActivated(std::function<void(Tag &tag_data)> callback)
 {
 	_on_tag_activated_callback = callback;
 }
@@ -111,7 +112,7 @@ void RFIDKit::sendReadRegister4()
 
 auto RFIDKit::isTagSignatureValid() -> bool
 {
-		return (_tag.data[0] == 0x4C && _tag.data[1] == 0x45 && _tag.data[2] == 0x4B && _tag.data[3] == 0x41);
+	return (_tag.data[0] == 0x4C && _tag.data[1] == 0x45 && _tag.data[2] == 0x4B && _tag.data[3] == 0x41);
 }
 
 auto RFIDKit::receiveATQA() -> bool

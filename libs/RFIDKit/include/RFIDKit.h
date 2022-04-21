@@ -100,7 +100,7 @@ class RFIDKit : public interface::RFIDReader::ISO14443
 
 	void resetTag() { _tag.data = {}; };
 
-	void onTagActivated(std::function<void(rfid::Tag &)> const &callback);
+	void onTagActivated(std::function<void(Tag &)> callback);
 
   private:
 	template <size_t SIZE>
@@ -128,7 +128,8 @@ class RFIDKit : public interface::RFIDReader::ISO14443
 
 	interface::RFIDReader &_rfid_reader;
 	rfid::Tag _tag {};
-	std::function<void(rfid::Tag &)> _on_tag_activated_callback;
+	Tag _tag_action_data = Tag::None;
+	std::function<void(Tag &)> _on_tag_activated_callback;
 	state _state = state::SENSOR_SLEEP;
 };
 
