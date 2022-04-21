@@ -12,16 +12,20 @@ target_include_directories(FileManagerKit
 target_sources(FileManagerKit
 	PRIVATE
 		source/File.cpp
+		source/FileReception.cpp
 )
 
 target_link_libraries(FileManagerKit
 	mbed-os
+	ContainerKit
+	CoreEventQueue
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
 		tests/File_test.cpp
+		tests/FileReception_test.cpp
 	)
 
 endif()

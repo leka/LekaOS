@@ -15,6 +15,7 @@
 #include "CoreEventQueue.h"
 #include "FATFileSystem.h"
 #include "FileManagerKit.h"
+#include "FileReception.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 
@@ -23,10 +24,6 @@ using namespace std::chrono;
 
 auto level			 = uint8_t {0};
 auto charging_status = bool {false};
-
-auto file_reception_circular_queue = CircularQueue<uint8_t, 1024> {};
-auto write_buffer				   = std::array<uint8_t, 128> {};
-auto event_queue				   = CoreEventQueue {};
 
 auto service_device_information = BLEServiceDeviceInformation {};
 auto service_battery			= BLEServiceBattery {};
@@ -41,7 +38,8 @@ auto blekit = BLEKit {};
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
-FileManagerKit::File reception_file {};
+auto file_for_reception		= FileManagerKit::File {};
+auto file_reception_handler = FileReception {file_for_reception};
 
 void initializeSD()
 {
@@ -67,29 +65,8 @@ auto main() -> int
 
 	initializeSD();
 
-	event_queue.dispatch_forever();
-
-	if (reception_file.open(service_file_reception.getFilePath().data(), "w")) {
-		reception_file.close();
-	}
-
-	auto on_file_data_write = []() {
-		auto path = service_file_reception.getFilePath();
-
-		if (reception_file.open(path.data(), "a")) {
-			write_buffer.fill('\0');
-			auto data_read = file_reception_circular_queue.pop(write_buffer.data(), std::size(write_buffer));
-			reception_file.write(write_buffer.data(), data_read);
-			reception_file.close();
-		}
-	};
-
-	auto on_file_data_received = [&on_file_data_write](std::span<uint8_t> buffer) {
-		file_reception_circular_queue.push(buffer.data(), std::size(buffer));
-
-		event_queue.call(on_file_data_write);
-	};
-	service_file_reception.onFileDataReceived(on_file_data_received);
+	service_file_reception.onFileDataReceived(
+		[](std::span<uint8_t> buffer) { file_reception_handler.onPacketReceived(buffer); });
 
 	while (true) {
 		log_info("Main thread running...");
@@ -103,8 +80,10 @@ auto main() -> int
 
 		log_info("Screensaver enable: %d", service_monitoring.isScreensaverEnable());
 
-		auto version = service_update.getVersion();
+		log_info("Path is %s", service_file_reception.getFilePath().data());
+		file_reception_handler.setFilePath(service_file_reception.getFilePath().data());
 
+		auto version = service_update.getVersion();
 		log_info("Requested version: %d.%d.%d", version.major, version.minor, version.revision);
 
 		auto advertising_data		 = blekit.getAdvertisingData();
