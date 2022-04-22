@@ -23,6 +23,7 @@ target_link_libraries(RobotKit
 	BLEKit
 	CoreMotor
 	LedKit
+	FileManagerKit
 	CoreMutex
 	VideoKit
 	BehaviorKit
