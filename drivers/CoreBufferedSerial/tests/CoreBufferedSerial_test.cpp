@@ -10,8 +10,7 @@ using namespace leka;
 
 TEST(CoreBufferedSerialTest, initialization)
 {
-	auto serial		= mbed::BufferedSerial {RFID_UART_TX, RFID_UART_RX, 57600};
-	auto coreserial = CoreBufferedSerial {serial};
+	auto coreserial = CoreBufferedSerial {RFID_UART_TX, RFID_UART_RX};
 
 	ASSERT_NE(&coreserial, nullptr);
 }
