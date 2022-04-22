@@ -18,8 +18,8 @@ class CoreBufferedSerial : public interface::BufferedSerial
 	{
 	}
 
-	auto read(uint8_t *buffer, ssize_t length) -> ssize_t final;
-	auto write(const uint8_t *buffer, ssize_t length) -> ssize_t final;
+	auto read(uint8_t *buffer, std::size_t length) -> std::size_t final;
+	auto write(const uint8_t *buffer, std::size_t length) -> std::size_t final;
 	auto readable() -> bool final;
 
   private:
