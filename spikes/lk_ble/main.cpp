@@ -38,8 +38,7 @@ auto blekit = BLEKit {};
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
-auto file_for_reception		= FileManagerKit::File {};
-auto file_reception_handler = FileReception {file_for_reception};
+auto file_reception_handler = FileReception {};
 
 void initializeSD()
 {

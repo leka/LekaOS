@@ -3,36 +3,49 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "FileReception.h"
+#include <fstream>
 
 #include "mocks/leka/EventQueue.h"
-#include "mocks/leka/File.h"
 
 using namespace leka;
-
-using ::testing::_;
-using ::testing::InSequence;
-using ::testing::Matcher;
-using ::testing::Return;
-
-MATCHER_P(compareChar, expected_char, "")
-{
-	return *expected_char == *arg;
-}
 
 class FileReceptionTest : public ::testing::Test
 {
   protected:
-	// void SetUp() override {}
+	void SetUp() override
+	{
+		strcpy(temp_file_path, "/tmp/XXXXXX");
+		mkstemp(temp_file_path);
+	}
 	// void TearDown() override {}
-
-	FileReceptionTest() : file_reception(filemock) {}
 
 	mock::EventQueue event_queue {};
 
-	mock::File filemock;
 	FileReception file_reception;
 
-	static inline auto packet = std::to_array<uint8_t>({'a', 'b', 'c'});
+	static inline auto packet			= std::to_array<uint8_t>({'a', 'b', 'c'});
+	static inline auto packet_in_string = std::string(packet.begin(), packet.end());
+
+	char temp_file_path[L_tmpnam];	 // NOLINT
+
+	auto readTempFile() -> std::string
+	{
+		std::fstream f {};
+		f.open(temp_file_path);
+
+		std::stringstream out {};
+		out << f.rdbuf();
+		f.close();
+
+		return out.str();
+	}
+
+	void writeTempFile(std::span<uint8_t> data)
+	{
+		auto *file = fopen(temp_file_path, "wb");
+		fwrite(data.data(), sizeof(uint8_t), data.size(), file);
+		fclose(file);
+	}
 };
 
 TEST_F(FileReceptionTest, instantiation)
@@ -42,35 +55,41 @@ TEST_F(FileReceptionTest, instantiation)
 
 TEST_F(FileReceptionTest, setFilePath)
 {
-	EXPECT_CALL(filemock, open(Matcher<const std::filesystem::path &>(_), compareChar("w"))).WillOnce(Return(true));
-	EXPECT_CALL(filemock, close).Times(1);
+	writeTempFile(packet);
+	auto read_before_action = readTempFile();
+	EXPECT_EQ(read_before_action, packet_in_string);
 
-	file_reception.setFilePath("/fs/test.txt");
+	file_reception.setFilePath(temp_file_path);
+
+	auto read_after_action = readTempFile();
+	EXPECT_EQ(read_after_action, "");
 }
 
 TEST_F(FileReceptionTest, setFilePathFileNotAccessible)
 {
-	EXPECT_CALL(filemock, open(Matcher<const std::filesystem::path &>(_), compareChar("w"))).WillOnce(Return(false));
+	file_reception.setFilePath("/tmp/unexisting_directory/XXXXXX");
 
-	file_reception.setFilePath("/fs/unexisting_directory/test.txt");
+	// nothing expected
 }
 
 TEST_F(FileReceptionTest, onPacketReceived)
 {
-	{
-		InSequence seq;
+	file_reception.setFilePath(temp_file_path);
 
-		EXPECT_CALL(filemock, open(Matcher<const std::filesystem::path &>(_), compareChar("a"))).WillOnce(Return(true));
-		EXPECT_CALL(filemock, write(Matcher<const uint8_t *>(_), std::size(packet))).Times(1);
-		EXPECT_CALL(filemock, close).Times(1);
-	}
+	auto read_before_action = readTempFile();
+	EXPECT_EQ(read_before_action, "");
 
 	file_reception.onPacketReceived(packet);
+
+	auto read_after_action = readTempFile();
+	EXPECT_EQ(read_after_action, packet_in_string);
 }
 
 TEST_F(FileReceptionTest, onPacketReceivedFileNotAccessible)
 {
-	EXPECT_CALL(filemock, open(Matcher<const std::filesystem::path &>(_), compareChar("a"))).WillOnce(Return(false));
+	file_reception.setFilePath("/tmp/unexisting_directory/XXXXXX");
 
 	file_reception.onPacketReceived(packet);
+
+	// nothing expected
 }

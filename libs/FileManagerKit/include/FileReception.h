@@ -10,14 +10,14 @@
 
 #include "CircularQueue.h"
 #include "CoreEventQueue.h"
-#include "interface/platform/File.h"
+#include "FileManagerKit.h"
 
 namespace leka {
 
 class FileReception
 {
   public:
-	explicit FileReception(interface::File &file) : _file(file) { event_queue.dispatch_forever(); }
+	explicit FileReception() { event_queue.dispatch_forever(); }
 
 	void setFilePath(const std::filesystem::path &path);
 	void onPacketReceived(std::span<uint8_t> buffer);
@@ -25,7 +25,7 @@ class FileReception
   private:
 	void writeToFile();
 
-	interface::File &_file;
+	FileManagerKit::File _file {};
 
 	std::filesystem::path _path {};
 	CoreEventQueue event_queue {};
