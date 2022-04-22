@@ -12,8 +12,6 @@ using namespace leka;
 class CoreI2CTests : public ::testing::Test
 {
   protected:
-	CoreI2CTests() : corei2c(i2c) {}
-
 	void SetUp() override
 	{
 		expected_read_values	= {};
@@ -22,8 +20,7 @@ class CoreI2CTests : public ::testing::Test
 	}
 	// void TearDown() override {}
 
-	mbed::I2C i2c {NC, NC};
-	CoreI2C corei2c;
+	CoreI2C corei2c {NC, NC};
 
 	std::vector<uint8_t> expected_read_values;
 	std::vector<uint8_t> actual_read_values;
