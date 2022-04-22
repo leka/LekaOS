@@ -20,7 +20,10 @@ class CoreBufferedSerial : public interface::BufferedSerial
 
 	auto read(uint8_t *buffer, std::size_t length) -> std::size_t final;
 	auto write(const uint8_t *buffer, std::size_t length) -> std::size_t final;
+
 	auto readable() -> bool final;
+
+	void sigio(mbed::Callback<void()> func) final;
 
   private:
 	mbed::BufferedSerial _serial;
