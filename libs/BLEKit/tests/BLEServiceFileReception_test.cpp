@@ -84,7 +84,7 @@ TEST_F(BLEServiceFileReceptionTest, getFilePathAny)
 	auto cast_expected_file_path = std::span<uint8_t>(reinterpret_cast<uint8_t *>(expected_file_path.begin()),
 													  reinterpret_cast<uint8_t *>(expected_file_path.end()));
 
-	testing::MockFunction<void(std::span<char>)> mock_callback {};
+	testing::MockFunction<void(std::span<const char>)> mock_callback {};
 	service_file_reception.onFilePathReceived(mock_callback.AsStdFunction());
 
 	EXPECT_CALL(mock_callback, Call(compareArray(expected_file_path))).Times(1);
@@ -101,7 +101,7 @@ TEST_F(BLEServiceFileReceptionTest, getFilePathNotSameHandle)
 
 	data_received_handle.handle = 0xFFFF;
 
-	testing::MockFunction<void(std::span<char>)> mock_callback {};
+	testing::MockFunction<void(std::span<const char>)> mock_callback {};
 	service_file_reception.onFilePathReceived(mock_callback.AsStdFunction());
 
 	EXPECT_CALL(mock_callback, Call).Times(0);
@@ -113,7 +113,7 @@ TEST_F(BLEServiceFileReceptionTest, onFileDataReceivedCallback)
 {
 	auto expected_array = std::to_array<uint8_t>({0x2A, 0x2B, 0x2C, 0x2D, 0x2E});
 
-	testing::MockFunction<void(std::span<uint8_t>)> mock_callback {};
+	testing::MockFunction<void(std::span<const uint8_t>)> mock_callback {};
 	service_file_reception.onFileDataReceived(mock_callback.AsStdFunction());
 
 	EXPECT_CALL(mock_callback, Call(compareArray(expected_array))).Times(1);
@@ -125,7 +125,7 @@ TEST_F(BLEServiceFileReceptionTest, onFileDataReceivedCallbackNotSameHandle)
 {
 	auto sent_data = std::to_array<uint8_t>({0x2A, 0x2B, 0x2C, 0x2D, 0x2E});
 
-	testing::MockFunction<void(std::span<uint8_t>)> mock_callback {};
+	testing::MockFunction<void(std::span<const uint8_t>)> mock_callback {};
 	service_file_reception.onFileDataReceived(mock_callback.AsStdFunction());
 
 	data_received_handle.handle = 0xFFFF;

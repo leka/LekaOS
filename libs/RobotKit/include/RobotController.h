@@ -225,9 +225,9 @@ class RobotController : public interface::RobotController
 		_service_commands.onCommandsReceived(on_commands_received);
 
 		_service_file_reception.onFilePathReceived(
-			[this](std::span<char> path) { file_reception.setFilePath(path.data()); });
+			[this](std::span<const char> path) { file_reception.setFilePath(path.data()); });
 		_service_file_reception.onFileDataReceived(
-			[this](std::span<uint8_t> buffer) { file_reception.onPacketReceived(buffer); });
+			[this](std::span<const uint8_t> buffer) { file_reception.onPacketReceived(buffer); });
 
 		auto on_update_requested = [this]() { raise(event::update_requested {}); };
 		_service_update.onUpdateRequested(on_update_requested);

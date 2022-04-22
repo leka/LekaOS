@@ -20,7 +20,7 @@ class FileReception
 	explicit FileReception() { event_queue.dispatch_forever(); }
 
 	void setFilePath(const std::filesystem::path &path);
-	void onPacketReceived(std::span<uint8_t> buffer);
+	void onPacketReceived(std::span<const uint8_t> buffer);
 
   private:
 	void writeToFile();

@@ -15,7 +15,7 @@ void FileReception::setFilePath(const std::filesystem::path &path)
 	}
 }
 
-void FileReception::onPacketReceived(std::span<uint8_t> buffer)
+void FileReception::onPacketReceived(std::span<const uint8_t> buffer)
 {
 	_circular_queue.push(buffer.data(), std::size(buffer));
 

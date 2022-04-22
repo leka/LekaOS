@@ -38,9 +38,12 @@ class BLEServiceFileReception : public interface::BLEService
 		}
 	};
 
-	void onFilePathReceived(const std::function<void(std::span<char>)> &callback) { _on_file_path_callback = callback; }
+	void onFilePathReceived(const std::function<void(std::span<const char>)> &callback)
+	{
+		_on_file_path_callback = callback;
+	}
 
-	void onFileDataReceived(const std::function<void(std::span<uint8_t>)> &callback)
+	void onFileDataReceived(const std::function<void(std::span<const uint8_t>)> &callback)
 	{
 		_on_file_data_callback = callback;
 	}
@@ -54,8 +57,8 @@ class BLEServiceFileReception : public interface::BLEService
 	WriteOnlyArrayGattCharacteristic<uint8_t, 128> file_reception_buffer_characteristic {
 		service::receive_file::characteristic::file_reception_buffer, file_reception_buffer.begin()};
 
-	std::function<void(std::span<uint8_t>)> _on_file_data_callback {};
-	std::function<void(std::span<char>)> _on_file_path_callback {};
+	std::function<void(std::span<const uint8_t>)> _on_file_data_callback {};
+	std::function<void(std::span<const char>)> _on_file_path_callback {};
 
 	std::array<GattCharacteristic *, 2> _characteristic_table {&file_path_characteristic,
 															   &file_reception_buffer_characteristic};

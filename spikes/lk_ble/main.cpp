@@ -65,10 +65,10 @@ auto main() -> int
 	initializeSD();
 
 	service_file_reception.onFilePathReceived(
-		[](std::span<char> path) { file_reception_handler.setFilePath(path.data()); });
+		[](std::span<const char> path) { file_reception_handler.setFilePath(path.data()); });
 
 	service_file_reception.onFileDataReceived(
-		[](std::span<uint8_t> buffer) { file_reception_handler.onPacketReceived(buffer); });
+		[](std::span<const uint8_t> buffer) { file_reception_handler.onPacketReceived(buffer); });
 
 	while (true) {
 		log_info("Main thread running...");
