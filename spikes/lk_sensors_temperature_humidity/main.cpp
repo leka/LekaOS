@@ -21,8 +21,7 @@ auto main() -> int
 
 	log_info("Hello, World!\n\n");
 
-	mbed::I2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
-	CoreI2C corei2c(i2c);
+	CoreI2C corei2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
 	CoreHTS corehts(corei2c);
 
 	rtos::ThisThread::sleep_for(2s);
