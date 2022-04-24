@@ -29,7 +29,9 @@ TARGET_BOARD    ?= LEKA_V1_2_DEV
 # MARK: - Options
 #
 
+COVERAGE                             ?= ON
 ENABLE_LOG_DEBUG                     ?= ON
+ADDRESS_SANITIZER                    ?= OFF
 BUILD_TARGETS_TO_USE_WITH_BOOTLOADER ?= OFF
 
 #
@@ -201,9 +203,12 @@ run_unit_tests:
 config_unit_tests: mkdir_build_unit_tests
 	@echo ""
 	@echo "🏃 Running unit tests cmake configuration script 📝"
-	cmake -S ./tests/unit -B $(UNIT_TESTS_BUILD_DIR) -GNinja -DCMAKE_BUILD_TYPE=Debug -DCOVERAGE=ON
+	cmake -S ./tests/unit -B $(UNIT_TESTS_BUILD_DIR) -GNinja -DCMAKE_BUILD_TYPE=Debug -DCOVERAGE=$(COVERAGE) -DADDRESS_SANITIZER=$(ADDRESS_SANITIZER)
 	@mkdir -p $(CMAKE_TOOLS_BUILD_DIR)/unit_tests
 	@ln -sf $(UNIT_TESTS_BUILD_DIR)/compile_commands.json $(CMAKE_TOOLS_BUILD_DIR)/unit_tests/compile_commands.json
+
+config_unit_tests_asan:
+	@$(MAKE) config_unit_tests ADDRESS_SANITIZER=ON
 
 clean_unit_tests:
 	@$(MAKE) rm_unit_tests
