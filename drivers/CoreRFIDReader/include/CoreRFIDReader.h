@@ -27,30 +27,30 @@ namespace rfid {
 		}
 	};
 
-	inline constexpr size_t max_tx_length = 16;
-	inline constexpr size_t max_rx_length = 32;
+	inline constexpr auto max_tx_length = std::size_t {16};
+	inline constexpr auto max_rx_length = std::size_t {32};
 
 	namespace settings {
 
-		inline constexpr uint8_t default_rx_tx_speed				 = 0x00;
-		inline constexpr uint8_t arc_b								 = 0x68;   // Analog Register Configuration
-		inline constexpr uint8_t flag_increment						 = 0x01;
-		inline constexpr uint8_t acr_b_index_for_gain_and_modulation = 0x01;
+		inline constexpr auto default_rx_tx_speed				  = uint8_t {0x00};
+		inline constexpr auto arc_b								  = uint8_t {0x68};	  // Analog Register Configuration
+		inline constexpr auto flag_increment					  = uint8_t {0x01};
+		inline constexpr auto acr_b_index_for_gain_and_modulation = uint8_t {0x01};
 
 		namespace idle_tag_detection {
 
-			inline constexpr uint8_t tag_detection_command				   = 0x07;
-			inline constexpr uint8_t wu_source							   = 0x0A;
-			inline constexpr uint8_t length								   = 0x0E;
-			inline constexpr std::array<uint8_t, 2> enter_control		   = {0x21, 0x00};
-			inline constexpr std::array<uint8_t, 2> wu_control			   = {0x79, 0x01};
-			inline constexpr std::array<uint8_t, 2> leave_control		   = {0x18, 0x00};
-			inline constexpr uint8_t wu_periode							   = 0x20;
-			inline constexpr uint8_t oscillator_start					   = 0x60;
-			inline constexpr uint8_t digital_to_analog_start			   = 0x60;
-			inline constexpr std::array<uint8_t, 2> digital_to_analog_data = {0x70, 0x80};
-			inline constexpr uint8_t swing_count						   = 0x3F;
-			inline constexpr uint8_t max_sleep							   = 0x08;
+			inline constexpr auto tag_detection_command	  = uint8_t {0x07};
+			inline constexpr auto wu_source				  = uint8_t {0x0A};
+			inline constexpr auto length				  = uint8_t {0x0E};
+			inline constexpr auto enter_control			  = std::to_array<uint8_t>({0x21, 0x00});
+			inline constexpr auto wu_control			  = std::to_array<uint8_t>({0x79, 0x01});
+			inline constexpr auto leave_control			  = std::to_array<uint8_t>({0x18, 0x00});
+			inline constexpr auto wu_periode			  = uint8_t {0x20};
+			inline constexpr auto oscillator_start		  = uint8_t {0x60};
+			inline constexpr auto digital_to_analog_start = uint8_t {0x60};
+			inline constexpr auto digital_to_analog_data  = std::to_array<uint8_t>({0x70, 0x80});
+			inline constexpr auto swing_count			  = uint8_t {0x3F};
+			inline constexpr auto max_sleep				  = uint8_t {0x08};
 
 		}	// namespace idle_tag_detection
 
@@ -58,17 +58,17 @@ namespace rfid {
 
 	namespace tag_answer {
 
-		inline constexpr size_t heading_size = 2;
-		inline constexpr size_t flag_size	 = 3;
+		inline constexpr auto heading_size = std::size_t {2};
+		inline constexpr auto flag_size	   = std::size_t {3};
 
 	}	// namespace tag_answer
 
 	namespace expected_answer_size {
 
-		inline constexpr size_t idn						   = 17;
-		inline constexpr size_t tag_detection			   = 3;
-		inline constexpr size_t set_baudrate			   = 1;
-		inline constexpr size_t set_communication_protocol = 2;
+		inline constexpr auto idn						 = std::size_t {17};
+		inline constexpr auto tag_detection				 = std::size_t {3};
+		inline constexpr auto set_baudrate				 = std::size_t {1};
+		inline constexpr auto set_communication_protocol = std::size_t {2};
 
 	}	// namespace expected_answer_size
 
@@ -87,40 +87,40 @@ namespace rfid {
 
 	namespace status {
 
-		inline constexpr uint8_t communication_succeed		  = 0x80;
-		inline constexpr uint8_t error_time_out				  = 0x87;
-		inline constexpr std::array<uint8_t, 2> idn_success	  = {0x00, 0x0F};
-		inline constexpr std::array<uint8_t, 2> setup_success = {0x00, 0x00};
-		inline constexpr std::array<uint8_t, 2> tag_detection_callback {0x01, 0x02};
+		inline constexpr auto communication_succeed	 = uint8_t {0x80};
+		inline constexpr auto error_time_out		 = uint8_t {0x87};
+		inline constexpr auto idn_success			 = std::to_array<uint8_t>({0x00, 0x0F});
+		inline constexpr auto setup_success			 = std::to_array<uint8_t>({0x00, 0x00});
+		inline constexpr auto tag_detection_callback = std::to_array<uint8_t>({0x01, 0x02});
 
 	}	// namespace status
 
 	namespace command {
 
-		inline constexpr uint8_t send_receive = 0x04;
+		inline constexpr auto send_receive = uint8_t {0x04};
 
 		namespace idn {
-			inline constexpr uint8_t id		= 0x01;
-			inline constexpr uint8_t length = 0x00;
+			inline constexpr auto id	 = uint8_t {0x01};
+			inline constexpr auto length = uint8_t {0x00};
 		}	// namespace idn
 
 		namespace set_baudrate {
-			inline constexpr uint8_t id		= 0x0A;
-			inline constexpr uint8_t length = 0x01;
+			inline constexpr auto id	 = uint8_t {0x0A};
+			inline constexpr auto length = uint8_t {0x01};
 		}	// namespace set_baudrate
 
 		namespace set_protocol {
-			inline constexpr uint8_t id		= 0x02;
-			inline constexpr uint8_t length = 0x02;
+			inline constexpr auto id	 = uint8_t {0x02};
+			inline constexpr auto length = uint8_t {0x02};
 		}	// namespace set_protocol
 
 		namespace set_gain_and_modulation {
-			inline constexpr uint8_t id		= 0x09;
-			inline constexpr uint8_t length = 0x04;
+			inline constexpr auto id	 = uint8_t {0x09};
+			inline constexpr auto length = uint8_t {0x04};
 		}	// namespace set_gain_and_modulation
 
 		namespace frame {
-			inline constexpr std::array<uint8_t, 16> set_tag_detection_mode {
+			inline constexpr auto set_tag_detection_mode = std::to_array<uint8_t>({
 				rfid::settings::idle_tag_detection::tag_detection_command,
 				rfid::settings::idle_tag_detection::length,
 				rfid::settings::idle_tag_detection::wu_source,
@@ -137,33 +137,33 @@ namespace rfid {
 				rfid::settings::idle_tag_detection::digital_to_analog_data[1],
 				rfid::settings::idle_tag_detection::swing_count,
 				rfid::settings::idle_tag_detection::max_sleep,
-			};
+			});
 
-			inline constexpr std::array<uint8_t, 2> idn {
+			inline constexpr auto idn = std::to_array<uint8_t>({
 				rfid::command::idn::id,
 				rfid::command::idn::length,
-			};
+			});
 
-			inline constexpr std::array<uint8_t, 3> set_baudrate {
+			inline constexpr auto set_baudrate = std::to_array<uint8_t>({
 				rfid::command::set_baudrate::id,
 				rfid::command::set_baudrate::length,
-			};
+			});
 
-			inline constexpr std::array<uint8_t, 4> set_protocol_iso14443 {
+			inline constexpr auto set_protocol_iso14443 = std::to_array<uint8_t>({
 				rfid::command::set_protocol::id,
 				rfid::command::set_protocol::length,
 				rfid::protocol::iso14443A.id,
 				rfid::settings::default_rx_tx_speed,
-			};
+			});
 
-			inline constexpr std::array<uint8_t, 6> set_gain_and_modulation {
+			inline constexpr auto set_gain_and_modulation = std::to_array<uint8_t>({
 				rfid::command::set_gain_and_modulation::id,
 				rfid::command::set_gain_and_modulation::length,
 				rfid::settings::arc_b,
 				rfid::settings::flag_increment,
 				rfid::settings::acr_b_index_for_gain_and_modulation,
 				rfid::protocol::iso14443A.gain_modulation_values(),
-			};
+			});
 
 		}	// namespace frame
 
