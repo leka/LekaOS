@@ -32,6 +32,9 @@ target_link_libraries(LekaOS
 	LedKit
 	CoreLED
 	CoreEventFlags
+	CoreBufferedSerial
+	CoreRFIDReader
+	RFIDKit
 )
 
 target_link_custom_leka_targets(LekaOS)
