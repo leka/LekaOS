@@ -207,8 +207,8 @@ namespace firmware {
 
 namespace rfid {
 
-	auto core_buffered_serial = CoreBufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
-	auto reader				  = CoreRFIDReader(core_buffered_serial);
+	auto serial = CoreBufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
+	auto reader = CoreRFIDReader(serial);
 
 }	// namespace rfid
 
@@ -291,10 +291,10 @@ namespace robot {
 		commandkit,
 	};
 
-	void emergencyStop(MagicCard &_magic_card)
+	void emergencyStop(MagicCard &card)
 	{
 		static auto emergency_stop_iteration = 0;
-		if (_magic_card == MagicCard::emergency_stop) {
+		if (card == MagicCard::emergency_stop) {
 			// TODO (@yann) ajouter videokit stop()
 			leds::turnOff();
 			motors::turnOff();
@@ -342,7 +342,7 @@ auto main() -> int
 	robot::controller.registerOnUpdateLoadedCallback(firmware::setPendingUpdate);
 	robot::controller.registerEvents();
 
-	rfidkit.onTagActivated([](MagicCard _magic_card) { robot::emergencyStop(_magic_card); });
+	rfidkit.onTagActivated([](MagicCard card) { robot::emergencyStop(card); });
 
 	while (true) {
 		rtos::ThisThread::sleep_for(1s);

@@ -35,16 +35,6 @@ class RFIDKit : public interface::RFIDReader::ISO14443
 	void onTagActivated(std::function<void(MagicCard &)> callback);
 
   private:
-	template <size_t SIZE>
-	void commandToArray(Command<SIZE> command, std::span<uint8_t> span) const
-	{
-		for (size_t i = 0; i < SIZE; ++i) {
-			span.data()[i] = command.data.data()[i];
-		}
-
-		span.data()[SIZE] = static_cast<uint8_t>(command.flags);
-	}
-
 	void sendREQA();
 	void sendReadRegister0();
 	void sendReadRegister4();
@@ -58,7 +48,7 @@ class RFIDKit : public interface::RFIDReader::ISO14443
 
 	interface::RFIDReader &_rfid_reader;
 	rfid::Tag _tag {};
-	MagicCard _magic_card = MagicCard::None;
+	MagicCard _card = MagicCard::none;
 	std::function<void(MagicCard &)> _on_tag_available_callback;
 	state _state = state::WAITING_FOR_TAG;
 };

@@ -22,13 +22,13 @@ auto main() -> int
 
 	log_info("Hello, World!\n\n");
 
-	auto core_buffered_serial = CoreBufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
-	auto core_rfid_reader	  = CoreRFIDReader(core_buffered_serial);
-	auto rfid_kit			  = RFIDKit(core_rfid_reader);
+	auto rfidserial = CoreBufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
+	auto rfidreader = CoreRFIDReader(rfidserial);
+	auto rfidkit	= RFIDKit(rfidreader);
 
 	rtos::ThisThread::sleep_for(2s);
 
-	rfid_kit.init();
+	rfidkit.init();
 
 	HelloWorld hello;
 	hello.start();

@@ -66,8 +66,8 @@ void RFIDKit::runStateMachine()
 					log_debug("%x, ", i);
 				}
 				log_debug("\n");
-				_magic_card = MagicCard {_tag.data[5]};
-				_on_tag_available_callback(_magic_card);
+				_card = MagicCard {_tag.data[5]};
+				_on_tag_available_callback(_card);
 			}
 			_rfid_reader.setTagDetectionMode();
 			_state = state::WAITING_FOR_TAG;
@@ -76,7 +76,7 @@ void RFIDKit::runStateMachine()
 	}
 }
 
-void RFIDKit::onTagActivated(std::function<void(MagicCard &_magic_card)> callback)
+void RFIDKit::onTagActivated(std::function<void(MagicCard &_card)> callback)
 {
 	_on_tag_available_callback = callback;
 }
