@@ -21,13 +21,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: Clang
-            cc_bin: /usr/bin/clang
-            cxx_bin: /usr/bin/clang++
-          - name: GCC
-            cc_bin: /usr/bin/gcc-10
-            cxx_bin: /usr/bin/g++-10
+        compiler:
+          [
+            { name: Clang, cc: /usr/bin/clang, cxx: /usr/bin/clang++ },
+            { name: GCC, cc: /usr/bin/gcc-10, cxx: /usr/bin/g++-10 },
+          ]
 
     steps:
       - uses: actions/checkout@v2
@@ -36,13 +34,13 @@ jobs:
         id: set_cc_cxx_env
         shell: bash
         run: |
-          echo "CC=${{ matrix.cc_bin }}" >> $GITHUB_ENV
-          echo "CXX=${{ matrix.cxx_bin }}" >> $GITHUB_ENV
+          echo "CC=${{ matrix.compiler.cc }}" >> $GITHUB_ENV
+          echo "CXX=${{ matrix.compiler.cxx }}" >> $GITHUB_ENV
 
       - name: Setup CI
         uses: ./.github/actions/setup
         with:
-          ccache_name: unit_tests-${{ matrix.name }}
+          ccache_name: unit_tests-${{ matrix.compiler.name }}
 
       #
       # Mark: - Config, build & run unit tests
@@ -63,12 +61,12 @@ jobs:
           ccache -z
 
       - name: Generate coverage
-        if: ${{ matrix.name == 'GCC' }}
+        if: ${{ matrix.compiler.name == 'GCC' }}
         run: |
           make coverage_lcov
 
       - name: Upload coverage to Codecov
-        if: ${{ matrix.name == 'GCC' }}
+        if: ${{ matrix.compiler.name == 'GCC' }}
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
