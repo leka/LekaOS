@@ -94,7 +94,6 @@ if (SANITIZERS)
 			-fsanitize=address -static-libasan \
 			-fsanitize=pointer-compare \
 			-fsanitize=pointer-subtract \
-			-fsanitize=shadow-call-stack \
 			-fsanitize=leak \
 			-fsanitize=undefined \
 		")
