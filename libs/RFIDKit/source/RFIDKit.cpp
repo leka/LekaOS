@@ -13,6 +13,7 @@ void RFIDKit::init()
 
 	_rfid_reader.registerTagAvailableCallback(getTagDataCallback);
 	_rfid_reader.init();
+	_rfid_reader.setTagDetectionMode();
 }
 
 void RFIDKit::runStateMachine()
