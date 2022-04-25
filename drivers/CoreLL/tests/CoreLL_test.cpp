@@ -3,27 +3,48 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "CoreLL.h"
+#include <array>
 
 #include "gtest/gtest.h"
 
 using namespace leka;
 
-TEST(CoreLLTest, rawMemoryWriteToBuffer)
+TEST(CoreLLTest, rawMemoryWriteToBuffer32bits)
 {
 	CoreLL ll;
 
-	uint32_t buffer[5] {0};
-	uintptr_t buffer_address = reinterpret_cast<uintptr_t>(&buffer);
+	auto buffer			= std::to_array<uint32_t>({0, 0, 0, 0, 0});
+	auto buffer_address = reinterpret_cast<uintptr_t>(buffer.data());
 
-	ll.rawMemoryWrite(buffer_address + 0 * sizeof(buffer[0]), 42);
-	ll.rawMemoryWrite(buffer_address + 1 * sizeof(buffer[0]), 43);
-	ll.rawMemoryWrite(buffer_address + 2 * sizeof(buffer[0]), 44);
-	ll.rawMemoryWrite(buffer_address + 3 * sizeof(buffer[0]), 45);
-	ll.rawMemoryWrite(buffer_address + 4 * sizeof(buffer[0]), 46);
+	ll.rawMemoryWrite(buffer_address + 0 * sizeof(buffer[0]), uint32_t {1});
+	ll.rawMemoryWrite(buffer_address + 1 * sizeof(buffer[0]), uint32_t {2});
+	ll.rawMemoryWrite(buffer_address + 2 * sizeof(buffer[0]), uint32_t {3});
+	ll.rawMemoryWrite(buffer_address + 3 * sizeof(buffer[0]), uint32_t {4});
+	ll.rawMemoryWrite(buffer_address + 4 * sizeof(buffer[0]), uint32_t {5});
 
-	ASSERT_EQ(buffer[0], 42);
-	ASSERT_EQ(buffer[1], 43);
-	ASSERT_EQ(buffer[2], 44);
-	ASSERT_EQ(buffer[3], 45);
-	ASSERT_EQ(buffer[4], 46);
+	ASSERT_EQ(buffer[0], 1);
+	ASSERT_EQ(buffer[1], 2);
+	ASSERT_EQ(buffer[2], 3);
+	ASSERT_EQ(buffer[3], 4);
+	ASSERT_EQ(buffer[4], 5);
+}
+
+TEST(CoreLLTest, rawMemoryWriteToBuffer8bits)
+{
+	CoreLL ll;
+
+	auto buffer			= std::to_array<uint8_t>({0, 0, 0, 0, 0});
+	auto buffer_address = reinterpret_cast<uintptr_t>(buffer.data());
+
+	ll.rawMemoryWrite(buffer_address + 0 * sizeof(buffer[0]), uint8_t {1});
+	ll.rawMemoryWrite(buffer_address + 1 * sizeof(buffer[0]), uint8_t {2});
+	ll.rawMemoryWrite(buffer_address + 2 * sizeof(buffer[0]), uint8_t {3});
+	ll.rawMemoryWrite(buffer_address + 3 * sizeof(buffer[0]), uint8_t {4});
+	ll.rawMemoryWrite(buffer_address + 4 * sizeof(buffer[0]), uint8_t {5});
+
+	ASSERT_EQ(buffer[0], 1);
+	ASSERT_EQ(buffer[1], 2);
+	ASSERT_EQ(buffer[2], 3);
+	ASSERT_EQ(buffer[3], 4);
+	ASSERT_EQ(buffer[4], 5);
 }

@@ -39,34 +39,35 @@ TEST_F(BLEServiceUpdateTest, initialisation)
 
 TEST_F(BLEServiceUpdateTest, onRequestUpdateReceivedTrue)
 {
-	bool request_update_sent = true;
+	bool request_update_sent	  = true;
+	auto request_update_sent_data = std::make_shared<uint8_t>(request_update_sent);
 
 	testing::MockFunction<void()> mock_callback;
 	service_update.onUpdateRequested(mock_callback.AsStdFunction());
 
 	EXPECT_CALL(mock_callback, Call).Times(1);
 
-	auto convert_to_handle_data_type = [](bool value) { return std::make_shared<uint8_t>(value).get(); };
-	onDataReceivedProcess(convert_to_handle_data_type(request_update_sent));
+	onDataReceivedProcess(request_update_sent_data.get());
 }
 
 TEST_F(BLEServiceUpdateTest, onRequestUpdateReceivedFalse)
 {
-	bool request_update_sent = false;
+	bool request_update_sent	  = false;
+	auto request_update_sent_data = std::make_shared<uint8_t>(request_update_sent);
 
 	testing::MockFunction<void()> mock_callback;
 	service_update.onUpdateRequested(mock_callback.AsStdFunction());
 
 	EXPECT_CALL(mock_callback, Call).Times(0);
 
-	auto convert_to_handle_data_type = [](bool value) { return std::make_shared<uint8_t>(value).get(); };
-	onDataReceivedProcess(convert_to_handle_data_type(request_update_sent));
+	onDataReceivedProcess(request_update_sent_data.get());
 }
 
 TEST_F(BLEServiceUpdateTest, onRequestUpdateReceivedNotSameHandle)
 {
 	bool request_update_sent = default_request_update_sent;
 	bool sent_value			 = true;
+	auto sent_value_data	 = std::make_shared<uint8_t>(sent_value);
 
 	data_received_handle.handle = 0xFFFF;
 
@@ -75,8 +76,7 @@ TEST_F(BLEServiceUpdateTest, onRequestUpdateReceivedNotSameHandle)
 
 	EXPECT_CALL(mock_callback, Call).Times(0);
 
-	auto convert_to_handle_data_type = [](bool value) { return std::make_shared<uint8_t>(value).get(); };
-	onDataReceivedProcess(convert_to_handle_data_type(sent_value));
+	onDataReceivedProcess(sent_value_data.get());
 }
 
 TEST_F(BLEServiceUpdateTest, getVersionMajorDefault)
@@ -88,9 +88,9 @@ TEST_F(BLEServiceUpdateTest, getVersionMajorDefault)
 TEST_F(BLEServiceUpdateTest, getVersionMajorAnyValue)
 {
 	auto expected_version_major {0x2A};
+	auto expected_version_major_data = std::make_shared<uint8_t>(expected_version_major);
 
-	auto convert_to_handle_data_type = [](uint8_t value) { return std::make_shared<uint8_t>(value).get(); };
-	onDataReceivedProcess(convert_to_handle_data_type(expected_version_major));
+	onDataReceivedProcess(expected_version_major_data.get());
 
 	auto actual_version = service_update.getVersion();
 	EXPECT_EQ(actual_version.major, expected_version_major);
@@ -100,11 +100,11 @@ TEST_F(BLEServiceUpdateTest, getVersionMajorNotSameHandle)
 {
 	auto expected_version_major = default_version.major;
 	auto sent_value {0x2B};
+	auto sent_value_data = std::make_shared<uint8_t>(sent_value);
 
 	data_received_handle.handle = 0xFFFF;
 
-	auto convert_to_handle_data_type = [](uint8_t value) { return std::make_shared<uint8_t>(value).get(); };
-	onDataReceivedProcess(convert_to_handle_data_type(sent_value));
+	onDataReceivedProcess(sent_value_data.get());
 
 	auto actual_version = service_update.getVersion();
 	EXPECT_EQ(actual_version.major, expected_version_major);
@@ -120,9 +120,9 @@ TEST_F(BLEServiceUpdateTest, getVersionMinorDefault)
 TEST_F(BLEServiceUpdateTest, getVersionMinorAnyValue)
 {
 	auto expected_version_minor {0x2C};
+	auto expected_version_minor_data = std::make_shared<uint8_t>(expected_version_minor);
 
-	auto convert_to_handle_data_type = [](uint8_t value) { return std::make_shared<uint8_t>(value).get(); };
-	onDataReceivedProcess(convert_to_handle_data_type(expected_version_minor));
+	onDataReceivedProcess(expected_version_minor_data.get());
 
 	auto actual_version = service_update.getVersion();
 	EXPECT_EQ(actual_version.minor, expected_version_minor);
@@ -132,11 +132,11 @@ TEST_F(BLEServiceUpdateTest, getVersionMinorNotSameHandle)
 {
 	auto expected_version_minor = default_version.minor;
 	auto sent_value {0x2D};
+	auto sent_value_data = std::make_shared<uint8_t>(sent_value);
 
 	data_received_handle.handle = 0xFFFF;
 
-	auto convert_to_handle_data_type = [](uint8_t value) { return std::make_shared<uint8_t>(value).get(); };
-	onDataReceivedProcess(convert_to_handle_data_type(sent_value));
+	onDataReceivedProcess(sent_value_data.get());
 
 	auto actual_version = service_update.getVersion();
 	EXPECT_EQ(actual_version.minor, expected_version_minor);
@@ -154,13 +154,17 @@ TEST_F(BLEServiceUpdateTest, getVersionRevisionAnyValue)
 	auto expected_version_revision {0x2F2E};
 
 	auto convert_uint16_t_to_big_endian = [](uint16_t value) {
-		return static_cast<uint16_t>((value & 0x00FF) << 8 | (value & 0xFF00) >> 8);
+		return std::array<uint8_t, 2> {
+			static_cast<uint8_t>((value >> 8)),
+			static_cast<uint8_t>(value & 0xFF),
+		};
 	};
-	auto sent_value = convert_uint16_t_to_big_endian(expected_version_revision);
-	EXPECT_EQ(sent_value, 0x2E2F);
 
-	auto convert_to_handle_data_type = [](uint16_t *value) { return reinterpret_cast<uint8_t *>(value); };
-	onDataReceivedProcess(convert_to_handle_data_type(&sent_value));
+	auto sent_value = convert_uint16_t_to_big_endian(expected_version_revision);
+
+	EXPECT_EQ(static_cast<uint16_t>((static_cast<uint16_t>(sent_value[1]) << 8) | sent_value[0]), 0x2E2F);
+
+	onDataReceivedProcess(sent_value.data());
 
 	auto actual_version = service_update.getVersion();
 	EXPECT_EQ(actual_version.revision, expected_version_revision);
@@ -173,13 +177,15 @@ TEST_F(BLEServiceUpdateTest, getVersionRevisionNotSameHandle)
 	auto convert_uint16_t_to_big_endian = [](uint16_t value) {
 		return static_cast<uint16_t>((value & 0x00FF) << 8 | (value & 0xFF00) >> 8);
 	};
-	auto sent_value = convert_uint16_t_to_big_endian(0x3031);
+
+	auto sent_value		 = convert_uint16_t_to_big_endian(0x3031);
+	auto sent_value_data = std::make_shared<uint8_t>(sent_value);
+
 	EXPECT_EQ(sent_value, 0x3130);
 
 	data_received_handle.handle = 0xFFFF;
 
-	auto convert_to_handle_data_type = [](uint16_t *value) { return reinterpret_cast<uint8_t *>(value); };
-	onDataReceivedProcess(convert_to_handle_data_type(&sent_value));
+	onDataReceivedProcess(sent_value_data.get());
 
 	auto actual_version = service_update.getVersion();
 	EXPECT_EQ(actual_version.revision, expected_version_revision);
