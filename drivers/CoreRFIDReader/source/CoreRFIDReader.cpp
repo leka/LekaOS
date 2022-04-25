@@ -71,10 +71,10 @@ auto CoreRFIDReader::setBaudrate(uint8_t baudrate) -> bool
 
 	_serial.write(set_baudrate_frame.data(), set_baudrate_frame.size());
 
-	return (didSetBaudrateSucceed(baudrate));
+	return (didSetBaudrateSucceed());
 }
 
-auto CoreRFIDReader::didSetBaudrateSucceed(uint8_t baudrate) -> bool
+auto CoreRFIDReader::didSetBaudrateSucceed() -> bool
 {
 	read();
 	if (_anwser_size != rfid::expected_answer_size::set_baudrate) {

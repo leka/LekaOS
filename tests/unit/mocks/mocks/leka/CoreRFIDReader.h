@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <cstddef>
+// #include <cstddef>
 
 #include "gmock/gmock.h"
 #include "interface/drivers/RFIDReader.h"
@@ -26,5 +26,3 @@ class CoreRFIDReader : public interface::RFIDReader
 };
 
 }	// namespace leka::mock
-
-// std::array<uint8_t, 32> _rx_buf {};

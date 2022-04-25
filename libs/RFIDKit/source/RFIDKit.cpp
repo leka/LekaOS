@@ -74,6 +74,9 @@ void RFIDKit::runStateMachine()
 			_state = state::WAITING_FOR_TAG;
 
 		} break;
+		default: {
+			break;
+		}
 	}
 }
 
@@ -84,22 +87,16 @@ void RFIDKit::onTagActivated(std::function<void(MagicCard &_card)> callback)
 
 void RFIDKit::sendREQA()
 {
-	std::array<uint8_t, 2> array {};
-
 	_rfid_reader.sendCommandToTag(command_requestA.getArray());
 }
 
 void RFIDKit::sendReadRegister0()
 {
-	std::array<uint8_t, 3> array {};
-
 	_rfid_reader.sendCommandToTag(command_read_register_0.getArray());
 }
 
 void RFIDKit::sendReadRegister4()
 {
-	std::array<uint8_t, 3> array {};
-
 	_rfid_reader.sendCommandToTag(command_read_register_4.getArray());
 }
 
