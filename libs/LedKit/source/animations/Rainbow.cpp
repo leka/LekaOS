@@ -8,6 +8,8 @@
 
 namespace leka::led::animation {
 
+static constexpr auto kNumberOfLedsBelt = uint8_t {20};
+
 void Rainbow::setLeds(interface::LED &ears, interface::LED &belt)
 {
 	_ears = &ears;
@@ -59,7 +61,6 @@ void Rainbow::run()
 
 void Rainbow::stagesRainbow()
 {
-	static constexpr auto kNumberOfLedsBelt = uint8_t {20};
 	if (_rainbow_tail_index == kNumberOfLedsBelt) {
 		_rainbow_tail_index = 0;
 	}
@@ -78,19 +79,25 @@ void Rainbow::stagesRainbow()
 
 auto Rainbow::getRainbowColor(uint8_t index) const -> RGB
 {
-	static constexpr auto kRainbowColorNumber						   = 7;
-	static constexpr std::array<RGB, kRainbowColorNumber> rainbowColor = {
-		RGB::pure_red,	RGB {180, 50, 0},	 RGB {100, 100, 0}, RGB::pure_green,
-		RGB::pure_blue, RGB {0x4b, 0, 0x82}, RGB::magenta};
+	static constexpr auto colors = std::to_array<RGB>({
+		RGB::pure_red,
+		RGB::pure_green,
+		RGB::pure_blue,
+		RGB::magenta,
+		RGB::pure_red,
+	});
 
-	auto part_of_rainbow = index / 3;
-	auto position		 = static_cast<float>(index % 3) / 3;
-	if (part_of_rainbow < kRainbowColorNumber - 1) {
-		RGB color =
-			ColorKit::colorGradient(rainbowColor.at(part_of_rainbow), rainbowColor.at(part_of_rainbow + 1), position);
+	static constexpr auto kGradientLength = kNumberOfLedsBelt / colors.size();
+
+	auto colors_index = index / kGradientLength;
+	auto gradient_pos = static_cast<float>(index % kGradientLength) / kGradientLength;
+
+	if (colors_index < colors.size() - 1) {
+		RGB color = ColorKit::colorGradient(colors.at(colors_index), colors.at(colors_index + 1), gradient_pos);
 		return color;
 	}
-	return rainbowColor.at(kRainbowColorNumber - 1);
+
+	return colors.at(colors.size() - 1);
 }
 
 void Rainbow::turnLedBlack()
