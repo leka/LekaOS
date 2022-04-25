@@ -88,9 +88,25 @@ if (SANITIZERS)
 
 	# Append address sanitizer flags depending on compiler
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-		set(ADDRESS_SANITIZER_COMPILER_FLAGS "-fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize=address -static-libasan")
+		set(SANITIZERS_COMPILER_FLAGS " \
+			-fno-omit-frame-pointer \
+			-fno-optimize-sibling-calls \
+			-fsanitize=address -static-libasan \
+			-fsanitize=pointer-compare \
+			-fsanitize=pointer-subtract \
+			-fsanitize=shadow-call-stack \
+			-fsanitize=leak \
+			-fsanitize=undefined \
+		")
 	else ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-		set(ADDRESS_SANITIZER_COMPILER_FLAGS "-fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize=address -static-libsan")
+		set(SANITIZERS_COMPILER_FLAGS " \
+			-fno-omit-frame-pointer \
+			-fno-optimize-sibling-calls \
+			-fsanitize=address -static-libsan \
+			-fsanitize=pointer-compare \
+			-fsanitize=pointer-subtract \
+			-fsanitize=undefined \
+		")
 	endif()
 
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SANITIZERS_COMPILER_FLAGS}")
