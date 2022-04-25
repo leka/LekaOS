@@ -11,6 +11,7 @@
 #include "BLEServiceBattery.h"
 #include "BLEServiceCommands.h"
 #include "BLEServiceDeviceInformation.h"
+#include "BLEServiceFileReception.h"
 #include "BLEServiceMonitoring.h"
 #include "BLEServiceUpdate.h"
 
@@ -19,6 +20,7 @@
 #include "CommandKit.h"
 #include "CoreMotor.h"
 #include "CoreMutex.h"
+#include "FileReception.h"
 #include "LedKit.h"
 #include "RCLogger.h"
 #include "SerialNumberKit.h"
@@ -222,6 +224,11 @@ class RobotController : public interface::RobotController
 		};
 		_service_commands.onCommandsReceived(on_commands_received);
 
+		_service_file_reception.onFilePathReceived(
+			[this](std::span<const char> path) { file_reception.setFilePath(path.data()); });
+		_service_file_reception.onFileDataReceived(
+			[this](std::span<const uint8_t> buffer) { file_reception.onPacketReceived(buffer); });
+
 		auto on_update_requested = [this]() { raise(event::update_requested {}); };
 		_service_update.onUpdateRequested(on_update_requested);
 
@@ -254,16 +261,20 @@ class RobotController : public interface::RobotController
 	rtos::Thread _thread {};
 	events::EventQueue _event_queue {};
 
+	FileReception file_reception {};
+
 	BLEKit _ble {};
 
 	BLEServiceBattery _service_battery {};
 	BLEServiceCommands _service_commands {};
 	BLEServiceDeviceInformation _service_device_information {};
 	BLEServiceMonitoring _service_monitoring {};
+	BLEServiceFileReception _service_file_reception {};
 	BLEServiceUpdate _service_update {};
 
-	std::array<interface::BLEService *, 5> services = {
-		&_service_battery, &_service_commands, &_service_device_information, &_service_monitoring, &_service_update,
+	std::array<interface::BLEService *, 6> services = {
+		&_service_battery,	  &_service_commands,		&_service_device_information,
+		&_service_monitoring, &_service_file_reception, &_service_update,
 	};
 };
 

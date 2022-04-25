@@ -64,8 +64,11 @@ auto main() -> int
 
 	initializeSD();
 
+	service_file_reception.onFilePathReceived(
+		[](std::span<const char> path) { file_reception_handler.setFilePath(path.data()); });
+
 	service_file_reception.onFileDataReceived(
-		[](std::span<uint8_t> buffer) { file_reception_handler.onPacketReceived(buffer); });
+		[](std::span<const uint8_t> buffer) { file_reception_handler.onPacketReceived(buffer); });
 
 	while (true) {
 		log_info("Main thread running...");
@@ -78,9 +81,6 @@ auto main() -> int
 		service_monitoring.setChargingStatus(charging_status);
 
 		log_info("Screensaver enable: %d", service_monitoring.isScreensaverEnable());
-
-		log_info("Path is %s", service_file_reception.getFilePath().data());
-		file_reception_handler.setFilePath(service_file_reception.getFilePath().data());
 
 		auto version = service_update.getVersion();
 		log_info("Requested version: %d.%d.%d", version.major, version.minor, version.revision);
