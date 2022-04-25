@@ -34,6 +34,6 @@ auto main() -> int
 	hello.start();
 
 	while (true) {
-		rtos::ThisThread::sleep_for(10ms);
+		rtos::ThisThread::sleep_for(10s);
 	}
 }

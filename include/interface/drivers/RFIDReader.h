@@ -71,11 +71,11 @@ namespace interface {
 
 		virtual auto checkForTagDetection() -> bool = 0;
 
-		std::array<uint8_t, 32> _rx_buf {};
-
 		class ISO14443
 		{
 		  public:
+			virtual ~ISO14443() = default;
+
 			virtual void init() = 0;
 
 			virtual void runStateMachine() = 0;

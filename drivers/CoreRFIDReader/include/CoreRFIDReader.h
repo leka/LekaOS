@@ -195,7 +195,7 @@ class CoreRFIDReader : public interface::RFIDReader
   private:
 	void registerCallback();
 
-	auto didSetBaudrateSucceed(uint8_t baudrate) -> bool;
+	auto setBaudrateDidSucceed() -> bool;
 
 	auto setProtocolISO14443A() -> bool;
 	auto setGainAndModulationISO14443A() -> bool;
@@ -209,7 +209,6 @@ class CoreRFIDReader : public interface::RFIDReader
 	void copyTagDataToSpan(std::span<uint8_t> data);
 
 	tag_available_callback_t _tagAvailableCallback;
-	bool _tagWasDetected {false};
 
 	interface::BufferedSerial &_serial;
 	rtos::Thread _thread {};
