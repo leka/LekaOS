@@ -81,21 +81,37 @@ if (COVERAGE)
 endif(COVERAGE)
 
 # Add address sanitizer
-if (ADDRESS_SANITIZER)
+if (SANITIZERS)
 	if (NOT COVERAGE)
 		message(FATAL_ERROR "Address Sanitizer only works when coverage is enabled.")
 	endif()
 
 	# Append address sanitizer flags depending on compiler
 	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-		set(ADDRESS_SANITIZER_COMPILER_FLAGS "-fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize=address -static-libasan")
+		set(SANITIZERS_COMPILER_FLAGS " \
+			-fno-omit-frame-pointer \
+			-fno-optimize-sibling-calls \
+			-fsanitize=address -static-libasan \
+			-fsanitize=pointer-compare \
+			-fsanitize=pointer-subtract \
+			-fsanitize=shadow-call-stack \
+			-fsanitize=leak \
+			-fsanitize=undefined \
+		")
 	else ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-		set(ADDRESS_SANITIZER_COMPILER_FLAGS "-fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize=address -static-libsan")
+		set(SANITIZERS_COMPILER_FLAGS " \
+			-fno-omit-frame-pointer \
+			-fno-optimize-sibling-calls \
+			-fsanitize=address -static-libsan \
+			-fsanitize=pointer-compare \
+			-fsanitize=pointer-subtract \
+			-fsanitize=undefined \
+		")
 	endif()
 
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADDRESS_SANITIZER_COMPILER_FLAGS}")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ADDRESS_SANITIZER_COMPILER_FLAGS}")
-endif(ADDRESS_SANITIZER)
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SANITIZERS_COMPILER_FLAGS}")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZERS_COMPILER_FLAGS}")
+endif(SANITIZERS)
 
 # Enable logging for tests
 add_definitions(-DENABLE_LOG_DEBUG)
@@ -301,6 +317,6 @@ endif()
 message(STATUS "")
 message(STATUS "CMAKE_EXPORT_COMPILE_COMMANDS --> ${CMAKE_EXPORT_COMPILE_COMMANDS}")
 message(STATUS "CODE_COVERAGE                 --> ${COVERAGE}")
-message(STATUS "ADDRESS_SANITIZER             --> ${ADDRESS_SANITIZER}")
+message(STATUS "SANITIZERS                    --> ${SANITIZERS}")
 message(STATUS "CMAKE_VERBOSE_MAKEFILE        --> ${VERBOSE_BUILD}")
 message(STATUS "")
