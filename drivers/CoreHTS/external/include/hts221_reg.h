@@ -1,4 +1,4 @@
-/*
+/**
  ******************************************************************************
  * @file    hts221_reg.h
  * @author  Sensors Software Solution Team
@@ -7,7 +7,7 @@
  ******************************************************************************
  * @attention
  *
- * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
+ * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
  * All rights reserved.</center></h2>
  *
  * This software component is licensed by ST under BSD 3-Clause license,
@@ -28,6 +28,7 @@ extern "C" {
 
 	/* Includes ------------------------------------------------------------------*/
 	#include <math.h>
+	#include <stddef.h>
 	#include <stdint.h>
 
 /** @addtogroup HTS221
@@ -107,7 +108,7 @@ typedef struct {
  *
  */
 
-typedef int32_t (*stmdev_write_ptr)(void *, uint8_t, uint8_t *, uint16_t);
+typedef int32_t (*stmdev_write_ptr)(void *, uint8_t, const uint8_t *, uint16_t);
 typedef int32_t (*stmdev_read_ptr)(void *, uint8_t, uint8_t *, uint16_t);
 
 typedef struct {
@@ -278,9 +279,9 @@ typedef struct {
 
 /**
  * @defgroup HTS221_Register_Union
- * @brief    This union group all the registers that has a bitfield
+ * @brief    This union group all the registers having a bit-field
  *           description.
- *           This union is useful but not need by the driver.
+ *           This union is useful but it's not needed by the driver.
  *
  *           REMOVING this union you are compliant with:
  *           MISRA-C 2012 [Rule 19.2] -> " Union are not allowed "
