@@ -26,6 +26,7 @@ jobs:
             { name: Clang, cc: /usr/bin/clang, cxx: /usr/bin/clang++ },
             { name: GCC, cc: /usr/bin/gcc-10, cxx: /usr/bin/g++-10 },
           ]
+        asan: ["ON", "OFF"]
 
     steps:
       - uses: actions/checkout@v2
@@ -40,7 +41,7 @@ jobs:
       - name: Setup CI
         uses: ./.github/actions/setup
         with:
-          ccache_name: unit_tests-${{ matrix.compiler.name }}
+          ccache_name: unit_tests-${{ matrix.compiler.name }}-asan-{{ matrix.asan }}
 
       #
       # Mark: - Config, build & run unit tests
@@ -52,7 +53,7 @@ jobs:
 
       - name: Config, build & run
         run: |
-          make config_unit_tests
+          make config_unit_tests ADDRESS_SANITIZER=${{ matrix.asan }}
           make unit_tests
 
       - name: Ccache post build
@@ -61,12 +62,12 @@ jobs:
           ccache -z
 
       - name: Generate coverage
-        if: ${{ matrix.compiler.name == 'GCC' }}
+        if: ${{ matrix.compiler.name == 'GCC' && matrix.asan == 'OFF' }}
         run: |
           make coverage_lcov
 
       - name: Upload coverage to Codecov
-        if: ${{ matrix.compiler.name == 'GCC' }}
+        if: ${{ matrix.compiler.name == 'GCC' && matrix.asan == 'OFF' }}
         uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
