@@ -9,7 +9,7 @@ namespace leka::interface {
 class LCDDriver
 {
   public:
-	~LCDDriver() = default;
+	virtual ~LCDDriver() = default;
 
 	virtual void initialize()			   = 0;
 	virtual void setLandscapeOrientation() = 0;

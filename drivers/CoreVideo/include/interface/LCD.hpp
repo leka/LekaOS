@@ -9,7 +9,7 @@ namespace leka::interface {
 class LCD
 {
   public:
-	~LCD() = default;
+	virtual ~LCD() = default;
 
 	virtual void initialize() = 0;
 
