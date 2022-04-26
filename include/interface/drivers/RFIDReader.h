@@ -69,7 +69,7 @@ namespace interface {
 
 		virtual void setTagDetectionMode() = 0;
 
-		virtual auto checkForTagDetection() -> bool = 0;
+		virtual auto isTagDetected() -> bool = 0;
 
 		class ISO14443
 		{
