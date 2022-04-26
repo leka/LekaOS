@@ -45,7 +45,7 @@ void CoreRFIDReader::read()
 	}
 }
 
-auto CoreRFIDReader::checkForTagDetection() -> bool
+auto CoreRFIDReader::isTagDetected() -> bool
 {
 	std::array<uint8_t, 2> buffer {};
 

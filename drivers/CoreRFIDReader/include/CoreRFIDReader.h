@@ -190,7 +190,7 @@ class CoreRFIDReader : public interface::RFIDReader
 
 	void setTagDetectionMode() final;
 
-	auto checkForTagDetection() -> bool final;
+	auto isTagDetected() -> bool final;
 
   private:
 	void registerCallback();
