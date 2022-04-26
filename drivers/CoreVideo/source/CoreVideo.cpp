@@ -102,3 +102,18 @@ void CoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_l
 {
 	_corefont.display(text, size, starting_line, foreground, background);
 }
+
+auto CoreVideo::getDMA2DHandle() -> DMA2D_HandleTypeDef &
+{
+	return _coredma2d.getHandle();
+}
+
+auto CoreVideo::getLTDCHandle() -> LTDC_HandleTypeDef &
+{
+	return _coreltdc.getHandle();
+}
+
+auto CoreVideo::getJPEGHandle() -> JPEG_HandleTypeDef &
+{
+	return _corejpeg.getHandle();
+}

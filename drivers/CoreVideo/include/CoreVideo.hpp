@@ -38,6 +38,10 @@ class CoreVideo
 	void displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
 					 CGColor background = CGColor::white);
 
+	auto getDMA2DHandle() -> DMA2D_HandleTypeDef &;
+	auto getLTDCHandle() -> LTDC_HandleTypeDef &;
+	auto getJPEGHandle() -> JPEG_HandleTypeDef &;
+
   private:
 	interface::STM32Hal &_hal;
 	interface::SDRAM &_coresdram;
@@ -49,5 +53,29 @@ class CoreVideo
 	interface::Font &_corefont;
 	interface::JPEGBase &_corejpeg;
 };
+
+#define HAL_VIDEO_DECLARE_IRQ_HANDLERS(instance)                                                                       \
+	extern "C" {                                                                                                       \
+	void DMA2D_IRQHandler(void)                                                                                        \
+	{                                                                                                                  \
+		HAL_DMA2D_IRQHandler(&instance.getDMA2DHandle());                                                              \
+	}                                                                                                                  \
+	void LTDC_IRQHandler(void)                                                                                         \
+	{                                                                                                                  \
+		HAL_LTDC_IRQHandler(&instance.getLTDCHandle());                                                                \
+	}                                                                                                                  \
+	void JPEG_IRQHandler(void)                                                                                         \
+	{                                                                                                                  \
+		HAL_JPEG_IRQHandler(&instance.getJPEGHandle());                                                                \
+	}                                                                                                                  \
+	void DMA2_Stream0_IRQHandler(void)                                                                                 \
+	{                                                                                                                  \
+		HAL_DMA_IRQHandler(instance.getJPEGHandle().hdmain);                                                           \
+	}                                                                                                                  \
+	void DMA2_Stream1_IRQHandler(void)                                                                                 \
+	{                                                                                                                  \
+		HAL_DMA_IRQHandler(instance.getJPEGHandle().hdmaout);                                                          \
+	}                                                                                                                  \
+	}
 
 }	// namespace leka
