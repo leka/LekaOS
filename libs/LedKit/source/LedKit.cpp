@@ -53,7 +53,7 @@ void LedKit::runAnimation()
 	}
 }
 
-void LedKit::run()
+[[noreturn]] void LedKit::run()
 {
 	while (true) {
 		_event_flags.wait_any(flags::START_LED_ANIMATION_FLAG);
