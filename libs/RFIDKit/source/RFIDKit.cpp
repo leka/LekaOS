@@ -21,7 +21,7 @@ void RFIDKit::runStateMachine()
 	switch (_state) {
 		case state::WAITING_FOR_TAG: {
 			log_debug("CURRENT STATE : WAITING_FOR_TAG\n");
-			if (_rfid_reader.checkForTagDetection()) {
+			if (_rfid_reader.isTagDetected()) {
 				_rfid_reader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 				_state = state::TAG_COMMUNICATION_PROTOCOL_SET;
 			} else {
