@@ -16,7 +16,7 @@ class CoreGapEventHandler : public ble::Gap::EventHandler
 
 	void registerStartAdvertising(std::function<void()> const &function);
 
-	void onInitializationComplete(BLE::InitializationCompleteCallbackContext *params);
+	void onInitializationComplete(BLE::InitializationCompleteCallbackContext *params) const;
 
 	void onConnectionComplete(ble::ConnectionCompleteEvent const &event) override;
 	void onDisconnectionComplete(ble::DisconnectionCompleteEvent const &event) override;
