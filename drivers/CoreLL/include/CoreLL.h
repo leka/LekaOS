@@ -11,6 +11,8 @@ namespace leka {
 class CoreLL
 {
   public:
+	virtual ~CoreLL() = default;
+
 	virtual void rawMemoryWrite(uintptr_t destination, uint32_t data)
 	{
 		// ? NOLINTNEXTLINE - allow reinterpret_cast as there are no alternatives
