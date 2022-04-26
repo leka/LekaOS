@@ -8,7 +8,7 @@ void CoreGapEventHandler::registerStartAdvertising(std::function<void()> const &
 	_start_advertising = function;
 }
 
-void CoreGapEventHandler::onInitializationComplete(BLE::InitializationCompleteCallbackContext *params)
+void CoreGapEventHandler::onInitializationComplete(BLE::InitializationCompleteCallbackContext *params) const
 {
 	if (params->error != BLE_ERROR_NONE) {
 		return;
