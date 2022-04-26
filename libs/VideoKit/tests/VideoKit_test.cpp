@@ -5,6 +5,8 @@
 #include "VideoKit.h"
 
 #include "gtest/gtest.h"
+#include "mocks/leka/CoreLCD.h"
+#include "mocks/leka/CoreVideo.h"
 
 using namespace leka;
 
@@ -16,7 +18,9 @@ class VideoKitTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	VideoKit video_kit;
+	mock::CoreLCD mock_lcd {};
+	mock::CoreVideo mock_corevideo {};
+	VideoKit video_kit {mock_lcd, mock_corevideo};
 };
 
 TEST_F(VideoKitTest, initialization)
@@ -26,16 +30,24 @@ TEST_F(VideoKitTest, initialization)
 
 TEST_F(VideoKitTest, turnOn)
 {
+	EXPECT_CALL(mock_lcd, turnOn);
+
 	video_kit.turnOn();
 }
 
 TEST_F(VideoKitTest, turnOff)
 {
+	EXPECT_CALL(mock_lcd, turnOff);
+
 	video_kit.turnOff();
 }
 
 TEST_F(VideoKitTest, initializeScreen)
 {
+	EXPECT_CALL(mock_corevideo, initialize);
+	EXPECT_CALL(mock_corevideo, setBrightness);
+	EXPECT_CALL(mock_corevideo, clearScreen);
+
 	video_kit.initializeScreen();
 }
 

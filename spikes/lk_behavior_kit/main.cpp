@@ -8,11 +8,25 @@
 #include "rtos/ThisThread.h"
 
 #include "BehaviorKit.h"
+#include "CoreDMA2D.hpp"
+#include "CoreDSI.hpp"
 #include "CoreEventFlags.h"
+#include "CoreFont.hpp"
+#include "CoreGraphics.hpp"
+#include "CoreJPEG.hpp"
+#include "CoreJPEGModeDMA.hpp"
+#include "CoreJPEGModePolling.hpp"
+#include "CoreLCD.hpp"
+#include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLED.h"
+#include "CoreLL.h"
+#include "CoreLTDC.hpp"
 #include "CoreMotor.h"
 #include "CorePwm.h"
+#include "CoreSDRAM.hpp"
 #include "CoreSPI.h"
+#include "CoreSTM32Hal.h"
+#include "CoreVideo.hpp"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LedKit.h"
@@ -129,8 +143,35 @@ namespace motors {
 
 }	// namespace motors
 
-auto videokit	 = VideoKit {};
-auto behaviorkit = BehaviorKit {videokit, leds::kit, motors::left::motor, motors::right::motor};
+namespace display {
+
+	namespace internal {
+
+		auto corell		   = CoreLL {};
+		auto pixel		   = CGPixel {corell};
+		auto hal		   = CoreSTM32Hal {};
+		auto coresdram	   = CoreSDRAM {hal};
+		auto coredma2d	   = CoreDMA2D {hal};
+		auto coredsi	   = CoreDSI {hal};
+		auto coreltdc	   = CoreLTDC {hal};
+		auto coregraphics  = CoreGraphics {coredma2d};
+		auto corefont	   = CoreFont {pixel};
+		auto coreotm	   = CoreLCDDriverOTM8009A {coredsi, PinName::SCREEN_BACKLIGHT_PWM};
+		auto corelcd	   = CoreLCD {coreotm};
+		auto _corejpegmode = CoreJPEGModeDMA {hal};
+		auto corejpeg	   = CoreJPEG {hal, _corejpegmode};
+		auto corevideo =
+			CoreVideo {hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg};
+
+		HAL_VIDEO_DECLARE_IRQ_HANDLERS(corevideo);
+
+	}	// namespace internal
+
+	auto videokit = VideoKit {internal::corelcd, internal::corevideo};
+
+}	// namespace display
+
+auto behaviorkit = BehaviorKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
 auto hello		 = HelloWorld {};
 
 }	// namespace
@@ -144,7 +185,7 @@ auto main() -> int
 
 	leds::kit.init();
 	sd::init();
-	videokit.initializeScreen();
+	display::videokit.initializeScreen();
 
 	log_info("Hello, World!\n\n");
 

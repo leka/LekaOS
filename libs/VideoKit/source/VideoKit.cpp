@@ -4,31 +4,54 @@
 
 #include "VideoKit.h"
 
+#include "FileManagerKit.h"
+
 using namespace leka;
 
 void VideoKit::initializeScreen()
 {
-	// nothing to do
+	_video.initialize();
+
+	_video.setBrightness(1.F);
+	_video.clearScreen();
 }
 
 void VideoKit::turnOn()
 {
-	// nothing to do
+	_lcd.turnOn();
 }
 
 void VideoKit::turnOff()
 {
-	// nothing to do
+	_lcd.turnOff();
 }
 
 void VideoKit::displayImage(const std::filesystem::path &path)
 {
-	// nothing to do
+	auto file = FileManagerKit::File {path};
+
+	if (file.is_open()) {
+		_lcd.turnOn();
+
+		_video.displayImage(file);
+
+		file.close();
+	}
 }
 
 void VideoKit::playVideo(const std::filesystem::path &path, bool must_loop)
 {
-	// nothing to do
+	auto file = FileManagerKit::File {path};
+
+	if (file.is_open()) {
+		do {
+			_lcd.turnOn();
+
+			_video.playVideo(file);
+
+		} while (must_loop);
+		file.close();
+	}
 }
 
 void VideoKit::stopVideo()
