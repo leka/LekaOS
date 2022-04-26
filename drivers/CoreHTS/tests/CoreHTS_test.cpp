@@ -19,6 +19,7 @@ using ::testing::Pointee;
 using ::testing::Return;
 using ::testing::Sequence;
 using ::testing::SetArgPointee;
+using ::testing::SetArrayArgument;
 
 using namespace leka;
 using namespace leka::utils::math;
@@ -252,17 +253,18 @@ TEST_F(CoreHTSTest, calibrateHumidityCheckNumberOfCalls)
 
 TEST_F(CoreHTSTest, getTemperature)
 {
-	float degC_expected = 100;
+	auto degC_expected = std::to_array<uint8_t>({100, 0x00});
 	LinearCoefficients coefficients {.slope = 1, .y_intercept = 0};
 
 	corehts.setLinearCalibrationForTemperature(coefficients);
 
 	EXPECT_CALL(mocki2c, write).Times(1);
-	EXPECT_CALL(mocki2c, read).WillOnce(DoAll(SetArgPointee<1>(degC_expected), Return(0)));
+	EXPECT_CALL(mocki2c, read)
+		.WillOnce(DoAll(SetArrayArgument<1>(std::begin(degC_expected), std::end(degC_expected)), Return(0)));
 
 	auto degC_actual = corehts.getTemperatureCelsius();
 
-	ASSERT_EQ(degC_actual, degC_expected);
+	ASSERT_EQ(degC_actual, static_cast<float>(degC_expected[0]));
 }
 
 TEST_F(CoreHTSTest, getTemperatureFailed)
@@ -282,17 +284,18 @@ TEST_F(CoreHTSTest, getTemperatureFailed)
 
 TEST_F(CoreHTSTest, getHumidity)
 {
-	uint8_t rH_expected = 0x0A;
+	auto rH_expected = std::to_array<uint8_t>({0x0A, 0x00});
 	LinearCoefficients coefficients {.slope = 1, .y_intercept = 0};
 
 	corehts.setLinearCalibrationForHumidity(coefficients);
 
 	EXPECT_CALL(mocki2c, write).Times(1);
-	EXPECT_CALL(mocki2c, read).WillOnce(DoAll(SetArgPointee<1>(rH_expected), Return(0)));
+	EXPECT_CALL(mocki2c, read)
+		.WillOnce(DoAll(SetArrayArgument<1>(std::begin(rH_expected), std::end(rH_expected)), Return(0)));
 
 	auto rh_actual = corehts.getRelativeHumidity();
 
-	ASSERT_EQ(rh_actual, rH_expected);
+	ASSERT_EQ(rh_actual, rH_expected[0]);
 }
 
 TEST_F(CoreHTSTest, getHumidityFailed)
