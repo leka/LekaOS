@@ -18,9 +18,10 @@ struct RGB {
 
 	auto operator+=(RGB const &rhs) -> RGB
 	{
-		red	  = std::min(red + rhs.red, 255);
-		green = std::min(green + rhs.green, 255);
-		blue  = std::min(blue + rhs.blue, 255);
+		red	  = static_cast<uint8_t>(std::min(red + rhs.red, 255));
+		green = static_cast<uint8_t>(std::min(green + rhs.green, 255));
+		blue  = static_cast<uint8_t>(std::min(blue + rhs.blue, 255));
+
 		return *this;
 	}
 
@@ -28,6 +29,7 @@ struct RGB {
 	{
 		auto color = *this;
 		color += rhs;
+
 		return color;
 	}
 
