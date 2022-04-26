@@ -131,9 +131,12 @@ void AfraidRed::increaseBrightness()
 {
 	static constexpr auto kMaxInputValue = uint8_t {34};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
+		// le Kmax est le 34 et le 1 c'est le step (il change) dans 1/34 que vaut pos. NB: F = flottant
+		// jouer sur Kmax va changer le nombre d'itérations
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt->setColor(color);
 		_step++;
+
 	} else {
 		_stage++;
 	}

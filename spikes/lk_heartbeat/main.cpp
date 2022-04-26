@@ -67,17 +67,18 @@ auto ledkit = LedKit {leds::animations::thread, leds::animations::event_flags, l
 auto main() -> int
 {
 	logger::init();
-	leds::turnOff();
+	//	leds::turnOff();
 
 	log_info("Hello, World!\n\n");
 
 	ledkit.init();
 
 	hello.start();
-
+	// ne pas oublier le set avant start stop run
 	while (true) {
 		log_info("animation::heartbeating");
-		ledkit.start(&LedKit::animation::Heartbeat);
-		rtos::ThisThread::sleep_for(30ms);
+		ledkit.start(&LedKit::animation::heartbeat);
+		log_info("animation a été lancée");
+		rtos::ThisThread::sleep_for(1s);
 	}
 }

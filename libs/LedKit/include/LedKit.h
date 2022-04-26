@@ -9,6 +9,7 @@
 
 #include "ColorKit.h"
 #include "LEDAnimation.h"
+#include "LogKit.h"
 #include "animations/AfraidBlue.h"
 #include "animations/AfraidRed.h"
 #include "animations/AfraidRedBlue.h"
@@ -70,19 +71,21 @@ class LedKit
 		static inline auto fire			   = led::animation::Fire {};
 		static inline auto fly			   = led::animation::Fly {};
 		static inline auto happy		   = led::animation::Happy {};
-		static inline auto rainbow		   = led::animation::Rainbow {};
-		static inline auto sad			   = led::animation::Sad {};
-		static inline auto sad_cry		   = led::animation::SadCry {};
-		static inline auto sick			   = led::animation::Sick {};
-		static inline auto singing		   = led::animation::Singing {};
-		static inline auto sleeping		   = led::animation::Sleeping {};
-		static inline auto sneeze		   = led::animation::Sneeze {};
-		static inline auto spin_blink	   = led::animation::SpinBlink {};
-		static inline auto sprinkles	   = led::animation::Sprinkles {};
-		static inline auto underwater	   = led::animation::Underwater {};
-		static inline auto wake_up		   = led::animation::WakeUp {};
-		static inline auto wink			   = led::animation::Wink {};
-		static inline auto yawn			   = led::animation::Yawn {};
+		static inline auto heartbeat	   = led::animation::Heartbeat {};
+		// chaque membre  est une instance statique. Ils sont accessibles sans créer une instance de type animation
+		static inline auto rainbow	  = led::animation::Rainbow {};
+		static inline auto sad		  = led::animation::Sad {};
+		static inline auto sad_cry	  = led::animation::SadCry {};
+		static inline auto sick		  = led::animation::Sick {};
+		static inline auto singing	  = led::animation::Singing {};
+		static inline auto sleeping	  = led::animation::Sleeping {};
+		static inline auto sneeze	  = led::animation::Sneeze {};
+		static inline auto spin_blink = led::animation::SpinBlink {};
+		static inline auto sprinkles  = led::animation::Sprinkles {};
+		static inline auto underwater = led::animation::Underwater {};
+		static inline auto wake_up	  = led::animation::WakeUp {};
+		static inline auto wink		  = led::animation::Wink {};
+		static inline auto yawn		  = led::animation::Yawn {};
 	};
 
 	struct flags {

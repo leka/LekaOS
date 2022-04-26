@@ -6,6 +6,9 @@
 
 #include "Heartbeat.h"
 
+#include "rtos/ThisThread.h"
+
+#include "LogKit.h"
 namespace leka::led::animation {
 
 void Heartbeat::setLeds(interface::LED &ears, interface::LED &belt)
@@ -27,13 +30,15 @@ void Heartbeat::start()
 
 	turnLedBlack();
 	_step	 = 0;
-	_stage	 = 0;
+	_stage	 = 1;
 	_running = true;
 }
 
 void Heartbeat::stop()
 {
 	if (_ears == nullptr || _belt == nullptr) {
+		logger::init();
+		log_debug("je ne connais pas de leds");
 		return;
 	}
 
@@ -65,18 +70,22 @@ void Heartbeat::run()
 			_running = false;
 			break;
 	}
-	_ears->show();
+
 	_belt->show();
 }
 
 void Heartbeat::stage1()
 {
-	static constexpr auto kMaxInputValue = uint8_t {10};
+	static constexpr auto kMaxInputValue = uint8_t {5};	  // avec çà on a stage1 qui dure 1 s
+	// le Kmax est le 34 et le 1 c'est le step (il change) dans 1/34 que vaut pos. NB: F = flottant
+	// jouer sur Kmax va changer le nombre d'itérations
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB {255, 0, 0}, pos);
 		_belt->setColor(color);
 		_ears->setColor(color);
+		_belt->show();
 		_step++;
+		rtos::ThisThread::sleep_for(10);
 	} else {
 		_step = 0;
 		_stage++;
@@ -85,18 +94,20 @@ void Heartbeat::stage1()
 
 void Heartbeat::stage2()
 {
-	static constexpr auto kTreshold = 0.7F;
+	static constexpr auto kTreshold = 0.F;
 	decreaseBrightness(kTreshold);
 }
 
 void Heartbeat::stage3()
 {
-	static constexpr auto kMaxInputValue = uint8_t {80};
+	static constexpr auto kMaxInputValue = uint8_t {3};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB {255, 0, 0}, pos);
 		_belt->setColor(color);
 		_ears->setColor(color);
+		_belt->show();
 		_step++;
+		rtos::ThisThread::sleep_for(10);
 	} else {
 		_step = 0;
 		_stage++;
@@ -105,15 +116,41 @@ void Heartbeat::stage3()
 
 void Heartbeat::stage4()
 {
-	static constexpr auto kTreshold = 0.2F;
+	static constexpr auto kTreshold = 0.F;
 	decreaseBrightness(kTreshold);
 }
 
-void AfraidBlue::turnLedBlack()
+void Heartbeat::increaseBrightness()
+{
+	static constexpr auto kMaxInputValue = uint8_t {34};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
+		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
+		_belt->setColor(color);
+		_belt->show();
+		_step++;
+	} else {
+		_stage++;
+	}
+}
+
+void Heartbeat::decreaseBrightness(float treshold)
+{
+	static constexpr auto kMaxInputValue = uint8_t {3};
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos > treshold) {
+		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
+		_belt->setColor(color);
+		_belt->show();
+		_step--;
+	} else {
+		_stage++;
+	}
+}
+// le Kmax est le 34 et le 1 c'est le step (il change) dans 1/34 que vaut pos. NB: F = flottant
+// jouer sur Kmax va changer le nombre d'itérations
+void Heartbeat::turnLedBlack()
 {
 	_ears->setColor(RGB::black);
 	_belt->setColor(RGB::black);
-	_ears->show();
 	_belt->show();
 }
 

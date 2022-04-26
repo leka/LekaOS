@@ -21,11 +21,12 @@ void LedKit::init()
 
 void LedKit::start(interface::LEDAnimation *animation)
 {
-	stop();
+	stop();	  // normalement si jamais les leds ne sont pas initialisées çà stop mais pas là
 
 	_animation = animation;
 
 	if (_animation == nullptr) {
+		log_debug("l'animation vaut nullptr");	 // l'animation ne vaut pas nullptr non plus
 		return;
 	}
 
@@ -66,6 +67,7 @@ void LedKit::run()
 void LedKit::stop()
 {
 	_event_flags.set(flags::STOP_LED_ANIMATION_FLAG);
+	//_animation vaut nullptr apparement
 
 	if (_animation != nullptr) {
 		_animation->stop();

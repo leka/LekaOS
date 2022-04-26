@@ -24,6 +24,7 @@ target_sources(LedKit
 		source/animations/Fire.cpp
 		source/animations/Fly.cpp
 		source/animations/Happy.cpp
+		source/animations/Heartbeat.cpp
 		source/LedKit.cpp
 		source/animations/Rainbow.cpp
 		source/animations/Sad.cpp
