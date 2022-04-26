@@ -12,22 +12,16 @@ namespace leka::system::robot::sm {
 struct logger {
 	auto trim_namespaces(const char *str) const
 	{
-		auto sstr = std::string {str};
+		auto trimmed_str = std::string {str};
 
-		static const auto namespaces = std::to_array<const std::string>({
-			std::string {"leka::system::robot::"},
-			std::string {"boost::sml::back::"},
-			std::string {"boost::ext::sml::v1_1_4::back::"},
-		});
-
-		for (const auto &nmspc: namespaces) {
+		for (const std::string_view prefix: prefixes) {
 			auto pos = std::string::npos;
-			while ((pos = sstr.find(nmspc)) != std::string::npos) {
-				sstr.erase(pos, nmspc.length());
+			while ((pos = trimmed_str.find(prefix)) != std::string::npos) {
+				trimmed_str.erase(pos, prefix.length());
 			}
 		}
 
-		return sstr;
+		return trimmed_str;
 	}
 
 	template <typename T>
@@ -66,6 +60,13 @@ struct logger {
 		auto d = trim_namespaces(dst.c_str());
 		log_info("%s -> %s", s.c_str(), d.c_str());
 	}
+
+  private:
+	static constexpr auto prefixes = std::to_array<const char *>({
+		"leka::system::robot::",
+		"boost::sml::back::",
+		"boost::ext::sml::v1_1_4::back::",
+	});
 };
 
 }	// namespace leka::system::robot::sm
