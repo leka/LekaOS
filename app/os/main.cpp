@@ -291,7 +291,7 @@ namespace robot {
 		commandkit,
 	};
 
-	void emergencyStop(MagicCard &card)
+	void emergencyStop(const MagicCard &card)
 	{
 		static auto emergency_stop_iteration = 0;
 		if (card == MagicCard::emergency_stop) {
