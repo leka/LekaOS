@@ -9,9 +9,9 @@
 #include "interface/Font.hpp"
 #include "interface/Graphics.hpp"
 #include "interface/JPEG.hpp"
-#include "interface/LCD.hpp"
 #include "interface/LTDC.hpp"
 #include "interface/SDRAM.hpp"
+#include "interface/drivers/LCD.hpp"
 #include "interface/drivers/STM32Hal.h"
 #include "interface/platform/File.h"
 

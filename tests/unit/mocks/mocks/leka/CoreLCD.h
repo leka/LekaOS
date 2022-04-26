@@ -5,7 +5,7 @@
 #pragma once
 
 #include "gmock/gmock.h"
-#include "interface/LCD.hpp"
+#include "interface/drivers/LCD.hpp"
 
 namespace leka::mock {
 
