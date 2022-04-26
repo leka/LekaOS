@@ -13,6 +13,8 @@ class CoreLTDC : public interface::LTDCBase
 {
   public:
 	MOCK_METHOD(void, initialize, (), (override));
+
+	MOCK_METHOD(LTDC_HandleTypeDef &, getHandle, (), (override));
 };
 
 }	// namespace leka::mock
