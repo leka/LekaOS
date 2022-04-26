@@ -13,28 +13,30 @@
 #include "interface/SDRAM.hpp"
 #include "interface/drivers/LCD.hpp"
 #include "interface/drivers/STM32Hal.h"
+#include "interface/drivers/Video.h"
 #include "interface/platform/File.h"
 
 namespace leka {
 
-class CoreVideo
+class CoreVideo : public interface::Video
 {
   public:
 	CoreVideo(interface::STM32Hal &hal, interface::SDRAM &coresdram, interface::DMA2DBase &coredma2d,
 			  interface::DSIBase &coredsi, interface::LTDCBase &coreltdc, interface::LCD &corelcd,
 			  interface::Graphics &coregraphics, interface::Font &corefont, interface::JPEGBase &corejpeg);
 
-	void initialize();
+	void initialize() final;
 
-	void turnOff();
-	void turnOn();
+	void turnOff() final;
+	void turnOn() final;
 
-	void setBrightness(float value);
+	void setBrightness(float value) final;
 
-	void clearScreen(CGColor color = CGColor::white);
+	void clearScreen() final;
+	void clearScreen(CGColor color);
 	void displayRectangle(interface::Graphics::FilledRectangle rectangle, CGColor color);
-	void displayImage(interface::File &file);
-	void playVideo(interface::File &file);
+	void displayImage(interface::File &file) final;
+	void playVideo(interface::File &file) final;
 	void displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
 					 CGColor background = CGColor::white);
 

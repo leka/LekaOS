@@ -60,6 +60,11 @@ void CoreVideo::setBrightness(float value)
 	_corelcd.setBrightness(value);
 }
 
+void CoreVideo::clearScreen()
+{
+	clearScreen(CGColor::white);
+}
+
 void CoreVideo::clearScreen(CGColor color)
 {
 	_coregraphics.clearScreen(color);

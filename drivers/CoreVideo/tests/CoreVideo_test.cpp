@@ -118,9 +118,9 @@ TEST_F(CoreVideoTest, setBrightness)
 	corevideo.setBrightness(brightness_value);
 }
 
-TEST_F(CoreVideoTest, clearScreen)
+TEST_F(CoreVideoTest, clearScreenDefaultColor)
 {
-	EXPECT_CALL(graphicsmock, clearScreen).Times(1);
+	EXPECT_CALL(graphicsmock, clearScreen(compareColor(CGColor::white))).Times(1);
 
 	corevideo.clearScreen();
 }
