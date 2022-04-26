@@ -50,7 +50,7 @@ class LedKit
 
 	void init();
 	void start(interface::LEDAnimation *animation);
-	void run();
+	[[noreturn]] void run();
 	void stop();
 
 	void initializeAnimation();
