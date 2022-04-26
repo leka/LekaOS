@@ -19,6 +19,7 @@ target_link_libraries(spike_lk_lcd
 	CoreLL
 	CoreSTM32Hal
 	FileManagerKit
+	VideoKit
 )
 
 target_link_custom_leka_targets(spike_lk_lcd)
