@@ -160,3 +160,21 @@ TEST_F(CoreGapTest, setAdvertising)
 
 	coregap.setAdvertising(new_advertising_data);
 }
+
+TEST_F(CoreGapTest, onConnectionCallback)
+{
+	auto dummy_on_connection_callback = std::function<void()> {};
+
+	coregap.onConnectionCallback(dummy_on_connection_callback);
+
+	// nothing expected
+}
+
+TEST_F(CoreGapTest, onDisconnectionCallback)
+{
+	auto dummy_on_disconnection_callback = std::function<void()> {};
+
+	coregap.onDisconnectionCallback(dummy_on_disconnection_callback);
+
+	// nothing expected
+}

@@ -117,3 +117,21 @@ TEST_F(BLEKitTest, getAdvertisingDataThenSetAdvertisingData)
 
 	ble.setAdvertisingData(advertising_data);
 }
+
+TEST_F(BLEKitTest, onConnectionCallback)
+{
+	auto dummy_on_connection_callback = std::function<void()> {};
+
+	ble.onConnectionCallback(dummy_on_connection_callback);
+
+	// nothing expected
+}
+
+TEST_F(BLEKitTest, onDisconnectionCallback)
+{
+	auto dummy_on_disconnection_callback = std::function<void()> {};
+
+	ble.onDisconnectionCallback(dummy_on_disconnection_callback);
+
+	// nothing expected
+}

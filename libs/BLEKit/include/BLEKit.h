@@ -25,6 +25,9 @@ class BLEKit
 	void setAdvertisingData(const AdvertisingData &advertising_data);
 	[[nodiscard]] auto getAdvertisingData() const -> AdvertisingData;
 
+	void onConnectionCallback(const std::function<void()> &callback);
+	void onDisconnectionCallback(const std::function<void()> &callback);
+
   private:
 	// ? mbed::BLE specific function
 	void processEvents(BLE::OnEventsToProcessCallbackContext *context);

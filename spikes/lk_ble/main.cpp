@@ -60,6 +60,9 @@ auto main() -> int
 	std::array<uint8_t, 33> serial_number = {"LK-2202-003300294E5350092038384B"};
 	service_device_information.setSerialNumber(serial_number);
 
+	blekit.onConnectionCallback([] { log_info("Connected !"); });
+	blekit.onDisconnectionCallback([] { log_info("Disconnected !"); });
+
 	blekit.init();
 
 	initializeSD();

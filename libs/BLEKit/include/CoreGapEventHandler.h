@@ -22,8 +22,14 @@ class CoreGapEventHandler : public ble::Gap::EventHandler
 	void onDisconnectionComplete(ble::DisconnectionCompleteEvent const &event) override;
 	void onAdvertisingEnd(ble::AdvertisingEndEvent const &event) override;
 
+	void onConnectionCallback(const std::function<void()> &callback);
+	void onDisconnectionCallback(const std::function<void()> &callback);
+
   private:
 	std::function<void()> _start_advertising {};
+
+	std::function<void()> _on_connection_callback {};
+	std::function<void()> _on_disconnection_callback {};
 };
 
 }	// namespace leka
