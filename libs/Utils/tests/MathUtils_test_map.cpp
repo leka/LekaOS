@@ -20,7 +20,8 @@ TEST(MathUtilsTest, mapUint8ToFloatMin)
 	uint8_t value = 0;
 
 	auto result = map(value, min, max, 0.0f, 1.0f);
-	ASSERT_EQ(result, 0.0f);
+
+	EXPECT_EQ(result, 0.0f);
 }
 
 TEST(MathUtilsTest, mapUint8ToFloatMax)
@@ -30,7 +31,8 @@ TEST(MathUtilsTest, mapUint8ToFloatMax)
 	uint8_t value = 255;
 
 	auto result = map(value, min, max, 0.0f, 1.0f);
-	ASSERT_EQ(result, 1.0f);
+
+	EXPECT_EQ(result, 1.0f);
 }
 
 TEST(MathUtilsTest, mapUint8ToFloatMiddle)
@@ -40,7 +42,8 @@ TEST(MathUtilsTest, mapUint8ToFloatMiddle)
 	uint8_t value = 51;
 
 	auto result = map(value, min, max, 0.0f, 1.0f);
-	ASSERT_EQ(result, 0.2f);
+
+	EXPECT_EQ(result, 0.2f);
 }
 
 TEST(MathUtilsTest, mapFloatToUint8Min)
@@ -50,7 +53,8 @@ TEST(MathUtilsTest, mapFloatToUint8Min)
 	float value = 0.0f;
 
 	auto result = map(value, 0.0f, 1.0f, min, max);
-	ASSERT_EQ(result, 0);
+
+	EXPECT_EQ(result, 0);
 }
 
 TEST(MathUtilsTest, mapFloatToUint8Max)
@@ -60,7 +64,8 @@ TEST(MathUtilsTest, mapFloatToUint8Max)
 	float value = 1.0;
 
 	auto result = map(value, 0.0f, 1.0f, min, max);
-	ASSERT_EQ(result, 255);
+
+	EXPECT_EQ(result, 255);
 }
 
 TEST(MathUtilsTest, mapFloatToUint8Middle)
@@ -70,5 +75,6 @@ TEST(MathUtilsTest, mapFloatToUint8Middle)
 	float value = 0.2f;
 
 	auto result = map(value, 0.0f, 1.0f, min, max);
-	ASSERT_EQ(result, 51);
+
+	EXPECT_EQ(result, 51);
 }
