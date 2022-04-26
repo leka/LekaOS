@@ -48,3 +48,13 @@ void CoreGap::setAdvertising(AdvertisingData advertising_data)
 
 	_gap.setAdvertisingPayload(_advertising_handle, _advertising_data_builder.getAdvertisingData());
 }
+
+void CoreGap::onConnectionCallback(const std::function<void()> &callback)
+{
+	_gap_event_handler.onConnectionCallback(callback);
+}
+
+void CoreGap::onDisconnectionCallback(const std::function<void()> &callback)
+{
+	_gap_event_handler.onDisconnectionCallback(callback);
+}

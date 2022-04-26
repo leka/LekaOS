@@ -23,10 +23,12 @@ class CoreGap
 
 	void setEventHandler();
 	void onInitializationComplete(BLE::InitializationCompleteCallbackContext *params);
-	// void onInit(std::function<void()> cb) { _post_init = cb; }
 
 	void startAdvertising();
 	void setAdvertising(AdvertisingData advertising_data);
+
+	void onConnectionCallback(const std::function<void()> &callback);
+	void onDisconnectionCallback(const std::function<void()> &callback);
 
   private:
 	ble::advertising_handle_t _advertising_handle {ble::LEGACY_ADVERTISING_HANDLE};

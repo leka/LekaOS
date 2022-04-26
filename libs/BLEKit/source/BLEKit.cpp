@@ -41,3 +41,13 @@ auto BLEKit::getAdvertisingData() const -> AdvertisingData
 {
 	return _advertising_data;
 }
+
+void BLEKit::onConnectionCallback(const std::function<void()> &callback)
+{
+	_core_gap.onConnectionCallback(callback);
+}
+
+void BLEKit::onDisconnectionCallback(const std::function<void()> &callback)
+{
+	_core_gap.onDisconnectionCallback(callback);
+}
