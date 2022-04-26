@@ -10,11 +10,11 @@
 #include "CorePwm.h"
 #include "CoreSPI.h"
 #include "LedKit.h"
-#include "VideoKit.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/LEDAnimation.h"
 #include "mocks/leka/PwmOut.h"
+#include "mocks/leka/VideoKit.h"
 #include "mocks/mbed/DigitalOut.h"
 #include "mocks/mbed/EventFlags.h"
 
@@ -25,12 +25,12 @@ using ::testing::InSequence;
 class BehaviorKitTest : public ::testing::Test
 {
   protected:
-	BehaviorKitTest() : behaviorkit(videokit, ledkit, motor_left, motor_right) {};
+	BehaviorKitTest() : behaviorkit(mock_videokit, ledkit, motor_left, motor_right) {};
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	VideoKit videokit {};
+	mock::VideoKit mock_videokit {};
 
 	CoreSPI spi {NC, NC, NC, NC};
 	CoreLED<LedKit::kNumberOfLedsBelt> belt {spi};
@@ -65,6 +65,7 @@ TEST_F(BehaviorKitTest, spinBlink)
 {
 	static constexpr auto expected_speed = 0.5;
 
+	EXPECT_CALL(mock_videokit, playVideo);
 	{
 		InSequence seq;
 
@@ -90,6 +91,7 @@ TEST_F(BehaviorKitTest, blinkGreen)
 {
 	static constexpr auto expected_speed = 0.5;
 
+	EXPECT_CALL(mock_videokit, playVideo);
 	{
 		InSequence seq;
 
@@ -141,6 +143,8 @@ TEST_F(BehaviorKitTest, spinRight)
 
 TEST_F(BehaviorKitTest, lowBattery)
 {
+	EXPECT_CALL(mock_videokit, displayImage);
+
 	behaviorkit.lowBattery();
 }
 
@@ -150,6 +154,7 @@ TEST_F(BehaviorKitTest, stop)
 
 	ledkit.start(&mock_animation);
 
+	EXPECT_CALL(mock_videokit, stopVideo);
 	EXPECT_CALL(mock_animation, stop).Times(1);
 	EXPECT_CALL(dir_1_left, write(0));
 	EXPECT_CALL(dir_2_left, write(0));

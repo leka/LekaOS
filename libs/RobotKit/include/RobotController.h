@@ -25,11 +25,11 @@
 #include "RCLogger.h"
 #include "SerialNumberKit.h"
 #include "StateMachine.h"
-#include "VideoKit.h"
 #include "interface/RobotController.h"
 #include "interface/drivers/Battery.h"
 #include "interface/drivers/FirmwareUpdate.h"
 #include "interface/drivers/Timeout.h"
+#include "interface/libs/VideoKit.h"
 
 namespace leka {
 
@@ -42,8 +42,8 @@ class RobotController : public interface::RobotController
 
 	explicit RobotController(interface::Timeout &sleep_timeout, interface::Battery &battery,
 							 SerialNumberKit &serialnumberkit, interface::FirmwareUpdate &firmware_update,
-							 CoreMotor &motor_left, CoreMotor &motor_right, LedKit &ledkit, VideoKit &videokit,
-							 BehaviorKit &behaviorkit, CommandKit &cmdkit)
+							 CoreMotor &motor_left, CoreMotor &motor_right, LedKit &ledkit,
+							 interface::VideoKit &videokit, BehaviorKit &behaviorkit, CommandKit &cmdkit)
 		: _sleep_timeout(sleep_timeout),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
@@ -85,7 +85,7 @@ class RobotController : public interface::RobotController
 		_behaviorkit.sleeping();
 		_videokit.turnOn();
 
-		_event_queue.call_in(20s, &_videokit, &VideoKit::turnOff);
+		_event_queue.call_in(20s, &_videokit, &interface::VideoKit::turnOff);
 		_event_queue.call_in(20s, &_ledkit, &LedKit::stop);
 	}
 
@@ -124,7 +124,7 @@ class RobotController : public interface::RobotController
 		_battery_kit.onDataUpdated([this](uint8_t level) { onStartChargingBehavior(level); });
 		_videokit.turnOn();
 
-		_event_queue.call_in(1min, &_videokit, &VideoKit::turnOff);
+		_event_queue.call_in(1min, &_videokit, &interface::VideoKit::turnOff);
 		_event_queue.call_in(1min, &_ledkit, &LedKit::stop);
 	}
 
@@ -253,7 +253,7 @@ class RobotController : public interface::RobotController
 	CoreMotor &_motor_left;
 	CoreMotor &_motor_right;
 	LedKit &_ledkit;
-	VideoKit &_videokit;
+	interface::VideoKit &_videokit;
 
 	BehaviorKit &_behaviorkit;
 	CommandKit &_cmdkit;

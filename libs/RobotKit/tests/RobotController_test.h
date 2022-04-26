@@ -24,6 +24,7 @@
 #include "mocks/leka/MCU.h"
 #include "mocks/leka/PwmOut.h"
 #include "mocks/leka/Timeout.h"
+#include "mocks/leka/VideoKit.h"
 #include "mocks/mbed/DigitalOut.h"
 #include "mocks/mbed/EventFlags.h"
 
@@ -32,6 +33,7 @@ namespace bsml = boost::sml;
 namespace lksm = system::robot::sm;
 
 using ::testing::_;
+using ::testing::AnyNumber;
 using ::testing::InSequence;
 using ::testing::MockFunction;
 using ::testing::Return;
@@ -85,15 +87,15 @@ class RobotControllerTest : public testing::Test
 	CoreMotor motor_left {dir_1_left, dir_2_left, speed_left};
 	CoreMotor motor_right {dir_1_right, dir_2_right, speed_right};
 
-	VideoKit videokit {};
+	mock::VideoKit mock_videokit {};
 
-	BehaviorKit bhvkit {videokit, ledkit, motor_left, motor_right};
+	BehaviorKit bhvkit {mock_videokit, ledkit, motor_left, motor_right};
 
 	CommandKit cmdkit {};
 
 	RobotController<bsml::sm<system::robot::StateMachine, bsml::testing>> rc {
 		sleep_timeout, battery, serialnumberkit, firmware_update, motor_left,
-		motor_right,   ledkit,	videokit,		 bhvkit,		  cmdkit};
+		motor_right,   ledkit,	mock_videokit,	 bhvkit,		  cmdkit};
 
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
@@ -128,6 +130,10 @@ class RobotControllerTest : public testing::Test
 			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
 
 			expectedCallsStopMotors();
+
+			EXPECT_CALL(mock_videokit, initializeScreen).Times(1);
+			EXPECT_CALL(mock_videokit, turnOff).Times(1);
+			EXPECT_CALL(mock_videokit, stopVideo).Times(1);
 		}
 
 		rc.initializeComponents();
@@ -143,6 +149,8 @@ class RobotControllerTest : public testing::Test
 			EXPECT_CALL(battery, isCharging)
 				.InSequence(on_low_battery_sequence)
 				.WillOnce(Return(spy_isCharging_return_value));
+			EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/loading.jpg"}))
+				.Times(AnyNumber());
 			EXPECT_CALL(battery, level).InSequence(on_low_battery_sequence);
 
 			Sequence on_data_updated_sequence;
@@ -177,7 +185,13 @@ class RobotControllerTest : public testing::Test
 		EXPECT_CALL(battery, isCharging).InSequence(is_charging_sequence).WillOnce(Return(spy_isCharging_return_value));
 		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(is_charging_sequence);
 
-		EXPECT_CALL(sleep_timeout, start);
+		expectedCallsRunLaunchingBehavior();
+
+		Sequence on_idle_entry_sequence;
+		EXPECT_CALL(sleep_timeout, start).InSequence(on_idle_entry_sequence);
+
+		EXPECT_CALL(mock_videokit, playVideo).InSequence(on_idle_entry_sequence);
+		EXPECT_CALL(mock_videokit, turnOn).InSequence(on_idle_entry_sequence);
 	}
 
 	void expectedCallsTransitionSetupToCharging()
@@ -189,5 +203,19 @@ class RobotControllerTest : public testing::Test
 
 		EXPECT_CALL(battery, isCharging).InSequence(is_charging_sequence).WillOnce(Return(spy_isCharging_return_value));
 		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(is_charging_sequence);
+
+		expectedCallsRunLaunchingBehavior();
+
+		Sequence start_charging_behavior_sequence;
+		EXPECT_CALL(mock_videokit, turnOn).InSequence(start_charging_behavior_sequence);
+		EXPECT_CALL(mock_videokit, turnOff).InSequence(start_charging_behavior_sequence);
+	}
+
+	void expectedCallsRunLaunchingBehavior()
+	{
+		InSequence run_launching_behavior_sequence;
+
+		EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/logo.jpg"})).Times(1);
+		EXPECT_CALL(mock_videokit, turnOn);
 	}
 };

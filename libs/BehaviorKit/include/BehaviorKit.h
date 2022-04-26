@@ -6,14 +6,14 @@
 
 #include "CoreMotor.h"
 #include "LedKit.h"
-#include "VideoKit.h"
+#include "interface/libs/VideoKit.h"
 
 namespace leka {
 
 class BehaviorKit
 {
   public:
-	explicit BehaviorKit(VideoKit &videokit, LedKit &ledkit, CoreMotor &motor_left, CoreMotor &motor_right)
+	explicit BehaviorKit(interface::VideoKit &videokit, LedKit &ledkit, CoreMotor &motor_left, CoreMotor &motor_right)
 		: _videokit(videokit), _ledkit(ledkit), _motor_left(motor_left), _motor_right(motor_right)
 	{
 		// nothing do to
@@ -43,7 +43,7 @@ class BehaviorKit
 	void stop();
 
   private:
-	VideoKit &_videokit;
+	interface::VideoKit &_videokit;
 	LedKit &_ledkit;
 	CoreMotor &_motor_left;
 	CoreMotor &_motor_right;
