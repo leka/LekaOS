@@ -88,8 +88,10 @@ void Heartbeat::stage1()
 		_step++;
 		rtos::ThisThread::sleep_for(10);
 		log_debug("stage1");
+		log_debug(" stage1: _step %i", _step);
 	} else {
 		_step = 0;
+
 		_stage++;
 	}
 }
@@ -145,8 +147,11 @@ void Heartbeat::decreaseBrightness(float treshold)
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt->setColor(color);
 		_belt->show();
+		log_debug("corps du if de decrease_brightness");
 		_step--;
+
 	} else {
+		log_debug("je passe au stage suivant");
 		_stage++;
 	}
 }
