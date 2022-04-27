@@ -6,6 +6,7 @@
 #include "CommandKit.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "stubs/leka/EventLoopKit.h"
 
 using namespace leka;
 
@@ -15,7 +16,8 @@ class CommandKitRegisterTest : public testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	CommandKit cmdkit {};
+	stub::EventLoopKit event_loop {};
+	CommandKit cmdkit {event_loop};
 };
 
 TEST_F(CommandKitRegisterTest, registerZeroCommand)

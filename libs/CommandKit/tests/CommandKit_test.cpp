@@ -7,11 +7,14 @@
 #include "./mocks/Command.h"
 #include "LogKit.h"
 #include "gtest/gtest.h"
+#include "stubs/leka/EventLoopKit.h"
 
 using namespace leka;
 
 TEST(CommandKitTest, initialization)
 {
-	CommandKit cmdkit {};
+	stub::EventLoopKit event_loop {};
+	CommandKit cmdkit {event_loop};
+
 	EXPECT_NE(&cmdkit, nullptr);
 }
