@@ -66,7 +66,7 @@ void Heartbeat::run()
 		case 4:
 			stage4();
 			break;
-			rtos::ThisThread::sleep_for(1000ms);
+			// rtos::ThisThread::sleep_for(1000ms);
 		default:
 			_running = false;
 			break;
