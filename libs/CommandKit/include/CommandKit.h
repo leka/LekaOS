@@ -30,7 +30,8 @@ class CommandKit
 
 	static constexpr auto kStartPattern = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A});
 
-	CircularQueue<uint8_t, 256> _input_buffer {};
+	CoreEventQueue _event_queue {};
+	CircularQueue<uint8_t, 1024> _input_buffer {};
 
 	std::span<interface::Command *> _commands {};
 
