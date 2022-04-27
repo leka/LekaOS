@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <filesystem>
+
 namespace leka {
 
 class VideoKit
@@ -16,9 +18,9 @@ class VideoKit
 	void turnOn() {};
 	void turnOff() {};
 
-	void displayImage(const char *path) {};
+	void displayImage(const std::filesystem::path &path) {};
 
-	void playVideo(const char *path, bool must_loop = false) {};
+	void playVideo(const std::filesystem::path &path, bool must_loop = false) {};
 	void stopVideo() {};
 };
 
