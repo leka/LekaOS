@@ -199,6 +199,9 @@ class RobotController : public interface::RobotController
 
 		_battery_kit.startEventHandler();
 
+		_ble.onConnectionCallback([this] { _behaviorkit.stop(); });
+		_ble.onDisconnectionCallback([this] { _behaviorkit.stop(); });
+
 		// Setup callbacks for each State Machine events
 
 		auto on_sleep_timeout = [this]() { raise(event::sleep_timeout_did_end {}); };
