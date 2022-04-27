@@ -28,7 +28,12 @@ class Video
 
 	virtual void clearScreen()																		  = 0;
 	virtual void displayImage(interface::File &file, JPEGImageProperties *image_properties = nullptr) = 0;
-	virtual void playVideo(interface::File &file)													  = 0;
+
+	virtual void setVideo(interface::File &file)			  = 0;
+	virtual void displayNextFrameVideo(interface::File &file) = 0;
+	virtual auto isLastFrame() -> bool						  = 0;
+
+	virtual void playVideo(interface::File &file) = 0;
 };
 
 }	// namespace leka::interface

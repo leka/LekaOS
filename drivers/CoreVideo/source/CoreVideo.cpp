@@ -89,18 +89,41 @@ void CoreVideo::displayImage(interface::File &file, JPEGImageProperties *image_p
 							 _image_properties.getWidthOffset());
 }
 
-void CoreVideo::playVideo(interface::File &file)
+void CoreVideo::setVideo(interface::File &file)
 {
 	_image_properties = _corejpeg.getImageProperties();
 
-	auto frame_index = _corejpeg.findSOIMarker(file, 0);
+	file.seek(0, SEEK_SET);
+	_frame_index   = 0;
+	_image_size	   = 0;
+	_is_last_frame = false;
+}
 
-	while (frame_index != 0) {
-		file.seek(frame_index, SEEK_SET);
+void CoreVideo::displayNextFrameVideo(interface::File &file)
+{
+	_frame_index = _corejpeg.findSOIMarker(file, _frame_index + _image_size);
 
-		displayImage(file, &_image_properties);
+	if (_frame_index == 0) {
+		_is_last_frame = true;
+		return;
+	}
 
-		frame_index = _corejpeg.findSOIMarker(file, frame_index + _image_size);
+	file.seek(_frame_index, SEEK_SET);
+
+	displayImage(file, &_image_properties);
+}
+
+auto CoreVideo::isLastFrame() -> bool
+{
+	return _is_last_frame;
+}
+
+void CoreVideo::playVideo(interface::File &file)
+{
+	setVideo(file);
+
+	while (!isLastFrame()) {
+		displayNextFrameVideo(file);
 	}
 }
 

@@ -216,26 +216,53 @@ TEST_F(CoreVideoTest, displayTextWithColor)
 	corevideo.displayText(buff, text_length, starting_line, foreground_color, background_color);
 }
 
-TEST_F(CoreVideoTest, playVideo)
+TEST_F(CoreVideoTest, setVideo)
+{
+	EXPECT_CALL(filemock, seek(0, SEEK_SET));
+	EXPECT_CALL(jpegmock, getImageProperties);
+
+	corevideo.setVideo(filemock);
+
+	auto actual_is_last_frame = corevideo.isLastFrame();
+	EXPECT_FALSE(actual_is_last_frame);
+}
+
+TEST_F(CoreVideoTest, displayNextFrameVideo)
 {
 	const auto any_frame_index = 218;
-	const auto any_frame_size  = 27;
 
 	{
 		InSequence seq;
 
-		EXPECT_CALL(jpegmock, getImageProperties);
 		EXPECT_CALL(jpegmock, findSOIMarker).WillOnce(Return(any_frame_index));
-
 		EXPECT_CALL(filemock, seek(any_frame_index, SEEK_SET));
 
-		EXPECT_CALL(jpegmock, decodeImage).WillOnce(Return(any_frame_size));
-		EXPECT_CALL(dma2dmock, transferImage);
-
-		EXPECT_CALL(jpegmock, findSOIMarker(_, any_frame_index + any_frame_size)).WillOnce(Return(0));
+		EXPECT_CALL(jpegmock, decodeImage).Times(1);
+		EXPECT_CALL(dma2dmock, transferImage).Times(1);
 	}
 
-	corevideo.playVideo(filemock);
+	corevideo.displayNextFrameVideo(filemock);
+
+	auto actual_is_last_frame = corevideo.isLastFrame();
+	EXPECT_FALSE(actual_is_last_frame);
+}
+
+TEST_F(CoreVideoTest, displayNextFrameVideoIsLastFrame)
+{
+	{
+		InSequence seq;
+
+		EXPECT_CALL(jpegmock, findSOIMarker).WillOnce(Return(0));
+		EXPECT_CALL(filemock, seek).Times(0);
+
+		EXPECT_CALL(jpegmock, decodeImage).Times(0);
+		EXPECT_CALL(dma2dmock, transferImage).Times(0);
+	}
+
+	corevideo.displayNextFrameVideo(filemock);
+
+	auto actual_is_last_frame = corevideo.isLastFrame();
+	EXPECT_TRUE(actual_is_last_frame);
 }
 
 TEST_F(CoreVideoTest, getDMA2DHandle)
