@@ -26,11 +26,13 @@ class Heartbeat : public interface::LEDAnimation
 	bool _running		  = false;
 	uint8_t _step		  = 0;
 	uint8_t _stage		  = 0;
+	uint8_t _turn		  = 0;
 
 	void stage1();
 	void stage2();
 	void stage3();
 	void stage4();
+	void stage5();
 
 	void increaseBrightness();
 	void decreaseBrightness(float treshold);

@@ -32,6 +32,7 @@ void Heartbeat::start()
 	turnLedBlack();
 	_step	 = 0;
 	_stage	 = 1;
+	_turn	 = 0;
 	_running = true;
 }
 
@@ -66,7 +67,11 @@ void Heartbeat::run()
 		case 4:
 			stage4();
 			break;
-			// rtos::ThisThread::sleep_for(1000ms);
+			// rtos::ThisThread::sleep_for(1000ms);case 4:
+		case 5:
+			stage5();
+			break;
+
 		default:
 			_running = false;	//
 			break;
@@ -86,7 +91,7 @@ void Heartbeat::stage1()
 		_ears->setColor(color);
 		_belt->show();
 		_step++;
-		rtos::ThisThread::sleep_for(10);
+		// rtos::ThisThread::sleep_for(10);
 		log_debug("stage1");
 		log_debug(" stage1: _step %i", _step);
 	} else {
@@ -105,9 +110,11 @@ void Heartbeat::stage2()
 		_belt->show();
 		log_debug("corps du if de decrease_brightness");
 		_step++;
+		rtos::ThisThread::sleep_for(10);
 
 	} else {
 		log_debug("je passe au stage suivant");
+		_step = 0;
 		_stage++;
 	}
 }
@@ -132,17 +139,33 @@ void Heartbeat::stage3()
 void Heartbeat::stage4()
 {
 	log_debug("stage 4");
-	static constexpr auto kMaxInputValue = uint8_t {3};
+	static constexpr auto kMaxInputValue = uint8_t {15};
 	if (auto pos = utils::normalizeStep(kMaxInputValue - _step, kMaxInputValue); pos != 0) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt->setColor(color);
 		_belt->show();
 		log_debug("corps du if de decrease_brightness");
 		_step++;
+		rtos::ThisThread::sleep_for(10);
 
 	} else {
 		log_debug("je passe au stage suivant");
+		_step = 0;
 		_stage++;
+	}
+}
+
+void Heartbeat::stage5()
+{
+	log_debug("entree dans stage5");
+	rtos::ThisThread::sleep_for(70ms);
+	if (_turn < 10) {
+		_turn++;
+		log_debug("stage 5 _turn %i", _turn);
+		_stage = 1;
+
+	} else {
+		_stage = 20;
 	}
 }
 
