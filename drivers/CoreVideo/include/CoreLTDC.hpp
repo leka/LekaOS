@@ -17,7 +17,7 @@ class CoreLTDC : public interface::LTDCBase
 
 	void initialize() final;
 
-	[[nodiscard]] auto getHandle() -> LTDC_HandleTypeDef &;
+	[[nodiscard]] auto getHandle() -> LTDC_HandleTypeDef & final;
 	[[nodiscard]] auto getLayerConfig() const -> LTDC_LayerCfgTypeDef;
 
   private:

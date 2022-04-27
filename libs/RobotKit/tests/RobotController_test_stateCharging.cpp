@@ -23,7 +23,11 @@ TEST_F(RobotControllerTest, stateChargingEventChargeDidStopGuardIsChargingFalse)
 	rc.state_machine.set_current_states(lksm::state::charging);
 
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
-	EXPECT_CALL(sleep_timeout, start).Times(1);
+
+	Sequence on_idle_entry_sequence;
+	EXPECT_CALL(sleep_timeout, start).InSequence(on_idle_entry_sequence);
+	EXPECT_CALL(mock_videokit, playVideo).InSequence(on_idle_entry_sequence);
+	EXPECT_CALL(mock_videokit, turnOn).InSequence(on_idle_entry_sequence);
 
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));

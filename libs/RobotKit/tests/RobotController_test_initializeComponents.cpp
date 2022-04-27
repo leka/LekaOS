@@ -23,6 +23,10 @@ TEST_F(RobotControllerTest, initializeComponents)
 		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
 
 		expectedCallsStopMotors();
+
+		EXPECT_CALL(mock_videokit, initializeScreen).Times(1);
+		EXPECT_CALL(mock_videokit, turnOff).Times(1);
+		EXPECT_CALL(mock_videokit, stopVideo).Times(1);
 	}
 
 	rc.initializeComponents();

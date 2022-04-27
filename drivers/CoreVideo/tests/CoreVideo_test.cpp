@@ -20,6 +20,7 @@ using namespace leka;
 using ::testing::_;
 using ::testing::InSequence;
 using ::testing::Return;
+using ::testing::ReturnRef;
 
 class CoreVideoTest : public ::testing::Test
 {
@@ -117,9 +118,9 @@ TEST_F(CoreVideoTest, setBrightness)
 	corevideo.setBrightness(brightness_value);
 }
 
-TEST_F(CoreVideoTest, clearScreen)
+TEST_F(CoreVideoTest, clearScreenDefaultColor)
 {
-	EXPECT_CALL(graphicsmock, clearScreen).Times(1);
+	EXPECT_CALL(graphicsmock, clearScreen(compareColor(CGColor::white))).Times(1);
 
 	corevideo.clearScreen();
 }
@@ -220,4 +221,28 @@ TEST_F(CoreVideoTest, playVideo)
 	}
 
 	corevideo.playVideo(filemock);
+}
+
+TEST_F(CoreVideoTest, getDMA2DHandle)
+{
+	auto expected_handle = DMA2D_HandleTypeDef {};
+	EXPECT_CALL(dma2dmock, getHandle).WillOnce(ReturnRef(expected_handle));
+
+	corevideo.getDMA2DHandle();
+}
+
+TEST_F(CoreVideoTest, getLTDCHandle)
+{
+	auto expected_handle = LTDC_HandleTypeDef {};
+	EXPECT_CALL(ltdcmock, getHandle).WillOnce(ReturnRef(expected_handle));
+
+	corevideo.getLTDCHandle();
+}
+
+TEST_F(CoreVideoTest, getJPEGHandle)
+{
+	auto expected_handle = JPEG_HandleTypeDef {};
+	EXPECT_CALL(jpegmock, getHandle).WillOnce(ReturnRef(expected_handle));
+
+	corevideo.getJPEGHandle();
 }

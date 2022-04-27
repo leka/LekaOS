@@ -60,6 +60,11 @@ void CoreVideo::setBrightness(float value)
 	_corelcd.setBrightness(value);
 }
 
+void CoreVideo::clearScreen()
+{
+	clearScreen(CGColor::white);
+}
+
 void CoreVideo::clearScreen(CGColor color)
 {
 	_coregraphics.clearScreen(color);
@@ -101,4 +106,19 @@ void CoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_l
 							CGColor background)
 {
 	_corefont.display(text, size, starting_line, foreground, background);
+}
+
+auto CoreVideo::getDMA2DHandle() -> DMA2D_HandleTypeDef &
+{
+	return _coredma2d.getHandle();
+}
+
+auto CoreVideo::getLTDCHandle() -> LTDC_HandleTypeDef &
+{
+	return _coreltdc.getHandle();
+}
+
+auto CoreVideo::getJPEGHandle() -> JPEG_HandleTypeDef &
+{
+	return _corejpeg.getHandle();
 }
