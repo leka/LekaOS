@@ -9,6 +9,7 @@
 #include "rtos/ThisThread.h"
 
 #include "LogKit.h"
+using namespace std::chrono;
 namespace leka::led::animation {
 
 void Heartbeat::setLeds(interface::LED &ears, interface::LED &belt)
