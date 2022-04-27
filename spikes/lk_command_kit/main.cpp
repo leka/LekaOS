@@ -88,6 +88,8 @@ namespace display {
 
 namespace internal {
 
+	auto event_flags = CoreEventFlags {};
+
 	auto corell		   = CoreLL {};
 	auto pixel		   = CGPixel {corell};
 	auto hal		   = CoreSTM32Hal {};
@@ -108,7 +110,7 @@ namespace internal {
 
 }	// namespace internal
 
-auto videokit = VideoKit {internal::corelcd, internal::corevideo};
+auto videokit = VideoKit {internal::event_flags, internal::corelcd, internal::corevideo};
 
 }	// namespace display
 

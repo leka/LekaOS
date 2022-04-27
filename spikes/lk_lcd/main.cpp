@@ -10,6 +10,7 @@
 
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
+#include "CoreEventFlags.h"
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreJPEG.hpp"
@@ -35,6 +36,8 @@ using namespace std::chrono;
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 
+auto event_flags = CoreEventFlags {};
+
 CoreLL corell;
 CGPixel pixel(corell);
 CoreSTM32Hal hal;
@@ -52,7 +55,7 @@ CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coreg
 
 HAL_VIDEO_DECLARE_IRQ_HANDLERS(corevideo);
 
-auto videokit = VideoKit {corelcd, corevideo};
+auto videokit = VideoKit {event_flags, corelcd, corevideo};
 
 auto file = FileManagerKit::File {};
 
