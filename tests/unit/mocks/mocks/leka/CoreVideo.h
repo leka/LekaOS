@@ -20,7 +20,7 @@ class CoreVideo : public interface::Video
 	MOCK_METHOD(void, setBrightness, (float value), (override));
 
 	MOCK_METHOD(void, clearScreen, (), (override));
-	MOCK_METHOD(void, displayImage, (interface::File & file), (override));
+	MOCK_METHOD(void, displayImage, (interface::File &, JPEGImageProperties *), (override));
 	MOCK_METHOD(void, playVideo, (interface::File & file), (override));
 };
 

@@ -172,6 +172,21 @@ TEST_F(CoreVideoTest, displayImage)
 	corevideo.displayImage(filemock);
 }
 
+TEST_F(CoreVideoTest, displayImageWithImageProperties)
+{
+	auto image_properties = JPEGImageProperties {};
+
+	{
+		InSequence seq;
+
+		EXPECT_CALL(jpegmock, decodeImage).Times(1);
+		EXPECT_CALL(jpegmock, getImageProperties).Times(0);
+		EXPECT_CALL(dma2dmock, transferImage).Times(1);
+	}
+
+	corevideo.displayImage(filemock, &image_properties);
+}
+
 TEST_F(CoreVideoTest, displayText)
 {
 	constexpr uint8_t buff_size = 128;

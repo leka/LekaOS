@@ -75,30 +75,32 @@ void CoreVideo::displayRectangle(interface::Graphics::FilledRectangle rectangle,
 	_coregraphics.drawRectangle(rectangle, color);
 }
 
-void CoreVideo::displayImage(interface::File &file)
+void CoreVideo::displayImage(interface::File &file, JPEGImageProperties *image_properties)
 {
-	_corejpeg.decodeImage(file);
+	_image_size = _corejpeg.decodeImage(file);
 
-	auto image_properties = _corejpeg.getImageProperties();
+	if (image_properties == nullptr) {
+		_image_properties = _corejpeg.getImageProperties();
+	} else {
+		_image_properties = *image_properties;
+	}
 
-	_coredma2d.transferImage(image_properties.ImageWidth, image_properties.ImageHeight,
-							 image_properties.getWidthOffset());
+	_coredma2d.transferImage(_image_properties.ImageWidth, _image_properties.ImageHeight,
+							 _image_properties.getWidthOffset());
 }
 
 void CoreVideo::playVideo(interface::File &file)
 {
-	auto config = _corejpeg.getImageProperties();
+	_image_properties = _corejpeg.getImageProperties();
 
 	auto frame_index = _corejpeg.findSOIMarker(file, 0);
-	auto frame_size	 = size_t {0};
 
 	while (frame_index != 0) {
 		file.seek(frame_index, SEEK_SET);
 
-		frame_size = _corejpeg.decodeImage(file);
-		_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, config.getWidthOffset());
+		displayImage(file, &_image_properties);
 
-		frame_index = _corejpeg.findSOIMarker(file, frame_index + frame_size);
+		frame_index = _corejpeg.findSOIMarker(file, frame_index + _image_size);
 	}
 }
 

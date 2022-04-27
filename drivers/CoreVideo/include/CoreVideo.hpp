@@ -35,7 +35,7 @@ class CoreVideo : public interface::Video
 	void clearScreen() final;
 	void clearScreen(CGColor color);
 	void displayRectangle(interface::Graphics::FilledRectangle rectangle, CGColor color);
-	void displayImage(interface::File &file) final;
+	void displayImage(interface::File &file, JPEGImageProperties *image_properties = nullptr) final;
 	void playVideo(interface::File &file) final;
 	void displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
 					 CGColor background = CGColor::white);
@@ -54,6 +54,9 @@ class CoreVideo : public interface::Video
 	interface::Graphics &_coregraphics;
 	interface::Font &_corefont;
 	interface::JPEGBase &_corejpeg;
+
+	size_t _image_size {0};
+	JPEGImageProperties _image_properties {};
 };
 
 #define HAL_VIDEO_DECLARE_IRQ_HANDLERS(instance)                                                                       \
