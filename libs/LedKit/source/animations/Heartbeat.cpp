@@ -9,7 +9,7 @@
 #include "rtos/ThisThread.h"
 
 #include "LogKit.h"
-using namespace std::chrono;
+// using namespace std::chrono;
 namespace leka::led::animation {
 
 void Heartbeat::setLeds(interface::LED &ears, interface::LED &belt)
@@ -66,7 +66,7 @@ void Heartbeat::run()
 		case 4:
 			stage4();
 			break;
-
+			rtos::ThisThread::sleep_for(1000ms);
 		default:
 			_running = false;
 			break;
