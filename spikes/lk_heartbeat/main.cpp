@@ -79,6 +79,6 @@ auto main() -> int
 		log_info("animation::heartbeating");
 		ledkit.start(&LedKit::animation::heartbeat);
 		log_info("animation a été lancée");
-		rtos::ThisThread::sleep_for(100ms);
+		rtos::ThisThread::sleep_for(500ms);
 	}
 }
