@@ -87,6 +87,7 @@ void Heartbeat::stage1()
 		_belt->show();
 		_step++;
 		rtos::ThisThread::sleep_for(10);
+		log_debug("stage1");
 	} else {
 		_step = 0;
 		_stage++;
@@ -97,6 +98,7 @@ void Heartbeat::stage2()
 {
 	static constexpr auto kTreshold = 0.F;
 	decreaseBrightness(kTreshold);
+	log_debug("stage2");
 }
 
 void Heartbeat::stage3()
@@ -109,6 +111,7 @@ void Heartbeat::stage3()
 		_belt->show();
 		_step++;
 		rtos::ThisThread::sleep_for(10);
+		log_debug("stage3");
 	} else {
 		_step = 0;
 		_stage++;
@@ -119,6 +122,7 @@ void Heartbeat::stage4()
 {
 	static constexpr auto kTreshold = 0.F;
 	decreaseBrightness(kTreshold);
+	log_debug("stage4");
 }
 
 void Heartbeat::increaseBrightness()
