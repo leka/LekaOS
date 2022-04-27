@@ -20,9 +20,6 @@ class VideoKit : public interface::VideoKit
 
 	void initializeScreen() final;
 
-	void turnOn() final;
-	void turnOff() final;
-
 	void displayImage(const std::filesystem::path &path) final;
 
 	void playVideo(const std::filesystem::path &path, bool must_loop = false) final;

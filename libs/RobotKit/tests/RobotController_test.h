@@ -18,6 +18,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/Battery.h"
+#include "mocks/leka/CoreLCD.h"
 #include "mocks/leka/EventQueue.h"
 #include "mocks/leka/FirmwareUpdate.h"
 #include "mocks/leka/LEDAnimation.h"
@@ -87,6 +88,7 @@ class RobotControllerTest : public testing::Test
 	CoreMotor motor_left {dir_1_left, dir_2_left, speed_left};
 	CoreMotor motor_right {dir_1_right, dir_2_right, speed_right};
 
+	mock::CoreLCD mock_lcd {};
 	mock::VideoKit mock_videokit {};
 
 	BehaviorKit bhvkit {mock_videokit, ledkit, motor_left, motor_right};
@@ -94,8 +96,8 @@ class RobotControllerTest : public testing::Test
 	CommandKit cmdkit {};
 
 	RobotController<bsml::sm<system::robot::StateMachine, bsml::testing>> rc {
-		timeout,	 battery, serialnumberkit, firmware_update, motor_left,
-		motor_right, ledkit,  mock_videokit,   bhvkit,			cmdkit};
+		timeout, battery,  serialnumberkit, firmware_update, motor_left, motor_right,
+		ledkit,	 mock_lcd, mock_videokit,	bhvkit,			 cmdkit};
 
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
@@ -134,7 +136,7 @@ class RobotControllerTest : public testing::Test
 			expectedCallsStopMotors();
 
 			EXPECT_CALL(mock_videokit, initializeScreen).Times(1);
-			EXPECT_CALL(mock_videokit, turnOff).Times(1);
+			EXPECT_CALL(mock_lcd, turnOff).Times(1);
 			EXPECT_CALL(mock_videokit, stopVideo).Times(1);
 		}
 
@@ -195,7 +197,7 @@ class RobotControllerTest : public testing::Test
 		EXPECT_CALL(timeout, start).InSequence(on_idle_entry_sequence);
 
 		EXPECT_CALL(mock_videokit, playVideo).InSequence(on_idle_entry_sequence);
-		EXPECT_CALL(mock_videokit, turnOn).InSequence(on_idle_entry_sequence);
+		EXPECT_CALL(mock_lcd, turnOn).InSequence(on_idle_entry_sequence);
 	}
 
 	void expectedCallsTransitionSetupToCharging()
@@ -211,11 +213,13 @@ class RobotControllerTest : public testing::Test
 		expectedCallsRunLaunchingBehavior();
 
 		Sequence start_charging_behavior_sequence;
-		EXPECT_CALL(mock_videokit, turnOn).InSequence(start_charging_behavior_sequence);
+		EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
 		EXPECT_CALL(timeout, onTimeout)
 			.InSequence(start_charging_behavior_sequence)
 			.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_charging_start_timeout));
 		EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
+		// TODO (@YannLocatelli) - This was added in 81c4d030 but doesn't work anymore
+		// EXPECT_CALL(mock_lcd, turnOff).InSequence(start_charging_behavior_sequence);
 	}
 
 	void expectedCallsRunLaunchingBehavior()
@@ -223,6 +227,6 @@ class RobotControllerTest : public testing::Test
 		InSequence run_launching_behavior_sequence;
 
 		EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/logo.jpg"})).Times(1);
-		EXPECT_CALL(mock_videokit, turnOn);
+		EXPECT_CALL(mock_lcd, turnOn);
 	}
 };

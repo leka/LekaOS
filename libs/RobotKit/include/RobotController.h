@@ -28,6 +28,7 @@
 #include "interface/RobotController.h"
 #include "interface/drivers/Battery.h"
 #include "interface/drivers/FirmwareUpdate.h"
+#include "interface/drivers/LCD.hpp"
 #include "interface/drivers/Timeout.h"
 #include "interface/libs/VideoKit.h"
 
@@ -42,8 +43,8 @@ class RobotController : public interface::RobotController
 
 	explicit RobotController(interface::Timeout &timeout, interface::Battery &battery, SerialNumberKit &serialnumberkit,
 							 interface::FirmwareUpdate &firmware_update, CoreMotor &motor_left, CoreMotor &motor_right,
-							 LedKit &ledkit, interface::VideoKit &videokit, BehaviorKit &behaviorkit,
-							 CommandKit &cmdkit)
+							 LedKit &ledkit, interface::LCD &lcd, interface::VideoKit &videokit,
+							 BehaviorKit &behaviorkit, CommandKit &cmdkit)
 		: _timeout(timeout),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
@@ -51,6 +52,7 @@ class RobotController : public interface::RobotController
 		  _motor_left(motor_left),
 		  _motor_right(motor_right),
 		  _ledkit(ledkit),
+		  _lcd(lcd),
 		  _videokit(videokit),
 		  _behaviorkit(behaviorkit),
 		  _cmdkit(cmdkit)
@@ -63,7 +65,7 @@ class RobotController : public interface::RobotController
 		using namespace std::chrono_literals;
 
 		_behaviorkit.launching();
-		_videokit.turnOn();
+		_lcd.turnOn();
 		rtos::ThisThread::sleep_for(3s);
 	}
 
@@ -81,7 +83,7 @@ class RobotController : public interface::RobotController
 	void startWaitingBehavior() final
 	{
 		_behaviorkit.waiting();
-		_videokit.turnOn();
+		_lcd.turnOn();
 	}
 
 	void stopWaitingBehavior() final { _behaviorkit.stop(); }
@@ -92,10 +94,10 @@ class RobotController : public interface::RobotController
 		using namespace system::robot::sm;
 
 		_behaviorkit.sleeping();
-		_videokit.turnOn();
+		_lcd.turnOn();
 
 		auto on_sleeping_start_timeout = [this] {
-			_event_queue.call(&_videokit, &interface::VideoKit::turnOff);
+			_event_queue.call(&_lcd, &interface::LCD::turnOff);
 			_event_queue.call(&_ledkit, &LedKit::stop);
 		};
 		_timeout.onTimeout(on_sleeping_start_timeout);
@@ -141,10 +143,10 @@ class RobotController : public interface::RobotController
 		using namespace system::robot::sm;
 
 		_battery_kit.onDataUpdated([this](uint8_t level) { onStartChargingBehavior(level); });
-		_videokit.turnOn();
+		_lcd.turnOn();
 
 		auto on_charging_start_timeout = [this] {
-			_event_queue.call(&_videokit, &interface::VideoKit::turnOff);
+			_event_queue.call(&_lcd, &interface::LCD::turnOff);
 			_event_queue.call(&_ledkit, &LedKit::stop);
 		};
 		_timeout.onTimeout(on_charging_start_timeout);
@@ -194,7 +196,7 @@ class RobotController : public interface::RobotController
 		_ledkit.init();
 
 		_videokit.initializeScreen();
-		_videokit.turnOff();
+		_lcd.turnOff();
 		_videokit.stopVideo();
 	}
 
@@ -288,6 +290,7 @@ class RobotController : public interface::RobotController
 	CoreMotor &_motor_left;
 	CoreMotor &_motor_right;
 	LedKit &_ledkit;
+	interface::LCD &_lcd;
 	interface::VideoKit &_videokit;
 
 	BehaviorKit &_behaviorkit;

@@ -320,8 +320,17 @@ namespace robot {
 	}	// namespace internal
 
 	auto controller = RobotController {
-		internal::sleep_timeout, battery::cells, internal::serialnumberkit, firmware::kit, motors::left::motor,
-		motors::right::motor,	 leds::kit,		 display::videokit,			behaviorkit,   commandkit,
+		internal::sleep_timeout,
+		battery::cells,
+		internal::serialnumberkit,
+		firmware::kit,
+		motors::left::motor,
+		motors::right::motor,
+		leds::kit,
+		display::internal::corelcd,
+		display::videokit,
+		behaviorkit,
+		commandkit,
 	};
 
 	void emergencyStop(const MagicCard &card)

@@ -6,12 +6,12 @@
 
 TEST_F(RobotControllerTest, onChargingStartTimeout)
 {
-	EXPECT_CALL(mock_videokit, turnOn).Times(AnyNumber());
+	EXPECT_CALL(mock_lcd, turnOn).Times(AnyNumber());
 	EXPECT_CALL(timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_charging_start_timeout));
 	EXPECT_CALL(timeout, start).Times(AnyNumber());
 	rc.startChargingBehavior();
 
-	EXPECT_CALL(mock_videokit, turnOff);
+	EXPECT_CALL(mock_lcd, turnOff);
 	on_charging_start_timeout();
 }
 
@@ -41,7 +41,7 @@ TEST_F(RobotControllerTest, stateChargingEventChargeDidStopGuardIsChargingFalse)
 	EXPECT_CALL(timeout, onTimeout).InSequence(on_idle_entry_sequence);
 	EXPECT_CALL(timeout, start).InSequence(on_idle_entry_sequence);
 	EXPECT_CALL(mock_videokit, playVideo).InSequence(on_idle_entry_sequence);
-	EXPECT_CALL(mock_videokit, turnOn).InSequence(on_idle_entry_sequence);
+	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_idle_entry_sequence);
 
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));

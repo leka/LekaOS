@@ -28,20 +28,6 @@ TEST_F(VideoKitTest, initialization)
 	EXPECT_NE(&video_kit, nullptr);
 }
 
-TEST_F(VideoKitTest, turnOn)
-{
-	EXPECT_CALL(mock_lcd, turnOn);
-
-	video_kit.turnOn();
-}
-
-TEST_F(VideoKitTest, turnOff)
-{
-	EXPECT_CALL(mock_lcd, turnOff);
-
-	video_kit.turnOff();
-}
-
 TEST_F(VideoKitTest, initializeScreen)
 {
 	EXPECT_CALL(mock_corevideo, initialize);

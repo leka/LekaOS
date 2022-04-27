@@ -16,16 +16,6 @@ void VideoKit::initializeScreen()
 	_video.clearScreen();
 }
 
-void VideoKit::turnOn()
-{
-	_lcd.turnOn();
-}
-
-void VideoKit::turnOff()
-{
-	_lcd.turnOff();
-}
-
 void VideoKit::displayImage(const std::filesystem::path &path)
 {
 	auto file = FileManagerKit::File {path};
