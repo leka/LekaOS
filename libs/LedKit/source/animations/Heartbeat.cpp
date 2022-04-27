@@ -68,7 +68,7 @@ void Heartbeat::run()
 			break;
 			// rtos::ThisThread::sleep_for(1000ms);
 		default:
-			_running = false;
+			_running = false;	//
 			break;
 	}
 
