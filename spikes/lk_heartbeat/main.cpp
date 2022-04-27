@@ -80,5 +80,6 @@ auto main() -> int
 		ledkit.start(&LedKit::animation::heartbeat);
 		log_info("animation a été lancée");
 		rtos::ThisThread::sleep_for(1000ms);
+		log_info("pb sleep_for dans le spike");
 	}
 }
