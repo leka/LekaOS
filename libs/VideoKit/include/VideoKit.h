@@ -4,24 +4,24 @@
 
 #pragma once
 
-#include <filesystem>
+#include "interface/libs/VideoKit.h"
 
 namespace leka {
 
-class VideoKit
+class VideoKit : public interface::VideoKit
 {
   public:
 	explicit VideoKit() = default;
 
-	void initializeScreen() {};
+	void initializeScreen() final;
 
-	void turnOn() {};
-	void turnOff() {};
+	void turnOn() final;
+	void turnOff() final;
 
-	void displayImage(const std::filesystem::path &path) {};
+	void displayImage(const std::filesystem::path &path) final;
 
-	void playVideo(const std::filesystem::path &path, bool must_loop = false) {};
-	void stopVideo() {};
+	void playVideo(const std::filesystem::path &path, bool must_loop = false) final;
+	void stopVideo() final;
 };
 
 }	// namespace leka
