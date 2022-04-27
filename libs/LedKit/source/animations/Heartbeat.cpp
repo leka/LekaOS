@@ -98,9 +98,18 @@ void Heartbeat::stage1()
 
 void Heartbeat::stage2()
 {
-	static constexpr auto kTreshold = 0.F;
-	decreaseBrightness(kTreshold);
-	log_debug("stage2");
+	static constexpr auto kMaxInputValue = uint8_t {3};
+	if (auto pos = utils::normalizeStep(kMaxInputValue - _step, kMaxInputValue); pos != 0) {
+		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
+		_belt->setColor(color);
+		_belt->show();
+		log_debug("corps du if de decrease_brightness");
+		_step++;
+
+	} else {
+		log_debug("je passe au stage suivant");
+		_stage++;
+	}
 }
 
 void Heartbeat::stage3()
