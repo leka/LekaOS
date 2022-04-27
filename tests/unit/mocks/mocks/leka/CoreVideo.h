@@ -25,7 +25,6 @@ class CoreVideo : public interface::Video
 	MOCK_METHOD(void, setVideo, (interface::File &), (override));
 	MOCK_METHOD(void, displayNextFrameVideo, (interface::File &), (override));
 	MOCK_METHOD(bool, isLastFrame, (), (override));
-	MOCK_METHOD(void, playVideo, (interface::File & file), (override));
 };
 
 }	// namespace leka::mock

@@ -61,9 +61,10 @@ void VideoKit::run()
 	auto file = FileManagerKit::File {};
 
 	auto keep_running = [this] {
-		auto must_not_stop = !((_event_flags.get() & flags::STOP_VIDEO_FLAG) == flags::STOP_VIDEO_FLAG);
+		auto must_not_stop	  = !((_event_flags.get() & flags::STOP_VIDEO_FLAG) == flags::STOP_VIDEO_FLAG);
+		auto is_still_playing = !_video.isLastFrame();
 
-		return !must_not_stop && _must_loop;
+		return must_not_stop && (_must_loop || is_still_playing);
 	};
 
 	while (true) {
@@ -71,9 +72,10 @@ void VideoKit::run()
 		_event_flags.clear(flags::STOP_VIDEO_FLAG);
 
 		file.open(_current_path);
+		_video.setVideo(file);
 
 		while (keep_running()) {
-			_video.playVideo(file);
+			_video.displayNextFrameVideo(file);
 
 			rtos::ThisThread::sleep_for(1ms);
 		}

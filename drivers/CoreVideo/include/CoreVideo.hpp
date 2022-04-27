@@ -41,7 +41,6 @@ class CoreVideo : public interface::Video
 	void displayNextFrameVideo(interface::File &file) final;
 	auto isLastFrame() -> bool final;
 
-	void playVideo(interface::File &file) final;
 	void displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
 					 CGColor background = CGColor::white);
 

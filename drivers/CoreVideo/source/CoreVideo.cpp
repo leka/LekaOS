@@ -118,15 +118,6 @@ auto CoreVideo::isLastFrame() -> bool
 	return _is_last_frame;
 }
 
-void CoreVideo::playVideo(interface::File &file)
-{
-	setVideo(file);
-
-	while (!isLastFrame()) {
-		displayNextFrameVideo(file);
-	}
-}
-
 void CoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,
 							CGColor background)
 {
