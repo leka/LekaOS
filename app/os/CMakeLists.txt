@@ -32,6 +32,12 @@ target_link_libraries(LekaOS
 	LedKit
 	CoreLED
 	CoreEventFlags
+	CoreBufferedSerial
+	CoreWifi
+	CoreI2C
+	CoreHTS
+	CoreSPI
+
 )
 
 target_link_custom_leka_targets(LekaOS)

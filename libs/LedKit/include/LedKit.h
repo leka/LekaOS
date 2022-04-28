@@ -21,6 +21,7 @@
 #include "animations/Fire.h"
 #include "animations/Fly.h"
 #include "animations/Happy.h"
+#include "animations/Heartbeat.h"
 #include "animations/Rainbow.h"
 #include "animations/Sad.h"
 #include "animations/SadCry.h"

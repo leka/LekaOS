@@ -38,11 +38,13 @@ target_sources(LedKit
 		source/animations/WakeUp.cpp
 		source/animations/Wink.cpp
 		source/animations/Yawn.cpp
+
 )
 
 target_link_libraries(LedKit
 	CoreLED
 	ColorKit
+	CoreSPI
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
