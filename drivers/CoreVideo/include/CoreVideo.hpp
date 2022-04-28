@@ -69,23 +69,23 @@ class CoreVideo : public interface::Video
 	extern "C" {                                                                                                       \
 	void DMA2D_IRQHandler(void)                                                                                        \
 	{                                                                                                                  \
-		HAL_DMA2D_IRQHandler(&instance.getDMA2DHandle());                                                              \
+		HAL_DMA2D_IRQHandler(&(instance).getDMA2DHandle());                                                            \
 	}                                                                                                                  \
 	void LTDC_IRQHandler(void)                                                                                         \
 	{                                                                                                                  \
-		HAL_LTDC_IRQHandler(&instance.getLTDCHandle());                                                                \
+		HAL_LTDC_IRQHandler(&(instance).getLTDCHandle());                                                              \
 	}                                                                                                                  \
 	void JPEG_IRQHandler(void)                                                                                         \
 	{                                                                                                                  \
-		HAL_JPEG_IRQHandler(&instance.getJPEGHandle());                                                                \
+		HAL_JPEG_IRQHandler(&(instance).getJPEGHandle());                                                              \
 	}                                                                                                                  \
 	void DMA2_Stream0_IRQHandler(void)                                                                                 \
 	{                                                                                                                  \
-		HAL_DMA_IRQHandler(instance.getJPEGHandle().hdmain);                                                           \
+		HAL_DMA_IRQHandler((instance).getJPEGHandle().hdmain);                                                         \
 	}                                                                                                                  \
 	void DMA2_Stream1_IRQHandler(void)                                                                                 \
 	{                                                                                                                  \
-		HAL_DMA_IRQHandler(instance.getJPEGHandle().hdmaout);                                                          \
+		HAL_DMA_IRQHandler((instance).getJPEGHandle().hdmaout);                                                        \
 	}                                                                                                                  \
 	}
 
