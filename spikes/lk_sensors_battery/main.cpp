@@ -19,9 +19,9 @@ auto corebattery   = CoreBattery {PinName::BATTERY_VOLTAGE, charge_input};
 auto batterykit	   = BatteryKit {corebattery};
 auto mainboard_led = mbed::DigitalOut {LED1};
 
-void logBatteryNewLevel(uint8_t battery_new_level)
+void logBatteryNewLevel(uint8_t battery_new_level, bool battery_is_charging)
 {
-	if (corebattery.isCharging()) {
+	if (battery_is_charging) {
 		log_info("Battery at %d%% and in charge.", battery_new_level);
 	} else {
 		log_info("Battery at %d%%.", battery_new_level);

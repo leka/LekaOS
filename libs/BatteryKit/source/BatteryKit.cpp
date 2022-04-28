@@ -17,7 +17,7 @@ void BatteryKit::startEventHandler()
 		}
 
 		if (_on_data_updated) {
-			_on_data_updated(level());
+			_on_data_updated(level(), isCharging());
 		}
 	};
 
@@ -44,7 +44,7 @@ void BatteryKit::onChargeDidStop(mbed::Callback<void()> const &callback)
 	_battery.onChargeDidStop(callback);
 }
 
-void BatteryKit::onDataUpdated(std::function<void(uint8_t)> const &callback)
+void BatteryKit::onDataUpdated(std::function<void(uint8_t, bool)> const &callback)
 {
 	_on_data_updated = callback;
 }

@@ -21,7 +21,7 @@ class BatteryKit
 	void onChargeDidStart(mbed::Callback<void()> const &callback);
 	void onChargeDidStop(mbed::Callback<void()> const &callback);
 
-	void onDataUpdated(std::function<void(uint8_t)> const &callback);
+	void onDataUpdated(std::function<void(uint8_t, bool)> const &callback);
 	void onLowBattery(std::function<void()> const &callback);
 
   private:
@@ -29,7 +29,7 @@ class BatteryKit
 
 	CoreEventQueue _event_queue {};
 
-	std::function<void(uint8_t)> _on_data_updated {};
+	std::function<void(uint8_t, bool)> _on_data_updated {};
 	std::function<void()> _on_low_battery {};
 };
 
