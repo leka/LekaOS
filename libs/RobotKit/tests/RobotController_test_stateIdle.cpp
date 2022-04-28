@@ -9,7 +9,7 @@ TEST_F(RobotControllerTest, stateIdleEventTimeout)
 	rc.state_machine.set_current_states(lksm::state::idle);
 
 	Sequence on_exit_idle_sequence;
-	EXPECT_CALL(sleep_timeout, stop).InSequence(on_exit_idle_sequence);
+	EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_idle_sequence);
 	expectedCallsStopMotors();
 
@@ -30,7 +30,7 @@ TEST_F(RobotControllerTest, stateIdleEventChargeDidStartGuardIsChargingTrue)
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
 
 	Sequence on_exit_idle_sequence;
-	EXPECT_CALL(sleep_timeout, stop).InSequence(on_exit_idle_sequence);
+	EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_idle_sequence);
 	expectedCallsStopMotors();
 

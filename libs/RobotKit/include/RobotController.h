@@ -40,11 +40,11 @@ class RobotController : public interface::RobotController
   public:
 	sm_t state_machine {static_cast<interface::RobotController &>(*this), logger};
 
-	explicit RobotController(interface::Timeout &sleep_timeout, interface::Battery &battery,
-							 SerialNumberKit &serialnumberkit, interface::FirmwareUpdate &firmware_update,
-							 CoreMotor &motor_left, CoreMotor &motor_right, LedKit &ledkit,
-							 interface::VideoKit &videokit, BehaviorKit &behaviorkit, CommandKit &cmdkit)
-		: _sleep_timeout(sleep_timeout),
+	explicit RobotController(interface::Timeout &timeout, interface::Battery &battery, SerialNumberKit &serialnumberkit,
+							 interface::FirmwareUpdate &firmware_update, CoreMotor &motor_left, CoreMotor &motor_right,
+							 LedKit &ledkit, interface::VideoKit &videokit, BehaviorKit &behaviorkit,
+							 CommandKit &cmdkit)
+		: _timeout(timeout),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
 		  _firmware_update(firmware_update),
@@ -67,8 +67,8 @@ class RobotController : public interface::RobotController
 		rtos::ThisThread::sleep_for(3s);
 	}
 
-	void startSleepTimeout() final { _sleep_timeout.start(_sleep_timeout_duration); }
-	void stopSleepTimeout() final { _sleep_timeout.stop(); }
+	void startSleepTimeout() final { _timeout.start(_sleep_timeout_duration); }
+	void stopSleepTimeout() final { _timeout.stop(); }
 
 	void startWaitingBehavior() final
 	{
@@ -212,7 +212,7 @@ class RobotController : public interface::RobotController
 		// Setup callbacks for each State Machine events
 
 		auto on_sleep_timeout = [this]() { raise(event::sleep_timeout_did_end {}); };
-		_sleep_timeout.onTimeout(on_sleep_timeout);
+		_timeout.onTimeout(on_sleep_timeout);
 
 		auto on_charge_did_start = [this]() { raise(event::charge_did_start {}); };
 		_battery.onChargeDidStart(on_charge_did_start);
@@ -249,7 +249,7 @@ class RobotController : public interface::RobotController
 	system::robot::sm::logger logger {};
 
 	std::chrono::seconds _sleep_timeout_duration {300};
-	interface::Timeout &_sleep_timeout;
+	interface::Timeout &_timeout;
 
 	interface::Battery &_battery;
 	BatteryKit _battery_kit {_battery};

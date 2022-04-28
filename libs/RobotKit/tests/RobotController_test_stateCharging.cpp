@@ -25,7 +25,7 @@ TEST_F(RobotControllerTest, stateChargingEventChargeDidStopGuardIsChargingFalse)
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
 
 	Sequence on_idle_entry_sequence;
-	EXPECT_CALL(sleep_timeout, start).InSequence(on_idle_entry_sequence);
+	EXPECT_CALL(timeout, start).InSequence(on_idle_entry_sequence);
 	EXPECT_CALL(mock_videokit, playVideo).InSequence(on_idle_entry_sequence);
 	EXPECT_CALL(mock_videokit, turnOn).InSequence(on_idle_entry_sequence);
 
