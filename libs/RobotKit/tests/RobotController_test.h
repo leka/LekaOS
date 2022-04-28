@@ -149,6 +149,7 @@ class RobotControllerTest : public testing::Test
 
 			Sequence on_data_updated_sequence;
 			EXPECT_CALL(battery, level).InSequence(on_data_updated_sequence);
+			EXPECT_CALL(battery, isCharging).InSequence(on_data_updated_sequence);
 			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(on_data_updated_sequence);
 
 			EXPECT_CALL(timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleep_timeout));
