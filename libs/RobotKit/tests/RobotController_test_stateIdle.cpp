@@ -16,11 +16,17 @@ TEST_F(RobotControllerTest, stateIdleEventTimeout)
 	Sequence on_sleeping_sequence;
 	EXPECT_CALL(mock_videokit, playVideo).InSequence(on_sleeping_sequence);
 	EXPECT_CALL(mock_videokit, turnOn).InSequence(on_sleeping_sequence);
-	EXPECT_CALL(mock_videokit, turnOff).InSequence(on_sleeping_sequence);
+	EXPECT_CALL(timeout, onTimeout)
+		.InSequence(on_sleeping_sequence)
+		.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleeping_start_timeout));
+	EXPECT_CALL(timeout, start).InSequence(on_sleeping_sequence);
 
 	on_sleep_timeout();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::sleeping));
+
+	EXPECT_CALL(mock_videokit, turnOff);
+	on_sleeping_start_timeout();
 }
 
 TEST_F(RobotControllerTest, stateIdleEventChargeDidStartGuardIsChargingTrue)
@@ -36,7 +42,8 @@ TEST_F(RobotControllerTest, stateIdleEventChargeDidStartGuardIsChargingTrue)
 
 	Sequence on_charging_sequence;
 	EXPECT_CALL(mock_videokit, turnOn).InSequence(on_charging_sequence);
-	EXPECT_CALL(mock_videokit, turnOff).InSequence(on_charging_sequence);
+	EXPECT_CALL(timeout, onTimeout).InSequence(on_charging_sequence);
+	EXPECT_CALL(timeout, start).InSequence(on_charging_sequence);
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 

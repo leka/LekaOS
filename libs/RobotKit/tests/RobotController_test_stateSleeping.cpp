@@ -20,12 +20,14 @@ TEST_F(RobotControllerTest, stateSleepingEventChargeDidStartGuardIsChargingTrue)
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
 
 	Sequence on_exit_sleeping_sequence;
+	EXPECT_CALL(timeout, stop).InSequence(on_exit_sleeping_sequence);
 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_sleeping_sequence);
 	expectedCallsStopMotors();
 
 	Sequence on_charging_sequence;
 	EXPECT_CALL(mock_videokit, turnOn).InSequence(on_charging_sequence);
-	EXPECT_CALL(mock_videokit, turnOff).InSequence(on_charging_sequence);
+	EXPECT_CALL(timeout, onTimeout).InSequence(on_charging_sequence);
+	EXPECT_CALL(timeout, start).InSequence(on_charging_sequence);
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
