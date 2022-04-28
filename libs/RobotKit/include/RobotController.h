@@ -100,7 +100,7 @@ class RobotController : public interface::RobotController
 		return is_charging;
 	}
 
-	void onStartChargingBehavior(uint8_t level)
+	void onChargingBehavior(uint8_t level)
 	{
 		_service_battery.setBatteryLevel(level);
 
@@ -121,7 +121,7 @@ class RobotController : public interface::RobotController
 	{
 		using namespace std::chrono_literals;
 
-		_battery_kit.onDataUpdated([this](uint8_t level, bool is_charging) { onStartChargingBehavior(level); });
+		_battery_kit.onDataUpdated([this](uint8_t level, bool is_charging) { onChargingBehavior(level); });
 		_videokit.turnOn();
 
 		_event_queue.call_in(1min, &_videokit, &interface::VideoKit::turnOff);

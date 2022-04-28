@@ -103,7 +103,7 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsCharging)
 	rc.registerEvents();
 }
 
-TEST_F(RobotControllerTest, onStartChargingBehaviorLevelBelow25)
+TEST_F(RobotControllerTest, onChargingBehaviorLevelBelow25)
 {
 	auto battery_level = 0;
 
@@ -111,10 +111,10 @@ TEST_F(RobotControllerTest, onStartChargingBehaviorLevelBelow25)
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
-	rc.onStartChargingBehavior(battery_level);
+	rc.onChargingBehavior(battery_level);
 }
 
-TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove5Below25)
+TEST_F(RobotControllerTest, onChargingBehaviorLevelAbove5Below25)
 {
 	auto battery_level = 22;
 
@@ -122,10 +122,10 @@ TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove5Below25)
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
-	rc.onStartChargingBehavior(battery_level);
+	rc.onChargingBehavior(battery_level);
 }
 
-TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove25Below50)
+TEST_F(RobotControllerTest, onChargingBehaviorLevelAbove25Below50)
 {
 	auto battery_level = 42;
 
@@ -133,10 +133,10 @@ TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove25Below50)
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
-	rc.onStartChargingBehavior(battery_level);
+	rc.onChargingBehavior(battery_level);
 }
 
-TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove50Below75)
+TEST_F(RobotControllerTest, onChargingBehaviorLevelAbove50Below75)
 {
 	auto battery_level = 66;
 
@@ -144,10 +144,10 @@ TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove50Below75)
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
-	rc.onStartChargingBehavior(battery_level);
+	rc.onChargingBehavior(battery_level);
 }
 
-TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove75)
+TEST_F(RobotControllerTest, onChargingBehaviorLevelAbove75)
 {
 	auto battery_level = 90;
 
@@ -155,5 +155,5 @@ TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove75)
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
-	rc.onStartChargingBehavior(battery_level);
+	rc.onChargingBehavior(battery_level);
 }
