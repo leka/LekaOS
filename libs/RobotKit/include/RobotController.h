@@ -102,8 +102,6 @@ class RobotController : public interface::RobotController
 
 	void onChargingBehavior(uint8_t level)
 	{
-		_service_battery.setBatteryLevel(level);
-
 		if (level < 5) {
 			_behaviorkit.chargingZero();
 		} else if (level < 25) {
@@ -121,7 +119,6 @@ class RobotController : public interface::RobotController
 	{
 		using namespace std::chrono_literals;
 
-		_battery_kit.onDataUpdated([this](uint8_t level, bool is_charging) { onChargingBehavior(level); });
 		_videokit.turnOn();
 
 		_event_queue.call_in(1min, &_videokit, &interface::VideoKit::turnOff);
@@ -130,8 +127,7 @@ class RobotController : public interface::RobotController
 
 	void stopChargingBehavior() final
 	{
-		_battery_kit.onDataUpdated(
-			[this](uint8_t level, bool is_charging) { _service_battery.setBatteryLevel(level); });
+		// nothing to do
 	}
 
 	auto isReadyToUpdate() -> bool final
@@ -185,8 +181,12 @@ class RobotController : public interface::RobotController
 
 		// Setup callbacks for monitoring
 
-		_battery_kit.onDataUpdated(
-			[this](uint8_t level, bool is_charging) { _service_battery.setBatteryLevel(level); });
+		_battery_kit.onDataUpdated([this](uint8_t level, bool is_charging) {
+			_service_battery.setBatteryLevel(level);
+			if (is_charging) {
+				onChargingBehavior(level);
+			}
+		});
 
 		auto on_low_battery = [this] {
 			if (!_battery.isCharging()) {
