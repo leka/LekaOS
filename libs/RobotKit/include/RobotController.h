@@ -123,7 +123,7 @@ class RobotController : public interface::RobotController
 		return is_charging;
 	}
 
-	void onStartChargingBehavior(uint8_t level)
+	void onChargingBehavior(uint8_t level)
 	{
 		_service_battery.setBatteryLevel(level);
 
@@ -145,7 +145,7 @@ class RobotController : public interface::RobotController
 		using namespace std::chrono_literals;
 		using namespace system::robot::sm;
 
-		_battery_kit.onDataUpdated([this](uint8_t level) { onStartChargingBehavior(level); });
+		_battery_kit.onDataUpdated([this](uint8_t level) { onChargingBehavior(level); });
 		_lcd.turnOn();
 
 		auto on_charging_start_timeout = [this] {
