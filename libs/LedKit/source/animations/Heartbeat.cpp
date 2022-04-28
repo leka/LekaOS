@@ -14,7 +14,6 @@ namespace leka::led::animation {
 
 void Heartbeat::setLeds(interface::LED &ears, interface::LED &belt)
 {
-	_ears = &ears;
 	_belt = &belt;
 }
 
@@ -25,7 +24,7 @@ auto Heartbeat::isRunning() -> bool
 
 void Heartbeat::start()
 {
-	if (_ears == nullptr || _belt == nullptr) {
+	if (_belt == nullptr) {
 		return;
 	}
 
@@ -38,9 +37,9 @@ void Heartbeat::start()
 
 void Heartbeat::stop()
 {
-	if (_ears == nullptr || _belt == nullptr) {
+	if (_belt == nullptr) {
 		logger::init();
-		log_debug("je ne connais pas de leds");
+
 		return;
 	}
 
@@ -50,7 +49,7 @@ void Heartbeat::stop()
 
 void Heartbeat::run()
 {
-	if (_ears == nullptr || _belt == nullptr) {
+	if (_belt == nullptr) {
 		return;
 	}
 
@@ -88,12 +87,11 @@ void Heartbeat::stage1()
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB {255, 0, 0}, pos);
 		_belt->setColor(color);
-		_ears->setColor(color);
+
 		_belt->show();
 		_step++;
 		// rtos::ThisThread::sleep_for(10);
-		log_debug("stage1");
-		log_debug(" stage1: _step %i", _step);
+
 	} else {
 		_step = 0;
 
@@ -108,12 +106,11 @@ void Heartbeat::stage2()
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt->setColor(color);
 		_belt->show();
-		log_debug("corps du if de decrease_brightness");
+
 		_step++;
 		rtos::ThisThread::sleep_for(10);
 
 	} else {
-		log_debug("je passe au stage suivant");
 		_step = 0;
 		_stage++;
 	}
@@ -129,7 +126,7 @@ void Heartbeat::stage3()
 		_belt->show();
 		_step++;
 		rtos::ThisThread::sleep_for(10);
-		log_debug("stage3");
+
 	} else {
 		_step = 0;
 		_stage++;
@@ -138,18 +135,16 @@ void Heartbeat::stage3()
 
 void Heartbeat::stage4()
 {
-	log_debug("stage 4");
 	static constexpr auto kMaxInputValue = uint8_t {15};
 	if (auto pos = utils::normalizeStep(kMaxInputValue - _step, kMaxInputValue); pos != 0) {
 		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
 		_belt->setColor(color);
 		_belt->show();
-		log_debug("corps du if de decrease_brightness");
+
 		_step++;
 		rtos::ThisThread::sleep_for(10);
 
 	} else {
-		log_debug("je passe au stage suivant");
 		_step = 0;
 		_stage++;
 	}
@@ -157,11 +152,9 @@ void Heartbeat::stage4()
 
 void Heartbeat::stage5()
 {
-	log_debug("entree dans stage5");
 	rtos::ThisThread::sleep_for(70ms);
 	if (_turn < 10) {
 		_turn++;
-		log_debug("stage 5 _turn %i", _turn);
 		_stage = 1;
 
 	} else {
@@ -169,39 +162,29 @@ void Heartbeat::stage5()
 	}
 }
 
-void Heartbeat::increaseBrightness()
+void Heartbeat::increaseBrightness() {}
+
+void Heartbeat::decreaseBrightness(float treshold, uint8_t max, leka::RGB color)
 {
-	static constexpr auto kMaxInputValue = uint8_t {34};
-	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
-		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
+	static constexpr auto kMaxInputValue = uint8_t {15};
+	if (auto pos = utils::normalizeStep(kMaxInputValue - _step, max); pos != 0) {
+		RGB color = ColorKit::colorGradient(RGB::black, color, pos);
 		_belt->setColor(color);
 		_belt->show();
+
 		_step++;
+		rtos::ThisThread::sleep_for(10);
+
 	} else {
+		_step = 0;
 		_stage++;
 	}
 }
 
-void Heartbeat::decreaseBrightness(float treshold)
-{
-	static constexpr auto kMaxInputValue = uint8_t {3};
-	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos > treshold) {
-		RGB color = ColorKit::colorGradient(RGB::black, RGB::pure_red, pos);
-		_belt->setColor(color);
-		_belt->show();
-		log_debug("corps du if de decrease_brightness");
-		_step--;
-
-	} else {
-		log_debug("je passe au stage suivant");
-		_stage++;
-	}
-}
 // le Kmax est le 34 et le 1 c'est le step (il change) dans 1/34 que vaut pos. NB: F = flottant
 // jouer sur Kmax va changer le nombre d'itérations
 void Heartbeat::turnLedBlack()
 {
-	_ears->setColor(RGB::black);
 	_belt->setColor(RGB::black);
 	_belt->show();
 }

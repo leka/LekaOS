@@ -35,7 +35,7 @@ class Heartbeat : public interface::LEDAnimation
 	void stage5();
 
 	void increaseBrightness();
-	void decreaseBrightness(float treshold);
+	void decreaseBrightness(float treshold, uint8_t max, leka::RGB color);
 
 	void turnLedBlack();
 };
