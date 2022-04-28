@@ -218,6 +218,11 @@ class RobotController : public interface::RobotController
 		_battery_kit.onDataUpdated([this](uint8_t level) {
 			auto is_charging = _battery.isCharging();
 
+			auto advertising_data		 = _ble.getAdvertisingData();
+			advertising_data.battery	 = level;
+			advertising_data.is_charging = static_cast<uint8_t>(is_charging);
+			_ble.setAdvertisingData(advertising_data);
+
 			_service_battery.setBatteryLevel(level);
 			if (is_charging) {
 				onChargingBehavior(level);
