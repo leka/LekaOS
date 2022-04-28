@@ -75,13 +75,15 @@ TEST_F(BatteryKitTest, onChargeDidStop)
 
 TEST_F(BatteryKitTest, onDataUpdated)
 {
-	auto battery_level = 0x2A;
-	MockFunction<void(uint8_t)> mock_on_data_updated_callback;
+	auto battery_level		 = 0x2A;
+	auto battery_is_charging = true;
+	MockFunction<void(uint8_t, bool)> mock_on_data_updated_callback;
 
 	batterykit.onDataUpdated(mock_on_data_updated_callback.AsStdFunction());
 
 	EXPECT_CALL(mock_battery, level).WillRepeatedly(Return(battery_level));
-	EXPECT_CALL(mock_on_data_updated_callback, Call(battery_level)).Times(1);
+	EXPECT_CALL(mock_battery, isCharging).WillRepeatedly(Return(battery_is_charging));
+	EXPECT_CALL(mock_on_data_updated_callback, Call(battery_level, battery_is_charging)).Times(1);
 
 	batterykit.startEventHandler();
 }
