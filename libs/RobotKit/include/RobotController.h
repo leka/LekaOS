@@ -182,6 +182,11 @@ class RobotController : public interface::RobotController
 		// Setup callbacks for monitoring
 
 		_battery_kit.onDataUpdated([this](uint8_t level, bool is_charging) {
+			auto advertising_data		 = _ble.getAdvertisingData();
+			advertising_data.battery	 = level;
+			advertising_data.is_charging = is_charging;
+			_ble.setAdvertisingData(advertising_data);
+
 			_service_battery.setBatteryLevel(level);
 			if (is_charging) {
 				onChargingBehavior(level);

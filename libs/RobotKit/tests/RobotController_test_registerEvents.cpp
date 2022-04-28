@@ -20,6 +20,7 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsNotCharging)
 		Sequence on_data_updated_sequence;
 		EXPECT_CALL(battery, level).InSequence(on_data_updated_sequence).WillOnce(Return(false));
 		EXPECT_CALL(battery, isCharging).InSequence(on_data_updated_sequence);
+		EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).InSequence(on_data_updated_sequence);
 		// TODO: Specify which BLE service and what is expected if necessary
 		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(on_data_updated_sequence);
 
@@ -68,6 +69,7 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsCharging)
 		Sequence on_data_updated_sequence;
 		EXPECT_CALL(battery, level).InSequence(on_data_updated_sequence);
 		EXPECT_CALL(battery, isCharging).InSequence(on_data_updated_sequence).WillOnce(Return(true));
+		EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).InSequence(on_data_updated_sequence);
 		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(on_data_updated_sequence);
 		EXPECT_CALL(mock_videokit, displayImage).InSequence(on_data_updated_sequence);
 
