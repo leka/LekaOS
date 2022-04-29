@@ -20,6 +20,9 @@ target_link_libraries(bootloader
 	bootutil
 	CoreBattery
 	FileManagerKit
+	CoreQSPI
+	CoreFlashMemory
+	FirmwareKit
 	ConfigKit
 	CoreLED
 	CoreMotor

@@ -12,12 +12,16 @@
 
 #include "ConfigKit.h"
 #include "CoreBattery.h"
+#include "CoreFlashIS25LP016D.h"
+#include "CoreFlashManagerIS25LP016D.h"
 #include "CoreLED.h"
 #include "CoreMotor.h"
 #include "CorePwm.h"
+#include "CoreQSPI.h"
 #include "CoreSPI.h"
 #include "FATFileSystem.h"
 #include "FileManagerKit.h"
+#include "FirmwareKit.h"
 #include "SDBlockDevice.h"
 #include "bootutil/bootutil.h"
 #include "bootutil/image.h"
@@ -83,9 +87,28 @@ namespace factory_reset {
 	constexpr auto default_counter = uint8_t {100};
 	constexpr auto default_limit   = uint8_t {10};
 
+	namespace internal {
+
+		auto qspi	 = CoreQSPI();
+		auto manager = CoreFlashManagerIS25LP016D(qspi);
+		auto flash	 = CoreFlashIS25LP016D(qspi, manager);
+
+	}	// namespace internal
+
+	auto firmwarekit = FirmwareKit(internal::flash);
+
+	void initializeExternalFlash()
+	{
+		internal::flash.reset();
+		internal::qspi.setDataTransmissionFormat();
+		internal::qspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
+	}
+
 	void applyFactoryReset()
 	{
-		// Set LekaOS-1.0.0 in QSPI flash
+		auto firmware_version = FirmwareVersion {.major = 1, .minor = 0, .revision = 0};
+		firmwarekit.loadUpdate(firmware_version);
+		boot_set_pending(1);
 	}
 
 }	// namespace factory_reset
@@ -280,7 +303,7 @@ auto main() -> int
 	}
 
 	if (config::shouldApplyFactoryReset()) {
-		// Initialize QSPI flash
+		factory_reset::initializeExternalFlash();
 
 		factory_reset::applyFactoryReset();
 		config::resetFactoryResetCounter();
