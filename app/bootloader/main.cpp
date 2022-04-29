@@ -78,11 +78,25 @@ namespace sd {
 
 }	// namespace sd
 
+namespace factory_reset {
+
+	constexpr auto default_counter = uint8_t {100};
+	constexpr auto default_limit   = uint8_t {10};
+
+	void applyFactoryReset()
+	{
+		// Set LekaOS-1.0.0 in QSPI flash
+	}
+
+}	// namespace factory_reset
+
 namespace config {
 
 	auto bootloader_version = Config {"/fs/conf/bootloader_version", bootloader::version};
 	auto battery_hysteresis_offset =
 		Config {"/fs/conf/bootloader_battery_hysteresis_offset", battery::default_hysteresis_offset};
+	auto factory_reset_counter = Config {"/fs/conf/factory_reset_counter", factory_reset::default_counter};
+	auto factory_reset_limit   = Config {"/fs/conf/factory_reset_limit", factory_reset::default_limit};
 
 	auto configkit = ConfigKit {};
 
@@ -94,6 +108,26 @@ namespace config {
 	auto batteryHysteresisOffset() -> uint8_t
 	{
 		return configkit.read(config::battery_hysteresis_offset);
+	}
+
+	void incrementFactoryResetCounter()
+	{
+		auto counter = configkit.read(config::factory_reset_counter);
+		counter += 1;
+		configkit.write(config::factory_reset_counter, counter);
+	}
+
+	auto shouldApplyFactoryReset() -> bool
+	{
+		auto counter = configkit.read(config::factory_reset_counter);
+		auto limit	 = configkit.read(config::factory_reset_limit);
+
+		return counter > limit;
+	}
+
+	void resetFactoryResetCounter()
+	{
+		configkit.write(config::factory_reset_counter, 0);
 	}
 
 }	// namespace config
@@ -243,6 +277,16 @@ auto main() -> int
 		}
 
 		rtos::ThisThread::sleep_for(5s);
+	}
+
+	if (config::shouldApplyFactoryReset()) {
+		// Initialize QSPI flash
+
+		factory_reset::applyFactoryReset();
+		config::resetFactoryResetCounter();
+
+	} else {
+		config::incrementFactoryResetCounter();
 	}
 
 	auto start_address = os::start_address;
