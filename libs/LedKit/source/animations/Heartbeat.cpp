@@ -6,10 +6,8 @@
 
 #include "Heartbeat.h"
 
-#include "rtos/ThisThread.h"
-
 #include "LogKit.h"
-using namespace std::chrono;
+STAGE 5 using namespace std::chrono;
 namespace leka::led::animation {
 
 void Heartbeat::setLeds(interface::LED &ears, interface::LED &belt)
@@ -80,32 +78,31 @@ void Heartbeat::run()
 }
 
 void Heartbeat::stage1()
-
 {
-	static constexpr auto max = uint8_t {5};
-	auto color(RGB::pure_red);
-	increaseBrightness(max, color);
+	static const auto sleep_time = rtos::Kernel::Clock::duration_u32 {10ms};
+	static constexpr auto max	 = uint8_t {5};
+	increaseBrightness(max, RGB::pure_red, sleep_time);
 }
 
 void Heartbeat::stage2()
 {
-	static constexpr auto max = uint8_t {3};
-	auto color(RGB::pure_red);
-	decreaseBrightness(max, color);
+	static const auto sleep_time = rtos::Kernel::Clock::duration_u32 {10ms};
+	static constexpr auto max	 = uint8_t {3};
+	decreaseBrightness(max, RGB::pure_red, sleep_time);
 }
 
 void Heartbeat::stage3()
 {
-	static constexpr auto max = uint8_t {5};
-	auto color(RGB::pure_red);
-	increaseBrightness(max, color);
+	static constexpr auto sleep_time = rtos::Kernel::Clock::duration_u32 {10ms};
+	static constexpr auto max		 = uint8_t {5};
+	increaseBrightness(max, RGB::pure_red, sleep_time);
 }
 
 void Heartbeat::stage4()
 {
-	static constexpr auto max = uint8_t {3};
-	auto color(RGB::pure_red);
-	decreaseBrightness(max, color);
+	static const auto sleep_time = rtos::Kernel::Clock::duration_u32 {10ms};
+	static constexpr auto max	 = uint8_t {5};
+	decreaseBrightness(max, RGB::pure_red, sleep_time);
 }
 
 void Heartbeat::stage5()
@@ -120,16 +117,15 @@ void Heartbeat::stage5()
 	}
 }
 
-void Heartbeat::increaseBrightness(uint8_t max, RGB)
+void Heartbeat::increaseBrightness(uint8_t max, RGB color, rtos::Kernel::Clock::duration_u32 sleep_time)
 {
 	static constexpr auto kMaxInputValue = uint8_t {3};
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
-		RGB color = ColorKit::colorGradient(RGB::black, RGB {255, 0, 0}, pos);
-		_belt->setColor(color);
-		_ears->setColor(color);
+		RGB color_gradient = ColorKit::colorGradient(RGB::black, color, pos);
+		_belt->setColor(color_gradient);
 		_belt->show();
 		_step++;
-		rtos::ThisThread::sleep_for(10);
+		rtos::ThisThread::sleep_for(sleep_time);
 
 	} else {
 		_step = 0;
@@ -137,16 +133,16 @@ void Heartbeat::increaseBrightness(uint8_t max, RGB)
 	}
 }
 
-void Heartbeat::decreaseBrightness(uint8_t max, leka::RGB color)
+void Heartbeat::decreaseBrightness(uint8_t max, RGB color, rtos::Kernel::Clock::duration_u32 sleep_time)
 {
 	static constexpr auto kMaxInputValue = uint8_t {15};
 	if (auto pos = utils::normalizeStep(kMaxInputValue - _step, max); pos != 0) {
-		RGB color = ColorKit::colorGradient(RGB::black, color, pos);
-		_belt->setColor(color);
+		RGB color_gradient = ColorKit::colorGradient(RGB::black, color, pos);
+		_belt->setColor(color_gradient);
 		_belt->show();
 
 		_step++;
-		rtos::ThisThread::sleep_for(10);
+		rtos::ThisThread::sleep_for(sleep_time);
 
 	} else {
 		_step = 0;
