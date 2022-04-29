@@ -255,7 +255,12 @@ namespace firmware {
 
 	void setPendingUpdate()
 	{
-		boot_set_pending(1);
+		boot_set_pending(0);
+	}
+
+	void confirmFirmware()
+	{
+		boot_set_confirmed();
 	}
 
 }	// namespace firmware
@@ -453,6 +458,9 @@ auto main() -> int
 	robot::controller.registerEvents();
 
 	rfidkit.onTagActivated([](MagicCard card) { robot::emergencyStop(card); });
+
+	// TODO(@team): Add functional test prior confirming the firmware
+	firmware::confirmFirmware();
 
 	while (true) {
 		rtos::ThisThread::sleep_for(1s);
