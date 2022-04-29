@@ -31,6 +31,12 @@ using namespace leka;
 
 namespace {
 
+namespace bootloader {
+
+	constexpr auto version = uint8_t {1};
+
+}
+
 namespace os {
 
 	constexpr auto start_address = uint32_t {0x8040000 + 0x1000};	// Start application address + header
@@ -74,10 +80,16 @@ namespace sd {
 
 namespace config {
 
+	auto bootloader_version = Config {"/fs/conf/bootloader_version", bootloader::version};
 	auto battery_hysteresis_offset =
 		Config {"/fs/conf/bootloader_battery_hysteresis_offset", battery::default_hysteresis_offset};
 
 	auto configkit = ConfigKit {};
+
+	void setBootloaderVersion()
+	{
+		configkit.write(bootloader_version, bootloader_version.default_value());
+	}
 
 	auto batteryHysteresisOffset() -> uint8_t
 	{
@@ -212,6 +224,14 @@ auto main() -> int
 	motors::turnOff();
 
 	sd::init();
+
+	// ? As bootloader, os & sd card can evelove independently, there is no way to know which
+	// ? version of the bootloader is being used a priori.
+	// ? On first run, we write the bootloader version to a special config file, to allow us to:
+	// ?    - share the information with the os
+	// ?    - guarantee the persistence of the information in case of sd card is changed
+	// ?    - or in case of os update/modification
+	config::setBootloaderVersion();
 
 	while (battery::cells.level() < 0 + config::batteryHysteresisOffset()) {
 		if (battery::cells.isCharging() && battery::cells.voltage() < battery::minimum_working_level) {
