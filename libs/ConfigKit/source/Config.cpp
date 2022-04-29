@@ -23,7 +23,7 @@ auto ConfigKit::read(Config const &config) const -> uint8_t
 
 auto ConfigKit::write(Config const &config, uint8_t data) const -> bool
 {
-	FileManagerKit::File file {config.path(), "r+"};
+	FileManagerKit::File file {config.path(), "w+"};
 
 	if (!file.is_open()) {
 		return false;
