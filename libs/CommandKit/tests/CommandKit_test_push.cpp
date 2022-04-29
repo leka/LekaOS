@@ -7,6 +7,7 @@
 #include "LogKit.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "mocks/leka/EventQueue.h"
 
 using namespace leka;
 
@@ -22,6 +23,11 @@ class CommandKitPushTest : public testing::Test
 	}	// void TearDown() override {}
 
 	CommandKit cmdkit {};
+
+	// ? Instantiation of mock::EventQueue is needed to setup the underlying stubs that will make the mock work
+	// ? correctly. Without it UT are failing
+	// TODO (@ladislas) - review mocks/stubs to remove the need of the object, replace with setup/teardown functions
+	mock::EventQueue event_queue {};
 };
 
 TEST_F(CommandKitPushTest, pushDataGood)
