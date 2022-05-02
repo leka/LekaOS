@@ -5,6 +5,7 @@
 add_subdirectory(${SPIKES_DIR}/lk_behavior_kit)
 add_subdirectory(${SPIKES_DIR}/lk_ble)
 add_subdirectory(${SPIKES_DIR}/lk_bluetooth)
+add_subdirectory(${SPIKES_DIR}/lk_bootloader_ears)
 add_subdirectory(${SPIKES_DIR}/lk_cg_animations)
 add_subdirectory(${SPIKES_DIR}/lk_color_kit)
 add_subdirectory(${SPIKES_DIR}/lk_command_kit)
@@ -16,6 +17,7 @@ add_subdirectory(${SPIKES_DIR}/lk_file_manager_kit)
 add_subdirectory(${SPIKES_DIR}/lk_flash_memory)
 add_subdirectory(${SPIKES_DIR}/lk_lcd)
 add_subdirectory(${SPIKES_DIR}/lk_led_kit)
+
 add_subdirectory(${SPIKES_DIR}/lk_led)
 add_subdirectory(${SPIKES_DIR}/lk_log_kit)
 add_subdirectory(${SPIKES_DIR}/lk_motors)
@@ -42,6 +44,7 @@ add_custom_target(spikes_leka)
 add_dependencies( spikes_leka
 	spike_lk_ble
 	spike_lk_bluetooth
+	spike_lk_bootloader_ears
 	spike_lk_cg_animations
 	spike_lk_color_kit
 	spike_lk_command_kit
@@ -53,6 +56,7 @@ add_dependencies( spikes_leka
 	spike_lk_lcd
 	spike_lk_led
 	spike_lk_led_kit
+
 	spike_lk_log_kit
 	spike_lk_motors
 	spike_lk_reinforcer
