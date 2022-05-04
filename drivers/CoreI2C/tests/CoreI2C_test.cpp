@@ -29,7 +29,7 @@ class CoreI2CTest : public ::testing::Test
 
 TEST_F(CoreI2CTest, initialisation)
 {
-	ASSERT_NE(&corei2c, nullptr);
+	EXPECT_NE(&corei2c, nullptr);
 }
 
 TEST_F(CoreI2CTest, writeZeroBytes)
@@ -38,7 +38,7 @@ TEST_F(CoreI2CTest, writeZeroBytes)
 
 	corei2c.write(0, expected_written_values.data(), 0, false);
 
-	ASSERT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
+	EXPECT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
 }
 
 TEST_F(CoreI2CTest, writeOneByte)
@@ -47,7 +47,7 @@ TEST_F(CoreI2CTest, writeOneByte)
 
 	corei2c.write(0, expected_written_values.data(), 1, false);
 
-	ASSERT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
+	EXPECT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
 }
 
 TEST_F(CoreI2CTest, writeTwoBytes)
@@ -56,7 +56,7 @@ TEST_F(CoreI2CTest, writeTwoBytes)
 
 	corei2c.write(0, expected_written_values.data(), 2, false);
 
-	ASSERT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
+	EXPECT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
 }
 
 TEST_F(CoreI2CTest, writeFiveBytes)
@@ -65,7 +65,7 @@ TEST_F(CoreI2CTest, writeFiveBytes)
 
 	corei2c.write(0, expected_written_values.data(), 5, false);
 
-	ASSERT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
+	EXPECT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
 }
 
 TEST_F(CoreI2CTest, writeTenBytes)
@@ -74,7 +74,7 @@ TEST_F(CoreI2CTest, writeTenBytes)
 
 	corei2c.write(0, expected_written_values.data(), 10, false);
 
-	ASSERT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
+	EXPECT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
 }
 
 TEST_F(CoreI2CTest, readZeroBytes)
