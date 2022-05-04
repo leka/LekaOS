@@ -9,7 +9,7 @@
 
 using namespace leka;
 
-class CoreI2CTests : public ::testing::Test
+class CoreI2CTest : public ::testing::Test
 {
   protected:
 	void SetUp() override
@@ -27,57 +27,57 @@ class CoreI2CTests : public ::testing::Test
 	std::vector<uint8_t> expected_written_values;
 };
 
-TEST_F(CoreI2CTests, initialisation)
+TEST_F(CoreI2CTest, initialisation)
 {
-	ASSERT_NE(&corei2c, nullptr);
+	EXPECT_NE(&corei2c, nullptr);
 }
 
-TEST_F(CoreI2CTests, writeZeroBytes)
+TEST_F(CoreI2CTest, writeZeroBytes)
 {
 	expected_written_values = {};
 
 	corei2c.write(0, expected_written_values.data(), 0, false);
 
-	ASSERT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
+	EXPECT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
 }
 
-TEST_F(CoreI2CTests, writeOneByte)
+TEST_F(CoreI2CTest, writeOneByte)
 {
 	expected_written_values = {0x01};
 
 	corei2c.write(0, expected_written_values.data(), 1, false);
 
-	ASSERT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
+	EXPECT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
 }
 
-TEST_F(CoreI2CTests, writeTwoBytes)
+TEST_F(CoreI2CTest, writeTwoBytes)
 {
 	expected_written_values = {0x01, 0x02};
 
 	corei2c.write(0, expected_written_values.data(), 2, false);
 
-	ASSERT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
+	EXPECT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
 }
 
-TEST_F(CoreI2CTests, writeFiveBytes)
+TEST_F(CoreI2CTest, writeFiveBytes)
 {
 	expected_written_values = {0x01, 0x02, 0x03, 0x04, 0x05};
 
 	corei2c.write(0, expected_written_values.data(), 5, false);
 
-	ASSERT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
+	EXPECT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
 }
 
-TEST_F(CoreI2CTests, writeTenBytes)
+TEST_F(CoreI2CTest, writeTenBytes)
 {
 	expected_written_values = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A};
 
 	corei2c.write(0, expected_written_values.data(), 10, false);
 
-	ASSERT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
+	EXPECT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
 }
 
-TEST_F(CoreI2CTests, readZeroBytes)
+TEST_F(CoreI2CTest, readZeroBytes)
 {
 	expected_read_values = {};
 	actual_read_values.resize(0);
@@ -88,7 +88,7 @@ TEST_F(CoreI2CTests, readZeroBytes)
 	EXPECT_EQ(expected_read_values, actual_read_values);
 }
 
-TEST_F(CoreI2CTests, readOneByte)
+TEST_F(CoreI2CTest, readOneByte)
 {
 	expected_read_values = {0x01};
 	actual_read_values.resize(1);
@@ -99,7 +99,7 @@ TEST_F(CoreI2CTests, readOneByte)
 	EXPECT_EQ(expected_read_values, actual_read_values);
 }
 
-TEST_F(CoreI2CTests, readTwoBytes)
+TEST_F(CoreI2CTest, readTwoBytes)
 {
 	expected_read_values = {0x01, 0x02};
 	actual_read_values.resize(2);
@@ -110,7 +110,7 @@ TEST_F(CoreI2CTests, readTwoBytes)
 	EXPECT_EQ(expected_read_values, actual_read_values);
 }
 
-TEST_F(CoreI2CTests, readFiveBytes)
+TEST_F(CoreI2CTest, readFiveBytes)
 {
 	expected_read_values = {0x01, 0x02, 0x03, 0x04, 0x05};
 	actual_read_values.resize(5);
@@ -121,7 +121,7 @@ TEST_F(CoreI2CTests, readFiveBytes)
 	EXPECT_EQ(expected_read_values, actual_read_values);
 }
 
-TEST_F(CoreI2CTests, readTenBytes)
+TEST_F(CoreI2CTest, readTenBytes)
 {
 	expected_read_values = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A};
 	actual_read_values.resize(10);
