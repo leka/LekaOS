@@ -29,7 +29,6 @@ add_subdirectory(${SPIKES_DIR}/lk_sensors_touch)
 add_subdirectory(${SPIKES_DIR}/lk_serial_number)
 add_subdirectory(${SPIKES_DIR}/lk_ticker_timeout)
 add_subdirectory(${SPIKES_DIR}/lk_wifi)
-
 add_subdirectory(${SPIKES_DIR}/lk_update_process_app_base)
 add_subdirectory(${SPIKES_DIR}/lk_update_process_app_update)
 
@@ -68,8 +67,8 @@ add_dependencies( spikes_leka
 
 	spike_lk_update_process_app_base
 	spike_lk_update_process_app_update
-)
 
+)
 add_custom_target(spikes_mbed)
 add_dependencies( spikes_mbed
 	spike_mbed_blinky
