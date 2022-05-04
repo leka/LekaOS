@@ -21,6 +21,7 @@
 #include "animations/Fire.h"
 #include "animations/Fly.h"
 #include "animations/Happy.h"
+#include "animations/Heartbeat.h"
 #include "animations/Rainbow.h"
 #include "animations/Sad.h"
 #include "animations/SadCry.h"
@@ -69,6 +70,7 @@ class LedKit
 		static inline auto fire			   = led::animation::Fire {};
 		static inline auto fly			   = led::animation::Fly {};
 		static inline auto happy		   = led::animation::Happy {};
+		static inline auto heartbeat	   = led::animation::Heartbeat {};
 		static inline auto rainbow		   = led::animation::Rainbow {};
 		static inline auto sad			   = led::animation::Sad {};
 		static inline auto sad_cry		   = led::animation::SadCry {};
