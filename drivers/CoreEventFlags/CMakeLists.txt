@@ -15,3 +15,11 @@ target_sources(CoreEventFlags
 )
 
 target_link_libraries(CoreEventFlags mbed-os)
+
+if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
+
+	leka_unit_tests_sources(
+		tests/CoreEventFlags_test.cpp
+	)
+
+endif()
