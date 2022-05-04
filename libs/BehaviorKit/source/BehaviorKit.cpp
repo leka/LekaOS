@@ -73,7 +73,7 @@ void BehaviorKit::chargingGreen()
 
 void BehaviorKit::blinkGreen()
 {
-	spinLeft(0.5);
+	spinLeft(1);
 	_ledkit.start(&LedKit::animation::blink_green);
 	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi");
 	rtos::ThisThread::sleep_for(3s);
@@ -84,7 +84,7 @@ void BehaviorKit::blinkGreen()
 
 void BehaviorKit::spinBlink()
 {
-	spinRight(0.5);
+	spinRight(1);
 	_ledkit.start(&LedKit::animation::spin_blink);
 	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi");
 	rtos::ThisThread::sleep_for(3s);

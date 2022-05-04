@@ -63,7 +63,7 @@ TEST_F(BehaviorKitTest, initialization)
 
 TEST_F(BehaviorKitTest, spinBlink)
 {
-	static constexpr auto expected_speed = 0.5;
+	auto expected_speed = 1;
 
 	EXPECT_CALL(mock_videokit, playVideo);
 	{
@@ -89,7 +89,7 @@ TEST_F(BehaviorKitTest, spinBlink)
 
 TEST_F(BehaviorKitTest, blinkGreen)
 {
-	static constexpr auto expected_speed = 0.5;
+	auto expected_speed = 1;
 
 	EXPECT_CALL(mock_videokit, playVideo);
 	{
@@ -113,9 +113,9 @@ TEST_F(BehaviorKitTest, blinkGreen)
 	behaviorkit.blinkGreen();
 }
 
-TEST_F(BehaviorKitTest, spinLeft)
+TEST_F(BehaviorKitTest, spinLeftAnySpeed)
 {
-	static constexpr auto expected_speed = 0.5;
+	auto expected_speed = 0.7;
 
 	EXPECT_CALL(dir_1_left, write(1));
 	EXPECT_CALL(dir_2_left, write(0));
@@ -127,9 +127,9 @@ TEST_F(BehaviorKitTest, spinLeft)
 	behaviorkit.spinLeft(expected_speed);
 }
 
-TEST_F(BehaviorKitTest, spinRight)
+TEST_F(BehaviorKitTest, spinRightAnySpeed)
 {
-	static constexpr auto expected_speed = 0.5;
+	auto expected_speed = 0.3;
 
 	EXPECT_CALL(dir_1_left, write(0));
 	EXPECT_CALL(dir_2_left, write(1));
@@ -150,7 +150,7 @@ TEST_F(BehaviorKitTest, lowBattery)
 
 TEST_F(BehaviorKitTest, stop)
 {
-	static constexpr auto speed = 0.5;
+	auto speed = 0.5;
 
 	ledkit.start(&mock_animation);
 
