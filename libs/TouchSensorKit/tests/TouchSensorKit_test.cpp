@@ -17,8 +17,7 @@ class TouchSensorTest : public ::testing::Test
   protected:
 	// void SetUp() override {}
 	// void TearDown() override {}
-	mbed::I2C i2c	= mbed::I2C(PinName::SENSOR_PROXIMITY_MUX_I2C_SDA, PinName::SENSOR_PROXIMITY_MUX_I2C_SCL);
-	CoreI2C corei2c = CoreI2C {i2c};
+	CoreI2C corei2c = CoreI2C(PinName::SENSOR_PROXIMITY_MUX_I2C_SDA, PinName::SENSOR_PROXIMITY_MUX_I2C_SCL);
 	CoreIOExpanderMCP23017 expander			= CoreIOExpanderMCP23017 {corei2c};
 	io::expanded::DigitalIn<uint16_t> input = io::expanded::DigitalIn<uint16_t> {expander, touch::pin::ear_left};
 	TouchSensorKit touch_sensor_kit			= TouchSensorKit {input};
@@ -29,8 +28,12 @@ TEST_F(TouchSensorTest, initializationDefault)
 	ASSERT_NE(&touch_sensor_kit, nullptr);
 }
 
-TEST_F(TouchSensorTest, isTouched)
+TEST_F(TouchSensorTest, updateState)
 {
-	auto touched = touch_sensor_kit.isTouched();
-	ASSERT_TRUE(touched);
+	touch_sensor_kit.updateState();
+}
+
+TEST_F(TouchSensorTest, printState)
+{
+	touch_sensor_kit.printState();
 }

@@ -40,21 +40,19 @@ class CoreIOExpanderTest : public ::testing::Test
 		return static_cast<uint16_t>(buffer_read[0] + (buffer_read[1] << 8));
 	}
 
-	mbed::I2C i2c	= mbed::I2C(PinName::SENSOR_PROXIMITY_MUX_I2C_SDA, PinName::SENSOR_PROXIMITY_MUX_I2C_SCL);
-	CoreI2C corei2c = CoreI2C {i2c};
+	CoreI2C corei2c = CoreI2C(PinName::SENSOR_PROXIMITY_MUX_I2C_SDA, PinName::SENSOR_PROXIMITY_MUX_I2C_SCL);
 	CoreIOExpanderMCP23017 expander = CoreIOExpanderMCP23017 {corei2c};
 };
 
 TEST_F(CoreIOExpanderTest, initializationDefault)
 {
-	ASSERT_NE(&i2c, nullptr);
 	ASSERT_NE(&corei2c, nullptr);
 	ASSERT_NE(&expander, nullptr);
 }
 
-TEST_F(CoreIOExpanderTest, reset)
+TEST_F(CoreIOExpanderTest, init)
 {
-	expander.reset();
+	expander.init();
 }
 
 TEST_F(CoreIOExpanderTest, config)
@@ -80,7 +78,6 @@ TEST_F(CoreIOExpanderTest, setPinAsInput)
 TEST_F(CoreIOExpanderTest, readInputPin)
 {
 	auto input_value = expander.readInputPin(mcp23017::pin::PA0);
-	ASSERT_EQ(0, input_value);
 }
 
 TEST_F(CoreIOExpanderTest, setModeForPinPullUp)
@@ -96,5 +93,4 @@ TEST_F(CoreIOExpanderTest, setModeForPinPullNone)
 TEST_F(CoreIOExpanderTest, getModeForPin)
 {
 	auto mode = expander.getModeForPin(mcp23017::pin::PA0);
-	ASSERT_EQ(PinMode::PullNone, mode);
 }

@@ -6,16 +6,23 @@
 
 using namespace leka;
 
-auto TouchSensorKit::isTouched() -> bool
+void TouchSensorKit::updateState()
 {
-	auto value = _pin.read();
-
-	return (value != 0);
+	auto value						= _pin.read();
+	shadow_ear_left_touched			= (0 == (value & touch::pin::ear_left));
+	shadow_ear_right_touched		= (0 == (value & touch::pin::ear_right));
+	shadow_belt_left_back_touched	= (0 == (value & touch::pin::belt_left_back));
+	shadow_belt_left_front_touched	= (0 == (value & touch::pin::belt_left_front));
+	shadow_belt_right_back_touched	= (0 == (value & touch::pin::belt_right_back));
+	shadow_belt_right_front_touched = (0 == (value & touch::pin::belt_right_front));
 }
 
-auto TouchSensorKit::setPin(::io::expanded::DigitalIn<> &pin) -> bool
+void TouchSensorKit::printState()
 {
-	auto _pin = pin;
-
-	return true;
+	log_info("Ear left touched: %s", shadow_ear_left_touched ? "true" : "false");
+	log_info("Ear right touched: %s", shadow_ear_right_touched ? "true" : "false");
+	log_info("Belt left front touched: %s", shadow_belt_left_front_touched ? "true" : "false");
+	log_info("Belt left back touched: %s", shadow_belt_left_back_touched ? "true" : "false");
+	log_info("Belt right front touched: %s", shadow_belt_right_front_touched ? "true" : "false");
+	log_info("Belt right back touched: %s", shadow_belt_right_back_touched ? "true" : "false");
 }
