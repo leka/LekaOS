@@ -20,6 +20,8 @@ using rotation_t = Rotation;
 class CoreMotorBase
 {
   public:
+	virtual ~CoreMotorBase() = default;
+
 	virtual void spin(rotation_t rotation, float speed) = 0;
 	virtual void stop()									= 0;
 };

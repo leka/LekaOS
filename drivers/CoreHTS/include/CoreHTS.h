@@ -18,11 +18,16 @@ namespace interface {
 	class TemperatureSensor
 	{
 	  public:
+		virtual ~TemperatureSensor() = default;
+
 		virtual auto getTemperatureCelsius() -> float = 0;
 	};
 
 	class HumiditySensor
 	{
+	  public:
+		virtual ~HumiditySensor() = default;
+
 		virtual auto getRelativeHumidity() -> float = 0;
 	};
 

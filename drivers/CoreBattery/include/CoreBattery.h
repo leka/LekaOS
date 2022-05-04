@@ -29,20 +29,20 @@ class CoreBattery : public interface::Battery
 	auto isCharging() -> bool final;
 
 	struct Capacity {
-		static constexpr auto full			= float {12.00};
-		static constexpr auto three_quarter = float {11.73};
-		static constexpr auto half			= float {11.08};
-		static constexpr auto quarter		= float {10.47};
-		static constexpr auto empty			= float {09.00};
+		static constexpr auto full			= float {12.00F};
+		static constexpr auto three_quarter = float {11.73F};
+		static constexpr auto half			= float {11.08F};
+		static constexpr auto quarter		= float {10.47F};
+		static constexpr auto empty			= float {09.00F};
 	};
 
   private:
-	static constexpr auto analog_voltage_reference = float {3.33};
+	static constexpr auto analog_voltage_reference = float {3.33F};
 
 	struct PolynomialCoefficient {
-		static constexpr auto degree_0 = float {47.5};
-		static constexpr auto degree_1 = float {-50.7};
-		static constexpr auto degree_2 = float {15.8};
+		static constexpr auto degree_0 = float {47.5F};
+		static constexpr auto degree_1 = float {-50.7F};
+		static constexpr auto degree_2 = float {15.8F};
 	};
 
 	auto readRawVoltage() -> float;

@@ -14,6 +14,8 @@ namespace leka::interface {
 class SDRAM
 {
   public:
+	virtual ~SDRAM() = default;
+
 	virtual void setupSDRAMConfig()								= 0;
 	virtual auto setupTimingConfig() -> FMC_SDRAM_TimingTypeDef = 0;
 	virtual auto setupDMA() -> DMA_HandleTypeDef				= 0;
