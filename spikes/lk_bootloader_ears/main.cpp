@@ -57,25 +57,6 @@ namespace leds {
 		belt.show();
 	}
 
-	void blink_ears_medium(RGB color, int cpt)
-	{
-		for (int i(0); i < cpt; i++) {
-			leds::ears.setColor(color);
-			leds::ears.show();
-			rtos::ThisThread::sleep_for(100ms);
-			leds::ears.setColor(RGB::black);
-			leds::ears.show();
-			rtos::ThisThread::sleep_for(100ms);
-
-			leds::ears.setColor(color);
-			leds::ears.show();
-			rtos::ThisThread::sleep_for(100ms);
-			leds::ears.setColor(RGB::black);
-			leds::ears.show();
-			rtos::ThisThread::sleep_for(2s);
-		}
-	}
-
 	void blink_ears_high(RGB color, int cpt)
 	{
 		for (int i(0); i < cpt; i++) {
@@ -124,21 +105,9 @@ auto main() -> int
 	hello.start();
 
 	while (true) {
-		log_info("couleur1");
+		rtos::ThisThread::sleep_for(3s);
 		leds::blink_ears_high(leka::RGB {0x00, 0x22, 0x43}, 4);
 		rtos::ThisThread::sleep_for(3s);
-
-		log_info("couleur2");
-		leds::blink_ears_high(RGB::orange, 4);
-
-		rtos::ThisThread::sleep_for(3s);
-
-		log_info("couleur3");
-		leds::blink_ears_high(RGB::fuschia, 4);
-
-		rtos::ThisThread::sleep_for(3s);
-
-		log_info("couleur3");
 		leds::blink_ears_high(RGB::vert_pre, 4);
 		rtos::ThisThread::sleep_for(3s);
 	}
