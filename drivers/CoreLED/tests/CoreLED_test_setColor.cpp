@@ -241,7 +241,7 @@ TEST_F(CoreLedSetColorTest, setColorRangeInverted)
 	EXPECT_TRUE(std::equal(expected_colors.begin(), expected_colors.end(), leds.getColor().begin()));
 }
 
-TEST_F(CoreLedSetColorTest, setColorBeginEqualsEndFirst)
+TEST_F(CoreLedSetColorTest, setColorRangeBeginEqualsEndFirst)
 {
 	RGB color			  = RGB::pure_green;
 	int range_begin_index = 0;
@@ -254,7 +254,7 @@ TEST_F(CoreLedSetColorTest, setColorBeginEqualsEndFirst)
 	EXPECT_TRUE(std::equal(expected_colors.begin(), expected_colors.end(), leds.getColor().begin()));
 }
 
-TEST_F(CoreLedSetColorTest, setColorBeginEqualsEndMiddle)
+TEST_F(CoreLedSetColorTest, setColorRangeBeginEqualsEndMiddle)
 {
 	RGB color			  = RGB::pure_green;
 	int range_begin_index = number_of_leds / 2 - 1;
@@ -267,7 +267,7 @@ TEST_F(CoreLedSetColorTest, setColorBeginEqualsEndMiddle)
 	EXPECT_TRUE(std::equal(expected_colors.begin(), expected_colors.end(), leds.getColor().begin()));
 }
 
-TEST_F(CoreLedSetColorTest, setColorBeginEqualsEndLast)
+TEST_F(CoreLedSetColorTest, setColorRangeBeginEqualsEndLast)
 {
 	RGB color			  = RGB::pure_green;
 	int range_begin_index = number_of_leds - 1;
@@ -280,7 +280,7 @@ TEST_F(CoreLedSetColorTest, setColorBeginEqualsEndLast)
 	EXPECT_TRUE(std::equal(expected_colors.begin(), expected_colors.end(), leds.getColor().begin()));
 }
 
-TEST_F(CoreLedSetColorTest, setColorBeginEqualsEndLastEqualNumberOfLeds)
+TEST_F(CoreLedSetColorTest, setColorRangeBeginEqualsEndLastEqualNumberOfLeds)
 {
 	RGB color			  = RGB::pure_green;
 	int range_begin_index = number_of_leds;
@@ -293,7 +293,7 @@ TEST_F(CoreLedSetColorTest, setColorBeginEqualsEndLastEqualNumberOfLeds)
 	EXPECT_TRUE(std::equal(expected_colors.begin(), expected_colors.end(), leds.getColor().begin()));
 }
 
-TEST_F(CoreLedSetColorTest, setColorBeginEqualsEndLastHigherThanNumberOfLeds)
+TEST_F(CoreLedSetColorTest, setColorRangeBeginEqualsEndLastHigherThanNumberOfLeds)
 {
 	RGB color			  = RGB::pure_green;
 	int range_begin_index = number_of_leds + 100;
