@@ -16,6 +16,7 @@
 #include "animations/Angry.h"
 #include "animations/AngryShort.h"
 #include "animations/BlinkGreen.h"
+#include "animations/Breath.h"
 #include "animations/Bubbles.h"
 #include "animations/Disgusted.h"
 #include "animations/Fire.h"
@@ -65,6 +66,7 @@ class LedKit
 		static inline auto angry		   = led::animation::Angry {};
 		static inline auto angry_short	   = led::animation::AngryShort {};
 		static inline auto blink_green	   = led::animation::BlinkGreen {};
+		static inline auto breath		   = led::animation::Breath {};
 		static inline auto bubbles		   = led::animation::Bubbles {};
 		static inline auto disgusted	   = led::animation::Disgusted {};
 		static inline auto fire			   = led::animation::Fire {};
