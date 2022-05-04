@@ -6,13 +6,12 @@
 
 #include "Breath.h"
 
-using namespace std::chrono;
-
 namespace leka::led::animation {
 
 void Breath::setLeds(interface::LED &ears, interface::LED &belt)
 {
 	_belt = &belt;
+	_ears = &ears;
 }
 
 auto Breath::isRunning() -> bool

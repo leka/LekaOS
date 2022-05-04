@@ -6,12 +6,12 @@
 
 #include "Heartbeat.h"
 
-using namespace std::chrono;
 namespace leka::led::animation {
 
 void Heartbeat::setLeds(interface::LED &ears, interface::LED &belt)
 {
 	_belt = &belt;
+	_ears = &ears;
 }
 
 auto Heartbeat::isRunning() -> bool
@@ -61,7 +61,7 @@ void Heartbeat::run()
 		case 3:
 			stage3();
 			break;
-			// rtos::ThisThread::sleep_for(1000ms);case 4:
+
 		case 4:
 			stage4();
 			break;
@@ -100,21 +100,19 @@ void Heartbeat::stage3()
 
 void Heartbeat::stage4()
 {
-	static const uint8_t kMaxInputValue = {200};
+	static const uint8_t kMaxInputValue = {40};
 
 	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
 		++_step;
 
 	} else {
-		_step = 0;
-	}
-
-	if (_turn < 10) {
-		_turn++;
-		_stage = 0;
-
-	} else {
-		++_stage;
+		if (_turn < 10) {
+			_step  = 0;
+			_stage = 0;
+			_turn++;
+		} else {
+			++_stage;
+		}
 	}
 }
 

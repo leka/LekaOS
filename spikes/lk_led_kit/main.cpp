@@ -76,6 +76,14 @@ auto main() -> int
 	hello.start();
 
 	while (true) {
+		log_info("animation::heartbeat");
+		ledkit.start(&LedKit::animation::heartbeat);
+		rtos::ThisThread::sleep_for(10s);
+
+		log_info("animation::breath");
+		ledkit.start(&LedKit::animation::breath);
+		rtos::ThisThread::sleep_for(10s);
+
 		log_info("animation::sleeping");
 		ledkit.start(&LedKit::animation::sleeping);
 		rtos::ThisThread::sleep_for(10s);
@@ -178,14 +186,6 @@ auto main() -> int
 
 		log_info("animation::yawn");
 		ledkit.start(&LedKit::animation::yawn);
-		rtos::ThisThread::sleep_for(10s);
-
-		log_info("animation::heartbeat");
-		ledkit.start(&LedKit::animation::heartbeat);
-		rtos::ThisThread::sleep_for(10s);
-
-		log_info("animation::breath");
-		ledkit.start(&LedKit::animation::breath);
 		rtos::ThisThread::sleep_for(10s);
 	}
 }
