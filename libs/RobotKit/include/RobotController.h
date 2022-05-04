@@ -199,6 +199,16 @@ class RobotController : public interface::RobotController
 
 		_battery_kit.startEventHandler();
 
+		_ble.onConnectionCallback([this] {
+			log_info("BLE connected");
+			_behaviorkit.stop();
+		});
+
+		_ble.onDisconnectionCallback([this] {
+			log_info("BLE disconnected");
+			_behaviorkit.stop();
+		});
+
 		// Setup callbacks for each State Machine events
 
 		auto on_sleep_timeout = [this]() { raise(event::sleep_timeout_did_end {}); };
