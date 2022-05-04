@@ -42,6 +42,7 @@ target_sources(stubs
 		${EXTERN_MBED_OS_DIR}/rtos/tests/UNITTESTS/doubles/Thread_stub.cpp
 		${EXTERN_MBED_OS_DIR}/platform/tests/UNITTESTS/doubles/mbed_assert_stub.cpp
 		${EXTERN_MBED_OS_DIR}/events/tests/UNITTESTS/doubles/equeue_stub.c
+		${EXTERN_MBED_OS_DIR}/events/tests/UNITTESTS/doubles/EventFlags_stub.cpp
 		${EXTERN_MBED_OS_DIR}/events/tests/UNITTESTS/doubles/EventQueue_stub.cpp
 		${EXTERN_MBED_OS_DIR}/drivers/tests/UNITTESTS/doubles/SerialBase_stub.cpp
 		${EXTERN_MBED_OS_DIR}/platform/tests/UNITTESTS/doubles/FileHandle_stub.cpp
