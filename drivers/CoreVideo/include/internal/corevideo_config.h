@@ -32,8 +32,8 @@ namespace lcd {
 		inline constexpr uint16_t VACT = lcd::otm8009a::landscape::height;	// Vertical Active time in units of lines = imageSize Y in pixels to display
 
 		inline constexpr uint16_t HSA = lcd::otm8009a::landscape::hsync;    // Horizontal start active time in units of lcdClk
-		inline constexpr uint16_t HBP = lcd::otm8009a::landscape::hbp;	    // Horizontal Back Porch time in units of lcdClk
-		inline constexpr uint16_t HFP = lcd::otm8009a::landscape::hfp;	    // Horizontal Front Porch time in units of lcdClk
+		inline constexpr uint16_t HBP = 1;                                  // Horizontal Back Porch time in units of lcdClk  // TODO(JohnDoe): Determine the correct value to avoid offset
+		inline constexpr uint16_t HFP = 1;                                  // Horizontal Front Porch time in units of lcdClk // TODO(JohnDoe): Determine the correct value to avoid offset
 		inline constexpr uint16_t HACT = lcd::otm8009a::landscape::width;	// Horizontal Active time in units of lcdClk = imageSize X in pixels to display
 		// clang-format on
 
