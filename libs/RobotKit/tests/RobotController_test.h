@@ -218,8 +218,6 @@ class RobotControllerTest : public testing::Test
 			.InSequence(start_charging_behavior_sequence)
 			.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_charging_start_timeout));
 		EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
-		// TODO (@YannLocatelli) - This was added in 81c4d030 but doesn't work anymore
-		// EXPECT_CALL(mock_lcd, turnOff).InSequence(start_charging_behavior_sequence);
 	}
 
 	void expectedCallsRunLaunchingBehavior()
