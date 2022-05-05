@@ -9,10 +9,24 @@
 
 #include "BehaviorKit.h"
 #include "CommandKit.h"
+#include "CoreDMA2D.hpp"
+#include "CoreDSI.hpp"
 #include "CoreEventFlags.h"
+#include "CoreFont.hpp"
+#include "CoreGraphics.hpp"
+#include "CoreJPEG.hpp"
+#include "CoreJPEGModeDMA.hpp"
+#include "CoreJPEGModePolling.hpp"
+#include "CoreLCD.hpp"
+#include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLED.h"
+#include "CoreLL.h"
+#include "CoreLTDC.hpp"
 #include "CorePwm.h"
+#include "CoreSDRAM.hpp"
 #include "CoreSPI.h"
+#include "CoreSTM32Hal.h"
+#include "CoreVideo.hpp"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
@@ -70,9 +84,37 @@ auto right = CoreMotor {internal::right::dir_1, internal::right::dir_2, internal
 
 }	// namespace motor
 
-auto videokit = VideoKit {};
+namespace display {
 
-auto behaviorkit = BehaviorKit {videokit, ledkit, motor::left, motor::right};
+namespace internal {
+
+	auto event_flags = CoreEventFlags {};
+
+	auto corell		   = CoreLL {};
+	auto pixel		   = CGPixel {corell};
+	auto hal		   = CoreSTM32Hal {};
+	auto coresdram	   = CoreSDRAM {hal};
+	auto coredma2d	   = CoreDMA2D {hal};
+	auto coredsi	   = CoreDSI {hal};
+	auto coreltdc	   = CoreLTDC {hal};
+	auto coregraphics  = CoreGraphics {coredma2d};
+	auto corefont	   = CoreFont {pixel};
+	auto coreotm	   = CoreLCDDriverOTM8009A {coredsi, PinName::SCREEN_BACKLIGHT_PWM};
+	auto corelcd	   = CoreLCD {coreotm};
+	auto _corejpegmode = CoreJPEGModeDMA {hal};
+	auto corejpeg	   = CoreJPEG {hal, _corejpegmode};
+	auto corevideo =
+		CoreVideo {hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg};
+
+	HAL_VIDEO_DECLARE_IRQ_HANDLERS(corevideo);
+
+}	// namespace internal
+
+auto videokit = VideoKit {internal::event_flags, internal::corelcd, internal::corevideo};
+
+}	// namespace display
+
+auto behaviorkit = BehaviorKit {display::videokit, ledkit, motor::left, motor::right};
 
 namespace command {
 
@@ -171,7 +213,7 @@ auto main() -> int
 	logger::init();
 
 	initializeSD();
-	videokit.initializeScreen();
+	display::videokit.initializeScreen();
 	cmdkit.registerCommand(command::list);
 
 	turnOff();

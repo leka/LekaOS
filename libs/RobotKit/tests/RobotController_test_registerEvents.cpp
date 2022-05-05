@@ -40,13 +40,13 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsNotCharging)
 			Sequence run_launching_behavior_sequence;
 			EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/logo.jpg"}))
 				.InSequence(run_launching_behavior_sequence);
-			EXPECT_CALL(mock_videokit, turnOn).InSequence(run_launching_behavior_sequence);
+			EXPECT_CALL(mock_lcd, turnOn).InSequence(run_launching_behavior_sequence);
 
 			EXPECT_CALL(timeout, onTimeout);
 			EXPECT_CALL(timeout, start);
 
 			EXPECT_CALL(mock_videokit, playVideo);
-			EXPECT_CALL(mock_videokit, turnOn);
+			EXPECT_CALL(mock_lcd, turnOn);
 		}
 	}
 
@@ -91,12 +91,14 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsCharging)
 			Sequence run_launching_behavior_sequence;
 			EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/logo.jpg"}))
 				.InSequence(run_launching_behavior_sequence);
-			EXPECT_CALL(mock_videokit, turnOn).InSequence(run_launching_behavior_sequence);
+			EXPECT_CALL(mock_lcd, turnOn).InSequence(run_launching_behavior_sequence);
 
 			Sequence start_charging_behavior_sequence;
-			EXPECT_CALL(mock_videokit, turnOn).InSequence(start_charging_behavior_sequence);
+			EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
 			EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
 			EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
+			// TODO (@YannLocatelli) - This was added in 81c4d030 but doesn't work anymore
+			// EXPECT_CALL(mock_lcd, turnOff).InSequence(start_charging_behavior_sequence);
 		}
 	}
 

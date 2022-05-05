@@ -9,15 +9,29 @@
 
 #include "CoreBattery.h"
 #include "CoreBufferedSerial.h"
+#include "CoreDMA2D.hpp"
+#include "CoreDSI.hpp"
 #include "CoreEventFlags.h"
 #include "CoreFlashIS25LP016D.h"
 #include "CoreFlashManagerIS25LP016D.h"
+#include "CoreFont.hpp"
+#include "CoreGraphics.hpp"
+#include "CoreJPEG.hpp"
+#include "CoreJPEGModeDMA.hpp"
+#include "CoreJPEGModePolling.hpp"
+#include "CoreLCD.hpp"
+#include "CoreLCDDriverOTM8009A.hpp"
+#include "CoreLL.h"
+#include "CoreLTDC.hpp"
 #include "CoreMCU.h"
 #include "CorePwm.h"
 #include "CoreQSPI.h"
 #include "CoreRFIDReader.h"
+#include "CoreSDRAM.hpp"
 #include "CoreSPI.h"
+#include "CoreSTM32Hal.h"
 #include "CoreTimeout.h"
+#include "CoreVideo.hpp"
 #include "FATFileSystem.h"
 #include "FirmwareKit.h"
 #include "HelloWorld.h"
@@ -152,8 +166,37 @@ namespace motors {
 
 }	// namespace motors
 
-auto videokit	 = VideoKit {};
-auto behaviorkit = BehaviorKit {videokit, leds::kit, motors::left::motor, motors::right::motor};
+namespace display {
+
+	namespace internal {
+
+		auto event_flags = CoreEventFlags {};
+
+		auto corell		   = CoreLL {};
+		auto pixel		   = CGPixel {corell};
+		auto hal		   = CoreSTM32Hal {};
+		auto coresdram	   = CoreSDRAM {hal};
+		auto coredma2d	   = CoreDMA2D {hal};
+		auto coredsi	   = CoreDSI {hal};
+		auto coreltdc	   = CoreLTDC {hal};
+		auto coregraphics  = CoreGraphics {coredma2d};
+		auto corefont	   = CoreFont {pixel};
+		auto coreotm	   = CoreLCDDriverOTM8009A {coredsi, PinName::SCREEN_BACKLIGHT_PWM};
+		auto corelcd	   = CoreLCD {coreotm};
+		auto _corejpegmode = CoreJPEGModeDMA {hal};
+		auto corejpeg	   = CoreJPEG {hal, _corejpegmode};
+		auto corevideo =
+			CoreVideo {hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg};
+
+		HAL_VIDEO_DECLARE_IRQ_HANDLERS(corevideo);
+
+	}	// namespace internal
+
+	auto videokit = VideoKit {internal::event_flags, internal::corelcd, internal::corevideo};
+
+}	// namespace display
+
+auto behaviorkit = BehaviorKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
 
 namespace command {
 
@@ -286,7 +329,8 @@ namespace robot {
 		motors::left::motor,
 		motors::right::motor,
 		leds::kit,
-		videokit,
+		display::internal::corelcd,
+		display::videokit,
 		behaviorkit,
 		commandkit,
 	};

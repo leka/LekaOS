@@ -75,31 +75,47 @@ void CoreVideo::displayRectangle(interface::Graphics::FilledRectangle rectangle,
 	_coregraphics.drawRectangle(rectangle, color);
 }
 
-void CoreVideo::displayImage(interface::File &file)
+void CoreVideo::displayImage(interface::File &file, JPEGImageProperties *image_properties)
 {
-	_corejpeg.decodeImage(file);
+	_image_size = _corejpeg.decodeImage(file);
 
-	auto image_properties = _corejpeg.getImageProperties();
+	if (image_properties == nullptr) {
+		_image_properties = _corejpeg.getImageProperties();
+	} else {
+		_image_properties = *image_properties;
+	}
 
-	_coredma2d.transferImage(image_properties.ImageWidth, image_properties.ImageHeight,
-							 image_properties.getWidthOffset());
+	_coredma2d.transferImage(_image_properties.ImageWidth, _image_properties.ImageHeight,
+							 _image_properties.getWidthOffset());
 }
 
-void CoreVideo::playVideo(interface::File &file)
+void CoreVideo::setVideo(interface::File &file)
 {
-	auto config = _corejpeg.getImageProperties();
+	_image_properties = _corejpeg.getImageProperties();
 
-	auto frame_index = _corejpeg.findSOIMarker(file, 0);
-	auto frame_size	 = size_t {0};
+	file.seek(0, SEEK_SET);
+	_frame_index   = 0;
+	_image_size	   = 0;
+	_is_last_frame = false;
+}
 
-	while (frame_index != 0) {
-		file.seek(frame_index, SEEK_SET);
+void CoreVideo::displayNextFrameVideo(interface::File &file)
+{
+	_frame_index = _corejpeg.findSOIMarker(file, _frame_index + _image_size);
 
-		frame_size = _corejpeg.decodeImage(file);
-		_coredma2d.transferImage(config.ImageWidth, config.ImageHeight, config.getWidthOffset());
-
-		frame_index = _corejpeg.findSOIMarker(file, frame_index + frame_size);
+	if (_frame_index == 0) {
+		_is_last_frame = true;
+		return;
 	}
+
+	file.seek(_frame_index, SEEK_SET);
+
+	displayImage(file, &_image_properties);
+}
+
+auto CoreVideo::isLastFrame() -> bool
+{
+	return _is_last_frame;
 }
 
 void CoreVideo::displayText(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,

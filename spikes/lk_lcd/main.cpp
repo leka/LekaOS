@@ -10,6 +10,7 @@
 
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
+#include "CoreEventFlags.h"
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreJPEG.hpp"
@@ -27,12 +28,15 @@
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
+#include "VideoKit.h"
 
 using namespace leka;
 using namespace std::chrono;
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
+
+auto event_flags = CoreEventFlags {};
 
 CoreLL corell;
 CGPixel pixel(corell);
@@ -49,6 +53,10 @@ CoreJPEGModeDMA _corejpegmode {hal};
 CoreJPEG corejpeg {hal, _corejpegmode};
 CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
 
+HAL_VIDEO_DECLARE_IRQ_HANDLERS(corevideo);
+
+auto videokit = VideoKit {event_flags, corelcd, corevideo};
+
 auto file = FileManagerKit::File {};
 
 auto images = std::to_array({"/fs/images/logo.jpg", "/fs/images/robot-emotion-happy.jpg"});
@@ -56,33 +64,6 @@ auto videos = std::to_array({
 	"/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi",
 	"/fs/videos/2022_01_17-animation-face-state-yawning-sleeping_without_eyebrows.avi",
 });
-
-extern "C" {
-void DMA2D_IRQHandler(void)
-{
-	HAL_DMA2D_IRQHandler(&coredma2d.getHandle());
-}
-
-void LTDC_IRQHandler(void)
-{
-	HAL_LTDC_IRQHandler(&coreltdc.getHandle());
-}
-
-void JPEG_IRQHandler(void)
-{
-	HAL_JPEG_IRQHandler(&corejpeg.getHandle());
-}
-
-void DMA2_Stream0_IRQHandler(void)
-{
-	HAL_DMA_IRQHandler(corejpeg.getHandle().hdmain);
-}
-
-void DMA2_Stream1_IRQHandler(void)
-{
-	HAL_DMA_IRQHandler(corejpeg.getHandle().hdmaout);
-}
-}
 
 void initializeSD()
 {
@@ -104,7 +85,7 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(2s);
 
-	corevideo.initialize();
+	videokit.initializeScreen();
 
 	initializeSD();
 
@@ -149,26 +130,19 @@ auto main() -> int
 
 		rtos::ThisThread::sleep_for(1s);
 
-		corevideo.setBrightness(0.9F);
-		corevideo.turnOn();
+		corelcd.setBrightness(0.9F);
+		corelcd.turnOn();
 
 		for (const auto &image_name: images) {
-			if (file.open(image_name)) {
-				log_info("File opened");
-				corevideo.displayImage(file);
-				file.close();
-				rtos::ThisThread::sleep_for(1s);
-			}
+			videokit.displayImage(image_name);
+			rtos::ThisThread::sleep_for(1s);
 		}
 
 		for (const auto &video_name: videos) {
-			if (file.open(video_name)) {
-				corevideo.playVideo(file);
-				file.close();
-				rtos::ThisThread::sleep_for(2s);
-			}
+			videokit.playVideo(video_name);
+			rtos::ThisThread::sleep_for(1s);
 		}
 
-		corevideo.turnOff();
+		corelcd.turnOff();
 	}
 }

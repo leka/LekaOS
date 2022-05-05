@@ -18,6 +18,7 @@ target_link_libraries(VideoKit
 	CoreLL
 	CoreSTM32Hal
 	CoreVideo
+	FileManagerKit
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

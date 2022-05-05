@@ -15,9 +15,6 @@ class VideoKit
 
 	virtual void initializeScreen() = 0;
 
-	virtual void turnOn()  = 0;
-	virtual void turnOff() = 0;
-
 	virtual void displayImage(const std::filesystem::path &path) = 0;
 
 	virtual void playVideo(const std::filesystem::path &path, bool must_loop = false) = 0;
