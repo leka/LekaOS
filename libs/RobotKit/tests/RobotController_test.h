@@ -102,12 +102,12 @@ class RobotControllerTest : public testing::Test
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
 
-	interface::Timeout::callback_t on_sleep_timeout			 = {};
-	interface::Timeout::callback_t on_sleeping_start_timeout = {};
-	interface::Timeout::callback_t on_charging_start_timeout = {};
+	interface::Timeout::callback_t on_sleep_timeout			 = [] {};
+	interface::Timeout::callback_t on_sleeping_start_timeout = [] {};
+	interface::Timeout::callback_t on_charging_start_timeout = [] {};
 
-	mbed::Callback<void()> on_charge_did_start {};
-	mbed::Callback<void()> on_charge_did_stop {};
+	mbed::Callback<void()> on_charge_did_start = [] {};
+	mbed::Callback<void()> on_charge_did_stop  = [] {};
 
 	bool spy_isCharging_return_value = false;
 
