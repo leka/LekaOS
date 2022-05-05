@@ -24,6 +24,7 @@
 #include "CoreLL.h"
 #include "CoreLTDC.hpp"
 #include "CoreMCU.h"
+#include "CoreMotor.h"
 #include "CorePwm.h"
 #include "CoreQSPI.h"
 #include "CoreRFIDReader.h"

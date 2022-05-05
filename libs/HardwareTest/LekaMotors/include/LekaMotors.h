@@ -13,15 +13,15 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
-#include "CoreMotorBase.h"
 #include "TwoMotorsBase.h"
+#include "interface/drivers/Motor.h"
 
 namespace leka {
 
 class Motors : TwoMotorsBase
 {
   public:
-	Motors(CoreMotorBase &motor_right, CoreMotorBase &motor_left);
+	Motors(interface::Motor &motor_right, interface::Motor &motor_left);
 	~Motors() {};
 
 	void move(direction_t direction, uint8_t speed);
@@ -29,8 +29,8 @@ class Motors : TwoMotorsBase
 	void stop(void);
 
   private:
-	CoreMotorBase &_motor_right;
-	CoreMotorBase &_motor_left;
+	interface::Motor &_motor_right;
+	interface::Motor &_motor_left;
 };
 
 }	// namespace leka

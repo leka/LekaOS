@@ -22,6 +22,7 @@
 #include "CoreLED.h"
 #include "CoreLL.h"
 #include "CoreLTDC.hpp"
+#include "CoreMotor.h"
 #include "CorePwm.h"
 #include "CoreSDRAM.hpp"
 #include "CoreSPI.h"
