@@ -4,6 +4,17 @@
 
 #include "./RobotController_test.h"
 
+TEST_F(RobotControllerTest, onChargingStartTimeout)
+{
+	EXPECT_CALL(mock_videokit, turnOn).Times(AnyNumber());
+	EXPECT_CALL(timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_charging_start_timeout));
+	EXPECT_CALL(timeout, start).Times(AnyNumber());
+	rc.startChargingBehavior();
+
+	EXPECT_CALL(mock_videokit, turnOff);
+	on_charging_start_timeout();
+}
+
 TEST_F(RobotControllerTest, stateChargingEventChargeDidStopGuardIsChargingTrue)
 {
 	rc.state_machine.set_current_states(lksm::state::charging);
@@ -24,8 +35,11 @@ TEST_F(RobotControllerTest, stateChargingEventChargeDidStopGuardIsChargingFalse)
 
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
 
+	EXPECT_CALL(timeout, stop);
+
 	Sequence on_idle_entry_sequence;
-	EXPECT_CALL(sleep_timeout, start).InSequence(on_idle_entry_sequence);
+	EXPECT_CALL(timeout, onTimeout).InSequence(on_idle_entry_sequence);
+	EXPECT_CALL(timeout, start).InSequence(on_idle_entry_sequence);
 	EXPECT_CALL(mock_videokit, playVideo).InSequence(on_idle_entry_sequence);
 	EXPECT_CALL(mock_videokit, turnOn).InSequence(on_idle_entry_sequence);
 
