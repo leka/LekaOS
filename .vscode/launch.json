@@ -19,6 +19,12 @@
 				"reset halt"
 			],
 			"device": "STM32F769BI",
+		},
+		{
+			"name": "Unit Tests Debug",
+			"type": "lldb",
+			"request": "launch",
+			"program": "${workspaceFolder}/_build_unit_tests/LekaOSUnitTestsExec",
 		}
 	]
 }
