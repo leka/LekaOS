@@ -157,3 +157,33 @@ TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove75)
 
 	rc.onStartChargingBehavior(battery_level);
 }
+
+TEST_F(RobotControllerTest, onBleConnection)
+{
+	EXPECT_CALL(dir_1_left, write(0)).Times(2);
+	EXPECT_CALL(dir_2_left, write(0)).Times(2);
+	EXPECT_CALL(speed_left, write(0)).Times(2);
+	EXPECT_CALL(dir_1_right, write(0)).Times(2);
+	EXPECT_CALL(dir_2_right, write(0)).Times(2);
+	EXPECT_CALL(speed_right, write(0)).Times(2);
+	EXPECT_CALL(mock_ears, hide()).Times(1);
+	EXPECT_CALL(mock_belt, hide()).Times(1);
+	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
+
+	rc.onBleConnectionCallback();
+}
+
+TEST_F(RobotControllerTest, onBleDisconnection)
+{
+	EXPECT_CALL(dir_1_left, write(0)).Times(2);
+	EXPECT_CALL(dir_2_left, write(0)).Times(2);
+	EXPECT_CALL(speed_left, write(0)).Times(2);
+	EXPECT_CALL(dir_1_right, write(0)).Times(2);
+	EXPECT_CALL(dir_2_right, write(0)).Times(2);
+	EXPECT_CALL(speed_right, write(0)).Times(2);
+	EXPECT_CALL(mock_ears, hide()).Times(1);
+	EXPECT_CALL(mock_belt, hide()).Times(1);
+	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
+
+	rc.onBleDisconnectionCallback();
+}
