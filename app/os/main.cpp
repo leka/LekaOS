@@ -328,6 +328,8 @@ namespace robot {
 		firmware::kit,
 		motors::left::motor,
 		motors::right::motor,
+		leds::ears,
+		leds::belt,
 		leds::kit,
 		display::internal::corelcd,
 		display::videokit,
