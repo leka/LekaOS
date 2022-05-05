@@ -44,8 +44,7 @@ class LedKit
 	static constexpr auto kNumberOfLedsEars = 2;
 	static constexpr auto kNumberOfLedsBelt = 20;
 
-	LedKit(rtos::Thread &thread, interface::EventFlags &event_flags, const CoreLED<kNumberOfLedsEars> &ears,
-		   const CoreLED<kNumberOfLedsBelt> &belt)
+	LedKit(rtos::Thread &thread, interface::EventFlags &event_flags, interface::LED &ears, interface::LED &belt)
 		: _thread(thread), _event_flags(event_flags), _ears(ears), _belt(belt) {};
 
 	void init();
@@ -93,8 +92,8 @@ class LedKit
 	rtos::Thread &_thread;
 	interface::EventFlags &_event_flags;
 
-	CoreLED<kNumberOfLedsEars> _ears;
-	CoreLED<kNumberOfLedsBelt> _belt;
+	interface::LED &_ears;
+	interface::LED &_belt;
 
 	interface::LEDAnimation *_animation = nullptr;
 };
