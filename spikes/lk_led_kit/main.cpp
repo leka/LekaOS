@@ -76,6 +76,10 @@ auto main() -> int
 	hello.start();
 
 	while (true) {
+		log_info("animation::ble");
+		ledkit.start(&LedKit::animation::ble);
+		rtos::ThisThread::sleep_for(10s);
+
 		log_info("animation::sleeping");
 		ledkit.start(&LedKit::animation::sleeping);
 		rtos::ThisThread::sleep_for(10s);
