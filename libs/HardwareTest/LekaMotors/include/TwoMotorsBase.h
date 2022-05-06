@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "interface/drivers/Motor.h"
+
 namespace leka {
 
 enum class Direction

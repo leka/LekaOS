@@ -6,14 +6,14 @@
 
 #include <span>
 
-#include "CoreMotorBase.h"
 #include "Utils.h"
 #include "interface/Command.h"
+#include "interface/drivers/Motor.h"
 
 namespace leka {
 
 struct MotorsCommand : interface::Command {
-	MotorsCommand(CoreMotorBase &left, CoreMotorBase &right) : _left(left), _right(right) {}
+	MotorsCommand(interface::Motor &left, interface::Motor &right) : _left(left), _right(right) {}
 
 	auto id() -> uint8_t override { return cmd::id; }
 
@@ -69,8 +69,8 @@ struct MotorsCommand : interface::Command {
 	};
 
 	std::array<uint8_t, cmd::size> args {};
-	CoreMotorBase &_left;
-	CoreMotorBase &_right;
+	interface::Motor &_left;
+	interface::Motor &_right;
 };
 
 }	// namespace leka

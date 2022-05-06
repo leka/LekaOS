@@ -19,19 +19,19 @@
 using namespace leka;
 using namespace std::chrono;
 
-void spinLeft(CoreMotorBase &left, CoreMotorBase &right)
+void spinLeft(interface::Motor &left, interface::Motor &right)
 {
 	left.spin(Rotation::clockwise, 0.5F);
 	right.spin(Rotation::clockwise, 0.5F);
 }
 
-void spinRight(CoreMotorBase &left, CoreMotorBase &right)
+void spinRight(interface::Motor &left, interface::Motor &right)
 {
 	left.spin(Rotation::counterClockwise, 0.5F);
 	right.spin(Rotation::counterClockwise, 0.5F);
 }
 
-void stop(CoreMotorBase &left, CoreMotorBase &right)
+void stop(interface::Motor &left, interface::Motor &right)
 {
 	left.stop();
 	right.stop();

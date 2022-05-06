@@ -11,7 +11,6 @@
 
 #include "BehaviorKit.h"
 #include "CommandKit.h"
-#include "CoreMotor.h"
 #include "CorePwm.h"
 #include "SerialNumberKit.h"
 #include "gmock/gmock.h"
@@ -19,6 +18,7 @@
 #include "mocks/leka/Battery.h"
 #include "mocks/leka/CoreLCD.h"
 #include "mocks/leka/CoreLED.h"
+#include "mocks/leka/CoreMotor.h"
 #include "mocks/leka/EventQueue.h"
 #include "mocks/leka/FirmwareUpdate.h"
 #include "mocks/leka/LEDAnimation.h"
@@ -77,27 +77,19 @@ class RobotControllerTest : public testing::Test
 
 	mock::LEDAnimation mock_animation {};
 
-	mbed::mock::DigitalOut dir_1_left = {};
-	mbed::mock::DigitalOut dir_2_left = {};
-	mock::PwmOut speed_left			  = {};
-
-	mbed::mock::DigitalOut dir_1_right = {};
-	mbed::mock::DigitalOut dir_2_right = {};
-	mock::PwmOut speed_right		   = {};
-
-	CoreMotor motor_left {dir_1_left, dir_2_left, speed_left};
-	CoreMotor motor_right {dir_1_right, dir_2_right, speed_right};
+	mock::CoreMotor mock_motor_left {};
+	mock::CoreMotor mock_motor_right {};
 
 	mock::CoreLCD mock_lcd {};
 	mock::VideoKit mock_videokit {};
 
-	BehaviorKit bhvkit {mock_videokit, ledkit, motor_left, motor_right};
+	BehaviorKit bhvkit {mock_videokit, ledkit, mock_motor_left, mock_motor_right};
 
 	CommandKit cmdkit {};
 
 	RobotController<bsml::sm<system::robot::StateMachine, bsml::testing>> rc {
-		timeout,   battery, serialnumberkit, firmware_update, motor_left, motor_right, mock_ears,
-		mock_belt, ledkit,	mock_lcd,		 mock_videokit,	  bhvkit,	  cmdkit};
+		timeout, battery,  serialnumberkit, firmware_update, mock_motor_left, mock_motor_right, mock_ears, mock_belt,
+		ledkit,	 mock_lcd, mock_videokit,	bhvkit,			 cmdkit};
 
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
@@ -113,12 +105,8 @@ class RobotControllerTest : public testing::Test
 
 	void expectedCallsStopMotors()
 	{
-		EXPECT_CALL(dir_1_left, write(0));
-		EXPECT_CALL(dir_2_left, write(0));
-		EXPECT_CALL(speed_left, write(0));
-		EXPECT_CALL(dir_1_right, write(0));
-		EXPECT_CALL(dir_2_right, write(0));
-		EXPECT_CALL(speed_right, write(0));
+		EXPECT_CALL(mock_motor_left, stop());
+		EXPECT_CALL(mock_motor_right, stop());
 	}
 
 	void expectedCallsInitializeComponents()
