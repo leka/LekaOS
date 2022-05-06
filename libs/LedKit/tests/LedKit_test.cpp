@@ -7,8 +7,8 @@
 #include "rtos/tests/UNITTESTS/doubles/Thread_stub.h"
 
 #include "CoreLED.h"
-#include "CoreSPI.h"
 #include "gtest/gtest.h"
+#include "mocks/leka/CoreLED.h"
 #include "mocks/leka/LEDAnimation.h"
 #include "mocks/mbed/EventFlags.h"
 
@@ -24,16 +24,15 @@ class LedKitTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
+	std::array<RGB, LedKit::kNumberOfLedsBelt> expected_colors {};
+
+	mock::CoreLED mock_ears;
+	mock::CoreLED mock_belt;
+
 	rtos::Thread animation_thread;
 	mbed::mock::EventFlags mock_event_flags;
 
-	std::array<RGB, LedKit::kNumberOfLedsBelt> expected_colors {};
-
-	CoreSPI spi {NC, NC, NC, NC};
-	CoreLED<LedKit::kNumberOfLedsBelt> belt {spi};
-	CoreLED<LedKit::kNumberOfLedsEars> ears {spi};
-
-	LedKit ledkit {animation_thread, mock_event_flags, ears, belt};
+	LedKit ledkit {animation_thread, mock_event_flags, mock_ears, mock_belt};
 };
 
 TEST_F(LedKitTest, initialization)
