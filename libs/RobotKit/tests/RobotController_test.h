@@ -53,7 +53,7 @@ class RobotControllerTest : public testing::Test
 		ble::init_mocks();
 
 		expectedCallsInitializeComponents();
-		expectedCallsRegisterEvents();
+		// expectedCallsRegisterEvents();
 	}
 	void TearDown() override { ble::delete_mocks(); }
 

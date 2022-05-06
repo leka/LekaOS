@@ -9,7 +9,7 @@ TEST_F(RobotControllerTest, stateSetupEventSetupCompleteGuardIsChargingFalse)
 	rc.state_machine.set_current_states(lksm::state::setup);
 
 	spy_isCharging_return_value = false;
-	expectedCallsRegisterEvents();
+	// expectedCallsRegisterEvents();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
 }
@@ -19,7 +19,7 @@ TEST_F(RobotControllerTest, stateSetupEventSetupCompleteGuardIsChargingTrue)
 	rc.state_machine.set_current_states(lksm::state::setup);
 
 	spy_isCharging_return_value = true;
-	expectedCallsRegisterEvents();
+	// expectedCallsRegisterEvents();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
 }
