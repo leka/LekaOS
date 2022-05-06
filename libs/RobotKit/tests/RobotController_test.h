@@ -13,12 +13,12 @@
 #include "CommandKit.h"
 #include "CoreMotor.h"
 #include "CorePwm.h"
-#include "CoreSPI.h"
 #include "SerialNumberKit.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/Battery.h"
 #include "mocks/leka/CoreLCD.h"
+#include "mocks/leka/CoreLED.h"
 #include "mocks/leka/EventQueue.h"
 #include "mocks/leka/FirmwareUpdate.h"
 #include "mocks/leka/LEDAnimation.h"
@@ -67,13 +67,13 @@ class RobotControllerTest : public testing::Test
 
 	mock::FirmwareUpdate firmware_update {};
 
-	CoreSPI spi {NC, NC, NC, NC};
-	CoreLED<LedKit::kNumberOfLedsBelt> belt {spi};
-	CoreLED<LedKit::kNumberOfLedsEars> ears {spi};
+	mock::CoreLED mock_ears;
+	mock::CoreLED mock_belt;
+
 	rtos::Thread animation_thread;
 	mbed::mock::EventFlags mock_event_flags;
 
-	LedKit ledkit {animation_thread, mock_event_flags, ears, belt};
+	LedKit ledkit {animation_thread, mock_event_flags, mock_ears, mock_belt};
 
 	mock::LEDAnimation mock_animation {};
 

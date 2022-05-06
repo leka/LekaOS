@@ -8,10 +8,10 @@
 
 #include "CoreMotor.h"
 #include "CorePwm.h"
-#include "CoreSPI.h"
 #include "LedKit.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "mocks/leka/CoreLED.h"
 #include "mocks/leka/LEDAnimation.h"
 #include "mocks/leka/PwmOut.h"
 #include "mocks/leka/VideoKit.h"
@@ -32,13 +32,13 @@ class BehaviorKitTest : public ::testing::Test
 
 	mock::VideoKit mock_videokit {};
 
-	CoreSPI spi {NC, NC, NC, NC};
-	CoreLED<LedKit::kNumberOfLedsBelt> belt {spi};
-	CoreLED<LedKit::kNumberOfLedsEars> ears {spi};
+	mock::CoreLED mock_ears;
+	mock::CoreLED mock_belt;
+
 	rtos::Thread animation_thread;
 	mbed::mock::EventFlags mock_event_flags;
 
-	LedKit ledkit {animation_thread, mock_event_flags, ears, belt};
+	LedKit ledkit {animation_thread, mock_event_flags, mock_ears, mock_belt};
 
 	mock::LEDAnimation mock_animation {};
 
