@@ -101,9 +101,24 @@ TEST_F(ConfigTest, read)
 	ASSERT_EQ(5, data);
 }
 
-TEST_F(ConfigTest, writeNotOpenFile)
+TEST_F(ConfigTest, writeCreatingFile)
 {
 	Config config {config_path};
+	auto configkit = ConfigKit();
+
+	spy_removeConfigFile();
+
+	auto write = configkit.write(config, 5);
+	ASSERT_TRUE(write);
+
+	auto data = spy_readConfigValue();
+	ASSERT_EQ(5, data);
+}
+
+TEST_F(ConfigTest, writeNotOpenFile)
+{
+	auto unreachable_config_path = std::filesystem::path {"/tmp/unnexisting_directory/test_config.conf"};
+	Config config {unreachable_config_path};
 	auto configkit = ConfigKit();
 	spy_removeConfigFile();
 	auto write = configkit.write(config, 5);
