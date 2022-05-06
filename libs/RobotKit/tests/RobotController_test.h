@@ -96,8 +96,8 @@ class RobotControllerTest : public testing::Test
 	CommandKit cmdkit {};
 
 	RobotController<bsml::sm<system::robot::StateMachine, bsml::testing>> rc {
-		timeout, battery,  serialnumberkit, firmware_update, motor_left, motor_right,
-		ledkit,	 mock_lcd, mock_videokit,	bhvkit,			 cmdkit};
+		timeout,   battery, serialnumberkit, firmware_update, motor_left, motor_right, mock_ears,
+		mock_belt, ledkit,	mock_lcd,		 mock_videokit,	  bhvkit,	  cmdkit};
 
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();

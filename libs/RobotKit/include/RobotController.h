@@ -43,14 +43,16 @@ class RobotController : public interface::RobotController
 
 	explicit RobotController(interface::Timeout &timeout, interface::Battery &battery, SerialNumberKit &serialnumberkit,
 							 interface::FirmwareUpdate &firmware_update, CoreMotor &motor_left, CoreMotor &motor_right,
-							 LedKit &ledkit, interface::LCD &lcd, interface::VideoKit &videokit,
-							 BehaviorKit &behaviorkit, CommandKit &cmdkit)
+							 interface::LED &ears, interface::LED &belt, LedKit &ledkit, interface::LCD &lcd,
+							 interface::VideoKit &videokit, BehaviorKit &behaviorkit, CommandKit &cmdkit)
 		: _timeout(timeout),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
 		  _firmware_update(firmware_update),
 		  _motor_left(motor_left),
 		  _motor_right(motor_right),
+		  _ears(ears),
+		  _belt(belt),
 		  _ledkit(ledkit),
 		  _lcd(lcd),
 		  _videokit(videokit),
@@ -228,12 +230,12 @@ class RobotController : public interface::RobotController
 
 		_ble.onConnectionCallback([this] {
 			log_info("BLE connected");
-			_behaviorkit.stop();
+			onBleConnectionCallback();
 		});
 
 		_ble.onDisconnectionCallback([this] {
 			log_info("BLE disconnected");
-			_behaviorkit.stop();
+			onBleDisconnectionCallback();
 		});
 
 		// Setup callbacks for each State Machine events
@@ -272,6 +274,26 @@ class RobotController : public interface::RobotController
 		raise(event::setup_complete {});
 	}
 
+	void onBleConnectionCallback()
+	{
+		_behaviorkit.stop();
+		_motor_left.stop();
+		_motor_right.stop();
+		_ears.hide();
+		_belt.hide();
+		_videokit.stopVideo();
+	}
+
+	void onBleDisconnectionCallback()
+	{
+		_behaviorkit.stop();
+		_motor_left.stop();
+		_motor_right.stop();
+		_ears.hide();
+		_belt.hide();
+		_videokit.stopVideo();
+	}
+
   private:
 	system::robot::sm::logger logger {};
 
@@ -289,6 +311,8 @@ class RobotController : public interface::RobotController
 
 	CoreMotor &_motor_left;
 	CoreMotor &_motor_right;
+	interface::LED &_ears;
+	interface::LED &_belt;
 	LedKit &_ledkit;
 	interface::LCD &_lcd;
 	interface::VideoKit &_videokit;
