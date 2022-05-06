@@ -23,6 +23,10 @@ namespace sm::event {
 	};
 	struct update_requested {
 	};
+	struct ble_connection {
+	};
+	struct ble_disconnection {
+	};
 
 }	// namespace sm::event
 
@@ -98,6 +102,14 @@ namespace sm::action {
 		auto operator()(irc &rc) const { rc.applyUpdate(); }
 	};
 
+	struct start_connection_behavior {
+		auto operator()(irc &rc) const { rc.startConnectionBehavior(); }
+	};
+
+	struct start_disconnection_behavior {
+		auto operator()(irc &rc) const { rc.startDisconnectionBehavior(); }
+	};
+
 }	// namespace sm::action
 
 struct StateMachine {
@@ -128,6 +140,12 @@ struct StateMachine {
 
 			, sm::state::charging + event<sm::event::charge_did_stop>  [sm::guard::is_not_charging {}]   = sm::state::idle
 			, sm::state::charging + event<sm::event::update_requested>[sm::guard::is_ready_to_update {}] = sm::state::updating
+
+			, sm::state::sleeping + event<sm::event::ble_connection> / sm::action::start_connection_behavior {}
+			, sm::state::idle     + event<sm::event::ble_connection> / sm::action::start_connection_behavior {}
+
+			, sm::state::sleeping + event<sm::event::ble_disconnection> / sm::action::start_disconnection_behavior {}= sm::state::idle
+			, sm::state::idle     + event<sm::event::ble_disconnection> / sm::action::start_disconnection_behavior {}= sm::state::idle
 
 			, sm::state::updating + boost::sml::on_entry<_> / sm::action::apply_update {}	  // clang-format on
 		);
