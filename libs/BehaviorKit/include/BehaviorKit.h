@@ -41,6 +41,8 @@ class BehaviorKit
 	void sprinkles();
 	void rainbow();
 
+	void bleConnection();
+
 	void stop();
 
   private:

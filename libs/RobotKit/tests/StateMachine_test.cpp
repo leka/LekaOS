@@ -171,3 +171,43 @@ TEST_F(StateMachineTest, stateChargingEventUpdateRequestedGuardFalse)
 
 	EXPECT_TRUE(sm.is(lksm::state::charging));
 }
+
+TEST_F(StateMachineTest, stateSleepingEventBleConnection)
+{
+	sm.set_current_states(lksm::state::sleeping);
+
+	EXPECT_CALL(mock_rc, startConnectionBehavior).Times(1);
+
+	sm.process_event(lksm::event::ble_connection {});
+
+	EXPECT_TRUE(sm.is(lksm::state::sleeping));
+}
+
+TEST_F(StateMachineTest, stateSleepingEventBleDisconnection)
+{
+	sm.set_current_states(lksm::state::sleeping);
+
+	sm.process_event(lksm::event::ble_disconnection {});
+
+	EXPECT_TRUE(sm.is(lksm::state::idle));
+}
+
+TEST_F(StateMachineTest, stateIdleEventBleConnection)
+{
+	sm.set_current_states(lksm::state::idle);
+
+	EXPECT_CALL(mock_rc, startConnectionBehavior).Times(1);
+
+	sm.process_event(lksm::event::ble_connection {});
+
+	EXPECT_TRUE(sm.is(lksm::state::idle));
+}
+
+TEST_F(StateMachineTest, stateIdleEventBleDisconnection)
+{
+	sm.set_current_states(lksm::state::idle);
+
+	sm.process_event(lksm::event::ble_disconnection {});
+
+	EXPECT_TRUE(sm.is(lksm::state::idle));
+}

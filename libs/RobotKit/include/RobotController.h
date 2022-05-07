@@ -163,6 +163,14 @@ class RobotController : public interface::RobotController
 		_battery_kit.onDataUpdated([this](uint8_t level) { _service_battery.setBatteryLevel(level); });
 	}
 
+	void startConnectionBehavior() final
+	{
+		onBleConnectionCallback();
+		_behaviorkit.bleConnection();
+	}
+
+	void startDisconnectionBehavior() final { onBleDisconnectionCallback(); }
+
 	auto isReadyToUpdate() -> bool final
 	{
 		return (_battery.isCharging() && _battery.level() > _minimal_battery_level_to_update);
@@ -229,15 +237,9 @@ class RobotController : public interface::RobotController
 
 		_battery_kit.startEventHandler();
 
-		_ble.onConnectionCallback([this] {
-			log_info("BLE connected");
-			onBleConnectionCallback();
-		});
+		_ble.onConnectionCallback([this] { raise(event::ble_connection {}); });
 
-		_ble.onDisconnectionCallback([this] {
-			log_info("BLE disconnected");
-			onBleDisconnectionCallback();
-		});
+		_ble.onDisconnectionCallback([this] { raise(event::ble_disconnection {}); });
 
 		// Setup callbacks for each State Machine events
 

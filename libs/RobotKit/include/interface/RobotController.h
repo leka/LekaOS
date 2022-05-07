@@ -29,6 +29,9 @@ class RobotController
 	virtual void startChargingBehavior() = 0;
 	virtual void stopChargingBehavior()	 = 0;
 
+	virtual void startConnectionBehavior()	  = 0;
+	virtual void startDisconnectionBehavior() = 0;
+
 	virtual auto isReadyToUpdate() -> bool = 0;
 	virtual void applyUpdate()			   = 0;
 };
