@@ -55,8 +55,7 @@ namespace spi {
 
 namespace animations {
 
-	auto thread = rtos::Thread {};
-	auto ef		= CoreEventFlags {};
+	auto event_loop = EventLoopKit {};
 
 }	// namespace animations
 
@@ -65,7 +64,7 @@ auto belt = CoreLED<LedKit::kNumberOfLedsBelt> {spi::belt};
 
 }	// namespace leds
 
-auto ledkit = LedKit {leds::animations::thread, leds::animations::ef, leds::ears, leds::belt};
+auto ledkit = LedKit {leds::animations::event_loop, leds::ears, leds::belt};
 
 namespace motor {
 

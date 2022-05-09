@@ -27,6 +27,7 @@
 #include "CoreSPI.h"
 #include "CoreSTM32Hal.h"
 #include "CoreVideo.hpp"
+#include "EventLoopKit.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LedKit.h"
@@ -83,8 +84,7 @@ namespace leds {
 
 		namespace animations {
 
-			auto thread		 = rtos::Thread {};
-			auto event_flags = CoreEventFlags {};
+			auto event_loop = EventLoopKit {};
 
 		}	// namespace animations
 
@@ -93,7 +93,7 @@ namespace leds {
 	auto ears = CoreLED<internal::ears::size> {internal::ears::spi};
 	auto belt = CoreLED<internal::belt::size> {internal::belt::spi};
 
-	auto kit = LedKit {internal::animations::thread, internal::animations::event_flags, ears, belt};
+	auto kit = LedKit {internal::animations::event_loop, ears, belt};
 
 	void turnOff()
 	{

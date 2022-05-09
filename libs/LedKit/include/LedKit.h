@@ -5,7 +5,6 @@
 #pragma once
 
 #include "drivers/HighResClock.h"
-#include "rtos/Thread.h"
 
 #include "ColorKit.h"
 #include "LEDAnimation.h"
@@ -35,8 +34,7 @@
 #include "animations/WakeUp.h"
 #include "animations/Wink.h"
 #include "animations/Yawn.h"
-#include "interface/drivers/EventFlags.h"
-
+#include "interface/libs/EventLoop.h"
 namespace leka {
 
 class LedKit
@@ -45,16 +43,13 @@ class LedKit
 	static constexpr auto kNumberOfLedsEars = 2;
 	static constexpr auto kNumberOfLedsBelt = 20;
 
-	LedKit(rtos::Thread &thread, interface::EventFlags &event_flags, interface::LED &ears, interface::LED &belt)
-		: _thread(thread), _event_flags(event_flags), _ears(ears), _belt(belt) {};
+	LedKit(interface::EventLoop &event_loop, interface::LED &ears, interface::LED &belt)
+		: _event_loop(event_loop), _ears(ears), _belt(belt) {};
 
 	void init();
 	void start(interface::LEDAnimation *animation);
-	[[noreturn]] void run();
+	void run();
 	void stop();
-
-	void initializeAnimation();
-	void runAnimation();
 
 	struct animation {
 		static inline auto afraid_blue	   = led::animation::AfraidBlue {};
@@ -87,12 +82,10 @@ class LedKit
 
 	struct flags {
 		static constexpr uint32_t START_LED_ANIMATION_FLAG = (1UL << 1);
-		static constexpr uint32_t STOP_LED_ANIMATION_FLAG  = (1UL << 2);
 	};
 
   private:
-	rtos::Thread &_thread;
-	interface::EventFlags &_event_flags;
+	interface::EventLoop &_event_loop;
 
 	interface::LED &_ears;
 	interface::LED &_belt;
