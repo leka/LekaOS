@@ -7,9 +7,9 @@
 #include "drivers/HighResClock.h"
 #include "rtos/ThisThread.h"
 
-#include "CoreEventFlags.h"
 #include "CoreLED.h"
 #include "CoreSPI.h"
+#include "EventLoopKit.h"
 #include "HelloWorld.h"
 #include "LedKit.h"
 #include "LogKit.h"
@@ -45,8 +45,7 @@ namespace leds {
 
 	namespace animations {
 
-		auto thread		 = rtos::Thread {};
-		auto event_flags = CoreEventFlags {};
+		auto event_loop = EventLoopKit {};
 
 	}	// namespace animations
 
@@ -64,7 +63,7 @@ namespace leds {
 }	// namespace leds
 
 auto hello	= HelloWorld {};
-auto ledkit = LedKit {leds::animations::thread, leds::animations::event_flags, leds::ears, leds::belt};
+auto ledkit = LedKit {leds::animations::event_loop, leds::ears, leds::belt};
 
 }	// namespace
 

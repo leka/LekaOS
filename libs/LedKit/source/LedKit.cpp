@@ -16,7 +16,7 @@ void LedKit::init()
 	_ears.show();
 	_belt.show();
 
-	_thread.start(mbed::Callback(this, &LedKit::run));
+	_event_loop.registerCallback([&] { run(); });
 }
 
 void LedKit::start(interface::LEDAnimation *animation)
@@ -29,43 +29,23 @@ void LedKit::start(interface::LEDAnimation *animation)
 		return;
 	}
 
-	_event_flags.set(flags::START_LED_ANIMATION_FLAG);
-}
-
-void LedKit::initializeAnimation()
-{
 	_animation->setLeds(_ears, _belt);
 	_animation->start();
+
+	_event_loop.start();
 }
 
-void LedKit::runAnimation()
+void LedKit::run()
 {
-	_event_flags.clear(flags::STOP_LED_ANIMATION_FLAG);
-
-	auto keep_running = [&]() {
-		auto flags = _event_flags.get();
-		return (flags != flags::STOP_LED_ANIMATION_FLAG);
-	};
-
-	while (keep_running() && _animation->isRunning()) {
+	while (_animation->isRunning()) {
 		_animation->run();
 		rtos::ThisThread::sleep_for(40ms);
 	}
 }
 
-[[noreturn]] void LedKit::run()
-{
-	while (true) {
-		_event_flags.wait_any(flags::START_LED_ANIMATION_FLAG);
-
-		initializeAnimation();
-		runAnimation();
-	}
-}
-
 void LedKit::stop()
 {
-	_event_flags.set(flags::STOP_LED_ANIMATION_FLAG);
+	_event_loop.stop();
 
 	if (_animation != nullptr) {
 		_animation->stop();
