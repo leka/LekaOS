@@ -144,6 +144,11 @@ struct StateMachine {
 			, sm::state::sleeping + event<sm::event::ble_connection> / sm::action::start_connection_behavior {}
 			, sm::state::idle     + event<sm::event::ble_connection> / sm::action::start_connection_behavior {}
 
+
+			, sm::state::charging + event<sm::event::ble_connection>    = sm::state::charging
+			, sm::state::charging + event<sm::event::ble_disconnection> = sm::state::charging
+			, sm::state::charging + event<sm::event::command_received>  = sm::state::charging
+
 			, sm::state::sleeping + event<sm::event::ble_disconnection> / sm::action::start_disconnection_behavior {}= sm::state::idle
 			, sm::state::idle     + event<sm::event::ble_disconnection> / sm::action::start_disconnection_behavior {}= sm::state::idle
 
