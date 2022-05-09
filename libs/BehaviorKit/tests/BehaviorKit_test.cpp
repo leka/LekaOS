@@ -16,7 +16,7 @@
 #include "mocks/leka/PwmOut.h"
 #include "mocks/leka/VideoKit.h"
 #include "mocks/mbed/DigitalOut.h"
-#include "mocks/mbed/EventFlags.h"
+#include "stubs/leka/EventLoopKit.h"
 
 using namespace leka;
 
@@ -35,10 +35,9 @@ class BehaviorKitTest : public ::testing::Test
 	mock::CoreLED mock_ears;
 	mock::CoreLED mock_belt;
 
-	rtos::Thread animation_thread;
-	mbed::mock::EventFlags mock_event_flags;
+	stub::EventLoopKit stub_event_loop;
 
-	LedKit ledkit {animation_thread, mock_event_flags, mock_ears, mock_belt};
+	LedKit ledkit {stub_event_loop, mock_ears, mock_belt};
 
 	mock::LEDAnimation mock_animation {};
 
