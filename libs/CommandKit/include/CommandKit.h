@@ -27,7 +27,7 @@ class CommandKit
 
 	void registerCommand(std::span<interface::Command *> cmds);
 
-	auto size() const -> std::size_t;
+	[[nodiscard]] auto size() const -> std::size_t;
 
   private:
 	void processCommands();
