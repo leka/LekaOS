@@ -10,8 +10,7 @@ using namespace leka;
 
 CommandKit::CommandKit()
 {
-	// _event_queue.dispatch_forever();
-	_event_queue_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
+	_event_queue.dispatch_forever();
 }
 
 void CommandKit::push(std::span<uint8_t> data)
@@ -65,14 +64,8 @@ void CommandKit::executeCommands()
 		for (auto *cmd: _commands) {
 			if (current_command == cmd->id()) {
 				_input_buffer.pop(cmd->data(), cmd->size());
-				auto exec = [cmd, current_command] {
-					auto *lcmd = cmd;
-					log_debug("Execute command: %i", current_command);
-					lcmd->execute();
-				};
-				// _event_queue.call(exec);
-				_event_queue.call(cmd, &interface::Command::execute);
-				// exec();
+				auto exec = [cmd] { cmd->execute(); };
+				_event_queue.call(exec);
 			}
 		}
 	}
