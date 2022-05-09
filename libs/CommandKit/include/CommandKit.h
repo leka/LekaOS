@@ -8,12 +8,7 @@
 #include <span>
 
 #include "CircularQueue.h"
-#include "commands/LedFullCommand.h"
-#include "commands/LedRangeCommand.h"
-#include "commands/LedSingleCommand.h"
-#include "commands/MotorsCommand.h"
-#include "commands/ReinforcerCommand.h"
-#include "commands/TestCommand.h"
+#include "CoreEventQueue.h"
 #include "interface/Command.h"
 
 namespace leka {
