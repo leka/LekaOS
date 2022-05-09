@@ -23,6 +23,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
 		tests/EventLoopKit_test.cpp
+		tests/EventLoopKit_test_stub.cpp
 	)
 
 endif()

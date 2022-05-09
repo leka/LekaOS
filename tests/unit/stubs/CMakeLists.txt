@@ -34,6 +34,7 @@ target_sources(stubs
 		${UNIT_TESTS_STUBS_MBED_DIR}/source/EventQueue_extension.cpp
 
 		${UNIT_TESTS_STUBS_LEKA_DIR}/source/CoreEventQueue.cpp
+		${UNIT_TESTS_STUBS_LEKA_DIR}/source/EventLoopKit.cpp
 
 		${EXTERN_MBED_OS_DIR}/rtos/tests/UNITTESTS/doubles/mbed_rtos_rtx_stub.c
 		${EXTERN_MBED_OS_DIR}/rtos/tests/UNITTESTS/doubles/Mutex_stub.cpp
