@@ -71,10 +71,9 @@ class RobotControllerTest : public testing::Test
 	mock::CoreLED mock_ears;
 	mock::CoreLED mock_belt;
 
-	rtos::Thread animation_thread;
-	mbed::mock::EventFlags mock_event_flags;
+	stub::EventLoopKit event_loop_stub;
 
-	LedKit ledkit {animation_thread, mock_event_flags, mock_ears, mock_belt};
+	LedKit ledkit {event_loop_stub, mock_ears, mock_belt};
 
 	mock::LEDAnimation mock_animation {};
 
