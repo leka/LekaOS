@@ -1,5 +1,5 @@
 // Leka - LekaOS
-// Copyright 2020 APF France handicap
+// Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
 #include <cstddef>
@@ -12,13 +12,18 @@
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
+#include "filesystem"
 
 using namespace leka;
 using namespace std::chrono_literals;
 
-auto file				= FileManagerKit::File {};
-auto filename			= std::to_array("/fs/tmp/test_spike_lk_filesystem_kit");
-const uint8_t seek_temp = 7;
+auto file									  = FileManagerKit::File {};
+const auto seek_temp						  = uint8_t {7};
+const std::filesystem::path tmp_dir			  = "/fs/tmp/";
+const std::filesystem::path test_dir		  = tmp_dir / "test/";
+const std::filesystem::path sub_test_dir	  = test_dir / "sub/";
+const std::filesystem::path test_filename	  = test_dir / "test_spike_lk_filesystem_kit";
+const std::filesystem::path sub_test_filename = sub_test_dir / "test_spike_lk_filesystem_kit";
 
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
@@ -56,7 +61,37 @@ auto main() -> int
 		log_info("A message from your board %s --> \"%s\" at %i s", MBED_CONF_APP_TARGET_NAME, hello.world,
 				 int(t.count() / 1000));
 
-		if (auto open = file.open(filename.data(), "w"); !open) {
+		if (auto removed = std::filesystem::remove(test_filename); !removed) {
+			log_error("The file or directory '%s' doesn't exist or fails to be removed", test_filename.c_str());
+		} else {
+			log_info("File or directory '%s' removed", test_filename.c_str());
+		}
+
+		if (auto removed = std::filesystem::remove(sub_test_dir); !removed) {
+			log_error("The file or directory '%s' doesn't exist or fails to be removed", sub_test_dir.c_str());
+		} else {
+			log_info("File or directory '%s' removed", sub_test_dir.c_str());
+		}
+
+		if (auto removed = std::filesystem::remove(test_dir); !removed) {
+			log_error("The file or directory '%s' doesn't exist or fails to be removed", test_dir.c_str());
+		} else {
+			log_info("File or directory '%s' removed", test_dir.c_str());
+		}
+
+		if (auto created = FileManagerKit::create_directory(test_dir); !created) {
+			log_error("The directory '%s' already exists or fails to be created ", test_dir.c_str());
+		} else {
+			log_info("Directory '%s' created", test_dir.c_str());
+		}
+
+		if (auto created = FileManagerKit::create_directory(sub_test_dir); !created) {
+			log_error("The directory '%s' already exists or fails to be created ", sub_test_dir.c_str());
+		} else {
+			log_info("Directory '%s' created", sub_test_dir.c_str());
+		}
+
+		if (auto open = file.open(test_filename, "w"); !open) {
 			log_error("Fail to open file");
 			return EXIT_FAILURE;
 		}
@@ -89,7 +124,7 @@ auto main() -> int
 
 		auto output_data = std::array<char, 1024> {};
 
-		if (auto open = file.reopen(filename.data(), "r"); !open) {
+		if (auto open = file.reopen(test_filename, "r"); !open) {
 			log_error("Fail to re-open file");
 			return EXIT_FAILURE;
 		}
@@ -116,6 +151,7 @@ auto main() -> int
 
 		file.close();
 		log_info("File closed");
+		log_info("\n\n");
 		rtos::ThisThread::sleep_for(10s);
 	}
 }
