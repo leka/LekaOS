@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-// ? LCOV_EXCL_START - Exclude from coverage report
+// LCOV_EXCL_START
 
 #include "BouncingSquare.h"
 
@@ -89,4 +89,4 @@ void BouncingSquare::drawSquare()
 }
 }	// namespace leka::animation
 
-// ? LCOV_EXCL_STOP - Exclude from coverage report
+// LCOV_EXCL_STOP

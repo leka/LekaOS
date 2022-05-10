@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-// ? LCOV_EXCL_START - Exclude from coverage report
+// LCOV_EXCL_START
 
 #include "CoreBufferedSerial.h"
 
@@ -28,4 +28,4 @@ void CoreBufferedSerial::sigio(mbed::Callback<void()> func)
 	_serial.sigio(func);
 }
 
-// ? LCOV_EXCL_STOP - Exclude from coverage report
+// LCOV_EXCL_STOP
