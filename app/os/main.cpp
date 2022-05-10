@@ -45,6 +45,12 @@
 #include "SlicingBlockDevice.h"
 #include "VideoKit.h"
 #include "bootutil/bootutil.h"
+#include "commands/LedFullCommand.h"
+#include "commands/LedRangeCommand.h"
+#include "commands/LedSingleCommand.h"
+#include "commands/MotorsCommand.h"
+#include "commands/ReinforcerCommand.h"
+#include "commands/TestCommand.h"
 
 using namespace leka;
 using namespace std::chrono;

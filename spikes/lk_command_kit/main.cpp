@@ -33,6 +33,12 @@
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 #include "VideoKit.h"
+#include "commands/LedFullCommand.h"
+#include "commands/LedRangeCommand.h"
+#include "commands/LedSingleCommand.h"
+#include "commands/MotorsCommand.h"
+#include "commands/ReinforcerCommand.h"
+#include "commands/TestCommand.h"
 
 using namespace leka;
 using namespace std::chrono;

@@ -8,12 +8,7 @@
 #include <span>
 
 #include "CircularQueue.h"
-#include "commands/LedFullCommand.h"
-#include "commands/LedRangeCommand.h"
-#include "commands/LedSingleCommand.h"
-#include "commands/MotorsCommand.h"
-#include "commands/ReinforcerCommand.h"
-#include "commands/TestCommand.h"
+#include "CoreEventQueue.h"
 #include "interface/Command.h"
 
 namespace leka {
@@ -27,7 +22,7 @@ class CommandKit
 
 	void registerCommand(std::span<interface::Command *> cmds);
 
-	auto size() const -> std::size_t;
+	[[nodiscard]] auto size() const -> std::size_t;
 
   private:
 	void processCommands();
