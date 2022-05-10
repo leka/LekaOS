@@ -44,6 +44,9 @@ namespace sm::state {
 	inline auto connected	 = boost::sml::state<class connected>;
 	inline auto disconnected = boost::sml::state<class disconnected>;
 
+	inline auto connected	 = boost::sml::state<class connected>;
+	inline auto disconnected = boost::sml::state<class disconnected>;
+
 }	// namespace sm::state
 
 namespace sm::guard {
