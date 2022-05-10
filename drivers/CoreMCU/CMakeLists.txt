@@ -15,3 +15,11 @@ target_sources(CoreMCU
 )
 
 target_link_libraries(CoreMCU mbed-os)
+
+if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
+
+	leka_unit_tests_sources(
+		tests/CoreMCU_test.cpp
+	)
+
+endif()
