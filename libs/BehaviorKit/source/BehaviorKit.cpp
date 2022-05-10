@@ -117,10 +117,12 @@ void BehaviorKit::rainbow()
 	_ledkit.stop();
 }
 
-void BehaviorKit::bleConnection()
+void BehaviorKit::bleConnection(bool with_video)
 {
 	_ledkit.start(&LedKit::animation::ble_connection);
-	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-action-wink-without-eyebrows.avi");
+	if (with_video) {
+		_videokit.playVideo("/fs/videos/2022_02_14-animation-face-action-wink-without-eyebrows.avi");
+	}
 }
 
 void BehaviorKit::stop()
