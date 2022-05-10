@@ -6,6 +6,8 @@
 
 using namespace leka;
 
+// LCOV_EXCL_START
+
 auto CoreMCU::getID() -> MCUID
 {
 	auto id = MCUID {};
@@ -19,3 +21,5 @@ auto CoreMCU::getID() -> MCUID
 
 	return id;
 }
+
+// LCOV_EXCL_STOP
