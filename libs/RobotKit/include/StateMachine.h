@@ -38,6 +38,9 @@ namespace sm::state {
 	inline auto charging = boost::sml::state<class charging>;
 	inline auto updating = boost::sml::state<class updating>;
 
+	inline auto connected	 = boost::sml::state<class connected>;
+	inline auto disconnected = boost::sml::state<class disconnected>;
+
 }	// namespace sm::state
 
 namespace sm::guard {
@@ -103,7 +106,11 @@ namespace sm::action {
 	};
 
 	struct start_connection_behavior {
-		auto operator()(irc &rc) const { rc.startConnectionBehavior(); }
+		auto operator()(irc &rc) const { rc.startConnectionBehavior(true); }
+	};
+
+	struct start_charging_connection_behavior {
+		auto operator()(irc &rc) const { rc.startConnectionBehavior(false); }
 	};
 
 	struct start_disconnection_behavior {
@@ -126,6 +133,8 @@ struct StateMachine {
 			, sm::state::idle     + boost::sml::on_entry<_> / (sm::action::start_sleep_timeout {}, sm::action::start_waiting_behavior {})
 			, sm::state::idle     + boost::sml::on_exit<_>  / (sm::action::stop_sleep_timeout  {}, sm::action::stop_waiting_behavior  {})
 
+			, sm::state::idle     + event<sm::event::ble_connection>                                     = sm::state::idle
+			, sm::state::idle     + event<sm::event::ble_disconnection>                                  = sm::state::idle
 			, sm::state::idle     + event<sm::event::sleep_timeout_did_end>                              = sm::state::sleeping
 			, sm::state::idle     + event<sm::event::charge_did_start> [sm::guard::is_charging {}]       = sm::state::charging
 
@@ -133,6 +142,7 @@ struct StateMachine {
 			, sm::state::sleeping + boost::sml::on_exit<_>  / sm::action::stop_sleeping_behavior {}
 
 			, sm::state::sleeping + event<sm::event::command_received>                                   = sm::state::idle
+			, sm::state::sleeping + event<sm::event::ble_connection>                                     = sm::state::idle
 			, sm::state::sleeping + event<sm::event::charge_did_start> [sm::guard::is_charging {}]       = sm::state::charging
 
 			, sm::state::charging + boost::sml::on_entry<_> / sm::action::start_charging_behavior {}
@@ -140,19 +150,16 @@ struct StateMachine {
 
 			, sm::state::charging + event<sm::event::charge_did_stop>  [sm::guard::is_not_charging {}]   = sm::state::idle
 			, sm::state::charging + event<sm::event::update_requested>[sm::guard::is_ready_to_update {}] = sm::state::updating
+			, sm::state::charging + event<sm::event::ble_connection>                                     = sm::state::charging
+			, sm::state::charging + event<sm::event::ble_disconnection>                                  = sm::state::charging
+			, sm::state::charging + event<sm::event::command_received>                                   = sm::state::charging
 
-			, sm::state::sleeping + event<sm::event::ble_connection> / sm::action::start_connection_behavior {}
-			, sm::state::idle     + event<sm::event::ble_connection> / sm::action::start_connection_behavior {}
+			, sm::state::updating + boost::sml::on_entry<_> / sm::action::apply_update {},
 
 
-			, sm::state::charging + event<sm::event::ble_connection>    = sm::state::charging
-			, sm::state::charging + event<sm::event::ble_disconnection> = sm::state::charging
-			, sm::state::charging + event<sm::event::command_received>  = sm::state::charging
-
-			, sm::state::sleeping + event<sm::event::ble_disconnection> / sm::action::start_disconnection_behavior {}= sm::state::idle
-			, sm::state::idle     + event<sm::event::ble_disconnection> / sm::action::start_disconnection_behavior {}= sm::state::idle
-
-			, sm::state::updating + boost::sml::on_entry<_> / sm::action::apply_update {}	  // clang-format on
+			* sm::state::disconnected  + event<sm::event::ble_connection>  [sm::guard::is_not_charging {}] / sm::action::start_connection_behavior {}          = sm::state::connected
+			, sm::state::disconnected  + event<sm::event::ble_connection>  [sm::guard::is_charging {}]     / sm::action::start_charging_connection_behavior {} = sm::state::connected
+			, sm::state::connected     + event<sm::event::ble_disconnection>                               / sm::action::start_disconnection_behavior {}       = sm::state::disconnected	  // clang-format on
 		);
 	}
 };

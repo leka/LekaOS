@@ -24,13 +24,14 @@ class RobotController
 	virtual void startSleepingBehavior() = 0;
 	virtual void stopSleepingBehavior()	 = 0;
 
-	virtual auto isCharging() -> bool = 0;
+	virtual auto isCharging() -> bool	  = 0;
+	virtual auto isBleConnected() -> bool = 0;
 
 	virtual void startChargingBehavior() = 0;
 	virtual void stopChargingBehavior()	 = 0;
 
-	virtual void startConnectionBehavior()	  = 0;
-	virtual void startDisconnectionBehavior() = 0;
+	virtual void startConnectionBehavior(bool enableVideo) = 0;
+	virtual void startDisconnectionBehavior()			   = 0;
 
 	virtual auto isReadyToUpdate() -> bool = 0;
 	virtual void applyUpdate()			   = 0;
