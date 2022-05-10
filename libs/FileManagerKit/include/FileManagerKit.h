@@ -57,4 +57,6 @@ struct File : public interface::File, public mbed::NonCopyable<File> {
 	std::unique_ptr<FILE, decltype(&fclose)> _file {nullptr, &fclose};
 };
 
+auto create_directory(const std::filesystem::path &path) -> bool;
+auto remove(const std::filesystem::path &path) -> bool;
 }	// namespace leka::FileManagerKit

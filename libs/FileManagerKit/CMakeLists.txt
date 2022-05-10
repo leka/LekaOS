@@ -13,6 +13,7 @@ target_sources(FileManagerKit
 	PRIVATE
 		source/File.cpp
 		source/FileReception.cpp
+		source/FileManagerKit.cpp
 )
 
 target_link_libraries(FileManagerKit
@@ -26,6 +27,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/File_test.cpp
 		tests/FileReception_test.cpp
+		tests/FileManagerKit_test.cpp
 	)
 
 endif()
