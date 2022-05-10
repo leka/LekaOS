@@ -2,7 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-// ? LCOV_EXCL_START - Exclude from coverage report
+// LCOV_EXCL_START
 
 #include "CoreWifi.h"
 
@@ -59,4 +59,4 @@ auto CoreWifi::get_stack() -> NetworkStack *
 	return _module.get_stack();
 }
 
-// ? LCOV_EXCL_STOP - Exclude from coverage report
+// LCOV_EXCL_STOP

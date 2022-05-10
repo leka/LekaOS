@@ -25,7 +25,7 @@
 
 #pragma once
 
-// ? LCOV_EXCL_START - Exclude from coverage report
+// LCOV_EXCL_START
 
 #include "LEDAnimation.h"
 
@@ -60,4 +60,4 @@ class Amazed : public interface::LEDAnimation
 
 }	// namespace leka::led::animation
 
-// ? LCOV_EXCL_STOP - Exclude from coverage report
+// LCOV_EXCL_STOP

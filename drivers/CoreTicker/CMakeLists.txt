@@ -17,3 +17,11 @@ target_sources(CoreTicker
 target_link_libraries(CoreTicker
 	mbed-os
 )
+
+if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
+
+	leka_unit_tests_sources(
+		tests/CoreTicker_test.cpp
+	)
+
+endif()

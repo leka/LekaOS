@@ -4,7 +4,7 @@
 
 #pragma once
 
-// ? LCOV_EXCL_START - Exclude from coverage report
+// LCOV_EXCL_START
 
 #include "ESP8266Interface.h"
 
@@ -20,4 +20,4 @@ class CoreESP8266 : public ESP8266Interface
 
 }	// namespace leka
 
-// ? LCOV_EXCL_STOP - Exclude from coverage report
+// LCOV_EXCL_STOP

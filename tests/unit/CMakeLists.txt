@@ -270,6 +270,7 @@ leka_register_unit_tests_for_driver(CoreQSPI)
 leka_register_unit_tests_for_driver(CoreRFIDReader)
 leka_register_unit_tests_for_driver(CoreSPI)
 leka_register_unit_tests_for_driver(CoreSTM32Hal)
+leka_register_unit_tests_for_driver(CoreTicker)
 leka_register_unit_tests_for_driver(CoreVideo)
 
 # Register libraries

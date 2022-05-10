@@ -4,7 +4,7 @@
 
 #pragma once
 
-// ? LCOV_EXCL_START - Exclude from coverage report
+// LCOV_EXCL_START
 
 #include "drivers/interfaces/InterfaceDigitalOut.h"
 
@@ -46,4 +46,4 @@ class CoreWifi : public WiFiInterface
 
 }	// namespace leka
 
-// ? LCOV_EXCL_STOP - Exclude from coverage report
+// LCOV_EXCL_STOP

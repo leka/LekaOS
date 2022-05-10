@@ -3,6 +3,8 @@
 using namespace leka;
 using namespace std::chrono;
 
+// LCOV_EXCL_START
+
 void CoreTimeout::onTimeout(callback_t const &callback)
 {
 	_callback = callback;
@@ -23,3 +25,5 @@ void CoreTimeout::timeout() const
 {
 	_callback();
 }
+
+// LCOV_EXCL_STOP
