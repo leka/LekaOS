@@ -19,6 +19,7 @@ target_link_libraries(CommandKit
 	CoreLED
 	CoreMotor
 	BehaviorKit
+	EventLoopKit
 	mbed-os
 )
 
@@ -28,6 +29,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/CommandKit_test.cpp
 		tests/CommandKit_test_push.cpp
 		tests/CommandKit_test_register.cpp
+		tests/CommandRunner_test.cpp
 	)
 
 endif()

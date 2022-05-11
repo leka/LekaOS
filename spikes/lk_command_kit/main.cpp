@@ -28,6 +28,7 @@
 #include "CoreSPI.h"
 #include "CoreSTM32Hal.h"
 #include "CoreVideo.hpp"
+#include "EventLoopKit.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
@@ -127,6 +128,8 @@ namespace command {
 
 namespace internal {
 
+	auto event_loop = EventLoopKit {};
+
 	auto test		= TestCommand {};
 	auto led		= LedSingleCommand {leds::ears, leds::belt};
 	auto led_full	= LedFullCommand {leds::ears, leds::belt};
@@ -211,7 +214,7 @@ void initializeSD()
 	fatfs.mount(&sd_blockdevice);
 }
 
-auto cmdkit = CommandKit {};
+auto cmdkit = CommandKit {command::internal::event_loop};
 
 HelloWorld hello;
 
