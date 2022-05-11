@@ -167,6 +167,8 @@ TEST_F(RobotControllerTest, onBleConnection)
 	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
 
 	rc.onBleConnectionCallback();
+
+	EXPECT_TRUE(rc.isBleConnected());
 }
 
 TEST_F(RobotControllerTest, onBleDisconnection)
@@ -178,4 +180,5 @@ TEST_F(RobotControllerTest, onBleDisconnection)
 	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
 
 	rc.onBleDisconnectionCallback();
+	EXPECT_FALSE(rc.isBleConnected());
 }
