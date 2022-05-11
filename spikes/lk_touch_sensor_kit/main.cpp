@@ -5,8 +5,6 @@
 #include "drivers/BufferedSerial.h"
 #include "rtos/ThisThread.h"
 
-#include "CoreI2C.h"
-#include "CoreIOExpander.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "TouchSensorKit.h"
@@ -22,10 +20,8 @@ auto main() -> int
 	hello.start();
 
 	log_info("Hello, World!\n\n");
-	auto corei2c		  = CoreI2C {PinName::SENSOR_PROXIMITY_MUX_I2C_SDA, PinName::SENSOR_PROXIMITY_MUX_I2C_SCL};
-	auto expander		  = CoreIOExpanderMCP23017 {corei2c};
-	auto input			  = io::expanded::DigitalIn<> {expander, touch::pin::all};
-	auto touch_sensor_kit = TouchSensorKit {input};
+
+	auto touch_sensor_kit = TouchSensorKit();
 
 	auto start = rtos::Kernel::Clock::now();
 
