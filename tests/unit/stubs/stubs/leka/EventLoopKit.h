@@ -29,6 +29,7 @@ class EventLoopKit : public interface::EventLoop
   private:
 	bool must_exit = false;
 
+	int loops				= 0;
 	int spy_number_of_loops = 1;
 
 	callback_t _callback {};

@@ -17,6 +17,8 @@ void EventLoopKit::start()
 		return;
 	}
 
+	loops	  = 0;
+	must_exit = false;
 	loop();
 }
 
@@ -32,8 +34,6 @@ void EventLoopKit::exit()
 
 void EventLoopKit::loop()
 {
-	auto loops = 0;
-
 	auto keep_running = [&] {
 		auto ret = (loops < spy_number_of_loops && !must_exit);
 		++loops;
