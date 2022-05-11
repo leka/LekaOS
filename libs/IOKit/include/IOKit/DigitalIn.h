@@ -25,8 +25,8 @@ class DigitalIn : public mbed::interface::DigitalIn, private internal::IO<pin_un
 
 	~DigitalIn() override = default;
 
-	auto read() -> int override { return internal::IO<pin_underlying_type_t>::read(); }
-	void mode(::PinMode mode) override { internal::IO<pin_underlying_type_t>::setMode(mode); }
+	auto read() -> int override { return internal::IO<pin_underlying_type_t>::readInput(); }
+	void mode(::PinMode mode) override { internal::IO<pin_underlying_type_t>::setModeInput(mode); }
 	auto is_connected() -> int override { return 1; }
 };
 
