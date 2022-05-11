@@ -34,8 +34,8 @@ namespace buffer {
 
 	inline auto timestamp = std::array<char, 32> {};
 	inline auto filename  = std::array<char, 128> {};
-	inline auto message	  = std::array<char, 128> {};
-	inline auto output	  = std::array<char, 256> {};
+	inline auto message	  = std::array<char, 256> {};
+	inline auto output	  = std::array<char, 512> {};
 
 	inline auto fifo = CircularQueue<char, 4096> {};
 
@@ -186,7 +186,7 @@ namespace internal {
 template <typename... Args>
 void format_message(const char *message = nullptr, Args... args)
 {
-	static auto format = std::array<char, 64> {};
+	static auto format = std::array<char, 128> {};
 
 	if (sizeof...(args) == 0) {
 		if (message == nullptr || *message == '\0') {
