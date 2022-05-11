@@ -278,48 +278,6 @@ namespace mcuboot {
 
 }	// namespace mcuboot
 
-namespace watchdog {
-
-	namespace internal {
-
-		auto &instance		   = mbed::Watchdog::get_instance();
-		constexpr auto timeout = 30000ms;
-		auto thread			   = rtos::Thread {osPriorityLow};
-
-		__attribute__((noreturn)) void watchdog_kick()
-		{
-			static auto kick_count = uint32_t {0};
-
-			static auto start = rtos::Kernel::Clock::now();
-			static auto stop  = rtos::Kernel::Clock::now();
-			static auto now	  = static_cast<int>(stop.time_since_epoch().count());
-			static auto delta = static_cast<int>((stop - start).count());
-
-			while (true) {
-				internal::instance.kick();
-				++kick_count;
-
-				stop  = rtos::Kernel::Clock::now();
-				now	  = static_cast<int>(stop.time_since_epoch().count());
-				delta = static_cast<int>((stop - start).count());
-
-				log_info("kicks: %i, delta: %ims, time: %ims", kick_count, delta, now);
-
-				start = rtos::Kernel::Clock::now();
-				rtos::ThisThread::sleep_for(5s);
-			}
-		}
-
-	}	// namespace internal
-
-	void start()
-	{
-		internal::instance.start(internal::timeout.count());
-		internal::thread.start(watchdog::internal::watchdog_kick);
-	}
-
-}	// namespace watchdog
-
 namespace robot {
 
 	namespace internal {
@@ -362,6 +320,53 @@ namespace robot {
 	}
 
 }	// namespace robot
+
+namespace watchdog {
+
+	namespace internal {
+
+		auto &instance		   = mbed::Watchdog::get_instance();
+		constexpr auto timeout = 30000ms;
+		auto thread			   = rtos::Thread {osPriorityLow};
+
+		__attribute__((noreturn)) void watchdog_kick()
+		{
+			static auto kick_count = uint32_t {0};
+
+			static auto start = rtos::Kernel::Clock::now();
+			static auto stop  = rtos::Kernel::Clock::now();
+			static auto now	  = static_cast<int>(stop.time_since_epoch().count());
+			static auto delta = static_cast<int>((stop - start).count());
+
+			while (true) {
+				internal::instance.kick();
+				++kick_count;
+
+				stop  = rtos::Kernel::Clock::now();
+				now	  = static_cast<int>(stop.time_since_epoch().count());
+				delta = static_cast<int>((stop - start).count());
+
+				auto ble_connected	 = robot::controller.isBleConnected() ? 1 : 0;
+				auto battery_level	 = battery::cells.level();
+				auto charging_status = battery::cells.isCharging() ? 1 : 0;
+
+				log_info("ts: %i, dt: %i, kck: %i, ble: %i, lvl: %i, chr: %i", now, delta, kick_count, ble_connected,
+						 battery_level, charging_status);
+
+				start = rtos::Kernel::Clock::now();
+				rtos::ThisThread::sleep_for(5s);
+			}
+		}
+
+	}	// namespace internal
+
+	void start()
+	{
+		internal::instance.start(internal::timeout.count());
+		internal::thread.start(watchdog::internal::watchdog_kick);
+	}
+
+}	// namespace watchdog
 
 }	// namespace
 
