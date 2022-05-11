@@ -6,9 +6,9 @@
 
 using namespace leka;
 
-auto CoreEventFlags::wait_any(eventflags_t flag) -> void
+auto CoreEventFlags::wait_any(eventflags_t flag, bool clear) -> void
 {
-	_event_flags.wait_any(flag);
+	_event_flags.wait_any(flag, osWaitForever, clear);
 }
 
 auto CoreEventFlags::set(eventflags_t flags) -> std::optional<eventflags_t>

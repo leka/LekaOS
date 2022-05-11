@@ -17,7 +17,7 @@ class CoreEventFlags : public interface::EventFlags
   public:
 	explicit CoreEventFlags() = default;
 
-	auto wait_any(eventflags_t flag) -> void final;
+	auto wait_any(eventflags_t flag, bool clear = true) -> void final;
 
 	auto set(eventflags_t flag) -> std::optional<eventflags_t> final;
 	auto clear(eventflags_t flag) -> std::optional<eventflags_t> final;
