@@ -19,6 +19,7 @@ target_sources(TouchSensorKit
 target_link_libraries(TouchSensorKit
 	mbed-os
 	IOKit
+	CoreI2C
 	CoreIOExpander
 )
 

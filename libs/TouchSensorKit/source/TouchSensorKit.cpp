@@ -6,15 +6,47 @@
 
 using namespace leka;
 
+TouchSensorKit::TouchSensorKit()
+{
+	pull_up();
+	set_power_mode(touch::power_mode::normal);
+}
+
+void TouchSensorKit::reset()
+{
+	set_power_mode(touch::power_mode::low);
+	set_power_mode(touch::power_mode::normal);
+}
+
+void TouchSensorKit::pull_up()
+{
+	_ear_left_input.mode(PinMode::PullUp);
+	_ear_right_input.mode(PinMode::PullUp);
+	_belt_left_back_input.mode(PinMode::PullUp);
+	_belt_left_front_input.mode(PinMode::PullUp);
+	_belt_right_back_input.mode(PinMode::PullUp);
+	_belt_right_front_input.mode(PinMode::PullUp);
+}
+
+void TouchSensorKit::set_power_mode(int power_mode)
+{
+	_ear_left_pm.write(power_mode);
+	_ear_right_pm.write(power_mode);
+	_belt_left_back_pm.write(power_mode);
+	_belt_left_front_pm.write(power_mode);
+	_belt_right_back_pm.write(power_mode);
+	_belt_right_front_pm.write(power_mode);
+}
+
 void TouchSensorKit::updateState()
 {
-	auto value						= _pin.read();
-	shadow_ear_left_touched			= (0 == (value & touch::pin::ear_left));
-	shadow_ear_right_touched		= (0 == (value & touch::pin::ear_right));
-	shadow_belt_left_back_touched	= (0 == (value & touch::pin::belt_left_back));
-	shadow_belt_left_front_touched	= (0 == (value & touch::pin::belt_left_front));
-	shadow_belt_right_back_touched	= (0 == (value & touch::pin::belt_right_back));
-	shadow_belt_right_front_touched = (0 == (value & touch::pin::belt_right_front));
+	shadow_ear_left_touched			= (0 == _ear_left_input.read());
+	shadow_ear_right_touched		= (0 == _ear_right_input.read());
+	shadow_belt_left_back_touched	= (0 == _belt_left_back_input.read());
+	shadow_belt_left_front_touched	= (0 == _belt_left_front_input.read());
+	shadow_belt_right_back_touched	= (0 == _belt_right_back_input.read());
+	shadow_belt_right_front_touched = (0 == _belt_right_front_input.read());
+	reset();
 }
 
 void TouchSensorKit::printState()
