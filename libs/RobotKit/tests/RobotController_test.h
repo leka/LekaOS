@@ -28,6 +28,7 @@
 #include "mocks/leka/VideoKit.h"
 #include "mocks/mbed/DigitalOut.h"
 #include "mocks/mbed/EventFlags.h"
+#include "stubs/leka/EventLoopKit.h"
 
 using namespace leka;
 namespace bsml = boost::sml;
@@ -85,7 +86,8 @@ class RobotControllerTest : public testing::Test
 
 	BehaviorKit bhvkit {mock_videokit, ledkit, mock_motor_left, mock_motor_right};
 
-	CommandKit cmdkit {};
+	stub::EventLoopKit event_loop {};
+	CommandKit cmdkit {event_loop};
 
 	RobotController<bsml::sm<system::robot::StateMachine, bsml::testing>> rc {
 		timeout, battery,  serialnumberkit, firmware_update, mock_motor_left, mock_motor_right, mock_ears, mock_belt,

@@ -8,17 +8,18 @@
 
 using namespace leka;
 
-CommandKit::CommandKit()
+CommandKit::CommandKit(interface::EventLoop &loop) : _event_loop(loop)
 {
-	_event_queue.dispatch_forever();
+	_event_loop.registerCallback([this] { executeCommands(); });
 }
 
 void CommandKit::push(std::span<uint8_t> data)
 {
 	_input_buffer.push(data);
 
-	constexpr auto kMinCommandSize = 7;
-	if (_input_buffer.size() >= kMinCommandSize && _is_ready_to_process) {
+	static constexpr auto kMinCommandSize = 7;
+
+	if (_input_buffer.size() >= kMinCommandSize) {
 		processCommands();
 	}
 }
@@ -35,13 +36,10 @@ auto CommandKit::size() const -> std::size_t
 
 void CommandKit::processCommands()
 {
-	_is_ready_to_process = false;
-
 	auto pos = 0U;
 
 	if (!_input_buffer.hasPattern(kStartPattern, pos)) {
 		_input_buffer.clear();
-		_is_ready_to_process = true;
 		return;
 	}
 
@@ -49,11 +47,6 @@ void CommandKit::processCommands()
 		_input_buffer.drop();
 	}
 
-	executeCommands();
-}
-
-void CommandKit::executeCommands()
-{
 	auto number_of_commands = uint8_t {};
 	_input_buffer.pop(number_of_commands);
 
@@ -63,12 +56,29 @@ void CommandKit::executeCommands()
 
 		for (auto *cmd: _commands) {
 			if (current_command == cmd->id()) {
-				_input_buffer.pop(cmd->data(), cmd->size());
-				auto exec = [cmd] { cmd->execute(); };
-				_event_queue.call(exec);
+				_tmp_buffer.at(0) = current_command;
+				_input_buffer.pop(&_tmp_buffer[1], cmd->size());
+				_command_buffer.push({_tmp_buffer.data(), cmd->size() + 1});
 			}
 		}
 	}
 
-	_is_ready_to_process = true;
+	_event_loop.start();
+}
+
+void CommandKit::executeCommands()
+{
+	while (!_command_buffer.empty()) {
+		auto current_command = uint8_t {};
+		_command_buffer.pop(current_command);
+
+		for (auto *cmd: _commands) {
+			if (current_command == cmd->id()) {
+				_command_buffer.pop(cmd->data(), cmd->size());
+				cmd->execute();
+			}
+		}
+	}
+
+	_event_loop.stop();
 }

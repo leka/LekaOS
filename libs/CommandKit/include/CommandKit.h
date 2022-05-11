@@ -8,15 +8,15 @@
 #include <span>
 
 #include "CircularQueue.h"
-#include "CoreEventQueue.h"
 #include "interface/Command.h"
+#include "interface/libs/EventLoop.h"
 
 namespace leka {
 
 class CommandKit
 {
   public:
-	CommandKit();
+	explicit CommandKit(interface::EventLoop &loop);
 
 	void push(std::span<uint8_t> data);
 
@@ -30,12 +30,13 @@ class CommandKit
 
 	static constexpr auto kStartPattern = std::to_array<uint8_t>({0x2A, 0x2A, 0x2A, 0x2A});
 
-	CoreEventQueue _event_queue {};
 	CircularQueue<uint8_t, 1024> _input_buffer {};
+	CircularQueue<uint8_t, 1024> _command_buffer {};
+	std::array<uint8_t, 128> _tmp_buffer {};
 
 	std::span<interface::Command *> _commands {};
 
-	bool _is_ready_to_process = true;
+	interface::EventLoop &_event_loop;
 };
 
 }	// namespace leka

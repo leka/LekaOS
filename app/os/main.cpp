@@ -33,6 +33,7 @@
 #include "CoreSTM32Hal.h"
 #include "CoreTimeout.h"
 #include "CoreVideo.hpp"
+#include "EventLoopKit.h"
 #include "FATFileSystem.h"
 #include "FirmwareKit.h"
 #include "HelloWorld.h"
@@ -209,6 +210,8 @@ namespace command {
 
 	namespace internal {
 
+		auto event_loop = EventLoopKit {};
+
 		auto led_single = LedSingleCommand {leds::ears, leds::belt};
 		auto led_full	= LedFullCommand {leds::ears, leds::belt};
 		auto led_range	= LedRangeCommand {leds::ears, leds::belt};
@@ -227,7 +230,7 @@ namespace command {
 
 }	// namespace command
 
-auto commandkit = CommandKit {};
+auto commandkit = CommandKit {command::internal::event_loop};
 
 namespace firmware {
 
