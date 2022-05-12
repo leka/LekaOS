@@ -12,9 +12,6 @@ CoreIOExpanderMCP23017::CoreIOExpanderMCP23017(interface::I2C &i2c, mbed::Digita
 	: _i2c(i2c), _mux_reset(mux_reset)
 {
 	init();
-	// config_IODIR(0x3F00);
-	// config_GPPU(0x3F00);
-	// config_GPIO(0x003F);
 };
 
 void CoreIOExpanderMCP23017::init()

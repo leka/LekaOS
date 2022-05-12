@@ -26,7 +26,7 @@ class TouchSensorKit
 
   private:
 	CoreI2C corei2c {PinName::SENSOR_PROXIMITY_MUX_I2C_SDA, PinName::SENSOR_PROXIMITY_MUX_I2C_SCL};
-	mbed::DigitalOut expander_reset {SENSOR_PROXIMITY_MUX_RESET, 0};
+	mbed::DigitalOut expander_reset {PinName::SENSOR_PROXIMITY_MUX_RESET, 0};
 	CoreIOExpanderMCP23017 expander {corei2c, expander_reset};
 
 	leka::io::expanded::DigitalIn<> _ear_left_input {expander, touch::pin::ear_left_input};
