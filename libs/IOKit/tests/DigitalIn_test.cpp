@@ -110,7 +110,7 @@ TEST_F(DigitalInTest, instantiationExplicitPinTypeEnumUint8t)
 TEST_F(DigitalInTest, setModePullNone)
 {
 	EXPECT_CALL(mockIOExpander, setPinAsInput(pin_number)).Times(1);
-	EXPECT_CALL(mockIOExpander, setModeForPin(pin_number, PullNone)).Times(1);
+	EXPECT_CALL(mockIOExpander, setModeForInputPin(pin_number, PullNone)).Times(1);
 
 	leka::io::expanded::DigitalIn<uint16_t> pin {mockIOExpander, pin_number};
 
@@ -120,7 +120,7 @@ TEST_F(DigitalInTest, setModePullNone)
 TEST_F(DigitalInTest, setModePullUp)
 {
 	EXPECT_CALL(mockIOExpander, setPinAsInput(pin_number)).Times(1);
-	EXPECT_CALL(mockIOExpander, setModeForPin(pin_number, PullUp)).Times(1);
+	EXPECT_CALL(mockIOExpander, setModeForInputPin(pin_number, PullUp)).Times(1);
 
 	leka::io::expanded::DigitalIn<uint16_t> pin {mockIOExpander, pin_number};
 
@@ -130,7 +130,7 @@ TEST_F(DigitalInTest, setModePullUp)
 TEST_F(DigitalInTest, setModePullDown)
 {
 	EXPECT_CALL(mockIOExpander, setPinAsInput(pin_number)).Times(1);
-	EXPECT_CALL(mockIOExpander, setModeForPin(pin_number, PullDown)).Times(1);
+	EXPECT_CALL(mockIOExpander, setModeForInputPin(pin_number, PullDown)).Times(1);
 
 	leka::io::expanded::DigitalIn<uint16_t> pin {mockIOExpander, pin_number};
 
