@@ -164,11 +164,9 @@ TEST_F(RobotControllerTest, onBleConnection)
 	EXPECT_CALL(mock_motor_right, stop()).Times(2);
 	EXPECT_CALL(mock_ears, hide()).Times(1);
 	EXPECT_CALL(mock_belt, hide()).Times(1);
-	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
+	EXPECT_CALL(mock_videokit, stopVideo()).Times(2);
 
-	rc.onBleConnectionCallback();
-
-	EXPECT_TRUE(rc.isBleConnected());
+	rc.stopActuatorsOnBleConnection();
 }
 
 TEST_F(RobotControllerTest, onBleDisconnection)
@@ -177,8 +175,7 @@ TEST_F(RobotControllerTest, onBleDisconnection)
 	EXPECT_CALL(mock_motor_right, stop()).Times(2);
 	EXPECT_CALL(mock_ears, hide()).Times(1);
 	EXPECT_CALL(mock_belt, hide()).Times(1);
-	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
+	EXPECT_CALL(mock_videokit, stopVideo()).Times(2);
 
-	rc.onBleDisconnectionCallback();
-	EXPECT_FALSE(rc.isBleConnected());
+	rc.stopActuatorsOnBleDisconnection();
 }

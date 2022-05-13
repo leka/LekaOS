@@ -23,11 +23,12 @@ struct RobotController : public interface::RobotController {
 	MOCK_METHOD(void, stopSleepingBehavior, (), (override));
 
 	MOCK_METHOD(bool, isCharging, (), (override));
+	MOCK_METHOD(bool, isBleConnected, (), (override));
 
 	MOCK_METHOD(void, startChargingBehavior, (), (override));
 	MOCK_METHOD(void, stopChargingBehavior, (), (override));
 
-	MOCK_METHOD(void, startConnectionBehavior, (), (override));
+	MOCK_METHOD(void, startConnectionBehavior, (bool), (override));
 	MOCK_METHOD(void, startDisconnectionBehavior, (), (override));
 
 	MOCK_METHOD(bool, isReadyToUpdate, (), (override));
