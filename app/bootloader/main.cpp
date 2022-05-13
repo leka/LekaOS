@@ -102,12 +102,14 @@ namespace leds {
 
 	namespace internal {
 
+		constexpr auto light_blue = RGB {0x00, 0x22, 0x43};
+
 		void blink()
 		{
-			leds::ears.setColor(RGB::pure_red);
+			leds::ears.setColor(light_blue);
 			leds::ears.show();
 			rtos::ThisThread::sleep_for(100ms);
-			leds::ears.setColor(RGB::black);
+			leds::ears.setColor(light_blue);
 			leds::ears.show();
 		}
 
