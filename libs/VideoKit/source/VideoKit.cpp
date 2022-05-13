@@ -34,7 +34,8 @@ void VideoKit::displayImage(const std::filesystem::path &path)
 	}
 }
 
-void VideoKit::playVideo(const std::filesystem::path &path, bool must_loop)
+void VideoKit::playVideo(const std::filesystem::path &path, bool must_loop,
+						 std::function<void(void)> onVideoDidEndCallback)
 {
 	if (auto file = FileManagerKit::File {path}; file.is_open()) {
 		file.close();
@@ -48,6 +49,7 @@ void VideoKit::playVideo(const std::filesystem::path &path, bool must_loop)
 		_event_flags.set(flags::START_VIDEO_FLAG);
 
 		_lcd.turnOn();
+		_onVideoDidEndCallback = onVideoDidEndCallback;
 	}
 }
 
@@ -81,5 +83,9 @@ void VideoKit::run()
 		}
 
 		file.close();
+		if (_onVideoDidEndCallback != nullptr) {
+			_onVideoDidEndCallback();
+			_onVideoDidEndCallback = {};
+		}
 	}
 }
