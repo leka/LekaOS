@@ -12,12 +12,16 @@
 
 #include "ConfigKit.h"
 #include "CoreBattery.h"
+#include "CoreFlashIS25LP016D.h"
+#include "CoreFlashManagerIS25LP016D.h"
 #include "CoreLED.h"
 #include "CoreMotor.h"
 #include "CorePwm.h"
+#include "CoreQSPI.h"
 #include "CoreSPI.h"
 #include "FATFileSystem.h"
 #include "FileManagerKit.h"
+#include "FirmwareKit.h"
 #include "SDBlockDevice.h"
 #include "bootutil/bootutil.h"
 #include "bootutil/image.h"
@@ -78,11 +82,82 @@ namespace sd {
 
 }	// namespace sd
 
+namespace factory_reset {
+
+	constexpr auto default_limit = uint8_t {10};
+
+	namespace internal {
+
+		constexpr auto factory_reset_counter_path = "/fs/conf/factory_reset_counter";
+
+		auto qspi	 = CoreQSPI();
+		auto manager = CoreFlashManagerIS25LP016D(qspi);
+		auto flash	 = CoreFlashIS25LP016D(qspi, manager);
+
+	}	// namespace internal
+
+	auto firmwarekit = FirmwareKit(internal::flash);
+
+	void initializeExternalFlash()
+	{
+		internal::flash.reset();
+		internal::qspi.setDataTransmissionFormat();
+		internal::qspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
+	}
+
+	auto getCounter() -> uint8_t
+	{
+		FileManagerKit::File file {internal::factory_reset_counter_path, "r"};
+
+		if (!file.is_open()) {
+			return default_limit + 1;
+		}
+
+		auto data = std::array<uint8_t, 1> {};
+		file.read(data);
+
+		return data.front();
+	}
+
+	void setCounter(uint8_t value)
+	{
+		FileManagerKit::File file {internal::factory_reset_counter_path, "w+"};
+
+		if (!file.is_open()) {
+			return;
+		}
+
+		auto output = std::to_array<uint8_t>({value});
+		file.write(output);
+	}
+
+	void incrementCounter()
+	{
+		auto counter = factory_reset::getCounter();
+		counter += 1;
+		setCounter(counter);
+	}
+
+	void resetCounter()
+	{
+		setCounter(0);
+	}
+
+	void applyFactoryReset()
+	{
+		auto firmware_version = FirmwareVersion {.major = 1, .minor = 0, .revision = 0};
+		firmwarekit.loadUpdate(firmware_version);
+		boot_set_pending(1);
+	}
+
+}	// namespace factory_reset
+
 namespace config {
 
 	auto bootloader_version = Config {"/fs/conf/bootloader_version", bootloader::version};
 	auto battery_hysteresis_offset =
 		Config {"/fs/conf/bootloader_battery_hysteresis_offset", battery::default_hysteresis_offset};
+	auto factory_reset_limit = Config {"/fs/conf/factory_reset_limit", factory_reset::default_limit};
 
 	auto configkit = ConfigKit {};
 
@@ -94,6 +169,14 @@ namespace config {
 	auto batteryHysteresisOffset() -> uint8_t
 	{
 		return configkit.read(config::battery_hysteresis_offset);
+	}
+
+	auto shouldApplyFactoryReset() -> bool
+	{
+		auto counter = factory_reset::getCounter();
+		auto limit	 = configkit.read(config::factory_reset_limit);
+
+		return counter > limit;
 	}
 
 }	// namespace config
@@ -243,6 +326,16 @@ auto main() -> int
 		}
 
 		rtos::ThisThread::sleep_for(5s);
+	}
+
+	if (config::shouldApplyFactoryReset()) {
+		factory_reset::initializeExternalFlash();
+
+		factory_reset::applyFactoryReset();
+		factory_reset::resetCounter();
+
+	} else {
+		factory_reset::incrementCounter();
 	}
 
 	auto start_address = os::start_address;
