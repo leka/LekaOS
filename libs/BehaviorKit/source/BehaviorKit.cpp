@@ -32,6 +32,13 @@ void BehaviorKit::launching()
 	_videokit.displayImage("/fs/images/logo.jpg");
 }
 
+void BehaviorKit::wakingUp()
+{
+	_ledkit.start(&LedKit::animation::wake_up);
+	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-action-waking-up-without-eyebrows.avi", false,
+						[this] { neutral(); });
+}
+
 void BehaviorKit::sleeping()
 {
 	_ledkit.start(&LedKit::animation::sleeping);

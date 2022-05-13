@@ -221,6 +221,12 @@ class RobotController : public interface::RobotController
 		_is_ble_connected = false;
 	}
 
+	void startWakingUpBehavior() final
+	{
+		_behaviorkit.wakingUp();
+		_lcd.turnOn();
+	}
+
 	auto isReadyToUpdate() -> bool final
 	{
 		return (_battery.isCharging() && _battery.level() > _minimal_battery_level_to_update);

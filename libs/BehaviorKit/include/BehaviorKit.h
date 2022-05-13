@@ -25,6 +25,7 @@ class BehaviorKit
 	void onScreensaverEnded(std::function<void(void)> const &callback);
 
 	void launching();
+	void wakingUp();
 	void sleeping();
 	void waiting();
 

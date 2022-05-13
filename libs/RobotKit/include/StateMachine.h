@@ -139,6 +139,10 @@ namespace sm::action {
 		auto operator()(irc &rc) const { rc.startDisconnectionBehavior(); }
 	};
 
+	struct start_waking_up_behavior {
+		auto operator()(irc &rc) const { rc.startWakingUpBehavior(); }
+	};
+
 	struct start_screensaver_behavior {
 		auto operator()(irc &rc) const { rc.startScreensaverBehavior(); }
 	};
@@ -185,9 +189,9 @@ struct StateMachine {
 			, sm::state::sleeping + boost::sml::on_entry<_> / sm::action::start_sleeping_behavior {}
 			, sm::state::sleeping + boost::sml::on_exit<_>  / sm::action::stop_sleeping_behavior {}
 
-			, sm::state::sleeping + event<sm::event::command_received>                                   = sm::state::working
-			, sm::state::sleeping + event<sm::event::ble_connection>                                     = sm::state::working
-			, sm::state::sleeping + event<sm::event::charge_did_start> [sm::guard::is_charging {}]       = sm::state::charging
+			, sm::state::sleeping + event<sm::event::command_received> / (sm::action::start_waking_up_behavior {})  = sm::state::working
+			, sm::state::sleeping + event<sm::event::ble_connection>                                                = sm::state::working
+			, sm::state::sleeping + event<sm::event::charge_did_start> [sm::guard::is_charging {}]                  = sm::state::charging
 
 			, sm::state::charging + boost::sml::on_entry<_> / sm::action::start_charging_behavior {}
 			, sm::state::charging + boost::sml::on_exit<_>  / sm::action::stop_charging_behavior {}

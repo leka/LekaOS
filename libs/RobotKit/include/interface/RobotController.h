@@ -36,7 +36,8 @@ class RobotController
 	virtual void startConnectionBehavior(bool enableVideo) = 0;
 	virtual void startDisconnectionBehavior()			   = 0;
 
-	virtual void startWorkingBehavior() = 0;
+	virtual void startWakingUpBehavior() = 0;
+	virtual void startWorkingBehavior()	 = 0;
 
 	virtual void startScreensaverBehavior() = 0;
 	virtual void stopScreensaverBehavior()	= 0;
