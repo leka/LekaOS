@@ -22,6 +22,7 @@ class BehaviorKit
 
 	void spinLeft(float speed);
 	void spinRight(float speed);
+	void onScreensaverEnded(std::function<void(void)> const &callback);
 
 	void launching();
 	void sleeping();
@@ -34,6 +35,11 @@ class BehaviorKit
 	void chargingOrange();
 	void chargingYellow();
 	void chargingGreen();
+
+	void underwater();
+	void bubbles();
+	void fly();
+	void singing();
 
 	void blinkGreen();
 	void spinBlink();
@@ -50,6 +56,8 @@ class BehaviorKit
 	LedKit &_ledkit;
 	interface::Motor &_motor_left;
 	interface::Motor &_motor_right;
+
+	std::function<void(void)> _on_screensaver_ended {};
 };
 
 }	// namespace leka

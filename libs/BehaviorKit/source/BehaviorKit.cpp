@@ -22,6 +22,11 @@ void BehaviorKit::spinRight(float speed)
 	_motor_right.spin(Rotation::counterClockwise, speed);
 }
 
+void BehaviorKit::onScreensaverEnded(std::function<void(void)> const &callback)
+{
+	_on_screensaver_ended = callback;
+}
+
 void BehaviorKit::launching()
 {
 	_videokit.displayImage("/fs/images/logo.jpg");
@@ -69,6 +74,34 @@ void BehaviorKit::chargingYellow()
 void BehaviorKit::chargingGreen()
 {
 	_videokit.displayImage("/fs/images/battery_green_4.jpg");
+}
+
+void BehaviorKit::underwater()
+{
+	_ledkit.start(&LedKit::animation::underwater);
+	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-state-under-water-without-eyebrows.avi", false,
+						_on_screensaver_ended);
+}
+
+void BehaviorKit::bubbles()
+{
+	_ledkit.start(&LedKit::animation::bubbles);
+	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-action-bubbles-without-eyebrows.avi", false,
+						_on_screensaver_ended);
+}
+
+void BehaviorKit::fly()
+{
+	_ledkit.start(&LedKit::animation::fly);
+	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-action-fly-without-eyebrows.avi", false,
+						_on_screensaver_ended);
+}
+
+void BehaviorKit::singing()
+{
+	_ledkit.start(&LedKit::animation::singing);
+	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-action-singing-color-without-eyebrows.avi", false,
+						_on_screensaver_ended);
 }
 
 void BehaviorKit::blinkGreen()

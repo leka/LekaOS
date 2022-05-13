@@ -91,6 +91,34 @@ class RobotController : public interface::RobotController
 
 	void stopWaitingBehavior() final { _behaviorkit.stop(); }
 
+	void startScreensaverBehavior() final
+	{
+		using namespace system::robot::sm;
+		static auto behaviorIndex		   = 0;
+		auto on_screensaver_ended_callback = [this]() { raise(event::screensaver_animation_did_end {}); };
+		_behaviorkit.onScreensaverEnded(on_screensaver_ended_callback);
+		switch (behaviorIndex) {
+			case 0:
+				_behaviorkit.underwater();
+				break;
+			case 1:
+				_behaviorkit.bubbles();
+				break;
+			case 2:
+				_behaviorkit.fly();
+				break;
+			case 3:
+				_behaviorkit.singing();
+				break;
+			default:
+				behaviorIndex = 0;
+				break;
+		}
+		++behaviorIndex;
+	}
+
+	void stopScreensaverBehavior() final { _behaviorkit.stop(); }
+
 	void startSleepingBehavior() final
 	{
 		using namespace std::chrono_literals;
