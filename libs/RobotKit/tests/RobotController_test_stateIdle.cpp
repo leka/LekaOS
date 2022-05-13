@@ -57,3 +57,46 @@ TEST_F(RobotControllerTest, stateIdleEventChargeDidStartGuardIsChargingFalse)
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
 }
+
+TEST_F(RobotControllerTest, startConnectionBehaviorIsCharging)
+{
+	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
+
+	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
+	EXPECT_CALL(mock_belt, hide).Times(1);
+	EXPECT_CALL(mock_ears, hide).Times(1);
+	EXPECT_CALL(mock_motor_left, stop).Times(2);
+	EXPECT_CALL(mock_motor_right, stop).Times(2);
+
+	EXPECT_CALL(mock_videokit, playVideo).Times(0);
+	rc.startConnectionBehavior();
+	EXPECT_TRUE(rc.isBleConnected());
+}
+
+TEST_F(RobotControllerTest, startConnectionBehaviorIsNotCharging)
+{
+	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
+
+	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
+	EXPECT_CALL(mock_belt, hide).Times(1);
+	EXPECT_CALL(mock_ears, hide).Times(1);
+	EXPECT_CALL(mock_motor_left, stop).Times(2);
+	EXPECT_CALL(mock_motor_right, stop).Times(2);
+
+	EXPECT_CALL(mock_videokit, playVideo).Times(1);
+
+	rc.startConnectionBehavior();
+	EXPECT_TRUE(rc.isBleConnected());
+}
+
+TEST_F(RobotControllerTest, startDisconnectionBehavior)
+{
+	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
+	EXPECT_CALL(mock_belt, hide).Times(1);
+	EXPECT_CALL(mock_ears, hide).Times(1);
+	EXPECT_CALL(mock_motor_left, stop).Times(2);
+	EXPECT_CALL(mock_motor_right, stop).Times(2);
+
+	rc.startDisconnectionBehavior();
+	EXPECT_FALSE(rc.isBleConnected());
+}
