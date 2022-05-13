@@ -96,6 +96,28 @@ namespace sd {
 
 }	// namespace sd
 
+namespace factory_reset {
+
+	namespace internal {
+
+		constexpr auto factory_reset_counter_path = "/fs/conf/factory_reset_counter";
+
+	}
+
+	void resetCounter()
+	{
+		FileManagerKit::File file {internal::factory_reset_counter_path, "w+"};
+
+		if (!file.is_open()) {
+			return;
+		}
+
+		auto output = std::to_array<uint8_t>({0});
+		file.write(output);
+	}
+
+}	// namespace factory_reset
+
 namespace leds {
 
 	namespace internal {
@@ -255,7 +277,13 @@ namespace firmware {
 
 	void setPendingUpdate()
 	{
-		boot_set_pending(1);
+		boot_set_pending(0);
+	}
+
+	void confirmFirmware()
+	{
+		factory_reset::resetCounter();
+		boot_set_confirmed();
 	}
 
 }	// namespace firmware
@@ -453,6 +481,9 @@ auto main() -> int
 	robot::controller.registerEvents();
 
 	rfidkit.onTagActivated([](MagicCard card) { robot::emergencyStop(card); });
+
+	// TODO(@team): Add functional test prior confirming the firmware
+	firmware::confirmFirmware();
 
 	while (true) {
 		rtos::ThisThread::sleep_for(1s);
