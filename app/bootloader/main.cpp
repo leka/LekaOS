@@ -84,10 +84,11 @@ namespace sd {
 
 namespace factory_reset {
 
-	constexpr auto default_counter = uint8_t {100};
-	constexpr auto default_limit   = uint8_t {10};
+	constexpr auto default_limit = uint8_t {10};
 
 	namespace internal {
+
+		constexpr auto factory_reset_counter_path = "/fs/conf/factory_reset_counter";
 
 		auto qspi	 = CoreQSPI();
 		auto manager = CoreFlashManagerIS25LP016D(qspi);
@@ -104,6 +105,44 @@ namespace factory_reset {
 		internal::qspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
 	}
 
+	auto getCounter() -> uint8_t
+	{
+		FileManagerKit::File file {internal::factory_reset_counter_path, "r"};
+
+		if (!file.is_open()) {
+			return default_limit + 1;
+		}
+
+		auto data = std::array<uint8_t, 1> {};
+		file.read(data);
+
+		return data.front();
+	}
+
+	void setCounter(uint8_t value)
+	{
+		FileManagerKit::File file {internal::factory_reset_counter_path, "w+"};
+
+		if (!file.is_open()) {
+			return;
+		}
+
+		auto output = std::to_array<uint8_t>({value});
+		file.write(output);
+	}
+
+	void incrementCounter()
+	{
+		auto counter = factory_reset::getCounter();
+		counter += 1;
+		setCounter(counter);
+	}
+
+	void resetCounter()
+	{
+		setCounter(0);
+	}
+
 	void applyFactoryReset()
 	{
 		auto firmware_version = FirmwareVersion {.major = 1, .minor = 0, .revision = 0};
@@ -118,8 +157,7 @@ namespace config {
 	auto bootloader_version = Config {"/fs/conf/bootloader_version", bootloader::version};
 	auto battery_hysteresis_offset =
 		Config {"/fs/conf/bootloader_battery_hysteresis_offset", battery::default_hysteresis_offset};
-	auto factory_reset_counter = Config {"/fs/conf/factory_reset_counter", factory_reset::default_counter};
-	auto factory_reset_limit   = Config {"/fs/conf/factory_reset_limit", factory_reset::default_limit};
+	auto factory_reset_limit = Config {"/fs/conf/factory_reset_limit", factory_reset::default_limit};
 
 	auto configkit = ConfigKit {};
 
@@ -133,24 +171,12 @@ namespace config {
 		return configkit.read(config::battery_hysteresis_offset);
 	}
 
-	void incrementFactoryResetCounter()
-	{
-		auto counter = configkit.read(config::factory_reset_counter);
-		counter += 1;
-		configkit.write(config::factory_reset_counter, counter);
-	}
-
 	auto shouldApplyFactoryReset() -> bool
 	{
-		auto counter = configkit.read(config::factory_reset_counter);
+		auto counter = factory_reset::getCounter();
 		auto limit	 = configkit.read(config::factory_reset_limit);
 
 		return counter > limit;
-	}
-
-	void resetFactoryResetCounter()
-	{
-		configkit.write(config::factory_reset_counter, 0);
 	}
 
 }	// namespace config
@@ -306,10 +332,10 @@ auto main() -> int
 		factory_reset::initializeExternalFlash();
 
 		factory_reset::applyFactoryReset();
-		config::resetFactoryResetCounter();
+		factory_reset::resetCounter();
 
 	} else {
-		config::incrementFactoryResetCounter();
+		factory_reset::incrementCounter();
 	}
 
 	auto start_address = os::start_address;
