@@ -40,22 +40,22 @@ TEST_F(LogKitFormatTest, formatFullContentStringOnly)
 {
 	log_info("Hello, World");
 
-	ASSERT_THAT(spy_sink_output, MatchesRegex("[0-9:]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\.]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+() > .+"));
 }
 
 TEST_F(LogKitFormatTest, formatFullContentStringAdditionalArguments)
 {
 	log_info("Hello, World. %i %s!", 42, "FTW");
 
-	ASSERT_THAT(spy_sink_output, MatchesRegex("[0-9:]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\.]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+() > .+"));
 }
 
 TEST_F(LogKitFormatTest, formatFullContentStringEmpty)
 {
 	log_info("");
 
-	ASSERT_THAT(spy_sink_output, Not(HasSubstr(" > ")));
-	ASSERT_THAT(spy_sink_output, MatchesRegex("[0-9:]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+()"));
+	EXPECT_THAT(spy_sink_output, Not(HasSubstr(" > ")));
+	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\.]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+()"));
 }
 
 TEST_F(LogKitFormatTest, formatTimeHumanReadable)
@@ -65,15 +65,15 @@ TEST_F(LogKitFormatTest, formatTimeHumanReadable)
 	auto time = std::string(leka::logger::buffer::timestamp.data());
 
 	// Format: hhh:mm:ss:μμμ
-	ASSERT_THAT(time, MatchesRegex("[0-9]{3}:[0-9]{2}:[0-9]{2}:[0-9]{3}"));
+	ASSERT_THAT(time, MatchesRegex("[0-9]{3}:[0-9]{2}:[0-9]{2}\.[0-9]{3}"));
 }
 
 TEST_F(LogKitFormatTest, formatLevel)
 {
 	for (auto const [level, string]: leka::logger::level::lut) {
 		// Format: [LEVEL]
-		ASSERT_THAT(string, MatchesRegex("\\[[A-Z[:space:]]+\\]"));
-		ASSERT_THAT(string, MatchesRegex("\\[(INFO|ERR |DBUG)\\]"));
+		EXPECT_THAT(string, MatchesRegex("\\[[A-Z[:space:]]+\\]"));
+		EXPECT_THAT(string, MatchesRegex("\\[(INFO|ERR |DBUG)\\]"));
 	}
 }
 
@@ -83,8 +83,8 @@ TEST_F(LogKitFormatTest, formatFileNameLineNumberFunctioName)
 
 	auto filename = std::string(leka::logger::buffer::filename.data());
 
-	ASSERT_THAT(filename, MatchesRegex("\\[.+[.h|.cpp]:[0-9]+\\] .+"));
-	ASSERT_THAT(filename, HasSubstr(__PRETTY_FUNCTION__));
+	EXPECT_THAT(filename, MatchesRegex("\\[.+[.h|.cpp]:[0-9]+\\] .+"));
+	EXPECT_THAT(filename, HasSubstr(__PRETTY_FUNCTION__));
 }
 
 TEST_F(LogKitFormatTest, formatMessageStringOnly)
@@ -93,7 +93,7 @@ TEST_F(LogKitFormatTest, formatMessageStringOnly)
 
 	auto message = std::string(leka::logger::buffer::message.data());
 
-	ASSERT_THAT(message, MatchesRegex("> Hello, World"));
+	EXPECT_THAT(message, MatchesRegex("> Hello, World"));
 }
 
 TEST_F(LogKitFormatTest, formatMessageStringAdditionalArguments)
@@ -102,7 +102,7 @@ TEST_F(LogKitFormatTest, formatMessageStringAdditionalArguments)
 
 	auto message = std::string(leka::logger::buffer::message.data());
 
-	ASSERT_THAT(message, MatchesRegex("> Hello, World, with 4 variadic arguments"));
+	EXPECT_THAT(message, MatchesRegex("> Hello, World, with 4 variadic arguments"));
 }
 
 TEST_F(LogKitFormatTest, formatMessageStringEmpty)
@@ -111,7 +111,7 @@ TEST_F(LogKitFormatTest, formatMessageStringEmpty)
 
 	auto message = std::string(leka::logger::buffer::message.data());
 
-	ASSERT_THAT(message, IsEmpty());
+	EXPECT_THAT(message, IsEmpty());
 }
 
 TEST_F(LogKitFormatTest, formatMessageNullPointer)
@@ -120,7 +120,7 @@ TEST_F(LogKitFormatTest, formatMessageNullPointer)
 
 	auto message = std::string(leka::logger::buffer::message.data());
 
-	ASSERT_THAT(message, IsEmpty());
+	EXPECT_THAT(message, IsEmpty());
 }
 
 TEST_F(LogKitFormatTest, formatMessageNoParameters)
@@ -129,5 +129,5 @@ TEST_F(LogKitFormatTest, formatMessageNoParameters)
 
 	auto message = std::string(leka::logger::buffer::message.data());
 
-	ASSERT_THAT(message, IsEmpty());
+	EXPECT_THAT(message, IsEmpty());
 }

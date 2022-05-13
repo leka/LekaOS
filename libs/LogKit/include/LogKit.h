@@ -173,8 +173,8 @@ namespace internal {
 	auto min  = sec / 60;
 	auto hour = min / 60;
 
-	// ? Format: hhh:mm:ss:μμμ e.g. 008:15:12:345
-	snprintf(buffer::timestamp.data(), std::size(buffer::timestamp), "%03lld:%02lld:%02lld:%03lld", hour, min % 60,
+	// ? Format: hhh:mm:ss.μμμ e.g. 008:15:12.345
+	snprintf(buffer::timestamp.data(), std::size(buffer::timestamp), "%03lld:%02lld:%02lld.%03lld", hour, min % 60,
 			 sec % 60, ms);
 }
 
