@@ -16,7 +16,7 @@ class VideoKit : public interface::VideoKit
 
 	MOCK_METHOD(void, displayImage, (const std::filesystem::path &), (override));
 
-	MOCK_METHOD(void, playVideo, (const std::filesystem::path &, bool), (override));
+	MOCK_METHOD(void, playVideo, (const std::filesystem::path &, bool, std::function<void()>), (override));
 	MOCK_METHOD(void, stopVideo, (), (override));
 };
 

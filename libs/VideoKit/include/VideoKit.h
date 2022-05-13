@@ -25,7 +25,8 @@ class VideoKit : public interface::VideoKit
 
 	void displayImage(const std::filesystem::path &path) final;
 
-	void playVideo(const std::filesystem::path &path, bool must_loop = false) final;
+	void playVideo(const std::filesystem::path &path, bool must_loop = false,
+				   std::function<void()> callback = {}) final;
 	void stopVideo() final;
 
 	[[noreturn]] void run();
@@ -42,6 +43,7 @@ class VideoKit : public interface::VideoKit
 	interface::Video &_video;
 
 	std::filesystem::path _current_path {};
+	std::function<void()> _on_video_ended_callback {};
 	bool _must_loop {false};
 };
 

@@ -17,8 +17,9 @@ class VideoKit
 
 	virtual void displayImage(const std::filesystem::path &path) = 0;
 
-	virtual void playVideo(const std::filesystem::path &path, bool must_loop = false) = 0;
-	virtual void stopVideo()														  = 0;
+	virtual void playVideo(const std::filesystem::path &path, bool must_loop = false,
+						   std::function<void()> onVideoDidEndCallback = {}) = 0;
+	virtual void stopVideo()												 = 0;
 };
 
 }	// namespace leka::interface
