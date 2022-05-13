@@ -292,4 +292,8 @@
 #define WSF_MS_PER_TICK 1	// defined by library:cordio
 #define _RTE_				// defined by library:rtos
 
+#define MBED_CPU_STATS_ENABLED	 1
+#define MBED_HEAP_STATS_ENABLED	 1
+#define MBED_STACK_STATS_ENABLED 1
+
 #endif
