@@ -158,6 +158,11 @@ void BehaviorKit::bleConnection(bool enableVideo)
 	}
 }
 
+void BehaviorKit::neutral()
+{
+	_videokit.displayImage("/fs/images/robot-emotion-neutral.jpg");
+}
+
 void BehaviorKit::stop()
 {
 	_ledkit.stop();

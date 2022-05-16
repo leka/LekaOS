@@ -48,6 +48,7 @@ class BehaviorKit
 	void rainbow();
 
 	void bleConnection(bool enableVideo);
+	void neutral();
 
 	void stop();
 
