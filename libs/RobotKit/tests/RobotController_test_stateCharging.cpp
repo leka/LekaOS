@@ -19,10 +19,10 @@ TEST_F(RobotControllerTest, stateChargingEventChargeDidStopGuardIsChargingTrue)
 {
 	rc.state_machine.set_current_states(lksm::state::charging);
 
-	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
+	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
 
 	// TODO: Specify which BLE service and what is expected if necessary
-	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(2);
 
 	on_charge_did_stop();
 
