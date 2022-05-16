@@ -25,6 +25,12 @@ class BLEServiceUpdate : public interface::BLEService
 				_on_update_requested_callback();
 			}
 		}
+		if (params.handle == factory_reset_characteristic.getValueHandle()) {
+			is_factory_reset_requested = static_cast<bool>(params.data[0]);
+			if (_on_factory_reset_notification_callback != nullptr) {
+				_on_factory_reset_notification_callback(is_factory_reset_requested);
+			}
+		}
 		if (params.handle == version_major_characteristic.getValueHandle()) {
 			version.major = params.data[0];
 		}
@@ -38,11 +44,21 @@ class BLEServiceUpdate : public interface::BLEService
 
 	void onUpdateRequested(const std::function<void()> &callback) { _on_update_requested_callback = callback; }
 
+	void onFactoryResetNotification(const std::function<void(bool)> &callback)
+	{
+		_on_factory_reset_notification_callback = callback;
+	}
+
   private:
 	bool must_apply_update {false};
 	WriteOnlyGattCharacteristic<bool> apply_update_characteristic {
 		service::firmware_update::characteristic::request_update, &must_apply_update};
 	std::function<void()> _on_update_requested_callback {};
+
+	bool is_factory_reset_requested {false};
+	WriteOnlyGattCharacteristic<bool> factory_reset_characteristic {
+		service::firmware_update::characteristic::request_factory_reset, &is_factory_reset_requested};
+	std::function<void(bool)> _on_factory_reset_notification_callback {};
 
 	FirmwareVersion version {};
 
@@ -55,9 +71,9 @@ class BLEServiceUpdate : public interface::BLEService
 	WriteOnlyGattCharacteristic<uint16_t> version_revision_characteristic {
 		service::firmware_update::characteristic::version_revision, &version.revision};
 
-	std::array<GattCharacteristic *, 4> _characteristic_table {
-		&apply_update_characteristic, &version_major_characteristic, &version_minor_characteristic,
-		&version_revision_characteristic};
+	std::array<GattCharacteristic *, 5> _characteristic_table {
+		&apply_update_characteristic, &factory_reset_characteristic, &version_major_characteristic,
+		&version_minor_characteristic, &version_revision_characteristic};
 };
 
 }	// namespace leka

@@ -79,6 +79,47 @@ TEST_F(BLEServiceUpdateTest, onRequestUpdateReceivedNotSameHandle)
 	onDataReceivedProcess(sent_value_data.get());
 }
 
+TEST_F(BLEServiceUpdateTest, onFactoryResetNotificationReceivedTrue)
+{
+	bool request_factory_reset_sent		 = true;
+	auto request_factory_reset_sent_data = std::make_shared<uint8_t>(request_factory_reset_sent);
+
+	testing::MockFunction<void(bool)> mock_callback;
+	service_update.onFactoryResetNotification(mock_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_callback, Call(request_factory_reset_sent)).Times(1);
+
+	onDataReceivedProcess(request_factory_reset_sent_data.get());
+}
+
+TEST_F(BLEServiceUpdateTest, onFactoryResetNotificationReceivedFalse)
+{
+	bool request_factory_reset_sent		 = false;
+	auto request_factory_reset_sent_data = std::make_shared<uint8_t>(request_factory_reset_sent);
+
+	testing::MockFunction<void(bool)> mock_callback;
+	service_update.onFactoryResetNotification(mock_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_callback, Call(request_factory_reset_sent)).Times(1);
+
+	onDataReceivedProcess(request_factory_reset_sent_data.get());
+}
+
+TEST_F(BLEServiceUpdateTest, onFactoryResetNotificationReceivedNotSameHandle)
+{
+	bool sent_value		 = true;
+	auto sent_value_data = std::make_shared<uint8_t>(sent_value);
+
+	data_received_handle.handle = 0xFFFF;
+
+	testing::MockFunction<void(bool)> mock_callback;
+	service_update.onFactoryResetNotification(mock_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_callback, Call).Times(0);
+
+	onDataReceivedProcess(sent_value_data.get());
+}
+
 TEST_F(BLEServiceUpdateTest, getVersionMajorDefault)
 {
 	auto actual_version = service_update.getVersion();
