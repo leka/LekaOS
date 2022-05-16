@@ -11,15 +11,31 @@
 #include "FileManagerKit.h"
 #include "LogKit.h"
 #include "filesystem"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 using namespace leka;
 
+using ::testing::HasSubstr;
+
 class FileSystemTest : public ::testing::Test
 {
   protected:
-	void SetUp() override { spy_remove_all_directories(); }
-	// void TearDown() override {}
+	void SetUp() override
+	{
+		spy_sink_output = "";
+		logger::set_sink_function(spy_sink_function);
+		spy_remove_all_directories();
+	}
+	void TearDown() override { logger::set_sink_function(logger::internal::default_sink_function); }
+
+	static void spy_sink_function(const char *str, size_t size)
+	{
+		spy_sink_output = std::string {str};
+		std::cout << spy_sink_output;
+	}
+
+	static inline auto spy_sink_output = std::string {};
 
 	void spy_mkdir(const std::filesystem::path &path) { std::filesystem::create_directories(path); }
 
@@ -41,10 +57,11 @@ class FileSystemTest : public ::testing::Test
 		std::filesystem::remove_all(path_B1);
 	}
 
-	const std::filesystem::path path_A	= std::filesystem::temp_directory_path() / "A";
-	const std::filesystem::path path_B	= std::filesystem::temp_directory_path() / "B";
-	const std::filesystem::path path_A1 = std::filesystem::temp_directory_path() / "A/A1";
-	const std::filesystem::path path_B1 = std::filesystem::temp_directory_path() / "B/B1";
+	const std::filesystem::path path_A	 = std::filesystem::temp_directory_path() / "A";
+	const std::filesystem::path path_B	 = std::filesystem::temp_directory_path() / "B";
+	const std::filesystem::path path_A1	 = std::filesystem::temp_directory_path() / "A/A1";
+	const std::filesystem::path path_B1	 = std::filesystem::temp_directory_path() / "B/B1";
+	const std::filesystem::path filename = path_A / "test_file";
 };
 
 TEST_F(FileSystemTest, createDirectory)
@@ -80,4 +97,13 @@ TEST_F(FileSystemTest, removeNotExistingDirectory)
 	spy_rmdir(path_B);
 	auto removed = FileManagerKit::remove(path_B);
 	ASSERT_FALSE(removed);
+}
+
+TEST_F(FileSystemTest, listContentFiles)
+{
+	spy_mkdir(path_A);
+	spy_mkdir(path_A1);
+	auto file = FileManagerKit::File {};
+	file.open(filename, "w");
+	FileManagerKit::list_contents(path_A);
 }
