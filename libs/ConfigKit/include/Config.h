@@ -20,7 +20,7 @@ struct Config {
 	[[nodiscard]] auto default_value() const -> uint8_t { return _default_value; }
 
   private:
-	const std::filesystem::path _default_parent_path = "/fs/conf";
+	const std::filesystem::path _default_parent_path = "/fs/etc";
 	const std::filesystem::path _path;
 	const uint8_t _default_value;
 };
