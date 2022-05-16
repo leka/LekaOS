@@ -63,7 +63,7 @@ TEST_F(ConfigTest, initializationWithDefaultParentPathConfig)
 	const std::filesystem::path custom_filename = "test_config.conf";
 	Config config {custom_filename};
 	ASSERT_NE(nullptr, &config);
-	const std::filesystem::path expected_path = "/fs/conf/test_config.conf";
+	const std::filesystem::path expected_path = "/fs/etc/test_config.conf";
 	ASSERT_EQ(expected_path, config.path());
 }
 
