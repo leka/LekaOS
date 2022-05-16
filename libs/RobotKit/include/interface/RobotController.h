@@ -18,6 +18,9 @@ class RobotController
 	virtual void startSleepTimeout() = 0;
 	virtual void stopSleepTimeout()	 = 0;
 
+	virtual void startIdleTimeout() = 0;
+	virtual void stopIdleTimeout()	= 0;
+
 	virtual void startWaitingBehavior() = 0;
 	virtual void stopWaitingBehavior()	= 0;
 
@@ -32,6 +35,8 @@ class RobotController
 
 	virtual void startConnectionBehavior(bool enableVideo) = 0;
 	virtual void startDisconnectionBehavior()			   = 0;
+
+	virtual void startWorkingBehavior() = 0;
 
 	virtual void startScreensaverBehavior() = 0;
 	virtual void stopScreensaverBehavior()	= 0;

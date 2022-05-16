@@ -83,6 +83,17 @@ class RobotController : public interface::RobotController
 
 	void stopSleepTimeout() final { _timeout.stop(); }
 
+	void startIdleTimeout() final
+	{
+		using namespace system::robot::sm;
+		auto on_idle_timeout = [this] { raise(event::idle_timeout_did_end {}); };
+		_timeout.onTimeout(on_idle_timeout);
+
+		_timeout.start(_idle_timeout_duration);
+	}
+
+	void stopIdleTimeout() final { _timeout.stop(); }
+
 	void startWaitingBehavior() final
 	{
 		_behaviorkit.waiting();
@@ -118,6 +129,12 @@ class RobotController : public interface::RobotController
 	}
 
 	void stopScreensaverBehavior() final { _behaviorkit.stop(); }
+
+	void startWorkingBehavior() final
+	{
+		_behaviorkit.neutral();
+		_lcd.turnOn();
+	}
 
 	void startSleepingBehavior() final
 	{
@@ -291,8 +308,8 @@ class RobotController : public interface::RobotController
 			raise(event::command_received {});
 
 			if (!isCharging()) {
-				stopSleepTimeout();
-				startSleepTimeout();
+				stopIdleTimeout();
+				startIdleTimeout();
 
 				_cmdkit.push(std::span {_buffer.data(), std::size(_buffer)});
 			}
@@ -335,7 +352,8 @@ class RobotController : public interface::RobotController
   private:
 	system::robot::sm::logger logger {};
 
-	std::chrono::seconds _sleep_timeout_duration {300};
+	std::chrono::seconds _sleep_timeout_duration {60};
+	std::chrono::seconds _idle_timeout_duration {600};
 	interface::Timeout &_timeout;
 
 	interface::Battery &_battery;
