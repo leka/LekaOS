@@ -116,6 +116,21 @@ namespace factory_reset {
 		file.write(output);
 	}
 
+	void set(bool is_factory_reset_requested)
+	{
+		FileManagerKit::File file {internal::factory_reset_counter_path, "w+"};
+
+		if (!file.is_open()) {
+			return;
+		}
+
+		auto value = std::to_array<uint8_t>({0x00});
+		if (is_factory_reset_requested) {
+			value = std::to_array<uint8_t>({0xFF});
+		}
+		file.write(value);
+	}
+
 }	// namespace factory_reset
 
 namespace leds {
@@ -478,6 +493,7 @@ auto main() -> int
 
 	robot::controller.initializeComponents();
 	robot::controller.registerOnUpdateLoadedCallback(firmware::setPendingUpdate);
+	robot::controller.registerOnFactoryResetNotificationCallback(factory_reset::set);
 	robot::controller.registerEvents();
 
 	rfidkit.onTagActivated([](MagicCard card) { robot::emergencyStop(card); });
