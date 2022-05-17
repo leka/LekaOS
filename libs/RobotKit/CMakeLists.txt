@@ -1,0 +1,30 @@
+# Leka - LekaOS
+# Copyright 2022 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+add_library(RobotKit STATIC)
+
+target_include_directories(RobotKit
+	PUBLIC
+		include
+	PRIVATE
+		tests/include
+)
+
+target_sources(RobotKit
+	PRIVATE
+		source/StateMachine.cpp
+)
+
+target_link_libraries(RobotKit
+
+)
+
+if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
+
+	leka_unit_tests_sources(
+		tests/source/StateMachine_test_initialization.cpp
+		tests/source/StateMachine_test_events.cpp
+	)
+
+endif()
