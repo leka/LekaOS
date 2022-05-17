@@ -16,11 +16,14 @@ namespace leka {
 class TouchSensorKit
 {
   public:
-	explicit TouchSensorKit();
+	explicit TouchSensorKit() = default;
+	void setup();
 
-	void reset();
+	void set_pull_mode(PinMode mode);
+
 	void set_power_mode(int power_mode);
-	void pull_up();
+	void power_mode_reset();
+
 	void updateState();
 	void printState();
 

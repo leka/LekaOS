@@ -23,19 +23,34 @@ TEST_F(TouchSensorTest, initializationDefault)
 	ASSERT_NE(&touch_sensor_kit, nullptr);
 }
 
-TEST_F(TouchSensorTest, reset)
+TEST_F(TouchSensorTest, setup)
 {
-	touch_sensor_kit.reset();
+	touch_sensor_kit.setup();
 }
 
-TEST_F(TouchSensorTest, pullUp)
+TEST_F(TouchSensorTest, setPullModePullUp)
 {
-	touch_sensor_kit.pull_up();
+	touch_sensor_kit.set_pull_mode(PinMode::PullUp);
+}
+
+TEST_F(TouchSensorTest, setPullModePullDown)
+{
+	touch_sensor_kit.set_pull_mode(PinMode::PullDown);
 }
 
 TEST_F(TouchSensorTest, setPowerModeNormal)
 {
 	touch_sensor_kit.set_power_mode(touch::power_mode::normal);
+}
+
+TEST_F(TouchSensorTest, setPowerModeLow)
+{
+	touch_sensor_kit.set_power_mode(touch::power_mode::low);
+}
+
+TEST_F(TouchSensorTest, resetByPowerMode)
+{
+	touch_sensor_kit.power_mode_reset();
 }
 
 TEST_F(TouchSensorTest, updateState)

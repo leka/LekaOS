@@ -5,27 +5,22 @@
 #include "TouchSensorKit.h"
 
 using namespace leka;
+using namespace std::chrono;
 
-TouchSensorKit::TouchSensorKit()
+void TouchSensorKit::setup()
 {
-	pull_up();
+	set_pull_mode(PinMode::PullUp);
 	set_power_mode(touch::power_mode::normal);
 }
 
-void TouchSensorKit::reset()
+void TouchSensorKit::set_pull_mode(PinMode mode)
 {
-	set_power_mode(touch::power_mode::low);
-	set_power_mode(touch::power_mode::normal);
-}
-
-void TouchSensorKit::pull_up()
-{
-	_ear_left_input.mode(PinMode::PullUp);
-	_ear_right_input.mode(PinMode::PullUp);
-	_belt_left_back_input.mode(PinMode::PullUp);
-	_belt_left_front_input.mode(PinMode::PullUp);
-	_belt_right_back_input.mode(PinMode::PullUp);
-	_belt_right_front_input.mode(PinMode::PullUp);
+	_ear_left_input.mode(mode);
+	_ear_right_input.mode(mode);
+	_belt_left_back_input.mode(mode);
+	_belt_left_front_input.mode(mode);
+	_belt_right_back_input.mode(mode);
+	_belt_right_front_input.mode(mode);
 }
 
 void TouchSensorKit::set_power_mode(int power_mode)
@@ -38,6 +33,13 @@ void TouchSensorKit::set_power_mode(int power_mode)
 	_belt_right_front_pm.write(power_mode);
 }
 
+void TouchSensorKit::power_mode_reset()
+{
+	set_power_mode(touch::power_mode::low);
+	rtos::ThisThread::sleep_for(5ms);
+	set_power_mode(touch::power_mode::normal);
+}
+
 void TouchSensorKit::updateState()
 {
 	shadow_ear_left_touched			= (0 == _ear_left_input.read());
@@ -46,7 +48,7 @@ void TouchSensorKit::updateState()
 	shadow_belt_left_front_touched	= (0 == _belt_left_front_input.read());
 	shadow_belt_right_back_touched	= (0 == _belt_right_back_input.read());
 	shadow_belt_right_front_touched = (0 == _belt_right_front_input.read());
-	reset();
+	power_mode_reset();
 }
 
 void TouchSensorKit::printState()

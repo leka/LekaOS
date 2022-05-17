@@ -7,15 +7,18 @@
 #include "drivers/DigitalOut.h"
 
 #include "CoreI2C.h"
+#include "external/MCP23017.h"
 #include "interface/drivers/IOExpander.h"
-#include "internal/MCP23017.h"
 
 namespace leka {
 
 class CoreIOExpanderMCP23017 : public interface::IOExpander<uint16_t>
 {
   public:
-	explicit CoreIOExpanderMCP23017(interface::I2C &i2c, mbed::DigitalOut &mux_reset);
+	explicit CoreIOExpanderMCP23017(interface::I2C &i2c, mbed::DigitalOut &mux_reset) : _i2c(i2c), _mux_reset(mux_reset)
+	{
+		init();
+	};
 
 	void init();
 

@@ -7,8 +7,6 @@ add_library(CoreIOExpander STATIC)
 target_include_directories(CoreIOExpander
 	PUBLIC
 		include
-	PRIVATE
-		internal
 )
 
 target_sources(CoreIOExpander

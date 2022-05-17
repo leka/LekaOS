@@ -22,6 +22,7 @@ auto main() -> int
 	log_info("Hello, World!\n\n");
 
 	auto touch_sensor_kit = TouchSensorKit();
+	touch_sensor_kit.setup();
 
 	auto start = rtos::Kernel::Clock::now();
 

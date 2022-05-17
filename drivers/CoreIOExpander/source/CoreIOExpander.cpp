@@ -8,12 +8,6 @@
 
 using namespace leka;
 
-CoreIOExpanderMCP23017::CoreIOExpanderMCP23017(interface::I2C &i2c, mbed::DigitalOut &mux_reset)
-	: _i2c(i2c), _mux_reset(mux_reset)
-{
-	init();
-};
-
 void CoreIOExpanderMCP23017::init()
 {
 	_mux_reset = 1;
