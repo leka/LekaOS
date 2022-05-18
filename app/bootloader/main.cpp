@@ -91,7 +91,7 @@ namespace factory_reset {
 
 	namespace internal {
 
-		constexpr auto factory_reset_counter_path = "/fs/conf/factory_reset_counter";
+		constexpr auto factory_reset_counter_path = "/fs/usr/share/factory_reset_counter";
 
 		auto qspi	 = CoreQSPI();
 		auto manager = CoreFlashManagerIS25LP016D(qspi);
