@@ -4,6 +4,8 @@
 
 #include "TouchSensorKit.h"
 
+#include "rtos/ThisThread.h"
+
 using namespace leka;
 using namespace std::chrono;
 
@@ -38,6 +40,7 @@ void TouchSensorKit::power_mode_reset()
 	set_power_mode(touch::power_mode::low);
 	rtos::ThisThread::sleep_for(5ms);
 	set_power_mode(touch::power_mode::normal);
+	rtos::ThisThread::sleep_for(5ms);
 }
 
 void TouchSensorKit::updateState()
