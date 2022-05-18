@@ -30,14 +30,14 @@ void BehaviorKit::launching()
 void BehaviorKit::sleeping()
 {
 	_ledkit.start(&LedKit::animation::sleeping);
-	_videokit.playVideoOnce("/fs/videos/2022_01_17-animation-face-state-yawning-sleeping_without_eyebrows.avi");
+	_videokit.playVideoOnce("/fs/home/vid/animation-face-state-yawning-sleeping_without_eyebrows.avi");
 }
 
 void BehaviorKit::waiting()
 {
 	_ledkit.stop();
 	_videokit.playVideoOnRepeat(
-		"/fs/videos/2022_02_14-animation-face-state-waiting-looking-top-right-to-left-without-eyebrows.avi");
+		"/fs/home/vid/animation-face-state-waiting-looking-top-right-to-left-without-eyebrows.avi");
 }
 
 void BehaviorKit::lowBattery()
@@ -77,7 +77,7 @@ void BehaviorKit::blinkGreen()
 {
 	spinLeft(1);
 	_ledkit.start(&LedKit::animation::blink_green);
-	_videokit.playVideoOnce("/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi");
+	_videokit.playVideoOnce("/fs/home/vid/animation-face-state-happy-without-eyebrows.avi");
 	rtos::ThisThread::sleep_for(3s);
 	_ledkit.stop();
 	_motor_left.stop();
@@ -88,7 +88,7 @@ void BehaviorKit::spinBlink()
 {
 	spinRight(1);
 	_ledkit.start(&LedKit::animation::spin_blink);
-	_videokit.playVideoOnce("/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi");
+	_videokit.playVideoOnce("/fs/home/vid/animation-face-state-happy-without-eyebrows.avi");
 	rtos::ThisThread::sleep_for(3s);
 	_ledkit.stop();
 	_motor_left.stop();
@@ -98,7 +98,7 @@ void BehaviorKit::spinBlink()
 void BehaviorKit::fire()
 {
 	_ledkit.start(&LedKit::animation::fire);
-	_videokit.playVideoOnce("/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi");
+	_videokit.playVideoOnce("/fs/home/vid/animation-face-state-happy-without-eyebrows.avi");
 	rtos::ThisThread::sleep_for(3s);
 	_ledkit.stop();
 }
@@ -106,7 +106,7 @@ void BehaviorKit::fire()
 void BehaviorKit::sprinkles()
 {
 	_ledkit.start(&LedKit::animation::sprinkles);
-	_videokit.playVideoOnce("/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi");
+	_videokit.playVideoOnce("/fs/home/vid/animation-face-state-happy-without-eyebrows.avi");
 	rtos::ThisThread::sleep_for(3s);
 	_ledkit.stop();
 }
@@ -114,7 +114,7 @@ void BehaviorKit::sprinkles()
 void BehaviorKit::rainbow()
 {
 	_ledkit.start(&LedKit::animation::rainbow);
-	_videokit.playVideoOnce("/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi");
+	_videokit.playVideoOnce("/fs/home/vid/animation-face-state-happy-without-eyebrows.avi");
 	rtos::ThisThread::sleep_for(3s);
 	_ledkit.stop();
 }
@@ -122,8 +122,9 @@ void BehaviorKit::rainbow()
 void BehaviorKit::bleConnection(bool with_video)
 {
 	_ledkit.start(&LedKit::animation::ble_connection);
+
 	if (with_video) {
-		_videokit.playVideoOnce("/fs/videos/2022_02_14-animation-face-action-wink-without-eyebrows.avi");
+		_videokit.playVideoOnce("/fs/home/vid/animation-face-action-wink-without-eyebrows.avi");
 	}
 }
 
