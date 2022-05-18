@@ -2,20 +2,16 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "rtos/ThisThread.h"
-#include "rtos/tests/UNITTESTS/doubles/Thread_stub.h"
-
 #include "CoreLED.h"
 #include "CoreSPI.h"
 #include "LedKit.h"
 #include "gtest/gtest.h"
-#include "mocks/leka/LEDAnimation.h"
+#include "mocks/Animation.h"
 #include "stubs/leka/EventLoopKit.h"
 
 using namespace leka;
 using namespace std::chrono;
 
-using ::testing::AnyNumber;
 using ::testing::InSequence;
 
 class LedKitTestAnimations : public ::testing::Test
@@ -36,7 +32,8 @@ class LedKitTestAnimations : public ::testing::Test
 
 	LedKit ledkit {stub_event_loop, ears, belt};
 
-	mock::LEDAnimation mock_animation {};
+	// mock::LEDAnimation mock_animation {};
+	mock::Animation mock_animation {};
 };
 
 TEST_F(LedKitTestAnimations, initialization)
@@ -55,25 +52,38 @@ TEST_F(LedKitTestAnimations, init)
 
 TEST_F(LedKitTestAnimations, startAnimation)
 {
-	event_loop_stub.spy_setNumberOfLoops(10);
-
 	EXPECT_CALL(mock_animation, setLeds).Times(1);
-	EXPECT_CALL(mock_animation, start).Times(1);
+	EXPECT_CALL(mock_animation, startCalled).Times(1);
+	EXPECT_FALSE(mock_animation.isRunning());
 
 	ledkit.start(&mock_animation);
+	EXPECT_TRUE(mock_animation.isRunning());
 }
 
 TEST_F(LedKitTestAnimations, startNullPtr)
 {
 	EXPECT_CALL(mock_animation, setLeds).Times(0);
-	EXPECT_CALL(mock_animation, start).Times(0);
+	EXPECT_CALL(mock_animation, startCalled).Times(0);
+	EXPECT_FALSE(mock_animation.isRunning());
 
 	ledkit.start(nullptr);
+	EXPECT_FALSE(mock_animation.isRunning());
+}
+
+TEST_F(LedKitTestAnimations, runAnimation)
+{
+	auto kMaxStageNumber = 10;
+	EXPECT_CALL(mock_animation, setLeds).Times(1);
+	EXPECT_CALL(mock_animation, startCalled).Times(1);
+	EXPECT_CALL(mock_animation, stageCalled).Times(kMaxStageNumber);
+
+	ledkit.init();
+	ledkit.start(&mock_animation);
 }
 
 TEST_F(LedKitTestAnimations, stopWithoutAnimation)
 {
-	EXPECT_CALL(mock_animation, stop).Times(0);
+	EXPECT_CALL(mock_animation, stopCalled).Times(0);
 
 	ledkit.stop();
 }
@@ -81,28 +91,41 @@ TEST_F(LedKitTestAnimations, stopWithoutAnimation)
 TEST_F(LedKitTestAnimations, stopStartedAnimation)
 {
 	EXPECT_CALL(mock_animation, setLeds).Times(1);
-	EXPECT_CALL(mock_animation, start).Times(1);
-	EXPECT_CALL(mock_animation, stop).Times(1);
+	EXPECT_CALL(mock_animation, startCalled).Times(1);
+	EXPECT_CALL(mock_animation, stopCalled).Times(1);
+	EXPECT_FALSE(mock_animation.isRunning());
 
 	ledkit.start(&mock_animation);
+	EXPECT_TRUE(mock_animation.isRunning());
+
 	ledkit.stop();
+	EXPECT_FALSE(mock_animation.isRunning());
 }
 
 TEST_F(LedKitTestAnimations, startNewAnimationSequence)
 {
-	mock::LEDAnimation mock_new_animation;
+	mock::Animation mock_new_animation;
 
 	{
 		InSequence seq;
 
 		EXPECT_CALL(mock_animation, setLeds).Times(1);
-		EXPECT_CALL(mock_animation, start).Times(1);
-		EXPECT_CALL(mock_animation, stop).Times(1);
+		EXPECT_CALL(mock_animation, startCalled).Times(1);
+		EXPECT_CALL(mock_animation, stopCalled).Times(1);
 		EXPECT_CALL(mock_new_animation, setLeds).Times(1);
-		EXPECT_CALL(mock_new_animation, start).Times(1);
+		EXPECT_CALL(mock_new_animation, startCalled).Times(1);
 	}
+
+	EXPECT_FALSE(mock_animation.isRunning());
+	EXPECT_FALSE(mock_new_animation.isRunning());
 
 	ledkit.start(&mock_animation);
 
+	EXPECT_TRUE(mock_animation.isRunning());
+	EXPECT_FALSE(mock_new_animation.isRunning());
+
 	ledkit.start(&mock_new_animation);
+
+	EXPECT_FALSE(mock_animation.isRunning());
+	EXPECT_TRUE(mock_new_animation.isRunning());
 }
