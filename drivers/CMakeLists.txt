@@ -32,10 +32,14 @@ add_subdirectory(${DRIVERS_DIR}/CoreBattery)
 add_subdirectory(${DRIVERS_DIR}/CoreHTS)
 add_subdirectory(${DRIVERS_DIR}/CoreLightSensor)
 add_subdirectory(${DRIVERS_DIR}/CoreMicrophone)
-add_subdirectory(${DRIVERS_DIR}/CoreIOExpander)
 
 # Actuators drivers
 add_subdirectory(${DRIVERS_DIR}/CoreLED)
 add_subdirectory(${DRIVERS_DIR}/CoreMotor)
 add_subdirectory(${DRIVERS_DIR}/FastLED)
+
+# Expander drivers
+add_subdirectory(${DRIVERS_DIR}/CoreIOExpander)
+add_subdirectory(${DRIVERS_DIR}/CoreDACExpander)
+
 

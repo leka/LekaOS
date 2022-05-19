@@ -21,6 +21,7 @@ target_link_libraries(TouchSensorKit
 	IOKit
 	CoreI2C
 	CoreIOExpander
+	CoreDACExpander
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

@@ -4,52 +4,34 @@
 
 #pragma once
 
-#include "drivers/DigitalOut.h"
+#include <interface/drivers/DigitalOut.h>
 
+#include "external/MCP4728.h"
 #include "interface/drivers/I2C.h"
-#include "interface/drivers/IOExpander.h"
 
 namespace leka {
 
-class CoreIOExpanderMCP23017 : public interface::IOExpander<uint16_t>
+class CoreDACExpanderMCP4728
 {
   public:
-	explicit CoreIOExpanderMCP23017(interface::I2C &i2c, mbed::DigitalOut &mux_reset) : _i2c(i2c), _mux_reset(mux_reset)
-	{
-		init();
-	};
+	explicit CoreDACExpanderMCP4728(interface::I2C &i2c) : _i2c(i2c) {};
 
-	void init();
+	void reset(uint8_t address, uint8_t channel);
 
-	void config_IODIR(uint16_t dir_config);
+	void multiple_write_for_dac_input_registers(uint8_t address, uint8_t channel, uint16_t value_calib);
 
-	void config_GPPU(uint16_t pullup_config);
+	void single_write_for_dac_input_register_and_eeprom(uint8_t address, uint8_t channel, uint16_t value_calib);
 
-	void config_IPOL(uint16_t polarity_config);
+	void set_vref(uint8_t address, uint8_t vref);
 
-	void config_GPIO(uint16_t io_config);
+	void set_power_down(uint8_t address, uint8_t power_down);
 
-	void setPinAsInput(uint16_t pin) final;
+	void set_gain(uint8_t address, uint8_t gain);
 
-	auto readInputPin(uint16_t pin) -> int final;
-
-	void setModeForInputPin(uint16_t pin, PinMode mode) final;
-
-	auto getModeForInputPin(uint16_t pin) -> PinMode final;
-
-	void setPinAsOutput(uint16_t pin) final;
-
-	auto readOutputPin(uint16_t pin) -> int final;
-
-	void writeOutputPin(uint16_t pin, int value) final;
+	static const uint8_t _I2C_ADDRESS_LEFT	= 0xC0;
+	static const uint8_t _I2C_ADDRESS_RIGHT = 0xC2;
 
   private:
-	void writeRegister(uint8_t reg, uint16_t value);
-	auto readRegister(uint8_t reg) -> uint16_t;
-
 	interface::I2C &_i2c;
-	mbed::DigitalOut &_mux_reset;
-	const uint8_t _I2C_ADDRESS = 0x4E;
-	uint16_t shadow_GPIO, shadow_IODIR, shadow_GPPU, shadow_IPOL;
 };
 }	// namespace leka
