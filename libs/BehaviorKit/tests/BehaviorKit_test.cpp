@@ -53,43 +53,6 @@ TEST_F(BehaviorKitTest, initialization)
 	ASSERT_NE(&behaviorkit, nullptr);
 }
 
-TEST_F(BehaviorKitTest, spinBlink)
-{
-	auto expected_speed = 1;
-
-	EXPECT_CALL(mock_videokit, playVideo);
-
-	{
-		InSequence seq;
-
-		EXPECT_CALL(mock_motor_left, spin(Rotation::counterClockwise, expected_speed));
-		EXPECT_CALL(mock_motor_right, spin(Rotation::counterClockwise, expected_speed));
-
-		EXPECT_CALL(mock_motor_left, stop());
-		EXPECT_CALL(mock_motor_right, stop());
-	}
-
-	behaviorkit.spinBlink();
-}
-
-TEST_F(BehaviorKitTest, blinkGreen)
-{
-	auto expected_speed = 1;
-
-	EXPECT_CALL(mock_videokit, playVideo);
-	{
-		InSequence seq;
-
-		EXPECT_CALL(mock_motor_left, spin(Rotation::clockwise, expected_speed));
-		EXPECT_CALL(mock_motor_right, spin(Rotation::clockwise, expected_speed));
-
-		EXPECT_CALL(mock_motor_left, stop());
-		EXPECT_CALL(mock_motor_right, stop());
-	}
-
-	behaviorkit.blinkGreen();
-}
-
 TEST_F(BehaviorKitTest, spinLeftAnySpeed)
 {
 	auto expected_speed = 0.7;
@@ -110,11 +73,95 @@ TEST_F(BehaviorKitTest, spinRightAnySpeed)
 	behaviorkit.spinRight(expected_speed);
 }
 
-TEST_F(BehaviorKitTest, lowBattery)
+TEST_F(BehaviorKitTest, launching)
 {
 	EXPECT_CALL(mock_videokit, displayImage);
+	behaviorkit.launching();
+}
+
+TEST_F(BehaviorKitTest, sleeping)
+{
+	EXPECT_CALL(mock_videokit, playVideo);
+	behaviorkit.sleeping();
+}
+
+TEST_F(BehaviorKitTest, waiting)
+{
+	EXPECT_CALL(mock_videokit, playVideo);
+	behaviorkit.waiting();
+}
+
+TEST_F(BehaviorKitTest, batteryBehaviors)
+{
+	EXPECT_CALL(mock_videokit, displayImage).Times(6);
 
 	behaviorkit.lowBattery();
+	behaviorkit.chargingZero();
+	behaviorkit.chargingRed();
+	behaviorkit.chargingOrange();
+	behaviorkit.chargingYellow();
+	behaviorkit.chargingGreen();
+}
+
+TEST_F(BehaviorKitTest, blinkGreen)
+{
+	auto expected_speed = 1;
+
+	EXPECT_CALL(mock_videokit, playVideo);
+	{
+		InSequence seq;
+
+		EXPECT_CALL(mock_motor_left, spin(Rotation::clockwise, expected_speed));
+		EXPECT_CALL(mock_motor_right, spin(Rotation::clockwise, expected_speed));
+
+		EXPECT_CALL(mock_motor_left, stop());
+		EXPECT_CALL(mock_motor_right, stop());
+	}
+
+	behaviorkit.blinkGreen();
+}
+
+TEST_F(BehaviorKitTest, spinBlink)
+{
+	auto expected_speed = 1;
+
+	EXPECT_CALL(mock_videokit, playVideo);
+
+	{
+		InSequence seq;
+
+		EXPECT_CALL(mock_motor_left, spin(Rotation::counterClockwise, expected_speed));
+		EXPECT_CALL(mock_motor_right, spin(Rotation::counterClockwise, expected_speed));
+
+		EXPECT_CALL(mock_motor_left, stop());
+		EXPECT_CALL(mock_motor_right, stop());
+	}
+
+	behaviorkit.spinBlink();
+}
+
+TEST_F(BehaviorKitTest, fire)
+{
+	EXPECT_CALL(mock_videokit, playVideo);
+	behaviorkit.fire();
+}
+
+TEST_F(BehaviorKitTest, sprinkles)
+{
+	EXPECT_CALL(mock_videokit, playVideo);
+	behaviorkit.sprinkles();
+}
+
+TEST_F(BehaviorKitTest, rainbow)
+{
+	EXPECT_CALL(mock_videokit, playVideo);
+	behaviorkit.rainbow();
+}
+
+TEST_F(BehaviorKitTest, bleConnection)
+{
+	EXPECT_CALL(mock_videokit, playVideo);
+	behaviorkit.bleConnection();
 }
 
 TEST_F(BehaviorKitTest, stop)
