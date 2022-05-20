@@ -177,9 +177,7 @@ TEST_F(BehaviorKitTest, stop)
 	ledkit.start(&mock_animation);
 
 	EXPECT_CALL(mock_videokit, stopVideo);
-	EXPECT_CALL(mock_animation, stop).Times(1);
-	EXPECT_CALL(mock_motor_left, stop());
-	EXPECT_CALL(mock_motor_right, stop());
+	EXPECT_CALL(mock_animation, stop);
 
 	behaviorkit.stop();
 }

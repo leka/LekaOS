@@ -164,11 +164,7 @@ class RobotController : public interface::RobotController
 	void startConnectionBehavior() final
 	{
 		stopActuators();
-		if (_battery.isCharging()) {
-			_behaviorkit.bleConnection(false);
-		} else {
-			_behaviorkit.bleConnection(true);
-		}
+		_behaviorkit.bleConnection(_battery.isCharging());
 		_is_ble_connected = true;
 	}
 
