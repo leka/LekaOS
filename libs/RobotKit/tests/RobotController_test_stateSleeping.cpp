@@ -22,7 +22,6 @@ TEST_F(RobotControllerTest, stateSleepingEventChargeDidStartGuardIsChargingTrue)
 	Sequence on_exit_sleeping_sequence;
 	EXPECT_CALL(timeout, stop).InSequence(on_exit_sleeping_sequence);
 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_sleeping_sequence);
-	expectedCallsStopMotors();
 
 	Sequence on_charging_sequence;
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_charging_sequence);

@@ -129,8 +129,6 @@ void BehaviorKit::stop()
 {
 	_ledkit.stop();
 	_videokit.stopVideo();
-	_motor_left.stop();
-	_motor_right.stop();
 }
 
 }	// namespace leka

@@ -11,7 +11,6 @@ TEST_F(RobotControllerTest, stateIdleEventTimeout)
 	Sequence on_exit_idle_sequence;
 	EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_idle_sequence);
-	expectedCallsStopMotors();
 
 	// TODO (@hugo) EXPECT_CALL(mock_videokit, playVideo).Times(X);
 
@@ -29,7 +28,6 @@ TEST_F(RobotControllerTest, stateIdleEventChargeDidStartGuardIsChargingTrue)
 	Sequence on_exit_idle_sequence;
 	EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_idle_sequence);
-	expectedCallsStopMotors();
 
 	Sequence on_charging_sequence;
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_charging_sequence);
@@ -56,47 +54,4 @@ TEST_F(RobotControllerTest, stateIdleEventChargeDidStartGuardIsChargingFalse)
 	on_charge_did_start();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
-}
-
-TEST_F(RobotControllerTest, startConnectionBehaviorIsCharging)
-{
-	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
-
-	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
-	EXPECT_CALL(mock_belt, hide).Times(1);
-	EXPECT_CALL(mock_ears, hide).Times(1);
-	EXPECT_CALL(mock_motor_left, stop).Times(2);
-	EXPECT_CALL(mock_motor_right, stop).Times(2);
-
-	EXPECT_CALL(mock_videokit, playVideo).Times(0);
-	rc.startConnectionBehavior();
-	EXPECT_TRUE(rc.isBleConnected());
-}
-
-TEST_F(RobotControllerTest, startConnectionBehaviorIsNotCharging)
-{
-	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
-
-	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
-	EXPECT_CALL(mock_belt, hide).Times(1);
-	EXPECT_CALL(mock_ears, hide).Times(1);
-	EXPECT_CALL(mock_motor_left, stop).Times(2);
-	EXPECT_CALL(mock_motor_right, stop).Times(2);
-
-	EXPECT_CALL(mock_videokit, playVideo).Times(1);
-
-	rc.startConnectionBehavior();
-	EXPECT_TRUE(rc.isBleConnected());
-}
-
-TEST_F(RobotControllerTest, startDisconnectionBehavior)
-{
-	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
-	EXPECT_CALL(mock_belt, hide).Times(1);
-	EXPECT_CALL(mock_ears, hide).Times(1);
-	EXPECT_CALL(mock_motor_left, stop).Times(2);
-	EXPECT_CALL(mock_motor_right, stop).Times(2);
-
-	rc.startDisconnectionBehavior();
-	EXPECT_FALSE(rc.isBleConnected());
 }
