@@ -213,7 +213,7 @@ namespace leds {
 			leds::ears.setColor(light_blue);
 			leds::ears.show();
 			rtos::ThisThread::sleep_for(100ms);
-			leds::ears.setColor(light_blue);
+			leds::ears.setColor(RGB::black);
 			leds::ears.show();
 		}
 
