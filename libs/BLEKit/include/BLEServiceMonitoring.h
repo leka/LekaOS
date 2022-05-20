@@ -39,7 +39,7 @@ class BLEServiceMonitoring : public interface::BLEService
 		}
 		if (params.handle == hard_reboot_characteristic.getValueHandle()) {
 			hard_reboot = static_cast<bool>(params.data[0]);
-			if (soft_reboot) {
+			if (hard_reboot) {
 				system_reset();
 			}
 		}
