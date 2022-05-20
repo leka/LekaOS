@@ -45,6 +45,8 @@ namespace os {
 
 	constexpr auto start_address = uint32_t {0x8040000 + 0x1000};	// Start application address + header
 
+	auto version_path = "/fs/conf/os_version";
+
 }	// namespace os
 
 namespace battery {
@@ -164,6 +166,19 @@ namespace config {
 	void setBootloaderVersion()
 	{
 		configkit.write(bootloader_version, bootloader_version.default_value());
+	}
+
+	void setOSVersion(uint8_t major, uint8_t minor, uint16_t revision)
+	{
+		FileManagerKit::File file {os::version_path, "w+"};
+
+		if (!file.is_open()) {
+			return;
+		}
+
+		auto output = std::array<char, 14> {};
+		snprintf(output.data(), std::size(output), "%i.%i.%i", major, minor, revision);
+		file.write(output);
 	}
 
 	auto batteryHysteresisOffset() -> uint8_t
@@ -332,6 +347,7 @@ auto main() -> int
 		factory_reset::initializeExternalFlash();
 
 		factory_reset::applyFactoryReset();
+		config::setOSVersion(1, 0, 0);
 		factory_reset::resetCounter();
 
 	} else {
@@ -354,6 +370,9 @@ auto main() -> int
 		}
 
 		start_address = boot_handler.br_image_off + boot_handler.br_hdr->ih_hdr_size;
+
+		auto os_version = boot_handler.br_hdr->ih_ver;
+		config::setOSVersion(os_version.iv_major, os_version.iv_minor, os_version.iv_revision);
 	}
 
 	// Run the application in the primary slot
