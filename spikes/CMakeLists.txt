@@ -28,6 +28,7 @@ add_subdirectory(${SPIKES_DIR}/lk_sensors_temperature_humidity)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_touch)
 add_subdirectory(${SPIKES_DIR}/lk_serial_number)
 add_subdirectory(${SPIKES_DIR}/lk_ticker_timeout)
+add_subdirectory(${SPIKES_DIR}/lk_video_kit)
 add_subdirectory(${SPIKES_DIR}/lk_wifi)
 
 add_subdirectory(${SPIKES_DIR}/lk_update_process_app_base)
