@@ -74,7 +74,6 @@ TEST_F(VideoKitTest, playVideoInALoopFalse)
 {
 	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::STOP_VIDEO_FLAG));
 	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::START_VIDEO_FLAG));
-	EXPECT_CALL(mock_lcd, turnOn);
 
 	auto play_in_a_loop = false;
 	video_kit.playVideo(temp_file_path, play_in_a_loop);
@@ -84,7 +83,6 @@ TEST_F(VideoKitTest, playVideoInALoopTrue)
 {
 	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::STOP_VIDEO_FLAG));
 	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::START_VIDEO_FLAG));
-	EXPECT_CALL(mock_lcd, turnOn);
 
 	auto play_in_a_loop = true;
 	video_kit.playVideo(temp_file_path, play_in_a_loop);

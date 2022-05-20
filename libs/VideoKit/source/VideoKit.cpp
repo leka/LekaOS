@@ -52,8 +52,6 @@ void VideoKit::playVideo(const std::filesystem::path &path, bool must_loop)
 
 		rtos::ThisThread::sleep_for(100ms);
 		_event_flags.set(flags::START_VIDEO_FLAG);
-
-		_lcd.turnOn();
 	}
 }
 
