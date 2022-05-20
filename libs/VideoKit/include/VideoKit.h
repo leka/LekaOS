@@ -7,7 +7,6 @@
 #include "rtos/Thread.h"
 
 #include "interface/drivers/EventFlags.h"
-#include "interface/drivers/LCD.hpp"
 #include "interface/drivers/Video.h"
 #include "interface/libs/VideoKit.h"
 
@@ -16,8 +15,8 @@ namespace leka {
 class VideoKit : public interface::VideoKit
 {
   public:
-	explicit VideoKit(interface::EventFlags &event_flags, interface::LCD &lcd, interface::Video &video)
-		: _event_flags(event_flags), _lcd(lcd), _video {video}
+	explicit VideoKit(interface::EventFlags &event_flags, interface::Video &video)
+		: _event_flags(event_flags), _video {video}
 	{
 		// nothing to do
 	}
@@ -40,7 +39,6 @@ class VideoKit : public interface::VideoKit
 	rtos::Thread _thread {};
 	interface::EventFlags &_event_flags;
 
-	interface::LCD &_lcd;
 	interface::Video &_video;
 
 	std::filesystem::path _current_path {};

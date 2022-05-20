@@ -5,7 +5,6 @@
 #include "VideoKit.h"
 
 #include "gtest/gtest.h"
-#include "mocks/leka/CoreLCD.h"
 #include "mocks/leka/CoreVideo.h"
 #include "mocks/leka/EventFlags.h"
 
@@ -26,9 +25,8 @@ class VideoKitTest : public ::testing::Test
 	char temp_file_path[L_tmpnam];	 // NOLINT
 
 	mock::EventFlags mock_event_flags {};
-	mock::CoreLCD mock_lcd {};
 	mock::CoreVideo mock_corevideo {};
-	VideoKit video_kit {mock_event_flags, mock_lcd, mock_corevideo};
+	VideoKit video_kit {mock_event_flags, mock_corevideo};
 };
 
 TEST_F(VideoKitTest, initialization)
