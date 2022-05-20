@@ -23,8 +23,14 @@ void VideoKit::initializeScreen()
 
 void VideoKit::displayImage(const std::filesystem::path &path)
 {
+	if (path == _current_path) {
+		return;
+	}
+
 	if (auto file = FileManagerKit::File {path}; file.is_open()) {
 		_event_flags.set(flags::STOP_VIDEO_FLAG);
+
+		_current_path = path;
 
 		rtos::ThisThread::sleep_for(100ms);
 
