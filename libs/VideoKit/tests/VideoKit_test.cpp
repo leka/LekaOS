@@ -58,6 +58,18 @@ TEST_F(VideoKitTest, displayImageFileDoesNotExist)
 	video_kit.displayImage("/unexisting/path");
 }
 
+TEST_F(VideoKitTest, displayImageSamePathTwice)
+{
+	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::STOP_VIDEO_FLAG));
+	EXPECT_CALL(mock_corevideo, displayImage).Times(1);
+
+	video_kit.displayImage(temp_file_path);
+
+	EXPECT_CALL(mock_corevideo, displayImage).Times(0);
+
+	video_kit.displayImage(temp_file_path);
+}
+
 TEST_F(VideoKitTest, playVideoInALoopFalse)
 {
 	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::STOP_VIDEO_FLAG));
