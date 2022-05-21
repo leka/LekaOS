@@ -13,7 +13,7 @@ class FirmwareUpdate
   public:
 	virtual ~FirmwareUpdate() = default;
 
-	virtual auto loadUpdate(FirmwareVersion &version) -> bool = 0;
+	virtual auto loadUpdate(const FirmwareVersion &version) -> bool = 0;
 };
 
 }	// namespace leka::interface
