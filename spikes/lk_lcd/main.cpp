@@ -8,6 +8,8 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
+#include "./Images.h"
+#include "./Videos.h"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
 #include "CoreEventFlags.h"
@@ -58,12 +60,6 @@ HAL_VIDEO_DECLARE_IRQ_HANDLERS(corevideo);
 auto videokit = VideoKit {event_flags, corelcd, corevideo};
 
 auto file = FileManagerKit::File {};
-
-auto images = std::to_array({"/fs/images/logo.jpg", "/fs/images/robot-emotion-happy.jpg"});
-auto videos = std::to_array({
-	"/fs/videos/2022_02_14-animation-face-state-happy-without-eyebrows.avi",
-	"/fs/videos/2022_01_17-animation-face-state-yawning-sleeping_without_eyebrows.avi",
-});
 
 void initializeSD()
 {
