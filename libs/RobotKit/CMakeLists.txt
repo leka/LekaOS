@@ -8,38 +8,23 @@ target_include_directories(RobotKit
 	PUBLIC
 		include
 	PRIVATE
-		tests
+		tests/include
 )
 
 target_sources(RobotKit
 	PRIVATE
 		source/StateMachine.cpp
-		source/RobotController.cpp
 )
 
 target_link_libraries(RobotKit
-	BatteryKit
-	SerialNumberKit
-	BLEKit
-	CoreMotor
-	LedKit
-	FileManagerKit
-	CoreMutex
-	VideoKit
-	BehaviorKit
-	CommandKit
+
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
-		tests/StateMachine_test.cpp
-		tests/RobotController_test_initializeComponents.cpp
-		tests/RobotController_test_registerEvents.cpp
-		tests/RobotController_test_stateSetup.cpp
-		tests/RobotController_test_stateIdle.cpp
-		tests/RobotController_test_stateSleeping.cpp
-		tests/RobotController_test_stateCharging.cpp
+		tests/source/StateMachine_test_initialization.cpp
+		tests/source/StateMachine_test_events.cpp
 	)
 
 endif()
