@@ -86,7 +86,8 @@ namespace sd {
 
 namespace factory_reset {
 
-	constexpr auto default_limit = uint8_t {10};
+	constexpr auto default_limit	= uint8_t {10};
+	constexpr auto firmware_version = FirmwareVersion {.major = 1, .minor = 0, .revision = 0};
 
 	namespace internal {
 
@@ -147,7 +148,6 @@ namespace factory_reset {
 
 	void applyFactoryReset()
 	{
-		auto firmware_version = FirmwareVersion {.major = 1, .minor = 0, .revision = 0};
 		firmwarekit.loadUpdate(firmware_version);
 		boot_set_pending(1);
 	}
@@ -347,7 +347,8 @@ auto main() -> int
 		factory_reset::initializeExternalFlash();
 
 		factory_reset::applyFactoryReset();
-		config::setOSVersion(1, 0, 0);
+		config::setOSVersion(factory_reset::firmware_version.major, factory_reset::firmware_version.minor,
+							 factory_reset::firmware_version.revision);
 		factory_reset::resetCounter();
 
 	} else {
