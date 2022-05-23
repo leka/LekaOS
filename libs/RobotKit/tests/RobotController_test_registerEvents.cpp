@@ -18,7 +18,9 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsNotCharging)
 		EXPECT_CALL(battery, level).InSequence(on_low_battery_sequence);
 
 		Sequence on_data_updated_sequence;
-		EXPECT_CALL(battery, level).InSequence(on_data_updated_sequence);
+		EXPECT_CALL(battery, level).InSequence(on_data_updated_sequence).WillOnce(Return(false));
+		EXPECT_CALL(battery, isCharging).InSequence(on_data_updated_sequence);
+		EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).InSequence(on_data_updated_sequence);
 		// TODO: Specify which BLE service and what is expected if necessary
 		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(on_data_updated_sequence);
 
@@ -67,7 +69,10 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsCharging)
 
 		Sequence on_data_updated_sequence;
 		EXPECT_CALL(battery, level).InSequence(on_data_updated_sequence);
+		EXPECT_CALL(battery, isCharging).InSequence(on_data_updated_sequence).WillOnce(Return(true));
+		EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).InSequence(on_data_updated_sequence);
 		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(on_data_updated_sequence);
+		EXPECT_CALL(mock_videokit, displayImage).InSequence(on_data_updated_sequence);
 
 		EXPECT_CALL(timeout, onTimeout);
 
@@ -103,59 +108,49 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsCharging)
 	rc.registerEvents();
 }
 
-TEST_F(RobotControllerTest, onStartChargingBehaviorLevelBelow25)
+TEST_F(RobotControllerTest, onChargingBehaviorLevelBelow25)
 {
 	auto battery_level = 0;
 
 	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/low_battery.jpg"})).Times(1);
-	// TODO: Specify which BLE service and what is expected if necessary
-	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
-	rc.onStartChargingBehavior(battery_level);
+	rc.onChargingBehavior(battery_level);
 }
 
-TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove5Below25)
+TEST_F(RobotControllerTest, onChargingBehaviorLevelAbove5Below25)
 {
 	auto battery_level = 22;
 
 	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/battery_red.jpg"})).Times(1);
-	// TODO: Specify which BLE service and what is expected if necessary
-	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
-	rc.onStartChargingBehavior(battery_level);
+	rc.onChargingBehavior(battery_level);
 }
 
-TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove25Below50)
+TEST_F(RobotControllerTest, onChargingBehaviorLevelAbove25Below50)
 {
 	auto battery_level = 42;
 
 	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/battery_yellow_2.jpg"})).Times(1);
-	// TODO: Specify which BLE service and what is expected if necessary
-	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
-	rc.onStartChargingBehavior(battery_level);
+	rc.onChargingBehavior(battery_level);
 }
 
-TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove50Below75)
+TEST_F(RobotControllerTest, onChargingBehaviorLevelAbove50Below75)
 {
 	auto battery_level = 66;
 
 	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/battery_green_3.jpg"})).Times(1);
-	// TODO: Specify which BLE service and what is expected if necessary
-	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
-	rc.onStartChargingBehavior(battery_level);
+	rc.onChargingBehavior(battery_level);
 }
 
-TEST_F(RobotControllerTest, onStartChargingBehaviorLevelAbove75)
+TEST_F(RobotControllerTest, onChargingBehaviorLevelAbove75)
 {
 	auto battery_level = 90;
 
 	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/battery_green_4.jpg"})).Times(1);
-	// TODO: Specify which BLE service and what is expected if necessary
-	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
 
-	rc.onStartChargingBehavior(battery_level);
+	rc.onChargingBehavior(battery_level);
 }
 
 TEST_F(RobotControllerTest, onBleConnection)
