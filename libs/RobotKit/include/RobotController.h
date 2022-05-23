@@ -209,6 +209,11 @@ class RobotController : public interface::RobotController
 		_on_update_loaded_callback = on_update_loaded_callback;
 	}
 
+	void registerOnFactoryResetNotificationCallback(std::function<void(bool)> const &on_factory_reset_requested)
+	{
+		_service_update.onFactoryResetNotification(on_factory_reset_requested);
+	}
+
 	void registerEvents()
 	{
 		using namespace system::robot::sm;

@@ -60,7 +60,8 @@ namespace firmware_update {
 	inline constexpr uint16_t uuid = 0x7085;
 
 	namespace characteristic {
-		inline constexpr uint16_t request_update = 0x8285;
+		inline constexpr uint16_t request_update		= 0x8285;
+		inline constexpr uint16_t request_factory_reset = 0x8270;
 
 		inline constexpr uint16_t version_major	   = 0x7765;
 		inline constexpr uint16_t version_minor	   = 0x7773;

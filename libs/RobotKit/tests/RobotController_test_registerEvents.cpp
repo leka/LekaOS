@@ -108,6 +108,15 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsCharging)
 	rc.registerEvents();
 }
 
+TEST_F(RobotControllerTest, registerOnFactoryResetNotificationCallback)
+{
+	mbed::Callback<void(bool)> callback {};
+
+	rc.registerOnFactoryResetNotificationCallback(callback);
+
+	// nothing can be expected
+}
+
 TEST_F(RobotControllerTest, onChargingBehaviorLevelBelow25)
 {
 	auto battery_level = 0;
