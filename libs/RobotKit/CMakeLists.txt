@@ -42,6 +42,7 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/RobotController_test_stateCharging.cpp
 		tests/RobotController_test_stateConnected.cpp
 		tests/RobotController_test_stateDisconnected.cpp
+		tests/RobotController_test_stateScreensaver.cpp
 	)
 
 endif()

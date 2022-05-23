@@ -86,9 +86,19 @@ TEST_F(StateMachineTest, stateIdleEventTimeout)
 
 	EXPECT_CALL(mock_rc, stopSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, stopWaitingBehavior).Times(1);
-	EXPECT_CALL(mock_rc, startSleepingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startScreensaverBehavior).Times(1);
 
 	sm.process_event(lksm::event::sleep_timeout_did_end {});
+
+	EXPECT_TRUE(sm.is(lksm::state::screensaver));
+}
+
+TEST_F(StateMachineTest, stateScreensaverAnimationDidEnd)
+{
+	sm.set_current_states(lksm::state::screensaver);
+	EXPECT_CALL(mock_rc, startSleepingBehavior).Times(1);
+
+	sm.process_event(lksm::event::screensaver_animation_did_end {});
 
 	EXPECT_TRUE(sm.is(lksm::state::sleeping));
 }

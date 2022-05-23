@@ -13,20 +13,11 @@ TEST_F(RobotControllerTest, stateIdleEventTimeout)
 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_idle_sequence);
 	expectedCallsStopMotors();
 
-	Sequence on_sleeping_sequence;
-	EXPECT_CALL(mock_videokit, playVideo).InSequence(on_sleeping_sequence);
-	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_sleeping_sequence);
-	EXPECT_CALL(timeout, onTimeout)
-		.InSequence(on_sleeping_sequence)
-		.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleeping_start_timeout));
-	EXPECT_CALL(timeout, start).InSequence(on_sleeping_sequence);
+	// TODO (@hugo) EXPECT_CALL(mock_videokit, playVideo).Times(X);
 
 	on_sleep_timeout();
 
-	EXPECT_TRUE(rc.state_machine.is(lksm::state::sleeping));
-
-	EXPECT_CALL(mock_lcd, turnOff);
-	on_sleeping_start_timeout();
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::screensaver));
 }
 
 TEST_F(RobotControllerTest, stateIdleEventChargeDidStartGuardIsChargingTrue)
