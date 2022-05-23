@@ -57,7 +57,7 @@ CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coreg
 
 HAL_VIDEO_DECLARE_IRQ_HANDLERS(corevideo);
 
-auto videokit = VideoKit {event_flags, corelcd, corevideo};
+auto videokit = VideoKit {event_flags, corevideo};
 
 auto file = FileManagerKit::File {};
 

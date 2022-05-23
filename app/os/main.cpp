@@ -239,7 +239,7 @@ namespace display {
 
 	}	// namespace internal
 
-	auto videokit = VideoKit {internal::event_flags, internal::corelcd, internal::corevideo};
+	auto videokit = VideoKit {internal::event_flags, internal::corevideo};
 
 }	// namespace display
 

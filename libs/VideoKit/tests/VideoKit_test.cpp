@@ -5,7 +5,6 @@
 #include "VideoKit.h"
 
 #include "gtest/gtest.h"
-#include "mocks/leka/CoreLCD.h"
 #include "mocks/leka/CoreVideo.h"
 #include "mocks/leka/EventFlags.h"
 
@@ -26,9 +25,8 @@ class VideoKitTest : public ::testing::Test
 	char temp_file_path[L_tmpnam];	 // NOLINT
 
 	mock::EventFlags mock_event_flags {};
-	mock::CoreLCD mock_lcd {};
 	mock::CoreVideo mock_corevideo {};
-	VideoKit video_kit {mock_event_flags, mock_lcd, mock_corevideo};
+	VideoKit video_kit {mock_event_flags, mock_corevideo};
 };
 
 TEST_F(VideoKitTest, initialization)
@@ -74,7 +72,6 @@ TEST_F(VideoKitTest, playVideoInALoopFalse)
 {
 	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::STOP_VIDEO_FLAG));
 	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::START_VIDEO_FLAG));
-	EXPECT_CALL(mock_lcd, turnOn);
 
 	auto play_in_a_loop = false;
 	video_kit.playVideo(temp_file_path, play_in_a_loop);
@@ -84,7 +81,6 @@ TEST_F(VideoKitTest, playVideoInALoopTrue)
 {
 	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::STOP_VIDEO_FLAG));
 	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::START_VIDEO_FLAG));
-	EXPECT_CALL(mock_lcd, turnOn);
 
 	auto play_in_a_loop = true;
 	video_kit.playVideo(temp_file_path, play_in_a_loop);

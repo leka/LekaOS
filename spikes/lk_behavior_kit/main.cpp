@@ -169,7 +169,7 @@ namespace display {
 
 	}	// namespace internal
 
-	auto videokit = VideoKit {internal::event_flags, internal::corelcd, internal::corevideo};
+	auto videokit = VideoKit {internal::event_flags, internal::corevideo};
 
 }	// namespace display
 
@@ -187,6 +187,7 @@ auto main() -> int
 
 	leds::kit.init();
 	sd::init();
+	display::internal::corelcd.turnOn();
 	display::videokit.initializeScreen();
 
 	log_info("Hello, World!\n\n");
