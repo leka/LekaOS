@@ -151,18 +151,25 @@ TEST_F(CoreDMA2DTest, transferImage)
 	ASSERT_EQ(handle.Init.OutputOffset, lcd::dimension::width - image_width);
 }
 
-TEST_F(CoreDMA2DTest, transferImageDifferentWidth)
+TEST_F(CoreDMA2DTest, transferImageCentered)
 {
-	uint16_t image_width  = 400;
-	uint16_t image_height = 400;
+	uint16_t image_width  = 123;
+	uint16_t image_height = 456;
+
+	auto left_pixels_offset_to_center = (lcd::dimension::width - image_width) / 2;
+	auto top_pixel_offset_to_center	  = (lcd::dimension::height - image_height) / 2;
+
+	auto memory_offset_to_center = lcd::property::pixel_memory_size *
+								   (left_pixels_offset_to_center + top_pixel_offset_to_center * lcd::dimension::width);
 
 	{
 		InSequence seq;
 
 		EXPECT_CALL(halmock, HAL_DMA2D_Init).Times(1).WillRepeatedly(Return(HAL_OK));
 		EXPECT_CALL(halmock, HAL_DMA2D_ConfigLayer).Times(1).WillRepeatedly(Return(HAL_OK));
-		EXPECT_CALL(halmock, HAL_DMA2D_Start_IT(_, jpeg::decoded_buffer_address, lcd::frame_buffer_address, image_width,
-												image_height))
+		EXPECT_CALL(halmock,
+					HAL_DMA2D_Start_IT(_, jpeg::decoded_buffer_address,
+									   lcd::frame_buffer_address + memory_offset_to_center, image_width, image_height))
 			.Times(1);
 	}
 

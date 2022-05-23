@@ -25,6 +25,8 @@ namespace lcd {
 	// TODO : it should be instanciated and passed to objects that need it
 	namespace property {
 
+		inline constexpr uint8_t pixel_memory_size = 4;	  // ARGB, in bytes
+
 		// clang-format off
 		inline constexpr uint16_t VSA  = lcd::otm8009a::landscape::vsync;   // Vertical start active time in units of lines
 		inline constexpr uint16_t VBP  = lcd::otm8009a::landscape::vbp;	    // Vertical Back Porch time in units of lines
