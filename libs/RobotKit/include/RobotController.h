@@ -91,6 +91,11 @@ class RobotController : public interface::RobotController
 
 	void stopWaitingBehavior() final { _behaviorkit.stop(); }
 
+	void startScreensaverBehavior() final
+	{
+		// TODO (@hugo) Call screensaver.start() and assure transition to sleeping at the end
+	}
+
 	void startSleepingBehavior() final
 	{
 		using namespace std::chrono_literals;

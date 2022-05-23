@@ -33,6 +33,8 @@ class RobotController
 	virtual void startConnectionBehavior()	  = 0;
 	virtual void startDisconnectionBehavior() = 0;
 
+	virtual void startScreensaverBehavior() = 0;
+
 	virtual auto isReadyToUpdate() -> bool = 0;
 	virtual void applyUpdate()			   = 0;
 };

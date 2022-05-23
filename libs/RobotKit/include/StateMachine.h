@@ -15,6 +15,8 @@ namespace sm::event {
 	};
 	struct sleep_timeout_did_end {
 	};
+	struct screensaver_animation_did_end {
+	};
 	struct command_received {
 	};
 	struct charge_did_start {
@@ -32,11 +34,12 @@ namespace sm::event {
 
 namespace sm::state {
 
-	inline auto setup	 = boost::sml::state<class setup>;
-	inline auto idle	 = boost::sml::state<class idle>;
-	inline auto sleeping = boost::sml::state<class sleeping>;
-	inline auto charging = boost::sml::state<class charging>;
-	inline auto updating = boost::sml::state<class updating>;
+	inline auto setup		= boost::sml::state<class setup>;
+	inline auto idle		= boost::sml::state<class idle>;
+	inline auto sleeping	= boost::sml::state<class sleeping>;
+	inline auto charging	= boost::sml::state<class charging>;
+	inline auto updating	= boost::sml::state<class updating>;
+	inline auto screensaver = boost::sml::state<class screensaver>;
 
 	inline auto connected	 = boost::sml::state<class connected>;
 	inline auto disconnected = boost::sml::state<class disconnected>;
@@ -113,6 +116,10 @@ namespace sm::action {
 		auto operator()(irc &rc) const { rc.startDisconnectionBehavior(); }
 	};
 
+	struct start_screensaver_behavior {
+		auto operator()(irc &rc) const { rc.startScreensaverBehavior(); }
+	};
+
 }	// namespace sm::action
 
 struct StateMachine {
@@ -129,10 +136,15 @@ struct StateMachine {
 			, sm::state::idle     + boost::sml::on_entry<_> / (sm::action::start_sleep_timeout {}, sm::action::start_waiting_behavior {})
 			, sm::state::idle     + boost::sml::on_exit<_>  / (sm::action::stop_sleep_timeout  {}, sm::action::stop_waiting_behavior  {})
 
-			, sm::state::idle     + event<sm::event::ble_connection>                               = sm::state::idle
-			, sm::state::idle     + event<sm::event::ble_disconnection>                            = sm::state::idle
-			, sm::state::idle     + event<sm::event::sleep_timeout_did_end>                        = sm::state::sleeping
-			, sm::state::idle     + event<sm::event::charge_did_start> [sm::guard::is_charging {}] = sm::state::charging
+			, sm::state::idle     + event<sm::event::ble_connection>                                     = sm::state::idle
+			, sm::state::idle     + event<sm::event::ble_disconnection>                                  = sm::state::idle
+			, sm::state::idle     + event<sm::event::sleep_timeout_did_end>                              = sm::state::screensaver
+			, sm::state::idle     + event<sm::event::charge_did_start> [sm::guard::is_charging {}]       = sm::state::charging
+
+			, sm::state::screensaver + boost::sml::on_entry<_> / sm::action::start_screensaver_behavior {}
+
+			, sm::state::screensaver  + event<sm::event::screensaver_animation_did_end>                  = sm::state::sleeping
+			, sm::state::screensaver  + event<sm::event::charge_did_start> [sm::guard::is_charging {}]   = sm::state::charging
 
 			, sm::state::sleeping + boost::sml::on_entry<_> / sm::action::start_sleeping_behavior {}
 			, sm::state::sleeping + boost::sml::on_exit<_>  / sm::action::stop_sleeping_behavior {}
