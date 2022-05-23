@@ -158,10 +158,16 @@ TEST_F(BehaviorKitTest, rainbow)
 	behaviorkit.rainbow();
 }
 
-TEST_F(BehaviorKitTest, bleConnection)
+TEST_F(BehaviorKitTest, bleConnectionWhileCharging)
+{
+	EXPECT_CALL(mock_videokit, playVideo).Times(0);
+	behaviorkit.bleConnection(false);
+}
+
+TEST_F(BehaviorKitTest, bleConnectionWhileNotCharging)
 {
 	EXPECT_CALL(mock_videokit, playVideo);
-	behaviorkit.bleConnection();
+	behaviorkit.bleConnection(true);
 }
 
 TEST_F(BehaviorKitTest, stop)

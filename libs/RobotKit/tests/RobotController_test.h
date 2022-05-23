@@ -36,6 +36,7 @@ namespace lksm = system::robot::sm;
 
 using ::testing::_;
 using ::testing::AnyNumber;
+using ::testing::AtLeast;
 using ::testing::InSequence;
 using ::testing::MockFunction;
 using ::testing::Return;

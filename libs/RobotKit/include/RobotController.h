@@ -158,11 +158,20 @@ class RobotController : public interface::RobotController
 
 	void startConnectionBehavior() final
 	{
-		onBleConnectionCallback();
-		_behaviorkit.bleConnection();
+		stopActuators();
+		if (_battery.isCharging()) {
+			_behaviorkit.bleConnection(false);
+		} else {
+			_behaviorkit.bleConnection(true);
+		}
+		_is_ble_connected = true;
 	}
 
-	void startDisconnectionBehavior() final { onBleDisconnectionCallback(); }
+	void startDisconnectionBehavior() final
+	{
+		stopActuators();
+		_is_ble_connected = false;
+	}
 
 	auto isReadyToUpdate() -> bool final
 	{
@@ -287,9 +296,8 @@ class RobotController : public interface::RobotController
 		raise(event::setup_complete {});
 	}
 
-	void onBleConnectionCallback()
+	void stopActuators()
 	{
-		_is_ble_connected = true;
 		_behaviorkit.stop();
 		_motor_left.stop();
 		_motor_right.stop();
@@ -298,18 +306,7 @@ class RobotController : public interface::RobotController
 		_videokit.stopVideo();
 	}
 
-	void onBleDisconnectionCallback()
-	{
-		_is_ble_connected = false;
-		_behaviorkit.stop();
-		_motor_left.stop();
-		_motor_right.stop();
-		_ears.hide();
-		_belt.hide();
-		_videokit.stopVideo();
-	}
-
-	auto isBleConnected() const -> bool { return _is_ble_connected; }
+	auto isBleConnected() -> bool final { return _is_ble_connected; }
 
   private:
 	system::robot::sm::logger logger {};

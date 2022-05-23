@@ -41,7 +41,7 @@ class BehaviorKit
 	void sprinkles();
 	void rainbow();
 
-	void bleConnection();
+	void bleConnection(bool with_video);
 
 	void stop();
 
