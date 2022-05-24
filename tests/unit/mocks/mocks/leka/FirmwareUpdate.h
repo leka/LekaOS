@@ -11,7 +11,7 @@ namespace leka::mock {
 class FirmwareUpdate : public interface::FirmwareUpdate
 {
   public:
-	MOCK_METHOD(bool, loadUpdate, (FirmwareVersion &), (override));
+	MOCK_METHOD(bool, loadUpdate, (const FirmwareVersion &), (override));
 };
 
 }	// namespace leka::mock
