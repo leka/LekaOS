@@ -44,6 +44,7 @@ target_sources(LedKit
 target_link_libraries(LedKit
 	CoreLED
 	ColorKit
+	EventLoopKit
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
