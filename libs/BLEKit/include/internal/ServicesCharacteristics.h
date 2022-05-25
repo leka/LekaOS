@@ -17,6 +17,7 @@ namespace device_information {
 		inline constexpr uint16_t manufacturer_name = GattCharacteristic::UUID_MANUFACTURER_NAME_STRING_CHAR;
 		inline constexpr uint16_t model_number		= GattCharacteristic::UUID_MODEL_NUMBER_STRING_CHAR;
 		inline constexpr uint16_t serial_number		= GattCharacteristic::UUID_SERIAL_NUMBER_STRING_CHAR;
+		inline constexpr uint16_t os_version		= GattCharacteristic::UUID_FIRMWARE_REVISION_STRING_CHAR;
 	}	// namespace characteristic
 
 }	// namespace device_information

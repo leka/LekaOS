@@ -123,6 +123,8 @@ class RobotControllerTest : public testing::Test
 			EXPECT_CALL(mock_mcu, getID).Times(1);
 			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
 
+			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
+
 			expectedCallsStopMotors();
 
 			EXPECT_CALL(mock_videokit, initializeScreen).Times(1);

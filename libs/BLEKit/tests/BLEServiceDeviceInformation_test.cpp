@@ -47,3 +47,27 @@ TEST(BLEServiceDeviceInformationTest, setSerialNumber)
 	}
 	EXPECT_TRUE(same_content);
 }
+
+TEST(BLEServiceDeviceInformationTest, setOSVersion)
+{
+	auto service_device_information = BLEServiceDeviceInformation {};
+
+	const auto os_version_size = 14;
+	std::array<char, os_version_size> actual_os_version {};
+
+	auto spy_callback = [&actual_os_version](const BLEServiceDeviceInformation::data_to_send_handle_t &handle) {
+		for (int i = 0; i < os_version_size; i++) {
+			actual_os_version.at(i) = std::get<1>(handle)[i];
+		}
+	};
+
+	service_device_information.onDataReadyToSend(spy_callback);
+
+	auto os_version			 = FirmwareVersion {123, 234, 45678};
+	auto expected_os_version = os_version.asStdArray();	  // "123.234.45678"
+	service_device_information.setOSVersion(os_version);
+
+	for (int i = 0; i < os_version_size; i++) {
+		EXPECT_EQ(actual_os_version.at(i), expected_os_version[i]);
+	}
+}
