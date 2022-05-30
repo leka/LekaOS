@@ -20,7 +20,6 @@ void RFIDKit::runStateMachine()
 {
 	switch (_state) {
 		case state::WAITING_FOR_TAG: {
-			log_debug("CURRENT STATE : WAITING_FOR_TAG\n");
 			if (_rfid_reader.isTagDetected()) {
 				_rfid_reader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 				_state = state::TAG_COMMUNICATION_PROTOCOL_SET;
@@ -31,7 +30,6 @@ void RFIDKit::runStateMachine()
 		} break;
 
 		case state::TAG_COMMUNICATION_PROTOCOL_SET: {
-			log_debug("CURRENT STATE : TAG_PROTOCOL_SET\n");
 			sendREQA();
 			_state = state::WAIT_FOR_ATQA_RESPONSE;
 
@@ -48,8 +46,6 @@ void RFIDKit::runStateMachine()
 		} break;
 
 		case state::TAG_IDENTIFIED: {
-			log_debug("CURRENT STATE : TAG_IDENTIFIED\n");
-
 			if (receiveReadTagData()) {
 				sendReadRegister4();
 				_state = state::TAG_AVAILABLE;
@@ -59,15 +55,9 @@ void RFIDKit::runStateMachine()
 			}
 		} break;
 		case state::TAG_AVAILABLE: {
-			log_debug("CURRENT STATE : TAG_AVAILABLE\n");
-
 			if (receiveReadTagData() && isTagSignatureValid()) {
-				log_debug("Data : ");
-				for (unsigned char i: _tag.data) {
-					log_debug("%x, ", i);
-				}
-				log_debug("\n");
 				_card = MagicCard {_tag.data[5]};
+				log_info("Card available: %u", _card.data);
 				_on_tag_available_callback(_card);
 			}
 			_rfid_reader.setTagDetectionMode();
