@@ -5,12 +5,19 @@
 #include "VideoKit.h"
 #include <mutex>
 
+#include "rtos/Mutex.h"
 #include "rtos/ThisThread.h"
 
 #include "FileManagerKit.h"
 
 using namespace leka;
 using namespace std::chrono_literals;
+
+namespace {
+
+rtos::Mutex mutex {};
+
+}	// namespace
 
 void VideoKit::initializeScreen()
 {
