@@ -15,6 +15,7 @@ target_sources(RobotKit
 	PRIVATE
 		source/StateMachine.cpp
 		source/RobotController.cpp
+		source/Screensaver.cpp
 )
 
 target_link_libraries(RobotKit

@@ -71,6 +71,31 @@ void BehaviorKit::chargingGreen()
 	_videokit.displayImage("/fs/images/battery_green_4.jpg");
 }
 
+void BehaviorKit::underwater(std::function<void()> const &callback)
+{
+	_ledkit.start(&LedKit::animation::underwater);
+	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-state-under-water-without-eyebrows.avi", false, callback);
+}
+
+void BehaviorKit::bubbles(std::function<void()> const &callback)
+{
+	_ledkit.start(&LedKit::animation::bubbles);
+	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-action-bubbles-without-eyebrows.avi", false, callback);
+}
+
+void BehaviorKit::fly(std::function<void()> const &callback)
+{
+	_ledkit.start(&LedKit::animation::fly);
+	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-action-fly-without-eyebrows.avi", false, callback);
+}
+
+void BehaviorKit::singing(std::function<void()> const &callback)
+{
+	_ledkit.start(&LedKit::animation::singing);
+	_videokit.playVideo("/fs/videos/2022_02_14-animation-face-action-singing-color-without-eyebrows.avi", false,
+						callback);
+}
+
 void BehaviorKit::blinkGreen()
 {
 	spinLeft(1);

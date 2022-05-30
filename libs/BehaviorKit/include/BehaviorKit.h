@@ -35,6 +35,11 @@ class BehaviorKit
 	void chargingYellow();
 	void chargingGreen();
 
+	void underwater(std::function<void()> const &callback = {});
+	void bubbles(std::function<void()> const &callback = {});
+	void fly(std::function<void()> const &callback = {});
+	void singing(std::function<void()> const &callback = {});
+
 	void blinkGreen();
 	void spinBlink();
 	void fire();

@@ -120,6 +120,10 @@ namespace sm::action {
 		auto operator()(irc &rc) const { rc.startScreensaverBehavior(); }
 	};
 
+	struct stop_screensaver_behavior {
+		auto operator()(irc &rc) const { rc.stopScreensaverBehavior(); }
+	};
+
 }	// namespace sm::action
 
 struct StateMachine {
@@ -142,8 +146,11 @@ struct StateMachine {
 			, sm::state::idle     + event<sm::event::charge_did_start> [sm::guard::is_charging {}]       = sm::state::charging
 
 			, sm::state::screensaver + boost::sml::on_entry<_> / sm::action::start_screensaver_behavior {}
+			, sm::state::screensaver + boost::sml::on_exit<_> / sm::action::stop_screensaver_behavior {}
 
 			, sm::state::screensaver  + event<sm::event::screensaver_animation_did_end>                  = sm::state::sleeping
+			, sm::state::screensaver  + event<sm::event::ble_connection>                                 = sm::state::idle
+			, sm::state::screensaver  + event<sm::event::command_received>                               = sm::state::idle
 			, sm::state::screensaver  + event<sm::event::charge_did_start> [sm::guard::is_charging {}]   = sm::state::charging
 
 			, sm::state::sleeping + boost::sml::on_entry<_> / sm::action::start_sleeping_behavior {}

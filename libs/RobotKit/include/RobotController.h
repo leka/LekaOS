@@ -22,6 +22,7 @@
 #include "FileReception.h"
 #include "LedKit.h"
 #include "RCLogger.h"
+#include "Screensaver.h"
 #include "SerialNumberKit.h"
 #include "StateMachine.h"
 #include "interface/RobotController.h"
@@ -93,8 +94,14 @@ class RobotController : public interface::RobotController
 
 	void startScreensaverBehavior() final
 	{
-		// TODO (@hugo) Call screensaver.start() and assure transition to sleeping at the end
+		using namespace system::robot::sm;
+
+		auto on_screensaver_ended_callback = [this]() { raise(event::screensaver_animation_did_end {}); };
+		_screensaver.onScreensaverEnded(on_screensaver_ended_callback);
+		_screensaver.start();
 	}
+
+	void stopScreensaverBehavior() final { _screensaver.stop(); }
 
 	void startSleepingBehavior() final
 	{
@@ -312,7 +319,7 @@ class RobotController : public interface::RobotController
   private:
 	system::robot::sm::logger logger {};
 
-	std::chrono::seconds _sleep_timeout_duration {300};
+	std::chrono::seconds _sleep_timeout_duration {30};
 	interface::Timeout &_timeout;
 
 	interface::Battery &_battery;
@@ -334,6 +341,7 @@ class RobotController : public interface::RobotController
 
 	BehaviorKit &_behaviorkit;
 	CommandKit &_cmdkit;
+	Screensaver _screensaver = Screensaver {_behaviorkit};
 
 	rtos::Thread _thread {};
 	events::EventQueue _event_queue {};
