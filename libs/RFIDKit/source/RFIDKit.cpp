@@ -56,8 +56,8 @@ void RFIDKit::runStateMachine()
 		} break;
 		case state::TAG_AVAILABLE: {
 			if (receiveReadTagData() && isTagSignatureValid()) {
-				_card = MagicCard {_tag.data[5]};
-				log_info("Card available: %u", _card.data);
+				_card = MagicCard {_tag};
+				log_info("Card available: %u", _card.getId());
 				_on_tag_available_callback(_card);
 			}
 			_rfid_reader.setTagDetectionMode();
