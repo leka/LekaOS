@@ -67,16 +67,16 @@ constexpr MagicCard MagicCard::none			  = MagicCard {0x00'00};
 constexpr MagicCard MagicCard::emergency_stop = MagicCard {0x00'01};
 constexpr MagicCard MagicCard::dice_roll	  = MagicCard {0x00'02};
 
-constexpr MagicCard MagicCard::number_0	 = MagicCard {0x0A};
-constexpr MagicCard MagicCard::number_1	 = MagicCard {0x0B};
-constexpr MagicCard MagicCard::number_2	 = MagicCard {0x0C};
-constexpr MagicCard MagicCard::number_3	 = MagicCard {0x0D};
-constexpr MagicCard MagicCard::number_4	 = MagicCard {0x0E};
-constexpr MagicCard MagicCard::number_5	 = MagicCard {0x0F};
-constexpr MagicCard MagicCard::number_6	 = MagicCard {0x10};
-constexpr MagicCard MagicCard::number_7	 = MagicCard {0x11};
-constexpr MagicCard MagicCard::number_8	 = MagicCard {0x12};
-constexpr MagicCard MagicCard::number_9	 = MagicCard {0x13};
-constexpr MagicCard MagicCard::number_10 = MagicCard {0x14};
+constexpr MagicCard MagicCard::number_0	 = MagicCard {0x00'0A};
+constexpr MagicCard MagicCard::number_1	 = MagicCard {0x00'0B};
+constexpr MagicCard MagicCard::number_2	 = MagicCard {0x00'0C};
+constexpr MagicCard MagicCard::number_3	 = MagicCard {0x00'0D};
+constexpr MagicCard MagicCard::number_4	 = MagicCard {0x00'0E};
+constexpr MagicCard MagicCard::number_5	 = MagicCard {0x00'0F};
+constexpr MagicCard MagicCard::number_6	 = MagicCard {0x00'10};
+constexpr MagicCard MagicCard::number_7	 = MagicCard {0x00'11};
+constexpr MagicCard MagicCard::number_8	 = MagicCard {0x00'12};
+constexpr MagicCard MagicCard::number_9	 = MagicCard {0x00'13};
+constexpr MagicCard MagicCard::number_10 = MagicCard {0x00'14};
 
 }	// namespace leka
