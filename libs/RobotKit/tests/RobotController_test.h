@@ -191,7 +191,7 @@ class RobotControllerTest : public testing::Test
 		EXPECT_CALL(timeout, start).InSequence(on_idle_entry_sequence);
 
 		EXPECT_CALL(mock_videokit, playVideo).InSequence(on_idle_entry_sequence);
-		EXPECT_CALL(mock_lcd, turnOn).InSequence(on_idle_entry_sequence);
+		EXPECT_CALL(mock_lcd, turnOn).Times(AtLeast(1)).InSequence(on_idle_entry_sequence);
 	}
 
 	void expectedCallsTransitionSetupToCharging()

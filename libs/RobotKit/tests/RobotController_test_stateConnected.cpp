@@ -15,6 +15,8 @@ TEST_F(RobotControllerTest, startConnectionBehaviorIsCharging)
 	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1));
 
 	EXPECT_CALL(mock_videokit, playVideo).Times(0);
+	EXPECT_CALL(mock_belt, setColor).Times(AtLeast(1));
+	EXPECT_CALL(mock_belt, show).Times(AtLeast(1));
 	rc.startConnectionBehavior();
 	EXPECT_TRUE(rc.isBleConnected());
 }
@@ -30,6 +32,8 @@ TEST_F(RobotControllerTest, startConnectionBehaviorIsNotCharging)
 	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1));
 
 	EXPECT_CALL(mock_videokit, playVideo).Times(1);
+	EXPECT_CALL(mock_belt, setColor).Times(AtLeast(1));
+	EXPECT_CALL(mock_belt, show).Times(AtLeast(1));
 
 	rc.startConnectionBehavior();
 	EXPECT_TRUE(rc.isBleConnected());
