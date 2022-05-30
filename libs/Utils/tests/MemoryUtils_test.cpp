@@ -98,3 +98,19 @@ TEST(MemoryUtilsTest, getHighByte)
 
 	ASSERT_EQ(0b1111'1111, high);
 }
+
+TEST(MemoryUtilsTest, combineTwoBytes)
+{
+	auto high = uint8_t {0xAB};
+	auto low  = uint8_t {0xCD};
+
+	auto both = combineBytes({.high = high, .low = low});
+
+	EXPECT_EQ(both, 0xABCD);
+
+	auto new_high = getHighByte(both);
+	auto new_low  = getLowByte(both);
+
+	EXPECT_EQ(new_high, high);
+	EXPECT_EQ(new_low, low);
+}
