@@ -163,6 +163,7 @@ class RobotController : public interface::RobotController
 			_behaviorkit.bleConnection(false);
 		} else {
 			_behaviorkit.bleConnection(true);
+			_lcd.turnOn();
 		}
 		_is_ble_connected = true;
 	}
