@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "rtos/Mutex.h"
 #include "rtos/Thread.h"
 
 #include "interface/drivers/EventFlags.h"
@@ -38,6 +39,8 @@ class VideoKit : public interface::VideoKit
   private:
 	rtos::Thread _thread {};
 	interface::EventFlags &_event_flags;
+
+	rtos::Mutex mutex {};
 
 	interface::Video &_video;
 

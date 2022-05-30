@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "VideoKit.h"
+#include <mutex>
 
 #include "rtos/ThisThread.h"
 
@@ -23,6 +24,8 @@ void VideoKit::initializeScreen()
 
 void VideoKit::displayImage(const std::filesystem::path &path)
 {
+	const std::scoped_lock lock(mutex);
+
 	if (path == _current_path) {
 		return;
 	}
@@ -42,6 +45,8 @@ void VideoKit::displayImage(const std::filesystem::path &path)
 
 void VideoKit::playVideo(const std::filesystem::path &path, bool must_loop)
 {
+	const std::scoped_lock lock(mutex);
+
 	if (auto file = FileManagerKit::File {path}; file.is_open()) {
 		file.close();
 
