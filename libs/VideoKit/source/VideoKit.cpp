@@ -3,13 +3,21 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "VideoKit.h"
+#include <mutex>
 
+#include "rtos/Mutex.h"
 #include "rtos/ThisThread.h"
 
 #include "FileManagerKit.h"
 
 using namespace leka;
 using namespace std::chrono_literals;
+
+namespace {
+
+rtos::Mutex mutex {};
+
+}	// namespace
 
 void VideoKit::initializeScreen()
 {
@@ -23,6 +31,8 @@ void VideoKit::initializeScreen()
 
 void VideoKit::displayImage(const std::filesystem::path &path)
 {
+	const std::scoped_lock lock(mutex);
+
 	if (path == _current_path) {
 		return;
 	}
@@ -42,6 +52,8 @@ void VideoKit::displayImage(const std::filesystem::path &path)
 
 void VideoKit::playVideo(const std::filesystem::path &path, bool must_loop)
 {
+	const std::scoped_lock lock(mutex);
+
 	if (auto file = FileManagerKit::File {path}; file.is_open()) {
 		file.close();
 
