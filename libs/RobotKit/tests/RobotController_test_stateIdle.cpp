@@ -29,6 +29,57 @@ TEST_F(RobotControllerTest, stateIdleEventTimeout)
 	on_sleeping_start_timeout();
 }
 
+TEST_F(RobotControllerTest, stateIdleEventBleConnection)
+{
+	rc.state_machine.set_current_states(lksm::state::idle);
+
+	Sequence on_exit_idle_sequence;
+	EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
+
+	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
+
+	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1));
+	EXPECT_CALL(mock_belt, hide).Times(AtLeast(1));
+	EXPECT_CALL(mock_ears, hide).Times(AtLeast(1));
+	EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1));
+	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1));
+
+	EXPECT_CALL(mock_videokit, playVideoOnce).Times(AtLeast(1));
+	EXPECT_CALL(mock_belt, setColor).Times(AtLeast(1));
+	EXPECT_CALL(mock_belt, show).Times(AtLeast(1));
+
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AtLeast(1));
+
+	Sequence on_working_entry_sequence;
+	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(timeout, start).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_working_entry_sequence);
+
+	rc.state_machine.process_event(lksm::event::ble_connection {});
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::working));
+}
+
+TEST_F(RobotControllerTest, stateIdleEventCommandReceived)
+{
+	rc.state_machine.set_current_states(lksm::state::idle, lksm::state::connected);
+
+	Sequence on_exit_idle_sequence;
+	EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
+	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_idle_sequence);
+	expectedCallsStopMotors();
+
+	Sequence on_working_entry_sequence;
+	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(timeout, start).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_working_entry_sequence);
+
+	rc.state_machine.process_event(lksm::event::command_received {});
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::working, lksm::state::connected));
+}
+
 TEST_F(RobotControllerTest, stateIdleEventChargeDidStartGuardIsChargingTrue)
 {
 	rc.state_machine.set_current_states(lksm::state::idle);

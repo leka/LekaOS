@@ -19,21 +19,42 @@ TEST_F(RobotControllerTest, stateChargingEventChargeDidStopGuardIsChargingTrue)
 {
 	rc.state_machine.set_current_states(lksm::state::charging);
 
-	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
+	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
 
 	// TODO: Specify which BLE service and what is expected if necessary
-	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AtLeast(1));
 
 	on_charge_did_stop();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
 }
 
-TEST_F(RobotControllerTest, stateChargingEventChargeDidStopGuardIsChargingFalse)
+TEST_F(RobotControllerTest, stateChargingConnectedEventChargeDidStopGuardIsChargingFalse)
 {
-	rc.state_machine.set_current_states(lksm::state::charging);
+	rc.state_machine.set_current_states(lksm::state::charging, lksm::state::connected);
 
-	EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
+	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
+
+	EXPECT_CALL(timeout, stop);
+
+	Sequence on_working_entry_sequence;
+	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(timeout, start).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_working_entry_sequence);
+
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AtLeast(1));
+
+	on_charge_did_stop();
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::working));
+}
+
+TEST_F(RobotControllerTest, stateChargingDisconnectedEventChargeDidStopGuardIsChargingFalse)
+{
+	rc.state_machine.set_current_states(lksm::state::charging, lksm::state::disconnected);
+
+	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
 
 	EXPECT_CALL(timeout, stop);
 

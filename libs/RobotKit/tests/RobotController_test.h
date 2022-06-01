@@ -97,6 +97,7 @@ class RobotControllerTest : public testing::Test
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
 
 	interface::Timeout::callback_t on_sleep_timeout			 = {};
+	interface::Timeout::callback_t on_idle_timeout			 = {};
 	interface::Timeout::callback_t on_sleeping_start_timeout = {};
 	interface::Timeout::callback_t on_charging_start_timeout = {};
 
@@ -155,7 +156,9 @@ class RobotControllerTest : public testing::Test
 			EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).InSequence(on_data_updated_sequence);
 			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(on_data_updated_sequence);
 
-			EXPECT_CALL(timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleep_timeout));
+			// EXPECT_CALL(timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleep_timeout));
+
+			EXPECT_CALL(timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_idle_timeout));
 
 			EXPECT_CALL(battery, onChargeDidStart).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_start));
 
