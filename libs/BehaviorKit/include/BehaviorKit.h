@@ -42,6 +42,7 @@ class BehaviorKit
 	void rainbow();
 
 	void bleConnection(bool with_video);
+	void working();
 
 	void stop();
 
