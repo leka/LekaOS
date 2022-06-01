@@ -68,34 +68,30 @@ TEST_F(VideoKitTest, displayImageSamePathTwice)
 	video_kit.displayImage(temp_file_path);
 }
 
-TEST_F(VideoKitTest, playVideoInALoopFalse)
+TEST_F(VideoKitTest, playVideoOnce)
 {
 	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::STOP_VIDEO_FLAG));
 	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::START_VIDEO_FLAG));
 
-	auto play_in_a_loop = false;
-	video_kit.playVideo(temp_file_path, play_in_a_loop);
+	video_kit.playVideoOnce(temp_file_path);
 }
 
-TEST_F(VideoKitTest, playVideoInALoopTrue)
+TEST_F(VideoKitTest, playVideoOnRepeat)
 {
 	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::STOP_VIDEO_FLAG));
 	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::START_VIDEO_FLAG));
 
-	auto play_in_a_loop = true;
-	video_kit.playVideo(temp_file_path, play_in_a_loop);
+	video_kit.playVideoOnRepeat(temp_file_path);
 }
 
-TEST_F(VideoKitTest, playVideoInALoopFalseFileDoesNotExist)
+TEST_F(VideoKitTest, playVideoOnceFileDoesNotExist)
 {
-	auto play_in_a_loop = false;
-	video_kit.playVideo("some_video", play_in_a_loop);
+	video_kit.playVideoOnce("some_video");
 }
 
-TEST_F(VideoKitTest, playVideoInALoopTrueFileDoesNotExist)
+TEST_F(VideoKitTest, playVideoOnRepeatFileDoesNotExist)
 {
-	auto play_in_a_loop = true;
-	video_kit.playVideo("some_video", play_in_a_loop);
+	video_kit.playVideoOnRepeat("some_video");
 }
 
 TEST_F(VideoKitTest, stopVideo)

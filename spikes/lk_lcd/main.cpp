@@ -135,7 +135,7 @@ auto main() -> int
 		}
 
 		for (const auto &video_name: videos) {
-			videokit.playVideo(video_name);
+			videokit.playVideoOnce(video_name);
 			rtos::ThisThread::sleep_for(1s);
 		}
 
