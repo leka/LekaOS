@@ -93,17 +93,59 @@ TEST_F(StateMachineTest, stateIdleEventTimeout)
 	EXPECT_TRUE(sm.is(lksm::state::sleeping));
 }
 
+TEST_F(StateMachineTest, stateIdleEventCommandReceived)
+{
+	sm.set_current_states(lksm::state::idle);
+
+	EXPECT_CALL(mock_rc, stopSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, stopWaitingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startIdleTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startWorkingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, isBleConnected).WillOnce(Return(true));
+
+	sm.process_event(lksm::event::command_received {});
+
+	EXPECT_TRUE(sm.is(lksm::state::working));
+}
+
+TEST_F(StateMachineTest, stateWorkingEventTimeout)
+{
+	sm.set_current_states(lksm::state::working);
+
+	EXPECT_CALL(mock_rc, stopIdleTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startWaitingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
+
+	sm.process_event(lksm::event::idle_timeout_did_end {});
+
+	EXPECT_TRUE(sm.is(lksm::state::idle));
+}
+
+TEST_F(StateMachineTest, stateWorkingEventChargeDidStart)
+{
+	sm.set_current_states(lksm::state::working);
+
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
+	EXPECT_CALL(mock_rc, stopIdleTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+
+	sm.process_event(lksm::event::charge_did_start {});
+
+	EXPECT_TRUE(sm.is(lksm::state::charging));
+}
+
 TEST_F(StateMachineTest, stateSleepEventCommandReceived)
 {
 	sm.set_current_states(lksm::state::sleeping);
 
 	EXPECT_CALL(mock_rc, stopSleepingBehavior).Times(1);
-	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
-	EXPECT_CALL(mock_rc, startWaitingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startIdleTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startWorkingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, isBleConnected).WillOnce(Return(true));
 
 	sm.process_event(lksm::event::command_received {});
 
-	EXPECT_TRUE(sm.is(lksm::state::idle));
+	EXPECT_TRUE(sm.is(lksm::state::working));
 }
 
 TEST_F(StateMachineTest, stateSleepEventChargeDidStart)
@@ -133,11 +175,27 @@ TEST_F(StateMachineTest, stateIdleEventChargeDidStart)
 	EXPECT_TRUE(sm.is(lksm::state::charging));
 }
 
-TEST_F(StateMachineTest, stateChargingEventChargeDidStop)
+TEST_F(StateMachineTest, stateChargingEventChargeDidStopBleConnected)
+{
+	sm.set_current_states(lksm::state::charging);
+
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
+	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(true));
+	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startIdleTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startWorkingBehavior).Times(1);
+
+	sm.process_event(lksm::event::charge_did_stop {});
+
+	EXPECT_TRUE(sm.is(lksm::state::working));
+}
+
+TEST_F(StateMachineTest, stateChargingEventChargeDidStopBleDisconnected)
 {
 	sm.set_current_states(lksm::state::charging);
 
 	EXPECT_CALL(mock_rc, isCharging).WillOnce(Return(false));
+	EXPECT_CALL(mock_rc, isBleConnected).WillOnce(Return(false));
 	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startWaitingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
@@ -177,10 +235,11 @@ TEST_F(StateMachineTest, stateSleepingEventBleConnection)
 	sm.set_current_states(lksm::state::sleeping, lksm::state::disconnected);
 
 	EXPECT_CALL(mock_rc, startConnectionBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startWorkingBehavior).Times(1);
 
 	sm.process_event(lksm::event::ble_connection {});
 
-	EXPECT_TRUE(sm.is(lksm::state::idle, lksm::state::connected));
+	EXPECT_TRUE(sm.is(lksm::state::working, lksm::state::connected));
 }
 
 TEST_F(StateMachineTest, stateSleepingEventBleDisconnection)
@@ -199,10 +258,11 @@ TEST_F(StateMachineTest, stateIdleEventBleConnection)
 	sm.set_current_states(lksm::state::idle, lksm::state::disconnected);
 
 	EXPECT_CALL(mock_rc, startConnectionBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startWorkingBehavior).Times(1);
 
 	sm.process_event(lksm::event::ble_connection {});
 
-	EXPECT_TRUE(sm.is(lksm::state::idle, lksm::state::connected));
+	EXPECT_TRUE(sm.is(lksm::state::working, lksm::state::connected));
 }
 
 TEST_F(StateMachineTest, stateIdleEventBleDisconnection)
