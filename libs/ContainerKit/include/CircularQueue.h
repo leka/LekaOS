@@ -30,7 +30,7 @@ class CircularQueue
 
 	void push(const T &data)
 	{
-		const std::scoped_lock<CriticalSection> lock(_lock);
+		const std::scoped_lock lock(_lock);
 
 		_buffer[_head] = data;
 
@@ -51,7 +51,7 @@ class CircularQueue
 			return;
 		}
 
-		const std::scoped_lock<CriticalSection> lock(_lock);
+		const std::scoped_lock lock(_lock);
 
 		// if we try to write more bytes than the buffer can hold we only bother writing the last bytes
 		if (len > BufferSize) {
@@ -88,7 +88,7 @@ class CircularQueue
 
 	void drop()
 	{
-		const std::scoped_lock<CriticalSection> lock(_lock);
+		const std::scoped_lock lock(_lock);
 
 		if (non_critical_empty()) {	  // LCOV_EXCL_LINE
 			return;
@@ -100,7 +100,7 @@ class CircularQueue
 
 	auto pop(T &data) -> bool
 	{
-		const std::scoped_lock<CriticalSection> lock(_lock);
+		const std::scoped_lock lock(_lock);
 
 		if (non_critical_empty()) {	  // LCOV_EXCL_LINE
 			return false;
@@ -115,7 +115,7 @@ class CircularQueue
 
 	auto pop(T *dest, CounterType len) -> CounterType
 	{
-		const std::scoped_lock<CriticalSection> lock(_lock);
+		const std::scoped_lock lock(_lock);
 
 		if (len <= 0 || non_critical_empty()) {
 			return 0;
@@ -150,7 +150,7 @@ class CircularQueue
 
 	[[nodiscard]] auto empty() const -> bool
 	{
-		const std::scoped_lock<CriticalSection> lock(_lock);
+		const std::scoped_lock lock(_lock);
 
 		bool is_empty = non_critical_empty();
 
@@ -161,7 +161,7 @@ class CircularQueue
 
 	void clear()
 	{
-		const std::scoped_lock<CriticalSection> lock(_lock);
+		const std::scoped_lock lock(_lock);
 
 		_head = 0;
 		_tail = 0;
@@ -170,7 +170,7 @@ class CircularQueue
 
 	auto size() const -> CounterType
 	{
-		const std::scoped_lock<CriticalSection> lock(_lock);
+		const std::scoped_lock lock(_lock);
 
 		CounterType elements = non_critical_size();	  // LCOV_EXCL_LINE
 
@@ -179,7 +179,7 @@ class CircularQueue
 
 	auto peek(T &data) const -> bool
 	{
-		const std::scoped_lock<CriticalSection> lock(_lock);
+		const std::scoped_lock lock(_lock);
 
 		if (non_critical_empty()) {
 			return false;
@@ -192,7 +192,7 @@ class CircularQueue
 
 	auto peekAt(CounterType position, T &data) const -> bool
 	{
-		const std::scoped_lock<CriticalSection> lock(_lock);
+		const std::scoped_lock lock(_lock);
 
 		if (non_critical_empty() || position >= non_critical_size()) {
 			return false;
@@ -220,7 +220,7 @@ class CircularQueue
 
 	auto hasPattern(const T *pattern, std::size_t size, std::unsigned_integral auto &position) -> bool
 	{
-		const std::scoped_lock<CriticalSection> lock(_lock);
+		const std::scoped_lock lock(_lock);
 
 		auto i = 0U;
 
