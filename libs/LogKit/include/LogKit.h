@@ -250,7 +250,7 @@ namespace internal {
 	#define log_debug(str, ...)                                                                                        \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
-			const std::lock_guard<rtos::Mutex> lock(leka::logger::internal::mutex);                                    \
+			const std::scoped_lock lock(leka::logger::internal::mutex);                                                \
 			format_time_human_readable(leka::logger::internal::now());                                                 \
 			format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                                       \
 			format_message(str, ##__VA_ARGS__);                                                                        \
@@ -264,7 +264,7 @@ namespace internal {
 	#define log_info(str, ...)                                                                                         \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
-			const std::lock_guard<rtos::Mutex> lock(leka::logger::internal::mutex);                                    \
+			const std::scoped_lock lock(leka::logger::internal::mutex);                                                \
 			format_time_human_readable(leka::logger::internal::now());                                                 \
 			format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                                       \
 			format_message(str, ##__VA_ARGS__);                                                                        \
@@ -278,7 +278,7 @@ namespace internal {
 	#define log_error(str, ...)                                                                                        \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
-			const std::lock_guard<rtos::Mutex> lock(leka::logger::internal::mutex);                                    \
+			const std::scoped_lock lock(leka::logger::internal::mutex);                                                \
 			format_time_human_readable(leka::logger::internal::now());                                                 \
 			format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                                       \
 			format_message(str, ##__VA_ARGS__);                                                                        \
