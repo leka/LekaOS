@@ -50,7 +50,7 @@ void VideoKit::displayImage(const std::filesystem::path &path)
 	}
 }
 
-void VideoKit::playVideo(const std::filesystem::path &path, bool must_loop)
+void VideoKit::playVideoOnce(const std::filesystem::path &path)
 {
 	const std::scoped_lock lock(mutex);
 
@@ -60,7 +60,22 @@ void VideoKit::playVideo(const std::filesystem::path &path, bool must_loop)
 		_event_flags.set(flags::STOP_VIDEO_FLAG);
 
 		_current_path = path;
-		_must_loop	  = must_loop;
+		_must_loop	  = false;
+
+		rtos::ThisThread::sleep_for(100ms);
+		_event_flags.set(flags::START_VIDEO_FLAG);
+	}
+}
+
+void VideoKit::playVideoOnRepeat(const std::filesystem::path &path)
+{
+	if (auto file = FileManagerKit::File {path}; file.is_open()) {
+		file.close();
+
+		_event_flags.set(flags::STOP_VIDEO_FLAG);
+
+		_current_path = path;
+		_must_loop	  = true;
 
 		rtos::ThisThread::sleep_for(100ms);
 		_event_flags.set(flags::START_VIDEO_FLAG);

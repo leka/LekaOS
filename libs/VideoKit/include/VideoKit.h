@@ -25,7 +25,9 @@ class VideoKit : public interface::VideoKit
 
 	void displayImage(const std::filesystem::path &path) final;
 
-	void playVideo(const std::filesystem::path &path, bool must_loop = false) final;
+	void playVideoOnce(const std::filesystem::path &path) final;
+	void playVideoOnRepeat(const std::filesystem::path &path) final;
+
 	void stopVideo() final;
 
 	[[noreturn]] void run();

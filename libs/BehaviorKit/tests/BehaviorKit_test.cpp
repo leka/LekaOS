@@ -80,13 +80,13 @@ TEST_F(BehaviorKitTest, launching)
 
 TEST_F(BehaviorKitTest, sleeping)
 {
-	EXPECT_CALL(mock_videokit, playVideo);
+	EXPECT_CALL(mock_videokit, playVideoOnce);
 	behaviorkit.sleeping();
 }
 
 TEST_F(BehaviorKitTest, waiting)
 {
-	EXPECT_CALL(mock_videokit, playVideo);
+	EXPECT_CALL(mock_videokit, playVideoOnRepeat);
 	behaviorkit.waiting();
 }
 
@@ -106,7 +106,7 @@ TEST_F(BehaviorKitTest, blinkGreen)
 {
 	auto expected_speed = 1;
 
-	EXPECT_CALL(mock_videokit, playVideo);
+	EXPECT_CALL(mock_videokit, playVideoOnce);
 	{
 		InSequence seq;
 
@@ -124,7 +124,7 @@ TEST_F(BehaviorKitTest, spinBlink)
 {
 	auto expected_speed = 1;
 
-	EXPECT_CALL(mock_videokit, playVideo);
+	EXPECT_CALL(mock_videokit, playVideoOnce);
 
 	{
 		InSequence seq;
@@ -141,31 +141,31 @@ TEST_F(BehaviorKitTest, spinBlink)
 
 TEST_F(BehaviorKitTest, fire)
 {
-	EXPECT_CALL(mock_videokit, playVideo);
+	EXPECT_CALL(mock_videokit, playVideoOnce);
 	behaviorkit.fire();
 }
 
 TEST_F(BehaviorKitTest, sprinkles)
 {
-	EXPECT_CALL(mock_videokit, playVideo);
+	EXPECT_CALL(mock_videokit, playVideoOnce);
 	behaviorkit.sprinkles();
 }
 
 TEST_F(BehaviorKitTest, rainbow)
 {
-	EXPECT_CALL(mock_videokit, playVideo);
+	EXPECT_CALL(mock_videokit, playVideoOnce);
 	behaviorkit.rainbow();
 }
 
 TEST_F(BehaviorKitTest, bleConnectionWhileCharging)
 {
-	EXPECT_CALL(mock_videokit, playVideo).Times(0);
+	EXPECT_CALL(mock_videokit, playVideoOnce).Times(0);
 	behaviorkit.bleConnection(false);
 }
 
 TEST_F(BehaviorKitTest, bleConnectionWhileNotCharging)
 {
-	EXPECT_CALL(mock_videokit, playVideo);
+	EXPECT_CALL(mock_videokit, playVideoOnce);
 	behaviorkit.bleConnection(true);
 }
 

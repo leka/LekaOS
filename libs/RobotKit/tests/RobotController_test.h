@@ -190,7 +190,7 @@ class RobotControllerTest : public testing::Test
 			.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleep_timeout));
 		EXPECT_CALL(timeout, start).InSequence(on_idle_entry_sequence);
 
-		EXPECT_CALL(mock_videokit, playVideo).InSequence(on_idle_entry_sequence);
+		EXPECT_CALL(mock_videokit, playVideoOnRepeat).InSequence(on_idle_entry_sequence);
 		EXPECT_CALL(mock_lcd, turnOn).Times(AtLeast(1)).InSequence(on_idle_entry_sequence);
 	}
 

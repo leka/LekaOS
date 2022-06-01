@@ -14,7 +14,7 @@ TEST_F(RobotControllerTest, stateIdleEventTimeout)
 	expectedCallsStopMotors();
 
 	Sequence on_sleeping_sequence;
-	EXPECT_CALL(mock_videokit, playVideo).InSequence(on_sleeping_sequence);
+	EXPECT_CALL(mock_videokit, playVideoOnce).InSequence(on_sleeping_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_sleeping_sequence);
 	EXPECT_CALL(timeout, onTimeout)
 		.InSequence(on_sleeping_sequence)

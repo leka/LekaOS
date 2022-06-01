@@ -47,7 +47,7 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsNotCharging)
 			EXPECT_CALL(timeout, onTimeout);
 			EXPECT_CALL(timeout, start);
 
-			EXPECT_CALL(mock_videokit, playVideo);
+			EXPECT_CALL(mock_videokit, playVideoOnRepeat);
 			EXPECT_CALL(mock_lcd, turnOn);
 		}
 	}
