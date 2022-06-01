@@ -169,6 +169,12 @@ TEST_F(BehaviorKitTest, bleConnectionWhileNotCharging)
 	behaviorkit.bleConnection(true);
 }
 
+TEST_F(BehaviorKitTest, working)
+{
+	EXPECT_CALL(mock_videokit, displayImage);
+	behaviorkit.working();
+}
+
 TEST_F(BehaviorKitTest, stop)
 {
 	auto speed = 0.5;
