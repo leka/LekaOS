@@ -165,14 +165,9 @@ class RobotController : public interface::RobotController
 			_behaviorkit.bleConnection(true);
 			_lcd.turnOn();
 		}
-		_is_ble_connected = true;
 	}
 
-	void startDisconnectionBehavior() final
-	{
-		stopActuators();
-		_is_ble_connected = false;
-	}
+	void startDisconnectionBehavior() final { stopActuators(); }
 
 	auto isReadyToUpdate() -> bool final
 	{
@@ -310,7 +305,7 @@ class RobotController : public interface::RobotController
 		_videokit.stopVideo();
 	}
 
-	auto isBleConnected() -> bool final { return _is_ble_connected; }
+	auto isBleConnected() -> bool final { return state_machine.is(system::robot::sm::state::connected); }
 
   private:
 	system::robot::sm::logger logger {};
@@ -356,8 +351,6 @@ class RobotController : public interface::RobotController
 		&_service_battery,	  &_service_commands,		&_service_device_information,
 		&_service_monitoring, &_service_file_reception, &_service_update,
 	};
-
-	bool _is_ble_connected = false;
 };
 
 }	// namespace leka
