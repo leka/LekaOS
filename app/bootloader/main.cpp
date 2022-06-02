@@ -45,7 +45,7 @@ namespace os {
 
 	constexpr auto start_address = uint32_t {0x8040000 + 0x1000};	// Start application address + header
 
-	auto version_path = "/fs/conf/os_version";
+	auto version_path = "/fs/sys/os-version";
 
 }	// namespace os
 
