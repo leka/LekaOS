@@ -24,7 +24,7 @@ void BehaviorKit::spinRight(float speed)
 
 void BehaviorKit::launching()
 {
-	_videokit.displayImage("/fs/images/logo.jpg");
+	_videokit.displayImage("/fs/home/img/logo.jpg");
 }
 
 void BehaviorKit::sleeping()
@@ -43,34 +43,32 @@ void BehaviorKit::waiting()
 void BehaviorKit::lowBattery()
 {
 	_ledkit.stop();
-	_videokit.displayImage("/fs/images/loading.jpg");
-	_motor_left.stop();
-	_motor_right.stop();
+	_videokit.displayImage("/fs/home/img/loading.jpg");
 }
 
 void BehaviorKit::chargingZero()
 {
-	_videokit.displayImage("/fs/images/low_battery.jpg");
+	_videokit.displayImage("/fs/home/img/low_battery.jpg");
 }
 
 void BehaviorKit::chargingRed()
 {
-	_videokit.displayImage("/fs/images/battery_red.jpg");
+	_videokit.displayImage("/fs/home/img/battery_red.jpg");
 }
 
 void BehaviorKit::chargingOrange()
 {
-	_videokit.displayImage("/fs/images/battery_yellow_2.jpg");
+	_videokit.displayImage("/fs/home/img/battery_yellow_2.jpg");
 }
 
 void BehaviorKit::chargingYellow()
 {
-	_videokit.displayImage("/fs/images/battery_green_3.jpg");
+	_videokit.displayImage("/fs/home/img/battery_green_3.jpg");
 }
 
 void BehaviorKit::chargingGreen()
 {
-	_videokit.displayImage("/fs/images/battery_green_4.jpg");
+	_videokit.displayImage("/fs/home/img/battery_green_4.jpg");
 }
 
 void BehaviorKit::blinkGreen()
