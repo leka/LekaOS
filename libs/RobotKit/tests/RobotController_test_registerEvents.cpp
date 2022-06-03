@@ -14,7 +14,7 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsNotCharging)
 		Sequence on_low_battery_sequence;
 		EXPECT_CALL(battery, level).InSequence(on_low_battery_sequence);
 		EXPECT_CALL(battery, isCharging).InSequence(on_low_battery_sequence).WillOnce(Return(false));
-		EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/loading.jpg"}));
+		EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/home/img/loading.jpg"}));
 		EXPECT_CALL(battery, level).InSequence(on_low_battery_sequence);
 
 		Sequence on_data_updated_sequence;
@@ -40,7 +40,7 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsNotCharging)
 			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(is_charging_sequence);
 
 			Sequence run_launching_behavior_sequence;
-			EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/logo.jpg"}))
+			EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/home/img/logo.jpg"}))
 				.InSequence(run_launching_behavior_sequence);
 			EXPECT_CALL(mock_lcd, turnOn).InSequence(run_launching_behavior_sequence);
 
@@ -94,7 +94,7 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsCharging)
 			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(is_charging_sequence);
 
 			Sequence run_launching_behavior_sequence;
-			EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/logo.jpg"}))
+			EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/home/img/logo.jpg"}))
 				.InSequence(run_launching_behavior_sequence);
 			EXPECT_CALL(mock_lcd, turnOn).InSequence(run_launching_behavior_sequence);
 
@@ -121,7 +121,7 @@ TEST_F(RobotControllerTest, onChargingBehaviorLevelBelow25)
 {
 	auto battery_level = 0;
 
-	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/low_battery.jpg"})).Times(1);
+	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/home/img/low_battery.jpg"})).Times(1);
 
 	rc.onChargingBehavior(battery_level);
 }
@@ -130,7 +130,7 @@ TEST_F(RobotControllerTest, onChargingBehaviorLevelAbove5Below25)
 {
 	auto battery_level = 22;
 
-	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/battery_red.jpg"})).Times(1);
+	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/home/img/battery_red.jpg"})).Times(1);
 
 	rc.onChargingBehavior(battery_level);
 }
@@ -139,7 +139,7 @@ TEST_F(RobotControllerTest, onChargingBehaviorLevelAbove25Below50)
 {
 	auto battery_level = 42;
 
-	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/battery_yellow_2.jpg"})).Times(1);
+	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/home/img/battery_yellow_2.jpg"})).Times(1);
 
 	rc.onChargingBehavior(battery_level);
 }
@@ -148,7 +148,7 @@ TEST_F(RobotControllerTest, onChargingBehaviorLevelAbove50Below75)
 {
 	auto battery_level = 66;
 
-	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/battery_green_3.jpg"})).Times(1);
+	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/home/img/battery_green_3.jpg"})).Times(1);
 
 	rc.onChargingBehavior(battery_level);
 }
@@ -157,7 +157,7 @@ TEST_F(RobotControllerTest, onChargingBehaviorLevelAbove75)
 {
 	auto battery_level = 90;
 
-	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/battery_green_4.jpg"})).Times(1);
+	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/home/img/battery_green_4.jpg"})).Times(1);
 
 	rc.onChargingBehavior(battery_level);
 }
