@@ -17,15 +17,25 @@ class IO
 	{
 	}
 
-	auto read() -> int
+	void setAsInput() { _expander.setPinAsInput(_pin); }
+
+	void setMode(PinMode mode) { _expander.setModeForPin(_pin, mode); }
+
+	auto readInput() -> int
 	{
 		auto val = _expander.readInputPin(_pin);
 		return val;
 	}
 
-	void setMode(PinMode mode) { _expander.setModeForPin(_pin, mode); }
+	void setAsOutput() { _expander.setPinAsOutput(_pin); }
 
-	void setAsInput() { _expander.setPinAsInput(_pin); }
+	void writeOutput(int value) { _expander.writeOutputPin(_pin, value); }
+
+	auto readOutput() -> int
+	{
+		auto val = _expander.readOutputPin(_pin);
+		return val;
+	}
 
   private:
 	interface::IOExpander<pin_underlying_type_t> &_expander;
