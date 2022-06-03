@@ -153,9 +153,9 @@ struct StateMachine {
 			, sm::state::updating + boost::sml::on_entry<_> / sm::action::apply_update {},
 
 
-			* sm::state::disconnected  + event<sm::event::ble_connection>  [sm::guard::is_not_charging {}] / sm::action::start_connection_behavior {}     = sm::state::connected
-			, sm::state::disconnected  + event<sm::event::ble_connection>  [sm::guard::is_charging {}]     / sm::action::start_connection_behavior {}     = sm::state::connected
-			, sm::state::connected     + event<sm::event::ble_disconnection>                               / sm::action::start_disconnection_behavior {}  = sm::state::disconnected	  // clang-format on
+			* sm::state::disconnected + event<sm::event::ble_connection>    / sm::action::start_connection_behavior {}    = sm::state::connected
+			, sm::state::connected    + event<sm::event::ble_disconnection> / sm::action::start_disconnection_behavior {} = sm::state::disconnected
+			// clang-format on
 		);
 	}
 };
