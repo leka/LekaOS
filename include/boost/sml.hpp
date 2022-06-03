@@ -1891,7 +1891,7 @@ struct call<TEvent, aux::type_list<TEvent>, back::no_policy> {
   static auto execute(T object, const TEvent &event, TSM &, TDeps &, TSubs &) {
     return object(event);
   }
-};
+}; 
 template <class TEvent, class TLogger>
 struct call<TEvent, aux::type_list<TEvent>, TLogger> {
   template <class T, class TSM, class TDeps, class TSubs>
