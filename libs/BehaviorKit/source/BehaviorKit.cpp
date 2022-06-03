@@ -127,7 +127,7 @@ void BehaviorKit::bleConnection(bool with_video)
 
 void BehaviorKit::working()
 {
-	_videokit.displayImage("/fs/images/robot-emotion-neutral.jpg");
+	_videokit.displayImage("/fs/images/robot-emotion-neutral-2.jpg");
 }
 
 void BehaviorKit::stop()
