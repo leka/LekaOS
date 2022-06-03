@@ -1736,7 +1736,13 @@ class sm {
     using sm_impl_t = sm_impl<typename TSM::template rebind<type>>;
     using state_t = typename sm_impl_t::state_t;
     using states_ids_t = typename sm_impl_t::states_ids_t;
-    return aux::get_id<state_t, typename TState::type>((states_ids_t *)0) == aux::cget<sm_impl_t>(sub_sms_).current_state_[0];
+    auto result = false;
+    visit_current_states<T>([&](auto state) {
+      (void)state;
+      result |= (aux::get_id<state_t, typename TState::type>((states_ids_t *)0) ==
+                 aux::get_id<state_t, typename decltype(state)::type>((states_ids_t *)0));
+    });
+    return result;
   }
   template <class T = aux::identity<sm_t>, template <class...> class TState>
   bool is(const TState<terminate_state> &) const {
@@ -1885,7 +1891,7 @@ struct call<TEvent, aux::type_list<TEvent>, back::no_policy> {
   static auto execute(T object, const TEvent &event, TSM &, TDeps &, TSubs &) {
     return object(event);
   }
-};
+}; 
 template <class TEvent, class TLogger>
 struct call<TEvent, aux::type_list<TEvent>, TLogger> {
   template <class T, class TSM, class TDeps, class TSubs>
