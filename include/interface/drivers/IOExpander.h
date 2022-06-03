@@ -22,6 +22,11 @@ class IOExpander
 
 	virtual void setModeForPin(pin_underlying_type_t pin, PinMode mode) = 0;
 	virtual auto getModeForPin(pin_underlying_type_t pin) -> PinMode	= 0;
+	virtual void setPinAsOutput(pin_underlying_type_t pin)				= 0;
+
+	virtual auto readOutputPin(pin_underlying_type_t pin) -> int = 0;
+
+	virtual void writeOutputPin(pin_underlying_type_t pin, int value) = 0;
 };
 
 }	// namespace leka::interface
