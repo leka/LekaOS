@@ -15,6 +15,8 @@ namespace sm::event {
 	};
 	struct sleep_timeout_did_end {
 	};
+	struct idle_timeout_did_end {
+	};
 	struct command_received {
 	};
 	struct charge_did_start {
@@ -34,6 +36,7 @@ namespace sm::state {
 
 	inline auto setup	 = boost::sml::state<class setup>;
 	inline auto idle	 = boost::sml::state<class idle>;
+	inline auto working	 = boost::sml::state<class working>;
 	inline auto sleeping = boost::sml::state<class sleeping>;
 	inline auto charging = boost::sml::state<class charging>;
 	inline auto updating = boost::sml::state<class updating>;
@@ -53,6 +56,14 @@ namespace sm::guard {
 
 	struct is_not_charging {
 		auto operator()(irc &rc) const { return !rc.isCharging(); }
+	};
+
+	struct is_connected {
+		auto operator()(irc &rc) const { return rc.isBleConnected(); }
+	};
+
+	struct is_not_connected {
+		auto operator()(irc &rc) const { return !rc.isBleConnected(); }
 	};
 
 	struct is_ready_to_update {
@@ -75,6 +86,14 @@ namespace sm::action {
 
 	struct stop_sleep_timeout {
 		auto operator()(irc &rc) const { rc.stopSleepTimeout(); }
+	};
+
+	struct start_idle_timeout {
+		auto operator()(irc &rc) const { rc.startIdleTimeout(); }
+	};
+
+	struct stop_idle_timeout {
+		auto operator()(irc &rc) const { rc.stopIdleTimeout(); }
 	};
 
 	struct start_waiting_behavior {
@@ -113,6 +132,10 @@ namespace sm::action {
 		auto operator()(irc &rc) const { rc.startDisconnectionBehavior(); }
 	};
 
+	struct start_working_behavior {
+		auto operator()(irc &rc) const { rc.startWorkingBehavior(); }
+	};
+
 }	// namespace sm::action
 
 struct StateMachine {
@@ -129,26 +152,34 @@ struct StateMachine {
 			, sm::state::idle     + boost::sml::on_entry<_> / (sm::action::start_sleep_timeout {}, sm::action::start_waiting_behavior {})
 			, sm::state::idle     + boost::sml::on_exit<_>  / (sm::action::stop_sleep_timeout  {}, sm::action::stop_waiting_behavior  {})
 
-			, sm::state::idle     + event<sm::event::ble_connection>                               = sm::state::idle
-			, sm::state::idle     + event<sm::event::ble_disconnection>                            = sm::state::idle
-			, sm::state::idle     + event<sm::event::sleep_timeout_did_end>                        = sm::state::sleeping
-			, sm::state::idle     + event<sm::event::charge_did_start> [sm::guard::is_charging {}] = sm::state::charging
+			, sm::state::idle     + event<sm::event::ble_connection>                                     = sm::state::working
+			, sm::state::idle     + event<sm::event::command_received>  [sm::guard::is_connected {}]     = sm::state::working
+			, sm::state::idle     + event<sm::event::sleep_timeout_did_end>                              = sm::state::sleeping
+			, sm::state::idle     + event<sm::event::charge_did_start> [sm::guard::is_charging {}]       = sm::state::charging
+
+			, sm::state::working + boost::sml::on_entry<_> / (sm::action::start_idle_timeout {}, sm::action::start_working_behavior {})
+			, sm::state::working + boost::sml::on_exit<_>  / sm::action::stop_idle_timeout {}
+
+			, sm::state::working  + event<sm::event::ble_disconnection>                                  = sm::state::idle
+			, sm::state::working  + event<sm::event::idle_timeout_did_end>                               = sm::state::idle
+			, sm::state::working  + event<sm::event::charge_did_start> [sm::guard::is_charging {}]       = sm::state::charging
 
 			, sm::state::sleeping + boost::sml::on_entry<_> / sm::action::start_sleeping_behavior {}
 			, sm::state::sleeping + boost::sml::on_exit<_>  / sm::action::stop_sleeping_behavior {}
 
-			, sm::state::sleeping + event<sm::event::command_received>                               = sm::state::idle
-			, sm::state::sleeping + event<sm::event::ble_connection>                                 = sm::state::idle
-			, sm::state::sleeping + event<sm::event::charge_did_start> [sm::guard::is_charging {}]   = sm::state::charging
+			, sm::state::sleeping + event<sm::event::command_received>    [sm::guard::is_connected {}]   = sm::state::working
+			, sm::state::sleeping + event<sm::event::ble_connection>                                     = sm::state::working
+			, sm::state::sleeping + event<sm::event::charge_did_start> [sm::guard::is_charging {}]       = sm::state::charging
 
 			, sm::state::charging + boost::sml::on_entry<_> / sm::action::start_charging_behavior {}
 			, sm::state::charging + boost::sml::on_exit<_>  / sm::action::stop_charging_behavior {}
 
-			, sm::state::charging + event<sm::event::charge_did_stop>  [sm::guard::is_not_charging {}]   = sm::state::idle
-			, sm::state::charging + event<sm::event::update_requested>[sm::guard::is_ready_to_update {}] = sm::state::updating
-			, sm::state::charging + event<sm::event::ble_connection>                                     = sm::state::charging
-			, sm::state::charging + event<sm::event::ble_disconnection>                                  = sm::state::charging
-			, sm::state::charging + event<sm::event::command_received>                                   = sm::state::charging
+			, sm::state::charging + event<sm::event::charge_did_stop>  [sm::guard::is_not_charging {} && sm::guard::is_not_connected {}]  = sm::state::idle
+			, sm::state::charging + event<sm::event::charge_did_stop>  [sm::guard::is_not_charging {} && sm::guard::is_connected {}]      = sm::state::working
+			, sm::state::charging + event<sm::event::update_requested> [sm::guard::is_ready_to_update {}]                                 = sm::state::updating
+			, sm::state::charging + event<sm::event::ble_connection>                                                                      = sm::state::charging
+			, sm::state::charging + event<sm::event::ble_disconnection>                                                                   = sm::state::charging
+			, sm::state::charging + event<sm::event::command_received>                                                                    = sm::state::charging
 
 			, sm::state::updating + boost::sml::on_entry<_> / sm::action::apply_update {},
 
