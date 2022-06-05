@@ -48,9 +48,6 @@ TEST_F(RobotControllerTest, stateIdleEventBleConnection)
 	EXPECT_CALL(mock_belt, setColor).Times(AtLeast(1));
 	EXPECT_CALL(mock_belt, show).Times(AtLeast(1));
 
-	// TODO: Specify which BLE service and what is expected if necessary
-	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AtLeast(1));
-
 	Sequence on_working_entry_sequence;
 	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
 	EXPECT_CALL(timeout, start).InSequence(on_working_entry_sequence);
