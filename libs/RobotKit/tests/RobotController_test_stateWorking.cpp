@@ -17,7 +17,7 @@ TEST_F(RobotControllerTest, stateWorkingEventTimeout)
 	EXPECT_CALL(mock_videokit, playVideoOnRepeat).InSequence(on_idle_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_idle_sequence);
 
-	rc.state_machine.process_event(lksm::event::idle_timeout_did_end {});
+	on_idle_timeout();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
 }
