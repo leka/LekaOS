@@ -134,6 +134,18 @@ TEST_F(StateMachineTest, stateWorkingEventChargeDidStart)
 	EXPECT_TRUE(sm.is(lksm::state::charging));
 }
 
+TEST_F(StateMachineTest, stateWorkingEventEmergencyStop)
+{
+	sm.set_current_states(lksm::state::working);
+
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
+	EXPECT_CALL(mock_rc, stopIdleTimeout).Times(1);
+
+	sm.process_event(lksm::event::emergency_stop {});
+
+	EXPECT_TRUE(sm.is(lksm::state::emergency_stopped));
+}
+
 TEST_F(StateMachineTest, stateSleepEventCommandReceived)
 {
 	sm.set_current_states(lksm::state::sleeping);

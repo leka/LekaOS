@@ -25,6 +25,8 @@ namespace sm::event {
 	};
 	struct update_requested {
 	};
+	struct emergency_stop {
+	};
 	struct ble_connection {
 	};
 	struct ble_disconnection {
@@ -34,12 +36,13 @@ namespace sm::event {
 
 namespace sm::state {
 
-	inline auto setup	 = boost::sml::state<class setup>;
-	inline auto idle	 = boost::sml::state<class idle>;
-	inline auto working	 = boost::sml::state<class working>;
-	inline auto sleeping = boost::sml::state<class sleeping>;
-	inline auto charging = boost::sml::state<class charging>;
-	inline auto updating = boost::sml::state<class updating>;
+	inline auto setup			  = boost::sml::state<class setup>;
+	inline auto idle			  = boost::sml::state<class idle>;
+	inline auto working			  = boost::sml::state<class working>;
+	inline auto sleeping		  = boost::sml::state<class sleeping>;
+	inline auto charging		  = boost::sml::state<class charging>;
+	inline auto updating		  = boost::sml::state<class updating>;
+	inline auto emergency_stopped = boost::sml::state<class emergency_stopped>;
 
 	inline auto connected	 = boost::sml::state<class connected>;
 	inline auto disconnected = boost::sml::state<class disconnected>;
@@ -163,6 +166,7 @@ struct StateMachine {
 			, sm::state::working  + event<sm::event::ble_disconnection>                                  = sm::state::idle
 			, sm::state::working  + event<sm::event::idle_timeout_did_end>                               = sm::state::idle
 			, sm::state::working  + event<sm::event::charge_did_start> [sm::guard::is_charging {}]       = sm::state::charging
+			, sm::state::working  + event<sm::event::emergency_stop>                                     = sm::state::emergency_stopped
 
 			, sm::state::sleeping + boost::sml::on_entry<_> / sm::action::start_sleeping_behavior {}
 			, sm::state::sleeping + boost::sml::on_exit<_>  / sm::action::stop_sleeping_behavior {}
