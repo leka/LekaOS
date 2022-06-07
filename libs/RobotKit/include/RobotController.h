@@ -203,6 +203,12 @@ class RobotController : public interface::RobotController
 		system_reset();
 	}
 
+	void turnOffActuators() final
+	{
+		_lcd.turnOff();
+		stopActuators();
+	}
+
 	void raise(auto event)
 	{
 		_event_queue.call([this, &event] { state_machine.process_event(event); });

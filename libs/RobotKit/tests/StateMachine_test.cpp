@@ -140,6 +140,7 @@ TEST_F(StateMachineTest, stateWorkingEventEmergencyStop)
 
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
 	EXPECT_CALL(mock_rc, stopIdleTimeout).Times(1);
+	EXPECT_CALL(mock_rc, turnOffActuators).Times(1);
 
 	sm.process_event(lksm::event::emergency_stop {});
 

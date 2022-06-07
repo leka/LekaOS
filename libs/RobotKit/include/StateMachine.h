@@ -139,6 +139,10 @@ namespace sm::action {
 		auto operator()(irc &rc) const { rc.startWorkingBehavior(); }
 	};
 
+	struct turn_off_actuators {
+		auto operator()(irc &rc) const { rc.turnOffActuators(); }
+	};
+
 }	// namespace sm::action
 
 struct StateMachine {
@@ -185,7 +189,11 @@ struct StateMachine {
 			, sm::state::charging + event<sm::event::ble_disconnection>                                                                   = sm::state::charging
 			, sm::state::charging + event<sm::event::command_received>                                                                    = sm::state::charging
 
-			, sm::state::updating + boost::sml::on_entry<_> / sm::action::apply_update {},
+			, sm::state::updating + boost::sml::on_entry<_> / sm::action::apply_update {}
+
+			, sm::state::emergency_stopped + boost::sml::on_entry<_> / sm::action::turn_off_actuators {}
+
+			,
 
 
 			* sm::state::disconnected + event<sm::event::ble_connection>    / sm::action::start_connection_behavior {}    = sm::state::connected
