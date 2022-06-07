@@ -4,6 +4,24 @@
 
 #include "./RobotController_test.h"
 
+TEST_F(RobotControllerTest, stateWorkingEventCommandReceived)
+{
+	rc.state_machine.set_current_states(lksm::state::working);
+
+	Sequence on_exit_working_sequence;
+	EXPECT_CALL(timeout, stop).InSequence(on_exit_working_sequence);
+
+	Sequence on_entry_working_sequence;
+	EXPECT_CALL(timeout, onTimeout).InSequence(on_entry_working_sequence);
+	EXPECT_CALL(timeout, start).InSequence(on_entry_working_sequence);
+	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_entry_working_sequence);
+	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_entry_working_sequence);
+
+	rc.state_machine.process_event(lksm::event::command_received {});
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::working));
+}
+
 TEST_F(RobotControllerTest, stateWorkingEventTimeout)
 {
 	rc.state_machine.set_current_states(lksm::state::working);

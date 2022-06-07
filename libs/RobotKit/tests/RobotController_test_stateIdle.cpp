@@ -52,6 +52,7 @@ TEST_F(RobotControllerTest, stateIdleEventBleConnection)
 	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
 	EXPECT_CALL(timeout, start).InSequence(on_working_entry_sequence);
 	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_working_entry_sequence);
 
 	rc.state_machine.process_event(lksm::event::ble_connection {});
 
@@ -71,6 +72,7 @@ TEST_F(RobotControllerTest, stateIdleEventCommandReceived)
 	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
 	EXPECT_CALL(timeout, start).InSequence(on_working_entry_sequence);
 	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_working_entry_sequence);
 
 	rc.state_machine.process_event(lksm::event::command_received {});
 

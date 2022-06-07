@@ -43,6 +43,7 @@ TEST_F(RobotControllerTest, stateChargingConnectedEventChargeDidStopGuardIsCharg
 	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
 	EXPECT_CALL(timeout, start).InSequence(on_working_entry_sequence);
 	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_working_entry_sequence);
 
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AtLeast(1));

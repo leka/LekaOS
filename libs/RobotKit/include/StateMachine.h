@@ -162,6 +162,7 @@ struct StateMachine {
 
 			, sm::state::working  + event<sm::event::ble_disconnection>                                  = sm::state::idle
 			, sm::state::working  + event<sm::event::idle_timeout_did_end>                               = sm::state::idle
+			, sm::state::working  + event<sm::event::command_received>                                   = sm::state::working
 			, sm::state::working  + event<sm::event::charge_did_start> [sm::guard::is_charging {}]       = sm::state::charging
 
 			, sm::state::sleeping + boost::sml::on_entry<_> / sm::action::start_sleeping_behavior {}

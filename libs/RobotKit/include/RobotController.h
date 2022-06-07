@@ -295,9 +295,6 @@ class RobotController : public interface::RobotController
 			raise(event::command_received {});
 
 			if (!isCharging()) {
-				stopIdleTimeout();
-				startIdleTimeout();
-
 				_cmdkit.push(std::span {_buffer.data(), std::size(_buffer)});
 			}
 		};
