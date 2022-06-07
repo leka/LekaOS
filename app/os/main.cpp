@@ -353,13 +353,14 @@ namespace robot {
 	{
 		static auto emergency_stop_iteration = 0;
 		if (card == MagicCard::emergency_stop) {
-			// ? Turn off actuators
+			++emergency_stop_iteration;
+			log_error("EMERGENCY_STOP - %i", emergency_stop_iteration);
+
 			leds::turnOff();
 			motors::turnOff();
 			display::internal::corelcd.turnOff();
 			display::videokit.stopVideo();
 
-			++emergency_stop_iteration;
 			if (emergency_stop_iteration == 7) {
 				system_reset();
 			}
