@@ -44,6 +44,8 @@ void BehaviorKit::lowBattery()
 {
 	_ledkit.stop();
 	_videokit.displayImage("/fs/images/loading.jpg");
+	_motor_left.stop();
+	_motor_right.stop();
 }
 
 void BehaviorKit::chargingZero()
