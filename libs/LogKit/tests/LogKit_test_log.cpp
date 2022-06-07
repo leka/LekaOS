@@ -82,15 +82,15 @@ TEST_F(LogKitTest, formatFullContentStringOnly)
 {
 	log_debug("Hello, World");
 
-	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
 
 	log_info("Hello, World");
 
-	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
 
 	log_error("Hello, World");
 
-	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
 }
 
 TEST_F(LogKitTest, formatFullContentStringAdditionalArguments)
@@ -98,15 +98,15 @@ TEST_F(LogKitTest, formatFullContentStringAdditionalArguments)
 {
 	log_debug("Hello, World. %i %s!", 42, "FTW");
 
-	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
 
 	log_info("Hello, World. %i %s!", 42, "FTW");
 
-	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
 
 	log_error("Hello, World. %i %s!", 42, "FTW");
 
-	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+() > .+"));
 }
 
 TEST_F(LogKitTest, formatFullContentStringEmpty)
@@ -114,15 +114,15 @@ TEST_F(LogKitTest, formatFullContentStringEmpty)
 	log_debug("");
 
 	EXPECT_THAT(spy_sink_output, Not(HasSubstr(" > ")));
-	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+()"));
+	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+()"));
 
 	log_info("");
 
 	EXPECT_THAT(spy_sink_output, Not(HasSubstr(" > ")));
-	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+()"));
+	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+()"));
 
 	log_error("");
 
 	EXPECT_THAT(spy_sink_output, Not(HasSubstr(" > ")));
-	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+()"));
+	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\\.]+ \\[[A-Z ]+\\] \\[.+:[0-9]+\\] .+()"));
 }
