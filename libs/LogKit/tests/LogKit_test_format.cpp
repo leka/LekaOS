@@ -40,14 +40,14 @@ TEST_F(LogKitFormatTest, formatFullContentStringOnly)
 {
 	log_info("Hello, World");
 
-	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\.]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\\.]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+() > .+"));
 }
 
 TEST_F(LogKitFormatTest, formatFullContentStringAdditionalArguments)
 {
 	log_info("Hello, World. %i %s!", 42, "FTW");
 
-	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\.]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+() > .+"));
+	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\\.]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+() > .+"));
 }
 
 TEST_F(LogKitFormatTest, formatFullContentStringEmpty)
@@ -55,7 +55,7 @@ TEST_F(LogKitFormatTest, formatFullContentStringEmpty)
 	log_info("");
 
 	EXPECT_THAT(spy_sink_output, Not(HasSubstr(" > ")));
-	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\.]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+()"));
+	EXPECT_THAT(spy_sink_output, MatchesRegex("[0-9:\\.]+ \\[[A-Z]+\\] \\[.+:[0-9]+\\] .+()"));
 }
 
 TEST_F(LogKitFormatTest, formatTimeHumanReadable)
@@ -65,7 +65,7 @@ TEST_F(LogKitFormatTest, formatTimeHumanReadable)
 	auto time = std::string(leka::logger::buffer::timestamp.data());
 
 	// Format: hhh:mm:ss:μμμ
-	ASSERT_THAT(time, MatchesRegex("[0-9]{3}:[0-9]{2}:[0-9]{2}\.[0-9]{3}"));
+	ASSERT_THAT(time, MatchesRegex("[0-9]{3}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}"));
 }
 
 TEST_F(LogKitFormatTest, formatLevel)
