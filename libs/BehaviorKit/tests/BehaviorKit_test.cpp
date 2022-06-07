@@ -93,6 +93,8 @@ TEST_F(BehaviorKitTest, waiting)
 TEST_F(BehaviorKitTest, batteryBehaviors)
 {
 	EXPECT_CALL(mock_videokit, displayImage).Times(6);
+	EXPECT_CALL(mock_motor_left, stop()).Times(1);
+	EXPECT_CALL(mock_motor_right, stop()).Times(1);
 
 	behaviorkit.lowBattery();
 	behaviorkit.chargingZero();

@@ -15,6 +15,7 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsNotCharging)
 		EXPECT_CALL(battery, level).InSequence(on_low_battery_sequence);
 		EXPECT_CALL(battery, isCharging).InSequence(on_low_battery_sequence).WillOnce(Return(false));
 		EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/loading.jpg"}));
+		expectedCallsStopMotors();
 		EXPECT_CALL(battery, level).InSequence(on_low_battery_sequence);
 
 		Sequence on_data_updated_sequence;
