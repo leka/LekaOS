@@ -104,6 +104,13 @@ class RobotController : public interface::RobotController
 
 	void startWorkingBehavior() final
 	{
+		using namespace system::robot::sm;
+
+		if (state_machine.is(state::working)) {
+			_lcd.turnOn();
+			return;
+		}
+
 		_behaviorkit.working();
 		_lcd.turnOn();
 	}

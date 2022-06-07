@@ -14,7 +14,6 @@ TEST_F(RobotControllerTest, stateWorkingEventCommandReceived)
 	Sequence on_entry_working_sequence;
 	EXPECT_CALL(timeout, onTimeout).InSequence(on_entry_working_sequence);
 	EXPECT_CALL(timeout, start).InSequence(on_entry_working_sequence);
-	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_entry_working_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_entry_working_sequence);
 
 	rc.state_machine.process_event(lksm::event::command_received {});
