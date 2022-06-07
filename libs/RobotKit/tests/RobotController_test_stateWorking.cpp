@@ -32,6 +32,8 @@ TEST_F(RobotControllerTest, stateWorkingEventChargeDidStartGuardIsChargingTrue)
 	EXPECT_CALL(timeout, stop).InSequence(on_exit_working_sequence);
 
 	Sequence start_charging_behavior_sequence;
+	EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);

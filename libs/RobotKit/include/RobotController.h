@@ -160,6 +160,8 @@ class RobotController : public interface::RobotController
 		using namespace std::chrono_literals;
 		using namespace system::robot::sm;
 
+		onChargingBehavior(_battery_kit.level());
+		rtos::ThisThread::sleep_for(500ms);
 		_lcd.turnOn();
 
 		auto on_charging_start_timeout = [this] {
