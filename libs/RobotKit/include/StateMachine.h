@@ -195,6 +195,9 @@ struct StateMachine {
 
 			, sm::state::emergency_stopped + event<sm::event::command_received> [sm::guard::is_not_charging {} && sm::guard::is_connected {}] = sm::state::working
 			, sm::state::emergency_stopped + event<sm::event::ble_connection>   [sm::guard::is_not_charging {}]                               = sm::state::working
+			, sm::state::emergency_stopped + event<sm::event::charge_did_start> [sm::guard::is_charging {}]                                   = sm::state::charging
+			, sm::state::emergency_stopped + event<sm::event::command_received> [sm::guard::is_charging {} && sm::guard::is_connected {}]     = sm::state::charging
+			, sm::state::emergency_stopped + event<sm::event::ble_connection>   [sm::guard::is_charging {}]                                   = sm::state::charging
 
 			,
 

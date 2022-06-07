@@ -365,3 +365,29 @@ TEST_F(StateMachineTest, stateEmergencyStoppedEventBleConnectionGuardIsNotChargi
 
 	EXPECT_TRUE(sm.is(lksm::state::working));
 }
+
+TEST_F(StateMachineTest, stateEmergencyStoppedEventChargeDidStartGuardIsNotCharging)
+{
+	sm.set_current_states(lksm::state::emergency_stopped);
+
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
+
+	EXPECT_CALL(mock_rc, startChargingBehavior).Times(0);
+
+	sm.process_event(lksm::event::charge_did_start {});
+
+	EXPECT_TRUE(sm.is(lksm::state::emergency_stopped));
+}
+
+TEST_F(StateMachineTest, stateEmergencyStoppedEventChargeDidStartGuardIsCharging)
+{
+	sm.set_current_states(lksm::state::emergency_stopped);
+
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
+
+	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+
+	sm.process_event(lksm::event::charge_did_start {});
+
+	EXPECT_TRUE(sm.is(lksm::state::charging));
+}
