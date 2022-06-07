@@ -353,9 +353,12 @@ namespace robot {
 	{
 		static auto emergency_stop_iteration = 0;
 		if (card == MagicCard::emergency_stop) {
-			// TODO (@yann) ajouter videokit stop()
+			// ? Turn off actuators
 			leds::turnOff();
 			motors::turnOff();
+			display::internal::corelcd.turnOff();
+			display::videokit.stopVideo();
+
 			++emergency_stop_iteration;
 			if (emergency_stop_iteration == 7) {
 				system_reset();
