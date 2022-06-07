@@ -184,8 +184,11 @@ struct StateMachine {
 			, sm::state::updating + boost::sml::on_entry<_> / sm::action::apply_update {},
 
 
-			* sm::state::disconnected + event<sm::event::ble_connection>    / sm::action::start_connection_behavior {}    = sm::state::connected
-			, sm::state::connected    + event<sm::event::ble_disconnection> / sm::action::start_disconnection_behavior {} = sm::state::disconnected
+			* sm::state::disconnected + event<sm::event::ble_connection> = sm::state::connected
+			, sm::state::disconnected + boost::sml::on_entry<_> / sm::action::start_disconnection_behavior {}
+
+			, sm::state::connected + event<sm::event::ble_disconnection> = sm::state::disconnected
+			, sm::state::connected + boost::sml::on_entry<_> / sm::action::start_connection_behavior {}
 			// clang-format on
 		);
 	}
