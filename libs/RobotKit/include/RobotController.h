@@ -247,6 +247,8 @@ class RobotController : public interface::RobotController
 		_service_update.onFactoryResetNotification(on_factory_reset_requested);
 	}
 
+	void raiseEmergencyStop() { raise(system::robot::sm::event::emergency_stop {}); }
+
 	void registerEvents()
 	{
 		using namespace system::robot::sm;

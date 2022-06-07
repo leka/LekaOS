@@ -360,6 +360,7 @@ namespace robot {
 			motors::turnOff();
 			display::internal::corelcd.turnOff();
 			display::videokit.stopVideo();
+			controller.raiseEmergencyStop();
 
 			if (emergency_stop_iteration == 7) {
 				system_reset();
