@@ -208,6 +208,8 @@ class RobotControllerTest : public testing::Test
 		expectedCallsRunLaunchingBehavior();
 
 		Sequence start_charging_behavior_sequence;
+		EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
+		EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
 		EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
 		EXPECT_CALL(timeout, onTimeout)
 			.InSequence(start_charging_behavior_sequence)

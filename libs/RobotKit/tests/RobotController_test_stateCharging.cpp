@@ -6,6 +6,8 @@
 
 TEST_F(RobotControllerTest, onChargingStartTimeout)
 {
+	EXPECT_CALL(battery, level);
+	EXPECT_CALL(mock_videokit, displayImage);
 	EXPECT_CALL(mock_lcd, turnOn).Times(AnyNumber());
 	EXPECT_CALL(timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_charging_start_timeout));
 	EXPECT_CALL(timeout, start).Times(AnyNumber());
