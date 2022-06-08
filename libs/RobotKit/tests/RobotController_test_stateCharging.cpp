@@ -164,3 +164,22 @@ TEST_F(RobotControllerTest, stateChargingEventUpdateRequestedGuardIsReadyToUpdat
 
 	// EXPECT_TRUE(rc.state_machine.is(lksm::state::updating));
 }
+
+TEST_F(RobotControllerTest, stateChargingEventEmergencyStop)
+{
+	rc.state_machine.set_current_states(lksm::state::charging);
+
+	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
+	EXPECT_CALL(timeout, stop);
+
+	EXPECT_CALL(mock_motor_left, stop).Times(2);
+	EXPECT_CALL(mock_motor_right, stop).Times(2);
+	EXPECT_CALL(mock_belt, hide).Times(1);
+	EXPECT_CALL(mock_ears, hide).Times(1);
+	EXPECT_CALL(mock_lcd, turnOff).Times(1);
+	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
+
+	rc.raiseEmergencyStop();
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::emergency_stopped));
+}

@@ -188,6 +188,7 @@ struct StateMachine {
 			, sm::state::charging + event<sm::event::ble_connection>                                                                      = sm::state::charging
 			, sm::state::charging + event<sm::event::ble_disconnection>                                                                   = sm::state::charging
 			, sm::state::charging + event<sm::event::command_received>                                                                    = sm::state::charging
+			, sm::state::charging + event<sm::event::emergency_stop>                                                                      = sm::state::emergency_stopped
 
 			, sm::state::updating + boost::sml::on_entry<_> / sm::action::apply_update {}
 
