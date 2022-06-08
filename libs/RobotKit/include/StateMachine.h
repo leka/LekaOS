@@ -160,9 +160,10 @@ struct StateMachine {
 			, sm::state::idle     + boost::sml::on_exit<_>  / (sm::action::stop_sleep_timeout  {}, sm::action::stop_waiting_behavior  {})
 
 			, sm::state::idle     + event<sm::event::ble_connection>                                     = sm::state::working
-			, sm::state::idle     + event<sm::event::command_received>  [sm::guard::is_connected {}]     = sm::state::working
+			, sm::state::idle     + event<sm::event::command_received> [sm::guard::is_connected {}]      = sm::state::working
 			, sm::state::idle     + event<sm::event::sleep_timeout_did_end>                              = sm::state::sleeping
 			, sm::state::idle     + event<sm::event::charge_did_start> [sm::guard::is_charging {}]       = sm::state::charging
+			, sm::state::idle     + event<sm::event::emergency_stop>                                     = sm::state::emergency_stopped
 
 			, sm::state::working + boost::sml::on_entry<_> / (sm::action::start_idle_timeout {}, sm::action::start_working_behavior {})
 			, sm::state::working + boost::sml::on_exit<_>  / sm::action::stop_idle_timeout {}
