@@ -209,6 +209,8 @@ class RobotController : public interface::RobotController
 		stopActuators();
 	}
 
+	void resetEmergencyStopIteration() final { _emergency_stop_iteration = 0; }
+
 	void raise(auto event)
 	{
 		_event_queue.call([this, &event] { state_machine.process_event(event); });
@@ -247,7 +249,14 @@ class RobotController : public interface::RobotController
 		_service_update.onFactoryResetNotification(on_factory_reset_requested);
 	}
 
-	void raiseEmergencyStop() { raise(system::robot::sm::event::emergency_stop {}); }
+	void raiseEmergencyStop()
+	{
+		++_emergency_stop_iteration;
+		raise(system::robot::sm::event::emergency_stop {});
+		if (_emergency_stop_iteration >= 7) {
+			system_reset();
+		}
+	}
 
 	void registerEvents()
 	{
@@ -379,6 +388,8 @@ class RobotController : public interface::RobotController
 		&_service_battery,	  &_service_commands,		&_service_device_information,
 		&_service_monitoring, &_service_file_reception, &_service_update,
 	};
+
+	uint8_t _emergency_stop_iteration {0};
 };
 
 }	// namespace leka

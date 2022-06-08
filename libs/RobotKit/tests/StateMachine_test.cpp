@@ -368,6 +368,7 @@ TEST_F(StateMachineTest, stateEmergencyStoppedEventCommandReceivedGuardIsNotChar
 	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(true));
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
 
+	EXPECT_CALL(mock_rc, resetEmergencyStopIteration).Times(1);
 	EXPECT_CALL(mock_rc, startWorkingBehavior);
 	EXPECT_CALL(mock_rc, startIdleTimeout);
 
@@ -394,6 +395,7 @@ TEST_F(StateMachineTest, stateEmergencyStoppedEventBleConnectionGuardIsNotChargi
 
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
 
+	EXPECT_CALL(mock_rc, resetEmergencyStopIteration).Times(1);
 	EXPECT_CALL(mock_rc, startWorkingBehavior);
 	EXPECT_CALL(mock_rc, startIdleTimeout);
 	EXPECT_CALL(mock_rc, startConnectionBehavior);
@@ -422,6 +424,7 @@ TEST_F(StateMachineTest, stateEmergencyStoppedEventChargeDidStartGuardIsCharging
 
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
 
+	EXPECT_CALL(mock_rc, resetEmergencyStopIteration).Times(1);
 	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
 
 	sm.process_event(lksm::event::charge_did_start {});
@@ -433,6 +436,7 @@ TEST_F(StateMachineTest, stateEmergencyStoppedEventCommandReceivedGuardIsChargin
 {
 	sm.set_current_states(lksm::state::emergency_stopped, lksm::state::connected);
 
+	EXPECT_CALL(mock_rc, resetEmergencyStopIteration).Times(1);
 	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(true));
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
 
@@ -460,6 +464,7 @@ TEST_F(StateMachineTest, stateEmergencyStoppedEventBleConnectionGuardIsCharging)
 
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
 
+	EXPECT_CALL(mock_rc, resetEmergencyStopIteration).Times(1);
 	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, startConnectionBehavior).Times(1);
 

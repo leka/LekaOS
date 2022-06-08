@@ -351,14 +351,8 @@ namespace robot {
 
 	void emergencyStop(const MagicCard &card)
 	{
-		static auto emergency_stop_iteration = 0;
 		if (card == MagicCard::emergency_stop) {
-			++emergency_stop_iteration;
 			controller.raiseEmergencyStop();
-
-			if (emergency_stop_iteration == 7) {
-				system_reset();
-			}
 		}
 	}
 
