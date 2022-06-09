@@ -10,6 +10,7 @@
 #include "CoreLED.h"
 #include "CoreSPI.h"
 #include "EventLoopKit.h"
+#include "FastThree.h"
 #include "HelloWorld.h"
 #include "LedKit.h"
 #include "LogKit.h"
@@ -61,6 +62,7 @@ namespace leds {
 auto hello	= HelloWorld {};
 auto ledkit = LedKit {leds::animations::event_loop, leds::ears, leds::belt};
 
+auto fastthree = led::animation::FastThree {};
 }	// namespace
 
 auto main() -> int
@@ -182,5 +184,9 @@ auto main() -> int
 		log_info("animation::yawn");
 		ledkit.start(&LedKit::animation::yawn);
 		rtos::ThisThread::sleep_for(2s);
+
+		log_info("animation::fastthree");
+		ledkit.start(&fastthree);
+		rtos::ThisThread::sleep_for(20s);
 	}
 }
