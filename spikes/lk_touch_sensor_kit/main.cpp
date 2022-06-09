@@ -31,13 +31,21 @@ auto main() -> int
 	auto t = rtos::Kernel::Clock::now() - start;
 	log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world,
 			 int(t.count() / 1000));
-	touch_sensor_kit.calibration();
+	touch_sensor_kit.adjust_sensitivity_high();
 	rtos::ThisThread::sleep_for(2s);
+
+	// auto memory			  = std::array<uint8_t, 24> {};
+	// touch_sensor_kit.read_dac_memory(memory);
+	// for (unsigned char i: memory) {
+	// 	log_info("%02x", i);
+	// }
+	// log_info("\n\n");
 
 	while (true) {
 		touch_sensor_kit.updateState();
 		touch_sensor_kit.printState();
 		log_info("\n\n");
+
 		rtos::ThisThread::sleep_for(1s);
 	}
 }

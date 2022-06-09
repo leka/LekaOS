@@ -38,8 +38,8 @@ add_subdirectory(${DRIVERS_DIR}/CoreLED)
 add_subdirectory(${DRIVERS_DIR}/CoreMotor)
 add_subdirectory(${DRIVERS_DIR}/FastLED)
 
-# Expander drivers
+
 add_subdirectory(${DRIVERS_DIR}/CoreIOExpander)
-add_subdirectory(${DRIVERS_DIR}/CoreDACExpander)
+add_subdirectory(${DRIVERS_DIR}/CoreDACTouch)
 
 
