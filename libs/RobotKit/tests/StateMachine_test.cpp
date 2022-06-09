@@ -139,7 +139,7 @@ TEST_F(StateMachineTest, stateWorkingEventEmergencyStop)
 	sm.set_current_states(lksm::state::working);
 
 	EXPECT_CALL(mock_rc, stopIdleTimeout).Times(1);
-	EXPECT_CALL(mock_rc, turnOffActuators).Times(1);
+	EXPECT_CALL(mock_rc, stopActuatorsAndLcd).Times(1);
 
 	sm.process_event(lksm::event::emergency_stop {});
 
@@ -178,7 +178,7 @@ TEST_F(StateMachineTest, stateSleepEventEmergencyStop)
 	sm.set_current_states(lksm::state::sleeping);
 
 	EXPECT_CALL(mock_rc, stopSleepingBehavior).Times(1);
-	EXPECT_CALL(mock_rc, turnOffActuators).Times(1);
+	EXPECT_CALL(mock_rc, stopActuatorsAndLcd).Times(1);
 
 	sm.process_event(lksm::event::emergency_stop {});
 
@@ -205,7 +205,7 @@ TEST_F(StateMachineTest, stateIdleEventEmergencyStop)
 
 	EXPECT_CALL(mock_rc, stopWaitingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, stopSleepTimeout).Times(1);
-	EXPECT_CALL(mock_rc, turnOffActuators).Times(1);
+	EXPECT_CALL(mock_rc, stopActuatorsAndLcd).Times(1);
 
 	sm.process_event(lksm::event::emergency_stop {});
 
@@ -272,7 +272,7 @@ TEST_F(StateMachineTest, stateChargingEventEmergencyStop)
 	sm.set_current_states(lksm::state::charging);
 
 	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
-	EXPECT_CALL(mock_rc, turnOffActuators).Times(1);
+	EXPECT_CALL(mock_rc, stopActuatorsAndLcd).Times(1);
 
 	sm.process_event(lksm::event::emergency_stop {});
 

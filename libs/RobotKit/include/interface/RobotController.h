@@ -41,7 +41,7 @@ class RobotController
 	virtual auto isReadyToUpdate() -> bool = 0;
 	virtual void applyUpdate()			   = 0;
 
-	virtual void turnOffActuators() = 0;
+	virtual void stopActuatorsAndLcd() = 0;
 };
 
 }	// namespace leka::interface

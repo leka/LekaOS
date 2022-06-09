@@ -203,7 +203,7 @@ class RobotController : public interface::RobotController
 		system_reset();
 	}
 
-	void turnOffActuators() final
+	void stopActuatorsAndLcd() final
 	{
 		_lcd.turnOff();
 		stopActuators();
