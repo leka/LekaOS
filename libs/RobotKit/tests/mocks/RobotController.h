@@ -37,6 +37,8 @@ struct RobotController : public interface::RobotController {
 
 	MOCK_METHOD(bool, isReadyToUpdate, (), (override));
 	MOCK_METHOD(void, applyUpdate, (), (override));
+
+	MOCK_METHOD(void, stopActuatorsAndLcd, (), (override));
 };
 
 }	// namespace leka::mock

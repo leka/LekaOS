@@ -91,3 +91,22 @@ TEST_F(RobotControllerTest, stateSleepingEventChargeDidStartGuardIsChargingFalse
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::sleeping));
 }
+
+TEST_F(RobotControllerTest, stateSleepingEventEmergencyStop)
+{
+	rc.state_machine.set_current_states(lksm::state::sleeping);
+
+	Sequence on_exit_sleeping_sequence;
+	EXPECT_CALL(timeout, stop).InSequence(on_exit_sleeping_sequence);
+
+	EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1));
+	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1));
+	EXPECT_CALL(mock_belt, hide).Times(1);
+	EXPECT_CALL(mock_ears, hide).Times(1);
+	EXPECT_CALL(mock_lcd, turnOff).Times(1);
+	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1));
+
+	rc.raiseEmergencyStop();
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::emergency_stopped));
+}

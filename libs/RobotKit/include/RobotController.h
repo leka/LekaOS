@@ -203,6 +203,12 @@ class RobotController : public interface::RobotController
 		system_reset();
 	}
 
+	void stopActuatorsAndLcd() final
+	{
+		_lcd.turnOff();
+		stopActuators();
+	}
+
 	void raise(auto event)
 	{
 		_event_queue.call([this, &event] { state_machine.process_event(event); });
@@ -240,6 +246,8 @@ class RobotController : public interface::RobotController
 	{
 		_service_update.onFactoryResetNotification(on_factory_reset_requested);
 	}
+
+	void raiseEmergencyStop() { raise(system::robot::sm::event::emergency_stop {}); }
 
 	void registerEvents()
 	{
