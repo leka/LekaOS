@@ -2,6 +2,8 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#pragma once
+
 // ? Include order is important here
 // clang-format off
 #include "RobotController.h"
@@ -124,7 +126,8 @@ class RobotControllerTest : public testing::Test
 			EXPECT_CALL(mock_mcu, getID).Times(1);
 			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
 
-			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
+			// EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
+			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AtLeast(1));
 
 			expectedCallsStopMotors();
 
