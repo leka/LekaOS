@@ -24,7 +24,7 @@ void BehaviorKit::spinRight(float speed)
 
 void BehaviorKit::launching()
 {
-	_videokit.displayImage("/fs/home/img/logo.jpg");
+	_videokit.displayImage("fs/home/img/robot-misc-splash_screen-large-400-004C.jpg");
 }
 
 void BehaviorKit::sleeping()
@@ -43,32 +43,32 @@ void BehaviorKit::waiting()
 void BehaviorKit::lowBattery()
 {
 	_ledkit.stop();
-	_videokit.displayImage("/fs/home/img/loading.jpg");
+	_videokit.displayImage("fs/home/img/robot-battery-empty-must_be_charged-004F.jpg");
 }
 
 void BehaviorKit::chargingZero()
 {
-	_videokit.displayImage("/fs/home/img/low_battery.jpg");
+	_videokit.displayImage("fs/home/img/robot-battery-charging-empty_red-0082.jpg");
 }
 
 void BehaviorKit::chargingRed()
 {
-	_videokit.displayImage("/fs/home/img/battery_red.jpg");
+	_videokit.displayImage("fs/home/img/robot-battery-charging-low_red-0050.jpg");
 }
 
 void BehaviorKit::chargingOrange()
 {
-	_videokit.displayImage("/fs/home/img/battery_yellow_2.jpg");
+	_videokit.displayImage("fs/home/img/robot-battery-charging-medium_yellow-0051.jpg");
 }
 
 void BehaviorKit::chargingYellow()
 {
-	_videokit.displayImage("/fs/home/img/battery_green_3.jpg");
+	_videokit.displayImage("fs/home/img/robot-battery-charging-high_green-0052.jpg");
 }
 
 void BehaviorKit::chargingGreen()
 {
-	_videokit.displayImage("/fs/home/img/battery_green_4.jpg");
+	_videokit.displayImage("fs/home/img/robot-battery-charging-full_green-0053.jpg");
 }
 
 void BehaviorKit::blinkGreen()
@@ -128,7 +128,7 @@ void BehaviorKit::bleConnection(bool with_video)
 
 void BehaviorKit::working()
 {
-	_videokit.displayImage("/fs/images/robot-emotion-neutral.jpg");
+	_videokit.displayImage("fs/home/img/robot-face-smiling-slightly-003F.jpg");
 }
 
 void BehaviorKit::stop()
