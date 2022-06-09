@@ -209,7 +209,7 @@ class RobotController : public interface::RobotController
 		stopActuators();
 	}
 
-	void resetEmergencyStopIteration() final { _emergency_stop_iteration = 0; }
+	void resetEmergencyStopCounter() final { _emergency_stop_counter = 0; }
 
 	void raise(auto event)
 	{
@@ -251,9 +251,9 @@ class RobotController : public interface::RobotController
 
 	void raiseEmergencyStop()
 	{
-		++_emergency_stop_iteration;
+		++_emergency_stop_counter;
 		raise(system::robot::sm::event::emergency_stop {});
-		if (_emergency_stop_iteration >= 7) {
+		if (_emergency_stop_counter >= 7) {
 			system_reset();
 		}
 	}
@@ -389,7 +389,7 @@ class RobotController : public interface::RobotController
 		&_service_monitoring, &_service_file_reception, &_service_update,
 	};
 
-	uint8_t _emergency_stop_iteration {0};
+	uint8_t _emergency_stop_counter {0};
 };
 
 }	// namespace leka

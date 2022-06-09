@@ -41,8 +41,8 @@ class RobotController
 	virtual auto isReadyToUpdate() -> bool = 0;
 	virtual void applyUpdate()			   = 0;
 
-	virtual void stopActuatorsAndLcd()		   = 0;
-	virtual void resetEmergencyStopIteration() = 0;
+	virtual void stopActuatorsAndLcd()		 = 0;
+	virtual void resetEmergencyStopCounter() = 0;
 };
 
 }	// namespace leka::interface
