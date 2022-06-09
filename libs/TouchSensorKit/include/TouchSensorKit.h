@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "CoreDACExpander.h"
+#include "CoreDACTouch.h"
 #include "CoreI2C.h"
 #include "CoreIOExpander.h"
 #include "DigitalOut.h"
@@ -26,7 +26,6 @@ class TouchSensorKit
 
 	void calibration();
 
-  private:
 	void set_pull_mode(PinMode mode);
 
 	void set_power_mode(int power_mode);
@@ -34,7 +33,9 @@ class TouchSensorKit
 
 	void adjust_sensitivity_low();
 	void adjust_sensitivity_high();
+	void read_dac_memory(std::array<uint8_t, 24> &value);
 
+  private:
 	void calibrateTwoSensors(bool &sensor_left, bool &sensor_right, uint8_t channel);
 	void calibrateEars();
 	void calibrateBeltLBRF();
@@ -43,7 +44,8 @@ class TouchSensorKit
 	CoreI2C corei2c {PinName::SENSOR_PROXIMITY_MUX_I2C_SDA, PinName::SENSOR_PROXIMITY_MUX_I2C_SCL};
 	mbed::DigitalOut io_expander_reset {PinName::SENSOR_PROXIMITY_MUX_RESET, 0};
 	CoreIOExpanderMCP23017 io_expander {corei2c, io_expander_reset};
-	CoreDACExpanderMCP4728 dac_expander {corei2c};
+	CoreDACTouchMCP4728 dac_expander_left {corei2c, 0xC0};
+	CoreDACTouchMCP4728 dac_expander_right {corei2c, 0xC2};
 
 	leka::io::expanded::DigitalIn<> _ear_left_input {io_expander, touch::pin::ear_left_input};
 	leka::io::expanded::DigitalIn<> _ear_right_input {io_expander, touch::pin::ear_right_input};

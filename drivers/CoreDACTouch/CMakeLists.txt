@@ -2,19 +2,19 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CoreDACExpander STATIC)
+add_library(CoreDACTouch STATIC)
 
-target_include_directories(CoreDACExpander
+target_include_directories(CoreDACTouch
 	PUBLIC
 		include
 )
 
-target_sources(CoreDACExpander
+target_sources(CoreDACTouch
 	PRIVATE
-		source/CoreDACExpander.cpp
+		source/CoreDACTouch.cpp
 )
 
-target_link_libraries(CoreDACExpander
+target_link_libraries(CoreDACTouch
 	mbed-os
 	CoreI2C
 )
@@ -22,7 +22,7 @@ target_link_libraries(CoreDACExpander
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
 	leka_unit_tests_sources(
-		tests/CoreDACExpander_test.cpp
+		tests/CoreDACTouch_test.cpp
 	)
 
 endif()
