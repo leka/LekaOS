@@ -24,22 +24,16 @@ class TouchSensorKit
 	void updateState();
 	void printState();
 
-	void calibration();
-
-	void set_pull_mode(PinMode mode);
-
-	void set_power_mode(int power_mode);
-	void power_mode_reset();
-
-	void adjust_sensitivity_low();
-	void adjust_sensitivity_high();
-	void read_dac_memory(std::array<uint8_t, 24> &value);
+	void resetByPowerMode();
 
   private:
+	void setPullMode(PinMode mode);
+
+	void setPowerMode(int power_mode);
+
+	void initDACTouch();
+
 	void calibrateTwoSensors(bool &sensor_left, bool &sensor_right, uint8_t channel);
-	void calibrateEars();
-	void calibrateBeltLBRF();
-	void calibrateBeltRBLF();
 
 	CoreI2C corei2c {PinName::SENSOR_PROXIMITY_MUX_I2C_SDA, PinName::SENSOR_PROXIMITY_MUX_I2C_SCL};
 	mbed::DigitalOut io_expander_reset {PinName::SENSOR_PROXIMITY_MUX_RESET, 0};
