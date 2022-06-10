@@ -159,23 +159,23 @@ def deleteFile(filename):
 # MARK: - Main script
 #
 
-def main():
-    while((index < len(image_files))):
-        print(f"{index + 1:04d} / {len(image_files):04d} : ", end='')
-        sendLine(image_files[index])
+# def main():
+while((index < len(image_files))):
+    print(f"{index + 1:04d} / {len(image_files):04d} : ", end='')
+    sendLine(image_files[index])
 
-        waitResponse()
+    waitResponse()
 
-        if(needReboot()):
-            if(delete_file_occuring_reboot):
-                deleteFile(image_files[index])
-            continue
-        if(responseIsValid()):
-            index += 1
-        sleep(interval_between_two_response)
-
-    return 0
+    if(needReboot()):
+        if(delete_file_occuring_reboot):
+            deleteFile(image_files[index])
+        continue
+    if(responseIsValid()):
+        index += 1
+    sleep(interval_between_two_response)
 
 
-if __name__ == '__main__':
-    sys.exit(main())
+# if __name__ == '__main__':
+#     sys.exit(main())
+
+# main()
