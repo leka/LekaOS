@@ -93,8 +93,8 @@ com_timeout = .1
 
 try:
     com = serial.Serial(serial_port, 115200, timeout=com_timeout)
-except serial.serialutil.SerialException:
-    print(f"Device not connected to {serial_port}\n")
+except serial.serialutil.SerialException as error:
+    print(f"Device not connected to {serial_port}, {error}\n")
     printHelp()
     sys.exit(1)
 
