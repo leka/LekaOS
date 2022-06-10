@@ -239,7 +239,6 @@ namespace leds {
 		void lowEnergy()
 		{
 			internal::blink();
-			rtos::ThisThread::sleep_for(2s);
 		}
 
 		void mediumEnergy()
@@ -247,7 +246,6 @@ namespace leds {
 			internal::blink();
 			rtos::ThisThread::sleep_for(100ms);
 			internal::blink();
-			rtos::ThisThread::sleep_for(2s);
 		}
 
 		void highEnergy()
@@ -257,7 +255,6 @@ namespace leds {
 			internal::blink();
 			rtos::ThisThread::sleep_for(100ms);
 			internal::blink();
-			rtos::ThisThread::sleep_for(2s);
 		}
 
 	}	// namespace blink
@@ -340,7 +337,7 @@ auto main() -> int
 			leds::blink::highEnergy();
 		}
 
-		rtos::ThisThread::sleep_for(5s);
+		rtos::ThisThread::sleep_for(4s);
 	}
 
 	if (config::shouldApplyFactoryReset()) {
