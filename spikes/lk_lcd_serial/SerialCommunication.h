@@ -21,7 +21,7 @@ class SerialCommunication
 
 	void checkNewMessage();
 
-	[[nodiscard]] auto getMessage() -> std::filesystem::path;
+	[[nodiscard]] auto getMessage() const -> std::filesystem::path;
 	void sendMessage(const std::string_view &message);
 
   private:

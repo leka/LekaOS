@@ -7,11 +7,11 @@ import getopt
 from time import sleep
 import serial
 
+
 #
 # MARK: - Variables
 #
 
-# CONFIGURATIONS
 serial_port = '/dev/tty.usbmodem14103'
 
 source_directory = 'fs/home/img'  # Relative path from LekaOS root
@@ -26,7 +26,6 @@ delete_file_occuring_reboot = False
 #
 # MARK: - Help
 #
-
 
 def printHelp():
     print("./tools/display_image_via_serial.py\n\t"
@@ -45,7 +44,6 @@ def printHelp():
 # MARK: - Handle args
 #
 
-
 argv = sys.argv[1:]
 try:
     opts, args = getopt.getopt(argv, "", ["help",
@@ -63,7 +61,7 @@ except getopt.GetoptError:
 for opt, arg in opts:
     if opt in ("--help"):
         printHelp()
-        sys.exit()
+        sys.exit(0)
     elif opt in ("--serial_port"):
         serial_port = arg
     elif opt in ("--are_images"):
@@ -89,7 +87,7 @@ for opt, arg in opts:
 if serial_port == "":
     print("serial_port cannot be empty.\n")
     printHelp()
-    exit(1)
+    sys.exit(1)
 
 com_timeout = .1
 
@@ -98,7 +96,7 @@ try:
 except serial.serialutil.SerialException:
     print(f"Device not connected to {serial_port}\n")
     printHelp()
-    exit(1)
+    sys.exit(1)
 
 line = ''
 iter_without_response = 0
@@ -119,7 +117,6 @@ image_files.sort()
 #
 # MARK: - Functions
 #
-
 
 def getLine():
     return com.readline().decode("utf-8")
@@ -157,6 +154,10 @@ def needReboot():
 def deleteFile(filename):
     os.remove(source_directory + '/' + filename)
 
+
+#
+# MARK: - Main script
+#
 
 def main():
     while((index < len(image_files))):

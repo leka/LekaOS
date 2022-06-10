@@ -9,11 +9,11 @@ void SerialCommunication::checkNewMessage()
 	_reception_string.clear();
 
 	while (_serial.readable()) {
-		std::array<char, 1> temp_char {};
+		auto c = char {};
 
-		_serial.read(temp_char.data(), 1);
+		_serial.read(&c, 1);
 
-		_reception_string.push_back(temp_char[0]);
+		_reception_string.push_back(c);
 	}
 
 	auto gotNewMessage = !_reception_string.empty();
@@ -22,7 +22,7 @@ void SerialCommunication::checkNewMessage()
 	}
 }
 
-auto SerialCommunication::getMessage() -> std::filesystem::path
+auto SerialCommunication::getMessage() const -> std::filesystem::path
 {
 	return std::filesystem::path {_reception_string};
 }
