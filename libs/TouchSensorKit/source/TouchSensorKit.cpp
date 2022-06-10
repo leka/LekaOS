@@ -11,42 +11,9 @@ using namespace std::chrono_literals;
 
 void TouchSensorKit::setup()
 {
-	set_pull_mode(PinMode::PullUp);
-	set_power_mode(touch::power_mode::normal);
-	dac_expander_left.setVoltageReference(0x00);
-	dac_expander_left.setPowerMode(0x00);
-	dac_expander_left.setGain(0x00);
-	dac_expander_right.setVoltageReference(0x00);
-	dac_expander_right.setPowerMode(0x00);
-	dac_expander_right.setGain(0x00);
-}
-
-void TouchSensorKit::set_pull_mode(PinMode mode)
-{
-	_ear_left_input.mode(mode);
-	_ear_right_input.mode(mode);
-	_belt_left_back_input.mode(mode);
-	_belt_left_front_input.mode(mode);
-	_belt_right_back_input.mode(mode);
-	_belt_right_front_input.mode(mode);
-}
-
-void TouchSensorKit::set_power_mode(int power_mode)
-{
-	_ear_left_pm.write(power_mode);
-	_ear_right_pm.write(power_mode);
-	_belt_left_back_pm.write(power_mode);
-	_belt_left_front_pm.write(power_mode);
-	_belt_right_back_pm.write(power_mode);
-	_belt_right_front_pm.write(power_mode);
-}
-
-void TouchSensorKit::power_mode_reset()
-{
-	set_power_mode(touch::power_mode::low);
-	rtos::ThisThread::sleep_for(5ms);
-	set_power_mode(touch::power_mode::normal);
-	rtos::ThisThread::sleep_for(5ms);
+	setPullMode(PinMode::PullUp);
+	setPowerMode(touch::power_mode::normal);
+	initDACTouch();
 }
 
 void TouchSensorKit::updateState()
@@ -57,7 +24,6 @@ void TouchSensorKit::updateState()
 	_belt_left_front_touched  = (0 == _belt_left_front_input.read());
 	_belt_right_back_touched  = (0 == _belt_right_back_input.read());
 	_belt_right_front_touched = (0 == _belt_right_front_input.read());
-	power_mode_reset();
 }
 
 void TouchSensorKit::printState()
@@ -70,113 +36,91 @@ void TouchSensorKit::printState()
 	log_info("Belt right back touched: %s", _belt_right_back_touched ? "true" : "false");
 }
 
-void TouchSensorKit::adjust_sensitivity_low()
+void TouchSensorKit::resetByPowerMode()
 {
-	std::array<uint8_t, 2> value_to_write = {0xFF, 0x0F};
-	dac_expander_left.writeToSpecificInputRegister(0, value_to_write);
-	dac_expander_left.writeToSpecificInputRegister(0, value_to_write);
-	dac_expander_left.writeToSpecificInputRegister(1, value_to_write);
-	dac_expander_right.writeToSpecificInputRegister(1, value_to_write);
-	dac_expander_right.writeToSpecificInputRegister(2, value_to_write);
-	dac_expander_right.writeToSpecificInputRegister(2, value_to_write);
+	setPowerMode(touch::power_mode::low);
+	rtos::ThisThread::sleep_for(5ms);
+	setPowerMode(touch::power_mode::normal);
+	rtos::ThisThread::sleep_for(5ms);
 }
 
-void TouchSensorKit::adjust_sensitivity_high()
+void TouchSensorKit::setPullMode(PinMode mode)
 {
-	std::array<uint8_t, 2> value_to_write = {0x01, 0x00};
-	dac_expander_left.writeToSpecificInputRegister(0, value_to_write);
-	dac_expander_left.writeToSpecificInputRegister(1, value_to_write);
-	dac_expander_left.writeToSpecificInputRegister(2, value_to_write);
-	dac_expander_right.writeToSpecificInputRegister(0, value_to_write);
-	dac_expander_right.writeToSpecificInputRegister(1, value_to_write);
-	dac_expander_right.writeToSpecificInputRegister(2, value_to_write);
+	_ear_left_input.mode(mode);
+	_ear_right_input.mode(mode);
+	_belt_left_back_input.mode(mode);
+	_belt_left_front_input.mode(mode);
+	_belt_right_back_input.mode(mode);
+	_belt_right_front_input.mode(mode);
 }
 
-void TouchSensorKit::read_dac_memory(std::array<uint8_t, 24> &value)
+void TouchSensorKit::setPowerMode(int power_mode)
 {
-	dac_expander_left.readMemory(value);
+	_ear_left_pm.write(power_mode);
+	_ear_right_pm.write(power_mode);
+	_belt_left_back_pm.write(power_mode);
+	_belt_left_front_pm.write(power_mode);
+	_belt_right_back_pm.write(power_mode);
+	_belt_right_front_pm.write(power_mode);
 }
 
-// void TouchSensorKit::calibrateTwoSensors(bool &sensor_left, bool &sensor_right, uint8_t channel)
-// {
-// 	auto value_left_calib  = uint16_t {0x0FFF};
-// 	auto value_right_calib = uint16_t {0x0FFF};
-// 	auto step			   = uint16_t {0x0001};
+void TouchSensorKit::initDACTouch()
+{
+	dac_expander_left.writeVoltageReference(0x00);
+	dac_expander_left.writePowerMode(0x00);
+	dac_expander_left.writeGain(0x00);
+	dac_expander_right.writeVoltageReference(0x00);
+	dac_expander_right.writePowerMode(0x00);
+	dac_expander_right.writeGain(0x00);
+}
 
-// 	dac_expander.reset(CoreDACExpanderMCP4728::_I2C_ADDRESS_LEFT, channel);
-// 	dac_expander.reset(CoreDACExpanderMCP4728::_I2C_ADDRESS_RIGHT, channel);
+void TouchSensorKit::calibrateTwoSensors(bool &sensor_left, bool &sensor_right, uint8_t channel)
+{
+	auto buffer_left  = std::array<uint8_t, 2> {};
+	auto buffer_right = std::array<uint8_t, 2> {};
 
-// 	rtos::ThisThread::sleep_for(1s);
-// 	updateState();
+	dac_expander_left.writeToSpecificInputRegister(channel, buffer_left);
+	dac_expander_right.writeToSpecificInputRegister(channel, buffer_right);
+	rtos::ThisThread::sleep_for(1ms);
 
-// 	while (!(sensor_left && sensor_right)) {
-// 		if (!sensor_left) {
-// 			if (value_left_calib - step > 0x0FFF) {
-// 				value_left_calib = 0x0FFF;
-// 			} else {
-// 				value_left_calib -= step;
-// 			}
-// 		}
-// 		if (!sensor_right) {
-// 			if (value_right_calib - step > 0x0FFF) {
-// 				value_right_calib = 0x0FFF;
-// 			} else {
-// 				value_right_calib -= step;
-// 			}
-// 		}
+	auto value_left_calib  = uint16_t {0x0FFF};
+	auto value_right_calib = uint16_t {0x0FFF};
+	auto step			   = uint8_t {1};
 
-// 		dac_expander.multiple_write_for_dac_input_registers(CoreDACExpanderMCP4728::_I2C_ADDRESS_LEFT, channel,
-// 															value_left_calib);
-// 		dac_expander.multiple_write_for_dac_input_registers(CoreDACExpanderMCP4728::_I2C_ADDRESS_RIGHT, channel,
-// 															value_right_calib);
+	updateState();
 
-// 		rtos::ThisThread::sleep_for(1ms);
-// 		updateState();
-// 	}
+	while (!(sensor_left && sensor_right)) {
+		if (!sensor_left) {
+			if (value_left_calib - step > 0x0FFF) {
+				value_left_calib = 0x0FFF;
+			} else {
+				value_left_calib -= step;
+			}
+		}
+		if (!sensor_right) {
+			if (value_right_calib - step > 0x0FFF) {
+				value_right_calib = 0x0FFF;
+			} else {
+				value_right_calib -= step;
+			}
+		}
 
-// 	dac_expander.single_write_for_dac_input_register_and_eeprom(CoreDACExpanderMCP4728::_I2C_ADDRESS_LEFT, channel,
-// 																value_left_calib);
-// 	dac_expander.single_write_for_dac_input_register_and_eeprom(CoreDACExpanderMCP4728::_I2C_ADDRESS_RIGHT, channel,
-// 																value_right_calib);
-// 	rtos::ThisThread::sleep_for(1ms);
+		buffer_left.at(0) = static_cast<uint8_t>((0xFF00 & value_left_calib) >> 8);
+		buffer_left.at(1) = static_cast<uint8_t>(0x00FF & value_left_calib);
+		dac_expander_left.writeToSpecificInputRegister(channel, buffer_left);
 
-// 	log_info("CALIBRATED!");
-// 	rtos::ThisThread::sleep_for(100ms);
-// }
+		buffer_right.at(0) = static_cast<uint8_t>((0xFF00 & value_right_calib) >> 8);
+		buffer_right.at(1) = static_cast<uint8_t>(0x00FF & value_right_calib);
+		dac_expander_right.writeToSpecificInputRegister(channel, buffer_right);
+		rtos::ThisThread::sleep_for(1ms);
 
-// void TouchSensorKit::calibrateEars()
-// {
-// 	log_info("Place hands on EAR LEFT and EAR RIGHT");
-// 	log_info("Calibration will start in 5 seconds");
-// 	rtos::ThisThread::sleep_for(5s);
-// 	calibrateTwoSensors(_ear_left_touched, _ear_right_touched, 2);
-// }
+		updateState();
+	}
 
-// void TouchSensorKit::calibrateBeltLBRF()
-// {
-// 	log_info("Place hands on BELT LEFT BACK and BELT RIGHT FRONT");
-// 	log_info("Calibration will start in 5 seconds");
-// 	rtos::ThisThread::sleep_for(5s);
-// 	calibrateTwoSensors(_belt_left_back_touched, _belt_right_front_touched, 1);
-// }
+	dac_expander_left.writeToSpecificMemoryRegister(channel, buffer_left);
+	dac_expander_right.writeToSpecificMemoryRegister(channel, buffer_right);
+	rtos::ThisThread::sleep_for(1ms);
 
-// void TouchSensorKit::calibrateBeltRBLF()
-// {
-// 	log_info("Place hands on BELT LEFT FRONT and BELT RIGHT BACK");
-// 	log_info("Calibration will start in 5 seconds");
-// 	rtos::ThisThread::sleep_for(5s);
-// 	calibrateTwoSensors(_belt_left_front_touched, _belt_right_back_touched, 0);
-// }
-
-// void TouchSensorKit::calibration()
-// {
-// 	log_info("Touch calibration");
-// 	log_info("For each of 6 touch sensors, value of sensibility will change");
-// 	log_info("Please keep your hands on 2 sensors until \"CALIBRATED !\" appears.\n");
-// 	rtos::ThisThread::sleep_for(15s);
-
-// 	calibrateEars();
-// 	calibrateBeltLBRF();
-// 	calibrateBeltRBLF();
-// 	rtos::ThisThread::sleep_for(1s);
-// }
+	log_info("CALIBRATED!");
+	rtos::ThisThread::sleep_for(100ms);
+}
