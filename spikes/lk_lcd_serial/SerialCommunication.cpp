@@ -22,9 +22,9 @@ void SerialCommunication::checkNewMessage()
 	}
 }
 
-auto SerialCommunication::getMessage() -> std::string &
+auto SerialCommunication::getMessage() -> std::filesystem::path
 {
-	return _reception_string;
+	return std::filesystem::path {_reception_string};
 }
 
 void SerialCommunication::sendMessage(const std::string_view &message)
