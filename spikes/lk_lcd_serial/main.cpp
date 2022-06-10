@@ -74,23 +74,23 @@ void initializeSD()
 
 auto containsStartAndEndOfPath(auto image_path) -> bool
 {
-	auto containsStart	  = image_path.find("/fs") != std::string::npos;
-	auto containsImageEnd = image_path.find(".jpg") != std::string::npos;
-	auto containsVideoEnd = image_path.find(".avi") != std::string::npos;
+	auto containsStart	  = image_path.string().find("/fs") != std::string::npos;
+	auto containsImageEnd = image_path.string().find(".jpg") != std::string::npos;
+	auto containsVideoEnd = image_path.string().find(".avi") != std::string::npos;
 	return containsStart && (containsImageEnd || containsVideoEnd);
 }
 
-auto isAnImage(auto path) -> bool
+auto isImage(auto path) -> bool
 {
-	auto containsImageFolder = path.find("img") != std::string::npos;
-	auto containsImageEnd	 = path.find(".jpg") != std::string::npos;
+	auto containsImageFolder = path.string().find("img") != std::string::npos;
+	auto containsImageEnd	 = path.string().find(".jpg") != std::string::npos;
 	return containsImageFolder && containsImageEnd;
 }
 
-auto isAVideo(auto path) -> bool
+auto isVideo(auto path) -> bool
 {
-	auto containsVideoFolder = path.find("vid") != std::string::npos;
-	auto containsVideoEnd	 = path.find(".avi") != std::string::npos;
+	auto containsVideoFolder = path.string().find("vid") != std::string::npos;
+	auto containsVideoEnd	 = path.string().find(".avi") != std::string::npos;
 	return containsVideoFolder && containsVideoEnd;
 }
 
@@ -117,10 +117,10 @@ auto main() -> int
 
 		auto file_path = communication.getMessage();
 		if (containsStartAndEndOfPath(file_path)) {
-			if (isAnImage(file_path)) {
+			if (isImage(file_path)) {
 				videokit.displayImage(file_path);
 				communication.sendMessage("ACK\n");
-			} else if (isAVideo(file_path)) {
+			} else if (isVideo(file_path)) {
 				videokit.playVideoOnce(file_path);
 				communication.sendMessage("ACK\n");
 			} else {
