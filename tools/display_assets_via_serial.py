@@ -173,6 +173,8 @@ def main():
             index += 1
         sleep(interval_between_two_response)
 
+    return 0
+
 
 if __name__ == '__main__':
     sys.exit(main())
