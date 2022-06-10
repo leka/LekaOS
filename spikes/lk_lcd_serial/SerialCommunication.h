@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <filesystem>
 #include <string>
 
 #include "PinNames.h"
@@ -20,7 +21,7 @@ class SerialCommunication
 
 	void checkNewMessage();
 
-	[[nodiscard]] auto getMessage() -> std::string &;
+	[[nodiscard]] auto getMessage() -> std::filesystem::path;
 	void sendMessage(const std::string_view &message);
 
   private:
