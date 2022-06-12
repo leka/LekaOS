@@ -1,20 +1,23 @@
 #!/usr/bin/env python3
 
 import os
+import glob
 import sys
 import getopt
 
 from time import sleep
 import serial
+import serial.tools.list_ports
 
 
 #
 # MARK: - Variables
 #
 
-serial_port = '/dev/tty.usbmodem14103'
+ports = glob.glob('/dev/tty.usbmodem*')
+serial_port = ports[0] if (len(ports) != 0) else ''
 
-source_directory = 'fs/home/img'  # Relative path from LekaOS root
+source_directory = 'fs'  # Relative path from LekaOS root
 
 interval_between_two_response = 1  # in seconds
 delay_to_reboot = 5  # in seconds
@@ -89,14 +92,16 @@ if serial_port == "":
     printHelp()
     sys.exit(1)
 
-com_timeout = .1
+com_timeout = .1  # in seconds
 
 try:
     com = serial.Serial(serial_port, 115200, timeout=com_timeout)
 except serial.serialutil.SerialException as error:
-    print(f"Device not connected to {serial_port}, {error}\n")
+    print(f"{error}")
     printHelp()
     sys.exit(1)
+
+print(f"Connected to {com.name}")
 
 line = ''
 iter_without_response = 0
@@ -107,11 +112,7 @@ no_response_limit = delay_to_reboot / com_timeout
 # MARK: - Images
 #
 
-destination_directory = '/' + source_directory  # Absolute path from SD root
-
-index = start_from_index
-image_files = os.listdir(source_directory)
-image_files.sort()
+# destination_directory = '/' + source_directory  # Absolute path from SD root
 
 
 #
@@ -122,10 +123,11 @@ def getLine():
     return com.readline().decode("utf-8")
 
 
-def sendLine(filename):
-    full_path = destination_directory + '/' + filename
-    print(full_path)
-    com.write(full_path.encode("utf-8"))
+def sendLine(file_path):
+    # full_path = destination_directory + '/' + filename
+    file_path = f"/{file_path}"
+    print(os.path.basename(file_path))
+    com.write(file_path.encode("utf-8"))
 
 
 def waitResponse():
@@ -159,23 +161,66 @@ def deleteFile(filename):
 # MARK: - Main script
 #
 
-# def main():
-while((index < len(image_files))):
-    print(f"{index + 1:04d} / {len(image_files):04d} : ", end='')
-    sendLine(image_files[index])
+def main():
+    number_of_dirs = 0
 
-    waitResponse()
+    for (root, dirs, files) in os.walk(source_directory):
+        files = [f for f in files if not f[0] == '.']
+        dirs[:] = [d for d in dirs if not d[0] == '.']
 
-    if(needReboot()):
-        if(delete_file_occuring_reboot):
-            deleteFile(image_files[index])
-        continue
-    if(responseIsValid()):
-        index += 1
-    sleep(interval_between_two_response)
+        if files:
+            number_of_dirs = number_of_dirs + 1
+
+    dir_index = 1
+
+    for (root, dirs, files) in os.walk(source_directory):
+        files = [f for f in files if not f[0] == '.']
+        dirs[:] = [d for d in dirs if not d[0] == '.']
+
+        if not files:
+            continue
+
+        zero_fill = len(f"{number_of_dirs}")
+        print(
+            f"\n[{str(dir_index).zfill(zero_fill)}/{number_of_dirs}] /{root}")
+        dir_index = dir_index + 1
+
+        for index, file in enumerate(files):
+            file_path = os.path.join(root, file)
+            zero_fill = len(f"{len(files)}")
+
+            print(
+                f"  [{str(index + 1).zfill(zero_fill)}/{len(files)}] ", end='')
+
+            sendLine(file_path)
+
+            waitResponse()
+
+            if(responseIsValid()):
+                print("file exist")
+            else:
+                print("file not exit")
+                continue
+
+            if file_path.endswith(('.jpg', '.avi')):
+                waitResponse()
+
+                if(responseIsValid()):
+                    print("file can be opened")
+
+            # if(needReboot()):
+            #     if(delete_file_occuring_reboot):
+            #         deleteFile(image_files[index])
+            #     continue
+            # print('ret' + line)
+            # if(responseIsValid()):
+            #     print("file exist")
+                # index += 1
+
+            sleep(interval_between_two_response)
+
+    return 0
 
 
-# if __name__ == '__main__':
-#     sys.exit(main())
-
-# main()
+if __name__ == '__main__':
+    sys.exit(main())

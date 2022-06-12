@@ -116,12 +116,20 @@ auto main() -> int
 		com_event_flags.wait_any(NEW_MESSAGE);
 
 		auto file_path = communication.getMessage();
+
+		if (std::filesystem::exists(file_path)) {
+			communication.sendMessage("ACK\n");
+		} else {
+			// communication.sendMessage("ABSENT\n");
+			communication.sendMessage("NOK\n");
+			continue;
+		}
 		if (containsStartAndEndOfPath(file_path)) {
 			if (isImage(file_path)) {
-				videokit.displayImage(file_path);
+				// videokit.displayImage(file_path);
 				communication.sendMessage("ACK\n");
 			} else if (isVideo(file_path)) {
-				videokit.playVideoOnce(file_path);
+				// videokit.playVideoOnce(file_path);
 				communication.sendMessage("ACK\n");
 			} else {
 				communication.sendMessage("NOK\n");
