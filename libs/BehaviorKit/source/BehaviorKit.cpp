@@ -50,27 +50,27 @@ void BehaviorKit::lowBattery()
 	_motor_right.stop();
 }
 
-void BehaviorKit::chargingZero()
+void BehaviorKit::chargingEmpty()
 {
 	_videokit.displayImage("/fs/images/low_battery.jpg");
 }
 
-void BehaviorKit::chargingRed()
+void BehaviorKit::chargingLow()
 {
 	_videokit.displayImage("/fs/images/battery_red.jpg");
 }
 
-void BehaviorKit::chargingOrange()
+void BehaviorKit::chargingMedium()
 {
 	_videokit.displayImage("/fs/images/battery_yellow_2.jpg");
 }
 
-void BehaviorKit::chargingYellow()
+void BehaviorKit::chargingHigh()
 {
 	_videokit.displayImage("/fs/images/battery_green_3.jpg");
 }
 
-void BehaviorKit::chargingGreen()
+void BehaviorKit::chargingFull()
 {
 	_videokit.displayImage("/fs/images/battery_green_4.jpg");
 }

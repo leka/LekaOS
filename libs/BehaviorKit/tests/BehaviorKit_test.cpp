@@ -97,11 +97,11 @@ TEST_F(BehaviorKitTest, batteryBehaviors)
 	EXPECT_CALL(mock_motor_right, stop()).Times(1);
 
 	behaviorkit.lowBattery();
-	behaviorkit.chargingZero();
-	behaviorkit.chargingRed();
-	behaviorkit.chargingOrange();
-	behaviorkit.chargingYellow();
-	behaviorkit.chargingGreen();
+	behaviorkit.chargingEmpty();
+	behaviorkit.chargingLow();
+	behaviorkit.chargingMedium();
+	behaviorkit.chargingHigh();
+	behaviorkit.chargingFull();
 }
 
 TEST_F(BehaviorKitTest, blinkGreen)

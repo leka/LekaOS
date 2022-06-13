@@ -29,11 +29,11 @@ class BehaviorKit
 
 	void lowBattery();
 
-	void chargingZero();
-	void chargingRed();
-	void chargingOrange();
-	void chargingYellow();
-	void chargingGreen();
+	void chargingEmpty();
+	void chargingLow();
+	void chargingMedium();
+	void chargingHigh();
+	void chargingFull();
 
 	void blinkGreen();
 	void spinBlink();
