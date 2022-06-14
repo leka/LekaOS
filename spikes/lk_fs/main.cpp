@@ -132,14 +132,14 @@ auto main() -> int
 
 		if (path.string().ends_with(".jpg")) {
 			videokit.displayImage(path);
-			// rtos::ThisThread::sleep_for(500ms);
+			rtos::ThisThread::sleep_for(500ms);
 			com.write("ACK_IMAGE:" + path.string());
 			continue;
 		}
 
 		if (path.string().ends_with(".avi")) {
 			videokit.playVideoOnce(path);
-			// rtos::ThisThread::sleep_for(3s);
+			rtos::ThisThread::sleep_for(3s);
 			com.write("ACK_VIDEO:" + path.string());
 			continue;
 		}
