@@ -15,7 +15,7 @@ ComUtils::ComUtils(rtos::EventFlags &event_flags) : _event_flags(event_flags)
 	_event_queue.dispatch_forever();
 
 	auto func = [this]() { this->read(); };
-	_event_queue.call_every(50ms, func);
+	_event_queue.call_every(200ms, func);
 }
 
 void ComUtils::read()
@@ -32,6 +32,7 @@ void ComUtils::read()
 		}
 
 		_buffer.push_back(c);
+		rtos::ThisThread::sleep_for(1ms);
 	}
 
 	auto data_available = !_buffer.empty();
