@@ -54,8 +54,8 @@ auto main() -> int
 	if (auto is_connected = web_kit.connect("USER_SSID", "USER_PASS"); is_connected) {
 		// clang-format off
 		auto certificates_path_list = std::to_array(
-			{"/fs/certificate_store/DigiCert_High_Assurance_TLS_Hybrid_ECC_SHA256_2020_CA1-0667035BBB14FD63AFC0D6A8534EFE16.txt",
-			 "/fs/certificate_store/DigiCert_SHA2_High_Assurance_Server_CA-04E1E7A4DC5CF2F36DC02B42B85D159F.txt"});
+			{"/fs/usr/certs/ca/DigiCert_High_Assurance_TLS_Hybrid_ECC_SHA256_2020_CA1-0667035BBB14FD63AFC0D6A8534EFE16.txt",
+			 "/fs/usr/certs/ca/DigiCert_SHA2_High_Assurance_Server_CA-04E1E7A4DC5CF2F36DC02B42B85D159F.txt"});
 		// clang-format on
 
 		web_kit.setCertificateStore(certificates_path_list);
@@ -64,7 +64,7 @@ auto main() -> int
 
 		auto downloadable_file =
 			WebKit::DownloadableFile {.url = "https://github.com/leka/LekaOS/releases/download/1.2.3/LekaOS-1.2.3.bin",
-									  .to_path = "/fs/os/LekaOS-1.2.3.bin"};
+									  .to_path = "/fs/usr/os/LekaOS-1.2.3.bin"};
 		auto file_downloaded = web_kit.downloadFile(downloadable_file);
 
 		if (file_downloaded) {

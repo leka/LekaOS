@@ -45,7 +45,7 @@ namespace os {
 
 	constexpr auto start_address = uint32_t {0x8040000 + 0x1000};	// Start application address + header
 
-	auto version_path = "/fs/conf/os_version";
+	auto version_path = "/fs/sys/os-version";
 
 }	// namespace os
 
@@ -91,7 +91,7 @@ namespace factory_reset {
 
 	namespace internal {
 
-		constexpr auto factory_reset_counter_path = "/fs/conf/factory_reset_counter";
+		constexpr auto factory_reset_counter_path = "/fs/usr/share/factory_reset_counter";
 
 		auto qspi	 = CoreQSPI();
 		auto manager = CoreFlashManagerIS25LP016D(qspi);
@@ -156,10 +156,10 @@ namespace factory_reset {
 
 namespace config {
 
-	auto bootloader_version = Config {"/fs/conf/bootloader_version", bootloader::version};
+	auto bootloader_version = Config {"/fs/sys/bootloader-version", bootloader::version};
 	auto battery_hysteresis_offset =
-		Config {"/fs/conf/bootloader_battery_hysteresis_offset", battery::default_hysteresis_offset};
-	auto factory_reset_limit = Config {"/fs/conf/factory_reset_limit", factory_reset::default_limit};
+		Config {"/fs/etc/bootloader-battery_hysteresis", battery::default_hysteresis_offset};
+	auto factory_reset_limit = Config {"/fs/etc/bootloader-reboots_limit", factory_reset::default_limit};
 
 	auto configkit = ConfigKit {};
 
