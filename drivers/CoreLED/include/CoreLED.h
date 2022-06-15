@@ -101,7 +101,6 @@ class CoreLED : public interface::LED
 
 	[[nodiscard]] auto getColor() -> std::span<const RGB> override { return std::span(_colors); }
 	[[nodiscard]] auto getBrightness() -> std::span<const uint8_t> override { return std::span(_brightness); }
-
 	[[nodiscard]] auto isOn() const -> bool override { return _is_color_shown; }
 
   private:

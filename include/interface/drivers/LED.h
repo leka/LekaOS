@@ -33,8 +33,7 @@ class LED
 
 	[[nodiscard]] virtual auto getColor() -> std::span<const RGB>		   = 0;
 	[[nodiscard]] virtual auto getBrightness() -> std::span<const uint8_t> = 0;
-
-	[[nodiscard]] virtual auto isOn() const -> bool = 0;
+	[[nodiscard]] virtual auto isOn() const -> bool						   = 0;
 };
 
 }	// namespace leka::interface

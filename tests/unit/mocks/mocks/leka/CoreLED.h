@@ -15,7 +15,6 @@ class CoreLED : public interface::LED
 {
   public:
 	MOCK_METHOD(void, setColor, (const RGB &color), (override));
-
 	MOCK_METHOD(void, setColorRange, (unsigned start, unsigned end, const RGB &color), (override));
 	MOCK_METHOD(void, setColorAtIndex, (unsigned index, const RGB &color), (override));
 	MOCK_METHOD(void, setColorWithArray, (std::span<const RGB> color), (override));
@@ -27,7 +26,6 @@ class CoreLED : public interface::LED
 
 	MOCK_METHOD(std::span<const RGB>, getColor, (), (override));
 	MOCK_METHOD(std::span<const uint8_t>, getBrightness, (), (override));
-
 	MOCK_METHOD(bool, isOn, (), (const, override));
 };
 
