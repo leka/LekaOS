@@ -315,7 +315,7 @@ namespace watchdog {
 	namespace internal {
 
 		auto &instance		   = mbed::Watchdog::get_instance();
-		constexpr auto timeout = 60s;
+		constexpr auto timeout = 30000ms;
 		auto thread			   = rtos::Thread {osPriorityLow};
 
 		namespace stats {
@@ -413,6 +413,8 @@ auto main() -> int
 
 	watchdog::start();
 	logger::init();
+
+	rtos::ThisThread::sleep_for(50ms);
 
 	sd::init();
 
