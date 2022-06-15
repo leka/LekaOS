@@ -5,9 +5,11 @@
 // Original file: https://github.com/mcu-tools/mcuboot/blob/main/boot/mbed/mcuboot_main.cpp
 
 #include "mbed_application.h"
+#include "mbed_stats.h"
 #include "mbedtls/platform.h"
 
 #include "drivers/InterruptIn.h"
+#include "drivers/Watchdog.h"
 #include "rtos/ThisThread.h"
 
 #include "ConfigKit.h"
@@ -22,6 +24,7 @@
 #include "FATFileSystem.h"
 #include "FileManagerKit.h"
 #include "FirmwareKit.h"
+#include "LogKit.h"
 #include "SDBlockDevice.h"
 #include "bootutil/bootutil.h"
 #include "bootutil/image.h"
@@ -307,6 +310,96 @@ namespace motors {
 
 }	// namespace motors
 
+namespace watchdog {
+
+	namespace internal {
+
+		auto &instance		   = mbed::Watchdog::get_instance();
+		constexpr auto timeout = 60s;
+		auto thread			   = rtos::Thread {osPriorityLow};
+
+		namespace stats {
+
+			auto cpu   = mbed_stats_cpu_t {};
+			auto stack = mbed_stats_stack_t {};
+			auto heap  = mbed_stats_heap_t {};
+
+		}	// namespace stats
+
+		__attribute__((noreturn)) void watchdog_kick()
+		{
+			static auto kick_count = uint32_t {0};
+
+			static auto start = rtos::Kernel::Clock::now();
+			static auto stop  = rtos::Kernel::Clock::now();
+			static auto delta = static_cast<int>((stop - start).count());
+
+			static auto ble_connected	= uint8_t {};
+			static auto battery_level	= uint8_t {};
+			static auto charging_status = uint8_t {};
+
+			static auto sleep_ratio		 = uint8_t {};
+			static auto deep_sleep_ratio = uint8_t {};
+
+			static auto stack_used_delta	= int32_t {};
+			static auto stack_used_size		= uint32_t {};
+			static auto stack_reserved_size = uint32_t {};
+			static auto stack_used_ratio	= uint8_t {};
+
+			static auto heap_used_delta	   = int32_t {};
+			static auto heap_used_size	   = uint32_t {};
+			static auto heap_reserved_size = uint32_t {};
+			static auto heap_used_ratio	   = uint8_t {};
+
+			while (true) {
+				internal::instance.kick();
+				++kick_count;
+
+				stop  = rtos::Kernel::Clock::now();
+				delta = static_cast<int>((stop - start).count());
+
+				mbed_stats_cpu_get(&stats::cpu);
+
+				sleep_ratio = static_cast<uint8_t>(((stats::cpu.sleep_time / 1000 * 100) / (stats::cpu.uptime / 1000)));
+				deep_sleep_ratio =
+					static_cast<uint8_t>(((stats::cpu.deep_sleep_time / 1000 * 100) / (stats::cpu.uptime / 1000)));
+
+				mbed_stats_stack_get(&stats::stack);
+
+				stack_used_delta	= static_cast<int32_t>(stats::stack.max_size - stack_used_size);
+				stack_used_size		= stats::stack.max_size;
+				stack_reserved_size = stats::stack.reserved_size;
+				stack_used_ratio	= static_cast<uint8_t>((stack_used_size * 100) / stack_reserved_size);
+
+				mbed_stats_heap_get(&stats::heap);
+
+				heap_used_delta	   = static_cast<int32_t>(stats::heap.current_size - heap_used_size);
+				heap_used_size	   = stats::heap.current_size;
+				heap_reserved_size = stats::heap.reserved_size;
+				heap_used_ratio	   = static_cast<uint8_t>((heap_used_size * 100) / heap_reserved_size);
+
+				log_info(
+					"dt: %i, kck: %u, ble: %u, lvl: %u%%, chr: %u, slp: %u%%, dsl: %u%%, sur: %u%% (%+i)[%u/"
+					"%u], hur: %u%% (%+i)[%u/%u]",
+					delta, kick_count, ble_connected, battery_level, charging_status, sleep_ratio, deep_sleep_ratio,
+					stack_used_ratio, stack_used_delta, stack_used_size, stack_reserved_size, heap_used_ratio,
+					heap_used_delta, heap_used_size, heap_reserved_size);
+
+				start = rtos::Kernel::Clock::now();
+				rtos::ThisThread::sleep_for(5s);
+			}
+		}
+
+	}	// namespace internal
+
+	void start()
+	{
+		internal::instance.start(internal::timeout.count());
+		internal::thread.start(watchdog::internal::watchdog_kick);
+	}
+
+}	// namespace watchdog
+
 }	// namespace
 
 //
@@ -317,6 +410,9 @@ auto main() -> int
 {
 	leds::turnOff();
 	motors::turnOff();
+
+	watchdog::start();
+	logger::init();
 
 	sd::init();
 
