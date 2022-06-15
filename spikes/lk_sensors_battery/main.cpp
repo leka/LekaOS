@@ -22,9 +22,9 @@ auto mainboard_led = mbed::DigitalOut {LED1};
 void logBatteryNewLevel(uint8_t battery_new_level)
 {
 	if (corebattery.isCharging()) {
-		log_info("Battery at %d%% and in charge.", battery_new_level);
+		log_info("Battery at %d%%, voltage at %f and in charge.", battery_new_level, corebattery.voltage());
 	} else {
-		log_info("Battery at %d%%.", battery_new_level);
+		log_info("Battery at %d%%, voltage at %f.", battery_new_level, corebattery.voltage());
 	}
 }
 

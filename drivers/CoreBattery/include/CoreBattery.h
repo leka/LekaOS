@@ -29,9 +29,9 @@ class CoreBattery : public interface::Battery
 	auto isCharging() -> bool final;
 
 	struct Capacity {
-		static constexpr auto full			= float {12.00F};
-		static constexpr auto three_quarter = float {11.73F};
-		static constexpr auto half			= float {11.08F};
+		static constexpr auto full			= float {11.50F};
+		static constexpr auto three_quarter = float {11.03F};
+		static constexpr auto half			= float {10.85F};
 		static constexpr auto quarter		= float {10.47F};
 		static constexpr auto empty			= float {09.00F};
 	};
