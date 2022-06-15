@@ -143,15 +143,15 @@ class RobotController : public interface::RobotController
 	void onChargingBehavior(uint8_t level)
 	{
 		if (level < 25) {
-			_behaviorkit.chargingZero();
+			_behaviorkit.chargingEmpty();
 		} else if (level < 50) {
-			_behaviorkit.chargingRed();
+			_behaviorkit.chargingLow();
 		} else if (level < 75) {
-			_behaviorkit.chargingOrange();
+			_behaviorkit.chargingMedium();
 		} else if (level < 90) {
-			_behaviorkit.chargingYellow();
+			_behaviorkit.chargingHigh();
 		} else {
-			_behaviorkit.chargingGreen();
+			_behaviorkit.chargingFull();
 		}
 	}
 
