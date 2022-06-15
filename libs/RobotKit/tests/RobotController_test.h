@@ -147,7 +147,10 @@ class RobotControllerTest : public testing::Test
 				.InSequence(on_low_battery_sequence)
 				.WillOnce(Return(spy_isCharging_return_value));
 			if (spy_isCharging_return_value == false) {
-				EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/loading.jpg"})).Times(1);
+				EXPECT_CALL(
+					mock_videokit,
+					displayImage(std::filesystem::path {"/fs/home/img/system/robot-battery-empty-must_be_charged.jpg"}))
+					.Times(1);
 				expectedCallsStopMotors();
 			}
 			EXPECT_CALL(battery, level).InSequence(on_low_battery_sequence);
@@ -223,7 +226,9 @@ class RobotControllerTest : public testing::Test
 	{
 		InSequence run_launching_behavior_sequence;
 
-		EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"/fs/images/logo.jpg"})).Times(1);
+		EXPECT_CALL(mock_videokit,
+					displayImage(std::filesystem::path {"/fs/home/img/system/robot-misc-splash_screen-large-400.jpg"}))
+			.Times(1);
 		EXPECT_CALL(mock_lcd, turnOn);
 	}
 };
