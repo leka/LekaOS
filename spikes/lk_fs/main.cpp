@@ -102,8 +102,8 @@ auto main() -> int
 {
 	sd::init();
 
-	videokit.initializeScreen();
 	display::corelcd.turnOn();
+	videokit.initializeScreen();
 
 	rtos::ThisThread::sleep_for(1s);
 
@@ -138,8 +138,12 @@ auto main() -> int
 		}
 
 		if (path.string().ends_with(".avi")) {
+			videokit.displayImage("/fs/home/img/system/robot-misc-robot-misc-screen_empty_white.jpg");
+			rtos::ThisThread::sleep_for(5ms);
 			videokit.playVideoOnce(path);
 			rtos::ThisThread::sleep_for(3s);
+			videokit.stopVideo();
+			rtos::ThisThread::sleep_for(5ms);
 			com.write("ACK_VIDEO:" + path.string());
 			continue;
 		}
