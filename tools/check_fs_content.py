@@ -215,7 +215,7 @@ def main():
                 FILES_REBOOT.append(file_path)
                 reboot_device()
 
-            LOOP_SLEEP_DELAY = 1  # in seconds
+            LOOP_SLEEP_DELAY = 0.2  # in seconds
             sleep(LOOP_SLEEP_DELAY)
 
     delete_missing_file()
