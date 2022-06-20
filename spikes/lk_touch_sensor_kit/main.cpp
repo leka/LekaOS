@@ -33,6 +33,8 @@ auto main() -> int
 			 int(t.count() / 1000));
 	rtos::ThisThread::sleep_for(2s);
 
+	touch_sensor_kit.calibration();
+
 	while (true) {
 		touch_sensor_kit.updateState();
 		touch_sensor_kit.resetByPowerMode();
