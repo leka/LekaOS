@@ -31,6 +31,7 @@ target_sources(LedKit
 	source/animations/SadCry.cpp
 	source/animations/Sick.cpp
 	source/animations/Singing.cpp
+	source/animations/Sinus.cpp
 	source/animations/Sleeping.cpp
 	source/animations/Sneeze.cpp
 	source/animations/SpinBlink.cpp

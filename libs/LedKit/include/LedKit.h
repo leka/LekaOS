@@ -26,6 +26,7 @@
 #include "animations/SadCry.h"
 #include "animations/Sick.h"
 #include "animations/Singing.h"
+#include "animations/Sinus.h"
 #include "animations/Sleeping.h"
 #include "animations/Sneeze.h"
 #include "animations/SpinBlink.h"
@@ -70,6 +71,7 @@ class LedKit
 		static inline auto sad_cry		   = led::animation::SadCry {};
 		static inline auto sick			   = led::animation::Sick {};
 		static inline auto singing		   = led::animation::Singing {};
+		static inline auto sinus		   = led::animation::Sinus {};
 		static inline auto sleeping		   = led::animation::Sleeping {};
 		static inline auto sneeze		   = led::animation::Sneeze {};
 		static inline auto spin_blink	   = led::animation::SpinBlink {};

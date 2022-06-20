@@ -75,6 +75,10 @@ auto main() -> int
 	hello.start();
 
 	while (true) {
+		log_info("animation::sinus");
+		ledkit.start(&LedKit::animation::sinus);
+		rtos::ThisThread::sleep_for(40s);
+
 		log_info("animation::ble_connection");
 		ledkit.start(&LedKit::animation::ble_connection);
 		rtos::ThisThread::sleep_for(2s);
