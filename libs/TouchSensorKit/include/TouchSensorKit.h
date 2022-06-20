@@ -26,6 +26,15 @@ class TouchSensorKit
 
 	void resetByPowerMode();
 
+	void calibration();
+
+	auto ear_left_touched() const -> bool { return _ear_left_touched; }
+	auto ear_right_touched() const -> bool { return _ear_right_touched; }
+	auto belt_left_back_touched() const -> bool { return _belt_left_back_touched; }
+	auto belt_left_front_touched() const -> bool { return _belt_left_front_touched; }
+	auto belt_right_back_touched() const -> bool { return _belt_right_back_touched; }
+	auto belt_right_front_touched() const -> bool { return _belt_right_front_touched; }
+
   private:
 	void setPullMode(PinMode mode);
 
@@ -34,6 +43,9 @@ class TouchSensorKit
 	void initDACTouch();
 
 	void calibrateTwoSensors(bool &sensor_left, bool &sensor_right, uint8_t channel);
+	void calibrateEars();
+	void calibrateBeltLBRF();
+	void calibrateBeltRBLF();
 
 	CoreI2C corei2c {PinName::SENSOR_PROXIMITY_MUX_I2C_SDA, PinName::SENSOR_PROXIMITY_MUX_I2C_SCL};
 	mbed::DigitalOut io_expander_reset {PinName::SENSOR_PROXIMITY_MUX_RESET, 0};

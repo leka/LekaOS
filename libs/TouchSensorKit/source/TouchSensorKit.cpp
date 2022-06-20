@@ -89,7 +89,7 @@ void TouchSensorKit::calibrateTwoSensors(bool &sensor_left, bool &sensor_right, 
 
 	updateState();
 
-	while (!(sensor_left && sensor_right)) {
+	while (!((sensor_left || value_left_calib == 0) && (sensor_right || value_right_calib == 0))) {
 		if (!sensor_left) {
 			if (value_left_calib - step > 0x0FFF) {
 				value_left_calib = 0x0FFF;
@@ -108,6 +108,7 @@ void TouchSensorKit::calibrateTwoSensors(bool &sensor_left, bool &sensor_right, 
 		buffer_left.at(0) = static_cast<uint8_t>((0xFF00 & value_left_calib) >> 8);
 		buffer_left.at(1) = static_cast<uint8_t>(0x00FF & value_left_calib);
 		dac_expander_left.writeToSpecificInputRegister(channel, buffer_left);
+		rtos::ThisThread::sleep_for(1ms);
 
 		buffer_right.at(0) = static_cast<uint8_t>((0xFF00 & value_right_calib) >> 8);
 		buffer_right.at(1) = static_cast<uint8_t>(0x00FF & value_right_calib);
@@ -123,4 +124,41 @@ void TouchSensorKit::calibrateTwoSensors(bool &sensor_left, bool &sensor_right, 
 
 	log_info("CALIBRATED!");
 	rtos::ThisThread::sleep_for(100ms);
+}
+
+void TouchSensorKit::calibrateEars()
+{
+	log_info("Place hands on EAR LEFT and EAR RIGHT");
+	log_info("Calibration will start in 5 seconds");
+	rtos::ThisThread::sleep_for(5s);
+	calibrateTwoSensors(_ear_left_touched, _ear_right_touched, 2);
+}
+
+void TouchSensorKit::calibrateBeltLBRF()
+{
+	log_info("Place hands on BELT LEFT BACK and BELT RIGHT FRONT");
+	log_info("Calibration will start in 5 seconds");
+	rtos::ThisThread::sleep_for(5s);
+	calibrateTwoSensors(_belt_left_back_touched, _belt_right_front_touched, 1);
+}
+
+void TouchSensorKit::calibrateBeltRBLF()
+{
+	log_info("Place hands on BELT LEFT FRONT and BELT RIGHT BACK");
+	log_info("Calibration will start in 5 seconds");
+	rtos::ThisThread::sleep_for(5s);
+	calibrateTwoSensors(_belt_left_front_touched, _belt_right_back_touched, 0);
+}
+
+void TouchSensorKit::calibration()
+{
+	log_info("Touch calibration");
+	log_info("For each of 6 touch sensors, value of sensibility will change");
+	log_info("Please keep your hands on 2 sensors until \"CALIBRATED !\" appears.\n");
+	rtos::ThisThread::sleep_for(15s);
+
+	calibrateEars();
+	calibrateBeltLBRF();
+	calibrateBeltRBLF();
+	rtos::ThisThread::sleep_for(1s);
 }
