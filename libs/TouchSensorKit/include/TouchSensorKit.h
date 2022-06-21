@@ -26,6 +26,7 @@ class TouchSensorKit
 
 	void resetByPowerMode();
 
+	void adjust_sensivity(uint16_t value);
 	void calibration();
 
 	auto ear_left_touched() const -> bool { return _ear_left_touched; }
@@ -50,8 +51,8 @@ class TouchSensorKit
 	CoreI2C corei2c {PinName::SENSOR_PROXIMITY_MUX_I2C_SDA, PinName::SENSOR_PROXIMITY_MUX_I2C_SCL};
 	mbed::DigitalOut io_expander_reset {PinName::SENSOR_PROXIMITY_MUX_RESET, 0};
 	CoreIOExpanderMCP23017 io_expander {corei2c, io_expander_reset};
-	CoreDACTouchMCP4728 dac_expander_left {corei2c, 0xC0};
-	CoreDACTouchMCP4728 dac_expander_right {corei2c, 0xC2};
+	CoreDACTouchMCP4728 dac_touch_left {corei2c, 0xC0};
+	CoreDACTouchMCP4728 dac_touch_right {corei2c, 0xC2};
 
 	leka::io::expanded::DigitalIn<> _ear_left_input {io_expander, touch::pin::ear_left_input};
 	leka::io::expanded::DigitalIn<> _ear_right_input {io_expander, touch::pin::ear_right_input};
@@ -73,5 +74,8 @@ class TouchSensorKit
 	bool _belt_left_front_touched {false};
 	bool _belt_right_back_touched {false};
 	bool _belt_right_front_touched {false};
+
+	uint16_t default_max_value_calib {0x0FFF};
+	uint16_t default_min_value_calib {0x0000};
 };
 }	// namespace leka

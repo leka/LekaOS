@@ -66,12 +66,30 @@ void TouchSensorKit::setPowerMode(int power_mode)
 
 void TouchSensorKit::initDACTouch()
 {
-	dac_expander_left.writeVoltageReference(0x00);
-	dac_expander_left.writePowerMode(0x00);
-	dac_expander_left.writeGain(0x00);
-	dac_expander_right.writeVoltageReference(0x00);
-	dac_expander_right.writePowerMode(0x00);
-	dac_expander_right.writeGain(0x00);
+	dac_touch_left.writeVoltageReference(0x00);
+	dac_touch_left.writePowerMode(0x00);
+	dac_touch_left.writeGain(0x00);
+	dac_touch_right.writeVoltageReference(0x00);
+	dac_touch_right.writePowerMode(0x00);
+	dac_touch_right.writeGain(0x00);
+}
+
+void TouchSensorKit::adjust_sensivity(uint16_t value)
+{
+	auto buffer = std::array<uint8_t, 2> {};
+
+	buffer.at(0) = static_cast<uint8_t>((0xFF00 & value) >> 8);
+	buffer.at(1) = static_cast<uint8_t>(0x00FF & value);
+
+	dac_touch_left.writeToSpecificInputRegister(0, buffer);
+	dac_touch_right.writeToSpecificInputRegister(0, buffer);
+
+	dac_touch_left.writeToSpecificInputRegister(1, buffer);
+	dac_touch_right.writeToSpecificInputRegister(1, buffer);
+
+	dac_touch_left.writeToSpecificInputRegister(2, buffer);
+	dac_touch_right.writeToSpecificInputRegister(2, buffer);
+	rtos::ThisThread::sleep_for(1ms);
 }
 
 void TouchSensorKit::calibrateTwoSensors(bool &sensor_left, bool &sensor_right, uint8_t channel)
@@ -79,27 +97,28 @@ void TouchSensorKit::calibrateTwoSensors(bool &sensor_left, bool &sensor_right, 
 	auto buffer_left  = std::array<uint8_t, 2> {};
 	auto buffer_right = std::array<uint8_t, 2> {};
 
-	dac_expander_left.writeToSpecificInputRegister(channel, buffer_left);
-	dac_expander_right.writeToSpecificInputRegister(channel, buffer_right);
+	dac_touch_left.writeToSpecificInputRegister(channel, buffer_left);
+	dac_touch_right.writeToSpecificInputRegister(channel, buffer_right);
 	rtos::ThisThread::sleep_for(1ms);
 
-	auto value_left_calib  = uint16_t {0x0FFF};
-	auto value_right_calib = uint16_t {0x0FFF};
-	auto step			   = uint8_t {1};
+	auto value_left_calib  = uint16_t {default_max_value_calib};
+	auto value_right_calib = uint16_t {default_max_value_calib};
+	auto step			   = uint8_t {0x00FF};
 
 	updateState();
 
-	while (!((sensor_left || value_left_calib == 0) && (sensor_right || value_right_calib == 0))) {
+	while (!((sensor_left || value_left_calib <= value_left_calib % step) &&
+			 (sensor_right || value_right_calib <= value_right_calib % step))) {
 		if (!sensor_left) {
-			if (value_left_calib - step > 0x0FFF) {
-				value_left_calib = 0x0FFF;
+			if (value_left_calib - step > default_max_value_calib) {
+				value_left_calib = default_max_value_calib;
 			} else {
 				value_left_calib -= step;
 			}
 		}
 		if (!sensor_right) {
-			if (value_right_calib - step > 0x0FFF) {
-				value_right_calib = 0x0FFF;
+			if (value_right_calib - step > default_max_value_calib) {
+				value_right_calib = default_max_value_calib;
 			} else {
 				value_right_calib -= step;
 			}
@@ -107,23 +126,25 @@ void TouchSensorKit::calibrateTwoSensors(bool &sensor_left, bool &sensor_right, 
 
 		buffer_left.at(0) = static_cast<uint8_t>((0xFF00 & value_left_calib) >> 8);
 		buffer_left.at(1) = static_cast<uint8_t>(0x00FF & value_left_calib);
-		dac_expander_left.writeToSpecificInputRegister(channel, buffer_left);
+		dac_touch_left.writeToSpecificInputRegister(channel, buffer_left);
 		rtos::ThisThread::sleep_for(1ms);
 
 		buffer_right.at(0) = static_cast<uint8_t>((0xFF00 & value_right_calib) >> 8);
 		buffer_right.at(1) = static_cast<uint8_t>(0x00FF & value_right_calib);
-		dac_expander_right.writeToSpecificInputRegister(channel, buffer_right);
+		dac_touch_right.writeToSpecificInputRegister(channel, buffer_right);
 		rtos::ThisThread::sleep_for(1ms);
 
 		updateState();
+		rtos::ThisThread::sleep_for(500ms);
 	}
 
-	dac_expander_left.writeToSpecificMemoryRegister(channel, buffer_left);
-	dac_expander_right.writeToSpecificMemoryRegister(channel, buffer_right);
+	dac_touch_left.writeToSpecificMemoryRegister(channel, buffer_left);
+	dac_touch_right.writeToSpecificMemoryRegister(channel, buffer_right);
 	rtos::ThisThread::sleep_for(1ms);
-
+	log_info("Value Left Calibration : %d", value_left_calib);
+	log_info("Value Right Calibration : %d", value_right_calib);
 	log_info("CALIBRATED!");
-	rtos::ThisThread::sleep_for(100ms);
+	rtos::ThisThread::sleep_for(1ms);
 }
 
 void TouchSensorKit::calibrateEars()
@@ -155,7 +176,7 @@ void TouchSensorKit::calibration()
 	log_info("Touch calibration");
 	log_info("For each of 6 touch sensors, value of sensibility will change");
 	log_info("Please keep your hands on 2 sensors until \"CALIBRATED !\" appears.\n");
-	rtos::ThisThread::sleep_for(15s);
+	rtos::ThisThread::sleep_for(5s);
 
 	calibrateEars();
 	calibrateBeltLBRF();
