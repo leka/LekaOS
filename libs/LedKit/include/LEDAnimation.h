@@ -15,6 +15,11 @@ namespace leka::led::animation::utils {
 	return leka::utils::math::map(step, uint8_t {0}, step_max, 0.F, 1.F);
 }
 
+auto random8(uint8_t min, uint8_t max) -> uint8_t
+{
+	return min + rand() % (max - min + 1);
+}
+
 }	// namespace leka::led::animation::utils
 
 namespace leka::interface {
