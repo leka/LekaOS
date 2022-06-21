@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "GradientSpotColor.h"
 #include "RGB.h"
 #include "internal/conversion.h"
 #include "internal/interpolation.h"
