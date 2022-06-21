@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <cmath>
+
 #include "ColorKit.h"
 #include "CoreLED.h"
 #include "Utils.h"
@@ -13,11 +15,6 @@ namespace leka::led::animation::utils {
 [[nodiscard]] inline auto normalizeStep(uint8_t step, uint8_t step_max) -> float
 {
 	return leka::utils::math::map(step, uint8_t {0}, step_max, 0.F, 1.F);
-}
-
-auto random8(uint8_t min, uint8_t max) -> uint8_t
-{
-	return min + rand() % (max - min + 1);
 }
 
 }	// namespace leka::led::animation::utils

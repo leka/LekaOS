@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <cmath>
 #include <cstdint>
 #include <span>
 
@@ -28,5 +29,10 @@ struct LinearCoefficients {
 auto computeLinearCoefficients(Point p1, Point p2) -> LinearCoefficients;
 
 auto checksum8(std::span<uint8_t> data) -> uint8_t;
+
+[[nodiscard]] inline auto random8(uint8_t min, uint8_t max) -> uint8_t
+{
+	return min + rand() % (max - min + 1);
+}
 
 }	// namespace leka::utils::math
