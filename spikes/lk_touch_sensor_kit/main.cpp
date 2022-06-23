@@ -144,6 +144,39 @@ void turnOffBeltLeftFront()
 	belt.show();
 }
 
+auto random_numbers = std::vector<uint8_t>();	// tableau qui décrit l'état des 6 pins au cours du temps
+auto random8(uint8_t min, uint8_t max) -> uint8_t
+{
+	return min + rand() % (max - min + 1);
+}
+
+void setLedsWithRandomColors()
+{
+	random_numbers.clear();
+	std::vector<RGB> colors;
+	for (int i(0); i < 6; i++) {
+		auto random_number = random8(0, 1);
+		random_numbers.push_back(random_number);
+		colors.push_back(random_number == 0 ? RGB::pure_blue : RGB::pure_red);
+	}
+	turnOnEarLeft(colors[0]);
+	turnOnEarRight(colors[1]);
+	turnOnBeltRightBack(colors[2]);
+	turnOnBeltRightFront(colors[3]);
+	turnOnBeltLeftBack(colors[4]);
+	turnOnBeltLeftFront(colors[5]);
+}
+
+void turnOffAllLeds()
+{
+	turnOffEarLeft();
+	turnOffEarRight();
+	turnOffBeltRightBack();
+	turnOffBeltRightFront();
+	turnOffBeltLeftBack();
+	turnOffBeltLeftFront();
+}
+
 }	// namespace leds
 
 void launch_sequence(uint8_t seq)
@@ -203,6 +236,8 @@ void win_animation()
 	}
 }
 
+auto ledkit = LedKit {leds::internal::animations::event_loop, leds::ears, leds::belt};
+
 auto touch_sensor_kit = TouchSensorKit();
 
 void update_leds()
@@ -242,6 +277,61 @@ void update_leds()
 	rtos::ThisThread::sleep_for(500ms);
 }
 
+using namespace leds;
+void update_touched_colors()
+{
+	if (touch_sensor_kit.ear_left_touched() && random_numbers[0] == 0) {
+		turnOffEarLeft();
+		random_numbers[0] = 3;
+	}
+	if (touch_sensor_kit.ear_right_touched() && random_numbers[1] == 0) {
+		turnOffEarRight();
+		random_numbers[1] = 3;
+	}
+	if (touch_sensor_kit.belt_right_back_touched() && random_numbers[2] == 0) {
+		turnOffBeltRightBack();
+		random_numbers[2] = 3;
+	}
+	if (touch_sensor_kit.belt_right_front_touched() && random_numbers[3] == 0) {
+		turnOffBeltRightFront();
+		random_numbers[3] = 3;
+	}
+	if (touch_sensor_kit.belt_left_back_touched() && random_numbers[4] == 0) {
+		turnOffBeltLeftBack();
+		random_numbers[4] = 3;
+	}
+	if (touch_sensor_kit.belt_left_front_touched() && random_numbers[5] == 0) {
+		turnOffBeltLeftFront();
+		random_numbers[5] = 3;
+	}
+}
+auto are_all_blue_touched() -> bool
+{
+	for (auto number: random_numbers) {
+		if (number == 0) {
+			return false;
+		}
+	}
+	return true;
+}
+
+void catch_colors()
+{
+	leds::setLedsWithRandomColors();
+	rtos::ThisThread::sleep_for(500ms);
+	while (!(are_all_blue_touched())) {
+		touch_sensor_kit.updateState();
+		// touch_sensor_kit.resetByPowerMode();
+		update_touched_colors();
+		rtos::ThisThread::sleep_for(500ms);
+	}
+	touch_sensor_kit.resetByPowerMode();
+	rtos::ThisThread::sleep_for(1ms);
+	log_info("animation::rainbow");
+	ledkit.start(&LedKit::animation::rainbow);
+	rtos::ThisThread::sleep_for(4s);
+}
+
 void design_pattern(uint8_t sequence)
 {
 	auto defined_sequence = uint8_t {};
@@ -267,7 +357,7 @@ void design_pattern(uint8_t sequence)
 		rtos::ThisThread::sleep_for(500ms);
 		do {
 			touch_sensor_kit.updateState();
-			touch_sensor_kit.resetByPowerMode();
+			// touch_sensor_kit.resetByPowerMode();
 			rtos::ThisThread::sleep_for(500ms);
 		} while (!touch_sensor_kit.ear_left_touched() && !touch_sensor_kit.ear_right_touched());
 
@@ -313,11 +403,13 @@ auto main() -> int
 			 int(t.count() / 1000));
 
 	// touch_sensor_kit.calibration();
-	rtos::ThisThread::sleep_for(5s);
 	touch_sensor_kit.adjust_sensivity(0);
+	leds::turnOffAllLeds();
+	rtos::ThisThread::sleep_for(2s);
 	while (true) {
-		update_leds();
+		// update_leds();
 		// design_pattern(0);
+		catch_colors();
 		rtos::ThisThread::sleep_for(1ms);
 	}
 }
