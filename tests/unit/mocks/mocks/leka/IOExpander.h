@@ -14,10 +14,13 @@ class IOExpander : public interface::IOExpander<pin_underlying_type_t>
 {
   public:
 	MOCK_METHOD(void, setPinAsInput, (pin_underlying_type_t), (override));
-	MOCK_METHOD(int, readInputPin, (pin_underlying_type_t), (override));
+	MOCK_METHOD(void, setPinAsOutput, (pin_underlying_type_t), (override));
 
 	MOCK_METHOD(void, setModeForPin, (pin_underlying_type_t, PinMode), ());
 	MOCK_METHOD(PinMode, getModeForPin, (pin_underlying_type_t), (override));
+
+	MOCK_METHOD(int, readPin, (pin_underlying_type_t), (override));
+	MOCK_METHOD(void, writePin, (pin_underlying_type_t, int), (override));
 };
 
 }	// namespace leka::mock

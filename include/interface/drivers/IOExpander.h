@@ -16,12 +16,14 @@ class IOExpander
   public:
 	virtual ~IOExpander() = default;
 
-	virtual void setPinAsInput(pin_underlying_type_t pin) = 0;
-
-	virtual auto readInputPin(pin_underlying_type_t pin) -> int = 0;
+	virtual void setPinAsInput(pin_underlying_type_t pin)  = 0;
+	virtual void setPinAsOutput(pin_underlying_type_t pin) = 0;
 
 	virtual void setModeForPin(pin_underlying_type_t pin, PinMode mode) = 0;
 	virtual auto getModeForPin(pin_underlying_type_t pin) -> PinMode	= 0;
+
+	virtual auto readPin(pin_underlying_type_t pin) -> int		= 0;
+	virtual void writePin(pin_underlying_type_t pin, int value) = 0;
 };
 
 }	// namespace leka::interface

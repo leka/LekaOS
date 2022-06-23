@@ -19,7 +19,7 @@ class IO
 
 	auto read() -> int
 	{
-		auto val = _expander.readInputPin(_pin);
+		auto val = _expander.readPin(_pin);
 		return val;
 	}
 
