@@ -6,12 +6,12 @@ add_mbed_executable(spike_mbed_blinky)
 
 target_include_directories(spike_mbed_blinky
 	PRIVATE
-		.
+	.
 )
 
 target_sources(spike_mbed_blinky
 	PRIVATE
-		main.cpp
+	main.cpp
 )
 
 target_link_custom_leka_targets(spike_mbed_blinky)

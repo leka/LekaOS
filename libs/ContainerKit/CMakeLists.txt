@@ -6,22 +6,21 @@ add_library(ContainerKit STATIC)
 
 target_include_directories(ContainerKit
 	PUBLIC
-		include
+	include
 )
 
 target_sources(ContainerKit
 	PRIVATE
-		source/CircularQueue.cpp
+	source/CircularQueue.cpp
 )
 
 target_link_libraries(ContainerKit
 	PRIVATE
-		mbed-os
-		CriticalSection
+	mbed-os
+	CriticalSection
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/CircularQueue_test.cpp
 		tests/CircularQueue_test_clear.cpp
@@ -34,5 +33,4 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/CircularQueue_test_pushpop.cpp
 		tests/CircularQueue_test_size.cpp
 	)
-
 endif()

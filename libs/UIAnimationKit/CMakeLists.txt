@@ -6,14 +6,14 @@ add_library(UIAnimationKit STATIC)
 
 target_include_directories(UIAnimationKit
 	PUBLIC
-		include
-		include/internal
+	include
+	include/internal
 )
 
 target_sources(UIAnimationKit
 	PRIVATE
-		source/BouncingSquare.cpp
-		source/UIAnimationKit.cpp
+	source/BouncingSquare.cpp
+	source/UIAnimationKit.cpp
 )
 
 target_link_libraries(UIAnimationKit
@@ -22,10 +22,8 @@ target_link_libraries(UIAnimationKit
 	CoreVideo
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/UIAnimationKit_test.cpp
 	)
-
 endif()

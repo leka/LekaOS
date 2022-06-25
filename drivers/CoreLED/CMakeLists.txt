@@ -6,12 +6,12 @@ add_library(CoreLED STATIC)
 
 target_include_directories(CoreLED
 	PUBLIC
-		include
+	include
 )
 
 target_sources(CoreLED
 	PRIVATE
-		source/CoreLED.cpp
+	source/CoreLED.cpp
 )
 
 target_link_libraries(CoreLED
@@ -19,8 +19,7 @@ target_link_libraries(CoreLED
 	ColorKit
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/CoreLED_test_brightness.cpp
 		tests/CoreLED_test_setColor.cpp
@@ -28,5 +27,4 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/CoreLED_test_status.cpp
 		tests/CoreLED_test.cpp
 	)
-
 endif()

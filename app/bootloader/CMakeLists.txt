@@ -6,14 +6,14 @@ add_mbed_executable(bootloader)
 
 target_include_directories(bootloader
 	PRIVATE
-		.
+	.
 )
 
 target_sources(bootloader
 	PRIVATE
-		main.cpp
-		default_bd.cpp
-		signing_keys.c
+	main.cpp
+	default_bd.cpp
+	signing_keys.c
 )
 
 target_link_libraries(bootloader

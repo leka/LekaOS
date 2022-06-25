@@ -6,14 +6,14 @@ add_library(FileManagerKit STATIC)
 
 target_include_directories(FileManagerKit
 	PUBLIC
-		include
+	include
 )
 
 target_sources(FileManagerKit
 	PRIVATE
-		source/File.cpp
-		source/FileReception.cpp
-		source/FileManagerKit.cpp
+	source/File.cpp
+	source/FileReception.cpp
+	source/FileManagerKit.cpp
 )
 
 target_link_libraries(FileManagerKit
@@ -22,12 +22,10 @@ target_link_libraries(FileManagerKit
 	CoreEventQueue
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/File_test.cpp
 		tests/FileReception_test.cpp
 		tests/FileManagerKit_test.cpp
 	)
-
 endif()
