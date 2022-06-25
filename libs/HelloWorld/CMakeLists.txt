@@ -6,12 +6,12 @@ add_library(HelloWorld STATIC)
 
 target_include_directories(HelloWorld
 	PUBLIC
-		include
+	include
 )
 
 target_sources(HelloWorld
 	PRIVATE
-		source/HelloWorld.cpp
+	source/HelloWorld.cpp
 )
 
 target_link_libraries(HelloWorld

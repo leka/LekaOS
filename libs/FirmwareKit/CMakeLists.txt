@@ -6,12 +6,12 @@ add_library(FirmwareKit STATIC)
 
 target_include_directories(FirmwareKit
 	PUBLIC
-		include
+	include
 )
 
 target_sources(FirmwareKit
 	PRIVATE
-		source/FirmwareKit.cpp
+	source/FirmwareKit.cpp
 )
 
 target_link_libraries(FirmwareKit
@@ -20,10 +20,8 @@ target_link_libraries(FirmwareKit
 	CoreFlashMemory
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/FirmwareKit_test.cpp
 	)
-
 endif()

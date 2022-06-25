@@ -6,12 +6,12 @@ add_library(lib_LekaMotors STATIC)
 
 target_include_directories(lib_LekaMotors
 	PUBLIC
-		include
+	include
 )
 
 target_sources(lib_LekaMotors
 	PRIVATE
-		source/LekaMotors.cpp
+	source/LekaMotors.cpp
 )
 
 target_link_libraries(lib_LekaMotors

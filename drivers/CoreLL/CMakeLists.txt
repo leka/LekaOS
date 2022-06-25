@@ -5,22 +5,19 @@
 add_library(CoreLL STATIC)
 
 target_include_directories(CoreLL
-  PUBLIC
+	PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_sources(CoreLL
-  PRIVATE
-    source/CoreLL.cpp
+	PRIVATE
+	source/CoreLL.cpp
 )
 
 target_link_libraries(CoreLL mbed-os)
 
-
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/CoreLL_test.cpp
 	)
-
 endif()

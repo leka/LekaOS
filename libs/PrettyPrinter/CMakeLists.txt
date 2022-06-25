@@ -6,16 +6,16 @@ add_library(lib_PrettyPrinter STATIC)
 
 target_include_directories(lib_PrettyPrinter
 	PUBLIC
-		./include
+	./include
 )
 
 target_sources(lib_PrettyPrinter
 	PRIVATE
-		./source/PrettyPrinter.cpp
+	./source/PrettyPrinter.cpp
 )
 
 target_link_libraries(lib_PrettyPrinter
 	PRIVATE
-		mbed-os
-		LogKit
+	mbed-os
+	LogKit
 )

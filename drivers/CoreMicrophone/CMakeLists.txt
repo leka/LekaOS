@@ -6,20 +6,18 @@ add_library(CoreMicrophone STATIC)
 
 target_include_directories(CoreMicrophone
 	PUBLIC
-		include
+	include
 )
 
 target_sources(CoreMicrophone
 	PRIVATE
-		source/CoreMicrophone.cpp
+	source/CoreMicrophone.cpp
 )
 
 target_link_libraries(CoreMicrophone mbed-os)
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/CoreMicrophone_test.cpp
 	)
-
 endif()

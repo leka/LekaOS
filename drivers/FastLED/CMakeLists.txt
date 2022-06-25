@@ -5,15 +5,15 @@
 add_library(driver_FastLED STATIC)
 
 target_include_directories(driver_FastLED
-  PUBLIC
-  	${CMAKE_CURRENT_SOURCE_DIR}/include
+	PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}/include
 	${CMAKE_CURRENT_SOURCE_DIR}/include/internal
 	${CMAKE_CURRENT_SOURCE_DIR}/include/internal/lib8tion
 )
 
 target_sources(driver_FastLED
-  PRIVATE
-  	source/FastLED.cpp
+	PRIVATE
+	source/FastLED.cpp
 	source/bitswap.cpp
 	source/colorutils.cpp
 	source/colorpalettes.cpp
