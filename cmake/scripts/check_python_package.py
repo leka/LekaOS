@@ -1,4 +1,4 @@
-#file which is invoked by the cmake build system to check if all necessary python packages are installed.
+# file which is invoked by the cmake build system to check if all necessary python packages are installed.
 
 import sys
 
