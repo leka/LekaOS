@@ -1,4 +1,3 @@
-
 # Note: some code originally from here: https://os.mbed.com/cookbook/mbed-cmake
 
 # needed for memory map script
@@ -6,14 +5,14 @@ check_python_package(intelhex HAVE_INTELHEX)
 check_python_package(prettytable HAVE_PRETTYTABLE)
 
 set(CAN_RUN_MEMAP TRUE)
-if(NOT (HAVE_INTELHEX AND HAVE_PRETTYTABLE))
+
+if(NOT(HAVE_INTELHEX AND HAVE_PRETTYTABLE))
 	message(WARNING "Unable to run the memory mapper due to missing Python dependencies.")
 	set(CAN_RUN_MEMAP FALSE)
 endif()
 
 # Set memap toolchain name
 set(MEMAP_TOOLCHAIN_NAME ${MBED_TOOLCHAIN_NAME})
-
 
 # figure out objcopy command
 get_filename_component(TOOLCHAIN_BIN_DIR ${CMAKE_C_COMPILER} DIRECTORY)
@@ -29,9 +28,8 @@ if(NOT EXISTS ${OBJCOPY_EXECUTABLE})
 	message(FATAL_ERROR "Failed to find objcopy executable!  Please set OBJCOPY_EXECUTABLE to the path to ${OBJCOPY_NAME}")
 endif()
 
-#custom function to add a mbed executable and generate mbed source files
+# custom function to add a mbed executable and generate mbed source files
 function(add_mbed_executable EXECUTABLE)
-
 	add_executable(${EXECUTABLE} ${ARGN})
 
 	target_link_libraries(${EXECUTABLE} mbed-os)
@@ -45,7 +43,7 @@ function(add_mbed_executable EXECUTABLE)
 	target_link_libraries(${EXECUTABLE} -Wl,\"-Map=${MAP_FILE}\",--cref)
 
 	set(OBJCOPY_ELF_TO_BIN_COMMAND ${OBJCOPY_EXECUTABLE} -O binary $<TARGET_FILE:${EXECUTABLE}> ${BIN_FILE})
-	set(OBJCOPY_ELF_TO_HEX_COMMAND ${OBJCOPY_EXECUTABLE} -O ihex   $<TARGET_FILE:${EXECUTABLE}> ${HEX_FILE})
+	set(OBJCOPY_ELF_TO_HEX_COMMAND ${OBJCOPY_EXECUTABLE} -O ihex $<TARGET_FILE:${EXECUTABLE}> ${HEX_FILE})
 
 	# generate .bin firmware file
 	add_custom_command(
@@ -70,5 +68,4 @@ function(add_mbed_executable EXECUTABLE)
 			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 			COMMENT "Displaying memory map for ${EXECUTABLE}")
 	endif()
-
 endfunction(add_mbed_executable)

@@ -42,13 +42,13 @@ add_dependencies(mbed-os-static mbed-linker-script)
 # disable some annoying warnings during the Mbed build
 target_compile_options(mbed-os-static
 	PUBLIC
-		$<$<COMPILE_LANGUAGE:CXX>:-Wno-reorder>
-		$<$<COMPILE_LANGUAGE:CXX>:-Wno-register>
-		$<$<COMPILE_LANGUAGE:CXX>:-Wno-volatile>
-		-Wno-unused-function
-		-Wno-unused-variable
-		-Wno-enum-compare
-		-Wno-attributes
+	$<$<COMPILE_LANGUAGE:CXX>:-Wno-reorder>
+	$<$<COMPILE_LANGUAGE:CXX>:-Wno-register>
+	$<$<COMPILE_LANGUAGE:CXX>:-Wno-volatile>
+	-Wno-unused-function
+	-Wno-unused-variable
+	-Wno-enum-compare
+	-Wno-attributes
 )
 
 # create final library target (wraps actual library target in -Wl,--whole-archive [which is needed for weak symbols to work])
@@ -56,7 +56,7 @@ add_library(mbed-os INTERFACE)
 
 target_include_directories(mbed-os
 	INTERFACE
-    	${MBED_OS_DIR}
+	${MBED_OS_DIR}
 )
 
 target_link_libraries(mbed-os INTERFACE
