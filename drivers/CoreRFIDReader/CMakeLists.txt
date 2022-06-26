@@ -6,12 +6,12 @@ add_library(CoreRFIDReader STATIC)
 
 target_include_directories(CoreRFIDReader
 	PUBLIC
-		include
+	include
 )
 
 target_sources(CoreRFIDReader
 	PRIVATE
-		source/CoreRFIDReader.cpp
+	source/CoreRFIDReader.cpp
 )
 
 target_link_libraries(CoreRFIDReader

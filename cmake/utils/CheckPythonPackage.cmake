@@ -8,55 +8,50 @@ set(PYTHON_PACKAGECHECK_SCRIPT ${MBED_CMAKE_SCRIPTS_DIR}/check_python_package.py
 
 # set OUTPUT_VAR to whether PACKAGENAME was found
 function(check_python_package PACKAGENAME OUTPUT_VAR)
+	# can't have Python packages without Python!
+	if(NOT Python3_FOUND)
+		set(${OUTPUT_VAR} FALSE PARENT_SCOPE)
+		return()
+	endif()
 
-    # can't have Python packages without Python!
-    if(NOT Python3_FOUND)
-        set(${OUTPUT_VAR} FALSE PARENT_SCOPE)
-        return()
-    endif()
+	set(NEED_TO_RUN_CHECK TRUE)
 
-    set(NEED_TO_RUN_CHECK TRUE)
+	if(DEFINED ${OUTPUT_VAR})
+		if(${OUTPUT_VAR})
+			# if the python interpreter changed, we need to recheck
+			if("${PY_INTERP_FOR_${OUTPUT_VAR}}" STREQUAL "${Python3_EXECUTABLE}")
+				set(NEED_TO_RUN_CHECK FALSE)
+			endif()
+		endif()
+	endif()
 
-    if(DEFINED ${OUTPUT_VAR})
-        if(${OUTPUT_VAR})
+	if(NEED_TO_RUN_CHECK)
+		set(PY_INTERP_FOR_${OUTPUT_VAR} ${Python3_EXECUTABLE} CACHE INTERNAL "The python interpreter used to run the ${OUTPUT_VAR} check" FORCE)
 
-            # if the python interpreter changed, we need to recheck
-            if("${PY_INTERP_FOR_${OUTPUT_VAR}}" STREQUAL "${Python3_EXECUTABLE}")
-                set(NEED_TO_RUN_CHECK FALSE)
-            endif()
+		execute_process(COMMAND ${Python3_EXECUTABLE} ${PYTHON_PACKAGECHECK_SCRIPT} ${PACKAGENAME}
+			RESULT_VARIABLE PACKAGECHECK_RESULT)
 
-        endif()
-    endif()
+		test(HAVE_PACKAGE ${PACKAGECHECK_RESULT} EQUAL 0)
 
-    if(NEED_TO_RUN_CHECK)
-        set(PY_INTERP_FOR_${OUTPUT_VAR} ${Python3_EXECUTABLE} CACHE INTERNAL "The python interpreter used to run the ${OUTPUT_VAR} check" FORCE)
+		if(HAVE_PACKAGE)
+			message(STATUS "Checking for Python package ${PACKAGENAME} -- found")
+		else()
+			message(STATUS "Checking for Python package ${PACKAGENAME} -- not found")
+		endif()
 
-        execute_process(COMMAND ${Python3_EXECUTABLE} ${PYTHON_PACKAGECHECK_SCRIPT} ${PACKAGENAME}
-                RESULT_VARIABLE PACKAGECHECK_RESULT)
-
-        test(HAVE_PACKAGE ${PACKAGECHECK_RESULT} EQUAL 0)
-
-        if(HAVE_PACKAGE)
-            message(STATUS "Checking for Python package ${PACKAGENAME} -- found")
-        else()
-            message(STATUS "Checking for Python package ${PACKAGENAME} -- not found")
-        endif()
-
-        set(${OUTPUT_VAR} ${HAVE_PACKAGE} CACHE BOOL "Whether the Python package ${PACKAGENAME} was found" FORCE)
-        mark_as_advanced(${OUTPUT_VAR})
-
-    endif()
+		set(${OUTPUT_VAR} ${HAVE_PACKAGE} CACHE BOOL "Whether the Python package ${PACKAGENAME} was found" FORCE)
+		mark_as_advanced(${OUTPUT_VAR})
+	endif()
 endfunction(check_python_package)
 
 # check that PACKAGENAME can be imported, and print an error if not
 function(verify_python_package PACKAGENAME)
+	# we can just generate our own variable name
+	string(TOUPPER "HAVE_${PACKAGENAME}" HAVE_VAR_NAME)
 
-    # we can just generate our own variable name
-    string(TOUPPER "HAVE_${PACKAGENAME}" HAVE_VAR_NAME)
+	check_python_package(${PACKAGENAME} ${HAVE_VAR_NAME})
 
-    check_python_package(${PACKAGENAME} ${HAVE_VAR_NAME})
-
-    if(NOT ${HAVE_VAR_NAME})
-        message(FATAL_ERROR "The required Python package ${PACKAGENAME} was not found in ${Python3_EXECUTABLE}.  Please install it.")
-    endif()
+	if(NOT ${HAVE_VAR_NAME})
+		message(FATAL_ERROR "The required Python package ${PACKAGENAME} was not found in ${Python3_EXECUTABLE}.  Please install it.")
+	endif()
 endfunction(verify_python_package)

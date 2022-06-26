@@ -1,4 +1,3 @@
-
 # include correct mbed-cmake buildfile based on toolchain
 if("${MBED_TOOLCHAIN_NAME}" STREQUAL "GCC_ARM")
 	include(ToolchainGCCArmBuild)

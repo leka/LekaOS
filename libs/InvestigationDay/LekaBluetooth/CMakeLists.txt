@@ -5,14 +5,14 @@
 add_library(lib_LekaBluetooth STATIC)
 
 target_include_directories(lib_LekaBluetooth
-  PUBLIC
-  	${CMAKE_CURRENT_SOURCE_DIR}/include
+	PUBLIC
+	${CMAKE_CURRENT_SOURCE_DIR}/include
 	${CMAKE_CURRENT_SOURCE_DIR}/include/internal
 )
 
 target_sources(lib_LekaBluetooth
-  PRIVATE
-  	source/BM64Converter.cpp
+	PRIVATE
+	source/BM64Converter.cpp
 	source/LekaBluetooth.cpp
 )
 

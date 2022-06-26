@@ -6,13 +6,13 @@ add_mbed_executable(certs_emc_lcd_led_motors)
 
 target_include_directories(certs_emc_lcd_led_motors
 	PRIVATE
-		.
-		../../include
+	.
+	../../include
 )
 
 target_sources(certs_emc_lcd_led_motors
 	PRIVATE
-		main.cpp
+	main.cpp
 )
 
 target_link_libraries(certs_emc_lcd_led_motors

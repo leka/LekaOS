@@ -6,16 +6,16 @@ add_library(BLEKit STATIC)
 
 target_include_directories(BLEKit
 	PUBLIC
-		include
+	include
 )
 
 target_sources(BLEKit
 	PRIVATE
-		source/BLEKit.cpp
-		source/CoreGapEventHandler.cpp
-		source/CoreGap.cpp
-		source/CoreGattServerEventHandler.cpp
-		source/CoreGattServer.cpp
+	source/BLEKit.cpp
+	source/CoreGapEventHandler.cpp
+	source/CoreGap.cpp
+	source/CoreGattServerEventHandler.cpp
+	source/CoreGattServer.cpp
 )
 
 target_link_libraries(BLEKit
@@ -23,8 +23,7 @@ target_link_libraries(BLEKit
 	CoreEventQueue
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/AdvertisingData_test.cpp
 		tests/CoreGapEventHandler_test.cpp
@@ -38,5 +37,4 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/BLEServiceFileReception_test.cpp
 		tests/BLEServiceUpdate_test.cpp
 	)
-
 endif()

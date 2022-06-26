@@ -6,22 +6,20 @@ add_library(CoreTicker STATIC)
 
 target_include_directories(CoreTicker
 	PUBLIC
-		include
+	include
 )
 
 target_sources(CoreTicker
 	PRIVATE
-		source/CoreTicker.cpp
+	source/CoreTicker.cpp
 )
 
 target_link_libraries(CoreTicker
 	mbed-os
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/CoreTicker_test.cpp
 	)
-
 endif()

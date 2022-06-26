@@ -6,14 +6,14 @@ add_mbed_executable(certs_emc_bt_lcd_qspi_rfid_touch_wifi)
 
 target_include_directories(certs_emc_bt_lcd_qspi_rfid_touch_wifi
 	PRIVATE
-		.
-		../../include
+	.
+	../../include
 )
 
 target_sources(certs_emc_bt_lcd_qspi_rfid_touch_wifi
 	PRIVATE
-		main.cpp
-		CoreFlashUtils.cpp
+	main.cpp
+	CoreFlashUtils.cpp
 )
 
 target_link_libraries(certs_emc_bt_lcd_qspi_rfid_touch_wifi

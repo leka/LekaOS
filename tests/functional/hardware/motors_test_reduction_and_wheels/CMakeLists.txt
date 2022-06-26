@@ -6,12 +6,12 @@ add_mbed_executable(hardware_motors_test_reduction_and_wheels)
 
 target_include_directories(hardware_motors_test_reduction_and_wheels
 	PRIVATE
-		.
+	.
 )
 
 target_sources(hardware_motors_test_reduction_and_wheels
 	PRIVATE
-		main.cpp
+	main.cpp
 )
 
 target_link_libraries(hardware_motors_test_reduction_and_wheels

@@ -6,12 +6,12 @@ add_mbed_executable(LekaOS)
 
 target_include_directories(LekaOS
 	PRIVATE
-		.
+	.
 )
 
 target_sources(LekaOS
 	PRIVATE
-		main.cpp
+	main.cpp
 )
 
 target_link_libraries(LekaOS

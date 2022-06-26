@@ -6,12 +6,12 @@ add_library(EventLoopKit STATIC)
 
 target_include_directories(EventLoopKit
 	PUBLIC
-		include
+	include
 )
 
 target_sources(EventLoopKit
 	PRIVATE
-		source/EventLoopKit.cpp
+	source/EventLoopKit.cpp
 )
 
 target_link_libraries(EventLoopKit
@@ -19,11 +19,9 @@ target_link_libraries(EventLoopKit
 	CoreEventFlags
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/EventLoopKit_test.cpp
 		tests/EventLoopKit_test_stub.cpp
 	)
-
 endif()

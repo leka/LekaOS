@@ -6,12 +6,12 @@ add_library(VideoKit STATIC)
 
 target_include_directories(VideoKit
 	PUBLIC
-		include
+	include
 )
 
 target_sources(VideoKit
 	PRIVATE
-		source/VideoKit.cpp
+	source/VideoKit.cpp
 )
 
 target_link_libraries(VideoKit
@@ -21,10 +21,8 @@ target_link_libraries(VideoKit
 	FileManagerKit
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/VideoKit_test.cpp
 	)
-
 endif()
