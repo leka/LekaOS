@@ -323,13 +323,15 @@ void catch_colors()
 		touch_sensor_kit.updateState();
 		// touch_sensor_kit.resetByPowerMode();
 		update_touched_colors();
-		rtos::ThisThread::sleep_for(500ms);
+		rtos::ThisThread::sleep_for(10ms);
 	}
 	touch_sensor_kit.resetByPowerMode();
 	rtos::ThisThread::sleep_for(1ms);
 	log_info("animation::rainbow");
 	ledkit.start(&LedKit::animation::rainbow);
-	rtos::ThisThread::sleep_for(4s);
+	rtos::ThisThread::sleep_for(5s);
+	ledkit.stop();
+	rtos::ThisThread::sleep_for(2s);
 }
 
 void design_pattern(uint8_t sequence)
@@ -393,6 +395,7 @@ auto main() -> int
 	log_info("Hello, World!\n\n");
 
 	touch_sensor_kit.setup();
+	ledkit.init();
 
 	auto start = rtos::Kernel::Clock::now();
 
@@ -403,7 +406,7 @@ auto main() -> int
 			 int(t.count() / 1000));
 
 	// touch_sensor_kit.calibration();
-	touch_sensor_kit.adjust_sensivity(0);
+	touch_sensor_kit.adjust_sensivity(0x00);
 	leds::turnOffAllLeds();
 	rtos::ThisThread::sleep_for(2s);
 	while (true) {
