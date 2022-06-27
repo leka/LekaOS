@@ -34,4 +34,19 @@ constexpr auto combineBytes(TwoBytes bytes) noexcept -> uint16_t
 	return both;
 }
 
+constexpr auto getByteAndMask(uint8_t value, uint8_t mask) noexcept -> uint8_t
+{
+	return static_cast<uint8_t>(mask & value);
+}
+
+constexpr auto getByteOrMask(uint8_t value, uint8_t mask) noexcept -> uint8_t
+{
+	return static_cast<uint8_t>(mask | value);
+}
+
+constexpr auto combineBytesParts(uint8_t first_value, uint8_t second_value, uint8_t mask) noexcept -> uint8_t
+{
+	return static_cast<uint8_t>((mask & first_value) | (~mask & second_value));
+}
+
 }	// namespace leka::utils::memory
