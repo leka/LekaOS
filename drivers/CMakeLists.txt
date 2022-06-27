@@ -40,3 +40,6 @@ add_subdirectory(${DRIVERS_DIR}/FastLED)
 
 # Touch drivers
 add_subdirectory(${DRIVERS_DIR}/CoreIOExpander)
+add_subdirectory(${DRIVERS_DIR}/CoreDACTouch)
+
+
