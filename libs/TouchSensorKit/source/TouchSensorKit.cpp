@@ -78,7 +78,7 @@ void TouchSensorKit::adjust_sensivity(uint16_t value)
 {
 	auto buffer = std::array<uint8_t, 2> {};
 
-	buffer.at(0) = static_cast<uint8_t>((0xFF00 & value) >> 8);
+	buffer.at(0) = static_cast<uint8_t>((0x0F00 & value) >> 8);
 	buffer.at(1) = static_cast<uint8_t>(0x00FF & value);
 
 	dac_touch_left.writeToSpecificInputRegister(0, buffer);
@@ -124,12 +124,12 @@ void TouchSensorKit::calibrateTwoSensors(bool &sensor_left, bool &sensor_right, 
 			}
 		}
 
-		buffer_left.at(0) = static_cast<uint8_t>((0xFF00 & value_left_calib) >> 8);
+		buffer_left.at(0) = static_cast<uint8_t>((0x0F00 & value_left_calib) >> 8);
 		buffer_left.at(1) = static_cast<uint8_t>(0x00FF & value_left_calib);
 		dac_touch_left.writeToSpecificInputRegister(channel, buffer_left);
 		rtos::ThisThread::sleep_for(1ms);
 
-		buffer_right.at(0) = static_cast<uint8_t>((0xFF00 & value_right_calib) >> 8);
+		buffer_right.at(0) = static_cast<uint8_t>((0x0F00 & value_right_calib) >> 8);
 		buffer_right.at(1) = static_cast<uint8_t>(0x00FF & value_right_calib);
 		dac_touch_right.writeToSpecificInputRegister(channel, buffer_right);
 		rtos::ThisThread::sleep_for(1ms);
