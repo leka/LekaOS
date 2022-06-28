@@ -37,6 +37,7 @@ target_link_libraries(ColorKit
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
+		tests/ColorKit_test_255_RGB.cpp
 		tests/ColorKit_test_conversion.cpp
 		tests/ColorKit_test_gradient.cpp
 		tests/RGB_test.cpp
