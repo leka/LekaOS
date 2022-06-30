@@ -87,9 +87,8 @@ set(TARGETS_DIR ${ROOT_DIR}/targets)
 set(OS_DIR ${ROOT_DIR}/app/os)
 set(BOOTLOADER_DIR ${ROOT_DIR}/app/bootloader)
 
-# spikes, functional tests
+# spikes
 set(SPIKES_DIR ${ROOT_DIR}/spikes)
-set(FUNCTIONAL_TESTS_DIR ${ROOT_DIR}/tests/functional)
 
 #
 # MARK: - LekaOS Project
@@ -134,9 +133,8 @@ add_subdirectory(${MBED_HTTP_DIR})
 add_subdirectory(${DRIVERS_DIR})
 add_subdirectory(${LIBS_DIR})
 
-# Add spikes, functional tests
+# Add spikes
 add_subdirectory(${SPIKES_DIR})
-add_subdirectory(${FUNCTIONAL_TESTS_DIR})
 
 # Add bootloader
 add_subdirectory(${BOOTLOADER_DIR})

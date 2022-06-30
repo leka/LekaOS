@@ -65,11 +65,6 @@ runs:
       run: |
         make spikes TARGET_BOARD=${{ inputs.target_board }}
 
-    - name: Build functional tests
-      shell: bash
-      run: |
-        make tests_functional TARGET_BOARD=${{ inputs.target_board }}
-
     - name: Build misc
       shell: bash
       run: |

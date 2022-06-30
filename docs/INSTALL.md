@@ -96,7 +96,7 @@ make config
 # you can also specify a build type (default is Release)
 make config BUILD_TYPE=Debug
 
-# the build LekaOS, spikes & functional tests
+# the build os, spikes
 make
 ```
 
