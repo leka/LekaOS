@@ -17,11 +17,28 @@ void CoreRFIDReader::init()
 {
 	_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
 	registerCallback();
+	setTagDetectionMode();
+	log_debug("reader_init");
 }
 
-void CoreRFIDReader::registerTagAvailableCallback(tag_available_callback_t callback)
+void CoreRFIDReader::registerTagAvailableCallback(mbed::Callback<void()> callback)
 {
 	_tagAvailableCallback = callback;
+};
+
+void CoreRFIDReader::registerOnATQARequestCallback(mbed::Callback<void()> callback)
+{
+	_on_atqa_received_callback = callback;
+};
+
+void CoreRFIDReader::registerOnRegisterCallback(mbed::Callback<void()> callback)
+{
+	_on_register_received_callback = callback;
+};
+
+void CoreRFIDReader::registerOnTagValidCallback(mbed::Callback<void()> callback)
+{
+	_on_tag_valid = callback;
 };
 
 void CoreRFIDReader::registerCallback()
@@ -34,6 +51,7 @@ void CoreRFIDReader::registerCallback()
 void CoreRFIDReader::onDataAvailable()
 {
 	read();
+	log_debug("read");
 	_tagAvailableCallback();
 }
 
@@ -64,50 +82,28 @@ void CoreRFIDReader::setTagDetectionMode()
 				  rfid::command::frame::set_tag_detection_mode.size());
 }
 
-auto CoreRFIDReader::setBaudrate(uint8_t baudrate) -> bool
+void CoreRFIDReader::setCommunicationProtocol(rfid::Protocol protocol)
 {
-	std::array<uint8_t, 3> set_baudrate_frame = {rfid::command::set_baudrate::id, rfid::command::set_baudrate::length,
-												 baudrate};
-
-	_serial.write(set_baudrate_frame.data(), set_baudrate_frame.size());
-
-	return (setBaudrateDidSucceed());
-}
-
-auto CoreRFIDReader::setBaudrateDidSucceed() -> bool
-{
-	read();
-	if (_anwser_size != rfid::expected_answer_size::set_baudrate) {
-		return false;
-	}
-
-	return _rx_buf[0] == 0x55;
-}
-
-auto CoreRFIDReader::setCommunicationProtocol(rfid::Protocol protocol) -> bool
-{
-	auto setCommunicationProtocol = bool {false};
 	if (protocol == rfid::Protocol::ISO14443A) {
-		setCommunicationProtocol = setProtocolISO14443A() && setGainAndModulationISO14443A();
+		setProtocolISO14443A();
+		setGainAndModulationISO14443A();
 	}
-
-	return setCommunicationProtocol;
 }
 
-auto CoreRFIDReader::setProtocolISO14443A() -> bool
+void CoreRFIDReader::setProtocolISO14443A()
 {
 	_serial.write(rfid::command::frame::set_protocol_iso14443.data(),
 				  rfid::command::frame::set_protocol_iso14443.size());
 
-	return didsetCommunicationProtocolSucceed();
+	didsetCommunicationProtocolSucceed();
 }
 
-auto CoreRFIDReader::setGainAndModulationISO14443A() -> bool
+void CoreRFIDReader::setGainAndModulationISO14443A()
 {
 	_serial.write(rfid::command::frame::set_gain_and_modulation.data(),
 				  rfid::command::frame::set_gain_and_modulation.size());
 
-	return didsetCommunicationProtocolSucceed();
+	didsetCommunicationProtocolSucceed();
 }
 
 auto CoreRFIDReader::didsetCommunicationProtocolSucceed() -> bool
@@ -126,6 +122,7 @@ void CoreRFIDReader::sendCommandToTag(std::span<const uint8_t> cmd)
 	auto command_size = formatCommand(cmd);
 
 	_serial.write(_tx_buf.data(), command_size);
+	log_debug("sendCommandToTag");
 }
 
 auto CoreRFIDReader::formatCommand(std::span<const uint8_t> cmd) -> size_t
@@ -140,18 +137,7 @@ auto CoreRFIDReader::formatCommand(std::span<const uint8_t> cmd) -> size_t
 	return cmd.size() + rfid::tag_answer::heading_size;
 }
 
-auto CoreRFIDReader::receiveDataFromTag(std::span<uint8_t> data) -> bool
-{
-	if (!DataFromTagIsCorrect(data.size())) {
-		return false;
-	}
-
-	copyTagDataToSpan(data);
-
-	return true;
-}
-
-auto CoreRFIDReader::DataFromTagIsCorrect(size_t sizeTagData) -> bool
+auto CoreRFIDReader::dataFromTagIsCorrect(size_t sizeTagData) -> bool
 {
 	uint8_t status = _rx_buf[0];
 	uint8_t length = _rx_buf[1];
@@ -164,6 +150,68 @@ void CoreRFIDReader::copyTagDataToSpan(std::span<uint8_t> data)
 	for (auto i = 0; i < data.size(); ++i) {
 		data[i] = _rx_buf[i + rfid::tag_answer::heading_size];
 	}
+}
+
+auto CoreRFIDReader::isTagSignatureValid() -> bool
+{
+	return (_tag.data[0] == 0x4C && _tag.data[1] == 0x45 && _tag.data[2] == 0x4B && _tag.data[3] == 0x41);
+}
+
+auto CoreRFIDReader::receiveATQA() -> bool
+{
+	std::array<uint8_t, 2> ATQA_answer {};
+	std::span<uint8_t> span = {ATQA_answer};
+
+	if (dataFromTagIsCorrect(span.size())) {
+		copyTagDataToSpan(span);
+	}
+
+	_on_atqa_received_callback();
+	log_debug("receiveAtqa");
+
+	return (span[0] == ATQA_answer[0] && span[1] == ATQA_answer[1]);
+}
+
+auto CoreRFIDReader::receiveReadTagData() -> bool
+{
+	std::span<uint8_t> span = {_tag_data};
+	if (dataFromTagIsCorrect(span.size())) {
+		copyTagDataToSpan(span);
+	}
+
+	for (size_t i = 0; i < span.size(); ++i) {
+		_tag.data[i] = span.data()[i];
+	}
+	log_debug("receive_register");
+
+	std::array<uint8_t, 2> received_crc = {span[16], span[17]};
+
+	_on_register_received_callback();
+
+	return received_crc == computeCRC(span.data());
+}
+
+auto CoreRFIDReader::computeCRC(uint8_t const *data) const -> std::array<uint8_t, 2>
+{
+	uint32_t wCrc = 0x6363;
+	size_t size	  = 16;
+
+	do {
+		std::byte bt;
+		bt	 = static_cast<std::byte>(*data++);
+		bt	 = (bt ^ static_cast<std::byte>(wCrc & 0x00FF));
+		bt	 = (bt ^ (bt << 4));
+		wCrc = (wCrc >> 8) ^ (static_cast<uint32_t>(bt) << 8) ^ (static_cast<uint32_t>(bt) << 3) ^
+			   (static_cast<uint32_t>(bt) >> 4);
+	} while (--size);
+
+	std::array<uint8_t, 2> pbtCrc = {static_cast<uint8_t>(wCrc & 0xFF), static_cast<uint8_t>((wCrc >> 8) & 0xFF)};
+	return pbtCrc;
+}
+
+void CoreRFIDReader::onTagValid()
+{
+	_on_tag_valid();
 }
 
 }	// namespace leka
