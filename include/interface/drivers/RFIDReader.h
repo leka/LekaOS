@@ -80,6 +80,17 @@ namespace interface {
 
 			virtual void runStateMachine() = 0;
 
+			virtual auto isTagSignatureValid() -> bool;
+
+			virtual void sendREQA();
+			virtual void sendReadRegister0();
+			virtual void sendReadRegister4();
+
+			virtual auto receiveATQA() -> bool;
+			virtual auto receiveReadTagData() -> bool;
+
+			virtual void registerMagicCard();
+
 			template <size_t SIZE>
 			struct Command {
 				const std::array<uint8_t, SIZE> data;

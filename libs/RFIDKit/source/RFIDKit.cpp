@@ -7,6 +7,7 @@
 #include "LogKit.h"
 
 namespace leka {
+
 void RFIDKit::init()
 {
 	static auto getTagDataCallback = [this]() { this->runStateMachine(); };
@@ -31,7 +32,14 @@ void RFIDKit::runStateMachine()
 
 		case state::TAG_COMMUNICATION_PROTOCOL_SET: {
 			sendREQA();
-			_state = state::WAIT_FOR_ATQA_RESPONSE;
+			if (receiveATQA()) {
+				sendReadRegister0();
+				_state = state::TAG_IDENTIFIED;
+			} else {
+				_rfid_reader.setTagDetectionMode();
+				_state = state::WAITING_FOR_TAG;
+			}
+			// _state = state::WAIT_FOR_ATQA_RESPONSE;
 
 		} break;
 
@@ -68,6 +76,12 @@ void RFIDKit::runStateMachine()
 			break;
 		}
 	}
+}
+
+void RFIDKit::registerMagicCard()
+{
+	_card = MagicCard {_tag.data[5]};
+	_on_tag_available_callback(_card);
 }
 
 void RFIDKit::onTagActivated(std::function<void(MagicCard &_card)> callback)

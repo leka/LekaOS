@@ -4,10 +4,12 @@
 
 #pragma once
 
+#include <boost/sml.hpp>
 #include <cstddef>
 #include <span>
 
 #include "MagicCard.h"
+#include "RFIDStateMachine.h"
 #include "interface/drivers/RFIDReader.h"
 
 namespace leka {
@@ -34,16 +36,18 @@ class RFIDKit : public interface::RFIDReader::ISO14443
 
 	void onTagActivated(std::function<void(MagicCard &)> callback);
 
+	auto isTagSignatureValid() -> bool final;
+
+	void sendREQA() final;
+	void sendReadRegister0() final;
+	void sendReadRegister4() final;
+
+	auto receiveATQA() -> bool final;
+	auto receiveReadTagData() -> bool final;
+
+	void registerMagicCard() final;
+
   private:
-	void sendREQA();
-	void sendReadRegister0();
-	void sendReadRegister4();
-
-	auto isTagSignatureValid() -> bool;
-
-	auto receiveATQA() -> bool;
-	auto receiveReadTagData() -> bool;
-
 	auto computeCRC(uint8_t const *data) const -> std::array<uint8_t, 2>;
 
 	interface::RFIDReader &_rfid_reader;
