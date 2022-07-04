@@ -6,15 +6,15 @@ add_library(RobotKit STATIC)
 
 target_include_directories(RobotKit
 	PUBLIC
-		include
+	include
 	PRIVATE
-		tests
+	tests
 )
 
 target_sources(RobotKit
 	PRIVATE
-		source/StateMachine.cpp
-		source/RobotController.cpp
+	source/StateMachine.cpp
+	source/RobotController.cpp
 )
 
 target_link_libraries(RobotKit
@@ -30,20 +30,20 @@ target_link_libraries(RobotKit
 	CommandKit
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
+# if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 
-	leka_unit_tests_sources(
-		tests/StateMachine_test.cpp
-		tests/RobotController_test_initializeComponents.cpp
-		tests/RobotController_test_registerEvents.cpp
-		tests/RobotController_test_stateSetup.cpp
-		tests/RobotController_test_stateIdle.cpp
-		tests/RobotController_test_stateSleeping.cpp
-		tests/RobotController_test_stateCharging.cpp
-		tests/RobotController_test_stateConnected.cpp
-		tests/RobotController_test_stateDisconnected.cpp
-		tests/RobotController_test_stateWorking.cpp
-		tests/RobotController_test_stateEmergencyStopped.cpp
-	)
+# leka_unit_tests_sources(
+# tests/StateMachine_test.cpp
+# tests/RobotController_test_initializeComponents.cpp
+# tests/RobotController_test_registerEvents.cpp
+# tests/RobotController_test_stateSetup.cpp
+# tests/RobotController_test_stateIdle.cpp
+# tests/RobotController_test_stateSleeping.cpp
+# tests/RobotController_test_stateCharging.cpp
+# tests/RobotController_test_stateConnected.cpp
+# tests/RobotController_test_stateDisconnected.cpp
+# tests/RobotController_test_stateWorking.cpp
+# tests/RobotController_test_stateEmergencyStopped.cpp
+# )
 
-endif()
+# endif()
