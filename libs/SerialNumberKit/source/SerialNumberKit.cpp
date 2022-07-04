@@ -24,3 +24,17 @@ auto SerialNumberKit::getSerialNumber() -> std::array<uint8_t, SN_SIZE> &
 
 	return serial_number;
 }
+
+auto SerialNumberKit::getShortSerialNumber() -> std::array<uint8_t, SHORT_SN_SIZE> &
+{
+	auto prefix = utils::cast::from_c_string_to_uint8_t_array("LK-22xx-");
+	std::copy(prefix.begin(), prefix.end(), short_serial_number.begin());
+
+	std::array<char, SHORT_SN_SIZE - std::size(prefix) + 1> mcu_id_array {};
+	auto mcu_id = _mcu.getID();
+	snprintf(mcu_id_array.begin(), std::size(mcu_id_array), "%08lX", mcu_id.front);
+
+	std::memcpy(short_serial_number.begin() + std::size(prefix) - 1, &mcu_id_array, std::size(mcu_id_array));
+
+	return short_serial_number;
+}
