@@ -16,7 +16,7 @@ class SerialNumberKit
   public:
 	explicit SerialNumberKit(interface::MCU &mcu) : _mcu(mcu) {}
 
-	auto getSerialNumber() -> std::array<uint8_t, SN_SIZE>;
+	auto getSerialNumber() -> std::array<uint8_t, SN_SIZE> &;
 
   private:
 	interface::MCU &_mcu;

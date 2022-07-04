@@ -10,7 +10,7 @@
 
 using namespace leka;
 
-auto SerialNumberKit::getSerialNumber() -> std::array<uint8_t, SN_SIZE>
+auto SerialNumberKit::getSerialNumber() -> std::array<uint8_t, SN_SIZE> &
 {
 	auto prefix = utils::cast::from_c_string_to_uint8_t_array("LK-22xx-");
 	std::copy(prefix.begin(), prefix.end(), serial_number.begin());
