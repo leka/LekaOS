@@ -43,11 +43,13 @@ void Bluetooth::pairing()
 	return;
 }
 
-void Bluetooth::checkResponse(bool printResponse)
+auto Bluetooth::checkResponse(bool printResponse) -> bool
 {
 	uint8_t attempts	 = 0;
 	uint8_t max_attempts = 100;
 	_buffer_length		 = 0;
+
+	bool still_alive = false;
 
 	while (attempts < max_attempts) {
 		rtos::ThisThread::sleep_for(10ms);
@@ -59,8 +61,9 @@ void Bluetooth::checkResponse(bool printResponse)
 
 				rtos::ThisThread::sleep_for(10ms);	 // Delay to catch length
 				if (_buffer_length + 1 + 2 > max_buffer_size) {
-					return;
+					return still_alive;
 				}
+				still_alive = true;
 
 				_interface.read(_buffer + 1 + 2, _buffer_length);
 				_buffer_length += 1 + 2;   // 0xAA + 2 bytes for length
@@ -90,7 +93,7 @@ void Bluetooth::checkResponse(bool printResponse)
 		attempts++;
 	}
 
-	return;
+	return still_alive;
 }
 
 void Bluetooth::playPause()
@@ -106,7 +109,7 @@ void Bluetooth::playPause()
 	return;
 }
 
-bool Bluetooth::isPaired()
+auto Bluetooth::isPaired() -> bool
 {
 	return _paired;
 }
@@ -134,7 +137,7 @@ void Bluetooth::sendMessage(char *msg, size_t msg_length)
 	_interface.write(_buffer, _buffer_length);
 }
 
-size_t Bluetooth::getMessage(char *buffer)
+auto Bluetooth::getMessage(char *buffer) -> size_t
 {
 	for (uint16_t i = 0; i < _msg_length; i++) {
 		buffer[i]	= _msg_rcv[i];
@@ -144,7 +147,7 @@ size_t Bluetooth::getMessage(char *buffer)
 	return _msg_length;
 }
 
-bool Bluetooth::checkNewMessage()
+auto Bluetooth::checkNewMessage() -> bool
 {
 	return _new_message;
 }
@@ -153,6 +156,9 @@ void Bluetooth::start()
 {
 	char text[max_buffer_size] = {0};
 	uint16_t text_length;
+
+	auto counter				 = 0;
+	constexpr auto counter_limit = 5;
 
 	printf("Bluetooth example\n\n");
 
@@ -172,13 +178,21 @@ void Bluetooth::start()
 	sendMessage(text, text_length);
 
 	while (true) {
-		checkResponse(true);
+		printf("Counter: %d/%d\n", counter, counter_limit);
+		if (checkResponse(true)) {
+			counter = 0;
+		}
 		if (checkNewMessage()) {
 			text_length = getMessage(text);
 			rtos::ThisThread::sleep_for(2s);   // Delay of echo
 			sendMessage(text, text_length);	   // ECHO
+
+		} else if (counter > counter_limit) {
+			printf("Bluetooth is trying to pair...\n");
+			pairing();
 		}
-		rtos::ThisThread::sleep_for(800ms);
+		counter++;
+		rtos::ThisThread::sleep_for(1s);
 	}
 
 	printf("End of Bluetooth example\n\n");
