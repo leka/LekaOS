@@ -6,12 +6,12 @@ add_library(CoreDACTouch STATIC)
 
 target_include_directories(CoreDACTouch
 	PUBLIC
-		include
+	include
 )
 
 target_sources(CoreDACTouch
 	PRIVATE
-		source/CoreDACTouch.cpp
+	source/CoreDACTouch.cpp
 )
 
 target_link_libraries(CoreDACTouch
@@ -19,10 +19,8 @@ target_link_libraries(CoreDACTouch
 	CoreI2C
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/CoreDACTouch_test.cpp
 	)
-
 endif()

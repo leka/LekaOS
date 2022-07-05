@@ -24,6 +24,18 @@ void TouchSensorKit::updateState()
 	_belt_left_front_touched  = (0 == _belt_left_front_input.read());
 	_belt_right_back_touched  = (0 == _belt_right_back_input.read());
 	_belt_right_front_touched = (0 == _belt_right_front_input.read());
+	// power_mode_reset();
+}
+
+void TouchSensorKit::fakeUpdateState(uint8_t flags)
+{
+	_ear_left_touched		  = (flags & 1);
+	_ear_right_touched		  = (flags & 2);
+	_belt_left_back_touched	  = (flags & 4);
+	_belt_left_front_touched  = (flags & 8);
+	_belt_right_back_touched  = (flags & 16);
+	_belt_right_front_touched = (flags & 32);
+	// power_mode_reset();
 }
 
 void TouchSensorKit::printState()

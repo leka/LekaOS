@@ -46,9 +46,15 @@ namespace internal {
 
 }	// namespace internal
 
-auto ears = CoreLED<internal::ears::size> {internal::ears::spi};
-auto belt = CoreLED<internal::belt::size> {internal::belt::spi};
+auto ears		   = CoreLED<internal::ears::size> {internal::ears::spi};
+auto belt		   = CoreLED<internal::belt::size> {internal::belt::spi};
+auto random_number = uint8_t {0};
+auto win		   = bool {false};
 
+auto random8(uint8_t min, uint8_t max) -> uint8_t
+{
+	return min + rand() % (max - min + 1);
+}
 void turnOn()
 {
 	ears.setColor(RGB::pure_blue);
@@ -143,259 +149,190 @@ void turnOffBeltLeftFront()
 	belt.setColorAtIndex(18, RGB::black);
 	belt.show();
 }
-
-auto random_numbers = std::vector<uint8_t>();	// tableau qui décrit l'état des 6 pins au cours du temps
-auto random8(uint8_t min, uint8_t max) -> uint8_t
-{
-	return min + rand() % (max - min + 1);
-}
-
+// Cette fonction va setter un des 6 groupes de leds en bleu
 void setLedsWithRandomColors()
 {
-	random_numbers.clear();
-	std::vector<RGB> colors;
-	for (int i(0); i < 6; i++) {
-		auto random_number = random8(0, 1);
-		random_numbers.push_back(random_number);
-		colors.push_back(random_number == 0 ? RGB::pure_blue : RGB::pure_red);
+	// On considère que les leds bleues devront être touchées
+	constexpr RGB targetColor = RGB::pure_blue;
+	// win est une variable globale qui représente le fait de réussir à toucher un groupe de leds bleues
+	win = false;
+	// l'ensemble des leds sont éteintes avant de resetter un nouveau groupe de leds en bleu
+	turnOff();
+	// en fonction du nombre tiré au sort on sette un groupe  de leds entre 0 et 5
+	random_number = random8(0, 5);
+	switch (random_number) {
+		case 0:
+			turnOnEarLeft(targetColor);
+			break;
+
+		case 1:
+			turnOnEarRight(targetColor);
+			break;
+
+		case 2:
+			turnOnBeltRightBack(targetColor);
+			break;
+
+		case 3:
+			turnOnBeltRightFront(targetColor);
+			break;
+
+		case 4:
+			turnOnBeltLeftBack(targetColor);
+			break;
+
+		case 5:
+			turnOnBeltLeftFront(targetColor);
+			break;
 	}
-	turnOnEarLeft(colors[0]);
-	turnOnEarRight(colors[1]);
-	turnOnBeltRightBack(colors[2]);
-	turnOnBeltRightFront(colors[3]);
-	turnOnBeltLeftBack(colors[4]);
-	turnOnBeltLeftFront(colors[5]);
 }
-
-void turnOffAllLeds()
-{
-	turnOffEarLeft();
-	turnOffEarRight();
-	turnOffBeltRightBack();
-	turnOffBeltRightFront();
-	turnOffBeltLeftBack();
-	turnOffBeltLeftFront();
-}
-
 }	// namespace leds
-
-void launch_sequence(uint8_t seq)
-{
-	auto digit = uint8_t {0};
-
-	for (uint8_t i(0); i < 8; i++) {
-		digit = 1 & (seq >> i);
-		leds::ears.setColorAtIndex(digit, RGB::pure_blue);
-		leds::ears.show();
-		rtos::ThisThread::sleep_for(1s);
-		leds::ears.setColorAtIndex(digit, RGB::black);
-		leds::ears.show();
-		rtos::ThisThread::sleep_for(1s);
-	}
-}
-
-void start_animation()
-{
-	for (uint8_t i(0); i < 2; i++) {
-		leds::ears.setColorAtIndex(0, RGB::pure_blue);
-		leds::ears.setColorAtIndex(1, RGB::pure_blue);
-		leds::ears.show();
-		rtos::ThisThread::sleep_for(500ms);
-		leds::ears.setColorAtIndex(0, RGB::black);
-		leds::ears.setColorAtIndex(1, RGB::black);
-		leds::ears.show();
-		rtos::ThisThread::sleep_for(500ms);
-	}
-}
-
-void failed_animation()
-{
-	for (uint8_t i(0); i < 2; i++) {
-		leds::ears.setColorAtIndex(0, RGB::pure_red);
-		leds::ears.setColorAtIndex(1, RGB::pure_red);
-		leds::ears.show();
-		rtos::ThisThread::sleep_for(500ms);
-		leds::ears.setColorAtIndex(0, RGB::black);
-		leds::ears.setColorAtIndex(1, RGB::black);
-		leds::ears.show();
-		rtos::ThisThread::sleep_for(500ms);
-	}
-}
-
-void win_animation()
-{
-	for (uint8_t i(0); i < 2; i++) {
-		leds::ears.setColorAtIndex(0, RGB::pure_green);
-		leds::ears.setColorAtIndex(1, RGB::pure_green);
-		leds::ears.show();
-		rtos::ThisThread::sleep_for(500ms);
-		leds::ears.setColorAtIndex(0, RGB::black);
-		leds::ears.setColorAtIndex(1, RGB::black);
-		leds::ears.show();
-		rtos::ThisThread::sleep_for(500ms);
-	}
-}
 
 auto ledkit = LedKit {leds::internal::animations::event_loop, leds::ears, leds::belt};
 
 auto touch_sensor_kit = TouchSensorKit();
 
-void update_leds()
-{
-	touch_sensor_kit.updateState();
-	touch_sensor_kit.resetByPowerMode();
-	if (touch_sensor_kit.ear_left_touched()) {
-		leds::turnOnEarLeft(RGB::pure_blue);
-	} else {
-		leds::turnOffEarLeft();
-	}
-	if (touch_sensor_kit.ear_right_touched()) {
-		leds::turnOnEarRight(RGB::pure_blue);
-	} else {
-		leds::turnOffEarRight();
-	}
-	if (touch_sensor_kit.belt_right_front_touched()) {
-		leds::turnOnBeltRightBack(RGB::pure_blue);
-	} else {
-		leds::turnOffBeltRightBack();
-	}
-	if (touch_sensor_kit.belt_right_back_touched()) {
-		leds::turnOnBeltRightFront(RGB::pure_blue);
-	} else {
-		leds::turnOffBeltRightFront();
-	}
-	if (touch_sensor_kit.belt_left_front_touched()) {
-		leds::turnOnBeltLeftBack(RGB::pure_blue);
-	} else {
-		leds::turnOffBeltLeftBack();
-	}
-	if (touch_sensor_kit.belt_left_back_touched()) {
-		leds::turnOnBeltLeftFront(RGB::pure_blue);
-	} else {
-		leds::turnOffBeltLeftFront();
-	}
-	rtos::ThisThread::sleep_for(500ms);
-}
-
 using namespace leds;
+// Chaque level a plusieurs manches. Cette fonction renvoie les signaux lumineux relatifs à une manche
 void update_touched_colors()
 {
-	if (touch_sensor_kit.ear_left_touched() && random_numbers[0] == 0) {
-		turnOffEarLeft();
-		random_numbers[0] = 3;
-	}
-	if (touch_sensor_kit.ear_right_touched() && random_numbers[1] == 0) {
-		turnOffEarRight();
-		random_numbers[1] = 3;
-	}
-	if (touch_sensor_kit.belt_right_back_touched() && random_numbers[2] == 0) {
-		turnOffBeltRightBack();
-		random_numbers[2] = 3;
-	}
-	if (touch_sensor_kit.belt_right_front_touched() && random_numbers[3] == 0) {
-		turnOffBeltRightFront();
-		random_numbers[3] = 3;
-	}
-	if (touch_sensor_kit.belt_left_back_touched() && random_numbers[4] == 0) {
-		turnOffBeltLeftBack();
-		random_numbers[4] = 3;
-	}
-	if (touch_sensor_kit.belt_left_front_touched() && random_numbers[5] == 0) {
-		turnOffBeltLeftFront();
-		random_numbers[5] = 3;
-	}
-}
-auto are_all_blue_touched() -> bool
-{
-	for (auto number: random_numbers) {
-		if (number == 0) {
-			return false;
+	// lorsque l'enfant touche la bonne led elle devra s'allumer en vert
+	constexpr RGB win_color = RGB::pure_green;
+	// Si ce n'est pas la bonne led elle doit s'allumer en rouge
+	constexpr RGB lose_color = RGB::pure_red;
+	// Si on a touché l'oreille gauche et que le random_number vaut 0 ( ds le switch oreille gauche)
+	// Elle se colore en vert et il a gagné (win = true)
+	if (touch_sensor_kit.ear_left_touched()) {
+		if (random_number == 0) {
+			turnOnEarLeft(win_color);
+			win = true;
+			// Sinon c'est que random_number correspond à un autre groupe de leds, on a touché le mauvais
+			//  On allume l'oreille gauche de la couleur rouge
+		} else {
+			turnOnEarLeft(lose_color);
 		}
 	}
-	return true;
-}
 
-void catch_colors()
-{
-	leds::setLedsWithRandomColors();
-	rtos::ThisThread::sleep_for(500ms);
-	while (!(are_all_blue_touched())) {
-		touch_sensor_kit.updateState();
-		// touch_sensor_kit.resetByPowerMode();
-		update_touched_colors();
-		rtos::ThisThread::sleep_for(10ms);
+	if (touch_sensor_kit.ear_right_touched()) {
+		if (random_number == 1) {
+			turnOnEarRight(win_color);
+			win = true;
+		} else {
+			turnOnEarRight(lose_color);
+		}
 	}
-	touch_sensor_kit.resetByPowerMode();
-	rtos::ThisThread::sleep_for(1ms);
+
+	if (touch_sensor_kit.belt_right_back_touched()) {
+		if (random_number == 2) {
+			turnOnBeltRightBack(win_color);
+			win = true;
+		} else {
+			turnOnBeltRightBack(lose_color);
+		}
+	}
+
+	if (touch_sensor_kit.belt_right_front_touched()) {
+		if (random_number == 3) {
+			turnOnBeltRightFront(win_color);
+			win = true;
+		} else {
+			turnOnBeltRightFront(lose_color);
+		}
+	}
+	if (touch_sensor_kit.belt_left_back_touched()) {
+		if (random_number == 4) {
+			turnOnBeltLeftBack(win_color);
+			win = true;
+		} else {
+			turnOnBeltLeftBack(lose_color);
+		}
+	}
+
+	if (touch_sensor_kit.belt_left_front_touched()) {
+		if (random_number == 5) {
+			turnOnBeltLeftFront(win_color);
+			win = true;
+		} else {
+			turnOnBeltLeftFront(lose_color);
+		}
+	}
+}
+// renvoie uniquement une variable globale win qui n'est modifiée que par update_touched_colors si l'enfant a touché le
+// bon groupe de leds
+auto is_target_touched() -> bool
+{
+	return win;
+}
+// Ici on controle le temps autorisé pour une manche si il est dépassé c'est de toute façon perdu
+// inf 6000  si on veut perdre( 6 capteurs, 1capteur/s touché selon sleep du do du dessous)
+auto playOnce(int maximum_duration) -> bool
+{
+	// On sette un groupe de leds en bleu de façon aléatoire
+	leds::setLedsWithRandomColors();
+	// ce touched_flags va setter groupe de leds il est au max = à 2^5 ce qui correspond au sixième groupe de leds
+	uint8_t touched_flags = 1;
+	// on récupère la valeur actuelle du temps
+	auto start = rtos::Kernel::Clock::now();
+	// Cette variable stockera l'écart entre le start et le moment oû l'enfant joue
+	int delta;
+	do {
+		rtos::ThisThread::sleep_for(1s);
+		// Le premier capteur sera considéré comme touché au départ de la manche (il correspond à 2^0 )
+		touch_sensor_kit.fakeUpdateState(touched_flags);
+		touch_sensor_kit.resetByPowerMode();
+		// En fnction de random_number on met à jour les couleurs
+		update_touched_colors();
+		rtos::ThisThread::sleep_for(1s);
+		// On multiplie touched flags par 2 afin de lui donner la valeur de la prochaine puissance de 2 ainsi cela
+		// permettra de mettre à jour le prochain belt_touched
+		touched_flags = touched_flags * 2;
+		// on récupère le temps restant dans la manche
+		delta = static_cast<int>((rtos::Kernel::Clock::now() - start).count());
+		// On le fait tant que le bon groupe de leds n'est pas touché ou qu'il reste du temps
+	} while (!(is_target_touched()) && (delta < maximum_duration));
+	// On récupère la valuer de win à travers cette fonction, cette valeur a été mise à jour grâce à
+	// update_touched_colors
+	return is_target_touched();
+}
+// Cette fonction permet de jouer 5 manches d'un level
+void playLevel(uint8_t level)
+{	// durée pour toucher le bon groupe de leds doit être de plus en plus petite à mesure que le niveau augmente. Il est
+	// au maximum à 6000 ms.
+	// PK ? dans la fonction du dessus on simule l'allumage d'un groupe de leds toutes les secondes en 6000 ms tous les
+	// groupes sont allumés en fait on gagne forcément le premier niveau. Mais pas forcément les autres
+	int maximum_duration = 6000 - 1000 * level;
+	uint8_t score		 = 0;
+	// Si le score est inférieure à 5
+	while (score < 5) {
+		// Si on réussit une manche on augmente le score
+		if (playOnce(maximum_duration)) {
+			++score;
+		} else {
+			// sinon on revient à 0. On ne sort de la fonction que tant qu'on a réussit un level en entier (5 manches
+			// réussies d'affilé)
+			score = 0;
+		}
+	}
+
 	log_info("animation::rainbow");
 	ledkit.start(&LedKit::animation::rainbow);
-	rtos::ThisThread::sleep_for(5s);
-	ledkit.stop();
-	rtos::ThisThread::sleep_for(2s);
+	rtos::ThisThread::sleep_for(4s);
+	touch_sensor_kit.printState();
+	log_info("\n\n");
 }
-
-void design_pattern(uint8_t sequence)
-{
-	auto defined_sequence = uint8_t {};
-
-	if (sequence == 0 || sequence == 0xFF) {
-		defined_sequence = static_cast<uint8_t>(std::rand() / ((RAND_MAX + 1U) / 254));
-	} else {
-		defined_sequence = sequence;
-	}
-
-	bool run = true;
-
-	start_animation();
-
-	launch_sequence(defined_sequence);
-
-	start_animation();
-
-	auto digit = uint8_t {0};
-	for (uint8_t i(0); i < 8; i++) {
-		digit = 1 & (defined_sequence >> i);
-		touch_sensor_kit.resetByPowerMode();
-		rtos::ThisThread::sleep_for(500ms);
-		do {
-			touch_sensor_kit.updateState();
-			// touch_sensor_kit.resetByPowerMode();
-			rtos::ThisThread::sleep_for(500ms);
-		} while (!touch_sensor_kit.ear_left_touched() && !touch_sensor_kit.ear_right_touched());
-
-		if (((touch_sensor_kit.ear_left_touched() && !touch_sensor_kit.ear_right_touched()) && digit == 1) ||
-			((touch_sensor_kit.ear_right_touched() && !touch_sensor_kit.ear_left_touched()) && digit == 0)) {
-			leds::ears.setColorAtIndex(digit, RGB::pure_green);
-			leds::ears.show();
-			rtos::ThisThread::sleep_for(1s);
-			leds::ears.setColorAtIndex(digit, RGB::black);
-			leds::ears.show();
-			rtos::ThisThread::sleep_for(1s);
-		} else {
-			// log_info("Failed !\n\n");
-			failed_animation();
-			run = false;
-			break;
-		}
-	}
-
-	if (run) {
-		win_animation();
-	}
-	rtos::ThisThread::sleep_for(2s);
-}
-
 auto main() -> int
 {
 	logger::init();
+	leds::turnOff();
 
 	HelloWorld hello;
 	hello.start();
 
 	log_info("Hello, World!\n\n");
 
-	touch_sensor_kit.setup();
 	ledkit.init();
+
+	touch_sensor_kit.setup();
 
 	auto start = rtos::Kernel::Clock::now();
 
@@ -405,14 +342,16 @@ auto main() -> int
 	log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world,
 			 int(t.count() / 1000));
 
-	// touch_sensor_kit.calibration();
 	touch_sensor_kit.adjust_sensivity(0x00);
-	leds::turnOffAllLeds();
 	rtos::ThisThread::sleep_for(2s);
+
+	uint8_t level = 0;
 	while (true) {
-		// update_leds();
-		// design_pattern(0);
-		catch_colors();
-		rtos::ThisThread::sleep_for(1ms);
+		// playlevel renvoie void se finit quand le score est incrémenté à 5
+		playLevel(level);
+		++level;
+		if (level == 4) {
+			level = 0;
+		}
 	}
 }

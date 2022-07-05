@@ -50,7 +50,7 @@ void Rainbow::run()
 		return;
 	}
 
-	if (auto kLastStage = uint8_t {150}; _stage <= kLastStage) {
+	if (auto kLastStage = uint8_t {40}; _stage <= kLastStage) {
 		stagesRainbow();
 	} else {
 		turnLedBlack();

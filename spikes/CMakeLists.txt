@@ -41,7 +41,7 @@ add_subdirectory(${SPIKES_DIR}/mbed_watchdog_ticker_vs_thread)
 add_subdirectory(${SPIKES_DIR}/stl_cxxsupport)
 
 add_custom_target(spikes_leka)
-add_dependencies( spikes_leka
+add_dependencies(spikes_leka
 	spike_lk_ble
 	spike_lk_bluetooth
 	spike_lk_cg_animations
@@ -74,18 +74,18 @@ add_dependencies( spikes_leka
 )
 
 add_custom_target(spikes_mbed)
-add_dependencies( spikes_mbed
+add_dependencies(spikes_mbed
 	spike_mbed_blinky
 	spike_mbed_watchdog_ticker_vs_thread
 )
 
 add_custom_target(spikes_stl)
-add_dependencies( spikes_stl
+add_dependencies(spikes_stl
 	spike_stl_cxxsupport
 )
 
 add_custom_target(spikes)
-add_dependencies( spikes
+add_dependencies(spikes
 	spikes_leka
 	spikes_mbed
 	spikes_stl

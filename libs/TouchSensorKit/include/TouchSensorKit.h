@@ -22,6 +22,7 @@ class TouchSensorKit
 	void setup();
 
 	void updateState();
+	void fakeUpdateState(uint8_t flags);
 	void printState();
 
 	void resetByPowerMode();
