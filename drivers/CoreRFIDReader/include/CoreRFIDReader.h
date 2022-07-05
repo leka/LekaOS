@@ -4,9 +4,6 @@
 
 #pragma once
 
-#include <cstdint>
-#include <span>
-
 #include "events/EventQueue.h"
 #include "rtos/Thread.h"
 
@@ -177,48 +174,38 @@ class CoreRFIDReader : public interface::RFIDReader
 	explicit CoreRFIDReader(interface::BufferedSerial &serial) : _serial(serial) {};
 
 	void init() final;
-
-	void registerTagAvailableCallback(tag_available_callback_t callback) final;
-	void onDataAvailable() final;
-
-	auto setBaudrate(uint8_t baudrate) -> bool final;
-
-	auto setCommunicationProtocol(rfid::Protocol protocol) -> bool final;
-
-	void sendCommandToTag(std::span<const uint8_t> cmd) final;
-	auto receiveDataFromTag(std::span<uint8_t> data) -> bool final;
-
 	void setTagDetectionMode() final;
-
 	auto isTagDetected() -> bool final;
+	void onTagValid() final;
+	auto getTagData() -> rfid::Tag final;
+	void getDataFromTag(std::span<uint8_t> data) final;
+	auto didTagCommunicationSucceed(size_t sizeTagData) -> bool final;
+	void sendCommandToTag(std::span<const uint8_t> cmd) final;
+	void setCommunicationProtocol(rfid::Protocol protocol) final;
+	void registerOnTagDetectedCallback(mbed::Callback<void()> callback) final;
+	void registerOnTagValidCallback(mbed::Callback<void()> callback) final;
 
   private:
-	void registerCallback();
+	void registerOnDataAvailableCallback();
+	void onDataAvailable();
 
-	auto setBaudrateDidSucceed() -> bool;
+	void setProtocolISO14443A();
+	void setGainAndModulationISO14443A();
 
-	auto setProtocolISO14443A() -> bool;
-	auto setGainAndModulationISO14443A() -> bool;
-
-	auto didsetCommunicationProtocolSucceed() -> bool;
 	void read();
 
 	auto formatCommand(std::span<const uint8_t> cmd) -> size_t;
 
-	auto DataFromTagIsCorrect(size_t sizeTagData) -> bool;
-	void copyTagDataToSpan(std::span<uint8_t> data);
-
-	tag_available_callback_t _tagAvailableCallback;
-
-	interface::BufferedSerial &_serial;
+	rfid::Tag _tag {};
+	size_t _anwser_size {0};
 	rtos::Thread _thread {};
 	events::EventQueue _event_queue {};
+	interface::BufferedSerial &_serial;
+	mbed::Callback<void()> _on_tag_detected;
+	mbed::Callback<void()> _on_tag_valid;
 
-	size_t _anwser_size {0};
 	std::array<uint8_t, rfid::max_tx_length> _tx_buf {};
 	std::array<uint8_t, rfid::max_rx_length> _rx_buf {};
-
-	rfid::Tag _tag {};
 };
 
 }	// namespace leka
