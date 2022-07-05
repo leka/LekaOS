@@ -26,12 +26,12 @@ class Bluetooth
 	void start(void);
 	void pairing();
 	void playPause();
-	void checkResponse(bool printResponse = false);
+	auto checkResponse(bool printResponse = false) -> bool;
 
-	bool isPaired();
+	auto isPaired() -> bool;
 	void sendMessage(char *msg, size_t msg_length);
-	size_t getMessage(char *buffer);
-	bool checkNewMessage();
+	auto getMessage(char *buffer) -> size_t;
+	auto checkNewMessage() -> bool;
 
   private:
 	mbed::BufferedSerial _interface;
