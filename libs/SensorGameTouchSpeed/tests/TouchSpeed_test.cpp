@@ -8,6 +8,11 @@
 
 using namespace leka;
 // using ::testing::_;
+
+auto random8(uint8_t min, uint8_t max) -> uint8_t
+{
+	return min + rand() % (max - min + 1);
+}
 class TouchSpeedTest : public ::testing::Test
 {
   protected:
