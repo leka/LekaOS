@@ -53,4 +53,5 @@ jobs:
           name: bootloader_os_firmware
           retention-days: 7
           path: |
-            _release/firmware.bin
+            _release/firmware.hex
+            _release/application-signed.bin
