@@ -16,6 +16,7 @@
 #include "LedKit.h"
 #include "LogKit.h"
 #include "TouchSensorKit.h"
+#include "TouchSpeed.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -327,7 +328,8 @@ auto main() -> int
 
 	HelloWorld hello;
 	hello.start();
-
+	TouchSpeed touchspeed;
+	touchspeed.HelloWorld();
 	log_info("Hello, World!\n\n");
 
 	ledkit.init();
