@@ -6,6 +6,13 @@ namespace leka {
 
 void TouchSpeed::HelloWorld() {}
 
+int TouchSpeed::determineMaximumDuration(int level)
+{
+	int easiestLevel	= 6000;
+	int maximumDuration = easiestLevel - 1000 * level;
+	return maximumDuration;
+}
+
 auto TouchSpeed::is_target_touched() -> bool {}
 
 auto TouchSpeed::setRandomCaptorWithColors() -> void {}

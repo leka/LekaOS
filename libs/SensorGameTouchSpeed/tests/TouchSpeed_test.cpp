@@ -26,3 +26,8 @@ TEST_F(TouchSpeedTest, helloWorldTest)
 {
 	touch_speed.HelloWorld();
 }
+TEST_F(TouchSpeedTest, MaximumDurationTest)
+{
+	touch_speed.determineMaximumDuration(1);
+	ASSERT_EQ(touch_speed.determineMaximumDuration(1), 5000);
+}

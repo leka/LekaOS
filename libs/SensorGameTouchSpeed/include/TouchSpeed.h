@@ -6,7 +6,7 @@ class TouchSpeed
 {
   public:
 	void HelloWorld();
-
+	auto determineMaximumDuration(int level) -> int;
 	auto is_target_touched() -> bool;
 
 	auto setRandomCaptorWithColors() -> void;
