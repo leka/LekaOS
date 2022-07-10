@@ -244,6 +244,7 @@ add_subdirectory(template)
 # Register drivers
 leka_register_unit_tests_for_driver(CoreBattery)
 leka_register_unit_tests_for_driver(CoreBufferedSerial)
+leka_register_unit_tests_for_driver(CoreQDAC)
 leka_register_unit_tests_for_driver(CoreEventFlags)
 leka_register_unit_tests_for_driver(CoreEventQueue)
 leka_register_unit_tests_for_driver(CoreFlashMemory)
