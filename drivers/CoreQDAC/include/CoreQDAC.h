@@ -19,33 +19,22 @@ class CoreQDACMCP4728 : public interface::QDAC
 	CoreQDACMCP4728(interface::I2C &i2c, uint8_t address) : _i2c(i2c), _address(address) {};
 
 	void init() final;
-
-	void write(uint8_t channel, uint16_t data) final;
-	auto read(uint8_t channel) -> uint16_t final;
+	void write(uint8_t channel, std::array<uint8_t, 2> data) final;
+	void read(std::span<uint8_t> buffer) final;
 
   private:
-	void writeInputRegisters();
-	void readInputRegisters();
-
-	void setVoltageReference(uint8_t data);
-	void setPowerDown(uint8_t data);
-	void setGain(uint8_t data);
-
 	interface::I2C &_i2c;
 	uint8_t _address;
 
-	struct QDACInputData {
-		uint8_t vref  = 0x00;
-		uint8_t pd	  = 0x00;
-		uint8_t gain  = 0x00;
-		uint16_t data = 0x0000;
-	};
+	void writeToMultipleInputRegisters(uint8_t channel, std::array<uint8_t, 2> data);
+	void writeToInputRegistersAndMemoryUntilChannelD(uint8_t channel, std::array<uint8_t, 2> data);
+	void writeToSingleInputRegisterAndMemory(uint8_t channel, std::array<uint8_t, 2> data);
 
-	std::array<QDACInputData, 4> _tx_registers {};
-	std::array<QDACInputData, 4> _rx_registers {};
+	void writeVoltageReference(uint8_t voltageReference);
+	void writePowerMode(uint8_t powerMode);
+	void writeGain(uint8_t gain);
 
-	static constexpr std::array<uint8_t, 4> _channels {mcp4728::channel::A, mcp4728::channel::B, mcp4728::channel::C,
-													   mcp4728::channel::D};
+	void readInputRegistersAndMemory(std::span<uint8_t> buffer);
 };
 
 }	// namespace leka
