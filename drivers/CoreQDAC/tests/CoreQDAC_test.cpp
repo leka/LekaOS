@@ -4,6 +4,7 @@
 
 #include "CoreQDAC.h"
 
+#include "external/MCP4728.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreI2C.h"
@@ -13,6 +14,7 @@ using namespace leka;
 using ::testing::Args;
 using ::testing::DoAll;
 using ::testing::ElementsAre;
+using ::testing::InSequence;
 using ::testing::Return;
 using ::testing::SetArrayArgument;
 
@@ -50,23 +52,80 @@ TEST_F(CoreQDACTest, init)
 
 TEST_F(CoreQDACTest, write)
 {
-	auto value_to_write = std::array<uint8_t, 2> {0xFF, 0xAA};
+	auto value_to_write = uint16_t {0x0ABC};
 
-	const auto data = ElementsAre(0x5A, 0xFF, 0xAA);
-	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(data));
+	const auto expected_buffer_A = ElementsAre(0x40, 0x00, 0x00);
+	const auto expected_buffer_B = ElementsAre(0x42, 0x0A, 0xBC);
+	const auto expected_buffer_C = ElementsAre(0x44, 0x00, 0x00);
+	const auto expected_buffer_D = ElementsAre(0x46, 0x00, 0x00);
+
+	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_A)).Times(1);
+	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_B)).Times(1);
+	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_C)).Times(1);
+	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_D)).Times(1);
 
 	dac.write(mcp4728::channel::B, value_to_write);
 }
 
+TEST_F(CoreQDACTest, writeMemory)
+{
+	auto value_to_write = uint16_t {0x0ABC};
+
+	const auto expected_buffer = ElementsAre(0x5A, 0x0A, 0xBC);
+	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer));
+
+	dac.write(mcp4728::channel::B, value_to_write, true);
+}
+
+TEST_F(CoreQDACTest, writeAllChannels)
+{
+	auto value_to_write = uint16_t {0x0ABC};
+
+	const auto expected_buffer = ElementsAre(0x0A, 0xBC);
+
+	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer)).Times(4);
+
+	dac.writeAllChannels(value_to_write);
+}
+
+TEST_F(CoreQDACTest, writeAllChannelsMemory)
+{
+	auto value_to_write			 = uint16_t {0x0ABC};
+	const auto expected_buffer_A = ElementsAre(0x50, 0x0A, 0xBC);
+	const auto expected_buffer_B = ElementsAre(0x52, 0x0A, 0xBC);
+	const auto expected_buffer_C = ElementsAre(0x54, 0x0A, 0xBC);
+	const auto expected_buffer_D = ElementsAre(0x56, 0x0A, 0xBC);
+
+	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_A)).Times(1);
+	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_B)).Times(1);
+	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_C)).Times(1);
+	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_D)).Times(1);
+
+	dac.writeAllChannels(value_to_write, true);
+}
+
 TEST_F(CoreQDACTest, read)
 {
-	auto data		   = std::array<uint8_t, 24> {};
-	auto expected_data = std::array<uint8_t, 24> {0x01, 0x02, 0x03, 0x04};
+	auto expected_buffer = std::array<uint8_t, 24> {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
+	auto expected_data	 = static_cast<uint16_t>(((expected_buffer.at(1) & 0x0F) << 8) | expected_buffer.at(2));
 
 	EXPECT_CALL(mocki2c, read)
-		.WillOnce(DoAll(SetArrayArgument<1>(begin(expected_data), end(expected_data)), Return(0)));
+		.WillOnce(DoAll(SetArrayArgument<1>(begin(expected_buffer), end(expected_buffer)), Return(0)));
 
-	dac.read(data);
+	auto data = dac.read(mcp4728::channel::A);
 
-	ASSERT_EQ(data, expected_data);
+	ASSERT_EQ(expected_data, data);
+}
+
+TEST_F(CoreQDACTest, readMemory)
+{
+	auto expected_buffer = std::array<uint8_t, 24> {0x01, 0x02, 0x03, 0x04, 0x05, 0x06};
+	auto expected_data	 = static_cast<uint16_t>(((expected_buffer.at(4) & 0x0F) << 8) | expected_buffer.at(5));
+
+	EXPECT_CALL(mocki2c, read)
+		.WillOnce(DoAll(SetArrayArgument<1>(begin(expected_buffer), end(expected_buffer)), Return(0)));
+
+	auto data = dac.read(mcp4728::channel::A, true);
+
+	ASSERT_EQ(expected_data, data);
 }
