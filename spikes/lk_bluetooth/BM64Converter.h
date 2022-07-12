@@ -4,33 +4,48 @@
 
 #pragma once
 
+#include <array>
 #include <cstddef>
 #include <cstdint>
+#include <span>
 
 namespace BM64 {
 namespace Command {
 
-	const uint8_t pairing[3]			   = {0x02, 0x00, 0x50};
-	inline constexpr size_t pairing_length = 3;
+	inline constexpr uint8_t SINC_WORD = 0xAA;
 
-	const uint8_t play_pause[3]				  = {0x02, 0x00, 0x32};
-	inline constexpr size_t play_pause_length = 3;
+	inline constexpr uint8_t SEND_DATA	   = 0x12;
+	inline constexpr uint8_t DATA_INCOMING = 0x22;
 
-	const uint8_t eq_soft_mode[3]				= {0x1C, 0x01, 0x00};
-	inline constexpr size_t eq_soft_mode_length = 3;
+	inline constexpr uint8_t BTM_STATUS			   = 0x01;
+	inline constexpr uint8_t A2DP_LINK_ESTABLISHED = 0x06;
 
 };	 // namespace Command
+
+namespace ComplexCommand {
+
+	inline static auto pairing			   = std::to_array<uint8_t>({0x02, 0x00, 0x50});
+	inline constexpr size_t pairing_length = 3;
+
+	inline static auto play_pause			  = std::to_array<uint8_t>({0x02, 0x00, 0x32});
+	inline constexpr size_t play_pause_length = 3;
+
+	inline static auto eq_soft_mode				= std::to_array<uint8_t>({0x1C, 0x01, 0x00});
+	inline constexpr size_t eq_soft_mode_length = 3;
+
+}	// namespace ComplexCommand
+
 // using command_t = Command;
 
 namespace Response {
 
-	const uint8_t acknowledge[2]			   = {0xFF, 0xFF};	 // Not done yet
+	inline static auto acknowledge			   = std::to_array<uint8_t>({0xFF, 0xFF});	 // Not done yet
 	inline constexpr size_t acknowledge_length = 2;
 
 };	 // namespace Response
 // using response_t = Response;
 
-size_t getCommand(const uint8_t *cmd, const size_t cmd_length, uint8_t *buffer);
+auto getCommand(std::span<uint8_t> cmd, size_t cmd_length, std::span<uint8_t> buffer) -> size_t;
 // void convertResponse();	  // Events in datasheet
 
 };	 // namespace BM64

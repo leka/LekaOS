@@ -4,17 +4,17 @@
 
 #include "BM64Converter.h"
 
-size_t BM64::getCommand(const uint8_t *cmd, const size_t cmd_length, uint8_t *buffer)
+auto BM64::getCommand(std::span<uint8_t> cmd, size_t cmd_length, std::span<uint8_t> buffer) -> size_t
 {
 	size_t frame_length = 3 + cmd_length + 1;
 	uint8_t checksum	= 0x00;
 
 	/* HEAD - START */
-	buffer[0] = 0xAA;	// Not included in checksum
+	buffer[0] = BM64::Command::SINC_WORD;	// Not included in checksum
 
 	/* HEAD - LENGTH (2 BYTES) */
-	buffer[1] = (uint8_t)((uint16_t)cmd_length >> 8);
-	buffer[2] = (uint8_t)cmd_length;
+	buffer[1] = static_cast<uint8_t>((static_cast<uint16_t>(cmd_length >> 8)));
+	buffer[2] = static_cast<uint8_t>(cmd_length);
 	checksum -= (buffer[1] + buffer[2]);
 
 	/* MID - OP Code & DATA - PARAMETER */
