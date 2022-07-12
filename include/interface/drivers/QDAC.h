@@ -16,9 +16,9 @@ class QDAC
   public:
 	virtual ~QDAC() = default;
 
-	virtual void init()												 = 0;
-	virtual void write(uint8_t channel, std::array<uint8_t, 2> data) = 0;
-	virtual void read(std::span<uint8_t> buffer)					 = 0;
+	virtual void init()													   = 0;
+	virtual void write(uint8_t channel, uint16_t data, bool b_eep = false) = 0;
+	virtual auto read(uint8_t channel, bool b_eep = false) -> uint16_t	   = 0;
 };
 
 }	// namespace leka::interface

@@ -19,22 +19,37 @@ class CoreQDACMCP4728 : public interface::QDAC
 	CoreQDACMCP4728(interface::I2C &i2c, uint8_t address) : _i2c(i2c), _address(address) {};
 
 	void init() final;
-	void write(uint8_t channel, std::array<uint8_t, 2> data) final;
-	void read(std::span<uint8_t> buffer) final;
+	void write(uint8_t channel, uint16_t data, bool b_eep = false) final;
+	auto read(uint8_t channel, bool b_eep = false) -> uint16_t final;
+
+	void writeAllChannels(uint16_t data, bool b_eep = false);
 
   private:
+	void fastWrite();
+	void multiWrite();
+	void sequentialWrite();
+	void singleWrite(uint8_t channel);
+
+	void selectVoltageReference(uint8_t data);
+	void selectPowerMode(uint8_t data);
+	void selectGain(uint8_t data);
+
+	void readInputRegistersAndMemory();
+
 	interface::I2C &_i2c;
 	uint8_t _address;
 
-	void writeToMultipleInputRegisters(uint8_t channel, std::array<uint8_t, 2> data);
-	void writeToInputRegistersAndMemoryUntilChannelD(uint8_t channel, std::array<uint8_t, 2> data);
-	void writeToSingleInputRegisterAndMemory(uint8_t channel, std::array<uint8_t, 2> data);
+	struct DACInputData {
+		uint8_t vref  = 0x00;
+		uint8_t pd	  = 0x00;
+		uint8_t gain  = 0x00;
+		uint16_t data = 0x0000;
+	};
 
-	void writeVoltageReference(uint8_t voltageReference);
-	void writePowerMode(uint8_t powerMode);
-	void writeGain(uint8_t gain);
-
-	void readInputRegistersAndMemory(std::span<uint8_t> buffer);
+	std::array<DACInputData, 4> _reg {};
+	std::array<DACInputData, 4> _eep {};
+	std::array<DACInputData, 4> _read_reg {};
+	std::array<DACInputData, 4> _read_eep {};
 };
 
 }	// namespace leka

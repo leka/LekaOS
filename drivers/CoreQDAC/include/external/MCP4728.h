@@ -10,31 +10,17 @@ namespace leka::mcp4728 {
 
 namespace command {
 
-	namespace write {
+	inline constexpr auto fast_write	   = uint8_t {0x00};
+	inline constexpr auto multi_write	   = uint8_t {0x40};
+	inline constexpr auto sequential_write = uint8_t {0x50};
+	inline constexpr auto single_write	   = uint8_t {0x58};
 
-		namespace input_registers {
-			namespace mask {
-				inline constexpr auto field	  = uint8_t {0xF8};
-				inline constexpr auto channel = uint8_t {0x07};
-			}	// namespace mask
-			inline constexpr auto multi_default				 = uint8_t {0x40};
-			inline constexpr auto sequential_until_channel_D = uint8_t {0x50};
-			inline constexpr auto single_with_eeprom_memory	 = uint8_t {0x58};
-		}	// namespace input_registers
-
-		namespace select_bits {
-			namespace mask {
-				inline constexpr auto field = uint8_t {0xE0};
-			}	// namespace mask
-			inline constexpr auto voltage_reference = uint8_t {0x80};
-			inline constexpr auto power_mode		= uint8_t {0xA0};
-			inline constexpr auto gain				= uint8_t {0xC0};
-		}	// namespace select_bits
-
-	}	// namespace write
+	inline constexpr auto select_vref		= uint8_t {0x80};
+	inline constexpr auto select_power_down = uint8_t {0xA0};
+	inline constexpr auto select_gain		= uint8_t {0xC0};
 
 	namespace read {
-		inline constexpr auto max_buffer_size = uint8_t {24};
+		inline constexpr auto buffer_size = uint8_t {24};
 	}	// namespace read
 
 }	// namespace command
