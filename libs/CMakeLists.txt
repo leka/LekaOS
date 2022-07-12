@@ -24,7 +24,6 @@ add_subdirectory(${LIBS_DIR}/WebKit)
 add_subdirectory(${LIBS_DIR}/PrettyPrinter)
 
 add_subdirectory(${LIBS_DIR}/InvestigationDay/BLE)
-add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaBluetooth)
 add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaRFID)
 add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaScreen)
 add_subdirectory(${LIBS_DIR}/InvestigationDay/LekaTouch)
