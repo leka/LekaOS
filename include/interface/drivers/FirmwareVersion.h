@@ -9,6 +9,9 @@
 #include <cstdio>
 #include <span>
 
+#include "semver.h"
+#include "semver/semver.hpp"
+
 namespace leka {
 
 struct FirmwareVersion {

@@ -18,6 +18,7 @@ target_link_libraries(FirmwareKit
 	mbed-os
 	FileManagerKit
 	CoreFlashMemory
+	semver
 )
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

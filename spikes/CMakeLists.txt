@@ -37,6 +37,7 @@ add_subdirectory(${SPIKES_DIR}/lk_update_process_app_update)
 
 add_subdirectory(${SPIKES_DIR}/mbed_blinky)
 add_subdirectory(${SPIKES_DIR}/mbed_watchdog_ticker_vs_thread)
+add_subdirectory(${SPIKES_DIR}/lk_semver_comparison)
 
 add_subdirectory(${SPIKES_DIR}/stl_cxxsupport)
 
@@ -58,6 +59,7 @@ add_dependencies(spikes_leka
 	spike_lk_motors
 	spike_lk_reinforcer
 	spike_lk_rfid
+	spike_lk_semver_comparison
 	spike_lk_sensors_battery
 	spike_lk_sensors_light
 	spike_lk_sensors_microphone
