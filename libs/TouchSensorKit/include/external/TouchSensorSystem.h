@@ -5,6 +5,7 @@
 #pragma once
 
 #include "CoreIOExpander.h"
+#include "CoreQDAC.h"
 
 namespace leka::touch {
 
@@ -22,6 +23,13 @@ namespace pin {
 	inline constexpr auto belt_left_front_power_mode  = uint16_t {leka::mcp23017::pin::PA2};
 	inline constexpr auto belt_right_back_power_mode  = uint16_t {leka::mcp23017::pin::PA1};
 	inline constexpr auto belt_right_front_power_mode = uint16_t {leka::mcp23017::pin::PA0};
+
+	inline constexpr auto ear_left_ch		  = uint16_t {leka::mcp4728::channel::A};
+	inline constexpr auto ear_right_ch		  = uint16_t {leka::mcp4728::channel::A};
+	inline constexpr auto belt_left_back_ch	  = uint16_t {leka::mcp4728::channel::B};
+	inline constexpr auto belt_left_front_ch  = uint16_t {leka::mcp4728::channel::B};
+	inline constexpr auto belt_right_back_ch  = uint16_t {leka::mcp4728::channel::C};
+	inline constexpr auto belt_right_front_ch = uint16_t {leka::mcp4728::channel::C};
 }	// namespace pin
 
 namespace power_mode {
