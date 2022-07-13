@@ -10,6 +10,7 @@ ROOT_DIR          := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 CMAKE_DIR         := $(ROOT_DIR)/cmake
 MBED_OS_DIR       := $(ROOT_DIR)/extern/mbed-os
 MCUBOOT_DIR       := $(ROOT_DIR)/extern/mcuboot
+SEMVER_DIR        := $(ROOT_DIR)/extern/semver
 
 #
 # MARK: - Arguments
@@ -21,6 +22,8 @@ MBED_BRANCH     ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
 MBED_VERSION    ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
 MCUBOOT_GIT_URL ?= $(shell cat $(ROOT_DIR)/config/mcuboot_git_url)
 MCUBOOT_VERSION ?= $(shell cat $(ROOT_DIR)/config/mcuboot_version)
+SEMVER_GIT_URL  ?= $(shell cat $(ROOT_DIR)/config/semver_git_url)
+SEMVER_VERSION  ?= $(shell cat $(ROOT_DIR)/config/semver_version)
 BAUDRATE        ?= 115200
 BUILD_TYPE      ?= Release
 TARGET_BOARD    ?= LEKA_V1_2_DEV
@@ -266,6 +269,7 @@ clang_tidy_diff:
 pull_deps:
 	@$(MAKE) mbed_clone
 	@$(MAKE) mcuboot_clone
+	@$(MAKE) semver_clone
 
 mbed_clone:
 	@echo ""
@@ -296,6 +300,22 @@ mcuboot_symlink_files:
 	@echo "🔗 Symlinking CMakeLists.txt to MCUBoot directory 🗂️"
 	ln -srf $(CMAKE_DIR)/templates/mcuboot/boot.cmake $(MCUBOOT_DIR)/boot/CMakeLists.txt
 	ln -srf $(CMAKE_DIR)/templates/mcuboot/mbed.cmake $(MCUBOOT_DIR)/boot/mbed/CMakeLists.txt
+
+#
+# MARK: - Semver targets
+#
+
+semver_clone:
+	@echo ""
+	@echo "🧬 Cloning Semver 📦"
+	@rm -rf $(SEMVER_DIR)
+	git clone --depth=1 --branch=$(SEMVER_VERSION) $(SEMVER_GIT_URL) $(SEMVER_DIR)
+	@$(MAKE) semver_symlink_files
+
+semver_symlink_files:
+	@echo ""
+	@echo "🔗 Symlinking CMakeLists.txt to Semver directory 🗂️"
+	ln -srf $(CMAKE_DIR)/templates/semver/CMakeLists.txt $(SEMVER_DIR)/CMakeLists.txt
 
 #
 # MARK: - Utils targets

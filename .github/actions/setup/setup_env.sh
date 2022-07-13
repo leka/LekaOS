@@ -27,11 +27,13 @@ git checkout $BASE_REF
 BASE_SHA=$(git rev-parse --short HEAD)
 BASE_MBED_VERSION=$(cat config/mbed_version)
 BASE_MCUBOOT_VERSION=$(cat config/mcuboot_version)
+BASE_SEMVER_VERSION=$(cat config/semver_version)
 BASE_CXX_STANDARD="-std=c++$(cat CMakeLists.txt | grep -Po '(?<=CMAKE_CXX_STANDARD\s)[0-9]*')"
 
 echo "BASE_SHA=$BASE_SHA" >> $GITHUB_ENV
 echo "BASE_MBED_VERSION=$BASE_MBED_VERSION" >> $GITHUB_ENV
 echo "BASE_MCUBOOT_VERSION=$BASE_MCUBOOT_VERSION" >> $GITHUB_ENV
+echo "BASE_SEMVER_VERSION=$BASE_SEMVER_VERSION" >> $GITHUB_ENV
 echo "BASE_CXX_STANDARD=$BASE_CXX_STANDARD" >> $GITHUB_ENV
 
 git checkout $HEAD_REF
@@ -39,11 +41,13 @@ git checkout $HEAD_REF
 HEAD_SHA=$(git rev-parse --short HEAD)
 HEAD_MBED_VERSION=$(cat config/mbed_version)
 HEAD_MCUBOOT_VERSION=$(cat config/mcuboot_version)
+HEAD_SEMVER_VERSION=$(cat config/semver_version)
 HEAD_CXX_STANDARD="-std=c++$(cat CMakeLists.txt | grep -Po '(?<=CMAKE_CXX_STANDARD\s)[0-9]*')"
 
 echo "HEAD_SHA=$HEAD_SHA" >> $GITHUB_ENV
 echo "HEAD_MBED_VERSION=$HEAD_MBED_VERSION" >> $GITHUB_ENV
 echo "HEAD_MCUBOOT_VERSION=$HEAD_MCUBOOT_VERSION" >> $GITHUB_ENV
+echo "HEAD_SEMVER_VERSION=$HEAD_SEMVER_VERSION" >> $GITHUB_ENV
 echo "HEAD_CXX_STANDARD=$HEAD_CXX_STANDARD" >> $GITHUB_ENV
 
 #

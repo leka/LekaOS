@@ -76,6 +76,7 @@ set(ROOT_DIR ${CMAKE_CURRENT_LIST_DIR})
 set(MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
 set(MCUBOOT_DIR ${ROOT_DIR}/extern/mcuboot/boot)
 set(MBED_HTTP_DIR ${ROOT_DIR}/extern/mbed-http)
+set(SEMVER_DIR ${ROOT_DIR}/extern/semver)
 
 # includes
 set(LIBS_DIR ${ROOT_DIR}/libs)
@@ -118,12 +119,14 @@ add_subdirectory(${LIBS_DIR}/Utils)
 add_subdirectory(${LIBS_DIR}/LogKit)
 add_subdirectory(${LIBS_DIR}/HelloWorld)
 add_subdirectory(${LIBS_DIR}/CriticalSection)
+add_subdirectory(${SEMVER_DIR})
 
 link_libraries(
 	Utils
 	LogKit
 	HelloWorld
 	CriticalSection
+	semver
 )
 
 add_subdirectory(${MCUBOOT_DIR})

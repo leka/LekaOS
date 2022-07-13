@@ -44,11 +44,19 @@ runs:
         ref: ${{ env.HEAD_MCUBOOT_VERSION }}
         path: extern/mcuboot
 
+    - name: Checkout semver
+      uses: actions/checkout@v3
+      with:
+        repository: h2non/semver.c
+        ref: ${{ env.HEAD_SEMVER_VERSION }}
+        path: extern/semver
+
     - name: Symlink deps files
       shell: bash
       run: |
         make mbed_symlink_files
         make mcuboot_symlink_files
+        make semver_symlink_files
 
     #
     # Mark: - ARM GCC Toolchain

@@ -6,6 +6,7 @@
 !.vscode/settings.template.json
 extern/mbed-os
 extern/mcuboot
+extern/semver
 _build*
 _coverage*
 cmake/config/
