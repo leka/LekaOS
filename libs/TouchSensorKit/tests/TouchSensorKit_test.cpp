@@ -43,7 +43,7 @@ TEST_F(TouchSensorTest, resetByPowerMode)
 	touch_sensor_kit.resetByPowerMode();
 }
 
-TEST_F(TouchSensorTest, calibration)
+TEST_F(TouchSensorTest, adjustSensitivity)
 {
-	touch_sensor_kit.caliration();
+	touch_sensor_kit.adjustSensitivity(0x0ABC);
 }

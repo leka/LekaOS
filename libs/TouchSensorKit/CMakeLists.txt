@@ -7,6 +7,8 @@ add_library(TouchSensorKit STATIC)
 target_include_directories(TouchSensorKit
 	PUBLIC
 		include
+	PRIVATE
+		include/internal
 )
 
 target_sources(TouchSensorKit
@@ -19,7 +21,8 @@ target_link_libraries(TouchSensorKit
 	IOKit
 	CoreI2C
 	CoreIOExpander
-	CoreDACTouch
+	CoreQDAC
+	CoreTouchSensor
 )
 
 if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

@@ -284,6 +284,7 @@ leka_register_unit_tests_for_library(LedKit)
 leka_register_unit_tests_for_library(RobotKit)
 leka_register_unit_tests_for_library(RFIDKit)
 leka_register_unit_tests_for_library(SerialNumberKit)
+leka_register_unit_tests_for_library(TouchSensorKit)
 leka_register_unit_tests_for_library(UIAnimationKit)
 leka_register_unit_tests_for_library(VideoKit)
 
