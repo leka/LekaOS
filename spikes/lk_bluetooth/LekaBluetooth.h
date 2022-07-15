@@ -5,6 +5,7 @@
 #pragma once
 
 #include <chrono>
+#include <span>
 
 #include "PinNames.h"
 
@@ -14,34 +15,35 @@
 #include "rtos/Thread.h"
 
 #include "BM64Converter.h"
+#include "LogKit.h"
 
-inline constexpr uint8_t max_buffer_size = 128;
+inline constexpr uint8_t MAX_BUFFER_SIZE = 128;
 
 class Bluetooth
 {
   public:
 	Bluetooth();
-	~Bluetooth() {};
+	~Bluetooth() = default;
 
-	void start(void);
+	void start();
 	void pairing();
 	void playPause();
-	void checkResponse(bool printResponse = false);
+	auto checkResponse(bool printResponse = false) -> bool;
 
-	bool isPaired();
-	void sendMessage(char *msg, size_t msg_length);
-	size_t getMessage(char *buffer);
-	bool checkNewMessage();
+	[[nodiscard]] auto isPaired() const -> bool;
+	void sendMessage(const char *msg, size_t msg_length);
+	auto getMessage(std::span<char> buffer) -> int;
+	[[nodiscard]] auto checkNewMessage() const -> bool;
 
   private:
 	mbed::BufferedSerial _interface;
 	mbed::DigitalOut _bluetooth_reset;
 	mbed::DigitalOut _bluetooth_wake_up;
 
-	uint8_t _buffer[max_buffer_size] = {0};
-	uint16_t _buffer_length			 = 0;
-	char _msg_rcv[max_buffer_size];
-	size_t _msg_length = 0;
+	std::array<uint8_t, MAX_BUFFER_SIZE> _buffer;
+	uint16_t _buffer_length = 0;
+	std::array<char, MAX_BUFFER_SIZE> _received_message;
+	int _msg_length = 0;
 
 	bool _paired	  = false;	 // Check simultaneous pairing is possible
 	bool _new_message = true;
