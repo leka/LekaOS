@@ -15,7 +15,6 @@ target_sources(spike_lk_game_touch_speed
 	LedManager.cpp
 	Level.cpp
 	Round.cpp
-	Random8.cpp
 )
 
 target_link_libraries(spike_lk_game_touch_speed
@@ -25,6 +24,7 @@ target_link_libraries(spike_lk_game_touch_speed
 	CoreSPI
 	LedKit
 	EventLoopKit
+	Utils
 )
 
 target_link_custom_leka_targets(spike_lk_game_touch_speed)

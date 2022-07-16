@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "../../spikes/lk_game_touch_speed/Position.h"
 #include "CoreI2C.h"
 #include "CoreIOExpander.h"
 #include "CoreQDAC.h"
@@ -29,12 +30,7 @@ class TouchSensorKit
 
 	void adjustSensitivity(uint16_t value, bool saved = false);
 
-	auto ear_left_touched() const -> bool { return _state.ear_left_touched; };
-	auto ear_right_touched() const -> bool { return _state.ear_right_touched; };
-	auto belt_left_back_touched() const -> bool { return _state.belt_left_back_touched; };
-	auto belt_left_front_touched() const -> bool { return _state.belt_left_front_touched; };
-	auto belt_right_back_touched() const -> bool { return _state.belt_right_back_touched; };
-	auto belt_right_front_touched() const -> bool { return _state.belt_right_front_touched; };
+	auto component_touched(Position component) const -> bool;
 
   private:
 	void setPowerMode(int power_mode);

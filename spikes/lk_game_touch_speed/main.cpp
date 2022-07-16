@@ -39,6 +39,7 @@ auto main() -> int
 	TouchSensorKit touchSensorKit {};
 	LedKit ledKit(loopKit, ears, belt);
 	leds::LedManager ledManager(ears, belt, ledKit);
+
 	leds::Round round(ledManager, touchSensorKit);
 
 	logger::init();
@@ -53,7 +54,7 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(2s);
 
-	leds::touch_sensor_kit.adjust_sensivity(0x00);
+	leds::touch_sensor_kit.adjustSensitivity(0x0000);
 
 	uint8_t level = 0;
 	while (true) {

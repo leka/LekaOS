@@ -20,18 +20,17 @@ auto Level::playOnce() -> bool
 
 	auto start			= rtos::Kernel::Clock::now();
 	int sinceRoundBegin = 0;
+	_currentRound.registerCallback([this](Position component) { _currentRound.update_touched_colors(component); });
 	do {
 		rtos::ThisThread::sleep_for(500ms);
 		rtos::ThisThread::sleep_for(1s);
 		uint8_t touched_flags = _currentRound.getFlag();
-		_touch_sensor_kit.fakeUpdateState(touched_flags);
+		_touch_sensor_kit.updateState();
 		_touch_sensor_kit.resetByPowerMode();
-		_currentRound.setTouched();
-		_currentRound.update_touched_colors();
+		_currentRound.updateTouchedPosition();
 		rtos::ThisThread::sleep_for(1s);
 		_currentRound.setFlag();
 		sinceRoundBegin = static_cast<int>((rtos::Kernel::Clock::now() - start).count());
-
 	} while (!(_currentRound.is_target_touched()) && (sinceRoundBegin > _maximumDuration));
 
 	_currentRound.resetFlag();
@@ -53,7 +52,7 @@ void Level::playAllRounds()
 		}
 	}
 
-	_ledManager.winAnimation();
+	_ledManager.playReinforcer();
 
 	_touch_sensor_kit.printState();
 	log_info("\n\n");
