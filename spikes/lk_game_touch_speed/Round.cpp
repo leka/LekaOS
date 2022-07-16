@@ -1,3 +1,6 @@
+
+#pragma once
+
 #include "Round.h"
 
 #include "drivers/HighResClock.h"
@@ -5,7 +8,8 @@
 
 #include "LedManager.h"
 #include "LogKit.h"
-#include "Random8.h"
+#include "MathUtils.h"
+#include "Position.h"
 
 using namespace leka;
 namespace leds {
@@ -17,76 +21,87 @@ Round::Round(LedManager &ledManager, leka::TouchSensorKit &touchSensorKit)
 
 void Round::choseRandomCaptorAsTarget()
 {
-	log_info("dans choseRandomCaptor");
-	rtos::ThisThread::sleep_for(500ms);
-	_target = random8(0, 5);
-	_ledManager.setRandomCaptorWithColor(_target);
+	uint8_t targetNumber = leka::utils::math::random8(0, 5);
+	setTarget(targetNumber);
+	_ledManager.turnOff();
+	_ledManager.turnOn(_target, leka::RGB::pure_blue);
 }
-void Round::setColorWinIfWon(uint8_t touched)
+void Round::setColorTarget(Position touched)
 {
 	constexpr RGB win_color = RGB::pure_green;
-	// uint8_t est forcément supérieur à 0 => cause de warning
-	if (touched > 5 || touched < 0) {
-		return;
-	} else if (touched == _target) {
-		_ledManager.turnOnCaptor(touched, win_color);
-		log_info("met win à true");
+
+	if (touched == _target) {
+		_ledManager.turnOn(touched, win_color);
 		_win = true;
 		rtos::ThisThread::sleep_for(500ms);
 	}
-}
-void Round::setColorLoseIfLoose(uint8_t touched)
-{
+
 	constexpr RGB lose_color = RGB::pure_red;
-	// uint8_t est forcément supérieur à 0 => cause de warning
-	if (touched > 5 || touched < 0) {
-		return;
-	} else if (touched != _target) {
-		_ledManager.turnOnCaptor(touched, lose_color);
-		log_info("met win à false");
+
+	if (touched != _target) {
+		_ledManager.turnOn(touched, lose_color);
 		_win = false;
 		rtos::ThisThread::sleep_for(500ms);
 	}
 }
 
-void Round::update_touched_colors()
+void Round::setTarget(uint8_t targetNumber)
 {
-	log_info("dans update_touched_colors");
-	rtos::ThisThread::sleep_for(500ms);
-	setColorWinIfWon(_touched);
-	setColorLoseIfLoose(_touched);
+	switch (targetNumber) {
+		case 0:
+			_target = Position::ear_left;
+			break;
+		case 1:
+			_target = Position::ear_right;
+			break;
+		case 2:
+			_target = Position::belt_back_right;
+			break;
+		case 3:
+			_target = Position::belt_front_right;
+			break;
+		case 4:
+			_target = Position::belt_back_left;
+			break;
+		case 5:
+			_target = Position::belt_front_left;
+			break;
+		default:
+			break;
+	}
+}
+void Round::updateTouchedColor(Position component)
+{
+	setColorTarget(component);
 }
 
-auto Round::is_target_touched() const -> bool
+auto Round::isTargetTouched() const -> bool
 {
 	return _win;
 }
 
-void Round::setTouched()
+void Round::updateTouchedPosition()
 {
-	log_info("dans setTouched");
-	rtos::ThisThread::sleep_for(500ms);
-
-	if (_touch_sensor_kit.ear_left_touched()) {
-		_touched = 0;
+	if (_touch_sensor_kit.isSensorTouched(Position::ear_left)) {
+		_onTouch(Position::ear_left);
 	}
-	if (_touch_sensor_kit.ear_right_touched()) {
-		_touched = 1;
+	if (_touch_sensor_kit.isSensorTouched(Position::ear_right)) {
+		_onTouch(Position::ear_right);
 	}
 
-	if (_touch_sensor_kit.belt_right_back_touched()) {
-		_touched = 2;
+	if (_touch_sensor_kit.isSensorTouched(Position::belt_back_right)) {
+		_onTouch(Position::belt_back_right);
 	}
 
-	if (_touch_sensor_kit.belt_right_front_touched()) {
-		_touched = 3;
+	if (_touch_sensor_kit.isSensorTouched(Position::belt_front_right)) {
+		_onTouch(Position::belt_front_right);
 	}
-	if (_touch_sensor_kit.belt_left_back_touched()) {
-		_touched = 4;
+	if (_touch_sensor_kit.isSensorTouched(Position::belt_back_left)) {
+		_onTouch(Position::belt_back_left);
 	}
 
-	if (_touch_sensor_kit.belt_left_front_touched()) {
-		_touched = 5;
+	if (_touch_sensor_kit.isSensorTouched(Position::belt_back_right)) {
+		_onTouch(Position::belt_front_left);
 	}
 }
 void Round::resetFlag()
@@ -96,11 +111,12 @@ void Round::resetFlag()
 void Round::setFlag()
 {
 	_touched_flag = _touched_flag * 2;
-	log_debug("_touched_flag = %i ", _touched_flag);
 }
 
 auto Round::getFlag() const -> uint8_t
 {
+	// devrait récupérer les positions touchées au sein du touchsensor et on aurait pas besoin de get flag et de set
+	// flag
 	return _touched_flag;
 }
 

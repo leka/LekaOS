@@ -4,58 +4,58 @@
 #include "rtos/ThisThread.h"
 
 #include "LedManager.h"
-#include "LogKit.h"
 
 using namespace leka;
-namespace leds {
 
 auto Level::playOnce() -> bool
 {
-	rtos::ThisThread::sleep_for(500ms);
-	if (_score > scoreToWinLevel || _score < 0) {
+	if (_score > _scoreToWinLevel || _score < 0) {
 		_score = 0;
 	}
 
-	_currentRound.choseRandomCaptorAsTarget();
+	_playingRound.choseRandomCaptorAsTarget();
 
-	auto start			= rtos::Kernel::Clock::now();
-	int sinceRoundBegin = 0;
+	auto start		  = rtos::Kernel::Clock::now();
+	int roundDuration = 0;
+	_playingRound.registerCallback([this](Position component) { _playingRound.updateTouchedColor(component); });
+
+	auto keep_playing = [&]() {
+		auto target_not_touched	  = !_playingRound.isTargetTouched();
+		auto time_still_available = roundDuration > _maximumDuration;
+
+		auto ret = target_not_touched && time_still_available;
+
+		return ret;
+	};
+
 	do {
-		rtos::ThisThread::sleep_for(500ms);
-		rtos::ThisThread::sleep_for(1s);
-		uint8_t touched_flags = _currentRound.getFlag();
-		_touch_sensor_kit.fakeUpdateState(touched_flags);
+		uint8_t touched_flags = _playingRound.getFlag();
+		_touch_sensor_kit.updateState();
 		_touch_sensor_kit.resetByPowerMode();
-		_currentRound.setTouched();
-		_currentRound.update_touched_colors();
-		rtos::ThisThread::sleep_for(1s);
-		_currentRound.setFlag();
-		sinceRoundBegin = static_cast<int>((rtos::Kernel::Clock::now() - start).count());
+		_playingRound.updateTouchedPosition();
+		_playingRound.setFlag();
+		roundDuration = static_cast<int>((rtos::Kernel::Clock::now() - start).count());
 
-	} while (!(_currentRound.is_target_touched()) && (sinceRoundBegin > _maximumDuration));
+	} while (keep_playing());
 
-	_currentRound.resetFlag();
+	_playingRound.resetFlag();
 
-	return _currentRound.is_target_touched();
+	return _playingRound.isTargetTouched();
 }
 
 void Level::playAllRounds()
 {
-	log_info("dans playLevel");
-	rtos::ThisThread::sleep_for(500ms);
-
-	while (_score < scoreToWinLevel) {
-		if (playOnce()) {
+	while (_score < _scoreToWinLevel) {
+		auto round_won = playOnce();
+		if (round_won) {
 			++_score;
-			log_info("score =, %i", _score);
+
 		} else {
 			_score = 0;
 		}
 	}
 
-	_ledManager.winAnimation();
+	_ledManager.playReinforcer();
 
 	_touch_sensor_kit.printState();
-	log_info("\n\n");
 }
-}	// namespace leds

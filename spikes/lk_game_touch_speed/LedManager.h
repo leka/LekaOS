@@ -3,6 +3,7 @@
 #include <cstdint>
 
 #include "LedKit.h"
+#include "Position.h"
 #include "RGB.h"
 #include "interface/drivers/LED.h"
 
@@ -14,28 +15,14 @@ class LedManager
   public:
 	LedManager(leka::interface::LED &ears, leka::interface::LED &belt, leka::LedKit &ledkit);
 
-	void turnOnCaptor(uint8_t indexCaptor, leka::RGB color);
 	void turnOff();
-	void setRandomCaptorWithColor(uint8_t captorNumber);
+	void playReinforcer();
+	void turnOn(leka::Position component, leka::RGB color);
+	void turnOff(leka::Position component);
 
-	void winAnimation();
-
-  private:	 // LedManager():_level(Round{})
+  private:
 	leka::interface::LED &_ears;
 	leka::interface::LED &_belt;
 	leka::LedKit &_ledKit;
-
-	void turnOnEarLeft(leka::RGB color);
-	void turnOnEarRight(leka::RGB color);
-	void turnOffEarLeft();
-	void turnOffEarRight();
-	void turnOnBeltRightBack(leka::RGB color);
-	void turnOffBeltRightBack();
-	void turnOnBeltRightFront(leka::RGB color);
-	void turnOffBeltRightFront();
-	void turnOnBeltLeftBack(leka::RGB color);
-	void turnOffBeltLeftBack();
-	void turnOnBeltLeftFront(leka::RGB color);
-	void turnOffBeltLeftFront();
 };
 }	// namespace leds

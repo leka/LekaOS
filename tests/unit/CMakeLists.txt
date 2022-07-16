@@ -265,6 +265,7 @@ leka_register_unit_tests_for_driver(CoreSPI)
 leka_register_unit_tests_for_driver(CoreSTM32Hal)
 leka_register_unit_tests_for_driver(CoreTicker)
 leka_register_unit_tests_for_driver(CoreVideo)
+leka_register_unit_tests_for_driver(CoreTouchSensor)
 
 # Register libraries
 leka_register_unit_tests_for_library(BatteryKit)

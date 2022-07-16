@@ -6,12 +6,12 @@ add_library(TouchSensorKit STATIC)
 
 target_include_directories(TouchSensorKit
 	PUBLIC
-		include
+	include
 )
 
 target_sources(TouchSensorKit
 	PRIVATE
-		source/TouchSensorKit.cpp
+	source/TouchSensorKit.cpp
 )
 
 target_link_libraries(TouchSensorKit
@@ -23,10 +23,8 @@ target_link_libraries(TouchSensorKit
 	CoreTouchSensor
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/TouchSensorKit_test.cpp
 	)
-
 endif()
