@@ -32,6 +32,8 @@ class FirmwareKitTest : public ::testing::Test
 	mock::FlashMemory mock_flash;
 	FirmwareKit firmwarekit;
 
+	FirmwareVersion default_current_version = FirmwareVersion {1, 0, 0};
+
 	std::array<char, 6> content = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};	  // "abcdef"
 };
 
@@ -49,6 +51,15 @@ MATCHER_P2(compareArray, expected_array, useless_var, "")
 TEST_F(FirmwareKitTest, instantiation)
 {
 	ASSERT_NE(&firmwarekit, nullptr);
+}
+
+TEST_F(FirmwareKitTest, getCurrentVersion)
+{
+	auto actual_version = firmwarekit.getCurrentVersion();
+
+	EXPECT_EQ(actual_version.major, default_current_version.major);
+	EXPECT_EQ(actual_version.minor, default_current_version.minor);
+	EXPECT_EQ(actual_version.revision, default_current_version.revision);
 }
 
 TEST_F(FirmwareKitTest, loadUpdate)
