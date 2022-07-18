@@ -4,6 +4,7 @@
 
 #include "CoreQDAC.h"
 
+#include "MemoryUtils.h"
 #include "external/MCP4728.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -14,6 +15,7 @@ using namespace leka;
 using ::testing::Args;
 using ::testing::DoAll;
 using ::testing::ElementsAre;
+using ::testing::ElementsAreArray;
 using ::testing::InSequence;
 using ::testing::Return;
 using ::testing::SetArrayArgument;
@@ -38,14 +40,18 @@ TEST_F(CoreQDACTest, initializationDefault)
 
 TEST_F(CoreQDACTest, init)
 {
-	const auto voltage_reference = ElementsAre(0x80);
-	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(voltage_reference));
+	const auto expected_vref		= static_cast<uint8_t>(mcp4728::command::set_vref | 0x00);
+	const auto expected_buffer_vref = ElementsAre(expected_vref);
+	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_vref));
 
-	const auto power_down = ElementsAre(0xA0, 0x00);
-	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(power_down));
+	const auto expected_pd_first_byte	  = static_cast<uint8_t>(mcp4728::command::set_power_down | 0x00);
+	const auto expected_pd_second_byte	  = uint8_t {0x00};
+	const auto expected_buffer_power_down = ElementsAre(expected_pd_first_byte, expected_pd_second_byte);
+	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_power_down));
 
-	const auto gain = ElementsAre(0xC0);
-	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(gain));
+	const auto expected_gain		= static_cast<uint8_t>(mcp4728::command::set_gain | 0x00);
+	const auto expected_buffer_gain = ElementsAre(expected_gain);
+	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_gain));
 
 	dac.init();
 }
@@ -54,52 +60,69 @@ TEST_F(CoreQDACTest, write)
 {
 	auto value_to_write = uint16_t {0x0ABC};
 
-	const auto expected_buffer_A = ElementsAre(0x40, 0x00, 0x00);
-	const auto expected_buffer_B = ElementsAre(0x42, 0x0A, 0xBC);
-	const auto expected_buffer_C = ElementsAre(0x44, 0x00, 0x00);
-	const auto expected_buffer_D = ElementsAre(0x46, 0x00, 0x00);
+	auto command = std::array<uint8_t, 3> {};
 
-	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_A)).Times(1);
-	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_B)).Times(1);
-	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_C)).Times(1);
-	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_D)).Times(1);
+	command.at(0)			   = static_cast<uint8_t>(mcp4728::command::multi_write | mcp4728::channel::B << 1);
+	command.at(1)			   = 0x00 | (0x0F & utils::memory::getHighByte(value_to_write));
+	command.at(2)			   = utils::memory::getLowByte(value_to_write);
+	const auto expected_buffer = ElementsAreArray(command);
 
-	dac.write(mcp4728::channel::B, value_to_write);
+	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer)).Times(1);
+
+	dac.write(leka::Channel::B, value_to_write);
 }
 
 TEST_F(CoreQDACTest, writeMemory)
 {
 	auto value_to_write = uint16_t {0x0ABC};
 
-	const auto expected_buffer = ElementsAre(0x5A, 0x0A, 0xBC);
+	auto command = std::array<uint8_t, 3> {};
+
+	command.at(0)			   = static_cast<uint8_t>(mcp4728::command::single_write | mcp4728::channel::B << 1);
+	command.at(1)			   = 0x00 | (0x0F & utils::memory::getHighByte(value_to_write));
+	command.at(2)			   = utils::memory::getLowByte(value_to_write);
+	const auto expected_buffer = ElementsAreArray(command);
+
 	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer));
 
-	dac.write(mcp4728::channel::B, value_to_write, true);
+	dac.write(leka::Channel::B, value_to_write, true);
 }
 
 TEST_F(CoreQDACTest, writeAllChannels)
 {
 	auto value_to_write = uint16_t {0x0ABC};
 
-	const auto expected_buffer = ElementsAre(0x0A, 0xBC);
+	auto command = std::array<uint8_t, 8> {};
 
-	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer)).Times(4);
+	for (uint8_t ch = mcp4728::channel::A; ch <= mcp4728::channel::D; ch++) {
+		command.at(ch * 2) =
+			static_cast<uint8_t>(mcp4728::command::fast_write | (0x0F & utils::memory::getHighByte(value_to_write)));
+		command.at(ch * 2 + 1) = utils::memory::getLowByte(value_to_write);
+	}
+
+	const auto expected_buffer = ElementsAreArray(command);
+
+	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer)).Times(1);
 
 	dac.writeAllChannels(value_to_write);
 }
 
 TEST_F(CoreQDACTest, writeAllChannelsMemory)
 {
-	auto value_to_write			 = uint16_t {0x0ABC};
-	const auto expected_buffer_A = ElementsAre(0x50, 0x0A, 0xBC);
-	const auto expected_buffer_B = ElementsAre(0x52, 0x0A, 0xBC);
-	const auto expected_buffer_C = ElementsAre(0x54, 0x0A, 0xBC);
-	const auto expected_buffer_D = ElementsAre(0x56, 0x0A, 0xBC);
+	auto value_to_write = uint16_t {0x0ABC};
 
-	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_A)).Times(1);
-	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_B)).Times(1);
-	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_C)).Times(1);
-	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer_D)).Times(1);
+	auto command = std::array<uint8_t, 9> {};
+
+	command.at(0) = static_cast<uint8_t>(mcp4728::command::sequential_write | mcp4728::channel::A << 1);
+
+	for (uint8_t ch = mcp4728::channel::A; ch <= mcp4728::channel::D; ch++) {
+		command.at((ch - mcp4728::channel::A) * 2 + 1) = 0x00 | (0x0F & utils::memory::getHighByte(value_to_write));
+		command.at((ch - mcp4728::channel::A) * 2 + 2) = utils::memory::getLowByte(value_to_write);
+	}
+
+	const auto expected_buffer = ElementsAreArray(command);
+
+	EXPECT_CALL(mocki2c, write).With(Args<1, 2>(expected_buffer)).Times(1);
 
 	dac.writeAllChannels(value_to_write, true);
 }
@@ -112,7 +135,7 @@ TEST_F(CoreQDACTest, read)
 	EXPECT_CALL(mocki2c, read)
 		.WillOnce(DoAll(SetArrayArgument<1>(begin(expected_buffer), end(expected_buffer)), Return(0)));
 
-	auto data = dac.read(mcp4728::channel::A);
+	auto data = dac.read(leka::Channel::A);
 
 	ASSERT_EQ(expected_data, data);
 }
@@ -125,7 +148,7 @@ TEST_F(CoreQDACTest, readMemory)
 	EXPECT_CALL(mocki2c, read)
 		.WillOnce(DoAll(SetArrayArgument<1>(begin(expected_buffer), end(expected_buffer)), Return(0)));
 
-	auto data = dac.read(mcp4728::channel::A, true);
+	auto data = dac.read(leka::Channel::A, true);
 
 	ASSERT_EQ(expected_data, data);
 }

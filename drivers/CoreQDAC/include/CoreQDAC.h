@@ -19,37 +19,37 @@ class CoreQDACMCP4728 : public interface::QDAC
 	CoreQDACMCP4728(interface::I2C &i2c, uint8_t address) : _i2c(i2c), _address(address) {};
 
 	void init() final;
-	void write(uint8_t channel, uint16_t data, bool b_eep = false) final;
-	auto read(uint8_t channel, bool b_eep = false) -> uint16_t final;
+	void write(Channel channel, uint16_t data, bool eeprom = false) final;
+	void writeAllChannels(uint16_t data, bool eeprom = false);
 
-	void writeAllChannels(uint16_t data, bool b_eep = false);
+	auto read(Channel channel, bool eeprom = false) -> uint16_t final;
 
   private:
 	void fastWrite();
-	void multiWrite();
-	void sequentialWrite();
+	void multiWrite(uint8_t channel);
+	void sequentialWrite(uint8_t starting_channel);
 	void singleWrite(uint8_t channel);
 
-	void selectVoltageReference(uint8_t data);
-	void selectPowerMode(uint8_t data);
-	void selectGain(uint8_t data);
+	void setVoltageReference(uint8_t data);
+	void setPowerDown(uint8_t data);
+	void setGain(uint8_t data);
 
 	void readInputRegistersAndMemory();
 
 	interface::I2C &_i2c;
 	uint8_t _address;
 
-	struct DACInputData {
+	struct QDACInputData {
 		uint8_t vref  = 0x00;
 		uint8_t pd	  = 0x00;
 		uint8_t gain  = 0x00;
 		uint16_t data = 0x0000;
 	};
 
-	std::array<DACInputData, 4> _reg {};
-	std::array<DACInputData, 4> _eep {};
-	std::array<DACInputData, 4> _read_reg {};
-	std::array<DACInputData, 4> _read_eep {};
+	std::array<QDACInputData, 4> _tx_registers {};
+	std::array<QDACInputData, 4> _tx_eeprom {};
+	std::array<QDACInputData, 4> _rx_registers {};
+	std::array<QDACInputData, 4> _rx_eeprom {};
 };
 
 }	// namespace leka
