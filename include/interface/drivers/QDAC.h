@@ -4,21 +4,30 @@
 
 #pragma once
 
+#include <array>
 #include <cstdint>
 #include <span>
 
-#include "array"
+namespace leka {
 
-namespace leka::interface {
-
-class QDAC
+enum class Channel : uint8_t
 {
-  public:
-	virtual ~QDAC() = default;
-
-	virtual void init()													   = 0;
-	virtual void write(uint8_t channel, uint16_t data, bool b_eep = false) = 0;
-	virtual auto read(uint8_t channel, bool b_eep = false) -> uint16_t	   = 0;
+	A,
+	B,
+	C,
+	D
 };
 
-}	// namespace leka::interface
+namespace interface {
+	class QDAC
+	{
+	  public:
+		virtual ~QDAC() = default;
+
+		virtual void init()														= 0;
+		virtual void write(Channel channel, uint16_t data, bool eeprom = false) = 0;
+		virtual auto read(Channel channel, bool eeprom = false) -> uint16_t		= 0;
+	};
+
+}	// namespace interface
+}	// namespace leka

@@ -4,17 +4,17 @@
 
 #pragma once
 
-#include "CoreBufferedSerial.h"
 #include "gmock/gmock.h"
+#include "interface/drivers/QDAC.h"
 
-namespace leka {
+namespace leka::mock {
 
 class CoreQDAC : public interface::QDAC
 {
   public:
 	MOCK_METHOD(void, init, (), (override));
-	MOCK_METHOD(void, write, (uint8_t, std::array<uint8_t, 2>, uint8_t), (override));
-	MOCK_METHOD(void, read, (std::span<uint8_t>, size_t), (override));
+	MOCK_METHOD(void, write, (Channel, uint16_t, bool), (override));
+	MOCK_METHOD(uint16_t, read, (Channel, bool), (override));
 };
 
-}	// namespace leka
+}	// namespace leka::mock
