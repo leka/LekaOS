@@ -16,6 +16,7 @@ target_sources(CoreIOExpander
 
 target_link_libraries(CoreIOExpander
 	mbed-os
+	LogKit
 )
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

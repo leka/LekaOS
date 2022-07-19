@@ -34,12 +34,12 @@ void TouchSensorKit::updateState()
 
 void TouchSensorKit::printState()
 {
-	log_info("Ear left touched: %s", _state.ear_left_touched ? "true" : "false");
-	log_info("Ear right touched: %s", _state.ear_right_touched ? "true" : "false");
-	log_info("Belt left front touched: %s", _state.belt_left_front_touched ? "true" : "false");
-	log_info("Belt left back touched: %s", _state.belt_left_back_touched ? "true" : "false");
-	log_info("Belt right front touched: %s", _state.belt_right_front_touched ? "true" : "false");
-	log_info("Belt right back touched: %s", _state.belt_right_back_touched ? "true" : "false");
+	// log_info("Ear left touched: %s", _state.ear_left_touched ? "true" : "false");
+	// log_info("Ear right touched: %s", _state.ear_right_touched ? "true" : "false");
+	// log_info("Belt left front touched: %s", _state.belt_left_front_touched ? "true" : "false");
+	// log_info("Belt left back touched: %s", _state.belt_left_back_touched ? "true" : "false");
+	// log_info("Belt right front touched: %s", _state.belt_right_front_touched ? "true" : "false");
+	// log_info("Belt right back touched: %s", _state.belt_right_back_touched ? "true" : "false");
 }
 
 void TouchSensorKit::resetByPowerMode()
