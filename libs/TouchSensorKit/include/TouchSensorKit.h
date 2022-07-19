@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "../../spikes/lk_game_touch_speed/Position.h"
 #include "CoreI2C.h"
 #include "CoreIOExpander.h"
 #include "CoreQDAC.h"

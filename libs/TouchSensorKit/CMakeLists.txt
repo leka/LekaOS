@@ -7,13 +7,11 @@ add_library(TouchSensorKit STATIC)
 target_include_directories(TouchSensorKit
 	PUBLIC
 	include
-	../../spikes/lk_game_touch_speed/Position.h
 )
 
 target_sources(TouchSensorKit
 	PRIVATE
 	source/TouchSensorKit.cpp
-	../../spikes/lk_game_touch_speed/Position.cpp
 )
 
 target_link_libraries(TouchSensorKit

@@ -73,21 +73,3 @@ void TouchSensorKit::adjustSensitivity(uint16_t value, bool saved)
 	_sensor_belt_right_front.adjustSensitivity(value, saved);
 	rtos::ThisThread::sleep_for(1ms);
 }
-
-auto TouchSensorKit::component_touched(Position component) const -> bool
-{
-	switch (component) {
-		case Position::ear_left:
-			return _state.ear_left_touched;
-		case Position::ear_right:
-			return _state.ear_right_touched;
-		case Position::belt_front_left:
-			return _state.belt_left_front_touched;
-		case Position::belt_front_right:
-			return _state.belt_right_front_touched;
-		case Position::belt_back_left:
-			return _state.belt_left_back_touched;
-		case Position::belt_back_right:
-			return _state.belt_right_back_touched;
-	}
-}
