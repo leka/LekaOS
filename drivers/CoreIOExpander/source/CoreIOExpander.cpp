@@ -78,7 +78,11 @@ auto CoreIOExpanderMCP23017::getModeForPin(uint16_t pin) -> PinMode
 auto CoreIOExpanderMCP23017::readPin(uint16_t pin) -> int
 {
 	_registers.gpio = readRegister(mcp23017::internal_register::GPIO);
-	auto value		= _registers.gpio & pin;
+	// static uint16_t callNumber = 0;
+
+	// _registers.gpio = (callNumber % 12) > 5 ? 0x0400 : 0;
+	auto value = _registers.gpio & pin;
+	// ++callNumber;
 	return pin == value ? 1 : 0;
 }
 
@@ -113,7 +117,7 @@ auto CoreIOExpanderMCP23017::readRegister(uint8_t reg) -> uint16_t
 	auto addr	= std::array<uint8_t, 1> {reg};
 	auto buffer = std::array<uint8_t, 2> {};
 
-	_i2c.write(_I2C_ADDRESS, addr.data(), addr.size(), true);
+	_i2c.write(_I2C_ADDRESS, addr.data(), addr.size(), false);
 	_i2c.read(_I2C_ADDRESS, buffer.data(), buffer.size(), false);
 
 	auto value = utils::memory::combineBytes({.high = buffer.at(1), .low = buffer.at(0)});

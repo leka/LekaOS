@@ -64,7 +64,7 @@ class TouchSensorKit
 											 touch::pin::belt_left_front_ch};
 	CoreTouchSensor _sensor_belt_right_back {_belt_right_back_input, _belt_right_back_pm, dac_touch_right,
 											 touch::pin::belt_right_back_ch};
-	CoreTouchSensor _sensor_belt_right_front {_belt_right_back_input, _belt_right_back_pm, dac_touch_right,
+	CoreTouchSensor _sensor_belt_right_front {_belt_right_front_input, _belt_right_front_pm, dac_touch_right,
 											  touch::pin::belt_right_front_ch};
 
 	uint16_t default_max_value_calib {0x0FFF};

@@ -22,6 +22,14 @@ void TouchSensorKit::updateState()
 	_state.belt_left_front_touched	= (0 == _sensor_belt_left_front.read());
 	_state.belt_right_back_touched	= (0 == _sensor_belt_right_back.read());
 	_state.belt_right_front_touched = (0 == _sensor_belt_right_front.read());
+	// static uint16_t callNumber		= 0;
+	// _state.ear_left_touched			= callNumber % 20 == 0;
+	// _state.ear_right_touched		= callNumber % 20 == 3;
+	// _state.belt_left_back_touched	= callNumber % 20 == 6;
+	// _state.belt_left_front_touched	= callNumber % 20 == 9;
+	// _state.belt_right_back_touched	= callNumber % 20 == 12;
+	// _state.belt_right_front_touched = callNumber % 20 == 15;
+	// ++callNumber;
 }
 
 void TouchSensorKit::printState()
