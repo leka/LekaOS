@@ -29,8 +29,6 @@ struct Command {
 };
 
 constexpr Command<1> command_requestA		 = {.data = {0x26}, .flags = leka::rfid::Flag::sb_7};
-constexpr Command<2> command_read_register_0 = {.data  = {0x30, 0x00},
-												.flags = leka::rfid::Flag::crc | leka::rfid::Flag::sb_8};
 constexpr Command<2> command_read_register_4 = {.data  = {0x30, 0x04},
 												.flags = leka::rfid::Flag::crc | leka::rfid::Flag::sb_8};
 constexpr Command<2> command_read_register_6 = {.data  = {0x30, 0x06},
@@ -91,11 +89,10 @@ namespace sm::event {
 
 namespace sm::state {
 
-	inline auto idle			= boost::sml::state<class idle>;
-	inline auto send_reqa		= boost::sml::state<class send_reqa>;
-	inline auto requesting_atqa = boost::sml::state<class requesting_atqa>;
-	inline auto identifying_tag = boost::sml::state<class identifying_tag>;
-	inline auto validating_tag	= boost::sml::state<class validating_tag>;
+	inline auto idle				= boost::sml::state<class idle>;
+	inline auto send_reqa			= boost::sml::state<class send_reqa>;
+	inline auto requesting_atqa		= boost::sml::state<class requesting_atqa>;
+	inline auto requesting_tag_data = boost::sml::state<class requesting_tag_data>;
 
 }	// namespace sm::state
 
@@ -136,12 +133,6 @@ namespace sm::action {
 		auto operator()(irfidreader &rfidreader) const { rfidreader.sendCommandToTag(command_requestA.getArray()); }
 	};
 
-	struct send_register_0 {
-		auto operator()(irfidreader &rfidreader) const
-		{
-			rfidreader.sendCommandToTag(command_read_register_0.getArray());
-		}
-	};
 
 	struct send_register_4 {
 		auto operator()(irfidreader &rfidreader) const
@@ -150,7 +141,7 @@ namespace sm::action {
 		}
 	};
 
-	struct on_tag_valid {
+	struct on_tag_data_received {
 		auto operator()(irfidreader &rfidreader) const { rfidreader.onTagValid(); }
 	};
 
@@ -168,16 +159,13 @@ struct ISO14443A {
 
 			, sm::state::send_reqa        + event<sm::event::tag_detected>                                      / (sm::action::send_request_A  {})          = sm::state::requesting_atqa
 
-			, sm::state::requesting_atqa  + event<sm::event::tag_detected>  [sm::guard::atqa_received {}]       / (sm::action::send_register_0  {})         = sm::state::identifying_tag
+			, sm::state::requesting_atqa  + event<sm::event::tag_detected>  [sm::guard::atqa_received {}]       / (sm::action::send_register_4  {})         = sm::state::requesting_tag_data
 			, sm::state::requesting_atqa  + event<sm::event::tag_detected>  [!sm::guard::atqa_received {}]      / (sm::action::set_tag_detection_mode {})   = sm::state::idle
 
-			, sm::state::identifying_tag  + event<sm::event::tag_detected>  [sm::guard::register_received {}]   / (sm::action::send_register_4  {})         = sm::state::validating_tag
-			, sm::state::identifying_tag  + event<sm::event::tag_detected>  [!sm::guard::register_received {}]  / (sm::action::set_tag_detection_mode {})   = sm::state::idle
+			, sm::state::requesting_tag_data   + event<sm::event::tag_detected>  [sm::guard::register_received {}]   / (sm::action::set_tag_detection_mode {})             = sm::state::idle
+			, sm::state::requesting_tag_data   + event<sm::event::tag_detected>  [!sm::guard::register_received {}]  / (sm::action::set_tag_detection_mode {})             = sm::state::idle
 
-			, sm::state::validating_tag   + event<sm::event::tag_detected>  [sm::guard::register_received {}]   / (sm::action::set_tag_detection_mode {})             = sm::state::idle
-			, sm::state::validating_tag   + event<sm::event::tag_detected>  [!sm::guard::register_received {}]  / (sm::action::set_tag_detection_mode {})             = sm::state::idle
-
-			, sm::state::validating_tag   + boost::sml::on_exit<_> / ( sm::action::on_tag_valid {})      //TODO (@Hugo) Find a way to trigger set_tag_detection_mode before on_tag_valid instead of using it even if register4 isn't received
+			, sm::state::requesting_tag_data   + boost::sml::on_exit<_> / ( sm::action::on_tag_data_received {})      //TODO (@Hugo) Find a way to trigger set_tag_detection_mode before on_tag_data_received instead of using it even if register4 isn't received
 
 			// clang-format on
 		);
