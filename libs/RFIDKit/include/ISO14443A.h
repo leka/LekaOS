@@ -150,18 +150,18 @@ struct ISO14443A {
 
 		return make_transition_table(
 			// clang-format off
-			* sm::state::idle  + event<sm::event::tag_detected> [sm::guard::is_tag_detected {} ] / (sm::action::set_communication_protocol {})              = sm::state::send_reqa
-			, sm::state::idle  + event<sm::event::tag_detected> [!sm::guard::is_tag_detected {}] / (sm::action::set_tag_detection_mode {})                  = sm::state::idle
+			* sm::state::idle  + event<sm::event::tag_detected> [sm::guard::is_tag_detected {} ] / (sm::action::set_communication_protocol {})                   = sm::state::send_reqa
+			, sm::state::idle  + event<sm::event::tag_detected> [!sm::guard::is_tag_detected {}] / (sm::action::set_tag_detection_mode {})                       = sm::state::idle
 
-			, sm::state::send_reqa        + event<sm::event::tag_detected>                                      / (sm::action::send_request_A  {})          = sm::state::requesting_atqa
+			, sm::state::send_reqa             + event<sm::event::tag_detected>                                      / (sm::action::send_request_A  {})          = sm::state::requesting_atqa
 
-			, sm::state::requesting_atqa  + event<sm::event::tag_detected>  [sm::guard::atqa_received {}]       / (sm::action::send_register_4  {})         = sm::state::requesting_tag_data
-			, sm::state::requesting_atqa  + event<sm::event::tag_detected>  [!sm::guard::atqa_received {}]      / (sm::action::set_tag_detection_mode {})   = sm::state::idle
+			, sm::state::requesting_atqa       + event<sm::event::tag_detected>  [sm::guard::atqa_received {}]       / (sm::action::send_register_4  {})         = sm::state::requesting_tag_data
+			, sm::state::requesting_atqa       + event<sm::event::tag_detected>  [!sm::guard::atqa_received {}]      / (sm::action::set_tag_detection_mode {})   = sm::state::idle
 
-			, sm::state::requesting_tag_data   + event<sm::event::tag_detected>  [sm::guard::register_received {}]   / (sm::action::set_tag_detection_mode {})             = sm::state::idle
-			, sm::state::requesting_tag_data   + event<sm::event::tag_detected>  [!sm::guard::register_received {}]  / (sm::action::set_tag_detection_mode {})             = sm::state::idle
+			, sm::state::requesting_tag_data   + event<sm::event::tag_detected>  [sm::guard::register_received {}]   / (sm::action::on_tag_data_received {})     = sm::state::idle
+			, sm::state::requesting_tag_data   + event<sm::event::tag_detected>  [!sm::guard::register_received {}]                                              = sm::state::idle
 
-			, sm::state::requesting_tag_data   + boost::sml::on_exit<_> / ( sm::action::on_tag_data_received {})      //TODO (@Hugo) Find a way to trigger set_tag_detection_mode before on_tag_data_received instead of using it even if register4 isn't received
+			, sm::state::requesting_tag_data   + boost::sml::on_exit<_> / ( sm::action::set_tag_detection_mode {})
 
 			// clang-format on
 		);
