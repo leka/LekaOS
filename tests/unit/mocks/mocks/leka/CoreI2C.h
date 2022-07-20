@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "CoreI2C.h"
 #include "gmock/gmock.h"
+#include "interface/drivers/I2C.h"
 
 namespace leka::mock {
 
