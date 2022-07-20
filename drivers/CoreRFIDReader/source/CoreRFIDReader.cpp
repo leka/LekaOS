@@ -15,12 +15,12 @@ void CoreRFIDReader::init()
 	registerOnDataAvailableCallback();
 }
 
-void CoreRFIDReader::registerOnTagDetectedCallback(mbed::Callback<void()> callback)
+void CoreRFIDReader::registerOnTagDetectedCallback(const std::function<void()> &callback)
 {
 	_on_tag_detected = callback;
 };
 
-void CoreRFIDReader::registerOnTagValidCallback(mbed::Callback<void()> callback)
+void CoreRFIDReader::registerOnTagValidCallback(const std::function<void()> &callback)
 {
 	_on_tag_valid = callback;
 };
@@ -63,6 +63,7 @@ void CoreRFIDReader::setTagDetectionMode()
 {
 	_serial.write(rfid::command::frame::set_tag_detection_mode.data(),
 				  rfid::command::frame::set_tag_detection_mode.size());
+	rtos::ThisThread::sleep_for(10ms);
 }
 
 void CoreRFIDReader::setCommunicationProtocol(rfid::Protocol protocol)
@@ -85,23 +86,16 @@ void CoreRFIDReader::setGainAndModulationISO14443A()
 				  rfid::command::frame::set_gain_and_modulation.size());
 }
 
-void CoreRFIDReader::sendCommandToTag(std::span<const uint8_t> cmd)
-{
-	auto command_size = formatCommand(cmd);
-
-	_serial.write(_tx_buf.data(), command_size);
-}
-
-auto CoreRFIDReader::formatCommand(std::span<const uint8_t> cmd) -> size_t
+void CoreRFIDReader::sendToTag(std::span<const uint8_t> data)
 {
 	_tx_buf[0] = rfid::command::send_receive;
-	_tx_buf[1] = static_cast<uint8_t>(cmd.size());
+	_tx_buf[1] = static_cast<uint8_t>(data.size());
 
-	for (auto i = 0; i < cmd.size(); ++i) {
-		_tx_buf.at(i + rfid::tag_answer::heading_size) = cmd[i];
+	for (auto i = 0; i < data.size(); ++i) {
+		_tx_buf.at(i + rfid::tag_answer::heading_size) = data[i];
 	}
 
-	return cmd.size() + rfid::tag_answer::heading_size;
+	_serial.write(_tx_buf.data(), data.size() + rfid::tag_answer::heading_size);
 }
 
 auto CoreRFIDReader::didTagCommunicationSucceed(size_t sizeTagData) -> bool
@@ -109,10 +103,10 @@ auto CoreRFIDReader::didTagCommunicationSucceed(size_t sizeTagData) -> bool
 	uint8_t status = _rx_buf[0];
 	uint8_t length = _rx_buf[1];
 
-	auto didCommunicationSucceed = status == rfid::status::communication_succeed;
-	auto didCommandSameSize		 = sizeTagData == length - rfid::tag_answer::flag_size;
+	auto did_communication_succeed = status == rfid::status::communication_succeed;
+	auto did_command_same_size	   = sizeTagData == length - rfid::tag_answer::flag_size;
 
-	return (didCommunicationSucceed && didCommandSameSize);
+	return (did_communication_succeed && did_command_same_size);
 }
 
 void CoreRFIDReader::getDataFromTag(std::span<uint8_t> data)
@@ -122,16 +116,17 @@ void CoreRFIDReader::getDataFromTag(std::span<uint8_t> data)
 	}
 }
 
-auto CoreRFIDReader::getTagData() -> rfid::Tag
+auto CoreRFIDReader::getTag() -> rfid::Tag
+{
+	return _tag;
+}
+
+void CoreRFIDReader::onTagDataReceived()
 {
 	for (size_t i = 0; i < 18; ++i) {
 		_tag.data[i] = _rx_buf[i + rfid::tag_answer::heading_size];
 	}
-	return _tag;
-}
 
-void CoreRFIDReader::onTagValid()
-{
 	_on_tag_valid();
 }
 

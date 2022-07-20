@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include <boost/sml.hpp>
-
 #include "ISO14443A.h"
 #include "MagicCard.h"
 #include "interface/drivers/RFIDReader.h"
@@ -21,9 +19,9 @@ class RFIDKit
 	{
 		using namespace rfid::sm;
 
-		static auto tagDetectedCallback = [this]() { state_machine.process_event(event::tag_detected {}); };
+		static auto tag_detected_callback = [this]() { state_machine.process_event(event::tag_detected {}); };
 
-		_rfid_reader.registerOnTagDetectedCallback(tagDetectedCallback);
+		_rfid_reader.registerOnTagDetectedCallback(tag_detected_callback);
 		registerMagicCard();
 
 		_rfid_reader.init();
@@ -33,11 +31,13 @@ class RFIDKit
 	void registerMagicCard()
 	{
 		auto on_magic_card_readable_callback = [this]() {
-			rfid::Tag tag = _rfid_reader.getTagData();
+			rfid::Tag tag = _rfid_reader.getTag();
 			if (isTagSignatureValid(tag)) {
 				_card = MagicCard {tag.data[5]};
 
-				_on_tag_available_callback(_card);
+				if (_on_tag_available_callback != nullptr) {
+					_on_tag_available_callback(_card);
+				}
 			}
 		};
 		_rfid_reader.registerOnTagValidCallback(on_magic_card_readable_callback);
@@ -45,8 +45,7 @@ class RFIDKit
 
 	auto isTagSignatureValid(rfid::Tag tag) -> bool
 	{
-		return (tag.data[0] == leka_tag_header[0] && tag.data[1] == leka_tag_header[1] &&
-				tag.data[2] == leka_tag_header[2] && tag.data[3] == leka_tag_header[3]);
+		return std::equal(std::begin(leka_tag_header), std::end(leka_tag_header), std::begin(tag.data));
 	}
 
 	void onTagActivated(std::function<void(MagicCard &_card)> callback) { _on_tag_available_callback = callback; }

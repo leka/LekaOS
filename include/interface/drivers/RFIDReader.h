@@ -8,11 +8,6 @@
 #include <functional>
 #include <span>
 
-#include "platform/Callback.h"
-
-#include "BufferedSerial.h"
-#include "boost/sml.hpp"
-
 namespace leka {
 
 namespace rfid {
@@ -53,17 +48,17 @@ namespace interface {
 	  public:
 		virtual ~RFIDReader() = default;
 
-		virtual void init()															= 0;
-		virtual void setTagDetectionMode()											= 0;
-		virtual auto isTagDetected() -> bool										= 0;
-		virtual void onTagValid()													= 0;
-		virtual auto getTagData() -> rfid::Tag										= 0;
-		virtual void getDataFromTag(std::span<uint8_t> data)						= 0;
-		virtual auto didTagCommunicationSucceed(size_t sizeTagData) -> bool			= 0;
-		virtual void sendCommandToTag(std::span<const uint8_t> cmd)					= 0;
-		virtual void setCommunicationProtocol(rfid::Protocol protocol)				= 0;
-		virtual void registerOnTagDetectedCallback(mbed::Callback<void()> callback) = 0;
-		virtual void registerOnTagValidCallback(mbed::Callback<void()> callback)	= 0;
+		virtual void init()																  = 0;
+		virtual void setTagDetectionMode()												  = 0;
+		virtual auto isTagDetected() -> bool											  = 0;
+		virtual void onTagDataReceived()												  = 0;
+		virtual auto getTag() -> rfid::Tag												  = 0;
+		virtual void getDataFromTag(std::span<uint8_t> data)							  = 0;
+		virtual auto didTagCommunicationSucceed(size_t sizeTagData) -> bool				  = 0;
+		virtual void sendToTag(std::span<const uint8_t> data)							  = 0;
+		virtual void setCommunicationProtocol(rfid::Protocol protocol)					  = 0;
+		virtual void registerOnTagDetectedCallback(const std::function<void()> &callback) = 0;
+		virtual void registerOnTagValidCallback(const std::function<void()> &callback)	  = 0;
 	};
 
 }	// namespace interface

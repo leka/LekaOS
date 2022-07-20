@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <cstddef>
+
 #include "boost/sml.hpp"
 #include "interface/drivers/RFIDReader.h"
 
@@ -30,8 +32,6 @@ struct Command {
 
 constexpr Command<1> command_requestA		 = {.data = {0x26}, .flags = leka::rfid::Flag::sb_7};
 constexpr Command<2> command_read_register_4 = {.data  = {0x30, 0x04},
-												.flags = leka::rfid::Flag::crc | leka::rfid::Flag::sb_8};
-constexpr Command<2> command_read_register_6 = {.data  = {0x30, 0x06},
 												.flags = leka::rfid::Flag::crc | leka::rfid::Flag::sb_8};
 
 constexpr size_t ATQA_answer_size	  = 2;
@@ -64,7 +64,7 @@ inline auto receiveAtqa(interface::RFIDReader &rfidreader) -> bool
 		rfidreader.getDataFromTag(atqa_answer);
 	}
 
-	return atqa_answer[0] == expected_ATQA_answer[0] && atqa_answer[1] == expected_ATQA_answer[1];
+	return atqa_answer == expected_ATQA_answer;
 }
 
 inline auto receiveRegister(interface::RFIDReader &rfidreader) -> bool
@@ -130,19 +130,15 @@ namespace sm::action {
 	};
 
 	struct send_request_A {
-		auto operator()(irfidreader &rfidreader) const { rfidreader.sendCommandToTag(command_requestA.getArray()); }
+		auto operator()(irfidreader &rfidreader) const { rfidreader.sendToTag(command_requestA.getArray()); }
 	};
 
-
 	struct send_register_4 {
-		auto operator()(irfidreader &rfidreader) const
-		{
-			rfidreader.sendCommandToTag(command_read_register_4.getArray());
-		}
+		auto operator()(irfidreader &rfidreader) const { rfidreader.sendToTag(command_read_register_4.getArray()); }
 	};
 
 	struct on_tag_data_received {
-		auto operator()(irfidreader &rfidreader) const { rfidreader.onTagValid(); }
+		auto operator()(irfidreader &rfidreader) const { rfidreader.onTagDataReceived(); }
 	};
 
 }	// namespace sm::action

@@ -174,35 +174,35 @@ class CoreRFIDReader : public interface::RFIDReader
 	explicit CoreRFIDReader(interface::BufferedSerial &serial) : _serial(serial) {};
 
 	void init() final;
-	void setTagDetectionMode() final;
+
+	void registerOnTagDetectedCallback(const std::function<void()> &callback) final;
+	void registerOnTagValidCallback(const std::function<void()> &callback) final;
+
 	auto isTagDetected() -> bool final;
-	void onTagValid() final;
-	auto getTagData() -> rfid::Tag final;
-	void getDataFromTag(std::span<uint8_t> data) final;
-	auto didTagCommunicationSucceed(size_t sizeTagData) -> bool final;
-	void sendCommandToTag(std::span<const uint8_t> cmd) final;
+	void setTagDetectionMode() final;
 	void setCommunicationProtocol(rfid::Protocol protocol) final;
-	void registerOnTagDetectedCallback(mbed::Callback<void()> callback) final;
-	void registerOnTagValidCallback(mbed::Callback<void()> callback) final;
+	void sendToTag(std::span<const uint8_t> data) final;
+	auto didTagCommunicationSucceed(size_t sizeTagData) -> bool final;
+	void getDataFromTag(std::span<uint8_t> data) final;
+	auto getTag() -> rfid::Tag final;
+	void onTagDataReceived() final;
 
   private:
 	void registerOnDataAvailableCallback();
 	void onDataAvailable();
 
-	void setProtocolISO14443A();
-	void setGainAndModulationISO14443A();
-
 	void read();
 
-	auto formatCommand(std::span<const uint8_t> cmd) -> size_t;
+	void setProtocolISO14443A();
+	void setGainAndModulationISO14443A();
 
 	rfid::Tag _tag {};
 	size_t _anwser_size {0};
 	rtos::Thread _thread {};
 	events::EventQueue _event_queue {};
 	interface::BufferedSerial &_serial;
-	mbed::Callback<void()> _on_tag_detected;
-	mbed::Callback<void()> _on_tag_valid;
+	std::function<void()> _on_tag_detected;
+	std::function<void()> _on_tag_valid;
 
 	std::array<uint8_t, rfid::max_tx_length> _tx_buf {};
 	std::array<uint8_t, rfid::max_rx_length> _rx_buf {};
