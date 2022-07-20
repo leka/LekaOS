@@ -34,12 +34,12 @@ void RFIDKit::registerMagicCard()
 	_rfid_reader.registerOnTagValidCallback(on_magic_card_readable_callback);
 }
 
-auto RFIDKit::isTagSignatureValid(rfid::Tag tag) -> bool
+auto RFIDKit::isTagSignatureValid(rfid::Tag tag) const -> bool
 {
 	return std::equal(std::begin(leka_tag_header), std::end(leka_tag_header), std::begin(tag.data));
 }
 
-void RFIDKit::onTagActivated(std::function<void(MagicCard &_card)> callback)
+void RFIDKit::onTagActivated(std::function<void(MagicCard &_card)> const &callback)
 {
 	_on_tag_available_callback = callback;
 }
