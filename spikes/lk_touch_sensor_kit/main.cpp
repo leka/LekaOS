@@ -12,6 +12,9 @@
 using namespace leka;
 using namespace std::chrono;
 
+auto threadUpdateStates = rtos::Thread {osPriorityLow};
+auto threadUpdatePrint	= rtos::Thread {osPriorityLow};
+
 auto main() -> int
 {
 	logger::init();
@@ -33,9 +36,13 @@ auto main() -> int
 			 int(t.count() / 1000));
 	touch_sensor_kit.adjustSensitivity(0x0000, true);
 	rtos::ThisThread::sleep_for(2s);
-
+	auto updateState_func = [&] { touch_sensor_kit.updateState(); };
+	mbed::Callback<void()> callback_updateState(updateState_func);
+	// auto updatePrint_func = [&] { touch_sensor_kit.printState(); };
+	// mbed::Callback<void()> callback_printState(updatePrint_func);
 	while (true) {
-		touch_sensor_kit.updateState();
+		threadUpdateStates.start(callback_updateState);
+		// threadUpdatePrint.start(callback_printState);
 		touch_sensor_kit.printState();
 		touch_sensor_kit.resetByPowerMode();
 		log_info("\n\n");

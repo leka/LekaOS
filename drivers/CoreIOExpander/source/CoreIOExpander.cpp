@@ -120,9 +120,9 @@ auto CoreIOExpanderMCP23017::readRegister(uint8_t reg) -> uint16_t
 	auto buffer = std::array<uint8_t, 2> {};
 
 	_i2c.write(_I2C_ADDRESS, addr.data(), addr.size(), false);
-	log_info("Before  _i2c.read in readRegister for buffer for 0 %u, for 1 %u", buffer.at(0), buffer.at(1));
+	// log_info("Before  _i2c.read in readRegister for buffer for 0 %u, for 1 %u", buffer.at(0), buffer.at(1));
 	_i2c.read(_I2C_ADDRESS, buffer.data(), buffer.size(), false);
-	log_info("After  _i2c.read in readRegister for buffer for 0 %u, for 1 %u", buffer.at(0), buffer.at(1));
+	// log_info("After  _i2c.read in readRegister for buffer for 0 %u, for 1 %u", buffer.at(0), buffer.at(1));
 
 	auto value = utils::memory::combineBytes({.high = buffer.at(1), .low = buffer.at(0)});
 

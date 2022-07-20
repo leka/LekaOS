@@ -80,5 +80,6 @@ class TouchSensorKit
 	};
 
 	State _state;
+	rtos::Thread _thread {};
 };
 }	// namespace leka

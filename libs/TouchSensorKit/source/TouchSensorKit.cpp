@@ -16,12 +16,14 @@ void TouchSensorKit::setup()
 
 void TouchSensorKit::updateState()
 {
-	_state.ear_left_touched			= (0 == _sensor_ear_left.read());
-	_state.ear_right_touched		= (0 == _sensor_ear_right.read());
-	_state.belt_left_back_touched	= (0 == _sensor_belt_left_back.read());
-	_state.belt_left_front_touched	= (0 == _sensor_belt_left_front.read());
-	_state.belt_right_back_touched	= (0 == _sensor_belt_right_back.read());
-	_state.belt_right_front_touched = (0 == _sensor_belt_right_front.read());
+	while (true) {
+		_state.ear_left_touched			= (0 == _sensor_ear_left.read());
+		_state.ear_right_touched		= (0 == _sensor_ear_right.read());
+		_state.belt_left_back_touched	= (0 == _sensor_belt_left_back.read());
+		_state.belt_left_front_touched	= (0 == _sensor_belt_left_front.read());
+		_state.belt_right_back_touched	= (0 == _sensor_belt_right_back.read());
+		_state.belt_right_front_touched = (0 == _sensor_belt_right_front.read());
+	}
 	// static uint16_t callNumber		= 0;
 	// _state.ear_left_touched			= callNumber % 20 == 0;
 	// _state.ear_right_touched		= callNumber % 20 == 3;
@@ -34,14 +36,13 @@ void TouchSensorKit::updateState()
 
 void TouchSensorKit::printState()
 {
-	// log_info("Ear left touched: %s", _state.ear_left_touched ? "true" : "false");
+	log_info("Ear left touched: %s", _state.ear_left_touched ? "true" : "false");
 	// log_info("Ear right touched: %s", _state.ear_right_touched ? "true" : "false");
-	// log_info("Belt left front touched: %s", _state.belt_left_front_touched ? "true" : "false");
+	log_info("Belt left front touched: %s", _state.belt_left_front_touched ? "true" : "false");
 	// log_info("Belt left back touched: %s", _state.belt_left_back_touched ? "true" : "false");
-	// log_info("Belt right front touched: %s", _state.belt_right_front_touched ? "true" : "false");
-	// log_info("Belt right back touched: %s", _state.belt_right_back_touched ? "true" : "false");
+	//  log_info("Belt right front touched: %s", _state.belt_right_front_touched ? "true" : "false");
+	//  log_info("Belt right back touched: %s", _state.belt_right_back_touched ? "true" : "false");
 }
-
 void TouchSensorKit::resetByPowerMode()
 {
 	if (_state.ear_left_touched | _state.ear_right_touched | _state.belt_left_front_touched |
