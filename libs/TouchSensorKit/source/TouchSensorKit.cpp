@@ -9,59 +9,61 @@
 using namespace leka;
 using namespace std::chrono_literals;
 
-void TouchSensorKit::setup()
+void TouchSensorKit::init()
 {
-	setPowerMode(touch::power_mode::normal);
+	for (Position position: positions) {
+		setPowerMode(position, PowerMode::normal);
+	}
 }
 
-void TouchSensorKit::updateState()
+auto TouchSensorKit::isTouched(Position position) -> bool
 {
-	_state.ear_left_touched			= (0 == _sensor_ear_left.read());
-	_state.ear_right_touched		= (0 == _sensor_ear_right.read());
-	_state.belt_left_back_touched	= (0 == _sensor_belt_left_back.read());
-	_state.belt_left_front_touched	= (0 == _sensor_belt_left_front.read());
-	_state.belt_right_back_touched	= (0 == _sensor_belt_right_back.read());
-	_state.belt_right_front_touched = (0 == _sensor_belt_right_front.read());
+	const auto pos = static_cast<uint8_t>(position);
+
+	auto read = (1 == _sensors.at(pos).read());
+	if (read && _on_sensor_touched_callback != nullptr) {
+		_on_sensor_touched_callback();
+	}
+	return read;
 }
 
-void TouchSensorKit::printState()
+auto TouchSensorKit::isTouchedAny() -> bool
 {
-	log_info("Ear left touched: %s", _state.ear_left_touched ? "true" : "false");
-	log_info("Ear right touched: %s", _state.ear_right_touched ? "true" : "false");
-	log_info("Belt left front touched: %s", _state.belt_left_front_touched ? "true" : "false");
-	log_info("Belt left back touched: %s", _state.belt_left_back_touched ? "true" : "false");
-	log_info("Belt right front touched: %s", _state.belt_right_front_touched ? "true" : "false");
-	log_info("Belt right back touched: %s", _state.belt_right_back_touched ? "true" : "false");
+	for (Position position: positions) {
+		if (isTouched(position)) {
+			return true;
+		};
+	};
+	return false;
+}
+
+void TouchSensorKit::setPowerMode(Position position, PowerMode power_mode)
+{
+	const auto pos = static_cast<uint8_t>(position);
+	_sensors.at(pos).setPowerMode(power_mode);
 }
 
 void TouchSensorKit::resetByPowerMode()
 {
-	if (_state.ear_left_touched | _state.ear_right_touched | _state.belt_left_front_touched |
-		_state.belt_left_back_touched | _state.belt_right_front_touched | _state.belt_right_back_touched) {
-		setPowerMode(touch::power_mode::low);
-		rtos::ThisThread::sleep_for(5ms);
-		setPowerMode(touch::power_mode::normal);
-		rtos::ThisThread::sleep_for(5ms);
+	for (Position position: positions) {
+		if (isTouched(position)) {
+			setPowerMode(position, PowerMode::low);
+			rtos::ThisThread::sleep_for(20ms);
+			setPowerMode(position, PowerMode::normal);
+			rtos::ThisThread::sleep_for(20ms);
+		}
 	}
 }
 
-void TouchSensorKit::setPowerMode(int power_mode)
+void TouchSensorKit::setSensitivity(Position position, uint16_t value, bool saved)
 {
-	_sensor_ear_left.setPowerMode(power_mode);
-	_sensor_ear_right.setPowerMode(power_mode);
-	_sensor_belt_left_back.setPowerMode(power_mode);
-	_sensor_belt_left_front.setPowerMode(power_mode);
-	_sensor_belt_right_back.setPowerMode(power_mode);
-	_sensor_belt_right_front.setPowerMode(power_mode);
+	const auto pos = static_cast<uint8_t>(position);
+	_sensors.at(pos).setSensitivity(value, saved);
+
+	rtos::ThisThread::sleep_for(10ms);
 }
 
-void TouchSensorKit::adjustSensitivity(uint16_t value, bool saved)
+void TouchSensorKit::registerOnSensorTouched(std::function<void()> const &on_sensor_touched_callback)
 {
-	_sensor_ear_left.adjustSensitivity(value, saved);
-	_sensor_ear_right.adjustSensitivity(value, saved);
-	_sensor_belt_left_back.adjustSensitivity(value, saved);
-	_sensor_belt_left_front.adjustSensitivity(value, saved);
-	_sensor_belt_right_back.adjustSensitivity(value, saved);
-	_sensor_belt_right_front.adjustSensitivity(value, saved);
-	rtos::ThisThread::sleep_for(1ms);
+	_on_sensor_touched_callback = on_sensor_touched_callback;
 }

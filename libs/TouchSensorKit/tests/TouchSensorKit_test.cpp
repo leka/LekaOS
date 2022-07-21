@@ -25,17 +25,12 @@ TEST_F(TouchSensorTest, initializationDefault)
 
 TEST_F(TouchSensorTest, setup)
 {
-	touch_sensor_kit.setup();
+	touch_sensor_kit.init();
 }
 
 TEST_F(TouchSensorTest, updateState)
 {
 	touch_sensor_kit.updateState();
-}
-
-TEST_F(TouchSensorTest, printState)
-{
-	touch_sensor_kit.printState();
 }
 
 TEST_F(TouchSensorTest, resetByPowerMode)
