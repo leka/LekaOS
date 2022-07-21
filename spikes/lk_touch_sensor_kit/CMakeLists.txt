@@ -16,6 +16,11 @@ target_sources(spike_lk_touch_sensor_kit
 
 target_link_libraries(spike_lk_touch_sensor_kit
 	TouchSensorKit
+	CoreEventFlags
+	CoreLED
+	CoreSPI
+	EventLoopKit
+	LedKit
 )
 
 target_link_custom_leka_targets(spike_lk_touch_sensor_kit)
