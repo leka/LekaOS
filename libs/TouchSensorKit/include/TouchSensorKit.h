@@ -14,37 +14,41 @@ enum class Position
 {
 	ear_left,
 	ear_right,
-	belt_front_left,
-	belt_front_right,
-	belt_back_left,
-	belt_back_right,
+	belt_left_back,
+	belt_left_front,
+	belt_right_back,
+	belt_right_front,
+};
+
+inline const auto positions = std::array<Position, 6> {
+	Position::ear_left,		   Position::ear_right,		  Position::belt_left_back,
+	Position::belt_left_front, Position::belt_right_back, Position::belt_right_front,
 };
 
 class TouchSensorKit
 {
   public:
 	explicit TouchSensorKit() = default;
-	void setup();
+	void init();
 
-	void updateState();
-	void printState();
+	[[nodiscard]] auto isTouched(Position position) -> bool;
+	[[nodiscard]] auto isTouchedAny() -> bool;
 
+	void setPowerMode(Position position, PowerMode power_mode);
 	void resetByPowerMode();
 
-	void adjustSensitivity(uint16_t value, bool saved = false);
+	void setSensitivity(Position position, uint16_t value, bool saved = false);
+
+	void registerOnSensorTouched(std::function<void()> const &on_sensor_touched_callback);
+
+	static constexpr uint16_t default_max_sensitivity_value {0x0FFF};
+	static constexpr uint16_t default_min_sensitivity_value {0x0000};
 
   private:
-	CoreTouchSensor _sensor_ear_left {ear_left_in, _ear_left_pm, dac_touch_left, Channel::A};
-	CoreTouchSensor _sensor_ear_right {ear_right_in, _ear_right_pm, dac_touch_right, ear_right_ch};
-	CoreTouchSensor _sensor_belt_left_back {belt_left_back_in, _belt_left_back_pm, dac_touch_left, belt_left_back_ch};
-	CoreTouchSensor _sensor_belt_left_front {belt_left_front_in, _belt_left_front_pm, dac_touch_left,
-											 belt_left_front_ch};
-	CoreTouchSensor _sensor_belt_right_back {belt_right_back_in, _belt_right_back_pm, dac_touch_right,
-											 belt_right_back_ch};
-	CoreTouchSensor _sensor_belt_right_front {belt_right_front_in, _belt_right_front_pm, dac_touch_right,
-											  belt_right_front_ch};
+	std::array<CoreTouchSensor, 6> _sensors = {sensor_ear_left,		   sensor_ear_right,	   sensor_belt_left_back,
+											   sensor_belt_left_front, sensor_belt_right_back, sensor_belt_right_front};
 
-	uint16_t default_max_sensitivity_value {0x0FFF};
-	uint16_t default_min_sensitivity_value {0x0000};
+	// struct State{} _state;
+	std::function<void()> _on_sensor_touched_callback {};
 };
 }	// namespace leka
