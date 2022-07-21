@@ -20,7 +20,7 @@ void CoreRFIDReader::registerOnTagDetectedCallback(const std::function<void()> &
 	_on_tag_detected = callback;
 };
 
-void CoreRFIDReader::registerOnTagValidCallback(const std::function<void()> &callback)
+void CoreRFIDReader::registerOnTagReadableCallback(const std::function<void()> &callback)
 {
 	_on_tag_valid = callback;
 };

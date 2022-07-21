@@ -176,7 +176,7 @@ class CoreRFIDReader : public interface::RFIDReader
 	void init() final;
 
 	void registerOnTagDetectedCallback(const std::function<void()> &callback) final;
-	void registerOnTagValidCallback(const std::function<void()> &callback) final;
+	void registerOnTagReadableCallback(const std::function<void()> &callback) final;
 
 	auto isTagDetected() -> bool final;
 	void setTagDetectionMode() final;

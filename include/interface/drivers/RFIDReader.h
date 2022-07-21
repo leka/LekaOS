@@ -58,7 +58,7 @@ namespace interface {
 		virtual void sendToTag(std::span<const uint8_t> data)							  = 0;
 		virtual void setCommunicationProtocol(rfid::Protocol protocol)					  = 0;
 		virtual void registerOnTagDetectedCallback(const std::function<void()> &callback) = 0;
-		virtual void registerOnTagValidCallback(const std::function<void()> &callback)	  = 0;
+		virtual void registerOnTagReadableCallback(const std::function<void()> &callback) = 0;
 	};
 
 }	// namespace interface

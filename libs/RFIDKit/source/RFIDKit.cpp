@@ -31,7 +31,7 @@ void RFIDKit::registerMagicCard()
 			}
 		}
 	};
-	_rfid_reader.registerOnTagValidCallback(on_magic_card_readable_callback);
+	_rfid_reader.registerOnTagReadableCallback(on_magic_card_readable_callback);
 }
 
 auto RFIDKit::isTagSignatureValid(rfid::Tag tag) const -> bool
