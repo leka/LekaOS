@@ -13,14 +13,16 @@ class CoreRFIDReader : public interface::RFIDReader
 {
   public:
 	MOCK_METHOD(void, init, (), (override));
-	MOCK_METHOD(void, registerTagAvailableCallback, (tagAvailableCallback), (override));
-	MOCK_METHOD(void, onDataAvailable, (), (override));
-	MOCK_METHOD(bool, setBaudrate, (uint8_t), (override));
-	MOCK_METHOD(bool, setCommunicationProtocol, (rfid::Protocol), (override));
-	MOCK_METHOD(void, sendToTag, (std::span<uint8_t>), (override));
-	MOCK_METHOD(bool, receiveDataFromTag, (std::span<uint8_t> data), (override));
-	MOCK_METHOD(void, setModeTagDetection, (), (override));
 	MOCK_METHOD(bool, isTagDetected, (), (override));
+	MOCK_METHOD(void, setTagDetectionMode, (), (override));
+	MOCK_METHOD(void, setCommunicationProtocol, (rfid::Protocol), (override));
+	MOCK_METHOD(void, sendToTag, (std::span<const uint8_t>), (override));
+	MOCK_METHOD(bool, didTagCommunicationSucceed, (size_t), (override));
+	MOCK_METHOD(void, getDataFromTag, (std::span<uint8_t> data), (override));
+	MOCK_METHOD(rfid::Tag, getTag, (), (override));
+	MOCK_METHOD(void, onTagDataReceived, (), (override));
+	MOCK_METHOD(void, registerOnTagDetectedCallback, (const std::function<void()> &), (override));
+	MOCK_METHOD(void, registerOnTagReadableCallback, (const std::function<void()> &), (override));
 };
 
 }	// namespace leka::mock
