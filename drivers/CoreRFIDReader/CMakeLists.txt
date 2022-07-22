@@ -18,3 +18,9 @@ target_link_libraries(CoreRFIDReader
 	mbed-os
 	CoreBufferedSerial
 )
+
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
+	leka_unit_tests_sources(
+		tests/CoreRFIDReader_test.cpp
+	)
+endif()
