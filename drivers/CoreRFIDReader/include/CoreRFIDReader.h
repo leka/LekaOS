@@ -186,10 +186,10 @@ class CoreRFIDReader : public interface::RFIDReader
 	void getDataFromTag(std::span<uint8_t> data) final;
 	auto getTag() -> rfid::Tag final;
 	void onTagDataReceived() final;
+	void onDataAvailable();
 
   private:
 	void registerOnDataAvailableCallback();
-	void onDataAvailable();
 
 	void read();
 
@@ -197,7 +197,7 @@ class CoreRFIDReader : public interface::RFIDReader
 	void setGainAndModulationISO14443A();
 
 	rfid::Tag _tag {};
-	size_t _anwser_size {0};
+	size_t _answer_size {0};
 	rtos::Thread _thread {};
 	events::EventQueue _event_queue {};
 	interface::BufferedSerial &_serial;

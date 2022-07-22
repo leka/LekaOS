@@ -42,7 +42,7 @@ void CoreRFIDReader::read()
 {
 	rtos::ThisThread::sleep_for(10ms);
 	if (_serial.readable()) {
-		_anwser_size = _serial.read(_rx_buf.data(), _rx_buf.size());
+		_answer_size = _serial.read(_rx_buf.data(), _rx_buf.size());
 	}
 }
 
@@ -50,7 +50,7 @@ auto CoreRFIDReader::isTagDetected() -> bool
 {
 	std::array<uint8_t, 2> buffer {};
 
-	if (_anwser_size != rfid::expected_answer_size::tag_detection) {
+	if (_answer_size != rfid::expected_answer_size::tag_detection) {
 		return false;
 	}
 
@@ -112,7 +112,8 @@ auto CoreRFIDReader::didTagCommunicationSucceed(size_t sizeTagData) -> bool
 void CoreRFIDReader::getDataFromTag(std::span<uint8_t> data)
 {
 	for (auto i = 0; i < data.size(); ++i) {
-		data[i] = _rx_buf[i + rfid::tag_answer::heading_size];
+		data[i]		 = _rx_buf[i + rfid::tag_answer::heading_size];
+		_tag.data[i] = data[i];
 	}
 }
 
@@ -123,10 +124,6 @@ auto CoreRFIDReader::getTag() -> rfid::Tag
 
 void CoreRFIDReader::onTagDataReceived()
 {
-	for (size_t i = 0; i < 18; ++i) {
-		_tag.data[i] = _rx_buf[i + rfid::tag_answer::heading_size];
-	}
-
 	_on_tag_valid();
 }
 
