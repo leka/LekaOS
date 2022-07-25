@@ -39,26 +39,37 @@ class CoreTouchSensorTest : public ::testing::Test
 
 TEST_F(CoreTouchSensorTest, initializationDefault)
 {
-	EXPECT_CALL(dac, init).Times(1);
 	auto new_sensor = CoreTouchSensor {in, out, dac, channel};
 	ASSERT_NE(&new_sensor, nullptr);
 }
 
+TEST_F(CoreTouchSensorTest, init)
+{
+	EXPECT_CALL(dac, init).Times(1);
+
+	sensor.init();
+}
+
 TEST_F(CoreTouchSensorTest, read)
 {
-	auto expected_read = 0x01;
+	auto expected_read = bool {false};
 	EXPECT_CALL(mockIOExpander, readPin(pin_number)).Times(1).WillOnce(Return(expected_read));
 	auto actual_read = sensor.read();
 
 	EXPECT_EQ(actual_read, expected_read);
 }
 
-TEST_F(CoreTouchSensorTest, setPowerMode)
+TEST_F(CoreTouchSensorTest, reset)
 {
-	auto power_mode		= PowerMode::low;
-	auto expected_value = static_cast<uint8_t>(power_mode);
+	auto expected_value = uint8_t {};
+
+	expected_value = 0x00;
 	EXPECT_CALL(mockIOExpander, writePin(pin_number, expected_value)).Times(1);
-	sensor.setPowerMode(power_mode);
+
+	expected_value = 0x01;
+	EXPECT_CALL(mockIOExpander, writePin(pin_number, expected_value)).Times(1);
+
+	sensor.reset();
 }
 
 TEST_F(CoreTouchSensorTest, setSensitivity)
