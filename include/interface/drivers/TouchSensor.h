@@ -4,27 +4,18 @@
 
 #pragma once
 
-#include <array>
 #include <cstdint>
-#include <span>
 
-namespace leka {
-enum class PowerMode : uint8_t
+namespace leka::interface {
+class TouchSensor
 {
-	low,
-	normal
+  public:
+	virtual ~TouchSensor() = default;
+
+	virtual void init()												= 0;
+	virtual auto read() -> bool										= 0;
+	virtual void reset()											= 0;
+	virtual void setSensitivity(uint16_t value, bool saved = false) = 0;
 };
 
-namespace interface {
-	class TouchSensor
-	{
-	  public:
-		virtual ~TouchSensor() = default;
-
-		virtual auto read() -> int										= 0;
-		virtual void setPowerMode(PowerMode power_mode)					= 0;
-		virtual void setSensitivity(uint16_t value, bool saved = false) = 0;
-	};
-
-}	// namespace interface
-}	// namespace leka
+}	// namespace leka::interface
