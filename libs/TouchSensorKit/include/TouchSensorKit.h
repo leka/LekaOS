@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "CoreTouchSensor.h"
 #include "LogKit.h"
+#include "interface/drivers/TouchSensor.h"
 #include "internal/TouchSensorSystem.h"
 
 namespace leka {
@@ -17,7 +17,7 @@ enum class Position
 	belt_left_back,
 	belt_left_front,
 	belt_right_back,
-	belt_right_front,
+	belt_right_front
 };
 
 inline const auto positions = std::array<Position, 6> {
@@ -28,27 +28,31 @@ inline const auto positions = std::array<Position, 6> {
 class TouchSensorKit
 {
   public:
-	explicit TouchSensorKit() = default;
+	static constexpr auto kNumberOfSensors = uint8_t {6};
+
+	explicit TouchSensorKit(std::array<interface::TouchSensor, kNumberOfSensors> &sensors) : _sensors(sensors) {};
+
 	void init();
+	void start();
+	void run();
+	void stop();
 
-	[[nodiscard]] auto isTouched(Position position) -> bool;
-	[[nodiscard]] auto isTouchedAny() -> bool;
+	auto isTouched(Position position) -> bool;
+	auto isReleased(Position position) -> bool;
 
-	void setPowerMode(Position position, PowerMode power_mode);
-	void resetByPowerMode();
+	void calibrate(Position position);
 
-	void setSensitivity(Position position, uint16_t value, bool saved = false);
-
-	void registerOnSensorTouched(std::function<void()> const &on_sensor_touched_callback);
-
-	static constexpr uint16_t default_max_sensitivity_value {0x0FFF};
-	static constexpr uint16_t default_min_sensitivity_value {0x0000};
+	void registerOnSensorTouched(std::function<void(Position &)> const &on_sensor_touched_callback);
+	void registerOnSensorReleased(std::function<void(Position &)> const &on_sensor_released_callback);
 
   private:
-	std::array<CoreTouchSensor, 6> _sensors = {sensor_ear_left,		   sensor_ear_right,	   sensor_belt_left_back,
-											   sensor_belt_left_front, sensor_belt_right_back, sensor_belt_right_front};
+	void read(uint8_t position);
+	void reset(uint8_t position);
+	void setSensitivity(uint8_t position, uint16_t value, bool saved = false);
 
-	// struct State{} _state;
-	std::function<void()> _on_sensor_touched_callback {};
+	std::array<interface::TouchSensor, kNumberOfSensors> &_sensors;
+
+	std::function<void(Position &)> _on_sensor_touched_callback {};
+	std::function<void(Position &)> _on_sensor_released_callback {};
 };
 }	// namespace leka

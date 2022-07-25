@@ -23,22 +23,36 @@ TEST_F(TouchSensorTest, initializationDefault)
 	ASSERT_NE(&touch_sensor_kit, nullptr);
 }
 
-TEST_F(TouchSensorTest, setup)
+TEST_F(TouchSensorTest, init)
 {
 	touch_sensor_kit.init();
 }
 
-TEST_F(TouchSensorTest, updateState)
+TEST_F(TouchSensorTest, start)
 {
 	touch_sensor_kit.updateState();
 }
 
-TEST_F(TouchSensorTest, resetByPowerMode)
+TEST_F(TouchSensorTest, run)
 {
-	touch_sensor_kit.resetByPowerMode();
+	touch_sensor_kit.updateState();
 }
 
-TEST_F(TouchSensorTest, adjustSensitivity)
+TEST_F(TouchSensorTest, stop)
 {
-	touch_sensor_kit.adjustSensitivity(0x0ABC);
+	touch_sensor_kit.updateState();
+}
+TEST_F(TouchSensorTest, start)
+{
+	touch_sensor_kit.updateState();
+}
+
+TEST_F(TouchSensorTest, isTouched)
+{
+	touch_sensor_kit.isTouched(Position::ear_left);
+}
+
+TEST_F(TouchSensorTest, isReleased)
+{
+	touch_sensor_kit.isReleased(Position::ear_left);
 }

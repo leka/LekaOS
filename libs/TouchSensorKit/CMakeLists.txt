@@ -7,8 +7,6 @@ add_library(TouchSensorKit STATIC)
 target_include_directories(TouchSensorKit
 	PUBLIC
 		include
-	PRIVATE
-		include/internal
 )
 
 target_sources(TouchSensorKit
