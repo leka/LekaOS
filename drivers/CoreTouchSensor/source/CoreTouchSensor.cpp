@@ -40,3 +40,8 @@ void CoreTouchSensor::setPowerMode(PowerMode power_mode)
 	auto pm = static_cast<uint8_t>(power_mode);
 	_power_mode_pin.write(pm);
 }
+
+auto CoreTouchSensor::getState() -> bool
+{
+	return _state;
+}
