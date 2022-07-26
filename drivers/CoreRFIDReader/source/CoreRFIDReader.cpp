@@ -88,8 +88,8 @@ void CoreRFIDReader::setGainAndModulationISO14443A()
 
 void CoreRFIDReader::sendToTag(std::span<const uint8_t> data)
 {
-	_tx_buf[0] = rfid::command::send_receive;
-	_tx_buf[1] = static_cast<uint8_t>(data.size());
+	_tx_buf.at(0) = rfid::command::send_receive;
+	_tx_buf.at(1) = static_cast<uint8_t>(data.size());
 
 	for (auto i = 0; i < data.size(); ++i) {
 		_tx_buf.at(i + rfid::tag_answer::heading_size) = data[i];
@@ -100,8 +100,8 @@ void CoreRFIDReader::sendToTag(std::span<const uint8_t> data)
 
 auto CoreRFIDReader::didTagCommunicationSucceed(size_t sizeTagData) -> bool
 {
-	uint8_t status = _rx_buf[0];
-	uint8_t length = _rx_buf[1];
+	uint8_t status = _rx_buf.at(0);
+	uint8_t length = _rx_buf.at(1);
 
 	auto did_communication_succeed = status == rfid::status::communication_succeed;
 	auto did_command_same_size	   = sizeTagData == length - rfid::tag_answer::flag_size;
@@ -111,13 +111,10 @@ auto CoreRFIDReader::didTagCommunicationSucceed(size_t sizeTagData) -> bool
 
 auto CoreRFIDReader::getDataFromTag() -> std::array<uint8_t, 18>
 {
-	static constexpr auto register_size = 18;
-	std::array<uint8_t, register_size> data {};
-	for (auto i = 0; i < register_size; ++i) {
-		data[i]		 = _rx_buf[i + rfid::tag_answer::heading_size];
-		_tag.data[i] = data[i];
+	for (auto i = 0; i < _tag.data.size(); ++i) {
+		_tag.data.at(i) = _rx_buf.at(i + rfid::tag_answer::heading_size);
 	}
-	return data;
+	return _tag.data;
 }
 
 auto CoreRFIDReader::getTag() -> rfid::Tag
