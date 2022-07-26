@@ -29,6 +29,7 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(2s);
 
 	rfidkit.init();
+	rfidkit.onTagActivated([](const MagicCard &card) { log_debug("Card id: %i", card.getId()); });
 
 	HelloWorld hello;
 	hello.start();
