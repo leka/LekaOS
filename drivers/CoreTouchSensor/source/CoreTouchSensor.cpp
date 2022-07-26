@@ -6,6 +6,8 @@
 
 #include "rtos/ThisThread.h"
 
+#include "MathUtils.h"
+
 using namespace leka;
 using namespace std::chrono_literals;
 
@@ -25,23 +27,21 @@ auto CoreTouchSensor::read() -> bool
 void CoreTouchSensor::reset()
 {
 	setPowerMode(PowerMode::low);
-	rtos::ThisThread::sleep_for(10ms);
+	rtos::ThisThread::sleep_for(1ms);
 	setPowerMode(PowerMode::normal);
-	rtos::ThisThread::sleep_for(10ms);
+	rtos::ThisThread::sleep_for(1ms);
 }
 
 void CoreTouchSensor::setSensitivity(uint16_t value, bool saved)
 {
-	_sensitivity_pin.dac.write(_sensitivity_pin.channel, value, saved);
+	auto inverted_value =
+		utils::math::map<uint16_t, uint16_t>(value, default_min_sensitivity_value, default_max_sensitivity_value,
+											 default_max_sensitivity_value, default_min_sensitivity_value);
+	_sensitivity_pin.dac.write(_sensitivity_pin.channel, inverted_value, saved);
 }
 
 void CoreTouchSensor::setPowerMode(PowerMode power_mode)
 {
 	auto pm = static_cast<uint8_t>(power_mode);
 	_power_mode_pin.write(pm);
-}
-
-auto CoreTouchSensor::getState() -> bool
-{
-	return _state;
 }

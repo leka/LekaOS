@@ -6,6 +6,7 @@
 
 #include "IOKit/DigitalIn.h"
 #include "IOKit/DigitalOut.h"
+#include "MathUtils.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreI2C.h"
@@ -74,14 +75,10 @@ TEST_F(CoreTouchSensorTest, reset)
 
 TEST_F(CoreTouchSensorTest, setSensitivity)
 {
-	EXPECT_CALL(dac, write(channel, 0x0ABC, false)).Times(1);
-	auto value = 0x0ABC;
+	auto value			= 0x0ABC;
+	auto expected_value = utils::math::map<uint16_t, uint16_t>(
+		value, CoreTouchSensor::default_min_sensitivity_value, CoreTouchSensor::default_max_sensitivity_value,
+		CoreTouchSensor::default_max_sensitivity_value, CoreTouchSensor::default_min_sensitivity_value);
+	EXPECT_CALL(dac, write(channel, expected_value, false)).Times(1);
 	sensor.setSensitivity(value);
-}
-
-TEST_F(CoreTouchSensorTest, getState)
-{
-	auto expected_state = false;
-	auto state			= sensor.getState();
-	EXPECT_EQ(expected_state, state);
 }
