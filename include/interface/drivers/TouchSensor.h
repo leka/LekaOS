@@ -16,6 +16,7 @@ class TouchSensor
 	virtual auto read() -> bool										= 0;
 	virtual void reset()											= 0;
 	virtual void setSensitivity(uint16_t value, bool saved = false) = 0;
+	virtual auto getState() -> bool									= 0;
 };
 
 }	// namespace leka::interface

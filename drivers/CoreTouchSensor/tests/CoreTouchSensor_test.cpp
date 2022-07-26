@@ -78,3 +78,10 @@ TEST_F(CoreTouchSensorTest, setSensitivity)
 	auto value = 0x0ABC;
 	sensor.setSensitivity(value);
 }
+
+TEST_F(CoreTouchSensorTest, getState)
+{
+	auto expected_state = false;
+	auto state			= sensor.getState();
+	EXPECT_EQ(expected_state, state);
+}

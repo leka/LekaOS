@@ -22,6 +22,7 @@ class CoreTouchSensor : public interface::TouchSensor
 	auto read() -> bool final;
 	void reset() final;
 	void setSensitivity(uint16_t value, bool saved = false) final;
+	auto getState() -> bool final;
 
   private:
 	enum class PowerMode : uint8_t
