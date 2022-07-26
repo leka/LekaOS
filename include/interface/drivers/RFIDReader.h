@@ -53,7 +53,7 @@ namespace interface {
 		virtual auto isTagDetected() -> bool											  = 0;
 		virtual void onTagDataReceived()												  = 0;
 		virtual auto getTag() -> rfid::Tag												  = 0;
-		virtual void getDataFromTag(std::span<uint8_t> data)							  = 0;
+		virtual auto getDataFromTag() -> std::array<uint8_t, 18>						  = 0;
 		virtual auto didTagCommunicationSucceed(size_t sizeTagData) -> bool				  = 0;
 		virtual void sendToTag(std::span<const uint8_t> data)							  = 0;
 		virtual void setCommunicationProtocol(rfid::Protocol protocol)					  = 0;

@@ -183,7 +183,7 @@ class CoreRFIDReader : public interface::RFIDReader
 	void setCommunicationProtocol(rfid::Protocol protocol) final;
 	void sendToTag(std::span<const uint8_t> data) final;
 	auto didTagCommunicationSucceed(size_t sizeTagData) -> bool final;
-	void getDataFromTag(std::span<uint8_t> data) final;
+	auto getDataFromTag() -> std::array<uint8_t, 18> final;
 	auto getTag() -> rfid::Tag final;
 	void onTagDataReceived() final;
 	void onDataAvailable();

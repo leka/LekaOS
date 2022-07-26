@@ -18,7 +18,7 @@ class CoreRFIDReader : public interface::RFIDReader
 	MOCK_METHOD(void, setCommunicationProtocol, (rfid::Protocol), (override));
 	MOCK_METHOD(void, sendToTag, (std::span<const uint8_t>), (override));
 	MOCK_METHOD(bool, didTagCommunicationSucceed, (size_t), (override));
-	MOCK_METHOD(void, getDataFromTag, (std::span<uint8_t> data), (override));
+	MOCK_METHOD((std::array<uint8_t, 18>), getDataFromTag, (), (override));
 	MOCK_METHOD(rfid::Tag, getTag, (), (override));
 	MOCK_METHOD(void, onTagDataReceived, (), (override));
 	MOCK_METHOD(void, registerOnTagDetectedCallback, (const std::function<void()> &), (override));

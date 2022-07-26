@@ -109,12 +109,15 @@ auto CoreRFIDReader::didTagCommunicationSucceed(size_t sizeTagData) -> bool
 	return (did_communication_succeed && did_command_same_size);
 }
 
-void CoreRFIDReader::getDataFromTag(std::span<uint8_t> data)
+auto CoreRFIDReader::getDataFromTag() -> std::array<uint8_t, 18>
 {
-	for (auto i = 0; i < data.size(); ++i) {
+	static constexpr auto register_size = 18;
+	std::array<uint8_t, register_size> data {};
+	for (auto i = 0; i < register_size; ++i) {
 		data[i]		 = _rx_buf[i + rfid::tag_answer::heading_size];
 		_tag.data[i] = data[i];
 	}
+	return data;
 }
 
 auto CoreRFIDReader::getTag() -> rfid::Tag

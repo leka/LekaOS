@@ -58,22 +58,22 @@ inline auto computeCRC(uint8_t const *data) -> std::array<uint8_t, 2>
 
 inline auto receiveAtqa(interface::RFIDReader &rfidreader) -> bool
 {
-	std::array<uint8_t, ATQA_answer_size> atqa_answer {};
-
-	if (rfidreader.didTagCommunicationSucceed(ATQA_answer_size)) {
-		rfidreader.getDataFromTag(atqa_answer);
+	if (!rfidreader.didTagCommunicationSucceed(ATQA_answer_size)) {
+		return false;
 	}
 
+	auto data = rfidreader.getDataFromTag();
+
+	std::array<uint8_t, ATQA_answer_size> atqa_answer = {data[0], data[1]};
 	return atqa_answer == expected_ATQA_answer;
 }
 
 inline auto receiveRegister(interface::RFIDReader &rfidreader) -> bool
 {
-	std::array<uint8_t, register_answer_size> register_answer {};
-
-	if (rfidreader.didTagCommunicationSucceed(register_answer_size)) {
-		rfidreader.getDataFromTag(register_answer);
+	if (!rfidreader.didTagCommunicationSucceed(register_answer_size)) {
+		return false;
 	}
+	auto register_answer = rfidreader.getDataFromTag();
 
 	std::array<uint8_t, 2> received_crc = {register_answer[16], register_answer[17]};
 
