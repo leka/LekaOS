@@ -16,6 +16,7 @@ target_sources(spike_lk_touch_sensor_kit
 
 target_link_libraries(spike_lk_touch_sensor_kit
 	TouchSensorKit
+	CoreTouchSensor
 	CoreEventFlags
 	CoreLED
 	CoreSPI

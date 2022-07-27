@@ -66,6 +66,7 @@ add_dependencies(spikes_leka
 	spike_lk_sensors_touch
 	spike_lk_serial_number
 	spike_lk_ticker_timeout
+	spike_lk_touch_sensor_kit
 	spike_lk_wifi
 
 	spike_lk_update_process_app_base
