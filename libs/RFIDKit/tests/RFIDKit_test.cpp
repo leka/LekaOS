@@ -46,7 +46,7 @@ TEST_F(RFIDKitTest, registerMagicCardCallbackTagValidCallbackSet)
 {
 	std::array<uint8_t, 7> id {};
 	std::array<uint8_t, 4> sak {};
-	std::array<uint8_t, 16> data {0x4C, 0x45, 0x4B, 0x41, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	std::array<uint8_t, 18> data {0x4C, 0x45, 0x4B, 0x41, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	rfid::Tag tag_valid {id, sak, data};
 
@@ -65,7 +65,7 @@ TEST_F(RFIDKitTest, registerMagicCardCallbackTagValidCallbackNotSet)
 {
 	std::array<uint8_t, 7> id {};
 	std::array<uint8_t, 4> sak {};
-	std::array<uint8_t, 16> data {0x4C, 0x45, 0x4B, 0x41, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	std::array<uint8_t, 18> data {0x4C, 0x45, 0x4B, 0x41, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	rfid::Tag tag_valid {id, sak, data};
 
@@ -82,7 +82,7 @@ TEST_F(RFIDKitTest, TagSignatureIsValid)
 {
 	std::array<uint8_t, 7> id {};
 	std::array<uint8_t, 4> sak {};
-	std::array<uint8_t, 16> data {0x4C, 0x45, 0x4B, 0x41, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	std::array<uint8_t, 18> data {0x4C, 0x45, 0x4B, 0x41, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	rfid::Tag tag_valid {id, sak, data};
 
@@ -95,7 +95,7 @@ TEST_F(RFIDKitTest, TagSignatureIsNotValid)
 {
 	std::array<uint8_t, 7> id {};
 	std::array<uint8_t, 4> sak {};
-	std::array<uint8_t, 16> data {0x00, 0x45, 0x00, 0x41, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	std::array<uint8_t, 18> data {0x00, 0x45, 0x00, 0x41, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 	rfid::Tag tag_valid {id, sak, data};
 

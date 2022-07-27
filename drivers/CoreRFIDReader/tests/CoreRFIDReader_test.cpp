@@ -218,7 +218,7 @@ TEST_F(CoreRFIDReaderTest, sendCommandSuccess)
 	reader.sendToTag(command);
 }
 
-TEST_F(CoreRFIDReaderTest, receiveDataSuccess2)
+TEST_F(CoreRFIDReaderTest, receiveDataSuccess)
 {
 	setFakeCallback();
 
@@ -231,51 +231,51 @@ TEST_F(CoreRFIDReaderTest, receiveDataSuccess2)
 	receiveRFIDReaderAnswer(read_values);
 
 	reader.onDataAvailable();
-	std::array<uint8_t, 18> actual_values = reader.getDataFromTag();
+	std::span<uint8_t> actual_values = reader.getDataFromTag();
 
 	bool is_communication_succeed = reader.didTagCommunicationSucceed(actual_values.size());
 
 	EXPECT_EQ(is_communication_succeed, true);
-	EXPECT_EQ(actual_values, expected_values);
+	EXPECT_TRUE(std::equal(actual_values.begin(), actual_values.end(), expected_values.begin()));
 }
 
-TEST_F(CoreRFIDReaderTest, receiveDataFailedWrongAnswerFlag2)
+TEST_F(CoreRFIDReaderTest, receiveDataFailedWrongAnswerFlag)
 {
 	setFakeCallback();
 
-	std::array<uint8_t, 18> read_values = {0xff, 0x05, 0x4C, 0x45, 0x4B, 0x41, 0x00, 0x01, 0x01,
-										   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+	std::array<uint8_t, 23> read_values = {0xff, 0x05, 0x4C, 0x45, 0x4B, 0x41, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00,
+										   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCA, 0x6C, 0x28, 0x00, 0x00};
 
 	receiveRFIDReaderAnswer(read_values);
 
 	reader.onDataAvailable();
 
-	std::array<uint8_t, 18> actual_values = reader.getDataFromTag();
-	bool is_communication_succeed		  = reader.didTagCommunicationSucceed(read_values.size());
+	std::span<uint8_t> actual_values = reader.getDataFromTag();
+	bool is_communication_succeed	 = reader.didTagCommunicationSucceed(read_values.size());
 
 	EXPECT_EQ(is_communication_succeed, false);
-	EXPECT_NE(actual_values, read_values);
+	EXPECT_FALSE(std::equal(actual_values.begin(), actual_values.end(), read_values.begin()));
 }
 
-TEST_F(CoreRFIDReaderTest, receiveDataFailedWrongLength2)
+TEST_F(CoreRFIDReaderTest, receiveDataFailedWrongLength)
 {
 	setFakeCallback();
 
-	std::array<uint8_t, 18> read_values = {0x80, 0x02, 0x44, 0x00, 0x28, 0x00, 0x00};
+	std::array<uint8_t, 7> read_values = {0x80, 0x02, 0x44, 0x00, 0x28, 0x00, 0x00};
 
 	receiveRFIDReaderAnswer(read_values);
 
 	reader.onDataAvailable();
 
-	std::array<uint8_t, 18> actual_values = reader.getDataFromTag();
+	std::span<uint8_t> actual_values = reader.getDataFromTag();
 
 	bool is_communication_succeed = reader.didTagCommunicationSucceed(read_values.size());
 
 	EXPECT_EQ(is_communication_succeed, false);
-	EXPECT_NE(actual_values, read_values);
+	EXPECT_FALSE(std::equal(read_values.begin(), read_values.end(), actual_values.begin()));
 }
 
-TEST_F(CoreRFIDReaderTest, getTag2)
+TEST_F(CoreRFIDReaderTest, getTag)
 {
 	setFakeCallback();
 	reader.registerOnTagReadableCallback(callbackFunction);
@@ -283,8 +283,8 @@ TEST_F(CoreRFIDReaderTest, getTag2)
 	std::array<uint8_t, 23> read_values = {0x80, 0x15, 0x4C, 0x45, 0x4B, 0x41, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00,
 										   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCA, 0x6C, 0x28, 0x00, 0x00};
 
-	std::array<uint8_t, 16> expected_values = {0x4C, 0x45, 0x4B, 0x41, 0x00, 0x01, 0x01, 0x00,
-											   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+	std::array<uint8_t, 18> expected_values = {0x4C, 0x45, 0x4B, 0x41, 0x00, 0x01, 0x01, 0x00, 0x00,
+											   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCA, 0x6C};
 
 	receiveRFIDReaderAnswer(read_values);
 

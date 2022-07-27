@@ -83,11 +83,11 @@ TEST_F(ISO14443ATest, stateRequestingAtqaEventTagDetectedGuardIsTrue)
 	sm.set_current_states(state::requesting_atqa);
 
 	constexpr std::array<uint8_t, rfid::ATQA_answer_size> expected_ATQA_answer {0x44, 0x00};
-	constexpr std::array<uint8_t, rfid::register_answer_size> data {
-		0x44, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+	std::array<uint8_t, rfid::register_answer_size> data {0x44, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+														  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 	EXPECT_CALL(mock_reader, didTagCommunicationSucceed).Times(1).WillOnce(Return(true));
-	EXPECT_CALL(mock_reader, getDataFromTag).WillOnce(Return(data));
+	EXPECT_CALL(mock_reader, getDataFromTag).WillOnce(Return(std::span(data)));
 	EXPECT_CALL(mock_reader, sendToTag).Times(1);
 
 	sm.process_event(event::tag_detected {});
@@ -118,7 +118,7 @@ TEST_F(ISO14443ATest, stateRequestingTagDataEventTagDetectedGuardIsTrue)
 
 	EXPECT_CALL(mock_reader, didTagCommunicationSucceed).Times(1).WillOnce(Return(true));
 
-	EXPECT_CALL(mock_reader, getDataFromTag).WillOnce(Return(data));
+	EXPECT_CALL(mock_reader, getDataFromTag).WillOnce(Return(std::span(data)));
 	EXPECT_CALL(mock_reader, onTagDataReceived).Times(1);
 	EXPECT_CALL(mock_reader, setTagDetectionMode).Times(1);
 
