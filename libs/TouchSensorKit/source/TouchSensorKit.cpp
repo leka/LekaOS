@@ -11,94 +11,72 @@ using namespace std::chrono_literals;
 
 void TouchSensorKit::init()
 {
-	for (Sensor sensor: _sensors) {
-		sensor.component.init();
+	for (Position position: _positions) {
+		init(position);
 	}
+	_event_loop.registerCallback([this] { run(); });
 }
 
 void TouchSensorKit::start()
 {
-	for (Sensor sensor: _sensors) {
-		sensor.component.read();
-	}
+	stop();
+	_event_loop.start();
 }
 
 void TouchSensorKit::run()
 {
-	for (Sensor sensor: _sensors) {
-		sensor.component.read();
+	for (Position position: _positions) {
+		updateState(position);
 	}
+	rtos::ThisThread::sleep_for(100ms);
 }
 void TouchSensorKit::stop()
 {
-	for (Sensor sensor: _sensors) {
-		sensor.component.read();
+	_event_loop.stop();
+}
+
+void TouchSensorKit::updateState(Position position)
+{
+	const auto index = static_cast<size_t>(position);
+
+	auto previousState = bool {};
+	auto currentState  = bool {};
+
+	previousState	 = _state.at(index);
+	_state.at(index) = read(position);
+	currentState	 = _state.at(index);
+
+	if (!previousState && currentState && _on_sensor_touched_callback != nullptr) {
+		_on_sensor_touched_callback(position);
+	}
+	if (previousState && !currentState && _on_sensor_released_callback != nullptr) {
+		_on_sensor_released_callback(position);
 	}
 }
 
-auto TouchSensorKit::isTouched(Position position) -> bool
+void TouchSensorKit::calibrate(Position position)
 {
-	const auto pos = static_cast<uint8_t>(position);
-	for (Sensor sensor: _sensors) {
-		if (pos == sensor.position) {
-			auto lastState	  = _sensor.state;
-			auto currentState = (_sensor.read());
-			if (!lastState && currentState) {
-				if (_on_sensor_touched_callback != nullptr) {
-					_on_sensor_touched_callback(position);
-				}
-				return true
-			}
-		}
-	}
-	return false;
-}
+	auto value = uint16_t {CoreTouchSensor::default_min_sensitivity_value};
+	auto step  = uint16_t {10};
 
-auto TouchSensorKit::isReleased(Position position) -> bool
-{
-	const auto pos = static_cast<uint8_t>(position);
-	for (Sensor sensor: _sensors) {
-		if (pos == sensor.position) {
-			auto lastState	  = _sensor.state;
-			auto currentState = (_sensor.read());
-			if (lastState && !currentState) {
-				if (_on_sensor_touched_callback != nullptr) {
-					_on_sensor_touched_callback(position);
-				}
-				return true
-			}
-		}
-	}
-	return false;
-}
+	constexpr auto accurate_read_count = uint8_t {10};
+	auto read_count					   = uint8_t {0};
 
-void TouchSensorKit::calibrate(Position position) {}
+	setSensitivity(position, value);
 
-void TouchSensorKit::read(uint8_t position)
-{
-	for (Sensor sensor: _sensors) {
-		if (pos == sensor.position) {
-			_sensors.state = _sensors.component.read();
-		}
-	}
-}
+	while (read_count < accurate_read_count && value <= CoreTouchSensor::default_max_sensitivity_value) {
+		if (read(position)) {
+			read_count = 0;
+			value += step;
+			setSensitivity(position, value);
+			log_info(" Value : %d\n\n", value);
 
-void TouchSensorKit::reset(uint8_t position)
-{
-	for (Sensor sensor: _sensors) {
-		if (pos == sensor.position) {
-			_sensors.state = _sensors.component.reset();
+		} else {
+			read_count++;
 		}
+		rtos::ThisThread::sleep_for(100ms);
 	}
-}
-
-void TouchSensorKit::setSensitivity(uint8_t position, uint16_t value, bool saved)
-{
-	for (Sensor sensor: _sensors) {
-		if (pos == sensor.position) {
-			_sensors.state = _sensors.component.setSensitivity(value, saved);
-		}
-	}
+	setSensitivity(position, value, true);
 }
 
 void TouchSensorKit::registerOnSensorTouched(std::function<void(Position &)> const &on_sensor_touched_callback)
@@ -109,4 +87,32 @@ void TouchSensorKit::registerOnSensorTouched(std::function<void(Position &)> con
 void TouchSensorKit::registerOnSensorReleased(std::function<void(Position &)> const &on_sensor_released_callback)
 {
 	_on_sensor_released_callback = on_sensor_released_callback;
+}
+
+void TouchSensorKit::init(Position position)
+{
+	const auto index = static_cast<size_t>(position);
+
+	_sensors.at(index)->init();
+}
+
+auto TouchSensorKit::read(Position position) -> bool
+{
+	const auto index = static_cast<size_t>(position);
+
+	return _sensors.at(index)->read();
+}
+
+void TouchSensorKit::reset(Position position)
+{
+	const auto index = static_cast<size_t>(position);
+
+	_sensors.at(index)->reset();
+}
+
+void TouchSensorKit::setSensitivity(Position position, uint16_t value, bool saved)
+{
+	const auto index = static_cast<size_t>(position);
+
+	_sensors.at(index)->setSensitivity(value, saved);
 }
