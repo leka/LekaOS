@@ -9,7 +9,7 @@
 
 using namespace leka;
 
-using ::testing::Return;
+using ::testing::ReturnRef;
 using ::testing::SaveArg;
 
 class RFIDKitTest : public ::testing::Test
@@ -24,7 +24,7 @@ class RFIDKitTest : public ::testing::Test
 	mock::CoreRFIDReader mock_reader {};
 	const std::function<void(MagicCard &)> callback;
 
-	std::function<void()> magic_card_callback {};
+	std::function<void(rfid::Tag &)> magic_card_callback {};
 };
 
 TEST_F(RFIDKitTest, initialization)
@@ -37,7 +37,7 @@ TEST_F(RFIDKitTest, init)
 	EXPECT_CALL(mock_reader, registerOnTagDetectedCallback).Times(1);
 	EXPECT_CALL(mock_reader, registerOnTagReadableCallback).Times(1);
 	EXPECT_CALL(mock_reader, init).Times(1);
-	EXPECT_CALL(mock_reader, setTagDetectionMode).Times(1);
+	EXPECT_CALL(mock_reader, setModeTagDetection).Times(1);
 
 	rfid_kit.init();
 }
@@ -50,15 +50,34 @@ TEST_F(RFIDKitTest, registerMagicCardCallbackTagValidCallbackSet)
 
 	rfid::Tag tag_valid {id, sak, data};
 
+	auto callback = [](MagicCard &) { ; };
+
 	rfid_kit.onTagActivated(callback);
 
 	EXPECT_CALL(mock_reader, registerOnTagReadableCallback).WillOnce(SaveArg<0>(&magic_card_callback));
 
 	rfid_kit.registerMagicCard();
 
-	EXPECT_CALL(mock_reader, getTag).WillOnce(Return(tag_valid));
+	magic_card_callback(tag_valid);
+}
 
-	magic_card_callback();
+TEST_F(RFIDKitTest, registerMagicCardCallbackTagNotValidCallbackSet)
+{
+	std::array<uint8_t, 7> id {};
+	std::array<uint8_t, 4> sak {};
+	std::array<uint8_t, 18> data {0x4C, 0x45, 0x4B, 0x00, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+	rfid::Tag tag_not_valid {id, sak, data};
+
+	auto callback = [](MagicCard &) { ; };
+
+	rfid_kit.onTagActivated(callback);
+
+	EXPECT_CALL(mock_reader, registerOnTagReadableCallback).WillOnce(SaveArg<0>(&magic_card_callback));
+
+	rfid_kit.registerMagicCard();
+
+	magic_card_callback(tag_not_valid);
 }
 
 TEST_F(RFIDKitTest, registerMagicCardCallbackTagValidCallbackNotSet)
@@ -73,9 +92,7 @@ TEST_F(RFIDKitTest, registerMagicCardCallbackTagValidCallbackNotSet)
 
 	rfid_kit.registerMagicCard();
 
-	EXPECT_CALL(mock_reader, getTag).WillOnce(Return(tag_valid));
-
-	magic_card_callback();
+	magic_card_callback(tag_valid);
 }
 
 TEST_F(RFIDKitTest, TagSignatureIsValid)
@@ -97,9 +114,9 @@ TEST_F(RFIDKitTest, TagSignatureIsNotValid)
 	std::array<uint8_t, 4> sak {};
 	std::array<uint8_t, 18> data {0x00, 0x45, 0x00, 0x41, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-	rfid::Tag tag_valid {id, sak, data};
+	rfid::Tag tag_not_valid {id, sak, data};
 
-	auto is_tag_valid = rfid_kit.isTagSignatureValid(tag_valid);
+	auto is_tag_valid = rfid_kit.isTagSignatureValid(tag_not_valid);
 
 	EXPECT_FALSE(is_tag_valid);
 }

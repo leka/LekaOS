@@ -21,10 +21,10 @@ struct Command {
 		auto cmd = std::array<uint8_t, SIZE + 1> {};
 
 		for (int i = 0; i < SIZE; ++i) {
-			cmd[i] = data[i];
+			cmd.at(i) = data.at(i);
 		}
 
-		cmd[SIZE] = static_cast<uint8_t>(flags);
+		cmd.at(SIZE) = static_cast<uint8_t>(flags);
 
 		return cmd;
 	}
@@ -62,10 +62,10 @@ inline auto receiveAtqa(interface::RFIDReader &rfidreader) -> bool
 		return false;
 	}
 
-	auto data = rfidreader.getDataFromTag();
+	auto tag = rfidreader.getTag();
 
-	std::array<uint8_t, ATQA_answer_size> atqa_answer = {data[0], data[1]};
-	return atqa_answer == expected_ATQA_answer;
+	auto is_atqa_correct = std::equal(expected_ATQA_answer.begin(), expected_ATQA_answer.end(), tag.data.begin());
+	return is_atqa_correct;
 }
 
 inline auto receiveRegister(interface::RFIDReader &rfidreader) -> bool
@@ -73,16 +73,17 @@ inline auto receiveRegister(interface::RFIDReader &rfidreader) -> bool
 	if (!rfidreader.didTagCommunicationSucceed(register_answer_size)) {
 		return false;
 	}
-	auto register_answer = rfidreader.getDataFromTag();
+	auto tag = rfidreader.getTag();
 
-	std::array<uint8_t, 2> received_crc = {register_answer[16], register_answer[17]};
+	auto crc_computed	= computeCRC(tag.data.data());
+	auto is_crc_correct = std::equal(crc_computed.begin(), crc_computed.end(), tag.data.begin() + 16);
 
-	return received_crc == computeCRC(register_answer.data());
+	return is_crc_correct;
 }
 
 namespace sm::event {
 
-	struct tag_detected {
+	struct tag_response_available {
 	};
 
 }	// namespace sm::event
@@ -100,10 +101,6 @@ namespace sm::guard {
 
 	using irfidreader = interface::RFIDReader;
 
-	struct is_tag_detected {
-		auto operator()(irfidreader &rfidreader) const { return rfidreader.isTagDetected(); }
-	};
-
 	struct atqa_received {
 		auto operator()(irfidreader &rfidreader) const { return receiveAtqa(rfidreader); }
 	};
@@ -118,8 +115,8 @@ namespace sm::action {
 
 	using irfidreader = interface::RFIDReader;
 
-	struct set_tag_detection_mode {
-		auto operator()(irfidreader &rfidreader) const { rfidreader.setTagDetectionMode(); }
+	struct set_mode_tag_detection {
+		auto operator()(irfidreader &rfidreader) const { rfidreader.setModeTagDetection(); }
 	};
 
 	struct set_communication_protocol {
@@ -130,15 +127,18 @@ namespace sm::action {
 	};
 
 	struct send_request_A {
-		auto operator()(irfidreader &rfidreader) const { rfidreader.sendToTag(command_requestA.getArray()); }
+		auto operator()(irfidreader &rfidreader) const { rfidreader.sendRequestToTag(command_requestA.getArray()); }
 	};
 
 	struct send_register_4 {
-		auto operator()(irfidreader &rfidreader) const { rfidreader.sendToTag(command_read_register_4.getArray()); }
+		auto operator()(irfidreader &rfidreader) const
+		{
+			rfidreader.sendRequestToTag(command_read_register_4.getArray());
+		}
 	};
 
-	struct on_tag_data_received {
-		auto operator()(irfidreader &rfidreader) const { rfidreader.onTagDataReceived(); }
+	struct on_tag_readable {
+		auto operator()(irfidreader &rfidreader) const { rfidreader.onTagReadable(); }
 	};
 
 }	// namespace sm::action
@@ -150,18 +150,17 @@ struct ISO14443A {
 
 		return make_transition_table(
 			// clang-format off
-			* sm::state::idle  + event<sm::event::tag_detected> [sm::guard::is_tag_detected {} ] / (sm::action::set_communication_protocol {})                   = sm::state::send_reqa
-			, sm::state::idle  + event<sm::event::tag_detected> [!sm::guard::is_tag_detected {}] / (sm::action::set_tag_detection_mode {})                       = sm::state::idle
+			* sm::state::idle  + event<sm::event::tag_response_available> / (sm::action::set_communication_protocol {})                   = sm::state::send_reqa
 
-			, sm::state::send_reqa             + event<sm::event::tag_detected>                                      / (sm::action::send_request_A  {})          = sm::state::requesting_atqa
+			, sm::state::send_reqa             + event<sm::event::tag_response_available>                                      / (sm::action::send_request_A  {})          = sm::state::requesting_atqa
 
-			, sm::state::requesting_atqa       + event<sm::event::tag_detected>  [sm::guard::atqa_received {}]       / (sm::action::send_register_4  {})         = sm::state::requesting_tag_data
-			, sm::state::requesting_atqa       + event<sm::event::tag_detected>  [!sm::guard::atqa_received {}]      / (sm::action::set_tag_detection_mode {})   = sm::state::idle
+			, sm::state::requesting_atqa       + event<sm::event::tag_response_available>  [sm::guard::atqa_received {}]       / (sm::action::send_register_4  {})         = sm::state::requesting_tag_data
+			, sm::state::requesting_atqa       + event<sm::event::tag_response_available>  [!sm::guard::atqa_received {}]      / (sm::action::set_mode_tag_detection {})   = sm::state::idle
 
-			, sm::state::requesting_tag_data   + event<sm::event::tag_detected>  [sm::guard::register_received {}]   / (sm::action::on_tag_data_received {})     = sm::state::idle
-			, sm::state::requesting_tag_data   + event<sm::event::tag_detected>  [!sm::guard::register_received {}]                                              = sm::state::idle
+			, sm::state::requesting_tag_data   + event<sm::event::tag_response_available>  [sm::guard::register_received {}]   / (sm::action::on_tag_readable {})          = sm::state::idle
+			, sm::state::requesting_tag_data   + event<sm::event::tag_response_available>  [!sm::guard::register_received {}]                                              = sm::state::idle
 
-			, sm::state::requesting_tag_data   + boost::sml::on_exit<_> / ( sm::action::set_tag_detection_mode {})
+			, sm::state::requesting_tag_data   + boost::sml::on_exit<_> / ( sm::action::set_mode_tag_detection {})
 
 			// clang-format on
 		);

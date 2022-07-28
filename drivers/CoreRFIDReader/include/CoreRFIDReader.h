@@ -2,11 +2,12 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+//? CR95HF RFID reader datasheet available at:
+//? https://www.st.com/resource/en/datasheet/cr95hf.pdf
+
 #pragma once
 
-#include "events/EventQueue.h"
-#include "rtos/Thread.h"
-
+#include "CoreEventQueue.h"
 #include "interface/drivers/BufferedSerial.h"
 #include "interface/drivers/RFIDReader.h"
 
@@ -176,33 +177,26 @@ class CoreRFIDReader : public interface::RFIDReader
 	void init() final;
 
 	void registerOnTagDetectedCallback(const std::function<void()> &callback) final;
-	void registerOnTagReadableCallback(const std::function<void()> &callback) final;
+	void registerOnTagReadableCallback(const std::function<void(rfid::Tag &)> &callback) final;
 
-	auto isTagDetected() -> bool final;
-	void setTagDetectionMode() final;
+	void setModeTagDetection() final;
 	void setCommunicationProtocol(rfid::Protocol protocol) final;
-	void sendToTag(std::span<const uint8_t> data) final;
+	void sendRequestToTag(std::span<const uint8_t> data) final;
 	auto didTagCommunicationSucceed(size_t sizeTagData) -> bool final;
-	auto getDataFromTag() -> std::span<uint8_t> final;
-	auto getTag() -> rfid::Tag final;
-	void onTagDataReceived() final;
-	void onDataAvailable();
+	auto getTag() -> rfid::Tag & final;
+	void onTagReadable() final;
 
   private:
-	void registerOnDataAvailableCallback();
+	void _receiveResponseFromTag();
 
-	void read();
-
-	void setProtocolISO14443A();
-	void setGainAndModulationISO14443A();
+	void _setProtocolISO14443A();
+	void _setGainAndModulationISO14443A();
 
 	rfid::Tag _tag {};
-	size_t _answer_size {0};
-	rtos::Thread _thread {};
-	events::EventQueue _event_queue {};
+	leka::CoreEventQueue _event_queue {};
 	interface::BufferedSerial &_serial;
-	std::function<void()> _on_tag_detected;
-	std::function<void()> _on_tag_valid;
+	std::function<void()> _on_tag_response_available;
+	std::function<void(rfid::Tag &)> _on_tag_readable;
 
 	std::array<uint8_t, rfid::max_tx_length> _tx_buf {};
 	std::array<uint8_t, rfid::max_rx_length> _rx_buf {};

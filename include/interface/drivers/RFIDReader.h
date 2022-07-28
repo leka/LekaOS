@@ -48,17 +48,15 @@ namespace interface {
 	  public:
 		virtual ~RFIDReader() = default;
 
-		virtual void init()																  = 0;
-		virtual void setTagDetectionMode()												  = 0;
-		virtual auto isTagDetected() -> bool											  = 0;
-		virtual void onTagDataReceived()												  = 0;
-		virtual auto getTag() -> rfid::Tag												  = 0;
-		virtual auto getDataFromTag() -> std::span<uint8_t>								  = 0;
-		virtual auto didTagCommunicationSucceed(size_t sizeTagData) -> bool				  = 0;
-		virtual void sendToTag(std::span<const uint8_t> data)							  = 0;
-		virtual void setCommunicationProtocol(rfid::Protocol protocol)					  = 0;
-		virtual void registerOnTagDetectedCallback(const std::function<void()> &callback) = 0;
-		virtual void registerOnTagReadableCallback(const std::function<void()> &callback) = 0;
+		virtual void init()																			 = 0;
+		virtual void setModeTagDetection()															 = 0;
+		virtual void onTagReadable()																 = 0;
+		virtual auto getTag() -> rfid::Tag														   & = 0;
+		virtual auto didTagCommunicationSucceed(size_t sizeTagData) -> bool							 = 0;
+		virtual void sendRequestToTag(std::span<const uint8_t> data)								 = 0;
+		virtual void setCommunicationProtocol(rfid::Protocol protocol)								 = 0;
+		virtual void registerOnTagDetectedCallback(const std::function<void()> &callback)			 = 0;
+		virtual void registerOnTagReadableCallback(const std::function<void(rfid::Tag &)> &callback) = 0;
 	};
 
 }	// namespace interface
