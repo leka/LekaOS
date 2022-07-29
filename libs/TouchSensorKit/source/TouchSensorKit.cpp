@@ -13,7 +13,6 @@ void TouchSensorKit::setup()
 {
 	setPowerMode(touch::power_mode::normal);
 }
-
 void TouchSensorKit::updateState()
 {
 	_state.ear_left_touched			= (0 == _sensor_ear_left.read());
@@ -23,8 +22,17 @@ void TouchSensorKit::updateState()
 	_state.belt_right_back_touched	= (0 == _sensor_belt_right_back.read());
 	_state.belt_right_front_touched = (0 == _sensor_belt_right_front.read());
 }
-
-void TouchSensorKit::printState()
+void TouchSensorKit::fakeUpdateState(uint8_t flags)
+{
+	_state.ear_left_touched			= (flags & 1);
+	_state.ear_right_touched		= (flags & 2);
+	_state.belt_left_back_touched	= (flags & 4);
+	_state.belt_left_front_touched	= (flags & 8);
+	_state.belt_right_back_touched	= (flags & 16);
+	_state.belt_right_front_touched = (flags & 32);
+	rtos::ThisThread::sleep_for(500ms);
+}
+void TouchSensorKit::printState() const
 {
 	log_info("Ear left touched: %s", _state.ear_left_touched ? "true" : "false");
 	log_info("Ear right touched: %s", _state.ear_right_touched ? "true" : "false");
