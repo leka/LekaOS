@@ -26,29 +26,22 @@ class CoreRFIDReaderTest : public ::testing::Test
   protected:
 	CoreRFIDReaderTest() : reader(mockBufferedSerial) {};
 
-	// void SetUp() override {}
+	void SetUp() override
+	{
+		reader.registerOnTagReadableCallback(callback_readable.AsStdFunction());
+		reader.registerOnTagDetectedCallback(callback_detected.AsStdFunction());
+		EXPECT_CALL(mockBufferedSerial, sigio).WillOnce(SaveArg<0>(&callback_sigio));
+		reader.init();
+	}
 	// void TearDown() override {}
 
 	mock::EventQueue event_queue {};
 	mock::CoreBufferedSerial mockBufferedSerial;
 	CoreRFIDReader reader;
 
-	bool _callbackCalled {false};
-
-	static void func1() {};
-	static void func2(rfid::Tag tag) {};
-	std::function<void()> callbackDetected			= func1;
-	std::function<void(rfid::Tag)> callbackReadable = func2;
-	std::function<void()> callbackSigio {};
-
-	void isCallbackCalled() { _callbackCalled = true; };
-
-	void setFakeCallback()
-	{
-		_callbackCalled = false;
-		auto callback	= [this]() { this->isCallbackCalled(); };
-		reader.registerOnTagDetectedCallback(callback);
-	}
+	testing::MockFunction<void()> callback_detected;
+	testing::MockFunction<void(rfid::Tag)> callback_readable;
+	std::function<void()> callback_sigio {};
 
 	void sendSetProtocol()
 	{
@@ -89,36 +82,22 @@ TEST_F(CoreRFIDReaderTest, init)
 
 TEST_F(CoreRFIDReaderTest, registerCallbacks)
 {
-	reader.registerOnTagDetectedCallback(callbackDetected);
-	reader.registerOnTagReadableCallback(callbackReadable);
+	reader.registerOnTagDetectedCallback(callback_detected.AsStdFunction());
+	reader.registerOnTagReadableCallback(callback_readable.AsStdFunction());
 }
 
 TEST_F(CoreRFIDReaderTest, setModeTagDetection)
 {
-	const auto expected_values =
-		ElementsAre(rfid::command::frame::set_tag_detection_mode[0], rfid::command::frame::set_tag_detection_mode[1],
-					rfid::command::frame::set_tag_detection_mode[2], rfid::command::frame::set_tag_detection_mode[3],
-					rfid::command::frame::set_tag_detection_mode[4], rfid::command::frame::set_tag_detection_mode[5],
-					rfid::command::frame::set_tag_detection_mode[6], rfid::command::frame::set_tag_detection_mode[7],
-					rfid::command::frame::set_tag_detection_mode[8], rfid::command::frame::set_tag_detection_mode[9],
-					rfid::command::frame::set_tag_detection_mode[10], rfid::command::frame::set_tag_detection_mode[11],
-					rfid::command::frame::set_tag_detection_mode[12], rfid::command::frame::set_tag_detection_mode[13],
-					rfid::command::frame::set_tag_detection_mode[14], rfid::command::frame::set_tag_detection_mode[15]);
+	const auto expected_values = testing::ElementsAreArray(rfid::command::frame::set_tag_detection_mode);
 
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
-	;
 
 	reader.setModeTagDetection();
 }
 
 TEST_F(CoreRFIDReaderTest, setCommunicationProtocolSuccess)
 {
-	reader.registerOnTagDetectedCallback(callbackDetected);
-	EXPECT_CALL(mockBufferedSerial, sigio).Times(1).WillOnce(SaveArg<0>(&callbackSigio));
-	reader.init();
-
-	std::array<uint8_t, 2> set_protocol_success_answer			  = {0x00, 0x00};
-	std::array<uint8_t, 2> set_gain_and_modulation_success_answer = {0x00, 0x00};
+	std::array<uint8_t, 2> set_protocol_success_answer = {0x00, 0x00};
 
 	{
 		InSequence seq;
@@ -127,34 +106,26 @@ TEST_F(CoreRFIDReaderTest, setCommunicationProtocolSuccess)
 		sendSetGainAndModulation();
 	}
 
-	callbackSigio();
+	callback_sigio();
 	reader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 }
 
-TEST_F(CoreRFIDReaderTest, setCommunicationProtocolFailedOnAnswerTooBig)
-{
-	reader.registerOnTagDetectedCallback(callbackDetected);
-	EXPECT_CALL(mockBufferedSerial, sigio).Times(1).WillOnce(SaveArg<0>(&callbackSigio));
-	reader.init();
+// TEST_F(CoreRFIDReaderTest, setCommunicationProtocolFailedOnAnswerTooBig)
+// {
+// 	std::array<uint8_t, 3> set_protocol_failed_answer = {0x00, 0x00, 0x00};
+// 	{
+// 		InSequence seq;
+// 		receiveRFIDReaderAnswer(set_protocol_failed_answer);
+// 		sendSetProtocol();
+// 		sendSetGainAndModulation();
+// 	}
 
-	std::array<uint8_t, 3> set_protocol_failed_answer = {0x00, 0x00, 0x00};
-	{
-		InSequence seq;
-		receiveRFIDReaderAnswer(set_protocol_failed_answer);
-		sendSetProtocol();
-		sendSetGainAndModulation();
-	}
-
-	callbackSigio();
-	reader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
-}
+// 	callback_sigio();
+// 	reader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
+// }
 
 TEST_F(CoreRFIDReaderTest, setCommunicationProtocolFailedOnWrongFirstValue)
 {
-	reader.registerOnTagDetectedCallback(callbackDetected);
-	EXPECT_CALL(mockBufferedSerial, sigio).Times(1).WillOnce(SaveArg<0>(&callbackSigio));
-	reader.init();
-
 	std::array<uint8_t, 2> set_protocol_failed_answer = {0x82, 0x00};
 	{
 		InSequence seq;
@@ -163,7 +134,7 @@ TEST_F(CoreRFIDReaderTest, setCommunicationProtocolFailedOnWrongFirstValue)
 		sendSetGainAndModulation();
 	}
 
-	callbackSigio();
+	callback_sigio();
 	reader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 }
 
@@ -179,10 +150,6 @@ TEST_F(CoreRFIDReaderTest, sendCommandSuccess)
 
 TEST_F(CoreRFIDReaderTest, receiveDataSuccess)
 {
-	reader.registerOnTagDetectedCallback(callbackDetected);
-	EXPECT_CALL(mockBufferedSerial, sigio).Times(1).WillOnce(SaveArg<0>(&callbackSigio));
-	reader.init();
-
 	std::array<uint8_t, 23> read_values = {0x80, 0x15, 0x4C, 0x45, 0x4B, 0x41, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00,
 										   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCA, 0x6C, 0x28, 0x00, 0x00};
 
@@ -190,7 +157,7 @@ TEST_F(CoreRFIDReaderTest, receiveDataSuccess)
 											   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCA, 0x6C};
 
 	receiveRFIDReaderAnswer(read_values);
-	callbackSigio();
+	callback_sigio();
 	auto tag = reader.getTag();
 
 	bool is_communication_succeed = reader.didTagCommunicationSucceed(tag.data.size());
@@ -201,16 +168,12 @@ TEST_F(CoreRFIDReaderTest, receiveDataSuccess)
 
 TEST_F(CoreRFIDReaderTest, receiveDataFailedWrongAnswerFlag)
 {
-	reader.registerOnTagDetectedCallback(callbackDetected);
-	EXPECT_CALL(mockBufferedSerial, sigio).Times(1).WillOnce(SaveArg<0>(&callbackSigio));
-	reader.init();
-
 	std::array<uint8_t, 23> read_values = {0xff, 0x05, 0x4C, 0x45, 0x4B, 0x41, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00,
 										   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCA, 0x6C, 0x28, 0x00, 0x00};
 
 	receiveRFIDReaderAnswer(read_values);
 
-	callbackSigio();
+	callback_sigio();
 
 	auto tag					  = reader.getTag();
 	bool is_communication_succeed = reader.didTagCommunicationSucceed(tag.data.size());
@@ -221,15 +184,11 @@ TEST_F(CoreRFIDReaderTest, receiveDataFailedWrongAnswerFlag)
 
 TEST_F(CoreRFIDReaderTest, receiveDataFailedWrongLength)
 {
-	reader.registerOnTagDetectedCallback(callbackDetected);
-	EXPECT_CALL(mockBufferedSerial, sigio).Times(1).WillOnce(SaveArg<0>(&callbackSigio));
-	reader.init();
-
 	std::array<uint8_t, 7> read_values = {0x80, 0x02, 0x44, 0x00, 0x28, 0x00, 0x00};
 
 	receiveRFIDReaderAnswer(read_values);
 
-	callbackSigio();
+	callback_sigio();
 
 	auto tag = reader.getTag();
 
@@ -241,11 +200,6 @@ TEST_F(CoreRFIDReaderTest, receiveDataFailedWrongLength)
 
 TEST_F(CoreRFIDReaderTest, getTag)
 {
-	reader.registerOnTagReadableCallback(callbackReadable);
-	reader.registerOnTagDetectedCallback(callbackDetected);
-	EXPECT_CALL(mockBufferedSerial, sigio).Times(1).WillOnce(SaveArg<0>(&callbackSigio));
-	reader.init();
-
 	std::array<uint8_t, 23> read_values = {0x80, 0x15, 0x4C, 0x45, 0x4B, 0x41, 0x00, 0x01, 0x01, 0x00, 0x00, 0x00,
 										   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCA, 0x6C, 0x28, 0x00, 0x00};
 
@@ -254,7 +208,7 @@ TEST_F(CoreRFIDReaderTest, getTag)
 
 	receiveRFIDReaderAnswer(read_values);
 
-	callbackSigio();
+	callback_sigio();
 
 	reader.onTagReadable();
 
