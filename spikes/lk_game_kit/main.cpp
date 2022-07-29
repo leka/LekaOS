@@ -23,6 +23,7 @@
 #include "LedManager.h"
 #include "LogKit.h"
 #include "TouchSensorKit.h"
+#include "games/GameSpeed.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -132,26 +133,36 @@ auto touch_sensor_kit = TouchSensorKit {touch::event_loop,
 										touch::sensor::belt_right_back,
 										touch::sensor::belt_right_front};
 
-auto ledkit		= LedKit {leds::animations::event_loop, leds::ears, leds::belt};
-auto ledmanager = leds::LedManager {leds::ears, leds::belt, ledkit};
+// auto ledkit		= LedKit {leds::animations::event_loop, leds::ears, leds::belt};
+// auto ledmanager = leds::LedManager {leds::ears, leds::belt, ledkit};
 
-auto event_loop = EventLoopKit {};
+// auto event_loop = EventLoopKit {};
 
-auto gamekit = GameKit {event_loop};
+// auto gamekit = GameKit {event_loop};
 
 auto main() -> int
 {
+	CoreSPI spiEars {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+	CoreSPI spiBelt {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+	CoreLED<2> ears(spiEars);
+	CoreLED<20> belt(spiBelt);
+	auto event_loop_ledkit	= EventLoopKit {};
+	auto event_loop_gamekit = EventLoopKit {};
+
+	auto ledkit	 = LedKit {event_loop_ledkit, ears, belt};
+	auto gamekit = GameKit {event_loop_gamekit};
+	leds::LedManager ledmanager(ears, belt, ledkit);
+
+	GameSpeed gamespeed(ledmanager, 0, touch_sensor_kit);
+
 	logger::init();
-	leds::turnOff();
 
 	log_info("Hello, World!\n\n");
-
-	hello.start();
-
-	ledkit.init();
 
 	gamekit.init();
 
 	while (true) {
+		gamekit.start(&gamespeed);
+		rtos::ThisThread::sleep_for(30s);
 	}
 }
