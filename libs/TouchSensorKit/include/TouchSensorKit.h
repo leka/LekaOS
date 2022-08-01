@@ -40,17 +40,17 @@ class TouchSensorKit
 
 	void init();
 	void start();
-	void run();
 	void stop();
 
-	void registerOnSensorTouched(std::function<void(Position)> const &on_sensor_touched_callback);
-	void registerOnSensorReleased(std::function<void(Position)> const &on_sensor_released_callback);
+	void registerOnSensorTouched(std::function<void(const Position)> const &on_sensor_touched_callback);
+	void registerOnSensorReleased(std::function<void(const Position)> const &on_sensor_released_callback);
 
   private:
+	void run();
+
 	auto readAtPosition(Position position) -> bool;
 	void resetAtPosition(Position position);
 	void setSensitivityAtPosition(Position position, uint16_t value, bool saved = false);
-	void calibrateAtPosition(Position position);
 
 	static constexpr std::array<Position, kNumberOfSensors> _positions {
 		Position::ear_left,		   Position::ear_right,		  Position::belt_left_back,
@@ -68,7 +68,7 @@ class TouchSensorKit
 	static constexpr auto default_max_sensitivity_value = uint16_t {0x0FF0};
 	static constexpr auto default_min_sensitivity_value = uint16_t {0x000F};
 
-	std::function<void(Position)> _on_sensor_touched_callback {};
-	std::function<void(Position)> _on_sensor_released_callback {};
+	std::function<void(const Position)> _on_sensor_touched_callback {};
+	std::function<void(const Position)> _on_sensor_released_callback {};
 };
 }	// namespace leka
