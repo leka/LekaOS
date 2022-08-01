@@ -28,12 +28,12 @@ void TouchSensorKit::start()
 
 void TouchSensorKit::run()
 {
-	auto states		   = std::array<bool, kNumberOfSensors> {};
-	auto previousState = bool {};
-	auto currentState  = bool {};
+	auto state = std::array<bool, kNumberOfSensors> {};
 	while (true) {
 		for (Position position: _positions) {
-			currentState = readAtPosition(position);
+			auto previousState						= state.at(static_cast<size_t>(position));
+			auto currentState						= readAtPosition(position);
+			state.at(static_cast<size_t>(position)) = currentState;
 
 			if (!previousState && currentState && _on_sensor_touched_callback != nullptr) {
 				_on_sensor_touched_callback(position);
@@ -41,8 +41,6 @@ void TouchSensorKit::run()
 			if (previousState && !currentState && _on_sensor_released_callback != nullptr) {
 				_on_sensor_released_callback(position);
 			}
-
-			previousState = currentState;
 		}
 		rtos::ThisThread::sleep_for(100ms);
 	}
@@ -62,33 +60,30 @@ void TouchSensorKit::registerOnSensorReleased(std::function<void(Position)> cons
 	_on_sensor_released_callback = on_sensor_released_callback;
 }
 
-void TouchSensorKit::updateStateAtPosition(Position position)
+auto TouchSensorKit::readAtPosition(Position position) -> bool
 {
 	switch (position) {
 		case Position::ear_left:
-			_state.at(static_cast<size_t>(position)) = _ear_left.read();
+			return _ear_left.read();
 			break;
 		case Position::ear_right:
-			_state.at(static_cast<size_t>(position)) = _ear_right.read();
+			return _ear_right.read();
 			break;
 		case Position::belt_left_back:
-			_state.at(static_cast<size_t>(position)) = _belt_left_back.read();
+			return _belt_left_back.read();
 			break;
 		case Position::belt_left_front:
-			_state.at(static_cast<size_t>(position)) = _belt_left_front.read();
+			return _belt_left_front.read();
 			break;
 		case Position::belt_right_back:
-			_state.at(static_cast<size_t>(position)) = _belt_right_back.read();
+			return _belt_right_back.read();
 			break;
 		case Position::belt_right_front:
-			_state.at(static_cast<size_t>(position)) = _belt_right_front.read();
+			return _belt_right_front.read();
+			break;
+		default:
 			break;
 	}
-}
-
-auto TouchSensorKit::geAtPosition(Position position) -> bool
-{
-	return _state.at(static_cast<size_t>(position));
 }
 
 void TouchSensorKit::resetAtPosition(Position position)
