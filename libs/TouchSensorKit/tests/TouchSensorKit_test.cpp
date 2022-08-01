@@ -54,6 +54,13 @@ TEST_F(TouchSensorTest, init)
 	EXPECT_CALL(mock_belt_right_front, init).Times(1);
 	EXPECT_CALL(mock_belt_right_back, init).Times(1);
 
+	EXPECT_CALL(mock_ear_left, setSensitivity).Times(1);
+	EXPECT_CALL(mock_ear_right, setSensitivity).Times(1);
+	EXPECT_CALL(mock_belt_left_front, setSensitivity).Times(1);
+	EXPECT_CALL(mock_belt_left_back, setSensitivity).Times(1);
+	EXPECT_CALL(mock_belt_right_front, setSensitivity).Times(1);
+	EXPECT_CALL(mock_belt_right_back, setSensitivity).Times(1);
+
 	touch_sensor_kit.init();
 }
 
@@ -65,18 +72,6 @@ TEST_F(TouchSensorTest, start)
 TEST_F(TouchSensorTest, stop)
 {
 	touch_sensor_kit.stop();
-}
-TEST_F(TouchSensorTest, calibrate)
-{
-	const auto default_max_sensitivity_value = uint16_t {0x0FF0};
-	const auto default_min_sensitivity_value = uint16_t {0x000F};
-	const auto step							 = uint16_t {10};
-
-	const auto count = static_cast<uint16_t>((default_max_sensitivity_value - default_min_sensitivity_value) / step);
-
-	EXPECT_CALL(mock_ear_left, read).Times(count + 1);
-	EXPECT_CALL(mock_ear_left, setSensitivity).Times(count + 3);
-	touch_sensor_kit.calibrate(Position::ear_left);
 }
 
 TEST_F(TouchSensorTest, registerOnSensorTouched)

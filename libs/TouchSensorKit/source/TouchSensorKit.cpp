@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "TouchSensorKit.h"
+#include <array>
 
 #include "rtos/ThisThread.h"
 
@@ -18,6 +19,13 @@ void TouchSensorKit::init()
 	_belt_left_front.init();
 	_belt_right_back.init();
 	_belt_right_front.init();
+
+	_ear_left.setSensitivity(default_max_sensitivity_value, true);
+	_ear_right.setSensitivity(default_max_sensitivity_value, true);
+	_belt_left_back.setSensitivity(default_max_sensitivity_value, true);
+	_belt_left_front.setSensitivity(default_max_sensitivity_value, true);
+	_belt_right_back.setSensitivity(default_max_sensitivity_value, true);
+	_belt_right_front.setSensitivity(default_max_sensitivity_value, true);
 }
 
 void TouchSensorKit::start()
@@ -28,9 +36,13 @@ void TouchSensorKit::start()
 
 void TouchSensorKit::run()
 {
+	auto const positions =
+		std::array<Position, 6> {Position::ear_left,		Position::ear_right,	   Position::belt_left_back,
+								 Position::belt_left_front, Position::belt_right_back, Position::belt_right_front};
 	auto state = std::array<bool, kNumberOfSensors> {};
+
 	while (true) {
-		for (Position position: _positions) {
+		for (Position position: positions) {
 			auto previousState						= state.at(static_cast<size_t>(position));
 			auto currentState						= readAtPosition(position);
 			state.at(static_cast<size_t>(position)) = currentState;
@@ -50,12 +62,12 @@ void TouchSensorKit::stop()
 	_event_loop.stop();
 }
 
-void TouchSensorKit::registerOnSensorTouched(std::function<void(Position)> const &on_sensor_touched_callback)
+void TouchSensorKit::registerOnSensorTouched(std::function<void(const Position)> const &on_sensor_touched_callback)
 {
 	_on_sensor_touched_callback = on_sensor_touched_callback;
 }
 
-void TouchSensorKit::registerOnSensorReleased(std::function<void(Position)> const &on_sensor_released_callback)
+void TouchSensorKit::registerOnSensorReleased(std::function<void(const Position)> const &on_sensor_released_callback)
 {
 	_on_sensor_released_callback = on_sensor_released_callback;
 }
@@ -82,6 +94,7 @@ auto TouchSensorKit::readAtPosition(Position position) -> bool
 			return _belt_right_front.read();
 			break;
 		default:
+			return false;
 			break;
 	}
 }
