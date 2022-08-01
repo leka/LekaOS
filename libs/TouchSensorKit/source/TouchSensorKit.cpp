@@ -56,7 +56,6 @@ void TouchSensorKit::run()
 		}
 		rtos::ThisThread::sleep_for(100ms);
 	}
-	rtos::ThisThread::sleep_for(100ms);
 }
 void TouchSensorKit::stop()
 {

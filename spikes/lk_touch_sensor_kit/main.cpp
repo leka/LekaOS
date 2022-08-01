@@ -5,92 +5,83 @@
 #include "drivers/BufferedSerial.h"
 #include "rtos/ThisThread.h"
 
+#include "CoreI2C.h"
+#include "CoreIOExpander.h"
+#include "CoreQDAC.h"
 #include "CoreTouchSensor.h"
+#include "DigitalOut.h"
+#include "EventLoopKit.h"
 #include "HelloWorld.h"
-#include "Leds.h"
+#include "IOKit/DigitalIn.h"
+#include "IOKit/DigitalOut.h"
 #include "LogKit.h"
 #include "TouchSensorKit.h"
 
 using namespace leka;
 using namespace std::chrono;
 
-namespace TouchLed {
-struct Ear {
-	Position position;
-	uint8_t index;
-};
+namespace leka::touch {
 
-auto ears = std::array<Ear, 2> {Ear {Position::ear_right, 0}, Ear {Position::ear_left, 1}};
+inline auto corei2c			  = CoreI2C {PinName::SENSOR_PROXIMITY_MUX_I2C_SDA, PinName::SENSOR_PROXIMITY_MUX_I2C_SCL};
+inline auto io_expander_reset = mbed::DigitalOut {PinName::SENSOR_PROXIMITY_MUX_RESET, 0};
+inline auto io_expander		  = CoreIOExpanderMCP23017 {corei2c, io_expander_reset};
 
-struct Belt {
-	Position position;
-	uint8_t start_index;
-	uint8_t end_index;
-};
+namespace detect_pin {
+	inline auto ear_left		 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB5};
+	inline auto ear_right		 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB4};
+	inline auto belt_left_back	 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB3};
+	inline auto belt_left_front	 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB2};
+	inline auto belt_right_back	 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB1};
+	inline auto belt_right_front = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB0};
+}	// namespace detect_pin
 
-auto belt = std::array<Belt, 4> {Belt {Position::belt_left_front, 10, 13}, Belt {Position::belt_left_back, 16, 18},
-								 Belt {Position::belt_right_front, 1, 3}, Belt {Position::belt_right_back, 6, 9}};
+namespace power_mode_pin {
+	inline auto ear_left		 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA5};
+	inline auto ear_right		 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA4};
+	inline auto belt_left_back	 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA3};
+	inline auto belt_left_front	 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA2};
+	inline auto belt_right_back	 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA1};
+	inline auto belt_right_front = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA0};
+}	// namespace power_mode_pin
 
-void setColorEar(Ear ear, RGB color)
-{
-	leds::ears.setColorAtIndex(ear.index, color);
-	leds::ears.show();
-}
+namespace dac {
+	inline auto left  = CoreQDACMCP4728 {corei2c, 0xC0};
+	inline auto right = CoreQDACMCP4728 {corei2c, 0xC2};
+	namespace channel {
+		inline auto ear_left		 = Channel::C;
+		inline auto ear_right		 = Channel::C;
+		inline auto belt_left_back	 = Channel::B;
+		inline auto belt_left_front	 = Channel::A;
+		inline auto belt_right_back	 = Channel::B;
+		inline auto belt_right_front = Channel::A;
+	}	// namespace channel
+}	// namespace dac
 
-void setColorBelt(Belt belt, RGB color)
-{
-	leds::belt.setColorRange(belt.start_index, belt.end_index, color);
-	leds::belt.show();
-}
+namespace sensor {
+	inline auto ear_left =
+		CoreTouchSensor {detect_pin::ear_left, power_mode_pin::ear_left, dac::left, dac::channel::ear_left};
+	inline auto ear_right =
+		CoreTouchSensor {detect_pin::ear_right, power_mode_pin::ear_right, dac::right, dac::channel::ear_right};
+	inline auto belt_left_back = CoreTouchSensor {detect_pin::belt_left_back, power_mode_pin::belt_left_back, dac::left,
+												  dac::channel::belt_left_back};
+	inline auto belt_left_front	 = CoreTouchSensor {detect_pin::belt_left_front, power_mode_pin::belt_left_front,
+													dac::left, dac::channel::belt_left_front};
+	inline auto belt_right_back	 = CoreTouchSensor {detect_pin::belt_right_back, power_mode_pin::belt_right_back,
+													dac::right, dac::channel::belt_right_back};
+	inline auto belt_right_front = CoreTouchSensor {detect_pin::belt_right_front, power_mode_pin::belt_right_front,
+													dac::right, dac::channel::belt_right_front};
+}	// namespace sensor
 
-void turnOnLeds(Position position)
-{
-	for (Ear sensor: ears) {
-		if (sensor.position == position) {
-			TouchLed::setColorEar(sensor, RGB::pure_blue);
-		}
-	}
-	for (Belt sensor: belt) {
-		if (sensor.position == position) {
-			TouchLed::setColorBelt(sensor, RGB::pure_blue);
-		}
-	}
-}
+namespace position {
+	inline constexpr auto ear_left		   = uint8_t {0};
+	inline constexpr auto ear_right		   = uint8_t {1};
+	inline constexpr auto belt_left_back   = uint8_t {2};
+	inline constexpr auto belt_left_front  = uint8_t {3};
+	inline constexpr auto belt_right_back  = uint8_t {4};
+	inline constexpr auto belt_right_front = uint8_t {5};
+}	// namespace position
 
-void turnOffLeds(Position position)
-{
-	for (Ear sensor: ears) {
-		if (sensor.position == position) {
-			TouchLed::setColorEar(sensor, RGB::black);
-		}
-	}
-	for (Belt sensor: belt) {
-		if (sensor.position == position) {
-			TouchLed::setColorBelt(sensor, RGB::black);
-		}
-	}
-}
-
-void turnOnAllLeds()
-{
-	for (Ear sensor: ears) {
-		TouchLed::setColorEar(sensor, RGB::pure_blue);
-	}
-	for (Belt sensor: belt) {
-		TouchLed::setColorBelt(sensor, RGB::pure_blue);
-	}
-}
-void turnOffAllLeds()
-{
-	for (Ear sensor: ears) {
-		TouchLed::setColorEar(sensor, RGB::black);
-	}
-	for (Belt sensor: belt) {
-		TouchLed::setColorBelt(sensor, RGB::black);
-	}
-}
-
-}	// namespace TouchLed
+}	// namespace leka::touch
 
 auto event_loop		  = EventLoopKit {};
 auto touch_sensor_kit = TouchSensorKit {event_loop,
@@ -155,37 +146,6 @@ void printSensorReleased(Position position)
 	rtos::ThisThread::sleep_for(1s);
 }
 
-void calibration()
-{
-	TouchLed::turnOffAllLeds();
-
-	log_info("Put your hand on ear left sensor");
-	touch_sensor_kit.calibrate(Position::ear_left);
-	setColorEar(TouchLed::ears.at(1), RGB::pure_red);
-
-	log_info("Put your hand on ear right sensor");
-	touch_sensor_kit.calibrate(Position::ear_right);
-	setColorEar(TouchLed::ears.at(0), RGB::pure_red);
-
-	log_info("Put your hand on belt left front sensor");
-	touch_sensor_kit.calibrate(Position::belt_left_front);
-	setColorBelt(TouchLed::belt.at(0), RGB::pure_red);
-
-	log_info("Put your hand on belt left back sensor");
-	touch_sensor_kit.calibrate(Position::belt_left_back);
-	setColorBelt(TouchLed::belt.at(1), RGB::pure_red);
-
-	log_info("Put your hand on belt right front sensor");
-	touch_sensor_kit.calibrate(Position::belt_right_front);
-	setColorBelt(TouchLed::belt.at(2), RGB::pure_red);
-
-	log_info("Put your hand on belt right back sensor");
-	touch_sensor_kit.calibrate(Position::belt_right_back);
-	setColorBelt(TouchLed::belt.at(3), RGB::pure_red);
-
-	TouchLed::turnOffAllLeds();
-}
-
 auto main() -> int
 {
 	logger::init();
@@ -205,16 +165,13 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(2s);
 
-	TouchLed::turnOffAllLeds();
-
 	touch_sensor_kit.init();
-	calibration();
 
-	auto turnOnLeds_func  = [&](Position position) { TouchLed::turnOnLeds(position); };
-	auto turnOffLeds_func = [&](Position position) { TouchLed::turnOffLeds(position); };
+	auto printSensorTouched_func  = [&](const Position position) { printSensorTouched(position); };
+	auto printSensorReleased_func = [&](const Position position) { printSensorReleased(position); };
 
-	touch_sensor_kit.registerOnSensorTouched(turnOnLeds_func);
-	touch_sensor_kit.registerOnSensorReleased(turnOffLeds_func);
+	touch_sensor_kit.registerOnSensorTouched(printSensorTouched_func);
+	touch_sensor_kit.registerOnSensorReleased(printSensorReleased_func);
 
 	touch_sensor_kit.start();
 
