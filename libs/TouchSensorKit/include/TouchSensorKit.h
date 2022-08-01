@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "LogKit.h"
-#include "external/TouchSensorSystem.h"
 #include "interface/drivers/TouchSensor.h"
 #include "interface/libs/EventLoop.h"
 
@@ -51,10 +49,6 @@ class TouchSensorKit
 	auto readAtPosition(Position position) -> bool;
 	void resetAtPosition(Position position);
 	void setSensitivityAtPosition(Position position, uint16_t value, bool saved = false);
-
-	static constexpr std::array<Position, kNumberOfSensors> _positions {
-		Position::ear_left,		   Position::ear_right,		  Position::belt_left_back,
-		Position::belt_left_front, Position::belt_right_back, Position::belt_right_front};
 
 	interface::EventLoop &_event_loop;
 
