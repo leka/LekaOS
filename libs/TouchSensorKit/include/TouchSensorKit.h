@@ -4,20 +4,11 @@
 
 #pragma once
 
+#include "Position.h"
 #include "interface/drivers/TouchSensor.h"
 #include "interface/libs/EventLoop.h"
 
 namespace leka {
-
-enum class Position : uint8_t
-{
-	ear_left,
-	ear_right,
-	belt_left_back,
-	belt_left_front,
-	belt_right_back,
-	belt_right_front,
-};
 
 class TouchSensorKit
 {
