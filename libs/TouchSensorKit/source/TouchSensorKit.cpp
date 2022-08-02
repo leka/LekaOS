@@ -74,29 +74,30 @@ void TouchSensorKit::registerOnSensorReleased(std::function<void(const Position)
 
 auto TouchSensorKit::readAtPosition(Position position) -> bool
 {
+	auto read = bool {};
 	switch (position) {
 		case Position::ear_left:
-			return _ear_left.read();
+			read = _ear_left.read();
 			break;
 		case Position::ear_right:
-			return _ear_right.read();
+			read = _ear_right.read();
 			break;
 		case Position::belt_left_back:
-			return _belt_left_back.read();
+			read = _belt_left_back.read();
 			break;
 		case Position::belt_left_front:
-			return _belt_left_front.read();
+			read = _belt_left_front.read();
 			break;
 		case Position::belt_right_back:
-			return _belt_right_back.read();
+			read = _belt_right_back.read();
 			break;
 		case Position::belt_right_front:
-			return _belt_right_front.read();
+			read = _belt_right_front.read();
 			break;
 		default:
-			return false;
 			break;
 	}
+	return read;
 }
 
 void TouchSensorKit::resetAtPosition(Position position)

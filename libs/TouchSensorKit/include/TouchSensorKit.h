@@ -35,7 +35,7 @@ class TouchSensorKit
 	void registerOnSensorReleased(std::function<void(const Position)> const &on_sensor_released_callback);
 
   private:
-	void run();
+	[[noreturn]] void run();
 
 	auto readAtPosition(Position position) -> bool;
 	void resetAtPosition(Position position);
