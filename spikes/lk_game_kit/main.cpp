@@ -77,8 +77,8 @@ namespace detect_pin {
 	inline auto ear_right		 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB4};
 	inline auto belt_left_back	 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB2};
 	inline auto belt_left_front	 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB3};
-	inline auto belt_right_back	 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB0};
-	inline auto belt_right_front = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB1};
+	inline auto belt_right_back	 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB1};
+	inline auto belt_right_front = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB0};
 }	// namespace detect_pin
 
 namespace power_mode_pin {
@@ -86,8 +86,8 @@ namespace power_mode_pin {
 	inline auto ear_right		 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA4};
 	inline auto belt_left_back	 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA2};
 	inline auto belt_left_front	 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA3};
-	inline auto belt_right_back	 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA0};
-	inline auto belt_right_front = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA1};
+	inline auto belt_right_back	 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA1};
+	inline auto belt_right_front = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA0};
 }	// namespace power_mode_pin
 
 namespace dac {
@@ -98,8 +98,8 @@ namespace dac {
 		inline auto ear_right		 = Channel::C;
 		inline auto belt_left_back	 = Channel::A;
 		inline auto belt_left_front	 = Channel::B;
-		inline auto belt_right_back	 = Channel::A;
-		inline auto belt_right_front = Channel::B;
+		inline auto belt_right_back	 = Channel::B;
+		inline auto belt_right_front = Channel::A;
 	}	// namespace channel
 }	// namespace dac
 
