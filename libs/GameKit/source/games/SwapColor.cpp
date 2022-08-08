@@ -12,14 +12,14 @@ using namespace std::chrono;
 
 void SwapColor::start()
 {
-	for (uint8_t i = 0; i < _colors.size(); i++) {
-		_colors_iterators.at(i) = _start_color_iterator;
+	for (auto &_colors_iterator: _colors_iterators) {
+		_colors_iterator = _start_color_iterator;
 	}
 
-	auto isTouched_func = [&](const Position position) { swap(position); };
+	auto swap_func = [&](const Position position) { swap(position); };
 
 	_touch_sensor_kit.init();
-	_touch_sensor_kit.registerOnSensorTouched(isTouched_func);
+	_touch_sensor_kit.registerOnSensorTouched(swap_func);
 	_touch_sensor_kit.start();
 
 	_running = true;
