@@ -15,6 +15,7 @@
 #include "IOKit/DigitalIn.h"
 #include "IOKit/DigitalOut.h"
 #include "LogKit.h"
+#include "Position.h"
 #include "TouchSensorKit.h"
 
 using namespace leka;
