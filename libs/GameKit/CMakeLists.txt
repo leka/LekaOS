@@ -14,7 +14,7 @@ target_sources(GameKit
 	PRIVATE
 	source/LedManager.cpp
 	source/GameKit.cpp
-	source/SwapColor.cpp
+	source/games/SwapColor.cpp
 )
 
 target_link_libraries(GameKit
