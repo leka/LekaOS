@@ -5,7 +5,6 @@
 
 using namespace leka;
 using namespace std::chrono;
-
 namespace leds {
 
 LedManager::LedManager(interface::LED &ears, interface::LED &belt, LedKit &ledkit)
@@ -25,11 +24,11 @@ void LedManager::turnOnComponent(leka::Position component, leka::RGB color)
 			_ears.setColorAtIndex(0, color);
 			_ears.show();
 			break;
-		case leka::Position::belt_right_front:
+		case leka::Position::belt_right_back:
 			_belt.setColorRange(0, 4, color);
 			_belt.show();
 			break;
-		case leka::Position::belt_right_back:
+		case leka::Position::belt_right_front:
 			_belt.setColorRange(5, 9, color);
 			_belt.show();
 			break;
@@ -55,10 +54,10 @@ void LedManager::turnOffComponent(leka::Position component)
 		case leka::Position::ear_right:
 			_ears.setColorAtIndex(0, RGB::black);
 			break;
-		case leka::Position::belt_right_front:
+		case leka::Position::belt_right_back:
 			_belt.setColorRange(0, 4, RGB::black);
 			break;
-		case leka::Position::belt_right_back:
+		case leka::Position::belt_right_front:
 			_belt.setColorRange(5, 9, RGB::black);
 			break;
 		case leka::Position::belt_left_back:
@@ -74,10 +73,9 @@ void LedManager::turnOffComponent(leka::Position component)
 	_belt.show();
 }
 
-void LedManager::playReinforcer()
+void LedManager::playReinforcer(interface::LEDAnimation *animation)
 {
-	_ledKit.start(&leka::LedKit::animation::rainbow);
-	rtos::ThisThread::sleep_for(4s);
+	_ledKit.start(animation);
 }
 void LedManager::stop()
 {
