@@ -13,6 +13,14 @@
 #include "RGB.h"
 #include "TouchSensorKit.h"
 
+enum class GameState
+{
+	PlayingGame,
+	TouchedTarget,
+	PlayingAnimation,
+	AnimationPlayed
+};
+
 class GameTouchColor : public leka::interface::Game
 {
   public:
@@ -34,7 +42,7 @@ class GameTouchColor : public leka::interface::Game
 	bool _running = false;
 	uint8_t _level {0};
 	leka::Position _target {};
-	bool _win		 = false;
+	GameState _state = GameState::PlayingGame;
 	bool _keeplaying = false;
 	std::array<uint8_t, 6> _random_numbers {};
 

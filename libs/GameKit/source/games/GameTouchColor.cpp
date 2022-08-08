@@ -26,19 +26,30 @@ void GameTouchColor::start()
 
 void GameTouchColor::run()
 {
-	if (_win) {
-		_touch_sensor_kit.registerOnSensorTouched(do_nothing);
-		_ledManager.playReinforcer();
-
-		if (_level == 3) {
-			_running = false;
-		} else {
-			rtos::ThisThread::sleep_for(4s);
-			_win = false;
-			setLedsWithRandomColors();
-			auto update_touched_func = [&](Position position) { updateTouchedColor(position); };
-			_touch_sensor_kit.registerOnSensorTouched(update_touched_func);
-		}
+	static leka::led::animation::Rainbow rainbow;
+	switch (_state) {
+		case GameState::PlayingGame:
+			break;
+		case GameState::PlayingAnimation:
+			if (!rainbow.isRunning()) {
+				_state = GameState::AnimationPlayed;
+			}
+			return;
+		case GameState::TouchedTarget:
+			_touch_sensor_kit.registerOnSensorTouched(do_nothing);
+			_ledManager.playReinforcer(&LedKit::animation::rainbow);
+			_state = GameState::PlayingAnimation;
+			break;
+		case GameState::AnimationPlayed:
+			if (_level == 3) {
+				_running = false;
+			} else {
+				setLedsWithRandomColors();
+				auto update_touched_func = [&](Position position) { updateTouchedColor(position); };
+				_touch_sensor_kit.registerOnSensorTouched(update_touched_func);
+				_state = GameState::PlayingGame;
+			}
+			break;
 	}
 }
 
@@ -81,7 +92,7 @@ void GameTouchColor::updateTouchedColor(leka::Position component)
 	_ledManager.turnOnComponent(component, RGB::black);
 	_random_numbers.at(static_cast<int>(component)) = 255;
 	if (are_all_blue_touched()) {
-		_win = true;
+		_state = GameState::TouchedTarget;
 		log_debug("win");
 		++_level;
 		log_debug("level %d", _level);
