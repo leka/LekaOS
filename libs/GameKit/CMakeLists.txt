@@ -12,6 +12,8 @@ target_include_directories(GameKit
 
 target_sources(GameKit
 	PRIVATE
+
+	source/games/GameTouchColor.cpp
 	source/LedManager.cpp
 	source/GameKit.cpp
 )
