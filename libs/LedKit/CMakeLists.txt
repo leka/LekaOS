@@ -27,6 +27,7 @@ target_sources(LedKit
 	source/animations/Happy.cpp
 	source/LedKit.cpp
 	source/animations/Rainbow.cpp
+	source/animations/RainbowCallback.cpp
 	source/animations/Sad.cpp
 	source/animations/SadCry.cpp
 	source/animations/Sick.cpp

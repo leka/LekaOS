@@ -7,6 +7,8 @@
 
 #include "rtos/ThisThread.h"
 
+#include "LogKit.h"
+
 using namespace leka;
 using namespace std::chrono_literals;
 
@@ -65,6 +67,7 @@ void TouchSensorKit::stop()
 void TouchSensorKit::registerOnSensorTouched(std::function<void(const Position)> const &on_sensor_touched_callback)
 {
 	_on_sensor_touched_callback = on_sensor_touched_callback;
+	log_debug("changed callback");
 }
 
 void TouchSensorKit::registerOnSensorReleased(std::function<void(const Position)> const &on_sensor_released_callback)

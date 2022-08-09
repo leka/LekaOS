@@ -6,6 +6,7 @@
 #include "rtos/ThisThread.h"
 
 #include "LogKit.h"
+#include "animations/RainbowCallback.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -26,30 +27,23 @@ void GameTouchColor::start()
 
 void GameTouchColor::run()
 {
-	leka::led::animation::Rainbow &rainbow = leka::LedKit::animation::rainbow;
-	switch (_state) {
-		case GameState::PlayingGame:
-			break;
-		case GameState::PlayingAnimation:
-			if (!rainbow.isRunning()) {
-				_state = GameState::AnimationPlayed;
-			}
-			return;
-		case GameState::TouchedTarget:
-			_touch_sensor_kit.registerOnSensorTouched(do_nothing);
-			_ledManager.playReinforcer(&rainbow);
-			_state = GameState::PlayingAnimation;
-			break;
-		case GameState::AnimationPlayed:
+	static leka::led::animation::RainbowCallback rainbow;
+	static auto update_touched_func = [&](Position position) { updateTouchedColor(position); };
+	if (_win) {
+		_win = false;
+		_touch_sensor_kit.registerOnSensorTouched(do_nothing);
+
+		auto reset_game_func = [&]() {
 			if (_level == 3) {
 				_running = false;
+
 			} else {
 				setLedsWithRandomColors();
-				auto update_touched_func = [&](Position position) { updateTouchedColor(position); };
 				_touch_sensor_kit.registerOnSensorTouched(update_touched_func);
-				_state = GameState::PlayingGame;
 			}
-			break;
+		};
+		rainbow.registerCallback(reset_game_func);
+		_ledManager.playReinforcer(&rainbow);
 	}
 }
 
@@ -88,7 +82,7 @@ void GameTouchColor::updateTouchedColor(leka::Position component)
 	_ledManager.turnOnComponent(component, RGB::black);
 	_random_numbers.at(static_cast<int>(component)) = 255;
 	if (are_all_blue_touched()) {
-		_state = GameState::TouchedTarget;
+		_win = true;
 		log_debug("win");
 		++_level;
 		log_debug("level %d", _level);
