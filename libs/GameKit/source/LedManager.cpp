@@ -24,11 +24,11 @@ void LedManager::turnOnComponent(leka::Position component, leka::RGB color)
 			_ears.setColorAtIndex(0, color);
 			_ears.show();
 			break;
-		case leka::Position::belt_right_back:
+		case leka::Position::belt_right_front:
 			_belt.setColorRange(0, 4, color);
 			_belt.show();
 			break;
-		case leka::Position::belt_right_front:
+		case leka::Position::belt_right_back:
 			_belt.setColorRange(5, 9, color);
 			_belt.show();
 			break;

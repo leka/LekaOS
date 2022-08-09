@@ -98,9 +98,9 @@ namespace dac {
 		inline auto ear_left		 = Channel::C;
 		inline auto ear_right		 = Channel::C;
 		inline auto belt_left_back	 = Channel::A;
-		inline auto belt_left_front	 = Channel::B;
+		inline auto belt_left_front	 = Channel::A;
 		inline auto belt_right_back	 = Channel::B;
-		inline auto belt_right_front = Channel::A;
+		inline auto belt_right_front = Channel::B;
 	}	// namespace channel
 }	// namespace dac
 

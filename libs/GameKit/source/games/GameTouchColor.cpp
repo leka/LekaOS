@@ -26,7 +26,7 @@ void GameTouchColor::start()
 
 void GameTouchColor::run()
 {
-	static leka::led::animation::Rainbow rainbow;
+	leka::led::animation::Rainbow &rainbow = leka::LedKit::animation::rainbow;
 	switch (_state) {
 		case GameState::PlayingGame:
 			break;
@@ -37,7 +37,7 @@ void GameTouchColor::run()
 			return;
 		case GameState::TouchedTarget:
 			_touch_sensor_kit.registerOnSensorTouched(do_nothing);
-			_ledManager.playReinforcer(&LedKit::animation::rainbow);
+			_ledManager.playReinforcer(&rainbow);
 			_state = GameState::PlayingAnimation;
 			break;
 		case GameState::AnimationPlayed:
@@ -82,10 +82,6 @@ void GameTouchColor::setLedsWithRandomColors()
 		colors.at(i)		  = possible_colors.at(random_number);
 		_ledManager.turnOnComponent(static_cast<leka::Position>(i), colors.at(i));
 	}
-	log_debug("random_numbers: %d, %d , %d, %d, %d, %d", _random_numbers.at(0), _random_numbers.at(1),
-			  _random_numbers.at(2), _random_numbers.at(3), _random_numbers.at(4), _random_numbers.at(5));
-
-	// dans un for avec un cast de i en position => ferait une ligne
 }
 void GameTouchColor::updateTouchedColor(leka::Position component)
 {
