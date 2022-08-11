@@ -14,6 +14,7 @@ target_sources(GameKit
 	PRIVATE
 	source/LedManager.cpp
 	source/GameKit.cpp
+	source/games/Cure.cpp
 )
 
 target_link_libraries(GameKit
