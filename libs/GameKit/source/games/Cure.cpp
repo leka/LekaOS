@@ -37,6 +37,7 @@ void Cure::run()
 			setDots();
 			if (_mobile_cursor_index < kNumberOfLedsBelt) {
 				_belt.setColorAtIndex(_mobile_cursor_index, _mobile_cursor_color);
+				_belt.show();
 				rtos::ThisThread::sleep_for(2s);
 				_mobile_cursor_index++;
 
@@ -99,5 +100,6 @@ void Cure::setDots()
 			default:
 				break;
 		}
+		_belt.show();
 	}
 }
