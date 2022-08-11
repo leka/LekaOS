@@ -54,10 +54,10 @@ void LedManager::turnOffComponent(leka::Position component)
 		case leka::Position::ear_right:
 			_ears.setColorAtIndex(0, RGB::black);
 			break;
-		case leka::Position::belt_right_back:
+		case leka::Position::belt_right_front:
 			_belt.setColorRange(0, 4, RGB::black);
 			break;
-		case leka::Position::belt_right_front:
+		case leka::Position::belt_right_back:
 			_belt.setColorRange(5, 9, RGB::black);
 			break;
 		case leka::Position::belt_left_back:
