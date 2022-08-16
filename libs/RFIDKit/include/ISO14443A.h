@@ -34,51 +34,66 @@ constexpr Command<1> command_requestA		 = {.data = {0x26}, .flags = leka::rfid::
 constexpr Command<2> command_read_register_4 = {.data  = {0x30, 0x04},
 												.flags = leka::rfid::Flag::crc | leka::rfid::Flag::sb_8};
 
-constexpr size_t ATQA_answer_size	  = 2;
-constexpr size_t register_answer_size = 18;
-constexpr std::array<uint8_t, ATQA_answer_size> expected_ATQA_answer {0x44, 0x00};
+constexpr auto ATQA_answer_size			= 2;
+constexpr auto initial_polynomial_value = uint16_t {0x6363};
+constexpr auto register_answer_size		= size_t {18};
+constexpr auto expected_ATQA_answer		= std::array<uint8_t, ATQA_answer_size> {0x44, 0x00};
 
 inline auto computeCRC(uint8_t const *data) -> std::array<uint8_t, 2>
 {
-	uint32_t wCrc = 0x6363;
+	// ? Implementation taken from libnfc:
+	// ? https://github.com/nfc-tools/libnfc/blob/master/libnfc/iso14443-subr.c#L47-L62
+
+	uint32_t wCrc = initial_polynomial_value;
 	size_t size	  = 16;
 
 	do {
-		std::byte bt;
-		bt	 = static_cast<std::byte>(*data++);
-		bt	 = (bt ^ static_cast<std::byte>(wCrc & 0x00FF));
-		bt	 = (bt ^ (bt << 4));
-		wCrc = (wCrc >> 8) ^ (static_cast<uint32_t>(bt) << 8) ^ (static_cast<uint32_t>(bt) << 3) ^
-			   (static_cast<uint32_t>(bt) >> 4);
+		std::byte val;
+		val	 = static_cast<std::byte>(*data++);
+		val	 = (val ^ static_cast<std::byte>(wCrc & 0x00FF));
+		val	 = (val ^ (val << 4));
+		wCrc = (wCrc >> 8) ^ (static_cast<uint32_t>(val) << 8) ^ (static_cast<uint32_t>(val) << 3) ^
+			   (static_cast<uint32_t>(val) >> 4);
 	} while (--size);
 
 	std::array<uint8_t, 2> pbtCrc = {static_cast<uint8_t>(wCrc & 0xFF), static_cast<uint8_t>((wCrc >> 8) & 0xFF)};
 	return pbtCrc;
 }
 
-inline auto receiveAtqa(interface::RFIDReader &rfidreader) -> bool
+inline auto checkATQA(rfid::Tag tag) -> bool
+{
+	auto is_atqa_correct = std::equal(expected_ATQA_answer.begin(), expected_ATQA_answer.end(), tag.data.begin());
+	return is_atqa_correct;
+}
+
+inline auto checkRegister(rfid::Tag tag) -> bool
+{
+	auto crc_computed	= computeCRC(tag.data.data());
+	auto is_crc_correct = std::equal(crc_computed.begin(), crc_computed.end(), tag.data.begin() + 16);
+
+	return is_crc_correct;
+}
+
+inline auto atqaReceived(interface::RFIDReader &rfidreader) -> bool
 {
 	if (!rfidreader.didTagCommunicationSucceed(ATQA_answer_size)) {
 		return false;
 	}
 
-	auto tag = rfidreader.getTag();
+	const auto &tag = rfidreader.getTag();
 
-	auto is_atqa_correct = std::equal(expected_ATQA_answer.begin(), expected_ATQA_answer.end(), tag.data.begin());
-	return is_atqa_correct;
+	return checkATQA(tag);
 }
 
-inline auto receiveRegister(interface::RFIDReader &rfidreader) -> bool
+inline auto registerReceived(interface::RFIDReader &rfidreader) -> bool
 {
-	if (!rfidreader.didTagCommunicationSucceed(register_answer_size)) {
+	if (!rfidreader.didTagCommunicationSucceed(ATQA_answer_size)) {
 		return false;
 	}
-	auto tag = rfidreader.getTag();
 
-	auto crc_computed	= computeCRC(tag.data.data());
-	auto is_crc_correct = std::equal(crc_computed.begin(), crc_computed.end(), tag.data.begin() + 16);
+	const auto &tag = rfidreader.getTag();
 
-	return is_crc_correct;
+	return checkRegister(tag);
 }
 
 namespace sm::event {
@@ -102,11 +117,11 @@ namespace sm::guard {
 	using irfidreader = interface::RFIDReader;
 
 	struct atqa_received {
-		auto operator()(irfidreader &rfidreader) const { return receiveAtqa(rfidreader); }
+		auto operator()(irfidreader &rfidreader) const { return atqaReceived(rfidreader); }
 	};
 
 	struct register_received {
-		auto operator()(irfidreader &rfidreader) const { return receiveRegister(rfidreader); }
+		auto operator()(irfidreader &rfidreader) const { return registerReceived(rfidreader); }
 	};
 
 }	// namespace sm::guard
