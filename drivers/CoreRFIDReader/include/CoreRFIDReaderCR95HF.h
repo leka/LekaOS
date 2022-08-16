@@ -13,7 +13,7 @@
 
 namespace leka {
 
-namespace rfid {
+namespace rfid::cr95hf {
 
 	struct RFIDProtocol {
 		const uint8_t id;
@@ -119,60 +119,60 @@ namespace rfid {
 
 		namespace frame {
 			inline constexpr auto set_tag_detection_mode = std::to_array<uint8_t>({
-				rfid::settings::idle_tag_detection::tag_detection_command,
-				rfid::settings::idle_tag_detection::length,
-				rfid::settings::idle_tag_detection::wu_source,
-				rfid::settings::idle_tag_detection::enter_control[0],
-				rfid::settings::idle_tag_detection::enter_control[1],
-				rfid::settings::idle_tag_detection::wu_control[0],
-				rfid::settings::idle_tag_detection::wu_control[1],
-				rfid::settings::idle_tag_detection::leave_control[0],
-				rfid::settings::idle_tag_detection::leave_control[1],
-				rfid::settings::idle_tag_detection::wu_periode,
-				rfid::settings::idle_tag_detection::oscillator_start,
-				rfid::settings::idle_tag_detection::digital_to_analog_start,
-				rfid::settings::idle_tag_detection::digital_to_analog_data[0],
-				rfid::settings::idle_tag_detection::digital_to_analog_data[1],
-				rfid::settings::idle_tag_detection::swing_count,
-				rfid::settings::idle_tag_detection::max_sleep,
+				settings::idle_tag_detection::tag_detection_command,
+				settings::idle_tag_detection::length,
+				settings::idle_tag_detection::wu_source,
+				settings::idle_tag_detection::enter_control[0],
+				settings::idle_tag_detection::enter_control[1],
+				settings::idle_tag_detection::wu_control[0],
+				settings::idle_tag_detection::wu_control[1],
+				settings::idle_tag_detection::leave_control[0],
+				settings::idle_tag_detection::leave_control[1],
+				settings::idle_tag_detection::wu_periode,
+				settings::idle_tag_detection::oscillator_start,
+				settings::idle_tag_detection::digital_to_analog_start,
+				settings::idle_tag_detection::digital_to_analog_data[0],
+				settings::idle_tag_detection::digital_to_analog_data[1],
+				settings::idle_tag_detection::swing_count,
+				settings::idle_tag_detection::max_sleep,
 			});
 
 			inline constexpr auto idn = std::to_array<uint8_t>({
-				rfid::command::idn::id,
-				rfid::command::idn::length,
+				command::idn::id,
+				command::idn::length,
 			});
 
 			inline constexpr auto set_baudrate = std::to_array<uint8_t>({
-				rfid::command::set_baudrate::id,
-				rfid::command::set_baudrate::length,
+				command::set_baudrate::id,
+				command::set_baudrate::length,
 			});
 
 			inline constexpr auto set_protocol_iso14443 = std::to_array<uint8_t>({
-				rfid::command::set_protocol::id,
-				rfid::command::set_protocol::length,
-				rfid::protocol::iso14443A.id,
-				rfid::settings::default_rx_tx_speed,
+				command::set_protocol::id,
+				command::set_protocol::length,
+				protocol::iso14443A.id,
+				settings::default_rx_tx_speed,
 			});
 
 			inline constexpr auto set_gain_and_modulation = std::to_array<uint8_t>({
-				rfid::command::set_gain_and_modulation::id,
-				rfid::command::set_gain_and_modulation::length,
-				rfid::settings::arc_b,
-				rfid::settings::flag_increment,
-				rfid::settings::acr_b_index_for_gain_and_modulation,
-				rfid::protocol::iso14443A.gain_modulation_values(),
+				command::set_gain_and_modulation::id,
+				command::set_gain_and_modulation::length,
+				settings::arc_b,
+				settings::flag_increment,
+				settings::acr_b_index_for_gain_and_modulation,
+				protocol::iso14443A.gain_modulation_values(),
 			});
 
 		}	// namespace frame
 
 	}	// namespace command
 
-}	// namespace rfid
+}	// namespace rfid::cr95hf
 
-class CoreRFIDReader : public interface::RFIDReader
+class CoreRFIDReaderCR95HF : public interface::RFIDReader
 {
   public:
-	explicit CoreRFIDReader(interface::BufferedSerial &serial) : _serial(serial) {};
+	explicit CoreRFIDReaderCR95HF(interface::BufferedSerial &serial) : _serial(serial) {};
 
 	void init() final;
 
@@ -198,8 +198,8 @@ class CoreRFIDReader : public interface::RFIDReader
 	std::function<void()> _on_tag_response_available;
 	std::function<void(rfid::Tag &)> _on_tag_readable;
 
-	std::array<uint8_t, rfid::max_tx_length> _tx_buf {};
-	std::array<uint8_t, rfid::max_rx_length> _rx_buf {};
+	std::array<uint8_t, rfid::cr95hf::max_tx_length> _tx_buf {};
+	std::array<uint8_t, rfid::cr95hf::max_rx_length> _rx_buf {};
 };
 
 }	// namespace leka

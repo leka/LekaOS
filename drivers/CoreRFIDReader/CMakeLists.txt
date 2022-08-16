@@ -11,7 +11,7 @@ target_include_directories(CoreRFIDReader
 
 target_sources(CoreRFIDReader
 	PRIVATE
-	source/CoreRFIDReader.cpp
+	source/CoreRFIDReaderCR95HF.cpp
 )
 
 target_link_libraries(CoreRFIDReader
@@ -22,6 +22,6 @@ target_link_libraries(CoreRFIDReader
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
-		tests/CoreRFIDReader_test.cpp
+		tests/CoreRFIDReaderCR95HF_test.cpp
 	)
 endif()

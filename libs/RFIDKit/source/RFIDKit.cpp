@@ -10,7 +10,7 @@ void RFIDKit::init()
 {
 	using namespace rfid::sm;
 
-	static auto tag_detected_callback = [this]() { state_machine.process_event(event::tag_response_available {}); };
+	auto tag_detected_callback = [this]() { state_machine.process_event(event::tag_response_available {}); };
 
 	_rfid_reader.registerOnTagDetectedCallback(tag_detected_callback);
 	registerMagicCard();
@@ -23,7 +23,8 @@ void RFIDKit::registerMagicCard()
 {
 	auto on_magic_card_readable_callback = [this](rfid::Tag &tag) {
 		if (isTagSignatureValid(tag)) {
-			_card = MagicCard {static_cast<uint16_t>((tag.data[4] << 8) + tag.data[5])};
+			auto id = utils::memory::combineBytes({.high = tag.data[4], .low = tag.data[5]});
+			_card	= MagicCard {id};
 
 			if (_on_tag_available_callback != nullptr) {
 				_on_tag_available_callback(_card);

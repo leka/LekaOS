@@ -5,7 +5,7 @@
 #include "RFIDKit.h"
 
 #include "gtest/gtest.h"
-#include "mocks/leka/CoreRFIDReader.h"
+#include "mocks/leka/CoreRFIDReaderCR95HF.h"
 
 using namespace leka;
 
@@ -22,7 +22,7 @@ class RFIDKitTest : public ::testing::Test
 	// void TearDown() override {}
 
 	RFIDKit rfid_kit;
-	mock::CoreRFIDReader mock_reader {};
+	mock::CoreRFIDReaderCR95HF mock_reader {};
 	MockFunction<void(MagicCard &)> mock_callback;
 
 	std::function<void(rfid::Tag &)> magic_card_callback {};

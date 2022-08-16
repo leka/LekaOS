@@ -29,7 +29,7 @@
 #include "CoreMotor.h"
 #include "CorePwm.h"
 #include "CoreQSPI.h"
-#include "CoreRFIDReader.h"
+#include "CoreRFIDReaderCR95HF.h"
 #include "CoreSDRAM.hpp"
 #include "CoreSPI.h"
 #include "CoreSTM32Hal.h"
@@ -305,7 +305,7 @@ namespace firmware {
 namespace rfid {
 
 	auto serial = CoreBufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
-	auto reader = CoreRFIDReader(serial);
+	auto reader = CoreRFIDReaderCR95HF(serial);
 
 }	// namespace rfid
 

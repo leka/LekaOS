@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <functional>
 
-#include "CoreRFIDReader.h"
+#include "CoreRFIDReaderCR95HF.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreBufferedSerial.h"
 #include "mocks/leka/EventQueue.h"
@@ -37,7 +37,7 @@ class CoreRFIDReaderTest : public ::testing::Test
 
 	mock::EventQueue event_queue {};
 	mock::CoreBufferedSerial mockBufferedSerial;
-	CoreRFIDReader reader;
+	CoreRFIDReaderCR95HF reader;
 
 	testing::MockFunction<void()> callback_detected;
 	testing::MockFunction<void(rfid::Tag)> callback_readable;
@@ -45,17 +45,19 @@ class CoreRFIDReaderTest : public ::testing::Test
 
 	void sendSetProtocol()
 	{
-		const auto expected_values = ElementsAre(rfid::command::set_protocol::id, rfid::command::set_protocol::length,
-												 rfid::protocol::iso14443A.id, rfid::settings::default_rx_tx_speed);
+		const auto expected_values =
+			ElementsAre(rfid::cr95hf::command::set_protocol::id, rfid::cr95hf::command::set_protocol::length,
+						rfid::cr95hf::protocol::iso14443A.id, rfid::cr95hf::settings::default_rx_tx_speed);
 		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 	}
 
 	void sendSetGainAndModulation()
 	{
-		const auto expected_values = ElementsAre(
-			rfid::command::set_gain_and_modulation::id, rfid::command::set_gain_and_modulation::length,
-			rfid::settings::arc_b, rfid::settings::flag_increment, rfid::settings::acr_b_index_for_gain_and_modulation,
-			rfid::protocol::iso14443A.gain_modulation_values());
+		const auto expected_values = ElementsAre(rfid::cr95hf::command::set_gain_and_modulation::id,
+												 rfid::cr95hf::command::set_gain_and_modulation::length,
+												 rfid::cr95hf::settings::arc_b, rfid::cr95hf::settings::flag_increment,
+												 rfid::cr95hf::settings::acr_b_index_for_gain_and_modulation,
+												 rfid::cr95hf::protocol::iso14443A.gain_modulation_values());
 		EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 	}
 
@@ -88,7 +90,7 @@ TEST_F(CoreRFIDReaderTest, registerCallbacks)
 
 TEST_F(CoreRFIDReaderTest, setModeTagDetection)
 {
-	const auto expected_values = testing::ElementsAreArray(rfid::command::frame::set_tag_detection_mode);
+	const auto expected_values = testing::ElementsAreArray(rfid::cr95hf::command::frame::set_tag_detection_mode);
 
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 
@@ -110,20 +112,6 @@ TEST_F(CoreRFIDReaderTest, setCommunicationProtocolSuccess)
 	reader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 }
 
-// TEST_F(CoreRFIDReaderTest, setCommunicationProtocolFailedOnAnswerTooBig)
-// {
-// 	std::array<uint8_t, 3> set_protocol_failed_answer = {0x00, 0x00, 0x00};
-// 	{
-// 		InSequence seq;
-// 		receiveRFIDReaderAnswer(set_protocol_failed_answer);
-// 		sendSetProtocol();
-// 		sendSetGainAndModulation();
-// 	}
-
-// 	callback_sigio();
-// 	reader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
-// }
-
 TEST_F(CoreRFIDReaderTest, setCommunicationProtocolFailedOnWrongFirstValue)
 {
 	std::array<uint8_t, 2> set_protocol_failed_answer = {0x82, 0x00};
@@ -141,7 +129,8 @@ TEST_F(CoreRFIDReaderTest, setCommunicationProtocolFailedOnWrongFirstValue)
 TEST_F(CoreRFIDReaderTest, sendCommandSuccess)
 {
 	std::array<uint8_t, 2> command = {0x26, 0x07};
-	const auto expected_values	   = ElementsAre(rfid::command::send_receive, command.size(), command[0], command[1]);
+	const auto expected_values =
+		ElementsAre(rfid::cr95hf::command::send_receive, command.size(), command[0], command[1]);
 
 	EXPECT_CALL(mockBufferedSerial, write).With(Args<0, 1>(expected_values));
 

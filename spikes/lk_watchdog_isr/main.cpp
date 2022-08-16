@@ -12,7 +12,7 @@
 #include "rtos/Thread.h"
 
 #include "CoreBufferedSerial.h"
-#include "CoreRFIDReader.h"
+#include "CoreRFIDReaderCR95HF.h"
 #include "CriticalSection.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
@@ -116,7 +116,7 @@ namespace watchdog {
 namespace rfid {
 
 	auto serial = CoreBufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
-	auto reader = CoreRFIDReader(serial);
+	auto reader = CoreRFIDReaderCR95HF(serial);
 
 }	// namespace rfid
 
