@@ -38,6 +38,7 @@ auto main() -> int
 
 	auto input_state  = bool {};
 	auto output_state = bool {};
+	out.write(mcp23017::level::high);
 
 	while (true) {
 		in.mode(PinMode::PullUp);
@@ -46,9 +47,6 @@ auto main() -> int
 		log_info("Input : state = %s", input_state ? "true" : "false");
 		rtos::ThisThread::sleep_for(100ms);
 
-		out.write(mcp23017::level::low);
-		output_state = (1 == out.read());
-		log_info("Output : state = %s", output_state ? "true" : "false");
-		rtos::ThisThread::sleep_for(100ms);
+		rtos::ThisThread::sleep_for(1s);
 	}
 }
