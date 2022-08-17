@@ -25,3 +25,8 @@ target_link_libraries(MagicCardKit
 	BehaviorKit
 )
 
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
+	leka_unit_tests_sources(
+		tests/MagicCardKit_test.cpp
+	)
+endif()
