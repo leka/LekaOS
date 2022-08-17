@@ -2,8 +2,8 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-//? CR95HF RFID reader datasheet available at:
-//? https://www.st.com/resource/en/datasheet/cr95hf.pdf
+// ? CR95HF RFID reader datasheet available at:
+// ? https://www.st.com/resource/en/datasheet/cr95hf.pdf
 
 #pragma once
 
