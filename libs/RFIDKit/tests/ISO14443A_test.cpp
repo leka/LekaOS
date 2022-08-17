@@ -42,7 +42,7 @@ TEST_F(ISO14443ATest, initialState)
 	EXPECT_FALSE(sm.is(state::requesting_tag_data));
 }
 
-TEST_F(ISO14443ATest, stateIdleEventTagDetectedGuardIsTagDetectedTrue)
+TEST_F(ISO14443ATest, stateIdleEventTagResponseAvailableGuardIsTagDetectedTrue)
 {
 	sm.set_current_states(state::idle);
 
@@ -53,7 +53,7 @@ TEST_F(ISO14443ATest, stateIdleEventTagDetectedGuardIsTagDetectedTrue)
 	EXPECT_TRUE(sm.is(state::send_reqa));
 }
 
-TEST_F(ISO14443ATest, stateSendReqaEventTagDetected)
+TEST_F(ISO14443ATest, stateSendReqaEventTagResponseAvailable)
 {
 	sm.set_current_states(state::send_reqa);
 
@@ -64,7 +64,7 @@ TEST_F(ISO14443ATest, stateSendReqaEventTagDetected)
 	EXPECT_TRUE(sm.is(state::requesting_atqa));
 }
 
-TEST_F(ISO14443ATest, stateRequestingAtqaEventTagDetectedGuardIsTrue)
+TEST_F(ISO14443ATest, stateRequestingAtqaEventTagResponseAvailableGuardIsTrue)
 {
 	sm.set_current_states(state::requesting_atqa);
 
@@ -86,7 +86,7 @@ TEST_F(ISO14443ATest, stateRequestingAtqaEventTagDetectedGuardIsTrue)
 	EXPECT_TRUE(sm.is(state::requesting_tag_data));
 }
 
-TEST_F(ISO14443ATest, stateRequestingAtqaEventTagDetectedGuardIsFalse)
+TEST_F(ISO14443ATest, stateRequestingAtqaEventTagResponseAvailableGuardIsFalse)
 {
 	sm.set_current_states(state::requesting_atqa);
 
@@ -98,7 +98,7 @@ TEST_F(ISO14443ATest, stateRequestingAtqaEventTagDetectedGuardIsFalse)
 	EXPECT_TRUE(sm.is(state::idle));
 }
 
-TEST_F(ISO14443ATest, stateRequestingTagDataEventTagDetectedGuardIsTrue)
+TEST_F(ISO14443ATest, stateRequestingTagDataEventTagResponseAvailableGuardIsTrue)
 {
 	sm.set_current_states(state::requesting_tag_data);
 
@@ -122,7 +122,7 @@ TEST_F(ISO14443ATest, stateRequestingTagDataEventTagDetectedGuardIsTrue)
 	EXPECT_TRUE(sm.is(state::idle));
 }
 
-TEST_F(ISO14443ATest, stateRequestingTagDataEventTagDetectedGuardIsFalse)
+TEST_F(ISO14443ATest, stateRequestingTagDataEventTagResponseAvailableGuardIsFalse)
 {
 	sm.set_current_states(state::requesting_tag_data);
 
