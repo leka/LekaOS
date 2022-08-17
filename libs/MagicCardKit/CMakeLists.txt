@@ -13,6 +13,7 @@ target_include_directories(MagicCardKit
 target_sources(MagicCardKit
 	PRIVATE
 	source/MagicCardKit.cpp
+	source/StateMachineActivity.cpp
 	source/activity/SelectReinforcers.cpp
 )
 
