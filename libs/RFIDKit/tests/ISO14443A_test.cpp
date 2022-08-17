@@ -5,7 +5,7 @@
 #include "ISO14443A.h"
 
 #include "gtest/gtest.h"
-#include "mocks/leka/CoreRFIDReaderCR95HF.h"
+#include "mocks/leka/CoreRFIDReader.h"
 
 using namespace leka;
 using namespace rfid::sm;
@@ -19,7 +19,7 @@ class ISO14443ATest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	mock::CoreRFIDReaderCR95HF mock_reader {};
+	mock::CoreRFIDReader mock_reader {};
 	boost::sml::sm<rfid::ISO14443A, boost::sml::testing> sm {static_cast<interface::RFIDReader &>(mock_reader)};
 
 	static constexpr rfid::Command<1> command_requestA		  = {.data = {0x26}, .flags = leka::rfid::Flag::sb_7};
