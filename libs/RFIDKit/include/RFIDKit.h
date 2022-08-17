@@ -4,53 +4,29 @@
 
 #pragma once
 
-#include <cstddef>
-#include <span>
-
+#include "ISO14443A.h"
 #include "MagicCard.h"
 #include "interface/drivers/RFIDReader.h"
 
 namespace leka {
 
-enum class state : uint8_t
-{
-
-	WAITING_FOR_TAG				   = 0x00,
-	TAG_COMMUNICATION_PROTOCOL_SET = 0x01,
-	WAIT_FOR_ATQA_RESPONSE		   = 0x02,
-	TAG_IDENTIFIED				   = 0x03,
-	TAG_AVAILABLE				   = 0x04,
-
-};
-
-class RFIDKit : public interface::RFIDReader::ISO14443
+class RFIDKit
 {
   public:
 	explicit RFIDKit(interface::RFIDReader &rfid_reader) : _rfid_reader(rfid_reader) {};
 
-	void init() final;
-
-	void runStateMachine() final;
-
-	void onTagActivated(std::function<void(MagicCard &)> callback);
+	void init();
+	void registerMagicCard();
+	[[nodiscard]] auto isTagSignatureValid(rfid::Tag tag) const -> bool;
+	void onTagActivated(std::function<void(MagicCard &_card)> const &callback);
 
   private:
-	void sendREQA();
-	void sendReadRegister0();
-	void sendReadRegister4();
-
-	auto isTagSignatureValid() -> bool;
-
-	auto receiveATQA() -> bool;
-	auto receiveReadTagData() -> bool;
-
-	auto computeCRC(uint8_t const *data) const -> std::array<uint8_t, 2>;
-
 	interface::RFIDReader &_rfid_reader;
-	rfid::Tag _tag {};
 	MagicCard _card = MagicCard::none;
 	std::function<void(MagicCard &)> _on_tag_available_callback;
-	state _state = state::WAITING_FOR_TAG;
+	boost::sml::sm<rfid::ISO14443A> state_machine {_rfid_reader};
+
+	static constexpr std::array<uint8_t, 4> leka_tag_header = {0x4C, 0x45, 0x4B, 0x41};
 };
 
 }	// namespace leka
