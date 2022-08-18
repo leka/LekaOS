@@ -10,7 +10,8 @@
 namespace leka::utils::math {
 
 template <typename OutputType, typename IntputType>
-auto map(IntputType x, IntputType in_min, IntputType in_max, OutputType out_min, OutputType out_max) -> OutputType
+constexpr auto map(IntputType x, IntputType in_min, IntputType in_max, OutputType out_min, OutputType out_max)
+	-> OutputType
 {
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
