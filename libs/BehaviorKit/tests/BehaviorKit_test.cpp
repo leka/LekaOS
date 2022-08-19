@@ -177,6 +177,12 @@ TEST_F(BehaviorKitTest, working)
 	behaviorkit.working();
 }
 
+TEST_F(BehaviorKitTest, chooseActivity)
+{
+	EXPECT_CALL(mock_videokit, displayImage);
+	behaviorkit.chooseActivity();
+}
+
 TEST_F(BehaviorKitTest, stop)
 {
 	auto speed = 0.5;
