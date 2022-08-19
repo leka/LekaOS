@@ -12,6 +12,7 @@ target_include_directories(GameKit
 
 target_sources(GameKit
 	PRIVATE
+
 	source/GameKit.cpp
 )
 
