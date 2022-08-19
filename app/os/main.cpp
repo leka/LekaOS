@@ -40,6 +40,7 @@
 #include "FirmwareKit.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
+#include "MagicCardKit.h"
 #include "QSPIFBlockDevice.h"
 #include "RFIDKit.h"
 #include "RobotController.h"
@@ -304,12 +305,14 @@ namespace firmware {
 
 namespace rfid {
 
-	auto serial = CoreBufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
-	auto reader = CoreRFIDReaderCR95HF(serial);
+	auto serial		= CoreBufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
+	auto reader		= CoreRFIDReaderCR95HF(serial);
+	auto event_loop = EventLoopKit();
 
 }	// namespace rfid
 
-auto rfidkit = RFIDKit(rfid::reader);
+auto rfidkit	  = RFIDKit(rfid::reader);
+auto magiccardkit = MagicCardKit(rfid::event_loop, behaviorkit);
 
 namespace mcuboot {
 
@@ -347,12 +350,15 @@ namespace robot {
 		display::videokit,
 		behaviorkit,
 		commandkit,
+		magiccardkit,
 	};
 
-	void emergencyStop(const MagicCard &card)
+	void triggerTagAction(const MagicCard &card)
 	{
 		if (card == MagicCard::emergency_stop) {
 			controller.raiseEmergencyStop();
+		} else if (card == MagicCard::remote_standard) {
+			controller.raiseRfidActivity();
 		}
 	}
 
@@ -488,7 +494,7 @@ auto main() -> int
 	robot::controller.registerOnFactoryResetNotificationCallback(factory_reset::set);
 	robot::controller.registerEvents();
 
-	rfidkit.onTagActivated(robot::emergencyStop);
+	rfidkit.onTagActivated(robot::triggerTagAction);
 
 	// TODO(@team): Add functional test prior confirming the firmware
 	firmware::confirmFirmware();
