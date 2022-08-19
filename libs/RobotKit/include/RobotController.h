@@ -30,6 +30,7 @@
 #include "interface/drivers/LCD.hpp"
 #include "interface/drivers/Motor.h"
 #include "interface/drivers/Timeout.h"
+#include "interface/libs/MagicCardKit.h"
 #include "interface/libs/VideoKit.h"
 
 namespace leka {
@@ -39,13 +40,11 @@ template <typename sm_t = boost::sml::sm<system::robot::StateMachine, boost::sml
 class RobotController : public interface::RobotController
 {
   public:
-	sm_t state_machine {static_cast<interface::RobotController &>(*this), logger};
-
 	explicit RobotController(interface::Timeout &timeout, interface::Battery &battery, SerialNumberKit &serialnumberkit,
 							 interface::FirmwareUpdate &firmware_update, interface::Motor &motor_left,
 							 interface::Motor &motor_right, interface::LED &ears, interface::LED &belt, LedKit &ledkit,
 							 interface::LCD &lcd, interface::VideoKit &videokit, BehaviorKit &behaviorkit,
-							 CommandKit &cmdkit)
+							 CommandKit &cmdkit, interface::MagicCardKit &magiccardkit)
 		: _timeout(timeout),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
@@ -58,7 +57,8 @@ class RobotController : public interface::RobotController
 		  _lcd(lcd),
 		  _videokit(videokit),
 		  _behaviorkit(behaviorkit),
-		  _cmdkit(cmdkit)
+		  _cmdkit(cmdkit),
+		  _magiccardkit(magiccardkit)
 	{
 		// nothing to do
 	}
@@ -188,6 +188,14 @@ class RobotController : public interface::RobotController
 
 	void startDisconnectionBehavior() final { stopActuators(); }
 
+	void startRfidActivityBehavior() final
+	{
+		_lcd.turnOn();
+		_behaviorkit.chooseActivity();
+	}
+
+	void stopRfidActivityBehavior() final { _behaviorkit.stop(); }
+
 	auto isReadyToUpdate() -> bool final
 	{
 		return (_battery.isCharging() && _battery.level() > _minimal_battery_level_to_update);
@@ -261,6 +269,8 @@ class RobotController : public interface::RobotController
 			system_reset();
 		}
 	}
+
+	void raiseRfidActivity() { raise(system::robot::sm::event::remote_standard_detected {}); }
 
 	void registerEvents()
 	{
@@ -348,6 +358,7 @@ class RobotController : public interface::RobotController
 	auto isBleConnected() -> bool final { return state_machine.is(system::robot::sm::state::connected); }
 
   private:
+	sm_t state_machine {static_cast<interface::RobotController &>(*this), logger, _magiccardkit};
 	system::robot::sm::logger logger {};
 
 	std::chrono::seconds _sleep_timeout_duration {60};
@@ -370,6 +381,7 @@ class RobotController : public interface::RobotController
 	LedKit &_ledkit;
 	interface::LCD &_lcd;
 	interface::VideoKit &_videokit;
+	interface::MagicCardKit &_magiccardkit;
 
 	BehaviorKit &_behaviorkit;
 	CommandKit &_cmdkit;

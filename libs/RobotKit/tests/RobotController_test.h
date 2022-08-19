@@ -4,6 +4,7 @@
 
 // ? Include order is important here
 // clang-format off
+#include "MagicCardKit.h"
 #include "RobotController.h"
 // clang-format on
 
@@ -86,12 +87,16 @@ class RobotControllerTest : public testing::Test
 
 	BehaviorKit bhvkit {mock_videokit, ledkit, mock_motor_left, mock_motor_right};
 
+	stub::EventLoopKit event_loop_magic_card;
+
+	MagicCardKit magiccardkit {event_loop_magic_card, bhvkit};
+
 	stub::EventLoopKit event_loop {};
 	CommandKit cmdkit {event_loop};
 
 	RobotController<bsml::sm<system::robot::StateMachine, bsml::testing>> rc {
-		timeout, battery,  serialnumberkit, firmware_update, mock_motor_left, mock_motor_right, mock_ears, mock_belt,
-		ledkit,	 mock_lcd, mock_videokit,	bhvkit,			 cmdkit};
+		timeout,   battery, serialnumberkit, firmware_update, mock_motor_left, mock_motor_right, mock_ears,
+		mock_belt, ledkit,	mock_lcd,		 mock_videokit,	  bhvkit,		   cmdkit,			 magiccardkit};
 
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
