@@ -33,7 +33,10 @@ void GameKit::run()
 {
 	while (_game->isRunning()) {
 		_game->run();
+
 		rtos::ThisThread::sleep_for(50ms);
+		
+
 	}
 }
 
