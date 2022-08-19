@@ -156,8 +156,8 @@ constexpr MagicCard MagicCard::activity_colors_and_sounds	= MagicCard {0x00'1E};
 constexpr MagicCard MagicCard::activity_magic_objects		= MagicCard {0x00'1F};
 constexpr MagicCard MagicCard::activity_dance_freeze		= MagicCard {0x00'20};
 
-constexpr MagicCard MagicCard::activity_magic_objects = MagicCard {0x00'21};
-constexpr MagicCard MagicCard::activity_dance_freeze  = MagicCard {0x00'22};
+constexpr MagicCard MagicCard::remote_standard		 = MagicCard {0x00'21};
+constexpr MagicCard MagicCard::remote_colored_arrows = MagicCard {0x00'22};
 
 constexpr MagicCard MagicCard::reinforcer_1_blink_green = MagicCard {0x00'23};
 constexpr MagicCard MagicCard::reinforcer_2_spin_blink	= MagicCard {0x00'24};
