@@ -67,10 +67,7 @@ void turnOff()
 
 }	// namespace leds
 
-
 auto ledkit = LedKit {leds::animations::event_loop, leds::ears, leds::belt};
-
-
 
 namespace touch {
 
@@ -128,16 +125,12 @@ auto event_loop = EventLoopKit {};
 
 }	// namespace touch
 
-
 namespace game {
 
 auto event_loop	 = EventLoopKit {};
 auto led_manager = leds::LedManager {leds::ears, leds::belt, ledkit};
 
 }	// namespace game
-
-
-
 
 auto touch_sensor_kit = TouchSensorKit {touch::event_loop,
 										touch::sensor::ear_left,
@@ -146,7 +139,6 @@ auto touch_sensor_kit = TouchSensorKit {touch::event_loop,
 										touch::sensor::belt_left_front,
 										touch::sensor::belt_right_back,
 										touch::sensor::belt_right_front};
-
 
 auto gamekit = GameKit {game::event_loop};
 GameSpeed gamespeed(game::led_manager, touch_sensor_kit, 0);
@@ -164,8 +156,5 @@ auto main() -> int
 	while (true) {
 		gamekit.start(&gamespeed);
 		rtos::ThisThread::sleep_for(30s);
-
-	
-
 	}
 }

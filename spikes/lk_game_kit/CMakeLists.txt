@@ -12,10 +12,8 @@ target_include_directories(spike_lk_game_kit
 target_sources(spike_lk_game_kit
 	PRIVATE
 	main.cpp
-  GameSpeed.cpp
+	GameSpeed.cpp
 	LedManager.cpp
-
-
 )
 
 target_link_libraries(spike_lk_game_kit
