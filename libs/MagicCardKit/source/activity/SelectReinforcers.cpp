@@ -13,9 +13,11 @@ auto SelectReinforcer::playReinforcer() -> bool
 	return _play_reinforcer;
 }
 
-void SelectReinforcer::setBehaviorKit(BehaviorKit &behaviorkit)
+void SelectReinforcer::setUtils(ReinforcerKit &reinforcerkit, interface::VideoKit &videokit, interface::LED &led)
 {
-	_behaviorkit = &behaviorkit;
+	_reinforcerkit = &reinforcerkit;
+	_videokit	   = &videokit;
+	_led		   = &led;
 }
 
 void SelectReinforcer::registerCallback(const std::function<void(const MagicCard &card)> &callback)
@@ -25,13 +27,13 @@ void SelectReinforcer::registerCallback(const std::function<void(const MagicCard
 
 void SelectReinforcer::start()
 {
-	_behaviorkit->working();
+	_videokit->displayImage("path");   // TODO insert neutral
 	_play_reinforcer = false;
 }
 
 void SelectReinforcer::stop()
 {
-	_behaviorkit->stop();
+	// _behaviorkit->stop();
 	_play_reinforcer = false;
 }
 

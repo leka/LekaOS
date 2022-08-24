@@ -15,15 +15,11 @@ class MagicCardKit
   public:
 	virtual ~MagicCardKit() = default;
 
-	virtual void init()								   = 0;
-	virtual void start()							   = 0;
-	virtual void run(const MagicCard &card)			   = 0;
-	virtual void stop()								   = 0;
-	virtual void updateCallback(const MagicCard &card) = 0;
-
-	struct activity {
-		static inline auto select_reinforcer = rfid::activity::SelectReinforcer {};
-	};
+	virtual void init()									  = 0;
+	virtual void start(interface::RFIDActivity &activity) = 0;
+	virtual void run(const MagicCard &card)				  = 0;
+	virtual void stop()									  = 0;
+	virtual void updateCallback(const MagicCard &card)	  = 0;
 };
 
 }	// namespace leka::interface

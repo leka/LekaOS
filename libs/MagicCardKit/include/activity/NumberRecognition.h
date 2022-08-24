@@ -6,14 +6,15 @@
 
 // LCOV_EXCL_START
 
+#include "CircularQueue.h"
 #include "RFIDActivity.h"
 
 namespace leka::rfid::activity {
 
-class SelectReinforcer : public interface::RFIDActivity
+class NumberRecognition : public interface::RFIDActivity
 {
   public:
-	explicit SelectReinforcer() = default;
+	explicit NumberRecognition() = default;
 
 	void start() final;
 	void run(const MagicCard &card) final;
@@ -28,7 +29,20 @@ class SelectReinforcer : public interface::RFIDActivity
 	ReinforcerKit *_reinforcerkit {};
 	interface::VideoKit *_videokit {};
 	interface::LED *_led {};
-	std::function<void(const MagicCard &card)> _set_reinforcer_callback {};
+
+	static constexpr std::array<const char *, 11> numbers_table = {
+		"number-0_zero", "number-1_one",   "number-2_two",	 "number-3_three", "number-4_four", "number-5_five",
+		"number-6_six",	 "number-7_seven", "number-8_eight", "number-9_nine",  "number-10_ten"};
+
+	CircularQueue<uint8_t, numbers_table.size() / 2> last_numbers_displayed {};
+
+	MagicCard expected_tag_number = MagicCard::none;
+	uint8_t random_number		  = 0;
+	uint8_t pos					  = 0;
+
+	std::string last_image = "NaN";
+
+	void setRandomNumberDisplay();
 };
 
 }	// namespace leka::rfid::activity

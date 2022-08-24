@@ -6,14 +6,15 @@
 
 // LCOV_EXCL_START
 
+#include "CircularQueue.h"
 #include "RFIDActivity.h"
 
 namespace leka::rfid::activity {
 
-class SelectReinforcer : public interface::RFIDActivity
+class EmotionRecognition : public interface::RFIDActivity
 {
   public:
-	explicit SelectReinforcer() = default;
+	explicit EmotionRecognition() = default;
 
 	void start() final;
 	void run(const MagicCard &card) final;
@@ -28,7 +29,21 @@ class SelectReinforcer : public interface::RFIDActivity
 	ReinforcerKit *_reinforcerkit {};
 	interface::VideoKit *_videokit {};
 	interface::LED *_led {};
-	std::function<void(const MagicCard &card)> _set_reinforcer_callback {};
+
+	static constexpr std::array<const char *, 5> emotions_table = {"robot-emotion-happy", "robot-emotion-angry",
+																   "robot-emotion-affraid", "robot-emotion-disgusted",
+																   "robot-emotion-sad_tears"};
+
+	CircularQueue<uint8_t, emotions_table.size() / 2> last_emotions_displayed {};
+
+	MagicCard expected_tag_emotion_child = MagicCard::none;
+	MagicCard expected_tag_emotion_leka	 = MagicCard::none;
+	uint8_t random_emotion				 = 0;
+	uint8_t pos							 = 0;
+
+	std::string last_image = "NaN";
+
+	void setRandomEmotionDisplay();
 };
 
 }	// namespace leka::rfid::activity

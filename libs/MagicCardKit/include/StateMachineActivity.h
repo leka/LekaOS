@@ -25,16 +25,6 @@ namespace sm::state {
 
 }	// namespace sm::state
 
-namespace sm::action {
-
-	using imck = interface::MagicCardKit;
-
-	struct start_activity {
-		auto operator()(imck &magic_card_kit) const { magic_card_kit.start(); }
-	};
-
-}	// namespace sm::action
-
 struct StateMachineActivity {
 	auto operator()() const
 	{
@@ -42,9 +32,8 @@ struct StateMachineActivity {
 
 		return make_transition_table(
 			// clang-format off
-			*  sm::state::idle  + event<sm::event::activity_detected>   / (sm::action::start_activity {})   = sm::state::play_activity
-
-			, sm::state::play_activity + event<sm::event::activity_stopped>                                 = sm::state::idle
+			*  sm::state::idle         + event<sm::event::activity_detected>  = sm::state::play_activity
+			, sm::state::play_activity + event<sm::event::activity_stopped>   = sm::state::idle
 			// clang-format on
 		);
 	}

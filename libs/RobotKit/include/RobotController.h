@@ -63,6 +63,8 @@ class RobotController : public interface::RobotController
 		// nothing to do
 	}
 
+	sm_t state_machine {static_cast<interface::RobotController &>(*this), logger, _magiccardkit};
+
 	void runLaunchingBehavior() final
 	{
 		using namespace std::chrono_literals;
@@ -358,7 +360,6 @@ class RobotController : public interface::RobotController
 	auto isBleConnected() -> bool final { return state_machine.is(system::robot::sm::state::connected); }
 
   private:
-	sm_t state_machine {static_cast<interface::RobotController &>(*this), logger, _magiccardkit};
 	system::robot::sm::logger logger {};
 
 	std::chrono::seconds _sleep_timeout_duration {60};

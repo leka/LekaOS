@@ -4,10 +4,8 @@
 
 #pragma once
 
-#include "drivers/HighResClock.h"
-
 #include "RFIDActivity.h"
-#include "StateMachineActivity.h"
+#include "ReinforcerKit.h"
 #include "boost/sml.hpp"
 #include "interface/libs/EventLoop.h"
 #include "interface/libs/MagicCardKit.h"
@@ -17,11 +15,12 @@ namespace leka {
 class MagicCardKit : public interface::MagicCardKit
 {
   public:
-	explicit MagicCardKit(interface::EventLoop &event_loop, BehaviorKit &behaviorkit)
-		: _event_loop(event_loop), _behaviorkit(behaviorkit) {};
+	explicit MagicCardKit(interface::EventLoop &event_loop, ReinforcerKit &reinforcerkit, interface::VideoKit &videokit,
+						  interface::LED &led)
+		: _event_loop(event_loop), _reinforcerkit(reinforcerkit), _videokit(videokit), _led(led) {};
 
 	void init() final;
-	void start() final;
+	void start(interface::RFIDActivity &activity) final;
 	void run(const MagicCard &card) final;
 	void stop() final;
 	void updateCallback(const MagicCard &card) final;
@@ -30,12 +29,9 @@ class MagicCardKit : public interface::MagicCardKit
 	interface::RFIDActivity *_activity = nullptr;
 	interface::EventLoop &_event_loop;
 	MagicCard _magic_card = MagicCard::none;
-	BehaviorKit &_behaviorkit;
-	MagicCard _reinforcer = MagicCard::reinforcer_5_rainbow;
-
-	void linkMagicCardToActivity(const MagicCard &card);
-	void runReinforcer();
-	void setDefaultReinforcer(const MagicCard &card);
+	ReinforcerKit &_reinforcerkit;
+	interface::VideoKit &_videokit;
+	interface::LED &_led;
 };
 
 }	// namespace leka

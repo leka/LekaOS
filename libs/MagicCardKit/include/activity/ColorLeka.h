@@ -10,10 +10,10 @@
 
 namespace leka::rfid::activity {
 
-class SelectReinforcer : public interface::RFIDActivity
+class ColorLeka : public interface::RFIDActivity
 {
   public:
-	explicit SelectReinforcer() = default;
+	explicit ColorLeka() = default;
 
 	void start() final;
 	void run(const MagicCard &card) final;
@@ -28,7 +28,6 @@ class SelectReinforcer : public interface::RFIDActivity
 	ReinforcerKit *_reinforcerkit {};
 	interface::VideoKit *_videokit {};
 	interface::LED *_led {};
-	std::function<void(const MagicCard &card)> _set_reinforcer_callback {};
 };
 
 }	// namespace leka::rfid::activity

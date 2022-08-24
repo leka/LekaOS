@@ -6,14 +6,15 @@
 
 // LCOV_EXCL_START
 
+#include "CircularQueue.h"
 #include "RFIDActivity.h"
 
 namespace leka::rfid::activity {
 
-class SelectReinforcer : public interface::RFIDActivity
+class ShapeRecognition : public interface::RFIDActivity
 {
   public:
-	explicit SelectReinforcer() = default;
+	explicit ShapeRecognition() = default;
 
 	void start() final;
 	void run(const MagicCard &card) final;
@@ -28,7 +29,21 @@ class SelectReinforcer : public interface::RFIDActivity
 	ReinforcerKit *_reinforcerkit {};
 	interface::VideoKit *_videokit {};
 	interface::LED *_led {};
-	std::function<void(const MagicCard &card)> _set_reinforcer_callback {};
+
+	static constexpr std::array<const char *, 8> shapes_table = {
+		"shape-circle-plain_line",	  "shape-square-plain_line",  "shape-triangle-plain_line",
+		"shape-star-plain_line",	  "shape-circle-dotted_line", "shape-square-dotted_line",
+		"shape-triangle-dotted_line", "shape-star-dotted_line"};   // TODO (@hugo) Adapter avec les IDs
+
+	CircularQueue<uint8_t, shapes_table.size() / 2> last_shapes_displayed {};
+
+	MagicCard expected_tag_shape = MagicCard::none;
+	uint8_t random_shape		 = 0;
+	uint8_t pos					 = 0;
+
+	std::string last_image = "NaN";
+
+	void setRandomShapeDisplay();
 };
 
 }	// namespace leka::rfid::activity

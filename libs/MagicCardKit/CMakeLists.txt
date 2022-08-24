@@ -15,6 +15,15 @@ target_sources(MagicCardKit
 	source/MagicCardKit.cpp
 	source/StateMachineActivity.cpp
 	source/activity/SelectReinforcers.cpp
+	source/activity/ColorRecognition.cpp
+	source/activity/EmotionRecognition.cpp
+	source/activity/NumberRecognition.cpp
+	source/activity/ShapeRecognition.cpp
+	source/activity/DisplayEmotions.cpp
+	source/activity/ColorLeka.cpp
+	source/activity/TwoNumbersAddition.cpp
+	source/activity/TwoNumbersSubstraction.cpp
+	source/activity/ColoredShapeRecognition.cpp
 )
 
 target_link_libraries(MagicCardKit
@@ -23,6 +32,7 @@ target_link_libraries(MagicCardKit
 	RFIDKit
 	LedKit
 	BehaviorKit
+	ReinforcerKit
 )
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

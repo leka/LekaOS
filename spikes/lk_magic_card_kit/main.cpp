@@ -28,6 +28,7 @@
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "MagicCardKit.h"
+#include "ReinforcerKit.h"
 #include "SDBlockDevice.h"
 #include "VideoKit.h"
 
@@ -165,11 +166,12 @@ namespace display {
 
 }	// namespace display
 
-auto behaviorkit = BehaviorKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
+auto behaviorkit   = BehaviorKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
+auto reinforcerkit = ReinforcerKit(behaviorkit);
 
 auto event_loop = EventLoopKit();
 
-auto magic_card_kit = MagicCardKit(event_loop, behaviorkit);
+auto magic_card_kit = MagicCardKit(event_loop, reinforcerkit, display::videokit, leds::belt);
 
 }	// namespace
 

@@ -9,6 +9,9 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
+#include "ColorLeka.h"
+#include "ColorRecognition.h"
+#include "ColoredShapeRecognition.h"
 #include "CoreBattery.h"
 #include "CoreBufferedSerial.h"
 #include "CoreDMA2D.hpp"
@@ -35,18 +38,26 @@
 #include "CoreSTM32Hal.h"
 #include "CoreTimeout.h"
 #include "CoreVideo.hpp"
+#include "DisplayEmotions.h"
+#include "EmotionRecognition.h"
 #include "EventLoopKit.h"
 #include "FATFileSystem.h"
 #include "FirmwareKit.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "MagicCardKit.h"
+#include "NumberRecognition.h"
 #include "QSPIFBlockDevice.h"
 #include "RFIDKit.h"
 #include "RobotController.h"
 #include "SDBlockDevice.h"
+#include "SelectReinforcer.h"
 #include "SerialNumberKit.h"
+#include "ShapeRecognition.h"
 #include "SlicingBlockDevice.h"
+#include "StateMachineActivity.h"
+#include "TwoNumberSubstraction.h"
+#include "TwoNumbersAddition.h"
 #include "VideoKit.h"
 #include "bootutil/bootutil.h"
 #include "commands/LedFullCommand.h"
@@ -243,7 +254,8 @@ namespace display {
 
 }	// namespace display
 
-auto behaviorkit = BehaviorKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
+auto behaviorkit   = BehaviorKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
+auto reinforcerkit = ReinforcerKit(behaviorkit);
 
 namespace command {
 
@@ -305,6 +317,20 @@ namespace firmware {
 
 namespace rfid {
 
+	namespace activity {
+
+		auto select_reinforcer		   = leka::rfid::activity::SelectReinforcer {};
+		auto color_recognition		   = leka::rfid::activity::ColorRecognition {};
+		auto emotion_recognition	   = leka::rfid::activity::EmotionRecognition {};
+		auto number_recognition		   = leka::rfid::activity::NumberRecognition {};
+		auto shape_recognition		   = leka::rfid::activity::ShapeRecognition {};
+		auto display_emotions		   = leka::rfid::activity::DisplayEmotions {};
+		auto color_leka				   = leka::rfid::activity::ColorLeka {};
+		auto two_numbers_addition	   = leka::rfid::activity::TwoNumbersAddition {};
+		auto two_numbers_substraction  = leka::rfid::activity::TwoNumbersSubstraction {};
+		auto colored_shape_recognition = leka::rfid::activity::ColoredShapeRecognition {};
+	}	// namespace activity
+
 	auto serial		= CoreBufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
 	auto reader		= CoreRFIDReaderCR95HF(serial);
 	auto event_loop = EventLoopKit();
@@ -312,7 +338,8 @@ namespace rfid {
 }	// namespace rfid
 
 auto rfidkit	  = RFIDKit(rfid::reader);
-auto magiccardkit = MagicCardKit(rfid::event_loop, behaviorkit);
+auto magiccardkit = MagicCardKit(rfid::event_loop, reinforcerkit, display::videokit, leds::belt);
+auto sm_activity  = boost::sml::sm<leka::rfid::magic_card::StateMachineActivity> {magiccardkit};
 
 namespace mcuboot {
 
@@ -353,12 +380,37 @@ namespace robot {
 		magiccardkit,
 	};
 
-	void triggerTagAction(const MagicCard &card)
+	void onMagicCardAvailable(const MagicCard &card)
 	{
 		if (card == MagicCard::emergency_stop) {
 			controller.raiseEmergencyStop();
 		} else if (card == MagicCard::remote_standard) {
 			controller.raiseRfidActivity();
+		}
+		if (sm_activity.is(leka::rfid::magic_card::sm::state::idle)) {
+			if (card == MagicCard::number_0) {
+				magiccardkit.start(rfid::activity::select_reinforcer);
+				// auto set_default_reinforcer_callback = [](const MagicCard &card) { setDefaultReinforcer(card); };
+				// _activity->registerCallback(set_default_reinforcer_callback);
+			} else if (card == MagicCard::number_1) {
+				magiccardkit.start(rfid::activity::color_recognition);
+			} else if (card == MagicCard::number_2) {
+				magiccardkit.start(rfid::activity::emotion_recognition);
+			} else if (card == MagicCard::number_3) {
+				magiccardkit.start(rfid::activity::number_recognition);
+			} else if (card == MagicCard::number_4) {
+				magiccardkit.start(rfid::activity::shape_recognition);
+			} else if (card == MagicCard::number_5) {
+				magiccardkit.start(rfid::activity::display_emotions);
+			} else if (card == MagicCard::number_6) {
+				magiccardkit.start(rfid::activity::color_leka);
+			} else if (card == MagicCard::number_7) {
+				magiccardkit.start(rfid::activity::two_numbers_addition);
+			} else if (card == MagicCard::number_8) {
+				magiccardkit.start(rfid::activity::two_numbers_substraction);
+			} else if (card == MagicCard::number_9) {
+				magiccardkit.start(rfid::activity::colored_shape_recognition);
+			}
 		}
 	}
 
@@ -494,7 +546,7 @@ auto main() -> int
 	robot::controller.registerOnFactoryResetNotificationCallback(factory_reset::set);
 	robot::controller.registerEvents();
 
-	rfidkit.onTagActivated(robot::triggerTagAction);
+	rfidkit.onTagActivated(robot::onMagicCardAvailable);
 
 	// TODO(@team): Add functional test prior confirming the firmware
 	firmware::confirmFirmware();
