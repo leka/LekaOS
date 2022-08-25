@@ -6,14 +6,14 @@
 
 #include <span>
 
-#include "BehaviorKit.h"
+#include "ReinforcerKit.h"
 #include "Utils.h"
 #include "interface/Command.h"
 
 namespace leka {
 
 struct ReinforcerCommand : interface::Command {
-	explicit ReinforcerCommand(BehaviorKit &kit) : _behaviorkit(kit) {}
+	explicit ReinforcerCommand(ReinforcerKit &kit) : _reinforcerkit(kit) {}
 
 	auto id() -> uint8_t override { return cmd::id; }
 
@@ -37,19 +37,19 @@ struct ReinforcerCommand : interface::Command {
 
 		switch (id) {
 			case cmd::motivator::rainbow:
-				_behaviorkit.rainbow();
+				_reinforcerkit.run(Reinforcer::Rainbow);
 				break;
 			case cmd::motivator::fire:
-				_behaviorkit.fire();
+				_reinforcerkit.run(Reinforcer::Fire);
 				break;
 			case cmd::motivator::sprinkles:
-				_behaviorkit.sprinkles();
+				_reinforcerkit.run(Reinforcer::Sprinkles);
 				break;
 			case cmd::motivator::spinblink:
-				_behaviorkit.spinBlink();
+				_reinforcerkit.run(Reinforcer::SpinBlink);
 				break;
 			case cmd::motivator::blinkgreen:
-				_behaviorkit.blinkGreen();
+				_reinforcerkit.run(Reinforcer::BlinkGreen);
 				break;
 			default:
 				break;
@@ -73,7 +73,7 @@ struct ReinforcerCommand : interface::Command {
 	};
 
 	std::array<uint8_t, cmd::size> args {};
-	BehaviorKit &_behaviorkit;
+	ReinforcerKit &_reinforcerkit;
 };
 
 }	// namespace leka
