@@ -44,6 +44,7 @@
 #include "LogKit.h"
 #include "QSPIFBlockDevice.h"
 #include "RFIDKit.h"
+#include "ReinforcerKit.h"
 #include "RobotController.h"
 #include "SDBlockDevice.h"
 #include "SMAutonomousGame.h"
@@ -246,7 +247,8 @@ namespace display {
 
 }	// namespace display
 
-auto behaviorkit = BehaviorKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
+auto behaviorkit   = BehaviorKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
+auto reinforcerkit = ReinforcerKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
 
 namespace command {
 
@@ -258,7 +260,7 @@ namespace command {
 		auto led_full	= LedFullCommand {leds::ears, leds::belt};
 		auto led_range	= LedRangeCommand {leds::ears, leds::belt};
 		auto motors		= MotorsCommand {motors::left::motor, motors::right::motor};
-		auto reinforcer = ReinforcerCommand {behaviorkit};
+		auto reinforcer = ReinforcerCommand {reinforcerkit};
 
 	}	// namespace internal
 
