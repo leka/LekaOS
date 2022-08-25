@@ -13,11 +13,14 @@ target_include_directories(GameKit
 target_sources(GameKit
 	PRIVATE
 	source/GameKit.cpp
+	source/games/DisplayTags.cpp
 	source/SMAutonomousGame.cpp
 )
 
 target_link_libraries(GameKit
-	EventLoopKit
+	RFIDKit
+	CoreLED
+	VideoKit
 )
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
