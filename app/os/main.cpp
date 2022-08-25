@@ -35,18 +35,22 @@
 #include "CoreSTM32Hal.h"
 #include "CoreTimeout.h"
 #include "CoreVideo.hpp"
+#include "DisplayTags.h"
 #include "EventLoopKit.h"
 #include "FATFileSystem.h"
 #include "FirmwareKit.h"
+#include "GameKit.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "QSPIFBlockDevice.h"
 #include "RFIDKit.h"
 #include "RobotController.h"
 #include "SDBlockDevice.h"
+#include "SMAutonomousGame.h"
 #include "SerialNumberKit.h"
 #include "SlicingBlockDevice.h"
 #include "VideoKit.h"
+#include "boost/sml.hpp"
 #include "bootutil/bootutil.h"
 #include "commands/LedFullCommand.h"
 #include "commands/LedRangeCommand.h"
@@ -322,6 +326,16 @@ namespace mcuboot {
 
 }	// namespace mcuboot
 
+namespace game {
+
+	auto display_tag = leka::game::DisplayTags(rfidkit, display::videokit);
+	;
+
+	auto sm_autonomous_game = boost::sml::sm<leka::game::SMAutonomousGame> {};
+	auto gamekit			= GameKit {};
+
+}	// namespace game
+
 namespace robot {
 
 	namespace internal {
@@ -333,26 +347,53 @@ namespace robot {
 
 	}	// namespace internal
 
-	auto controller = RobotController {
-		internal::sleep_timeout,
-		battery::cells,
-		internal::serialnumberkit,
-		firmware::kit,
-		motors::left::motor,
-		motors::right::motor,
-		leds::ears,
-		leds::belt,
-		leds::kit,
-		display::internal::corelcd,
-		display::videokit,
-		behaviorkit,
-		commandkit,
-	};
+	auto controller = RobotController {internal::sleep_timeout,
+									   battery::cells,
+									   internal::serialnumberkit,
+									   firmware::kit,
+									   motors::left::motor,
+									   motors::right::motor,
+									   leds::ears,
+									   leds::belt,
+									   leds::kit,
+									   display::internal::corelcd,
+									   display::videokit,
+									   behaviorkit,
+									   commandkit,
+									   game::gamekit};
 
-	void emergencyStop(const MagicCard &card)
+	void onMagicCardAvailable(const MagicCard &card)
 	{
 		if (card == MagicCard::emergency_stop) {
 			controller.raiseEmergencyStop();
+		} else if (card == MagicCard::remote_standard) {
+			controller.raiseAutonomousGameTransition();
+		}
+		if (controller.state_machine.is(boost::sml::state<leka::game::SMAutonomousGame>)) {
+			if (card == MagicCard::number_0) {
+				game::gamekit.start(&game::display_tag);
+			}
+			// auto set_default_reinforcer_callback = [](const MagicCard &card) { setDefaultReinforcer(card); };
+			// _activity->registerCallback(set_default_reinforcer_callback);
+			// } else if (card == MagicCard::number_1) {
+			// 	magiccardkit.start(rfid::activity::color_recognition);
+			// } else if (card == MagicCard::number_2) {
+			// 	magiccardkit.start(rfid::activity::emotion_recognition);
+			// } else if (card == MagicCard::number_3) {
+			// 	magiccardkit.start(rfid::activity::number_recognition);
+			// } else if (card == MagicCard::number_4) {
+			// 	magiccardkit.start(rfid::activity::shape_recognition);
+			// } else if (card == MagicCard::number_5) {
+			// 	magiccardkit.start(rfid::activity::display_emotions);
+			// } else if (card == MagicCard::number_6) {
+			// 	magiccardkit.start(rfid::activity::color_leka);
+			// } else if (card == MagicCard::number_7) {
+			// 	magiccardkit.start(rfid::activity::two_numbers_addition);
+			// } else if (card == MagicCard::number_8) {
+			// 	magiccardkit.start(rfid::activity::two_numbers_substraction);
+			// } else if (card == MagicCard::number_9) {
+			// 	magiccardkit.start(rfid::activity::colored_shape_recognition);
+			// }
 		}
 	}
 
@@ -488,7 +529,7 @@ auto main() -> int
 	robot::controller.registerOnFactoryResetNotificationCallback(factory_reset::set);
 	robot::controller.registerEvents();
 
-	rfidkit.onTagActivated(robot::emergencyStop);
+	rfidkit.onTagActivated(robot::onMagicCardAvailable);
 
 	// TODO(@team): Add functional test prior confirming the firmware
 	firmware::confirmFirmware();
