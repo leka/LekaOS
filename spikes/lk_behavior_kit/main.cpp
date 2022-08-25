@@ -204,30 +204,5 @@ auto main() -> int
 		rtos::ThisThread::sleep_for(10s);
 		behaviorkit.stop();
 		rtos::ThisThread::sleep_for(3s);
-
-		behaviorkit.blinkGreen();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
-
-		behaviorkit.spinBlink();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
-
-		behaviorkit.fire();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
-
-		behaviorkit.sprinkles();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
-
-		behaviorkit.rainbow();
-		rtos::ThisThread::sleep_for(10s);
-		behaviorkit.stop();
-		rtos::ThisThread::sleep_for(3s);
 	}
 }
