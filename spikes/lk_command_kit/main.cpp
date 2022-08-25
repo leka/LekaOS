@@ -7,7 +7,6 @@
 
 #include "rtos/ThisThread.h"
 
-#include "BehaviorKit.h"
 #include "CommandKit.h"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
@@ -32,6 +31,7 @@
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
+#include "ReinforcerKit.h"
 #include "SDBlockDevice.h"
 #include "VideoKit.h"
 #include "commands/LedFullCommand.h"
@@ -121,7 +121,7 @@ auto videokit = VideoKit {internal::event_flags, internal::corevideo};
 
 }	// namespace display
 
-auto behaviorkit = BehaviorKit {display::videokit, ledkit, motor::left, motor::right};
+auto reinforcerkit = ReinforcerKit {display::videokit, ledkit, motor::left, motor::right};
 
 namespace command {
 
@@ -134,7 +134,7 @@ namespace internal {
 	auto led_full	= LedFullCommand {leds::ears, leds::belt};
 	auto led_range	= LedRangeCommand {leds::ears, leds::belt};
 	auto motors		= MotorsCommand {motor::left, motor::right};
-	auto reinforcer = ReinforcerCommand {behaviorkit};
+	auto reinforcer = ReinforcerCommand {reinforcerkit};
 
 }	// namespace internal
 
@@ -196,7 +196,7 @@ void turnOff()
 	leds::ears.show();
 	leds::belt.setColor(RGB::black);
 	leds::belt.show();
-	behaviorkit.stop();
+	reinforcerkit.stop();
 	log_debug("turn off end");
 };
 
