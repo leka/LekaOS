@@ -19,6 +19,7 @@ class RFIDKit
 	void registerMagicCard();
 	[[nodiscard]] auto isTagSignatureValid(rfid::Tag tag) const -> bool;
 	void onTagActivated(std::function<void(MagicCard &_card)> const &callback);
+	[[nodiscard]] auto getCallback() const -> const std::function<void(MagicCard &)> &;
 
   private:
 	interface::RFIDReader &_rfid_reader;
