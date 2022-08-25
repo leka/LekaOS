@@ -6,10 +6,8 @@
 
 #include "gtest/gtest.h"
 #include "mocks/Game.h"
-#include "stubs/leka/EventLoopKit.h"
 
 using namespace leka;
-using namespace std::chrono;
 
 using ::testing::InSequence;
 
@@ -21,9 +19,7 @@ class GameKitTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	stub::EventLoopKit stub_event_loop {};
-
-	GameKit gamekit {stub_event_loop};
+	GameKit gamekit;
 
 	mock::Game mock_game {};
 };
@@ -35,50 +31,32 @@ TEST_F(GameKitTest, initialization)
 
 TEST_F(GameKitTest, startGame)
 {
-	EXPECT_CALL(mock_game, startCalled).Times(1);
-	EXPECT_FALSE(mock_game.isRunning());
+	EXPECT_CALL(mock_game, start).Times(1);
 
 	gamekit.start(&mock_game);
-	EXPECT_TRUE(mock_game.isRunning());
 }
 
 TEST_F(GameKitTest, startNullPtr)
 {
-	EXPECT_CALL(mock_game, startCalled).Times(0);
-	EXPECT_FALSE(mock_game.isRunning());
+	EXPECT_CALL(mock_game, start).Times(0);
 
 	gamekit.start(nullptr);
-	EXPECT_FALSE(mock_game.isRunning());
-}
-
-TEST_F(GameKitTest, runGame)
-{
-	auto kMaxStageNumber = 10;
-	EXPECT_CALL(mock_game, startCalled).Times(1);
-	EXPECT_CALL(mock_game, stageCalled).Times(kMaxStageNumber);
-
-	gamekit.init();
-	gamekit.start(&mock_game);
 }
 
 TEST_F(GameKitTest, stopWithoutGame)
 {
-	EXPECT_CALL(mock_game, stopCalled).Times(0);
+	EXPECT_CALL(mock_game, stop).Times(0);
 
 	gamekit.stop();
 }
 
 TEST_F(GameKitTest, stopStartedGame)
 {
-	EXPECT_CALL(mock_game, startCalled).Times(1);
-	EXPECT_CALL(mock_game, stopCalled).Times(1);
-	EXPECT_FALSE(mock_game.isRunning());
+	EXPECT_CALL(mock_game, start).Times(1);
+	EXPECT_CALL(mock_game, stop).Times(1);
 
 	gamekit.start(&mock_game);
-	EXPECT_TRUE(mock_game.isRunning());
-
 	gamekit.stop();
-	EXPECT_FALSE(mock_game.isRunning());
 }
 
 TEST_F(GameKitTest, startNewGameSequence)
@@ -88,21 +66,12 @@ TEST_F(GameKitTest, startNewGameSequence)
 	{
 		InSequence seq;
 
-		EXPECT_CALL(mock_game, startCalled).Times(1);
-		EXPECT_CALL(mock_game, stopCalled).Times(1);
-		EXPECT_CALL(mock_new_game, startCalled).Times(1);
+		EXPECT_CALL(mock_game, start).Times(1);
+		EXPECT_CALL(mock_game, stop).Times(1);
+		EXPECT_CALL(mock_new_game, start).Times(1);
 	}
-
-	EXPECT_FALSE(mock_game.isRunning());
-	EXPECT_FALSE(mock_new_game.isRunning());
 
 	gamekit.start(&mock_game);
 
-	EXPECT_TRUE(mock_game.isRunning());
-	EXPECT_FALSE(mock_new_game.isRunning());
-
 	gamekit.start(&mock_new_game);
-
-	EXPECT_FALSE(mock_game.isRunning());
-	EXPECT_TRUE(mock_new_game.isRunning());
 }
