@@ -20,6 +20,7 @@
 #include "CommandKit.h"
 #include "CoreMutex.h"
 #include "FileReception.h"
+#include "GameKit.h"
 #include "LedKit.h"
 #include "RCLogger.h"
 #include "SerialNumberKit.h"
@@ -45,7 +46,7 @@ class RobotController : public interface::RobotController
 							 interface::FirmwareUpdate &firmware_update, interface::Motor &motor_left,
 							 interface::Motor &motor_right, interface::LED &ears, interface::LED &belt, LedKit &ledkit,
 							 interface::LCD &lcd, interface::VideoKit &videokit, BehaviorKit &behaviorkit,
-							 CommandKit &cmdkit)
+							 CommandKit &cmdkit, GameKit &gamekit)
 		: _timeout(timeout),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
@@ -58,7 +59,8 @@ class RobotController : public interface::RobotController
 		  _lcd(lcd),
 		  _videokit(videokit),
 		  _behaviorkit(behaviorkit),
-		  _cmdkit(cmdkit)
+		  _cmdkit(cmdkit),
+		  _gamekit(gamekit)
 	{
 		// nothing to do
 	}
@@ -188,6 +190,18 @@ class RobotController : public interface::RobotController
 
 	void startDisconnectionBehavior() final { stopActuators(); }
 
+	void startRfidActivityBehavior() final
+	{
+		_lcd.turnOn();
+		_behaviorkit.chooseActivity();
+	}
+
+	void stopRfidActivityBehavior() final
+	{
+		_behaviorkit.stop();
+		_gamekit.stop();
+	}
+
 	auto isReadyToUpdate() -> bool final
 	{
 		return (_battery.isCharging() && _battery.level() > _minimal_battery_level_to_update);
@@ -261,6 +275,8 @@ class RobotController : public interface::RobotController
 			system_reset();
 		}
 	}
+
+	void raiseAutonomousGameTransition() { raise(system::robot::sm::event::autonomous_game_transition {}); }
 
 	void registerEvents()
 	{
@@ -370,6 +386,7 @@ class RobotController : public interface::RobotController
 	LedKit &_ledkit;
 	interface::LCD &_lcd;
 	interface::VideoKit &_videokit;
+	GameKit &_gamekit;
 
 	BehaviorKit &_behaviorkit;
 	CommandKit &_cmdkit;
