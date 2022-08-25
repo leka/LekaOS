@@ -35,6 +35,9 @@ struct RobotController : public interface::RobotController {
 	MOCK_METHOD(void, startConnectionBehavior, (), (override));
 	MOCK_METHOD(void, startDisconnectionBehavior, (), (override));
 
+	MOCK_METHOD(void, startRfidActivityBehavior, (), (override));
+	MOCK_METHOD(void, stopRfidActivityBehavior, (), (override));
+
 	MOCK_METHOD(bool, isReadyToUpdate, (), (override));
 	MOCK_METHOD(void, applyUpdate, (), (override));
 

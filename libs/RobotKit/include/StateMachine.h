@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "SMAutonomousGame.h"
 #include "boost/sml.hpp"
 #include "interface/RobotController.h"
 
@@ -30,6 +31,8 @@ namespace sm::event {
 	struct ble_connection {
 	};
 	struct ble_disconnection {
+	};
+	struct autonomous_game_transition {
 	};
 
 }	// namespace sm::event
@@ -147,6 +150,14 @@ namespace sm::action {
 		auto operator()(irc &rc) const { rc.resetEmergencyStopCounter(); }
 	};
 
+	struct start_rfid_activity_behavior {
+		auto operator()(irc &rc) const { rc.startRfidActivityBehavior(); }
+	};
+
+	struct stop_rfid_activity_behavior {
+		auto operator()(irc &rc) const { rc.stopRfidActivityBehavior(); }
+	};
+
 }	// namespace sm::action
 
 struct StateMachine {
@@ -163,27 +174,30 @@ struct StateMachine {
 			, sm::state::idle     + boost::sml::on_entry<_> / (sm::action::start_sleep_timeout {}, sm::action::start_waiting_behavior {})
 			, sm::state::idle     + boost::sml::on_exit<_>  / (sm::action::stop_sleep_timeout  {}, sm::action::stop_waiting_behavior  {})
 
-			, sm::state::idle     + event<sm::event::ble_connection>                                     = sm::state::working
-			, sm::state::idle     + event<sm::event::command_received> [sm::guard::is_connected {}]      = sm::state::working
-			, sm::state::idle     + event<sm::event::sleep_timeout_did_end>                              = sm::state::sleeping
-			, sm::state::idle     + event<sm::event::charge_did_start> [sm::guard::is_charging {}]       = sm::state::charging
-			, sm::state::idle     + event<sm::event::emergency_stop>                                     = sm::state::emergency_stopped
+			, sm::state::idle     + event<sm::event::ble_connection>                                                        = sm::state::working
+			, sm::state::idle     + event<sm::event::command_received> [sm::guard::is_connected {}]                         = sm::state::working
+			, sm::state::idle     + event<sm::event::sleep_timeout_did_end>                                                 = sm::state::sleeping
+			, sm::state::idle     + event<sm::event::charge_did_start> [sm::guard::is_charging {}]                          = sm::state::charging
+			, sm::state::idle     + event<sm::event::emergency_stop>                                                        = sm::state::emergency_stopped
+			, sm::state::idle     + event<sm::event::autonomous_game_transition>                                            = state<game::SMAutonomousGame>
 
 			, sm::state::working + boost::sml::on_entry<_> / (sm::action::start_idle_timeout {}, sm::action::start_working_behavior {})
 			, sm::state::working + boost::sml::on_exit<_>  / sm::action::stop_idle_timeout {}
 
-			, sm::state::working  + event<sm::event::ble_disconnection>                                  = sm::state::idle
-			, sm::state::working  + event<sm::event::idle_timeout_did_end>                               = sm::state::idle
-			, sm::state::working  + event<sm::event::charge_did_start> [sm::guard::is_charging {}]       = sm::state::charging
-			, sm::state::working  + event<sm::event::emergency_stop>                                     = sm::state::emergency_stopped
+			, sm::state::working  + event<sm::event::ble_disconnection>                                                     = sm::state::idle
+			, sm::state::working  + event<sm::event::idle_timeout_did_end>                                                  = sm::state::idle
+			, sm::state::working  + event<sm::event::charge_did_start> [sm::guard::is_charging {}]                          = sm::state::charging
+			, sm::state::working  + event<sm::event::emergency_stop>                                                        = sm::state::emergency_stopped
+			, sm::state::working  + event<sm::event::autonomous_game_transition>                                            = state<game::SMAutonomousGame>
 
 			, sm::state::sleeping + boost::sml::on_entry<_> / sm::action::start_sleeping_behavior {}
 			, sm::state::sleeping + boost::sml::on_exit<_>  / sm::action::stop_sleeping_behavior {}
 
-			, sm::state::sleeping + event<sm::event::command_received>    [sm::guard::is_connected {}]   = sm::state::working
-			, sm::state::sleeping + event<sm::event::ble_connection>                                     = sm::state::working
-			, sm::state::sleeping + event<sm::event::charge_did_start>    [sm::guard::is_charging {}]    = sm::state::charging
-			, sm::state::sleeping + event<sm::event::emergency_stop>                                     = sm::state::emergency_stopped
+			, sm::state::sleeping + event<sm::event::command_received>    [sm::guard::is_connected {}]                      = sm::state::working
+			, sm::state::sleeping + event<sm::event::ble_connection>                                                        = sm::state::working
+			, sm::state::sleeping + event<sm::event::charge_did_start>    [sm::guard::is_charging {}]                       = sm::state::charging
+			, sm::state::sleeping + event<sm::event::emergency_stop>                                                        = sm::state::emergency_stopped
+			, sm::state::sleeping + event<sm::event::autonomous_game_transition>                                            = state<game::SMAutonomousGame>
 
 			, sm::state::charging + boost::sml::on_entry<_> / sm::action::start_charging_behavior {}
 			, sm::state::charging + boost::sml::on_exit<_>  / sm::action::stop_charging_behavior {}
@@ -195,6 +209,7 @@ struct StateMachine {
 			, sm::state::charging + event<sm::event::ble_disconnection>                                                                   = sm::state::charging
 			, sm::state::charging + event<sm::event::command_received>                                                                    = sm::state::charging
 			, sm::state::charging + event<sm::event::emergency_stop>                                                                      = sm::state::emergency_stopped
+			, sm::state::charging + event<sm::event::autonomous_game_transition>                                                          = sm::state::charging
 
 			, sm::state::updating + boost::sml::on_entry<_> / sm::action::apply_update {}
 
@@ -206,6 +221,18 @@ struct StateMachine {
 			, sm::state::emergency_stopped + event<sm::event::charge_did_start> [sm::guard::is_charging {}]                                   = sm::state::charging
 			, sm::state::emergency_stopped + event<sm::event::command_received> [sm::guard::is_charging {} && sm::guard::is_connected {}]     = sm::state::charging
 			, sm::state::emergency_stopped + event<sm::event::ble_connection>   [sm::guard::is_charging {}]                                   = sm::state::charging
+			, sm::state::emergency_stopped + event<sm::event::autonomous_game_transition>                                                     = state<game::SMAutonomousGame>
+
+			, state<game::SMAutonomousGame> + boost::sml::on_entry<_> / sm::action::start_rfid_activity_behavior {}
+			, state<game::SMAutonomousGame> + boost::sml::on_exit<_> / sm::action::stop_rfid_activity_behavior {}
+
+			, state<game::SMAutonomousGame> + event<sm::event::command_received> [sm::guard::is_not_charging {} && sm::guard::is_connected {}] = sm::state::working
+			, state<game::SMAutonomousGame> + event<sm::event::ble_connection>   [sm::guard::is_not_charging {}]                               = sm::state::working
+			, state<game::SMAutonomousGame> + event<sm::event::charge_did_start> [sm::guard::is_charging {}]                                   = sm::state::charging
+			, state<game::SMAutonomousGame> + event<sm::event::command_received> [sm::guard::is_charging {} && sm::guard::is_connected {}]     = sm::state::charging
+			, state<game::SMAutonomousGame> + event<sm::event::ble_connection>   [sm::guard::is_charging {}]                                   = sm::state::charging
+			, state<game::SMAutonomousGame> + event<sm::event::emergency_stop>                                                                 = sm::state::emergency_stopped
+			, state<game::SMAutonomousGame> + event<sm::event::autonomous_game_transition>                                                     = state<game::SMAutonomousGame>
 
 			,
 
