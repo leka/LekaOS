@@ -125,3 +125,10 @@ TEST_F(RFIDKitTest, onTagActivated)
 {
 	rfid_kit.onTagActivated(nullptr);
 }
+
+TEST_F(RFIDKitTest, getCallback)
+{
+	rfid_kit.onTagActivated(nullptr);
+	auto callback = rfid_kit.getCallback();
+	ASSERT_EQ(callback, nullptr);
+}
