@@ -110,3 +110,19 @@ TEST_F(RobotControllerTest, stateSleepingEventEmergencyStop)
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::emergency_stopped));
 }
+
+TEST_F(RobotControllerTest, stateSleepingEventAutonomousGameTransition)
+{
+	rc.state_machine.set_current_states(lksm::state::sleeping);
+
+	Sequence on_exit_sleeping_sequence;
+	EXPECT_CALL(timeout, stop).InSequence(on_exit_sleeping_sequence);
+	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_sleeping_sequence);
+	expectedCallsStopMotors();
+
+	EXPECT_CALL(mock_videokit, displayImage).Times(1);
+
+	rc.raiseAutonomousGameTransition();
+
+	EXPECT_TRUE(rc.state_machine.is(boost::sml::state<game::SMAutonomousGame>));
+}
