@@ -108,6 +108,20 @@ TEST_F(StateMachineTest, stateIdleEventCommandReceived)
 	EXPECT_TRUE(sm.is(lksm::state::working));
 }
 
+TEST_F(StateMachineTest, stateIdleEventAutonomousGameTransition)
+{
+	sm.set_current_states(lksm::state::idle);
+
+	EXPECT_CALL(mock_rc, stopSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, stopWaitingBehavior).Times(1);
+
+	EXPECT_CALL(mock_rc, startRfidActivityBehavior).Times(1);
+
+	sm.process_event(lksm::event::autonomous_game_transition {});
+
+	EXPECT_TRUE(sm.is(boost::sml::state<game::SMAutonomousGame>));
+}
+
 TEST_F(StateMachineTest, stateWorkingEventTimeout)
 {
 	sm.set_current_states(lksm::state::working);
@@ -144,6 +158,18 @@ TEST_F(StateMachineTest, stateWorkingEventEmergencyStop)
 	sm.process_event(lksm::event::emergency_stop {});
 
 	EXPECT_TRUE(sm.is(lksm::state::emergency_stopped));
+}
+
+TEST_F(StateMachineTest, stateWorkingEventAutonomousGameTransition)
+{
+	sm.set_current_states(lksm::state::working);
+
+	EXPECT_CALL(mock_rc, stopIdleTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startRfidActivityBehavior).Times(1);
+
+	sm.process_event(lksm::event::autonomous_game_transition {});
+
+	EXPECT_TRUE(sm.is(boost::sml::state<game::SMAutonomousGame>));
 }
 
 TEST_F(StateMachineTest, stateSleepEventCommandReceived)
@@ -183,6 +209,19 @@ TEST_F(StateMachineTest, stateSleepEventEmergencyStop)
 	sm.process_event(lksm::event::emergency_stop {});
 
 	EXPECT_TRUE(sm.is(lksm::state::emergency_stopped));
+}
+
+TEST_F(StateMachineTest, stateSleepEventAutonomousGameTransition)
+{
+	sm.set_current_states(lksm::state::sleeping);
+
+	EXPECT_CALL(mock_rc, stopSleepingBehavior).Times(1);
+
+	EXPECT_CALL(mock_rc, startRfidActivityBehavior).Times(1);
+
+	sm.process_event(lksm::event::autonomous_game_transition {});
+
+	EXPECT_TRUE(sm.is(boost::sml::state<game::SMAutonomousGame>));
 }
 
 TEST_F(StateMachineTest, stateIdleEventChargeDidStart)
@@ -277,6 +316,18 @@ TEST_F(StateMachineTest, stateChargingEventEmergencyStop)
 	sm.process_event(lksm::event::emergency_stop {});
 
 	EXPECT_TRUE(sm.is(lksm::state::emergency_stopped));
+}
+
+TEST_F(StateMachineTest, stateChargingEventAutonomousGameTransition)
+{
+	sm.set_current_states(lksm::state::charging);
+
+	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startRfidActivityBehavior).Times(0);
+
+	sm.process_event(lksm::event::autonomous_game_transition {});
+
+	EXPECT_TRUE(sm.is(lksm::state::charging));
 }
 
 TEST_F(StateMachineTest, stateSleepingEventBleConnection)
@@ -471,4 +522,128 @@ TEST_F(StateMachineTest, stateEmergencyStoppedEventBleConnectionGuardIsCharging)
 	sm.process_event(lksm::event::ble_connection {});
 
 	EXPECT_TRUE(sm.is(lksm::state::charging));
+}
+
+TEST_F(StateMachineTest, stateGameEventCommandReceivedGuardIsNotChargingConnected)
+{
+	sm.set_current_states(boost::sml::state<game::SMAutonomousGame>);
+
+	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(true));
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
+
+	EXPECT_CALL(mock_rc, stopRfidActivityBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startWorkingBehavior);
+	EXPECT_CALL(mock_rc, startIdleTimeout);
+
+	sm.process_event(lksm::event::command_received {});
+
+	EXPECT_TRUE(sm.is(lksm::state::working));
+}
+
+TEST_F(StateMachineTest, stateGameEventCommandReceivedGuardIsNotChargingDisconnected)
+{
+	sm.set_current_states(boost::sml::state<game::SMAutonomousGame>);
+
+	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(false));
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
+
+	sm.process_event(lksm::event::command_received {});
+
+	EXPECT_TRUE(sm.is(boost::sml::state<game::SMAutonomousGame>));
+}
+
+TEST_F(StateMachineTest, stateGameEventBleConnectionGuardIsNotCharging)
+{
+	sm.set_current_states(boost::sml::state<game::SMAutonomousGame>);
+
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
+
+	EXPECT_CALL(mock_rc, stopRfidActivityBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startWorkingBehavior);
+	EXPECT_CALL(mock_rc, startIdleTimeout);
+	EXPECT_CALL(mock_rc, startConnectionBehavior);
+
+	sm.process_event(lksm::event::ble_connection {});
+
+	EXPECT_TRUE(sm.is(lksm::state::working));
+}
+
+TEST_F(StateMachineTest, stateGameEventChargeDidStartGuardIsNotCharging)
+{
+	sm.set_current_states(boost::sml::state<game::SMAutonomousGame>);
+
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
+
+	EXPECT_CALL(mock_rc, startChargingBehavior).Times(0);
+
+	sm.process_event(lksm::event::charge_did_start {});
+
+	EXPECT_TRUE(sm.is(boost::sml::state<game::SMAutonomousGame>));
+}
+
+TEST_F(StateMachineTest, stateGameEventChargeDidStartGuardIsCharging)
+{
+	sm.set_current_states(boost::sml::state<game::SMAutonomousGame>);
+
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
+
+	EXPECT_CALL(mock_rc, stopRfidActivityBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+
+	sm.process_event(lksm::event::charge_did_start {});
+
+	EXPECT_TRUE(sm.is(lksm::state::charging));
+}
+
+TEST_F(StateMachineTest, stateGameEventCommandReceivedGuardIsChargingConnected)
+{
+	sm.set_current_states(boost::sml::state<game::SMAutonomousGame>, lksm::state::connected);
+
+	EXPECT_CALL(mock_rc, stopRfidActivityBehavior).Times(1);
+	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(true));
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
+
+	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+
+	sm.process_event(lksm::event::command_received {});
+
+	EXPECT_TRUE(sm.is(lksm::state::charging));
+}
+
+TEST_F(StateMachineTest, stateGameEventCommandReceivedGuardIsChargingDisconnected)
+{
+	sm.set_current_states(boost::sml::state<game::SMAutonomousGame>, lksm::state::disconnected);
+
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
+
+	sm.process_event(lksm::event::command_received {});
+
+	EXPECT_TRUE(sm.is(boost::sml::state<game::SMAutonomousGame>));
+}
+
+TEST_F(StateMachineTest, stateGameEventBleConnectionGuardIsCharging)
+{
+	sm.set_current_states(boost::sml::state<game::SMAutonomousGame>);
+
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
+
+	EXPECT_CALL(mock_rc, stopRfidActivityBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startConnectionBehavior).Times(1);
+
+	sm.process_event(lksm::event::ble_connection {});
+
+	EXPECT_TRUE(sm.is(lksm::state::charging));
+}
+
+TEST_F(StateMachineTest, stateGameEventAutonomousGameTransition)
+{
+	sm.set_current_states(boost::sml::state<game::SMAutonomousGame>);
+
+	EXPECT_CALL(mock_rc, stopRfidActivityBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startRfidActivityBehavior).Times(1);
+
+	sm.process_event(lksm::event::autonomous_game_transition {});
+
+	EXPECT_TRUE(sm.is(boost::sml::state<game::SMAutonomousGame>));
 }

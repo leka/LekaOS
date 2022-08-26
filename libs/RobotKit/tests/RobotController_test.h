@@ -12,6 +12,7 @@
 #include "BehaviorKit.h"
 #include "CommandKit.h"
 #include "CorePwm.h"
+#include "GameKit.h"
 #include "SerialNumberKit.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -85,13 +86,14 @@ class RobotControllerTest : public testing::Test
 	mock::VideoKit mock_videokit {};
 
 	BehaviorKit bhvkit {mock_videokit, ledkit, mock_motor_left, mock_motor_right};
+	GameKit gamekit;
 
 	stub::EventLoopKit event_loop {};
 	CommandKit cmdkit {event_loop};
 
 	RobotController<bsml::sm<system::robot::StateMachine, bsml::testing>> rc {
-		timeout, battery,  serialnumberkit, firmware_update, mock_motor_left, mock_motor_right, mock_ears, mock_belt,
-		ledkit,	 mock_lcd, mock_videokit,	bhvkit,			 cmdkit};
+		timeout,   battery, serialnumberkit, firmware_update, mock_motor_left, mock_motor_right, mock_ears,
+		mock_belt, ledkit,	mock_lcd,		 mock_videokit,	  bhvkit,		   cmdkit,			 gamekit};
 
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
