@@ -10,7 +10,7 @@ void RFIDKit::init()
 {
 	using namespace rfid::sm;
 
-	auto tag_detected_callback = [this]() { state_machine.process_event(event::tag_response_available {}); };
+	static auto tag_detected_callback = [this]() { state_machine.process_event(event::tag_response_available {}); };
 
 	_rfid_reader.registerOnTagDetectedCallback(tag_detected_callback);
 	registerMagicCard();

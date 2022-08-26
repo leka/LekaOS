@@ -35,7 +35,7 @@ constexpr Command<2> command_read_register_4 = {.data  = {0x30, 0x04},
 												.flags = leka::rfid::Flag::crc | leka::rfid::Flag::sb_8};
 
 constexpr auto ATQA_answer_size			= 2;
-constexpr auto initial_polynomial_value = uint16_t {0x6363};
+constexpr auto initial_polynomial_value = uint32_t {0x6363};
 constexpr auto register_answer_size		= size_t {18};
 constexpr auto expected_ATQA_answer		= std::array<uint8_t, ATQA_answer_size> {0x44, 0x00};
 
@@ -87,7 +87,7 @@ inline auto atqaReceived(interface::RFIDReader &rfidreader) -> bool
 
 inline auto registerReceived(interface::RFIDReader &rfidreader) -> bool
 {
-	if (!rfidreader.didTagCommunicationSucceed(ATQA_answer_size)) {
+	if (!rfidreader.didTagCommunicationSucceed(register_answer_size)) {
 		return false;
 	}
 
