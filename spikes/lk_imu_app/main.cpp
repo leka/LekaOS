@@ -125,7 +125,6 @@ auto main() -> int
 	auto time_odr = CARD_ODR_26HZ.getTimeODR();
 	videokit.displayImage(CARD_ODR_26HZ.getImgPath());
 
-
 	rfidkit.init();
 	rfidkit.onTagActivated([&id_card, &time_odr](const MagicCard &card) { 
 		id_card = card.getId(); 
