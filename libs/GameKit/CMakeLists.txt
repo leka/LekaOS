@@ -14,6 +14,7 @@ target_sources(GameKit
 	PRIVATE
 	source/GameKit.cpp
 	source/games/DisplayTags.cpp
+	source/games/NumberRecognition.cpp
 	source/SMAutonomousGame.cpp
 )
 
@@ -21,6 +22,7 @@ target_link_libraries(GameKit
 	RFIDKit
 	CoreLED
 	VideoKit
+	ReinforcerKit
 )
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

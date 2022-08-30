@@ -42,6 +42,7 @@
 #include "GameKit.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
+#include "NumberRecognition.h"
 #include "QSPIFBlockDevice.h"
 #include "RFIDKit.h"
 #include "ReinforcerKit.h"
@@ -330,8 +331,8 @@ namespace mcuboot {
 
 namespace game {
 
-	auto display_tag = leka::game::DisplayTags(rfidkit, display::videokit);
-	;
+	auto display_tag		= leka::game::DisplayTags(rfidkit, display::videokit);
+	auto number_recognition = leka::game::NumberRecognition(rfidkit, display::videokit, reinforcerkit);
 
 	auto sm_autonomous_game = boost::sml::sm<leka::game::SMAutonomousGame> {};
 	auto gamekit			= GameKit {};
@@ -374,28 +375,9 @@ namespace robot {
 		if (controller.state_machine.is(boost::sml::state<leka::game::SMAutonomousGame>)) {
 			if (card == MagicCard::number_0) {
 				game::gamekit.start(&game::display_tag);
+			} else if (card == MagicCard::number_1) {
+				game::gamekit.start(&game::number_recognition);
 			}
-			// auto set_default_reinforcer_callback = [](const MagicCard &card) { setDefaultReinforcer(card); };
-			// _activity->registerCallback(set_default_reinforcer_callback);
-			// } else if (card == MagicCard::number_1) {
-			// 	magiccardkit.start(rfid::activity::color_recognition);
-			// } else if (card == MagicCard::number_2) {
-			// 	magiccardkit.start(rfid::activity::emotion_recognition);
-			// } else if (card == MagicCard::number_3) {
-			// 	magiccardkit.start(rfid::activity::number_recognition);
-			// } else if (card == MagicCard::number_4) {
-			// 	magiccardkit.start(rfid::activity::shape_recognition);
-			// } else if (card == MagicCard::number_5) {
-			// 	magiccardkit.start(rfid::activity::display_emotions);
-			// } else if (card == MagicCard::number_6) {
-			// 	magiccardkit.start(rfid::activity::color_leka);
-			// } else if (card == MagicCard::number_7) {
-			// 	magiccardkit.start(rfid::activity::two_numbers_addition);
-			// } else if (card == MagicCard::number_8) {
-			// 	magiccardkit.start(rfid::activity::two_numbers_substraction);
-			// } else if (card == MagicCard::number_9) {
-			// 	magiccardkit.start(rfid::activity::colored_shape_recognition);
-			// }
 		}
 	}
 
