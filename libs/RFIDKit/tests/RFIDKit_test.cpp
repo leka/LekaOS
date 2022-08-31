@@ -125,3 +125,26 @@ TEST_F(RFIDKitTest, onTagActivated)
 {
 	rfid_kit.onTagActivated(nullptr);
 }
+
+TEST_F(RFIDKitTest, getNullPtrCallback)
+{
+	rfid_kit.onTagActivated(nullptr);
+	auto callback = rfid_kit.getCallback();
+	EXPECT_EQ(callback, nullptr);
+}
+
+TEST_F(RFIDKitTest, getCallback)
+{
+	auto card = MagicCard::none;
+
+	const std::function<void(leka::MagicCard &)> expected_passed_callback = [](MagicCard &card) {
+		card = MagicCard::activity_super_simon;
+	};
+
+	rfid_kit.onTagActivated(expected_passed_callback);
+	auto callback = rfid_kit.getCallback();
+
+	callback(card);
+
+	EXPECT_EQ(card, MagicCard::activity_super_simon);
+}
