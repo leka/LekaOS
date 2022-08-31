@@ -4,8 +4,10 @@
 
 #pragma once
 
-#include "Activity.h"
+#include <unordered_map>
 
+#include "Activity.h"
+#include "MagicCard.h"
 namespace leka {
 
 class ActivityKit
@@ -13,11 +15,13 @@ class ActivityKit
   public:
 	explicit ActivityKit() = default;
 
-	void start(interface::Activity *activity);
+	void registerActivities(std::unordered_map<uint16_t, interface::Activity *> const &activities);
+	void start(const MagicCard &card);
 	void stop();
 
   private:
 	interface::Activity *_activity = nullptr;
+	std::unordered_map<uint16_t, interface::Activity *> _activities {};
 };
 
 }	// namespace leka

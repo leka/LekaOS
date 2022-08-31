@@ -6,15 +6,20 @@
 
 using namespace leka;
 
-void ActivityKit::start(interface::Activity *activity)
+void ActivityKit::registerActivities(std::unordered_map<uint16_t, interface::Activity *> const &activities)
+{
+	_activities = activities;
+}
+
+void ActivityKit::start(const MagicCard &card)
 {
 	stop();
 
-	_activity = activity;
-
-	if (_activity == nullptr) {
+	if (_activities.find(card.getId()) == _activities.end()) {
 		return;
 	}
+	_activity = _activities.at(card.getId());
+
 	_activity->start();
 }
 
