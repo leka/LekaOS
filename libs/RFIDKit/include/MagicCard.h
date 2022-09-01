@@ -190,3 +190,11 @@ constexpr MagicCard MagicCard::math_arithmetic_substraction_sign_minus = MagicCa
 constexpr MagicCard MagicCard::math_arithmetic_addition_sign_plus	   = MagicCard {0x00'3C};
 
 }	// namespace leka
+
+// ? Make MagicCard std::hash compatible for use in associative containers (i.e. std::unordered_map)
+namespace std {
+template <>
+struct hash<leka::MagicCard> {
+	auto operator()(const leka::MagicCard &card) const -> size_t { return hash<int>()(card.getId()); }
+};
+}	// namespace std
