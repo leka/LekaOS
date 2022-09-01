@@ -41,9 +41,12 @@ add_subdirectory(${DRIVERS_DIR}/CoreMotor)
 add_subdirectory(${DRIVERS_DIR}/CoreIOExpander)
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> 7d8790d7 (add CoreIMU)
+=======
+>>>>>>> ee69a2c4 (add CoreIMU to MakeList)
 add_subdirectory(${DRIVERS_DIR}/CoreQDAC)
 add_subdirectory(${DRIVERS_DIR}/CoreTouchSensor)
 
@@ -58,4 +61,12 @@ add_subdirectory(${DRIVERS_DIR}/CoreLSM6DSOX)
 # IMU drivers
 add_subdirectory(${DRIVERS_DIR}/CoreIMU)
 >>>>>>> a8079684 (add CoreIMU)
+<<<<<<< HEAD
 >>>>>>> 7d8790d7 (add CoreIMU)
+=======
+=======
+
+# Touch drivers
+add_subdirectory(${DRIVERS_DIR}/CoreIMU)
+>>>>>>> 81e3955d (add CoreIMU to MakeList)
+>>>>>>> ee69a2c4 (add CoreIMU to MakeList)
