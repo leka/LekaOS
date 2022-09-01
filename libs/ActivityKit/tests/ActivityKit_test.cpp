@@ -16,62 +16,66 @@ class ActivityKitTest : public ::testing::Test
   protected:
 	ActivityKitTest() = default;
 
-	// void SetUp() override {}
+	void SetUp() override { activitykit.registerActivities(activity_list); }
 	// void TearDown() override {}
 
 	ActivityKit activitykit;
 
-	mock::Activity mock_activity {};
+	mock::Activity mock_activity_0 {};
+	mock::Activity mock_activity_1 {};
+
+	std::unordered_map<MagicCard, interface::Activity *> activity_list = {
+		{MagicCard::number_0, &mock_activity_0},
+		{MagicCard::number_1, &mock_activity_1},
+	};
 };
 
 TEST_F(ActivityKitTest, initialization)
 {
-	EXPECT_NE(&mock_activity, nullptr);
+	EXPECT_NE(&mock_activity_0, nullptr);
 }
 
-TEST_F(ActivityKitTest, startactivity)
+TEST_F(ActivityKitTest, startActivity)
 {
-	EXPECT_CALL(mock_activity, start).Times(1);
+	EXPECT_CALL(mock_activity_0, start).Times(1);
 
-	activitykit.start(&mock_activity);
+	activitykit.start(MagicCard::number_0);
 }
 
 TEST_F(ActivityKitTest, startNullPtr)
 {
-	EXPECT_CALL(mock_activity, start).Times(0);
+	EXPECT_CALL(mock_activity_0, start).Times(0);
 
-	activitykit.start(nullptr);
+	activitykit.start(MagicCard::none);
 }
 
-TEST_F(ActivityKitTest, stopWithoutactivity)
+TEST_F(ActivityKitTest, stopWithoutActivity)
 {
-	EXPECT_CALL(mock_activity, stop).Times(0);
+	EXPECT_CALL(mock_activity_0, stop).Times(0);
 
 	activitykit.stop();
 }
 
-TEST_F(ActivityKitTest, stopStartedactivity)
+TEST_F(ActivityKitTest, stopStartedActivity)
 {
-	EXPECT_CALL(mock_activity, start).Times(1);
-	EXPECT_CALL(mock_activity, stop).Times(1);
+	EXPECT_CALL(mock_activity_0, start).Times(1);
+	EXPECT_CALL(mock_activity_0, stop).Times(1);
 
-	activitykit.start(&mock_activity);
+	activitykit.start(MagicCard::number_0);
 	activitykit.stop();
 }
 
-TEST_F(ActivityKitTest, startNewactivitySequence)
+TEST_F(ActivityKitTest, startNewActivitySequence)
 {
-	mock::Activity mock_new_activity;
-
 	{
 		InSequence seq;
 
-		EXPECT_CALL(mock_activity, start).Times(1);
-		EXPECT_CALL(mock_activity, stop).Times(1);
-		EXPECT_CALL(mock_new_activity, start).Times(1);
+		EXPECT_CALL(mock_activity_0, start).Times(1);
+		EXPECT_CALL(mock_activity_0, stop).Times(1);
+		EXPECT_CALL(mock_activity_1, start).Times(1);
 	}
 
-	activitykit.start(&mock_activity);
+	activitykit.start(MagicCard::number_0);
 
-	activitykit.start(&mock_new_activity);
+	activitykit.start(MagicCard::number_1);
 }
