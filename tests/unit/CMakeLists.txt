@@ -244,6 +244,7 @@ add_subdirectory(template)
 # Register drivers
 leka_register_unit_tests_for_driver(CoreBattery)
 leka_register_unit_tests_for_driver(CoreBufferedSerial)
+leka_register_unit_tests_for_driver(CoreQDAC)
 leka_register_unit_tests_for_driver(CoreEventFlags)
 leka_register_unit_tests_for_driver(CoreEventQueue)
 leka_register_unit_tests_for_driver(CoreFlashMemory)
@@ -266,6 +267,7 @@ leka_register_unit_tests_for_driver(CoreTicker)
 leka_register_unit_tests_for_driver(CoreVideo)
 
 # Register libraries
+leka_register_unit_tests_for_library(ActivityKit)
 leka_register_unit_tests_for_library(BatteryKit)
 leka_register_unit_tests_for_library(BehaviorKit)
 leka_register_unit_tests_for_library(BLEKit)

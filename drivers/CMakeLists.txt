@@ -39,6 +39,3 @@ add_subdirectory(${DRIVERS_DIR}/CoreMotor)
 
 # Touch drivers
 add_subdirectory(${DRIVERS_DIR}/CoreIOExpander)
-
-# IMU drivers
-add_subdirectory(${DRIVERS_DIR}/CoreIMU)

@@ -133,6 +133,11 @@ void BehaviorKit::working()
 	_videokit.displayImage("/fs/home/img/system/robot-face-smiling-slightly.jpg");
 }
 
+void BehaviorKit::chooseActivity()
+{
+	_videokit.displayImage("/fs/home/img/system/robot-misc-choose_activity-fr_FR.jpg");
+}
+
 void BehaviorKit::stop()
 {
 	_ledkit.stop();

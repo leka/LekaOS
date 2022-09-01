@@ -18,3 +18,12 @@ target_link_libraries(RFIDKit
 	mbed-os
 	CoreRFIDReader
 )
+
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
+	leka_unit_tests_sources(
+		tests/ISO14443A_test.cpp
+		tests/ISO14443AUtils_test.cpp
+		tests/MagicCard_test.cpp
+		tests/RFIDKit_test.cpp
+	)
+endif()
