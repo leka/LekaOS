@@ -16,16 +16,18 @@ void ActivityKit::start(const MagicCard &card)
 	stop();
 
 	if (_activities.find(card.getId()) == _activities.end()) {
+		_current_activity = nullptr;
 		return;
 	}
-	_activity = _activities.at(card.getId());
 
-	_activity->start();
+	_current_activity = _activities.at(card.getId());
+
+	_current_activity->start();
 }
 
 void ActivityKit::stop()
 {
-	if (_activity != nullptr) {
-		_activity->stop();
+	if (_current_activity != nullptr) {
+		_current_activity->stop();
 	}
 }

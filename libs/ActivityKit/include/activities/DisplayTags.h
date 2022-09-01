@@ -6,7 +6,6 @@
 
 // LCOV_EXCL_START
 
-#include "Activity.h"
 #include "RFIDKit.h"
 #include "interface/libs/Activity.h"
 #include "interface/libs/VideoKit.h"
@@ -24,7 +23,7 @@ class DisplayTags : public interface::Activity
   private:
 	RFIDKit &_rfidkit;
 	interface::VideoKit &_videokit;
-	std::array<char, 32> path = {};
+	std::array<char, 32> _path_buffer = {};
 	std::function<void(MagicCard &)> _backup_callback {};
 };
 

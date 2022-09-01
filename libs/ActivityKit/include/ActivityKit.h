@@ -6,7 +6,6 @@
 
 #include <unordered_map>
 
-#include "Activity.h"
 #include "MagicCard.h"
 #include "interface/libs/Activity.h"
 namespace leka {
@@ -17,11 +16,12 @@ class ActivityKit
 	explicit ActivityKit() = default;
 
 	void registerActivities(std::unordered_map<uint16_t, interface::Activity *> const &activities);
+
 	void start(const MagicCard &card);
 	void stop();
 
   private:
-	interface::Activity *_activity = nullptr;
+	interface::Activity *_current_activity = nullptr;
 	std::unordered_map<uint16_t, interface::Activity *> _activities {};
 };
 
