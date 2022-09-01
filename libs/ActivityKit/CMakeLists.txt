@@ -13,6 +13,7 @@ target_include_directories(ActivityKit
 target_sources(ActivityKit
 	PRIVATE
 	source/ActivityKit.cpp
+	source/activities/DisplayTags.cpp
 )
 
 target_link_libraries(ActivityKit
