@@ -15,14 +15,14 @@ class ActivityKit
   public:
 	explicit ActivityKit() = default;
 
-	void registerActivities(std::unordered_map<uint16_t, interface::Activity *> const &activities);
+	void registerActivities(std::unordered_map<MagicCard, interface::Activity *> const &activities);
 
 	void start(const MagicCard &card);
 	void stop();
 
   private:
 	interface::Activity *_current_activity = nullptr;
-	std::unordered_map<uint16_t, interface::Activity *> _activities {};
+	std::unordered_map<MagicCard, interface::Activity *> _activities {};
 };
 
 }	// namespace leka
