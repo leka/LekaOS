@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Activity.h"
 #include "gmock/gmock.h"
+#include "interface/Activity.h"
 
 namespace leka::mock {
 

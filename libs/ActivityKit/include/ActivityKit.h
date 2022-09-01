@@ -4,7 +4,8 @@
 
 #pragma once
 
-#include "Activity.h"
+#include "MagicCard.h"
+#include "interface/Activity.h"
 
 namespace leka {
 
