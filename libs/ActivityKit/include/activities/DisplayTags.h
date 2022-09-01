@@ -8,6 +8,7 @@
 
 #include "Activity.h"
 #include "RFIDKit.h"
+#include "interface/libs/Activity.h"
 #include "interface/libs/VideoKit.h"
 
 namespace leka::activity {

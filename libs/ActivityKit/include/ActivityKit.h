@@ -8,6 +8,7 @@
 
 #include "Activity.h"
 #include "MagicCard.h"
+#include "interface/libs/Activity.h"
 namespace leka {
 
 class ActivityKit
