@@ -2,6 +2,7 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
+add_subdirectory(${LIBS_DIR}/ActivityKit)
 add_subdirectory(${LIBS_DIR}/BatteryKit)
 add_subdirectory(${LIBS_DIR}/BehaviorKit)
 add_subdirectory(${LIBS_DIR}/BLEKit)
@@ -12,7 +13,6 @@ add_subdirectory(${LIBS_DIR}/ContainerKit)
 add_subdirectory(${LIBS_DIR}/EventLoopKit)
 add_subdirectory(${LIBS_DIR}/FileManagerKit)
 add_subdirectory(${LIBS_DIR}/FirmwareKit)
-add_subdirectory(${LIBS_DIR}/GameKit)
 add_subdirectory(${LIBS_DIR}/IOKit)
 add_subdirectory(${LIBS_DIR}/LedKit)
 add_subdirectory(${LIBS_DIR}/RobotKit)
