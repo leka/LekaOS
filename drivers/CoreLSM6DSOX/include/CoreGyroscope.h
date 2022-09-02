@@ -8,6 +8,7 @@
 #include "drivers/DigitalOut.h"
 #include "drivers/I2C.h"
 
+<<<<<<< HEAD
 #include "LogKit.h"
 #include "interface/IMUSensor.h"
 
@@ -24,6 +25,26 @@ namespace leka {
 
         private:
             leka::LKCoreLSM6DSOX &_core_imu;
+=======
+#include "lsm6dsox_reg.h"
+#include "LogKit.h"
+#include "CoreLSM6DSOX.h"
+#include "interface/IMUSensor.h"
+
+namespace leka {
+    class CoreGyroscope : public interface::IMUSensor
+    {
+        public:
+            CoreGyroscope(LKCoreIMU *core_imu);
+            void getData(std::array<float, 3> &gy_data);
+	        void setDataRate(lsm6dsox_odr_g_t odr_gy);
+            auto getDataRate() -> int32_t;
+            void SetFullScale(lsm6dsox_fs_g_t fs_g);
+            void TurnOff();
+
+        private:
+            LKCoreIMU *_core_imu;
+>>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
     };
 }
 
