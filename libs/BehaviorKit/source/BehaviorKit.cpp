@@ -85,7 +85,7 @@ void BehaviorKit::working()
 	_videokit.displayImage("/fs/home/img/system/robot-face-smiling-slightly.jpg");
 }
 
-void BehaviorKit::chooseActivity()
+void BehaviorKit::displayAutonomousActivitiesPrompt()
 {
 	_videokit.displayImage("/fs/home/img/system/robot-misc-choose_activity-fr_FR.jpg");
 }

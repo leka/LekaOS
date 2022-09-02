@@ -117,10 +117,10 @@ TEST_F(BehaviorKitTest, working)
 	behaviorkit.working();
 }
 
-TEST_F(BehaviorKitTest, chooseActivity)
+TEST_F(BehaviorKitTest, displayAutonomousActivitiesPrompt)
 {
 	EXPECT_CALL(mock_videokit, displayImage);
-	behaviorkit.chooseActivity();
+	behaviorkit.displayAutonomousActivitiesPrompt();
 }
 
 TEST_F(BehaviorKitTest, stop)

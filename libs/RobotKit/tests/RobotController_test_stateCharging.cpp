@@ -183,3 +183,18 @@ TEST_F(RobotControllerTest, stateChargingEventEmergencyStop)
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::emergency_stopped));
 }
+
+TEST_F(RobotControllerTest, stateChargingEventAutonomousActivityRequested)
+{
+	rc.state_machine.set_current_states(lksm::state::charging);
+
+	EXPECT_CALL(battery, level);
+	EXPECT_CALL(mock_videokit, displayImage).Times(1);
+	EXPECT_CALL(mock_lcd, turnOn).Times(AnyNumber());
+	EXPECT_CALL(timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_charging_start_timeout));
+	EXPECT_CALL(timeout, start).Times(AnyNumber());
+
+	rc.onMagicCardAvailable(MagicCard::remote_standard);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
+}
