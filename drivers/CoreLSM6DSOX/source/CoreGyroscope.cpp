@@ -42,7 +42,11 @@ namespace leka {
 		lsm6dsox_data_t data;
 
 		lsm6dsox_data_get(&_core_imu->getRegisterIOFunction(), nullptr, &_core_imu->getConfig(), &data);
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 
 		gy_data[0] = data.ui.gy.mdps[0];
 		gy_data[1] = data.ui.gy.mdps[1];
@@ -73,7 +77,11 @@ namespace leka {
 	{
 		lsm6dsox_ctrl2_g_t reg;
 		lsm6dsox_read_reg(&_core_imu->getRegisterIOFunction(), LSM6DSOX_CTRL2_G, (uint8_t *)&reg, 1);
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 
         return reg.odr_g;
 	}
@@ -96,7 +104,11 @@ namespace leka {
     void CoreGyroscope::TurnOff()
 	{
 		lsm6dsox_gy_data_rate_set(&_core_imu->getRegisterIOFunction(), LSM6DSOX_GY_ODR_OFF);
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 	}
 
 }

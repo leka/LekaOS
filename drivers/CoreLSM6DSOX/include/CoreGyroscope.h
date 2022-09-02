@@ -10,6 +10,7 @@
 
 <<<<<<< HEAD
 #include "LogKit.h"
+<<<<<<< HEAD
 #include "interface/IMUSensor.h"
 
 namespace leka {
@@ -26,8 +27,11 @@ namespace leka {
         private:
             leka::LKCoreLSM6DSOX &_core_imu;
 =======
+<<<<<<< HEAD
 #include "lsm6dsox_reg.h"
 #include "LogKit.h"
+=======
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 #include "CoreLSM6DSOX.h"
 #include "interface/IMUSensor.h"
 
@@ -44,7 +48,11 @@ namespace leka {
 
         private:
             LKCoreIMU *_core_imu;
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
     };
 }
 

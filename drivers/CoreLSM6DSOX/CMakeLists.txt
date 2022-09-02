@@ -10,7 +10,11 @@ target_include_directories(CoreLSM6DSOX
 add_library(coreLSM6DSOX STATIC)
 
 target_include_directories(coreLSM6DSOX
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 	PUBLIC
 	include
 	extern/include
@@ -20,7 +24,11 @@ target_include_directories(coreLSM6DSOX
 target_sources(CoreLSM6DSOX
 =======
 target_sources(coreLSM6DSOX
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 	PRIVATE
 	source/CoreLSM6DSOX.cpp
 	source/CoreAccelerometer.cpp
@@ -32,7 +40,11 @@ target_sources(coreLSM6DSOX
 target_link_libraries(CoreLSM6DSOX)
 =======
 target_link_libraries(coreLSM6DSOX)
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(

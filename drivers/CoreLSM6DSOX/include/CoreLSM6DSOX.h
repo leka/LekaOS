@@ -25,7 +25,11 @@ class LKCoreIMU
 	LKCoreIMU(mbed::I2C &interface, PinName pin_interrupt);
 
 	void getData(std::array<float, 3> &xl_data, std::array<float, 3> &gy_data);
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 	auto getId() -> int32_t;
 
 	void TurnOffEmbeddedFeatures(lsm6dsox_emb_sens_t *emb_sens);
@@ -36,6 +40,7 @@ class LKCoreIMU
 <<<<<<< HEAD
 	auto getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val) const -> int32_t;
 
+<<<<<<< HEAD
 	auto WriteReg(stmdev_ctx_t *ctx, uint8_t reg, const uint8_t *data, uint16_t len) const	-> int32_t;
 	auto setBlockDataUpdate(stmdev_ctx_t *ctx, uint8_t val) const							-> int32_t;
 	auto setIntNotification(stmdev_ctx_t *ctx, lsm6dsox_lir_t val) const					-> int32_t;
@@ -46,8 +51,11 @@ class LKCoreIMU
 	static auto ptr_io_write(LKCoreLSM6DSOX *handle, uint8_t write_address, const uint8_t *p_buffer, uint16_t number_bytes_to_write) -> int32_t;
 	static auto ptr_io_read(LKCoreLSM6DSOX *handle, uint8_t read_address, uint8_t *p_buffer, uint16_t number_bytes_to_read) -> int32_t;
 =======
+<<<<<<< HEAD
 	auto getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val) -> int32_t;
 
+=======
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 	auto WriteReg(stmdev_ctx_t *ctx, uint8_t reg, uint8_t *data, uint16_t len) 	-> int32_t;
 	auto setBlockDataUpdate(stmdev_ctx_t *ctx, uint8_t val) 					-> int32_t;
 	auto setIntNotification(stmdev_ctx_t *ctx, lsm6dsox_lir_t val)				-> int32_t;
@@ -57,7 +65,11 @@ class LKCoreIMU
 
 	static auto ptr_io_write(void *handle, uint8_t write_address, uint8_t *p_buffer, uint16_t number_bytes_to_write) -> int32_t;
 	static auto ptr_io_read(void *handle, uint8_t read_address, uint8_t *p_buffer, uint16_t number_bytes_to_read) -> int32_t;
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 
 	auto getRegisterIOFunction() -> stmdev_ctx_t& { return _register_io_function; }
 	auto getConfig() -> lsm6dsox_md_t& { return _config; }
@@ -68,7 +80,11 @@ class LKCoreIMU
 	auto write(uint8_t register_address, uint16_t number_bytes_to_write, const uint8_t *p_buffer) -> int32_t;
 =======
 	auto write(uint8_t register_address, uint16_t number_bytes_to_write, uint8_t *p_buffer) -> int32_t;
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 
 	mbed::I2C &_interface;
 	uint8_t _address = LSM6DSOX_I2C_ADD_L;
@@ -90,5 +106,9 @@ static void byteCopy(uint8_t *target, const uint8_t *source);
 
 static void bytecpy(uint8_t *target, uint8_t *source);
 
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 #endif	 // _LEKA_OS_SPIKE_IMU_UTILS_H_

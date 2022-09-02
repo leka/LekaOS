@@ -8,7 +8,11 @@
 <<<<<<< HEAD
 #include "CoreLSM6DSOX.h"
 =======
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 
 namespace leka::interface {
 

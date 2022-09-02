@@ -184,7 +184,11 @@ auto LKCoreIMU::write(uint8_t register_address, uint16_t number_bytes_to_write, 
         lsm6dsox_mode_get(&_register_io_function, nullptr, &_config);
 	}
 
+<<<<<<< HEAD
 >>>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX):drivers/CoreLSM6DSOX/source/CoreLSM6DSOX.cpp
+=======
+>>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX):drivers/CoreLSM6DSOX/source/CoreLSM6DSOX.cpp
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 
 	/* First, send component address. Then, send data and STOP condition */
 	tmp[0] = register_address;
@@ -299,7 +303,11 @@ auto LKCoreIMU::setBlockDataUpdate(stmdev_ctx_t *ctx, uint8_t val) -> int32_t
 	return ret;
 }
 ========
+<<<<<<< HEAD
 >>>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX):drivers/CoreLSM6DSOX/source/CoreLSM6DSOX.cpp
+=======
+>>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX):drivers/CoreLSM6DSOX/source/CoreLSM6DSOX.cpp
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 
 auto LKCoreIMU::setIntNotification(stmdev_ctx_t *ctx, lsm6dsox_lir_t val) -> int32_t
 {
@@ -346,7 +354,11 @@ auto LKCoreIMU::setEmbeddedSens(stmdev_ctx_t *ctx, lsm6dsox_emb_sens_t *val) -> 
 		ret = lsm6dsox_read_reg(ctx, LSM6DSOX_EMB_FUNC_EN_A, (uint8_t *)&emb_func_en_a, 1);
 ========
 	void LKCoreIMU::RouteSignalsInterruptGetSet(lsm6dsox_pin_int1_route_t *pin_int1_route)
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 	{
 		lsm6dsox_pin_int1_route_get(&_register_io_function, pin_int1_route);
 		pin_int1_route->mlc1 = PROPERTY_ENABLE;
@@ -487,7 +499,11 @@ auto LKCoreIMU::setEmbeddedSens(stmdev_ctx_t *ctx, lsm6dsox_emb_sens_t *val) -> 
 		if(val == nullptr)
 			return 1;
 =======
+<<<<<<< HEAD
 >>>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX):drivers/CoreLSM6DSOX/source/CoreLSM6DSOX.cpp
+=======
+>>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX):drivers/CoreLSM6DSOX/source/CoreLSM6DSOX.cpp
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 	}
 
 	if (ret == 0) {
@@ -556,7 +572,11 @@ auto LKCoreIMU::getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val)
 		bytecpy((uint8_t *)&status_master_mainpage, &reg[9]);
 		bytecpy((uint8_t *)&fifo_status1, &reg[10]);
 		bytecpy((uint8_t *)&fifo_status2, &reg[11]);
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 		val->timestamp			= all_int_src.timestamp_endcount;
 		val->wake_up_z			= wake_up_src.z_wu;
 		val->wake_up_y			= wake_up_src.y_wu;
@@ -675,7 +695,11 @@ auto LKCoreIMU::getMLCOut(stmdev_ctx_t *ctx, uint8_t *buff) -> int32_t
 	return ret;
 }
 
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 }	// namespace leka
 
 
@@ -689,5 +713,9 @@ static void bytecpy(uint8_t *target, uint8_t *source)
 	}
 }
 
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 

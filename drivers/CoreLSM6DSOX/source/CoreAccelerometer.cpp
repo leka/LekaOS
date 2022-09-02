@@ -40,7 +40,11 @@ namespace leka {
 		lsm6dsox_data_t data;
 
 		lsm6dsox_data_get(&_core_imu->getRegisterIOFunction(), nullptr, &_core_imu->getConfig(), &data);
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 
 		xl_data[0] = data.ui.xl.mg[0];
 		xl_data[1] = data.ui.xl.mg[1];
@@ -69,7 +73,11 @@ namespace leka {
 	{
 		lsm6dsox_ctrl1_xl_t reg;
 		lsm6dsox_read_reg(&_core_imu->getRegisterIOFunction(), LSM6DSOX_CTRL1_XL, (uint8_t *)&reg, 1);
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
         
         return reg.odr_xl;
 	}
@@ -92,7 +100,11 @@ namespace leka {
     void CoreAccelerometer::TurnOff()
 	{
 		lsm6dsox_xl_data_rate_set(&_core_imu->getRegisterIOFunction(), LSM6DSOX_XL_ODR_OFF);
+<<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 	}
 
 }
