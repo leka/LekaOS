@@ -124,7 +124,7 @@ TEST_F(RobotControllerTest, stateIdleEventChargeDidStartGuardIsChargingFalse)
 
 TEST_F(RobotControllerTest, stateIdleEventEmergencyStop)
 {
-	rc.state_machine.set_current_states(lksm::state::sleeping);
+	rc.state_machine.set_current_states(lksm::state::idle);
 
 	Sequence on_exit_idle_sequence;
 	EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
@@ -139,4 +139,20 @@ TEST_F(RobotControllerTest, stateIdleEventEmergencyStop)
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::emergency_stopped));
+}
+
+TEST_F(RobotControllerTest, stateIdleEventAutonomousActivityRequested)
+{
+	rc.state_machine.set_current_states(lksm::state::idle);
+
+	Sequence on_exit_idle_sequence;
+	EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
+	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_idle_sequence);
+	expectedCallsStopMotors();
+
+	EXPECT_CALL(mock_videokit, displayImage).Times(1);
+
+	rc.onMagicCardAvailable(MagicCard::dice_roll);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
 }

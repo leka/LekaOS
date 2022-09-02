@@ -15,6 +15,7 @@
 #include "BLEServiceMonitoring.h"
 #include "BLEServiceUpdate.h"
 
+#include "ActivityKit.h"
 #include "BatteryKit.h"
 #include "BehaviorKit.h"
 #include "CommandKit.h"
@@ -47,7 +48,7 @@ class RobotController : public interface::RobotController
 							 interface::FirmwareUpdate &firmware_update, interface::Motor &motor_left,
 							 interface::Motor &motor_right, interface::LED &ears, interface::LED &belt, LedKit &ledkit,
 							 interface::LCD &lcd, interface::VideoKit &videokit, BehaviorKit &behaviorkit,
-							 CommandKit &cmdkit, RFIDKit &rfidkit)
+							 CommandKit &cmdkit, RFIDKit &rfidkit, ActivityKit &activitykit)
 		: _timeout(timeout),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
@@ -61,7 +62,8 @@ class RobotController : public interface::RobotController
 		  _videokit(videokit),
 		  _behaviorkit(behaviorkit),
 		  _cmdkit(cmdkit),
-		  _rfidkit(rfidkit)
+		  _rfidkit(rfidkit),
+		  _activitykit(activitykit)
 	{
 		// nothing to do
 	}
@@ -191,6 +193,18 @@ class RobotController : public interface::RobotController
 
 	void startDisconnectionBehavior() final { stopActuators(); }
 
+	void startAutonomousActivityMode() final
+	{
+		_lcd.turnOn();
+		_behaviorkit.displayAutonomousActivitiesPrompt();
+	}
+
+	void stopAutonomousActivityMode() final
+	{
+		_behaviorkit.stop();
+		_activitykit.stop();
+	}
+
 	auto isReadyToUpdate() -> bool final
 	{
 		return (_battery.isCharging() && _battery.level() > _minimal_battery_level_to_update);
@@ -267,10 +281,31 @@ class RobotController : public interface::RobotController
 		}
 	}
 
+	void raiseAutonomousActivityModeRequested()
+	{
+		raise(system::robot::sm::event::autonomous_activities_mode_requested {});
+	}
+
 	void onMagicCardAvailable(const MagicCard &card)
 	{
 		if (card == MagicCard::emergency_stop) {
 			raiseEmergencyStop();
+			return;
+		}
+
+		if (card == MagicCard::dice_roll) {
+			raiseAutonomousActivityModeRequested();
+			if (_activitykit.isPlaying()) {
+				_activitykit.stop();
+			}
+			return;
+		}
+
+		auto is_not_playing		= !_activitykit.isPlaying();
+		auto is_autonomous_mode = state_machine.is(system::robot::sm::state::autonomous_activities);
+
+		if (is_not_playing && is_autonomous_mode) {
+			_activitykit.start(card);
 		}
 	}
 
@@ -385,6 +420,7 @@ class RobotController : public interface::RobotController
 	interface::LCD &_lcd;
 	interface::VideoKit &_videokit;
 	RFIDKit &_rfidkit;
+	ActivityKit &_activitykit;
 
 	BehaviorKit &_behaviorkit;
 	CommandKit &_cmdkit;

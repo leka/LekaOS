@@ -167,3 +167,14 @@ TEST_F(RobotControllerTest, stateEmergencyStoppedEventBleConnectionGuardIsChargi
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
 }
+
+TEST_F(RobotControllerTest, stateEmergencyStoppedEventAutonomousActivityRequested)
+{
+	rc.state_machine.set_current_states(lksm::state::emergency_stopped);
+
+	EXPECT_CALL(mock_videokit, displayImage).Times(1);
+
+	rc.state_machine.process_event(lksm::event::autonomous_activities_mode_requested {});
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
+}
