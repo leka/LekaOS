@@ -67,6 +67,13 @@ add_subdirectory(${DRIVERS_DIR}/CoreIMU)
 =======
 
 # Touch drivers
+<<<<<<< HEAD
 add_subdirectory(${DRIVERS_DIR}/CoreIMU)
 >>>>>>> 81e3955d (add CoreIMU to MakeList)
+<<<<<<< HEAD
 >>>>>>> ee69a2c4 (add CoreIMU to MakeList)
+=======
+=======
+add_subdirectory(${DRIVERS_DIR}/CoreLSM6DSOX)
+>>>>>>> 6fac508c (:sparkles: [drivers] - Add CoreLSM6DSOX)
+>>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
