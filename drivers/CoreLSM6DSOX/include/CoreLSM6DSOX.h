@@ -20,18 +20,12 @@ class LKCoreIMU
 	void getData(std::array<float, 3> &xl_data, std::array<float, 3> &gy_data);
 	auto getId() -> int32_t;
 
-	void setDataRate(lsm6dsox_odr_xl_t odr_xl, lsm6dsox_odr_g_t odr_g);
-	auto getDataRate() -> int32_t;
-
 	void TurnOffEmbeddedFeatures(lsm6dsox_emb_sens_t *emb_sens);
 	void TurnOffSensors();
-	void SetFullScale();
 	void RouteSignalsInterruptGetSet(lsm6dsox_pin_int1_route_t *pin_int1_route);
 	void print_uint8_t(uint8_t n);
 
 	auto getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val) -> int32_t;
-
-	auto get_reg_io_function() -> stmdev_ctx_t& { return _register_io_function;}
 
 	auto WriteReg(stmdev_ctx_t *ctx, uint8_t reg, uint8_t *data, uint16_t len) 	-> int32_t;
 	auto setBlockDataUpdate(stmdev_ctx_t *ctx, uint8_t val) 					-> int32_t;
@@ -42,6 +36,9 @@ class LKCoreIMU
 
 	static auto ptr_io_write(void *handle, uint8_t write_address, uint8_t *p_buffer, uint16_t number_bytes_to_write) -> int32_t;
 	static auto ptr_io_read(void *handle, uint8_t read_address, uint8_t *p_buffer, uint16_t number_bytes_to_read) -> int32_t;
+
+	auto getRegisterIOFunction() -> stmdev_ctx_t& { return _register_io_function; }
+	auto getConfig() -> lsm6dsox_md_t& { return _config; }
 
   private:
 	auto read(uint8_t register_address, uint16_t number_bytes_to_read, uint8_t *p_buffer) -> int32_t;

@@ -2,7 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "CoreIMU.h"
+#include "CoreLSM6DSOX.h"
 
 namespace leka {
 
@@ -18,29 +18,9 @@ namespace leka {
 		lsm6dsox_init_set(&_register_io_function, LSM6DSOX_DRV_RDY);
 		lsm6dsox_i3c_disable_set(&_register_io_function, LSM6DSOX_I3C_DISABLE);
 
-		lsm6dsox_mode_get(&_register_io_function, NULL, &_config);
-
-		_config.ui.xl.odr = _config.ui.xl.LSM6DSOX_XL_UI_104Hz_NM;
-		_config.ui.xl.fs  = _config.ui.xl.LSM6DSOX_XL_UI_2g;
-		_config.ui.gy.odr = _config.ui.gy.LSM6DSOX_GY_UI_104Hz_NM;
-		_config.ui.gy.fs  = _config.ui.gy.LSM6DSOX_GY_UI_125dps;
-
-		lsm6dsox_mode_set(&_register_io_function, NULL, &_config);
+        lsm6dsox_mode_get(&_register_io_function, nullptr, &_config);
 	}
 
-	void LKCoreIMU::getData(std::array<float, 3> &xl_data, std::array<float, 3> &gy_data)
-	{
-		lsm6dsox_data_t data;
-
-		lsm6dsox_data_get(&_register_io_function, NULL, &_config, &data);
-
-		xl_data[0] = data.ui.xl.mg[0];
-		xl_data[1] = data.ui.xl.mg[1];
-		xl_data[2] = data.ui.xl.mg[2];
-		gy_data[0] = data.ui.gy.mdps[0];
-		gy_data[1] = data.ui.gy.mdps[1];
-		gy_data[2] = data.ui.gy.mdps[2];
-	}
 
 	auto LKCoreIMU::ptr_io_write(void *handle, uint8_t write_address, uint8_t *p_buffer, uint16_t number_bytes_to_write) -> int32_t
 	{
@@ -94,29 +74,6 @@ namespace leka {
 			return 0;
 	}
 
-	// Sets the ODR of the accelerometer and the gyroscope
-	// changes the value of the register CTRL1_XL and CTRL2_G
-	void LKCoreIMU::setDataRate(lsm6dsox_odr_xl_t odr_xl, lsm6dsox_odr_g_t odr_gy)
-	{
-		lsm6dsox_xl_data_rate_set(&_register_io_function, odr_xl);
-		lsm6dsox_gy_data_rate_set(&_register_io_function, odr_gy);
-	}
-
-	auto LKCoreIMU::getDataRate() -> int32_t
-	{
-		int32_t ret1, ret2;
-		lsm6dsox_ctrl1_xl_t reg1;
-		lsm6dsox_ctrl2_g_t reg2;
-
-		lsm6dsox_read_reg(&_register_io_function, LSM6DSOX_CTRL1_XL, (uint8_t *)&reg1, 1);
-		lsm6dsox_read_reg(&_register_io_function, LSM6DSOX_CTRL2_G, (uint8_t *)&reg2, 1);
-
-		if (reg1.odr_xl == LSM6DSOX_XL_ODR_26Hz && reg2.odr_g == LSM6DSOX_GY_ODR_26Hz)
-			return 0;
-		else
-			return 1;
-	}
-
 
 	auto LKCoreIMU::setMLCDataRate(stmdev_ctx_t *ctx, lsm6dsox_mlc_odr_t val) -> int32_t
 	{
@@ -150,12 +107,6 @@ namespace leka {
 	{
 		lsm6dsox_xl_data_rate_set(&_register_io_function, LSM6DSOX_XL_ODR_OFF);
 		lsm6dsox_gy_data_rate_set(&_register_io_function, LSM6DSOX_GY_ODR_OFF);
-	}
-
-	void LKCoreIMU::SetFullScale()
-	{
-		lsm6dsox_xl_full_scale_set(&_register_io_function, LSM6DSOX_2g);
-		lsm6dsox_gy_full_scale_set(&_register_io_function, LSM6DSOX_2000dps);
 	}
 
 	void LKCoreIMU::RouteSignalsInterruptGetSet(lsm6dsox_pin_int1_route_t *pin_int1_route)
