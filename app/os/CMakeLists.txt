@@ -35,6 +35,7 @@ target_link_libraries(LekaOS
 	CoreBufferedSerial
 	CoreRFIDReader
 	RFIDKit
+	ActivityKit
 )
 
 target_link_custom_leka_targets(LekaOS)
