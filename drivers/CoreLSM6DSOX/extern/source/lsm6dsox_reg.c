@@ -17,9 +17,13 @@
   ******************************************************************************
   */
 <<<<<<< HEAD
+<<<<<<< HEAD
  // clang-format off
 =======
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+// clang-format off
+>>>>>>> 91aa7087 (:construction: [drivers] test synchro)
 
 #include "lsm6dsox_reg.h"
 
@@ -14464,7 +14468,11 @@ int32_t lsm6dsox_embedded_sens_off(stmdev_ctx_t *ctx)
  // clang-format on 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+<<<<<<< HEAD
 =======
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+// clang-format on 
+>>>>>>> 91aa7087 (:construction: [drivers] test synchro)

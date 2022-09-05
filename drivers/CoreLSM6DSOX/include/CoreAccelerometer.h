@@ -9,6 +9,9 @@
 #include "drivers/I2C.h"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 91aa7087 (:construction: [drivers] test synchro)
 #include "LogKit.h"
 <<<<<<< HEAD
 #include "interface/IMUSensor.h"
