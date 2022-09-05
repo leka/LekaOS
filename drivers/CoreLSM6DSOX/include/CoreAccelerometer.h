@@ -9,7 +9,6 @@
 #include "drivers/I2C.h"
 
 #include "LogKit.h"
-<<<<<<< HEAD
 #include "interface/IMUSensor.h"
 
 namespace leka {
@@ -28,27 +27,6 @@ namespace leka {
 
         private:
             leka::LKCoreLSM6DSOX &_core_imu;
-=======
-#include "CoreLSM6DSOX.h"
-#include "interface/IMUSensor.h"
-
-namespace leka {
-    class CoreAccelerometer : public interface::IMUSensor
-    {
-        public:
-            CoreAccelerometer(LKCoreIMU *core_imu);
-            void getData(std::array<float, 3> &xl_data);
-
-            void setDataRate(lsm6dsox_odr_xl_t odr_xl);
-            auto getDataRate() -> int32_t;
-            
-            void SetFullScale(lsm6dsox_fs_xl_t fs_xl);
-            void TurnOff();
-
-
-        private:
-            LKCoreIMU *_core_imu;
->>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
     };
 }
 
