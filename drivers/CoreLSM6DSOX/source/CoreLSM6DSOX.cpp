@@ -75,7 +75,7 @@ namespace leka {
 	}
 
 
-	auto LKCoreLSM6DSOX::setMLCDataRate(stmdev_ctx_t *ctx, lsm6dsox_mlc_odr_t val) -> int32_t
+	auto LKCoreLSM6DSOX::setMLCDataRate(stmdev_ctx_t *ctx, lsm6dsox_mlc_odr_t val) const -> int32_t
 	{
 		lsm6dsox_emb_func_odr_cfg_c_t reg;
 		int32_t ret;
@@ -116,14 +116,14 @@ namespace leka {
 		lsm6dsox_pin_int1_route_set(&_register_io_function, *pin_int1_route);
 	}
 
-	auto LKCoreLSM6DSOX::WriteReg(stmdev_ctx_t *ctx, uint8_t reg, uint8_t *data, uint16_t len) -> int32_t
+	auto LKCoreLSM6DSOX::WriteReg(stmdev_ctx_t *ctx, uint8_t reg, uint8_t *data, uint16_t len) const -> int32_t
 	{
 		int32_t ret;
 		ret = ctx->write_reg(ctx->handle, reg, data, len);
 		return ret;
 	}
 
-	auto LKCoreLSM6DSOX::setBlockDataUpdate(stmdev_ctx_t *ctx, uint8_t val) -> int32_t
+	auto LKCoreLSM6DSOX::setBlockDataUpdate(stmdev_ctx_t *ctx, uint8_t val) const -> int32_t
 	{
 		lsm6dsox_ctrl3_c_t reg;
 		int32_t ret;
@@ -137,7 +137,7 @@ namespace leka {
 		return ret;
 	}
 
-	auto LKCoreLSM6DSOX::setIntNotification(stmdev_ctx_t *ctx, lsm6dsox_lir_t val) -> int32_t
+	auto LKCoreLSM6DSOX::setIntNotification(stmdev_ctx_t *ctx, lsm6dsox_lir_t val) const -> int32_t
 	{
 		lsm6dsox_tap_cfg0_t tap_cfg0;
 		lsm6dsox_page_rw_t page_rw;
@@ -147,7 +147,7 @@ namespace leka {
 		if (ret == 0) {
 			tap_cfg0.lir			 = static_cast<uint8_t>(val) & 0x01U;
 			tap_cfg0.int_clr_on_read = static_cast<uint8_t>(val) & 0x01U;
-			ret						 = lsm6dsox_write_reg(ctx, LSM6DSOX_TAP_CFG0, reinterpret_cast<uint8_t *>(&tap_cfg0), 1);
+			ret						 = lsm6dsox_write_reg(ctx, LSM6DSOX_TAP_CFG0, (uint8_t *)&tap_cfg0, 1);
 		}
 
 		if (ret == 0) {
@@ -155,12 +155,12 @@ namespace leka {
 		}
 
 		if (ret == 0) {
-			ret = lsm6dsox_read_reg(ctx, LSM6DSOX_PAGE_RW, reinterpret_cast<uint8_t *>(&page_rw), 1);
+			ret = lsm6dsox_read_reg(ctx, LSM6DSOX_PAGE_RW, (uint8_t *)&page_rw, 1);
 		}
 
 		if (ret == 0) {
 			page_rw.emb_func_lir = ((uint8_t)val & 0x02U) >> 1;
-			ret					 = lsm6dsox_write_reg(ctx, LSM6DSOX_PAGE_RW, reinterpret_cast<uint8_t *>(&page_rw), 1);
+			ret					 = lsm6dsox_write_reg(ctx, LSM6DSOX_PAGE_RW, (uint8_t *)&page_rw, 1);
 		}
 
 		if (ret == 0) {
@@ -170,7 +170,7 @@ namespace leka {
 		return ret;
 	}
 
-	auto LKCoreLSM6DSOX::setEmbeddedSens(stmdev_ctx_t *ctx, const lsm6dsox_emb_sens_t *val) -> int32_t
+	auto LKCoreLSM6DSOX::setEmbeddedSens(stmdev_ctx_t *ctx, const lsm6dsox_emb_sens_t *val) const -> int32_t
 	{
 		lsm6dsox_emb_func_en_a_t emb_func_en_a;
 		lsm6dsox_emb_func_en_b_t emb_func_en_b;
@@ -178,11 +178,11 @@ namespace leka {
 		ret = lsm6dsox_mem_bank_set(ctx, LSM6DSOX_EMBEDDED_FUNC_BANK);
 
 		if (ret == 0) {
-			ret = lsm6dsox_read_reg(ctx, LSM6DSOX_EMB_FUNC_EN_A, reinterpret_cast<uint8_t *>(&emb_func_en_a), 1);
+			ret = lsm6dsox_read_reg(ctx, LSM6DSOX_EMB_FUNC_EN_A, (uint8_t *)&emb_func_en_a, 1);
 		}
 
 		if (ret == 0) {
-			ret							 = lsm6dsox_read_reg(ctx, LSM6DSOX_EMB_FUNC_EN_B, reinterpret_cast<uint8_t *>(&emb_func_en_b), 1);
+			ret							 = lsm6dsox_read_reg(ctx, LSM6DSOX_EMB_FUNC_EN_B, (uint8_t *)&emb_func_en_b, 1);
 			emb_func_en_b.mlc_en		 = val->mlc;
 			emb_func_en_b.fsm_en		 = val->fsm;
 			emb_func_en_a.tilt_en		 = val->tilt;
@@ -223,29 +223,29 @@ namespace leka {
 		lsm6dsox_ctrl5_c_t ctrl5_c;
 		uint8_t reg[12];
 
-		if(lsm6dsox_read_reg(ctx, LSM6DSOX_CTRL5_C, reinterpret_cast<uint8_t*>(&ctrl5_c), 1)) //If 0, then no error
+		if(lsm6dsox_read_reg(ctx, LSM6DSOX_CTRL5_C, (uint8_t*)&ctrl5_c, 1)) //If 0, then no error
 			return 1; //Error
 
 		ctrl5_c.rounding_status = PROPERTY_ENABLE;
 
-		if(lsm6dsox_write_reg(ctx, LSM6DSOX_CTRL5_C, reinterpret_cast<uint8_t*>(&ctrl5_c), 1))
+		if(lsm6dsox_write_reg(ctx, LSM6DSOX_CTRL5_C, (uint8_t*)&ctrl5_c, 1))
 			return 1;
 
 		if(lsm6dsox_read_reg(ctx, LSM6DSOX_ALL_INT_SRC, reg, 12))
 			return 1;
 
-		byteCopy(reinterpret_cast<uint8_t*>(&all_int_src), &reg[0]);
-		byteCopy(reinterpret_cast<uint8_t*>(&wake_up_src), &reg[1]);
-		byteCopy(reinterpret_cast<uint8_t*>(&tap_src), &reg[2]);
-		byteCopy(reinterpret_cast<uint8_t*>(&d6d_src), &reg[3]);
-		byteCopy(reinterpret_cast<uint8_t*>(&status_reg), &reg[4]);
-		byteCopy(reinterpret_cast<uint8_t*>(&emb_func_status_mainpage), &reg[5]);
-		byteCopy(reinterpret_cast<uint8_t*>(&fsm_status_a_mainpage), &reg[6]);
-		byteCopy(reinterpret_cast<uint8_t*>(&fsm_status_b_mainpage), &reg[7]);
-		byteCopy(reinterpret_cast<uint8_t*>(&mlc_status_mainpage), &reg[8]);
-		byteCopy(reinterpret_cast<uint8_t*>(&status_master_mainpage), &reg[9]);
-		byteCopy(reinterpret_cast<uint8_t*>(&fifo_status1), &reg[10]);
-		byteCopy(reinterpret_cast<uint8_t*>(&fifo_status2), &reg[11]);
+		byteCopy((uint8_t*)&all_int_src, &reg[0]);
+		byteCopy((uint8_t*)&wake_up_src, &reg[1]);
+		byteCopy((uint8_t*)&tap_src, &reg[2]);
+		byteCopy((uint8_t*)&d6d_src, &reg[3]);
+		byteCopy((uint8_t*)&status_reg, &reg[4]);
+		byteCopy((uint8_t*)&emb_func_status_mainpage, &reg[5]);
+		byteCopy((uint8_t*)&fsm_status_a_mainpage, &reg[6]);
+		byteCopy((uint8_t*)&fsm_status_b_mainpage, &reg[7]);
+		byteCopy((uint8_t*)&mlc_status_mainpage, &reg[8]);
+		byteCopy((uint8_t*)&status_master_mainpage, &reg[9]);
+		byteCopy((uint8_t*)&fifo_status1, &reg[10]);
+		byteCopy((uint8_t*)&fifo_status2, &reg[11]);
 		val->timestamp			= all_int_src.timestamp_endcount;
 		val->wake_up_z			= wake_up_src.z_wu;
 		val->wake_up_y			= wake_up_src.y_wu;
@@ -312,7 +312,7 @@ namespace leka {
 		val->fifo_ovr			= fifo_status2.fifo_ovr_ia;
 		val->fifo_th			= fifo_status2.fifo_wtm_ia;
 		ctrl5_c.rounding_status = PROPERTY_DISABLE;
-		if(lsm6dsox_write_reg(ctx, LSM6DSOX_CTRL5_C, reinterpret_cast<uint8_t*>(&ctrl5_c), 1))
+		if(lsm6dsox_write_reg(ctx, LSM6DSOX_CTRL5_C, (uint8_t*)&ctrl5_c, 1))
 			return 1;
 
 		return 0; //No error
@@ -334,15 +334,14 @@ namespace leka {
 		return ret;
 	}
 
+	static void byteCopy(uint8_t *target, const uint8_t *source)
+	{
+		if ((target != nullptr) && (source != nullptr)) 
+			*target = *source;
+	}
+
 }	// namespace leka
 
 
-
-static void byteCopy(uint8_t *target, const uint8_t *source)
-{
-	if ((target != nullptr) && (source != nullptr)) {
-		*target = *source;
-	}
-}
 
 
