@@ -347,14 +347,8 @@ namespace robot {
 		display::videokit,
 		behaviorkit,
 		commandkit,
+		rfidkit,
 	};
-
-	void emergencyStop(const MagicCard &card)
-	{
-		if (card == MagicCard::emergency_stop) {
-			controller.raiseEmergencyStop();
-		}
-	}
 
 }	// namespace robot
 
@@ -478,7 +472,6 @@ auto main() -> int
 	hello.start();
 
 	sd::init();
-	rfidkit.init();
 	firmware::initializeFlash();
 
 	commandkit.registerCommand(command::list);
@@ -487,8 +480,6 @@ auto main() -> int
 	robot::controller.registerOnUpdateLoadedCallback(firmware::setPendingUpdate);
 	robot::controller.registerOnFactoryResetNotificationCallback(factory_reset::set);
 	robot::controller.registerEvents();
-
-	rfidkit.onTagActivated(robot::emergencyStop);
 
 	// TODO(@team): Add functional test prior confirming the firmware
 	firmware::confirmFirmware();
