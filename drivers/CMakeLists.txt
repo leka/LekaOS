@@ -39,6 +39,8 @@ add_subdirectory(${DRIVERS_DIR}/CoreMotor)
 
 # Touch drivers
 add_subdirectory(${DRIVERS_DIR}/CoreIOExpander)
+add_subdirectory(${DRIVERS_DIR}/CoreQDAC)
+add_subdirectory(${DRIVERS_DIR}/CoreTouchSensor)
 
 # Touch drivers
 add_subdirectory(${DRIVERS_DIR}/CoreLSM6DSOX)
