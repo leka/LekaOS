@@ -5,14 +5,16 @@
 #pragma once
 
 #include "lsm6dsox_reg.h"
-<<<<<<< HEAD
 #include "CoreLSM6DSOX.h"
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 >>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX)
 =======
 >>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
 >>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 98c551c9 (:construction: [drivers] CoreLSM6DSOX after sync)
 
 namespace leka::interface {
 

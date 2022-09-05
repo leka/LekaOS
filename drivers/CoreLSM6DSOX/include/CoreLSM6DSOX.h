@@ -12,12 +12,12 @@
 #include "LogKit.h"
 
 namespace leka {
-<<<<<<< HEAD
 class LKCoreLSM6DSOX
 {
   public:
 	LKCoreLSM6DSOX(mbed::I2C &interface, PinName pin_interrupt);
 
+<<<<<<< HEAD
 =======
 class LKCoreIMU
 {
@@ -30,6 +30,8 @@ class LKCoreIMU
 =======
 >>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
 >>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 98c551c9 (:construction: [drivers] CoreLSM6DSOX after sync)
 	auto getId() -> int32_t;
 
 	void TurnOffEmbeddedFeatures(lsm6dsox_emb_sens_t *emb_sens);
@@ -40,7 +42,6 @@ class LKCoreIMU
 <<<<<<< HEAD
 	auto getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val) const -> int32_t;
 
-<<<<<<< HEAD
 	auto WriteReg(stmdev_ctx_t *ctx, uint8_t reg, const uint8_t *data, uint16_t len) const	-> int32_t;
 	auto setBlockDataUpdate(stmdev_ctx_t *ctx, uint8_t val) const							-> int32_t;
 	auto setIntNotification(stmdev_ctx_t *ctx, lsm6dsox_lir_t val) const					-> int32_t;
@@ -50,6 +51,7 @@ class LKCoreIMU
 
 	static auto ptr_io_write(LKCoreLSM6DSOX *handle, uint8_t write_address, const uint8_t *p_buffer, uint16_t number_bytes_to_write) -> int32_t;
 	static auto ptr_io_read(LKCoreLSM6DSOX *handle, uint8_t read_address, uint8_t *p_buffer, uint16_t number_bytes_to_read) -> int32_t;
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 	auto getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val) -> int32_t;
@@ -70,14 +72,16 @@ class LKCoreIMU
 =======
 >>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
 >>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 98c551c9 (:construction: [drivers] CoreLSM6DSOX after sync)
 
 	auto getRegisterIOFunction() -> stmdev_ctx_t& { return _register_io_function; }
 	auto getConfig() -> lsm6dsox_md_t& { return _config; }
 
   private:
 	auto read(uint8_t register_address, uint16_t number_bytes_to_read, uint8_t *p_buffer) -> int32_t;
-<<<<<<< HEAD
 	auto write(uint8_t register_address, uint16_t number_bytes_to_write, const uint8_t *p_buffer) -> int32_t;
+<<<<<<< HEAD
 =======
 	auto write(uint8_t register_address, uint16_t number_bytes_to_write, uint8_t *p_buffer) -> int32_t;
 <<<<<<< HEAD
@@ -85,6 +89,8 @@ class LKCoreIMU
 =======
 >>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
 >>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 98c551c9 (:construction: [drivers] CoreLSM6DSOX after sync)
 
 	mbed::I2C &_interface;
 	uint8_t _address = LSM6DSOX_I2C_ADD_L;
@@ -93,13 +99,13 @@ class LKCoreIMU
 	stmdev_ctx_t _register_io_function;
 	lsm6dsox_md_t _config;
 };
-<<<<<<< HEAD
 
 
 static void byteCopy(uint8_t *target, const uint8_t *source);
 }	// namespace leka
 
 
+<<<<<<< HEAD
 =======
 }	// namespace leka
 
@@ -111,4 +117,6 @@ static void bytecpy(uint8_t *target, uint8_t *source);
 =======
 >>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
 >>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 98c551c9 (:construction: [drivers] CoreLSM6DSOX after sync)
 #endif	 // _LEKA_OS_SPIKE_IMU_UTILS_H_

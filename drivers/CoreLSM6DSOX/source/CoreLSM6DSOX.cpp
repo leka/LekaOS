@@ -6,7 +6,6 @@
 
 namespace leka {
 
-<<<<<<< HEAD
 	LKCoreLSM6DSOX::LKCoreLSM6DSOX(mbed::I2C &interface, PinName pin_interrupt)
 		: _interface(interface), _lsm6dsox_interrupt(pin_interrupt)
 	{
@@ -111,6 +110,7 @@ namespace leka {
 	}
 
 	void LKCoreLSM6DSOX::RouteSignalsInterruptGetSet(lsm6dsox_pin_int1_route_t *pin_int1_route)
+<<<<<<< HEAD
 =======
 LKCoreIMU::LKCoreIMU(mbed::I2C &interface, PinName pin_interrupt)
 	: _interface(interface), _lsm6dsox_interrupt(pin_interrupt)
@@ -359,11 +359,12 @@ auto LKCoreIMU::setEmbeddedSens(stmdev_ctx_t *ctx, lsm6dsox_emb_sens_t *val) -> 
 =======
 >>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
 >>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 98c551c9 (:construction: [drivers] CoreLSM6DSOX after sync)
 	{
 		lsm6dsox_pin_int1_route_get(&_register_io_function, pin_int1_route);
 		pin_int1_route->mlc1 = PROPERTY_ENABLE;
 		lsm6dsox_pin_int1_route_set(&_register_io_function, *pin_int1_route);
-<<<<<<< HEAD
 	}
 
 	auto LKCoreLSM6DSOX::WriteReg(stmdev_ctx_t *ctx, uint8_t reg, const uint8_t *data, uint16_t len) const -> int32_t
@@ -498,6 +499,7 @@ auto LKCoreIMU::setEmbeddedSens(stmdev_ctx_t *ctx, lsm6dsox_emb_sens_t *val) -> 
 		byteCopy((uint8_t*)&fifo_status2, &reg[11]);
 		if(val == nullptr)
 			return 1;
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 >>>>>>>> 22302a25 (:sparkles: [drivers] - Add CoreLSM6DSOX):drivers/CoreLSM6DSOX/source/CoreLSM6DSOX.cpp
@@ -577,6 +579,8 @@ auto LKCoreIMU::getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val)
 =======
 >>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
 >>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 98c551c9 (:construction: [drivers] CoreLSM6DSOX after sync)
 		val->timestamp			= all_int_src.timestamp_endcount;
 		val->wake_up_z			= wake_up_src.z_wu;
 		val->wake_up_y			= wake_up_src.y_wu;
@@ -643,7 +647,6 @@ auto LKCoreIMU::getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val)
 		val->fifo_ovr			= fifo_status2.fifo_ovr_ia;
 		val->fifo_th			= fifo_status2.fifo_wtm_ia;
 		ctrl5_c.rounding_status = PROPERTY_DISABLE;
-<<<<<<< HEAD
 		if(lsm6dsox_write_reg(ctx, LSM6DSOX_CTRL5_C, (uint8_t*)&ctrl5_c, 1))
 			return 1;
 
@@ -672,6 +675,7 @@ auto LKCoreIMU::getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val)
 			*target = *source;
 	}
 
+<<<<<<< HEAD
 =======
 		ret						= lsm6dsox_write_reg(ctx, LSM6DSOX_CTRL5_C, (uint8_t *)&ctrl5_c, 1);
 	}
@@ -700,10 +704,13 @@ auto LKCoreIMU::getMLCOut(stmdev_ctx_t *ctx, uint8_t *buff) -> int32_t
 =======
 >>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
 >>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 98c551c9 (:construction: [drivers] CoreLSM6DSOX after sync)
 }	// namespace leka
 
 
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 static void bytecpy(uint8_t *target, uint8_t *source)
@@ -718,4 +725,6 @@ static void bytecpy(uint8_t *target, uint8_t *source)
 =======
 >>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
 >>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 98c551c9 (:construction: [drivers] CoreLSM6DSOX after sync)
 

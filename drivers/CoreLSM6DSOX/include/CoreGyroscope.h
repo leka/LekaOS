@@ -13,7 +13,6 @@
 =======
 >>>>>>> 91aa7087 (:construction: [drivers] test synchro)
 #include "LogKit.h"
-<<<<<<< HEAD
 #include "interface/IMUSensor.h"
 
 namespace leka {
@@ -29,6 +28,7 @@ namespace leka {
 
         private:
             leka::LKCoreLSM6DSOX &_core_imu;
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 #include "lsm6dsox_reg.h"
@@ -56,6 +56,8 @@ namespace leka {
 =======
 >>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
 >>>>>>> 0487f66c (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+>>>>>>> 98c551c9 (:construction: [drivers] CoreLSM6DSOX after sync)
     };
 }
 
