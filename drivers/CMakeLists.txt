@@ -39,6 +39,12 @@ add_subdirectory(${DRIVERS_DIR}/CoreMotor)
 
 # Touch drivers
 add_subdirectory(${DRIVERS_DIR}/CoreIOExpander)
+<<<<<<< HEAD
+=======
+add_subdirectory(${DRIVERS_DIR}/CoreQDAC)
+add_subdirectory(${DRIVERS_DIR}/CoreTouchSensor)
+
+>>>>>>> 961b0e85 (:sparkles: (drivers): Add CoreTouchSensor)
 
 # Touch drivers
 add_subdirectory(${DRIVERS_DIR}/CoreLSM6DSOX)
