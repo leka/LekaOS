@@ -1193,12 +1193,10 @@ class reporter
 	{
 		if (asserts_.fail > fails_) {
 			++tests_.fail;
-			printer_ << '\n' << "FAILED" << '\n';
+			printer_ << '\n' << printer_.colors().fail << "FAILED" << printer_.colors().none << '\n';
 		} else {
 			++tests_.pass;
-			printer_ << "PASSED" << '\n';
-
-			std::cout << printer_.str() << std::endl;
+			printer_ << printer_.colors().pass << "PASSED" << printer_.colors().none << '\n';
 		}
 	}
 
