@@ -22,14 +22,14 @@ namespace leka {
 	}
 
 
-	auto LKCoreLSM6DSOX::ptr_io_write(LKCoreLSM6DSOX *handle, uint8_t write_address, uint8_t *p_buffer, uint16_t number_bytes_to_write) -> int32_t
+	auto LKCoreLSM6DSOX::ptr_io_write(LKCoreLSM6DSOX *handle, uint8_t write_address, const uint8_t *p_buffer, uint16_t number_bytes_to_write) -> int32_t
 	{
-		return static_cast<int32_t>(handle->write(write_address, number_bytes_to_write, p_buffer));
+		return handle->write(write_address, number_bytes_to_write, p_buffer);
 	}
 
 	auto LKCoreLSM6DSOX::ptr_io_read(LKCoreLSM6DSOX *handle, uint8_t read_address, uint8_t *p_buffer, uint16_t number_bytes_to_read) -> int32_t
 	{
-		return static_cast<int32_t>(handle->read(read_address, number_bytes_to_read, p_buffer));
+		return handle->read(read_address, number_bytes_to_read, p_buffer);
 	}
 
 	auto LKCoreLSM6DSOX::read(uint8_t register_address, uint16_t number_bytes_to_read, uint8_t *pBuffer) -> int32_t
@@ -116,7 +116,7 @@ namespace leka {
 		lsm6dsox_pin_int1_route_set(&_register_io_function, *pin_int1_route);
 	}
 
-	auto LKCoreLSM6DSOX::WriteReg(stmdev_ctx_t *ctx, uint8_t reg, uint8_t *data, uint16_t len) const -> int32_t
+	auto LKCoreLSM6DSOX::WriteReg(stmdev_ctx_t *ctx, uint8_t reg, const uint8_t *data, uint16_t len) const -> int32_t
 	{
 		int32_t ret;
 		ret = ctx->write_reg(ctx->handle, reg, data, len);
@@ -246,6 +246,8 @@ namespace leka {
 		byteCopy((uint8_t*)&status_master_mainpage, &reg[9]);
 		byteCopy((uint8_t*)&fifo_status1, &reg[10]);
 		byteCopy((uint8_t*)&fifo_status2, &reg[11]);
+		if(val == nullptr)
+			return 1;
 		val->timestamp			= all_int_src.timestamp_endcount;
 		val->wake_up_z			= wake_up_src.z_wu;
 		val->wake_up_y			= wake_up_src.y_wu;
