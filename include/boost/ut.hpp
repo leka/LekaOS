@@ -1210,8 +1210,9 @@ class reporter
 
 	auto on(events::exception exception) -> void
 	{
-		printer_ << "\n  " << printer_.colors().fail << "Unexpected exception with message:\n"
-				 << exception.what() << printer_.colors().none;
+		printer_ << "\n  "
+				 << "Unexpected exception with message:\n"
+				 << exception.what();
 		++asserts_.fail;
 	}
 
@@ -1228,8 +1229,8 @@ class reporter
 			return name.rfind('/') != std::string_view::npos ? name.substr(name.rfind('/') + 1) : name;
 		};
 		printer_ << "\n  " << short_name(assertion.location.file_name()) << ':' << assertion.location.line() << ':'
-				 << printer_.colors().fail << "FAILED" << printer_.colors().none << " [" << std::boolalpha
-				 << assertion.expr << printer_.colors().none << ']';
+				 << "FAILED"
+				 << " [" << std::boolalpha << assertion.expr << ']';
 		++asserts_.fail;
 	}
 
@@ -1240,14 +1241,13 @@ class reporter
 		if (tests_.fail or asserts_.fail) {
 			printer_ << "\n========================================================"
 						"=======================\n"
-					 << "tests:   " << (tests_.pass + tests_.fail) << " | " << printer_.colors().fail << tests_.fail
-					 << " failed" << printer_.colors().none << '\n'
+					 << "tests:   " << (tests_.pass + tests_.fail) << " | " << tests_.fail << " failed" << '\n'
 					 << "asserts: " << (asserts_.pass + asserts_.fail) << " | " << asserts_.pass << " passed"
-					 << " | " << printer_.colors().fail << asserts_.fail << " failed" << printer_.colors().none << '\n';
+					 << " | " << asserts_.fail << " failed" << '\n';
 			std::cerr << printer_.str() << std::endl;
 		} else {
-			std::cout << printer_.colors().pass << "All tests passed" << printer_.colors().none << " (" << asserts_.pass
-					  << " asserts in " << tests_.pass << " tests)\n";
+			std::cout << "All tests passed"
+					  << " (" << asserts_.pass << " asserts in " << tests_.pass << " tests)\n";
 
 			if (tests_.skip) {
 				std::cout << tests_.skip << " tests skipped\n";
