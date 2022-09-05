@@ -11,7 +11,10 @@
 
 #include "BehaviorKit.h"
 #include "CommandKit.h"
+#include "CoreBufferedSerial.h"
 #include "CorePwm.h"
+#include "CoreRFIDReaderCR95HF.h"
+#include "RFIDKit.h"
 #include "SerialNumberKit.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -86,12 +89,16 @@ class RobotControllerTest : public testing::Test
 
 	BehaviorKit bhvkit {mock_videokit, ledkit, mock_motor_left, mock_motor_right};
 
+	CoreBufferedSerial serial {RFID_UART_TX, RFID_UART_RX, 57600};
+	CoreRFIDReaderCR95HF reader {serial};
+	RFIDKit rfidkit {reader};
+
 	stub::EventLoopKit event_loop {};
 	CommandKit cmdkit {event_loop};
 
 	RobotController<bsml::sm<system::robot::StateMachine, bsml::testing>> rc {
-		timeout, battery,  serialnumberkit, firmware_update, mock_motor_left, mock_motor_right, mock_ears, mock_belt,
-		ledkit,	 mock_lcd, mock_videokit,	bhvkit,			 cmdkit};
+		timeout,   battery, serialnumberkit, firmware_update, mock_motor_left, mock_motor_right, mock_ears,
+		mock_belt, ledkit,	mock_lcd,		 mock_videokit,	  bhvkit,		   cmdkit,			 rfidkit};
 
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();

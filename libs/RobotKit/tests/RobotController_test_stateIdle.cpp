@@ -131,7 +131,7 @@ TEST_F(RobotControllerTest, stateIdleEventEmergencyStop)
 	EXPECT_CALL(mock_lcd, turnOff).Times(1);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1));
 
-	rc.raiseEmergencyStop();
+	rc.onMagicCardAvailable(MagicCard::emergency_stop);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::emergency_stopped));
 }
