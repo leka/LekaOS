@@ -349,7 +349,7 @@ namespace robot {
 		commandkit,
 	};
 
-	void emergencyStop(const MagicCard &card)
+	void onMagicCardAvailable(const MagicCard &card)
 	{
 		if (card == MagicCard::emergency_stop) {
 			controller.raiseEmergencyStop();
@@ -488,7 +488,7 @@ auto main() -> int
 	robot::controller.registerOnFactoryResetNotificationCallback(factory_reset::set);
 	robot::controller.registerEvents();
 
-	rfidkit.onTagActivated(robot::emergencyStop);
+	rfidkit.onTagActivated(robot::onMagicCardAvailable);
 
 	// TODO(@team): Add functional test prior confirming the firmware
 	firmware::confirmFirmware();
