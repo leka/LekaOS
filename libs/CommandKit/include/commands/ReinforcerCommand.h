@@ -52,6 +52,7 @@ struct ReinforcerCommand : interface::Command {
 				_behaviorkit.blinkGreen();
 				break;
 			default:
+				_behaviorkit.rainbow();
 				break;
 		}
 
