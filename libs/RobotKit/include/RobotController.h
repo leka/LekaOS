@@ -21,7 +21,9 @@
 #include "CoreMutex.h"
 #include "FileReception.h"
 #include "LedKit.h"
+#include "MagicCard.h"
 #include "RCLogger.h"
+#include "RFIDKit.h"
 #include "SerialNumberKit.h"
 #include "StateMachine.h"
 #include "interface/RobotController.h"
@@ -45,7 +47,7 @@ class RobotController : public interface::RobotController
 							 interface::FirmwareUpdate &firmware_update, interface::Motor &motor_left,
 							 interface::Motor &motor_right, interface::LED &ears, interface::LED &belt, LedKit &ledkit,
 							 interface::LCD &lcd, interface::VideoKit &videokit, BehaviorKit &behaviorkit,
-							 CommandKit &cmdkit)
+							 CommandKit &cmdkit, RFIDKit &rfidkit)
 		: _timeout(timeout),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
@@ -58,7 +60,8 @@ class RobotController : public interface::RobotController
 		  _lcd(lcd),
 		  _videokit(videokit),
 		  _behaviorkit(behaviorkit),
-		  _cmdkit(cmdkit)
+		  _cmdkit(cmdkit),
+		  _rfidkit(rfidkit)
 	{
 		// nothing to do
 	}
@@ -220,6 +223,8 @@ class RobotController : public interface::RobotController
 	{
 		_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
 
+		_rfidkit.init();
+
 		_ble.setServices(services);
 		_ble.init();
 
@@ -262,11 +267,20 @@ class RobotController : public interface::RobotController
 		}
 	}
 
+	void onMagicCardAvailable(const MagicCard &card)
+	{
+		if (card == MagicCard::emergency_stop) {
+			raiseEmergencyStop();
+		}
+	}
+
 	void registerEvents()
 	{
 		using namespace system::robot::sm;
 
 		// Setup callbacks for monitoring
+
+		_rfidkit.onTagActivated([this](const MagicCard &card) { onMagicCardAvailable(card); });
 
 		_battery_kit.onDataUpdated([this](uint8_t level) {
 			auto is_charging = _battery.isCharging();
@@ -370,6 +384,7 @@ class RobotController : public interface::RobotController
 	LedKit &_ledkit;
 	interface::LCD &_lcd;
 	interface::VideoKit &_videokit;
+	RFIDKit &_rfidkit;
 
 	BehaviorKit &_behaviorkit;
 	CommandKit &_cmdkit;
