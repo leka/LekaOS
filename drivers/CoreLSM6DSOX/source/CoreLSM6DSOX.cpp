@@ -206,7 +206,7 @@ namespace leka {
 		return ret;
 	}
 
-	auto LKCoreLSM6DSOX::getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val) -> int32_t
+	auto LKCoreLSM6DSOX::getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val) const -> int32_t
 	{
 		lsm6dsox_emb_func_status_mainpage_t emb_func_status_mainpage;
 		lsm6dsox_status_master_mainpage_t status_master_mainpage;
@@ -221,7 +221,7 @@ namespace leka {
 		lsm6dsox_tap_src_t tap_src;
 		lsm6dsox_d6d_src_t d6d_src;
 		lsm6dsox_ctrl5_c_t ctrl5_c;
-		uint8_t reg[12];
+		std::array<uint8_t, 12> reg;
 
 		if(lsm6dsox_read_reg(ctx, LSM6DSOX_CTRL5_C, (uint8_t*)&ctrl5_c, 1)) //If 0, then no error
 			return 1; //Error
@@ -231,7 +231,7 @@ namespace leka {
 		if(lsm6dsox_write_reg(ctx, LSM6DSOX_CTRL5_C, (uint8_t*)&ctrl5_c, 1))
 			return 1;
 
-		if(lsm6dsox_read_reg(ctx, LSM6DSOX_ALL_INT_SRC, reg, 12))
+		if(lsm6dsox_read_reg(ctx, LSM6DSOX_ALL_INT_SRC, reg.begin(), 12))
 			return 1;
 
 		byteCopy((uint8_t*)&all_int_src, &reg[0]);
@@ -320,7 +320,7 @@ namespace leka {
 		return 0; //No error
 	}
 
-	auto LKCoreLSM6DSOX::getMLCOut(stmdev_ctx_t *ctx, uint8_t *buff) -> int32_t
+	auto LKCoreLSM6DSOX::getMLCOut(stmdev_ctx_t *ctx, uint8_t *buff) const -> int32_t
 	{
 		int32_t ret;
 		ret = lsm6dsox_mem_bank_set(ctx, LSM6DSOX_EMBEDDED_FUNC_BANK);

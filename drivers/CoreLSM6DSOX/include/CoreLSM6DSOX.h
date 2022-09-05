@@ -24,14 +24,14 @@ class LKCoreLSM6DSOX
 	void RouteSignalsInterruptGetSet(lsm6dsox_pin_int1_route_t *pin_int1_route);
 	void print_uint8_t(uint8_t n);
 
-	auto getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val) -> int32_t;
+	auto getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val) const -> int32_t;
 
 	auto WriteReg(stmdev_ctx_t *ctx, uint8_t reg, const uint8_t *data, uint16_t len) const	-> int32_t;
 	auto setBlockDataUpdate(stmdev_ctx_t *ctx, uint8_t val) const							-> int32_t;
 	auto setIntNotification(stmdev_ctx_t *ctx, lsm6dsox_lir_t val) const					-> int32_t;
 	auto setEmbeddedSens(stmdev_ctx_t *ctx, const lsm6dsox_emb_sens_t *val)	const			-> int32_t;
 	auto setMLCDataRate(stmdev_ctx_t *ctx, lsm6dsox_mlc_odr_t val) const					-> int32_t;
-	auto getMLCOut(stmdev_ctx_t *ctx, uint8_t *buff)										-> int32_t;
+	auto getMLCOut(stmdev_ctx_t *ctx, uint8_t *buff) const									-> int32_t;
 
 	static auto ptr_io_write(LKCoreLSM6DSOX *handle, uint8_t write_address, const uint8_t *p_buffer, uint16_t number_bytes_to_write) -> int32_t;
 	static auto ptr_io_read(LKCoreLSM6DSOX *handle, uint8_t read_address, uint8_t *p_buffer, uint16_t number_bytes_to_read) -> int32_t;
