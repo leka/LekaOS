@@ -39,49 +39,8 @@ add_subdirectory(${DRIVERS_DIR}/CoreMotor)
 
 # Touch drivers
 add_subdirectory(${DRIVERS_DIR}/CoreIOExpander)
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 7d8790d7 (add CoreIMU)
-=======
->>>>>>> ee69a2c4 (add CoreIMU to MakeList)
 add_subdirectory(${DRIVERS_DIR}/CoreQDAC)
 add_subdirectory(${DRIVERS_DIR}/CoreTouchSensor)
 
->>>>>>> 961b0e85 (:sparkles: (drivers): Add CoreTouchSensor)
-
-<<<<<<< HEAD
 # Touch drivers
 add_subdirectory(${DRIVERS_DIR}/CoreLSM6DSOX)
-=======
-=======
-
-# IMU drivers
-add_subdirectory(${DRIVERS_DIR}/CoreIMU)
->>>>>>> a8079684 (add CoreIMU)
-<<<<<<< HEAD
->>>>>>> 7d8790d7 (add CoreIMU)
-=======
-=======
-
-# Touch drivers
-<<<<<<< HEAD
-add_subdirectory(${DRIVERS_DIR}/CoreIMU)
->>>>>>> 81e3955d (add CoreIMU to MakeList)
-<<<<<<< HEAD
->>>>>>> ee69a2c4 (add CoreIMU to MakeList)
-=======
-=======
-add_subdirectory(${DRIVERS_DIR}/CoreLSM6DSOX)
->>>>>>> 6fac508c (:sparkles: [drivers] - Add CoreLSM6DSOX)
->>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
-=======
-
-add_subdirectory(${DRIVERS_DIR}/CoreQDAC)
-add_subdirectory(${DRIVERS_DIR}/CoreTouchSensor)
-
-add_subdirectory(${DRIVERS_DIR}/CoreLSM6DSOX)
->>>>>>> 7a7abb5c (:construction: [drivers] test synchro)
