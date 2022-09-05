@@ -5,6 +5,7 @@
 #pragma once
 
 #include "lsm6dsox_reg.h"
+#include "CoreLSM6DSOX.h"
 
 namespace leka::interface {
 

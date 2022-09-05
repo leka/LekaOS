@@ -10,22 +10,21 @@
 
 #include "lsm6dsox_reg.h"
 #include "LogKit.h"
-#include "CoreLSM6DSOX.h"
 #include "interface/IMUSensor.h"
 
 namespace leka {
-    class CoreGyroscope : public interface::IMUSensor
+    class LKCoreGyroscope : public interface::IMUSensor
     {
         public:
-            CoreGyroscope(LKCoreIMU *core_imu);
-            void getData(std::array<float, 3> &gy_data);
+            explicit LKCoreGyroscope(LKCoreLSM6DSOX &core_imu) ;
+            void getData(std::array<float, 3> &gy_data) final;
 	        void setDataRate(lsm6dsox_odr_g_t odr_gy);
-            auto getDataRate() -> int32_t;
+            auto getDataRate() -> int32_t final;
             void SetFullScale(lsm6dsox_fs_g_t fs_g);
-            void TurnOff();
+            void TurnOff() final;
 
         private:
-            LKCoreIMU *_core_imu;
+            leka::LKCoreLSM6DSOX &_core_imu;
     };
 }
 

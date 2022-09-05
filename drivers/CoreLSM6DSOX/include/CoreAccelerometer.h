@@ -10,25 +10,24 @@
 
 #include "lsm6dsox_reg.h"
 #include "LogKit.h"
-#include "CoreLSM6DSOX.h"
 #include "interface/IMUSensor.h"
 
 namespace leka {
-    class CoreAccelerometer : public interface::IMUSensor
+    class LKCoreAccelerometer : public interface::IMUSensor
     {
         public:
-            CoreAccelerometer(LKCoreIMU *core_imu);
-            void getData(std::array<float, 3> &xl_data);
+            explicit LKCoreAccelerometer(LKCoreLSM6DSOX &core_imu);
+            void getData(std::array<float, 3> &xl_data) final;
 
             void setDataRate(lsm6dsox_odr_xl_t odr_xl);
-            auto getDataRate() -> int32_t;
+            auto getDataRate() -> int32_t final;
             
             void SetFullScale(lsm6dsox_fs_xl_t fs_xl);
-            void TurnOff();
+            void TurnOff() final;
 
 
         private:
-            LKCoreIMU *_core_imu;
+            leka::LKCoreLSM6DSOX &_core_imu;
     };
 }
 

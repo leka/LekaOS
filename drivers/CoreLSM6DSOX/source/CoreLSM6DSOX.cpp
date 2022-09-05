@@ -6,7 +6,7 @@
 
 namespace leka {
 
-	LKCoreIMU::LKCoreIMU(mbed::I2C &interface, PinName pin_interrupt)
+	LKCoreLSM6DSOX::LKCoreLSM6DSOX(mbed::I2C &interface, PinName pin_interrupt)
 		: _interface(interface), _lsm6dsox_interrupt(pin_interrupt)
 	{
 		_register_io_function.write_reg = (stmdev_write_ptr)ptr_io_write;
@@ -22,17 +22,17 @@ namespace leka {
 	}
 
 
-	auto LKCoreIMU::ptr_io_write(void *handle, uint8_t write_address, uint8_t *p_buffer, uint16_t number_bytes_to_write) -> int32_t
+	auto LKCoreLSM6DSOX::ptr_io_write(LKCoreLSM6DSOX *handle, uint8_t write_address, uint8_t *p_buffer, uint16_t number_bytes_to_write) -> int32_t
 	{
-		return (int32_t)((LKCoreIMU *)handle)->write(write_address, number_bytes_to_write, p_buffer);
+		return static_cast<int32_t>(handle->write(write_address, number_bytes_to_write, p_buffer));
 	}
 
-	auto LKCoreIMU::ptr_io_read(void *handle, uint8_t read_address, uint8_t *p_buffer, uint16_t number_bytes_to_read) -> int32_t
+	auto LKCoreLSM6DSOX::ptr_io_read(LKCoreLSM6DSOX *handle, uint8_t read_address, uint8_t *p_buffer, uint16_t number_bytes_to_read) -> int32_t
 	{
-		return (int32_t)((LKCoreIMU *)handle)->read(read_address, number_bytes_to_read, p_buffer);
+		return static_cast<int32_t>(handle->read(read_address, number_bytes_to_read, p_buffer));
 	}
 
-	auto LKCoreIMU::read(uint8_t register_address, uint16_t number_bytes_to_read, uint8_t *pBuffer) -> int32_t
+	auto LKCoreLSM6DSOX::read(uint8_t register_address, uint16_t number_bytes_to_read, uint8_t *pBuffer) -> int32_t
 	{
 		int ret;
 
@@ -47,7 +47,7 @@ namespace leka {
 		return 0;
 	}
 
-	auto LKCoreIMU::write(uint8_t register_address, uint16_t number_bytes_to_write, uint8_t *pBuffer) -> int32_t
+	auto LKCoreLSM6DSOX::write(uint8_t register_address, uint16_t number_bytes_to_write, const uint8_t *pBuffer) -> int32_t
 	{
 		int ret;
 		uint8_t tmp[32];
@@ -65,17 +65,17 @@ namespace leka {
 	}
 
 	// Return 0 in case of success
-	auto LKCoreIMU::getId() -> int32_t
+	auto LKCoreLSM6DSOX::getId() -> int32_t
 	{
 		lsm6dsox_id_t val;
-		if (lsm6dsox_id_get(&_register_io_function, NULL, &val) != 0)
+		if (lsm6dsox_id_get(&_register_io_function, nullptr, &val) != 0)
 			return 1;
 		else
 			return 0;
 	}
 
 
-	auto LKCoreIMU::setMLCDataRate(stmdev_ctx_t *ctx, lsm6dsox_mlc_odr_t val) -> int32_t
+	auto LKCoreLSM6DSOX::setMLCDataRate(stmdev_ctx_t *ctx, lsm6dsox_mlc_odr_t val) -> int32_t
 	{
 		lsm6dsox_emb_func_odr_cfg_c_t reg;
 		int32_t ret;
@@ -97,33 +97,33 @@ namespace leka {
 		return ret;
 	}
 
-	void LKCoreIMU::TurnOffEmbeddedFeatures(lsm6dsox_emb_sens_t *emb_sens)
+	void LKCoreLSM6DSOX::TurnOffEmbeddedFeatures(lsm6dsox_emb_sens_t *emb_sens)
 	{
 		lsm6dsox_embedded_sens_get(&_register_io_function, emb_sens);
 		lsm6dsox_embedded_sens_off(&_register_io_function);
 	}
 
-	void LKCoreIMU::TurnOffSensors()
+	void LKCoreLSM6DSOX::TurnOffSensors()
 	{
 		lsm6dsox_xl_data_rate_set(&_register_io_function, LSM6DSOX_XL_ODR_OFF);
 		lsm6dsox_gy_data_rate_set(&_register_io_function, LSM6DSOX_GY_ODR_OFF);
 	}
 
-	void LKCoreIMU::RouteSignalsInterruptGetSet(lsm6dsox_pin_int1_route_t *pin_int1_route)
+	void LKCoreLSM6DSOX::RouteSignalsInterruptGetSet(lsm6dsox_pin_int1_route_t *pin_int1_route)
 	{
 		lsm6dsox_pin_int1_route_get(&_register_io_function, pin_int1_route);
 		pin_int1_route->mlc1 = PROPERTY_ENABLE;
 		lsm6dsox_pin_int1_route_set(&_register_io_function, *pin_int1_route);
 	}
 
-	auto LKCoreIMU::WriteReg(stmdev_ctx_t *ctx, uint8_t reg, uint8_t *data, uint16_t len) -> int32_t
+	auto LKCoreLSM6DSOX::WriteReg(stmdev_ctx_t *ctx, uint8_t reg, uint8_t *data, uint16_t len) -> int32_t
 	{
 		int32_t ret;
 		ret = ctx->write_reg(ctx->handle, reg, data, len);
 		return ret;
 	}
 
-	auto LKCoreIMU::setBlockDataUpdate(stmdev_ctx_t *ctx, uint8_t val) -> int32_t
+	auto LKCoreLSM6DSOX::setBlockDataUpdate(stmdev_ctx_t *ctx, uint8_t val) -> int32_t
 	{
 		lsm6dsox_ctrl3_c_t reg;
 		int32_t ret;
@@ -137,7 +137,7 @@ namespace leka {
 		return ret;
 	}
 
-	auto LKCoreIMU::setIntNotification(stmdev_ctx_t *ctx, lsm6dsox_lir_t val) -> int32_t
+	auto LKCoreLSM6DSOX::setIntNotification(stmdev_ctx_t *ctx, lsm6dsox_lir_t val) -> int32_t
 	{
 		lsm6dsox_tap_cfg0_t tap_cfg0;
 		lsm6dsox_page_rw_t page_rw;
@@ -145,9 +145,9 @@ namespace leka {
 		ret = lsm6dsox_read_reg(ctx, LSM6DSOX_TAP_CFG0, (uint8_t *)&tap_cfg0, 1);
 
 		if (ret == 0) {
-			tap_cfg0.lir			 = (uint8_t)val & 0x01U;
-			tap_cfg0.int_clr_on_read = (uint8_t)val & 0x01U;
-			ret						 = lsm6dsox_write_reg(ctx, LSM6DSOX_TAP_CFG0, (uint8_t *)&tap_cfg0, 1);
+			tap_cfg0.lir			 = static_cast<uint8_t>(val) & 0x01U;
+			tap_cfg0.int_clr_on_read = static_cast<uint8_t>(val) & 0x01U;
+			ret						 = lsm6dsox_write_reg(ctx, LSM6DSOX_TAP_CFG0, reinterpret_cast<uint8_t *>(&tap_cfg0), 1);
 		}
 
 		if (ret == 0) {
@@ -155,12 +155,12 @@ namespace leka {
 		}
 
 		if (ret == 0) {
-			ret = lsm6dsox_read_reg(ctx, LSM6DSOX_PAGE_RW, (uint8_t *)&page_rw, 1);
+			ret = lsm6dsox_read_reg(ctx, LSM6DSOX_PAGE_RW, reinterpret_cast<uint8_t *>(&page_rw), 1);
 		}
 
 		if (ret == 0) {
 			page_rw.emb_func_lir = ((uint8_t)val & 0x02U) >> 1;
-			ret					 = lsm6dsox_write_reg(ctx, LSM6DSOX_PAGE_RW, (uint8_t *)&page_rw, 1);
+			ret					 = lsm6dsox_write_reg(ctx, LSM6DSOX_PAGE_RW, reinterpret_cast<uint8_t *>(&page_rw), 1);
 		}
 
 		if (ret == 0) {
@@ -170,7 +170,7 @@ namespace leka {
 		return ret;
 	}
 
-	auto LKCoreIMU::setEmbeddedSens(stmdev_ctx_t *ctx, lsm6dsox_emb_sens_t *val) -> int32_t
+	auto LKCoreLSM6DSOX::setEmbeddedSens(stmdev_ctx_t *ctx, const lsm6dsox_emb_sens_t *val) -> int32_t
 	{
 		lsm6dsox_emb_func_en_a_t emb_func_en_a;
 		lsm6dsox_emb_func_en_b_t emb_func_en_b;
@@ -178,11 +178,11 @@ namespace leka {
 		ret = lsm6dsox_mem_bank_set(ctx, LSM6DSOX_EMBEDDED_FUNC_BANK);
 
 		if (ret == 0) {
-			ret = lsm6dsox_read_reg(ctx, LSM6DSOX_EMB_FUNC_EN_A, (uint8_t *)&emb_func_en_a, 1);
+			ret = lsm6dsox_read_reg(ctx, LSM6DSOX_EMB_FUNC_EN_A, reinterpret_cast<uint8_t *>(&emb_func_en_a), 1);
 		}
 
 		if (ret == 0) {
-			ret							 = lsm6dsox_read_reg(ctx, LSM6DSOX_EMB_FUNC_EN_B, (uint8_t *)&emb_func_en_b, 1);
+			ret							 = lsm6dsox_read_reg(ctx, LSM6DSOX_EMB_FUNC_EN_B, reinterpret_cast<uint8_t *>(&emb_func_en_b), 1);
 			emb_func_en_b.mlc_en		 = val->mlc;
 			emb_func_en_b.fsm_en		 = val->fsm;
 			emb_func_en_a.tilt_en		 = val->tilt;
@@ -206,7 +206,7 @@ namespace leka {
 		return ret;
 	}
 
-	auto LKCoreIMU::getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val) -> int32_t
+	auto LKCoreLSM6DSOX::getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val) -> int32_t
 	{
 		lsm6dsox_emb_func_status_mainpage_t emb_func_status_mainpage;
 		lsm6dsox_status_master_mainpage_t status_master_mainpage;
@@ -222,104 +222,103 @@ namespace leka {
 		lsm6dsox_d6d_src_t d6d_src;
 		lsm6dsox_ctrl5_c_t ctrl5_c;
 		uint8_t reg[12];
-		int32_t ret;
-		ret = lsm6dsox_read_reg(ctx, LSM6DSOX_CTRL5_C, (uint8_t *)&ctrl5_c, 1);
 
-		if (ret == 0) {
-			ctrl5_c.rounding_status = PROPERTY_ENABLE;
-			ret						= lsm6dsox_write_reg(ctx, LSM6DSOX_CTRL5_C, (uint8_t *)&ctrl5_c, 1);
-		}
+		if(lsm6dsox_read_reg(ctx, LSM6DSOX_CTRL5_C, reinterpret_cast<uint8_t*>(&ctrl5_c), 1)) //If 0, then no error
+			return 1; //Error
 
-		if (ret == 0) {
-			ret = lsm6dsox_read_reg(ctx, LSM6DSOX_ALL_INT_SRC, reg, 12);
-		}
+		ctrl5_c.rounding_status = PROPERTY_ENABLE;
 
-		if (ret == 0) {
-			bytecpy((uint8_t *)&all_int_src, &reg[0]);
-			bytecpy((uint8_t *)&wake_up_src, &reg[1]);
-			bytecpy((uint8_t *)&tap_src, &reg[2]);
-			bytecpy((uint8_t *)&d6d_src, &reg[3]);
-			bytecpy((uint8_t *)&status_reg, &reg[4]);
-			bytecpy((uint8_t *)&emb_func_status_mainpage, &reg[5]);
-			bytecpy((uint8_t *)&fsm_status_a_mainpage, &reg[6]);
-			bytecpy((uint8_t *)&fsm_status_b_mainpage, &reg[7]);
-			bytecpy((uint8_t *)&mlc_status_mainpage, &reg[8]);
-			bytecpy((uint8_t *)&status_master_mainpage, &reg[9]);
-			bytecpy((uint8_t *)&fifo_status1, &reg[10]);
-			bytecpy((uint8_t *)&fifo_status2, &reg[11]);
-			val->timestamp			= all_int_src.timestamp_endcount;
-			val->wake_up_z			= wake_up_src.z_wu;
-			val->wake_up_y			= wake_up_src.y_wu;
-			val->wake_up_x			= wake_up_src.x_wu;
-			val->wake_up			= wake_up_src.wu_ia;
-			val->sleep_state		= wake_up_src.sleep_state;
-			val->free_fall			= wake_up_src.ff_ia;
-			val->sleep_change		= wake_up_src.sleep_change_ia;
-			val->tap_x				= tap_src.x_tap;
-			val->tap_y				= tap_src.y_tap;
-			val->tap_z				= tap_src.z_tap;
-			val->tap_sign			= tap_src.tap_sign;
-			val->double_tap			= tap_src.double_tap;
-			val->single_tap			= tap_src.single_tap;
-			val->six_d_xl			= d6d_src.xl;
-			val->six_d_xh			= d6d_src.xh;
-			val->six_d_yl			= d6d_src.yl;
-			val->six_d_yh			= d6d_src.yh;
-			val->six_d_zl			= d6d_src.zl;
-			val->six_d_zh			= d6d_src.zh;
-			val->six_d				= d6d_src.d6d_ia;
-			val->den_flag			= d6d_src.den_drdy;
-			val->drdy_xl			= status_reg.xlda;
-			val->drdy_g				= status_reg.gda;
-			val->drdy_temp			= status_reg.tda;
-			val->step_detector		= emb_func_status_mainpage.is_step_det;
-			val->tilt				= emb_func_status_mainpage.is_tilt;
-			val->sig_mot			= emb_func_status_mainpage.is_sigmot;
-			val->fsm_lc				= emb_func_status_mainpage.is_fsm_lc;
-			val->fsm1				= fsm_status_a_mainpage.is_fsm1;
-			val->fsm2				= fsm_status_a_mainpage.is_fsm2;
-			val->fsm3				= fsm_status_a_mainpage.is_fsm3;
-			val->fsm4				= fsm_status_a_mainpage.is_fsm4;
-			val->fsm5				= fsm_status_a_mainpage.is_fsm5;
-			val->fsm6				= fsm_status_a_mainpage.is_fsm6;
-			val->fsm7				= fsm_status_a_mainpage.is_fsm7;
-			val->fsm8				= fsm_status_a_mainpage.is_fsm8;
-			val->fsm9				= fsm_status_b_mainpage.is_fsm9;
-			val->fsm10				= fsm_status_b_mainpage.is_fsm10;
-			val->fsm11				= fsm_status_b_mainpage.is_fsm11;
-			val->fsm12				= fsm_status_b_mainpage.is_fsm12;
-			val->fsm13				= fsm_status_b_mainpage.is_fsm13;
-			val->fsm14				= fsm_status_b_mainpage.is_fsm14;
-			val->fsm15				= fsm_status_b_mainpage.is_fsm15;
-			val->fsm16				= fsm_status_b_mainpage.is_fsm16;
-			val->mlc1				= mlc_status_mainpage.is_mlc1;
-			val->mlc2				= mlc_status_mainpage.is_mlc2;
-			val->mlc3				= mlc_status_mainpage.is_mlc3;
-			val->mlc4				= mlc_status_mainpage.is_mlc4;
-			val->mlc5				= mlc_status_mainpage.is_mlc5;
-			val->mlc6				= mlc_status_mainpage.is_mlc6;
-			val->mlc7				= mlc_status_mainpage.is_mlc7;
-			val->mlc8				= mlc_status_mainpage.is_mlc8;
-			val->sh_endop			= status_master_mainpage.sens_hub_endop;
-			val->sh_slave0_nack		= status_master_mainpage.slave0_nack;
-			val->sh_slave1_nack		= status_master_mainpage.slave1_nack;
-			val->sh_slave2_nack		= status_master_mainpage.slave2_nack;
-			val->sh_slave3_nack		= status_master_mainpage.slave3_nack;
-			val->sh_wr_once			= status_master_mainpage.wr_once_done;
-			val->fifo_diff			= (256U * fifo_status2.diff_fifo) + fifo_status1.diff_fifo;
-			val->fifo_ovr_latched	= fifo_status2.over_run_latched;
-			val->fifo_bdr			= fifo_status2.counter_bdr_ia;
-			val->fifo_full			= fifo_status2.fifo_full_ia;
-			val->fifo_ovr			= fifo_status2.fifo_ovr_ia;
-			val->fifo_th			= fifo_status2.fifo_wtm_ia;
-			ctrl5_c.rounding_status = PROPERTY_DISABLE;
-			ret						= lsm6dsox_write_reg(ctx, LSM6DSOX_CTRL5_C, (uint8_t *)&ctrl5_c, 1);
-		}
+		if(lsm6dsox_write_reg(ctx, LSM6DSOX_CTRL5_C, reinterpret_cast<uint8_t*>(&ctrl5_c), 1))
+			return 1;
 
-		return ret;
+		if(lsm6dsox_read_reg(ctx, LSM6DSOX_ALL_INT_SRC, reg, 12))
+			return 1;
+
+		byteCopy(reinterpret_cast<uint8_t*>(&all_int_src), &reg[0]);
+		byteCopy(reinterpret_cast<uint8_t*>(&wake_up_src), &reg[1]);
+		byteCopy(reinterpret_cast<uint8_t*>(&tap_src), &reg[2]);
+		byteCopy(reinterpret_cast<uint8_t*>(&d6d_src), &reg[3]);
+		byteCopy(reinterpret_cast<uint8_t*>(&status_reg), &reg[4]);
+		byteCopy(reinterpret_cast<uint8_t*>(&emb_func_status_mainpage), &reg[5]);
+		byteCopy(reinterpret_cast<uint8_t*>(&fsm_status_a_mainpage), &reg[6]);
+		byteCopy(reinterpret_cast<uint8_t*>(&fsm_status_b_mainpage), &reg[7]);
+		byteCopy(reinterpret_cast<uint8_t*>(&mlc_status_mainpage), &reg[8]);
+		byteCopy(reinterpret_cast<uint8_t*>(&status_master_mainpage), &reg[9]);
+		byteCopy(reinterpret_cast<uint8_t*>(&fifo_status1), &reg[10]);
+		byteCopy(reinterpret_cast<uint8_t*>(&fifo_status2), &reg[11]);
+		val->timestamp			= all_int_src.timestamp_endcount;
+		val->wake_up_z			= wake_up_src.z_wu;
+		val->wake_up_y			= wake_up_src.y_wu;
+		val->wake_up_x			= wake_up_src.x_wu;
+		val->wake_up			= wake_up_src.wu_ia;
+		val->sleep_state		= wake_up_src.sleep_state;
+		val->free_fall			= wake_up_src.ff_ia;
+		val->sleep_change		= wake_up_src.sleep_change_ia;
+		val->tap_x				= tap_src.x_tap;
+		val->tap_y				= tap_src.y_tap;
+		val->tap_z				= tap_src.z_tap;
+		val->tap_sign			= tap_src.tap_sign;
+		val->double_tap			= tap_src.double_tap;
+		val->single_tap			= tap_src.single_tap;
+		val->six_d_xl			= d6d_src.xl;
+		val->six_d_xh			= d6d_src.xh;
+		val->six_d_yl			= d6d_src.yl;
+		val->six_d_yh			= d6d_src.yh;
+		val->six_d_zl			= d6d_src.zl;
+		val->six_d_zh			= d6d_src.zh;
+		val->six_d				= d6d_src.d6d_ia;
+		val->den_flag			= d6d_src.den_drdy;
+		val->drdy_xl			= status_reg.xlda;
+		val->drdy_g				= status_reg.gda;
+		val->drdy_temp			= status_reg.tda;
+		val->step_detector		= emb_func_status_mainpage.is_step_det;
+		val->tilt				= emb_func_status_mainpage.is_tilt;
+		val->sig_mot			= emb_func_status_mainpage.is_sigmot;
+		val->fsm_lc				= emb_func_status_mainpage.is_fsm_lc;
+		val->fsm1				= fsm_status_a_mainpage.is_fsm1;
+		val->fsm2				= fsm_status_a_mainpage.is_fsm2;
+		val->fsm3				= fsm_status_a_mainpage.is_fsm3;
+		val->fsm4				= fsm_status_a_mainpage.is_fsm4;
+		val->fsm5				= fsm_status_a_mainpage.is_fsm5;
+		val->fsm6				= fsm_status_a_mainpage.is_fsm6;
+		val->fsm7				= fsm_status_a_mainpage.is_fsm7;
+		val->fsm8				= fsm_status_a_mainpage.is_fsm8;
+		val->fsm9				= fsm_status_b_mainpage.is_fsm9;
+		val->fsm10				= fsm_status_b_mainpage.is_fsm10;
+		val->fsm11				= fsm_status_b_mainpage.is_fsm11;
+		val->fsm12				= fsm_status_b_mainpage.is_fsm12;
+		val->fsm13				= fsm_status_b_mainpage.is_fsm13;
+		val->fsm14				= fsm_status_b_mainpage.is_fsm14;
+		val->fsm15				= fsm_status_b_mainpage.is_fsm15;
+		val->fsm16				= fsm_status_b_mainpage.is_fsm16;
+		val->mlc1				= mlc_status_mainpage.is_mlc1;
+		val->mlc2				= mlc_status_mainpage.is_mlc2;
+		val->mlc3				= mlc_status_mainpage.is_mlc3;
+		val->mlc4				= mlc_status_mainpage.is_mlc4;
+		val->mlc5				= mlc_status_mainpage.is_mlc5;
+		val->mlc6				= mlc_status_mainpage.is_mlc6;
+		val->mlc7				= mlc_status_mainpage.is_mlc7;
+		val->mlc8				= mlc_status_mainpage.is_mlc8;
+		val->sh_endop			= status_master_mainpage.sens_hub_endop;
+		val->sh_slave0_nack		= status_master_mainpage.slave0_nack;
+		val->sh_slave1_nack		= status_master_mainpage.slave1_nack;
+		val->sh_slave2_nack		= status_master_mainpage.slave2_nack;
+		val->sh_slave3_nack		= status_master_mainpage.slave3_nack;
+		val->sh_wr_once			= status_master_mainpage.wr_once_done;
+		val->fifo_diff			= (256U * fifo_status2.diff_fifo) + fifo_status1.diff_fifo;
+		val->fifo_ovr_latched	= fifo_status2.over_run_latched;
+		val->fifo_bdr			= fifo_status2.counter_bdr_ia;
+		val->fifo_full			= fifo_status2.fifo_full_ia;
+		val->fifo_ovr			= fifo_status2.fifo_ovr_ia;
+		val->fifo_th			= fifo_status2.fifo_wtm_ia;
+		ctrl5_c.rounding_status = PROPERTY_DISABLE;
+		if(lsm6dsox_write_reg(ctx, LSM6DSOX_CTRL5_C, reinterpret_cast<uint8_t*>(&ctrl5_c), 1))
+			return 1;
+
+		return 0; //No error
 	}
 
-	auto LKCoreIMU::getMLCOut(stmdev_ctx_t *ctx, uint8_t *buff) -> int32_t
+	auto LKCoreLSM6DSOX::getMLCOut(stmdev_ctx_t *ctx, uint8_t *buff) -> int32_t
 	{
 		int32_t ret;
 		ret = lsm6dsox_mem_bank_set(ctx, LSM6DSOX_EMBEDDED_FUNC_BANK);
@@ -339,9 +338,9 @@ namespace leka {
 
 
 
-static void bytecpy(uint8_t *target, uint8_t *source)
+static void byteCopy(uint8_t *target, const uint8_t *source)
 {
-	if ((target != NULL) && (source != NULL)) {
+	if ((target != nullptr) && (source != nullptr)) {
 		*target = *source;
 	}
 }
