@@ -139,6 +139,11 @@ class RobotControllerTest : public testing::Test
 
 			expectedCallsStopMotors();
 
+			EXPECT_CALL(mock_ears, setColor);
+			EXPECT_CALL(mock_belt, setColor);
+			EXPECT_CALL(mock_ears, show);
+			EXPECT_CALL(mock_belt, show);
+
 			EXPECT_CALL(mock_videokit, initializeScreen).Times(1);
 			EXPECT_CALL(mock_lcd, turnOff).Times(1);
 			EXPECT_CALL(mock_videokit, stopVideo).Times(1);
