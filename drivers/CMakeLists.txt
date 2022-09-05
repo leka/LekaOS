@@ -42,6 +42,7 @@ add_subdirectory(${DRIVERS_DIR}/CoreIOExpander)
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> 7d8790d7 (add CoreIMU)
@@ -77,3 +78,10 @@ add_subdirectory(${DRIVERS_DIR}/CoreIMU)
 add_subdirectory(${DRIVERS_DIR}/CoreLSM6DSOX)
 >>>>>>> 6fac508c (:sparkles: [drivers] - Add CoreLSM6DSOX)
 >>>>>>> 37cbd965 (:sparkles: [drivers] - Add CoreLSM6DSOX)
+=======
+
+add_subdirectory(${DRIVERS_DIR}/CoreQDAC)
+add_subdirectory(${DRIVERS_DIR}/CoreTouchSensor)
+
+add_subdirectory(${DRIVERS_DIR}/CoreLSM6DSOX)
+>>>>>>> 7a7abb5c (:construction: [drivers] test synchro)

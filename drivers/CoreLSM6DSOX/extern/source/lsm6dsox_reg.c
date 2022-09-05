@@ -16,6 +16,7 @@
   *
   ******************************************************************************
   */
+// clang-format off
 
 #include "lsm6dsox_reg.h"
 
@@ -14458,3 +14459,4 @@ int32_t lsm6dsox_embedded_sens_off(stmdev_ctx_t *ctx)
   */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+// clang-format on 

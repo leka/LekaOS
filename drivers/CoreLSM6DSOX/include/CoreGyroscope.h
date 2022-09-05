@@ -8,7 +8,6 @@
 #include "drivers/DigitalOut.h"
 #include "drivers/I2C.h"
 
-#include "lsm6dsox_reg.h"
 #include "LogKit.h"
 <<<<<<< HEAD
 #include "interface/IMUSensor.h"
