@@ -15,7 +15,7 @@ namespace leka::interface {
             virtual ~IMUSensor() = default;
 
             virtual void getData(std::array<float, 3> &data_array) = 0;
-            virtual auto getDataRate() -> int32_t =0;
+            virtual auto getDataRate() -> int32_t = 0;
             virtual void TurnOff() = 0;
 
     };
