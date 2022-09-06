@@ -206,7 +206,7 @@ namespace leka {
 		return ret;
 	}
 
-	auto LKCoreLSM6DSOX::getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val) -> int32_t
+	auto LKCoreLSM6DSOX::getAllRessources(stmdev_ctx_t *ctx, lsm6dsox_all_sources_t *val) const -> int32_t
 	{
 		lsm6dsox_emb_func_status_mainpage_t emb_func_status_mainpage;
 		lsm6dsox_status_master_mainpage_t status_master_mainpage;
@@ -320,7 +320,7 @@ namespace leka {
 		return 0; //No error
 	}
 
-	auto LKCoreLSM6DSOX::getMLCOut(stmdev_ctx_t *ctx, uint8_t *buff) -> int32_t
+	auto LKCoreLSM6DSOX::getMLCOut(stmdev_ctx_t *ctx, uint8_t *buff) const -> int32_t
 	{
 		int32_t ret;
 		ret = lsm6dsox_mem_bank_set(ctx, LSM6DSOX_EMBEDDED_FUNC_BANK);
