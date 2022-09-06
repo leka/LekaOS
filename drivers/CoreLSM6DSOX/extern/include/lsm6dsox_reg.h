@@ -18,7 +18,7 @@
   ******************************************************************************
   */
 
-// clang-format off
+ // clang-format off
 
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef LSM6DSOX_REGS_H
@@ -4870,6 +4870,6 @@ int32_t lsm6dsox_embedded_sens_off(stmdev_ctx_t *ctx);
 
 #endif /*LSM6DSOX_DRIVER_H */
 
+ // clang-format on
+ 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
-// clang-format on
