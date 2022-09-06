@@ -31,4 +31,10 @@ void ActivityKit::stop()
 	}
 
 	_current_activity->stop();
+	_current_activity = nullptr;
+}
+
+auto ActivityKit::isPlaying() const -> bool
+{
+	return _current_activity != nullptr;
 }

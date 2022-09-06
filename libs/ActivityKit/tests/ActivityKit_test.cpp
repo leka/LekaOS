@@ -79,3 +79,23 @@ TEST_F(ActivityKitTest, startNewActivitySequence)
 
 	activitykit.start(MagicCard::number_1);
 }
+
+TEST_F(ActivityKitTest, isPlayingActivityNullPtr)
+{
+	EXPECT_FALSE(activitykit.isPlaying());
+}
+
+TEST_F(ActivityKitTest, isPlayingActivityStarted)
+{
+	activitykit.start(MagicCard::number_0);
+
+	EXPECT_TRUE(activitykit.isPlaying());
+}
+
+TEST_F(ActivityKitTest, isPlayingActivityStopped)
+{
+	activitykit.start(MagicCard::number_0);
+	activitykit.stop();
+
+	EXPECT_FALSE(activitykit.isPlaying());
+}
