@@ -288,15 +288,28 @@ class RobotController : public interface::RobotController
 
 	void onMagicCardAvailable(const MagicCard &card)
 	{
-		if (card == MagicCard::emergency_stop) {
-			raiseEmergencyStop();
-		} else if (card == MagicCard::remote_standard) {
-			raiseAutonomousActivityModeRequested();
-			return;
+		switch (card.getId()) {
+			case MagicCard::emergency_stop:
+				raiseEmergencyStop();
+				return;
+
+			case MagicCard::remote_standard:
+				raiseAutonomousActivityModeRequested();
+				break;
+
+			default:
+				break;
 		}
-		if (state_machine.is(system::robot::sm::state::autonomous_activities)) {
+
+		auto process_card_in_autonomous_activities_mode = [this](auto card) {
+			if (!state_machine.is(system::robot::sm::state::autonomous_activities)) {
+				return;
+			}
+
 			_activitykit.start(card);
-		}
+		};
+
+		process_card_in_autonomous_activities_mode(card);
 	}
 
 	void registerEvents()
