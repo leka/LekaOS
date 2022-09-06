@@ -221,7 +221,8 @@ namespace leka {
 		lsm6dsox_tap_src_t tap_src;
 		lsm6dsox_d6d_src_t d6d_src;
 		lsm6dsox_ctrl5_c_t ctrl5_c;
-		uint8_t reg[12];
+		//uint8_t reg[12];
+		std::array<uint8_t, 12> reg;
 
 		if(lsm6dsox_read_reg(ctx, LSM6DSOX_CTRL5_C, (uint8_t*)&ctrl5_c, 1)) //If 0, then no error
 			return 1; //Error
@@ -231,9 +232,10 @@ namespace leka {
 		if(lsm6dsox_write_reg(ctx, LSM6DSOX_CTRL5_C, (uint8_t*)&ctrl5_c, 1))
 			return 1;
 
-		if(lsm6dsox_read_reg(ctx, LSM6DSOX_ALL_INT_SRC, reg, 12))
+		if(lsm6dsox_read_reg(ctx, LSM6DSOX_ALL_INT_SRC, reg.data(), 12))
 			return 1;
-
+		
+		//static_cast<uint8_t*>
 		byteCopy((uint8_t*)&all_int_src, &reg[0]);
 		byteCopy((uint8_t*)&wake_up_src, &reg[1]);
 		byteCopy((uint8_t*)&tap_src, &reg[2]);
