@@ -15,12 +15,14 @@ target_sources(ActivityKit
 	PRIVATE
 	source/ActivityKit.cpp
 	source/activities/DisplayTags.cpp
+	source/activities/NumberRecognition.cpp
 )
 
 target_link_libraries(ActivityKit
 	RFIDKit
 	CoreLED
 	VideoKit
+	ReinforcerKit
 )
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
