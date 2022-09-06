@@ -19,6 +19,7 @@
   */
 
 // clang-format off
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef LSM6DSOX_REGS_H
 #define LSM6DSOX_REGS_H
