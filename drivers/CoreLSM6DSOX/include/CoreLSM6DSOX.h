@@ -28,7 +28,7 @@ class LKCoreLSM6DSOX
 
 	auto WriteReg(stmdev_ctx_t *ctx, uint8_t reg, const uint8_t *data, uint16_t len) const	-> int32_t;
 	auto setBlockDataUpdate(stmdev_ctx_t *ctx, uint8_t val) const							-> int32_t;
-	auto setIntNotification(stmdev_ctx_t *ctx, lsm6dsox_lir_t val) const					-> int32_t;
+	auto setIntNotification(stmdev_ctx_t *ctx, lsm6dsox_lir_t *val) const					-> int32_t;
 	auto setEmbeddedSens(stmdev_ctx_t *ctx, const lsm6dsox_emb_sens_t *val)	const			-> int32_t;
 	auto setMLCDataRate(stmdev_ctx_t *ctx, lsm6dsox_mlc_odr_t val) const					-> int32_t;
 	auto getMLCOut(stmdev_ctx_t *ctx, uint8_t *buff) const									-> int32_t;
@@ -52,7 +52,7 @@ class LKCoreLSM6DSOX
 };
 
 
-	static void byteCopy(uint8_t *source, const uint8_t *target) {
+	void byteCopy(uint8_t *source, const uint8_t *target) {
 		if ((source != nullptr) && (target != nullptr)) 
 			*source = *target;
 	}
