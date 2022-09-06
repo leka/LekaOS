@@ -9,6 +9,7 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
+#include "ActivityKit.h"
 #include "CoreBattery.h"
 #include "CoreBufferedSerial.h"
 #include "CoreDMA2D.hpp"
@@ -35,6 +36,7 @@
 #include "CoreSTM32Hal.h"
 #include "CoreTimeout.h"
 #include "CoreVideo.hpp"
+#include "DisplayTags.h"
 #include "EventLoopKit.h"
 #include "FATFileSystem.h"
 #include "FirmwareKit.h"
@@ -324,6 +326,21 @@ namespace mcuboot {
 
 }	// namespace mcuboot
 
+namespace activities {
+
+	namespace internal {
+
+		auto display_tag = leka::activity::DisplayTags(rfidkit, display::videokit);
+
+	}
+
+	inline const std::unordered_map<MagicCard, interface::Activity *> activities {
+		{MagicCard::number_10, &internal::display_tag}};
+
+}	// namespace activities
+
+auto activitykit = ActivityKit {};
+
 namespace robot {
 
 	namespace internal {
@@ -350,6 +367,7 @@ namespace robot {
 		behaviorkit,
 		commandkit,
 		rfidkit,
+		activitykit,
 	};
 
 }	// namespace robot
@@ -477,6 +495,7 @@ auto main() -> int
 	firmware::initializeFlash();
 
 	commandkit.registerCommand(command::list);
+	activitykit.registerActivities(activities::activities);
 
 	robot::controller.initializeComponents();
 	robot::controller.registerOnUpdateLoadedCallback(firmware::setPendingUpdate);

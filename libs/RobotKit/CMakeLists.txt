@@ -29,6 +29,7 @@ target_link_libraries(RobotKit
 	BehaviorKit
 	CommandKit
 	RFIDKit
+	ActivityKit
 )
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
@@ -44,5 +45,6 @@ if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/RobotController_test_stateDisconnected.cpp
 		tests/RobotController_test_stateWorking.cpp
 		tests/RobotController_test_stateEmergencyStopped.cpp
+		tests/RobotController_test_stateAutonomousActivities.cpp
 	)
 endif()

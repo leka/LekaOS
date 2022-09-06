@@ -9,11 +9,13 @@
 
 #include "ble_mocks.h"
 
+#include "ActivityKit.h"
 #include "BehaviorKit.h"
 #include "CommandKit.h"
 #include "CoreBufferedSerial.h"
 #include "CorePwm.h"
 #include "CoreRFIDReaderCR95HF.h"
+#include "DisplayTags.h"
 #include "RFIDKit.h"
 #include "SerialNumberKit.h"
 #include "gmock/gmock.h"
@@ -93,12 +95,15 @@ class RobotControllerTest : public testing::Test
 	CoreRFIDReaderCR95HF reader {serial};
 	RFIDKit rfidkit {reader};
 
+	ActivityKit activitykit;
+	activity::DisplayTags display_tag {rfidkit, mock_videokit};
+
 	stub::EventLoopKit event_loop {};
 	CommandKit cmdkit {event_loop};
 
 	RobotController<bsml::sm<system::robot::StateMachine, bsml::testing>> rc {
-		timeout,   battery, serialnumberkit, firmware_update, mock_motor_left, mock_motor_right, mock_ears,
-		mock_belt, ledkit,	mock_lcd,		 mock_videokit,	  bhvkit,		   cmdkit,			 rfidkit};
+		timeout, battery,  serialnumberkit, firmware_update, mock_motor_left, mock_motor_right, mock_ears,	mock_belt,
+		ledkit,	 mock_lcd, mock_videokit,	bhvkit,			 cmdkit,		  rfidkit,			activitykit};
 
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
