@@ -52,7 +52,11 @@ class LKCoreLSM6DSOX
 };
 
 
-static void byteCopy(uint8_t *target, const uint8_t *source);
+	static void byteCopy(uint8_t *source, const uint8_t *target) {
+		if ((source != nullptr) && (target != nullptr)) 
+			*source = *target;
+	}
+
 }	// namespace leka
 
 

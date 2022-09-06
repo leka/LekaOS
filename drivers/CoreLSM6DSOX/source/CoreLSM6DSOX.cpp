@@ -142,11 +142,13 @@ namespace leka {
 		lsm6dsox_tap_cfg0_t tap_cfg0;
 		lsm6dsox_page_rw_t page_rw;
 		int32_t ret;
+		uint8_t val_convert = static_cast<uint8_t>(val);
+
 		ret = lsm6dsox_read_reg(ctx, LSM6DSOX_TAP_CFG0, (uint8_t *)&tap_cfg0, 1);
 
 		if (ret == 0) {
-			tap_cfg0.lir			 = static_cast<uint8_t>(val) & 0x01U;
-			tap_cfg0.int_clr_on_read = static_cast<uint8_t>(val) & 0x01U;
+			tap_cfg0.lir			 = val_convert & 0x01U;
+			tap_cfg0.int_clr_on_read = val_convert & 0x01U;
 			ret						 = lsm6dsox_write_reg(ctx, LSM6DSOX_TAP_CFG0, (uint8_t *)&tap_cfg0, 1);
 		}
 
@@ -159,7 +161,7 @@ namespace leka {
 		}
 
 		if (ret == 0) {
-			page_rw.emb_func_lir = ((uint8_t)val & 0x02U) >> 1;
+			page_rw.emb_func_lir = (val_convert & 0x02U) >> 1;
 			ret					 = lsm6dsox_write_reg(ctx, LSM6DSOX_PAGE_RW, (uint8_t *)&page_rw, 1);
 		}
 
@@ -222,7 +224,7 @@ namespace leka {
 		lsm6dsox_d6d_src_t d6d_src;
 		lsm6dsox_ctrl5_c_t ctrl5_c;
 		//uint8_t reg[12];
-		std::array<uint8_t, 12> reg;
+		std::array<uint8_t, 12> reg = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 		if(lsm6dsox_read_reg(ctx, LSM6DSOX_CTRL5_C, (uint8_t*)&ctrl5_c, 1)) //If 0, then no error
 			return 1; //Error
@@ -336,12 +338,6 @@ namespace leka {
 		}
 
 		return ret;
-	}
-
-	static void byteCopy(uint8_t *target, const uint8_t *source)
-	{
-		if ((target != nullptr) && (source != nullptr)) 
-			*target = *source;
 	}
 
 }	// namespace leka
