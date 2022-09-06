@@ -294,6 +294,7 @@ class RobotController : public interface::RobotController
 				return;
 
 			case MagicCard::remote_standard:
+			case MagicCard::dice_roll:
 				raiseAutonomousActivityModeRequested();
 				break;
 
