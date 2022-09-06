@@ -46,3 +46,11 @@ TEST_F(MagicCardTest, getId)
 {
 	EXPECT_EQ(pre_implemented_number_10.getId(), number_ten_id);
 }
+
+TEST_F(MagicCardTest, operatorInt)
+{
+	auto expected_id		 = MagicCard::emergency_stop.getId();
+	auto card_to_get_id_from = MagicCard::emergency_stop;
+
+	EXPECT_EQ(expected_id, card_to_get_id_from);
+}
