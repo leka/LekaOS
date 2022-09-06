@@ -41,6 +41,7 @@ namespace leka {
 	{
 		lsm6dsox_ctrl2_g_t reg;
 		lsm6dsox_read_reg(&_core_imu.getRegisterIOFunction(), LSM6DSOX_CTRL2_G, (uint8_t *)&reg, 1);
+        return reg.odr_g;
 	}
 
 	void LKCoreGyroscope::SetFullScale(lsm6dsox_fs_g_t fs_g)
