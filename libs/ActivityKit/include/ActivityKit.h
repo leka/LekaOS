@@ -20,6 +20,8 @@ class ActivityKit
 	void start(const MagicCard &card);
 	void stop();
 
+	[[nodiscard]] auto isPlaying() const -> bool;
+
   private:
 	interface::Activity *_current_activity = nullptr;
 	std::unordered_map<MagicCard, interface::Activity *> _activities {};
