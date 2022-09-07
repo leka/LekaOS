@@ -77,7 +77,7 @@ def wait_for_status():
     status = ''
     no_response_counter = 0
 
-    while(no_response_counter <= MAX_GET_LINE_RETRIES):
+    while (no_response_counter <= MAX_GET_LINE_RETRIES):
         sleep(.005)
         status = read_status()
 
@@ -159,7 +159,7 @@ def print_report(broken, empty, missing, reboot):
 
 # Relative path from LekaOS root
 ROOT_PATH = args.dir if not args.test else 'fs/usr/test'
-LOOP_SLEEP_DELAY = args.SLEEP_DELAY if not args.FAST else 0.2
+LOOP_SLEEP_DELAY = args.loop_delay if not args.fast else 0.2
 
 FILES_BROKEN = list()
 FILES_EMPTY = list()
