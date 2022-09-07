@@ -23,7 +23,7 @@ class RFIDKitTest : public ::testing::Test
 
 	RFIDKit rfid_kit;
 	mock::CoreRFIDReader mock_reader {};
-	MockFunction<void(MagicCard &)> mock_callback;
+	MockFunction<void(const MagicCard &)> mock_callback;
 
 	std::function<void(rfid::Tag &)> magic_card_callback {};
 };
@@ -135,16 +135,16 @@ TEST_F(RFIDKitTest, getNullPtrCallback)
 
 TEST_F(RFIDKitTest, getCallback)
 {
-	auto card = MagicCard::none;
+	auto _card = MagicCard::none;
 
-	const std::function<void(leka::MagicCard &)> expected_passed_callback = [](MagicCard &card) {
-		card = MagicCard::activity_super_simon;
+	const std::function<void(const leka::MagicCard &)> expected_passed_callback = [&_card](const MagicCard &card) {
+		_card = card;
 	};
 
 	rfid_kit.onTagActivated(expected_passed_callback);
 	auto callback = rfid_kit.getCallback();
 
-	callback(card);
+	callback(MagicCard::activity_super_simon);
 
-	EXPECT_EQ(card, MagicCard::activity_super_simon);
+	EXPECT_EQ(_card, MagicCard::activity_super_simon);
 }

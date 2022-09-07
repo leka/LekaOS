@@ -39,12 +39,12 @@ auto RFIDKit::isTagSignatureValid(rfid::Tag tag) const -> bool
 	return std::equal(std::begin(leka_tag_header), std::end(leka_tag_header), std::begin(tag.data));
 }
 
-void RFIDKit::onTagActivated(std::function<void(MagicCard &_card)> const &callback)
+void RFIDKit::onTagActivated(std::function<void(const MagicCard &_card)> const &callback)
 {
 	_on_tag_available_callback = callback;
 }
 
-[[nodiscard]] auto RFIDKit::getCallback() const -> const std::function<void(MagicCard &)> &
+[[nodiscard]] auto RFIDKit::getCallback() const -> const std::function<void(const MagicCard &)> &
 {
 	return _on_tag_available_callback;
 }

@@ -24,7 +24,7 @@ class DisplayTags : public interface::Activity
 	RFIDKit &_rfidkit;
 	interface::VideoKit &_videokit;
 	std::array<char, 32> _path_buffer = {};
-	std::function<void(MagicCard &)> _backup_callback {};
+	std::function<void(const MagicCard &)> _backup_callback {};
 };
 
 }	// namespace leka::activity
