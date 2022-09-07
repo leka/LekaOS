@@ -38,6 +38,7 @@
 #include "CoreTimeout.h"
 #include "CoreVideo.hpp"
 #include "DisplayTags.h"
+#include "EmotionRecognition.h"
 #include "EventLoopKit.h"
 #include "FATFileSystem.h"
 #include "FirmwareKit.h"
@@ -340,6 +341,7 @@ namespace activities {
 		auto picto_color_recognition = leka::activity::PictoColorRecognition(rfidkit, display::videokit, reinforcerkit);
 		auto led_color_recognition =
 			leka::activity::LedColorRecognition(rfidkit, display::videokit, reinforcerkit, leds::belt);
+		auto emotion_recognition = leka::activity::EmotionRecognition(rfidkit, display::videokit, reinforcerkit);
 
 	}	// namespace internal
 
@@ -349,6 +351,7 @@ namespace activities {
 		{MagicCard::number_1, &internal::number_recognition},
 		{MagicCard::number_2, &internal::picto_color_recognition},
 		{MagicCard::number_3, &internal::led_color_recognition},
+		{MagicCard::number_4, &internal::emotion_recognition},
 	};
 
 }	// namespace activities
