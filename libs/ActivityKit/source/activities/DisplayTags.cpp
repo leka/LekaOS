@@ -14,7 +14,7 @@ void DisplayTags::start()
 
 	_backup_callback = _rfidkit.getCallback();
 
-	auto on_tag_detected_callback = [this](MagicCard &card) {
+	auto on_tag_detected_callback = [this](const MagicCard &card) {
 		snprintf(_path_buffer.data(), _path_buffer.size(), "fs/home/img/id/%.4x.jpg", card.getId());
 		_videokit.displayImage(_path_buffer.data());
 
