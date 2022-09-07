@@ -19,6 +19,7 @@ target_sources(ActivityKit
 	source/activities/PictoColorRecognition.cpp
 	source/activities/LedColorRecognition.cpp
 	source/activities/ChooseReinforcer.cpp
+	source/activities/EmotionRecognition.cpp
 )
 
 target_link_libraries(ActivityKit
