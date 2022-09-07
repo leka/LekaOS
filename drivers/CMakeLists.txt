@@ -43,4 +43,4 @@ add_subdirectory(${DRIVERS_DIR}/CoreQDAC)
 add_subdirectory(${DRIVERS_DIR}/CoreTouchSensor)
 
 # Core IMU
-add_subdirectory(${DRIVERS_DIR}/CoreLSM6DSOX)
+add_subdirectory(${DRIVERS_DIR}/CoreIMUlsm6dsox)

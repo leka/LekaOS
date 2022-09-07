@@ -15,7 +15,7 @@ namespace leka {
     class LKCoreAccelerometer : public interface::IMUSensor
     {
         public:
-            explicit LKCoreAccelerometer(LKCoreLSM6DSOX &core_imu);
+            explicit LKCoreAccelerometer(leka::CoreIMU_LSM6DSOX &core_imu);
             void getData(std::array<float, 3> &xl_data) final;
 
             void setDataRate(lsm6dsox_odr_xl_t odr_xl);
@@ -26,7 +26,7 @@ namespace leka {
 
 
         private:
-            leka::LKCoreLSM6DSOX &_core_imu;
+            leka::CoreIMU_LSM6DSOX &_core_imu;
 
     };
 }

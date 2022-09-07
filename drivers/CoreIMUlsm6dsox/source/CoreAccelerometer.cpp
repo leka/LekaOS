@@ -6,7 +6,7 @@
 
 namespace leka {
 
-    LKCoreAccelerometer::LKCoreAccelerometer(leka::LKCoreLSM6DSOX &core_imu) : _core_imu(core_imu)
+    LKCoreAccelerometer::LKCoreAccelerometer(leka::CoreIMU_LSM6DSOX &core_imu) : _core_imu(core_imu)
     {
         lsm6dsox_mode_get(&_core_imu.getRegisterIOFunction(), nullptr, &_core_imu.getConfig());
         

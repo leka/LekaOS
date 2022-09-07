@@ -15,7 +15,7 @@ namespace leka {
     class LKCoreGyroscope : public interface::IMUSensor
     {
         public:
-            explicit LKCoreGyroscope(LKCoreLSM6DSOX &core_imu) ;
+            explicit LKCoreGyroscope(CoreIMU_LSM6DSOX &core_imu) ;
             void getData(std::array<float, 3> &gy_data) final;
 	        void setDataRate(lsm6dsox_odr_g_t odr_gy);
             auto getDataRate() -> int32_t final;
@@ -23,7 +23,7 @@ namespace leka {
             void TurnOff() final;
 
         private:
-            leka::LKCoreLSM6DSOX &_core_imu;
+            leka::CoreIMU_LSM6DSOX &_core_imu;
 
     };
 }
