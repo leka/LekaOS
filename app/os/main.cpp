@@ -41,6 +41,7 @@
 #include "FATFileSystem.h"
 #include "FirmwareKit.h"
 #include "HelloWorld.h"
+#include "LedColorRecognition.h"
 #include "LogKit.h"
 #include "NumberRecognition.h"
 #include "PictoColorRecognition.h"
@@ -335,6 +336,8 @@ namespace activities {
 		auto display_tag			 = leka::activity::DisplayTags(rfidkit, display::videokit);
 		auto number_recognition		 = leka::activity::NumberRecognition(rfidkit, display::videokit, reinforcerkit);
 		auto picto_color_recognition = leka::activity::PictoColorRecognition(rfidkit, display::videokit, reinforcerkit);
+		auto led_color_recognition =
+			leka::activity::LedColorRecognition(rfidkit, display::videokit, reinforcerkit, leds::belt);
 
 	}	// namespace internal
 
@@ -342,6 +345,7 @@ namespace activities {
 		{MagicCard::number_10, &internal::display_tag},
 		{MagicCard::number_1, &internal::number_recognition},
 		{MagicCard::number_2, &internal::picto_color_recognition},
+		{MagicCard::number_3, &internal::led_color_recognition},
 	};
 
 }	// namespace activities
