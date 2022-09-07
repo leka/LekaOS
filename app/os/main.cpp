@@ -42,6 +42,7 @@
 #include "FirmwareKit.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
+#include "NumberRecognition.h"
 #include "QSPIFBlockDevice.h"
 #include "RFIDKit.h"
 #include "ReinforcerKit.h"
@@ -330,12 +331,15 @@ namespace activities {
 
 	namespace internal {
 
-		auto display_tag = leka::activity::DisplayTags(rfidkit, display::videokit);
+		auto display_tag		= leka::activity::DisplayTags(rfidkit, display::videokit);
+		auto number_recognition = leka::activity::NumberRecognition(rfidkit, display::videokit, reinforcerkit);
 
-	}
+	}	// namespace internal
 
 	inline const std::unordered_map<MagicCard, interface::Activity *> activities {
-		{MagicCard::number_10, &internal::display_tag}};
+		{MagicCard::number_10, &internal::display_tag},
+		{MagicCard::number_1, &internal::number_recognition},
+	};
 
 }	// namespace activities
 
