@@ -10,6 +10,7 @@
 #include "rtos/Thread.h"
 
 #include "ActivityKit.h"
+#include "ChooseReinforcer.h"
 #include "CoreBattery.h"
 #include "CoreBufferedSerial.h"
 #include "CoreDMA2D.hpp"
@@ -334,6 +335,7 @@ namespace activities {
 	namespace internal {
 
 		auto display_tag			 = leka::activity::DisplayTags(rfidkit, display::videokit);
+		auto choose_reinforcer		 = leka::activity::ChooseReinforcer(rfidkit, display::videokit, reinforcerkit);
 		auto number_recognition		 = leka::activity::NumberRecognition(rfidkit, display::videokit, reinforcerkit);
 		auto picto_color_recognition = leka::activity::PictoColorRecognition(rfidkit, display::videokit, reinforcerkit);
 		auto led_color_recognition =
@@ -343,6 +345,7 @@ namespace activities {
 
 	inline const std::unordered_map<MagicCard, interface::Activity *> activities {
 		{MagicCard::number_10, &internal::display_tag},
+		{MagicCard::number_0, &internal::choose_reinforcer},
 		{MagicCard::number_1, &internal::number_recognition},
 		{MagicCard::number_2, &internal::picto_color_recognition},
 		{MagicCard::number_3, &internal::led_color_recognition},
