@@ -45,6 +45,7 @@
 #include "FoodRecognition.h"
 #include "HelloWorld.h"
 #include "LedColorRecognition.h"
+#include "LedNumberCounting.h"
 #include "LogKit.h"
 #include "NumberRecognition.h"
 #include "PictoColorRecognition.h"
@@ -344,6 +345,8 @@ namespace activities {
 			leka::activity::LedColorRecognition(rfidkit, display::videokit, reinforcerkit, leds::belt);
 		auto emotion_recognition = leka::activity::EmotionRecognition(rfidkit, display::videokit, reinforcerkit);
 		auto food_recognition	 = leka::activity::FoodRecognition(rfidkit, display::videokit, reinforcerkit);
+		auto led_number_counting =
+			leka::activity::LedNumberCounting(rfidkit, display::videokit, reinforcerkit, leds::belt);
 
 	}	// namespace internal
 
@@ -355,6 +358,7 @@ namespace activities {
 		{MagicCard::number_3, &internal::led_color_recognition},
 		{MagicCard::number_4, &internal::emotion_recognition},
 		{MagicCard::number_5, &internal::food_recognition},
+		{MagicCard::number_6, &internal::led_number_counting},
 	};
 
 }	// namespace activities
