@@ -102,7 +102,7 @@ namespace factory_reset {
 
 	}	// namespace internal
 
-	auto firmwarekit = FirmwareKit(internal::flash);
+	auto firmwarekit = FirmwareKit(internal::flash, FirmwareKit::DEFAULT_CONFIG);
 
 	void initializeExternalFlash()
 	{

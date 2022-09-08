@@ -284,7 +284,7 @@ namespace firmware {
 
 	}	// namespace internal
 
-	auto kit = FirmwareKit(internal::flash);
+	auto kit = FirmwareKit(internal::flash, FirmwareKit::DEFAULT_CONFIG);
 
 	void initializeFlash()
 	{
