@@ -42,20 +42,23 @@ namespace leka::interface {
             
             virtual ~Gyroscope() = default;
 
-            virtual auto getDataX_mdps() -> float_t     = 0;
-            virtual auto getDataY_mdps() -> float_t     = 0;
-            virtual auto getDataZ_mdps() -> float_t     = 0;
+            virtual auto getDataX_mdps()                                -> float_t = 0;
+            virtual auto getDataY_mdps()                                -> float_t = 0;
+            virtual auto getDataZ_mdps()                                -> float_t = 0;
 
-            virtual auto getDataX_dps() -> float_t      = 0;
-            virtual auto getDataY_dps() -> float_t      = 0;
-            virtual auto getDataZ_dps() -> float_t      = 0;
+            virtual auto getDataX_dps()                                 -> float_t = 0;
+            virtual auto getDataY_dps()                                 -> float_t = 0;
+            virtual auto getDataZ_dps()                                 -> float_t = 0;
 
-            virtual void setDataRate(odr_g_t odr_gy)    = 0;
-            virtual auto getDataRateGyr() -> int32_t    = 0;
+            virtual void getData_mdps(std::array<float, 3> &gy_data)               = 0;
+            virtual void getData_dps(std::array<float, 3> &gy_data)                = 0;
+
+            virtual void setDataRate(odr_g_t odr_gy)                               = 0;
+            virtual auto getDataRateGyr()                               -> int32_t = 0;
             
-            virtual void SetFullScale(fs_g_t fs_gy)     = 0;
+            virtual void SetFullScale(fs_g_t fs_gy)                                = 0;
 
-            virtual void TurnOffGyr()                   = 0;
+            virtual void TurnOffGyr()                                              = 0;
 
 
         private:
