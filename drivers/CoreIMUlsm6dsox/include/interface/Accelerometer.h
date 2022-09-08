@@ -42,20 +42,23 @@ namespace leka::interface {
             
             virtual ~Accelerometer() = default;
 
-            virtual auto getDataX_mg() -> float_t       = 0;
-            virtual auto getDataY_mg() -> float_t       = 0;
-            virtual auto getDataZ_mg() -> float_t       = 0;
+            virtual auto getDataX_mg()                              -> float_t = 0;
+            virtual auto getDataY_mg()                              -> float_t = 0;
+            virtual auto getDataZ_mg()                              -> float_t = 0;
             
-            virtual auto getDataX_g() -> float_t        = 0;
-            virtual auto getDataY_g() -> float_t        = 0;
-            virtual auto getDataZ_g() -> float_t        = 0;
+            virtual auto getDataX_g()                               -> float_t = 0;
+            virtual auto getDataY_g()                               -> float_t = 0;
+            virtual auto getDataZ_g()                               -> float_t = 0;
 
-            virtual void setDataRate(odr_xl_t odr_xl)   = 0;
-            virtual auto getDataRateAcc() -> int32_t    = 0;
+            virtual void getData_mg(std::array<float, 3> &xl_data)              = 0;
+            virtual void getData_g(std::array<float, 3> &xl_data)               = 0;
+
+            virtual void setDataRate(odr_xl_t odr_xl)                           = 0;
+            virtual auto getDataRateAcc()                           -> int32_t  = 0;
             
-            virtual void SetFullScale(fs_xl_t fs_xl)    = 0;
+            virtual void SetFullScale(fs_xl_t fs_xl)                            = 0;
 
-            virtual void TurnOffAcc()                   = 0;
+            virtual void TurnOffAcc()                                           = 0;
 
 
         private:

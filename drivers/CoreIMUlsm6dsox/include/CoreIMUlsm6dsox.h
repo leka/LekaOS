@@ -46,28 +46,36 @@ namespace leka {
 
 
 			//Accelerometer
-			auto getDataX_mg() -> float_t final;
-            auto getDataY_mg() -> float_t final;
-            auto getDataZ_mg() -> float_t final;
-            auto getDataX_g() -> float_t final;
-            auto getDataY_g() -> float_t final;
-            auto getDataZ_g() -> float_t final;
-            void setDataRate(odr_xl_t odr_xl) final;
-            auto getDataRateAcc() -> int32_t final;
-            void SetFullScale(fs_xl_t fs_xl) final;
-            void TurnOffAcc() final;
+			//A supprimer car pas utilisées ?
+			auto getDataX_mg() 									-> float_t 	final;
+            auto getDataY_mg() 									-> float_t	final;
+            auto getDataZ_mg() 									-> float_t 	final;
+            auto getDataX_g() 									-> float_t 	final;
+            auto getDataY_g() 									-> float_t 	final;
+            auto getDataZ_g() 									-> float_t 	final;
+			//
+			void getData_mg(std::array<float, 3> &xl_data) 		 			final;
+            void getData_g(std::array<float, 3> &xl_data) 					final;
+            void setDataRate(odr_xl_t odr_xl) 								final;
+            auto getDataRateAcc() 								-> int32_t 	final;
+            void SetFullScale(fs_xl_t fs_xl) 								final;
+            void TurnOffAcc() 												final;
 
 			//Gyroscope
-			auto getDataX_mdps() -> float_t final;
-            auto getDataY_mdps() -> float_t final;
-            auto getDataZ_mdps() -> float_t final;
-            auto getDataX_dps() -> float_t final;
-            auto getDataY_dps() -> float_t final;
-            auto getDataZ_dps() -> float_t final;
-            void setDataRate(odr_g_t odr_gy) final;
-            auto getDataRateGyr() -> int32_t final;
-            void SetFullScale(fs_g_t fs_gy) final;
-            void TurnOffGyr() final;
+			//A supprimer car pas utilisées ?
+			auto getDataX_mdps()								-> float_t 	final;
+            auto getDataY_mdps() 								-> float_t 	final;
+            auto getDataZ_mdps() 								-> float_t 	final;
+            auto getDataX_dps() 								-> float_t 	final;
+            auto getDataY_dps() 								-> float_t 	final;
+            auto getDataZ_dps() 								-> float_t 	final;
+			//
+            void getData_mdps(std::array<float, 3> &gy_data) 	  			final;
+            void getData_dps(std::array<float, 3> &gy_data) 	  			final;
+            void setDataRate(odr_g_t odr_gy) 								final;
+            auto getDataRateGyr() 								-> int32_t 	final;
+            void SetFullScale(fs_g_t fs_gy) 								final;
+            void TurnOffGyr() 												final;
 
 
 		private:

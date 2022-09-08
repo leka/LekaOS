@@ -218,6 +218,24 @@ auto CoreIMU_LSM6DSOX::getDataZ_g() -> float_t {
     return getDataZ_mg()/1000;
 }
 
+void CoreIMU_LSM6DSOX::getData_mg(std::array<float, 3> &xl_data)
+{
+	lsm6dsox_data_t data;
+	lsm6dsox_data_get(&getRegisterIOFunction(), nullptr, &getConfig(), &data);
+	xl_data[0] = data.ui.xl.mg[0];
+	xl_data[1] = data.ui.xl.mg[1];
+	xl_data[2] = data.ui.xl.mg[2];
+}
+
+void CoreIMU_LSM6DSOX::getData_g(std::array<float, 3> &xl_data)
+{
+	lsm6dsox_data_t data;
+	lsm6dsox_data_get(&getRegisterIOFunction(), nullptr, &getConfig(), &data);
+	xl_data[0] = data.ui.xl.mg[0]/1000;
+	xl_data[1] = data.ui.xl.mg[1]/1000;
+	xl_data[2] = data.ui.xl.mg[2]/1000;
+}
+
 void CoreIMU_LSM6DSOX::setDataRate(odr_xl_t odr_xl)
 {
 	lsm6dsox_xl_data_rate_set(&getRegisterIOFunction(), static_cast<lsm6dsox_odr_xl_t>(odr_xl));
@@ -278,6 +296,28 @@ auto CoreIMU_LSM6DSOX::getDataZ_dps() -> float_t {
 void CoreIMU_LSM6DSOX::setDataRate(odr_g_t odr_gy)
 {
 	lsm6dsox_gy_data_rate_set(&getRegisterIOFunction(), static_cast<lsm6dsox_odr_g_t>(odr_gy));
+}
+
+void CoreIMU_LSM6DSOX::getData_mdps(std::array<float, 3> &gy_data)
+{
+	lsm6dsox_data_t data;
+
+	lsm6dsox_data_get(&getRegisterIOFunction(), nullptr, &getConfig(), &data);
+
+	gy_data[0] = data.ui.gy.mdps[0];
+	gy_data[1] = data.ui.gy.mdps[1];
+	gy_data[2] = data.ui.gy.mdps[2];
+}
+
+void CoreIMU_LSM6DSOX::getData_dps(std::array<float, 3> &gy_data)
+{
+	lsm6dsox_data_t data;
+
+	lsm6dsox_data_get(&getRegisterIOFunction(), nullptr, &getConfig(), &data);
+
+	gy_data[0] = data.ui.gy.mdps[0]/1000;
+	gy_data[1] = data.ui.gy.mdps[1]/1000;
+	gy_data[2] = data.ui.gy.mdps[2]/1000;
 }
 
 auto CoreIMU_LSM6DSOX::getDataRateGyr() -> int32_t
