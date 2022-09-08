@@ -42,6 +42,7 @@
 #include "EventLoopKit.h"
 #include "FATFileSystem.h"
 #include "FirmwareKit.h"
+#include "FlashNumberCounting.h"
 #include "FoodRecognition.h"
 #include "HelloWorld.h"
 #include "LedColorRecognition.h"
@@ -347,6 +348,8 @@ namespace activities {
 		auto food_recognition	 = leka::activity::FoodRecognition(rfidkit, display::videokit, reinforcerkit);
 		auto led_number_counting =
 			leka::activity::LedNumberCounting(rfidkit, display::videokit, reinforcerkit, leds::belt);
+		auto flash_number_counting =
+			leka::activity::FlashNumberCounting(rfidkit, display::videokit, reinforcerkit, leds::belt);
 
 	}	// namespace internal
 
@@ -359,6 +362,7 @@ namespace activities {
 		{MagicCard::number_4, &internal::emotion_recognition},
 		{MagicCard::number_5, &internal::food_recognition},
 		{MagicCard::number_6, &internal::led_number_counting},
+		{MagicCard::number_7, &internal::flash_number_counting},
 	};
 
 }	// namespace activities
