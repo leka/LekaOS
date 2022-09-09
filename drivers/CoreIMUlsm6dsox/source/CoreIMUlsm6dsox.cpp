@@ -262,9 +262,9 @@ auto CoreIMU_LSM6DSOX::updateData() -> int32_t
     _data_sensors.xl.x = data.ui.xl.mg[0];
     _data_sensors.xl.y = data.ui.xl.mg[1];
     _data_sensors.xl.z = data.ui.xl.mg[2];
-	_data_sensors.gy.x = data.ui.gy.mdps[0];
-	_data_sensors.gy.y = data.ui.gy.mdps[1];
-	_data_sensors.gy.z = data.ui.gy.mdps[2];
+	_data_sensors.gy.x = data.ui.gy.mdps[0]/1000;
+	_data_sensors.gy.y = data.ui.gy.mdps[1]/1000;
+	_data_sensors.gy.z = data.ui.gy.mdps[2]/1000;
 
 	return 0;
 }
