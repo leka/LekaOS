@@ -34,55 +34,56 @@ namespace leka {
 			};
 			enum class RateXL
 			{
-				OFF		= (lsm6dsox_odr_xl_t)lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_OFF,
-				_1H6	= (lsm6dsox_odr_xl_t)lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_1Hz6,
-				_12Hz5	= (lsm6dsox_odr_xl_t)lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_12Hz5,
-				_26Hz	= (lsm6dsox_odr_xl_t)lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_26Hz,
-				_52Hz	= (lsm6dsox_odr_xl_t)lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_52Hz,
-				_104Hz	= (lsm6dsox_odr_xl_t)lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_104Hz,
-				_208Hz	= (lsm6dsox_odr_xl_t)lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_208Hz,
-				_417Hz	= (lsm6dsox_odr_xl_t)lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_417Hz,
-				_833Hz	= (lsm6dsox_odr_xl_t)lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_833Hz,
-				_1667Hz = (lsm6dsox_odr_xl_t)lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_1667Hz,
-				_3333Hz = (lsm6dsox_odr_xl_t)lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_3333Hz,
-				_6667Hz = (lsm6dsox_odr_xl_t)lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_6667Hz,
+				OFF		= lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_OFF,
+				_1H6	= lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_1Hz6,
+				_12Hz5	= lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_12Hz5,
+				_26Hz	= lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_26Hz,
+				_52Hz	= lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_52Hz,
+				_104Hz	= lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_104Hz,
+				_208Hz	= lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_208Hz,
+				_417Hz	= lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_417Hz,
+				_833Hz	= lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_833Hz,
+				_1667Hz = lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_1667Hz,
+				_3333Hz = lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_3333Hz,
+				_6667Hz = lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_6667Hz,
 			};
 
 			enum class RateGyr
 			{				
-				OFF		= (lsm6dsox_odr_g_t)lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_OFF,
-				_12Hz5	= (lsm6dsox_odr_g_t)lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_12Hz5,
-				_26Hz	= (lsm6dsox_odr_g_t)lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_26Hz,
-				_52Hz	= (lsm6dsox_odr_g_t)lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_52Hz,
-				_104Hz	= (lsm6dsox_odr_g_t)lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_104Hz,
-				_208Hz	= (lsm6dsox_odr_g_t)lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_208Hz,
-				_417Hz	= (lsm6dsox_odr_g_t)lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_417Hz,
-				_833Hz	= (lsm6dsox_odr_g_t)lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_833Hz,
-				_1667Hz = (lsm6dsox_odr_g_t)lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_1667Hz,
-				_3333Hz = (lsm6dsox_odr_g_t)lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_3333Hz,
-				_6667Hz = (lsm6dsox_odr_g_t)lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_6667Hz,
+				OFF		= lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_OFF,
+				_12Hz5	= lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_12Hz5,
+				_26Hz	= lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_26Hz,
+				_52Hz	= lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_52Hz,
+				_104Hz	= lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_104Hz,
+				_208Hz	= lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_208Hz,
+				_417Hz	= lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_417Hz,
+				_833Hz	= lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_833Hz,
+				_1667Hz = lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_1667Hz,
+				_3333Hz = lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_3333Hz,
+				_6667Hz = lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_6667Hz,
 			};
 
 			enum class RangeXL
 			{
-				_2G	 = (lsm6dsox_fs_xl_t)lsm6dsox_fs_xl_t::LSM6DSOX_2g,
-				_4G	 = (lsm6dsox_fs_xl_t)lsm6dsox_fs_xl_t::LSM6DSOX_4g,
-				_8G	 = (lsm6dsox_fs_xl_t)lsm6dsox_fs_xl_t::LSM6DSOX_8g,
-				_16G = (lsm6dsox_fs_xl_t)lsm6dsox_fs_xl_t::LSM6DSOX_16g,
+				_2G	 = lsm6dsox_fs_xl_t::LSM6DSOX_2g,
+				_4G	 = lsm6dsox_fs_xl_t::LSM6DSOX_4g,
+				_8G	 = lsm6dsox_fs_xl_t::LSM6DSOX_8g,
+				_16G = lsm6dsox_fs_xl_t::LSM6DSOX_16g,
 			};
 
 			enum class RangeGyr
 			{
-				_125dps   = (lsm6dsox_fs_g_t)lsm6dsox_fs_g_t::LSM6DSOX_125dps,
-				_250dps   = (lsm6dsox_fs_g_t)lsm6dsox_fs_g_t::LSM6DSOX_250dps,
-				_500dps   = (lsm6dsox_fs_g_t)lsm6dsox_fs_g_t::LSM6DSOX_500dps,
-				_1000dps  = (lsm6dsox_fs_g_t)lsm6dsox_fs_g_t::LSM6DSOX_1000dps,
-				_2000dps  = (lsm6dsox_fs_g_t)lsm6dsox_fs_g_t::LSM6DSOX_2000dps,
+				_125dps   = lsm6dsox_fs_g_t::LSM6DSOX_125dps,
+				_250dps   = lsm6dsox_fs_g_t::LSM6DSOX_250dps,
+				_500dps   = lsm6dsox_fs_g_t::LSM6DSOX_500dps,
+				_1000dps  = lsm6dsox_fs_g_t::LSM6DSOX_1000dps,
+				_2000dps  = lsm6dsox_fs_g_t::LSM6DSOX_2000dps,
 			};	
 
 			//
 			// MARK: - struc
 			//
+			
             struct DataSensors {
                 accel_data_t xl;
                 gyro_data_t gy;
