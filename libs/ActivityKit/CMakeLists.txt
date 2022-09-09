@@ -24,6 +24,7 @@ target_sources(ActivityKit
 	source/activities/LedNumberCounting.cpp
 	source/activities/FlashNumberCounting.cpp
 	source/activities/SuperSimon.cpp
+	source/activities/ShapeRecognition.cpp
 )
 
 target_link_libraries(ActivityKit
