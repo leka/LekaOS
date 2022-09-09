@@ -38,12 +38,12 @@ auto CoreIMU_LSM6DSOX::init() -> int32_t
 	if(lsm6dsox_mode_get(&_register_io_function, nullptr, &_config)) {
 		return 1;
 	}
-
-	_config.ui.xl.odr = _config.ui.xl.LSM6DSOX_XL_UI_104Hz_NM;
+	
+	_config.ui.xl.odr = _config.ui.xl.LSM6DSOX_XL_UI_26Hz_HP;
 	_config.ui.xl.fs  = _config.ui.xl.LSM6DSOX_XL_UI_2g;
-	_config.ui.gy.odr = _config.ui.gy.LSM6DSOX_GY_UI_104Hz_NM;
-	_config.ui.gy.fs  = _config.ui.gy.LSM6DSOX_GY_UI_125dps;
-
+	_config.ui.gy.odr = _config.ui.gy.LSM6DSOX_GY_UI_26Hz_HP;
+	_config.ui.gy.fs  = _config.ui.gy.LSM6DSOX_GY_UI_2000dps;
+	
 	if(lsm6dsox_mode_set(&_register_io_function, nullptr, &_config)) {
 		return 1;
 	}
