@@ -13,6 +13,7 @@ target_include_directories(CoreIMUlsm6dsox
 target_sources(CoreIMUlsm6dsox
 	PRIVATE
 	extern/source/lsm6dsox_reg.c
+	source/CoreIMUlsm6dsox.cpp
 )
 
 target_link_libraries(CoreIMUlsm6dsox)
