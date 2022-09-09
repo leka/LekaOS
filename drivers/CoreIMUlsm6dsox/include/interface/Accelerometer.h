@@ -29,12 +29,11 @@ namespace leka::interface {
             virtual auto getAccelX()                            -> mg_t     = 0;
             virtual auto getAccelY()                            -> mg_t     = 0;
             virtual auto getAccelZ()                            -> mg_t     = 0;
-
-            virtual void getAccelXYZ(std::array<mg_t, 3> &)                 = 0;
+            virtual auto getAccelXYZ() 			                -> std::span<mg_t, 3>    = 0;
+            
             virtual auto getAccelRate() 				        -> int32_t  = 0;
             virtual auto getAccelRange() 				        -> int32_t  = 0;
 
             virtual auto turnOffAccel()                         -> int32_t  = 0;
-
     };
 }

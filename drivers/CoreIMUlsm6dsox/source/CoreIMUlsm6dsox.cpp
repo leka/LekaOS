@@ -148,12 +148,9 @@ auto CoreIMU_LSM6DSOX::setPowerMode(power_mode_t mode) -> int32_t
 	return 0;
 }
 
-auto CoreIMU_LSM6DSOX::setMLCDataRate(lsm6dsox_mlc_odr_t val) -> int32_t
+void CoreIMU_LSM6DSOX::setMLCDataRate(lsm6dsox_mlc_odr_t val)
 {
-	if(lsm6dsox_mlc_data_rate_set(&getRegisterIOFunction(), val)) {
-		return 1;
-	}
-	return 0;
+	lsm6dsox_mlc_data_rate_set(&getRegisterIOFunction(), val);
 }
 
 auto CoreIMU_LSM6DSOX::TurnOffEmbeddedFeatures(lsm6dsox_emb_sens_t *emb_sens) -> int32_t
@@ -162,7 +159,7 @@ auto CoreIMU_LSM6DSOX::TurnOffEmbeddedFeatures(lsm6dsox_emb_sens_t *emb_sens) ->
 		return 1;
 	}
 	if(lsm6dsox_embedded_sens_off(&_register_io_function)){
-			return 1;
+		return 1;
 	}
 	return 0;
 }
@@ -228,30 +225,35 @@ auto CoreIMU_LSM6DSOX::setEmbeddedSens(const lsm6dsox_emb_sens_t *val) -> int32_
 
 auto CoreIMU_LSM6DSOX::getAllRessources(lsm6dsox_all_sources_t *val) -> int32_t
 {
-	return lsm6dsox_all_sources_get(&getRegisterIOFunction(), val);
+	if(lsm6dsox_all_sources_get(&getRegisterIOFunction(), val)) {
+		return 1;
+	}
+	return 0;
 }
 
 auto CoreIMU_LSM6DSOX::getId(uint8_t &id) -> int32_t
 {
 	if (lsm6dsox_device_id_get(&_register_io_function, &id)) {
-		return 0; }
+		return 0; 
+	}
 	return id;
 }
-
+	//A revoir
 auto CoreIMU_LSM6DSOX::getMLCOut(uint8_t *buff) -> int32_t
 {
-	if (lsm6dsox_mem_bank_set(&getRegisterIOFunction(), LSM6DSOX_EMBEDDED_FUNC_BANK)) return 1;
-
-	if (lsm6dsox_read_reg(&getRegisterIOFunction(), LSM6DSOX_MLC0_SRC, buff, 8)) return 1;
-
-	if (lsm6dsox_mem_bank_set(&getRegisterIOFunction(), LSM6DSOX_USER_BANK)) return 1;
+	if (lsm6dsox_mem_bank_set(&getRegisterIOFunction(), LSM6DSOX_EMBEDDED_FUNC_BANK)) {
+		return 1; 
+	} 
+	if (lsm6dsox_read_reg(&getRegisterIOFunction(), LSM6DSOX_MLC0_SRC, buff, 8)) {
+		return 1; 
+	}
+	if (lsm6dsox_mem_bank_set(&getRegisterIOFunction(), LSM6DSOX_USER_BANK)) {
+		return 1; 
+	}
 
 	return 0;
 }
 
-//
-// Mark: - 
-//
 
 auto CoreIMU_LSM6DSOX::updateData() -> int32_t
 {
@@ -269,11 +271,10 @@ auto CoreIMU_LSM6DSOX::updateData() -> int32_t
 	return 0;
 }
 
-auto CoreIMU_LSM6DSOX::TurnOffSensors() -> int32_t
+void CoreIMU_LSM6DSOX::TurnOffSensors()
 {
 	turnOffAccel();
 	turnOffGyr();
-	return 0;
 }	
 
 //
@@ -325,11 +326,10 @@ auto CoreIMU_LSM6DSOX::getAccelZ() -> interface::mg_t
     return _data_sensors.xl.z;
 }
 
-void CoreIMU_LSM6DSOX::getAccelXYZ(std::array<interface::mg_t, 3> &xl_data)
+auto CoreIMU_LSM6DSOX::getAccelXYZ() -> std::span<interface::mg_t, 3>
 {
-	xl_data[0] = getAccelX();
-	xl_data[1] = getAccelY();
-	xl_data[2] = getAccelZ();
+	auto xl_data = std::to_array({getAccelX(), getAccelY(), getAccelZ()});
+	return std::span {xl_data};
 }
 
 
@@ -391,11 +391,10 @@ auto CoreIMU_LSM6DSOX::getAngularSpeedZ() -> interface::dps_t
 	return _data_sensors.gy.z;
 }     
 
-void CoreIMU_LSM6DSOX::getAngularSpeedXYZ(std::array<interface::dps_t,3> &gy_data) 
+auto CoreIMU_LSM6DSOX::getAngularSpeedXYZ()  -> std::span<interface::dps_t, 3>
 {
-	gy_data[0] = getAngularSpeedX();
-	gy_data[1] = getAngularSpeedY();
-	gy_data[2] = getAngularSpeedZ();
+	auto gy_data = std::to_array({getAngularSpeedX(), getAngularSpeedY(), getAngularSpeedZ()});
+	return std::span {gy_data};
 }
 
 auto CoreIMU_LSM6DSOX::turnOffGyr() -> int32_t 

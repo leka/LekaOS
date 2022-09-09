@@ -28,15 +28,11 @@ namespace leka::interface {
             virtual auto getAngularSpeedX()                                 -> dps_t    = 0;
             virtual auto getAngularSpeedY()                                 -> dps_t    = 0;
             virtual auto getAngularSpeedZ()                                 -> dps_t    = 0;
+            virtual auto getAngularSpeedXYZ() 						        -> std::span<dps_t, 3> = 0;
 
-            virtual void getAngularSpeedXYZ(std::array<dps_t, 3> &)                     = 0;
             virtual auto getGyrRate() 						                -> int32_t  = 0;
             virtual auto getGyrRange() 						                -> int32_t  = 0;
 
             virtual auto turnOffGyr() -> int32_t = 0;
-
-
-        private:
-
     };
 }
