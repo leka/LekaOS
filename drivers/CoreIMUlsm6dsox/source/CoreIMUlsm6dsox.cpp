@@ -48,16 +48,16 @@ auto CoreIMU_LSM6DSOX::init() -> int32_t
 		return 1;
 	}
 	
-	if(setAccelRate(OdrXL::XL_ODR_26Hz)) {
+	if(setAccelRate(RateXL::_26Hz)) {
 		return 1;
 	}
-	if(setGyrRate(OdrG::GY_ODR_26Hz)) {
+	if(setGyrRate(RateGyr::_26Hz)) {
 		return 1;
 	}
-	if(setAccelRange(FsXL::XL_FS_2g)) {
+	if(setAccelRange(RangeXL::_2G)) {
 		return 1;
 	}
-	if(setGyrRange(FsG::GY_FS_2000dps)) {
+	if(setGyrRange(RangeGyr::_2000dps)) {
 		return 1;
 	}
 
