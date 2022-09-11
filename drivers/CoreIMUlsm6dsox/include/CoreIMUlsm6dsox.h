@@ -83,8 +83,8 @@ namespace leka {
 			//
 			// MARK: - struc
 			//
-			
-            struct DataSensors {
+
+            struct SensorsData {
                 accel_data_t xl;
                 gyro_data_t gy;
             };
@@ -110,12 +110,12 @@ namespace leka {
 			// MARK: - Device functions
 			//
 
-			auto init() -> int32_t;
-			auto setPowerMode(power_mode_t) 							-> int32_t;
-			auto setBlockDataUpdate(uint8_t val) 						-> int32_t;
-			auto setIntNotification(lsm6dsox_lir_t val) 				-> int32_t;
+			void init();
+			void setPowerMode(power_mode_t);
+			void setBlockDataUpdate(uint8_t val);
+			void setIntNotification(lsm6dsox_lir_t val);
 			void setMLCDataRate(lsm6dsox_mlc_odr_t val);
-			auto setEmbeddedSens(const lsm6dsox_emb_sens_t *val)		-> int32_t;
+			void setEmbeddedSens(const lsm6dsox_emb_sens_t *val);
 
 			void RouteSignalsInterruptGetSet(lsm6dsox_pin_int1_route_t *pin_int1_route);
 			auto WriteReg(stmdev_ctx_t *ctx, uint8_t reg, const uint8_t *data, uint16_t len) const	-> int32_t;
@@ -123,45 +123,40 @@ namespace leka {
 			
 			auto getId(uint8_t &id) 									-> int32_t;
 			auto getMLCOut(uint8_t *buff) 								-> int32_t;
-			auto getAllRessources(lsm6dsox_all_sources_t *val) 			-> int32_t;
+			void getAllRessources(lsm6dsox_all_sources_t *val);
 			auto getConfig() -> lsm6dsox_md_t& { return _config; }
 			auto getRegisterIOFunction() -> stmdev_ctx_t& { return _register_io_function; }
 
-			auto updateData() 											-> int32_t;
+			void updateData();
 			void TurnOffSensors();
-			auto TurnOffEmbeddedFeatures(lsm6dsox_emb_sens_t *emb_sens) -> int32_t;
+			void TurnOffEmbeddedFeatures(lsm6dsox_emb_sens_t *emb_sens);
 
 			//
 			// MARK: - Accelerometer functions
 			//
 
-            auto getAccelX()                        -> interface::mg_t 	final;
-            auto getAccelY()                        -> interface::mg_t 	final;
-            auto getAccelZ()                        -> interface::mg_t 	final;
-            auto getAccelXYZ() 						-> std::span<interface::mg_t, 3> final;
+            auto getAccelXYZ() 						-> std::tuple<interface::mg_t, interface::mg_t, interface::mg_t> final;
 
-            auto setAccelRate(odr_xl_t odr_xl)		-> int32_t;
-            auto setAccelRange(fs_xl_t fs_xl) 		-> int32_t;
+            void setAccelRate(odr_xl_t odr_xl);
+            void setAccelRange(fs_xl_t fs_xl);
 
             auto getAccelRate() 					-> int32_t 			final;
             auto getAccelRange() 					-> int32_t 			final;
-            auto turnOffAccel() 					-> int32_t 			final;
+            void turnOffAccel() 							 			final;
 
 			//
 			// MARK: - Gyroscope functions
 			//			
 
-			auto getAngularSpeedX()                 -> interface::dps_t final;
-			auto getAngularSpeedY()                 -> interface::dps_t final;
-			auto getAngularSpeedZ()                 -> interface::dps_t final;
-            auto getAngularSpeedXYZ() 				-> std::span<interface::dps_t, 3> final;
-            auto setGyrRate(odr_g_t odr_gy) 		-> int32_t;
-            auto setGyrRange(fs_g_t fs_gy) 			-> int32_t;
+            auto getAngularSpeedXYZ() 				-> std::tuple<interface::dps_t, interface::dps_t, interface::dps_t> final;
+            void setGyrRate(odr_g_t odr_gy);
+            void setGyrRange(fs_g_t fs_gy);
 
             auto getGyrRate() 						-> int32_t 			final;
             auto getGyrRange() 						-> int32_t 			final;
-            auto turnOffGyr() 						-> int32_t 			final;
+            void turnOffGyr() 								 			final;
 			
+			auto getAccelAndAngularSpeed() -> std::tuple<interface::mg_t, interface::mg_t, interface::mg_t, interface::dps_t, interface::dps_t, interface::dps_t>;
 
 		private:
 			mbed::I2C &_i2c;
@@ -169,7 +164,7 @@ namespace leka {
 
 			PinName _lsm6dsox_interrupt;			
 			lsm6dsox_md_t _config;
-			DataSensors _data_sensors;
+			SensorsData _sensors_data;
 
 			static const int kBufferSize			 = 32;
 			std::array<uint8_t, kBufferSize> _buffer = {0};
