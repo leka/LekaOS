@@ -6,7 +6,6 @@
 #pragma once
 
 #include "LogKit.h"
-#include <math.h>
 
 
 namespace leka::interface {
@@ -29,11 +28,11 @@ namespace leka::interface {
             virtual auto getAccelX()                            -> mg_t     = 0;
             virtual auto getAccelY()                            -> mg_t     = 0;
             virtual auto getAccelZ()                            -> mg_t     = 0;
-            virtual auto getAccelXYZ() 			                -> std::span<mg_t, 3>    = 0;
+            virtual auto getAccelXYZ() 			                -> std::tuple<mg_t, mg_t, mg_t>    = 0;
             
             virtual auto getAccelRate() 				        -> int32_t  = 0;
             virtual auto getAccelRange() 				        -> int32_t  = 0;
 
-            virtual auto turnOffAccel()                         -> int32_t  = 0;
+            virtual void turnOffAccel()                                     = 0;
     };
 }
