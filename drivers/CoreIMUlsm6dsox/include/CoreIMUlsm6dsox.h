@@ -17,7 +17,7 @@
 
 namespace leka {
 
-	class CoreIMU_LSM6DSOX : public interface::Accelerometer, public interface::Gyroscope
+	class CoreIMULSM6DSOX : public interface::Accelerometer, public interface::Gyroscope
 	{
 		public:
 
@@ -103,8 +103,8 @@ namespace leka {
 			// MARK: - Constructor & Destructor
 			//
 
-			CoreIMU_LSM6DSOX(mbed::I2C &i2c, PinName pin_interrupt);
-			~CoreIMU_LSM6DSOX() final;
+			CoreIMULSM6DSOX(mbed::I2C &i2c, PinName pin_interrupt);
+			~CoreIMULSM6DSOX() final;
 
 			//
 			// MARK: - Device functions
@@ -177,9 +177,9 @@ namespace leka {
 			auto write(uint8_t register_address, uint16_t number_bytes_to_write, uint8_t *p_buffer) 			-> int32_t;
 
 			stmdev_ctx_t _register_io_function;
-			static auto ptr_io_write(CoreIMU_LSM6DSOX *handle, uint8_t write_address, uint8_t *p_buffer, 
+			static auto ptr_io_write(CoreIMULSM6DSOX *handle, uint8_t write_address, uint8_t *p_buffer, 
 																				uint16_t number_bytes_to_write)	-> int32_t;
-			static auto ptr_io_read(CoreIMU_LSM6DSOX *handle, uint8_t read_address, uint8_t *p_buffer, 
+			static auto ptr_io_read(CoreIMULSM6DSOX *handle, uint8_t read_address, uint8_t *p_buffer, 
 																				uint16_t number_bytes_to_read) 	-> int32_t;
 
 	};
