@@ -116,13 +116,13 @@ void CoreIMULSM6DSOX::setPowerMode(power_mode_t mode)
 			default:
 				return ;
 		}
-		lsm6dsox_xl_power_mode_set(&getRegisterIOFunction(), power_mode);
+		lsm6dsox_xl_power_mode_set(&_register_io_function, power_mode);
 	}
 }
 
 void CoreIMULSM6DSOX::setMLCDataRate(lsm6dsox_mlc_odr_t val)
 {
-	lsm6dsox_mlc_data_rate_set(&getRegisterIOFunction(), val);
+	lsm6dsox_mlc_data_rate_set(&_register_io_function, val);
 }
 
 void CoreIMULSM6DSOX::TurnOffEmbeddedFeatures(lsm6dsox_emb_sens_t *emb_sens)
@@ -141,28 +141,28 @@ void CoreIMULSM6DSOX::RouteSignalsInterruptGetSet(lsm6dsox_pin_int1_route_t *pin
 void CoreIMULSM6DSOX::setBlockDataUpdate(uint8_t val)
 {
 	lsm6dsox_ctrl3_c_t reg;
-	auto ret = lsm6dsox_read_reg(&getRegisterIOFunction(), LSM6DSOX_CTRL3_C, (uint8_t *)&reg, 1);
+	auto ret = lsm6dsox_read_reg(&_register_io_function, LSM6DSOX_CTRL3_C, (uint8_t *)&reg, 1);
 
 	if (ret == 0) {
 		reg.bdu = val;
-		lsm6dsox_write_reg(&getRegisterIOFunction(), LSM6DSOX_CTRL3_C, (uint8_t *)&reg, 1);
+		lsm6dsox_write_reg(&_register_io_function, LSM6DSOX_CTRL3_C, (uint8_t *)&reg, 1);
 	}
 }
 
 void CoreIMULSM6DSOX::setIntNotification(lsm6dsox_lir_t val)
 {
-	lsm6dsox_int_notification_set(&getRegisterIOFunction(), val);
+	lsm6dsox_int_notification_set(&_register_io_function, val);
 }
 
 void CoreIMULSM6DSOX::setEmbeddedSens(const lsm6dsox_emb_sens_t *val)
 {
 	lsm6dsox_emb_func_en_a_t emb_func_en_a;
 	lsm6dsox_emb_func_en_b_t emb_func_en_b;
-	lsm6dsox_mem_bank_set(&getRegisterIOFunction(), LSM6DSOX_EMBEDDED_FUNC_BANK);
+	lsm6dsox_mem_bank_set(&_register_io_function, LSM6DSOX_EMBEDDED_FUNC_BANK);
 
-	lsm6dsox_read_reg(&getRegisterIOFunction(), LSM6DSOX_EMB_FUNC_EN_A, (uint8_t *)&emb_func_en_a, 1);
+	lsm6dsox_read_reg(&_register_io_function, LSM6DSOX_EMB_FUNC_EN_A, (uint8_t *)&emb_func_en_a, 1);
 
-	auto ret					 = lsm6dsox_read_reg(&getRegisterIOFunction(), LSM6DSOX_EMB_FUNC_EN_B, (uint8_t *)&emb_func_en_b, 1);
+	auto ret					 = lsm6dsox_read_reg(&_register_io_function, LSM6DSOX_EMB_FUNC_EN_B, (uint8_t *)&emb_func_en_b, 1);
 	emb_func_en_b.mlc_en		 = val->mlc;
 	emb_func_en_b.fsm_en		 = val->fsm;
 	emb_func_en_a.tilt_en		 = val->tilt;
@@ -171,15 +171,15 @@ void CoreIMULSM6DSOX::setEmbeddedSens(const lsm6dsox_emb_sens_t *val)
 	emb_func_en_b.fifo_compr_en	 = val->fifo_compr;
 
 	if (ret == 0) {
-		lsm6dsox_write_reg(&getRegisterIOFunction(), LSM6DSOX_EMB_FUNC_EN_A, (uint8_t *)&emb_func_en_a, 1);
-		lsm6dsox_write_reg(&getRegisterIOFunction(), LSM6DSOX_EMB_FUNC_EN_B, (uint8_t *)&emb_func_en_b, 1);
-		lsm6dsox_mem_bank_set(&getRegisterIOFunction(), LSM6DSOX_USER_BANK);
+		lsm6dsox_write_reg(&_register_io_function, LSM6DSOX_EMB_FUNC_EN_A, (uint8_t *)&emb_func_en_a, 1);
+		lsm6dsox_write_reg(&_register_io_function, LSM6DSOX_EMB_FUNC_EN_B, (uint8_t *)&emb_func_en_b, 1);
+		lsm6dsox_mem_bank_set(&_register_io_function, LSM6DSOX_USER_BANK);
 	}
 }
 
 void CoreIMULSM6DSOX::updateAllRessources(lsm6dsox_all_sources_t *val)
 {
-	lsm6dsox_all_sources_get(&getRegisterIOFunction(), val);
+	lsm6dsox_all_sources_get(&_register_io_function, val);
 }
 
 auto CoreIMULSM6DSOX::getId(uint8_t &id) -> int32_t
@@ -192,9 +192,9 @@ auto CoreIMULSM6DSOX::getId(uint8_t &id) -> int32_t
 	//A revoir
 auto CoreIMULSM6DSOX::getMLCOut(uint8_t *buff) -> int32_t
 {
-	lsm6dsox_mem_bank_set(&getRegisterIOFunction(), LSM6DSOX_EMBEDDED_FUNC_BANK);
-	lsm6dsox_read_reg(&getRegisterIOFunction(), LSM6DSOX_MLC0_SRC, buff, 8);
-	lsm6dsox_mem_bank_set(&getRegisterIOFunction(), LSM6DSOX_USER_BANK);
+	lsm6dsox_mem_bank_set(&_register_io_function, LSM6DSOX_EMBEDDED_FUNC_BANK);
+	lsm6dsox_read_reg(&_register_io_function, LSM6DSOX_MLC0_SRC, buff, 8);
+	lsm6dsox_mem_bank_set(&_register_io_function, LSM6DSOX_USER_BANK);
 
 	return 0;
 }
@@ -203,7 +203,7 @@ auto CoreIMULSM6DSOX::getMLCOut(uint8_t *buff) -> int32_t
 void CoreIMULSM6DSOX::updateData()
 {
     lsm6dsox_data_t data;
-    lsm6dsox_data_get(&getRegisterIOFunction(), nullptr, &getConfig(), &data);
+    lsm6dsox_data_get(&_register_io_function, nullptr, &getConfig(), &data);
     _sensors_data.xl.x = data.ui.xl.mg[0];
     _sensors_data.xl.y = data.ui.xl.mg[1];
     _sensors_data.xl.z = data.ui.xl.mg[2];
@@ -224,25 +224,25 @@ void CoreIMULSM6DSOX::TurnOffSensors()
 
 void CoreIMULSM6DSOX::setAccelRate(odr_xl_t odr_xl)
 {
-	lsm6dsox_xl_data_rate_set(&getRegisterIOFunction(), static_cast<lsm6dsox_odr_xl_t>(odr_xl));
+	lsm6dsox_xl_data_rate_set(&_register_io_function, static_cast<lsm6dsox_odr_xl_t>(odr_xl));
 }
 
 void CoreIMULSM6DSOX::setAccelRange(fs_xl_t fs_xl)
 {
-	lsm6dsox_xl_full_scale_set(&getRegisterIOFunction(), static_cast<lsm6dsox_fs_xl_t>(fs_xl));
+	lsm6dsox_xl_full_scale_set(&_register_io_function, static_cast<lsm6dsox_fs_xl_t>(fs_xl));
 }
 
 auto CoreIMULSM6DSOX::getAccelRate() -> int32_t
 {
 	lsm6dsox_ctrl1_xl_t reg;
-	lsm6dsox_read_reg(&getRegisterIOFunction(), LSM6DSOX_CTRL1_XL, (uint8_t *)&reg, 1);
+	lsm6dsox_read_reg(&_register_io_function, LSM6DSOX_CTRL1_XL, (uint8_t *)&reg, 1);
 	return reg.odr_xl;
 }
 
 auto CoreIMULSM6DSOX::getAccelRange() -> int32_t
 {
 	lsm6dsox_ctrl1_xl_t reg;
-	lsm6dsox_read_reg(&getRegisterIOFunction(), LSM6DSOX_CTRL1_XL, (uint8_t *)&reg, 1);
+	lsm6dsox_read_reg(&_register_io_function, LSM6DSOX_CTRL1_XL, (uint8_t *)&reg, 1);
 	return reg.fs_xl;
 }
 
@@ -265,25 +265,25 @@ void CoreIMULSM6DSOX::turnOffAccel()
 
 void CoreIMULSM6DSOX::setGyrRate(odr_g_t odr_gy)
 {
-	lsm6dsox_gy_data_rate_set(&getRegisterIOFunction(), static_cast<lsm6dsox_odr_g_t>(odr_gy));
+	lsm6dsox_gy_data_rate_set(&_register_io_function, static_cast<lsm6dsox_odr_g_t>(odr_gy));
 }
 
 void CoreIMULSM6DSOX::setGyrRange(fs_g_t fs_gy)
 {
-	lsm6dsox_gy_full_scale_set(&getRegisterIOFunction(), static_cast<lsm6dsox_fs_g_t>(fs_gy));
+	lsm6dsox_gy_full_scale_set(&_register_io_function, static_cast<lsm6dsox_fs_g_t>(fs_gy));
 }
 
 auto CoreIMULSM6DSOX::getGyrRate() -> int32_t
 {
 	lsm6dsox_ctrl2_g_t reg;
-	lsm6dsox_read_reg(&getRegisterIOFunction(), LSM6DSOX_CTRL2_G, (uint8_t *)&reg, 1);
+	lsm6dsox_read_reg(&_register_io_function, LSM6DSOX_CTRL2_G, (uint8_t *)&reg, 1);
 	return reg.odr_g;
 }
 
 auto CoreIMULSM6DSOX::getGyrRange() -> int32_t
 {
 	lsm6dsox_ctrl2_g_t reg;
-	lsm6dsox_read_reg(&getRegisterIOFunction(), LSM6DSOX_CTRL2_G, (uint8_t *)&reg, 1);
+	lsm6dsox_read_reg(&_register_io_function, LSM6DSOX_CTRL2_G, (uint8_t *)&reg, 1);
 	return reg.fs_g;
 }
  
@@ -309,4 +309,26 @@ auto CoreIMULSM6DSOX::getAccelAndAngularSpeed() -> std::tuple<interface::mg_t, i
 	return std::tuple {_sensors_data.xl.x, _sensors_data.xl.y, _sensors_data.xl.z, _sensors_data.gy.x, _sensors_data.gy.y, _sensors_data.gy.z};
 }
 
+
+void CoreIMULSM6DSOX::setDecisionTree(const ucf_line_t *tree) {
+	auto nb_lines = static_cast<int>((sizeof(tree) / sizeof(ucf_line_t)));
+	log_info("size = %d", nb_lines);
+	for (auto i = 0; i < nb_lines; ++i) {
+		WriteReg(&_register_io_function, tree[i].address, (std::uint8_t *)&tree[i].data, 1);
+		rtos::ThisThread::sleep_for(5ms);
+	}
+}
+
+void CoreIMULSM6DSOX::setMLCConfig(const ucf_line_t *tree) {
+	setDecisionTree(tree);
+	TurnOffEmbeddedFeatures(&_emb_sens);
+	rtos::ThisThread::sleep_for(10ms);
+
+	TurnOffSensors();
+	setBlockDataUpdate(PROPERTY_ENABLE); 
+
+	RouteSignalsInterruptGetSet(&_pin_int1_route);
+	setIntNotification(LSM6DSOX_BASE_PULSED_EMB_LATCHED);
+	setEmbeddedSens(&_emb_sens);
+}
 }	// namespace leka

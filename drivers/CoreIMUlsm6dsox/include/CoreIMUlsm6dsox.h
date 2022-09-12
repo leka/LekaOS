@@ -15,6 +15,11 @@
 #include "interface/Accelerometer.h"
 #include "interface/Gyroscope.h"
 
+#include "rtos/ThisThread.h"
+#include "rtos/Thread.h"
+
+using namespace std::chrono;
+
 namespace leka {
 
 	class CoreIMULSM6DSOX : public interface::Accelerometer, public interface::Gyroscope
@@ -81,13 +86,18 @@ namespace leka {
 			};	
 
 			//
-			// MARK: - struc
+			// MARK: - structs
 			//
 
             struct SensorsData {
                 accel_data_t xl;
                 gyro_data_t gy;
             };
+
+			struct ucf_line_t{
+				uint8_t address;
+				uint8_t data;
+			};
 
 			//
 			// MARK: - Type definitions
@@ -129,8 +139,10 @@ namespace leka {
 
 			void updateData();
 			void TurnOffSensors();
-			void TurnOffEmbeddedFeatures(lsm6dsox_emb_sens_t *emb_sens);
+			void TurnOffEmbeddedFeatures(lsm6dsox_emb_sens_t *);
 
+			void setDecisionTree(const ucf_line_t *);
+			void setMLCConfig(const ucf_line_t *);
 			//
 			// MARK: - Accelerometer functions
 			//
@@ -162,7 +174,9 @@ namespace leka {
 			mbed::I2C &_i2c;
 			uint8_t _address = LSM6DSOX_I2C_ADD_L;
 
-			PinName _lsm6dsox_interrupt;			
+			PinName _lsm6dsox_interrupt;		
+			lsm6dsox_emb_sens_t _emb_sens;
+			lsm6dsox_pin_int1_route_t _pin_int1_route;
 			lsm6dsox_md_t _config;
 			SensorsData _sensors_data;
 
