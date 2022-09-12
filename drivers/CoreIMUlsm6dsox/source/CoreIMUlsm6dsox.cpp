@@ -160,9 +160,7 @@ void CoreIMU_LSM6DSOX::setEmbeddedSens(const lsm6dsox_emb_sens_t *val)
 	lsm6dsox_emb_func_en_b_t emb_func_en_b;
 	lsm6dsox_mem_bank_set(&getRegisterIOFunction(), LSM6DSOX_EMBEDDED_FUNC_BANK);
 
-	if (lsm6dsox_read_reg(&getRegisterIOFunction(), LSM6DSOX_EMB_FUNC_EN_A, (uint8_t *)&emb_func_en_a, 1)) {
-		return;
-	}
+	lsm6dsox_read_reg(&getRegisterIOFunction(), LSM6DSOX_EMB_FUNC_EN_A, (uint8_t *)&emb_func_en_a, 1);
 
 	auto ret					 = lsm6dsox_read_reg(&getRegisterIOFunction(), LSM6DSOX_EMB_FUNC_EN_B, (uint8_t *)&emb_func_en_b, 1);
 	emb_func_en_b.mlc_en		 = val->mlc;
@@ -173,19 +171,13 @@ void CoreIMU_LSM6DSOX::setEmbeddedSens(const lsm6dsox_emb_sens_t *val)
 	emb_func_en_b.fifo_compr_en	 = val->fifo_compr;
 
 	if (ret == 0) {
-		if(lsm6dsox_write_reg(&getRegisterIOFunction(), LSM6DSOX_EMB_FUNC_EN_A, (uint8_t *)&emb_func_en_a, 1)) {
-			return;
-		}
-		if(lsm6dsox_write_reg(&getRegisterIOFunction(), LSM6DSOX_EMB_FUNC_EN_B, (uint8_t *)&emb_func_en_b, 1)) {
-			return;
-		}
-		if(lsm6dsox_mem_bank_set(&getRegisterIOFunction(), LSM6DSOX_USER_BANK)) {
-			return;
-		}
+		lsm6dsox_write_reg(&getRegisterIOFunction(), LSM6DSOX_EMB_FUNC_EN_A, (uint8_t *)&emb_func_en_a, 1);
+		lsm6dsox_write_reg(&getRegisterIOFunction(), LSM6DSOX_EMB_FUNC_EN_B, (uint8_t *)&emb_func_en_b, 1);
+		lsm6dsox_mem_bank_set(&getRegisterIOFunction(), LSM6DSOX_USER_BANK);
 	}
 }
 
-void CoreIMU_LSM6DSOX::getAllRessources(lsm6dsox_all_sources_t *val)
+void CoreIMU_LSM6DSOX::updateAllRessources(lsm6dsox_all_sources_t *val)
 {
 	lsm6dsox_all_sources_get(&getRegisterIOFunction(), val);
 }
