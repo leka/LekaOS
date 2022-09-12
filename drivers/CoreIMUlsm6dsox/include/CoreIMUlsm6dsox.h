@@ -127,13 +127,16 @@ namespace leka {
 			void setMLCDataRate(lsm6dsox_mlc_odr_t val);
 			void setEmbeddedSens(const lsm6dsox_emb_sens_t *val);
 
+			void setDecisionTree(const ucf_line_t *);
+			void setMLCConfig(const ucf_line_t *);
+			
 			void RouteSignalsInterruptGetSet(lsm6dsox_pin_int1_route_t *pin_int1_route);
 			auto WriteReg(stmdev_ctx_t *ctx, uint8_t reg, const uint8_t *data, uint16_t len) const	-> int32_t;
 
 			
 			auto getId(uint8_t &id) 									-> int32_t;
-			auto getMLCOut(uint8_t *buff) 								-> int32_t;
-			void updateAllRessources(lsm6dsox_all_sources_t *val);
+			auto getOutputTree(uint8_t *buff, uint8_t reg) 				-> uint8_t;
+			auto getAllRessources() -> lsm6dsox_all_sources_t;
 			auto getConfig() -> lsm6dsox_md_t& { return _config; }
 			auto getRegisterIOFunction() -> stmdev_ctx_t& { return _register_io_function; }
 
@@ -141,8 +144,6 @@ namespace leka {
 			void TurnOffSensors();
 			void TurnOffEmbeddedFeatures(lsm6dsox_emb_sens_t *);
 
-			void setDecisionTree(const ucf_line_t *);
-			void setMLCConfig(const ucf_line_t *);
 			//
 			// MARK: - Accelerometer functions
 			//
@@ -174,14 +175,20 @@ namespace leka {
 			mbed::I2C &_i2c;
 			uint8_t _address = LSM6DSOX_I2C_ADD_L;
 
+			lsm6dsox_md_t _config;
+			SensorsData _sensors_data;
+			
+			static const int kBufferSize			 = 32;
+			std::array<uint8_t, kBufferSize> _buffer = {0};
+
+			//
+			// MARK: - For decision tree
+			//
+
 			PinName _lsm6dsox_interrupt;		
 			lsm6dsox_emb_sens_t _emb_sens;
 			lsm6dsox_pin_int1_route_t _pin_int1_route;
-			lsm6dsox_md_t _config;
-			SensorsData _sensors_data;
-
-			static const int kBufferSize			 = 32;
-			std::array<uint8_t, kBufferSize> _buffer = {0};
+			lsm6dsox_all_sources_t _status;
 
 			//
 			// MARK: - I2C Read/Write methods & pointers
