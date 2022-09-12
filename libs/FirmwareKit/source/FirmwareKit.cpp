@@ -4,7 +4,31 @@
 
 #include "FirmwareKit.h"
 
+#include "semver/semver.hpp"
+
 using namespace leka;
+
+auto FirmwareKit::getCurrentVersion() -> FirmwareVersion
+{
+	return getCurrentVersionFromFile();
+}
+
+auto FirmwareKit::getCurrentVersionFromFile() -> FirmwareVersion
+{
+	auto file_content = std::array<char, 16> {};
+
+	if (auto is_not_open = !_file.open(os_version_path); is_not_open) {
+		return FirmwareVersion {.major = 1, .minor = 0, .revision = 0};
+	}
+
+	_file.read(file_content);
+	_file.close();
+
+	std::replace(std::begin(file_content), std::end(file_content), '\n', '\0');
+	auto semversion = semver::version {file_content.data()};
+
+	return FirmwareVersion {.major = semversion.major, .minor = semversion.minor, .revision = semversion.patch};
+}
 
 auto FirmwareKit::loadUpdate(const FirmwareVersion &version) -> bool
 {

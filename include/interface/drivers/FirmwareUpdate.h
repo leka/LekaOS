@@ -13,6 +13,7 @@ class FirmwareUpdate
   public:
 	virtual ~FirmwareUpdate() = default;
 
+	virtual auto getCurrentVersion() -> FirmwareVersion				= 0;
 	virtual auto loadUpdate(const FirmwareVersion &version) -> bool = 0;
 };
 
