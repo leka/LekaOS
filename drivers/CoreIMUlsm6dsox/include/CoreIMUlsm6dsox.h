@@ -123,7 +123,7 @@ namespace leka {
 			
 			auto getId(uint8_t &id) 									-> int32_t;
 			auto getMLCOut(uint8_t *buff) 								-> int32_t;
-			void getAllRessources(lsm6dsox_all_sources_t *val);
+			void updateAllRessources(lsm6dsox_all_sources_t *val);
 			auto getConfig() -> lsm6dsox_md_t& { return _config; }
 			auto getRegisterIOFunction() -> stmdev_ctx_t& { return _register_io_function; }
 
