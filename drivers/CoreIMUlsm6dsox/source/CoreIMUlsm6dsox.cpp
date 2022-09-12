@@ -177,9 +177,11 @@ void CoreIMULSM6DSOX::setEmbeddedSens(const lsm6dsox_emb_sens_t *val)
 	}
 }
 
-void CoreIMULSM6DSOX::updateAllRessources(lsm6dsox_all_sources_t *val)
+auto CoreIMULSM6DSOX::getAllRessources() -> lsm6dsox_all_sources_t
 {
-	lsm6dsox_all_sources_get(&_register_io_function, val);
+	lsm6dsox_all_sources_get(&_register_io_function, &_status);
+
+	return _status;
 }
 
 auto CoreIMULSM6DSOX::getId(uint8_t &id) -> int32_t
@@ -190,15 +192,55 @@ auto CoreIMULSM6DSOX::getId(uint8_t &id) -> int32_t
 	return id;
 }
 	//A revoir
-auto CoreIMULSM6DSOX::getMLCOut(uint8_t *buff) -> int32_t
+auto CoreIMULSM6DSOX::getOutputTree(uint8_t *buff, uint8_t reg_tree) -> uint8_t
 {
 	lsm6dsox_mem_bank_set(&_register_io_function, LSM6DSOX_EMBEDDED_FUNC_BANK);
-	lsm6dsox_read_reg(&_register_io_function, LSM6DSOX_MLC0_SRC, buff, 8);
+	lsm6dsox_read_reg(&_register_io_function, reg_tree, buff, 8);
 	lsm6dsox_mem_bank_set(&_register_io_function, LSM6DSOX_USER_BANK);
 
-	return 0;
+	switch(reg_tree){
+		case LSM6DSOX_MLC0_SRC:
+			return buff[0];
+		case LSM6DSOX_MLC1_SRC:
+			return buff[1];
+		case LSM6DSOX_MLC2_SRC:
+			return buff[2];
+		case LSM6DSOX_MLC3_SRC:
+			return buff[3];
+		case LSM6DSOX_MLC4_SRC:
+			return buff[4];
+		case LSM6DSOX_MLC5_SRC:
+			return buff[5];
+		case LSM6DSOX_MLC6_SRC:
+			return buff[6];
+		case LSM6DSOX_MLC7_SRC:
+			return buff[7];
+		default:
+			return -1;
+	}
 }
 
+void CoreIMULSM6DSOX::setDecisionTree(const ucf_line_t *tree) {
+	auto nb_lines = static_cast<int>((sizeof(tree) / sizeof(ucf_line_t)));
+	log_info("size = %d", nb_lines);
+	for (auto i = 0; i < nb_lines; ++i) {
+		WriteReg(&_register_io_function, tree[i].address, (std::uint8_t *)&tree[i].data, 1);
+		rtos::ThisThread::sleep_for(5ms);
+	}
+}
+
+void CoreIMULSM6DSOX::setMLCConfig(const ucf_line_t *tree) {
+	setDecisionTree(tree);
+	TurnOffEmbeddedFeatures(&_emb_sens);
+	rtos::ThisThread::sleep_for(10ms);
+
+	TurnOffSensors();
+	setBlockDataUpdate(PROPERTY_ENABLE); 
+
+	RouteSignalsInterruptGetSet(&_pin_int1_route);
+	setIntNotification(LSM6DSOX_BASE_PULSED_EMB_LATCHED);
+	setEmbeddedSens(&_emb_sens);
+}
 
 void CoreIMULSM6DSOX::updateData()
 {
@@ -310,25 +352,4 @@ auto CoreIMULSM6DSOX::getAccelAndAngularSpeed() -> std::tuple<interface::mg_t, i
 }
 
 
-void CoreIMULSM6DSOX::setDecisionTree(const ucf_line_t *tree) {
-	auto nb_lines = static_cast<int>((sizeof(tree) / sizeof(ucf_line_t)));
-	log_info("size = %d", nb_lines);
-	for (auto i = 0; i < nb_lines; ++i) {
-		WriteReg(&_register_io_function, tree[i].address, (std::uint8_t *)&tree[i].data, 1);
-		rtos::ThisThread::sleep_for(5ms);
-	}
-}
-
-void CoreIMULSM6DSOX::setMLCConfig(const ucf_line_t *tree) {
-	setDecisionTree(tree);
-	TurnOffEmbeddedFeatures(&_emb_sens);
-	rtos::ThisThread::sleep_for(10ms);
-
-	TurnOffSensors();
-	setBlockDataUpdate(PROPERTY_ENABLE); 
-
-	RouteSignalsInterruptGetSet(&_pin_int1_route);
-	setIntNotification(LSM6DSOX_BASE_PULSED_EMB_LATCHED);
-	setEmbeddedSens(&_emb_sens);
-}
 }	// namespace leka
