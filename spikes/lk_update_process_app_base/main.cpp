@@ -28,7 +28,7 @@ FATFileSystem fatfs("fs");
 auto coreqspi		   = CoreQSPI();
 auto coremanageris25lp = CoreFlashManagerIS25LP016D(coreqspi);
 auto coreis25lp		   = CoreFlashIS25LP016D(coreqspi, coremanageris25lp);
-auto firmwarekit	   = FirmwareKit(coreis25lp);
+auto firmwarekit	   = FirmwareKit(coreis25lp, FirmwareKit::DEFAULT_CONFIG);
 
 auto get_secondary_bd() -> mbed::BlockDevice *
 {

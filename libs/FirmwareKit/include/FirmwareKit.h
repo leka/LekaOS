@@ -15,11 +15,16 @@ namespace leka {
 
 class FirmwareKit : public interface::FirmwareUpdate
 {
-	static constexpr auto os_version_path = "fs/sys/os-version";
-
   public:
-	explicit FirmwareKit(interface::FlashMemory &flash, const char *format = "/fs/usr/os/LekaOS-%i.%i.%i.bin")
-		: _flash(flash), _path_format(format)
+	struct Config {
+		const char *os_version_path;
+		const char *bin_path_format;
+	};
+
+	static constexpr auto DEFAULT_CONFIG =
+		Config {.os_version_path = "fs/sys/os-version", .bin_path_format = "/fs/usr/os/LekaOS-%i.%i.%i.bin"};
+
+	explicit FirmwareKit(interface::FlashMemory &flash, Config config) : _flash(flash), _config(config)
 	{
 		// nothing do to
 	}
@@ -36,7 +41,7 @@ class FirmwareKit : public interface::FirmwareUpdate
 	interface::FlashMemory &_flash;
 	FileManagerKit::File _file {};
 
-	const char *_path_format;
+	const Config _config;
 };
 
 }	// namespace leka
