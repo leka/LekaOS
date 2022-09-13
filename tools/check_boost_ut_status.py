@@ -28,6 +28,9 @@ parser.add_argument('-l', '--loop-delay', metavar='SLEEP_DELAY', default=0.8,
 parser.add_argument('-f', '--fast', metavar='FAST', action=argparse.BooleanOptionalAction,
                     help='fast check with 0.2s loop delay')
 
+parser.add_argument('-v', '--verbose', metavar='VERBOSE', action=argparse.BooleanOptionalAction,
+                    help='provides additional details about command processing and output')
+
 
 args = parser.parse_args()
 
@@ -80,20 +83,17 @@ def wait_for_response():
 
 
 def create_saving_file():
-    f = open(filepath, "w")
+    try:
+        f = open(filepath, "w")
+    except OSError:
+        print("Could not open file:" + filepath)
+        sys.exit()
     f.close()
 
 
 def write_saving_file(data):
     file = open(filepath, "a")
-    file.write(data + '\n')
-    file.close()
-
-
-def print_saving_file():
-    file = open(filepath, "r")
-    content = file.read()
-    print(content)
+    file.write(data.strip() + '\n')
     file.close()
 
 
@@ -101,8 +101,8 @@ def delete_saving_file():
     os.remove(filepath)
 
 
-def FilterOnRegEx(file):
-    ploop = ("\s\smain\.cpp:[0-9].+:FAILED")
+def filter_on_regex(file):
+    ploop = ("main\.cpp:[0-9].+:FAILED")
     pattern = re.compile(ploop)
     for line in file:
         match = pattern.search(line)
@@ -113,7 +113,7 @@ def FilterOnRegEx(file):
 def check_boost_ut_status():
     failed_tests = list()
     file = open(filepath, "r")
-    for line in FilterOnRegEx(file):
+    for line in filter_on_regex(file):
         failed_tests.append(line)
     file.close()
     return failed_tests
@@ -140,9 +140,11 @@ def reboot_device():
 #
 
 
-LOOP_SLEEP_DELAY = float(args.loop_delay) if not args.fast else 0.2
+LOOP_SLEEP_DELAY = float(args.loop_delay) if not args.fast else 0.1
+VERBOSE = args.verbose
+
+
 FAILED_TESTS = list()
-NO_RESPONSE_STATUS = True
 
 FAILED_STR = Fore.RED + "❌FAILED"
 SUCCESS_STR = Fore.GREEN + "✅SUCCESS"
@@ -152,12 +154,15 @@ def main():
 
     create_saving_file()
 
-    global NO_RESPONSE_STATUS
+    NO_RESPONSE_STATUS = True
+    print("Waiting for response...")
     while True:
         data = wait_for_response()
         if data is not None:
             NO_RESPONSE_STATUS = False
             write_saving_file(data)
+            if VERBOSE:
+                print(data.strip())
         elif NO_RESPONSE_STATUS:
             print("⚠️  Device not responding, rebooting now...")
             reboot_device()
