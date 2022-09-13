@@ -1,5 +1,5 @@
 # Leka - LekaOS
-# Copyright 2020 APF France handicap
+# Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
 add_mbed_executable(spike_lk_boost_ut)
@@ -15,11 +15,6 @@ target_sources(spike_lk_boost_ut
 )
 
 target_link_libraries(spike_lk_boost_ut
-	CoreVideo
-	CoreLL
-	CoreSTM32Hal
-	FileManagerKit
-	UIAnimationKit
 )
 
 target_link_custom_leka_targets(spike_lk_boost_ut)
