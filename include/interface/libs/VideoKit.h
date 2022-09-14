@@ -15,7 +15,8 @@ class VideoKit
 
 	virtual void initializeScreen() = 0;
 
-	virtual void displayImage(const std::filesystem::path &path) = 0;
+	virtual void displayImage(const std::filesystem::path &path)					   = 0;
+	virtual void fillWhiteBackgroundAndDisplayImage(const std::filesystem::path &path) = 0;
 
 	virtual void playVideoOnce(const std::filesystem::path &path)	  = 0;
 	virtual void playVideoOnRepeat(const std::filesystem::path &path) = 0;
