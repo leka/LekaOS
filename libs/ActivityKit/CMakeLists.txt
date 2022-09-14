@@ -8,6 +8,7 @@ target_include_directories(ActivityKit
 	PUBLIC
 	include
 	include/activities
+	include/activities/include
 )
 
 target_sources(ActivityKit
