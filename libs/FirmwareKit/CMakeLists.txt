@@ -4,9 +4,13 @@
 
 add_library(FirmwareKit STATIC)
 
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/os_version.h.in"
+	"${CMAKE_CURRENT_BINARY_DIR}/include/os_version.h")
+
 target_include_directories(FirmwareKit
 	PUBLIC
 	include
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
 )
 
 target_sources(FirmwareKit
