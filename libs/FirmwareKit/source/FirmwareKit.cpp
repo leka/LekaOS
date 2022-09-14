@@ -4,13 +4,15 @@
 
 #include "FirmwareKit.h"
 
+#include "OSVersion.h"
 #include "semver/semver.hpp"
 
 using namespace leka;
 
 auto FirmwareKit::getCurrentVersion() -> Version
 {
-	return getCurrentVersionFromFile();
+	auto semversion = semver::version {OS_VERSION};
+	return Version {.major = semversion.major, .minor = semversion.minor, .revision = semversion.patch};
 }
 
 auto FirmwareKit::getCurrentVersionFromFile() -> Version
