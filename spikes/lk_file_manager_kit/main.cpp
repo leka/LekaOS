@@ -25,6 +25,8 @@ const std::filesystem::path sub_test_dir	  = test_dir / "sub/";
 const std::filesystem::path test_filename	  = test_dir / "test_spike_lk_filesystem_kit";
 const std::filesystem::path sub_test_filename = sub_test_dir / "test_spike_lk_filesystem_kit";
 
+const auto file_for_sha256_path = std::filesystem::path {"fs/usr/os/LekaOS-1.0.0.bin"};
+
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 
@@ -36,6 +38,18 @@ void initializeSD()
 	sd_blockdevice.frequency(default_sd_blockdevice_frequency);
 
 	fatfs.mount(&sd_blockdevice);
+}
+
+void printSHA256(std::span<uint8_t> array)
+{
+	for (size_t i = 0; i < std::size(array); i++) {
+		if (array[i] < 0xF) {
+			printf("0%x", array[i]);
+		} else {
+			printf("%x", array[i]);
+		}
+	}
+	printf("\n");
 }
 
 auto main() -> int
@@ -55,6 +69,10 @@ auto main() -> int
 	initializeSD();
 
 	rtos::ThisThread::sleep_for(1s);
+
+	file.open(file_for_sha256_path);
+	auto sha256 = file.getSHA256();
+	printSHA256(sha256);
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
