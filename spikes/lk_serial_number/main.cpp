@@ -37,6 +37,9 @@ auto main() -> int
 	auto serial_number = serialnumberkit.getSerialNumber();
 	log_info("S/N: %s", serial_number.data());
 
+	auto short_serial_number = serialnumberkit.getShortSerialNumber();
+	log_info("S/N (short): %s", short_serial_number.data());
+
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
 		log_info("A message from your board %s --> \"%s\" at %i s", MBED_CONF_APP_TARGET_NAME, hello.world,
