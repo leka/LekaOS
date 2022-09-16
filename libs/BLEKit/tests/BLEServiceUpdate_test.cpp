@@ -20,6 +20,7 @@ class BLEServiceUpdateTest : public testing::Test
 	BLEServiceUpdate service_update {};
 
 	BLEServiceUpdate::data_received_handle_t data_received_handle {};
+	BLEServiceUpdate::data_requested_handle_t data_requested_handle {};
 
 	bool default_request_update_sent {false};
 	FirmwareVersion default_version {0x00, 0x00, 0x0000};
@@ -231,4 +232,11 @@ TEST_F(BLEServiceUpdateTest, getVersionRevisionNotSameHandle)
 	auto actual_version = service_update.getVersion();
 	EXPECT_EQ(actual_version.revision, expected_version_revision);
 	EXPECT_NE(actual_version.revision, sent_value);
+}
+
+TEST_F(BLEServiceUpdateTest, onDataRequested)
+{
+	service_update.onDataRequested(data_requested_handle);
+
+	// nothing expected
 }

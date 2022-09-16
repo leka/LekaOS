@@ -40,6 +40,7 @@ class BLEServiceFileReceptionTest : public testing::Test
 	std::array<const char, 256> default_expected_file_path {};
 
 	BLEServiceFileReception::data_received_handle_t data_received_handle {};
+	BLEServiceFileReception::data_requested_handle_t data_requested_handle {};
 
 	void onDataReceivedProcess(std::span<uint8_t> data)
 	{
@@ -133,4 +134,11 @@ TEST_F(BLEServiceFileReceptionTest, onFileDataReceivedCallbackNotSameHandle)
 	EXPECT_CALL(mock_callback, Call).Times(0);
 
 	onDataReceivedProcess(sent_data);
+}
+
+TEST_F(BLEServiceFileReceptionTest, onDataRequested)
+{
+	service_file_reception.onDataRequested(data_requested_handle);
+
+	// nothing expected
 }

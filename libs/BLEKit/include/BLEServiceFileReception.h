@@ -48,6 +48,11 @@ class BLEServiceFileReception : public interface::BLEService
 		_on_file_data_callback = callback;
 	}
 
+	void onDataRequested(const data_requested_handle_t &params) final
+	{
+		// do nothing
+	}
+
   private:
 	std::array<char, 256> file_path {};
 	WriteOnlyArrayGattCharacteristic<char, 256> file_path_characteristic {

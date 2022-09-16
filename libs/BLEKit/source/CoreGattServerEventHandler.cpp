@@ -26,3 +26,18 @@ void CoreGattServerEventHandler::onDataWritten(const GattWriteCallbackParams &pa
 
 	std::for_each(_services.begin(), _services.end(), on_data_received);
 }
+
+void CoreGattServerEventHandler::onDataRead(const GattReadCallbackParams &params)
+{
+	auto on_data_requested = [&params](interface::BLEService *service) {
+		auto characteristics_count = service->getCharacteristicCount();
+
+		for (uint8_t index = 0; index < characteristics_count; index++) {
+			if (params.handle == service->getCharacteristic(index)->getValueHandle()) {
+				service->onDataRequested(params);
+			}
+		}
+	};
+
+	std::for_each(_services.begin(), _services.end(), on_data_requested);
+}

@@ -47,6 +47,11 @@ class BLEServiceMonitoring : public interface::BLEService
 
 	void onSoftReboot(const std::function<void()> &callback) { _on_soft_reboot = callback; }
 
+	void onDataRequested(const data_requested_handle_t &params) final
+	{
+		// do nothing
+	}
+
   private:
 	uint8_t charging_status {0x00};
 	ReadOnlyGattCharacteristic<uint8_t> _charging_status_characteristic {
