@@ -12,7 +12,11 @@ namespace leka {
 class SerialNumberFormater
 {
   public:
-	explicit SerialNumberFormater(interface::MCU &mcu) : _mcu(mcu) {}
+	struct Config {
+		const char *date_of_test_path;
+	};
+
+	explicit SerialNumberFormater(interface::MCU &mcu, Config config) : _mcu(mcu), _config(config) {}
 
 	[[nodiscard]] auto setPrefix(std::span<uint8_t> serial_number) const -> std::size_t;
 	[[nodiscard]] auto setDateOfTest(std::span<uint8_t> serial_number, uint32_t offset) const -> std::size_t;
@@ -20,6 +24,7 @@ class SerialNumberFormater
 
   private:
 	interface::MCU &_mcu;
+	const Config _config;
 };
 
 }	// namespace leka

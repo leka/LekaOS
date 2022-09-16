@@ -70,7 +70,7 @@ class RobotControllerTest : public testing::Test
 	mock::Battery battery {};
 
 	mock::MCU mock_mcu {};
-	SerialNumberKit serialnumberkit {mock_mcu};
+	SerialNumberKit serialnumberkit {mock_mcu, SerialNumberKit::DEFAULT_CONFIG};
 
 	mock::FirmwareUpdate firmware_update {};
 

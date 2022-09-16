@@ -15,7 +15,13 @@ namespace leka {
 class SerialNumberKit
 {
   public:
-	explicit SerialNumberKit(interface::MCU &mcu) : _formater(mcu)
+	struct Config {
+		const char *date_of_test_path;
+	};
+	static constexpr auto DEFAULT_CONFIG = Config {.date_of_test_path = "fs/sys/date_of_test"};
+
+	explicit SerialNumberKit(interface::MCU &mcu, Config config)
+		: _formater(mcu, SerialNumberFormater::Config {.date_of_test_path = config.date_of_test_path})
 	{
 		// do nothing
 	}

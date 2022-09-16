@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstring>
 
+#include "FileManagerKit.h"
 #include "SerialNumberFormater.h"
 
 using namespace leka;
@@ -21,6 +22,11 @@ auto SerialNumberFormater::setDateOfTest(std::span<uint8_t> partial_serial_numbe
 {
 	auto date_of_test = std::array<uint8_t, 4> {};
 	date_of_test.fill('X');
+
+	if (auto file = FileManagerKit::File {_config.date_of_test_path}; file.is_open()) {
+		file.read(date_of_test);
+		file.close();
+	}
 
 	std::copy(date_of_test.begin(), date_of_test.end(), partial_serial_number.begin() + offset);
 

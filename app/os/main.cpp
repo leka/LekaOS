@@ -348,7 +348,7 @@ namespace robot {
 		auto sleep_timeout = CoreTimeout {};
 
 		auto mcu			 = CoreMCU {};
-		auto serialnumberkit = SerialNumberKit {mcu};
+		auto serialnumberkit = SerialNumberKit {mcu, SerialNumberKit::DEFAULT_CONFIG};
 
 	}	// namespace internal
 
