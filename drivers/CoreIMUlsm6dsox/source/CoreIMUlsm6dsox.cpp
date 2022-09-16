@@ -350,6 +350,4 @@ auto CoreIMULSM6DSOX::getAngularSpeedX() -> interface::dps_t {
 	return _sensors_data.gy.z;
 }
 
-// OLDER
-
 }	// namespace leka
