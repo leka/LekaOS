@@ -12,12 +12,16 @@ target_include_directories(SerialNumberKit
 target_sources(SerialNumberKit
 	PRIVATE
 	source/SerialNumberKit.cpp
+	source/SerialNumberFormater.cpp
 )
 
-target_link_libraries(SerialNumberKit)
+target_link_libraries(SerialNumberKit
+	FileManagerKit
+)
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/SerialNumberKit_test.cpp
+		tests/SerialNumberFormater_test.cpp
 	)
 endif()

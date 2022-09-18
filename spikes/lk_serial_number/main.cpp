@@ -5,15 +5,30 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreMCU.h"
+#include "FATFileSystem.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
+#include "SDBlockDevice.h"
 #include "SerialNumberKit.h"
 
 using namespace leka;
 using namespace std::chrono_literals;
 
+SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
+FATFileSystem fatfs("fs");
+
 auto mcu			 = CoreMCU {};
-auto serialnumberkit = SerialNumberKit {mcu};
+auto serialnumberkit = SerialNumberKit {mcu, SerialNumberKit::DEFAULT_CONFIG};
+
+void initializeSD()
+{
+	constexpr auto default_sd_blockdevice_frequency = uint64_t {25'000'000};
+
+	sd_blockdevice.init();
+	sd_blockdevice.frequency(default_sd_blockdevice_frequency);
+
+	fatfs.mount(&sd_blockdevice);
+}
 
 auto main() -> int
 {
@@ -22,6 +37,8 @@ auto main() -> int
 	log_info("Hello, World!\n\n");
 
 	auto start = rtos::Kernel::Clock::now();
+
+	initializeSD();
 
 	auto hello = HelloWorld();
 
@@ -36,6 +53,9 @@ auto main() -> int
 
 	auto serial_number = serialnumberkit.getSerialNumber();
 	log_info("S/N: %s", serial_number.data());
+
+	auto short_serial_number = serialnumberkit.getShortSerialNumber();
+	log_info("S/N (short): %s", short_serial_number.data());
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
