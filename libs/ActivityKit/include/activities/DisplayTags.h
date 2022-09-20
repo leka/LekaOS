@@ -21,6 +21,8 @@ class DisplayTags : public interface::Activity
 	void stop() final;
 
   private:
+	void processCard(const MagicCard &card);
+
 	RFIDKit &_rfidkit;
 	interface::VideoKit &_videokit;
 	std::array<char, 32> _path_buffer = {};

@@ -14,20 +14,29 @@ void DisplayTags::start()
 
 	_backup_callback = _rfidkit.getCallback();
 
-	auto on_tag_detected_callback = [this](const MagicCard &card) {
-		snprintf(_path_buffer.data(), _path_buffer.size(), "fs/home/img/id/%.4x.jpg", card.getId());
-		_videokit.displayImage(_path_buffer.data());
-
-		_backup_callback(card);
-	};
-
-	_rfidkit.onTagActivated(on_tag_detected_callback);
+	_rfidkit.onTagActivated([this](const MagicCard &card) { processCard(card); });
 }
 
 void DisplayTags::stop()
 {
 	_rfidkit.onTagActivated(_backup_callback);
 }
+
+void DisplayTags::processCard(const MagicCard &card)
+{
+	// TODO (@HPezz) Remove special case when fix is available
+	// ! Temporary fix while we wait for a change in fs
+	if (card == MagicCard::math_arithmetic_addition_sign_plus) {
+		_videokit.displayImage("fs/home/img/id/003B.jpg");
+	} else if (card == MagicCard::math_arithmetic_substraction_sign_minus) {
+		_videokit.displayImage("fs/home/img/id/003C.jpg");
+	} else {
+		snprintf(_path_buffer.data(), _path_buffer.size(), "fs/home/img/id/%.4x.jpg", card.getId());
+		_videokit.displayImage(_path_buffer.data());
+
+		_backup_callback(card);
+	}
+};
 
 }	// namespace leka::activity
 
