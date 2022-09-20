@@ -62,6 +62,8 @@ $CLANG_TIDY_EXEC = ""
 
 if system("which clang-tidy > /dev/null")
 	$CLANG_TIDY_EXEC = "clang-tidy"
+elsif system("which clang-tidy-14 > /dev/null")
+	$CLANG_TIDY_EXEC = "clang-tidy-14"
 elsif system("which clang-tidy-13 > /dev/null")
 	$CLANG_TIDY_EXEC = "clang-tidy-13"
 elsif system("which /opt/homebrew/opt/llvm/bin/clang-tidy > /dev/null")

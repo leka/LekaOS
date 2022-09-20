@@ -29,18 +29,6 @@ jobs:
         uses: ./.github/actions/setup
 
       #
-      # Mark: - Install clang-tidy
-      #
-
-      - name: Install clang-tidy 13
-        run: |
-          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
-          sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main"
-          sudo apt update -y
-          sudo apt install -y --no-install-recommends clang-tidy-13
-          clang-tidy-13 --version
-
-      #
       # Mark: - Config
       #
 
