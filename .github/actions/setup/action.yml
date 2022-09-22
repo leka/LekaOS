@@ -109,11 +109,6 @@ runs:
     # Mark: - Python/pip
     #
 
-    - name: Setup Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: "3.x"
-
     - name: Cache pip dependencies
       id: global_cache-pip_dependencies
       uses: actions/cache@v2
@@ -121,9 +116,9 @@ runs:
         path: |
           ${{ env.RUNNER_HOME }}/.cache/pip
           ${{ env.pythonLocation }}
-        key: ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-${{ hashFiles('config/mbed_version') }}
+        key: ${{ runner.os }}-global_cache-pip_dependencies-${{ hashFiles('config/mbed_version') }}
         restore-keys: |
-          ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-
+          ${{ runner.os }}-global_cache-pip_dependencies-
 
     - name: Install pip packages
       shell: bash
