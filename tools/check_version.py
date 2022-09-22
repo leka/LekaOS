@@ -2,7 +2,6 @@
 
 import sys
 from typing import Dict
-from ctypes import c_uint8, c_uint16
 import argparse
 import re
 
@@ -27,13 +26,13 @@ def version_is_mcuboot_compliant(version: str):
         return False
 
     try:
-        if (int(version_splited[0]) > c_uint8(-1).value):
+        if int(version_splited[0]) > 255:
             return False
 
-        if (int(version_splited[1]) > c_uint8(-1).value):
+        if int(version_splited[1]) > 255:
             return False
 
-        if (int(version_splited[2]) > c_uint16(-1).value):
+        if int(version_splited[2]) > 65535:
             return False
 
     except BaseException as error:
