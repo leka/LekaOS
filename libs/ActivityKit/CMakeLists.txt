@@ -20,6 +20,7 @@ target_sources(ActivityKit
 	source/activities/LedColorRecognition.cpp
 	source/activities/ChooseReinforcer.cpp
 	source/activities/EmotionRecognition.cpp
+	source/activities/FoodRecognition.cpp
 )
 
 target_link_libraries(ActivityKit
