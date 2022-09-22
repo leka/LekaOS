@@ -17,6 +17,7 @@ target_sources(ActivityKit
 	source/activities/DisplayTags.cpp
 	source/activities/NumberRecognition.cpp
 	source/activities/PictoColorRecognition.cpp
+	source/activities/LedColorRecognition.cpp
 )
 
 target_link_libraries(ActivityKit
