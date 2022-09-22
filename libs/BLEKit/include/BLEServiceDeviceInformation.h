@@ -40,6 +40,11 @@ class BLEServiceDeviceInformation : public interface::BLEService
 		// do nothing
 	}
 
+	void onDataRequested(const data_requested_handle_t &params) final
+	{
+		// do nothing
+	}
+
   private:
 	inline static auto _manufacturer = utils::cast::from_c_string_to_uint8_t_array("APF France handicap");
 

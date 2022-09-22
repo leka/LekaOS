@@ -20,6 +20,7 @@ class BLEServiceMonitoringTest : public testing::Test
 	BLEServiceMonitoring service_monitoring {};
 
 	BLEServiceMonitoring::data_received_handle_t data_received_handle {};
+	BLEServiceMonitoring::data_requested_handle_t data_requested_handle {};
 
 	bool default_is_screensaver_enable {true};
 
@@ -133,4 +134,11 @@ TEST_F(BLEServiceMonitoringTest, onSoftRebootNotSameHandle)
 	EXPECT_CALL(mock_callback, Call).Times(0);
 
 	onDataReceivedProcess(&sent_value_data);
+}
+
+TEST_F(BLEServiceMonitoringTest, onDataRequested)
+{
+	service_monitoring.onDataRequested(data_requested_handle);
+
+	// nothing expected
 }

@@ -377,6 +377,11 @@ class RobotController : public interface::RobotController
 			[this](std::span<const char> path) { file_reception.setFilePath(path.data()); });
 		_service_file_reception.onFileDataReceived(
 			[this](std::span<const uint8_t> buffer) { file_reception.onPacketReceived(buffer); });
+		_service_file_reception.onFileSHA256Requested([this](std::span<const char> path) {
+			if (FileManagerKit::File file {path.data()}; file.is_open()) {
+				_service_file_reception.setFileSHA256(file.getSHA256());
+			}
+		});
 
 		auto on_update_requested = [this]() { raise(event::update_requested {}); };
 		_service_update.onUpdateRequested(on_update_requested);

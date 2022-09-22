@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "BLEServiceFileReception.h"
+#include <array>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -40,6 +41,7 @@ class BLEServiceFileReceptionTest : public testing::Test
 	std::array<const char, 256> default_expected_file_path {};
 
 	BLEServiceFileReception::data_received_handle_t data_received_handle {};
+	BLEServiceFileReception::data_requested_handle_t data_requested_handle {};
 
 	void onDataReceivedProcess(std::span<uint8_t> data)
 	{
@@ -133,4 +135,53 @@ TEST_F(BLEServiceFileReceptionTest, onFileDataReceivedCallbackNotSameHandle)
 	EXPECT_CALL(mock_callback, Call).Times(0);
 
 	onDataReceivedProcess(sent_data);
+}
+
+TEST_F(BLEServiceFileReceptionTest, onFileSHA256Requested)
+{
+	testing::MockFunction<void(std::span<const char>)> mock_callback {};
+	service_file_reception.onFileSHA256Requested(mock_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_callback, Call).Times(1);
+
+	service_file_reception.onDataRequested(data_requested_handle);
+}
+
+TEST_F(BLEServiceFileReceptionTest, onFileSHA256RequestedNotSameHandle)
+{
+	testing::MockFunction<void(std::span<const char>)> mock_callback {};
+	service_file_reception.onFileSHA256Requested(mock_callback.AsStdFunction());
+
+	data_requested_handle.handle = 0xFFFF;
+
+	EXPECT_CALL(mock_callback, Call).Times(0);
+
+	service_file_reception.onDataRequested(data_requested_handle);
+}
+
+TEST_F(BLEServiceFileReceptionTest, onFileSHA256RequestedtUnset)
+{
+	service_file_reception.onFileSHA256Requested(nullptr);
+
+	service_file_reception.onDataRequested(data_requested_handle);
+}
+
+TEST_F(BLEServiceFileReceptionTest, setFileSHA256)
+{
+	std::array<uint8_t, 32> expected_sha256 {
+		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+		0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
+	};
+	std::array<uint8_t, 32> actual_sha256 {};
+
+	auto spy_callback = [&actual_sha256](const BLEServiceFileReception::data_to_send_handle_t &handle) {
+		for (auto i = 0; i < std::size(actual_sha256); i++) {
+			actual_sha256.at(i) = std::get<1>(handle)[i];
+		}
+	};
+
+	service_file_reception.onDataReadyToSend(spy_callback);
+
+	service_file_reception.setFileSHA256(expected_sha256);
+	EXPECT_EQ(actual_sha256, expected_sha256);
 }

@@ -30,6 +30,11 @@ class BLEServiceCommands : public interface::BLEService
 		_on_commands_received = callback;
 	}
 
+	void onDataRequested(const data_requested_handle_t &params) final
+	{
+		// do nothing
+	}
+
   private:
 	std::array<uint8_t, 128> _buffer {};
 	WriteOnlyArrayGattCharacteristic<uint8_t, 128> tx_characteristic {
