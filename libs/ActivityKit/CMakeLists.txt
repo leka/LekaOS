@@ -22,6 +22,7 @@ target_sources(ActivityKit
 	source/activities/EmotionRecognition.cpp
 	source/activities/FoodRecognition.cpp
 	source/activities/LedNumberCounting.cpp
+	source/activities/FlashNumberCounting.cpp
 )
 
 target_link_libraries(ActivityKit
