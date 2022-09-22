@@ -57,6 +57,7 @@
 #include "SDBlockDevice.h"
 #include "SerialNumberKit.h"
 #include "SlicingBlockDevice.h"
+#include "SuperSimon.h"
 #include "VideoKit.h"
 #include "bootutil/bootutil.h"
 #include "commands/LedFullCommand.h"
@@ -350,6 +351,7 @@ namespace activities {
 			leka::activity::LedNumberCounting(rfidkit, display::videokit, reinforcerkit, leds::belt);
 		auto flash_number_counting =
 			leka::activity::FlashNumberCounting(rfidkit, display::videokit, reinforcerkit, leds::belt);
+		auto super_simon = leka::activity::SuperSimon(rfidkit, display::videokit, reinforcerkit, leds::belt);
 
 	}	// namespace internal
 
@@ -363,6 +365,7 @@ namespace activities {
 		{MagicCard::number_5, &internal::food_recognition},
 		{MagicCard::number_6, &internal::led_number_counting},
 		{MagicCard::number_7, &internal::flash_number_counting},
+		{MagicCard::number_8, &internal::super_simon},
 	};
 
 }	// namespace activities

@@ -23,6 +23,7 @@ target_sources(ActivityKit
 	source/activities/FoodRecognition.cpp
 	source/activities/LedNumberCounting.cpp
 	source/activities/FlashNumberCounting.cpp
+	source/activities/SuperSimon.cpp
 )
 
 target_link_libraries(ActivityKit
