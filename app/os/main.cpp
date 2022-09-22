@@ -56,6 +56,7 @@
 #include "RobotController.h"
 #include "SDBlockDevice.h"
 #include "SerialNumberKit.h"
+#include "ShapeRecognition.h"
 #include "SlicingBlockDevice.h"
 #include "SuperSimon.h"
 #include "VideoKit.h"
@@ -351,7 +352,8 @@ namespace activities {
 			leka::activity::LedNumberCounting(rfidkit, display::videokit, reinforcerkit, leds::belt);
 		auto flash_number_counting =
 			leka::activity::FlashNumberCounting(rfidkit, display::videokit, reinforcerkit, leds::belt);
-		auto super_simon = leka::activity::SuperSimon(rfidkit, display::videokit, reinforcerkit, leds::belt);
+		auto super_simon	   = leka::activity::SuperSimon(rfidkit, display::videokit, reinforcerkit, leds::belt);
+		auto shape_recognition = leka::activity::ShapeRecognition(rfidkit, display::videokit, reinforcerkit);
 
 	}	// namespace internal
 
@@ -366,6 +368,7 @@ namespace activities {
 		{MagicCard::number_6, &internal::led_number_counting},
 		{MagicCard::number_7, &internal::flash_number_counting},
 		{MagicCard::number_8, &internal::super_simon},
+		{MagicCard::number_9, &internal::shape_recognition},
 	};
 
 }	// namespace activities
