@@ -51,6 +51,10 @@ target_include_directories(mbed-os
 	${EXTERN_MBED_OS_DIR}/connectivity/include
 	${EXTERN_MBED_OS_DIR}/connectivity/include/connectivity
 
+	${EXTERN_MBED_OS_DIR}/connectivity/mbedtls
+	${EXTERN_MBED_OS_DIR}/connectivity/mbedtls/include
+	${EXTERN_MBED_OS_DIR}/connectivity/mbedtls/include/mbedtls
+
 	${EXTERN_MBED_OS_DIR}/drivers
 	${EXTERN_MBED_OS_DIR}/drivers/include
 	${EXTERN_MBED_OS_DIR}/drivers/include/drivers

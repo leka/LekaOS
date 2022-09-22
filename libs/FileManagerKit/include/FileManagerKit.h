@@ -53,6 +53,8 @@ struct File : public interface::File, public mbed::NonCopyable<File> {
 
 	[[nodiscard]] auto is_open() const -> bool final;
 
+	auto getSHA256() -> std::array<uint8_t, 32> final;
+
   private:
 	std::unique_ptr<FILE, decltype(&fclose)> _file {nullptr, &fclose};
 };

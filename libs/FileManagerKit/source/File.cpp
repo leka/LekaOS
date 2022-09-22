@@ -2,6 +2,8 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#include "mbedtls/platform.h"
+#include "mbedtls/sha256.h"
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
@@ -188,4 +190,35 @@ void File::clearerr()
 	}
 
 	std::clearerr(_file.get());
+}
+
+auto File::getSHA256() -> std::array<uint8_t, 32>
+{
+	std::array<uint8_t, 32> sha256 {};
+	std::array<uint8_t, 128> buffer = {};
+
+	sha256.fill('\0');
+
+	if (!is_open()) {
+		return sha256;
+	}
+
+	mbedtls_platform_setup(nullptr);
+	mbedtls_sha256_context context;
+
+	mbedtls_sha256_init(&context);
+	mbedtls_sha256_starts(&context, 0);
+
+	for (auto i = 0; i < size(); i += std::size(buffer)) {
+		seek(i);
+		auto bytes_read = read(buffer.data(), std::size(buffer));
+		mbedtls_sha256_update(&context, buffer.data(), bytes_read);
+	}
+
+	mbedtls_sha256_finish(&context, sha256.data());
+
+	mbedtls_sha256_free(&context);
+	mbedtls_platform_teardown(nullptr);
+
+	return sha256;
 }

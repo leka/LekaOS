@@ -55,6 +55,8 @@ struct File {
 	virtual void clearerr() = 0;
 
 	[[nodiscard]] virtual auto is_open() const -> bool = 0;
+
+	virtual auto getSHA256() -> std::array<uint8_t, 32> = 0;
 };
 
 }	// namespace leka::interface

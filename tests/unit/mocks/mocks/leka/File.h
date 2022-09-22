@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <array>
 #include <span>
 
 #include "filesystem"
@@ -56,6 +57,8 @@ class File : public interface::File
 	MOCK_METHOD(void, clearerr, (), (override));
 
 	MOCK_METHOD(bool, is_open, (), (const override));
+
+	MOCK_METHOD((std::array<uint8_t, 32>), getSHA256, (), (override));
 };
 
 }	// namespace leka::mock
