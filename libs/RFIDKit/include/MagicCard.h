@@ -20,7 +20,7 @@ struct MagicCard {
 
 	explicit constexpr MagicCard(const rfid::Tag &tag) : _tag(tag) {}
 
-	[[nodiscard]] auto getId() const -> uint16_t
+	[[nodiscard]] constexpr auto getId() const -> uint16_t
 	{
 		auto high = _tag.data.at(id_high_byte_index);
 		auto low  = _tag.data.at(id_low_byte_index);
