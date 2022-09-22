@@ -41,7 +41,7 @@ jobs:
 
       - name: Build firmware, os, bootloader
         run: |
-          ./tools/firmware/build_firmware.sh -r
+          make firmware
 
       #
       # Mark: - Upload

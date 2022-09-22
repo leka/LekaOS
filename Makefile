@@ -15,15 +15,16 @@ MCUBOOT_DIR       := $(ROOT_DIR)/extern/mcuboot
 # MARK: - Arguments
 #
 
-PORT            ?= /dev/tty.usbmodem14303
-MBED_GIT_URL    ?= $(shell cat $(ROOT_DIR)/config/mbed_git_url)
-MBED_BRANCH     ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
-MBED_VERSION    ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
-MCUBOOT_GIT_URL ?= $(shell cat $(ROOT_DIR)/config/mcuboot_git_url)
-MCUBOOT_VERSION ?= $(shell cat $(ROOT_DIR)/config/mcuboot_version)
-BAUDRATE        ?= 115200
-BUILD_TYPE      ?= Release
-TARGET_BOARD    ?= LEKA_V1_2_DEV
+PORT             ?= /dev/tty.usbmodem14303
+MBED_GIT_URL     ?= $(shell cat $(ROOT_DIR)/config/mbed_git_url)
+MBED_BRANCH      ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
+MBED_VERSION     ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
+MCUBOOT_GIT_URL  ?= $(shell cat $(ROOT_DIR)/config/mcuboot_git_url)
+MCUBOOT_VERSION  ?= $(shell cat $(ROOT_DIR)/config/mcuboot_version)
+BAUDRATE         ?= 115200
+BUILD_TYPE       ?= Release
+TARGET_BOARD     ?= LEKA_V1_2_DEV
+FIRMWARE_VERSION ?= $(shell cat $(ROOT_DIR)/config/os_version)
 
 #
 # MARK: - Options
@@ -96,6 +97,10 @@ tests_functional:
 	@echo ""
 	@echo "🏗️  Building functional tests ⚗️"
 	cmake --build $(TARGET_BUILD_DIR) -t tests_functional
+
+firmware:
+	python3 tools/check_version.py ./config/os_version
+	./tools/firmware/build_firmware.sh -r -v $(FIRMWARE_VERSION)
 
 #
 # MARK: - Config targets
