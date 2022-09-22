@@ -6,6 +6,8 @@
 
 // LCOV_EXCL_START
 
+#include <optional>
+
 #include "Color.h"
 #include "Number.h"
 #include "RFIDKit.h"
