@@ -24,13 +24,42 @@ auto SerialNumberFormater::setDateOfTest(std::span<uint8_t> partial_serial_numbe
 	date_of_test.fill('X');
 
 	if (auto file = FileManagerKit::File {_config.date_of_test_path}; file.is_open()) {
-		file.read(date_of_test);
+		auto file_content = std::array<char, 16> {};
+
+		file.read(file_content);
+
+		// ? epoch is 10 characters long, so the file size is at least 8 bytes
+		if (auto format_is_epoch = file.size() > 8; format_is_epoch) {
+			setDateOfTestFromEpoch(file_content, date_of_test);
+		}
+		// ? some robot still use the format YYMMDD
+		if (auto format_is_YYMMDD = file.size() <= 8; format_is_YYMMDD) {
+			setDateOfTestFromYYMMDD(file_content, date_of_test);
+		}
+
 		file.close();
 	}
 
 	std::copy(date_of_test.begin(), date_of_test.end(), partial_serial_number.begin() + offset);
 
 	return std::size(date_of_test);
+}
+
+void SerialNumberFormater::setDateOfTestFromYYMMDD(std::span<char> content, std::span<uint8_t> date_of_test) const
+{
+	std::copy(content.begin(), content.begin() + std::size(date_of_test), date_of_test.begin());
+}
+
+void SerialNumberFormater::setDateOfTestFromEpoch(std::span<char> content, std::span<uint8_t> date_of_test) const
+{
+	std::time_t epoch = std::atoll(content.data());
+	std::array<char, 8> epoch_c_array {};
+
+	struct tm local_time;
+	localtime_r(&epoch, &local_time);
+	std::strftime(epoch_c_array.data(), std::size(epoch_c_array), "%y%m", &local_time);
+
+	std::copy(epoch_c_array.begin(), epoch_c_array.begin() + std::size(date_of_test), date_of_test.begin());
 }
 
 void SerialNumberFormater::setMCUID(std::span<uint8_t> partial_serial_number, uint32_t offset, uint8_t number_of_digits)

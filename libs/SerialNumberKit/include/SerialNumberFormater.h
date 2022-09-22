@@ -23,6 +23,9 @@ class SerialNumberFormater
 	void setMCUID(std::span<uint8_t> serial_number, uint32_t offset, uint8_t number_of_digits);
 
   private:
+	void setDateOfTestFromYYMMDD(std::span<char> content, std::span<uint8_t> date_of_test) const;
+	void setDateOfTestFromEpoch(std::span<char> content, std::span<uint8_t> date_of_test) const;
+
 	interface::MCU &_mcu;
 	const Config _config;
 };

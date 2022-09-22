@@ -35,7 +35,7 @@ TEST_F(SerialNumberKitTest, initialization)
 
 TEST_F(SerialNumberKitTest, getSerialNumber)
 {
-	auto expected_serial_number = std::array<uint8_t, 32> {"LK-22062A2B2C2D3A3B3C3D4A4B4C4D"};
+	auto expected_serial_number = std::array<uint8_t, 32> {"LK-22092A2B2C2D3A3B3C3D4A4B4C4D"};
 
 	EXPECT_CALL(mock_mcu, getID).WillOnce(Return(mcu_id_returned));
 
@@ -46,7 +46,7 @@ TEST_F(SerialNumberKitTest, getSerialNumber)
 
 TEST_F(SerialNumberKitTest, getShortSerialNumber)
 {
-	auto expected_serial_number = std::array<uint8_t, 16> {"LK-22062A2B2C2D"};
+	auto expected_serial_number = std::array<uint8_t, 16> {"LK-22092A2B2C2D"};
 
 	EXPECT_CALL(mock_mcu, getID).WillOnce(Return(mcu_id_returned));
 
