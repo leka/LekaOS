@@ -76,7 +76,7 @@ echo "ARM_TOOLCHAIN_URL=$ARM_TOOLCHAIN_URL" >> $GITHUB_ENV
 # MARK: - SonarCloud
 #
 
-SONARCLOUD_CLI_URL="https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472.zip"
+SONARCLOUD_CLI_URL="https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747.zip"
 SONARCLOUD_CLI_FILENAME="sonar-scanner-cli-*.zip"
 SONARCLOUD_CLI_EXTRACT_DIRECTORY="sonar-scanner-*"
 
