@@ -22,10 +22,3 @@ TEST(MathUtilsTest, RandomBetween0And255)
 	EXPECT_GE(random, 0);
 	EXPECT_LE(random, 255);
 }
-
-TEST(MathUtilsTest, RandomBetweenOutsideOfRange)
-{
-	auto random = random8(300, 500);
-	EXPECT_GE(random, 0);
-	EXPECT_LE(random, 255);
-}
