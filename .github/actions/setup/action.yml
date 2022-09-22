@@ -56,7 +56,7 @@ runs:
 
     - name: Cache ARM GCC Toolchain
       id: cache_arm_toolchain
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ env.RUNNER_HOME }}/gcc-arm-none-eabi
         key: ${{ runner.os }}-global_cache-arm_toolchain-${{ hashFiles('config/toolchain_gcc_arm_none_eabi_url') }}
@@ -98,7 +98,7 @@ runs:
 
     - name: Cache ccache
       id: global_cache-ccache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ env.CCACHE_DIR}}
         key: ${{ runner.os }}-${{ inputs.ccache_name }}-ccache-${{ env.CACHE_NOW_TIME }}
@@ -111,7 +111,7 @@ runs:
 
     - name: Cache pip dependencies
       id: global_cache-pip_dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           ${{ env.RUNNER_HOME }}/.cache/pip
