@@ -16,7 +16,7 @@ on:
 jobs:
   bootloader_os_firmware:
     name: Bootloader + OS = Firmware
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       #
