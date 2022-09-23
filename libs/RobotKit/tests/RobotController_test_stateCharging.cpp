@@ -17,6 +17,41 @@ TEST_F(RobotControllerTest, onChargingStartTimeout)
 	on_charging_start_timeout();
 }
 
+TEST_F(RobotControllerTest, stateChargingWorkingAlternatelyUntilHardReboot)
+{
+	rc.state_machine.set_current_states(lksm::state::idle);
+
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AtLeast(1));
+
+	for (auto i = 0; i <= 10; ++i) {
+		EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
+		Sequence on_exit_idle_sequence;
+		EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
+		EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_idle_sequence);
+		expectedCallsStopMotors();
+
+		Sequence start_charging_behavior_sequence;
+		EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
+		EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
+		EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
+		EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
+		EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
+
+		on_charge_did_start();
+
+		EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
+		EXPECT_CALL(timeout, stop);
+
+		Sequence on_idle_entry_sequence;
+		EXPECT_CALL(timeout, onTimeout).InSequence(on_idle_entry_sequence);
+		EXPECT_CALL(timeout, start).InSequence(on_idle_entry_sequence);
+		EXPECT_CALL(mock_videokit, playVideoOnRepeat).InSequence(on_idle_entry_sequence);
+		EXPECT_CALL(mock_lcd, turnOn).InSequence(on_idle_entry_sequence);
+		on_charge_did_stop();
+	}
+}
+
 TEST_F(RobotControllerTest, stateChargingEventChargeDidStopGuardIsChargingTrue)
 {
 	rc.state_machine.set_current_states(lksm::state::charging);

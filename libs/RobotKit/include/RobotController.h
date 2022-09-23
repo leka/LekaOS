@@ -165,7 +165,7 @@ class RobotController : public interface::RobotController
 		using namespace std::chrono_literals;
 		using namespace system::robot::sm;
 
-		if (_consecutive_charging_counter >= 5) {
+		if (_consecutive_charging_counter >= 10) {
 			system_reset();
 		}
 
