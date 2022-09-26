@@ -9,7 +9,6 @@
 #include <optional>
 
 #include "Color.h"
-#include "Number.h"
 #include "RFIDKit.h"
 #include "ReinforcerKit.h"
 #include "interface/Activity.h"

@@ -47,13 +47,13 @@ void SuperSimon::processCard(const MagicCard &card)
 			_reinforcerkit.playDefault();
 			rtos::ThisThread::sleep_for(1s);
 			_expected_color_index = 0;
+			++_current_round;
 
-			if (_current_round >= _last_round) {
+			if (_current_round == _last_round) {
 				_backup_callback(MagicCard::dice_roll);
 				return;
 			}
 
-			++_current_round;
 			launchNextRound();
 			return;
 		}
