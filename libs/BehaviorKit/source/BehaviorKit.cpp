@@ -24,7 +24,7 @@ void BehaviorKit::spinRight(float speed)
 
 void BehaviorKit::launching()
 {
-	_videokit.displayImage("/fs/home/img/system/robot-misc-splash_screen-large-400.jpg");
+	_videokit.displayImage("/fs/home/img/id/007E.jpg");
 }
 
 void BehaviorKit::sleeping()
