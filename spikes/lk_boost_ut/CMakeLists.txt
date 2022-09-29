@@ -12,6 +12,14 @@ target_include_directories(spike_lk_boost_ut
 target_sources(spike_lk_boost_ut
 	PRIVATE
 	main.cpp
+	tests/test_array.cpp
+	tests/test_expect.cpp
+	tests/test_minimal.cpp
+	tests/test_mutable.cpp
+	tests/test_parametrized.cpp
+	tests/test_should.cpp
+	tests/test_skip.cpp
+	tests/test_spec.cpp
 )
 
 target_link_libraries(spike_lk_boost_ut
