@@ -11,6 +11,12 @@
 
 namespace leka {
 
+enum class Language
+{
+	fr_FR = 1,
+	en_US = 2
+};
+
 struct MagicCard {
 	enum class Language
 	{
