@@ -34,6 +34,15 @@ void ActivityKit::stop()
 	_current_activity = nullptr;
 }
 
+void ActivityKit::displayMainMenu(const MagicCard &card)
+{
+	if (card.getLanguage() == MagicCard::Language::fr_FR) {
+		_videokit.displayImage("/fs/home/img/system/robot-misc-choose_activity-fr_FR.jpg");
+	} else {
+		_videokit.displayImage("/fs/home/img/system/robot-misc-choose_activity-en_US.jpg");
+	}
+}
+
 auto ActivityKit::isPlaying() const -> bool
 {
 	return _current_activity != nullptr;
