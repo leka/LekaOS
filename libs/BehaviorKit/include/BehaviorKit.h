@@ -37,7 +37,6 @@ class BehaviorKit
 
 	void bleConnection(bool with_video);
 	void working();
-	void displayAutonomousActivitiesPrompt();
 
 	void stop();
 
