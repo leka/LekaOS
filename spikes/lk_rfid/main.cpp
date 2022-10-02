@@ -8,7 +8,7 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreBufferedSerial.h"
-#include "CoreRFIDReader.h"
+#include "CoreRFIDReaderCR95HF.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "RFIDKit.h"
@@ -23,12 +23,13 @@ auto main() -> int
 	log_info("Hello, World!\n\n");
 
 	auto rfidserial = CoreBufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
-	auto rfidreader = CoreRFIDReader(rfidserial);
+	auto rfidreader = CoreRFIDReaderCR95HF(rfidserial);
 	auto rfidkit	= RFIDKit(rfidreader);
 
 	rtos::ThisThread::sleep_for(2s);
 
 	rfidkit.init();
+	rfidkit.onTagActivated([](const MagicCard &card) { log_debug("Card id: %i", card.getId()); });
 
 	HelloWorld hello;
 	hello.start();

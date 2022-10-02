@@ -58,3 +58,13 @@ TEST(BLEServiceBatteryTest, onDataReceived)
 
 	// nothing expected
 }
+
+TEST(BLEServiceBatteryTest, onDataRequested)
+{
+	auto service_battery = BLEServiceBattery {};
+
+	auto dummy_params = BLEServiceBattery::data_requested_handle_t {};
+	service_battery.onDataRequested(dummy_params);
+
+	// nothing expected
+}

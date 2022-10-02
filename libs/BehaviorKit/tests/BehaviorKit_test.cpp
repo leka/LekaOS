@@ -4,18 +4,13 @@
 
 #include "BehaviorKit.h"
 
-#include "rtos/tests/UNITTESTS/doubles/Thread_stub.h"
-
-#include "CorePwm.h"
 #include "LedKit.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreLED.h"
 #include "mocks/leka/CoreMotor.h"
 #include "mocks/leka/LEDAnimation.h"
-#include "mocks/leka/PwmOut.h"
 #include "mocks/leka/VideoKit.h"
-#include "mocks/mbed/DigitalOut.h"
 #include "stubs/leka/EventLoopKit.h"
 
 using namespace leka;
@@ -104,61 +99,6 @@ TEST_F(BehaviorKitTest, batteryBehaviors)
 	behaviorkit.chargingFull();
 }
 
-TEST_F(BehaviorKitTest, blinkGreen)
-{
-	auto expected_speed = 1;
-
-	EXPECT_CALL(mock_videokit, playVideoOnce);
-	{
-		InSequence seq;
-
-		EXPECT_CALL(mock_motor_left, spin(Rotation::clockwise, expected_speed));
-		EXPECT_CALL(mock_motor_right, spin(Rotation::clockwise, expected_speed));
-
-		EXPECT_CALL(mock_motor_left, stop());
-		EXPECT_CALL(mock_motor_right, stop());
-	}
-
-	behaviorkit.blinkGreen();
-}
-
-TEST_F(BehaviorKitTest, spinBlink)
-{
-	auto expected_speed = 1;
-
-	EXPECT_CALL(mock_videokit, playVideoOnce);
-
-	{
-		InSequence seq;
-
-		EXPECT_CALL(mock_motor_left, spin(Rotation::counterClockwise, expected_speed));
-		EXPECT_CALL(mock_motor_right, spin(Rotation::counterClockwise, expected_speed));
-
-		EXPECT_CALL(mock_motor_left, stop());
-		EXPECT_CALL(mock_motor_right, stop());
-	}
-
-	behaviorkit.spinBlink();
-}
-
-TEST_F(BehaviorKitTest, fire)
-{
-	EXPECT_CALL(mock_videokit, playVideoOnce);
-	behaviorkit.fire();
-}
-
-TEST_F(BehaviorKitTest, sprinkles)
-{
-	EXPECT_CALL(mock_videokit, playVideoOnce);
-	behaviorkit.sprinkles();
-}
-
-TEST_F(BehaviorKitTest, rainbow)
-{
-	EXPECT_CALL(mock_videokit, playVideoOnce);
-	behaviorkit.rainbow();
-}
-
 TEST_F(BehaviorKitTest, bleConnectionWhileCharging)
 {
 	EXPECT_CALL(mock_videokit, playVideoOnce).Times(0);
@@ -175,6 +115,12 @@ TEST_F(BehaviorKitTest, working)
 {
 	EXPECT_CALL(mock_videokit, displayImage);
 	behaviorkit.working();
+}
+
+TEST_F(BehaviorKitTest, displayAutonomousActivitiesPrompt)
+{
+	EXPECT_CALL(mock_videokit, displayImage);
+	behaviorkit.displayAutonomousActivitiesPrompt();
 }
 
 TEST_F(BehaviorKitTest, stop)

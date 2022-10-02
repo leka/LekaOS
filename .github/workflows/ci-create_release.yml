@@ -16,7 +16,7 @@ on:
 jobs:
   bootloader_os_firmware:
     name: Bootloader + OS = Firmware
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       #
@@ -41,7 +41,7 @@ jobs:
 
       - name: Build firmware, os, bootloader
         run: |
-          ./tools/firmware/build_firmware.sh -r
+          make firmware
 
       #
       # Mark: - Upload
@@ -53,4 +53,5 @@ jobs:
           name: bootloader_os_firmware
           retention-days: 7
           path: |
-            _release/firmware.bin
+            _release/firmware.hex
+            _release/application-signed.bin

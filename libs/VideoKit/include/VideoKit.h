@@ -24,6 +24,7 @@ class VideoKit : public interface::VideoKit
 	void initializeScreen() final;
 
 	void displayImage(const std::filesystem::path &path) final;
+	void fillWhiteBackgroundAndDisplayImage(const std::filesystem::path &path) final;
 
 	void playVideoOnce(const std::filesystem::path &path) final;
 	void playVideoOnRepeat(const std::filesystem::path &path) final;

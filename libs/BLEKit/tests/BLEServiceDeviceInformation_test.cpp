@@ -71,3 +71,13 @@ TEST(BLEServiceDeviceInformationTest, setOSVersion)
 		EXPECT_EQ(actual_os_version.at(i), expected_os_version[i]);
 	}
 }
+
+TEST(BLEServiceDeviceInformationTest, onDataRequested)
+{
+	auto service_device_information = BLEServiceDeviceInformation {};
+
+	auto dummy_params = BLEServiceDeviceInformation::data_requested_handle_t {};
+	service_device_information.onDataRequested(dummy_params);
+
+	// nothing expected
+}

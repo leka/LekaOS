@@ -8,7 +8,7 @@ on:
 
 jobs:
   triage:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Auto card labeler
         uses: technote-space/auto-card-labeler@v2

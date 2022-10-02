@@ -101,3 +101,66 @@ TEST_F(CoreGattServerEventHandlerTest, onDataReceivedParamsHandleDifferent)
 
 	gatt_event_handler.onDataWritten(params);
 }
+
+TEST_F(CoreGattServerEventHandlerTest, onDataRequested)
+{
+	auto characteristic_value		  = uint8_t {0};
+	auto characteristic				  = GattCharacteristic {0x1234, &characteristic_value};
+	auto service_characteristic_table = std::to_array<GattCharacteristic *>({&characteristic});
+	auto mock_service				  = mock::BLEService(0x01, service_characteristic_table);
+
+	auto services = std::to_array<interface::BLEService *>({&mock_service});
+
+	gatt_event_handler.setServices(services);
+
+	auto expected_params   = GattReadCallbackParams {};
+	expected_params.handle = characteristic.getValueHandle();
+
+	EXPECT_CALL(mock_service, onDataRequested(compareParams(expected_params)))
+		.Times(std::size(service_characteristic_table));
+
+	gatt_event_handler.onDataRead(expected_params);
+}
+
+TEST_F(CoreGattServerEventHandlerTest, onDataRequestedMultipleServices)
+{
+	auto characteristic_value			= uint8_t {};
+	auto characteristic					= GattCharacteristic {0x1234, &characteristic_value};
+	auto service_1_characteristic_table = std::to_array<GattCharacteristic *>({&characteristic});
+	auto service_2_characteristic_table = std::to_array<GattCharacteristic *>({&characteristic, &characteristic});
+	auto mock_service_1					= mock::BLEService(0x01, service_1_characteristic_table);
+	auto mock_service_2					= mock::BLEService(0x02, service_2_characteristic_table);
+
+	auto services = std::to_array<interface::BLEService *>({&mock_service_1, &mock_service_2});
+
+	gatt_event_handler.setServices(services);
+
+	auto expected_params   = GattReadCallbackParams {};
+	expected_params.handle = characteristic.getValueHandle();
+
+	EXPECT_CALL(mock_service_1, onDataRequested(compareParams(expected_params)))
+		.Times(std::size(service_1_characteristic_table));
+	EXPECT_CALL(mock_service_2, onDataRequested(compareParams(expected_params)))
+		.Times(std::size(service_2_characteristic_table));
+
+	gatt_event_handler.onDataRead(expected_params);
+}
+
+TEST_F(CoreGattServerEventHandlerTest, onDataRequestedParamsHandleDifferent)
+{
+	auto characteristic_value		  = uint8_t {};
+	auto characteristic				  = GattCharacteristic {0x1234, &characteristic_value};
+	auto service_characteristic_table = std::to_array<GattCharacteristic *>({&characteristic});
+	auto mock_service				  = mock::BLEService(0x01, service_characteristic_table);
+
+	auto services = std::to_array<interface::BLEService *>({&mock_service});
+
+	gatt_event_handler.setServices(services);
+
+	auto params	  = GattReadCallbackParams {};
+	params.handle = characteristic.getValueHandle() + 1;
+
+	EXPECT_CALL(mock_service, onDataRequested).Times(0);
+
+	gatt_event_handler.onDataRead(params);
+}

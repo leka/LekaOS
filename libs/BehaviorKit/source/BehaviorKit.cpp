@@ -10,8 +10,6 @@ namespace leka {
 
 using namespace std::chrono;
 
-inline constexpr auto reinforcer_duration = 2700ms;
-
 void BehaviorKit::spinLeft(float speed)
 {
 	_motor_left.spin(Rotation::clockwise, speed);
@@ -74,52 +72,6 @@ void BehaviorKit::chargingFull()
 	_videokit.displayImage("/fs/home/img/system/robot-battery-charging-quarter_4-green.jpg");
 }
 
-void BehaviorKit::blinkGreen()
-{
-	spinLeft(1);
-	_ledkit.start(&LedKit::animation::blink_green);
-	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-reinforcer-happy-no_eyebrows.avi");
-	rtos::ThisThread::sleep_for(reinforcer_duration);
-	_ledkit.stop();
-	_motor_left.stop();
-	_motor_right.stop();
-}
-
-void BehaviorKit::spinBlink()
-{
-	spinRight(1);
-	_ledkit.start(&LedKit::animation::spin_blink);
-	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-reinforcer-happy-no_eyebrows.avi");
-	rtos::ThisThread::sleep_for(reinforcer_duration);
-	_ledkit.stop();
-	_motor_left.stop();
-	_motor_right.stop();
-}
-
-void BehaviorKit::fire()
-{
-	_ledkit.start(&LedKit::animation::fire);
-	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-reinforcer-happy-no_eyebrows.avi");
-	rtos::ThisThread::sleep_for(reinforcer_duration);
-	_ledkit.stop();
-}
-
-void BehaviorKit::sprinkles()
-{
-	_ledkit.start(&LedKit::animation::sprinkles);
-	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-reinforcer-happy-no_eyebrows.avi");
-	rtos::ThisThread::sleep_for(reinforcer_duration);
-	_ledkit.stop();
-}
-
-void BehaviorKit::rainbow()
-{
-	_ledkit.start(&LedKit::animation::rainbow);
-	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-reinforcer-happy-no_eyebrows.avi");
-	rtos::ThisThread::sleep_for(reinforcer_duration);
-	_ledkit.stop();
-}
-
 void BehaviorKit::bleConnection(bool with_video)
 {
 	_ledkit.start(&LedKit::animation::ble_connection);
@@ -131,6 +83,11 @@ void BehaviorKit::bleConnection(bool with_video)
 void BehaviorKit::working()
 {
 	_videokit.displayImage("/fs/home/img/system/robot-face-smiling-slightly.jpg");
+}
+
+void BehaviorKit::displayAutonomousActivitiesPrompt()
+{
+	_videokit.displayImage("/fs/home/img/system/robot-misc-choose_activity-fr_FR.jpg");
 }
 
 void BehaviorKit::stop()

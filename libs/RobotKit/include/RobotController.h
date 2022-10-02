@@ -15,13 +15,16 @@
 #include "BLEServiceMonitoring.h"
 #include "BLEServiceUpdate.h"
 
+#include "ActivityKit.h"
 #include "BatteryKit.h"
 #include "BehaviorKit.h"
 #include "CommandKit.h"
 #include "CoreMutex.h"
 #include "FileReception.h"
 #include "LedKit.h"
+#include "MagicCard.h"
 #include "RCLogger.h"
+#include "RFIDKit.h"
 #include "SerialNumberKit.h"
 #include "StateMachine.h"
 #include "interface/RobotController.h"
@@ -45,7 +48,7 @@ class RobotController : public interface::RobotController
 							 interface::FirmwareUpdate &firmware_update, interface::Motor &motor_left,
 							 interface::Motor &motor_right, interface::LED &ears, interface::LED &belt, LedKit &ledkit,
 							 interface::LCD &lcd, interface::VideoKit &videokit, BehaviorKit &behaviorkit,
-							 CommandKit &cmdkit)
+							 CommandKit &cmdkit, RFIDKit &rfidkit, ActivityKit &activitykit)
 		: _timeout(timeout),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
@@ -58,7 +61,9 @@ class RobotController : public interface::RobotController
 		  _lcd(lcd),
 		  _videokit(videokit),
 		  _behaviorkit(behaviorkit),
-		  _cmdkit(cmdkit)
+		  _cmdkit(cmdkit),
+		  _rfidkit(rfidkit),
+		  _activitykit(activitykit)
 	{
 		// nothing to do
 	}
@@ -188,6 +193,18 @@ class RobotController : public interface::RobotController
 
 	void startDisconnectionBehavior() final { stopActuators(); }
 
+	void startAutonomousActivityMode() final
+	{
+		_lcd.turnOn();
+		_behaviorkit.displayAutonomousActivitiesPrompt();
+	}
+
+	void stopAutonomousActivityMode() final
+	{
+		_behaviorkit.stop();
+		_activitykit.stop();
+	}
+
 	auto isReadyToUpdate() -> bool final
 	{
 		return (_battery.isCharging() && _battery.level() > _minimal_battery_level_to_update);
@@ -220,13 +237,15 @@ class RobotController : public interface::RobotController
 	{
 		_thread.start({&_event_queue, &events::EventQueue::dispatch_forever});
 
+		_rfidkit.init();
+
 		_ble.setServices(services);
 		_ble.init();
 
-		auto &_serial_number = _serialnumberkit.getSerialNumber();
+		auto _serial_number = _serialnumberkit.getSerialNumber();
 		_service_device_information.setSerialNumber(_serial_number);
 
-		auto _os_version = FirmwareVersion {.major = 1, .minor = 1, .revision = 0};
+		auto _os_version = FirmwareVersion {.major = 1, .minor = 2, .revision = 0};
 		_service_device_information.setOSVersion(_os_version);
 
 		auto advertising_data = _ble.getAdvertisingData();
@@ -262,11 +281,41 @@ class RobotController : public interface::RobotController
 		}
 	}
 
+	void raiseAutonomousActivityModeRequested()
+	{
+		raise(system::robot::sm::event::autonomous_activities_mode_requested {});
+	}
+
+	void onMagicCardAvailable(const MagicCard &card)
+	{
+		if (card == MagicCard::emergency_stop) {
+			raiseEmergencyStop();
+			return;
+		}
+
+		if (card == MagicCard::dice_roll) {
+			raiseAutonomousActivityModeRequested();
+			if (_activitykit.isPlaying()) {
+				_activitykit.stop();
+			}
+			return;
+		}
+
+		auto is_not_playing		= !_activitykit.isPlaying();
+		auto is_autonomous_mode = state_machine.is(system::robot::sm::state::autonomous_activities);
+
+		if (is_not_playing && is_autonomous_mode) {
+			_activitykit.start(card);
+		}
+	}
+
 	void registerEvents()
 	{
 		using namespace system::robot::sm;
 
 		// Setup callbacks for monitoring
+
+		_rfidkit.onTagActivated([this](const MagicCard &card) { onMagicCardAvailable(card); });
 
 		_battery_kit.onDataUpdated([this](uint8_t level) {
 			auto is_charging = _battery.isCharging();
@@ -328,6 +377,11 @@ class RobotController : public interface::RobotController
 			[this](std::span<const char> path) { file_reception.setFilePath(path.data()); });
 		_service_file_reception.onFileDataReceived(
 			[this](std::span<const uint8_t> buffer) { file_reception.onPacketReceived(buffer); });
+		_service_file_reception.onFileSHA256Requested([this](std::span<const char> path) {
+			if (FileManagerKit::File file {path.data()}; file.is_open()) {
+				_service_file_reception.setFileSHA256(file.getSHA256());
+			}
+		});
 
 		auto on_update_requested = [this]() { raise(event::update_requested {}); };
 		_service_update.onUpdateRequested(on_update_requested);
@@ -370,6 +424,8 @@ class RobotController : public interface::RobotController
 	LedKit &_ledkit;
 	interface::LCD &_lcd;
 	interface::VideoKit &_videokit;
+	RFIDKit &_rfidkit;
+	ActivityKit &_activitykit;
 
 	BehaviorKit &_behaviorkit;
 	CommandKit &_cmdkit;

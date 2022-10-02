@@ -218,8 +218,17 @@ TEST_F(CoreVideoTest, displayTextWithColor)
 
 TEST_F(CoreVideoTest, setVideo)
 {
-	EXPECT_CALL(filemock, seek(0, SEEK_SET));
-	EXPECT_CALL(jpegmock, getImageProperties);
+	const auto start_of_file_index = 0;
+	const auto any_frame_index	   = 5668;
+
+	{
+		InSequence seq;
+
+		EXPECT_CALL(jpegmock, findSOIMarker(_, start_of_file_index)).WillOnce(Return(any_frame_index));
+		EXPECT_CALL(filemock, seek(any_frame_index, SEEK_SET));
+		EXPECT_CALL(jpegmock, decodeImage).Times(1);
+		EXPECT_CALL(jpegmock, getImageProperties);
+	}
 
 	corevideo.setVideo(filemock);
 

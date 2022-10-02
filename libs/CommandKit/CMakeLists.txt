@@ -18,7 +18,7 @@ target_link_libraries(CommandKit
 	CoreEventQueue
 	CoreLED
 	CoreMotor
-	BehaviorKit
+	ReinforcerKit
 	EventLoopKit
 	mbed-os
 )

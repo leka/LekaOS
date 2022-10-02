@@ -56,7 +56,7 @@ runs:
 
     - name: Cache ARM GCC Toolchain
       id: cache_arm_toolchain
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ env.RUNNER_HOME }}/gcc-arm-none-eabi
         key: ${{ runner.os }}-global_cache-arm_toolchain-${{ hashFiles('config/toolchain_gcc_arm_none_eabi_url') }}
@@ -93,12 +93,12 @@ runs:
     - name: Install tools
       shell: bash
       run: |
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends ninja-build ccache lcov gcovr
+        sudo apt-fast update
+        sudo apt-fast install -y --no-install-recommends ninja-build ccache lcov gcovr
 
     - name: Cache ccache
       id: global_cache-ccache
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ${{ env.CCACHE_DIR}}
         key: ${{ runner.os }}-${{ inputs.ccache_name }}-ccache-${{ env.CACHE_NOW_TIME }}
@@ -109,21 +109,16 @@ runs:
     # Mark: - Python/pip
     #
 
-    - name: Setup Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: "3.x"
-
     - name: Cache pip dependencies
       id: global_cache-pip_dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: |
           ${{ env.RUNNER_HOME }}/.cache/pip
           ${{ env.pythonLocation }}
-        key: ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-${{ hashFiles('config/mbed_version') }}
+        key: ${{ runner.os }}-global_cache-pip_dependencies-${{ hashFiles('config/mbed_version') }}
         restore-keys: |
-          ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-
+          ${{ runner.os }}-global_cache-pip_dependencies-
 
     - name: Install pip packages
       shell: bash

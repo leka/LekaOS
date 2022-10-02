@@ -91,12 +91,14 @@ void CoreVideo::displayImage(interface::File &file, JPEGImageProperties *image_p
 
 void CoreVideo::setVideo(interface::File &file)
 {
-	_image_properties = _corejpeg.getImageProperties();
-
-	file.seek(0, SEEK_SET);
 	_frame_index   = 0;
 	_image_size	   = 0;
 	_is_last_frame = false;
+
+	_frame_index = _corejpeg.findSOIMarker(file, _frame_index);
+	file.seek(_frame_index, SEEK_SET);
+	_corejpeg.decodeImage(file);
+	_image_properties = _corejpeg.getImageProperties();
 }
 
 void CoreVideo::displayNextFrameVideo(interface::File &file)

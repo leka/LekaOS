@@ -74,7 +74,21 @@ TEST_F(RobotControllerTest, stateWorkingEventEmergencyStop)
 	EXPECT_CALL(mock_lcd, turnOff).Times(1);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
 
-	rc.raiseEmergencyStop();
+	rc.onMagicCardAvailable(MagicCard::emergency_stop);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::emergency_stopped));
+}
+
+TEST_F(RobotControllerTest, stateWorkingEventAutonomousActivityRequested)
+{
+	rc.state_machine.set_current_states(lksm::state::working);
+
+	Sequence on_exit_working_sequence;
+	EXPECT_CALL(timeout, stop).InSequence(on_exit_working_sequence);
+
+	EXPECT_CALL(mock_videokit, displayImage).Times(1);
+
+	rc.onMagicCardAvailable(MagicCard::dice_roll);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
 }

@@ -50,6 +50,28 @@ void VideoKit::displayImage(const std::filesystem::path &path)
 	}
 }
 
+void VideoKit::fillWhiteBackgroundAndDisplayImage(const std::filesystem::path &path)
+{
+	const std::scoped_lock lock(mutex);
+
+	if (path == _current_path) {
+		return;
+	}
+
+	if (auto file = FileManagerKit::File {path}; file.is_open()) {
+		_event_flags.set(flags::STOP_VIDEO_FLAG);
+
+		_current_path = path;
+
+		rtos::ThisThread::sleep_for(100ms);
+
+		_video.clearScreen();
+		_video.displayImage(file);
+
+		file.close();
+	}
+}
+
 void VideoKit::playVideoOnce(const std::filesystem::path &path)
 {
 	const std::scoped_lock lock(mutex);

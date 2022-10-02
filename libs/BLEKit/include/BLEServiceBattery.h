@@ -31,6 +31,11 @@ class BLEServiceBattery : public interface::BLEService
 		// do nothing
 	}
 
+	void onDataRequested(const data_requested_handle_t &params) final
+	{
+		// do nothing
+	}
+
   private:
 	data_to_send_handle_t send_data_function;
 

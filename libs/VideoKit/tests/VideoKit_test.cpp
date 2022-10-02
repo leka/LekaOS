@@ -68,6 +68,34 @@ TEST_F(VideoKitTest, displayImageSamePathTwice)
 	video_kit.displayImage(temp_file_path);
 }
 
+TEST_F(VideoKitTest, fillWhiteBackgroundDisplayImage)
+{
+	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::STOP_VIDEO_FLAG));
+	EXPECT_CALL(mock_corevideo, clearScreen);
+	EXPECT_CALL(mock_corevideo, displayImage);
+
+	video_kit.fillWhiteBackgroundAndDisplayImage(temp_file_path);
+}
+
+TEST_F(VideoKitTest, fillWhiteBackgroundDisplayImageFileDoesNotExist)
+{
+	video_kit.fillWhiteBackgroundAndDisplayImage("/unexisting/path");
+}
+
+TEST_F(VideoKitTest, fillWhiteBackgroundDisplayImageSamePathTwice)
+{
+	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::STOP_VIDEO_FLAG));
+	EXPECT_CALL(mock_corevideo, clearScreen).Times(1);
+	EXPECT_CALL(mock_corevideo, displayImage).Times(1);
+
+	video_kit.fillWhiteBackgroundAndDisplayImage(temp_file_path);
+
+	EXPECT_CALL(mock_corevideo, clearScreen).Times(0);
+	EXPECT_CALL(mock_corevideo, displayImage).Times(0);
+
+	video_kit.fillWhiteBackgroundAndDisplayImage(temp_file_path);
+}
+
 TEST_F(VideoKitTest, playVideoOnce)
 {
 	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::STOP_VIDEO_FLAG));

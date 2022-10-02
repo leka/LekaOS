@@ -9,9 +9,14 @@
 
 #include "ble_mocks.h"
 
+#include "ActivityKit.h"
 #include "BehaviorKit.h"
 #include "CommandKit.h"
+#include "CoreBufferedSerial.h"
 #include "CorePwm.h"
+#include "CoreRFIDReaderCR95HF.h"
+#include "DisplayTags.h"
+#include "RFIDKit.h"
 #include "SerialNumberKit.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -65,7 +70,7 @@ class RobotControllerTest : public testing::Test
 	mock::Battery battery {};
 
 	mock::MCU mock_mcu {};
-	SerialNumberKit serialnumberkit {mock_mcu};
+	SerialNumberKit serialnumberkit {mock_mcu, SerialNumberKit::DEFAULT_CONFIG};
 
 	mock::FirmwareUpdate firmware_update {};
 
@@ -86,12 +91,19 @@ class RobotControllerTest : public testing::Test
 
 	BehaviorKit bhvkit {mock_videokit, ledkit, mock_motor_left, mock_motor_right};
 
+	CoreBufferedSerial serial {RFID_UART_TX, RFID_UART_RX, 57600};
+	CoreRFIDReaderCR95HF reader {serial};
+	RFIDKit rfidkit {reader};
+
+	ActivityKit activitykit;
+	activity::DisplayTags display_tag {rfidkit, mock_videokit};
+
 	stub::EventLoopKit event_loop {};
 	CommandKit cmdkit {event_loop};
 
 	RobotController<bsml::sm<system::robot::StateMachine, bsml::testing>> rc {
-		timeout, battery,  serialnumberkit, firmware_update, mock_motor_left, mock_motor_right, mock_ears, mock_belt,
-		ledkit,	 mock_lcd, mock_videokit,	bhvkit,			 cmdkit};
+		timeout, battery,  serialnumberkit, firmware_update, mock_motor_left, mock_motor_right, mock_ears,	mock_belt,
+		ledkit,	 mock_lcd, mock_videokit,	bhvkit,			 cmdkit,		  rfidkit,			activitykit};
 
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
@@ -124,6 +136,7 @@ class RobotControllerTest : public testing::Test
 			EXPECT_CALL(mock_mcu, getID).Times(1);
 			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
 
+			// EXPECT_CALL(firmware_update, getCurrentVersion).Times(1);
 			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
 
 			Sequence set_serial_number_as_ble_device_name;
@@ -131,6 +144,11 @@ class RobotControllerTest : public testing::Test
 			EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).InSequence(set_serial_number_as_ble_device_name);
 
 			expectedCallsStopMotors();
+
+			EXPECT_CALL(mock_ears, setColor);
+			EXPECT_CALL(mock_belt, setColor);
+			EXPECT_CALL(mock_ears, show);
+			EXPECT_CALL(mock_belt, show);
 
 			EXPECT_CALL(mock_videokit, initializeScreen).Times(1);
 			EXPECT_CALL(mock_lcd, turnOff).Times(1);

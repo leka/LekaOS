@@ -52,6 +52,7 @@ namespace receive_file {
 	namespace characteristic {
 		inline constexpr uint16_t file_path				= 0x7080;
 		inline constexpr uint16_t file_reception_buffer = 0x8283;
+		inline constexpr uint16_t file_sha256			= 0x7083;
 	}	// namespace characteristic
 
 }	// namespace receive_file

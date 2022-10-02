@@ -41,6 +41,8 @@ struct RGB {
 	static const RGB yellow;
 	static const RGB cyan;
 	static const RGB magenta;
+	static const RGB purple;
+	static const RGB orange;
 };
 
 constexpr RGB RGB::white {0xFF, 0xFF, 0xFF};
@@ -53,5 +55,8 @@ constexpr RGB RGB::pure_blue {0x00, 0x00, 0xFF};
 constexpr RGB RGB::yellow {0xFF, 0xFF, 0x00};
 constexpr RGB RGB::cyan {0x00, 0xFF, 0xFF};
 constexpr RGB RGB::magenta {0xFF, 0x00, 0xFF};
+
+constexpr RGB RGB::purple {0x14, 0x00, 0x50};
+constexpr RGB RGB::orange {0xFF, 0x80, 0x00};
 
 }	// namespace leka

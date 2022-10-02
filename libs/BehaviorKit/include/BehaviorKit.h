@@ -35,14 +35,9 @@ class BehaviorKit
 	void chargingHigh();
 	void chargingFull();
 
-	void blinkGreen();
-	void spinBlink();
-	void fire();
-	void sprinkles();
-	void rainbow();
-
 	void bleConnection(bool with_video);
 	void working();
+	void displayAutonomousActivitiesPrompt();
 
 	void stop();
 

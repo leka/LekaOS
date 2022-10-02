@@ -49,6 +49,11 @@ class BLEServiceUpdate : public interface::BLEService
 		_on_factory_reset_notification_callback = callback;
 	}
 
+	void onDataRequested(const data_requested_handle_t &params) final
+	{
+		// do nothing
+	}
+
   private:
 	bool must_apply_update {false};
 	WriteOnlyGattCharacteristic<bool> apply_update_characteristic {

@@ -9,6 +9,8 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
+#include "ActivityKit.h"
+#include "ChooseReinforcer.h"
 #include "CoreBattery.h"
 #include "CoreBufferedSerial.h"
 #include "CoreDMA2D.hpp"
@@ -29,23 +31,34 @@
 #include "CoreMotor.h"
 #include "CorePwm.h"
 #include "CoreQSPI.h"
-#include "CoreRFIDReader.h"
+#include "CoreRFIDReaderCR95HF.h"
 #include "CoreSDRAM.hpp"
 #include "CoreSPI.h"
 #include "CoreSTM32Hal.h"
 #include "CoreTimeout.h"
 #include "CoreVideo.hpp"
+#include "DisplayTags.h"
+#include "EmotionRecognition.h"
 #include "EventLoopKit.h"
 #include "FATFileSystem.h"
 #include "FirmwareKit.h"
+#include "FlashNumberCounting.h"
+#include "FoodRecognition.h"
 #include "HelloWorld.h"
+#include "LedColorRecognition.h"
+#include "LedNumberCounting.h"
 #include "LogKit.h"
+#include "NumberRecognition.h"
+#include "PictoColorRecognition.h"
 #include "QSPIFBlockDevice.h"
 #include "RFIDKit.h"
+#include "ReinforcerKit.h"
 #include "RobotController.h"
 #include "SDBlockDevice.h"
 #include "SerialNumberKit.h"
+#include "ShapeRecognition.h"
 #include "SlicingBlockDevice.h"
+#include "SuperSimon.h"
 #include "VideoKit.h"
 #include "bootutil/bootutil.h"
 #include "commands/LedFullCommand.h"
@@ -242,7 +255,8 @@ namespace display {
 
 }	// namespace display
 
-auto behaviorkit = BehaviorKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
+auto behaviorkit   = BehaviorKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
+auto reinforcerkit = ReinforcerKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
 
 namespace command {
 
@@ -254,7 +268,7 @@ namespace command {
 		auto led_full	= LedFullCommand {leds::ears, leds::belt};
 		auto led_range	= LedRangeCommand {leds::ears, leds::belt};
 		auto motors		= MotorsCommand {motors::left::motor, motors::right::motor};
-		auto reinforcer = ReinforcerCommand {behaviorkit};
+		auto reinforcer = ReinforcerCommand {reinforcerkit};
 
 	}	// namespace internal
 
@@ -280,7 +294,7 @@ namespace firmware {
 
 	}	// namespace internal
 
-	auto kit = FirmwareKit(internal::flash);
+	auto kit = FirmwareKit(internal::flash, FirmwareKit::DEFAULT_CONFIG);
 
 	void initializeFlash()
 	{
@@ -305,7 +319,7 @@ namespace firmware {
 namespace rfid {
 
 	auto serial = CoreBufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
-	auto reader = CoreRFIDReader(serial);
+	auto reader = CoreRFIDReaderCR95HF(serial);
 
 }	// namespace rfid
 
@@ -322,6 +336,45 @@ namespace mcuboot {
 
 }	// namespace mcuboot
 
+namespace activities {
+
+	namespace internal {
+
+		auto display_tag			 = leka::activity::DisplayTags(rfidkit, display::videokit);
+		auto choose_reinforcer		 = leka::activity::ChooseReinforcer(rfidkit, display::videokit, reinforcerkit);
+		auto number_recognition		 = leka::activity::NumberRecognition(rfidkit, display::videokit, reinforcerkit);
+		auto picto_color_recognition = leka::activity::PictoColorRecognition(rfidkit, display::videokit, reinforcerkit);
+		auto led_color_recognition =
+			leka::activity::LedColorRecognition(rfidkit, display::videokit, reinforcerkit, leds::belt);
+		auto emotion_recognition = leka::activity::EmotionRecognition(rfidkit, display::videokit, reinforcerkit);
+		auto food_recognition	 = leka::activity::FoodRecognition(rfidkit, display::videokit, reinforcerkit);
+		auto led_number_counting =
+			leka::activity::LedNumberCounting(rfidkit, display::videokit, reinforcerkit, leds::belt);
+		auto flash_number_counting =
+			leka::activity::FlashNumberCounting(rfidkit, display::videokit, reinforcerkit, leds::belt);
+		auto super_simon	   = leka::activity::SuperSimon(rfidkit, display::videokit, reinforcerkit, leds::belt);
+		auto shape_recognition = leka::activity::ShapeRecognition(rfidkit, display::videokit, reinforcerkit);
+
+	}	// namespace internal
+
+	inline const std::unordered_map<MagicCard, interface::Activity *> activities {
+		{MagicCard::number_10, &internal::display_tag},
+		{MagicCard::number_0, &internal::choose_reinforcer},
+		{MagicCard::number_1, &internal::number_recognition},
+		{MagicCard::number_2, &internal::picto_color_recognition},
+		{MagicCard::number_3, &internal::led_color_recognition},
+		{MagicCard::number_4, &internal::emotion_recognition},
+		{MagicCard::number_5, &internal::food_recognition},
+		{MagicCard::number_6, &internal::led_number_counting},
+		{MagicCard::number_7, &internal::flash_number_counting},
+		{MagicCard::number_8, &internal::super_simon},
+		{MagicCard::number_9, &internal::shape_recognition},
+	};
+
+}	// namespace activities
+
+auto activitykit = ActivityKit {};
+
 namespace robot {
 
 	namespace internal {
@@ -329,7 +382,7 @@ namespace robot {
 		auto sleep_timeout = CoreTimeout {};
 
 		auto mcu			 = CoreMCU {};
-		auto serialnumberkit = SerialNumberKit {mcu};
+		auto serialnumberkit = SerialNumberKit {mcu, SerialNumberKit::DEFAULT_CONFIG};
 
 	}	// namespace internal
 
@@ -347,14 +400,9 @@ namespace robot {
 		display::videokit,
 		behaviorkit,
 		commandkit,
+		rfidkit,
+		activitykit,
 	};
-
-	void emergencyStop(const MagicCard &card)
-	{
-		if (card == MagicCard::emergency_stop) {
-			controller.raiseEmergencyStop();
-		}
-	}
 
 }	// namespace robot
 
@@ -478,17 +526,15 @@ auto main() -> int
 	hello.start();
 
 	sd::init();
-	rfidkit.init();
 	firmware::initializeFlash();
 
 	commandkit.registerCommand(command::list);
+	activitykit.registerActivities(activities::activities);
 
 	robot::controller.initializeComponents();
 	robot::controller.registerOnUpdateLoadedCallback(firmware::setPendingUpdate);
 	robot::controller.registerOnFactoryResetNotificationCallback(factory_reset::set);
 	robot::controller.registerEvents();
-
-	rfidkit.onTagActivated([](const MagicCard &card) { robot::emergencyStop(card); });
 
 	// TODO(@team): Add functional test prior confirming the firmware
 	firmware::confirmFirmware();

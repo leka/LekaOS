@@ -58,4 +58,8 @@ target_sources(stubs
 	${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source/SecurityManager.cpp
 	${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/tests/UNITTESTS/doubles/fakes/BLE.cpp
 	${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/tests/UNITTESTS/doubles/fakes/source/GattServerImpl_mock.cpp
+
+	${EXTERN_MBED_OS_DIR}/connectivity/mbedtls/source/platform.c
+	${EXTERN_MBED_OS_DIR}/connectivity/mbedtls/source/sha256.c
+	${EXTERN_MBED_OS_DIR}/connectivity/mbedtls/source/platform_util.c
 )
