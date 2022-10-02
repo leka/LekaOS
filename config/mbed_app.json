@@ -1,0 +1,41 @@
+{
+	"config": {
+		"target_name": null,
+		"USE_HAL_JPEG_REGISTER_CALLBACKS": {
+			"macro_name": "USE_HAL_JPEG_REGISTER_CALLBACKS",
+			"value": "1U"
+		}
+	},
+	"target_overrides": {
+		"*": {
+			"bluenrg_ms.SPI_IRQ": "BLE_IRQ",
+			"bluenrg_ms.SPI_RESET": "BLE_RESET",
+			"bluenrg_ms.SPI_MISO": "BLE_SPI_MISO",
+			"bluenrg_ms.SPI_MOSI": "BLE_SPI_MOSI",
+			"bluenrg_ms.SPI_nCS": "BLE_SPI_NSS",
+			"bluenrg_ms.SPI_SCK": "BLE_SPI_SCK",
+			"cordio.desired-att-mtu": 251,
+			"sd.SPI_CS": "SD_SPI_CS",
+			"sd.SPI_MISO": "SD_SPI_MISO",
+			"sd.SPI_MOSI": "SD_SPI_MOSI",
+			"sd.SPI_CLK": "SD_SPI_SCK",
+			"qspif.QSPI_IO0": "QSPI_FLASH_IO0",
+			"qspif.QSPI_IO1": "QSPI_FLASH_IO1",
+			"qspif.QSPI_IO2": "QSPI_FLASH_IO2",
+			"qspif.QSPI_IO3": "QSPI_FLASH_IO3",
+			"qspif.QSPI_SCK": "QSPI_FLASH_CLK",
+			"qspif.QSPI_CSN": "QSPI_FLASH_nCS",
+			"qspif.QSPI_MIN_PROG_SIZE": 1,
+			"target.printf_lib": "std",
+			"target.features_add": [
+				"EXPERIMENTAL_API"
+			]
+		},
+		"LEKA_DISCO": {
+			"target_name": "\"LEKA_DISCO\""
+		},
+		"LEKA_V1_2_DEV": {
+			"target_name": "\"LEKA_V1_2_DEV\""
+		}
+	}
+}

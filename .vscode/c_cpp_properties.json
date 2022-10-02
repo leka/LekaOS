@@ -1,0 +1,45 @@
+{
+	"configurations": [
+		{
+			"name": "Mac - Intel",
+			"includePath": [
+				"${workspaceFolder}/**"
+			],
+			"defines": [],
+			"macFrameworkPath": [],
+			"compilerPath": "/usr/local/bin/arm-none-eabi-gcc",
+			"cStandard": "gnu17",
+			"cppStandard": "gnu++20",
+			"intelliSenseMode": "gcc-arm",
+			"compilerArgs": [],
+			"configurationProvider": "ms-vscode.cmake-tools",
+			"browse": {
+				"path": [
+					"${workspaceFolder}/**"
+				],
+				"limitSymbolsToIncludedHeaders": true
+			}
+		},
+		{
+			"name": "Mac - Silicon",
+			"includePath": [
+				"${workspaceFolder}/**"
+			],
+			"defines": [],
+			"macFrameworkPath": [],
+			"compilerPath": "/opt/homebrew/bin/arm-none-eabi-gcc",
+			"cStandard": "gnu17",
+			"cppStandard": "gnu++20",
+			"intelliSenseMode": "gcc-arm",
+			"compilerArgs": [],
+			"configurationProvider": "ms-vscode.cmake-tools",
+			"browse": {
+				"path": [
+					"${workspaceFolder}/**"
+				],
+				"limitSymbolsToIncludedHeaders": true
+			}
+		}
+	],
+	"version": 4
+}

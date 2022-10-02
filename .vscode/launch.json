@@ -1,0 +1,30 @@
+{
+	"configurations": [
+		{
+			"name": "OpenOCD Debug",
+			"type": "cortex-debug",
+			"request": "launch",
+			"cwd": "${workspaceRoot}",
+			"executable": "${command:cmake.launchTargetPath}",
+			"servertype": "openocd",
+			"configFiles": [
+				"interface/stlink.cfg",
+				"target/stm32f7x.cfg"
+			],
+			"openOCDPreConfigLaunchCommands": [],
+			"openOCDLaunchCommands": [
+				"transport select hla_swd",
+				"init",
+				"targets",
+				"reset halt"
+			],
+			"device": "STM32F769BI",
+		},
+		{
+			"name": "Unit Tests Debug",
+			"type": "lldb",
+			"request": "launch",
+			"program": "${workspaceFolder}/_build_unit_tests/LekaOSUnitTestsExec",
+		}
+	]
+}

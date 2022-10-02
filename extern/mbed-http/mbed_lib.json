@@ -1,0 +1,13 @@
+{
+    "name": "mbed-http",
+    "macros": [
+        "MBEDTLS_SHA1_C"
+    ],
+    "config": {
+        "http-buffer-size": {
+            "help": "Size of the HTTP receive buffer in bytes",
+            "value": 8192,
+            "macro_name": "HTTP_RECEIVE_BUFFER_SIZE"
+        }
+    }
+}

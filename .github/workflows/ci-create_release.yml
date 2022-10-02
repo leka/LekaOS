@@ -1,0 +1,56 @@
+# Leka - LekaOS
+# Copyright 2022 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: Create Release
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  bootloader_os_firmware:
+    name: Bootloader + OS = Firmware
+    runs-on: ubuntu-latest
+
+    steps:
+      #
+      # Mark: - Setup
+      #
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup CI
+        uses: ./.github/actions/setup
+        with:
+          ccache_name: create_release
+
+      #
+      # Mark: - Config & build
+      #
+
+      - name: Get key to sign
+        run: |
+          echo "${{ secrets.FIRMWARE_SIGNING_KEY }}" > signing-keys.pem
+
+      - name: Build firmware, os, bootloader
+        run: |
+          ./tools/firmware/build_firmware.sh -r
+
+      #
+      # Mark: - Upload
+      #
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: bootloader_os_firmware
+          retention-days: 7
+          path: |
+            _release/firmware.bin

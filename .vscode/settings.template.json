@@ -1,0 +1,113 @@
+{
+	"files.associations": {
+		".clang-format": "yaml",
+		".clang-tidy": "yaml",
+		"*.orig": "cpp",
+		"any": "cpp",
+		"array": "cpp",
+		"atomic": "cpp",
+		"bit": "cpp",
+		"*.tcc": "cpp",
+		"cctype": "cpp",
+		"chrono": "cpp",
+		"clocale": "cpp",
+		"cmath": "cpp",
+		"compare": "cpp",
+		"concepts": "cpp",
+		"cstdarg": "cpp",
+		"cstddef": "cpp",
+		"cstdint": "cpp",
+		"cstdio": "cpp",
+		"cstdlib": "cpp",
+		"cstring": "cpp",
+		"ctime": "cpp",
+		"cwchar": "cpp",
+		"cwctype": "cpp",
+		"deque": "cpp",
+		"forward_list": "cpp",
+		"list": "cpp",
+		"map": "cpp",
+		"set": "cpp",
+		"unordered_map": "cpp",
+		"unordered_set": "cpp",
+		"vector": "cpp",
+		"exception": "cpp",
+		"algorithm": "cpp",
+		"functional": "cpp",
+		"iterator": "cpp",
+		"memory": "cpp",
+		"memory_resource": "cpp",
+		"numeric": "cpp",
+		"optional": "cpp",
+		"random": "cpp",
+		"ratio": "cpp",
+		"string": "cpp",
+		"string_view": "cpp",
+		"system_error": "cpp",
+		"tuple": "cpp",
+		"type_traits": "cpp",
+		"utility": "cpp",
+		"fstream": "cpp",
+		"initializer_list": "cpp",
+		"iomanip": "cpp",
+		"iosfwd": "cpp",
+		"iostream": "cpp",
+		"istream": "cpp",
+		"limits": "cpp",
+		"new": "cpp",
+		"ostream": "cpp",
+		"ranges": "cpp",
+		"sstream": "cpp",
+		"stdexcept": "cpp",
+		"streambuf": "cpp",
+		"cinttypes": "cpp",
+		"typeindex": "cpp",
+		"typeinfo": "cpp",
+		"variant": "cpp",
+		"lstd_*": "cpp",
+		"mstd_*": "cpp"
+	},
+	"files.exclude": {
+		".cache": true,
+		".clangd": true
+	},
+	"editor.formatOnSave": true,
+	"cmake.ignoreKitEnv": true,
+	"cmake.configureOnOpen": true,
+	"cmake.buildDirectory": "${workspaceFolder}/_build_cmake_tools",
+	"cmake.mergedCompileCommands": "${workspaceFolder}/compile_commands.json",
+	"cmake.generator": "Ninja",
+	"cmake.configureSettings": {
+		"TARGET_BOARD": "LEKA_V1_2_DEV",
+		"ENABLE_LOG_DEBUG": "ON",
+		"ENABLE_SYSTEM_STATS": "ON",
+		"MBED_PATH": "${workspaceFolder}/extern/mbed-os",
+		"CMAKE_CONFIG_DIR": "${workspaceFolder}/_build_cmake_tools/cmake_config",
+		"CMAKE_BUILD_TYPE": "Debug"
+	},
+	"clangd.checkUpdates": true,
+	"clangd.arguments": [
+		// On Apple Intel, un comment the following line
+		"--query-driver=/usr/local/bin/arm-none-eabi*",
+		// On Apple Silicon, un comment the following line
+		// "--query-driver=/opt/homebrew/bin/arm-none-eabi*",
+		"--log=verbose",
+		"--completion-style=detailed",
+		"--clang-tidy",
+		"--header-insertion=never",
+		"--suggest-missing-includes"
+	],
+	"markdownlint.config": {
+		"MD002": false,
+		"MD007": {
+			"indent": 4
+		},
+		"MD024": {
+			"siblings_only": true
+		},
+		"MD029": {
+			"style": "one"
+		},
+		"MD033": false
+	}
+}

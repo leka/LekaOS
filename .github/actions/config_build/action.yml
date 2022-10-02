@@ -1,0 +1,88 @@
+# Leka - LekaOS
+# Copyright 2022 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: "Config & build"
+description: ""
+
+inputs:
+  checkout_base_ref:
+    description: "Checkout base ref before config"
+    required: true
+    default: "false"
+
+  enable_log_debug:
+    description: "ENABLE_LOG_DEBUG=[ON, OFF]"
+    required: true
+    default: "OFF"
+
+  target_board:
+    description: "TARGET_BOARD=[LEKA_V1_2_DEV, LEKA_DISCO]"
+    required: true
+    default: "LEKA_V1_2_DEV"
+
+  build_for_bootloader:
+    description: "BUILD_TARGETS_TO_USE_WITH_BOOTLOADER=[ON, OFF]"
+    required: true
+    default: "OFF"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout base ref
+      if: ${{ inputs.checkout_base_ref == 'true' }}
+      shell: bash
+      run: |
+        git checkout ${{ env.BASE_REF }}
+
+    - name: Ccache pre build
+      shell: bash
+      run: |
+        make ccache_prebuild
+
+    - name: Pull deps
+      shell: bash
+      run: |
+        make pull_deps
+
+    - name: Config
+      shell: bash
+      run: |
+        make config TARGET_BOARD=${{ inputs.target_board }} ENABLE_LOG_DEBUG=${{ inputs.enable_log_debug }} BUILD_TARGETS_TO_USE_WITH_BOOTLOADER=${{ inputs.build_for_bootloader }}
+
+    - name: Build LekaOS
+      shell: bash
+      run: |
+        make os TARGET_BOARD=${{ inputs.target_board }}
+
+    - name: Build bootloader
+      shell: bash
+      run: |
+        make bootloader TARGET_BOARD=${{ inputs.target_board }}
+
+    - name: Build spikes
+      shell: bash
+      run: |
+        make spikes TARGET_BOARD=${{ inputs.target_board }}
+
+    - name: Build functional tests
+      shell: bash
+      run: |
+        make tests_functional TARGET_BOARD=${{ inputs.target_board }}
+
+    - name: Build misc
+      shell: bash
+      run: |
+        make all TARGET_BOARD=${{ inputs.target_board }}
+
+    - name: Ccache post build
+      shell: bash
+      run: |
+        make ccache_postbuild
+        ccache -z
+
+    - name: Checkout head ref
+      if: ${{ inputs.checkout_base_ref == 'true' }}
+      shell: bash
+      run: |
+        git checkout ${{ env.HEAD_REF }}

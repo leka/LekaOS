@@ -1,0 +1,6 @@
+./extern
+./cmake
+./targets
+./_build
+./_build_unit_tests
+./_build_cmake_tools

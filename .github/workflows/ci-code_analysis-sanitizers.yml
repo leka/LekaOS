@@ -1,0 +1,60 @@
+# Leka - LekaOS
+# Copyright 2022 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: Code Analysis - Sanitizers
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  run_sanitizers:
+    name: Build & run
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        compiler:
+          [
+            { name: Clang, cc: /usr/bin/clang, cxx: /usr/bin/clang++ },
+            { name: GCC, cc: /usr/bin/gcc-10, cxx: /usr/bin/g++-10 },
+          ]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set CC & CXX env
+        id: set_cc_cxx_env
+        shell: bash
+        run: |
+          echo "CC=${{ matrix.compiler.cc }}" >> $GITHUB_ENV
+          echo "CXX=${{ matrix.compiler.cxx }}" >> $GITHUB_ENV
+
+      - name: Setup CI
+        uses: ./.github/actions/setup
+        with:
+          ccache_name: code_analysis-sanitizers-${{ matrix.compiler.name }}
+
+      #
+      # Mark: - Config, build & run unit tests
+      #
+
+      - name: Ccache pre build
+        run: |
+          make ccache_prebuild
+
+      - name: Config, build & run
+        run: |
+          make config_unit_tests SANITIZERS=ON && make unit_tests
+
+      - name: Ccache post build
+        run: |
+          make ccache_postbuild
+          ccache -z

@@ -1,0 +1,88 @@
+{
+	"LEKA_DISCO": {
+		"inherits": [
+			"MCU_STM32F7"
+		],
+		"extra_labels_add": [
+			"MX25L51245G",
+			"STM32F769xI",
+			"CORDIO"
+		],
+		"components_add": [
+			"BlueNRG_MS",
+			"SD",
+			"QSPIF"
+		],
+		"supported_form_factors": [
+			"ARDUINO_UNO"
+		],
+		"features": [
+			"BLE"
+		],
+		"config": {
+			"flash_dual_bank": {
+				"help": "Default board configuration is Single Bank Flash. If you enable Dual Bank with ST Link Utility, set value to 1",
+				"value": "0"
+			}
+		},
+		"detect_code": [
+			"0817"
+		],
+		"macros_add": [
+			"STM32F769xx",
+			"HSE_VALUE=25000000"
+		],
+		"device_has_add": [
+			"EMAC",
+			"USBDEVICE",
+			"QSPI"
+		],
+		"device_name": "STM32F769NIHx",
+		"overrides": {
+			"network-default-interface-type": "ETHERNET"
+		}
+	},
+	"LEKA_V1_2_DEV": {
+		"inherits": [
+			"MCU_STM32F7"
+		],
+		"extra_labels_add": [
+			"STM32F769xI",
+			"CORDIO"
+		],
+		"components_add": [
+			"BlueNRG_MS",
+			"SD",
+			"QSPIF"
+		],
+		"supported_form_factors": [],
+		"features": [
+			"BLE"
+		],
+		"config": {
+			"flash_dual_bank": {
+				"help": "Default board configuration is Single Bank Flash. If you enable Dual Bank with ST Link Utility, set value to 1",
+				"value": "0"
+			}
+		},
+		"detect_code": [
+			"1234"
+		],
+		"macros_add": [
+			"STM32F769xx",
+			"HSE_VALUE=25000000"
+		],
+		"device_has_add": [
+			"QSPI"
+		],
+		"device_has_remove": [
+			"SPISLAVE",
+			"CAN"
+		],
+		"device_name": "STM32F769BITx",
+		"overrides": {
+			"network-default-interface-type": "WIFI",
+			"lse_available": false
+		}
+	}
+}

@@ -1,0 +1,141 @@
+# Leka - LekaOS
+# Copyright 2021 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: "CI Setup"
+description: ""
+
+inputs:
+  ccache_name:
+    description: "action/cache name for ccache"
+    required: true
+    default: "global_cache"
+
+runs:
+  using: "composite"
+  steps:
+    #
+    # Mark: - Setup env
+    #
+
+    - name: Setup ENV variables
+      id: setup_env_variables
+      shell: bash
+      run: ${{ github.action_path }}/setup_env.sh
+      env:
+        BASE_REF: ${{ github.event.pull_request.base.ref }}
+        HEAD_REF: ${{ github.head_ref }}
+
+    #
+    # Mark: - Checkout dependencies
+    #
+
+    - name: Checkout mbed-os
+      uses: actions/checkout@v3
+      with:
+        repository: leka/mbed-os
+        ref: ${{ env.HEAD_MBED_VERSION }}
+        path: extern/mbed-os
+
+    - name: Checkout mcuboot
+      uses: actions/checkout@v3
+      with:
+        repository: mcu-tools/mcuboot
+        ref: ${{ env.HEAD_MCUBOOT_VERSION }}
+        path: extern/mcuboot
+
+    - name: Symlink deps files
+      shell: bash
+      run: |
+        make mbed_symlink_files
+        make mcuboot_symlink_files
+
+    #
+    # Mark: - ARM GCC Toolchain
+    #
+
+    - name: Cache ARM GCC Toolchain
+      id: cache_arm_toolchain
+      uses: actions/cache@v2
+      with:
+        path: ${{ env.RUNNER_HOME }}/gcc-arm-none-eabi
+        key: ${{ runner.os }}-global_cache-arm_toolchain-${{ hashFiles('config/toolchain_gcc_arm_none_eabi_url') }}
+
+    - name: Install ARM GCC Toolchain
+      if: steps.cache_arm_toolchain.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        wget ${{ env.ARM_TOOLCHAIN_URL }}
+        tar -xjf ${{ env.ARM_TOOLCHAIN_FILENAME }} && rm -rf ${{ env.ARM_TOOLCHAIN_FILENAME }}
+        mv ${{ env.ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} ${{ env.RUNNER_HOME }}/gcc-arm-none-eabi
+
+    - name: Add ARM GCC Toolchain to path
+      shell: bash
+      run: |
+        echo "${{ env.RUNNER_HOME }}/gcc-arm-none-eabi/bin" >> $GITHUB_PATH
+
+    - name: Test ARM GCC Toolchain
+      shell: bash
+      run: |
+        ls -al ${{ env.RUNNER_HOME }}/gcc-arm-none-eabi/bin
+        arm-none-eabi-gcc -v
+
+    - name: Add toolchain version to env
+      shell: bash
+      run: |
+        TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc \().*(?= \(re)' | sed 's/)/ -/g')
+        echo "TOOLCHAIN_VERSION=$TOOLCHAIN_VERSION" >> $GITHUB_ENV
+
+    #
+    # Mark: - Misc. tools
+    #
+
+    - name: Install tools
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends ninja-build ccache lcov gcovr
+
+    - name: Cache ccache
+      id: global_cache-ccache
+      uses: actions/cache@v2
+      with:
+        path: ${{ env.CCACHE_DIR}}
+        key: ${{ runner.os }}-${{ inputs.ccache_name }}-ccache-${{ env.CACHE_NOW_TIME }}
+        restore-keys: |
+          ${{ runner.os }}-${{ inputs.ccache_name }}-ccache-
+
+    #
+    # Mark: - Python/pip
+    #
+
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.x"
+
+    - name: Cache pip dependencies
+      id: global_cache-pip_dependencies
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ env.RUNNER_HOME }}/.cache/pip
+          ${{ env.pythonLocation }}
+        key: ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-${{ hashFiles('config/mbed_version') }}
+        restore-keys: |
+          ${{ runner.os }}-global_cache-pip_dependencies-${{ env.pythonLocation }}-
+
+    - name: Install pip packages
+      shell: bash
+      run: |
+        pip install --upgrade --upgrade-strategy eager mbed-cli mbed-tools imgtool
+        pip install --upgrade --upgrade-strategy eager -r ./extern/mbed-os/requirements.txt
+        pip install --upgrade --upgrade-strategy eager -r ./extern/mcuboot/scripts/requirements.txt
+
+    - name: Test pip packages
+      shell: bash
+      run: |
+        pip list -v
+        mbed-cli --help
+        mbed-tools --help
+        imgtool --help

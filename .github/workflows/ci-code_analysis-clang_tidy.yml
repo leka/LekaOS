@@ -1,0 +1,76 @@
+# Leka - LekaOS
+# Copyright 2021 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: Code Analysis - Clang-Tidy
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+      #
+      # Mark: - Setup
+      #
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup CI
+        uses: ./.github/actions/setup
+
+      #
+      # Mark: - Install clang-tidy
+      #
+
+      - name: Install clang-tidy 13
+        run: |
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
+          sudo apt-add-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-13 main"
+          sudo apt update -y
+          sudo apt install -y --no-install-recommends clang-tidy-13
+          clang-tidy-13 --version
+
+      #
+      # Mark: - Config
+      #
+
+      - name: Generate compile_commands.json
+        run: |
+          make config_tools
+          make config_tools_build
+
+      #
+      # Mark: - Analyze
+      #
+
+      - name: Get modified files
+        id: modified_files
+        uses: Ana06/get-changed-files@v2.1.0
+        with:
+          format: "space-delimited"
+          filter: "*"
+
+      - name: Run clang-tidy
+        run: |
+          echo ${{ steps.modified_files.outputs.added }}           \
+               ${{ steps.modified_files.outputs.modified }}        \
+               ${{ steps.modified_files.outputs.added_modified }}  \
+               | xargs -n1 \
+               | grep -E -v "_test" \
+               | grep -E -v "extern" \
+               | grep -E -v "gtest" \
+               | grep -E -v "gmock" \
+               | grep -E -v "mocks" \
+               | grep -E -v "stubs" \
+               | grep -E    "\.h$|\.cpp$" \
+               | xargs --no-run-if-empty ruby tools/run-clang-tidy.rb _build_cmake_tools

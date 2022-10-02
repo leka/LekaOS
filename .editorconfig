@@ -1,0 +1,42 @@
+# editorconfig.org
+
+root = true
+
+[*]
+indent_style = tab
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.md]
+trim_trailing_whitespace = false # Trailing whitespace is significant in markdown files
+
+[*.cmake]
+indent_style = tab
+indent_size = 4
+
+[CMakeLists.txt]
+indent_style = tab
+indent_size = 4
+
+[*.py]
+indent_style = space
+indent_size = 4
+
+[*.yml]
+indent_style = space
+indent_size = 2
+
+[.clang-{format,tidy}]
+indent_style = space
+indent_size = 2
+
+[{settings,c_cpp_properties}.json]
+indent_style = tab
+indent_size = 4
+
+[.ycm_extra_conf.py]
+indent_style = space
+indent_size = 2
