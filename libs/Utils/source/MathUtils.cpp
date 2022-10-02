@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "MathUtils.h"
+#include <cmath>
 #include <span>
 
 using namespace leka::utils;
@@ -29,4 +30,10 @@ auto math::checksum8(std::span<uint8_t> data) -> uint8_t
 	}
 
 	return checksum;
+}
+
+auto math::random8(uint8_t min, uint8_t max) -> uint8_t
+{
+	auto ret = min + rand() % (max - min + 1);
+	return static_cast<uint8_t>(ret);
 }

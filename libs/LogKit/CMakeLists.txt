@@ -6,12 +6,12 @@ add_library(LogKit STATIC)
 
 target_include_directories(LogKit
 	PUBLIC
-		include
+	include
 )
 
 target_sources(LogKit
 	PRIVATE
-		source/LogKit.cpp
+	source/LogKit.cpp
 )
 
 target_link_libraries(LogKit
@@ -19,8 +19,7 @@ target_link_libraries(LogKit
 	ContainerKit
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/LogKit_test_log.cpp
 		tests/LogKit_test_fifo.cpp
@@ -28,5 +27,4 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/LogKit_test_now.cpp
 		tests/LogKit_test_sink.cpp
 	)
-
 endif()

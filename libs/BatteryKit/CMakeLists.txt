@@ -6,12 +6,12 @@ add_library(BatteryKit STATIC)
 
 target_include_directories(BatteryKit
 	PUBLIC
-		include
+	include
 )
 
 target_sources(BatteryKit
 	PRIVATE
-		source/BatteryKit.cpp
+	source/BatteryKit.cpp
 )
 
 target_link_libraries(BatteryKit
@@ -19,10 +19,8 @@ target_link_libraries(BatteryKit
 	CoreEventQueue
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/BatteryKit_test.cpp
 	)
-
 endif()

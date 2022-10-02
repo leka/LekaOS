@@ -6,13 +6,13 @@ add_library(target_DISCO_ORIGINAL STATIC)
 
 target_include_directories(target_DISCO_ORIGINAL
 	PUBLIC
-		.
+	.
 )
 
 target_sources(target_DISCO_ORIGINAL
 	PRIVATE
-		PeripheralPins.c
-		system_clock.c
+	PeripheralPins.c
+	system_clock.c
 )
 
 target_link_libraries(target_DISCO_ORIGINAL mbed-os)

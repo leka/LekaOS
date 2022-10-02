@@ -6,13 +6,13 @@ add_mbed_executable(spike_lk_log_kit)
 
 target_include_directories(spike_lk_log_kit
 	PRIVATE
-		.
+	.
 )
 
 target_sources(spike_lk_log_kit
 	PRIVATE
-		main.cpp
-		source/utils.cpp
+	main.cpp
+	source/utils.cpp
 )
 
 target_link_libraries(spike_lk_log_kit

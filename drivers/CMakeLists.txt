@@ -36,4 +36,6 @@ add_subdirectory(${DRIVERS_DIR}/CoreMicrophone)
 # Actuators drivers
 add_subdirectory(${DRIVERS_DIR}/CoreLED)
 add_subdirectory(${DRIVERS_DIR}/CoreMotor)
-add_subdirectory(${DRIVERS_DIR}/FastLED)
+
+# Touch drivers
+add_subdirectory(${DRIVERS_DIR}/CoreIOExpander)

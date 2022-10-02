@@ -20,26 +20,27 @@ set(CHIP_LINKER_FLAGS "")
 set(MBED_LINK_OPTIONS "")
 
 foreach(FLAG ${MCU_LINK_OPTIONS})
-    if("${FLAG}" MATCHES "--wrap")
-        list(APPEND MBED_LINK_OPTIONS "${FLAG}")
-    elseif("${FLAG}" IN_LIST MCU_COMPILE_FLAGS)
-        # duplicate flag, do nothing
-    else()
-        string(APPEND CHIP_LINKER_FLAGS " ${FLAG}")
-    endif()
+	if("${FLAG}" MATCHES "--wrap")
+		list(APPEND MBED_LINK_OPTIONS "${FLAG}")
+	elseif("${FLAG}" IN_LIST MCU_COMPILE_FLAGS)
+	# duplicate flag, do nothing
+	else()
+		string(APPEND CHIP_LINKER_FLAGS " ${FLAG}")
+	endif()
 endforeach()
 
 # also add config-specific link flags (these go with mbed-os since they need generator expressions)
 foreach(BUILD_TYPE ${CMAKE_CONFIGURATION_TYPES})
-    string(TOUPPER "${BUILD_TYPE}" BUILD_TYPE_UCASE)
-    foreach(OPTION ${MCU_LINK_OPTIONS_${BUILD_TYPE_UCASE}})
-        if(NOT "${OPTION}" STREQUAL "")
-            list(APPEND MBED_LINK_OPTIONS $<$<CONFIG:${BUILD_TYPE}>:${OPTION}>)
-        endif()
-    endforeach()
+	string(TOUPPER "${BUILD_TYPE}" BUILD_TYPE_UCASE)
+
+	foreach(OPTION ${MCU_LINK_OPTIONS_${BUILD_TYPE_UCASE}})
+		if(NOT "${OPTION}" STREQUAL "")
+			list(APPEND MBED_LINK_OPTIONS $<$<CONFIG:${BUILD_TYPE}>:${OPTION}>)
+		endif()
+	endforeach()
 endforeach()
 
-#note: these initialize the cache variables on first configure
+# note: these initialize the cache variables on first configure
 set(CMAKE_C_FLAGS_INIT "${CHIP_FLAGS}")
 set(CMAKE_CXX_FLAGS_INIT "${CHIP_FLAGS} -Wvla -fno-exceptions -fno-rtti")
 set(CMAKE_ASM_FLAGS_INIT "${CHIP_FLAGS}")

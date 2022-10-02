@@ -6,20 +6,18 @@ add_library(CoreLightSensor STATIC)
 
 target_include_directories(CoreLightSensor
 	PUBLIC
-		include
+	include
 )
 
 target_sources(CoreLightSensor
 	PRIVATE
-		source/CoreLightSensor.cpp
+	source/CoreLightSensor.cpp
 )
 
 target_link_libraries(CoreLightSensor mbed-os)
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/CoreLightSensor_test.cpp
 	)
-
 endif()

@@ -6,27 +6,26 @@ add_library(IOKit STATIC)
 
 target_include_directories(IOKit
 	PUBLIC
-		include
+	include
 	PRIVATE
-		internal
+	internal
 )
 
 target_sources(IOKit
 	PRIVATE
-		source/IO.cpp
-		source/DigitalIn.cpp
+	source/IO.cpp
+	source/DigitalIn.cpp
+	source/DigitalOut.cpp
 )
 
 target_link_libraries(IOKit
 	PRIVATE
-		mbed-os
-
+	mbed-os
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/DigitalIn_test.cpp
+		tests/DigitalOut_test.cpp
 	)
-
 endif()

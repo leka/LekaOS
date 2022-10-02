@@ -140,7 +140,7 @@ TEST_F(DigitalInTest, setModePullDown)
 TEST_F(DigitalInTest, read)
 {
 	EXPECT_CALL(mockIOExpander, setPinAsInput(pin_number)).Times(1);
-	EXPECT_CALL(mockIOExpander, readInputPin(pin_number)).Times(1);
+	EXPECT_CALL(mockIOExpander, readPin(pin_number)).Times(1);
 
 	leka::io::expanded::DigitalIn<uint16_t> pin {mockIOExpander, pin_number};
 

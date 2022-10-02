@@ -23,6 +23,12 @@ parser.add_argument('-p', '--port', metavar='PORT', default='/dev/tty.usbmodem*'
 parser.add_argument('-d', '--dir', metavar='DIR', default='fs',
                     help='directory to control, relative to LekaOS root')
 
+parser.add_argument('-l', '--loop-delay', metavar='SLEEP_DELAY', default=0.8,
+                    help='time delay between files')
+
+parser.add_argument('-f', '--fast', metavar='FAST', action=argparse.BooleanOptionalAction,
+                    help='fast check with 0.2s loop delay')
+
 parser.add_argument('--test', action=argparse.BooleanOptionalAction,
                     help='Run tests with /fs/usr/test')
 
@@ -36,8 +42,8 @@ args = parser.parse_args()
 PORTS = glob.glob(args.port)
 SERIAL_PORT = PORTS[0] if (len(PORTS) != 0) else args.port
 
-REBOOT_TIMEOUT = 5  # in seconds
-SERIAL_TIMEOUT = .1  # in seconds
+REBOOT_TIMEOUT = 5.0  # in seconds
+SERIAL_TIMEOUT = 0.1  # in seconds
 
 MAX_GET_LINE_RETRIES = REBOOT_TIMEOUT / SERIAL_TIMEOUT
 
@@ -153,6 +159,7 @@ def print_report(broken, empty, missing, reboot):
 
 # Relative path from LekaOS root
 ROOT_PATH = args.dir if not args.test else 'fs/usr/test'
+LOOP_SLEEP_DELAY = args.SLEEP_DELAY if not args.FAST else 0.2
 
 FILES_BROKEN = list()
 FILES_EMPTY = list()
@@ -215,7 +222,6 @@ def main():
                 FILES_REBOOT.append(file_path)
                 reboot_device()
 
-            LOOP_SLEEP_DELAY = 1  # in seconds
             sleep(LOOP_SLEEP_DELAY)
 
     delete_missing_file()

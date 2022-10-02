@@ -6,38 +6,37 @@ add_library(CoreVideo STATIC)
 
 target_include_directories(CoreVideo
 	PUBLIC
-		include
-		external/include
+	include
+	external/include
 )
 
 target_sources(CoreVideo
 	PRIVATE
-		source/CoreDMA2D.cpp
-		source/CoreFont.cpp
-		source/CoreGraphics.cpp
-		source/JPEGImageProperties.cpp
-		source/CoreJPEGModePolling.cpp
-		source/CoreJPEGModeDMA.cpp
-		source/CoreJPEG.cpp
-		source/CoreLTDC.cpp
-		source/CoreDSI.cpp
-		source/CoreLCD.cpp
-		source/CoreLCDDriverOTM8009A.cpp
-		source/CoreSDRAM.cpp
-		source/CoreVideo.cpp
-		external/source/st_jpeg_utils.cpp
+	source/CoreDMA2D.cpp
+	source/CoreFont.cpp
+	source/CoreGraphics.cpp
+	source/JPEGImageProperties.cpp
+	source/CoreJPEGModePolling.cpp
+	source/CoreJPEGModeDMA.cpp
+	source/CoreJPEG.cpp
+	source/CoreLTDC.cpp
+	source/CoreDSI.cpp
+	source/CoreLCD.cpp
+	source/CoreLCDDriverOTM8009A.cpp
+	source/CoreSDRAM.cpp
+	source/CoreVideo.cpp
+	external/source/st_jpeg_utils.cpp
 )
 
 target_link_libraries(CoreVideo
 	PRIVATE
-		mbed-os
-		CoreLL
-		CoreSTM32Hal
-		FileManagerKit
+	mbed-os
+	CoreLL
+	CoreSTM32Hal
+	FileManagerKit
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/CGColor_test.cpp
 		tests/CGPixel_test.cpp
@@ -55,5 +54,4 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/CoreSDRAM_test.cpp
 		tests/CoreVideo_test.cpp
 	)
-
 endif()

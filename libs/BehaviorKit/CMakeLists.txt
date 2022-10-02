@@ -6,12 +6,12 @@ add_library(BehaviorKit STATIC)
 
 target_include_directories(BehaviorKit
 	PUBLIC
-		include
+	include
 )
 
 target_sources(BehaviorKit
 	PRIVATE
-		source/BehaviorKit.cpp
+	source/BehaviorKit.cpp
 )
 
 target_link_libraries(BehaviorKit
@@ -20,10 +20,8 @@ target_link_libraries(BehaviorKit
 	CoreMotor
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/BehaviorKit_test.cpp
 	)
-
 endif()

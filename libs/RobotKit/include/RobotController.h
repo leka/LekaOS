@@ -223,11 +223,15 @@ class RobotController : public interface::RobotController
 		_ble.setServices(services);
 		_ble.init();
 
-		auto _serial_number = _serialnumberkit.getSerialNumber();
+		auto &_serial_number = _serialnumberkit.getSerialNumber();
 		_service_device_information.setSerialNumber(_serial_number);
 
-		auto _os_version = FirmwareVersion {.major = 1, .minor = 0, .revision = 0};
+		auto _os_version = FirmwareVersion {.major = 1, .minor = 1, .revision = 0};
 		_service_device_information.setOSVersion(_os_version);
+
+		auto advertising_data = _ble.getAdvertisingData();
+		advertising_data.name = reinterpret_cast<const char *>(_serialnumberkit.getShortSerialNumber().data());
+		_ble.setAdvertisingData(advertising_data);
 
 		_motor_left.stop();
 		_motor_right.stop();

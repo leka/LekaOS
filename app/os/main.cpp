@@ -488,7 +488,7 @@ auto main() -> int
 	robot::controller.registerOnFactoryResetNotificationCallback(factory_reset::set);
 	robot::controller.registerEvents();
 
-	rfidkit.onTagActivated([](MagicCard card) { robot::emergencyStop(card); });
+	rfidkit.onTagActivated([](const MagicCard &card) { robot::emergencyStop(card); });
 
 	// TODO(@team): Add functional test prior confirming the firmware
 	firmware::confirmFirmware();

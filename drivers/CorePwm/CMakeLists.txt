@@ -6,22 +6,20 @@ add_library(CorePwm STATIC)
 
 target_include_directories(CorePwm
 	PUBLIC
-		include
+	include
 )
 
 target_sources(CorePwm
 	PRIVATE
-		source/CorePwm.cpp
+	source/CorePwm.cpp
 )
 
 target_link_libraries(CorePwm
 	mbed-os
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/CorePwm_test.cpp
 	)
-
 endif()

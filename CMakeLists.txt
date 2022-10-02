@@ -7,8 +7,8 @@ cmake_minimum_required(VERSION 3.21)
 #
 # MARK: - External tools
 #
-
 find_program(CCACHE "ccache")
+
 if(CCACHE)
 	set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE}")
 	set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE}")
@@ -41,7 +41,8 @@ add_compile_options(
 
 # Bootloader
 option(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER "Build targets with padding to use with bootloader" OFF)
-if (BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
+
+if(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
 	set(MBED_APP_FLAGS
 		-DMBED_APP_START=0x08041000
 		-DMBED_APP_SIZE=0x17E000
@@ -50,12 +51,14 @@ endif(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
 
 # Logger
 option(ENABLE_LOG_DEBUG "Enable LogKit output" OFF)
+
 if(ENABLE_LOG_DEBUG)
 	add_definitions(-DENABLE_LOG_DEBUG)
 endif(ENABLE_LOG_DEBUG)
 
 # SYSTEM Stats
 option(ENABLE_SYSTEM_STATS "Enable SYSTEM stats" OFF)
+
 if(ENABLE_LOG_DEBUG AND ENABLE_SYSTEM_STATS)
 	add_definitions(-DMBED_CPU_STATS_ENABLED)
 	add_definitions(-DMBED_STACK_STATS_ENABLED)
@@ -67,26 +70,25 @@ endif(ENABLE_LOG_DEBUG AND ENABLE_SYSTEM_STATS)
 #
 
 # Before all
-set(ROOT_DIR      ${CMAKE_CURRENT_LIST_DIR})
+set(ROOT_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 # extern
-set(MBED_OS_DIR   ${ROOT_DIR}/extern/mbed-os)
-set(MCUBOOT_DIR   ${ROOT_DIR}/extern/mcuboot/boot)
+set(MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
+set(MCUBOOT_DIR ${ROOT_DIR}/extern/mcuboot/boot)
 set(MBED_HTTP_DIR ${ROOT_DIR}/extern/mbed-http)
 
 # includes
-set(LIBS_DIR    ${ROOT_DIR}/libs)
+set(LIBS_DIR ${ROOT_DIR}/libs)
 set(DRIVERS_DIR ${ROOT_DIR}/drivers)
 set(INCLUDE_DIR ${ROOT_DIR}/include)
 set(TARGETS_DIR ${ROOT_DIR}/targets)
 
 # app
-set(OS_DIR         ${ROOT_DIR}/app/os)
+set(OS_DIR ${ROOT_DIR}/app/os)
 set(BOOTLOADER_DIR ${ROOT_DIR}/app/bootloader)
 
-# spikes, functional tests
-set(SPIKES_DIR           ${ROOT_DIR}/spikes)
-set(FUNCTIONAL_TESTS_DIR ${ROOT_DIR}/tests/functional)
+# spikes
+set(SPIKES_DIR ${ROOT_DIR}/spikes)
 
 #
 # MARK: - LekaOS Project
@@ -99,7 +101,8 @@ project(LekaOS LANGUAGES C CXX ASM)
 
 # Add custom target subdirectory
 set(AVAILABLE_CUSTOM_TARGETS LEKA_DISCO LEKA_V1_2_DEV)
-if (${TARGET_BOARD} IN_LIST AVAILABLE_CUSTOM_TARGETS)
+
+if(${TARGET_BOARD} IN_LIST AVAILABLE_CUSTOM_TARGETS)
 	message(STATUS "Add subdirectory for hardware target ${TARGET_BOARD}")
 	add_subdirectory(${TARGETS_DIR}/TARGET_${TARGET_BOARD})
 else()
@@ -130,9 +133,8 @@ add_subdirectory(${MBED_HTTP_DIR})
 add_subdirectory(${DRIVERS_DIR})
 add_subdirectory(${LIBS_DIR})
 
-# Add spikes, functional tests
+# Add spikes
 add_subdirectory(${SPIKES_DIR})
-add_subdirectory(${FUNCTIONAL_TESTS_DIR})
 
 # Add bootloader
 add_subdirectory(${BOOTLOADER_DIR})
@@ -146,8 +148,8 @@ mbed_cmake_print_build_report()
 #
 # MARK: - Misc. options
 #
-
 option(VERBOSE_BUILD "Have a verbose build process")
+
 if(VERBOSE_BUILD)
 	set(CMAKE_VERBOSE_MAKEFILE ON)
 endif()

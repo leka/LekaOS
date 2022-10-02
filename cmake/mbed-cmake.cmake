@@ -45,13 +45,13 @@ set(CMAKE_CONFIGURATION_TYPES Debug RelWithDebInfo Release)
 
 # check configuration files
 # -------------------------------------------------------------
-
 set(MBED_CMAKE_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 # relative to CMakeLists.txt inside mbed-cmake
 if(NOT DEFINED MBED_CMAKE_GENERATED_CONFIG_RELPATH)
 	set(MBED_CMAKE_GENERATED_CONFIG_RELPATH ${MBED_CMAKE_CONFIG_DIR})
 endif()
+
 set(MBED_CMAKE_GENERATED_CONFIG_PATH ${MBED_CMAKE_CONFIG_DIR})
 
 if(NOT DEFINED MBED_CMAKE_CONFIG_HEADERS_PATH)
@@ -78,39 +78,32 @@ endif()
 # search for and load compilers
 enable_language(C CXX ASM)
 
-
 foreach(BUILD_TYPE RELWITHDEBINFO DEBUG RELEASE)
 	list_to_space_separated(CMAKE_C_FLAGS_${BUILD_TYPE} ${MCU_COMPILE_OPTIONS_${BUILD_TYPE}})
 	list_to_space_separated(CMAKE_CXX_FLAGS_${BUILD_TYPE} ${MCU_COMPILE_OPTIONS_${BUILD_TYPE}})
 	list_to_space_separated(CMAKE_ASM_FLAGS_${BUILD_TYPE} ${MCU_COMPILE_OPTIONS_${BUILD_TYPE}})
 endforeach()
 
-
 # find python (used for memap and several upload methods)
 # -------------------------------------------------------------
-
 find_package(Python3 COMPONENTS Interpreter)
 
 # load the Mbed CMake functions
 # -------------------------------------------------------------
-
 include(AddMbedExecutable)
 
 # Configure upload methods
 # -------------------------------------------------------------
-
 set(CMAKE_EXECUTABLE_SUFFIX .elf)
 
 # add Mbed OS source
 # -------------------------------------------------------------
-
 set(MBED_CMAKE_CONFIG_HEADERS_PATH ${MBED_CMAKE_GENERATED_CONFIG_PATH}/config-headers)
-add_subdirectory(${MBED_OS_DIR}) #first get Mbed standard library
+add_subdirectory(${MBED_OS_DIR}) # first get Mbed standard library
 
 # build report
 # -------------------------------------------------------------
 function(mbed_cmake_print_build_report)
-
 	message(STATUS "---- Completed configuration of ${PROJECT_NAME} ----")
 
 	# build type
@@ -123,5 +116,4 @@ function(mbed_cmake_print_build_report)
 	message(STATUS ">> CXX Compile Flags (Global): ${CMAKE_CXX_FLAGS}")
 	message(STATUS ">> CXX Compile Flags (For ${CMAKE_BUILD_TYPE}): ${CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE_UCASE}}")
 	message(STATUS ">> Linker Flags: ${CMAKE_EXE_LINKER_FLAGS}")
-
 endfunction(mbed_cmake_print_build_report)

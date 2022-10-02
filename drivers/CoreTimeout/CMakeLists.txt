@@ -6,12 +6,12 @@ add_library(CoreTimeout STATIC)
 
 target_include_directories(CoreTimeout
 	PUBLIC
-		include
+	include
 )
 
 target_sources(CoreTimeout
 	PRIVATE
-		source/CoreTimeout.cpp
+	source/CoreTimeout.cpp
 )
 
 target_link_libraries(CoreTimeout

@@ -132,7 +132,7 @@ auto main() -> int
 
 		if (path.string().ends_with(".jpg")) {
 			videokit.displayImage(path);
-			rtos::ThisThread::sleep_for(500ms);
+			rtos::ThisThread::sleep_for(100ms);
 			com.write("ACK_IMAGE:" + path.string());
 			continue;
 		}

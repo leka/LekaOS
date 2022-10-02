@@ -39,3 +39,14 @@ TEST_F(SerialNumberKitTest, getSerialNumber)
 	auto actual_serial_number = serial_number_kit.getSerialNumber();
 	EXPECT_EQ(actual_serial_number, expected_serial_number);
 }
+
+TEST_F(SerialNumberKitTest, getShortSerialNumber)
+{
+	auto mcu_id_returned		= MCUID {0x2A2B2C2D, 0x3A3B3C3D, 0x4A4B4C4D};
+	auto expected_serial_number = std::array<uint8_t, 17> {"LK-22xx-2A2B2C2D"};
+
+	EXPECT_CALL(mock_mcu, getID).WillOnce(Return(mcu_id_returned));
+
+	auto actual_serial_number = serial_number_kit.getShortSerialNumber();
+	EXPECT_EQ(actual_serial_number, expected_serial_number);
+}

@@ -6,12 +6,12 @@ add_mbed_executable(spike_lk_watchdog_isr)
 
 target_include_directories(spike_lk_watchdog_isr
 	PRIVATE
-		.
+	.
 )
 
 target_sources(spike_lk_watchdog_isr
 	PRIVATE
-		main.cpp
+	main.cpp
 )
 
 target_link_libraries(spike_lk_watchdog_isr
@@ -19,6 +19,5 @@ target_link_libraries(spike_lk_watchdog_isr
 	CoreRFIDReader
 	RFIDKit
 )
-
 
 target_link_custom_leka_targets(spike_lk_watchdog_isr)

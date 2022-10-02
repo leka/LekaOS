@@ -6,12 +6,12 @@ add_mbed_executable(spike_lk_serial_number)
 
 target_include_directories(spike_lk_serial_number
 	PRIVATE
-		.
+	.
 )
 
 target_sources(spike_lk_serial_number
 	PRIVATE
-		main.cpp
+	main.cpp
 )
 
 target_link_libraries(spike_lk_serial_number

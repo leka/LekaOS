@@ -6,20 +6,18 @@ add_library(CoreBattery STATIC)
 
 target_include_directories(CoreBattery
 	PUBLIC
-		include
+	include
 )
 
 target_sources(CoreBattery
 	PRIVATE
-		source/CoreBattery.cpp
+	source/CoreBattery.cpp
 )
 
 target_link_libraries(CoreBattery mbed-os)
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/CoreBattery_test.cpp
 	)
-
 endif()

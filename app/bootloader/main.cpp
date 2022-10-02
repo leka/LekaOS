@@ -168,7 +168,11 @@ namespace config {
 
 	void setBootloaderVersion()
 	{
-		configkit.write(bootloader_version, bootloader_version.default_value());
+		auto ret = configkit.write(bootloader_version, bootloader_version.default_value());
+
+		if (!ret) {
+			log_error("Error writing config bootloader version");
+		}
 	}
 
 	void setOSVersion(uint8_t major, uint8_t minor, uint16_t revision)

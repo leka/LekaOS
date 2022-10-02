@@ -6,14 +6,14 @@ add_mbed_executable(spike_lk_fs)
 
 target_include_directories(spike_lk_fs
 	PRIVATE
-		.
-		include
+	.
+	include
 )
 
 target_sources(spike_lk_fs
 	PRIVATE
-		main.cpp
-		source/ComUtils.cpp
+	main.cpp
+	source/ComUtils.cpp
 )
 
 target_link_libraries(spike_lk_fs

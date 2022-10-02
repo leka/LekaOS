@@ -6,14 +6,14 @@ add_library(CoreWifi STATIC)
 
 target_include_directories(CoreWifi
 	PUBLIC
-		include
-		include/internal
+	include
+	include/internal
 )
 
 target_sources(CoreWifi
 	PRIVATE
-		source/CoreWifi.cpp
-		source/CoreNetwork.cpp
+	source/CoreWifi.cpp
+	source/CoreNetwork.cpp
 )
 
 target_link_libraries(CoreWifi

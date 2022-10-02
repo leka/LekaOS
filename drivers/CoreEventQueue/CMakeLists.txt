@@ -6,20 +6,18 @@ add_library(CoreEventQueue STATIC)
 
 target_include_directories(CoreEventQueue
 	PUBLIC
-		include
+	include
 )
 
 target_sources(CoreEventQueue
 	PRIVATE
-		source/CoreEventQueue.cpp
+	source/CoreEventQueue.cpp
 )
 
 target_link_libraries(CoreEventQueue mbed-os)
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/CoreEventQueue_test.cpp
 	)
-
 endif()

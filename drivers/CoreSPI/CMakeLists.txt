@@ -6,22 +6,20 @@ add_library(CoreSPI STATIC)
 
 target_include_directories(CoreSPI
 	PUBLIC
-		include
+	include
 )
 
 target_sources(CoreSPI
 	PRIVATE
-		source/CoreSPI.cpp
+	source/CoreSPI.cpp
 )
 
 target_link_libraries(CoreSPI
-		mbed-os
+	mbed-os
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/CoreSPI_test.cpp
 	)
-
 endif()

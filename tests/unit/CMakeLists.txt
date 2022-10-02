@@ -7,8 +7,8 @@ cmake_minimum_required(VERSION 3.21)
 #
 # MARK: - External tools
 #
-
 find_program(CCACHE "ccache")
+
 if(CCACHE)
 	set(CMAKE_C_COMPILER_LAUNCHER "${CCACHE}")
 	set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE}")
@@ -16,6 +16,7 @@ endif(CCACHE)
 
 # Compile commands database
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON CACHE INTERNAL "")
+
 if(CMAKE_EXPORT_COMPILE_COMMANDS)
 	set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
 endif()
@@ -23,7 +24,6 @@ endif()
 #
 # MARK: - Shiny output
 #
-
 message(STATUS "")
 
 message(STATUS [==[                                                                                          ]==])
@@ -40,7 +40,6 @@ message(STATUS "")
 #
 # Mark: - Project setup
 #
-
 project(LekaOSUnitTests LANGUAGES C CXX)
 
 #
@@ -57,10 +56,10 @@ set(CMAKE_C_EXTENSIONS TRUE)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 # Colored output for compilation
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	message(STATUS "GCC found! Adding -fdiagnostics-color=always compile option")
 	add_compile_options("-fdiagnostics-color=always")
-elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 	message(STATUS "Clang found! Adding -fcolor-diagnostics compile option")
 	add_compile_options("-fcolor-diagnostics")
 else()
@@ -68,8 +67,8 @@ else()
 endif()
 
 # Add code coverage
-if (COVERAGE)
-	if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+if(COVERAGE)
+	if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
 		message(FATAL_ERROR "Non-debug build may result in misleading code coverage results.")
 	endif()
 
@@ -81,13 +80,13 @@ if (COVERAGE)
 endif(COVERAGE)
 
 # Add address sanitizer
-if (SANITIZERS)
-	if (NOT COVERAGE)
+if(SANITIZERS)
+	if(NOT COVERAGE)
 		message(FATAL_ERROR "Address Sanitizer only works when coverage is enabled.")
 	endif()
 
 	# Append address sanitizer flags depending on compiler
-	if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		set(SANITIZERS_COMPILER_FLAGS " \
 			-fno-omit-frame-pointer \
 			-fno-optimize-sibling-calls \
@@ -97,7 +96,7 @@ if (SANITIZERS)
 			-fsanitize=leak \
 			-fsanitize=undefined \
 		")
-	else ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+	elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 		set(SANITIZERS_COMPILER_FLAGS " \
 			-fno-omit-frame-pointer \
 			-fno-optimize-sibling-calls \
@@ -106,6 +105,8 @@ if (SANITIZERS)
 			-fsanitize=pointer-subtract \
 			-fsanitize=undefined \
 		")
+	else()
+		message(FATAL_ERROR "Compiler not recognized")
 	endif()
 
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SANITIZERS_COMPILER_FLAGS}")
@@ -118,19 +119,17 @@ add_definitions(-DENABLE_LOG_DEBUG)
 #
 # MARK: - Directories
 #
-
-set(UNIT_TESTS_DIR     ${CMAKE_CURRENT_LIST_DIR})
-set(ROOT_DIR           ${UNIT_TESTS_DIR}/../..)
+set(UNIT_TESTS_DIR ${CMAKE_CURRENT_LIST_DIR})
+set(ROOT_DIR ${UNIT_TESTS_DIR}/../..)
 set(EXTERN_MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
 
-set(LIBS_DIR      ${ROOT_DIR}/libs)
-set(DRIVERS_DIR   ${ROOT_DIR}/drivers)
-set(INCLUDE_DIR   ${ROOT_DIR}/include)
+set(LIBS_DIR ${ROOT_DIR}/libs)
+set(DRIVERS_DIR ${ROOT_DIR}/drivers)
+set(INCLUDE_DIR ${ROOT_DIR}/include)
 
 #
 # Mark: - Add GoogleTest & GMock
 #
-
 configure_file(GoogleTest.in.cmake googletest-download/CMakeLists.txt)
 
 execute_process(COMMAND ${CMAKE_COMMAND}
@@ -163,14 +162,12 @@ add_subdirectory(
 #
 # Mark: - Setup unit tests
 #
-
 enable_testing()
 add_executable(LekaOSUnitTestsExec)
 
 #
 # Mark: - Define macros, functions, custom commands
 #
-
 add_custom_command(
 	TARGET LekaOSUnitTestsExec
 	PRE_BUILD
@@ -182,7 +179,7 @@ function(leka_unit_tests_sources UNIT_TESTS_SOURCES)
 	set(_UNIT_TESTS_SOURCES ${UNIT_TESTS_SOURCES} ${ARGN})
 	target_sources(LekaOSUnitTestsExec
 		PRIVATE
-			${_UNIT_TESTS_SOURCES}
+		${_UNIT_TESTS_SOURCES}
 	)
 endfunction()
 
@@ -191,7 +188,7 @@ function(leka_register_unit_tests_for_library LIBRARY)
 	add_subdirectory("${LIBS_DIR}/${LIBRARY}" "libs/${LIBRARY}")
 	target_link_libraries(LekaOSUnitTestsExec
 		PRIVATE
-			${LIBRARY}
+		${LIBRARY}
 	)
 endfunction()
 
@@ -200,14 +197,13 @@ function(leka_register_unit_tests_for_driver DRIVER)
 	add_subdirectory("${DRIVERS_DIR}/${DRIVER}" "drivers/${DRIVER}")
 	target_link_libraries(LekaOSUnitTestsExec
 		PRIVATE
-			${DRIVER}
+		${DRIVER}
 	)
 endfunction()
 
 #
 # Mark: - C++ Support, interfaces
 #
-
 include_directories(BEFORE SYSTEM
 	${EXTERN_MBED_OS_DIR}/platform/cxxsupport
 	${INCLUDE_DIR}
@@ -216,20 +212,17 @@ include_directories(BEFORE SYSTEM
 #
 # Mark: - Headers
 #
-
 add_subdirectory(${UNIT_TESTS_DIR}/headers)
 
 #
 # Mark: - Add fakes, stubs & mocks
 #
-
 add_subdirectory(${UNIT_TESTS_DIR}/stubs)
 add_subdirectory(${UNIT_TESTS_DIR}/mocks)
 
 #
 # Mark: - Register tests for util libraries
 #
-
 leka_register_unit_tests_for_library(Utils)
 leka_register_unit_tests_for_library(LogKit)
 leka_register_unit_tests_for_library(CriticalSection)
@@ -237,7 +230,6 @@ leka_register_unit_tests_for_library(CriticalSection)
 #
 # Mark: - Link util libraries for remaining tests
 #
-
 link_libraries(
 	Utils
 	LogKit
@@ -247,7 +239,6 @@ link_libraries(
 #
 # Mark: - Register tests for drivers and libraries
 #
-
 add_subdirectory(template)
 
 # Register drivers
@@ -258,6 +249,7 @@ leka_register_unit_tests_for_driver(CoreEventQueue)
 leka_register_unit_tests_for_driver(CoreFlashMemory)
 leka_register_unit_tests_for_driver(CoreHTS)
 leka_register_unit_tests_for_driver(CoreI2C)
+leka_register_unit_tests_for_driver(CoreIOExpander)
 leka_register_unit_tests_for_driver(CoreLED)
 leka_register_unit_tests_for_driver(CoreLightSensor)
 leka_register_unit_tests_for_driver(CoreLL)
@@ -296,14 +288,13 @@ leka_register_unit_tests_for_library(VideoKit)
 #
 # Mark: - Finish up
 #
-
 target_link_libraries(LekaOSUnitTestsExec
 	PRIVATE
-		gtest_main
-		gmock_main
-		mbed-os
-		mocks
-		stubs
+	gtest_main
+	gmock_main
+	mbed-os
+	mocks
+	stubs
 )
 
 add_test(NAME LekaOSUnitTests COMMAND LekaOSUnitTestsExec)
@@ -311,8 +302,8 @@ add_test(NAME LekaOSUnitTests COMMAND LekaOSUnitTestsExec)
 #
 # MARK: - Options
 #
-
 option(VERBOSE_BUILD "Have a verbose build process")
+
 if(VERBOSE_BUILD)
 	set(CMAKE_VERBOSE_MAKEFILE ON)
 endif()

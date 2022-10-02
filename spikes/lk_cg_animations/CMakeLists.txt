@@ -6,12 +6,12 @@ add_mbed_executable(spike_lk_cg_animations)
 
 target_include_directories(spike_lk_cg_animations
 	PRIVATE
-		.
+	.
 )
 
 target_sources(spike_lk_cg_animations
 	PRIVATE
-		main.cpp
+	main.cpp
 )
 
 target_link_libraries(spike_lk_cg_animations

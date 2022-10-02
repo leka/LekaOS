@@ -6,15 +6,15 @@ add_library(RobotKit STATIC)
 
 target_include_directories(RobotKit
 	PUBLIC
-		include
+	include
 	PRIVATE
-		tests
+	tests
 )
 
 target_sources(RobotKit
 	PRIVATE
-		source/StateMachine.cpp
-		source/RobotController.cpp
+	source/StateMachine.cpp
+	source/RobotController.cpp
 )
 
 target_link_libraries(RobotKit
@@ -30,8 +30,7 @@ target_link_libraries(RobotKit
 	CommandKit
 )
 
-if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/StateMachine_test.cpp
 		tests/RobotController_test_initializeComponents.cpp
@@ -45,5 +44,4 @@ if (${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/RobotController_test_stateWorking.cpp
 		tests/RobotController_test_stateEmergencyStopped.cpp
 	)
-
 endif()

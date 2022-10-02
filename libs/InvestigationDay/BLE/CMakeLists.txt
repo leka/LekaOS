@@ -6,12 +6,12 @@ add_library(lib_BLE STATIC)
 
 target_include_directories(lib_BLE
 	PUBLIC
-		include
+	include
 )
 
 target_sources(lib_BLE
 	PRIVATE
-		include/LKBLE.h
+	include/LKBLE.h
 )
 
 target_link_libraries(lib_BLE
@@ -19,4 +19,3 @@ target_link_libraries(lib_BLE
 	LogKit
 	lib_PrettyPrinter
 )
-

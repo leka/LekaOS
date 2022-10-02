@@ -126,6 +126,10 @@ class RobotControllerTest : public testing::Test
 
 			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
 
+			Sequence set_serial_number_as_ble_device_name;
+			EXPECT_CALL(mock_mcu, getID).InSequence(set_serial_number_as_ble_device_name);
+			EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).InSequence(set_serial_number_as_ble_device_name);
+
 			expectedCallsStopMotors();
 
 			EXPECT_CALL(mock_videokit, initializeScreen).Times(1);
