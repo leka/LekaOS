@@ -180,3 +180,17 @@ TEST_F(RFIDKitTest, getLastMagicCardActivated)
 
 	EXPECT_EQ(rfid_kit.getLastMagicCardActivated(), MagicCard::emergency_stop);
 }
+
+TEST_F(RFIDKitTest, getLastMagicCardActivated)
+{
+	rfid::Tag tag {.data = {0x4C, 0x45, 0x4B, 0x41, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+
+	rfid_kit.onTagActivated(mock_callback.AsStdFunction());
+	EXPECT_CALL(mock_reader, registerOnTagReadableCallback).WillOnce(SaveArg<0>(&magic_card_callback));
+
+	rfid_kit.registerMagicCard();
+
+	magic_card_callback(tag);
+
+	EXPECT_EQ(rfid_kit.getLastMagicCardActivated(), MagicCard::emergency_stop);
+}
