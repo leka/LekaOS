@@ -48,4 +48,9 @@ void RFIDKit::onTagActivated(std::function<void(const MagicCard &_card)> const &
 	return _on_tag_available_callback;
 }
 
+[[nodiscard]] auto RFIDKit::getLastMagicCardActivated() const -> const MagicCard &
+{
+	return _card;
+}
+
 }	// namespace leka
