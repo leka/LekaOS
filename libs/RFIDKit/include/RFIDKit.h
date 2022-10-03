@@ -21,6 +21,7 @@ class RFIDKit
 	void onTagActivated(std::function<void(const MagicCard &_card)> const &callback);
 
 	[[nodiscard]] auto getCallback() const -> const std::function<void(const MagicCard &)> &;
+	[[nodiscard]] auto getLastMagicCardActivated() const -> const MagicCard &;
 
   private:
 	interface::RFIDReader &_rfid_reader;
