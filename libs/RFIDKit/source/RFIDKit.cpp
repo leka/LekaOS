@@ -23,8 +23,7 @@ void RFIDKit::registerMagicCard()
 {
 	auto on_magic_card_readable_callback = [this](rfid::Tag &tag) {
 		if (isTagSignatureValid(tag)) {
-			auto id = utils::memory::combineBytes({.high = tag.data[4], .low = tag.data[5]});
-			_card	= MagicCard {id};
+			_card = MagicCard {tag};
 
 			if (_on_tag_available_callback != nullptr) {
 				_on_tag_available_callback(_card);
