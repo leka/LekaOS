@@ -34,6 +34,9 @@ namespace sm::event {
 	struct autonomous_activities_mode_requested {
 	};
 
+	struct classic_mode_requested {
+	};
+
 }	// namespace sm::event
 
 namespace sm::state {
@@ -231,6 +234,7 @@ struct StateMachine {
 			, sm::state::autonomous_activities + event<sm::event::charge_did_start> [sm::guard::is_charging {}]                                 = sm::state::charging
 			, sm::state::autonomous_activities + event<sm::event::emergency_stop>                                                               = sm::state::emergency_stopped
 			, sm::state::autonomous_activities + event<sm::event::autonomous_activities_mode_requested>                                         = sm::state::autonomous_activities
+			, sm::state::autonomous_activities + event<sm::event::classic_mode_requested>                                                       = sm::state::idle
 
 			,
 

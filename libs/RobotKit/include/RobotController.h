@@ -288,6 +288,8 @@ class RobotController : public interface::RobotController
 		raise(system::robot::sm::event::autonomous_activities_mode_requested {});
 	}
 
+	void raiseClassicModeRequested() { raise(system::robot::sm::event::classic_mode_requested {}); }
+
 	void onMagicCardAvailable(const MagicCard &card)
 	{
 		if (card == MagicCard::emergency_stop) {
@@ -296,9 +298,14 @@ class RobotController : public interface::RobotController
 		}
 
 		if (card == MagicCard::dice_roll) {
+			++_classic_mode_return_counter;
 			raiseAutonomousActivityModeRequested();
 			if (_activitykit.isPlaying()) {
 				_activitykit.stop();
+			} else if (_classic_mode_return_counter >= 2) {
+				raiseClassicModeRequested();
+				_classic_mode_return_counter = 0;
+				return;
 			}
 			return;
 		}
@@ -308,6 +315,7 @@ class RobotController : public interface::RobotController
 
 		if (is_not_playing && is_autonomous_mode) {
 			_activitykit.start(card);
+			_classic_mode_return_counter = 0;
 		}
 	}
 
@@ -452,6 +460,7 @@ class RobotController : public interface::RobotController
 	};
 
 	uint8_t _emergency_stop_counter {0};
+	uint8_t _classic_mode_return_counter {0};
 };
 
 }	// namespace leka
