@@ -184,9 +184,30 @@ TEST_F(RobotControllerTest, stateChargingEventEmergencyStop)
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::emergency_stopped));
 }
 
-TEST_F(RobotControllerTest, stateChargingEventAutonomousActivityRequested)
+// ! TODO: Refactor with composite SM & CoreTimer mock
+TEST_F(RobotControllerTest, stateChargingDiceRollDetectedDelayNotOver)
 {
 	rc.state_machine.set_current_states(lksm::state::charging);
+
+	auto maximal_delay_before_over = 1s;
+
+	EXPECT_CALL(battery, level).Times(0);
+	EXPECT_CALL(mock_videokit, displayImage).Times(0);
+	EXPECT_CALL(mock_lcd, turnOn).Times(0);
+	EXPECT_CALL(timeout, start).Times(0);
+
+	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
+	rc.onMagicCardAvailable(MagicCard::dice_roll);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
+}
+
+// ! TODO: Refactor with composite SM & CoreTimer mock
+TEST_F(RobotControllerTest, stateChargingDiceRollDetectedDelayOverEventAutonomousActivityRequested)
+{
+	rc.state_machine.set_current_states(lksm::state::charging);
+
+	auto minimal_delay_over = 1001ms;
 
 	EXPECT_CALL(battery, level);
 	EXPECT_CALL(mock_videokit, displayImage).Times(1);
@@ -194,6 +215,7 @@ TEST_F(RobotControllerTest, stateChargingEventAutonomousActivityRequested)
 	EXPECT_CALL(timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_charging_start_timeout));
 	EXPECT_CALL(timeout, start).Times(AnyNumber());
 
+	spy_kernel_addElapsedTimeToTickCount(minimal_delay_over);
 	rc.onMagicCardAvailable(MagicCard::dice_roll);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));

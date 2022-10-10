@@ -141,9 +141,27 @@ TEST_F(RobotControllerTest, stateIdleEventEmergencyStop)
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::emergency_stopped));
 }
 
-TEST_F(RobotControllerTest, stateIdleEventAutonomousActivityRequested)
+// ! TODO: Refactor with composite SM & CoreTimer mock
+TEST_F(RobotControllerTest, stateIdleDiceRollDetectedDelayNotOver)
 {
 	rc.state_machine.set_current_states(lksm::state::idle);
+
+	auto maximal_delay_before_over = 1s;
+
+	EXPECT_CALL(mock_videokit, displayImage).Times(0);
+
+	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
+	rc.onMagicCardAvailable(MagicCard::dice_roll);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
+}
+
+// ! TODO: Refactor with composite SM & CoreTimer mock
+TEST_F(RobotControllerTest, stateIdleDiceRollDetectedDelayOverEventAutonomousActivityRequested)
+{
+	rc.state_machine.set_current_states(lksm::state::idle);
+
+	auto minimal_delay_over = 1001ms;
 
 	Sequence on_exit_idle_sequence;
 	EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
@@ -152,6 +170,7 @@ TEST_F(RobotControllerTest, stateIdleEventAutonomousActivityRequested)
 
 	EXPECT_CALL(mock_videokit, displayImage).Times(1);
 
+	spy_kernel_addElapsedTimeToTickCount(minimal_delay_over);
 	rc.onMagicCardAvailable(MagicCard::dice_roll);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));

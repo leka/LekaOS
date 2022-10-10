@@ -601,3 +601,29 @@ TEST_F(StateMachineTest, stateGameEventAutonomousActivityRequested)
 
 	EXPECT_TRUE(sm.is(lksm::state::autonomous_activities));
 }
+
+TEST_F(StateMachineTest, stateGameEventAutonomousActivityExitedDisconnected)
+{
+	sm.set_current_states(lksm::state::autonomous_activities, lksm::state::disconnected);
+
+	EXPECT_CALL(mock_rc, stopAutonomousActivityMode).Times(1);
+	EXPECT_CALL(mock_rc, startWaitingBehavior).Times(1);
+
+	sm.process_event(lksm::event::autonomous_activities_mode_exited {});
+
+	EXPECT_TRUE(sm.is(lksm::state::idle));
+}
+
+TEST_F(StateMachineTest, stateGameEventAutonomousActivityExitedConnected)
+{
+	sm.set_current_states(lksm::state::autonomous_activities, lksm::state::connected);
+
+	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(true));
+
+	EXPECT_CALL(mock_rc, stopAutonomousActivityMode).Times(1);
+	EXPECT_CALL(mock_rc, startWorkingBehavior).Times(1);
+
+	sm.process_event(lksm::event::autonomous_activities_mode_exited {});
+
+	EXPECT_TRUE(sm.is(lksm::state::working));
+}

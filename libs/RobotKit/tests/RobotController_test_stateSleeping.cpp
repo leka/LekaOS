@@ -111,9 +111,27 @@ TEST_F(RobotControllerTest, stateSleepingEventEmergencyStop)
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::emergency_stopped));
 }
 
-TEST_F(RobotControllerTest, stateSleepingEventAutonomousActivityRequested)
+// ! TODO: Refactor with composite SM & CoreTimer mock
+TEST_F(RobotControllerTest, stateSleepingDiceRollDetectedDelayNotOver)
 {
 	rc.state_machine.set_current_states(lksm::state::sleeping);
+
+	auto maximal_delay_before_over = 1s;
+
+	EXPECT_CALL(mock_videokit, displayImage).Times(0);
+
+	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
+	rc.onMagicCardAvailable(MagicCard::dice_roll);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::sleeping));
+}
+
+// ! TODO: Refactor with composite SM & CoreTimer mock
+TEST_F(RobotControllerTest, stateSleepingDiceRollDetectedDelayOverEventAutonomousActivitiesRequested)
+{
+	rc.state_machine.set_current_states(lksm::state::sleeping);
+
+	auto minimal_delay_over = 1001ms;
 
 	Sequence on_exit_sleeping_sequence;
 	EXPECT_CALL(timeout, stop).InSequence(on_exit_sleeping_sequence);
@@ -122,6 +140,7 @@ TEST_F(RobotControllerTest, stateSleepingEventAutonomousActivityRequested)
 
 	EXPECT_CALL(mock_videokit, displayImage).Times(1);
 
+	spy_kernel_addElapsedTimeToTickCount(minimal_delay_over);
 	rc.onMagicCardAvailable(MagicCard::dice_roll);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
