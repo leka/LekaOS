@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <interface/libs/VideoKit.h>
 #include <unordered_map>
 
 #include "MagicCard.h"
@@ -13,16 +14,19 @@ namespace leka {
 class ActivityKit
 {
   public:
-	explicit ActivityKit() = default;
+	explicit ActivityKit(interface::VideoKit &videokit) : _videokit(videokit) {};
 
 	void registerActivities(std::unordered_map<MagicCard, interface::Activity *> const &activities);
 
 	void start(const MagicCard &card);
 	void stop();
 
+	void displayMainMenu(const MagicCard &card);
+
 	[[nodiscard]] auto isPlaying() const -> bool;
 
   private:
+	interface::VideoKit &_videokit;
 	interface::Activity *_current_activity = nullptr;
 	std::unordered_map<MagicCard, interface::Activity *> _activities {};
 };

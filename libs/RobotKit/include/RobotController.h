@@ -196,7 +196,9 @@ class RobotController : public interface::RobotController
 	void startAutonomousActivityMode() final
 	{
 		_lcd.turnOn();
-		_behaviorkit.displayAutonomousActivitiesPrompt();
+
+		auto card = _rfidkit.getLastMagicCardActivated();
+		_activitykit.displayMainMenu(card);
 	}
 
 	void stopAutonomousActivityMode() final

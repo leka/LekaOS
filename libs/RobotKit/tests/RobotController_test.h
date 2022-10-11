@@ -95,7 +95,7 @@ class RobotControllerTest : public testing::Test
 	CoreRFIDReaderCR95HF reader {serial};
 	RFIDKit rfidkit {reader};
 
-	ActivityKit activitykit;
+	ActivityKit activitykit {mock_videokit};
 	activity::DisplayTags display_tag {rfidkit, mock_videokit};
 
 	stub::EventLoopKit event_loop {};

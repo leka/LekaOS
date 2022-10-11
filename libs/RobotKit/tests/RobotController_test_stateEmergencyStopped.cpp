@@ -174,7 +174,7 @@ TEST_F(RobotControllerTest, stateEmergencyStoppedEventAutonomousActivityRequeste
 
 	EXPECT_CALL(mock_videokit, displayImage).Times(1);
 
-	rc.state_machine.process_event(lksm::event::autonomous_activities_mode_requested {});
+	rc.onMagicCardAvailable(MagicCard::dice_roll);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
 }

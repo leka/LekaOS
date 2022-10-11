@@ -373,7 +373,7 @@ namespace activities {
 
 }	// namespace activities
 
-auto activitykit = ActivityKit {};
+auto activitykit = ActivityKit {display::videokit};
 
 namespace robot {
 
