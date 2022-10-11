@@ -13,122 +13,85 @@
 	Record_IMU_App developped in python.
 */
 
-#include "drivers/AnalogIn.h"
-#include "drivers/DigitalIn.h"
-#include "events/EventQueue.h"
 #include "rtos/ThisThread.h"
-#include "rtos/Thread.h"
 
 #include "CoreBufferedSerial.h"
-#include "CoreDMA2D.hpp"
-#include "CoreDSI.hpp"
-#include "CoreEventFlags.h"
-#include "CoreFont.hpp"
-#include "CoreGraphics.hpp"
 #include "CoreIMULSM6DSOX.h"
-#include "CoreJPEG.hpp"
-#include "CoreJPEGModeDMA.hpp"
-#include "CoreJPEGModePolling.hpp"
-#include "CoreLCD.hpp"
-#include "CoreLCDDriverOTM8009A.hpp"
-#include "CoreLL.h"
-#include "CoreLTDC.hpp"
+#include "CoreLED.h"
 #include "CoreRFIDReaderCR95HF.h"
-#include "CoreSDRAM.hpp"
-#include "CoreSTM32Hal.h"
-#include "CoreVideo.hpp"
-#include "FATFileSystem.h"
-#include "FileManagerKit.h"
+#include "CoreSPI.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
 #include "ODRCard.h"
 #include "RFIDKit.h"
-#include "SDBlockDevice.h"
-#include "VideoKit.h"
 
 using namespace std::literals::chrono_literals;
 using namespace leka;
 using namespace motion::record;
 
-/**************************** LCD **************************/
-SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
-auto event_flags = CoreEventFlags {};
+namespace {
 
-CoreLL corell;
-CGPixel pixel(corell);
-CoreSTM32Hal hal;
-CoreSDRAM coresdram(hal);
-CoreDMA2D coredma2d(hal);
-CoreDSI coredsi(hal);
-CoreLTDC coreltdc(hal);
-CoreGraphics coregraphics(coredma2d);
-CoreFont corefont(pixel);
-CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
-CoreLCD corelcd(coreotm);
-CoreJPEGModeDMA _corejpegmode {hal};
-CoreJPEG corejpeg {hal, _corejpegmode};
-CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
-HAL_VIDEO_DECLARE_IRQ_HANDLERS(corevideo);
-auto videokit = VideoKit {event_flags, corevideo};
+namespace leds {
 
-/**************************** IMU **************************/
-mbed::I2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
-leka::CoreIMULSM6DSOX coreimu(i2c, PinName::SENSOR_IMU_IRQ);
+	namespace internal::belt {
 
-/**************************** FILE MANAGE **************************/
-FATFileSystem fatfs("fs");
-auto file = FileManagerKit::File {};
+		auto spi			= CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+		constexpr auto size = 20;
 
-void initializeSD()
-{
-	constexpr auto default_sd_blockdevice_frequency = uint64_t {25'000'000};
+	}	// namespace internal::belt
 
-	sd_blockdevice.init();
-	sd_blockdevice.frequency(default_sd_blockdevice_frequency);
+	auto belt = CoreLED<internal::belt::size> {internal::belt::spi};
 
-	fatfs.mount(&sd_blockdevice);
-}
+}	// namespace leds
 
-/**************************** RFID **************************/
-auto rfidserial = CoreBufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
-auto rfidreader = CoreRFIDReaderCR95HF(rfidserial);
-auto rfidkit	= RFIDKit(rfidreader);
+namespace imu {
 
-/**************************** CARDS **************************/
-ODRCard CARD_ODR_12_5HZ(card::ODR_12_5HZ, "ODR_IMU_12Hz", LSM6DSOX_XL_ODR_12Hz5, LSM6DSOX_GY_ODR_12Hz5, 80ms);
-ODRCard CARD_ODR_26HZ(card::ODR_26HZ, "ODR_IMU_26Hz", LSM6DSOX_XL_ODR_26Hz, LSM6DSOX_GY_ODR_26Hz, 38ms);
-ODRCard CARD_ODR_52HZ(card::ODR_52HZ, "ODR_IMU_52Hz", LSM6DSOX_XL_ODR_52Hz, LSM6DSOX_GY_ODR_52Hz, 19ms);
-ODRCard CARD_ODR_104HZ(card::ODR_104HZ, "ODR_IMU_104Hz", LSM6DSOX_XL_ODR_104Hz, LSM6DSOX_GY_ODR_104Hz, 10ms);
-std::array<ODRCard, 4> odr_cards = {CARD_ODR_12_5HZ, CARD_ODR_26HZ, CARD_ODR_52HZ, CARD_ODR_104HZ};
+	mbed::I2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
+	leka::CoreIMULSM6DSOX coreimu(i2c);
 
-// by default
-auto current_tag_id = CARD_ODR_26HZ.getId();
-auto time_odr		= CARD_ODR_26HZ.getTimeODR();
+}	// namespace imu
+
+namespace rfid {
+
+	auto serial = CoreBufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
+	auto reader = CoreRFIDReaderCR95HF(serial);
+
+}	// namespace rfid
+
+auto rfidkit = RFIDKit(rfid::reader);
+
+namespace cards::odr {
+
+	ODRCard CARD_ODR_12_5HZ(card::ODR_12_5HZ, RGB::pure_red, LSM6DSOX_XL_ODR_12Hz5, LSM6DSOX_GY_ODR_12Hz5, 80ms);
+	ODRCard CARD_ODR_26HZ(card::ODR_26HZ, RGB::pure_green, LSM6DSOX_XL_ODR_26Hz, LSM6DSOX_GY_ODR_26Hz, 38ms);
+	ODRCard CARD_ODR_52HZ(card::ODR_52HZ, RGB::pure_blue, LSM6DSOX_XL_ODR_52Hz, LSM6DSOX_GY_ODR_52Hz, 19ms);
+	ODRCard CARD_ODR_104HZ(card::ODR_104HZ, RGB::purple, LSM6DSOX_XL_ODR_104Hz, LSM6DSOX_GY_ODR_104Hz, 10ms);
+	std::array<ODRCard, 4> odr_cards = {CARD_ODR_12_5HZ, CARD_ODR_26HZ, CARD_ODR_52HZ, CARD_ODR_104HZ};
+}	// namespace cards::odr
+
+// Default configuration
+auto current_tag_id = cards::odr::CARD_ODR_26HZ.getId();
+auto time_odr		= cards::odr::CARD_ODR_26HZ.getTimeODR();
+
+}	// namespace
 
 auto main() -> int
 {
 	auto id_card = 0;
 
 	logger::init();
-	videokit.initializeScreen();
-	initializeSD();
 
 	HelloWorld hello;
 	hello.start();
 
-	corevideo.clearScreen();
-	rtos::ThisThread::sleep_for(2s);
-
-	videokit.displayImage(CARD_ODR_26HZ.getImgPath());
-
 	rfidkit.init();
-	rfidkit.onTagActivated([&](const MagicCard &card) {
+	rfidkit.onTagActivated([&id_card](const MagicCard &card) {
 		id_card = card.getId();
-		for (ODRCard card: odr_cards) {
-			if (card.getId() == id_card) {
+		for (ODRCard odr_card: cards::odr::odr_cards) {
+			if (odr_card.getId() == id_card) {
 				updateODR<leka::CoreIMULSM6DSOX::odr_xl_t, leka::CoreIMULSM6DSOX::odr_g_t>(
-					videokit, coreimu, card.getImgPath(), card.getXlODR(), card.getGyODR(), time_odr,
-					card.getTimeODR());
+					leds::belt, imu::coreimu, odr_card.getColor(), odr_card.getXlODR(), odr_card.getGyODR(), time_odr,
+					odr_card.getTimeODR());
 				break;
 			}
 		}
@@ -139,10 +102,11 @@ auto main() -> int
 		std::tuple<interface::mg_t, interface::mg_t, interface::mg_t, interface::dps_t, interface::dps_t,
 				   interface::dps_t>
 			imu_data;
-		imu_data = coreimu.getAccelAndAngularSpeed();
+		imu_data = imu::coreimu.getAccelAndAngularSpeed();
 
-		log_info("%f\t%f\t%f\t%f\t%f\t%f", std::get<0>(imu_data), std::get<1>(imu_data), std::get<2>(imu_data),
-				 std::get<3>(imu_data), std::get<4>(imu_data), std::get<5>(imu_data));
+		log_info("Acc_x(mg): %f, Acc_y(mg): %f, Acc_z(mg): %f, Gyr_x(dps): %f, Gyr_y(dps): %f, Gyr_z(dps): %f)",
+				 std::get<0>(imu_data), std::get<1>(imu_data), std::get<2>(imu_data), std::get<3>(imu_data),
+				 std::get<4>(imu_data), std::get<5>(imu_data));
 		rtos::ThisThread::sleep_until(start + time_odr);
 	}
 }

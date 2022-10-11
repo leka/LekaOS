@@ -15,19 +15,10 @@ target_sources(spike_lk_imu_app
 )
 
 target_link_libraries(spike_lk_imu_app
-	CoreVideo
-	CoreLL
-	CoreSTM32Hal
-	CoreEventFlags
-	FileManagerKit
-	VideoKit
-	CoreSPI
 	ColorKit
 	CoreLED
-	CoreBufferedSerial
-	CoreRFIDReader
 	RFIDKit
-	CoreIMULSM6DSOX
+	CoreIMU
 )
 
 target_link_custom_leka_targets(spike_lk_imu_app)
