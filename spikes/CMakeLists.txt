@@ -6,6 +6,7 @@ add_subdirectory(${SPIKES_DIR}/lk_audio)
 add_subdirectory(${SPIKES_DIR}/lk_behavior_kit)
 add_subdirectory(${SPIKES_DIR}/lk_ble)
 add_subdirectory(${SPIKES_DIR}/lk_bluetooth)
+add_subdirectory(${SPIKES_DIR}/lk_boost_ut)
 add_subdirectory(${SPIKES_DIR}/lk_cg_animations)
 add_subdirectory(${SPIKES_DIR}/lk_color_kit)
 add_subdirectory(${SPIKES_DIR}/lk_command_kit)
@@ -45,6 +46,7 @@ add_custom_target(spikes_leka)
 add_dependencies(spikes_leka
 	spike_lk_ble
 	spike_lk_bluetooth
+	spike_lk_boost_ut
 	spike_lk_cg_animations
 	spike_lk_color_kit
 	spike_lk_command_kit
