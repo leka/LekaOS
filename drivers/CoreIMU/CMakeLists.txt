@@ -2,21 +2,21 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CoreIMULSM6DSOX STATIC)
+add_library(CoreIMU STATIC)
 
-target_include_directories(CoreIMULSM6DSOX
+target_include_directories(CoreIMU
 	PUBLIC
 	include
 	extern/include
 )
 
-target_sources(CoreIMULSM6DSOX
+target_sources(CoreIMU
 	PRIVATE
 	extern/source/lsm6dsox_reg.c
 	source/CoreIMULSM6DSOX.cpp
 )
 
-target_link_libraries(CoreIMULSM6DSOX)
+target_link_libraries(CoreIMU)
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
