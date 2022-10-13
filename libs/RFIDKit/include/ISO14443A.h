@@ -11,7 +11,7 @@
 
 namespace leka::rfid {
 
-template <size_t SIZE>
+template <std::size_t SIZE>
 struct Command {
 	const std::array<uint8_t, SIZE> data;
 	const leka::rfid::Flag flags;
@@ -20,7 +20,7 @@ struct Command {
 	{
 		auto cmd = std::array<uint8_t, SIZE + 1> {};
 
-		for (int i = 0; i < SIZE; ++i) {
+		for (std::size_t i = 0; i < SIZE; ++i) {
 			cmd.at(i) = data.at(i);
 		}
 
