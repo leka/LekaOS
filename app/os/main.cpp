@@ -303,6 +303,11 @@ namespace firmware {
 		internal::qspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
 	}
 
+	auto version() -> FirmwareVersion
+	{
+		return kit.getCurrentVersion();
+	}
+
 	void setPendingUpdate()
 	{
 		boot_set_pending(0);
@@ -517,8 +522,10 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(1s);
 
+	auto version = firmware::version();
+
 	log_info("\n\n");
-	log_info("Hello, LekaOS!\n");
+	log_info("Hello, LekaOS v%i.%i.%i!\n", version.major, version.minor, version.revision);
 
 	rtos::ThisThread::sleep_for(2s);
 
