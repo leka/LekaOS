@@ -23,7 +23,7 @@ class BLEServiceUpdateTest : public testing::Test
 	BLEServiceUpdate::data_requested_handle_t data_requested_handle {};
 
 	bool default_request_update_sent {false};
-	FirmwareVersion default_version {0x00, 0x00, 0x0000};
+	Version default_version {0x00, 0x00, 0x0000};
 
 	void onDataReceivedProcess(const uint8_t *data)
 	{
