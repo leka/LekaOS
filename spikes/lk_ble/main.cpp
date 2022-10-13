@@ -60,7 +60,7 @@ auto main() -> int
 	std::array<uint8_t, 33> serial_number = {"LK-2202-003300294E5350092038384B"};
 	service_device_information.setSerialNumber(serial_number);
 
-	auto os_version = FirmwareVersion {123, 234, 45678};
+	auto os_version = Version {123, 234, 45678};
 	service_device_information.setOSVersion(os_version);
 
 	blekit.onConnectionCallback([] { log_info("Connected !"); });

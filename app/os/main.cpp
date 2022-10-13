@@ -303,7 +303,7 @@ namespace firmware {
 		internal::qspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
 	}
 
-	auto version() -> FirmwareVersion
+	auto version() -> Version
 	{
 		return kit.getCurrentVersion();
 	}

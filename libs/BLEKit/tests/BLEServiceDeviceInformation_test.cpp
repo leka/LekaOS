@@ -63,7 +63,7 @@ TEST(BLEServiceDeviceInformationTest, setOSVersion)
 
 	service_device_information.onDataReadyToSend(spy_callback);
 
-	auto os_version			 = FirmwareVersion {123, 234, 45678};
+	auto os_version			 = Version {123, 234, 45678};
 	auto expected_os_version = os_version.asStdArray();	  // "123.234.45678"
 	service_device_information.setOSVersion(os_version);
 

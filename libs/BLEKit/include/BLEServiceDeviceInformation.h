@@ -5,7 +5,7 @@
 #pragma once
 
 #include "CastUtils.h"
-#include "interface/drivers/FirmwareVersion.h"
+#include "interface/drivers/Version.h"
 #include "internal/BLEService.h"
 #include "internal/ServicesCharacteristics.h"
 
@@ -24,7 +24,7 @@ class BLEServiceDeviceInformation : public interface::BLEService
 		sendData(data);
 	}
 
-	void setOSVersion(const FirmwareVersion &version) const
+	void setOSVersion(const Version &version) const
 	{
 		_os_version.fill('\0');
 		auto version_cstr = version.asStdArray();

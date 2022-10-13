@@ -29,12 +29,12 @@ class FirmwareKit : public interface::FirmwareUpdate
 		// nothing do to
 	}
 
-	auto getCurrentVersion() -> leka::FirmwareVersion final;
+	auto getCurrentVersion() -> Version final;
 
-	auto loadUpdate(const leka::FirmwareVersion &version) -> bool final;
+	auto loadUpdate(const Version &version) -> bool final;
 
   private:
-	auto getCurrentVersionFromFile() -> leka::FirmwareVersion;
+	auto getCurrentVersionFromFile() -> Version;
 
 	auto loadUpdate(const char *path) -> bool;
 
