@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "interface/drivers/FirmwareVersion.h"
+#include "interface/drivers/Version.h"
 #include "internal/BLEService.h"
 #include "internal/ServicesCharacteristics.h"
 
@@ -15,7 +15,7 @@ class BLEServiceUpdate : public interface::BLEService
   public:
 	BLEServiceUpdate() : interface::BLEService(service::firmware_update::uuid, _characteristic_table) {}
 
-	auto getVersion() const -> FirmwareVersion { return version; }
+	auto getVersion() const -> Version { return version; }
 
 	void onDataReceived(const data_received_handle_t &params) final
 	{
@@ -65,7 +65,7 @@ class BLEServiceUpdate : public interface::BLEService
 		service::firmware_update::characteristic::request_factory_reset, &is_factory_reset_requested};
 	std::function<void(bool)> _on_factory_reset_notification_callback {};
 
-	FirmwareVersion version {};
+	Version version {};
 
 	WriteOnlyGattCharacteristic<uint8_t> version_major_characteristic {
 		service::firmware_update::characteristic::version_major, &version.major};
