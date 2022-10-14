@@ -627,3 +627,104 @@ TEST_F(StateMachineTest, stateAutonomousActivityEventAutonomousActivityExitedCon
 
 	EXPECT_TRUE(sm.is(lksm::state::working));
 }
+
+TEST_F(StateMachineTest, stateChargingEventFileExchangeRequestedGuardTrue)
+{
+	sm.set_current_states(lksm::state::charging);
+
+	EXPECT_CALL(mock_rc, stopChargingBehavior);
+
+	EXPECT_CALL(mock_rc, isReadyToFileExchange).WillOnce(Return(true));
+	EXPECT_CALL(mock_rc, onFileExchangeStart);
+
+	sm.process_event(lksm::event::file_exchange_start_requested {});
+
+	EXPECT_TRUE(sm.is(lksm::state::file_exchange));
+}
+
+TEST_F(StateMachineTest, stateChargingEventFileExchangeRequestedGuardFalse)
+{
+	sm.set_current_states(lksm::state::charging);
+
+	EXPECT_CALL(mock_rc, isReadyToFileExchange).WillOnce(Return(false));
+	EXPECT_CALL(mock_rc, onFileExchangeStart).Times(0);
+
+	sm.process_event(lksm::event::file_exchange_start_requested {});
+
+	EXPECT_TRUE(sm.is(lksm::state::charging));
+}
+
+TEST_F(StateMachineTest, stateFileExhangeEventFileExchangeStopRequestedGuardIsCharging)
+{
+	sm.set_current_states(lksm::state::file_exchange);
+
+	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
+	EXPECT_CALL(mock_rc, startChargingBehavior);
+
+	sm.process_event(lksm::event::file_exchange_stop_requested {});
+
+	EXPECT_TRUE(sm.is(lksm::state::charging));
+}
+
+TEST_F(StateMachineTest, stateFileExhangeEventFileExchangeStopRequestedGuardIsNotCharging)
+{
+	sm.set_current_states(lksm::state::file_exchange);
+
+	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
+	EXPECT_CALL(mock_rc, startWorkingBehavior);
+	EXPECT_CALL(mock_rc, startIdleTimeout);
+
+	sm.process_event(lksm::event::file_exchange_stop_requested {});
+
+	EXPECT_TRUE(sm.is(lksm::state::working));
+}
+
+TEST_F(StateMachineTest, stateFileExhangeEventBleDisconnectionGuardIsCharging)
+{
+	sm.set_current_states(lksm::state::file_exchange, lksm::state::connected);
+
+	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+
+	EXPECT_CALL(mock_rc, startDisconnectionBehavior);
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
+
+	EXPECT_CALL(mock_rc, startChargingBehavior);
+
+	sm.process_event(lksm::event::ble_disconnection {});
+
+	EXPECT_TRUE(sm.is(lksm::state::charging, lksm::state::disconnected));
+}
+
+TEST_F(StateMachineTest, stateFileExhangeEventBleDisconnectionGuardIsNotCharging)
+{
+	sm.set_current_states(lksm::state::file_exchange, lksm::state::connected);
+
+	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+
+	EXPECT_CALL(mock_rc, startDisconnectionBehavior);
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
+
+	EXPECT_CALL(mock_rc, startSleepTimeout);
+	EXPECT_CALL(mock_rc, startWaitingBehavior);
+
+	sm.process_event(lksm::event::ble_disconnection {});
+
+	EXPECT_TRUE(sm.is(lksm::state::idle, lksm::state::disconnected));
+}
+
+TEST_F(StateMachineTest, stateFileExhangeEventEmergencyStop)
+{
+	sm.set_current_states(lksm::state::file_exchange);
+
+	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+
+	EXPECT_CALL(mock_rc, stopActuatorsAndLcd);
+
+	sm.process_event(lksm::event::emergency_stop {});
+
+	EXPECT_TRUE(sm.is(lksm::state::emergency_stopped));
+}

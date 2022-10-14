@@ -23,6 +23,10 @@ namespace sm::event {
 	};
 	struct charge_did_stop {
 	};
+	struct file_exchange_start_requested {
+	};
+	struct file_exchange_stop_requested {
+	};
 	struct update_requested {
 	};
 	struct emergency_stop {
@@ -46,6 +50,7 @@ namespace sm::state {
 	inline auto working				  = boost::sml::state<class working>;
 	inline auto sleeping			  = boost::sml::state<class sleeping>;
 	inline auto charging			  = boost::sml::state<class charging>;
+	inline auto file_exchange		  = boost::sml::state<class file_exchange>;
 	inline auto updating			  = boost::sml::state<class updating>;
 	inline auto emergency_stopped	  = boost::sml::state<class emergency_stopped>;
 	inline auto autonomous_activities = boost::sml::state<class autonomous_activities>;
@@ -75,6 +80,9 @@ namespace sm::guard {
 		auto operator()(irc &rc) const { return !rc.isBleConnected(); }
 	};
 
+	struct is_ready_to_file_exchange {
+		auto operator()(irc &rc) const {}
+	};
 	struct is_ready_to_update {
 		auto operator()(irc &rc) const { return rc.isReadyToUpdate(); }
 	};
@@ -127,6 +135,14 @@ namespace sm::action {
 
 	struct stop_charging_behavior {
 		auto operator()(irc &rc) const { rc.stopChargingBehavior(); }
+	};
+
+	struct on_file_exchange_start {
+		auto operator()(irc &rc) const {}
+	};
+
+	struct on_file_exchange_end {
+		auto operator()(irc &rc) const {}
 	};
 
 	struct apply_update {
@@ -207,12 +223,22 @@ struct StateMachine {
 
 			, sm::state::charging + event<sm::event::charge_did_stop>  [sm::guard::is_not_charging {} && sm::guard::is_not_connected {}]  = sm::state::idle
 			, sm::state::charging + event<sm::event::charge_did_stop>  [sm::guard::is_not_charging {} && sm::guard::is_connected {}]      = sm::state::working
+			, sm::state::charging + event<sm::event::file_exchange_start_requested> [sm::guard::is_ready_to_file_exchange {}]             = sm::state::file_exchange
 			, sm::state::charging + event<sm::event::update_requested> [sm::guard::is_ready_to_update {}]                                 = sm::state::updating
 			, sm::state::charging + event<sm::event::ble_connection>                                                                      = sm::state::charging
 			, sm::state::charging + event<sm::event::ble_disconnection>                                                                   = sm::state::charging
 			, sm::state::charging + event<sm::event::command_received>                                                                    = sm::state::charging
 			, sm::state::charging + event<sm::event::emergency_stop>                                                                      = sm::state::emergency_stopped
 			, sm::state::charging + event<sm::event::autonomous_activities_mode_requested>                                                = sm::state::charging
+
+			, sm::state::file_exchange + boost::sml::on_entry<_> / sm::action::on_file_exchange_start {}
+			, sm::state::file_exchange + boost::sml::on_exit<_>  / sm::action::on_file_exchange_end {}
+
+			, sm::state::file_exchange + event<sm::event::file_exchange_stop_requested> [sm::guard::is_not_charging {}] = sm::state::working
+			, sm::state::file_exchange + event<sm::event::file_exchange_stop_requested> [sm::guard::is_charging {}]     = sm::state::charging
+			, sm::state::file_exchange + event<sm::event::ble_disconnection>            [sm::guard::is_not_charging {}] = sm::state::idle
+			, sm::state::file_exchange + event<sm::event::ble_disconnection>            [sm::guard::is_charging {}]     = sm::state::charging
+			, sm::state::file_exchange + event<sm::event::emergency_stop>                                               = sm::state::emergency_stopped
 
 			, sm::state::updating + boost::sml::on_entry<_> / sm::action::apply_update {}
 
