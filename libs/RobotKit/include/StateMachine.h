@@ -234,11 +234,12 @@ struct StateMachine {
 			, sm::state::file_exchange + boost::sml::on_entry<_> / sm::action::on_file_exchange_start {}
 			, sm::state::file_exchange + boost::sml::on_exit<_>  / sm::action::on_file_exchange_end {}
 
-			, sm::state::file_exchange + event<sm::event::file_exchange_stop_requested> [sm::guard::is_not_charging {}] = sm::state::working
-			, sm::state::file_exchange + event<sm::event::file_exchange_stop_requested> [sm::guard::is_charging {}]     = sm::state::charging
-			, sm::state::file_exchange + event<sm::event::ble_disconnection>            [sm::guard::is_not_charging {}] = sm::state::idle
-			, sm::state::file_exchange + event<sm::event::ble_disconnection>            [sm::guard::is_charging {}]     = sm::state::charging
-			, sm::state::file_exchange + event<sm::event::emergency_stop>                                               = sm::state::emergency_stopped
+			, sm::state::file_exchange + event<sm::event::file_exchange_stop_requested> [sm::guard::is_not_charging {}]    = sm::state::working
+			, sm::state::file_exchange + event<sm::event::file_exchange_stop_requested> [sm::guard::is_charging {}]        = sm::state::charging
+			, sm::state::file_exchange + event<sm::event::ble_disconnection>            [sm::guard::is_not_charging {}]    = sm::state::idle
+			, sm::state::file_exchange + event<sm::event::ble_disconnection>            [sm::guard::is_charging {}]        = sm::state::charging
+			, sm::state::file_exchange + event<sm::event::emergency_stop>                                                  = sm::state::emergency_stopped
+			, sm::state::file_exchange + event<sm::event::update_requested>             [sm::guard::is_ready_to_update {}] = sm::state::updating
 
 			, sm::state::updating + boost::sml::on_entry<_> / sm::action::apply_update {}
 

@@ -728,3 +728,29 @@ TEST_F(StateMachineTest, stateFileExhangeEventEmergencyStop)
 
 	EXPECT_TRUE(sm.is(lksm::state::emergency_stopped));
 }
+
+TEST_F(StateMachineTest, stateFileExhangeEventUpdateRequestedGuardTrue)
+{
+	sm.set_current_states(lksm::state::file_exchange);
+
+	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+
+	EXPECT_CALL(mock_rc, isReadyToUpdate).WillOnce(Return(true));
+	EXPECT_CALL(mock_rc, applyUpdate);
+
+	sm.process_event(lksm::event::update_requested {});
+
+	EXPECT_TRUE(sm.is(lksm::state::updating));
+}
+
+TEST_F(StateMachineTest, stateFileExhangeEventUpdateRequestedGuardFalse)
+{
+	sm.set_current_states(lksm::state::file_exchange);
+
+	EXPECT_CALL(mock_rc, isReadyToUpdate).WillOnce(Return(false));
+	EXPECT_CALL(mock_rc, applyUpdate).Times(0);
+
+	sm.process_event(lksm::event::update_requested {});
+
+	EXPECT_TRUE(sm.is(lksm::state::file_exchange));
+}
