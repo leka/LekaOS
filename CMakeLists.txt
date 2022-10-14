@@ -90,6 +90,9 @@ set(BOOTLOADER_DIR ${ROOT_DIR}/app/bootloader)
 # spikes
 set(SPIKES_DIR ${ROOT_DIR}/spikes)
 
+# functional tests
+set(TESTS_FUNCTIONAL_DIR ${ROOT_DIR}/tests/functional)
+
 #
 # MARK: - LekaOS Project
 #
@@ -135,6 +138,9 @@ add_subdirectory(${LIBS_DIR})
 
 # Add spikes
 add_subdirectory(${SPIKES_DIR})
+
+# Add functional tests
+add_subdirectory(${TESTS_FUNCTIONAL_DIR})
 
 # Add bootloader
 add_subdirectory(${BOOTLOADER_DIR})
