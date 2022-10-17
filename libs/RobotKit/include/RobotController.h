@@ -11,7 +11,7 @@
 #include "BLEServiceBattery.h"
 #include "BLEServiceCommands.h"
 #include "BLEServiceDeviceInformation.h"
-#include "BLEServiceFileReception.h"
+#include "BLEServiceFileExchange.h"
 #include "BLEServiceMonitoring.h"
 #include "BLEServiceUpdate.h"
 
@@ -395,13 +395,13 @@ class RobotController : public interface::RobotController
 		};
 		_service_commands.onCommandsReceived(on_commands_received);
 
-		_service_file_reception.onFilePathReceived(
+		_service_file_exchange.onFilePathReceived(
 			[this](std::span<const char> path) { file_reception.setFilePath(path.data()); });
-		_service_file_reception.onFileDataReceived(
+		_service_file_exchange.onFileDataReceived(
 			[this](std::span<const uint8_t> buffer) { file_reception.onPacketReceived(buffer); });
-		_service_file_reception.onFileSHA256Requested([this](std::span<const char> path) {
+		_service_file_exchange.onFileSHA256Requested([this](std::span<const char> path) {
 			if (FileManagerKit::File file {path.data()}; file.is_open()) {
-				_service_file_reception.setFileSHA256(file.getSHA256());
+				_service_file_exchange.setFileSHA256(file.getSHA256());
 			}
 		});
 
@@ -466,12 +466,12 @@ class RobotController : public interface::RobotController
 	BLEServiceCommands _service_commands {};
 	BLEServiceDeviceInformation _service_device_information {};
 	BLEServiceMonitoring _service_monitoring {};
-	BLEServiceFileReception _service_file_reception {};
+	BLEServiceFileExchange _service_file_exchange {};
 	BLEServiceUpdate _service_update {};
 
 	std::array<interface::BLEService *, 6> services = {
-		&_service_battery,	  &_service_commands,		&_service_device_information,
-		&_service_monitoring, &_service_file_reception, &_service_update,
+		&_service_battery,	  &_service_commands,	   &_service_device_information,
+		&_service_monitoring, &_service_file_exchange, &_service_update,
 	};
 
 	uint8_t _emergency_stop_counter {0};

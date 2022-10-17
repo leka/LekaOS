@@ -7,7 +7,7 @@
 #include "BLEKit.h"
 #include "BLEServiceBattery.h"
 #include "BLEServiceDeviceInformation.h"
-#include "BLEServiceFileReception.h"
+#include "BLEServiceFileExchange.h"
 #include "BLEServiceMonitoring.h"
 #include "BLEServiceUpdate.h"
 
@@ -28,11 +28,11 @@ auto charging_status = bool {false};
 auto service_device_information = BLEServiceDeviceInformation {};
 auto service_battery			= BLEServiceBattery {};
 auto service_monitoring			= BLEServiceMonitoring {};
-auto service_file_reception		= BLEServiceFileReception {};
+auto service_file_exchange		= BLEServiceFileExchange {};
 auto service_update				= BLEServiceUpdate {};
 
 auto services = std::to_array<interface::BLEService *>(
-	{&service_device_information, &service_battery, &service_monitoring, &service_update, &service_file_reception});
+	{&service_device_information, &service_battery, &service_monitoring, &service_update, &service_file_exchange});
 
 auto blekit = BLEKit {};
 
@@ -70,10 +70,10 @@ auto main() -> int
 
 	initializeSD();
 
-	service_file_reception.onFilePathReceived(
+	service_file_exchange.onFilePathReceived(
 		[](std::span<const char> path) { file_reception_handler.setFilePath(path.data()); });
 
-	service_file_reception.onFileDataReceived(
+	service_file_exchange.onFileDataReceived(
 		[](std::span<const uint8_t> buffer) { file_reception_handler.onPacketReceived(buffer); });
 
 	while (true) {

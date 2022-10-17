@@ -9,10 +9,10 @@
 
 namespace leka {
 
-class BLEServiceFileReception : public interface::BLEService
+class BLEServiceFileExchange : public interface::BLEService
 {
   public:
-	BLEServiceFileReception() : interface::BLEService(service::receive_file::uuid, _characteristic_table) {};
+	BLEServiceFileExchange() : interface::BLEService(service::receive_file::uuid, _characteristic_table) {};
 
 	void setFileSHA256(std::array<uint8_t, 32> sha256) const
 	{
