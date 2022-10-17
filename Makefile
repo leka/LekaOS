@@ -108,6 +108,10 @@ firmware:
 	python3 tools/check_version.py ./config/os_version
 	./tools/firmware/build_firmware.sh -r -v $(OS_VERSION)
 
+firmware_no_cleanup:
+	python3 tools/check_version.py ./config/os_version
+	./tools/firmware/build_firmware.sh -v $(OS_VERSION)
+
 #
 # MARK: - Config targets
 #
