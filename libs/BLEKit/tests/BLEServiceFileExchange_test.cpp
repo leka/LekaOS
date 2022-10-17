@@ -79,6 +79,55 @@ TEST_F(BLEServiceFileExchangeTest, initialisation)
 	EXPECT_NE(&service_file_exchange, nullptr);
 }
 
+TEST_F(BLEServiceFileExchangeTest, setFileExchangeState)
+{
+	uint8_t actual_charging_status {};
+
+	auto spy_callback = [&actual_charging_status](const BLEServiceFileExchange::data_to_send_handle_t &handle) {
+		actual_charging_status = std::get<1>(handle)[0];
+	};
+
+	service_file_exchange.onDataReadyToSend(spy_callback);
+
+	service_file_exchange.setFileExchangeState(true);
+	EXPECT_TRUE(actual_charging_status);
+
+	service_file_exchange.setFileExchangeState(false);
+	EXPECT_FALSE(actual_charging_status);
+}
+
+TEST_F(BLEServiceFileExchangeTest, onSetFileExchangeStateCallback)
+{
+	bool sent_value		 = true;
+	auto sent_value_data = static_cast<uint8_t>(sent_value);
+
+	data_received_handle.data = &sent_value_data;
+
+	testing::MockFunction<void(bool)> mock_callback {};
+	service_file_exchange.onSetFileExchangeState(mock_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_callback, Call(sent_value));
+
+	service_file_exchange.onDataReceived(data_received_handle);
+}
+
+TEST_F(BLEServiceFileExchangeTest, onSetFileExchangeStateCallbackNotSameHandle)
+{
+	bool sent_value		 = true;
+	auto sent_value_data = static_cast<uint8_t>(sent_value);
+
+	data_received_handle.data = &sent_value_data;
+
+	testing::MockFunction<void(bool)> mock_callback {};
+	service_file_exchange.onSetFileExchangeState(mock_callback.AsStdFunction());
+
+	data_received_handle.handle = 0xFFFF;
+
+	EXPECT_CALL(mock_callback, Call).Times(0);
+
+	service_file_exchange.onDataReceived(data_received_handle);
+}
+
 TEST_F(BLEServiceFileExchangeTest, getFilePathAny)
 {
 	auto expected_file_path = std::to_array("/fs/some_file.txt");

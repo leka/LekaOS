@@ -14,6 +14,15 @@ class BLEServiceFileExchange : public interface::BLEService
   public:
 	BLEServiceFileExchange() : interface::BLEService(service::file_exchange::uuid, _characteristic_table) {};
 
+	void setFileExchangeState(bool value)
+	{
+		set_file_exchange_state = static_cast<uint8_t>(value);
+
+		auto data = std::make_tuple(set_file_exchange_state_characteristic.getValueHandle(),
+									std::span(&set_file_exchange_state, 1));
+		sendData(data);
+	}
+
 	void setFileSHA256(std::array<uint8_t, 32> sha256) const
 	{
 		auto data = std::make_tuple(file_sha256_characteristic.getValueHandle(), sha256);
@@ -22,6 +31,12 @@ class BLEServiceFileExchange : public interface::BLEService
 
 	void onDataReceived(const data_received_handle_t &params) final
 	{
+		if (params.handle == set_file_exchange_state_characteristic.getValueHandle()) {
+			set_file_exchange_state = params.data[0];
+			if (_on_set_file_exchange_state_change) {
+				_on_set_file_exchange_state_change(static_cast<bool>(set_file_exchange_state));
+			}
+		}
 		if (params.handle == file_path_characteristic.getValueHandle()) {
 			if (params.offset == 0) {
 				file_path.fill('\0');
@@ -43,6 +58,11 @@ class BLEServiceFileExchange : public interface::BLEService
 			}
 		}
 	};
+
+	void onSetFileExchangeState(const std::function<void(bool)> &callback)
+	{
+		_on_set_file_exchange_state_change = callback;
+	}
 
 	void onFilePathReceived(const std::function<void(std::span<const char>)> &callback)
 	{
@@ -67,6 +87,11 @@ class BLEServiceFileExchange : public interface::BLEService
 	}
 
   private:
+	uint8_t set_file_exchange_state {0x00};
+	ReadWriteGattCharacteristic<uint8_t> set_file_exchange_state_characteristic {
+		service::file_exchange::characteristic::set_state, &set_file_exchange_state};
+	std::function<void(bool)> _on_set_file_exchange_state_change {};
+
 	std::array<char, 256> file_path {};
 	WriteOnlyArrayGattCharacteristic<char, 256> file_path_characteristic {
 		service::file_exchange::characteristic::file_path, file_path.begin()};
