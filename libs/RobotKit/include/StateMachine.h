@@ -81,7 +81,7 @@ namespace sm::guard {
 	};
 
 	struct is_ready_to_file_exchange {
-		auto operator()(irc &rc) const {}
+		auto operator()(irc &rc) const { return rc.isReadyToFileExchange(); }
 	};
 	struct is_ready_to_update {
 		auto operator()(irc &rc) const { return rc.isReadyToUpdate(); }
@@ -138,11 +138,11 @@ namespace sm::action {
 	};
 
 	struct on_file_exchange_start {
-		auto operator()(irc &rc) const {}
+		auto operator()(irc &rc) const { rc.onFileExchangeStart(); }
 	};
 
 	struct on_file_exchange_end {
-		auto operator()(irc &rc) const {}
+		auto operator()(irc &rc) const { rc.onFileExchangeEnd(); }
 	};
 
 	struct apply_update {

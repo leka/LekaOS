@@ -50,6 +50,7 @@ if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 			tests/RobotController_test_stateWorking.cpp
 			tests/RobotController_test_stateEmergencyStopped.cpp
 			tests/RobotController_test_stateAutonomousActivities.cpp
+			tests/RobotController_test_stateFileExchange.cpp
 		)
 	endif()
 endif()
