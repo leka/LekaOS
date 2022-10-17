@@ -12,7 +12,7 @@ MBED_OS_DIR       := $(ROOT_DIR)/extern/mbed-os
 MCUBOOT_DIR       := $(ROOT_DIR)/extern/mcuboot
 
 #
-# MARK: - Arguments
+# MARK: - Config
 #
 
 MBED_GIT_URL     ?= $(shell cat $(ROOT_DIR)/config/mbed_git_url)
@@ -20,19 +20,26 @@ MBED_BRANCH      ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
 MBED_VERSION     ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
 MCUBOOT_GIT_URL  ?= $(shell cat $(ROOT_DIR)/config/mcuboot_git_url)
 MCUBOOT_VERSION  ?= $(shell cat $(ROOT_DIR)/config/mcuboot_version)
-
-BUILD_TYPE       ?= Release
-TARGET_BOARD     ?= LEKA_V1_2_DEV
 FIRMWARE_VERSION ?= $(shell cat $(ROOT_DIR)/config/os_version)
+
 
 #
 # MARK: - Options
 #
 
-COVERAGE                             ?= ON
-ENABLE_LOG_DEBUG                     ?= ON
-ENABLE_SYSTEM_STATS                  ?= ON
-SANITIZERS                           ?= OFF
+# build
+BUILD_TYPE   ?= Release
+TARGET_BOARD ?= LEKA_V1_2_DEV
+
+# tests
+COVERAGE   ?= ON
+SANITIZERS ?= OFF
+
+# os
+ENABLE_LOG_DEBUG    ?= ON
+ENABLE_SYSTEM_STATS ?= ON
+
+# bootloader
 BUILD_TARGETS_TO_USE_WITH_BOOTLOADER ?= OFF
 
 #
