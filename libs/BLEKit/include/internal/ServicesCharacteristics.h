@@ -45,7 +45,7 @@ namespace monitoring {
 
 }	// namespace monitoring
 
-namespace receive_file {
+namespace file_exchange {
 
 	inline constexpr uint16_t uuid = 0x8270;
 
@@ -55,7 +55,7 @@ namespace receive_file {
 		inline constexpr uint16_t file_sha256			= 0x7083;
 	}	// namespace characteristic
 
-}	// namespace receive_file
+}	// namespace file_exchange
 
 namespace firmware_update {
 
