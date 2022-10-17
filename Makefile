@@ -20,7 +20,7 @@ MBED_BRANCH      ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
 MBED_VERSION     ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
 MCUBOOT_GIT_URL  ?= $(shell cat $(ROOT_DIR)/config/mcuboot_git_url)
 MCUBOOT_VERSION  ?= $(shell cat $(ROOT_DIR)/config/mcuboot_version)
-FIRMWARE_VERSION ?= $(shell cat $(ROOT_DIR)/config/os_version)
+OS_VERSION       ?= $(shell cat $(ROOT_DIR)/config/os_version)
 
 
 #
@@ -106,7 +106,7 @@ tests_functional:
 
 firmware:
 	python3 tools/check_version.py ./config/os_version
-	./tools/firmware/build_firmware.sh -r -v $(FIRMWARE_VERSION)
+	./tools/firmware/build_firmware.sh -r -v $(OS_VERSION)
 
 #
 # MARK: - Config targets
