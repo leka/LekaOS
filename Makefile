@@ -15,13 +15,12 @@ MCUBOOT_DIR       := $(ROOT_DIR)/extern/mcuboot
 # MARK: - Arguments
 #
 
-PORT             ?= /dev/tty.usbmodem14303
 MBED_GIT_URL     ?= $(shell cat $(ROOT_DIR)/config/mbed_git_url)
 MBED_BRANCH      ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
 MBED_VERSION     ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
 MCUBOOT_GIT_URL  ?= $(shell cat $(ROOT_DIR)/config/mcuboot_git_url)
 MCUBOOT_VERSION  ?= $(shell cat $(ROOT_DIR)/config/mcuboot_version)
-BAUDRATE         ?= 115200
+
 BUILD_TYPE       ?= Release
 TARGET_BOARD     ?= LEKA_V1_2_DEV
 FIRMWARE_VERSION ?= $(shell cat $(ROOT_DIR)/config/os_version)
@@ -358,6 +357,3 @@ flash:
 
 reset:
 	openocd -f interface/stlink.cfg -c 'transport select hla_swd' -f target/stm32f7x.cfg -c init -c 'reset run' -c exit
-
-term:
-	mbed sterm -b $(BAUDRATE) -p $(PORT)
