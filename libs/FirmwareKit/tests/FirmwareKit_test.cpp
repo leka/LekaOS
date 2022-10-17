@@ -9,6 +9,7 @@
 #include "FirmwareKit.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/FlashMemory.h"
+#include "os_version.h"
 
 using namespace leka;
 
@@ -38,11 +39,14 @@ class FirmwareKitTest : public ::testing::Test
 	std::string bin_update_path				  = "/tmp/update-v2.0.0.bin";
 	std::array<uint8_t, 6> bin_update_content = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};	// "abcdef"
 
-	Version default_version = Version {1, 0, 0};
-	Version current_version = Version {1, 2, 3};
+	// ? Default made sense when we were reading from a file in case the file was not readable
+	// ? With the #define OS_VERSION, this is not needed anymore
+	// TODO (@YannLocatelli): Remove the file related tests?
+	Version default_version = Version {1, 2, 0};
+	Version current_version = Version {1, 2, 0};
 	Version update_version	= Version {2, 0, 0};
 
-	std::string current_version_str = "1.2.3";
+	std::string current_version_str = OS_VERSION;
 
 	mock::FlashMemory mock_flash {};
 	FirmwareKit::Config config = {.os_version_path = "/tmp/os-version", .bin_path_format = "/tmp/update-v%i.%i.%i.bin"};
