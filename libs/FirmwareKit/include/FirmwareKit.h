@@ -17,12 +17,10 @@ class FirmwareKit : public interface::FirmwareUpdate
 {
   public:
 	struct Config {
-		const char *os_version_path;
 		const char *bin_path_format;
 	};
 
-	static constexpr auto DEFAULT_CONFIG =
-		Config {.os_version_path = "fs/sys/os-version", .bin_path_format = "/fs/usr/os/LekaOS-%i.%i.%i.bin"};
+	static constexpr auto DEFAULT_CONFIG = Config {.bin_path_format = "/fs/usr/os/LekaOS-%i.%i.%i.bin"};
 
 	explicit FirmwareKit(interface::FlashMemory &flash, Config config) : _flash(flash), _config(config)
 	{
@@ -34,8 +32,6 @@ class FirmwareKit : public interface::FirmwareUpdate
 	auto loadUpdate(const Version &version) -> bool final;
 
   private:
-	auto getCurrentVersionFromFile() -> Version;
-
 	auto loadUpdate(const char *path) -> bool;
 
 	interface::FlashMemory &_flash;
