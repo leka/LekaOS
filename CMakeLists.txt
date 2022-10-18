@@ -36,6 +36,7 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 add_compile_options(
 	$<$<COMPILE_LANGUAGE:CXX>:-Wno-register>
 	$<$<COMPILE_LANGUAGE:CXX>:-Wno-volatile>
+	$<$<COMPILE_LANGUAGE:C>:-std=c++20>
 	-fdiagnostics-color=always
 )
 
