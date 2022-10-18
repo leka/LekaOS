@@ -12,28 +12,34 @@ MBED_OS_DIR       := $(ROOT_DIR)/extern/mbed-os
 MCUBOOT_DIR       := $(ROOT_DIR)/extern/mcuboot
 
 #
-# MARK: - Arguments
+# MARK: - Config
 #
 
-PORT             ?= /dev/tty.usbmodem14303
 MBED_GIT_URL     ?= $(shell cat $(ROOT_DIR)/config/mbed_git_url)
 MBED_BRANCH      ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
 MBED_VERSION     ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
 MCUBOOT_GIT_URL  ?= $(shell cat $(ROOT_DIR)/config/mcuboot_git_url)
 MCUBOOT_VERSION  ?= $(shell cat $(ROOT_DIR)/config/mcuboot_version)
-BAUDRATE         ?= 115200
-BUILD_TYPE       ?= Release
-TARGET_BOARD     ?= LEKA_V1_2_DEV
-FIRMWARE_VERSION ?= $(shell cat $(ROOT_DIR)/config/os_version)
+OS_VERSION       ?= $(shell cat $(ROOT_DIR)/config/os_version)
+
 
 #
 # MARK: - Options
 #
 
-COVERAGE                             ?= ON
-ENABLE_LOG_DEBUG                     ?= ON
-ENABLE_SYSTEM_STATS                  ?= ON
-SANITIZERS                           ?= OFF
+# build
+BUILD_TYPE   ?= Release
+TARGET_BOARD ?= LEKA_V1_2_DEV
+
+# tests
+COVERAGE   ?= ON
+SANITIZERS ?= OFF
+
+# os
+ENABLE_LOG_DEBUG    ?= ON
+ENABLE_SYSTEM_STATS ?= ON
+
+# bootloader
 BUILD_TARGETS_TO_USE_WITH_BOOTLOADER ?= OFF
 
 #
@@ -100,7 +106,11 @@ tests_functional:
 
 firmware:
 	python3 tools/check_version.py ./config/os_version
-	./tools/firmware/build_firmware.sh -r -v $(FIRMWARE_VERSION)
+	./tools/firmware/build_firmware.sh -r -v $(OS_VERSION)
+
+firmware_no_cleanup:
+	python3 tools/check_version.py ./config/os_version
+	./tools/firmware/build_firmware.sh -v $(OS_VERSION)
 
 #
 # MARK: - Config targets
@@ -358,6 +368,3 @@ flash:
 
 reset:
 	openocd -f interface/stlink.cfg -c 'transport select hla_swd' -f target/stm32f7x.cfg -c init -c 'reset run' -c exit
-
-term:
-	mbed sterm -b $(BAUDRATE) -p $(PORT)
