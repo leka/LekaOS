@@ -24,10 +24,6 @@ class FirmwareKitTest : public ::testing::Test
 
 	void SetUp() override
 	{
-		std::ofstream osv_stream {config.os_version_path, std::ios::binary};
-		osv_stream << current_version_str;
-		osv_stream.close();
-
 		std::ofstream update_stream {bin_update_path.c_str(), std::ios::binary};
 		for (const auto &val: bin_update_content) {
 			update_stream << val;
@@ -39,17 +35,13 @@ class FirmwareKitTest : public ::testing::Test
 	std::string bin_update_path				  = "/tmp/update-v2.0.0.bin";
 	std::array<uint8_t, 6> bin_update_content = {0x61, 0x62, 0x63, 0x64, 0x65, 0x66};	// "abcdef"
 
-	// ? Default made sense when we were reading from a file in case the file was not readable
-	// ? With the #define OS_VERSION, this is not needed anymore
-	// TODO (@YannLocatelli): Remove the file related tests?
-	Version default_version = Version {1, 2, 0};
 	Version current_version = Version {1, 2, 0};
 	Version update_version	= Version {2, 0, 0};
 
 	std::string current_version_str = OS_VERSION;
 
 	mock::FlashMemory mock_flash {};
-	FirmwareKit::Config config = {.os_version_path = "/tmp/os-version", .bin_path_format = "/tmp/update-v%i.%i.%i.bin"};
+	FirmwareKit::Config config = {.bin_path_format = "/tmp/update-v%i.%i.%i.bin"};
 
 	FirmwareKit firmwarekit = FirmwareKit {mock_flash, config};
 };
@@ -77,17 +69,6 @@ TEST_F(FirmwareKitTest, getCurrentVersion)
 	EXPECT_EQ(actual_version.major, current_version.major);
 	EXPECT_EQ(actual_version.minor, current_version.minor);
 	EXPECT_EQ(actual_version.revision, current_version.revision);
-}
-
-TEST_F(FirmwareKitTest, getCurrentVersionFileNotFound)
-{
-	std::filesystem::remove(config.os_version_path);
-
-	auto actual_version = firmwarekit.getCurrentVersion();
-
-	EXPECT_EQ(actual_version.major, default_version.major);
-	EXPECT_EQ(actual_version.minor, default_version.minor);
-	EXPECT_EQ(actual_version.revision, default_version.revision);
 }
 
 TEST_F(FirmwareKitTest, loadUpdate)

@@ -15,24 +15,6 @@ auto FirmwareKit::getCurrentVersion() -> Version
 	return Version {.major = semversion.major, .minor = semversion.minor, .revision = semversion.patch};
 }
 
-auto FirmwareKit::getCurrentVersionFromFile() -> Version
-{
-	auto file_content = std::array<char, 16> {};
-
-	if (auto is_not_open = !_file.open(_config.os_version_path); is_not_open) {
-		return Version {.major = 1, .minor = 0, .revision = 0};
-	}
-
-	_file.read(file_content);
-	_file.close();
-
-	std::replace(std::begin(file_content), std::end(file_content), '\n', '\0');
-
-	auto semversion = semver::version {file_content.data()};
-
-	return Version {.major = semversion.major, .minor = semversion.minor, .revision = semversion.patch};
-}
-
 auto FirmwareKit::loadUpdate(const Version &version) -> bool
 {
 	auto path = std::array<char, 64> {};
