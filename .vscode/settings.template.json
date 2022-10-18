@@ -79,7 +79,7 @@
 	"cmake.generator": "Ninja",
 	"cmake.configureSettings": {
 		"TARGET_BOARD": "LEKA_V1_2_DEV",
-		"OS_VERSION": "1.2.3",
+		"OS_VERSION": "0.0.0",
 		"ENABLE_LOG_DEBUG": "ON",
 		"ENABLE_SYSTEM_STATS": "ON",
 		"MBED_PATH": "${workspaceFolder}/extern/mbed-os",
