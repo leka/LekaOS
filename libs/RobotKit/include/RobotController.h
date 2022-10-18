@@ -165,6 +165,10 @@ class RobotController : public interface::RobotController
 		using namespace std::chrono_literals;
 		using namespace system::robot::sm;
 
+		if (_consecutive_charging_counter >= 10) {
+			system_reset();
+		}
+
 		onChargingBehavior(_battery_kit.level());
 		rtos::ThisThread::sleep_for(500ms);
 		_lcd.turnOn();
@@ -172,10 +176,12 @@ class RobotController : public interface::RobotController
 		auto on_charging_start_timeout = [this] {
 			_event_queue.call(&_lcd, &interface::LCD::turnOff);
 			_event_queue.call(&_ledkit, &LedKit::stop);
+			_consecutive_charging_counter = 0;
 		};
 		_timeout.onTimeout(on_charging_start_timeout);
 
 		_timeout.start(1min);
+		++_consecutive_charging_counter;
 	}
 
 	void stopChargingBehavior() final { _timeout.stop(); }
@@ -452,6 +458,7 @@ class RobotController : public interface::RobotController
 	};
 
 	uint8_t _emergency_stop_counter {0};
+	uint8_t _consecutive_charging_counter {0};
 };
 
 }	// namespace leka

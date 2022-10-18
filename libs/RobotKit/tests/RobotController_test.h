@@ -34,6 +34,7 @@
 #include "mocks/mbed/DigitalOut.h"
 #include "mocks/mbed/EventFlags.h"
 #include "stubs/leka/EventLoopKit.h"
+#include "tests/UNITTESTS/doubles/platform/mbed_power_mgmt.h"
 
 using namespace leka;
 namespace bsml = boost::sml;
