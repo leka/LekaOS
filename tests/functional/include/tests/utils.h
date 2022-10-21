@@ -15,7 +15,7 @@ using namespace std::chrono;
 
 inline auto start = rtos::Kernel::Clock::now();
 inline auto stop  = rtos::Kernel::Clock::now();
-inline auto delta = static_cast<int>((stop - start).count());
+inline auto delta = [] { return static_cast<int>((stop - start).count()); };
 
 }	// namespace utils::time
 
@@ -32,8 +32,7 @@ inline auto delta = static_cast<int>((stop - start).count());
 // NOLINTNEXTLINE
 #define utils_end()                                                                                                    \
 	do {                                                                                                               \
-		utils::time::stop  = rtos::Kernel::Clock::now();                                                               \
-		utils::time::delta = static_cast<int>((utils::time::stop - utils::time::start).count());                       \
+		utils::time::stop = rtos::Kernel::Clock::now();                                                                \
 		log_ll("\n", 1);                                                                                               \
-		log_info("End of tests (%i ms total)", utils::time::delta);                                                    \
+		log_info("End of tests (%i ms total)", utils::time::delta());                                                  \
 	} while (0)
