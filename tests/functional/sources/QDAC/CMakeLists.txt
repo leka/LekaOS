@@ -4,15 +4,12 @@
 
 add_mbed_executable(suite_qdac)
 
-target_include_directories(suite_qdac
-	PRIVATE
-	${TESTS_FUNCTIONAL_INCLUDE_DIR}
+leka_functional_tests_includes(suite_qdac
+	.
 )
 
-target_sources(suite_qdac
-	PRIVATE
-	${TESTS_FUNCTIONAL_DIR}/main.cpp
-	./suite_qdac.cpp
+leka_functional_tests_sources(suite_qdac
+	suite_qdac.cpp
 )
 
 target_link_libraries(suite_qdac

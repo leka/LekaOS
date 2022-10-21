@@ -4,15 +4,12 @@
 
 add_mbed_executable(suite_io_expander)
 
-target_include_directories(suite_io_expander
-	PRIVATE
-	${TESTS_FUNCTIONAL_INCLUDE_DIR}
+leka_functional_tests_includes(suite_io_expander
+	.
 )
 
-target_sources(suite_io_expander
-	PRIVATE
-	${TESTS_FUNCTIONAL_DIR}/main.cpp
-	./suite_io_expander.cpp
+leka_functional_tests_sources(suite_io_expander
+	suite_io_expander.cpp
 )
 
 target_link_libraries(suite_io_expander
