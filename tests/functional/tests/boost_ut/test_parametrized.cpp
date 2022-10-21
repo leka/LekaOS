@@ -4,8 +4,7 @@
 
 #include <tuple>
 
-#include "./tests/config.h"
-#include "boost/ut.hpp"
+#include "tests/config.h"
 
 using namespace boost::ut;
 

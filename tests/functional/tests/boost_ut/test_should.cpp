@@ -2,8 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "./tests/config.h"
-#include "boost/ut.hpp"
+#include "tests/config.h"
 
 using namespace boost::ut;
 
