@@ -524,7 +524,7 @@ TEST_F(StateMachineTest, stateEmergencyStoppedEventBleConnectionGuardIsCharging)
 	EXPECT_TRUE(sm.is(lksm::state::charging));
 }
 
-TEST_F(StateMachineTest, stateGameEventBleConnection)
+TEST_F(StateMachineTest, stateAutonomousActivityEventBleConnection)
 {
 	sm.set_current_states(lksm::state::autonomous_activities);
 
@@ -537,7 +537,7 @@ TEST_F(StateMachineTest, stateGameEventBleConnection)
 	EXPECT_TRUE(sm.is(lksm::state::working));
 }
 
-TEST_F(StateMachineTest, stateGameEventCommandReceivedConnected)
+TEST_F(StateMachineTest, stateAutonomousActivityEventCommandReceivedConnected)
 {
 	sm.set_current_states(lksm::state::autonomous_activities);
 
@@ -552,7 +552,7 @@ TEST_F(StateMachineTest, stateGameEventCommandReceivedConnected)
 	EXPECT_TRUE(sm.is(lksm::state::working));
 }
 
-TEST_F(StateMachineTest, stateGameEventCommandReceivedDisconnected)
+TEST_F(StateMachineTest, stateAutonomousActivityEventCommandReceivedDisconnected)
 {
 	sm.set_current_states(lksm::state::autonomous_activities);
 
@@ -563,7 +563,7 @@ TEST_F(StateMachineTest, stateGameEventCommandReceivedDisconnected)
 	EXPECT_TRUE(sm.is(lksm::state::autonomous_activities));
 }
 
-TEST_F(StateMachineTest, stateGameEventChargeDidStartGuardIsNotCharging)
+TEST_F(StateMachineTest, stateAutonomousActivityEventChargeDidStartGuardIsNotCharging)
 {
 	sm.set_current_states(lksm::state::autonomous_activities);
 
@@ -576,7 +576,7 @@ TEST_F(StateMachineTest, stateGameEventChargeDidStartGuardIsNotCharging)
 	EXPECT_TRUE(sm.is(lksm::state::autonomous_activities));
 }
 
-TEST_F(StateMachineTest, stateGameEventChargeDidStartGuardIsCharging)
+TEST_F(StateMachineTest, stateAutonomousActivityEventChargeDidStartGuardIsCharging)
 {
 	sm.set_current_states(lksm::state::autonomous_activities);
 
@@ -590,7 +590,7 @@ TEST_F(StateMachineTest, stateGameEventChargeDidStartGuardIsCharging)
 	EXPECT_TRUE(sm.is(lksm::state::charging));
 }
 
-TEST_F(StateMachineTest, stateGameEventAutonomousActivityRequested)
+TEST_F(StateMachineTest, stateAutonomousActivityEventAutonomousActivityRequested)
 {
 	sm.set_current_states(lksm::state::autonomous_activities);
 
@@ -602,7 +602,7 @@ TEST_F(StateMachineTest, stateGameEventAutonomousActivityRequested)
 	EXPECT_TRUE(sm.is(lksm::state::autonomous_activities));
 }
 
-TEST_F(StateMachineTest, stateGameEventAutonomousActivityExitedDisconnected)
+TEST_F(StateMachineTest, stateAutonomousActivityEventAutonomousActivityExitedDisconnected)
 {
 	sm.set_current_states(lksm::state::autonomous_activities, lksm::state::disconnected);
 
@@ -614,7 +614,7 @@ TEST_F(StateMachineTest, stateGameEventAutonomousActivityExitedDisconnected)
 	EXPECT_TRUE(sm.is(lksm::state::idle));
 }
 
-TEST_F(StateMachineTest, stateGameEventAutonomousActivityExitedConnected)
+TEST_F(StateMachineTest, stateAutonomousActivityEventAutonomousActivityExitedConnected)
 {
 	sm.set_current_states(lksm::state::autonomous_activities, lksm::state::connected);
 
