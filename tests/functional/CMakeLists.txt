@@ -15,3 +15,4 @@ function(add_main_to_functional_test TARGET)
 endfunction()
 
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/boost_ut)
+add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/qdac)
