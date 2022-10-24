@@ -74,6 +74,7 @@
 	"editor.formatOnSave": true,
 	"cmake.ignoreKitEnv": true,
 	"cmake.configureOnOpen": true,
+	"cmake.format.allowOptionalArgumentIndentation": true,
 	"cmake.buildDirectory": "${workspaceFolder}/_build_cmake_tools",
 	"cmake.mergedCompileCommands": "${workspaceFolder}/compile_commands.json",
 	"cmake.generator": "Ninja",

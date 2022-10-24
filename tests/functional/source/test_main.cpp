@@ -5,9 +5,9 @@
 #include <iostream>
 #include <utility>
 
-#include "./tests/config.h"
-#include "./utils.h"
 #include "boost/ut.hpp"
+#include "tests/config.h"
+#include "tests/utils.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -15,9 +15,9 @@ namespace ut = boost::ut;
 
 auto main() -> int
 {
-	ut::cfg<ut::override> = {.filter = "*", .colors = {.none = "", .pass = "", .fail = ""}, .dry_run = false};
+	ut::cfg<ut::override> = {.filter = "*", .dry_run = false};
 
-	utils_start("boost::ut example spike");
+	utils_start(TARGET);
 
 	[[maybe_unused]] const auto result = ut::cfg<>.run({.report_errors = true});
 
