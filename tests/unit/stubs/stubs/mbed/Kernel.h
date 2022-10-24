@@ -12,4 +12,6 @@ extern int64_t spy_kernel_tick_count;
 
 void spy_kernel_setTickCount(int64_t count);
 
+void spy_kernel_addElapsedTimeToTickCount(std::chrono::milliseconds elapsed_time);
+
 }	// namespace leka
