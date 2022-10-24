@@ -100,31 +100,17 @@ TEST_F(RobotControllerTest, stateGameEventChargeDidStartGuardIsChargingFalse)
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
 }
 
-TEST_F(RobotControllerTest, stateGameEventAutonomousActivityRequested)
-{
-	rc.state_machine.set_current_states(lksm::state::autonomous_activities);
-
-	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1));
-	EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1));
-	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1));
-	EXPECT_CALL(mock_videokit, displayImage).Times(1);
-
-	rc.onMagicCardAvailable(MagicCard::dice_roll);
-
-	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
-}
-
 TEST_F(RobotControllerTest, stateGameActivityDisplayTagsChosen)
 {
 	rc.state_machine.set_current_states(lksm::state::autonomous_activities);
 
-	const std::unordered_map<MagicCard, interface::Activity *> activities {{MagicCard::number_10, &display_tag}};
-
-	activitykit.registerActivities(activities);
-
-	EXPECT_CALL(mock_videokit, displayImage).Times(1);
-
-	rc.onMagicCardAvailable(MagicCard::number_10);
+	auto set_activitykit_is_playing = [this] {
+		const std::unordered_map<MagicCard, interface::Activity *> activities {{MagicCard::number_10, &display_tag}};
+		activitykit.registerActivities(activities);
+		EXPECT_CALL(mock_videokit, displayImage).Times(1);
+		activitykit.start(MagicCard::number_10);
+	};
+	set_activitykit_is_playing();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
 }
@@ -133,17 +119,128 @@ TEST_F(RobotControllerTest, stateGameMagicCardAvailableActivityAlreadyStarted)
 {
 	rc.state_machine.set_current_states(lksm::state::autonomous_activities);
 
-	const std::unordered_map<MagicCard, interface::Activity *> activities {{MagicCard::number_10, &display_tag}};
-
-	activitykit.registerActivities(activities);
-
-	EXPECT_CALL(mock_videokit, displayImage).Times(1);
-
-	activitykit.start(MagicCard::number_10);
+	auto set_activitykit_is_playing = [this] {
+		const std::unordered_map<MagicCard, interface::Activity *> activities {{MagicCard::number_10, &display_tag}};
+		activitykit.registerActivities(activities);
+		EXPECT_CALL(mock_videokit, displayImage).Times(1);
+		activitykit.start(MagicCard::number_10);
+	};
+	set_activitykit_is_playing();
 
 	EXPECT_CALL(mock_videokit, displayImage).Times(0);
 
 	rc.onMagicCardAvailable(MagicCard::number_10);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
+}
+
+TEST_F(RobotControllerTest, stateGameActivityStartedBackToMenuDelayNotOver)
+{
+	rc.state_machine.set_current_states(lksm::state::autonomous_activities);
+
+	auto maximal_delay_before_over = 1s;
+
+	auto set_activitykit_is_playing = [this] {
+		const std::unordered_map<MagicCard, interface::Activity *> activities {{MagicCard::number_10, &display_tag}};
+		activitykit.registerActivities(activities);
+		EXPECT_CALL(mock_videokit, displayImage).Times(1);
+		activitykit.start(MagicCard::number_10);
+	};
+	set_activitykit_is_playing();
+
+	EXPECT_CALL(mock_videokit, displayImage).Times(0);
+
+	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
+	rc.onMagicCardAvailable(MagicCard::dice_roll);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
+}
+
+// ! TODO: Refactor with composite SM & CoreTimer mock
+TEST_F(RobotControllerTest, stateGameActivityStartedBackToMenu)
+{
+	auto minimal_delay_over = 1001ms;
+
+	rc.state_machine.set_current_states(lksm::state::autonomous_activities);
+
+	auto set_activitykit_is_playing = [this] {
+		const std::unordered_map<MagicCard, interface::Activity *> activities {{MagicCard::number_10, &display_tag}};
+		activitykit.registerActivities(activities);
+		EXPECT_CALL(mock_videokit, displayImage).Times(1);
+		activitykit.start(MagicCard::number_10);
+	};
+	set_activitykit_is_playing();
+
+	EXPECT_CALL(mock_videokit, stopVideo);
+	expectedCallsStopMotors();
+
+	EXPECT_CALL(mock_videokit, displayImage).Times(1);
+
+	spy_kernel_addElapsedTimeToTickCount(minimal_delay_over);
+	rc.onMagicCardAvailable(MagicCard::dice_roll);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
+}
+
+// ! TODO: Refactor with composite SM & CoreTimer mock
+TEST_F(RobotControllerTest, stateGameEventDiceRollDetectedDelayNotOver)
+{
+	rc.state_machine.set_current_states(lksm::state::autonomous_activities);
+
+	auto maximal_delay_before_over = 2s;
+
+	EXPECT_CALL(mock_videokit, stopVideo).Times(0);
+	EXPECT_CALL(mock_motor_left, stop).Times(0);
+	EXPECT_CALL(mock_motor_right, stop).Times(0);
+	EXPECT_CALL(mock_videokit, displayImage).Times(0);
+
+	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
+	rc.onMagicCardAvailable(MagicCard::dice_roll);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
+}
+
+// ! TODO: Refactor with composite SM & CoreTimer mock
+TEST_F(RobotControllerTest, stateGameEventAutonomousActivityExitedDisconnected)
+{
+	rc.state_machine.set_current_states(lksm::state::autonomous_activities, lksm::state::disconnected);
+
+	auto minimal_delay_over = 2001ms;
+
+	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1));
+	EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1));
+	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1));
+
+	Sequence on_idle_entry_sequence;
+	EXPECT_CALL(timeout, onTimeout).InSequence(on_idle_entry_sequence);
+	EXPECT_CALL(timeout, start).InSequence(on_idle_entry_sequence);
+	EXPECT_CALL(mock_videokit, playVideoOnRepeat).InSequence(on_idle_entry_sequence);
+	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_idle_entry_sequence);
+
+	spy_kernel_addElapsedTimeToTickCount(minimal_delay_over);
+	rc.onMagicCardAvailable(MagicCard::dice_roll);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
+}
+
+// ! TODO: Refactor with composite SM & CoreTimer mock
+TEST_F(RobotControllerTest, stateGameEventAutonomousActivityExitedConnected)
+{
+	rc.state_machine.set_current_states(lksm::state::autonomous_activities, lksm::state::connected);
+
+	auto minimal_delay_over = 2001ms;
+
+	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1));
+	EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1));
+	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1));
+
+	Sequence on_working_entry_sequence;
+	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(timeout, start).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_working_entry_sequence);
+
+	spy_kernel_addElapsedTimeToTickCount(minimal_delay_over);
+	rc.onMagicCardAvailable(MagicCard::dice_roll);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::working));
 }

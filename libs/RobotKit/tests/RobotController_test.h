@@ -34,8 +34,10 @@
 #include "mocks/mbed/DigitalOut.h"
 #include "mocks/mbed/EventFlags.h"
 #include "stubs/leka/EventLoopKit.h"
+#include "stubs/mbed/Kernel.h"
 
 using namespace leka;
+using namespace std::chrono_literals;
 namespace bsml = boost::sml;
 namespace lksm = system::robot::sm;
 

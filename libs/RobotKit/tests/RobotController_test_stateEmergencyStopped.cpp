@@ -168,12 +168,31 @@ TEST_F(RobotControllerTest, stateEmergencyStoppedEventBleConnectionGuardIsChargi
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
 }
 
-TEST_F(RobotControllerTest, stateEmergencyStoppedEventAutonomousActivityRequested)
+// ! TODO: Refactor with composite SM & CoreTimer mock
+TEST_F(RobotControllerTest, stateEmergencyStoppedDiceRollDetectedDelayNotOver)
 {
 	rc.state_machine.set_current_states(lksm::state::emergency_stopped);
 
+	auto maximal_delay_before_over = 1s;
+
+	EXPECT_CALL(mock_videokit, displayImage).Times(0);
+
+	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
+	rc.onMagicCardAvailable(MagicCard::dice_roll);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::emergency_stopped));
+}
+
+// ! TODO: Refactor with composite SM & CoreTimer mock
+TEST_F(RobotControllerTest, stateEmergencyStoppedDiceRollDetectedDelayOverEventAutonomousActivityRequested)
+{
+	rc.state_machine.set_current_states(lksm::state::emergency_stopped);
+
+	auto minimal_delay_over = 1001ms;
+
 	EXPECT_CALL(mock_videokit, displayImage).Times(1);
 
+	spy_kernel_addElapsedTimeToTickCount(minimal_delay_over);
 	rc.onMagicCardAvailable(MagicCard::dice_roll);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));

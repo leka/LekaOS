@@ -288,25 +288,45 @@ class RobotController : public interface::RobotController
 		raise(system::robot::sm::event::autonomous_activities_mode_requested {});
 	}
 
+	void raiseAutonomousActivityModeExited() { raise(system::robot::sm::event::autonomous_activities_mode_exited {}); }
+
 	void onMagicCardAvailable(const MagicCard &card)
 	{
+		using namespace std::chrono;
+
+		// ! TODO: Refactor with composite SM & CoreTimer instead of start/stop
+
+		auto is_playing				= _activitykit.isPlaying();
+		auto NOT_is_playing			= !is_playing;
+		auto is_autonomous_mode		= state_machine.is(system::robot::sm::state::autonomous_activities);
+		auto NOT_is_autonomous_mode = !is_autonomous_mode;
+
 		if (card == MagicCard::emergency_stop) {
 			raiseEmergencyStop();
 			return;
 		}
 
 		if (card == MagicCard::dice_roll) {
-			raiseAutonomousActivityModeRequested();
-			if (_activitykit.isPlaying()) {
-				_activitykit.stop();
+			if (NOT_is_autonomous_mode) {
+				start = rtos::Kernel::Clock::now();
+				if (start - stop > 1s) {
+					raiseAutonomousActivityModeRequested();
+				}
+			} else if (is_autonomous_mode && NOT_is_playing) {
+				stop = rtos::Kernel::Clock::now();
+				if (stop - start > 2s) {
+					raiseAutonomousActivityModeExited();
+				}
+			} else {
+				start = rtos::Kernel::Clock::now();
+				if (start - stop > 1s) {
+					raiseAutonomousActivityModeRequested();
+				}
+				return;
 			}
-			return;
 		}
 
-		auto is_not_playing		= !_activitykit.isPlaying();
-		auto is_autonomous_mode = state_machine.is(system::robot::sm::state::autonomous_activities);
-
-		if (is_not_playing && is_autonomous_mode) {
+		if (NOT_is_playing && is_autonomous_mode) {
 			_activitykit.start(card);
 		}
 	}
@@ -409,6 +429,9 @@ class RobotController : public interface::RobotController
 	std::chrono::seconds _sleep_timeout_duration {60};
 	std::chrono::seconds _idle_timeout_duration {600};
 	interface::Timeout &_timeout;
+
+	rtos::Kernel::Clock::time_point start = rtos::Kernel::Clock::now();
+	rtos::Kernel::Clock::time_point stop  = rtos::Kernel::Clock::now();
 
 	interface::Battery &_battery;
 	BatteryKit _battery_kit {_battery};
