@@ -4,14 +4,14 @@
 
 #include "./RobotController_test.h"
 
-TEST_F(RobotControllerTest, stateGameConnectedEventCommandReceived)
+TEST_F(RobotControllerTest, stateAutonomousActivityConnectedEventCommandReceived)
 {
 	rc.state_machine.set_current_states(lksm::state::autonomous_activities, lksm::state::connected);
 
-	Sequence on_game_exit_sequence;
-	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_game_exit_sequence);
-	EXPECT_CALL(mock_motor_left, stop).InSequence(on_game_exit_sequence);
-	EXPECT_CALL(mock_motor_right, stop).InSequence(on_game_exit_sequence);
+	Sequence on_autonomous_activity_exit_sequence;
+	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_autonomous_activity_exit_sequence);
+	EXPECT_CALL(mock_motor_left, stop).InSequence(on_autonomous_activity_exit_sequence);
+	EXPECT_CALL(mock_motor_right, stop).InSequence(on_autonomous_activity_exit_sequence);
 
 	Sequence on_working_entry_sequence;
 	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
@@ -24,7 +24,7 @@ TEST_F(RobotControllerTest, stateGameConnectedEventCommandReceived)
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::working, lksm::state::connected));
 }
 
-TEST_F(RobotControllerTest, stateGameDisconnectedEventCommandReceived)
+TEST_F(RobotControllerTest, stateAutonomousActivityDisconnectedEventCommandReceived)
 {
 	rc.state_machine.set_current_states(lksm::state::autonomous_activities, lksm::state::disconnected);
 
@@ -33,7 +33,7 @@ TEST_F(RobotControllerTest, stateGameDisconnectedEventCommandReceived)
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities, lksm::state::disconnected));
 }
 
-TEST_F(RobotControllerTest, stateGameEventBleConnection)
+TEST_F(RobotControllerTest, stateAutonomousActivityEventBleConnection)
 {
 	rc.state_machine.set_current_states(lksm::state::autonomous_activities, lksm::state::disconnected);
 
@@ -60,16 +60,16 @@ TEST_F(RobotControllerTest, stateGameEventBleConnection)
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::working, lksm::state::connected));
 }
 
-TEST_F(RobotControllerTest, stateGameEventChargeDidStartGuardIsChargingTrue)
+TEST_F(RobotControllerTest, stateAutonomousActivityEventChargeDidStartGuardIsChargingTrue)
 {
 	rc.state_machine.set_current_states(lksm::state::autonomous_activities);
 
 	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
 
-	Sequence on_game_exit_sequence;
-	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_game_exit_sequence);
-	EXPECT_CALL(mock_motor_left, stop).InSequence(on_game_exit_sequence);
-	EXPECT_CALL(mock_motor_right, stop).InSequence(on_game_exit_sequence);
+	Sequence on_autonomous_activity_exit_sequence;
+	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_autonomous_activity_exit_sequence);
+	EXPECT_CALL(mock_motor_left, stop).InSequence(on_autonomous_activity_exit_sequence);
+	EXPECT_CALL(mock_motor_right, stop).InSequence(on_autonomous_activity_exit_sequence);
 
 	Sequence start_charging_behavior_sequence;
 	EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
@@ -86,7 +86,7 @@ TEST_F(RobotControllerTest, stateGameEventChargeDidStartGuardIsChargingTrue)
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
 }
 
-TEST_F(RobotControllerTest, stateGameEventChargeDidStartGuardIsChargingFalse)
+TEST_F(RobotControllerTest, stateAutonomousActivityEventChargeDidStartGuardIsChargingFalse)
 {
 	rc.state_machine.set_current_states(lksm::state::autonomous_activities);
 
@@ -100,7 +100,7 @@ TEST_F(RobotControllerTest, stateGameEventChargeDidStartGuardIsChargingFalse)
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
 }
 
-TEST_F(RobotControllerTest, stateGameActivityDisplayTagsChosen)
+TEST_F(RobotControllerTest, stateAutonomousActivityStartActivity)
 {
 	rc.state_machine.set_current_states(lksm::state::autonomous_activities);
 
@@ -115,7 +115,7 @@ TEST_F(RobotControllerTest, stateGameActivityDisplayTagsChosen)
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
 }
 
-TEST_F(RobotControllerTest, stateGameMagicCardAvailableActivityAlreadyStarted)
+TEST_F(RobotControllerTest, stateAutonomousActivityStartActivityActivityAlreadyStarted)
 {
 	rc.state_machine.set_current_states(lksm::state::autonomous_activities);
 
@@ -134,7 +134,7 @@ TEST_F(RobotControllerTest, stateGameMagicCardAvailableActivityAlreadyStarted)
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
 }
 
-TEST_F(RobotControllerTest, stateGameActivityStartedBackToMenuDelayNotOver)
+TEST_F(RobotControllerTest, stateAutonomousActivityActivityStartedBackToMenuDelayNotOver)
 {
 	rc.state_machine.set_current_states(lksm::state::autonomous_activities);
 
@@ -157,7 +157,7 @@ TEST_F(RobotControllerTest, stateGameActivityStartedBackToMenuDelayNotOver)
 }
 
 // ! TODO: Refactor with composite SM & CoreTimer mock
-TEST_F(RobotControllerTest, stateGameActivityStartedBackToMenu)
+TEST_F(RobotControllerTest, stateAutonomousActivityActivityStartedBackToMenu)
 {
 	auto minimal_delay_over = 1001ms;
 
@@ -183,7 +183,7 @@ TEST_F(RobotControllerTest, stateGameActivityStartedBackToMenu)
 }
 
 // ! TODO: Refactor with composite SM & CoreTimer mock
-TEST_F(RobotControllerTest, stateGameEventDiceRollDetectedDelayNotOver)
+TEST_F(RobotControllerTest, stateAutonomousActivityDiceRollDetectedDelayNotOver)
 {
 	rc.state_machine.set_current_states(lksm::state::autonomous_activities);
 
@@ -201,7 +201,7 @@ TEST_F(RobotControllerTest, stateGameEventDiceRollDetectedDelayNotOver)
 }
 
 // ! TODO: Refactor with composite SM & CoreTimer mock
-TEST_F(RobotControllerTest, stateGameEventAutonomousActivityExitedDisconnected)
+TEST_F(RobotControllerTest, stateAutonomousActivityDiceRollDetectedDelayOverEventAutonomousActivityExitedDisconnected)
 {
 	rc.state_machine.set_current_states(lksm::state::autonomous_activities, lksm::state::disconnected);
 
@@ -224,7 +224,7 @@ TEST_F(RobotControllerTest, stateGameEventAutonomousActivityExitedDisconnected)
 }
 
 // ! TODO: Refactor with composite SM & CoreTimer mock
-TEST_F(RobotControllerTest, stateGameEventAutonomousActivityExitedConnected)
+TEST_F(RobotControllerTest, stateAutonomousActivityDiceRollDetectedDelayOverEventAutonomousActivityExitedConnected)
 {
 	rc.state_machine.set_current_states(lksm::state::autonomous_activities, lksm::state::connected);
 
