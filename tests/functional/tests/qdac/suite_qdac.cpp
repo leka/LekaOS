@@ -5,6 +5,7 @@
 #include "CoreI2C.h"
 #include "CoreQDAC.h"
 #include "tests/config.h"
+#include "tests/ft_utils.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -23,6 +24,8 @@ suite suite_qdac = [] {
 		auto ret = dac.read(channel);
 		expect(data == ret) << "Failed to read Channel A";
 	};
+
+	busy_sleep(100);
 
 	"read channel B"_test = [&] {
 		data	= 0x0DEF;
