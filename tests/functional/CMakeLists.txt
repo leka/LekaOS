@@ -53,3 +53,5 @@ add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/firmware_kit)
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/imu_kit)
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/io_expander)
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/qdac)
+
+add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/stl_features)

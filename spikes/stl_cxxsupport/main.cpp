@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <array>
+#include <ranges>
 #include <span>
 
 #include "drivers/BufferedSerial.h"
@@ -10,6 +11,7 @@
 
 #include "HelloWorld.h"
 #include "LogKit.h"
+#include "RangesUtils.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -93,6 +95,31 @@ auto main() -> int
 
 	auto back = span0.back();
 	log_info("span0.back() = %i", back);
+
+	log_info("Test std::range features");
+
+	constexpr auto range = [](const auto a, const auto b) {
+		auto x = std::ranges::views::iota(a) | std::ranges::views::take(b - a + 1);
+		return std::ranges::views::all(x);
+	};
+
+	for (auto x: range(1, 10)) {
+		log_info("x: %i", x);
+	}
+
+	for (auto y: range(20, 25)) {
+		log_info("y: %i", y);
+	}
+
+	log_info("Test utils::ranges::sequences features");
+
+	for (auto val: utils::ranges::sequence({.start = 0, .end = 5})) {
+		log_info("x: %i", val);
+	}
+
+	for (auto val: utils::ranges::sequence({.start = 10, .end = 20})) {
+		log_info("y: %i", val);
+	}
 
 	return 1;
 }
