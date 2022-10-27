@@ -60,19 +60,21 @@ $tmp_search_dirs = $tmp_search_dirs.uniq
 log_debug "Find clang-tidy"
 $CLANG_TIDY_EXEC = ""
 
-if system("which clang-tidy > /dev/null")
-	$CLANG_TIDY_EXEC = "clang-tidy"
+if system("which clang-tidy-15 > /dev/null")
+	$CLANG_TIDY_EXEC = "clang-tidy-15"
 elsif system("which clang-tidy-14 > /dev/null")
 	$CLANG_TIDY_EXEC = "clang-tidy-14"
-elsif system("which clang-tidy-13 > /dev/null")
-	$CLANG_TIDY_EXEC = "clang-tidy-13"
 elsif system("which /opt/homebrew/opt/llvm/bin/clang-tidy > /dev/null")
 	$CLANG_TIDY_EXEC = "/opt/homebrew/opt/llvm/bin/clang-tidy"
 elsif system("which /usr/local/opt/llvm/bin/clang-tidy > /dev/null")
 	$CLANG_TIDY_EXEC = "/usr/local/opt/llvm/bin/clang-tidy"
+else
+	abort("No suitable version of clang-tidy found...")
 end
 
 puts "Clang-tidy found at: #{$CLANG_TIDY_EXEC}"
+puts `#{$CLANG_TIDY_EXEC} --version`
+puts
 
 puts "Standard headers search dirs:"
 puts $tmp_search_dirs.map { |d| "    #{d}" }.join("\n")
