@@ -22,7 +22,7 @@ TEST_F(RobotControllerTest, initializeComponents)
 		// TODO: Specify which BLE service and what is expected if necessary
 		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
 
-		// EXPECT_CALL(firmware_update, getCurrentVersion).Times(1);
+		EXPECT_CALL(firmware_update, getCurrentVersion).Times(1);
 		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
 
 		Sequence set_serial_number_as_ble_device_name;
