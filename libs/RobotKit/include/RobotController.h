@@ -247,7 +247,7 @@ class RobotController : public interface::RobotController
 		auto _serial_number = _serialnumberkit.getSerialNumber();
 		_service_device_information.setSerialNumber(_serial_number);
 
-		auto _os_version = Version {.major = 1, .minor = 2, .revision = 0};
+		auto _os_version = _firmware_update.getCurrentVersion();
 		_service_device_information.setOSVersion(_os_version);
 
 		auto advertising_data = _ble.getAdvertisingData();
