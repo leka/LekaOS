@@ -23,6 +23,9 @@ class CoreBufferedSerial : public interface::BufferedSerial
 
 	auto readable() -> bool final;
 
+	void enable_input() final;
+	void disable_input() final;
+
 	void sigio(mbed::Callback<void()> func) final;
 
   private:
