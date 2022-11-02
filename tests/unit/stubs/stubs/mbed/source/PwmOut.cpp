@@ -31,6 +31,16 @@ void PwmOut::period(float value)
 	leka::spy_PwmOut_period = value;
 }
 
+void PwmOut::suspend()
+{
+	// nothing to do
+}
+
+void PwmOut::resume()
+{
+	// nothing to do
+}
+
 }	// namespace mbed
 
 namespace leka {
