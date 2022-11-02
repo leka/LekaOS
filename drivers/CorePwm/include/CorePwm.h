@@ -18,6 +18,9 @@ class CorePwm : public interface::PwmOut
 	auto read() -> float final;
 	void write(float value) final;
 
+	void suspend() final;
+	void resume() final;
+
   private:
 	mbed::PwmOut _pwm;
 };
