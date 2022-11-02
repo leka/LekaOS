@@ -82,6 +82,7 @@ TEST_F(CoreMotorTest, stop)
 	EXPECT_CALL(dir_1, write(0));
 	EXPECT_CALL(dir_2, write(0));
 	EXPECT_CALL(speed, write(0));
+	EXPECT_CALL(speed, suspend());
 
 	motor.stop();
 }
