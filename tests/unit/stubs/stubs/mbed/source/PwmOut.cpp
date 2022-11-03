@@ -4,62 +4,62 @@
 
 #include "../PwmOut.h"
 
+namespace {
+float spy_PwmOut_value		 = -42.0f;
+float spy_PwmOut_period		 = -42.0f;
+bool spy_PwmOut_is_suspended = true;
+}	// namespace
+
 namespace mbed {
 
 PwmOut::PwmOut(PinName)
 {
-	leka::spy_PwmOut_is_suspended = false;
+	spy_PwmOut_is_suspended = false;
 }
 
 PwmOut::~PwmOut()
 {
-	leka::spy_PwmOut_is_suspended = true;
+	spy_PwmOut_is_suspended = true;
 }
 
 void PwmOut::write(float value)
 {
-	leka::spy_PwmOut_value = value;
+	spy_PwmOut_value = value;
 }
 
 auto PwmOut::read() -> float
 {
-	return leka::spy_PwmOut_value;
+	return spy_PwmOut_value;
 }
 
 void PwmOut::period(float value)
 {
-	leka::spy_PwmOut_period = value;
+	spy_PwmOut_period = value;
 }
 
 void PwmOut::suspend()
 {
-	leka::spy_PwmOut_is_suspended = true;
+	spy_PwmOut_is_suspended = true;
 }
 
 void PwmOut::resume()
 {
-	leka::spy_PwmOut_is_suspended = false;
+	spy_PwmOut_is_suspended = false;
 }
 
 }	// namespace mbed
 
 namespace leka {
 
-float spy_PwmOut_value = -42.0f;
-
 float spy_PwmOut_getValue()
 {
 	return spy_PwmOut_value;
 }
 
-float spy_PwmOut_period = -42.0f;
-
 float spy_PwmOut_getPeriod()
 {
 	return spy_PwmOut_period;
 }
-
-bool spy_PwmOut_is_suspended = true;
 
 bool spy_PwmOut_isSuspended()
 {
