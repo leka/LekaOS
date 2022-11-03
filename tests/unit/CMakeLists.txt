@@ -315,6 +315,7 @@ endif()
 # Print options
 message(STATUS "")
 message(STATUS "CMAKE_EXPORT_COMPILE_COMMANDS --> ${CMAKE_EXPORT_COMPILE_COMMANDS}")
+message(STATUS "UT LITE                       --> ${UT_LITE}")
 message(STATUS "CODE_COVERAGE                 --> ${COVERAGE}")
 message(STATUS "SANITIZERS                    --> ${SANITIZERS}")
 message(STATUS "CMAKE_VERBOSE_MAKEFILE        --> ${VERBOSE_BUILD}")
