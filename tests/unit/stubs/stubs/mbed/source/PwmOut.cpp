@@ -8,12 +8,12 @@ namespace mbed {
 
 PwmOut::PwmOut(PinName)
 {
-	return;
+	leka::spy_PwmOut_is_suspended = false;
 }
 
 PwmOut::~PwmOut()
 {
-	return;
+	leka::spy_PwmOut_is_suspended = true;
 }
 
 void PwmOut::write(float value)
@@ -33,12 +33,12 @@ void PwmOut::period(float value)
 
 void PwmOut::suspend()
 {
-	// nothing to do
+	leka::spy_PwmOut_is_suspended = true;
 }
 
 void PwmOut::resume()
 {
-	// nothing to do
+	leka::spy_PwmOut_is_suspended = false;
 }
 
 }	// namespace mbed
@@ -57,6 +57,13 @@ float spy_PwmOut_period = -42.0f;
 float spy_PwmOut_getPeriod()
 {
 	return spy_PwmOut_period;
+}
+
+bool spy_PwmOut_is_suspended = true;
+
+bool spy_PwmOut_isSuspended()
+{
+	return spy_PwmOut_is_suspended;
 }
 
 }	// namespace leka
