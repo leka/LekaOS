@@ -39,6 +39,7 @@ endfunction()
 
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/boost_ut)
 
+add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/deep_sleep_mbed_hal)
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/imu)
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/io_expander)
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/file_manager)
