@@ -16,6 +16,17 @@ using namespace boost::ut::bdd;
 // ? https://github.com/ARMmbed/mbed-os/blob/master/hal/tests/TESTS/mbed_hal/sleep/main.cpp
 
 suite suite_mbed_hal = [] {
+	// NOLINTBEGIN(bugprone-lambda-function-name)
+	log_free("\t\033[31m! Important notice\033[0m\n");
+	log_free("\tThose tests are very sensitive to timing and system state and they can easily fail\n");
+	log_free("\twhen sleep_manager_can_deep_sleep() is called while something is blocking deep sleep\n");
+	log_free("\tfor example: ticker, serial write, etc.\n");
+	log_free("\tIt might be necessary to run the test multiple time to assess if failure is constant\n");
+	log_free("\tor just a glitch in the \033[32mmatrix\033[0m...\n\n");
+	// NOLINTEND(bugprone-lambda-function-name)
+
+	rtos::ThisThread::sleep_for(1000ms);
+
 	"high speed clocks - turned off on deep sleep"_test = [] {
 		const ticker_data_t *us_ticker	   = get_us_ticker_data();
 		const ticker_data_t *lp_ticker	   = get_lp_ticker_data();
