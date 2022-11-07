@@ -209,7 +209,7 @@ auto File::getSHA256() -> std::array<uint8_t, 32>
 	mbedtls_sha256_init(&context);
 	mbedtls_sha256_starts(&context, 0);
 
-	for (auto i = 0; i < size(); i += std::size(buffer)) {
+	for (std::size_t i = 0; i < size(); i += std::size(buffer)) {
 		seek(i);
 		auto bytes_read = read(buffer.data(), std::size(buffer));
 		mbedtls_sha256_update(&context, buffer.data(), bytes_read);
