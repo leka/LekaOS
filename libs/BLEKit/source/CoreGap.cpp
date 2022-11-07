@@ -12,7 +12,7 @@ void CoreGap::setDefaultAdvertising()
 	_advertising_data_builder.setName(default_advertising_data.name);
 	_advertising_data_builder.setServiceData(
 		leka::service::commands::uuid,	 // TODO: commands::uuid only for compatibility with LekaApp
-		{default_advertising_data.data(), default_advertising_data.size()});
+		{default_advertising_data.data(), static_cast<int>(default_advertising_data.size())});
 }
 
 void CoreGap::setEventHandler()
@@ -44,7 +44,7 @@ void CoreGap::setAdvertising(AdvertisingData advertising_data)
 	_advertising_data_builder.setName(advertising_data.name);
 	_advertising_data_builder.setServiceData(
 		leka::service::commands::uuid,	 // TODO: commands::uuid only for compatibility with LekaApp
-		{advertising_data.data(), advertising_data.size()});
+		{advertising_data.data(), static_cast<int>(advertising_data.size())});
 
 	_gap.setAdvertisingPayload(_advertising_handle, _advertising_data_builder.getAdvertisingData());
 }
