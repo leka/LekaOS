@@ -6,7 +6,7 @@ add_library(CoreLL STATIC)
 
 target_include_directories(CoreLL
 	PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/include
+	include
 )
 
 target_sources(CoreLL
