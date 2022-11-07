@@ -266,37 +266,38 @@ def print_summary():
 
     if not RUN_TESTS:
         warningprint("No available set !")
+        sys.exit(1)
+
+    FAILS = list()
+    print("\n")
+    print("Results files :")
+    for test in RUN_TESTS:
+        print(test.result_filepath)
+        fail = test.check_status()
+        if fail:
+            FAILS.append(test)
+
+    print("\n")
+    print("{:<100} {:<7}".format('BIN_PATH', 'STATUS'))
+    for test in RUN_TESTS:
+        path = test.path
+        status = "❌" if test in FAILS else "✅"
+        print("{:<100} {:^7}".format(path, status))
+
+    print("\n")
+    for test in FAILS:
+        print(Fore.YELLOW + test.result_filepath + Style.RESET_ALL)
+        test.print_result_file()
+
+    if (FAILS):
+        print(Fore.RED + " ❌ %d in %d suites have failed..." % (len(FAILS), len(RUN_TESTS)) +
+              Style.RESET_ALL)
     else:
-        FAILS = list()
-        print("\n")
-        print("Results files :")
-        for test in RUN_TESTS:
-            print(test.result_filepath)
-            fail = test.check_status()
-            if fail:
-                FAILS.append(test)
+        print(Fore.GREEN + " ✅ All the %d suites have passed !" % len(RUN_TESTS) +
+              Style.RESET_ALL)
 
-        print("\n")
-        print("{:<100} {:<7}".format('BIN_PATH', 'STATUS'))
-        for test in RUN_TESTS:
-            path = test.path
-            status = "❌" if test in FAILS else "✅"
-            print("{:<100} {:^7}".format(path, status))
-
-        print("\n")
-        for test in FAILS:
-            print(Fore.YELLOW + test.result_filepath + Style.RESET_ALL)
-            test.print_result_file()
-
-        if (FAILS):
-            print(Fore.RED + " ❌ %d in %d suites have failed..." % (len(FAILS), len(RUN_TESTS)) +
-                  Style.RESET_ALL)
-        else:
-            print(Fore.GREEN + " ✅ All the %d suites have passed !" % len(RUN_TESTS) +
-                  Style.RESET_ALL)
-
-        ret = len(FAILS)
-        return ret
+    ret = len(FAILS)
+    return ret
 
 
 #
@@ -307,7 +308,7 @@ RUN_TESTS = list()
 
 
 def flash_erase():
-    ret = os.system("st-flash erase")
+    ret = os.system("st-flash --connect-under-reset --reset erase")
     return ret
 
 
@@ -322,12 +323,15 @@ def reset_buffer():
 def main():
     ret = 0
 
+    print("Hello, World!")
+
     if not TESTS_FUNCTIONAL_BIN_FILES:
         warningprint("No exec !")
         sys.exit(1)
 
     if FLASH_ERASE_FLAG:
         flash_erase()
+
     reset_buffer()
 
     print("Running tests...")
@@ -339,6 +343,7 @@ def main():
 
     if FLASH_ERASE_FLAG:
         flash_erase()
+
     reset_buffer()
 
     fails = print_summary()

@@ -1,0 +1,43 @@
+# Leka - LekaOS
+# Copyright 2022 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: Functional Tests
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  run_functional_tests:
+    name: Build & Test
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      #
+      # Mark: - Config & Build
+      #
+
+      - name: Config & Build
+        run: |
+          make clean
+          make pull_deps
+          make config_tools
+          make config
+          make
+
+      #
+      # Mark: - Run functional tests
+      #
+
+      - name: Run functional tests
+        run: |
+          python3 tools/run_functional_tests.py --all
