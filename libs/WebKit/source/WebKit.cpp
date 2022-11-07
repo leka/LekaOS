@@ -37,7 +37,7 @@ auto WebKit::downloadFile(DownloadableFile const &file) -> bool
 	auto response = HttpResponse {};
 
 	auto is_redirected				  = false;
-	auto certificates_path_list_index = 0;
+	auto certificates_path_list_index = std::size_t {0};
 
 	auto did_download_file = [&is_redirected, &response] {
 		return !is_redirected && std::size(response.headers_fields) != 0;
