@@ -21,6 +21,38 @@ if(CMAKE_EXPORT_COMPILE_COMMANDS)
 	set(CMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
 endif()
 
+# CI or not CI?
+if(DEFINED $ENV{CI})
+	set(RUNNING_ON_CI TRUE)
+else()
+	set(RUNNING_ON_CI FALSE)
+endif(DEFINED $ENV{CI})
+
+# Set llvm/clang
+if(NOT ${RUNNING_ON_CI} AND APPLE)
+	execute_process(
+		COMMAND
+		brew --prefix llvm
+		OUTPUT_VARIABLE
+		BREW_LLVM_PATH
+		OUTPUT_STRIP_TRAILING_WHITESPACE
+	)
+
+	set(CMAKE_C_COMPILER "${BREW_LLVM_PATH}/bin/clang")
+	set(CMAKE_CXX_COMPILER "${BREW_LLVM_PATH}/bin/clang++")
+
+	set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
+
+	add_compile_options("-fexperimental-library")
+	add_compile_options("-I/opt/homebrew/opt/llvm/include") # from brew info llvm
+
+	add_link_options("-fuse-ld=lld")
+	add_link_options("-L${BREW_LLVM_PATH}/lib") # from brew info llvm
+	add_link_options("-L${BREW_LLVM_PATH}/lib/c++") # from brew info llvm
+	add_link_options("-Wl,-rpath,${BREW_LLVM_PATH}/lib/c++") # from brew info llvm
+	add_link_options("-Wl,-syslibroot,/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk") # from trial/errors
+endif(NOT ${RUNNING_ON_CI} AND APPLE)
+
 #
 # MARK: - Shiny output
 #
@@ -336,6 +368,7 @@ message(STATUS "")
 message(STATUS "UT LITE                  --> ${UT_LITE}")
 message(STATUS "CODE_COVERAGE            --> ${COVERAGE}")
 message(STATUS "SANITIZERS               --> ${SANITIZERS}")
+message(STATUS "RUNNING ON CI (ENV)      --> ${RUNNING_ON_CI}")
 
 if(NOT ${CI_UT_OPTIMIZATION_LEVEL} STREQUAL "")
 	message(STATUS "CI_UT_OPTIMIZATION_LEVEL --> ${CI_UT_OPTIMIZATION_LEVEL}")
