@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <functional>
+
 #include "ble/BLE.h"
 #include "ble/Gap.h"
 
