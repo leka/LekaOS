@@ -13,11 +13,13 @@ target_include_directories(CoreIMU
 target_sources(CoreIMU
 	PRIVATE
 	extern/source/lsm6dsox_reg.c
+	source/CoreLSM6DSOX.cpp
 )
 
 target_link_libraries(CoreIMU)
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
+		tests/CoreLSM6DSOX_test.cpp
 	)
 endif()
