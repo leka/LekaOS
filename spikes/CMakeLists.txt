@@ -2,6 +2,7 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
+add_subdirectory(${SPIKES_DIR}/lk_accel_gyro)
 add_subdirectory(${SPIKES_DIR}/lk_audio)
 add_subdirectory(${SPIKES_DIR}/lk_behavior_kit)
 add_subdirectory(${SPIKES_DIR}/lk_ble)
@@ -44,6 +45,7 @@ add_subdirectory(${SPIKES_DIR}/stl_cxxsupport)
 
 add_custom_target(spikes_leka)
 add_dependencies(spikes_leka
+	spike_lk_accel_gyro
 	spike_lk_ble
 	spike_lk_bluetooth
 	spike_lk_cg_animations
