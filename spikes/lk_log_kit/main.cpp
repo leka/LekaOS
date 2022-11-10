@@ -40,7 +40,7 @@ auto main() -> int
 	hello.start();
 
 	// ? You can un/comment the following lines to filter console output
-	// thread_log_debug.start(log_thread_debug);
+	thread_log_debug.start(log_thread_debug);
 	// rtos::ThisThread::sleep_for(1s);
 	// thread_log_printf.start(log_thread_printf);
 
@@ -55,7 +55,7 @@ auto main() -> int
 		// log_from_isr();
 	};
 
-	ticker_log_from_isr.attach(log_isr_lambda, 2s);
+	// ticker_log_from_isr.attach(log_isr_lambda, 2s);
 
 	while (true) {
 		auto start = rtos::Kernel::Clock::now();

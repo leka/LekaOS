@@ -16,8 +16,11 @@ using namespace std::chrono;
 			log_debug("%s debug message", "First:");
 			log_info("%s information message", "Second:");
 			log_error("%s error message", "Third:");
+			log_free("%s free formatting log message with line break\n", "Fourth:");
+			const auto *str = "Fifth : a low level log using pointer and size\n";
+			log_ll(str, std::strlen(str));
 			auto stop_run = rtos::Kernel::Clock::now();
-			log_info("Total time to log the %i messages --> %ims\n", 4, int((stop_run - start_run).count()));
+			log_info("Total time to log the %i messages --> %ims\n", 6, int((stop_run - start_run).count()));
 		}
 		auto stop = rtos::Kernel::Clock::now();
 
@@ -39,6 +42,7 @@ using namespace std::chrono;
 			log_printf("%s debug message\n", "First:");
 			log_printf("%s information message\n", "Second:");
 			log_printf("%s error message\n", "Third:");
+			log_printf("%s free formatting log message with line break\n", "Fourth:");
 			auto stop_run = rtos::Kernel::Clock::now();
 			log_printf("Total time to log the %i messages --> %ims\n\n", 4, int((stop_run - start_run).count()));
 		}
@@ -60,8 +64,11 @@ void log_from_isr()
 		log_debug("%s debug message", "First:");
 		log_info("%s information message", "Second:");
 		log_error("%s error message", "Third:");
+		log_free("%s free formatting log message with line break\n", "Fourth:");
+		const auto *str = "Fifth : a low level log using pointer and size\n";
+		log_ll(str, std::strlen(str));
 		auto stop_run = rtos::Kernel::Clock::now();
-		log_info("Total time to log the %i messages --> %ims\n", 4, int((stop_run - start_run).count()));
+		log_info("Total time to log the %i messages --> %ims\n", 6, int((stop_run - start_run).count()));
 	}
 	auto stop = rtos::Kernel::Clock::now();
 
