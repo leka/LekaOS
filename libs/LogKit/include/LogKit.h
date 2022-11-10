@@ -288,7 +288,16 @@ namespace internal {
 			leka::logger::internal::sink(leka::logger::buffer::output.data(), length);                                 \
 		} while (0)
 
-	// NOLINTNEXTLINE
+// NOLINTNEXTLINE
+	#define log_free(str, ...)                                                                                         \
+		do {                                                                                                           \
+			using namespace leka::logger;                                                                              \
+			const std::scoped_lock lock(leka::logger::internal::mutex);                                                \
+			auto length = format_output(str, ##__VA_ARGS__);                                                           \
+			leka::logger::internal::sink(leka::logger::buffer::output.data(), length);                                 \
+		} while (0)
+
+// NOLINTNEXTLINE
 	#define log_ll(data, size)                                                                                         \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
@@ -300,6 +309,7 @@ namespace internal {
 	#define log_debug(str, ...)
 	#define log_info(str, ...)
 	#define log_error(str, ...)
+	#define log_free(str, ...)
 	#define log_ll(data, size)
 
 #endif	 // not defined (ENABLE_LOG_DEBUG)
