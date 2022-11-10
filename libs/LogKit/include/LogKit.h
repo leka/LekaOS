@@ -298,10 +298,12 @@ namespace internal {
 		} while (0)
 
 // NOLINTNEXTLINE
-	#define log_ll(data, size)                                                                                         \
+	#define log_ll(p_data, size)                                                                                       \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
-			leka::logger::internal::filehandle_low_level_write(data, size);                                            \
+			const std::scoped_lock lock(leka::logger::internal::mutex);                                                \
+			leka::logger::buffer::fifo.push(std::span {p_data, size});                                                 \
+			leka::logger::internal::event_queue.call(process_fifo);                                                    \
 		} while (0)
 
 #else	// not defined (ENABLE_LOG_DEBUG)
@@ -310,6 +312,6 @@ namespace internal {
 	#define log_info(str, ...)
 	#define log_error(str, ...)
 	#define log_free(str, ...)
-	#define log_ll(data, size)
+	#define log_ll(p_data, size)
 
 #endif	 // not defined (ENABLE_LOG_DEBUG)
