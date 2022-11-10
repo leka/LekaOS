@@ -15,8 +15,6 @@ namespace ut = boost::ut;
 
 auto main() -> int
 {
-	ut::cfg<ut::override> = {.filter = "*", .dry_run = false};
-
 	utils_start(TARGET);
 
 	[[maybe_unused]] const auto result = ut::cfg<>.run({.report_errors = true});
