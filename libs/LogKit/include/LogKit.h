@@ -302,7 +302,7 @@ namespace internal {
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
 			const std::scoped_lock lock(leka::logger::internal::mutex);                                                \
-			leka::logger::buffer::fifo.push(std::span {p_data, size});                                                 \
+			leka::logger::buffer::fifo.push(std::span {p_data, static_cast<std::size_t>(size)});                       \
 			leka::logger::internal::event_queue.call(process_fifo);                                                    \
 		} while (0)
 
