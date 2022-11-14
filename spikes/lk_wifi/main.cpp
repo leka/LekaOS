@@ -74,14 +74,14 @@ void runExample(WiFiInterface &wifi_interface)
 	// Receive a simple http response and print out the response line
 	std::array<char, 64> rx_buffer {};
 
-	log_ll("\n", 1);
+	log_free("\n");
 
 	for (auto available_data = socket.recv(rx_buffer.data(), rx_buffer.size()); available_data > 0;) {
 		log_ll(rx_buffer.data(), available_data);
 		available_data = socket.recv(rx_buffer.data(), rx_buffer.size());
 	}
 
-	log_ll("\n", 1);
+	log_free("\n");
 
 	// Close the socket to return its memory and bring down the network interface
 	socket.close();
