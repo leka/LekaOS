@@ -53,10 +53,11 @@ void SerialNumberFormater::setDateOfTestFromYYMMDD(std::span<char> content, std:
 
 void SerialNumberFormater::setDateOfTestFromEpoch(std::span<char> content, std::span<uint8_t> date_of_test) const
 {
-	std::time_t epoch = std::atoll(content.data());
-	std::array<char, 8> epoch_c_array {};
+	std::array<char, 8> epoch_c_array = {};
+	struct tm local_time			  = {};
 
-	struct tm local_time;
+	std::time_t epoch = std::atoll(content.data());
+
 	localtime_r(&epoch, &local_time);
 	std::strftime(epoch_c_array.data(), std::size(epoch_c_array), "%y%m", &local_time);
 
