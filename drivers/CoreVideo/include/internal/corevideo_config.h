@@ -12,8 +12,8 @@ namespace lcd {
 
 	inline constexpr uintptr_t frame_buffer_address = 0xC0000000;
 
-	// TODO : this should not depend on OTM driver,
-	// TODO : it should be instanciated and passed to objects that need it
+	// TODO(@leka/dev-embedded): this should not depend on OTM driver,
+	// TODO(@leka/dev-embedded): it should be instanciated and passed to objects that need it
 	namespace dimension {
 
 		inline constexpr uint16_t width	 = lcd::otm8009a::landscape::width;
@@ -21,8 +21,8 @@ namespace lcd {
 
 	}	// namespace dimension
 
-	// TODO : this should not depend on OTM driver,
-	// TODO : it should be instanciated and passed to objects that need it
+	// TODO(@leka/dev-embedded): this should not depend on OTM driver,
+	// TODO(@leka/dev-embedded): it should be instanciated and passed to objects that need it
 	namespace property {
 
 		inline constexpr uint8_t pixel_memory_size = 4;	  // ARGB, in bytes
@@ -34,8 +34,8 @@ namespace lcd {
 		inline constexpr uint16_t VACT = lcd::otm8009a::landscape::height;	// Vertical Active time in units of lines = imageSize Y in pixels to display
 
 		inline constexpr uint16_t HSA = lcd::otm8009a::landscape::hsync;    // Horizontal start active time in units of lcdClk
-		inline constexpr uint16_t HBP = 1;                                  // Horizontal Back Porch time in units of lcdClk  // TODO(JohnDoe): Determine the correct value to avoid offset
-		inline constexpr uint16_t HFP = 1;                                  // Horizontal Front Porch time in units of lcdClk // TODO(JohnDoe): Determine the correct value to avoid offset
+		inline constexpr uint16_t HBP = 1;                                  // Horizontal Back Porch time in units of lcdClk  // TODO(@leka/dev-embedded): Determine the correct value to avoid offset
+		inline constexpr uint16_t HFP = 1;                                  // Horizontal Front Porch time in units of lcdClk // TODO(@leka/dev-embedded): Determine the correct value to avoid offset
 		inline constexpr uint16_t HACT = lcd::otm8009a::landscape::width;	// Horizontal Active time in units of lcdClk = imageSize X in pixels to display
 		// clang-format on
 
@@ -53,7 +53,8 @@ namespace dsi {
 
 namespace jpeg {
 
-	inline constexpr uintptr_t decoded_buffer_address = lcd::frame_buffer_address + 800 * 480 * 4;	 // 0xC0200000;
+	inline constexpr uintptr_t decoded_buffer_address =
+		lcd::frame_buffer_address + 800UL * 480UL * 4UL;   // 0xC0200000;
 
 	namespace mcu {
 
