@@ -12,8 +12,8 @@ namespace lcd {
 
 	inline constexpr uintptr_t frame_buffer_address = 0xC0000000;
 
-	// TODO : this should not depend on OTM driver,
-	// TODO : it should be instanciated and passed to objects that need it
+	// TODO(JohnDoe): this should not depend on OTM driver,
+	// TODO(JohnDoe): it should be instanciated and passed to objects that need it
 	namespace dimension {
 
 		inline constexpr uint16_t width	 = lcd::otm8009a::landscape::width;
@@ -21,8 +21,8 @@ namespace lcd {
 
 	}	// namespace dimension
 
-	// TODO : this should not depend on OTM driver,
-	// TODO : it should be instanciated and passed to objects that need it
+	// TODO(JohnDoe): this should not depend on OTM driver,
+	// TODO(JohnDoe): it should be instanciated and passed to objects that need it
 	namespace property {
 
 		inline constexpr uint8_t pixel_memory_size = 4;	  // ARGB, in bytes
@@ -53,7 +53,8 @@ namespace dsi {
 
 namespace jpeg {
 
-	inline constexpr uintptr_t decoded_buffer_address = lcd::frame_buffer_address + 800 * 480 * 4;	 // 0xC0200000;
+	inline constexpr uintptr_t decoded_buffer_address =
+		lcd::frame_buffer_address + 800UL * 480UL * 4UL;   // 0xC0200000;
 
 	namespace mcu {
 

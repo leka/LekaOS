@@ -15,6 +15,7 @@ void CoreJPEG::initialize()
 	_hal.HAL_RCC_JPEG_FORCE_RESET();
 	_hal.HAL_RCC_JPEG_RELEASE_RESET();
 
+	// NOLINTNEXTLINE - ST's implementation detail
 	_hal.HAL_NVIC_SetPriority(JPEG_IRQn, 0x06, 0x0F);
 	_hal.HAL_NVIC_EnableIRQ(JPEG_IRQn);
 
