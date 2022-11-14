@@ -6,6 +6,8 @@
 
 using namespace leka;
 
+// NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
+
 void CoreQSPI::setDataTransmissionFormat()
 {
 	auto _command_width					  = QSPI_CFG_BUS_SINGLE;
@@ -31,7 +33,7 @@ auto CoreQSPI::read(uint8_t command, uint32_t address, std::span<uint8_t> rx_buf
 	// ? Use local variable as Mbed's QSPI driver returns the number of bytes read as an in/out parameter
 	auto size = rx_buffer_size;
 
-	_qspi.read(command, -1, address, reinterpret_cast<char *>(rx_buffer.data()), &size);
+	_qspi.read(command, -1, static_cast<int>(address), reinterpret_cast<char *>(rx_buffer.data()), &size);
 
 	return size;
 }
@@ -42,7 +44,7 @@ auto CoreQSPI::write(uint8_t command, uint32_t address, const std::span<uint8_t>
 	// ? Use local variable as Mbed's QSPI driver returns the number of bytes written as an in/out parameter
 	auto size = tx_buffer_size;
 
-	_qspi.write(command, -1, address, reinterpret_cast<char *>(tx_buffer.data()), &size);
+	_qspi.write(command, -1, static_cast<int>(address), reinterpret_cast<char *>(tx_buffer.data()), &size);
 
 	return size;
 }
@@ -55,8 +57,10 @@ auto CoreQSPI::sendCommand(uint8_t command, uint32_t address, const std::span<ui
 	auto tx_size = tx_buffer_size;
 	auto rx_size = rx_buffer_size;
 
-	_qspi.command_transfer(command, address, reinterpret_cast<char *>(tx_buffer.data()), tx_size,
+	_qspi.command_transfer(command, static_cast<int>(address), reinterpret_cast<char *>(tx_buffer.data()), tx_size,
 						   reinterpret_cast<char *>(rx_buffer.data()), rx_size);
 
 	return std::make_tuple(tx_size, rx_size);
 }
+
+// NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
