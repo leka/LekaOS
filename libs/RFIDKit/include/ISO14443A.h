@@ -13,26 +13,26 @@ namespace leka::rfid {
 
 template <std::size_t SIZE>
 struct Command {
-	const std::array<uint8_t, SIZE> data;
-	const leka::rfid::Flag flags;
+	struct Details {
+		std::initializer_list<uint8_t> data;
+		rfid::Flag flags {};
+	};
 
-	[[nodiscard]] inline auto getArray() const -> std::array<uint8_t, SIZE + 1>
+	explicit constexpr Command(Details details)
 	{
-		auto cmd = std::array<uint8_t, SIZE + 1> {};
+		std::copy(details.data.begin(), details.data.end(), _data.begin());
+		_data.back() = static_cast<uint8_t>(details.flags);
+	};
 
-		for (std::size_t i = 0; i < SIZE; ++i) {
-			cmd.at(i) = data.at(i);
-		}
+	[[nodiscard]] constexpr auto data() const -> std::span<const uint8_t> { return std::span(_data); }
 
-		cmd.at(SIZE) = static_cast<uint8_t>(flags);
-
-		return cmd;
-	}
+  private:
+	std::array<uint8_t, SIZE + 1> _data;
 };
 
-constexpr Command<1> command_requestA		 = {.data = {0x26}, .flags = leka::rfid::Flag::sb_7};
-constexpr Command<2> command_read_register_4 = {.data  = {0x30, 0x04},
-												.flags = leka::rfid::Flag::crc | leka::rfid::Flag::sb_8};
+inline constexpr auto command_requestA = Command<1>({.data = {0x26}, .flags = leka::rfid::Flag::sb_7});
+inline constexpr auto command_read_register_4 =
+	Command<2>({.data = {0x30, 0x04}, .flags = leka::rfid::Flag::crc | leka::rfid::Flag::sb_8});
 
 constexpr auto ATQA_answer_size			= 2;
 constexpr auto initial_polynomial_value = uint32_t {0x6363};
@@ -142,14 +142,11 @@ namespace sm::action {
 	};
 
 	struct send_request_A {
-		auto operator()(irfidreader &rfidreader) const { rfidreader.sendRequestToTag(command_requestA.getArray()); }
+		auto operator()(irfidreader &rfidreader) const { rfidreader.sendRequestToTag(command_requestA.data()); }
 	};
 
 	struct send_register_4 {
-		auto operator()(irfidreader &rfidreader) const
-		{
-			rfidreader.sendRequestToTag(command_read_register_4.getArray());
-		}
+		auto operator()(irfidreader &rfidreader) const { rfidreader.sendRequestToTag(command_read_register_4.data()); }
 	};
 
 	struct on_tag_readable {
