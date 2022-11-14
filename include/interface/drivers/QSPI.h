@@ -19,11 +19,11 @@ class QSPI
 	virtual void setFrequency(int hz = 1'000'000) = 0;
 
 	virtual auto read(uint8_t command, uint32_t address, std::span<uint8_t> rx_buffer, std::size_t rx_buffer_size)
-		-> std::size_t											  = 0;
-	virtual auto write(uint8_t command, uint32_t address, const std::span<uint8_t> tx_buffer,
-					   std::size_t tx_buffer_size) -> std::size_t = 0;
+		-> std::size_t = 0;
+	virtual auto write(uint8_t command, uint32_t address, std::span<uint8_t> tx_buffer, std::size_t tx_buffer_size)
+		-> std::size_t = 0;
 
-	virtual auto sendCommand(uint8_t command, uint32_t address, const std::span<uint8_t> tx_buffer,
+	virtual auto sendCommand(uint8_t command, uint32_t address, std::span<uint8_t> tx_buffer,
 							 std::size_t tx_buffer_size, std::span<uint8_t> rx_buffer, std::size_t rx_buffer_size)
 		-> std::tuple<size_t, std::size_t> = 0;
 };
