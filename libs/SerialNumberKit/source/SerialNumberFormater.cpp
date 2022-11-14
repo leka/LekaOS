@@ -2,6 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#include <cinttypes>
 #include <cstdio>
 #include <cstring>
 
@@ -69,8 +70,8 @@ void SerialNumberFormater::setMCUID(std::span<uint8_t> partial_serial_number, ui
 	std::array<char, MAX_MCU_ID_LENGTH> mcu_id_array {};
 
 	auto mcu_id = _mcu.getID();
-	snprintf(mcu_id_array.begin(), std::size(mcu_id_array), "%08lX%08lX%08lX", mcu_id.front, mcu_id.middle,
-			 mcu_id.back);
+	snprintf(mcu_id_array.begin(), std::size(mcu_id_array), "%08" PRIX32 "%08" PRIX32 "%08" PRIX32, mcu_id.front,
+			 mcu_id.middle, mcu_id.back);
 
 	if (number_of_digits > MAX_MCU_ID_DIGITS) {
 		number_of_digits = MAX_MCU_ID_DIGITS;
