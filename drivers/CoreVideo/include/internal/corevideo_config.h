@@ -54,7 +54,7 @@ namespace dsi {
 namespace jpeg {
 
 	inline constexpr uintptr_t decoded_buffer_address =
-		lcd::frame_buffer_address + 800UL * 480UL * 4UL;   // 0xC0200000;
+		lcd::frame_buffer_address + 800UL * 480UL * 4UL;   // --> 0xC0200000;
 
 	namespace mcu {
 
