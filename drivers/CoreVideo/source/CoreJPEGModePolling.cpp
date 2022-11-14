@@ -55,6 +55,7 @@ void CoreJPEGModePolling::onErrorCallback(JPEG_HandleTypeDef *hjpeg)
 
 void CoreJPEGModePolling::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size)
 {
+	// ? NOLINTNEXTLINE - allow reinterpret_cast as there are no alternatives
 	_mcu_block_index += pConvert_Function(output_buffer, reinterpret_cast<uint8_t *>(jpeg::decoded_buffer_address),
 										  _mcu_block_index, size, nullptr);
 
