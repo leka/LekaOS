@@ -20,7 +20,7 @@ class CoreJPEGModePolling : public interface::JPEGMode
 	void onMspInitCallback(JPEG_HandleTypeDef *hjpeg) final;
 	void onInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *info) final;
 	void onErrorCallback(JPEG_HandleTypeDef *hjpeg) final;
-	void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_data, uint32_t datasize) final;
+	void onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t datasize) final;
 	void onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize) final;
 	void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) final;
 
