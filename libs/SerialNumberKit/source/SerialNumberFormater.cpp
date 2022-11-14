@@ -48,7 +48,7 @@ auto SerialNumberFormater::setDateOfTest(std::span<uint8_t> partial_serial_numbe
 
 void SerialNumberFormater::setDateOfTestFromYYMMDD(std::span<char> content, std::span<uint8_t> date_of_test) const
 {
-	std::copy(content.begin(), content.begin() + std::size(date_of_test), date_of_test.begin());
+	std::copy(content.begin(), content.begin() + std::ssize(date_of_test), date_of_test.begin());
 }
 
 void SerialNumberFormater::setDateOfTestFromEpoch(std::span<char> content, std::span<uint8_t> date_of_test) const
