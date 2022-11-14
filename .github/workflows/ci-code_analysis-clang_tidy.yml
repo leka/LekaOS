@@ -43,4 +43,4 @@ jobs:
 
       - name: Run clang-tidy
         run: |
-          make clang_tidy_diff
+          make clang_tidy_diff BASE_BRANCH=${{ github.event.pull_request.base.ref }}

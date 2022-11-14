@@ -22,6 +22,11 @@ MCUBOOT_GIT_URL  ?= $(shell cat $(ROOT_DIR)/config/mcuboot_git_url)
 MCUBOOT_VERSION  ?= $(shell cat $(ROOT_DIR)/config/mcuboot_version)
 OS_VERSION       ?= $(shell cat $(ROOT_DIR)/config/os_version)
 
+#
+# MARK: - CI
+#
+
+BASE_BRANCH ?= develop
 
 #
 # MARK: - Options
@@ -256,7 +261,7 @@ clang_tidy_diff:
 	@echo ""
 	@echo "🏃‍♂️ Running clang-tidy on modified files 🧹"
 	@echo ""
-	@git diff --name-status develop            \
+	@git diff --name-status $(BASE_BRANCH)     \
 		| grep -E -v "_test"                   \
 		| grep -E -v "extern"                  \
 		| grep -E -v "gtest"                   \
