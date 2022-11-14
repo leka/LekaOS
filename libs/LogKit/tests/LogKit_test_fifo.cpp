@@ -50,10 +50,10 @@ TEST_F(LogKitFifoTest, processEmpty)
 
 TEST_F(LogKitFifoTest, processNotEmpty)
 {
-	EXPECT_CALL(mockfh, write).Times(128);
+	EXPECT_CALL(mockfh, write).Times(128 / std::size(logger::buffer::process_buffer));
 
 	for (auto i = 0; i < 128; ++i) {
-		logger::buffer::fifo.push(i);
+		logger::buffer::fifo.push(static_cast<char>(i));
 	}
 
 	logger::process_fifo();
@@ -61,10 +61,10 @@ TEST_F(LogKitFifoTest, processNotEmpty)
 
 TEST_F(LogKitFifoTest, processFull)
 {
-	EXPECT_CALL(mockfh, write).Times(4096);
+	EXPECT_CALL(mockfh, write).Times(4096 / std::size(logger::buffer::process_buffer));
 
 	for (auto i = 0; i < 4096; ++i) {
-		logger::buffer::fifo.push(i);
+		logger::buffer::fifo.push(static_cast<char>(i));
 	}
 
 	logger::process_fifo();

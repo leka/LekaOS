@@ -37,7 +37,8 @@ namespace buffer {
 	inline auto message	  = std::array<char, 256> {};
 	inline auto output	  = std::array<char, 512> {};
 
-	inline auto fifo = CircularQueue<char, 4096> {};
+	inline auto fifo		   = CircularQueue<char, 4096> {};
+	inline auto process_buffer = std::array<char, 64> {};
 
 };	 // namespace buffer
 
@@ -104,9 +105,8 @@ namespace internal {
 inline void process_fifo()
 {
 	while (!buffer::fifo.empty()) {
-		auto c = char {};
-		buffer::fifo.pop(c);
-		internal::filehandle->write(&c, 1);
+		auto length = buffer::fifo.pop(buffer::process_buffer.data(), std::size(buffer::process_buffer));
+		internal::filehandle->write(buffer::process_buffer.data(), length);
 	}
 }
 
