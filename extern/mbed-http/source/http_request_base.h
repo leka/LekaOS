@@ -218,7 +218,7 @@ public:
      * @param buffer Pointer to a buffer to store the data in
      * @param buffer_size Size of the buffer
      */
-    void set_request_log_buffer(uint8_t *buffer, size_t buffer_size) {
+    void set_request_log_buffer(uint8_t *buffer, std::size_t buffer_size) {
         _request_buffer = buffer;
         _request_buffer_size = buffer_size;
         _request_buffer_ix = 0;
@@ -228,7 +228,7 @@ public:
      * Get the number of bytes written to the request log buffer, since the last request.
      * If no request was sent, or if the request log buffer is NULL, then this returns 0.
      */
-    size_t get_request_log_buffer_length() {
+    std::size_t get_request_log_buffer_length() {
         return _request_buffer_ix;
     }
 
@@ -346,8 +346,8 @@ private:
     nsapi_error_t _error;
 
     uint8_t *_request_buffer;
-    size_t _request_buffer_size;
-    size_t _request_buffer_ix;
+    std::size_t _request_buffer_size;
+    std::size_t _request_buffer_ix;
 };
 
 #endif // _HTTP_REQUEST_BASE_H_
