@@ -48,13 +48,13 @@ inline auto computeCRC(uint8_t const *data) -> std::array<uint8_t, 2>
 	size_t size	  = 16;
 
 	do {
-		std::byte val;
+		std::byte val {};
 		val	 = static_cast<std::byte>(*data++);
 		val	 = (val ^ static_cast<std::byte>(wCrc & 0x00FF));
 		val	 = (val ^ (val << 4));
 		wCrc = (wCrc >> 8) ^ (static_cast<uint32_t>(val) << 8) ^ (static_cast<uint32_t>(val) << 3) ^
 			   (static_cast<uint32_t>(val) >> 4);
-	} while (--size);
+	} while (--size != 0);
 
 	std::array<uint8_t, 2> pbtCrc = {static_cast<uint8_t>(wCrc & 0xFF), static_cast<uint8_t>((wCrc >> 8) & 0xFF)};
 	return pbtCrc;
