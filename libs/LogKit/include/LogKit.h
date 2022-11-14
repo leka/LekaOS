@@ -89,7 +89,7 @@ namespace internal {
 
 	inline filehandle_ptr filehandle = nullptr;
 
-	inline void filehandle_low_level_write(const char *data, const size_t size)
+	inline void filehandle_low_level_write(const char *data, const std::size_t size)
 	{
 		internal::filehandle->write(data, size);
 	}
@@ -145,10 +145,10 @@ namespace internal {
 // MARK: - Sink
 //
 
-using sink_function_t = std::function<void(const char *, size_t)>;	 // LCOV_EXCL_LINE
+using sink_function_t = std::function<void(const char *, std::size_t)>;	  // LCOV_EXCL_LINE
 
 namespace internal {
-	inline void default_sink_function(const char *str, [[maybe_unused]] size_t size)
+	inline void default_sink_function(const char *str, [[maybe_unused]] std::size_t size)
 	{
 		buffer::fifo.push(std::span {str, size});
 		internal::event_queue.call(process_fifo);

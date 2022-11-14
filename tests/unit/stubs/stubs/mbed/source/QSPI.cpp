@@ -45,7 +45,7 @@ auto QSPI::set_frequency(int value) -> qspi_status_t
 	return QSPI_STATUS_OK;
 }
 
-auto QSPI::read(qspi_inst_t instruction, int alt, int address, char *rx_buffer, size_t *rx_length) -> qspi_status_t
+auto QSPI::read(qspi_inst_t instruction, int alt, int address, char *rx_buffer, std::size_t *rx_length) -> qspi_status_t
 {
 	leka::spy_QSPI_command = instruction;
 	leka::spy_QSPI_address = address;
@@ -62,7 +62,7 @@ auto QSPI::read(qspi_inst_t instruction, int alt, int address, char *rx_buffer, 
 	return QSPI_STATUS_OK;
 }
 
-auto QSPI::write(qspi_inst_t instruction, int alt, int address, const char *tx_buffer, size_t *tx_length)
+auto QSPI::write(qspi_inst_t instruction, int alt, int address, const char *tx_buffer, std::size_t *tx_length)
 	-> qspi_status_t
 {
 	leka::spy_QSPI_command = instruction;
@@ -80,8 +80,8 @@ auto QSPI::write(qspi_inst_t instruction, int alt, int address, const char *tx_b
 	return QSPI_STATUS_OK;
 }
 
-auto QSPI::command_transfer(qspi_inst_t instruction, int address, const char *tx_buffer, size_t tx_length,
-							const char *rx_buffer, size_t rx_length) -> qspi_status_t
+auto QSPI::command_transfer(qspi_inst_t instruction, int address, const char *tx_buffer, std::size_t tx_length,
+							const char *rx_buffer, std::size_t rx_length) -> qspi_status_t
 {
 	leka::spy_QSPI_command			= instruction;
 	leka::spy_QSPI_address			= address;

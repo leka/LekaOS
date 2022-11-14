@@ -19,7 +19,7 @@ struct JPEGMode {
 	virtual void onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize)			 = 0;
 	virtual void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)									 = 0;
 
-	virtual auto decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> size_t = 0;
+	virtual auto decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> std::size_t = 0;
 };
 
 }	// namespace leka::interface

@@ -21,8 +21,8 @@ extern int spy_QSPI_frequency;
 extern mbed::qspi_inst_t spy_QSPI_command;
 extern int spy_QSPI_address;
 extern std::string spy_QSPI_rx_buffer;
-extern size_t spy_QSPI_rx_buffer_length;
+extern std::size_t spy_QSPI_rx_buffer_length;
 extern std::string spy_QSPI_tx_buffer;
-extern size_t spy_QSPI_tx_buffer_length;
+extern std::size_t spy_QSPI_tx_buffer_length;
 
 }	// namespace leka

@@ -19,25 +19,25 @@ struct File {
 
 	virtual void close() = 0;
 
-	virtual auto read(std::span<uint8_t> buffer) -> size_t = 0;
-	virtual auto write(std::span<uint8_t> data) -> size_t  = 0;
+	virtual auto read(std::span<uint8_t> buffer) -> std::size_t = 0;
+	virtual auto write(std::span<uint8_t> data) -> std::size_t	= 0;
 
-	virtual auto read(std::span<char> buffer) -> size_t = 0;
-	virtual auto write(std::span<char> data) -> size_t	= 0;
+	virtual auto read(std::span<char> buffer) -> std::size_t = 0;
+	virtual auto write(std::span<char> data) -> std::size_t	 = 0;
 
-	virtual auto read(uint8_t *buffer, uint32_t size) -> size_t		 = 0;
-	virtual auto write(const uint8_t *data, uint32_t size) -> size_t = 0;
+	virtual auto read(uint8_t *buffer, uint32_t size) -> std::size_t	  = 0;
+	virtual auto write(const uint8_t *data, uint32_t size) -> std::size_t = 0;
 
-	virtual auto read(char *buffer, uint32_t size) -> size_t	  = 0;
-	virtual auto write(const char *data, uint32_t size) -> size_t = 0;
+	virtual auto read(char *buffer, uint32_t size) -> std::size_t	   = 0;
+	virtual auto write(const char *data, uint32_t size) -> std::size_t = 0;
 
 	virtual void seek(size_t pos, int origin) = 0;
 
 	virtual void rewind() = 0;
 
-	virtual auto size() -> size_t = 0;
+	virtual auto size() -> std::size_t = 0;
 
-	virtual auto tell() -> size_t = 0;
+	virtual auto tell() -> std::size_t = 0;
 
 	virtual auto reopen(const char *path, const char *mode) -> bool					 = 0;
 	virtual auto reopen(const std::filesystem::path &path, const char *mode) -> bool = 0;

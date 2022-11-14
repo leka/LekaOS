@@ -84,7 +84,7 @@ void CoreJPEGModePolling::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
 	// TODO(@yann): implement flag
 }
 
-auto CoreJPEGModePolling::decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> size_t
+auto CoreJPEGModePolling::decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> std::size_t
 {
 	_file = &file;
 

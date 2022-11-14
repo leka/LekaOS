@@ -96,7 +96,7 @@ auto main() -> int
 	static CGColor background = CGColor::white;
 
 	leka::logger::set_sink_function(
-		[](const char *str, size_t size) { corevideo.displayText(str, size, line, foreground, background); });
+		[](const char *str, std::size_t size) { corevideo.displayText(str, size, line, foreground, background); });
 
 	for (int i = 1; i <= 10; i++) {
 		foreground = (i % 2 == 0) ? CGColor::black : CGColor::pure_red;
@@ -107,7 +107,7 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(500ms);
 
-	leka::logger::set_sink_function([](const char *str, size_t size) {
+	leka::logger::set_sink_function([](const char *str, std::size_t size) {
 		corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
 	});
 

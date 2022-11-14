@@ -36,7 +36,7 @@ constexpr Command<2> command_read_register_4 = {.data  = {0x30, 0x04},
 
 constexpr auto ATQA_answer_size			= 2;
 constexpr auto initial_polynomial_value = uint32_t {0x6363};
-constexpr auto register_answer_size		= size_t {18};
+constexpr auto register_answer_size		= std::size_t {18};
 constexpr auto expected_ATQA_answer		= std::array<uint8_t, ATQA_answer_size> {0x44, 0x00};
 
 inline auto computeCRC(uint8_t const *data) -> std::array<uint8_t, 2>

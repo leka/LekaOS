@@ -8,7 +8,7 @@ using namespace boost::ut;
 
 suite suite_array = [] {
 	"std::array size"_test = [] {
-		const auto size = size_t {5};
+		const auto size = std::size_t {5};
 		auto tab		= std::array<uint8_t, size> {};
 		expect((size == std::size(tab)) >> fatal) << "fatal";
 	};
