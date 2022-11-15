@@ -41,7 +41,7 @@ auto SerialNumberFormater::setDateOfTest(std::span<uint8_t> partial_serial_numbe
 		file.close();
 	}
 
-	std::copy(date_of_test.begin(), date_of_test.end(), partial_serial_number.begin() + offset);
+	std::copy(date_of_test.begin(), date_of_test.end(), partial_serial_number.begin() + static_cast<int>(offset));
 
 	return std::size(date_of_test);
 }
