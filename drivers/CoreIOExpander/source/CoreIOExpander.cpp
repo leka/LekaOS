@@ -78,8 +78,8 @@ auto CoreIOExpanderMCP23017::getModeForPin(uint16_t pin) -> PinMode
 auto CoreIOExpanderMCP23017::readPin(uint16_t pin) -> int
 {
 	_registers.gpio = readRegister(mcp23017::internal_register::GPIO);
-	auto value		= _registers.gpio & pin;
-	return pin == value ? 1 : 0;
+	auto pin_is_on	= _registers.gpio & pin;
+	return pin_is_on;
 }
 
 void CoreIOExpanderMCP23017::writePin(uint16_t pin, int value)

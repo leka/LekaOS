@@ -20,7 +20,7 @@ void CoreTouchSensor::init()
 
 auto CoreTouchSensor::read() -> bool
 {
-	_state = (1 == _detect_pin.read());
+	_state = (_detect_pin.read() != 0);
 	return _state;
 }
 

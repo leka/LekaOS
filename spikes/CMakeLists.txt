@@ -11,6 +11,7 @@ add_subdirectory(${SPIKES_DIR}/lk_color_kit)
 add_subdirectory(${SPIKES_DIR}/lk_command_kit)
 add_subdirectory(${SPIKES_DIR}/lk_config_kit)
 add_subdirectory(${SPIKES_DIR}/lk_coreled)
+add_subdirectory(${SPIKES_DIR}/lk_core_touch_sensor)
 add_subdirectory(${SPIKES_DIR}/lk_event_queue)
 add_subdirectory(${SPIKES_DIR}/lk_file_reception)
 add_subdirectory(${SPIKES_DIR}/lk_file_manager_kit)
@@ -49,6 +50,7 @@ add_dependencies(spikes_leka
 	spike_lk_color_kit
 	spike_lk_command_kit
 	spike_lk_coreled
+	spike_lk_core_touch_sensor
 	spike_lk_event_queue
 	spike_lk_file_reception
 	spike_lk_file_manager_kit
