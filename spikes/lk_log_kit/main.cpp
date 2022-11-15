@@ -55,7 +55,7 @@ auto main() -> int
 		// log_from_isr();
 	};
 
-	// ticker_log_from_isr.attach(log_isr_lambda, 2s);
+	// ticker_log_from_isr.attach(log_isr_lambda, 5s);
 
 	while (true) {
 		auto start = rtos::Kernel::Clock::now();
@@ -65,6 +65,6 @@ auto main() -> int
 
 		log_info("log_debug took %i ms to complete... that's fast!\n", int((stop - start).count()));
 
-		rtos::ThisThread::sleep_for(1000ms);
+		rtos::ThisThread::sleep_for(3333ms);
 	}
 }
