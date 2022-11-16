@@ -78,3 +78,51 @@ TEST(MathUtilsTest, mapFloatToUint8Middle)
 
 	EXPECT_EQ(result, 51);
 }
+
+TEST(MathUtilsTest, mapInverseUint8)
+{
+	uint8_t in_min	= 0;
+	uint8_t in_max	= 255;
+	uint8_t out_min = 255;
+	uint8_t out_max = 0;
+
+	{
+		uint8_t value = 0;
+
+		auto result = map(value, in_min, in_max, out_min, out_max);
+
+		EXPECT_EQ(result, 255);
+	}
+
+	{
+		uint8_t value = 255;
+
+		auto result = map(value, in_min, in_max, out_min, out_max);
+
+		EXPECT_EQ(result, 0);
+	}
+}
+
+TEST(MathUtilsTest, mapInverseUint8ToFloat)
+{
+	uint8_t in_min = 0;
+	uint8_t in_max = 255;
+	float out_min  = 1.F;
+	float out_max  = 0.F;
+
+	{
+		uint8_t value = 0;
+
+		auto result = map(value, in_min, in_max, out_min, out_max);
+
+		EXPECT_EQ(result, 1.0F);
+	}
+
+	{
+		uint8_t value = 255;
+
+		auto result = map(value, in_min, in_max, out_min, out_max);
+
+		EXPECT_EQ(result, 0.0F);
+	}
+}
