@@ -95,6 +95,25 @@ namespace internal {
 		internal::filehandle->write(data, size);
 	}
 
+	inline void disable_filehandle_input()
+
+	{
+		if (filehandle == nullptr) {
+			return;
+		}
+
+		internal::filehandle->enable_input(false);
+	}
+
+	inline void enable_filehandle_input()
+	{
+		if (filehandle == nullptr) {
+			return;
+		}
+
+		internal::filehandle->enable_input(true);
+	}
+
 }	// namespace internal
 
 [[maybe_unused]] inline void set_filehandle_pointer(filehandle_ptr fh)
@@ -230,7 +249,11 @@ inline void set_print_function(...) {}		 // NOSONAR
 inline void set_filehandle_pointer(...) {}	 // NOSONAR
 
 namespace internal {
-	inline void default_sink_function(...) {}	// NOSONAR
+
+	inline void default_sink_function(...) {}	   // NOSONAR
+	inline void disable_filehandle_input(...) {}   // NOSONAR
+	inline void enable_filehandle_input(...) {}	   // NOSONAR
+
 }	// namespace internal
 
 #endif	 // ENABLE_LOG_DEBUG
