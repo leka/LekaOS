@@ -27,7 +27,7 @@ using namespace std::chrono;
 
 		log_info("Total time to LOG the for loop --> %ims\n", static_cast<int>((stop - start).count()));
 
-		rtos::ThisThread::sleep_for(3s);
+		rtos::ThisThread::sleep_for(5s);
 	}
 }
 
