@@ -119,6 +119,8 @@ namespace internal {
 [[maybe_unused]] inline void set_filehandle_pointer(filehandle_ptr fh)
 {
 	internal::filehandle = fh;
+
+	internal::disable_filehandle_input();
 }
 
 inline void process_fifo()
