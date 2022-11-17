@@ -21,28 +21,32 @@ suite suite_lsm6dsox = [] {
 	auto gyro	  = CoreGyroscope {lsm6dsox};
 
 	lsm6dsox.init();
-	auto default_min_bound_az = 800.F;
-	auto default_max_bound_az = 1200.F;
+	auto default_min_bound_az = 800._f;
+	auto default_max_bound_az = 1200._f;
 
 	"Initialization"_test = [&] { expect(neq(&lsm6dsox, nullptr)); };
 
 	"Get imu data "_test = [&] {
 		auto [ax, ay, az] = accel.getXYZ();
 		auto [gx, gy, gz] = gyro.getXYZ();
-		expect(ax != 0.F) << "Null acceleration on X axis ";
-		expect(ay != 0.F) << "Null acceleration on Y axis ";
-		expect(az >= default_min_bound_az) << "Acceleration on Z axis:" << az << "axis too low";
-		expect(az <= default_max_bound_az) << "Acceleration on Z axis:" << az << "axis too high";
-		expect(gx != 0.F) << "Null angular speed on X axis ";
-		expect(gy != 0.F) << "Null angular speed on Y axis ";
-		expect(gx != 0.F) << "Null angular speed on Z axis ";
+		rtos::ThisThread::sleep_for(100ms);
+		auto [current_ax, current_ay, current_az] = accel.getXYZ();
+		auto [current_gx, current_gy, current_gz] = gyro.getXYZ();
+		expect(ax != current_ax) << "Lsm6dsox still off " << ax << "==" << current_ax;
+		expect(ay != current_ay) << "Lsm6dsox still off " << ay << "==" << current_ay;
+		expect(az != current_az) << "Lsm6dsox still off " << az << "==" << current_az;
+		expect(current_az >= default_min_bound_az) << "Acceleration on Z axis:" << az << "axis too low";
+		expect(current_az <= default_max_bound_az) << "Acceleration on Z axis:" << az << "axis too high";
+		expect(gx != current_gx) << "Lsm6dsox still off " << gx << "==" << current_gx;
+		expect(gy != current_gy) << "Lsm6dsox still off " << gy << "==" << current_gy;
+		expect(gz != current_gz) << "Lsm6dsox still off " << gz << "==" << current_gz;
 	};
 
 	"Turn off lsm6dsox"_test = [&] {
 		lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
 		auto [ax, ay, az] = accel.getXYZ();
 		auto [gx, gy, gz] = gyro.getXYZ();
-		rtos::ThisThread::sleep_for(40ms);
+		rtos::ThisThread::sleep_for(100ms);
 		auto [current_ax, current_ay, current_az] = accel.getXYZ();
 		auto [current_gx, current_gy, current_gz] = gyro.getXYZ();
 		expect(ax == current_ax) << "Lsm6dsox not turned off " << ax << "!=" << current_ax;
@@ -56,7 +60,7 @@ suite suite_lsm6dsox = [] {
 	"Assert data are different when lsm6dsox turned on "_test = [&] {
 		lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Normal);
 		auto [gx, gy, gz] = gyro.getXYZ();
-		rtos::ThisThread::sleep_for(40ms);
+		rtos::ThisThread::sleep_for(100ms);
 		auto [current_gx, current_gy, current_gz] = gyro.getXYZ();
 		expect(gz != current_gz) << "Datas are all the same " << gz << "!=" << current_gz;
 	};
@@ -66,12 +70,14 @@ suite suite_lsm6dsox = [] {
 		lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Normal);
 		auto [ax, ay, az] = accel.getXYZ();
 		auto [gx, gy, gz] = gyro.getXYZ();
-		expect(ax != 0.F) << "Null acceleration on X axis ";
-		expect(ay != 0.F) << "Null acceleration on Y axis ";
-		expect(az >= default_min_bound_az) << "Acceleration on Z axis:" << az << "axis too low";
-		expect(az <= default_max_bound_az) << "Acceleration on Z axis:" << az << "axis too high";
-		expect(gx != 0.F) << "Null angular speed on X axis ";
-		expect(gy != 0.F) << "Null angular speed on Y axis ";
-		expect(gx != 0.F) << "Null angular speed on Z axis ";
+		rtos::ThisThread::sleep_for(100ms);
+		auto [current_ax, current_ay, current_az] = accel.getXYZ();
+		auto [current_gx, current_gy, current_gz] = gyro.getXYZ();
+		expect(ax != current_ax) << "Lsm6dsox still off " << ax << "==" << current_ax;
+		expect(ay != current_ay) << "Lsm6dsox still off " << ay << "==" << current_ay;
+		expect(az != current_az) << "Lsm6dsox still off " << az << "==" << current_az;
+		expect(gx != current_gx) << "Lsm6dsox still off " << gx << "==" << current_gx;
+		expect(gy != current_gy) << "Lsm6dsox still off " << gy << "==" << current_gy;
+		expect(gz != current_gz) << "Lsm6dsox still off " << gz << "==" << current_gz;
 	};
 };
