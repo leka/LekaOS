@@ -31,7 +31,7 @@ class Bluetooth
 	auto checkResponse(bool printResponse = false) -> bool;
 
 	[[nodiscard]] auto isPaired() const -> bool;
-	void sendMessage(const char *msg, size_t msg_length);
+	void sendMessage(const char *msg, std::size_t msg_length);
 	auto getMessage(std::span<char> buffer) -> int;
 	[[nodiscard]] auto checkNewMessage() const -> bool;
 

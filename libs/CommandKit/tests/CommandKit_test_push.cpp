@@ -16,7 +16,7 @@ class CommandKitPushTest : public testing::Test
   protected:
 	void SetUp() override
 	{
-		logger::set_sink_function([](const char *str, size_t size) {
+		logger::set_sink_function([](const char *str, std::size_t size) {
 			auto spy_sink_output = std::string {str};
 			std::cout << spy_sink_output;
 		});

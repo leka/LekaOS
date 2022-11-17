@@ -31,7 +31,7 @@ class LogKitFifoTest : public ::testing::Test
 		logger::set_filehandle_pointer(nullptr);
 	}
 
-	static void spy_sink_function(const char *str, size_t size)
+	static void spy_sink_function(const char *str, std::size_t size)
 	{
 		spy_sink_output = std::string {str};
 		std::cout << spy_sink_output;

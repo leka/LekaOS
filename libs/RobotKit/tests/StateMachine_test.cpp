@@ -24,7 +24,7 @@ class StateMachineTest : public testing::Test
 	void SetUp() override { logger::set_sink_function(spy_sink_function); }
 	// void TearDown() override {}
 
-	static void spy_sink_function(const char *str, size_t size)
+	static void spy_sink_function(const char *str, std::size_t size)
 	{
 		auto output = std::string {str};
 		std::cout << output;

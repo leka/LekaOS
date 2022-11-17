@@ -15,8 +15,8 @@ namespace mbed::mock {
 class FileHandle : public mbed::FileHandle
 {
   public:
-	MOCK_METHOD(ssize_t, read, (void *buffer, size_t size), (override));
-	MOCK_METHOD(ssize_t, write, (const void *buffer, size_t size), (override));
+	MOCK_METHOD(ssize_t, read, (void *buffer, std::size_t size), (override));
+	MOCK_METHOD(ssize_t, write, (const void *buffer, std::size_t size), (override));
 	MOCK_METHOD(off_t, seek, (off_t offset, int whence), (override));
 	MOCK_METHOD(int, close, (), (override));
 };

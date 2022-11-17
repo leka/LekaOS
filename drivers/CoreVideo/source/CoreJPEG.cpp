@@ -71,12 +71,12 @@ void CoreJPEG::registerProcessCallbacks()
 								   [](JPEG_HandleTypeDef *hjpeg) { self._mode.onErrorCallback(hjpeg); });
 }
 
-auto CoreJPEG::decodeImage(interface::File &file) -> size_t
+auto CoreJPEG::decodeImage(interface::File &file) -> std::size_t
 {
 	return _mode.decode(&_hjpeg, file);
 }
 
-auto CoreJPEG::findSOIMarker(interface::File &file, size_t start_index) -> size_t
+auto CoreJPEG::findSOIMarker(interface::File &file, std::size_t start_index) -> std::size_t
 {
 	auto buffer = std::array<uint8_t, 512> {};
 

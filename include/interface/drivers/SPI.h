@@ -14,7 +14,7 @@ class SPI
   public:
 	virtual ~SPI() = default;
 
-	virtual auto write(std::span<const uint8_t> data) -> size_t = 0;
+	virtual auto write(std::span<const uint8_t> data) -> std::size_t = 0;
 };
 
 }	// namespace leka::interface

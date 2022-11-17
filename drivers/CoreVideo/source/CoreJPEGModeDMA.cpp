@@ -148,7 +148,7 @@ void CoreJPEGModeDMA::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
 	_hw_decode_ended = true;
 }
 
-auto CoreJPEGModeDMA::decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> size_t
+auto CoreJPEGModeDMA::decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> std::size_t
 {
 	reset();
 
