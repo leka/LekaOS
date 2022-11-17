@@ -67,7 +67,7 @@ jobs:
 
       - name: Upload coverage to Codecov
         if: ${{ matrix.compiler.name == 'GCC' }}
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./_build_unit_tests/_coverage/coverage.info
