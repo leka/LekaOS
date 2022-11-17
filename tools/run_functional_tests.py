@@ -42,7 +42,7 @@ parser.add_argument('-p', '--port', metavar='PORT', default='/dev/tty.usbmodem*'
                     help='serial port path used for the robot')
 parser.add_argument('--response-timeout', metavar='RESPONSE_TIMEOUT', default=5.0,
                     help='response timeout')
-parser.add_argument('--flash-erase', action='store_true',
+parser.add_argument('--no-flash-erase', action='store_false',
                     help='disable flash erase')
 
 group = parser.add_mutually_exclusive_group(required=True)
@@ -116,7 +116,7 @@ def list_bin_files():
 
 TESTS_FUNCTIONAL_BIN_FILES = list_bin_files() if args.all else args.bin_files
 
-FLASH_ERASE_FLAG = args.flash_erase
+FLASH_ERASE_FLAG = args.no_flash_erase
 
 
 def warningprint(*args, **kwargs):
@@ -161,7 +161,7 @@ class Test:
         result_filepath = self.result_filepath
         try:
             with open(result_filepath, "a") as file:
-                file.write(data.strip() + '\n')
+                file.write(data)
         except FileNotFoundError as e:
             print("The file: " + result_filepath + "doesn\'t exist")
             print("Error: " + e)
@@ -305,15 +305,17 @@ def print_summary():
 RUN_TESTS = list()
 
 
-def reboot_device():
-    com.send_break()
-    REBOOT_SLEEP_DELAY = 3
-    sleep(REBOOT_SLEEP_DELAY)
-
-
 def flash_erase():
-    ret = os.system("st-flash --debug erase")
+    ret = os.system("st-flash erase")
     return ret
+
+
+def reset_buffer():
+    BREAK_DELAY = 1
+    com.reset_input_buffer()
+    com.reset_output_buffer()
+    com.send_break(BREAK_DELAY)
+    sleep(BREAK_DELAY)
 
 
 def main():
@@ -325,13 +327,7 @@ def main():
 
     if FLASH_ERASE_FLAG:
         flash_erase()
-
-    print("Rebooting device...")
-    reboot_device()
-
-    while True:
-        if wait_for_response() is not None:
-            break
+    reset_buffer()
 
     print("Running tests...")
     for filepath in TESTS_FUNCTIONAL_BIN_FILES:
@@ -339,6 +335,10 @@ def main():
         error = test.run()
         if not error:
             RUN_TESTS.append(test)
+
+    if FLASH_ERASE_FLAG:
+        flash_erase()
+    reset_buffer()
 
     fails = print_summary()
     if fails:
