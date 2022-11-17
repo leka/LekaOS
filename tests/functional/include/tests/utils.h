@@ -6,9 +6,10 @@
 
 #include "rtos/ThisThread.h"
 
-#include "FATFileSystem.h"
+#include "storage/blockdevice/COMPONENT_SD/include/SD/SDBlockDevice.h"
+#include "storage/filesystem/fat/include/fat/FATFileSystem.h"
+
 #include "LogKit.h"
-#include "SDBlockDevice.h"
 
 namespace utils {
 
