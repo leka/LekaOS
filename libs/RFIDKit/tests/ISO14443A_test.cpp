@@ -22,12 +22,12 @@ class ISO14443ATest : public ::testing::Test
 	mock::CoreRFIDReader mock_reader {};
 	boost::sml::sm<rfid::ISO14443A, boost::sml::testing> sm {static_cast<interface::RFIDReader &>(mock_reader)};
 
-	static constexpr rfid::Command<1> command_requestA		  = {.data = {0x26}, .flags = leka::rfid::Flag::sb_7};
-	static constexpr rfid::Command<2> command_read_register_4 = {
-		.data = {0x30, 0x04}, .flags = leka::rfid::Flag::crc | leka::rfid::Flag::sb_8};
-
 	std::function<void()> magic_card_callback {};
 };
+
+inline constexpr auto command_requestA = rfid::Command<1>({.data = {0x26}, .flags = leka::rfid::Flag::sb_7});
+inline constexpr auto command_read_register_4 =
+	rfid::Command<2>({.data = {0x30, 0x04}, .flags = leka::rfid::Flag::crc | leka::rfid::Flag::sb_8});
 
 TEST_F(ISO14443ATest, initialization)
 {

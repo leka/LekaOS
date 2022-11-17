@@ -76,9 +76,7 @@ void CoreRFIDReaderCR95HF::sendRequestToTag(std::span<const uint8_t> data)
 	_tx_buf.at(0) = rfid::cr95hf::command::send_receive;
 	_tx_buf.at(1) = static_cast<uint8_t>(data.size());
 
-	for (auto i = 0; i < data.size(); ++i) {
-		_tx_buf.at(i + rfid::cr95hf::tag_answer::heading_size) = data[i];
-	}
+	std::copy(data.begin(), data.end(), _tx_buf.begin() + rfid::cr95hf::tag_answer::heading_size);
 
 	_serial.write(_tx_buf.data(), data.size() + rfid::cr95hf::tag_answer::heading_size);
 }
@@ -96,9 +94,8 @@ auto CoreRFIDReaderCR95HF::didTagCommunicationSucceed(size_t sizeTagData) -> boo
 
 auto CoreRFIDReaderCR95HF::getTag() -> rfid::Tag &
 {
-	for (auto i = 0; i < _tag.data.size(); ++i) {
-		_tag.data.at(i) = _rx_buf.at(i + rfid::cr95hf::tag_answer::heading_size);
-	}
+	std::copy(_rx_buf.begin() + rfid::cr95hf::tag_answer::heading_size, _rx_buf.end(), _tag.data.begin());
+
 	return _tag;
 }
 

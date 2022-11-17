@@ -13,31 +13,31 @@ namespace leka::rfid {
 
 template <std::size_t SIZE>
 struct Command {
-	const std::array<uint8_t, SIZE> data;
-	const leka::rfid::Flag flags;
+	struct Details {
+		std::initializer_list<uint8_t> data;
+		rfid::Flag flags {};
+	};
 
-	[[nodiscard]] inline auto getArray() const -> std::array<uint8_t, SIZE + 1>
+	explicit constexpr Command(Details details)
 	{
-		auto cmd = std::array<uint8_t, SIZE + 1> {};
+		std::copy(details.data.begin(), details.data.end(), _data.begin());
+		_data.back() = static_cast<uint8_t>(details.flags);
+	};
 
-		for (std::size_t i = 0; i < SIZE; ++i) {
-			cmd.at(i) = data.at(i);
-		}
+	[[nodiscard]] constexpr auto data() const -> std::span<const uint8_t> { return std::span(_data); }
 
-		cmd.at(SIZE) = static_cast<uint8_t>(flags);
-
-		return cmd;
-	}
+  private:
+	std::array<uint8_t, SIZE + 1> _data;
 };
 
-constexpr Command<1> command_requestA		 = {.data = {0x26}, .flags = leka::rfid::Flag::sb_7};
-constexpr Command<2> command_read_register_4 = {.data  = {0x30, 0x04},
-												.flags = leka::rfid::Flag::crc | leka::rfid::Flag::sb_8};
+inline constexpr auto command_requestA = Command<1>({.data = {0x26}, .flags = leka::rfid::Flag::sb_7});
+inline constexpr auto command_read_register_4 =
+	Command<2>({.data = {0x30, 0x04}, .flags = leka::rfid::Flag::crc | leka::rfid::Flag::sb_8});
 
-constexpr auto ATQA_answer_size			= 2;
-constexpr auto initial_polynomial_value = uint32_t {0x6363};
-constexpr auto register_answer_size		= size_t {18};
-constexpr auto expected_ATQA_answer		= std::array<uint8_t, ATQA_answer_size> {0x44, 0x00};
+inline constexpr auto ATQA_answer_size		   = 2;
+inline constexpr auto initial_polynomial_value = uint32_t {0x6363};
+inline constexpr auto register_answer_size	   = std::size_t {18};
+inline constexpr auto expected_ATQA_answer	   = std::array<uint8_t, ATQA_answer_size> {0x44, 0x00};
 
 inline auto computeCRC(uint8_t const *data) -> std::array<uint8_t, 2>
 {
@@ -48,13 +48,13 @@ inline auto computeCRC(uint8_t const *data) -> std::array<uint8_t, 2>
 	size_t size	  = 16;
 
 	do {
-		std::byte val;
+		std::byte val {};
 		val	 = static_cast<std::byte>(*data++);
 		val	 = (val ^ static_cast<std::byte>(wCrc & 0x00FF));
 		val	 = (val ^ (val << 4));
 		wCrc = (wCrc >> 8) ^ (static_cast<uint32_t>(val) << 8) ^ (static_cast<uint32_t>(val) << 3) ^
 			   (static_cast<uint32_t>(val) >> 4);
-	} while (--size);
+	} while (--size != 0);
 
 	std::array<uint8_t, 2> pbtCrc = {static_cast<uint8_t>(wCrc & 0xFF), static_cast<uint8_t>((wCrc >> 8) & 0xFF)};
 	return pbtCrc;
@@ -142,14 +142,11 @@ namespace sm::action {
 	};
 
 	struct send_request_A {
-		auto operator()(irfidreader &rfidreader) const { rfidreader.sendRequestToTag(command_requestA.getArray()); }
+		auto operator()(irfidreader &rfidreader) const { rfidreader.sendRequestToTag(command_requestA.data()); }
 	};
 
 	struct send_register_4 {
-		auto operator()(irfidreader &rfidreader) const
-		{
-			rfidreader.sendRequestToTag(command_read_register_4.getArray());
-		}
+		auto operator()(irfidreader &rfidreader) const { rfidreader.sendRequestToTag(command_read_register_4.data()); }
 	};
 
 	struct on_tag_readable {
