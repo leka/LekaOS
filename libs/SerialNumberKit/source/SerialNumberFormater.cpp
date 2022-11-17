@@ -2,6 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#include <cinttypes>
 #include <cstdio>
 #include <cstring>
 
@@ -40,22 +41,23 @@ auto SerialNumberFormater::setDateOfTest(std::span<uint8_t> partial_serial_numbe
 		file.close();
 	}
 
-	std::copy(date_of_test.begin(), date_of_test.end(), partial_serial_number.begin() + offset);
+	std::copy(date_of_test.begin(), date_of_test.end(), partial_serial_number.begin() + static_cast<int>(offset));
 
 	return std::size(date_of_test);
 }
 
 void SerialNumberFormater::setDateOfTestFromYYMMDD(std::span<char> content, std::span<uint8_t> date_of_test) const
 {
-	std::copy(content.begin(), content.begin() + std::size(date_of_test), date_of_test.begin());
+	std::copy(content.begin(), content.begin() + std::ssize(date_of_test), date_of_test.begin());
 }
 
 void SerialNumberFormater::setDateOfTestFromEpoch(std::span<char> content, std::span<uint8_t> date_of_test) const
 {
-	std::time_t epoch = std::atoll(content.data());
-	std::array<char, 8> epoch_c_array {};
+	std::array<char, 8> epoch_c_array = {};
+	struct tm local_time			  = {};
 
-	struct tm local_time;
+	std::time_t epoch = std::atoll(content.data());
+
 	localtime_r(&epoch, &local_time);
 	std::strftime(epoch_c_array.data(), std::size(epoch_c_array), "%y%m", &local_time);
 
@@ -69,8 +71,8 @@ void SerialNumberFormater::setMCUID(std::span<uint8_t> partial_serial_number, ui
 	std::array<char, MAX_MCU_ID_LENGTH> mcu_id_array {};
 
 	auto mcu_id = _mcu.getID();
-	snprintf(mcu_id_array.begin(), std::size(mcu_id_array), "%08lX%08lX%08lX", mcu_id.front, mcu_id.middle,
-			 mcu_id.back);
+	snprintf(mcu_id_array.begin(), std::size(mcu_id_array), "%08" PRIX32 "%08" PRIX32 "%08" PRIX32, mcu_id.front,
+			 mcu_id.middle, mcu_id.back);
 
 	if (number_of_digits > MAX_MCU_ID_DIGITS) {
 		number_of_digits = MAX_MCU_ID_DIGITS;

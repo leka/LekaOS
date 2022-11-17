@@ -208,6 +208,6 @@ constexpr MagicCard MagicCard::math_arithmetic_addition_sign_plus	   = MagicCard
 namespace std {
 template <>
 struct hash<leka::MagicCard> {
-	auto operator()(const leka::MagicCard &card) const -> size_t { return hash<int>()(card.getId()); }
+	auto operator()(const leka::MagicCard &card) const -> std::size_t { return hash<int>()(card.getId()); }
 };
 }	// namespace std

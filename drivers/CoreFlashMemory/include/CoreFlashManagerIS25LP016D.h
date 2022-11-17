@@ -58,7 +58,7 @@ namespace command {
 }	// namespace command
 
 namespace status {
-	inline constexpr size_t register_size = 0x01;
+	inline constexpr std::size_t register_size = 0x01;
 
 	inline constexpr uint8_t work_in_progress	= 0x01;
 	inline constexpr uint8_t write_enable_latch = 0x02;

@@ -65,8 +65,8 @@ TEST_F(CoreFlashIS25LP016DTest, reset)
 
 TEST_F(CoreFlashIS25LP016DTest, read)
 {
-	uint32_t address		   = 0x2A;
-	const size_t bytes_to_read = 0x10;
+	uint32_t address				= 0x2A;
+	const std::size_t bytes_to_read = 0x10;
 	std::array<uint8_t, bytes_to_read> buffer {};
 
 	size_t expected_bytes_read = bytes_to_read;
@@ -86,8 +86,8 @@ TEST_F(CoreFlashIS25LP016DTest, read)
 
 TEST_F(CoreFlashIS25LP016DTest, readOverSize)
 {
-	uint32_t address		   = flash::is25lp016d::size;
-	const size_t bytes_to_read = 0x10;
+	uint32_t address				= flash::is25lp016d::size;
+	const std::size_t bytes_to_read = 0x10;
 	std::array<uint8_t, bytes_to_read> buffer {};
 
 	size_t expected_bytes_read = 0;
@@ -100,8 +100,8 @@ TEST_F(CoreFlashIS25LP016DTest, readOverSize)
 
 TEST_F(CoreFlashIS25LP016DTest, readFailChipIsNotAvailable)
 {
-	uint32_t address		   = 0x2A;
-	const size_t bytes_to_read = 0x10;
+	uint32_t address				= 0x2A;
+	const std::size_t bytes_to_read = 0x10;
 	std::array<uint8_t, bytes_to_read> buffer {};
 
 	size_t expected_bytes_read = 0;
@@ -125,7 +125,7 @@ TEST_F(CoreFlashIS25LP016DTest, write)
 	const auto bytes_to_write = 5;
 
 	size_t expected_bytes_written	  = bytes_to_write;
-	auto returned_buffer_read_written = std::tuple<size_t, size_t> {0x00, 0x01};
+	auto returned_buffer_read_written = std::tuple<size_t, std::size_t> {0x00, 0x01};
 	{
 		InSequence seq;
 

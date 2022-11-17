@@ -4,7 +4,7 @@
 
 #include "BM64Converter.h"
 
-auto BM64::getCommand(std::span<uint8_t> cmd, size_t cmd_length, std::span<uint8_t> buffer) -> size_t
+auto BM64::getCommand(std::span<uint8_t> cmd, std::size_t cmd_length, std::span<uint8_t> buffer) -> std::size_t
 {
 	size_t frame_length = 3 + cmd_length + 1;
 	uint8_t checksum	= 0x00;

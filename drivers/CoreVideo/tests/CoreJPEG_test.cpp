@@ -124,7 +124,7 @@ TEST_F(CoreJPEGTest, findSOIMarkerPresent)
 	std::array<uint8_t, 1024> data {};
 	std::fill(std::begin(data), std::end(data), 0);
 
-	const auto expected_frame_index	  = size_t {218};
+	const auto expected_frame_index	  = std::size_t {218};
 	data.at(expected_frame_index)	  = (jpeg::JPEG_SOI_MARKER >> 8) & 0xFF;
 	data.at(expected_frame_index + 1) = jpeg::JPEG_SOI_MARKER & 0xFF;
 
@@ -148,7 +148,7 @@ TEST_F(CoreJPEGTest, findSOIMarkerAbsent)
 	std::array<uint8_t, 1024> data {};
 	std::fill(std::begin(data), std::end(data), 0);
 
-	const auto expected_frame_index = size_t {0};
+	const auto expected_frame_index = std::size_t {0};
 
 	EXPECT_CALL(filemock, size).Times(AnyNumber()).WillRepeatedly(Return(1024));
 	EXPECT_CALL(filemock, seek).Times(AnyNumber());
@@ -176,7 +176,7 @@ TEST_F(CoreJPEGTest, findSOIMarkerPresentInLastPacket)
 	std::array<uint8_t, 1024> data {};
 	std::fill(std::begin(data), std::end(data), 0);
 
-	const auto expected_frame_index	  = size_t {1001};
+	const auto expected_frame_index	  = std::size_t {1001};
 	data.at(expected_frame_index)	  = (jpeg::JPEG_SOI_MARKER >> 8) & 0xFF;
 	data.at(expected_frame_index + 1) = jpeg::JPEG_SOI_MARKER & 0xFF;
 
@@ -206,7 +206,7 @@ TEST_F(CoreJPEGTest, findSOIMarkerPresentInLastPacketStartingIndexWithOffset)
 	std::array<uint8_t, 1024> data {};
 	std::fill(std::begin(data), std::end(data), 0);
 
-	const auto expected_frame_index	  = size_t {1001};
+	const auto expected_frame_index	  = std::size_t {1001};
 	data.at(expected_frame_index)	  = (jpeg::JPEG_SOI_MARKER >> 8) & 0xFF;
 	data.at(expected_frame_index + 1) = jpeg::JPEG_SOI_MARKER & 0xFF;
 

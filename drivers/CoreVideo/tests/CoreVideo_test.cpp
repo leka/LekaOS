@@ -191,7 +191,7 @@ TEST_F(CoreVideoTest, displayText)
 {
 	constexpr uint8_t buff_size = 128;
 	char buff[buff_size] {};
-	auto text_length = sprintf(buff, "Some text");
+	auto text_length = snprintf(buff, buff_size, "Some text");
 
 	auto starting_line = 1;
 
@@ -204,7 +204,7 @@ TEST_F(CoreVideoTest, displayTextWithColor)
 {
 	constexpr uint8_t buff_size = 128;
 	char buff[buff_size] {};
-	auto text_length = sprintf(buff, "Some text");
+	auto text_length = snprintf(buff, buff_size, "Some text");
 
 	auto starting_line = 1;
 

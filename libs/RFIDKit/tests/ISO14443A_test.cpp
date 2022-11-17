@@ -102,7 +102,7 @@ TEST_F(ISO14443ATest, stateRequestingTagDataEventTagResponseAvailableGuardIsTrue
 {
 	sm.set_current_states(state::requesting_tag_data);
 
-	constexpr size_t register_answer_size = 18;
+	constexpr std::size_t register_answer_size = 18;
 
 	std::array<uint8_t, 7> id {};
 	std::array<uint8_t, 4> sak {};

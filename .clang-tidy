@@ -95,11 +95,13 @@ CheckOptions:
   - key: readability-function-cognitive-complexity.IgnoreMacros
     value: true
   - key: readability-magic-numbers.IgnoredIntegerValues
-    value: "1;2;3;4;10;100;1000;60;80;3600;9600;57600;115200;128;255"
+    value: "1;2;3;4;10;100;1000;60;80;3600;9600;57600;115200;128;255;1000000"
   - key: readability-identifier-length.IgnoredVariableNames
-    value: "^(fs|c|ms|fh|t|bd|s)$"
+    value: "^(fs|c|ms|fh|t|bd|s|hz|id|[abcijkxyz])$"
   - key: readability-identifier-length.IgnoredParameterNames
-    value: "^(fs|c|ms|fh|t|bd|s)$"
+    value: "^(fs|c|ms|fh|t|bd|s|hz|id|[abcijkxyz])$"
+  - key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
+    value: true
 
 WarningsAsErrors: " \
   modernize-*

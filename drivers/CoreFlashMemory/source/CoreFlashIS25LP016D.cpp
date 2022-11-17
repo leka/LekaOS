@@ -11,7 +11,7 @@ using namespace flash::is25lp016d;
 
 namespace leka {
 
-auto CoreFlashIS25LP016D::getSize() -> size_t
+auto CoreFlashIS25LP016D::getSize() -> std::size_t
 {
 	return flash::is25lp016d::size;
 }
@@ -21,7 +21,8 @@ void CoreFlashIS25LP016D::reset()
 	_flash_manager.reset();
 }
 
-auto CoreFlashIS25LP016D::read(uint32_t address, std::span<uint8_t> rx_buffer, size_t rx_buffer_size) -> size_t
+auto CoreFlashIS25LP016D::read(uint32_t address, std::span<uint8_t> rx_buffer, std::size_t rx_buffer_size)
+	-> std::size_t
 {
 	if (address + rx_buffer.size() > flash::is25lp016d::size) {
 		return 0;
@@ -36,7 +37,8 @@ auto CoreFlashIS25LP016D::read(uint32_t address, std::span<uint8_t> rx_buffer, s
 	return bytes_read;
 }
 
-auto CoreFlashIS25LP016D::write(uint32_t address, const std::span<uint8_t> tx_buffer, size_t tx_buffer_size) -> size_t
+auto CoreFlashIS25LP016D::write(uint32_t address, const std::span<uint8_t> tx_buffer, std::size_t tx_buffer_size)
+	-> std::size_t
 {
 	if (address + tx_buffer.size() > getSize()) {
 		return 0;
