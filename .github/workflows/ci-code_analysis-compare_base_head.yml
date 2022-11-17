@@ -64,7 +64,7 @@ jobs:
       # Mark: - Upload artifacts
       #
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: base_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
           path: build_artifacts
@@ -123,7 +123,7 @@ jobs:
       # Mark: - Upload artifacts
       #
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: head_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
           path: build_artifacts
