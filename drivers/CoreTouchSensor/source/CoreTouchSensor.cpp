@@ -32,11 +32,11 @@ void CoreTouchSensor::reset()
 	rtos::ThisThread::sleep_for(1ms);
 }
 
-void CoreTouchSensor::setSensitivity(uint16_t value)
+void CoreTouchSensor::setSensitivity(float value)
 {
-	auto inverted_value =
-		utils::math::map<uint16_t, uint16_t>(value, default_min_sensitivity_value, default_max_sensitivity_value,
-											 default_max_sensitivity_value, default_min_sensitivity_value);
+	auto inverted_value = utils::math::map<uint16_t, float>(value, default_min_sensitivity_input_value,
+															default_max_sensitivity_input_value, kDefaultMaxSensitivity,
+															kDefaultMinSensitivity);
 	_sensitivity_pin.dac.write(_sensitivity_pin.channel, inverted_value);
 }
 
