@@ -15,7 +15,7 @@ class CoreTouchSensor : public interface::TouchSensor
 	MOCK_METHOD(void, init, (), (override));
 	MOCK_METHOD(bool, read, (), (override));
 	MOCK_METHOD(void, reset, (), (override));
-	MOCK_METHOD(void, setSensitivity, (uint16_t), (override));
+	MOCK_METHOD(void, setSensitivity, (float), (override));
 };
 
 }	// namespace leka::mock
