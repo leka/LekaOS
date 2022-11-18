@@ -18,9 +18,21 @@ namespace time {
 	using namespace leka;
 	using namespace std::chrono;
 
-	inline auto start = rtos::Kernel::Clock::now();
-	inline auto stop  = rtos::Kernel::Clock::now();
-	inline auto delta = [] { return static_cast<int>((stop - start).count()); };
+	namespace main {
+
+		inline auto start = rtos::Kernel::Clock::now();
+		inline auto stop  = rtos::Kernel::Clock::now();
+		inline auto delta = [] { return static_cast<int>((stop - start).count()); };
+
+	}	// namespace main
+
+	namespace test {
+
+		inline auto start = rtos::Kernel::Clock::now();
+		inline auto stop  = rtos::Kernel::Clock::now();
+		inline auto delta = [] { return static_cast<int>((stop - start).count()); };
+
+	}	// namespace test
 
 }	// namespace time
 

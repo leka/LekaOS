@@ -15,11 +15,10 @@ namespace ut = boost::ut;
 
 auto main() -> int
 {
-	utils_start(TARGET);
+	logger::init();
+	rtos::ThisThread::sleep_for(1s);
 
 	[[maybe_unused]] const auto result = ut::cfg<>.run({.report_errors = true});
-
-	utils_end();
 
 	return static_cast<int>(result);
 }
