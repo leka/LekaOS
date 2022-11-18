@@ -72,7 +72,7 @@ void VideoKit::fillWhiteBackgroundAndDisplayImage(const std::filesystem::path &p
 	}
 }
 
-void VideoKit::playVideoOnce(const std::filesystem::path &path)
+void VideoKit::playVideoOnce(const std::filesystem::path &path, const std::function<void()> &on_video_ended_callback)
 {
 	const std::scoped_lock lock(mutex);
 
@@ -86,10 +86,13 @@ void VideoKit::playVideoOnce(const std::filesystem::path &path)
 
 		rtos::ThisThread::sleep_for(100ms);
 		_event_flags.set(flags::START_VIDEO_FLAG);
+
+		_on_video_ended_callback = on_video_ended_callback;
 	}
 }
 
-void VideoKit::playVideoOnRepeat(const std::filesystem::path &path)
+void VideoKit::playVideoOnRepeat(const std::filesystem::path &path,
+								 const std::function<void()> &on_video_ended_callback)
 {
 	if (auto file = FileManagerKit::File {path}; file.is_open()) {
 		file.close();
@@ -101,6 +104,8 @@ void VideoKit::playVideoOnRepeat(const std::filesystem::path &path)
 
 		rtos::ThisThread::sleep_for(100ms);
 		_event_flags.set(flags::START_VIDEO_FLAG);
+
+		_on_video_ended_callback = on_video_ended_callback;
 	}
 }
 
@@ -134,5 +139,8 @@ void VideoKit::run()
 		}
 
 		file.close();
+		if (_on_video_ended_callback != nullptr) {
+			_on_video_ended_callback();
+		}
 	}
 }

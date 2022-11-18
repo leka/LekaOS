@@ -134,8 +134,10 @@ auto main() -> int
 			rtos::ThisThread::sleep_for(1s);
 		}
 
+		auto on_video_ended_callback = [] { log_debug("End of the video"); };
+
 		for (const auto &video_name: videos) {
-			videokit.playVideoOnce(video_name);
+			videokit.playVideoOnce(video_name, on_video_ended_callback);
 			rtos::ThisThread::sleep_for(1s);
 		}
 
