@@ -222,7 +222,7 @@ class Test:
     def check_status(self):
 
         def all_tests_passed(file):
-            ploop = (".*All tests passed.+\(\d+ asserts in \d+ tests\)")
+            ploop = (".*All tests passed!")
             pattern = re.compile(ploop)
             ret = False
             for line in file:
@@ -233,7 +233,7 @@ class Test:
             return ret
 
         def failure_lines(file):
-            ploop = (".*\.cpp:[0-9].+:.*FAILED")
+            ploop = (".*\\.cpp:[0-9].+: Failure|\\[  FAILED  \\]")
             pattern = re.compile(ploop)
             for line in file:
                 match = pattern.search(line)
