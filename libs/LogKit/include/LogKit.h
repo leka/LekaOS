@@ -268,10 +268,10 @@ namespace internal {
 
 #if defined(ENABLE_LOG_DEBUG)	// defined (ENABLE_LOG_DEBUG)
 
-	// NOLINTNEXTLINE
+// NOLINTBEGIN (cppcoreguidelines-macro-usage bugprone-lambda-function-name)
+
 	#define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 
-	// NOLINTNEXTLINE
 	#define log_debug(str, ...)                                                                                        \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
@@ -285,7 +285,6 @@ namespace internal {
 			leka::logger::internal::sink(leka::logger::buffer::output.data(), length);                                 \
 		} while (0)
 
-	// NOLINTNEXTLINE
 	#define log_info(str, ...)                                                                                         \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
@@ -299,7 +298,6 @@ namespace internal {
 			leka::logger::internal::sink(leka::logger::buffer::output.data(), length);                                 \
 		} while (0)
 
-	// NOLINTNEXTLINE
 	#define log_error(str, ...)                                                                                        \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
@@ -313,7 +311,6 @@ namespace internal {
 			leka::logger::internal::sink(leka::logger::buffer::output.data(), length);                                 \
 		} while (0)
 
-// NOLINTNEXTLINE
 	#define log_free(str, ...)                                                                                         \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
@@ -322,7 +319,6 @@ namespace internal {
 			leka::logger::internal::sink(leka::logger::buffer::output.data(), length);                                 \
 		} while (0)
 
-// NOLINTNEXTLINE
 	#define log_ll(p_data, size)                                                                                       \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
@@ -330,6 +326,8 @@ namespace internal {
 			leka::logger::buffer::fifo.push(std::span {p_data, static_cast<std::size_t>(size)});                       \
 			leka::logger::internal::event_queue.call(process_fifo);                                                    \
 		} while (0)
+
+// NOLINTEND (cppcoreguidelines-macro-usage bugprone-lambda-function-name)
 
 #else	// not defined (ENABLE_LOG_DEBUG)
 
