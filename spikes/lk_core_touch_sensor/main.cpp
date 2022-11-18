@@ -22,42 +22,52 @@ using namespace leka;
 using namespace std::chrono;
 
 namespace touch {
+
 auto corei2c		   = CoreI2C {PinName::SENSOR_PROXIMITY_MUX_I2C_SDA, PinName::SENSOR_PROXIMITY_MUX_I2C_SCL};
 auto io_expander_reset = mbed::DigitalOut {PinName::SENSOR_PROXIMITY_MUX_RESET, 0};
 auto io_expander	   = CoreIOExpanderMCP23017 {corei2c, io_expander_reset};
 
 namespace detect_pin {
+
 	auto ear_left		  = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB5};
 	auto ear_right		  = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB4};
 	auto belt_left_front  = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB3};
 	auto belt_left_back	  = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB2};
 	auto belt_right_back  = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB1};
 	auto belt_right_front = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB0};
+
 }	// namespace detect_pin
 
 namespace power_mode_pin {
+
 	auto ear_left		  = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA5};
 	auto ear_right		  = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA4};
 	auto belt_left_front  = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA3};
 	auto belt_left_back	  = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA2};
 	auto belt_right_back  = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA1};
 	auto belt_right_front = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA0};
+
 }	// namespace power_mode_pin
 
 namespace dac {
+
 	auto left  = CoreQDACMCP4728 {corei2c, 0xC2};
 	auto right = CoreQDACMCP4728 {corei2c, 0xC0};
 	namespace channel {
+
 		auto ear_left		  = mcp4728::channel::C;
 		auto ear_right		  = mcp4728::channel::C;
 		auto belt_left_back	  = mcp4728::channel::A;
 		auto belt_left_front  = mcp4728::channel::B;
 		auto belt_right_back  = mcp4728::channel::B;
 		auto belt_right_front = mcp4728::channel::A;
+
 	}	// namespace channel
+
 }	// namespace dac
 
 namespace sensor {
+
 	auto ear_left = CoreTouchSensor {detect_pin::ear_left, power_mode_pin::ear_left, dac::left, dac::channel::ear_left};
 	auto ear_right =
 		CoreTouchSensor {detect_pin::ear_right, power_mode_pin::ear_right, dac::right, dac::channel::ear_right};
@@ -70,7 +80,16 @@ namespace sensor {
 	auto belt_right_front = CoreTouchSensor {detect_pin::belt_right_front, power_mode_pin::belt_right_front, dac::right,
 											 dac::channel::belt_right_front};
 }	// namespace sensor
+
 }	// namespace touch
+
+namespace sensitivity {
+
+inline constexpr auto low	 = float {0.5F};
+inline constexpr auto medium = float {0.7F};
+inline constexpr auto high	 = float {1.0F};
+
+}	// namespace sensitivity
 
 auto sensor = CoreTouchSensor {touch::sensor::ear_left};
 
@@ -95,15 +114,15 @@ void calibration()
 
 	rtos::ThisThread::sleep_for(5s);
 
-	auto value = uint16_t {CoreTouchSensor::default_min_sensitivity_value};
-	auto step  = uint16_t {10};
+	auto value = float {CoreTouchSensor::default_min_sensitivity_input_value};
+	auto step  = float {0.1F};
 
 	constexpr auto accurate_read_count = uint8_t {10};
 	auto read_count					   = uint8_t {0};
 
 	sensor.setSensitivity(value);
 
-	while (read_count < accurate_read_count && value <= CoreTouchSensor::default_max_sensitivity_value) {
+	while (read_count < accurate_read_count && value <= CoreTouchSensor::default_max_sensitivity_input_value) {
 		if (!sensor.read()) {
 			read_count = 0;
 			value += step;
@@ -130,7 +149,7 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(2s);
 
 	sensor.init();
-	sensor.setSensitivity(0x0FF0);
+	sensor.setSensitivity(sensitivity::medium);
 
 	// ? Current workaround for bug #1112
 	// TODO(@leka/dev-embedded) - Try to find solution w/ software or ui/ux
@@ -144,12 +163,12 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(1s);
 
 	while (true) {
-		auto is_touched = sensor.read();
-
-		if (is_touched) {
+		if (auto is_touched = sensor.read(); is_touched) {
 			log_info("Sensor touched");
 		} else {
 			log_info(".");
 		}
+
+		rtos::ThisThread::sleep_for(100ms);
 	}
 }
