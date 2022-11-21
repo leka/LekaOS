@@ -43,8 +43,12 @@ suite suite_file_manager_kit = [] {
 	auto file		= FileManagerKit::File {};
 	auto input_data = std::to_array("Hello, Leka!");
 
-	utils::sd::init();
-	path::remove_all();
+	"initialize SD card"_test = [] {
+		utils::sd::init();
+		expect(utils::sd::internal::bd.size() != 0_u);
+	};
+
+	"remove existing files"_test = [] { path::remove_all(); };
 
 	"open existing file"_test = [&] {
 		auto open = file.open("/fs/usr/test/file-1-ok.txt", "w");
@@ -84,7 +88,7 @@ suite suite_file_manager_kit = [] {
 		expect(not file.is_open()) << "Failed to close file";
 	};
 
-	"write to new file "_test = [&] {
+	"write to new file"_test = [&] {
 		file.open(path::dir_file, "w");
 		auto bytes = file.write(input_data);
 		file.close();
@@ -92,7 +96,7 @@ suite suite_file_manager_kit = [] {
 		expect(bytes == std::size(input_data) >> fatal) << "Failed to write file";
 	};
 
-	"read new file "_test = [&] {
+	"read new file"_test = [&] {
 		auto output_data = std::array<char, 64> {};
 
 		file.open(path::dir_file, "r");
@@ -106,6 +110,10 @@ suite suite_file_manager_kit = [] {
 		expect(not found.empty());
 	};
 
-	file.close();
-	path::remove_all();
+	"close file"_test = [&] {
+		file.close();
+		expect(not file.is_open());
+	};
+
+	"clean up created files"_test = [] { path::remove_all(); };
 };
