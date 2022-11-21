@@ -57,21 +57,3 @@ namespace sd {
 }	// namespace sd
 
 }	// namespace utils
-
-// NOLINTNEXTLINE
-#define utils_start(msg)                                                                                               \
-	do {                                                                                                               \
-		logger::init();                                                                                                \
-		log_free("\n");                                                                                                \
-		log_info("Starting %s...\n", msg);                                                                             \
-		rtos::ThisThread::sleep_for(1s);                                                                               \
-		utils::time::start = rtos::Kernel::Clock::now();                                                               \
-	} while (0)
-
-// NOLINTNEXTLINE
-#define utils_end()                                                                                                    \
-	do {                                                                                                               \
-		utils::time::stop = rtos::Kernel::Clock::now();                                                                \
-		log_free("\n");                                                                                                \
-		log_info("End of tests (%i ms total)", utils::time::delta());                                                  \
-	} while (0)
