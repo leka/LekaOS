@@ -26,7 +26,7 @@ suite suite_lsm6dsox = [] {
 
 	"Initialization"_test = [&] { expect(neq(&lsm6dsox, nullptr)); };
 
-	"Get imu data "_test = [&] {
+	"Get imu data"_test = [&] {
 		auto [ax, ay, az] = accel.getXYZ();
 		auto [gx, gy, gz] = gyro.getXYZ();
 		rtos::ThisThread::sleep_for(100ms);
@@ -57,7 +57,7 @@ suite suite_lsm6dsox = [] {
 		expect(gz == current_gz) << "Lsm6dsox not turned off " << gz << "!=" << current_gz;
 	};
 
-	"Assert data are different when lsm6dsox turned on "_test = [&] {
+	"Assert data are different when lsm6dsox turned on"_test = [&] {
 		lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Normal);
 		auto [gx, gy, gz] = gyro.getXYZ();
 		rtos::ThisThread::sleep_for(100ms);
@@ -65,7 +65,7 @@ suite suite_lsm6dsox = [] {
 		expect(gz != current_gz) << "Datas are all the same " << gz << "!=" << current_gz;
 	};
 
-	"Turn on lsm6dsox after turned off "_test = [&] {
+	"Turn on lsm6dsox after turned off"_test = [&] {
 		lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
 		lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Normal);
 		auto [ax, ay, az] = accel.getXYZ();
