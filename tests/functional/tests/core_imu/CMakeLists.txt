@@ -4,7 +4,7 @@
 
 register_functional_test(
 	TARGET
-		functional_ut_imu
+		functional_ut_core_imu
 
 	INCLUDE_DIRECTORIES
 
