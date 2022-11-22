@@ -20,6 +20,7 @@ class CoreJPEG : public interface::JPEGBase
   public:
 	explicit CoreJPEG(interface::STM32Hal &hal, interface::JPEGMode &mode) : _hal(hal), _mode(mode)
 	{
+		// NOLINTNEXTLINE (cppcoreguidelines-pro-type-cstyle-cast) - ST hal macros
 		_hjpeg.Instance = JPEG;
 	}
 
