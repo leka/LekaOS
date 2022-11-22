@@ -41,8 +41,8 @@ parser = argparse.ArgumentParser(description='Run functional tests')
 parser.add_argument('-p', '--port', metavar='PORT', default='/dev/tty.usbmodem*',
                     help='serial port path used for the robot')
 parser.add_argument('--response-timeout', metavar='RESPONSE_TIMEOUT', default=5.0,
-                    help='response timeout')
-parser.add_argument('--flash-erase', action='store_true',
+                    help='response timeout is seconds')
+parser.add_argument('--no-flash-erase', action='store_false',
                     help='disable flash erase')
 
 group = parser.add_mutually_exclusive_group(required=True)
@@ -63,10 +63,11 @@ args = parser.parse_args()
 PORTS = glob.glob(args.port)
 SERIAL_PORT = PORTS[0] if (len(PORTS) != 0) else args.port
 
-RESPONSE_TIMEOUT = float(args.response_timeout)   # in seconds
+RESPONSE_TIMEOUT = args.response_timeout  # in seconds
+RESPONSE_RETRY_DELAY = 0.1  # in seconds
 SERIAL_TIMEOUT = 0.1  # in seconds
 
-MAX_GET_LINE_RETRIES = RESPONSE_TIMEOUT / SERIAL_TIMEOUT
+MAX_GET_LINE_RETRIES = RESPONSE_TIMEOUT / RESPONSE_RETRY_DELAY
 
 try:
     com = serial.Serial(SERIAL_PORT, 115200, timeout=SERIAL_TIMEOUT)
@@ -87,7 +88,7 @@ def wait_for_response():
     no_response_counter = 0
 
     while (no_response_counter <= MAX_GET_LINE_RETRIES):
-        sleep(.005)
+        sleep(RESPONSE_RETRY_DELAY)
         data = read_output_serial()
         if (data):
             return data
@@ -116,7 +117,7 @@ def list_bin_files():
 
 TESTS_FUNCTIONAL_BIN_FILES = list_bin_files() if args.all else args.bin_files
 
-FLASH_ERASE_FLAG = args.flash_erase
+FLASH_ERASE_FLAG = args.no_flash_erase
 
 
 def warningprint(*args, **kwargs):
@@ -161,7 +162,7 @@ class Test:
         result_filepath = self.result_filepath
         try:
             with open(result_filepath, "a") as file:
-                file.write(data.strip() + '\n')
+                file.write(data)
         except FileNotFoundError as e:
             print("The file: " + result_filepath + "doesn\'t exist")
             print("Error: " + e)
@@ -305,15 +306,17 @@ def print_summary():
 RUN_TESTS = list()
 
 
-def reboot_device():
-    com.send_break()
-    REBOOT_SLEEP_DELAY = 3
-    sleep(REBOOT_SLEEP_DELAY)
-
-
 def flash_erase():
-    ret = os.system("st-flash --debug erase")
+    ret = os.system("st-flash erase")
     return ret
+
+
+def reset_buffer():
+    BREAK_DELAY = 1
+    com.reset_input_buffer()
+    com.reset_output_buffer()
+    com.send_break(BREAK_DELAY)
+    sleep(BREAK_DELAY)
 
 
 def main():
@@ -325,13 +328,7 @@ def main():
 
     if FLASH_ERASE_FLAG:
         flash_erase()
-
-    print("Rebooting device...")
-    reboot_device()
-
-    while True:
-        if wait_for_response() is not None:
-            break
+    reset_buffer()
 
     print("Running tests...")
     for filepath in TESTS_FUNCTIONAL_BIN_FILES:
@@ -339,6 +336,10 @@ def main():
         error = test.run()
         if not error:
             RUN_TESTS.append(test)
+
+    if FLASH_ERASE_FLAG:
+        flash_erase()
+    reset_buffer()
 
     fails = print_summary()
     if fails:
