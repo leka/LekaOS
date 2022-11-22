@@ -41,7 +41,7 @@ parser = argparse.ArgumentParser(description='Run functional tests')
 parser.add_argument('-p', '--port', metavar='PORT', default='/dev/tty.usbmodem*',
                     help='serial port path used for the robot')
 parser.add_argument('--response-timeout', metavar='RESPONSE_TIMEOUT', default=5.0,
-                    help='response timeout')
+                    help='response timeout is seconds')
 parser.add_argument('--no-flash-erase', action='store_false',
                     help='disable flash erase')
 
@@ -63,10 +63,11 @@ args = parser.parse_args()
 PORTS = glob.glob(args.port)
 SERIAL_PORT = PORTS[0] if (len(PORTS) != 0) else args.port
 
-RESPONSE_TIMEOUT = float(args.response_timeout)   # in seconds
+RESPONSE_TIMEOUT = args.response_timeout  # in seconds
+RESPONSE_RETRY_DELAY = 0.1  # in seconds
 SERIAL_TIMEOUT = 0.1  # in seconds
 
-MAX_GET_LINE_RETRIES = RESPONSE_TIMEOUT / SERIAL_TIMEOUT
+MAX_GET_LINE_RETRIES = RESPONSE_TIMEOUT / RESPONSE_RETRY_DELAY
 
 try:
     com = serial.Serial(SERIAL_PORT, 115200, timeout=SERIAL_TIMEOUT)
@@ -87,7 +88,7 @@ def wait_for_response():
     no_response_counter = 0
 
     while (no_response_counter <= MAX_GET_LINE_RETRIES):
-        sleep(.005)
+        sleep(RESPONSE_RETRY_DELAY)
         data = read_output_serial()
         if (data):
             return data
