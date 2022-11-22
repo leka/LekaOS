@@ -4,6 +4,9 @@
 
 #pragma once
 
+#include <array>
+#include <functional>
+
 #include "interface/drivers/Version.h"
 #include "internal/BLEService.h"
 #include "internal/ServicesCharacteristics.h"

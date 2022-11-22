@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "CoreJPEG.hpp"
+#include <algorithm>
+#include <array>
 
 #include "external/st_jpeg_utils.h"
 #include "internal/corevideo_config.h"

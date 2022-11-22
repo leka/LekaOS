@@ -4,6 +4,11 @@
 
 #pragma once
 
+#include <algorithm>
+#include <array>
+#include <functional>
+#include <span>
+
 #include "internal/BLEService.h"
 #include "internal/ServicesCharacteristics.h"
 

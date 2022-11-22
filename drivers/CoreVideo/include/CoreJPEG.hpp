@@ -4,9 +4,6 @@
 
 #pragma once
 
-#include <array>
-#include <cstdint>
-
 #include "JPEGImageProperties.hpp"
 #include "interface/JPEG.hpp"
 #include "interface/JPEGMode.hpp"
