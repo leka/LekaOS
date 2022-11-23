@@ -9,10 +9,10 @@
 
 namespace leka {
 
-class BLEServiceFileReception : public interface::BLEService
+class BLEServiceFileExchange : public interface::BLEService
 {
   public:
-	BLEServiceFileReception() : interface::BLEService(service::receive_file::uuid, _characteristic_table) {};
+	BLEServiceFileExchange() : interface::BLEService(service::file_exchange::uuid, _characteristic_table) {};
 
 	void setFileSHA256(std::array<uint8_t, 32> sha256) const
 	{
@@ -69,15 +69,15 @@ class BLEServiceFileReception : public interface::BLEService
   private:
 	std::array<char, 256> file_path {};
 	WriteOnlyArrayGattCharacteristic<char, 256> file_path_characteristic {
-		service::receive_file::characteristic::file_path, file_path.begin()};
+		service::file_exchange::characteristic::file_path, file_path.begin()};
 
 	std::array<uint8_t, 128> file_reception_buffer {};
 	WriteOnlyArrayGattCharacteristic<uint8_t, 128> file_reception_buffer_characteristic {
-		service::receive_file::characteristic::file_reception_buffer, file_reception_buffer.begin()};
+		service::file_exchange::characteristic::file_reception_buffer, file_reception_buffer.begin()};
 
 	std::array<uint8_t, 32> file_sha256 {};
 	ReadOnlyArrayGattCharacteristic<uint8_t, 32> file_sha256_characteristic {
-		service::receive_file::characteristic::file_sha256, file_sha256.begin()};
+		service::file_exchange::characteristic::file_sha256, file_sha256.begin()};
 
 	std::function<void(std::span<const uint8_t>)> _on_file_data_callback {};
 	std::function<void(std::span<const char>)> _on_file_path_callback {};
