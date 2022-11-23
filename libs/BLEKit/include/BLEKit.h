@@ -4,6 +4,9 @@
 
 #pragma once
 
+#include <functional>
+#include <span>
+
 #include "BLEServiceBattery.h"
 #include "ble/BLE.h"
 

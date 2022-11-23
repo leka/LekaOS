@@ -4,7 +4,9 @@
 
 #pragma once
 
+#include <functional>
 #include <span>
+#include <tuple>
 
 #include "ble/gatt/GattCharacteristic.h"
 #include "ble/gatt/GattService.h"

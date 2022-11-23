@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "BLEServiceUpdate.h"
+#include <memory>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"

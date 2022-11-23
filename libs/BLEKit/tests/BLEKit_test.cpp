@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "BLEKit.h"
+#include <array>
 
 #include "ble_mocks.h"
 

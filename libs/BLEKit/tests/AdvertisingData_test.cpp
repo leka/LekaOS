@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "AdvertisingData.h"
+#include <span>
 
 #include "gtest/gtest.h"
 

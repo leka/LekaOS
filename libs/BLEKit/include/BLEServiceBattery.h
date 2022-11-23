@@ -4,6 +4,10 @@
 
 #pragma once
 
+#include <array>
+#include <span>
+#include <tuple>
+
 #include "internal/BLEService.h"
 #include "internal/ServicesCharacteristics.h"
 
@@ -37,7 +41,7 @@ class BLEServiceBattery : public interface::BLEService
 	}
 
   private:
-	data_to_send_handle_t send_data_function;
+	data_to_send_handle_t send_data_function {};
 
 	uint8_t _battery_level_characteristic_value {};
 	ReadOnlyGattCharacteristic<uint8_t> _battery_level_writable_characteristic {

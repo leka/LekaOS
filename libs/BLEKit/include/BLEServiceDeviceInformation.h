@@ -4,6 +4,11 @@
 
 #pragma once
 
+#include <algorithm>
+#include <array>
+#include <span>
+#include <tuple>
+
 #include "CastUtils.h"
 #include "interface/drivers/Version.h"
 #include "internal/BLEService.h"
