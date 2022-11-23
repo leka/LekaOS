@@ -16,10 +16,8 @@ suite suite_parameterized = [] {
 		test("parametrized: for loop / val = " + std::to_string(i)) = [i] { expect(that % i > 0); };
 	}
 
-	"parametrized: | operator + std::vector"_test = [](auto arg) {
-		log << " val =" << std::to_string(arg) << " ";
-		expect(arg > 0_i) << "all values greater than 0";
-	} | std::vector {1, 2, 3};
+	"parametrized: | operator + std::vector"_test = [](auto arg) { expect(arg > 0_i) << "all values greater than 0"; } |
+													std::vector {1, 2, 3};
 
 	"parametrized: | operator + std::tuple"_test = []<typename T>() mutable {
 		expect(std::is_integral_v<T>) << "all types are integrals";
@@ -39,7 +37,6 @@ suite suite_parameterized = [] {
 		std::tuple {42, true});
 
 	"parametrized: template<>"_test = []<class TArg>(TArg arg) {
-		log << " val =" << std::to_string(arg) << " ";
 		expect(std::is_integral_v<TArg> >> fatal);
 		expect(42_i == static_cast<int>(arg) or arg);
 		expect(type<TArg> == type<int> or type<TArg> == type<bool>);
