@@ -13,71 +13,219 @@
 using namespace leka;
 using namespace std::chrono;
 using namespace boost::ut;
+using namespace boost::ut::bdd;
 
 suite suite_lsm6dsox = [] {
+	constexpr auto kAccelZAxisDefaultMinBound = 800._f;
+	constexpr auto kAccelZAxisDefaultMaxBound = 1200._f;
+
 	auto i2c	  = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
 	auto lsm6dsox = CoreLSM6DSOX {i2c};
 	auto accel	  = CoreAccelerometer {lsm6dsox};
 	auto gyro	  = CoreGyroscope {lsm6dsox};
 
-	lsm6dsox.init();
-	auto default_min_bound_az = 800._f;
-	auto default_max_bound_az = 1200._f;
-
-	"Initialization"_test = [&] { expect(neq(&lsm6dsox, nullptr)); };
-
-	"Get imu data"_test = [&] {
-		auto [ax, ay, az] = accel.getXYZ();
-		auto [gx, gy, gz] = gyro.getXYZ();
-		rtos::ThisThread::sleep_for(100ms);
-		auto [current_ax, current_ay, current_az] = accel.getXYZ();
-		auto [current_gx, current_gy, current_gz] = gyro.getXYZ();
-		expect(ax != current_ax) << "Lsm6dsox still off " << ax << "==" << current_ax;
-		expect(ay != current_ay) << "Lsm6dsox still off " << ay << "==" << current_ay;
-		expect(az != current_az) << "Lsm6dsox still off " << az << "==" << current_az;
-		expect(current_az >= default_min_bound_az) << "Acceleration on Z axis:" << az << "axis too low";
-		expect(current_az <= default_max_bound_az) << "Acceleration on Z axis:" << az << "axis too high";
-		expect(gx != current_gx) << "Lsm6dsox still off " << gx << "==" << current_gx;
-		expect(gy != current_gy) << "Lsm6dsox still off " << gy << "==" << current_gy;
-		expect(gz != current_gz) << "Lsm6dsox still off " << gz << "==" << current_gz;
+	"initialization"_test = [&] {
+		expect(neq(&lsm6dsox, nullptr));
+		lsm6dsox.init();
 	};
 
-	"Turn off lsm6dsox"_test = [&] {
-		lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
-		auto [ax, ay, az] = accel.getXYZ();
-		auto [gx, gy, gz] = gyro.getXYZ();
-		rtos::ThisThread::sleep_for(100ms);
-		auto [current_ax, current_ay, current_az] = accel.getXYZ();
-		auto [current_gx, current_gy, current_gz] = gyro.getXYZ();
-		expect(ax == current_ax) << "Lsm6dsox not turned off " << ax << "!=" << current_ax;
-		expect(ay == current_ay) << "Lsm6dsox not turned off " << ay << "!=" << current_ay;
-		expect(az == current_az) << "Lsm6dsox not turned off " << az << "!=" << current_az;
-		expect(gx == current_gx) << "Lsm6dsox not turned off " << gx << "!=" << current_gx;
-		expect(gy == current_gy) << "Lsm6dsox not turned off " << gy << "!=" << current_gy;
-		expect(gz == current_gz) << "Lsm6dsox not turned off " << gz << "!=" << current_gz;
+	"get data - accelerometer"_test = [&] {
+		"z accel != 0"_test = [&] {
+			auto [ax, ay, az] = accel.getXYZ();
+			expect(az != 0._f);
+		};
+
+		"z accel between min/max bounds"_test = [&] {
+			auto [ax, ay, az] = accel.getXYZ();
+			expect(az >= kAccelZAxisDefaultMinBound);
+			expect(az <= kAccelZAxisDefaultMaxBound);
+		};
+
+		"x,y,z accel values change over time"_test = [&] {
+			auto i_batch = std::vector<float> {};
+			auto f_batch = std::vector<float> {};
+
+			for (auto i = 0; i < 10; ++i) {
+				auto [ax, ay, az] = accel.getXYZ();
+
+				i_batch.push_back(ax);
+				i_batch.push_back(ay);
+				i_batch.push_back(az);
+
+				rtos::ThisThread::sleep_for(25ms);
+			}
+
+			rtos::ThisThread::sleep_for(100ms);
+
+			for (auto i = 0; i < 10; ++i) {
+				auto [ax, ay, az] = accel.getXYZ();
+
+				f_batch.push_back(ax);
+				f_batch.push_back(ay);
+				f_batch.push_back(az);
+
+				rtos::ThisThread::sleep_for(25ms);
+			}
+
+			expect(neq(i_batch, f_batch));
+		};
 	};
 
-	"Assert data are different when lsm6dsox turned on"_test = [&] {
-		lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Normal);
-		auto [gx, gy, gz] = gyro.getXYZ();
-		rtos::ThisThread::sleep_for(100ms);
-		auto [current_gx, current_gy, current_gz] = gyro.getXYZ();
-		expect(gz != current_gz) << "Datas are all the same " << gz << "!=" << current_gz;
+	"get data - gyroscope"_test = [&] {
+		"x,y,z gyro values change over time"_test = [&] {
+			auto i_batch = std::vector<float> {};
+			auto f_batch = std::vector<float> {};
+
+			for (auto i = 0; i < 10; ++i) {
+				auto [gx, gy, gz] = gyro.getXYZ();
+
+				i_batch.push_back(gx);
+				i_batch.push_back(gy);
+				i_batch.push_back(gz);
+
+				rtos::ThisThread::sleep_for(25ms);
+			}
+
+			rtos::ThisThread::sleep_for(100ms);
+
+			for (auto i = 0; i < 10; ++i) {
+				auto [gx, gy, gz] = gyro.getXYZ();
+
+				f_batch.push_back(gx);
+				f_batch.push_back(gy);
+				f_batch.push_back(gz);
+
+				rtos::ThisThread::sleep_for(25ms);
+			}
+
+			expect(neq(i_batch, f_batch));
+		};
 	};
 
-	"Turn on lsm6dsox after turned off"_test = [&] {
-		lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
-		lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Normal);
-		auto [ax, ay, az] = accel.getXYZ();
-		auto [gx, gy, gz] = gyro.getXYZ();
-		rtos::ThisThread::sleep_for(100ms);
-		auto [current_ax, current_ay, current_az] = accel.getXYZ();
-		auto [current_gx, current_gy, current_gz] = gyro.getXYZ();
-		expect(ax != current_ax) << "Lsm6dsox still off " << ax << "==" << current_ax;
-		expect(ay != current_ay) << "Lsm6dsox still off " << ay << "==" << current_ay;
-		expect(az != current_az) << "Lsm6dsox still off " << az << "==" << current_az;
-		expect(gx != current_gx) << "Lsm6dsox still off " << gx << "==" << current_gx;
-		expect(gy != current_gy) << "Lsm6dsox still off " << gy << "==" << current_gy;
-		expect(gz != current_gz) << "Lsm6dsox still off " << gz << "==" << current_gz;
+	// TODO (@HPezz): move this to core_lsm6dsox specific tests
+	scenario("lsm6dsox - power mode") = [&] {
+		given("powermode is set to off") = [&] {
+			lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
+
+			then("I expect accel data to not change over time") = [&] {
+				auto i_batch = std::vector<float> {};
+				auto f_batch = std::vector<float> {};
+
+				for (auto i = 0; i < 10; ++i) {
+					auto [ax, ay, az] = accel.getXYZ();
+
+					i_batch.push_back(ax);
+					i_batch.push_back(ay);
+					i_batch.push_back(az);
+
+					rtos::ThisThread::sleep_for(25ms);
+				}
+
+				rtos::ThisThread::sleep_for(100ms);
+
+				for (auto i = 0; i < 10; ++i) {
+					auto [ax, ay, az] = accel.getXYZ();
+
+					f_batch.push_back(ax);
+					f_batch.push_back(ay);
+					f_batch.push_back(az);
+
+					rtos::ThisThread::sleep_for(25ms);
+				}
+
+				expect(eq(i_batch, f_batch));
+			};
+
+			then("I expect gyro data to not change over time") = [&] {
+				auto i_batch = std::vector<float> {};
+				auto f_batch = std::vector<float> {};
+
+				for (auto i = 0; i < 10; ++i) {
+					auto [gx, gy, gz] = gyro.getXYZ();
+
+					i_batch.push_back(gx);
+					i_batch.push_back(gy);
+					i_batch.push_back(gz);
+
+					rtos::ThisThread::sleep_for(25ms);
+				}
+
+				rtos::ThisThread::sleep_for(100ms);
+
+				for (auto i = 0; i < 10; ++i) {
+					auto [gx, gy, gz] = gyro.getXYZ();
+
+					f_batch.push_back(gx);
+					f_batch.push_back(gy);
+					f_batch.push_back(gz);
+
+					rtos::ThisThread::sleep_for(25ms);
+				}
+
+				expect(eq(i_batch, f_batch));
+			};
+		};
+
+		given("powermode is set to normal again") = [&] {
+			lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Normal);
+
+			then("I expect accel data to change over time") = [&] {
+				auto i_batch = std::vector<float> {};
+				auto f_batch = std::vector<float> {};
+
+				for (auto i = 0; i < 10; ++i) {
+					auto [ax, ay, az] = accel.getXYZ();
+
+					i_batch.push_back(ax);
+					i_batch.push_back(ay);
+					i_batch.push_back(az);
+
+					rtos::ThisThread::sleep_for(25ms);
+				}
+
+				rtos::ThisThread::sleep_for(100ms);
+
+				for (auto i = 0; i < 10; ++i) {
+					auto [ax, ay, az] = accel.getXYZ();
+
+					f_batch.push_back(ax);
+					f_batch.push_back(ay);
+					f_batch.push_back(az);
+
+					rtos::ThisThread::sleep_for(25ms);
+				}
+
+				expect(neq(i_batch, f_batch));
+			};
+
+			then("I expect gyro data to change over time") = [&] {
+				auto i_batch = std::vector<float> {};
+				auto f_batch = std::vector<float> {};
+
+				for (auto i = 0; i < 10; ++i) {
+					auto [gx, gy, gz] = gyro.getXYZ();
+
+					i_batch.push_back(gx);
+					i_batch.push_back(gy);
+					i_batch.push_back(gz);
+
+					rtos::ThisThread::sleep_for(25ms);
+				}
+
+				rtos::ThisThread::sleep_for(100ms);
+
+				for (auto i = 0; i < 10; ++i) {
+					auto [gx, gy, gz] = gyro.getXYZ();
+
+					f_batch.push_back(gx);
+					f_batch.push_back(gy);
+					f_batch.push_back(gz);
+
+					rtos::ThisThread::sleep_for(25ms);
+				}
+
+				expect(neq(i_batch, f_batch));
+			};
+		};
 	};
 };
