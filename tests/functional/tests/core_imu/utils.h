@@ -10,8 +10,12 @@
 
 #include "boost/ut.hpp"
 
+// clang-format off
 template <typename T>
-concept CanGetDataXYZ = requires { &T::getXYZ; };
+concept CanGetDataXYZ = requires {
+	&T::getXYZ;
+};
+// clang-format on
 
 template <CanGetDataXYZ T>
 auto values_did_change_over_time(T &sensor)
