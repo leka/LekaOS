@@ -9,7 +9,8 @@ register_functional_test(
 	INCLUDE_DIRECTORIES
 
 	SOURCES
-		suite_lsm6dsox.cpp
+		suite_core_lsm6dsox.cpp
+		suite_core_imu.cpp
 
 	LINK_LIBRARIES
 		CoreI2C
