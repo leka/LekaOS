@@ -1,0 +1,95 @@
+# Leka - LekaOS
+# Copyright 2023 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: "CodeQL"
+
+on:
+  push:
+    branches: ["develop"]
+
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: ["develop"]
+  schedule:
+    - cron: "34 17 * * 1"
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["cpp", "python", "ruby"]
+        # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
+        # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup CI
+        uses: ./.github/actions/setup
+        with:
+          ccache_key: ${{ runner.os }}-ccache-code_analysis-code_ql-${{ matrix.language }}
+          ccache_restore_keys: |
+            ${{ runner.os }}-ccache-code_analysis-code_ql-
+            ${{ runner.os }}-ccache-code_analysis-
+            ${{ runner.os }}-ccache-
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+          queries: security-and-quality
+
+      - name: Ccache pre build
+        if: ${{matrix.language == 'cpp' }}
+        run: |
+          make ccache_prebuild
+
+      - name: Config & build
+        if: ${{matrix.language == 'cpp' }}
+        run: |
+          make config
+          make
+
+      - name: Ccache post build
+        if: ${{matrix.language == 'cpp' }}
+        run: |
+          make ccache_postbuild
+          ccache -z
+
+      - name: Ccache pre unit tests
+        if: ${{matrix.language == 'cpp' }}
+        run: |
+          make ccache_prebuild
+
+      - name: Config, build & run unit tests
+        if: ${{matrix.language == 'cpp' }}
+        run: |
+          make config_unit_tests
+          make unit_tests
+          make coverage_sonarqube GCOV_EXEC=/usr/bin/gcov-12
+        env:
+          CC: /usr/bin/gcc-12
+          CXX: /usr/bin/g++-12
+
+      - name: Ccache post unit tests
+        if: ${{matrix.language == 'cpp' }}
+        run: |
+          make ccache_postbuild
+          ccache -z
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:${{matrix.language}}"
