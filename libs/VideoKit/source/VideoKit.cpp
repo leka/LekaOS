@@ -94,6 +94,8 @@ void VideoKit::playVideoOnce(const std::filesystem::path &path, const std::funct
 void VideoKit::playVideoOnRepeat(const std::filesystem::path &path,
 								 const std::function<void()> &on_video_ended_callback)
 {
+	const std::scoped_lock lock(mutex);
+
 	if (auto file = FileManagerKit::File {path}; file.is_open()) {
 		file.close();
 
