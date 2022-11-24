@@ -15,15 +15,25 @@ auto FirmwareKit::getCurrentVersion() -> Version
 	return Version {.major = semversion.major, .minor = semversion.minor, .revision = semversion.patch};
 }
 
-auto FirmwareKit::loadUpdate(const Version &version) -> bool
+auto FirmwareKit::getPathOfVersion(const Version &version) const -> std::filesystem::path
 {
-	auto path = std::array<char, 64> {};
-	snprintf(path.data(), std::size(path), _config.bin_path_format, version.major, version.minor, version.revision);
+	auto path_buffer = std::array<char, 64> {};
+	snprintf(path_buffer.data(), std::size(path_buffer), _config.bin_path_format, version.major, version.minor,
+			 version.revision);
 
-	return loadUpdate(path.data());
+	auto path = std::filesystem::path {path_buffer.begin()};
+
+	return path;
 }
 
-auto FirmwareKit::loadUpdate(const char *path) -> bool
+auto FirmwareKit::loadUpdate(const Version &version) -> bool
+{
+	auto path = getPathOfVersion(version);
+
+	return loadUpdate(path);
+}
+
+auto FirmwareKit::loadUpdate(const std::filesystem::path &path) -> bool
 {
 	if (auto is_open = _file.open(path); is_open) {
 		auto address = uint32_t {0x0};
