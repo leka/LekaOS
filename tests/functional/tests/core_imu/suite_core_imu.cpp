@@ -4,6 +4,7 @@
 
 #include "rtos/ThisThread.h"
 
+#include "./utils.h"
 #include "CoreAccelerometer.h"
 #include "CoreGyroscope.h"
 #include "CoreI2C.h"
@@ -41,64 +42,10 @@ suite suite_core_imu = [] {
 			expect(az <= kAccelZAxisDefaultMaxBound);
 		};
 
-		"x,y,z accel values change over time"_test = [&] {
-			auto i_batch = std::vector<float> {};
-			auto f_batch = std::vector<float> {};
-
-			for (auto i = 0; i < 10; ++i) {
-				auto [ax, ay, az] = accel.getXYZ();
-
-				i_batch.push_back(ax);
-				i_batch.push_back(ay);
-				i_batch.push_back(az);
-
-				rtos::ThisThread::sleep_for(25ms);
-			}
-
-			rtos::ThisThread::sleep_for(100ms);
-
-			for (auto i = 0; i < 10; ++i) {
-				auto [ax, ay, az] = accel.getXYZ();
-
-				f_batch.push_back(ax);
-				f_batch.push_back(ay);
-				f_batch.push_back(az);
-
-				rtos::ThisThread::sleep_for(25ms);
-			}
-
-			expect(neq(i_batch, f_batch));
-		};
+		"x,y,z accel values change over time"_test = [&] { expect(values_did_change_over_time(accel)); };
 	};
 
 	"gyroscope"_test = [&] {
-		"x,y,z gyro values change over time"_test = [&] {
-			auto i_batch = std::vector<float> {};
-			auto f_batch = std::vector<float> {};
-
-			for (auto i = 0; i < 10; ++i) {
-				auto [gx, gy, gz] = gyro.getXYZ();
-
-				i_batch.push_back(gx);
-				i_batch.push_back(gy);
-				i_batch.push_back(gz);
-
-				rtos::ThisThread::sleep_for(25ms);
-			}
-
-			rtos::ThisThread::sleep_for(100ms);
-
-			for (auto i = 0; i < 10; ++i) {
-				auto [gx, gy, gz] = gyro.getXYZ();
-
-				f_batch.push_back(gx);
-				f_batch.push_back(gy);
-				f_batch.push_back(gz);
-
-				rtos::ThisThread::sleep_for(25ms);
-			}
-
-			expect(neq(i_batch, f_batch));
-		};
+		"x,y,z gyro values change over time"_test = [&] { expect(values_did_change_over_time(gyro)); };
 	};
 };

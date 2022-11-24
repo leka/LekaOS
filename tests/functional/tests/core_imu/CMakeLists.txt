@@ -7,6 +7,7 @@ register_functional_test(
 		functional_ut_core_imu
 
 	INCLUDE_DIRECTORIES
+		.
 
 	SOURCES
 		suite_core_lsm6dsox.cpp

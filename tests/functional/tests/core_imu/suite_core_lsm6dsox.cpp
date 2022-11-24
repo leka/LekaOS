@@ -4,6 +4,7 @@
 
 #include "rtos/ThisThread.h"
 
+#include "./utils.h"
 #include "CoreAccelerometer.h"
 #include "CoreGyroscope.h"
 #include "CoreI2C.h"
@@ -31,124 +32,18 @@ suite suite_lsm6dsox = [] {
 			lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
 
 			then("I expect accel data to not change over time") = [&] {
-				auto i_batch = std::vector<float> {};
-				auto f_batch = std::vector<float> {};
-
-				for (auto i = 0; i < 10; ++i) {
-					auto [ax, ay, az] = accel.getXYZ();
-
-					i_batch.push_back(ax);
-					i_batch.push_back(ay);
-					i_batch.push_back(az);
-
-					rtos::ThisThread::sleep_for(25ms);
-				}
-
-				rtos::ThisThread::sleep_for(100ms);
-
-				for (auto i = 0; i < 10; ++i) {
-					auto [ax, ay, az] = accel.getXYZ();
-
-					f_batch.push_back(ax);
-					f_batch.push_back(ay);
-					f_batch.push_back(az);
-
-					rtos::ThisThread::sleep_for(25ms);
-				}
-
-				expect(eq(i_batch, f_batch));
+				expect(not values_did_change_over_time(accel));
 			};
 
-			then("I expect gyro data to not change over time") = [&] {
-				auto i_batch = std::vector<float> {};
-				auto f_batch = std::vector<float> {};
-
-				for (auto i = 0; i < 10; ++i) {
-					auto [gx, gy, gz] = gyro.getXYZ();
-
-					i_batch.push_back(gx);
-					i_batch.push_back(gy);
-					i_batch.push_back(gz);
-
-					rtos::ThisThread::sleep_for(25ms);
-				}
-
-				rtos::ThisThread::sleep_for(100ms);
-
-				for (auto i = 0; i < 10; ++i) {
-					auto [gx, gy, gz] = gyro.getXYZ();
-
-					f_batch.push_back(gx);
-					f_batch.push_back(gy);
-					f_batch.push_back(gz);
-
-					rtos::ThisThread::sleep_for(25ms);
-				}
-
-				expect(eq(i_batch, f_batch));
-			};
+			then("I expect gyro data to not change over time") = [&] { expect(not values_did_change_over_time(gyro)); };
 		};
 
 		given("powermode is set to normal again") = [&] {
 			lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Normal);
 
-			then("I expect accel data to change over time") = [&] {
-				auto i_batch = std::vector<float> {};
-				auto f_batch = std::vector<float> {};
+			then("I expect accel data to change over time") = [&] { expect(values_did_change_over_time(accel)); };
 
-				for (auto i = 0; i < 10; ++i) {
-					auto [ax, ay, az] = accel.getXYZ();
-
-					i_batch.push_back(ax);
-					i_batch.push_back(ay);
-					i_batch.push_back(az);
-
-					rtos::ThisThread::sleep_for(25ms);
-				}
-
-				rtos::ThisThread::sleep_for(100ms);
-
-				for (auto i = 0; i < 10; ++i) {
-					auto [ax, ay, az] = accel.getXYZ();
-
-					f_batch.push_back(ax);
-					f_batch.push_back(ay);
-					f_batch.push_back(az);
-
-					rtos::ThisThread::sleep_for(25ms);
-				}
-
-				expect(neq(i_batch, f_batch));
-			};
-
-			then("I expect gyro data to change over time") = [&] {
-				auto i_batch = std::vector<float> {};
-				auto f_batch = std::vector<float> {};
-
-				for (auto i = 0; i < 10; ++i) {
-					auto [gx, gy, gz] = gyro.getXYZ();
-
-					i_batch.push_back(gx);
-					i_batch.push_back(gy);
-					i_batch.push_back(gz);
-
-					rtos::ThisThread::sleep_for(25ms);
-				}
-
-				rtos::ThisThread::sleep_for(100ms);
-
-				for (auto i = 0; i < 10; ++i) {
-					auto [gx, gy, gz] = gyro.getXYZ();
-
-					f_batch.push_back(gx);
-					f_batch.push_back(gy);
-					f_batch.push_back(gz);
-
-					rtos::ThisThread::sleep_for(25ms);
-				}
-
-				expect(neq(i_batch, f_batch));
-			};
+			then("I expect gyro data to change over time") = [&] { expect(values_did_change_over_time(gyro)); };
 		};
 	};
 };
