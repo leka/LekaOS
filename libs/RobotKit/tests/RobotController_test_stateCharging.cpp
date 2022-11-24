@@ -154,6 +154,9 @@ TEST_F(RobotControllerTest, stateChargingEventUpdateRequestedGuardIsReadyToUpdat
 
 	// TODO (@yann): Trigger update_requested in StateMachine from BLE and remove isReadyToUpdate call
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
+	EXPECT_CALL(battery, level).Times(AnyNumber()).WillRepeatedly(Return(returned_level));
+	EXPECT_CALL(firmware_update, isVersionAvailable).Times(AnyNumber()).WillRepeatedly(Return(true));
+
 	EXPECT_CALL(firmware_update, loadUpdate).Times(0);
 	rc.isReadyToUpdate();
 
@@ -167,8 +170,27 @@ TEST_F(RobotControllerTest, stateChargingEventUpdateRequestedGuardIsReadyToUpdat
 	uint8_t returned_level {0};
 
 	// TODO (@yann): Trigger update_requested in StateMachine from BLE and remove isReadyToUpdate call
-	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
+	EXPECT_CALL(battery, isCharging).Times(AnyNumber()).WillRepeatedly(Return(true));
 	EXPECT_CALL(battery, level).WillOnce(Return(returned_level));
+	EXPECT_CALL(firmware_update, isVersionAvailable).Times(AnyNumber()).WillRepeatedly(Return(true));
+
+	EXPECT_CALL(firmware_update, loadUpdate).Times(0);
+	rc.isReadyToUpdate();
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
+}
+
+TEST_F(RobotControllerTest, stateChargingEventUpdateRequestedGuardIsReadyToUpdateFalseVersionDoesNotExists)
+{
+	rc.state_machine.set_current_states(lksm::state::charging);
+
+	uint8_t returned_level {100};
+
+	// TODO (@yann): Trigger update_requested in StateMachine from BLE and remove isReadyToUpdate call
+	EXPECT_CALL(battery, isCharging).Times(AnyNumber()).WillRepeatedly(Return(true));
+	EXPECT_CALL(battery, level).Times(AnyNumber()).WillRepeatedly(Return(returned_level));
+	EXPECT_CALL(firmware_update, isVersionAvailable).Times(AnyNumber()).WillRepeatedly(Return(false));
+
 	EXPECT_CALL(firmware_update, loadUpdate).Times(0);
 	rc.isReadyToUpdate();
 
@@ -188,6 +210,8 @@ TEST_F(RobotControllerTest, stateChargingEventUpdateRequestedGuardIsReadyToUpdat
 
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
 	EXPECT_CALL(battery, level).WillOnce(Return(returned_level));
+	EXPECT_CALL(firmware_update, isVersionAvailable).WillOnce(Return(true));
+
 	EXPECT_CALL(firmware_update, loadUpdate).WillOnce(Return(true));
 	EXPECT_CALL(mock_on_update_loaded_callback, Call).Times(1);
 	rc.isReadyToUpdate();
@@ -209,6 +233,8 @@ TEST_F(RobotControllerTest,
 
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
 	EXPECT_CALL(battery, level).WillOnce(Return(returned_level));
+	EXPECT_CALL(firmware_update, isVersionAvailable).WillOnce(Return(true));
+
 	EXPECT_CALL(firmware_update, loadUpdate).WillOnce(Return(true));
 	rc.isReadyToUpdate();
 	rc.applyUpdate();
@@ -229,6 +255,8 @@ TEST_F(RobotControllerTest, stateChargingEventUpdateRequestedGuardIsReadyToUpdat
 
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
 	EXPECT_CALL(battery, level).WillOnce(Return(returned_level));
+	EXPECT_CALL(firmware_update, isVersionAvailable).WillOnce(Return(true));
+
 	EXPECT_CALL(firmware_update, loadUpdate).WillOnce(Return(false));
 	EXPECT_CALL(mock_on_update_loaded_callback, Call).Times(0);
 	rc.isReadyToUpdate();
