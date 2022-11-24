@@ -20,6 +20,9 @@ fi
 if [ -z "$APPLICATION_VERSION" ]; then
 	echo "APPLICATION_VERSION is unset"
 	APPLICATION_VERSION="1.2.3+4"
+else
+	epoch=$(date +%s)
+	APPLICATION_VERSION=$APPLICATION_VERSION+$epoch
 fi
 
 if [ -z "$APPLICATION_SIGNED_HEX" ]; then
