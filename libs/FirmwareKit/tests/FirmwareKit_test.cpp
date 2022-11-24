@@ -73,3 +73,42 @@ TEST_F(FirmwareKitTest, loadUpdateFileNotFound)
 
 	ASSERT_FALSE(did_load_firmware);
 }
+
+TEST_F(FirmwareKitTest, isVersionAvailable)
+{
+	auto existing_version	  = Version {1, 0, 0};
+	auto is_version_available = firmwarekit.isVersionAvailable(existing_version);
+
+	EXPECT_TRUE(is_version_available);
+}
+
+TEST_F(FirmwareKitTest, isVersionAvailableFileNotFound)
+{
+	auto unexisting_version = Version {0, 0, 0};
+
+	auto is_version_available = firmwarekit.isVersionAvailable(unexisting_version);
+
+	EXPECT_FALSE(is_version_available);
+}
+
+TEST_F(FirmwareKitTest, isVersionAvailableFileTooSmall)
+{
+	auto _config	  = FirmwareKit::Config {.bin_path_format = "/tmp/LekaOS-%i.%i.%i.bin"};
+	auto _firmwarekit = FirmwareKit {mock_flash, _config};
+
+	auto dummy_version				   = Version {99, 99, 9999};
+	std::string bin_dummy_version_path = "/tmp/LekaOS-99.99.9999.bin";
+
+	auto k_minimal_expected_file_size = 300'000;
+	std::ofstream update_stream {bin_dummy_version_path.c_str(), std::ios::binary};
+	for (auto i = 0; i < k_minimal_expected_file_size - 1; i++) {
+		update_stream << static_cast<uint8_t>(i);
+	}
+	update_stream.close();
+
+	auto is_version_available = _firmwarekit.isVersionAvailable(dummy_version);
+
+	EXPECT_FALSE(is_version_available);
+
+	std::filesystem::remove(bin_dummy_version_path.c_str());
+}

@@ -30,6 +30,7 @@ class FirmwareKit : public interface::FirmwareUpdate
 
 	auto getCurrentVersion() -> Version final;
 
+	auto isVersionAvailable(const Version &version) -> bool final;
 	auto loadUpdate(const Version &version) -> bool final;
 
   private:

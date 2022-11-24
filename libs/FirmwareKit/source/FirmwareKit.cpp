@@ -26,6 +26,22 @@ auto FirmwareKit::getPathOfVersion(const Version &version) const -> std::filesys
 	return path;
 }
 
+auto FirmwareKit::isVersionAvailable(const Version &version) -> bool
+{
+	auto path		 = getPathOfVersion(version);
+	auto file_exists = false;
+
+	if (auto is_open = _file.open(path); is_open) {
+		constexpr auto kMinimalFileSizeInBytes = std::size_t {300'000};
+
+		file_exists = _file.size() >= kMinimalFileSizeInBytes;
+	}
+
+	_file.close();
+
+	return file_exists;
+}
+
 auto FirmwareKit::loadUpdate(const Version &version) -> bool
 {
 	auto path = getPathOfVersion(version);
