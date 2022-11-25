@@ -207,6 +207,39 @@ class RobotController : public interface::RobotController
 		_activitykit.stop();
 	}
 
+	void onFileExchangeStart() final
+	{
+		_service_file_exchange.onFilePathReceived(
+			[this](std::span<const char> path) { file_reception.setFilePath(path.data()); });
+		_service_file_exchange.onFileDataReceived(
+			[this](std::span<const uint8_t> buffer) { file_reception.onPacketReceived(buffer); });
+		_service_file_exchange.onFileSHA256Requested([this](std::span<const char> path) {
+			if (FileManagerKit::File file {path.data()}; file.is_open()) {
+				_service_file_exchange.setFileSHA256(file.getSHA256());
+			}
+		});
+	}
+
+	void onFileExchangeEnd() final
+	{
+		_service_file_exchange.setFileExchangeState(false);
+
+		_service_file_exchange.onFilePathReceived(nullptr);
+		_service_file_exchange.onFileDataReceived(nullptr);
+		_service_file_exchange.onFileSHA256Requested(nullptr);
+	}
+
+	auto isReadyToFileExchange() -> bool final
+	{
+		auto is_robot_ready = (_battery.isCharging() && _battery.level() > _minimal_battery_level_to_update);
+
+		if (!is_robot_ready) {
+			_service_file_exchange.setFileExchangeState(false);
+		}
+
+		return is_robot_ready;
+	}
+
 	auto isReadyToUpdate() -> bool final
 	{
 		return (_battery.isCharging() && _battery.level() > _minimal_battery_level_to_update);
@@ -348,7 +381,9 @@ class RobotController : public interface::RobotController
 			_ble.setAdvertisingData(advertising_data);
 
 			_service_battery.setBatteryLevel(level);
-			if (is_charging) {
+
+			auto is_not_in_file_exchange = !_service_file_exchange.getFileExchangeState();
+			if (is_charging && is_not_in_file_exchange) {
 				onChargingBehavior(level);
 			}
 		});
@@ -395,13 +430,11 @@ class RobotController : public interface::RobotController
 		};
 		_service_commands.onCommandsReceived(on_commands_received);
 
-		_service_file_exchange.onFilePathReceived(
-			[this](std::span<const char> path) { file_reception.setFilePath(path.data()); });
-		_service_file_exchange.onFileDataReceived(
-			[this](std::span<const uint8_t> buffer) { file_reception.onPacketReceived(buffer); });
-		_service_file_exchange.onFileSHA256Requested([this](std::span<const char> path) {
-			if (FileManagerKit::File file {path.data()}; file.is_open()) {
-				_service_file_exchange.setFileSHA256(file.getSHA256());
+		_service_file_exchange.onSetFileExchangeState([this](bool file_exchange_requested) {
+			if (file_exchange_requested) {
+				raise(event::file_exchange_start_requested {});
+			} else {
+				raise(event::file_exchange_stop_requested {});
 			}
 		});
 
