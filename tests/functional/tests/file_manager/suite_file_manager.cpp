@@ -24,6 +24,7 @@ struct path {
 	static inline const auto all = std::to_array({dir_file, sub_dir, dir, root});
 
 	static inline auto remove_all = []() {
+		log << "";
 		log << "Cleaning up files, directories";
 
 		for (const auto &p: path::all) {
@@ -35,7 +36,7 @@ struct path {
 				log << "Doesn't exit:" << p;
 			}
 		}
-		log << "\n";
+		log << "";
 	};
 };
 
