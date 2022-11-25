@@ -24,20 +24,10 @@ suite suite_log_kit = [] {
 			rtos::ThisThread::sleep_for(500ms);
 
 			then("I expect deep sleep to be possible") = [] {
-				const ticker_data_t *lp_ticker	  = get_lp_ticker_data();
-				const unsigned int lp_ticker_freq = lp_ticker->interface->get_info()->frequency;
+				auto status = utils::sleep::system_deep_sleep_check();
 
-				// ? Give time to test to finish UART transmission before entering deep sleep mode
-				utils::sleep::busy_wait(utils::sleep::SERIAL_FLUSH_TIME_MS);
-
-				auto can_deep_sleep = sleep_manager_can_deep_sleep();
-				expect(can_deep_sleep) << "deep sleep not possible";
-
-				const timestamp_t wakeup_time = lp_ticker_read() + utils::sleep::us_to_ticks(20000, lp_ticker_freq);
-				lp_ticker_set_interrupt(wakeup_time);
-
-				auto can_deep_sleep_test_check = sleep_manager_can_deep_sleep_test_check();
-				expect(can_deep_sleep_test_check);
+				expect(status.can_deep_sleep);
+				expect(status.test_check_ok);
 			};
 		};
 	};
@@ -49,20 +39,10 @@ suite suite_log_kit = [] {
 			rtos::ThisThread::sleep_for(500ms);
 
 			then("I expect deep sleep to NOT be possible") = [] {
-				const ticker_data_t *lp_ticker	  = get_lp_ticker_data();
-				const unsigned int lp_ticker_freq = lp_ticker->interface->get_info()->frequency;
+				auto status = utils::sleep::system_deep_sleep_check();
 
-				// ? Give time to test to finish UART transmission before entering deep sleep mode
-				utils::sleep::busy_wait(utils::sleep::SERIAL_FLUSH_TIME_MS);
-
-				auto can_deep_sleep = sleep_manager_can_deep_sleep();
-				expect(not can_deep_sleep) << "deep sleep STILL possible";
-
-				const timestamp_t wakeup_time = lp_ticker_read() + utils::sleep::us_to_ticks(20000, lp_ticker_freq);
-				lp_ticker_set_interrupt(wakeup_time);
-
-				auto can_deep_sleep_test_check = sleep_manager_can_deep_sleep_test_check();
-				expect(not can_deep_sleep_test_check);
+				expect(not status.can_deep_sleep);
+				expect(not status.test_check_ok);
 			};
 		};
 	};
@@ -74,20 +54,10 @@ suite suite_log_kit = [] {
 			rtos::ThisThread::sleep_for(500ms);
 
 			then("I expect deep sleep to NOT be possible") = [] {
-				const ticker_data_t *lp_ticker	  = get_lp_ticker_data();
-				const unsigned int lp_ticker_freq = lp_ticker->interface->get_info()->frequency;
+				auto status = utils::sleep::system_deep_sleep_check();
 
-				// ? Give time to test to finish UART transmission before entering deep sleep mode
-				utils::sleep::busy_wait(utils::sleep::SERIAL_FLUSH_TIME_MS);
-
-				auto can_deep_sleep = sleep_manager_can_deep_sleep();
-				expect(can_deep_sleep) << "deep sleep not possible";
-
-				const timestamp_t wakeup_time = lp_ticker_read() + utils::sleep::us_to_ticks(20000, lp_ticker_freq);
-				lp_ticker_set_interrupt(wakeup_time);
-
-				auto can_deep_sleep_test_check = sleep_manager_can_deep_sleep_test_check();
-				expect(can_deep_sleep_test_check);
+				expect(status.can_deep_sleep);
+				expect(status.test_check_ok);
 			};
 		};
 	};

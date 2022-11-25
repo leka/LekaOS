@@ -94,4 +94,29 @@ inline void lp_ticker_isr(const ticker_data_t *const ticker_data)
 }
 #endif
 
+struct DeepSleepStatus {
+	bool can_deep_sleep = {false};
+	bool test_check_ok	= {false};
+};
+
+using deep_sleep_status_t = DeepSleepStatus;
+
+inline auto system_deep_sleep_check() -> deep_sleep_status_t
+{
+	const ticker_data_t *lp_ticker	  = get_lp_ticker_data();
+	const unsigned int lp_ticker_freq = lp_ticker->interface->get_info()->frequency;
+
+	// ? Give time to test to finish UART transmission before entering deep sleep mode
+	utils::sleep::busy_wait(utils::sleep::SERIAL_FLUSH_TIME_MS);
+
+	auto can_deep_sleep = sleep_manager_can_deep_sleep();
+
+	const timestamp_t wakeup_time = lp_ticker_read() + utils::sleep::us_to_ticks(20000, lp_ticker_freq);
+	lp_ticker_set_interrupt(wakeup_time);
+
+	auto can_deep_sleep_test_check = sleep_manager_can_deep_sleep_test_check();
+
+	return {can_deep_sleep, can_deep_sleep_test_check};
+}
+
 }	// namespace utils::sleep
