@@ -12,9 +12,6 @@ using namespace boost::ut;
 using namespace std::chrono;
 using namespace boost::ut::bdd;
 
-// ? tests inspired from https://github.com/ARMmbed/mbed-os
-// ? https://github.com/ARMmbed/mbed-os/blob/master/hal/tests/TESTS/mbed_hal/sleep/main.cpp
-
 suite suite_log_kit = [] {
 	rtos::ThisThread::sleep_for(2000ms);
 

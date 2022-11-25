@@ -128,11 +128,12 @@ suite suite_mbed_hal = [] {
 
 			mbed_sleep();
 
+#if MBED_CONF_TARGET_LPTICKER_LPTIM
+
 			// ? On some targets like STM family boards with LPTIM enabled an interrupt is triggered on counter
 			// ? rollover. We need special handling for cases when next_match_timestamp < start_timestamp (interrupt
 			// ? is to be fired after rollover). In such case after first wake-up we need to reset interrupt and go
 			// ? back to sleep waiting for the valid one. NOTE: Above comment (CMPOK) applies also here.
-#if MBED_CONF_TARGET_LPTICKER_LPTIM
 
 			if ((next_match_timestamp < start_timestamp) && lp_ticker_read() < next_match_timestamp) {
 				lp_ticker_set_interrupt(next_match_timestamp);
@@ -140,7 +141,7 @@ suite suite_mbed_hal = [] {
 				mbed_sleep();
 			}
 
-#endif
+#endif	 // MBED_CONF_TARGET_LPTICKER_LPTIM
 
 			const timestamp_t wakeup_timestamp = lp_ticker_read();
 
