@@ -70,6 +70,9 @@ auto main() -> int
 
 	initializeSD();
 
+	service_file_exchange.onSetFileExchangeState(
+		[](bool new_state) { log_info("New FileExchange state is: %s", (new_state ? "on" : "off")); });
+
 	service_file_exchange.onFilePathReceived(
 		[](std::span<const char> path) { file_reception_handler.setFilePath(path.data()); });
 
