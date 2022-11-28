@@ -15,6 +15,7 @@ using namespace lcd::otm8009a;
 void CoreLCDDriverOTM8009A::turnOn()
 {
 	_dsi.write(display::turn_on::array);
+	_backlight.resume();
 	setBrightness(_previous_brightness_value);
 }
 
@@ -22,6 +23,7 @@ void CoreLCDDriverOTM8009A::turnOff()
 {
 	_dsi.write(display::turn_off::array);
 	setBrightness(0.F);
+	_backlight.suspend();
 }
 
 void CoreLCDDriverOTM8009A::setBrightness(float value)

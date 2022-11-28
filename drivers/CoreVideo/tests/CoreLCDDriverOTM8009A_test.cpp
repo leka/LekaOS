@@ -75,6 +75,8 @@ TEST_F(CoreOTM8009ATest, turnOn)
 	EXPECT_CALL(dsimock, write(expected_instruction_array)).Times(1);
 
 	otm.turnOn();
+
+	EXPECT_FALSE(spy_PwmOut_isSuspended());
 }
 
 TEST_F(CoreOTM8009ATest, turnOff)
@@ -84,6 +86,8 @@ TEST_F(CoreOTM8009ATest, turnOff)
 	EXPECT_CALL(dsimock, write(expected_instruction_array)).Times(1);
 
 	otm.turnOff();
+
+	EXPECT_TRUE(spy_PwmOut_isSuspended());
 }
 
 TEST_F(CoreOTM8009ATest, setBrightness)
@@ -91,6 +95,13 @@ TEST_F(CoreOTM8009ATest, setBrightness)
 	otm.setBrightness(0.5);
 
 	EXPECT_EQ(spy_PwmOut_getValue(), 0.5);
+}
+
+TEST_F(CoreOTM8009ATest, setBrightnessToZero)
+{
+	otm.setBrightness(0.0);
+
+	EXPECT_EQ(spy_PwmOut_getValue(), 0.0);
 }
 
 TEST_F(CoreOTM8009ATest, setBrightnessTurnOffThenTurnOn)
@@ -106,9 +117,11 @@ TEST_F(CoreOTM8009ATest, setBrightnessTurnOffThenTurnOn)
 
 	EXPECT_EQ(spy_PwmOut_getValue(), 0);
 	EXPECT_NE(spy_PwmOut_getValue(), initial_brightness_value);
+	EXPECT_TRUE(spy_PwmOut_isSuspended());
 
 	EXPECT_CALL(dsimock, write(_)).Times(1);
 	otm.turnOn();
 
 	EXPECT_EQ(spy_PwmOut_getValue(), initial_brightness_value);
+	EXPECT_FALSE(spy_PwmOut_isSuspended());
 }
