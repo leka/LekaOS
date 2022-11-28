@@ -15,3 +15,13 @@ void CorePwm::write(float value)
 {
 	_pwm.write(value);
 }
+
+void CorePwm::suspend()
+{
+	_pwm.suspend();
+}
+
+void CorePwm::resume()
+{
+	_pwm.resume();
+}

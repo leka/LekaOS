@@ -16,12 +16,14 @@ void CoreLCDDriverOTM8009A::turnOn()
 {
 	_dsi.write(display::turn_on::array, std::size(display::turn_on::array));
 	setBrightness(_previous_brightness_value);
+	_backlight.resume();
 }
 
 void CoreLCDDriverOTM8009A::turnOff()
 {
 	_dsi.write(display::turn_off::array, std::size(display::turn_off::array));
 	setBrightness(0.F);
+	_backlight.suspend();
 }
 
 void CoreLCDDriverOTM8009A::setBrightness(float value)

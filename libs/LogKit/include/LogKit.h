@@ -237,6 +237,7 @@ inline void init(filehandle_ptr fh			 = &internal::default_serial,
 				 const sink_function_t &sink = internal::default_sink_function)
 {
 	set_filehandle_pointer(fh);
+	fh->enable_input(false);
 	set_sink_function(sink);
 	internal::start_event_queue();
 }

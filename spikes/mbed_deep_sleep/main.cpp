@@ -1,22 +1,16 @@
-// Leka - LekaOS
-// Copyright 2022 APF France handicap
+// mbed Microcontroller Library
+// Copyright (c) 2019 ARM Limited
 // SPDX-License-Identifier: Apache-2.0
 
-#include <cstddef>
-#include <cstdint>
+#include <cstdio>
 
 #include "drivers/Watchdog.h"
 #include "platform/mbed_power_mgmt.h"
 #include "platform/mbed_stats.h"
 #include "rtos/ThisThread.h"
 
-#include "CoreBufferedSerial.h"
-#include "CoreRFIDReaderCR95HF.h"
-#include "HelloWorld.h"
 #include "LogKit.h"
-#include "RFIDKit.h"
 
-using namespace leka;
 using namespace std::chrono;
 
 namespace watchdog {
@@ -106,27 +100,39 @@ void start()
 
 auto main() -> int
 {
-	logger::init();
+	leka::logger::init();
 	watchdog::start();
 
-	log_info("Hello, World!\n\n");
-
-	auto rfidserial = CoreBufferedSerial(RFID_UART_TX, RFID_UART_RX, 57600);
-	auto rfidreader = CoreRFIDReaderCR95HF(rfidserial);
-	auto rfidkit	= RFIDKit(rfidreader);
-
-	rtos::ThisThread::sleep_for(2s);
-
-	rfidkit.init();
-	rfidkit.onTagActivated([](const MagicCard &card) { log_debug("Card id: %i", card.getId()); });
-
-	HelloWorld hello;
-	hello.start();
-
-	// ? Uncomment to see the impact on deep sleep ratio
-	// rfidserial.disable_input();
+	auto allowed = sleep_manager_can_deep_sleep() ? 1 : 0;
+	log_info("Deep sleep allowed: %d", allowed);
 
 	while (true) {
-		rtos::ThisThread::sleep_for(10s);
+		// ? This part is taken from mbed's documentation
+		// ? sleep_manager_can_deep_sleep doesn't seem to work as expected
+		// ? as it always return the same value (not allowed)
+		// ? The statistics are good though as we see that sleep/deep sleep ratio
+		// ? reach a 50/50 ratio as time passes by...
+
+		// Deep sleep for 1 second
+		allowed = sleep_manager_can_deep_sleep() ? 1 : 0;
+		log_info("Deep sleep allowed: %d", allowed);
+		rtos::ThisThread::sleep_for(1000ms);
+
+		// Lock deep sleep
+		log_info("Locking deep sleep");
+		sleep_manager_lock_deep_sleep();
+
+		// Sleep for 1 second
+		allowed = sleep_manager_can_deep_sleep() ? 1 : 0;
+		log_info("Deep sleep allowed: %d", allowed);
+		rtos::ThisThread::sleep_for(1000ms);
+
+		// Unlock deep sleep
+		log_info("Unlocking deep sleep");
+		sleep_manager_unlock_deep_sleep();
+
+		// ? As an alternative, only keeping the following line
+		// ? will make the deep sleep ratio reach 99%
+		// rtos::ThisThread::sleep_for(1000ms);
 	}
 }

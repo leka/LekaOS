@@ -39,6 +39,7 @@ add_subdirectory(${SPIKES_DIR}/lk_update_process_app_base)
 add_subdirectory(${SPIKES_DIR}/lk_update_process_app_update)
 
 add_subdirectory(${SPIKES_DIR}/mbed_blinky)
+add_subdirectory(${SPIKES_DIR}/mbed_deep_sleep)
 add_subdirectory(${SPIKES_DIR}/mbed_watchdog_ticker_vs_thread)
 
 add_subdirectory(${SPIKES_DIR}/stl_cxxsupport)
@@ -80,6 +81,7 @@ add_dependencies(spikes_leka
 add_custom_target(spikes_mbed)
 add_dependencies(spikes_mbed
 	spike_mbed_blinky
+	spike_mbed_deep_sleep
 	spike_mbed_watchdog_ticker_vs_thread
 )
 
