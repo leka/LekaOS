@@ -31,6 +31,7 @@ target_sources(CoreVideo
 target_link_libraries(CoreVideo
 	PRIVATE
 	mbed-os
+	PUBLIC
 	CoreLL
 	CoreSTM32Hal
 	FileManagerKit
