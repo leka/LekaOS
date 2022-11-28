@@ -41,6 +41,17 @@ TEST_F(CoreMotorTest, initialization)
 	ASSERT_NE(&motor, nullptr);
 }
 
+TEST_F(CoreMotorTest, suspendOnInitialization)
+{
+	mbed::mock::DigitalOut local_dir_1 = {};
+	mbed::mock::DigitalOut local_dir_2 = {};
+	mock::PwmOut local_speed		   = {};
+
+	EXPECT_CALL(local_speed, suspend());
+
+	auto local_motor = CoreMotor {local_dir_1, local_dir_2, local_speed};
+}
+
 TEST_F(CoreMotorTest, rotateClockwiseNormalSpeed)
 {
 	EXPECT_CALL(dir_1, write(1));
