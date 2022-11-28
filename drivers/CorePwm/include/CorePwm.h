@@ -23,6 +23,7 @@ class CorePwm : public interface::PwmOut
 
   private:
 	mbed::PwmOut _pwm;
+	bool _is_suspended = false;
 };
 
 }	// namespace leka

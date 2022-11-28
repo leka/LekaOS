@@ -52,6 +52,16 @@ TEST(CorePwmTest, suspend)
 	ASSERT_TRUE(spy_PwmOut_isSuspended());
 }
 
+TEST(CorePwmTest, suspendThenSuspend)
+{
+	auto corepwm = CorePwm {NC};
+
+	corepwm.suspend();
+	corepwm.suspend();
+
+	ASSERT_TRUE(spy_PwmOut_isSuspended());
+}
+
 TEST(CorePwmTest, suspendThenResume)
 {
 	auto corepwm = CorePwm {NC};
@@ -60,6 +70,20 @@ TEST(CorePwmTest, suspendThenResume)
 
 	ASSERT_TRUE(spy_PwmOut_isSuspended());
 
+	corepwm.resume();
+
+	ASSERT_FALSE(spy_PwmOut_isSuspended());
+}
+
+TEST(CorePwmTest, suspendThenResumeThenResume)
+{
+	auto corepwm = CorePwm {NC};
+
+	corepwm.suspend();
+
+	ASSERT_TRUE(spy_PwmOut_isSuspended());
+
+	corepwm.resume();
 	corepwm.resume();
 
 	ASSERT_FALSE(spy_PwmOut_isSuspended());

@@ -18,10 +18,20 @@ void CorePwm::write(float value)
 
 void CorePwm::suspend()
 {
+	if (_is_suspended) {
+		return;
+	}
+
 	_pwm.suspend();
+	_is_suspended = true;
 }
 
 void CorePwm::resume()
 {
+	if (!_is_suspended) {
+		return;
+	}
+
 	_pwm.resume();
+	_is_suspended = false;
 }
