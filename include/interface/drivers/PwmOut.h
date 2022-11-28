@@ -13,6 +13,9 @@ class PwmOut
 
 	virtual auto read() -> float	= 0;
 	virtual void write(float value) = 0;
+
+	virtual void suspend() = 0;
+	virtual void resume()  = 0;
 };
 
 }	// namespace leka::interface
