@@ -40,6 +40,7 @@ endfunction()
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/boost_ut)
 
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/core_imu)
+add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/deep_sleep_core_buffered_serial)
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/deep_sleep_log_kit)
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/deep_sleep_mbed_hal)
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/file_manager)
