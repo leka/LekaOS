@@ -98,17 +98,26 @@ inline auto registerReceived(interface::RFIDReader &rfidreader) -> bool
 
 namespace sm::event {
 
-	struct tag_response_available {
-	};
+	using namespace boost::sml::dsl;
+
+	// inline auto test = boost::sml::dsl::event<class test>;
+
+	inline auto tag_response_available = boost::sml::dsl::event<class tag_response_available>;
+	// struct tag_response_available {
+	// };
 
 }	// namespace sm::event
 
 namespace sm::state {
 
-	inline auto idle				= boost::sml::state<class idle>;
-	inline auto send_reqa			= boost::sml::state<class send_reqa>;
-	inline auto requesting_atqa		= boost::sml::state<class requesting_atqa>;
-	inline auto requesting_tag_data = boost::sml::state<class requesting_tag_data>;
+	using namespace boost::sml::dsl;
+
+	inline auto idle				= "idle"_s;
+	inline auto send_reqa			= "send_reqa"_s;
+	inline auto requesting_atqa		= "requesting_atqa"_s;
+	inline auto requesting_tag_data = "requesting_tag_data"_s;
+
+	// inline auto test = "test"_s;
 
 }	// namespace sm::state
 
@@ -116,13 +125,9 @@ namespace sm::guard {
 
 	using irfidreader = interface::RFIDReader;
 
-	struct atqa_received {
-		auto operator()(irfidreader &rfidreader) const { return atqaReceived(rfidreader); }
-	};
+	constexpr auto atqa_received = [](irfidreader &rfidreader) { return atqaReceived(rfidreader); };
 
-	struct register_received {
-		auto operator()(irfidreader &rfidreader) const { return registerReceived(rfidreader); }
-	};
+	constexpr auto register_received = [](irfidreader &rfidreader) { return registerReceived(rfidreader); };
 
 }	// namespace sm::guard
 
@@ -130,53 +135,47 @@ namespace sm::action {
 
 	using irfidreader = interface::RFIDReader;
 
-	struct set_mode_tag_detection {
-		auto operator()(irfidreader &rfidreader) const { rfidreader.setModeTagDetection(); }
+	constexpr auto set_mode_tag_detection = [](irfidreader &rfidreader) { rfidreader.setModeTagDetection(); };
+
+	constexpr auto set_communication_protocol = [](irfidreader &rfidreader) {
+		rfidreader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 	};
 
-	struct set_communication_protocol {
-		auto operator()(irfidreader &rfidreader) const
-		{
-			rfidreader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
-		}
+	constexpr auto send_request_A = [](irfidreader &rfidreader) {
+		rfidreader.sendRequestToTag(command_requestA.data());
 	};
 
-	struct send_request_A {
-		auto operator()(irfidreader &rfidreader) const { rfidreader.sendRequestToTag(command_requestA.data()); }
+	constexpr auto send_register_4 = [](irfidreader &rfidreader) {
+		rfidreader.sendRequestToTag(command_read_register_4.data());
 	};
 
-	struct send_register_4 {
-		auto operator()(irfidreader &rfidreader) const { rfidreader.sendRequestToTag(command_read_register_4.data()); }
-	};
-
-	struct on_tag_readable {
-		auto operator()(irfidreader &rfidreader) const { rfidreader.onTagReadable(); }
-	};
-
+	constexpr auto on_tag_readable = [](irfidreader &rfidreader) { rfidreader.onTagReadable(); };
 }	// namespace sm::action
 
 struct ISO14443A {
+	interface::RFIDReader &rfidreader;
+
 	auto operator()() const
 	{
-		using namespace boost::sml;
+		using namespace boost::sml::dsl;
 
-		return make_transition_table(
+		return transition_table {
 			// clang-format off
-			* sm::state::idle  + event<sm::event::tag_response_available> / (sm::action::set_communication_protocol {})                   = sm::state::send_reqa
 
-			, sm::state::send_reqa             + event<sm::event::tag_response_available>                                      / (sm::action::send_request_A  {})          = sm::state::requesting_atqa
+			* sm::state::idle                + sm::event::tag_response_available / (sm::action::set_communication_protocol)                  = sm::state::send_reqa
 
-			, sm::state::requesting_atqa       + event<sm::event::tag_response_available>  [sm::guard::atqa_received {}]       / (sm::action::send_register_4  {})         = sm::state::requesting_tag_data
-			, sm::state::requesting_atqa       + event<sm::event::tag_response_available>  [!sm::guard::atqa_received {}]      / (sm::action::set_mode_tag_detection {})   = sm::state::idle
+			, sm::state::send_reqa           + sm::event::tag_response_available                                      / (sm::action::send_request_A  )          = sm::state::requesting_atqa
 
-			, sm::state::requesting_tag_data   + event<sm::event::tag_response_available>  [sm::guard::register_received {}]   / (sm::action::on_tag_readable {})          = sm::state::idle
-			, sm::state::requesting_tag_data   + event<sm::event::tag_response_available>  [!sm::guard::register_received {}]                                              = sm::state::idle
+			, sm::state::requesting_atqa     + sm::event::tag_response_available  [sm::guard::atqa_received ]       / (sm::action::send_register_4  )         = sm::state::requesting_tag_data
+			, sm::state::requesting_atqa     + sm::event::tag_response_available  [ ! sm::guard::atqa_received ]      / (sm::action::set_mode_tag_detection )   = sm::state::idle
 
-			, sm::state::requesting_tag_data   + boost::sml::on_exit<_> / ( sm::action::set_mode_tag_detection {})
+			, sm::state::requesting_tag_data + sm::event::tag_response_available  [sm::guard::register_received ]   / (sm::action::on_tag_readable )          = sm::state::idle
+			, sm::state::requesting_tag_data + sm::event::tag_response_available  [sm::guard::register_received ]                                              = sm::state::idle
+
+			// , sm::state::requesting_tag_data + boost::sml::dsl:: / ( sm::action::set_mode_tag_detection )
 
 			// clang-format on
-		);
+		};
 	}
 };
-
 }	// namespace leka::rfid
