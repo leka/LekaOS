@@ -20,5 +20,7 @@ auto main() -> int
 
 	[[maybe_unused]] const auto result = ut::cfg<>.run({.report_errors = true});
 
+	log_free("\n<<END_OF_TESTS>>\n");
+
 	return static_cast<int>(result);
 }

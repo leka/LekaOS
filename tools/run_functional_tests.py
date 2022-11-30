@@ -214,7 +214,9 @@ class Test:
             while True:
                 data = wait_for_response()
                 if data is not None:
-                    if data.strip() != ".":
+                    if data.strip() == "<<END_OF_TESTS>>":
+                        return ret
+                    elif data.strip() != ".":
                         self.edit_result_file(data)
                 else:
                     return ret
