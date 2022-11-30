@@ -19,7 +19,7 @@ CoreVideo::CoreVideo(interface::STM32Hal &hal, interface::SDRAM &coresdram, inte
 	  _corefont(corefont),
 	  _corejpeg(corejpeg)
 {
-	_corelcd.turnOff();
+	// nothing to do
 }
 
 void CoreVideo::initialize()
