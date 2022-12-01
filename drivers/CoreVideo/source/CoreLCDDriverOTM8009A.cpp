@@ -268,6 +268,7 @@ void CoreLCDDriverOTM8009A::setLandscapeOrientation()
 	// ? Following code is implemented based on OTM8009A driver datasheet
 	// ? register 36H (Memory Data Access Control)
 
+	// clang-format off
 	auto settings = []() constexpr
 	{
 		// settings |= std::byte {1 << 7};	  // Set vertical symmetry - needed
@@ -293,6 +294,7 @@ void CoreLCDDriverOTM8009A::setLandscapeOrientation()
 
 		return std::to_integer<uint8_t>(_settings);
 	};
+	// clang-format on
 
 	constexpr auto command = std::to_array<uint8_t>({madctr::command, settings()});
 
