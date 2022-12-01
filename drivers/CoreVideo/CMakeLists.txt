@@ -38,6 +38,7 @@ endif()
 target_link_libraries(CoreVideo
 	PRIVATE
 	mbed-os
+	PUBLIC
 	CoreLL
 	CoreSTM32Hal
 	FileManagerKit
