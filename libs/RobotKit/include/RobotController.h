@@ -242,7 +242,12 @@ class RobotController : public interface::RobotController
 
 	auto isReadyToUpdate() -> bool final
 	{
-		return (_battery.isCharging() && _battery.level() > _minimal_battery_level_to_update);
+		auto is_robot_ready = _battery.isCharging() && _battery.level() > _minimal_battery_level_to_update;
+
+		auto firmware_version	  = _service_update.getVersion();
+		auto is_version_available = _firmware_update.isVersionAvailable(firmware_version);
+
+		return is_robot_ready && is_version_available;
 	}
 
 	void applyUpdate() final

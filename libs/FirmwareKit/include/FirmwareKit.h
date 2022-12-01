@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <filesystem>
 #include <functional>
 #include <string>
 
@@ -29,10 +30,13 @@ class FirmwareKit : public interface::FirmwareUpdate
 
 	auto getCurrentVersion() -> Version final;
 
+	auto isVersionAvailable(const Version &version) -> bool final;
 	auto loadUpdate(const Version &version) -> bool final;
 
   private:
-	auto loadUpdate(const char *path) -> bool;
+	[[nodiscard]] auto getPathOfVersion(const Version &version) const -> std::filesystem::path;
+
+	auto loadUpdate(const std::filesystem::path &path) -> bool;
 
 	interface::FlashMemory &_flash;
 	FileManagerKit::File _file {};

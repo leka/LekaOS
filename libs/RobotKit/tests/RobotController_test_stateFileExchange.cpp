@@ -156,6 +156,7 @@ TEST_F(RobotControllerTest, stateFileExchangeEventUpdateRequestedGuardIsReadyToU
 		.InSequence(is_ready_to_update_sequence)
 		.WillRepeatedly(Return(returned_is_charging));
 	EXPECT_CALL(battery, level).InSequence(is_ready_to_update_sequence).WillRepeatedly(Return(returned_level));
+	EXPECT_CALL(firmware_update, isVersionAvailable).WillOnce(Return(true));
 
 	EXPECT_CALL(firmware_update, loadUpdate).WillOnce(Return(true));
 	EXPECT_CALL(mock_on_update_loaded_callback, Call);
@@ -169,8 +170,9 @@ TEST_F(RobotControllerTest, stateFileExchangeEventUpdateRequestedGuardIsReadyToU
 {
 	rc.state_machine.set_current_states(lksm::state::file_exchange);
 
-	auto returned_is_charging = false;
-	auto returned_level		  = uint8_t {100};
+	auto returned_is_charging		   = false;
+	auto returned_level				   = uint8_t {100};
+	auto returned_is_version_available = true;
 
 	MockFunction<void()> mock_on_update_loaded_callback;
 	rc.registerOnUpdateLoadedCallback(mock_on_update_loaded_callback.AsStdFunction());
@@ -184,6 +186,7 @@ TEST_F(RobotControllerTest, stateFileExchangeEventUpdateRequestedGuardIsReadyToU
 		.InSequence(is_ready_to_update_sequence)
 		.WillRepeatedly(Return(returned_is_charging));
 	EXPECT_CALL(battery, level).Times(0).InSequence(is_ready_to_update_sequence);
+	EXPECT_CALL(firmware_update, isVersionAvailable).WillOnce(Return(returned_is_version_available));
 
 	EXPECT_CALL(firmware_update, loadUpdate).Times(0);
 	EXPECT_CALL(mock_on_update_loaded_callback, Call).Times(0);
@@ -197,8 +200,9 @@ TEST_F(RobotControllerTest, stateFileExchangeEventUpdateRequestedGuardIsReadyToU
 {
 	rc.state_machine.set_current_states(lksm::state::file_exchange);
 
-	auto returned_is_charging = true;
-	auto returned_level		  = uint8_t {0};
+	auto returned_is_charging		   = true;
+	auto returned_level				   = uint8_t {0};
+	auto returned_is_version_available = true;
 
 	MockFunction<void()> mock_on_update_loaded_callback;
 	rc.registerOnUpdateLoadedCallback(mock_on_update_loaded_callback.AsStdFunction());
@@ -212,6 +216,37 @@ TEST_F(RobotControllerTest, stateFileExchangeEventUpdateRequestedGuardIsReadyToU
 		.InSequence(is_ready_to_update_sequence)
 		.WillRepeatedly(Return(returned_is_charging));
 	EXPECT_CALL(battery, level).InSequence(is_ready_to_update_sequence).WillRepeatedly(Return(returned_level));
+	EXPECT_CALL(firmware_update, isVersionAvailable).WillOnce(Return(returned_is_version_available));
+
+	EXPECT_CALL(firmware_update, loadUpdate).Times(0);
+	EXPECT_CALL(mock_on_update_loaded_callback, Call).Times(0);
+
+	rc.state_machine.process_event(lksm::event::update_requested {});
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::file_exchange));
+}
+
+TEST_F(RobotControllerTest, stateFileExchangeEventUpdateRequestedGuardIsReadyToUpdateFalseVersionDoesNotExists)
+{
+	rc.state_machine.set_current_states(lksm::state::file_exchange);
+
+	auto returned_is_charging		   = true;
+	auto returned_level				   = uint8_t {100};
+	auto returned_is_version_available = false;
+
+	MockFunction<void()> mock_on_update_loaded_callback;
+	rc.registerOnUpdateLoadedCallback(mock_on_update_loaded_callback.AsStdFunction());
+
+	Sequence on_file_exchange_end;
+	// TODO (@yann): Trigger file_exchange_start_requested in StateMachine from BLE and do not use process_event
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber()).InSequence(on_file_exchange_end);
+
+	Sequence is_ready_to_update_sequence;
+	EXPECT_CALL(battery, isCharging)
+		.InSequence(is_ready_to_update_sequence)
+		.WillRepeatedly(Return(returned_is_charging));
+	EXPECT_CALL(battery, level).InSequence(is_ready_to_update_sequence).WillRepeatedly(Return(returned_level));
+	EXPECT_CALL(firmware_update, isVersionAvailable).WillOnce(Return(returned_is_version_available));
 
 	EXPECT_CALL(firmware_update, loadUpdate).Times(0);
 	EXPECT_CALL(mock_on_update_loaded_callback, Call).Times(0);
