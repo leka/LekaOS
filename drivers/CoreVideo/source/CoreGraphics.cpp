@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "CoreGraphics.hpp"
+#include <cstddef>
 
 using namespace leka;
 
@@ -20,7 +21,8 @@ void CoreGraphics::clearScreen(CGColor color)
 void CoreGraphics::drawRectangle(FilledRectangle rectangle, CGColor color)
 {
 	uintptr_t destination_address =
-		lcd::frame_buffer_address + 4 * (lcd::dimension::width * rectangle.origin.y + rectangle.origin.x);
+		lcd::frame_buffer_address +
+		static_cast<unsigned long>(4) * (lcd::dimension::width * rectangle.origin.y + rectangle.origin.x);
 
 	uint32_t destinationColor = color.getARGB();
 

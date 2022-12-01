@@ -40,13 +40,23 @@ auto corevideo = CoreVideo {hal, coresdram, coredma2d, coredsi, coreltdc, corelc
 HAL_VIDEO_DECLARE_IRQ_HANDLERS(corevideo);
 
 suite suite_core_video = [] {
-	scenario("core video initialization") = [] {
+	scenario("initialization") = [] {
 		given("core video is in default configuration") = [] {
-			rtos::ThisThread::sleep_for(250ms);
-
 			expect(neq(&corevideo, nullptr));
 
 			when("I do nothing") = [] {
+				then("I expect deep sleep TO NOT BE possible") = [] {
+					auto status = utils::sleep::system_deep_sleep_check();
+
+					expect(not status.can_deep_sleep);
+					expect(not status.test_check_ok);
+				};
+			};
+
+			when("I initialize") = [] {
+				corevideo.initialize();
+				rtos::ThisThread::sleep_for(250ms);
+
 				then("I expect deep sleep TO BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
@@ -58,23 +68,7 @@ suite suite_core_video = [] {
 	};
 
 	scenario("init, on, off, on, off") = [] {
-		given("core video is in default configuration") = [] {
-			rtos::ThisThread::sleep_for(250ms);
-
-			expect(neq(&corevideo, nullptr));
-
-			when("I initialize") = [] {
-				corevideo.initialize();
-				rtos::ThisThread::sleep_for(250ms);
-
-				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
-
-					expect(not status.can_deep_sleep);
-					expect(not status.test_check_ok);
-				};
-			};
-
+		given("core video is initialized") = [] {
 			when("I turn on") = [] {
 				corevideo.turnOn();
 				rtos::ThisThread::sleep_for(250ms);
@@ -99,7 +93,7 @@ suite suite_core_video = [] {
 				};
 			};
 
-			when("I turn on") = [] {
+			when("I turn on again") = [] {
 				corevideo.turnOn();
 				rtos::ThisThread::sleep_for(250ms);
 
@@ -111,7 +105,7 @@ suite suite_core_video = [] {
 				};
 			};
 
-			when("I turn off") = [] {
+			when("I turn off agin") = [] {
 				corevideo.turnOff();
 				rtos::ThisThread::sleep_for(250ms);
 
@@ -125,95 +119,95 @@ suite suite_core_video = [] {
 		};
 	};
 
-	scenario("fill screen when off") = [] {
-		given("core video is off") = [] {
-			corevideo.initialize();
-			corevideo.turnOff();
-			rtos::ThisThread::sleep_for(250ms);
+	// scenario("fill screen when off") = [] {
+	// 	given("core video is off") = [] {
+	// 		// corevideo.initialize();
+	// 		corevideo.turnOff();
+	// 		rtos::ThisThread::sleep_for(250ms);
 
-			then("I expect deep sleep TO BE possible") = [] {
-				auto status = utils::sleep::system_deep_sleep_check();
+	// 		then("I expect deep sleep TO BE possible") = [] {
+	// 			auto status = utils::sleep::system_deep_sleep_check();
 
-				expect(status.can_deep_sleep);
-				expect(status.test_check_ok);
-			};
+	// 			expect(status.can_deep_sleep);
+	// 			expect(status.test_check_ok);
+	// 		};
 
-			when("I clear screen in red") = [] {
-				corevideo.clearScreen(CGColor::pure_red);
-				rtos::ThisThread::sleep_for(250ms);
+	// 		when("I clear screen in red") = [] {
+	// 			corevideo.clearScreen(CGColor::pure_red);
+	// 			rtos::ThisThread::sleep_for(250ms);
 
-				then("I expect deep sleep TO BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+	// 			then("I expect deep sleep TO BE possible") = [] {
+	// 				auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(status.can_deep_sleep);
-					expect(status.test_check_ok);
-				};
-			};
+	// 				expect(status.can_deep_sleep);
+	// 				expect(status.test_check_ok);
+	// 			};
+	// 		};
 
-			when("I turn on and set brightness to 100%") = [] {
-				corevideo.turnOn();
-				corevideo.setBrightness(1.0);
-				rtos::ThisThread::sleep_for(1000ms);
+	// 		when("I turn on and set brightness to 100%") = [] {
+	// 			corevideo.turnOn();
+	// 			corevideo.setBrightness(1.0);
+	// 			rtos::ThisThread::sleep_for(1000ms);
 
-				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+	// 			then("I expect deep sleep TO NOT BE possible") = [] {
+	// 				auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(not status.can_deep_sleep);
-					expect(not status.test_check_ok);
-				};
-			};
+	// 				expect(not status.can_deep_sleep);
+	// 				expect(not status.test_check_ok);
+	// 			};
+	// 		};
 
-			when("I turn off") = [] {
-				corevideo.turnOff();
-				rtos::ThisThread::sleep_for(250ms);
+	// 		when("I turn off") = [] {
+	// 			corevideo.turnOff();
+	// 			rtos::ThisThread::sleep_for(250ms);
 
-				then("I expect deep sleep TO BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+	// 			then("I expect deep sleep TO BE possible") = [] {
+	// 				auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(status.can_deep_sleep);
-					expect(status.test_check_ok);
-				};
-			};
-		};
-	};
+	// 				expect(status.can_deep_sleep);
+	// 				expect(status.test_check_ok);
+	// 			};
+	// 		};
+	// 	};
+	// };
 
-	scenario("fill screen when on") = [] {
-		given("core video is on with brightness at 100%") = [] {
-			corevideo.initialize();
-			corevideo.turnOn();
-			corevideo.setBrightness(1.0);
-			rtos::ThisThread::sleep_for(250ms);
+	// scenario("fill screen when on") = [] {
+	// 	given("core video is on with brightness at 100%") = [] {
+	// 		// corevideo.initialize();
+	// 		corevideo.turnOn();
+	// 		corevideo.setBrightness(1.0);
+	// 		rtos::ThisThread::sleep_for(250ms);
 
-			then("I expect deep sleep TO NOT BE possible") = [] {
-				auto status = utils::sleep::system_deep_sleep_check();
+	// 		then("I expect deep sleep TO NOT BE possible") = [] {
+	// 			auto status = utils::sleep::system_deep_sleep_check();
 
-				expect(not status.can_deep_sleep);
-				expect(not status.test_check_ok);
-			};
+	// 			expect(not status.can_deep_sleep);
+	// 			expect(not status.test_check_ok);
+	// 		};
 
-			when("I clear screen in blue") = [] {
-				corevideo.clearScreen(CGColor::pure_blue);
-				rtos::ThisThread::sleep_for(1000ms);
+	// 		when("I clear screen in blue") = [] {
+	// 			corevideo.clearScreen(CGColor::pure_blue);
+	// 			rtos::ThisThread::sleep_for(1000ms);
 
-				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+	// 			then("I expect deep sleep TO NOT BE possible") = [] {
+	// 				auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(not status.can_deep_sleep);
-					expect(not status.test_check_ok);
-				};
-			};
+	// 				expect(not status.can_deep_sleep);
+	// 				expect(not status.test_check_ok);
+	// 			};
+	// 		};
 
-			when("I turn off") = [] {
-				corevideo.turnOff();
-				rtos::ThisThread::sleep_for(250ms);
+	// 		when("I turn off") = [] {
+	// 			corevideo.turnOff();
+	// 			rtos::ThisThread::sleep_for(250ms);
 
-				then("I expect deep sleep TO BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+	// 			then("I expect deep sleep TO BE possible") = [] {
+	// 				auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(status.can_deep_sleep);
-					expect(status.test_check_ok);
-				};
-			};
-		};
-	};
+	// 				expect(status.can_deep_sleep);
+	// 				expect(status.test_check_ok);
+	// 			};
+	// 		};
+	// 	};
+	// };
 };

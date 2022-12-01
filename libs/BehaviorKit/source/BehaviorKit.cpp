@@ -30,7 +30,11 @@ void BehaviorKit::launching()
 void BehaviorKit::sleeping()
 {
 	_ledkit.start(&LedKit::animation::sleeping);
-	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-sleep-yawn_then_sleep-no_eyebrows.avi");
+	// TODO (@ladislas): this is needed because when starting autonomous games while sleeping, we can see the last
+	// sleeping face
+	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-sleep-yawn_then_sleep-no_eyebrows.avi", [&] {
+		_videokit.displayImage("/fs/home/img/system/robot-misc-robot-misc-screen_empty_black.jpg");
+	});
 }
 
 void BehaviorKit::waiting()

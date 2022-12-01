@@ -293,7 +293,7 @@ class RobotController : public interface::RobotController
 		_ledkit.init();
 
 		_videokit.initializeScreen();
-		_lcd.turnOff();
+		// _lcd.turnOff();
 		_videokit.stopVideo();
 	}
 

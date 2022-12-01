@@ -7,6 +7,7 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreLCDDriverOTM8009A.hpp"
+#include "LogKit.h"
 
 using namespace leka;
 using namespace std::chrono_literals;
@@ -15,20 +16,25 @@ using namespace lcd::otm8009a;
 void CoreLCDDriverOTM8009A::turnOn()
 {
 	_dsi.write(display::turn_on::array, std::size(display::turn_on::array));
-	setBrightness(_previous_brightness_value);
 	_backlight.resume();
+	setBrightness(_previous_brightness_value);
+	log_info("turning on with brightness: %f", _previous_brightness_value);
 }
 
 void CoreLCDDriverOTM8009A::turnOff()
 {
 	_dsi.write(display::turn_off::array, std::size(display::turn_off::array));
-	setBrightness(0.F);
+	// setBrightness(0.F);
 	_backlight.suspend();
 }
 
 void CoreLCDDriverOTM8009A::setBrightness(float value)
 {
 	_backlight.write(value);
+
+	if (value != 0.F) {
+		_previous_brightness_value = value;
+	}
 }
 
 void CoreLCDDriverOTM8009A::initialize()
@@ -267,8 +273,7 @@ void CoreLCDDriverOTM8009A::setLandscapeOrientation()
 	// ? Following code is implemented based on OTM8009A driver datasheet
 	// ? register 36H (Memory Data Access Control)
 
-	auto settings = []() constexpr
-	{
+	auto settings = []() constexpr {
 		// settings |= std::byte {1 << 7};	  // Set vertical symmetry - needed
 		// settings |= std::byte {1 << 5};	  // Set landscape mode - needed
 
@@ -278,14 +283,8 @@ void CoreLCDDriverOTM8009A::setLandscapeOrientation()
 
 		std::byte _settings {0x00};
 
-		auto set_landscape_mode = [&]() constexpr
-		{
-			_settings |= std::byte {1 << 5};
-		};
-		auto set_horizontal_symmetry = [&]() constexpr
-		{
-			_settings |= std::byte {1 << 6};
-		};
+		auto set_landscape_mode		 = [&]() constexpr { _settings |= std::byte {1 << 5}; };
+		auto set_horizontal_symmetry = [&]() constexpr { _settings |= std::byte {1 << 6}; };
 
 		set_landscape_mode();
 		set_horizontal_symmetry();

@@ -102,7 +102,6 @@ TEST_F(CoreOTM8009ATest, setBrightnessToZero)
 	otm.setBrightness(0.0);
 
 	EXPECT_EQ(spy_PwmOut_getValue(), 0.0);
-	EXPECT_TRUE(spy_PwmOut_isSuspended());
 }
 
 TEST_F(CoreOTM8009ATest, setBrightnessTurnOffThenTurnOn)
@@ -116,8 +115,10 @@ TEST_F(CoreOTM8009ATest, setBrightnessTurnOffThenTurnOn)
 	EXPECT_CALL(dsimock, write).Times(1);
 	otm.turnOff();
 
-	EXPECT_EQ(spy_PwmOut_getValue(), 0);
-	EXPECT_NE(spy_PwmOut_getValue(), initial_brightness_value);
+	// TODO (@ladislas): should not be needed now that we have turn on/off
+	// test that turn off turns off
+	// EXPECT_EQ(spy_PwmOut_getValue(), 0);
+	// EXPECT_NE(spy_PwmOut_getValue(), initial_brightness_value);
 	EXPECT_TRUE(spy_PwmOut_isSuspended());
 
 	EXPECT_CALL(dsimock, write).Times(1);

@@ -23,8 +23,11 @@ void VideoKit::initializeScreen()
 {
 	_video.initialize();
 
-	_video.setBrightness(1.F);
+	// _video.setBrightness(1.F);
 	_video.clearScreen();
+
+	_video.turnOn();
+	// _video.setBrightness(1.F);
 
 	_thread.start(mbed::Callback(this, &VideoKit::run));
 }

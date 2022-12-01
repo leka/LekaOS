@@ -37,8 +37,8 @@ TEST_F(VideoKitTest, initialization)
 TEST_F(VideoKitTest, initializeScreen)
 {
 	EXPECT_CALL(mock_corevideo, initialize);
-	EXPECT_CALL(mock_corevideo, setBrightness);
 	EXPECT_CALL(mock_corevideo, clearScreen);
+	EXPECT_CALL(mock_corevideo, turnOn);
 
 	video_kit.initializeScreen();
 }

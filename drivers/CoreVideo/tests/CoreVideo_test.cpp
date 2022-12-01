@@ -89,7 +89,8 @@ TEST_F(CoreVideoTest, initialization)
 		EXPECT_CALL(lcdmock, initialize).Times(1);
 		EXPECT_CALL(jpegmock, initialize).Times(1);
 		EXPECT_CALL(dma2dmock, initialize).Times(1);
-		EXPECT_CALL(lcdmock, setBrightness).Times(1);
+		// EXPECT_CALL(lcdmock, setBrightness).Times(1);
+		EXPECT_CALL(lcdmock, turnOff).Times(1);
 	}
 
 	corevideo.initialize();
