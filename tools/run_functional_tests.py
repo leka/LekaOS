@@ -40,7 +40,7 @@ parser = argparse.ArgumentParser(description='Run functional tests')
 
 parser.add_argument('-p', '--port', metavar='PORT', default='/dev/tty.usbmodem*',
                     help='serial port path used for the robot')
-parser.add_argument('--response-timeout', metavar='RESPONSE_TIMEOUT', default=5.0,
+parser.add_argument('--response-timeout', metavar='RESPONSE_TIMEOUT', default=30.0,
                     help='response timeout is seconds')
 parser.add_argument('--no-flash-erase', action='store_false',
                     help='disable flash erase')
@@ -214,7 +214,9 @@ class Test:
             while True:
                 data = wait_for_response()
                 if data is not None:
-                    if data.strip() != ".":
+                    if data.strip() == "<<END_OF_TESTS>>":
+                        return ret
+                    elif data.strip() != ".":
                         self.edit_result_file(data)
                 else:
                     return ret
