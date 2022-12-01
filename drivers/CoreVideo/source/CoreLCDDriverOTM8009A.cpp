@@ -35,7 +35,8 @@ void CoreLCDDriverOTM8009A::setBrightness(float value)
 
 void CoreLCDDriverOTM8009A::initialize()
 {
-	_backlight.period(0.01F);	// Set PWM at 1/(0.01 seconds) = 100Hz
+	constexpr auto kPwmPeriod = float {1.F / 100.F};   // ? Period at 100Hz
+	_backlight.period(kPwmPeriod);
 
 	// Enable CMD2 to access vendor specific commands
 	// Enter in command 2 mode and set EXTC to enable address shift function (0x00)
