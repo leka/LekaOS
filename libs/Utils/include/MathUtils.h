@@ -32,4 +32,6 @@ auto checksum8(std::span<uint8_t> data) -> uint8_t;
 
 [[nodiscard]] auto random8(uint8_t min, uint8_t max) -> uint8_t;
 
+auto invSqrt(float x) -> float;
+
 }	// namespace leka::utils::math

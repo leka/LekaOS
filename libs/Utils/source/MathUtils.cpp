@@ -37,3 +37,21 @@ auto math::random8(uint8_t min, uint8_t max) -> uint8_t
 	auto ret = min + rand() % (max - min + 1);
 	return static_cast<uint8_t>(ret);
 }
+
+// ? For more info: https://en.wikipedia.org/wiki/Fast_inverse_square_root
+
+auto math::invSqrt(float x) -> float
+{
+	float xhalf = {};
+	int i		= {};
+
+	xhalf = 0.5f * x;
+
+	i = *(int *)&x;
+	i = 0x5f375a86 - (i >> 1);
+
+	x = *(float *)&i;
+	x = x * (1.5f - xhalf * x * x);
+
+	return x;
+}
