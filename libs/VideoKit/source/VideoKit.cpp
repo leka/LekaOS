@@ -26,7 +26,7 @@ void VideoKit::initializeScreen()
 	_video.setBrightness(1.F);
 	_video.clearScreen();
 
-	_thread.start(mbed::Callback(this, &VideoKit::run));
+	_thread.start([this] { run(); });
 }
 
 void VideoKit::displayImage(const std::filesystem::path &path)
