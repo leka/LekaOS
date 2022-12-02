@@ -83,8 +83,8 @@ jobs:
 
       - name: Config, build & run unit tests
         env:
-          CC: /usr/bin/gcc-10
-          CXX: /usr/bin/g++-10
+          CC: /usr/bin/gcc-12
+          CXX: /usr/bin/g++-12
         run: |
           make config_unit_tests
           make unit_tests
