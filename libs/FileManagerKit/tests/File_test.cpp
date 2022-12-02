@@ -482,7 +482,7 @@ TEST_F(FileTest, seek)
 
 	file.open(tempFilename, "w+");
 
-	auto _ = file.write(input_data);
+	std::ignore = file.write(input_data);
 	file.seek(3);
 	auto bytes_read = file.read(output_data);
 
