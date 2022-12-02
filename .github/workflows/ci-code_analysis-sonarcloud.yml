@@ -88,7 +88,7 @@ jobs:
         run: |
           make config_unit_tests
           make unit_tests
-          make coverage_sonarqube
+          make coverage_sonarqube GCOV_EXEC=/usr/bin/gcov-12
 
       - name: Ccache post unit tests
         run: |

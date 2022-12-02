@@ -65,12 +65,12 @@ jobs:
           ccache -z
 
       - name: Generate coverage
-        if: ${{ matrix.compiler.name == 'GCC 10' }}
+        if: ${{ matrix.compiler.name == 'GCC 12' }}
         run: |
-          make coverage_lcov
+          make coverage_lcov GCOV_EXEC=/usr/bin/gcov-12
 
       - name: Upload coverage to Codecov
-        if: ${{ matrix.compiler.name == 'GCC 10' }}
+        if: ${{ matrix.compiler.name == 'GCC 12' }}
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
