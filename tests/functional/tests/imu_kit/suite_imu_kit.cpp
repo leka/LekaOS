@@ -17,7 +17,7 @@ using namespace std::chrono;
 using namespace boost::ut;
 using namespace boost::ut::bdd;
 
-suite suite_lsm6dsox = [] {
+suite suite_imu_kit = [] {
 	constexpr auto default_min_bound_pitch		 = -5._f;
 	constexpr auto default_max_bound_pitch		 = 5._f;
 	constexpr auto default_min_bound_roll		 = -5._f;
@@ -78,41 +78,6 @@ suite suite_lsm6dsox = [] {
 				expect(yaw < default_max_bound_yaw)
 					<< "Yaw (" << yaw << ") greater than maximal bound (" << default_max_bound_yaw << ")";
 			};
-			// when("I wait for 10 seconds") = [&] {
-			// 	auto [pitch, roll, yaw] = imukit.getAngles();
-			// 	auto last_pitch			= pitch;
-			// 	auto last_roll			= roll;
-			// 	auto last_yaw			= yaw;
-
-			// 	auto pitch_drift = 0.F;
-			// 	auto roll_drift	 = 0.F;
-			// 	auto yaw_drift	 = 0.F;
-
-			// 	rtos::ThisThread::sleep_for(100ms);
-
-			// 	for (auto i = 0; i < measurement_iteration; ++i) {
-			// 		auto [pitch, roll, yaw] = imukit.getAngles();
-			// 		pitch_drift += last_pitch - pitch;
-			// 		roll_drift += last_roll - roll;
-			// 		yaw_drift += last_yaw - yaw;
-
-			// 		last_pitch = pitch;
-			// 		last_roll  = roll;
-			// 		last_yaw   = yaw;
-			// 		rtos::ThisThread::sleep_for(100ms);
-			// 	}
-			// 	then("I expect pitch NOT to drift") = [&] {
-			// 		expect(le(pitch_drift, maximal_pitch_noise_amplitude))
-			// 			<< "(" << pitch_drift << " > " << maximal_pitch_noise_amplitude << ")";
-			// 	};
-			// 	then("I expect roll NOT to drift") = [&] {
-			// 		expect(le(roll_drift, maximal_roll_noise_amplitude))
-			// 			<< "(" << roll_drift << " > " << maximal_roll_noise_amplitude << ")";
-			// 	};
-			// 	then("I expect yaw to drift slightly") = [&] {
-			// 		expect(le(yaw_drift, maximal_yaw_drift)) << "(" << yaw_drift << " > " << maximal_yaw_drift << ")";
-			// 	};
-			// };
 			when("I wait for 10 seconds") = [&] {
 				auto [first_pitch, first_roll, first_yaw] = imukit.getAngles();
 
