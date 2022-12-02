@@ -31,7 +31,7 @@ class CoreLCDDriverOTM8009A : public interface::LCDDriver
 	interface::DSIBase &_dsi;
 	mbed::PwmOut _backlight;
 
-	float _previous_brightness_value = {0.F};
+	float _previous_brightness_value = {1.F};
 };
 
 namespace lcd::otm8009a {
