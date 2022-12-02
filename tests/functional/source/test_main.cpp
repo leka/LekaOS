@@ -16,11 +16,14 @@ namespace ut = boost::ut;
 auto main() -> int
 {
 	logger::init();
-	rtos::ThisThread::sleep_for(1s);
+
+	log_free("\n<<START_OF_TESTS>>\n\n");
+
+	rtos::ThisThread::sleep_for(1000ms);
 
 	[[maybe_unused]] const auto result = ut::cfg<>.run({.report_errors = true});
 
-	log_free("\n<<END_OF_TESTS>>\n");
+	log_free("\n<<END_OF_TESTS>>\n\n");
 
 	return static_cast<int>(result);
 }
