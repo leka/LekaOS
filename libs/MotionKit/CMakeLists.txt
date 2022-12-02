@@ -11,14 +11,18 @@ target_include_directories(MotionKit
 
 target_sources(MotionKit
 	PRIVATE
+	source/MotionKit.cpp
 	source/PID.cpp
 )
 
 target_link_libraries(MotionKit
+	CoreIMU
+	IMUKit
 )
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
+		tests/MotionKit_test.cpp
 		tests/PID_test.cpp
 	)
 endif()
