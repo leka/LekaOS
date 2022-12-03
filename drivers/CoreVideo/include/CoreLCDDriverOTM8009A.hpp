@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <array>
+
 #include "drivers/PwmOut.h"
 
 #include "interface/DSI.hpp"
@@ -37,14 +39,14 @@ class CoreLCDDriverOTM8009A : public interface::LCDDriver
 namespace lcd::otm8009a {
 
 	// #define OTM8009A_480X800_FREQUENCY_DIVIDER 2   // LCD Frequency divider
-	constexpr uint32_t frequency_divider = 2;
+	inline constexpr auto frequency_divider = uint32_t {2};
 
 	namespace orientation {
 
 		// #define OTM8009A_ORIENTATION_PORTRAIT  ((uint32_t)0x00)	  // Portrait orientation choice of LCD screen
 		// #define OTM8009A_ORIENTATION_LANDSCAPE ((uint32_t)0x01)	  // Landscape orientation choice of LCD screen
-		constexpr uint32_t portait	 = 0x00;
-		constexpr uint32_t landscape = 0x01;
+		inline constexpr auto portait	= uint32_t {0x00};
+		inline constexpr auto landscape = uint32_t {0x01};
 
 	}	// namespace orientation
 
@@ -52,8 +54,8 @@ namespace lcd::otm8009a {
 
 		// #define OTM8009A_FORMAT_RGB888 ((uint32_t)0x00)	  // Pixel format chosen is RGB888 : 24 bpp
 		// #define OTM8009A_FORMAT_RBG565 ((uint32_t)0x02)	  // Pixel format chosen is RGB565 : 16 bpp
-		constexpr uint32_t rgb888 = 0x00;
-		constexpr uint32_t rbg565 = 0x02;
+		inline constexpr auto rgb888 = uint32_t {0x00};
+		inline constexpr auto rbg565 = uint32_t {0x02};
 
 	}	// namespace format
 
@@ -62,8 +64,8 @@ namespace lcd::otm8009a {
 		// Width and Height in Portrait mode
 		// #define OTM8009A_480X800_WIDTH  ((uint16_t)480)	  // LCD PIXEL WIDTH
 		// #define OTM8009A_480X800_HEIGHT ((uint16_t)800)	  // LCD PIXEL HEIGHT
-		constexpr uint16_t width  = 480;
-		constexpr uint16_t height = 800;
+		inline constexpr auto width	 = uint16_t {480};
+		inline constexpr auto height = uint16_t {800};
 
 		// Timing parameters for Portrait orientation mode
 		// #define OTM8009A_480X800_HSYNC ((uint16_t)2)		// Horizontal synchronization
@@ -72,12 +74,12 @@ namespace lcd::otm8009a {
 		// #define OTM8009A_480X800_VSYNC ((uint16_t)1)		// Vertical synchronization
 		// #define OTM8009A_480X800_VBP   ((uint16_t)15)	// Vertical back porch
 		// #define OTM8009A_480X800_VFP   ((uint16_t)16)	// Vertical front porch
-		constexpr uint16_t hsync = 2;
-		constexpr uint16_t hbp	 = 34;
-		constexpr uint16_t hfp	 = 34;
-		constexpr uint16_t vsync = 1;
-		constexpr uint16_t vbp	 = 15;
-		constexpr uint16_t vfp	 = 16;
+		inline constexpr auto hsync = uint16_t {2};
+		inline constexpr auto hbp	= uint16_t {34};
+		inline constexpr auto hfp	= uint16_t {34};
+		inline constexpr auto vsync = uint16_t {1};
+		inline constexpr auto vbp	= uint16_t {15};
+		inline constexpr auto vfp	= uint16_t {16};
 
 	}	// namespace portrait
 
@@ -86,8 +88,8 @@ namespace lcd::otm8009a {
 		// Width and Height in Landscape mode
 		// #define OTM8009A_800X480_WIDTH	((uint16_t)800)	  // LCD PIXEL WIDTH
 		// #define OTM8009A_800X480_HEIGHT ((uint16_t)480)	  // LCD PIXEL HEIGHT
-		constexpr uint16_t width  = 800;
-		constexpr uint16_t height = 480;
+		inline constexpr auto width	 = uint16_t {800};
+		inline constexpr auto height = uint16_t {480};
 
 		// Timing parameters for Landscape orientation mode
 		// #define OTM8009A_800X480_HSYNC OTM8009A_480X800_VSYNC	// Horizontal synchronization
@@ -96,52 +98,52 @@ namespace lcd::otm8009a {
 		// #define OTM8009A_800X480_VSYNC OTM8009A_480X800_HSYNC	// Vertical synchronization
 		// #define OTM8009A_800X480_VBP   OTM8009A_480X800_HBP		// Vertical back porch
 		// #define OTM8009A_800X480_VFP   OTM8009A_480X800_HFP		// Vertical front porch
-		constexpr uint16_t hsync = portrait::vsync;
-		constexpr uint16_t hbp	 = portrait::vbp;
-		constexpr uint16_t hfp	 = portrait::vfp;
-		constexpr uint16_t vsync = portrait::hsync;
-		constexpr uint16_t vbp	 = portrait::hbp;
-		constexpr uint16_t vfp	 = portrait::hfp;
+		inline constexpr auto hsync = uint16_t {portrait::vsync};
+		inline constexpr auto hbp	= uint16_t {portrait::vbp};
+		inline constexpr auto hfp	= uint16_t {portrait::vfp};
+		inline constexpr auto vsync = uint16_t {portrait::hsync};
+		inline constexpr auto vbp	= uint16_t {portrait::hbp};
+		inline constexpr auto vfp	= uint16_t {portrait::hfp};
 
 	}	// namespace landscape
 
 	namespace nop {
 
 		// #define OTM8009A_CMD_NOP 0x00	// NOP command
-		constexpr uint8_t command = 0x00;
+		inline constexpr auto command = uint8_t {0x00};
 
 	}	// namespace nop
 
 	namespace sleepout {
 
 		// #define OTM8009A_CMD_SLPOUT 0x11   // Sleep Out command
-		constexpr uint8_t command = 0x11;
+		inline constexpr auto command = uint8_t {0x11};
 
 	}	// namespace sleepout
 
 	namespace colormode {
 
 		// #define OTM8009A_CMD_COLMOD 0x3A   // Interface Pixel format command
-		constexpr uint8_t command = 0x3A;
+		inline constexpr auto command = uint8_t {0x3A};
 
 		// Possible values of COLMOD parameter corresponding to used pixel formats
 		// #define OTM8009A_COLMOD_RGB565 0x55
 		// #define OTM8009A_COLMOD_RGB888 0x77
-		constexpr uint8_t rgb565 = 0x55;
-		constexpr uint8_t rgb888 = 0x77;
+		inline constexpr auto rgb565 = uint8_t {0x55};
+		inline constexpr auto rgb888 = uint8_t {0x77};
 
 	}	// namespace colormode
 
 	namespace madctr {	 // Memory access write control
 
 		// #define OTM8009A_CMD_MADCTR 0x36   // Memory Access write control command
-		constexpr uint8_t command = 0x36;
+		inline constexpr auto command = uint8_t {0x36};
 
 		// Possible used values of MADCTR
 		// #define OTM8009A_MADCTR_MODE_PORTRAIT  0x00
 		// #define OTM8009A_MADCTR_MODE_LANDSCAPE 0x60	  // MY = 0, MX = 1, MV = 1, ML = 0, RGB = 0
-		constexpr uint8_t portrait	= 0x00;
-		constexpr uint8_t landscape = 0x60;
+		inline constexpr auto portrait	= uint8_t {0x00};
+		inline constexpr auto landscape = uint8_t {0x60};
 
 	}	// namespace madctr
 
@@ -150,16 +152,16 @@ namespace lcd::otm8009a {
 		namespace turn_on {
 
 			// #define OTM8009A_CMD_DISPON 0x29   // Display On command
-			constexpr uint8_t command = 0x29;
-			constexpr uint8_t array[] = {command, 0x00};
+			inline constexpr auto command = uint8_t {0x29};
+			inline constexpr auto array	  = std::to_array<uint8_t>({command, 0x00});
 
 		}	// namespace turn_on
 
 		namespace turn_off {
 
 			// #define OTM8009A_CMD_DISPOFF 0x28	// Display Off command
-			constexpr uint8_t command = 0x28;
-			constexpr uint8_t array[] = {command, 0x00};
+			inline constexpr auto command = uint8_t {0x28};
+			inline constexpr auto array	  = std::to_array<uint8_t>({command, 0x00});
 
 		}	// namespace turn_off
 
@@ -169,8 +171,8 @@ namespace lcd::otm8009a {
 
 		// #define OTM8009A_CMD_RAMWR 0x2C	  // Memory (GRAM) write command
 		// #define OTM8009A_CMD_RAMRD 0x2E	  // Memory (GRAM) read command
-		constexpr uint8_t write = 0x2C;
-		constexpr uint8_t read	= 0x2E;
+		inline constexpr auto write = uint8_t {0x2C};
+		inline constexpr auto read	= uint8_t {0x2E};
 
 	}	// namespace gram::command
 
@@ -181,10 +183,10 @@ namespace lcd::otm8009a {
 		// #define OTM8009A_CMD_WRCTRLD  0x53	 // Write CTRL Display command
 		// #define OTM8009A_CMD_WRCABC	  0x55	 // Write Content Adaptive Brightness command
 		// #define OTM8009A_CMD_WRCABCMB 0x5E	 // Write CABC Minimum Brightness command
-		constexpr uint8_t wrdisbv  = 0x51;
-		constexpr uint8_t wrctrld  = 0x53;
-		constexpr uint8_t wrcabc   = 0x55;
-		constexpr uint8_t wrcabcmb = 0x5E;
+		inline constexpr auto wrdisbv  = uint8_t {0x51};
+		inline constexpr auto wrctrld  = uint8_t {0x53};
+		inline constexpr auto wrcabc   = uint8_t {0x55};
+		inline constexpr auto wrcabcmb = uint8_t {0x5E};
 
 	}	// namespace cabc::command
 
@@ -193,16 +195,16 @@ namespace lcd::otm8009a {
 		namespace for_column {
 
 			// #define OTM8009A_CMD_CASET 0x2A	  // Column address set command
-			constexpr uint8_t command = 0x2A;
-			constexpr uint8_t array[] = {0x00, 0x00, 0x03, 0x1F, command};
+			inline constexpr auto command = uint8_t {0x2A};
+			inline constexpr auto array	  = std::to_array<uint8_t>({0x00, 0x00, 0x03, 0x1F, command});
 
 		}	// namespace for_column
 
 		namespace for_page {
 
 			// #define OTM8009A_CMD_PASET 0x2B	  // Page address set command
-			constexpr uint8_t command = 0x2B;
-			constexpr uint8_t array[] = {0x00, 0x00, 0x01, 0xDF, command};
+			inline constexpr auto command = uint8_t {0x2B};
+			inline constexpr auto array	  = std::to_array<uint8_t>({0x00, 0x00, 0x01, 0xDF, command});
 
 		}	// namespace for_page
 
@@ -210,106 +212,114 @@ namespace lcd::otm8009a {
 
 	namespace register_data {
 
-		constexpr uint8_t long01[] = {0x80, 0x09, 0x01, 0xFF};
-		constexpr uint8_t long02[] = {0x80, 0x09, 0xFF};
-		constexpr uint8_t long03[] = {0x00, 0x09, 0x0F, 0x0E, 0x07, 0x10, 0x0B, 0x0A, 0x04,
-									  0x07, 0x0B, 0x08, 0x0F, 0x10, 0x0A, 0x01, 0xE1};
-		constexpr uint8_t long04[] = {0x00, 0x09, 0x0F, 0x0E, 0x07, 0x10, 0x0B, 0x0A, 0x04,
-									  0x07, 0x0B, 0x08, 0x0F, 0x10, 0x0A, 0x01, 0xE2};
-		constexpr uint8_t long05[] = {0x79, 0x79, 0xD8};
-		constexpr uint8_t long06[] = {0x00, 0x01, 0xB3};
-		constexpr uint8_t long07[] = {0x85, 0x01, 0x00, 0x84, 0x01, 0x00, 0xCE};
-		constexpr uint8_t long08[] = {0x18, 0x04, 0x03, 0x39, 0x00, 0x00, 0x00, 0x18,
-									  0x03, 0x03, 0x3A, 0x00, 0x00, 0x00, 0xCE};
-		constexpr uint8_t long09[] = {0x18, 0x02, 0x03, 0x3B, 0x00, 0x00, 0x00, 0x18,
-									  0x01, 0x03, 0x3C, 0x00, 0x00, 0x00, 0xCE};
-		constexpr uint8_t long10[] = {0x01, 0x01, 0x20, 0x20, 0x00, 0x00, 0x01, 0x02, 0x00, 0x00, 0xCF};
-		constexpr uint8_t long11[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCB};
-		constexpr uint8_t long12[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-									  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCB};
-		constexpr uint8_t long13[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-									  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCB};
-		constexpr uint8_t long14[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCB};
-		constexpr uint8_t long15[] = {0x00, 0x04, 0x04, 0x04, 0x04, 0x04, 0x00, 0x00,
-									  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCB};
-		constexpr uint8_t long16[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x04,
-									  0x04, 0x04, 0x04, 0x00, 0x00, 0x00, 0x00, 0xCB};
-		constexpr uint8_t long17[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCB};
-		constexpr uint8_t long18[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xCB};
-		constexpr uint8_t long19[] = {0x00, 0x26, 0x09, 0x0B, 0x01, 0x25, 0x00, 0x00, 0x00, 0x00, 0xCC};
-		constexpr uint8_t long20[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-									  0x00, 0x00, 0x00, 0x26, 0x0A, 0x0C, 0x02, 0xCC};
-		constexpr uint8_t long21[] = {0x25, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-									  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCC};
-		constexpr uint8_t long22[] = {0x00, 0x25, 0x0C, 0x0A, 0x02, 0x26, 0x00, 0x00, 0x00, 0x00, 0xCC};
-		constexpr uint8_t long23[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-									  0x00, 0x00, 0x00, 0x25, 0x0B, 0x09, 0x01, 0xCC};
-		constexpr uint8_t long24[] = {0x26, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-									  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCC};
-		constexpr uint8_t long25[] = {0xFF, 0xFF, 0xFF, 0xFF};
+		inline constexpr auto long01 = std::to_array<uint8_t>({0x80, 0x09, 0x01, 0xFF});
+		inline constexpr auto long02 = std::to_array<uint8_t>({0x80, 0x09, 0xFF});
+		inline constexpr auto long03 = std::to_array<uint8_t>(
+			{0x00, 0x09, 0x0F, 0x0E, 0x07, 0x10, 0x0B, 0x0A, 0x04, 0x07, 0x0B, 0x08, 0x0F, 0x10, 0x0A, 0x01, 0xE1});
+		inline constexpr auto long04 = std::to_array<uint8_t>(
+			{0x00, 0x09, 0x0F, 0x0E, 0x07, 0x10, 0x0B, 0x0A, 0x04, 0x07, 0x0B, 0x08, 0x0F, 0x10, 0x0A, 0x01, 0xE2});
+		inline constexpr auto long05 = std::to_array<uint8_t>({0x79, 0x79, 0xD8});
+		inline constexpr auto long06 = std::to_array<uint8_t>({0x00, 0x01, 0xB3});
+		inline constexpr auto long07 = std::to_array<uint8_t>({0x85, 0x01, 0x00, 0x84, 0x01, 0x00, 0xCE});
+		inline constexpr auto long08 = std::to_array<uint8_t>(
+			{0x18, 0x04, 0x03, 0x39, 0x00, 0x00, 0x00, 0x18, 0x03, 0x03, 0x3A, 0x00, 0x00, 0x00, 0xCE});
+		inline constexpr auto long09 = std::to_array<uint8_t>(
+			{0x18, 0x02, 0x03, 0x3B, 0x00, 0x00, 0x00, 0x18, 0x01, 0x03, 0x3C, 0x00, 0x00, 0x00, 0xCE});
+		inline constexpr auto long10 =
+			std::to_array<uint8_t>({0x01, 0x01, 0x20, 0x20, 0x00, 0x00, 0x01, 0x02, 0x00, 0x00, 0xCF});
+		inline constexpr auto long11 =
+			std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCB});
+		inline constexpr auto long12 = std::to_array<uint8_t>(
+			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCB});
+		inline constexpr auto long13 = std::to_array<uint8_t>(
+			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCB});
+		inline constexpr auto long14 =
+			std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCB});
+		inline constexpr auto long15 = std::to_array<uint8_t>(
+			{0x00, 0x04, 0x04, 0x04, 0x04, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCB});
+		inline constexpr auto long16 = std::to_array<uint8_t>(
+			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x04, 0x04, 0x04, 0x04, 0x00, 0x00, 0x00, 0x00, 0xCB});
+		inline constexpr auto long17 =
+			std::to_array<uint8_t>({0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCB});
+		inline constexpr auto long18 =
+			std::to_array<uint8_t>({0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xCB});
+		inline constexpr auto long19 =
+			std::to_array<uint8_t>({0x00, 0x26, 0x09, 0x0B, 0x01, 0x25, 0x00, 0x00, 0x00, 0x00, 0xCC});
+		inline constexpr auto long20 = std::to_array<uint8_t>(
+			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x26, 0x0A, 0x0C, 0x02, 0xCC});
+		inline constexpr auto long21 = std::to_array<uint8_t>(
+			{0x25, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCC});
+		inline constexpr auto long22 =
+			std::to_array<uint8_t>({0x00, 0x25, 0x0C, 0x0A, 0x02, 0x26, 0x00, 0x00, 0x00, 0x00, 0xCC});
+		inline constexpr auto long23 = std::to_array<uint8_t>(
+			{0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x25, 0x0B, 0x09, 0x01, 0xCC});
+		inline constexpr auto long24 = std::to_array<uint8_t>(
+			{0x26, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCC});
+		inline constexpr auto long25 = std::to_array<uint8_t>({0xFF, 0xFF, 0xFF, 0xFF});
 
 		// CASET value (Column Address Set) : X direction LCD GRAM boundaries
 		// depending on LCD orientation mode and PASET value (Page Address Set) : Y direction
 		// LCD GRAM boundaries depending on LCD orientation mode
 		// XS[15:0] = 0x000 = 0, XE[15:0] = 0x31F = 799 for landscape mode : apply to CASET
 		// YS[15:0] = 0x000 = 0, YE[15:0] = 0x31F = 799 for portrait mode  : apply to PASET
-		constexpr uint8_t long27[] = {0x00, 0x00, 0x03, 0x1F, set_address::for_column::command};
+		inline constexpr auto long27 =
+			std::to_array<uint8_t>({0x00, 0x00, 0x03, 0x1F, set_address::for_column::command});
 
 		// XS[15:0] = 0x000 = 0, XE[15:0] = 0x1DF = 479 for portrait mode  : apply to CASET
 		// YS[15:0] = 0x000 = 0, YE[15:0] = 0x1DF = 479 for landscape mode : apply to PASET
-		constexpr uint8_t long28[] = {0x00, 0x00, 0x01, 0xDF, set_address::for_page::command};
+		inline constexpr auto long28 = std::to_array<uint8_t>({0x00, 0x00, 0x01, 0xDF, set_address::for_page::command});
 
-		constexpr uint8_t short01[] = {nop::command, 0x00};
-		constexpr uint8_t short02[] = {nop::command, 0x80};
-		constexpr uint8_t short03[] = {0xC4, 0x30};
-		constexpr uint8_t short04[] = {nop::command, 0x8A};
-		constexpr uint8_t short05[] = {0xC4, 0x40};
-		constexpr uint8_t short06[] = {nop::command, 0xB1};
-		constexpr uint8_t short07[] = {0xC5, 0xA9};
-		constexpr uint8_t short08[] = {nop::command, 0x91};
-		constexpr uint8_t short09[] = {0xC5, 0x34};
-		constexpr uint8_t short10[] = {nop::command, 0xB4};
-		constexpr uint8_t short11[] = {0xC0, 0x50};
-		constexpr uint8_t short12[] = {0xD9, 0x4E};
-		constexpr uint8_t short13[] = {nop::command, 0x81};
-		constexpr uint8_t short14[] = {0xC1, 0x66};
-		constexpr uint8_t short15[] = {nop::command, 0xA1};
-		constexpr uint8_t short16[] = {0xC1, 0x08};
-		constexpr uint8_t short17[] = {nop::command, 0x92};
-		constexpr uint8_t short18[] = {0xC5, 0x01};
-		constexpr uint8_t short19[] = {nop::command, 0x95};
-		constexpr uint8_t short20[] = {nop::command, 0x94};
-		constexpr uint8_t short21[] = {0xC5, 0x33};
-		constexpr uint8_t short22[] = {nop::command, 0xA3};
-		constexpr uint8_t short23[] = {0xC0, 0x1B};
-		constexpr uint8_t short24[] = {nop::command, 0x82};
-		constexpr uint8_t short25[] = {0xC5, 0x83};
-		constexpr uint8_t short26[] = {0xC4, 0x83};
-		constexpr uint8_t short27[] = {0xC1, 0x0E};
-		constexpr uint8_t short28[] = {nop::command, 0xA6};
-		constexpr uint8_t short29[] = {nop::command, 0xA0};
-		constexpr uint8_t short30[] = {nop::command, 0xB0};
-		constexpr uint8_t short31[] = {nop::command, 0xC0};
-		constexpr uint8_t short32[] = {nop::command, 0xD0};
-		constexpr uint8_t short33[] = {nop::command, 0x90};
-		constexpr uint8_t short34[] = {nop::command, 0xE0};
-		constexpr uint8_t short35[] = {nop::command, 0xF0};
-		constexpr uint8_t short36[] = {sleepout::command, 0x00};
-		constexpr uint8_t short37[] = {colormode::command, colormode::rgb565};
-		constexpr uint8_t short38[] = {colormode::command, colormode::rgb888};
-		constexpr uint8_t short39[] = {madctr::command, madctr::landscape};
-		constexpr uint8_t short40[] = {cabc::command::wrdisbv, 0x7F};
-		constexpr uint8_t short41[] = {cabc::command::wrctrld, 0x2C};
-		constexpr uint8_t short42[] = {cabc::command::wrcabc, 0x02};
-		constexpr uint8_t short43[] = {cabc::command::wrcabcmb, 0xFF};
-		constexpr uint8_t short44[] = {display::turn_on::command, 0x00};
-		constexpr uint8_t short45[] = {gram::command::write, 0x00};
-		constexpr uint8_t short46[] = {0xCF, 0x00};
-		constexpr uint8_t short47[] = {0xC5, 0x66};
-		constexpr uint8_t short48[] = {nop::command, 0xB6};
-		constexpr uint8_t short49[] = {0xF5, 0x06};
-		constexpr uint8_t short50[] = {nop::command, 0xB1};
-		constexpr uint8_t short51[] = {0xC6, 0x06};
+		inline constexpr auto short01 = std::to_array<uint8_t>({nop::command, 0x00});
+		inline constexpr auto short02 = std::to_array<uint8_t>({nop::command, 0x80});
+		inline constexpr auto short03 = std::to_array<uint8_t>({0xC4, 0x30});
+		inline constexpr auto short04 = std::to_array<uint8_t>({nop::command, 0x8A});
+		inline constexpr auto short05 = std::to_array<uint8_t>({0xC4, 0x40});
+		inline constexpr auto short06 = std::to_array<uint8_t>({nop::command, 0xB1});
+		inline constexpr auto short07 = std::to_array<uint8_t>({0xC5, 0xA9});
+		inline constexpr auto short08 = std::to_array<uint8_t>({nop::command, 0x91});
+		inline constexpr auto short09 = std::to_array<uint8_t>({0xC5, 0x34});
+		inline constexpr auto short10 = std::to_array<uint8_t>({nop::command, 0xB4});
+		inline constexpr auto short11 = std::to_array<uint8_t>({0xC0, 0x50});
+		inline constexpr auto short12 = std::to_array<uint8_t>({0xD9, 0x4E});
+		inline constexpr auto short13 = std::to_array<uint8_t>({nop::command, 0x81});
+		inline constexpr auto short14 = std::to_array<uint8_t>({0xC1, 0x66});
+		inline constexpr auto short15 = std::to_array<uint8_t>({nop::command, 0xA1});
+		inline constexpr auto short16 = std::to_array<uint8_t>({0xC1, 0x08});
+		inline constexpr auto short17 = std::to_array<uint8_t>({nop::command, 0x92});
+		inline constexpr auto short18 = std::to_array<uint8_t>({0xC5, 0x01});
+		inline constexpr auto short19 = std::to_array<uint8_t>({nop::command, 0x95});
+		inline constexpr auto short20 = std::to_array<uint8_t>({nop::command, 0x94});
+		inline constexpr auto short21 = std::to_array<uint8_t>({0xC5, 0x33});
+		inline constexpr auto short22 = std::to_array<uint8_t>({nop::command, 0xA3});
+		inline constexpr auto short23 = std::to_array<uint8_t>({0xC0, 0x1B});
+		inline constexpr auto short24 = std::to_array<uint8_t>({nop::command, 0x82});
+		inline constexpr auto short25 = std::to_array<uint8_t>({0xC5, 0x83});
+		inline constexpr auto short26 = std::to_array<uint8_t>({0xC4, 0x83});
+		inline constexpr auto short27 = std::to_array<uint8_t>({0xC1, 0x0E});
+		inline constexpr auto short28 = std::to_array<uint8_t>({nop::command, 0xA6});
+		inline constexpr auto short29 = std::to_array<uint8_t>({nop::command, 0xA0});
+		inline constexpr auto short30 = std::to_array<uint8_t>({nop::command, 0xB0});
+		inline constexpr auto short31 = std::to_array<uint8_t>({nop::command, 0xC0});
+		inline constexpr auto short32 = std::to_array<uint8_t>({nop::command, 0xD0});
+		inline constexpr auto short33 = std::to_array<uint8_t>({nop::command, 0x90});
+		inline constexpr auto short34 = std::to_array<uint8_t>({nop::command, 0xE0});
+		inline constexpr auto short35 = std::to_array<uint8_t>({nop::command, 0xF0});
+		inline constexpr auto short36 = std::to_array<uint8_t>({sleepout::command, 0x00});
+		inline constexpr auto short37 = std::to_array<uint8_t>({colormode::command, colormode::rgb565});
+		inline constexpr auto short38 = std::to_array<uint8_t>({colormode::command, colormode::rgb888});
+		inline constexpr auto short39 = std::to_array<uint8_t>({madctr::command, madctr::landscape});
+		inline constexpr auto short40 = std::to_array<uint8_t>({cabc::command::wrdisbv, 0x7F});
+		inline constexpr auto short41 = std::to_array<uint8_t>({cabc::command::wrctrld, 0x2C});
+		inline constexpr auto short42 = std::to_array<uint8_t>({cabc::command::wrcabc, 0x02});
+		inline constexpr auto short43 = std::to_array<uint8_t>({cabc::command::wrcabcmb, 0xFF});
+		inline constexpr auto short44 = std::to_array<uint8_t>({display::turn_on::command, 0x00});
+		inline constexpr auto short45 = std::to_array<uint8_t>({gram::command::write, 0x00});
+		inline constexpr auto short46 = std::to_array<uint8_t>({0xCF, 0x00});
+		inline constexpr auto short47 = std::to_array<uint8_t>({0xC5, 0x66});
+		inline constexpr auto short48 = std::to_array<uint8_t>({nop::command, 0xB6});
+		inline constexpr auto short49 = std::to_array<uint8_t>({0xF5, 0x06});
+		inline constexpr auto short50 = std::to_array<uint8_t>({nop::command, 0xB1});
+		inline constexpr auto short51 = std::to_array<uint8_t>({0xC6, 0x06});
 
 	}	// namespace register_data
 
