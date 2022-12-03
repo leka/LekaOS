@@ -21,7 +21,8 @@ class CoreDSI : public interface::DSIBase
 	[[nodiscard]] auto getHandle() const -> DSI_HandleTypeDef;
 	[[nodiscard]] auto getConfig() -> DSI_VidCfgTypeDef final;
 
-	void write(const uint8_t *data, uint32_t size) final;
+	[[deprecated]] void write(const uint8_t *data, uint32_t size) final;
+	void write(std::span<const uint8_t> data) final;
 
   private:
 	interface::STM32Hal &_hal;
