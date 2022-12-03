@@ -16,7 +16,6 @@ class CoreDSI : public interface::DSIBase
 	MOCK_METHOD(void, start, (), (override));
 	MOCK_METHOD(void, reset, (), (override));
 	MOCK_METHOD(DSI_VidCfgTypeDef, getConfig, (), (override));
-	MOCK_METHOD(void, write, (const uint8_t *data, const uint32_t size), (override));
 	MOCK_METHOD(void, write, (std::span<const uint8_t> data), (override));
 };
 
