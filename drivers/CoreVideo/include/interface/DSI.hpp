@@ -21,8 +21,7 @@ class DSIBase
 
 	virtual auto getConfig() -> DSI_VidCfgTypeDef = 0;
 
-	virtual void write(const uint8_t *data, uint32_t size) = 0;
-	virtual void write(std::span<const uint8_t> data)	   = 0;
+	virtual void write(std::span<const uint8_t> data) = 0;
 };
 
 }	// namespace leka::interface
