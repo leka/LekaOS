@@ -320,6 +320,7 @@ endif()
 
 # Print options
 message(STATUS "")
+message(STATUS "CMAKE_CXX_COMPILER            --> ${CMAKE_CXX_COMPILER}")
 message(STATUS "CMAKE_EXPORT_COMPILE_COMMANDS --> ${CMAKE_EXPORT_COMPILE_COMMANDS}")
 message(STATUS "UT LITE                       --> ${UT_LITE}")
 message(STATUS "CODE_COVERAGE                 --> ${COVERAGE}")
