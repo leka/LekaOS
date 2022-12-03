@@ -36,7 +36,7 @@ TEST_F(CoreOTM8009ATest, instantiation)
 
 TEST_F(CoreOTM8009ATest, initialize)
 {
-	EXPECT_CALL(dsimock, write).Times(101);
+	EXPECT_CALL(dsimock, write(_, _)).Times(101);
 
 	otm.initialize();
 
@@ -101,13 +101,13 @@ TEST_F(CoreOTM8009ATest, setBrightnessTurnOffThenTurnOn)
 
 	EXPECT_EQ(spy_PwmOut_getValue(), initial_brightness_value);
 
-	EXPECT_CALL(dsimock, write).Times(1);
+	EXPECT_CALL(dsimock, write(_, _)).Times(1);
 	otm.turnOff();
 
 	EXPECT_EQ(spy_PwmOut_getValue(), 0);
 	EXPECT_NE(spy_PwmOut_getValue(), initial_brightness_value);
 
-	EXPECT_CALL(dsimock, write).Times(1);
+	EXPECT_CALL(dsimock, write(_, _)).Times(1);
 	otm.turnOn();
 
 	EXPECT_EQ(spy_PwmOut_getValue(), initial_brightness_value);

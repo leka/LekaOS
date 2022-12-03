@@ -144,47 +144,47 @@ TEST_F(CoreDSITest, resetSequence)
 
 TEST_F(CoreDSITest, ioWriteShortCommand)
 {
-	uint8_t command[] = {0x2A, 0x2B};
-	auto config		  = coredsi.getConfig();
+	constexpr auto command = std::to_array<uint8_t>({0x2A, 0x2B});
+	auto config			   = coredsi.getConfig();
 
 	EXPECT_CALL(halmock, HAL_DSI_ShortWrite(_, config.VirtualChannelID, _, command[0], command[1])).Times(1);
 	EXPECT_CALL(halmock, HAL_DSI_LongWrite).Times(0);
 
-	coredsi.write(command, std::size(command));
+	coredsi.write(command);
 }
 
 TEST_F(CoreDSITest, ioWriteLongCommand)
 {
 	auto config = coredsi.getConfig();
 
-	uint8_t command1[] = {0x2A, 0x2B, 0x2C};
-	uint8_t command2[] = {0x2A, 0x2B, 0x2C, 0x2D, 0x2E};
-	uint8_t command3[] = {0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30};
-	uint8_t command4[] = {0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x31};
+	constexpr auto command1 = std::to_array<uint8_t>({0x2A, 0x2B, 0x2C});
+	constexpr auto command2 = std::to_array<uint8_t>({0x2A, 0x2B, 0x2C, 0x2D, 0x2E});
+	constexpr auto command3 = std::to_array<uint8_t>({0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30});
+	constexpr auto command4 = std::to_array<uint8_t>({0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x31});
 
 	EXPECT_CALL(halmock, HAL_DSI_ShortWrite).Times(0);
 
 	EXPECT_CALL(halmock, HAL_DSI_LongWrite(_, config.VirtualChannelID, DSI_DCS_LONG_PKT_WRITE, std::size(command1),
-										   command1[std::size(command1) - 1], command1))
+										   command1.back(), const_cast<uint8_t *>(command1.data())))
 		.Times(1);
 
-	coredsi.write(command1, std::size(command1));
+	coredsi.write(command1);
 
 	EXPECT_CALL(halmock, HAL_DSI_LongWrite(_, config.VirtualChannelID, DSI_DCS_LONG_PKT_WRITE, std::size(command2),
-										   command2[std::size(command2) - 1], command2))
+										   command2.back(), const_cast<uint8_t *>(command2.data())))
 		.Times(1);
 
-	coredsi.write(command2, std::size(command2));
+	coredsi.write(command2);
 
 	EXPECT_CALL(halmock, HAL_DSI_LongWrite(_, config.VirtualChannelID, DSI_DCS_LONG_PKT_WRITE, std::size(command3),
-										   command3[std::size(command3) - 1], command3))
+										   command3.back(), const_cast<uint8_t *>(command3.data())))
 		.Times(1);
 
-	coredsi.write(command3, std::size(command3));
+	coredsi.write(command3);
 
 	EXPECT_CALL(halmock, HAL_DSI_LongWrite(_, config.VirtualChannelID, DSI_DCS_LONG_PKT_WRITE, std::size(command4),
-										   command4[std::size(command4) - 1], command4))
+										   command4.back(), const_cast<uint8_t *>(command4.data())))
 		.Times(1);
 
-	coredsi.write(command4, std::size(command4));
+	coredsi.write(command4);
 }
