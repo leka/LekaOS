@@ -21,17 +21,26 @@ jobs:
   run_unit_tests:
     name: Build & run
     runs-on: ubuntu-22.04
+    continue-on-error: ${{ matrix.experimental }}
 
     strategy:
       fail-fast: false
       matrix:
-        compiler: [
+        compiler:
+          [
             { name: Clang 13, cc: /usr/bin/clang-13, cxx: /usr/bin/clang++-13 },
             { name: Clang 14, cc: /usr/bin/clang-14, cxx: /usr/bin/clang++-14 },
             { name: GCC 10, cc: /usr/bin/gcc-10, cxx: /usr/bin/g++-10 },
-            # { name: GCC 11, cc: /usr/bin/gcc-11, cxx: /usr/bin/g++-11 }, # ? Not working yet, see https://github.com/boost-ext/sml/issues/546
             { name: GCC 12, cc: /usr/bin/gcc-12, cxx: /usr/bin/g++-12 },
           ]
+        experimental: [false]
+        include:
+          - compiler: {
+                name: GCC 11, # ? Not working yet, see https://github.com/boost-ext/sml/issues/546
+                cc: /usr/bin/gcc-11,
+                cxx: /usr/bin/g++-11,
+              }
+            experimental: true
 
     steps:
       - uses: actions/checkout@v3
