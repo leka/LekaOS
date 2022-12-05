@@ -39,14 +39,14 @@ void CoreMotor::setSpeed(float speed)
 		return;
 	}
 
+	_speed.resume();
+
 	if (speed > 1.0F) {
 		_speed.write(1.0F);
 
 	} else {
 		_speed.write(speed);
 	}
-
-	_speed.resume();
 }
 
 }	// namespace leka
