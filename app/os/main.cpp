@@ -175,8 +175,6 @@ namespace leds {
 	auto ears = CoreLED<internal::ears::size> {internal::ears::spi};
 	auto belt = CoreLED<internal::belt::size> {internal::belt::spi};
 
-	auto kit = LedKit {internal::animations::event_loop, ears, belt};
-
 	void turnOff()
 	{
 		ears.setColor(RGB::black);
@@ -186,6 +184,8 @@ namespace leds {
 	}
 
 }	// namespace leds
+
+auto ledkit = LedKit {leds::internal::animations::event_loop, leds::ears, leds::belt};
 
 namespace motors {
 
@@ -250,8 +250,8 @@ namespace display::internal {
 }	// namespace display::internal
 
 auto videokit	   = VideoKit {display::internal::event_flags, display::internal::corevideo};
-auto behaviorkit   = BehaviorKit {videokit, leds::kit, motors::left::motor, motors::right::motor};
-auto reinforcerkit = ReinforcerKit {videokit, leds::kit, motors::left::motor, motors::right::motor};
+auto behaviorkit   = BehaviorKit {videokit, ledkit, motors::left::motor, motors::right::motor};
+auto reinforcerkit = ReinforcerKit {videokit, ledkit, motors::left::motor, motors::right::motor};
 
 namespace command {
 
@@ -392,7 +392,7 @@ namespace robot {
 		motors::right::motor,
 		leds::ears,
 		leds::belt,
-		leds::kit,
+		ledkit,
 		display::internal::corelcd,
 		videokit,
 		behaviorkit,
