@@ -162,10 +162,9 @@ namespace display {
 		auto corelcd	   = CoreLCD {coreotm};
 		auto _corejpegmode = CoreJPEGModeDMA {hal};
 		auto corejpeg	   = CoreJPEG {hal, _corejpegmode};
-		auto corevideo =
-			CoreVideo {hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg};
 
-		HAL_VIDEO_DECLARE_IRQ_HANDLERS(corevideo);
+		extern "C" auto corevideo =
+			CoreVideo {hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg};
 
 	}	// namespace internal
 

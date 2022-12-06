@@ -58,42 +58,34 @@ namespace sd {
 
 }	// namespace sd
 
-namespace display {
+namespace display::internal {
 
-	namespace internal {
+	auto event_flags = CoreEventFlags {};
 
-		auto event_flags = CoreEventFlags {};
+	auto corell		   = CoreLL {};
+	auto pixel		   = CGPixel {corell};
+	auto hal		   = CoreSTM32Hal {};
+	auto coresdram	   = CoreSDRAM {hal};
+	auto coredma2d	   = CoreDMA2D {hal};
+	auto coredsi	   = CoreDSI {hal};
+	auto coreltdc	   = CoreLTDC {hal};
+	auto coregraphics  = CoreGraphics {coredma2d};
+	auto corefont	   = CoreFont {pixel};
+	auto coreotm	   = CoreLCDDriverOTM8009A {coredsi, PinName::SCREEN_BACKLIGHT_PWM};
+	auto corelcd	   = CoreLCD {coreotm};
+	auto _corejpegmode = CoreJPEGModeDMA {hal};
+	auto corejpeg	   = CoreJPEG {hal, _corejpegmode};
 
-		auto corell		  = CoreLL {};
-		auto pixel		  = CGPixel {corell};
-		auto hal		  = CoreSTM32Hal {};
-		auto coresdram	  = CoreSDRAM {hal};
-		auto coredma2d	  = CoreDMA2D {hal};
-		auto coredsi	  = CoreDSI {hal};
-		auto coreltdc	  = CoreLTDC {hal};
-		auto coregraphics = CoreGraphics {coredma2d};
-		auto corefont	  = CoreFont {pixel};
-		auto coreotm	  = CoreLCDDriverOTM8009A {coredsi, PinName::SCREEN_BACKLIGHT_PWM};
+	extern "C" auto corevideo =
+		CoreVideo {hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg};
 
-		auto corejpegmode = CoreJPEGModeDMA {hal};
-		auto corejpeg	  = CoreJPEG {hal, corejpegmode};
+}	// namespace display::internal
 
-	}	// namespace internal
-
-	auto corelcd = CoreLCD {internal::coreotm};
-
-	auto corevideo =
-		CoreVideo {internal::hal, internal::coresdram,	  internal::coredma2d, internal::coredsi, internal::coreltdc,
-				   corelcd,		  internal::coregraphics, internal::corefont,  internal::corejpeg};
-
-	HAL_VIDEO_DECLARE_IRQ_HANDLERS(corevideo);
-
-}	// namespace display
+auto videokit = VideoKit {display::internal::event_flags, display::internal::corevideo};
 
 }	// namespace
 
-auto hello	  = HelloWorld {};
-auto videokit = VideoKit {display::internal::event_flags, display::corevideo};
+auto hello = HelloWorld {};
 
 auto com_utils_flag = rtos::EventFlags {};
 auto com			= ComUtils {com_utils_flag};
@@ -102,7 +94,7 @@ auto main() -> int
 {
 	sd::init();
 
-	display::corelcd.turnOn();
+	display::internal::corelcd.turnOn();
 	videokit.initializeScreen();
 
 	rtos::ThisThread::sleep_for(1s);

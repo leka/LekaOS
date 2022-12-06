@@ -25,10 +25,7 @@ using ::testing::ReturnRef;
 class CoreVideoTest : public ::testing::Test
 {
   protected:
-	CoreVideoTest()
-		: corevideo(halmock, sdrammock, dma2dmock, dsimock, ltdcmock, lcdmock, graphicsmock, fontmock, jpegmock)
-	{
-	}
+	CoreVideoTest() = default;
 
 	// void SetUp() override {}
 	// void TearDown() override {}
@@ -45,7 +42,7 @@ class CoreVideoTest : public ::testing::Test
 
 	mock::File filemock;
 
-	CoreVideo corevideo;
+	CoreVideo corevideo {halmock, sdrammock, dma2dmock, dsimock, ltdcmock, lcdmock, graphicsmock, fontmock, jpegmock};
 };
 
 MATCHER_P(compareColor, expected_color, "")

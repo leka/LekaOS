@@ -65,28 +65,4 @@ class CoreVideo : public interface::Video
 	bool _is_last_frame {false};
 };
 
-#define HAL_VIDEO_DECLARE_IRQ_HANDLERS(instance)                                                                       \
-	extern "C" {                                                                                                       \
-	void DMA2D_IRQHandler(void)                                                                                        \
-	{                                                                                                                  \
-		HAL_DMA2D_IRQHandler(&(instance).getDMA2DHandle());                                                            \
-	}                                                                                                                  \
-	void LTDC_IRQHandler(void)                                                                                         \
-	{                                                                                                                  \
-		HAL_LTDC_IRQHandler(&(instance).getLTDCHandle());                                                              \
-	}                                                                                                                  \
-	void JPEG_IRQHandler(void)                                                                                         \
-	{                                                                                                                  \
-		HAL_JPEG_IRQHandler(&(instance).getJPEGHandle());                                                              \
-	}                                                                                                                  \
-	void DMA2_Stream0_IRQHandler(void)                                                                                 \
-	{                                                                                                                  \
-		HAL_DMA_IRQHandler((instance).getJPEGHandle().hdmain);                                                         \
-	}                                                                                                                  \
-	void DMA2_Stream1_IRQHandler(void)                                                                                 \
-	{                                                                                                                  \
-		HAL_DMA_IRQHandler((instance).getJPEGHandle().hdmaout);                                                        \
-	}                                                                                                                  \
-	}
-
 }	// namespace leka
