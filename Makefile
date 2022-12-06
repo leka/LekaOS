@@ -35,6 +35,7 @@ TARGET_BOARD ?= LEKA_V1_2_DEV
 COVERAGE   ?= ON
 SANITIZERS ?= OFF
 UT_LITE    ?= OFF
+GCOV_EXEC  ?= ""
 
 # os
 ENABLE_LOG_DEBUG    ?= ON
@@ -188,8 +189,8 @@ coverage_sonarqube:
 	@echo ""
 	@echo "🔬 Generating code coverage 📝"
 	@echo ""
-	@gcovr --root . $(EXCLUDE_FROM_GCOVR_COVERAGE)
-	@gcovr --root . $(EXCLUDE_FROM_GCOVR_COVERAGE) --exclude-throw-branches --exclude-unreachable-branches --sonarqube $(UNIT_TESTS_COVERAGE_DIR)/coverage.xml
+	@gcovr --root . $(EXCLUDE_FROM_GCOVR_COVERAGE) --gcov-executable $(GCOV_EXEC)
+	@gcovr --root . $(EXCLUDE_FROM_GCOVR_COVERAGE) --gcov-executable $(GCOV_EXEC) --exclude-throw-branches --exclude-unreachable-branches --sonarqube $(UNIT_TESTS_COVERAGE_DIR)/coverage.xml
 	@echo ""
 	@echo "📝 SonarQube XML report can be viewed with:"
 	@echo "    open $(UNIT_TESTS_COVERAGE_DIR)/coverage.xml\n"
@@ -197,8 +198,10 @@ coverage_sonarqube:
 coverage_lcov:
 	@echo ""
 	@echo "🔬 Generating code coverage using lcov 📝"
+	@which lcov
+	@lcov --version
 	@mkdir -p $(UNIT_TESTS_COVERAGE_DIR)
-	@lcov --capture --directory . --output-file $(UNIT_TESTS_COVERAGE_DIR)/_tmp_coverage.info
+	@lcov --capture --directory . --output-file $(UNIT_TESTS_COVERAGE_DIR)/_tmp_coverage.info --gcov-tool $(GCOV_EXEC)
 	@lcov --remove $(UNIT_TESTS_COVERAGE_DIR)/_tmp_coverage.info $(EXCLUDE_FROM_LCOV_COVERAGE) -o $(UNIT_TESTS_COVERAGE_DIR)/coverage.info
 	@lcov --list $(UNIT_TESTS_COVERAGE_DIR)/coverage.info
 
