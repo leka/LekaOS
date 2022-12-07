@@ -62,12 +62,35 @@ TEST_F(FileReceptionTest, setFilePath)
 	file_reception.setFilePath(temp_file_path);
 
 	auto read_after_action = readTempFile();
-	EXPECT_EQ(read_after_action, "");
+	EXPECT_EQ(read_after_action, packet_in_string);
+	EXPECT_EQ(read_after_action, read_before_action);
 }
 
 TEST_F(FileReceptionTest, setFilePathFileNotAccessible)
 {
 	file_reception.setFilePath("/tmp/unexisting_directory/XXXXXX");
+
+	// nothing expected
+}
+
+TEST_F(FileReceptionTest, clearFile)
+{
+	writeTempFile(packet);
+	auto read_before_action = readTempFile();
+	EXPECT_EQ(read_before_action, packet_in_string);
+
+	file_reception.setFilePath(temp_file_path);
+	file_reception.clearFile();
+
+	auto read_after_action = readTempFile();
+	EXPECT_EQ(read_after_action, "");
+}
+
+TEST_F(FileReceptionTest, clearFileFileNotAccessible)
+{
+	file_reception.setFilePath("/tmp/unexisting_directory/XXXXXX");
+
+	file_reception.clearFile();
 
 	// nothing expected
 }
