@@ -31,7 +31,7 @@ class CoreOTM8009ATest : public ::testing::Test
 
 TEST_F(CoreOTM8009ATest, instantiation)
 {
-	ASSERT_NE(&otm, nullptr);
+	EXPECT_NE(&otm, nullptr);
 }
 
 TEST_F(CoreOTM8009ATest, initialize)
@@ -40,7 +40,7 @@ TEST_F(CoreOTM8009ATest, initialize)
 
 	otm.initialize();
 
-	ASSERT_EQ(spy_PwmOut_getPeriod(), 0.01f);
+	EXPECT_EQ(spy_PwmOut_getPeriod(), 0.01f);
 }
 
 TEST_F(CoreOTM8009ATest, setLandscapeOrientation)
@@ -90,7 +90,7 @@ TEST_F(CoreOTM8009ATest, setBrightness)
 {
 	otm.setBrightness(0.5);
 
-	ASSERT_EQ(spy_PwmOut_getValue(), 0.5);
+	EXPECT_EQ(spy_PwmOut_getValue(), 0.5);
 }
 
 TEST_F(CoreOTM8009ATest, setBrightnessTurnOffThenTurnOn)
