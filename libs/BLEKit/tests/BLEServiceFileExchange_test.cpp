@@ -183,6 +183,67 @@ TEST_F(BLEServiceFileExchangeTest, getFilePathNotSameHandle)
 	onDataReceivedProcess(cast_sent_file_path);
 }
 
+TEST_F(BLEServiceFileExchangeTest, setFileIsCleared)
+{
+	uint8_t actual_clear_file {};
+
+	auto spy_callback = [&actual_clear_file](const BLEServiceFileExchange::data_to_send_handle_t &handle) {
+		actual_clear_file = std::get<1>(handle)[0];
+	};
+
+	service_file_exchange.onDataReadyToSend(spy_callback);
+
+	service_file_exchange.setFileIsCleared();
+	EXPECT_FALSE(actual_clear_file);
+}
+
+TEST_F(BLEServiceFileExchangeTest, onClearFileRequestedFalse)
+{
+	bool sent_value		 = false;
+	auto sent_value_data = static_cast<uint8_t>(sent_value);
+
+	data_received_handle.data = &sent_value_data;
+
+	testing::MockFunction<void()> mock_callback {};
+	service_file_exchange.onClearFileRequested(mock_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_callback, Call()).Times(0);
+
+	service_file_exchange.onDataReceived(data_received_handle);
+}
+
+TEST_F(BLEServiceFileExchangeTest, onClearFileRequestedTrue)
+{
+	bool sent_value		 = true;
+	auto sent_value_data = static_cast<uint8_t>(sent_value);
+
+	data_received_handle.data = &sent_value_data;
+
+	testing::MockFunction<void()> mock_callback {};
+	service_file_exchange.onClearFileRequested(mock_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_callback, Call()).Times(1);
+
+	service_file_exchange.onDataReceived(data_received_handle);
+}
+
+TEST_F(BLEServiceFileExchangeTest, onClearFileRequestedNotSameHandle)
+{
+	bool sent_value		 = true;
+	auto sent_value_data = static_cast<uint8_t>(sent_value);
+
+	data_received_handle.data = &sent_value_data;
+
+	testing::MockFunction<void()> mock_callback {};
+	service_file_exchange.onClearFileRequested(mock_callback.AsStdFunction());
+
+	data_received_handle.handle = 0xFFFF;
+
+	EXPECT_CALL(mock_callback, Call()).Times(0);
+
+	service_file_exchange.onDataReceived(data_received_handle);
+}
+
 TEST_F(BLEServiceFileExchangeTest, onFileDataReceivedCallback)
 {
 	auto expected_array = std::to_array<uint8_t>({0x2A, 0x2B, 0x2C, 0x2D, 0x2E});
