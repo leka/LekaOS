@@ -76,6 +76,8 @@ auto main() -> int
 	service_file_exchange.onFilePathReceived(
 		[](std::span<const char> path) { file_reception_handler.setFilePath(path.data()); });
 
+	service_file_exchange.onClearFileRequested([] { file_reception_handler.clearFile(); });
+
 	service_file_exchange.onFileDataReceived(
 		[](std::span<const uint8_t> buffer) { file_reception_handler.onPacketReceived(buffer); });
 

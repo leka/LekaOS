@@ -213,6 +213,10 @@ class RobotController : public interface::RobotController
 
 		_service_file_exchange.onFilePathReceived(
 			[this](std::span<const char> path) { file_reception.setFilePath(path.data()); });
+		_service_file_exchange.onClearFileRequested([this] {
+			file_reception.clearFile();
+			_service_file_exchange.setFileIsCleared();
+		});
 		_service_file_exchange.onFileDataReceived(
 			[this](std::span<const uint8_t> buffer) { file_reception.onPacketReceived(buffer); });
 		_service_file_exchange.onFileSHA256Requested([this](std::span<const char> path) {
@@ -229,6 +233,7 @@ class RobotController : public interface::RobotController
 		_service_file_exchange.setFileExchangeState(false);
 
 		_service_file_exchange.onFilePathReceived(nullptr);
+		_service_file_exchange.onClearFileRequested(nullptr);
 		_service_file_exchange.onFileDataReceived(nullptr);
 		_service_file_exchange.onFileSHA256Requested(nullptr);
 	}
