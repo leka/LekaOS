@@ -31,9 +31,11 @@ class BLEServiceFileExchange : public interface::BLEService
 
 	auto getFileExchangeState() const -> bool { return set_file_exchange_state != 0x00; }
 
-	void setFileSHA256(std::array<uint8_t, 32> sha256) const
+	void setFileSHA256(std::array<uint8_t, 32> sha256)
 	{
-		auto data = std::make_tuple(file_sha256_characteristic.getValueHandle(), sha256);
+		std::copy(std::begin(sha256), std::begin(sha256) + std::size(sha256), file_sha256.begin());
+
+		auto data = std::make_tuple(file_sha256_characteristic.getValueHandle(), file_sha256);
 		sendData(data);
 	}
 
