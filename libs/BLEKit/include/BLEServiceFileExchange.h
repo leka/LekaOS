@@ -112,7 +112,8 @@ class BLEServiceFileExchange : public interface::BLEService
 
 	std::array<uint8_t, 32> file_sha256 {};
 	ReadOnlyArrayGattCharacteristic<uint8_t, 32> file_sha256_characteristic {
-		service::file_exchange::characteristic::file_sha256, file_sha256.begin()};
+		service::file_exchange::characteristic::file_sha256, file_sha256.begin(),
+		GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
 
 	std::function<void(std::span<const uint8_t>)> _on_file_data_callback {};
 	std::function<void(std::span<const char>)> _on_file_path_callback {};
