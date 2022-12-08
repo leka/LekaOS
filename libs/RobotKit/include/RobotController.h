@@ -214,9 +214,11 @@ class RobotController : public interface::RobotController
 		_service_file_exchange.onFileDataReceived(
 			[this](std::span<const uint8_t> buffer) { file_reception.onPacketReceived(buffer); });
 		_service_file_exchange.onFileSHA256Requested([this](std::span<const char> path) {
-			if (FileManagerKit::File file {path.data()}; file.is_open()) {
-				_service_file_exchange.setFileSHA256(file.getSHA256());
-			}
+			_event_queue.call([this, path] {
+				if (FileManagerKit::File file {path.data()}; file.is_open()) {
+					_service_file_exchange.setFileSHA256(file.getSHA256());
+				}
+			});
 		});
 	}
 
