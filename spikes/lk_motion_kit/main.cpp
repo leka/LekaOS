@@ -96,7 +96,7 @@ void onMagicCardAvailable(const MagicCard &card)
 {
 	switch (card.getId()) {
 		case (MagicCard::number_1.getId()):
-			motionkit.rotate(1, Rotation::counterClockwise);
+			motionkit.rotate(1, Rotation::counterClockwise, [] { log_debug("Callback end of rotation"); });
 			break;
 		case (MagicCard::number_2.getId()):
 			motionkit.rotate(2, Rotation::clockwise);
