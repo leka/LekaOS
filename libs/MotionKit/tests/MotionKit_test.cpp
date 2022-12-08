@@ -101,7 +101,14 @@ TEST_F(MotionKitTest, rotateAndStop)
 		 motion.stop();
 	};
 
+	EXPECT_CALL(mock_function_imu, Call()).Times(1);
 	EXPECT_CALL(mock_function_motion, Call()).Times(1);
+
+	EXPECT_CALL(mock_motor_left, stop).Times(2);
+	EXPECT_CALL(mock_motor_right, stop).Times(2);
+
+	EXPECT_CALL(mock_motor_left, spin).Times(1);
+	EXPECT_CALL(mock_motor_right, spin).Times(1);
 
 	stub_event_loop_imu.registerCallback(loop_imu);
 	stub_event_loop_motion.registerCallback(loop_motion);
@@ -119,7 +126,11 @@ TEST_F(MotionKitTest, startStabilisationAndStop)
 		 motion.stop();
 	};
 
+	EXPECT_CALL(mock_function_imu, Call()).Times(1);
 	EXPECT_CALL(mock_function_motion, Call()).Times(1);
+
+	EXPECT_CALL(mock_motor_left, stop).Times(2);
+	EXPECT_CALL(mock_motor_right, stop).Times(2);
 
 	stub_event_loop_imu.registerCallback(loop_imu);
 	stub_event_loop_motion.registerCallback(loop_motion);
