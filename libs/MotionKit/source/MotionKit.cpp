@@ -26,7 +26,8 @@ void MotionKit::stop()
 	_rotate_x_turns_requested = false;
 }
 
-void MotionKit::rotate(uint8_t number_of_rotations, Rotation direction)
+void MotionKit::rotate(uint8_t number_of_rotations, Rotation direction,
+					   const std::function<void()> &on_rotation_ended_callback)
 {
 	stop();
 
@@ -43,6 +44,8 @@ void MotionKit::rotate(uint8_t number_of_rotations, Rotation direction)
 	_motor_right.spin(direction, kPwmMaxValue);
 
 	_event_loop.start();
+
+	_on_rotation_ended_callback = on_rotation_ended_callback;
 }
 
 void MotionKit::startStabilisation()
@@ -93,6 +96,11 @@ void MotionKit::run()
 
 		rtos::ThisThread::sleep_for(70ms);
 	}
+
+	if (_on_rotation_ended_callback != nullptr) {
+		_on_rotation_ended_callback();
+	}
+
 	_imukit.stop();
 }
 

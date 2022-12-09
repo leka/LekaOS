@@ -21,7 +21,8 @@ class MotionKit
 
 	void init();
 
-	void rotate(uint8_t number_of_rotations, Rotation direction);
+	void rotate(uint8_t number_of_rotations, Rotation direction,
+				const std::function<void()> &on_rotation_ended_callback = {});
 	void startStabilisation();
 
 	void stop();
@@ -39,6 +40,7 @@ class MotionKit
 	PID _pid;
 
 	uint8_t _rotations_to_execute = 0;
+	std::function<void()> _on_rotation_ended_callback {};
 
 	bool _target_not_reached	   = false;
 	bool _stabilisation_requested  = false;
