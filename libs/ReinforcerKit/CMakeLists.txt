@@ -16,6 +16,7 @@ target_sources(ReinforcerKit
 
 target_link_libraries(ReinforcerKit
 	LedKit
+	MotionKit
 )
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

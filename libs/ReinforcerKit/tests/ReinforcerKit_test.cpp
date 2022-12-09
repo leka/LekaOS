@@ -5,10 +5,13 @@
 #include "ReinforcerKit.h"
 
 #include "LedKit.h"
+#include "MotionKit.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
+#include "mocks/leka/Accelerometer.h"
 #include "mocks/leka/CoreLED.h"
 #include "mocks/leka/CoreMotor.h"
+#include "mocks/leka/Gyroscope.h"
 #include "mocks/leka/LEDAnimation.h"
 #include "mocks/leka/VideoKit.h"
 #include "stubs/leka/EventLoopKit.h"
@@ -21,7 +24,7 @@ using ::testing::Sequence;
 class ReinforcerkitTest : public ::testing::Test
 {
   protected:
-	ReinforcerkitTest() : reinforcerkit(mock_videokit, ledkit, mock_motor_left, mock_motor_right) {};
+	ReinforcerkitTest() : reinforcerkit(mock_videokit, ledkit, motion) {};
 
 	// void SetUp() override {}
 	// void TearDown() override {}
@@ -37,8 +40,18 @@ class ReinforcerkitTest : public ::testing::Test
 
 	mock::LEDAnimation mock_animation {};
 
+	stub::EventLoopKit stub_event_loop_imu {};
+	stub::EventLoopKit stub_event_loop_motion {};
+
 	mock::CoreMotor mock_motor_left {};
 	mock::CoreMotor mock_motor_right {};
+
+	mock::Accelerometer accel {};
+	mock::Gyroscope gyro {};
+
+	IMUKit imukit {stub_event_loop_imu, accel, gyro};
+
+	MotionKit motion {mock_motor_left, mock_motor_right, imukit, stub_event_loop_motion};
 
 	ReinforcerKit reinforcerkit;
 
