@@ -288,8 +288,12 @@ class RobotController : public interface::RobotController
 		auto _os_version = _firmware_update.getCurrentVersion();
 		_service_device_information.setOSVersion(_os_version);
 
-		auto advertising_data = _ble.getAdvertisingData();
-		advertising_data.name = reinterpret_cast<const char *>(_serialnumberkit.getShortSerialNumber().data());
+		auto advertising_data		   = _ble.getAdvertisingData();
+		advertising_data.name		   = reinterpret_cast<const char *>(_serialnumberkit.getShortSerialNumber().data());
+		advertising_data.version_major = _os_version.major;
+		advertising_data.version_minor = _os_version.minor;
+		advertising_data.version_revision = _os_version.revision;
+
 		_ble.setAdvertisingData(advertising_data);
 
 		_motor_left.stop();
