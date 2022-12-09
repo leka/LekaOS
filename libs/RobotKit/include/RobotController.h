@@ -209,6 +209,8 @@ class RobotController : public interface::RobotController
 
 	void onFileExchangeStart() final
 	{
+		_service_file_exchange.setFileExchangeState(true);
+
 		_service_file_exchange.onFilePathReceived(
 			[this](std::span<const char> path) { file_reception.setFilePath(path.data()); });
 		_service_file_exchange.onFileDataReceived(
