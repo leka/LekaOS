@@ -15,7 +15,8 @@
 
 using namespace leka;
 
-using ::testing::InSequence;
+using ::testing::AnyNumber;
+using ::testing::Sequence;
 
 class ReinforcerkitTest : public ::testing::Test
 {
@@ -40,6 +41,28 @@ class ReinforcerkitTest : public ::testing::Test
 	mock::CoreMotor mock_motor_right {};
 
 	ReinforcerKit reinforcerkit;
+
+	void expectedCallsMovingReinforcer()
+	{
+		EXPECT_CALL(mock_videokit, playVideoOnce);
+		EXPECT_CALL(mock_motor_left, stop).Times(1);
+		EXPECT_CALL(mock_motor_right, stop).Times(1);
+		EXPECT_CALL(mock_motor_left, spin).Times(1);
+		EXPECT_CALL(mock_motor_right, spin).Times(1);
+		EXPECT_CALL(mock_ears, setColor).Times(AnyNumber());
+		EXPECT_CALL(mock_ears, show).Times(AnyNumber());
+		EXPECT_CALL(mock_belt, setColor).Times(AnyNumber());
+		EXPECT_CALL(mock_belt, show).Times(AnyNumber());
+	}
+
+	void expectedCallsMotionlessReinforcer()
+	{
+		EXPECT_CALL(mock_videokit, playVideoOnce);
+		EXPECT_CALL(mock_ears, setColor).Times(AnyNumber());
+		EXPECT_CALL(mock_ears, show).Times(AnyNumber());
+		EXPECT_CALL(mock_belt, setColor).Times(AnyNumber());
+		EXPECT_CALL(mock_belt, show).Times(AnyNumber());
+	}
 };
 
 TEST_F(ReinforcerkitTest, initialization)
@@ -49,82 +72,54 @@ TEST_F(ReinforcerkitTest, initialization)
 
 TEST_F(ReinforcerkitTest, playBlinkGreen)
 {
-	auto expected_speed = 1;
-
-	EXPECT_CALL(mock_videokit, playVideoOnce);
-	{
-		InSequence seq;
-
-		EXPECT_CALL(mock_motor_left, spin(Rotation::clockwise, expected_speed));
-		EXPECT_CALL(mock_motor_right, spin(Rotation::clockwise, expected_speed));
-
-		EXPECT_CALL(mock_motor_left, stop());
-		EXPECT_CALL(mock_motor_right, stop());
-	}
+	expectedCallsMovingReinforcer();
 
 	reinforcerkit.play(ReinforcerKit::Reinforcer::BlinkGreen);
 }
 
 TEST_F(ReinforcerkitTest, playSpinBlink)
 {
-	auto expected_speed = 1;
-
-	EXPECT_CALL(mock_videokit, playVideoOnce);
-
-	{
-		InSequence seq;
-
-		EXPECT_CALL(mock_motor_left, spin(Rotation::counterClockwise, expected_speed));
-		EXPECT_CALL(mock_motor_right, spin(Rotation::counterClockwise, expected_speed));
-
-		EXPECT_CALL(mock_motor_left, stop());
-		EXPECT_CALL(mock_motor_right, stop());
-	}
+	expectedCallsMovingReinforcer();
 
 	reinforcerkit.play(ReinforcerKit::Reinforcer::SpinBlink);
 }
 
 TEST_F(ReinforcerkitTest, playFire)
 {
-	EXPECT_CALL(mock_videokit, playVideoOnce);
+	expectedCallsMotionlessReinforcer();
 	reinforcerkit.play(ReinforcerKit::Reinforcer::Fire);
 }
 
 TEST_F(ReinforcerkitTest, playSprinkles)
 {
-	EXPECT_CALL(mock_videokit, playVideoOnce);
+	expectedCallsMotionlessReinforcer();
 	reinforcerkit.play(ReinforcerKit::Reinforcer::Sprinkles);
 }
 
 TEST_F(ReinforcerkitTest, playRainbow)
 {
-	EXPECT_CALL(mock_videokit, playVideoOnce);
+	expectedCallsMotionlessReinforcer();
 	reinforcerkit.play(ReinforcerKit::Reinforcer::Rainbow);
 }
 
 TEST_F(ReinforcerkitTest, PlayDefaultReinforcer)
 {
-	auto expected_speed = 1;
+	expectedCallsMotionlessReinforcer();
 
-	EXPECT_CALL(mock_videokit, playVideoOnce);
+	reinforcerkit.playDefault();
+}
 
+TEST_F(ReinforcerkitTest, SetBlinkGreenAndPlayDefaultReinforcer)
+{
+	expectedCallsMovingReinforcer();
+
+	reinforcerkit.setDefaultReinforcer(ReinforcerKit::Reinforcer::BlinkGreen);
 	reinforcerkit.playDefault();
 }
 
 TEST_F(ReinforcerkitTest, SetSpinBlinkAndPlayDefaultReinforcer)
 {
-	auto expected_speed = 1;
-
-	EXPECT_CALL(mock_videokit, playVideoOnce);
-	{
-		InSequence seq;
-
-		EXPECT_CALL(mock_motor_left, spin(Rotation::counterClockwise, expected_speed));
-		EXPECT_CALL(mock_motor_right, spin(Rotation::counterClockwise, expected_speed));
-
-		EXPECT_CALL(mock_motor_left, stop());
-		EXPECT_CALL(mock_motor_right, stop());
-	}
+	expectedCallsMovingReinforcer();
 
 	reinforcerkit.setDefaultReinforcer(ReinforcerKit::Reinforcer::SpinBlink);
 	reinforcerkit.playDefault();
@@ -132,7 +127,7 @@ TEST_F(ReinforcerkitTest, SetSpinBlinkAndPlayDefaultReinforcer)
 
 TEST_F(ReinforcerkitTest, SetFireAndPlayDefaultReinforcer)
 {
-	EXPECT_CALL(mock_videokit, playVideoOnce);
+	expectedCallsMotionlessReinforcer();
 
 	reinforcerkit.setDefaultReinforcer(ReinforcerKit::Reinforcer::Fire);
 	reinforcerkit.playDefault();
@@ -140,7 +135,7 @@ TEST_F(ReinforcerkitTest, SetFireAndPlayDefaultReinforcer)
 
 TEST_F(ReinforcerkitTest, SetSprinklesAndPlayDefaultReinforcer)
 {
-	EXPECT_CALL(mock_videokit, playVideoOnce);
+	expectedCallsMotionlessReinforcer();
 
 	reinforcerkit.setDefaultReinforcer(ReinforcerKit::Reinforcer::Sprinkles);
 	reinforcerkit.playDefault();
@@ -148,7 +143,7 @@ TEST_F(ReinforcerkitTest, SetSprinklesAndPlayDefaultReinforcer)
 
 TEST_F(ReinforcerkitTest, SetRainbowAndPlayDefaultReinforcer)
 {
-	EXPECT_CALL(mock_videokit, playVideoOnce);
+	expectedCallsMotionlessReinforcer();
 
 	reinforcerkit.setDefaultReinforcer(ReinforcerKit::Reinforcer::Rainbow);
 	reinforcerkit.playDefault();
