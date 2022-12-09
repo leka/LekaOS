@@ -15,10 +15,16 @@ target_sources(spike_lk_reinforcer
 )
 
 target_link_libraries(spike_lk_reinforcer
+	VideoKit
 	CoreLED
-	ColorKit
 	LedKit
-	CoreEventFlags
+	CoreMotor
+	CorePwm
+	CoreI2C
+	CoreIMU
+	IMUKit
+	MotionKit
+	ReinforcerKit
 )
 
 target_link_custom_leka_targets(spike_lk_reinforcer)

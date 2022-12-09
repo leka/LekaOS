@@ -36,6 +36,10 @@ target_link_libraries(LekaOS
 	CoreRFIDReader
 	RFIDKit
 	ActivityKit
+	CoreI2C
+	CoreIMU
+	IMUKit
+	MotionKit
 )
 
 target_link_custom_leka_targets(LekaOS)

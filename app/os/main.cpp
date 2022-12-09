@@ -11,6 +11,7 @@
 
 #include "ActivityKit.h"
 #include "ChooseReinforcer.h"
+#include "CoreAccelerometer.h"
 #include "CoreBattery.h"
 #include "CoreBufferedSerial.h"
 #include "CoreDMA2D.hpp"
@@ -20,12 +21,15 @@
 #include "CoreFlashManagerIS25LP016D.h"
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
+#include "CoreGyroscope.h"
+#include "CoreI2C.h"
 #include "CoreJPEG.hpp"
 #include "CoreJPEGModeDMA.hpp"
 #include "CoreJPEGModePolling.hpp"
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLL.h"
+#include "CoreLSM6DSOX.h"
 #include "CoreLTDC.hpp"
 #include "CoreMCU.h"
 #include "CoreMotor.h"
@@ -248,9 +252,35 @@ namespace display::internal {
 
 }	// namespace display::internal
 
-auto videokit	   = VideoKit {display::internal::event_flags, display::internal::corevideo};
+auto videokit = VideoKit {display::internal::event_flags, display::internal::corevideo};
+
+namespace imu {
+
+	namespace internal {
+
+		CoreI2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
+		EventLoopKit event_loop {};
+
+	}	// namespace internal
+
+	CoreLSM6DSOX lsm6dsox(internal::i2c);
+	CoreAccelerometer accel(lsm6dsox);
+	CoreGyroscope gyro(lsm6dsox);
+
+}	// namespace imu
+
+auto imukit = IMUKit {imu::internal::event_loop, imu::accel, imu::gyro};
+
+namespace motion::internal {
+
+	EventLoopKit event_loop {};
+
+}	// namespace motion::internal
+
+auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::event_loop};
+
 auto behaviorkit   = BehaviorKit {videokit, ledkit, motors::left::motor, motors::right::motor};
-auto reinforcerkit = ReinforcerKit {videokit, ledkit, motors::left::motor, motors::right::motor};
+auto reinforcerkit = ReinforcerKit {videokit, ledkit, motionkit};
 
 namespace command {
 
@@ -528,6 +558,10 @@ auto main() -> int
 
 	commandkit.registerCommand(command::list);
 	activitykit.registerActivities(activities::activities);
+
+	imu::lsm6dsox.init();
+	imukit.init();
+	motionkit.init();
 
 	robot::controller.initializeComponents();
 	robot::controller.registerOnUpdateLoadedCallback(firmware::setPendingUpdate);

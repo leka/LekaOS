@@ -8,15 +8,15 @@
 #include <interface/libs/VideoKit.h>
 
 #include "LedKit.h"
+#include "MotionKit.h"
 
 namespace leka {
 
 class ReinforcerKit
 {
   public:
-	explicit ReinforcerKit(interface::VideoKit &videokit, LedKit &ledkit, interface::Motor &motor_left,
-						   interface::Motor &motor_right)
-		: _videokit(videokit), _ledkit(ledkit), _motor_left(motor_left), _motor_right(motor_right)
+	explicit ReinforcerKit(interface::VideoKit &videokit, LedKit &ledkit, MotionKit &motion_kit)
+		: _videokit(videokit), _ledkit(ledkit), _motionkit(motion_kit)
 	{
 		// nothing do to
 	}
@@ -38,8 +38,7 @@ class ReinforcerKit
   private:
 	interface::VideoKit &_videokit;
 	LedKit &_ledkit;
-	interface::Motor &_motor_left;
-	interface::Motor &_motor_right;
+	MotionKit &_motionkit;
 	Reinforcer _default_reinforcer = Reinforcer::Rainbow;
 
 	void playBlinkGreen();
