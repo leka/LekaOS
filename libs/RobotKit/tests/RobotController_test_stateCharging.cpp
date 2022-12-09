@@ -265,9 +265,23 @@ TEST_F(RobotControllerTest, stateChargingEventUpdateRequestedGuardIsReadyToUpdat
 	// EXPECT_TRUE(rc.state_machine.is(lksm::state::updating));
 }
 
-TEST_F(RobotControllerTest, stateChargingEventEmergencyStop)
+TEST_F(RobotControllerTest, stateChargingEventEmergencyStopDelayNotOver)
 {
 	rc.state_machine.set_current_states(lksm::state::charging);
+
+	auto maximal_delay_before_over = 9s;
+
+	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
+	rc.onMagicCardAvailable(MagicCard::emergency_stop);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
+}
+
+TEST_F(RobotControllerTest, stateChargingEventEmergencyStopDelayOver)
+{
+	rc.state_machine.set_current_states(lksm::state::charging);
+
+	auto delay_over = 11s;
 
 	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
 	EXPECT_CALL(timeout, stop);
@@ -279,6 +293,7 @@ TEST_F(RobotControllerTest, stateChargingEventEmergencyStop)
 	EXPECT_CALL(mock_lcd, turnOff).Times(1);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
 
+	spy_kernel_addElapsedTimeToTickCount(delay_over);
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::emergency_stopped));

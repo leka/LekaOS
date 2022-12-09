@@ -345,7 +345,7 @@ class RobotController : public interface::RobotController
 		auto is_autonomous_mode		= state_machine.is(system::robot::sm::state::autonomous_activities);
 		auto NOT_is_autonomous_mode = !is_autonomous_mode;
 
-		if (card == MagicCard::emergency_stop) {
+		if (card == MagicCard::emergency_stop && rtos::Kernel::Clock::now() - kSystemStartupTimestamp > 10s) {
 			raiseEmergencyStop();
 			return;
 		}
@@ -473,6 +473,8 @@ class RobotController : public interface::RobotController
 	std::chrono::seconds _sleep_timeout_duration {60};
 	std::chrono::seconds _idle_timeout_duration {600};
 	interface::Timeout &_timeout;
+
+	const rtos::Kernel::Clock::time_point kSystemStartupTimestamp = rtos::Kernel::Clock::now();
 
 	rtos::Kernel::Clock::time_point start = rtos::Kernel::Clock::now();
 	rtos::Kernel::Clock::time_point stop  = rtos::Kernel::Clock::now();

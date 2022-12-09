@@ -117,9 +117,23 @@ TEST_F(RobotControllerTest, stateFileExchangeEventDisconnectionGuardIsNotChargin
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle, lksm::state::disconnected));
 }
 
-TEST_F(RobotControllerTest, stateFileExchangeEventEmergencyStop)
+TEST_F(RobotControllerTest, stateFileExchangeEventEmergencyStopDelayNotOver)
 {
 	rc.state_machine.set_current_states(lksm::state::file_exchange);
+
+	auto maximal_delay_before_over = 9s;
+
+	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
+	rc.onMagicCardAvailable(MagicCard::emergency_stop);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::file_exchange));
+}
+
+TEST_F(RobotControllerTest, stateFileExchangeEventEmergencyStopDelayOver)
+{
+	rc.state_machine.set_current_states(lksm::state::file_exchange);
+
+	auto delay_over = 11s;
 
 	Sequence on_file_exchange_end;
 	// TODO: Specify which BLE service and what is expected if necessary
@@ -132,6 +146,7 @@ TEST_F(RobotControllerTest, stateFileExchangeEventEmergencyStop)
 	EXPECT_CALL(mock_lcd, turnOff).Times(1);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
 
+	spy_kernel_addElapsedTimeToTickCount(delay_over);
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::emergency_stopped));
