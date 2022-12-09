@@ -8,11 +8,14 @@
 #include "rtos/ThisThread.h"
 
 #include "CommandKit.h"
+#include "CoreAccelerometer.h"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
 #include "CoreEventFlags.h"
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
+#include "CoreGyroscope.h"
+#include "CoreI2C.h"
 #include "CoreJPEG.hpp"
 #include "CoreJPEGModeDMA.hpp"
 #include "CoreJPEGModePolling.hpp"
@@ -20,6 +23,7 @@
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLED.h"
 #include "CoreLL.h"
+#include "CoreLSM6DSOX.h"
 #include "CoreLTDC.hpp"
 #include "CoreMotor.h"
 #include "CorePwm.h"
@@ -91,6 +95,31 @@ auto right = CoreMotor {internal::right::dir_1, internal::right::dir_2, internal
 
 }	// namespace motor
 
+namespace imu {
+
+namespace internal {
+
+	CoreI2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
+	EventLoopKit event_loop {};
+
+}	// namespace internal
+
+CoreLSM6DSOX lsm6dsox(internal::i2c);
+CoreAccelerometer accel(lsm6dsox);
+CoreGyroscope gyro(lsm6dsox);
+
+}	// namespace imu
+
+auto imukit = IMUKit {imu::internal::event_loop, imu::accel, imu::gyro};
+
+namespace motion::internal {
+
+EventLoopKit event_loop {};
+
+}	// namespace motion::internal
+
+auto motionkit = MotionKit {motor::left, motor::right, imukit, motion::internal::event_loop};
+
 namespace display {
 
 namespace internal {
@@ -120,7 +149,7 @@ auto videokit = VideoKit {internal::event_flags, internal::corevideo};
 
 }	// namespace display
 
-auto reinforcerkit = ReinforcerKit {display::videokit, ledkit, motor::left, motor::right};
+auto reinforcerkit = ReinforcerKit {display::videokit, ledkit, motionkit};
 
 namespace command {
 
@@ -224,6 +253,10 @@ auto main() -> int
 	display::videokit.initializeScreen();
 	display::internal::corelcd.turnOn();
 	cmdkit.registerCommand(command::list);
+
+	imu::lsm6dsox.init();
+	imukit.init();
+	motionkit.init();
 
 	turnOff();
 
