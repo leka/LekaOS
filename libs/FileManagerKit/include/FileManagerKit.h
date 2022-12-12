@@ -35,7 +35,10 @@ struct File : public interface::File, public mbed::NonCopyable<File> {
 	auto write(const char *data, uint32_t size) -> std::size_t final;
 
 	void seek(size_t pos, int origin = SEEK_SET) final;
+
+	void clear() final;
 	void rewind() final;
+
 	auto size() -> std::size_t final;
 
 	auto tell() -> std::size_t final;
@@ -57,6 +60,7 @@ struct File : public interface::File, public mbed::NonCopyable<File> {
 
   private:
 	std::unique_ptr<FILE, decltype(&fclose)> _file {nullptr, &fclose};
+	std::filesystem::path _path;
 };
 
 auto create_directory(const std::filesystem::path &path) -> bool;

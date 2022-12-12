@@ -32,6 +32,7 @@ struct File {
 
 	virtual void seek(size_t pos, int origin) = 0;
 
+	virtual void clear()  = 0;
 	virtual void rewind() = 0;
 
 	virtual auto size() -> std::size_t = 0;
