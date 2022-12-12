@@ -176,7 +176,7 @@ TEST_F(RobotControllerTest, stateIdleDiceRollDetectedDelayOverEventAutonomousAct
 {
 	rc.state_machine.set_current_states(lksm::state::idle);
 
-	auto minimal_delay_over = 1001s;
+	auto minimal_delay_over = 1001ms;
 
 	Sequence on_exit_idle_sequence;
 	EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
