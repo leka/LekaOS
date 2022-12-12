@@ -99,7 +99,8 @@ class BLEServiceFileExchange : public interface::BLEService
   private:
 	uint8_t set_file_exchange_state {0x00};
 	ReadWriteGattCharacteristic<uint8_t> set_file_exchange_state_characteristic {
-		service::file_exchange::characteristic::set_state, &set_file_exchange_state};
+		service::file_exchange::characteristic::set_state, &set_file_exchange_state,
+		GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
 	std::function<void(bool)> _on_set_file_exchange_state_change {};
 
 	std::array<char, 256> file_path {};

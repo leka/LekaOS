@@ -92,6 +92,10 @@ TEST_F(RobotControllerTest, stateChargingEventFileExchangeRequestedGuardIsReadyT
 	Sequence stop_charging_behavior;
 	EXPECT_CALL(timeout, stop).InSequence(stop_charging_behavior);
 
+	Sequence on_file_exchange_start;
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber()).InSequence(on_file_exchange_start);
+
 	rc.state_machine.process_event(lksm::event::file_exchange_start_requested {});
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::file_exchange));
