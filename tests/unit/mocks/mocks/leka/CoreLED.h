@@ -14,6 +14,9 @@ namespace leka::mock {
 class CoreLED : public interface::LED
 {
   public:
+	CoreLED();
+	virtual ~CoreLED();
+
 	MOCK_METHOD(void, setColor, (const RGB &color), (override));
 
 	MOCK_METHOD(void, setColorRange, (unsigned start, unsigned end, const RGB &color), (override));

@@ -12,10 +12,8 @@ namespace leka::mock {
 class BLEService : public interface::BLEService
 {
   public:
-	BLEService(const UUID &uuid, std::span<GattCharacteristic *> characteristics)
-		: interface::BLEService(uuid, characteristics)
-	{
-	}
+	BLEService(const UUID &uuid, std::span<GattCharacteristic *> characteristics);
+	virtual ~BLEService();
 
 	MOCK_METHOD(void, onDataReceived, (const data_received_handle_t &params), (override));
 	MOCK_METHOD(void, onDataRequested, (const data_requested_handle_t &params), (override));

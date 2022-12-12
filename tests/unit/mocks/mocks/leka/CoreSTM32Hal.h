@@ -12,6 +12,9 @@ namespace leka::mock {
 class CoreSTM32Hal : public interface::STM32Hal
 {
   public:
+	CoreSTM32Hal();
+	virtual ~CoreSTM32Hal();
+
 	MOCK_METHOD(void, HAL_RCC_GPIOD_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_GPIOE_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_GPIOF_CLK_ENABLE, (), (override));

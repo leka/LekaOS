@@ -12,6 +12,9 @@ namespace leka::mock {
 class CoreJPEG : public interface::JPEGBase
 {
   public:
+	CoreJPEG();
+	virtual ~CoreJPEG();
+
 	MOCK_METHOD(void, initialize, (), (override));
 
 	MOCK_METHOD(JPEG_HandleTypeDef &, getHandle, (), (override));

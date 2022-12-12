@@ -16,6 +16,9 @@ namespace leka::mock {
 class File : public interface::File
 {
   public:
+	File();
+	virtual ~File();
+
 	MOCK_METHOD(bool, open, (const char *, const char *), (override));
 	MOCK_METHOD(bool, open, (const std::filesystem::path &, const char *), (override));
 

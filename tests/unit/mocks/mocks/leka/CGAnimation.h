@@ -13,6 +13,9 @@ namespace leka::mock {
 class CGAnimation : public interface::CGAnimation
 {
   public:
+	CGAnimation();
+	virtual ~CGAnimation();
+
 	MOCK_METHOD(void, start, (), (override));
 	MOCK_METHOD(void, stop, (), (override));
 	MOCK_METHOD(void, run, (), (override));

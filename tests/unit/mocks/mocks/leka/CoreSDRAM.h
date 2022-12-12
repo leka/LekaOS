@@ -12,6 +12,9 @@ namespace leka::mock {
 class CoreSDRAM : public interface::SDRAM
 {
   public:
+	CoreSDRAM();
+	virtual ~CoreSDRAM();
+
 	MOCK_METHOD(void, setupSDRAMConfig, (), (override));
 	MOCK_METHOD(FMC_SDRAM_TimingTypeDef, setupTimingConfig, (), (override));
 	MOCK_METHOD(DMA_HandleTypeDef, setupDMA, (), (override));

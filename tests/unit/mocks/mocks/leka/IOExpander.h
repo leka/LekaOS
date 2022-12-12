@@ -13,6 +13,9 @@ template <typename pin_underlying_type_t>
 class IOExpander : public interface::IOExpander<pin_underlying_type_t>
 {
   public:
+	// IOExpander();
+	// virtual ~IOExpander();
+
 	MOCK_METHOD(void, setPinAsInput, (pin_underlying_type_t), (override));
 	MOCK_METHOD(void, setPinAsOutput, (pin_underlying_type_t), (override));
 

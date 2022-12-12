@@ -12,6 +12,9 @@ namespace leka::mock {
 class Accelerometer : public interface::Accelerometer
 {
   public:
+	Accelerometer();
+	virtual ~Accelerometer();
+
 	MOCK_METHOD((std::tuple<float, float, float>), getXYZ, (), (override));
 };
 

@@ -12,6 +12,9 @@ namespace leka::mock {
 class CoreRFIDReader : public interface::RFIDReader
 {
   public:
+	CoreRFIDReader();
+	virtual ~CoreRFIDReader();
+
 	MOCK_METHOD(void, init, (), (override));
 	MOCK_METHOD(void, setModeTagDetection, (), (override));
 	MOCK_METHOD(void, setCommunicationProtocol, (rfid::Protocol), (override));

@@ -12,6 +12,9 @@ namespace leka::mock {
 class CoreDSI : public interface::DSIBase
 {
   public:
+	CoreDSI();
+	virtual ~CoreDSI();
+
 	MOCK_METHOD(void, initialize, (), (override));
 	MOCK_METHOD(void, start, (), (override));
 	MOCK_METHOD(void, reset, (), (override));

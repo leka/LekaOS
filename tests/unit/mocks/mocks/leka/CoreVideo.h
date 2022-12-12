@@ -12,6 +12,9 @@ namespace leka::mock {
 class CoreVideo : public interface::Video
 {
   public:
+	CoreVideo();
+	virtual ~CoreVideo();
+
 	MOCK_METHOD(void, initialize, (), (override));
 
 	MOCK_METHOD(void, turnOn, (), (override));

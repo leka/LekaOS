@@ -12,6 +12,9 @@ namespace leka::mock {
 class Battery : public interface::Battery
 {
   public:
+	Battery();
+	virtual ~Battery();
+
 	MOCK_METHOD(void, onChargeDidStart, (mbed::Callback<void()> const &), (override));
 	MOCK_METHOD(void, onChargeDidStop, (mbed::Callback<void()> const &), (override));
 

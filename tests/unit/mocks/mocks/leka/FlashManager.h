@@ -12,6 +12,9 @@ namespace leka::mock {
 class FlashManager : public interface::FlashManager
 {
   public:
+	FlashManager();
+	virtual ~FlashManager();
+
 	MOCK_METHOD(uint8_t, getStatusRegister, (), (override));
 
 	MOCK_METHOD(void, waitForChipAvailable, (), (override));
