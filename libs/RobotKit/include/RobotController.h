@@ -345,7 +345,10 @@ class RobotController : public interface::RobotController
 		auto is_autonomous_mode		= state_machine.is(system::robot::sm::state::autonomous_activities);
 		auto NOT_is_autonomous_mode = !is_autonomous_mode;
 
-		if (card == MagicCard::emergency_stop && rtos::Kernel::Clock::now() - kSystemStartupTimestamp > 10s) {
+		// TODO(@leka/dev-embedded): Refactor startup_delay_elapsed (see #1196)
+		const auto startup_delay_elapsed = rtos::Kernel::Clock::now() - kSystemStartupTimestamp > 10s;
+
+		if (card == MagicCard::emergency_stop && startup_delay_elapsed) {
 			raiseEmergencyStop();
 			return;
 		}
