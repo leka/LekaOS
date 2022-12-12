@@ -92,9 +92,23 @@ TEST_F(RobotControllerTest, stateSleepingEventChargeDidStartGuardIsChargingFalse
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::sleeping));
 }
 
-TEST_F(RobotControllerTest, stateSleepingEventEmergencyStop)
+TEST_F(RobotControllerTest, stateSleepingEventEmergencyStopDelayNotOver)
 {
 	rc.state_machine.set_current_states(lksm::state::sleeping);
+
+	auto maximal_delay_before_over = 9s;
+
+	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
+	rc.onMagicCardAvailable(MagicCard::emergency_stop);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::sleeping));
+}
+
+TEST_F(RobotControllerTest, stateSleepingEventEmergencyStopDelayOver)
+{
+	rc.state_machine.set_current_states(lksm::state::sleeping);
+
+	auto delay_over = 11s;
 
 	Sequence on_exit_sleeping_sequence;
 	EXPECT_CALL(timeout, stop).InSequence(on_exit_sleeping_sequence);
@@ -106,6 +120,7 @@ TEST_F(RobotControllerTest, stateSleepingEventEmergencyStop)
 	EXPECT_CALL(mock_lcd, turnOff).Times(1);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1));
 
+	spy_kernel_addElapsedTimeToTickCount(delay_over);
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::emergency_stopped));

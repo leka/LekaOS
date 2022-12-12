@@ -122,9 +122,23 @@ TEST_F(RobotControllerTest, stateIdleEventChargeDidStartGuardIsChargingFalse)
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
 }
 
-TEST_F(RobotControllerTest, stateIdleEventEmergencyStop)
+TEST_F(RobotControllerTest, stateIdleEventEmergencyStopDelayNotOver)
 {
 	rc.state_machine.set_current_states(lksm::state::idle);
+
+	auto maximal_delay_before_over = 9s;
+
+	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
+	rc.onMagicCardAvailable(MagicCard::emergency_stop);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
+}
+
+TEST_F(RobotControllerTest, stateIdleEventEmergencyStopDelayOver)
+{
+	rc.state_machine.set_current_states(lksm::state::idle);
+
+	auto delay_over = 11s;
 
 	Sequence on_exit_idle_sequence;
 	EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
@@ -136,6 +150,7 @@ TEST_F(RobotControllerTest, stateIdleEventEmergencyStop)
 	EXPECT_CALL(mock_lcd, turnOff).Times(1);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1));
 
+	spy_kernel_addElapsedTimeToTickCount(delay_over);
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::emergency_stopped));
@@ -161,7 +176,7 @@ TEST_F(RobotControllerTest, stateIdleDiceRollDetectedDelayOverEventAutonomousAct
 {
 	rc.state_machine.set_current_states(lksm::state::idle);
 
-	auto minimal_delay_over = 1001ms;
+	auto minimal_delay_over = 1001s;
 
 	Sequence on_exit_idle_sequence;
 	EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
