@@ -35,7 +35,10 @@ struct File : public interface::File, public mbed::NonCopyable<File> {
 	auto write(const char *data, uint32_t size) -> std::size_t final;
 
 	void seek(size_t pos, int origin = SEEK_SET) final;
+
+	void clear() final;
 	void rewind() final;
+
 	auto size() -> std::size_t final;
 
 	auto tell() -> std::size_t final;

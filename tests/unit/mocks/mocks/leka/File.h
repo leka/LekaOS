@@ -35,6 +35,7 @@ class File : public interface::File
 
 	MOCK_METHOD(void, seek, (size_t, int), (override));
 
+	MOCK_METHOD(void, clear, (), (override));
 	MOCK_METHOD(void, rewind, (), (override));
 
 	MOCK_METHOD(size_t, size, (), (override));

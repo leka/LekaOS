@@ -100,6 +100,11 @@ void File::seek(size_t pos, int origin)
 	std::fseek(_file.get(), static_cast<long>(pos), origin);
 }
 
+void File::clear()
+{
+	reopen(_path, "w+");
+}
+
 void File::rewind()
 {
 	seek(0);
