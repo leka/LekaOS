@@ -33,12 +33,14 @@ File::File(const std::filesystem::path &path, const char *mode)
 
 auto File::open(const char *path, const char *mode) -> bool
 {
+	_path = path;
 	_file.reset(std::fopen(path, mode));
 	return is_open();
 }
 
 auto File::open(const std::filesystem::path &path, const char *mode) -> bool
 {
+	_path = path;
 	_file.reset(std::fopen(path.c_str(), mode));
 	return is_open();
 }
@@ -49,6 +51,7 @@ void File::close()
 		return;
 	}
 
+	_path.clear();
 	_file.reset(nullptr);
 }
 

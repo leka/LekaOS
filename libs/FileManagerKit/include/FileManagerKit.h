@@ -57,6 +57,7 @@ struct File : public interface::File, public mbed::NonCopyable<File> {
 
   private:
 	std::unique_ptr<FILE, decltype(&fclose)> _file {nullptr, &fclose};
+	std::filesystem::path _path;
 };
 
 auto create_directory(const std::filesystem::path &path) -> bool;
