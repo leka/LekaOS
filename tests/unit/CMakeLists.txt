@@ -111,6 +111,8 @@ if(SANITIZERS)
 	else()
 		message(FATAL_ERROR "Compiler not recognized")
 	endif()
+
+	add_link_options(-fsanitize=address -fsanitize=undefined)
 endif(SANITIZERS)
 
 # Enable logging for tests
