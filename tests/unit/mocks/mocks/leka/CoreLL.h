@@ -12,8 +12,8 @@ namespace leka::mock {
 class CoreLLMock : public CoreLL
 {
   public:
-	CoreLLMock();
-	virtual ~CoreLLMock();
+	// CoreLLMock();
+	// virtual ~CoreLLMock();
 
 	MOCK_METHOD(void, rawMemoryWrite, (uintptr_t destination, uint32_t data), (override));
 };

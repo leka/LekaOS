@@ -2,14 +2,14 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(mocks STATIC)
+add_library(mocks INTERFACE)
 
 target_include_directories(mocks
-	PUBLIC
+	INTERFACE
 	.
 )
 
 target_sources(mocks
-	PUBLIC
+	INTERFACE
 	mocks/leka/source/mocks.cpp
 )
