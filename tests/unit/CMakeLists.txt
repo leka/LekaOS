@@ -72,7 +72,7 @@ if(COVERAGE)
 		message(FATAL_ERROR "Non-debug build may result in misleading code coverage results.")
 	endif()
 
-	add_compile_options(-g -Og --coverage -fno-exceptions -fno-inline)
+	add_compile_options(-g -O1 --coverage -fno-exceptions -fno-inline)
 
 	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		add_compile_options(-fprofile-abs-path)
