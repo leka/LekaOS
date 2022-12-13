@@ -68,11 +68,7 @@ TEST_F(RobotControllerTest, stateFileExchangeEventDisconnectionGuardIsCharging)
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber()).InSequence(on_file_exchange_end);
 
-	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
-	EXPECT_CALL(mock_motor_left, stop).Times(2);
-	EXPECT_CALL(mock_motor_right, stop).Times(2);
-	EXPECT_CALL(mock_ears, hide).Times(1);
-	EXPECT_CALL(mock_belt, hide).Times(1);
+	expectedCallsStopActuators();
 
 	Sequence start_charging_behavior_sequence;
 	EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
@@ -100,11 +96,7 @@ TEST_F(RobotControllerTest, stateFileExchangeEventDisconnectionGuardIsNotChargin
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber()).InSequence(on_file_exchange_end);
 
-	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
-	EXPECT_CALL(mock_motor_left, stop).Times(2);
-	EXPECT_CALL(mock_motor_right, stop).Times(2);
-	EXPECT_CALL(mock_ears, hide).Times(1);
-	EXPECT_CALL(mock_belt, hide).Times(1);
+	expectedCallsStopActuators();
 
 	Sequence on_idle_sequence;
 	EXPECT_CALL(timeout, onTimeout).InSequence(on_idle_sequence);

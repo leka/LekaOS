@@ -21,7 +21,6 @@
 #include "CommandKit.h"
 #include "CoreMutex.h"
 #include "FileReception.h"
-#include "LedKit.h"
 #include "MagicCard.h"
 #include "RCLogger.h"
 #include "RFIDKit.h"
@@ -33,6 +32,7 @@
 #include "interface/drivers/LCD.hpp"
 #include "interface/drivers/Motor.h"
 #include "interface/drivers/Timeout.h"
+#include "interface/libs/LedKit.h"
 #include "interface/libs/VideoKit.h"
 
 namespace leka {
@@ -46,9 +46,9 @@ class RobotController : public interface::RobotController
 
 	explicit RobotController(interface::Timeout &timeout, interface::Battery &battery, SerialNumberKit &serialnumberkit,
 							 interface::FirmwareUpdate &firmware_update, interface::Motor &motor_left,
-							 interface::Motor &motor_right, interface::LED &ears, interface::LED &belt, LedKit &ledkit,
-							 interface::LCD &lcd, interface::VideoKit &videokit, BehaviorKit &behaviorkit,
-							 CommandKit &cmdkit, RFIDKit &rfidkit, ActivityKit &activitykit)
+							 interface::Motor &motor_right, interface::LED &ears, interface::LED &belt,
+							 interface::LedKit &ledkit, interface::LCD &lcd, interface::VideoKit &videokit,
+							 BehaviorKit &behaviorkit, CommandKit &cmdkit, RFIDKit &rfidkit, ActivityKit &activitykit)
 		: _timeout(timeout),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
@@ -123,7 +123,7 @@ class RobotController : public interface::RobotController
 
 		auto on_sleeping_start_timeout = [this] {
 			_event_queue.call(&_lcd, &interface::LCD::turnOff);
-			_event_queue.call(&_ledkit, &LedKit::stop);
+			_event_queue.call(&_ledkit, &interface::LedKit::stop);
 		};
 		_timeout.onTimeout(on_sleeping_start_timeout);
 
@@ -171,7 +171,7 @@ class RobotController : public interface::RobotController
 
 		auto on_charging_start_timeout = [this] {
 			_event_queue.call(&_lcd, &interface::LCD::turnOff);
-			_event_queue.call(&_ledkit, &LedKit::stop);
+			_event_queue.call(&_ledkit, &interface::LedKit::stop);
 		};
 		_timeout.onTimeout(on_charging_start_timeout);
 
@@ -502,7 +502,7 @@ class RobotController : public interface::RobotController
 	interface::Motor &_motor_right;
 	interface::LED &_ears;
 	interface::LED &_belt;
-	LedKit &_ledkit;
+	interface::LedKit &_ledkit;
 	interface::LCD &_lcd;
 	interface::VideoKit &_videokit;
 	RFIDKit &_rfidkit;

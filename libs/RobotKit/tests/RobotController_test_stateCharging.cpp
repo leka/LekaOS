@@ -74,6 +74,35 @@ TEST_F(RobotControllerTest, stateChargingDisconnectedEventChargeDidStopGuardIsCh
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
 }
 
+TEST_F(RobotControllerTest, stateChargingDisconnectedEventBleConnection)
+{
+	rc.state_machine.set_current_states(lksm::state::charging, lksm::state::disconnected);
+
+	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
+
+	Sequence on_charging_exit_sequence;
+	EXPECT_CALL(timeout, stop).Times(1).InSequence(on_charging_exit_sequence);
+
+	expectedCallsStopActuators();
+	Sequence on_ble_connection_sequence;
+	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection)))
+		.Times(1)
+		.InSequence(on_ble_connection_sequence);
+	EXPECT_CALL(mock_videokit, playVideoOnce).Times(0).InSequence(on_ble_connection_sequence);
+	EXPECT_CALL(mock_lcd, turnOn).Times(0).InSequence(on_ble_connection_sequence);
+
+	Sequence on_charging_entry_sequence;
+	EXPECT_CALL(battery, level).InSequence(on_charging_entry_sequence);
+	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_charging_entry_sequence);
+	EXPECT_CALL(mock_lcd, turnOn).Times(AnyNumber()).InSequence(on_charging_entry_sequence);
+	EXPECT_CALL(timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_charging_start_timeout));
+	EXPECT_CALL(timeout, start).Times(AnyNumber()).InSequence(on_charging_entry_sequence);
+
+	rc.state_machine.process_event(lksm::event::ble_connection {});
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging, lksm::state::connected));
+}
+
 TEST_F(RobotControllerTest, stateChargingEventFileExchangeRequestedGuardIsReadyToFileExchangeTrue)
 {
 	rc.state_machine.set_current_states(lksm::state::charging);
@@ -327,6 +356,9 @@ TEST_F(RobotControllerTest, stateChargingDiceRollDetectedDelayOverEventAutonomou
 	rc.state_machine.set_current_states(lksm::state::charging);
 
 	auto minimal_delay_over = 1001ms;
+
+	Sequence on_charging_exit_sequence;
+	EXPECT_CALL(timeout, stop).Times(1).InSequence(on_charging_exit_sequence);
 
 	EXPECT_CALL(battery, level);
 	EXPECT_CALL(mock_videokit, displayImage).Times(1);

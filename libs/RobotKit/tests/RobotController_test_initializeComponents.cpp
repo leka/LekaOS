@@ -31,10 +31,7 @@ TEST_F(RobotControllerTest, initializeComponents)
 
 		expectedCallsStopMotors();
 
-		EXPECT_CALL(mock_ears, setColor).Times(1);
-		EXPECT_CALL(mock_belt, setColor).Times(1);
-		EXPECT_CALL(mock_ears, show).Times(1);
-		EXPECT_CALL(mock_belt, show).Times(1);
+		EXPECT_CALL(mock_ledkit, init).Times(1);
 
 		EXPECT_CALL(mock_videokit, initializeScreen).Times(1);
 		EXPECT_CALL(mock_lcd, turnOff).Times(1);

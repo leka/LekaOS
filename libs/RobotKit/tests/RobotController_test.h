@@ -16,6 +16,7 @@
 #include "CorePwm.h"
 #include "CoreRFIDReaderCR95HF.h"
 #include "DisplayTags.h"
+#include "LedKitAnimations.h"
 #include "RFIDKit.h"
 #include "SerialNumberKit.h"
 #include "gmock/gmock.h"
@@ -27,6 +28,7 @@
 #include "mocks/leka/EventQueue.h"
 #include "mocks/leka/FirmwareUpdate.h"
 #include "mocks/leka/LEDAnimation.h"
+#include "mocks/leka/LedKit.h"
 #include "mocks/leka/MCU.h"
 #include "mocks/leka/PwmOut.h"
 #include "mocks/leka/Timeout.h"
@@ -54,6 +56,12 @@ ACTION_TEMPLATE(GetCallback, HAS_1_TEMPLATE_PARAMS(typename, callback_t), AND_1_
 	*pointer = callback_t(arg0);
 }
 
+MATCHER_P(isSameAnimation, expected_animation_type, "")
+{
+	bool is_same = typeid(*expected_animation_type) == typeid(*arg);
+	return is_same;
+}
+
 class RobotControllerTest : public testing::Test
 {
   protected:
@@ -79,9 +87,7 @@ class RobotControllerTest : public testing::Test
 	mock::CoreLED mock_ears;
 	mock::CoreLED mock_belt;
 
-	stub::EventLoopKit stub_event_loop;
-
-	LedKit ledkit {stub_event_loop, mock_ears, mock_belt};
+	mock::LedKit mock_ledkit;
 
 	mock::LEDAnimation mock_animation {};
 
@@ -91,7 +97,7 @@ class RobotControllerTest : public testing::Test
 	mock::CoreLCD mock_lcd {};
 	mock::VideoKit mock_videokit {};
 
-	BehaviorKit bhvkit {mock_videokit, ledkit, mock_motor_left, mock_motor_right};
+	BehaviorKit bhvkit {mock_videokit, mock_ledkit, mock_motor_left, mock_motor_right};
 
 	CoreBufferedSerial serial {RFID_UART_TX, RFID_UART_RX, 57600};
 	CoreRFIDReaderCR95HF reader {serial};
@@ -104,8 +110,9 @@ class RobotControllerTest : public testing::Test
 	CommandKit cmdkit {event_loop};
 
 	RobotController<bsml::sm<system::robot::StateMachine, bsml::testing>> rc {
-		timeout, battery,  serialnumberkit, firmware_update, mock_motor_left, mock_motor_right, mock_ears,	mock_belt,
-		ledkit,	 mock_lcd, mock_videokit,	bhvkit,			 cmdkit,		  rfidkit,			activitykit};
+		timeout,		  battery,	 serialnumberkit, firmware_update, mock_motor_left,
+		mock_motor_right, mock_ears, mock_belt,		  mock_ledkit,	   mock_lcd,
+		mock_videokit,	  bhvkit,	 cmdkit,		  rfidkit,		   activitykit};
 
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
@@ -124,6 +131,16 @@ class RobotControllerTest : public testing::Test
 	{
 		EXPECT_CALL(mock_motor_left, stop());
 		EXPECT_CALL(mock_motor_right, stop());
+	}
+
+	void expectedCallsStopActuators()
+	{
+		EXPECT_CALL(mock_ledkit, stop).Times(AtLeast(1));
+		EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1));
+		EXPECT_CALL(mock_motor_left, stop()).Times(AtLeast(1));
+		EXPECT_CALL(mock_motor_right, stop()).Times(AtLeast(1));
+		EXPECT_CALL(mock_belt, hide).Times(AtLeast(1));
+		EXPECT_CALL(mock_ears, hide).Times(AtLeast(1));
 	}
 
 	void expectedCallsInitializeComponents()
@@ -147,14 +164,13 @@ class RobotControllerTest : public testing::Test
 
 			expectedCallsStopMotors();
 
-			EXPECT_CALL(mock_ears, setColor);
-			EXPECT_CALL(mock_belt, setColor);
-			EXPECT_CALL(mock_ears, show);
-			EXPECT_CALL(mock_belt, show);
+			EXPECT_CALL(mock_ledkit, init);
 
 			EXPECT_CALL(mock_videokit, initializeScreen).Times(1);
 			EXPECT_CALL(mock_lcd, turnOff).Times(1);
 			EXPECT_CALL(mock_videokit, stopVideo).Times(1);
+
+			EXPECT_CALL(mock_ledkit, stop).Times(AtLeast(1));
 		}
 
 		rc.initializeComponents();
