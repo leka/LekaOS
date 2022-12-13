@@ -27,6 +27,8 @@ class BehaviorKit
 	void sleeping();
 	void waiting();
 
+	void blinkOnCharge();
+
 	void lowBattery();
 
 	void chargingEmpty();

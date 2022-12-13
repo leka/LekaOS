@@ -41,6 +41,11 @@ void BehaviorKit::waiting()
 	_videokit.playVideoOnRepeat("/fs/home/vid/system/robot-system-idle-looking_top_right_left-no_eyebrows.avi");
 }
 
+void BehaviorKit::blinkOnCharge()
+{
+	_ledkit.start(&led::animation::blink_on_charge);
+}
+
 void BehaviorKit::lowBattery()
 {
 	_ledkit.stop();
