@@ -6,6 +6,8 @@
 
 #include <random>
 
+#include "rtos/ThisThread.h"
+
 #include "SuperSimon.h"
 
 namespace leka::activity {

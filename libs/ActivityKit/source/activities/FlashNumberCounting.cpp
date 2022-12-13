@@ -7,6 +7,8 @@
 #include "FlashNumberCounting.h"
 #include <random>
 
+#include "rtos/ThisThread.h"
+
 namespace leka::activity {
 using namespace std::chrono;
 
