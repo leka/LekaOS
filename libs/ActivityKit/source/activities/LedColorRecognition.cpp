@@ -6,6 +6,8 @@
 
 #include "LedColorRecognition.h"
 
+#include "rtos/ThisThread.h"
+
 namespace leka::activity {
 
 void LedColorRecognition::start()
