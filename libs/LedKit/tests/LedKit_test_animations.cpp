@@ -32,7 +32,6 @@ class LedKitTestAnimations : public ::testing::Test
 
 	LedKit ledkit {stub_event_loop, ears, belt};
 
-	// mock::LEDAnimation mock_animation {};
 	mock::Animation mock_animation {};
 };
 
