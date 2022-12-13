@@ -56,6 +56,8 @@ jobs:
 
       - name: Config, build & run
         run: |
+          export ASAN_OPTIONS=detect_leaks=1
+          export UBSAN_OPTIONS=print_stacktrace=1
           make config_unit_tests SANITIZERS=ON && make unit_tests
 
       - name: Ccache post build

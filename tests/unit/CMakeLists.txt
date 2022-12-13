@@ -72,15 +72,13 @@ if(COVERAGE)
 		message(FATAL_ERROR "Non-debug build may result in misleading code coverage results.")
 	endif()
 
-	# Append coverage compiler flags
-	set(COVERAGE_COMPILER_FLAGS "-g -O0 --coverage -fno-exceptions -fno-inline ")
+	add_compile_options(-g -O0 --coverage -fno-exceptions -fno-inline)
 
 	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-		set(COVERAGE_COMPILER_FLAGS "${COVERAGE_COMPILER_FLAGS}  -fprofile-abs-path ")
+		add_compile_options(-fprofile-abs-path)
 	endif()
 
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COVERAGE_COMPILER_FLAGS}")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COVERAGE_COMPILER_FLAGS}")
+	add_link_options(--coverage)
 endif(COVERAGE)
 
 # Add address sanitizer
@@ -89,32 +87,32 @@ if(SANITIZERS)
 		message(FATAL_ERROR "Address Sanitizer only works when coverage is enabled.")
 	endif()
 
-	# Append address sanitizer flags depending on compiler
 	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-		set(SANITIZERS_COMPILER_FLAGS " \
-			-fno-omit-frame-pointer \
-			-fno-optimize-sibling-calls \
-			-fsanitize=address -static-libasan \
-			-fsanitize=pointer-compare \
-			-fsanitize=pointer-subtract \
-			-fsanitize=leak \
-			-fsanitize=undefined \
-		")
+		add_compile_options(
+			-fno-omit-frame-pointer
+			-fno-optimize-sibling-calls
+			-fsanitize=address -static-libasan
+			-fsanitize=pointer-compare
+			-fsanitize=pointer-subtract
+			-fsanitize=leak
+			-fsanitize=undefined
+			-fsanitize-address-use-after-scope
+		)
 	elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-		set(SANITIZERS_COMPILER_FLAGS " \
-			-fno-omit-frame-pointer \
-			-fno-optimize-sibling-calls \
-			-fsanitize=address -static-libsan \
-			-fsanitize=pointer-compare \
-			-fsanitize=pointer-subtract \
-			-fsanitize=undefined \
-		")
+		add_compile_options(
+			-fno-omit-frame-pointer
+			-fno-optimize-sibling-calls
+			-fsanitize=address -static-libsan
+			-fsanitize=pointer-compare
+			-fsanitize=pointer-subtract
+			-fsanitize=undefined
+			-fsanitize-address-use-after-scope
+		)
 	else()
 		message(FATAL_ERROR "Compiler not recognized")
 	endif()
 
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SANITIZERS_COMPILER_FLAGS}")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZERS_COMPILER_FLAGS}")
+	add_link_options(-fsanitize=address -fsanitize=undefined)
 endif(SANITIZERS)
 
 # Enable logging for tests
@@ -175,7 +173,7 @@ add_executable(LekaOSUnitTestsExec)
 add_custom_command(
 	TARGET LekaOSUnitTestsExec
 	PRE_BUILD
-	COMMAND find . -name "*.gcda" -print0 | xargs -0 -r rm
+	COMMAND find . -name "*.gcda" -o -name "*.gcov" | xargs -r rm -rf
 )
 
 # Define function to add sources to LekaOS Unit Tests
