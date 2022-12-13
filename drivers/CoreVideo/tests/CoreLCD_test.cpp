@@ -10,6 +10,7 @@
 
 using namespace leka;
 using ::testing::_;
+using ::testing::An;
 using ::testing::Args;
 using ::testing::AtLeast;
 using ::testing::ElementsAre;
@@ -59,9 +60,7 @@ TEST_F(CoreLCDTest, turnOff)
 
 TEST_F(CoreLCDTest, setBrightness)
 {
-	float any_value;
+	EXPECT_CALL(lcddrivermock, setBrightness(An<float>())).Times(1);
 
-	EXPECT_CALL(lcddrivermock, setBrightness(any_value)).Times(1);
-
-	corelcd.setBrightness(any_value);
+	corelcd.setBrightness(42.F);
 }
