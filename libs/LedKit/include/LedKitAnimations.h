@@ -12,6 +12,7 @@
 #include "animations/AngryShort.h"
 #include "animations/BleConnection.h"
 #include "animations/BlinkGreen.h"
+#include "animations/BlinkOnCharge.h"
 #include "animations/Bubbles.h"
 #include "animations/Disgusted.h"
 #include "animations/Fire.h"
@@ -40,6 +41,7 @@ static inline auto amazed		   = led::animation::Amazed {};
 static inline auto angry		   = led::animation::Angry {};
 static inline auto angry_short	   = led::animation::AngryShort {};
 static inline auto blink_green	   = led::animation::BlinkGreen {};
+static inline auto blink_on_charge = led::animation::BlinkOnCharge {};
 static inline auto bubbles		   = led::animation::Bubbles {};
 static inline auto ble_connection  = led::animation::BleConnection {};
 static inline auto disgusted	   = led::animation::Disgusted {};
