@@ -50,6 +50,7 @@
 #include "FoodRecognition.h"
 #include "HelloWorld.h"
 #include "LedColorRecognition.h"
+#include "LedKit.h"
 #include "LedNumberCounting.h"
 #include "LogKit.h"
 #include "NumberRecognition.h"

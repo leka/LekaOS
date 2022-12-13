@@ -34,6 +34,7 @@
 #include "EventLoopKit.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
+#include "LedKit.h"
 #include "LogKit.h"
 #include "ReinforcerKit.h"
 #include "SDBlockDevice.h"
