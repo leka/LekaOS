@@ -4,37 +4,34 @@
 
 #include "BehaviorKit.h"
 
-#include "LedKit.h"
+#include "LedKitAnimations.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "mocks/leka/CoreLED.h"
 #include "mocks/leka/CoreMotor.h"
-#include "mocks/leka/LEDAnimation.h"
+#include "mocks/leka/LedKit.h"
 #include "mocks/leka/VideoKit.h"
-#include "stubs/leka/EventLoopKit.h"
 
 using namespace leka;
 
 using ::testing::InSequence;
 
+MATCHER_P(isSameAnimation, expected_animation_type, "")
+{
+	bool is_same = typeid(*expected_animation_type) == typeid(*arg);
+	return is_same;
+}
+
 class BehaviorKitTest : public ::testing::Test
 {
   protected:
-	BehaviorKitTest() : behaviorkit(mock_videokit, ledkit, mock_motor_left, mock_motor_right) {};
+	BehaviorKitTest() : behaviorkit(mock_videokit, mock_ledkit, mock_motor_left, mock_motor_right) {};
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
 	mock::VideoKit mock_videokit {};
 
-	mock::CoreLED mock_ears;
-	mock::CoreLED mock_belt;
-
-	stub::EventLoopKit stub_event_loop;
-
-	LedKit ledkit {stub_event_loop, mock_ears, mock_belt};
-
-	mock::LEDAnimation mock_animation {};
+	mock::LedKit mock_ledkit {};
 
 	mock::CoreMotor mock_motor_left {};
 	mock::CoreMotor mock_motor_right {};
@@ -76,6 +73,8 @@ TEST_F(BehaviorKitTest, launching)
 TEST_F(BehaviorKitTest, sleeping)
 {
 	EXPECT_CALL(mock_videokit, playVideoOnce);
+	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::sleeping))).Times(1);
+
 	behaviorkit.sleeping();
 }
 
@@ -102,12 +101,16 @@ TEST_F(BehaviorKitTest, batteryBehaviors)
 TEST_F(BehaviorKitTest, bleConnectionWhileCharging)
 {
 	EXPECT_CALL(mock_videokit, playVideoOnce).Times(0);
+	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection))).Times(1);
+
 	behaviorkit.bleConnection(false);
 }
 
 TEST_F(BehaviorKitTest, bleConnectionWhileNotCharging)
 {
 	EXPECT_CALL(mock_videokit, playVideoOnce);
+	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection))).Times(1);
+
 	behaviorkit.bleConnection(true);
 }
 
@@ -119,12 +122,8 @@ TEST_F(BehaviorKitTest, working)
 
 TEST_F(BehaviorKitTest, stop)
 {
-	auto speed = 0.5;
-
-	ledkit.start(&mock_animation);
-
+	EXPECT_CALL(mock_ledkit, stop);
 	EXPECT_CALL(mock_videokit, stopVideo);
-	EXPECT_CALL(mock_animation, stop).Times(1);
 	EXPECT_CALL(mock_motor_left, stop());
 	EXPECT_CALL(mock_motor_right, stop());
 

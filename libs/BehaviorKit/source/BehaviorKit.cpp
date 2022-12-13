@@ -6,6 +6,8 @@
 
 #include "rtos/ThisThread.h"
 
+#include "LedKitAnimations.h"
+
 namespace leka {
 
 using namespace std::chrono;
@@ -29,7 +31,7 @@ void BehaviorKit::launching()
 
 void BehaviorKit::sleeping()
 {
-	_ledkit.start(&LedKit::animation::sleeping);
+	_ledkit.start(&led::animation::sleeping);
 	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-sleep-yawn_then_sleep-no_eyebrows.avi");
 }
 
@@ -74,7 +76,7 @@ void BehaviorKit::chargingFull()
 
 void BehaviorKit::bleConnection(bool with_video)
 {
-	_ledkit.start(&LedKit::animation::ble_connection);
+	_ledkit.start(&led::animation::ble_connection);
 	if (with_video) {
 		_videokit.playVideoOnce("/fs/home/vid/system/robot-system-ble_connection-wink-no_eyebrows.avi");
 	}
