@@ -77,6 +77,8 @@ if(COVERAGE)
 	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 		add_compile_options(-fprofile-abs-path)
 	endif()
+
+	add_link_options(--coverage)
 endif(COVERAGE)
 
 # Add address sanitizer
