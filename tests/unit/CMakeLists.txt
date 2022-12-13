@@ -94,6 +94,7 @@ if(SANITIZERS)
 			-fsanitize=pointer-subtract
 			-fsanitize=leak
 			-fsanitize=undefined
+			-fsanitize-address-use-after-scope
 		)
 	elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
 		add_compile_options(
@@ -103,6 +104,7 @@ if(SANITIZERS)
 			-fsanitize=pointer-compare
 			-fsanitize=pointer-subtract
 			-fsanitize=undefined
+			-fsanitize-address-use-after-scope
 		)
 	else()
 		message(FATAL_ERROR "Compiler not recognized")
