@@ -31,6 +31,14 @@ class BLEServiceFileExchange : public interface::BLEService
 
 	auto getFileExchangeState() const -> bool { return set_file_exchange_state != 0x00; }
 
+	void setFileIsCleared()
+	{
+		clear_file = 0;
+
+		auto data = std::make_tuple(clear_file_characteristic.getValueHandle(), std::span(&clear_file, 1));
+		sendData(data);
+	}
+
 	void setFileSHA256(std::array<uint8_t, 32> sha256)
 	{
 		std::copy(std::begin(sha256), std::begin(sha256) + std::size(sha256), file_sha256.begin());
@@ -57,6 +65,12 @@ class BLEServiceFileExchange : public interface::BLEService
 				_on_file_path_callback(on_file_data_callback_buffer);
 			}
 		}
+		if (params.handle == clear_file_characteristic.getValueHandle()) {
+			clear_file = params.data[0];
+			if (_on_clear_file_requested_callback && clear_file != 0x00) {
+				_on_clear_file_requested_callback();
+			}
+		}
 		if (params.handle == file_reception_buffer_characteristic.getValueHandle()) {
 			if (params.offset == 0) {
 				file_reception_buffer.fill('\0');
@@ -78,6 +92,8 @@ class BLEServiceFileExchange : public interface::BLEService
 	{
 		_on_file_path_callback = callback;
 	}
+
+	void onClearFileRequested(const std::function<void()> &callback) { _on_clear_file_requested_callback = callback; }
 
 	void onFileDataReceived(const std::function<void(std::span<const uint8_t>)> &callback)
 	{
@@ -107,6 +123,12 @@ class BLEServiceFileExchange : public interface::BLEService
 	WriteOnlyArrayGattCharacteristic<char, 256> file_path_characteristic {
 		service::file_exchange::characteristic::file_path, file_path.begin()};
 
+	uint8_t clear_file {0x00};
+	ReadWriteGattCharacteristic<uint8_t> clear_file_characteristic {
+		service::file_exchange::characteristic::clear_file, &clear_file,
+		GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
+	std::function<void()> _on_clear_file_requested_callback {};
+
 	std::array<uint8_t, 128> file_reception_buffer {};
 	WriteOnlyArrayGattCharacteristic<uint8_t, 128> file_reception_buffer_characteristic {
 		service::file_exchange::characteristic::file_reception_buffer, file_reception_buffer.begin()};
@@ -120,9 +142,9 @@ class BLEServiceFileExchange : public interface::BLEService
 	std::function<void(std::span<const char>)> _on_file_path_callback {};
 	std::function<void(std::span<const char>)> _on_file_sha256_callback {};
 
-	std::array<GattCharacteristic *, 4> _characteristic_table {
-		&set_file_exchange_state_characteristic, &file_path_characteristic, &file_reception_buffer_characteristic,
-		&file_sha256_characteristic};
+	std::array<GattCharacteristic *, 5> _characteristic_table {
+		&set_file_exchange_state_characteristic, &file_path_characteristic, &clear_file_characteristic,
+		&file_reception_buffer_characteristic, &file_sha256_characteristic};
 };
 
 }	// namespace leka

@@ -9,8 +9,12 @@ using namespace leka;
 void FileReception::setFilePath(const std::filesystem::path &path)
 {
 	_path = path;
+}
 
-	if (_file.open(_path, "w")) {
+void FileReception::clearFile()
+{
+	if (_file.open(_path)) {
+		_file.clear();
 		_file.close();
 	}
 }
