@@ -84,10 +84,10 @@ CoreLCDDriver::~CoreLCDDriver() {}
 CoreLED::CoreLED() {}
 CoreLED::~CoreLED() {}
 
-// #include "../CoreLL.h"
+#include "../CoreLL.h"
 
-// CoreLL::CoreLL() {}
-// CoreLL::~CoreLL() {}
+CoreLLMock::CoreLLMock() {}
+CoreLLMock::~CoreLLMock() {}
 
 #include "../CoreLTDC.h"
 

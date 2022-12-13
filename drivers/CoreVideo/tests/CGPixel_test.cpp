@@ -9,6 +9,9 @@
 
 using namespace leka;
 
+using ::testing::_;
+using ::testing::TypedEq;
+
 TEST(CGPixelTest, draw)
 {
 	mock::CoreLLMock llmock;
@@ -21,7 +24,7 @@ TEST(CGPixelTest, draw)
 		lcd::frame_buffer_address + (4 * (pixel.coordinates.y * lcd::dimension::width + pixel.coordinates.x));
 	auto expected_data = color.getARGB();
 
-	EXPECT_CALL(llmock, rawMemoryWrite(expected_address, expected_data));
+	EXPECT_CALL(llmock, rawMemoryWrite(expected_address, TypedEq<uint32_t>(expected_data)));
 
 	pixel.draw(color);
 }

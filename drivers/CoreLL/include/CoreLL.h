@@ -6,26 +6,15 @@
 
 #include <cstdint>
 
+#include "interface/drivers/LL.h"
+
 namespace leka {
 
-class CoreLL
+class CoreLL : public interface::LL
 {
   public:
-	virtual ~CoreLL() = default;
-
-	virtual void rawMemoryWrite(uintptr_t destination, uint32_t data)
-	{
-		// ? NOLINTNEXTLINE - allow reinterpret_cast as there are no alternatives
-		auto *ptr = reinterpret_cast<uint32_t *>(destination);
-		*ptr	  = data;
-	}
-
-	virtual void rawMemoryWrite(uintptr_t destination, uint8_t data)
-	{
-		// ? NOLINTNEXTLINE - allow reinterpret_cast as there are no alternatives
-		auto *ptr = reinterpret_cast<uint8_t *>(destination);
-		*ptr	  = data;
-	}
+	void rawMemoryWrite(uintptr_t destination, uint32_t data) final;
+	void rawMemoryWrite(uintptr_t destination, uint8_t data) final;
 };
 
 }	// namespace leka
