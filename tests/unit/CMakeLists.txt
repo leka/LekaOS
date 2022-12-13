@@ -175,7 +175,7 @@ add_executable(LekaOSUnitTestsExec)
 add_custom_command(
 	TARGET LekaOSUnitTestsExec
 	PRE_BUILD
-	COMMAND find . -name "*.gcda" -print0 | xargs -0 -r rm
+	COMMAND find . -name "*.gcda" -o -name "*.gcov" | xargs -r rm -rf
 )
 
 # Define function to add sources to LekaOS Unit Tests
