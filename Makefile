@@ -361,13 +361,13 @@ ccache_prebuild:
 	@ccache -p
 	@echo ""
 	@echo "🪆 Ccache pre build stats 📉"
-	@ccache -s
+	@ccache -s -v
 	@ccache -z
 
 ccache_postbuild:
 	@echo ""
 	@echo "🪆 Ccache post build stats 📈"
-	@ccache -s
+	@ccache -s -v
 
 flash:
 	openocd -f interface/stlink.cfg -c 'transport select hla_swd' -f target/stm32f7x.cfg -c 'program $(BIN_PATH) 0x08000000' -c exit
