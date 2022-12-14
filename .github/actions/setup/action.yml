@@ -9,7 +9,11 @@ inputs:
   ccache_name:
     description: "action/cache name for ccache"
     required: true
-    default: "global_cache"
+    default: "Linux-ccache-"
+  ccache_restore_keys:
+    description: "action/cache name for ccache"
+    required: true
+    default: "Linux-ccache-"
 
 runs:
   using: "composite"
@@ -101,9 +105,11 @@ runs:
       uses: actions/cache@v3
       with:
         path: ${{ env.CCACHE_DIR}}
-        key: ${{ runner.os }}-${{ inputs.ccache_name }}-ccache-${{ env.CACHE_NOW_TIME }}
+        key: ${{ runner.os }}-ccache-${{ inputs.ccache_name }}-${{ env.CACHE_NOW_TIME }}
         restore-keys: |
-          ${{ runner.os }}-${{ inputs.ccache_name }}-ccache-
+          ${{ runner.os }}-ccache-${{ inputs.ccache_name }}-
+          ${{ runner.os }}-ccache-${{ inputs.ccache_restore_keys }}
+          ${{ runner.os }}-ccache-
 
     #
     # Mark: - Python/pip

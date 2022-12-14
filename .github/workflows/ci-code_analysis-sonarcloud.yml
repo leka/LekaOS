@@ -29,7 +29,10 @@ jobs:
       - name: Setup CI
         uses: ./.github/actions/setup
         with:
-          ccache_name: code_analysis-sonarcloud
+          ccache_name: code_analysis-sonarcloud-${{ github.ref_name }}
+          ccache_restore_keys: |
+            code_analysis-sonarcloud-
+            code_analysis-
 
       #
       # Mark: - SonarCloud
