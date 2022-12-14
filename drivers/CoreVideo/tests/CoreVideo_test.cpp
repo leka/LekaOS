@@ -18,6 +18,7 @@
 
 using namespace leka;
 using ::testing::_;
+using ::testing::An;
 using ::testing::InSequence;
 using ::testing::Return;
 using ::testing::ReturnRef;
@@ -108,11 +109,9 @@ TEST_F(CoreVideoTest, turnOn)
 
 TEST_F(CoreVideoTest, setBrightness)
 {
-	float brightness_value;
+	EXPECT_CALL(lcdmock, setBrightness(An<float>())).Times(1);
 
-	EXPECT_CALL(lcdmock, setBrightness(brightness_value)).Times(1);
-
-	corevideo.setBrightness(brightness_value);
+	corevideo.setBrightness(42.F);
 }
 
 TEST_F(CoreVideoTest, clearScreenDefaultColor)

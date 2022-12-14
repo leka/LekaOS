@@ -12,6 +12,7 @@
 
 using namespace leka;
 
+using ::testing::AnyNumber;
 using ::testing::MockFunction;
 using testing::Return;
 
@@ -118,6 +119,7 @@ TEST_F(IMUKitTest, defaultPosition)
 	accel_data = {0.F, 0.F, 1000.F};
 
 	EXPECT_CALL(accel, getXYZ).WillRepeatedly(Return(accel_data));
+	EXPECT_CALL(gyro, getXYZ).Times(AnyNumber());
 
 	for (auto i = 0; i < 100; ++i) {
 		imukit.computeAngles();
@@ -135,6 +137,7 @@ TEST_F(IMUKitTest, robotRolled90DegreesOnTheTop)
 	accel_data = {1000.F, 0.F, 0.F};
 
 	EXPECT_CALL(accel, getXYZ).WillRepeatedly(Return(accel_data));
+	EXPECT_CALL(gyro, getXYZ).Times(AnyNumber());
 
 	for (auto i = 0; i < 100; ++i) {
 		imukit.computeAngles();
@@ -152,6 +155,7 @@ TEST_F(IMUKitTest, robotRolled90DegreesOnTheBottom)
 	accel_data = {-1000.F, 0.F, 0.F};
 
 	EXPECT_CALL(accel, getXYZ).WillRepeatedly(Return(accel_data));
+	EXPECT_CALL(gyro, getXYZ).Times(AnyNumber());
 
 	for (auto i = 0; i < 100; ++i) {
 		imukit.computeAngles();
@@ -169,6 +173,7 @@ TEST_F(IMUKitTest, robotRolled90DegreesOnItsLeft)
 	accel_data = {0.F, 1000.F, 0.F};
 
 	EXPECT_CALL(accel, getXYZ).WillRepeatedly(Return(accel_data));
+	EXPECT_CALL(gyro, getXYZ).Times(AnyNumber());
 
 	for (auto i = 0; i < 100; ++i) {
 		imukit.computeAngles();
@@ -186,6 +191,7 @@ TEST_F(IMUKitTest, robotRolled90DegreesOnItsRight)
 	accel_data = {0.F, -1000.F, 0.F};
 
 	EXPECT_CALL(accel, getXYZ).WillRepeatedly(Return(accel_data));
+	EXPECT_CALL(gyro, getXYZ).Times(AnyNumber());
 
 	for (auto i = 0; i < 100; ++i) {
 		imukit.computeAngles();
