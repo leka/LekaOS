@@ -91,7 +91,7 @@ if(SANITIZERS)
 		add_compile_options(
 			-fno-omit-frame-pointer
 			-fno-optimize-sibling-calls
-			-fsanitize=address -static-libasan
+			-fsanitize=address
 			-fsanitize=pointer-compare
 			-fsanitize=pointer-subtract
 			-fsanitize=leak
@@ -102,7 +102,7 @@ if(SANITIZERS)
 		add_compile_options(
 			-fno-omit-frame-pointer
 			-fno-optimize-sibling-calls
-			-fsanitize=address -static-libsan
+			-fsanitize=address
 			-fsanitize=pointer-compare
 			-fsanitize=pointer-subtract
 			-fsanitize=undefined
