@@ -36,6 +36,7 @@ COVERAGE   ?= ON
 SANITIZERS ?= OFF
 UT_LITE    ?= OFF
 GCOV_EXEC  ?= ""
+CI_UT_OPTIMIZATION_LEVEL ?= ""
 
 # os
 ENABLE_LOG_DEBUG    ?= ON
@@ -223,7 +224,7 @@ run_unit_tests:
 config_unit_tests: mkdir_build_unit_tests
 	@echo ""
 	@echo "🏃 Running unit tests cmake configuration script 📝"
-	cmake -S ./tests/unit -B $(UNIT_TESTS_BUILD_DIR) -GNinja -DCMAKE_BUILD_TYPE=Debug -DCOVERAGE=$(COVERAGE) -DSANITIZERS=$(SANITIZERS) -DOS_VERSION=$(OS_VERSION) -DUT_LITE=$(UT_LITE)
+	cmake -S ./tests/unit -B $(UNIT_TESTS_BUILD_DIR) -GNinja -DCMAKE_BUILD_TYPE=Debug -DCOVERAGE=$(COVERAGE) -DSANITIZERS=$(SANITIZERS) -DOS_VERSION=$(OS_VERSION) -DUT_LITE=$(UT_LITE) -DCI_UT_OPTIMIZATION_LEVEL=$(CI_UT_OPTIMIZATION_LEVEL)
 	@mkdir -p $(CMAKE_TOOLS_BUILD_DIR)/unit_tests
 	@ln -sf $(UNIT_TESTS_BUILD_DIR)/compile_commands.json $(CMAKE_TOOLS_BUILD_DIR)/unit_tests/compile_commands.json
 
