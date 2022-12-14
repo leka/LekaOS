@@ -113,6 +113,10 @@ if(SANITIZERS)
 	endif()
 
 	add_link_options(-fsanitize=address -fsanitize=undefined)
+
+	if(CI_UT_OPTIMIZATION_LEVEL)
+		add_compile_options(${CI_UT_OPTIMIZATION_LEVEL})
+	endif(CI_UT_OPTIMIZATION_LEVEL)
 endif(SANITIZERS)
 
 # Enable logging for tests
@@ -331,7 +335,14 @@ message(STATUS ">> External definitions")
 message(STATUS ">> ")
 message(STATUS "")
 
-message(STATUS "UT LITE       --> ${UT_LITE}")
-message(STATUS "CODE_COVERAGE --> ${COVERAGE}")
-message(STATUS "SANITIZERS    --> ${SANITIZERS}")
+message(STATUS "UT LITE                  --> ${UT_LITE}")
+message(STATUS "CODE_COVERAGE            --> ${COVERAGE}")
+message(STATUS "SANITIZERS               --> ${SANITIZERS}")
+
+if(NOT ${CI_UT_OPTIMIZATION_LEVEL} STREQUAL "")
+	message(STATUS "CI_UT_OPTIMIZATION_LEVEL --> ${CI_UT_OPTIMIZATION_LEVEL}")
+else()
+	message(STATUS "CI_UT_OPTIMIZATION_LEVEL --> (empty, see COMPILE_OPTIONS)")
+endif(NOT ${CI_UT_OPTIMIZATION_LEVEL} STREQUAL "")
+
 message(STATUS "")
