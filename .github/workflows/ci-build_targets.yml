@@ -40,8 +40,8 @@ jobs:
         with:
           ccache_name: build-target-${{ github.ref_name }}-${{ matrix.custom_target }}
           ccache_restore_keys: |
-            build-target-${{ github.ref_name }}-
-            build-target-
+            ${{ runner.os }}-ccache-build-target-${{ github.ref_name }}-
+            ${{ runner.os }}-ccache-build-target-
 
       #
       # Mark: - Config & build

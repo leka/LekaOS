@@ -37,9 +37,9 @@ jobs:
         with:
           ccache_name: build-base_ref-${{ github.base_ref }}-enable_log_debug-${{ matrix.enable_log_debug }}
           ccache_restore_keys: |
-            build-base_ref-${{ github.base_ref }}-enable_log_debug-
-            build-base_ref-${{ github.base_ref }}-
-            build-base_ref-
+            ${{ runner.os }}-ccache-build-base_ref-${{ github.base_ref }}-enable_log_debug-
+            ${{ runner.os }}-ccache-build-base_ref-${{ github.base_ref }}-
+            ${{ runner.os }}-ccache-build-base_ref-
 
       #
       # Mark: - Config & build
@@ -100,9 +100,9 @@ jobs:
         with:
           ccache_name: build-head_ref-${{ github.head_ref }}-enable_log_debug-${{ matrix.enable_log_debug }}
           ccache_restore_keys: |
-            build-head_ref-${{ github.head_ref }}-enable_log_debug-
-            build-head_ref-${{ github.head_ref }}-
-            build-head_ref-
+            ${{ runner.os }}-ccache-build-head_ref-${{ github.head_ref }}-enable_log_debug-
+            ${{ runner.os }}-ccache-build-head_ref-${{ github.head_ref }}-
+            ${{ runner.os }}-ccache-build-head_ref-
 
       #
       # Mark: - Config & build

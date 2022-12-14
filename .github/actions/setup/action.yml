@@ -108,7 +108,7 @@ runs:
         key: ${{ runner.os }}-ccache-${{ inputs.ccache_name }}-${{ env.CACHE_NOW_TIME }}
         restore-keys: |
           ${{ runner.os }}-ccache-${{ inputs.ccache_name }}-
-          ${{ runner.os }}-ccache-${{ inputs.ccache_restore_keys }}
+          ${{ inputs.ccache_restore_keys }}
           ${{ runner.os }}-ccache-
 
     #

@@ -46,8 +46,8 @@ jobs:
         with:
           ccache_name: unit_tests-${{ github.ref_name }}-${{ matrix.compiler.name }}
           ccache_restore_keys: |
-            unit_tests-${{ github.ref_name }}-
-            unit_tests-
+            ${{ runner.os }}-ccache-unit_tests-${{ github.ref_name }}-
+            ${{ runner.os }}-ccache-unit_tests-
 
       #
       # Mark: - Config, build & run unit tests

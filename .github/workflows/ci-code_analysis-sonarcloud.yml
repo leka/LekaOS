@@ -31,8 +31,8 @@ jobs:
         with:
           ccache_name: code_analysis-sonarcloud-${{ github.ref_name }}
           ccache_restore_keys: |
-            code_analysis-sonarcloud-
-            code_analysis-
+            ${{ runner.os }}-ccache-code_analysis-sonarcloud-
+            ${{ runner.os }}-ccache-code_analysis-
 
       #
       # Mark: - SonarCloud

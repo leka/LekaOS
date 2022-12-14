@@ -47,10 +47,10 @@ jobs:
         with:
           ccache_name: code_analysis-sanitizers-${{ github.ref_name }}-${{ matrix.compiler.name }}-${{ matrix.optimisation_level }}
           ccache_restore_keys: |
-            code_analysis-sanitizers-${{ github.ref_name }}-${{ matrix.compiler.name }}-
-            code_analysis-sanitizers-${{ github.ref_name }}-
-            code_analysis-sanitizers-
-            code_analysis-
+            ${{ runner.os }}-ccache-code_analysis-sanitizers-${{ github.ref_name }}-${{ matrix.compiler.name }}-
+            ${{ runner.os }}-ccache-code_analysis-sanitizers-${{ github.ref_name }}-
+            ${{ runner.os }}-ccache-code_analysis-sanitizers-
+            ${{ runner.os }}-ccache-code_analysis-
 
       #
       # Mark: - Config, build & run unit tests
