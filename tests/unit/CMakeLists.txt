@@ -130,6 +130,13 @@ set(DRIVERS_DIR ${ROOT_DIR}/drivers)
 set(INCLUDE_DIR ${ROOT_DIR}/include)
 
 #
+# MARK: - External tools
+#
+list(APPEND CMAKE_MODULE_PATH ${ROOT_DIR}/cmake/utils)
+
+include(Utils)
+
+#
 # Mark: - Add GoogleTest & GMock
 #
 configure_file(GoogleTest.in.cmake googletest-download/CMakeLists.txt)
@@ -317,12 +324,14 @@ if(VERBOSE_BUILD)
 	set(CMAKE_VERBOSE_MAKEFILE ON)
 endif()
 
-# Print options
+print_compilers_flags_options_definitions()
+
+message(STATUS ">> ")
+message(STATUS ">> External definitions")
+message(STATUS ">> ")
 message(STATUS "")
-message(STATUS "CMAKE_CXX_COMPILER            --> ${CMAKE_CXX_COMPILER}")
-message(STATUS "CMAKE_EXPORT_COMPILE_COMMANDS --> ${CMAKE_EXPORT_COMPILE_COMMANDS}")
-message(STATUS "UT LITE                       --> ${UT_LITE}")
-message(STATUS "CODE_COVERAGE                 --> ${COVERAGE}")
-message(STATUS "SANITIZERS                    --> ${SANITIZERS}")
-message(STATUS "CMAKE_VERBOSE_MAKEFILE        --> ${VERBOSE_BUILD}")
+
+message(STATUS "UT LITE       --> ${UT_LITE}")
+message(STATUS "CODE_COVERAGE --> ${COVERAGE}")
+message(STATUS "SANITIZERS    --> ${SANITIZERS}")
 message(STATUS "")
