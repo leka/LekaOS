@@ -28,6 +28,7 @@ jobs:
             # { name: GCC 11, cc: /usr/bin/gcc-11, cxx: /usr/bin/g++-11 }, # ? Not working yet, see https://github.com/boost-ext/sml/issues/546
             { name: GCC 12, cc: /usr/bin/gcc-12, cxx: /usr/bin/g++-12 },
           ]
+        optimisation_level: ["-O0", "-Og", "-O1", "-O2", "-Os"]
 
     steps:
       - uses: actions/checkout@v3
@@ -58,7 +59,8 @@ jobs:
         run: |
           export ASAN_OPTIONS=detect_leaks=1
           export UBSAN_OPTIONS=print_stacktrace=1
-          make config_unit_tests SANITIZERS=ON && make unit_tests
+          make config_unit_tests COVERAGE=ON SANITIZERS=ON CI_UT_OPTIMIZATION_LEVEL="${{ matrix.optimisation_level }}"
+          make unit_tests
 
       - name: Ccache post build
         run: |
