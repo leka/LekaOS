@@ -45,7 +45,12 @@ jobs:
       - name: Setup CI
         uses: ./.github/actions/setup
         with:
-          ccache_name: code_analysis-sanitizers-${{ matrix.compiler.name }}-${{ matrix.optimisation_level }}
+          ccache_name: code_analysis-sanitizers-${{ github.ref_name }}-${{ matrix.compiler.name }}-${{ matrix.optimisation_level }}
+          ccache_restore_keys: |
+            ${{ runner.os }}-ccache-code_analysis-sanitizers-${{ github.ref_name }}-${{ matrix.compiler.name }}-
+            ${{ runner.os }}-ccache-code_analysis-sanitizers-${{ github.ref_name }}-
+            ${{ runner.os }}-ccache-code_analysis-sanitizers-
+            ${{ runner.os }}-ccache-code_analysis-
 
       #
       # Mark: - Config, build & run unit tests
