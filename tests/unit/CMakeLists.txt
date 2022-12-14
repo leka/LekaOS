@@ -74,10 +74,6 @@ if(COVERAGE)
 
 	add_compile_options(-g -O0 --coverage -fno-exceptions -fno-inline)
 
-	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-		add_compile_options(-fprofile-abs-path)
-	endif()
-
 	add_link_options(--coverage)
 endif(COVERAGE)
 
