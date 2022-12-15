@@ -17,6 +17,7 @@ void MotionKit::init()
 
 void MotionKit::stop()
 {
+	_timeout.stop();
 	_motor_left.stop();
 	_motor_right.stop();
 	_event_loop.stop();
@@ -42,6 +43,11 @@ void MotionKit::rotate(uint8_t number_of_rotations, Rotation direction,
 
 	_motor_left.spin(direction, kPwmMaxValue);
 	_motor_right.spin(direction, kPwmMaxValue);
+
+	auto on_timeout = [this] { stop(); };
+
+	_timeout.onTimeout(on_timeout);
+	_timeout.start(10s);
 
 	_event_loop.start();
 

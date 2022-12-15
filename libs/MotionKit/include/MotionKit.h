@@ -16,8 +16,14 @@ class MotionKit
 {
   public:
 	MotionKit(interface::Motor &motor_left, interface::Motor &motor_right, IMUKit &imu_kit,
-			  interface::EventLoop &event_loop)
-		: _motor_left(motor_left), _motor_right(motor_right), _imukit(imu_kit), _event_loop(event_loop) {};
+			  interface::EventLoop &event_loop, interface::Timeout &timeout)
+		: _motor_left(motor_left),
+		  _motor_right(motor_right),
+		  _imukit(imu_kit),
+		  _event_loop(event_loop),
+		  _timeout(timeout)
+	{
+	}
 
 	void init();
 
@@ -37,6 +43,7 @@ class MotionKit
 	interface::Motor &_motor_right;
 	IMUKit &_imukit;
 	interface::EventLoop &_event_loop;
+	interface::Timeout &_timeout;
 	PID _pid;
 
 	uint8_t _rotations_to_execute = 0;
