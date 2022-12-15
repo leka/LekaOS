@@ -74,6 +74,7 @@ runs:
       shell: bash
       run: |
         make ccache_postbuild
+        cat ${{ env.CCACHE_LOGFILE }} || True
         ccache -z
 
     - name: Checkout head ref

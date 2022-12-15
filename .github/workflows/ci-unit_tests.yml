@@ -44,10 +44,11 @@ jobs:
       - name: Setup CI
         uses: ./.github/actions/setup
         with:
-          ccache_name: unit_tests-${{ github.ref_name }}-${{ matrix.compiler.name }}
+          ccache_key: ${{ runner.os }}-ccache-unit_tests-(${{ matrix.compiler.name }})
           ccache_restore_keys: |
-            ${{ runner.os }}-ccache-unit_tests-${{ github.ref_name }}-
+            ${{ runner.os }}-ccache-unit_tests-(${{ matrix.compiler.name }})-
             ${{ runner.os }}-ccache-unit_tests-
+            ${{ runner.os }}-ccache-
 
       #
       # Mark: - Config, build & run unit tests
@@ -65,6 +66,7 @@ jobs:
       - name: Ccache post build
         run: |
           make ccache_postbuild
+          cat ${{ env.CCACHE_LOGFILE }} || True
           ccache -z
 
       - name: Generate coverage
