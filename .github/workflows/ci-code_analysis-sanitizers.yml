@@ -70,5 +70,5 @@ jobs:
       - name: Ccache post build
         run: |
           make ccache_postbuild
-          cat ${{ env.CCACHE_LOGFILE }}
+          cat ${{ env.CCACHE_LOGFILE }} || True
           ccache -z
