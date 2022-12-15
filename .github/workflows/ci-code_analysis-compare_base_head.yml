@@ -74,6 +74,7 @@ jobs:
         with:
           name: base_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
           path: build_artifacts
+          retention-days: 1
 
   #
   # Mark: - Job - build_head_ref
@@ -139,6 +140,7 @@ jobs:
         with:
           name: head_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
           path: build_artifacts
+          retention-days: 1
 
   #
   # Mark: - Job - compare_bin_map_files
