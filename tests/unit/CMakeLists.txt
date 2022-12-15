@@ -74,10 +74,6 @@ if(COVERAGE)
 
 	add_compile_options(-g -O0 --coverage -fno-exceptions -fno-inline)
 
-	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-		add_compile_options(-fprofile-abs-path)
-	endif()
-
 	add_link_options(--coverage)
 endif(COVERAGE)
 
@@ -91,7 +87,7 @@ if(SANITIZERS)
 		add_compile_options(
 			-fno-omit-frame-pointer
 			-fno-optimize-sibling-calls
-			-fsanitize=address -static-libasan
+			-fsanitize=address
 			-fsanitize=pointer-compare
 			-fsanitize=pointer-subtract
 			-fsanitize=leak
@@ -102,7 +98,7 @@ if(SANITIZERS)
 		add_compile_options(
 			-fno-omit-frame-pointer
 			-fno-optimize-sibling-calls
-			-fsanitize=address -static-libsan
+			-fsanitize=address
 			-fsanitize=pointer-compare
 			-fsanitize=pointer-subtract
 			-fsanitize=undefined
@@ -113,6 +109,10 @@ if(SANITIZERS)
 	endif()
 
 	add_link_options(-fsanitize=address -fsanitize=undefined)
+
+	if(CI_UT_OPTIMIZATION_LEVEL)
+		add_compile_options(${CI_UT_OPTIMIZATION_LEVEL})
+	endif(CI_UT_OPTIMIZATION_LEVEL)
 endif(SANITIZERS)
 
 # Enable logging for tests
@@ -128,6 +128,13 @@ set(EXTERN_MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
 set(LIBS_DIR ${ROOT_DIR}/libs)
 set(DRIVERS_DIR ${ROOT_DIR}/drivers)
 set(INCLUDE_DIR ${ROOT_DIR}/include)
+
+#
+# MARK: - External tools
+#
+list(APPEND CMAKE_MODULE_PATH ${ROOT_DIR}/cmake/utils)
+
+include(Utils)
 
 #
 # Mark: - Add GoogleTest & GMock
@@ -317,12 +324,21 @@ if(VERBOSE_BUILD)
 	set(CMAKE_VERBOSE_MAKEFILE ON)
 endif()
 
-# Print options
+print_compilers_flags_options_definitions()
+
+message(STATUS ">> ")
+message(STATUS ">> External definitions")
+message(STATUS ">> ")
 message(STATUS "")
-message(STATUS "CMAKE_CXX_COMPILER            --> ${CMAKE_CXX_COMPILER}")
-message(STATUS "CMAKE_EXPORT_COMPILE_COMMANDS --> ${CMAKE_EXPORT_COMPILE_COMMANDS}")
-message(STATUS "UT LITE                       --> ${UT_LITE}")
-message(STATUS "CODE_COVERAGE                 --> ${COVERAGE}")
-message(STATUS "SANITIZERS                    --> ${SANITIZERS}")
-message(STATUS "CMAKE_VERBOSE_MAKEFILE        --> ${VERBOSE_BUILD}")
+
+message(STATUS "UT LITE                  --> ${UT_LITE}")
+message(STATUS "CODE_COVERAGE            --> ${COVERAGE}")
+message(STATUS "SANITIZERS               --> ${SANITIZERS}")
+
+if(NOT ${CI_UT_OPTIMIZATION_LEVEL} STREQUAL "")
+	message(STATUS "CI_UT_OPTIMIZATION_LEVEL --> ${CI_UT_OPTIMIZATION_LEVEL}")
+else()
+	message(STATUS "CI_UT_OPTIMIZATION_LEVEL --> (not used)")
+endif(NOT ${CI_UT_OPTIMIZATION_LEVEL} STREQUAL "")
+
 message(STATUS "")

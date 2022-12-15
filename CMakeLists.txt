@@ -148,9 +148,6 @@ add_subdirectory(${BOOTLOADER_DIR})
 # Add LekaOS
 add_subdirectory(${OS_DIR})
 
-# Finally print the mbed-cmake build report
-mbed_cmake_print_build_report()
-
 #
 # MARK: - Misc. options
 #
@@ -160,11 +157,4 @@ if(VERBOSE_BUILD)
 	set(CMAKE_VERBOSE_MAKEFILE ON)
 endif()
 
-# Print options
-message(STATUS "")
-message(STATUS "CMAKE_EXPORT_COMPILE_COMMANDS --> ${CMAKE_EXPORT_COMPILE_COMMANDS}")
-message(STATUS "ENABLE_LOG_DEBUG              --> ${ENABLE_LOG_DEBUG}")
-message(STATUS "ENABLE_SYSTEM_STATS           --> ${ENABLE_SYSTEM_STATS}")
-message(STATUS "BUILD_TARGETS_FOR_BOOTLOADER  --> ${BUILD_TARGETS_TO_USE_WITH_BOOTLOADER}")
-message(STATUS "CMAKE_VERBOSE_MAKEFILE        --> ${VERBOSE_BUILD}")
-message(STATUS "")
+print_compilers_flags_options_definitions()
