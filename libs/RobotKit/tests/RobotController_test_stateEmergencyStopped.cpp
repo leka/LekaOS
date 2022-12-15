@@ -74,6 +74,7 @@ TEST_F(RobotControllerTest, stateEmergencyStoppedEventChargeDidStartGuardIsCharg
 	Sequence start_charging_behavior_sequence;
 	EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(mock_ledkit, start).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
@@ -109,6 +110,7 @@ TEST_F(RobotControllerTest, stateEmergencyStoppedConnectedEventCommandReceivedGu
 	Sequence start_charging_behavior_sequence;
 	EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(mock_ledkit, start).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
@@ -141,13 +143,6 @@ TEST_F(RobotControllerTest, stateEmergencyStoppedEventBleConnectionGuardIsChargi
 
 	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
 
-	Sequence start_charging_behavior_sequence;
-	EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
-	EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
-	EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
-	EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
-	EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
-
 	expectedCallsStopActuators();
 	Sequence on_ble_connection_sequence;
 	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection)))
@@ -155,6 +150,14 @@ TEST_F(RobotControllerTest, stateEmergencyStoppedEventBleConnectionGuardIsChargi
 		.InSequence(on_ble_connection_sequence);
 	EXPECT_CALL(mock_videokit, playVideoOnce).Times(0).InSequence(on_ble_connection_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).Times(0).InSequence(on_ble_connection_sequence);
+
+	Sequence start_charging_behavior_sequence;
+	EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(mock_ledkit, start).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
 
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AtLeast(1));

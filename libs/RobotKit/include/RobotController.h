@@ -166,19 +166,21 @@ class RobotController : public interface::RobotController
 		using namespace system::robot::sm;
 
 		onChargingBehavior(_battery_kit.level());
+		_behaviorkit.blinkOnCharge();
 		rtos::ThisThread::sleep_for(500ms);
 		_lcd.turnOn();
 
-		auto on_charging_start_timeout = [this] {
-			_event_queue.call(&_lcd, &interface::LCD::turnOff);
-			_event_queue.call(&_ledkit, &interface::LedKit::stop);
-		};
+		auto on_charging_start_timeout = [this] { _event_queue.call(&_lcd, &interface::LCD::turnOff); };
 		_timeout.onTimeout(on_charging_start_timeout);
 
 		_timeout.start(1min);
 	}
 
-	void stopChargingBehavior() final { _timeout.stop(); }
+	void stopChargingBehavior() final
+	{
+		_timeout.stop();
+		_behaviorkit.stop();
+	}
 
 	void startConnectionBehavior() final
 	{

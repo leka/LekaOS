@@ -8,6 +8,7 @@ TEST_F(RobotControllerTest, onChargingStartTimeout)
 {
 	EXPECT_CALL(battery, level);
 	EXPECT_CALL(mock_videokit, displayImage);
+	EXPECT_CALL(mock_ledkit, start);
 	EXPECT_CALL(mock_lcd, turnOn).Times(AnyNumber());
 	EXPECT_CALL(timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_charging_start_timeout));
 	EXPECT_CALL(timeout, start).Times(AnyNumber());
@@ -37,7 +38,11 @@ TEST_F(RobotControllerTest, stateChargingConnectedEventChargeDidStopGuardIsCharg
 
 	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
 
-	EXPECT_CALL(timeout, stop);
+	Sequence on_charging_exit_sequence;
+	EXPECT_CALL(timeout, stop).Times(1).InSequence(on_charging_exit_sequence);
+	EXPECT_CALL(mock_ledkit, stop).Times(1).InSequence(on_charging_exit_sequence);
+	EXPECT_CALL(mock_videokit, stopVideo).Times(1).InSequence(on_charging_exit_sequence);
+	expectedCallsStopMotors();
 
 	Sequence on_working_entry_sequence;
 	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
@@ -58,7 +63,11 @@ TEST_F(RobotControllerTest, stateChargingDisconnectedEventChargeDidStopGuardIsCh
 
 	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
 
-	EXPECT_CALL(timeout, stop);
+	Sequence on_charging_exit_sequence;
+	EXPECT_CALL(timeout, stop).Times(1).InSequence(on_charging_exit_sequence);
+	EXPECT_CALL(mock_ledkit, stop).Times(1).InSequence(on_charging_exit_sequence);
+	EXPECT_CALL(mock_videokit, stopVideo).Times(1).InSequence(on_charging_exit_sequence);
+	expectedCallsStopMotors();
 
 	Sequence on_idle_entry_sequence;
 	EXPECT_CALL(timeout, onTimeout).InSequence(on_idle_entry_sequence);
@@ -94,6 +103,7 @@ TEST_F(RobotControllerTest, stateChargingDisconnectedEventBleConnection)
 	Sequence on_charging_entry_sequence;
 	EXPECT_CALL(battery, level).InSequence(on_charging_entry_sequence);
 	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_charging_entry_sequence);
+	EXPECT_CALL(mock_ledkit, start).InSequence(on_charging_entry_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).Times(AnyNumber()).InSequence(on_charging_entry_sequence);
 	EXPECT_CALL(timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_charging_start_timeout));
 	EXPECT_CALL(timeout, start).Times(AnyNumber()).InSequence(on_charging_entry_sequence);
@@ -118,8 +128,11 @@ TEST_F(RobotControllerTest, stateChargingEventFileExchangeRequestedGuardIsReadyT
 		.WillRepeatedly(Return(returned_is_charging));
 	EXPECT_CALL(battery, level).InSequence(is_ready_to_file_exchange_sequence).WillRepeatedly(Return(returned_level));
 
-	Sequence stop_charging_behavior;
-	EXPECT_CALL(timeout, stop).InSequence(stop_charging_behavior);
+	Sequence on_charging_exit_sequence;
+	EXPECT_CALL(timeout, stop).Times(1).InSequence(on_charging_exit_sequence);
+	EXPECT_CALL(mock_ledkit, stop).Times(1).InSequence(on_charging_exit_sequence);
+	EXPECT_CALL(mock_videokit, stopVideo).Times(1).InSequence(on_charging_exit_sequence);
+	expectedCallsStopMotors();
 
 	Sequence on_file_exchange_start;
 	// TODO: Specify which BLE service and what is expected if necessary
@@ -317,14 +330,12 @@ TEST_F(RobotControllerTest, stateChargingEventEmergencyStopDelayOver)
 	auto delay_over = 11s;
 
 	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
-	EXPECT_CALL(timeout, stop);
 
-	EXPECT_CALL(mock_motor_left, stop).Times(2);
-	EXPECT_CALL(mock_motor_right, stop).Times(2);
-	EXPECT_CALL(mock_belt, hide).Times(1);
-	EXPECT_CALL(mock_ears, hide).Times(1);
-	EXPECT_CALL(mock_lcd, turnOff).Times(1);
-	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
+	Sequence on_charging_exit_sequence;
+	EXPECT_CALL(timeout, stop).Times(1).InSequence(on_charging_exit_sequence);
+
+	expectedCallsStopActuators();
+	EXPECT_CALL(mock_lcd, turnOff);
 
 	spy_kernel_addElapsedTimeToTickCount(delay_over);
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
@@ -341,6 +352,7 @@ TEST_F(RobotControllerTest, stateChargingDiceRollDetectedDelayNotOver)
 
 	EXPECT_CALL(battery, level).Times(0);
 	EXPECT_CALL(mock_videokit, displayImage).Times(0);
+	EXPECT_CALL(mock_ledkit, start).Times(0);
 	EXPECT_CALL(mock_lcd, turnOn).Times(0);
 	EXPECT_CALL(timeout, start).Times(0);
 
@@ -359,9 +371,13 @@ TEST_F(RobotControllerTest, stateChargingDiceRollDetectedDelayOverEventAutonomou
 
 	Sequence on_charging_exit_sequence;
 	EXPECT_CALL(timeout, stop).Times(1).InSequence(on_charging_exit_sequence);
+	EXPECT_CALL(mock_ledkit, stop).Times(1).InSequence(on_charging_exit_sequence);
+	EXPECT_CALL(mock_videokit, stopVideo).Times(1).InSequence(on_charging_exit_sequence);
+	expectedCallsStopMotors();
 
 	EXPECT_CALL(battery, level);
 	EXPECT_CALL(mock_videokit, displayImage).Times(1);
+	EXPECT_CALL(mock_ledkit, start);
 	EXPECT_CALL(mock_lcd, turnOn).Times(AnyNumber());
 	EXPECT_CALL(timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_charging_start_timeout));
 	EXPECT_CALL(timeout, start).Times(AnyNumber());
