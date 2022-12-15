@@ -419,6 +419,7 @@ class RobotController : public interface::RobotController
 			_ble.setAdvertisingData(advertising_data);
 
 			_service_battery.setBatteryLevel(level);
+			_service_monitoring.setChargingStatus(is_charging);
 
 			auto is_not_in_file_exchange = !_service_file_exchange.getFileExchangeState();
 			if (is_charging && is_not_in_file_exchange) {
