@@ -46,10 +46,16 @@ class MotionKit
 	bool _stabilisation_requested  = false;
 	bool _rotate_x_turns_requested = false;
 
-	const float kReferenceAngle		   = 180.F;
-	const float kMinimalViableRobotPwm = 0.25F;	  // ? Under this pwm value, torque is too low to spin the wheel
+	const float kReferenceAngle = 180.F;
+	const float kPIDMaxValue	= 1.8F;
+
+	// ? When the motor is stopped, PWM values under kMinimalViableRobotPwm are too low to generate enough torque for
+	// ? the motor to start spinning ? At the same time, kMinimalViableRobotPwm needs to be the lowest possible to avoid
+	// ? overshooting when the target is reached
+
+	const float kMinimalViableRobotPwm = 0.15F;
 	const float kPwmMaxValue		   = 1.F;
-	const float kPwmMarginLimit		   = 0.28F;
+	const float kEpsilon			   = 0.02F;
 };
 
 }	// namespace leka

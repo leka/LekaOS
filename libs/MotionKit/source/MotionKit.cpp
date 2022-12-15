@@ -106,13 +106,13 @@ void MotionKit::run()
 
 auto MotionKit::mapSpeed(float speed) const -> float
 {
-	return utils::math::map(speed, 0.F, 1.F, kMinimalViableRobotPwm, kPwmMaxValue);
+	return utils::math::map(speed, 0.F, kPIDMaxValue, kMinimalViableRobotPwm, kPwmMaxValue);
 }
 
 void MotionKit::executeSpeed(float speed, Rotation direction)
 {
 	auto speed_bounded = mapSpeed(speed);
-	if (speed_bounded <= kPwmMarginLimit) {
+	if (speed_bounded <= kMinimalViableRobotPwm + kEpsilon) {
 		_motor_left.stop();
 		_motor_right.stop();
 		_target_not_reached = false;
