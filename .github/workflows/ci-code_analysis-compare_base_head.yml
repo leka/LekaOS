@@ -35,7 +35,7 @@ jobs:
         id: setup_ci
         uses: ./.github/actions/setup
         with:
-          ccache_name: build-base_ref-${{ github.base_ref }}-enable_log_debug-${{ matrix.enable_log_debug }}
+          ccache_key: build-base_ref-${{ github.base_ref }}-enable_log_debug-${{ matrix.enable_log_debug }}
           ccache_restore_keys: |
             ${{ runner.os }}-ccache-build-base_ref-${{ github.base_ref }}-enable_log_debug-
             ${{ runner.os }}-ccache-build-base_ref-${{ github.base_ref }}-
@@ -98,7 +98,7 @@ jobs:
         id: setup_ci
         uses: ./.github/actions/setup
         with:
-          ccache_name: build-head_ref-${{ github.head_ref }}-enable_log_debug-${{ matrix.enable_log_debug }}
+          ccache_key: build-head_ref-${{ github.head_ref }}-enable_log_debug-${{ matrix.enable_log_debug }}
           ccache_restore_keys: |
             ${{ runner.os }}-ccache-build-head_ref-${{ github.head_ref }}-enable_log_debug-
             ${{ runner.os }}-ccache-build-head_ref-${{ github.head_ref }}-

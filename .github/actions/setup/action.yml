@@ -6,7 +6,7 @@ name: "CI Setup"
 description: ""
 
 inputs:
-  ccache_name:
+  ccache_key:
     description: "action/cache name for ccache"
     required: true
     default: "Linux-ccache-"
@@ -105,9 +105,9 @@ runs:
       uses: actions/cache@v3
       with:
         path: ${{ env.CCACHE_DIR}}
-        key: ${{ runner.os }}-ccache-${{ inputs.ccache_name }}-${{ env.CACHE_NOW_TIME }}
+        key: ${{ runner.os }}-ccache-${{ inputs.ccache_key }}-${{ env.CACHE_NOW_TIME }}
         restore-keys: |
-          ${{ runner.os }}-ccache-${{ inputs.ccache_name }}-
+          ${{ runner.os }}-ccache-${{ inputs.ccache_key }}-
           ${{ inputs.ccache_restore_keys }}
           ${{ runner.os }}-ccache-
 
