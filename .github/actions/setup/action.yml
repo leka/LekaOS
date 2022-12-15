@@ -105,7 +105,7 @@ runs:
       uses: actions/cache@v3
       with:
         path: ${{ env.CCACHE_DIR}}
-        key: ${{ inputs.ccache_key }}
+        key: ${{ inputs.ccache_key }}-(${{ env.CACHE_NOW_TIME }}) # TODO(@ladislas): separate env from setup
         restore-keys: ${{ inputs.ccache_restore_keys }}
 
     #

@@ -38,7 +38,7 @@ jobs:
       - name: Setup CI
         uses: ./.github/actions/setup
         with:
-          ccache_key: ${{ runner.os }}-ccache-build_target-(${{ matrix.custom_target }})-(${{ env.CACHE_NOW_TIME }})
+          ccache_key: ${{ runner.os }}-ccache-build_target-(${{ matrix.custom_target }})
           ccache_restore_keys: |
             ${{ runner.os }}-ccache-build_target-(${{ matrix.custom_target }})-
             ${{ runner.os }}-ccache-build_target-

@@ -29,7 +29,7 @@ jobs:
       - name: Setup CI
         uses: ./.github/actions/setup
         with:
-          ccache_key: ${{ runner.os }}-ccache-create_release-(${{ env.CACHE_NOW_TIME }})
+          ccache_key: ${{ runner.os }}-ccache-create_release
           ccache_restore_keys: |
             ${{ runner.os }}-ccache-create_release-
             ${{ runner.os }}-ccache-
