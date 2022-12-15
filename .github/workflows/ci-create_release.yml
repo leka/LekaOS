@@ -29,7 +29,9 @@ jobs:
       - name: Setup CI
         uses: ./.github/actions/setup
         with:
-          ccache_name: create_release
+          ccache_name: create_release-${{ github.ref_name }}-
+          ccache_restore_keys: |
+            ${{ runner.os }}-ccache-create_release-
 
       #
       # Mark: - Config & build
@@ -39,9 +41,19 @@ jobs:
         run: |
           echo "${{ secrets.FIRMWARE_SIGNING_KEY }}" > signing-keys.pem
 
+      - name: Ccache pre build
+        run: |
+          make ccache_prebuild
+
       - name: Build firmware, os, bootloader
         run: |
           make firmware
+
+      - name: Ccache post build
+        run: |
+          make ccache_postbuild
+          cat ${{ env.CCACHE_LOGFILE }} || True
+          ccache -z
 
       #
       # Mark: - Upload
