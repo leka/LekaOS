@@ -105,11 +105,8 @@ runs:
       uses: actions/cache@v3
       with:
         path: ${{ env.CCACHE_DIR}}
-        key: ${{ runner.os }}-ccache-${{ inputs.ccache_key }}-${{ env.CACHE_NOW_TIME }}
-        restore-keys: |
-          ${{ runner.os }}-ccache-${{ inputs.ccache_key }}-
-          ${{ inputs.ccache_restore_keys }}
-          ${{ runner.os }}-ccache-
+        key: ${{ inputs.ccache_key }}
+        restore-keys: ${{ inputs.ccache_restore_keys }}
 
     #
     # Mark: - Python/pip
