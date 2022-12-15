@@ -25,6 +25,7 @@ target_link_libraries(spike_lk_motion_kit
 	CoreBufferedSerial
 	CoreRFIDReader
 	RFIDKit
+	CoreTimeout
 )
 
 target_link_custom_leka_targets(spike_lk_motion_kit)

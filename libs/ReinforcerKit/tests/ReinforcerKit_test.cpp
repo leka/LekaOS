@@ -12,6 +12,7 @@
 #include "mocks/leka/CoreMotor.h"
 #include "mocks/leka/Gyroscope.h"
 #include "mocks/leka/LedKit.h"
+#include "mocks/leka/Timeout.h"
 #include "mocks/leka/VideoKit.h"
 #include "stubs/leka/EventLoopKit.h"
 
@@ -47,9 +48,11 @@ class ReinforcerkitTest : public ::testing::Test
 	mock::Accelerometer accel {};
 	mock::Gyroscope gyro {};
 
+	mock::Timeout mock_timeout {};
+
 	IMUKit imukit {stub_event_loop_imu, accel, gyro};
 
-	MotionKit motion {mock_motor_left, mock_motor_right, imukit, stub_event_loop_motion};
+	MotionKit motion {mock_motor_left, mock_motor_right, imukit, stub_event_loop_motion, mock_timeout};
 
 	ReinforcerKit reinforcerkit;
 
