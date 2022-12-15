@@ -184,16 +184,25 @@ class RobotController : public interface::RobotController
 
 	void startConnectionBehavior() final
 	{
+		using namespace std::chrono_literals;
 		stopActuators();
 		if (_battery.isCharging()) {
 			_behaviorkit.bleConnection(false);
+			rtos::ThisThread::sleep_for(5s);
+			_behaviorkit.blinkOnCharge();
 		} else {
 			_behaviorkit.bleConnection(true);
 			_lcd.turnOn();
 		}
 	}
 
-	void startDisconnectionBehavior() final { stopActuators(); }
+	void startDisconnectionBehavior() final
+	{
+		stopActuators();
+		if (_battery.isCharging()) {
+			_behaviorkit.blinkOnCharge();
+		}
+	}
 
 	void startAutonomousActivityMode() final
 	{
