@@ -4,8 +4,6 @@
 
 #include "LedKit.h"
 
-#include "rtos/tests/UNITTESTS/doubles/Thread_stub.h"
-
 #include "CoreLED.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreLED.h"

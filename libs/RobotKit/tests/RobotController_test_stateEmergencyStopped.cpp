@@ -44,15 +44,12 @@ TEST_F(RobotControllerTest, stateEmergencyStoppedEventBleConnectionGuardIsNotCha
 
 	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
 
-	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
-	EXPECT_CALL(mock_motor_left, stop).Times(2);
-	EXPECT_CALL(mock_motor_right, stop).Times(2);
-	EXPECT_CALL(mock_ears, hide).Times(1);
-	EXPECT_CALL(mock_belt, hide).Times(1);
-
-	EXPECT_CALL(mock_belt, setColor).Times(AtLeast(1));
-	EXPECT_CALL(mock_belt, show).Times(AtLeast(1));
-	EXPECT_CALL(mock_videokit, playVideoOnce).Times(1);
+	expectedCallsStopActuators();
+	Sequence on_ble_connection_sequence;
+	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection)))
+		.Times(1)
+		.InSequence(on_ble_connection_sequence);
+	EXPECT_CALL(mock_videokit, playVideoOnce).Times(1).InSequence(on_ble_connection_sequence);
 
 	Sequence on_working_entry_sequence;
 	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
@@ -151,14 +148,13 @@ TEST_F(RobotControllerTest, stateEmergencyStoppedEventBleConnectionGuardIsChargi
 	EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
 
-	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
-	EXPECT_CALL(mock_motor_left, stop).Times(2);
-	EXPECT_CALL(mock_motor_right, stop).Times(2);
-	EXPECT_CALL(mock_ears, hide).Times(1);
-	EXPECT_CALL(mock_belt, hide).Times(1);
-
-	EXPECT_CALL(mock_belt, setColor).Times(AtLeast(1));
-	EXPECT_CALL(mock_belt, show).Times(AtLeast(1));
+	expectedCallsStopActuators();
+	Sequence on_ble_connection_sequence;
+	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection)))
+		.Times(1)
+		.InSequence(on_ble_connection_sequence);
+	EXPECT_CALL(mock_videokit, playVideoOnce).Times(0).InSequence(on_ble_connection_sequence);
+	EXPECT_CALL(mock_lcd, turnOn).Times(0).InSequence(on_ble_connection_sequence);
 
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AtLeast(1));

@@ -13,12 +13,8 @@ TEST_F(RobotControllerTest, stateIdleEventTimeout)
 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_idle_sequence);
 	expectedCallsStopMotors();
 
-	EXPECT_CALL(mock_belt, setColor).Times(AtLeast(1));
-	EXPECT_CALL(mock_ears, setColor).Times(AtLeast(1));
-	EXPECT_CALL(mock_belt, show).Times(AtLeast(1));
-	EXPECT_CALL(mock_ears, show).Times(AtLeast(1));
-
 	Sequence on_sleeping_sequence;
+	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::sleeping))).InSequence(on_sleeping_sequence);
 	EXPECT_CALL(mock_videokit, playVideoOnce).InSequence(on_sleeping_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_sleeping_sequence);
 	EXPECT_CALL(timeout, onTimeout)
@@ -38,20 +34,18 @@ TEST_F(RobotControllerTest, stateIdleEventBleConnection)
 {
 	rc.state_machine.set_current_states(lksm::state::idle);
 
+	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
+
 	Sequence on_exit_idle_sequence;
 	EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
 
-	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
-
-	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1));
-	EXPECT_CALL(mock_belt, hide).Times(AtLeast(1));
-	EXPECT_CALL(mock_ears, hide).Times(AtLeast(1));
-	EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1));
-	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1));
-
-	EXPECT_CALL(mock_belt, setColor).Times(AtLeast(1));
-	EXPECT_CALL(mock_belt, show).Times(AtLeast(1));
-	EXPECT_CALL(mock_videokit, playVideoOnce).Times(AtLeast(1));
+	expectedCallsStopActuators();
+	Sequence on_ble_connection_sequence;
+	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection)))
+		.Times(1)
+		.InSequence(on_ble_connection_sequence);
+	EXPECT_CALL(mock_videokit, playVideoOnce).Times(1).InSequence(on_ble_connection_sequence);
+	EXPECT_CALL(mock_lcd, turnOn).Times(1).InSequence(on_ble_connection_sequence);
 
 	Sequence on_working_entry_sequence;
 	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
