@@ -136,3 +136,10 @@ TEST_F(BLEKitTest, onDisconnectionCallback)
 
 	// nothing expected
 }
+
+TEST_F(BLEKitTest, isConnectedDefault)
+{
+	auto is_connected = ble.isConnected();
+
+	EXPECT_FALSE(is_connected);
+}
