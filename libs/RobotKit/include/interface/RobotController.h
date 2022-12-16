@@ -41,8 +41,8 @@ class RobotController
 
 	virtual void startWorkingBehavior() = 0;
 
-	virtual void onFileExchangeStart()			 = 0;
-	virtual void onFileExchangeEnd()			 = 0;
+	virtual void startFileExchange()			 = 0;
+	virtual void stopFileExchange()				 = 0;
 	virtual auto isReadyToFileExchange() -> bool = 0;
 
 	virtual auto isReadyToUpdate() -> bool = 0;
