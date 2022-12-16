@@ -40,6 +40,8 @@ class BehaviorKit
 	void bleConnection(bool with_video);
 	void working();
 
+	void fileExchange();
+
 	void stop();
 
   private:

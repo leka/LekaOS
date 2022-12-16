@@ -220,6 +220,12 @@ class RobotController : public interface::RobotController
 
 	void onFileExchangeStart() final
 	{
+		_behaviorkit.fileExchange();
+		if (_battery.isCharging()) {
+			_behaviorkit.blinkOnCharge();
+		}
+		_lcd.turnOn();
+
 		_service_file_exchange.setFileExchangeState(true);
 
 		_service_file_exchange.onFilePathReceived(

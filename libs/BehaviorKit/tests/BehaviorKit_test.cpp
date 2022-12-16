@@ -120,6 +120,12 @@ TEST_F(BehaviorKitTest, working)
 	behaviorkit.working();
 }
 
+TEST_F(BehaviorKitTest, fileExchange)
+{
+	EXPECT_CALL(mock_videokit, displayImage);
+	behaviorkit.fileExchange();
+}
+
 TEST_F(BehaviorKitTest, stop)
 {
 	EXPECT_CALL(mock_ledkit, stop);
