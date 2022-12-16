@@ -15,6 +15,9 @@ TEST_F(RobotControllerTest, startConnectionBehaviorIsCharging)
 		.InSequence(on_ble_connection_sequence);
 	EXPECT_CALL(mock_videokit, playVideoOnce).Times(0).InSequence(on_ble_connection_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).Times(0).InSequence(on_ble_connection_sequence);
+	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::blink_on_charge)))
+		.Times(1)
+		.InSequence(on_ble_connection_sequence);
 
 	rc.startConnectionBehavior();
 }

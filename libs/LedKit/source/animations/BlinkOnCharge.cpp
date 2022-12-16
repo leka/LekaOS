@@ -43,20 +43,62 @@ void BlinkOnCharge::stop()
 
 void BlinkOnCharge::run()
 {
-	const auto kStageDurationEarsOn = uint8_t {20};
-
 	if (_ears == nullptr || _belt == nullptr) {
 		return;
 	}
 
-	if (_stage < kStageDurationEarsOn) {
-		_ears->setColor(RGB::pure_green);
-		_ears->show();
-	} else {
-		turnLedBlack();
-	}
+	switch (_stage) {
+		case 0:
+			increaseBrightness(20, light_white);
+			break;
+		case 1:
+			decreaseBrightness(20, light_white);
+			break;
 
-	++_stage;
+		case 2:
+			static constexpr auto kMaxEarsOffDuration = uint8_t {100};
+			if (_step < kMaxEarsOffDuration) {
+				turnLedBlack();
+				++_step;
+			} else {
+				_step = 0;
+				++_stage;
+			}
+			break;
+
+		default:
+			_stage = 0;
+			break;
+	}
+	_ears->show();
+}
+
+void BlinkOnCharge::increaseBrightness(uint8_t max, RGB color)
+{
+	static const auto kMaxInputValue = max;
+	if (auto pos = utils::normalizeStep(_step, kMaxInputValue); pos != 1.F) {
+		RGB color_gradient = ColorKit::colorGradient(RGB::black, color, pos);
+		_ears->setColor(color_gradient);
+		++_step;
+
+	} else {
+		_step = 0;
+		++_stage;
+	}
+}
+
+void BlinkOnCharge::decreaseBrightness(uint8_t max, RGB color)
+{
+	static const auto kMaxInputValue = max;
+	if (auto pos = utils::normalizeStep(kMaxInputValue - _step, max); pos != 0) {
+		RGB color_gradient = ColorKit::colorGradient(RGB::black, color, pos);
+		_ears->setColor(color_gradient);
+		++_step;
+
+	} else {
+		_step = 0;
+		++_stage;
+	}
 }
 
 void BlinkOnCharge::turnLedBlack()

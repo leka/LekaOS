@@ -99,6 +99,9 @@ TEST_F(RobotControllerTest, stateChargingDisconnectedEventBleConnection)
 		.InSequence(on_ble_connection_sequence);
 	EXPECT_CALL(mock_videokit, playVideoOnce).Times(0).InSequence(on_ble_connection_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).Times(0).InSequence(on_ble_connection_sequence);
+	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::blink_on_charge)))
+		.Times(1)
+		.InSequence(on_ble_connection_sequence);
 
 	Sequence on_charging_entry_sequence;
 	EXPECT_CALL(battery, level).InSequence(on_charging_entry_sequence);
