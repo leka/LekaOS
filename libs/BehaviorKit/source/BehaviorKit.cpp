@@ -92,6 +92,11 @@ void BehaviorKit::working()
 	_videokit.displayImage("/fs/home/img/system/robot-face-smiling-slightly.jpg");
 }
 
+void BehaviorKit::fileExchange()
+{
+	_videokit.displayImage("/fs/home/img/system/robot-file_exchange.jpg");
+}
+
 void BehaviorKit::stop()
 {
 	_ledkit.stop();
