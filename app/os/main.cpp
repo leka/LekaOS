@@ -275,10 +275,12 @@ auto imukit = IMUKit {imu::internal::event_loop, imu::accel, imu::gyro};
 namespace motion::internal {
 
 	EventLoopKit event_loop {};
+	CoreTimeout timeout {};
 
 }	// namespace motion::internal
 
-auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::event_loop};
+auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::event_loop,
+							motion::internal::timeout};
 
 auto behaviorkit   = BehaviorKit {videokit, ledkit, motors::left::motor, motors::right::motor};
 auto reinforcerkit = ReinforcerKit {videokit, ledkit, motionkit};

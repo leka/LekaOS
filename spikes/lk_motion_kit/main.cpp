@@ -12,6 +12,7 @@
 #include "CoreMotor.h"
 #include "CorePwm.h"
 #include "CoreRFIDReaderCR95HF.h"
+#include "CoreTimeout.h"
 #include "EventLoopKit.h"
 #include "HelloWorld.h"
 #include "IMUKit.h"
@@ -76,10 +77,12 @@ auto imukit = IMUKit {imu::internal::event_loop, imu::accel, imu::gyro};
 namespace motion::internal {
 
 	EventLoopKit event_loop {};
+	CoreTimeout timeout {};
 
 }	// namespace motion::internal
 
-auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::event_loop};
+auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::event_loop,
+							motion::internal::timeout};
 
 namespace rfid {
 

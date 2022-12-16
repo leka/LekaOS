@@ -17,6 +17,7 @@ void MotionKit::init()
 
 void MotionKit::stop()
 {
+	_timeout.stop();
 	_motor_left.stop();
 	_motor_right.stop();
 	_event_loop.stop();
@@ -42,6 +43,11 @@ void MotionKit::rotate(uint8_t number_of_rotations, Rotation direction,
 
 	_motor_left.spin(direction, kPwmMaxValue);
 	_motor_right.spin(direction, kPwmMaxValue);
+
+	auto on_timeout = [this] { stop(); };
+
+	_timeout.onTimeout(on_timeout);
+	_timeout.start(10s);
 
 	_event_loop.start();
 
@@ -106,13 +112,13 @@ void MotionKit::run()
 
 auto MotionKit::mapSpeed(float speed) const -> float
 {
-	return utils::math::map(speed, 0.F, 1.F, kMinimalViableRobotPwm, kPwmMaxValue);
+	return utils::math::map(speed, 0.F, kPIDMaxValue, kMinimalViableRobotPwm, kPwmMaxValue);
 }
 
 void MotionKit::executeSpeed(float speed, Rotation direction)
 {
 	auto speed_bounded = mapSpeed(speed);
-	if (speed_bounded <= kPwmMarginLimit) {
+	if (speed_bounded <= kMinimalViableRobotPwm + kEpsilon) {
 		_motor_left.stop();
 		_motor_right.stop();
 		_target_not_reached = false;

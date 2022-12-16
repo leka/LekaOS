@@ -30,6 +30,7 @@
 #include "CoreSDRAM.hpp"
 #include "CoreSPI.h"
 #include "CoreSTM32Hal.h"
+#include "CoreTimeout.h"
 #include "CoreVideo.hpp"
 #include "EventLoopKit.h"
 #include "FATFileSystem.h"
@@ -116,10 +117,11 @@ auto imukit = IMUKit {imu::internal::event_loop, imu::accel, imu::gyro};
 namespace motion::internal {
 
 EventLoopKit event_loop {};
+CoreTimeout timeout {};
 
 }	// namespace motion::internal
 
-auto motionkit = MotionKit {motor::left, motor::right, imukit, motion::internal::event_loop};
+auto motionkit = MotionKit {motor::left, motor::right, imukit, motion::internal::event_loop, motion::internal::timeout};
 
 namespace display {
 

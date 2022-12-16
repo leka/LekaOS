@@ -16,8 +16,14 @@ class MotionKit
 {
   public:
 	MotionKit(interface::Motor &motor_left, interface::Motor &motor_right, IMUKit &imu_kit,
-			  interface::EventLoop &event_loop)
-		: _motor_left(motor_left), _motor_right(motor_right), _imukit(imu_kit), _event_loop(event_loop) {};
+			  interface::EventLoop &event_loop, interface::Timeout &timeout)
+		: _motor_left(motor_left),
+		  _motor_right(motor_right),
+		  _imukit(imu_kit),
+		  _event_loop(event_loop),
+		  _timeout(timeout)
+	{
+	}
 
 	void init();
 
@@ -37,6 +43,7 @@ class MotionKit
 	interface::Motor &_motor_right;
 	IMUKit &_imukit;
 	interface::EventLoop &_event_loop;
+	interface::Timeout &_timeout;
 	PID _pid;
 
 	uint8_t _rotations_to_execute = 0;
@@ -46,10 +53,16 @@ class MotionKit
 	bool _stabilisation_requested  = false;
 	bool _rotate_x_turns_requested = false;
 
-	const float kReferenceAngle		   = 180.F;
-	const float kMinimalViableRobotPwm = 0.25F;	  // ? Under this pwm value, torque is too low to spin the wheel
+	const float kReferenceAngle = 180.F;
+	const float kPIDMaxValue	= 1.8F;
+
+	// ? When the motor is stopped, PWM values under kMinimalViableRobotPwm are too low to generate enough torque for
+	// ? the motor to start spinning ? At the same time, kMinimalViableRobotPwm needs to be the lowest possible to avoid
+	// ? overshooting when the target is reached
+
+	const float kMinimalViableRobotPwm = 0.15F;
 	const float kPwmMaxValue		   = 1.F;
-	const float kPwmMarginLimit		   = 0.28F;
+	const float kEpsilon			   = 0.02F;
 };
 
 }	// namespace leka
