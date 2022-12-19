@@ -7,6 +7,7 @@
 #include "EmotionRecognition.h"
 #include <random>
 
+#include "rtos/ThisThread.h"
 namespace leka::activity {
 
 void EmotionRecognition::start()
@@ -28,8 +29,11 @@ void EmotionRecognition::stop()
 
 void EmotionRecognition::processCard(const MagicCard &card)
 {
+	using namespace std::chrono;
+
 	if (card == std::get<0>(_current_emotion->cards) || card == std::get<1>(_current_emotion->cards)) {
 		_reinforcerkit.playDefault();
+		rtos::ThisThread::sleep_for(6s);
 		++_current_round;
 
 		if (_current_round == kRoundsNumber) {
