@@ -7,6 +7,8 @@
 #include "FoodRecognition.h"
 #include <random>
 
+#include "rtos/ThisThread.h"
+
 namespace leka::activity {
 
 void FoodRecognition::start()
@@ -28,8 +30,11 @@ void FoodRecognition::stop()
 
 void FoodRecognition::processCard(const MagicCard &card)
 {
+	using namespace std::chrono;
+
 	if (card == _current_food->card) {
 		_reinforcerkit.playDefault();
+		rtos::ThisThread::sleep_for(6s);
 		++_current_round;
 
 		if (_current_round == kScoreToWin) {

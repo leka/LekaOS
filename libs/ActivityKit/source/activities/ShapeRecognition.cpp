@@ -7,6 +7,8 @@
 #include "ShapeRecognition.h"
 #include <random>
 
+#include "rtos/ThisThread.h"
+
 namespace leka::activity {
 
 void ShapeRecognition::start()
@@ -28,8 +30,11 @@ void ShapeRecognition::stop()
 
 void ShapeRecognition::processCard(const MagicCard &card)
 {
+	using namespace std::chrono;
+
 	if (card == _current_shape->card) {
 		_reinforcerkit.playDefault();
+		rtos::ThisThread::sleep_for(6s);
 		++_score;
 
 		if (_score == kRoundsNumber) {

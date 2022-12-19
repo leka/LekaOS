@@ -7,6 +7,8 @@
 #include "LedNumberCounting.h"
 #include <random>
 
+#include "rtos/ThisThread.h"
+
 namespace leka::activity {
 
 void LedNumberCounting::start()
@@ -32,8 +34,11 @@ void LedNumberCounting::stop()
 
 void LedNumberCounting::processCard(const MagicCard &card)
 {
+	using namespace std::chrono;
+
 	if (card == _expected_tag_number) {
 		_reinforcerkit.playDefault();
+		rtos::ThisThread::sleep_for(6s);
 		++_current_round;
 
 		if (_current_round == kRoundsNumber) {
