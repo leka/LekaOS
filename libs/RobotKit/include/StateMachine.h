@@ -246,12 +246,13 @@ struct StateMachine {
 			, sm::state::emergency_stopped + boost::sml::on_entry<_> / sm::action::stop_actuators_and_lcd {}
 			, sm::state::emergency_stopped + boost::sml::on_exit <_> / sm::action::reset_emergency_stop_counter {}
 
-			, sm::state::emergency_stopped + event<sm::event::command_received> [sm::guard::is_not_charging {} && sm::guard::is_connected {}] = sm::state::working
-			, sm::state::emergency_stopped + event<sm::event::ble_connection>   [sm::guard::is_not_charging {}]                               = sm::state::working
-			, sm::state::emergency_stopped + event<sm::event::charge_did_start> [sm::guard::is_charging {}]                                   = sm::state::charging
-			, sm::state::emergency_stopped + event<sm::event::command_received> [sm::guard::is_charging {} && sm::guard::is_connected {}]     = sm::state::charging
-			, sm::state::emergency_stopped + event<sm::event::ble_connection>   [sm::guard::is_charging {}]                                   = sm::state::charging
-			, sm::state::emergency_stopped + event<sm::event::autonomous_activities_mode_requested>                                           = sm::state::autonomous_activities
+			, sm::state::emergency_stopped + event<sm::event::command_received>                     [sm::guard::is_not_charging {} && sm::guard::is_connected {}] = sm::state::working
+			, sm::state::emergency_stopped + event<sm::event::ble_connection>                       [sm::guard::is_not_charging {}]                               = sm::state::working
+			, sm::state::emergency_stopped + event<sm::event::autonomous_activities_mode_requested> [sm::guard::is_not_charging {}]                               = sm::state::autonomous_activities
+			, sm::state::emergency_stopped + event<sm::event::charge_did_start>                     [sm::guard::is_charging {}]                                   = sm::state::charging
+			, sm::state::emergency_stopped + event<sm::event::command_received>                     [sm::guard::is_charging {} && sm::guard::is_connected {}]     = sm::state::charging
+			, sm::state::emergency_stopped + event<sm::event::ble_connection>                       [sm::guard::is_charging {}]                                   = sm::state::charging
+			, sm::state::emergency_stopped + event<sm::event::autonomous_activities_mode_requested> [sm::guard::is_charging {}]                                   = sm::state::charging
 
 			, sm::state::autonomous_activities + boost::sml::on_entry<_> / sm::action::start_autonomous_activities_mode {}
 			, sm::state::autonomous_activities + boost::sml::on_exit<_> / sm::action::stop_autonomous_activities_mode {}
