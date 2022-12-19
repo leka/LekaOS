@@ -186,9 +186,14 @@ TEST_F(RobotControllerTest, stateEmergencyStoppedDiceRollDetectedDelayNotOver)
 }
 
 // ! TODO: Refactor with composite SM & CoreTimer mock
-TEST_F(RobotControllerTest, stateEmergencyStoppedDiceRollDetectedDelayOverEventAutonomousActivityRequested)
+TEST_F(RobotControllerTest,
+	   stateEmergencyStoppedDiceRollDetectedDelayOverEventAutonomousActivityRequestedGuardIsChargingFalse)
 {
 	rc.state_machine.set_current_states(lksm::state::emergency_stopped);
+
+	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AtLeast(1));
 
 	auto minimal_delay_over = 1001ms;
 
@@ -198,4 +203,30 @@ TEST_F(RobotControllerTest, stateEmergencyStoppedDiceRollDetectedDelayOverEventA
 	rc.onMagicCardAvailable(MagicCard::dice_roll);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
+}
+
+// ! TODO: Refactor with composite SM & CoreTimer mock
+TEST_F(RobotControllerTest,
+	   stateEmergencyStoppedDiceRollDetectedDelayOverEventAutonomousActivityRequestedGuardIsChargingTrue)
+{
+	rc.state_machine.set_current_states(lksm::state::emergency_stopped);
+
+	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AtLeast(1));
+
+	auto minimal_delay_over = 1001ms;
+
+	Sequence start_charging_behavior_sequence;
+	EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(mock_ledkit, start).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
+
+	spy_kernel_addElapsedTimeToTickCount(minimal_delay_over);
+	rc.onMagicCardAvailable(MagicCard::dice_roll);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
 }

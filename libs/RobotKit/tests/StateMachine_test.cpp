@@ -469,6 +469,20 @@ TEST_F(StateMachineTest, stateEmergencyStoppedEventChargeDidStartGuardIsNotCharg
 	EXPECT_TRUE(sm.is(lksm::state::emergency_stopped));
 }
 
+TEST_F(StateMachineTest, stateEmergencyStoppedEventAutonomousActivityRequestedGuardIsNotCharging)
+{
+	sm.set_current_states(lksm::state::emergency_stopped);
+
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
+
+	EXPECT_CALL(mock_rc, resetEmergencyStopCounter).Times(1);
+	EXPECT_CALL(mock_rc, startAutonomousActivityMode).Times(1);
+
+	sm.process_event(lksm::event::autonomous_activities_mode_requested {});
+
+	EXPECT_TRUE(sm.is(lksm::state::autonomous_activities));
+}
+
 TEST_F(StateMachineTest, stateEmergencyStoppedEventChargeDidStartGuardIsCharging)
 {
 	sm.set_current_states(lksm::state::emergency_stopped);
@@ -520,6 +534,20 @@ TEST_F(StateMachineTest, stateEmergencyStoppedEventBleConnectionGuardIsCharging)
 	EXPECT_CALL(mock_rc, startConnectionBehavior).Times(1);
 
 	sm.process_event(lksm::event::ble_connection {});
+
+	EXPECT_TRUE(sm.is(lksm::state::charging));
+}
+
+TEST_F(StateMachineTest, stateEmergencyStoppedEventAutonomousActivityRequestedGuardIsCharging)
+{
+	sm.set_current_states(lksm::state::emergency_stopped);
+
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
+
+	EXPECT_CALL(mock_rc, resetEmergencyStopCounter).Times(1);
+	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+
+	sm.process_event(lksm::event::autonomous_activities_mode_requested {});
 
 	EXPECT_TRUE(sm.is(lksm::state::charging));
 }
