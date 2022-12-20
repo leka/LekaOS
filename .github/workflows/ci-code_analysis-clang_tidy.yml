@@ -7,7 +7,7 @@ name: Code Analysis - Clang-Tidy
 on:
   push:
     branches:
-      - master
+      - main
       - develop
 
   pull_request:

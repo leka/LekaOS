@@ -7,7 +7,7 @@ name: Code Analysis - Sonarcloud
 on:
   push:
     branches:
-      - master
+      - main
       - develop
 
   pull_request:

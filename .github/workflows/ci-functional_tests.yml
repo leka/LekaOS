@@ -7,7 +7,7 @@ name: Functional Tests
 on:
   push:
     branches:
-      - master
+      - main
       - develop
 
   pull_request:
