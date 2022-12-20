@@ -13,6 +13,10 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   bootloader_os_firmware:
     name: Bootloader + OS = Firmware
