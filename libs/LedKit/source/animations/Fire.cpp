@@ -34,12 +34,13 @@ void Fire::start()
 
 void Fire::stop()
 {
+	_running = false;
+
 	if (_ears == nullptr || _belt == nullptr) {
 		return;
 	}
 
 	turnLedBlack();
-	_running = false;
 }
 
 void Fire::run()

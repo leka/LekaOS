@@ -33,12 +33,13 @@ void SpinBlink::start()
 
 void SpinBlink::stop()
 {
+	_running = false;
+
 	if (_ears == nullptr || _belt == nullptr) {
 		return;
 	}
 
 	turnLedBlack();
-	_running = false;
 }
 
 void SpinBlink::run()

@@ -36,12 +36,13 @@ void Rainbow::start()
 
 void Rainbow::stop()
 {
+	_running = false;
+
 	if (_ears == nullptr || _belt == nullptr) {
 		return;
 	}
 
 	turnLedBlack();
-	_running = false;
 }
 
 void Rainbow::run()
