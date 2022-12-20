@@ -6,6 +6,7 @@
 
 #include "ChooseReinforcer.h"
 
+#include "rtos/ThisThread.h"
 namespace leka::activity {
 
 void ChooseReinforcer::start()
@@ -19,26 +20,33 @@ void ChooseReinforcer::start()
 
 void ChooseReinforcer::processCard(const MagicCard &card)
 {
+	using namespace std::chrono;
+
 	switch (card.getId()) {
 		case (MagicCard::reinforcer_1_blink_green.getId()):
 			_reinforcerkit.setDefaultReinforcer(ReinforcerKit::Reinforcer::BlinkGreen);
 			_reinforcerkit.playDefault();
+			rtos::ThisThread::sleep_for(3s);
 			break;
 		case (MagicCard::reinforcer_2_spin_blink.getId()):
 			_reinforcerkit.setDefaultReinforcer(ReinforcerKit::Reinforcer::SpinBlink);
 			_reinforcerkit.playDefault();
+			rtos::ThisThread::sleep_for(3s);
 			break;
 		case (MagicCard::reinforcer_3_fire.getId()):
 			_reinforcerkit.setDefaultReinforcer(ReinforcerKit::Reinforcer::Fire);
 			_reinforcerkit.playDefault();
+			rtos::ThisThread::sleep_for(3s);
 			break;
 		case (MagicCard::reinforcer_4_sprinkles.getId()):
 			_reinforcerkit.setDefaultReinforcer(ReinforcerKit::Reinforcer::Sprinkles);
 			_reinforcerkit.playDefault();
+			rtos::ThisThread::sleep_for(3s);
 			break;
 		case (MagicCard::reinforcer_5_rainbow.getId()):
 			_reinforcerkit.setDefaultReinforcer(ReinforcerKit::Reinforcer::Rainbow);
 			_reinforcerkit.playDefault();
+			rtos::ThisThread::sleep_for(3s);
 			break;
 		default:
 			_backup_callback(card);

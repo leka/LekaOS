@@ -50,7 +50,7 @@ void SuperSimon::processCard(const MagicCard &card)
 
 		if (_expected_color_index == _current_round) {
 			_reinforcerkit.playDefault();
-			rtos::ThisThread::sleep_for(6s);
+			rtos::ThisThread::sleep_for(5s);
 			_expected_color_index = 0;
 			++_current_round;
 

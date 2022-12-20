@@ -34,7 +34,7 @@ void PictoColorRecognition::processCard(const MagicCard &card)
 
 	if (card == _current_color->card) {
 		_reinforcerkit.playDefault();
-		rtos::ThisThread::sleep_for(6s);
+		rtos::ThisThread::sleep_for(5s);
 		++_current_round;
 
 		if (_current_round == kRoundsNumber) {

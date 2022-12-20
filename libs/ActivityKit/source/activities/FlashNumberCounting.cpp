@@ -41,7 +41,7 @@ void FlashNumberCounting::processCard(const MagicCard &card)
 
 	if (card == _expected_tag_number) {
 		_reinforcerkit.playDefault();
-		rtos::ThisThread::sleep_for(6s);
+		rtos::ThisThread::sleep_for(5s);
 
 		++_current_round;
 
