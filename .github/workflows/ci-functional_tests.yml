@@ -7,11 +7,15 @@ name: Functional Tests
 on:
   push:
     branches:
-      - master
+      - main
       - develop
 
   pull_request:
     types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   run_functional_tests:
