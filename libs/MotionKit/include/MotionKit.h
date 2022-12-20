@@ -62,7 +62,7 @@ class MotionKit
 
 	const float kMinimalViableRobotPwm = 0.15F;
 	const float kPwmMaxValue		   = 1.F;
-	const float kEpsilon			   = 0.02F;
+	const float kEpsilon			   = 0.005F;
 };
 
 }	// namespace leka
