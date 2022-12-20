@@ -34,7 +34,7 @@ void ShapeRecognition::processCard(const MagicCard &card)
 
 	if (card == _current_shape->card) {
 		_reinforcerkit.playDefault();
-		rtos::ThisThread::sleep_for(6s);
+		rtos::ThisThread::sleep_for(5s);
 		++_score;
 
 		if (_score == kRoundsNumber) {

@@ -34,7 +34,7 @@ void FoodRecognition::processCard(const MagicCard &card)
 
 	if (card == _current_food->card) {
 		_reinforcerkit.playDefault();
-		rtos::ThisThread::sleep_for(6s);
+		rtos::ThisThread::sleep_for(5s);
 		++_current_round;
 
 		if (_current_round == kScoreToWin) {
