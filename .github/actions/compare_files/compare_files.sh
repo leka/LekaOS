@@ -82,9 +82,6 @@ for target in "${all_targets[@]}"; do
 		base_ram_with_percentage="$(getUsedRamSizeWithPercentage $BASE_DIR $target_name)"
 		head_ram_with_percentage="$(getUsedRamSizeWithPercentage $HEAD_DIR $target_name)"
 
-		base_ram_percentage=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*\s\([[:digit:]]*%\)' $BASE_DIR/$target_name-code_size.txt)
-		head_ram_percentage=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*\s\([[:digit:]]*%\)' $HEAD_DIR/$target_name-code_size.txt)
-
 		base_ram="$(getUsedRamSize $BASE_DIR $target_name)"
 		head_ram="$(getUsedRamSize $HEAD_DIR $target_name)"
 
