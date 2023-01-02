@@ -109,11 +109,11 @@ namespace sm::action {
 	};
 
 	struct start_deep_sleep_timeout {
-		auto operator()(irc &rc) const {}
+		auto operator()(irc &rc) const { rc.startDeepSleepTimeout(); }
 	};
 
 	struct stop_deep_sleep_timeout {
-		auto operator()(irc &rc) const {}
+		auto operator()(irc &rc) const { rc.stopDeepSleepTimeout(); }
 	};
 
 	struct start_idle_timeout {

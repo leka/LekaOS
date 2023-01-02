@@ -18,6 +18,9 @@ class RobotController
 	virtual void startSleepTimeout() = 0;
 	virtual void stopSleepTimeout()	 = 0;
 
+	virtual void startDeepSleepTimeout() = 0;
+	virtual void stopDeepSleepTimeout()	 = 0;
+
 	virtual void startIdleTimeout() = 0;
 	virtual void stopIdleTimeout()	= 0;
 

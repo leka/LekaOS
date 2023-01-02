@@ -131,6 +131,7 @@ class RobotControllerTest : public testing::Test
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
 
 	interface::Timeout::callback_t on_sleep_timeout			 = {};
+	interface::Timeout::callback_t on_deep_sleep_timeout	 = {};
 	interface::Timeout::callback_t on_idle_timeout			 = {};
 	interface::Timeout::callback_t on_sleeping_start_timeout = {};
 	interface::Timeout::callback_t on_charging_start_timeout = {};
@@ -262,6 +263,10 @@ class RobotControllerTest : public testing::Test
 		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(is_charging_sequence);
 
 		expectedCallsRunLaunchingBehavior();
+
+		Sequence start_deep_sleep_timeout_sequence;
+		EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(start_deep_sleep_timeout_sequence);
+		EXPECT_CALL(timeout_state_transition, start).InSequence(start_deep_sleep_timeout_sequence);
 
 		Sequence start_charging_behavior_sequence;
 		EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
