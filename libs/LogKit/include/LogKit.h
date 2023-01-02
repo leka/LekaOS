@@ -22,6 +22,8 @@
 
 #include "CircularQueue.h"
 
+#pragma GCC diagnostic ignored "-Wformat-security"	 // ? Turn off format security warning
+
 namespace leka::logger {
 
 #if defined(ENABLE_LOG_DEBUG)
