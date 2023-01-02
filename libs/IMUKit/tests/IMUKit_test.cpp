@@ -102,8 +102,6 @@ TEST_F(IMUKitTest, computeAnglesNullAccelerations)
 	EXPECT_CALL(accel, getXYZ).WillRepeatedly(Return(accel_data));
 	EXPECT_CALL(gyro, getXYZ).WillRepeatedly(Return(gyro_data));
 
-	auto [pitch, roll, yaw] = imukit.getAngles();
-
 	for (auto i = 0; i < 100; ++i) {
 		imukit.computeAngles();
 
