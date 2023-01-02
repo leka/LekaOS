@@ -159,8 +159,9 @@ TEST_F(CoreDMA2DTest, transferImageCentered)
 	auto left_pixels_offset_to_center = (lcd::dimension::width - image_width) / 2;
 	auto top_pixel_offset_to_center	  = (lcd::dimension::height - image_height) / 2;
 
-	auto memory_offset_to_center = lcd::property::pixel_memory_size *
-								   (left_pixels_offset_to_center + top_pixel_offset_to_center * lcd::dimension::width);
+	auto memory_offset_to_center =
+		static_cast<unsigned>(lcd::property::pixel_memory_size *
+							  (left_pixels_offset_to_center + top_pixel_offset_to_center * lcd::dimension::width));
 
 	{
 		InSequence seq;
