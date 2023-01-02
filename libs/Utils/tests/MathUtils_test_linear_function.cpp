@@ -7,7 +7,7 @@
 
 using namespace leka::utils::math;
 
-auto rounding_error = float {0.0001};
+constexpr auto rounding_error = float {0.0001F};
 
 TEST(MathUtilsTest, computeLinearCoefficientsForFunction1)
 {
@@ -39,8 +39,8 @@ TEST(MathUtilsTest, computeLinearCoefficientsForFunction3)
 {
 	// function: y = 2x - 5
 
-	Point p1 {1.2566, -2.4868};
-	Point p2 {3.4395, 1.8790};
+	constexpr Point p1 {1.2566F, -2.4868F};
+	constexpr Point p2 {3.4395F, 1.8790F};
 
 	auto [slope, y_intercept] = computeLinearCoefficients(p1, p2);
 
@@ -52,8 +52,8 @@ TEST(MathUtilsTest, computeLinearCoefficientsForFunction4)
 {
 	// function: y = -x/2 + 0.75
 
-	Point p1 {-2.6860, 2.0930};
-	Point p2 {3.2299, -0.8649};
+	constexpr Point p1 {-2.6860F, 2.0930F};
+	constexpr Point p2 {3.2299F, -0.8649F};
 
 	auto [slope, y_intercept] = computeLinearCoefficients(p1, p2);
 
@@ -63,8 +63,8 @@ TEST(MathUtilsTest, computeLinearCoefficientsForFunction4)
 
 TEST(MathUtilsTest, computeLinearCoefficientsWithPointsHavingSameXValue)
 {
-	Point p1 {-2, -2};
-	Point p2 {-2, 3};
+	constexpr Point p1 {-2, -2};
+	constexpr Point p2 {-2, 3};
 
 	auto [slope, y_intercept] = computeLinearCoefficients(p2, p1);
 
