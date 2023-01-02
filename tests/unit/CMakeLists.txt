@@ -58,6 +58,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 # More warnings
 add_compile_options(
 	-Wshadow
+	-Wconversion
 )
 
 # Colored output for compilation
