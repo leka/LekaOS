@@ -6,6 +6,13 @@
 
 TEST_F(RobotControllerTest, stateWorkingEventTimeout)
 {
+	Sequence get_on_idle_timeout_callback;
+	EXPECT_CALL(timeout, onTimeout)
+		.InSequence(get_on_idle_timeout_callback)
+		.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_idle_timeout));
+	EXPECT_CALL(timeout, start).InSequence(get_on_idle_timeout_callback);
+	rc.startIdleTimeout();
+
 	rc.state_machine.set_current_states(lksm::state::working);
 
 	Sequence on_exit_working_sequence;

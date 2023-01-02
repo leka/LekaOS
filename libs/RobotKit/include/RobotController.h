@@ -446,9 +446,6 @@ class RobotController : public interface::RobotController
 
 		// Setup callbacks for each State Machine events
 
-		auto on_idle_timeout = [this]() { raise(event::idle_timeout_did_end {}); };
-		_timeout.onTimeout(on_idle_timeout);
-
 		auto on_charge_did_start = [this]() { raise(event::charge_did_start {}); };
 		_battery.onChargeDidStart(on_charge_did_start);
 
