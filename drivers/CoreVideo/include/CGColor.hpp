@@ -14,7 +14,11 @@ struct CGColor {
 	uint8_t blue {};
 	uint8_t alpha {0xFF};
 
-	[[nodiscard]] auto getARGB() const -> uint32_t { return alpha << 24 | red << 16 | green << 8 | blue; }
+	[[nodiscard]] auto getARGB() const -> uint32_t
+	{
+		const auto argb = static_cast<uint32_t>(alpha << 24 | red << 16 | green << 8 | blue);
+		return argb;
+	}
 
 	static const CGColor white;
 	static const CGColor black;
