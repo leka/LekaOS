@@ -21,7 +21,7 @@ MATCHER_P(setArray, expected_array, "")
 	}
 
 	for (unsigned i = 0; i < expected_array.size(); i++) {
-		arg[i] = expected_array[i];
+		arg[i] = static_cast<uint8_t>(expected_array[i]);
 	}
 	return true;
 }
@@ -36,7 +36,7 @@ class CoreFlashManagerIS25LP016DTest : public ::testing::Test
 
 	void MOCK_FUNCTION_chip_available(int times = 1)
 	{
-		auto work_not_in_progress = ~status::work_in_progress;
+		auto work_not_in_progress = static_cast<uint8_t>(~status::work_in_progress);
 		auto returned_value		  = std::to_array({work_not_in_progress});
 		EXPECT_CALL(qspimock, sendCommand(command::read_status, _, _, _, setArray(returned_value), _)).Times(times);
 	}
