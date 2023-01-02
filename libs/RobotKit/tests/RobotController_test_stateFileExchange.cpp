@@ -23,8 +23,8 @@ TEST_F(RobotControllerTest, stateFileExchangeEventFileExchangeStopRequestedGuard
 	EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_ledkit, start).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
-	EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
-	EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(timeout_state_internal, onTimeout).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(timeout_state_internal, start).InSequence(start_charging_behavior_sequence);
 
 	rc.state_machine.process_event(lksm::event::file_exchange_stop_requested {});
 
@@ -46,8 +46,8 @@ TEST_F(RobotControllerTest, stateFileExchangeEventFileExchangeStopRequestedGuard
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber()).InSequence(on_file_exchange_end);
 
 	Sequence on_working_entry_sequence;
-	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
-	EXPECT_CALL(timeout, start).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(timeout_state_transition, start).InSequence(on_working_entry_sequence);
 	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_working_entry_sequence);
 
 	rc.state_machine.process_event(lksm::event::file_exchange_stop_requested {});
@@ -78,8 +78,8 @@ TEST_F(RobotControllerTest, stateFileExchangeEventDisconnectionGuardIsCharging)
 	EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_ledkit, start).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
-	EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
-	EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(timeout_state_internal, onTimeout).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(timeout_state_internal, start).InSequence(start_charging_behavior_sequence);
 
 	rc.state_machine.process_event(lksm::event::ble_disconnection {});
 
@@ -105,8 +105,8 @@ TEST_F(RobotControllerTest, stateFileExchangeEventDisconnectionGuardIsNotChargin
 	EXPECT_CALL(mock_ledkit, start).Times(0).InSequence(start_disconnection_behavior);
 
 	Sequence on_idle_sequence;
-	EXPECT_CALL(timeout, onTimeout).InSequence(on_idle_sequence);
-	EXPECT_CALL(timeout, start).InSequence(on_idle_sequence);
+	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(on_idle_sequence);
+	EXPECT_CALL(timeout_state_transition, start).InSequence(on_idle_sequence);
 	EXPECT_CALL(mock_videokit, playVideoOnRepeat).InSequence(on_idle_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_idle_sequence);
 

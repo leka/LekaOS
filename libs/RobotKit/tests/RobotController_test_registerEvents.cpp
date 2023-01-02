@@ -47,8 +47,8 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsNotCharging)
 				.InSequence(run_launching_behavior_sequence);
 			EXPECT_CALL(mock_lcd, turnOn).InSequence(run_launching_behavior_sequence);
 
-			EXPECT_CALL(timeout, onTimeout);
-			EXPECT_CALL(timeout, start);
+			EXPECT_CALL(timeout_state_transition, onTimeout);
+			EXPECT_CALL(timeout_state_transition, start);
 
 			EXPECT_CALL(mock_videokit, playVideoOnRepeat);
 			EXPECT_CALL(mock_lcd, turnOn);
@@ -106,8 +106,8 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsCharging)
 			EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
 			EXPECT_CALL(mock_ledkit, start).InSequence(start_charging_behavior_sequence);
 			EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
-			EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
-			EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
+			EXPECT_CALL(timeout_state_internal, onTimeout).InSequence(start_charging_behavior_sequence);
+			EXPECT_CALL(timeout_state_internal, start).InSequence(start_charging_behavior_sequence);
 		}
 	}
 

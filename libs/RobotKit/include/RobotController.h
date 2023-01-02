@@ -44,12 +44,14 @@ class RobotController : public interface::RobotController
   public:
 	sm_t state_machine {static_cast<interface::RobotController &>(*this), logger};
 
-	explicit RobotController(interface::Timeout &timeout, interface::Battery &battery, SerialNumberKit &serialnumberkit,
+	explicit RobotController(interface::Timeout &timeout_state_internal, interface::Timeout &timeout_state_transition,
+							 interface::Battery &battery, SerialNumberKit &serialnumberkit,
 							 interface::FirmwareUpdate &firmware_update, interface::Motor &motor_left,
 							 interface::Motor &motor_right, interface::LED &ears, interface::LED &belt,
 							 interface::LedKit &ledkit, interface::LCD &lcd, interface::VideoKit &videokit,
 							 BehaviorKit &behaviorkit, CommandKit &cmdkit, RFIDKit &rfidkit, ActivityKit &activitykit)
-		: _timeout(timeout),
+		: _timeout_state_internal(timeout_state_internal),
+		  _timeout_state_transition(timeout_state_transition),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
 		  _firmware_update(firmware_update),
@@ -81,23 +83,23 @@ class RobotController : public interface::RobotController
 	{
 		using namespace system::robot::sm;
 		auto on_sleep_timeout = [this] { raise(event::sleep_timeout_did_end {}); };
-		_timeout.onTimeout(on_sleep_timeout);
+		_timeout_state_transition.onTimeout(on_sleep_timeout);
 
-		_timeout.start(_sleep_timeout_duration);
+		_timeout_state_transition.start(_sleep_timeout_duration);
 	}
 
-	void stopSleepTimeout() final { _timeout.stop(); }
+	void stopSleepTimeout() final { _timeout_state_transition.stop(); }
 
 	void startIdleTimeout() final
 	{
 		using namespace system::robot::sm;
 		auto on_idle_timeout = [this] { raise(event::idle_timeout_did_end {}); };
-		_timeout.onTimeout(on_idle_timeout);
+		_timeout_state_transition.onTimeout(on_idle_timeout);
 
-		_timeout.start(_idle_timeout_duration);
+		_timeout_state_transition.start(_idle_timeout_duration);
 	}
 
-	void stopIdleTimeout() final { _timeout.stop(); }
+	void stopIdleTimeout() final { _timeout_state_transition.stop(); }
 
 	void startWaitingBehavior() final
 	{
@@ -125,14 +127,14 @@ class RobotController : public interface::RobotController
 			_event_queue.call(&_lcd, &interface::LCD::turnOff);
 			_event_queue.call(&_ledkit, &interface::LedKit::stop);
 		};
-		_timeout.onTimeout(on_sleeping_start_timeout);
+		_timeout_state_internal.onTimeout(on_sleeping_start_timeout);
 
-		_timeout.start(20s);
+		_timeout_state_internal.start(20s);
 	}
 
 	void stopSleepingBehavior() final
 	{
-		_timeout.stop();
+		_timeout_state_internal.stop();
 		_behaviorkit.stop();
 	}
 
@@ -171,14 +173,14 @@ class RobotController : public interface::RobotController
 		_lcd.turnOn();
 
 		auto on_charging_start_timeout = [this] { _event_queue.call(&_lcd, &interface::LCD::turnOff); };
-		_timeout.onTimeout(on_charging_start_timeout);
+		_timeout_state_internal.onTimeout(on_charging_start_timeout);
 
-		_timeout.start(1min);
+		_timeout_state_internal.start(1min);
 	}
 
 	void stopChargingBehavior() final
 	{
-		_timeout.stop();
+		_timeout_state_internal.stop();
 		_behaviorkit.stop();
 	}
 
@@ -495,9 +497,11 @@ class RobotController : public interface::RobotController
   private:
 	system::robot::sm::logger logger {};
 
+	interface::Timeout &_timeout_state_internal;
+
 	std::chrono::seconds _sleep_timeout_duration {60};
 	std::chrono::seconds _idle_timeout_duration {600};
-	interface::Timeout &_timeout;
+	interface::Timeout &_timeout_state_transition;
 
 	const rtos::Kernel::Clock::time_point kSystemStartupTimestamp = rtos::Kernel::Clock::now();
 
