@@ -43,7 +43,7 @@ class CircularQueue
 		}
 	}
 
-	void push(std::span<const T> items) { push(items.data(), items.size()); }
+	void push(std::span<const T> items) { push(items.data(), static_cast<CounterType>(items.size())); }
 
 	void push(const T *src, CounterType len)
 	{
