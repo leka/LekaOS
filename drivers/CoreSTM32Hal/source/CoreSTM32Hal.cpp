@@ -4,6 +4,10 @@
 
 #include "CoreSTM32Hal.h"
 
+#if __clang__
+	#pragma GCC diagnostic ignored "-Wdeprecated-volatile"	 // ? Turn off deprecated volatile warning
+#endif
+
 namespace leka {
 
 void CoreSTM32Hal::HAL_RCC_GPIOD_CLK_ENABLE()
