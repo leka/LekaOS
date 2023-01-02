@@ -20,7 +20,7 @@ MATCHER_P(setArray, expected_array, "")
 		return false;
 	}
 
-	for (int i = 0; i < expected_array.size(); i++) {
+	for (unsigned i = 0; i < expected_array.size(); i++) {
 		arg[i] = expected_array[i];
 	}
 	return true;

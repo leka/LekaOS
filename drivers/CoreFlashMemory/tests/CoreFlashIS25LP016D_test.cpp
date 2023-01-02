@@ -24,7 +24,7 @@ MATCHER_P(compareArray, expected_array, "")
 
 	auto same_content = true;
 
-	for (int i = 0; i < expected_array.size(); i++) {
+	for (unsigned i = 0; i < expected_array.size(); i++) {
 		same_content &= arg[i] == expected_array[i];
 	}
 	return same_content;
