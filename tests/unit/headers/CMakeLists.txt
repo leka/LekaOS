@@ -9,7 +9,7 @@ project(mbed-os)
 add_library(mbed-os INTERFACE)
 
 target_include_directories(mbed-os
-	INTERFACE
+	SYSTEM INTERFACE
 	${HEADERS_DIR}/mbed
 
 	${EXTERN_MBED_OS_DIR}
