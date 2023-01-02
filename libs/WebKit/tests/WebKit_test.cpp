@@ -33,7 +33,7 @@ TEST_F(WebKitTest, connect)
 
 	EXPECT_CALL(network_mock, connect(ssid, pass)).Times(1);
 
-	web_kit.connect(ssid, pass);
+	std::ignore = web_kit.connect(ssid, pass);
 }
 
 TEST_F(WebKitTest, setCertificateStore)
