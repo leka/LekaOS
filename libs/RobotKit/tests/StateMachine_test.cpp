@@ -238,6 +238,7 @@ TEST_F(StateMachineTest, stateSleepEventTimeout)
 
 	EXPECT_CALL(mock_rc, stopSleepingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, suspendHardwareForDeepSleep).Times(1);
 
 	sm.process_event(lksm::event::deep_sleep_timeout_did_end {});
 
@@ -364,6 +365,7 @@ TEST_F(StateMachineTest, stateChargingEventTimeout)
 
 	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, suspendHardwareForDeepSleep).Times(1);
 
 	sm.process_event(lksm::event::deep_sleep_timeout_did_end {});
 

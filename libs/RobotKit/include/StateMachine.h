@@ -177,7 +177,7 @@ namespace sm::action {
 	};
 
 	struct suspend_hardware_for_deep_sleep {
-		auto operator()(irc &rc) const {}
+		auto operator()(irc &rc) const { rc.suspendHardwareForDeepSleep(); }
 	};
 
 	struct reset_emergency_stop_counter {
