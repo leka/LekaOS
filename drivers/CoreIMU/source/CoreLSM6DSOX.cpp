@@ -72,10 +72,10 @@ auto CoreLSM6DSOX::getData() -> SensorData &
 auto CoreLSM6DSOX::read(uint8_t register_address, uint16_t number_bytes_to_read, uint8_t *p_buffer) -> int32_t
 {
 	// Send component address, without STOP condition
-	auto ret = _i2c.write(_address, &register_address, 1, true);
+	auto ret = _i2c.write(kI2CAddress, &register_address, 1, true);
 	if (ret == 0) {
 		// Read data, with STOP condition
-		ret = _i2c.read(_address, p_buffer, number_bytes_to_read, false);
+		ret = _i2c.read(kI2CAddress, p_buffer, number_bytes_to_read, false);
 	}
 
 	return ret;
@@ -89,7 +89,7 @@ auto CoreLSM6DSOX::write(uint8_t register_address, uint16_t number_bytes_to_writ
 
 	_rx_buffer[0] = register_address;
 	std::copy(p_buffer, (p_buffer + number_bytes_to_write), _rx_buffer.data() + 1);
-	auto ret = _i2c.write(_address, _rx_buffer.data(), number_bytes_to_write + 1, false);
+	auto ret = _i2c.write(kI2CAddress, _rx_buffer.data(), number_bytes_to_write + 1, false);
 	return ret;
 }
 
