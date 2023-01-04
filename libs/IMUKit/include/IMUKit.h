@@ -44,7 +44,10 @@ class IMUKit
 		const std::chrono::milliseconds delay {};
 		const float frequency {};
 	};
-	const SamplingConfig kDefaultSamplingConfig {.delay = std::chrono::milliseconds {70}, .frequency = 12.5F};
+
+	// ? Modify "delay" value to tune Mahony.
+	// ? Initial value for Hugo's Robot = 70 ms
+	const SamplingConfig kDefaultSamplingConfig {.delay = std::chrono::milliseconds {74}, .frequency = 12.5F};
 	bool _is_running {false};
 };
 
