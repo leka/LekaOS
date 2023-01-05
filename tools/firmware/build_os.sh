@@ -6,28 +6,24 @@ mkdir -p _release
 # Variables
 RECOMPILE_APPLICATIONS="$1"
 
-APPLICATION_HEX_SOURCE="$2"
+APPLICATION_HEX_SOURCE="_build/LEKA_V1_2_DEV/app/os/LekaOS.hex"
+APPLICATION_HEX_DESTINATION="$2"
+
 APPLICATION_VERSION="$3"
 APPLICATION_HEX="_tmp/application.hex"
-APPLICATION_SIGNED_HEX="$4"
+APPLICATION_SIGNED_HEX=$APPLICATION_HEX_DESTINATION
 APPLICATION_SIGNED_BIN="_release/application-signed.bin"
-
-if [ -z "$APPLICATION_HEX_SOURCE" ]; then
-	echo "APPLICATION_HEX_SOURCE is unset"
-	APPLICATION_HEX_SOURCE="_build/LEKA_V1_2_DEV/app/os/LekaOS.hex"
-fi
 
 if [ -z "$APPLICATION_VERSION" ]; then
 	echo "APPLICATION_VERSION is unset"
-	APPLICATION_VERSION="1.2.3+4"
-else
-	epoch=$(date +%s)
-	APPLICATION_VERSION=$APPLICATION_VERSION+$epoch
+	exit 1
 fi
+epoch=$(date +%s)
+APPLICATION_VERSION=$APPLICATION_VERSION+$epoch
 
-if [ -z "$APPLICATION_SIGNED_HEX" ]; then
-	echo "APPLICATION_SIGNED_HEX is unset"
-	APPLICATION_SIGNED_HEX="_tmp/application-signed.hex"
+if [ -z "$APPLICATION_HEX_DESTINATION" ]; then
+	echo "APPLICATION_HEX_DESTINATION is unset"
+	exit 1
 fi
 
 # Compile applications

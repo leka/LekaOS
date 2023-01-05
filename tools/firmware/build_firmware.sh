@@ -14,9 +14,7 @@ do
 done
 
 BOOTLOADER_HEX="_tmp/bootloader.hex"
-
-APPLICATION_HEX_SOURCE="_build/LEKA_V1_2_DEV/app/os/LekaOS.hex"
-APPLICATION_SIGNED_HEX="_tmp/application-signed.hex"
+APPLICATION_HEX="_tmp/application-signed.hex"
 
 FIRMWARE_HEX="_release/firmware.hex"
 FIRMWARE_RELEASE="_release/firmware.bin"
@@ -30,9 +28,9 @@ fi;
 
 # Get application
 echo "Build application"
-./tools/firmware/build_os.sh $RECOMPILE_BOOTLOADER $APPLICATION_HEX_SOURCE $APPLICATION_VERSION $APPLICATION_SIGNED_HEX
+./tools/firmware/build_os.sh $RECOMPILE_BOOTLOADER $APPLICATION_HEX $APPLICATION_VERSION
 
 # Merge bootloader and application
 echo "Merge bootloader & applications"
-hexmerge.py -o $FIRMWARE_HEX --no-start-addr $BOOTLOADER_HEX $APPLICATION_SIGNED_HEX
+hexmerge.py -o $FIRMWARE_HEX --no-start-addr $BOOTLOADER_HEX $APPLICATION_HEX
 arm-none-eabi-objcopy -I ihex -O binary $FIRMWARE_HEX $FIRMWARE_RELEASE
