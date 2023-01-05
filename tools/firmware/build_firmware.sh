@@ -25,7 +25,7 @@ FIRMWARE_RELEASE="_release/firmware.bin"
 if [ "$RECOMPILE_BOOTLOADER" = "true" ];
 then
 	echo "Build bootloader"
-	./tools/firmware/build_bootloader.sh
+	./tools/firmware/build_bootloader.sh $BOOTLOADER_HEX
 fi;
 
 # Get application
