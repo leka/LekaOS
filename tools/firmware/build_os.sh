@@ -18,8 +18,6 @@ if [ -z "$APPLICATION_VERSION" ]; then
 	echo "APPLICATION_VERSION is unset"
 	exit 1
 fi
-epoch=$(date +%s)
-APPLICATION_VERSION=$APPLICATION_VERSION+$epoch
 
 if [ -z "$APPLICATION_HEX_DESTINATION" ]; then
 	echo "APPLICATION_HEX_DESTINATION is unset"

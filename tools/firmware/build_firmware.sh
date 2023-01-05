@@ -13,6 +13,14 @@ do
     esac
 done
 
+if [ -z "$APPLICATION_VERSION" ]; then
+	echo "APPLICATION_VERSION is unset"
+	exit 1
+fi
+
+BUILD_NUMBER=$(date +%s)
+APPLICATION_VERSION="$APPLICATION_VERSION+$BUILD_NUMBER"
+
 BOOTLOADER_HEX="_tmp/bootloader.hex"
 APPLICATION_HEX="_tmp/application-signed.hex"
 
