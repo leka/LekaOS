@@ -17,7 +17,7 @@ BOOTLOADER_HEX="_tmp/bootloader.hex"
 APPLICATION_HEX="_tmp/application-signed.hex"
 
 FIRMWARE_HEX="_release/firmware.hex"
-FIRMWARE_RELEASE="_release/firmware.bin"
+FIRMWARE_BIN="_release/firmware.bin"
 
 # Get bootloader
 if [ "$RECOMPILE_BOOTLOADER" = "true" ];
@@ -31,6 +31,8 @@ echo "Build application"
 ./tools/firmware/build_os.sh $RECOMPILE_BOOTLOADER $APPLICATION_HEX $APPLICATION_VERSION
 
 # Merge bootloader and application
-echo "Merge bootloader & applications"
+echo "Merge bootloader & application"
 hexmerge.py -o $FIRMWARE_HEX --no-start-addr $BOOTLOADER_HEX $APPLICATION_HEX
-arm-none-eabi-objcopy -I ihex -O binary $FIRMWARE_HEX $FIRMWARE_RELEASE
+
+# Convert in binary
+arm-none-eabi-objcopy -I ihex -O binary $FIRMWARE_HEX $FIRMWARE_BIN
