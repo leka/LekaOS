@@ -22,10 +22,10 @@ BUILD_NUMBER=$(date +%s)
 APPLICATION_VERSION="$APPLICATION_VERSION+$BUILD_NUMBER"
 
 BOOTLOADER_HEX="_tmp/bootloader.hex"
-APPLICATION_HEX="_tmp/application-signed.hex"
+APPLICATION_HEX="_tmp/LekaOS-$APPLICATION_VERSION.hex"
 
-FIRMWARE_HEX="_release/firmware.hex"
-FIRMWARE_BIN="_release/firmware.bin"
+FIRMWARE_HEX="_release/Firmware-$APPLICATION_VERSION.hex"
+FIRMWARE_BIN="_release/Firmware-$APPLICATION_VERSION.bin"
 
 # Get bootloader
 if [ "$RECOMPILE_BOOTLOADER" = "true" ];
