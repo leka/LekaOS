@@ -42,6 +42,7 @@ add_subdirectory(${SPIKES_DIR}/lk_update_process_app_base)
 add_subdirectory(${SPIKES_DIR}/lk_update_process_app_update)
 
 add_subdirectory(${SPIKES_DIR}/mbed_blinky)
+add_subdirectory(${SPIKES_DIR}/mbed_time_measurement)
 add_subdirectory(${SPIKES_DIR}/mbed_watchdog_ticker_vs_thread)
 
 add_subdirectory(${SPIKES_DIR}/stl_cxxsupport)
