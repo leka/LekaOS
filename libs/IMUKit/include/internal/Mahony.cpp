@@ -21,6 +21,7 @@ void Mahony::update(std::tuple<float, float, float> accel, std::tuple<float, flo
 	_current_time_point = rtos::Kernel::Clock::now();
 	_dt					= (_current_time_point - _last_time_point) / 1000.0;
 	_last_time_point	= _current_time_point;
+	log_debug("_dt = %f", _dt);
 	float recipNorm;
 	float q0q0;
 	float q0q1;
@@ -94,6 +95,19 @@ void Mahony::update(std::tuple<float, float, float> accel, std::tuple<float, flo
 		halfex = (ay * halfvz - az * halfvy) + (my * halfwz - mz * halfwy);
 		halfey = (az * halfvx - ax * halfvz) + (mz * halfwx - mx * halfwz);
 		halfez = (ax * halfvy - ay * halfvx) + (mx * halfwy - my * halfwx);
+
+		if (kTwoKi > 0.0f) {
+			_integralFBx += kTwoKi * halfex * _dt.count();
+			_integralFBy += kTwoKi * halfey * _dt.count();
+			_integralFBz += kTwoKi * halfez * _dt.count();
+			gx += _integralFBx;
+			gy += _integralFBy;
+			gz += _integralFBz;
+		} else {
+			_integralFBx = 0.0f;
+			_integralFBy = 0.0f;
+			_integralFBz = 0.0f;
+		}
 
 		gx += kTwoKp * halfex;
 		gy += kTwoKp * halfey;

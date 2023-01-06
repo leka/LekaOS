@@ -38,11 +38,15 @@ class Mahony
 	void computeAngles();
 
 	const float kTwoKp = float {2.0F * 2.F};
+	const float kTwoKi = float {2.0F * 0.2F};
 
 	float _q0 {1.0F};
 	float _q1 {0.0F};
 	float _q2 {0.0F};
 	float _q3 {0.0F};
+	float _integralFBx {0.0F};
+	float _integralFBy {0.0F};
+	float _integralFBz {0.0F};
 	rtos::Kernel::Clock::time_point _last_time_point {};
 	rtos::Kernel::Clock::time_point _current_time_point {};
 	std::chrono::duration<double, std::milli> _dt {};
