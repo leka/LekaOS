@@ -12,7 +12,10 @@
 #pragma once
 
 #include <array>
+#include <chrono>
 #include <tuple>
+
+#include "rtos/ThisThread.h"
 
 #include "MathUtils.h"
 
@@ -23,7 +26,6 @@ class Mahony
   public:
 	Mahony() = default;
 
-	void begin(float sampleFrequency) { _invSampleFreq = 1.0F / sampleFrequency; }
 	void update(std::tuple<float, float, float>, std::tuple<float, float, float>, std::tuple<float, float, float>);
 
 	auto getRoll() -> float;
@@ -41,7 +43,9 @@ class Mahony
 	float _q1 {0.0F};
 	float _q2 {0.0F};
 	float _q3 {0.0F};
-	float _invSampleFreq {};
+	rtos::Kernel::Clock::time_point _last_time_point {};
+	rtos::Kernel::Clock::time_point _current_time_point {};
+	std::chrono::duration<double, std::milli> _dt {};
 	float _roll {};
 	float _pitch {};
 	float _yaw {};

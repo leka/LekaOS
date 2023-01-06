@@ -10,7 +10,6 @@ using namespace leka;
 
 void IMUKit::init()
 {
-	_mahony.begin(kDefaultSamplingConfig.frequency);
 	_event_loop.registerCallback([this] { run(); });
 }
 
@@ -24,7 +23,7 @@ void IMUKit::run()
 {
 	while (_is_running) {
 		computeAngles();
-		rtos::ThisThread::sleep_for(kDefaultSamplingConfig.delay);
+		rtos::ThisThread::sleep_for(_delay);
 	}
 }
 

@@ -7,6 +7,8 @@
 #include <cmath>
 #include <numbers>
 
+#include "LogKit.h"
+
 namespace leka::ahrs {
 
 void Mahony::update(std::tuple<float, float, float> accel, std::tuple<float, float, float> gyro,
@@ -16,7 +18,9 @@ void Mahony::update(std::tuple<float, float, float> accel, std::tuple<float, flo
 	auto [gx, gy, gz] = gyro;
 	auto [mx, my, mz] = mag;
 
-	float dt = _invSampleFreq;
+	_current_time_point = rtos::Kernel::Clock::now();
+	_dt					= (_current_time_point - _last_time_point) / 1000.0;
+	_last_time_point	= _current_time_point;
 	float recipNorm;
 	float q0q0;
 	float q0q1;
@@ -96,9 +100,9 @@ void Mahony::update(std::tuple<float, float, float> accel, std::tuple<float, flo
 		gz += kTwoKp * halfez;
 	}
 
-	gx *= (0.5F * dt);
-	gy *= (0.5F * dt);
-	gz *= (0.5F * dt);
+	gx *= (0.5F * _dt.count());
+	gy *= (0.5F * _dt.count());
+	gz *= (0.5F * _dt.count());
 	qa = _q0;
 	qb = _q1;
 	qc = _q2;

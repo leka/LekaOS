@@ -40,11 +40,7 @@ class IMUKit
 	interface::Gyroscope &_gyro;
 
 	ahrs::Mahony _mahony {};
-	struct SamplingConfig {
-		const std::chrono::milliseconds delay {};
-		const float frequency {};
-	};
-	const SamplingConfig kDefaultSamplingConfig {.delay = std::chrono::milliseconds {70}, .frequency = 12.5F};
+	const std::chrono::milliseconds _delay = std::chrono::milliseconds {70};
 	bool _is_running {false};
 };
 
