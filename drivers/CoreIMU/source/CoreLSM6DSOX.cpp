@@ -78,15 +78,17 @@ void CoreLSM6DSOX::registerOnGyDataReadyCallback(drdy_callback_t const &callback
 
 void CoreLSM6DSOX::onGyrDataReadyHandler()
 {
+	static constexpr auto _1k = float {1000.F};
+
 	lsm6dsox_angular_rate_raw_get(&_register_io_function, data_raw_gy.data());
-	_sensor_data.gy.x = lsm6dsox_from_fs500_to_mdps(data_raw_gy.at(0)) / 1000.F;
-	_sensor_data.gy.y = lsm6dsox_from_fs500_to_mdps(data_raw_gy.at(1)) / 1000.F;
-	_sensor_data.gy.z = lsm6dsox_from_fs500_to_mdps(data_raw_gy.at(2)) / 1000.F;
+	_sensor_data.gy.x = lsm6dsox_from_fs500_to_mdps(data_raw_gy.at(0)) / _1k;
+	_sensor_data.gy.y = lsm6dsox_from_fs500_to_mdps(data_raw_gy.at(1)) / _1k;
+	_sensor_data.gy.z = lsm6dsox_from_fs500_to_mdps(data_raw_gy.at(2)) / _1k;
 
 	lsm6dsox_acceleration_raw_get(&_register_io_function, data_raw_xl.data());
-	_sensor_data.xl.x = lsm6dsox_from_fs4_to_mg(data_raw_xl.at(0));
-	_sensor_data.xl.y = lsm6dsox_from_fs4_to_mg(data_raw_xl.at(1));
-	_sensor_data.xl.z = lsm6dsox_from_fs4_to_mg(data_raw_xl.at(2));
+	_sensor_data.xl.x = lsm6dsox_from_fs4_to_mg(data_raw_xl.at(0)) / _1k;
+	_sensor_data.xl.y = lsm6dsox_from_fs4_to_mg(data_raw_xl.at(1)) / _1k;
+	_sensor_data.xl.z = lsm6dsox_from_fs4_to_mg(data_raw_xl.at(2)) / _1k;
 
 	_on_gy_data_ready_callback(_sensor_data);
 }
