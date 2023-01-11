@@ -44,7 +44,7 @@ class IMUKit
 		const std::chrono::milliseconds delay {};
 		const float frequency {};
 	};
-	const SamplingConfig kDefaultSamplingConfig {.delay = std::chrono::milliseconds {70}, .frequency = 12.5F};
+	const SamplingConfig kDefaultSamplingConfig {.delay = std::chrono::milliseconds {70}, .frequency = 13.F};
 	bool _is_running {false};
 };
 
