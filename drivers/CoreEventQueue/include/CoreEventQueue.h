@@ -18,12 +18,14 @@ class CoreEventQueue : public interface::EventQueue
 
 	void dispatch_forever() final;
 
-	void call(auto f, auto... params) { _event_queue.call(f, params...); }
+	auto call(auto f, auto... params) -> int { return _event_queue.call(f, params...); }
 
-	void call_every(std::chrono::duration<int, std::milli> duration, auto f, auto... params)
+	auto call_every(std::chrono::duration<int, std::milli> duration, auto f, auto... params) -> int
 	{
-		_event_queue.call_every(duration, f, params...);
+		return _event_queue.call_every(duration, f, params...);
 	}
+
+	void cancel(int id) { _event_queue.cancel(id); }
 
 	// ? Overload needed for mbed::BLE compatibility
 	void callMbedCallback(mbed::Callback<void()> const &f);
