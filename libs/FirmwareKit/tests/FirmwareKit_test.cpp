@@ -26,7 +26,7 @@ class FirmwareKitTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	Version current_version = Version {1, 2, 0};
+	Version current_version = Version {1, 3, 0};
 
 	std::string current_version_str = OS_VERSION;
 
