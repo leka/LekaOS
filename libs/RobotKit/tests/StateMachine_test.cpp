@@ -663,7 +663,7 @@ TEST_F(StateMachineTest, stateChargingEventFileExchangeRequestedGuardTrue)
 	EXPECT_CALL(mock_rc, stopChargingBehavior);
 
 	EXPECT_CALL(mock_rc, isReadyToFileExchange).WillOnce(Return(true));
-	EXPECT_CALL(mock_rc, onFileExchangeStart);
+	EXPECT_CALL(mock_rc, startFileExchange);
 
 	sm.process_event(lksm::event::file_exchange_start_requested {});
 
@@ -675,7 +675,7 @@ TEST_F(StateMachineTest, stateChargingEventFileExchangeRequestedGuardFalse)
 	sm.set_current_states(lksm::state::charging);
 
 	EXPECT_CALL(mock_rc, isReadyToFileExchange).WillOnce(Return(false));
-	EXPECT_CALL(mock_rc, onFileExchangeStart).Times(0);
+	EXPECT_CALL(mock_rc, startFileExchange).Times(0);
 
 	sm.process_event(lksm::event::file_exchange_start_requested {});
 
@@ -686,7 +686,7 @@ TEST_F(StateMachineTest, stateFileExhangeEventFileExchangeStopRequestedGuardIsCh
 {
 	sm.set_current_states(lksm::state::file_exchange);
 
-	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+	EXPECT_CALL(mock_rc, stopFileExchange);
 
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
 	EXPECT_CALL(mock_rc, startChargingBehavior);
@@ -700,7 +700,7 @@ TEST_F(StateMachineTest, stateFileExhangeEventFileExchangeStopRequestedGuardIsNo
 {
 	sm.set_current_states(lksm::state::file_exchange);
 
-	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+	EXPECT_CALL(mock_rc, stopFileExchange);
 
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
 	EXPECT_CALL(mock_rc, startWorkingBehavior);
@@ -715,7 +715,7 @@ TEST_F(StateMachineTest, stateFileExhangeEventBleDisconnectionGuardIsCharging)
 {
 	sm.set_current_states(lksm::state::file_exchange, lksm::state::connected);
 
-	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+	EXPECT_CALL(mock_rc, stopFileExchange);
 
 	EXPECT_CALL(mock_rc, startDisconnectionBehavior);
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
@@ -731,7 +731,7 @@ TEST_F(StateMachineTest, stateFileExhangeEventBleDisconnectionGuardIsNotCharging
 {
 	sm.set_current_states(lksm::state::file_exchange, lksm::state::connected);
 
-	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+	EXPECT_CALL(mock_rc, stopFileExchange);
 
 	EXPECT_CALL(mock_rc, startDisconnectionBehavior);
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
@@ -748,7 +748,7 @@ TEST_F(StateMachineTest, stateFileExhangeEventEmergencyStop)
 {
 	sm.set_current_states(lksm::state::file_exchange);
 
-	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+	EXPECT_CALL(mock_rc, stopFileExchange);
 
 	EXPECT_CALL(mock_rc, stopActuatorsAndLcd);
 
@@ -761,7 +761,7 @@ TEST_F(StateMachineTest, stateFileExhangeEventUpdateRequestedGuardTrue)
 {
 	sm.set_current_states(lksm::state::file_exchange);
 
-	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+	EXPECT_CALL(mock_rc, stopFileExchange);
 
 	EXPECT_CALL(mock_rc, isReadyToUpdate).WillOnce(Return(true));
 	EXPECT_CALL(mock_rc, applyUpdate);

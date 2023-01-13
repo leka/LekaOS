@@ -139,13 +139,13 @@ TEST_F(RobotControllerTest, stateChargingEventFileExchangeRequestedGuardIsReadyT
 	EXPECT_CALL(mock_videokit, stopVideo).Times(1).InSequence(on_charging_exit_sequence);
 	expectedCallsStopMotors();
 
-	Sequence on_file_exchange_start;
-	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_file_exchange_start);
-	EXPECT_CALL(battery, isCharging).InSequence(on_file_exchange_start).WillRepeatedly(Return(returned_is_charging));
-	EXPECT_CALL(mock_ledkit, start).Times(1).InSequence(on_file_exchange_start);
-	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_file_exchange_start);
+	Sequence start_file_exchange;
+	EXPECT_CALL(mock_videokit, displayImage).InSequence(start_file_exchange);
+	EXPECT_CALL(battery, isCharging).InSequence(start_file_exchange).WillRepeatedly(Return(returned_is_charging));
+	EXPECT_CALL(mock_ledkit, start).Times(1).InSequence(start_file_exchange);
+	EXPECT_CALL(mock_lcd, turnOn).InSequence(start_file_exchange);
 	// TODO: Specify which BLE service and what is expected if necessary
-	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber()).InSequence(on_file_exchange_start);
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber()).InSequence(start_file_exchange);
 
 	rc.state_machine.process_event(lksm::event::file_exchange_start_requested {});
 
@@ -176,13 +176,13 @@ TEST_F(RobotControllerTest,
 
 	returned_is_charging = false;
 
-	Sequence on_file_exchange_start;
-	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_file_exchange_start);
-	EXPECT_CALL(battery, isCharging).InSequence(on_file_exchange_start).WillRepeatedly(Return(returned_is_charging));
-	EXPECT_CALL(mock_ledkit, start).Times(0).InSequence(on_file_exchange_start);
-	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_file_exchange_start);
+	Sequence start_file_exchange;
+	EXPECT_CALL(mock_videokit, displayImage).InSequence(start_file_exchange);
+	EXPECT_CALL(battery, isCharging).InSequence(start_file_exchange).WillRepeatedly(Return(returned_is_charging));
+	EXPECT_CALL(mock_ledkit, start).Times(0).InSequence(start_file_exchange);
+	EXPECT_CALL(mock_lcd, turnOn).InSequence(start_file_exchange);
 	// TODO: Specify which BLE service and what is expected if necessary
-	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber()).InSequence(on_file_exchange_start);
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber()).InSequence(start_file_exchange);
 
 	rc.state_machine.process_event(lksm::event::file_exchange_start_requested {});
 

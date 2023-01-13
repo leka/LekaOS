@@ -137,12 +137,12 @@ namespace sm::action {
 		auto operator()(irc &rc) const { rc.stopChargingBehavior(); }
 	};
 
-	struct on_file_exchange_start {
-		auto operator()(irc &rc) const { rc.onFileExchangeStart(); }
+	struct start_file_exchange {
+		auto operator()(irc &rc) const { rc.startFileExchange(); }
 	};
 
-	struct on_file_exchange_end {
-		auto operator()(irc &rc) const { rc.onFileExchangeEnd(); }
+	struct stop_file_exchange {
+		auto operator()(irc &rc) const { rc.stopFileExchange(); }
 	};
 
 	struct apply_update {
@@ -231,8 +231,8 @@ struct StateMachine {
 			, sm::state::charging + event<sm::event::emergency_stop>                                                                      = sm::state::emergency_stopped
 			, sm::state::charging + event<sm::event::autonomous_activities_mode_requested>                                                = sm::state::charging
 
-			, sm::state::file_exchange + boost::sml::on_entry<_> / sm::action::on_file_exchange_start {}
-			, sm::state::file_exchange + boost::sml::on_exit<_>  / sm::action::on_file_exchange_end {}
+			, sm::state::file_exchange + boost::sml::on_entry<_> / sm::action::start_file_exchange {}
+			, sm::state::file_exchange + boost::sml::on_exit<_>  / sm::action::stop_file_exchange {}
 
 			, sm::state::file_exchange + event<sm::event::file_exchange_stop_requested> [sm::guard::is_not_charging {}]    = sm::state::working
 			, sm::state::file_exchange + event<sm::event::file_exchange_stop_requested> [sm::guard::is_charging {}]        = sm::state::charging

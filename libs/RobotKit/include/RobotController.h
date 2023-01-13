@@ -220,7 +220,7 @@ class RobotController : public interface::RobotController
 		_activitykit.stop();
 	}
 
-	void onFileExchangeStart() final
+	void startFileExchange() final
 	{
 		_behaviorkit.fileExchange();
 		if (_battery.isCharging()) {
@@ -247,7 +247,7 @@ class RobotController : public interface::RobotController
 		});
 	}
 
-	void onFileExchangeEnd() final
+	void stopFileExchange() final
 	{
 		_service_file_exchange.setFileExchangeState(false);
 
