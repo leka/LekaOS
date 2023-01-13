@@ -15,6 +15,10 @@ struct RobotController : public interface::RobotController {
 
 	MOCK_METHOD(void, startSleepTimeout, (), (override));
 	MOCK_METHOD(void, stopSleepTimeout, (), (override));
+
+	MOCK_METHOD(void, startDeepSleepTimeout, (), (override));
+	MOCK_METHOD(void, stopDeepSleepTimeout, (), (override));
+
 	MOCK_METHOD(void, startIdleTimeout, (), (override));
 	MOCK_METHOD(void, stopIdleTimeout, (), (override));
 
@@ -46,6 +50,8 @@ struct RobotController : public interface::RobotController {
 	MOCK_METHOD(void, applyUpdate, (), (override));
 
 	MOCK_METHOD(void, stopActuatorsAndLcd, (), (override));
+	MOCK_METHOD(void, suspendHardwareForDeepSleep, (), (override));
+
 	MOCK_METHOD(void, resetEmergencyStopCounter, (), (override));
 };
 

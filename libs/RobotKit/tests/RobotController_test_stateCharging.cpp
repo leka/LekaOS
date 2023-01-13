@@ -40,6 +40,7 @@ TEST_F(RobotControllerTest, stateChargingConnectedEventChargeDidStopGuardIsCharg
 	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
 
 	Sequence on_charging_exit_sequence;
+	EXPECT_CALL(timeout_state_transition, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(timeout_state_internal, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(mock_ledkit, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(1).InSequence(on_charging_exit_sequence);
@@ -65,6 +66,7 @@ TEST_F(RobotControllerTest, stateChargingDisconnectedEventChargeDidStopGuardIsCh
 	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
 
 	Sequence on_charging_exit_sequence;
+	EXPECT_CALL(timeout_state_transition, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(timeout_state_internal, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(mock_ledkit, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(1).InSequence(on_charging_exit_sequence);
@@ -91,6 +93,7 @@ TEST_F(RobotControllerTest, stateChargingDisconnectedEventBleConnection)
 	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
 
 	Sequence on_charging_exit_sequence;
+	EXPECT_CALL(timeout_state_transition, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(timeout_state_internal, stop).Times(1).InSequence(on_charging_exit_sequence);
 
 	expectedCallsStopActuators();
@@ -103,6 +106,10 @@ TEST_F(RobotControllerTest, stateChargingDisconnectedEventBleConnection)
 	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::blink_on_charge)))
 		.Times(1)
 		.InSequence(on_ble_connection_sequence);
+
+	Sequence start_deep_sleep_timeout_sequence;
+	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(start_deep_sleep_timeout_sequence);
+	EXPECT_CALL(timeout_state_transition, start).InSequence(start_deep_sleep_timeout_sequence);
 
 	Sequence on_charging_entry_sequence;
 	EXPECT_CALL(battery, level).InSequence(on_charging_entry_sequence);
@@ -134,6 +141,7 @@ TEST_F(RobotControllerTest, stateChargingEventFileExchangeRequestedGuardIsReadyT
 	EXPECT_CALL(battery, level).InSequence(is_ready_to_file_exchange_sequence).WillRepeatedly(Return(returned_level));
 
 	Sequence on_charging_exit_sequence;
+	EXPECT_CALL(timeout_state_transition, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(timeout_state_internal, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(mock_ledkit, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(1).InSequence(on_charging_exit_sequence);
@@ -169,6 +177,7 @@ TEST_F(RobotControllerTest,
 	EXPECT_CALL(battery, level).InSequence(is_ready_to_file_exchange_sequence).WillRepeatedly(Return(returned_level));
 
 	Sequence on_charging_exit_sequence;
+	EXPECT_CALL(timeout_state_transition, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(timeout_state_internal, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(mock_ledkit, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(1).InSequence(on_charging_exit_sequence);
@@ -378,6 +387,7 @@ TEST_F(RobotControllerTest, stateChargingEventEmergencyStopDelayOver)
 	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
 
 	Sequence on_charging_exit_sequence;
+	EXPECT_CALL(timeout_state_transition, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(timeout_state_internal, stop).Times(1).InSequence(on_charging_exit_sequence);
 
 	expectedCallsStopActuators();
@@ -416,10 +426,15 @@ TEST_F(RobotControllerTest, stateChargingDiceRollDetectedDelayOverEventAutonomou
 	auto minimal_delay_over = 1001ms;
 
 	Sequence on_charging_exit_sequence;
+	EXPECT_CALL(timeout_state_transition, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(timeout_state_internal, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(mock_ledkit, stop).Times(1).InSequence(on_charging_exit_sequence);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(1).InSequence(on_charging_exit_sequence);
 	expectedCallsStopMotors();
+
+	Sequence start_deep_sleep_timeout_sequence;
+	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(start_deep_sleep_timeout_sequence);
+	EXPECT_CALL(timeout_state_transition, start).InSequence(start_deep_sleep_timeout_sequence);
 
 	EXPECT_CALL(battery, level);
 	EXPECT_CALL(mock_videokit, displayImage).Times(1);
@@ -433,4 +448,27 @@ TEST_F(RobotControllerTest, stateChargingDiceRollDetectedDelayOverEventAutonomou
 	rc.onMagicCardAvailable(MagicCard::dice_roll);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
+}
+
+TEST_F(RobotControllerTest, stateChargingEventTimeout)
+{
+	Sequence get_on_deep_sleep_timeout_callback;
+	EXPECT_CALL(timeout_state_transition, onTimeout)
+		.InSequence(get_on_deep_sleep_timeout_callback)
+		.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_deep_sleep_timeout));
+	EXPECT_CALL(timeout_state_transition, start).InSequence(get_on_deep_sleep_timeout_callback);
+	rc.startDeepSleepTimeout();
+
+	rc.state_machine.set_current_states(lksm::state::charging);
+
+	Sequence on_charging_exit_sequence;
+	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_charging_exit_sequence);
+	EXPECT_CALL(timeout_state_internal, stop).InSequence(on_charging_exit_sequence);
+	EXPECT_CALL(mock_ledkit, stop).InSequence(on_charging_exit_sequence);
+	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_charging_exit_sequence);
+	expectedCallsStopMotors();
+
+	on_deep_sleep_timeout();
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::deep_sleeping));
 }

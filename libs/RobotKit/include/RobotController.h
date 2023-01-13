@@ -90,6 +90,17 @@ class RobotController : public interface::RobotController
 
 	void stopSleepTimeout() final { _timeout_state_transition.stop(); }
 
+	void startDeepSleepTimeout() final
+	{
+		using namespace system::robot::sm;
+		auto on_deep_sleep_timeout = [this] { raise(event::deep_sleep_timeout_did_end {}); };
+		_timeout_state_transition.onTimeout(on_deep_sleep_timeout);
+
+		_timeout_state_transition.start(_deep_sleep_timeout_duration);
+	}
+
+	void stopDeepSleepTimeout() final { _timeout_state_transition.stop(); }
+
 	void startIdleTimeout() final
 	{
 		using namespace system::robot::sm;
@@ -293,6 +304,8 @@ class RobotController : public interface::RobotController
 		_lcd.turnOff();
 		stopActuators();
 	}
+
+	void suspendHardwareForDeepSleep() final { log_info("TO IMPLEMENT - configuring hardware for deep sleep"); }
 
 	void resetEmergencyStopCounter() final { _emergency_stop_counter = 0; }
 
@@ -501,6 +514,7 @@ class RobotController : public interface::RobotController
 
 	std::chrono::seconds _sleep_timeout_duration {60};
 	std::chrono::seconds _idle_timeout_duration {600};
+	std::chrono::seconds _deep_sleep_timeout_duration {600};
 	interface::Timeout &_timeout_state_transition;
 
 	const rtos::Kernel::Clock::time_point kSystemStartupTimestamp = rtos::Kernel::Clock::now();

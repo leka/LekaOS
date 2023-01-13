@@ -13,6 +13,10 @@ TEST_F(RobotControllerTest, stateIdleEventTimeout)
 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_idle_sequence);
 	expectedCallsStopMotors();
 
+	Sequence start_deep_sleep_timeout_sequence;
+	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(start_deep_sleep_timeout_sequence);
+	EXPECT_CALL(timeout_state_transition, start).InSequence(start_deep_sleep_timeout_sequence);
+
 	Sequence on_sleeping_sequence;
 	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::sleeping))).InSequence(on_sleeping_sequence);
 	EXPECT_CALL(mock_videokit, playVideoOnce).InSequence(on_sleeping_sequence);
@@ -86,6 +90,10 @@ TEST_F(RobotControllerTest, stateIdleEventChargeDidStartGuardIsChargingTrue)
 	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_idle_sequence);
 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_idle_sequence);
 	expectedCallsStopMotors();
+
+	Sequence start_deep_sleep_timeout_sequence;
+	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(start_deep_sleep_timeout_sequence);
+	EXPECT_CALL(timeout_state_transition, start).InSequence(start_deep_sleep_timeout_sequence);
 
 	Sequence start_charging_behavior_sequence;
 	EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
