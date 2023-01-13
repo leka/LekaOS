@@ -45,6 +45,16 @@ namespace monitoring {
 
 }	// namespace monitoring
 
+namespace config {
+
+	inline constexpr uint16_t uuid = 0x6770;
+
+	namespace characteristic {
+		inline constexpr uint16_t robot_name = 0x8278;
+	}	// namespace characteristic
+
+}	// namespace config
+
 namespace magic_card {
 	inline constexpr UUID::LongUUIDBytes_t uuid = {"Magic Card"};
 
