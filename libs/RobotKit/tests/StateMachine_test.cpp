@@ -575,6 +575,7 @@ TEST_F(StateMachineTest, stateEmergencyStoppedEventCommandReceivedGuardIsChargin
 {
 	sm.set_current_states(lksm::state::emergency_stopped, lksm::state::disconnected);
 
+	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(false));
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
 	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(false));
 
@@ -701,6 +702,8 @@ TEST_F(StateMachineTest, stateAutonomousActivityEventAutonomousActivityExitedDis
 	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(false));
 
 	EXPECT_CALL(mock_rc, stopAutonomousActivityMode).Times(1);
+
+	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(false));
 	EXPECT_CALL(mock_rc, startWaitingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
 
