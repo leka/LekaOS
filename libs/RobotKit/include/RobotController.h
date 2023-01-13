@@ -189,11 +189,11 @@ class RobotController : public interface::RobotController
 		using namespace std::chrono_literals;
 		stopActuators();
 		if (_battery.isCharging()) {
-			_behaviorkit.bleConnection(false);
+			_behaviorkit.bleConnectionWithoutVideo();
 			rtos::ThisThread::sleep_for(5s);
 			_behaviorkit.blinkOnCharge();
 		} else {
-			_behaviorkit.bleConnection(true);
+			_behaviorkit.bleConnectionWithVideo();
 			_lcd.turnOn();
 		}
 	}

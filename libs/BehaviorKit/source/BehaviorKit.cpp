@@ -79,12 +79,15 @@ void BehaviorKit::chargingFull()
 	_videokit.displayImage("/fs/home/img/system/robot-battery-charging-quarter_4-green.jpg");
 }
 
-void BehaviorKit::bleConnection(bool with_video)
+void BehaviorKit::bleConnectionWithoutVideo()
 {
 	_ledkit.start(&led::animation::ble_connection);
-	if (with_video) {
-		_videokit.playVideoOnce("/fs/home/vid/system/robot-system-ble_connection-wink-no_eyebrows.avi");
-	}
+}
+
+void BehaviorKit::bleConnectionWithVideo()
+{
+	_ledkit.start(&led::animation::ble_connection);
+	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-ble_connection-wink-no_eyebrows.avi");
 }
 
 void BehaviorKit::working()
