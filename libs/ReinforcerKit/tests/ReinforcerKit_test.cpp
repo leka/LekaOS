@@ -19,6 +19,7 @@
 using namespace leka;
 
 using ::testing::AnyNumber;
+using ::testing::AtMost;
 using ::testing::Sequence;
 
 MATCHER_P(isSameAnimation, expected_animation, "")
@@ -63,6 +64,9 @@ class ReinforcerkitTest : public ::testing::Test
 		EXPECT_CALL(mock_motor_right, stop).Times(1);
 		EXPECT_CALL(mock_motor_left, spin).Times(1);
 		EXPECT_CALL(mock_motor_right, spin).Times(1);
+		EXPECT_CALL(mock_timeout, stop).Times(AtMost(1));
+		EXPECT_CALL(mock_timeout, onTimeout).Times(AtMost(1));
+		EXPECT_CALL(mock_timeout, start).Times(AtMost(1));
 		EXPECT_CALL(mock_ledkit, start(isSameAnimation(animation)));
 	}
 
@@ -163,6 +167,7 @@ TEST_F(ReinforcerkitTest, stop)
 	EXPECT_CALL(mock_videokit, stopVideo);
 	EXPECT_CALL(mock_motor_left, stop);
 	EXPECT_CALL(mock_motor_right, stop);
+	EXPECT_CALL(mock_timeout, stop);
 
 	reinforcerkit.stop();
 }

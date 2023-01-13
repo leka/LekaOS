@@ -176,6 +176,7 @@ TEST_F(RFIDKitTest, getLastMagicCardActivated)
 
 	rfid_kit.registerMagicCard();
 
+	EXPECT_CALL(mock_callback, Call(MagicCard::emergency_stop));
 	magic_card_callback(tag);
 
 	EXPECT_EQ(rfid_kit.getLastMagicCardActivated(), MagicCard::emergency_stop);
