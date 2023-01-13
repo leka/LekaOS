@@ -14,19 +14,8 @@ namespace leka::mock {
 class EventQueue
 {
   public:
-	EventQueue()
-	{
-		equeue_stub.void_ptr = &ptr;
-
-		spy_CoreEventQueue_on_dispatch_forever_call = [] { equeue_stub.call_cb_immediately = true; };
-		spy_EventQueue_on_dispatch_forever_call		= [] { equeue_stub.call_cb_immediately = true; };
-	}
-
-	~EventQueue()
-	{
-		equeue_stub.void_ptr			= nullptr;
-		equeue_stub.call_cb_immediately = false;
-	}
+	EventQueue();
+	virtual ~EventQueue();
 
   private:
 	struct equeue_event ptr;

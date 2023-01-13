@@ -12,6 +12,9 @@ namespace leka::mock {
 class CoreBufferedSerial : public interface::BufferedSerial
 {
   public:
+	CoreBufferedSerial();
+	virtual ~CoreBufferedSerial();
+
 	MOCK_METHOD(std::size_t, read, (uint8_t *, std::size_t), (override));
 	MOCK_METHOD(std::size_t, write, (const uint8_t *, std::size_t), (override));
 	MOCK_METHOD(bool, readable, (), (override));

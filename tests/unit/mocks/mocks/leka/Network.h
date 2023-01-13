@@ -12,6 +12,9 @@ namespace leka::mock {
 class Network : public interface::Network
 {
   public:
+	Network();
+	virtual ~Network();
+
 	MOCK_METHOD(bool, connect, (const char *, const char *), (override));
 	MOCK_METHOD(HttpResponse &, sendRequest,
 				(const char *, const char *, const std::function<void(const char *at, uint32_t length)> &), (override));

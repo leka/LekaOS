@@ -12,6 +12,9 @@ namespace leka::mock {
 class MCU : public interface::MCU
 {
   public:
+	MCU();
+	virtual ~MCU();
+
 	MOCK_METHOD(MCUID, getID, (), (override));
 };
 

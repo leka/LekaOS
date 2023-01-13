@@ -8,3 +8,8 @@ target_include_directories(mocks
 	INTERFACE
 	.
 )
+
+target_sources(mocks
+	INTERFACE
+	mocks/leka/source/mocks.cpp
+)

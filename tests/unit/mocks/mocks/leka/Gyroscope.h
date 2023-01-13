@@ -12,6 +12,9 @@ namespace leka::mock {
 class Gyroscope : public interface::Gyroscope
 {
   public:
+	Gyroscope();
+	virtual ~Gyroscope();
+
 	MOCK_METHOD((std::tuple<float, float, float>), getXYZ, (), (override));
 };
 

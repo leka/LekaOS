@@ -12,6 +12,9 @@ namespace leka::mock {
 class CoreJPEGMode : public interface::JPEGMode
 {
   public:
+	CoreJPEGMode();
+	virtual ~CoreJPEGMode();
+
 	MOCK_METHOD(void, onMspInitCallback, (JPEG_HandleTypeDef *), (override));
 	MOCK_METHOD(void, onInfoReadyCallback, (JPEG_HandleTypeDef *, JPEG_ConfTypeDef *), (override));
 	MOCK_METHOD(void, onErrorCallback, (JPEG_HandleTypeDef *), (override));

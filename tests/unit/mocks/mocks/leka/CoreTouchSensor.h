@@ -12,6 +12,9 @@ namespace leka::mock {
 class CoreTouchSensor : public interface::TouchSensor
 {
   public:
+	CoreTouchSensor();
+	virtual ~CoreTouchSensor();
+
 	MOCK_METHOD(void, init, (), (override));
 	MOCK_METHOD(bool, read, (), (override));
 	MOCK_METHOD(void, reset, (), (override));

@@ -12,6 +12,9 @@ namespace leka::mock {
 class EventFlags : public interface::EventFlags
 {
   public:
+	EventFlags();
+	virtual ~EventFlags();
+
 	MOCK_METHOD(void, wait_any, (eventflags_t, bool), (override));
 	MOCK_METHOD(std::optional<eventflags_t>, set, (eventflags_t), (override));
 	MOCK_METHOD(std::optional<eventflags_t>, clear, (eventflags_t), (override));

@@ -12,6 +12,9 @@ namespace leka::mock {
 class VideoKit : public interface::VideoKit
 {
   public:
+	VideoKit();
+	virtual ~VideoKit();
+
 	MOCK_METHOD(void, initializeScreen, (), (override));
 
 	MOCK_METHOD(void, displayImage, (const std::filesystem::path &), (override));

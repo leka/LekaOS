@@ -12,6 +12,9 @@ namespace leka::mock {
 class CoreI2C : public interface::I2C
 {
   public:
+	CoreI2C();
+	virtual ~CoreI2C();
+
 	MOCK_METHOD(int, read, (int, uint8_t *, int, bool), (override));
 	MOCK_METHOD(int, write, (int, const uint8_t *, int, bool), (override));
 };

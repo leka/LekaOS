@@ -12,6 +12,9 @@ namespace leka::mock {
 class Ticker : public interface::Ticker
 {
   public:
+	Ticker();
+	virtual ~Ticker();
+
 	MOCK_METHOD(void, onTick, (callback_t const &), (override));
 
 	MOCK_METHOD(void, start, (std::chrono::microseconds), (override));

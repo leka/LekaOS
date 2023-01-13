@@ -12,6 +12,9 @@ namespace leka::mock {
 class LEDAnimation : public interface::LEDAnimation
 {
   public:
+	LEDAnimation();
+	virtual ~LEDAnimation();
+
 	MOCK_METHOD(void, start, (), (override));
 	MOCK_METHOD(void, stop, (), (override));
 	MOCK_METHOD(void, run, (), (override));

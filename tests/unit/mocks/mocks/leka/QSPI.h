@@ -14,6 +14,9 @@ namespace leka::mock {
 class QSPI : public interface::QSPI
 {
   public:
+	QSPI();
+	virtual ~QSPI();
+
 	MOCK_METHOD(void, setDataTransmissionFormat, (), (override));
 	MOCK_METHOD(void, setFrequency, (int), (override));
 

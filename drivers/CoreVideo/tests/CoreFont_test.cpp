@@ -11,9 +11,11 @@
 
 using namespace leka;
 using ::testing::_;
+using ::testing::An;
 using ::testing::AnyNumber;
 using ::testing::AtLeast;
 using ::testing::Matcher;
+using ::testing::TypedEq;
 using ::testing::WithArg;
 using ::testing::WithArgs;
 
@@ -134,7 +136,8 @@ TEST_F(CoreFontTest, drawCharacter)
 
 	auto pixels_per_char = graphics::font_pixel_width * graphics::font_pixel_height;   // 17 * 24 = 408
 
-	EXPECT_CALL(llmock, rawMemoryWrite).Times(pixels_per_char);	  // Expect to draw as much as pixel in any character
+	EXPECT_CALL(llmock, rawMemoryWrite(_, An<uint32_t>()))
+		.Times(pixels_per_char);   // Expect to draw as much as pixel in any character
 
 	font.drawChar(character);
 }
@@ -151,8 +154,9 @@ TEST_F(CoreFontTest, drawCharacterWithColor)
 	auto pixels_per_char = graphics::font_pixel_width * graphics::font_pixel_height;   // 17 * 24 = 408
 	auto pixels_lit		 = 12;	 // Corrolated with LKFontTable for the tested character
 
-	EXPECT_CALL(llmock, rawMemoryWrite(_, foreground_color.getARGB())).Times(pixels_lit);
-	EXPECT_CALL(llmock, rawMemoryWrite(_, background_color.getARGB())).Times(pixels_per_char - pixels_lit);
+	EXPECT_CALL(llmock, rawMemoryWrite(_, TypedEq<uint32_t>(foreground_color.getARGB()))).Times(pixels_lit);
+	EXPECT_CALL(llmock, rawMemoryWrite(_, TypedEq<uint32_t>(background_color.getARGB())))
+		.Times(pixels_per_char - pixels_lit);
 
 	font.drawChar(character, foreground_color, background_color);
 }
@@ -171,7 +175,7 @@ TEST_F(CoreFontTest, displayNormalSentence)
 	auto pixels_per_char	 = graphics::font_pixel_width * graphics::font_pixel_height;   // 17 * 24 = 408
 	auto expected_pixel_draw = text_length * pixels_per_char;
 
-	EXPECT_CALL(llmock, rawMemoryWrite).Times(expected_pixel_draw);
+	EXPECT_CALL(llmock, rawMemoryWrite(_, An<uint32_t>())).Times(expected_pixel_draw);
 
 	font.display(buff, text_length, starting_line, foreground_color, background_color);
 }
@@ -184,7 +188,7 @@ TEST_F(CoreFontTest, displayPositiveStartingLine)
 
 	auto starting_line = 0;
 
-	EXPECT_CALL(llmock, rawMemoryWrite).Times(0);
+	EXPECT_CALL(llmock, rawMemoryWrite(_, An<uint8_t>())).Times(0);
 
 	font.display(buff, text_length, starting_line);
 }
@@ -197,7 +201,7 @@ TEST_F(CoreFontTest, displayExceededStartingLine)
 
 	auto starting_line = 50;
 
-	EXPECT_CALL(llmock, rawMemoryWrite).Times(0);
+	EXPECT_CALL(llmock, rawMemoryWrite(_, An<uint8_t>())).Times(0);
 
 	font.display(buff, text_length, starting_line);
 }
@@ -220,7 +224,7 @@ TEST_F(CoreFontTest, displayWithNewLine)
 	auto expected_last_pixel_y_position = graphics::font_pixel_height * starting_line + graphics::font_pixel_height;
 
 	// TODO: This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove it in the future
-	EXPECT_CALL(llmock, rawMemoryWrite).Times(AnyNumber());
+	EXPECT_CALL(llmock, rawMemoryWrite(_, An<uint32_t>())).Times(AnyNumber());
 
 	// ACT
 	text_length = snprintf(buff, buff_size, "This is the first line\nThis is the second line");
@@ -247,7 +251,7 @@ TEST_F(CoreFontTest, displayUnwrittableAsciiCharacter)
 	expected_last_pixel.y = graphics::font_pixel_height;
 
 	// TODO: This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove it in the future
-	EXPECT_CALL(llmock, rawMemoryWrite).Times(AnyNumber());
+	EXPECT_CALL(llmock, rawMemoryWrite(_, An<uint32_t>())).Times(AnyNumber());
 
 	// ACT
 	font.display(buff, text_length, starting_line);
@@ -277,7 +281,7 @@ TEST_F(CoreFontTest, displayWithScreenWidthReached)
 	expected_last_pixel.y = ((text_length / max_char_per_line) + 1) * graphics::font_pixel_height;
 
 	// TODO: This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove it in the future
-	EXPECT_CALL(llmock, rawMemoryWrite).Times(AnyNumber());
+	EXPECT_CALL(llmock, rawMemoryWrite(_, An<uint32_t>())).Times(AnyNumber());
 
 	// ACT
 	font.display(buff, text_length, starting_line);
@@ -300,7 +304,7 @@ TEST_F(CoreFontTest, displayWithScreenHeightReached)
 	auto expected_last_pixel_y_position = lcd::dimension::height;
 
 	// TODO: This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove it in the future
-	EXPECT_CALL(llmock, rawMemoryWrite).Times(AnyNumber());
+	EXPECT_CALL(llmock, rawMemoryWrite(_, An<uint32_t>())).Times(AnyNumber());
 
 	// ACT
 	text_length =

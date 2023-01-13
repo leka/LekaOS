@@ -12,6 +12,9 @@ namespace leka::mock {
 class CoreMotor : public interface::Motor
 {
   public:
+	CoreMotor();
+	virtual ~CoreMotor();
+
 	MOCK_METHOD(void, spin, (rotation_t, float), (override));
 	MOCK_METHOD(void, stop, (), (override));
 };
