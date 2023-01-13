@@ -11,7 +11,7 @@
 #include "BLEServiceBattery.h"
 #include "BLEServiceCommands.h"
 #include "BLEServiceDeviceInformation.h"
-#include "BLEServiceFileReception.h"
+#include "BLEServiceFileExchange.h"
 #include "BLEServiceMonitoring.h"
 #include "BLEServiceUpdate.h"
 
@@ -21,7 +21,6 @@
 #include "CommandKit.h"
 #include "CoreMutex.h"
 #include "FileReception.h"
-#include "LedKit.h"
 #include "MagicCard.h"
 #include "RCLogger.h"
 #include "RFIDKit.h"
@@ -33,6 +32,7 @@
 #include "interface/drivers/LCD.hpp"
 #include "interface/drivers/Motor.h"
 #include "interface/drivers/Timeout.h"
+#include "interface/libs/LedKit.h"
 #include "interface/libs/VideoKit.h"
 
 namespace leka {
@@ -46,9 +46,9 @@ class RobotController : public interface::RobotController
 
 	explicit RobotController(interface::Timeout &timeout, interface::Battery &battery, SerialNumberKit &serialnumberkit,
 							 interface::FirmwareUpdate &firmware_update, interface::Motor &motor_left,
-							 interface::Motor &motor_right, interface::LED &ears, interface::LED &belt, LedKit &ledkit,
-							 interface::LCD &lcd, interface::VideoKit &videokit, BehaviorKit &behaviorkit,
-							 CommandKit &cmdkit, RFIDKit &rfidkit, ActivityKit &activitykit)
+							 interface::Motor &motor_right, interface::LED &ears, interface::LED &belt,
+							 interface::LedKit &ledkit, interface::LCD &lcd, interface::VideoKit &videokit,
+							 BehaviorKit &behaviorkit, CommandKit &cmdkit, RFIDKit &rfidkit, ActivityKit &activitykit)
 		: _timeout(timeout),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
@@ -123,7 +123,7 @@ class RobotController : public interface::RobotController
 
 		auto on_sleeping_start_timeout = [this] {
 			_event_queue.call(&_lcd, &interface::LCD::turnOff);
-			_event_queue.call(&_ledkit, &LedKit::stop);
+			_event_queue.call(&_ledkit, &interface::LedKit::stop);
 		};
 		_timeout.onTimeout(on_sleeping_start_timeout);
 
@@ -166,37 +166,50 @@ class RobotController : public interface::RobotController
 		using namespace system::robot::sm;
 
 		onChargingBehavior(_battery_kit.level());
+		_behaviorkit.blinkOnCharge();
 		rtos::ThisThread::sleep_for(500ms);
 		_lcd.turnOn();
 
-		auto on_charging_start_timeout = [this] {
-			_event_queue.call(&_lcd, &interface::LCD::turnOff);
-			_event_queue.call(&_ledkit, &LedKit::stop);
-		};
+		auto on_charging_start_timeout = [this] { _event_queue.call(&_lcd, &interface::LCD::turnOff); };
 		_timeout.onTimeout(on_charging_start_timeout);
 
 		_timeout.start(1min);
 	}
 
-	void stopChargingBehavior() final { _timeout.stop(); }
+	void stopChargingBehavior() final
+	{
+		_timeout.stop();
+		_behaviorkit.stop();
+	}
 
 	void startConnectionBehavior() final
 	{
+		using namespace std::chrono_literals;
 		stopActuators();
 		if (_battery.isCharging()) {
 			_behaviorkit.bleConnection(false);
+			rtos::ThisThread::sleep_for(5s);
+			_behaviorkit.blinkOnCharge();
 		} else {
 			_behaviorkit.bleConnection(true);
 			_lcd.turnOn();
 		}
 	}
 
-	void startDisconnectionBehavior() final { stopActuators(); }
+	void startDisconnectionBehavior() final
+	{
+		stopActuators();
+		if (_battery.isCharging()) {
+			_behaviorkit.blinkOnCharge();
+		}
+	}
 
 	void startAutonomousActivityMode() final
 	{
+		auto card = _rfidkit.getLastMagicCardActivated();
+		_activitykit.displayMainMenu(card);
+
 		_lcd.turnOn();
-		_behaviorkit.displayAutonomousActivitiesPrompt();
 	}
 
 	void stopAutonomousActivityMode() final
@@ -205,9 +218,62 @@ class RobotController : public interface::RobotController
 		_activitykit.stop();
 	}
 
+	void onFileExchangeStart() final
+	{
+		_behaviorkit.fileExchange();
+		if (_battery.isCharging()) {
+			_behaviorkit.blinkOnCharge();
+		}
+		_lcd.turnOn();
+
+		_service_file_exchange.setFileExchangeState(true);
+
+		_service_file_exchange.onFilePathReceived(
+			[this](std::span<const char> path) { file_reception.setFilePath(path.data()); });
+		_service_file_exchange.onClearFileRequested([this] {
+			file_reception.clearFile();
+			_service_file_exchange.setFileIsCleared();
+		});
+		_service_file_exchange.onFileDataReceived(
+			[this](std::span<const uint8_t> buffer) { file_reception.onPacketReceived(buffer); });
+		_service_file_exchange.onFileSHA256Requested([this](std::span<const char> path) {
+			_event_queue.call([this, path] {
+				if (FileManagerKit::File file {path.data()}; file.is_open()) {
+					_service_file_exchange.setFileSHA256(file.getSHA256());
+				}
+			});
+		});
+	}
+
+	void onFileExchangeEnd() final
+	{
+		_service_file_exchange.setFileExchangeState(false);
+
+		_service_file_exchange.onFilePathReceived(nullptr);
+		_service_file_exchange.onClearFileRequested(nullptr);
+		_service_file_exchange.onFileDataReceived(nullptr);
+		_service_file_exchange.onFileSHA256Requested(nullptr);
+	}
+
+	auto isReadyToFileExchange() -> bool final
+	{
+		auto is_robot_ready = (_battery.isCharging() && _battery.level() > _minimal_battery_level_to_update);
+
+		if (!is_robot_ready) {
+			_service_file_exchange.setFileExchangeState(false);
+		}
+
+		return is_robot_ready;
+	}
+
 	auto isReadyToUpdate() -> bool final
 	{
-		return (_battery.isCharging() && _battery.level() > _minimal_battery_level_to_update);
+		auto is_robot_ready = _battery.isCharging() && _battery.level() > _minimal_battery_level_to_update;
+
+		auto firmware_version	  = _service_update.getVersion();
+		auto is_version_available = _firmware_update.isVersionAvailable(firmware_version);
+
+		return is_robot_ready && is_version_available;
 	}
 
 	void applyUpdate() final
@@ -245,11 +311,15 @@ class RobotController : public interface::RobotController
 		auto _serial_number = _serialnumberkit.getSerialNumber();
 		_service_device_information.setSerialNumber(_serial_number);
 
-		auto _os_version = FirmwareVersion {.major = 1, .minor = 2, .revision = 0};
+		auto _os_version = _firmware_update.getCurrentVersion();
 		_service_device_information.setOSVersion(_os_version);
 
-		auto advertising_data = _ble.getAdvertisingData();
-		advertising_data.name = reinterpret_cast<const char *>(_serialnumberkit.getShortSerialNumber().data());
+		auto advertising_data		   = _ble.getAdvertisingData();
+		advertising_data.name		   = reinterpret_cast<const char *>(_serialnumberkit.getShortSerialNumber().data());
+		advertising_data.version_major = _os_version.major;
+		advertising_data.version_minor = _os_version.minor;
+		advertising_data.version_revision = _os_version.revision;
+
 		_ble.setAdvertisingData(advertising_data);
 
 		_motor_left.stop();
@@ -286,25 +356,48 @@ class RobotController : public interface::RobotController
 		raise(system::robot::sm::event::autonomous_activities_mode_requested {});
 	}
 
+	void raiseAutonomousActivityModeExited() { raise(system::robot::sm::event::autonomous_activities_mode_exited {}); }
+
 	void onMagicCardAvailable(const MagicCard &card)
 	{
-		if (card == MagicCard::emergency_stop) {
+		using namespace std::chrono;
+
+		// ! TODO: Refactor with composite SM & CoreTimer instead of start/stop
+
+		auto is_playing				= _activitykit.isPlaying();
+		auto NOT_is_playing			= !is_playing;
+		auto is_autonomous_mode		= state_machine.is(system::robot::sm::state::autonomous_activities);
+		auto NOT_is_autonomous_mode = !is_autonomous_mode;
+
+		// TODO(@leka/dev-embedded): Refactor startup_delay_elapsed (see #1196)
+		const auto startup_delay_elapsed = rtos::Kernel::Clock::now() - kSystemStartupTimestamp > 10s;
+
+		if (card == MagicCard::emergency_stop && startup_delay_elapsed) {
 			raiseEmergencyStop();
 			return;
 		}
 
 		if (card == MagicCard::dice_roll) {
-			raiseAutonomousActivityModeRequested();
-			if (_activitykit.isPlaying()) {
-				_activitykit.stop();
+			if (NOT_is_autonomous_mode) {
+				start = rtos::Kernel::Clock::now();
+				if (start - stop > 1s) {
+					raiseAutonomousActivityModeRequested();
+				}
+			} else if (is_autonomous_mode && NOT_is_playing) {
+				stop = rtos::Kernel::Clock::now();
+				if (stop - start > 2s) {
+					raiseAutonomousActivityModeExited();
+				}
+			} else {
+				start = rtos::Kernel::Clock::now();
+				if (start - stop > 1s) {
+					raiseAutonomousActivityModeRequested();
+				}
+				return;
 			}
-			return;
 		}
 
-		auto is_not_playing		= !_activitykit.isPlaying();
-		auto is_autonomous_mode = state_machine.is(system::robot::sm::state::autonomous_activities);
-
-		if (is_not_playing && is_autonomous_mode) {
+		if (NOT_is_playing && is_autonomous_mode) {
 			_activitykit.start(card);
 		}
 	}
@@ -326,7 +419,10 @@ class RobotController : public interface::RobotController
 			_ble.setAdvertisingData(advertising_data);
 
 			_service_battery.setBatteryLevel(level);
-			if (is_charging) {
+			_service_monitoring.setChargingStatus(is_charging);
+
+			auto is_not_in_file_exchange = !_service_file_exchange.getFileExchangeState();
+			if (is_charging && is_not_in_file_exchange) {
 				onChargingBehavior(level);
 			}
 		});
@@ -373,13 +469,11 @@ class RobotController : public interface::RobotController
 		};
 		_service_commands.onCommandsReceived(on_commands_received);
 
-		_service_file_reception.onFilePathReceived(
-			[this](std::span<const char> path) { file_reception.setFilePath(path.data()); });
-		_service_file_reception.onFileDataReceived(
-			[this](std::span<const uint8_t> buffer) { file_reception.onPacketReceived(buffer); });
-		_service_file_reception.onFileSHA256Requested([this](std::span<const char> path) {
-			if (FileManagerKit::File file {path.data()}; file.is_open()) {
-				_service_file_reception.setFileSHA256(file.getSHA256());
+		_service_file_exchange.onSetFileExchangeState([this](bool file_exchange_requested) {
+			if (file_exchange_requested) {
+				raise(event::file_exchange_start_requested {});
+			} else {
+				raise(event::file_exchange_stop_requested {});
 			}
 		});
 
@@ -408,6 +502,11 @@ class RobotController : public interface::RobotController
 	std::chrono::seconds _idle_timeout_duration {600};
 	interface::Timeout &_timeout;
 
+	const rtos::Kernel::Clock::time_point kSystemStartupTimestamp = rtos::Kernel::Clock::now();
+
+	rtos::Kernel::Clock::time_point start = rtos::Kernel::Clock::now();
+	rtos::Kernel::Clock::time_point stop  = rtos::Kernel::Clock::now();
+
 	interface::Battery &_battery;
 	BatteryKit _battery_kit {_battery};
 	uint8_t _minimal_battery_level_to_update {25};
@@ -421,7 +520,7 @@ class RobotController : public interface::RobotController
 	interface::Motor &_motor_right;
 	interface::LED &_ears;
 	interface::LED &_belt;
-	LedKit &_ledkit;
+	interface::LedKit &_ledkit;
 	interface::LCD &_lcd;
 	interface::VideoKit &_videokit;
 	RFIDKit &_rfidkit;
@@ -441,12 +540,12 @@ class RobotController : public interface::RobotController
 	BLEServiceCommands _service_commands {};
 	BLEServiceDeviceInformation _service_device_information {};
 	BLEServiceMonitoring _service_monitoring {};
-	BLEServiceFileReception _service_file_reception {};
+	BLEServiceFileExchange _service_file_exchange {};
 	BLEServiceUpdate _service_update {};
 
 	std::array<interface::BLEService *, 6> services = {
-		&_service_battery,	  &_service_commands,		&_service_device_information,
-		&_service_monitoring, &_service_file_reception, &_service_update,
+		&_service_battery,	  &_service_commands,	   &_service_device_information,
+		&_service_monitoring, &_service_file_exchange, &_service_update,
 	};
 
 	uint8_t _emergency_stop_counter {0};

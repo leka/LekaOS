@@ -11,6 +11,7 @@
 
 #include "ActivityKit.h"
 #include "ChooseReinforcer.h"
+#include "CoreAccelerometer.h"
 #include "CoreBattery.h"
 #include "CoreBufferedSerial.h"
 #include "CoreDMA2D.hpp"
@@ -20,12 +21,15 @@
 #include "CoreFlashManagerIS25LP016D.h"
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
+#include "CoreGyroscope.h"
+#include "CoreI2C.h"
 #include "CoreJPEG.hpp"
 #include "CoreJPEGModeDMA.hpp"
 #include "CoreJPEGModePolling.hpp"
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLL.h"
+#include "CoreLSM6DSOX.h"
 #include "CoreLTDC.hpp"
 #include "CoreMCU.h"
 #include "CoreMotor.h"
@@ -46,6 +50,7 @@
 #include "FoodRecognition.h"
 #include "HelloWorld.h"
 #include "LedColorRecognition.h"
+#include "LedKit.h"
 #include "LedNumberCounting.h"
 #include "LogKit.h"
 #include "NumberRecognition.h"
@@ -175,8 +180,6 @@ namespace leds {
 	auto ears = CoreLED<internal::ears::size> {internal::ears::spi};
 	auto belt = CoreLED<internal::belt::size> {internal::belt::spi};
 
-	auto kit = LedKit {internal::animations::event_loop, ears, belt};
-
 	void turnOff()
 	{
 		ears.setColor(RGB::black);
@@ -186,6 +189,8 @@ namespace leds {
 	}
 
 }	// namespace leds
+
+auto ledkit = LedKit {leds::internal::animations::event_loop, leds::ears, leds::belt};
 
 namespace motors {
 
@@ -225,38 +230,60 @@ namespace motors {
 
 }	// namespace motors
 
-namespace display {
+namespace display::internal {
+
+	auto event_flags = CoreEventFlags {};
+
+	auto corell		   = CoreLL {};
+	auto pixel		   = CGPixel {corell};
+	auto hal		   = CoreSTM32Hal {};
+	auto coresdram	   = CoreSDRAM {hal};
+	auto coredma2d	   = CoreDMA2D {hal};
+	auto coredsi	   = CoreDSI {hal};
+	auto coreltdc	   = CoreLTDC {hal};
+	auto coregraphics  = CoreGraphics {coredma2d};
+	auto corefont	   = CoreFont {pixel};
+	auto coreotm	   = CoreLCDDriverOTM8009A {coredsi, PinName::SCREEN_BACKLIGHT_PWM};
+	auto corelcd	   = CoreLCD {coreotm};
+	auto _corejpegmode = CoreJPEGModeDMA {hal};
+	auto corejpeg	   = CoreJPEG {hal, _corejpegmode};
+
+	extern "C" auto corevideo =
+		CoreVideo {hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg};
+
+}	// namespace display::internal
+
+auto videokit = VideoKit {display::internal::event_flags, display::internal::corevideo};
+
+namespace imu {
 
 	namespace internal {
 
-		auto event_flags = CoreEventFlags {};
-
-		auto corell		   = CoreLL {};
-		auto pixel		   = CGPixel {corell};
-		auto hal		   = CoreSTM32Hal {};
-		auto coresdram	   = CoreSDRAM {hal};
-		auto coredma2d	   = CoreDMA2D {hal};
-		auto coredsi	   = CoreDSI {hal};
-		auto coreltdc	   = CoreLTDC {hal};
-		auto coregraphics  = CoreGraphics {coredma2d};
-		auto corefont	   = CoreFont {pixel};
-		auto coreotm	   = CoreLCDDriverOTM8009A {coredsi, PinName::SCREEN_BACKLIGHT_PWM};
-		auto corelcd	   = CoreLCD {coreotm};
-		auto _corejpegmode = CoreJPEGModeDMA {hal};
-		auto corejpeg	   = CoreJPEG {hal, _corejpegmode};
-		auto corevideo =
-			CoreVideo {hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg};
-
-		HAL_VIDEO_DECLARE_IRQ_HANDLERS(corevideo);
+		CoreI2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
+		EventLoopKit event_loop {};
 
 	}	// namespace internal
 
-	auto videokit = VideoKit {internal::event_flags, internal::corevideo};
+	CoreLSM6DSOX lsm6dsox(internal::i2c);
+	CoreAccelerometer accel(lsm6dsox);
+	CoreGyroscope gyro(lsm6dsox);
 
-}	// namespace display
+}	// namespace imu
 
-auto behaviorkit   = BehaviorKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
-auto reinforcerkit = ReinforcerKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
+auto imukit = IMUKit {imu::internal::event_loop, imu::accel, imu::gyro};
+
+namespace motion::internal {
+
+	EventLoopKit event_loop {};
+	CoreTimeout timeout {};
+
+}	// namespace motion::internal
+
+auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::event_loop,
+							motion::internal::timeout};
+
+auto behaviorkit   = BehaviorKit {videokit, ledkit, motors::left::motor, motors::right::motor};
+auto reinforcerkit = ReinforcerKit {videokit, ledkit, motionkit};
 
 namespace command {
 
@@ -303,6 +330,11 @@ namespace firmware {
 		internal::qspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
 	}
 
+	auto version() -> Version
+	{
+		return kit.getCurrentVersion();
+	}
+
 	void setPendingUpdate()
 	{
 		boot_set_pending(0);
@@ -340,20 +372,17 @@ namespace activities {
 
 	namespace internal {
 
-		auto display_tag			 = leka::activity::DisplayTags(rfidkit, display::videokit);
-		auto choose_reinforcer		 = leka::activity::ChooseReinforcer(rfidkit, display::videokit, reinforcerkit);
-		auto number_recognition		 = leka::activity::NumberRecognition(rfidkit, display::videokit, reinforcerkit);
-		auto picto_color_recognition = leka::activity::PictoColorRecognition(rfidkit, display::videokit, reinforcerkit);
-		auto led_color_recognition =
-			leka::activity::LedColorRecognition(rfidkit, display::videokit, reinforcerkit, leds::belt);
-		auto emotion_recognition = leka::activity::EmotionRecognition(rfidkit, display::videokit, reinforcerkit);
-		auto food_recognition	 = leka::activity::FoodRecognition(rfidkit, display::videokit, reinforcerkit);
-		auto led_number_counting =
-			leka::activity::LedNumberCounting(rfidkit, display::videokit, reinforcerkit, leds::belt);
-		auto flash_number_counting =
-			leka::activity::FlashNumberCounting(rfidkit, display::videokit, reinforcerkit, leds::belt);
-		auto super_simon	   = leka::activity::SuperSimon(rfidkit, display::videokit, reinforcerkit, leds::belt);
-		auto shape_recognition = leka::activity::ShapeRecognition(rfidkit, display::videokit, reinforcerkit);
+		auto display_tag			 = leka::activity::DisplayTags(rfidkit, videokit);
+		auto choose_reinforcer		 = leka::activity::ChooseReinforcer(rfidkit, videokit, reinforcerkit);
+		auto number_recognition		 = leka::activity::NumberRecognition(rfidkit, videokit, reinforcerkit);
+		auto picto_color_recognition = leka::activity::PictoColorRecognition(rfidkit, videokit, reinforcerkit);
+		auto led_color_recognition = leka::activity::LedColorRecognition(rfidkit, videokit, reinforcerkit, leds::belt);
+		auto emotion_recognition   = leka::activity::EmotionRecognition(rfidkit, videokit, reinforcerkit);
+		auto food_recognition	   = leka::activity::FoodRecognition(rfidkit, videokit, reinforcerkit);
+		auto led_number_counting   = leka::activity::LedNumberCounting(rfidkit, videokit, reinforcerkit, leds::belt);
+		auto flash_number_counting = leka::activity::FlashNumberCounting(rfidkit, videokit, reinforcerkit, leds::belt);
+		auto super_simon		   = leka::activity::SuperSimon(rfidkit, videokit, reinforcerkit, leds::belt);
+		auto shape_recognition	   = leka::activity::ShapeRecognition(rfidkit, videokit, reinforcerkit);
 
 	}	// namespace internal
 
@@ -373,7 +402,7 @@ namespace activities {
 
 }	// namespace activities
 
-auto activitykit = ActivityKit {};
+auto activitykit = ActivityKit {videokit};
 
 namespace robot {
 
@@ -395,9 +424,9 @@ namespace robot {
 		motors::right::motor,
 		leds::ears,
 		leds::belt,
-		leds::kit,
+		ledkit,
 		display::internal::corelcd,
-		display::videokit,
+		videokit,
 		behaviorkit,
 		commandkit,
 		rfidkit,
@@ -517,8 +546,10 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(1s);
 
+	auto version = firmware::version();
+
 	log_info("\n\n");
-	log_info("Hello, LekaOS!\n");
+	log_info("Hello, LekaOS v%i.%i.%i!\n", version.major, version.minor, version.revision);
 
 	rtos::ThisThread::sleep_for(2s);
 
@@ -530,6 +561,10 @@ auto main() -> int
 
 	commandkit.registerCommand(command::list);
 	activitykit.registerActivities(activities::activities);
+
+	imu::lsm6dsox.init();
+	imukit.init();
+	motionkit.init();
 
 	robot::controller.initializeComponents();
 	robot::controller.registerOnUpdateLoadedCallback(firmware::setPendingUpdate);

@@ -41,11 +41,23 @@ TEST_F(CoreMotorTest, initialization)
 	ASSERT_NE(&motor, nullptr);
 }
 
+TEST_F(CoreMotorTest, suspendOnInitialization)
+{
+	mbed::mock::DigitalOut local_dir_1 = {};
+	mbed::mock::DigitalOut local_dir_2 = {};
+	mock::PwmOut local_speed		   = {};
+
+	EXPECT_CALL(local_speed, suspend());
+
+	auto local_motor = CoreMotor {local_dir_1, local_dir_2, local_speed};
+}
+
 TEST_F(CoreMotorTest, rotateClockwiseNormalSpeed)
 {
 	EXPECT_CALL(dir_1, write(1));
 	EXPECT_CALL(dir_2, write(0));
 	EXPECT_CALL(speed, write(0.5));
+	EXPECT_CALL(speed, resume());
 
 	motor.spin(Rotation::clockwise, 0.5);
 }
@@ -55,6 +67,7 @@ TEST_F(CoreMotorTest, rotateClockwiseMaxSpeed)
 	EXPECT_CALL(dir_1, write(1));
 	EXPECT_CALL(dir_2, write(0));
 	EXPECT_CALL(speed, write(1));
+	EXPECT_CALL(speed, resume());
 
 	motor.spin(Rotation::clockwise, 1);
 }
@@ -64,6 +77,7 @@ TEST_F(CoreMotorTest, rotateCounterClockwiseNormalSpeed)
 	EXPECT_CALL(dir_1, write(0));
 	EXPECT_CALL(dir_2, write(1));
 	EXPECT_CALL(speed, write(0.5));
+	EXPECT_CALL(speed, resume());
 
 	motor.spin(Rotation::counterClockwise, 0.5);
 }
@@ -73,6 +87,7 @@ TEST_F(CoreMotorTest, rotateCounterClockwiseMaxSpeed)
 	EXPECT_CALL(dir_1, write(0));
 	EXPECT_CALL(dir_2, write(1));
 	EXPECT_CALL(speed, write(1));
+	EXPECT_CALL(speed, resume());
 
 	motor.spin(Rotation::counterClockwise, 1);
 }
@@ -82,8 +97,19 @@ TEST_F(CoreMotorTest, stop)
 	EXPECT_CALL(dir_1, write(0));
 	EXPECT_CALL(dir_2, write(0));
 	EXPECT_CALL(speed, write(0));
+	EXPECT_CALL(speed, suspend());
 
 	motor.stop();
+}
+
+TEST_F(CoreMotorTest, speedValueEqualToZero)
+{
+	MOCK_FUNCTION_silence_digital_write_unexpected_calls();
+
+	EXPECT_CALL(speed, write(0));
+	EXPECT_CALL(speed, suspend());
+
+	motor.spin(Rotation::clockwise, 0);
 }
 
 TEST_F(CoreMotorTest, speedValueNotGreaterThanOne)
@@ -91,6 +117,7 @@ TEST_F(CoreMotorTest, speedValueNotGreaterThanOne)
 	MOCK_FUNCTION_silence_digital_write_unexpected_calls();
 
 	EXPECT_CALL(speed, write(1));
+	EXPECT_CALL(speed, resume());
 
 	motor.spin(Rotation::clockwise, 100);
 }
@@ -100,6 +127,7 @@ TEST_F(CoreMotorTest, speedValueNotLowerThanZero)
 	MOCK_FUNCTION_silence_digital_write_unexpected_calls();
 
 	EXPECT_CALL(speed, write(0));
+	EXPECT_CALL(speed, suspend());
 
 	motor.spin(Rotation::clockwise, -100);
 }

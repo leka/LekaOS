@@ -12,6 +12,12 @@
 namespace leka {
 
 struct MagicCard {
+	enum class Language
+	{
+		fr_FR = 1,
+		en_US = 2
+	};
+
 	explicit constexpr MagicCard(uint16_t id)
 	{
 		_tag.data.at(id_high_byte_index) = utils::memory::getHighByte(id);
@@ -28,6 +34,12 @@ struct MagicCard {
 		auto both = utils::memory::combineBytes({.high = high, .low = low});
 
 		return both;
+	}
+
+	[[nodiscard]] constexpr auto getLanguage() const -> Language
+	{
+		auto language = Language {_tag.data.at(language_byte_index)};
+		return language;
 	}
 
 	constexpr auto operator==(MagicCard const &rhs) const -> bool
@@ -112,8 +124,9 @@ struct MagicCard {
 	static const MagicCard math_arithmetic_addition_sign_plus;
 
   private:
-	static constexpr auto id_high_byte_index = 4;
-	static constexpr auto id_low_byte_index	 = 5;
+	static constexpr auto id_high_byte_index  = 4;
+	static constexpr auto id_low_byte_index	  = 5;
+	static constexpr auto language_byte_index = 6;
 
 	rfid::Tag _tag {};
 };
@@ -195,6 +208,6 @@ constexpr MagicCard MagicCard::math_arithmetic_addition_sign_plus	   = MagicCard
 namespace std {
 template <>
 struct hash<leka::MagicCard> {
-	auto operator()(const leka::MagicCard &card) const -> size_t { return hash<int>()(card.getId()); }
+	auto operator()(const leka::MagicCard &card) const -> std::size_t { return hash<int>()(card.getId()); }
 };
 }	// namespace std

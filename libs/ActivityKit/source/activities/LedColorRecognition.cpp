@@ -6,6 +6,8 @@
 
 #include "LedColorRecognition.h"
 
+#include "rtos/ThisThread.h"
+
 namespace leka::activity {
 
 void LedColorRecognition::start()
@@ -33,7 +35,7 @@ void LedColorRecognition::processCard(const MagicCard &card)
 
 	if (card == _current_color->card) {
 		_reinforcerkit.playDefault();
-		rtos::ThisThread::sleep_for(400ms);
+		rtos::ThisThread::sleep_for(5s);
 		++_current_round;
 
 		if (_current_round == kRoundsNumber) {

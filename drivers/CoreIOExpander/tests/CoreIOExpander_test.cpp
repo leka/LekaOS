@@ -140,7 +140,7 @@ TEST_F(CoreIOExpanderTest, readPinHigh)
 	MOCK_FUNCTION_expectedCallsReadRegister(mcp23017::internal_register::GPIO, GPIO_expected_buffer);
 
 	auto output_value = expander.readPin(pin_number);
-	EXPECT_EQ(1, output_value);
+	EXPECT_EQ(pin_number, output_value);
 }
 
 TEST_F(CoreIOExpanderTest, readPinLow)

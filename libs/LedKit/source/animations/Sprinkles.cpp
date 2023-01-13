@@ -34,12 +34,13 @@ void Sprinkles::start()
 
 void Sprinkles::stop()
 {
+	_running = false;
+
 	if (_ears == nullptr || _belt == nullptr) {
 		return;
 	}
 
 	turnLedBlack();
-	_running = false;
 }
 
 void Sprinkles::run()

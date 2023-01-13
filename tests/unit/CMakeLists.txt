@@ -72,11 +72,9 @@ if(COVERAGE)
 		message(FATAL_ERROR "Non-debug build may result in misleading code coverage results.")
 	endif()
 
-	# Append coverage compiler flags
-	set(COVERAGE_COMPILER_FLAGS "-g -O0 --coverage -fno-exceptions -fno-inline ")
+	add_compile_options(-g -O0 --coverage -fno-exceptions -fno-inline)
 
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COVERAGE_COMPILER_FLAGS}")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COVERAGE_COMPILER_FLAGS}")
+	add_link_options(--coverage)
 endif(COVERAGE)
 
 # Add address sanitizer
@@ -85,32 +83,36 @@ if(SANITIZERS)
 		message(FATAL_ERROR "Address Sanitizer only works when coverage is enabled.")
 	endif()
 
-	# Append address sanitizer flags depending on compiler
 	if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-		set(SANITIZERS_COMPILER_FLAGS " \
-			-fno-omit-frame-pointer \
-			-fno-optimize-sibling-calls \
-			-fsanitize=address -static-libasan \
-			-fsanitize=pointer-compare \
-			-fsanitize=pointer-subtract \
-			-fsanitize=leak \
-			-fsanitize=undefined \
-		")
+		add_compile_options(
+			-fno-omit-frame-pointer
+			-fno-optimize-sibling-calls
+			-fsanitize=address
+			-fsanitize=pointer-compare
+			-fsanitize=pointer-subtract
+			-fsanitize=leak
+			-fsanitize=undefined
+			-fsanitize-address-use-after-scope
+		)
 	elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-		set(SANITIZERS_COMPILER_FLAGS " \
-			-fno-omit-frame-pointer \
-			-fno-optimize-sibling-calls \
-			-fsanitize=address -static-libsan \
-			-fsanitize=pointer-compare \
-			-fsanitize=pointer-subtract \
-			-fsanitize=undefined \
-		")
+		add_compile_options(
+			-fno-omit-frame-pointer
+			-fno-optimize-sibling-calls
+			-fsanitize=address
+			-fsanitize=pointer-compare
+			-fsanitize=pointer-subtract
+			-fsanitize=undefined
+			-fsanitize-address-use-after-scope
+		)
 	else()
 		message(FATAL_ERROR "Compiler not recognized")
 	endif()
 
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${SANITIZERS_COMPILER_FLAGS}")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SANITIZERS_COMPILER_FLAGS}")
+	add_link_options(-fsanitize=address -fsanitize=undefined)
+
+	if(CI_UT_OPTIMIZATION_LEVEL)
+		add_compile_options(${CI_UT_OPTIMIZATION_LEVEL})
+	endif(CI_UT_OPTIMIZATION_LEVEL)
 endif(SANITIZERS)
 
 # Enable logging for tests
@@ -126,6 +128,13 @@ set(EXTERN_MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
 set(LIBS_DIR ${ROOT_DIR}/libs)
 set(DRIVERS_DIR ${ROOT_DIR}/drivers)
 set(INCLUDE_DIR ${ROOT_DIR}/include)
+
+#
+# MARK: - External tools
+#
+list(APPEND CMAKE_MODULE_PATH ${ROOT_DIR}/cmake/utils)
+
+include(Utils)
 
 #
 # Mark: - Add GoogleTest & GMock
@@ -171,7 +180,7 @@ add_executable(LekaOSUnitTestsExec)
 add_custom_command(
 	TARGET LekaOSUnitTestsExec
 	PRE_BUILD
-	COMMAND find . -name "*.gcda" -print0 | xargs -0 -r rm
+	COMMAND find . -name "*.gcda" -o -name "*.gcov" | xargs -r rm -rf
 )
 
 # Define function to add sources to LekaOS Unit Tests
@@ -250,6 +259,7 @@ leka_register_unit_tests_for_driver(CoreEventQueue)
 leka_register_unit_tests_for_driver(CoreFlashMemory)
 leka_register_unit_tests_for_driver(CoreHTS)
 leka_register_unit_tests_for_driver(CoreI2C)
+leka_register_unit_tests_for_driver(CoreIMU)
 leka_register_unit_tests_for_driver(CoreIOExpander)
 leka_register_unit_tests_for_driver(CoreLED)
 leka_register_unit_tests_for_driver(CoreLightSensor)
@@ -280,8 +290,10 @@ leka_register_unit_tests_for_library(EventLoopKit)
 leka_register_unit_tests_for_library(FileManagerKit)
 leka_register_unit_tests_for_library(FirmwareKit)
 leka_register_unit_tests_for_library(WebKit)
+leka_register_unit_tests_for_library(IMUKit)
 leka_register_unit_tests_for_library(IOKit)
 leka_register_unit_tests_for_library(LedKit)
+leka_register_unit_tests_for_library(MotionKit)
 leka_register_unit_tests_for_library(ReinforcerKit)
 leka_register_unit_tests_for_library(RobotKit)
 leka_register_unit_tests_for_library(RFIDKit)
@@ -312,10 +324,21 @@ if(VERBOSE_BUILD)
 	set(CMAKE_VERBOSE_MAKEFILE ON)
 endif()
 
-# Print options
+print_compilers_flags_options_definitions()
+
+message(STATUS ">> ")
+message(STATUS ">> External definitions")
+message(STATUS ">> ")
 message(STATUS "")
-message(STATUS "CMAKE_EXPORT_COMPILE_COMMANDS --> ${CMAKE_EXPORT_COMPILE_COMMANDS}")
-message(STATUS "CODE_COVERAGE                 --> ${COVERAGE}")
-message(STATUS "SANITIZERS                    --> ${SANITIZERS}")
-message(STATUS "CMAKE_VERBOSE_MAKEFILE        --> ${VERBOSE_BUILD}")
+
+message(STATUS "UT LITE                  --> ${UT_LITE}")
+message(STATUS "CODE_COVERAGE            --> ${COVERAGE}")
+message(STATUS "SANITIZERS               --> ${SANITIZERS}")
+
+if(NOT ${CI_UT_OPTIMIZATION_LEVEL} STREQUAL "")
+	message(STATUS "CI_UT_OPTIMIZATION_LEVEL --> ${CI_UT_OPTIMIZATION_LEVEL}")
+else()
+	message(STATUS "CI_UT_OPTIMIZATION_LEVEL --> (not used)")
+endif(NOT ${CI_UT_OPTIMIZATION_LEVEL} STREQUAL "")
+
 message(STATUS "")

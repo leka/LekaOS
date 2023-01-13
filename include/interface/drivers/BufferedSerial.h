@@ -21,6 +21,9 @@ class BufferedSerial
 
 	virtual auto readable() -> bool = 0;
 
+	virtual void disable_input() = 0;
+	virtual void enable_input()	 = 0;
+
 	virtual void sigio(mbed::Callback<void()> func) = 0;   // TODO (@HPezz) replace mbed callback by std function
 };
 

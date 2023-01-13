@@ -6,7 +6,6 @@
 
 #include <array>
 #include <cstdint>
-#include <span>
 
 namespace leka {
 
@@ -14,6 +13,9 @@ struct AdvertisingData {
 	const char *name = "Leka";	 // TODO: Get default name from configuration files
 	uint8_t battery {};
 	uint8_t is_charging {};
+	uint8_t version_major {};
+	uint8_t version_minor {};
+	uint16_t version_revision {};
 
 	auto data()
 	{
@@ -24,9 +26,17 @@ struct AdvertisingData {
 	[[nodiscard]] auto size() const -> uint32_t { return _internal_values.size(); }
 
 	// private:
-	void updateValues() { _internal_values = {battery, is_charging}; }
+	void updateValues()
+	{
+		_internal_values = {battery,
+							is_charging,
+							version_major,
+							version_minor,
+							static_cast<uint8_t>(version_revision >> 8),
+							static_cast<uint8_t>(version_revision)};
+	}
 
-	std::array<uint8_t, 2> _internal_values = {};
+	std::array<uint8_t, 6> _internal_values = {};
 };
 
 }	// namespace leka

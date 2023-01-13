@@ -24,7 +24,7 @@ class CoreJPEGModePolling : public interface::JPEGMode
 	void onDataAvailableCallback(JPEG_HandleTypeDef *hjpeg, uint32_t decoded_datasize) final;
 	void onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg) final;
 
-	auto decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> size_t final;
+	auto decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> std::size_t final;
 
   private:
 	struct JPEGDataBuffer {

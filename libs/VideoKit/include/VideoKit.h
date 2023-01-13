@@ -26,8 +26,10 @@ class VideoKit : public interface::VideoKit
 	void displayImage(const std::filesystem::path &path) final;
 	void fillWhiteBackgroundAndDisplayImage(const std::filesystem::path &path) final;
 
-	void playVideoOnce(const std::filesystem::path &path) final;
-	void playVideoOnRepeat(const std::filesystem::path &path) final;
+	void playVideoOnce(const std::filesystem::path &path,
+					   const std::function<void()> &on_video_ended_callback = {}) final;
+	void playVideoOnRepeat(const std::filesystem::path &path,
+						   const std::function<void()> &on_video_ended_callback = {}) final;
 
 	void stopVideo() final;
 
@@ -45,6 +47,7 @@ class VideoKit : public interface::VideoKit
 	interface::Video &_video;
 
 	std::filesystem::path _current_path {};
+	std::function<void()> _on_video_ended_callback {};
 	bool _must_loop {false};
 };
 

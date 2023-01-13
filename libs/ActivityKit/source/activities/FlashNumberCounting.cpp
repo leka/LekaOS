@@ -7,11 +7,14 @@
 #include "FlashNumberCounting.h"
 #include <random>
 
+#include "rtos/ThisThread.h"
+
 namespace leka::activity {
-using namespace std::chrono;
 
 void FlashNumberCounting::start()
 {
+	using namespace std::chrono;
+
 	_current_round			= 0;
 	_current_flashes_number = 0;
 	_expected_tag_number	= MagicCard::none;
@@ -34,9 +37,11 @@ void FlashNumberCounting::stop()
 
 void FlashNumberCounting::processCard(const MagicCard &card)
 {
+	using namespace std::chrono;
+
 	if (card == _expected_tag_number) {
 		_reinforcerkit.playDefault();
-		rtos::ThisThread::sleep_for(1s);
+		rtos::ThisThread::sleep_for(5s);
 
 		++_current_round;
 
@@ -52,6 +57,8 @@ void FlashNumberCounting::processCard(const MagicCard &card)
 
 void FlashNumberCounting::launchNextRound()
 {
+	using namespace std::chrono;
+
 	_current_flashes_number = _flash_numbers.at(_current_round);
 	_expected_tag_number	= MagicCard(MagicCard::number_0.getId() + _current_flashes_number);
 

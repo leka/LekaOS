@@ -6,6 +6,18 @@
 
 using namespace leka;
 
+namespace {
+
+inline constexpr std::size_t CHUNK_IN_SIZE =
+	std::size_t {jpeg::input_chunk_size} * std::size_t {jpeg::input_buffers_nb};
+inline constexpr std::size_t CHUNK_OUT_SIZE =
+	std::size_t {jpeg::output_chunk_size} * std::size_t {jpeg::output_buffers_nb};
+
+inline auto BIG_CHUNK_OF_MEMORY_IN	= std::array<uint8_t, CHUNK_IN_SIZE> {};
+inline auto BIG_CHUNK_OF_MEMORY_OUT = std::array<uint8_t, CHUNK_OUT_SIZE> {};
+
+}	// namespace
+
 void CoreJPEGModeDMA::onMspInitCallback(JPEG_HandleTypeDef *hjpeg)
 {
 	// enable DMA2 clock
@@ -26,12 +38,13 @@ void CoreJPEGModeDMA::onMspInitCallback(JPEG_HandleTypeDef *hjpeg)
 	_hdma_in.Init.PeriphBurst		  = DMA_PBURST_INC4;
 
 	// init and link DMA IN
-	_hdma_in.Instance = DMA2_Stream0;
+	_hdma_in.Instance = DMA2_Stream0;	// NOLINT - ST's implementation detail
 	_hal.HAL_DMA_DeInit(&_hdma_in);
 	_hal.HAL_DMA_Init(&_hdma_in);
 	__HAL_LINKDMA(hjpeg, hdmain, _hdma_in);
 
 	// enable DMA IRQ
+	// NOLINTNEXTLINE - ST's implementation detail
 	_hal.HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0x07, 0x0F);
 	_hal.HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
 
@@ -50,12 +63,13 @@ void CoreJPEGModeDMA::onMspInitCallback(JPEG_HandleTypeDef *hjpeg)
 	_hdma_out.Init.PeriphBurst		   = DMA_PBURST_INC4;
 
 	// init and link DMA OUT
-	_hdma_out.Instance = DMA2_Stream1;
+	_hdma_out.Instance = DMA2_Stream1;	 // NOLINT - ST's implementation detail
 	_hal.HAL_DMA_DeInit(&_hdma_out);
 	_hal.HAL_DMA_Init(&_hdma_out);
 	__HAL_LINKDMA(hjpeg, hdmaout, _hdma_out);
 
 	// enable DMA IRQ
+	// NOLINTNEXTLINE - ST's implementation detail
 	_hal.HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 0x07, 0x0F);
 	_hal.HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
 }
@@ -148,7 +162,7 @@ void CoreJPEGModeDMA::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
 	_hw_decode_ended = true;
 }
 
-auto CoreJPEGModeDMA::decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> size_t
+auto CoreJPEGModeDMA::decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> std::size_t
 {
 	reset();
 
@@ -174,9 +188,6 @@ auto CoreJPEGModeDMA::decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -
 	return _image_size;
 }
 
-std::array<uint8_t, jpeg::input_chunk_size * jpeg::input_buffers_nb> CoreJPEGModeDMA::BIG_CHUNGUS_OF_MEMORY_IN;
-std::array<uint8_t, jpeg::output_chunk_size * jpeg::output_buffers_nb> CoreJPEGModeDMA::BIG_CHUNGUS_OF_MEMORY_OUT;
-
 void CoreJPEGModeDMA::reset()
 {
 	_image_size = 0;
@@ -194,26 +205,24 @@ void CoreJPEGModeDMA::reset()
 	_out_paused = false;
 
 	// initialize memory chungus
-	uint32_t i = 0;
-	for (auto &buffer: _input_buffers) {
+	for (auto i = 0; auto &buffer: _input_buffers) {
 		buffer.state	= Buffer::State::Empty;
 		buffer.datasize = 0;
-		buffer.data		= BIG_CHUNGUS_OF_MEMORY_IN.data() + i * jpeg::input_chunk_size;
+		buffer.data		= BIG_CHUNK_OF_MEMORY_IN.data() + i * std::size_t {jpeg::input_chunk_size};
 		i += 1;
 	}
-	i = 0;
-	for (auto &buffer: _output_buffers) {
+	for (auto i = 0; auto &buffer: _output_buffers) {
 		buffer.state	= Buffer::State::Empty;
 		buffer.datasize = 0;
-		buffer.data		= BIG_CHUNGUS_OF_MEMORY_OUT.data() + i * jpeg::output_chunk_size;
+		buffer.data		= BIG_CHUNK_OF_MEMORY_OUT.data() + i * std::size_t {jpeg::output_chunk_size};
 		i += 1;
 	}
 }
 
 void CoreJPEGModeDMA::decoderInputHandler(JPEG_HandleTypeDef *hjpeg, interface::File &file)
 {
-	auto &write_buffer = _input_buffers[_input_buffers_write_index];
-	auto &read_buffer  = _input_buffers[_input_buffers_read_index];
+	auto &write_buffer = _input_buffers.at(_input_buffers_write_index);
+	auto &read_buffer  = _input_buffers.at(_input_buffers_read_index);
 
 	if (write_buffer.state == Buffer::State::Empty) {
 		write_buffer.datasize = file.read(write_buffer.data, jpeg::input_chunk_size);
@@ -240,9 +249,11 @@ auto CoreJPEGModeDMA::decoderOutputHandler(JPEG_HandleTypeDef *hjpeg) -> bool
 	const auto &write_buffer  = _output_buffers.at(_output_buffers_write_index);
 
 	if (read_buffer.state == Buffer::State::Full) {
-		_mcu_block_index += convertMCUBlocks(read_buffer.data, (uint8_t *)jpeg::decoded_buffer_address,
-											 _mcu_block_index, read_buffer.datasize, &converted_data_count);
-
+		// NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
+		_mcu_block_index +=
+			convertMCUBlocks(read_buffer.data, reinterpret_cast<uint8_t *>(jpeg::decoded_buffer_address),
+							 _mcu_block_index, read_buffer.datasize, &converted_data_count);
+		// NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
 		read_buffer.state	 = Buffer::State::Empty;
 		read_buffer.datasize = 0;
 

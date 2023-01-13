@@ -4,9 +4,6 @@
 
 #pragma once
 
-#include <array>
-#include <cstdint>
-
 #include "JPEGImageProperties.hpp"
 #include "interface/JPEG.hpp"
 #include "interface/JPEGMode.hpp"
@@ -20,6 +17,7 @@ class CoreJPEG : public interface::JPEGBase
   public:
 	explicit CoreJPEG(interface::STM32Hal &hal, interface::JPEGMode &mode) : _hal(hal), _mode(mode)
 	{
+		// NOLINTNEXTLINE (cppcoreguidelines-pro-type-cstyle-cast) - ST hal macros
 		_hjpeg.Instance = JPEG;
 	}
 
@@ -27,8 +25,8 @@ class CoreJPEG : public interface::JPEGBase
 
 	auto getHandle() -> JPEG_HandleTypeDef & final;
 
-	auto decodeImage(interface::File &file) -> size_t final;
-	auto findSOIMarker(interface::File &file, size_t start_index) -> size_t final;
+	auto decodeImage(interface::File &file) -> std::size_t final;
+	auto findSOIMarker(interface::File &file, std::size_t start_index) -> std::size_t final;
 
 	auto getImageProperties() -> JPEGImageProperties final;
 

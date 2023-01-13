@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "FirmwareVersion.h"
+#include "Version.h"
 
 namespace leka::interface {
 
@@ -13,8 +13,9 @@ class FirmwareUpdate
   public:
 	virtual ~FirmwareUpdate() = default;
 
-	virtual auto getCurrentVersion() -> FirmwareVersion				= 0;
-	virtual auto loadUpdate(const FirmwareVersion &version) -> bool = 0;
+	virtual auto getCurrentVersion() -> Version						= 0;
+	virtual auto isVersionAvailable(const Version &version) -> bool = 0;
+	virtual auto loadUpdate(const Version &version) -> bool			= 0;
 };
 
 }	// namespace leka::interface

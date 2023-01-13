@@ -5,6 +5,7 @@
 #pragma once
 
 #include <filesystem>
+#include <functional>
 
 namespace leka::interface {
 
@@ -18,8 +19,10 @@ class VideoKit
 	virtual void displayImage(const std::filesystem::path &path)					   = 0;
 	virtual void fillWhiteBackgroundAndDisplayImage(const std::filesystem::path &path) = 0;
 
-	virtual void playVideoOnce(const std::filesystem::path &path)	  = 0;
-	virtual void playVideoOnRepeat(const std::filesystem::path &path) = 0;
+	virtual void playVideoOnce(const std::filesystem::path &path,
+							   const std::function<void()> &on_video_ended_callback = {})	  = 0;
+	virtual void playVideoOnRepeat(const std::filesystem::path &path,
+								   const std::function<void()> &on_video_ended_callback = {}) = 0;
 
 	virtual void stopVideo() = 0;
 };

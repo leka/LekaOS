@@ -73,7 +73,7 @@ for target in "${all_targets[@]}"; do
 		if [ $diff_flash -lt 0 ]; then
 			output_flash_delta=":chart_with_downwards_trend:<br>$diff_flash&nbsp;($diff_flash_percentage)"
 		elif [ $diff_flash -gt 0 ]; then
-			output_flash_delta=":chart_with_upwards_trend:<br>$diff_flash&nbsp;($diff_flash_percentage)"
+			output_flash_delta=":chart_with_upwards_trend:<br>+$diff_flash&nbsp;(+$diff_flash_percentage)"
 		else
 			output_flash="$base_flash_with_percentage"
 			output_flash_delta="ø"
@@ -81,9 +81,6 @@ for target in "${all_targets[@]}"; do
 
 		base_ram_with_percentage="$(getUsedRamSizeWithPercentage $BASE_DIR $target_name)"
 		head_ram_with_percentage="$(getUsedRamSizeWithPercentage $HEAD_DIR $target_name)"
-
-		base_ram_percentage=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*\s\([[:digit:]]*%\)' $BASE_DIR/$target_name-code_size.txt)
-		head_ram_percentage=$(grep -Po '(?<=SRAM used:\s)[[:digit:]]*\s\([[:digit:]]*%\)' $HEAD_DIR/$target_name-code_size.txt)
 
 		base_ram="$(getUsedRamSize $BASE_DIR $target_name)"
 		head_ram="$(getUsedRamSize $HEAD_DIR $target_name)"
@@ -97,7 +94,7 @@ for target in "${all_targets[@]}"; do
 		if [ $diff_ram -lt 0 ]; then
 			output_ram_delta=":chart_with_downwards_trend:<br>$diff_ram&nbsp;($diff_ram_percentage)"
 		elif [ $diff_ram -gt 0 ]; then
-			output_ram_delta=":chart_with_upwards_trend:<br>$diff_ram&nbsp;($diff_ram_percentage)"
+			output_ram_delta=":chart_with_upwards_trend:<br>+$diff_ram&nbsp;(+$diff_ram_percentage)"
 		else
 			output_ram="$base_ram_with_percentage"
 			output_ram_delta="ø"

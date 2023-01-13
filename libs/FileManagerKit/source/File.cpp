@@ -33,12 +33,14 @@ File::File(const std::filesystem::path &path, const char *mode)
 
 auto File::open(const char *path, const char *mode) -> bool
 {
+	_path = path;
 	_file.reset(std::fopen(path, mode));
 	return is_open();
 }
 
 auto File::open(const std::filesystem::path &path, const char *mode) -> bool
 {
+	_path = path;
 	_file.reset(std::fopen(path.c_str(), mode));
 	return is_open();
 }
@@ -49,45 +51,46 @@ void File::close()
 		return;
 	}
 
+	_path.clear();
 	_file.reset(nullptr);
 }
 
-auto File::read(std::span<uint8_t> buffer) -> size_t
+auto File::read(std::span<uint8_t> buffer) -> std::size_t
 {
 	return std::fread(buffer.data(), sizeof(uint8_t), buffer.size(), _file.get());
 }
 
-auto File::write(std::span<uint8_t> data) -> size_t
+auto File::write(std::span<uint8_t> data) -> std::size_t
 {
 	return std::fwrite(data.data(), sizeof(uint8_t), data.size(), _file.get());
 }
 
-auto File::read(std::span<char> buffer) -> size_t
+auto File::read(std::span<char> buffer) -> std::size_t
 {
 	return std::fread(buffer.data(), sizeof(char), buffer.size(), _file.get());
 }
 
-auto File::write(std::span<char> data) -> size_t
+auto File::write(std::span<char> data) -> std::size_t
 {
 	return std::fwrite(data.data(), sizeof(char), data.size(), _file.get());
 }
 
-auto File::read(uint8_t *buffer, uint32_t size) -> size_t
+auto File::read(uint8_t *buffer, uint32_t size) -> std::size_t
 {
 	return std::fread(buffer, sizeof(uint8_t), size, _file.get());
 }
 
-auto File::write(const uint8_t *data, uint32_t size) -> size_t
+auto File::write(const uint8_t *data, uint32_t size) -> std::size_t
 {
 	return std::fwrite(data, sizeof(uint8_t), size, _file.get());
 }
 
-auto File::read(char *buffer, uint32_t size) -> size_t
+auto File::read(char *buffer, uint32_t size) -> std::size_t
 {
 	return std::fread(buffer, sizeof(char), size, _file.get());
 }
 
-auto File::write(const char *data, uint32_t size) -> size_t
+auto File::write(const char *data, uint32_t size) -> std::size_t
 {
 	return std::fwrite(data, sizeof(char), size, _file.get());
 }
@@ -97,12 +100,17 @@ void File::seek(size_t pos, int origin)
 	std::fseek(_file.get(), static_cast<long>(pos), origin);
 }
 
+void File::clear()
+{
+	reopen(_path, "w+");
+}
+
 void File::rewind()
 {
 	seek(0);
 }
 
-auto File::size() -> size_t
+auto File::size() -> std::size_t
 {
 	if (_file == nullptr) {
 		return 0;
@@ -120,7 +128,7 @@ auto File::is_open() const -> bool
 	return _file != nullptr;
 }
 
-auto File::tell() -> size_t
+auto File::tell() -> std::size_t
 {
 	if (_file == nullptr) {
 		return 0;
@@ -209,7 +217,7 @@ auto File::getSHA256() -> std::array<uint8_t, 32>
 	mbedtls_sha256_init(&context);
 	mbedtls_sha256_starts(&context, 0);
 
-	for (auto i = 0; i < size(); i += std::size(buffer)) {
+	for (std::size_t i = 0; i < size(); i += std::size(buffer)) {
 		seek(i);
 		auto bytes_read = read(buffer.data(), std::size(buffer));
 		mbedtls_sha256_update(&context, buffer.data(), bytes_read);

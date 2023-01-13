@@ -35,7 +35,7 @@ TEST_F(CoreEventFlagsTest, get)
 {
 	CoreEventFlags::eventflags_t f1 = 42;
 
-	auto _ = flags.set(f1);
+	std::ignore = flags.set(f1);
 
 	auto ret_f1 = flags.get();
 
@@ -47,7 +47,7 @@ TEST_F(CoreEventFlagsTest, clearSuccess)
 {
 	CoreEventFlags::eventflags_t f1 = 42;
 
-	auto _ = flags.set(f1);
+	std::ignore = flags.set(f1);
 
 	auto ret = flags.clear(f1);
 
@@ -58,7 +58,7 @@ TEST_F(CoreEventFlagsTest, waitAny)
 {
 	CoreEventFlags::eventflags_t f1 = 42;
 
-	auto _ = flags.set(f1);
+	std::ignore = flags.set(f1);
 
 	flags.wait_any(f1);
 

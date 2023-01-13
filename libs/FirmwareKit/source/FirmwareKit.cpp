@@ -4,42 +4,52 @@
 
 #include "FirmwareKit.h"
 
+#include "os_version.h"
 #include "semver/semver.hpp"
 
 using namespace leka;
 
-auto FirmwareKit::getCurrentVersion() -> FirmwareVersion
+auto FirmwareKit::getCurrentVersion() -> Version
 {
-	return getCurrentVersionFromFile();
+	auto semversion = semver::version {OS_VERSION};
+	return Version {.major = semversion.major, .minor = semversion.minor, .revision = semversion.patch};
 }
 
-auto FirmwareKit::getCurrentVersionFromFile() -> FirmwareVersion
+auto FirmwareKit::getPathOfVersion(const Version &version) const -> std::filesystem::path
 {
-	auto file_content = std::array<char, 16> {};
+	auto path_buffer = std::array<char, 64> {};
+	snprintf(path_buffer.data(), std::size(path_buffer), _config.bin_path_format, version.major, version.minor,
+			 version.revision);
 
-	if (auto is_not_open = !_file.open(_config.os_version_path); is_not_open) {
-		return FirmwareVersion {.major = 1, .minor = 0, .revision = 0};
+	auto path = std::filesystem::path {path_buffer.begin()};
+
+	return path;
+}
+
+auto FirmwareKit::isVersionAvailable(const Version &version) -> bool
+{
+	auto path		 = getPathOfVersion(version);
+	auto file_exists = false;
+
+	if (auto is_open = _file.open(path); is_open) {
+		constexpr auto kMinimalFileSizeInBytes = std::size_t {300'000};
+
+		file_exists = _file.size() >= kMinimalFileSizeInBytes;
 	}
 
-	_file.read(file_content);
 	_file.close();
 
-	std::replace(std::begin(file_content), std::end(file_content), '\n', '\0');
-
-	auto semversion = semver::version {file_content.data()};
-
-	return FirmwareVersion {.major = semversion.major, .minor = semversion.minor, .revision = semversion.patch};
+	return file_exists;
 }
 
-auto FirmwareKit::loadUpdate(const FirmwareVersion &version) -> bool
+auto FirmwareKit::loadUpdate(const Version &version) -> bool
 {
-	auto path = std::array<char, 64> {};
-	snprintf(path.data(), std::size(path), _config.bin_path_format, version.major, version.minor, version.revision);
+	auto path = getPathOfVersion(version);
 
-	return loadUpdate(path.data());
+	return loadUpdate(path);
 }
 
-auto FirmwareKit::loadUpdate(const char *path) -> bool
+auto FirmwareKit::loadUpdate(const std::filesystem::path &path) -> bool
 {
 	if (auto is_open = _file.open(path); is_open) {
 		auto address = uint32_t {0x0};

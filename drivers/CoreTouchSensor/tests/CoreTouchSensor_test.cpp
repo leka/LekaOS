@@ -75,10 +75,12 @@ TEST_F(CoreTouchSensorTest, reset)
 
 TEST_F(CoreTouchSensorTest, setSensitivity)
 {
-	auto value			= 0x0ABC;
-	auto expected_value = utils::math::map<uint16_t, uint16_t>(
-		value, CoreTouchSensor::default_min_sensitivity_value, CoreTouchSensor::default_max_sensitivity_value,
-		CoreTouchSensor::default_max_sensitivity_value, CoreTouchSensor::default_min_sensitivity_value);
+	auto value						  = float {0.7F};
+	const auto kDefaultMaxSensitivity = uint16_t {0x0FFF};
+	const auto kDefaultMinSensitivity = uint16_t {0x0000};
+	auto expected_value = utils::math::map<uint16_t, float>(value, CoreTouchSensor::default_min_sensitivity_input_value,
+															CoreTouchSensor::default_max_sensitivity_input_value,
+															kDefaultMaxSensitivity, kDefaultMinSensitivity);
 	EXPECT_CALL(dac, write(channel, expected_value)).Times(1);
 	sensor.setSensitivity(value);
 }

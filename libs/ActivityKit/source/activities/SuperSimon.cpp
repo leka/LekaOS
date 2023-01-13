@@ -6,13 +6,16 @@
 
 #include <random>
 
+#include "rtos/ThisThread.h"
+
 #include "SuperSimon.h"
 
 namespace leka::activity {
-using namespace std::chrono;
 
 void SuperSimon::start()
 {
+	using namespace std::chrono;
+
 	_current_round		  = 0;
 	_expected_color_index = 0;
 
@@ -34,6 +37,8 @@ void SuperSimon::stop()
 
 void SuperSimon::processCard(const MagicCard &card)
 {
+	using namespace std::chrono;
+
 	if (card == _expected_colors.at(_expected_color_index)->card) {
 		_led.setColor(_expected_colors.at(_expected_color_index)->color);
 		_led.show();
@@ -45,7 +50,7 @@ void SuperSimon::processCard(const MagicCard &card)
 
 		if (_expected_color_index == _current_round) {
 			_reinforcerkit.playDefault();
-			rtos::ThisThread::sleep_for(1s);
+			rtos::ThisThread::sleep_for(5s);
 			_expected_color_index = 0;
 			++_current_round;
 
@@ -67,6 +72,8 @@ void SuperSimon::processCard(const MagicCard &card)
 
 void SuperSimon::launchNextRound()
 {
+	using namespace std::chrono;
+
 	for (auto i = 0; i <= _current_round; ++i) {
 		_expected_colors.at(i) = _colors.at(i);
 

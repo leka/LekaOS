@@ -4,13 +4,23 @@
 
 #include "./RobotController_test.h"
 
-TEST_F(RobotControllerTest, startDisconnectionBehavior)
+TEST_F(RobotControllerTest, startDisconnectionBehaviorCharging)
 {
-	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
-	EXPECT_CALL(mock_motor_left, stop).Times(2);
-	EXPECT_CALL(mock_motor_right, stop).Times(2);
-	EXPECT_CALL(mock_belt, hide).Times(1);
-	EXPECT_CALL(mock_ears, hide).Times(1);
+	expectedCallsStopActuators();
+
+	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
+	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::blink_on_charge))).Times(1);
+
+	rc.startDisconnectionBehavior();
+	EXPECT_FALSE(rc.isBleConnected());
+}
+
+TEST_F(RobotControllerTest, startDisconnectionBehaviorNotCharging)
+{
+	expectedCallsStopActuators();
+
+	EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
+	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::blink_on_charge))).Times(0);
 
 	rc.startDisconnectionBehavior();
 	EXPECT_FALSE(rc.isBleConnected());

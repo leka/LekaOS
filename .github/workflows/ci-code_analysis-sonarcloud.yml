@@ -7,11 +7,15 @@ name: Code Analysis - Sonarcloud
 on:
   push:
     branches:
-      - master
+      - main
       - develop
 
   pull_request:
     types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   run:
@@ -29,7 +33,11 @@ jobs:
       - name: Setup CI
         uses: ./.github/actions/setup
         with:
-          ccache_name: code_analysis-sonarcloud
+          ccache_key: ${{ runner.os }}-ccache-code_analysis-sonarcloud
+          ccache_restore_keys: |
+            ${{ runner.os }}-ccache-code_analysis-sonarcloud-
+            ${{ runner.os }}-ccache-code_analysis-
+            ${{ runner.os }}-ccache-
 
       #
       # Mark: - SonarCloud
@@ -83,12 +91,12 @@ jobs:
 
       - name: Config, build & run unit tests
         env:
-          CC: /usr/bin/gcc-10
-          CXX: /usr/bin/g++-10
+          CC: /usr/bin/gcc-12
+          CXX: /usr/bin/g++-12
         run: |
           make config_unit_tests
           make unit_tests
-          make coverage_sonarqube
+          make coverage_sonarqube GCOV_EXEC=/usr/bin/gcov-12
 
       - name: Ccache post unit tests
         run: |

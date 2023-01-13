@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <filesystem>
 #include <functional>
 #include <string>
 
@@ -17,26 +18,25 @@ class FirmwareKit : public interface::FirmwareUpdate
 {
   public:
 	struct Config {
-		const char *os_version_path;
 		const char *bin_path_format;
 	};
 
-	static constexpr auto DEFAULT_CONFIG =
-		Config {.os_version_path = "fs/sys/os-version", .bin_path_format = "/fs/usr/os/LekaOS-%i.%i.%i.bin"};
+	static constexpr auto DEFAULT_CONFIG = Config {.bin_path_format = "/fs/usr/os/LekaOS-%i.%i.%i.bin"};
 
 	explicit FirmwareKit(interface::FlashMemory &flash, Config config) : _flash(flash), _config(config)
 	{
 		// nothing do to
 	}
 
-	auto getCurrentVersion() -> leka::FirmwareVersion final;
+	auto getCurrentVersion() -> Version final;
 
-	auto loadUpdate(const leka::FirmwareVersion &version) -> bool final;
+	auto isVersionAvailable(const Version &version) -> bool final;
+	auto loadUpdate(const Version &version) -> bool final;
 
   private:
-	auto getCurrentVersionFromFile() -> leka::FirmwareVersion;
+	[[nodiscard]] auto getPathOfVersion(const Version &version) const -> std::filesystem::path;
 
-	auto loadUpdate(const char *path) -> bool;
+	auto loadUpdate(const std::filesystem::path &path) -> bool;
 
 	interface::FlashMemory &_flash;
 	FileManagerKit::File _file {};

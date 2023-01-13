@@ -7,7 +7,7 @@
 #include "BLEKit.h"
 #include "BLEServiceBattery.h"
 #include "BLEServiceDeviceInformation.h"
-#include "BLEServiceFileReception.h"
+#include "BLEServiceFileExchange.h"
 #include "BLEServiceMonitoring.h"
 #include "BLEServiceUpdate.h"
 
@@ -28,11 +28,11 @@ auto charging_status = bool {false};
 auto service_device_information = BLEServiceDeviceInformation {};
 auto service_battery			= BLEServiceBattery {};
 auto service_monitoring			= BLEServiceMonitoring {};
-auto service_file_reception		= BLEServiceFileReception {};
+auto service_file_exchange		= BLEServiceFileExchange {};
 auto service_update				= BLEServiceUpdate {};
 
 auto services = std::to_array<interface::BLEService *>(
-	{&service_device_information, &service_battery, &service_monitoring, &service_update, &service_file_reception});
+	{&service_device_information, &service_battery, &service_monitoring, &service_update, &service_file_exchange});
 
 auto blekit = BLEKit {};
 
@@ -60,7 +60,7 @@ auto main() -> int
 	std::array<uint8_t, 33> serial_number = {"LK-2202-003300294E5350092038384B"};
 	service_device_information.setSerialNumber(serial_number);
 
-	auto os_version = FirmwareVersion {123, 234, 45678};
+	auto os_version = Version {123, 234, 45678};
 	service_device_information.setOSVersion(os_version);
 
 	blekit.onConnectionCallback([] { log_info("Connected !"); });
@@ -70,10 +70,15 @@ auto main() -> int
 
 	initializeSD();
 
-	service_file_reception.onFilePathReceived(
+	service_file_exchange.onSetFileExchangeState(
+		[](bool new_state) { log_info("New FileExchange state is: %s", (new_state ? "on" : "off")); });
+
+	service_file_exchange.onFilePathReceived(
 		[](std::span<const char> path) { file_reception_handler.setFilePath(path.data()); });
 
-	service_file_reception.onFileDataReceived(
+	service_file_exchange.onClearFileRequested([] { file_reception_handler.clearFile(); });
+
+	service_file_exchange.onFileDataReceived(
 		[](std::span<const uint8_t> buffer) { file_reception_handler.onPacketReceived(buffer); });
 
 	while (true) {
@@ -91,10 +96,14 @@ auto main() -> int
 		auto version = service_update.getVersion();
 		log_info("Requested version: %d.%d.%d", version.major, version.minor, version.revision);
 
-		auto advertising_data		 = blekit.getAdvertisingData();
-		advertising_data.name		 = "NewLeka";
-		advertising_data.battery	 = level;
-		advertising_data.is_charging = charging_status;
+		auto advertising_data			  = blekit.getAdvertisingData();
+		advertising_data.name			  = "NewLeka";
+		advertising_data.battery		  = level;
+		advertising_data.is_charging	  = charging_status;
+		advertising_data.version_major	  = uint8_t {0x01};
+		advertising_data.version_minor	  = uint8_t {0x02};
+		advertising_data.version_revision = uint16_t {0x0304};
+
 		blekit.setAdvertisingData(advertising_data);
 	}
 }

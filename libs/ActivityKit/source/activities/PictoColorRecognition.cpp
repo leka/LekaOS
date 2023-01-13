@@ -7,6 +7,8 @@
 #include "PictoColorRecognition.h"
 #include <random>
 
+#include "rtos/ThisThread.h"
+
 namespace leka::activity {
 
 void PictoColorRecognition::start()
@@ -28,8 +30,11 @@ void PictoColorRecognition::stop()
 
 void PictoColorRecognition::processCard(const MagicCard &card)
 {
+	using namespace std::chrono;
+
 	if (card == _current_color->card) {
 		_reinforcerkit.playDefault();
+		rtos::ThisThread::sleep_for(5s);
 		++_current_round;
 
 		if (_current_round == kRoundsNumber) {

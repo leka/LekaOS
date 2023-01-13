@@ -115,7 +115,7 @@ auto Bluetooth::isPaired() const -> bool
 	return _paired;
 }
 
-void Bluetooth::sendMessage(const char *msg, size_t msg_length)
+void Bluetooth::sendMessage(const char *msg, std::size_t msg_length)
 {
 	_buffer_length				  = 0;
 	const auto command_header	  = 1 + 1 + 1 + 2 + 2;

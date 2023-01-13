@@ -38,26 +38,30 @@ using namespace std::chrono;
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 
+namespace display::internal {
+
 auto event_flags = CoreEventFlags {};
 
-CoreLL corell;
-CGPixel pixel(corell);
-CoreSTM32Hal hal;
-CoreSDRAM coresdram(hal);
-CoreDMA2D coredma2d(hal);
-CoreDSI coredsi(hal);
-CoreLTDC coreltdc(hal);
-CoreGraphics coregraphics(coredma2d);
-CoreFont corefont(pixel);
-CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
-CoreLCD corelcd(coreotm);
-CoreJPEGModeDMA _corejpegmode {hal};
-CoreJPEG corejpeg {hal, _corejpegmode};
-CoreVideo corevideo(hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg);
+auto corell		   = CoreLL {};
+auto pixel		   = CGPixel {corell};
+auto hal		   = CoreSTM32Hal {};
+auto coresdram	   = CoreSDRAM {hal};
+auto coredma2d	   = CoreDMA2D {hal};
+auto coredsi	   = CoreDSI {hal};
+auto coreltdc	   = CoreLTDC {hal};
+auto coregraphics  = CoreGraphics {coredma2d};
+auto corefont	   = CoreFont {pixel};
+auto coreotm	   = CoreLCDDriverOTM8009A {coredsi, PinName::SCREEN_BACKLIGHT_PWM};
+auto corelcd	   = CoreLCD {coreotm};
+auto _corejpegmode = CoreJPEGModeDMA {hal};
+auto corejpeg	   = CoreJPEG {hal, _corejpegmode};
 
-HAL_VIDEO_DECLARE_IRQ_HANDLERS(corevideo);
+extern "C" auto corevideo =
+	CoreVideo {hal, coresdram, coredma2d, coredsi, coreltdc, corelcd, coregraphics, corefont, corejpeg};
 
-auto videokit = VideoKit {event_flags, corevideo};
+}	// namespace display::internal
+
+auto videokit = VideoKit {display::internal::event_flags, display::internal::corevideo};
 
 auto file = FileManagerKit::File {};
 
@@ -88,15 +92,16 @@ auto main() -> int
 	HelloWorld hello;
 	hello.start();
 
-	corevideo.clearScreen();
+	display::internal::corevideo.clearScreen();
 	rtos::ThisThread::sleep_for(1s);
 
 	static auto line = 1;
 	static CGColor foreground;
 	static CGColor background = CGColor::white;
 
-	leka::logger::set_sink_function(
-		[](const char *str, size_t size) { corevideo.displayText(str, size, line, foreground, background); });
+	leka::logger::set_sink_function([](const char *str, std::size_t size) {
+		display::internal::corevideo.displayText(str, size, line, foreground, background);
+	});
 
 	for (int i = 1; i <= 10; i++) {
 		foreground = (i % 2 == 0) ? CGColor::black : CGColor::pure_red;
@@ -107,8 +112,8 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(500ms);
 
-	leka::logger::set_sink_function([](const char *str, size_t size) {
-		corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);	// write in blue
+	leka::logger::set_sink_function([](const char *str, std::size_t size) {
+		display::internal::corevideo.displayText(str, size, 10, {0x00, 0x00, 0xFF}, CGColor::white);   // write in blue
 	});
 
 	log_info(
@@ -126,19 +131,21 @@ auto main() -> int
 
 		rtos::ThisThread::sleep_for(1s);
 
-		corelcd.setBrightness(0.9F);
-		corelcd.turnOn();
+		display::internal::corelcd.setBrightness(0.9F);
+		display::internal::corelcd.turnOn();
 
 		for (const auto &image_name: images) {
 			videokit.displayImage(image_name);
 			rtos::ThisThread::sleep_for(1s);
 		}
 
+		auto on_video_ended_callback = [] { log_debug("End of the video"); };
+
 		for (const auto &video_name: videos) {
-			videokit.playVideoOnce(video_name);
+			videokit.playVideoOnce(video_name, on_video_ended_callback);
 			rtos::ThisThread::sleep_for(1s);
 		}
 
-		corelcd.turnOff();
+		display::internal::corelcd.turnOff();
 	}
 }

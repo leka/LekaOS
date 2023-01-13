@@ -7,11 +7,15 @@ name: Code Analysis - Clang-Tidy
 on:
   push:
     branches:
-      - master
+      - main
       - develop
 
   pull_request:
     types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   run:
@@ -41,24 +45,6 @@ jobs:
       # Mark: - Analyze
       #
 
-      - name: Get modified files
-        id: modified_files
-        uses: Ana06/get-changed-files@v2.1.0
-        with:
-          format: "space-delimited"
-          filter: "*"
-
       - name: Run clang-tidy
         run: |
-          echo ${{ steps.modified_files.outputs.added }}           \
-               ${{ steps.modified_files.outputs.modified }}        \
-               ${{ steps.modified_files.outputs.added_modified }}  \
-               | xargs -n1 \
-               | grep -E -v "_test" \
-               | grep -E -v "extern" \
-               | grep -E -v "gtest" \
-               | grep -E -v "gmock" \
-               | grep -E -v "mocks" \
-               | grep -E -v "stubs" \
-               | grep -E    "\.h$|\.cpp$" \
-               | xargs --no-run-if-empty ruby tools/run-clang-tidy.rb _build_cmake_tools
+          make clang_tidy_diff

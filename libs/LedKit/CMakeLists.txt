@@ -19,6 +19,7 @@ target_sources(LedKit
 	source/animations/Angry.cpp
 	source/animations/AngryShort.cpp
 	source/animations/BlinkGreen.cpp
+	source/animations/BlinkOnCharge.cpp
 	source/animations/BleConnection.cpp
 	source/animations/Bubbles.cpp
 	source/animations/Disgusted.cpp

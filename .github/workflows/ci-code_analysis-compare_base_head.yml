@@ -8,6 +8,10 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   #
   # Mark: - Job - build_base_ref
@@ -35,7 +39,13 @@ jobs:
         id: setup_ci
         uses: ./.github/actions/setup
         with:
-          ccache_name: build-base_ref-enable_log_debug-${{ matrix.enable_log_debug }}
+          ccache_key: ${{ runner.os }}-ccache-compare_base_head-build_base_ref-enable_log_debug-(${{ matrix.enable_log_debug }})
+          ccache_restore_keys: |
+            ${{ runner.os }}-ccache-compare_base_head-build_base_ref-enable_log_debug-(${{ matrix.enable_log_debug }})-
+            ${{ runner.os }}-ccache-compare_base_head-build_base_ref-enable_log_debug-
+            ${{ runner.os }}-ccache-compare_base_head-build_base_ref-
+            ${{ runner.os }}-ccache-compare_base_head-
+            ${{ runner.os }}-ccache-
 
       #
       # Mark: - Config & build
@@ -64,10 +74,11 @@ jobs:
       # Mark: - Upload artifacts
       #
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: base_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
           path: build_artifacts
+          retention-days: 1
 
   #
   # Mark: - Job - build_head_ref
@@ -94,7 +105,13 @@ jobs:
         id: setup_ci
         uses: ./.github/actions/setup
         with:
-          ccache_name: build-head_ref-enable_log_debug-${{ matrix.enable_log_debug }}
+          ccache_key: ${{ runner.os }}-ccache-compare_base_head-build_head_ref-enable_log_debug-(${{ matrix.enable_log_debug }})
+          ccache_restore_keys: |
+            ${{ runner.os }}-ccache-compare_base_head-build_head_ref-enable_log_debug-(${{ matrix.enable_log_debug }})-
+            ${{ runner.os }}-ccache-compare_base_head-build_head_ref-enable_log_debug-
+            ${{ runner.os }}-ccache-compare_base_head-build_head_ref-
+            ${{ runner.os }}-ccache-compare_base_head-
+            ${{ runner.os }}-ccache-
 
       #
       # Mark: - Config & build
@@ -123,10 +140,11 @@ jobs:
       # Mark: - Upload artifacts
       #
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: head_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
           path: build_artifacts
+          retention-days: 1
 
   #
   # Mark: - Job - compare_bin_map_files
@@ -154,7 +172,7 @@ jobs:
         id: setup_ci
         uses: ./.github/actions/setup
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           path: build_artifacts
 

@@ -7,6 +7,8 @@
 #include "NumberRecognition.h"
 #include <random>
 
+#include "rtos/ThisThread.h"
+
 namespace leka::activity {
 
 void NumberRecognition::start()
@@ -28,8 +30,11 @@ void NumberRecognition::stop()
 
 void NumberRecognition::processCard(const MagicCard &card)
 {
+	using namespace std::chrono;
+
 	if (card == _current_number->card) {
 		_reinforcerkit.playDefault();
+		rtos::ThisThread::sleep_for(5s);
 		++_current_round;
 
 		if (_current_round == kRoundsNumber) {

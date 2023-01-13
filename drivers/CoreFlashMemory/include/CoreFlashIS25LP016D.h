@@ -22,12 +22,12 @@ class CoreFlashIS25LP016D : public interface::FlashMemory
 		// nothing do to
 	}
 
-	auto getSize() -> size_t final;
+	auto getSize() -> std::size_t final;
 
 	void reset();
 
-	auto read(uint32_t address, std::span<uint8_t> rx_buffer, size_t rx_buffer_size) -> size_t final;
-	auto write(uint32_t address, std::span<uint8_t> tx_buffer, size_t tx_buffer_size) -> size_t final;
+	auto read(uint32_t address, std::span<uint8_t> rx_buffer, std::size_t rx_buffer_size) -> std::size_t final;
+	auto write(uint32_t address, std::span<uint8_t> tx_buffer, std::size_t tx_buffer_size) -> std::size_t final;
 
 	void erase() final;
 
@@ -40,7 +40,7 @@ class CoreFlashIS25LP016D : public interface::FlashMemory
 
 namespace flash::is25lp016d {
 
-inline constexpr size_t size					= 0x00200000;
+inline constexpr std::size_t size				= 0x00200000;
 inline constexpr auto max_clock_frequency_in_hz = 133'000'000;
 
 namespace command {

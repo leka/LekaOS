@@ -90,7 +90,7 @@ namespace sd {
 namespace factory_reset {
 
 	constexpr auto default_limit	= uint8_t {10};
-	constexpr auto firmware_version = FirmwareVersion {.major = 1, .minor = 0, .revision = 0};
+	constexpr auto firmware_version = Version {.major = 1, .minor = 0, .revision = 0};
 
 	namespace internal {
 

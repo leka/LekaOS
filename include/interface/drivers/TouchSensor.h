@@ -13,10 +13,10 @@ class TouchSensor
   public:
 	virtual ~TouchSensor() = default;
 
-	virtual void init()							= 0;
-	virtual auto read() -> bool					= 0;
-	virtual void reset()						= 0;
-	virtual void setSensitivity(uint16_t value) = 0;
+	virtual void init()						 = 0;
+	virtual auto read() -> bool				 = 0;
+	virtual void reset()					 = 0;
+	virtual void setSensitivity(float value) = 0;
 };
 
 }	// namespace leka::interface

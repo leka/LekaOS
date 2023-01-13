@@ -2,6 +2,7 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
+add_subdirectory(${SPIKES_DIR}/lk_accel_gyro)
 add_subdirectory(${SPIKES_DIR}/lk_audio)
 add_subdirectory(${SPIKES_DIR}/lk_behavior_kit)
 add_subdirectory(${SPIKES_DIR}/lk_ble)
@@ -11,14 +12,17 @@ add_subdirectory(${SPIKES_DIR}/lk_color_kit)
 add_subdirectory(${SPIKES_DIR}/lk_command_kit)
 add_subdirectory(${SPIKES_DIR}/lk_config_kit)
 add_subdirectory(${SPIKES_DIR}/lk_coreled)
+add_subdirectory(${SPIKES_DIR}/lk_core_touch_sensor)
 add_subdirectory(${SPIKES_DIR}/lk_event_queue)
 add_subdirectory(${SPIKES_DIR}/lk_file_reception)
 add_subdirectory(${SPIKES_DIR}/lk_file_manager_kit)
 add_subdirectory(${SPIKES_DIR}/lk_flash_memory)
 add_subdirectory(${SPIKES_DIR}/lk_fs)
+add_subdirectory(${SPIKES_DIR}/lk_imu_kit)
 add_subdirectory(${SPIKES_DIR}/lk_lcd)
 add_subdirectory(${SPIKES_DIR}/lk_led_kit)
 add_subdirectory(${SPIKES_DIR}/lk_log_kit)
+add_subdirectory(${SPIKES_DIR}/lk_motion_kit)
 add_subdirectory(${SPIKES_DIR}/lk_motors)
 add_subdirectory(${SPIKES_DIR}/lk_qdac)
 add_subdirectory(${SPIKES_DIR}/lk_reinforcer)
@@ -43,19 +47,23 @@ add_subdirectory(${SPIKES_DIR}/stl_cxxsupport)
 
 add_custom_target(spikes_leka)
 add_dependencies(spikes_leka
+	spike_lk_accel_gyro
 	spike_lk_ble
 	spike_lk_bluetooth
 	spike_lk_cg_animations
 	spike_lk_color_kit
 	spike_lk_command_kit
 	spike_lk_coreled
+	spike_lk_core_touch_sensor
 	spike_lk_event_queue
 	spike_lk_file_reception
 	spike_lk_file_manager_kit
 	spike_lk_flash_memory
+	spike_lk_imu_kit
 	spike_lk_lcd
 	spike_lk_led_kit
 	spike_lk_log_kit
+	spike_lk_motion_kit
 	spike_lk_motors
 	spike_lk_qdac
 	spike_lk_reinforcer

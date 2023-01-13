@@ -6,6 +6,8 @@
 
 #include "rtos/ThisThread.h"
 
+#include "LedKitAnimations.h"
+
 namespace leka {
 
 using namespace std::chrono;
@@ -29,7 +31,7 @@ void BehaviorKit::launching()
 
 void BehaviorKit::sleeping()
 {
-	_ledkit.start(&LedKit::animation::sleeping);
+	_ledkit.start(&led::animation::sleeping);
 	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-sleep-yawn_then_sleep-no_eyebrows.avi");
 }
 
@@ -37,6 +39,11 @@ void BehaviorKit::waiting()
 {
 	_ledkit.stop();
 	_videokit.playVideoOnRepeat("/fs/home/vid/system/robot-system-idle-looking_top_right_left-no_eyebrows.avi");
+}
+
+void BehaviorKit::blinkOnCharge()
+{
+	_ledkit.start(&led::animation::blink_on_charge);
 }
 
 void BehaviorKit::lowBattery()
@@ -74,7 +81,7 @@ void BehaviorKit::chargingFull()
 
 void BehaviorKit::bleConnection(bool with_video)
 {
-	_ledkit.start(&LedKit::animation::ble_connection);
+	_ledkit.start(&led::animation::ble_connection);
 	if (with_video) {
 		_videokit.playVideoOnce("/fs/home/vid/system/robot-system-ble_connection-wink-no_eyebrows.avi");
 	}
@@ -85,9 +92,9 @@ void BehaviorKit::working()
 	_videokit.displayImage("/fs/home/img/system/robot-face-smiling-slightly.jpg");
 }
 
-void BehaviorKit::displayAutonomousActivitiesPrompt()
+void BehaviorKit::fileExchange()
 {
-	_videokit.displayImage("/fs/home/img/system/robot-misc-choose_activity-fr_FR.jpg");
+	_videokit.displayImage("/fs/home/img/system/robot-file_exchange.jpg");
 }
 
 void BehaviorKit::stop()

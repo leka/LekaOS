@@ -4,6 +4,11 @@
 
 #pragma once
 
+#include <array>
+#include <functional>
+#include <span>
+#include <tuple>
+
 #include "platform/mbed_power_mgmt.h"
 
 #include "internal/BLEService.h"

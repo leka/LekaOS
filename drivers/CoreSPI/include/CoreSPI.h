@@ -15,7 +15,7 @@ class CoreSPI : public interface::SPI
   public:
 	explicit CoreSPI(PinName mosi, PinName miso, PinName sclk, PinName ssel = NC) : _spi(mosi, miso, sclk, ssel) {}
 
-	auto write(std::span<const uint8_t> data) -> size_t final;
+	auto write(std::span<const uint8_t> data) -> std::size_t final;
 
   private:
 	mbed::SPI _spi;

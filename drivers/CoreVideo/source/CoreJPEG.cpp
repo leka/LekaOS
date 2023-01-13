@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "CoreJPEG.hpp"
+#include <algorithm>
+#include <array>
 
 #include "external/st_jpeg_utils.h"
 #include "internal/corevideo_config.h"
@@ -15,6 +17,7 @@ void CoreJPEG::initialize()
 	_hal.HAL_RCC_JPEG_FORCE_RESET();
 	_hal.HAL_RCC_JPEG_RELEASE_RESET();
 
+	// NOLINTNEXTLINE - ST's implementation detail
 	_hal.HAL_NVIC_SetPriority(JPEG_IRQn, 0x06, 0x0F);
 	_hal.HAL_NVIC_EnableIRQ(JPEG_IRQn);
 
@@ -71,12 +74,12 @@ void CoreJPEG::registerProcessCallbacks()
 								   [](JPEG_HandleTypeDef *hjpeg) { self._mode.onErrorCallback(hjpeg); });
 }
 
-auto CoreJPEG::decodeImage(interface::File &file) -> size_t
+auto CoreJPEG::decodeImage(interface::File &file) -> std::size_t
 {
 	return _mode.decode(&_hjpeg, file);
 }
 
-auto CoreJPEG::findSOIMarker(interface::File &file, size_t start_index) -> size_t
+auto CoreJPEG::findSOIMarker(interface::File &file, std::size_t start_index) -> std::size_t
 {
 	auto buffer = std::array<uint8_t, 512> {};
 

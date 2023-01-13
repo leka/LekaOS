@@ -45,17 +45,19 @@ namespace monitoring {
 
 }	// namespace monitoring
 
-namespace receive_file {
+namespace file_exchange {
 
 	inline constexpr uint16_t uuid = 0x8270;
 
 	namespace characteristic {
+		inline constexpr uint16_t set_state				= 0x8383;
 		inline constexpr uint16_t file_path				= 0x7080;
+		inline constexpr uint16_t clear_file			= 0x6770;
 		inline constexpr uint16_t file_reception_buffer = 0x8283;
 		inline constexpr uint16_t file_sha256			= 0x7083;
 	}	// namespace characteristic
 
-}	// namespace receive_file
+}	// namespace file_exchange
 
 namespace firmware_update {
 

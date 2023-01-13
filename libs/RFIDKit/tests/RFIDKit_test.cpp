@@ -148,3 +148,35 @@ TEST_F(RFIDKitTest, getCallback)
 
 	EXPECT_EQ(_card, MagicCard::activity_super_simon);
 }
+
+TEST_F(RFIDKitTest, getMagicCardFR)
+{
+	std::array<uint8_t, 18> data {0x4C, 0x45, 0x4B, 0x41, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	rfid::Tag tag_FR {{}, {}, data};
+	MagicCard FR_magic_card {tag_FR};
+
+	EXPECT_EQ(FR_magic_card.getLanguage(), MagicCard::Language::fr_FR);
+}
+
+TEST_F(RFIDKitTest, getMagicCardEN)
+{
+	std::array<uint8_t, 18> data {0x4C, 0x45, 0x4B, 0x41, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	rfid::Tag tag_EN {{}, {}, data};
+	MagicCard EN_magic_card {tag_EN};
+
+	EXPECT_EQ(EN_magic_card.getLanguage(), MagicCard::Language::en_US);
+}
+
+TEST_F(RFIDKitTest, getLastMagicCardActivated)
+{
+	rfid::Tag tag {.data = {0x4C, 0x45, 0x4B, 0x41, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
+
+	rfid_kit.onTagActivated(mock_callback.AsStdFunction());
+	EXPECT_CALL(mock_reader, registerOnTagReadableCallback).WillOnce(SaveArg<0>(&magic_card_callback));
+
+	rfid_kit.registerMagicCard();
+
+	magic_card_callback(tag);
+
+	EXPECT_EQ(rfid_kit.getLastMagicCardActivated(), MagicCard::emergency_stop);
+}

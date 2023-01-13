@@ -38,7 +38,7 @@ auto main() -> int
 	coreqspi.setDataTransmissionFormat();
 	coreqspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
 
-	const size_t bytes_to_read = 0x20;
+	const std::size_t bytes_to_read = 0x20;
 	std::array<uint8_t, bytes_to_read> buffer {};
 
 	auto data		 = std::to_array<uint8_t>({1, 2, 3, 4, 5, 6, 7, 8, 9});

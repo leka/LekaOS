@@ -7,11 +7,15 @@ name: Code Analysis - Sanitizers
 on:
   push:
     branches:
-      - master
+      - main
       - develop
 
   pull_request:
     types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   run_sanitizers:
@@ -23,9 +27,11 @@ jobs:
       matrix:
         compiler:
           [
-            { name: Clang, cc: /usr/bin/clang, cxx: /usr/bin/clang++ },
-            { name: GCC, cc: /usr/bin/gcc-10, cxx: /usr/bin/g++-10 },
+            { name: Clang 14, cc: /usr/bin/clang-14, cxx: /usr/bin/clang++-14 },
+            { name: GCC 10, cc: /usr/bin/gcc-10, cxx: /usr/bin/g++-10 },
+            { name: GCC 12, cc: /usr/bin/gcc-12, cxx: /usr/bin/g++-12 },
           ]
+        optimisation_level: ["-Og", "-Os"]
 
     steps:
       - uses: actions/checkout@v3
@@ -34,13 +40,21 @@ jobs:
         id: set_cc_cxx_env
         shell: bash
         run: |
+          ${{ matrix.compiler.cc }} --version
+          ${{ matrix.compiler.cxx }} --version
           echo "CC=${{ matrix.compiler.cc }}" >> $GITHUB_ENV
           echo "CXX=${{ matrix.compiler.cxx }}" >> $GITHUB_ENV
 
       - name: Setup CI
         uses: ./.github/actions/setup
         with:
-          ccache_name: code_analysis-sanitizers-${{ matrix.compiler.name }}
+          ccache_key: ${{ runner.os }}-ccache-code_analysis-sanitizers-(${{ matrix.compiler.name }})-(${{ matrix.optimisation_level }})
+          ccache_restore_keys: |
+            ${{ runner.os }}-ccache-code_analysis-sanitizers-(${{ matrix.compiler.name }})-(${{ matrix.optimisation_level }})-
+            ${{ runner.os }}-ccache-code_analysis-sanitizers-(${{ matrix.compiler.name }})-
+            ${{ runner.os }}-ccache-code_analysis-sanitizers-
+            ${{ runner.os }}-ccache-code_analysis-
+            ${{ runner.os }}-ccache-
 
       #
       # Mark: - Config, build & run unit tests
@@ -52,9 +66,13 @@ jobs:
 
       - name: Config, build & run
         run: |
-          make config_unit_tests SANITIZERS=ON && make unit_tests
+          export ASAN_OPTIONS=detect_leaks=1
+          export UBSAN_OPTIONS=print_stacktrace=1
+          make config_unit_tests COVERAGE=ON SANITIZERS=ON CI_UT_OPTIMIZATION_LEVEL="${{ matrix.optimisation_level }}"
+          make unit_tests
 
       - name: Ccache post build
         run: |
           make ccache_postbuild
+          cat ${{ env.CCACHE_LOGFILE }} || True
           ccache -z

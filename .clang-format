@@ -12,7 +12,7 @@ IncludeCategories:
   - Regex: '(<|"mbed)'
     Priority: 0
     SortPriority: 0
-  - Regex: '"(drivers|rtos|events|platform)'
+  - Regex: '"(drivers|rtos|events|platform|hal)'
     Priority: 2
     SortPriority: 0
   - Regex: "PinNames.h"

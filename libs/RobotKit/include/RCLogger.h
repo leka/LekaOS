@@ -65,7 +65,7 @@ struct logger {
 	static constexpr auto prefixes = std::to_array<const char *>({
 		"leka::system::robot::",
 		"boost::sml::back::",
-		"boost::ext::sml::v1_1_4::back::",
+		"boost::ext::sml::v1_1_6::back::",
 	});
 };
 

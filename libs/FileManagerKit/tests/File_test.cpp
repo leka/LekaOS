@@ -482,7 +482,7 @@ TEST_F(FileTest, seek)
 
 	file.open(tempFilename, "w+");
 
-	auto _ = file.write(input_data);
+	std::ignore = file.write(input_data);
 	file.seek(3);
 	auto bytes_read = file.read(output_data);
 
@@ -863,4 +863,31 @@ TEST_F(FileTest, clearError)
 	auto error_after_clear = file.error();
 
 	ASSERT_FALSE(error_after_clear);
+}
+
+TEST_F(FileTest, clear)
+{
+	auto input_data = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	  // "abcdef"
+
+	writeTempFile(input_data);
+
+	file.open(tempFilename);
+	auto size = file.size();
+	EXPECT_NE(size, 0);
+
+	file.clear();
+
+	size = file.size();
+	EXPECT_EQ(size, 0);
+
+	file.close();
+}
+
+TEST_F(FileTest, clearNotExistingFile)
+{
+	ASSERT_FALSE(file.is_open());
+
+	file.clear();
+
+	// nothing expected
 }

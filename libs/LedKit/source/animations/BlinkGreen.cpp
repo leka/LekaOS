@@ -36,12 +36,13 @@ void BlinkGreen::start()
 
 void BlinkGreen::stop()
 {
+	_running = false;
+
 	if (_ears == nullptr || _belt == nullptr) {
 		return;
 	}
 
 	turnLedBlack();
-	_running = false;
 }
 
 void BlinkGreen::run()

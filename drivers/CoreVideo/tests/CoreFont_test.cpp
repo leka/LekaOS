@@ -161,7 +161,7 @@ TEST_F(CoreFontTest, displayNormalSentence)
 {
 	constexpr uint8_t buff_size = 128;
 	char buff[buff_size] {};
-	auto text_length = sprintf(buff, "Some text");
+	auto text_length = snprintf(buff, buff_size, "Some text");
 
 	auto starting_line = 1;
 
@@ -180,7 +180,7 @@ TEST_F(CoreFontTest, displayPositiveStartingLine)
 {
 	constexpr uint8_t buff_size = 128;
 	char buff[buff_size] {};
-	auto text_length = sprintf(buff, "Some text");
+	auto text_length = snprintf(buff, buff_size, "Some text");
 
 	auto starting_line = 0;
 
@@ -193,7 +193,7 @@ TEST_F(CoreFontTest, displayExceededStartingLine)
 {
 	constexpr uint8_t buff_size = 128;
 	char buff[buff_size] {};
-	auto text_length = sprintf(buff, "Some text");
+	auto text_length = snprintf(buff, buff_size, "Some text");
 
 	auto starting_line = 50;
 
@@ -223,7 +223,7 @@ TEST_F(CoreFontTest, displayWithNewLine)
 	EXPECT_CALL(llmock, rawMemoryWrite).Times(AnyNumber());
 
 	// ACT
-	text_length = sprintf(buff, "This is the first line\nThis is the second line");
+	text_length = snprintf(buff, buff_size, "This is the first line\nThis is the second line");
 	font.display(buff, text_length, starting_line);
 
 	// ASSERT
@@ -240,7 +240,7 @@ TEST_F(CoreFontTest, displayUnwrittableAsciiCharacter)
 
 	auto starting_line = 1;
 
-	text_length = sprintf(buff, "\tThis is the first line");
+	text_length = snprintf(buff, buff_size, "\tThis is the first line");
 
 	CGPoint expected_last_pixel;
 	expected_last_pixel.x = (graphics::font_pixel_width * (text_length - 1)) - 1;
@@ -264,9 +264,9 @@ TEST_F(CoreFontTest, displayWithScreenWidthReached)
 	constexpr uint8_t buff_size = 128;
 	char buff[buff_size] {};
 	uint8_t text_length =
-		sprintf(buff,
-				"This sentence is supposed to be on multiple lines because it is too long to be displayed on "
-				"only one line of the screen.");
+		snprintf(buff, buff_size,
+				 "This sentence is supposed to be on multiple lines because it is too long to be displayed on "
+				 "only one line of the screen.");
 	uint8_t max_char_per_line = lcd::dimension::width / graphics::font_pixel_width;
 	ASSERT_GT(text_length, max_char_per_line);	 // Text to display MUST exceed 47 characters for this test
 
@@ -303,7 +303,8 @@ TEST_F(CoreFontTest, displayWithScreenHeightReached)
 	EXPECT_CALL(llmock, rawMemoryWrite).Times(AnyNumber());
 
 	// ACT
-	text_length = sprintf(buff, "This text should appear on the screen\nThis text should NOT appear on the screen");
+	text_length =
+		snprintf(buff, buff_size, "This text should appear on the screen\nThis text should NOT appear on the screen");
 	font.display(buff, text_length, starting_line);
 
 	// ASSERT

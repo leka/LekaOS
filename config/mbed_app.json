@@ -29,7 +29,8 @@
 			"target.printf_lib": "std",
 			"target.features_add": [
 				"EXPERIMENTAL_API"
-			]
+			],
+			"platform.stdio-baud-rate": 115200
 		},
 		"LEKA_DISCO": {
 			"target_name": "\"LEKA_DISCO\""

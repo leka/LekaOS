@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "CoreGattServerEventHandler.h"
+#include <array>
 
 #include "ble_mocks.h"
 

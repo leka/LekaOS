@@ -1,4 +1,7 @@
-# file which is invoked by the cmake build system to check if all necessary python packages are installed.
+#!/usr/bin/env python3
+
+# file which is invoked by the cmake build system to check if all necessary
+# python packages are installed.
 
 import sys
 

@@ -5,6 +5,7 @@
 #pragma once
 
 #include <array>
+#include <functional>
 
 #include "ble/BLE.h"
 #include "ble/Gap.h"

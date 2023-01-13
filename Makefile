@@ -12,28 +12,37 @@ MBED_OS_DIR       := $(ROOT_DIR)/extern/mbed-os
 MCUBOOT_DIR       := $(ROOT_DIR)/extern/mcuboot
 
 #
-# MARK: - Arguments
+# MARK: - Config
 #
 
-PORT             ?= /dev/tty.usbmodem14303
 MBED_GIT_URL     ?= $(shell cat $(ROOT_DIR)/config/mbed_git_url)
 MBED_BRANCH      ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
 MBED_VERSION     ?= $(shell cat $(ROOT_DIR)/config/mbed_version)
 MCUBOOT_GIT_URL  ?= $(shell cat $(ROOT_DIR)/config/mcuboot_git_url)
 MCUBOOT_VERSION  ?= $(shell cat $(ROOT_DIR)/config/mcuboot_version)
-BAUDRATE         ?= 115200
-BUILD_TYPE       ?= Release
-TARGET_BOARD     ?= LEKA_V1_2_DEV
-FIRMWARE_VERSION ?= $(shell cat $(ROOT_DIR)/config/os_version)
+OS_VERSION       ?= $(shell cat $(ROOT_DIR)/config/os_version)
+
 
 #
 # MARK: - Options
 #
 
-COVERAGE                             ?= ON
-ENABLE_LOG_DEBUG                     ?= ON
-ENABLE_SYSTEM_STATS                  ?= ON
-SANITIZERS                           ?= OFF
+# build
+BUILD_TYPE   ?= Release
+TARGET_BOARD ?= LEKA_V1_2_DEV
+
+# tests
+COVERAGE   ?= ON
+SANITIZERS ?= OFF
+UT_LITE    ?= OFF
+GCOV_EXEC  ?= ""
+CI_UT_OPTIMIZATION_LEVEL ?= ""
+
+# os
+ENABLE_LOG_DEBUG    ?= ON
+ENABLE_SYSTEM_STATS ?= ON
+
+# bootloader
 BUILD_TARGETS_TO_USE_WITH_BOOTLOADER ?= OFF
 
 #
@@ -100,7 +109,11 @@ tests_functional:
 
 firmware:
 	python3 tools/check_version.py ./config/os_version
-	./tools/firmware/build_firmware.sh -r -v $(FIRMWARE_VERSION)
+	./tools/firmware/build_firmware.sh -r -v $(OS_VERSION)
+
+firmware_no_cleanup:
+	python3 tools/check_version.py ./config/os_version
+	./tools/firmware/build_firmware.sh -v $(OS_VERSION)
 
 #
 # MARK: - Config targets
@@ -135,12 +148,12 @@ config_tools_target: mkdir_tools_config
 config_cmake_build: mkdir_cmake_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
-	@cmake -S . -B $(TARGET_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DENABLE_SYSTEM_STATS=$(ENABLE_SYSTEM_STATS) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=$(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
+	@cmake -S . -B $(TARGET_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DENABLE_SYSTEM_STATS=$(ENABLE_SYSTEM_STATS) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=$(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER) -DOS_VERSION=$(OS_VERSION)
 
 config_tools_build: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
-	@cmake -S . -B $(CMAKE_TOOLS_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_TOOLS_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=ON -DENABLE_SYSTEM_STATS=ON
+	@cmake -S . -B $(CMAKE_TOOLS_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_TOOLS_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=ON -DENABLE_SYSTEM_STATS=ON -DOS_VERSION=$(OS_VERSION)
 
 #
 # MARK: - Tests targets
@@ -177,8 +190,8 @@ coverage_sonarqube:
 	@echo ""
 	@echo "🔬 Generating code coverage 📝"
 	@echo ""
-	@gcovr --root . $(EXCLUDE_FROM_GCOVR_COVERAGE)
-	@gcovr --root . $(EXCLUDE_FROM_GCOVR_COVERAGE) --exclude-throw-branches --exclude-unreachable-branches --sonarqube $(UNIT_TESTS_COVERAGE_DIR)/coverage.xml
+	@gcovr --root . $(EXCLUDE_FROM_GCOVR_COVERAGE) --gcov-executable $(GCOV_EXEC)
+	@gcovr --root . $(EXCLUDE_FROM_GCOVR_COVERAGE) --gcov-executable $(GCOV_EXEC) --exclude-throw-branches --exclude-unreachable-branches --sonarqube $(UNIT_TESTS_COVERAGE_DIR)/coverage.xml
 	@echo ""
 	@echo "📝 SonarQube XML report can be viewed with:"
 	@echo "    open $(UNIT_TESTS_COVERAGE_DIR)/coverage.xml\n"
@@ -186,8 +199,10 @@ coverage_sonarqube:
 coverage_lcov:
 	@echo ""
 	@echo "🔬 Generating code coverage using lcov 📝"
+	@which lcov
+	@lcov --version
 	@mkdir -p $(UNIT_TESTS_COVERAGE_DIR)
-	@lcov --capture --directory . --output-file $(UNIT_TESTS_COVERAGE_DIR)/_tmp_coverage.info
+	@lcov --capture --directory . --output-file $(UNIT_TESTS_COVERAGE_DIR)/_tmp_coverage.info --gcov-tool $(GCOV_EXEC)
 	@lcov --remove $(UNIT_TESTS_COVERAGE_DIR)/_tmp_coverage.info $(EXCLUDE_FROM_LCOV_COVERAGE) -o $(UNIT_TESTS_COVERAGE_DIR)/coverage.info
 	@lcov --list $(UNIT_TESTS_COVERAGE_DIR)/coverage.info
 
@@ -209,12 +224,15 @@ run_unit_tests:
 config_unit_tests: mkdir_build_unit_tests
 	@echo ""
 	@echo "🏃 Running unit tests cmake configuration script 📝"
-	cmake -S ./tests/unit -B $(UNIT_TESTS_BUILD_DIR) -GNinja -DCMAKE_BUILD_TYPE=Debug -DCOVERAGE=$(COVERAGE) -DSANITIZERS=$(SANITIZERS)
+	cmake -S ./tests/unit -B $(UNIT_TESTS_BUILD_DIR) -GNinja -DCMAKE_BUILD_TYPE=Debug -DCOVERAGE=$(COVERAGE) -DSANITIZERS=$(SANITIZERS) -DOS_VERSION=$(OS_VERSION) -DUT_LITE=$(UT_LITE) -DCI_UT_OPTIMIZATION_LEVEL=$(CI_UT_OPTIMIZATION_LEVEL)
 	@mkdir -p $(CMAKE_TOOLS_BUILD_DIR)/unit_tests
 	@ln -sf $(UNIT_TESTS_BUILD_DIR)/compile_commands.json $(CMAKE_TOOLS_BUILD_DIR)/unit_tests/compile_commands.json
 
 config_unit_tests_asan:
 	@$(MAKE) config_unit_tests SANITIZERS=ON
+
+config_unit_tests_lite:
+	@$(MAKE) config_unit_tests SANITIZERS=ON UT_LITE=ON
 
 clean_unit_tests:
 	@$(MAKE) rm_unit_tests
@@ -343,13 +361,13 @@ ccache_prebuild:
 	@ccache -p
 	@echo ""
 	@echo "🪆 Ccache pre build stats 📉"
-	@ccache -s
+	@ccache -s -v
 	@ccache -z
 
 ccache_postbuild:
 	@echo ""
 	@echo "🪆 Ccache post build stats 📈"
-	@ccache -s
+	@ccache -s -v
 
 flash:
 	openocd -f interface/stlink.cfg -c 'transport select hla_swd' -f target/stm32f7x.cfg -c 'program $(BIN_PATH) 0x08000000' -c exit
@@ -358,6 +376,3 @@ flash:
 
 reset:
 	openocd -f interface/stlink.cfg -c 'transport select hla_swd' -f target/stm32f7x.cfg -c init -c 'reset run' -c exit
-
-term:
-	mbed sterm -b $(BAUDRATE) -p $(PORT)

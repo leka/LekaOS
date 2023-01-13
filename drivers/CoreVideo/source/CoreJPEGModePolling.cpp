@@ -53,9 +53,10 @@ void CoreJPEGModePolling::onErrorCallback(JPEG_HandleTypeDef *hjpeg)
 	// TODO(@yann): handle errors
 }
 
-void CoreJPEGModePolling::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_buffer, uint32_t size)
+void CoreJPEGModePolling::onDataReadyCallback(JPEG_HandleTypeDef *hjpeg, uint8_t *output_data, uint32_t size)
 {
-	_mcu_block_index += pConvert_Function(output_buffer, reinterpret_cast<uint8_t *>(jpeg::decoded_buffer_address),
+	// ? NOLINTNEXTLINE - allow reinterpret_cast as there are no alternatives
+	_mcu_block_index += pConvert_Function(output_data, reinterpret_cast<uint8_t *>(jpeg::decoded_buffer_address),
 										  _mcu_block_index, size, nullptr);
 
 	_hal.HAL_JPEG_ConfigOutputBuffer(hjpeg, _mcu_data_output_buffer.data(), leka::jpeg::output_chunk_size);
@@ -84,7 +85,7 @@ void CoreJPEGModePolling::onDecodeCompleteCallback(JPEG_HandleTypeDef *hjpeg)
 	// TODO(@yann): implement flag
 }
 
-auto CoreJPEGModePolling::decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> size_t
+auto CoreJPEGModePolling::decode(JPEG_HandleTypeDef *hjpeg, interface::File &file) -> std::size_t
 {
 	_file = &file;
 

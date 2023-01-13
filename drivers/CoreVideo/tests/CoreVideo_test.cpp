@@ -18,6 +18,7 @@
 
 using namespace leka;
 using ::testing::_;
+using ::testing::An;
 using ::testing::InSequence;
 using ::testing::Return;
 using ::testing::ReturnRef;
@@ -25,10 +26,7 @@ using ::testing::ReturnRef;
 class CoreVideoTest : public ::testing::Test
 {
   protected:
-	CoreVideoTest()
-		: corevideo(halmock, sdrammock, dma2dmock, dsimock, ltdcmock, lcdmock, graphicsmock, fontmock, jpegmock)
-	{
-	}
+	CoreVideoTest() = default;
 
 	// void SetUp() override {}
 	// void TearDown() override {}
@@ -45,7 +43,7 @@ class CoreVideoTest : public ::testing::Test
 
 	mock::File filemock;
 
-	CoreVideo corevideo;
+	CoreVideo corevideo {halmock, sdrammock, dma2dmock, dsimock, ltdcmock, lcdmock, graphicsmock, fontmock, jpegmock};
 };
 
 MATCHER_P(compareColor, expected_color, "")
@@ -111,11 +109,9 @@ TEST_F(CoreVideoTest, turnOn)
 
 TEST_F(CoreVideoTest, setBrightness)
 {
-	float brightness_value;
+	EXPECT_CALL(lcdmock, setBrightness(An<float>())).Times(1);
 
-	EXPECT_CALL(lcdmock, setBrightness(brightness_value)).Times(1);
-
-	corevideo.setBrightness(brightness_value);
+	corevideo.setBrightness(42.F);
 }
 
 TEST_F(CoreVideoTest, clearScreenDefaultColor)
@@ -191,7 +187,7 @@ TEST_F(CoreVideoTest, displayText)
 {
 	constexpr uint8_t buff_size = 128;
 	char buff[buff_size] {};
-	auto text_length = sprintf(buff, "Some text");
+	auto text_length = snprintf(buff, buff_size, "Some text");
 
 	auto starting_line = 1;
 
@@ -204,7 +200,7 @@ TEST_F(CoreVideoTest, displayTextWithColor)
 {
 	constexpr uint8_t buff_size = 128;
 	char buff[buff_size] {};
-	auto text_length = sprintf(buff, "Some text");
+	auto text_length = snprintf(buff, buff_size, "Some text");
 
 	auto starting_line = 1;
 

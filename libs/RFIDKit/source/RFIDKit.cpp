@@ -21,10 +21,9 @@ void RFIDKit::init()
 
 void RFIDKit::registerMagicCard()
 {
-	auto on_magic_card_readable_callback = [this](rfid::Tag &tag) {
+	auto on_magic_card_readable_callback = [this](const rfid::Tag &tag) {
 		if (isTagSignatureValid(tag)) {
-			auto id = utils::memory::combineBytes({.high = tag.data[4], .low = tag.data[5]});
-			_card	= MagicCard {id};
+			_card = MagicCard {tag};
 
 			if (_on_tag_available_callback != nullptr) {
 				_on_tag_available_callback(_card);
@@ -47,6 +46,11 @@ void RFIDKit::onTagActivated(std::function<void(const MagicCard &_card)> const &
 [[nodiscard]] auto RFIDKit::getCallback() const -> const std::function<void(const MagicCard &)> &
 {
 	return _on_tag_available_callback;
+}
+
+[[nodiscard]] auto RFIDKit::getLastMagicCardActivated() const -> const MagicCard &
+{
+	return _card;
 }
 
 }	// namespace leka

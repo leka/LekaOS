@@ -28,6 +28,13 @@ target_sources(CoreVideo
 	external/source/st_jpeg_utils.cpp
 )
 
+if(NOT(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests"))
+	target_sources(CoreVideo
+		PUBLIC
+		external/source/HAL_IRQHandlers.cpp
+	)
+endif()
+
 target_link_libraries(CoreVideo
 	PRIVATE
 	mbed-os

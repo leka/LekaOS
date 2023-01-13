@@ -37,7 +37,8 @@ namespace buffer {
 	inline auto message	  = std::array<char, 256> {};
 	inline auto output	  = std::array<char, 512> {};
 
-	inline auto fifo = CircularQueue<char, 4096> {};
+	inline auto fifo		   = CircularQueue<char, 8192> {};
+	inline auto process_buffer = std::array<char, 64> {};
 
 };	 // namespace buffer
 
@@ -89,9 +90,28 @@ namespace internal {
 
 	inline filehandle_ptr filehandle = nullptr;
 
-	inline void filehandle_low_level_write(const char *data, const size_t size)
+	inline void filehandle_low_level_write(const char *data, const std::size_t size)
 	{
 		internal::filehandle->write(data, size);
+	}
+
+	inline void disable_filehandle_input()
+
+	{
+		if (filehandle == nullptr) {
+			return;
+		}
+
+		internal::filehandle->enable_input(false);
+	}
+
+	inline void enable_filehandle_input()
+	{
+		if (filehandle == nullptr) {
+			return;
+		}
+
+		internal::filehandle->enable_input(true);
 	}
 
 }	// namespace internal
@@ -99,14 +119,15 @@ namespace internal {
 [[maybe_unused]] inline void set_filehandle_pointer(filehandle_ptr fh)
 {
 	internal::filehandle = fh;
+
+	internal::disable_filehandle_input();
 }
 
 inline void process_fifo()
 {
 	while (!buffer::fifo.empty()) {
-		auto c = char {};
-		buffer::fifo.pop(c);
-		internal::filehandle->write(&c, 1);
+		auto length = buffer::fifo.pop(buffer::process_buffer.data(), std::size(buffer::process_buffer));
+		internal::filehandle->write(buffer::process_buffer.data(), length);
 	}
 }
 
@@ -145,10 +166,10 @@ namespace internal {
 // MARK: - Sink
 //
 
-using sink_function_t = std::function<void(const char *, size_t)>;	 // LCOV_EXCL_LINE
+using sink_function_t = std::function<void(const char *, std::size_t)>;	  // LCOV_EXCL_LINE
 
 namespace internal {
-	inline void default_sink_function(const char *str, [[maybe_unused]] size_t size)
+	inline void default_sink_function(const char *str, [[maybe_unused]] std::size_t size)
 	{
 		buffer::fifo.push(std::span {str, size});
 		internal::event_queue.call(process_fifo);
@@ -230,7 +251,11 @@ inline void set_print_function(...) {}		 // NOSONAR
 inline void set_filehandle_pointer(...) {}	 // NOSONAR
 
 namespace internal {
-	inline void default_sink_function(...) {}	// NOSONAR
+
+	inline void default_sink_function(...) {}	   // NOSONAR
+	inline void disable_filehandle_input(...) {}   // NOSONAR
+	inline void enable_filehandle_input(...) {}	   // NOSONAR
+
 }	// namespace internal
 
 #endif	 // ENABLE_LOG_DEBUG
@@ -243,10 +268,10 @@ namespace internal {
 
 #if defined(ENABLE_LOG_DEBUG)	// defined (ENABLE_LOG_DEBUG)
 
-	// NOLINTNEXTLINE
+// NOLINTBEGIN (cppcoreguidelines-macro-usage bugprone-lambda-function-name)
+
 	#define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 
-	// NOLINTNEXTLINE
 	#define log_debug(str, ...)                                                                                        \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
@@ -260,7 +285,6 @@ namespace internal {
 			leka::logger::internal::sink(leka::logger::buffer::output.data(), length);                                 \
 		} while (0)
 
-	// NOLINTNEXTLINE
 	#define log_info(str, ...)                                                                                         \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
@@ -274,7 +298,6 @@ namespace internal {
 			leka::logger::internal::sink(leka::logger::buffer::output.data(), length);                                 \
 		} while (0)
 
-	// NOLINTNEXTLINE
 	#define log_error(str, ...)                                                                                        \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
@@ -288,18 +311,30 @@ namespace internal {
 			leka::logger::internal::sink(leka::logger::buffer::output.data(), length);                                 \
 		} while (0)
 
-	// NOLINTNEXTLINE
-	#define log_ll(data, size)                                                                                         \
+	#define log_free(str, ...)                                                                                         \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
-			leka::logger::internal::filehandle_low_level_write(data, size);                                            \
+			const std::scoped_lock lock(leka::logger::internal::mutex);                                                \
+			auto length = format_output(str, ##__VA_ARGS__);                                                           \
+			leka::logger::internal::sink(leka::logger::buffer::output.data(), length);                                 \
 		} while (0)
+
+	#define log_ll(p_data, size)                                                                                       \
+		do {                                                                                                           \
+			using namespace leka::logger;                                                                              \
+			const std::scoped_lock lock(leka::logger::internal::mutex);                                                \
+			leka::logger::buffer::fifo.push(std::span {p_data, static_cast<std::size_t>(size)});                       \
+			leka::logger::internal::event_queue.call(process_fifo);                                                    \
+		} while (0)
+
+// NOLINTEND (cppcoreguidelines-macro-usage bugprone-lambda-function-name)
 
 #else	// not defined (ENABLE_LOG_DEBUG)
 
 	#define log_debug(str, ...)
 	#define log_info(str, ...)
 	#define log_error(str, ...)
-	#define log_ll(data, size)
+	#define log_free(str, ...)
+	#define log_ll(p_data, size)
 
 #endif	 // not defined (ENABLE_LOG_DEBUG)

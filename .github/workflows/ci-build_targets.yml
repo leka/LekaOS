@@ -8,10 +8,14 @@ on:
   push:
     branches:
       - develop
-      - master
+      - main
 
   pull_request:
     types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   #
@@ -38,7 +42,11 @@ jobs:
       - name: Setup CI
         uses: ./.github/actions/setup
         with:
-          ccache_name: build-target-${{ matrix.custom_target }}
+          ccache_key: ${{ runner.os }}-ccache-build_target-(${{ matrix.custom_target }})
+          ccache_restore_keys: |
+            ${{ runner.os }}-ccache-build_target-(${{ matrix.custom_target }})-
+            ${{ runner.os }}-ccache-build_target-
+            ${{ runner.os }}-ccache-
 
       #
       # Mark: - Config & build

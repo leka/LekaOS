@@ -38,6 +38,10 @@ struct RobotController : public interface::RobotController {
 	MOCK_METHOD(void, startAutonomousActivityMode, (), (override));
 	MOCK_METHOD(void, stopAutonomousActivityMode, (), (override));
 
+	MOCK_METHOD(void, onFileExchangeStart, (), (override));
+	MOCK_METHOD(void, onFileExchangeEnd, (), (override));
+	MOCK_METHOD(bool, isReadyToFileExchange, (), (override));
+
 	MOCK_METHOD(bool, isReadyToUpdate, (), (override));
 	MOCK_METHOD(void, applyUpdate, (), (override));
 

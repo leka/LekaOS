@@ -2,6 +2,8 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#include <algorithm>
+
 #include "CoreGattServerEventHandler.h"
 
 using namespace leka;

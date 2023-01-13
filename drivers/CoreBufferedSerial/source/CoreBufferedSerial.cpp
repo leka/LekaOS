@@ -23,6 +23,16 @@ auto CoreBufferedSerial::readable() -> bool
 	return _serial.readable();
 }
 
+void CoreBufferedSerial::enable_input()
+{
+	_serial.enable_input(true);
+}
+
+void CoreBufferedSerial::disable_input()
+{
+	_serial.enable_input(false);
+}
+
 void CoreBufferedSerial::sigio(mbed::Callback<void()> func)
 {
 	_serial.sigio(func);

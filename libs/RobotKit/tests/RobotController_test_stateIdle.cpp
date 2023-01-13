@@ -13,12 +13,8 @@ TEST_F(RobotControllerTest, stateIdleEventTimeout)
 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_idle_sequence);
 	expectedCallsStopMotors();
 
-	EXPECT_CALL(mock_belt, setColor).Times(AtLeast(1));
-	EXPECT_CALL(mock_ears, setColor).Times(AtLeast(1));
-	EXPECT_CALL(mock_belt, show).Times(AtLeast(1));
-	EXPECT_CALL(mock_ears, show).Times(AtLeast(1));
-
 	Sequence on_sleeping_sequence;
+	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::sleeping))).InSequence(on_sleeping_sequence);
 	EXPECT_CALL(mock_videokit, playVideoOnce).InSequence(on_sleeping_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_sleeping_sequence);
 	EXPECT_CALL(timeout, onTimeout)
@@ -38,20 +34,18 @@ TEST_F(RobotControllerTest, stateIdleEventBleConnection)
 {
 	rc.state_machine.set_current_states(lksm::state::idle);
 
+	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
+
 	Sequence on_exit_idle_sequence;
 	EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
 
-	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
-
-	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1));
-	EXPECT_CALL(mock_belt, hide).Times(AtLeast(1));
-	EXPECT_CALL(mock_ears, hide).Times(AtLeast(1));
-	EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1));
-	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1));
-
-	EXPECT_CALL(mock_belt, setColor).Times(AtLeast(1));
-	EXPECT_CALL(mock_belt, show).Times(AtLeast(1));
-	EXPECT_CALL(mock_videokit, playVideoOnce).Times(AtLeast(1));
+	expectedCallsStopActuators();
+	Sequence on_ble_connection_sequence;
+	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection)))
+		.Times(1)
+		.InSequence(on_ble_connection_sequence);
+	EXPECT_CALL(mock_videokit, playVideoOnce).Times(1).InSequence(on_ble_connection_sequence);
+	EXPECT_CALL(mock_lcd, turnOn).Times(1).InSequence(on_ble_connection_sequence);
 
 	Sequence on_working_entry_sequence;
 	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
@@ -96,6 +90,7 @@ TEST_F(RobotControllerTest, stateIdleEventChargeDidStartGuardIsChargingTrue)
 	Sequence start_charging_behavior_sequence;
 	EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(mock_ledkit, start).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
@@ -122,9 +117,23 @@ TEST_F(RobotControllerTest, stateIdleEventChargeDidStartGuardIsChargingFalse)
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
 }
 
-TEST_F(RobotControllerTest, stateIdleEventEmergencyStop)
+TEST_F(RobotControllerTest, stateIdleEventEmergencyStopDelayNotOver)
 {
 	rc.state_machine.set_current_states(lksm::state::idle);
+
+	auto maximal_delay_before_over = 9s;
+
+	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
+	rc.onMagicCardAvailable(MagicCard::emergency_stop);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
+}
+
+TEST_F(RobotControllerTest, stateIdleEventEmergencyStopDelayOver)
+{
+	rc.state_machine.set_current_states(lksm::state::idle);
+
+	auto delay_over = 11s;
 
 	Sequence on_exit_idle_sequence;
 	EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
@@ -136,14 +145,33 @@ TEST_F(RobotControllerTest, stateIdleEventEmergencyStop)
 	EXPECT_CALL(mock_lcd, turnOff).Times(1);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1));
 
+	spy_kernel_addElapsedTimeToTickCount(delay_over);
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::emergency_stopped));
 }
 
-TEST_F(RobotControllerTest, stateIdleEventAutonomousActivityRequested)
+// ! TODO: Refactor with composite SM & CoreTimer mock
+TEST_F(RobotControllerTest, stateIdleDiceRollDetectedDelayNotOver)
 {
 	rc.state_machine.set_current_states(lksm::state::idle);
+
+	auto maximal_delay_before_over = 1s;
+
+	EXPECT_CALL(mock_videokit, displayImage).Times(0);
+
+	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
+	rc.onMagicCardAvailable(MagicCard::dice_roll);
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::idle));
+}
+
+// ! TODO: Refactor with composite SM & CoreTimer mock
+TEST_F(RobotControllerTest, stateIdleDiceRollDetectedDelayOverEventAutonomousActivityRequested)
+{
+	rc.state_machine.set_current_states(lksm::state::idle);
+
+	auto minimal_delay_over = 1001ms;
 
 	Sequence on_exit_idle_sequence;
 	EXPECT_CALL(timeout, stop).InSequence(on_exit_idle_sequence);
@@ -152,6 +180,7 @@ TEST_F(RobotControllerTest, stateIdleEventAutonomousActivityRequested)
 
 	EXPECT_CALL(mock_videokit, displayImage).Times(1);
 
+	spy_kernel_addElapsedTimeToTickCount(minimal_delay_over);
 	rc.onMagicCardAvailable(MagicCard::dice_roll);
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
