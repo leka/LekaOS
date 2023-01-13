@@ -6,7 +6,6 @@
 
 #include "drivers/AnalogIn.h"
 #include "drivers/InterruptIn.h"
-#include "platform/Callback.h"
 
 #include "interface/drivers/Battery.h"
 
@@ -21,8 +20,8 @@ class CoreBattery : public interface::Battery
 		// nothing do to
 	}
 
-	void onChargeDidStart(mbed::Callback<void()> const &callback) final;
-	void onChargeDidStop(mbed::Callback<void()> const &callback) final;
+	void onChargeDidStart(std::function<void()> const &callback) final;
+	void onChargeDidStop(std::function<void()> const &callback) final;
 
 	auto voltage() -> float final;
 	auto level() -> uint8_t final;
@@ -51,6 +50,9 @@ class CoreBattery : public interface::Battery
 
 	mbed::AnalogIn _voltage_pin;
 	mbed::InterruptIn &_charge_status_input;
+
+	std::function<void()> _on_charge_did_start {};
+	std::function<void()> _on_charge_did_stop {};
 };
 
 }	// namespace leka

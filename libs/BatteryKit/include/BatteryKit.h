@@ -18,8 +18,8 @@ class BatteryKit
 
 	auto level() -> uint8_t;
 	auto isCharging() -> bool;
-	void onChargeDidStart(mbed::Callback<void()> const &callback);
-	void onChargeDidStop(mbed::Callback<void()> const &callback);
+	void onChargeDidStart(std::function<void()> const &callback);
+	void onChargeDidStop(std::function<void()> const &callback);
 
 	void onDataUpdated(std::function<void(uint8_t)> const &callback);
 	void onLowBattery(std::function<void()> const &callback);

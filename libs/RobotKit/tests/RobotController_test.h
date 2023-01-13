@@ -49,6 +49,7 @@ using ::testing::AtLeast;
 using ::testing::InSequence;
 using ::testing::MockFunction;
 using ::testing::Return;
+using ::testing::SaveArg;
 using ::testing::Sequence;
 
 ACTION_TEMPLATE(GetCallback, HAS_1_TEMPLATE_PARAMS(typename, callback_t), AND_1_VALUE_PARAMS(pointer))
@@ -136,8 +137,8 @@ class RobotControllerTest : public testing::Test
 	interface::Timeout::callback_t on_sleeping_start_timeout = {};
 	interface::Timeout::callback_t on_charging_start_timeout = {};
 
-	mbed::Callback<void()> on_charge_did_start {};
-	mbed::Callback<void()> on_charge_did_stop {};
+	std::function<void()> on_charge_did_start {};
+	std::function<void()> on_charge_did_stop {};
 
 	bool spy_isCharging_return_value = false;
 
@@ -215,9 +216,9 @@ class RobotControllerTest : public testing::Test
 			EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).InSequence(on_data_updated_sequence);
 			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(2).InSequence(on_data_updated_sequence);
 
-			EXPECT_CALL(battery, onChargeDidStart).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_start));
+			EXPECT_CALL(battery, onChargeDidStart).WillOnce(SaveArg<0>(&on_charge_did_start));
 
-			EXPECT_CALL(battery, onChargeDidStop).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_stop));
+			EXPECT_CALL(battery, onChargeDidStop).WillOnce(SaveArg<0>(&on_charge_did_stop));
 
 			{
 				InSequence event_setup_complete;
