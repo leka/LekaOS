@@ -6,8 +6,6 @@
 
 namespace leka {
 
-extern bool spy_CoreEventQueue_did_call_function;
-
 extern std::function<void()> spy_CoreEventQueue_on_dispatch_forever_call;
 
 }	// namespace leka
