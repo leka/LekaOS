@@ -67,3 +67,8 @@ void CoreGap::onDisconnectionCallback(const std::function<void()> &callback)
 {
 	_gap_event_handler.onDisconnectionCallback(callback);
 }
+
+auto CoreGap::isConnected() const -> bool
+{
+	return _gap_event_handler.isConnected();
+}

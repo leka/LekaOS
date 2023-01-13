@@ -85,6 +85,8 @@ auto main() -> int
 		log_info("Main thread running...");
 		rtos::ThisThread::sleep_for(5s);
 
+		log_info("Is connected: %d", blekit.isConnected());
+
 		service_battery.setBatteryLevel(level);
 		++level;
 

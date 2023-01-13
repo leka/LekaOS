@@ -26,8 +26,11 @@ class CoreGapEventHandler : public ble::Gap::EventHandler
 
 	void onConnectionCallback(const std::function<void()> &callback);
 	void onDisconnectionCallback(const std::function<void()> &callback);
+	[[nodiscard]] auto isConnected() const -> bool;
 
   private:
+	bool is_connected = false;
+
 	std::function<void()> _start_advertising {};
 
 	std::function<void()> _on_connection_callback {};

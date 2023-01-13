@@ -55,3 +55,8 @@ void BLEKit::onDisconnectionCallback(const std::function<void()> &callback)
 {
 	_core_gap.onDisconnectionCallback(callback);
 }
+
+auto BLEKit::isConnected() const -> bool
+{
+	return _core_gap.isConnected();
+}
