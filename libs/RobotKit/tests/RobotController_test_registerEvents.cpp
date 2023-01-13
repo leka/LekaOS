@@ -27,8 +27,6 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsNotCharging)
 		// TODO: Specify which BLE service and what is expected if necessary
 		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(2).InSequence(on_data_updated_sequence);
 
-		EXPECT_CALL(timeout, onTimeout);
-
 		EXPECT_CALL(battery, onChargeDidStart);
 
 		EXPECT_CALL(battery, onChargeDidStop);
@@ -49,8 +47,8 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsNotCharging)
 				.InSequence(run_launching_behavior_sequence);
 			EXPECT_CALL(mock_lcd, turnOn).InSequence(run_launching_behavior_sequence);
 
-			EXPECT_CALL(timeout, onTimeout);
-			EXPECT_CALL(timeout, start);
+			EXPECT_CALL(timeout_state_transition, onTimeout);
+			EXPECT_CALL(timeout_state_transition, start);
 
 			EXPECT_CALL(mock_videokit, playVideoOnRepeat);
 			EXPECT_CALL(mock_lcd, turnOn);
@@ -78,8 +76,6 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsCharging)
 		EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).InSequence(on_data_updated_sequence);
 		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(2).InSequence(on_data_updated_sequence);
 		EXPECT_CALL(mock_videokit, displayImage).InSequence(on_data_updated_sequence);
-
-		EXPECT_CALL(timeout, onTimeout);
 
 		EXPECT_CALL(battery, onChargeDidStart);
 
@@ -110,8 +106,8 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsCharging)
 			EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
 			EXPECT_CALL(mock_ledkit, start).InSequence(start_charging_behavior_sequence);
 			EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
-			EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
-			EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
+			EXPECT_CALL(timeout_state_internal, onTimeout).InSequence(start_charging_behavior_sequence);
+			EXPECT_CALL(timeout_state_internal, start).InSequence(start_charging_behavior_sequence);
 		}
 	}
 

@@ -408,7 +408,8 @@ namespace robot {
 
 	namespace internal {
 
-		auto sleep_timeout = CoreTimeout {};
+		auto timeout_state_internal	  = CoreTimeout {};
+		auto timeout_state_transition = CoreTimeout {};
 
 		auto mcu			 = CoreMCU {};
 		auto serialnumberkit = SerialNumberKit {mcu, SerialNumberKit::DEFAULT_CONFIG};
@@ -416,7 +417,8 @@ namespace robot {
 	}	// namespace internal
 
 	auto controller = RobotController {
-		internal::sleep_timeout,
+		internal::timeout_state_internal,
+		internal::timeout_state_transition,
 		battery::cells,
 		internal::serialnumberkit,
 		firmware::kit,
