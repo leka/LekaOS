@@ -10,6 +10,7 @@
 #include "gtest/gtest.h"
 #include "mocks/leka/FlashMemory.h"
 #include "os_version.h"
+#include "semver/semver.hpp"
 
 using namespace leka;
 
@@ -26,9 +27,11 @@ class FirmwareKitTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	Version current_version = Version {1, 3, 0};
-
-	std::string current_version_str = OS_VERSION;
+	Version current_version = Version {
+		semver::version {OS_VERSION}.major,
+		semver::version {OS_VERSION}.minor,
+		semver::version {OS_VERSION}.patch,
+	};
 
 	mock::FlashMemory mock_flash {};
 	FirmwareKit::Config config = {.bin_path_format = "fs/usr/os/LekaOS-%i.%i.%i.bin"};

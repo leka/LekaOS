@@ -4,6 +4,10 @@
 
 add_library(FirmwareKit STATIC)
 
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${ROOT_DIR}/config/os_version)
+
+file(STRINGS "${ROOT_DIR}/config/os_version" OS_VERSION)
+
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/include/os_version.h.in"
 	"${CMAKE_CURRENT_BINARY_DIR}/include/os_version.h")
 
