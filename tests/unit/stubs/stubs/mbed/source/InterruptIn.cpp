@@ -20,12 +20,12 @@ auto InterruptIn::read() -> int
 	return leka::spy_InterruptIn_value;
 }
 
-void InterruptIn::rise(Callback<void()> func)
+void InterruptIn::rise(mbed::Callback<void()> func)
 {
 	leka::spy_InterruptIn_risecallback = func;
 }
 
-void InterruptIn::fall(Callback<void()> func)
+void InterruptIn::fall(mbed::Callback<void()> func)
 {
 	leka::spy_InterruptIn_fallcallback = func;
 }

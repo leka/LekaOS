@@ -4,10 +4,9 @@
 
 #pragma once
 
+#include <functional>
 #include <string>
 #include <vector>
-
-#include "platform/Callback.h"
 
 namespace leka {
 

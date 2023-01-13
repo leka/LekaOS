@@ -4,7 +4,6 @@
 
 #include <memory>
 
-#include "platform/Callback.h"
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
