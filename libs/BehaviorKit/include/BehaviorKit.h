@@ -37,7 +37,8 @@ class BehaviorKit
 	void chargingHigh();
 	void chargingFull();
 
-	void bleConnection(bool with_video);
+	void bleConnectionWithoutVideo();
+	void bleConnectionWithVideo();
 	void working();
 
 	void fileExchange();

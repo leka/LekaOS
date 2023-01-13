@@ -103,7 +103,7 @@ TEST_F(BehaviorKitTest, bleConnectionWithoutVideo)
 	EXPECT_CALL(mock_videokit, playVideoOnce).Times(0);
 	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection))).Times(1);
 
-	behaviorkit.bleConnection(false);
+	behaviorkit.bleConnectionWithoutVideo();
 }
 
 TEST_F(BehaviorKitTest, bleConnectionWithVideo)
@@ -111,7 +111,7 @@ TEST_F(BehaviorKitTest, bleConnectionWithVideo)
 	EXPECT_CALL(mock_videokit, playVideoOnce);
 	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection))).Times(1);
 
-	behaviorkit.bleConnection(true);
+	behaviorkit.bleConnectionWithVideo();
 }
 
 TEST_F(BehaviorKitTest, working)
