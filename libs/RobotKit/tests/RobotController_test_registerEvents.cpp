@@ -120,9 +120,9 @@ TEST_F(RobotControllerTest, registerEventsBatteryIsCharging)
 
 TEST_F(RobotControllerTest, registerOnFactoryResetNotificationCallback)
 {
-	mbed::Callback<void(bool)> callback {};
+	MockFunction<void(bool)> callback {};
 
-	rc.registerOnFactoryResetNotificationCallback(callback);
+	rc.registerOnFactoryResetNotificationCallback(callback.AsStdFunction());
 
 	// nothing can be expected
 }
