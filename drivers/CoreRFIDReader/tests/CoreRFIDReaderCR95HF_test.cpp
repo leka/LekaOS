@@ -108,6 +108,7 @@ TEST_F(CoreRFIDReaderTest, setCommunicationProtocolSuccess)
 		sendSetGainAndModulation();
 	}
 
+	EXPECT_CALL(callback_detected, Call);
 	callback_sigio();
 	reader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 }
@@ -122,6 +123,7 @@ TEST_F(CoreRFIDReaderTest, setCommunicationProtocolFailedOnWrongFirstValue)
 		sendSetGainAndModulation();
 	}
 
+	EXPECT_CALL(callback_detected, Call);
 	callback_sigio();
 	reader.setCommunicationProtocol(rfid::Protocol::ISO14443A);
 }
@@ -146,6 +148,7 @@ TEST_F(CoreRFIDReaderTest, receiveDataSuccess)
 											   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xCA, 0x6C};
 
 	receiveRFIDReaderAnswer(read_values);
+	EXPECT_CALL(callback_detected, Call);
 	callback_sigio();
 	auto tag = reader.getTag();
 
@@ -162,6 +165,7 @@ TEST_F(CoreRFIDReaderTest, receiveDataFailedWrongAnswerFlag)
 
 	receiveRFIDReaderAnswer(read_values);
 
+	EXPECT_CALL(callback_detected, Call);
 	callback_sigio();
 
 	auto tag					  = reader.getTag();
@@ -177,6 +181,7 @@ TEST_F(CoreRFIDReaderTest, receiveDataFailedWrongLength)
 
 	receiveRFIDReaderAnswer(read_values);
 
+	EXPECT_CALL(callback_detected, Call);
 	callback_sigio();
 
 	auto tag = reader.getTag();
@@ -197,8 +202,10 @@ TEST_F(CoreRFIDReaderTest, getTag)
 
 	receiveRFIDReaderAnswer(read_values);
 
+	EXPECT_CALL(callback_detected, Call);
 	callback_sigio();
 
+	EXPECT_CALL(callback_readable, Call);
 	reader.onTagReadable();
 
 	auto tag = reader.getTag();
