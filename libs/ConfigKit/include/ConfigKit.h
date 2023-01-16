@@ -7,6 +7,7 @@
 #include <filesystem>
 
 #include "Config.h"
+#include "FileManagerKit.h"
 
 namespace leka {
 
@@ -14,8 +15,38 @@ class ConfigKit
 {
   public:
 	explicit ConfigKit() = default;
-	[[nodiscard]] auto read(Config const &config) const -> uint8_t;
-	[[nodiscard]] auto write(Config const &config, uint8_t data) const -> bool;
+	template <std::size_t SIZE = 1>
+	[[nodiscard]] auto read(Config<SIZE> const &config) const
+	{
+		if (FileManagerKit::File file {config.path(), "r"}; file.is_open()) {
+			auto data = std::array<uint8_t, SIZE> {};
+			file.read(data);
+
+			if constexpr (SIZE == 1) {
+				return data[0];
+			} else {
+				return data;
+			}
+		}
+
+		if constexpr (SIZE == 1) {
+			return config.default_value()[0];
+		} else {
+			return config.default_value();
+		}
+	}
+
+	template <std::size_t SIZE = 1>
+	[[nodiscard]] auto write(Config<SIZE> const &config, std::array<uint8_t, SIZE> data) const -> bool
+	{
+		if (FileManagerKit::File file {config.path(), "w+"}; file.is_open()) {
+			file.write(data);
+
+			return true;
+		}
+
+		return false;
+	}
 };
 
 }	// namespace leka

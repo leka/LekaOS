@@ -22,7 +22,8 @@ using namespace std::chrono_literals;
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 
-auto configkit = ConfigKit();
+auto configkit		= ConfigKit();
+auto config_to_edit = Config {"/fs/var/tmp/config"};
 
 void initializeSD()
 {
@@ -60,12 +61,13 @@ auto main() -> int
 				 int(t.count() / 1000));
 
 		++custom_data;
-		if (auto write = configkit.write(config::bootloader::battery_level_hysteresis, custom_data); !write) {
-			log_error("Fail to write in hysteresis config file");
+		if (auto write = configkit.write(config_to_edit, {custom_data}); !write) {
+			log_error("Fail to write config file");
 			return EXIT_FAILURE;
 		}
-		auto battery_level_hysteresis = configkit.read(config::bootloader::battery_level_hysteresis);
-		log_info("Battery level hysteresis : %d", battery_level_hysteresis);
+		auto config_value = configkit.read(config_to_edit);
+		log_info("Config value : %d", config_value);
+
 		rtos::ThisThread::sleep_for(10s);
 	}
 }

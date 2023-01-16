@@ -158,10 +158,10 @@ namespace factory_reset {
 
 namespace config {
 
-	auto bootloader_version = Config {"/fs/sys/bootloader-version", bootloader::version};
+	auto bootloader_version = Config {"/fs/sys/bootloader-version", {bootloader::version}};
 	auto battery_hysteresis_offset =
-		Config {"/fs/etc/bootloader-battery_hysteresis", battery::default_hysteresis_offset};
-	auto factory_reset_limit = Config {"/fs/etc/bootloader-reboots_limit", factory_reset::default_limit};
+		Config {"/fs/etc/bootloader-battery_hysteresis", {battery::default_hysteresis_offset}};
+	auto factory_reset_limit = Config {"/fs/etc/bootloader-reboots_limit", {factory_reset::default_limit}};
 
 	auto configkit = ConfigKit {};
 
