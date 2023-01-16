@@ -40,7 +40,7 @@ namespace {
 
 namespace bootloader {
 
-	constexpr auto version = uint8_t {1};
+	constexpr auto version = uint8_t {2};
 
 }
 
