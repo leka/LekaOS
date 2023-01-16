@@ -49,6 +49,22 @@ auto FirmwareKit::loadFirmware(const Version &version) -> bool
 	return load(path);
 }
 
+auto FirmwareKit::loadFactoryFirmware() -> bool
+{
+	if (auto factory_firmware_exists = _file.open(_config.factory_path); factory_firmware_exists) {
+		return load(_config.factory_path);
+	}
+	// ! IMPORTANT: BACKWARD COMPATIBILITY
+	// ? This path is kept to handle the case where the bootloader has
+	// ? been updated but not the SD card, in which case the factory
+	// ? firmware might not exist. If it's the case, we must load the
+	// ? previous factory firmware which was LekaOS-1.0.0.bin
+	// ? This should only happen when a robot is sent back to be fixed
+	// ? and used internally, but never for products in the field as
+	// ? the bootloader cannot change.
+	return loadFirmware({.major = 1, .minor = 0, .revision = 0});
+}
+
 auto FirmwareKit::load(const std::filesystem::path &path) -> bool
 {
 	if (auto is_open = _file.open(path); is_open) {

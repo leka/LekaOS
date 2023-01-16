@@ -34,7 +34,10 @@ class FirmwareKitTest : public ::testing::Test
 	};
 
 	mock::FlashMemory mock_flash {};
-	FirmwareKit::Config config = {.bin_path_format = "fs/usr/os/LekaOS-%i.%i.%i.bin"};
+	FirmwareKit::Config config = {
+		.bin_path_format = "fs/usr/os/LekaOS-%i.%i.%i.bin",
+		.factory_path	 = "fs/usr/os/LekaOS-factory.bin",
+	};
 
 	FirmwareKit firmwarekit = FirmwareKit {mock_flash, config};
 };
@@ -114,4 +117,55 @@ TEST_F(FirmwareKitTest, isVersionAvailableFileTooSmall)
 	EXPECT_FALSE(is_version_available);
 
 	std::filesystem::remove(bin_dummy_version_path.c_str());
+}
+
+TEST_F(FirmwareKitTest, loadFactoryFirmware)
+{
+	{
+		InSequence seq;
+
+		EXPECT_CALL(mock_flash, erase).Times(1);
+		EXPECT_CALL(mock_flash, write).Times(AtLeast(1));
+	}
+
+	auto did_load_firmware = firmwarekit.loadFactoryFirmware();
+
+	EXPECT_TRUE(did_load_firmware);
+}
+
+TEST_F(FirmwareKitTest, loadFactoryFirmwareDoesNotExistLoadV100)
+{
+	auto _config = FirmwareKit::Config {
+		.factory_path = "/tmp/LekaOS-factory.bin",
+	};
+	FileManagerKit::remove("/tmp/LekaOS-factory.bin");
+
+	auto _firmwarekit = FirmwareKit {mock_flash, _config};
+
+	{
+		InSequence seq;
+
+		EXPECT_CALL(mock_flash, erase).Times(1);
+		EXPECT_CALL(mock_flash, write).Times(AtLeast(1));
+	}
+
+	auto did_load_firmware = firmwarekit.loadFactoryFirmware();
+
+	EXPECT_TRUE(did_load_firmware);
+}
+
+TEST_F(FirmwareKitTest, loadFactoryFirmwareDoesNotExistAndV100DoesNotExist)
+{
+	auto _config = FirmwareKit::Config {
+		.bin_path_format = "/tmp/LekaOS-%i.%i.%i.bin",
+		.factory_path	 = "/tmp/LekaOS-factory.bin",
+	};
+	FileManagerKit::remove("/tmp/LekaOS-factory.bin");
+	FileManagerKit::remove("/tmp/LekaOS-1.0.0.bin");
+
+	auto _firmwarekit = FirmwareKit {mock_flash, _config};
+
+	auto did_load_firmware = _firmwarekit.loadFactoryFirmware();
+
+	EXPECT_FALSE(did_load_firmware);
 }

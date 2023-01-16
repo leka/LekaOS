@@ -14,6 +14,7 @@ class FirmwareUpdate : public interface::FirmwareUpdate
 	MOCK_METHOD(Version, getCurrentVersion, (), (override));
 	MOCK_METHOD(bool, isVersionAvailable, (const Version &), (override));
 	MOCK_METHOD(bool, loadFirmware, (const Version &), (override));
+	MOCK_METHOD(bool, loadFactoryFirmware, (), (override));
 };
 
 }	// namespace leka::mock

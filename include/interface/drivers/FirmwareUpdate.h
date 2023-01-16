@@ -16,6 +16,7 @@ class FirmwareUpdate
 	virtual auto getCurrentVersion() -> Version						= 0;
 	virtual auto isVersionAvailable(const Version &version) -> bool = 0;
 	virtual auto loadFirmware(const Version &version) -> bool		= 0;
+	virtual auto loadFactoryFirmware() -> bool						= 0;
 };
 
 }	// namespace leka::interface

@@ -19,9 +19,11 @@ class FirmwareKit : public interface::FirmwareUpdate
   public:
 	struct Config {
 		const char *bin_path_format;
+		const char *factory_path;
 	};
 
-	static constexpr auto DEFAULT_CONFIG = Config {.bin_path_format = "/fs/usr/os/LekaOS-%i.%i.%i.bin"};
+	static constexpr auto DEFAULT_CONFIG =
+		Config {.bin_path_format = "/fs/usr/os/LekaOS-%i.%i.%i.bin", .factory_path = "/fs/usr/os/LekaOS-factory.bin"};
 
 	explicit FirmwareKit(interface::FlashMemory &flash, Config config) : _flash(flash), _config(config)
 	{
@@ -32,6 +34,7 @@ class FirmwareKit : public interface::FirmwareUpdate
 
 	auto isVersionAvailable(const Version &version) -> bool final;
 	auto loadFirmware(const Version &version) -> bool final;
+	auto loadFactoryFirmware() -> bool final;
 
   private:
 	[[nodiscard]] auto getPathOfVersion(const Version &version) const -> std::filesystem::path;
