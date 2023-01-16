@@ -46,10 +46,10 @@ auto FirmwareKit::loadUpdate(const Version &version) -> bool
 {
 	auto path = getPathOfVersion(version);
 
-	return loadUpdate(path);
+	return load(path);
 }
 
-auto FirmwareKit::loadUpdate(const std::filesystem::path &path) -> bool
+auto FirmwareKit::load(const std::filesystem::path &path) -> bool
 {
 	if (auto is_open = _file.open(path); is_open) {
 		auto address = uint32_t {0x0};

@@ -36,7 +36,7 @@ class FirmwareKit : public interface::FirmwareUpdate
   private:
 	[[nodiscard]] auto getPathOfVersion(const Version &version) const -> std::filesystem::path;
 
-	auto loadUpdate(const std::filesystem::path &path) -> bool;
+	auto load(const std::filesystem::path &path) -> bool;
 
 	interface::FlashMemory &_flash;
 	FileManagerKit::File _file {};
