@@ -4,34 +4,39 @@
 
 #pragma once
 
+#include <tuple>
 #include <vector>
 
 #include "rtos/ThisThread.h"
 
 #include "boost/ut.hpp"
+#include "interface/LSM6DSOX.h"
 
-// clang-format off
-template <typename T>
-concept CanGetDataXYZ = requires {
-	&T::getXYZ;
-};
-// clang-format on
-
-template <CanGetDataXYZ T>
-auto values_did_change_over_time(T &sensor)
+inline auto values_did_change_over_time(leka::interface::LSM6DSOX &lsm6dsox)
 {
 	using namespace std::chrono;
 	using namespace boost::ut;
 
+	auto sensor_data = leka::interface::LSM6DSOX::SensorData();
+
 	auto i_batch = std::vector<float> {};
 	auto f_batch = std::vector<float> {};
 
-	for (auto i = 0; i < 10; ++i) {
-		auto [x, y, z] = sensor.getXYZ();
+	auto sensor_callback = [&](const leka::interface::LSM6DSOX::SensorData &data) { sensor_data = data; };
+	lsm6dsox.registerOnGyDataReadyCallback(sensor_callback);
 
-		i_batch.push_back(x);
-		i_batch.push_back(y);
-		i_batch.push_back(z);
+	for (auto i = 0; i < 10; ++i) {
+		auto [xlx, xly, xlz] = sensor_data.xl;
+
+		i_batch.push_back(xlx);
+		i_batch.push_back(xly);
+		i_batch.push_back(xlz);
+
+		auto [gyx, gyy, gyz] = sensor_data.gy;
+
+		i_batch.push_back(gyx);
+		i_batch.push_back(gyy);
+		i_batch.push_back(gyz);
 
 		rtos::ThisThread::sleep_for(25ms);
 	}
@@ -39,11 +44,17 @@ auto values_did_change_over_time(T &sensor)
 	rtos::ThisThread::sleep_for(100ms);
 
 	for (auto i = 0; i < 10; ++i) {
-		auto [x, y, z] = sensor.getXYZ();
+		auto [xlx, xly, xlz] = sensor_data.xl;
 
-		f_batch.push_back(x);
-		f_batch.push_back(y);
-		f_batch.push_back(z);
+		f_batch.push_back(xlx);
+		f_batch.push_back(xly);
+		f_batch.push_back(xlz);
+
+		auto [gyx, gyy, gyz] = sensor_data.gy;
+
+		f_batch.push_back(gyx);
+		f_batch.push_back(gyy);
+		f_batch.push_back(gyz);
 
 		rtos::ThisThread::sleep_for(25ms);
 	}
