@@ -4,9 +4,7 @@
 
 #include "rtos/ThisThread.h"
 
-#include "CoreAccelerometer.h"
 #include "CoreBufferedSerial.h"
-#include "CoreGyroscope.h"
 #include "CoreI2C.h"
 #include "CoreLSM6DSOX.h"
 #include "CoreMotor.h"
@@ -61,18 +59,17 @@ namespace imu {
 
 	namespace internal {
 
+		auto drdy_irq = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
 		CoreI2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
-		EventLoopKit event_loop {};
+		auto event_queue = CoreEventQueue();
 
 	}	// namespace internal
 
-	CoreLSM6DSOX lsm6dsox(internal::i2c);
-	CoreAccelerometer accel(lsm6dsox);
-	CoreGyroscope gyro(lsm6dsox);
+	CoreLSM6DSOX lsm6dsox(internal::i2c, internal::drdy_irq);
 
 }	// namespace imu
 
-auto imukit = IMUKit {imu::internal::event_loop, imu::accel, imu::gyro};
+auto imukit = IMUKit {imu::lsm6dsox};
 
 namespace motion::internal {
 
