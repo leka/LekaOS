@@ -5,6 +5,7 @@
 #pragma once
 
 #include <interface/drivers/Motor.h>
+#include <interface/libs/EventLoop.h>
 
 #include "IMUKit.h"
 #include "PID.h"
