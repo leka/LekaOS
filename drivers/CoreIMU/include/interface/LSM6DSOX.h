@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <functional>
 namespace leka::interface {
 
 class LSM6DSOX
@@ -37,8 +38,10 @@ class LSM6DSOX
 		Gyroscope gy	 = {0, 0, 0};
 	};
 
-	virtual void init()					   = 0;
-	virtual auto getData() -> SensorData & = 0;
-	virtual void setPowerMode(PowerMode)   = 0;
+	using drdy_callback_t = std::function<void(const SensorData &)>;
+
+	virtual void init()															= 0;
+	virtual void registerOnGyDataReadyCallback(drdy_callback_t const &callback) = 0;
+	virtual void setPowerMode(PowerMode)										= 0;
 };
 }	// namespace leka::interface

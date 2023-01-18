@@ -18,7 +18,10 @@ target_sources(CoreIMU
 	source/CoreGyroscope.cpp
 )
 
-target_link_libraries(CoreIMU)
+target_link_libraries(CoreIMU
+	CoreEventQueue
+	CoreInterruptIn
+)
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
