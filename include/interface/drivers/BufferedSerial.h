@@ -24,7 +24,7 @@ class BufferedSerial
 	virtual void disable_input() = 0;
 	virtual void enable_input()	 = 0;
 
-	virtual void sigio(mbed::Callback<void()> func) = 0;   // TODO (@HPezz) replace mbed callback by std function
+	virtual void sigio(std::function<void()> const &callback) = 0;
 };
 
 }	// namespace leka::interface

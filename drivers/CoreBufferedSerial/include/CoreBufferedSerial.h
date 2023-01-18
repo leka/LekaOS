@@ -26,10 +26,12 @@ class CoreBufferedSerial : public interface::BufferedSerial
 	void enable_input() final;
 	void disable_input() final;
 
-	void sigio(mbed::Callback<void()> func) final;
+	void sigio(std::function<void()> const &callback) final;
 
   private:
 	mbed::BufferedSerial _serial;
+
+	std::function<void()> _sigio_callback {};
 };
 
 }	// namespace leka

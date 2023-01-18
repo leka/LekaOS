@@ -27,9 +27,6 @@ class CoreEventQueue : public interface::EventQueue
 
 	void cancel(int id) { _event_queue.cancel(id); }
 
-	// ? Overload needed for mbed::BLE compatibility
-	void callMbedCallback(mbed::Callback<void()> const &f);
-
   private:
 	rtos::Thread _event_queue_thread {};
 	events::EventQueue _event_queue {};

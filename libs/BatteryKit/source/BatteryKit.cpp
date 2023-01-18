@@ -34,12 +34,12 @@ auto BatteryKit::isCharging() -> bool
 	return _battery.isCharging();
 }
 
-void BatteryKit::onChargeDidStart(mbed::Callback<void()> const &callback)
+void BatteryKit::onChargeDidStart(std::function<void()> const &callback)
 {
 	_battery.onChargeDidStart(callback);
 }
 
-void BatteryKit::onChargeDidStop(mbed::Callback<void()> const &callback)
+void BatteryKit::onChargeDidStop(std::function<void()> const &callback)
 {
 	_battery.onChargeDidStop(callback);
 }

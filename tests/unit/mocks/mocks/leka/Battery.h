@@ -12,8 +12,8 @@ namespace leka::mock {
 class Battery : public interface::Battery
 {
   public:
-	MOCK_METHOD(void, onChargeDidStart, (mbed::Callback<void()> const &), (override));
-	MOCK_METHOD(void, onChargeDidStop, (mbed::Callback<void()> const &), (override));
+	MOCK_METHOD(void, onChargeDidStart, (std::function<void()> const &), (override));
+	MOCK_METHOD(void, onChargeDidStop, (std::function<void()> const &), (override));
 
 	MOCK_METHOD(float, voltage, (), (override));
 	MOCK_METHOD(uint8_t, level, (), (override));

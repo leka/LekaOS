@@ -33,9 +33,10 @@ void CoreBufferedSerial::disable_input()
 	_serial.enable_input(false);
 }
 
-void CoreBufferedSerial::sigio(mbed::Callback<void()> func)
+void CoreBufferedSerial::sigio(std::function<void()> const &callback)
 {
-	_serial.sigio(func);
+	_sigio_callback = callback;
+	_serial.sigio(mbed::Callback<void()> {[this] { _sigio_callback(); }});
 }
 
 // LCOV_EXCL_STOP

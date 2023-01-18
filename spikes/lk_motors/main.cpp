@@ -7,7 +7,6 @@
 #include "drivers/BufferedSerial.h"
 #include "drivers/DigitalOut.h"
 #include "drivers/PwmOut.h"
-#include "platform/Callback.h"
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 

@@ -13,6 +13,7 @@ using namespace leka;
 
 using ::testing::MockFunction;
 using ::testing::Return;
+using ::testing::SaveArg;
 
 class BatteryKitTest : public ::testing::Test
 {
@@ -57,20 +58,26 @@ TEST_F(BatteryKitTest, isCharging)
 
 TEST_F(BatteryKitTest, onChargeDidStart)
 {
-	mbed::Callback<void()> callback_dummy([] {});
+	MockFunction<void()> callback {};
+	std::function<void()> charge_did_start_callback {};
 
-	EXPECT_CALL(mock_battery, onChargeDidStart(callback_dummy)).Times(1);
+	EXPECT_CALL(mock_battery, onChargeDidStart).WillOnce(SaveArg<0>(&charge_did_start_callback));
+	batterykit.onChargeDidStart(callback.AsStdFunction());
 
-	batterykit.onChargeDidStart(callback_dummy);
+	EXPECT_CALL(callback, Call);
+	charge_did_start_callback();
 }
 
 TEST_F(BatteryKitTest, onChargeDidStop)
 {
-	mbed::Callback<void()> callback_dummy([] {});
+	MockFunction<void()> callback;
+	std::function<void()> charge_did_stop_callback;
 
-	EXPECT_CALL(mock_battery, onChargeDidStop(callback_dummy)).Times(1);
+	EXPECT_CALL(mock_battery, onChargeDidStop).WillOnce(SaveArg<0>(&charge_did_stop_callback));
+	batterykit.onChargeDidStop(callback.AsStdFunction());
 
-	batterykit.onChargeDidStop(callback_dummy);
+	EXPECT_CALL(callback, Call);
+	charge_did_stop_callback();
 }
 
 TEST_F(BatteryKitTest, onDataUpdated)

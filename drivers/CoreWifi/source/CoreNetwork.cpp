@@ -1,5 +1,7 @@
 #include "CoreNetwork.h"
 
+#include "platform/Callback.h"
+
 using namespace leka;
 
 auto CoreNetwork::connect(const char *ssid, const char *pass) -> bool
