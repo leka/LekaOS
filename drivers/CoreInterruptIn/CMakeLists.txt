@@ -18,3 +18,8 @@ target_link_libraries(CoreInterruptIn
 	mbed-os
 )
 
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
+	leka_unit_tests_sources(
+		tests/CoreInterruptIn_test.cpp
+	)
+endif()
