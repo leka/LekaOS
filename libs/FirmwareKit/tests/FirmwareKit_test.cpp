@@ -24,8 +24,19 @@ class FirmwareKitTest : public ::testing::Test
   protected:
 	FirmwareKitTest() = default;
 
-	// void SetUp() override {}
-	// void TearDown() override {}
+	void SetUp() override
+	{
+		auto dummy_version				   = Version {1, 0, 0};
+		std::string bin_dummy_version_path = "/tmp/LekaOS-1.0.0.bin";
+
+		auto k_minimal_expected_file_size = 300'000;
+		std::ofstream update_stream {bin_dummy_version_path.c_str(), std::ios::binary};
+		for (auto i = 0; i < k_minimal_expected_file_size; i++) {
+			update_stream << static_cast<uint8_t>(i);
+		}
+		update_stream.close();
+	}
+	void TearDown() override { std::filesystem::remove("/tmp/LekaOS-1.0.0.bin"); }
 
 	Version current_version = Version {
 		semver::version {OS_VERSION}.major,
@@ -35,7 +46,7 @@ class FirmwareKitTest : public ::testing::Test
 
 	mock::FlashMemory mock_flash {};
 	FirmwareKit::Config config = {
-		.bin_path_format = "fs/usr/os/LekaOS-%i.%i.%i.bin",
+		.bin_path_format = "/tmp/LekaOS-%i.%i.%i.bin",
 		.factory_path	 = "fs/usr/os/LekaOS-factory.bin",
 	};
 
@@ -99,9 +110,6 @@ TEST_F(FirmwareKitTest, isVersionAvailableFileNotFound)
 
 TEST_F(FirmwareKitTest, isVersionAvailableFileTooSmall)
 {
-	auto _config	  = FirmwareKit::Config {.bin_path_format = "/tmp/LekaOS-%i.%i.%i.bin"};
-	auto _firmwarekit = FirmwareKit {mock_flash, _config};
-
 	auto dummy_version				   = Version {99, 99, 9999};
 	std::string bin_dummy_version_path = "/tmp/LekaOS-99.99.9999.bin";
 
@@ -112,7 +120,7 @@ TEST_F(FirmwareKitTest, isVersionAvailableFileTooSmall)
 	}
 	update_stream.close();
 
-	auto is_version_available = _firmwarekit.isVersionAvailable(dummy_version);
+	auto is_version_available = firmwarekit.isVersionAvailable(dummy_version);
 
 	EXPECT_FALSE(is_version_available);
 
