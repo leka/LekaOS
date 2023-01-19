@@ -72,3 +72,14 @@ jobs:
           path: |
             _release/Firmware-*.hex
             _release/LekaOS-*.bin
+
+      #
+      # Mark: - Check versions from files and os_version are identical
+      #
+
+      - name: Check os/firmware version
+        id: check_os_firmware_version
+        uses: ./.github/actions/check_version
+        with:
+          firmware_hex_path: _release/Firmware-*.hex
+          os_bin_path: _release/LekaOS-*.bin
