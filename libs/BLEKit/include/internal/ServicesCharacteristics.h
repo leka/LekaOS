@@ -34,13 +34,13 @@ namespace battery {
 
 namespace monitoring {
 
-	inline constexpr uint16_t uuid = 0x7779;
+	inline constexpr UUID::LongUUIDBytes_t uuid = {0x00, 0x00, 0x77, 0x79};
 
 	namespace characteristic {
-		inline constexpr uint16_t charging_status	 = 0x6783;
-		inline constexpr uint16_t screensaver_enable = 0x8369;
-		inline constexpr uint16_t soft_reboot		 = 0x8382;
-		inline constexpr uint16_t hard_reboot		 = 0x7282;
+		inline constexpr UUID::LongUUIDBytes_t charging_status	  = {0x00, 0x00, 0x67, 0x83};
+		inline constexpr UUID::LongUUIDBytes_t screensaver_enable = {"ENA Screensaver"};
+		inline constexpr UUID::LongUUIDBytes_t soft_reboot		  = {0x00, 0x00, 0x83, 0x82};
+		inline constexpr UUID::LongUUIDBytes_t hard_reboot		  = {0x00, 0x00, 0x72, 0x82};
 	}	// namespace characteristic
 
 }	// namespace monitoring
@@ -67,29 +67,29 @@ namespace magic_card {
 
 namespace file_exchange {
 
-	inline constexpr uint16_t uuid = 0x8270;
+	inline constexpr UUID::LongUUIDBytes_t uuid = {0x00, 0x00, 0x82, 0x70};
 
 	namespace characteristic {
-		inline constexpr uint16_t set_state				= 0x8383;
-		inline constexpr uint16_t file_path				= 0x7080;
-		inline constexpr uint16_t clear_file			= 0x6770;
-		inline constexpr uint16_t file_reception_buffer = 0x8283;
-		inline constexpr uint16_t file_sha256			= 0x7083;
+		inline constexpr UUID::LongUUIDBytes_t set_state			 = {0x00, 0x00, 0x83, 0x83};
+		inline constexpr UUID::LongUUIDBytes_t file_path			 = {0x00, 0x00, 0x70, 0x80};
+		inline constexpr UUID::LongUUIDBytes_t clear_file			 = {0x00, 0x00, 0x67, 0x70};
+		inline constexpr UUID::LongUUIDBytes_t file_reception_buffer = {0x00, 0x00, 0x82, 0x83};
+		inline constexpr UUID::LongUUIDBytes_t file_sha256			 = {0x00, 0x00, 0x70, 0x83};
 	}	// namespace characteristic
 
 }	// namespace file_exchange
 
 namespace firmware_update {
 
-	inline constexpr uint16_t uuid = 0x7085;
+	inline constexpr UUID::LongUUIDBytes_t uuid = {0x00, 0x00, 0x70, 0x85};
 
 	namespace characteristic {
-		inline constexpr uint16_t request_update		= 0x8285;
-		inline constexpr uint16_t request_factory_reset = 0x8270;
+		inline constexpr UUID::LongUUIDBytes_t request_update		 = {0x00, 0x00, 0x82, 0x85};
+		inline constexpr UUID::LongUUIDBytes_t request_factory_reset = {0x00, 0x00, 0x82, 0x70};
 
-		inline constexpr uint16_t version_major	   = 0x7765;
-		inline constexpr uint16_t version_minor	   = 0x7773;
-		inline constexpr uint16_t version_revision = 0x8269;
+		inline constexpr UUID::LongUUIDBytes_t version_major	= {0x00, 0x00, 0x77, 0x65};
+		inline constexpr UUID::LongUUIDBytes_t version_minor	= {0x00, 0x00, 0x77, 0x73};
+		inline constexpr UUID::LongUUIDBytes_t version_revision = {0x00, 0x00, 0x82, 0x69};
 	}	// namespace characteristic
 
 }	// namespace firmware_update
