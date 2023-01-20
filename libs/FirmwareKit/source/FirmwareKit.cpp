@@ -42,7 +42,7 @@ auto FirmwareKit::isVersionAvailable(const Version &version) -> bool
 	return file_exists;
 }
 
-auto FirmwareKit::loadUpdate(const Version &version) -> bool
+auto FirmwareKit::loadFirmware(const Version &version) -> bool
 {
 	auto path = getPathOfVersion(version);
 

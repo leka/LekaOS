@@ -64,7 +64,7 @@ auto main() -> int
 
 	// Load file
 	auto version = Version {.major = 1, .minor = 2, .revision = 3};
-	if (auto did_load = firmwarekit.loadUpdate(version); did_load) {
+	if (auto did_load = firmwarekit.loadFirmware(version); did_load) {
 		log_info("New update was loaded in external flash");
 	}
 

@@ -179,7 +179,7 @@ TEST_F(RobotControllerTest, stateFileExchangeEventUpdateRequestedGuardIsReadyToU
 	EXPECT_CALL(battery, level).InSequence(is_ready_to_update_sequence).WillRepeatedly(Return(returned_level));
 	EXPECT_CALL(firmware_update, isVersionAvailable).WillOnce(Return(true));
 
-	EXPECT_CALL(firmware_update, loadUpdate).WillOnce(Return(true));
+	EXPECT_CALL(firmware_update, loadFirmware).WillOnce(Return(true));
 	EXPECT_CALL(mock_on_update_loaded_callback, Call);
 
 	rc.state_machine.process_event(lksm::event::update_requested {});
@@ -209,7 +209,7 @@ TEST_F(RobotControllerTest, stateFileExchangeEventUpdateRequestedGuardIsReadyToU
 	EXPECT_CALL(battery, level).Times(0).InSequence(is_ready_to_update_sequence);
 	EXPECT_CALL(firmware_update, isVersionAvailable).WillOnce(Return(returned_is_version_available));
 
-	EXPECT_CALL(firmware_update, loadUpdate).Times(0);
+	EXPECT_CALL(firmware_update, loadFirmware).Times(0);
 	EXPECT_CALL(mock_on_update_loaded_callback, Call).Times(0);
 
 	rc.state_machine.process_event(lksm::event::update_requested {});
@@ -239,7 +239,7 @@ TEST_F(RobotControllerTest, stateFileExchangeEventUpdateRequestedGuardIsReadyToU
 	EXPECT_CALL(battery, level).InSequence(is_ready_to_update_sequence).WillRepeatedly(Return(returned_level));
 	EXPECT_CALL(firmware_update, isVersionAvailable).WillOnce(Return(returned_is_version_available));
 
-	EXPECT_CALL(firmware_update, loadUpdate).Times(0);
+	EXPECT_CALL(firmware_update, loadFirmware).Times(0);
 	EXPECT_CALL(mock_on_update_loaded_callback, Call).Times(0);
 
 	rc.state_machine.process_event(lksm::event::update_requested {});
@@ -269,7 +269,7 @@ TEST_F(RobotControllerTest, stateFileExchangeEventUpdateRequestedGuardIsReadyToU
 	EXPECT_CALL(battery, level).InSequence(is_ready_to_update_sequence).WillRepeatedly(Return(returned_level));
 	EXPECT_CALL(firmware_update, isVersionAvailable).WillOnce(Return(returned_is_version_available));
 
-	EXPECT_CALL(firmware_update, loadUpdate).Times(0);
+	EXPECT_CALL(firmware_update, loadFirmware).Times(0);
 	EXPECT_CALL(mock_on_update_loaded_callback, Call).Times(0);
 
 	rc.state_machine.process_event(lksm::event::update_requested {});

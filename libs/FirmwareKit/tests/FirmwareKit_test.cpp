@@ -53,7 +53,7 @@ TEST_F(FirmwareKitTest, getCurrentVersion)
 	EXPECT_EQ(actual_version.revision, current_version.revision);
 }
 
-TEST_F(FirmwareKitTest, loadUpdate)
+TEST_F(FirmwareKitTest, loadFirmware)
 {
 	auto version_to_load = Version {1, 0, 0};
 	{
@@ -63,16 +63,16 @@ TEST_F(FirmwareKitTest, loadUpdate)
 		EXPECT_CALL(mock_flash, write).Times(AtLeast(1));
 	}
 
-	auto did_load_firmware = firmwarekit.loadUpdate(version_to_load);
+	auto did_load_firmware = firmwarekit.loadFirmware(version_to_load);
 
 	ASSERT_TRUE(did_load_firmware);
 }
 
-TEST_F(FirmwareKitTest, loadUpdateFileNotFound)
+TEST_F(FirmwareKitTest, loadFirmwareFileNotFound)
 {
 	auto unexisting_version = Version {0, 0, 0};
 
-	auto did_load_firmware = firmwarekit.loadUpdate(unexisting_version);
+	auto did_load_firmware = firmwarekit.loadFirmware(unexisting_version);
 
 	ASSERT_FALSE(did_load_firmware);
 }
