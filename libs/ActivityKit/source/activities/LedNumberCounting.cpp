@@ -17,7 +17,7 @@ void LedNumberCounting::start()
 	_current_leds_number = 0;
 	_expected_tag_number = MagicCard::none;
 
-	_videokit.displayImage("fs/home/img/system/robot-face-smiling-slightly.jpg");
+	_videokit.displayImage("system/robot-face-smiling-slightly.jpg");
 
 	_backup_callback = _rfidkit.getCallback();
 	std::shuffle(_led_indexes.begin(), _led_indexes.end(), std::mt19937(static_cast<unsigned int>(time(nullptr))));

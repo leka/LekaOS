@@ -119,8 +119,7 @@ TEST_F(ActivityKitTest, isPlayingActivityStopped)
 
 TEST_F(ActivityKitTest, displayENMainMenu)
 {
-	EXPECT_CALL(mock_videokit,
-				displayImage(std::filesystem::path {"/fs/home/img/system/robot-misc-choose_activity-en_US.jpg"}))
+	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"system/robot-misc-choose_activity-en_US.jpg"}))
 		.Times(1);
 
 	activitykit.displayMainMenu(dice_roll_EN);
@@ -128,8 +127,7 @@ TEST_F(ActivityKitTest, displayENMainMenu)
 
 TEST_F(ActivityKitTest, displayFRMainMenu)
 {
-	EXPECT_CALL(mock_videokit,
-				displayImage(std::filesystem::path {"/fs/home/img/system/robot-misc-choose_activity-fr_FR.jpg"}))
+	EXPECT_CALL(mock_videokit, displayImage(std::filesystem::path {"system/robot-misc-choose_activity-fr_FR.jpg"}))
 		.Times(1);
 
 	activitykit.displayMainMenu(dice_roll_FR);

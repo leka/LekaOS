@@ -11,7 +11,7 @@ namespace leka::activity {
 
 void ChooseReinforcer::start()
 {
-	_videokit.displayImage("fs/home/img/system/robot-face-smiling-slightly.jpg");
+	_videokit.displayImage("system/robot-face-smiling-slightly.jpg");
 
 	_backup_callback = _rfidkit.getCallback();
 

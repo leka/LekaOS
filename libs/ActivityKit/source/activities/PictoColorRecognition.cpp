@@ -52,7 +52,7 @@ void PictoColorRecognition::launchNextRound()
 {
 	_current_color = _colors.at(_current_round);
 
-	auto full_path = "/fs/home/img/id/" + std::string(_current_color->id) + ".jpg";
+	auto full_path = "id/" + std::string(_current_color->id) + ".jpg";
 	_videokit.fillWhiteBackgroundAndDisplayImage(full_path);
 }
 

@@ -10,7 +10,7 @@ namespace leka::activity {
 
 void DisplayTags::start()
 {
-	_videokit.displayImage("fs/home/img/system/robot-misc-robot-misc-screen_empty_white.jpg");
+	_videokit.displayImage("system/robot-misc-robot-misc-screen_empty_white.jpg");
 
 	_backup_callback = _rfidkit.getCallback();
 
@@ -27,11 +27,11 @@ void DisplayTags::processCard(const MagicCard &card)
 	// TODO (@HPezz) Remove special case when fix is available
 	// ! Temporary fix while we wait for a change in fs
 	if (card == MagicCard::math_arithmetic_addition_sign_plus) {
-		_videokit.displayImage("fs/home/img/id/003B.jpg");
+		_videokit.displayImage("id/003B.jpg");
 	} else if (card == MagicCard::math_arithmetic_substraction_sign_minus) {
-		_videokit.displayImage("fs/home/img/id/003C.jpg");
+		_videokit.displayImage("id/003C.jpg");
 	} else {
-		snprintf(_path_buffer.data(), _path_buffer.size(), "fs/home/img/id/%.4x.jpg", card.getId());
+		snprintf(_path_buffer.data(), _path_buffer.size(), "id/%.4x.jpg", card.getId());
 		_videokit.displayImage(_path_buffer.data());
 
 		_backup_callback(card);

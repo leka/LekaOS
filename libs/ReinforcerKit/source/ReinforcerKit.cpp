@@ -50,35 +50,32 @@ void ReinforcerKit::stop()
 
 void ReinforcerKit::playBlinkGreen()
 {
-	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-reinforcer-happy-no_eyebrows.avi");
+	_videokit.playVideoOnce("system/robot-system-reinforcer-happy-no_eyebrows.avi");
 	_ledkit.start(&led::animation::blink_green);
 	_motionkit.rotate(3, Rotation::clockwise, [this] { _ledkit.stop(); });
 }
 
 void ReinforcerKit::playSpinBlink()
 {
-	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-reinforcer-happy-no_eyebrows.avi");
+	_videokit.playVideoOnce("system/robot-system-reinforcer-happy-no_eyebrows.avi");
 	_ledkit.start(&led::animation::spin_blink);
 	_motionkit.rotate(3, Rotation::counterClockwise, [this] { _ledkit.stop(); });
 }
 
 void ReinforcerKit::playFire()
 {
-	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-reinforcer-happy-no_eyebrows.avi",
-							[this] { _ledkit.stop(); });
+	_videokit.playVideoOnce("system/robot-system-reinforcer-happy-no_eyebrows.avi", [this] { _ledkit.stop(); });
 	_ledkit.start(&led::animation::fire);
 }
 
 void ReinforcerKit::playSprinkles()
 {
-	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-reinforcer-happy-no_eyebrows.avi",
-							[this] { _ledkit.stop(); });
+	_videokit.playVideoOnce("system/robot-system-reinforcer-happy-no_eyebrows.avi", [this] { _ledkit.stop(); });
 	_ledkit.start(&led::animation::sprinkles);
 }
 
 void ReinforcerKit::playRainbow()
 {
-	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-reinforcer-happy-no_eyebrows.avi",
-							[this] { _ledkit.stop(); });
+	_videokit.playVideoOnce("system/robot-system-reinforcer-happy-no_eyebrows.avi", [this] { _ledkit.stop(); });
 	_ledkit.start(&led::animation::rainbow);
 }

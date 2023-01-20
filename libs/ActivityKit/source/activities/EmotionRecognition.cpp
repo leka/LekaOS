@@ -51,7 +51,7 @@ void EmotionRecognition::launchNextRound()
 {
 	_current_emotion = _emotions.at(_current_round);
 
-	auto full_path = "/fs/home/img/id/" + std::string(_current_emotion->id) + ".jpg";
+	auto full_path = "id/" + std::string(_current_emotion->id) + ".jpg";
 	_videokit.displayImage(full_path);
 }
 

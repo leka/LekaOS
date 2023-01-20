@@ -52,7 +52,7 @@ void FoodRecognition::launchNextRound()
 {
 	_current_food = _foods.at(_current_round);
 
-	auto full_path = "/fs/home/img/id/" + std::string(_current_food->id) + ".jpg";
+	auto full_path = "id/" + std::string(_current_food->id) + ".jpg";
 	_videokit.fillWhiteBackgroundAndDisplayImage(full_path);
 }
 

@@ -52,7 +52,7 @@ void NumberRecognition::launchNextRound()
 {
 	_current_number = _numbers.at(_current_round);
 
-	auto full_path = "/fs/home/img/id/" + std::string(_current_number->id) + ".jpg";
+	auto full_path = "id/" + std::string(_current_number->id) + ".jpg";
 	_videokit.fillWhiteBackgroundAndDisplayImage(full_path);
 }
 

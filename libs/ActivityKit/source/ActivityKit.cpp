@@ -37,9 +37,9 @@ void ActivityKit::stop()
 void ActivityKit::displayMainMenu(const MagicCard &card)
 {
 	if (card.getLanguage() == MagicCard::Language::fr_FR) {
-		_videokit.displayImage("/fs/home/img/system/robot-misc-choose_activity-fr_FR.jpg");
+		_videokit.displayImage("system/robot-misc-choose_activity-fr_FR.jpg");
 	} else {
-		_videokit.displayImage("/fs/home/img/system/robot-misc-choose_activity-en_US.jpg");
+		_videokit.displayImage("system/robot-misc-choose_activity-en_US.jpg");
 	}
 }
 

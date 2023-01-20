@@ -19,7 +19,7 @@ void SuperSimon::start()
 	_current_round		  = 0;
 	_expected_color_index = 0;
 
-	_videokit.displayImage("fs/home/img/system/robot-face-smiling-slightly.jpg");
+	_videokit.displayImage("system/robot-face-smiling-slightly.jpg");
 
 	_backup_callback = _rfidkit.getCallback();
 	std::shuffle(_colors.begin(), _colors.end(), std::mt19937(static_cast<unsigned int>(time(nullptr))));

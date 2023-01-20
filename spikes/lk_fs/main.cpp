@@ -130,7 +130,7 @@ auto main() -> int
 		}
 
 		if (path.string().ends_with(".avi")) {
-			videokit.displayImage("/fs/home/img/system/robot-misc-robot-misc-screen_empty_white.jpg");
+			videokit.displayImage("system/robot-misc-robot-misc-screen_empty_white.jpg");
 			rtos::ThisThread::sleep_for(5ms);
 			videokit.playVideoOnce(path);
 			rtos::ThisThread::sleep_for(3s);

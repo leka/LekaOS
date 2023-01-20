@@ -52,7 +52,7 @@ void ShapeRecognition::launchNextRound()
 {
 	_current_shape = _shapes.at(_score);
 
-	auto full_path = "/fs/home/img/id/" + std::string(_current_shape->id) + ".jpg";
+	auto full_path = "id/" + std::string(_current_shape->id) + ".jpg";
 	_videokit.fillWhiteBackgroundAndDisplayImage(full_path);
 }
 
