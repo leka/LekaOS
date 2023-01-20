@@ -46,6 +46,9 @@ class VideoKit : public interface::VideoKit
 
 	interface::Video &_video;
 
+	const std::filesystem::path _default_image_path = "/fs/home/img";
+	const std::filesystem::path _default_video_path = "/fs/home/vid";
+
 	std::filesystem::path _current_path {};
 	std::function<void()> _on_video_ended_callback {};
 	bool _must_loop {false};

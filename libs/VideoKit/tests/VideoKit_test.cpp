@@ -53,7 +53,7 @@ TEST_F(VideoKitTest, displayImage)
 
 TEST_F(VideoKitTest, displayImageFileDoesNotExist)
 {
-	video_kit.displayImage("/unexisting/path");
+	video_kit.displayImage("/tmp/nothing");
 }
 
 TEST_F(VideoKitTest, displayImageSamePathTwice)
@@ -79,7 +79,7 @@ TEST_F(VideoKitTest, fillWhiteBackgroundDisplayImage)
 
 TEST_F(VideoKitTest, fillWhiteBackgroundDisplayImageFileDoesNotExist)
 {
-	video_kit.fillWhiteBackgroundAndDisplayImage("/unexisting/path");
+	video_kit.fillWhiteBackgroundAndDisplayImage("/tmp/nothing");
 }
 
 TEST_F(VideoKitTest, fillWhiteBackgroundDisplayImageSamePathTwice)
@@ -114,12 +114,12 @@ TEST_F(VideoKitTest, playVideoOnRepeat)
 
 TEST_F(VideoKitTest, playVideoOnceFileDoesNotExist)
 {
-	video_kit.playVideoOnce("some_video");
+	video_kit.playVideoOnce("/tmp/nothing");
 }
 
 TEST_F(VideoKitTest, playVideoOnRepeatFileDoesNotExist)
 {
-	video_kit.playVideoOnRepeat("some_video");
+	video_kit.playVideoOnRepeat("/tmp/nothing");
 }
 
 TEST_F(VideoKitTest, stopVideo)

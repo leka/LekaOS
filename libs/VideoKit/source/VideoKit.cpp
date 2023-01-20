@@ -33,14 +33,16 @@ void VideoKit::displayImage(const std::filesystem::path &path)
 {
 	const std::scoped_lock lock(mutex);
 
-	if (path == _current_path) {
+	auto full_path = _default_image_path / path;
+
+	if (full_path == _current_path) {
 		return;
 	}
 
-	if (auto file = FileManagerKit::File {path}; file.is_open()) {
+	if (auto file = FileManagerKit::File {full_path}; file.is_open()) {
 		_event_flags.set(flags::STOP_VIDEO_FLAG);
 
-		_current_path = path;
+		_current_path = full_path;
 
 		rtos::ThisThread::sleep_for(100ms);
 
@@ -54,14 +56,16 @@ void VideoKit::fillWhiteBackgroundAndDisplayImage(const std::filesystem::path &p
 {
 	const std::scoped_lock lock(mutex);
 
-	if (path == _current_path) {
+	auto full_path = _default_image_path / path;
+
+	if (full_path == _current_path) {
 		return;
 	}
 
-	if (auto file = FileManagerKit::File {path}; file.is_open()) {
+	if (auto file = FileManagerKit::File {full_path}; file.is_open()) {
 		_event_flags.set(flags::STOP_VIDEO_FLAG);
 
-		_current_path = path;
+		_current_path = full_path;
 
 		rtos::ThisThread::sleep_for(100ms);
 
@@ -76,12 +80,14 @@ void VideoKit::playVideoOnce(const std::filesystem::path &path, const std::funct
 {
 	const std::scoped_lock lock(mutex);
 
-	if (auto file = FileManagerKit::File {path}; file.is_open()) {
+	auto full_path = _default_video_path / path;
+
+	if (auto file = FileManagerKit::File {full_path}; file.is_open()) {
 		file.close();
 
 		_event_flags.set(flags::STOP_VIDEO_FLAG);
 
-		_current_path = path;
+		_current_path = full_path;
 		_must_loop	  = false;
 
 		rtos::ThisThread::sleep_for(100ms);
@@ -96,12 +102,14 @@ void VideoKit::playVideoOnRepeat(const std::filesystem::path &path,
 {
 	const std::scoped_lock lock(mutex);
 
-	if (auto file = FileManagerKit::File {path}; file.is_open()) {
+	auto full_path = _default_video_path / path;
+
+	if (auto file = FileManagerKit::File {full_path}; file.is_open()) {
 		file.close();
 
 		_event_flags.set(flags::STOP_VIDEO_FLAG);
 
-		_current_path = path;
+		_current_path = full_path;
 		_must_loop	  = true;
 
 		rtos::ThisThread::sleep_for(100ms);
