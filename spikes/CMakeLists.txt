@@ -31,7 +31,6 @@ add_subdirectory(${SPIKES_DIR}/lk_sensors_battery)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_light)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_microphone)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_temperature_humidity)
-add_subdirectory(${SPIKES_DIR}/lk_sensors_touch)
 add_subdirectory(${SPIKES_DIR}/lk_serial_number)
 add_subdirectory(${SPIKES_DIR}/lk_ticker_timeout)
 add_subdirectory(${SPIKES_DIR}/lk_touch_sensor_kit)
@@ -73,7 +72,6 @@ add_dependencies(spikes_leka
 	spike_lk_sensors_light
 	spike_lk_sensors_microphone
 	spike_lk_sensors_temperature_humidity
-	spike_lk_sensors_touch
 	spike_lk_serial_number
 	spike_lk_ticker_timeout
 	spike_lk_touch_sensor_kit
