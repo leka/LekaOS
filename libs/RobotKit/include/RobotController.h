@@ -292,7 +292,7 @@ class RobotController : public interface::RobotController
 	void applyUpdate() final
 	{
 		auto firmware_version = _service_update.getVersion();
-		if (_firmware_update.loadUpdate(firmware_version) && _on_update_loaded_callback != nullptr) {
+		if (_firmware_update.loadFirmware(firmware_version) && _on_update_loaded_callback != nullptr) {
 			_on_update_loaded_callback();
 		}
 
