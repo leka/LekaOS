@@ -22,21 +22,35 @@ class ConfigTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	auto spy_readConfigValue() -> uint8_t
+	void spy_readConfigValue(std::span<uint8_t> input_data)
 	{
-		auto input_data = std::array<uint8_t, 1> {};
-		FileManagerKit::File file {config_path.c_str()};
-		file.read(input_data);
-		file.close();
-		return input_data.front();
+		if (FileManagerKit::File file {config_path.c_str()}; file.is_open()) {
+			file.read(input_data);
+		}
 	}
 
-	void spy_writeConfigValue(uint8_t data)
+	auto spy_readConfigValue() -> uint8_t
 	{
-		auto output_data = std::array<uint8_t, 1> {data};
-		FileManagerKit::File file {config_path.c_str(), "r+"};
-		file.write(output_data);
-		file.close();
+		auto data = std::array<uint8_t, 1> {};
+		if (FileManagerKit::File file {config_path.c_str()}; file.is_open()) {
+			file.read(data);
+		}
+		return data[0];
+	}
+
+	void spy_writeConfigValue(std::span<uint8_t> data)
+	{
+		if (FileManagerKit::File file {config_path.c_str(), "r+"}; file.is_open()) {
+			file.write(data);
+		}
+	}
+
+	void spy_writeConfigValue(uint8_t input_data)
+	{
+		if (FileManagerKit::File file {config_path.c_str(), "r+"}; file.is_open()) {
+			auto data = std::array<uint8_t, 1> {input_data};
+			file.write(data);
+		}
 	}
 
 	void spy_touchConfigFile()
@@ -46,92 +60,183 @@ class ConfigTest : public ::testing::Test
 	}
 	void spy_removeConfigFile() { std::remove(config_path.c_str()); }
 
+	ConfigKit configkit {};
 	const std::filesystem::path config_path = "/tmp/test_config.conf";
 };
 
 TEST_F(ConfigTest, initializationConfigFullPath)
 {
-	const std::filesystem::path custom_full_path = "/tmp/test_config.conf";
-	Config config {custom_full_path};
-	ASSERT_NE(nullptr, &config);
-	const std::filesystem::path expected_path = "/tmp/test_config.conf";
-	ASSERT_EQ(expected_path, config.path());
+	auto custom_full_path = std::filesystem::path {"/tmp/test_config.conf"};
+	auto config			  = Config<5> {custom_full_path};
+	auto expected_path	  = std::filesystem::path {"/tmp/test_config.conf"};
+
+	EXPECT_NE(nullptr, &config);
+
+	EXPECT_EQ(expected_path, config.path());
 }
 
 TEST_F(ConfigTest, initializationWithDefaultParentPathConfig)
 {
-	const std::filesystem::path custom_filename = "test_config.conf";
-	Config config {custom_filename};
-	ASSERT_NE(nullptr, &config);
-	const std::filesystem::path expected_path = "/fs/etc/test_config.conf";
-	ASSERT_EQ(expected_path, config.path());
+	auto custom_filename = std::filesystem::path {"test_config.conf"};
+	auto config			 = Config<5> {custom_filename};
+	auto expected_path	 = std::filesystem::path {"/fs/etc/test_config.conf"};
+
+	EXPECT_NE(nullptr, &config);
+	EXPECT_EQ(expected_path, config.path());
 }
 
 TEST_F(ConfigTest, initializationConfigKit)
 {
-	auto configkit = ConfigKit();
-	ASSERT_NE(nullptr, &configkit);
+	EXPECT_NE(nullptr, &configkit);
 }
 
 TEST_F(ConfigTest, readNotOpenFile)
 {
-	Config config {config_path};
-	auto configkit = ConfigKit();
+	auto config_buffer = std::array<uint8_t, 5> {"Leka"};
+	auto config		   = Config {config_path, config_buffer};
+
 	spy_removeConfigFile();
-	auto data = configkit.read(config);
-	ASSERT_EQ(config.default_value(), data);
+
+	auto actual_data_config = configkit.read(config);
+	EXPECT_EQ(config.default_value(), actual_data_config);
 }
 
 TEST_F(ConfigTest, readEmptyFile)
 {
-	Config config {config_path};
-	auto configkit = ConfigKit();
+	auto config				  = Config<5> {config_path};
+	auto expected_data_config = std::array<uint8_t, 5> {};
+
 	spy_removeConfigFile();
 	spy_touchConfigFile();
-	auto data = configkit.read(config);
-	ASSERT_EQ(0, data);
+
+	auto actual_data_config = configkit.read(config);
+	EXPECT_EQ(actual_data_config, expected_data_config);
 }
 
 TEST_F(ConfigTest, read)
 {
-	Config config {config_path};
-	auto configkit = ConfigKit();
-	spy_writeConfigValue(5);
-	auto data = configkit.read(config);
-	ASSERT_EQ(5, data);
+	auto config				  = Config<5> {config_path};
+	auto expected_data_config = std::array<uint8_t, 5> {"Leka"};
+
+	spy_writeConfigValue(expected_data_config);
+
+	auto actual_data_config = configkit.read(config);
+	EXPECT_EQ(actual_data_config, expected_data_config);
 }
 
 TEST_F(ConfigTest, writeCreatingFile)
 {
-	Config config {config_path};
-	auto configkit = ConfigKit();
+	auto config = Config<5> {config_path};
+
+	auto expected_data_config = std::array<uint8_t, 5> {"Leka"};
+	auto actual_data_config	  = std::array<uint8_t, 5> {};
 
 	spy_removeConfigFile();
 
-	auto write = configkit.write(config, 5);
-	ASSERT_TRUE(write);
+	auto write = configkit.write(config, expected_data_config);
+	EXPECT_TRUE(write);
 
-	auto data = spy_readConfigValue();
-	ASSERT_EQ(5, data);
+	spy_readConfigValue(actual_data_config);
+	EXPECT_EQ(actual_data_config, expected_data_config);
 }
 
 TEST_F(ConfigTest, writeNotOpenFile)
 {
-	auto unreachable_config_path = std::filesystem::path {"/tmp/unnexisting_directory/test_config.conf"};
-	Config config {unreachable_config_path};
-	auto configkit = ConfigKit();
+	auto config_buffer			 = std::array<uint8_t, 5> {"Leka"};
+	auto unreachable_config_path = std::filesystem::path {"/tmp/unexisting_directory/test_config.conf"};
+	auto config					 = Config {unreachable_config_path, config_buffer};
+
 	spy_removeConfigFile();
-	auto write = configkit.write(config, 5);
-	ASSERT_FALSE(write);
+
+	auto write = configkit.write(config, {});
+	EXPECT_FALSE(write);
 }
 
 TEST_F(ConfigTest, write)
 {
-	Config config {config_path};
-	auto configkit = ConfigKit();
+	auto config = Config<5> {config_path};
+
+	auto expected_data_config = std::array<uint8_t, 5> {"Leka"};
+	auto actual_data_config	  = std::array<uint8_t, 5> {};
+
 	spy_touchConfigFile();
-	auto write = configkit.write(config, 5);
-	ASSERT_TRUE(write);
-	auto data = spy_readConfigValue();
-	ASSERT_EQ(5, data);
+	auto write = configkit.write(config, expected_data_config);
+	EXPECT_TRUE(write);
+
+	spy_readConfigValue(actual_data_config);
+	EXPECT_EQ(actual_data_config, expected_data_config);
+}
+
+TEST_F(ConfigTest, readNotOpenFileOneByteConfig)
+{
+	auto expected_data_config = uint8_t {0x2A};
+	auto config				  = Config {config_path, {expected_data_config}};
+
+	spy_removeConfigFile();
+
+	auto actual_data_config = configkit.read(config);
+	EXPECT_EQ(actual_data_config, expected_data_config);
+}
+
+TEST_F(ConfigTest, readEmptyFileOneByteConfig)
+{
+	auto expected_data_config = uint8_t {};
+	auto config				  = Config {config_path};
+
+	spy_removeConfigFile();
+	spy_touchConfigFile();
+
+	auto actual_data_config = configkit.read(config);
+	EXPECT_EQ(actual_data_config, expected_data_config);
+}
+
+TEST_F(ConfigTest, readOneByteConfig)
+{
+	auto expected_data_config = uint8_t {0x2A};
+	auto config				  = Config {config_path};
+
+	spy_writeConfigValue(expected_data_config);
+
+	auto actual_data_config = configkit.read(config);
+	EXPECT_EQ(actual_data_config, expected_data_config);
+}
+
+TEST_F(ConfigTest, writeCreatingFileOneByteConfig)
+{
+	auto config = Config {config_path};
+
+	auto expected_data_config = uint8_t {0x2A};
+
+	spy_removeConfigFile();
+
+	auto write = configkit.write(config, {expected_data_config});
+	EXPECT_TRUE(write);
+
+	auto actual_data_config = spy_readConfigValue();
+	EXPECT_EQ(actual_data_config, expected_data_config);
+}
+
+TEST_F(ConfigTest, writeNotOpenFileOneByteConfig)
+{
+	auto unreachable_config_path = std::filesystem::path {"/tmp/unexisting_directory/test_config.conf"};
+	auto config					 = Config {unreachable_config_path, {0x2A}};
+
+	spy_removeConfigFile();
+
+	auto write = configkit.write(config, {});
+	EXPECT_FALSE(write);
+}
+
+TEST_F(ConfigTest, writeOneByteConfig)
+{
+	auto config = Config {config_path};
+
+	auto expected_data_config = uint8_t {0x2A};
+
+	spy_touchConfigFile();
+	auto write = configkit.write(config, {expected_data_config});
+	EXPECT_TRUE(write);
+
+	auto actual_data_config = spy_readConfigValue();
+	EXPECT_EQ(actual_data_config, expected_data_config);
 }

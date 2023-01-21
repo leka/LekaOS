@@ -10,6 +10,6 @@
 
 namespace leka::config::bootloader {
 
-inline const auto battery_level_hysteresis = Config {"bootloader_battery_level_hysteresis", 42};
+inline const auto battery_level_hysteresis = Config {"bootloader_battery_level_hysteresis", {42}};
 
 }	// namespace leka::config::bootloader
