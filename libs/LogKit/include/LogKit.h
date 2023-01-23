@@ -22,6 +22,8 @@
 
 #include "CircularQueue.h"
 
+#pragma GCC diagnostic ignored "-Wformat-security"	 // ? Turn off format security warning
+
 namespace leka::logger {
 
 #if defined(ENABLE_LOG_DEBUG)
@@ -224,9 +226,10 @@ void format_message(const char *message = nullptr, Args... args)
 }
 
 template <typename... Args>
-auto format_output(const char *message = nullptr, Args... args) -> int
+auto format_output(const char *message = nullptr, Args... args) -> std::size_t
 {
-	return snprintf(buffer::output.data(), std::size(buffer::output), message, args...);
+	auto size = snprintf(buffer::output.data(), std::size(buffer::output), message, args...);
+	return static_cast<std::size_t>(size);
 }
 
 //

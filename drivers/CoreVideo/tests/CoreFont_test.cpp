@@ -12,10 +12,8 @@
 using namespace leka;
 using ::testing::_;
 using ::testing::AnyNumber;
-using ::testing::AtLeast;
-using ::testing::Matcher;
-using ::testing::WithArg;
-using ::testing::WithArgs;
+
+// NOLINTBEGIN(modernize-use-trailing-return-type, misc-non-private-member-variables-in-classes)
 
 class CoreFontTest : public ::testing::Test
 {
@@ -37,12 +35,12 @@ TEST_F(CoreFontTest, instantiation)
 
 TEST_F(CoreFontTest, fontGetFirstPixelAddressOf$)
 {
-	char character = '$';
-	auto index	   = 288;	// See CoreTable, index is given before start of character
+	constexpr char character = '$';
+	constexpr auto index	 = 288;	  // See CoreTable, index is given before start of character
 
-	auto expected_address = &CGFontTable[index];
+	const auto *expected_address = &CGFontTable.at(index);
 
-	auto actual_address = font.fontGetFirstPixelAddress(character);
+	const auto *actual_address = font.fontGetFirstPixelAddress(character);
 
 	// Cannot check address directly. Check bytes from selected character are the same.
 	for (uint8_t inc = 0; inc < graphics::bytes_per_char; inc++) {
@@ -52,12 +50,12 @@ TEST_F(CoreFontTest, fontGetFirstPixelAddressOf$)
 
 TEST_F(CoreFontTest, fontGetFirstPixelAddressOfA)
 {
-	char character = 'A';
-	auto index	   = 2376;	 // See CoreTable, index is given before start of character
+	constexpr char character = 'A';
+	constexpr auto index	 = 2376;   // See CoreTable, index is given before start of character
 
-	auto expected_address = &CGFontTable[index];
+	const auto *expected_address = &CGFontTable.at(index);
 
-	auto actual_address = font.fontGetFirstPixelAddress(character);
+	const auto *actual_address = font.fontGetFirstPixelAddress(character);
 
 	// Cannot check address directly. Check bytes from selected character are the same.
 	for (uint8_t inc = 0; inc < graphics::bytes_per_char; inc++) {
@@ -67,12 +65,12 @@ TEST_F(CoreFontTest, fontGetFirstPixelAddressOfA)
 
 TEST_F(CoreFontTest, fontGetFirstPixelAddressOfz)
 {
-	char character = 'z';
-	auto index	   = 6480;	 // See CoreTable, index is given before start of character
+	constexpr char character = 'z';
+	constexpr auto index	 = 6480;   // See CoreTable, index is given before start of character
 
-	auto expected_address = &CGFontTable[index];
+	const auto *expected_address = &CGFontTable.at(index);
 
-	auto actual_address = font.fontGetFirstPixelAddress(character);
+	const auto *actual_address = font.fontGetFirstPixelAddress(character);
 
 	// Cannot check address directly. Check bytes from selected character are the same.
 	for (uint8_t inc = 0; inc < graphics::bytes_per_char; inc++) {
@@ -82,20 +80,20 @@ TEST_F(CoreFontTest, fontGetFirstPixelAddressOfz)
 
 TEST_F(CoreFontTest, fontGetPixelBytes)
 {
-	uint8_t line_to_convert[3] = {0x2A, 0x2B, 0x2C};
-	auto expected_conversion   = 0x002A2B2C;
+	constexpr auto line_to_convert	   = std::to_array<const uint8_t>({0x2A, 0x2B, 0x2C});
+	constexpr auto expected_conversion = 0x002A2B2C;
 
-	auto actual_conversion = font.fontGetPixelBytes(reinterpret_cast<uint8_t *>(&line_to_convert));
+	auto actual_conversion = font.fontGetPixelBytes(line_to_convert.data());
 
 	ASSERT_EQ(expected_conversion, actual_conversion);
 }
 
 TEST_F(CoreFontTest, fontGetPixelBytesFailed)
 {
-	uint8_t line_to_convert[3] = {0x2A, 0x2B, 0x2C};
-	auto expected_conversion   = 0x002A2B2D;   // Note 2D at the end
+	constexpr auto line_to_convert	   = std::to_array<uint8_t>({0x2A, 0x2B, 0x2C});
+	constexpr auto expected_conversion = 0x002A2B2D;   // Note 2D at the end
 
-	auto actual_conversion = font.fontGetPixelBytes(reinterpret_cast<uint8_t *>(&line_to_convert));
+	auto actual_conversion = font.fontGetPixelBytes(line_to_convert.data());
 
 	ASSERT_NE(expected_conversion, actual_conversion);
 }
@@ -121,7 +119,7 @@ TEST_F(CoreFontTest, fontPixelIsOnWithC00010FF)
 
 	for (uint8_t pixel_id = 0; pixel_id < graphics::pixels_per_line; pixel_id++) {
 		auto get_bit   = byte_of_line >> (max_bit_index_of_a_line - pixel_id);	 // Read from left to right
-		bool bit_is_on = get_bit & 0x01;
+		bool bit_is_on = (get_bit & 0x01) != 0;
 
 		ASSERT_EQ(bit_is_on, font.fontPixelIsOn(byte_of_line, pixel_id));
 	}
@@ -148,8 +146,8 @@ TEST_F(CoreFontTest, drawCharacterWithColor)
 	CGColor foreground_color = CGColor::pure_red;
 	CGColor background_color = CGColor::black;
 
-	auto pixels_per_char = graphics::font_pixel_width * graphics::font_pixel_height;   // 17 * 24 = 408
-	auto pixels_lit		 = 12;	 // Corrolated with LKFontTable for the tested character
+	auto pixels_per_char  = graphics::font_pixel_width * graphics::font_pixel_height;	// 17 * 24 = 408
+	const auto pixels_lit = 12;	  // Corrolated with LKFontTable for the tested character
 
 	EXPECT_CALL(llmock, rawMemoryWrite(_, foreground_color.getARGB())).Times(pixels_lit);
 	EXPECT_CALL(llmock, rawMemoryWrite(_, background_color.getARGB())).Times(pixels_per_char - pixels_lit);
@@ -159,11 +157,11 @@ TEST_F(CoreFontTest, drawCharacterWithColor)
 
 TEST_F(CoreFontTest, displayNormalSentence)
 {
-	constexpr uint8_t buff_size = 128;
-	char buff[buff_size] {};
-	auto text_length = snprintf(buff, buff_size, "Some text");
+	auto buff = std::array<char, 128> {};
 
-	auto starting_line = 1;
+	auto text_length = snprintf(buff.data(), buff.size(), "Some text");
+
+	const auto starting_line = uint32_t {1};
 
 	CGColor foreground_color = CGColor::black;
 	CGColor background_color = CGColor::white;
@@ -173,33 +171,33 @@ TEST_F(CoreFontTest, displayNormalSentence)
 
 	EXPECT_CALL(llmock, rawMemoryWrite).Times(expected_pixel_draw);
 
-	font.display(buff, text_length, starting_line, foreground_color, background_color);
+	font.display(buff.data(), text_length, starting_line, foreground_color, background_color);
 }
 
 TEST_F(CoreFontTest, displayPositiveStartingLine)
 {
-	constexpr uint8_t buff_size = 128;
-	char buff[buff_size] {};
-	auto text_length = snprintf(buff, buff_size, "Some text");
+	auto buff = std::array<char, 128> {};
 
-	auto starting_line = 0;
+	auto text_length = snprintf(buff.data(), buff.size(), "Some text");
+
+	const auto starting_line = uint32_t {0};
 
 	EXPECT_CALL(llmock, rawMemoryWrite).Times(0);
 
-	font.display(buff, text_length, starting_line);
+	font.display(buff.data(), text_length, starting_line);
 }
 
 TEST_F(CoreFontTest, displayExceededStartingLine)
 {
-	constexpr uint8_t buff_size = 128;
-	char buff[buff_size] {};
-	auto text_length = snprintf(buff, buff_size, "Some text");
+	auto buff = std::array<char, 128> {};
 
-	auto starting_line = 50;
+	auto text_length = snprintf(buff.data(), buff.size(), "Some text");
+
+	const auto starting_line = uint32_t {50};
 
 	EXPECT_CALL(llmock, rawMemoryWrite).Times(0);
 
-	font.display(buff, text_length, starting_line);
+	font.display(buff.data(), text_length, starting_line);
 }
 
 TEST_F(CoreFontTest, displayWithNewLine)
@@ -211,20 +209,19 @@ TEST_F(CoreFontTest, displayWithNewLine)
 	// actual_last_drawn_pixel is calculate after we call CoreFont::display(_, _, _).
 
 	// ARRANGE
-	constexpr uint8_t buff_size = 128;
-	char buff[buff_size] {};
-	uint8_t text_length;
+	auto buff = std::array<char, 128> {};
 
-	auto starting_line = 5;
+	const auto starting_line = uint32_t {5};
 
 	auto expected_last_pixel_y_position = graphics::font_pixel_height * starting_line + graphics::font_pixel_height;
 
-	// TODO: This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove it in the future
+	// ? This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call
+	// TODO(@leka/dev-embedded): Remove call in the future
 	EXPECT_CALL(llmock, rawMemoryWrite).Times(AnyNumber());
 
 	// ACT
-	text_length = snprintf(buff, buff_size, "This is the first line\nThis is the second line");
-	font.display(buff, text_length, starting_line);
+	auto text_length = snprintf(buff.data(), buff.size(), "This is the first line\nThis is the second line");
+	font.display(buff.data(), text_length, starting_line);
 
 	// ASSERT
 	auto actual_last_drawn_pixel = font.getLastDrawnPixel();
@@ -234,23 +231,22 @@ TEST_F(CoreFontTest, displayWithNewLine)
 TEST_F(CoreFontTest, displayUnwrittableAsciiCharacter)
 {
 	// ARRANGE
-	constexpr uint8_t buff_size = 128;
-	char buff[buff_size] {};
-	uint8_t text_length;
+	auto buff = std::array<char, 128> {};
 
-	auto starting_line = 1;
+	const auto starting_line = uint32_t {1};
 
-	text_length = snprintf(buff, buff_size, "\tThis is the first line");
+	auto text_length = snprintf(buff.data(), buff.size(), "\tThis is the first line");
 
 	CGPoint expected_last_pixel;
 	expected_last_pixel.x = (graphics::font_pixel_width * (text_length - 1)) - 1;
 	expected_last_pixel.y = graphics::font_pixel_height;
 
-	// TODO: This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove it in the future
+	// ? This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call
+	// TODO(@leka/dev-embedded): Remove call in the future
 	EXPECT_CALL(llmock, rawMemoryWrite).Times(AnyNumber());
 
 	// ACT
-	font.display(buff, text_length, starting_line);
+	font.display(buff.data(), text_length, starting_line);
 
 	// ASSERT
 	auto actual_last_drawn_pixel = font.getLastDrawnPixel();
@@ -261,26 +257,27 @@ TEST_F(CoreFontTest, displayUnwrittableAsciiCharacter)
 TEST_F(CoreFontTest, displayWithScreenWidthReached)
 {
 	// ARRANGE
-	constexpr uint8_t buff_size = 128;
-	char buff[buff_size] {};
-	uint8_t text_length =
-		snprintf(buff, buff_size,
+	auto buff = std::array<char, 128> {};
+
+	auto text_length =
+		snprintf(buff.data(), buff.size(),
 				 "This sentence is supposed to be on multiple lines because it is too long to be displayed on "
 				 "only one line of the screen.");
 	uint8_t max_char_per_line = lcd::dimension::width / graphics::font_pixel_width;
 	ASSERT_GT(text_length, max_char_per_line);	 // Text to display MUST exceed 47 characters for this test
 
-	auto starting_line = 1;
+	const auto starting_line = uint32_t {1};
 
 	CGPoint expected_last_pixel;
 	expected_last_pixel.x = (text_length % max_char_per_line) * graphics::font_pixel_width - 1;
 	expected_last_pixel.y = ((text_length / max_char_per_line) + 1) * graphics::font_pixel_height;
 
-	// TODO: This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove it in the future
+	// ? This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call
+	// TODO(@leka/dev-embedded): Remove call in the future
 	EXPECT_CALL(llmock, rawMemoryWrite).Times(AnyNumber());
 
 	// ACT
-	font.display(buff, text_length, starting_line);
+	font.display(buff.data(), text_length, starting_line);
 
 	// ASSERT
 	auto actual_last_drawn_pixel = font.getLastDrawnPixel();
@@ -291,23 +288,24 @@ TEST_F(CoreFontTest, displayWithScreenWidthReached)
 TEST_F(CoreFontTest, displayWithScreenHeightReached)
 {
 	// ARRANGE
-	constexpr uint8_t buff_size = 128;
-	char buff[buff_size] {};
-	uint8_t text_length;
+	auto buff = std::array<char, 128> {};
 
-	auto starting_line = 20;
+	const auto starting_line = 20;
 
 	auto expected_last_pixel_y_position = lcd::dimension::height;
 
-	// TODO: This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call. Remove it in the future
+	// ? This EXPECT_CALL suppress the GMOCK WARNING: Uninteresting mock function call
+	// TODO(@leka/dev-embedded): Remove call in the future
 	EXPECT_CALL(llmock, rawMemoryWrite).Times(AnyNumber());
 
 	// ACT
-	text_length =
-		snprintf(buff, buff_size, "This text should appear on the screen\nThis text should NOT appear on the screen");
-	font.display(buff, text_length, starting_line);
+	auto text_length = snprintf(buff.data(), buff.size(),
+								"This text should appear on the screen\nThis text should NOT appear on the screen");
+	font.display(buff.data(), text_length, starting_line);
 
 	// ASSERT
 	auto actual_last_drawn_pixel = font.getLastDrawnPixel();
 	ASSERT_EQ(actual_last_drawn_pixel.coordinates.y, expected_last_pixel_y_position);
 }
+
+// NOLINTEND(modernize-use-trailing-return-type, misc-non-private-member-variables-in-classes)

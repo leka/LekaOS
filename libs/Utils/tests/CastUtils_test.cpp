@@ -31,7 +31,7 @@ TEST(CastUtilsTest, from_c_string_to_uint8_t_arraySameElement)
 	const char c_string_reference[] = "Lorem Ipsum";
 	auto uint8_t_array				= leka::utils::cast::from_c_string_to_uint8_t_array(c_string_reference);
 
-	for (auto index = 0; index < std::size(uint8_t_array); index++) {
+	for (std::size_t index = 0; index < std::size(uint8_t_array); index++) {
 		EXPECT_EQ(c_string_reference[index], uint8_t_array.at(index));
 	}
 }

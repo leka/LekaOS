@@ -72,8 +72,8 @@ TEST_F(CoreJPEGModeDMATest, onInfoReadyCallback420ChromSubsamplingDimensionsMult
 {
 	auto config = JPEG_ConfTypeDef {
 		.ChromaSubsampling = JPEG_420_SUBSAMPLING,
-		.ImageHeight	   = 16 * 30,	// =480
-		.ImageWidth		   = 16 * 50,	// =800
+		.ImageHeight	   = 16 * 30,	// = 480
+		.ImageWidth		   = 16 * 50,	// = 800
 	};
 
 	corejpegmode.onInfoReadyCallback(&hjpeg, &config);
@@ -87,13 +87,13 @@ TEST_F(CoreJPEGModeDMATest, onInfoReadyCallback420ChromSubsamplingDimensionsNotM
 	auto config = JPEG_ConfTypeDef {.ChromaSubsampling = JPEG_420_SUBSAMPLING};
 
 	for (int i = 1; i < 16; i++) {
-		config.ImageWidth  = 16 * 50 + i;	// =800 + i
-		config.ImageHeight = 16 * 30 + i;	// =480 + i
+		config.ImageWidth  = static_cast<uint32_t>(16 * 50 + i);   // = 800 + i
+		config.ImageHeight = static_cast<uint32_t>(16 * 30 + i);   // = 480 + i
 
 		corejpegmode.onInfoReadyCallback(&hjpeg, &config);
 
-		auto width_ceil_multiple  = 800 + 16 * ((15 + i) / 16);
-		auto height_ceil_multiple = 480 + 16 * ((15 + i) / 16);
+		const auto width_ceil_multiple	= 800 + 16 * ((15 + i) / 16);
+		const auto height_ceil_multiple = 480 + 16 * ((15 + i) / 16);
 
 		EXPECT_EQ(config.ImageWidth, width_ceil_multiple);
 		EXPECT_EQ(config.ImageHeight, height_ceil_multiple);
@@ -104,8 +104,8 @@ TEST_F(CoreJPEGModeDMATest, onInfoReadyCallback422ChromSubsamplingDimensionsMult
 {
 	auto config = JPEG_ConfTypeDef {
 		.ChromaSubsampling = JPEG_422_SUBSAMPLING,
-		.ImageHeight	   = 8 * 60,	// =480
-		.ImageWidth		   = 16 * 50,	// =800
+		.ImageHeight	   = 8 * 60,	// = 480
+		.ImageWidth		   = 16 * 50,	// = 800
 	};
 
 	corejpegmode.onInfoReadyCallback(&hjpeg, &config);
@@ -119,8 +119,8 @@ TEST_F(CoreJPEGModeDMATest, onInfoReadyCallback422ChromSubsamplingDimensionsNotM
 	auto config = JPEG_ConfTypeDef {.ChromaSubsampling = JPEG_422_SUBSAMPLING};
 
 	for (int i = 1; i < 16; i++) {
-		config.ImageWidth  = 16 * 50 + i;	// =800 + i
-		config.ImageHeight = 8 * 60 + i;	// =480 + i
+		config.ImageWidth  = static_cast<uint32_t>(16 * 50 + i);   // = 800 + i
+		config.ImageHeight = static_cast<uint32_t>(8 * 60 + i);	   // = 480 + i
 
 		corejpegmode.onInfoReadyCallback(&hjpeg, &config);
 
@@ -136,8 +136,8 @@ TEST_F(CoreJPEGModeDMATest, onInfoReadyCallback444ChromSubsamplingDimensionsMult
 {
 	auto config = JPEG_ConfTypeDef {
 		.ChromaSubsampling = JPEG_444_SUBSAMPLING,
-		.ImageHeight	   = 8 * 60,	// =480
-		.ImageWidth		   = 8 * 100,	// =800
+		.ImageHeight	   = 8 * 60,	// = 480
+		.ImageWidth		   = 8 * 100,	// = 800
 	};
 
 	corejpegmode.onInfoReadyCallback(&hjpeg, &config);
@@ -151,8 +151,8 @@ TEST_F(CoreJPEGModeDMATest, onInfoReadyCallback444ChromSubsamplingDimensionsNotM
 	auto config = JPEG_ConfTypeDef {.ChromaSubsampling = JPEG_444_SUBSAMPLING};
 
 	for (int i = 1; i < 8; i++) {
-		config.ImageWidth  = 8 * 100 + i;	// =800 + i
-		config.ImageHeight = 8 * 60 + i;	// =480 + i
+		config.ImageWidth  = static_cast<uint32_t>(8 * 100 + i);   // = 800 + i
+		config.ImageHeight = static_cast<uint32_t>(8 * 60 + i);	   // = 480 + i
 
 		corejpegmode.onInfoReadyCallback(&hjpeg, &config);
 

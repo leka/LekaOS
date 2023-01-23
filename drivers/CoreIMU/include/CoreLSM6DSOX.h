@@ -34,7 +34,7 @@ class CoreLSM6DSOX : public interface::LSM6DSOX
 	lsm6dsox_md_t _config {};
 	stmdev_ctx_t _register_io_function {};
 	SensorData _sensor_data {};
-	const char _address = LSM6DSOX_I2C_ADD_L;
+	static constexpr auto kI2CAddress = LSM6DSOX_I2C_ADD_L;
 
 	static constexpr uint8_t kMaxBufferLength = 32;
 	std::array<uint8_t, kMaxBufferLength> _rx_buffer {};

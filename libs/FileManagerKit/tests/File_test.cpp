@@ -40,16 +40,16 @@ class FileTest : public ::testing::Test
 
 	void writeTempFile(std::span<uint8_t> data)
 	{
-		auto *file = fopen(tempFilename, "wb");
-		fwrite(data.data(), sizeof(uint8_t), data.size(), file);
-		fclose(file);
+		auto *tmp_file = fopen(tempFilename, "wb");
+		fwrite(data.data(), sizeof(uint8_t), data.size(), tmp_file);
+		fclose(tmp_file);
 	}
 
 	void writeTempFile(std::span<char> data)
 	{
-		auto *file = fopen(tempFilename, "w");
-		fwrite(data.data(), sizeof(char), data.size(), file);
-		fclose(file);
+		auto *tmp_file = fopen(tempFilename, "w");
+		fwrite(data.data(), sizeof(char), data.size(), tmp_file);
+		fclose(tmp_file);
 	}
 
 	FileManagerKit::File file {};

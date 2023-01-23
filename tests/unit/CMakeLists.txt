@@ -55,6 +55,12 @@ set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_EXTENSIONS TRUE)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+# More warnings
+add_compile_options(
+	-Wshadow
+	-Wconversion
+)
+
 # Colored output for compilation
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
 	message(STATUS "GCC found! Adding -fdiagnostics-color=always compile option")

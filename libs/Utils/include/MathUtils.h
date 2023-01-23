@@ -13,7 +13,7 @@ template <typename OutputType, typename IntputType>
 constexpr auto map(IntputType x, IntputType in_min, IntputType in_max, OutputType out_min, OutputType out_max)
 	-> OutputType
 {
-	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+	return static_cast<OutputType>((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
 }
 
 struct Point {

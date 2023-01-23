@@ -33,9 +33,10 @@ TEST_F(CoreBatteryTest, initialization)
 
 TEST_F(CoreBatteryTest, voltageAboveFull)
 {
-	auto AnalogIn_voltage_value	  = float {2.208};
-	auto expected_battery_voltage = float {12.6};
-	auto expected_battery_level	  = uint8_t {100};
+	constexpr auto AnalogIn_voltage_value	= float {2.208F};
+	constexpr auto expected_battery_voltage = float {12.6F};
+	constexpr auto expected_battery_level	= uint8_t {100};
+
 	spy_AnalogIn_setVoltageValue(AnalogIn_voltage_value);
 
 	ASSERT_NEAR(battery.voltage(), expected_battery_voltage, 0.1);
@@ -46,9 +47,10 @@ TEST_F(CoreBatteryTest, voltageAboveFull)
 TEST_F(CoreBatteryTest, voltageBetweenThreeQuarterAndFull)
 {
 	// ? Check again the 3 next value
-	auto AnalogIn_voltage_value	  = float {2.135};
-	auto expected_battery_voltage = float {11.3};
-	auto expected_battery_level	  = uint8_t {88};
+	constexpr auto AnalogIn_voltage_value	= float {2.135F};
+	constexpr auto expected_battery_voltage = float {11.3F};
+	constexpr auto expected_battery_level	= uint8_t {88};
+
 	spy_AnalogIn_setVoltageValue(AnalogIn_voltage_value);
 
 	ASSERT_NEAR(battery.voltage(), expected_battery_voltage, 0.1);
@@ -60,9 +62,10 @@ TEST_F(CoreBatteryTest, voltageBetweenThreeQuarterAndFull)
 TEST_F(CoreBatteryTest, voltageBetweenHalfAndThreeQuarter)
 {
 	// ? Check again the 3 next value
-	auto AnalogIn_voltage_value	  = float {2.110};
-	auto expected_battery_voltage = float {10.8};
-	auto expected_battery_level	  = uint8_t {55};
+	constexpr auto AnalogIn_voltage_value	= float {2.110F};
+	constexpr auto expected_battery_voltage = float {10.8F};
+	constexpr auto expected_battery_level	= uint8_t {55};
+
 	spy_AnalogIn_setVoltageValue(AnalogIn_voltage_value);
 
 	ASSERT_NEAR(battery.voltage(), expected_battery_voltage, 0.1);
@@ -74,9 +77,10 @@ TEST_F(CoreBatteryTest, voltageBetweenHalfAndThreeQuarter)
 TEST_F(CoreBatteryTest, voltageBetweenQuarterAndHalf)
 {
 	// ? Check again the 3 next value
-	auto AnalogIn_voltage_value	  = float {2.090};
-	auto expected_battery_voltage = float {10.6};
-	auto expected_battery_level	  = uint8_t {30};
+	constexpr auto AnalogIn_voltage_value	= float {2.090F};
+	constexpr auto expected_battery_voltage = float {10.6F};
+	constexpr auto expected_battery_level	= uint8_t {30};
+
 	spy_AnalogIn_setVoltageValue(AnalogIn_voltage_value);
 
 	ASSERT_NEAR(battery.voltage(), expected_battery_voltage, 0.1);
@@ -87,9 +91,10 @@ TEST_F(CoreBatteryTest, voltageBetweenQuarterAndHalf)
 
 TEST_F(CoreBatteryTest, voltageBetweenEmptyAndQuarter)
 {
-	auto AnalogIn_voltage_value	  = float {2.033};
-	auto expected_battery_voltage = float {9.7};
-	auto expected_battery_level	  = uint8_t {15};
+	constexpr auto AnalogIn_voltage_value	= float {2.033F};
+	constexpr auto expected_battery_voltage = float {9.7F};
+	constexpr auto expected_battery_level	= uint8_t {15};
+
 	spy_AnalogIn_setVoltageValue(AnalogIn_voltage_value);
 
 	ASSERT_NEAR(battery.voltage(), expected_battery_voltage, 0.1);
@@ -100,9 +105,10 @@ TEST_F(CoreBatteryTest, voltageBetweenEmptyAndQuarter)
 
 TEST_F(CoreBatteryTest, voltageBelowEmpty)
 {
-	auto AnalogIn_voltage_value	  = float {1.82};
-	auto expected_battery_voltage = float {7.5};
-	auto expected_battery_level	  = uint8_t {0};
+	constexpr auto AnalogIn_voltage_value	= float {1.82F};
+	constexpr auto expected_battery_voltage = float {7.5F};
+	constexpr auto expected_battery_level	= uint8_t {0};
+
 	spy_AnalogIn_setVoltageValue(AnalogIn_voltage_value);
 
 	ASSERT_NEAR(battery.voltage(), expected_battery_voltage, 0.1);
