@@ -21,11 +21,7 @@ class CoreJPEGModeDMATest : public ::testing::Test
   protected:
 	CoreJPEGModeDMATest() : corejpegmode(halmock) {}
 
-	void SetUp() override
-	{
-		// EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).Times(1);
-		// corejpegmode.decode(&hjpeg, &filemock);
-	}
+	// void SetUp() override {}
 	// void TearDown() override {}
 
 	mock::CoreSTM32Hal halmock;
@@ -174,78 +170,109 @@ TEST_F(CoreJPEGModeDMATest, onDataReadyCallback)
 	corejpegmode.onDataReadyCallback(&hjpeg, &pDataOut, size);
 }
 
-// TEST_F(CoreJPEGModeDMATest, onDataAvailableCallback)
-// {
-// 	auto size = uint32_t {2};
+TEST_F(CoreJPEGModeDMATest, onDataAvailableCallbackSizeDifferent)
+{
+	auto decoded_datasize = 1;
 
-// 	{
-// 		InSequence seq;
+	EXPECT_CALL(halmock, HAL_JPEG_ConfigInputBuffer).Times(1);
 
-// 		EXPECT_CALL(filemock, seek).Times(1);
-// 		EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillOnce(Return(42));
-// 		EXPECT_CALL(halmock, HAL_JPEG_ConfigInputBuffer).Times(1);
-// 	}
+	corejpegmode.onDataAvailableCallback(&hjpeg, decoded_datasize);
+}
 
-// 	corejpegmode.onDataAvailableCallback(&hjpeg, size);
-// }
+TEST_F(CoreJPEGModeDMATest, onDataAvailableCallbackSizeEqualNextBufferEmpty)
+{
+	auto decoded_datasize = 0;
 
-// TEST_F(CoreJPEGModeDMATest, onDataAvailableCallbackSizeEqual)
-// {
-// 	auto size = uint32_t {42};
+	EXPECT_CALL(halmock, HAL_JPEG_Pause).Times(1);
 
-// 	EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillOnce(Return(42));
-// 	EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(1);
-// 	corejpegmode.decode(&hjpeg, &filemock);
-
-// 	{
-// 		InSequence seq;
-
-// 		EXPECT_CALL(filemock, seek).Times(0);
-// 		EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillOnce(Return(42));
-// 		EXPECT_CALL(halmock, HAL_JPEG_ConfigInputBuffer).Times(1);
-// 	}
-
-// 	corejpegmode.onDataAvailableCallback(&hjpeg, size);
-// }
-
-// TEST_F(CoreJPEGModeDMATest, onDataAvailableCallbackCannotReadFile)
-// {
-// 	auto size = uint32_t {2};
-
-// 	{
-// 		InSequence seq;
-
-// 		EXPECT_CALL(filemock, seek).Times(1);
-// 		EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillOnce(Return(0));
-// 		EXPECT_CALL(halmock, HAL_JPEG_ConfigInputBuffer).Times(0);
-// 	}
-
-// 	corejpegmode.onDataAvailableCallback(&hjpeg, size);
-// }
-
-// TEST_F(CoreJPEGModeDMATest, decodeSuccess)
-// {
-// 	EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillOnce(Return(42));
-// 	EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(1);
-
-// 	auto status = corejpegmode.decode(&hjpeg, &filemock);
-
-// 	EXPECT_EQ(status, HAL_OK);
-// }
-
-// TEST_F(CoreJPEGModeDMATest, decodeFailed)
-// {
-// 	EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), _)).WillOnce(Return(0));
-// 	EXPECT_CALL(halmock, HAL_JPEG_Decode).Times(0);
-
-// 	auto status = corejpegmode.decode(&hjpeg, &filemock);
-
-// 	EXPECT_NE(status, HAL_OK);
-// }
+	corejpegmode.onDataAvailableCallback(&hjpeg, decoded_datasize);
+}
 
 TEST_F(CoreJPEGModeDMATest, onDecodeCompleteCallback)
 {
 	corejpegmode.onDecodeCompleteCallback(&hjpeg);
 
 	// nothing expected
+}
+
+TEST_F(CoreJPEGModeDMATest, decodeBufferFull)
+{
+	auto buffer_state_full = 1;
+
+	{
+		InSequence seq;
+
+		// read file and fill input buffers
+		EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), jpeg::input_chunk_size))
+			.Times(jpeg::input_buffers_nb)
+			.WillRepeatedly(Return(buffer_state_full));
+
+		// start JPEG decoding with DMA method
+		EXPECT_CALL(halmock, HAL_JPEG_Decode_DMA).Times(1);
+
+		// loop until decode process ends
+		// nothing expected
+	}
+
+	auto image_size = corejpegmode.decode(&hjpeg, filemock);
+
+	EXPECT_EQ(image_size, 0);
+}
+
+TEST_F(CoreJPEGModeDMATest, decodeBufferEmptyNotPausedWriteBufferFull)
+{
+	auto buffer_state_full	= 1;
+	auto buffer_state_empty = 0;
+
+	{
+		InSequence seq;
+
+		// read file and fill input buffers
+		EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), jpeg::input_chunk_size))
+			.Times(jpeg::input_buffers_nb)
+			.WillRepeatedly(Return(buffer_state_empty));
+
+		// start JPEG decoding with DMA method
+		EXPECT_CALL(halmock, HAL_JPEG_Decode_DMA).Times(1);
+
+		// loop until decode process ends
+		// // decodeInputHandler
+		EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), jpeg::input_chunk_size))
+			.Times(jpeg::input_buffers_nb)
+			.WillRepeatedly(Return(buffer_state_full));
+		// // decoderOutputHandler
+	}
+
+	auto image_size = corejpegmode.decode(&hjpeg, filemock);
+
+	EXPECT_EQ(image_size, 0);
+}
+
+TEST_F(CoreJPEGModeDMATest, decodeBufferEmptyNotPausedWriteBufferEmpty)
+{
+	auto buffer_state_full	= 1;
+	auto buffer_state_empty = 0;
+
+	{
+		InSequence seq;
+
+		// read file and fill input buffers
+		EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), jpeg::input_chunk_size))
+			.Times(jpeg::input_buffers_nb)
+			.WillRepeatedly(Return(buffer_state_empty));
+
+		// start JPEG decoding with DMA method
+		EXPECT_CALL(halmock, HAL_JPEG_Decode_DMA).Times(1);
+
+		// loop until decode process ends
+		// // decodeInputHandler
+		EXPECT_CALL(filemock, read(Matcher<uint8_t *>(_), jpeg::input_chunk_size))
+			.Times(jpeg::input_buffers_nb)
+			.WillRepeatedly(Return(buffer_state_empty));
+		// // decoderOutputHandler
+	}
+
+	auto image_size = corejpegmode.decode(&hjpeg, filemock);
+
+	EXPECT_EQ(image_size, 0);
 }
