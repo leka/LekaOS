@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "BehaviorKit.h"
+#include <fs_structure.hpp>
 
 #include "rtos/ThisThread.h"
 
@@ -26,19 +27,19 @@ void BehaviorKit::spinRight(float speed)
 
 void BehaviorKit::launching()
 {
-	_videokit.displayImage("/fs/home/img/system/robot-misc-splash_screen-large-400.jpg");
+	_videokit.displayImage(fs::home::img::system::robot_misc_splash_screen_large_400);
 }
 
 void BehaviorKit::sleeping()
 {
 	_ledkit.start(&led::animation::sleeping);
-	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-sleep-yawn_then_sleep-no_eyebrows.avi");
+	_videokit.playVideoOnce(fs::home::vid::system::robot_system_sleep_yawn_then_sleep_no_eyebrows);
 }
 
 void BehaviorKit::waiting()
 {
 	_ledkit.stop();
-	_videokit.playVideoOnRepeat("/fs/home/vid/system/robot-system-idle-looking_top_right_left-no_eyebrows.avi");
+	_videokit.playVideoOnRepeat(fs::home::vid::system::robot_system_idle_looking_top_right_left_no_eyebrows);
 }
 
 void BehaviorKit::blinkOnCharge()
@@ -49,34 +50,34 @@ void BehaviorKit::blinkOnCharge()
 void BehaviorKit::lowBattery()
 {
 	_ledkit.stop();
-	_videokit.displayImage("/fs/home/img/system/robot-battery-empty-must_be_charged.jpg");
+	_videokit.displayImage(fs::home::img::system::robot_battery_empty_must_be_charged);
 	_motor_left.stop();
 	_motor_right.stop();
 }
 
 void BehaviorKit::chargingEmpty()
 {
-	_videokit.displayImage("/fs/home/img/system/robot-battery-charging-empty_red.jpg");
+	_videokit.displayImage(fs::home::img::system::robot_battery_charging_empty_red);
 }
 
 void BehaviorKit::chargingLow()
 {
-	_videokit.displayImage("/fs/home/img/system/robot-battery-charging-quarter_1-red.jpg");
+	_videokit.displayImage(fs::home::img::system::robot_battery_charging_quarter_1_red);
 }
 
 void BehaviorKit::chargingMedium()
 {
-	_videokit.displayImage("/fs/home/img/system/robot-battery-charging-quarter_2-orange.jpg");
+	_videokit.displayImage(fs::home::img::system::robot_battery_charging_quarter_2_orange);
 }
 
 void BehaviorKit::chargingHigh()
 {
-	_videokit.displayImage("/fs/home/img/system/robot-battery-charging-quarter_3-green.jpg");
+	_videokit.displayImage(fs::home::img::system::robot_battery_charging_quarter_3_green);
 }
 
 void BehaviorKit::chargingFull()
 {
-	_videokit.displayImage("/fs/home/img/system/robot-battery-charging-quarter_4-green.jpg");
+	_videokit.displayImage(fs::home::img::system::robot_battery_charging_quarter_4_green);
 }
 
 void BehaviorKit::bleConnectionWithoutVideo()
@@ -87,16 +88,17 @@ void BehaviorKit::bleConnectionWithoutVideo()
 void BehaviorKit::bleConnectionWithVideo()
 {
 	_ledkit.start(&led::animation::ble_connection);
-	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-ble_connection-wink-no_eyebrows.avi");
+	_videokit.playVideoOnce(fs::home::vid::system::robot_system_ble_connection_wink_no_eyebrows);
 }
 
 void BehaviorKit::working()
 {
-	_videokit.displayImage("/fs/home/img/system/robot-face-smiling-slightly.jpg");
+	_videokit.displayImage(fs::home::img::system::robot_face_smiling_slightly);
 }
 
 void BehaviorKit::fileExchange()
 {
+	// TODO(@ladislas): add file exchange image
 	_videokit.displayImage("/fs/home/img/system/robot-file_exchange.jpg");
 }
 
