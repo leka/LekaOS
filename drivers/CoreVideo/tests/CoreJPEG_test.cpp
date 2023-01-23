@@ -18,6 +18,7 @@ using ::testing::DoAll;
 using ::testing::InSequence;
 using ::testing::Matcher;
 using ::testing::Return;
+using ::testing::SaveArg;
 using ::testing::SetArgPointee;
 using ::testing::SetArrayArgument;
 
@@ -65,6 +66,16 @@ TEST_F(CoreJPEGTest, getImageProperties)
 
 TEST_F(CoreJPEGTest, initializationSequence)
 {
+	std::function<void(JPEG_HandleTypeDef *)> hal_jpeg_mspinit_callback = [](JPEG_HandleTypeDef *) {};
+	std::function<void(JPEG_HandleTypeDef *, JPEG_ConfTypeDef *)> hal_jpeg_info_ready_callback =
+		[](JPEG_HandleTypeDef *, JPEG_ConfTypeDef *) {};
+	std::function<void(JPEG_HandleTypeDef *, uint32_t)> hal_jpeg_get_data_callback = [](JPEG_HandleTypeDef *,
+																						uint32_t) {};
+	std::function<void(JPEG_HandleTypeDef *, uint8_t *, uint32_t)> hal_jpeg_data_ready_callback =
+		[](JPEG_HandleTypeDef *, uint8_t *, uint32_t) {};
+	std::function<void(JPEG_HandleTypeDef *)> hal_jpeg_decode_complete_callback = [](JPEG_HandleTypeDef *) {};
+	std::function<void(JPEG_HandleTypeDef *)> hal_jpeg_error_callback			= [](JPEG_HandleTypeDef *) {};
+
 	{
 		InSequence seq;
 
@@ -75,17 +86,48 @@ TEST_F(CoreJPEGTest, initializationSequence)
 		EXPECT_CALL(halmock, HAL_NVIC_SetPriority).Times(1);
 		EXPECT_CALL(halmock, HAL_NVIC_EnableIRQ).Times(1);
 
-		EXPECT_CALL(halmock, HAL_JPEG_RegisterCallback(_, HAL_JPEG_MSPINIT_CB_ID, _)).Times(1);
+		EXPECT_CALL(halmock, HAL_JPEG_RegisterCallback(_, HAL_JPEG_MSPINIT_CB_ID, _))
+			.WillOnce(DoAll(SaveArg<2>(&hal_jpeg_mspinit_callback), Return(HAL_StatusTypeDef::HAL_OK)));
 		EXPECT_CALL(halmock, HAL_JPEG_Init).Times(1);
 
-		EXPECT_CALL(halmock, HAL_JPEG_RegisterInfoReadyCallback).Times(1);
-		EXPECT_CALL(halmock, HAL_JPEG_RegisterGetDataCallback).Times(1);
-		EXPECT_CALL(halmock, HAL_JPEG_RegisterDataReadyCallback).Times(1);
-		EXPECT_CALL(halmock, HAL_JPEG_RegisterCallback(_, HAL_JPEG_DECODE_CPLT_CB_ID, _)).Times(1);
-		EXPECT_CALL(halmock, HAL_JPEG_RegisterCallback(_, HAL_JPEG_ERROR_CB_ID, _)).Times(1);
+		EXPECT_CALL(halmock, HAL_JPEG_RegisterInfoReadyCallback)
+			.WillOnce(DoAll(SaveArg<1>(&hal_jpeg_info_ready_callback), Return(HAL_StatusTypeDef::HAL_OK)));
+		EXPECT_CALL(halmock, HAL_JPEG_RegisterGetDataCallback)
+			.WillOnce(DoAll(SaveArg<1>(&hal_jpeg_get_data_callback), Return(HAL_StatusTypeDef::HAL_OK)));
+		EXPECT_CALL(halmock, HAL_JPEG_RegisterDataReadyCallback)
+			.WillOnce(DoAll(SaveArg<1>(&hal_jpeg_data_ready_callback), Return(HAL_StatusTypeDef::HAL_OK)));
+		EXPECT_CALL(halmock, HAL_JPEG_RegisterCallback(_, HAL_JPEG_DECODE_CPLT_CB_ID, _))
+			.WillOnce(DoAll(SaveArg<2>(&hal_jpeg_decode_complete_callback), Return(HAL_StatusTypeDef::HAL_OK)));
+		EXPECT_CALL(halmock, HAL_JPEG_RegisterCallback(_, HAL_JPEG_ERROR_CB_ID, _))
+			.WillOnce(DoAll(SaveArg<2>(&hal_jpeg_error_callback), Return(HAL_StatusTypeDef::HAL_OK)));
 	}
 
 	corejpeg.initialize();
+
+	// ? - Verification of callback registered
+
+	auto jpeg_handle = JPEG_HandleTypeDef {};
+
+	EXPECT_CALL(modemock, onMspInitCallback(&jpeg_handle));
+	hal_jpeg_mspinit_callback(&jpeg_handle);
+
+	auto jpeg_conf = JPEG_ConfTypeDef {};
+	EXPECT_CALL(modemock, onInfoReadyCallback(&jpeg_handle, &jpeg_conf));
+	hal_jpeg_info_ready_callback(&jpeg_handle, &jpeg_conf);
+
+	auto any_datasize = uint8_t {42};
+	EXPECT_CALL(modemock, onDataAvailableCallback(&jpeg_handle, any_datasize));
+	hal_jpeg_get_data_callback(&jpeg_handle, any_datasize);
+
+	auto output_data = std::array<uint8_t, 8> {};
+	EXPECT_CALL(modemock, onDataReadyCallback(&jpeg_handle, output_data.data(), any_datasize));
+	hal_jpeg_data_ready_callback(&jpeg_handle, output_data.data(), any_datasize);
+
+	EXPECT_CALL(modemock, onDecodeCompleteCallback(&jpeg_handle));
+	hal_jpeg_decode_complete_callback(&jpeg_handle);
+
+	EXPECT_CALL(modemock, onErrorCallback(&jpeg_handle));
+	hal_jpeg_error_callback(&jpeg_handle);
 }
 
 TEST_F(CoreJPEGTest, decodeImage)
