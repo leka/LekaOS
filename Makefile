@@ -49,9 +49,12 @@ BUILD_TARGETS_TO_USE_WITH_BOOTLOADER ?= OFF
 # MARK: - Build dirs
 #
 
-PROJECT_BUILD_DIR       := $(ROOT_DIR)/_build
-TARGET_BUILD_DIR        := $(PROJECT_BUILD_DIR)/${TARGET_BOARD}
-CMAKE_CONFIG_DIR        := $(TARGET_BUILD_DIR)/cmake_config
+# Global - os + bootloader + spikes + functional tests
+GLOBAL_BUILD_DIR              := $(ROOT_DIR)/_build
+TARGET_BOARD_BUILD_DIR        := $(GLOBAL_BUILD_DIR)/${TARGET_BOARD}
+TARGET_BOARD_CMAKE_CONFIG_DIR := $(TARGET_BOARD_BUILD_DIR)/cmake_config
+
+# Unit tests
 UNIT_TESTS_BUILD_DIR    := $(ROOT_DIR)/_build_unit_tests
 UNIT_TESTS_COVERAGE_DIR := $(UNIT_TESTS_BUILD_DIR)/_coverage
 
@@ -59,7 +62,7 @@ UNIT_TESTS_COVERAGE_DIR := $(UNIT_TESTS_BUILD_DIR)/_coverage
 # MARK: - VSCode CMake Tools
 #
 
-CMAKE_TOOLS_BUILD_DIR := $(ROOT_DIR)/_build_cmake_tools
+CMAKE_TOOLS_BUILD_DIR  := $(ROOT_DIR)/_build_cmake_tools
 CMAKE_TOOLS_CONFIG_DIR := $(CMAKE_TOOLS_BUILD_DIR)/cmake_config
 
 #
@@ -73,7 +76,7 @@ EXCLUDE_FROM_LCOV_COVERAGE  =     '*Xcode*'      '*_build*'      '*extern*'     
 # MARK: - .bin path
 #
 
-LEKA_OS_BIN_PATH := $(TARGET_BUILD_DIR)/app/os/LekaOS.bin
+LEKA_OS_BIN_PATH := $(TARGET_BOARD_BUILD_DIR)/app/os/LekaOS.bin
 BIN_PATH         ?= $(LEKA_OS_BIN_PATH)
 
 #
@@ -85,27 +88,27 @@ BIN_PATH         ?= $(LEKA_OS_BIN_PATH)
 all:
 	@echo ""
 	@echo "🏗️  Building everything! 🌈"
-	cmake --build $(TARGET_BUILD_DIR)
+	cmake --build $(TARGET_BOARD_BUILD_DIR)
 
 os:
 	@echo ""
 	@echo "🏗️  Building LekaOS 🤖"
-	cmake --build $(TARGET_BUILD_DIR) -t LekaOS
+	cmake --build $(TARGET_BOARD_BUILD_DIR) -t LekaOS
 
 bootloader:
 	@echo ""
 	@echo "🏗️  Building Bootloader 🤖"
-	cmake --build $(TARGET_BUILD_DIR) -t bootloader
+	cmake --build $(TARGET_BOARD_BUILD_DIR) -t bootloader
 
 spikes:
 	@echo ""
 	@echo "🏗️  Building spikes 🍱"
-	cmake --build $(TARGET_BUILD_DIR) -t spikes
+	cmake --build $(TARGET_BOARD_BUILD_DIR) -t spikes
 
 tests_functional:
 	@echo ""
 	@echo "🏗️  Building functional tests ⚗️"
-	cmake --build $(TARGET_BUILD_DIR) -t tests_functional
+	cmake --build $(TARGET_BOARD_BUILD_DIR) -t tests_functional
 
 firmware:
 	python3 tools/check_version.py ./config/os_version
@@ -119,36 +122,29 @@ firmware_no_cleanup:
 # MARK: - Config targets
 #
 
+# Global config
 config:
 	@$(MAKE) config_cmake_target
 	@$(MAKE) config_cmake_build
 
-config_tools:
-	@$(MAKE) config_tools_target
-# @$(MAKE) config_tools_build
-
-clean:
-	@$(MAKE) rm_build
-
-clean_config:
-	@$(MAKE) rm_build
-	@$(MAKE) rm_config
-	@$(MAKE) config
-
 config_cmake_target: mkdir_cmake_config
 	@echo ""
 	@echo "🏃 Running configuration script for target $(TARGET_BOARD) 📝"
-	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_CONFIG_DIR) -a $(ROOT_DIR)/config/mbed_app.json
+	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(TARGET_BOARD_CMAKE_CONFIG_DIR) -a $(ROOT_DIR)/config/mbed_app.json
+
+config_cmake_build: mkdir_cmake_config
+	@echo ""
+	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
+	@cmake -S . -B $(TARGET_BOARD_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(TARGET_BOARD_CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DENABLE_SYSTEM_STATS=$(ENABLE_SYSTEM_STATS) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=$(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
+
+# Tools
+config_tools:
+	@$(MAKE) config_tools_target
 
 config_tools_target: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running configuration script for VSCode CMake Tools 📝"
 	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_TOOLS_CONFIG_DIR) -a $(ROOT_DIR)/config/mbed_app.json
-
-config_cmake_build: mkdir_cmake_config
-	@echo ""
-	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
-	@cmake -S . -B $(TARGET_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DENABLE_SYSTEM_STATS=$(ENABLE_SYSTEM_STATS) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=$(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
 
 config_tools_build: mkdir_tools_config
 	@echo ""
@@ -325,7 +321,7 @@ mcuboot_symlink_files:
 #
 
 mkdir_cmake_config:
-	@mkdir -p $(CMAKE_CONFIG_DIR)
+	@mkdir -p $(TARGET_BOARD_CMAKE_CONFIG_DIR)
 
 mkdir_tools_config:
 	@mkdir -p $(CMAKE_TOOLS_CONFIG_DIR)
@@ -337,19 +333,14 @@ mkdir_build_unit_tests:
 rm_build:
 	@echo ""
 	@echo "⚠️  Cleaning up $(TARGET_BOARD) build directory 🧹"
-	rm -rf $(TARGET_BUILD_DIR)
+	rm -rf $(TARGET_BOARD_BUILD_DIR)
 
 rm_build_all:
 	@echo ""
 	@echo "⚠️  Cleaning up all build directories 🧹"
-	rm -rf $(PROJECT_BUILD_DIR)
+	rm -rf $(GLOBAL_BUILD_DIR)
 	rm -rf $(CMAKE_TOOLS_BUILD_DIR)
 	rm -rf ./compile_commands.json
-
-rm_config:
-	@echo ""
-	@echo "⚠️  Cleaning up $(TARGET_BOARD) cmake_config directory 🧹"
-	rm -rf $(CMAKE_CONFIG_DIR)
 
 deep_clean:
 	@$(MAKE) rm_build_all
