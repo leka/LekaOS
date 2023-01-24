@@ -54,6 +54,10 @@ GLOBAL_BUILD_DIR              := $(ROOT_DIR)/_build
 TARGET_BOARD_BUILD_DIR        := $(GLOBAL_BUILD_DIR)/${TARGET_BOARD}
 TARGET_BOARD_CMAKE_CONFIG_DIR := $(TARGET_BOARD_BUILD_DIR)/cmake_config
 
+# Firmware = os + bootloader
+FIRMWARE_BUILD_DIR  := $(ROOT_DIR)/_build_firmware
+FIRMWARE_CONFIG_DIR := $(FIRMWARE_BUILD_DIR)/cmake_config
+
 # Unit tests
 UNIT_TESTS_BUILD_DIR    := $(ROOT_DIR)/_build_unit_tests
 UNIT_TESTS_COVERAGE_DIR := $(UNIT_TESTS_BUILD_DIR)/_coverage
@@ -110,17 +114,26 @@ tests_functional:
 	@echo "🏗️  Building functional tests ⚗️"
 	cmake --build $(TARGET_BOARD_BUILD_DIR) -t tests_functional
 
-firmware:
-	python3 tools/check_version.py ./config/os_version
-	./tools/firmware/build_firmware.sh -r -v $(OS_VERSION)
-
-firmware_no_cleanup:
-	python3 tools/check_version.py ./config/os_version
-	./tools/firmware/build_firmware.sh -v $(OS_VERSION)
+firmware: bootloader
+	@echo ""
+	@echo "🏗️  Building Firmware = LekaOS + Bootloader 🤖"
+	cmake --build $(FIRMWARE_BUILD_DIR) -t LekaOS
+	@echo ""
+	@echo "🛂 Check os version"
+	@echo ""
+	@python3 tools/check_version.py ./config/os_version
+	@echo ""
+	@echo "🧑‍🔬 Generate firmware + os images"
+	@bash ./tools/generate_firmware.sh
 
 #
 # MARK: - Config targets
 #
+
+config_all:
+	@$(MAKE) config
+	@$(MAKE) config_firmware
+	@$(MAKE) config_unit_tests_lite COVERAGE=ON
 
 # Global config
 config:
@@ -136,6 +149,22 @@ config_cmake_build: mkdir_cmake_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
 	@cmake -S . -B $(TARGET_BOARD_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(TARGET_BOARD_CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DENABLE_SYSTEM_STATS=$(ENABLE_SYSTEM_STATS) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=$(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
+
+# Firmware config
+config_firmware: config
+	@$(MAKE) config_firmware_target
+	@$(MAKE) config_firmware_build
+
+config_firmware_target: mkdir_firmware_config
+	@echo ""
+	@echo "🏃 Running configuration script for firmware (os + bootloader) 📝"
+	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(FIRMWARE_CONFIG_DIR) -a $(ROOT_DIR)/config/mbed_app.json
+
+config_firmware_build: mkdir_firmware_config
+	@echo ""
+	@echo "🏃 Running cmake configuration script for firmware (os + bootloader) 📝"
+	@cmake -S . -B $(FIRMWARE_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(FIRMWARE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DENABLE_SYSTEM_STATS=$(ENABLE_SYSTEM_STATS) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=ON
+
 
 # Tools
 config_tools:
@@ -323,6 +352,9 @@ mcuboot_symlink_files:
 mkdir_cmake_config:
 	@mkdir -p $(TARGET_BOARD_CMAKE_CONFIG_DIR)
 
+mkdir_firmware_config:
+	@mkdir -p $(FIRMWARE_CONFIG_DIR)
+
 mkdir_tools_config:
 	@mkdir -p $(CMAKE_TOOLS_CONFIG_DIR)
 
@@ -339,6 +371,7 @@ rm_build_all:
 	@echo ""
 	@echo "⚠️  Cleaning up all build directories 🧹"
 	rm -rf $(GLOBAL_BUILD_DIR)
+	rm -rf $(FIRMWARE_BUILD_DIR)
 	rm -rf $(CMAKE_TOOLS_BUILD_DIR)
 	rm -rf ./compile_commands.json
 

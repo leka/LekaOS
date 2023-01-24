@@ -52,7 +52,7 @@ jobs:
 
       - name: Build firmware, os, bootloader
         run: |
-          make firmware
+          make config_firmware firmware
 
       - name: Ccache post build
         run: |
