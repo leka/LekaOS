@@ -33,7 +33,7 @@ class VideoKit : public interface::VideoKit
 
 	void stopVideo() final;
 
-	[[noreturn]] void run();
+	void run();
 
   private:
 	interface::EventLoop &_event_loop;
