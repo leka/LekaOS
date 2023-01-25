@@ -24,6 +24,7 @@
 #include "CoreSDRAM.hpp"
 #include "CoreSTM32Hal.h"
 #include "CoreVideo.hpp"
+#include "EventLoopKit.h"
 #include "FATFileSystem.h"
 #include "FileManagerKit.h"
 #include "HelloWorld.h"
@@ -39,6 +40,7 @@ FATFileSystem fatfs("fs");
 
 namespace display::internal {
 
+auto event_loop	 = EventLoopKit {};
 auto event_flags = CoreEventFlags {};
 
 auto corell		   = CoreLL {};
@@ -60,7 +62,7 @@ extern "C" auto corevideo =
 
 }	// namespace display::internal
 
-auto videokit = VideoKit {display::internal::event_flags, display::internal::corevideo};
+auto videokit = VideoKit {display::internal::event_loop, display::internal::event_flags, display::internal::corevideo};
 
 auto file = FileManagerKit::File {};
 

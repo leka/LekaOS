@@ -127,6 +127,7 @@ namespace display {
 
 namespace internal {
 
+	auto event_loop	 = EventLoopKit {};
 	auto event_flags = CoreEventFlags {};
 
 	auto corell		   = CoreLL {};
@@ -148,7 +149,7 @@ namespace internal {
 
 }	// namespace internal
 
-auto videokit = VideoKit {internal::event_flags, internal::corevideo};
+auto videokit = VideoKit {internal::event_loop, internal::event_flags, internal::corevideo};
 
 }	// namespace display
 

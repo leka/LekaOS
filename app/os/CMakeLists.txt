@@ -40,6 +40,7 @@ target_link_libraries(LekaOS
 	CoreIMU
 	IMUKit
 	MotionKit
+	EventLoopKit
 )
 
 target_link_custom_leka_targets(LekaOS)

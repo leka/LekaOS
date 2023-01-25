@@ -163,6 +163,7 @@ auto motionkit = MotionKit {motor::left, motor::right, imukit, motion::internal:
 
 namespace display::internal {
 
+	auto event_loop	 = EventLoopKit {};
 	auto event_flags = CoreEventFlags {};
 
 	auto corell		   = CoreLL {};
@@ -184,7 +185,7 @@ namespace display::internal {
 
 }	// namespace display::internal
 
-auto videokit	   = VideoKit {display::internal::event_flags, display::internal::corevideo};
+auto videokit = VideoKit {display::internal::event_loop, display::internal::event_flags, display::internal::corevideo};
 auto reinforcerkit = ReinforcerKit {videokit, ledkit, motionkit};
 
 auto hello = HelloWorld {};

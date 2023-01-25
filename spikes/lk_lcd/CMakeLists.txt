@@ -19,6 +19,7 @@ target_link_libraries(spike_lk_lcd
 	CoreLL
 	CoreSTM32Hal
 	CoreEventFlags
+	EventLoopKit
 	FileManagerKit
 	VideoKit
 )

@@ -7,6 +7,7 @@
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreVideo.h"
 #include "mocks/leka/EventFlags.h"
+#include "stubs/leka/EventLoopKit.h"
 
 using namespace leka;
 
@@ -24,9 +25,10 @@ class VideoKitTest : public ::testing::Test
 
 	char temp_file_path[L_tmpnam];	 // NOLINT
 
+	stub::EventLoopKit stub_event_loop {};
 	mock::EventFlags mock_event_flags {};
 	mock::CoreVideo mock_corevideo {};
-	VideoKit video_kit {mock_event_flags, mock_corevideo};
+	VideoKit video_kit {stub_event_loop, mock_event_flags, mock_corevideo};
 };
 
 TEST_F(VideoKitTest, initialization)
@@ -99,7 +101,6 @@ TEST_F(VideoKitTest, fillWhiteBackgroundDisplayImageSamePathTwice)
 TEST_F(VideoKitTest, playVideoOnce)
 {
 	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::STOP_VIDEO_FLAG));
-	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::START_VIDEO_FLAG));
 
 	video_kit.playVideoOnce(temp_file_path);
 }
@@ -107,7 +108,6 @@ TEST_F(VideoKitTest, playVideoOnce)
 TEST_F(VideoKitTest, playVideoOnRepeat)
 {
 	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::STOP_VIDEO_FLAG));
-	EXPECT_CALL(mock_event_flags, set(VideoKit::flags::START_VIDEO_FLAG));
 
 	video_kit.playVideoOnRepeat(temp_file_path);
 }
