@@ -10,6 +10,10 @@
 
 using namespace leka;
 
+using ::testing::InSequence;
+using ::testing::MockFunction;
+using ::testing::Return;
+
 class VideoKitTest : public ::testing::Test
 {
   protected:
@@ -115,4 +119,46 @@ TEST_F(VideoKitTest, playVideoOnRepeatFileDoesNotExist)
 TEST_F(VideoKitTest, stopVideo)
 {
 	video_kit.stopVideo();
+}
+
+TEST_F(VideoKitTest, run)
+{
+	auto n_frames = uint8_t {99};
+	{
+		InSequence seq;
+
+		EXPECT_CALL(mock_corevideo, setVideo).Times(1);
+
+		for (auto i = 0; i < n_frames; i++) {
+			EXPECT_CALL(mock_corevideo, isLastFrame).WillOnce(Return(false));
+			EXPECT_CALL(mock_corevideo, displayNextFrameVideo);
+		}
+
+		EXPECT_CALL(mock_corevideo, isLastFrame).WillOnce(Return(true));
+	}
+
+	video_kit.run();
+}
+
+TEST_F(VideoKitTest, runVideoEndedCallback)
+{
+	auto dummy_function = MockFunction<void()> {};
+	video_kit.playVideoOnce(temp_file_path, dummy_function.AsStdFunction());
+
+	auto n_frames = uint8_t {99};
+	{
+		InSequence seq;
+
+		EXPECT_CALL(mock_corevideo, setVideo).Times(1);
+
+		for (auto i = 0; i < n_frames; i++) {
+			EXPECT_CALL(mock_corevideo, isLastFrame).WillOnce(Return(false));
+			EXPECT_CALL(mock_corevideo, displayNextFrameVideo);
+		}
+
+		EXPECT_CALL(mock_corevideo, isLastFrame).WillOnce(Return(true));
+		EXPECT_CALL(dummy_function, Call).Times(1);
+	}
+
+	video_kit.run();
 }
