@@ -11,7 +11,6 @@
 #include "CoreAccelerometer.h"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
-#include "CoreEventFlags.h"
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreGyroscope.h"
@@ -127,8 +126,7 @@ namespace display {
 
 namespace internal {
 
-	auto event_loop	 = EventLoopKit {};
-	auto event_flags = CoreEventFlags {};
+	auto event_loop = EventLoopKit {};
 
 	auto corell		   = CoreLL {};
 	auto pixel		   = CGPixel {corell};
@@ -149,7 +147,7 @@ namespace internal {
 
 }	// namespace internal
 
-auto videokit = VideoKit {internal::event_loop, internal::event_flags, internal::corevideo};
+auto videokit = VideoKit {internal::event_loop, internal::corevideo};
 
 }	// namespace display
 

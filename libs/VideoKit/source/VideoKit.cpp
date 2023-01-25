@@ -38,7 +38,7 @@ void VideoKit::displayImage(const std::filesystem::path &path)
 	}
 
 	if (auto file = FileManagerKit::File {path}; file.is_open()) {
-		_event_flags.set(flags::STOP_VIDEO_FLAG);
+		_must_stop = true;
 		_event_loop.stop();
 
 		_current_path = path;
@@ -60,7 +60,7 @@ void VideoKit::fillWhiteBackgroundAndDisplayImage(const std::filesystem::path &p
 	}
 
 	if (auto file = FileManagerKit::File {path}; file.is_open()) {
-		_event_flags.set(flags::STOP_VIDEO_FLAG);
+		_must_stop = true;
 		_event_loop.stop();
 
 		_current_path = path;
@@ -81,7 +81,7 @@ void VideoKit::playVideoOnce(const std::filesystem::path &path, const std::funct
 	if (auto file = FileManagerKit::File {path}; file.is_open()) {
 		file.close();
 
-		_event_flags.set(flags::STOP_VIDEO_FLAG);
+		_must_stop = true;
 		_event_loop.stop();
 
 		_current_path = path;
@@ -102,7 +102,7 @@ void VideoKit::playVideoOnRepeat(const std::filesystem::path &path,
 	if (auto file = FileManagerKit::File {path}; file.is_open()) {
 		file.close();
 
-		_event_flags.set(flags::STOP_VIDEO_FLAG);
+		_must_stop = true;
 		_event_loop.stop();
 
 		_current_path = path;
@@ -117,19 +117,19 @@ void VideoKit::playVideoOnRepeat(const std::filesystem::path &path,
 
 void VideoKit::stopVideo()
 {
-	_event_flags.set(flags::STOP_VIDEO_FLAG);
+	_must_stop = true;
 }
 
 void VideoKit::run()
 {
 	auto keep_running = [this] {
-		auto must_not_stop	  = !((_event_flags.get() & flags::STOP_VIDEO_FLAG) == flags::STOP_VIDEO_FLAG);
+		auto must_not_stop	  = !_must_stop;
 		auto is_still_playing = !_video.isLastFrame();
 
 		return must_not_stop && (_must_loop || is_still_playing);
 	};
 
-	_event_flags.clear(flags::STOP_VIDEO_FLAG);
+	_must_stop = false;
 
 	auto file = FileManagerKit::File {_current_path};
 	_video.setVideo(file);

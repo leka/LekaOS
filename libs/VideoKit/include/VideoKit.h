@@ -6,7 +6,6 @@
 
 #include "rtos/Thread.h"
 
-#include "interface/drivers/EventFlags.h"
 #include "interface/drivers/Video.h"
 #include "interface/libs/EventLoop.h"
 #include "interface/libs/VideoKit.h"
@@ -16,8 +15,8 @@ namespace leka {
 class VideoKit : public interface::VideoKit
 {
   public:
-	explicit VideoKit(interface::EventLoop &event_loop, interface::EventFlags &event_flags, interface::Video &video)
-		: _event_loop(event_loop), _event_flags(event_flags), _video {video}
+	explicit VideoKit(interface::EventLoop &event_loop, interface::Video &video)
+		: _event_loop(event_loop), _video {video}
 	{
 		// nothing to do
 	}
@@ -36,18 +35,14 @@ class VideoKit : public interface::VideoKit
 
 	[[noreturn]] void run();
 
-	struct flags {
-		static constexpr uint32_t STOP_VIDEO_FLAG = (1UL << 2);
-	};
-
   private:
 	interface::EventLoop &_event_loop;
-	interface::EventFlags &_event_flags;
 
 	interface::Video &_video;
 
 	std::filesystem::path _current_path {};
 	std::function<void()> _on_video_ended_callback {};
+	bool _must_stop {false};
 	bool _must_loop {false};
 };
 

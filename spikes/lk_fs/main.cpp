@@ -9,7 +9,6 @@
 #include "ComUtils.h"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
-#include "CoreEventFlags.h"
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreJPEG.hpp"
@@ -60,8 +59,7 @@ namespace sd {
 
 namespace display::internal {
 
-	auto event_loop	 = EventLoopKit {};
-	auto event_flags = CoreEventFlags {};
+	auto event_loop = EventLoopKit {};
 
 	auto corell		   = CoreLL {};
 	auto pixel		   = CGPixel {corell};
@@ -82,7 +80,7 @@ namespace display::internal {
 
 }	// namespace display::internal
 
-auto videokit = VideoKit {display::internal::event_loop, display::internal::event_flags, display::internal::corevideo};
+auto videokit = VideoKit {display::internal::event_loop, display::internal::corevideo};
 
 }	// namespace
 

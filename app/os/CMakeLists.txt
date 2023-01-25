@@ -31,7 +31,6 @@ target_link_libraries(LekaOS
 	VideoKit
 	LedKit
 	CoreLED
-	CoreEventFlags
 	CoreBufferedSerial
 	CoreRFIDReader
 	RFIDKit
