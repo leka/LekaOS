@@ -5,6 +5,7 @@
 #include "CoreFont.hpp"
 
 #include "CGFont.hpp"
+#include "Character.hpp"
 #include "gtest/gtest.h"
 #include "internal/corevideo_config.h"
 #include "mocks/leka/CoreLL.h"
@@ -129,7 +130,7 @@ TEST_F(CoreFontTest, fontPixelIsOnWithC00010FF)
 
 TEST_F(CoreFontTest, drawCharacter)
 {
-	CoreFont::Character character;
+	Character character {};
 	character.ascii = '.';
 
 	auto pixels_per_char = graphics::font_pixel_width * graphics::font_pixel_height;   // 17 * 24 = 408
@@ -143,7 +144,7 @@ TEST_F(CoreFontTest, drawCharacterWithColor)
 {
 	// ENHANCEMENT: Set pixels_lit by checking number of bit set.
 
-	CoreFont::Character character;
+	Character character {};
 	character.ascii			 = '.';
 	CGColor foreground_color = CGColor::pure_red;
 	CGColor background_color = CGColor::black;

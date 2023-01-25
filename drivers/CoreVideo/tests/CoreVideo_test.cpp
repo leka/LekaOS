@@ -4,6 +4,7 @@
 
 #include "CoreVideo.hpp"
 
+#include "Character.hpp"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreDMA2D.h"
 #include "mocks/leka/CoreDSI.h"
