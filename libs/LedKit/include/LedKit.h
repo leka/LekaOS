@@ -18,10 +18,6 @@ class LedKit : public interface::LedKit
 	static constexpr auto kNumberOfLedsEars = 2;
 	static constexpr auto kNumberOfLedsBelt = 20;
 
-	struct flags {
-		static constexpr uint32_t START_LED_ANIMATION_FLAG = (1UL << 1);
-	};
-
 	LedKit(interface::EventLoop &event_loop, interface::LED &ears, interface::LED &belt)
 		: _event_loop(event_loop), _ears(ears), _belt(belt) {};
 
