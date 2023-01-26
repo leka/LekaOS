@@ -12,6 +12,7 @@
 #include "BLEServiceCommands.h"
 #include "BLEServiceDeviceInformation.h"
 #include "BLEServiceFileExchange.h"
+#include "BLEServiceMagicCard.h"
 #include "BLEServiceMonitoring.h"
 #include "BLEServiceUpdate.h"
 
@@ -423,7 +424,10 @@ class RobotController : public interface::RobotController
 
 		// Setup callbacks for monitoring
 
-		_rfidkit.onTagActivated([this](const MagicCard &card) { onMagicCardAvailable(card); });
+		_rfidkit.onTagActivated([this](const MagicCard &card) {
+			onMagicCardAvailable(card);
+			_service_magic_card.setMagicCard(card);
+		});
 
 		_battery_kit.onDataUpdated([this](uint8_t level) {
 			auto is_charging = _battery.isCharging();
@@ -555,12 +559,14 @@ class RobotController : public interface::RobotController
 	BLEServiceCommands _service_commands {};
 	BLEServiceDeviceInformation _service_device_information {};
 	BLEServiceMonitoring _service_monitoring {};
+	BLEServiceMagicCard _service_magic_card {};
 	BLEServiceFileExchange _service_file_exchange {};
 	BLEServiceUpdate _service_update {};
 
-	std::array<interface::BLEService *, 6> services = {
-		&_service_battery,	  &_service_commands,	   &_service_device_information,
-		&_service_monitoring, &_service_file_exchange, &_service_update,
+	std::array<interface::BLEService *, 7> services = {
+		&_service_battery,	  &_service_commands,	&_service_device_information,
+		&_service_monitoring, &_service_magic_card, &_service_file_exchange,
+		&_service_update,
 	};
 
 	uint8_t _emergency_stop_counter {0};
