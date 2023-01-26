@@ -21,6 +21,7 @@ target_sources(BLEKit
 target_link_libraries(BLEKit
 	mbed-os
 	CoreEventQueue
+	RFIDKit
 )
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
@@ -34,6 +35,7 @@ if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/BLEServiceBattery_test.cpp
 		tests/BLEServiceDeviceInformation_test.cpp
 		tests/BLEServiceMonitoring_test.cpp
+		tests/BLEServiceMagicCard_test.cpp
 		tests/BLEServiceFileExchange_test.cpp
 		tests/BLEServiceUpdate_test.cpp
 	)
