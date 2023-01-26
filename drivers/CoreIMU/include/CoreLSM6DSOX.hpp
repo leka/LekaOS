@@ -22,6 +22,7 @@ class CoreLSM6DSOX : public interface::LSM6DSOX
 	void init() final;
 
 	void registerOnGyDataReadyCallback(drdy_callback_t const &callback) final;
+	void registerOnDoubleTapCallback(std::function<void()> const &callback) final;
 
 	void setPowerMode(PowerMode mode) final;
 
@@ -35,7 +36,9 @@ class CoreLSM6DSOX : public interface::LSM6DSOX
 							uint16_t number_bytes_to_read) -> int32_t;
 
 	void onGyrDataReadyHandler();
+
 	void setGyrDataReadyInterrupt();
+	void setDoubleTapInterrupt();
 
 	interface::I2C &_i2c;
 	CoreEventQueue _event_queue {};
@@ -47,7 +50,9 @@ class CoreLSM6DSOX : public interface::LSM6DSOX
 
 	std::array<int16_t, 3> data_raw_xl {};
 	std::array<int16_t, 3> data_raw_gy {};
+
 	drdy_callback_t _on_gy_data_ready_callback;
+	std::function<void()> _on_double_tap_callback;
 
 	static constexpr uint8_t kMaxBufferLength = 32;
 	std::array<uint8_t, kMaxBufferLength> _rx_buffer {};

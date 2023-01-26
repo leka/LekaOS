@@ -52,16 +52,19 @@ void CoreLSM6DSOX::setPowerMode(PowerMode mode)
 		case PowerMode::UltraLow:
 			xl_power_mode = LSM6DSOX_ULTRA_LOW_POWER_MD;
 			gy_power_mode = LSM6DSOX_GY_NORMAL;
+			setDoubleTapInterrupt();
 			break;
 
 		case PowerMode::Normal:
 			xl_power_mode = LSM6DSOX_LOW_NORMAL_POWER_MD;
 			gy_power_mode = LSM6DSOX_GY_NORMAL;
+			setGyrDataReadyInterrupt();
 			break;
 
 		case PowerMode::High:
 			xl_power_mode = LSM6DSOX_HIGH_PERFORMANCE_MD;
 			gy_power_mode = LSM6DSOX_GY_HIGH_PERFORMANCE;
+			setGyrDataReadyInterrupt();
 			break;
 	}
 
@@ -74,6 +77,11 @@ void CoreLSM6DSOX::setPowerMode(PowerMode mode)
 void CoreLSM6DSOX::registerOnGyDataReadyCallback(drdy_callback_t const &callback)
 {
 	_on_gy_data_ready_callback = callback;
+}
+
+void CoreLSM6DSOX::registerOnDoubleTapCallback(std::function<void()> const &callback)
+{
+	_on_double_tap_callback = callback;
 }
 
 void CoreLSM6DSOX::onGyrDataReadyHandler()
@@ -127,6 +135,31 @@ auto CoreLSM6DSOX::ptr_io_read(CoreLSM6DSOX *handle, uint8_t read_address, uint8
 							   uint16_t number_bytes_to_read) -> int32_t
 {
 	return handle->read(read_address, number_bytes_to_read, p_buffer);
+}
+
+void CoreLSM6DSOX::setDoubleTapInterrupt()
+{
+	lsm6dsox_tap_detection_on_x_set(&_register_io_function, PROPERTY_ENABLE);
+	lsm6dsox_tap_detection_on_y_set(&_register_io_function, PROPERTY_ENABLE);
+	lsm6dsox_tap_detection_on_z_set(&_register_io_function, PROPERTY_ENABLE);
+
+	// ? Set of those 6 values functional, but can be better tuned
+	lsm6dsox_tap_shock_set(&_register_io_function, 1);
+	lsm6dsox_tap_quiet_set(&_register_io_function, 1);
+	lsm6dsox_tap_dur_set(&_register_io_function, 0);
+	lsm6dsox_tap_threshold_x_set(&_register_io_function, 1);
+	lsm6dsox_tap_threshold_y_set(&_register_io_function, 1);
+	lsm6dsox_tap_threshold_z_set(&_register_io_function, 1);
+
+	lsm6dsox_single_double_tap_t tap_enabled {LSM6DSOX_BOTH_SINGLE_DOUBLE};
+	lsm6dsox_tap_mode_set(&_register_io_function, tap_enabled);
+
+	lsm6dsox_pin_int1_route_t double_tap_int1 {.double_tap = PROPERTY_ENABLE};
+	lsm6dsox_pin_int1_route_set(&_register_io_function, double_tap_int1);
+
+	auto double_tap_callback = [this] { _event_queue.call([this] { _on_double_tap_callback(); }); };
+
+	_drdy_irq.onRise(double_tap_callback);
 }
 
 void CoreLSM6DSOX::setGyrDataReadyInterrupt()
