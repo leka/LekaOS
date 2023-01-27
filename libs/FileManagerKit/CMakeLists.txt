@@ -27,6 +27,7 @@ if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/File_test.cpp
 		tests/File_initialization_test.cpp
 		tests/File_open_close_test.cpp
+		tests/File_write_test.cpp
 		tests/File_sha256_test.cpp
 		tests/FileReception_test.cpp
 		tests/FileManagerKit_test.cpp
