@@ -66,7 +66,7 @@ struct CGCharacter {
 	uint8_t ascii {};	 // From 0x20 to 0x7F
 };
 
-struct FilledRectangle {
+struct CGRectangle {
 	CGPoint origin {0, 0};	 // * Top left corner by convention
 	uint16_t width {};
 	uint16_t height {};

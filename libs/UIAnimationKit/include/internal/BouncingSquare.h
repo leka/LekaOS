@@ -33,7 +33,7 @@ class BouncingSquare : public interface::CGAnimation
 
 	interface::Graphics &_coregraphics;
 
-	FilledRectangle _square = {{0, 0}, 100, 100};
+	CGRectangle _square {{0, 0}, 100, 100};
 	CGColor _color {.red = 0xFF, .green = 0x00, .blue = 0x00};
 
 	struct Shift {
