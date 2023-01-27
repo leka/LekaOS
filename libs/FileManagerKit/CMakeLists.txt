@@ -24,7 +24,6 @@ target_link_libraries(FileManagerKit
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
-		tests/File_test.cpp
 		tests/File_initialization_test.cpp
 		tests/File_open_close_test.cpp
 		tests/File_write_test.cpp
@@ -36,6 +35,7 @@ if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/File_buffer_test.cpp
 		tests/File_flush_test.cpp
 		tests/File_error_test.cpp
+		tests/File_clear_test.cpp
 		tests/File_sha256_test.cpp
 		tests/FileReception_test.cpp
 		tests/FileManagerKit_test.cpp

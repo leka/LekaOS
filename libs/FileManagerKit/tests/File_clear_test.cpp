@@ -3,19 +3,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <array>
-#include <fstream>
-#include <iostream>
+#include <filesystem>
 #include <span>
-#include <string>
 
 #include "FileManagerKit.h"
-#include "LogKit.h"
-#include "filesystem"
 #include "gtest/gtest.h"
 
 using namespace leka;
 
-class FileTest : public ::testing::Test
+class FileTestClear : public ::testing::Test
 {
   protected:
 	void SetUp() override
@@ -25,18 +21,6 @@ class FileTest : public ::testing::Test
 		tempFilename_filesystem_path = tempFilename;
 	}
 	// void TearDown() override {}
-
-	auto readTempFile() -> std::string
-	{
-		std::fstream f {};
-		f.open(tempFilename);
-
-		std::stringstream out {};
-		out << f.rdbuf();
-		f.close();
-
-		return out.str();
-	}
 
 	void writeTempFile(std::span<uint8_t> data)
 	{
@@ -57,7 +41,7 @@ class FileTest : public ::testing::Test
 	std::filesystem::path tempFilename_filesystem_path;
 };
 
-TEST_F(FileTest, clear)
+TEST_F(FileTestClear, clear)
 {
 	auto input_data = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	  // "abcdef"
 
@@ -75,7 +59,7 @@ TEST_F(FileTest, clear)
 	file.close();
 }
 
-TEST_F(FileTest, clearNotExistingFile)
+TEST_F(FileTestClear, clearNotExistingFile)
 {
 	ASSERT_FALSE(file.is_open());
 
