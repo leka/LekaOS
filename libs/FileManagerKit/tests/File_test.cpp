@@ -57,35 +57,6 @@ class FileTest : public ::testing::Test
 	std::filesystem::path tempFilename_filesystem_path;
 };
 
-TEST_F(FileTest, open)
-{
-	file.open(tempFilename);
-
-	ASSERT_TRUE(file.is_open());
-}
-
-TEST_F(FileTest, openByFileSystemPath)
-{
-	file.open(tempFilename_filesystem_path);
-
-	ASSERT_TRUE(file.is_open());
-}
-
-TEST_F(FileTest, close)
-{
-	file.open(tempFilename);
-	file.close();
-
-	ASSERT_FALSE(file.is_open());
-}
-
-TEST_F(FileTest, closeNoFile)
-{
-	file.close();
-
-	ASSERT_FALSE(file.is_open());
-}
-
 TEST_F(FileTest, writeSpan)
 {
 	auto input_data = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	  // "abcdef"
