@@ -33,7 +33,7 @@ auto CoreFont::fontPixelIsOn(uint32_t byte_of_line, uint8_t pixel_id) -> bool
 	return is_on;
 }
 
-void CoreFont::drawChar(Character character, CGColor foreground, CGColor background)
+void CoreFont::drawChar(CGCharacter character, CGColor foreground, CGColor background)
 {
 	_pixel_to_draw.coordinates.x = character.origin.x;
 	_pixel_to_draw.coordinates.y = character.origin.y;
@@ -62,7 +62,7 @@ void CoreFont::display(const char *text, uint32_t size, uint32_t starting_line, 
 		return;
 	}
 
-	Character character;
+	auto character	   = CGCharacter {};
 	character.origin.x = 0;
 	character.origin.y = (starting_line - 1) * graphics::font_pixel_height;
 

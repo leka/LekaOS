@@ -9,7 +9,7 @@
 namespace leka {
 
 struct CGColor;
-struct Character;
+struct CGCharacter;
 
 }	// namespace leka
 
@@ -20,9 +20,9 @@ class Font
   public:
 	virtual ~Font() = default;
 
-	virtual void drawChar(Character character, CGColor foreground, CGColor background) = 0;
+	virtual void drawChar(CGCharacter character, CGColor foreground, CGColor background) = 0;
 	virtual void display(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground,
-						 CGColor background)										   = 0;
+						 CGColor background)											 = 0;
 
 	virtual auto fontGetFirstPixelAddress(char character) -> const uint8_t * = 0;
 	virtual auto fontGetPixelBytes(const uint8_t *line_address) -> uint32_t	 = 0;
