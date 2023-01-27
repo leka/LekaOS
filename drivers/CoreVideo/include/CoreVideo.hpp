@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "FilledRectangle.hpp"
+#include "CGGraphics.hpp"
 #include "interface/DMA2D.hpp"
 #include "interface/DSI.hpp"
 #include "interface/Font.hpp"

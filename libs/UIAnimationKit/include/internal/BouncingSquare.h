@@ -9,7 +9,7 @@
 #include <cstdint>
 
 #include "CGAnimation.h"
-#include "FilledRectangle.hpp"
+#include "CGGraphics.hpp"
 #include "interface/Graphics.hpp"
 
 namespace leka::animation {

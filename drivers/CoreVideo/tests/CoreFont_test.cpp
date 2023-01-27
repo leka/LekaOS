@@ -5,7 +5,6 @@
 #include "CoreFont.hpp"
 
 #include "CGFont.hpp"
-#include "Character.hpp"
 #include "gtest/gtest.h"
 #include "internal/corevideo_config.h"
 #include "mocks/leka/CoreLL.h"

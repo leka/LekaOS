@@ -4,9 +4,7 @@
 
 #pragma once
 
-#include "CGColor.hpp"
-#include "CGPixel.hpp"
-#include "Character.hpp"
+#include "CGGraphics.hpp"
 #include "interface/Font.hpp"
 
 namespace leka {

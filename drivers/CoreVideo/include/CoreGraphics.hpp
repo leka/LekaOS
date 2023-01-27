@@ -4,9 +4,8 @@
 
 #pragma once
 
-#include "CGColor.hpp"
+#include "CGGraphics.hpp"
 #include "CoreLL.h"
-#include "FilledRectangle.hpp"
 #include "interface/DMA2D.hpp"
 #include "interface/Graphics.hpp"
 #include "internal/corevideo_config.h"

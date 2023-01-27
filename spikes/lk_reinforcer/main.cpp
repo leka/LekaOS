@@ -7,7 +7,7 @@
 #include "drivers/HighResClock.h"
 #include "rtos/ThisThread.h"
 
-#include "CGPixel.hpp"
+#include "CGGraphics.hpp"
 #include "CoreAccelerometer.h"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
