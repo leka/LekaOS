@@ -57,32 +57,6 @@ class FileTest : public ::testing::Test
 	std::filesystem::path tempFilename_filesystem_path;
 };
 
-TEST_F(FileTest, tellNoFile)
-{
-	auto pos = file.tell();
-	ASSERT_EQ(0, pos);
-}
-
-TEST_F(FileTest, tellEmptyFile)
-{
-	file.open(tempFilename);
-	auto pos = file.tell();
-	ASSERT_EQ(0, pos);
-}
-
-TEST_F(FileTest, tellFile)
-{
-	auto input_data = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	  // "abcdef"
-
-	file.open(tempFilename, "w");
-	file.write(input_data);
-	file.seek(3);
-
-	auto actual_pos = file.tell();
-
-	ASSERT_EQ(3, actual_pos);
-}
-
 TEST_F(FileTest, reopenNoFile)
 {
 	auto reopen = file.reopen(tempFilename, "w");
