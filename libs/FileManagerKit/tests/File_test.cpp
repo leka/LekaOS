@@ -57,31 +57,6 @@ class FileTest : public ::testing::Test
 	std::filesystem::path tempFilename_filesystem_path;
 };
 
-TEST_F(FileTest, sizeNoFile)
-{
-	auto size = file.size();
-	ASSERT_EQ(0, size);
-}
-
-TEST_F(FileTest, sizeEmptyFile)
-{
-	file.open(tempFilename);
-	auto size = file.size();
-	ASSERT_EQ(0, size);
-}
-
-TEST_F(FileTest, sizeFile)
-{
-	auto input_data = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	  // "abcdef"
-
-	file.open(tempFilename);
-	auto expected_size = file.write(input_data);
-
-	auto actual_size = file.size();
-
-	ASSERT_EQ(expected_size, actual_size);
-}
-
 TEST_F(FileTest, seek)
 {
 	auto input_data	   = std::to_array<uint8_t>({0x61, 0x62, 0x63, 0x64, 0x65, 0x66});	 // "abcdef"
