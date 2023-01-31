@@ -17,7 +17,6 @@ target_sources(spike_lk_fs
 )
 
 target_link_libraries(spike_lk_fs
-	CoreEventFlags
 	CorePwm
 	CoreVideo
 	EventLoopKit

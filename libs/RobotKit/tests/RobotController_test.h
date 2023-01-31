@@ -34,7 +34,6 @@
 #include "mocks/leka/Timeout.h"
 #include "mocks/leka/VideoKit.h"
 #include "mocks/mbed/DigitalOut.h"
-#include "mocks/mbed/EventFlags.h"
 #include "stubs/leka/EventLoopKit.h"
 #include "stubs/mbed/Kernel.h"
 

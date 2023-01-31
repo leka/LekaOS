@@ -22,6 +22,7 @@ target_link_libraries(spike_lk_reinforcer
 	CorePwm
 	CoreI2C
 	CoreIMU
+	EventLoopKit
 	IMUKit
 	MotionKit
 	ReinforcerKit
