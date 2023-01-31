@@ -35,32 +35,40 @@ void CoreLSM6DSOX::init()
 
 void CoreLSM6DSOX::setPowerMode(PowerMode mode)
 {
-	if (mode == PowerMode::Off) {
-		lsm6dsox_xl_data_rate_set(&_register_io_function, LSM6DSOX_XL_ODR_OFF);
-		lsm6dsox_gy_data_rate_set(&_register_io_function, LSM6DSOX_GY_ODR_OFF);
-	} else {
-		lsm6dsox_xl_hm_mode_t xl_power_mode {};
-		lsm6dsox_g_hm_mode_t gy_power_mode {};
-		switch (mode) {
-			case PowerMode::UltraLow:
-				xl_power_mode = LSM6DSOX_ULTRA_LOW_POWER_MD;
-				gy_power_mode = LSM6DSOX_GY_NORMAL;
-				break;
-			default:
-			case PowerMode::Normal:
-				xl_power_mode = LSM6DSOX_LOW_NORMAL_POWER_MD;
-				gy_power_mode = LSM6DSOX_GY_NORMAL;
-				break;
-			case PowerMode::High:
-				xl_power_mode = LSM6DSOX_HIGH_PERFORMANCE_MD;
-				gy_power_mode = LSM6DSOX_GY_HIGH_PERFORMANCE;
-				break;
-		}
-		lsm6dsox_xl_power_mode_set(&_register_io_function, xl_power_mode);
-		lsm6dsox_gy_power_mode_set(&_register_io_function, gy_power_mode);
-		lsm6dsox_xl_data_rate_set(&_register_io_function, lsm6dsox_odr_xl_t::LSM6DSOX_XL_ODR_52Hz);
-		lsm6dsox_gy_data_rate_set(&_register_io_function, lsm6dsox_odr_g_t::LSM6DSOX_GY_ODR_52Hz);
+	auto xl_power_mode = lsm6dsox_xl_hm_mode_t {};
+	auto gy_power_mode = lsm6dsox_g_hm_mode_t {};
+
+	auto xl_odr = lsm6dsox_odr_xl_t {LSM6DSOX_XL_ODR_52Hz};
+	auto gy_odr = lsm6dsox_odr_g_t {LSM6DSOX_GY_ODR_52Hz};
+
+	switch (mode) {
+		case PowerMode::Off:
+			xl_odr		  = LSM6DSOX_XL_ODR_OFF;
+			gy_odr		  = LSM6DSOX_GY_ODR_OFF;
+			xl_power_mode = LSM6DSOX_ULTRA_LOW_POWER_MD;
+			gy_power_mode = LSM6DSOX_GY_NORMAL;
+			break;
+
+		case PowerMode::UltraLow:
+			xl_power_mode = LSM6DSOX_ULTRA_LOW_POWER_MD;
+			gy_power_mode = LSM6DSOX_GY_NORMAL;
+			break;
+
+		case PowerMode::Normal:
+			xl_power_mode = LSM6DSOX_LOW_NORMAL_POWER_MD;
+			gy_power_mode = LSM6DSOX_GY_NORMAL;
+			break;
+
+		case PowerMode::High:
+			xl_power_mode = LSM6DSOX_HIGH_PERFORMANCE_MD;
+			gy_power_mode = LSM6DSOX_GY_HIGH_PERFORMANCE;
+			break;
 	}
+
+	lsm6dsox_xl_power_mode_set(&_register_io_function, xl_power_mode);
+	lsm6dsox_gy_power_mode_set(&_register_io_function, gy_power_mode);
+	lsm6dsox_xl_data_rate_set(&_register_io_function, xl_odr);
+	lsm6dsox_gy_data_rate_set(&_register_io_function, gy_odr);
 }
 
 void CoreLSM6DSOX::registerOnGyDataReadyCallback(drdy_callback_t const &callback)
