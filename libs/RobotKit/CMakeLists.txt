@@ -30,6 +30,7 @@ target_link_libraries(RobotKit
 	CommandKit
 	RFIDKit
 	ActivityKit
+	ConfigKit
 )
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

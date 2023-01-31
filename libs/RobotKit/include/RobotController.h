@@ -10,6 +10,7 @@
 #include "BLEKit.h"
 #include "BLEServiceBattery.h"
 #include "BLEServiceCommands.h"
+#include "BLEServiceConfig.h"
 #include "BLEServiceDeviceInformation.h"
 #include "BLEServiceFileExchange.h"
 #include "BLEServiceMagicCard.h"
@@ -20,6 +21,7 @@
 #include "BatteryKit.h"
 #include "BehaviorKit.h"
 #include "CommandKit.h"
+#include "ConfigKit.h"
 #include "CoreMutex.h"
 #include "FileReception.h"
 #include "MagicCard.h"
@@ -330,10 +332,19 @@ class RobotController : public interface::RobotController
 		auto _os_version = _firmware_update.getCurrentVersion();
 		_service_device_information.setOSVersion(_os_version);
 
-		auto advertising_data		   = _ble.getAdvertisingData();
-		advertising_data.name		   = reinterpret_cast<const char *>(_serialnumberkit.getShortSerialNumber().data());
-		advertising_data.version_major = _os_version.major;
-		advertising_data.version_minor = _os_version.minor;
+		auto short_serial_number_span  = _serialnumberkit.getShortSerialNumber();
+		auto short_serial_number_array = std::array<uint8_t, BLEServiceConfig::kMaxRobotNameSize> {};
+		std::copy_n(std::begin(short_serial_number_span), std::size(short_serial_number_span),
+					std::begin(short_serial_number_array));
+		auto config_robot_name = Config<BLEServiceConfig::kMaxRobotNameSize> {"robot_name", short_serial_number_array};
+		_robot_name			   = _configkit.read(config_robot_name);
+
+		_service_config.setRobotName(_robot_name);
+
+		auto advertising_data			  = _ble.getAdvertisingData();
+		advertising_data.name			  = reinterpret_cast<const char *>(_robot_name.data());
+		advertising_data.version_major	  = _os_version.major;
+		advertising_data.version_minor	  = _os_version.minor;
 		advertising_data.version_revision = _os_version.revision;
 
 		_ble.setAdvertisingData(advertising_data);
@@ -473,6 +484,12 @@ class RobotController : public interface::RobotController
 
 		_service_monitoring.onSoftReboot([] { system_reset(); });
 
+		_service_config.onRobotNameUpdated(
+			[this](const std::array<uint8_t, BLEServiceConfig::kMaxRobotNameSize> &robot_name) {
+				auto config_robot_name = Config<BLEServiceConfig::kMaxRobotNameSize> {"robot_name"};
+				std::ignore			   = _configkit.write(config_robot_name, robot_name);
+			});
+
 		auto on_commands_received = [this](std::span<uint8_t> _buffer) {
 			raise(event::command_received {});
 
@@ -532,6 +549,9 @@ class RobotController : public interface::RobotController
 
 	SerialNumberKit &_serialnumberkit;
 
+	ConfigKit _configkit {};
+	std::array<uint8_t, BLEServiceConfig::kMaxRobotNameSize> _robot_name {};
+
 	interface::FirmwareUpdate &_firmware_update;
 	std::function<void()> _on_update_loaded_callback {};
 
@@ -559,14 +579,14 @@ class RobotController : public interface::RobotController
 	BLEServiceCommands _service_commands {};
 	BLEServiceDeviceInformation _service_device_information {};
 	BLEServiceMonitoring _service_monitoring {};
+	BLEServiceConfig _service_config {};
 	BLEServiceMagicCard _service_magic_card {};
 	BLEServiceFileExchange _service_file_exchange {};
 	BLEServiceUpdate _service_update {};
 
-	std::array<interface::BLEService *, 7> services = {
-		&_service_battery,	  &_service_commands,	&_service_device_information,
-		&_service_monitoring, &_service_magic_card, &_service_file_exchange,
-		&_service_update,
+	std::array<interface::BLEService *, 8> services = {
+		&_service_battery, &_service_commands,	 &_service_device_information, &_service_monitoring,
+		&_service_config,  &_service_magic_card, &_service_file_exchange,	   &_service_update,
 	};
 
 	uint8_t _emergency_stop_counter {0};
