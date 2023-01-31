@@ -10,7 +10,7 @@ CoreGraphics::CoreGraphics(interface::DMA2DBase &dma2d) : _dma2d(dma2d) {}
 
 void CoreGraphics::clearScreen(CGColor color)
 {
-	FilledRectangle rect;
+	FilledRectangle rect {};
 	rect.width	= lcd::dimension::width;
 	rect.height = lcd::dimension::height;
 

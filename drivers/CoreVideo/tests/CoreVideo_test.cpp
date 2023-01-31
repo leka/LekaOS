@@ -4,6 +4,7 @@
 
 #include "CoreVideo.hpp"
 
+#include "Character.hpp"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreDMA2D.h"
 #include "mocks/leka/CoreDSI.h"
@@ -132,7 +133,7 @@ TEST_F(CoreVideoTest, clearScreenWithColor)
 
 TEST_F(CoreVideoTest, drawRectangle)
 {
-	interface::Graphics::FilledRectangle rectangle;
+	FilledRectangle rectangle {};
 	rectangle.origin.x = 200;
 	rectangle.origin.y = 369;
 	rectangle.width	   = 11;
@@ -147,7 +148,7 @@ TEST_F(CoreVideoTest, drawRectangle)
 
 TEST_F(CoreVideoTest, drawRectangleWithColor)
 {
-	interface::Graphics::FilledRectangle rectangle;
+	FilledRectangle rectangle {};
 	CGColor rectangle_color {0x2A, 0x2B, 0x2C};
 
 	EXPECT_CALL(graphicsmock, drawRectangle(_, compareColor(rectangle_color))).Times(1);
