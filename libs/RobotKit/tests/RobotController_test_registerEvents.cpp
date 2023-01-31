@@ -181,3 +181,13 @@ TEST_F(RobotControllerTest, onChargingBehaviorLevelAbove90)
 
 	rc.onChargingBehavior(battery_level);
 }
+
+TEST_F(RobotControllerTest, onTagActivated)
+{
+	auto onTagActivated = rfidkit.getCallback();
+
+	// TODO: Specify which BLE service and what is expected if necessary
+	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(2);
+
+	onTagActivated(MagicCard::none);
+}

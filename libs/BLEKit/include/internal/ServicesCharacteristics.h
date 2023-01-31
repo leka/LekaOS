@@ -45,6 +45,16 @@ namespace monitoring {
 
 }	// namespace monitoring
 
+namespace magic_card {
+	inline constexpr UUID::LongUUIDBytes_t uuid = {"Magic Card"};
+
+	namespace characteristic {
+		inline constexpr UUID::LongUUIDBytes_t id		= {"ID"};
+		inline constexpr UUID::LongUUIDBytes_t language = {"Language"};
+	}	// namespace characteristic
+
+}	// namespace magic_card
+
 namespace file_exchange {
 
 	inline constexpr uint16_t uuid = 0x8270;
