@@ -39,18 +39,28 @@ auto main() -> int
 	imu::lsm6dsox.init();
 
 	imu::lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
-	imu::lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Normal);
 
 	auto callback = [](const interface::LSM6DSOX::SensorData &imu_data) {
 		const auto &[xlx, xly, xlz] = imu_data.xl;
 		const auto &[gx, gy, gz]	= imu_data.gy;
-		log_info("Xl : x: %7.2f, y: %7.2f, z: %7.2f\n", xlx, xly, xlz);
-		log_info("Gy : x: %7.2f, y: %7.2f, z: %7.2f\n", gx, gy, gz);
+
+		log_debug("xl.x: %7.2f, xl.y: %7.2f, xl.z: %7.2f, gy.x: %7.2f, gy.y: %7.2f, gy.z: %7.2f", xlx, xly, xlz, gx, gy,
+				  gz);
 	};
 
 	imu::lsm6dsox.registerOnGyDataReadyCallback(callback);
 
 	while (true) {
+		log_info("Setting normal power mode for 5s");
 		rtos::ThisThread::sleep_for(1s);
+		imu::lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Normal);
+
+		rtos::ThisThread::sleep_for(5s);
+
+		imu::lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
+		rtos::ThisThread::sleep_for(500ms);
+		log_info("Turning off for 5s");
+
+		rtos::ThisThread::sleep_for(5s);
 	}
 }
