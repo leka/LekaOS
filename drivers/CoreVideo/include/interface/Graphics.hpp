@@ -10,7 +10,7 @@ namespace leka {
 
 struct CGColor;
 struct CGPoint;
-struct FilledRectangle;
+struct CGRectangle;
 
 }	// namespace leka
 
@@ -23,7 +23,7 @@ class Graphics
 
 	virtual void clearScreen(CGColor color) = 0;
 
-	virtual void drawRectangle(FilledRectangle rectangle, CGColor color) = 0;
+	virtual void drawRectangle(CGRectangle rectangle, CGColor color) = 0;
 };
 
 }	// namespace leka::interface

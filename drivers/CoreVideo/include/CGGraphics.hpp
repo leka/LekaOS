@@ -1,10 +1,13 @@
 // Leka - LekaOS
-// Copyright 2021 APF France handicap
+// Copyright 2023 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
 #pragma once
 
 #include <cstdint>
+
+#include "CoreLL.h"
+#include "internal/corevideo_config.h"
 
 namespace leka {
 
@@ -36,5 +39,37 @@ constexpr CGColor CGColor::pure_blue {0x00, 0x00, 0xFF};
 constexpr CGColor CGColor::yellow {0xFF, 0xFF, 0x00};
 constexpr CGColor CGColor::cyan {0x00, 0xFF, 0xFF};
 constexpr CGColor CGColor::magenta {0xFF, 0x00, 0xFF};
+
+struct CGPoint {
+	uint32_t x = 0;
+	uint32_t y = 0;
+};
+
+struct CGPixel {
+	explicit CGPixel(CoreLL &ll) : corell(ll) {}
+
+	CGPoint coordinates {0, 0};
+	CoreLL &corell;
+
+	void draw(CGColor color)
+	{
+		uintptr_t destination_address =
+			lcd::frame_buffer_address + (4 * (coordinates.y * lcd::dimension::width + coordinates.x));
+		uint32_t destinationColor = color.getARGB();
+
+		corell.rawMemoryWrite(destination_address, destinationColor);
+	}
+};
+
+struct CGCharacter {
+	CGPoint origin {};	 // Top left corner by convention
+	uint8_t ascii {};	 // From 0x20 to 0x7F
+};
+
+struct CGRectangle {
+	CGPoint origin {0, 0};	 // * Top left corner by convention
+	uint16_t width {};
+	uint16_t height {};
+};
 
 }	// namespace leka

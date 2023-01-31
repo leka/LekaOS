@@ -2,8 +2,7 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "CGPixel.hpp"
-
+#include "CGGraphics.hpp"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreLL.h"
 

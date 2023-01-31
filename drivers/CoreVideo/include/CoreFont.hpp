@@ -4,9 +4,7 @@
 
 #pragma once
 
-#include "CGColor.hpp"
-#include "CGPixel.hpp"
-#include "Character.hpp"
+#include "CGGraphics.hpp"
 #include "interface/Font.hpp"
 
 namespace leka {
@@ -16,7 +14,8 @@ class CoreFont : public interface::Font
   public:
 	explicit CoreFont(CGPixel &pixel_to_draw);
 
-	void drawChar(Character character, CGColor foreground = CGColor::black, CGColor background = CGColor::white) final;
+	void drawChar(CGCharacter character, CGColor foreground = CGColor::black,
+				  CGColor background = CGColor::white) final;
 	void display(const char *text, uint32_t size, uint32_t starting_line, CGColor foreground = CGColor::black,
 				 CGColor background = CGColor::white) final;
 
