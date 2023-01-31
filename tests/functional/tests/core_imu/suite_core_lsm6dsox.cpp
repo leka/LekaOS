@@ -6,7 +6,7 @@
 
 #include "./utils.h"
 #include "CoreI2C.h"
-#include "CoreLSM6DSOX.h"
+#include "CoreLSM6DSOX.hpp"
 #include "tests/config.h"
 
 using namespace leka;

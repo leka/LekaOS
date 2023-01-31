@@ -2,7 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "CoreLSM6DSOX.h"
+#include "CoreLSM6DSOX.hpp"
 
 namespace leka {
 

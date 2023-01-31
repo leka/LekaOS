@@ -10,7 +10,7 @@
 #include "rtos/ThisThread.h"
 
 #include "boost/ut.hpp"
-#include "interface/LSM6DSOX.h"
+#include "interface/LSM6DSOX.hpp"
 
 inline auto values_did_change_over_time(leka::interface::LSM6DSOX &lsm6dsox)
 {

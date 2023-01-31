@@ -8,7 +8,7 @@
 
 #include "CoreEventQueue.h"
 #include "CoreInterruptIn.h"
-#include "interface/LSM6DSOX.h"
+#include "interface/LSM6DSOX.hpp"
 #include "interface/drivers/I2C.h"
 #include "lsm6dsox_reg.h"
 

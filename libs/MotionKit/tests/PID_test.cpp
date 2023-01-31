@@ -2,7 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "PID.h"
+#include "PID.hpp"
 
 #include "gtest/gtest.h"
 

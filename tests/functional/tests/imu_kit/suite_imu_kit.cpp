@@ -5,8 +5,8 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreI2C.h"
-#include "CoreLSM6DSOX.h"
-#include "IMUKit.h"
+#include "CoreLSM6DSOX.hpp"
+#include "IMUKit.hpp"
 #include "tests/config.h"
 
 using namespace leka;

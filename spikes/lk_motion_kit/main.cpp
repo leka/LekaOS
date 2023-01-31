@@ -6,16 +6,16 @@
 
 #include "CoreBufferedSerial.h"
 #include "CoreI2C.h"
-#include "CoreLSM6DSOX.h"
+#include "CoreLSM6DSOX.hpp"
 #include "CoreMotor.h"
 #include "CorePwm.h"
 #include "CoreRFIDReaderCR95HF.h"
 #include "CoreTimeout.h"
 #include "EventLoopKit.h"
 #include "HelloWorld.h"
-#include "IMUKit.h"
+#include "IMUKit.hpp"
 #include "LogKit.h"
-#include "MotionKit.h"
+#include "MotionKit.hpp"
 #include "RFIDKit.h"
 
 using namespace std::chrono;

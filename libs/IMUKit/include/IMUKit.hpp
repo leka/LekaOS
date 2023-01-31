@@ -6,8 +6,8 @@
 
 #include <chrono>
 
-#include "interface/LSM6DSOX.h"
-#include "internal/Mahony.h"
+#include "interface/LSM6DSOX.hpp"
+#include "internal/Mahony.hpp"
 
 namespace leka {
 

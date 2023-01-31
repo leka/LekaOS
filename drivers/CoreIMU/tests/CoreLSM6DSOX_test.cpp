@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "CoreLSM6DSOX.h"
+#include "CoreLSM6DSOX.hpp"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreI2C.h"
 #include "mocks/leka/EventQueue.h"

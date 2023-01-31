@@ -5,6 +5,7 @@
 #pragma once
 
 #include <functional>
+
 namespace leka::interface {
 
 class LSM6DSOX

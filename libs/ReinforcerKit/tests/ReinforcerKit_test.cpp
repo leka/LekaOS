@@ -5,7 +5,7 @@
 #include "ReinforcerKit.h"
 
 #include "LedKitAnimations.h"
-#include "MotionKit.h"
+#include "MotionKit.hpp"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreMotor.h"

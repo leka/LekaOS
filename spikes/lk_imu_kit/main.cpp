@@ -5,9 +5,9 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreI2C.h"
-#include "CoreLSM6DSOX.h"
+#include "CoreLSM6DSOX.hpp"
 #include "HelloWorld.h"
-#include "IMUKit.h"
+#include "IMUKit.hpp"
 #include "LogKit.h"
 
 using namespace std::chrono;

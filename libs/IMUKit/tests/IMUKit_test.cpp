@@ -2,9 +2,9 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "IMUKit.h"
+#include "IMUKit.hpp"
 
-#include "CoreLSM6DSOX.h"
+#include "CoreLSM6DSOX.hpp"
 #include "ThisThread.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"

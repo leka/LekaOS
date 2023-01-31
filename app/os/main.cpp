@@ -27,7 +27,7 @@
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLL.h"
-#include "CoreLSM6DSOX.h"
+#include "CoreLSM6DSOX.hpp"
 #include "CoreLTDC.hpp"
 #include "CoreMCU.h"
 #include "CoreMotor.h"

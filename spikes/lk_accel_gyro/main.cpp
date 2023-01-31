@@ -5,7 +5,7 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreI2C.h"
-#include "CoreLSM6DSOX.h"
+#include "CoreLSM6DSOX.hpp"
 #include "HelloWorld.h"
 #include "LogKit.h"
 

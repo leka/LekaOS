@@ -20,7 +20,7 @@
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLED.h"
 #include "CoreLL.h"
-#include "CoreLSM6DSOX.h"
+#include "CoreLSM6DSOX.hpp"
 #include "CoreLTDC.hpp"
 #include "CoreMotor.h"
 #include "CorePwm.h"
