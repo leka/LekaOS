@@ -52,7 +52,7 @@ jobs:
 
       - name: Build firmware, os, bootloader
         run: |
-          make firmware
+          make config_firmware firmware
 
       - name: Ccache post build
         run: |
@@ -70,8 +70,8 @@ jobs:
           name: bootloader_os_firmware
           retention-days: 7
           path: |
-            _release/Firmware-*.hex
-            _release/LekaOS-*.bin
+            _build_firmware/app/release/Firmware-*.hex
+            _build_firmware/app/release/LekaOS-*.bin
 
       #
       # Mark: - Check versions from files and os_version are identical
@@ -81,5 +81,5 @@ jobs:
         id: check_os_firmware_version
         uses: ./.github/actions/check_version
         with:
-          firmware_hex_path: _release/Firmware-*.hex
-          os_bin_path: _release/LekaOS-*.bin
+          firmware_hex_path: _build_firmware/app/release/Firmware-*.hex
+          os_bin_path: _build_firmware/app/release/LekaOS-*.bin
