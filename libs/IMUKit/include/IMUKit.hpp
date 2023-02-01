@@ -37,7 +37,7 @@ class IMUKit
 	};
 	// ? Sampling config deprecated.
 	// TODO(@ladislas @hugo): Use dynamic sampling frequency.
-	const SamplingConfig kDefaultSamplingConfig {.delay = std::chrono::milliseconds {70}, .frequency = 13.F};
+	const SamplingConfig kDefaultSamplingConfig {.delay = std::chrono::milliseconds {20}, .frequency = 18.F};
 };
 
 }	// namespace leka

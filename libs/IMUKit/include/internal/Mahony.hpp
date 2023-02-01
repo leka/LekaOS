@@ -25,6 +25,8 @@ class Mahony
 
 	void begin(float sampleFrequency) { _invSampleFreq = 1.0F / sampleFrequency; }
 	void update(std::tuple<float, float, float>, std::tuple<float, float, float>, std::tuple<float, float, float>);
+	void update(std::tuple<float, float, float>, std::tuple<float, float, float>, std::tuple<float, float, float>,
+				float dt);
 
 	auto getRoll() -> float;
 	auto getPitch() -> float;
