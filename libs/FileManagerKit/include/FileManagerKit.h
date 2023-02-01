@@ -65,4 +65,6 @@ struct File : public interface::File, public mbed::NonCopyable<File> {
 
 auto create_directory(const std::filesystem::path &path) -> bool;
 auto remove(const std::filesystem::path &path) -> bool;
+auto file_exists(const std::filesystem::path &path) -> bool;
+auto file_is_missing(const std::filesystem::path &path) -> bool;
 }	// namespace leka::FileManagerKit

@@ -3,10 +3,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include <cstddef>
+#include <filesystem>
 
 #include "FileManagerKit.h"
 #include "boost/ut.hpp"
-#include "filesystem"
 #include "tests/config.h"
 #include "tests/utils.h"
 
@@ -27,13 +27,13 @@ struct path {
 		log << "";
 		log << "Cleaning up files, directories";
 
-		for (const auto &p: path::all) {
-			if (std::filesystem::exists(p)) {
-				log << "Removing:" << p;
-				std::filesystem::remove(p);
-				expect(not std::filesystem::exists(p)) << p << "still exists";
+		for (const auto &path: path::all) {
+			if (std::filesystem::exists(path)) {
+				log << "Removing:" << path;
+				std::filesystem::remove(path);
+				expect(not std::filesystem::exists(path)) << path << "still exists";
 			} else {
-				log << "Doesn't exit:" << p;
+				log << "Doesn't exit:" << path;
 			}
 		}
 		log << "";
@@ -89,6 +89,12 @@ suite suite_file_manager_kit = [] {
 		expect(not file.is_open()) << "Failed to close file";
 	};
 
+	"new file exists"_test = [&] {
+		auto exists = FileManagerKit::file_exists(path::dir_file);
+
+		expect(exists >> fatal) << "Failed to check the existance of file";
+	};
+
 	"write to new file"_test = [&] {
 		file.open(path::dir_file, "w");
 		auto bytes = file.write(input_data);
@@ -117,4 +123,10 @@ suite suite_file_manager_kit = [] {
 	};
 
 	"clean up created files"_test = [] { path::remove_all(); };
+
+	"file does not exist"_test = [&] {
+		auto dir_file_is_missing = FileManagerKit::file_is_missing(path::dir_file);
+
+		expect(dir_file_is_missing >> fatal) << "Failed to check the non existance of file";
+	};
 };

@@ -20,3 +20,14 @@ auto FileManagerKit::remove(const std::filesystem::path &path) -> bool
 {
 	return std::filesystem::remove(path);
 }
+
+auto FileManagerKit::file_exists(const std::filesystem::path &path) -> bool
+{
+	auto file = FileManagerKit::File {path, "r"};
+	return file.is_open();
+}
+
+auto FileManagerKit::file_is_missing(const std::filesystem::path &path) -> bool
+{
+	return !FileManagerKit::file_exists(path);
+}
