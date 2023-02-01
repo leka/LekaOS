@@ -11,7 +11,6 @@
 
 #include "ActivityKit.h"
 #include "ChooseReinforcer.h"
-#include "CoreAccelerometer.h"
 #include "CoreBattery.h"
 #include "CoreBufferedSerial.h"
 #include "CoreDMA2D.hpp"
@@ -20,15 +19,15 @@
 #include "CoreFlashManagerIS25LP016D.h"
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
-#include "CoreGyroscope.h"
 #include "CoreI2C.h"
+#include "CoreInterruptIn.h"
 #include "CoreJPEG.hpp"
 #include "CoreJPEGModeDMA.hpp"
 #include "CoreJPEGModePolling.hpp"
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLL.h"
-#include "CoreLSM6DSOX.h"
+#include "CoreLSM6DSOX.hpp"
 #include "CoreLTDC.hpp"
 #include "CoreMCU.h"
 #include "CoreMotor.h"
@@ -258,18 +257,16 @@ namespace imu {
 
 	namespace internal {
 
-		CoreI2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
-		EventLoopKit event_loop {};
+		auto drdy_irq = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
+		auto i2c	  = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
 
 	}	// namespace internal
 
-	CoreLSM6DSOX lsm6dsox(internal::i2c);
-	CoreAccelerometer accel(lsm6dsox);
-	CoreGyroscope gyro(lsm6dsox);
+	auto lsm6dsox = CoreLSM6DSOX(internal::i2c, internal::drdy_irq);
 
 }	// namespace imu
 
-auto imukit = IMUKit {imu::internal::event_loop, imu::accel, imu::gyro};
+auto imukit = IMUKit {imu::lsm6dsox};
 
 namespace motion::internal {
 

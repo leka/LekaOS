@@ -5,12 +5,11 @@
 #include "ReinforcerKit.h"
 
 #include "LedKitAnimations.h"
-#include "MotionKit.h"
+#include "MotionKit.hpp"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "mocks/leka/Accelerometer.h"
 #include "mocks/leka/CoreMotor.h"
-#include "mocks/leka/Gyroscope.h"
+#include "mocks/leka/LSM6DSOX.h"
 #include "mocks/leka/LedKit.h"
 #include "mocks/leka/Timeout.h"
 #include "mocks/leka/VideoKit.h"
@@ -40,18 +39,16 @@ class ReinforcerkitTest : public ::testing::Test
 
 	mock::LedKit mock_ledkit;
 
-	stub::EventLoopKit stub_event_loop_imu {};
 	stub::EventLoopKit stub_event_loop_motion {};
 
 	mock::CoreMotor mock_motor_left {};
 	mock::CoreMotor mock_motor_right {};
 
-	mock::Accelerometer accel {};
-	mock::Gyroscope gyro {};
+	mock::LSM6DSOX lsm6dsox {};
 
 	mock::Timeout mock_timeout {};
 
-	IMUKit imukit {stub_event_loop_imu, accel, gyro};
+	IMUKit imukit {lsm6dsox};
 
 	MotionKit motion {mock_motor_left, mock_motor_right, imukit, stub_event_loop_motion, mock_timeout};
 
@@ -64,6 +61,7 @@ class ReinforcerkitTest : public ::testing::Test
 		EXPECT_CALL(mock_motor_right, stop).Times(1);
 		EXPECT_CALL(mock_motor_left, spin).Times(1);
 		EXPECT_CALL(mock_motor_right, spin).Times(1);
+		EXPECT_CALL(lsm6dsox, setPowerMode(interface::LSM6DSOX::PowerMode::Normal)).Times(1);
 		EXPECT_CALL(mock_timeout, stop).Times(AtMost(1));
 		EXPECT_CALL(mock_timeout, onTimeout).Times(AtMost(1));
 		EXPECT_CALL(mock_timeout, start).Times(AtMost(1));

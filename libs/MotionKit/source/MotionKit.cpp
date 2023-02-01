@@ -2,7 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "MotionKit.h"
+#include "MotionKit.hpp"
 
 #include "MathUtils.h"
 #include "ThisThread.h"
@@ -33,7 +33,7 @@ void MotionKit::rotate(uint8_t number_of_rotations, Rotation direction,
 	stop();
 
 	_imukit.start();
-	_imukit.reset();
+	_imukit.setOrigin();
 
 	_target_not_reached		  = true;
 	_stabilisation_requested  = false;
@@ -59,7 +59,7 @@ void MotionKit::startStabilisation()
 	stop();
 
 	_imukit.start();
-	_imukit.reset();
+	_imukit.setOrigin();
 
 	_target_not_reached		  = false;
 	_stabilisation_requested  = true;

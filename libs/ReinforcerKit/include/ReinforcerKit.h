@@ -8,7 +8,7 @@
 #include <interface/libs/LedKit.h>
 #include <interface/libs/VideoKit.h>
 
-#include "MotionKit.h"
+#include "MotionKit.hpp"
 
 namespace leka {
 

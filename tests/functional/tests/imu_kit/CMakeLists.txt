@@ -15,5 +15,4 @@ register_functional_test(
 		CoreI2C
 		CoreIMU
 		IMUKit
-		EventLoopKit
 )

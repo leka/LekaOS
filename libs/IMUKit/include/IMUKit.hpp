@@ -6,46 +6,38 @@
 
 #include <chrono>
 
-#include "interface/Accelerometer.h"
-#include "interface/Gyroscope.h"
-#include "interface/libs/EventLoop.h"
-#include "internal/Mahony.h"
+#include "interface/LSM6DSOX.hpp"
+#include "internal/Mahony.hpp"
 
 namespace leka {
 
 class IMUKit
 {
   public:
-	IMUKit(interface::EventLoop &event_loop, interface::Accelerometer &accel, interface::Gyroscope &gyro)
-		: _event_loop(event_loop),
-		  _accel(accel),
-		  _gyro(gyro) {
+	explicit IMUKit(interface::LSM6DSOX &lsm6dsox)
+		: _lsm6dsox(lsm6dsox) {
 			  // nothing to do
 		  };
 
 	void init();
 	void start();
-	void run();
 	void stop();
+	void setOrigin();
 
 	auto getAngles() -> std::array<float, 3>;
 
-	void reset();
-
-	void computeAngles();
-
   private:
-	interface::EventLoop &_event_loop;
-	interface::Accelerometer &_accel;
-	interface::Gyroscope &_gyro;
+	void computeAngles(const interface::LSM6DSOX::SensorData &imu_data);
+	interface::LSM6DSOX &_lsm6dsox;
 
 	ahrs::Mahony _mahony {};
 	struct SamplingConfig {
 		const std::chrono::milliseconds delay {};
 		const float frequency {};
 	};
+	// ? Sampling config deprecated.
+	// TODO(@ladislas @hugo): Use dynamic sampling frequency.
 	const SamplingConfig kDefaultSamplingConfig {.delay = std::chrono::milliseconds {70}, .frequency = 13.F};
-	bool _is_running {false};
 };
 
 }	// namespace leka
