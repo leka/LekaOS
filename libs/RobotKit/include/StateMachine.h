@@ -25,6 +25,8 @@ namespace sm::event {
 	};
 	struct charge_did_stop {
 	};
+	struct go_to_sleep_requested {
+	};
 	struct file_exchange_start_requested {
 	};
 	struct file_exchange_stop_requested {
@@ -223,6 +225,7 @@ struct StateMachine {
 			, sm::state::working  + event<sm::event::charge_did_start> [sm::guard::is_charging {}]                          = sm::state::charging
 			, sm::state::working  + event<sm::event::emergency_stop>                                                        = sm::state::emergency_stopped
 			, sm::state::working  + event<sm::event::autonomous_activities_mode_requested>                                  = sm::state::autonomous_activities
+			, sm::state::working  + event<sm::event::go_to_sleep_requested>                                                 = sm::state::sleeping
 
 			, sm::state::sleeping + boost::sml::on_entry<_> / (sm::action::start_deep_sleep_timeout {}, sm::action::start_sleeping_behavior {} )
 			, sm::state::sleeping + boost::sml::on_exit<_>  / (sm::action::stop_deep_sleep_timeout  {}, sm::action::stop_sleeping_behavior  {} )

@@ -175,6 +175,19 @@ TEST_F(StateMachineTest, stateWorkingEventAutonomousActivityRequested)
 	EXPECT_TRUE(sm.is(lksm::state::autonomous_activities));
 }
 
+TEST_F(StateMachineTest, stateWorkingEventGoToSleepRequested)
+{
+	sm.set_current_states(lksm::state::working);
+
+	EXPECT_CALL(mock_rc, stopIdleTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startSleepingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout).Times(1);
+
+	sm.process_event(lksm::event::go_to_sleep_requested {});
+
+	EXPECT_TRUE(sm.is(lksm::state::sleeping));
+}
+
 TEST_F(StateMachineTest, stateSleepEventCommandReceived)
 {
 	sm.set_current_states(lksm::state::sleeping);
