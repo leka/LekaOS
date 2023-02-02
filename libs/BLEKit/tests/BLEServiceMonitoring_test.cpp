@@ -54,39 +54,6 @@ TEST_F(BLEServiceMonitoringTest, setChargingStatus)
 	EXPECT_FALSE(actual_charging_status);
 }
 
-TEST_F(BLEServiceMonitoringTest, isScreensaverEnableDefault)
-{
-	auto actual_is_screensaver_enable = service_monitoring.isScreensaverEnable();
-	EXPECT_EQ(actual_is_screensaver_enable, default_is_screensaver_enable);
-}
-
-TEST_F(BLEServiceMonitoringTest, isScreensaverEnableFalse)
-{
-	bool expect_screensaver_enabled		 = false;
-	auto expect_screensaver_enabled_data = static_cast<uint8_t>(expect_screensaver_enabled);
-
-	onDataReceivedProcess(&expect_screensaver_enabled_data);
-
-	auto actual_is_screensaver_enable = service_monitoring.isScreensaverEnable();
-	EXPECT_EQ(actual_is_screensaver_enable, expect_screensaver_enabled);
-}
-
-TEST_F(BLEServiceMonitoringTest, isScreensaverEnableNotSameHandle)
-{
-	bool expect_screensaver_enabled = default_is_screensaver_enable;
-	bool sent_value					= false;
-	auto sent_value_data			= static_cast<uint8_t>(sent_value);
-
-	data_received_handle.handle = 0xFFFF;
-
-	onDataReceivedProcess(&sent_value_data);
-
-	auto actual_is_screensaver_enable = service_monitoring.isScreensaverEnable();
-
-	EXPECT_EQ(actual_is_screensaver_enable, expect_screensaver_enabled);
-	EXPECT_NE(actual_is_screensaver_enable, sent_value);
-}
-
 TEST_F(BLEServiceMonitoringTest, onSoftRebootUnset)
 {
 	bool sent_value		 = true;
