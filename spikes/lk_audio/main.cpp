@@ -73,11 +73,14 @@ auto main() -> int
 
 	initializeSD();
 
+	if (FileManagerKit::file_is_missing(sound_file_path)) {
+		return 1;
+	}
+
 	while (true) {
-		if (auto is_open = file.open(sound_file_path); is_open) {
-			playSound();
-			file.close();
-		}
+		file.open(sound_file_path);
+		playSound();
+		file.close();
 
 		rtos::ThisThread::sleep_for(1s);
 	}

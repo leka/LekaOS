@@ -37,18 +37,22 @@ void VideoKit::displayImage(const std::filesystem::path &path)
 		return;
 	}
 
-	if (auto file = FileManagerKit::File {path}; file.is_open()) {
-		_must_stop = true;
-		_event_loop.stop();
-
-		_current_path = path;
-
-		rtos::ThisThread::sleep_for(100ms);
-
-		_video.displayImage(file);
-
-		file.close();
+	if (FileManagerKit::file_is_missing(path)) {
+		return;
 	}
+
+	auto file = FileManagerKit::File {path};
+
+	_must_stop = true;
+	_event_loop.stop();
+
+	_current_path = path;
+
+	rtos::ThisThread::sleep_for(100ms);
+
+	_video.displayImage(file);
+
+	file.close();
 }
 
 void VideoKit::fillWhiteBackgroundAndDisplayImage(const std::filesystem::path &path)
@@ -59,39 +63,43 @@ void VideoKit::fillWhiteBackgroundAndDisplayImage(const std::filesystem::path &p
 		return;
 	}
 
-	if (auto file = FileManagerKit::File {path}; file.is_open()) {
-		_must_stop = true;
-		_event_loop.stop();
-
-		_current_path = path;
-
-		rtos::ThisThread::sleep_for(100ms);
-
-		_video.clearScreen();
-		_video.displayImage(file);
-
-		file.close();
+	if (FileManagerKit::file_is_missing(path)) {
+		return;
 	}
+
+	auto file = FileManagerKit::File {path};
+
+	_must_stop = true;
+	_event_loop.stop();
+
+	_current_path = path;
+
+	rtos::ThisThread::sleep_for(100ms);
+
+	_video.clearScreen();
+	_video.displayImage(file);
+
+	file.close();
 }
 
 void VideoKit::playVideoOnce(const std::filesystem::path &path, const std::function<void()> &on_video_ended_callback)
 {
 	const std::scoped_lock lock(mutex);
 
-	if (auto file = FileManagerKit::File {path}; file.is_open()) {
-		file.close();
-
-		_must_stop = true;
-		_event_loop.stop();
-
-		_current_path = path;
-		_must_loop	  = false;
-
-		rtos::ThisThread::sleep_for(100ms);
-
-		_on_video_ended_callback = on_video_ended_callback;
-		_event_loop.start();
+	if (FileManagerKit::file_is_missing(path)) {
+		return;
 	}
+
+	_must_stop = true;
+	_event_loop.stop();
+
+	_current_path = path;
+	_must_loop	  = false;
+
+	rtos::ThisThread::sleep_for(100ms);
+
+	_on_video_ended_callback = on_video_ended_callback;
+	_event_loop.start();
 }
 
 void VideoKit::playVideoOnRepeat(const std::filesystem::path &path,
@@ -99,20 +107,20 @@ void VideoKit::playVideoOnRepeat(const std::filesystem::path &path,
 {
 	const std::scoped_lock lock(mutex);
 
-	if (auto file = FileManagerKit::File {path}; file.is_open()) {
-		file.close();
-
-		_must_stop = true;
-		_event_loop.stop();
-
-		_current_path = path;
-		_must_loop	  = true;
-
-		rtos::ThisThread::sleep_for(100ms);
-
-		_on_video_ended_callback = on_video_ended_callback;
-		_event_loop.start();
+	if (FileManagerKit::file_is_missing(path)) {
+		return;
 	}
+
+	_must_stop = true;
+	_event_loop.stop();
+
+	_current_path = path;
+	_must_loop	  = true;
+
+	rtos::ThisThread::sleep_for(100ms);
+
+	_on_video_ended_callback = on_video_ended_callback;
+	_event_loop.start();
 }
 
 void VideoKit::stopVideo()
