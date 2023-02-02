@@ -171,3 +171,29 @@ TEST_F(RobotControllerTest, stateWorkingActivityStartedNotPlaying)
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::working));
 }
+
+TEST_F(RobotControllerTest, stateWorkingEventGoToSleepRequested)
+{
+	rc.state_machine.set_current_states(lksm::state::working);
+
+	// TODO (@yann): Trigger go_to_sleep_requested in StateMachine from BLE and do not use process_event
+	Sequence on_exit_working_sequence;
+	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_working_sequence);
+
+	Sequence start_deep_sleep_timeout_sequence;
+	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(start_deep_sleep_timeout_sequence);
+	EXPECT_CALL(timeout_state_transition, start).InSequence(start_deep_sleep_timeout_sequence);
+
+	Sequence on_sleeping_sequence;
+	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::sleeping))).InSequence(on_sleeping_sequence);
+	EXPECT_CALL(mock_videokit, playVideoOnce).InSequence(on_sleeping_sequence);
+	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_sleeping_sequence);
+	EXPECT_CALL(timeout_state_internal, onTimeout)
+		.InSequence(on_sleeping_sequence)
+		.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleeping_start_timeout));
+	EXPECT_CALL(timeout_state_internal, start).InSequence(on_sleeping_sequence);
+
+	rc.state_machine.process_event(lksm::event::go_to_sleep_requested {});
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::sleeping));
+}

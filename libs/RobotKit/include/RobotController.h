@@ -482,6 +482,11 @@ class RobotController : public interface::RobotController
 		auto on_charge_did_stop = [this]() { raise(event::charge_did_stop {}); };
 		_battery.onChargeDidStop(on_charge_did_stop);
 
+		_service_monitoring.onGoToSleepRequested([this] {
+			// raise(event::go_to_sleep_requested {});
+			// _service_monitoring.resetGoToSleep();
+		});
+
 		_service_monitoring.onSoftReboot([] { system_reset(); });
 
 		_service_config.onRobotNameUpdated(
