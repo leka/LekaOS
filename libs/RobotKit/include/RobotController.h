@@ -484,7 +484,7 @@ class RobotController : public interface::RobotController
 
 		_service_monitoring.onGoToSleepRequested([this] {
 			raise(event::go_to_sleep_requested {});
-			// _service_monitoring.resetGoToSleep();
+			_service_monitoring.resetGoToSleep();
 		});
 
 		_service_monitoring.onSoftReboot([] { system_reset(); });
