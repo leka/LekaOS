@@ -483,7 +483,7 @@ class RobotController : public interface::RobotController
 		_battery.onChargeDidStop(on_charge_did_stop);
 
 		_service_monitoring.onGoToSleepRequested([this] {
-			// raise(event::go_to_sleep_requested {});
+			raise(event::go_to_sleep_requested {});
 			// _service_monitoring.resetGoToSleep();
 		});
 
