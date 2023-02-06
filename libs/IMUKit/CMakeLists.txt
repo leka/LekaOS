@@ -2,6 +2,8 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
+add_subdirectory(external)
+
 add_library(IMUKit STATIC)
 
 target_include_directories(IMUKit
