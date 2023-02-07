@@ -83,7 +83,7 @@ void MotionKit::run()
 	};
 
 	while (must_rotate()) {
-		auto [current_pitch, current_roll, current_yaw] = _imukit.getAngles();
+		auto [current_pitch, current_roll, current_yaw] = _imukit.getEulerAngles();
 
 		check_complete_rotations_executed(current_yaw);
 
@@ -95,7 +95,7 @@ void MotionKit::run()
 	_rotations_to_execute	  = 0;
 
 	while (_stabilisation_requested || _target_not_reached) {
-		auto [pitch, roll, yaw] = _imukit.getAngles();
+		auto [pitch, roll, yaw] = _imukit.getEulerAngles();
 		auto [speed, rotation]	= _pid.processPID(pitch, roll, yaw);
 
 		executeSpeed(speed, rotation);

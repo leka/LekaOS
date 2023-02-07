@@ -4,12 +4,15 @@
 
 #pragma once
 
-#include <array>
-#include <chrono>
-
 #include "interface/LSM6DSOX.hpp"
 
 namespace leka {
+
+struct EulerAngles {
+	float pitch;
+	float roll;
+	float yaw;
+};
 
 class IMUKit
 {
@@ -21,10 +24,11 @@ class IMUKit
 	void stop();
 
 	void setOrigin();
-	auto getAngles() -> std::array<float, 3>;
+	auto getEulerAngles() -> const EulerAngles &;
 
   private:
 	interface::LSM6DSOX &_lsm6dsox;
+	EulerAngles _euler_angles {};
 };
 
 }	// namespace leka

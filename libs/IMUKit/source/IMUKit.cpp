@@ -30,8 +30,7 @@ void IMUKit::setOrigin()
 	// TODO(@ladislas): to implement
 }
 
-auto IMUKit::getAngles() -> std::array<float, 3>
+auto IMUKit::getEulerAngles() -> const EulerAngles &
 {
-	// TODO(@ladislas): to implement
-	return {0.F, 0.F, 0.F};
+	return _euler_angles;
 }
