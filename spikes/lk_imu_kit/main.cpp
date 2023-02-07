@@ -34,6 +34,7 @@ IMUKit imukit(imu::lsm6dsox);
 
 auto main() -> int
 {
+	rtos::ThisThread::sleep_for(140ms);
 	logger::init();
 
 	HelloWorld hello;
@@ -41,6 +42,7 @@ auto main() -> int
 
 	imu::lsm6dsox.init();
 
+	imukit.stop();
 	imukit.init();
 	imukit.start();
 

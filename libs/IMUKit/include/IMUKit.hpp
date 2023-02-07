@@ -27,6 +27,8 @@ class IMUKit
 	auto getEulerAngles() -> const EulerAngles &;
 
   private:
+	void drdy_callback(const interface::LSM6DSOX::SensorData &data);
+
 	interface::LSM6DSOX &_lsm6dsox;
 	EulerAngles _euler_angles {};
 };

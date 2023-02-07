@@ -18,6 +18,7 @@ target_sources(IMUKit
 
 target_link_libraries(IMUKit
 	CoreIMU
+	Fusion
 )
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
