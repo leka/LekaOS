@@ -61,7 +61,7 @@ class BLEServiceMonitoring : public interface::BLEService
 
 	void onSoftReboot(const std::function<void()> &callback) { _on_soft_reboot = callback; }
 
-	void onGoToSleepRequested(const std::function<void()> &callback) { _on_go_to_sleep_callback = callback; }
+	void registerGoToSleepRequested(const std::function<void()> &callback) { _on_go_to_sleep_callback = callback; }
 
 	void onDataRequested(const data_requested_handle_t &params) final
 	{

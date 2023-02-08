@@ -54,7 +54,7 @@ TEST_F(BLEServiceMonitoringTest, setChargingStatus)
 	EXPECT_FALSE(actual_charging_status);
 }
 
-TEST_F(BLEServiceMonitoringTest, onGoToSleepRequestedUnset)
+TEST_F(BLEServiceMonitoringTest, registerGoToSleepRequestedUnset)
 {
 	bool sent_value		 = true;
 	auto sent_value_data = static_cast<uint8_t>(sent_value);
@@ -65,33 +65,33 @@ TEST_F(BLEServiceMonitoringTest, onGoToSleepRequestedUnset)
 	onDataReceivedProcess(&sent_value_data);
 }
 
-TEST_F(BLEServiceMonitoringTest, onGoToSleepRequestedReceivedFalse)
+TEST_F(BLEServiceMonitoringTest, registerGoToSleepRequestedReceivedFalse)
 {
 	bool sent_value		 = false;
 	auto sent_value_data = static_cast<uint8_t>(sent_value);
 
 	testing::MockFunction<void()> mock_callback {};
-	service_monitoring.onGoToSleepRequested(mock_callback.AsStdFunction());
+	service_monitoring.registerGoToSleepRequested(mock_callback.AsStdFunction());
 
 	EXPECT_CALL(mock_callback, Call).Times(0);
 
 	onDataReceivedProcess(&sent_value_data);
 }
 
-TEST_F(BLEServiceMonitoringTest, onGoToSleepRequestedReceivedTrue)
+TEST_F(BLEServiceMonitoringTest, registerGoToSleepRequestedReceivedTrue)
 {
 	bool sent_value		 = true;
 	auto sent_value_data = static_cast<uint8_t>(sent_value);
 
 	testing::MockFunction<void()> mock_callback {};
-	service_monitoring.onGoToSleepRequested(mock_callback.AsStdFunction());
+	service_monitoring.registerGoToSleepRequested(mock_callback.AsStdFunction());
 
 	EXPECT_CALL(mock_callback, Call).Times(1);
 
 	onDataReceivedProcess(&sent_value_data);
 }
 
-TEST_F(BLEServiceMonitoringTest, onGoToSleepRequestedNotSameHandle)
+TEST_F(BLEServiceMonitoringTest, registerGoToSleepRequestedNotSameHandle)
 {
 	bool sent_value		 = true;
 	auto sent_value_data = static_cast<uint8_t>(sent_value);
@@ -99,7 +99,7 @@ TEST_F(BLEServiceMonitoringTest, onGoToSleepRequestedNotSameHandle)
 	data_received_handle.handle = 0xFFFF;
 
 	testing::MockFunction<void()> mock_callback {};
-	service_monitoring.onGoToSleepRequested(mock_callback.AsStdFunction());
+	service_monitoring.registerGoToSleepRequested(mock_callback.AsStdFunction());
 
 	EXPECT_CALL(mock_callback, Call).Times(0);
 
