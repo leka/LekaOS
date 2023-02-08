@@ -12,11 +12,10 @@
 #include "mocks/leka/LSM6DSOX.h"
 #include "stubs/leka/EventLoopKit.h"
 #include "stubs/mbed/InterruptIn.h"
+#include "stubs/mbed/Kernel.h"
 
 using namespace leka;
-using ::testing::_;
-using ::testing::AtLeast;
-using ::testing::SaveArg;
+using namespace std::chrono;
 
 class IMUKitTest : public ::testing::Test
 {
@@ -48,4 +47,44 @@ TEST_F(IMUKitTest, stop)
 	EXPECT_CALL(mock_lsm6dox, setPowerMode(interface::LSM6DSOX::PowerMode::Off)).Times(1);
 
 	imukit.stop();
+}
+
+TEST_F(IMUKitTest, getEulerAngles)
+{
+	auto [pitch, roll, yaw] = imukit.getEulerAngles();
+
+	EXPECT_EQ(pitch, 0);
+	EXPECT_EQ(roll, 0);
+	EXPECT_EQ(yaw, 0);
+}
+
+TEST_F(IMUKitTest, setOrigin)
+{
+	// TODO(@ladislas): add tests
+	imukit.setOrigin();
+}
+
+TEST_F(IMUKitTest, onDataReady)
+{
+	const auto data_initial = interface::LSM6DSOX::SensorData {
+		.xl = {.x = 0.F, .y = 0.F, .z = 0.F}, .gy = {.x = 0.F, .y = 0.F, .z = 0.F }
+	};
+
+	mock_lsm6dox.call_drdy_callback(data_initial);
+
+	const auto angles_initial = imukit.getEulerAngles();
+
+	spy_kernel_addElapsedTimeToTickCount(80ms);
+
+	const auto data_updated = interface::LSM6DSOX::SensorData {
+		.xl = {.x = 1.F, .y = 2.F, .z = 3.F}, .gy = {.x = 1.F, .y = 2.F, .z = 3.F }
+	};
+
+	mock_lsm6dox.call_drdy_callback(data_updated);
+
+	auto angles_updated = imukit.getEulerAngles();
+
+	EXPECT_NE(angles_initial.pitch, angles_updated.pitch);
+	EXPECT_NE(angles_initial.roll, angles_updated.roll);
+	EXPECT_NE(angles_initial.yaw, angles_updated.yaw);
 }
