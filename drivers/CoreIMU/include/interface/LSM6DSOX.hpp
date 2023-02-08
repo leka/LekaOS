@@ -39,7 +39,7 @@ class LSM6DSOX
 		Gyroscope gy	 = {0, 0, 0};
 	};
 
-	using drdy_callback_t = std::function<void(const SensorData &)>;
+	using drdy_callback_t = std::function<void(const SensorData)>;
 
 	virtual void init()															= 0;
 	virtual void registerOnGyDataReadyCallback(drdy_callback_t const &callback) = 0;

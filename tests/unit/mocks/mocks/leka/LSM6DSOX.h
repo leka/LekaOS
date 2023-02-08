@@ -15,15 +15,12 @@ class LSM6DSOX : public interface::LSM6DSOX
 	MOCK_METHOD(void, init, (), (override));
 	MOCK_METHOD(void, setPowerMode, (PowerMode), (override));
 
-	void registerOnGyDataReadyCallback(std::function<void(const SensorData &)> const &cb) override
-	{
-		drdy_callback = cb;
-	}
+	void registerOnGyDataReadyCallback(drdy_callback_t const &cb) override { drdy_callback = cb; }
 
 	void call_drdy_callback(const SensorData &data) { drdy_callback(data); }
 
   private:
-	std::function<void(const SensorData &)> drdy_callback {};
+	drdy_callback_t drdy_callback {};
 };
 
 }	// namespace leka::mock
