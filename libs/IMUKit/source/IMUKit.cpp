@@ -78,12 +78,12 @@ void IMUKit::setOrigin()
 	// ? and start counting from there
 }
 
-auto IMUKit::getEulerAngles() const -> const EulerAngles &
+auto IMUKit::getEulerAngles() const -> EulerAngles
 {
 	return _euler_angles;
 }
 
-void IMUKit::drdy_callback(const interface::LSM6DSOX::SensorData &data)
+void IMUKit::drdy_callback(const interface::LSM6DSOX::SensorData data)
 {
 	// ? Note: For a detailed explanation on the code below, checkout
 	// ? https://github.com/leka/LekaOS/tree/develop/spikes/lk_sensors_imu_lsm6dsox_fusion_calibration
