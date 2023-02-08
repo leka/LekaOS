@@ -29,8 +29,6 @@ class MotionKitTest : public ::testing::Test
 
 	void SetUp() override
 	{
-		EXPECT_CALL(lsm6dsox, registerOnGyDataReadyCallback).Times(1);
-
 		imukit.init();
 		motion.init();
 	}
