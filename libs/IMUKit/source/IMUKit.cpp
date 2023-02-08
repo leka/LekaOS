@@ -78,7 +78,7 @@ void IMUKit::setOrigin()
 	// ? and start counting from there
 }
 
-auto IMUKit::getEulerAngles() -> const EulerAngles &
+auto IMUKit::getEulerAngles() const -> const EulerAngles &
 {
 	return _euler_angles;
 }
