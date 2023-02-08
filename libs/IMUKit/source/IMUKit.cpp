@@ -73,6 +73,9 @@ void IMUKit::stop()
 void IMUKit::setOrigin()
 {
 	// TODO(@ladislas): to implement
+	// ? Reseting the algorithm might not be the best answer as it takes a few second to stabilize
+	// ? Because the readings are very stable, it would be easier to take the current yaw
+	// ? and start counting from there
 }
 
 auto IMUKit::getEulerAngles() -> const EulerAngles &
