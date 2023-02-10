@@ -6,9 +6,13 @@
 #include <algorithm>
 #include <array>
 
+#include "rtos/ThisThread.h"
+
+#include "LogKit.h"
 #include "MemoryUtils.h"
 
 using namespace leka;
+using namespace std::chrono_literals;
 
 void CoreQDACMCP4728::init()
 {
@@ -165,4 +169,19 @@ void CoreQDACMCP4728::readInputRegisters()
 	};
 
 	set_input_data_for_all_channels();
+
+	log_info("Raw QDAC registers:");
+	for (int i = 0; i < 4; i++) {
+		log_info("(%x) Channel %x (_input): %2x%2x%2x", _address, i, buffer.at(i * 6 + 0), buffer.at(i * 6 + 1),
+				 buffer.at(i * 6 + 2));
+		log_info("(%x) Channel %x (eeprom): %2x%2x%2x", _address, i, buffer.at(i * 6 + 3), buffer.at(i * 6 + 4),
+				 buffer.at(i * 6 + 5));
+	}
+	log_info("Compiled QDAC registers:");
+	for (int channel = 0; channel < 4; channel++) {
+		log_info("(%x) Channel #%i: VREF: %x, PD: %x, Gain: %x, Data: %lx", _address, channel,
+				 _rx_registers.at(channel).vref, _rx_registers.at(channel).pd, _rx_registers.at(channel).gain,
+				 _rx_registers.at(channel).data);
+	}
+	rtos::ThisThread::sleep_for(40ms);
 }
