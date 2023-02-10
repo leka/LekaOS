@@ -21,6 +21,7 @@ add_subdirectory(${SPIKES_DIR}/lk_imu_kit)
 add_subdirectory(${SPIKES_DIR}/lk_lcd)
 add_subdirectory(${SPIKES_DIR}/lk_led_kit)
 add_subdirectory(${SPIKES_DIR}/lk_log_kit)
+add_subdirectory(${SPIKES_DIR}/lk_lsm6dsox)
 add_subdirectory(${SPIKES_DIR}/lk_motion_kit)
 add_subdirectory(${SPIKES_DIR}/lk_motors)
 add_subdirectory(${SPIKES_DIR}/lk_qdac)
@@ -63,6 +64,7 @@ add_dependencies(spikes_leka
 	spike_lk_lcd
 	spike_lk_led_kit
 	spike_lk_log_kit
+	spike_lk_lsm6dsox
 	spike_lk_motion_kit
 	spike_lk_motors
 	spike_lk_qdac

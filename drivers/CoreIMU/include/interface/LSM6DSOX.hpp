@@ -41,8 +41,9 @@ class LSM6DSOX
 
 	using drdy_callback_t = std::function<void(const SensorData &)>;
 
-	virtual void init()															= 0;
-	virtual void registerOnGyDataReadyCallback(drdy_callback_t const &callback) = 0;
-	virtual void setPowerMode(PowerMode)										= 0;
+	virtual void init()																= 0;
+	virtual void registerOnGyDataReadyCallback(drdy_callback_t const &callback)		= 0;
+	virtual void registerOnDoubleTapCallback(std::function<void()> const &callback) = 0;
+	virtual void setPowerMode(PowerMode)											= 0;
 };
 }	// namespace leka::interface

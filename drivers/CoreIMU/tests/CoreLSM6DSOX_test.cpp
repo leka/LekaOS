@@ -78,3 +78,17 @@ TEST_F(CoreLSM6DSOXTest, onGyrDRDY)
 	auto on_rise_callback = spy_InterruptIn_getRiseCallback();
 	on_rise_callback();
 }
+
+TEST_F(CoreLSM6DSOXTest, onDoubleTap)
+{
+	lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::UltraLow);
+
+	MockFunction<void()> mock_callback;
+
+	EXPECT_CALL(mock_callback, Call).Times(1);
+
+	lsm6dsox.registerOnDoubleTapCallback(mock_callback.AsStdFunction());
+
+	auto on_rise_callback = spy_InterruptIn_getRiseCallback();
+	on_rise_callback();
+}
