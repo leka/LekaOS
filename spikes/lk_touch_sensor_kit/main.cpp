@@ -27,8 +27,8 @@ inline auto io_expander		  = CoreIOExpanderMCP23017 {corei2c, io_expander_reset}
 
 namespace detect_pin {
 
-	inline auto ear_left		 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB5};
-	inline auto ear_right		 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB4};
+	inline auto ear_left		 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB4};
+	inline auto ear_right		 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB5};
 	inline auto belt_left_front	 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB3};
 	inline auto belt_left_back	 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB2};
 	inline auto belt_right_back	 = io::expanded::DigitalIn<> {io_expander, mcp23017::pin::PB1};
@@ -38,8 +38,8 @@ namespace detect_pin {
 
 namespace power_mode_pin {
 
-	inline auto ear_left		 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA5};
-	inline auto ear_right		 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA4};
+	inline auto ear_left		 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA4};
+	inline auto ear_right		 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA5};
 	inline auto belt_left_front	 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA3};
 	inline auto belt_left_back	 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA2};
 	inline auto belt_right_back	 = io::expanded::DigitalOut<> {io_expander, mcp23017::pin::PA1};
