@@ -2,6 +2,8 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#include <cinttypes>
+
 #include "rtos/ThisThread.h"
 
 #include "CoreI2C.h"
@@ -40,12 +42,13 @@ auto main() -> int
 
 	imu::lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
 
-	auto callback = [](const interface::LSM6DSOX::SensorData &imu_data) {
-		const auto &[xlx, xly, xlz] = imu_data.xl;
-		const auto &[gx, gy, gz]	= imu_data.gy;
+	auto callback = [](const interface::LSM6DSOX::SensorData data) {
+		const auto &[xlx, xly, xlz] = data.xl;
+		const auto &[gx, gy, gz]	= data.gy;
+		const auto timestamp		= data.timestamp.time_since_epoch().count();
 
-		log_debug("xl.x: %7.2f, xl.y: %7.2f, xl.z: %7.2f, gy.x: %7.2f, gy.y: %7.2f, gy.z: %7.2f", xlx, xly, xlz, gx, gy,
-				  gz);
+		log_debug("ts: %" PRId64 "ms, xl.x: %7.2f, xl.y: %7.2f, xl.z: %7.2f, gy.x: %7.2f, gy.y: %7.2f, gy.z: %7.2f",
+				  timestamp, xlx, xly, xlz, gx, gy, gz);
 	};
 
 	imu::lsm6dsox.registerOnGyDataReadyCallback(callback);
