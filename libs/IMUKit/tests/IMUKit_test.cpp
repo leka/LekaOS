@@ -12,13 +12,10 @@
 #include "mocks/leka/LSM6DSOX.h"
 #include "stubs/leka/EventLoopKit.h"
 #include "stubs/mbed/InterruptIn.h"
+#include "stubs/mbed/Kernel.h"
 
 using namespace leka;
-using ::testing::_;
-using ::testing::AtLeast;
-using ::testing::SaveArg;
-
-// TODO(@leka/dev-embedded): temporary fix, changes are needed when updating fusion algorithm
+using namespace std::chrono;
 
 class IMUKitTest : public ::testing::Test
 {
@@ -52,154 +49,42 @@ TEST_F(IMUKitTest, stop)
 	imukit.stop();
 }
 
-TEST_F(IMUKitTest, computeAnglesNullAccelerations)
+TEST_F(IMUKitTest, getEulerAngles)
 {
-	std::function<void(interface::LSM6DSOX::SensorData)> callback {};
+	auto [pitch, roll, yaw] = imukit.getEulerAngles();
 
-	EXPECT_CALL(mock_lsm6dox, registerOnGyDataReadyCallback).WillOnce(SaveArg<0>(&callback));
-
-	imukit.init();
-
-	interface::LSM6DSOX::SensorData imu_data
-	{
-		{0, 0, 0}, { 0, 0, 0 }
-	};
-
-	callback(imu_data);
-
-	auto [pitch, roll, yaw] = imukit.getAngles();
-
-	for (auto i = 0; i < 100; ++i) {
-		auto [pitch, roll, yaw] = imukit.getAngles();
-		EXPECT_EQ(pitch, 0);
-		EXPECT_EQ(roll, 0);
-		EXPECT_EQ(yaw, 180);
-	}
+	EXPECT_EQ(pitch, 0);
+	EXPECT_EQ(roll, 0);
+	EXPECT_EQ(yaw, 0);
 }
 
-TEST_F(IMUKitTest, defaultPosition)
+TEST_F(IMUKitTest, setOrigin)
 {
-	std::function<void(interface::LSM6DSOX::SensorData)> callback {};
-
-	EXPECT_CALL(mock_lsm6dox, registerOnGyDataReadyCallback).WillOnce(SaveArg<0>(&callback));
-
-	imukit.init();
-
-	interface::LSM6DSOX::SensorData imu_data
-	{
-		{0, 0, 1000}, { 0, 0, 0 }
-	};
-
-	callback(imu_data);
-
-	auto [pitch, roll, yaw] = imukit.getAngles();
-
-	for (auto i = 0; i < 100; ++i) {
-		auto [pitch, roll, yaw] = imukit.getAngles();
-		EXPECT_EQ(pitch, 0);
-		EXPECT_EQ(roll, 0);
-		EXPECT_EQ(yaw, 180);
-	}
+	// TODO(@ladislas): add tests
+	imukit.setOrigin();
 }
 
-// TODO (@ladislas, @hugo) Go further with numeric testing when new fusion is implemented
+TEST_F(IMUKitTest, onDataReady)
+{
+	const auto data_initial = interface::LSM6DSOX::SensorData {
+		.xl = {.x = 0.F, .y = 0.F, .z = 0.F}, .gy = {.x = 0.F, .y = 0.F, .z = 0.F }
+	};
 
-// TEST_F(IMUKitTest, robotRolled90DegreesOnTheTop)
-// {
-// 	std::function<void(interface::LSM6DSOX::SensorData)> callback {};
+	mock_lsm6dox.call_drdy_callback(data_initial);
 
-// 	EXPECT_CALL(mock_lsm6dox, registerOnGyDataReadyCallback).WillOnce(SaveArg<0>(&callback));
+	const auto angles_initial = imukit.getEulerAngles();
 
-// 	imukit.init();
+	spy_kernel_addElapsedTimeToTickCount(80ms);
 
-// 	interface::LSM6DSOX::SensorData imu_data
-// 	{
-// 		{1000, 0, 0}, { 0, 0, 0 }
-// 	};
+	const auto data_updated = interface::LSM6DSOX::SensorData {
+		.xl = {.x = 1.F, .y = 2.F, .z = 3.F}, .gy = {.x = 1.F, .y = 2.F, .z = 3.F }
+	};
 
-// 	callback(imu_data);
+	mock_lsm6dox.call_drdy_callback(data_updated);
 
-// 	auto [pitch, roll, yaw] = imukit.getAngles();
+	auto angles_updated = imukit.getEulerAngles();
 
-// 	for (auto i = 0; i < 100; ++i) {
-// 		auto [pitch, roll, yaw] = imukit.getAngles();
-// 		EXPECT_TRUE(-100 < pitch && pitch < -80);
-// 		EXPECT_EQ(roll, 0);
-// 		EXPECT_EQ(yaw, 180);
-// 	}
-// }
-
-// TEST_F(IMUKitTest, robotRolled90DegreesOnTheBottom)
-// {
-// 	std::function<void(interface::LSM6DSOX::SensorData)> callback {};
-
-// 	EXPECT_CALL(mock_lsm6dox, registerOnGyDataReadyCallback).WillOnce(SaveArg<0>(&callback));
-
-// 	imukit.init();
-
-// 	interface::LSM6DSOX::SensorData imu_data
-// 	{
-// 		{-1000, 0, 0}, { 0, 0, 0 }
-// 	};
-
-// 	callback(imu_data);
-
-// 	auto [pitch, roll, yaw] = imukit.getAngles();
-
-// 	for (auto i = 0; i < 100; ++i) {
-// 		auto [pitch, roll, yaw] = imukit.getAngles();
-// 		EXPECT_TRUE(80 < pitch && pitch < 100);
-// 		EXPECT_EQ(roll, 0);
-// 		EXPECT_EQ(yaw, 180);
-// 	}
-// }
-
-// TEST_F(IMUKitTest, robotRolled90DegreesOnItsLeft)
-// {
-// 	std::function<void(interface::LSM6DSOX::SensorData)> callback {};
-
-// 	EXPECT_CALL(mock_lsm6dox, registerOnGyDataReadyCallback).WillOnce(SaveArg<0>(&callback));
-
-// 	imukit.init();
-
-// 	interface::LSM6DSOX::SensorData imu_data
-// 	{
-// 		{0, 1000, 0}, { 0, 0, 0 }
-// 	};
-
-// 	callback(imu_data);
-
-// 	auto [pitch, roll, yaw] = imukit.getAngles();
-
-// 	for (auto i = 0; i < 100; ++i) {
-// 		auto [pitch, roll, yaw] = imukit.getAngles();
-// 		EXPECT_EQ(pitch, 0);
-// 		EXPECT_TRUE(80 < roll && roll < 100);
-// 		EXPECT_EQ(yaw, 180);
-// 	}
-// }
-
-// TEST_F(IMUKitTest, robotRolled90DegreesOnItsRight)
-// {
-// 	std::function<void(interface::LSM6DSOX::SensorData)> callback {};
-
-// 	EXPECT_CALL(mock_lsm6dox, registerOnGyDataReadyCallback).WillOnce(SaveArg<0>(&callback));
-
-// 	imukit.init();
-
-// 	interface::LSM6DSOX::SensorData imu_data
-// 	{
-// 		{0, -1000, 0}, { 0, 0, 0 }
-// 	};
-
-// 	callback(imu_data);
-
-// 	auto [pitch, roll, yaw] = imukit.getAngles();
-
-// 	for (auto i = 0; i < 100; ++i) {
-// 		auto [pitch, roll, yaw] = imukit.getAngles();
-// 		EXPECT_EQ(pitch, 0);
-// 		EXPECT_TRUE(-100 < roll && roll < -80);
-// 		EXPECT_EQ(yaw, 180);
-// 	}
-// }
+	EXPECT_NE(angles_initial.pitch, angles_updated.pitch);
+	EXPECT_NE(angles_initial.roll, angles_updated.roll);
+	EXPECT_NE(angles_initial.yaw, angles_updated.yaw);
+}

@@ -4,40 +4,33 @@
 
 #pragma once
 
-#include <chrono>
-
 #include "interface/LSM6DSOX.hpp"
-#include "internal/Mahony.hpp"
 
 namespace leka {
+
+struct EulerAngles {
+	float pitch;
+	float roll;
+	float yaw;
+};
 
 class IMUKit
 {
   public:
-	explicit IMUKit(interface::LSM6DSOX &lsm6dsox)
-		: _lsm6dsox(lsm6dsox) {
-			  // nothing to do
-		  };
+	explicit IMUKit(interface::LSM6DSOX &lsm6dsox) : _lsm6dsox(lsm6dsox) {}
 
 	void init();
 	void start();
 	void stop();
-	void setOrigin();
 
-	auto getAngles() -> std::array<float, 3>;
+	void setOrigin();
+	[[nodiscard]] auto getEulerAngles() const -> EulerAngles;
 
   private:
-	void computeAngles(const interface::LSM6DSOX::SensorData &imu_data);
-	interface::LSM6DSOX &_lsm6dsox;
+	void drdy_callback(interface::LSM6DSOX::SensorData data);
 
-	ahrs::Mahony _mahony {};
-	struct SamplingConfig {
-		const std::chrono::milliseconds delay {};
-		const float frequency {};
-	};
-	// ? Sampling config deprecated.
-	// TODO(@ladislas @hugo): Use dynamic sampling frequency.
-	const SamplingConfig kDefaultSamplingConfig {.delay = std::chrono::milliseconds {70}, .frequency = 13.F};
+	interface::LSM6DSOX &_lsm6dsox;
+	EulerAngles _euler_angles {};
 };
 
 }	// namespace leka

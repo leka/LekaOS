@@ -2,6 +2,8 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
+add_subdirectory(external)
+
 add_library(IMUKit STATIC)
 
 target_include_directories(IMUKit
@@ -12,12 +14,11 @@ target_include_directories(IMUKit
 target_sources(IMUKit
 	PRIVATE
 	source/IMUKit.cpp
-	include/internal/Mahony.cpp
 )
 
 target_link_libraries(IMUKit
 	CoreIMU
-	EventLoopKit
+	Fusion
 )
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")

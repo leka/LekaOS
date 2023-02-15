@@ -4,8 +4,6 @@
 
 add_mbed_executable(spike_lk_sensors_imu_lsm6dsox_fusion_calibration)
 
-add_subdirectory(fusion)
-
 target_include_directories(spike_lk_sensors_imu_lsm6dsox_fusion_calibration
 	PRIVATE
 	.

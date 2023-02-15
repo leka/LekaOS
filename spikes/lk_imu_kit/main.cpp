@@ -34,6 +34,7 @@ IMUKit imukit(imu::lsm6dsox);
 
 auto main() -> int
 {
+	rtos::ThisThread::sleep_for(140ms);
 	logger::init();
 
 	HelloWorld hello;
@@ -41,13 +42,13 @@ auto main() -> int
 
 	imu::lsm6dsox.init();
 
+	imukit.stop();
 	imukit.init();
 	imukit.start();
 
 	while (true) {
-		auto [pitch, roll, yaw] = imukit.getAngles();
+		const auto [pitch, roll, yaw] = imukit.getEulerAngles();
 		log_info("Pitch : %7.2f, Roll : %7.2f Yaw : %7.2f", pitch, roll, yaw);
-
 		rtos::ThisThread::sleep_for(140ms);
 	}
 }
