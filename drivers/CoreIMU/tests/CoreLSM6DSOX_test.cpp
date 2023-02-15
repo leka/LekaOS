@@ -78,3 +78,11 @@ TEST_F(CoreLSM6DSOXTest, onGyrDRDY)
 	auto on_rise_callback = spy_InterruptIn_getRiseCallback();
 	on_rise_callback();
 }
+
+TEST_F(CoreLSM6DSOXTest, emptyOnGyrDrdyCallback)
+{
+	lsm6dsox.registerOnGyDataReadyCallback({});
+
+	auto on_rise_callback = spy_InterruptIn_getRiseCallback();
+	on_rise_callback();
+}
