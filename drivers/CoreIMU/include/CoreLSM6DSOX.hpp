@@ -47,7 +47,7 @@ class CoreLSM6DSOX : public interface::LSM6DSOX
 
 	std::array<int16_t, 3> data_raw_xl {};
 	std::array<int16_t, 3> data_raw_gy {};
-	drdy_callback_t _on_gy_data_ready_callback;
+	drdy_callback_t _on_gy_data_ready_callback {};
 
 	static constexpr uint8_t kMaxBufferLength = 32;
 	std::array<uint8_t, kMaxBufferLength> _rx_buffer {};

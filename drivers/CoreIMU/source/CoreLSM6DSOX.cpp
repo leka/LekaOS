@@ -90,7 +90,9 @@ void CoreLSM6DSOX::onGyrDataReadyHandler()
 	_sensor_data.xl.y = lsm6dsox_from_fs4_to_mg(data_raw_xl.at(1)) / _1k;
 	_sensor_data.xl.z = lsm6dsox_from_fs4_to_mg(data_raw_xl.at(2)) / _1k;
 
-	_on_gy_data_ready_callback(_sensor_data);
+	if (_on_gy_data_ready_callback) {
+		_on_gy_data_ready_callback(_sensor_data);
+	}
 }
 
 auto CoreLSM6DSOX::read(uint8_t register_address, uint16_t number_bytes_to_read, uint8_t *p_buffer) -> int32_t
