@@ -76,9 +76,11 @@ void CoreLSM6DSOX::registerOnGyDataReadyCallback(drdy_callback_t const &callback
 	_on_gy_data_ready_callback = callback;
 }
 
-void CoreLSM6DSOX::onGyrDataReadyHandler()
+void CoreLSM6DSOX::onGyrDataReadyHandler(auto timestamp)
 {
 	static constexpr auto _1k = float {1000.F};
+
+	_sensor_data = SensorData {.timestamp = timestamp};
 
 	lsm6dsox_angular_rate_raw_get(&_register_io_function, data_raw_gy.data());
 	_sensor_data.gy.x = lsm6dsox_from_fs500_to_mdps(data_raw_gy.at(0)) / _1k;
@@ -142,7 +144,10 @@ void CoreLSM6DSOX::setGyrDataReadyInterrupt()
 	};
 	lsm6dsox_pin_int1_route_set(&_register_io_function, gyro_int1);
 
-	auto gyr_drdy_callback = [this] { _event_queue.call([this] { onGyrDataReadyHandler(); }); };
+	auto gyr_drdy_callback = [this] {
+		auto timestamp = rtos::Kernel::Clock::now();
+		_event_queue.call([this, timestamp] { onGyrDataReadyHandler(timestamp); });
+	};
 
 	_drdy_irq.onRise(gyr_drdy_callback);
 }
