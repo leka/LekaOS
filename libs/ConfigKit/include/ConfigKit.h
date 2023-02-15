@@ -18,21 +18,23 @@ class ConfigKit
 	template <std::size_t SIZE = 1>
 	[[nodiscard]] auto read(Config<SIZE> const &config) const
 	{
-		if (FileManagerKit::File file {config.path(), "r"}; file.is_open()) {
-			auto data = std::array<uint8_t, SIZE> {};
-			file.read(data);
-
+		if (FileManagerKit::file_is_missing(config.path())) {
 			if constexpr (SIZE == 1) {
-				return data[0];
+				return config.default_value()[0];
 			} else {
-				return data;
+				return config.default_value();
 			}
 		}
 
+		auto file = FileManagerKit::File {config.path(), "r"};
+
+		auto data = std::array<uint8_t, SIZE> {};
+		file.read(data);
+
 		if constexpr (SIZE == 1) {
-			return config.default_value()[0];
+			return data[0];
 		} else {
-			return config.default_value();
+			return data;
 		}
 	}
 

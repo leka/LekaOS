@@ -112,11 +112,11 @@ namespace factory_reset {
 
 	auto getCounter() -> uint8_t
 	{
-		FileManagerKit::File file {internal::factory_reset_counter_path, "r"};
-
-		if (!file.is_open()) {
+		if (FileManagerKit::file_is_missing(internal::factory_reset_counter_path)) {
 			return default_limit + 1;
 		}
+
+		auto file = FileManagerKit::File {internal::factory_reset_counter_path, "r"};
 
 		auto data = std::array<uint8_t, 1> {};
 		file.read(data);
