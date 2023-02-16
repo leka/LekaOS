@@ -48,18 +48,17 @@ namespace fusion {
 		.rejectionTimeout	   = static_cast<unsigned int>(5 * kODR_HZ),   // ? # of samples in 5 seconds
 	};
 
-	auto timestamp_now		= rtos::Kernel::Clock::now();
-	auto timestamp_previous = rtos::Kernel::Clock::now();
+	interface::LSM6DSOX::SensorData::time_point_t timestamp_previous = {};
 
 	auto global_offset = FusionOffset {};
 
 	constexpr auto CALIBRATION = bool {true};
 	// constexpr auto CALIBRATION = bool {false};
 
-	void callback(const interface::LSM6DSOX::SensorData &data)
+	void callback(const interface::LSM6DSOX::SensorData data)
 	{
-		timestamp_now		  = rtos::Kernel::Clock::now();
-		auto timestamp_now_ms = mbed::HighResClock::now().time_since_epoch().count();
+		auto timestamp_now	  = data.timestamp;
+		auto timestamp_now_us = std::chrono::microseconds {timestamp_now.time_since_epoch()}.count();
 
 		// ? Acquire latest sensor data
 		auto gyroscope	   = FusionVector {{data.gy.x, data.gy.y, data.gy.z}};
@@ -68,8 +67,6 @@ namespace fusion {
 		if constexpr (CALIBRATION) {
 			// ? Define calibration offsets
 			// ? Data: https://www.dropbox.com/scl/fi/cue7qpb77892rozyjbmcq/2022_01_16-IMU-Calibration_Data.xlsx
-			// const auto gyroscope_offset = FusionVector {{}};
-			// const auto accelerometer_offset = FusionVector {{}};
 			constexpr auto gyroscope_offset		= FusionVector {{0.02544522554F, -0.3286247803F, 0.3205770357F}};
 			constexpr auto accelerometer_offset = FusionVector {{0.006480437024F, -0.01962820621F, 0.003259031049F}};
 
@@ -84,7 +81,7 @@ namespace fusion {
 		}
 
 		// ? Calculate delta time (in seconds) to account for gyroscope sample clock error
-		auto delta_time	   = static_cast<float>((timestamp_now - timestamp_previous).count()) / 1000.F;
+		auto delta_time	   = std::chrono::duration<float>(timestamp_now - timestamp_previous).count();
 		timestamp_previous = timestamp_now;
 
 		// ? Update gyroscope AHRS algorithm
@@ -107,9 +104,9 @@ namespace fusion {
 
 		// ? Log values
 		// ? See https://x-io.co.uk/downloads/x-IMU3-User-Manual-v1.0.pdf#page=24
-		log_free("I,%" PRId64 ",%f,%f,%f,%f,%f,%f\r\nQ,%" PRId64 ",%f,%f,%f,%f\r\n", timestamp_now_ms, gyroscope.axis.x,
+		log_free("I,%" PRId64 ",%f,%f,%f,%f,%f,%f\r\nQ,%" PRId64 ",%f,%f,%f,%f\r\n", timestamp_now_us, gyroscope.axis.x,
 				 gyroscope.axis.y, gyroscope.axis.z, accelerometer.axis.x, accelerometer.axis.y, accelerometer.axis.z,
-				 timestamp_now_ms, q_w, q_x, q_y, q_z);
+				 timestamp_now_us, q_w, q_x, q_y, q_z);
 	};
 
 }	// namespace fusion

@@ -34,7 +34,7 @@ class CoreLSM6DSOX : public interface::LSM6DSOX
 	static auto ptr_io_read(CoreLSM6DSOX *handle, uint8_t read_address, uint8_t *p_buffer,
 							uint16_t number_bytes_to_read) -> int32_t;
 
-	void onGyrDataReadyHandler();
+	void onGyrDataReadyHandler(auto timestamp);
 	void setGyrDataReadyInterrupt();
 
 	interface::I2C &_i2c;

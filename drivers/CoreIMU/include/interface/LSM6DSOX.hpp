@@ -6,6 +6,8 @@
 
 #include <functional>
 
+#include "rtos/Kernel.h"
+
 namespace leka::interface {
 
 class LSM6DSOX
@@ -23,6 +25,8 @@ class LSM6DSOX
 
 	// TODO(@ladislas) - user types --> move to include/types
 	struct SensorData {
+		using time_point_t = std::chrono::time_point<rtos::Kernel::Clock>;
+
 		struct Accelerometer {
 			float x = {};
 			float y = {};
@@ -37,6 +41,8 @@ class LSM6DSOX
 
 		Accelerometer xl = {0, 0, 0};
 		Gyroscope gy	 = {0, 0, 0};
+
+		time_point_t timestamp {};
 	};
 
 	using drdy_callback_t = std::function<void(const SensorData)>;
