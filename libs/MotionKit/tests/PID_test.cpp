@@ -13,12 +13,14 @@ class PIDTest : public ::testing::Test
   protected:
 	PIDTest() = default;
 
-	// void SetUp() override { }
+	void SetUp() override { pid.setTargetYaw(kTargetYaw); }
 	// void TearDown() override {}
 
 	PID pid {};
 
-	float max_speed_value = 1.8F;	//? ((360-180)*Kp + (360-180)*Kd)/KDeltaT
+	float kTargetYaw = 0;
+
+	float halfturn_error_speed = 6.3F;	 //? ((360-180)*Kp + (360-180)*Kd)/KDeltaT
 };
 
 TEST_F(PIDTest, initialization)
@@ -30,7 +32,7 @@ TEST_F(PIDTest, processPIDDefaultPosition)
 {
 	auto pitch = 0.F;
 	auto roll  = 0.F;
-	auto yaw   = 180.F;
+	auto yaw   = 0.F;
 
 	auto [speed, direction] = pid.processPID(pitch, roll, yaw);
 
@@ -42,12 +44,12 @@ TEST_F(PIDTest, processPIDRolledOverAHalfRight)
 {
 	auto pitch = 0.F;
 	auto roll  = 0.F;
-	auto yaw   = 0.F;
+	auto yaw   = 180.F;
 
 	auto [speed, direction] = pid.processPID(pitch, roll, yaw);
 
-	EXPECT_EQ(speed, max_speed_value);
-	EXPECT_EQ(direction, Rotation::clockwise);
+	EXPECT_EQ(speed, halfturn_error_speed);
+	EXPECT_EQ(direction, Rotation::counterClockwise);
 }
 
 TEST_F(PIDTest, processPIDRolledOverAQuarterRight)
@@ -58,30 +60,66 @@ TEST_F(PIDTest, processPIDRolledOverAQuarterRight)
 
 	auto [speed, direction] = pid.processPID(pitch, roll, yaw);
 
-	EXPECT_EQ(speed, 0.9F);
-	EXPECT_EQ(direction, Rotation::clockwise);
+	EXPECT_EQ(speed, halfturn_error_speed / 2.F);
+	EXPECT_EQ(direction, Rotation::counterClockwise);
 }
 
 TEST_F(PIDTest, processPIDRolledOverAQuarterLeft)
 {
 	auto pitch = 0.F;
 	auto roll  = 0.F;
-	auto yaw   = 270.F;
+	auto yaw   = -90.F;
 
 	auto [speed, direction] = pid.processPID(pitch, roll, yaw);
 
-	EXPECT_EQ(speed, 0.9F);
-	EXPECT_EQ(direction, Rotation::counterClockwise);
+	EXPECT_EQ(speed, halfturn_error_speed / 2.F);
+	EXPECT_EQ(direction, Rotation::clockwise);
 }
 
 TEST_F(PIDTest, processPIDRolledOverAHalfLeft)
 {
 	auto pitch = 0.F;
 	auto roll  = 0.F;
-	auto yaw   = 360.F;
+	auto yaw   = -180.F;
 
 	auto [speed, direction] = pid.processPID(pitch, roll, yaw);
 
-	EXPECT_EQ(speed, max_speed_value);
-	EXPECT_EQ(direction, Rotation::counterClockwise);
+	EXPECT_EQ(speed, halfturn_error_speed);
+	EXPECT_EQ(direction, Rotation::clockwise);
+}
+
+TEST_F(PIDTest, processPIDByErrorDefaultPosition)
+{
+	auto error = 0.F;
+
+	auto speed = pid.processPIDByError(error);
+
+	EXPECT_EQ(speed, 0.F);
+}
+
+TEST_F(PIDTest, processPIDByErrorHalfTurn)
+{
+	auto error = 180.F;
+
+	auto speed = pid.processPIDByError(error);
+
+	EXPECT_EQ(speed, halfturn_error_speed);
+}
+
+TEST_F(PIDTest, processPIDByErrorOneTurn)
+{
+	auto error = 360.F;
+
+	auto speed = pid.processPIDByError(error);
+
+	EXPECT_EQ(speed, halfturn_error_speed * 2);
+}
+
+TEST_F(PIDTest, processPIDByError2Turn)
+{
+	auto error = 720.F;
+
+	auto speed = pid.processPIDByError(error);
+
+	EXPECT_EQ(speed, halfturn_error_speed * 4);
 }

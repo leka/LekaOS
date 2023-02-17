@@ -9,7 +9,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreMotor.h"
-#include "mocks/leka/LSM6DSOX.h"
+#include "mocks/leka/IMUKit.h"
 #include "mocks/leka/LedKit.h"
 #include "mocks/leka/Timeout.h"
 #include "mocks/leka/VideoKit.h"
@@ -18,6 +18,7 @@
 using namespace leka;
 
 using ::testing::AnyNumber;
+using ::testing::AtLeast;
 using ::testing::AtMost;
 using ::testing::Sequence;
 
@@ -39,30 +40,30 @@ class ReinforcerkitTest : public ::testing::Test
 
 	mock::LedKit mock_ledkit;
 
-	stub::EventLoopKit stub_event_loop_motion {};
-
 	mock::CoreMotor mock_motor_left {};
 	mock::CoreMotor mock_motor_right {};
 
-	mock::LSM6DSOX lsm6dsox {};
-
 	mock::Timeout mock_timeout {};
 
-	IMUKit imukit {lsm6dsox};
+	mock::IMUKit mock_imukit {};
 
-	MotionKit motion {mock_motor_left, mock_motor_right, imukit, stub_event_loop_motion, mock_timeout};
+	MotionKit motion {mock_motor_left, mock_motor_right, mock_imukit, mock_timeout};
 
 	ReinforcerKit reinforcerkit;
+
+	const interface::EulerAngles angles {
+		0.0F, 0.0F, 0.F
+	};
 
 	void expectedCallsMovingReinforcer(interface::LEDAnimation *animation)
 	{
 		EXPECT_CALL(mock_videokit, playVideoOnce);
 		EXPECT_CALL(mock_motor_left, stop).Times(1);
 		EXPECT_CALL(mock_motor_right, stop).Times(1);
-		EXPECT_CALL(mock_motor_left, spin).Times(1);
-		EXPECT_CALL(mock_motor_right, spin).Times(1);
-		EXPECT_CALL(lsm6dsox, setPowerMode(interface::LSM6DSOX::PowerMode::Normal)).Times(1);
+		EXPECT_CALL(mock_motor_left, spin).Times(AtLeast(1));
+		EXPECT_CALL(mock_motor_right, spin).Times(AtLeast(1));
 		EXPECT_CALL(mock_timeout, stop).Times(AtMost(1));
+		EXPECT_CALL(mock_imukit, getEulerAngles).Times(1);
 		EXPECT_CALL(mock_timeout, onTimeout).Times(AtMost(1));
 		EXPECT_CALL(mock_timeout, start).Times(AtMost(1));
 		EXPECT_CALL(mock_ledkit, start(isSameAnimation(animation)));
@@ -85,6 +86,8 @@ TEST_F(ReinforcerkitTest, playBlinkGreen)
 	expectedCallsMovingReinforcer(&led::animation::blink_green);
 
 	reinforcerkit.play(ReinforcerKit::Reinforcer::BlinkGreen);
+
+	mock_imukit.call_angles_ready_callback(angles);
 }
 
 TEST_F(ReinforcerkitTest, playSpinBlink)
@@ -92,6 +95,8 @@ TEST_F(ReinforcerkitTest, playSpinBlink)
 	expectedCallsMovingReinforcer(&led::animation::spin_blink);
 
 	reinforcerkit.play(ReinforcerKit::Reinforcer::SpinBlink);
+
+	mock_imukit.call_angles_ready_callback(angles);
 }
 
 TEST_F(ReinforcerkitTest, playFire)
@@ -125,6 +130,8 @@ TEST_F(ReinforcerkitTest, SetBlinkGreenAndPlayDefaultReinforcer)
 
 	reinforcerkit.setDefaultReinforcer(ReinforcerKit::Reinforcer::BlinkGreen);
 	reinforcerkit.playDefault();
+
+	mock_imukit.call_angles_ready_callback(angles);
 }
 
 TEST_F(ReinforcerkitTest, SetSpinBlinkAndPlayDefaultReinforcer)
@@ -133,6 +140,8 @@ TEST_F(ReinforcerkitTest, SetSpinBlinkAndPlayDefaultReinforcer)
 
 	reinforcerkit.setDefaultReinforcer(ReinforcerKit::Reinforcer::SpinBlink);
 	reinforcerkit.playDefault();
+
+	mock_imukit.call_angles_ready_callback(angles);
 }
 
 TEST_F(ReinforcerkitTest, SetFireAndPlayDefaultReinforcer)

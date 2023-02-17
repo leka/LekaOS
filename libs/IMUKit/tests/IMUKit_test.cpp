@@ -66,6 +66,41 @@ TEST_F(IMUKitTest, setOrigin)
 
 TEST_F(IMUKitTest, onDataReady)
 {
+	testing::MockFunction<void(interface::EulerAngles angles)> mock_callback {};
+
+	imukit.onEulerAnglesReady(mock_callback.AsStdFunction());
+
+	const auto data_initial = interface::LSM6DSOX::SensorData {
+		.xl = {.x = 0.F, .y = 0.F, .z = 0.F}, .gy = {.x = 0.F, .y = 0.F, .z = 0.F }
+	};
+
+	EXPECT_CALL(mock_callback, Call);
+
+	mock_lsm6dox.call_drdy_callback(data_initial);
+
+	const auto angles_initial = imukit.getEulerAngles();
+
+	spy_kernel_addElapsedTimeToTickCount(80ms);
+
+	const auto data_updated = interface::LSM6DSOX::SensorData {
+		.xl = {.x = 1.F, .y = 2.F, .z = 3.F}, .gy = {.x = 1.F, .y = 2.F, .z = 3.F }
+	};
+
+	EXPECT_CALL(mock_callback, Call);
+
+	mock_lsm6dox.call_drdy_callback(data_updated);
+
+	auto angles_updated = imukit.getEulerAngles();
+
+	EXPECT_NE(angles_initial.pitch, angles_updated.pitch);
+	EXPECT_NE(angles_initial.roll, angles_updated.roll);
+	EXPECT_NE(angles_initial.yaw, angles_updated.yaw);
+}
+
+TEST_F(IMUKitTest, onDataReadyEmptyEulerAngleCallback)
+{
+	imukit.onEulerAnglesReady({});
+
 	const auto data_initial = interface::LSM6DSOX::SensorData {
 		.xl = {.x = 0.F, .y = 0.F, .z = 0.F}, .gy = {.x = 0.F, .y = 0.F, .z = 0.F }
 	};
