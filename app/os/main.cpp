@@ -47,6 +47,7 @@
 #include "FlashNumberCounting.h"
 #include "FoodRecognition.h"
 #include "HelloWorld.h"
+#include "IMUKit.hpp"
 #include "LedColorRecognition.h"
 #include "LedKit.h"
 #include "LedNumberCounting.h"
@@ -270,13 +271,11 @@ auto imukit = IMUKit {imu::lsm6dsox};
 
 namespace motion::internal {
 
-	EventLoopKit event_loop {};
 	CoreTimeout timeout {};
 
 }	// namespace motion::internal
 
-auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::event_loop,
-							motion::internal::timeout};
+auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::timeout};
 
 auto behaviorkit   = BehaviorKit {videokit, ledkit, motors::left::motor, motors::right::motor};
 auto reinforcerkit = ReinforcerKit {videokit, ledkit, motionkit};
@@ -562,7 +561,6 @@ auto main() -> int
 
 	imu::lsm6dsox.init();
 	imukit.init();
-	motionkit.init();
 
 	robot::controller.initializeComponents();
 	robot::controller.registerOnUpdateLoadedCallback(firmware::setPendingUpdate);
