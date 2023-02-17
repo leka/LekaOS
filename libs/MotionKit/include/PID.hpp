@@ -15,8 +15,10 @@ class PID
   public:
 	PID() = default;
 
+	void setTargetYaw(float angle);
 	auto processPID([[maybe_unused]] float pitch, [[maybe_unused]] float roll, float yaw)
 		-> std::tuple<float, Rotation>;
+	auto processPIDByError(float _error_position_current) -> float;
 
   private:
 	// ? Kp, Ki, Kd were found empirically by increasing Kp until the rotation angle exceeds the target angle
@@ -30,15 +32,15 @@ class PID
 		static constexpr auto Kd = float {0.4F};
 	};
 	const float kStaticBound = 5.F;
-	const float kDeltaT		 = 70.F;
-	const float kTargetAngle = 180.F;
+	const float kDeltaT		 = 20.F;
 
-	float _error_position_total	  = 0.F;
-	float _error_position_current = 0.F;
-	float _error_position_last	  = 0.F;
-	float _proportional			  = 0.F;
-	float _integral				  = 0.F;
-	float _derivative			  = 0.F;
+	float _target_yaw {};
+
+	float _error_position_total = 0.F;
+	float _error_position_last	= 0.F;
+	float _proportional			= 0.F;
+	float _integral				= 0.F;
+	float _derivative			= 0.F;
 };
 
 }	// namespace leka

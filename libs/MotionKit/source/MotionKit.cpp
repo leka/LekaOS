@@ -10,17 +10,11 @@
 using namespace leka;
 using namespace std::chrono_literals;
 
-void MotionKit::init()
-{
-	_event_loop.registerCallback([this] { run(); });
-}
-
 void MotionKit::stop()
 {
 	_timeout.stop();
 	_motor_left.stop();
 	_motor_right.stop();
-	_event_loop.stop();
 
 	_stabilisation_requested  = false;
 	_target_not_reached		  = false;
@@ -32,24 +26,26 @@ void MotionKit::rotate(uint8_t number_of_rotations, Rotation direction,
 {
 	stop();
 
-	_imukit.start();
-	_imukit.setOrigin();
+	_euler_angles_previous = _imukit.getEulerAngles();
+	_pid.setTargetYaw(_euler_angles_previous.yaw);
 
 	_target_not_reached		  = true;
 	_stabilisation_requested  = false;
 	_rotate_x_turns_requested = true;
 
-	_rotations_to_execute = number_of_rotations;
-
-	_motor_left.spin(direction, kPwmMaxValue);
-	_motor_right.spin(direction, kPwmMaxValue);
+	_angle_rotation_sum	   = 0;
+	_angle_rotation_target = static_cast<float>(number_of_rotations) * 360.F;
 
 	auto on_timeout = [this] { stop(); };
 
 	_timeout.onTimeout(on_timeout);
 	_timeout.start(10s);
 
-	_event_loop.start();
+	auto on_euler_angles_rdy_callback = [this, direction](const interface::EulerAngles &euler_angles) {
+		iterateOverRotation(euler_angles, direction);
+	};
+
+	_imukit.onEulerAnglesReady(on_euler_angles_rdy_callback);
 
 	_on_rotation_ended_callback = on_rotation_ended_callback;
 }
@@ -58,61 +54,74 @@ void MotionKit::startStabilisation()
 {
 	stop();
 
-	_imukit.start();
-	_imukit.setOrigin();
+	_euler_angles_previous = _imukit.getEulerAngles();
+	_pid.setTargetYaw(_euler_angles_previous.yaw);
 
 	_target_not_reached		  = false;
 	_stabilisation_requested  = true;
 	_rotate_x_turns_requested = false;
 
-	_event_loop.start();
+	auto on_euler_angles_rdy_callback = [this](const interface::EulerAngles &euler_angles) {
+		iterateOverRotation(euler_angles);
+	};
+
+	_imukit.onEulerAnglesReady(on_euler_angles_rdy_callback);
 }
 
 // LCOV_EXCL_START - Dynamic behavior, involving motors and time.
-void MotionKit::run()
+void MotionKit::iterateOverRotation(const interface::EulerAngles &angles, Rotation direction)
 {
-	auto last_yaw			= kReferenceAngle;
-	auto rotations_executed = 0;
+	auto must_stop = [&] { return !_stabilisation_requested && !_rotate_x_turns_requested && !_target_not_reached; };
 
-	auto must_rotate = [&] { return _rotate_x_turns_requested && rotations_executed != _rotations_to_execute; };
+	if (must_stop()) {
+		stop();
+		_imukit.onEulerAnglesReady({});
 
-	auto check_complete_rotations_executed = [&](auto current_yaw) {
-		if (std::abs(last_yaw - current_yaw) >= 300.F) {
-			++rotations_executed;
+		if (_on_rotation_ended_callback) {
+			_on_rotation_ended_callback();
 		}
+
+		return;
+	}
+
+	auto counting_rotations = [&](auto current_yaw) {
+		if (auto abs_yaw_delta = std::abs(_euler_angles_previous.yaw - current_yaw); abs_yaw_delta >= 300.F) {
+			_angle_rotation_sum += 360.F - abs_yaw_delta;
+		} else {
+			_angle_rotation_sum += abs_yaw_delta;
+		}
+		_euler_angles_previous.yaw = current_yaw;
 	};
 
-	while (must_rotate()) {
-		auto [current_pitch, current_roll, current_yaw] = _imukit.getEulerAngles();
+	counting_rotations(angles.yaw);
 
-		check_complete_rotations_executed(current_yaw);
-
-		rtos::ThisThread::sleep_for(70ms);
-		last_yaw = current_yaw;
-	}
-
-	_rotate_x_turns_requested = false;
-	_rotations_to_execute	  = 0;
-
-	while (_stabilisation_requested || _target_not_reached) {
-		auto [pitch, roll, yaw] = _imukit.getEulerAngles();
-		auto [speed, rotation]	= _pid.processPID(pitch, roll, yaw);
+	if (_stabilisation_requested && _target_not_reached) {
+		auto [speed, rotation] = _pid.processPID(angles.pitch, angles.roll, angles.yaw);
 
 		executeSpeed(speed, rotation);
-
-		rtos::ThisThread::sleep_for(70ms);
 	}
 
-	if (_on_rotation_ended_callback != nullptr) {
-		_on_rotation_ended_callback();
-	}
+	// Without regulation
+	// if (_rotate_x_turns_requested && _target_not_reached) {
+	// 	if (auto error_position_current = _angle_rotation_target - _angle_rotation_sum;
+	// 		error_position_current > minimum_viable_position_error) {
+	// 		return;
+	// 	}
+	// 	_target_not_reached		  = false;
+	// 	_rotate_x_turns_requested = false;
+	// }
 
-	_imukit.stop();
+	// With regulation
+	if (_rotate_x_turns_requested && _target_not_reached) {
+		auto speed = _pid.processPIDByError(_angle_rotation_target - _angle_rotation_sum);
+
+		executeSpeed(speed, direction);
+	}
 }
 
 auto MotionKit::mapSpeed(float speed) const -> float
 {
-	return utils::math::map(speed, 0.F, kPIDMaxValue, kMinimalViableRobotPwm, kPwmMaxValue);
+	return utils::math::map(speed, 0.F, kEntryLimitSpeed, kMinimalViableRobotPwm, kPwmMaxValue);
 }
 
 void MotionKit::executeSpeed(float speed, Rotation direction)
@@ -121,7 +130,8 @@ void MotionKit::executeSpeed(float speed, Rotation direction)
 	if (speed_bounded <= kMinimalViableRobotPwm + kEpsilon) {
 		_motor_left.stop();
 		_motor_right.stop();
-		_target_not_reached = false;
+		_target_not_reached		  = false;
+		_rotate_x_turns_requested = false;
 	} else {
 		_motor_left.spin(direction, speed_bounded);
 		_motor_right.spin(direction, speed_bounded);
