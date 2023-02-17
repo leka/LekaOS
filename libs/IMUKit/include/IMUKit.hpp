@@ -5,32 +5,31 @@
 #pragma once
 
 #include "interface/LSM6DSOX.hpp"
+#include "interface/libs/IMUKit.h"
 
 namespace leka {
 
-struct EulerAngles {
-	float pitch;
-	float roll;
-	float yaw;
-};
-
-class IMUKit
+class IMUKit : public interface::IMUKit
 {
   public:
 	explicit IMUKit(interface::LSM6DSOX &lsm6dsox) : _lsm6dsox(lsm6dsox) {}
 
-	void init();
-	void start();
-	void stop();
+	void init() final;
+	void start() final;
+	void stop() final;
 
-	void setOrigin();
-	[[nodiscard]] auto getEulerAngles() const -> EulerAngles;
+	void setOrigin() final;
+	void onEulerAnglesReady(angles_ready_callback_t const &callback) final;
+	[[nodiscard]] auto getEulerAngles() const -> interface::EulerAngles final;
 
   private:
 	void drdy_callback(interface::LSM6DSOX::SensorData data);
 
 	interface::LSM6DSOX &_lsm6dsox;
-	EulerAngles _euler_angles {};
+	interface::EulerAngles _euler_angles
+	{
+	};
+	angles_ready_callback_t _on_euler_angles_rdy_callback {};
 };
 
 }	// namespace leka

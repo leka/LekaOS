@@ -78,9 +78,13 @@ void IMUKit::setOrigin()
 	// ? and start counting from there
 }
 
-auto IMUKit::getEulerAngles() const -> EulerAngles
-{
+auto IMUKit::getEulerAngles() const -> interface::EulerAngles {
 	return _euler_angles;
+}
+
+void IMUKit::onEulerAnglesReady(angles_ready_callback_t const &callback)
+{
+	_on_euler_angles_rdy_callback = callback;
 }
 
 void IMUKit::drdy_callback(const interface::LSM6DSOX::SensorData data)
@@ -113,4 +117,8 @@ void IMUKit::drdy_callback(const interface::LSM6DSOX::SensorData data)
 		   .roll  = euler.angle.roll,
 		   .yaw	  = euler.angle.yaw,
 	   };
+
+	if (_on_euler_angles_rdy_callback) {
+		_on_euler_angles_rdy_callback(_euler_angles);
+	}
 };
