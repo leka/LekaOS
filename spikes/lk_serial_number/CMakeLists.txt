@@ -2,7 +2,7 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_mbed_executable(spike_lk_serial_number)
+add_executable(spike_lk_serial_number)
 
 target_include_directories(spike_lk_serial_number
 	PRIVATE
@@ -18,5 +18,3 @@ target_link_libraries(spike_lk_serial_number
 	CoreMCU
 	SerialNumberKit
 )
-
-target_link_custom_leka_targets(spike_lk_serial_number)

@@ -2,7 +2,7 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_mbed_executable(spike_lk_cg_animations)
+add_executable(spike_lk_cg_animations)
 
 target_include_directories(spike_lk_cg_animations
 	PRIVATE
@@ -22,5 +22,3 @@ target_link_libraries(spike_lk_cg_animations
 	FileManagerKit
 	UIAnimationKit
 )
-
-target_link_custom_leka_targets(spike_lk_cg_animations)

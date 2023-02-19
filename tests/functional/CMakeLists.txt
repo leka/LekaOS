@@ -13,7 +13,7 @@ function(register_functional_test)
 
 	cmake_parse_arguments(REGISTER_FT "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-	add_mbed_executable(${REGISTER_FT_TARGET})
+	add_executable(${REGISTER_FT_TARGET})
 
 	target_include_directories(${REGISTER_FT_TARGET}
 		PRIVATE

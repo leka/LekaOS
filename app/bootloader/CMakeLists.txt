@@ -2,7 +2,7 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_mbed_executable(bootloader)
+add_executable(bootloader)
 
 target_include_directories(bootloader
 	PRIVATE
@@ -28,5 +28,3 @@ target_link_libraries(bootloader
 	CoreMotor
 	CorePwm
 )
-
-target_link_custom_leka_targets(bootloader)
