@@ -320,13 +320,9 @@ mbed_clone:
 	@echo "🧬 Cloning Mbed OS 📦"
 	@rm -rf $(MBED_OS_DIR)
 	git clone --depth=1 --branch=$(MBED_BRANCH) $(MBED_GIT_URL) $(MBED_OS_DIR)
-	@$(MAKE) mbed_symlink_files
 
 mbed_symlink_files:
-	@echo ""
-	@echo "🔗 Symlinking templates to Mbed OS directory 🗂️"
-	ln -srf $(CMAKE_DIR)/templates/mbed/CMakeLists.txt $(MBED_OS_DIR)/CMakeLists.txt
-	ln -srf $(CMAKE_DIR)/templates/mbed/.mbedignore    $(MBED_OS_DIR)/.mbedignore
+# TODO(@ladislas): no-op, remove in following PR
 
 #
 # MARK: - Mcuboot targets
