@@ -37,7 +37,7 @@ runs:
     - name: Checkout mbed-os
       uses: actions/checkout@v4
       with:
-        repository: leka/mbed-os
+        repository: leka/mbed-ce
         ref: ${{ env.HEAD_MBED_VERSION }}
         path: extern/mbed-os
 
@@ -51,7 +51,6 @@ runs:
     - name: Symlink deps files
       shell: bash
       run: |
-        make mbed_symlink_files
         make mcuboot_symlink_files
 
     #
