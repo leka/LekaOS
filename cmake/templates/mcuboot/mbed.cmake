@@ -40,4 +40,7 @@ target_sources(bootutil
 
 target_link_libraries(bootutil
 	mbed-os
+	mbed-mbedtls
+	mbed-storage-blockdevice
+	mbed-storage-flashiap
 )

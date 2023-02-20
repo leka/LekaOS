@@ -18,6 +18,9 @@ target_sources(FileManagerKit
 
 target_link_libraries(FileManagerKit
 	mbed-os
+	mbed-mbedtls
+	mbed-storage-sd
+	mbed-storage-fat
 	ContainerKit
 	CoreEventQueue
 )
