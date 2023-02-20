@@ -19,4 +19,5 @@ target_sources(CoreWifi
 target_link_libraries(CoreWifi
 	mbed-os
 	mbed-http
+	mbed-wifi
 )

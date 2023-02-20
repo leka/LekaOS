@@ -19,7 +19,7 @@ target_sources(BLEKit
 )
 
 target_link_libraries(BLEKit
-	mbed-os
+	mbed-bluenrg-ms
 	CoreEventQueue
 	RFIDKit
 )
