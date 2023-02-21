@@ -7,6 +7,8 @@ name: Code Analysis - Impact of changes
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    paths-ignore:
+      - "config/toolchain_gcc_arm_none_eabi_url"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
