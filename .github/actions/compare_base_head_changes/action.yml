@@ -45,7 +45,7 @@ runs:
       with:
         header: compare_base_head_changes-${{ inputs.comment_header }}
         message: |
-          # File comparision analysis report
+          # PR changes analysis report
 
           ## :pushpin: Info
 
