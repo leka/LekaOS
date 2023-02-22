@@ -150,7 +150,7 @@ jobs:
   # Mark: - Job - compare_bin_map_files
   #
 
-  compare_base_head_files:
+  compare_base_head_changes:
     name: Compare base/head files
     runs-on: ubuntu-22.04
     needs: [build_base_ref, build_head_ref]
@@ -181,7 +181,7 @@ jobs:
         run: ls -R
 
       - name: Compare files
-        uses: ./.github/actions/compare_files
+        uses: ./.github/actions/compare_base_head_changes
         with:
           comment_header: enable_log_debug-${{ matrix.enable_log_debug }}
           enable_log_debug: ${{ matrix.enable_log_debug }}

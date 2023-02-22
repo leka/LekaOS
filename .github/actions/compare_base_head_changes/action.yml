@@ -2,7 +2,7 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-name: "Compare files"
+name: "Compare base/head changes"
 description: ""
 
 inputs:
@@ -25,10 +25,10 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Compare files
-      id: compare_files
+    - name: Compare changes
+      id: compare_base_head_changes
       shell: bash
-      run: ${{ github.action_path }}/compare_files.sh ${{ inputs.base_dir }} ${{ inputs.head_dir }}
+      run: ${{ github.action_path }}/compare_base_head_files.sh ${{ inputs.base_dir }} ${{ inputs.head_dir }}
 
     - name: Generate statistics
       id: generate_statistics
@@ -43,16 +43,23 @@ runs:
     - name: Publish differences
       uses: marocchino/sticky-pull-request-comment@v2
       with:
-        header: compare_files-${{ inputs.comment_header }}
+        header: compare_base_head_changes-${{ inputs.comment_header }}
         message: |
           # File comparision analysis report
 
-          ## :bookmark: Info
+          ## :pushpin: Info
 
-          - base: [`${{ env.BASE_REF}}`](https://github.com/leka/LekaOS/tree/${{ env.BASE_REF}}) / ${{ env.BASE_SHA }} + `${{ env.BASE_MBED_VERSION }}` + `${{ env.BASE_CXX_STANDARD }}`
-          - head: [`${{ env.HEAD_REF }}`](https://github.com/leka/LekaOS/tree/${{ env.HEAD_REF }}) / ${{ env.HEAD_SHA }} + `${{ env.HEAD_MBED_VERSION }}` + `${{ env.HEAD_CXX_STANDARD }}`
           - toolchain: `${{ env.TOOLCHAIN_VERSION }}`
           - enable_log_debug: `${{ inputs.enable_log_debug }}`
+
+          |        | `base`                                                                         | `head`                                                                           |
+          |--------|--------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+          | branch | [`${{ env.BASE_REF}}`](https://github.com/leka/LekaOS/tree/${{ env.BASE_REF}}) | [`${{ env.HEAD_REF }}`](https://github.com/leka/LekaOS/tree/${{ env.HEAD_REF }}) |
+          | sha    | ${{ env.BASE_SHA }}                                                            | ${{ env.HEAD_SHA }}                                                              |
+          | mbed   | `${{ env.BASE_MBED_VERSION }}`                                                 | `${{ env.HEAD_MBED_VERSION }}`                                                   |
+          | `-std` | `${{ env.BASE_CXX_STANDARD }}`                                                 | `${{ env.HEAD_CXX_STANDARD }}`                                                   |
+
+          ## :memo: Firmware impact analysis
 
           ${{ env.FIRMWARE_STATISTICS_OUTPUT }}
 
@@ -73,10 +80,10 @@ runs:
 
           </details>
 
-          ## :memo: Summary
+          ## :microscope: Detailed impact analysis
 
           <details>
-          <summary>Click to show summary</summary>
+          <summary>Click to show detailed analysis for all targets</summary>
 
           - :heavy_check_mark: - existing target
           - :sparkles: - new target
@@ -86,12 +93,7 @@ runs:
 
           ${{ env.STATUS_DIFF_OUTPUT }}
 
-          </details>
-
           ## :world_map: Map files diff output
-
-          <details>
-          <summary>Click to show diff list</summary>
 
           ${{ env.MAP_DIFF_OUTPUT }}
 
