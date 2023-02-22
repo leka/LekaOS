@@ -1,0 +1,246 @@
+# Leka - LekaOS
+# Copyright 2022 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: Code Analysis - Toolchain upgrade
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "config/toolchain_gcc_arm_none_eabi_url"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  #
+  # Mark: - Job - build_base_toolchain
+  #
+
+  build_base_toolchain:
+    name: build w/ base toolchain
+    runs-on: ubuntu-22.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        enable_log_debug: ["ON", "OFF"]
+
+    steps:
+      #
+      # Mark: - Setup
+      #
+
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup CI
+        id: setup_ci
+        uses: ./.github/actions/setup
+        with:
+          ccache_key: ${{ runner.os }}-ccache-toolchain_upgrade-build_base_toolchain-enable_log_debug-(${{ matrix.enable_log_debug }})
+          ccache_restore_keys: |
+            ${{ runner.os }}-ccache-toolchain_upgrade-build_base_toolchain-enable_log_debug-(${{ matrix.enable_log_debug }})-
+            ${{ runner.os }}-ccache-toolchain_upgrade-build_base_toolchain-enable_log_debug-
+            ${{ runner.os }}-ccache-toolchain_upgrade-build_base_toolchain-
+            ${{ runner.os }}-ccache-toolchain_upgrade-
+            ${{ runner.os }}-ccache-
+
+      - name: Install BASE Arm GCC Toolchain
+        run: |
+          rm -rf ${{ env.RUNNER_HOME }}/arm_gnu_toolchain
+          wget -c ${{ env.BASE_ARM_TOOLCHAIN_URL }} -O ${{ env.BASE_ARM_TOOLCHAIN_ARCHIVE }}
+          mkdir -p ${{ env.BASE_ARM_TOOLCHAIN_EXTRACT_DIRECTORY }}
+          tar -xvf ${{ env.BASE_ARM_TOOLCHAIN_ARCHIVE }} -C ${{ env.BASE_ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} --strip-components=1
+          rm -rf ${{ env.BASE_ARM_TOOLCHAIN_ARCHIVE }}
+          mv ${{ env.BASE_ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} ${{ env.RUNNER_HOME }}/arm_gnu_toolchain
+
+      - name: Add BASE Arm GCC Toolchain to path
+        run: |
+          echo "${{ env.RUNNER_HOME }}/arm_gnu_toolchain/bin" >> $GITHUB_PATH
+
+      - name: Test BASE Arm GCC Toolchain
+        run: |
+          ls -al ${{ env.RUNNER_HOME }}/arm_gnu_toolchain/bin
+          arm-none-eabi-gcc -v
+
+      - name: Add BASE Arm GCC Toolchain version to env
+        run: |
+          BASE_ARM_TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc ).*')
+          echo "BASE_ARM_TOOLCHAIN_VERSION=$BASE_ARM_TOOLCHAIN_VERSION" >> $GITHUB_ENV
+
+      #
+      # Mark: - Config & build
+      #
+
+      - name: Config & build
+        id: config_build
+        uses: ./.github/actions/config_build
+        with:
+          enable_log_debug: ${{ matrix.enable_log_debug }}
+          checkout_base_ref: true
+
+      #
+      # Mark: - Move files
+      #
+
+      - name: Move ${{ env.BASE_REF }}:${{ env.BASE_SHA }} bin & map files to temporary directory
+        run: |
+          mkdir -p build_artifacts
+          find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} build_artifacts
+          find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} build_artifacts
+          find _build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} build_artifacts
+          find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} build_artifacts
+
+      #
+      # Mark: - Upload artifacts
+      #
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: base_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
+          path: build_artifacts
+          retention-days: 1
+
+    outputs:
+      BASE_ARM_TOOLCHAIN_VERSION: ${{ env.BASE_ARM_TOOLCHAIN_VERSION }}
+
+  #
+  # Mark: - Job - build_head_toolchain
+  #
+
+  build_head_toolchain:
+    name: build w/ new toolchain
+    runs-on: ubuntu-22.04
+
+    strategy:
+      fail-fast: false
+      matrix:
+        enable_log_debug: ["ON", "OFF"]
+
+    steps:
+      #
+      # Mark: - Setup
+      #
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup CI
+        id: setup_ci
+        uses: ./.github/actions/setup
+        with:
+          ccache_key: ${{ runner.os }}-ccache-toolchain_upgrade-build_head_toolchain-enable_log_debug-(${{ matrix.enable_log_debug }})
+          ccache_restore_keys: |
+            ${{ runner.os }}-ccache-toolchain_upgrade-build_head_toolchain-enable_log_debug-(${{ matrix.enable_log_debug }})-
+            ${{ runner.os }}-ccache-toolchain_upgrade-build_head_toolchain-enable_log_debug-
+            ${{ runner.os }}-ccache-toolchain_upgrade-build_head_toolchain-
+            ${{ runner.os }}-ccache-toolchain_upgrade-
+            ${{ runner.os }}-ccache-
+
+      - name: Install HEAD Arm GCC Toolchain
+        run: |
+          rm -rf ${{ env.RUNNER_HOME }}/arm_gnu_toolchain
+          wget -c ${{ env.HEAD_ARM_TOOLCHAIN_URL }} -O ${{ env.HEAD_ARM_TOOLCHAIN_ARCHIVE }}
+          mkdir -p ${{ env.HEAD_ARM_TOOLCHAIN_EXTRACT_DIRECTORY }}
+          tar -xvf ${{ env.HEAD_ARM_TOOLCHAIN_ARCHIVE }} -C ${{ env.HEAD_ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} --strip-components=1
+          rm -rf ${{ env.HEAD_ARM_TOOLCHAIN_ARCHIVE }}
+          mv ${{ env.HEAD_ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} ${{ env.RUNNER_HOME }}/arm_gnu_toolchain
+
+      - name: Add HEAD Arm GCC Toolchain to path
+        run: |
+          echo "${{ env.RUNNER_HOME }}/arm_gnu_toolchain/bin" >> $GITHUB_PATH
+
+      - name: Test HEAD Arm GCC Toolchain
+        run: |
+          ls -al ${{ env.RUNNER_HOME }}/arm_gnu_toolchain/bin
+          arm-none-eabi-gcc -v
+
+      - name: Add HEAD Arm GCC Toolchain version to env
+        run: |
+          HEAD_ARM_TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc ).*')
+          echo "HEAD_ARM_TOOLCHAIN_VERSION=$HEAD_ARM_TOOLCHAIN_VERSION" >> $GITHUB_ENV
+
+      #
+      # Mark: - Config & build
+      #
+
+      - name: Config & build
+        id: config_build
+        uses: ./.github/actions/config_build
+        with:
+          enable_log_debug: ${{ matrix.enable_log_debug }}
+          checkout_base_ref: false
+
+      #
+      # Mark: - Move files
+      #
+
+      - name: Move ${{ env.HEAD_REF }}:${{ env.HEAD_SHA }} bin & map files to temporary directory
+        run: |
+          mkdir -p build_artifacts
+          find _build ! -path '*CMakeFiles*' -name "*.bin" -print0 | xargs -0 -I {} cp {} build_artifacts
+          find _build ! -path '*CMakeFiles*' -name "*.map" -print0 | xargs -0 -I {} cp {} build_artifacts
+          find _build ! -path '*CMakeFiles*' -name "*.hex" -print0 | xargs -0 -I {} cp {} build_artifacts
+          find _build ! -path '*CMakeFiles*' -name "*.elf" -print0 | xargs -0 -I {} cp {} build_artifacts
+
+      #
+      # Mark: - Upload artifacts
+      #
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: head_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
+          path: build_artifacts
+          retention-days: 1
+
+    outputs:
+      HEAD_ARM_TOOLCHAIN_VERSION: ${{ env.HEAD_ARM_TOOLCHAIN_VERSION }}
+
+  #
+  # Mark: - Job - compare_bin_map_files
+  #
+
+  compare_base_head_files:
+    name: Compare base/head files
+    runs-on: ubuntu-22.04
+    needs: [build_base_toolchain, build_head_toolchain]
+
+    strategy:
+      fail-fast: true
+      matrix:
+        enable_log_debug: ["ON", "OFF"]
+
+    steps:
+      #
+      # Mark: - Setup
+      #
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Setup CI
+        id: setup_ci
+        uses: ./.github/actions/setup
+
+      - uses: actions/download-artifact@v3
+        with:
+          path: build_artifacts
+
+      - name: Display structure of downloaded files
+        working-directory: build_artifacts
+        run: ls -R
+
+      - name: Compare files
+        uses: ./.github/actions/compare_toolchain_upgrade
+        with:
+          comment_header: enable_log_debug-${{ matrix.enable_log_debug }}
+          enable_log_debug: ${{ matrix.enable_log_debug }}
+          base_dir: build_artifacts/base_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
+          head_dir: build_artifacts/head_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
+        env:
+          BASE_ARM_TOOLCHAIN_VERSION: ${{ needs.build_base_toolchain.outputs.BASE_ARM_TOOLCHAIN_VERSION }}
+          HEAD_ARM_TOOLCHAIN_VERSION: ${{ needs.build_head_toolchain.outputs.HEAD_ARM_TOOLCHAIN_VERSION }}
