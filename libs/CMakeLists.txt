@@ -25,5 +25,3 @@ add_subdirectory(${LIBS_DIR}/TouchSensorKit)
 add_subdirectory(${LIBS_DIR}/UIAnimationKit)
 add_subdirectory(${LIBS_DIR}/VideoKit)
 add_subdirectory(${LIBS_DIR}/WebKit)
-
-add_subdirectory(${LIBS_DIR}/PrettyPrinter)
