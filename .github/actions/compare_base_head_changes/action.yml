@@ -59,7 +59,7 @@ runs:
           | mbed   | `${{ env.BASE_MBED_VERSION }}`                                                 | `${{ env.HEAD_MBED_VERSION }}`                                                   |
           | `-std` | `${{ env.BASE_CXX_STANDARD }}`                                                 | `${{ env.HEAD_CXX_STANDARD }}`                                                   |
 
-          ## :memo: Firmware impact analysis
+          ## :robot: Firmware impact analysis
 
           ${{ env.FIRMWARE_STATISTICS_OUTPUT }}
 
