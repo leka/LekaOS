@@ -58,7 +58,7 @@ runs:
       with:
         header: publish_version
         message: |
-          # Version comparison
+          # :bookmark: Version comparison
 
           ${{ env.VERSION_COMPARISON_OUTPUT }}
 

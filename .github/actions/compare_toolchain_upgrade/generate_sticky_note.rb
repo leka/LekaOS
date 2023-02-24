@@ -14,7 +14,7 @@ MAP_DIFF_OUTPUT=File.read(MAP_DIFF_OUTPUT_PATH)
 
 sticky_message = <<-EOF
 
-# Toolchain upgrade analysis report
+# :toolbox: Toolchain Upgrade Analysis Report
 
 ## :pushpin: Info
 
