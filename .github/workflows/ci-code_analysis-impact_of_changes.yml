@@ -9,6 +9,8 @@ on:
     types: [opened, synchronize, reopened]
     paths-ignore:
       - "config/toolchain_gcc_arm_none_eabi_url"
+      - ".github/workflows/ci-code_analysis-toolchain_upgrade.yml"
+      - ".github/actions/compare_toolchain_upgrade/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
