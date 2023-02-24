@@ -27,6 +27,8 @@ class CoreQDACMCP4728 : public interface::QDAC
 	void writeInputRegisters();
 	void readInputRegisters();
 
+	void writeEEPROMRegisters(uint8_t channel);
+
 	void setVoltageReference(uint8_t data);
 	void setPowerDown(uint8_t data);
 	void setGain(uint8_t data);

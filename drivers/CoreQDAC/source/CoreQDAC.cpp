@@ -27,7 +27,8 @@ void CoreQDACMCP4728::write(uint8_t channel, uint16_t data)
 
 	if (it != std::end(_channels)) {
 		_tx_registers.at(channel).data = data;
-		writeInputRegisters();
+		// writeInputRegisters();
+		writeEEPROMRegisters(channel);
 	}
 }
 
@@ -66,6 +67,33 @@ void CoreQDACMCP4728::writeInputRegisters()
 		compute_second_byte_for_channel(channel);
 		compute_third_byte_for_channel(channel);
 	}
+
+	_i2c.write(_address, command.data(), command.size(), false);
+}
+
+void CoreQDACMCP4728::writeEEPROMRegisters(uint8_t channel)
+{
+	const auto number_of_bytes_per_channel = uint8_t {3};
+	const auto command_size				   = number_of_bytes_per_channel;
+	auto command						   = std::array<uint8_t, command_size> {};
+
+	auto compute_first_byte_for_channel = [&command, this](auto channel) {
+		command.at(0) = static_cast<uint8_t>(mcp4728::command::single_write | ((0x03 & channel) << 1));
+	};
+
+	auto compute_second_byte_for_channel = [&command, this](auto channel) {
+		command.at(1) = static_cast<uint8_t>(_tx_registers.at(channel).vref << 7 | _tx_registers.at(channel).pd << 5 |
+											 _tx_registers.at(channel).gain << 4 |
+											 (0x0F & utils::memory::getHighByte(_tx_registers.at(channel).data)));
+	};
+
+	auto compute_third_byte_for_channel = [&command, this](auto channel) {
+		command.at(2) = utils::memory::getLowByte(_tx_registers.at(channel).data);
+	};
+
+	compute_first_byte_for_channel(channel);
+	compute_second_byte_for_channel(channel);
+	compute_third_byte_for_channel(channel);
 
 	_i2c.write(_address, command.data(), command.size(), false);
 }
