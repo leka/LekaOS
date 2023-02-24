@@ -7,7 +7,7 @@ shopt -s xpg_echo
 BASE_DIR=$1
 HEAD_DIR=$2
 
-source ./.github/actions/compare_files/utils.sh
+source ./.github/actions/compare_base_head_changes/utils.sh
 
 #
 # MARK: - bootloader statistics
