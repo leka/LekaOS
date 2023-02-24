@@ -25,7 +25,7 @@ class RFIDKitTest : public ::testing::Test
 	mock::CoreRFIDReader mock_reader {};
 	MockFunction<void(const MagicCard &)> mock_callback;
 
-	std::function<void(rfid::Tag &)> magic_card_callback {};
+	std::function<void(rfid::Tag)> magic_card_callback {};
 };
 
 TEST_F(RFIDKitTest, initialization)

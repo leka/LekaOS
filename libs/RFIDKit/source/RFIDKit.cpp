@@ -21,7 +21,7 @@ void RFIDKit::init()
 
 void RFIDKit::registerMagicCard()
 {
-	auto on_magic_card_readable_callback = [this](const rfid::Tag &tag) {
+	auto on_magic_card_readable_callback = [this](const rfid::Tag tag) {
 		if (isTagSignatureValid(tag)) {
 			_card = MagicCard {tag};
 
@@ -43,7 +43,7 @@ void RFIDKit::onTagActivated(std::function<void(const MagicCard &_card)> const &
 	_on_tag_available_callback = callback;
 }
 
-[[nodiscard]] auto RFIDKit::getCallback() const -> const std::function<void(const MagicCard &)> &
+[[nodiscard]] auto RFIDKit::getCallback() const -> const std::function<void(const MagicCard)> &
 {
 	return _on_tag_available_callback;
 }

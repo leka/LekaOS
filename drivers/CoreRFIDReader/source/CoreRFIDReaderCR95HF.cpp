@@ -31,7 +31,7 @@ void CoreRFIDReaderCR95HF::registerOnTagDetectedCallback(const std::function<voi
 	_on_tag_response_available = callback;
 };
 
-void CoreRFIDReaderCR95HF::registerOnTagReadableCallback(const std::function<void(rfid::Tag &)> &callback)
+void CoreRFIDReaderCR95HF::registerOnTagReadableCallback(const std::function<void(rfid::Tag)> &callback)
 {
 	_on_tag_readable = callback;
 };

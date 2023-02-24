@@ -177,7 +177,7 @@ class CoreRFIDReaderCR95HF : public interface::RFIDReader
 	void init() final;
 
 	void registerOnTagDetectedCallback(const std::function<void()> &callback) final;
-	void registerOnTagReadableCallback(const std::function<void(rfid::Tag &)> &callback) final;
+	void registerOnTagReadableCallback(const std::function<void(rfid::Tag)> &callback) final;
 
 	void setModeTagDetection() final;
 	void setCommunicationProtocol(rfid::Protocol protocol) final;
@@ -196,7 +196,7 @@ class CoreRFIDReaderCR95HF : public interface::RFIDReader
 	leka::CoreEventQueue _event_queue {};
 	interface::BufferedSerial &_serial;
 	std::function<void()> _on_tag_response_available;
-	std::function<void(rfid::Tag &)> _on_tag_readable;
+	std::function<void(rfid::Tag)> _on_tag_readable;
 
 	std::array<uint8_t, rfid::cr95hf::max_tx_length> _tx_buf {};
 	std::array<uint8_t, rfid::cr95hf::max_rx_length> _rx_buf {};

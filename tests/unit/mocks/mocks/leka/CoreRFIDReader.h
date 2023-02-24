@@ -20,7 +20,7 @@ class CoreRFIDReader : public interface::RFIDReader
 	MOCK_METHOD(rfid::Tag &, getTag, (), (override));
 	MOCK_METHOD(void, onTagReadable, (), (override));
 	MOCK_METHOD(void, registerOnTagDetectedCallback, (const std::function<void()> &), (override));
-	MOCK_METHOD(void, registerOnTagReadableCallback, (const std::function<void(rfid::Tag &)> &), (override));
+	MOCK_METHOD(void, registerOnTagReadableCallback, (const std::function<void(rfid::Tag)> &), (override));
 };
 
 }	// namespace leka::mock
