@@ -149,26 +149,36 @@ auto main() -> int
 
 	log_info("Hello, World!\n\n");
 
-	rtos::ThisThread::sleep_for(2s);
+	// rtos::ThisThread::sleep_for(2s);
 
 	touch_sensor_kit.registerOnSensorTouched(printSensorTouched);
 	touch_sensor_kit.registerOnSensorReleased(printSensorReleased);
+	// touch_sensor_kit.registerOnSensorTouched(printSensorReleased);
+	// touch_sensor_kit.registerOnSensorReleased(printSensorTouched);
 
 	touch_sensor_kit.initialize();
-	touch_sensor_kit.setRefreshDelay(20ms);
+	touch_sensor_kit.setRefreshDelay(200ms);
 
-	log_info("Enable touch for 10s");
-	touch_sensor_kit.enable();
-	rtos::ThisThread::sleep_for(10s);
+	rtos::ThisThread::sleep_for(1s);
 
-	log_info("Disable touch for 10s");
-	touch_sensor_kit.disable();
-	rtos::ThisThread::sleep_for(10s);
+	touch::io_expander.reset();
+
+	rtos::ThisThread::sleep_for(1s);
+
+	// log_info("Enable touch for 10s");
+	// touch_sensor_kit.enable();
+	// rtos::ThisThread::sleep_for(10s);
+
+	// log_info("Disable touch for 10s");
+	// touch_sensor_kit.disable();
+	// rtos::ThisThread::sleep_for(10s);
 
 	log_info("Enable Touch");
 	touch_sensor_kit.enable();
 	while (true) {
-		log_info("Still alive");
-		rtos::ThisThread::sleep_for(5s);
+		// log_info("Still alive");
+		rtos::ThisThread::sleep_for(20s);
+		touch::dac::left.read(2);
+		rtos::ThisThread::sleep_for(10min);
 	}
 }

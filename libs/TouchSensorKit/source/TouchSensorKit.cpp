@@ -7,6 +7,8 @@
 
 #include "rtos/ThisThread.h"
 
+#include "LogKit.h"
+
 using namespace leka;
 using namespace std::chrono_literals;
 
@@ -19,12 +21,24 @@ void TouchSensorKit::initialize()
 	_belt_right_back.init();
 	_belt_right_front.init();
 
-	setSensitivity(Position::ear_left, default_max_sensitivity_value);
-	setSensitivity(Position::ear_right, default_max_sensitivity_value);
-	setSensitivity(Position::belt_left_back, default_max_sensitivity_value);
-	setSensitivity(Position::belt_left_front, default_max_sensitivity_value);
-	setSensitivity(Position::belt_right_back, default_max_sensitivity_value);
-	setSensitivity(Position::belt_right_front, default_max_sensitivity_value);
+	rtos::ThisThread::sleep_for(200ms);
+
+	auto sensitivity = default_min_sensitivity_value;
+	setSensitivity(Position::ear_left, sensitivity);
+	setSensitivity(Position::ear_right, sensitivity);
+	setSensitivity(Position::belt_left_back, sensitivity);
+	setSensitivity(Position::belt_left_front, sensitivity);
+	setSensitivity(Position::belt_right_back, sensitivity);
+	setSensitivity(Position::belt_right_front, sensitivity);
+
+	rtos::ThisThread::sleep_for(200ms);
+
+	// _ear_left.reset();
+	// _ear_right.reset();
+	// _belt_left_back.reset();
+	// _belt_left_front.reset();
+	// _belt_right_back.reset();
+	// _belt_right_front.reset();
 
 	_event_queue.dispatch_forever();
 }
@@ -37,6 +51,14 @@ void TouchSensorKit::setRefreshDelay(std::chrono::milliseconds delay)
 void TouchSensorKit::enable()
 {
 	disable();
+
+	// _ear_left.reset();
+	// _ear_right.reset();
+	// _belt_left_back.reset();
+	// _belt_left_front.reset();
+	// _belt_right_back.reset();
+	// _belt_right_front.reset();
+
 	_event_id = _event_queue.call_every(_refresh_delay, [this] { run(); });
 }
 
@@ -51,8 +73,18 @@ void TouchSensorKit::run()
 		std::to_array<Position>({Position::ear_left, Position::ear_right, Position::belt_left_back,
 								 Position::belt_left_front, Position::belt_right_back, Position::belt_right_front});
 
+	// _ear_left.reset();
+	// _ear_right.reset();
+	// _belt_left_back.reset();
+	// _belt_left_front.reset();
+	// _belt_right_back.reset();
+	// _belt_right_front.reset();
+
 	for (Position position: positions) {
 		auto is_touched = isTouched(position);
+		// if (position == Position::belt_right_front) {
+		// 	log_info("Touched status: %d", is_touched);
+		// }
 		if (is_touched && !_previous_is_touched[position] && _on_sensor_touched_callback != nullptr) {
 			_on_sensor_touched_callback(position);
 		}

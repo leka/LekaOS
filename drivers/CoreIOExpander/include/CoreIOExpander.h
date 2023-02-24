@@ -25,6 +25,8 @@ class CoreIOExpanderMCP23017 : public interface::IOExpander<uint16_t>
 	auto readPin(uint16_t pin) -> int final;
 	void writePin(uint16_t pin, int value) final;
 
+	void reset() final;
+
   private:
 	void init();
 	void writeRegister(uint8_t reg, uint16_t value);
@@ -41,11 +43,11 @@ class CoreIOExpanderMCP23017 : public interface::IOExpander<uint16_t>
 		uint16_t defval	 = 0x0000;
 		uint16_t intcon	 = 0x0000;
 		uint16_t iocon	 = 0x0000;
-		uint16_t gppu	 = 0x0000;
+		uint16_t gppu	 = 0x0000;	 // That?
 		uint16_t intf	 = 0x0000;
 		uint16_t intcap	 = 0x0000;
 		uint16_t gpio	 = 0x0000;
-		uint16_t olat	 = 0x0000;
+		uint16_t olat	 = 0x0000;	 // That?
 	};
 
 	Registers _registers {};

@@ -53,6 +53,7 @@ class TouchSensorKit
 	interface::TouchSensor &_belt_right_front;
 
 	static constexpr auto default_max_sensitivity_value = float {1.F};
+	static constexpr auto default_min_sensitivity_value = float {0.F};
 
 	std::map<Position, bool> _previous_is_touched {};
 

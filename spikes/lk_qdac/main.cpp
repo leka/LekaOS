@@ -26,14 +26,18 @@ auto data = uint16_t {};
 
 void printInputRegisters()
 {
-	for (auto channels = std::array<uint8_t, 4> {mcp4728::channel::A, mcp4728::channel::B, mcp4728::channel::C,
-												 mcp4728::channel::D};
-		 uint8_t channel: channels) {
-		log_info("================= Channel %d ================= ", channel);
-		data = dac.read(channel);
-		log_info("Input Registers === Data: %x", data);
-		log_info("\n\n");
-	}
+	// for (auto channels = std::array<uint8_t, 4> {mcp4728::channel::A, mcp4728::channel::B, mcp4728::channel::C,
+	// 											 mcp4728::channel::D};
+	// 	 uint8_t channel: channels) {
+	// 	log_info("================= Channel %d ================= ", channel);
+	// 	data = dac.read(channel);
+	// 	log_info("Input Registers === Data: %x", data);
+	// 	log_info("\n\n");
+	// }
+	// log_info("================= Channel %d ================= ", 0);
+	data = dac.read(2);
+	log_info("Input Registers === Data: %x", data);
+	log_info("\n\n");
 }
 
 auto main() -> int
@@ -56,21 +60,21 @@ auto main() -> int
 	printInputRegisters();
 	rtos::ThisThread::sleep_for(2s);
 
-	channel = 0x00;
+	channel = 0x02;
 
-	data = 0x0ABC;
+	data = 0x0ABD;
 	log_info("Writing ! Channel : %d, Data : %x\n", channel, data);
 	dac.write(channel, data);
 	rtos::ThisThread::sleep_for(100ms);
 	printInputRegisters();
 	rtos::ThisThread::sleep_for(1s);
 
-	channel = 0x01;
+	// channel = 0x01;
 
-	data = 0x0DEF;
-	log_info("Writing ! Channel : %d, Data : %x\n", channel, data);
-	dac.write(channel, data);
-	rtos::ThisThread::sleep_for(100ms);
-	printInputRegisters();
-	rtos::ThisThread::sleep_for(1s);
+	// data = 0x0DEF;
+	// log_info("Writing ! Channel : %d, Data : %x\n", channel, data);
+	// dac.write(channel, data);
+	// rtos::ThisThread::sleep_for(100ms);
+	// printInputRegisters();
+	// rtos::ThisThread::sleep_for(1s);
 }

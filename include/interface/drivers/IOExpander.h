@@ -24,6 +24,8 @@ class IOExpander
 
 	virtual auto readPin(pin_underlying_type_t pin) -> int		= 0;
 	virtual void writePin(pin_underlying_type_t pin, int value) = 0;
+
+	virtual void reset() = 0;
 };
 
 }	// namespace leka::interface

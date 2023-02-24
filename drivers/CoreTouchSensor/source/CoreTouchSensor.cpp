@@ -20,6 +20,7 @@ void CoreTouchSensor::init()
 
 auto CoreTouchSensor::read() -> bool
 {
+	// _sensitivity_pin.dac.read(0x01);
 	_state = (_detect_pin.read() != 0);
 	return _state;
 }

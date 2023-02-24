@@ -42,6 +42,13 @@ auto CoreQDACMCP4728::read(uint8_t channel) -> uint16_t
 	return 0;
 }
 
+void CoreQDACMCP4728::generalCallSoftwareUpdate()
+{
+	// 0x06: reset -> internal become EEPROM + VOUT
+	auto command = std::array<uint8_t, 1> {0x08};
+	_i2c.write(_address, command.data(), command.size(), false);
+}
+
 void CoreQDACMCP4728::writeInputRegisters()
 {
 	const auto number_of_bytes_per_channel = uint8_t {3};
