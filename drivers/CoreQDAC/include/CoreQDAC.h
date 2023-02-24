@@ -24,6 +24,8 @@ class CoreQDACMCP4728 : public interface::QDAC
 	auto read(uint8_t channel) -> uint16_t final;
 
   private:
+	void generalCallSoftwareUpdate();
+
 	void writeInputRegisters();
 	void readInputRegisters();
 

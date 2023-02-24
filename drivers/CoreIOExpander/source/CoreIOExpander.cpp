@@ -4,10 +4,13 @@
 
 #include "CoreIOExpander.h"
 
+#include "rtos/ThisThread.h"
+
 #include "MemoryUtils.h"
 #include "span"
 
 using namespace leka;
+using namespace std::chrono_literals;
 
 CoreIOExpanderMCP23017::CoreIOExpanderMCP23017(interface::I2C &i2c, interface::DigitalOut &mux_reset)
 	: _i2c(i2c), _mux_reset(mux_reset)
@@ -40,6 +43,14 @@ void CoreIOExpanderMCP23017::setPinAsInput(uint16_t pin)
 	_registers.iodir = readRegister(mcp23017::internal_register::IODIR);
 	_registers.iodir |= pin;
 	writeRegister(mcp23017::internal_register::IODIR, _registers.iodir);
+
+	// _registers.ipol = readRegister(mcp23017::internal_register::IPOL);
+	// _registers.ipol |= pin;
+	// writeRegister(mcp23017::internal_register::IPOL, _registers.ipol);
+
+	// _registers.olat = readRegister(mcp23017::internal_register::OLAT);
+	// _registers.olat &= ~pin;
+	// writeRegister(mcp23017::internal_register::OLAT, _registers.olat);
 }
 
 void CoreIOExpanderMCP23017::setPinAsOutput(uint16_t pin)
@@ -63,6 +74,21 @@ void CoreIOExpanderMCP23017::setModeForPin(uint16_t pin, PinMode mode)
 			break;
 	}
 	writeRegister(mcp23017::internal_register::GPPU, _registers.gppu);
+
+	// _registers.olat = readRegister(mcp23017::internal_register::OLAT);
+	// _registers.olat |= pin;
+	// writeRegister(mcp23017::internal_register::OLAT, _registers.olat);
+}
+
+void CoreIOExpanderMCP23017::reset()
+{
+	// writeRegister(mcp23017::internal_register::GPIO, 0x1111);
+	// // writeRegister(mcp23017::internal_register::GPIO, 0x3F00);
+	// // writeRegister(mcp23017::internal_register::OLAT, 0x3F00);
+
+	// rtos::ThisThread::sleep_for(500ms);
+
+	// writeRegister(mcp23017::internal_register::GPIO, 0x0000);
 }
 
 auto CoreIOExpanderMCP23017::getModeForPin(uint16_t pin) -> PinMode

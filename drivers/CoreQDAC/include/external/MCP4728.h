@@ -65,7 +65,8 @@ namespace data {
 
 	namespace power_down {
 
-		inline constexpr auto normal = uint8_t {0x00};
+		inline constexpr auto normal		= uint8_t {0x00};
+		inline constexpr auto powerDown500K = uint8_t {0xFF};
 
 		namespace channel {
 
