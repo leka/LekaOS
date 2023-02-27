@@ -119,6 +119,9 @@ else()
 	message(FATAL_ERROR "Target ${TARGET_BOARD} is not available.")
 endif()
 
+# turn off vscode configuration
+set(MBED_GENERATE_VSCODE_CONFIG FALSE)
+
 # include mbed os build system
 include(${MBED_PATH}/tools/cmake/app.cmake)
 add_subdirectory(${MBED_PATH})
