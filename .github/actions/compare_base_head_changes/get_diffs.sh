@@ -1,3 +1,7 @@
+# Leka - LekaOS
+# Copyright 2022 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
 shopt -s xpg_echo
 
 BASE_DIR=$1

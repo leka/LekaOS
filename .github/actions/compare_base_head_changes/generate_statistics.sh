@@ -168,7 +168,7 @@ echo "Creating markdown output"
 
 echo 'FIRMWARE_STATISTICS_OUTPUT<<EOF_FIRMWARE_STATISTICS_OUTPUT' >> $GITHUB_ENV
 
-echo -n "| Target | Flash Used (base/head) | Fash Used Δ | Flash Available (base/head) | Static RAM (base/head) | Static RAM Δ |\n" >> $GITHUB_ENV
+echo -n "| Target | Flash Used (base/head) | Flash Used Δ | Flash Available (base/head) | Static RAM (base/head) | Static RAM Δ |\n" >> $GITHUB_ENV
 echo -n "|--------|:----------------------:|:-----------:|:---------------------------:|:----------------------:|:------------:|\n" >> $GITHUB_ENV
 
 echo -n "| bootloader | $OUTPUT_BOOTLOADER_FLASH_USED | $OUTPUT_BOOTLOADER_FLASH_USED_DELTA | $OUTPUT_BOOTLOADER_FLASH_AVAILABLE | $OUTPUT_BOOTLOADER_RAM | $OUTPUT_BOOTLOADER_RAM_DELTA |\n" >> $GITHUB_ENV

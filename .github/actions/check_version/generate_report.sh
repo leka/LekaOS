@@ -39,11 +39,10 @@ echo "Creating markdown output"
 
 echo 'VERSION_COMPARISON_OUTPUT<<EOF_VERSION_COMPARISON_OUTPUT' >> $GITHUB_ENV
 
-echo -n "|                 -                 |           Version          | Same as filename |  Same as os_version  |\n" >> $GITHUB_ENV
+echo -n "|                                   |           Version          | Same as filename |  Same as os_version  |\n" >> $GITHUB_ENV
 echo -n "|:---------------------------------:|:--------------------------:|:----------------:|:--------------------:|\n" >> $GITHUB_ENV
-
 echo -n "|               **os**              |\`$OUTPUT_OS_VERSION\`      |$OUTPUT_OS_VERSION_SAME_AS_FILE      |$OUTPUT_OS_VERSION_SAME_AS_OS_VERSION_CONFIG      |\n" >> $GITHUB_ENV
-echo -n "| **firmware**<br>(os + bootloader) |\`$OUTPUT_FIRMWARE_VERSION\`|$OUTPUT_FIRMWARE_VERSION_SAME_AS_FILE|$OUTPUT_FIRMWARE_VERSION_SAME_AS_OS_VERSION_CONFIG|\n" >> $GITHUB_ENV
+echo -n "| **firmware**<br>(bootloader + os) |\`$OUTPUT_FIRMWARE_VERSION\`|$OUTPUT_FIRMWARE_VERSION_SAME_AS_FILE|$OUTPUT_FIRMWARE_VERSION_SAME_AS_OS_VERSION_CONFIG|\n" >> $GITHUB_ENV
 
 
 echo 'EOF_VERSION_COMPARISON_OUTPUT' >> $GITHUB_ENV

@@ -169,7 +169,7 @@ fi
 
 echo "Creating markdown output"
 
-echo -n "| Target | Flash Used (base/head) | Fash Used Δ | Flash Available (base/head) | Static RAM (base/head) | Static RAM Δ |\n" >> $FIRMWARE_STATISTICS_OUTPUT
+echo -n "| Target | Flash Used (base/head) | Flash Used Δ | Flash Available (base/head) | Static RAM (base/head) | Static RAM Δ |\n" >> $FIRMWARE_STATISTICS_OUTPUT
 echo -n "|--------|:----------------------:|:-----------:|:---------------------------:|:----------------------:|:------------:|\n" >> $FIRMWARE_STATISTICS_OUTPUT
 
 echo -n "| bootloader | $OUTPUT_BOOTLOADER_FLASH_USED | $OUTPUT_BOOTLOADER_FLASH_USED_DELTA | $OUTPUT_BOOTLOADER_FLASH_AVAILABLE | $OUTPUT_BOOTLOADER_RAM | $OUTPUT_BOOTLOADER_RAM_DELTA |\n" >> $FIRMWARE_STATISTICS_OUTPUT
