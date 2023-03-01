@@ -17,6 +17,7 @@ target_sources(bootloader
 )
 
 target_link_libraries(bootloader
+	mbed-storage-qspif
 	bootutil
 	CoreBattery
 	FileManagerKit
@@ -28,3 +29,5 @@ target_link_libraries(bootloader
 	CoreMotor
 	CorePwm
 )
+
+mbed_set_post_build(bootloader)
