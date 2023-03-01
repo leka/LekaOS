@@ -2,18 +2,16 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_executable(spike_lk_file_manager_kit)
+register_spike(
+	TARGET
+		lk_file_manager_kit
 
-target_include_directories(spike_lk_file_manager_kit
-	PRIVATE
-	.
-)
+	INCLUDE_DIRECTORIES
+		.
 
-target_sources(spike_lk_file_manager_kit
-	PRIVATE
-	main.cpp
-)
+	SOURCES
+		main.cpp
 
-target_link_libraries(spike_lk_file_manager_kit
-	FileManagerKit
+	LINK_LIBRARIES
+		FileManagerKit
 )
