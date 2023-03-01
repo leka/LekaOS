@@ -2,8 +2,46 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_subdirectory(${SPIKES_DIR}/lk_activity_kit)
-add_subdirectory(${SPIKES_DIR}/lk_audio)
+add_custom_target(spikes)
+
+function(register_spike)
+	set(options "")
+	set(oneValueArgs TARGET)
+	set(multiValueArgs INCLUDE_DIRECTORIES SOURCES LINK_LIBRARIES)
+
+	cmake_parse_arguments(REGISTER_SPIKE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+	set(REGISTER_SPIKE_TARGET_FULL_NAME spike_${REGISTER_SPIKE_TARGET})
+
+	add_executable(${REGISTER_SPIKE_TARGET_FULL_NAME})
+
+	target_include_directories(${REGISTER_SPIKE_TARGET_FULL_NAME}
+		PRIVATE
+			${REGISTER_SPIKE_INCLUDE_DIRECTORIES}
+	)
+
+	target_sources(${REGISTER_SPIKE_TARGET_FULL_NAME}
+		PRIVATE
+			${REGISTER_SPIKE_SOURCES}
+	)
+
+	target_link_libraries(${REGISTER_SPIKE_TARGET_FULL_NAME}
+		PRIVATE
+			${REGISTER_SPIKE_LINK_LIBRARIES}
+	)
+
+	target_compile_definitions(${REGISTER_SPIKE_TARGET_FULL_NAME}
+		PUBLIC
+			TARGET="${REGISTER_SPIKE_TARGET_FULL_NAME}"
+	)
+
+	mbed_set_post_build(${REGISTER_SPIKE_TARGET_FULL_NAME})
+
+	add_dependencies(spikes
+		${REGISTER_SPIKE_TARGET_FULL_NAME}
+	)
+endfunction(register_spike)
+
 add_subdirectory(${SPIKES_DIR}/lk_behavior_kit)
 add_subdirectory(${SPIKES_DIR}/lk_ble)
 add_subdirectory(${SPIKES_DIR}/lk_bluetooth)
@@ -46,59 +84,3 @@ add_subdirectory(${SPIKES_DIR}/mbed_blinky)
 add_subdirectory(${SPIKES_DIR}/mbed_watchdog_ticker_vs_thread)
 
 add_subdirectory(${SPIKES_DIR}/stl_cxxsupport)
-
-add_custom_target(spikes_leka)
-add_dependencies(spikes_leka
-	spike_lk_activity_kit
-	spike_lk_ble
-	spike_lk_bluetooth
-	spike_lk_cg_animations
-	spike_lk_color_kit
-	spike_lk_command_kit
-	spike_lk_coreled
-	spike_lk_core_touch_sensor
-	spike_lk_event_queue
-	spike_lk_file_reception
-	spike_lk_file_manager_kit
-	spike_lk_flash_memory
-	spike_lk_imu_kit
-	spike_lk_lcd
-	spike_lk_led_kit
-	spike_lk_log_kit
-	spike_lk_motion_kit
-	spike_lk_motors
-	spike_lk_qdac
-	spike_lk_reinforcer
-	spike_lk_rfid
-	spike_lk_sensors_battery
-	spike_lk_sensors_imu_lsm6dsox
-	spike_lk_sensors_imu_lsm6dsox_fusion_calibration
-	spike_lk_sensors_light
-	spike_lk_sensors_microphone
-	spike_lk_sensors_temperature_humidity
-	spike_lk_serial_number
-	spike_lk_ticker_timeout
-	spike_lk_touch_sensor_kit
-	spike_lk_wifi
-
-	spike_lk_update_process_app_base
-	spike_lk_update_process_app_update
-)
-
-add_custom_target(spikes_mbed)
-add_dependencies(spikes_mbed
-	spike_mbed_blinky
-	spike_mbed_watchdog_ticker_vs_thread
-)
-
-add_custom_target(spikes_stl)
-add_dependencies(spikes_stl
-	spike_stl_cxxsupport
-)
-
-add_custom_target(spikes)
-add_dependencies(spikes
-	spikes_leka
-	spikes_mbed
-	spikes_stl
-)
