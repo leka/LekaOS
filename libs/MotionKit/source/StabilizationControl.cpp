@@ -1,36 +1,21 @@
 // Leka - LekaOS
-// Copyright 2022 APF France handicap
+// Copyright 2023 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "PID.hpp"
+#include "StabilizationControl.hpp"
 #include <algorithm>
+
+#include "MathUtils.h"
 
 using namespace leka;
 
-void PID::setTargetYaw(float angle)
-{
-	_target_yaw = angle;
-}
-
-auto PID::processPID([[maybe_unused]] float pitch, [[maybe_unused]] float roll, float yaw)
+auto StabilizationControl::processStabilizationAngle(EulerAngles target, EulerAngles current)
 	-> std::tuple<float, Rotation>
 {
 	auto direction = Rotation {};
 
-	auto speed = processPIDByError(_target_yaw - yaw);
+	auto error_position_current = target.yaw - current.yaw;
 
-	if (speed < 0) {
-		speed	  = -speed;
-		direction = Rotation::counterClockwise;
-	} else {
-		direction = Rotation::clockwise;
-	}
-
-	return {speed, direction};
-}
-
-auto PID::processPIDByError(float error_position_current) -> float
-{
 	if (std::abs(error_position_current) < kStaticBound) {
 		_error_position_total += error_position_current;
 		_error_position_total = std::min(_error_position_total, 50.F / Parameters::Ki);
@@ -49,5 +34,21 @@ auto PID::processPIDByError(float error_position_current) -> float
 
 	auto speed = (_proportional + _integral + _derivative) / kDeltaT;
 
-	return speed;
+	if (speed < 0) {
+		speed	  = -speed;
+		direction = Rotation::counterClockwise;
+	} else {
+		direction = Rotation::clockwise;
+	}
+
+	return {mapSpeed(speed), direction};
+}
+
+auto StabilizationControl::mapSpeed(float speed) const -> float
+{
+	auto bounded_speed = utils::math::map(speed, 0.F, kInputSpeedLimit, kMinimalViableRobotPwm, kPwmMaxValue);
+	if (bounded_speed < kMinimalViableRobotPwm + kEpsilon) {
+		return 0.F;
+	}
+	return bounded_speed;
 }
