@@ -7,14 +7,13 @@
 #include "IMUKit.hpp"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreMotor.h"
-#include "mocks/leka/IMUKit.h"
+#include "mocks/leka/IMUKit.hpp"
 #include "mocks/leka/Timeout.h"
 
 using namespace leka;
 
 using ::testing::_;
 using ::testing::AtLeast;
-using ::testing::MockFunction;
 
 // TODO(@leka/dev-embedded): temporary fix, changes are needed when updating fusion algorithm
 
@@ -36,9 +35,7 @@ class MotionKitTest : public ::testing::Test
 
 	mock::Timeout mock_timeout {};
 
-	const interface::EulerAngles angles {
-		0.0F, 0.0F, 0.F
-	};
+	const EulerAngles angles {0.0F, 0.0F, 0.F};
 
 	mock::IMUKit mock_imukit {};
 
@@ -90,6 +87,8 @@ TEST_F(MotionKitTest, rotateCounterClockwise)
 
 TEST_F(MotionKitTest, startStabilisation)
 {
+	const EulerAngles angles_quarter_left {0.0F, 0.0F, 90.F};
+
 	EXPECT_CALL(mock_timeout, stop).Times(1);
 	EXPECT_CALL(mock_motor_left, stop).Times(1);
 	EXPECT_CALL(mock_motor_right, stop).Times(1);
@@ -97,8 +96,7 @@ TEST_F(MotionKitTest, startStabilisation)
 	EXPECT_CALL(mock_imukit, getEulerAngles).Times(1);
 
 	motion.startStabilisation();
-
-	mock_imukit.call_angles_ready_callback(angles);
+	mock_imukit.call_angles_ready_callback(angles_quarter_left);
 }
 
 TEST_F(MotionKitTest, rotateAndStop)
@@ -116,12 +114,11 @@ TEST_F(MotionKitTest, rotateAndStop)
 	EXPECT_CALL(mock_motor_right, spin(Rotation::clockwise, _)).Times(AtLeast(1));
 
 	motion.rotate(1, Rotation::clockwise);
+	mock_imukit.call_angles_ready_callback(angles);
 
 	EXPECT_CALL(mock_timeout, stop).Times(1);
 	EXPECT_CALL(mock_motor_left, stop).Times(1);
 	EXPECT_CALL(mock_motor_right, stop).Times(1);
-
-	mock_imukit.call_angles_ready_callback(angles);
 
 	motion.stop();
 }
@@ -143,18 +140,19 @@ TEST_F(MotionKitTest, rotateAndTimeOutOver)
 	EXPECT_CALL(mock_motor_right, spin(Rotation::clockwise, _)).Times(AtLeast(1));
 
 	motion.rotate(1, Rotation::clockwise);
+	mock_imukit.call_angles_ready_callback(angles);
 
 	EXPECT_CALL(mock_timeout, stop).Times(1);
 	EXPECT_CALL(mock_motor_left, stop).Times(1);
 	EXPECT_CALL(mock_motor_right, stop).Times(1);
-
-	mock_imukit.call_angles_ready_callback(angles);
 
 	on_timeout_callback();
 }
 
 TEST_F(MotionKitTest, startStabilisationAndStop)
 {
+	const EulerAngles angles_quarter_left {0.0F, 0.0F, 90.F};
+
 	EXPECT_CALL(mock_timeout, stop).Times(1);
 	EXPECT_CALL(mock_motor_left, stop).Times(1);
 	EXPECT_CALL(mock_motor_right, stop).Times(1);
@@ -162,12 +160,11 @@ TEST_F(MotionKitTest, startStabilisationAndStop)
 	EXPECT_CALL(mock_imukit, getEulerAngles).Times(1);
 
 	motion.startStabilisation();
+	mock_imukit.call_angles_ready_callback(angles_quarter_left);
 
 	EXPECT_CALL(mock_timeout, stop).Times(1);
 	EXPECT_CALL(mock_motor_left, stop).Times(1);
 	EXPECT_CALL(mock_motor_right, stop).Times(1);
-
-	mock_imukit.call_angles_ready_callback(angles);
 
 	motion.stop();
 }

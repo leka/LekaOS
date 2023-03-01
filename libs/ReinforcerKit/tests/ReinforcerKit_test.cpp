@@ -9,7 +9,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreMotor.h"
-#include "mocks/leka/IMUKit.h"
+#include "mocks/leka/IMUKit.hpp"
 #include "mocks/leka/LedKit.h"
 #include "mocks/leka/Timeout.h"
 #include "mocks/leka/VideoKit.h"
@@ -17,10 +17,8 @@
 
 using namespace leka;
 
-using ::testing::AnyNumber;
 using ::testing::AtLeast;
 using ::testing::AtMost;
-using ::testing::Sequence;
 
 MATCHER_P(isSameAnimation, expected_animation, "")
 {
@@ -51,9 +49,7 @@ class ReinforcerkitTest : public ::testing::Test
 
 	ReinforcerKit reinforcerkit;
 
-	const interface::EulerAngles angles {
-		0.0F, 0.0F, 0.F
-	};
+	const EulerAngles angles {0.0F, 0.0F, 0.F};
 
 	void expectedCallsMovingReinforcer(interface::LEDAnimation *animation)
 	{

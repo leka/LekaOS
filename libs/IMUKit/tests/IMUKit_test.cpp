@@ -66,7 +66,7 @@ TEST_F(IMUKitTest, setOrigin)
 
 TEST_F(IMUKitTest, onDataReady)
 {
-	testing::MockFunction<void(interface::EulerAngles angles)> mock_callback {};
+	testing::MockFunction<void(EulerAngles angles)> mock_callback {};
 
 	imukit.onEulerAnglesReady(mock_callback.AsStdFunction());
 
