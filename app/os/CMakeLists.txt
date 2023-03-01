@@ -41,3 +41,5 @@ target_link_libraries(LekaOS
 	MotionKit
 	EventLoopKit
 )
+
+mbed_set_post_build(LekaOS)
