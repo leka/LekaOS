@@ -2,19 +2,17 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_executable(spike_lk_sensors_temperature_humidity)
+register_spike(
+	TARGET
+		lk_sensors_temperature_humidity
 
-target_include_directories(spike_lk_sensors_temperature_humidity
-	PRIVATE
-	.
-)
+	INCLUDE_DIRECTORIES
+		.
 
-target_sources(spike_lk_sensors_temperature_humidity
-	PRIVATE
-	main.cpp
-)
+	SOURCES
+		main.cpp
 
-target_link_libraries(spike_lk_sensors_temperature_humidity
-	CoreHTS
-	CoreI2C
+	LINK_LIBRARIES
+		CoreHTS
+		CoreI2C
 )

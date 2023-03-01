@@ -2,14 +2,15 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_executable(spike_mbed_watchdog_ticker_vs_thread)
+register_spike(
+	TARGET
+		mbed_watchdog_ticker_vs_thread
 
-target_include_directories(spike_mbed_watchdog_ticker_vs_thread
-	PRIVATE
-	.
-)
+	INCLUDE_DIRECTORIES
+		.
 
-target_sources(spike_mbed_watchdog_ticker_vs_thread
-	PRIVATE
-	main.cpp
+	SOURCES
+		main.cpp
+
+	LINK_LIBRARIES # n/a
 )

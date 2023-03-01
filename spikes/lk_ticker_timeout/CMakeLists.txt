@@ -2,19 +2,17 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_executable(spike_lk_ticker_timeout)
+register_spike(
+	TARGET
+		lk_ticker_timeout
 
-target_include_directories(spike_lk_ticker_timeout
-	PRIVATE
-	.
-)
+	INCLUDE_DIRECTORIES
+		.
 
-target_sources(spike_lk_ticker_timeout
-	PRIVATE
-	main.cpp
-)
+	SOURCES
+		main.cpp
 
-target_link_libraries(spike_lk_ticker_timeout
-	CoreTicker
-	CoreTimeout
+	LINK_LIBRARIES
+		CoreTicker
+		CoreTimeout
 )

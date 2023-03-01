@@ -2,19 +2,17 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_executable(spike_lk_sensors_imu_lsm6dsox)
+register_spike(
+	TARGET
+		lk_sensors_imu_lsm6dsox
 
-target_include_directories(spike_lk_sensors_imu_lsm6dsox
-	PRIVATE
-	.
-)
+	INCLUDE_DIRECTORIES
+		.
 
-target_sources(spike_lk_sensors_imu_lsm6dsox
-	PRIVATE
-	main.cpp
-)
+	SOURCES
+		main.cpp
 
-target_link_libraries(spike_lk_sensors_imu_lsm6dsox
-	CoreIMU
-	CoreI2C
+	LINK_LIBRARIES
+		CoreI2C
+		CoreIMU
 )

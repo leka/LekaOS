@@ -2,20 +2,18 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_executable(spike_lk_imu_kit)
+register_spike(
+	TARGET
+		lk_imu_kit
 
-target_include_directories(spike_lk_imu_kit
-	PRIVATE
-	.
-)
+	INCLUDE_DIRECTORIES
+		.
 
-target_sources(spike_lk_imu_kit
-	PRIVATE
-	main.cpp
-)
+	SOURCES
+		main.cpp
 
-target_link_libraries(spike_lk_imu_kit
-	CoreIMU
-	CoreI2C
-	IMUKit
+	LINK_LIBRARIES
+		CoreI2C
+		CoreIMU
+		IMUKit
 )

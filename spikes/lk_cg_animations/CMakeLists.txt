@@ -2,23 +2,20 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_executable(spike_lk_cg_animations)
+register_spike(
+	TARGET
+		lk_cg_animations
 
-target_include_directories(spike_lk_cg_animations
-	PRIVATE
-	.
-)
+	INCLUDE_DIRECTORIES
+		.
 
-target_sources(spike_lk_cg_animations
-	PRIVATE
-	main.cpp
-)
+	SOURCES
+		main.cpp
 
-target_link_libraries(spike_lk_cg_animations
-	CoreVideo
-	CoreLL
-	CoreSTM32Hal
-	CorePwm
-	FileManagerKit
-	UIAnimationKit
+	LINK_LIBRARIES
+		CoreLL
+		CoreSTM32Hal
+		CoreVideo
+		FileManagerKit
+		UIAnimationKit
 )

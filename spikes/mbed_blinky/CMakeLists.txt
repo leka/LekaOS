@@ -2,14 +2,15 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_executable(spike_mbed_blinky)
+register_spike(
+	TARGET
+		mbed_blinky
 
-target_include_directories(spike_mbed_blinky
-	PRIVATE
-	.
-)
+	INCLUDE_DIRECTORIES
+		.
 
-target_sources(spike_mbed_blinky
-	PRIVATE
-	main.cpp
+	SOURCES
+		main.cpp
+
+	LINK_LIBRARIES # n/a
 )

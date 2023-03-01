@@ -17,7 +17,13 @@ target_sources(CoreWifi
 )
 
 target_link_libraries(CoreWifi
-	mbed-os
-	mbed-http
-	mbed-wifi
+	PUBLIC
+		mbed-wifi
+		mbed-http
+
+	# mbed-netsocket
+
+	# mbed-netsocket-api
+		PRIVATE
+		mbed-os
 )
