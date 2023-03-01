@@ -28,6 +28,9 @@ function(register_functional_test)
 	)
 
 	target_link_libraries(${REGISTER_FT_TARGET}
+		mbed-storage-blockdevice
+		mbed-storage-sd
+		mbed-storage-fat
 		${REGISTER_FT_LINK_LIBRARIES}
 	)
 
@@ -35,6 +38,8 @@ function(register_functional_test)
 		PUBLIC
 			TARGET="${REGISTER_FT_TARGET}"
 	)
+
+	mbed_set_post_build(${REGISTER_FT_TARGET})
 endfunction()
 
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/boost_ut)
@@ -53,3 +58,19 @@ add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/firmware_kit)
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/imu_kit)
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/io_expander)
 add_subdirectory(${TESTS_FUNCTIONAL_TESTS_DIR}/qdac)
+
+add_custom_target(tests_functional)
+add_dependencies(tests_functional
+	functional_ut_boost_ut
+	functional_ut_core_imu
+	functional_ut_deep_sleep_core_buffered_serial
+	functional_ut_deep_sleep_core_motor
+	functional_ut_deep_sleep_core_pwm
+	functional_ut_deep_sleep_log_kit
+	functional_ut_deep_sleep_mbed_hal
+	functional_ut_file_manager
+	functional_ut_firmware_kit
+	functional_ut_imu_kit
+	functional_ut_io_expander
+	functional_ut_qdac
+)
