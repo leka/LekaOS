@@ -2,25 +2,16 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CoreQDAC STATIC)
+add_lib_core(CoreQDAC
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(CoreQDAC
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/CoreQDAC.cpp
 
-target_sources(CoreQDAC
-	PRIVATE
-	source/CoreQDAC.cpp
-)
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
 
-target_link_libraries(CoreQDAC
-	mbed-os
-	CoreI2C
-)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/CoreQDAC_test.cpp
-	)
-endif()
+)

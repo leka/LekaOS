@@ -134,6 +134,8 @@ list(APPEND CMAKE_MODULE_PATH "${ROOT_DIR}/cmake/utils")
 #
 project(LekaOS LANGUAGES C CXX ASM)
 
+include(add_lib)
+
 # Add c++ support, include directories
 include_directories(BEFORE SYSTEM
 	${INCLUDE_DIR}/cxxsupport
@@ -142,6 +144,14 @@ include_directories(BEFORE SYSTEM
 
 include_directories(BEFORE
 	${INCLUDE_DIR}
+)
+
+# mbed os headers
+add_library(mbed_headers INTERFACE)
+target_link_libraries(mbed_headers
+	INTERFACE
+	mbed-core-flags
+	mbed-rtos-flags
 )
 
 # Link libraries to all targets

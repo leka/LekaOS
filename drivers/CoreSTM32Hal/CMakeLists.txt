@@ -2,16 +2,13 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CoreSTM32Hal STATIC)
+add_lib_core(CoreSTM32Hal
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(CoreSTM32Hal
-	PUBLIC
-	include
+	PRIVATE_SOURCES
+		source/CoreSTM32Hal.cpp
+
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
 )
-
-target_sources(CoreSTM32Hal
-	PRIVATE
-	source/CoreSTM32Hal.cpp
-)
-
-target_link_libraries(CoreSTM32Hal mbed-os)

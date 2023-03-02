@@ -14,4 +14,5 @@ register_spike(
 
 	LINK_LIBRARIES
 		CoreLED
+		CoreSPI
 )

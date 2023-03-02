@@ -16,30 +16,35 @@ target_sources(LekaOS
 
 target_link_libraries(LekaOS
 	bootutil
-	RobotKit
-	CoreMCU
-	CoreTimeout
+	mbed-os
+
 	CoreBattery
-	CoreQSPI
-	CoreFlashMemory
-	FileManagerKit
-	SerialNumberKit
-	FirmwareKit
-	BehaviorKit
-	CorePwm
-	CoreMotor
-	VideoKit
-	LedKit
-	CoreLED
 	CoreBufferedSerial
-	CoreRFIDReader
-	RFIDKit
-	ActivityKit
+	CoreFlashMemory
 	CoreI2C
 	CoreIMU
-	IMUKit
-	MotionKit
+	CoreLED
+	CoreMCU
+	CoreMotor
+	CorePwm
+	CoreQSPI
+	CoreRFIDReader
+	CoreSPI
+	CoreTimeout
+
+	ActivityKit
+	BehaviorKit
 	EventLoopKit
+	FileManagerKit
+	FirmwareKit
+	IMUKit
+	LedKit
+	MotionKit
+	RFIDKit
+	ReinforcerKit
+	RobotKit
+	SerialNumberKit
+	VideoKit
 )
 
 mbed_set_post_build(LekaOS)

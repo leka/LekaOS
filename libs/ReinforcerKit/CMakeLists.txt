@@ -2,25 +2,19 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(ReinforcerKit STATIC)
+add_lib_kit(ReinforcerKit
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(ReinforcerKit
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/ReinforcerKit.cpp
 
-target_sources(ReinforcerKit
-	PRIVATE
-	source/ReinforcerKit.cpp
-)
+	PUBLIC_LINK_LIBRARIES
+		MotionKit
 
-target_link_libraries(ReinforcerKit
-	LedKit
-	MotionKit
-)
+	PRIVATE_LINK_LIBRARIES
+		LedKit
 
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/ReinforcerKit_test.cpp
-	)
-endif()
+)

@@ -2,6 +2,8 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
+include(add_lib)
+
 # C++ wrappers & low level drivers
 add_subdirectory(${DRIVERS_DIR}/CoreBufferedSerial)
 add_subdirectory(${DRIVERS_DIR}/CoreEventFlags)

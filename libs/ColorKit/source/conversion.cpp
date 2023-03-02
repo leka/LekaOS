@@ -3,7 +3,7 @@
 // Based on work by @gurki - https://github.com/gurki/vivid
 // SPDX-License-Identifier: Apache-2.0
 
-#include "conversion.h"
+#include "internal/conversion.h"
 #include <cmath>
 
 #include "RGB.h"

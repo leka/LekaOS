@@ -13,7 +13,15 @@ register_spike(
 		main.cpp
 
 	LINK_LIBRARIES
+		mbed-storage-fat
+		mbed-storage-sd
+		CoreMotor
 		CorePwm
+		CoreSPI
+		CoreSTM32Hal
+		CoreVideo
 		BehaviorKit
 		EventLoopKit
+		LedKit
+		VideoKit
 )

@@ -2,26 +2,17 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(BehaviorKit STATIC)
+add_lib_kit(BehaviorKit
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(BehaviorKit
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/BehaviorKit.cpp
 
-target_sources(BehaviorKit
-	PRIVATE
-	source/BehaviorKit.cpp
-)
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
+		LedKit
 
-target_link_libraries(BehaviorKit
-	LedKit
-	VideoKit
-	CoreMotor
-)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/BehaviorKit_test.cpp
-	)
-endif()
+)

@@ -15,6 +15,7 @@ register_spike(
 		source/ComUtils.cpp
 
 	LINK_LIBRARIES
+		CoreEventQueue
 		CorePwm
 		CoreVideo
 		EventLoopKit
