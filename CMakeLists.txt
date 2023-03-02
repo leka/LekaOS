@@ -127,7 +127,7 @@ include(${MBED_PATH}/tools/cmake/app.cmake)
 add_subdirectory(${MBED_PATH})
 
 # include cmake utils
-include(${ROOT_DIR}/cmake/utils/Utils.cmake)
+list(APPEND CMAKE_MODULE_PATH "${ROOT_DIR}/cmake/utils")
 
 #
 # MARK: - LekaOS Project
@@ -185,6 +185,7 @@ if(VERBOSE_BUILD)
 	set(CMAKE_VERBOSE_MAKEFILE ON)
 endif()
 
+include(print_compilers_flags_options_definitions)
 print_compilers_flags_options_definitions()
 
 mbed_finalize_build()
