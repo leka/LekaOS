@@ -2,18 +2,16 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CoreTimeout STATIC)
+add_lib_core(CoreTimeout
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(CoreTimeout
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/CoreTimeout.cpp
 
-target_sources(CoreTimeout
-	PRIVATE
-	source/CoreTimeout.cpp
-)
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
 
-target_link_libraries(CoreTimeout
-	mbed-os
+	UNIT_TESTS_SOURCES
+		tests/CoreTimeout_test.cpp
 )

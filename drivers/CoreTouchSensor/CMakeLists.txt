@@ -2,29 +2,16 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CoreTouchSensor STATIC)
+add_lib_core(CoreTouchSensor
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(CoreTouchSensor
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/CoreTouchSensor.cpp
 
-target_sources(CoreTouchSensor
-	PRIVATE
-	source/CoreTouchSensor.cpp
-)
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
 
-target_link_libraries(CoreTouchSensor
-	PRIVATE
-	mbed-os
-	CoreI2C
-	CoreIOExpander
-	CoreQDAC
-	IOKit
-)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/CoreTouchSensor_test.cpp
-	)
-endif()
+)

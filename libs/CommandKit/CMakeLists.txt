@@ -2,33 +2,23 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CommandKit STATIC)
+add_lib_kit(CommandKit
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(CommandKit
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/CommandKit.cpp
 
-target_sources(CommandKit
-	PRIVATE
-	source/CommandKit.cpp
-)
+	PUBLIC_LINK_LIBRARIES
+		ContainerKit
 
-target_link_libraries(CommandKit
-	CoreEventQueue
-	CoreLED
-	CoreMotor
-	ReinforcerKit
-	EventLoopKit
-	mbed-os
-)
+	PRIVATE_LINK_LIBRARIES
+		ReinforcerKit
+		mbed_headers
 
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
-		tests/CommandKit_test.cpp
+	UNIT_TESTS_SOURCES
 		tests/CommandKit_test_push.cpp
 		tests/CommandKit_test_register.cpp
+		tests/CommandKit_test.cpp
 		tests/CommandRunner_test.cpp
-		tests/Command_Video_test.cpp
-	)
-endif()
+)

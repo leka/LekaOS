@@ -2,10 +2,7 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(ColorKit STATIC)
-
 include(FetchContent)
-
 set(FETCHCONTENT_QUIET FALSE)
 
 FetchContent_Declare(glm
@@ -19,26 +16,19 @@ FetchContent_MakeAvailable(
 	glm
 )
 
-target_include_directories(ColorKit
-	PUBLIC
-	include
-	include/internal
-)
+add_lib_kit(ColorKit
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_sources(ColorKit
-	PRIVATE
-	source/ColorKit.cpp
-	source/conversion.cpp
-)
+	PRIVATE_SOURCES
+		source/ColorKit.cpp
+		source/conversion.cpp
 
-target_link_libraries(ColorKit
-	glm::glm
-)
+	PRIVATE_LINK_LIBRARIES
+		glm::glm
 
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/ColorKit_test_conversion.cpp
 		tests/ColorKit_test_gradient.cpp
 		tests/RGB_test.cpp
-	)
-endif()
+)

@@ -12,5 +12,8 @@ register_functional_test(
 		suite_firmware_kit.cpp
 
 	LINK_LIBRARIES
+		CoreFlashMemory
+		CoreQSPI
+		FileManagerKit
 		FirmwareKit
 )

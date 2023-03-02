@@ -17,17 +17,20 @@ target_sources(bootloader
 )
 
 target_link_libraries(bootloader
-	mbed-storage-qspif
 	bootutil
+	mbed-os
+	mbed-storage-qspif
+
 	CoreBattery
-	FileManagerKit
-	CoreQSPI
 	CoreFlashMemory
-	FirmwareKit
-	ConfigKit
 	CoreLED
 	CoreMotor
 	CorePwm
+	CoreQSPI
+	CoreSPI
+	ConfigKit
+	FileManagerKit
+	FirmwareKit
 )
 
 mbed_set_post_build(bootloader)

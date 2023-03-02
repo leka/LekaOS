@@ -2,26 +2,18 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(SerialNumberKit STATIC)
+add_lib_kit(SerialNumberKit
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(SerialNumberKit
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/SerialNumberKit.cpp
+		source/SerialNumberFormater.cpp
 
-target_sources(SerialNumberKit
-	PRIVATE
-	source/SerialNumberKit.cpp
-	source/SerialNumberFormater.cpp
-)
+	PRIVATE_LINK_LIBRARIES
+		FileManagerKit
 
-target_link_libraries(SerialNumberKit
-	FileManagerKit
-)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/SerialNumberKit_test.cpp
 		tests/SerialNumberFormater_test.cpp
-	)
-endif()
+)

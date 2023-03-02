@@ -2,24 +2,16 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CorePwm STATIC)
+add_lib_core(CorePwm
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(CorePwm
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/CorePwm.cpp
 
-target_sources(CorePwm
-	PRIVATE
-	source/CorePwm.cpp
-)
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
 
-target_link_libraries(CorePwm
-	mbed-os
-)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/CorePwm_test.cpp
-	)
-endif()
+)

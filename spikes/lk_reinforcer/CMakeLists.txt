@@ -18,11 +18,12 @@ register_spike(
 		CoreLED
 		CoreMotor
 		CorePwm
+		CoreSPI
 		CoreTimeout
 		EventLoopKit
 		IMUKit
 		LedKit
 		MotionKit
 		ReinforcerKit
-	VideoKit
+		VideoKit
 )

@@ -26,5 +26,6 @@ register_spike(
 		IMUKit
 		LedKit
 		MotionKit
+		ReinforcerKit
 		VideoKit
 )

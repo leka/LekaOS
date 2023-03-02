@@ -5,8 +5,6 @@
 #pragma once
 
 #include "RGB.h"
-#include "internal/conversion.h"
-#include "internal/interpolation.h"
 
 namespace leka::ColorKit {
 

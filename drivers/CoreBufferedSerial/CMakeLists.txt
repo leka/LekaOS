@@ -2,24 +2,16 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CoreBufferedSerial STATIC)
+add_lib_core(CoreBufferedSerial
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(CoreBufferedSerial
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/CoreBufferedSerial.cpp
 
-target_sources(CoreBufferedSerial
-	PRIVATE
-	source/CoreBufferedSerial.cpp
-)
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
 
-target_link_libraries(CoreBufferedSerial
-	mbed-os
-)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/CoreBufferedSerial_test.cpp
-	)
-endif()
+)

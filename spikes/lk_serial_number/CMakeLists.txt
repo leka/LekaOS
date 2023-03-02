@@ -12,6 +12,8 @@ register_spike(
 		main.cpp
 
 	LINK_LIBRARIES
+		mbed-storage-fat
+		mbed-storage-sd
 		CoreMCU
 		SerialNumberKit
 )
