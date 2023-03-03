@@ -59,7 +59,7 @@ TEST_F(StateMachineTest, stateSetupEventSetupCompleteGuardIsChargingFalse)
 
 	EXPECT_CALL(mock_rc, runLaunchingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
-	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startSleepTimeout(60)).Times(1);
 	EXPECT_CALL(mock_rc, startWaitingBehavior).Times(1);
 
 	sm.process_event(lksm::event::setup_complete {});
@@ -130,7 +130,7 @@ TEST_F(StateMachineTest, stateWorkingEventTimeout)
 
 	EXPECT_CALL(mock_rc, stopIdleTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startWaitingBehavior).Times(1);
-	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startSleepTimeout(60)).Times(1);
 
 	sm.process_event(lksm::event::idle_timeout_did_end {});
 
@@ -295,7 +295,7 @@ TEST_F(StateMachineTest, stateChargingEventChargeDidStopBleDisconnected)
 
 	EXPECT_CALL(mock_rc, isCharging).WillOnce(Return(false));
 	EXPECT_CALL(mock_rc, isBleConnected).WillOnce(Return(false));
-	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startSleepTimeout(60)).Times(1);
 	EXPECT_CALL(mock_rc, startWaitingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
@@ -705,7 +705,7 @@ TEST_F(StateMachineTest, stateAutonomousActivityEventAutonomousActivityExitedDis
 
 	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(false));
 	EXPECT_CALL(mock_rc, startWaitingBehavior).Times(1);
-	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startSleepTimeout(60)).Times(1);
 
 	sm.process_event(lksm::event::autonomous_activities_mode_exited {});
 
@@ -810,7 +810,7 @@ TEST_F(StateMachineTest, stateFileExhangeEventBleDisconnectionGuardIsNotCharging
 	EXPECT_CALL(mock_rc, startDisconnectionBehavior);
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
 
-	EXPECT_CALL(mock_rc, startSleepTimeout);
+	EXPECT_CALL(mock_rc, startSleepTimeout(60));
 	EXPECT_CALL(mock_rc, startWaitingBehavior);
 
 	sm.process_event(lksm::event::ble_disconnection {});

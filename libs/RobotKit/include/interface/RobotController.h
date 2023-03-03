@@ -15,8 +15,8 @@ class RobotController
 
 	virtual void runLaunchingBehavior() = 0;
 
-	virtual void startSleepTimeout() = 0;
-	virtual void stopSleepTimeout()	 = 0;
+	virtual void startSleepTimeout(int duration) = 0;
+	virtual void stopSleepTimeout()				 = 0;
 
 	virtual void startDeepSleepTimeout() = 0;
 	virtual void stopDeepSleepTimeout()	 = 0;

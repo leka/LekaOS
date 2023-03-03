@@ -13,7 +13,7 @@ struct RobotController : public interface::RobotController {
   public:
 	MOCK_METHOD(void, runLaunchingBehavior, (), (override));
 
-	MOCK_METHOD(void, startSleepTimeout, (), (override));
+	MOCK_METHOD(void, startSleepTimeout, (int), (override));
 	MOCK_METHOD(void, stopSleepTimeout, (), (override));
 
 	MOCK_METHOD(void, startDeepSleepTimeout, (), (override));

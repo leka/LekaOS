@@ -101,7 +101,8 @@ namespace sm::action {
 	};
 
 	struct start_sleep_timeout {
-		auto operator()(irc &rc) const { rc.startSleepTimeout(); }
+		int duration = 60;
+		auto operator()(irc &rc) const { rc.startSleepTimeout(duration); }
 	};
 
 	struct stop_sleep_timeout {
@@ -205,7 +206,7 @@ struct StateMachine {
 			, sm::state::setup    + event<sm::event::setup_complete> [sm::guard::is_charging {}]     = sm::state::charging
 			, sm::state::setup    + boost::sml::on_exit<_>  / sm::action::run_launching_behavior {}
 
-			, sm::state::idle     + boost::sml::on_entry<_> / (sm::action::start_sleep_timeout {}, sm::action::start_waiting_behavior {})
+			, sm::state::idle     + boost::sml::on_entry<_> / (sm::action::start_sleep_timeout {.duration = 60}, sm::action::start_waiting_behavior {})
 			, sm::state::idle     + boost::sml::on_exit<_>  / (sm::action::stop_sleep_timeout  {}, sm::action::stop_waiting_behavior  {})
 
 			, sm::state::idle     + event<sm::event::ble_connection>                                                        = sm::state::working

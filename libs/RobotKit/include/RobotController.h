@@ -82,13 +82,13 @@ class RobotController : public interface::RobotController
 		rtos::ThisThread::sleep_for(3s);
 	}
 
-	void startSleepTimeout() final
+	void startSleepTimeout(int duration) final
 	{
 		using namespace system::robot::sm;
 		auto on_sleep_timeout = [this] { raise(event::sleep_timeout_did_end {}); };
 		_timeout_state_transition.onTimeout(on_sleep_timeout);
 
-		_timeout_state_transition.start(_sleep_timeout_duration);
+		_timeout_state_transition.start(std::chrono::seconds(duration));
 	}
 
 	void stopSleepTimeout() final { _timeout_state_transition.stop(); }
@@ -537,7 +537,6 @@ class RobotController : public interface::RobotController
 
 	interface::Timeout &_timeout_state_internal;
 
-	std::chrono::seconds _sleep_timeout_duration {60};
 	std::chrono::seconds _idle_timeout_duration {600};
 	std::chrono::seconds _deep_sleep_timeout_duration {600};
 	interface::Timeout &_timeout_state_transition;
