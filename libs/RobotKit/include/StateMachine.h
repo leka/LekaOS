@@ -274,13 +274,14 @@ struct StateMachine {
 			, sm::state::emergency_stopped + event<sm::event::ble_connection>                       [sm::guard::is_charging {}]                                   = sm::state::charging
 			, sm::state::emergency_stopped + event<sm::event::autonomous_activities_mode_requested> [sm::guard::is_charging {}]                                   = sm::state::charging
 
-			, sm::state::autonomous_activities + boost::sml::on_entry<_> / sm::action::start_autonomous_activities_mode {}
-			, sm::state::autonomous_activities + boost::sml::on_exit<_> / sm::action::stop_autonomous_activities_mode {}
+			, sm::state::autonomous_activities + boost::sml::on_entry<_> / (sm::action::start_sleep_timeout {.duration = 600}, sm::action::start_autonomous_activities_mode {})
+			, sm::state::autonomous_activities + boost::sml::on_exit<_> / (sm::action::stop_sleep_timeout  {}, sm::action::stop_autonomous_activities_mode {})
 
 			, sm::state::autonomous_activities + event<sm::event::command_received> [sm::guard::is_connected {}]                                = sm::state::working
 			, sm::state::autonomous_activities + event<sm::event::ble_connection>                                                               = sm::state::working
 			, sm::state::autonomous_activities + event<sm::event::charge_did_start> [sm::guard::is_charging {}]                                 = sm::state::charging
 			, sm::state::autonomous_activities + event<sm::event::emergency_stop>                                                               = sm::state::emergency_stopped
+			, sm::state::autonomous_activities + event<sm::event::sleep_timeout_did_end>                                                        = sm::state::sleeping
 			, sm::state::autonomous_activities + event<sm::event::autonomous_activities_mode_requested>                                         = sm::state::autonomous_activities
 			, sm::state::autonomous_activities + event<sm::event::autonomous_activities_mode_exited> [sm::guard::is_not_connected {}]           = sm::state::idle
 			, sm::state::autonomous_activities + event<sm::event::autonomous_activities_mode_exited> [sm::guard::is_connected {}]               = sm::state::working

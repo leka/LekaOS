@@ -8,10 +8,11 @@ TEST_F(RobotControllerTest, stateAutonomousActivityConnectedEventCommandReceived
 {
 	rc.state_machine.set_current_states(lksm::state::autonomous_activities, lksm::state::connected);
 
-	Sequence on_autonomous_activity_exit_sequence;
-	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_autonomous_activity_exit_sequence);
-	EXPECT_CALL(mock_motor_left, stop).InSequence(on_autonomous_activity_exit_sequence);
-	EXPECT_CALL(mock_motor_right, stop).InSequence(on_autonomous_activity_exit_sequence);
+	Sequence on_exit_autonomous_activity_sequence;
+	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
 
 	Sequence on_working_entry_sequence;
 	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(on_working_entry_sequence);
@@ -39,8 +40,15 @@ TEST_F(RobotControllerTest, stateAutonomousActivityEventBleConnection)
 
 	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
 
-	expectedCallsStopActuators();
+	Sequence on_exit_autonomous_activity_sequence;
+	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_autonomous_activity_sequence);
+	// ? Below expectations are already considered in on_ble_connection_sequence
+	// EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
+	// EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
+	// EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
+
 	Sequence on_ble_connection_sequence;
+	expectedCallsStopActuators();
 	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection)))
 		.Times(1)
 		.InSequence(on_ble_connection_sequence);
@@ -63,10 +71,11 @@ TEST_F(RobotControllerTest, stateAutonomousActivityEventChargeDidStartGuardIsCha
 
 	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
 
-	Sequence on_autonomous_activity_exit_sequence;
-	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_autonomous_activity_exit_sequence);
-	EXPECT_CALL(mock_motor_left, stop).InSequence(on_autonomous_activity_exit_sequence);
-	EXPECT_CALL(mock_motor_right, stop).InSequence(on_autonomous_activity_exit_sequence);
+	Sequence on_exit_autonomous_activity_sequence;
+	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
 
 	Sequence start_deep_sleep_timeout_sequence;
 	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(start_deep_sleep_timeout_sequence);
@@ -86,6 +95,36 @@ TEST_F(RobotControllerTest, stateAutonomousActivityEventChargeDidStartGuardIsCha
 	on_charge_did_start();
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
+}
+
+TEST_F(RobotControllerTest, stateAutonomousActivityEventSleepTimeoutDidEnd)
+{
+	rc.state_machine.set_current_states(lksm::state::autonomous_activities);
+
+	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(true));
+
+	Sequence on_exit_autonomous_activity_sequence;
+	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
+
+	Sequence start_deep_sleep_timeout_sequence;
+	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(start_deep_sleep_timeout_sequence);
+	EXPECT_CALL(timeout_state_transition, start).InSequence(start_deep_sleep_timeout_sequence);
+
+	Sequence on_sleeping_sequence;
+	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::sleeping))).InSequence(on_sleeping_sequence);
+	EXPECT_CALL(mock_videokit, playVideoOnce).InSequence(on_sleeping_sequence);
+	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_sleeping_sequence);
+	EXPECT_CALL(timeout_state_internal, onTimeout)
+		.InSequence(on_sleeping_sequence)
+		.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleeping_start_timeout));
+	EXPECT_CALL(timeout_state_internal, start).InSequence(on_sleeping_sequence);
+
+	on_sleep_timeout();
+
+	EXPECT_TRUE(rc.state_machine.is(lksm::state::sleeping));
 }
 
 TEST_F(RobotControllerTest, stateAutonomousActivityEventChargeDidStartGuardIsChargingFalse)
@@ -173,10 +212,16 @@ TEST_F(RobotControllerTest, stateAutonomousActivityActivityStartedBackToMenu)
 	};
 	set_activitykit_is_playing();
 
-	EXPECT_CALL(mock_videokit, stopVideo);
-	expectedCallsStopMotors();
+	Sequence on_exit_autonomous_activity_sequence;
+	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
 
-	EXPECT_CALL(mock_videokit, displayImage).Times(1);
+	Sequence on_entry_autonomous_activity_sequence;
+	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(on_entry_autonomous_activity_sequence);
+	EXPECT_CALL(timeout_state_transition, start).InSequence(on_entry_autonomous_activity_sequence);
+	EXPECT_CALL(mock_videokit, displayImage).Times(1).InSequence(on_entry_autonomous_activity_sequence);
 
 	spy_kernel_addElapsedTimeToTickCount(minimal_delay_over);
 	rc.onMagicCardAvailable(MagicCard::dice_roll);
@@ -191,9 +236,13 @@ TEST_F(RobotControllerTest, stateAutonomousActivityDiceRollDetectedDelayNotOver)
 
 	auto maximal_delay_before_over = 2s;
 
+	EXPECT_CALL(timeout_state_transition, stop).Times(0);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(0);
 	EXPECT_CALL(mock_motor_left, stop).Times(0);
 	EXPECT_CALL(mock_motor_right, stop).Times(0);
+
+	EXPECT_CALL(timeout_state_transition, onTimeout).Times(0);
+	EXPECT_CALL(timeout_state_transition, start).Times(0);
 	EXPECT_CALL(mock_videokit, displayImage).Times(0);
 
 	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
@@ -209,9 +258,11 @@ TEST_F(RobotControllerTest, stateAutonomousActivityDiceRollDetectedDelayOverEven
 
 	auto minimal_delay_over = 2001ms;
 
-	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1));
-	EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1));
-	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1));
+	Sequence on_exit_autonomous_activity_sequence;
+	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
 
 	Sequence on_idle_entry_sequence;
 	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(on_idle_entry_sequence);
@@ -232,9 +283,11 @@ TEST_F(RobotControllerTest, stateAutonomousActivityDiceRollDetectedDelayOverEven
 
 	auto minimal_delay_over = 2001ms;
 
-	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1));
-	EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1));
-	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1));
+	Sequence on_exit_autonomous_activity_sequence;
+	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
+	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1)).InSequence(on_exit_autonomous_activity_sequence);
 
 	Sequence on_working_entry_sequence;
 	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(on_working_entry_sequence);
