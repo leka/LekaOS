@@ -436,8 +436,12 @@ class RobotController : public interface::RobotController
 		// Setup callbacks for monitoring
 
 		_rfidkit.onTagActivated([this](const MagicCard &card) {
-			onMagicCardAvailable(card);
+			// ! IMPORTANT NOTE
+			// ! The order of the following functions MUST NOT
+			// ! be changed. It is a temporary fix for #1311
+			// TODO(@leka/dev-embedded): remove when fixed
 			_service_magic_card.setMagicCard(card);
+			onMagicCardAvailable(card);
 		});
 
 		_battery_kit.onDataUpdated([this](uint8_t level) {
