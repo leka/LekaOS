@@ -16,7 +16,8 @@ class StabilizationControl
   public:
 	StabilizationControl() = default;
 
-	auto processStabilizationAngle(EulerAngles target, EulerAngles current) -> std::tuple<float, Rotation>;
+	void init(EulerAngles starting_angle);
+	auto processStabilizationAngle(EulerAngles current_angles) -> std::tuple<float, Rotation>;
 
   private:
 	[[nodiscard]] auto mapSpeed(float speed) const -> float;
@@ -43,6 +44,8 @@ class StabilizationControl
 	static constexpr float kEpsilon				  = 0.005F;
 
 	static constexpr float kInputSpeedLimit = 90 * (Parameters::Kp + Parameters::Kd) / kDeltaT;
+
+	EulerAngles _euler_angles_target {};
 
 	float _error_position_total = 0.F;
 	float _error_position_last	= 0.F;

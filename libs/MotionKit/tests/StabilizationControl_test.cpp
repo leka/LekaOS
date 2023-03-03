@@ -13,13 +13,13 @@ class StabilizationControlTest : public ::testing::Test
   protected:
 	StabilizationControlTest() = default;
 
-	// void SetUp() override {}
+	void SetUp() override { stabilization_control.init(current); }
 	//  void TearDown() override {}
 
 	StabilizationControl stabilization_control {};
 
 	EulerAngles target {.pitch = 0.F, .roll = 0.F, .yaw = 0.F};
-	EulerAngles current {};
+	EulerAngles current {.yaw = 0.F};
 
 	float quarterturn_error_speed = 1.F;	 //? mapSpeed(90 * (Kp + Kd)/ KDeltaT)
 	float halfturn_error_speed	  = 1.85F;	 //? mapSpeed(180 * (Kp + Kd)/ KDeltaT)
@@ -34,7 +34,7 @@ TEST_F(StabilizationControlTest, processStabilizationAngleDefaultPosition)
 {
 	current = {.pitch = 0.F, .roll = 0.F, .yaw = 0.F};
 
-	auto [speed, direction] = stabilization_control.processStabilizationAngle(target, current);
+	auto [speed, direction] = stabilization_control.processStabilizationAngle(current);
 
 	EXPECT_EQ(speed, 0.F);
 	EXPECT_EQ(direction, Rotation::clockwise);
@@ -44,7 +44,7 @@ TEST_F(StabilizationControlTest, processStabilizationAngleRolledOverAHalfRight)
 {
 	current = {.pitch = 0.F, .roll = 0.F, .yaw = 180.F};
 
-	auto [speed, direction] = stabilization_control.processStabilizationAngle(target, current);
+	auto [speed, direction] = stabilization_control.processStabilizationAngle(current);
 
 	EXPECT_EQ(speed, halfturn_error_speed);
 	EXPECT_EQ(direction, Rotation::counterClockwise);
@@ -54,7 +54,7 @@ TEST_F(StabilizationControlTest, processStabilizationAngleRolledOverAQuarterRigh
 {
 	current = {.pitch = 0.F, .roll = 0.F, .yaw = 90.F};
 
-	auto [speed, direction] = stabilization_control.processStabilizationAngle(target, current);
+	auto [speed, direction] = stabilization_control.processStabilizationAngle(current);
 
 	EXPECT_EQ(speed, quarterturn_error_speed);
 	EXPECT_EQ(direction, Rotation::counterClockwise);
@@ -64,7 +64,7 @@ TEST_F(StabilizationControlTest, processStabilizationAngleRolledOverAQuarterLeft
 {
 	current = {.pitch = 0.F, .roll = 0.F, .yaw = -90.F};
 
-	auto [speed, direction] = stabilization_control.processStabilizationAngle(target, current);
+	auto [speed, direction] = stabilization_control.processStabilizationAngle(current);
 
 	EXPECT_EQ(speed, quarterturn_error_speed);
 	EXPECT_EQ(direction, Rotation::clockwise);
@@ -74,7 +74,7 @@ TEST_F(StabilizationControlTest, processStabilizationAngleRolledOverAHalfLeft)
 {
 	current = {.pitch = 0.F, .roll = 0.F, .yaw = -180.F};
 
-	auto [speed, direction] = stabilization_control.processStabilizationAngle(target, current);
+	auto [speed, direction] = stabilization_control.processStabilizationAngle(current);
 
 	EXPECT_EQ(speed, halfturn_error_speed);
 	EXPECT_EQ(direction, Rotation::clockwise);

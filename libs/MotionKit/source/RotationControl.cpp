@@ -9,9 +9,18 @@
 
 using namespace leka;
 
-auto RotationControl::processRotationAngle(float target, float current) -> float
+void RotationControl::init(EulerAngles starting_angle, float number_of_rotations)
 {
-	auto error_position_current = target - current;
+	_euler_angles_previous = starting_angle;
+	_angle_rotation_target = number_of_rotations * 360.F;
+	_angle_rotation_sum	   = 0;
+}
+
+auto RotationControl::processRotationAngle(EulerAngles current_angles) -> float
+{
+	calculateTotalYawRotation(current_angles);
+
+	auto error_position_current = _angle_rotation_target - _angle_rotation_sum;
 
 	if (std::abs(error_position_current) < kStaticBound) {
 		_error_position_total += error_position_current;
@@ -34,13 +43,14 @@ auto RotationControl::processRotationAngle(float target, float current) -> float
 	return mapSpeed(speed);
 }
 
-auto RotationControl::calculateYawRotation(float previous_yaw, float yaw) -> float
+void RotationControl::calculateTotalYawRotation(EulerAngles angle)
 {
-	auto abs_yaw_delta = std::abs(previous_yaw - yaw);
-	if (abs_yaw_delta >= 300.F) {
-		return 360.F - abs_yaw_delta;
+	if (auto abs_yaw_delta = std::abs(_euler_angles_previous.yaw - angle.yaw); abs_yaw_delta >= 300.F) {
+		_angle_rotation_sum += 360.F - abs_yaw_delta;
+	} else {
+		_angle_rotation_sum += abs_yaw_delta;
 	}
-	return abs_yaw_delta;
+	_euler_angles_previous = angle;
 }
 
 auto RotationControl::mapSpeed(float speed) const -> float

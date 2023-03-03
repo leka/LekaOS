@@ -25,7 +25,7 @@ class MotionKit
 
 	void rotate(float number_of_rotations, Rotation direction,
 				const std::function<void()> &on_rotation_ended_callback = {});
-	void startStabilisation();
+	void startStabilization();
 
 	void stop();
 
@@ -33,7 +33,6 @@ class MotionKit
 	void processAngleForRotation(const EulerAngles &angles, Rotation direction);
 	void processAngleForStabilization(const EulerAngles &angles);
 
-	void calculateYawRotation(float yaw);
 	void setMotorsSpeedAndDirection(float speed, Rotation direction);
 
 	interface::Motor &_motor_left;
@@ -44,15 +43,10 @@ class MotionKit
 	RotationControl _rotation_control;
 	StabilizationControl _stabilization_control;
 
-	float _angle_rotation_target = 0.F;
-	float _angle_rotation_sum	 = 0.F;
 	std::function<void()> _on_rotation_ended_callback {};
 
 	bool _target_not_reached	   = false;
 	bool _rotate_x_turns_requested = false;
-
-	EulerAngles _euler_angles_previous {};
-	EulerAngles _target_angles {};
 };
 
 }	// namespace leka

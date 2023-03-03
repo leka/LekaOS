@@ -26,13 +26,11 @@ void MotionKit::rotate(float number_of_rotations, Rotation direction,
 {
 	stop();
 
-	_euler_angles_previous = _imukit.getEulerAngles();
+	auto starting_angle = _imukit.getEulerAngles();
+	_rotation_control.init(starting_angle, number_of_rotations);
 
 	_target_not_reached		  = true;
 	_rotate_x_turns_requested = true;
-
-	_angle_rotation_sum	   = 0;
-	_angle_rotation_target = number_of_rotations * 360.F;
 
 	auto on_timeout = [this] { stop(); };
 
@@ -48,11 +46,12 @@ void MotionKit::rotate(float number_of_rotations, Rotation direction,
 	_on_rotation_ended_callback = on_rotation_ended_callback;
 }
 
-void MotionKit::startStabilisation()
+void MotionKit::startStabilization()
 {
 	stop();
 
-	_target_angles = _imukit.getEulerAngles();
+	auto starting_angle = _imukit.getEulerAngles();
+	_stabilization_control.init(starting_angle);
 
 	auto on_euler_angles_rdy_callback = [this](const EulerAngles &euler_angles) {
 		processAngleForStabilization(euler_angles);
@@ -76,20 +75,16 @@ void MotionKit::processAngleForRotation(const EulerAngles &angles, Rotation dire
 		return;
 	}
 
-	_angle_rotation_sum += _rotation_control.calculateYawRotation(_euler_angles_previous.yaw, angles.yaw);
-
 	if (_rotate_x_turns_requested && _target_not_reached) {
-		auto speed = _rotation_control.processRotationAngle(_angle_rotation_target, _angle_rotation_sum);
+		auto speed = _rotation_control.processRotationAngle(angles);
 
 		setMotorsSpeedAndDirection(speed, direction);
 	}
-
-	_euler_angles_previous.yaw = angles.yaw;
 }
 
 void MotionKit::processAngleForStabilization(const EulerAngles &angles)
 {
-	auto [speed, rotation] = _stabilization_control.processStabilizationAngle(_target_angles, angles);
+	auto [speed, rotation] = _stabilization_control.processStabilizationAngle(angles);
 
 	setMotorsSpeedAndDirection(speed, rotation);
 }

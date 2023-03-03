@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "interface/libs/IMUKit.hpp"
 namespace leka {
 
 class RotationControl
@@ -11,11 +12,11 @@ class RotationControl
   public:
 	RotationControl() = default;
 
-	void setTarget(float number_of_rotations);
-	auto processRotationAngle(float target, float current) -> float;
-	auto calculateYawRotation(float previous_yaw, float yaw) -> float;
+	void init(EulerAngles starting_angles, float number_of_rotations);
+	auto processRotationAngle(EulerAngles current_angles) -> float;
 
   private:
+	void calculateTotalYawRotation(EulerAngles angle);
 	[[nodiscard]] auto mapSpeed(float speed) const -> float;
 
 	// ? Kp, Ki, Kd were found empirically by increasing Kp until the rotation angle exceeds the target angle
@@ -40,6 +41,11 @@ class RotationControl
 	static constexpr float kEpsilon				  = 0.005F;
 
 	static constexpr float kInputSpeedLimit = 90 * (Parameters::Kp + Parameters::Kd) / kDeltaT;
+
+	float _angle_rotation_target = 0.F;
+	float _angle_rotation_sum	 = 0.F;
+
+	EulerAngles _euler_angles_previous {};
 
 	float _error_position_total = 0.F;
 	float _error_position_last	= 0.F;

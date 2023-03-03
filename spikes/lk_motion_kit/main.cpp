@@ -115,12 +115,12 @@ void onMagicCardAvailable(const MagicCard &card)
 			motionkit.rotate(7, Rotation::counterClockwise);
 			break;
 		case (MagicCard::number_8.getId()):
-			motionkit.startStabilisation();
+			motionkit.startStabilization();
 			rtos::ThisThread::sleep_for(10s);
 			motionkit.stop();
 			break;
 		case (MagicCard::number_9.getId()):
-			motionkit.startStabilisation();
+			motionkit.startStabilization();
 			break;
 		case (MagicCard::number_10.getId()):
 			motionkit.stop();

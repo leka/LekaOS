@@ -9,12 +9,16 @@
 
 using namespace leka;
 
-auto StabilizationControl::processStabilizationAngle(EulerAngles target, EulerAngles current)
-	-> std::tuple<float, Rotation>
+void StabilizationControl::init(EulerAngles starting_angle)
+{
+	_euler_angles_target = starting_angle;
+}
+
+auto StabilizationControl::processStabilizationAngle(EulerAngles current_angles) -> std::tuple<float, Rotation>
 {
 	auto direction = Rotation {};
 
-	auto error_position_current = target.yaw - current.yaw;
+	auto error_position_current = _euler_angles_target.yaw - current_angles.yaw;
 
 	if (std::abs(error_position_current) < kStaticBound) {
 		_error_position_total += error_position_current;

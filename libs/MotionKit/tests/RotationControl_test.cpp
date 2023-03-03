@@ -13,16 +13,15 @@ class RotationControlTest : public ::testing::Test
   protected:
 	RotationControlTest() = default;
 
-	// void SetUp() override {}
+	void SetUp() override { rotation_control.init(angle, 1.0); }
 	//  void TearDown() override {}
 
 	RotationControl rotation_control {};
 
-	float yaw = 0.F;
+	EulerAngles angle {.yaw = 0.F};
 
-	float halfturn_error_speed = 1.85F;			//? mapSpeed(180 * (Kp + Kd)/KDeltaT)
-	float one_turn_error_speed = 3.55000019F;	//? mapSpeed(360 * (Kp + Kd)/KDeltaT)
-	float two_turn_error_speed = 6.95000029F;	//? mapSpeed(720 * (Kp + Kd)/KDeltaT)
+	float current_speed;
+	float previous_speed = 1000;
 };
 
 TEST_F(RotationControlTest, initialization)
@@ -30,68 +29,64 @@ TEST_F(RotationControlTest, initialization)
 	ASSERT_NE(&rotation_control, nullptr);
 }
 
-TEST_F(RotationControlTest, processRotationAngleDefaultPosition)
+TEST_F(RotationControlTest, processRotationAngleCounterClockwise)
 {
-	auto target = 0.F;
+	for (auto i = 0.F; i < 180.F; i += 5.F) {
+		auto current_angle = EulerAngles {.yaw = i};
 
-	auto speed = rotation_control.processRotationAngle(target, yaw);
+		current_speed = rotation_control.processRotationAngle(current_angle);
 
-	EXPECT_EQ(speed, 0.F);
+		EXPECT_LE(current_speed, previous_speed);
+
+		previous_speed = current_speed;
+	}
+
+	for (auto i = -180.F; i < -5.F; i += 5.F) {
+		auto current_angle = EulerAngles {.yaw = i};
+
+		current_speed = rotation_control.processRotationAngle(current_angle);
+
+		EXPECT_LE(current_speed, previous_speed);
+
+		previous_speed = current_speed;
+	}
+
+	for (auto i = -3.F; i < 0.F; i += 1.F) {
+		auto current_angle = EulerAngles {.yaw = i};
+
+		current_speed = rotation_control.processRotationAngle(current_angle);
+
+		EXPECT_EQ(current_speed, 0.F);
+	}
 }
 
-TEST_F(RotationControlTest, processRotationAngleHalfTurn)
+TEST_F(RotationControlTest, processRotationAngleClockwise)
 {
-	auto target = 180.F;
+	for (auto i = 0.F; i > -180.F; i -= 5.F) {
+		auto current_angle = EulerAngles {.yaw = i};
 
-	auto speed = rotation_control.processRotationAngle(target, yaw);
+		current_speed = rotation_control.processRotationAngle(current_angle);
 
-	EXPECT_EQ(speed, halfturn_error_speed);
-}
+		EXPECT_LE(current_speed, previous_speed);
 
-TEST_F(RotationControlTest, processRotationAngleOneTurn)
-{
-	auto target = 360.F;
+		previous_speed = current_speed;
+	}
 
-	auto speed = rotation_control.processRotationAngle(target, yaw);
+	for (auto i = 180.F; i > 5.F; i -= 5.F) {
+		auto current_angle = EulerAngles {.yaw = i};
 
-	EXPECT_EQ(speed, one_turn_error_speed);
-}
+		current_speed = rotation_control.processRotationAngle(current_angle);
 
-TEST_F(RotationControlTest, processRotationAngle2Turn)
-{
-	auto target = 720.F;
+		EXPECT_LE(current_speed, previous_speed);
 
-	auto speed = rotation_control.processRotationAngle(target, yaw);
+		previous_speed = current_speed;
+	}
 
-	EXPECT_EQ(speed, two_turn_error_speed);
-}
+	for (auto i = 3.F; i >= 0.F; i -= 1.F) {
+		auto current_angle = EulerAngles {.yaw = i};
 
-TEST_F(RotationControlTest, calculateYawRotationClockwise)
-{
-	auto previous = -20.F;
-	auto yaw	  = 20.F;
+		current_speed = rotation_control.processRotationAngle(current_angle);
 
-	auto abs_diff = rotation_control.calculateYawRotation(previous, yaw);
-
-	EXPECT_EQ(abs_diff, 40.F);
-}
-
-TEST_F(RotationControlTest, calculateYawRotationCounterClockwise)
-{
-	auto previous = 20.F;
-	auto yaw	  = -20.F;
-
-	auto abs_diff = rotation_control.calculateYawRotation(previous, yaw);
-
-	EXPECT_EQ(abs_diff, 40.F);
-}
-
-TEST_F(RotationControlTest, calculateYawRotationDiscontinuousPoint)
-{
-	auto previous = -160.F;
-	auto yaw	  = 170.F;
-
-	auto abs_diff = rotation_control.calculateYawRotation(previous, yaw);
-
-	EXPECT_EQ(abs_diff, 30.F);
+		EXPECT_EQ(current_speed, 0.F);
+	}
 }
