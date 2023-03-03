@@ -285,6 +285,8 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(1s);
 
+	activitykit.registerBeforeProcessCallback([] { log_info("Callback call"); });
+
 	rfidkit.onTagActivated([](const MagicCard &card) {
 		log_info("card: %ld", card.getId());
 		activitykit.start(card);

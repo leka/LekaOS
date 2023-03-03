@@ -8,13 +8,18 @@
 
 namespace leka::activity {
 
-void DisplayTags::start()
+void DisplayTags::start(const std::function<void()> &before_process_callback)
 {
 	_videokit.displayImage("fs/home/img/system/robot-misc-robot-misc-screen_empty_white.jpg");
 
 	_backup_callback = _rfidkit.getCallback();
 
-	_rfidkit.onTagActivated([this](const MagicCard &card) { processCard(card); });
+	_rfidkit.onTagActivated([this, &before_process_callback](const MagicCard &card) {
+		if (before_process_callback != nullptr) {
+			before_process_callback();
+		}
+		processCard(card);
+	});
 }
 
 void DisplayTags::stop()

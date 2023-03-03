@@ -11,7 +11,7 @@
 
 namespace leka::activity {
 
-void FoodRecognition::start()
+void FoodRecognition::start(const std::function<void()> &before_process_callback)
 {
 	_current_round = 0;
 	_current_food  = {};
@@ -20,7 +20,12 @@ void FoodRecognition::start()
 	std::shuffle(_foods.begin(), _foods.end(), std::mt19937(static_cast<unsigned int>(time(nullptr))));
 	launchNextRound();
 
-	_rfidkit.onTagActivated([this](const MagicCard &card) { processCard(card); });
+	_rfidkit.onTagActivated([this, &before_process_callback](const MagicCard &card) {
+		if (before_process_callback != nullptr) {
+			before_process_callback();
+		}
+		processCard(card);
+	});
 }
 
 void FoodRecognition::stop()

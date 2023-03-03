@@ -23,7 +23,7 @@ class SuperSimon : public interface::Activity
 						interface::LED &led)
 		: _rfidkit(rfidkit), _videokit(videokit), _reinforcerkit(reinforcerkit), _led(led) {};
 
-	void start() final;
+	void start(const std::function<void()> &before_process_callback) final;
 	void stop() final;
 
   private:

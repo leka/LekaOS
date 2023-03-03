@@ -12,7 +12,7 @@ namespace leka::mock {
 class Activity : public interface::Activity
 {
   public:
-	MOCK_METHOD(void, start, (), ());
+	MOCK_METHOD(void, start, (const std::function<void()> &), ());
 	MOCK_METHOD(void, stop, (), ());
 };
 
