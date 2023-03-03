@@ -425,6 +425,10 @@ class RobotController : public interface::RobotController
 		}
 
 		if (NOT_is_playing && is_autonomous_mode) {
+			// TODO: Determine behavior
+			// 1. Do nothing - Sleeping duration is for Main Menu + 1 Activity (current implementation)
+			// 2. Restart - Sleeping duration is for 1 Activity
+			// 3. Disable - No sleeping duration
 			_activitykit.start(card);
 		}
 	}
