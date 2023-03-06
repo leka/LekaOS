@@ -13,6 +13,7 @@ target_sources(MotionKit
 	PRIVATE
 	source/MotionKit.cpp
 	source/RotationControl.cpp
+	source/StabilizationControl.cpp
 )
 
 target_link_libraries(MotionKit
@@ -24,5 +25,6 @@ if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/MotionKit_test.cpp
 		tests/RotationControl_test.cpp
+		tests/StabilizationControl_test.cpp
 	)
 endif()
