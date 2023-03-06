@@ -47,6 +47,7 @@
 #include "FlashNumberCounting.h"
 #include "FoodRecognition.h"
 #include "HelloWorld.h"
+#include "IMUKit.hpp"
 #include "LedColorRecognition.h"
 #include "LedKit.h"
 #include "LedNumberCounting.h"

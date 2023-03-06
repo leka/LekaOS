@@ -32,6 +32,7 @@
 #include "EventLoopKit.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
+#include "IMUKit.hpp"
 #include "LedKit.h"
 #include "LogKit.h"
 #include "ReinforcerKit.h"
