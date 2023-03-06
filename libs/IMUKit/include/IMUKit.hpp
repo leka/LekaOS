@@ -19,6 +19,7 @@ class IMUKit : public interface::IMUKit
 	void stop() final;
 
 	void setOrigin() final;
+	void onEulerAnglesReady(angles_ready_callback_t const &callback) final;
 	[[nodiscard]] auto getEulerAngles() const -> EulerAngles final;
 
   private:
@@ -26,6 +27,7 @@ class IMUKit : public interface::IMUKit
 
 	interface::LSM6DSOX &_lsm6dsox;
 	EulerAngles _euler_angles {};
+	angles_ready_callback_t _on_euler_angles_rdy_callback {};
 };
 
 }	// namespace leka
