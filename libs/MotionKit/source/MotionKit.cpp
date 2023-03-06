@@ -46,6 +46,20 @@ void MotionKit::startYawRotation(float degrees, Rotation direction,
 	_on_rotation_ended_callback = on_rotation_ended_callback;
 }
 
+void MotionKit::startStabilization()
+{
+	stop();
+
+	auto starting_angle = _imukit.getEulerAngles();
+	_stabilization_control.setTarget(starting_angle);
+
+	auto on_euler_angles_rdy_callback = [this](const EulerAngles &euler_angles) {
+		processAngleForStabilization(euler_angles);
+	};
+
+	_imukit.onEulerAnglesReady(on_euler_angles_rdy_callback);
+}
+
 // LCOV_EXCL_START - Dynamic behavior, involving motors and time.
 void MotionKit::processAngleForRotation(const EulerAngles &angles, Rotation direction)
 {
@@ -66,6 +80,13 @@ void MotionKit::processAngleForRotation(const EulerAngles &angles, Rotation dire
 
 		setMotorsSpeedAndDirection(speed, direction);
 	}
+}
+
+void MotionKit::processAngleForStabilization(const EulerAngles &angles)
+{
+	auto [speed, rotation] = _stabilization_control.processStabilizationAngle(angles);
+
+	setMotorsSpeedAndDirection(speed, rotation);
 }
 
 void MotionKit::setMotorsSpeedAndDirection(float speed, Rotation direction)
