@@ -12,7 +12,7 @@ target_include_directories(MotionKit
 target_sources(MotionKit
 	PRIVATE
 	source/MotionKit.cpp
-	source/PID.cpp
+	source/RotationControl.cpp
 )
 
 target_link_libraries(MotionKit
@@ -23,6 +23,6 @@ target_link_libraries(MotionKit
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/MotionKit_test.cpp
-		tests/PID_test.cpp
+		tests/RotationControl_test.cpp
 	)
 endif()
