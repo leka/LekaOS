@@ -7,6 +7,7 @@
 #include <interface/drivers/Motor.h>
 
 #include "RotationControl.hpp"
+#include "StabilizationControl.hpp"
 #include "interface/drivers/Timeout.h"
 #include "interface/libs/IMUKit.hpp"
 
@@ -23,11 +24,13 @@ class MotionKit
 
 	void startYawRotation(float degrees, Rotation direction,
 						  const std::function<void()> &on_rotation_ended_callback = {});
+	void startStabilization();
 
 	void stop();
 
   private:
 	void processAngleForRotation(const EulerAngles &angles, Rotation direction);
+	void processAngleForStabilization(const EulerAngles &angles);
 
 	void setMotorsSpeedAndDirection(float speed, Rotation direction);
 
@@ -37,6 +40,7 @@ class MotionKit
 	interface::Timeout &_timeout;
 
 	RotationControl _rotation_control;
+	StabilizationControl _stabilization_control;
 	std::function<void()> _on_rotation_ended_callback {};
 
 	bool _target_not_reached	   = false;
