@@ -73,13 +73,11 @@ auto imukit = IMUKit {imu::lsm6dsox};
 
 namespace motion::internal {
 
-	EventLoopKit event_loop {};
 	CoreTimeout timeout {};
 
 }	// namespace motion::internal
 
-auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::event_loop,
-							motion::internal::timeout};
+auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::timeout};
 
 namespace rfid {
 
@@ -96,33 +94,25 @@ void onMagicCardAvailable(const MagicCard &card)
 {
 	switch (card.getId()) {
 		case (MagicCard::number_1.getId()):
-			motionkit.rotate(1, Rotation::counterClockwise, [] { log_debug("Callback end of rotation"); });
+			motionkit.startYawRotation(1, Rotation::counterClockwise, [] { log_debug("Callback end of rotation"); });
 			break;
 		case (MagicCard::number_2.getId()):
-			motionkit.rotate(2, Rotation::clockwise);
+			motionkit.startYawRotation(2, Rotation::clockwise);
 			break;
 		case (MagicCard::number_3.getId()):
-			motionkit.rotate(3, Rotation::counterClockwise);
+			motionkit.startYawRotation(3, Rotation::counterClockwise);
 			break;
 		case (MagicCard::number_4.getId()):
-			motionkit.rotate(4, Rotation::clockwise);
+			motionkit.startYawRotation(4, Rotation::clockwise);
 			break;
 		case (MagicCard::number_5.getId()):
-			motionkit.rotate(5, Rotation::counterClockwise);
+			motionkit.startYawRotation(5, Rotation::counterClockwise);
 			break;
 		case (MagicCard::number_6.getId()):
-			motionkit.rotate(6, Rotation::clockwise);
+			motionkit.startYawRotation(6, Rotation::clockwise);
 			break;
 		case (MagicCard::number_7.getId()):
-			motionkit.rotate(7, Rotation::counterClockwise);
-			break;
-		case (MagicCard::number_8.getId()):
-			motionkit.startStabilisation();
-			rtos::ThisThread::sleep_for(10s);
-			motionkit.stop();
-			break;
-		case (MagicCard::number_9.getId()):
-			motionkit.startStabilisation();
+			motionkit.startYawRotation(7, Rotation::counterClockwise);
 			break;
 		case (MagicCard::number_10.getId()):
 			motionkit.stop();
@@ -143,7 +133,6 @@ auto main() -> int
 
 	imu::lsm6dsox.init();
 	imukit.init();
-	motionkit.init();
 	rfidkit.init();
 
 	rfidkit.onTagActivated(onMagicCardAvailable);
