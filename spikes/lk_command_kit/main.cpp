@@ -111,12 +111,11 @@ auto imukit = IMUKit {imu::lsm6dsox};
 
 namespace motion::internal {
 
-EventLoopKit event_loop {};
 CoreTimeout timeout {};
 
 }	// namespace motion::internal
 
-auto motionkit = MotionKit {motor::left, motor::right, imukit, motion::internal::event_loop, motion::internal::timeout};
+auto motionkit = MotionKit {motor::left, motor::right, imukit, motion::internal::timeout};
 
 namespace display {
 
@@ -254,7 +253,6 @@ auto main() -> int
 
 	imu::lsm6dsox.init();
 	imukit.init();
-	motionkit.init();
 
 	turnOff();
 

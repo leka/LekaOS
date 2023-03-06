@@ -7,13 +7,13 @@
 #include "IMUKit.hpp"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreMotor.h"
-#include "mocks/leka/LSM6DSOX.h"
+#include "mocks/leka/IMUKit.hpp"
 #include "mocks/leka/Timeout.h"
-#include "stubs/leka/EventLoopKit.h"
 
 using namespace leka;
 
-using ::testing::MockFunction;
+using ::testing::_;
+using ::testing::AtLeast;
 
 // TODO(@leka/dev-embedded): temporary fix, changes are needed when updating fusion algorithm
 
@@ -27,28 +27,19 @@ class MotionKitTest : public ::testing::Test
   protected:
 	MotionKitTest() = default;
 
-	void SetUp() override
-	{
-		imukit.init();
-		motion.init();
-	}
+	// void SetUp() override {}
 	// void TearDown() override {}
-
-	stub::EventLoopKit stub_event_loop_motion {};
 
 	mock::CoreMotor mock_motor_left {};
 	mock::CoreMotor mock_motor_right {};
 
-	mock::LSM6DSOX lsm6dsox {};
-
 	mock::Timeout mock_timeout {};
 
-	std::tuple<float, float, float> accel_data = {0.F, 0.F, 0.F};
-	std::tuple<float, float, float> gyro_data  = {0.F, 0.F, 0.F};
+	const EulerAngles angles {0.F, 0.F, 0.F};
 
-	IMUKit imukit {lsm6dsox};
+	mock::IMUKit mock_imukit {};
 
-	MotionKit motion {mock_motor_left, mock_motor_right, imukit, stub_event_loop_motion, mock_timeout};
+	MotionKit motion {mock_motor_left, mock_motor_right, mock_imukit, mock_timeout};
 };
 
 TEST_F(MotionKitTest, initialization)
@@ -56,114 +47,90 @@ TEST_F(MotionKitTest, initialization)
 	ASSERT_NE(&motion, nullptr);
 }
 
-TEST_F(MotionKitTest, registerMockCallbackAndRotate)
+TEST_F(MotionKitTest, rotateClockwise)
 {
-	auto mock_function_motion = MockFunction<void(void)> {};
-	auto loop_motion		  = [&] { mock_function_motion.Call(); };
-
-	EXPECT_CALL(lsm6dsox, setPowerMode(interface::LSM6DSOX::PowerMode::Normal)).Times(1);
-	EXPECT_CALL(mock_function_motion, Call()).Times(1);
-
 	EXPECT_CALL(mock_timeout, stop).Times(1);
 	EXPECT_CALL(mock_motor_left, stop).Times(1);
 	EXPECT_CALL(mock_motor_right, stop).Times(1);
+
+	EXPECT_CALL(mock_imukit, getEulerAngles).Times(1);
 
 	EXPECT_CALL(mock_timeout, onTimeout).Times(1);
 	EXPECT_CALL(mock_timeout, start).Times(1);
 
-	EXPECT_CALL(mock_motor_left, spin(Rotation::clockwise, 1)).Times(1);
-	EXPECT_CALL(mock_motor_right, spin(Rotation::clockwise, 1)).Times(1);
+	EXPECT_CALL(mock_motor_left, spin(Rotation::clockwise, _)).Times(AtLeast(1));
+	EXPECT_CALL(mock_motor_right, spin(Rotation::clockwise, _)).Times(AtLeast(1));
 
-	stub_event_loop_motion.registerCallback(loop_motion);
-	motion.rotate(1, Rotation::clockwise);
+	motion.startYawRotation(1, Rotation::clockwise);
+
+	mock_imukit.call_angles_ready_callback(angles);
 }
 
-TEST_F(MotionKitTest, registerMockCallbackAndStartStabilisation)
+TEST_F(MotionKitTest, rotateCounterClockwise)
 {
-	auto mock_function_motion = MockFunction<void(void)> {};
-	auto loop_motion		  = [&] { mock_function_motion.Call(); };
-
-	EXPECT_CALL(lsm6dsox, setPowerMode(interface::LSM6DSOX::PowerMode::Normal)).Times(1);
-	EXPECT_CALL(mock_function_motion, Call()).Times(1);
-
 	EXPECT_CALL(mock_timeout, stop).Times(1);
 	EXPECT_CALL(mock_motor_left, stop).Times(1);
 	EXPECT_CALL(mock_motor_right, stop).Times(1);
 
-	stub_event_loop_motion.registerCallback(loop_motion);
-	motion.startStabilisation();
+	EXPECT_CALL(mock_imukit, getEulerAngles).Times(1);
+
+	EXPECT_CALL(mock_timeout, onTimeout).Times(1);
+	EXPECT_CALL(mock_timeout, start).Times(1);
+
+	EXPECT_CALL(mock_motor_left, spin(Rotation::counterClockwise, _)).Times(AtLeast(1));
+	EXPECT_CALL(mock_motor_right, spin(Rotation::counterClockwise, _)).Times(AtLeast(1));
+
+	motion.startYawRotation(1, Rotation::counterClockwise);
+
+	mock_imukit.call_angles_ready_callback(angles);
 }
 
 TEST_F(MotionKitTest, rotateAndStop)
 {
-	auto mock_function_motion = MockFunction<void(void)> {};
-	auto loop_motion		  = [&] {
-		 mock_function_motion.Call();
-		 motion.stop();
-	};
+	EXPECT_CALL(mock_timeout, stop).Times(1);
+	EXPECT_CALL(mock_motor_left, stop).Times(1);
+	EXPECT_CALL(mock_motor_right, stop).Times(1);
 
-	EXPECT_CALL(lsm6dsox, setPowerMode(interface::LSM6DSOX::PowerMode::Normal)).Times(1);
-	EXPECT_CALL(mock_function_motion, Call()).Times(1);
-
-	EXPECT_CALL(mock_timeout, stop).Times(2);
-	EXPECT_CALL(mock_motor_left, stop).Times(2);
-	EXPECT_CALL(mock_motor_right, stop).Times(2);
-
-	EXPECT_CALL(mock_motor_left, spin).Times(1);
-	EXPECT_CALL(mock_motor_right, spin).Times(1);
+	EXPECT_CALL(mock_imukit, getEulerAngles).Times(1);
 
 	EXPECT_CALL(mock_timeout, onTimeout).Times(1);
 	EXPECT_CALL(mock_timeout, start).Times(1);
 
-	stub_event_loop_motion.registerCallback(loop_motion);
-	motion.rotate(1, Rotation::clockwise);
-}
+	EXPECT_CALL(mock_motor_left, spin(Rotation::clockwise, _)).Times(AtLeast(1));
+	EXPECT_CALL(mock_motor_right, spin(Rotation::clockwise, _)).Times(AtLeast(1));
 
-TEST_F(MotionKitTest, rotateAndTimeOutOver)
-{
-	auto mock_function_motion = MockFunction<void(void)> {};
-	auto loop_motion		  = [&] { mock_function_motion.Call(); };
-
-	interface::Timeout::callback_t on_timeout_callback = {};
-
-	EXPECT_CALL(lsm6dsox, setPowerMode(interface::LSM6DSOX::PowerMode::Normal)).Times(1);
-	EXPECT_CALL(mock_function_motion, Call()).Times(1);
+	motion.startYawRotation(1, Rotation::clockwise);
+	mock_imukit.call_angles_ready_callback(angles);
 
 	EXPECT_CALL(mock_timeout, stop).Times(1);
 	EXPECT_CALL(mock_motor_left, stop).Times(1);
 	EXPECT_CALL(mock_motor_right, stop).Times(1);
 
-	EXPECT_CALL(mock_motor_left, spin).Times(1);
-	EXPECT_CALL(mock_motor_right, spin).Times(1);
+	motion.stop();
+}
+
+TEST_F(MotionKitTest, rotateAndTimeOutOver)
+{
+	interface::Timeout::callback_t on_timeout_callback = {};
+
+	EXPECT_CALL(mock_timeout, stop).Times(1);
+	EXPECT_CALL(mock_motor_left, stop).Times(1);
+	EXPECT_CALL(mock_motor_right, stop).Times(1);
+
+	EXPECT_CALL(mock_imukit, getEulerAngles).Times(1);
 
 	EXPECT_CALL(mock_timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_timeout_callback));
 	EXPECT_CALL(mock_timeout, start).Times(1);
 
-	stub_event_loop_motion.registerCallback(loop_motion);
-	motion.rotate(1, Rotation::clockwise);
+	EXPECT_CALL(mock_motor_left, spin(Rotation::clockwise, _)).Times(AtLeast(1));
+	EXPECT_CALL(mock_motor_right, spin(Rotation::clockwise, _)).Times(AtLeast(1));
+
+	motion.startYawRotation(1, Rotation::clockwise);
+	mock_imukit.call_angles_ready_callback(angles);
 
 	EXPECT_CALL(mock_timeout, stop).Times(1);
 	EXPECT_CALL(mock_motor_left, stop).Times(1);
 	EXPECT_CALL(mock_motor_right, stop).Times(1);
 
 	on_timeout_callback();
-}
-
-TEST_F(MotionKitTest, startStabilisationAndStop)
-{
-	auto mock_function_motion = MockFunction<void(void)> {};
-	auto loop_motion		  = [&] {
-		 mock_function_motion.Call();
-		 motion.stop();
-	};
-
-	EXPECT_CALL(lsm6dsox, setPowerMode(interface::LSM6DSOX::PowerMode::Normal)).Times(1);
-	EXPECT_CALL(mock_function_motion, Call()).Times(1);
-
-	EXPECT_CALL(mock_timeout, stop).Times(2);
-	EXPECT_CALL(mock_motor_left, stop).Times(2);
-	EXPECT_CALL(mock_motor_right, stop).Times(2);
-
-	stub_event_loop_motion.registerCallback(loop_motion);
-	motion.startStabilisation();
 }
