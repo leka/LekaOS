@@ -71,7 +71,7 @@ python3 -m pip install -U --user mbed-cli mbed-tools
 python3 -m pip install -U --user pyserial intelhex prettytable
 
 # and finally mbed-cli requirements
-python3 -m pip install -U --user -r https://raw.githubusercontent.com/ARMmbed/mbed-os/master/requirements.txt
+python3 -m pip install -U --user -r ./tools/config/mbed_requirements.txt
 ```
 
 ### 3. Install arm-none-eabi-gcc
