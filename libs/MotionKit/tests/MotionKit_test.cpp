@@ -36,6 +36,7 @@ class MotionKitTest : public ::testing::Test
 	mock::Timeout mock_timeout {};
 
 	const EulerAngles angles {0.F, 0.F, 0.F};
+	const float kOneTurnDegrees = 360.0;
 
 	mock::IMUKit mock_imukit {};
 
@@ -61,7 +62,7 @@ TEST_F(MotionKitTest, rotateClockwise)
 	EXPECT_CALL(mock_motor_left, spin(Rotation::clockwise, _)).Times(AtLeast(1));
 	EXPECT_CALL(mock_motor_right, spin(Rotation::clockwise, _)).Times(AtLeast(1));
 
-	motion.startYawRotation(1, Rotation::clockwise);
+	motion.startYawRotation(kOneTurnDegrees, Rotation::clockwise);
 
 	mock_imukit.call_angles_ready_callback(angles);
 }
@@ -80,7 +81,7 @@ TEST_F(MotionKitTest, rotateCounterClockwise)
 	EXPECT_CALL(mock_motor_left, spin(Rotation::counterClockwise, _)).Times(AtLeast(1));
 	EXPECT_CALL(mock_motor_right, spin(Rotation::counterClockwise, _)).Times(AtLeast(1));
 
-	motion.startYawRotation(1, Rotation::counterClockwise);
+	motion.startYawRotation(kOneTurnDegrees, Rotation::counterClockwise);
 
 	mock_imukit.call_angles_ready_callback(angles);
 }
@@ -99,7 +100,7 @@ TEST_F(MotionKitTest, rotateAndStop)
 	EXPECT_CALL(mock_motor_left, spin(Rotation::clockwise, _)).Times(AtLeast(1));
 	EXPECT_CALL(mock_motor_right, spin(Rotation::clockwise, _)).Times(AtLeast(1));
 
-	motion.startYawRotation(1, Rotation::clockwise);
+	motion.startYawRotation(kOneTurnDegrees, Rotation::clockwise);
 	mock_imukit.call_angles_ready_callback(angles);
 
 	EXPECT_CALL(mock_timeout, stop).Times(1);
@@ -125,7 +126,7 @@ TEST_F(MotionKitTest, rotateAndTimeOutOver)
 	EXPECT_CALL(mock_motor_left, spin(Rotation::clockwise, _)).Times(AtLeast(1));
 	EXPECT_CALL(mock_motor_right, spin(Rotation::clockwise, _)).Times(AtLeast(1));
 
-	motion.startYawRotation(1, Rotation::clockwise);
+	motion.startYawRotation(kOneTurnDegrees, Rotation::clockwise);
 	mock_imukit.call_angles_ready_callback(angles);
 
 	EXPECT_CALL(mock_timeout, stop).Times(1);

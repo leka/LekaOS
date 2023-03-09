@@ -12,7 +12,7 @@ class RotationControl
   public:
 	RotationControl() = default;
 
-	void setTarget(EulerAngles starting_angles, float number_of_rotations);
+	void setTarget(EulerAngles starting_angles, float degrees);
 	auto processRotationAngle(EulerAngles current_angles) -> float;
 
   private:

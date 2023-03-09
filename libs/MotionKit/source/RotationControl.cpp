@@ -9,10 +9,10 @@
 
 using namespace leka;
 
-void RotationControl::setTarget(EulerAngles starting_angle, float number_of_rotations)
+void RotationControl::setTarget(EulerAngles starting_angle, float degrees)
 {
 	_euler_angles_previous = starting_angle;
-	_angle_rotation_target = number_of_rotations * 360.F;
+	_angle_rotation_target = degrees;
 	_angle_rotation_sum	   = 0;
 }
 

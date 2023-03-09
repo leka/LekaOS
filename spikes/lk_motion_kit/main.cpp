@@ -94,25 +94,25 @@ void onMagicCardAvailable(const MagicCard &card)
 {
 	switch (card.getId()) {
 		case (MagicCard::number_1.getId()):
-			motionkit.startYawRotation(1, Rotation::counterClockwise, [] { log_debug("Callback end of rotation"); });
+			motionkit.startYawRotation(90, Rotation::counterClockwise, [] { log_debug("Callback end of rotation"); });
 			break;
 		case (MagicCard::number_2.getId()):
-			motionkit.startYawRotation(2, Rotation::clockwise);
+			motionkit.startYawRotation(180, Rotation::clockwise);
 			break;
 		case (MagicCard::number_3.getId()):
-			motionkit.startYawRotation(3, Rotation::counterClockwise);
+			motionkit.startYawRotation(360, Rotation::counterClockwise);
 			break;
 		case (MagicCard::number_4.getId()):
-			motionkit.startYawRotation(4, Rotation::clockwise);
+			motionkit.startYawRotation(540, Rotation::clockwise);
 			break;
 		case (MagicCard::number_5.getId()):
-			motionkit.startYawRotation(5, Rotation::counterClockwise);
+			motionkit.startYawRotation(720, Rotation::counterClockwise);
 			break;
 		case (MagicCard::number_6.getId()):
-			motionkit.startYawRotation(6, Rotation::clockwise);
+			motionkit.startYawRotation(1080, Rotation::clockwise);
 			break;
 		case (MagicCard::number_7.getId()):
-			motionkit.startYawRotation(7, Rotation::counterClockwise);
+			motionkit.startYawRotation(1080, Rotation::counterClockwise);
 			break;
 		case (MagicCard::number_10.getId()):
 			motionkit.stop();
