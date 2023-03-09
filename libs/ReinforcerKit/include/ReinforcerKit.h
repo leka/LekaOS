@@ -40,6 +40,7 @@ class ReinforcerKit
 	interface::LedKit &_ledkit;
 	MotionKit &_motionkit;
 	Reinforcer _default_reinforcer = Reinforcer::Rainbow;
+	const float kThreeTurnDegrees  = 1080.F;
 
 	void playBlinkGreen();
 	void playSpinBlink();

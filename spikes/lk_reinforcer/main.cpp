@@ -150,12 +150,11 @@ auto imukit = IMUKit {imu::lsm6dsox};
 
 namespace motion::internal {
 
-	EventLoopKit event_loop {};
 	CoreTimeout timeout {};
 
 }	// namespace motion::internal
 
-auto motionkit = MotionKit {motor::left, motor::right, imukit, motion::internal::event_loop, motion::internal::timeout};
+auto motionkit = MotionKit {motor::left, motor::right, imukit, motion::internal::timeout};
 
 namespace display::internal {
 
@@ -204,7 +203,6 @@ auto main() -> int
 	videokit.initializeScreen();
 	imu::lsm6dsox.init();
 	imukit.init();
-	motionkit.init();
 
 	rtos::ThisThread::sleep_for(3s);
 
