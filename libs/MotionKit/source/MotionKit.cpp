@@ -4,8 +4,6 @@
 
 #include "MotionKit.hpp"
 
-#include "ThisThread.h"
-
 using namespace leka;
 using namespace std::chrono_literals;
 
@@ -17,8 +15,7 @@ void MotionKit::stop()
 
 	_imukit.onEulerAnglesReady({});
 
-	_target_not_reached		  = false;
-	_rotate_x_turns_requested = false;
+	_target_not_reached = false;
 }
 
 void MotionKit::startYawRotation(float degrees, Rotation direction,
@@ -29,8 +26,7 @@ void MotionKit::startYawRotation(float degrees, Rotation direction,
 	auto starting_angle = _imukit.getEulerAngles();
 	_rotation_control.setTarget(starting_angle, degrees);
 
-	_target_not_reached		  = true;
-	_rotate_x_turns_requested = true;
+	_target_not_reached = true;
 
 	auto on_timeout = [this] { stop(); };
 
@@ -49,9 +45,11 @@ void MotionKit::startYawRotation(float degrees, Rotation direction,
 // LCOV_EXCL_START - Dynamic behavior, involving motors and time.
 void MotionKit::processAngleForRotation(const EulerAngles &angles, Rotation direction)
 {
-	auto must_stop = [&] { return !_rotate_x_turns_requested && !_target_not_reached; };
+	if (_target_not_reached) {
+		auto speed = _rotation_control.processRotationAngle(angles);
 
-	if (must_stop()) {
+		setMotorsSpeedAndDirection(speed, direction);
+	} else {
 		stop();
 
 		if (_on_rotation_ended_callback) {
@@ -60,12 +58,6 @@ void MotionKit::processAngleForRotation(const EulerAngles &angles, Rotation dire
 
 		return;
 	}
-
-	if (_rotate_x_turns_requested && _target_not_reached) {
-		auto speed = _rotation_control.processRotationAngle(angles);
-
-		setMotorsSpeedAndDirection(speed, direction);
-	}
 }
 
 void MotionKit::setMotorsSpeedAndDirection(float speed, Rotation direction)
@@ -73,8 +65,7 @@ void MotionKit::setMotorsSpeedAndDirection(float speed, Rotation direction)
 	if (speed == 0.F) {
 		_motor_left.stop();
 		_motor_right.stop();
-		_target_not_reached		  = false;
-		_rotate_x_turns_requested = false;
+		_target_not_reached = false;
 	} else {
 		_motor_left.spin(direction, speed);
 		_motor_right.spin(direction, speed);

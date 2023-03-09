@@ -39,8 +39,7 @@ class MotionKit
 	RotationControl _rotation_control;
 	std::function<void()> _on_rotation_ended_callback {};
 
-	bool _target_not_reached	   = false;
-	bool _rotate_x_turns_requested = false;
+	bool _target_not_reached = false;
 };
 
 }	// namespace leka
