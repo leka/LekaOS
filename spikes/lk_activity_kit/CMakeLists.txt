@@ -15,6 +15,7 @@ target_sources(spike_lk_activity_kit
 )
 
 target_link_libraries(spike_lk_activity_kit
+	CoreEventQueue
 	CoreTimeout
 	FileManagerKit
 	BehaviorKit
