@@ -11,7 +11,7 @@ void ActivityKit::registerActivities(std::unordered_map<MagicCard, interface::Ac
 	_activities = activities;
 }
 
-void ActivityKit::start(const MagicCard &card)
+void ActivityKit::start(const MagicCard &card, const std::function<void()> &before_process_callback)
 {
 	stop();
 
@@ -21,7 +21,7 @@ void ActivityKit::start(const MagicCard &card)
 	}
 
 	_current_activity = _activities.at(card);
-	_current_activity->start();
+	_current_activity->start(before_process_callback);
 }
 
 void ActivityKit::stop()

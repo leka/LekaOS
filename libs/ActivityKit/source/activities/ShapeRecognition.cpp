@@ -11,7 +11,7 @@
 
 namespace leka::activity {
 
-void ShapeRecognition::start()
+void ShapeRecognition::start(const std::function<void()> &before_process_callback)
 {
 	_score		   = 0;
 	_current_shape = {};
@@ -20,7 +20,10 @@ void ShapeRecognition::start()
 	std::shuffle(_shapes.begin(), _shapes.end(), std::mt19937(static_cast<unsigned int>(time(nullptr))));
 	launchNextRound();
 
-	_rfidkit.onTagActivated([this](const MagicCard &card) { processCard(card); });
+	_rfidkit.onTagActivated([this, &before_process_callback](const MagicCard &card) {
+		before_process_callback();
+		processCard(card);
+	});
 }
 
 void ShapeRecognition::stop()

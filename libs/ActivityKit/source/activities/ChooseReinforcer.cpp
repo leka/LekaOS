@@ -9,13 +9,16 @@
 #include "rtos/ThisThread.h"
 namespace leka::activity {
 
-void ChooseReinforcer::start()
+void ChooseReinforcer::start(const std::function<void()> &before_process_callback)
 {
 	_videokit.displayImage("fs/home/img/system/robot-face-smiling-slightly.jpg");
 
 	_backup_callback = _rfidkit.getCallback();
 
-	_rfidkit.onTagActivated([this](const MagicCard &card) { processCard(card); });
+	_rfidkit.onTagActivated([this, &before_process_callback](const MagicCard &card) {
+		before_process_callback();
+		processCard(card);
+	});
 }
 
 void ChooseReinforcer::processCard(const MagicCard &card)

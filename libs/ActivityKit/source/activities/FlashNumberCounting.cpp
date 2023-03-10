@@ -11,7 +11,7 @@
 
 namespace leka::activity {
 
-void FlashNumberCounting::start()
+void FlashNumberCounting::start(const std::function<void()> &before_process_callback)
 {
 	using namespace std::chrono;
 
@@ -27,7 +27,10 @@ void FlashNumberCounting::start()
 
 	launchNextRound();
 
-	_rfidkit.onTagActivated([this](const MagicCard &card) { processCard(card); });
+	_rfidkit.onTagActivated([this, &before_process_callback](const MagicCard &card) {
+		before_process_callback();
+		processCard(card);
+	});
 }
 
 void FlashNumberCounting::stop()

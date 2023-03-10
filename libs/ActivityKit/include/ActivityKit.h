@@ -18,7 +18,7 @@ class ActivityKit
 
 	void registerActivities(std::unordered_map<MagicCard, interface::Activity *> const &activities);
 
-	void start(const MagicCard &card);
+	void start(const MagicCard &card, const std::function<void()> &before_process_callback);
 	void stop();
 
 	void displayMainMenu(const MagicCard &card);

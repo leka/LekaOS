@@ -11,7 +11,7 @@
 
 namespace leka::activity {
 
-void LedNumberCounting::start()
+void LedNumberCounting::start(const std::function<void()> &before_process_callback)
 {
 	_current_round		 = 0;
 	_current_leds_number = 0;
@@ -24,7 +24,10 @@ void LedNumberCounting::start()
 	std::shuffle(_led_numbers.begin(), _led_numbers.end(), std::mt19937(static_cast<unsigned int>(time(nullptr))));
 	launchNextRound();
 
-	_rfidkit.onTagActivated([this](const MagicCard &card) { processCard(card); });
+	_rfidkit.onTagActivated([this, &before_process_callback](const MagicCard &card) {
+		before_process_callback();
+		processCard(card);
+	});
 }
 
 void LedNumberCounting::stop()

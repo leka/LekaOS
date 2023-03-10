@@ -10,7 +10,7 @@
 #include "rtos/ThisThread.h"
 namespace leka::activity {
 
-void EmotionRecognition::start()
+void EmotionRecognition::start(const std::function<void()> &before_process_callback)
 {
 	_current_round	 = 0;
 	_current_emotion = {};
@@ -19,7 +19,10 @@ void EmotionRecognition::start()
 	std::shuffle(_emotions.begin(), _emotions.end(), std::mt19937(static_cast<unsigned int>(time(nullptr))));
 	launchNextRound();
 
-	_rfidkit.onTagActivated([this](const MagicCard &card) { processCard(card); });
+	_rfidkit.onTagActivated([this, &before_process_callback](const MagicCard &card) {
+		before_process_callback();
+		processCard(card);
+	});
 }
 
 void EmotionRecognition::stop()
