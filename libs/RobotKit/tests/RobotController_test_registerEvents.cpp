@@ -189,5 +189,7 @@ TEST_F(RobotControllerTest, onTagActivated)
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(2);
 
+	expectedCallsResetAutonomousActivitiesTimeout();
+
 	onTagActivated(MagicCard::none);
 }

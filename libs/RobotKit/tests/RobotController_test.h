@@ -78,6 +78,7 @@ class RobotControllerTest : public testing::Test
 
 	mock::Timeout timeout_state_internal {};
 	mock::Timeout timeout_state_transition {};
+	mock::Timeout timeout_autonomous_activities {};
 	mock::Battery battery {};
 
 	mock::MCU mock_mcu {};
@@ -112,6 +113,7 @@ class RobotControllerTest : public testing::Test
 
 	RobotController<bsml::sm<system::robot::StateMachine, bsml::testing>> rc {timeout_state_internal,
 																			  timeout_state_transition,
+																			  timeout_autonomous_activities,
 																			  battery,
 																			  serialnumberkit,
 																			  firmware_update,
@@ -288,5 +290,16 @@ class RobotControllerTest : public testing::Test
 					displayImage(std::filesystem::path {"/fs/home/img/system/robot-misc-splash_screen-large-400.jpg"}))
 			.Times(1);
 		EXPECT_CALL(mock_lcd, turnOn);
+	}
+
+	void expectedCallsResetAutonomousActivitiesTimeout()
+	{
+		{
+			InSequence seq;
+
+			EXPECT_CALL(timeout_autonomous_activities, stop);
+			EXPECT_CALL(timeout_autonomous_activities, onTimeout);
+			EXPECT_CALL(timeout_autonomous_activities, start);
+		}
 	}
 };

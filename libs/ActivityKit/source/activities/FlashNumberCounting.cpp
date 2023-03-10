@@ -28,7 +28,9 @@ void FlashNumberCounting::start(const std::function<void()> &before_process_call
 	launchNextRound();
 
 	_rfidkit.onTagActivated([this, &before_process_callback](const MagicCard &card) {
-		before_process_callback();
+		if (before_process_callback != nullptr) {
+			before_process_callback();
+		}
 		processCard(card);
 	});
 }

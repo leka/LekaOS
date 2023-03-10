@@ -18,7 +18,6 @@ target_sources(RobotKit
 )
 
 target_link_libraries(RobotKit
-	CoreTimeout
 	BatteryKit
 	SerialNumberKit
 	BLEKit

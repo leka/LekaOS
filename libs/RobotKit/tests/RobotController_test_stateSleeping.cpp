@@ -104,6 +104,8 @@ TEST_F(RobotControllerTest, stateSleepingEventEmergencyStopDelayNotOver)
 
 	auto maximal_delay_before_over = 9s;
 
+	expectedCallsResetAutonomousActivitiesTimeout();
+
 	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
 
@@ -127,6 +129,8 @@ TEST_F(RobotControllerTest, stateSleepingEventEmergencyStopDelayOver)
 	EXPECT_CALL(mock_lcd, turnOff).Times(1);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1));
 
+	expectedCallsResetAutonomousActivitiesTimeout();
+
 	spy_kernel_addElapsedTimeToTickCount(delay_over);
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
 
@@ -141,6 +145,8 @@ TEST_F(RobotControllerTest, stateSleepingDiceRollDetectedDelayNotOver)
 	auto maximal_delay_before_over = 1s;
 
 	EXPECT_CALL(mock_videokit, displayImage).Times(0);
+
+	expectedCallsResetAutonomousActivitiesTimeout();
 
 	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
 	rc.onMagicCardAvailable(MagicCard::dice_roll);
@@ -161,6 +167,7 @@ TEST_F(RobotControllerTest, stateSleepingDiceRollDetectedDelayOverEventAutonomou
 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_sleeping_sequence);
 	expectedCallsStopMotors();
 
+	expectedCallsResetAutonomousActivitiesTimeout();
 	EXPECT_CALL(mock_videokit, displayImage).Times(1);
 
 	spy_kernel_addElapsedTimeToTickCount(minimal_delay_over);

@@ -23,7 +23,6 @@
 #include "CommandKit.h"
 #include "ConfigKit.h"
 #include "CoreMutex.h"
-#include "CoreTimeout.h"
 #include "FileReception.h"
 #include "MagicCard.h"
 #include "RCLogger.h"
@@ -49,13 +48,15 @@ class RobotController : public interface::RobotController
 	sm_t state_machine {static_cast<interface::RobotController &>(*this), logger};
 
 	explicit RobotController(interface::Timeout &timeout_state_internal, interface::Timeout &timeout_state_transition,
-							 interface::Battery &battery, SerialNumberKit &serialnumberkit,
-							 interface::FirmwareUpdate &firmware_update, interface::Motor &motor_left,
-							 interface::Motor &motor_right, interface::LED &ears, interface::LED &belt,
-							 interface::LedKit &ledkit, interface::LCD &lcd, interface::VideoKit &videokit,
-							 BehaviorKit &behaviorkit, CommandKit &cmdkit, RFIDKit &rfidkit, ActivityKit &activitykit)
+							 interface::Timeout &timeout_autonomous_activities, interface::Battery &battery,
+							 SerialNumberKit &serialnumberkit, interface::FirmwareUpdate &firmware_update,
+							 interface::Motor &motor_left, interface::Motor &motor_right, interface::LED &ears,
+							 interface::LED &belt, interface::LedKit &ledkit, interface::LCD &lcd,
+							 interface::VideoKit &videokit, BehaviorKit &behaviorkit, CommandKit &cmdkit,
+							 RFIDKit &rfidkit, ActivityKit &activitykit)
 		: _timeout_state_internal(timeout_state_internal),
 		  _timeout_state_transition(timeout_state_transition),
+		  _timeout_autonomous_activities(timeout_autonomous_activities),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
 		  _firmware_update(firmware_update),
@@ -559,7 +560,7 @@ class RobotController : public interface::RobotController
 	std::chrono::seconds _deep_sleep_timeout_duration {600};
 	interface::Timeout &_timeout_state_transition;
 
-	CoreTimeout _timeout_autonomous_activities {};
+	interface::Timeout &_timeout_autonomous_activities;
 	std::chrono::seconds _timeout_autonomous_activities_duration {600};
 
 	const rtos::Kernel::Clock::time_point kSystemStartupTimestamp = rtos::Kernel::Clock::now();
