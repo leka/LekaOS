@@ -440,8 +440,7 @@ class RobotController : public interface::RobotController
 		}
 
 		if (NOT_is_playing && is_autonomous_mode) {
-			auto before_process_card_callback = [this] { resetAutonomousActivitiesTimeout(); };
-			_activitykit.start(card, before_process_card_callback);
+			_activitykit.start(card);
 		}
 	}
 
@@ -459,6 +458,8 @@ class RobotController : public interface::RobotController
 			_service_magic_card.setMagicCard(card);
 			onMagicCardAvailable(card);
 		});
+
+		_activitykit.registerBeforeProcessCallback([this] { resetAutonomousActivitiesTimeout(); });
 
 		_battery_kit.onDataUpdated([this](uint8_t level) {
 			auto is_charging = _battery.isCharging();

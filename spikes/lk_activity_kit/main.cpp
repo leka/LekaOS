@@ -285,10 +285,14 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(1s);
 
-	auto before_process_card_callback = [] { log_info("Callback called"); };
-	rfidkit.onTagActivated([&before_process_card_callback](const MagicCard &card) {
+	auto before_process_card_callback = [] {};
+	before_process_card_callback();
+
+	activitykit.registerBeforeProcessCallback(before_process_card_callback);
+
+	rfidkit.onTagActivated([](const MagicCard &card) {
 		log_info("card: %ld", card.getId());
-		activitykit.start(card, before_process_card_callback);
+		activitykit.start(card);
 	});
 
 	while (true) {
