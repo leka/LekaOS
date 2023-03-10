@@ -23,6 +23,7 @@
 #include "CommandKit.h"
 #include "ConfigKit.h"
 #include "CoreMutex.h"
+#include "CoreTimeout.h"
 #include "FileReception.h"
 #include "MagicCard.h"
 #include "RCLogger.h"
@@ -230,6 +231,7 @@ class RobotController : public interface::RobotController
 
 	void stopAutonomousActivityMode() final
 	{
+		_timeout_autonomous_activities.stop();
 		_behaviorkit.stop();
 		_activitykit.stop();
 	}
@@ -385,11 +387,24 @@ class RobotController : public interface::RobotController
 
 	void raiseAutonomousActivityModeExited() { raise(system::robot::sm::event::autonomous_activities_mode_exited {}); }
 
+	void resetAutonomousActivitiesTimeout()
+	{
+		_timeout_autonomous_activities.stop();
+
+		auto on_autonomous_activities_timeout = [this] {
+			raise(system::robot::sm::event::autonomous_activities_mode_exited {});
+		};
+		_timeout_autonomous_activities.onTimeout(on_autonomous_activities_timeout);
+
+		_timeout_autonomous_activities.start(_timeout_autonomous_activities_duration);
+	}
+
 	void onMagicCardAvailable(const MagicCard &card)
 	{
 		using namespace std::chrono;
 
 		// ! TODO: Refactor with composite SM & CoreTimer instead of start/stop
+		resetAutonomousActivitiesTimeout();
 
 		auto is_playing				= _activitykit.isPlaying();
 		auto NOT_is_playing			= !is_playing;
@@ -425,7 +440,8 @@ class RobotController : public interface::RobotController
 		}
 
 		if (NOT_is_playing && is_autonomous_mode) {
-			_activitykit.start(card);
+			auto before_process_card_callback = [this] { resetAutonomousActivitiesTimeout(); };
+			_activitykit.start(card, before_process_card_callback);
 		}
 	}
 
@@ -541,6 +557,9 @@ class RobotController : public interface::RobotController
 	std::chrono::seconds _idle_timeout_duration {600};
 	std::chrono::seconds _deep_sleep_timeout_duration {600};
 	interface::Timeout &_timeout_state_transition;
+
+	CoreTimeout _timeout_autonomous_activities {};
+	std::chrono::seconds _timeout_autonomous_activities_duration {600};
 
 	const rtos::Kernel::Clock::time_point kSystemStartupTimestamp = rtos::Kernel::Clock::now();
 
