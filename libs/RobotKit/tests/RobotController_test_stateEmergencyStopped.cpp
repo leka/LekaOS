@@ -189,6 +189,7 @@ TEST_F(RobotControllerTest, stateEmergencyStoppedDiceRollDetectedDelayNotOver)
 
 	auto maximal_delay_before_over = 1s;
 
+	expectedCallsResetAutonomousActivitiesTimeout();
 	EXPECT_CALL(mock_videokit, displayImage).Times(0);
 
 	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
@@ -209,6 +210,7 @@ TEST_F(RobotControllerTest,
 
 	auto minimal_delay_over = 1001ms;
 
+	expectedCallsResetAutonomousActivitiesTimeout();
 	EXPECT_CALL(mock_videokit, displayImage).Times(1);
 
 	spy_kernel_addElapsedTimeToTickCount(minimal_delay_over);
@@ -240,6 +242,8 @@ TEST_F(RobotControllerTest,
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(timeout_state_internal, onTimeout).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(timeout_state_internal, start).InSequence(start_charging_behavior_sequence);
+
+	expectedCallsResetAutonomousActivitiesTimeout();
 
 	spy_kernel_addElapsedTimeToTickCount(minimal_delay_over);
 	rc.onMagicCardAvailable(MagicCard::dice_roll);

@@ -129,6 +129,8 @@ TEST_F(RobotControllerTest, stateFileExchangeEventEmergencyStopDelayNotOver)
 
 	auto maximal_delay_before_over = 9s;
 
+	expectedCallsResetAutonomousActivitiesTimeout();
+
 	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
 
@@ -151,6 +153,8 @@ TEST_F(RobotControllerTest, stateFileExchangeEventEmergencyStopDelayOver)
 	EXPECT_CALL(mock_ears, hide).Times(1);
 	EXPECT_CALL(mock_lcd, turnOff).Times(1);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
+
+	expectedCallsResetAutonomousActivitiesTimeout();
 
 	spy_kernel_addElapsedTimeToTickCount(delay_over);
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
