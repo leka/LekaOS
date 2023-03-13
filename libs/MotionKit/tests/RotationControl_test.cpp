@@ -4,7 +4,6 @@
 
 #include "RotationControl.hpp"
 
-#include "LogKit.h"
 #include "gtest/gtest.h"
 
 using namespace leka;
@@ -76,8 +75,6 @@ TEST_F(RotationControlTest, processRotationAngleClockwise)
 
 		EXPECT_LE(current_speed, previous_speed);
 
-		log_debug("1.");
-
 		previous_speed = current_speed;
 	}
 
@@ -88,8 +85,6 @@ TEST_F(RotationControlTest, processRotationAngleClockwise)
 
 		EXPECT_LE(current_speed, previous_speed);
 
-		log_debug("2");
-
 		previous_speed = current_speed;
 	}
 
@@ -97,8 +92,6 @@ TEST_F(RotationControlTest, processRotationAngleClockwise)
 		auto current_angle = EulerAngles {.yaw = static_cast<float>(i)};
 
 		current_speed = rotation_control.processRotationAngle(current_angle);
-
-		log_debug("3.");
 
 		EXPECT_EQ(current_speed, 0.F);
 	}
