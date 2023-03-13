@@ -38,7 +38,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
-          ref: ${{ github.event.pull_request.base.ref }}
 
       - name: Setup CI
         id: setup_ci
@@ -62,7 +61,7 @@ jobs:
         uses: ./.github/actions/config_build
         with:
           enable_log_debug: ${{ matrix.enable_log_debug }}
-          checkout_base_ref: false
+          checkout_base_ref: true
 
       #
       # Mark: - Move files

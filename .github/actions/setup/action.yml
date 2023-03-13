@@ -54,6 +54,7 @@ runs:
     - name: Symlink deps files
       shell: bash
       run: |
+        make mbed_symlink_files
         make mcuboot_symlink_files
 
     #
