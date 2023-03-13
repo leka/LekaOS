@@ -78,6 +78,8 @@ TEST_F(RobotControllerTest, stateWorkingEventEmergencyStopDelayNotOver)
 
 	auto maximal_delay_before_over = 10s;
 
+	expectedCallsResetAutonomousActivitiesTimeout();
+
 	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
 
@@ -100,6 +102,8 @@ TEST_F(RobotControllerTest, stateWorkingEventEmergencyStopDelayOver)
 	EXPECT_CALL(mock_lcd, turnOff).Times(1);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
 
+	expectedCallsResetAutonomousActivitiesTimeout();
+
 	spy_kernel_addElapsedTimeToTickCount(delay_over);
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
 
@@ -113,6 +117,8 @@ TEST_F(RobotControllerTest, stateWorkingDiceRollDetectedDelayNotOver)
 	auto maximal_delay_before_over = 1s;
 
 	EXPECT_CALL(mock_videokit, displayImage).Times(0);
+
+	expectedCallsResetAutonomousActivitiesTimeout();
 
 	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
 	rc.onMagicCardAvailable(MagicCard::dice_roll);
@@ -130,6 +136,7 @@ TEST_F(RobotControllerTest, stateWorkingDiceRollDetectedDelayOverEventAutonomous
 	Sequence on_exit_working_sequence;
 	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_working_sequence);
 
+	expectedCallsResetAutonomousActivitiesTimeout();
 	EXPECT_CALL(mock_videokit, displayImage).Times(1);
 
 	spy_kernel_addElapsedTimeToTickCount(minimal_delay_over);
@@ -153,6 +160,8 @@ TEST_F(RobotControllerTest, stateWorkingImpossibleSituationActivityStarted)
 	};
 	set_activitykit_is_playing();
 
+	expectedCallsResetAutonomousActivitiesTimeout();
+
 	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
 	rc.onMagicCardAvailable(MagicCard::number_0);
 
@@ -165,6 +174,8 @@ TEST_F(RobotControllerTest, stateWorkingActivityStartedNotPlaying)
 	rc.state_machine.set_current_states(lksm::state::working);
 
 	auto maximal_delay_before_over = 1s;
+
+	expectedCallsResetAutonomousActivitiesTimeout();
 
 	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
 	rc.onMagicCardAvailable(MagicCard::number_0);

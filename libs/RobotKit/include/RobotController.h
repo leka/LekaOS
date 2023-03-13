@@ -48,13 +48,15 @@ class RobotController : public interface::RobotController
 	sm_t state_machine {static_cast<interface::RobotController &>(*this), logger};
 
 	explicit RobotController(interface::Timeout &timeout_state_internal, interface::Timeout &timeout_state_transition,
-							 interface::Battery &battery, SerialNumberKit &serialnumberkit,
-							 interface::FirmwareUpdate &firmware_update, interface::Motor &motor_left,
-							 interface::Motor &motor_right, interface::LED &ears, interface::LED &belt,
-							 interface::LedKit &ledkit, interface::LCD &lcd, interface::VideoKit &videokit,
-							 BehaviorKit &behaviorkit, CommandKit &cmdkit, RFIDKit &rfidkit, ActivityKit &activitykit)
+							 interface::Timeout &timeout_autonomous_activities, interface::Battery &battery,
+							 SerialNumberKit &serialnumberkit, interface::FirmwareUpdate &firmware_update,
+							 interface::Motor &motor_left, interface::Motor &motor_right, interface::LED &ears,
+							 interface::LED &belt, interface::LedKit &ledkit, interface::LCD &lcd,
+							 interface::VideoKit &videokit, BehaviorKit &behaviorkit, CommandKit &cmdkit,
+							 RFIDKit &rfidkit, ActivityKit &activitykit)
 		: _timeout_state_internal(timeout_state_internal),
 		  _timeout_state_transition(timeout_state_transition),
+		  _timeout_autonomous_activities(timeout_autonomous_activities),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
 		  _firmware_update(firmware_update),
@@ -230,6 +232,7 @@ class RobotController : public interface::RobotController
 
 	void stopAutonomousActivityMode() final
 	{
+		_timeout_autonomous_activities.stop();
 		_behaviorkit.stop();
 		_activitykit.stop();
 	}
@@ -385,11 +388,24 @@ class RobotController : public interface::RobotController
 
 	void raiseAutonomousActivityModeExited() { raise(system::robot::sm::event::autonomous_activities_mode_exited {}); }
 
+	void resetAutonomousActivitiesTimeout()
+	{
+		_timeout_autonomous_activities.stop();
+
+		auto on_autonomous_activities_timeout = [this] {
+			raise(system::robot::sm::event::autonomous_activities_mode_exited {});
+		};
+		_timeout_autonomous_activities.onTimeout(on_autonomous_activities_timeout);
+
+		_timeout_autonomous_activities.start(_timeout_autonomous_activities_duration);
+	}
+
 	void onMagicCardAvailable(const MagicCard &card)
 	{
 		using namespace std::chrono;
 
 		// ! TODO: Refactor with composite SM & CoreTimer instead of start/stop
+		resetAutonomousActivitiesTimeout();
 
 		auto is_playing				= _activitykit.isPlaying();
 		auto NOT_is_playing			= !is_playing;
@@ -443,6 +459,8 @@ class RobotController : public interface::RobotController
 			_service_magic_card.setMagicCard(card);
 			onMagicCardAvailable(card);
 		});
+
+		_activitykit.registerBeforeProcessCallback([this] { resetAutonomousActivitiesTimeout(); });
 
 		_battery_kit.onDataUpdated([this](uint8_t level) {
 			auto is_charging = _battery.isCharging();
@@ -541,6 +559,9 @@ class RobotController : public interface::RobotController
 	std::chrono::seconds _idle_timeout_duration {600};
 	std::chrono::seconds _deep_sleep_timeout_duration {600};
 	interface::Timeout &_timeout_state_transition;
+
+	interface::Timeout &_timeout_autonomous_activities;
+	std::chrono::seconds _timeout_autonomous_activities_duration {600};
 
 	const rtos::Kernel::Clock::time_point kSystemStartupTimestamp = rtos::Kernel::Clock::now();
 

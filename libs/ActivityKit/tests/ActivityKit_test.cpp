@@ -12,6 +12,8 @@ using namespace leka;
 
 using ::testing::AnyNumber;
 using ::testing::InSequence;
+using ::testing::MockFunction;
+using ::testing::SaveArg;
 
 class ActivityKitTest : public ::testing::Test
 {
@@ -133,4 +135,17 @@ TEST_F(ActivityKitTest, displayFRMainMenu)
 		.Times(1);
 
 	activitykit.displayMainMenu(dice_roll_FR);
+}
+
+TEST_F(ActivityKitTest, registerBeforeProcessCallback)
+{
+	MockFunction<void()> callback;
+	activitykit.registerBeforeProcessCallback(callback.AsStdFunction());
+
+	std::function<void()> before_process_callback_registered {};
+	EXPECT_CALL(mock_activity_0, start).WillOnce(SaveArg<0>(&before_process_callback_registered));
+	activitykit.start(MagicCard::number_0);
+
+	EXPECT_CALL(callback, Call);
+	before_process_callback_registered();
 }

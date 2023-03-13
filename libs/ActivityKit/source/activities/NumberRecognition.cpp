@@ -11,7 +11,7 @@
 
 namespace leka::activity {
 
-void NumberRecognition::start()
+void NumberRecognition::start(const std::function<void()> &before_process_callback)
 {
 	_current_round	= 0;
 	_current_number = {};
@@ -20,7 +20,12 @@ void NumberRecognition::start()
 	std::shuffle(_numbers.begin(), _numbers.end(), std::mt19937(static_cast<unsigned int>(time(nullptr))));
 	launchNextRound();
 
-	_rfidkit.onTagActivated([this](const MagicCard &card) { processCard(card); });
+	_rfidkit.onTagActivated([this, &before_process_callback](const MagicCard &card) {
+		if (before_process_callback != nullptr) {
+			before_process_callback();
+		}
+		processCard(card);
+	});
 }
 
 void NumberRecognition::stop()

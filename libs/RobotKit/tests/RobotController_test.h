@@ -78,6 +78,7 @@ class RobotControllerTest : public testing::Test
 
 	mock::Timeout timeout_state_internal {};
 	mock::Timeout timeout_state_transition {};
+	mock::Timeout timeout_autonomous_activities {};
 	mock::Battery battery {};
 
 	mock::MCU mock_mcu {};
@@ -112,6 +113,7 @@ class RobotControllerTest : public testing::Test
 
 	RobotController<bsml::sm<system::robot::StateMachine, bsml::testing>> rc {timeout_state_internal,
 																			  timeout_state_transition,
+																			  timeout_autonomous_activities,
 																			  battery,
 																			  serialnumberkit,
 																			  firmware_update,
@@ -130,11 +132,12 @@ class RobotControllerTest : public testing::Test
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
 
-	interface::Timeout::callback_t on_sleep_timeout			 = {};
-	interface::Timeout::callback_t on_deep_sleep_timeout	 = {};
-	interface::Timeout::callback_t on_idle_timeout			 = {};
-	interface::Timeout::callback_t on_sleeping_start_timeout = {};
-	interface::Timeout::callback_t on_charging_start_timeout = {};
+	interface::Timeout::callback_t on_sleep_timeout					= {};
+	interface::Timeout::callback_t on_deep_sleep_timeout			= {};
+	interface::Timeout::callback_t on_idle_timeout					= {};
+	interface::Timeout::callback_t on_sleeping_start_timeout		= {};
+	interface::Timeout::callback_t on_charging_start_timeout		= {};
+	interface::Timeout::callback_t on_autonomous_activities_timeout = {};
 
 	std::function<void()> on_charge_did_start {};
 	std::function<void()> on_charge_did_stop {};
@@ -288,5 +291,18 @@ class RobotControllerTest : public testing::Test
 					displayImage(std::filesystem::path {"/fs/home/img/system/robot-misc-splash_screen-large-400.jpg"}))
 			.Times(1);
 		EXPECT_CALL(mock_lcd, turnOn);
+	}
+
+	void expectedCallsResetAutonomousActivitiesTimeout()
+	{
+		auto expected_duration = std::chrono::seconds {600};
+		{
+			InSequence seq;
+
+			EXPECT_CALL(timeout_autonomous_activities, stop);
+			EXPECT_CALL(timeout_autonomous_activities, onTimeout)
+				.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_autonomous_activities_timeout));
+			EXPECT_CALL(timeout_autonomous_activities, start(std::chrono::microseconds {expected_duration}));
+		}
 	}
 };
