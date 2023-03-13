@@ -37,7 +37,7 @@ runs:
     - name: Checkout mbed-os
       uses: actions/checkout@v4
       with:
-        repository: leka/mbed-ce
+        repository: leka/mbed-os
         ref: ${{ env.HEAD_MBED_VERSION }}
         path: extern/mbed-os
 
