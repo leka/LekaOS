@@ -79,6 +79,7 @@
 	"cmake.mergedCompileCommands": "${workspaceFolder}/compile_commands.json",
 	"cmake.generator": "Ninja",
 	"cmake.configureSettings": {
+		"TARGET_BOARD": "LEKA_V1_2_DEV",
 		"MBED_TARGET": "LEKA_V1_2_DEV",
 		"OS_VERSION": "0.0.0",
 		"ENABLE_LOG_DEBUG": "ON",
