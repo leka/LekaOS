@@ -7,7 +7,7 @@ description: ""
 
 inputs:
   mbed_os_version:
-    description: "Mbed OS version"
+    description: "Mbed OS version: 'base_version' or 'head_version'"
     required: true
   ccache_key:
     description: "action/cache name for ccache"
@@ -37,11 +37,20 @@ runs:
     # Mark: - Checkout dependencies
     #
 
-    - name: Checkout mbed-os
+    - name: Checkout mbed-os - base version
+      if: ${{ inputs.mbed_os_version == 'base_version' }}
       uses: actions/checkout@v4
       with:
         repository: leka/mbed-os
-        ref: ${{ inputs.mbed_os_version }}
+        ref: ${{ env.BASE_MBED_VERSION }}
+        path: extern/mbed-os
+
+    - name: Checkout mbed-os - head version
+      if: ${{ inputs.mbed_os_version == 'head_version' }}
+      uses: actions/checkout@v4
+      with:
+        repository: leka/mbed-os
+        ref: ${{ env.HEAD_MBED_VERSION }}
         path: extern/mbed-os
 
     - name: Checkout mcuboot
