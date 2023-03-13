@@ -44,6 +44,7 @@ jobs:
         id: setup_ci
         uses: ./.github/actions/setup
         with:
+          mbed_os_version: ${{ env.BASE_MBED_VERSION }}
           ccache_key: ${{ runner.os }}-ccache-compare_base_head-build_base_ref-enable_log_debug-(${{ matrix.enable_log_debug }})
           ccache_restore_keys: |
             ${{ runner.os }}-ccache-compare_base_head-build_base_ref-enable_log_debug-(${{ matrix.enable_log_debug }})-
@@ -110,6 +111,7 @@ jobs:
         id: setup_ci
         uses: ./.github/actions/setup
         with:
+          mbed_os_version: ${{ env.HEAD_MBED_VERSION }}
           ccache_key: ${{ runner.os }}-ccache-compare_base_head-build_head_ref-enable_log_debug-(${{ matrix.enable_log_debug }})
           ccache_restore_keys: |
             ${{ runner.os }}-ccache-compare_base_head-build_head_ref-enable_log_debug-(${{ matrix.enable_log_debug }})-
@@ -176,6 +178,8 @@ jobs:
       - name: Setup CI
         id: setup_ci
         uses: ./.github/actions/setup
+        with:
+          mbed_os_version: ${{ env.HEAD_MBED_VERSION }}
 
       - uses: actions/download-artifact@v4
         with:

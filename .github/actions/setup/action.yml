@@ -6,6 +6,9 @@ name: "CI Setup"
 description: ""
 
 inputs:
+  mbed_os_version:
+    description: "Mbed OS version"
+    required: true
   ccache_key:
     description: "action/cache name for ccache"
     required: true
@@ -38,7 +41,7 @@ runs:
       uses: actions/checkout@v4
       with:
         repository: leka/mbed-os
-        ref: ${{ env.HEAD_MBED_VERSION }}
+        ref: ${{ inputs.mbed_os_version }}
         path: extern/mbed-os
 
     - name: Checkout mcuboot

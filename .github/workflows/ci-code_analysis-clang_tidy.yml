@@ -31,6 +31,8 @@ jobs:
 
       - name: Setup CI
         uses: ./.github/actions/setup
+        with:
+          mbed_os_version: ${{ env.HEAD_MBED_VERSION }}
 
       #
       # Mark: - Config

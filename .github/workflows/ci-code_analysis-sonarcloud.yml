@@ -33,6 +33,7 @@ jobs:
       - name: Setup CI
         uses: ./.github/actions/setup
         with:
+          mbed_os_version: ${{ env.HEAD_MBED_VERSION }}
           ccache_key: ${{ runner.os }}-ccache-code_analysis-sonarcloud
           ccache_restore_keys: |
             ${{ runner.os }}-ccache-code_analysis-sonarcloud-
