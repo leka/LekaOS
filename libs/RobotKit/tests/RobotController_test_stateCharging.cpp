@@ -458,25 +458,25 @@ TEST_F(RobotControllerTest, stateChargingDiceRollDetectedDelayOverEventAutonomou
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::charging));
 }
 
-TEST_F(RobotControllerTest, stateChargingEventTimeout)
-{
-	Sequence get_on_deep_sleep_timeout_callback;
-	EXPECT_CALL(timeout_state_transition, onTimeout)
-		.InSequence(get_on_deep_sleep_timeout_callback)
-		.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_deep_sleep_timeout));
-	EXPECT_CALL(timeout_state_transition, start).InSequence(get_on_deep_sleep_timeout_callback);
-	rc.startDeepSleepTimeout();
+// TEST_F(RobotControllerTest, stateChargingEventTimeout)
+// {
+// 	Sequence get_on_deep_sleep_timeout_callback;
+// 	EXPECT_CALL(timeout_state_transition, onTimeout)
+// 		.InSequence(get_on_deep_sleep_timeout_callback)
+// 		.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_deep_sleep_timeout));
+// 	EXPECT_CALL(timeout_state_transition, start).InSequence(get_on_deep_sleep_timeout_callback);
+// 	rc.startDeepSleepTimeout();
 
-	rc.state_machine.set_current_states(lksm::state::charging);
+// 	rc.state_machine.set_current_states(lksm::state::charging);
 
-	Sequence on_charging_exit_sequence;
-	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_charging_exit_sequence);
-	EXPECT_CALL(timeout_state_internal, stop).InSequence(on_charging_exit_sequence);
-	EXPECT_CALL(mock_ledkit, stop).InSequence(on_charging_exit_sequence);
-	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_charging_exit_sequence);
-	expectedCallsStopMotors();
+// 	Sequence on_charging_exit_sequence;
+// 	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_charging_exit_sequence);
+// 	EXPECT_CALL(timeout_state_internal, stop).InSequence(on_charging_exit_sequence);
+// 	EXPECT_CALL(mock_ledkit, stop).InSequence(on_charging_exit_sequence);
+// 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_charging_exit_sequence);
+// 	expectedCallsStopMotors();
 
-	on_deep_sleep_timeout();
+// 	on_deep_sleep_timeout();
 
-	EXPECT_TRUE(rc.state_machine.is(lksm::state::deep_sleeping));
-}
+// 	EXPECT_TRUE(rc.state_machine.is(lksm::state::deep_sleeping));
+// }

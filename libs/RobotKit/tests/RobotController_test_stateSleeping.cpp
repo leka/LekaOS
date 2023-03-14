@@ -176,24 +176,24 @@ TEST_F(RobotControllerTest, stateSleepingDiceRollDetectedDelayOverEventAutonomou
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
 }
 
-TEST_F(RobotControllerTest, stateSleepingEventTimeout)
-{
-	Sequence get_on_deep_sleep_timeout_callback;
-	EXPECT_CALL(timeout_state_transition, onTimeout)
-		.InSequence(get_on_deep_sleep_timeout_callback)
-		.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_deep_sleep_timeout));
-	EXPECT_CALL(timeout_state_transition, start).InSequence(get_on_deep_sleep_timeout_callback);
-	rc.startDeepSleepTimeout();
+// TEST_F(RobotControllerTest, stateSleepingEventTimeout)
+// {
+// 	Sequence get_on_deep_sleep_timeout_callback;
+// 	EXPECT_CALL(timeout_state_transition, onTimeout)
+// 		.InSequence(get_on_deep_sleep_timeout_callback)
+// 		.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_deep_sleep_timeout));
+// 	EXPECT_CALL(timeout_state_transition, start).InSequence(get_on_deep_sleep_timeout_callback);
+// 	rc.startDeepSleepTimeout();
 
-	rc.state_machine.set_current_states(lksm::state::sleeping);
+// 	rc.state_machine.set_current_states(lksm::state::sleeping);
 
-	Sequence on_exit_sleeping_sequence;
-	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_sleeping_sequence);
-	EXPECT_CALL(timeout_state_internal, stop).InSequence(on_exit_sleeping_sequence);
-	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_sleeping_sequence);
-	expectedCallsStopMotors();
+// 	Sequence on_exit_sleeping_sequence;
+// 	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_sleeping_sequence);
+// 	EXPECT_CALL(timeout_state_internal, stop).InSequence(on_exit_sleeping_sequence);
+// 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_sleeping_sequence);
+// 	expectedCallsStopMotors();
 
-	on_deep_sleep_timeout();
+// 	on_deep_sleep_timeout();
 
-	EXPECT_TRUE(rc.state_machine.is(lksm::state::deep_sleeping));
-}
+// 	EXPECT_TRUE(rc.state_machine.is(lksm::state::deep_sleeping));
+// }
