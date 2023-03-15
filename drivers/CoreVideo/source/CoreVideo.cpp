@@ -70,7 +70,7 @@ void CoreVideo::clearScreen(CGColor color)
 	_coregraphics.clearScreen(color);
 }
 
-void CoreVideo::displayRectangle(interface::Graphics::FilledRectangle rectangle, CGColor color)
+void CoreVideo::displayRectangle(CGRectangle rectangle, CGColor color)
 {
 	_coregraphics.drawRectangle(rectangle, color);
 }

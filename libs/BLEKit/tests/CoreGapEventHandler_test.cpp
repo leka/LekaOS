@@ -134,3 +134,35 @@ TEST_F(CoreGapEventHandlerTest, onDisconnectionCallback)
 
 	core_gap_event_handler.onDisconnectionComplete(disconnection_complete_event);
 }
+
+TEST_F(CoreGapEventHandlerTest, isConnected)
+{
+	auto is_connected = core_gap_event_handler.isConnected();
+	EXPECT_FALSE(is_connected);
+
+	auto connection_complete_event =
+		ConnectionCompleteEvent(BLE_ERROR_BUFFER_OVERFLOW, INVALID_ADVERTISING_HANDLE, connection_role_t::CENTRAL,
+								peer_address_type_t::ANONYMOUS, ble::address_t(), ble::address_t(), ble::address_t(),
+								ble::conn_interval_t::max(), 0, ble::supervision_timeout_t::max(), 0);
+
+	EXPECT_CALL(mock_start_advertising_func, Call).Times(1);
+
+	core_gap_event_handler.onConnectionComplete(connection_complete_event);
+
+	is_connected = core_gap_event_handler.isConnected();
+	EXPECT_TRUE(is_connected);
+
+	//
+
+	auto handler = uintptr_t {};
+	auto reason	 = disconnection_reason_t::AUTHENTICATION_FAILURE;
+
+	auto disconnection_complete_event = DisconnectionCompleteEvent(handler, reason);
+
+	EXPECT_CALL(mock_start_advertising_func, Call).Times(1);
+
+	core_gap_event_handler.onDisconnectionComplete(disconnection_complete_event);
+
+	is_connected = core_gap_event_handler.isConnected();
+	EXPECT_FALSE(is_connected);
+}

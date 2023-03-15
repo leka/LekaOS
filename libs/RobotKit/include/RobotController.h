@@ -10,8 +10,10 @@
 #include "BLEKit.h"
 #include "BLEServiceBattery.h"
 #include "BLEServiceCommands.h"
+#include "BLEServiceConfig.h"
 #include "BLEServiceDeviceInformation.h"
 #include "BLEServiceFileExchange.h"
+#include "BLEServiceMagicCard.h"
 #include "BLEServiceMonitoring.h"
 #include "BLEServiceUpdate.h"
 
@@ -19,6 +21,7 @@
 #include "BatteryKit.h"
 #include "BehaviorKit.h"
 #include "CommandKit.h"
+#include "ConfigKit.h"
 #include "CoreMutex.h"
 #include "FileReception.h"
 #include "MagicCard.h"
@@ -44,12 +47,16 @@ class RobotController : public interface::RobotController
   public:
 	sm_t state_machine {static_cast<interface::RobotController &>(*this), logger};
 
-	explicit RobotController(interface::Timeout &timeout, interface::Battery &battery, SerialNumberKit &serialnumberkit,
-							 interface::FirmwareUpdate &firmware_update, interface::Motor &motor_left,
-							 interface::Motor &motor_right, interface::LED &ears, interface::LED &belt,
-							 interface::LedKit &ledkit, interface::LCD &lcd, interface::VideoKit &videokit,
-							 BehaviorKit &behaviorkit, CommandKit &cmdkit, RFIDKit &rfidkit, ActivityKit &activitykit)
-		: _timeout(timeout),
+	explicit RobotController(interface::Timeout &timeout_state_internal, interface::Timeout &timeout_state_transition,
+							 interface::Timeout &timeout_autonomous_activities, interface::Battery &battery,
+							 SerialNumberKit &serialnumberkit, interface::FirmwareUpdate &firmware_update,
+							 interface::Motor &motor_left, interface::Motor &motor_right, interface::LED &ears,
+							 interface::LED &belt, interface::LedKit &ledkit, interface::LCD &lcd,
+							 interface::VideoKit &videokit, BehaviorKit &behaviorkit, CommandKit &cmdkit,
+							 RFIDKit &rfidkit, ActivityKit &activitykit)
+		: _timeout_state_internal(timeout_state_internal),
+		  _timeout_state_transition(timeout_state_transition),
+		  _timeout_autonomous_activities(timeout_autonomous_activities),
 		  _battery(battery),
 		  _serialnumberkit(serialnumberkit),
 		  _firmware_update(firmware_update),
@@ -81,23 +88,34 @@ class RobotController : public interface::RobotController
 	{
 		using namespace system::robot::sm;
 		auto on_sleep_timeout = [this] { raise(event::sleep_timeout_did_end {}); };
-		_timeout.onTimeout(on_sleep_timeout);
+		_timeout_state_transition.onTimeout(on_sleep_timeout);
 
-		_timeout.start(_sleep_timeout_duration);
+		_timeout_state_transition.start(_sleep_timeout_duration);
 	}
 
-	void stopSleepTimeout() final { _timeout.stop(); }
+	void stopSleepTimeout() final { _timeout_state_transition.stop(); }
+
+	void startDeepSleepTimeout() final
+	{
+		using namespace system::robot::sm;
+		auto on_deep_sleep_timeout = [this] { raise(event::deep_sleep_timeout_did_end {}); };
+		_timeout_state_transition.onTimeout(on_deep_sleep_timeout);
+
+		_timeout_state_transition.start(_deep_sleep_timeout_duration);
+	}
+
+	void stopDeepSleepTimeout() final { _timeout_state_transition.stop(); }
 
 	void startIdleTimeout() final
 	{
 		using namespace system::robot::sm;
 		auto on_idle_timeout = [this] { raise(event::idle_timeout_did_end {}); };
-		_timeout.onTimeout(on_idle_timeout);
+		_timeout_state_transition.onTimeout(on_idle_timeout);
 
-		_timeout.start(_idle_timeout_duration);
+		_timeout_state_transition.start(_idle_timeout_duration);
 	}
 
-	void stopIdleTimeout() final { _timeout.stop(); }
+	void stopIdleTimeout() final { _timeout_state_transition.stop(); }
 
 	void startWaitingBehavior() final
 	{
@@ -125,14 +143,14 @@ class RobotController : public interface::RobotController
 			_event_queue.call(&_lcd, &interface::LCD::turnOff);
 			_event_queue.call(&_ledkit, &interface::LedKit::stop);
 		};
-		_timeout.onTimeout(on_sleeping_start_timeout);
+		_timeout_state_internal.onTimeout(on_sleeping_start_timeout);
 
-		_timeout.start(20s);
+		_timeout_state_internal.start(20s);
 	}
 
 	void stopSleepingBehavior() final
 	{
-		_timeout.stop();
+		_timeout_state_internal.stop();
 		_behaviorkit.stop();
 	}
 
@@ -171,14 +189,14 @@ class RobotController : public interface::RobotController
 		_lcd.turnOn();
 
 		auto on_charging_start_timeout = [this] { _event_queue.call(&_lcd, &interface::LCD::turnOff); };
-		_timeout.onTimeout(on_charging_start_timeout);
+		_timeout_state_internal.onTimeout(on_charging_start_timeout);
 
-		_timeout.start(1min);
+		_timeout_state_internal.start(1min);
 	}
 
 	void stopChargingBehavior() final
 	{
-		_timeout.stop();
+		_timeout_state_internal.stop();
 		_behaviorkit.stop();
 	}
 
@@ -187,11 +205,11 @@ class RobotController : public interface::RobotController
 		using namespace std::chrono_literals;
 		stopActuators();
 		if (_battery.isCharging()) {
-			_behaviorkit.bleConnection(false);
+			_behaviorkit.bleConnectionWithoutVideo();
 			rtos::ThisThread::sleep_for(5s);
 			_behaviorkit.blinkOnCharge();
 		} else {
-			_behaviorkit.bleConnection(true);
+			_behaviorkit.bleConnectionWithVideo();
 			_lcd.turnOn();
 		}
 	}
@@ -214,11 +232,12 @@ class RobotController : public interface::RobotController
 
 	void stopAutonomousActivityMode() final
 	{
+		_timeout_autonomous_activities.stop();
 		_behaviorkit.stop();
 		_activitykit.stop();
 	}
 
-	void onFileExchangeStart() final
+	void startFileExchange() final
 	{
 		_behaviorkit.fileExchange();
 		if (_battery.isCharging()) {
@@ -245,7 +264,7 @@ class RobotController : public interface::RobotController
 		});
 	}
 
-	void onFileExchangeEnd() final
+	void stopFileExchange() final
 	{
 		_service_file_exchange.setFileExchangeState(false);
 
@@ -279,7 +298,7 @@ class RobotController : public interface::RobotController
 	void applyUpdate() final
 	{
 		auto firmware_version = _service_update.getVersion();
-		if (_firmware_update.loadUpdate(firmware_version) && _on_update_loaded_callback != nullptr) {
+		if (_firmware_update.loadFirmware(firmware_version) && _on_update_loaded_callback != nullptr) {
 			_on_update_loaded_callback();
 		}
 
@@ -291,6 +310,8 @@ class RobotController : public interface::RobotController
 		_lcd.turnOff();
 		stopActuators();
 	}
+
+	void suspendHardwareForDeepSleep() final { log_info("TO IMPLEMENT - configuring hardware for deep sleep"); }
 
 	void resetEmergencyStopCounter() final { _emergency_stop_counter = 0; }
 
@@ -314,10 +335,19 @@ class RobotController : public interface::RobotController
 		auto _os_version = _firmware_update.getCurrentVersion();
 		_service_device_information.setOSVersion(_os_version);
 
-		auto advertising_data		   = _ble.getAdvertisingData();
-		advertising_data.name		   = reinterpret_cast<const char *>(_serialnumberkit.getShortSerialNumber().data());
-		advertising_data.version_major = _os_version.major;
-		advertising_data.version_minor = _os_version.minor;
+		auto short_serial_number_span  = _serialnumberkit.getShortSerialNumber();
+		auto short_serial_number_array = std::array<uint8_t, BLEServiceConfig::kMaxRobotNameSize> {};
+		std::copy_n(std::begin(short_serial_number_span), std::size(short_serial_number_span),
+					std::begin(short_serial_number_array));
+		auto config_robot_name = Config<BLEServiceConfig::kMaxRobotNameSize> {"robot_name", short_serial_number_array};
+		_robot_name			   = _configkit.read(config_robot_name);
+
+		_service_config.setRobotName(_robot_name);
+
+		auto advertising_data			  = _ble.getAdvertisingData();
+		advertising_data.name			  = reinterpret_cast<const char *>(_robot_name.data());
+		advertising_data.version_major	  = _os_version.major;
+		advertising_data.version_minor	  = _os_version.minor;
 		advertising_data.version_revision = _os_version.revision;
 
 		_ble.setAdvertisingData(advertising_data);
@@ -358,11 +388,24 @@ class RobotController : public interface::RobotController
 
 	void raiseAutonomousActivityModeExited() { raise(system::robot::sm::event::autonomous_activities_mode_exited {}); }
 
+	void resetAutonomousActivitiesTimeout()
+	{
+		_timeout_autonomous_activities.stop();
+
+		auto on_autonomous_activities_timeout = [this] {
+			raise(system::robot::sm::event::autonomous_activities_mode_exited {});
+		};
+		_timeout_autonomous_activities.onTimeout(on_autonomous_activities_timeout);
+
+		_timeout_autonomous_activities.start(_timeout_autonomous_activities_duration);
+	}
+
 	void onMagicCardAvailable(const MagicCard &card)
 	{
 		using namespace std::chrono;
 
 		// ! TODO: Refactor with composite SM & CoreTimer instead of start/stop
+		resetAutonomousActivitiesTimeout();
 
 		auto is_playing				= _activitykit.isPlaying();
 		auto NOT_is_playing			= !is_playing;
@@ -408,7 +451,16 @@ class RobotController : public interface::RobotController
 
 		// Setup callbacks for monitoring
 
-		_rfidkit.onTagActivated([this](const MagicCard &card) { onMagicCardAvailable(card); });
+		_rfidkit.onTagActivated([this](const MagicCard &card) {
+			// ! IMPORTANT NOTE
+			// ! The order of the following functions MUST NOT
+			// ! be changed. It is a temporary fix for #1311
+			// TODO(@leka/dev-embedded): remove when fixed
+			_service_magic_card.setMagicCard(card);
+			onMagicCardAvailable(card);
+		});
+
+		_activitykit.registerBeforeProcessCallback([this] { resetAutonomousActivitiesTimeout(); });
 
 		_battery_kit.onDataUpdated([this](uint8_t level) {
 			auto is_charging = _battery.isCharging();
@@ -446,9 +498,6 @@ class RobotController : public interface::RobotController
 
 		// Setup callbacks for each State Machine events
 
-		auto on_idle_timeout = [this]() { raise(event::idle_timeout_did_end {}); };
-		_timeout.onTimeout(on_idle_timeout);
-
 		auto on_charge_did_start = [this]() { raise(event::charge_did_start {}); };
 		_battery.onChargeDidStart(on_charge_did_start);
 
@@ -456,6 +505,12 @@ class RobotController : public interface::RobotController
 		_battery.onChargeDidStop(on_charge_did_stop);
 
 		_service_monitoring.onSoftReboot([] { system_reset(); });
+
+		_service_config.onRobotNameUpdated(
+			[this](const std::array<uint8_t, BLEServiceConfig::kMaxRobotNameSize> &robot_name) {
+				auto config_robot_name = Config<BLEServiceConfig::kMaxRobotNameSize> {"robot_name"};
+				std::ignore			   = _configkit.write(config_robot_name, robot_name);
+			});
 
 		auto on_commands_received = [this](std::span<uint8_t> _buffer) {
 			raise(event::command_received {});
@@ -498,9 +553,15 @@ class RobotController : public interface::RobotController
   private:
 	system::robot::sm::logger logger {};
 
+	interface::Timeout &_timeout_state_internal;
+
 	std::chrono::seconds _sleep_timeout_duration {60};
 	std::chrono::seconds _idle_timeout_duration {600};
-	interface::Timeout &_timeout;
+	std::chrono::seconds _deep_sleep_timeout_duration {600};
+	interface::Timeout &_timeout_state_transition;
+
+	interface::Timeout &_timeout_autonomous_activities;
+	std::chrono::seconds _timeout_autonomous_activities_duration {600};
 
 	const rtos::Kernel::Clock::time_point kSystemStartupTimestamp = rtos::Kernel::Clock::now();
 
@@ -512,6 +573,9 @@ class RobotController : public interface::RobotController
 	uint8_t _minimal_battery_level_to_update {25};
 
 	SerialNumberKit &_serialnumberkit;
+
+	ConfigKit _configkit {};
+	std::array<uint8_t, BLEServiceConfig::kMaxRobotNameSize> _robot_name {};
 
 	interface::FirmwareUpdate &_firmware_update;
 	std::function<void()> _on_update_loaded_callback {};
@@ -540,12 +604,14 @@ class RobotController : public interface::RobotController
 	BLEServiceCommands _service_commands {};
 	BLEServiceDeviceInformation _service_device_information {};
 	BLEServiceMonitoring _service_monitoring {};
+	BLEServiceConfig _service_config {};
+	BLEServiceMagicCard _service_magic_card {};
 	BLEServiceFileExchange _service_file_exchange {};
 	BLEServiceUpdate _service_update {};
 
-	std::array<interface::BLEService *, 6> services = {
-		&_service_battery,	  &_service_commands,	   &_service_device_information,
-		&_service_monitoring, &_service_file_exchange, &_service_update,
+	std::array<interface::BLEService *, 8> services = {
+		&_service_battery, &_service_commands,	 &_service_device_information, &_service_monitoring,
+		&_service_config,  &_service_magic_card, &_service_file_exchange,	   &_service_update,
 	};
 
 	uint8_t _emergency_stop_counter {0};

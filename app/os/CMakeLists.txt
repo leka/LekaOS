@@ -31,7 +31,6 @@ target_link_libraries(LekaOS
 	VideoKit
 	LedKit
 	CoreLED
-	CoreEventFlags
 	CoreBufferedSerial
 	CoreRFIDReader
 	RFIDKit
@@ -40,6 +39,7 @@ target_link_libraries(LekaOS
 	CoreIMU
 	IMUKit
 	MotionKit
+	EventLoopKit
 )
 
 target_link_custom_leka_targets(LekaOS)

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "CGColor.hpp"
+#include "CGGraphics.hpp"
 #include "CoreLL.h"
 #include "interface/DMA2D.hpp"
 #include "interface/Graphics.hpp"
@@ -19,7 +19,7 @@ class CoreGraphics : public interface::Graphics
 
 	void clearScreen(CGColor color = CGColor::white) final;
 
-	void drawRectangle(FilledRectangle rectangle, CGColor color) final;
+	void drawRectangle(CGRectangle rectangle, CGColor color) final;
 
   private:
 	interface::DMA2DBase &_dma2d;

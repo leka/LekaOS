@@ -17,7 +17,7 @@ class DisplayTags : public interface::Activity
   public:
 	explicit DisplayTags(RFIDKit &rfidkit, interface::VideoKit &videokit) : _rfidkit(rfidkit), _videokit(videokit) {};
 
-	void start() final;
+	void start(const std::function<void()> &before_process_callback) final;
 	void stop() final;
 
   private:

@@ -4,7 +4,6 @@
 
 #include <memory>
 
-#include "platform/Callback.h"
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
@@ -12,7 +11,6 @@
 #include "./Videos.h"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
-#include "CoreEventFlags.h"
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreJPEG.hpp"
@@ -25,6 +23,7 @@
 #include "CoreSDRAM.hpp"
 #include "CoreSTM32Hal.h"
 #include "CoreVideo.hpp"
+#include "EventLoopKit.h"
 #include "FATFileSystem.h"
 #include "FileManagerKit.h"
 #include "HelloWorld.h"
@@ -40,7 +39,7 @@ FATFileSystem fatfs("fs");
 
 namespace display::internal {
 
-auto event_flags = CoreEventFlags {};
+auto event_loop = EventLoopKit {};
 
 auto corell		   = CoreLL {};
 auto pixel		   = CGPixel {corell};
@@ -61,7 +60,7 @@ extern "C" auto corevideo =
 
 }	// namespace display::internal
 
-auto videokit = VideoKit {display::internal::event_flags, display::internal::corevideo};
+auto videokit = VideoKit {display::internal::event_loop, display::internal::corevideo};
 
 auto file = FileManagerKit::File {};
 

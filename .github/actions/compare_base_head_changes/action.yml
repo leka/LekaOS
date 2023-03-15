@@ -1,0 +1,100 @@
+# Leka - LekaOS
+# Copyright 2021 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: "Compare base/head changes"
+description: ""
+
+inputs:
+  comment_header:
+    description: "Specify comment header if needed"
+    required: true
+
+  enable_log_debug:
+    description: "ENABLE_LOG_DEBUG=[ON, OFF]"
+    required: true
+
+  base_dir:
+    description: "Path to base files"
+    required: true
+
+  head_dir:
+    description: "Path to head files"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Compare changes
+      id: compare_base_head_changes
+      shell: bash
+      run: ${{ github.action_path }}/compare_base_head_files.sh ${{ inputs.base_dir }} ${{ inputs.head_dir }}
+
+    - name: Generate statistics
+      id: generate_statistics
+      shell: bash
+      run: ${{ github.action_path }}/generate_statistics.sh ${{ inputs.base_dir }} ${{ inputs.head_dir }}
+
+    - name: Get diffs
+      id: get_diffs
+      shell: bash
+      run: ${{ github.action_path }}/get_diffs.sh ${{ inputs.base_dir }} ${{ inputs.head_dir }}
+
+    - name: Publish differences
+      uses: marocchino/sticky-pull-request-comment@v2
+      with:
+        header: compare_base_head_changes-${{ inputs.comment_header }}
+        message: |
+          # :chart_with_upwards_trend: Changes Impact Analysis Report
+
+          ## :pushpin: Info
+
+          - toolchain: `${{ env.TOOLCHAIN_VERSION }}`
+          - enable_log_debug: `${{ inputs.enable_log_debug }}`
+
+          |        | `base`                                                                         | `head`                                                                           |
+          |--------|--------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+          | branch | [`${{ env.BASE_REF}}`](https://github.com/leka/LekaOS/tree/${{ env.BASE_REF}}) | [`${{ env.HEAD_REF }}`](https://github.com/leka/LekaOS/tree/${{ env.HEAD_REF }}) |
+          | sha    | ${{ env.BASE_SHA }}                                                            | ${{ env.HEAD_SHA }}                                                              |
+          | mbed   | `${{ env.BASE_MBED_VERSION }}`                                                 | `${{ env.HEAD_MBED_VERSION }}`                                                   |
+          | `-std` | `${{ env.BASE_CXX_STANDARD }}`                                                 | `${{ env.HEAD_CXX_STANDARD }}`                                                   |
+
+          ## :robot: Firmware impact analysis
+
+          ${{ env.FIRMWARE_STATISTICS_OUTPUT }}
+
+          <details>
+          <summary>Click to show memory sections</summary>
+
+          ```
+          | -          |      Hex |     Bytes |  KiB |
+          |------------|---------:|----------:|-----:|
+          | Flash      | 0x200000 | 2 097 152 | 2048 |
+          | SRAM       |  0x80000 |   524 288 |  512 |
+          | Bootloader |  0x40000 |   262 144 |  256 |
+          | Header     |   0x1000 |     4 096 |    4 |
+          | OS         | 0x17E000 | 1 564 672 | 1528 |
+          | Tail       |   0x1000 |     4 096 |    4 |
+          | Scratch    |  0x40000 |   262 144 |  256 |
+          ```
+
+          </details>
+
+          ## :microscope: Detailed impact analysis
+
+          <details>
+          <summary>Click to show detailed analysis for all targets</summary>
+
+          - :heavy_check_mark: - existing target
+          - :sparkles: - new target
+          - :coffin: - deleted target
+          - :white_check_mark: - files are the same
+          - :x: - files are different
+
+          ${{ env.STATUS_DIFF_OUTPUT }}
+
+          ## :world_map: Map files diff output
+
+          ${{ env.MAP_DIFF_OUTPUT }}
+
+          </details>

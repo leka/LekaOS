@@ -12,7 +12,7 @@
 
 namespace leka::activity {
 
-void SuperSimon::start()
+void SuperSimon::start(const std::function<void()> &before_process_callback)
 {
 	using namespace std::chrono;
 
@@ -27,7 +27,12 @@ void SuperSimon::start()
 
 	launchNextRound();
 
-	_rfidkit.onTagActivated([this](const MagicCard &card) { processCard(card); });
+	_rfidkit.onTagActivated([this, &before_process_callback](const MagicCard &card) {
+		if (before_process_callback != nullptr) {
+			before_process_callback();
+		}
+		processCard(card);
+	});
 }
 
 void SuperSimon::stop()

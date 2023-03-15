@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "CGGraphics.hpp"
 #include "interface/DMA2D.hpp"
 #include "interface/DSI.hpp"
 #include "interface/Font.hpp"
@@ -34,7 +35,7 @@ class CoreVideo : public interface::Video
 
 	void clearScreen() final;
 	void clearScreen(CGColor color);
-	void displayRectangle(interface::Graphics::FilledRectangle rectangle, CGColor color);
+	void displayRectangle(CGRectangle rectangle, CGColor color);
 	void displayImage(interface::File &file, JPEGImageProperties *image_properties = nullptr) final;
 
 	void setVideo(interface::File &file) final;

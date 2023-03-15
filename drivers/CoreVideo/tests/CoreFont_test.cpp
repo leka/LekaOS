@@ -129,7 +129,7 @@ TEST_F(CoreFontTest, fontPixelIsOnWithC00010FF)
 
 TEST_F(CoreFontTest, drawCharacter)
 {
-	CoreFont::Character character;
+	auto character	= CGCharacter {};
 	character.ascii = '.';
 
 	auto pixels_per_char = graphics::font_pixel_width * graphics::font_pixel_height;   // 17 * 24 = 408
@@ -143,7 +143,7 @@ TEST_F(CoreFontTest, drawCharacterWithColor)
 {
 	// ENHANCEMENT: Set pixels_lit by checking number of bit set.
 
-	CoreFont::Character character;
+	auto character			 = CGCharacter {};
 	character.ascii			 = '.';
 	CGColor foreground_color = CGColor::pure_red;
 	CGColor background_color = CGColor::black;

@@ -10,7 +10,10 @@
 
 using namespace leka;
 
+using ::testing::AnyNumber;
 using ::testing::InSequence;
+using ::testing::MockFunction;
+using ::testing::SaveArg;
 
 class ActivityKitTest : public ::testing::Test
 {
@@ -99,6 +102,7 @@ TEST_F(ActivityKitTest, isPlayingActivityNullPtr)
 
 TEST_F(ActivityKitTest, isPlayingActivityStarted)
 {
+	EXPECT_CALL(mock_activity_0, start);
 	activitykit.start(MagicCard::number_0);
 
 	EXPECT_TRUE(activitykit.isPlaying());
@@ -106,7 +110,10 @@ TEST_F(ActivityKitTest, isPlayingActivityStarted)
 
 TEST_F(ActivityKitTest, isPlayingActivityStopped)
 {
+	EXPECT_CALL(mock_activity_0, start);
 	activitykit.start(MagicCard::number_0);
+
+	EXPECT_CALL(mock_activity_0, stop);
 	activitykit.stop();
 
 	EXPECT_FALSE(activitykit.isPlaying());
@@ -128,4 +135,17 @@ TEST_F(ActivityKitTest, displayFRMainMenu)
 		.Times(1);
 
 	activitykit.displayMainMenu(dice_roll_FR);
+}
+
+TEST_F(ActivityKitTest, registerBeforeProcessCallback)
+{
+	MockFunction<void()> callback;
+	activitykit.registerBeforeProcessCallback(callback.AsStdFunction());
+
+	std::function<void()> before_process_callback_registered {};
+	EXPECT_CALL(mock_activity_0, start).WillOnce(SaveArg<0>(&before_process_callback_registered));
+	activitykit.start(MagicCard::number_0);
+
+	EXPECT_CALL(callback, Call);
+	before_process_callback_registered();
 }

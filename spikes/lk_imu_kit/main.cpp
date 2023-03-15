@@ -4,13 +4,10 @@
 
 #include "rtos/ThisThread.h"
 
-#include "CoreAccelerometer.h"
-#include "CoreGyroscope.h"
 #include "CoreI2C.h"
-#include "CoreLSM6DSOX.h"
-#include "EventLoopKit.h"
+#include "CoreLSM6DSOX.hpp"
 #include "HelloWorld.h"
-#include "IMUKit.h"
+#include "IMUKit.hpp"
 #include "LogKit.h"
 
 using namespace std::chrono;
@@ -22,37 +19,36 @@ namespace imu {
 
 	namespace internal {
 
-		CoreI2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
-		CoreLSM6DSOX lsm6dsox(internal::i2c);
-		EventLoopKit event_loop {};
+		auto drdy_irq = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
+		auto i2c	  = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
 
 	}	// namespace internal
 
-	CoreAccelerometer accel(internal::lsm6dsox);
-	CoreGyroscope gyro(internal::lsm6dsox);
-
-	IMUKit kit(internal::event_loop, accel, gyro);
+	CoreLSM6DSOX lsm6dsox(internal::i2c, internal::drdy_irq);
 
 }	// namespace imu
+
+IMUKit imukit(imu::lsm6dsox);
 
 }	// namespace
 
 auto main() -> int
 {
+	rtos::ThisThread::sleep_for(140ms);
 	logger::init();
 
 	HelloWorld hello;
 	hello.start();
 
-	imu::internal::lsm6dsox.init();
+	imu::lsm6dsox.init();
 
-	imu::kit.init();
-	imu::kit.start();
+	imukit.stop();
+	imukit.init();
+	imukit.start();
 
 	while (true) {
-		auto [pitch, roll, yaw] = imu::kit.getAngles();
+		const auto [pitch, roll, yaw] = imukit.getEulerAngles();
 		log_info("Pitch : %7.2f, Roll : %7.2f Yaw : %7.2f", pitch, roll, yaw);
-
 		rtos::ThisThread::sleep_for(140ms);
 	}
 }

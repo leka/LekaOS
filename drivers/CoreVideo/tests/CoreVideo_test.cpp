@@ -54,7 +54,7 @@ MATCHER_P(compareColor, expected_color, "")
 	return (same_red && same_green && same_blue);
 }
 
-MATCHER_P(compareFilledRectangle, expected_rectangle, "")
+MATCHER_P(compareCGRectangle, expected_rectangle, "")
 {
 	bool same_origin_x = arg.origin.x == expected_rectangle.origin.x;
 	bool same_origin_y = arg.origin.y == expected_rectangle.origin.y;
@@ -132,7 +132,7 @@ TEST_F(CoreVideoTest, clearScreenWithColor)
 
 TEST_F(CoreVideoTest, drawRectangle)
 {
-	interface::Graphics::FilledRectangle rectangle;
+	auto rectangle	   = CGRectangle {};
 	rectangle.origin.x = 200;
 	rectangle.origin.y = 369;
 	rectangle.width	   = 11;
@@ -140,14 +140,14 @@ TEST_F(CoreVideoTest, drawRectangle)
 
 	CGColor rectangle_color;
 
-	EXPECT_CALL(graphicsmock, drawRectangle(compareFilledRectangle(rectangle), _)).Times(1);
+	EXPECT_CALL(graphicsmock, drawRectangle(compareCGRectangle(rectangle), _)).Times(1);
 
 	corevideo.displayRectangle(rectangle, rectangle_color);
 }
 
 TEST_F(CoreVideoTest, drawRectangleWithColor)
 {
-	interface::Graphics::FilledRectangle rectangle;
+	auto rectangle = CGRectangle {};
 	CGColor rectangle_color {0x2A, 0x2B, 0x2C};
 
 	EXPECT_CALL(graphicsmock, drawRectangle(_, compareColor(rectangle_color))).Times(1);

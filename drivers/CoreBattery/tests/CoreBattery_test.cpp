@@ -4,11 +4,14 @@
 
 #include "CoreBattery.h"
 
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "stubs/mbed/AnalogIn.h"
 #include "stubs/mbed/InterruptIn.h"
 
 using namespace leka;
+
+using ::testing::MockFunction;
 
 class CoreBatteryTest : public ::testing::Test
 {
@@ -109,32 +112,24 @@ TEST_F(CoreBatteryTest, voltageBelowEmpty)
 
 TEST_F(CoreBatteryTest, onChargeDidStart)
 {
-	auto lambda_dummy	 = []() {};
-	auto lambda_impostor = []() {};
+	MockFunction<void()> callback;
 
-	mbed::Callback<void()> callback_dummy(lambda_dummy);
-	mbed::Callback<void()> callback_impostor(lambda_impostor);
+	EXPECT_CALL(callback, Call);
+	battery.onChargeDidStart(callback.AsStdFunction());
 
-	battery.onChargeDidStart(callback_dummy);
-
-	ASSERT_NE(callback_impostor, callback_dummy);
-	ASSERT_NE(callback_impostor, spy_InterruptIn_getRiseCallback());
-	ASSERT_EQ(callback_dummy, spy_InterruptIn_getRiseCallback());
+	auto charge_did_start = spy_InterruptIn_getRiseCallback();
+	charge_did_start();
 }
 
 TEST_F(CoreBatteryTest, onChargeDidStop)
 {
-	auto lambda_dummy	 = []() {};
-	auto lambda_impostor = []() {};
+	MockFunction<void()> callback;
 
-	mbed::Callback<void()> callback_dummy(lambda_dummy);
-	mbed::Callback<void()> callback_impostor(lambda_impostor);
+	EXPECT_CALL(callback, Call);
+	battery.onChargeDidStop(callback.AsStdFunction());
 
-	battery.onChargeDidStop(callback_dummy);
-
-	ASSERT_NE(callback_impostor, callback_dummy);
-	ASSERT_NE(callback_impostor, spy_InterruptIn_getFallCallback());
-	ASSERT_EQ(callback_dummy, spy_InterruptIn_getFallCallback());
+	auto charge_did_stop = spy_InterruptIn_getFallCallback();
+	charge_did_stop();
 }
 
 TEST_F(CoreBatteryTest, isCharging)

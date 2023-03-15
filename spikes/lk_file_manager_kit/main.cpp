@@ -70,9 +70,11 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(1s);
 
-	file.open(file_for_sha256_path);
-	auto sha256 = file.getSHA256();
-	printSHA256(sha256);
+	if (FileManagerKit::file_exists(file_for_sha256_path)) {
+		file.open(file_for_sha256_path);
+		auto sha256 = file.getSHA256();
+		printSHA256(sha256);
+	}
 
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;

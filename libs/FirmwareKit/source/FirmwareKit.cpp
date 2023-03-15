@@ -28,43 +28,64 @@ auto FirmwareKit::getPathOfVersion(const Version &version) const -> std::filesys
 
 auto FirmwareKit::isVersionAvailable(const Version &version) -> bool
 {
-	auto path		 = getPathOfVersion(version);
-	auto file_exists = false;
+	auto path = getPathOfVersion(version);
 
-	if (auto is_open = _file.open(path); is_open) {
-		constexpr auto kMinimalFileSizeInBytes = std::size_t {300'000};
+	if (FileManagerKit::file_is_missing(path)) {
+		return false;
+	}
 
-		file_exists = _file.size() >= kMinimalFileSizeInBytes;
+	_file.open(path);
+
+	constexpr auto kMinimalFileSizeInBytes = std::size_t {300'000};
+	auto file_size_is_correct			   = _file.size() >= kMinimalFileSizeInBytes;
+
+	_file.close();
+
+	return file_size_is_correct;
+}
+
+auto FirmwareKit::loadFirmware(const Version &version) -> bool
+{
+	auto path = getPathOfVersion(version);
+
+	return load(path);
+}
+
+auto FirmwareKit::loadFactoryFirmware() -> bool
+{
+	if (auto factory_firmware_exists = _file.open(_config.factory_path); factory_firmware_exists) {
+		return load(_config.factory_path);
+	}
+	// ! IMPORTANT: BACKWARD COMPATIBILITY
+	// ? This path is kept to handle the case where the bootloader has
+	// ? been updated but not the SD card, in which case the factory
+	// ? firmware might not exist. If it's the case, we must load the
+	// ? previous factory firmware which was LekaOS-1.0.0.bin
+	// ? This should only happen when a robot is sent back to be fixed
+	// ? and used internally, but never for products in the field as
+	// ? the bootloader cannot change.
+	return loadFirmware({.major = 1, .minor = 0, .revision = 0});
+}
+
+auto FirmwareKit::load(const std::filesystem::path &path) -> bool
+{
+	if (FileManagerKit::file_is_missing(path)) {
+		return false;
+	}
+
+	_file.open(path);
+
+	auto address = uint32_t {0x0};
+	auto buffer	 = std::array<uint8_t, 256> {};
+
+	_flash.erase();
+
+	while (auto bytes_read = _file.read(buffer.data(), std::size(buffer))) {
+		_flash.write(address, buffer, bytes_read);
+		address += bytes_read;
 	}
 
 	_file.close();
 
-	return file_exists;
-}
-
-auto FirmwareKit::loadUpdate(const Version &version) -> bool
-{
-	auto path = getPathOfVersion(version);
-
-	return loadUpdate(path);
-}
-
-auto FirmwareKit::loadUpdate(const std::filesystem::path &path) -> bool
-{
-	if (auto is_open = _file.open(path); is_open) {
-		auto address = uint32_t {0x0};
-		auto buffer	 = std::array<uint8_t, 256> {};
-
-		_flash.erase();
-
-		while (auto bytes_read = _file.read(buffer.data(), std::size(buffer))) {
-			_flash.write(address, buffer, bytes_read);
-			address += bytes_read;
-		}
-
-		_file.close();
-		return true;
-	}
-
-	return false;
+	return true;
 }

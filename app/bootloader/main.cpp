@@ -40,7 +40,7 @@ namespace {
 
 namespace bootloader {
 
-	constexpr auto version = uint8_t {1};
+	constexpr auto version = uint8_t {2};
 
 }
 
@@ -89,8 +89,7 @@ namespace sd {
 
 namespace factory_reset {
 
-	constexpr auto default_limit	= uint8_t {10};
-	constexpr auto firmware_version = Version {.major = 1, .minor = 0, .revision = 0};
+	constexpr auto default_limit = uint8_t {10};
 
 	namespace internal {
 
@@ -113,11 +112,11 @@ namespace factory_reset {
 
 	auto getCounter() -> uint8_t
 	{
-		FileManagerKit::File file {internal::factory_reset_counter_path, "r"};
-
-		if (!file.is_open()) {
+		if (FileManagerKit::file_is_missing(internal::factory_reset_counter_path)) {
 			return default_limit + 1;
 		}
+
+		auto file = FileManagerKit::File {internal::factory_reset_counter_path, "r"};
 
 		auto data = std::array<uint8_t, 1> {};
 		file.read(data);
@@ -151,7 +150,7 @@ namespace factory_reset {
 
 	void applyFactoryReset()
 	{
-		firmwarekit.loadUpdate(firmware_version);
+		firmwarekit.loadFactoryFirmware();
 		boot_set_pending(1);
 	}
 
@@ -159,10 +158,10 @@ namespace factory_reset {
 
 namespace config {
 
-	auto bootloader_version = Config {"/fs/sys/bootloader-version", bootloader::version};
+	auto bootloader_version = Config {"/fs/sys/bootloader-version", {bootloader::version}};
 	auto battery_hysteresis_offset =
-		Config {"/fs/etc/bootloader-battery_hysteresis", battery::default_hysteresis_offset};
-	auto factory_reset_limit = Config {"/fs/etc/bootloader-reboots_limit", factory_reset::default_limit};
+		Config {"/fs/etc/bootloader-battery_hysteresis", {battery::default_hysteresis_offset}};
+	auto factory_reset_limit = Config {"/fs/etc/bootloader-reboots_limit", {factory_reset::default_limit}};
 
 	auto configkit = ConfigKit {};
 
@@ -431,8 +430,6 @@ auto main() -> int
 		factory_reset::initializeExternalFlash();
 
 		factory_reset::applyFactoryReset();
-		config::setOSVersion(factory_reset::firmware_version.major, factory_reset::firmware_version.minor,
-							 factory_reset::firmware_version.revision);
 		factory_reset::resetCounter();
 
 	} else {

@@ -11,7 +11,7 @@ target_include_directories(ConfigKit
 
 target_sources(ConfigKit
 	PRIVATE
-	source/Config.cpp
+	source/ConfigKit.cpp
 )
 
 target_link_libraries(ConfigKit

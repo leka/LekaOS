@@ -2,7 +2,7 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_subdirectory(${SPIKES_DIR}/lk_accel_gyro)
+add_subdirectory(${SPIKES_DIR}/lk_activity_kit)
 add_subdirectory(${SPIKES_DIR}/lk_audio)
 add_subdirectory(${SPIKES_DIR}/lk_behavior_kit)
 add_subdirectory(${SPIKES_DIR}/lk_ble)
@@ -28,12 +28,14 @@ add_subdirectory(${SPIKES_DIR}/lk_qdac)
 add_subdirectory(${SPIKES_DIR}/lk_reinforcer)
 add_subdirectory(${SPIKES_DIR}/lk_rfid)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_battery)
+add_subdirectory(${SPIKES_DIR}/lk_sensors_imu_lsm6dsox)
+add_subdirectory(${SPIKES_DIR}/lk_sensors_imu_lsm6dsox_fusion_calibration)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_light)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_microphone)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_temperature_humidity)
-add_subdirectory(${SPIKES_DIR}/lk_sensors_touch)
 add_subdirectory(${SPIKES_DIR}/lk_serial_number)
 add_subdirectory(${SPIKES_DIR}/lk_ticker_timeout)
+add_subdirectory(${SPIKES_DIR}/lk_touch_sensor_kit)
 add_subdirectory(${SPIKES_DIR}/lk_watchdog_isr)
 add_subdirectory(${SPIKES_DIR}/lk_wifi)
 
@@ -47,7 +49,7 @@ add_subdirectory(${SPIKES_DIR}/stl_cxxsupport)
 
 add_custom_target(spikes_leka)
 add_dependencies(spikes_leka
-	spike_lk_accel_gyro
+	spike_lk_activity_kit
 	spike_lk_ble
 	spike_lk_bluetooth
 	spike_lk_cg_animations
@@ -69,12 +71,14 @@ add_dependencies(spikes_leka
 	spike_lk_reinforcer
 	spike_lk_rfid
 	spike_lk_sensors_battery
+	spike_lk_sensors_imu_lsm6dsox
+	spike_lk_sensors_imu_lsm6dsox_fusion_calibration
 	spike_lk_sensors_light
 	spike_lk_sensors_microphone
 	spike_lk_sensors_temperature_humidity
-	spike_lk_sensors_touch
 	spike_lk_serial_number
 	spike_lk_ticker_timeout
+	spike_lk_touch_sensor_kit
 	spike_lk_wifi
 
 	spike_lk_update_process_app_base

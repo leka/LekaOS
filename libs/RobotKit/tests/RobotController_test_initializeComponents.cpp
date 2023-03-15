@@ -14,7 +14,7 @@ TEST_F(RobotControllerTest, initializeComponents)
 	{
 		InSequence seq;
 
-		EXPECT_CALL(mbed_mock_gatt, addService).Times(6);
+		EXPECT_CALL(mbed_mock_gatt, addService).Times(8);
 		EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(1);
 		EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(1);
 
@@ -27,6 +27,7 @@ TEST_F(RobotControllerTest, initializeComponents)
 
 		Sequence set_serial_number_as_ble_device_name;
 		EXPECT_CALL(mock_mcu, getID).InSequence(set_serial_number_as_ble_device_name);
+		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1).InSequence(set_serial_number_as_ble_device_name);
 		EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).InSequence(set_serial_number_as_ble_device_name);
 
 		expectedCallsStopMotors();

@@ -47,6 +47,8 @@ TEST_F(CoreTouchSensorTest, initializationDefault)
 TEST_F(CoreTouchSensorTest, init)
 {
 	EXPECT_CALL(dac, init).Times(1);
+	EXPECT_CALL(mockIOExpander, setModeForPin).Times(1);
+	EXPECT_CALL(mockIOExpander, writePin).Times(1);
 
 	sensor.init();
 }

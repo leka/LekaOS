@@ -30,6 +30,7 @@ void CoreGapEventHandler::onConnectionComplete(ConnectionCompleteEvent const &ev
 	if (_on_connection_callback != nullptr) {
 		_on_connection_callback();
 	}
+	is_connected = true;
 }
 
 void CoreGapEventHandler::onDisconnectionComplete(DisconnectionCompleteEvent const &event)
@@ -39,6 +40,7 @@ void CoreGapEventHandler::onDisconnectionComplete(DisconnectionCompleteEvent con
 	if (_on_disconnection_callback != nullptr) {
 		_on_disconnection_callback();
 	}
+	is_connected = false;
 }
 
 void CoreGapEventHandler::onAdvertisingEnd(AdvertisingEndEvent const &event)
@@ -54,4 +56,9 @@ void CoreGapEventHandler::onConnectionCallback(const std::function<void()> &call
 void CoreGapEventHandler::onDisconnectionCallback(const std::function<void()> &callback)
 {
 	_on_disconnection_callback = callback;
+}
+
+auto CoreGapEventHandler::isConnected() const -> bool
+{
+	return is_connected;
 }

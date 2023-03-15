@@ -4,18 +4,22 @@
 
 #include "CoreBattery.h"
 
+#include "platform/Callback.h"
+
 #include "MathUtils.h"
 
 namespace leka {
 
-void CoreBattery::onChargeDidStart(mbed::Callback<void()> const &callback)
+void CoreBattery::onChargeDidStart(std::function<void()> const &callback)
 {
-	_charge_status_input.rise(callback);
+	_on_charge_did_start = callback;
+	_charge_status_input.rise(mbed::Callback<void()> {[this] { _on_charge_did_start(); }});
 }
 
-void CoreBattery::onChargeDidStop(mbed::Callback<void()> const &callback)
+void CoreBattery::onChargeDidStop(std::function<void()> const &callback)
 {
-	_charge_status_input.fall(callback);
+	_on_charge_did_stop = callback;
+	_charge_status_input.fall(mbed::Callback<void()> {[this] { _on_charge_did_stop(); }});
 }
 
 auto CoreBattery::voltage() -> float

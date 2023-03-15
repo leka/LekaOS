@@ -93,20 +93,17 @@ TEST_F(BLEKitTest, setServices)
 
 TEST_F(BLEKitTest, callOnEventsToProcess)
 {
-	spy_ble_hasInitialized_return_value	 = false;
-	spy_CoreEventQueue_did_call_function = false;
+	spy_ble_hasInitialized_return_value = false;
 
 	EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(AnyNumber());
 	EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(AnyNumber());
 
 	ble.init();
 
-	EXPECT_FALSE(spy_CoreEventQueue_did_call_function);
-
 	BLE::OnEventsToProcessCallbackContext context = {BLE::Instance()};
 	spy_ble_on_events_to_process_callback(&context);
 
-	EXPECT_TRUE(spy_CoreEventQueue_did_call_function);
+	// nothing expected
 }
 
 TEST_F(BLEKitTest, getAdvertisingDataThenSetAdvertisingData)
@@ -135,4 +132,11 @@ TEST_F(BLEKitTest, onDisconnectionCallback)
 	ble.onDisconnectionCallback(dummy_on_disconnection_callback);
 
 	// nothing expected
+}
+
+TEST_F(BLEKitTest, isConnectedDefault)
+{
+	auto is_connected = ble.isConnected();
+
+	EXPECT_FALSE(is_connected);
 }

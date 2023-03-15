@@ -11,25 +11,23 @@
 
 #include "ActivityKit.h"
 #include "ChooseReinforcer.h"
-#include "CoreAccelerometer.h"
 #include "CoreBattery.h"
 #include "CoreBufferedSerial.h"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
-#include "CoreEventFlags.h"
 #include "CoreFlashIS25LP016D.h"
 #include "CoreFlashManagerIS25LP016D.h"
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
-#include "CoreGyroscope.h"
 #include "CoreI2C.h"
+#include "CoreInterruptIn.h"
 #include "CoreJPEG.hpp"
 #include "CoreJPEGModeDMA.hpp"
 #include "CoreJPEGModePolling.hpp"
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLL.h"
-#include "CoreLSM6DSOX.h"
+#include "CoreLSM6DSOX.hpp"
 #include "CoreLTDC.hpp"
 #include "CoreMCU.h"
 #include "CoreMotor.h"
@@ -49,6 +47,7 @@
 #include "FlashNumberCounting.h"
 #include "FoodRecognition.h"
 #include "HelloWorld.h"
+#include "IMUKit.hpp"
 #include "LedColorRecognition.h"
 #include "LedKit.h"
 #include "LedNumberCounting.h"
@@ -232,7 +231,7 @@ namespace motors {
 
 namespace display::internal {
 
-	auto event_flags = CoreEventFlags {};
+	auto event_loop = EventLoopKit {};
 
 	auto corell		   = CoreLL {};
 	auto pixel		   = CGPixel {corell};
@@ -253,34 +252,30 @@ namespace display::internal {
 
 }	// namespace display::internal
 
-auto videokit = VideoKit {display::internal::event_flags, display::internal::corevideo};
+auto videokit = VideoKit {display::internal::event_loop, display::internal::corevideo};
 
 namespace imu {
 
 	namespace internal {
 
-		CoreI2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
-		EventLoopKit event_loop {};
+		auto drdy_irq = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
+		auto i2c	  = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
 
 	}	// namespace internal
 
-	CoreLSM6DSOX lsm6dsox(internal::i2c);
-	CoreAccelerometer accel(lsm6dsox);
-	CoreGyroscope gyro(lsm6dsox);
+	auto lsm6dsox = CoreLSM6DSOX(internal::i2c, internal::drdy_irq);
 
 }	// namespace imu
 
-auto imukit = IMUKit {imu::internal::event_loop, imu::accel, imu::gyro};
+auto imukit = IMUKit {imu::lsm6dsox};
 
 namespace motion::internal {
 
-	EventLoopKit event_loop {};
 	CoreTimeout timeout {};
 
 }	// namespace motion::internal
 
-auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::event_loop,
-							motion::internal::timeout};
+auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::timeout};
 
 auto behaviorkit   = BehaviorKit {videokit, ledkit, motors::left::motor, motors::right::motor};
 auto reinforcerkit = ReinforcerKit {videokit, ledkit, motionkit};
@@ -408,7 +403,9 @@ namespace robot {
 
 	namespace internal {
 
-		auto sleep_timeout = CoreTimeout {};
+		auto timeout_state_internal		   = CoreTimeout {};
+		auto timeout_state_transition	   = CoreTimeout {};
+		auto timeout_autonomous_activities = CoreTimeout {};
 
 		auto mcu			 = CoreMCU {};
 		auto serialnumberkit = SerialNumberKit {mcu, SerialNumberKit::DEFAULT_CONFIG};
@@ -416,7 +413,9 @@ namespace robot {
 	}	// namespace internal
 
 	auto controller = RobotController {
-		internal::sleep_timeout,
+		internal::timeout_state_internal,
+		internal::timeout_state_transition,
+		internal::timeout_autonomous_activities,
 		battery::cells,
 		internal::serialnumberkit,
 		firmware::kit,
@@ -564,7 +563,6 @@ auto main() -> int
 
 	imu::lsm6dsox.init();
 	imukit.init();
-	motionkit.init();
 
 	robot::controller.initializeComponents();
 	robot::controller.registerOnUpdateLoadedCallback(firmware::setPendingUpdate);

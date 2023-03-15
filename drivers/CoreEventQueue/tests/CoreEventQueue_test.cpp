@@ -57,16 +57,3 @@ TEST_F(CoreEventQueueTest, callEvery)
 
 	event_queue.call_every(2s, mock.AsStdFunction());
 }
-
-TEST_F(CoreEventQueueTest, callMbedCallback)
-{
-	MockFunction<void(void)> mock;
-
-	EXPECT_CALL(mock, Call()).Times(1);
-
-	auto func = [&] { mock.Call(); };
-
-	event_queue.dispatch_forever();
-
-	event_queue.callMbedCallback(mbed::callback(func));
-}

@@ -34,7 +34,6 @@
 #include "mocks/leka/Timeout.h"
 #include "mocks/leka/VideoKit.h"
 #include "mocks/mbed/DigitalOut.h"
-#include "mocks/mbed/EventFlags.h"
 #include "stubs/leka/EventLoopKit.h"
 #include "stubs/mbed/Kernel.h"
 
@@ -49,6 +48,7 @@ using ::testing::AtLeast;
 using ::testing::InSequence;
 using ::testing::MockFunction;
 using ::testing::Return;
+using ::testing::SaveArg;
 using ::testing::Sequence;
 
 ACTION_TEMPLATE(GetCallback, HAS_1_TEMPLATE_PARAMS(typename, callback_t), AND_1_VALUE_PARAMS(pointer))
@@ -76,7 +76,9 @@ class RobotControllerTest : public testing::Test
 
 	mock::EventQueue event_queue {};
 
-	mock::Timeout timeout {};
+	mock::Timeout timeout_state_internal {};
+	mock::Timeout timeout_state_transition {};
+	mock::Timeout timeout_autonomous_activities {};
 	mock::Battery battery {};
 
 	mock::MCU mock_mcu {};
@@ -109,21 +111,36 @@ class RobotControllerTest : public testing::Test
 	stub::EventLoopKit event_loop {};
 	CommandKit cmdkit {event_loop};
 
-	RobotController<bsml::sm<system::robot::StateMachine, bsml::testing>> rc {
-		timeout,		  battery,	 serialnumberkit, firmware_update, mock_motor_left,
-		mock_motor_right, mock_ears, mock_belt,		  mock_ledkit,	   mock_lcd,
-		mock_videokit,	  bhvkit,	 cmdkit,		  rfidkit,		   activitykit};
+	RobotController<bsml::sm<system::robot::StateMachine, bsml::testing>> rc {timeout_state_internal,
+																			  timeout_state_transition,
+																			  timeout_autonomous_activities,
+																			  battery,
+																			  serialnumberkit,
+																			  firmware_update,
+																			  mock_motor_left,
+																			  mock_motor_right,
+																			  mock_ears,
+																			  mock_belt,
+																			  mock_ledkit,
+																			  mock_lcd,
+																			  mock_videokit,
+																			  bhvkit,
+																			  cmdkit,
+																			  rfidkit,
+																			  activitykit};
 
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
 
-	interface::Timeout::callback_t on_sleep_timeout			 = {};
-	interface::Timeout::callback_t on_idle_timeout			 = {};
-	interface::Timeout::callback_t on_sleeping_start_timeout = {};
-	interface::Timeout::callback_t on_charging_start_timeout = {};
+	interface::Timeout::callback_t on_sleep_timeout					= {};
+	interface::Timeout::callback_t on_deep_sleep_timeout			= {};
+	interface::Timeout::callback_t on_idle_timeout					= {};
+	interface::Timeout::callback_t on_sleeping_start_timeout		= {};
+	interface::Timeout::callback_t on_charging_start_timeout		= {};
+	interface::Timeout::callback_t on_autonomous_activities_timeout = {};
 
-	mbed::Callback<void()> on_charge_did_start {};
-	mbed::Callback<void()> on_charge_did_stop {};
+	std::function<void()> on_charge_did_start {};
+	std::function<void()> on_charge_did_stop {};
 
 	bool spy_isCharging_return_value = false;
 
@@ -148,7 +165,7 @@ class RobotControllerTest : public testing::Test
 		{
 			InSequence seq;
 
-			EXPECT_CALL(mbed_mock_gatt, addService).Times(6);
+			EXPECT_CALL(mbed_mock_gatt, addService).Times(8);
 			EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(1);
 			EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(1);
 
@@ -160,6 +177,7 @@ class RobotControllerTest : public testing::Test
 
 			Sequence set_serial_number_as_ble_device_name;
 			EXPECT_CALL(mock_mcu, getID).InSequence(set_serial_number_as_ble_device_name);
+			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1).InSequence(set_serial_number_as_ble_device_name);
 			EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).InSequence(set_serial_number_as_ble_device_name);
 
 			expectedCallsStopMotors();
@@ -201,11 +219,9 @@ class RobotControllerTest : public testing::Test
 			EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).InSequence(on_data_updated_sequence);
 			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(2).InSequence(on_data_updated_sequence);
 
-			EXPECT_CALL(timeout, onTimeout).WillOnce(GetCallback<interface::Timeout::callback_t>(&on_idle_timeout));
+			EXPECT_CALL(battery, onChargeDidStart).WillOnce(SaveArg<0>(&on_charge_did_start));
 
-			EXPECT_CALL(battery, onChargeDidStart).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_start));
-
-			EXPECT_CALL(battery, onChargeDidStop).WillOnce(GetCallback<mbed::Callback<void()>>(&on_charge_did_stop));
+			EXPECT_CALL(battery, onChargeDidStop).WillOnce(SaveArg<0>(&on_charge_did_stop));
 
 			{
 				InSequence event_setup_complete;
@@ -231,10 +247,10 @@ class RobotControllerTest : public testing::Test
 		expectedCallsRunLaunchingBehavior();
 
 		Sequence on_idle_entry_sequence;
-		EXPECT_CALL(timeout, onTimeout)
+		EXPECT_CALL(timeout_state_transition, onTimeout)
 			.InSequence(on_idle_entry_sequence)
 			.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleep_timeout));
-		EXPECT_CALL(timeout, start).InSequence(on_idle_entry_sequence);
+		EXPECT_CALL(timeout_state_transition, start).InSequence(on_idle_entry_sequence);
 
 		EXPECT_CALL(mock_videokit, playVideoOnRepeat).InSequence(on_idle_entry_sequence);
 		EXPECT_CALL(mock_lcd, turnOn).Times(AtLeast(1)).InSequence(on_idle_entry_sequence);
@@ -252,15 +268,19 @@ class RobotControllerTest : public testing::Test
 
 		expectedCallsRunLaunchingBehavior();
 
+		Sequence start_deep_sleep_timeout_sequence;
+		EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(start_deep_sleep_timeout_sequence);
+		EXPECT_CALL(timeout_state_transition, start).InSequence(start_deep_sleep_timeout_sequence);
+
 		Sequence start_charging_behavior_sequence;
 		EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
 		EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
 		EXPECT_CALL(mock_ledkit, start).InSequence(start_charging_behavior_sequence);
 		EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
-		EXPECT_CALL(timeout, onTimeout)
+		EXPECT_CALL(timeout_state_internal, onTimeout)
 			.InSequence(start_charging_behavior_sequence)
 			.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_charging_start_timeout));
-		EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
+		EXPECT_CALL(timeout_state_internal, start).InSequence(start_charging_behavior_sequence);
 	}
 
 	void expectedCallsRunLaunchingBehavior()
@@ -271,5 +291,18 @@ class RobotControllerTest : public testing::Test
 					displayImage(std::filesystem::path {"/fs/home/img/system/robot-misc-splash_screen-large-400.jpg"}))
 			.Times(1);
 		EXPECT_CALL(mock_lcd, turnOn);
+	}
+
+	void expectedCallsResetAutonomousActivitiesTimeout()
+	{
+		auto expected_duration = std::chrono::seconds {600};
+		{
+			InSequence seq;
+
+			EXPECT_CALL(timeout_autonomous_activities, stop);
+			EXPECT_CALL(timeout_autonomous_activities, onTimeout)
+				.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_autonomous_activities_timeout));
+			EXPECT_CALL(timeout_autonomous_activities, start(std::chrono::microseconds {expected_duration}));
+		}
 	}
 };

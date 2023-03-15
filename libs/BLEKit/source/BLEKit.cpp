@@ -4,6 +4,8 @@
 
 #include "BLEKit.h"
 
+#include "platform/Callback.h"
+
 using namespace leka;
 
 void BLEKit::setServices(std::span<interface::BLEService *> const &services)
@@ -31,7 +33,7 @@ void BLEKit::init()
 
 void BLEKit::processEvents(BLE::OnEventsToProcessCallbackContext *context)
 {
-	_event_queue.callMbedCallback(mbed::callback(&context->ble, &BLE::processEvents));
+	_event_queue.call(mbed::Callback {&context->ble, &BLE::processEvents});
 }
 
 void BLEKit::setAdvertisingData(const AdvertisingData &advertising_data)
@@ -54,4 +56,9 @@ void BLEKit::onConnectionCallback(const std::function<void()> &callback)
 void BLEKit::onDisconnectionCallback(const std::function<void()> &callback)
 {
 	_core_gap.onDisconnectionCallback(callback);
+}
+
+auto BLEKit::isConnected() const -> bool
+{
+	return _core_gap.isConnected();
 }

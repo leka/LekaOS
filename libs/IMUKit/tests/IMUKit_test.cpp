@@ -2,19 +2,20 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "IMUKit.h"
+#include "IMUKit.hpp"
 
+#include "CoreLSM6DSOX.hpp"
 #include "ThisThread.h"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "mocks/leka/Accelerometer.h"
-#include "mocks/leka/Gyroscope.h"
+#include "mocks/leka/CoreI2C.h"
+#include "mocks/leka/LSM6DSOX.h"
 #include "stubs/leka/EventLoopKit.h"
+#include "stubs/mbed/InterruptIn.h"
+#include "stubs/mbed/Kernel.h"
 
 using namespace leka;
-
-using ::testing::AnyNumber;
-using ::testing::MockFunction;
-using testing::Return;
+using namespace std::chrono;
 
 class IMUKitTest : public ::testing::Test
 {
@@ -24,15 +25,9 @@ class IMUKitTest : public ::testing::Test
 	void SetUp() override { imukit.init(); }
 	// void TearDown() override {}
 
-	stub::EventLoopKit stub_event_loop {};
+	mock::LSM6DSOX mock_lsm6dox {};
 
-	mock::Accelerometer accel {};
-	mock::Gyroscope gyro {};
-
-	std::tuple<float, float, float> accel_data = {0.F, 0.F, 0.F};
-	std::tuple<float, float, float> gyro_data  = {0.F, 0.F, 0.F};
-
-	IMUKit imukit {stub_event_loop, accel, gyro};
+	IMUKit imukit {mock_lsm6dox};
 };
 
 TEST_F(IMUKitTest, initialization)
@@ -40,166 +35,91 @@ TEST_F(IMUKitTest, initialization)
 	ASSERT_NE(&imukit, nullptr);
 }
 
-TEST_F(IMUKitTest, registerMockCallbackAndStart)
+TEST_F(IMUKitTest, start)
 {
-	auto mock_function = MockFunction<void(void)> {};
-	auto loop		   = [&] { mock_function.Call(); };
+	EXPECT_CALL(mock_lsm6dox, setPowerMode(interface::LSM6DSOX::PowerMode::Normal)).Times(1);
 
-	EXPECT_CALL(mock_function, Call()).Times(1);
-
-	stub_event_loop.registerCallback(loop);
-	imukit.start();
-}
-
-TEST_F(IMUKitTest, start10Loops)
-{
-	auto mock_function = MockFunction<void(void)> {};
-	auto loop		   = [&] { mock_function.Call(); };
-
-	stub_event_loop.spy_setNumberOfLoops(10);
-	EXPECT_CALL(mock_function, Call()).Times(10);
-
-	stub_event_loop.registerCallback(loop);
 	imukit.start();
 }
 
 TEST_F(IMUKitTest, stop)
 {
-	auto mock_function = MockFunction<void(void)> {};
-	auto loop		   = [&] {
-		 mock_function.Call();
-		 imukit.stop();
+	EXPECT_CALL(mock_lsm6dox, setPowerMode(interface::LSM6DSOX::PowerMode::Off)).Times(1);
+
+	imukit.stop();
+}
+
+TEST_F(IMUKitTest, getEulerAngles)
+{
+	auto [pitch, roll, yaw] = imukit.getEulerAngles();
+
+	EXPECT_EQ(pitch, 0);
+	EXPECT_EQ(roll, 0);
+	EXPECT_EQ(yaw, 0);
+}
+
+TEST_F(IMUKitTest, setOrigin)
+{
+	// TODO(@ladislas): add tests
+	imukit.setOrigin();
+}
+
+TEST_F(IMUKitTest, onDataReady)
+{
+	testing::MockFunction<void(EulerAngles angles)> mock_callback {};
+
+	imukit.onEulerAnglesReady(mock_callback.AsStdFunction());
+
+	const auto data_initial = interface::LSM6DSOX::SensorData {
+		.xl = {.x = 0.F, .y = 0.F, .z = 0.F}, .gy = {.x = 0.F, .y = 0.F, .z = 0.F }
 	};
 
-	stub_event_loop.spy_setNumberOfLoops(2);
-	EXPECT_CALL(mock_function, Call()).Times(1);
+	EXPECT_CALL(mock_callback, Call);
 
-	stub_event_loop.registerCallback(loop);
-	imukit.start();
-}
+	mock_lsm6dox.call_drdy_callback(data_initial);
 
-TEST_F(IMUKitTest, run)
-{
-	auto mock_function = MockFunction<void(void)> {};
-	auto loop		   = [&] {
-		 mock_function.Call();
-		 imukit.stop();
-		 imukit.run();
+	const auto angles_initial = imukit.getEulerAngles();
+
+	spy_kernel_addElapsedTimeToTickCount(80ms);
+
+	const auto data_updated = interface::LSM6DSOX::SensorData {
+		.xl = {.x = 1.F, .y = 2.F, .z = 3.F}, .gy = {.x = 1.F, .y = 2.F, .z = 3.F }
 	};
 
-	stub_event_loop.spy_setNumberOfLoops(2);
-	EXPECT_CALL(mock_function, Call()).Times(1);
+	EXPECT_CALL(mock_callback, Call);
 
-	stub_event_loop.registerCallback(loop);
-	imukit.start();
+	mock_lsm6dox.call_drdy_callback(data_updated);
+
+	auto angles_updated = imukit.getEulerAngles();
+
+	EXPECT_NE(angles_initial.pitch, angles_updated.pitch);
+	EXPECT_NE(angles_initial.roll, angles_updated.roll);
+	EXPECT_NE(angles_initial.yaw, angles_updated.yaw);
 }
 
-TEST_F(IMUKitTest, computeAnglesNullAccelerations)
+TEST_F(IMUKitTest, onDataReadyEmptyEulerAngleCallback)
 {
-	accel_data = {0.F, 0.F, 0.F};
-	gyro_data  = {0.F, 0.F, 0.F};
+	imukit.onEulerAnglesReady({});
 
-	EXPECT_CALL(accel, getXYZ).WillRepeatedly(Return(accel_data));
-	EXPECT_CALL(gyro, getXYZ).WillRepeatedly(Return(gyro_data));
+	const auto data_initial = interface::LSM6DSOX::SensorData {
+		.xl = {.x = 0.F, .y = 0.F, .z = 0.F}, .gy = {.x = 0.F, .y = 0.F, .z = 0.F }
+	};
 
-	auto [pitch, roll, yaw] = imukit.getAngles();
+	mock_lsm6dox.call_drdy_callback(data_initial);
 
-	for (auto i = 0; i < 100; ++i) {
-		imukit.computeAngles();
+	const auto angles_initial = imukit.getEulerAngles();
 
-		auto [pitch, roll, yaw] = imukit.getAngles();
-		EXPECT_EQ(pitch, 0);
-		EXPECT_EQ(roll, 0);
-		EXPECT_EQ(yaw, 180);
-	}
-}
+	spy_kernel_addElapsedTimeToTickCount(80ms);
 
-TEST_F(IMUKitTest, defaultPosition)
-{
-	accel_data = {0.F, 0.F, 1000.F};
+	const auto data_updated = interface::LSM6DSOX::SensorData {
+		.xl = {.x = 1.F, .y = 2.F, .z = 3.F}, .gy = {.x = 1.F, .y = 2.F, .z = 3.F }
+	};
 
-	EXPECT_CALL(accel, getXYZ).WillRepeatedly(Return(accel_data));
-	EXPECT_CALL(gyro, getXYZ).Times(AnyNumber());
+	mock_lsm6dox.call_drdy_callback(data_updated);
 
-	for (auto i = 0; i < 100; ++i) {
-		imukit.computeAngles();
-	}
+	auto angles_updated = imukit.getEulerAngles();
 
-	auto [pitch, roll, yaw] = imukit.getAngles();
-
-	EXPECT_EQ(pitch, 0);
-	EXPECT_EQ(roll, 0);
-	EXPECT_EQ(yaw, 180);
-}
-
-TEST_F(IMUKitTest, robotRolled90DegreesOnTheTop)
-{
-	accel_data = {1000.F, 0.F, 0.F};
-
-	EXPECT_CALL(accel, getXYZ).WillRepeatedly(Return(accel_data));
-	EXPECT_CALL(gyro, getXYZ).Times(AnyNumber());
-
-	for (auto i = 0; i < 100; ++i) {
-		imukit.computeAngles();
-	}
-
-	auto [pitch, roll, yaw] = imukit.getAngles();
-
-	EXPECT_TRUE(-100 < pitch && pitch < -80);
-	EXPECT_EQ(roll, 0);
-	EXPECT_EQ(yaw, 180);
-}
-
-TEST_F(IMUKitTest, robotRolled90DegreesOnTheBottom)
-{
-	accel_data = {-1000.F, 0.F, 0.F};
-
-	EXPECT_CALL(accel, getXYZ).WillRepeatedly(Return(accel_data));
-	EXPECT_CALL(gyro, getXYZ).Times(AnyNumber());
-
-	for (auto i = 0; i < 100; ++i) {
-		imukit.computeAngles();
-	}
-
-	auto [pitch, roll, yaw] = imukit.getAngles();
-
-	EXPECT_TRUE(80 < pitch && pitch < 100);
-	EXPECT_EQ(roll, 0);
-	EXPECT_EQ(yaw, 180);
-}
-
-TEST_F(IMUKitTest, robotRolled90DegreesOnItsLeft)
-{
-	accel_data = {0.F, 1000.F, 0.F};
-
-	EXPECT_CALL(accel, getXYZ).WillRepeatedly(Return(accel_data));
-	EXPECT_CALL(gyro, getXYZ).Times(AnyNumber());
-
-	for (auto i = 0; i < 100; ++i) {
-		imukit.computeAngles();
-	}
-
-	auto [pitch, roll, yaw] = imukit.getAngles();
-
-	EXPECT_EQ(pitch, 0);
-	EXPECT_TRUE(80 < roll && roll < 100);
-	EXPECT_EQ(yaw, 180);
-}
-
-TEST_F(IMUKitTest, robotRolled90DegreesOnItsRight)
-{
-	accel_data = {0.F, -1000.F, 0.F};
-
-	EXPECT_CALL(accel, getXYZ).WillRepeatedly(Return(accel_data));
-	EXPECT_CALL(gyro, getXYZ).Times(AnyNumber());
-
-	for (auto i = 0; i < 100; ++i) {
-		imukit.computeAngles();
-	}
-
-	auto [pitch, roll, yaw] = imukit.getAngles();
-
-	EXPECT_EQ(pitch, 0);
-	EXPECT_TRUE(-100 < roll && roll < -80);
-	EXPECT_EQ(yaw, 180);
+	EXPECT_NE(angles_initial.pitch, angles_updated.pitch);
+	EXPECT_NE(angles_initial.roll, angles_updated.roll);
+	EXPECT_NE(angles_initial.yaw, angles_updated.yaw);
 }

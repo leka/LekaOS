@@ -4,20 +4,18 @@
 
 #include "rtos/ThisThread.h"
 
-#include "CoreAccelerometer.h"
 #include "CoreBufferedSerial.h"
-#include "CoreGyroscope.h"
 #include "CoreI2C.h"
-#include "CoreLSM6DSOX.h"
+#include "CoreLSM6DSOX.hpp"
 #include "CoreMotor.h"
 #include "CorePwm.h"
 #include "CoreRFIDReaderCR95HF.h"
 #include "CoreTimeout.h"
 #include "EventLoopKit.h"
 #include "HelloWorld.h"
-#include "IMUKit.h"
+#include "IMUKit.hpp"
 #include "LogKit.h"
-#include "MotionKit.h"
+#include "MotionKit.hpp"
 #include "RFIDKit.h"
 
 using namespace std::chrono;
@@ -61,28 +59,25 @@ namespace imu {
 
 	namespace internal {
 
+		auto drdy_irq = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
 		CoreI2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
-		EventLoopKit event_loop {};
+		auto event_queue = CoreEventQueue();
 
 	}	// namespace internal
 
-	CoreLSM6DSOX lsm6dsox(internal::i2c);
-	CoreAccelerometer accel(lsm6dsox);
-	CoreGyroscope gyro(lsm6dsox);
+	CoreLSM6DSOX lsm6dsox(internal::i2c, internal::drdy_irq);
 
 }	// namespace imu
 
-auto imukit = IMUKit {imu::internal::event_loop, imu::accel, imu::gyro};
+auto imukit = IMUKit {imu::lsm6dsox};
 
 namespace motion::internal {
 
-	EventLoopKit event_loop {};
 	CoreTimeout timeout {};
 
 }	// namespace motion::internal
 
-auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::event_loop,
-							motion::internal::timeout};
+auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::timeout};
 
 namespace rfid {
 
@@ -99,33 +94,25 @@ void onMagicCardAvailable(const MagicCard &card)
 {
 	switch (card.getId()) {
 		case (MagicCard::number_1.getId()):
-			motionkit.rotate(1, Rotation::counterClockwise, [] { log_debug("Callback end of rotation"); });
+			motionkit.startYawRotation(90, Rotation::counterClockwise, [] { log_debug("Callback end of rotation"); });
 			break;
 		case (MagicCard::number_2.getId()):
-			motionkit.rotate(2, Rotation::clockwise);
+			motionkit.startYawRotation(180, Rotation::clockwise);
 			break;
 		case (MagicCard::number_3.getId()):
-			motionkit.rotate(3, Rotation::counterClockwise);
+			motionkit.startYawRotation(360, Rotation::counterClockwise);
 			break;
 		case (MagicCard::number_4.getId()):
-			motionkit.rotate(4, Rotation::clockwise);
+			motionkit.startYawRotation(540, Rotation::clockwise);
 			break;
 		case (MagicCard::number_5.getId()):
-			motionkit.rotate(5, Rotation::counterClockwise);
+			motionkit.startYawRotation(720, Rotation::counterClockwise);
 			break;
 		case (MagicCard::number_6.getId()):
-			motionkit.rotate(6, Rotation::clockwise);
+			motionkit.startYawRotation(1080, Rotation::clockwise);
 			break;
 		case (MagicCard::number_7.getId()):
-			motionkit.rotate(7, Rotation::counterClockwise);
-			break;
-		case (MagicCard::number_8.getId()):
-			motionkit.startStabilisation();
-			rtos::ThisThread::sleep_for(10s);
-			motionkit.stop();
-			break;
-		case (MagicCard::number_9.getId()):
-			motionkit.startStabilisation();
+			motionkit.startYawRotation(1080, Rotation::counterClockwise);
 			break;
 		case (MagicCard::number_10.getId()):
 			motionkit.stop();
@@ -146,7 +133,6 @@ auto main() -> int
 
 	imu::lsm6dsox.init();
 	imukit.init();
-	motionkit.init();
 	rfidkit.init();
 
 	rfidkit.onTagActivated(onMagicCardAvailable);

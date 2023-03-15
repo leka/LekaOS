@@ -32,9 +32,8 @@ jobs:
 
       - name: Config & Build
         run: |
-          make clean
+          make deep_clean
           make pull_deps
-          make config_tools
           make config
           make
 

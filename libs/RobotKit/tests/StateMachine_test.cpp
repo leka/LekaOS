@@ -74,6 +74,7 @@ TEST_F(StateMachineTest, stateSetupEventSetupCompleteGuardIsChargingTrue)
 	EXPECT_CALL(mock_rc, runLaunchingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
 	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout).Times(1);
 
 	sm.process_event(lksm::event::setup_complete {});
 
@@ -87,6 +88,7 @@ TEST_F(StateMachineTest, stateIdleEventTimeout)
 	EXPECT_CALL(mock_rc, stopSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, stopWaitingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, startSleepingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout).Times(1);
 
 	sm.process_event(lksm::event::sleep_timeout_did_end {});
 
@@ -142,6 +144,7 @@ TEST_F(StateMachineTest, stateWorkingEventChargeDidStart)
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
 	EXPECT_CALL(mock_rc, stopIdleTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout).Times(1);
 
 	sm.process_event(lksm::event::charge_did_start {});
 
@@ -177,6 +180,7 @@ TEST_F(StateMachineTest, stateSleepEventCommandReceived)
 	sm.set_current_states(lksm::state::sleeping);
 
 	EXPECT_CALL(mock_rc, stopSleepingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startIdleTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startWorkingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, isBleConnected).WillOnce(Return(true));
@@ -191,8 +195,10 @@ TEST_F(StateMachineTest, stateSleepEventChargeDidStart)
 	sm.set_current_states(lksm::state::sleeping);
 
 	EXPECT_CALL(mock_rc, stopSleepingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, isCharging).WillOnce(Return(true));
 	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout).Times(1);
 
 	sm.process_event(lksm::event::charge_did_start {});
 
@@ -204,6 +210,7 @@ TEST_F(StateMachineTest, stateSleepEventEmergencyStop)
 	sm.set_current_states(lksm::state::sleeping);
 
 	EXPECT_CALL(mock_rc, stopSleepingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, stopActuatorsAndLcd).Times(1);
 
 	sm.process_event(lksm::event::emergency_stop {});
@@ -216,6 +223,7 @@ TEST_F(StateMachineTest, stateSleepEventAutonomousActivityRequested)
 	sm.set_current_states(lksm::state::sleeping);
 
 	EXPECT_CALL(mock_rc, stopSleepingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
 
 	EXPECT_CALL(mock_rc, startAutonomousActivityMode).Times(1);
 
@@ -223,6 +231,19 @@ TEST_F(StateMachineTest, stateSleepEventAutonomousActivityRequested)
 
 	EXPECT_TRUE(sm.is(lksm::state::autonomous_activities));
 }
+
+// TEST_F(StateMachineTest, stateSleepEventTimeout)
+// {
+// 	sm.set_current_states(lksm::state::sleeping);
+
+// 	EXPECT_CALL(mock_rc, stopSleepingBehavior).Times(1);
+// 	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
+// 	EXPECT_CALL(mock_rc, suspendHardwareForDeepSleep).Times(1);
+
+// 	sm.process_event(lksm::event::deep_sleep_timeout_did_end {});
+
+// 	EXPECT_TRUE(sm.is(lksm::state::deep_sleeping));
+// }
 
 TEST_F(StateMachineTest, stateIdleEventChargeDidStart)
 {
@@ -232,6 +253,7 @@ TEST_F(StateMachineTest, stateIdleEventChargeDidStart)
 	EXPECT_CALL(mock_rc, stopSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, stopWaitingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout).Times(1);
 
 	sm.process_event(lksm::event::charge_did_start {});
 
@@ -258,6 +280,7 @@ TEST_F(StateMachineTest, stateChargingEventChargeDidStopBleConnected)
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
 	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(true));
 	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startIdleTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startWorkingBehavior).Times(1);
 
@@ -275,6 +298,7 @@ TEST_F(StateMachineTest, stateChargingEventChargeDidStopBleDisconnected)
 	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startWaitingBehavior).Times(1);
 	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
 
 	sm.process_event(lksm::event::charge_did_stop {});
 
@@ -286,6 +310,7 @@ TEST_F(StateMachineTest, stateChargingEventUpdateRequestedGuardTrue)
 	sm.set_current_states(lksm::state::charging);
 
 	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, isReadyToUpdate).WillOnce(Return(true));
 	EXPECT_CALL(mock_rc, applyUpdate).Times(1);
 
@@ -311,6 +336,7 @@ TEST_F(StateMachineTest, stateChargingEventEmergencyStop)
 	sm.set_current_states(lksm::state::charging);
 
 	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, stopActuatorsAndLcd).Times(1);
 
 	sm.process_event(lksm::event::emergency_stop {});
@@ -323,6 +349,9 @@ TEST_F(StateMachineTest, stateChargingEventAutonomousActivityRequested)
 	sm.set_current_states(lksm::state::charging);
 
 	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startAutonomousActivityMode).Times(0);
 
 	sm.process_event(lksm::event::autonomous_activities_mode_requested {});
@@ -330,12 +359,28 @@ TEST_F(StateMachineTest, stateChargingEventAutonomousActivityRequested)
 	EXPECT_TRUE(sm.is(lksm::state::charging));
 }
 
+// TEST_F(StateMachineTest, stateChargingEventTimeout)
+// {
+// 	sm.set_current_states(lksm::state::charging);
+
+// 	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
+// 	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
+// 	EXPECT_CALL(mock_rc, suspendHardwareForDeepSleep).Times(1);
+
+// 	sm.process_event(lksm::event::deep_sleep_timeout_did_end {});
+
+// 	EXPECT_TRUE(sm.is(lksm::state::deep_sleeping));
+// }
+
 TEST_F(StateMachineTest, stateSleepingEventBleConnection)
 {
 	sm.set_current_states(lksm::state::sleeping, lksm::state::disconnected);
 
+	EXPECT_CALL(mock_rc, stopSleepingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startConnectionBehavior).Times(1);
 	EXPECT_CALL(mock_rc, startWorkingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startIdleTimeout).Times(1);
 
 	sm.process_event(lksm::event::ble_connection {});
 
@@ -357,8 +402,11 @@ TEST_F(StateMachineTest, stateIdleEventBleConnection)
 {
 	sm.set_current_states(lksm::state::idle, lksm::state::disconnected);
 
+	EXPECT_CALL(mock_rc, stopWaitingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, stopSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startConnectionBehavior).Times(1);
 	EXPECT_CALL(mock_rc, startWorkingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startIdleTimeout).Times(1);
 
 	sm.process_event(lksm::event::ble_connection {});
 
@@ -380,7 +428,10 @@ TEST_F(StateMachineTest, stateChargingEventBleConnection)
 {
 	sm.set_current_states(lksm::state::charging, lksm::state::disconnected);
 
+	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
 	EXPECT_CALL(mock_rc, startConnectionBehavior).Times(1);
 
@@ -393,7 +444,10 @@ TEST_F(StateMachineTest, stateChargingEventBleDisconnection)
 {
 	sm.set_current_states(lksm::state::charging, lksm::state::connected);
 
+	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startDisconnectionBehavior).Times(1);
 
 	sm.process_event(lksm::event::ble_disconnection {});
@@ -405,7 +459,10 @@ TEST_F(StateMachineTest, stateChargingEventCommandReceived)
 {
 	sm.set_current_states(lksm::state::charging);
 
+	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout).Times(1);
 
 	sm.process_event(lksm::event::command_received {});
 
@@ -491,6 +548,7 @@ TEST_F(StateMachineTest, stateEmergencyStoppedEventChargeDidStartGuardIsCharging
 
 	EXPECT_CALL(mock_rc, resetEmergencyStopCounter).Times(1);
 	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout).Times(1);
 
 	sm.process_event(lksm::event::charge_did_start {});
 
@@ -506,6 +564,7 @@ TEST_F(StateMachineTest, stateEmergencyStoppedEventCommandReceivedGuardIsChargin
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
 
 	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout).Times(1);
 
 	sm.process_event(lksm::event::command_received {});
 
@@ -516,7 +575,9 @@ TEST_F(StateMachineTest, stateEmergencyStoppedEventCommandReceivedGuardIsChargin
 {
 	sm.set_current_states(lksm::state::emergency_stopped, lksm::state::disconnected);
 
+	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(false));
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
+	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(false));
 
 	sm.process_event(lksm::event::command_received {});
 
@@ -531,6 +592,7 @@ TEST_F(StateMachineTest, stateEmergencyStoppedEventBleConnectionGuardIsCharging)
 
 	EXPECT_CALL(mock_rc, resetEmergencyStopCounter).Times(1);
 	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startConnectionBehavior).Times(1);
 
 	sm.process_event(lksm::event::ble_connection {});
@@ -546,6 +608,7 @@ TEST_F(StateMachineTest, stateEmergencyStoppedEventAutonomousActivityRequestedGu
 
 	EXPECT_CALL(mock_rc, resetEmergencyStopCounter).Times(1);
 	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout).Times(1);
 
 	sm.process_event(lksm::event::autonomous_activities_mode_requested {});
 
@@ -559,6 +622,7 @@ TEST_F(StateMachineTest, stateAutonomousActivityEventBleConnection)
 	EXPECT_CALL(mock_rc, stopAutonomousActivityMode).Times(1);
 	EXPECT_CALL(mock_rc, startConnectionBehavior).Times(1);
 	EXPECT_CALL(mock_rc, startWorkingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startIdleTimeout).Times(1);
 
 	sm.process_event(lksm::event::ble_connection {});
 
@@ -612,6 +676,7 @@ TEST_F(StateMachineTest, stateAutonomousActivityEventChargeDidStartGuardIsChargi
 
 	EXPECT_CALL(mock_rc, stopAutonomousActivityMode).Times(1);
 	EXPECT_CALL(mock_rc, startChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout).Times(1);
 
 	sm.process_event(lksm::event::charge_did_start {});
 
@@ -634,8 +699,13 @@ TEST_F(StateMachineTest, stateAutonomousActivityEventAutonomousActivityExitedDis
 {
 	sm.set_current_states(lksm::state::autonomous_activities, lksm::state::disconnected);
 
+	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(false));
+
 	EXPECT_CALL(mock_rc, stopAutonomousActivityMode).Times(1);
+
+	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(false));
 	EXPECT_CALL(mock_rc, startWaitingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
 
 	sm.process_event(lksm::event::autonomous_activities_mode_exited {});
 
@@ -650,6 +720,7 @@ TEST_F(StateMachineTest, stateAutonomousActivityEventAutonomousActivityExitedCon
 
 	EXPECT_CALL(mock_rc, stopAutonomousActivityMode).Times(1);
 	EXPECT_CALL(mock_rc, startWorkingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, startIdleTimeout).Times(1);
 
 	sm.process_event(lksm::event::autonomous_activities_mode_exited {});
 
@@ -661,9 +732,10 @@ TEST_F(StateMachineTest, stateChargingEventFileExchangeRequestedGuardTrue)
 	sm.set_current_states(lksm::state::charging);
 
 	EXPECT_CALL(mock_rc, stopChargingBehavior);
+	EXPECT_CALL(mock_rc, stopDeepSleepTimeout);
 
 	EXPECT_CALL(mock_rc, isReadyToFileExchange).WillOnce(Return(true));
-	EXPECT_CALL(mock_rc, onFileExchangeStart);
+	EXPECT_CALL(mock_rc, startFileExchange);
 
 	sm.process_event(lksm::event::file_exchange_start_requested {});
 
@@ -675,7 +747,7 @@ TEST_F(StateMachineTest, stateChargingEventFileExchangeRequestedGuardFalse)
 	sm.set_current_states(lksm::state::charging);
 
 	EXPECT_CALL(mock_rc, isReadyToFileExchange).WillOnce(Return(false));
-	EXPECT_CALL(mock_rc, onFileExchangeStart).Times(0);
+	EXPECT_CALL(mock_rc, startFileExchange).Times(0);
 
 	sm.process_event(lksm::event::file_exchange_start_requested {});
 
@@ -686,10 +758,11 @@ TEST_F(StateMachineTest, stateFileExhangeEventFileExchangeStopRequestedGuardIsCh
 {
 	sm.set_current_states(lksm::state::file_exchange);
 
-	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+	EXPECT_CALL(mock_rc, stopFileExchange);
 
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
 	EXPECT_CALL(mock_rc, startChargingBehavior);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout);
 
 	sm.process_event(lksm::event::file_exchange_stop_requested {});
 
@@ -700,7 +773,7 @@ TEST_F(StateMachineTest, stateFileExhangeEventFileExchangeStopRequestedGuardIsNo
 {
 	sm.set_current_states(lksm::state::file_exchange);
 
-	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+	EXPECT_CALL(mock_rc, stopFileExchange);
 
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
 	EXPECT_CALL(mock_rc, startWorkingBehavior);
@@ -715,12 +788,13 @@ TEST_F(StateMachineTest, stateFileExhangeEventBleDisconnectionGuardIsCharging)
 {
 	sm.set_current_states(lksm::state::file_exchange, lksm::state::connected);
 
-	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+	EXPECT_CALL(mock_rc, stopFileExchange);
 
 	EXPECT_CALL(mock_rc, startDisconnectionBehavior);
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(true));
 
 	EXPECT_CALL(mock_rc, startChargingBehavior);
+	EXPECT_CALL(mock_rc, startDeepSleepTimeout);
 
 	sm.process_event(lksm::event::ble_disconnection {});
 
@@ -731,7 +805,7 @@ TEST_F(StateMachineTest, stateFileExhangeEventBleDisconnectionGuardIsNotCharging
 {
 	sm.set_current_states(lksm::state::file_exchange, lksm::state::connected);
 
-	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+	EXPECT_CALL(mock_rc, stopFileExchange);
 
 	EXPECT_CALL(mock_rc, startDisconnectionBehavior);
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
@@ -748,7 +822,7 @@ TEST_F(StateMachineTest, stateFileExhangeEventEmergencyStop)
 {
 	sm.set_current_states(lksm::state::file_exchange);
 
-	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+	EXPECT_CALL(mock_rc, stopFileExchange);
 
 	EXPECT_CALL(mock_rc, stopActuatorsAndLcd);
 
@@ -761,7 +835,7 @@ TEST_F(StateMachineTest, stateFileExhangeEventUpdateRequestedGuardTrue)
 {
 	sm.set_current_states(lksm::state::file_exchange);
 
-	EXPECT_CALL(mock_rc, onFileExchangeEnd);
+	EXPECT_CALL(mock_rc, stopFileExchange);
 
 	EXPECT_CALL(mock_rc, isReadyToUpdate).WillOnce(Return(true));
 	EXPECT_CALL(mock_rc, applyUpdate);

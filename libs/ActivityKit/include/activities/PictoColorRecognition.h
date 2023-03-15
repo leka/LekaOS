@@ -22,7 +22,7 @@ class PictoColorRecognition : public interface::Activity
 	explicit PictoColorRecognition(RFIDKit &rfidkit, interface::VideoKit &videokit, ReinforcerKit &reinforcerkit)
 		: _rfidkit(rfidkit), _videokit(videokit), _reinforcerkit(reinforcerkit) {};
 
-	void start() final;
+	void start(const std::function<void()> &before_process_callback) final;
 	void stop() final;
 
   private:

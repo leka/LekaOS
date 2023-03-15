@@ -8,13 +8,10 @@
 #include "rtos/ThisThread.h"
 
 #include "CommandKit.h"
-#include "CoreAccelerometer.h"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
-#include "CoreEventFlags.h"
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
-#include "CoreGyroscope.h"
 #include "CoreI2C.h"
 #include "CoreJPEG.hpp"
 #include "CoreJPEGModeDMA.hpp"
@@ -23,7 +20,7 @@
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLED.h"
 #include "CoreLL.h"
-#include "CoreLSM6DSOX.h"
+#include "CoreLSM6DSOX.hpp"
 #include "CoreLTDC.hpp"
 #include "CoreMotor.h"
 #include "CorePwm.h"
@@ -35,6 +32,7 @@
 #include "EventLoopKit.h"
 #include "FATFileSystem.h"
 #include "HelloWorld.h"
+#include "IMUKit.hpp"
 #include "LedKit.h"
 #include "LogKit.h"
 #include "ReinforcerKit.h"
@@ -98,36 +96,32 @@ auto right = CoreMotor {internal::right::dir_1, internal::right::dir_2, internal
 }	// namespace motor
 
 namespace imu {
-
 namespace internal {
 
-	CoreI2C i2c(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
-	EventLoopKit event_loop {};
+	auto drdy_irq = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
+	auto i2c	  = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
 
 }	// namespace internal
 
-CoreLSM6DSOX lsm6dsox(internal::i2c);
-CoreAccelerometer accel(lsm6dsox);
-CoreGyroscope gyro(lsm6dsox);
+CoreLSM6DSOX lsm6dsox(internal::i2c, internal::drdy_irq);
 
 }	// namespace imu
 
-auto imukit = IMUKit {imu::internal::event_loop, imu::accel, imu::gyro};
+auto imukit = IMUKit {imu::lsm6dsox};
 
 namespace motion::internal {
 
-EventLoopKit event_loop {};
 CoreTimeout timeout {};
 
 }	// namespace motion::internal
 
-auto motionkit = MotionKit {motor::left, motor::right, imukit, motion::internal::event_loop, motion::internal::timeout};
+auto motionkit = MotionKit {motor::left, motor::right, imukit, motion::internal::timeout};
 
 namespace display {
 
 namespace internal {
 
-	auto event_flags = CoreEventFlags {};
+	auto event_loop = EventLoopKit {};
 
 	auto corell		   = CoreLL {};
 	auto pixel		   = CGPixel {corell};
@@ -148,7 +142,7 @@ namespace internal {
 
 }	// namespace internal
 
-auto videokit = VideoKit {internal::event_flags, internal::corevideo};
+auto videokit = VideoKit {internal::event_loop, internal::corevideo};
 
 }	// namespace display
 
@@ -259,7 +253,6 @@ auto main() -> int
 
 	imu::lsm6dsox.init();
 	imukit.init();
-	motionkit.init();
 
 	turnOff();
 

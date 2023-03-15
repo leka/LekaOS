@@ -181,3 +181,10 @@ TEST_F(CoreGapTest, onDisconnectionCallback)
 
 	// nothing expected
 }
+
+TEST_F(CoreGapTest, isConnectedDefault)
+{
+	auto is_connected = coregap.isConnected();
+
+	EXPECT_FALSE(is_connected);
+}

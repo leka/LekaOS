@@ -17,7 +17,7 @@ class CoreBufferedSerial : public interface::BufferedSerial
 	MOCK_METHOD(bool, readable, (), (override));
 	MOCK_METHOD(void, disable_input, (), (override));
 	MOCK_METHOD(void, enable_input, (), (override));
-	MOCK_METHOD(void, sigio, (mbed::Callback<void()>), (override));
+	MOCK_METHOD(void, sigio, (std::function<void()> const &), (override));
 };
 
 }	// namespace leka::mock

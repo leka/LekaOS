@@ -80,6 +80,7 @@ TEST_F(BehaviorKitTest, sleeping)
 
 TEST_F(BehaviorKitTest, waiting)
 {
+	EXPECT_CALL(mock_ledkit, stop);
 	EXPECT_CALL(mock_videokit, playVideoOnRepeat);
 	behaviorkit.waiting();
 }
@@ -87,6 +88,7 @@ TEST_F(BehaviorKitTest, waiting)
 TEST_F(BehaviorKitTest, batteryBehaviors)
 {
 	EXPECT_CALL(mock_videokit, displayImage).Times(6);
+	EXPECT_CALL(mock_ledkit, stop);
 	EXPECT_CALL(mock_motor_left, stop()).Times(1);
 	EXPECT_CALL(mock_motor_right, stop()).Times(1);
 
@@ -98,20 +100,20 @@ TEST_F(BehaviorKitTest, batteryBehaviors)
 	behaviorkit.chargingFull();
 }
 
-TEST_F(BehaviorKitTest, bleConnectionWhileCharging)
+TEST_F(BehaviorKitTest, bleConnectionWithoutVideo)
 {
 	EXPECT_CALL(mock_videokit, playVideoOnce).Times(0);
 	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection))).Times(1);
 
-	behaviorkit.bleConnection(false);
+	behaviorkit.bleConnectionWithoutVideo();
 }
 
-TEST_F(BehaviorKitTest, bleConnectionWhileNotCharging)
+TEST_F(BehaviorKitTest, bleConnectionWithVideo)
 {
 	EXPECT_CALL(mock_videokit, playVideoOnce);
 	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection))).Times(1);
 
-	behaviorkit.bleConnection(true);
+	behaviorkit.bleConnectionWithVideo();
 }
 
 TEST_F(BehaviorKitTest, working)

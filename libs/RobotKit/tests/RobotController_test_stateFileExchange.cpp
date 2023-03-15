@@ -18,13 +18,17 @@ TEST_F(RobotControllerTest, stateFileExchangeEventFileExchangeStopRequestedGuard
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber()).InSequence(on_file_exchange_end);
 
+	Sequence start_deep_sleep_timeout_sequence;
+	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(start_deep_sleep_timeout_sequence);
+	EXPECT_CALL(timeout_state_transition, start).InSequence(start_deep_sleep_timeout_sequence);
+
 	Sequence start_charging_behavior_sequence;
 	EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_ledkit, start).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
-	EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
-	EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(timeout_state_internal, onTimeout).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(timeout_state_internal, start).InSequence(start_charging_behavior_sequence);
 
 	rc.state_machine.process_event(lksm::event::file_exchange_stop_requested {});
 
@@ -46,8 +50,8 @@ TEST_F(RobotControllerTest, stateFileExchangeEventFileExchangeStopRequestedGuard
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber()).InSequence(on_file_exchange_end);
 
 	Sequence on_working_entry_sequence;
-	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
-	EXPECT_CALL(timeout, start).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(timeout_state_transition, start).InSequence(on_working_entry_sequence);
 	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_working_entry_sequence);
 
 	rc.state_machine.process_event(lksm::event::file_exchange_stop_requested {});
@@ -73,13 +77,17 @@ TEST_F(RobotControllerTest, stateFileExchangeEventDisconnectionGuardIsCharging)
 	expectedCallsStopActuators();
 	EXPECT_CALL(mock_ledkit, start).InSequence(start_disconnection_behavior);
 
+	Sequence start_deep_sleep_timeout_sequence;
+	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(start_deep_sleep_timeout_sequence);
+	EXPECT_CALL(timeout_state_transition, start).InSequence(start_deep_sleep_timeout_sequence);
+
 	Sequence start_charging_behavior_sequence;
 	EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_ledkit, start).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
-	EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
-	EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(timeout_state_internal, onTimeout).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(timeout_state_internal, start).InSequence(start_charging_behavior_sequence);
 
 	rc.state_machine.process_event(lksm::event::ble_disconnection {});
 
@@ -105,8 +113,8 @@ TEST_F(RobotControllerTest, stateFileExchangeEventDisconnectionGuardIsNotChargin
 	EXPECT_CALL(mock_ledkit, start).Times(0).InSequence(start_disconnection_behavior);
 
 	Sequence on_idle_sequence;
-	EXPECT_CALL(timeout, onTimeout).InSequence(on_idle_sequence);
-	EXPECT_CALL(timeout, start).InSequence(on_idle_sequence);
+	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(on_idle_sequence);
+	EXPECT_CALL(timeout_state_transition, start).InSequence(on_idle_sequence);
 	EXPECT_CALL(mock_videokit, playVideoOnRepeat).InSequence(on_idle_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(on_idle_sequence);
 
@@ -120,6 +128,8 @@ TEST_F(RobotControllerTest, stateFileExchangeEventEmergencyStopDelayNotOver)
 	rc.state_machine.set_current_states(lksm::state::file_exchange);
 
 	auto maximal_delay_before_over = 9s;
+
+	expectedCallsResetAutonomousActivitiesTimeout();
 
 	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
@@ -143,6 +153,8 @@ TEST_F(RobotControllerTest, stateFileExchangeEventEmergencyStopDelayOver)
 	EXPECT_CALL(mock_ears, hide).Times(1);
 	EXPECT_CALL(mock_lcd, turnOff).Times(1);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(2);
+
+	expectedCallsResetAutonomousActivitiesTimeout();
 
 	spy_kernel_addElapsedTimeToTickCount(delay_over);
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
@@ -171,7 +183,7 @@ TEST_F(RobotControllerTest, stateFileExchangeEventUpdateRequestedGuardIsReadyToU
 	EXPECT_CALL(battery, level).InSequence(is_ready_to_update_sequence).WillRepeatedly(Return(returned_level));
 	EXPECT_CALL(firmware_update, isVersionAvailable).WillOnce(Return(true));
 
-	EXPECT_CALL(firmware_update, loadUpdate).WillOnce(Return(true));
+	EXPECT_CALL(firmware_update, loadFirmware).WillOnce(Return(true));
 	EXPECT_CALL(mock_on_update_loaded_callback, Call);
 
 	rc.state_machine.process_event(lksm::event::update_requested {});
@@ -201,7 +213,7 @@ TEST_F(RobotControllerTest, stateFileExchangeEventUpdateRequestedGuardIsReadyToU
 	EXPECT_CALL(battery, level).Times(0).InSequence(is_ready_to_update_sequence);
 	EXPECT_CALL(firmware_update, isVersionAvailable).WillOnce(Return(returned_is_version_available));
 
-	EXPECT_CALL(firmware_update, loadUpdate).Times(0);
+	EXPECT_CALL(firmware_update, loadFirmware).Times(0);
 	EXPECT_CALL(mock_on_update_loaded_callback, Call).Times(0);
 
 	rc.state_machine.process_event(lksm::event::update_requested {});
@@ -231,7 +243,7 @@ TEST_F(RobotControllerTest, stateFileExchangeEventUpdateRequestedGuardIsReadyToU
 	EXPECT_CALL(battery, level).InSequence(is_ready_to_update_sequence).WillRepeatedly(Return(returned_level));
 	EXPECT_CALL(firmware_update, isVersionAvailable).WillOnce(Return(returned_is_version_available));
 
-	EXPECT_CALL(firmware_update, loadUpdate).Times(0);
+	EXPECT_CALL(firmware_update, loadFirmware).Times(0);
 	EXPECT_CALL(mock_on_update_loaded_callback, Call).Times(0);
 
 	rc.state_machine.process_event(lksm::event::update_requested {});
@@ -261,7 +273,7 @@ TEST_F(RobotControllerTest, stateFileExchangeEventUpdateRequestedGuardIsReadyToU
 	EXPECT_CALL(battery, level).InSequence(is_ready_to_update_sequence).WillRepeatedly(Return(returned_level));
 	EXPECT_CALL(firmware_update, isVersionAvailable).WillOnce(Return(returned_is_version_available));
 
-	EXPECT_CALL(firmware_update, loadUpdate).Times(0);
+	EXPECT_CALL(firmware_update, loadFirmware).Times(0);
 	EXPECT_CALL(mock_on_update_loaded_callback, Call).Times(0);
 
 	rc.state_machine.process_event(lksm::event::update_requested {});

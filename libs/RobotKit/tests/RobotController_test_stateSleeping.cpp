@@ -9,13 +9,14 @@ TEST_F(RobotControllerTest, stateSleepingEventCommandReceived)
 	rc.state_machine.set_current_states(lksm::state::sleeping, lksm::state::connected);
 
 	Sequence on_exit_sleeping_sequence;
-	EXPECT_CALL(timeout, stop).InSequence(on_exit_sleeping_sequence);
+	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_sleeping_sequence);
+	EXPECT_CALL(timeout_state_internal, stop).InSequence(on_exit_sleeping_sequence);
 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_sleeping_sequence);
 	expectedCallsStopMotors();
 
 	Sequence on_working_entry_sequence;
-	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
-	EXPECT_CALL(timeout, start).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(timeout_state_transition, start).InSequence(on_working_entry_sequence);
 	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_working_entry_sequence);
 
 	rc.state_machine.process_event(lksm::event::command_received {});
@@ -30,7 +31,8 @@ TEST_F(RobotControllerTest, stateSleepingEventBleConnection)
 	EXPECT_CALL(battery, isCharging).WillRepeatedly(Return(false));
 
 	Sequence on_exit_sleeping_sequence;
-	EXPECT_CALL(timeout, stop).InSequence(on_exit_sleeping_sequence);
+	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_sleeping_sequence);
+	EXPECT_CALL(timeout_state_internal, stop).InSequence(on_exit_sleeping_sequence);
 
 	expectedCallsStopActuators();
 	Sequence on_ble_connection_sequence;
@@ -41,8 +43,8 @@ TEST_F(RobotControllerTest, stateSleepingEventBleConnection)
 	EXPECT_CALL(mock_lcd, turnOn).Times(1).InSequence(on_ble_connection_sequence);
 
 	Sequence on_working_entry_sequence;
-	EXPECT_CALL(timeout, onTimeout).InSequence(on_working_entry_sequence);
-	EXPECT_CALL(timeout, start).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(on_working_entry_sequence);
+	EXPECT_CALL(timeout_state_transition, start).InSequence(on_working_entry_sequence);
 	EXPECT_CALL(mock_videokit, displayImage).InSequence(on_working_entry_sequence);
 
 	rc.state_machine.process_event(lksm::event::ble_connection {});
@@ -57,17 +59,22 @@ TEST_F(RobotControllerTest, stateSleepingEventChargeDidStartGuardIsChargingTrue)
 	EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
 
 	Sequence on_exit_sleeping_sequence;
-	EXPECT_CALL(timeout, stop).InSequence(on_exit_sleeping_sequence);
+	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_sleeping_sequence);
+	EXPECT_CALL(timeout_state_internal, stop).InSequence(on_exit_sleeping_sequence);
 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_sleeping_sequence);
 	expectedCallsStopMotors();
+
+	Sequence start_deep_sleep_timeout_sequence;
+	EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(start_deep_sleep_timeout_sequence);
+	EXPECT_CALL(timeout_state_transition, start).InSequence(start_deep_sleep_timeout_sequence);
 
 	Sequence start_charging_behavior_sequence;
 	EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_ledkit, start).InSequence(start_charging_behavior_sequence);
 	EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
-	EXPECT_CALL(timeout, onTimeout).InSequence(start_charging_behavior_sequence);
-	EXPECT_CALL(timeout, start).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(timeout_state_internal, onTimeout).InSequence(start_charging_behavior_sequence);
+	EXPECT_CALL(timeout_state_internal, start).InSequence(start_charging_behavior_sequence);
 
 	// TODO: Specify which BLE service and what is expected if necessary
 	EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _));
@@ -97,6 +104,8 @@ TEST_F(RobotControllerTest, stateSleepingEventEmergencyStopDelayNotOver)
 
 	auto maximal_delay_before_over = 9s;
 
+	expectedCallsResetAutonomousActivitiesTimeout();
+
 	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
 
@@ -110,7 +119,8 @@ TEST_F(RobotControllerTest, stateSleepingEventEmergencyStopDelayOver)
 	auto delay_over = 11s;
 
 	Sequence on_exit_sleeping_sequence;
-	EXPECT_CALL(timeout, stop).InSequence(on_exit_sleeping_sequence);
+	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_sleeping_sequence);
+	EXPECT_CALL(timeout_state_internal, stop).InSequence(on_exit_sleeping_sequence);
 
 	EXPECT_CALL(mock_motor_left, stop).Times(AtLeast(1));
 	EXPECT_CALL(mock_motor_right, stop).Times(AtLeast(1));
@@ -118,6 +128,8 @@ TEST_F(RobotControllerTest, stateSleepingEventEmergencyStopDelayOver)
 	EXPECT_CALL(mock_ears, hide).Times(1);
 	EXPECT_CALL(mock_lcd, turnOff).Times(1);
 	EXPECT_CALL(mock_videokit, stopVideo).Times(AtLeast(1));
+
+	expectedCallsResetAutonomousActivitiesTimeout();
 
 	spy_kernel_addElapsedTimeToTickCount(delay_over);
 	rc.onMagicCardAvailable(MagicCard::emergency_stop);
@@ -134,6 +146,8 @@ TEST_F(RobotControllerTest, stateSleepingDiceRollDetectedDelayNotOver)
 
 	EXPECT_CALL(mock_videokit, displayImage).Times(0);
 
+	expectedCallsResetAutonomousActivitiesTimeout();
+
 	spy_kernel_addElapsedTimeToTickCount(maximal_delay_before_over);
 	rc.onMagicCardAvailable(MagicCard::dice_roll);
 
@@ -148,10 +162,12 @@ TEST_F(RobotControllerTest, stateSleepingDiceRollDetectedDelayOverEventAutonomou
 	auto minimal_delay_over = 1001ms;
 
 	Sequence on_exit_sleeping_sequence;
-	EXPECT_CALL(timeout, stop).InSequence(on_exit_sleeping_sequence);
+	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_sleeping_sequence);
+	EXPECT_CALL(timeout_state_internal, stop).InSequence(on_exit_sleeping_sequence);
 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_sleeping_sequence);
 	expectedCallsStopMotors();
 
+	expectedCallsResetAutonomousActivitiesTimeout();
 	EXPECT_CALL(mock_videokit, displayImage).Times(1);
 
 	spy_kernel_addElapsedTimeToTickCount(minimal_delay_over);
@@ -159,3 +175,25 @@ TEST_F(RobotControllerTest, stateSleepingDiceRollDetectedDelayOverEventAutonomou
 
 	EXPECT_TRUE(rc.state_machine.is(lksm::state::autonomous_activities));
 }
+
+// TEST_F(RobotControllerTest, stateSleepingEventTimeout)
+// {
+// 	Sequence get_on_deep_sleep_timeout_callback;
+// 	EXPECT_CALL(timeout_state_transition, onTimeout)
+// 		.InSequence(get_on_deep_sleep_timeout_callback)
+// 		.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_deep_sleep_timeout));
+// 	EXPECT_CALL(timeout_state_transition, start).InSequence(get_on_deep_sleep_timeout_callback);
+// 	rc.startDeepSleepTimeout();
+
+// 	rc.state_machine.set_current_states(lksm::state::sleeping);
+
+// 	Sequence on_exit_sleeping_sequence;
+// 	EXPECT_CALL(timeout_state_transition, stop).InSequence(on_exit_sleeping_sequence);
+// 	EXPECT_CALL(timeout_state_internal, stop).InSequence(on_exit_sleeping_sequence);
+// 	EXPECT_CALL(mock_videokit, stopVideo).InSequence(on_exit_sleeping_sequence);
+// 	expectedCallsStopMotors();
+
+// 	on_deep_sleep_timeout();
+
+// 	EXPECT_TRUE(rc.state_machine.is(lksm::state::deep_sleeping));
+// }

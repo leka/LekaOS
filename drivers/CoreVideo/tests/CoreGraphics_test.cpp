@@ -39,7 +39,7 @@ TEST_F(CoreGraphicsTest, drawRectangle)
 	auto rectangle_height	   = 40;
 	auto expected_color		   = CGColor::magenta;
 
-	CoreGraphics::FilledRectangle rectangle;
+	auto rectangle	   = CGRectangle {};
 	rectangle.origin.x = starting_pixel_column;
 	rectangle.origin.y = starting_pixel_line;
 	rectangle.width	   = rectangle_width;
