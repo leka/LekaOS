@@ -8,7 +8,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - "config/toolchain_gcc_arm_none_eabi_url"
+      - "config/arm_gnu_toolchain_url"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
