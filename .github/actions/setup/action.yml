@@ -69,8 +69,10 @@ runs:
       if: steps.cache_arm_toolchain.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        wget ${{ env.ARM_TOOLCHAIN_URL }}
-        tar -xjf ${{ env.ARM_TOOLCHAIN_FILENAME }} && rm -rf ${{ env.ARM_TOOLCHAIN_FILENAME }}
+        wget -q ${{ env.ARM_TOOLCHAIN_URL }} -O ${{ env.ARM_TOOLCHAIN_ARCHIVE_FILENAME }}
+        mkdir -p ${{ env.ARM_TOOLCHAIN_EXTRACT_DIRECTORY }}
+        tar -xf ${{ env.ARM_TOOLCHAIN_ARCHIVE_FILENAME }} -C ${{ env.ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} --strip-components=1
+        rm -rf ${{ env.ARM_TOOLCHAIN_ARCHIVE_FILENAME }}
         mv ${{ env.ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} ${{ env.RUNNER_HOME }}/gcc-arm-none-eabi
 
     - name: Add ARM GCC Toolchain to path
