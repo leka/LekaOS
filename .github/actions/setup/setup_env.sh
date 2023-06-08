@@ -82,8 +82,8 @@ echo "CCACHE_LOGFILE=$CCACHE_LOGFILE" >> $GITHUB_ENV
 # MARK: - ARM GCC Toolchain (generic)
 #
 
-ARM_TOOLCHAIN_ARCHIVE_FILENAME="gcc-arm-none-eabi.tar.bz2"
-ARM_TOOLCHAIN_EXTRACT_DIRECTORY="gcc-arm-none-eabi"
+ARM_TOOLCHAIN_ARCHIVE_FILENAME="arm-gnu-toolchain.tar.bz2"
+ARM_TOOLCHAIN_EXTRACT_DIRECTORY="arm-gnu-toolchain"
 ARM_TOOLCHAIN_URL=$(cat config/toolchain_gcc_arm_none_eabi_url)
 
 echo "ARM_TOOLCHAIN_ARCHIVE_FILENAME=$ARM_TOOLCHAIN_ARCHIVE_FILENAME" >> $GITHUB_ENV
