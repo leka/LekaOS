@@ -53,8 +53,8 @@ runs:
       env:
         RUNNER_HOME: ${{ env.RUNNER_HOME }}
         ENABLE_LOG_DEBUG: ${{ inputs.enable_log_debug }}
-        BASE_ARM_TOOLCHAIN_VERSION: ${{ env.BASE_ARM_TOOLCHAIN_VERSION }}
-        HEAD_ARM_TOOLCHAIN_VERSION: ${{ env.HEAD_ARM_TOOLCHAIN_VERSION }}
+        BASE_ARM_GNU_TOOLCHAIN_VERSION: ${{ env.BASE_ARM_GNU_TOOLCHAIN_VERSION }}
+        HEAD_ARM_GNU_TOOLCHAIN_VERSION: ${{ env.HEAD_ARM_GNU_TOOLCHAIN_VERSION }}
         BASE_REF: ${{ env.BASE_REF }}
         HEAD_REF: ${{ env.HEAD_REF }}
         BASE_SHA: ${{ env.BASE_SHA }}

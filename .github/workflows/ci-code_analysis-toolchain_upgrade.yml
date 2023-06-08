@@ -52,11 +52,11 @@ jobs:
       - name: Install BASE Arm GCC Toolchain
         run: |
           rm -rf ${{ env.RUNNER_HOME }}/arm_gnu_toolchain
-          wget -c ${{ env.BASE_ARM_TOOLCHAIN_URL }} -O ${{ env.BASE_ARM_TOOLCHAIN_ARCHIVE }}
-          mkdir -p ${{ env.BASE_ARM_TOOLCHAIN_EXTRACT_DIRECTORY }}
-          tar -xvf ${{ env.BASE_ARM_TOOLCHAIN_ARCHIVE }} -C ${{ env.BASE_ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} --strip-components=1
-          rm -rf ${{ env.BASE_ARM_TOOLCHAIN_ARCHIVE }}
-          mv ${{ env.BASE_ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} ${{ env.RUNNER_HOME }}/arm_gnu_toolchain
+          wget -c ${{ env.BASE_ARM_GNU_TOOLCHAIN_URL }} -O ${{ env.BASE_ARM_GNU_TOOLCHAIN_ARCHIVE_FILENAME }}
+          mkdir -p ${{ env.BASE_ARM_GNU_TOOLCHAIN_EXTRACT_DIRECTORY }}
+          tar -xvf ${{ env.BASE_ARM_GNU_TOOLCHAIN_ARCHIVE_FILENAME }} -C ${{ env.BASE_ARM_GNU_TOOLCHAIN_EXTRACT_DIRECTORY }} --strip-components=1
+          rm -rf ${{ env.BASE_ARM_GNU_TOOLCHAIN_ARCHIVE_FILENAME }}
+          mv ${{ env.BASE_ARM_GNU_TOOLCHAIN_EXTRACT_DIRECTORY }} ${{ env.RUNNER_HOME }}/arm_gnu_toolchain
 
       - name: Add BASE Arm GCC Toolchain to path
         run: |
@@ -69,8 +69,8 @@ jobs:
 
       - name: Add BASE Arm GCC Toolchain version to env
         run: |
-          BASE_ARM_TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc ).*')
-          echo "BASE_ARM_TOOLCHAIN_VERSION=$BASE_ARM_TOOLCHAIN_VERSION" >> $GITHUB_ENV
+          BASE_ARM_GNU_TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc ).*')
+          echo "BASE_ARM_GNU_TOOLCHAIN_VERSION=$BASE_ARM_GNU_TOOLCHAIN_VERSION" >> $GITHUB_ENV
 
       #
       # Mark: - Config & build
@@ -106,7 +106,7 @@ jobs:
           retention-days: 1
 
     outputs:
-      BASE_ARM_TOOLCHAIN_VERSION: ${{ env.BASE_ARM_TOOLCHAIN_VERSION }}
+      BASE_ARM_GNU_TOOLCHAIN_VERSION: ${{ env.BASE_ARM_GNU_TOOLCHAIN_VERSION }}
 
   #
   # Mark: - Job - build_head_toolchain
@@ -144,11 +144,11 @@ jobs:
       - name: Install HEAD Arm GCC Toolchain
         run: |
           rm -rf ${{ env.RUNNER_HOME }}/arm_gnu_toolchain
-          wget -c ${{ env.HEAD_ARM_TOOLCHAIN_URL }} -O ${{ env.HEAD_ARM_TOOLCHAIN_ARCHIVE }}
-          mkdir -p ${{ env.HEAD_ARM_TOOLCHAIN_EXTRACT_DIRECTORY }}
-          tar -xvf ${{ env.HEAD_ARM_TOOLCHAIN_ARCHIVE }} -C ${{ env.HEAD_ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} --strip-components=1
-          rm -rf ${{ env.HEAD_ARM_TOOLCHAIN_ARCHIVE }}
-          mv ${{ env.HEAD_ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} ${{ env.RUNNER_HOME }}/arm_gnu_toolchain
+          wget -c ${{ env.HEAD_ARM_GNU_TOOLCHAIN_URL }} -O ${{ env.HEAD_ARM_GNU_TOOLCHAIN_ARCHIVE_FILENAME }}
+          mkdir -p ${{ env.HEAD_ARM_GNU_TOOLCHAIN_EXTRACT_DIRECTORY }}
+          tar -xvf ${{ env.HEAD_ARM_GNU_TOOLCHAIN_ARCHIVE_FILENAME }} -C ${{ env.HEAD_ARM_GNU_TOOLCHAIN_EXTRACT_DIRECTORY }} --strip-components=1
+          rm -rf ${{ env.HEAD_ARM_GNU_TOOLCHAIN_ARCHIVE_FILENAME }}
+          mv ${{ env.HEAD_ARM_GNU_TOOLCHAIN_EXTRACT_DIRECTORY }} ${{ env.RUNNER_HOME }}/arm_gnu_toolchain
 
       - name: Add HEAD Arm GCC Toolchain to path
         run: |
@@ -161,8 +161,8 @@ jobs:
 
       - name: Add HEAD Arm GCC Toolchain version to env
         run: |
-          HEAD_ARM_TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc ).*')
-          echo "HEAD_ARM_TOOLCHAIN_VERSION=$HEAD_ARM_TOOLCHAIN_VERSION" >> $GITHUB_ENV
+          HEAD_ARM_GNU_TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc ).*')
+          echo "HEAD_ARM_GNU_TOOLCHAIN_VERSION=$HEAD_ARM_GNU_TOOLCHAIN_VERSION" >> $GITHUB_ENV
 
       #
       # Mark: - Config & build
@@ -198,7 +198,7 @@ jobs:
           retention-days: 1
 
     outputs:
-      HEAD_ARM_TOOLCHAIN_VERSION: ${{ env.HEAD_ARM_TOOLCHAIN_VERSION }}
+      HEAD_ARM_GNU_TOOLCHAIN_VERSION: ${{ env.HEAD_ARM_GNU_TOOLCHAIN_VERSION }}
 
   #
   # Mark: - Job - compare_bin_map_files
@@ -242,5 +242,5 @@ jobs:
           base_dir: build_artifacts/base_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
           head_dir: build_artifacts/head_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
         env:
-          BASE_ARM_TOOLCHAIN_VERSION: ${{ needs.build_base_toolchain.outputs.BASE_ARM_TOOLCHAIN_VERSION }}
-          HEAD_ARM_TOOLCHAIN_VERSION: ${{ needs.build_head_toolchain.outputs.HEAD_ARM_TOOLCHAIN_VERSION }}
+          BASE_ARM_GNU_TOOLCHAIN_VERSION: ${{ needs.build_base_toolchain.outputs.BASE_ARM_GNU_TOOLCHAIN_VERSION }}
+          HEAD_ARM_GNU_TOOLCHAIN_VERSION: ${{ needs.build_head_toolchain.outputs.HEAD_ARM_GNU_TOOLCHAIN_VERSION }}
