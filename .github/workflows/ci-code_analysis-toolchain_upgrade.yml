@@ -143,20 +143,10 @@ jobs:
 
       - name: Install HEAD Arm GCC Toolchain
         run: |
-          rm -rf ${{ env.RUNNER_HOME }}/arm_gnu_toolchain
-          wget -c ${{ env.HEAD_ARM_GNU_TOOLCHAIN_URL }} -O ${{ env.HEAD_ARM_GNU_TOOLCHAIN_ARCHIVE_FILENAME }}
-          mkdir -p ${{ env.HEAD_ARM_GNU_TOOLCHAIN_EXTRACT_DIRECTORY }}
-          tar -xvf ${{ env.HEAD_ARM_GNU_TOOLCHAIN_ARCHIVE_FILENAME }} -C ${{ env.HEAD_ARM_GNU_TOOLCHAIN_EXTRACT_DIRECTORY }} --strip-components=1
-          rm -rf ${{ env.HEAD_ARM_GNU_TOOLCHAIN_ARCHIVE_FILENAME }}
-          mv ${{ env.HEAD_ARM_GNU_TOOLCHAIN_EXTRACT_DIRECTORY }} ${{ env.RUNNER_HOME }}/arm_gnu_toolchain
-
-      - name: Add HEAD Arm GCC Toolchain to path
-        run: |
-          echo "${{ env.RUNNER_HOME }}/arm_gnu_toolchain/bin" >> $GITHUB_PATH
+          brew install arm-none-eabi-gcc
 
       - name: Test HEAD Arm GCC Toolchain
         run: |
-          ls -al ${{ env.RUNNER_HOME }}/arm_gnu_toolchain/bin
           arm-none-eabi-gcc -v
 
       - name: Add HEAD Arm GCC Toolchain version to env
