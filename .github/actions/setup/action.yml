@@ -59,14 +59,14 @@ runs:
     #
 
     - name: Cache ARM GCC Toolchain
-      id: cache_arm_toolchain
+      id: global_cache-arm_gnu_toolchain
       uses: actions/cache@v3
       with:
         path: ${{ env.RUNNER_HOME }}/arm-gnu-toolchain
         key: ${{ runner.os }}-global_cache-arm_gnu_toolchain-${{ hashFiles('config/toolchain_gcc_arm_none_eabi_url') }}
 
     - name: Install ARM GCC Toolchain
-      if: steps.cache_arm_toolchain.outputs.cache-hit != 'true'
+      if: steps.global_cache-arm_gnu_toolchain.outputs.cache-hit != 'true'
       shell: bash
       run: |
         wget -q ${{ env.ARM_TOOLCHAIN_URL }} -O ${{ env.ARM_TOOLCHAIN_ARCHIVE_FILENAME }}
