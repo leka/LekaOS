@@ -143,6 +143,7 @@ jobs:
 
       - name: Install HEAD Arm GCC Toolchain
         run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           brew install arm-none-eabi-gcc
 
       - name: Test HEAD Arm GCC Toolchain
