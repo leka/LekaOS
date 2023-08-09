@@ -149,6 +149,7 @@ jobs:
       - name: Test HEAD Arm GCC Toolchain
         run: |
           arm-none-eabi-gcc -v
+          which arm-none-eabi-gcc
 
       - name: Add HEAD Arm GCC Toolchain version to env
         run: |
