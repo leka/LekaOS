@@ -141,6 +141,10 @@ jobs:
             ${{ runner.os }}-ccache-toolchain_upgrade-
             ${{ runner.os }}-ccache-
 
+      - name: Set up Homebrew
+        id: set-up-homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
       - name: Install HEAD Arm GCC Toolchain
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
