@@ -55,44 +55,6 @@ runs:
         make mcuboot_symlink_files
 
     #
-    # Mark: - ARM GCC Toolchain
-    #
-
-    - name: Cache ARM GCC Toolchain
-      id: global_cache-arm_gnu_toolchain
-      uses: actions/cache@v3
-      with:
-        path: ${{ env.RUNNER_HOME }}/arm-gnu-toolchain
-        key: ${{ runner.os }}-global_cache-arm_gnu_toolchain-${{ hashFiles('config/toolchain_gcc_arm_none_eabi_url') }}
-
-    - name: Install ARM GCC Toolchain
-      if: steps.global_cache-arm_gnu_toolchain.outputs.cache-hit != 'true'
-      shell: bash
-      run: |
-        wget -q ${{ env.ARM_GNU_TOOLCHAIN_URL }} -O ${{ env.ARM_GNU_TOOLCHAIN_ARCHIVE_FILENAME }}
-        mkdir -p ${{ env.ARM_GNU_TOOLCHAIN_EXTRACT_DIRECTORY }}
-        tar -xf ${{ env.ARM_GNU_TOOLCHAIN_ARCHIVE_FILENAME }} -C ${{ env.ARM_GNU_TOOLCHAIN_EXTRACT_DIRECTORY }} --strip-components=1
-        rm -rf ${{ env.ARM_GNU_TOOLCHAIN_ARCHIVE_FILENAME }}
-        mv ${{ env.ARM_GNU_TOOLCHAIN_EXTRACT_DIRECTORY }} ${{ env.RUNNER_HOME }}/arm-gnu-toolchain
-
-    - name: Add ARM GCC Toolchain to path
-      shell: bash
-      run: |
-        echo "${{ env.RUNNER_HOME }}/arm-gnu-toolchain/bin" >> $GITHUB_PATH
-
-    - name: Test ARM GCC Toolchain
-      shell: bash
-      run: |
-        ls -al ${{ env.RUNNER_HOME }}/arm-gnu-toolchain/bin
-        arm-none-eabi-gcc -v
-
-    - name: Add toolchain version to env
-      shell: bash
-      run: |
-        TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc \().*' | sed 's/))/)/g')
-        echo "TOOLCHAIN_VERSION=$TOOLCHAIN_VERSION" >> $GITHUB_ENV
-
-    #
     # Mark: - Misc. tools
     #
 
