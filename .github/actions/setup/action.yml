@@ -89,7 +89,7 @@ runs:
     - name: Add toolchain version to env
       shell: bash
       run: |
-        TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc \().*(?= \(re)' | sed 's/)/ -/g')
+        TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc ).*' | sed 's/)/ -/g')
         echo "TOOLCHAIN_VERSION=$TOOLCHAIN_VERSION" >> $GITHUB_ENV
 
     #
