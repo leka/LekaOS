@@ -2,6 +2,7 @@
 #include <algorithm>
 
 #include "FileManagerKit.h"
+#include "LogKit.h"
 
 using namespace leka;
 
@@ -59,7 +60,14 @@ auto WebKit::downloadFile(DownloadableFile const &file) -> bool
 		if (auto is_open = _file_handle.open(file.to_path, "w"); is_open) {
 			auto save_to_file = [this](const char *string, uint32_t length) { _file_handle.write(string, length); };
 
+			log_info("send request...");
 			response = _network.sendRequest(_certificate.data(), _url.data(), save_to_file);
+			log_info("response received");
+
+			auto size = response.headers_fields.size();
+			for (auto index = 0; index < size; index++) {
+				log_info("%s: %s", response.headers_fields[index]->c_str(), response.headers_values[index]->c_str());
+			}
 
 			if (is_redirected = responseHasRedirectionUrl(response); is_redirected) {
 				getRedirectionUrl(response);
@@ -99,6 +107,7 @@ void WebKit::getRedirectionUrl(HttpResponse const &response)
 	auto location_field_index	 = std::distance(header_fields.begin(), location_field_iterator);
 
 	_url = *response.headers_values[location_field_index];
+	log_info("new url %s", _url.c_str());
 }
 
 auto WebKit::getUrl() const -> const std::string &
