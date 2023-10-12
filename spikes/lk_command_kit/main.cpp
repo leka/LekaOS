@@ -44,6 +44,7 @@
 #include "commands/MotorsCommand.h"
 #include "commands/ReinforcerCommand.h"
 #include "commands/TestCommand.h"
+#include "commands/WebCommand.h"
 
 using namespace leka;
 using namespace std::chrono;
