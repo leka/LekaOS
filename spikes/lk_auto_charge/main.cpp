@@ -17,6 +17,7 @@
 #include "CorePwm.h"
 #include "CoreTimeout.h"
 #include "EventLoopKit.h"
+#include "HappyToupie.h"
 #include "HelloWorld.h"
 #include "IMUKit.hpp"
 #include "LogKit.h"
@@ -100,6 +101,7 @@ auto blekit			  = BLEKit {};
 
 auto seal_strategy =
 	SealStrategy {event_loop, timeout, battery::cells, motors::left::motor, motors::right::motor, imukit};
+auto happy_toupie = HappyToupie {event_loop, timeout, battery::cells, motors::left::motor, motors::right::motor};
 
 auto last_strategy = uint8_t {0x00};
 
@@ -108,8 +110,12 @@ void runStrategy(uint8_t id)
 	if (id == 0x01) {
 		seal_strategy.start();
 		last_strategy = id;
+	} else if (id == 0x02) {
+		happy_toupie.start();
+		last_strategy = id;
 	} else {
 		seal_strategy.stop();
+		happy_toupie.stop();
 	}
 }
 
