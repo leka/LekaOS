@@ -14,6 +14,7 @@ target_sources(spike_lk_auto_charge
 	main.cpp
 	SealStrategy.cpp
 	HappyToupie.cpp
+	HappyFishy.cpp
 )
 
 target_link_libraries(spike_lk_auto_charge
