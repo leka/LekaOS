@@ -5,8 +5,8 @@ jinja2>=2.11.3
 intelhex>=2.3.0,<3.0.0
 mbed-tools
 mbed-os-tools
-pyelftools
+pyelftools>=0.27,<=0.28
 
 # needed for signing secure images
-cryptography
-cbor
+cryptography>=3.2,<4
+cbor>=1.0.0
