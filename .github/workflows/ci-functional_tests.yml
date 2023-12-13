@@ -26,6 +26,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Setup
+        run: |
+          brew update && brew upgrade
+          brew upgrade arm-gcc-bin
+          python3 -m pip install -U --user -r ./tools/config/mbed_requirements.txt
+
       #
       # Mark: - Config & Build
       #
