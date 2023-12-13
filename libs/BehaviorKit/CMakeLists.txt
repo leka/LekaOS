@@ -15,10 +15,12 @@ target_sources(BehaviorKit
 )
 
 target_link_libraries(BehaviorKit
+	EventLoopKit
 )
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
+		tests/BehaviorID_test.cpp
 		tests/BehaviorKit_test.cpp
 	)
 endif()
