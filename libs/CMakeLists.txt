@@ -4,6 +4,7 @@
 
 add_subdirectory(${LIBS_DIR}/ActivityKit)
 add_subdirectory(${LIBS_DIR}/BatteryKit)
+add_subdirectory(${LIBS_DIR}/BehaviorKit)
 add_subdirectory(${LIBS_DIR}/BehaviorKitDeprecated)
 add_subdirectory(${LIBS_DIR}/BLEKit)
 add_subdirectory(${LIBS_DIR}/ColorKit)
