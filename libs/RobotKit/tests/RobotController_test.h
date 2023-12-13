@@ -10,7 +10,7 @@
 #include "ble_mocks.h"
 
 #include "ActivityKit.h"
-#include "BehaviorKit.h"
+#include "BehaviorKitDeprecated.h"
 #include "CommandKit.h"
 #include "CoreBufferedSerial.h"
 #include "CorePwm.h"
@@ -99,7 +99,7 @@ class RobotControllerTest : public testing::Test
 	mock::CoreLCD mock_lcd {};
 	mock::VideoKit mock_videokit {};
 
-	BehaviorKit bhvkit {mock_videokit, mock_ledkit, mock_motor_left, mock_motor_right};
+	BehaviorKitDeprecated bhvkit {mock_videokit, mock_ledkit, mock_motor_left, mock_motor_right};
 
 	CoreBufferedSerial serial {RFID_UART_TX, RFID_UART_RX, 57600};
 	CoreRFIDReaderCR95HF reader {serial};

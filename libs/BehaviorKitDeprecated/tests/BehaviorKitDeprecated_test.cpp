@@ -2,7 +2,7 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "BehaviorKit.h"
+#include "BehaviorKitDeprecated.h"
 
 #include "LedKitAnimations.h"
 #include "gmock/gmock.h"
@@ -21,10 +21,10 @@ MATCHER_P(isSameAnimation, expected_animation_type, "")
 	return is_same;
 }
 
-class BehaviorKitTest : public ::testing::Test
+class BehaviorKitDeprecatedTest : public ::testing::Test
 {
   protected:
-	BehaviorKitTest() : behaviorkit(mock_videokit, mock_ledkit, mock_motor_left, mock_motor_right) {};
+	BehaviorKitDeprecatedTest() : behaviorkit(mock_videokit, mock_ledkit, mock_motor_left, mock_motor_right) {};
 
 	// void SetUp() override {}
 	// void TearDown() override {}
@@ -36,15 +36,15 @@ class BehaviorKitTest : public ::testing::Test
 	mock::CoreMotor mock_motor_left {};
 	mock::CoreMotor mock_motor_right {};
 
-	BehaviorKit behaviorkit;
+	BehaviorKitDeprecated behaviorkit;
 };
 
-TEST_F(BehaviorKitTest, initialization)
+TEST_F(BehaviorKitDeprecatedTest, initialization)
 {
 	ASSERT_NE(&behaviorkit, nullptr);
 }
 
-TEST_F(BehaviorKitTest, spinLeftAnySpeed)
+TEST_F(BehaviorKitDeprecatedTest, spinLeftAnySpeed)
 {
 	auto expected_speed = 0.7;
 
@@ -54,7 +54,7 @@ TEST_F(BehaviorKitTest, spinLeftAnySpeed)
 	behaviorkit.spinLeft(expected_speed);
 }
 
-TEST_F(BehaviorKitTest, spinRightAnySpeed)
+TEST_F(BehaviorKitDeprecatedTest, spinRightAnySpeed)
 {
 	auto expected_speed = 0.3;
 
@@ -64,13 +64,13 @@ TEST_F(BehaviorKitTest, spinRightAnySpeed)
 	behaviorkit.spinRight(expected_speed);
 }
 
-TEST_F(BehaviorKitTest, launching)
+TEST_F(BehaviorKitDeprecatedTest, launching)
 {
 	EXPECT_CALL(mock_videokit, displayImage);
 	behaviorkit.launching();
 }
 
-TEST_F(BehaviorKitTest, sleeping)
+TEST_F(BehaviorKitDeprecatedTest, sleeping)
 {
 	EXPECT_CALL(mock_videokit, playVideoOnce);
 	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::sleeping))).Times(1);
@@ -78,14 +78,14 @@ TEST_F(BehaviorKitTest, sleeping)
 	behaviorkit.sleeping();
 }
 
-TEST_F(BehaviorKitTest, waiting)
+TEST_F(BehaviorKitDeprecatedTest, waiting)
 {
 	EXPECT_CALL(mock_ledkit, stop);
 	EXPECT_CALL(mock_videokit, playVideoOnRepeat);
 	behaviorkit.waiting();
 }
 
-TEST_F(BehaviorKitTest, batteryBehaviors)
+TEST_F(BehaviorKitDeprecatedTest, batteryBehaviors)
 {
 	EXPECT_CALL(mock_videokit, displayImage).Times(6);
 	EXPECT_CALL(mock_ledkit, stop);
@@ -100,7 +100,7 @@ TEST_F(BehaviorKitTest, batteryBehaviors)
 	behaviorkit.chargingFull();
 }
 
-TEST_F(BehaviorKitTest, bleConnectionWithoutVideo)
+TEST_F(BehaviorKitDeprecatedTest, bleConnectionWithoutVideo)
 {
 	EXPECT_CALL(mock_videokit, playVideoOnce).Times(0);
 	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection))).Times(1);
@@ -108,7 +108,7 @@ TEST_F(BehaviorKitTest, bleConnectionWithoutVideo)
 	behaviorkit.bleConnectionWithoutVideo();
 }
 
-TEST_F(BehaviorKitTest, bleConnectionWithVideo)
+TEST_F(BehaviorKitDeprecatedTest, bleConnectionWithVideo)
 {
 	EXPECT_CALL(mock_videokit, playVideoOnce);
 	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection))).Times(1);
@@ -116,19 +116,19 @@ TEST_F(BehaviorKitTest, bleConnectionWithVideo)
 	behaviorkit.bleConnectionWithVideo();
 }
 
-TEST_F(BehaviorKitTest, working)
+TEST_F(BehaviorKitDeprecatedTest, working)
 {
 	EXPECT_CALL(mock_videokit, displayImage);
 	behaviorkit.working();
 }
 
-TEST_F(BehaviorKitTest, fileExchange)
+TEST_F(BehaviorKitDeprecatedTest, fileExchange)
 {
 	EXPECT_CALL(mock_videokit, displayImage);
 	behaviorkit.fileExchange();
 }
 
-TEST_F(BehaviorKitTest, stop)
+TEST_F(BehaviorKitDeprecatedTest, stop)
 {
 	EXPECT_CALL(mock_ledkit, stop);
 	EXPECT_CALL(mock_videokit, stopVideo);
