@@ -42,6 +42,9 @@ class SealStrategy
 	void moveForward(float speed);
 	void moveBackward(float speed);
 
+	void spinToFixRoll(bool is_right_tilted, bool should_move_forward, float speed_offset);
+	void moveToFixPitch(bool should_move_forward, float speed);
+
 	interface::EventLoop &_event_loop;
 	interface::Timeout &_timeout;
 

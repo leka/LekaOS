@@ -53,26 +53,10 @@ void SealStrategy::run()
 
 	if (abs_float(angles.roll) > kRollTolerance) {
 		auto speed_offset = convertToPwmFrom(angles.roll > 0 ? angles.roll : -angles.roll);
-		if (is_right_tilted) {
-			if (should_move_forward) {
-				spinRight(kMinPwmOutput, kMinPwmOutput + speed_offset);
-			} else {
-				spinLeft(kMinPwmOutput, kMinPwmOutput + speed_offset);
-			}
-		} else {
-			if (should_move_forward) {
-				spinLeft(kMinPwmOutput + speed_offset, kMinPwmOutput);
-			} else {
-				spinRight(kMinPwmOutput + speed_offset, kMinPwmOutput);
-			}
-		}
+		spinToFixRoll(is_right_tilted, should_move_forward, speed_offset);
 	} else if (abs_float(angles.pitch) > kPitchTolerance) {
 		auto speed = convertToPwmFrom(angles.pitch > 0 ? angles.pitch : -angles.pitch);
-		if (should_move_forward) {
-			moveForward(speed);
-		} else {
-			moveBackward(speed);
-		}
+		moveToFixPitch(should_move_forward, speed);
 	} else {
 		stopMotors();
 	}
@@ -109,4 +93,30 @@ void SealStrategy::moveBackward(float speed)
 {
 	_motor_left.spin(Rotation::clockwise, speed);
 	_motor_right.spin(Rotation::counterClockwise, speed);
+}
+
+void SealStrategy::spinToFixRoll(bool is_right_tilted, bool should_move_forward, float speed_offset)
+{
+	if (is_right_tilted) {
+		if (should_move_forward) {
+			spinRight(kMinPwmOutput, kMinPwmOutput + speed_offset);
+		} else {
+			spinLeft(kMinPwmOutput, kMinPwmOutput + speed_offset);
+		}
+	} else {
+		if (should_move_forward) {
+			spinLeft(kMinPwmOutput + speed_offset, kMinPwmOutput);
+		} else {
+			spinRight(kMinPwmOutput + speed_offset, kMinPwmOutput);
+		}
+	}
+}
+
+void SealStrategy::moveToFixPitch(bool should_move_forward, float speed)
+{
+	if (should_move_forward) {
+		moveForward(speed);
+	} else {
+		moveBackward(speed);
+	}
 }
