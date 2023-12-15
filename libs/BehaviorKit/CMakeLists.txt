@@ -12,6 +12,7 @@ target_include_directories(BehaviorKit
 target_sources(BehaviorKit
 	PRIVATE
 	source/BehaviorKit.cpp
+	source/behaviors/AutochargeSeal.cpp
 )
 
 target_link_libraries(BehaviorKit
@@ -22,5 +23,6 @@ if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/BehaviorID_test.cpp
 		tests/BehaviorKit_test.cpp
+		tests/BehaviorAutochargeSeal_test.cpp
 	)
 endif()
