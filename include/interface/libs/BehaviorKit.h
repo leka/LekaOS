@@ -17,6 +17,7 @@ class BehaviorKit
   public:
 	virtual ~BehaviorKit() = default;
 
+	virtual void init()														   = 0;
 	virtual void registerBehaviors(std::span<interface::Behavior *> behaviors) = 0;
 	virtual void setTimeoutDuration(std::chrono::seconds duration)			   = 0;
 	virtual void start(interface::Behavior *behavior)						   = 0;

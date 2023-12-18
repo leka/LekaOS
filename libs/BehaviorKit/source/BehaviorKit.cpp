@@ -7,7 +7,7 @@
 
 using namespace leka;
 
-BehaviorKit::BehaviorKit(interface::Timeout &timeout) : _timeout(timeout)
+void BehaviorKit::init()
 {
 	_timeout.onTimeout([this] { stop(); });
 }

@@ -10,6 +10,7 @@
 #include "mocks/leka/Timeout.h"
 
 using namespace leka;
+using namespace std::chrono_literals;
 
 using ::testing::Return;
 
@@ -33,8 +34,18 @@ TEST_F(BehaviorKitTest, initialization)
 	ASSERT_NE(&behaviorkit, nullptr);
 }
 
+TEST_F(BehaviorKitTest, initialize)
+{
+	EXPECT_CALL(mock_timeout, onTimeout);
+
+	behaviorkit.init();
+}
+
 TEST_F(BehaviorKitTest, startFirstBehavior)
 {
+	EXPECT_CALL(mock_timeout, onTimeout);
+	behaviorkit.init();
+
 	auto behaviors = std::to_array<interface::Behavior *>({&mock_behavior_a});
 	behaviorkit.registerBehaviors(behaviors);
 
@@ -47,6 +58,9 @@ TEST_F(BehaviorKitTest, startFirstBehavior)
 
 TEST_F(BehaviorKitTest, startBehaviorNullPtr)
 {
+	EXPECT_CALL(mock_timeout, onTimeout);
+	behaviorkit.init();
+
 	EXPECT_CALL(mock_timeout, stop);
 	EXPECT_CALL(mock_timeout, start).Times(0);
 
@@ -55,6 +69,9 @@ TEST_F(BehaviorKitTest, startBehaviorNullPtr)
 
 TEST_F(BehaviorKitTest, startFirstBehaviorID)
 {
+	EXPECT_CALL(mock_timeout, onTimeout);
+	behaviorkit.init();
+
 	auto behaviors = std::to_array<interface::Behavior *>({
 		&mock_behavior_a,
 		&mock_behavior_b,
@@ -75,6 +92,9 @@ TEST_F(BehaviorKitTest, startFirstBehaviorID)
 
 TEST_F(BehaviorKitTest, startBehaviorIDNotRegistered)
 {
+	EXPECT_CALL(mock_timeout, onTimeout);
+	behaviorkit.init();
+
 	auto behaviors = std::to_array<interface::Behavior *>({
 		&mock_behavior_a,
 		&mock_behavior_b,
@@ -94,6 +114,9 @@ TEST_F(BehaviorKitTest, startBehaviorIDNotRegistered)
 
 TEST_F(BehaviorKitTest, startBehaviorNotRegistered)
 {
+	EXPECT_CALL(mock_timeout, onTimeout);
+	behaviorkit.init();
+
 	auto behaviors = std::to_array<interface::Behavior *>({
 		&mock_behavior_a,
 	});
@@ -108,6 +131,9 @@ TEST_F(BehaviorKitTest, startBehaviorNotRegistered)
 
 TEST_F(BehaviorKitTest, startAnyBehavior)
 {
+	EXPECT_CALL(mock_timeout, onTimeout);
+	behaviorkit.init();
+
 	auto behaviors = std::to_array<interface::Behavior *>({
 		&mock_behavior_a,
 		&mock_behavior_b,
@@ -130,6 +156,9 @@ TEST_F(BehaviorKitTest, startAnyBehavior)
 
 TEST_F(BehaviorKitTest, setTimeoutDuration)
 {
+	EXPECT_CALL(mock_timeout, onTimeout);
+	behaviorkit.init();
+
 	auto behaviors = std::to_array<interface::Behavior *>({&mock_behavior_a});
 	behaviorkit.registerBehaviors(behaviors);
 

@@ -16,8 +16,12 @@ namespace leka {
 class BehaviorKit : public interface::BehaviorKit
 {
   public:
-	explicit BehaviorKit(interface::Timeout &timeout);
+	explicit BehaviorKit(interface::Timeout &timeout) : _timeout(timeout)
+	{
+		// nothing to do
+	}
 
+	void init() final;
 	void registerBehaviors(std::span<interface::Behavior *> behaviors) final;
 	void setTimeoutDuration(std::chrono::seconds duration) final;
 
