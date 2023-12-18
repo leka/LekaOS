@@ -7,9 +7,19 @@
 
 using namespace leka;
 
+BehaviorKit::BehaviorKit(interface::Timeout &timeout) : _timeout(timeout)
+{
+	_timeout.onTimeout([this] { stop(); });
+}
+
 void BehaviorKit::registerBehaviors(std::span<interface::Behavior *> behaviors)
 {
 	_behaviors = behaviors;
+}
+
+void BehaviorKit::setTimeoutDuration(std::chrono::seconds duration)
+{
+	_timeout_duration = duration;
 }
 
 void BehaviorKit::start(interface::Behavior *behavior)
@@ -28,6 +38,10 @@ void BehaviorKit::start(interface::Behavior *behavior)
 	}
 
 	_behavior->run();
+
+	if (_timeout_duration != std::chrono::seconds {0}) {
+		_timeout.start(_timeout_duration);
+	}
 }
 
 void BehaviorKit::start(BehaviorID id)
@@ -49,4 +63,5 @@ void BehaviorKit::stop()
 	if (_behavior != nullptr) {
 		_behavior->stop();
 	}
+	_timeout.stop();
 }

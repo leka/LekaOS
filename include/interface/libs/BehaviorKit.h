@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <chrono>
 #include <span>
 
 #include "interface/Behavior.h"
@@ -17,6 +18,7 @@ class BehaviorKit
 	virtual ~BehaviorKit() = default;
 
 	virtual void registerBehaviors(std::span<interface::Behavior *> behaviors) = 0;
+	virtual void setTimeoutDuration(std::chrono::seconds duration)			   = 0;
 	virtual void start(interface::Behavior *behavior)						   = 0;
 	virtual void start(BehaviorID id)										   = 0;
 	virtual void stop()														   = 0;
