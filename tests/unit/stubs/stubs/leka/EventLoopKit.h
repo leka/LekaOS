@@ -18,7 +18,7 @@ class EventLoopKit : public interface::EventLoop
 
 	void registerCallback(const callback_t &callback) final;
 
-	void start() final;
+	void start(bool loop_once = true) final;
 	void stop() final;
 	void exit() final;
 

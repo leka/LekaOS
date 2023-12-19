@@ -16,11 +16,12 @@ void EventLoopKit::registerCallback(const callback_t &callback)
 	_callback = callback;
 }
 
-void EventLoopKit::start()
+void EventLoopKit::start(bool loop_once)
 {
 	if (_callback == nullptr) {
 		return;
 	}
+	_loop_once = loop_once;
 
 	_flags.set(flag::START);
 }
@@ -43,8 +44,10 @@ void EventLoopKit::loop()
 		return ret;
 	};
 
+	auto should_clear = [&] { return _loop_once; };
+
 	while (keep_running()) {
-		_flags.wait_any(flag::START, true);
+		_flags.wait_any(flag::START, should_clear());
 
 		_callback();
 	}

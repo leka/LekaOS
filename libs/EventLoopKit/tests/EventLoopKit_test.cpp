@@ -40,6 +40,20 @@ TEST_F(EventLoopKitTest, registerCallbackAndStart)
 	event_loop.start();
 }
 
+TEST_F(EventLoopKitTest, registerCallbackAndStartMultipleLoops)
+{
+	auto loop = [&] {
+		mock.Call();
+		event_loop.exit();
+	};
+
+	// ? As we are using threads, this cannot be tested yet
+	EXPECT_CALL(mock, Call()).Times(0);
+
+	event_loop.registerCallback(loop);
+	event_loop.start(false);
+}
+
 TEST_F(EventLoopKitTest, stop)
 {
 	auto loop = [&] {
