@@ -10,6 +10,7 @@
 #include "BLEServiceCommands.h"
 
 #include "BatteryKit.h"
+#include "BehaviorKit.h"
 #include "CoreBattery.h"
 #include "CoreI2C.h"
 #include "CoreLSM6DSOX.hpp"
@@ -24,6 +25,7 @@
 #include "LogKit.h"
 #include "MathUtils.h"
 #include "SealStrategy.h"
+#include "behaviors/AutochargeSeal.h"
 
 using namespace std::chrono;
 using namespace leka;
@@ -100,30 +102,11 @@ auto service_commands = BLEServiceCommands {};
 auto services		  = std::to_array<interface::BLEService *>({&service_commands});
 auto blekit			  = BLEKit {};
 
-auto seal_strategy =
-	SealStrategy {event_loop, timeout, battery::cells, motors::left::motor, motors::right::motor, imukit};
-auto happy_toupie = HappyToupie {event_loop, timeout, battery::cells, motors::left::motor, motors::right::motor};
-auto happy_fishy  = HappyFishy {event_loop, timeout, battery::cells, motors::left::motor, motors::right::motor};
+auto behavior_autocharge_seal = behavior::AutochargeSeal {motors::left::motor, motors::right::motor, imukit};
+auto behaviors				  = std::to_array<interface::Behavior *>({&behavior_autocharge_seal});
+auto behavior_kit			  = BehaviorKit {event_loop};
 
-auto last_strategy = uint8_t {0x00};
-
-void runStrategy(uint8_t id)
-{
-	if (id == 0x01) {
-		seal_strategy.start();
-		last_strategy = id;
-	} else if (id == 0x02) {
-		happy_toupie.start();
-		last_strategy = id;
-	} else if (id == 0x03) {
-		happy_fishy.start();
-		last_strategy = id;
-	} else {
-		seal_strategy.stop();
-		happy_toupie.stop();
-		happy_fishy.stop();
-	}
-}
+auto last_strategy = BehaviorID {0x00};
 
 auto main() -> int
 {
@@ -140,10 +123,16 @@ auto main() -> int
 	imukit.init();
 	imukit.start();
 
-	battery::cells.onChargeDidStop([] { runStrategy(last_strategy); });
+	behavior_kit.registerBehaviors(behaviors);
+
+	battery::cells.onChargeDidStart([] { behavior_kit.stop(); });
+	battery::cells.onChargeDidStop([] { behavior_kit.start(last_strategy); });
 
 	blekit.setServices(services);
-	service_commands.onCommandsReceived([](std::span<uint8_t> _buffer) { runStrategy(_buffer[0]); });
+	service_commands.onCommandsReceived([](std::span<uint8_t> _buffer) {
+		behavior_kit.start(_buffer[0]);
+		last_strategy = _buffer[0];
+	});
 	blekit.init();
 
 	while (true) {

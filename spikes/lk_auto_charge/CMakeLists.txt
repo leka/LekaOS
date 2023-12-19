@@ -28,6 +28,7 @@ target_link_libraries(spike_lk_auto_charge
 	CoreI2C
 	IMUKit
 	BLEKit
+	BehaviorKit
 )
 
 target_link_custom_leka_targets(spike_lk_auto_charge)
