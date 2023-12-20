@@ -10,6 +10,7 @@
 #include <span>
 #include <tuple>
 
+#include "LogKit.h"
 #include "internal/BLEService.h"
 #include "internal/ServicesCharacteristics.h"
 
@@ -72,6 +73,31 @@ class BLEServiceFileExchange : public interface::BLEService
 			}
 		}
 		if (params.handle == file_reception_buffer_characteristic.getValueHandle()) {
+			// START
+			// log_info("Params:");
+			// log_info("  offset: %d", params.offset);
+			// log_info("  len: %d", params.len);
+			// log_info("  error_code: %d", params.error_code);
+			// log_info("  connHandle: %s", params.connHandle);
+			// log_info("  handle: %d", params.handle);
+			// log_info("  data: %s", params.data);
+			// log_info("  writeOp: %d", params.writeOp);
+			// log_info("  status: %d", params.status);
+			/*
+			000:01:16.800 [INFO] [BLEServiceFileExchange.h:77] onDataReceived > Params:
+			000:01:16.800 [INFO] [BLEServiceFileExchange.h:78] onDataReceived >   offset: 122
+			000:01:16.800 [INFO] [BLEServiceFileExchange.h:79] onDataReceived >   len: 6
+			000:01:16.800 [INFO] [BLEServiceFileExchange.h:80] onDataReceived >   error_code: 6
+			000:01:16.800 [INFO] [BLEServiceFileExchange.h:81] onDataReceived >   connHandle:
+			x..ÔÜ6eQ˘ªX_ˇsˇ;..PQï_.'˚™.mΩKΩ±~,pB±1‘î˜Nñæ.µ¸.ÄY`¥®Gbµe∑Î¶ﬂøè.4°ÈE.Í≈º∆êÇõÀÍ-FD.“ÖòÑ_.ﬂìﬂc›H
+			!Vé£âÈÔ„c&“nªªé<Ca,®..ñç◊/y˝«ﬂ.§
+			....'=ÁˇõVá.∫2'.Ip .·åq.>Ï◊.˘P§ˆ".f@.]ÂM÷˙f]0à’‡“.Å.ö»Ækπª{i!åÏÉ..*.ß´õ”úâL∂!Ù.∫ò¢.H˝w€ò˙Û≥œ∫.∞”..µ.¶∑a”7ßp¨
+			000:01:16.800 [INFO] [BLEServiceFileExchange.h:82] onDataReceived >   handle: 30
+			000:01:16.800 [INFO] [BLEServiceFileExchange.h:83] onDataReceived >   data: 345678..
+			000:01:16.800 [INFO] [BLEServiceFileExchange.h:84] onDataReceived >   writeOp: 6
+			000:01:16.800 [INFO] [BLEServiceFileExchange.h:85] onDataReceived >   status: 122
+			*/
+
 			if (params.offset == 0) {
 				file_reception_buffer.fill('\0');
 			}
@@ -80,6 +106,7 @@ class BLEServiceFileExchange : public interface::BLEService
 				auto on_file_data_callback_buffer = std::span {file_reception_buffer.data(), params.len};
 				_on_file_data_callback(on_file_data_callback_buffer);
 			}
+			// STOP
 		}
 	};
 
