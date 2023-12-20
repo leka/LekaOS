@@ -7,16 +7,6 @@
 #include "platform/mbed_power_mgmt.h"
 #include "rtos/ThisThread.h"
 
-#include "BLEKit.h"
-#include "BLEServiceBattery.h"
-#include "BLEServiceCommands.h"
-#include "BLEServiceConfig.h"
-#include "BLEServiceDeviceInformation.h"
-#include "BLEServiceFileExchange.h"
-#include "BLEServiceMagicCard.h"
-#include "BLEServiceMonitoring.h"
-#include "BLEServiceUpdate.h"
-
 #include "ActivityKit.h"
 #include "BatteryKit.h"
 #include "BehaviorKit.h"
@@ -323,9 +313,6 @@ class RobotController : public interface::RobotController
 
 		_rfidkit.init();
 
-		_ble.setServices(services);
-		_ble.init();
-
 		auto _serial_number = _serialnumberkit.getSerialNumber();
 		_service_device_information.setSerialNumber(_serial_number);
 
@@ -587,22 +574,6 @@ class RobotController : public interface::RobotController
 	events::EventQueue _event_queue {};
 
 	FileReception file_reception {};
-
-	BLEKit _ble {};
-
-	BLEServiceBattery _service_battery {};
-	BLEServiceCommands _service_commands {};
-	BLEServiceDeviceInformation _service_device_information {};
-	BLEServiceMonitoring _service_monitoring {};
-	BLEServiceConfig _service_config {};
-	BLEServiceMagicCard _service_magic_card {};
-	BLEServiceFileExchange _service_file_exchange {};
-	BLEServiceUpdate _service_update {};
-
-	std::array<interface::BLEService *, 8> services = {
-		&_service_battery, &_service_commands,	 &_service_device_information, &_service_monitoring,
-		&_service_config,  &_service_magic_card, &_service_file_exchange,	   &_service_update,
-	};
 
 	uint8_t _emergency_stop_counter {0};
 };

@@ -9,6 +9,16 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
+#include "BLEKit.h"
+#include "BLEServiceBattery.h"
+#include "BLEServiceCommands.h"
+#include "BLEServiceConfig.h"
+#include "BLEServiceDeviceInformation.h"
+#include "BLEServiceFileExchange.h"
+#include "BLEServiceMagicCard.h"
+#include "BLEServiceMonitoring.h"
+#include "BLEServiceUpdate.h"
+
 #include "ActivityKit.h"
 #include "ChooseReinforcer.h"
 #include "CoreBattery.h"
@@ -280,6 +290,34 @@ auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, m
 
 auto behaviorkit   = BehaviorKit {videokit, ledkit, motors::left::motor, motors::right::motor};
 auto reinforcerkit = ReinforcerKit {videokit, ledkit, motionkit};
+
+namespace blekit {
+
+	BLEKit instance {};
+	namespace service {
+		BLEServiceBattery battery {};
+		BLEServiceCommands commands {};
+		BLEServiceDeviceInformation device_information {};
+		BLEServiceMonitoring monitoring {};
+		BLEServiceConfig config {};
+		BLEServiceMagicCard magic_card {};
+		BLEServiceFileExchange file_exchange {};
+		BLEServiceUpdate update {};
+
+	}	// namespace service
+
+	auto services = std::to_array<interface::BLEService *>({
+		&service::battery,
+		&service::commands,
+		&service::device_information,
+		&service::monitoring,
+		&service::config,
+		&service::magic_card,
+		&service::file_exchange,
+		&service::update,
+	});
+
+}	// namespace blekit
 
 namespace command {
 
@@ -558,6 +596,9 @@ auto main() -> int
 
 	sd::init();
 	firmware::initializeFlash();
+
+	blekit::instance.setServices(blekit::services);
+	blekit::instance.init();
 
 	commandkit.registerCommand(command::list);
 	activitykit.registerActivities(activities::activities);
