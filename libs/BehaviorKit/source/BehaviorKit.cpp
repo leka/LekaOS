@@ -7,11 +7,6 @@
 
 using namespace leka;
 
-BehaviorKit::BehaviorKit(interface::EventLoop &event_loop) : _event_loop(event_loop)
-{
-	_event_loop.registerCallback([this] { run(); });
-}
-
 void BehaviorKit::registerBehaviors(std::span<interface::Behavior *> behaviors)
 {
 	_behaviors = behaviors;
@@ -32,7 +27,7 @@ void BehaviorKit::start(interface::Behavior *behavior)
 		return;
 	}
 
-	_event_loop.start();
+	_behavior->run();
 }
 
 void BehaviorKit::start(BehaviorID id)
@@ -47,11 +42,6 @@ void BehaviorKit::start(BehaviorID id)
 	}
 
 	start(found_behavior);
-}
-
-void BehaviorKit::run()
-{
-	_behavior->run();
 }
 
 void BehaviorKit::stop()

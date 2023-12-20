@@ -7,7 +7,6 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "mocks/leka/Behavior.h"
-#include "stubs/leka/EventLoopKit.h"
 
 using namespace leka;
 
@@ -21,8 +20,7 @@ class BehaviorKitTest : public ::testing::Test
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	stub::EventLoopKit stub_event_loop {};
-	BehaviorKit behaviorkit {stub_event_loop};
+	BehaviorKit behaviorkit {};
 
 	mock::Behavior mock_behavior_a {};
 	mock::Behavior mock_behavior_b {};

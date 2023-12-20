@@ -8,7 +8,6 @@
 
 #include "interface/Behavior.h"
 #include "interface/libs/BehaviorKit.h"
-#include "interface/libs/EventLoop.h"
 #include "internal/BehaviorID.h"
 
 namespace leka {
@@ -16,7 +15,7 @@ namespace leka {
 class BehaviorKit : public interface::BehaviorKit
 {
   public:
-	explicit BehaviorKit(interface::EventLoop &event_loop);
+	explicit BehaviorKit() = default;
 
 	void registerBehaviors(std::span<interface::Behavior *> behaviors) final;
 
@@ -25,10 +24,6 @@ class BehaviorKit : public interface::BehaviorKit
 	void stop() final;
 
   private:
-	void run();
-
-	interface::EventLoop &_event_loop;
-
 	std::span<interface::Behavior *> _behaviors {};
 	interface::Behavior *_behavior = nullptr;
 };
