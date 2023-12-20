@@ -62,7 +62,7 @@ TEST_F(AutochargeSealTest, id)
 	ASSERT_EQ(autocharge_seal.id(), behavior_id::autocharge_seal);
 }
 
-TEST_F(AutochargeSealTest, runNothingToFix)
+TEST_F(AutochargeSealTest, loopNothingToFix)
 {
 	auto angles = EulerAngles {0, 0, 0};
 
@@ -70,67 +70,67 @@ TEST_F(AutochargeSealTest, runNothingToFix)
 	EXPECT_CALL(mock_motor_left, stop);
 	EXPECT_CALL(mock_motor_right, stop);
 
-	autocharge_seal.run();
+	autocharge_seal.loop();
 }
 
-TEST_F(AutochargeSealTest, runFixPositivePitch)
+TEST_F(AutochargeSealTest, loopFixPositivePitch)
 {
 	auto angles = EulerAngles {10, 0, 0};
 
 	EXPECT_CALL(mock_imukit, getEulerAngles).WillOnce(Return(angles));
 	expectedCallsMoveForward();
 
-	autocharge_seal.run();
+	autocharge_seal.loop();
 }
 
-TEST_F(AutochargeSealTest, runFixNegativePitch)
+TEST_F(AutochargeSealTest, loopFixNegativePitch)
 {
 	auto angles = EulerAngles {-10, 0, 0};
 
 	EXPECT_CALL(mock_imukit, getEulerAngles).WillOnce(Return(angles));
 	expectedCallsMoveBackward();
 
-	autocharge_seal.run();
+	autocharge_seal.loop();
 }
 
-TEST_F(AutochargeSealTest, runFixPositiveRollPositivePitch)
+TEST_F(AutochargeSealTest, loopFixPositiveRollPositivePitch)
 {
 	auto angles = EulerAngles {10, 10, 0};
 
 	EXPECT_CALL(mock_imukit, getEulerAngles).WillOnce(Return(angles));
 	expectedCallsSpinRight();
 
-	autocharge_seal.run();
+	autocharge_seal.loop();
 }
 
-TEST_F(AutochargeSealTest, runFixPositiveRollNegativePitch)
+TEST_F(AutochargeSealTest, loopFixPositiveRollNegativePitch)
 {
 	auto angles = EulerAngles {-10, 10, 0};
 
 	EXPECT_CALL(mock_imukit, getEulerAngles).WillOnce(Return(angles));
 	expectedCallsSpinLeft();
 
-	autocharge_seal.run();
+	autocharge_seal.loop();
 }
 
-TEST_F(AutochargeSealTest, runFixNegativeRollPositivePitch)
+TEST_F(AutochargeSealTest, loopFixNegativeRollPositivePitch)
 {
 	auto angles = EulerAngles {10, -10, 0};
 
 	EXPECT_CALL(mock_imukit, getEulerAngles).WillOnce(Return(angles));
 	expectedCallsSpinLeft();
 
-	autocharge_seal.run();
+	autocharge_seal.loop();
 }
 
-TEST_F(AutochargeSealTest, runFixNegativeRollNegativePitch)
+TEST_F(AutochargeSealTest, loopFixNegativeRollNegativePitch)
 {
 	auto angles = EulerAngles {-10, -10, 0};
 
 	EXPECT_CALL(mock_imukit, getEulerAngles).WillOnce(Return(angles));
 	expectedCallsSpinRight();
 
-	autocharge_seal.run();
+	autocharge_seal.loop();
 }
 
 TEST_F(AutochargeSealTest, stop)

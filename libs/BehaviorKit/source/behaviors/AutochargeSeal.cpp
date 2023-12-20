@@ -27,24 +27,29 @@ void AutochargeSeal::run()
 	must_stop = true;	// TODO: Update for UT
 
 	do {
-		auto angles				 = _imukit.getEulerAngles();
-		auto is_right_tilted	 = angles.roll > 0;
-		auto should_move_forward = angles.pitch > 0;
-
-		auto abs_float = [](float value) { return value > 0 ? value : -value; };
-
-		if (abs_float(angles.roll) > kRollTolerance) {
-			auto speed_offset = convertToPwmFrom(angles.roll > 0 ? angles.roll : -angles.roll);
-			spinToFixRoll(is_right_tilted, should_move_forward, speed_offset);
-		} else if (abs_float(angles.pitch) > kPitchTolerance) {
-			auto speed = convertToPwmFrom(angles.pitch > 0 ? angles.pitch : -angles.pitch);
-			moveToFixPitch(should_move_forward, speed);
-		} else {
-			stopMotors();
-		}
-
-		rtos::ThisThread::sleep_for(10ms);
+		loop();
 	} while (!must_stop);
+}
+
+void AutochargeSeal::loop()
+{
+	auto angles				 = _imukit.getEulerAngles();
+	auto is_right_tilted	 = angles.roll > 0;
+	auto should_move_forward = angles.pitch > 0;
+
+	auto abs_float = [](float value) { return value > 0 ? value : -value; };
+
+	if (abs_float(angles.roll) > kRollTolerance) {
+		auto speed_offset = convertToPwmFrom(angles.roll > 0 ? angles.roll : -angles.roll);
+		spinToFixRoll(is_right_tilted, should_move_forward, speed_offset);
+	} else if (abs_float(angles.pitch) > kPitchTolerance) {
+		auto speed = convertToPwmFrom(angles.pitch > 0 ? angles.pitch : -angles.pitch);
+		moveToFixPitch(should_move_forward, speed);
+	} else {
+		stopMotors();
+	}
+
+	rtos::ThisThread::sleep_for(10ms);
 }
 
 void AutochargeSeal::stop()

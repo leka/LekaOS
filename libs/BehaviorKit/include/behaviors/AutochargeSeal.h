@@ -22,6 +22,7 @@ class AutochargeSeal : public interface::Behavior
 	auto id() -> BehaviorID final;
 
 	void run() final;
+	void loop();
 	void stop() final;
 
   private:
