@@ -22,14 +22,15 @@ auto AutochargeSeal::convertToPwmFrom(float angle) const -> float
 	return res;
 }
 
+// LCOV_EXCL_START
 void AutochargeSeal::run()
 {
-	must_stop = true;	// TODO: Update for UT
-
-	do {
+	must_stop = false;
+	while (!must_stop) {
 		loop();
-	} while (!must_stop);
+	}
 }
+// LCOV_EXCL_STOP
 
 void AutochargeSeal::loop()
 {
