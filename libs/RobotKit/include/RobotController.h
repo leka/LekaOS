@@ -40,6 +40,8 @@
 
 namespace leka {
 
+using namespace system::robot::sm;
+
 template <typename sm_t = boost::sml::sm<system::robot::StateMachine, boost::sml::logger<system::robot::sm::logger>,
 										 boost::sml::thread_safe<CoreMutex>>>
 class RobotController : public interface::RobotController
@@ -86,7 +88,6 @@ class RobotController : public interface::RobotController
 
 	void startSleepTimeout() final
 	{
-		using namespace system::robot::sm;
 		auto on_sleep_timeout = [this] { raise(event::sleep_timeout_did_end {}); };
 		_timeout_state_transition.onTimeout(on_sleep_timeout);
 
@@ -97,7 +98,6 @@ class RobotController : public interface::RobotController
 
 	void startDeepSleepTimeout() final
 	{
-		using namespace system::robot::sm;
 		auto on_deep_sleep_timeout = [this] { raise(event::deep_sleep_timeout_did_end {}); };
 		_timeout_state_transition.onTimeout(on_deep_sleep_timeout);
 
@@ -108,7 +108,6 @@ class RobotController : public interface::RobotController
 
 	void startIdleTimeout() final
 	{
-		using namespace system::robot::sm;
 		auto on_idle_timeout = [this] { raise(event::idle_timeout_did_end {}); };
 		_timeout_state_transition.onTimeout(on_idle_timeout);
 
@@ -134,7 +133,6 @@ class RobotController : public interface::RobotController
 	void startSleepingBehavior() final
 	{
 		using namespace std::chrono_literals;
-		using namespace system::robot::sm;
 
 		_behaviorkit.sleeping();
 		_lcd.turnOn();
@@ -181,7 +179,6 @@ class RobotController : public interface::RobotController
 	void startChargingBehavior() final
 	{
 		using namespace std::chrono_literals;
-		using namespace system::robot::sm;
 
 		onChargingBehavior(_battery_kit.level());
 		_behaviorkit.blinkOnCharge();
@@ -375,26 +372,21 @@ class RobotController : public interface::RobotController
 	void raiseEmergencyStop()
 	{
 		++_emergency_stop_counter;
-		raise(system::robot::sm::event::emergency_stop {});
+		raise(event::emergency_stop {});
 		if (_emergency_stop_counter >= 7) {
 			system_reset();
 		}
 	}
 
-	void raiseAutonomousActivityModeRequested()
-	{
-		raise(system::robot::sm::event::autonomous_activities_mode_requested {});
-	}
+	void raiseAutonomousActivityModeRequested() { raise(event::autonomous_activities_mode_requested {}); }
 
-	void raiseAutonomousActivityModeExited() { raise(system::robot::sm::event::autonomous_activities_mode_exited {}); }
+	void raiseAutonomousActivityModeExited() { raise(event::autonomous_activities_mode_exited {}); }
 
 	void resetAutonomousActivitiesTimeout()
 	{
 		_timeout_autonomous_activities.stop();
 
-		auto on_autonomous_activities_timeout = [this] {
-			raise(system::robot::sm::event::autonomous_activities_mode_exited {});
-		};
+		auto on_autonomous_activities_timeout = [this] { raise(event::autonomous_activities_mode_exited {}); };
 		_timeout_autonomous_activities.onTimeout(on_autonomous_activities_timeout);
 
 		_timeout_autonomous_activities.start(_timeout_autonomous_activities_duration);
@@ -409,7 +401,7 @@ class RobotController : public interface::RobotController
 
 		auto is_playing				= _activitykit.isPlaying();
 		auto NOT_is_playing			= !is_playing;
-		auto is_autonomous_mode		= state_machine.is(system::robot::sm::state::autonomous_activities);
+		auto is_autonomous_mode		= state_machine.is(state::autonomous_activities);
 		auto NOT_is_autonomous_mode = !is_autonomous_mode;
 
 		// TODO(@leka/dev-embedded): Refactor startup_delay_elapsed (see #1196)
@@ -447,8 +439,6 @@ class RobotController : public interface::RobotController
 
 	void registerEvents()
 	{
-		using namespace system::robot::sm;
-
 		// Setup callbacks for monitoring
 
 		_rfidkit.onTagActivated([this](const MagicCard &card) {
@@ -548,7 +538,7 @@ class RobotController : public interface::RobotController
 		_videokit.stopVideo();
 	}
 
-	auto isBleConnected() -> bool final { return state_machine.is(system::robot::sm::state::connected); }
+	auto isBleConnected() -> bool final { return state_machine.is(state::connected); }
 
   private:
 	system::robot::sm::logger logger {};
