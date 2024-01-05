@@ -58,9 +58,27 @@ void CoreGap::setAdvertising(AdvertisingData advertising_data)
 	_gap.setAdvertisingPayload(_advertising_handle, _advertising_data_builder.getAdvertisingData());
 }
 
+void CoreGap::updateConnectionParameters(ble::connection_handle_t handle)
+{
+	// ? : See mbed-os/connectivity/FEATURE_BLE/include/ble/Gap.h for definitions
+	// ? : Apple guidelines https://developer.apple.com/accessories/Accessory-Design-Guidelines.pdf#page=221
+
+	auto min_connection_interval = conn_interval_t {12};   // Min: 15ms = 12*1,25
+	auto max_connection_interval = min_connection_interval;
+	auto slave_latency			 = slave_latency_t {0};
+	auto supervision_timeout	 = supervision_timeout_t {500};
+
+	_gap.updateConnectionParameters(handle, min_connection_interval, max_connection_interval, slave_latency,
+									supervision_timeout);
+}
+
 void CoreGap::onConnectionCallback(const std::function<void()> &callback)
 {
-	_gap_event_handler.onConnectionCallback(callback);
+	_on_connection_callback = [&, callback](connection_handle_t handle) {
+		updateConnectionParameters(handle);
+		callback();
+	};
+	_gap_event_handler.onConnectionCallback(_on_connection_callback);
 }
 
 void CoreGap::onDisconnectionCallback(const std::function<void()> &callback)

@@ -97,7 +97,7 @@ TEST_F(CoreGapEventHandlerTest, onAdvertisingEnd)
 
 TEST_F(CoreGapEventHandlerTest, onConnectionCallback)
 {
-	MockFunction<void()> mock_on_connection_callback;
+	MockFunction<void(ble::connection_handle_t handle)> mock_on_connection_callback;
 
 	core_gap_event_handler.onConnectionCallback(mock_on_connection_callback.AsStdFunction());
 
