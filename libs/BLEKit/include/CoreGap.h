@@ -28,6 +28,8 @@ class CoreGap
 	void startAdvertising();
 	void setAdvertising(AdvertisingData advertising_data);
 
+	void updateConnectionParameters(ble::connection_handle_t handle);
+
 	void onConnectionCallback(const std::function<void()> &callback);
 	void onDisconnectionCallback(const std::function<void()> &callback);
 	[[nodiscard]] auto isConnected() const -> bool;
@@ -40,6 +42,8 @@ class CoreGap
 
 	CoreGapEventHandler _gap_event_handler;
 	ble::Gap &_gap;
+
+	std::function<void(ble::connection_handle_t handle)> _on_connection_callback {};
 };
 
 }	// namespace leka
