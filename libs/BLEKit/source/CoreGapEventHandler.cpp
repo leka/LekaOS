@@ -28,7 +28,8 @@ void CoreGapEventHandler::onConnectionComplete(ConnectionCompleteEvent const &ev
 	}
 
 	if (_on_connection_callback != nullptr) {
-		_on_connection_callback();
+		auto handle = event.getConnectionHandle();
+		_on_connection_callback(handle);
 	}
 	is_connected = true;
 }
@@ -48,7 +49,7 @@ void CoreGapEventHandler::onAdvertisingEnd(AdvertisingEndEvent const &event)
 	_start_advertising();
 }
 
-void CoreGapEventHandler::onConnectionCallback(const std::function<void()> &callback)
+void CoreGapEventHandler::onConnectionCallback(const std::function<void(connection_handle_t)> &callback)
 {
 	_on_connection_callback = callback;
 }
