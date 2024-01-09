@@ -21,6 +21,7 @@ target_sources(BLEKit
 target_link_libraries(BLEKit
 	mbed-os
 	CoreEventQueue
+	CoreTimeout
 	RFIDKit
 )
 

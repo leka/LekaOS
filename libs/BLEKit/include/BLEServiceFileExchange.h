@@ -10,6 +10,7 @@
 #include <span>
 #include <tuple>
 
+#include "CoreTimeout.h"
 #include "LogKit.h"
 #include "internal/BLEService.h"
 #include "internal/ServicesCharacteristics.h"
@@ -102,10 +103,21 @@ class BLEServiceFileExchange : public interface::BLEService
 				file_reception_buffer.fill('\0');
 			}
 			std::copy(params.data, params.data + params.len, file_reception_buffer.begin() + params.offset);
+			// Reset timer on buffer fill + circular queue to avoid colusion
+
 			if (_on_file_data_callback != nullptr) {
-				auto on_file_data_callback_buffer = std::span {file_reception_buffer.data(), params.len};
-				_on_file_data_callback(on_file_data_callback_buffer);
+				using namespace std::chrono_literals;
+				_timeout.stop();
+				buffer_len = params.offset + params.len;
+
+				auto on_timeout = [this] {
+					auto on_file_data_callback_buffer = std::span {file_reception_buffer.data(), buffer_len};
+					_on_file_data_callback(on_file_data_callback_buffer);
+				};
+				_timeout.onTimeout(on_timeout);
+				_timeout.start(1ms);
 			}
+
 			// STOP
 		}
 	};
@@ -172,6 +184,9 @@ class BLEServiceFileExchange : public interface::BLEService
 	std::array<GattCharacteristic *, 5> _characteristic_table {
 		&set_file_exchange_state_characteristic, &file_path_characteristic, &clear_file_characteristic,
 		&file_reception_buffer_characteristic, &file_sha256_characteristic};
+
+	CoreTimeout _timeout {};
+	uint8_t buffer_len {0};
 };
 
 }	// namespace leka
