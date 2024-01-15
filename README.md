@@ -26,6 +26,7 @@ Follow the guide:
 - [MbedOS - SPI Clock Frequency](./docs/mbed-os/SPI.md)
 
 ## List of dependencies
+
 - [armmbed/mbed-os](https://github.com/armmbed/mbed-os/)
 - [boost-ext/sml](https://github.com/boost-ext/sml)
 - [boost-ext/ut](https://github.com/boost-ext/ut)
