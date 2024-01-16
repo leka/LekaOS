@@ -25,6 +25,20 @@ Follow the guide:
 - [Tests](./docs/leka/Tests.md)
 - [MbedOS - SPI Clock Frequency](./docs/mbed-os/SPI.md)
 
+## List of dependencies
+
+- [armmbed/mbed-os](https://github.com/armmbed/mbed-os/)
+- [boost-ext/sml](https://github.com/boost-ext/sml)
+- [boost-ext/ut](https://github.com/boost-ext/ut)
+- [google/googletest](https://github.com/google/googletest)
+- [mcu-tools/mcuboot](https://github.com/mcu-tools/mcuboot)
+- [Neargye/semver](https://github.com/Neargye/semver)
+- [STMicroelectronics/STM32CubeF7](https://github.com/STMicroelectronics/STM32CubeF7/blob/master/Utilities/JPEG/jpeg_utils.c)
+- [STMicroelectronics/hts221-pid](https://github.com/STMicroelectronics/hts221-pid)
+- [STMicroelectronics/lsm6dsox-pid](https://github.com/STMicroelectronics/lsm6dsox-pid)
+- [xioTechnologies/Fusion](https://github.com/xioTechnologies/Fusion)
+- https://os.mbed.com/users/JohnnyK/code/mbed-http/
+
 ## License
 
 Copyright (c) APF France handicap. All rights reserved.
