@@ -129,8 +129,8 @@ class BLEServiceFileExchange : public interface::BLEService
 		GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
 	std::function<void()> _on_clear_file_requested_callback {};
 
-	std::array<uint8_t, 128> file_reception_buffer {};
-	WriteOnlyArrayGattCharacteristic<uint8_t, 128> file_reception_buffer_characteristic {
+	std::array<uint8_t, 256> file_reception_buffer {};
+	WriteOnlyArrayGattCharacteristic<uint8_t, 256> file_reception_buffer_characteristic {
 		service::file_exchange::characteristic::file_reception_buffer, file_reception_buffer.begin()};
 
 	std::array<uint8_t, 32> file_sha256 {};
