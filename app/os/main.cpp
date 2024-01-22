@@ -20,6 +20,7 @@
 #include "CoreFlashManagerIS25LP016D.h"
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
+#include "CoreHTS.h"
 #include "CoreI2C.h"
 #include "CoreIMU.hpp"
 #include "CoreInterruptIn.h"
@@ -150,6 +151,17 @@ namespace factory_reset {
 	}
 
 }	// namespace factory_reset
+
+namespace temperature_humidity {
+
+	namespace internal {
+
+		auto i2c = CoreI2C {PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL};
+	}
+
+	auto sensor = CoreHTS {internal::i2c};
+
+}	// namespace temperature_humidity
 
 namespace leds {
 
@@ -421,6 +433,8 @@ namespace robot {
 		internal::timeout_state_transition,
 		internal::timeout_autonomous_activities,
 		battery::kit,
+		temperature_humidity::sensor,
+		temperature_humidity::sensor,
 		internal::serialnumberkit,
 		firmware::kit,
 		motors::left::motor,
@@ -578,6 +592,7 @@ auto main() -> int
 	commandkit.registerCommand(command::list);
 	activitykit.registerActivities(activities::activities);
 
+	temperature_humidity::sensor.init();
 	imu::coreimu.init();
 	imukit.init();
 
