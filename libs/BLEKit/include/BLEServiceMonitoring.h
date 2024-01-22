@@ -39,6 +39,11 @@ class BLEServiceMonitoring : public interface::BLEService
 
 	auto isScreensaverEnable() const -> bool { return screensaver_enable; }
 
+	void onTemperatureRequested(const std::function<void()> &callback)
+	{
+		_on_temperature_requested_callback = callback;
+	}
+
 	void onDataReceived(const data_received_handle_t &params) final
 	{
 		if (params.handle == screensaver_enable_characteristic.getValueHandle()) {
@@ -62,7 +67,10 @@ class BLEServiceMonitoring : public interface::BLEService
 
 	void onDataRequested(const data_requested_handle_t &params) final
 	{
-		// do nothing
+		if (params.handle == _temperature_characteristic.getValueHandle() &&
+			_on_temperature_requested_callback != nullptr) {
+			_on_temperature_requested_callback();
+		}
 	}
 
   private:
@@ -75,6 +83,7 @@ class BLEServiceMonitoring : public interface::BLEService
 	ReadOnlyArrayGattCharacteristic<uint8_t, 4> _temperature_characteristic {
 		service::monitoring::characteristic::temperature, temperature.begin(),
 		GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
+	std::function<void()> _on_temperature_requested_callback {};
 
 	bool screensaver_enable {true};
 	WriteOnlyGattCharacteristic<bool> screensaver_enable_characteristic {

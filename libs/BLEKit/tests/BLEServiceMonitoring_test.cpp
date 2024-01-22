@@ -72,6 +72,35 @@ TEST_F(BLEServiceMonitoringTest, setTemperature)
 	EXPECT_EQ(actual_temperature, expected_temperature);
 }
 
+TEST_F(BLEServiceMonitoringTest, onTemperatureRequested)
+{
+	testing::MockFunction<void()> mock_callback {};
+	service_monitoring.onTemperatureRequested(mock_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_callback, Call).Times(1);
+
+	service_monitoring.onDataRequested(data_requested_handle);
+}
+
+TEST_F(BLEServiceMonitoringTest, onTemperatureRequestedNotSameHandle)
+{
+	testing::MockFunction<void()> mock_callback {};
+	service_monitoring.onTemperatureRequested(mock_callback.AsStdFunction());
+
+	data_requested_handle.handle = 0xFFFF;
+
+	EXPECT_CALL(mock_callback, Call).Times(0);
+
+	service_monitoring.onDataRequested(data_requested_handle);
+}
+
+TEST_F(BLEServiceMonitoringTest, onTemperatureRequestedtUnset)
+{
+	service_monitoring.onTemperatureRequested(nullptr);
+
+	service_monitoring.onDataRequested(data_requested_handle);
+}
+
 TEST_F(BLEServiceMonitoringTest, isScreensaverEnableDefault)
 {
 	auto actual_is_screensaver_enable = service_monitoring.isScreensaverEnable();
