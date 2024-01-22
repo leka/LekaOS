@@ -6,7 +6,6 @@
 
 #include <span>
 
-#include "BLEServiceBattery.h"
 #include "ble/BLE.h"
 #include "ble/GattServer.h"
 
