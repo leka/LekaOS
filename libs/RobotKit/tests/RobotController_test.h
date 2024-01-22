@@ -31,6 +31,7 @@
 #include "mocks/leka/LedKit.h"
 #include "mocks/leka/MCU.h"
 #include "mocks/leka/PwmOut.h"
+#include "mocks/leka/TemperatureSensor.h"
 #include "mocks/leka/Timeout.h"
 #include "mocks/leka/VideoKit.h"
 #include "mocks/mbed/DigitalOut.h"
@@ -84,6 +85,9 @@ class RobotControllerTest : public testing::Test
 	mock::MCU mock_mcu {};
 	SerialNumberKit serialnumberkit {mock_mcu, SerialNumberKit::DEFAULT_CONFIG};
 
+	mock::TemperatureSensor temperature_sensor {};
+	mock::HumiditySensor humidity_sensor {};
+
 	mock::FirmwareUpdate firmware_update {};
 
 	mock::CoreLED mock_ears;
@@ -115,6 +119,8 @@ class RobotControllerTest : public testing::Test
 																			  timeout_state_transition,
 																			  timeout_autonomous_activities,
 																			  battery,
+																			  temperature_sensor,
+																			  humidity_sensor,
 																			  serialnumberkit,
 																			  firmware_update,
 																			  mock_motor_left,
