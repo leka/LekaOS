@@ -72,6 +72,24 @@ TEST_F(BLEServiceMonitoringTest, setTemperature)
 	EXPECT_EQ(actual_temperature, expected_temperature);
 }
 
+TEST_F(BLEServiceMonitoringTest, setHumidity)
+{
+	std::array<uint8_t, 4> actual_humidity {};
+	std::array<uint8_t, 4> expected_humidity {};
+
+	auto spy_callback = [&actual_humidity](const BLEServiceMonitoring::data_to_send_handle_t &handle) {
+		for (auto i = 0; i < std::size(actual_humidity); i++) {
+			actual_humidity.at(i) = std::get<1>(handle)[i];
+		}
+	};
+
+	service_monitoring.onDataReadyToSend(spy_callback);
+
+	service_monitoring.setHumidity(51.24);
+	expected_humidity = {0xC3, 0xF5, 0x4C, 0x42};	// 51.24 little-endian as in Swift
+	EXPECT_EQ(actual_humidity, expected_humidity);
+}
+
 TEST_F(BLEServiceMonitoringTest, onTemperatureRequested)
 {
 	testing::MockFunction<void()> mock_callback {};

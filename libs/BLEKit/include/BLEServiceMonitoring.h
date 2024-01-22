@@ -51,6 +51,14 @@ class BLEServiceMonitoring : public interface::BLEService
 		sendData(data);
 	}
 
+	void setHumidity(float value)
+	{
+		std::memcpy(humidity.data(), &value, 4);
+
+		auto data = std::make_tuple(_humidity_characteristic.getValueHandle(), humidity);
+		sendData(data);
+	}
+
 	auto isScreensaverEnable() const -> bool { return _screensaver_enable; }
 
 	void onTemperatureRequested(const std::function<void()> &callback)
@@ -101,6 +109,11 @@ class BLEServiceMonitoring : public interface::BLEService
 		GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
 	std::function<void()> _on_temperature_requested_callback {};
 
+	std::array<uint8_t, 4> humidity {};
+	ReadOnlyArrayGattCharacteristic<uint8_t, 4> _humidity_characteristic {
+		service::monitoring::characteristic::humidity, humidity.begin(),
+		GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
+
 	bool _screensaver_enable {true};
 	WriteOnlyGattCharacteristic<bool> _screensaver_enable_characteristic {
 		service::monitoring::characteristic::screensaver_enable,
@@ -128,9 +141,10 @@ class BLEServiceMonitoring : public interface::BLEService
 		GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY,
 	};
 
-	std::array<GattCharacteristic *, 6> _characteristic_table {
+	std::array<GattCharacteristic *, 7> _characteristic_table {
 		&_charging_status_characteristic, &_screensaver_enable_characteristic, &_soft_reboot_characteristic,
 		&_hard_reboot_characteristic,	  &_negotiated_mtu_characteristic,	   &_temperature_characteristic,
+		&_humidity_characteristic,
 	};
 };
 
