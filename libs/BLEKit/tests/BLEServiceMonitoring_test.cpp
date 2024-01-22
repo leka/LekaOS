@@ -90,20 +90,20 @@ TEST_F(BLEServiceMonitoringTest, setHumidity)
 	EXPECT_EQ(actual_humidity, expected_humidity);
 }
 
-TEST_F(BLEServiceMonitoringTest, onTemperatureRequested)
+TEST_F(BLEServiceMonitoringTest, onTemperatureHumidityRequested)
 {
 	testing::MockFunction<void()> mock_callback {};
-	service_monitoring.onTemperatureRequested(mock_callback.AsStdFunction());
+	service_monitoring.onTemperatureHumidityRequested(mock_callback.AsStdFunction());
 
 	EXPECT_CALL(mock_callback, Call).Times(1);
 
 	service_monitoring.onDataRequested(data_requested_handle);
 }
 
-TEST_F(BLEServiceMonitoringTest, onTemperatureRequestedNotSameHandle)
+TEST_F(BLEServiceMonitoringTest, onTemperatureHumidityRequestedNotSameHandle)
 {
 	testing::MockFunction<void()> mock_callback {};
-	service_monitoring.onTemperatureRequested(mock_callback.AsStdFunction());
+	service_monitoring.onTemperatureHumidityRequested(mock_callback.AsStdFunction());
 
 	data_requested_handle.handle = 0xFFFF;
 
@@ -112,9 +112,9 @@ TEST_F(BLEServiceMonitoringTest, onTemperatureRequestedNotSameHandle)
 	service_monitoring.onDataRequested(data_requested_handle);
 }
 
-TEST_F(BLEServiceMonitoringTest, onTemperatureRequestedtUnset)
+TEST_F(BLEServiceMonitoringTest, onTemperatureHumidityRequestedtUnset)
 {
-	service_monitoring.onTemperatureRequested(nullptr);
+	service_monitoring.onTemperatureHumidityRequested(nullptr);
 
 	service_monitoring.onDataRequested(data_requested_handle);
 }

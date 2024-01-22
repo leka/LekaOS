@@ -47,9 +47,9 @@ class BLEServiceMonitoring : public interface::BLEService
 
 	auto isScreensaverEnable() const -> bool { return screensaver_enable; }
 
-	void onTemperatureRequested(const std::function<void()> &callback)
+	void onTemperatureHumidityRequested(const std::function<void()> &callback)
 	{
-		_on_temperature_requested_callback = callback;
+		_on_temperature_humidity_requested_callback = callback;
 	}
 
 	void onDataReceived(const data_received_handle_t &params) final
@@ -75,9 +75,10 @@ class BLEServiceMonitoring : public interface::BLEService
 
 	void onDataRequested(const data_requested_handle_t &params) final
 	{
-		if (params.handle == _temperature_characteristic.getValueHandle() &&
-			_on_temperature_requested_callback != nullptr) {
-			_on_temperature_requested_callback();
+		if ((params.handle == _temperature_characteristic.getValueHandle() ||
+			 params.handle == _humidity_characteristic.getValueHandle()) &&
+			_on_temperature_humidity_requested_callback != nullptr) {
+			_on_temperature_humidity_requested_callback();
 		}
 	}
 
@@ -91,12 +92,13 @@ class BLEServiceMonitoring : public interface::BLEService
 	ReadOnlyArrayGattCharacteristic<uint8_t, 4> _temperature_characteristic {
 		service::monitoring::characteristic::temperature, temperature.begin(),
 		GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
-	std::function<void()> _on_temperature_requested_callback {};
 
 	std::array<uint8_t, 4> humidity {};
 	ReadOnlyArrayGattCharacteristic<uint8_t, 4> _humidity_characteristic {
 		service::monitoring::characteristic::humidity, humidity.begin(),
 		GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY};
+
+	std::function<void()> _on_temperature_humidity_requested_callback {};
 
 	bool screensaver_enable {true};
 	WriteOnlyGattCharacteristic<bool> screensaver_enable_characteristic {
