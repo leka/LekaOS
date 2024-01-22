@@ -10,28 +10,9 @@
 #include "Utils.h"
 #include "hts221_reg.h"
 #include "interface/drivers/I2C.h"
+#include "interface/drivers/TemperatureSensor.h"
 
 namespace leka {
-
-namespace interface {
-
-	class TemperatureSensor
-	{
-	  public:
-		virtual ~TemperatureSensor() = default;
-
-		virtual auto getTemperatureCelsius() -> float = 0;
-	};
-
-	class HumiditySensor
-	{
-	  public:
-		virtual ~HumiditySensor() = default;
-
-		virtual auto getRelativeHumidity() -> float = 0;
-	};
-
-}	// namespace interface
 
 class CoreHTS : public interface::TemperatureSensor, public interface::HumiditySensor
 {
