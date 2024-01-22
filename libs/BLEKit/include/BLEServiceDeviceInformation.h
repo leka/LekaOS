@@ -25,7 +25,7 @@ class BLEServiceDeviceInformation : public interface::BLEService
 	{
 		std::copy(std::begin(value), std::begin(value) + std::size(_serial_number), _serial_number.begin());
 
-		auto data = std::make_tuple(_serial_number_characteristic.getValueHandle(), _serial_number);
+		auto data = std::make_tuple(&_serial_number_characteristic, std::span<const uint8_t>(_serial_number));
 		sendData(data);
 	}
 
@@ -36,7 +36,7 @@ class BLEServiceDeviceInformation : public interface::BLEService
 
 		std::copy(std::begin(version_cstr), std::begin(version_cstr) + std::size(_os_version), _os_version.begin());
 
-		auto data = std::make_tuple(_os_version_characteristic.getValueHandle(), _os_version);
+		auto data = std::make_tuple(&_os_version_characteristic, std::span<const uint8_t>(_os_version));
 		sendData(data);
 	}
 

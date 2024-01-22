@@ -74,13 +74,12 @@ TEST_F(CoreGattServerTest, onDataReadyToSend)
 
 	gatt_server.setServices(services);
 
-	auto handle		  = GattAttribute::Handle_t {};
 	auto data_to_send = std::to_array<const uint8_t>({0x2A, 0x2B, 0x2C, 0x2D});
 
-	auto tuple		   = std::make_tuple(handle, data_to_send);
+	auto tuple		   = std::make_tuple(&characteristic, data_to_send);
 	const auto &[h, d] = tuple;	  // need for the EXPECT_CALL: addresses must be the same
 
-	EXPECT_CALL(mbed_mock_gatt, write(h, d.data(), std::size(d), _)).Times(1);
+	EXPECT_CALL(mbed_mock_gatt, write(h->getValueHandle(), d.data(), std::size(d), _)).Times(1);
 
 	mock_service.sendData(tuple);
 }

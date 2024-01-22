@@ -26,7 +26,7 @@ class BLEService : public GattService
 
 	using data_received_handle_t  = GattWriteCallbackParams;
 	using data_requested_handle_t = GattReadCallbackParams;
-	using data_to_send_handle_t	  = std::tuple<GattAttribute::Handle_t, std::span<const uint8_t>>;
+	using data_to_send_handle_t	  = std::tuple<const GattCharacteristic *, std::span<const uint8_t>>;
 
 	virtual void onDataReceived(const data_received_handle_t &handle)	= 0;
 	virtual void onDataRequested(const data_requested_handle_t &handle) = 0;
