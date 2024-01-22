@@ -54,6 +54,24 @@ TEST_F(BLEServiceMonitoringTest, setChargingStatus)
 	EXPECT_FALSE(actual_charging_status);
 }
 
+TEST_F(BLEServiceMonitoringTest, setTemperature)
+{
+	std::array<uint8_t, 4> actual_temperature {};
+	std::array<uint8_t, 4> expected_temperature {};
+
+	auto spy_callback = [&actual_temperature](const BLEServiceMonitoring::data_to_send_handle_t &handle) {
+		for (auto i = 0; i < std::size(actual_temperature); i++) {
+			actual_temperature.at(i) = std::get<1>(handle)[i];
+		}
+	};
+
+	service_monitoring.onDataReadyToSend(spy_callback);
+
+	service_monitoring.setTemperature(31.4159);
+	expected_temperature = {0xC3, 0x53, 0xFB, 0x41};   // 31.4159, little-endian as in Swift
+	EXPECT_EQ(actual_temperature, expected_temperature);
+}
+
 TEST_F(BLEServiceMonitoringTest, isScreensaverEnableDefault)
 {
 	auto actual_is_screensaver_enable = service_monitoring.isScreensaverEnable();

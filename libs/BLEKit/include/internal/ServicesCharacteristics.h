@@ -42,6 +42,7 @@ namespace monitoring {
 		inline constexpr uint16_t soft_reboot				  = 0x8382;
 		inline constexpr uint16_t hard_reboot				  = 0x7282;
 		inline constexpr UUID::LongUUIDBytes_t negotiated_mtu = {"NEGOTIATED_MTU"};
+		inline constexpr UUID::LongUUIDBytes_t temperature	  = {"TEMPERATURE"};
 	}	// namespace characteristic
 
 }	// namespace monitoring
