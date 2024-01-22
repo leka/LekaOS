@@ -7,9 +7,9 @@
 #include <array>
 #include <tuple>
 
-#include "CoreI2C.h"
 #include "Utils.h"
 #include "hts221_reg.h"
+#include "interface/drivers/I2C.h"
 
 namespace leka {
 
