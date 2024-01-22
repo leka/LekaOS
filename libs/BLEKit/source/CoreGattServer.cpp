@@ -26,9 +26,9 @@ void CoreGattServer::setServices(std::span<interface::BLEService *> services)
 	_gatt_server_event_handler.setServices(services);
 }
 
-void CoreGattServer::write(GattAttribute::Handle_t characteristic_updated, std::span<const uint8_t> data)
+void CoreGattServer::write(const GattCharacteristic *characteristic_updated, std::span<const uint8_t> data)
 {
-	_gatt_server.write(characteristic_updated, data.data(), static_cast<uint16_t>(std::size(data)));
+	_gatt_server.write(characteristic_updated->getValueHandle(), data.data(), static_cast<uint16_t>(std::size(data)));
 }
 
 void CoreGattServer::onMTUNegotiated(const std::function<void(uint16_t)> &callback)

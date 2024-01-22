@@ -39,7 +39,7 @@ class BLEServiceMagicCard : public interface::BLEService
 		raw_data[1] = utils::memory::getLowByte(id);
 		raw_data[2] = static_cast<uint8_t>(language);
 
-		auto data = std::make_tuple(raw_data_characteristic.getValueHandle(), raw_data);
+		auto data = std::make_tuple(&raw_data_characteristic, raw_data);
 		sendData(data);
 	}
 
