@@ -31,16 +31,16 @@ class CoreOTM8009ATest : public ::testing::Test
 
 TEST_F(CoreOTM8009ATest, instantiation)
 {
-	ASSERT_NE(&otm, nullptr);
+	EXPECT_NE(&otm, nullptr);
 }
 
 TEST_F(CoreOTM8009ATest, initialize)
 {
-	EXPECT_CALL(dsimock, write).Times(101);
+	EXPECT_CALL(dsimock, write(_)).Times(101);
 
 	otm.initialize();
 
-	ASSERT_EQ(spy_PwmOut_getPeriod(), 0.01f);
+	EXPECT_EQ(spy_PwmOut_getPeriod(), 0.01f);
 }
 
 TEST_F(CoreOTM8009ATest, setLandscapeOrientation)
@@ -60,9 +60,9 @@ TEST_F(CoreOTM8009ATest, setLandscapeOrientation)
 	{
 		InSequence seq;
 
-		EXPECT_CALL(dsimock, write(_, 2)).With(Args<0, 1>(expected_instruction_array)).Times(1);
-		EXPECT_CALL(dsimock, write(_, 5)).With(Args<0, 1>(expected_set_address_for_column_array)).Times(1);
-		EXPECT_CALL(dsimock, write(_, 5)).With(Args<0, 1>(expected_set_address_for_page_array)).Times(1);
+		EXPECT_CALL(dsimock, write(expected_instruction_array)).Times(1);
+		EXPECT_CALL(dsimock, write(expected_set_address_for_column_array)).Times(1);
+		EXPECT_CALL(dsimock, write(expected_set_address_for_page_array)).Times(1);
 	}
 
 	otm.setLandscapeOrientation();
@@ -72,7 +72,7 @@ TEST_F(CoreOTM8009ATest, turnOn)
 {
 	auto expected_instruction_array = ElementsAre(lcd::otm8009a::display::turn_on::command, 0x00);
 
-	EXPECT_CALL(dsimock, write(_, 2)).With(Args<0, 1>(expected_instruction_array)).Times(1);
+	EXPECT_CALL(dsimock, write(expected_instruction_array)).Times(1);
 
 	otm.turnOn();
 }
@@ -81,7 +81,7 @@ TEST_F(CoreOTM8009ATest, turnOff)
 {
 	auto expected_instruction_array = ElementsAre(lcd::otm8009a::display::turn_off::command, 0x00);
 
-	EXPECT_CALL(dsimock, write(_, 2)).With(Args<0, 1>(expected_instruction_array)).Times(1);
+	EXPECT_CALL(dsimock, write(expected_instruction_array)).Times(1);
 
 	otm.turnOff();
 }
@@ -90,7 +90,7 @@ TEST_F(CoreOTM8009ATest, setBrightness)
 {
 	otm.setBrightness(0.5);
 
-	ASSERT_EQ(spy_PwmOut_getValue(), 0.5);
+	EXPECT_EQ(spy_PwmOut_getValue(), 0.5);
 }
 
 TEST_F(CoreOTM8009ATest, setBrightnessTurnOffThenTurnOn)
@@ -101,13 +101,13 @@ TEST_F(CoreOTM8009ATest, setBrightnessTurnOffThenTurnOn)
 
 	EXPECT_EQ(spy_PwmOut_getValue(), initial_brightness_value);
 
-	EXPECT_CALL(dsimock, write).Times(1);
+	EXPECT_CALL(dsimock, write(_)).Times(1);
 	otm.turnOff();
 
 	EXPECT_EQ(spy_PwmOut_getValue(), 0);
 	EXPECT_NE(spy_PwmOut_getValue(), initial_brightness_value);
 
-	EXPECT_CALL(dsimock, write).Times(1);
+	EXPECT_CALL(dsimock, write(_)).Times(1);
 	otm.turnOn();
 
 	EXPECT_EQ(spy_PwmOut_getValue(), initial_brightness_value);
