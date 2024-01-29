@@ -29,6 +29,16 @@ void CoreLCD::turnOff()
 	_driver.turnOff();
 }
 
+void CoreLCD::enableDeepSleep()
+{
+	_driver.enableDeepSleep();
+}
+
+void CoreLCD::disableDeepSleep()
+{
+	_driver.disableDeepSleep();
+}
+
 void CoreLCD::setBrightness(float value)
 {
 	_driver.setBrightness(value);

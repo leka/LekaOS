@@ -54,6 +54,20 @@ TEST_F(CoreLCDTest, turnOff)
 	corelcd.turnOff();
 }
 
+TEST_F(CoreLCDTest, enableDeepSleep)
+{
+	EXPECT_CALL(lcddrivermock, enableDeepSleep);
+
+	corelcd.enableDeepSleep();
+}
+
+TEST_F(CoreLCDTest, disableDeepSleep)
+{
+	EXPECT_CALL(lcddrivermock, disableDeepSleep);
+
+	corelcd.disableDeepSleep();
+}
+
 TEST_F(CoreLCDTest, setBrightness)
 {
 	EXPECT_CALL(lcddrivermock, setBrightness(An<float>())).Times(1);

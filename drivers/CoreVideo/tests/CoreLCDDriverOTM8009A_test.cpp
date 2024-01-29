@@ -13,6 +13,7 @@
 using namespace leka;
 
 using ::testing::_;
+using ::testing::AnyNumber;
 using ::testing::ElementsAre;
 using ::testing::InSequence;
 
@@ -86,6 +87,20 @@ TEST_F(CoreOTM8009ATest, turnOff)
 	EXPECT_CALL(dsimock, write(expected_instruction_array)).Times(1);
 
 	otm.turnOff();
+}
+
+TEST_F(CoreOTM8009ATest, enableDeepSleep)
+{
+	EXPECT_CALL(backlightmock, enableDeepSleep);
+
+	otm.enableDeepSleep();
+}
+
+TEST_F(CoreOTM8009ATest, disableDeepSleep)
+{
+	EXPECT_CALL(backlightmock, disableDeepSleep);
+
+	otm.disableDeepSleep();
 }
 
 TEST_F(CoreOTM8009ATest, setBrightness)

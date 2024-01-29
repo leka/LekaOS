@@ -4,12 +4,14 @@
 
 #pragma once
 
+#include "DeepSleepEnabled.h"
+
 namespace leka::interface {
 
-class LCD
+class LCD : public interface::DeepSleepEnabled
 {
   public:
-	virtual ~LCD() = default;
+	~LCD() override = default;
 
 	virtual void initialize() = 0;
 
