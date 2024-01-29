@@ -42,6 +42,7 @@ jobs:
       - name: Setup CI
         uses: ./.github/actions/setup
         with:
+          mbed_os_version: "head_version"
           ccache_key: ${{ runner.os }}-ccache-build_target-(${{ matrix.custom_target }})
           ccache_restore_keys: |
             ${{ runner.os }}-ccache-build_target-(${{ matrix.custom_target }})-

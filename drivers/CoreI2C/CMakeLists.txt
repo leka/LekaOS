@@ -2,22 +2,16 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CoreI2C STATIC)
+add_lib_core(CoreI2C
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(CoreI2C
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/CoreI2C.cpp
 
-target_sources(CoreI2C
-	PRIVATE
-	source/CoreI2C.cpp
-)
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
 
-target_link_libraries(CoreI2C mbed-os)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/CoreI2C_test.cpp
-	)
-endif()
+)

@@ -2,24 +2,16 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CoreTicker STATIC)
+add_lib_core(CoreTicker
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(CoreTicker
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/CoreTicker.cpp
 
-target_sources(CoreTicker
-	PRIVATE
-	source/CoreTicker.cpp
-)
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
 
-target_link_libraries(CoreTicker
-	mbed-os
-)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/CoreTicker_test.cpp
-	)
-endif()
+)

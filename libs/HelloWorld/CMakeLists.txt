@@ -2,18 +2,13 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(HelloWorld STATIC)
+add_lib_kit(HelloWorld
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(HelloWorld
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/HelloWorld.cpp
 
-target_sources(HelloWorld
-	PRIVATE
-	source/HelloWorld.cpp
-)
-
-target_link_libraries(HelloWorld
-	mbed-os
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
 )

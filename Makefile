@@ -137,48 +137,31 @@ config_all:
 
 # Global config
 config:
-	@$(MAKE) config_cmake_target
 	@$(MAKE) config_cmake_build
-
-config_cmake_target: mkdir_cmake_config
-	@echo ""
-	@echo "🏃 Running configuration script for target $(TARGET_BOARD) 📝"
-	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(TARGET_BOARD_CMAKE_CONFIG_DIR) -a $(ROOT_DIR)/config/mbed_app.json
 
 config_cmake_build: mkdir_cmake_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
-	@cmake -S . -B $(TARGET_BOARD_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(TARGET_BOARD_CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DENABLE_SYSTEM_STATS=$(ENABLE_SYSTEM_STATS) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=$(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
+	@cmake -S . -B $(TARGET_BOARD_BUILD_DIR) -GNinja -DMBED_TARGET="$(TARGET_BOARD)" -DCMAKE_CONFIG_DIR="$(TARGET_BOARD_CMAKE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DENABLE_SYSTEM_STATS=$(ENABLE_SYSTEM_STATS) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=$(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
 
 # Firmware config
 config_firmware: config
-	@$(MAKE) config_firmware_target
 	@$(MAKE) config_firmware_build
-
-config_firmware_target: mkdir_firmware_config
-	@echo ""
-	@echo "🏃 Running configuration script for firmware (os + bootloader) 📝"
-	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(FIRMWARE_CONFIG_DIR) -a $(ROOT_DIR)/config/mbed_app.json
 
 config_firmware_build: mkdir_firmware_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for firmware (os + bootloader) 📝"
-	@cmake -S . -B $(FIRMWARE_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(FIRMWARE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DENABLE_SYSTEM_STATS=$(ENABLE_SYSTEM_STATS) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=ON
+	@cmake -S . -B $(FIRMWARE_BUILD_DIR) -GNinja -DMBED_TARGET="$(TARGET_BOARD)" -DCMAKE_CONFIG_DIR="$(FIRMWARE_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=$(ENABLE_LOG_DEBUG) -DENABLE_SYSTEM_STATS=$(ENABLE_SYSTEM_STATS) -DBUILD_TARGETS_TO_USE_WITH_BOOTLOADER=ON
 
 
 # Tools
 config_tools:
-	@$(MAKE) config_tools_target
-
-config_tools_target: mkdir_tools_config
-	@echo ""
-	@echo "🏃 Running configuration script for VSCode CMake Tools 📝"
-	python3 $(CMAKE_DIR)/scripts/configure_cmake_for_target.py $(TARGET_BOARD) -p $(CMAKE_TOOLS_CONFIG_DIR) -a $(ROOT_DIR)/config/mbed_app.json
+# nothing to do
 
 config_tools_build: mkdir_tools_config
 	@echo ""
 	@echo "🏃 Running cmake configuration script for target $(TARGET_BOARD) 📝"
-	@cmake -S . -B $(CMAKE_TOOLS_BUILD_DIR) -GNinja -DCMAKE_CONFIG_DIR="$(CMAKE_TOOLS_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=ON -DENABLE_SYSTEM_STATS=ON
+	@cmake -S . -B $(CMAKE_TOOLS_BUILD_DIR) -GNinja -DMBED_TARGET="$(TARGET_BOARD)" -DCMAKE_CONFIG_DIR="$(CMAKE_TOOLS_CONFIG_DIR)" -DTARGET_BOARD="$(TARGET_BOARD)" -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DENABLE_LOG_DEBUG=ON -DENABLE_SYSTEM_STATS=ON
 
 #
 # MARK: - Tests targets
@@ -320,13 +303,9 @@ mbed_clone:
 	@echo "🧬 Cloning Mbed OS 📦"
 	@rm -rf $(MBED_OS_DIR)
 	git clone --depth=1 --branch=$(MBED_BRANCH) $(MBED_GIT_URL) $(MBED_OS_DIR)
-	@$(MAKE) mbed_symlink_files
 
 mbed_symlink_files:
-	@echo ""
-	@echo "🔗 Symlinking templates to Mbed OS directory 🗂️"
-	ln -srf $(CMAKE_DIR)/templates/mbed/CMakeLists.txt $(MBED_OS_DIR)/CMakeLists.txt
-	ln -srf $(CMAKE_DIR)/templates/mbed/.mbedignore    $(MBED_OS_DIR)/.mbedignore
+# TODO(@ladislas): no-op, remove in following PR
 
 #
 # MARK: - Mcuboot targets

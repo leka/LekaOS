@@ -2,29 +2,24 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(LogKit STATIC)
+add_lib_kit(LogKit
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(LogKit
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/LogKit.cpp
 
-target_sources(LogKit
-	PRIVATE
-	source/LogKit.cpp
-)
+	PUBLIC_LINK_LIBRARIES
+	mbed_headers
+		ContainerKit
 
-target_link_libraries(LogKit
-	mbed-os
-	ContainerKit
-)
+	PRIVATE_LINK_LIBRARIES
+		ContainerKit
 
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/LogKit_test_log.cpp
 		tests/LogKit_test_fifo.cpp
 		tests/LogKit_test_format.cpp
 		tests/LogKit_test_now.cpp
 		tests/LogKit_test_sink.cpp
-	)
-endif()
+)

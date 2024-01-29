@@ -2,23 +2,19 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_mbed_executable(spike_lk_ble)
+register_spike(
+	TARGET
+		lk_ble
 
-target_include_directories(spike_lk_ble
-	PRIVATE
-	.
+	INCLUDE_DIRECTORIES
+		.
+
+	SOURCES
+		main.cpp
+
+	LINK_LIBRARIES
+		CoreEventQueue
+		BLEKit
+		FileManagerKit
+		ContainerKit
 )
-
-target_sources(spike_lk_ble
-	PRIVATE
-	main.cpp
-)
-
-target_link_libraries(spike_lk_ble
-	BLEKit
-	FileManagerKit
-	ContainerKit
-	CoreEventQueue
-)
-
-target_link_custom_leka_targets(spike_lk_ble)

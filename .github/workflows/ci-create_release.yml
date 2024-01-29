@@ -33,6 +33,7 @@ jobs:
       - name: Setup CI
         uses: ./.github/actions/setup
         with:
+          mbed_os_version: "head_version"
           ccache_key: ${{ runner.os }}-ccache-create_release
           ccache_restore_keys: |
             ${{ runner.os }}-ccache-create_release-

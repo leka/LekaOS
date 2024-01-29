@@ -2,24 +2,16 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CoreQSPI STATIC)
+add_lib_core(CoreQSPI
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(CoreQSPI
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/CoreQSPI.cpp
 
-target_sources(CoreQSPI
-	PRIVATE
-	source/CoreQSPI.cpp
-)
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
 
-target_link_libraries(CoreQSPI
-	mbed-os
-)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/CoreQSPI_test.cpp
-	)
-endif()
+)

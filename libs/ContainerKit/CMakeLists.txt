@@ -2,27 +2,18 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(ContainerKit STATIC)
+add_lib_kit(ContainerKit
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(ContainerKit
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/CircularQueue.cpp
 
-target_sources(ContainerKit
-	PRIVATE
-	source/CircularQueue.cpp
-)
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
+		CriticalSection
 
-target_link_libraries(ContainerKit
-	PRIVATE
-	mbed-os
-	CriticalSection
-)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
-		tests/CircularQueue_test.cpp
+	UNIT_TESTS_SOURCES
 		tests/CircularQueue_test_clear.cpp
 		tests/CircularQueue_test_drop.cpp
 		tests/CircularQueue_test_empty.cpp
@@ -32,5 +23,5 @@ if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/CircularQueue_test_push.cpp
 		tests/CircularQueue_test_pushpop.cpp
 		tests/CircularQueue_test_size.cpp
-	)
-endif()
+		tests/CircularQueue_test.cpp
+)

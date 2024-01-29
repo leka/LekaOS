@@ -2,7 +2,7 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_mbed_executable(bootloader)
+add_executable(bootloader)
 
 target_include_directories(bootloader
 	PRIVATE
@@ -18,15 +18,19 @@ target_sources(bootloader
 
 target_link_libraries(bootloader
 	bootutil
+	mbed-os
+	mbed-storage-qspif
+
 	CoreBattery
-	FileManagerKit
-	CoreQSPI
 	CoreFlashMemory
-	FirmwareKit
-	ConfigKit
 	CoreLED
 	CoreMotor
 	CorePwm
+	CoreQSPI
+	CoreSPI
+	ConfigKit
+	FileManagerKit
+	FirmwareKit
 )
 
-target_link_custom_leka_targets(bootloader)
+mbed_set_post_build(bootloader)

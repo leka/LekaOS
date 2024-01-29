@@ -2,27 +2,21 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(VideoKit STATIC)
+add_lib_kit(VideoKit
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(VideoKit
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/VideoKit.cpp
 
-target_sources(VideoKit
-	PRIVATE
-	source/VideoKit.cpp
-)
+	PUBLIC_LINK_LIBRARIES
+		CoreVideo
+		CoreSTM32Hal
+		FileManagerKit
 
-target_link_libraries(VideoKit
-	CoreLL
-	CoreSTM32Hal
-	CoreVideo
-	FileManagerKit
-)
+	PRIVATE_LINK_LIBRARIES
+		CoreLL
 
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/VideoKit_test.cpp
-	)
-endif()
+)

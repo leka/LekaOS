@@ -2,24 +2,16 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CriticalSection STATIC)
+add_lib_kit(CriticalSection
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(CriticalSection
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/CriticalSection.cpp
 
-target_sources(CriticalSection
-	PRIVATE
-	source/CriticalSection.cpp
-)
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
 
-target_link_libraries(CriticalSection
-	mbed-os
-)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/CriticalSection_test.cpp
-	)
-endif()
+)

@@ -2,21 +2,16 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CoreWifi STATIC)
+add_lib_core(CoreWifi
+	PUBLIC_INCLUDE_DIRS
+		include
+		include/internal
 
-target_include_directories(CoreWifi
-	PUBLIC
-	include
-	include/internal
-)
+	PRIVATE_SOURCES
+		source/CoreWifi.cpp
+		source/CoreNetwork.cpp
 
-target_sources(CoreWifi
-	PRIVATE
-	source/CoreWifi.cpp
-	source/CoreNetwork.cpp
-)
-
-target_link_libraries(CoreWifi
-	mbed-os
-	mbed-http
+	PRIVATE_LINK_LIBRARIES
+		mbed-wifi
+		mbed-http
 )

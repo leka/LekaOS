@@ -2,20 +2,17 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_mbed_executable(spike_lk_update_process_app_update)
+register_spike(
+	TARGET
+		lk_update_process_app_update
 
-target_include_directories(spike_lk_update_process_app_update
-	PRIVATE
-	.
+	INCLUDE_DIRECTORIES
+		.
+
+	SOURCES
+		main.cpp
+
+	LINK_LIBRARIES
+		mbed-storage-qspif
+		bootutil
 )
-
-target_sources(spike_lk_update_process_app_update
-	PRIVATE
-	main.cpp
-)
-
-target_link_libraries(spike_lk_update_process_app_update
-	bootutil
-)
-
-target_link_custom_leka_targets(spike_lk_update_process_app_update)
