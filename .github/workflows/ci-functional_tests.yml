@@ -20,7 +20,7 @@ concurrency:
 jobs:
   run_functional_tests:
     name: Build & Test
-    runs-on: self-hosted
+    runs-on: [self-hosted, robot]
 
     steps:
       - name: Checkout
