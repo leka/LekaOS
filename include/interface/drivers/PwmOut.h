@@ -11,6 +11,8 @@ class PwmOut
   public:
 	virtual ~PwmOut() = default;
 
+	virtual void period(float value) = 0;
+
 	virtual auto read() -> float	= 0;
 	virtual void write(float value) = 0;
 

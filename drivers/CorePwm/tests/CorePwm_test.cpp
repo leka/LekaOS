@@ -43,6 +43,16 @@ TEST(CorePwmTest, read)
 	ASSERT_EQ(val, 0.5f);
 }
 
+TEST(CorePwmTest, period)
+{
+	auto corepwm = CorePwm {NC};
+	auto value	 = 1.F / 100.F;
+
+	corepwm.period(value);
+
+	ASSERT_EQ(spy_PwmOut_getPeriod(), value);
+}
+
 TEST(CorePwmTest, suspend)
 {
 	auto corepwm = CorePwm {NC};

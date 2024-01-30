@@ -16,6 +16,11 @@ void CorePwm::write(float value)
 	_pwm.write(value);
 }
 
+void CorePwm::period(float value)
+{
+	_pwm.period(value);
+}
+
 void CorePwm::suspend()
 {
 	if (_is_suspended) {
