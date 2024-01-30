@@ -26,5 +26,6 @@ if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/MathUtils_test_map.cpp
 		tests/MathUtils_test_random8.cpp
 		tests/MemoryUtils_test.cpp
+		tests/RangesUtils_test.cpp
 	)
 endif()
