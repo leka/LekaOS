@@ -6,10 +6,9 @@
 
 #include <array>
 
-#include "drivers/PwmOut.h"
-
 #include "interface/DSI.hpp"
 #include "interface/LCDDriver.hpp"
+#include "interface/drivers/PwmOut.h"
 
 namespace leka {
 
@@ -19,7 +18,8 @@ namespace leka {
 class CoreLCDDriverOTM8009A : public interface::LCDDriver
 {
   public:
-	CoreLCDDriverOTM8009A(interface::DSIBase &dsi, PinName backlight) : _dsi {dsi}, _backlight {backlight} {};
+	CoreLCDDriverOTM8009A(interface::DSIBase &dsi, interface::PwmOut &backlight)
+		: _dsi {dsi}, _backlight {backlight} {};
 
 	void initialize() final;
 	void setLandscapeOrientation() final;
@@ -31,7 +31,7 @@ class CoreLCDDriverOTM8009A : public interface::LCDDriver
 
   private:
 	interface::DSIBase &_dsi;
-	mbed::PwmOut _backlight;
+	interface::PwmOut &_backlight;
 
 	float _previous_brightness_value = {1.F};
 };

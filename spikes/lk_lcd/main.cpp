@@ -20,6 +20,7 @@
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLL.h"
 #include "CoreLTDC.hpp"
+#include "CorePwm.h"
 #include "CoreSDRAM.hpp"
 #include "CoreSTM32Hal.h"
 #include "CoreVideo.hpp"
@@ -40,6 +41,7 @@ FATFileSystem fatfs("fs");
 namespace display::internal {
 
 auto event_loop = EventLoopKit {};
+auto backlight	= CorePwm {SCREEN_BACKLIGHT_PWM};
 
 auto corell		   = CoreLL {};
 auto pixel		   = CGPixel {corell};
@@ -50,7 +52,7 @@ auto coredsi	   = CoreDSI {hal};
 auto coreltdc	   = CoreLTDC {hal};
 auto coregraphics  = CoreGraphics {coredma2d};
 auto corefont	   = CoreFont {pixel};
-auto coreotm	   = CoreLCDDriverOTM8009A {coredsi, PinName::SCREEN_BACKLIGHT_PWM};
+auto coreotm	   = CoreLCDDriverOTM8009A {coredsi, backlight};
 auto corelcd	   = CoreLCD {coreotm};
 auto _corejpegmode = CoreJPEGModeDMA {hal};
 auto corejpeg	   = CoreJPEG {hal, _corejpegmode};
