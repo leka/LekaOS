@@ -18,6 +18,7 @@ target_link_libraries(spike_lk_cg_animations
 	CoreVideo
 	CoreLL
 	CoreSTM32Hal
+	CorePwm
 	FileManagerKit
 	UIAnimationKit
 )
