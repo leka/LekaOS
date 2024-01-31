@@ -38,7 +38,7 @@ TEST_F(CoreI2CTest, writeZeroBytes)
 
 	corei2c.write(0, expected_written_values.data(), 0, false);
 
-	EXPECT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
+	EXPECT_EQ(expected_written_values, spy_I2C_getValuesAfterWrite());
 }
 
 TEST_F(CoreI2CTest, writeOneByte)
@@ -47,7 +47,7 @@ TEST_F(CoreI2CTest, writeOneByte)
 
 	corei2c.write(0, expected_written_values.data(), 1, false);
 
-	EXPECT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
+	EXPECT_EQ(expected_written_values, spy_I2C_getValuesAfterWrite());
 }
 
 TEST_F(CoreI2CTest, writeTwoBytes)
@@ -56,7 +56,7 @@ TEST_F(CoreI2CTest, writeTwoBytes)
 
 	corei2c.write(0, expected_written_values.data(), 2, false);
 
-	EXPECT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
+	EXPECT_EQ(expected_written_values, spy_I2C_getValuesAfterWrite());
 }
 
 TEST_F(CoreI2CTest, writeFiveBytes)
@@ -65,7 +65,7 @@ TEST_F(CoreI2CTest, writeFiveBytes)
 
 	corei2c.write(0, expected_written_values.data(), 5, false);
 
-	EXPECT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
+	EXPECT_EQ(expected_written_values, spy_I2C_getValuesAfterWrite());
 }
 
 TEST_F(CoreI2CTest, writeTenBytes)
@@ -74,14 +74,14 @@ TEST_F(CoreI2CTest, writeTenBytes)
 
 	corei2c.write(0, expected_written_values.data(), 10, false);
 
-	EXPECT_EQ(expected_written_values, spy_temperatureSensor_getValuesAfterWrite());
+	EXPECT_EQ(expected_written_values, spy_I2C_getValuesAfterWrite());
 }
 
 TEST_F(CoreI2CTest, readZeroBytes)
 {
 	expected_read_values = {};
 	actual_read_values.resize(0);
-	spy_temperatureSensor_setValuesBeforeRead(expected_read_values);
+	spy_I2C_setValuesBeforeRead(expected_read_values);
 
 	corei2c.read(0, actual_read_values.data(), 0, false);
 
@@ -92,7 +92,7 @@ TEST_F(CoreI2CTest, readOneByte)
 {
 	expected_read_values = {0x01};
 	actual_read_values.resize(1);
-	spy_temperatureSensor_setValuesBeforeRead(expected_read_values);
+	spy_I2C_setValuesBeforeRead(expected_read_values);
 
 	corei2c.read(0, actual_read_values.data(), 1, false);
 
@@ -103,7 +103,7 @@ TEST_F(CoreI2CTest, readTwoBytes)
 {
 	expected_read_values = {0x01, 0x02};
 	actual_read_values.resize(2);
-	spy_temperatureSensor_setValuesBeforeRead(expected_read_values);
+	spy_I2C_setValuesBeforeRead(expected_read_values);
 
 	corei2c.read(0, actual_read_values.data(), 2, false);
 
@@ -114,7 +114,7 @@ TEST_F(CoreI2CTest, readFiveBytes)
 {
 	expected_read_values = {0x01, 0x02, 0x03, 0x04, 0x05};
 	actual_read_values.resize(5);
-	spy_temperatureSensor_setValuesBeforeRead(expected_read_values);
+	spy_I2C_setValuesBeforeRead(expected_read_values);
 
 	corei2c.read(0, actual_read_values.data(), 5, false);
 
@@ -125,7 +125,7 @@ TEST_F(CoreI2CTest, readTenBytes)
 {
 	expected_read_values = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A};
 	actual_read_values.resize(10);
-	spy_temperatureSensor_setValuesBeforeRead(expected_read_values);
+	spy_I2C_setValuesBeforeRead(expected_read_values);
 
 	corei2c.read(0, actual_read_values.data(), 10, false);
 
