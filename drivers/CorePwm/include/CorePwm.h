@@ -20,15 +20,11 @@ class CorePwm : public interface::PwmOut
 
 	void period(float value) final;
 
-	void suspend() final;
-	void resume() final;
-
-	void enableDeepSleep() final { suspend(); }
-	void disableDeepSleep() final { resume(); }
+	void enableDeepSleep() final;
+	void disableDeepSleep() final;
 
   private:
 	mbed::PwmOut _pwm;
-	bool _is_suspended = false;
 };
 
 }	// namespace leka

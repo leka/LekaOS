@@ -21,22 +21,12 @@ void CorePwm::period(float value)
 	_pwm.period(value);
 }
 
-void CorePwm::suspend()
+void CorePwm::enableDeepSleep()
 {
-	if (_is_suspended) {
-		return;
-	}
-
 	_pwm.suspend();
-	_is_suspended = true;
 }
 
-void CorePwm::resume()
+void CorePwm::disableDeepSleep()
 {
-	if (!_is_suspended) {
-		return;
-	}
-
 	_pwm.resume();
-	_is_suspended = false;
 }

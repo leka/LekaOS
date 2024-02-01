@@ -81,7 +81,7 @@ suite suite_core_pwm = [] {
 			};
 
 			when("pwm is suspended") = [&] {
-				pwm.suspend();
+				pwm.enableDeepSleep();
 				rtos::ThisThread::sleep_for(5ms);
 
 				then("I expect deep sleep TO BE possible") = [] {
@@ -93,7 +93,7 @@ suite suite_core_pwm = [] {
 			};
 
 			when("pwm is resumed") = [&] {
-				pwm.resume();
+				pwm.disableDeepSleep();
 
 				then("I expect deep sleep TO NOT BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
@@ -132,7 +132,7 @@ suite suite_core_pwm = [] {
 			};
 
 			when("pwm is suspended") = [&] {
-				pwm.suspend();
+				pwm.enableDeepSleep();
 				rtos::ThisThread::sleep_for(5ms);
 
 				then("I expect deep sleep TO BE possible") = [] {
@@ -144,7 +144,7 @@ suite suite_core_pwm = [] {
 			};
 
 			when("pwm is resumed") = [&] {
-				pwm.resume();
+				pwm.disableDeepSleep();
 
 				then("I expect deep sleep TO NOT BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
@@ -183,7 +183,7 @@ suite suite_core_pwm = [] {
 			};
 
 			when("pwm is suspended") = [&] {
-				pwm.suspend();
+				pwm.enableDeepSleep();
 				rtos::ThisThread::sleep_for(5ms);
 
 				then("I expect deep sleep TO BE possible") = [] {
@@ -195,7 +195,7 @@ suite suite_core_pwm = [] {
 			};
 
 			when("pwm is resumed") = [&] {
-				pwm.resume();
+				pwm.disableDeepSleep();
 
 				then("I expect deep sleep TO NOT BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();

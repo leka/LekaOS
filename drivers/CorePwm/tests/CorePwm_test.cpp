@@ -53,52 +53,6 @@ TEST(CorePwmTest, period)
 	ASSERT_EQ(spy_PwmOut_getPeriod(), value);
 }
 
-TEST(CorePwmTest, suspend)
-{
-	auto corepwm = CorePwm {NC};
-
-	corepwm.suspend();
-
-	ASSERT_TRUE(spy_PwmOut_isSuspended());
-}
-
-TEST(CorePwmTest, suspendThenSuspend)
-{
-	auto corepwm = CorePwm {NC};
-
-	corepwm.suspend();
-	corepwm.suspend();
-
-	ASSERT_TRUE(spy_PwmOut_isSuspended());
-}
-
-TEST(CorePwmTest, suspendThenResume)
-{
-	auto corepwm = CorePwm {NC};
-
-	corepwm.suspend();
-
-	ASSERT_TRUE(spy_PwmOut_isSuspended());
-
-	corepwm.resume();
-
-	ASSERT_FALSE(spy_PwmOut_isSuspended());
-}
-
-TEST(CorePwmTest, suspendThenResumeThenResume)
-{
-	auto corepwm = CorePwm {NC};
-
-	corepwm.suspend();
-
-	ASSERT_TRUE(spy_PwmOut_isSuspended());
-
-	corepwm.resume();
-	corepwm.resume();
-
-	ASSERT_FALSE(spy_PwmOut_isSuspended());
-}
-
 TEST(CorePwmTest, enableDeepSleep)
 {
 	auto corepwm = CorePwm {NC};

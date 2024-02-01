@@ -35,11 +35,11 @@ void CoreMotor::setSpeed(float speed)
 {
 	if (speed <= 0.0F) {
 		_speed.write(0);
-		_speed.suspend();
+		_speed.enableDeepSleep();
 		return;
 	}
 
-	_speed.resume();
+	_speed.disableDeepSleep();
 
 	if (speed > 1.0F) {
 		_speed.write(1.0F);
