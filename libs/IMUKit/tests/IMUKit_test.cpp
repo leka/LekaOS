@@ -70,9 +70,8 @@ TEST_F(IMUKitTest, onDataReady)
 
 	imukit.onEulerAnglesReady(mock_callback.AsStdFunction());
 
-	const auto data_initial = interface::LSM6DSOX::SensorData {
-		.xl = {.x = 0.F, .y = 0.F, .z = 0.F}, .gy = {.x = 0.F, .y = 0.F, .z = 0.F }
-	};
+	const auto data_initial =
+		interface::LSM6DSOX::SensorData {.xl = {.x = 0.F, .y = 0.F, .z = 0.F}, .gy = {.x = 0.F, .y = 0.F, .z = 0.F}};
 
 	EXPECT_CALL(mock_callback, Call);
 
@@ -82,9 +81,8 @@ TEST_F(IMUKitTest, onDataReady)
 
 	spy_kernel_addElapsedTimeToTickCount(80ms);
 
-	const auto data_updated = interface::LSM6DSOX::SensorData {
-		.xl = {.x = 1.F, .y = 2.F, .z = 3.F}, .gy = {.x = 1.F, .y = 2.F, .z = 3.F }
-	};
+	const auto data_updated =
+		interface::LSM6DSOX::SensorData {.xl = {.x = 1.F, .y = 2.F, .z = 3.F}, .gy = {.x = 1.F, .y = 2.F, .z = 3.F}};
 
 	EXPECT_CALL(mock_callback, Call);
 
@@ -101,9 +99,8 @@ TEST_F(IMUKitTest, onDataReadyEmptyEulerAngleCallback)
 {
 	imukit.onEulerAnglesReady({});
 
-	const auto data_initial = interface::LSM6DSOX::SensorData {
-		.xl = {.x = 0.F, .y = 0.F, .z = 0.F}, .gy = {.x = 0.F, .y = 0.F, .z = 0.F }
-	};
+	const auto data_initial =
+		interface::LSM6DSOX::SensorData {.xl = {.x = 0.F, .y = 0.F, .z = 0.F}, .gy = {.x = 0.F, .y = 0.F, .z = 0.F}};
 
 	mock_lsm6dox.call_drdy_callback(data_initial);
 
@@ -111,9 +108,8 @@ TEST_F(IMUKitTest, onDataReadyEmptyEulerAngleCallback)
 
 	spy_kernel_addElapsedTimeToTickCount(80ms);
 
-	const auto data_updated = interface::LSM6DSOX::SensorData {
-		.xl = {.x = 1.F, .y = 2.F, .z = 3.F}, .gy = {.x = 1.F, .y = 2.F, .z = 3.F }
-	};
+	const auto data_updated =
+		interface::LSM6DSOX::SensorData {.xl = {.x = 1.F, .y = 2.F, .z = 3.F}, .gy = {.x = 1.F, .y = 2.F, .z = 3.F}};
 
 	mock_lsm6dox.call_drdy_callback(data_updated);
 

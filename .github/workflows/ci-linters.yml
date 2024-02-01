@@ -15,6 +15,14 @@ jobs:
         with:
           fetch-depth: 2
 
+      - name: Install clang-format 17
+        run: |
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo apt-add-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy-17 main"
+          sudo apt update -y
+          sudo apt install -y --no-install-recommends clang-format-17
+          clang-format-17 --version
+
       - name: Run clang-format
         run: |
-          python3 tools/run-clang-format.py --clang-format-executable=clang-format-14 -r --extension=h,hpp,c,cpp --color=always --style=file ./app ./drivers ./libs ./spikes ./tests
+          python3 tools/run-clang-format.py --clang-format-executable=clang-format-17 -r --extension=h,hpp,c,cpp --color=always --style=file ./app ./drivers ./libs ./spikes ./tests
