@@ -23,6 +23,9 @@ class CorePwm : public interface::PwmOut
 	void suspend() final;
 	void resume() final;
 
+	void enableDeepSleep() final { suspend(); }
+	void disableDeepSleep() final { resume(); }
+
   private:
 	mbed::PwmOut _pwm;
 	bool _is_suspended = false;

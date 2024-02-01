@@ -4,12 +4,14 @@
 
 #pragma once
 
+#include "DeepSleepEnabled.h"
+
 namespace leka::interface {
 
-class PwmOut
+class PwmOut : public interface::DeepSleepEnabled
 {
   public:
-	virtual ~PwmOut() = default;
+	~PwmOut() override = default;
 
 	virtual void period(float value) = 0;
 

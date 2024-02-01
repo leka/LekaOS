@@ -98,3 +98,33 @@ TEST(CorePwmTest, suspendThenResumeThenResume)
 
 	ASSERT_FALSE(spy_PwmOut_isSuspended());
 }
+
+TEST(CorePwmTest, enableDeepSleep)
+{
+	auto corepwm = CorePwm {NC};
+
+	corepwm.enableDeepSleep();
+	ASSERT_TRUE(spy_PwmOut_isSuspended());
+}
+
+TEST(CorePwmTest, disableDeepSleep)
+{
+	auto corepwm = CorePwm {NC};
+
+	corepwm.disableDeepSleep();
+	ASSERT_FALSE(spy_PwmOut_isSuspended());
+}
+
+TEST(CorePwmTest, enableDeepSleepThenDisableDeepSleepThenEnableDeepSleep)
+{
+	auto corepwm = CorePwm {NC};
+
+	corepwm.enableDeepSleep();
+	ASSERT_TRUE(spy_PwmOut_isSuspended());
+
+	corepwm.disableDeepSleep();
+	ASSERT_FALSE(spy_PwmOut_isSuspended());
+
+	corepwm.enableDeepSleep();
+	ASSERT_TRUE(spy_PwmOut_isSuspended());
+}
