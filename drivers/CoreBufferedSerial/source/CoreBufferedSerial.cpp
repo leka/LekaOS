@@ -2,8 +2,6 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-// LCOV_EXCL_START
-
 #include "CoreBufferedSerial.h"
 
 using namespace leka;
@@ -38,5 +36,3 @@ void CoreBufferedSerial::sigio(std::function<void()> const &callback)
 	_sigio_callback = callback;
 	_serial.sigio(mbed::Callback<void()> {[this] { _sigio_callback(); }});
 }
-
-// LCOV_EXCL_STOP
