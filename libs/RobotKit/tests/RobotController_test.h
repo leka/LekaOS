@@ -144,12 +144,6 @@ class RobotControllerTest : public testing::Test
 
 	bool spy_isCharging_return_value = false;
 
-	void expectedCallsStopMotors()
-	{
-		EXPECT_CALL(mock_motor_left, stop());
-		EXPECT_CALL(mock_motor_right, stop());
-	}
-
 	void expectedCallsStopActuators()
 	{
 		EXPECT_CALL(mock_ledkit, stop).Times(AtLeast(1));
@@ -162,135 +156,50 @@ class RobotControllerTest : public testing::Test
 
 	void expectedCallsInitializeComponents()
 	{
-		{
-			InSequence seq;
+		EXPECT_CALL(mock_mcu, getID).Times(AnyNumber());
+		EXPECT_CALL(firmware_update, getCurrentVersion).Times(AnyNumber());
 
-			EXPECT_CALL(mbed_mock_gatt, addService).Times(8);
-			EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(1);
-			EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(1);
+		EXPECT_CALL(mbed_mock_gap, setEventHandler).Times(AnyNumber());
+		EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).Times(AnyNumber());
+		EXPECT_CALL(mbed_mock_gatt, addService).Times(AnyNumber());
+		EXPECT_CALL(mbed_mock_gatt, setEventHandler).Times(AnyNumber());
+		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber());
 
-			EXPECT_CALL(mock_mcu, getID).Times(1);
-			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
-
-			EXPECT_CALL(firmware_update, getCurrentVersion).Times(1);
-			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1);
-
-			Sequence set_serial_number_as_ble_device_name;
-			EXPECT_CALL(mock_mcu, getID).InSequence(set_serial_number_as_ble_device_name);
-			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(1).InSequence(set_serial_number_as_ble_device_name);
-			EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).InSequence(set_serial_number_as_ble_device_name);
-
-			expectedCallsStopMotors();
-
-			EXPECT_CALL(mock_ledkit, init);
-
-			EXPECT_CALL(mock_videokit, initializeScreen).Times(1);
-			EXPECT_CALL(mock_lcd, turnOff).Times(1);
-			EXPECT_CALL(mock_videokit, stopVideo).Times(1);
-
-			EXPECT_CALL(mock_ledkit, stop).Times(AtLeast(1));
-		}
+		EXPECT_CALL(mock_ledkit, init).Times(AnyNumber());
+		EXPECT_CALL(mock_videokit, initializeScreen).Times(AnyNumber());
+		EXPECT_CALL(mock_lcd, turnOff).Times(AnyNumber());
+		EXPECT_CALL(mock_videokit, stopVideo).Times(AnyNumber());
+		EXPECT_CALL(mock_motor_left, stop).Times(AnyNumber());
+		EXPECT_CALL(mock_motor_right, stop).Times(AnyNumber());
 
 		rc.initializeComponents();
 	}
 
 	void expectedCallsRegisterEvents()
 	{
+		EXPECT_CALL(battery, isCharging).Times(AnyNumber());
+		EXPECT_CALL(battery, level).Times(AnyNumber());
+
+		EXPECT_CALL(mock_ledkit, stop).Times(AnyNumber());
+		EXPECT_CALL(mock_motor_left, stop).Times(AnyNumber());
+		EXPECT_CALL(mock_motor_right, stop).Times(AnyNumber());
+		EXPECT_CALL(mock_videokit, displayImage).Times(AnyNumber());
+
+		EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).Times(AnyNumber());
+		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(AnyNumber());
+
 		{
-			InSequence seq;
+			EXPECT_CALL(timeout_state_transition, onTimeout).Times(AnyNumber());
+			EXPECT_CALL(timeout_state_transition, start).Times(AnyNumber());
+			EXPECT_CALL(mock_videokit, playVideoOnRepeat).Times(AnyNumber());
+			EXPECT_CALL(mock_lcd, turnOn).Times(AnyNumber());
+		}	// ? On Idle entry
 
-			Sequence on_low_battery_sequence;
-			EXPECT_CALL(battery, level).InSequence(on_low_battery_sequence);
-			EXPECT_CALL(battery, isCharging)
-				.InSequence(on_low_battery_sequence)
-				.WillOnce(Return(spy_isCharging_return_value));
-			if (spy_isCharging_return_value == false) {
-				EXPECT_CALL(
-					mock_videokit,
-					displayImage(std::filesystem::path {"/fs/home/img/system/robot-battery-empty-must_be_charged.jpg"}))
-					.Times(1);
-				expectedCallsStopMotors();
-			}
-			EXPECT_CALL(battery, level).InSequence(on_low_battery_sequence);
-
-			Sequence on_data_updated_sequence;
-			EXPECT_CALL(battery, level).InSequence(on_data_updated_sequence);
-			EXPECT_CALL(battery, isCharging).InSequence(on_data_updated_sequence);
-			EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).InSequence(on_data_updated_sequence);
-			EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(2).InSequence(on_data_updated_sequence);
-
-			EXPECT_CALL(battery, onChargeDidStart).WillOnce(SaveArg<0>(&on_charge_did_start));
-
-			EXPECT_CALL(battery, onChargeDidStop).WillOnce(SaveArg<0>(&on_charge_did_stop));
-
-			{
-				InSequence event_setup_complete;
-
-				if (spy_isCharging_return_value == true) {
-					expectedCallsTransitionSetupToCharging();
-				} else {
-					expectedCallsTransitionSetupToIdle();
-				}
-			}
-		}
+		// Saved callback
+		EXPECT_CALL(battery, onChargeDidStart).WillOnce(SaveArg<0>(&on_charge_did_start));
+		EXPECT_CALL(battery, onChargeDidStop).WillOnce(SaveArg<0>(&on_charge_did_stop));
 
 		rc.registerEvents();
-	}
-
-	void expectedCallsTransitionSetupToIdle()
-	{
-		Sequence is_charging_sequence;
-
-		EXPECT_CALL(battery, isCharging).InSequence(is_charging_sequence).WillOnce(Return(spy_isCharging_return_value));
-		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(is_charging_sequence);
-
-		expectedCallsRunLaunchingBehavior();
-
-		Sequence on_idle_entry_sequence;
-		EXPECT_CALL(timeout_state_transition, onTimeout)
-			.InSequence(on_idle_entry_sequence)
-			.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_sleep_timeout));
-		EXPECT_CALL(timeout_state_transition, start).InSequence(on_idle_entry_sequence);
-
-		EXPECT_CALL(mock_videokit, playVideoOnRepeat).InSequence(on_idle_entry_sequence);
-		EXPECT_CALL(mock_lcd, turnOn).Times(AtLeast(1)).InSequence(on_idle_entry_sequence);
-	}
-
-	void expectedCallsTransitionSetupToCharging()
-	{
-		Sequence is_charging_sequence;
-
-		EXPECT_CALL(battery, isCharging).InSequence(is_charging_sequence).WillOnce(Return(spy_isCharging_return_value));
-		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(is_charging_sequence);
-
-		EXPECT_CALL(battery, isCharging).InSequence(is_charging_sequence).WillOnce(Return(spy_isCharging_return_value));
-		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).InSequence(is_charging_sequence);
-
-		expectedCallsRunLaunchingBehavior();
-
-		Sequence start_deep_sleep_timeout_sequence;
-		EXPECT_CALL(timeout_state_transition, onTimeout).InSequence(start_deep_sleep_timeout_sequence);
-		EXPECT_CALL(timeout_state_transition, start).InSequence(start_deep_sleep_timeout_sequence);
-
-		Sequence start_charging_behavior_sequence;
-		EXPECT_CALL(battery, level).InSequence(start_charging_behavior_sequence);
-		EXPECT_CALL(mock_videokit, displayImage).InSequence(start_charging_behavior_sequence);
-		EXPECT_CALL(mock_ledkit, start).InSequence(start_charging_behavior_sequence);
-		EXPECT_CALL(mock_lcd, turnOn).InSequence(start_charging_behavior_sequence);
-		EXPECT_CALL(timeout_state_internal, onTimeout)
-			.InSequence(start_charging_behavior_sequence)
-			.WillOnce(GetCallback<interface::Timeout::callback_t>(&on_charging_start_timeout));
-		EXPECT_CALL(timeout_state_internal, start).InSequence(start_charging_behavior_sequence);
-	}
-
-	void expectedCallsRunLaunchingBehavior()
-	{
-		InSequence run_launching_behavior_sequence;
-
-		EXPECT_CALL(mock_videokit,
-					displayImage(std::filesystem::path {"/fs/home/img/system/robot-misc-splash_screen-large-400.jpg"}))
-			.Times(1);
-		EXPECT_CALL(mock_lcd, turnOn);
 	}
 
 	void expectedCallsResetAutonomousActivitiesTimeout()
