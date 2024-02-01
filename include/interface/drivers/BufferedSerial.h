@@ -7,14 +7,14 @@
 #include <cstdint>
 #include <functional>
 
-#include "Callback.h"
+#include "DeepSleepEnabled.h"
 
 namespace leka::interface {
 
-class BufferedSerial
+class BufferedSerial : public interface::DeepSleepEnabled
 {
   public:
-	virtual ~BufferedSerial() = default;
+	~BufferedSerial() override = default;
 
 	virtual auto read(uint8_t *buffer, std::size_t length) -> std::size_t		 = 0;
 	virtual auto write(const uint8_t *buffer, std::size_t length) -> std::size_t = 0;

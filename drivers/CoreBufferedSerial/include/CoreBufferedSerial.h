@@ -26,6 +26,9 @@ class CoreBufferedSerial : public interface::BufferedSerial
 	void enable_input() final;
 	void disable_input() final;
 
+	void enableDeepSleep() final { disable_input(); }
+	void disableDeepSleep() final { enable_input(); }
+
 	void sigio(std::function<void()> const &callback) final;
 
   private:
