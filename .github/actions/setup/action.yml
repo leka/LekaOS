@@ -35,14 +35,14 @@ runs:
     #
 
     - name: Checkout mbed-os
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: leka/mbed-os
         ref: ${{ env.HEAD_MBED_VERSION }}
         path: extern/mbed-os
 
     - name: Checkout mcuboot
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: mcu-tools/mcuboot
         ref: ${{ env.HEAD_MCUBOOT_VERSION }}
