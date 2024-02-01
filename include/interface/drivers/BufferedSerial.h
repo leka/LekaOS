@@ -21,9 +21,6 @@ class BufferedSerial : public interface::DeepSleepEnabled
 
 	virtual auto readable() -> bool = 0;
 
-	virtual void disable_input() = 0;
-	virtual void enable_input()	 = 0;
-
 	virtual void sigio(std::function<void()> const &callback) = 0;
 };
 

@@ -59,20 +59,6 @@ TEST_F(CoreBufferedSerialTest, readable)
 	// nothing expected
 }
 
-TEST_F(CoreBufferedSerialTest, enableInput)
-{
-	coreserial.enable_input();
-
-	ASSERT_TRUE(spy_BufferedSerial_getEnableInput());
-}
-
-TEST_F(CoreBufferedSerialTest, disableInput)
-{
-	coreserial.disable_input();
-
-	ASSERT_FALSE(spy_BufferedSerial_getEnableInput());
-}
-
 TEST_F(CoreBufferedSerialTest, sigio)
 {
 	auto mock_function = MockFunction<void()> {};

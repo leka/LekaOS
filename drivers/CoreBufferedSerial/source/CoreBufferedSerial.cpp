@@ -21,12 +21,12 @@ auto CoreBufferedSerial::readable() -> bool
 	return _serial.readable();
 }
 
-void CoreBufferedSerial::enable_input()
+void CoreBufferedSerial::disableDeepSleep()
 {
 	_serial.enable_input(true);
 }
 
-void CoreBufferedSerial::disable_input()
+void CoreBufferedSerial::enableDeepSleep()
 {
 	_serial.enable_input(false);
 }
