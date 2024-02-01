@@ -35,7 +35,7 @@ jobs:
         optimisation_level: ["-Og", "-Os"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set CC & CXX env
         id: set_cc_cxx_env
