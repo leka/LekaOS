@@ -104,6 +104,8 @@ CheckOptions:
     value: "^(fs|c|ms|fh|t|bd|s|hz|id|[abcijkxyz])$"
   - key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
     value: true
+  - key: modernize-use-override.IgnoreDestructors
+    value: true
 
 WarningsAsErrors: " \
   modernize-*
