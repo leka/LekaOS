@@ -5,6 +5,7 @@
 #include "CoreMotor.h"
 
 #include "gtest/gtest.h"
+#include "mocks/leka/DeepSleepEnabled.h"
 #include "mocks/leka/PwmOut.h"
 #include "mocks/mbed/DigitalOut.h"
 
@@ -125,4 +126,22 @@ TEST_F(CoreMotorTest, speedValueNotLowerThanZero)
 	EXPECT_CALL(speed, write(0));
 
 	motor.spin(Rotation::clockwise, -100);
+}
+
+TEST_F(CoreMotorTest, enableDeepSleep)
+{
+	auto motor = CoreMotor {dir_1, dir_2, speed};
+
+	EXPECT_CALL(speed, enableDeepSleep());
+
+	motor.enableDeepSleep();
+}
+
+TEST_F(CoreMotorTest, disableDeepSleep)
+{
+	auto motor = CoreMotor {dir_1, dir_2, speed};
+
+	EXPECT_CALL(speed, disableDeepSleep());
+
+	motor.disableDeepSleep();
 }
