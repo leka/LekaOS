@@ -36,3 +36,13 @@ void CoreBufferedSerial::sigio(std::function<void()> const &callback)
 	_sigio_callback = callback;
 	_serial.sigio(mbed::Callback<void()> {[this] { _sigio_callback(); }});
 }
+
+void CoreBufferedSerial::enableDeepSleep()
+{
+	disable_input();
+}
+
+void CoreBufferedSerial::disableDeepSleep()
+{
+	enable_input();
+}
