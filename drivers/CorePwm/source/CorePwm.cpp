@@ -40,3 +40,13 @@ void CorePwm::resume()
 	_pwm.resume();
 	_is_suspended = false;
 }
+
+void CorePwm::enableDeepSleep()
+{
+	suspend();
+}
+
+void CorePwm::disableDeepSleep()
+{
+	resume();
+}

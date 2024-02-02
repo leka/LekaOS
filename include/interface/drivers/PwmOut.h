@@ -4,9 +4,11 @@
 
 #pragma once
 
+#include "interface/drivers/DeepSleepEnabled.h"
+
 namespace leka::interface {
 
-class PwmOut
+class PwmOut : public interface::DeepSleepEnabled
 {
   public:
 	virtual ~PwmOut() = default;
