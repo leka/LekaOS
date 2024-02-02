@@ -16,11 +16,14 @@ class CoreMotor : public interface::Motor
 	CoreMotor(interface::DigitalOut &dir_1, interface::DigitalOut &dir_2, interface::PwmOut &speed)
 		: _dir_1(dir_1), _dir_2(dir_2), _speed(speed)
 	{
-		_speed.suspend();
+		// nothing to do
 	}
 
-	void spin(rotation_t rotation, float speed) override;
-	void stop() override;
+	void spin(rotation_t rotation, float speed) final;
+	void stop() final;
+
+	void enableDeepSleep() final;
+	void disableDeepSleep() final;
 
   private:
 	void setDirections(int dir_1, int dir_2);
