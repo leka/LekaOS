@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "interface/drivers/DeepSleepEnabled.h"
+
 namespace leka {
 
 enum class Rotation
@@ -19,8 +21,7 @@ using rotation_t = Rotation;
 
 namespace interface {
 
-	class Motor
-
+	class Motor : public interface::DeepSleepEnabled
 	{
 	  public:
 		virtual ~Motor() = default;
