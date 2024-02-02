@@ -16,6 +16,9 @@ class CoreLCD : public interface::LCD
 	MOCK_METHOD(void, turnOn, (), (override));
 	MOCK_METHOD(void, turnOff, (), (override));
 	MOCK_METHOD(void, setBrightness, (float value), (override));
+
+	MOCK_METHOD(void, enableDeepSleep, (), (override));
+	MOCK_METHOD(void, disableDeepSleep, (), (override));
 };
 
 }	// namespace leka::mock
