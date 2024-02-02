@@ -19,8 +19,8 @@ class CoreMotor : public interface::Motor
 		// nothing to do
 	}
 
-	void spin(rotation_t rotation, float speed) override;
-	void stop() override;
+	void spin(rotation_t rotation, float speed) final;
+	void stop() final;
 
   private:
 	void setDirections(int dir_1, int dir_2);
