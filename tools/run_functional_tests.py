@@ -280,11 +280,11 @@ def print_summary():
             FAILS.append(test)
 
     print("\n")
-    print("{:<100} {:<7}".format('BIN_PATH', 'STATUS'))
+    print("{}{}".format('     ', 'TESTS'))
     for test in RUN_TESTS:
         path = test.path
-        status = "❌" if test in FAILS else "✅"
-        print("{:<100} {:^7}".format(path, status))
+        status = " ❌  " if test in FAILS else " ✅  "
+        print("{}{}".format(status, path))
 
     print("\n")
     for test in FAILS:
