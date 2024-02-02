@@ -100,6 +100,9 @@ void BufferedSerial::tx_irq(void) {}
 int BufferedSerial::enable_input(bool enabled)
 {
 	spy_BufferedSerial_enable_input = enabled;
+	if (not(enabled)) {
+		leka::spy_BufferedSerial_sigio_callback = [] {};   // ? Current behavior on robot
+	}
 
 	return 0;
 }
