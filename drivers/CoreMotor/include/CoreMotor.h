@@ -22,6 +22,9 @@ class CoreMotor : public interface::Motor
 	void spin(rotation_t rotation, float speed) final;
 	void stop() final;
 
+	void enableDeepSleep() final;
+	void disableDeepSleep() final;
+
   private:
 	void setDirections(int dir_1, int dir_2);
 	void setSpeed(float speed);

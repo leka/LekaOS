@@ -46,4 +46,14 @@ void CoreMotor::setSpeed(float speed)
 	_speed.write(speed);
 }
 
+void CoreMotor::enableDeepSleep()
+{
+	_speed.enableDeepSleep();
+}
+
+void CoreMotor::disableDeepSleep()
+{
+	_speed.disableDeepSleep();
+}
+
 }	// namespace leka
