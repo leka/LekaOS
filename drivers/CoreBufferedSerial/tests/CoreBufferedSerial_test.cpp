@@ -81,3 +81,21 @@ TEST_F(CoreBufferedSerialTest, disableDeepSleep)
 	coreserial.disableDeepSleep();
 	ASSERT_TRUE(spy_BufferedSerial_getEnableInput());
 }
+
+TEST_F(CoreBufferedSerialTest, sigioAfterDisableDeepSleep)
+{
+	auto mock_function = MockFunction<void()> {};
+
+	coreserial.sigio(mock_function.AsStdFunction());
+
+	EXPECT_CALL(mock_function, Call);
+	auto on_sigio_callback = spy_BufferedSerial_getSigioCallback();
+	on_sigio_callback();
+
+	coreserial.enableDeepSleep();
+	coreserial.disableDeepSleep();
+
+	EXPECT_CALL(mock_function, Call);
+	on_sigio_callback = spy_BufferedSerial_getSigioCallback();
+	on_sigio_callback();
+}
