@@ -6,11 +6,12 @@
 
 #include "ISO14443A.h"
 #include "MagicCard.h"
+#include "interface/drivers/DeepSleepEnabled.h"
 #include "interface/drivers/RFIDReader.h"
 
 namespace leka {
 
-class RFIDKit
+class RFIDKit : public interface::DeepSleepEnabled
 {
   public:
 	explicit RFIDKit(interface::RFIDReader &rfid_reader) : _rfid_reader(rfid_reader) {};
