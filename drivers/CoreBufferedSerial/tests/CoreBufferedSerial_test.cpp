@@ -83,3 +83,15 @@ TEST_F(CoreBufferedSerialTest, sigio)
 	auto on_sigio_callback = spy_BufferedSerial_getSigioCallback();
 	on_sigio_callback();
 }
+
+TEST_F(CoreBufferedSerialTest, enableDeepSleep)
+{
+	coreserial.enableDeepSleep();
+	ASSERT_FALSE(spy_BufferedSerial_getEnableInput());
+}
+
+TEST_F(CoreBufferedSerialTest, disableDeepSleep)
+{
+	coreserial.disableDeepSleep();
+	ASSERT_TRUE(spy_BufferedSerial_getEnableInput());
+}
