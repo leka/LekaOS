@@ -24,6 +24,9 @@ class RFIDKit : public interface::DeepSleepEnabled
 	[[nodiscard]] auto getCallback() const -> const std::function<void(const MagicCard &)> &;
 	[[nodiscard]] auto getLastMagicCardActivated() const -> const MagicCard &;
 
+	void enableDeepSleep() final;
+	void disableDeepSleep() final;
+
   private:
 	interface::RFIDReader &_rfid_reader;
 	MagicCard _card = MagicCard::none;
