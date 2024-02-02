@@ -7,11 +7,11 @@
 #include <cstdint>
 #include <functional>
 
-#include "Callback.h"
+#include "DeepSleepEnabled.h"
 
 namespace leka::interface {
 
-class BufferedSerial
+class BufferedSerial : public interface::DeepSleepEnabled
 {
   public:
 	virtual ~BufferedSerial() = default;
