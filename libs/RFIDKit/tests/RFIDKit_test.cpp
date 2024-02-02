@@ -181,3 +181,17 @@ TEST_F(RFIDKitTest, getLastMagicCardActivated)
 
 	EXPECT_EQ(rfid_kit.getLastMagicCardActivated(), MagicCard::emergency_stop);
 }
+
+TEST_F(RFIDKitTest, enableDeepSleep)
+{
+	EXPECT_CALL(mock_reader, enableDeepSleep());
+
+	rfid_kit.enableDeepSleep();
+}
+
+TEST_F(RFIDKitTest, disableDeepSleep)
+{
+	EXPECT_CALL(mock_reader, disableDeepSleep());
+
+	rfid_kit.disableDeepSleep();
+}
