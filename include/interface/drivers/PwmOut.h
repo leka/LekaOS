@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "interface/drivers/DeepSleepEnabled.h"
+#include "DeepSleepEnabled.h"
 
 namespace leka::interface {
 
