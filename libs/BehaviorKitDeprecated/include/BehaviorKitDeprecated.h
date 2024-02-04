@@ -10,11 +10,11 @@
 
 namespace leka {
 
-class BehaviorKit
+class BehaviorKitDeprecated
 {
   public:
-	explicit BehaviorKit(interface::VideoKit &videokit, interface::LedKit &ledkit, interface::Motor &motor_left,
-						 interface::Motor &motor_right)
+	explicit BehaviorKitDeprecated(interface::VideoKit &videokit, interface::LedKit &ledkit,
+								   interface::Motor &motor_left, interface::Motor &motor_right)
 		: _videokit(videokit), _ledkit(ledkit), _motor_left(motor_left), _motor_right(motor_right)
 	{
 		// nothing do to

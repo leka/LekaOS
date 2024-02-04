@@ -278,7 +278,7 @@ namespace motion::internal {
 
 auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::timeout};
 
-auto behaviorkit   = BehaviorKit {videokit, ledkit, motors::left::motor, motors::right::motor};
+auto behaviorkit   = BehaviorKitDeprecated {videokit, ledkit, motors::left::motor, motors::right::motor};
 auto reinforcerkit = ReinforcerKit {videokit, ledkit, motionkit};
 
 namespace command {
