@@ -21,12 +21,12 @@ auto CoreBufferedSerial::readable() -> bool
 	return _serial.readable();
 }
 
-void CoreBufferedSerial::enable_input()
+void CoreBufferedSerial::disableDeepSleep()
 {
 	_serial.enable_input(true);
 }
 
-void CoreBufferedSerial::disable_input()
+void CoreBufferedSerial::enableDeepSleep()
 {
 	_serial.enable_input(false);
 }
@@ -35,14 +35,4 @@ void CoreBufferedSerial::sigio(std::function<void()> const &callback)
 {
 	_sigio_callback = callback;
 	_serial.sigio(mbed::Callback<void()> {[this] { _sigio_callback(); }});
-}
-
-void CoreBufferedSerial::enableDeepSleep()
-{
-	disable_input();
-}
-
-void CoreBufferedSerial::disableDeepSleep()
-{
-	enable_input();
 }
