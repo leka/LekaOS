@@ -1,42 +1,29 @@
 // Leka - LekaOS
-// Copyright 2022 APF France handicap
+// Copyright 2023 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
 #include "BehaviorKit.h"
 
-#include "LedKitAnimations.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "mocks/leka/CoreMotor.h"
-#include "mocks/leka/LedKit.h"
-#include "mocks/leka/VideoKit.h"
+#include "mocks/leka/Behavior.h"
 
 using namespace leka;
 
-using ::testing::InSequence;
-
-MATCHER_P(isSameAnimation, expected_animation_type, "")
-{
-	bool is_same = typeid(*expected_animation_type) == typeid(*arg);
-	return is_same;
-}
+using ::testing::Return;
 
 class BehaviorKitTest : public ::testing::Test
 {
   protected:
-	BehaviorKitTest() : behaviorkit(mock_videokit, mock_ledkit, mock_motor_left, mock_motor_right) {};
+	BehaviorKitTest() = default;
 
 	// void SetUp() override {}
 	// void TearDown() override {}
 
-	mock::VideoKit mock_videokit {};
+	BehaviorKit behaviorkit {};
 
-	mock::LedKit mock_ledkit {};
-
-	mock::CoreMotor mock_motor_left {};
-	mock::CoreMotor mock_motor_right {};
-
-	BehaviorKit behaviorkit;
+	mock::Behavior mock_behavior_a {};
+	mock::Behavior mock_behavior_b {};
 };
 
 TEST_F(BehaviorKitTest, initialization)
@@ -44,96 +31,84 @@ TEST_F(BehaviorKitTest, initialization)
 	ASSERT_NE(&behaviorkit, nullptr);
 }
 
-TEST_F(BehaviorKitTest, spinLeftAnySpeed)
+TEST_F(BehaviorKitTest, startFirstBehavior)
 {
-	auto expected_speed = 0.7;
+	auto behaviors = std::to_array<interface::Behavior *>({&mock_behavior_a});
+	behaviorkit.registerBehaviors(behaviors);
 
-	EXPECT_CALL(mock_motor_left, spin(Rotation::clockwise, expected_speed));
-	EXPECT_CALL(mock_motor_right, spin(Rotation::clockwise, expected_speed));
+	EXPECT_CALL(mock_behavior_a, run);
 
-	behaviorkit.spinLeft(expected_speed);
+	behaviorkit.start(&mock_behavior_a);
 }
 
-TEST_F(BehaviorKitTest, spinRightAnySpeed)
+TEST_F(BehaviorKitTest, startBehaviorNullPtr)
 {
-	auto expected_speed = 0.3;
+	// nothing expected
 
-	EXPECT_CALL(mock_motor_left, spin(Rotation::counterClockwise, expected_speed));
-	EXPECT_CALL(mock_motor_right, spin(Rotation::counterClockwise, expected_speed));
-
-	behaviorkit.spinRight(expected_speed);
+	behaviorkit.start(nullptr);
 }
 
-TEST_F(BehaviorKitTest, launching)
+TEST_F(BehaviorKitTest, startFirstBehaviorID)
 {
-	EXPECT_CALL(mock_videokit, displayImage);
-	behaviorkit.launching();
+	auto behaviors = std::to_array<interface::Behavior *>({
+		&mock_behavior_a,
+		&mock_behavior_b,
+	});
+	behaviorkit.registerBehaviors(behaviors);
+
+	auto behavior_a_id = BehaviorID {1};
+	auto behavior_b_id = BehaviorID {2};
+
+	EXPECT_CALL(mock_behavior_a, id).WillRepeatedly(Return(behavior_a_id));
+	EXPECT_CALL(mock_behavior_b, id).WillRepeatedly(Return(behavior_b_id));
+	EXPECT_CALL(mock_behavior_b, run);
+
+	behaviorkit.start(behavior_b_id);
 }
 
-TEST_F(BehaviorKitTest, sleeping)
+TEST_F(BehaviorKitTest, startBehaviorIDNotRegistered)
 {
-	EXPECT_CALL(mock_videokit, playVideoOnce);
-	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::sleeping))).Times(1);
+	auto behaviors = std::to_array<interface::Behavior *>({
+		&mock_behavior_a,
+		&mock_behavior_b,
+	});
+	behaviorkit.registerBehaviors(behaviors);
 
-	behaviorkit.sleeping();
+	auto behavior_a_id = BehaviorID {1};
+	auto behavior_b_id = BehaviorID {2};
+
+	EXPECT_CALL(mock_behavior_a, id).WillRepeatedly(Return(behavior_a_id));
+	EXPECT_CALL(mock_behavior_b, id).WillRepeatedly(Return(behavior_b_id));
+
+	behaviorkit.start(BehaviorID {3});
 }
 
-TEST_F(BehaviorKitTest, waiting)
+TEST_F(BehaviorKitTest, startBehaviorNotRegistered)
 {
-	EXPECT_CALL(mock_ledkit, stop);
-	EXPECT_CALL(mock_videokit, playVideoOnRepeat);
-	behaviorkit.waiting();
+	auto behaviors = std::to_array<interface::Behavior *>({
+		&mock_behavior_a,
+	});
+	behaviorkit.registerBehaviors(behaviors);
+
+	EXPECT_CALL(mock_behavior_b, run).Times(0);
+
+	behaviorkit.start(&mock_behavior_b);
 }
 
-TEST_F(BehaviorKitTest, batteryBehaviors)
+TEST_F(BehaviorKitTest, startAnyBehavior)
 {
-	EXPECT_CALL(mock_videokit, displayImage).Times(6);
-	EXPECT_CALL(mock_ledkit, stop);
-	EXPECT_CALL(mock_motor_left, stop()).Times(1);
-	EXPECT_CALL(mock_motor_right, stop()).Times(1);
+	auto behaviors = std::to_array<interface::Behavior *>({
+		&mock_behavior_a,
+		&mock_behavior_b,
+	});
+	behaviorkit.registerBehaviors(behaviors);
 
-	behaviorkit.lowBattery();
-	behaviorkit.chargingEmpty();
-	behaviorkit.chargingLow();
-	behaviorkit.chargingMedium();
-	behaviorkit.chargingHigh();
-	behaviorkit.chargingFull();
-}
+	EXPECT_CALL(mock_behavior_a, run);
 
-TEST_F(BehaviorKitTest, bleConnectionWithoutVideo)
-{
-	EXPECT_CALL(mock_videokit, playVideoOnce).Times(0);
-	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection))).Times(1);
+	behaviorkit.start(&mock_behavior_a);
 
-	behaviorkit.bleConnectionWithoutVideo();
-}
+	EXPECT_CALL(mock_behavior_a, stop);
+	EXPECT_CALL(mock_behavior_b, run);
 
-TEST_F(BehaviorKitTest, bleConnectionWithVideo)
-{
-	EXPECT_CALL(mock_videokit, playVideoOnce);
-	EXPECT_CALL(mock_ledkit, start(isSameAnimation(&led::animation::ble_connection))).Times(1);
-
-	behaviorkit.bleConnectionWithVideo();
-}
-
-TEST_F(BehaviorKitTest, working)
-{
-	EXPECT_CALL(mock_videokit, displayImage);
-	behaviorkit.working();
-}
-
-TEST_F(BehaviorKitTest, fileExchange)
-{
-	EXPECT_CALL(mock_videokit, displayImage);
-	behaviorkit.fileExchange();
-}
-
-TEST_F(BehaviorKitTest, stop)
-{
-	EXPECT_CALL(mock_ledkit, stop);
-	EXPECT_CALL(mock_videokit, stopVideo);
-	EXPECT_CALL(mock_motor_left, stop());
-	EXPECT_CALL(mock_motor_right, stop());
-
-	behaviorkit.stop();
+	behaviorkit.start(&mock_behavior_b);
 }

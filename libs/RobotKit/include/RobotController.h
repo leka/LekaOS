@@ -19,7 +19,7 @@
 
 #include "ActivityKit.h"
 #include "BatteryKit.h"
-#include "BehaviorKit.h"
+#include "BehaviorKitDeprecated.h"
 #include "CommandKit.h"
 #include "ConfigKit.h"
 #include "CoreMutex.h"
@@ -54,7 +54,7 @@ class RobotController : public interface::RobotController
 							 SerialNumberKit &serialnumberkit, interface::FirmwareUpdate &firmware_update,
 							 interface::Motor &motor_left, interface::Motor &motor_right, interface::LED &ears,
 							 interface::LED &belt, interface::LedKit &ledkit, interface::LCD &lcd,
-							 interface::VideoKit &videokit, BehaviorKit &behaviorkit, CommandKit &cmdkit,
+							 interface::VideoKit &videokit, BehaviorKitDeprecated &behaviorkit, CommandKit &cmdkit,
 							 RFIDKit &rfidkit, ActivityKit &activitykit)
 		: _timeout_state_internal(timeout_state_internal),
 		  _timeout_state_transition(timeout_state_transition),
@@ -580,7 +580,7 @@ class RobotController : public interface::RobotController
 	RFIDKit &_rfidkit;
 	ActivityKit &_activitykit;
 
-	BehaviorKit &_behaviorkit;
+	BehaviorKitDeprecated &_behaviorkit;
 	CommandKit &_cmdkit;
 
 	rtos::Thread _thread {};

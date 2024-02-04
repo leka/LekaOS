@@ -1,55 +1,31 @@
 // Leka - LekaOS
-// Copyright 2022 APF France handicap
+// Copyright 2023 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
 #pragma once
 
-#include "interface/drivers/Motor.h"
-#include "interface/libs/LedKit.h"
-#include "interface/libs/VideoKit.h"
+#include <span>
+
+#include "interface/Behavior.h"
+#include "interface/libs/BehaviorKit.h"
+#include "internal/BehaviorID.h"
 
 namespace leka {
 
-class BehaviorKit
+class BehaviorKit : public interface::BehaviorKit
 {
   public:
-	explicit BehaviorKit(interface::VideoKit &videokit, interface::LedKit &ledkit, interface::Motor &motor_left,
-						 interface::Motor &motor_right)
-		: _videokit(videokit), _ledkit(ledkit), _motor_left(motor_left), _motor_right(motor_right)
-	{
-		// nothing do to
-	}
+	explicit BehaviorKit() = default;
 
-	void spinLeft(float speed);
-	void spinRight(float speed);
+	void registerBehaviors(std::span<interface::Behavior *> behaviors) final;
 
-	void launching();
-	void sleeping();
-	void waiting();
-
-	void blinkOnCharge();
-
-	void lowBattery();
-
-	void chargingEmpty();
-	void chargingLow();
-	void chargingMedium();
-	void chargingHigh();
-	void chargingFull();
-
-	void bleConnectionWithoutVideo();
-	void bleConnectionWithVideo();
-	void working();
-
-	void fileExchange();
-
-	void stop();
+	void start(interface::Behavior *behavior) final;
+	void start(BehaviorID id) final;
+	void stop() final;
 
   private:
-	interface::VideoKit &_videokit;
-	interface::LedKit &_ledkit;
-	interface::Motor &_motor_left;
-	interface::Motor &_motor_right;
+	std::span<interface::Behavior *> _behaviors {};
+	interface::Behavior *_behavior = nullptr;
 };
 
 }	// namespace leka

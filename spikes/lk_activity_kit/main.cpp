@@ -10,7 +10,7 @@
 #include "rtos/Thread.h"
 
 #include "ActivityKit.h"
-#include "BehaviorKit.h"
+#include "BehaviorKitDeprecated.h"
 #include "ChooseReinforcer.h"
 #include "CoreBufferedSerial.h"
 #include "CoreDMA2D.hpp"
@@ -209,7 +209,7 @@ namespace motion::internal {
 
 auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::timeout};
 
-auto behaviorkit   = BehaviorKit {videokit, ledkit, motors::left::motor, motors::right::motor};
+auto behaviorkit   = BehaviorKitDeprecated {videokit, ledkit, motors::left::motor, motors::right::motor};
 auto reinforcerkit = ReinforcerKit {videokit, ledkit, motionkit};
 
 namespace rfid {

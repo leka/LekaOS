@@ -1,113 +1,52 @@
 // Leka - LekaOS
-// Copyright 2022 APF France handicap
+// Copyright 2023 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
 #include "BehaviorKit.h"
-#include <fs_structure.hpp>
+#include <algorithm>
 
-#include "rtos/ThisThread.h"
+using namespace leka;
 
-#include "LedKitAnimations.h"
-
-namespace leka {
-
-using namespace std::chrono;
-
-void BehaviorKit::spinLeft(float speed)
+void BehaviorKit::registerBehaviors(std::span<interface::Behavior *> behaviors)
 {
-	_motor_left.spin(Rotation::clockwise, speed);
-	_motor_right.spin(Rotation::clockwise, speed);
+	_behaviors = behaviors;
 }
 
-void BehaviorKit::spinRight(float speed)
+void BehaviorKit::start(interface::Behavior *behavior)
 {
-	_motor_left.spin(Rotation::counterClockwise, speed);
-	_motor_right.spin(Rotation::counterClockwise, speed);
+	stop();
+
+	_behavior = nullptr;
+	for (auto *b: _behaviors) {
+		if (b == behavior) {
+			_behavior = b;
+		}
+	}
+
+	if (_behavior == nullptr) {
+		return;
+	}
+
+	_behavior->run();
 }
 
-void BehaviorKit::launching()
+void BehaviorKit::start(BehaviorID id)
 {
-	_videokit.displayImage(fs::home::img::system::robot_misc_splash_screen_large_400);
-}
+	interface::Behavior *found_behavior = nullptr;
 
-void BehaviorKit::sleeping()
-{
-	_ledkit.start(&led::animation::sleeping);
-	_videokit.playVideoOnce(fs::home::vid::system::robot_system_sleep_yawn_then_sleep_no_eyebrows);
-}
+	for (auto *behavior: _behaviors) {
+		if (id == behavior->id()) {
+			found_behavior = behavior;
+			break;
+		}
+	}
 
-void BehaviorKit::waiting()
-{
-	_ledkit.stop();
-	_videokit.playVideoOnRepeat(fs::home::vid::system::robot_system_idle_looking_top_right_left_no_eyebrows);
-}
-
-void BehaviorKit::blinkOnCharge()
-{
-	_ledkit.start(&led::animation::blink_on_charge);
-}
-
-void BehaviorKit::lowBattery()
-{
-	_ledkit.stop();
-	_videokit.displayImage(fs::home::img::system::robot_battery_empty_must_be_charged);
-	_motor_left.stop();
-	_motor_right.stop();
-}
-
-void BehaviorKit::chargingEmpty()
-{
-	_videokit.displayImage(fs::home::img::system::robot_battery_charging_empty_red);
-}
-
-void BehaviorKit::chargingLow()
-{
-	_videokit.displayImage(fs::home::img::system::robot_battery_charging_quarter_1_red);
-}
-
-void BehaviorKit::chargingMedium()
-{
-	_videokit.displayImage(fs::home::img::system::robot_battery_charging_quarter_2_orange);
-}
-
-void BehaviorKit::chargingHigh()
-{
-	_videokit.displayImage(fs::home::img::system::robot_battery_charging_quarter_3_green);
-}
-
-void BehaviorKit::chargingFull()
-{
-	_videokit.displayImage(fs::home::img::system::robot_battery_charging_quarter_4_green);
-}
-
-void BehaviorKit::bleConnectionWithoutVideo()
-{
-	_ledkit.start(&led::animation::ble_connection);
-}
-
-void BehaviorKit::bleConnectionWithVideo()
-{
-	_ledkit.start(&led::animation::ble_connection);
-	_videokit.playVideoOnce(fs::home::vid::system::robot_system_ble_connection_wink_no_eyebrows);
-}
-
-void BehaviorKit::working()
-{
-	_videokit.displayImage(fs::home::img::system::robot_face_smiling_slightly);
-}
-
-void BehaviorKit::fileExchange()
-{
-	// TODO(@ladislas): add file exchange image
-	_videokit.displayImage("/fs/home/img/system/robot-file_exchange.jpg");
+	start(found_behavior);
 }
 
 void BehaviorKit::stop()
 {
-	_ledkit.stop();
-	_videokit.stopVideo();
-	_motor_left.stop();
-	_motor_right.stop();
+	if (_behavior != nullptr) {
+		_behavior->stop();
+	}
 }
-
-}	// namespace leka
