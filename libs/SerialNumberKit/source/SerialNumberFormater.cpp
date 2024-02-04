@@ -58,7 +58,7 @@ void SerialNumberFormater::setDateOfTestFromEpoch(std::span<char> content, std::
 
 	std::time_t epoch = std::atoll(content.data());
 
-	localtime_r(&epoch, &local_time);
+	gmtime_r(&epoch, &local_time);
 	std::strftime(epoch_c_array.data(), std::size(epoch_c_array), "%y%m", &local_time);
 
 	std::copy(epoch_c_array.begin(), epoch_c_array.begin() + std::size(date_of_test), date_of_test.begin());
