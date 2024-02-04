@@ -104,4 +104,14 @@ void CoreRFIDReaderCR95HF::onTagReadable()
 	_on_tag_readable(_tag);
 }
 
+void CoreRFIDReaderCR95HF::enableDeepSleep()
+{
+	_serial.enableDeepSleep();
+}
+
+void CoreRFIDReaderCR95HF::disableDeepSleep()
+{
+	_serial.disableDeepSleep();
+}
+
 }	// namespace leka

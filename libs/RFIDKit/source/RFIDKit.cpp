@@ -53,4 +53,14 @@ void RFIDKit::onTagActivated(std::function<void(const MagicCard &_card)> const &
 	return _card;
 }
 
+void RFIDKit::enableDeepSleep()
+{
+	_rfid_reader.enableDeepSleep();
+}
+
+void RFIDKit::disableDeepSleep()
+{
+	_rfid_reader.disableDeepSleep();
+}
+
 }	// namespace leka

@@ -186,6 +186,9 @@ class CoreRFIDReaderCR95HF : public interface::RFIDReader
 	auto getTag() -> rfid::Tag & final;
 	void onTagReadable() final;
 
+	void enableDeepSleep() final;
+	void disableDeepSleep() final;
+
   private:
 	void _receiveResponseFromTag();
 
