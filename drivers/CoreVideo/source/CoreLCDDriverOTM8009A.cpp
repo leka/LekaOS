@@ -25,6 +25,16 @@ void CoreLCDDriverOTM8009A::turnOff()
 	setBrightness(0.F);
 }
 
+void CoreLCDDriverOTM8009A::enableDeepSleep()
+{
+	_backlight.enableDeepSleep();
+}
+
+void CoreLCDDriverOTM8009A::disableDeepSleep()
+{
+	_backlight.disableDeepSleep();
+}
+
 void CoreLCDDriverOTM8009A::setBrightness(float value)
 {
 	_backlight.write(value);

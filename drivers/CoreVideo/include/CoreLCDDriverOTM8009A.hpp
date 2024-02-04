@@ -29,6 +29,9 @@ class CoreLCDDriverOTM8009A : public interface::LCDDriver
 
 	void setBrightness(float value) final;
 
+	void enableDeepSleep() final;
+	void disableDeepSleep() final;
+
   private:
 	interface::DSIBase &_dsi;
 	interface::PwmOut &_backlight;

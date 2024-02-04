@@ -88,6 +88,20 @@ TEST_F(CoreOTM8009ATest, turnOff)
 	otm.turnOff();
 }
 
+TEST_F(CoreOTM8009ATest, enableDeepSleep)
+{
+	EXPECT_CALL(backlightmock, enableDeepSleep);
+
+	otm.enableDeepSleep();
+}
+
+TEST_F(CoreOTM8009ATest, disableDeepSleep)
+{
+	EXPECT_CALL(backlightmock, disableDeepSleep);
+
+	otm.disableDeepSleep();
+}
+
 TEST_F(CoreOTM8009ATest, setBrightness)
 {
 	auto value = 0.5F;
