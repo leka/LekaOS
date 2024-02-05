@@ -469,7 +469,7 @@ class RobotController : public interface::RobotController
 			}
 		});
 
-		auto on_low_battery = [this] {
+		_batterykit.onLowBattery([this] {
 			if (!_batterykit.isCharging()) {
 				_behaviorkit.lowBattery();
 			}
@@ -477,8 +477,7 @@ class RobotController : public interface::RobotController
 			if (_batterykit.level() == 0) {
 				system_reset();
 			}
-		};
-		_batterykit.onLowBattery(on_low_battery);
+		});
 
 		_batterykit.startEventHandler();
 
@@ -488,11 +487,9 @@ class RobotController : public interface::RobotController
 
 		// Setup callbacks for each State Machine events
 
-		auto on_charge_did_start = [this]() { raise(event::charge_did_start {}); };
-		_batterykit.onChargeDidStart(on_charge_did_start);
+		_batterykit.onChargeDidStart([this] { raise(event::charge_did_start {}); });
 
-		auto on_charge_did_stop = [this]() { raise(event::charge_did_stop {}); };
-		_batterykit.onChargeDidStop(on_charge_did_stop);
+		_batterykit.onChargeDidStop([this] { raise(event::charge_did_stop {}); });
 
 		_service_monitoring.onSoftReboot([] { system_reset(); });
 
@@ -502,7 +499,7 @@ class RobotController : public interface::RobotController
 				std::ignore			   = _configkit.write(config_robot_name, robot_name);
 			});
 
-		auto on_commands_received = [this](std::span<uint8_t> _buffer) {
+		_service_commands.onCommandsReceived([this](std::span<uint8_t> _buffer) {
 			raise(event::command_received {});
 
 			if (!isCharging()) {
@@ -511,8 +508,7 @@ class RobotController : public interface::RobotController
 
 				_cmdkit.push(std::span {_buffer.data(), std::size(_buffer)});
 			}
-		};
-		_service_commands.onCommandsReceived(on_commands_received);
+		});
 
 		_service_file_exchange.onSetFileExchangeState([this](bool file_exchange_requested) {
 			if (file_exchange_requested) {
@@ -522,8 +518,7 @@ class RobotController : public interface::RobotController
 			}
 		});
 
-		auto on_update_requested = [this]() { raise(event::update_requested {}); };
-		_service_update.onUpdateRequested(on_update_requested);
+		_service_update.onUpdateRequested([this] { raise(event::update_requested {}); });
 
 		raise(event::setup_complete {});
 	}
