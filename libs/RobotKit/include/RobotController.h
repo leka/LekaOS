@@ -34,6 +34,7 @@
 #include "interface/drivers/FirmwareUpdate.h"
 #include "interface/drivers/LCD.hpp"
 #include "interface/drivers/Motor.h"
+#include "interface/drivers/TemperatureSensor.h"
 #include "interface/drivers/Timeout.h"
 #include "interface/libs/LedKit.h"
 #include "interface/libs/VideoKit.h"
@@ -51,15 +52,18 @@ class RobotController : public interface::RobotController
 
 	explicit RobotController(interface::Timeout &timeout_state_internal, interface::Timeout &timeout_state_transition,
 							 interface::Timeout &timeout_autonomous_activities, interface::Battery &battery,
-							 SerialNumberKit &serialnumberkit, interface::FirmwareUpdate &firmware_update,
-							 interface::Motor &motor_left, interface::Motor &motor_right, interface::LED &ears,
-							 interface::LED &belt, interface::LedKit &ledkit, interface::LCD &lcd,
-							 interface::VideoKit &videokit, BehaviorKit &behaviorkit, CommandKit &cmdkit,
-							 RFIDKit &rfidkit, ActivityKit &activitykit)
+							 interface::TemperatureSensor &temperature_sensor,
+							 interface::HumiditySensor &humidity_sensor, SerialNumberKit &serialnumberkit,
+							 interface::FirmwareUpdate &firmware_update, interface::Motor &motor_left,
+							 interface::Motor &motor_right, interface::LED &ears, interface::LED &belt,
+							 interface::LedKit &ledkit, interface::LCD &lcd, interface::VideoKit &videokit,
+							 BehaviorKit &behaviorkit, CommandKit &cmdkit, RFIDKit &rfidkit, ActivityKit &activitykit)
 		: _timeout_state_internal(timeout_state_internal),
 		  _timeout_state_transition(timeout_state_transition),
 		  _timeout_autonomous_activities(timeout_autonomous_activities),
 		  _battery(battery),
+		  _temperature_sensor(temperature_sensor),
+		  _humidity_sensor(humidity_sensor),
 		  _serialnumberkit(serialnumberkit),
 		  _firmware_update(firmware_update),
 		  _motor_left(motor_left),
@@ -482,6 +486,11 @@ class RobotController : public interface::RobotController
 
 		_battery_kit.startEventHandler();
 
+		_service_monitoring.onTemperatureHumidityRequested([this]() {
+			_service_monitoring.setTemperature(_temperature_sensor.getTemperatureCelsius());
+			_service_monitoring.setHumidity(_humidity_sensor.getRelativeHumidity());
+		});
+
 		_ble.onConnectionCallback([this] { raise(event::ble_connection {}); });
 
 		_ble.onDisconnectionCallback([this] { raise(event::ble_disconnection {}); });
@@ -561,6 +570,8 @@ class RobotController : public interface::RobotController
 	interface::Battery &_battery;
 	BatteryKit _battery_kit {_battery};
 	uint8_t _minimal_battery_level_to_update {25};
+	interface::TemperatureSensor &_temperature_sensor;
+	interface::HumiditySensor &_humidity_sensor;
 
 	SerialNumberKit &_serialnumberkit;
 
