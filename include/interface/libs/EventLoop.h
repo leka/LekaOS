@@ -16,9 +16,9 @@ class EventLoop
 
 	virtual void registerCallback(const callback_t &) = 0;
 
-	virtual void start() = 0;
-	virtual void stop()	 = 0;
-	virtual void exit()	 = 0;
+	virtual void start(bool loop_once = true) = 0;
+	virtual void stop()						  = 0;
+	virtual void exit()						  = 0;
 
 	virtual void loop() = 0;
 };

@@ -18,7 +18,7 @@ class EventLoopKit : public interface::EventLoop
 
 	void registerCallback(const callback_t &callback) final;
 
-	void start() final;
+	void start(bool loop_once = true) final;
 	void stop() final;
 	void exit() final;
 
@@ -29,7 +29,8 @@ class EventLoopKit : public interface::EventLoop
 
 	void loop() final;
 
-	bool must_exit = false;
+	bool _loop_once = true;
+	bool must_exit	= false;
 
 	callback_t _callback {};
 	rtos::Thread _thread {};

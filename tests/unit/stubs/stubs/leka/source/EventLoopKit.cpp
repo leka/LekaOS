@@ -11,7 +11,7 @@ void EventLoopKit::registerCallback(const callback_t &callback)
 	_callback = callback;
 }
 
-void EventLoopKit::start()
+void EventLoopKit::start(bool loop_once)
 {
 	if (_callback == nullptr) {
 		return;
