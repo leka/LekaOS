@@ -32,6 +32,11 @@ TEST_F(RobotControllerTest, stopActuatorsAndLcd)
 
 TEST_F(RobotControllerTest, suspendHardwareForDeepSleep)
 {
+	EXPECT_CALL(mock_motor_left, enableDeepSleep);
+	EXPECT_CALL(mock_motor_right, enableDeepSleep);
+	EXPECT_CALL(mock_lcd, enableDeepSleep);
+	// TODO: Expect_call of RFID
+
 	rc.suspendHardwareForDeepSleep();
 }
 
