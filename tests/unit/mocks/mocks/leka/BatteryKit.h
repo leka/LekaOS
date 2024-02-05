@@ -9,13 +9,13 @@
 
 namespace leka::mock {
 
-class Battery : public interface::BatteryKit
+class BatteryKit : public interface::BatteryKit
 {
   public:
 	MOCK_METHOD(void, startEventHandler, (), (override));
 
 	MOCK_METHOD(uint8_t, level, (), (override));
-	MOCK_METHOD(void, onDataUpdated, (std::function<void()> const &), (override));
+	MOCK_METHOD(void, onDataUpdated, (std::function<void(uint8_t)> const &), (override));
 	MOCK_METHOD(void, onLowBattery, (std::function<void()> const &), (override));
 
 	MOCK_METHOD(bool, isCharging, (), (override));
