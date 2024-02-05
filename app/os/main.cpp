@@ -2,6 +2,7 @@
 // Copyright 2020-2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
+#include "mbed_retarget.h"
 #include "mbed_stats.h"
 
 #include "drivers/Watchdog.h"
@@ -74,6 +75,15 @@
 
 using namespace leka;
 using namespace std::chrono;
+
+//
+// MARK: - Mbed retarget
+//
+
+auto mbed::mbed_override_console([[maybe_unused]] int fd) -> mbed::FileHandle *
+{
+	return leka::logger::internal::filehandle;
+}
 
 //
 // MARK: - Global definitions
