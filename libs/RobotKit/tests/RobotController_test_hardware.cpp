@@ -49,6 +49,60 @@ TEST_F(RobotControllerTest, wakeUp)
 	// nothing expected
 }
 
+TEST_F(RobotControllerTest, onDataUpdated)
+{
+	{
+		EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
+
+		EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload);
+		// TODO: Specify which BLE service and what is expected if necessary
+		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(2);
+	}
+
+	on_data_updated(0);
+
+	{
+		EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
+
+		EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload);
+		// TODO: Specify which BLE service and what is expected if necessary
+		EXPECT_CALL(mbed_mock_gatt, write(_, _, _, _)).Times(2);
+
+		{
+			EXPECT_CALL(
+				mock_videokit,
+				displayImage(std::filesystem::path {"/fs/home/img/system/robot-battery-charging-empty_red.jpg"}));
+		}	// TODO: Replace with EXPECT_CALL(mock_behaviorkit, chargingEmpty);
+	}
+
+	on_data_updated(0);
+}
+
+TEST_F(RobotControllerTest, onLowBattery)
+{
+	{
+		EXPECT_CALL(battery, isCharging).WillOnce(Return(true));
+
+		EXPECT_CALL(battery, level).WillOnce(Return(1));
+	}
+	on_low_battery();
+
+	{
+		EXPECT_CALL(battery, isCharging).WillOnce(Return(false));
+		{
+			EXPECT_CALL(mock_ledkit, stop);
+			EXPECT_CALL(
+				mock_videokit,
+				displayImage(std::filesystem::path {"/fs/home/img/system/robot-battery-empty-must_be_charged.jpg"}));
+			EXPECT_CALL(mock_motor_left, stop);
+			EXPECT_CALL(mock_motor_right, stop);
+		}	// TODO: Replace with EXPECT_CALL(mock_behaviorkit, lowBattery);
+
+		EXPECT_CALL(battery, level).WillOnce(Return(0));
+	}
+	on_low_battery();
+}
+
 TEST_F(RobotControllerTest, onChargeDidStart)
 {
 	{

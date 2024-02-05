@@ -139,6 +139,8 @@ class RobotControllerTest : public testing::Test
 	interface::Timeout::callback_t on_charging_start_timeout		= {};
 	interface::Timeout::callback_t on_autonomous_activities_timeout = {};
 
+	std::function<void(uint8_t)> on_data_updated {};
+	std::function<void()> on_low_battery {};
 	std::function<void()> on_charge_did_start {};
 	std::function<void()> on_charge_did_stop {};
 
@@ -179,6 +181,7 @@ class RobotControllerTest : public testing::Test
 	{
 		EXPECT_CALL(battery, isCharging).Times(AnyNumber());
 		EXPECT_CALL(battery, level).Times(AnyNumber());
+		EXPECT_CALL(battery, startEventHandler).Times(AnyNumber());
 
 		EXPECT_CALL(mock_ledkit, stop).Times(AnyNumber());
 		EXPECT_CALL(mock_motor_left, stop).Times(AnyNumber());
@@ -196,6 +199,8 @@ class RobotControllerTest : public testing::Test
 		}	// ? On Idle entry
 
 		// Saved callback
+		EXPECT_CALL(battery, onDataUpdated).WillOnce(SaveArg<0>(&on_data_updated));
+		EXPECT_CALL(battery, onLowBattery).WillOnce(SaveArg<0>(&on_low_battery));
 		EXPECT_CALL(battery, onChargeDidStart).WillOnce(SaveArg<0>(&on_charge_did_start));
 		EXPECT_CALL(battery, onChargeDidStop).WillOnce(SaveArg<0>(&on_charge_did_stop));
 
