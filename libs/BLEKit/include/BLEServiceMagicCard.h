@@ -42,7 +42,7 @@ class BLEServiceMagicCard : public interface::BLEService
 		_id[0] = utils::memory::getHighByte(id);
 		_id[1] = utils::memory::getLowByte(id);
 
-		auto data = std::make_tuple(_id_characteristic.getValueHandle(), _id);
+		auto data = std::make_tuple(&_id_characteristic, _id);
 		sendData(data);
 	}
 
@@ -50,7 +50,7 @@ class BLEServiceMagicCard : public interface::BLEService
 	{
 		_language = static_cast<uint8_t>(language);
 
-		auto data = std::make_tuple(_language_characteristic.getValueHandle(), std::span(&_language, 1));
+		auto data = std::make_tuple(&_language_characteristic, std::span(&_language, 1));
 		sendData(data);
 	}
 

@@ -25,7 +25,7 @@ class BLEServiceMonitoring : public interface::BLEService
 	{
 		charging_status = static_cast<uint8_t>(value);
 
-		auto data = std::make_tuple(_charging_status_characteristic.getValueHandle(), std::span(&charging_status, 1));
+		auto data = std::make_tuple(&_charging_status_characteristic, std::span(&charging_status, 1));
 		sendData(data);
 	}
 

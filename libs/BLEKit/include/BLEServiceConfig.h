@@ -25,7 +25,7 @@ class BLEServiceConfig : public interface::BLEService
 	{
 		std::copy(std::begin(robot_name), std::begin(robot_name) + std::size(_robot_name), _robot_name.begin());
 
-		auto data = std::make_tuple(_robot_name_characteristic.getValueHandle(), _robot_name);
+		auto data = std::make_tuple(&_robot_name_characteristic, _robot_name);
 		sendData(data);
 	}
 
