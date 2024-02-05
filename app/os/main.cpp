@@ -10,6 +10,7 @@
 #include "rtos/Thread.h"
 
 #include "ActivityKit.h"
+#include "BatteryKit.h"
 #include "ChooseReinforcer.h"
 #include "CoreBattery.h"
 #include "CoreBufferedSerial.h"
@@ -92,6 +93,8 @@ namespace battery {
 	auto cells = CoreBattery {PinName::BATTERY_VOLTAGE, battery::charge::status_input};
 
 }	// namespace battery
+
+auto batterykit = BatteryKit {battery::cells};
 
 namespace sd {
 
@@ -417,7 +420,7 @@ namespace robot {
 		internal::timeout_state_internal,
 		internal::timeout_state_transition,
 		internal::timeout_autonomous_activities,
-		battery::cells,
+		batterykit,
 		internal::serialnumberkit,
 		firmware::kit,
 		motors::left::motor,

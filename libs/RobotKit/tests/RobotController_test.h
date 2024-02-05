@@ -21,7 +21,7 @@
 #include "SerialNumberKit.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "mocks/leka/Battery.h"
+#include "mocks/leka/BatteryKit.h"
 #include "mocks/leka/CoreLCD.h"
 #include "mocks/leka/CoreLED.h"
 #include "mocks/leka/CoreMotor.h"
@@ -79,7 +79,7 @@ class RobotControllerTest : public testing::Test
 	mock::Timeout timeout_state_internal {};
 	mock::Timeout timeout_state_transition {};
 	mock::Timeout timeout_autonomous_activities {};
-	mock::Battery battery {};
+	mock::BatteryKit battery {};
 
 	mock::MCU mock_mcu {};
 	SerialNumberKit serialnumberkit {mock_mcu, SerialNumberKit::DEFAULT_CONFIG};
