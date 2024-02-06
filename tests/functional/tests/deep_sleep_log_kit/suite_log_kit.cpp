@@ -21,7 +21,7 @@ suite suite_log_kit = [] {
 			rtos::ThisThread::sleep_for(500ms);
 
 			then("I expect deep sleep to be possible") = [] {
-				auto status = utils::sleep::system_deep_sleep_check();
+				auto status = tests::utils::sleep::system_deep_sleep_check();
 
 				expect(status.can_deep_sleep);
 				expect(status.test_check_ok);
@@ -36,7 +36,7 @@ suite suite_log_kit = [] {
 			rtos::ThisThread::sleep_for(500ms);
 
 			then("I expect deep sleep to NOT be possible") = [] {
-				auto status = utils::sleep::system_deep_sleep_check();
+				auto status = tests::utils::sleep::system_deep_sleep_check();
 
 				expect(not status.can_deep_sleep);
 				expect(not status.test_check_ok);
@@ -51,7 +51,7 @@ suite suite_log_kit = [] {
 			rtos::ThisThread::sleep_for(500ms);
 
 			then("I expect deep sleep to NOT be possible") = [] {
-				auto status = utils::sleep::system_deep_sleep_check();
+				auto status = tests::utils::sleep::system_deep_sleep_check();
 
 				expect(status.can_deep_sleep);
 				expect(status.test_check_ok);

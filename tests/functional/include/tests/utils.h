@@ -11,7 +11,7 @@
 
 #include "LogKit.h"
 
-namespace utils {
+namespace tests::utils {
 
 namespace time {
 
@@ -56,4 +56,4 @@ namespace sd {
 
 }	// namespace sd
 
-}	// namespace utils
+}	// namespace tests::utils
