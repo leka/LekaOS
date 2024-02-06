@@ -88,4 +88,56 @@ suite suite_rfid_kit = [] {
 			};
 		};
 	};
+
+	scenario("enabled/disable deepsleep then magic card detected") = [] {
+		given("rfid is in default configuration") = [] {
+			auto cardDetected = false;
+			rfidkit.onTagActivated([&cardDetected](const MagicCard &card) { cardDetected = true; });
+
+			when("I wait") = [&] {
+				cardDetected = false;
+				rtos::ThisThread::sleep_for(500ms);
+
+				then("I expect TO detect card") = [&cardDetected] { expect(cardDetected); };
+			};
+
+			when("I enable rfid deep sleep") = [&] {
+				rfidkit.enableDeepSleep();
+				rtos::ThisThread::sleep_for(500ms);
+
+				then("I expect deep sleep TO BE possible") = [] {
+					auto status = utils::sleep::system_deep_sleep_check();
+
+					expect(status.can_deep_sleep);
+					expect(status.test_check_ok);
+				};
+			};
+
+			when("I wait") = [&] {
+				cardDetected = false;
+				rtos::ThisThread::sleep_for(500ms);
+
+				then("I expect TO NOT detect card") = [&cardDetected] { expect(not cardDetected); };
+			};
+
+			when("I disable rfid deep sleep") = [&] {
+				rfidkit.disableDeepSleep();
+				rtos::ThisThread::sleep_for(500ms);
+
+				then("I expect deep sleep TO NOT BE possible") = [] {
+					auto status = utils::sleep::system_deep_sleep_check();
+
+					expect(not status.can_deep_sleep);
+					expect(not status.test_check_ok);
+				};
+			};
+
+			when("I wait") = [&] {
+				cardDetected = false;
+				rtos::ThisThread::sleep_for(500ms);
+
+				then("I expect TO detect card") = [&cardDetected] { expect(cardDetected); };
+			};
+		};
+	};
 };
