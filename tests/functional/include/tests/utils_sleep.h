@@ -19,7 +19,7 @@
 
 using namespace std::chrono;
 
-namespace utils::sleep {
+namespace tests::utils::sleep {
 
 constexpr inline auto SERIAL_FLUSH_TIME_MS	  = 150ms;
 constexpr inline auto US_PER_S				  = 1'000'000;
@@ -119,4 +119,4 @@ inline auto system_deep_sleep_check() -> deep_sleep_status_t
 	return {can_deep_sleep, can_deep_sleep_test_check};
 }
 
-}	// namespace utils::sleep
+}	// namespace tests::utils::sleep

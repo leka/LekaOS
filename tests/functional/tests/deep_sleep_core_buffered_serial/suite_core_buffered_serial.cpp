@@ -18,7 +18,7 @@ suite suite_core_buffered_serial = [] {
 	scenario("base system check") = [] {
 		given("serial is not instantiated") = [] {
 			then("I expect deep sleep TO BE possible") = [] {
-				auto status = utils::sleep::system_deep_sleep_check();
+				auto status = tests::utils::sleep::system_deep_sleep_check();
 
 				expect(status.test_check_ok);
 			};
@@ -35,7 +35,7 @@ suite suite_core_buffered_serial = [] {
 
 			when("I do nothing") = [&] {
 				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+					auto status = tests::utils::sleep::system_deep_sleep_check();
 
 					expect(not status.test_check_ok);
 				};
@@ -53,7 +53,7 @@ suite suite_core_buffered_serial = [] {
 
 			when("I do nothing") = [&] {
 				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+					auto status = tests::utils::sleep::system_deep_sleep_check();
 
 					expect(not status.test_check_ok);
 				};
@@ -65,7 +65,7 @@ suite suite_core_buffered_serial = [] {
 				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+					auto status = tests::utils::sleep::system_deep_sleep_check();
 
 					expect(status.test_check_ok);
 				};
@@ -77,7 +77,7 @@ suite suite_core_buffered_serial = [] {
 				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+					auto status = tests::utils::sleep::system_deep_sleep_check();
 
 					expect(not status.test_check_ok);
 				};
@@ -89,7 +89,7 @@ suite suite_core_buffered_serial = [] {
 				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+					auto status = tests::utils::sleep::system_deep_sleep_check();
 
 					expect(status.test_check_ok);
 				};
@@ -101,7 +101,7 @@ suite suite_core_buffered_serial = [] {
 				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+					auto status = tests::utils::sleep::system_deep_sleep_check();
 
 					expect(not status.test_check_ok);
 				};
@@ -113,7 +113,7 @@ suite suite_core_buffered_serial = [] {
 				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+					auto status = tests::utils::sleep::system_deep_sleep_check();
 
 					expect(status.test_check_ok);
 				};
@@ -125,7 +125,7 @@ suite suite_core_buffered_serial = [] {
 				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+					auto status = tests::utils::sleep::system_deep_sleep_check();
 
 					expect(not status.test_check_ok);
 				};

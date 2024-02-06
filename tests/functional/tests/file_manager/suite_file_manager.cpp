@@ -45,8 +45,8 @@ suite suite_file_manager_kit = [] {
 	auto input_data = std::to_array("Hello, Leka!");
 
 	"initialize SD card"_test = [] {
-		utils::sd::init();
-		expect(utils::sd::internal::bd.size() != 0_u);
+		tests::utils::sd::init();
+		expect(tests::utils::sd::internal::bd.size() != 0_u);
 	};
 
 	"remove existing files"_test = [] { path::remove_all(); };

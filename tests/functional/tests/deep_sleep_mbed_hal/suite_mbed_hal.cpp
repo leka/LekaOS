@@ -37,14 +37,14 @@ suite suite_mbed_hal = [] {
 		const unsigned int us_ticker_mask  = ((1 << us_ticker_width) - 1);
 
 		// ? Give time to test to finish UART transmission before entering deep sleep mode
-		utils::sleep::busy_wait(utils::sleep::SERIAL_FLUSH_TIME_MS);
+		tests::utils::sleep::busy_wait(tests::utils::sleep::SERIAL_FLUSH_TIME_MS);
 
 		{
 			auto can_deep_sleep_test_check = sleep_manager_can_deep_sleep_test_check();
 			expect(can_deep_sleep_test_check) << "deep sleep not possible";
 		}
 
-		const timestamp_t wakeup_time = lp_ticker_read() + utils::sleep::us_to_ticks(20000, lp_ticker_freq);
+		const timestamp_t wakeup_time = lp_ticker_read() + tests::utils::sleep::us_to_ticks(20000, lp_ticker_freq);
 		lp_ticker_set_interrupt(wakeup_time);
 
 		{
@@ -68,24 +68,25 @@ suite suite_mbed_hal = [] {
 								 ? (us_ticks_after_sleep - us_ticks_before_sleep)
 								 : (us_ticker_mask - us_ticks_before_sleep + us_ticks_after_sleep + 1);
 
-		expect(utils::sleep::ticks_to_us(us_ticks_diff, us_ticker_freq) < 1000_u);
+		expect(tests::utils::sleep::ticks_to_us(us_ticks_diff, us_ticker_freq) < 1000_u);
 
 		// ? Used for deep-sleep mode, a target should be awake within 10 ms. Define us delta value as follows:
 		// ? delta = default 10 ms + worst ticker resolution + extra time for code execution
 
 		auto info = "Delta ticks: " +
-					std::to_string(utils::sleep::us_to_ticks(utils::sleep::DEEPSLEEP_MODE_DELTA_US, lp_ticker_freq)) +
+					std::to_string(tests::utils::sleep::us_to_ticks(tests::utils::sleep::DEEPSLEEP_MODE_DELTA_US,
+																	lp_ticker_freq)) +
 					"Ticker width: " + std::to_string(lp_ticker_width) +
 					", Expected wake up tick: " + std::to_string(wakeup_time) +
 					" Actual wake up tick: " + std::to_string(lp_ticks_after_sleep);
 
-		auto timestamps_are_the_same = utils::sleep::compare_timestamps(
-			utils::sleep::us_to_ticks(utils::sleep::DEEPSLEEP_MODE_DELTA_US, lp_ticker_freq), lp_ticker_width,
-			wakeup_time, lp_ticks_after_sleep);
+		auto timestamps_are_the_same = tests::utils::sleep::compare_timestamps(
+			tests::utils::sleep::us_to_ticks(tests::utils::sleep::DEEPSLEEP_MODE_DELTA_US, lp_ticker_freq),
+			lp_ticker_width, wakeup_time, lp_ticks_after_sleep);
 
 		expect(timestamps_are_the_same) << "Delta ticks: "
-										<< utils::sleep::us_to_ticks(utils::sleep::DEEPSLEEP_MODE_DELTA_US,
-																	 lp_ticker_freq)
+										<< tests::utils::sleep::us_to_ticks(
+											   tests::utils::sleep::DEEPSLEEP_MODE_DELTA_US, lp_ticker_freq)
 										<< ", Ticker width: " << lp_ticker_width
 										<< ", Expected wake up tick: " << wakeup_time
 										<< ", Actual wake up tick: " << lp_ticks_after_sleep;
@@ -100,10 +101,10 @@ suite suite_mbed_hal = [] {
 		const unsigned int ticker_width = ticker->interface->get_info()->bits;
 
 		const ticker_irq_handler_type lp_ticker_irq_handler_org =
-			set_lp_ticker_irq_handler(utils::sleep::lp_ticker_isr);
+			set_lp_ticker_irq_handler(tests::utils::sleep::lp_ticker_isr);
 
 		// ? Give time to test to finish UART transmission before entering deep sleep mode
-		utils::sleep::busy_wait(utils::sleep::SERIAL_FLUSH_TIME_MS);
+		tests::utils::sleep::busy_wait(tests::utils::sleep::SERIAL_FLUSH_TIME_MS);
 
 		auto can_deep_sleep = sleep_manager_can_deep_sleep();
 		expect(can_deep_sleep) << "deep sleep not possible";
@@ -111,12 +112,12 @@ suite suite_mbed_hal = [] {
 		// ? Testing wake-up time 10 ms
 		for (timestamp_t i = 20'000; i < 200'000; i += 20'000) {
 			// ? Give time to test to finish UART transmission before entering deep sleep mode
-			utils::sleep::busy_wait(utils::sleep::SERIAL_FLUSH_TIME_MS);
+			tests::utils::sleep::busy_wait(tests::utils::sleep::SERIAL_FLUSH_TIME_MS);
 
 			// ? Note: lp_ticker_read() operates on ticks
 			const timestamp_t start_timestamp	   = lp_ticker_read();
-			const timestamp_t next_match_timestamp = utils::sleep::overflow_protect(
-				start_timestamp + utils::sleep::us_to_ticks(i, ticker_freq), ticker_width);
+			const timestamp_t next_match_timestamp = tests::utils::sleep::overflow_protect(
+				start_timestamp + tests::utils::sleep::us_to_ticks(i, ticker_freq), ticker_width);
 
 			lp_ticker_set_interrupt(next_match_timestamp);
 
@@ -149,15 +150,16 @@ suite suite_mbed_hal = [] {
 
 			const timestamp_t wakeup_timestamp = lp_ticker_read();
 
-			auto timestamps_are_the_same = utils::sleep::compare_timestamps(
-				utils::sleep::us_to_ticks(utils::sleep::DEEPSLEEP_MODE_DELTA_US, ticker_freq), ticker_width,
-				next_match_timestamp, wakeup_timestamp);
+			auto timestamps_are_the_same = tests::utils::sleep::compare_timestamps(
+				tests::utils::sleep::us_to_ticks(tests::utils::sleep::DEEPSLEEP_MODE_DELTA_US, ticker_freq),
+				ticker_width, next_match_timestamp, wakeup_timestamp);
 
 			expect(timestamps_are_the_same)
-				<< "Delta ticks: " << utils::sleep::us_to_ticks(utils::sleep::DEEPSLEEP_MODE_DELTA_US, ticker_freq)
+				<< "Delta ticks: "
+				<< tests::utils::sleep::us_to_ticks(tests::utils::sleep::DEEPSLEEP_MODE_DELTA_US, ticker_freq)
 				<< ", Ticker width: " << ticker_width << ", Expected wake up tick: " << next_match_timestamp
 				<< ", Actual wake up tick: " << wakeup_timestamp
-				<< ", delay ticks:  " << utils::sleep::us_to_ticks(i, ticker_freq)
+				<< ", delay ticks:  " << tests::utils::sleep::us_to_ticks(i, ticker_freq)
 				<< ", wake up after ticks: " << wakeup_timestamp - start_timestamp;
 		}
 
