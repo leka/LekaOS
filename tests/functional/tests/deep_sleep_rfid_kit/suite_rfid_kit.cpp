@@ -28,7 +28,7 @@ suite suite_rfid_kit = [] {
 
 			when("I do nothing") = [&] {
 				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+					auto status = tests::utils::sleep::system_deep_sleep_check();
 
 					expect(not status.can_deep_sleep);
 					expect(not status.test_check_ok);
@@ -44,7 +44,7 @@ suite suite_rfid_kit = [] {
 				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+					auto status = tests::utils::sleep::system_deep_sleep_check();
 
 					expect(status.can_deep_sleep);
 					expect(status.test_check_ok);
@@ -56,7 +56,7 @@ suite suite_rfid_kit = [] {
 				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+					auto status = tests::utils::sleep::system_deep_sleep_check();
 
 					expect(not status.can_deep_sleep);
 					expect(not status.test_check_ok);
@@ -68,7 +68,7 @@ suite suite_rfid_kit = [] {
 				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+					auto status = tests::utils::sleep::system_deep_sleep_check();
 
 					expect(status.can_deep_sleep);
 					expect(status.test_check_ok);
@@ -80,7 +80,7 @@ suite suite_rfid_kit = [] {
 				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+					auto status = tests::utils::sleep::system_deep_sleep_check();
 
 					expect(not status.can_deep_sleep);
 					expect(not status.test_check_ok);
@@ -106,7 +106,7 @@ suite suite_rfid_kit = [] {
 				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+					auto status = tests::utils::sleep::system_deep_sleep_check();
 
 					expect(status.can_deep_sleep);
 					expect(status.test_check_ok);
@@ -125,7 +125,7 @@ suite suite_rfid_kit = [] {
 				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
+					auto status = tests::utils::sleep::system_deep_sleep_check();
 
 					expect(not status.can_deep_sleep);
 					expect(not status.test_check_ok);
