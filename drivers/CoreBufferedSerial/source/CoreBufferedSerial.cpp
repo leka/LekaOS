@@ -24,6 +24,10 @@ auto CoreBufferedSerial::readable() -> bool
 void CoreBufferedSerial::disableDeepSleep()
 {
 	_serial.enable_input(true);
+
+	if (_sigio_callback != nullptr) {
+		_serial.sigio(mbed::Callback<void()> {[this] { _sigio_callback(); }});
+	}
 }
 
 void CoreBufferedSerial::enableDeepSleep()
