@@ -96,7 +96,7 @@ suite suite_rfid_kit = [] {
 
 			when("I wait") = [&] {
 				cardDetected = false;
-				rtos::ThisThread::sleep_for(500ms);
+				rtos::ThisThread::sleep_for(1s);
 
 				then("I expect TO detect card") = [&cardDetected] { expect(cardDetected); };
 			};
@@ -115,7 +115,7 @@ suite suite_rfid_kit = [] {
 
 			when("I wait") = [&] {
 				cardDetected = false;
-				rtos::ThisThread::sleep_for(500ms);
+				rtos::ThisThread::sleep_for(1s);
 
 				then("I expect TO NOT detect card") = [&cardDetected] { expect(not cardDetected); };
 			};
@@ -134,7 +134,7 @@ suite suite_rfid_kit = [] {
 
 			when("I wait") = [&] {
 				cardDetected = false;
-				rtos::ThisThread::sleep_for(500ms);
+				rtos::ThisThread::sleep_for(1s);
 
 				then("I expect TO detect card") = [&cardDetected] { expect(cardDetected); };
 			};
