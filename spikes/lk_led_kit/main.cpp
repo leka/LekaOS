@@ -18,7 +18,98 @@
 using namespace leka;
 using namespace std::chrono;
 
+#include "mbed_stats.h"
+
+#include "drivers/Watchdog.h"
 namespace {
+
+namespace watchdog {
+
+	namespace internal {
+
+		auto &instance		   = mbed::Watchdog::get_instance();
+		constexpr auto timeout = 30000ms;
+		auto thread			   = rtos::Thread {osPriorityLow};
+
+		namespace stats {
+
+			auto cpu   = mbed_stats_cpu_t {};
+			auto stack = mbed_stats_stack_t {};
+			auto heap  = mbed_stats_heap_t {};
+
+		}	// namespace stats
+
+		__attribute__((noreturn)) void watchdog_kick()
+		{
+			static auto kick_count = uint32_t {0};
+
+			static auto start = rtos::Kernel::Clock::now();
+			static auto stop  = rtos::Kernel::Clock::now();
+			static auto delta = static_cast<int>((stop - start).count());
+
+			static auto idle_ratio		 = uint8_t {};
+			static auto sleep_ratio		 = uint8_t {};
+			static auto deep_sleep_ratio = uint8_t {};
+
+			static auto stack_used_delta	= int32_t {};
+			static auto stack_used_size		= uint32_t {};
+			static auto stack_reserved_size = uint32_t {};
+			static auto stack_used_ratio	= uint8_t {};
+
+			static auto heap_used_delta	   = int32_t {};
+			static auto heap_used_size	   = uint32_t {};
+			static auto heap_reserved_size = uint32_t {};
+			static auto heap_used_ratio	   = uint8_t {};
+
+			while (true) {
+				internal::instance.kick();
+				++kick_count;
+
+				stop  = rtos::Kernel::Clock::now();
+				delta = static_cast<int>((stop - start).count());
+
+				mbed_stats_cpu_get(&stats::cpu);
+
+				idle_ratio	= static_cast<uint8_t>(((stats::cpu.idle_time / 1000 * 100) / (stats::cpu.uptime / 1000)));
+				sleep_ratio = static_cast<uint8_t>(((stats::cpu.sleep_time / 1000 * 100) / (stats::cpu.uptime / 1000)));
+				deep_sleep_ratio =
+					static_cast<uint8_t>(((stats::cpu.deep_sleep_time / 1000 * 100) / (stats::cpu.uptime / 1000)));
+
+				mbed_stats_stack_get(&stats::stack);
+
+				stack_used_delta	= static_cast<int32_t>(stats::stack.max_size - stack_used_size);
+				stack_used_size		= stats::stack.max_size;
+				stack_reserved_size = stats::stack.reserved_size;
+				stack_used_ratio	= static_cast<uint8_t>((stack_used_size * 100) / stack_reserved_size);
+
+				mbed_stats_heap_get(&stats::heap);
+
+				heap_used_delta	   = static_cast<int32_t>(stats::heap.current_size - heap_used_size);
+				heap_used_size	   = stats::heap.current_size;
+				heap_reserved_size = stats::heap.reserved_size;
+				heap_used_ratio	   = static_cast<uint8_t>((heap_used_size * 100) / heap_reserved_size);
+
+				log_info(
+					"dt: %i, kck: %u, idl: %u%%, slp: %u%%, dsl: %u%%, sur: %u%% (%+i)[%u/"
+					"%u], hur: %u%% (%+i)[%u/%u]",
+					delta, kick_count, idle_ratio, sleep_ratio, deep_sleep_ratio, stack_used_ratio, stack_used_delta,
+					stack_used_size, stack_reserved_size, heap_used_ratio, heap_used_delta, heap_used_size,
+					heap_reserved_size);
+
+				start = rtos::Kernel::Clock::now();
+				rtos::ThisThread::sleep_for(5s);
+			}
+		}
+
+	}	// namespace internal
+
+	void start()
+	{
+		internal::instance.start(internal::timeout.count());
+		internal::thread.start(watchdog::internal::watchdog_kick);
+	}
+
+}	// namespace watchdog
 
 namespace leds {
 
@@ -67,6 +158,7 @@ auto ledkit = LedKit {leds::animations::event_loop, leds::ears, leds::belt};
 auto main() -> int
 {
 	logger::init();
+	watchdog::start();
 	leds::turnOff();
 
 	log_info("Hello, World!\n\n");
@@ -75,113 +167,14 @@ auto main() -> int
 
 	hello.start();
 
-	while (true) {
+	{
 		log_info("animation::ble_connection");
 		ledkit.start(&led::animation::ble_connection);
 		rtos::ThisThread::sleep_for(2s);
+	}
 
-		log_info("animation::sleeping");
-		ledkit.start(&led::animation::sleeping);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::afraid_blue");
-		ledkit.start(&led::animation::afraid_blue);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::afraid_red");
-		ledkit.start(&led::animation::afraid_red);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::afraid_red_blue");
-		ledkit.start(&led::animation::afraid_red_blue);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::amazed");
-		ledkit.start(&led::animation::amazed);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::angry");
-		ledkit.start(&led::animation::angry);
-		rtos::ThisThread::sleep_for(20s);
-
-		log_info("animation::angry_short");
-		ledkit.start(&led::animation::angry_short);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::blink_green");
-		ledkit.start(&led::animation::blink_green);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::bubbles");
-		ledkit.start(&led::animation::bubbles);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::disgusted");
-		ledkit.start(&led::animation::disgusted);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::fire");
-		ledkit.start(&led::animation::fire);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::fly");
-		ledkit.start(&led::animation::fly);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::happy");
-		ledkit.start(&led::animation::happy);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::rainbow");
-		ledkit.start(&led::animation::rainbow);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::sad");
-		ledkit.start(&led::animation::sad);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::sad_cry");
-		ledkit.start(&led::animation::sad_cry);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::sick");
-		ledkit.start(&led::animation::sick);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::singing");
-		ledkit.start(&led::animation::singing);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::sleeping");
-		ledkit.start(&led::animation::sleeping);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::sneeze");
-		ledkit.start(&led::animation::sneeze);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::spin_blink");
-		ledkit.start(&led::animation::spin_blink);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::sprinkles");
-		ledkit.start(&led::animation::sprinkles);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::underwater");
-		ledkit.start(&led::animation::underwater);
-		rtos::ThisThread::sleep_for(20s);
-
-		log_info("animation::wake_up");
-		ledkit.start(&led::animation::wake_up);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::wink");
-		ledkit.start(&led::animation::wink);
-		rtos::ThisThread::sleep_for(2s);
-
-		log_info("animation::yawn");
-		ledkit.start(&led::animation::yawn);
-		rtos::ThisThread::sleep_for(2s);
+	ledkit.stop();
+	while (true) {
+		rtos::ThisThread::sleep_for(10min);
 	}
 }
