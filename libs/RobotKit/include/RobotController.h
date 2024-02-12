@@ -308,7 +308,15 @@ class RobotController : public interface::RobotController
 		stopActuators();
 	}
 
-	void suspendHardwareForDeepSleep() final { log_info("TO IMPLEMENT - configuring hardware for deep sleep"); }
+	void suspendHardwareForDeepSleep() final
+	{
+		auto hardwares_to_suspend =
+			std::to_array<interface::DeepSleepEnabled *>({&_motor_left, &_motor_right, &_lcd, &_rfidkit});
+
+		for (auto &hardware: hardwares_to_suspend) {
+			hardware->enableDeepSleep();
+		}
+	}
 
 	void resetEmergencyStopCounter() final { _emergency_stop_counter = 0; }
 
