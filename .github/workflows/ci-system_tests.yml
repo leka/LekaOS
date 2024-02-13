@@ -1,0 +1,52 @@
+# Leka - LekaOS
+# Copyright 2022 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: System Tests
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run_functional_tests:
+    name: Build & Test
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        run: |
+          brew update && brew upgrade
+          brew upgrade arm-gcc-bin
+          python3 -m pip install -U --user -r ./tools/config/mbed_requirements.txt
+
+      #
+      # Mark: - Config & Build
+      #
+
+      - name: Config & Build
+        run: |
+          make deep_clean
+          make pull_deps
+          make config
+          make
+
+      #
+      # Mark: - Run functional tests
+      #
+
+      - name: Run functional tests
+        run: |
+          python3 -u tools/run_system_tests.py
