@@ -529,6 +529,15 @@ namespace watchdog {
 
 }	// namespace watchdog
 
+namespace deep_sleep {
+	auto components = std::to_array<interface::DeepSleepEnabled *>({
+		&motors::left::motor,
+		&motors::left::motor,
+		&display::internal::corelcd,
+		&rfid::reader,
+	});
+}
+
 }	// namespace
 
 auto get_secondary_bd() -> mbed::BlockDevice *
@@ -569,6 +578,7 @@ auto main() -> int
 	robot::controller.registerOnUpdateLoadedCallback(firmware::setPendingUpdate);
 	robot::controller.registerOnFactoryResetNotificationCallback(factory_reset::set);
 	robot::controller.registerEvents();
+	robot::controller.registerDeepSleepEnabledComponents(deep_sleep::components);
 
 	// TODO(@team): Add functional test prior confirming the firmware
 	firmware::confirmFirmware();
