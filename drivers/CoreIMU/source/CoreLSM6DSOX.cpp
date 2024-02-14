@@ -97,6 +97,16 @@ void CoreLSM6DSOX::onGyrDataReadyHandler(auto timestamp)
 	}
 }
 
+void CoreLSM6DSOX::enableDeepSleep()
+{
+	setPowerMode(interface::LSM6DSOX::PowerMode::Off);
+}
+
+void CoreLSM6DSOX::disableDeepSleep()
+{
+	setPowerMode(interface::LSM6DSOX::PowerMode::Normal);
+}
+
 auto CoreLSM6DSOX::read(uint8_t register_address, uint16_t number_bytes_to_read, uint8_t *p_buffer) -> int32_t
 {
 	// Send component address, without STOP condition

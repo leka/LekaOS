@@ -86,3 +86,21 @@ TEST_F(CoreLSM6DSOXTest, emptyOnGyrDrdyCallback)
 	auto on_rise_callback = spy_InterruptIn_getRiseCallback();
 	on_rise_callback();
 }
+
+TEST_F(CoreLSM6DSOXTest, enableDeepSleep)
+{
+	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
+	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
+	lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
+
+	lsm6dsox.enableDeepSleep();
+}
+
+TEST_F(CoreLSM6DSOXTest, disableDeepSleep)
+{
+	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
+	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
+	lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Normal);
+
+	lsm6dsox.disableDeepSleep();
+}
