@@ -4,6 +4,8 @@
 
 #include "RFIDKit.h"
 
+#include "LogKit.h"
+
 namespace leka {
 
 void RFIDKit::init()
@@ -55,6 +57,8 @@ void RFIDKit::onTagActivated(std::function<void(const MagicCard &_card)> const &
 
 void RFIDKit::enableDeepSleep()
 {
+	log_info("RFIDKit::enableDeepSleep");
+
 	_rfid_reader.enableDeepSleep();
 }
 

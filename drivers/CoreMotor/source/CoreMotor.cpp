@@ -4,6 +4,8 @@
 
 #include "CoreMotor.h"
 
+#include "LogKit.h"
+
 namespace leka {
 
 using namespace mbed;
@@ -48,6 +50,7 @@ void CoreMotor::setSpeed(float speed)
 
 void CoreMotor::enableDeepSleep()
 {
+	log_info("CoreMotor::enableDeepSleep");
 	_speed.enableDeepSleep();
 }
 

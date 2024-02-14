@@ -8,6 +8,7 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreLCDDriverOTM8009A.hpp"
+#include "LogKit.h"
 
 using namespace leka;
 using namespace std::chrono_literals;
@@ -27,6 +28,8 @@ void CoreLCDDriverOTM8009A::turnOff()
 
 void CoreLCDDriverOTM8009A::enableDeepSleep()
 {
+	log_info("CoreLCDDriverOTM8009A::enableDeepSleep");
+
 	_backlight.enableDeepSleep();
 }
 
