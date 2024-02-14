@@ -532,7 +532,7 @@ namespace watchdog {
 namespace deep_sleep {
 	auto components = std::to_array<interface::DeepSleepEnabled *>({
 		&motors::left::motor,
-		&motors::left::motor,
+		&motors::right::motor,
 		&display::internal::corelcd,
 		&rfid::reader,
 	});
