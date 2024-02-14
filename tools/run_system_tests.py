@@ -189,7 +189,7 @@ def wait_for_system_to_sleep(duration=180):
         sleep(1)
 
     print()
-    data = list(filter(lambda string: 'watchdog' in string, data))[-10:]
+    # data = list(filter(lambda string: 'watchdog' in string, data))[-10:]
     print("\n".join(data))
     print_end_success(f"Waiting for LekaOS to run for {duration} seconds")
     return data
