@@ -37,6 +37,13 @@ TEST_F(RobotControllerTest, suspendHardwareForDeepSleep)
 	EXPECT_CALL(mock_lcd, enableDeepSleep);
 	// TODO: Expect_call of RFID
 
+	auto components = std::to_array<interface::DeepSleepEnabled *>({
+		&mock_motor_left,
+		&mock_motor_right,
+		&mock_lcd,
+	});
+
+	rc.registerDeepSleepEnabledComponents(components);
 	rc.suspendHardwareForDeepSleep();
 }
 
