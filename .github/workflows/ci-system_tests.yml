@@ -1,8 +1,8 @@
 # Leka - LekaOS
-# Copyright 2022 APF France handicap
+# Copyright 2024 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-name: Functional Tests
+name: System Tests
 
 on:
   push:
@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  run_functional_tests:
+  run_system_tests:
     name: Build & Test
     runs-on: robot
 
@@ -44,9 +44,9 @@ jobs:
           make
 
       #
-      # Mark: - Run functional tests
+      # Mark: - Run system tests
       #
 
-      - name: Run functional tests
+      - name: Run system tests
         run: |
-          python3 -u tools/run_functional_tests.py --all
+          python3 -u tools/run_system_tests.py --duration 800 --deep-sleep-percentage 1
