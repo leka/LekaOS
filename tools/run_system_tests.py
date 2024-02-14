@@ -35,6 +35,14 @@ parser.add_argument('--response-timeout', metavar='RESPONSE_TIMEOUT',
 parser.add_argument('--no-flash-erase', action='store_false',
                     help='disable flash erase')
 
+parser.add_argument('-d', '--duration', metavar='DURATION',
+                    default=18000,
+                    help='duration in seconds to wait for the system to sleep')
+
+parser.add_argument('-s', '--deep-sleep-percentage', metavar='DEEP_SLEEP_PERCENTAGE',
+                    default=95,
+                    help='deep sleep percentage')
+
 args = parser.parse_args()
 
 
@@ -181,10 +189,10 @@ def wait_for_system_to_sleep(duration=180):
         sleep(1)
 
     print()
-    data = list(filter(lambda string: 'watchdog' in string, data))
+    data = list(filter(lambda string: 'watchdog' in string, data))[-10:]
     print("\n".join(data))
     print_end_success(f"Waiting for LekaOS to run for {duration} seconds")
-    return data[-10:]
+    return data
 
 
 def calculate_sleep_deep_statistics(lines):
@@ -224,6 +232,8 @@ def calculate_sleep_deep_statistics(lines):
 
 
 FLASH_ERASE_FLAG = args.no_flash_erase
+SLEEP_DURATION = int(args.duration)
+DEEP_SLEEP_PERCENTAGE = int(args.deep_sleep_percentage)
 
 
 def main():
@@ -236,7 +246,7 @@ def main():
 
     reset_buffer()
 
-    data = wait_for_system_to_sleep(180)
+    data = wait_for_system_to_sleep(SLEEP_DURATION)
 
     sleep, deep_sleep = calculate_sleep_deep_statistics(data)
 
@@ -245,11 +255,11 @@ def main():
     print(Fore.CYAN + f"Average sleep: {sleep}%" + Style.RESET_ALL)
     print(Fore.CYAN + f"Average deep sleep: {deep_sleep}%" + Style.RESET_ALL)
 
-    if deep_sleep > 95:
-        print(Fore.GREEN + "Deep sleep is higher than 95%, this is good! ✅" + Style.RESET_ALL)
+    if deep_sleep >= DEEP_SLEEP_PERCENTAGE:
+        print(Fore.GREEN + f"Deep sleep is higher than {DEEP_SLEEP_PERCENTAGE}%, this is good! ✅" + Style.RESET_ALL)
         return 0
     else:
-        print(Fore.RED + "Deep sleep is lower than 95%, this is bad! ❌" + Style.RESET_ALL)
+        print(Fore.RED + f"Deep sleep is lower than {DEEP_SLEEP_PERCENTAGE}%, this is bad! ❌" + Style.RESET_ALL)
         return 1
 
 
