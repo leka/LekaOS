@@ -317,7 +317,7 @@ class RobotController : public interface::RobotController
 		_motor_left.enableDeepSleep();
 		_motor_right.enableDeepSleep();
 		// _rfidkit.enableDeepSleep();
-		// _lcd.enableDeepSleep();
+		_lcd.enableDeepSleep();
 	}
 
 	void resetEmergencyStopCounter() final { _emergency_stop_counter = 0; }
