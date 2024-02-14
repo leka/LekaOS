@@ -314,6 +314,10 @@ class RobotController : public interface::RobotController
 		for (auto &component: _deep_sleep_enabled_components) {
 			component->enableDeepSleep();
 		}
+		// _motor_left.enableDeepSleep();
+		// _motor_right.enableDeepSleep();
+		_rfidkit.enableDeepSleep();
+		_lcd.enableDeepSleep();
 	}
 
 	void resetEmergencyStopCounter() final { _emergency_stop_counter = 0; }
