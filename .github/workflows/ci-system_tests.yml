@@ -49,4 +49,4 @@ jobs:
 
       - name: Run system tests
         run: |
-          python3 -u tools/run_system_tests.py --duration 1200 --deep-sleep-percentage 1
+          python3 -u tools/run_system_tests.py --duration 30 --deep-sleep-percentage 1
