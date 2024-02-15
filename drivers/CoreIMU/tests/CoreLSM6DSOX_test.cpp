@@ -67,7 +67,7 @@ TEST_F(CoreLSM6DSOXTest, setPowerMode)
 
 TEST_F(CoreLSM6DSOXTest, onGyrDRDY)
 {
-	MockFunction<void(const leka::interface::LSM6DSOX::SensorData &data)> mock_callback;
+	MockFunction<void(const leka::interface::IMU::SensorData &data)> mock_callback;
 
 	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
 	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));

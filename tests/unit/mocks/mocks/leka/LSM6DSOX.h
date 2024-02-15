@@ -5,11 +5,11 @@
 #pragma once
 
 #include "gmock/gmock.h"
-#include "interface/drivers/LSM6DSOX.hpp"
+#include "interface/drivers/IMU.hpp"
 
 namespace leka::mock {
 
-class LSM6DSOX : public interface::LSM6DSOX
+class LSM6DSOX : public interface::IMU
 {
   public:
 	MOCK_METHOD(void, init, (), (override));

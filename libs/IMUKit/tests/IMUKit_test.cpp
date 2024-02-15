@@ -37,14 +37,14 @@ TEST_F(IMUKitTest, initialization)
 
 TEST_F(IMUKitTest, start)
 {
-	EXPECT_CALL(mock_lsm6dox, setPowerMode(interface::LSM6DSOX::PowerMode::Normal)).Times(1);
+	EXPECT_CALL(mock_lsm6dox, setPowerMode(interface::IMU::PowerMode::Normal)).Times(1);
 
 	imukit.start();
 }
 
 TEST_F(IMUKitTest, stop)
 {
-	EXPECT_CALL(mock_lsm6dox, setPowerMode(interface::LSM6DSOX::PowerMode::Off)).Times(1);
+	EXPECT_CALL(mock_lsm6dox, setPowerMode(interface::IMU::PowerMode::Off)).Times(1);
 
 	imukit.stop();
 }
@@ -71,7 +71,7 @@ TEST_F(IMUKitTest, onDataReady)
 	imukit.onEulerAnglesReady(mock_callback.AsStdFunction());
 
 	const auto data_initial =
-		interface::LSM6DSOX::SensorData {.xl = {.x = 0.F, .y = 0.F, .z = 0.F}, .gy = {.x = 0.F, .y = 0.F, .z = 0.F}};
+		interface::IMU::SensorData {.xl = {.x = 0.F, .y = 0.F, .z = 0.F}, .gy = {.x = 0.F, .y = 0.F, .z = 0.F}};
 
 	EXPECT_CALL(mock_callback, Call);
 
@@ -82,7 +82,7 @@ TEST_F(IMUKitTest, onDataReady)
 	spy_kernel_addElapsedTimeToTickCount(80ms);
 
 	const auto data_updated =
-		interface::LSM6DSOX::SensorData {.xl = {.x = 1.F, .y = 2.F, .z = 3.F}, .gy = {.x = 1.F, .y = 2.F, .z = 3.F}};
+		interface::IMU::SensorData {.xl = {.x = 1.F, .y = 2.F, .z = 3.F}, .gy = {.x = 1.F, .y = 2.F, .z = 3.F}};
 
 	EXPECT_CALL(mock_callback, Call);
 
@@ -100,7 +100,7 @@ TEST_F(IMUKitTest, onDataReadyEmptyEulerAngleCallback)
 	imukit.onEulerAnglesReady({});
 
 	const auto data_initial =
-		interface::LSM6DSOX::SensorData {.xl = {.x = 0.F, .y = 0.F, .z = 0.F}, .gy = {.x = 0.F, .y = 0.F, .z = 0.F}};
+		interface::IMU::SensorData {.xl = {.x = 0.F, .y = 0.F, .z = 0.F}, .gy = {.x = 0.F, .y = 0.F, .z = 0.F}};
 
 	mock_lsm6dox.call_drdy_callback(data_initial);
 
@@ -109,7 +109,7 @@ TEST_F(IMUKitTest, onDataReadyEmptyEulerAngleCallback)
 	spy_kernel_addElapsedTimeToTickCount(80ms);
 
 	const auto data_updated =
-		interface::LSM6DSOX::SensorData {.xl = {.x = 1.F, .y = 2.F, .z = 3.F}, .gy = {.x = 1.F, .y = 2.F, .z = 3.F}};
+		interface::IMU::SensorData {.xl = {.x = 1.F, .y = 2.F, .z = 3.F}, .gy = {.x = 1.F, .y = 2.F, .z = 3.F}};
 
 	mock_lsm6dox.call_drdy_callback(data_updated);
 

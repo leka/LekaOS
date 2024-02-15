@@ -48,14 +48,14 @@ namespace fusion {
 		.rejectionTimeout	   = static_cast<unsigned int>(5 * kODR_HZ),   // ? # of samples in 5 seconds
 	};
 
-	interface::LSM6DSOX::SensorData::time_point_t timestamp_previous = {};
+	interface::IMU::SensorData::time_point_t timestamp_previous = {};
 
 	auto global_offset = FusionOffset {};
 
 	constexpr auto CALIBRATION = bool {true};
 	// constexpr auto CALIBRATION = bool {false};
 
-	void callback(const interface::LSM6DSOX::SensorData data)
+	void callback(const interface::IMU::SensorData data)
 	{
 		auto timestamp_now	  = data.timestamp;
 		auto timestamp_now_us = std::chrono::microseconds {timestamp_now.time_since_epoch()}.count();
