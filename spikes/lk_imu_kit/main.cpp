@@ -5,7 +5,7 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreI2C.h"
-#include "CoreLSM6DSOX.hpp"
+#include "CoreIMU.hpp"
 #include "HelloWorld.h"
 #include "IMUKit.hpp"
 #include "LogKit.h"
@@ -24,11 +24,11 @@ namespace imu {
 
 	}	// namespace internal
 
-	CoreLSM6DSOX lsm6dsox(internal::i2c, internal::drdy_irq);
+	CoreIMU coreimu(internal::i2c, internal::drdy_irq);
 
 }	// namespace imu
 
-IMUKit imukit(imu::lsm6dsox);
+IMUKit imukit(imu::coreimu);
 
 }	// namespace
 
@@ -40,7 +40,7 @@ auto main() -> int
 	HelloWorld hello;
 	hello.start();
 
-	imu::lsm6dsox.init();
+	imu::coreimu.init();
 
 	imukit.stop();
 	imukit.init();

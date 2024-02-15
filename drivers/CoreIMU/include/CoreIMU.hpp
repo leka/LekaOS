@@ -15,10 +15,10 @@
 
 namespace leka {
 
-class CoreLSM6DSOX : public interface::IMU, public interface::DeepSleepEnabled
+class CoreIMU : public interface::IMU, public interface::DeepSleepEnabled
 {
   public:
-	explicit CoreLSM6DSOX(interface::I2C &i2c, CoreInterruptIn &drdy_irq);
+	explicit CoreIMU(interface::I2C &i2c, CoreInterruptIn &drdy_irq);
 
 	void init() final;
 
@@ -33,9 +33,9 @@ class CoreLSM6DSOX : public interface::IMU, public interface::DeepSleepEnabled
 	auto read(uint8_t register_address, uint16_t number_bytes_to_read, uint8_t *p_buffer) -> int32_t;
 	auto write(uint8_t register_address, uint16_t number_bytes_to_write, uint8_t *p_buffer) -> int32_t;
 
-	static auto ptr_io_write(CoreLSM6DSOX *handle, uint8_t write_address, uint8_t *p_buffer,
+	static auto ptr_io_write(CoreIMU *handle, uint8_t write_address, uint8_t *p_buffer,
 							 uint16_t number_bytes_to_write) -> int32_t;
-	static auto ptr_io_read(CoreLSM6DSOX *handle, uint8_t read_address, uint8_t *p_buffer,
+	static auto ptr_io_read(CoreIMU *handle, uint8_t read_address, uint8_t *p_buffer,
 							uint16_t number_bytes_to_read) -> int32_t;
 
 	void onGyrDataReadyHandler(auto timestamp);

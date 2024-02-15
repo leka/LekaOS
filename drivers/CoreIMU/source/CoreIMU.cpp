@@ -2,11 +2,11 @@
 // Copyright 2022 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include "CoreLSM6DSOX.hpp"
+#include "CoreIMU.hpp"
 
 namespace leka {
 
-CoreLSM6DSOX::CoreLSM6DSOX(interface::I2C &i2c, CoreInterruptIn &drdy_irq) : _i2c(i2c), _drdy_irq(drdy_irq)
+CoreIMU::CoreIMU(interface::I2C &i2c, CoreInterruptIn &drdy_irq) : _i2c(i2c), _drdy_irq(drdy_irq)
 {
 	// ? NOLINTNEXTLINE - allow reinterpret_cast as there are no alternatives
 	_register_io_function.write_reg = reinterpret_cast<stmdev_write_ptr>(ptr_io_write);
@@ -15,7 +15,7 @@ CoreLSM6DSOX::CoreLSM6DSOX(interface::I2C &i2c, CoreInterruptIn &drdy_irq) : _i2
 	_register_io_function.handle   = static_cast<void *>(this);
 }
 
-void CoreLSM6DSOX::init()
+void CoreIMU::init()
 {
 	_event_queue.dispatch_forever();
 
@@ -33,7 +33,7 @@ void CoreLSM6DSOX::init()
 	setGyrDataReadyInterrupt();
 }
 
-void CoreLSM6DSOX::setPowerMode(PowerMode mode)
+void CoreIMU::setPowerMode(PowerMode mode)
 {
 	auto xl_power_mode = lsm6dsox_xl_hm_mode_t {};
 	auto gy_power_mode = lsm6dsox_g_hm_mode_t {};
@@ -71,12 +71,12 @@ void CoreLSM6DSOX::setPowerMode(PowerMode mode)
 	lsm6dsox_gy_data_rate_set(&_register_io_function, gy_odr);
 }
 
-void CoreLSM6DSOX::registerOnGyDataReadyCallback(drdy_callback_t const &callback)
+void CoreIMU::registerOnGyDataReadyCallback(drdy_callback_t const &callback)
 {
 	_on_gy_data_ready_callback = callback;
 }
 
-void CoreLSM6DSOX::onGyrDataReadyHandler(auto timestamp)
+void CoreIMU::onGyrDataReadyHandler(auto timestamp)
 {
 	static constexpr auto _1k = float {1000.F};
 
@@ -97,17 +97,17 @@ void CoreLSM6DSOX::onGyrDataReadyHandler(auto timestamp)
 	}
 }
 
-void CoreLSM6DSOX::enableDeepSleep()
+void CoreIMU::enableDeepSleep()
 {
 	setPowerMode(interface::IMU::PowerMode::Off);
 }
 
-void CoreLSM6DSOX::disableDeepSleep()
+void CoreIMU::disableDeepSleep()
 {
 	setPowerMode(interface::IMU::PowerMode::Normal);
 }
 
-auto CoreLSM6DSOX::read(uint8_t register_address, uint16_t number_bytes_to_read, uint8_t *p_buffer) -> int32_t
+auto CoreIMU::read(uint8_t register_address, uint16_t number_bytes_to_read, uint8_t *p_buffer) -> int32_t
 {
 	// Send component address, without STOP condition
 	auto ret = _i2c.write(_address, &register_address, 1, true);
@@ -119,7 +119,7 @@ auto CoreLSM6DSOX::read(uint8_t register_address, uint16_t number_bytes_to_read,
 	return ret;
 }
 
-auto CoreLSM6DSOX::write(uint8_t register_address, uint16_t number_bytes_to_write, uint8_t *p_buffer) -> int32_t
+auto CoreIMU::write(uint8_t register_address, uint16_t number_bytes_to_write, uint8_t *p_buffer) -> int32_t
 {
 	if (number_bytes_to_write >= kMaxBufferLength) {
 		return 1;
@@ -131,19 +131,19 @@ auto CoreLSM6DSOX::write(uint8_t register_address, uint16_t number_bytes_to_writ
 	return ret;
 }
 
-auto CoreLSM6DSOX::ptr_io_write(CoreLSM6DSOX *handle, uint8_t write_address, uint8_t *p_buffer,
-								uint16_t number_bytes_to_write) -> int32_t
+auto CoreIMU::ptr_io_write(CoreIMU *handle, uint8_t write_address, uint8_t *p_buffer,
+						   uint16_t number_bytes_to_write) -> int32_t
 {
 	return handle->write(write_address, number_bytes_to_write, p_buffer);
 }
 
-auto CoreLSM6DSOX::ptr_io_read(CoreLSM6DSOX *handle, uint8_t read_address, uint8_t *p_buffer,
-							   uint16_t number_bytes_to_read) -> int32_t
+auto CoreIMU::ptr_io_read(CoreIMU *handle, uint8_t read_address, uint8_t *p_buffer,
+						  uint16_t number_bytes_to_read) -> int32_t
 {
 	return handle->read(read_address, number_bytes_to_read, p_buffer);
 }
 
-void CoreLSM6DSOX::setGyrDataReadyInterrupt()
+void CoreIMU::setGyrDataReadyInterrupt()
 {
 	lsm6dsox_dataready_pulsed_t drdy_pulsed {LSM6DSOX_DRDY_PULSED};
 	lsm6dsox_data_ready_mode_set(&_register_io_function, drdy_pulsed);
