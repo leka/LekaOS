@@ -5,7 +5,7 @@
 #pragma once
 
 #include "gmock/gmock.h"
-#include "interface/LSM6DSOX.hpp"
+#include "interface/drivers/LSM6DSOX.hpp"
 
 namespace leka::mock {
 

@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "interface/LSM6DSOX.hpp"
+#include "interface/drivers/LSM6DSOX.hpp"
 #include "interface/libs/IMUKit.hpp"
 
 namespace leka {
