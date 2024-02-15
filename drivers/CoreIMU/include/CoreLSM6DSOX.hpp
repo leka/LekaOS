@@ -8,9 +8,9 @@
 
 #include "CoreEventQueue.h"
 #include "CoreInterruptIn.h"
-#include "interface/LSM6DSOX.hpp"
 #include "interface/drivers/DeepSleepEnabled.h"
 #include "interface/drivers/I2C.h"
+#include "interface/drivers/LSM6DSOX.hpp"
 #include "lsm6dsox_reg.h"
 
 namespace leka {
