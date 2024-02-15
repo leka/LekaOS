@@ -9,7 +9,7 @@
 
 namespace leka::mock {
 
-class LSM6DSOX : public interface::IMU
+class IMU : public interface::IMU
 {
   public:
 	MOCK_METHOD(void, init, (), (override));
