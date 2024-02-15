@@ -20,6 +20,7 @@
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreI2C.h"
+#include "CoreIMU.hpp"
 #include "CoreInterruptIn.h"
 #include "CoreJPEG.hpp"
 #include "CoreJPEGModeDMA.hpp"
@@ -27,7 +28,6 @@
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLL.h"
-#include "CoreLSM6DSOX.hpp"
 #include "CoreLTDC.hpp"
 #include "CoreMCU.h"
 #include "CoreMotor.h"
@@ -264,11 +264,11 @@ namespace imu {
 
 	}	// namespace internal
 
-	auto lsm6dsox = CoreLSM6DSOX(internal::i2c, internal::drdy_irq);
+	auto coreimu = CoreIMU(internal::i2c, internal::drdy_irq);
 
 }	// namespace imu
 
-auto imukit = IMUKit {imu::lsm6dsox};
+auto imukit = IMUKit {imu::coreimu};
 
 namespace motion::internal {
 
@@ -562,7 +562,7 @@ auto main() -> int
 	commandkit.registerCommand(command::list);
 	activitykit.registerActivities(activities::activities);
 
-	imu::lsm6dsox.init();
+	imu::coreimu.init();
 	imukit.init();
 
 	robot::controller.initializeComponents();

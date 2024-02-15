@@ -7,7 +7,7 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreI2C.h"
-#include "CoreLSM6DSOX.hpp"
+#include "CoreIMU.hpp"
 #include "HelloWorld.h"
 #include "LogKit.h"
 
@@ -25,7 +25,7 @@ namespace imu {
 
 	}	// namespace internal
 
-	CoreLSM6DSOX lsm6dsox(internal::i2c, internal::drdy_irq);
+	CoreIMU coreimu(internal::i2c, internal::drdy_irq);
 
 }	// namespace imu
 
@@ -38,9 +38,9 @@ auto main() -> int
 	HelloWorld hello;
 	hello.start();
 
-	imu::lsm6dsox.init();
+	imu::coreimu.init();
 
-	imu::lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
+	imu::coreimu.setPowerMode(CoreIMU::PowerMode::Off);
 
 	auto callback = [](const interface::IMU::SensorData data) {
 		const auto &[xlx, xly, xlz] = data.xl;
@@ -51,16 +51,16 @@ auto main() -> int
 				  timestamp, xlx, xly, xlz, gx, gy, gz);
 	};
 
-	imu::lsm6dsox.registerOnGyDataReadyCallback(callback);
+	imu::coreimu.registerOnGyDataReadyCallback(callback);
 
 	while (true) {
 		log_info("Setting normal power mode for 5s");
 		rtos::ThisThread::sleep_for(1s);
-		imu::lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Normal);
+		imu::coreimu.setPowerMode(CoreIMU::PowerMode::Normal);
 
 		rtos::ThisThread::sleep_for(5s);
 
-		imu::lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
+		imu::coreimu.setPowerMode(CoreIMU::PowerMode::Off);
 		rtos::ThisThread::sleep_for(500ms);
 		log_info("Turning off for 5s");
 

@@ -4,7 +4,7 @@
 
 #include "IMUKit.hpp"
 
-#include "CoreLSM6DSOX.hpp"
+#include "CoreIMU.hpp"
 #include "ThisThread.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"

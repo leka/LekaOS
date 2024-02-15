@@ -8,7 +8,7 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreI2C.h"
-#include "CoreLSM6DSOX.hpp"
+#include "CoreIMU.hpp"
 #include "LogKit.h"
 
 // ? Note the following code has been heavily inspired from:
@@ -31,7 +31,7 @@ namespace imu {
 
 	}	// namespace internal
 
-	CoreLSM6DSOX lsm6dsox(internal::i2c, internal::drdy_irq);
+	CoreIMU coreimu(internal::i2c, internal::drdy_irq);
 
 }	// namespace imu
 
@@ -119,9 +119,9 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(1s);
 
-	imu::lsm6dsox.init();
+	imu::coreimu.init();
 
-	imu::lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
+	imu::coreimu.setPowerMode(CoreIMU::PowerMode::Off);
 
 	// ? Initialise algorithms
 	FusionAhrsInitialise(&fusion::ahrs);
@@ -136,8 +136,8 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(1s);
 
-	imu::lsm6dsox.registerOnGyDataReadyCallback(fusion::callback);
-	imu::lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Normal);
+	imu::coreimu.registerOnGyDataReadyCallback(fusion::callback);
+	imu::coreimu.setPowerMode(CoreIMU::PowerMode::Normal);
 
 	while (true) {
 		rtos::ThisThread::sleep_for(5s);
