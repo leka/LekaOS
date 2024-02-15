@@ -245,6 +245,28 @@ TEST_F(StateMachineTest, stateSleepEventTimeout)
 	EXPECT_TRUE(sm.is(lksm::state::deep_sleeping));
 }
 
+TEST_F(StateMachineTest, stateDeepSleepingEventChargeDidStart)
+{
+	sm.set_current_states(lksm::state::deep_sleeping);
+
+	EXPECT_CALL(mock_rc, wakeUp);
+
+	sm.process_event(lksm::event::charge_did_start {});
+
+	EXPECT_TRUE(sm.is(X));
+}
+
+TEST_F(StateMachineTest, stateDeepSleepingEventChargeDidStop)
+{
+	sm.set_current_states(lksm::state::deep_sleeping);
+
+	EXPECT_CALL(mock_rc, wakeUp);
+
+	sm.process_event(lksm::event::charge_did_stop {});
+
+	EXPECT_TRUE(sm.is(X));
+}
+
 TEST_F(StateMachineTest, stateIdleEventChargeDidStart)
 {
 	sm.set_current_states(lksm::state::idle);

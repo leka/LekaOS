@@ -241,6 +241,9 @@ struct StateMachine {
 			, sm::state::deep_sleeping + boost::sml::on_entry<_> / sm::action::suspend_hardware_for_deep_sleep {}
 			, sm::state::deep_sleeping + boost::sml::on_exit<_>  / sm::action::wake_up {}
 
+			, sm::state::deep_sleeping + event<sm::event::charge_did_start> = X
+			, sm::state::deep_sleeping + event<sm::event::charge_did_stop>  = X
+
 			, sm::state::charging + boost::sml::on_entry<_> / (sm::action::start_deep_sleep_timeout {}, sm::action::start_charging_behavior {} )
 			, sm::state::charging + boost::sml::on_exit<_>  / (sm::action::stop_deep_sleep_timeout  {}, sm::action::stop_charging_behavior  {} )
 
