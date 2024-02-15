@@ -55,19 +55,19 @@ void IMUKit::init()
 		FusionOffsetInitialise(&fusion::global_offset, fusion::kODR_HZ);
 	}
 
-	auto on_drdy_callback = [this](const interface::LSM6DSOX::SensorData &data) { drdy_callback(data); };
+	auto on_drdy_callback = [this](const interface::IMU::SensorData &data) { drdy_callback(data); };
 
-	_lsm6dsox.registerOnGyDataReadyCallback(on_drdy_callback);
+	_imu.registerOnGyDataReadyCallback(on_drdy_callback);
 }
 
 void IMUKit::start()
 {
-	_lsm6dsox.setPowerMode(interface::LSM6DSOX::PowerMode::Normal);
+	_imu.setPowerMode(interface::IMU::PowerMode::Normal);
 }
 
 void IMUKit::stop()
 {
-	_lsm6dsox.setPowerMode(interface::LSM6DSOX::PowerMode::Off);
+	_imu.setPowerMode(interface::IMU::PowerMode::Off);
 }
 
 void IMUKit::setOrigin()
@@ -88,10 +88,10 @@ void IMUKit::onEulerAnglesReady(angles_ready_callback_t const &callback)
 	_on_euler_angles_rdy_callback = callback;
 }
 
-void IMUKit::drdy_callback(const interface::LSM6DSOX::SensorData data)
+void IMUKit::drdy_callback(const interface::IMU::SensorData data)
 {
 	// ? Note: For a detailed explanation on the code below, checkout
-	// ? https://github.com/leka/LekaOS/tree/develop/spikes/lk_sensors_imu_lsm6dsox_fusion_calibration
+	// ? https://github.com/leka/LekaOS/tree/develop/spikes/lk_sensors_imu_imu_fusion_calibration
 
 	fusion::timestamp_now = rtos::Kernel::Clock::now();
 

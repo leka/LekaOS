@@ -10,12 +10,12 @@
 #include "CoreInterruptIn.h"
 #include "interface/drivers/DeepSleepEnabled.h"
 #include "interface/drivers/I2C.h"
-#include "interface/drivers/LSM6DSOX.hpp"
+#include "interface/drivers/IMU.hpp"
 #include "lsm6dsox_reg.h"
 
 namespace leka {
 
-class CoreLSM6DSOX : public interface::LSM6DSOX, public interface::DeepSleepEnabled
+class CoreLSM6DSOX : public interface::IMU, public interface::DeepSleepEnabled
 {
   public:
 	explicit CoreLSM6DSOX(interface::I2C &i2c, CoreInterruptIn &drdy_irq);

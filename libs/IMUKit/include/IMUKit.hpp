@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "interface/drivers/LSM6DSOX.hpp"
+#include "interface/drivers/IMU.hpp"
 #include "interface/libs/IMUKit.hpp"
 
 namespace leka {
@@ -12,7 +12,7 @@ namespace leka {
 class IMUKit : public interface::IMUKit
 {
   public:
-	explicit IMUKit(interface::LSM6DSOX &lsm6dsox) : _lsm6dsox(lsm6dsox) {}
+	explicit IMUKit(interface::IMU &imu) : _imu(imu) {}
 
 	void init();
 	void start() final;
@@ -23,9 +23,9 @@ class IMUKit : public interface::IMUKit
 	[[nodiscard]] auto getEulerAngles() const -> EulerAngles final;
 
   private:
-	void drdy_callback(interface::LSM6DSOX::SensorData data);
+	void drdy_callback(interface::IMU::SensorData data);
 
-	interface::LSM6DSOX &_lsm6dsox;
+	interface::IMU &_imu;
 	EulerAngles _euler_angles {};
 	angles_ready_callback_t _on_euler_angles_rdy_callback {};
 };

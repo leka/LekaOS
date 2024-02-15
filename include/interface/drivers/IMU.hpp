@@ -10,10 +10,10 @@
 
 namespace leka::interface {
 
-class LSM6DSOX
+class IMU
 {
   public:
-	virtual ~LSM6DSOX() = default;
+	virtual ~IMU() = default;
 
 	enum class PowerMode
 	{

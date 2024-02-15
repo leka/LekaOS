@@ -18,13 +18,13 @@ suite suite_lsm6dsox = [] {
 	auto i2c		 = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
 	auto drdy_irq	 = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
 	auto lsm6dsox	 = CoreLSM6DSOX {i2c, drdy_irq};
-	auto sensor_data = leka::interface::LSM6DSOX::SensorData();
+	auto sensor_data = leka::interface::IMU::SensorData();
 
 	"initialization"_test = [&] {
 		expect(neq(&lsm6dsox, nullptr));
 		lsm6dsox.init();
 
-		auto sensor_callback = [&](const leka::interface::LSM6DSOX::SensorData &data) { sensor_data = data; };
+		auto sensor_callback = [&](const leka::interface::IMU::SensorData &data) { sensor_data = data; };
 		lsm6dsox.registerOnGyDataReadyCallback(sensor_callback);
 	};
 

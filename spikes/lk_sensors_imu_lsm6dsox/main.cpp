@@ -42,7 +42,7 @@ auto main() -> int
 
 	imu::lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
 
-	auto callback = [](const interface::LSM6DSOX::SensorData data) {
+	auto callback = [](const interface::IMU::SensorData data) {
 		const auto &[xlx, xly, xlz] = data.xl;
 		const auto &[gx, gy, gz]	= data.gy;
 		const auto timestamp		= data.timestamp.time_since_epoch().count();
