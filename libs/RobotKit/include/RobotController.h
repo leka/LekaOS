@@ -316,6 +316,8 @@ class RobotController : public interface::RobotController
 		}
 	}
 
+	void wakeUp() final { system_reset(); }
+
 	void resetEmergencyStopCounter() final { _emergency_stop_counter = 0; }
 
 	void raise(auto event)
