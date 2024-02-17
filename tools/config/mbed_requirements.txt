@@ -12,5 +12,5 @@ mbed-os-tools==1.8.15
 pyelftools==0.30
 
 # needed for signing secure images
-cryptography==41.0.7
+cryptography==42.0.2
 cbor==1.0.0
