@@ -31,9 +31,9 @@ class CoreIMUTest : public ::testing::Test
 	// void TearDown() override {}
 
 	mock::CoreI2C mocki2c {};
-	CoreInterruptIn drdy_irq {NC};
+	CoreInterruptIn irq {NC};
 
-	CoreIMU coreimu {mocki2c, drdy_irq};
+	CoreIMU coreimu {mocki2c, irq};
 
 	// ? Instantiation of mock::EventQueue is needed to setup the underlying stubs that will make the mock work
 	// ? correctly. Without it UT are failing
@@ -65,7 +65,7 @@ TEST_F(CoreIMUTest, setPowerMode)
 	coreimu.setPowerMode(CoreIMU::PowerMode::High);
 }
 
-TEST_F(CoreIMUTest, onGyrDRDY)
+TEST_F(CoreIMUTest, onDataAvailable)
 {
 	MockFunction<void(const leka::interface::IMU::SensorData &data)> mock_callback;
 
@@ -73,16 +73,32 @@ TEST_F(CoreIMUTest, onGyrDRDY)
 	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
 	EXPECT_CALL(mock_callback, Call).Times(1);
 
-	coreimu.registerOnGyDataReadyCallback(mock_callback.AsStdFunction());
+	coreimu.registerOnDataAvailableCallback(mock_callback.AsStdFunction());
 
 	auto on_rise_callback = spy_InterruptIn_getRiseCallback();
 	on_rise_callback();
 }
 
-TEST_F(CoreIMUTest, emptyOnGyrDrdyCallback)
+TEST_F(CoreIMUTest, emptyOnDataAvailableCallback)
 {
-	coreimu.registerOnGyDataReadyCallback({});
+	coreimu.registerOnDataAvailableCallback({});
 
 	auto on_rise_callback = spy_InterruptIn_getRiseCallback();
 	on_rise_callback();
+}
+
+TEST_F(CoreIMUTest, enableOnDataAvailable)
+{
+	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
+	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
+
+	coreimu.enableOnDataAvailable();
+}
+
+TEST_F(CoreIMUTest, disableOnDataAvailable)
+{
+	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
+	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
+
+	coreimu.disableOnDataAvailable();
 }

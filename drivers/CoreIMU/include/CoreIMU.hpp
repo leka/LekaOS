@@ -17,11 +17,13 @@ namespace leka {
 class CoreIMU : public interface::IMU
 {
   public:
-	explicit CoreIMU(interface::I2C &i2c, CoreInterruptIn &drdy_irq);
+	explicit CoreIMU(interface::I2C &i2c, CoreInterruptIn &irq);
 
 	void init() final;
 
-	void registerOnGyDataReadyCallback(drdy_callback_t const &callback) final;
+	void registerOnDataAvailableCallback(data_available_callback_t const &callback) final;
+	void enableOnDataAvailable() final;
+	void disableOnDataAvailable() final;
 
 	void setPowerMode(PowerMode mode) final;
 
@@ -34,20 +36,22 @@ class CoreIMU : public interface::IMU
 	static auto ptr_io_read(CoreIMU *handle, uint8_t read_address, uint8_t *p_buffer, uint16_t number_bytes_to_read)
 		-> int32_t;
 
-	void onGyrDataReadyHandler(auto timestamp);
-	void setGyrDataReadyInterrupt();
+	void onDataAvailableHandler(auto timestamp);
+
+	void setInterruptCallback(std::function<void()> const &callback);
 
 	interface::I2C &_i2c;
 	CoreEventQueue _event_queue {};
 	lsm6dsox_md_t _config {};
 	stmdev_ctx_t _register_io_function {};
 	SensorData _sensor_data {};
-	CoreInterruptIn &_drdy_irq;
+	CoreInterruptIn &_irq;
 	const char _address = LSM6DSOX_I2C_ADD_L;
 
 	std::array<int16_t, 3> data_raw_xl {};
 	std::array<int16_t, 3> data_raw_gy {};
-	drdy_callback_t _on_gy_data_ready_callback {};
+	data_available_callback_t _on_data_available_callback {};
+	std::function<void()> _on_data_available_wrapper_callback {};
 
 	static constexpr uint8_t kMaxBufferLength = 32;
 	std::array<uint8_t, kMaxBufferLength> _rx_buffer {};

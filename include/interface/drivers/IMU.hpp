@@ -45,10 +45,14 @@ class IMU
 		time_point_t timestamp {};
 	};
 
-	using drdy_callback_t = std::function<void(const SensorData)>;
+	using data_available_callback_t = std::function<void(const SensorData)>;
 
-	virtual void init()															= 0;
-	virtual void registerOnGyDataReadyCallback(drdy_callback_t const &callback) = 0;
-	virtual void setPowerMode(PowerMode)										= 0;
+	virtual void init() = 0;
+
+	virtual void registerOnDataAvailableCallback(data_available_callback_t const &callback) = 0;
+	virtual void enableOnDataAvailable()													= 0;
+	virtual void disableOnDataAvailable()													= 0;
+
+	virtual void setPowerMode(PowerMode) = 0;
 };
 }	// namespace leka::interface
