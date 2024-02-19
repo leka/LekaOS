@@ -71,7 +71,7 @@ void CoreIMU::setPowerMode(PowerMode mode)
 	lsm6dsox_gy_data_rate_set(&_register_io_function, gy_odr);
 }
 
-void CoreIMU::registerOnDataAvailableCallback(drdy_callback_t const &callback)
+void CoreIMU::registerOnDataAvailableCallback(data_available_callback_t const &callback)
 {
 	_on_data_available_callback = callback;
 }

@@ -21,7 +21,7 @@ class CoreIMU : public interface::IMU
 
 	void init() final;
 
-	void registerOnDataAvailableCallback(drdy_callback_t const &callback) final;
+	void registerOnDataAvailableCallback(data_available_callback_t const &callback) final;
 
 	void setPowerMode(PowerMode mode) final;
 
@@ -47,7 +47,7 @@ class CoreIMU : public interface::IMU
 
 	std::array<int16_t, 3> data_raw_xl {};
 	std::array<int16_t, 3> data_raw_gy {};
-	drdy_callback_t _on_data_available_callback {};
+	data_available_callback_t _on_data_available_callback {};
 
 	static constexpr uint8_t kMaxBufferLength = 32;
 	std::array<uint8_t, kMaxBufferLength> _rx_buffer {};
