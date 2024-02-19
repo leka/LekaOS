@@ -33,7 +33,7 @@ void CoreIMU::init()
 	lsm6dsox_dataready_pulsed_t data_ready_pulsed {LSM6DSOX_DRDY_PULSED};
 	lsm6dsox_data_ready_mode_set(&_register_io_function, data_ready_pulsed);
 
-	setDataReadyInterrupt();
+	enableOnDataReadyInterrupt();
 }
 
 void CoreIMU::setPowerMode(PowerMode mode)
@@ -100,6 +100,33 @@ void CoreIMU::onDataReadyHandler(auto timestamp)
 	}
 }
 
+void CoreIMU::enableOnDataReadyInterrupt()
+{
+	lsm6dsox_pin_int1_route_t lsm6dsox_int1 {
+		.drdy_xl  = PROPERTY_ENABLE,
+		.den_flag = PROPERTY_ENABLE,
+	};
+	lsm6dsox_pin_int1_route_set(&_register_io_function, lsm6dsox_int1);
+
+	auto on_data_ready_callback = [this] {
+		auto timestamp = rtos::Kernel::Clock::now();
+		_event_queue.call([this, timestamp] { onDataReadyHandler(timestamp); });
+	};
+
+	setDataReadyInterruptCallback(on_data_ready_callback);
+}
+
+void CoreIMU::disableOnDataReadyInterrupt()
+{
+	lsm6dsox_pin_int1_route_t lsm6dsox_int1 {
+		.drdy_xl  = PROPERTY_DISABLE,
+		.den_flag = PROPERTY_DISABLE,
+	};
+	lsm6dsox_pin_int1_route_set(&_register_io_function, lsm6dsox_int1);
+
+	setDataReadyInterruptCallback({});
+}
+
 void CoreIMU::enableDeepSleep()
 {
 	setPowerMode(interface::IMU::PowerMode::Off);
@@ -146,20 +173,11 @@ auto CoreIMU::ptr_io_read(CoreIMU *handle, uint8_t read_address, uint8_t *p_buff
 	return handle->read(read_address, number_bytes_to_read, p_buffer);
 }
 
-void CoreIMU::setDataReadyInterrupt()
+void CoreIMU::setDataReadyInterruptCallback(std::function<void()> const &callback)
 {
-	lsm6dsox_pin_int1_route_t lsm6dsox_int1 {
-		.drdy_xl  = PROPERTY_ENABLE,
-		.den_flag = PROPERTY_ENABLE,
-	};
-	lsm6dsox_pin_int1_route_set(&_register_io_function, lsm6dsox_int1);
-
-	auto data_ready_callback = [this] {
-		auto timestamp = rtos::Kernel::Clock::now();
-		_event_queue.call([this, timestamp] { onDataReadyHandler(timestamp); });
-	};
-
-	_irq.onRise(data_ready_callback);
+	if (callback) {
+		_irq.onRise(callback);
+	}
 }
 
 }	// namespace leka

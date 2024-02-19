@@ -16,6 +16,8 @@ class IMU : public interface::IMU
 	MOCK_METHOD(void, setPowerMode, (PowerMode), (override));
 
 	void registerOnDataReadyCallback(data_ready_callback_t const &cb) override { data_ready_callback = cb; }
+	MOCK_METHOD(void, enableOnDataReadyInterrupt, (), (override));
+	MOCK_METHOD(void, disableOnDataReadyInterrupt, (), (override));
 
 	void call_data_ready_callback(const SensorData &data) { data_ready_callback(data); }
 

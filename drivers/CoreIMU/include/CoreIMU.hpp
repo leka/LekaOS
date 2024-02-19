@@ -23,6 +23,8 @@ class CoreIMU : public interface::IMU, public interface::DeepSleepEnabled
 	void init() final;
 
 	void registerOnDataReadyCallback(data_ready_callback_t const &callback) final;
+	void enableOnDataReadyInterrupt() final;
+	void disableOnDataReadyInterrupt() final;
 
 	void setPowerMode(PowerMode mode) final;
 
@@ -39,7 +41,8 @@ class CoreIMU : public interface::IMU, public interface::DeepSleepEnabled
 							uint16_t number_bytes_to_read) -> int32_t;
 
 	void onDataReadyHandler(auto timestamp);
-	void setDataReadyInterrupt();
+
+	void setDataReadyInterruptCallback(std::function<void()> const &callback);
 
 	interface::I2C &_i2c;
 	CoreEventQueue _event_queue {};

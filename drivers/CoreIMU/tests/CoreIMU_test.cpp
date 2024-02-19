@@ -87,6 +87,22 @@ TEST_F(CoreIMUTest, emptyOnDataReadyCallback)
 	on_rise_callback();
 }
 
+TEST_F(CoreIMUTest, enableOnDataReadyInterrupt)
+{
+	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
+	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
+
+	coreimu.enableOnDataReadyInterrupt();
+}
+
+TEST_F(CoreIMUTest, disableOnDataReadyInterrupt)
+{
+	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
+	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
+
+	coreimu.disableOnDataReadyInterrupt();
+}
+
 TEST_F(CoreIMUTest, enableDeepSleep)
 {
 	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
