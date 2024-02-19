@@ -25,7 +25,7 @@ suite suite_coreimu = [] {
 		coreimu.init();
 
 		auto sensor_callback = [&](const leka::interface::IMU::SensorData &data) { sensor_data = data; };
-		coreimu.registerOnGyDataReadyCallback(sensor_callback);
+		coreimu.registerOnDataReadyCallback(sensor_callback);
 	};
 
 	scenario("imu - power mode") = [&] {

@@ -23,7 +23,7 @@ inline auto values_did_change_over_time(leka::interface::IMU &imu)
 	auto f_batch = std::vector<float> {};
 
 	auto sensor_callback = [&](const leka::interface::IMU::SensorData &data) { sensor_data = data; };
-	imu.registerOnGyDataReadyCallback(sensor_callback);
+	imu.registerOnDataReadyCallback(sensor_callback);
 
 	for (auto i = 0; i < 10; ++i) {
 		auto [xlx, xly, xlz] = sensor_data.xl;

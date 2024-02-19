@@ -136,7 +136,7 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(1s);
 
-	imu::coreimu.registerOnGyDataReadyCallback(fusion::callback);
+	imu::coreimu.registerOnDataReadyCallback(fusion::callback);
 	imu::coreimu.setPowerMode(CoreIMU::PowerMode::Normal);
 
 	while (true) {

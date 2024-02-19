@@ -30,7 +30,7 @@ void CoreIMU::init()
 
 	lsm6dsox_mode_set(&_register_io_function, nullptr, &_config);
 
-	setGyrDataReadyInterrupt();
+	setDataReadyInterrupt();
 }
 
 void CoreIMU::setPowerMode(PowerMode mode)
@@ -71,12 +71,12 @@ void CoreIMU::setPowerMode(PowerMode mode)
 	lsm6dsox_gy_data_rate_set(&_register_io_function, gy_odr);
 }
 
-void CoreIMU::registerOnGyDataReadyCallback(drdy_callback_t const &callback)
+void CoreIMU::registerOnDataReadyCallback(drdy_callback_t const &callback)
 {
-	_on_gy_data_ready_callback = callback;
+	_on_data_ready_callback = callback;
 }
 
-void CoreIMU::onGyrDataReadyHandler(auto timestamp)
+void CoreIMU::onDataReadyHandler(auto timestamp)
 {
 	static constexpr auto _1k = float {1000.F};
 
@@ -92,8 +92,8 @@ void CoreIMU::onGyrDataReadyHandler(auto timestamp)
 	_sensor_data.xl.y = lsm6dsox_from_fs4_to_mg(data_raw_xl.at(1)) / _1k;
 	_sensor_data.xl.z = lsm6dsox_from_fs4_to_mg(data_raw_xl.at(2)) / _1k;
 
-	if (_on_gy_data_ready_callback) {
-		_on_gy_data_ready_callback(_sensor_data);
+	if (_on_data_ready_callback) {
+		_on_data_ready_callback(_sensor_data);
 	}
 }
 
@@ -143,23 +143,23 @@ auto CoreIMU::ptr_io_read(CoreIMU *handle, uint8_t read_address, uint8_t *p_buff
 	return handle->read(read_address, number_bytes_to_read, p_buffer);
 }
 
-void CoreIMU::setGyrDataReadyInterrupt()
+void CoreIMU::setDataReadyInterrupt()
 {
 	lsm6dsox_dataready_pulsed_t drdy_pulsed {LSM6DSOX_DRDY_PULSED};
 	lsm6dsox_data_ready_mode_set(&_register_io_function, drdy_pulsed);
 
-	lsm6dsox_pin_int1_route_t gyro_int1 {
+	lsm6dsox_pin_int1_route_t lsm6dsox_int1 {
 		.drdy_xl  = PROPERTY_ENABLE,
 		.den_flag = PROPERTY_ENABLE,
 	};
-	lsm6dsox_pin_int1_route_set(&_register_io_function, gyro_int1);
+	lsm6dsox_pin_int1_route_set(&_register_io_function, lsm6dsox_int1);
 
-	auto gyr_drdy_callback = [this] {
+	auto data_ready_callback = [this] {
 		auto timestamp = rtos::Kernel::Clock::now();
-		_event_queue.call([this, timestamp] { onGyrDataReadyHandler(timestamp); });
+		_event_queue.call([this, timestamp] { onDataReadyHandler(timestamp); });
 	};
 
-	_drdy_irq.onRise(gyr_drdy_callback);
+	_drdy_irq.onRise(data_ready_callback);
 }
 
 }	// namespace leka

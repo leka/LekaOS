@@ -65,7 +65,7 @@ TEST_F(CoreIMUTest, setPowerMode)
 	coreimu.setPowerMode(CoreIMU::PowerMode::High);
 }
 
-TEST_F(CoreIMUTest, onGyrDRDY)
+TEST_F(CoreIMUTest, onDataReady)
 {
 	MockFunction<void(const leka::interface::IMU::SensorData &data)> mock_callback;
 
@@ -73,15 +73,15 @@ TEST_F(CoreIMUTest, onGyrDRDY)
 	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
 	EXPECT_CALL(mock_callback, Call).Times(1);
 
-	coreimu.registerOnGyDataReadyCallback(mock_callback.AsStdFunction());
+	coreimu.registerOnDataReadyCallback(mock_callback.AsStdFunction());
 
 	auto on_rise_callback = spy_InterruptIn_getRiseCallback();
 	on_rise_callback();
 }
 
-TEST_F(CoreIMUTest, emptyOnGyrDrdyCallback)
+TEST_F(CoreIMUTest, emptyOnDataReadyCallback)
 {
-	coreimu.registerOnGyDataReadyCallback({});
+	coreimu.registerOnDataReadyCallback({});
 
 	auto on_rise_callback = spy_InterruptIn_getRiseCallback();
 	on_rise_callback();

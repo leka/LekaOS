@@ -15,7 +15,7 @@ class IMU : public interface::IMU
 	MOCK_METHOD(void, init, (), (override));
 	MOCK_METHOD(void, setPowerMode, (PowerMode), (override));
 
-	void registerOnGyDataReadyCallback(drdy_callback_t const &cb) override { drdy_callback = cb; }
+	void registerOnDataReadyCallback(drdy_callback_t const &cb) override { drdy_callback = cb; }
 
 	void call_drdy_callback(const SensorData &data) { drdy_callback(data); }
 

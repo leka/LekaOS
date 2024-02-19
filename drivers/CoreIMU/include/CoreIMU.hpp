@@ -22,7 +22,7 @@ class CoreIMU : public interface::IMU, public interface::DeepSleepEnabled
 
 	void init() final;
 
-	void registerOnGyDataReadyCallback(drdy_callback_t const &callback) final;
+	void registerOnDataReadyCallback(drdy_callback_t const &callback) final;
 
 	void setPowerMode(PowerMode mode) final;
 
@@ -38,8 +38,8 @@ class CoreIMU : public interface::IMU, public interface::DeepSleepEnabled
 	static auto ptr_io_read(CoreIMU *handle, uint8_t read_address, uint8_t *p_buffer,
 							uint16_t number_bytes_to_read) -> int32_t;
 
-	void onGyrDataReadyHandler(auto timestamp);
-	void setGyrDataReadyInterrupt();
+	void onDataReadyHandler(auto timestamp);
+	void setDataReadyInterrupt();
 
 	interface::I2C &_i2c;
 	CoreEventQueue _event_queue {};
@@ -51,7 +51,7 @@ class CoreIMU : public interface::IMU, public interface::DeepSleepEnabled
 
 	std::array<int16_t, 3> data_raw_xl {};
 	std::array<int16_t, 3> data_raw_gy {};
-	drdy_callback_t _on_gy_data_ready_callback {};
+	drdy_callback_t _on_data_ready_callback {};
 
 	static constexpr uint8_t kMaxBufferLength = 32;
 	std::array<uint8_t, kMaxBufferLength> _rx_buffer {};

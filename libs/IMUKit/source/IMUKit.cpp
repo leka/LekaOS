@@ -57,7 +57,7 @@ void IMUKit::init()
 
 	auto on_drdy_callback = [this](const interface::IMU::SensorData &data) { drdy_callback(data); };
 
-	_imu.registerOnGyDataReadyCallback(on_drdy_callback);
+	_imu.registerOnDataReadyCallback(on_drdy_callback);
 }
 
 void IMUKit::start()
