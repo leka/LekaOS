@@ -31,9 +31,9 @@ class CoreIMUTest : public ::testing::Test
 	// void TearDown() override {}
 
 	mock::CoreI2C mocki2c {};
-	CoreInterruptIn drdy_irq {NC};
+	CoreInterruptIn irq {NC};
 
-	CoreIMU coreimu {mocki2c, drdy_irq};
+	CoreIMU coreimu {mocki2c, irq};
 
 	// ? Instantiation of mock::EventQueue is needed to setup the underlying stubs that will make the mock work
 	// ? correctly. Without it UT are failing

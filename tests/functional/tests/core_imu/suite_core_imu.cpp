@@ -16,8 +16,8 @@ using namespace boost::ut::bdd;
 
 suite suite_coreimu = [] {
 	auto i2c		 = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
-	auto drdy_irq	 = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
-	auto coreimu	 = CoreIMU {i2c, drdy_irq};
+	auto irq		 = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
+	auto coreimu	 = CoreIMU {i2c, irq};
 	auto sensor_data = leka::interface::IMU::SensorData();
 
 	"initialization"_test = [&] {

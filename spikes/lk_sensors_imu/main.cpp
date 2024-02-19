@@ -20,12 +20,12 @@ namespace imu {
 
 	namespace internal {
 
-		auto drdy_irq = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
-		auto i2c	  = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
+		auto irq = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
+		auto i2c = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
 
 	}	// namespace internal
 
-	CoreIMU coreimu(internal::i2c, internal::drdy_irq);
+	CoreIMU coreimu(internal::i2c, internal::irq);
 
 }	// namespace imu
 
