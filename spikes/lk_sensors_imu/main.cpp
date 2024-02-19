@@ -51,7 +51,7 @@ auto main() -> int
 				  timestamp, xlx, xly, xlz, gx, gy, gz);
 	};
 
-	imu::coreimu.registerOnGyDataReadyCallback(callback);
+	imu::coreimu.registerOnDataAvailableCallback(callback);
 
 	while (true) {
 		log_info("Setting normal power mode for 5s");
