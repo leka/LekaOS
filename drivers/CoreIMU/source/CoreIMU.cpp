@@ -145,8 +145,8 @@ auto CoreIMU::ptr_io_read(CoreIMU *handle, uint8_t read_address, uint8_t *p_buff
 
 void CoreIMU::setDataReadyInterrupt()
 {
-	lsm6dsox_dataready_pulsed_t drdy_pulsed {LSM6DSOX_DRDY_PULSED};
-	lsm6dsox_data_ready_mode_set(&_register_io_function, drdy_pulsed);
+	lsm6dsox_dataready_pulsed_t data_ready_pulsed {LSM6DSOX_DRDY_PULSED};
+	lsm6dsox_data_ready_mode_set(&_register_io_function, data_ready_pulsed);
 
 	lsm6dsox_pin_int1_route_t lsm6dsox_int1 {
 		.drdy_xl  = PROPERTY_ENABLE,
