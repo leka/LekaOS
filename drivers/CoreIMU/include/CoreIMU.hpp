@@ -22,6 +22,8 @@ class CoreIMU : public interface::IMU
 	void init() final;
 
 	void registerOnDataAvailableCallback(data_available_callback_t const &callback) final;
+	void enableOnDataAvailable() final;
+	void disableOnDataAvailable() final;
 
 	void setPowerMode(PowerMode mode) final;
 
@@ -35,7 +37,8 @@ class CoreIMU : public interface::IMU
 		-> int32_t;
 
 	void onDataAvailableHandler(auto timestamp);
-	void setDataAvailableInterrupt();
+
+	void setInterruptCallback(std::function<void()> const &callback);
 
 	interface::I2C &_i2c;
 	CoreEventQueue _event_queue {};
@@ -48,6 +51,7 @@ class CoreIMU : public interface::IMU
 	std::array<int16_t, 3> data_raw_xl {};
 	std::array<int16_t, 3> data_raw_gy {};
 	data_available_callback_t _on_data_available_callback {};
+	std::function<void()> _on_data_available_wrapper_callback {};
 
 	static constexpr uint8_t kMaxBufferLength = 32;
 	std::array<uint8_t, kMaxBufferLength> _rx_buffer {};

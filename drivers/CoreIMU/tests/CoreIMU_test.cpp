@@ -86,3 +86,19 @@ TEST_F(CoreIMUTest, emptyOnDataAvailableCallback)
 	auto on_rise_callback = spy_InterruptIn_getRiseCallback();
 	on_rise_callback();
 }
+
+TEST_F(CoreIMUTest, enableOnDataAvailable)
+{
+	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
+	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
+
+	coreimu.enableOnDataAvailable();
+}
+
+TEST_F(CoreIMUTest, disableOnDataAvailable)
+{
+	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
+	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
+
+	coreimu.disableOnDataAvailable();
+}

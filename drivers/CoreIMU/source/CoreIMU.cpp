@@ -33,7 +33,7 @@ void CoreIMU::init()
 	lsm6dsox_dataready_pulsed_t data_ready_pulsed {LSM6DSOX_DRDY_PULSED};
 	lsm6dsox_data_ready_mode_set(&_register_io_function, data_ready_pulsed);
 
-	setDataAvailableInterrupt();
+	enableOnDataAvailable();
 }
 
 void CoreIMU::setPowerMode(PowerMode mode)
@@ -77,6 +77,13 @@ void CoreIMU::setPowerMode(PowerMode mode)
 void CoreIMU::registerOnDataAvailableCallback(data_available_callback_t const &callback)
 {
 	_on_data_available_callback = callback;
+
+	_on_data_available_wrapper_callback = [this] {
+		auto timestamp = rtos::Kernel::Clock::now();
+		_event_queue.call([this, timestamp] { onDataAvailableHandler(timestamp); });
+	};
+
+	setInterruptCallback(_on_data_available_wrapper_callback);
 }
 
 void CoreIMU::onDataAvailableHandler(auto timestamp)
@@ -98,6 +105,28 @@ void CoreIMU::onDataAvailableHandler(auto timestamp)
 	if (_on_data_available_callback) {
 		_on_data_available_callback(_sensor_data);
 	}
+}
+
+void CoreIMU::enableOnDataAvailable()
+{
+	lsm6dsox_pin_int1_route_t lsm6dsox_int1 {
+		.drdy_xl  = PROPERTY_ENABLE,
+		.den_flag = PROPERTY_ENABLE,
+	};
+	lsm6dsox_pin_int1_route_set(&_register_io_function, lsm6dsox_int1);
+
+	setInterruptCallback(_on_data_available_wrapper_callback);
+}
+
+void CoreIMU::disableOnDataAvailable()
+{
+	lsm6dsox_pin_int1_route_t lsm6dsox_int1 {
+		.drdy_xl  = PROPERTY_DISABLE,
+		.den_flag = PROPERTY_DISABLE,
+	};
+	lsm6dsox_pin_int1_route_set(&_register_io_function, lsm6dsox_int1);
+
+	setInterruptCallback({});
 }
 
 auto CoreIMU::read(uint8_t register_address, uint16_t number_bytes_to_read, uint8_t *p_buffer) -> int32_t
@@ -136,20 +165,11 @@ auto CoreIMU::ptr_io_read(CoreIMU *handle, uint8_t read_address, uint8_t *p_buff
 	return handle->read(read_address, number_bytes_to_read, p_buffer);
 }
 
-void CoreIMU::setDataAvailableInterrupt()
+void CoreIMU::setInterruptCallback(std::function<void()> const &callback)
 {
-	lsm6dsox_pin_int1_route_t lsm6dsox_int1 {
-		.drdy_xl  = PROPERTY_ENABLE,
-		.den_flag = PROPERTY_ENABLE,
-	};
-	lsm6dsox_pin_int1_route_set(&_register_io_function, lsm6dsox_int1);
-
-	auto data_available_callback = [this] {
-		auto timestamp = rtos::Kernel::Clock::now();
-		_event_queue.call([this, timestamp] { onDataAvailableHandler(timestamp); });
-	};
-
-	_irq.onRise(data_available_callback);
+	if (callback != nullptr) {
+		_irq.onRise(callback);
+	}
 }
 
 }	// namespace leka
