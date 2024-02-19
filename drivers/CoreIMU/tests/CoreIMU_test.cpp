@@ -13,6 +13,7 @@
 using namespace leka;
 
 using testing::_;
+using testing::AnyNumber;
 using testing::AtLeast;
 using testing::MockFunction;
 
@@ -119,4 +120,91 @@ TEST_F(CoreIMUTest, disableDeepSleep)
 	coreimu.setPowerMode(CoreIMU::PowerMode::Normal);
 
 	coreimu.disableDeepSleep();
+}
+
+TEST_F(CoreIMUTest, onWakeUpCallback)
+{
+	MockFunction<void()> mock_callback;
+
+	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
+	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
+	EXPECT_CALL(mock_callback, Call).Times(AnyNumber());
+
+	coreimu.registerOnWakeUpCallback(mock_callback.AsStdFunction());
+
+	auto on_rise_callback = spy_InterruptIn_getRiseCallback();
+	on_rise_callback();
+}
+
+TEST_F(CoreIMUTest, emptyOnWakeUpCallback)
+{
+	coreimu.registerOnWakeUpCallback({});
+
+	auto on_rise_callback = spy_InterruptIn_getRiseCallback();
+	on_rise_callback();
+}
+
+TEST_F(CoreIMUTest, enableOnWakeUpInterrupt)
+{
+	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
+	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
+
+	coreimu.enableOnWakeUpInterrupt();
+}
+
+TEST_F(CoreIMUTest, disableOnWakeUpInterrupt)
+{
+	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
+	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
+
+	coreimu.disableOnWakeUpInterrupt();
+}
+
+TEST_F(CoreIMUTest, switchCallbacks)
+{
+	auto mock_data_available_callback = MockFunction<void(const leka::interface::IMU::SensorData &data)> {};
+	auto mock_wake_up_callback		  = MockFunction<void()> {};
+	auto on_rise_callback			  = mbed::Callback<void()> {};
+
+	EXPECT_CALL(mocki2c, write).Times(AnyNumber());
+	EXPECT_CALL(mocki2c, read).Times(AnyNumber());
+
+	coreimu.registerOnDataReadyCallback(mock_data_available_callback.AsStdFunction());
+	coreimu.registerOnWakeUpCallback(mock_wake_up_callback.AsStdFunction());
+
+	{
+		// Enable Data Available
+		EXPECT_CALL(mock_data_available_callback, Call).Times(1);
+		EXPECT_CALL(mock_wake_up_callback, Call).Times(0);
+		coreimu.enableOnDataReadyInterrupt();
+		on_rise_callback = spy_InterruptIn_getRiseCallback();
+		on_rise_callback();
+	}
+
+	{
+		// Disable Data Available
+		EXPECT_CALL(mock_data_available_callback, Call).Times(0);
+		EXPECT_CALL(mock_wake_up_callback, Call).Times(0);
+		coreimu.disableOnDataReadyInterrupt();
+		on_rise_callback = spy_InterruptIn_getRiseCallback();
+		on_rise_callback();
+	}
+
+	{
+		// Enable Wake Up
+		EXPECT_CALL(mock_data_available_callback, Call).Times(0);
+		EXPECT_CALL(mock_wake_up_callback, Call).Times(AnyNumber());
+		coreimu.enableOnWakeUpInterrupt();
+		on_rise_callback = spy_InterruptIn_getRiseCallback();
+		on_rise_callback();
+	}
+
+	{
+		// Disable Wake Up
+		EXPECT_CALL(mock_data_available_callback, Call).Times(0);
+		EXPECT_CALL(mock_wake_up_callback, Call).Times(0);
+		coreimu.disableOnWakeUpInterrupt();
+		on_rise_callback = spy_InterruptIn_getRiseCallback();
+		on_rise_callback();
+	}
 }
