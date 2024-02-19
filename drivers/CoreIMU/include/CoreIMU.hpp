@@ -18,7 +18,7 @@ namespace leka {
 class CoreIMU : public interface::IMU, public interface::DeepSleepEnabled
 {
   public:
-	explicit CoreIMU(interface::I2C &i2c, CoreInterruptIn &drdy_irq);
+	explicit CoreIMU(interface::I2C &i2c, CoreInterruptIn &irq);
 
 	void init() final;
 
@@ -46,7 +46,7 @@ class CoreIMU : public interface::IMU, public interface::DeepSleepEnabled
 	lsm6dsox_md_t _config {};
 	stmdev_ctx_t _register_io_function {};
 	SensorData _sensor_data {};
-	CoreInterruptIn &_drdy_irq;
+	CoreInterruptIn &_irq;
 	const char _address = LSM6DSOX_I2C_ADD_L;
 
 	std::array<int16_t, 3> data_raw_xl {};

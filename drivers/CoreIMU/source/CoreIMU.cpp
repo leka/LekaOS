@@ -6,7 +6,7 @@
 
 namespace leka {
 
-CoreIMU::CoreIMU(interface::I2C &i2c, CoreInterruptIn &drdy_irq) : _i2c(i2c), _drdy_irq(drdy_irq)
+CoreIMU::CoreIMU(interface::I2C &i2c, CoreInterruptIn &irq) : _i2c(i2c), _irq(irq)
 {
 	// ? NOLINTNEXTLINE - allow reinterpret_cast as there are no alternatives
 	_register_io_function.write_reg = reinterpret_cast<stmdev_write_ptr>(ptr_io_write);
@@ -159,7 +159,7 @@ void CoreIMU::setDataReadyInterrupt()
 		_event_queue.call([this, timestamp] { onDataReadyHandler(timestamp); });
 	};
 
-	_drdy_irq.onRise(data_ready_callback);
+	_irq.onRise(data_ready_callback);
 }
 
 }	// namespace leka
