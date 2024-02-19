@@ -23,7 +23,7 @@ class IMUKit : public interface::IMUKit
 	[[nodiscard]] auto getEulerAngles() const -> EulerAngles final;
 
   private:
-	void drdy_callback(interface::IMU::SensorData data);
+	void data_ready_callback(interface::IMU::SensorData data);
 
 	interface::IMU &_imu;
 	EulerAngles _euler_angles {};

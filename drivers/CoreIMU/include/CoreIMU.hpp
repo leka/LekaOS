@@ -22,7 +22,7 @@ class CoreIMU : public interface::IMU, public interface::DeepSleepEnabled
 
 	void init() final;
 
-	void registerOnDataReadyCallback(drdy_callback_t const &callback) final;
+	void registerOnDataReadyCallback(data_ready_callback_t const &callback) final;
 
 	void setPowerMode(PowerMode mode) final;
 
@@ -51,7 +51,7 @@ class CoreIMU : public interface::IMU, public interface::DeepSleepEnabled
 
 	std::array<int16_t, 3> data_raw_xl {};
 	std::array<int16_t, 3> data_raw_gy {};
-	drdy_callback_t _on_data_ready_callback {};
+	data_ready_callback_t _on_data_ready_callback {};
 
 	static constexpr uint8_t kMaxBufferLength = 32;
 	std::array<uint8_t, kMaxBufferLength> _rx_buffer {};
