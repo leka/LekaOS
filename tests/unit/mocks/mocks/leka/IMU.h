@@ -19,10 +19,16 @@ class IMU : public interface::IMU
 	MOCK_METHOD(void, enableOnDataAvailable, (), (override));
 	MOCK_METHOD(void, disableOnDataAvailable, (), (override));
 
+	void registerOnWakeUpCallback(std::function<void()> const &cb) override { wake_up_callback = cb; }
+	MOCK_METHOD(void, enableOnWakeUpInterrupt, (), (override));
+	MOCK_METHOD(void, disableOnWakeUpInterrupt, (), (override));
+
 	void call_data_available_callback(const SensorData &data) { data_available_callback(data); }
+	void call_wake_up_callback() { wake_up_callback(); }
 
   private:
 	data_available_callback_t data_available_callback {};
+	std::function<void()> wake_up_callback {};
 };
 
 }	// namespace leka::mock

@@ -53,6 +53,10 @@ class IMU
 	virtual void enableOnDataAvailable()													= 0;
 	virtual void disableOnDataAvailable()													= 0;
 
+	virtual void registerOnWakeUpCallback(std::function<void()> const &callback) = 0;
+	virtual void enableOnWakeUpInterrupt()										 = 0;
+	virtual void disableOnWakeUpInterrupt()										 = 0;
+
 	virtual void setPowerMode(PowerMode) = 0;
 };
 }	// namespace leka::interface
