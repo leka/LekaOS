@@ -8,6 +8,8 @@
 
 #include "CoreI2C.h"
 #include "CoreIMU.hpp"
+#include "CoreLED.h"
+#include "CoreSPI.h"
 #include "HelloWorld.h"
 #include "LogKit.h"
 
@@ -29,7 +31,53 @@ namespace imu {
 
 }	// namespace imu
 
+namespace leds {
+
+	namespace internal {
+
+		namespace ears {
+
+			auto spi			= CoreSPI {LED_EARS_SPI_MOSI, NC, LED_EARS_SPI_SCK};
+			constexpr auto size = 2;
+
+		}	// namespace ears
+
+		namespace belt {
+
+			auto spi			= CoreSPI {LED_BELT_SPI_MOSI, NC, LED_BELT_SPI_SCK};
+			constexpr auto size = 20;
+
+		}	// namespace belt
+
+	}	// namespace internal
+
+	auto ears = CoreLED<internal::ears::size> {internal::ears::spi};
+	auto belt = CoreLED<internal::belt::size> {internal::belt::spi};
+
+}	// namespace leds
+
 }	// namespace
+
+void setColor(RGB color)
+{
+	leds::ears.setColor(color);
+	leds::belt.setColor(color);
+
+	leds::ears.show();
+	leds::belt.show();
+}
+
+void turnOff()
+{
+	setColor(RGB::black);
+}
+
+void wakeUpReaction()
+{
+	setColor(RGB::pure_blue);
+	rtos::ThisThread::sleep_for(2s);
+	turnOff();
+}
 
 auto main() -> int
 {
@@ -43,7 +91,7 @@ auto main() -> int
 	imu::coreimu.init();
 	imu::coreimu.setPowerMode(CoreIMU::PowerMode::Normal);
 
-	auto callback = [] { log_info("waking up!"); };
+	auto callback = [] { wakeUpReaction(); };
 
 	imu::coreimu.enableOnWakeUpInterrupt(callback);
 
