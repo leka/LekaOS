@@ -10,6 +10,8 @@ intelhex==2.3.0
 mbed-tools==7.59.0
 mbed-os-tools==1.8.15
 pyelftools==0.30
+setuptools==69.0.2
+jsonschema==2.6.0
 
 # needed for signing secure images
 cryptography==42.0.4
