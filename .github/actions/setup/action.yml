@@ -60,7 +60,7 @@ runs:
 
     - name: Cache ARM GCC Toolchain
       id: global_cache-arm_gnu_toolchain
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.RUNNER_HOME }}/arm-gnu-toolchain
         key: ${{ runner.os }}-global_cache-arm_gnu_toolchain-${{ hashFiles('config/toolchain_gcc_arm_none_eabi_url') }}
@@ -104,7 +104,7 @@ runs:
 
     - name: Cache ccache
       id: global_cache-ccache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CCACHE_DIR}}
         key: ${{ inputs.ccache_key }}-(${{ env.CACHE_NOW_TIME }}) # TODO(@ladislas): separate env from setup
@@ -116,7 +116,7 @@ runs:
 
     - name: Cache pip dependencies
       id: global_cache-pip_dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ${{ env.RUNNER_HOME }}/.cache/pip
