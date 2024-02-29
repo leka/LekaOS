@@ -10,6 +10,7 @@
 #include "rtos/ThisThread.h"
 #include "rtos/Thread.h"
 
+#include "AnalogIn.h"
 #include "CoreMotor.h"
 #include "CorePwm.h"
 #include "HelloWorld.h"
@@ -60,6 +61,18 @@ auto main() -> int
 	auto motor_left	 = CoreMotor {motor_left_dir_1, motor_left_dir_2, motor_left_speed};
 	auto motor_right = CoreMotor {motor_right_dir_1, motor_right_dir_2, motor_right_speed};
 
+	const auto maxVSense	= float {2.3};										// min -1V
+	auto motor_left_voltage = mbed::AnalogIn {MOTOR_LEFT_VOLTAGE, maxVSense};	// U = RI, R = 0.5
+
+	auto log_voltage = [&motor_left_voltage] {
+		for (int i = 0; i < 20; i++) {
+			log_info("Raw: %d | Ratio: %.2f | Voltage: %.2fV | Current: %.2fA", motor_left_voltage.read_u16(),
+					 motor_left_voltage.read(), motor_left_voltage.read_voltage(),
+					 motor_left_voltage.read_voltage() * 2.0F);
+			rtos::ThisThread::sleep_for(100ms);
+		}
+	};
+
 	while (true) {
 		auto t = rtos::Kernel::Clock::now() - start;
 		log_info("A message from your board %s --> \"%s\" at %i s\n", MBED_CONF_APP_TARGET_NAME, hello.world,
@@ -70,16 +83,11 @@ auto main() -> int
 		log_info("Spin left...");
 		spinLeft(motor_left, motor_right);
 
-		rtos::ThisThread::sleep_for(5s);
-
-		log_info("Spin right...");
-		spinRight(motor_left, motor_right);
-
-		rtos::ThisThread::sleep_for(5s);
+		log_voltage();
 
 		log_info("Spin stop...");
 		stop(motor_left, motor_right);
 
-		rtos::ThisThread::sleep_for(5s);
+		log_voltage();
 	}
 }
