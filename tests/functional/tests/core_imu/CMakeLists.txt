@@ -10,7 +10,7 @@ register_functional_test(
 		.
 
 	SOURCES
-		suite_core_lsm6dsox.cpp
+		suite_core_imu.cpp
 
 	LINK_LIBRARIES
 		CoreI2C

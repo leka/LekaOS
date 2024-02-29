@@ -13,12 +13,12 @@
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreI2C.h"
+#include "CoreIMU.hpp"
 #include "CoreJPEG.hpp"
 #include "CoreJPEGModeDMA.hpp"
 #include "CoreLCD.hpp"
 #include "CoreLED.h"
 #include "CoreLL.h"
-#include "CoreLSM6DSOX.hpp"
 #include "CoreLTDC.hpp"
 #include "CoreMotor.h"
 #include "CorePwm.h"
@@ -142,11 +142,11 @@ namespace imu {
 
 	}	// namespace internal
 
-	CoreLSM6DSOX lsm6dsox(internal::i2c, internal::drdy_irq);
+	CoreIMU coreimu(internal::i2c, internal::drdy_irq);
 
 }	// namespace imu
 
-auto imukit = IMUKit {imu::lsm6dsox};
+auto imukit = IMUKit {imu::coreimu};
 
 namespace motion::internal {
 
@@ -202,7 +202,7 @@ auto main() -> int
 
 	ledkit.init();
 	videokit.initializeScreen();
-	imu::lsm6dsox.init();
+	imu::coreimu.init();
 	imukit.init();
 
 	rtos::ThisThread::sleep_for(3s);

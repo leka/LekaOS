@@ -18,6 +18,7 @@
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreI2C.h"
+#include "CoreIMU.hpp"
 #include "CoreInterruptIn.h"
 #include "CoreJPEG.hpp"
 #include "CoreJPEGModeDMA.hpp"
@@ -25,7 +26,6 @@
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLL.h"
-#include "CoreLSM6DSOX.hpp"
 #include "CoreLTDC.hpp"
 #include "CoreMotor.h"
 #include "CorePwm.h"
@@ -195,11 +195,11 @@ namespace imu {
 
 	}	// namespace internal
 
-	auto lsm6dsox = CoreLSM6DSOX(internal::i2c, internal::drdy_irq);
+	auto coreimu = CoreIMU(internal::i2c, internal::drdy_irq);
 
 }	// namespace imu
 
-auto imukit = IMUKit {imu::lsm6dsox};
+auto imukit = IMUKit {imu::coreimu};
 
 namespace motion::internal {
 
@@ -276,7 +276,7 @@ auto main() -> int
 
 	sd::init();
 
-	imu::lsm6dsox.init();
+	imu::coreimu.init();
 	imukit.init();
 
 	ledkit.init();
