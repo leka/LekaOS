@@ -310,6 +310,8 @@ class RobotController : public interface::RobotController
 
 	void suspendHardwareForDeepSleep() final { log_info("TO IMPLEMENT - configuring hardware for deep sleep"); }
 
+	void wakeUp() final { system_reset(); }
+
 	void resetEmergencyStopCounter() final { _emergency_stop_counter = 0; }
 
 	void raise(auto event)
