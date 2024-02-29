@@ -187,6 +187,7 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(1s);
 
+	rfidkit.enableDeepSleep();
 	while (true) {
 		// ? Un/Comment one or the other for testing
 		log_info("Main thread still alive");

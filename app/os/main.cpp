@@ -463,6 +463,7 @@ namespace watchdog {
 			static auto battery_level	= uint8_t {};
 			static auto charging_status = uint8_t {};
 
+			static auto idle_ratio		 = uint8_t {};
 			static auto sleep_ratio		 = uint8_t {};
 			static auto deep_sleep_ratio = uint8_t {};
 
@@ -489,6 +490,7 @@ namespace watchdog {
 
 				mbed_stats_cpu_get(&stats::cpu);
 
+				idle_ratio	= static_cast<uint8_t>(((stats::cpu.idle_time / 1000 * 100) / (stats::cpu.uptime / 1000)));
 				sleep_ratio = static_cast<uint8_t>(((stats::cpu.sleep_time / 1000 * 100) / (stats::cpu.uptime / 1000)));
 				deep_sleep_ratio =
 					static_cast<uint8_t>(((stats::cpu.deep_sleep_time / 1000 * 100) / (stats::cpu.uptime / 1000)));
@@ -508,11 +510,11 @@ namespace watchdog {
 				heap_used_ratio	   = static_cast<uint8_t>((heap_used_size * 100) / heap_reserved_size);
 
 				log_info(
-					"dt: %i, kck: %u, ble: %u, lvl: %u%%, chr: %u, slp: %u%%, dsl: %u%%, sur: %u%% (%+i)[%u/"
+					"dt: %i, kck: %u, ble: %u, lvl: %u%%, chr: %u, idl: %u%%, slp: %u%%, dsl: %u%%, sur: %u%% (%+i)[%u/"
 					"%u], hur: %u%% (%+i)[%u/%u]",
-					delta, kick_count, ble_connected, battery_level, charging_status, sleep_ratio, deep_sleep_ratio,
-					stack_used_ratio, stack_used_delta, stack_used_size, stack_reserved_size, heap_used_ratio,
-					heap_used_delta, heap_used_size, heap_reserved_size);
+					delta, kick_count, ble_connected, battery_level, charging_status, idle_ratio, sleep_ratio,
+					deep_sleep_ratio, stack_used_ratio, stack_used_delta, stack_used_size, stack_reserved_size,
+					heap_used_ratio, heap_used_delta, heap_used_size, heap_reserved_size);
 
 				start = rtos::Kernel::Clock::now();
 				rtos::ThisThread::sleep_for(5s);
