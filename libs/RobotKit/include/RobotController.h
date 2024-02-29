@@ -538,7 +538,7 @@ class RobotController : public interface::RobotController
 		_videokit.stopVideo();
 	}
 
-	auto isBleConnected() -> bool final { return state_machine.is(state::connected); }
+	auto isBleConnected() -> bool final { return _ble.isConnected(); }
 
   private:
 	system::robot::sm::logger logger {};
