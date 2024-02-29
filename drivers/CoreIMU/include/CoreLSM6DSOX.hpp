@@ -9,12 +9,13 @@
 #include "CoreEventQueue.h"
 #include "CoreInterruptIn.h"
 #include "interface/LSM6DSOX.hpp"
+#include "interface/drivers/DeepSleepEnabled.h"
 #include "interface/drivers/I2C.h"
 #include "lsm6dsox_reg.h"
 
 namespace leka {
 
-class CoreLSM6DSOX : public interface::LSM6DSOX
+class CoreLSM6DSOX : public interface::LSM6DSOX, public interface::DeepSleepEnabled
 {
   public:
 	explicit CoreLSM6DSOX(interface::I2C &i2c, CoreInterruptIn &drdy_irq);
@@ -24,6 +25,9 @@ class CoreLSM6DSOX : public interface::LSM6DSOX
 	void registerOnGyDataReadyCallback(drdy_callback_t const &callback) final;
 
 	void setPowerMode(PowerMode mode) final;
+
+	void enableDeepSleep() final;
+	void disableDeepSleep() final;
 
   private:
 	auto read(uint8_t register_address, uint16_t number_bytes_to_read, uint8_t *p_buffer) -> int32_t;
