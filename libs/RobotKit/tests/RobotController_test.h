@@ -21,7 +21,7 @@
 #include "SerialNumberKit.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "mocks/leka/Battery.h"
+#include "mocks/leka/BatteryKit.h"
 #include "mocks/leka/CoreLCD.h"
 #include "mocks/leka/CoreLED.h"
 #include "mocks/leka/CoreMotor.h"
@@ -79,7 +79,7 @@ class RobotControllerTest : public testing::Test
 	mock::Timeout timeout_state_internal {};
 	mock::Timeout timeout_state_transition {};
 	mock::Timeout timeout_autonomous_activities {};
-	mock::Battery battery {};
+	mock::BatteryKit battery {};
 
 	mock::MCU mock_mcu {};
 	SerialNumberKit serialnumberkit {mock_mcu, SerialNumberKit::DEFAULT_CONFIG};
@@ -139,6 +139,8 @@ class RobotControllerTest : public testing::Test
 	interface::Timeout::callback_t on_charging_start_timeout		= {};
 	interface::Timeout::callback_t on_autonomous_activities_timeout = {};
 
+	std::function<void(uint8_t)> on_data_updated {};
+	std::function<void()> on_low_battery {};
 	std::function<void()> on_charge_did_start {};
 	std::function<void()> on_charge_did_stop {};
 
@@ -179,6 +181,7 @@ class RobotControllerTest : public testing::Test
 	{
 		EXPECT_CALL(battery, isCharging).Times(AnyNumber());
 		EXPECT_CALL(battery, level).Times(AnyNumber());
+		EXPECT_CALL(battery, startEventHandler).Times(AnyNumber());
 
 		EXPECT_CALL(mock_ledkit, stop).Times(AnyNumber());
 		EXPECT_CALL(mock_motor_left, stop).Times(AnyNumber());
@@ -196,6 +199,8 @@ class RobotControllerTest : public testing::Test
 		}	// ? On Idle entry
 
 		// Saved callback
+		EXPECT_CALL(battery, onDataUpdated).WillOnce(SaveArg<0>(&on_data_updated));
+		EXPECT_CALL(battery, onLowBattery).WillOnce(SaveArg<0>(&on_low_battery));
 		EXPECT_CALL(battery, onChargeDidStart).WillOnce(SaveArg<0>(&on_charge_did_start));
 		EXPECT_CALL(battery, onChargeDidStop).WillOnce(SaveArg<0>(&on_charge_did_stop));
 

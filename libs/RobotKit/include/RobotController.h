@@ -30,11 +30,11 @@
 #include "SerialNumberKit.h"
 #include "StateMachine.h"
 #include "interface/RobotController.h"
-#include "interface/drivers/Battery.h"
 #include "interface/drivers/FirmwareUpdate.h"
 #include "interface/drivers/LCD.hpp"
 #include "interface/drivers/Motor.h"
 #include "interface/drivers/Timeout.h"
+#include "interface/libs/BatteryKit.h"
 #include "interface/libs/LedKit.h"
 #include "interface/libs/VideoKit.h"
 
@@ -50,7 +50,7 @@ class RobotController : public interface::RobotController
 	sm_t state_machine {static_cast<interface::RobotController &>(*this), logger};
 
 	explicit RobotController(interface::Timeout &timeout_state_internal, interface::Timeout &timeout_state_transition,
-							 interface::Timeout &timeout_autonomous_activities, interface::Battery &battery,
+							 interface::Timeout &timeout_autonomous_activities, interface::BatteryKit &batterykit,
 							 SerialNumberKit &serialnumberkit, interface::FirmwareUpdate &firmware_update,
 							 interface::Motor &motor_left, interface::Motor &motor_right, interface::LED &ears,
 							 interface::LED &belt, interface::LedKit &ledkit, interface::LCD &lcd,
@@ -59,7 +59,7 @@ class RobotController : public interface::RobotController
 		: _timeout_state_internal(timeout_state_internal),
 		  _timeout_state_transition(timeout_state_transition),
 		  _timeout_autonomous_activities(timeout_autonomous_activities),
-		  _battery(battery),
+		  _batterykit(batterykit),
 		  _serialnumberkit(serialnumberkit),
 		  _firmware_update(firmware_update),
 		  _motor_left(motor_left),
@@ -154,7 +154,7 @@ class RobotController : public interface::RobotController
 
 	auto isCharging() -> bool final
 	{
-		auto is_charging = _battery.isCharging();
+		auto is_charging = _batterykit.isCharging();
 
 		_service_monitoring.setChargingStatus(is_charging);
 
@@ -180,7 +180,7 @@ class RobotController : public interface::RobotController
 	{
 		using namespace std::chrono_literals;
 
-		onChargingBehavior(_battery_kit.level());
+		onChargingBehavior(_batterykit.level());
 		_behaviorkit.blinkOnCharge();
 		rtos::ThisThread::sleep_for(500ms);
 		_lcd.turnOn();
@@ -201,7 +201,7 @@ class RobotController : public interface::RobotController
 	{
 		using namespace std::chrono_literals;
 		stopActuators();
-		if (_battery.isCharging()) {
+		if (_batterykit.isCharging()) {
 			_behaviorkit.bleConnectionWithoutVideo();
 			rtos::ThisThread::sleep_for(5s);
 			_behaviorkit.blinkOnCharge();
@@ -214,7 +214,7 @@ class RobotController : public interface::RobotController
 	void startDisconnectionBehavior() final
 	{
 		stopActuators();
-		if (_battery.isCharging()) {
+		if (_batterykit.isCharging()) {
 			_behaviorkit.blinkOnCharge();
 		}
 	}
@@ -237,7 +237,7 @@ class RobotController : public interface::RobotController
 	void startFileExchange() final
 	{
 		_behaviorkit.fileExchange();
-		if (_battery.isCharging()) {
+		if (_batterykit.isCharging()) {
 			_behaviorkit.blinkOnCharge();
 		}
 		_lcd.turnOn();
@@ -273,7 +273,7 @@ class RobotController : public interface::RobotController
 
 	auto isReadyToFileExchange() -> bool final
 	{
-		auto is_robot_ready = (_battery.isCharging() && _battery.level() > _minimal_battery_level_to_update);
+		auto is_robot_ready = (_batterykit.isCharging() && _batterykit.level() > _minimal_battery_level_to_update);
 
 		if (!is_robot_ready) {
 			_service_file_exchange.setFileExchangeState(false);
@@ -284,7 +284,7 @@ class RobotController : public interface::RobotController
 
 	auto isReadyToUpdate() -> bool final
 	{
-		auto is_robot_ready = _battery.isCharging() && _battery.level() > _minimal_battery_level_to_update;
+		auto is_robot_ready = _batterykit.isCharging() && _batterykit.level() > _minimal_battery_level_to_update;
 
 		auto firmware_version	  = _service_update.getVersion();
 		auto is_version_available = _firmware_update.isVersionAvailable(firmware_version);
@@ -452,8 +452,8 @@ class RobotController : public interface::RobotController
 
 		_activitykit.registerBeforeProcessCallback([this] { resetAutonomousActivitiesTimeout(); });
 
-		_battery_kit.onDataUpdated([this](uint8_t level) {
-			auto is_charging = _battery.isCharging();
+		_batterykit.onDataUpdated([this](uint8_t level) {
+			auto is_charging = _batterykit.isCharging();
 
 			auto advertising_data		 = _ble.getAdvertisingData();
 			advertising_data.battery	 = level;
@@ -469,18 +469,17 @@ class RobotController : public interface::RobotController
 			}
 		});
 
-		auto on_low_battery = [this] {
-			if (!_battery.isCharging()) {
+		_batterykit.onLowBattery([this] {
+			if (!_batterykit.isCharging()) {
 				_behaviorkit.lowBattery();
 			}
 
-			if (_battery.level() == 0) {
+			if (_batterykit.level() == 0) {
 				system_reset();
 			}
-		};
-		_battery_kit.onLowBattery(on_low_battery);
+		});
 
-		_battery_kit.startEventHandler();
+		_batterykit.startEventHandler();
 
 		_ble.onConnectionCallback([this] { raise(event::ble_connection {}); });
 
@@ -488,11 +487,9 @@ class RobotController : public interface::RobotController
 
 		// Setup callbacks for each State Machine events
 
-		auto on_charge_did_start = [this]() { raise(event::charge_did_start {}); };
-		_battery.onChargeDidStart(on_charge_did_start);
+		_batterykit.onChargeDidStart([this] { raise(event::charge_did_start {}); });
 
-		auto on_charge_did_stop = [this]() { raise(event::charge_did_stop {}); };
-		_battery.onChargeDidStop(on_charge_did_stop);
+		_batterykit.onChargeDidStop([this] { raise(event::charge_did_stop {}); });
 
 		_service_monitoring.onSoftReboot([] { system_reset(); });
 
@@ -502,7 +499,7 @@ class RobotController : public interface::RobotController
 				std::ignore			   = _configkit.write(config_robot_name, robot_name);
 			});
 
-		auto on_commands_received = [this](std::span<uint8_t> _buffer) {
+		_service_commands.onCommandsReceived([this](std::span<uint8_t> _buffer) {
 			raise(event::command_received {});
 
 			if (!isCharging()) {
@@ -511,8 +508,7 @@ class RobotController : public interface::RobotController
 
 				_cmdkit.push(std::span {_buffer.data(), std::size(_buffer)});
 			}
-		};
-		_service_commands.onCommandsReceived(on_commands_received);
+		});
 
 		_service_file_exchange.onSetFileExchangeState([this](bool file_exchange_requested) {
 			if (file_exchange_requested) {
@@ -522,8 +518,7 @@ class RobotController : public interface::RobotController
 			}
 		});
 
-		auto on_update_requested = [this]() { raise(event::update_requested {}); };
-		_service_update.onUpdateRequested(on_update_requested);
+		_service_update.onUpdateRequested([this] { raise(event::update_requested {}); });
 
 		raise(event::setup_complete {});
 	}
@@ -558,8 +553,7 @@ class RobotController : public interface::RobotController
 	rtos::Kernel::Clock::time_point start = rtos::Kernel::Clock::now();
 	rtos::Kernel::Clock::time_point stop  = rtos::Kernel::Clock::now();
 
-	interface::Battery &_battery;
-	BatteryKit _battery_kit {_battery};
+	interface::BatteryKit &_batterykit;
 	uint8_t _minimal_battery_level_to_update {25};
 
 	SerialNumberKit &_serialnumberkit;
