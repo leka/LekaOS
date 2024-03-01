@@ -289,6 +289,7 @@
 #define TARGET_LSE_DRIVE_LOAD_LEVEL										  RCC_LSEDRIVE_LOW	 // set by target:MCU_STM32F7
 #define USE_HAL_JPEG_REGISTER_CALLBACKS									  1U				 // set by application
 #define USE_HAL_TIM_REGISTER_CALLBACKS									  1U				 // set by application
+#define USE_HAL_DAC_REGISTER_CALLBACKS									  1U				 // set by application
 // Macros
 #define WSF_MS_PER_TICK 1	// defined by library:cordio
 #define _RTE_				// defined by library:rtos
