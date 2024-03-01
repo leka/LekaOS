@@ -8,6 +8,10 @@
 		"USE_HAL_TIM_REGISTER_CALLBACKS": {
 			"macro_name": "USE_HAL_TIM_REGISTER_CALLBACKS",
 			"value": "1U"
+		},
+		"USE_HAL_DAC_REGISTER_CALLBACKS": {
+			"macro_name": "USE_HAL_DAC_REGISTER_CALLBACKS",
+			"value": "1U"
 		}
 	},
 	"target_overrides": {
