@@ -30,5 +30,6 @@ target_link_libraries(CoreDAC
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 	leka_unit_tests_sources(
 		tests/CoreSTM32HalBasicTimer_test.cpp
+		tests/CoreDAC_test.cpp
 	)
 endif()
