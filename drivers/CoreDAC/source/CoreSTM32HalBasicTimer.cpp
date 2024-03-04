@@ -28,7 +28,7 @@ void CoreSTM32HalBasicTimer::initialize(uint32_t frequency)
 	// CK_Timer = CK_Int / ((Prescaler + 1) * (Period + 1))
 	auto divider = 54'000'000 / frequency;
 
-	_htim.Init.Prescaler		 = divider / 100;
+	_htim.Init.Prescaler		 = 2;
 	_htim.Init.Period			 = 100;	  // ? min 1
 	_htim.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	_hal.HAL_TIM_Base_Init(&_htim);
