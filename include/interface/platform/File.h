@@ -21,6 +21,8 @@ struct File {
 	virtual auto read(std::span<uint8_t> buffer) -> std::size_t = 0;
 	virtual auto write(std::span<uint8_t> data) -> std::size_t	= 0;
 
+	virtual auto read(std::span<uint16_t> buffer) -> std::size_t = 0;
+
 	virtual auto read(std::span<char> buffer) -> std::size_t = 0;
 	virtual auto write(std::span<char> data) -> std::size_t	 = 0;
 
