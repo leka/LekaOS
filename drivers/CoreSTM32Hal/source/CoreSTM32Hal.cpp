@@ -41,14 +41,49 @@ void CoreSTM32Hal::HAL_RCC_GPIOJ_CLK_ENABLE()
 	__HAL_RCC_GPIOJ_CLK_ENABLE();	// NOLINT
 }
 
+void CoreSTM32Hal::HAL_RCC_TIM6_CLK_ENABLE()
+{
+	__HAL_RCC_TIM6_CLK_ENABLE();   // NOLINT
+}
+
+void CoreSTM32Hal::HAL_RCC_TIM6_CLK_DISABLE()
+{
+	__HAL_RCC_TIM6_CLK_DISABLE();	// NOLINT
+}
+
+void CoreSTM32Hal::HAL_RCC_TIM7_CLK_ENABLE()
+{
+	__HAL_RCC_TIM7_CLK_ENABLE();   // NOLINT
+}
+
+void CoreSTM32Hal::HAL_RCC_TIM7_CLK_DISABLE()
+{
+	__HAL_RCC_TIM7_CLK_DISABLE();	// NOLINT
+}
+
 void CoreSTM32Hal::HAL_RCC_FMC_CLK_ENABLE()
 {
 	__HAL_RCC_FMC_CLK_ENABLE();	  // NOLINT
 }
 
+void CoreSTM32Hal::HAL_RCC_DMA1_CLK_ENABLE()
+{
+	__HAL_RCC_DMA1_CLK_ENABLE();   // NOLINT
+}
+
 void CoreSTM32Hal::HAL_RCC_DMA2_CLK_ENABLE()
 {
 	__HAL_RCC_DMA2_CLK_ENABLE();   // NOLINT
+}
+
+void CoreSTM32Hal::HAL_RCC_DAC_CLK_ENABLE()
+{
+	__HAL_RCC_DAC_CLK_ENABLE();	  // NOLINT
+}
+
+void CoreSTM32Hal::HAL_RCC_DAC_CLK_DISABLE()
+{
+	__HAL_RCC_DAC_CLK_DISABLE();   // NOLINT
 }
 
 void CoreSTM32Hal::HAL_RCC_JPEG_CLK_ENABLE()
@@ -309,6 +344,71 @@ auto CoreSTM32Hal::HAL_JPEG_Pause(JPEG_HandleTypeDef *hjpeg, uint32_t XferSelect
 auto CoreSTM32Hal::HAL_JPEG_Resume(JPEG_HandleTypeDef *hjpeg, uint32_t XferSelection) -> HAL_StatusTypeDef
 {
 	return ::HAL_JPEG_Resume(hjpeg, XferSelection);
+}
+
+auto CoreSTM32Hal::HAL_TIM_Base_Init(TIM_HandleTypeDef *htim) -> HAL_StatusTypeDef
+{
+	return ::HAL_TIM_Base_Init(htim);
+}
+
+auto CoreSTM32Hal::HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,
+														 TIM_MasterConfigTypeDef *sMasterConfig) -> HAL_StatusTypeDef
+{
+	return ::HAL_TIMEx_MasterConfigSynchronization(htim, sMasterConfig);
+}
+
+auto CoreSTM32Hal::HAL_TIM_RegisterCallback(TIM_HandleTypeDef *htim, HAL_TIM_CallbackIDTypeDef CallbackID,
+											pTIM_CallbackTypeDef pCallback) -> HAL_StatusTypeDef
+{
+	return ::HAL_TIM_RegisterCallback(htim, CallbackID, pCallback);
+}
+
+auto CoreSTM32Hal::HAL_TIM_Base_Start_IT(TIM_HandleTypeDef *htim) -> HAL_StatusTypeDef
+{
+	return ::HAL_TIM_Base_Start_IT(htim);
+}
+
+auto CoreSTM32Hal::HAL_TIM_Base_Stop_IT(TIM_HandleTypeDef *htim) -> HAL_StatusTypeDef
+{
+	return ::HAL_TIM_Base_Stop_IT(htim);
+}
+
+auto CoreSTM32Hal::HAL_TIM_Base_DeInit(TIM_HandleTypeDef *htim) -> HAL_StatusTypeDef
+{
+	return ::HAL_TIM_Base_DeInit(htim);
+}
+
+auto CoreSTM32Hal::HAL_DAC_Init(DAC_HandleTypeDef *hdac) -> HAL_StatusTypeDef
+{
+	return ::HAL_DAC_Init(hdac);
+}
+
+auto CoreSTM32Hal::HAL_DAC_ConfigChannel(DAC_HandleTypeDef *hdac, DAC_ChannelConfTypeDef *sConfig, uint32_t Channel)
+	-> HAL_StatusTypeDef
+{
+	return ::HAL_DAC_ConfigChannel(hdac, sConfig, Channel);
+}
+
+auto CoreSTM32Hal::HAL_DAC_RegisterCallback(DAC_HandleTypeDef *hdac, HAL_DAC_CallbackIDTypeDef CallbackID,
+											pDAC_CallbackTypeDef pCallback) -> HAL_StatusTypeDef
+{
+	return ::HAL_DAC_RegisterCallback(hdac, CallbackID, pCallback);
+}
+
+auto CoreSTM32Hal::HAL_DAC_Start_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t *pData, uint32_t Length,
+									 uint32_t Alignment) -> HAL_StatusTypeDef
+{
+	return ::HAL_DAC_Start_DMA(hdac, Channel, pData, Length, Alignment);
+}
+
+auto CoreSTM32Hal::HAL_DAC_Stop_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel) -> HAL_StatusTypeDef
+{
+	return ::HAL_DAC_Stop_DMA(hdac, Channel);
+}
+
+auto CoreSTM32Hal::HAL_DAC_DeInit(DAC_HandleTypeDef *hdac) -> HAL_StatusTypeDef
+{
+	return ::HAL_DAC_DeInit(hdac);
 }
 
 }	// namespace leka
