@@ -7,6 +7,7 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreDAC.h"
+#include "CoreEventQueue.h"
 #include "CoreSTM32Hal.h"
 #include "CoreSTM32HalBasicTimer.h"
 #include "DigitalOut.h"
@@ -26,12 +27,13 @@ auto audio_enable = mbed::DigitalOut {SOUND_ENABLE, 1};
 
 constexpr uint32_t sample_rate_hz = 44'100;
 
+auto event_queue = CoreEventQueue {};
+
 auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
 auto fatfs			= FATFileSystem {"fs"};
 
-auto file = FileManagerKit::File {};
-
 const auto sound_file_path = std::filesystem::path {"/fs/home/wav/fur-elise.wav"};
+auto file				   = FileManagerKit::File {};
 
 void initializeSD()
 {
@@ -56,12 +58,36 @@ constexpr auto size = 32'768;
 std::array<uint8_t, size> data_file {};
 std::array<uint16_t, size> data_play {};
 
+void setData(uint16_t offset)
+{
+	file.read(data_file);
+	for (uint32_t index = 0; index < data_file.size(); index += 2) {
+		// data_play.at(offset + index / 2) = (data_file[index + 1] << 8) | data_file[index];
+		// data_play[offset + index / 2] = (data_file[index] << 8) | data_file[index + 1];
+
+		data_play.at(offset + index / 2) = (data_file.at(index + 1) + 0x8000) >> 0;
+	}
+}
+
+void onHalfTransfer()
+{
+	// Fill first half
+	setData(0);
+}
+void onCompleteTransfer()
+{
+	// Fill second half
+	setData(size / 2);
+}
+
 auto main() -> int
 {
 	logger::init();
 
 	log_info("Hello, World!\n\n");
 	rtos::ThisThread::sleep_for(1s);
+
+	event_queue.dispatch_forever();
 
 	initializeSD();
 	if (FileManagerKit::file_is_missing(sound_file_path)) {
@@ -73,37 +99,13 @@ auto main() -> int
 	log_info("Initialize");
 	rtos::ThisThread::sleep_for(1s);
 
-	auto file = FileManagerKit::File {sound_file_path};
+	file.open(sound_file_path);
 
-	file.read(data_file);
-	for (int index = 0; index < data_file.size(); index += 2) {
-		data_play[index / 2] = (data_file[index + 1] << 8) | data_file[index];
-		// data_play[index / 2] = (data_file[index] << 8) | data_file[index + 1];
-	}
+	setData(0);
+	setData(size / 2);
 
-	// for (auto one_data: data_play) {
-	// 	printf("%04x", one_data);
-	// }
-	// printf("\n");
-
-	coredac.registerDMACallbacks(
-		[&file] {
-			// Fill first half
-			std::array<uint8_t, size> data_first_half {};
-			file.read(data_first_half);	  // THIS FAIL
-
-			// for (int index = 0; index < data_file.size(); index += 2) {
-			// data_play[index / 2] = (data_file[index + 1] << 8) | data_file[index];
-			// }
-		},
-		[&file] {
-			// Fill second half
-
-			// file.read(data_file);
-			// for (int index = 0; index < data_file.size(); index += 2) {
-			// data_play[size / 2 + index / 2] = (data_file[index + 1] << 8) | data_file[index];
-			// }
-		});
+	coredac.registerDMACallbacks([] { event_queue.call(onHalfTransfer); },
+								 [] { event_queue.call(onCompleteTransfer); });
 
 	hal_timer.initialize(sample_rate_hz);
 	coredac.initialize();
@@ -117,7 +119,7 @@ auto main() -> int
 	// END -- NEW CODE
 	coredac.start();
 
-	rtos::ThisThread::sleep_for(1s);
+	rtos::ThisThread::sleep_for(5s);
 
 	log_info("Stop sound");
 	coredac.stop();

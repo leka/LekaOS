@@ -21,6 +21,7 @@ target_link_libraries(spike_lk_audio
 	CoreSTM32Hal
 	CoreDAC
 	FileManagerKit
+	CoreEventQueue
 )
 
 target_link_custom_leka_targets(spike_lk_audio)
