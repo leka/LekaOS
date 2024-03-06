@@ -33,6 +33,8 @@ struct File : public interface::File, public mbed::NonCopyable<File> {
 	auto read(uint8_t *buffer, uint32_t size) -> std::size_t final;
 	auto write(const uint8_t *data, uint32_t size) -> std::size_t final;
 
+	auto read(uint16_t *buffer, uint32_t size) -> std::size_t;
+
 	auto read(char *buffer, uint32_t size) -> std::size_t final;
 	auto write(const char *data, uint32_t size) -> std::size_t final;
 

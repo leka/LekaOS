@@ -5,6 +5,8 @@
 #include "CoreSTM32HalBasicTimer.h"
 #include <cmath>
 
+#include "LogKit.h"
+
 using namespace leka;
 
 CoreSTM32HalBasicTimer::CoreSTM32HalBasicTimer(interface::STM32Hal &hal) : _hal(hal)
@@ -35,16 +37,34 @@ void CoreSTM32HalBasicTimer::initialize(float frequency)
 	_htim.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 	_hal.HAL_TIM_Base_Init(&_htim);
 
+	auto _calculatePeriod = [](uint32_t frequency) {
+		uint32_t clockFreq = HAL_RCC_GetPCLK1Freq();
+
+		/* Get PCLK1 prescaler */
+		if ((RCC->CFGR & RCC_CFGR_PPRE1) != 0) {
+			clockFreq *= 2;
+		}
+
+		if (frequency < (clockFreq >> 16) || frequency > clockFreq) {
+			log_error("Chosen freq out of bounds\n");
+		}
+
+		return (clockFreq / frequency);
+	};
+	auto periodCalculated = _calculatePeriod(frequency);
+
+	log_info("divider: %ld, prescaler: %ld, calculated: %ld", divider, _htim.Init.Prescaler, periodCalculated);
+
 	auto timerMasterConfig				  = TIM_MasterConfigTypeDef {};
 	timerMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
+	timerMasterConfig.MasterSlaveMode	  = TIM_MASTERSLAVEMODE_DISABLE;
 	_hal.HAL_TIMEx_MasterConfigSynchronization(&_htim, &timerMasterConfig);
 
-	static const auto &self = *this;
-	_hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_PERIOD_ELAPSED_CB_ID, []([[maybe_unused]] TIM_HandleTypeDef *htim) {
-		if (self._callback != nullptr) {
-			self._callback();
-		}
-	});
+	// static const auto &self = *this;
+	// _hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_PERIOD_ELAPSED_CB_ID, []([[maybe_unused]] TIM_HandleTypeDef *htim)
+	// { 	if (self._callback != nullptr) { 		self._callback();
+	// 	}
+	// });
 }
 
 void CoreSTM32HalBasicTimer::_registerMspCallbacks()
@@ -54,13 +74,13 @@ void CoreSTM32HalBasicTimer::_registerMspCallbacks()
 	_hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPINIT_CB_ID, []([[maybe_unused]] TIM_HandleTypeDef *htim) {
 		self._hal.HAL_RCC_TIM6_CLK_ENABLE();
 
-		self._hal.HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 0x00, 0x00);
+		self._hal.HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 0x01, 0x00);
 		self._hal.HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
 	});
 
-	_hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPDEINIT_CB_ID, []([[maybe_unused]] TIM_HandleTypeDef *htim) {
-		self._hal.HAL_RCC_TIM6_CLK_DISABLE();
-	});
+	// _hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPDEINIT_CB_ID, []([[maybe_unused]] TIM_HandleTypeDef *htim)
+	// { 	self._hal.HAL_RCC_TIM6_CLK_DISABLE();
+	// });
 }
 
 void CoreSTM32HalBasicTimer::linkDACTimer(DAC_ChannelConfTypeDef *config)

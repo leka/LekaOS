@@ -60,20 +60,22 @@ std::array<uint16_t, size * 2> data_play {};
 
 void setData(uint16_t offset)
 {
-	file.read(data_file);
-	// for (uint32_t index = 0; index < data_file.size(); index += 2) {
+	file.read(data_play.data() + offset, size);
+
+	// file.read(data_file);
+	// // for (uint32_t index = 0; index < data_file.size(); index += 2) {
+	// // 	// data_play.at(offset + index / 2) = (data_file[index + 1] << 8) | data_file[index];
+	// // 	data_play[offset + index / 2] = (data_file[index] << 8) | data_file[index + 1];
+
+	// // 	// data_play.at(offset + index / 2) = (data_file.at(index + 1) + 0x8000) >> 0;
+	// // }
+
+	// for (uint32_t index = 0; index < data_file.size(); index++) {
 	// 	// data_play.at(offset + index / 2) = (data_file[index + 1] << 8) | data_file[index];
-	// 	data_play[offset + index / 2] = (data_file[index] << 8) | data_file[index + 1];
+	// 	// data_play[offset + index / 2] = (data_file[index] << 8) | data_file[index + 1];
 
-	// 	// data_play.at(offset + index / 2) = (data_file.at(index + 1) + 0x8000) >> 0;
+	// 	data_play.at(offset + index) = data_file.at(index) + 0x8000;
 	// }
-
-	for (uint32_t index = 0; index < data_file.size(); index++) {
-		// data_play.at(offset + index / 2) = (data_file[index + 1] << 8) | data_file[index];
-		// data_play[offset + index / 2] = (data_file[index] << 8) | data_file[index + 1];
-
-		data_play.at(offset + index) = (data_file.at(index) + 0x8000) >> 0;
-	}
 }
 
 void onHalfTransfer()
@@ -114,7 +116,7 @@ auto main() -> int
 	coredac.registerDMACallbacks([] { event_queue.call(onHalfTransfer); },
 								 [] { event_queue.call(onCompleteTransfer); });
 
-	hal_timer.initialize(sample_rate_hz);
+	hal_timer.initialize(116'000);	 // 116'883
 	coredac.initialize();
 
 	coredac.registerDataToPlay(data_play);
