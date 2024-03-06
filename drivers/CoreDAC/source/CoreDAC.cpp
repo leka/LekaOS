@@ -18,14 +18,6 @@ auto CoreDAC::getHandle() -> DAC_HandleTypeDef &
 
 void CoreDAC::initialize()
 {
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-	__HAL_RCC_GPIOA_CLK_ENABLE();
-	GPIO_InitTypeDef GPIO_InitStruct = {0};
-	GPIO_InitStruct.Pin				 = GPIO_PIN_4;
-	GPIO_InitStruct.Mode			 = GPIO_MODE_ANALOG;
-	GPIO_InitStruct.Pull			 = GPIO_NOPULL;
-	_hal.HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
 	_registerMspCallbacks();
 
 	_hal.HAL_DAC_Init(&_hdac);

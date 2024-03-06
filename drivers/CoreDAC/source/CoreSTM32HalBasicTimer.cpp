@@ -74,13 +74,13 @@ void CoreSTM32HalBasicTimer::_registerMspCallbacks()
 	_hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPINIT_CB_ID, []([[maybe_unused]] TIM_HandleTypeDef *htim) {
 		self._hal.HAL_RCC_TIM6_CLK_ENABLE();
 
-		self._hal.HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 0x01, 0x00);
+		self._hal.HAL_NVIC_SetPriority(TIM6_DAC_IRQn, 0x00, 0x00);
 		self._hal.HAL_NVIC_EnableIRQ(TIM6_DAC_IRQn);
 	});
 
-	// _hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPDEINIT_CB_ID, []([[maybe_unused]] TIM_HandleTypeDef *htim)
-	// { 	self._hal.HAL_RCC_TIM6_CLK_DISABLE();
-	// });
+	_hal.HAL_TIM_RegisterCallback(&_htim, HAL_TIM_BASE_MSPDEINIT_CB_ID, []([[maybe_unused]] TIM_HandleTypeDef *htim) {
+		self._hal.HAL_RCC_TIM6_CLK_DISABLE();
+	});
 }
 
 void CoreSTM32HalBasicTimer::linkDACTimer(DAC_ChannelConfTypeDef *config)
