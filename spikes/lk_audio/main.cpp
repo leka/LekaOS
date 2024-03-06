@@ -52,20 +52,27 @@ void initializeSD()
 // constexpr auto size = 2'048;
 // constexpr auto size = 4'096;
 // constexpr auto size = 8'192;
-// constexpr auto size = 16'384;
-constexpr auto size = 32'768;
+constexpr auto size = 16'384;
+// constexpr auto size = 32'768;
 // constexpr auto size = 65'536; // NOK
 std::array<uint8_t, size> data_file {};
-std::array<uint16_t, size> data_play {};
+std::array<uint16_t, size * 2> data_play {};
 
 void setData(uint16_t offset)
 {
 	file.read(data_file);
-	for (uint32_t index = 0; index < data_file.size(); index += 2) {
+	// for (uint32_t index = 0; index < data_file.size(); index += 2) {
+	// 	// data_play.at(offset + index / 2) = (data_file[index + 1] << 8) | data_file[index];
+	// 	data_play[offset + index / 2] = (data_file[index] << 8) | data_file[index + 1];
+
+	// 	// data_play.at(offset + index / 2) = (data_file.at(index + 1) + 0x8000) >> 0;
+	// }
+
+	for (uint32_t index = 0; index < data_file.size(); index++) {
 		// data_play.at(offset + index / 2) = (data_file[index + 1] << 8) | data_file[index];
 		// data_play[offset + index / 2] = (data_file[index] << 8) | data_file[index + 1];
 
-		data_play.at(offset + index / 2) = (data_file.at(index + 1) + 0x8000) >> 0;
+		data_play.at(offset + index) = (data_file.at(index) + 0x8000) >> 0;
 	}
 }
 
@@ -77,7 +84,7 @@ void onHalfTransfer()
 void onCompleteTransfer()
 {
 	// Fill second half
-	setData(size / 2);
+	setData(size);
 }
 
 auto main() -> int
@@ -119,7 +126,7 @@ auto main() -> int
 	// END -- NEW CODE
 	coredac.start();
 
-	rtos::ThisThread::sleep_for(5s);
+	rtos::ThisThread::sleep_for(10s);
 
 	log_info("Stop sound");
 	coredac.stop();
