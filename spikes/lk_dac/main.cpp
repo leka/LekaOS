@@ -34,9 +34,15 @@ void fillBufferWithSinWave(uint16_t *buffer, uint32_t samples_per_period, uint16
 	};
 
 	for (uint32_t sample = 0; sample < samples_per_period; sample += coefficient) {
-		auto standard_value	  = sin0_1(sample * resolution);
-		auto normalized_value = normalization(standard_value);
-		std::fill_n(buffer + sample, coefficient, static_cast<uint16_t>(normalized_value));
+		if (sample < samples_per_period / 2) {
+			std::fill_n(buffer + sample, coefficient, maxValue);
+		} else {
+			std::fill_n(buffer + sample, coefficient, minValue);
+		}
+
+		// auto standard_value	  = sin0_1(sample * resolution);
+		// auto normalized_value = normalization(standard_value);
+		// std::fill_n(buffer + sample, coefficient, static_cast<uint16_t>(normalized_value));
 	}
 }
 
