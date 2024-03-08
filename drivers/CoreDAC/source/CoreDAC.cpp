@@ -23,7 +23,7 @@ void CoreDAC::initialize()
 	_hal.HAL_DAC_Init(&_hdac);
 
 	DAC_ChannelConfTypeDef config = {};
-	config.DAC_OutputBuffer		  = DAC_OUTPUTBUFFER_ENABLE;
+	config.DAC_OutputBuffer		  = DAC_OUTPUTBUFFER_DISABLE;
 	_hal_timer.linkDACTimer(&config);
 	_hal.HAL_DAC_ConfigChannel(&_hdac, &config, DAC_CHANNEL_1);
 

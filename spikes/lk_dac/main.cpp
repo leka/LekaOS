@@ -7,6 +7,7 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreDAC.h"
+#include "CoreEventQueue.h"
 #include "CoreSTM32Hal.h"
 #include "CoreSTM32HalBasicTimer.h"
 #include "DigitalOut.h"
@@ -20,6 +21,8 @@ auto hal_timer = CoreSTM32HalBasicTimer {hal};
 auto coredac   = CoreDAC {hal, hal_timer};
 
 auto audio_enable = mbed::DigitalOut {SOUND_ENABLE, 1};
+
+auto event_queue = CoreEventQueue {};
 
 constexpr uint32_t sample_rate_hz = 44'100;
 constexpr auto coefficient		  = 10;
@@ -46,6 +49,14 @@ void fillBufferWithSinWave(uint16_t *buffer, uint32_t samples_per_period, uint16
 	}
 }
 
+constexpr auto played_buffer_size = 256;
+std::array<uint16_t, played_buffer_size> played_buffer {};
+
+void setData(uint16_t offset, uint16_t value)
+{
+	std::fill_n(played_buffer.begin() + offset, played_buffer_size / 2, value);
+}
+
 auto main() -> int
 {
 	logger::init();
@@ -58,16 +69,23 @@ auto main() -> int
 	const uint32_t frequency = 440;
 	const uint16_t maxVal	 = 0xFFF;
 	const uint16_t minVal	 = 0x000;
-	std::array<uint16_t, sample_rate_hz * coefficient / frequency> buffer {};
+	std::array<uint16_t, 1024> buffer {};
 	fillBufferWithSinWave(buffer.data(), buffer.size(), maxVal, minVal);
 
-	coredac.registerDataToPlay(buffer);
+	event_queue.dispatch_forever();
+	setData(0, minVal);
+	setData(played_buffer_size / 2, maxVal);
 
-	log_info("buffer size: %d", buffer.size());
+	coredac.registerDMACallbacks([] { event_queue.call([] { setData(0, minVal); }); },
+								 [] { event_queue.call([] { setData(played_buffer_size / 2, maxVal); }); });
+
+	coredac.registerDataToPlay(played_buffer);
+
+	// log_info("buffer size: %d", buffer.size());
 	log_info("Start sound");
 	coredac.start();
 
-	rtos::ThisThread::sleep_for(1s);
+	rtos::ThisThread::sleep_for(4min);
 
 	log_info("Stop sound");
 	coredac.stop();

@@ -34,7 +34,7 @@ void CoreSTM32HalBasicTimer::initialize(float frequency)
 
 	_htim.Init.Prescaler		 = 0;
 	_htim.Init.Period			 = divider - 1;	  // ? min 1
-	_htim.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+	_htim.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
 	_hal.HAL_TIM_Base_Init(&_htim);
 
 	auto _calculatePeriod = [](uint32_t frequency) {

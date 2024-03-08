@@ -32,7 +32,7 @@ auto event_queue = CoreEventQueue {};
 auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
 auto fatfs			= FATFileSystem {"fs"};
 
-const auto sound_file_path = std::filesystem::path {"/fs/home/wav/fur-elise.wav"};
+const auto sound_file_path = std::filesystem::path {"/fs/home/wav/440.wav"};
 auto file				   = FileManagerKit::File {};
 
 void initializeSD()
@@ -48,19 +48,27 @@ void initializeSD()
 // constexpr auto size = 128;
 // constexpr auto size = 256;
 // constexpr auto size = 512;
+constexpr auto size = 1'000;
 // constexpr auto size = 1'024;
 // constexpr auto size = 2'048;
 // constexpr auto size = 4'096;
 // constexpr auto size = 8'192;
-constexpr auto size = 16'384;
+// constexpr auto size = 16'384;
 // constexpr auto size = 32'768;
 // constexpr auto size = 65'536; // NOK
-std::array<uint8_t, size> data_file {};
-std::array<uint16_t, size * 2> data_play {};
+constexpr auto data_file_size = size / 10;
+std::array<int16_t, data_file_size> data_file {};
+// std::array<uint8_t, size> data_file {};
+std::array<uint16_t, size> data_play {};
 
 void setData(uint16_t offset)
 {
-	file.read(data_play.data() + offset, size);
+	constexpr auto adjustment = 10;	  // Related to ARR
+	file.read(data_file);
+	for (auto i = 0; i < data_file_size; i++) {
+		std::fill_n(data_play.begin() + i * adjustment, adjustment, (data_file.at(i) + 0x8000));
+	}
+	// file.read(data_play.data() + offset, size / 2);
 
 	// file.read(data_file);
 	// // for (uint32_t index = 0; index < data_file.size(); index += 2) {
@@ -109,6 +117,8 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(1s);
 
 	file.open(sound_file_path);
+	auto header_array = std::array<uint8_t, 44> {};
+	file.read(header_array);   // header
 
 	setData(0);
 	setData(size / 2);
@@ -128,7 +138,7 @@ auto main() -> int
 	// END -- NEW CODE
 	coredac.start();
 
-	rtos::ThisThread::sleep_for(10s);
+	rtos::ThisThread::sleep_for(1min);
 
 	log_info("Stop sound");
 	coredac.stop();
