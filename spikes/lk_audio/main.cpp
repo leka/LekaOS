@@ -56,7 +56,7 @@ constexpr auto size = 2'000;
 // constexpr auto size = 16'384;
 // constexpr auto size = 32'768;
 // constexpr auto size = 65'536; // NOK
-constexpr auto coefficient	  = 1;
+constexpr auto coefficient	  = 2;						  // Related to ARR | ARR*coefficient ~= 2448
 constexpr auto data_file_size = size / coefficient / 2;	  // /2 for half buffer and *2
 std::array<int16_t, data_file_size> data_file {};
 // std::array<uint8_t, size> data_file {};
@@ -64,23 +64,11 @@ std::array<uint16_t, size> data_play {};
 
 void setData(uint16_t offset)
 {
-	static constexpr auto adjustment = coefficient;	  // Related to ARR
 	file.read(data_file);
 
-	if (coefficient == 1) {
-		for (auto i = 0; i < data_file_size; i++) {
-			auto normalized_value	 = static_cast<uint16_t>((data_file.at(i) + 0x8000) >> 4);
-			data_play.at(offset + i) = normalized_value;
-		}
-
-	} else {
-		for (auto i = 0; i < data_file_size; i++) {
-			auto normalized_value = static_cast<uint16_t>((data_file.at(i) + 0x8000) >> 4);
-			for (auto j = 0; j < adjustment; j++) {
-				data_play.at(offset + i * adjustment + j) = normalized_value;
-			}
-			// std::fill_n(data_play.begin() + offset + i * adjustment, adjustment, normalized_value);
-		}
+	for (auto i = 0; i < data_file_size; i++) {
+		auto normalized_value = static_cast<uint16_t>((data_file.at(i) + 0x8000) >> 4);
+		std::fill_n(data_play.begin() + offset + i * coefficient, coefficient, normalized_value);
 	}
 }
 
@@ -142,6 +130,35 @@ auto main() -> int
 	// 	rtos::ThisThread::sleep_for(1s);
 	// 	return 0;
 	// } // Normalization
+
+	// {
+	// 	setData(0);
+	// 	log_info("Data play (first half loaded):");
+	// 	rtos::ThisThread::sleep_for(1s);
+	// 	for (auto i = 0; i < data_play.size(); i++) {
+	// 		printf("At %3i: %x\n", i * 2 + 44, data_play.at(i));
+	// 	}
+	// 	printf("\n");
+
+	// 	setData(size / 2);
+	// 	log_info("Data play (second half loaded): ");
+	// 	rtos::ThisThread::sleep_for(1s);
+	// 	for (auto i = 0; i < data_play.size(); i++) {
+	// 		printf("At %3i: %x\n", i * 2 + 44, data_play.at(i));
+	// 	}
+	// 	printf("\n");
+
+	// setData(0);
+	// log_info("Data play (next chunk): ");
+	// rtos::ThisThread::sleep_for(1s);
+	// for (auto i = 0; i < data_play.size() / 2; i++) {
+	// 	printf("At %3i: %x\n", i * 2 + 44 + size * 2, data_play.at(i));
+	// }
+	// printf("\n");
+
+	// 	rtos::ThisThread::sleep_for(1s);
+	// 	return 0;
+	// }	// Correctly filled
 
 	setData(0);
 	setData(size / 2);
