@@ -20,7 +20,7 @@ auto hal	   = CoreSTM32Hal {};
 auto hal_timer = CoreSTM32HalBasicTimer {hal};
 auto coredac   = CoreDAC {hal, hal_timer};
 
-auto audio_enable = mbed::DigitalOut {SOUND_ENABLE, 1};
+auto audio_enable = mbed::DigitalOut {SOUND_ENABLE, 0};
 
 auto event_queue = CoreEventQueue {};
 

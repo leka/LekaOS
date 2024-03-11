@@ -48,7 +48,7 @@ void initializeSD()
 // constexpr auto size = 128;
 // constexpr auto size = 256;
 // constexpr auto size = 512;
-constexpr auto size = 1'000;
+constexpr auto size = 2'000;
 // constexpr auto size = 1'024;
 // constexpr auto size = 2'048;
 // constexpr auto size = 4'096;
@@ -56,34 +56,32 @@ constexpr auto size = 1'000;
 // constexpr auto size = 16'384;
 // constexpr auto size = 32'768;
 // constexpr auto size = 65'536; // NOK
-constexpr auto data_file_size = size / 10;
+constexpr auto coefficient	  = 1;
+constexpr auto data_file_size = size / coefficient / 2;	  // /2 for half buffer and *2
 std::array<int16_t, data_file_size> data_file {};
 // std::array<uint8_t, size> data_file {};
 std::array<uint16_t, size> data_play {};
 
 void setData(uint16_t offset)
 {
-	constexpr auto adjustment = 10;	  // Related to ARR
+	static constexpr auto adjustment = coefficient;	  // Related to ARR
 	file.read(data_file);
-	for (auto i = 0; i < data_file_size; i++) {
-		std::fill_n(data_play.begin() + i * adjustment, adjustment, (data_file.at(i) + 0x8000));
+
+	if (coefficient == 1) {
+		for (auto i = 0; i < data_file_size; i++) {
+			auto normalized_value	 = static_cast<uint16_t>((data_file.at(i) + 0x8000) >> 4);
+			data_play.at(offset + i) = normalized_value;
+		}
+
+	} else {
+		for (auto i = 0; i < data_file_size; i++) {
+			auto normalized_value = static_cast<uint16_t>((data_file.at(i) + 0x8000) >> 4);
+			for (auto j = 0; j < adjustment; j++) {
+				data_play.at(offset + i * adjustment + j) = normalized_value;
+			}
+			// std::fill_n(data_play.begin() + offset + i * adjustment, adjustment, normalized_value);
+		}
 	}
-	// file.read(data_play.data() + offset, size / 2);
-
-	// file.read(data_file);
-	// // for (uint32_t index = 0; index < data_file.size(); index += 2) {
-	// // 	// data_play.at(offset + index / 2) = (data_file[index + 1] << 8) | data_file[index];
-	// // 	data_play[offset + index / 2] = (data_file[index] << 8) | data_file[index + 1];
-
-	// // 	// data_play.at(offset + index / 2) = (data_file.at(index + 1) + 0x8000) >> 0;
-	// // }
-
-	// for (uint32_t index = 0; index < data_file.size(); index++) {
-	// 	// data_play.at(offset + index / 2) = (data_file[index + 1] << 8) | data_file[index];
-	// 	// data_play[offset + index / 2] = (data_file[index] << 8) | data_file[index + 1];
-
-	// 	data_play.at(offset + index) = data_file.at(index) + 0x8000;
-	// }
 }
 
 void onHalfTransfer()
@@ -94,7 +92,7 @@ void onHalfTransfer()
 void onCompleteTransfer()
 {
 	// Fill second half
-	setData(size);
+	setData(size / 2);
 }
 
 auto main() -> int
@@ -120,13 +118,38 @@ auto main() -> int
 	auto header_array = std::array<uint8_t, 44> {};
 	file.read(header_array);   // header
 
+	// {
+	// 	log_info("Header: ");
+	// 	rtos::ThisThread::sleep_for(100ms);
+	// 	for (auto &elem: header_array) {
+	// 		printf("%x ", elem);
+	// 	}
+	// 	printf("\n");
+
+	// 	rtos::ThisThread::sleep_for(1s);
+
+	// 	file.read(data_file);
+	// 	log_info("Content: ");
+	// 	rtos::ThisThread::sleep_for(1s);
+	// 	for (auto i = 0; i < data_file_size; i++) {
+	// 		int16_t file_value = data_file.at(i);
+	// 		printf("At %3i: %d\n", i * 2 + 44, file_value);
+	// 		// uint16_t normalized_value = static_cast<uint16_t>(data_file.at(i) + 0x8000) >> 4;
+	// 		// printf("%x ", normalized_value);
+	// 	}
+	// 	printf("\n");
+
+	// 	rtos::ThisThread::sleep_for(1s);
+	// 	return 0;
+	// } // Normalization
+
 	setData(0);
 	setData(size / 2);
 
 	coredac.registerDMACallbacks([] { event_queue.call(onHalfTransfer); },
 								 [] { event_queue.call(onCompleteTransfer); });
 
-	hal_timer.initialize(116'000);	 // 116'883
+	hal_timer.initialize();
 	coredac.initialize();
 
 	coredac.registerDataToPlay(data_play);
@@ -138,7 +161,7 @@ auto main() -> int
 	// END -- NEW CODE
 	coredac.start();
 
-	rtos::ThisThread::sleep_for(1min);
+	rtos::ThisThread::sleep_for(4s);
 
 	log_info("Stop sound");
 	coredac.stop();

@@ -53,7 +53,8 @@ void CoreSTM32HalBasicTimer::initialize(float frequency)
 	};
 	auto periodCalculated = _calculatePeriod(frequency);
 
-	log_info("divider: %ld, prescaler: %ld, calculated: %ld", divider, _htim.Init.Prescaler, periodCalculated);
+	log_info("divider: %ld, prescaler: %ld, period: %ld, calculated: %ld", divider, _htim.Init.Prescaler,
+			 _htim.Init.Period, periodCalculated);
 
 	auto timerMasterConfig				  = TIM_MasterConfigTypeDef {};
 	timerMasterConfig.MasterOutputTrigger = TIM_TRGO_UPDATE;
