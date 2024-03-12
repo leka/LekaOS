@@ -23,6 +23,7 @@ target_link_libraries(spike_lk_audio
 	FileManagerKit
 	CoreEventQueue
 	CoreEventFlags
+	BLEKit
 )
 
 target_link_custom_leka_targets(spike_lk_audio)

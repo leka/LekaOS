@@ -6,6 +6,9 @@
 
 #include "rtos/ThisThread.h"
 
+#include "BLEKit.h"
+#include "BLEServiceConfig.h"
+
 #include "CoreDAC.h"
 #include "CoreEventFlags.h"
 #include "CoreEventQueue.h"
@@ -34,14 +37,19 @@ auto event_queue_converted = CoreEventQueue {};
 auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
 auto fatfs			= FATFileSystem {"fs"};
 
-const auto sound_file_path = std::filesystem::path {"/fs/home/wav/440.wav"};
-auto file				   = FileManagerKit::File {};
+const auto sound_directory_path = std::filesystem::path {"/fs/home/wav"};
+auto sound_file_path			= sound_directory_path / std::filesystem::path {"440.wav"};
+auto file						= FileManagerKit::File {};
 
 auto event_flags = CoreEventFlags {};
 
 struct flag {
 	static constexpr uint32_t START = (1UL << 1);
 };
+
+auto service_config = BLEServiceConfig {};
+auto services		= std::to_array<interface::BLEService *>({&service_config});
+auto blekit			= BLEKit {};
 
 void initializeSD()
 {
@@ -124,10 +132,22 @@ auto main() -> int
 	event_queue_converted.dispatch_forever();
 	event_queue.dispatch_forever();
 
+	blekit.setServices(services);
+	blekit.init();
+
 	initializeSD();
 	if (FileManagerKit::file_is_missing(sound_file_path)) {
 		return 1;
 	}
+
+	service_config.onRobotNameUpdated([](const std::array<uint8_t, BLEServiceConfig::kMaxRobotNameSize> &robot_name) {
+		const auto *end_index = std::find(robot_name.begin(), robot_name.end(), '\0');
+		auto filename		  = std::string {robot_name.begin(), end_index} + ".wav";
+		sound_file_path		  = sound_directory_path / std::filesystem::path {filename};
+
+		log_info("Play file: %s", sound_file_path.c_str());
+		event_flags.set(flag::START);
+	});
 
 	// BEGIN -- NEW CODE
 
@@ -144,7 +164,6 @@ auto main() -> int
 
 	while (true) {
 		event_flags.wait_any(flag::START);
-		event_flags.set(flag::START);	// Temporary
 
 		{
 			file.open(sound_file_path);
