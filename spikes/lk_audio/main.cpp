@@ -64,19 +64,27 @@ std::array<int16_t, data_file_size> data_file {};
 std::array<uint16_t, size> data_converted {};
 std::array<uint16_t, size> data_play {};
 
+auto is_eof = false;
+
 void convertData(uint32_t offset)
 {
-	file.read(data_file);
+	auto bytes_read = file.read(data_file);
 
 	for (auto i = 0; i < data_file_size; i++) {
 		auto normalized_value = static_cast<uint16_t>((data_file.at(i) + 0x8000) >> 4);
 		std::fill_n(data_converted.begin() + offset + i * coefficient, coefficient, normalized_value);
 	}
-	log_info("offset %d", offset);	 // Better than sleep_for
+	is_eof = bytes_read != data_file_size;
+	log_info("bytes_read %d", bytes_read);	 // Better than sleep_for
 }
 
 void setData(uint32_t offset)
 {
+	if (is_eof) {
+		coredac.stop();
+		return;
+	}
+
 	std::copy(data_converted.begin() + offset, data_converted.begin() + offset + size / 2, data_play.begin() + offset);
 
 	event_queue_converted.call([offset] { convertData(offset); });
@@ -201,7 +209,7 @@ auto main() -> int
 	// END -- NEW CODE
 	coredac.start();
 
-	rtos::ThisThread::sleep_for(4s);
+	rtos::ThisThread::sleep_for(1min);
 
 	log_info("Stop sound");
 	coredac.stop();
