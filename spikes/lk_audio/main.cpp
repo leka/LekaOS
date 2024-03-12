@@ -75,7 +75,8 @@ void convertData(uint32_t offset)
 		std::fill_n(data_converted.begin() + offset + i * coefficient, coefficient, normalized_value);
 	}
 	is_eof = bytes_read != data_file_size;
-	log_info("bytes_read %d", bytes_read);	 // Better than sleep_for
+
+	log_info("");	// Better than sleep_for
 }
 
 void setData(uint32_t offset)
@@ -89,8 +90,7 @@ void setData(uint32_t offset)
 
 	event_queue_converted.call([offset] { convertData(offset); });
 
-	// log_info("offset %d", offset);	 // Better than sleep_for
-	rtos::ThisThread::sleep_for(1ms);
+	log_info("");	// Better than sleep_for
 }
 
 void onHalfTransfer()
@@ -126,95 +126,39 @@ auto main() -> int
 	log_info("Initialize");
 	rtos::ThisThread::sleep_for(1s);
 
-	file.open(sound_file_path);
-	auto header_array = std::array<uint8_t, 44> {};
-	file.read(header_array);   // header
-
-	// {
-	// 	log_info("Header: ");
-	// 	rtos::ThisThread::sleep_for(100ms);
-	// 	for (auto &elem: header_array) {
-	// 		printf("%x ", elem);
-	// 	}
-	// 	printf("\n");
-
-	// 	rtos::ThisThread::sleep_for(1s);
-
-	// 	file.read(data_file);
-	// 	log_info("Content: ");
-	// 	rtos::ThisThread::sleep_for(1s);
-	// 	for (auto i = 0; i < data_file_size; i++) {
-	// 		int16_t file_value = data_file.at(i);
-	// 		printf("At %3i: %d\n", i * 2 + 44, file_value);
-	// 		// uint16_t normalized_value = static_cast<uint16_t>(data_file.at(i) + 0x8000) >> 4;
-	// 		// printf("%x ", normalized_value);
-	// 	}
-	// 	printf("\n");
-
-	// 	rtos::ThisThread::sleep_for(1s);
-	// 	return 0;
-	// } // Normalization
-
-	// {
-	// 	setData(0);
-	// 	log_info("Data play (first half loaded):");
-	// 	rtos::ThisThread::sleep_for(1s);
-	// 	for (auto i = 0; i < data_play.size(); i++) {
-	// 		printf("At %3i: %x\n", i * 2 + 44, data_play.at(i));
-	// 	}
-	// 	printf("\n");
-
-	// 	setData(size / 2);
-	// 	log_info("Data play (second half loaded): ");
-	// 	rtos::ThisThread::sleep_for(1s);
-	// 	for (auto i = 0; i < data_play.size(); i++) {
-	// 		printf("At %3i: %x\n", i * 2 + 44, data_play.at(i));
-	// 	}
-	// 	printf("\n");
-
-	// setData(0);
-	// log_info("Data play (next chunk): ");
-	// rtos::ThisThread::sleep_for(1s);
-	// for (auto i = 0; i < data_play.size() / 2; i++) {
-	// 	printf("At %3i: %x\n", i * 2 + 44 + size * 2, data_play.at(i));
-	// }
-	// printf("\n");
-
-	// 	rtos::ThisThread::sleep_for(1s);
-	// 	return 0;
-	// }	// Correctly filled
-
-	convertData(0);
-	rtos::ThisThread::sleep_for(300ms);
-	convertData(size / 2);
-	rtos::ThisThread::sleep_for(300ms);
-
-	setData(0);
-	rtos::ThisThread::sleep_for(300ms);
-	setData(size / 2);
-	rtos::ThisThread::sleep_for(300ms);
-
 	coredac.registerDMACallbacks([] { event_queue.call(onHalfTransfer); },
 								 [] { event_queue.call(onCompleteTransfer); });
 
 	hal_timer.initialize(44'100 * coefficient);
 	coredac.initialize();
 
-	coredac.registerDataToPlay(data_play);
-	// Play on audio
-
-	log_info("Start sound");
-	rtos::ThisThread::sleep_for(1s);
-
-	// END -- NEW CODE
-	coredac.start();
-
-	rtos::ThisThread::sleep_for(1min);
-
-	log_info("Stop sound");
-	coredac.stop();
-
 	while (true) {
-		rtos::ThisThread::sleep_for(1min);
+		{
+			file.open(sound_file_path);
+			auto header_array = std::array<uint8_t, 44> {};
+			file.read(header_array);   // header
+
+			is_eof = false;
+
+			convertData(0);
+			rtos::ThisThread::sleep_for(300ms);
+			convertData(size / 2);
+			rtos::ThisThread::sleep_for(300ms);
+
+			setData(0);
+			rtos::ThisThread::sleep_for(300ms);
+			setData(size / 2);
+			rtos::ThisThread::sleep_for(300ms);
+
+			coredac.registerDataToPlay(data_play);
+			rtos::ThisThread::sleep_for(100ms);
+		}	// Setup new file
+
+		{
+			coredac.start();
+			while (!is_eof) rtos::ThisThread::sleep_for(500ms);
+		}	// Play on audio
+
+		rtos::ThisThread::sleep_for(1s);
 	}
 }
