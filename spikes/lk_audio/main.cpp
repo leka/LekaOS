@@ -7,6 +7,7 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreDAC.h"
+#include "CoreEventFlags.h"
 #include "CoreEventQueue.h"
 #include "CoreSTM32Hal.h"
 #include "CoreSTM32HalBasicTimer.h"
@@ -35,6 +36,12 @@ auto fatfs			= FATFileSystem {"fs"};
 
 const auto sound_file_path = std::filesystem::path {"/fs/home/wav/440.wav"};
 auto file				   = FileManagerKit::File {};
+
+auto event_flags = CoreEventFlags {};
+
+struct flag {
+	static constexpr uint32_t START = (1UL << 1);
+};
 
 void initializeSD()
 {
@@ -76,7 +83,7 @@ void convertData(uint32_t offset)
 	}
 	is_eof = bytes_read != data_file_size;
 
-	log_info("");	// Better than sleep_for
+	log_info("bytes_read %d", bytes_read);	 // Better than sleep_for
 }
 
 void setData(uint32_t offset)
@@ -90,7 +97,8 @@ void setData(uint32_t offset)
 
 	event_queue_converted.call([offset] { convertData(offset); });
 
-	log_info("");	// Better than sleep_for
+	// log_info("");	// Better than sleep_for
+	rtos::ThisThread::sleep_for(1ms);
 }
 
 void onHalfTransfer()
@@ -132,7 +140,12 @@ auto main() -> int
 	hal_timer.initialize(44'100 * coefficient);
 	coredac.initialize();
 
+	event_flags.set(flag::START);
+
 	while (true) {
+		event_flags.wait_any(flag::START);
+		event_flags.set(flag::START);	// Temporary
+
 		{
 			file.open(sound_file_path);
 			auto header_array = std::array<uint8_t, 44> {};
@@ -156,7 +169,7 @@ auto main() -> int
 
 		{
 			coredac.start();
-			while (!is_eof) rtos::ThisThread::sleep_for(500ms);
+			while (!is_eof) rtos::ThisThread::sleep_for(1s);
 		}	// Play on audio
 
 		rtos::ThisThread::sleep_for(1s);
