@@ -27,7 +27,8 @@ auto audio_enable = mbed::DigitalOut {SOUND_ENABLE, 1};
 
 constexpr uint32_t sample_rate_hz = 44'100;
 
-auto event_queue = CoreEventQueue {};
+auto event_queue		   = CoreEventQueue {};
+auto event_queue_converted = CoreEventQueue {};
 
 auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
 auto fatfs			= FATFileSystem {"fs"};
@@ -48,7 +49,7 @@ void initializeSD()
 // constexpr auto size = 128;
 // constexpr auto size = 256;
 // constexpr auto size = 512;
-constexpr auto size = 2'000;
+constexpr auto size = 5'000;
 // constexpr auto size = 1'024;
 // constexpr auto size = 2'048;
 // constexpr auto size = 4'096;
@@ -56,31 +57,45 @@ constexpr auto size = 2'000;
 // constexpr auto size = 16'384;
 // constexpr auto size = 32'768;
 // constexpr auto size = 65'536; // NOK
-constexpr auto coefficient	  = 2;						  // Related to ARR | ARR*coefficient ~= 2448
+constexpr auto coefficient	  = 10;						  // Related to ARR | ARR*coefficient ~= 2448
 constexpr auto data_file_size = size / coefficient / 2;	  // /2 for half buffer and *2
 std::array<int16_t, data_file_size> data_file {};
 // std::array<uint8_t, size> data_file {};
+std::array<uint16_t, size> data_converted {};
 std::array<uint16_t, size> data_play {};
 
-void setData(uint16_t offset)
+void convertData(uint32_t offset)
 {
 	file.read(data_file);
 
 	for (auto i = 0; i < data_file_size; i++) {
 		auto normalized_value = static_cast<uint16_t>((data_file.at(i) + 0x8000) >> 4);
-		std::fill_n(data_play.begin() + offset + i * coefficient, coefficient, normalized_value);
+		std::fill_n(data_converted.begin() + offset + i * coefficient, coefficient, normalized_value);
 	}
+	log_info("offset %d", offset);	 // Better than sleep_for
+}
+
+void setData(uint32_t offset)
+{
+	std::copy(data_converted.begin() + offset, data_converted.begin() + offset + size / 2, data_play.begin() + offset);
+
+	event_queue_converted.call([offset] { convertData(offset); });
+
+	// log_info("offset %d", offset);	 // Better than sleep_for
+	rtos::ThisThread::sleep_for(1ms);
 }
 
 void onHalfTransfer()
 {
 	// Fill first half
 	setData(0);
+	// std::fill_n(data_play.begin(), size / 2, 0x0);
 }
 void onCompleteTransfer()
 {
 	// Fill second half
 	setData(size / 2);
+	// std::fill_n(data_play.begin() + size / 2, size / 2, 0xFFF);
 }
 
 auto main() -> int
@@ -90,6 +105,7 @@ auto main() -> int
 	log_info("Hello, World!\n\n");
 	rtos::ThisThread::sleep_for(1s);
 
+	event_queue_converted.dispatch_forever();
 	event_queue.dispatch_forever();
 
 	initializeSD();
@@ -160,13 +176,20 @@ auto main() -> int
 	// 	return 0;
 	// }	// Correctly filled
 
+	convertData(0);
+	rtos::ThisThread::sleep_for(300ms);
+	convertData(size / 2);
+	rtos::ThisThread::sleep_for(300ms);
+
 	setData(0);
+	rtos::ThisThread::sleep_for(300ms);
 	setData(size / 2);
+	rtos::ThisThread::sleep_for(300ms);
 
 	coredac.registerDMACallbacks([] { event_queue.call(onHalfTransfer); },
 								 [] { event_queue.call(onCompleteTransfer); });
 
-	hal_timer.initialize();
+	hal_timer.initialize(44'100 * coefficient);
 	coredac.initialize();
 
 	coredac.registerDataToPlay(data_play);
