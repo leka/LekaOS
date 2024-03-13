@@ -25,6 +25,8 @@ struct File : public interface::File, public mbed::NonCopyable<File> {
 	auto read(std::span<uint8_t> buffer) -> std::size_t final;
 	auto write(std::span<uint8_t> data) -> std::size_t final;
 
+	auto read(std::span<int16_t> buffer) -> std::size_t final;
+
 	auto read(std::span<char> buffer) -> std::size_t final;
 	auto write(std::span<char> data) -> std::size_t final;
 
