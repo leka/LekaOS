@@ -104,7 +104,7 @@ void CoreDAC::_initializeDMA()
 	_hdma.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
 	_hdma.Init.MemDataAlignment	   = DMA_MDATAALIGN_HALFWORD;
 	_hdma.Init.Mode				   = DMA_CIRCULAR;
-	_hdma.Init.Priority			   = DMA_PRIORITY_VERY_HIGH;
+	_hdma.Init.Priority			   = DMA_PRIORITY_LOW;
 	_hdma.Init.FIFOMode			   = DMA_FIFOMODE_ENABLE;
 	_hdma.Init.FIFOThreshold	   = DMA_FIFO_THRESHOLD_HALFFULL;
 	_hdma.Init.MemBurst			   = DMA_MBURST_SINGLE;
