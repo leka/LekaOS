@@ -27,6 +27,8 @@ class File : public interface::File
 	MOCK_METHOD(size_t, read, (std::span<char>), (override));
 	MOCK_METHOD(size_t, write, (std::span<char>), (override));
 
+	MOCK_METHOD(size_t, read, (std::span<int16_t>), (override));
+
 	MOCK_METHOD(size_t, read, (uint8_t *, uint32_t), (override));
 	MOCK_METHOD(size_t, write, (const uint8_t *, uint32_t), (override));
 
