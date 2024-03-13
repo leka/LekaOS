@@ -12,10 +12,18 @@ target_include_directories(spike_lk_audio
 target_sources(spike_lk_audio
 	PRIVATE
 	main.cpp
+	WavFile.cpp
+	WavReader.cpp
+	AudioKit.cpp
 )
 
 target_link_libraries(spike_lk_audio
+	CoreSTM32Hal
+	CoreDAC
 	FileManagerKit
+	CoreEventQueue
+	CoreEventFlags
+	BLEKit
 )
 
 target_link_custom_leka_targets(spike_lk_audio)

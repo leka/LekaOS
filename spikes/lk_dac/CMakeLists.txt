@@ -17,6 +17,7 @@ target_sources(spike_lk_dac
 target_link_libraries(spike_lk_dac
 	CoreSTM32Hal
 	CoreDAC
+	CoreEventQueue
 )
 
 target_link_custom_leka_targets(spike_lk_dac)

@@ -1,16 +1,20 @@
 // Leka - LekaOS
-// Copyright 2022 APF France handicap
+// Copyright 2024 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include <array>
-#include <filesystem>
+#include <cmath>
 
-#include "drivers/AnalogOut.h"
-#include "drivers/DigitalOut.h"
-#include "platform/mbed_wait_api.h"
 #include "rtos/ThisThread.h"
-#include "rtos/Thread.h"
 
+#include "BLEKit.h"
+#include "BLEServiceConfig.h"
+
+#include "CoreDAC.h"
+#include "CoreEventFlags.h"
+#include "CoreEventQueue.h"
+#include "CoreSTM32Hal.h"
+#include "CoreSTM32HalBasicTimer.h"
+#include "DigitalOut.h"
 #include "FATFileSystem.h"
 #include "FileManagerKit.h"
 #include "LogKit.h"
@@ -19,50 +23,103 @@
 using namespace leka;
 using namespace std::chrono_literals;
 
-auto sd_bd = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
-auto fatfs = FATFileSystem {"fs"};
-
-const auto sound_file_path = std::filesystem::path {"/fs/home/wav/fur-elise.wav"};
-auto file				   = FileManagerKit::File {sound_file_path};
-
-auto thread_audio = rtos::Thread {};
+auto hal	   = CoreSTM32Hal {};
+auto hal_timer = CoreSTM32HalBasicTimer {hal};
+auto coredac   = CoreDAC {hal, hal_timer};
 
 auto audio_enable = mbed::DigitalOut {SOUND_ENABLE, 1};
-auto audio_output = mbed::AnalogOut {MCU_SOUND_OUT};
+
+constexpr uint32_t sample_rate_hz = 44'100;
+
+auto event_queue		   = CoreEventQueue {};
+auto event_queue_converted = CoreEventQueue {};
+
+auto sd_blockdevice = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
+auto fatfs			= FATFileSystem {"fs"};
+
+const auto sound_directory_path = std::filesystem::path {"/fs/home/wav"};
+auto sound_file_path			= sound_directory_path / std::filesystem::path {"440.wav"};
+auto file						= FileManagerKit::File {};
+
+auto event_flags = CoreEventFlags {};
+
+struct flag {
+	static constexpr uint32_t START = (1UL << 1);
+};
+
+auto service_config = BLEServiceConfig {};
+auto services		= std::to_array<interface::BLEService *>({&service_config});
+auto blekit			= BLEKit {};
 
 void initializeSD()
 {
-	constexpr auto default_sd_bd_frequency = uint64_t {25'000'000};
+	constexpr auto default_sd_blockdevice_frequency = uint64_t {25'000'000};
 
-	sd_bd.init();
-	sd_bd.frequency(default_sd_bd_frequency);
+	sd_blockdevice.init();
+	sd_blockdevice.frequency(default_sd_blockdevice_frequency);
 
-	fatfs.mount(&sd_bd);
+	fatfs.mount(&sd_blockdevice);
 }
 
-void playSound()
+// constexpr auto size = 128;
+// constexpr auto size = 256;
+// constexpr auto size = 512;
+constexpr auto size = 5'000;
+// constexpr auto size = 1'024;
+// constexpr auto size = 2'048;
+// constexpr auto size = 4'096;
+// constexpr auto size = 8'192;
+// constexpr auto size = 16'384;
+// constexpr auto size = 32'768;
+// constexpr auto size = 65'536; // NOK
+constexpr auto coefficient	  = 10;						  // Related to ARR | ARR*coefficient ~= 2448
+constexpr auto data_file_size = size / coefficient / 2;	  // /2 for half buffer and *2
+std::array<int16_t, data_file_size> data_file {};
+// std::array<uint8_t, size> data_file {};
+std::array<uint16_t, size> data_converted {};
+std::array<uint16_t, size> data_play {};
+
+auto is_eof = false;
+
+void convertData(uint32_t offset)
 {
-	static const auto _n_bytes_to_read = int {512};	  // arbitrary
-	auto _buffer					   = std::array<uint8_t, _n_bytes_to_read> {0};
+	auto bytes_read = file.read(data_file);
 
-	auto _ns_sample_rate		 = uint32_t {22676};		// 1,000,000,000 / 44,100 (in ns)
-	auto _ns_sample_rate_adapted = _ns_sample_rate * 1.7;	// arbitrary, 1s in MCU is not exactly 1s in real life
-	auto bytesread				 = uint32_t {_n_bytes_to_read};
-
-	/* START READ WAV */
-	while (bytesread == _n_bytes_to_read) {
-		// Read "_n_bytes_to_read" from file at each iteration. Real bytes read is given by "bytesread"
-		if (bytesread = file.read(_buffer.data(), _n_bytes_to_read); bytesread != 0) {
-			// Play every 2-bytes (sound encoded in 16 bits)
-			for (uint32_t j = 0; j < bytesread; j += 4) {	// Play one channel, data for stereo are alternate
-				audio_output.write_u16((_buffer.at(j + 1) + 0x8000) >>
-									   1);	 // offset for int16 data (0x8000) and volume 50% (>>1)
-
-				wait_ns(_ns_sample_rate_adapted);	// adjust play speed
-			}
-		}
+	for (auto i = 0; i < data_file_size; i++) {
+		auto normalized_value = static_cast<uint16_t>((data_file.at(i) + 0x8000) >> 4);
+		std::fill_n(data_converted.begin() + offset + i * coefficient, coefficient, normalized_value);
 	}
-	/* END READ WAV*/
+	is_eof = bytes_read != data_file_size;
+
+	log_info("bytes_read %d", bytes_read);	 // Better than sleep_for
+}
+
+void setData(uint32_t offset)
+{
+	if (is_eof) {
+		coredac.stop();
+		return;
+	}
+
+	std::copy(data_converted.begin() + offset, data_converted.begin() + offset + size / 2, data_play.begin() + offset);
+
+	event_queue_converted.call([offset] { convertData(offset); });
+
+	// log_info("");	// Better than sleep_for
+	rtos::ThisThread::sleep_for(1ms);
+}
+
+void onHalfTransfer()
+{
+	// Fill first half
+	setData(0);
+	// std::fill_n(data_play.begin(), size / 2, 0x0);
+}
+void onCompleteTransfer()
+{
+	// Fill second half
+	setData(size / 2);
+	// std::fill_n(data_play.begin() + size / 2, size / 2, 0xFFF);
 }
 
 auto main() -> int
@@ -70,17 +127,69 @@ auto main() -> int
 	logger::init();
 
 	log_info("Hello, World!\n\n");
+	rtos::ThisThread::sleep_for(1s);
+
+	event_queue_converted.dispatch_forever();
+	event_queue.dispatch_forever();
+
+	blekit.setServices(services);
+	blekit.init();
 
 	initializeSD();
-
 	if (FileManagerKit::file_is_missing(sound_file_path)) {
 		return 1;
 	}
 
+	service_config.onRobotNameUpdated([](const std::array<uint8_t, BLEServiceConfig::kMaxRobotNameSize> &robot_name) {
+		const auto *end_index = std::find(robot_name.begin(), robot_name.end(), '\0');
+		auto filename		  = std::string {robot_name.begin(), end_index} + ".wav";
+		sound_file_path		  = sound_directory_path / std::filesystem::path {filename};
+
+		log_info("Play file: %s", sound_file_path.c_str());
+		event_flags.set(flag::START);
+	});
+
+	// BEGIN -- NEW CODE
+
+	log_info("Initialize");
+	rtos::ThisThread::sleep_for(1s);
+
+	coredac.registerDMACallbacks([] { event_queue.call(onHalfTransfer); },
+								 [] { event_queue.call(onCompleteTransfer); });
+
+	hal_timer.initialize(44'100 * coefficient);
+	coredac.initialize();
+
+	event_flags.set(flag::START);
+
 	while (true) {
-		file.open(sound_file_path);
-		playSound();
-		file.close();
+		event_flags.wait_any(flag::START);
+
+		{
+			file.open(sound_file_path);
+			auto header_array = std::array<uint8_t, 44> {};
+			file.read(header_array);   // header
+
+			is_eof = false;
+
+			convertData(0);
+			rtos::ThisThread::sleep_for(300ms);
+			convertData(size / 2);
+			rtos::ThisThread::sleep_for(300ms);
+
+			setData(0);
+			rtos::ThisThread::sleep_for(300ms);
+			setData(size / 2);
+			rtos::ThisThread::sleep_for(300ms);
+
+			coredac.registerDataToPlay(data_play);
+			rtos::ThisThread::sleep_for(100ms);
+		}	// Setup new file
+
+		{
+			coredac.start();
+			while (!is_eof) rtos::ThisThread::sleep_for(1s);
+		}	// Play on audio
 
 		rtos::ThisThread::sleep_for(1s);
 	}
