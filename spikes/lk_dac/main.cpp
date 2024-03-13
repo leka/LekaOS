@@ -7,6 +7,7 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreDAC.h"
+#include "CoreEventQueue.h"
 #include "CoreSTM32Hal.h"
 #include "CoreSTM32HalBasicTimer.h"
 #include "DigitalOut.h"
@@ -26,6 +27,8 @@ extern "C" auto coredac	  = CoreDAC {hal, hal_timer};
 
 auto audio_enable = mbed::DigitalOut {SOUND_ENABLE, 1};
 
+auto event_queue = CoreEventQueue {};
+
 constexpr uint32_t sample_rate_hz = 44'100;
 constexpr auto coefficient		  = 10;
 
@@ -39,10 +42,24 @@ void fillBufferWithSinWave(uint16_t *buffer, uint32_t samples_per_period, uint16
 	};
 
 	for (uint32_t sample = 0; sample < samples_per_period; sample += coefficient) {
-		auto standard_value	  = sin0_1(sample * resolution);
-		auto normalized_value = normalization(standard_value);
-		std::fill_n(buffer + sample, coefficient, static_cast<uint16_t>(normalized_value));
+		if (sample < samples_per_period / 2) {
+			std::fill_n(buffer + sample, coefficient, maxValue);
+		} else {
+			std::fill_n(buffer + sample, coefficient, minValue);
+		}
+
+		// auto standard_value	  = sin0_1(sample * resolution);
+		// auto normalized_value = normalization(standard_value);
+		// std::fill_n(buffer + sample, coefficient, static_cast<uint16_t>(normalized_value));
 	}
+}
+
+constexpr auto played_buffer_size = 256;
+std::array<uint16_t, played_buffer_size> played_buffer {};
+
+void setData(uint16_t offset, uint16_t value)
+{
+	std::fill_n(played_buffer.begin() + offset, played_buffer_size / 2, value);
 }
 
 auto main() -> int
@@ -60,7 +77,15 @@ auto main() -> int
 	std::array<uint16_t, sample_rate_hz * coefficient / frequency> buffer {};
 	fillBufferWithSinWave(buffer.data(), buffer.size(), maxVal, minVal);
 
-	audio::internal::coredac.registerDataToPlay(buffer);
+	event_queue.dispatch_forever();
+	setData(0, minVal);
+	setData(played_buffer_size / 2, maxVal);
+
+	audio::internal::coredac.registerDMACallbacks(
+		[] { event_queue.call([] { setData(0, minVal); }); },
+		[] { event_queue.call([] { setData(played_buffer_size / 2, maxVal); }); });
+
+	audio::internal::coredac.registerDataToPlay(played_buffer);
 
 	log_info("buffer size: %d", buffer.size());
 	log_info("Start sound");
