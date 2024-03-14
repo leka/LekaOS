@@ -14,7 +14,7 @@
 
 namespace leka {
 
-class CoreDAC : public interface::DACBase
+class CoreDAC : public interface::DACDMA
 {
   public:
 	CoreDAC(interface::STM32Hal &hal, interface::STM32HalBasicTimer &hal_timer);
@@ -24,9 +24,9 @@ class CoreDAC : public interface::DACBase
 	void initialize() final;
 	void terminate() final;
 
-	void registerDataToPlay(std::span<uint16_t> data);
+	void registerDataToPlay(std::span<uint16_t> data) final;
 	void registerDMACallbacks(std::function<void()> const &on_half_transfer,
-							  std::function<void()> const &on_complete_transfer);
+							  std::function<void()> const &on_complete_transfer) final;
 
 	void start() final;
 	void stop() final;

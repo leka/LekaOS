@@ -4,6 +4,9 @@
 
 #pragma once
 
+#include <functional>
+#include <span>
+
 #include "interface/drivers/STM32Hal.h"
 
 namespace leka::interface {
@@ -20,6 +23,16 @@ class DACBase
 
 	virtual void start() = 0;
 	virtual void stop()	 = 0;
+};
+
+class DACDMA : public DACBase
+{
+  public:
+	virtual ~DACDMA() = default;
+
+	virtual void registerDataToPlay(std::span<uint16_t> data)							 = 0;
+	virtual void registerDMACallbacks(std::function<void()> const &on_half_transfer,
+									  std::function<void()> const &on_complete_transfer) = 0;
 };
 
 }	// namespace leka::interface
