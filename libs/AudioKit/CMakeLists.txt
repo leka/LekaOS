@@ -11,10 +11,14 @@ target_include_directories(AudioKit
 
 target_sources(AudioKit
 	PRIVATE
+	source/AudioKit.cpp
 	source/WavFile.cpp
 )
 
 target_link_libraries(AudioKit
 	mbed-os
+	CoreSTM32Hal
+	CoreDAC
+	CoreEventQueue
 	FileManagerKit
 )
