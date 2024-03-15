@@ -44,6 +44,7 @@ void ReinforcerKit::playDefault()
 void ReinforcerKit::stop()
 {
 	_ledkit.stop();
+	_audiokit.stop();
 	_motionkit.stop();
 	_videokit.stopVideo();
 }
