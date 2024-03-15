@@ -17,6 +17,8 @@ target_sources(ReinforcerKit
 target_link_libraries(ReinforcerKit
 	LedKit
 	MotionKit
+	CoreDAC
+	AudioKit
 )
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
