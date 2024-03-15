@@ -148,7 +148,7 @@ auto videokit = VideoKit {internal::event_loop, internal::corevideo};
 
 }	// namespace display
 
-auto behaviorkit   = BehaviorKit {display::videokit, ledkit, motor::left, motor::right};
+auto behaviorkit   = BehaviorKit {display::videokit, ledkit, motor::left, motor::right, audio::kit};
 auto reinforcerkit = ReinforcerKit {display::videokit, ledkit, motionkit};
 
 namespace command {

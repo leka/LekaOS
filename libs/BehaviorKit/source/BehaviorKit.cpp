@@ -91,7 +91,7 @@ void BehaviorKit::working()
 
 void BehaviorKit::magicCardDetected()
 {
-	// do nothing
+	// nothing to do
 }
 
 void BehaviorKit::fileExchange()
@@ -106,6 +106,7 @@ void BehaviorKit::stop()
 	_videokit.stopVideo();
 	_motor_left.stop();
 	_motor_right.stop();
+	_audiokit.stop();
 }
 
 }	// namespace leka

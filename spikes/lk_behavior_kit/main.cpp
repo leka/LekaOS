@@ -7,7 +7,9 @@
 #include "drivers/HighResClock.h"
 #include "rtos/ThisThread.h"
 
+#include "AudioKit.h"
 #include "BehaviorKit.h"
+#include "CoreDAC.h"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
 #include "CoreFont.hpp"
@@ -25,6 +27,7 @@
 #include "CoreSDRAM.hpp"
 #include "CoreSPI.h"
 #include "CoreSTM32Hal.h"
+#include "CoreSTM32HalBasicTimer.h"
 #include "CoreVideo.hpp"
 #include "EventLoopKit.h"
 #include "FATFileSystem.h"
@@ -142,6 +145,21 @@ namespace motors {
 
 }	// namespace motors
 
+auto hal = CoreSTM32Hal {};
+
+namespace audio {
+
+	namespace internal {
+
+		extern "C" auto hal_timer = CoreSTM32HalBasicTimer {hal};
+		extern "C" auto coredac	  = CoreDAC {hal, hal_timer};
+
+	}	// namespace internal
+
+	auto kit = AudioKit {internal::hal_timer, internal::coredac};
+
+}	// namespace audio
+
 namespace display {
 
 	namespace internal {
@@ -151,7 +169,6 @@ namespace display {
 
 		auto corell		   = CoreLL {};
 		auto pixel		   = CGPixel {corell};
-		auto hal		   = CoreSTM32Hal {};
 		auto coresdram	   = CoreSDRAM {hal};
 		auto coredma2d	   = CoreDMA2D {hal};
 		auto coredsi	   = CoreDSI {hal};
@@ -172,7 +189,7 @@ namespace display {
 
 }	// namespace display
 
-auto behaviorkit = BehaviorKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
+auto behaviorkit = BehaviorKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor, audio::kit};
 auto hello		 = HelloWorld {};
 
 }	// namespace
@@ -186,6 +203,7 @@ auto main() -> int
 
 	leds::kit.init();
 	sd::init();
+	audio::kit.initialize();
 	display::internal::corelcd.turnOn();
 	display::videokit.initializeScreen();
 
