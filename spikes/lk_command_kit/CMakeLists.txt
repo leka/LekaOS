@@ -19,7 +19,6 @@ target_link_libraries(spike_lk_command_kit
 	CoreMotor
 	CorePwm
 	CoreSPI
-	BehaviorKit
 	CommandKit
 	LedKit
 	VideoKit

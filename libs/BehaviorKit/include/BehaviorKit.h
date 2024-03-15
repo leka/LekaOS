@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "AudioKit.h"
 #include "interface/drivers/Motor.h"
 #include "interface/libs/LedKit.h"
 #include "interface/libs/VideoKit.h"
@@ -14,8 +15,8 @@ class BehaviorKit
 {
   public:
 	explicit BehaviorKit(interface::VideoKit &videokit, interface::LedKit &ledkit, interface::Motor &motor_left,
-						 interface::Motor &motor_right)
-		: _videokit(videokit), _ledkit(ledkit), _motor_left(motor_left), _motor_right(motor_right)
+						 interface::Motor &motor_right, AudioKit &audiokit)
+		: _videokit(videokit), _ledkit(ledkit), _motor_left(motor_left), _motor_right(motor_right), _audiokit(audiokit)
 	{
 		// nothing do to
 	}
@@ -53,6 +54,7 @@ class BehaviorKit
 	interface::LedKit &_ledkit;
 	interface::Motor &_motor_left;
 	interface::Motor &_motor_right;
+	AudioKit &_audiokit;
 };
 
 }	// namespace leka

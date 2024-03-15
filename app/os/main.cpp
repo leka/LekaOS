@@ -10,9 +10,11 @@
 #include "rtos/Thread.h"
 
 #include "ActivityKit.h"
+#include "AudioKit.h"
 #include "ChooseReinforcer.h"
 #include "CoreBattery.h"
 #include "CoreBufferedSerial.h"
+#include "CoreDAC.h"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
 #include "CoreFlashIS25LP016D.h"
@@ -37,6 +39,7 @@
 #include "CoreSDRAM.hpp"
 #include "CoreSPI.h"
 #include "CoreSTM32Hal.h"
+#include "CoreSTM32HalBasicTimer.h"
 #include "CoreTimeout.h"
 #include "CoreVideo.hpp"
 #include "DisplayTags.h"
@@ -229,6 +232,21 @@ namespace motors {
 
 }	// namespace motors
 
+auto hal = CoreSTM32Hal {};
+
+namespace audio {
+
+	namespace internal {
+
+		extern "C" auto hal_timer = CoreSTM32HalBasicTimer {hal};
+		extern "C" auto coredac	  = CoreDAC {hal, hal_timer};
+
+	}	// namespace internal
+
+	auto kit = AudioKit {internal::hal_timer, internal::coredac};
+
+}	// namespace audio
+
 namespace display::internal {
 
 	auto event_loop = EventLoopKit {};
@@ -236,7 +254,6 @@ namespace display::internal {
 
 	auto corell		   = CoreLL {};
 	auto pixel		   = CGPixel {corell};
-	auto hal		   = CoreSTM32Hal {};
 	auto coresdram	   = CoreSDRAM {hal};
 	auto coredma2d	   = CoreDMA2D {hal};
 	auto coredsi	   = CoreDSI {hal};
@@ -278,7 +295,7 @@ namespace motion::internal {
 
 auto motionkit = MotionKit {motors::left::motor, motors::right::motor, imukit, motion::internal::timeout};
 
-auto behaviorkit   = BehaviorKit {videokit, ledkit, motors::left::motor, motors::right::motor};
+auto behaviorkit   = BehaviorKit {videokit, ledkit, motors::left::motor, motors::right::motor, audio::kit};
 auto reinforcerkit = ReinforcerKit {videokit, ledkit, motionkit};
 
 namespace command {
@@ -564,6 +581,8 @@ auto main() -> int
 
 	imu::lsm6dsox.init();
 	imukit.init();
+
+	audio::kit.initialize();
 
 	robot::controller.initializeComponents();
 	robot::controller.registerOnUpdateLoadedCallback(firmware::setPendingUpdate);
