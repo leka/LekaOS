@@ -84,6 +84,11 @@ void BehaviorKit::working()
 	_videokit.displayImage(fs::home::img::system::robot_face_smiling_slightly);
 }
 
+void BehaviorKit::magicCardDetected()
+{
+	// do nothing
+}
+
 void BehaviorKit::fileExchange()
 {
 	// TODO(@ladislas): add file exchange image

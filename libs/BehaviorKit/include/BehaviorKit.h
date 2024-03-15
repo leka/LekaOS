@@ -38,6 +38,8 @@ class BehaviorKit
 	void bleConnectionWithVideo();
 	void working();
 
+	void magicCardDetected();
+
 	void fileExchange();
 
 	void stop();
