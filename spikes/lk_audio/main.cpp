@@ -1,34 +1,36 @@
 // Leka - LekaOS
-// Copyright 2022 APF France handicap
+// Copyright 2024 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-#include <array>
-#include <filesystem>
-
-#include "drivers/AnalogOut.h"
-#include "drivers/DigitalOut.h"
-#include "platform/mbed_wait_api.h"
 #include "rtos/ThisThread.h"
-#include "rtos/Thread.h"
 
+#include "BLEKit.h"
+#include "BLEServiceConfig.h"
+
+#include "AudioKit.h"
+#include "CoreDAC.h"
+#include "CoreSTM32Hal.h"
+#include "CoreSTM32HalBasicTimer.h"
 #include "FATFileSystem.h"
-#include "FileManagerKit.h"
 #include "LogKit.h"
 #include "SDBlockDevice.h"
 
 using namespace leka;
 using namespace std::chrono_literals;
 
-auto sd_bd = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
-auto fatfs = FATFileSystem {"fs"};
+auto hal	   = CoreSTM32Hal {};
+auto hal_timer = CoreSTM32HalBasicTimer {hal};
+auto coredac   = CoreDAC {hal, hal_timer};
 
-const auto sound_file_path = std::filesystem::path {"/fs/home/wav/fur-elise.wav"};
-auto file				   = FileManagerKit::File {sound_file_path};
+auto sd_bd	  = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
+auto fatfs	  = FATFileSystem {"fs"};
+auto filename = std::filesystem::path {};
 
-auto thread_audio = rtos::Thread {};
+auto audiokit = AudioKit {hal_timer, coredac};
 
-auto audio_enable = mbed::DigitalOut {SOUND_ENABLE, 1};
-auto audio_output = mbed::AnalogOut {MCU_SOUND_OUT};
+auto service_config = BLEServiceConfig {};
+auto services		= std::to_array<interface::BLEService *>({&service_config});
+auto blekit			= BLEKit {};
 
 void initializeSD()
 {
@@ -40,29 +42,10 @@ void initializeSD()
 	fatfs.mount(&sd_bd);
 }
 
-void playSound()
+void play(std::string filename)
 {
-	static const auto _n_bytes_to_read = int {512};	  // arbitrary
-	auto _buffer					   = std::array<uint8_t, _n_bytes_to_read> {0};
-
-	auto _ns_sample_rate		 = uint32_t {22676};		// 1,000,000,000 / 44,100 (in ns)
-	auto _ns_sample_rate_adapted = _ns_sample_rate * 1.7;	// arbitrary, 1s in MCU is not exactly 1s in real life
-	auto bytesread				 = uint32_t {_n_bytes_to_read};
-
-	/* START READ WAV */
-	while (bytesread == _n_bytes_to_read) {
-		// Read "_n_bytes_to_read" from file at each iteration. Real bytes read is given by "bytesread"
-		if (bytesread = file.read(_buffer.data(), _n_bytes_to_read); bytesread != 0) {
-			// Play every 2-bytes (sound encoded in 16 bits)
-			for (uint32_t j = 0; j < bytesread; j += 4) {	// Play one channel, data for stereo are alternate
-				audio_output.write_u16((_buffer.at(j + 1) + 0x8000) >>
-									   1);	 // offset for int16 data (0x8000) and volume 50% (>>1)
-
-				wait_ns(_ns_sample_rate_adapted);	// adjust play speed
-			}
-		}
-	}
-	/* END READ WAV*/
+	log_info("Play file: %s", filename.c_str());
+	audiokit.play(filename);
 }
 
 auto main() -> int
@@ -70,18 +53,22 @@ auto main() -> int
 	logger::init();
 
 	log_info("Hello, World!\n\n");
+	rtos::ThisThread::sleep_for(1s);
 
 	initializeSD();
 
-	if (FileManagerKit::file_is_missing(sound_file_path)) {
-		return 1;
-	}
+	audiokit.initialize();
+
+	blekit.setServices(services);
+	blekit.init();
+
+	service_config.onRobotNameUpdated([](const std::array<uint8_t, BLEServiceConfig::kMaxRobotNameSize> &robot_name) {
+		const auto *end_index = std::find(robot_name.begin(), robot_name.end(), '\0');
+		filename			  = std::string {robot_name.begin(), end_index};
+		play(filename);
+	});
 
 	while (true) {
-		file.open(sound_file_path);
-		playSound();
-		file.close();
-
-		rtos::ThisThread::sleep_for(1s);
+		rtos::ThisThread::sleep_for(1min);
 	}
 }
