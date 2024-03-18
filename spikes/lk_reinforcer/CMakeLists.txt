@@ -27,6 +27,8 @@ target_link_libraries(spike_lk_reinforcer
 	MotionKit
 	ReinforcerKit
 	CoreTimeout
+	CoreDAC
+	AudioKit
 )
 
 target_link_custom_leka_targets(spike_lk_reinforcer)

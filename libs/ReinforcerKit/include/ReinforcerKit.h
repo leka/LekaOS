@@ -8,6 +8,7 @@
 #include <interface/libs/LedKit.h>
 #include <interface/libs/VideoKit.h>
 
+#include "AudioKit.h"
 #include "MotionKit.hpp"
 
 namespace leka {
@@ -15,8 +16,9 @@ namespace leka {
 class ReinforcerKit
 {
   public:
-	explicit ReinforcerKit(interface::VideoKit &videokit, interface::LedKit &ledkit, MotionKit &motion_kit)
-		: _videokit(videokit), _ledkit(ledkit), _motionkit(motion_kit)
+	explicit ReinforcerKit(interface::VideoKit &videokit, interface::LedKit &ledkit, AudioKit &audiokit,
+						   MotionKit &motion_kit)
+		: _videokit(videokit), _ledkit(ledkit), _audiokit(audiokit), _motionkit(motion_kit)
 	{
 		// nothing do to
 	}
@@ -38,6 +40,7 @@ class ReinforcerKit
   private:
 	interface::VideoKit &_videokit;
 	interface::LedKit &_ledkit;
+	AudioKit &_audiokit;
 	MotionKit &_motionkit;
 	Reinforcer _default_reinforcer = Reinforcer::Rainbow;
 	const float kThreeTurnDegrees  = 1080.F;

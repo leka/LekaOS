@@ -447,6 +447,7 @@ class RobotController : public interface::RobotController
 			// ! be changed. It is a temporary fix for #1311
 			// TODO(@leka/dev-embedded): remove when fixed
 			_service_magic_card.setMagicCard(card);
+			_behaviorkit.magicCardDetected();
 			onMagicCardAvailable(card);
 		});
 

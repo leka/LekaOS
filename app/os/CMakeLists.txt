@@ -40,6 +40,8 @@ target_link_libraries(LekaOS
 	IMUKit
 	MotionKit
 	EventLoopKit
+	CoreDAC
+	AudioKit
 )
 
 target_link_custom_leka_targets(LekaOS)
