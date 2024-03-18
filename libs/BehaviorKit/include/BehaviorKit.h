@@ -30,6 +30,7 @@ class BehaviorKit
 	void blinkOnCharge();
 
 	void lowBattery();
+	void mediumLowBattery();
 
 	void chargingEmpty();
 	void chargingLow();
