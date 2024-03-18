@@ -51,6 +51,7 @@ void ReinforcerKit::stop()
 
 void ReinforcerKit::playBlinkGreen()
 {
+	_audiokit.play("1-ACTIVITE REUSSIE");
 	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-reinforcer-happy-no_eyebrows.avi");
 	_ledkit.start(&led::animation::blink_green);
 	_motionkit.startYawRotation(kThreeTurnDegrees, Rotation::clockwise, [this] { _ledkit.stop(); });
@@ -58,6 +59,7 @@ void ReinforcerKit::playBlinkGreen()
 
 void ReinforcerKit::playSpinBlink()
 {
+	_audiokit.play("1-ACTIVITE REUSSIE");
 	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-reinforcer-happy-no_eyebrows.avi");
 	_ledkit.start(&led::animation::spin_blink);
 	_motionkit.startYawRotation(kThreeTurnDegrees, Rotation::counterClockwise, [this] { _ledkit.stop(); });
@@ -65,6 +67,7 @@ void ReinforcerKit::playSpinBlink()
 
 void ReinforcerKit::playFire()
 {
+	_audiokit.play("1-ACTIVITE REUSSIE");
 	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-reinforcer-happy-no_eyebrows.avi",
 							[this] { _ledkit.stop(); });
 	_ledkit.start(&led::animation::fire);
@@ -72,6 +75,7 @@ void ReinforcerKit::playFire()
 
 void ReinforcerKit::playSprinkles()
 {
+	_audiokit.play("1-ACTIVITE REUSSIE");
 	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-reinforcer-happy-no_eyebrows.avi",
 							[this] { _ledkit.stop(); });
 	_ledkit.start(&led::animation::sprinkles);
@@ -79,6 +83,7 @@ void ReinforcerKit::playSprinkles()
 
 void ReinforcerKit::playRainbow()
 {
+	_audiokit.play("1-ACTIVITE REUSSIE");
 	_videokit.playVideoOnce("/fs/home/vid/system/robot-system-reinforcer-happy-no_eyebrows.avi",
 							[this] { _ledkit.stop(); });
 	_ledkit.start(&led::animation::rainbow);
