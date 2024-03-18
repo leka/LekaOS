@@ -32,7 +32,7 @@ class FileReception
 	CoreEventQueue event_queue {};
 
 	CircularQueue<uint8_t, 1024> _circular_queue {};
-	std::array<uint8_t, 128> _buffer {};
+	std::array<uint8_t, 256> _buffer {};
 };
 
 }	// namespace leka
