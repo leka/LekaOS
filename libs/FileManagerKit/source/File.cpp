@@ -60,6 +60,11 @@ auto File::read(std::span<uint8_t> buffer) -> std::size_t
 	return std::fread(buffer.data(), sizeof(uint8_t), buffer.size(), _file.get());
 }
 
+auto File::read(std::span<int16_t> buffer) -> std::size_t
+{
+	return std::fread(buffer.data(), sizeof(int16_t), buffer.size(), _file.get());
+}
+
 auto File::write(std::span<uint8_t> data) -> std::size_t
 {
 	return std::fwrite(data.data(), sizeof(uint8_t), data.size(), _file.get());

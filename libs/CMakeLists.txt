@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 add_subdirectory(${LIBS_DIR}/ActivityKit)
+add_subdirectory(${LIBS_DIR}/AudioKit)
 add_subdirectory(${LIBS_DIR}/BatteryKit)
 add_subdirectory(${LIBS_DIR}/BehaviorKit)
 add_subdirectory(${LIBS_DIR}/BLEKit)
