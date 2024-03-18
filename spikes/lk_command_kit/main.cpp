@@ -38,6 +38,7 @@
 #include "ReinforcerKit.h"
 #include "SDBlockDevice.h"
 #include "VideoKit.h"
+#include "commands/BehaviorCommand.h"
 #include "commands/LedFullCommand.h"
 #include "commands/LedRangeCommand.h"
 #include "commands/LedSingleCommand.h"
@@ -148,6 +149,7 @@ auto videokit = VideoKit {internal::event_loop, internal::corevideo};
 
 }	// namespace display
 
+auto behaviorkit   = BehaviorKit {display::videokit, ledkit, motor::left, motor::right};
 auto reinforcerkit = ReinforcerKit {display::videokit, ledkit, motionkit};
 
 namespace command {
@@ -163,6 +165,7 @@ namespace internal {
 	auto motors		= MotorsCommand {motor::left, motor::right};
 	auto reinforcer = ReinforcerCommand {reinforcerkit};
 	auto video		= VideoCommand {display::videokit};
+	auto behavior	= BehaviorCommand {behaviorkit};
 
 }	// namespace internal
 
@@ -214,6 +217,7 @@ auto list = std::to_array<interface::Command *>({
 	&internal::led_range,
 	&internal::reinforcer,
 	&internal::video,
+	&internal::behavior,
 });
 
 }	// namespace command
