@@ -25,3 +25,9 @@ target_link_libraries(CoreDAC
 	mbed-os
 	CoreSTM32Hal
 )
+
+if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
+	leka_unit_tests_sources(
+		tests/CoreSTM32HalBasicTimer_test.cpp
+	)
+endif()
