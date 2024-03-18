@@ -12,6 +12,7 @@ target_include_directories(CoreDAC
 target_sources(CoreDAC
 	PRIVATE
 	source/CoreSTM32HalBasicTimer.cpp
+	source/CoreDAC.cpp
 )
 
 if(NOT(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests"))

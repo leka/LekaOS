@@ -24,7 +24,10 @@ class CoreSTM32Hal : public interface::STM32Hal
 	MOCK_METHOD(void, HAL_RCC_TIM7_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_TIM7_CLK_DISABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_FMC_CLK_ENABLE, (), (override));
+	MOCK_METHOD(void, HAL_RCC_DMA1_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_DMA2_CLK_ENABLE, (), (override));
+	MOCK_METHOD(void, HAL_RCC_DAC_CLK_ENABLE, (), (override));
+	MOCK_METHOD(void, HAL_RCC_DAC_CLK_DISABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_JPEG_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_JPEG_FORCE_RESET, (), (override));
 	MOCK_METHOD(void, HAL_RCC_JPEG_RELEASE_RESET, (), (override));
@@ -125,6 +128,18 @@ class CoreSTM32Hal : public interface::STM32Hal
 	MOCK_METHOD(HAL_StatusTypeDef, HAL_TIM_Base_Start_IT, (TIM_HandleTypeDef * htim), (override));
 	MOCK_METHOD(HAL_StatusTypeDef, HAL_TIM_Base_Stop_IT, (TIM_HandleTypeDef * htim), (override));
 	MOCK_METHOD(HAL_StatusTypeDef, HAL_TIM_Base_DeInit, (TIM_HandleTypeDef * htim), (override));
+
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_DAC_Init, (DAC_HandleTypeDef * hdac), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_DAC_ConfigChannel,
+				(DAC_HandleTypeDef * hdac, DAC_ChannelConfTypeDef *sConfig, uint32_t Channel), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_DAC_RegisterCallback,
+				(DAC_HandleTypeDef * hdac, HAL_DAC_CallbackIDTypeDef CallbackID, pDAC_CallbackTypeDef pCallback),
+				(override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_DAC_Start_DMA,
+				(DAC_HandleTypeDef * hdac, uint32_t Channel, uint32_t *pData, uint32_t Length, uint32_t Alignment),
+				(override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_DAC_Stop_DMA, (DAC_HandleTypeDef * hdac, uint32_t Channel), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_DAC_DeInit, (DAC_HandleTypeDef * hdac), (override));
 };
 
 }	// namespace leka::mock

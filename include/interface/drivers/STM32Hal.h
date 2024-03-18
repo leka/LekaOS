@@ -29,7 +29,11 @@ class STM32Hal
 
 	virtual void HAL_RCC_FMC_CLK_ENABLE() = 0;
 
+	virtual void HAL_RCC_DMA1_CLK_ENABLE() = 0;
 	virtual void HAL_RCC_DMA2_CLK_ENABLE() = 0;
+
+	virtual void HAL_RCC_DAC_CLK_ENABLE()  = 0;
+	virtual void HAL_RCC_DAC_CLK_DISABLE() = 0;
 
 	virtual void HAL_RCC_JPEG_CLK_ENABLE()	  = 0;
 	virtual void HAL_RCC_JPEG_FORCE_RESET()	  = 0;
@@ -121,6 +125,16 @@ class STM32Hal
 	virtual auto HAL_TIM_Base_Start_IT(TIM_HandleTypeDef *htim) -> HAL_StatusTypeDef		   = 0;
 	virtual auto HAL_TIM_Base_Stop_IT(TIM_HandleTypeDef *htim) -> HAL_StatusTypeDef			   = 0;
 	virtual auto HAL_TIM_Base_DeInit(TIM_HandleTypeDef *htim) -> HAL_StatusTypeDef			   = 0;
+
+	virtual auto HAL_DAC_Init(DAC_HandleTypeDef *hdac) -> HAL_StatusTypeDef = 0;
+	virtual auto HAL_DAC_ConfigChannel(DAC_HandleTypeDef *hdac, DAC_ChannelConfTypeDef *sConfig, uint32_t Channel)
+		-> HAL_StatusTypeDef																	  = 0;
+	virtual auto HAL_DAC_RegisterCallback(DAC_HandleTypeDef *hdac, HAL_DAC_CallbackIDTypeDef CallbackID,
+										  pDAC_CallbackTypeDef pCallback) -> HAL_StatusTypeDef	  = 0;
+	virtual auto HAL_DAC_Start_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel, uint32_t *pData, uint32_t Length,
+								   uint32_t Alignment) -> HAL_StatusTypeDef						  = 0;
+	virtual auto HAL_DAC_Stop_DMA(DAC_HandleTypeDef *hdac, uint32_t Channel) -> HAL_StatusTypeDef = 0;
+	virtual auto HAL_DAC_DeInit(DAC_HandleTypeDef *hdac) -> HAL_StatusTypeDef					  = 0;
 };
 
 }	// namespace leka::interface
