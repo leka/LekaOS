@@ -27,6 +27,7 @@ void BehaviorKit::spinRight(float speed)
 
 void BehaviorKit::launching()
 {
+	_audiokit.play("37-WELCOME");
 	_videokit.displayImage(fs::home::img::system::robot_misc_splash_screen_large_400);
 }
 
@@ -49,6 +50,7 @@ void BehaviorKit::blinkOnCharge()
 
 void BehaviorKit::lowBattery()
 {
+	_audiokit.play("27-BATTERIE MINIME");
 	_ledkit.stop();
 	_videokit.displayImage(fs::home::img::system::robot_battery_empty_must_be_charged);
 	_motor_left.stop();
@@ -57,6 +59,7 @@ void BehaviorKit::lowBattery()
 
 void BehaviorKit::mediumLowBattery()
 {
+	_audiokit.play("3-BATTERIE FAIBLE");
 	_videokit.playVideoOnce(fs::home::vid::actions::robot_animation_action_yawning_no_eyebrows);
 }
 
@@ -82,16 +85,19 @@ void BehaviorKit::chargingHigh()
 
 void BehaviorKit::chargingFull()
 {
+	_audiokit.play("8-FIN DE CHARGE");
 	_videokit.displayImage(fs::home::img::system::robot_battery_charging_quarter_4_green);
 }
 
 void BehaviorKit::bleConnectionWithoutVideo()
 {
+	_audiokit.play("25-CONNEXION BT");
 	_ledkit.start(&led::animation::ble_connection);
 }
 
 void BehaviorKit::bleConnectionWithVideo()
 {
+	_audiokit.play("25-CONNEXION BT");
 	_ledkit.start(&led::animation::ble_connection);
 	_videokit.playVideoOnce(fs::home::vid::system::robot_system_ble_connection_wink_no_eyebrows);
 }
@@ -103,7 +109,7 @@ void BehaviorKit::working()
 
 void BehaviorKit::magicCardDetected()
 {
-	// nothing to do
+	_audiokit.play("21-TAG DETEC");
 }
 
 void BehaviorKit::fileExchange()
