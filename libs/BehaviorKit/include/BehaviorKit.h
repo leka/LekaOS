@@ -20,9 +20,6 @@ class BehaviorKit
 		// nothing do to
 	}
 
-	void spinLeft(float speed);
-	void spinRight(float speed);
-
 	void launching();
 	void sleeping();
 	void waiting();
