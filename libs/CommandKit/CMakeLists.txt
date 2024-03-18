@@ -19,6 +19,7 @@ target_link_libraries(CommandKit
 	CoreLED
 	CoreMotor
 	ReinforcerKit
+	BehaviorKit
 	EventLoopKit
 	mbed-os
 )
