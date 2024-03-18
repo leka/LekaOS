@@ -81,6 +81,12 @@ struct BehaviorCommand : interface::Command {
 			case cmd::behavior::file_exchange:
 				_behaviorkit.fileExchange();
 				break;
+			case cmd::behavior::magic_card_detected:
+				_behaviorkit.magicCardDetected();
+				break;
+			case cmd::behavior::medium_low_battery:
+				_behaviorkit.mediumLowBattery();
+				break;
 			default:
 				_behaviorkit.stop();
 				break;
@@ -110,6 +116,8 @@ struct BehaviorCommand : interface::Command {
 			static constexpr auto ble_connection_with_video	   = uint8_t {0x0C};
 			static constexpr auto working					   = uint8_t {0x0D};
 			static constexpr auto file_exchange				   = uint8_t {0x0E};
+			static constexpr auto magic_card_detected		   = uint8_t {0x0F};
+			static constexpr auto medium_low_battery		   = uint8_t {0x10};
 		};
 	};
 
