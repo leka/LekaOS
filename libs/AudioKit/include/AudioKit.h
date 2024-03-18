@@ -9,6 +9,7 @@
 #include "FileManagerKit.h"
 #include "WavFile.h"
 #include "interface/drivers/DAC.h"
+#include "interface/drivers/FlashMemory.h"
 #include "interface/drivers/STM32HalBasicTimer.h"
 
 namespace leka {
@@ -16,8 +17,8 @@ namespace leka {
 class AudioKit
 {
   public:
-	explicit AudioKit(interface::STM32HalBasicTimer &dac_timer, interface::DACDMA &dac)
-		: _dac_timer(dac_timer), _dac(dac)
+	explicit AudioKit(interface::STM32HalBasicTimer &dac_timer, interface::DACDMA &dac, interface::FlashMemory &flash)
+		: _dac_timer(dac_timer), _dac(dac), _flash(flash)
 	{
 		// nothing to do
 	}
@@ -30,6 +31,7 @@ class AudioKit
 	void play(const std::filesystem::path &path);
 	void stop();
 
+	auto preloadData(const std::filesystem::path &filename) -> bool;
 	void setData(uint32_t offset);
 	void run();
 
@@ -38,11 +40,15 @@ class AudioKit
 
 	interface::STM32HalBasicTimer &_dac_timer;
 	interface::DACDMA &_dac;
+	interface::FlashMemory &_flash;
 
 	FileManagerKit::File _file {};
 	WavFile _wav_file {_file};
+	uint32_t _file_size {};
 
 	CoreEventQueue _event_queue {};
+
+	uint32_t _flash_address {0};
 
 	static constexpr uint32_t played_data_size {2000};
 	std::array<uint16_t, played_data_size> played_data {};
