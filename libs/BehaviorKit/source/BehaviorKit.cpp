@@ -43,6 +43,11 @@ void BehaviorKit::lowBattery()
 	_motor_right.stop();
 }
 
+void BehaviorKit::mediumLowBattery()
+{
+	_videokit.playVideoOnce(fs::home::vid::actions::robot_animation_action_yawning_no_eyebrows);
+}
+
 void BehaviorKit::chargingEmpty()
 {
 	_videokit.displayImage(fs::home::img::system::robot_battery_charging_empty_red);
