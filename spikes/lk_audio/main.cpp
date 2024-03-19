@@ -9,6 +9,9 @@
 
 #include "AudioKit.h"
 #include "CoreDAC.h"
+#include "CoreFlashIS25LP016D.h"
+#include "CoreFlashManagerIS25LP016D.h"
+#include "CoreQSPI.h"
 #include "CoreSTM32Hal.h"
 #include "CoreSTM32HalBasicTimer.h"
 #include "FATFileSystem.h"
@@ -22,6 +25,26 @@ auto sd_bd	  = SDBlockDevice {SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK};
 auto fatfs	  = FATFileSystem {"fs"};
 auto filename = std::filesystem::path {};
 
+namespace external_flash {
+
+namespace internal {
+
+	auto qspi	 = CoreQSPI();
+	auto manager = CoreFlashManagerIS25LP016D(qspi);
+
+}	// namespace internal
+
+auto memory = CoreFlashIS25LP016D(internal::qspi, internal::manager);
+
+void initialize()
+{
+	memory.reset();
+	internal::qspi.setDataTransmissionFormat();
+	internal::qspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
+}
+
+}	// namespace external_flash
+
 auto hal = CoreSTM32Hal {};
 
 namespace audio {
@@ -33,7 +56,7 @@ namespace internal {
 
 }	// namespace internal
 
-auto kit = AudioKit {internal::hal_timer, internal::coredac};
+auto kit = AudioKit {internal::hal_timer, internal::coredac, external_flash::memory};
 
 }	// namespace audio
 
@@ -65,6 +88,7 @@ auto main() -> int
 	rtos::ThisThread::sleep_for(1s);
 
 	initializeSD();
+	external_flash::initialize();
 
 	audio::kit.initialize();
 
