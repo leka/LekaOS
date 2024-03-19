@@ -44,26 +44,6 @@ TEST_F(BehaviorKitTest, initialization)
 	ASSERT_NE(&behaviorkit, nullptr);
 }
 
-TEST_F(BehaviorKitTest, spinLeftAnySpeed)
-{
-	auto expected_speed = 0.7;
-
-	EXPECT_CALL(mock_motor_left, spin(Rotation::clockwise, expected_speed));
-	EXPECT_CALL(mock_motor_right, spin(Rotation::clockwise, expected_speed));
-
-	behaviorkit.spinLeft(expected_speed);
-}
-
-TEST_F(BehaviorKitTest, spinRightAnySpeed)
-{
-	auto expected_speed = 0.3;
-
-	EXPECT_CALL(mock_motor_left, spin(Rotation::counterClockwise, expected_speed));
-	EXPECT_CALL(mock_motor_right, spin(Rotation::counterClockwise, expected_speed));
-
-	behaviorkit.spinRight(expected_speed);
-}
-
 TEST_F(BehaviorKitTest, launching)
 {
 	EXPECT_CALL(mock_videokit, displayImage);

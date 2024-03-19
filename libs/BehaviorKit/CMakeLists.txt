@@ -18,6 +18,7 @@ target_link_libraries(BehaviorKit
 	LedKit
 	VideoKit
 	CoreMotor
+	AudioKit
 )
 
 if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
