@@ -171,8 +171,10 @@ class RobotController : public interface::RobotController
 			_behaviorkit.chargingMedium();
 		} else if (level < 90) {
 			_behaviorkit.chargingHigh();
-		} else {
+		} else if (level == 101) {
 			_behaviorkit.chargingFull();
+		} else {
+			_behaviorkit.chargingHigh();
 		}
 	}
 
