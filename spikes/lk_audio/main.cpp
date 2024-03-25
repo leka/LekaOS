@@ -101,6 +101,8 @@ auto main() -> int
 		play(filename);
 	});
 
+	play("440");
+
 	while (true) {
 		rtos::ThisThread::sleep_for(1min);
 	}
