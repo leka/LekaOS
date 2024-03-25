@@ -83,7 +83,7 @@ class RobotController : public interface::RobotController
 
 		_behaviorkit.launching();
 		_lcd.turnOn();
-		rtos::ThisThread::sleep_for(3s);
+		rtos::ThisThread::sleep_for(10s);
 	}
 
 	void startSleepTimeout() final
