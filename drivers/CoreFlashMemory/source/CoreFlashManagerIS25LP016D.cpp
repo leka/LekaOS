@@ -36,9 +36,8 @@ void CoreFlashManagerIS25LP016D::waitForChipAvailable()
 {
 	_timer.start();
 
-	rtos::ThisThread::sleep_for(5ms);
 	while (chipIsNotAvailable() && _timer.elapsed_time() < flash::is25lp016d::max_waiting_operation_duration) {
-		rtos::ThisThread::sleep_for(200ms);
+		rtos::ThisThread::sleep_for(1ms);
 	}
 
 	_timer.stop();

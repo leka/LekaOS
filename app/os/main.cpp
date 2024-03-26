@@ -233,6 +233,26 @@ namespace motors {
 
 }	// namespace motors
 
+namespace external_flash {
+
+	namespace internal {
+
+		auto qspi	 = CoreQSPI();
+		auto manager = CoreFlashManagerIS25LP016D(qspi);
+
+	}	// namespace internal
+
+	auto memory = CoreFlashIS25LP016D(internal::qspi, internal::manager);
+
+	void initialize()
+	{
+		memory.reset();
+		internal::qspi.setDataTransmissionFormat();
+		internal::qspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
+	}
+
+}	// namespace external_flash
+
 auto hal = CoreSTM32Hal {};
 
 namespace audio {
@@ -244,7 +264,7 @@ namespace audio {
 
 	}	// namespace internal
 
-	auto kit = AudioKit {internal::hal_timer, internal::coredac};
+	auto kit = AudioKit {internal::hal_timer, internal::coredac, external_flash::memory};
 
 }	// namespace audio
 
@@ -329,22 +349,7 @@ auto commandkit = CommandKit {command::internal::event_loop};
 
 namespace firmware {
 
-	namespace internal {
-
-		auto qspi	 = CoreQSPI();
-		auto manager = CoreFlashManagerIS25LP016D(qspi);
-		auto flash	 = CoreFlashIS25LP016D(qspi, manager);
-
-	}	// namespace internal
-
-	auto kit = FirmwareKit(internal::flash, FirmwareKit::DEFAULT_CONFIG);
-
-	void initializeFlash()
-	{
-		internal::flash.reset();
-		internal::qspi.setDataTransmissionFormat();
-		internal::qspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
-	}
+	auto kit = FirmwareKit(external_flash::memory, FirmwareKit::DEFAULT_CONFIG);
 
 	auto version() -> Version
 	{
@@ -577,7 +582,7 @@ auto main() -> int
 	hello.start();
 
 	sd::init();
-	firmware::initializeFlash();
+	external_flash::initialize();
 
 	commandkit.registerCommand(command::list);
 	activitykit.registerActivities(activities::activities);

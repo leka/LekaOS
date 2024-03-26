@@ -12,6 +12,8 @@
 #include "CoreDAC.h"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
+#include "CoreFlashIS25LP016D.h"
+#include "CoreFlashManagerIS25LP016D.h"
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreJPEG.hpp"
@@ -24,6 +26,7 @@
 #include "CoreLTDC.hpp"
 #include "CoreMotor.h"
 #include "CorePwm.h"
+#include "CoreQSPI.h"
 #include "CoreSDRAM.hpp"
 #include "CoreSPI.h"
 #include "CoreSTM32Hal.h"
@@ -145,6 +148,26 @@ namespace motors {
 
 }	// namespace motors
 
+namespace external_flash {
+
+	namespace internal {
+
+		auto qspi	 = CoreQSPI();
+		auto manager = CoreFlashManagerIS25LP016D(qspi);
+
+	}	// namespace internal
+
+	auto memory = CoreFlashIS25LP016D(internal::qspi, internal::manager);
+
+	void initialize()
+	{
+		memory.reset();
+		internal::qspi.setDataTransmissionFormat();
+		internal::qspi.setFrequency(flash::is25lp016d::max_clock_frequency_in_hz);
+	}
+
+}	// namespace external_flash
+
 auto hal = CoreSTM32Hal {};
 
 namespace audio {
@@ -156,7 +179,7 @@ namespace audio {
 
 	}	// namespace internal
 
-	auto kit = AudioKit {internal::hal_timer, internal::coredac};
+	auto kit = AudioKit {internal::hal_timer, internal::coredac, external_flash::memory};
 
 }	// namespace audio
 
@@ -203,6 +226,7 @@ auto main() -> int
 
 	leds::kit.init();
 	sd::init();
+	external_flash::initialize();
 	audio::kit.initialize();
 	display::internal::corelcd.turnOn();
 	display::videokit.initializeScreen();
