@@ -14,6 +14,7 @@
 using namespace leka;
 using namespace ble;
 
+using ::testing::_;
 using ::testing::Return;
 using ::testing::Sequence;
 
@@ -62,6 +63,11 @@ MATCHER_P(compareAdvertisingParameters, expected_params, "")
 MATCHER_P(compareAdvertisingPayload, expected_data_builder, "")
 {
 	return expected_data_builder.getAdvertisingData() == arg;
+}
+
+MATCHER_P(compareSlaveLatency, expected_slave_latency, "")
+{
+	return expected_slave_latency.value() == arg.value();
 }
 
 TEST_F(CoreGapTest, initialization)
@@ -134,6 +140,21 @@ TEST_F(CoreGapTest, startAdvertisingAdvertisingWasActive)
 	EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).Times(0);
 
 	coregap.startAdvertising();
+}
+
+TEST_F(CoreGapTest, updateConnectionParameters)
+{
+	auto handle					 = connection_handle_t {};
+	auto min_connection_interval = conn_interval_t {12};   // Min: 15ms = 12*1,25
+	auto max_connection_interval = min_connection_interval;
+	auto slave_latency			 = slave_latency_t {0};
+	auto supervision_timeout	 = supervision_timeout_t {500};
+
+	EXPECT_CALL(mbed_mock_gap,
+				updateConnectionParameters(handle, min_connection_interval, max_connection_interval,
+										   compareSlaveLatency(slave_latency), supervision_timeout, _, _));
+
+	coregap.updateConnectionParameters(handle);
 }
 
 TEST_F(CoreGapTest, onInitializationComplete)

@@ -83,7 +83,7 @@ class RobotController : public interface::RobotController
 
 		_behaviorkit.launching();
 		_lcd.turnOn();
-		rtos::ThisThread::sleep_for(3s);
+		rtos::ThisThread::sleep_for(10s);
 	}
 
 	void startSleepTimeout() final
@@ -171,8 +171,10 @@ class RobotController : public interface::RobotController
 			_behaviorkit.chargingMedium();
 		} else if (level < 90) {
 			_behaviorkit.chargingHigh();
-		} else {
+		} else if (level == 101) {
 			_behaviorkit.chargingFull();
+		} else {
+			_behaviorkit.chargingHigh();
 		}
 	}
 
