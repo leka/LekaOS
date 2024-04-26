@@ -128,7 +128,7 @@ runs:
     - name: Install pip packages
       shell: bash
       run: |
-        pip install --upgrade --upgrade-strategy eager mbed-cli mbed-tools imgtool
+        pip install --upgrade --upgrade-strategy eager -r ./requirements.txt
         pip install --upgrade --upgrade-strategy eager -r ./tools/config/mbed_requirements.txt
         pip install --upgrade --upgrade-strategy eager -r ./extern/mcuboot/scripts/requirements.txt
 
