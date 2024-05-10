@@ -86,7 +86,7 @@ endforeach()
 
 # find python (used for memap and several upload methods)
 # -------------------------------------------------------------
-find_package(Python3 3.10 EXACT COMPONENTS Interpreter)
+find_package(Python3 3.10 COMPONENTS Interpreter)
 
 # load the Mbed CMake functions
 # -------------------------------------------------------------

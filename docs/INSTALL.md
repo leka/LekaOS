@@ -39,7 +39,7 @@ brew install coreutils
 # 💡 don’t forget to add `$(brew --prefix coreutils)/libexec/gnubin` to your `$PATH`
 
 # then the prerequisites
-brew install git curl python
+brew install git curl python3
 
 # and finally the needed tools
 brew install make cmake ninja lcov gcovr stlink ccache open-ocd clang-format
@@ -64,14 +64,8 @@ I recommend the manual install. Make sure to follow the instructions from mbed:
 > <https://os.mbed.com/docs/mbed-os/v6.15/build-tools/install-and-set-up.html>
 
 ```bash
-# install mbed-cli and mbed-tools (mbed-cli2)
-python3 -m pip install -U --user mbed-cli mbed-tools
-
-# then install the important packages
-python3 -m pip install -U --user pyserial intelhex prettytable
-
-# and finally mbed-cli requirements
-python3 -m pip install -U --user -r ./tools/config/mbed_requirements.txt
+python3 -m pip install -U --user -r --break-system-packages ./requirements.txt
+python3 -m pip install -U --user -r --break-system-packages ./tools/config/mbed_requirements.txt
 ```
 
 ### 3. Install arm-none-eabi-gcc
@@ -79,8 +73,8 @@ python3 -m pip install -U --user -r ./tools/config/mbed_requirements.txt
 #### macOS
 
 ```bash
-brew tap ArmMbed/homebrew-formulae
-brew install arm-none-eabi-gcc
+brew tap brew tap osx-cross/arm
+brew install arm-gcc-bin
 ```
 
 ## How to use
