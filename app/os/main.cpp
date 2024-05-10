@@ -538,7 +538,7 @@ auto get_secondary_bd() -> mbed::BlockDevice *
 
 auto main() -> int
 {
-	logger::init();
+	leka::logger::init();
 	watchdog::start();
 
 	leds::turnOff();
