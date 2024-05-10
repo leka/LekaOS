@@ -23,7 +23,6 @@
 #include "CoreInterruptIn.h"
 #include "CoreJPEG.hpp"
 #include "CoreJPEGModeDMA.hpp"
-#include "CoreJPEGModePolling.hpp"
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLL.h"
@@ -64,13 +63,12 @@
 #include "SlicingBlockDevice.h"
 #include "SuperSimon.h"
 #include "VideoKit.h"
-#include "bootutil/bootutil.h"
+#include "bootutil/bootutil_public.h"
 #include "commands/LedFullCommand.h"
 #include "commands/LedRangeCommand.h"
 #include "commands/LedSingleCommand.h"
 #include "commands/MotorsCommand.h"
 #include "commands/ReinforcerCommand.h"
-#include "commands/TestCommand.h"
 
 using namespace leka;
 using namespace std::chrono;
