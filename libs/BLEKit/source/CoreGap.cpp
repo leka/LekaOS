@@ -4,6 +4,7 @@
 
 #include "CoreGap.h"
 
+#include "LogKit.h"
 #include "internal/ServicesCharacteristics.h"
 
 using namespace leka;
@@ -79,6 +80,9 @@ void CoreGap::onConnectionCallback(const std::function<void()> &callback)
 	_on_connection_callback = [&, callback](connection_handle_t handle) {
 		updateConnectionParameters(handle);
 		callback();
+		auto is_dple_supported =
+			_gap.isFeatureSupported(ble::controller_supported_features_t::LE_DATA_PACKET_LENGTH_EXTENSION);
+		log_info("DPLE supported: %s", is_dple_supported ? "true" : "false");
 	};
 	_gap_event_handler.onConnectionCallback(_on_connection_callback);
 }
