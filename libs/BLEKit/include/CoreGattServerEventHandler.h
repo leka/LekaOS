@@ -22,6 +22,7 @@ class CoreGattServerEventHandler : public ble::GattServer::EventHandler
 
 	void onDataWritten(const GattWriteCallbackParams &params) override;
 	void onDataRead(const GattReadCallbackParams &params) override;
+	void onAttMtuChange(ble::connection_handle_t handle, uint16_t new_mtu) override;
 
   private:
 	std::span<interface::BLEService *> _services {};
