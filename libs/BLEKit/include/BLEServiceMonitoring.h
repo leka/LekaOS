@@ -11,6 +11,7 @@
 
 #include "platform/mbed_power_mgmt.h"
 
+#include "MemoryUtils.h"
 #include "internal/BLEService.h"
 #include "internal/ServicesCharacteristics.h"
 
@@ -26,6 +27,19 @@ class BLEServiceMonitoring : public interface::BLEService
 		_charging_status = static_cast<uint8_t>(value);
 
 		auto data = std::make_tuple(_charging_status_characteristic.getValueHandle(), std::span(&_charging_status, 1));
+		sendData(data);
+	}
+
+	void setNegotiatedMtu(uint16_t value)
+	{
+		_negotiated_mtu = value;
+
+		auto _high_byte = utils::memory::getHighByte(_negotiated_mtu);
+		auto _low_byte	= utils::memory::getLowByte(_negotiated_mtu);
+
+		auto data =
+			std::make_tuple(_negotiated_mtu_characteristic.getValueHandle(), std::to_array({_high_byte, _low_byte}));
+
 		sendData(data);
 	}
 
@@ -85,11 +99,16 @@ class BLEServiceMonitoring : public interface::BLEService
 		&_hard_reboot,
 	};
 
-	std::array<GattCharacteristic *, 4> _characteristic_table {
-		&_charging_status_characteristic,
-		&_screensaver_enable_characteristic,
-		&_soft_reboot_characteristic,
-		&_hard_reboot_characteristic,
+	uint16_t _negotiated_mtu {0x00};
+	ReadOnlyGattCharacteristic<uint16_t> _negotiated_mtu_characteristic {
+		service::monitoring::characteristic::negotiated_mtu,
+		&_negotiated_mtu,
+		GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY,
+	};
+
+	std::array<GattCharacteristic *, 5> _characteristic_table {
+		&_charging_status_characteristic, &_screensaver_enable_characteristic, &_soft_reboot_characteristic,
+		&_hard_reboot_characteristic,	  &_negotiated_mtu_characteristic,
 	};
 };
 
