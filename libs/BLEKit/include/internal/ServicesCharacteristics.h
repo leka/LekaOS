@@ -37,11 +37,11 @@ namespace monitoring {
 	inline constexpr uint16_t uuid = 0x7779;
 
 	namespace characteristic {
-		inline constexpr uint16_t charging_status	 = 0x6783;
-		inline constexpr uint16_t screensaver_enable = 0x8369;
-		inline constexpr uint16_t soft_reboot		 = 0x8382;
-		inline constexpr uint16_t hard_reboot		 = 0x7282;
-		inline constexpr uint16_t negotiated_mtu	 = 0x7784;
+		inline constexpr uint16_t charging_status			  = 0x6783;
+		inline constexpr uint16_t screensaver_enable		  = 0x8369;
+		inline constexpr uint16_t soft_reboot				  = 0x8382;
+		inline constexpr uint16_t hard_reboot				  = 0x7282;
+		inline constexpr UUID::LongUUIDBytes_t negotiated_mtu = {"Negotiated MTU"};
 	}	// namespace characteristic
 
 }	// namespace monitoring
