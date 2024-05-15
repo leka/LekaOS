@@ -31,9 +31,9 @@ class BLEServiceMonitoring : public interface::BLEService
 
 	void setNegotiatedMtu(uint8_t value)
 	{
-		_negociated_mtu = value;
+		_negotiated_mtu = value;
 
-		auto data = std::make_tuple(_negociated_mtu_characteristic.getValueHandle(), std::span(&_negociated_mtu, 1));
+		auto data = std::make_tuple(_negotiated_mtu_characteristic.getValueHandle(), std::span(&_negotiated_mtu, 1));
 
 		sendData(data);
 	}
@@ -94,16 +94,16 @@ class BLEServiceMonitoring : public interface::BLEService
 		&_hard_reboot,
 	};
 
-	uint8_t _negociated_mtu {0x00};
-	ReadOnlyGattCharacteristic<uint8_t> _negociated_mtu_characteristic {
+	uint8_t _negotiated_mtu {0x00};
+	ReadOnlyGattCharacteristic<uint8_t> _negotiated_mtu_characteristic {
 		service::monitoring::characteristic::charging_status,
-		&_negociated_mtu,
+		&_negotiated_mtu,
 		GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY,
 	};
 
 	std::array<GattCharacteristic *, 5> _characteristic_table {
 		&_charging_status_characteristic, &_screensaver_enable_characteristic, &_soft_reboot_characteristic,
-		&_hard_reboot_characteristic,	  &_negociated_mtu_characteristic,
+		&_hard_reboot_characteristic,	  &_negotiated_mtu_characteristic,
 	};
 };
 

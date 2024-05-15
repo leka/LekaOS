@@ -41,7 +41,7 @@ namespace monitoring {
 		inline constexpr uint16_t screensaver_enable = 0x8369;
 		inline constexpr uint16_t soft_reboot		 = 0x8382;
 		inline constexpr uint16_t hard_reboot		 = 0x7282;
-		inline constexpr uint16_t negociated_mtu	 = 0x7784;
+		inline constexpr uint16_t negotiated_mtu	 = 0x7784;
 	}	// namespace characteristic
 
 }	// namespace monitoring

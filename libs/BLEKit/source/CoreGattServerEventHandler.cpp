@@ -47,5 +47,5 @@ void CoreGattServerEventHandler::onDataRead(const GattReadCallbackParams &params
 
 void CoreGattServerEventHandler::onAttMtuChange(ble::connection_handle_t handle, uint16_t new_mtu)
 {
-	log_info("Negociated MTU size: %i bytes", new_mtu);
+	log_info("Negotiated MTU size: %i bytes", new_mtu);
 }
