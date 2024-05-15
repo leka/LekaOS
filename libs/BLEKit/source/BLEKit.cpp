@@ -62,3 +62,8 @@ auto BLEKit::isConnected() const -> bool
 {
 	return _core_gap.isConnected();
 }
+
+void BLEKit::onMTUNegotiated(const std::function<void(uint16_t)> &callback)
+{
+	_core_gatt_server.onMTUNegotiated(callback);
+}

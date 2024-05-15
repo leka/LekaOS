@@ -32,6 +32,8 @@ class BLEKit
 	void onDisconnectionCallback(const std::function<void()> &callback);
 	[[nodiscard]] auto isConnected() const -> bool;
 
+	void onMTUNegotiated(const std::function<void(uint16_t)> &callback);
+
   private:
 	// ? mbed::BLE specific function
 	void processEvents(BLE::OnEventsToProcessCallbackContext *context);

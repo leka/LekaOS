@@ -23,6 +23,8 @@ class CoreGattServer
 	void setEventHandler();
 	void setServices(std::span<interface::BLEService *> services);
 
+	void onMTUNegotiated(const std::function<void(uint16_t)> &callback);
+
   private:
 	void write(GattAttribute::Handle_t characteristic_updated, std::span<const uint8_t> data);
 
