@@ -486,6 +486,8 @@ class RobotController : public interface::RobotController
 
 		_ble.onDisconnectionCallback([this] { raise(event::ble_disconnection {}); });
 
+		_ble.onMTUNegotiated([this](uint16_t new_mtu) { _service_monitoring.setNegotiatedMtu(new_mtu); });
+
 		// Setup callbacks for each State Machine events
 
 		auto on_charge_did_start = [this]() { raise(event::charge_did_start {}); };
