@@ -96,7 +96,7 @@ class BLEServiceMonitoring : public interface::BLEService
 
 	uint8_t _negotiated_mtu {0x00};
 	ReadOnlyGattCharacteristic<uint8_t> _negotiated_mtu_characteristic {
-		service::monitoring::characteristic::charging_status,
+		service::monitoring::characteristic::negotiated_mtu,
 		&_negotiated_mtu,
 		GattCharacteristic::BLE_GATT_CHAR_PROPERTIES_NOTIFY,
 	};
