@@ -128,9 +128,15 @@ runs:
     - name: Install pip packages
       shell: bash
       run: |
-        pip install --upgrade --upgrade-strategy eager -r ./requirements.txt
-        pip install --upgrade --upgrade-strategy eager -r ./tools/config/mbed_requirements.txt
-        pip install --upgrade --upgrade-strategy eager -r ./extern/mcuboot/scripts/requirements.txt
+        BREAK_SYSTEM_PACKAGES=""
+        if [[ $ImageOS == "ubuntu24" ]]; then
+          BREAK_SYSTEM_PACKAGES="--break-system-packages"
+        fi
+        echo "ImageOS: $ImageOS"
+        echo "BREAK_SYSTEM_PACKAGES: $BREAK_SYSTEM_PACKAGES"
+        pip install --upgrade --upgrade-strategy eager -r ./requirements.txt $BREAK_SYSTEM_PACKAGES
+        pip install --upgrade --upgrade-strategy eager -r ./tools/config/mbed_requirements.txt $BREAK_SYSTEM_PACKAGES
+        pip install --upgrade --upgrade-strategy eager -r ./extern/mcuboot/scripts/requirements.txt $BREAK_SYSTEM_PACKAGES
 
     - name: Test pip packages
       shell: bash
