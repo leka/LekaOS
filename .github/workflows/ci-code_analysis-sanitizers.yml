@@ -20,19 +20,53 @@ concurrency:
 jobs:
   run_sanitizers:
     name: Build & run
-    runs-on: ubuntu-22.04
+    runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
-        compiler:
-          [
-            { name: Clang 15, cc: /usr/bin/clang-15, cxx: /usr/bin/clang++-15 },
-            { name: GCC 10, cc: /usr/bin/gcc-10, cxx: /usr/bin/g++-10 },
-            { name: GCC 12, cc: /usr/bin/gcc-12, cxx: /usr/bin/g++-12 },
-            { name: GCC 13, cc: /usr/bin/gcc-13, cxx: /usr/bin/g++-13 },
-          ]
-        optimisation_level: ["-Og", "-Os"]
+        include:
+          - os: ubuntu-22.04
+            optimisation_level: "-Og"
+            compiler:
+              name: GCC 10
+              cc: /usr/bin/gcc-10
+              cxx: /usr/bin/g++-10
+
+          - os: ubuntu-22.04
+            optimisation_level: "-Os"
+            compiler:
+              name: GCC 10
+              cc: /usr/bin/gcc-10
+              cxx: /usr/bin/g++-10
+
+          - os: ubuntu-24.04
+            optimisation_level: "-Og"
+            compiler:
+              name: Clang 18
+              cc: /usr/bin/clang-18
+              cxx: /usr/bin/clang++-18
+
+          - os: ubuntu-24.04
+            optimisation_level: "-Os"
+            compiler:
+              name: Clang 18
+              cc: /usr/bin/clang-18
+              cxx: /usr/bin/clang++-18
+
+          - os: ubuntu-24.04
+            optimisation_level: "-Og"
+            compiler:
+              name: GCC 13
+              cc: /usr/bin/gcc-13
+              cxx: /usr/bin/g++-13
+
+          - os: ubuntu-24.04
+            optimisation_level: "-Os"
+            compiler:
+              name: GCC 13
+              cc: /usr/bin/gcc-13
+              cxx: /usr/bin/g++-13
 
     steps:
       - uses: actions/checkout@v4
