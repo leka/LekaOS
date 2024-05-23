@@ -43,6 +43,8 @@ runs:
     - name: Publish differences
       uses: marocchino/sticky-pull-request-comment@v2
       with:
+        hide_and_recreate: true
+        hide_classify: "OUTDATED"
         header: compare_base_head_changes-${{ inputs.comment_header }}
         message: |
           # :chart_with_upwards_trend: Changes Impact Analysis Report
