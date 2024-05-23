@@ -67,5 +67,7 @@ runs:
     - name: Publish differences
       uses: marocchino/sticky-pull-request-comment@v2
       with:
+        hide_and_recreate: true
+        hide_classify: "OUTDATED"
         header: compare_toolchain_upgrade-${{ inputs.comment_header }}
         path: ${{ env.RUNNER_HOME }}/STICKY_MESSAGE.md
