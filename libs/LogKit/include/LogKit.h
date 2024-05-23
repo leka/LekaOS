@@ -5,11 +5,11 @@
 #pragma once
 
 #include <array>
+#include <cinttypes>
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <functional>
-#include <mutex>
 #include <string_view>
 #include <unordered_map>
 
@@ -189,14 +189,15 @@ namespace internal {
 
 [[maybe_unused]] inline void format_time_human_readable(int64_t now)
 {
-	auto ms	  = now % 1000;
-	auto sec  = now / 1000;
-	auto min  = sec / 60;
-	auto hour = min / 60;
+	auto now_u32 = static_cast<uint32_t>(now);
+	auto ms		 = now_u32 % 1000;
+	auto sec	 = now_u32 / 1000;
+	auto min	 = sec / 60;
+	auto hour	 = min / 60;
 
 	// ? Format: hhh:mm:ss.μμμ e.g. 008:15:12.345
-	snprintf(buffer::timestamp.data(), std::size(buffer::timestamp), "%03lld:%02lld:%02lld.%03lld", hour, min % 60,
-			 sec % 60, ms);
+	snprintf(buffer::timestamp.data(), std::size(buffer::timestamp),
+			 "%03" PRIu32 ":%02" PRIu32 ":%02" PRIu32 ".%03" PRIu32, hour, min % 60, sec % 60, ms);
 }
 
 [[maybe_unused]] inline void format_filename_line_function(const char *filename, const int line, const char *function)
