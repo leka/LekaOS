@@ -64,8 +64,8 @@ I recommend the manual install. Make sure to follow the instructions from mbed:
 > <https://os.mbed.com/docs/mbed-os/v6.15/build-tools/install-and-set-up.html>
 
 ```bash
-python3 -m pip install -U --user -r --break-system-packages ./requirements.txt
-python3 -m pip install -U --user -r --break-system-packages ./tools/config/mbed_requirements.txt
+python3 -m pip install -U --user -r ./requirements.txt --break-system-packages
+python3 -m pip install -U --user -r ./tools/config/mbed_requirements.txt --break-system-packages
 ```
 
 ### 3. Install arm-none-eabi-gcc
