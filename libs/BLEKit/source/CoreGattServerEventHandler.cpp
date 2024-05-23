@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #include "CoreGattServerEventHandler.h"
+#include "LogKit.h"
 
 using namespace leka;
 using namespace std::chrono_literals;
@@ -42,4 +43,17 @@ void CoreGattServerEventHandler::onDataRead(const GattReadCallbackParams &params
 	};
 
 	std::for_each(_services.begin(), _services.end(), on_data_requested);
+}
+
+void CoreGattServerEventHandler::onMTUNegotiated(const std::function<void(uint16_t)> &callback)
+{
+	_on_mtu_negotiated_callback = callback;
+}
+
+void CoreGattServerEventHandler::onAttMtuChange(ble::connection_handle_t handle, uint16_t new_mtu)
+{
+	log_info("Negotiated MTU size: %i bytes", new_mtu);
+	if (_on_mtu_negotiated_callback != nullptr) {
+		_on_mtu_negotiated_callback(new_mtu);
+	}
 }

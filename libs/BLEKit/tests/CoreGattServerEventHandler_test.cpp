@@ -165,3 +165,16 @@ TEST_F(CoreGattServerEventHandlerTest, onDataRequestedParamsHandleDifferent)
 
 	gatt_event_handler.onDataRead(params);
 }
+
+TEST_F(CoreGattServerEventHandlerTest, onMTUNegotiated)
+{
+	auto expected_mtu = uint16_t {23};
+
+	MockFunction<void(uint16_t)> mock_on_mtu_negotiated_callback;
+
+	gatt_event_handler.onMTUNegotiated(mock_on_mtu_negotiated_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_on_mtu_negotiated_callback, Call(expected_mtu)).Times(1);
+
+	gatt_event_handler.onAttMtuChange(0, expected_mtu);
+}

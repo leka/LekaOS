@@ -65,6 +65,7 @@ auto main() -> int
 
 	blekit.onConnectionCallback([] { log_info("Connected !"); });
 	blekit.onDisconnectionCallback([] { log_info("Disconnected !"); });
+	blekit.onMTUNegotiated([](uint16_t new_mtu) { service_monitoring.setNegotiatedMtu(new_mtu); });
 
 	blekit.init();
 

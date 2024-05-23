@@ -30,3 +30,8 @@ void CoreGattServer::write(GattAttribute::Handle_t characteristic_updated, std::
 {
 	_gatt_server.write(characteristic_updated, data.data(), static_cast<uint16_t>(std::size(data)));
 }
+
+void CoreGattServer::onMTUNegotiated(const std::function<void(uint16_t)> &callback)
+{
+	_gatt_server_event_handler.onMTUNegotiated(callback);
+}

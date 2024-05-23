@@ -209,3 +209,12 @@ TEST_F(CoreGapTest, isConnectedDefault)
 
 	EXPECT_FALSE(is_connected);
 }
+
+TEST_F(CoreGapTest, isConnectedAfterConnection)
+{
+	auto dummy_on_connection_callback = std::function<void()> {};
+
+	coregap.onConnectionCallback(dummy_on_connection_callback);
+
+	// nothing expected
+}
