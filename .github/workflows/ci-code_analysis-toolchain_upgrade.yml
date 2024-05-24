@@ -99,7 +99,7 @@ jobs:
       # Mark: - Upload artifacts
       #
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: base_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
           path: build_artifacts
@@ -191,7 +191,7 @@ jobs:
       # Mark: - Upload artifacts
       #
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: head_ref-build-enable_log_debug-${{ matrix.enable_log_debug }}
           path: build_artifacts
@@ -226,7 +226,7 @@ jobs:
         id: setup_ci
         uses: ./.github/actions/setup
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: build_artifacts
 
