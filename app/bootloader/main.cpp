@@ -403,6 +403,12 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(50ms);
 
+	log_info("\n\n");
+	log_info("Hello, Bootloader v%i!", bootloader::version);
+	log_info("Arm GNU Toolchain v%s\n\n", __VERSION__);
+
+	rtos::ThisThread::sleep_for(50ms);
+
 	sd::init();
 
 	// ? As bootloader, os & sd card can evelove independently, there is no way to know which

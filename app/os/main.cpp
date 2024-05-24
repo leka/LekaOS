@@ -547,7 +547,8 @@ auto main() -> int
 	auto version = firmware::version();
 
 	log_info("\n\n");
-	log_info("Hello, LekaOS v%i.%i.%i!\n", version.major, version.minor, version.revision);
+	log_info("Hello, LekaOS v%i.%i.%i!", version.major, version.minor, version.revision);
+	log_info("Arm GNU Toolchain v%s\n\n", __VERSION__);
 
 	rtos::ThisThread::sleep_for(2s);
 
