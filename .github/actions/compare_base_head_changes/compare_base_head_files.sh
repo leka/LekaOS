@@ -10,39 +10,40 @@ HEAD_DIR=$2
 source ./.github/actions/compare_base_head_changes/utils.sh
 source ./.github/actions/compare_base_head_changes/get_all_targets.sh $BASE_DIR $HEAD_DIR
 
-echo 'STATUS_DIFF_OUTPUT<<EOF_STATUS_DIFF_OUTPUT' >> $GITHUB_ENV
+STATUS_DIFF_OUTPUT="$RUNNER_HOME/STATUS_DIFF_OUTPUT.md"
+touch $STATUS_DIFF_OUTPUT
 
-echo "| Target | Status | .bin | .map | Total Flash (base/head) | Total Flash Δ | Static RAM (base/head) | Static RAM Δ |" >> $GITHUB_ENV
-echo "|-------|:------:|:------:|:------:|:------:|:------:|:------:|:------:|" >> $GITHUB_ENV
+echo "| Target | Status | .bin | .map | Total Flash (base/head) | Total Flash Δ | Static RAM (base/head) | Static RAM Δ |" >> $STATUS_DIFF_OUTPUT
+echo "|-------|:------:|:------:|:------:|:------:|:------:|:------:|:------:|" >> $STATUS_DIFF_OUTPUT
 
 for target in "${all_targets[@]}"; do
 	target_name=$target
 
-	echo -n "| $target_name " >> $GITHUB_ENV
+	echo -n "| $target_name " >> $STATUS_DIFF_OUTPUT
 
 	if [[ " ${added_targets[*]} " =~ " $target " ]]; then
 
-		echo -n "| :sparkles: | - | - " >> $GITHUB_ENV
+		echo -n "| :sparkles: | - | - " >> $STATUS_DIFF_OUTPUT
 
 		createSizeTextFile $HEAD_DIR $target_name
 
 		head_flash_with_percentage="$(getUsedFlashSizeWithPercentage $HEAD_DIR $target_name)"
 		head_ram_with_percentage="$(getUsedRamSizeWithPercentage $HEAD_DIR $target_name)"
 
-		echo -n "| $head_flash_with_percentage | - | $head_ram_with_percentage | - |\n" >> $GITHUB_ENV
+		echo -n "| $head_flash_with_percentage | - | $head_ram_with_percentage | - |\n" >> $STATUS_DIFF_OUTPUT
 
 	elif [[ " ${deleted_targets[*]} " =~ " $target " ]]; then
 
-		echo -n "| :coffin: | - | - | - | - | - | - |\n" >> $GITHUB_ENV
+		echo -n "| :coffin: | - | - | - | - | - | - |\n" >> $STATUS_DIFF_OUTPUT
 
 	else
 
-		echo -n "| :heavy_check_mark: " >> $GITHUB_ENV
+		echo -n "| :heavy_check_mark: " >> $STATUS_DIFF_OUTPUT
 
 		if ! output=$(diff $BASE_DIR/$target_name.bin $HEAD_DIR/$target_name.bin 2>/dev/null); then
-			echo -n "| :x: " >> $GITHUB_ENV
+			echo -n "| :x: " >> $STATUS_DIFF_OUTPUT
 		else
-			echo -n "| :white_check_mark: " >> $GITHUB_ENV
+			echo -n "| :white_check_mark: " >> $STATUS_DIFF_OUTPUT
 		fi
 
 		createMapTextFile $BASE_DIR $target_name
@@ -53,9 +54,9 @@ for target in "${all_targets[@]}"; do
 
 
 		if ! output=$(diff $BASE_DIR/$target_name-map.txt $HEAD_DIR/$target_name-map.txt 2>/dev/null); then
-			echo -n "| :x: " >> $GITHUB_ENV
+			echo -n "| :x: " >> $STATUS_DIFF_OUTPUT
 		else
-			echo -n "| :white_check_mark: " >> $GITHUB_ENV
+			echo -n "| :white_check_mark: " >> $STATUS_DIFF_OUTPUT
 		fi
 
 		base_flash_with_percentage="$(getUsedFlashSizeWithPercentage $BASE_DIR $target_name)"
@@ -100,11 +101,9 @@ for target in "${all_targets[@]}"; do
 			output_ram_delta="ø"
 		fi
 
-		echo -n "| $output_flash | $output_flash_delta | $output_ram | $output_ram_delta " >> $GITHUB_ENV
+		echo -n "| $output_flash | $output_flash_delta | $output_ram | $output_ram_delta " >> $STATUS_DIFF_OUTPUT
 
-		echo -n "|\n" >> $GITHUB_ENV
+		echo -n "|\n" >> $STATUS_DIFF_OUTPUT
 	fi
 
 done
-
-echo 'EOF_STATUS_DIFF_OUTPUT' >> $GITHUB_ENV
