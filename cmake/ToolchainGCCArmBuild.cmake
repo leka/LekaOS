@@ -33,7 +33,12 @@ set(MBED_COMPILE_OPTIONS "SHELL:-include \"${MBED_CMAKE_CONFIG_HEADERS_PATH}/mbe
 
 # create the static library for the rest of the source files
 add_library(mbed-os-static STATIC ${MBED_SOURCE_FILES})
-target_compile_options(mbed-os-static PUBLIC ${MBED_COMPILE_OPTIONS})
+target_compile_options(mbed-os-static
+	PUBLIC
+		${MBED_COMPILE_OPTIONS}
+	PRIVATE
+		-w
+)
 target_include_directories(mbed-os-static PUBLIC ${MBED_INCLUDE_DIRS})
 
 # make sure linker script gets built before anything trying to use mbed-os
