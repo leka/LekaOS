@@ -45,4 +45,4 @@ set(CMAKE_C_FLAGS_INIT "${CHIP_FLAGS}")
 set(CMAKE_CXX_FLAGS_INIT "${CHIP_FLAGS} -Wvla -fno-exceptions -fno-rtti")
 set(CMAKE_ASM_FLAGS_INIT "${CHIP_FLAGS}")
 
-set(CMAKE_EXE_LINKER_FLAGS_INIT "${CHIP_LINKER_FLAGS} --specs=nosys.specs -Wl,--start-group -lstdc++ -lsupc++ -lm -lc -lgcc -lnosys -Wl,--end-group")
+set(CMAKE_EXE_LINKER_FLAGS_INIT "${CHIP_LINKER_FLAGS} --specs=nosys.specs --specs=nano.specs -Wl,--start-group -lstdc++ -lsupc++ -lm -lc -lgcc -lnosys -Wl,--end-group")
