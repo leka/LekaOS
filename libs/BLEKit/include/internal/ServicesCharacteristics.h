@@ -61,8 +61,6 @@ namespace magic_card {
 
 	namespace characteristic {
 		inline constexpr UUID::LongUUIDBytes_t raw_data = {"ID+LANGUAGE"};
-		inline constexpr UUID::LongUUIDBytes_t id		= {"ID"};
-		inline constexpr UUID::LongUUIDBytes_t language = {"Language"};
 	}	// namespace characteristic
 
 }	// namespace magic_card
