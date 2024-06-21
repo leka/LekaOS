@@ -44,6 +44,7 @@
 #include "commands/MotorsCommand.h"
 #include "commands/ReinforcerCommand.h"
 #include "commands/TestCommand.h"
+#include "commands/VideoCommand.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -161,6 +162,7 @@ namespace internal {
 	auto led_range	= LedRangeCommand {leds::ears, leds::belt};
 	auto motors		= MotorsCommand {motor::left, motor::right};
 	auto reinforcer = ReinforcerCommand {reinforcerkit};
+	auto video		= VideoCommand {display::videokit};
 
 }	// namespace internal
 
@@ -211,6 +213,7 @@ auto list = std::to_array<interface::Command *>({
 	&internal::led_full,
 	&internal::led_range,
 	&internal::reinforcer,
+	&internal::video,
 });
 
 }	// namespace command
