@@ -57,11 +57,10 @@ namespace config {
 }	// namespace config
 
 namespace magic_card {
-	inline constexpr UUID::LongUUIDBytes_t uuid = {"Magic Card"};
+	inline constexpr UUID::LongUUIDBytes_t uuid = {"MAGIC_CARD"};
 
 	namespace characteristic {
-		inline constexpr UUID::LongUUIDBytes_t id		= {"ID"};
-		inline constexpr UUID::LongUUIDBytes_t language = {"Language"};
+		inline constexpr UUID::LongUUIDBytes_t raw_data = {"ID+LANGUAGE"};
 	}	// namespace characteristic
 
 }	// namespace magic_card
