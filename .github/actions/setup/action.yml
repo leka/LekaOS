@@ -99,8 +99,8 @@ runs:
     - name: Install tools
       shell: bash
       run: |
-        sudo apt-fast update
-        sudo apt-fast install -y --no-install-recommends ninja-build ccache lcov gcovr zsh
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends ninja-build ccache lcov gcovr zsh
 
     - name: Cache ccache
       id: global_cache-ccache
