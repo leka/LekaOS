@@ -10,8 +10,6 @@
 
 using namespace leka;
 
-using ::testing::MockFunction;
-
 class BLEServiceMagicCardTest : public testing::Test
 {
   protected:
@@ -63,38 +61,32 @@ TEST_F(BLEServiceMagicCardTest, initialisation)
 
 TEST_F(BLEServiceMagicCardTest, setMagicCard)
 {
-	auto expected_id	   = uint16_t {0x1234};
-	auto expected_language = uint8_t {0x56};
+	auto magic_card_id		 = uint16_t {0x1234};
+	auto magic_card_language = uint8_t {0x56};
 
 	auto rfid_tag	= rfid::Tag {.data = {
 									 0x4C,
 									 0x45,
 									 0x4B,
 									 0x41,
-									 utils::memory::getHighByte(expected_id),
-									 utils::memory::getLowByte(expected_id),
-									 expected_language,
+									 utils::memory::getHighByte(magic_card_id),
+									 utils::memory::getLowByte(magic_card_id),
+									 magic_card_language,
 								 }};
 	auto magic_card = MagicCard {rfid_tag};
 
-	auto spy_callback = [&expected_id, &expected_language](const BLEServiceMagicCard::data_to_send_handle_t &handle) {
-		auto data = std::get<1>(handle);
+	std::array<uint8_t, 3> expected_raw_data {0x12, 0x34, 0x56};
+	std::array<uint8_t, 3> actual_raw_data {};
 
-		auto is_id		 = std::size(data) == 2;
-		auto is_language = std::size(data) == 1;
-
-		if (is_id) {
-			auto actual_id = utils::memory::combineBytes({.high = data[0], .low = data[1]});
-			EXPECT_EQ(actual_id, expected_id);
-		}
-		if (is_language) {
-			auto actual_language = data[0];
-			EXPECT_EQ(actual_language, expected_language);
+	auto spy_callback = [&actual_raw_data](const BLEServiceMagicCard::data_to_send_handle_t &handle) {
+		for (auto i = 0; i < std::size(actual_raw_data); i++) {
+			actual_raw_data.at(i) = std::get<1>(handle)[i];
 		}
 	};
 	service_magic_card.onDataReadyToSend(spy_callback);
 
 	service_magic_card.setMagicCard(magic_card);
+	EXPECT_EQ(actual_raw_data, expected_raw_data);
 }
 
 TEST_F(BLEServiceMagicCardTest, onDataReceived)
