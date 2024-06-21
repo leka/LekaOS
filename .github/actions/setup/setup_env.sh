@@ -70,7 +70,9 @@ CCACHE_DIR="/home/runner/work/ccache"
 CCACHE_COMPRESS="true"
 CCACHE_COMPRESSLEVEL=6
 CCACHE_COMPILERCHECK="content"
-CCACHE_LOGFILE="/home/runner/work/ccache/my_ccache.log"
+CCACHE_LOGFILE="$CCACHE_DIR/my_ccache.log"
+
+mkdir -p $CCACHE_DIR && touch $CCACHE_LOGFILE
 
 echo "CCACHE_DIR=$CCACHE_DIR" >> $GITHUB_ENV
 echo "CCACHE_COMPRESS=$CCACHE_COMPRESS" >> $GITHUB_ENV
