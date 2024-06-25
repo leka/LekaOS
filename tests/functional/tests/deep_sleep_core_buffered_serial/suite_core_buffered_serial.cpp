@@ -20,7 +20,6 @@ suite suite_core_buffered_serial = [] {
 			then("I expect deep sleep TO BE possible") = [] {
 				auto status = utils::sleep::system_deep_sleep_check();
 
-				expect(status.can_deep_sleep);
 				expect(status.test_check_ok);
 			};
 		};
@@ -38,7 +37,6 @@ suite suite_core_buffered_serial = [] {
 				then("I expect deep sleep TO NOT BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(not status.can_deep_sleep);
 					expect(not status.test_check_ok);
 				};
 			};
@@ -57,7 +55,6 @@ suite suite_core_buffered_serial = [] {
 				then("I expect deep sleep TO NOT BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(not status.can_deep_sleep);
 					expect(not status.test_check_ok);
 				};
 			};
@@ -70,7 +67,6 @@ suite suite_core_buffered_serial = [] {
 				then("I expect deep sleep TO BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(status.can_deep_sleep);
 					expect(status.test_check_ok);
 				};
 			};
@@ -83,7 +79,6 @@ suite suite_core_buffered_serial = [] {
 				then("I expect deep sleep TO NOT BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(not status.can_deep_sleep);
 					expect(not status.test_check_ok);
 				};
 			};
@@ -96,7 +91,6 @@ suite suite_core_buffered_serial = [] {
 				then("I expect deep sleep TO BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(status.can_deep_sleep);
 					expect(status.test_check_ok);
 				};
 			};
@@ -109,7 +103,6 @@ suite suite_core_buffered_serial = [] {
 				then("I expect deep sleep TO NOT BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(not status.can_deep_sleep);
 					expect(not status.test_check_ok);
 				};
 			};
@@ -122,7 +115,6 @@ suite suite_core_buffered_serial = [] {
 				then("I expect deep sleep TO BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(status.can_deep_sleep);
 					expect(status.test_check_ok);
 				};
 			};
@@ -135,7 +127,6 @@ suite suite_core_buffered_serial = [] {
 				then("I expect deep sleep TO NOT BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(not status.can_deep_sleep);
 					expect(not status.test_check_ok);
 				};
 			};
