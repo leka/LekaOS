@@ -69,6 +69,7 @@
 #include "commands/LedSingleCommand.h"
 #include "commands/MotorsCommand.h"
 #include "commands/ReinforcerCommand.h"
+#include "commands/VideoCommand.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -290,6 +291,7 @@ namespace command {
 		auto led_range	= LedRangeCommand {leds::ears, leds::belt};
 		auto motors		= MotorsCommand {motors::left::motor, motors::right::motor};
 		auto reinforcer = ReinforcerCommand {reinforcerkit};
+		auto video		= VideoCommand {videokit};
 
 	}	// namespace internal
 
@@ -299,6 +301,7 @@ namespace command {
 		&internal::led_range,
 		&internal::motors,
 		&internal::reinforcer,
+		&internal::video,
 	});
 
 }	// namespace command
