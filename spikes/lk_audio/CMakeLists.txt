@@ -15,7 +15,10 @@ target_sources(spike_lk_audio
 )
 
 target_link_libraries(spike_lk_audio
-	FileManagerKit
+	CoreSTM32Hal
+	CoreDAC
+	AudioKit
+	BLEKit
 )
 
 target_link_custom_leka_targets(spike_lk_audio)
