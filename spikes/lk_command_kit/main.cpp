@@ -7,7 +7,9 @@
 
 #include "rtos/ThisThread.h"
 
+#include "AudioKit.h"
 #include "CommandKit.h"
+#include "CoreDAC.h"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
 #include "CoreFont.hpp"
@@ -27,6 +29,7 @@
 #include "CoreSDRAM.hpp"
 #include "CoreSPI.h"
 #include "CoreSTM32Hal.h"
+#include "CoreSTM32HalBasicTimer.h"
 #include "CoreTimeout.h"
 #include "CoreVideo.hpp"
 #include "EventLoopKit.h"
@@ -110,6 +113,21 @@ CoreLSM6DSOX lsm6dsox(internal::i2c, internal::drdy_irq);
 
 auto imukit = IMUKit {imu::lsm6dsox};
 
+auto hal = CoreSTM32Hal {};
+
+namespace audio {
+
+namespace internal {
+
+	extern "C" auto hal_timer = CoreSTM32HalBasicTimer {hal};
+	extern "C" auto coredac	  = CoreDAC {hal, hal_timer};
+
+}	// namespace internal
+
+auto kit = AudioKit {internal::hal_timer, internal::coredac};
+
+}	// namespace audio
+
 namespace motion::internal {
 
 CoreTimeout timeout {};
@@ -127,7 +145,6 @@ namespace internal {
 
 	auto corell		   = CoreLL {};
 	auto pixel		   = CGPixel {corell};
-	auto hal		   = CoreSTM32Hal {};
 	auto coresdram	   = CoreSDRAM {hal};
 	auto coredma2d	   = CoreDMA2D {hal};
 	auto coredsi	   = CoreDSI {hal};
@@ -148,7 +165,7 @@ auto videokit = VideoKit {internal::event_loop, internal::corevideo};
 
 }	// namespace display
 
-auto reinforcerkit = ReinforcerKit {display::videokit, ledkit, motionkit};
+auto reinforcerkit = ReinforcerKit {display::videokit, ledkit, audio::kit, motionkit};
 
 namespace command {
 
@@ -251,6 +268,7 @@ auto main() -> int
 	logger::init();
 
 	initializeSD();
+	audio::kit.initialize();
 	display::videokit.initializeScreen();
 	display::internal::corelcd.turnOn();
 	cmdkit.registerCommand(command::list);
