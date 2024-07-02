@@ -158,7 +158,7 @@ TEST_F(BLEServiceMonitoringTest, setNegotiatedMtu)
 
 	auto spy_callback = [&actual_negotiated_mtu](const BLEServiceMonitoring::data_to_send_handle_t &handle) {
 		actual_negotiated_mtu =
-			utils::memory::combineBytes({high : std::get<1>(handle)[0], low : std::get<1>(handle)[1]});
+			utils::memory::combineBytes({.high = std::get<1>(handle)[0], .low = std::get<1>(handle)[1]});
 	};
 
 	service_monitoring.onDataReadyToSend(spy_callback);

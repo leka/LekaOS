@@ -20,7 +20,7 @@ concurrency:
 jobs:
   run_functional_tests:
     name: Build & Test
-    runs-on: self-hosted
+    runs-on: robot
 
     steps:
       - name: Checkout
@@ -28,9 +28,8 @@ jobs:
 
       - name: Setup
         run: |
-          brew update && brew upgrade
-          brew install --force --overwrite arm-gcc-bin@10
-          brew link --force --overwrite arm-gcc-bin@10
+          which arm-none-eabi-gcc
+          arm-none-eabi-gcc --version
           python3 -m pip install -U --user -r ./tools/config/mbed_requirements.txt --break-system-packages
         env:
           PIP_BREAK_SYSTEM_PACKAGES: 1
