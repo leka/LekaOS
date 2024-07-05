@@ -43,7 +43,7 @@ namespace rfid::cr95hf {
 			inline constexpr auto enter_control			  = std::to_array<uint8_t>({0x21, 0x00});
 			inline constexpr auto wu_control			  = std::to_array<uint8_t>({0x79, 0x01});
 			inline constexpr auto leave_control			  = std::to_array<uint8_t>({0x18, 0x00});
-			inline constexpr auto wu_periode			  = uint8_t {0x20};	  // Duration beteen two burst
+			inline constexpr auto wu_periode			  = uint8_t {0x28};	  // Duration beteen two burst
 			inline constexpr auto oscillator_start		  = uint8_t {0x60};	  // HFO to stabilize
 			inline constexpr auto digital_to_analog_start = uint8_t {0x60};	  // DAC to stabilize
 			inline constexpr auto digital_to_analog_data =
