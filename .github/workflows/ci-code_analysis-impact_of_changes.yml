@@ -8,7 +8,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths-ignore:
-      - "config/toolchain_gcc_arm_none_eabi_url"
+      - "config/arm_gnu_toolchain_url"
       - ".github/workflows/ci-code_analysis-toolchain_upgrade.yml"
       - ".github/actions/compare_toolchain_upgrade/**"
 

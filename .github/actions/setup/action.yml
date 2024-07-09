@@ -63,7 +63,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: ${{ env.RUNNER_HOME }}/arm-gnu-toolchain
-        key: ${{ runner.os }}-global_cache-arm_gnu_toolchain-${{ hashFiles('config/toolchain_gcc_arm_none_eabi_url') }}
+        key: ${{ runner.os }}-global_cache-arm_gnu_toolchain-${{ hashFiles('config/arm_gnu_toolchain_url') }}
 
     - name: Install ARM GCC Toolchain
       if: steps.global_cache-arm_gnu_toolchain.outputs.cache-hit != 'true'
