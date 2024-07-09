@@ -180,6 +180,10 @@ namespace sm::action {
 		auto operator()(irc &rc) const { rc.suspendHardwareForDeepSleep(); }
 	};
 
+	struct wake_up {
+		auto operator()(irc &rc) const { rc.wakeUp(); }
+	};
+
 	struct reset_emergency_stop_counter {
 		auto operator()(irc &rc) const { rc.resetEmergencyStopCounter(); }
 	};
@@ -235,6 +239,7 @@ struct StateMachine {
 			, sm::state::sleeping + event<sm::event::deep_sleep_timeout_did_end>                                            = sm::state::deep_sleeping
 
 			, sm::state::deep_sleeping + boost::sml::on_entry<_> / sm::action::suspend_hardware_for_deep_sleep {}
+			, sm::state::deep_sleeping + boost::sml::on_exit<_>  / sm::action::wake_up {}
 
 			, sm::state::charging + boost::sml::on_entry<_> / (sm::action::start_deep_sleep_timeout {}, sm::action::start_charging_behavior {} )
 			, sm::state::charging + boost::sml::on_exit<_>  / (sm::action::stop_deep_sleep_timeout  {}, sm::action::stop_charging_behavior  {} )

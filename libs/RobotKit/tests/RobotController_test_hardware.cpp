@@ -42,6 +42,13 @@ TEST_F(RobotControllerTest, suspendHardwareForDeepSleep)
 	rc.suspendHardwareForDeepSleep();
 }
 
+TEST_F(RobotControllerTest, wakeUp)
+{
+	rc.wakeUp();
+
+	// nothing expected
+}
+
 TEST_F(RobotControllerTest, onChargeDidStart)
 {
 	{
