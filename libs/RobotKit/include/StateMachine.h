@@ -232,7 +232,7 @@ struct StateMachine {
 			, sm::state::sleeping + event<sm::event::charge_did_start>    [sm::guard::is_charging {}]                       = sm::state::charging
 			, sm::state::sleeping + event<sm::event::emergency_stop>                                                        = sm::state::emergency_stopped
 			, sm::state::sleeping + event<sm::event::autonomous_activities_mode_requested>                                  = sm::state::autonomous_activities
-			//, sm::state::sleeping + event<sm::event::deep_sleep_timeout_did_end>                                            = sm::state::deep_sleeping
+			, sm::state::sleeping + event<sm::event::deep_sleep_timeout_did_end>                                            = sm::state::deep_sleeping
 
 			, sm::state::deep_sleeping + boost::sml::on_entry<_> / sm::action::suspend_hardware_for_deep_sleep {}
 
@@ -248,7 +248,7 @@ struct StateMachine {
 			, sm::state::charging + event<sm::event::command_received>                                                                    = sm::state::charging
 			, sm::state::charging + event<sm::event::emergency_stop>                                                                      = sm::state::emergency_stopped
 			, sm::state::charging + event<sm::event::autonomous_activities_mode_requested>                                                = sm::state::charging
-			//, sm::state::charging + event<sm::event::deep_sleep_timeout_did_end>                                                          = sm::state::deep_sleeping
+			, sm::state::charging + event<sm::event::deep_sleep_timeout_did_end>                                                          = sm::state::deep_sleeping
 
 			, sm::state::file_exchange + boost::sml::on_entry<_> / sm::action::start_file_exchange {}
 			, sm::state::file_exchange + boost::sml::on_exit<_>  / sm::action::stop_file_exchange {}
