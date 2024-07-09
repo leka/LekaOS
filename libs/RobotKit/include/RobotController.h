@@ -31,6 +31,7 @@
 #include "StateMachine.h"
 #include "interface/RobotController.h"
 #include "interface/drivers/Battery.h"
+#include "interface/drivers/DeepSleepEnabled.h"
 #include "interface/drivers/FirmwareUpdate.h"
 #include "interface/drivers/LCD.hpp"
 #include "interface/drivers/Motor.h"
@@ -308,7 +309,12 @@ class RobotController : public interface::RobotController
 		stopActuators();
 	}
 
-	void suspendHardwareForDeepSleep() final { log_info("TO IMPLEMENT - configuring hardware for deep sleep"); }
+	void suspendHardwareForDeepSleep() final
+	{
+		for (auto &component: _deep_sleep_enabled_components) {
+			component->enableDeepSleep();
+		}
+	}
 
 	void resetEmergencyStopCounter() final { _emergency_stop_counter = 0; }
 
@@ -542,6 +548,11 @@ class RobotController : public interface::RobotController
 
 	auto isBleConnected() -> bool final { return state_machine.is(state::connected); }
 
+	void registerDeepSleepEnabledComponents(std::span<interface::DeepSleepEnabled *> components)
+	{
+		_deep_sleep_enabled_components = components;
+	}
+
   private:
 	system::robot::sm::logger logger {};
 
@@ -607,6 +618,8 @@ class RobotController : public interface::RobotController
 	};
 
 	uint8_t _emergency_stop_counter {0};
+
+	std::span<interface::DeepSleepEnabled *> _deep_sleep_enabled_components {};
 };
 
 }	// namespace leka

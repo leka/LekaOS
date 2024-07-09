@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "./RobotController_test.h"
+#include "mocks/leka/DeepSleepEnabled.h"
 
 TEST_F(RobotControllerTest, stopActuators)
 {
@@ -32,6 +33,12 @@ TEST_F(RobotControllerTest, stopActuatorsAndLcd)
 
 TEST_F(RobotControllerTest, suspendHardwareForDeepSleep)
 {
+	mock::DeepSleepEnabled mock_deep_sleep_enabled {};
+
+	auto components = std::to_array<interface::DeepSleepEnabled *>({&mock_deep_sleep_enabled});
+	rc.registerDeepSleepEnabledComponents(components);
+
+	EXPECT_CALL(mock_deep_sleep_enabled, enableDeepSleep);
 	rc.suspendHardwareForDeepSleep();
 }
 

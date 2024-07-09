@@ -1,0 +1,46 @@
+# Leka - LekaOS
+# Copyright 2024 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+name: System Tests
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run_system_tests:
+    name: Build & Test
+    runs-on: robot
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup
+        run: |
+          which arm-none-eabi-gcc
+          arm-none-eabi-gcc --version
+          python3 -m pip install -U --user -r ./tools/config/mbed_requirements.txt --break-system-packages
+        env:
+          PIP_BREAK_SYSTEM_PACKAGES: 1
+
+      - name: Config & Build
+        run: |
+          make deep_clean
+          make pull_deps
+          make config
+          make
+
+      - name: Run system tests
+        run: |
+          python3 -u tools/run_system_tests.py --duration 800 --deep-sleep-percentage 1
