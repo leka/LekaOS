@@ -30,11 +30,9 @@ jobs:
         run: |
           brew update && brew upgrade
           brew upgrade arm-gcc-bin
-          python3 -m pip install -U --user -r ./tools/config/mbed_requirements.txt
-
-      #
-      # Mark: - Config & Build
-      #
+          python3 -m pip install -U --user -r ./tools/config/mbed_requirements.txt --break-system-packages
+        env:
+          PIP_BREAK_SYSTEM_PACKAGES: 1
 
       - name: Config & Build
         run: |
@@ -42,10 +40,6 @@ jobs:
           make pull_deps
           make config
           make
-
-      #
-      # Mark: - Run system tests
-      #
 
       - name: Run system tests
         run: |
