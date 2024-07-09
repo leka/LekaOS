@@ -28,8 +28,8 @@ jobs:
 
       - name: Setup
         run: |
-          brew update && brew upgrade
-          brew upgrade arm-gcc-bin
+          which arm-none-eabi-gcc
+          arm-none-eabi-gcc --version
           python3 -m pip install -U --user -r ./tools/config/mbed_requirements.txt --break-system-packages
         env:
           PIP_BREAK_SYSTEM_PACKAGES: 1
