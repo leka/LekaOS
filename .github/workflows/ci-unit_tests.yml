@@ -26,12 +26,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-22.04
-            compiler:
-              name: GCC 10
-              cc: /usr/bin/gcc-10
-              cxx: /usr/bin/g++-10
-
           - os: ubuntu-24.04
             compiler:
               name: Clang 18

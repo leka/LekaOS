@@ -26,20 +26,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-22.04
-            optimisation_level: "-Og"
-            compiler:
-              name: GCC 10
-              cc: /usr/bin/gcc-10
-              cxx: /usr/bin/g++-10
-
-          - os: ubuntu-22.04
-            optimisation_level: "-Os"
-            compiler:
-              name: GCC 10
-              cc: /usr/bin/gcc-10
-              cxx: /usr/bin/g++-10
-
           - os: ubuntu-24.04
             optimisation_level: "-Og"
             compiler:
