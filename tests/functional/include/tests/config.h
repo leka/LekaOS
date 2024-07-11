@@ -15,6 +15,7 @@ namespace ut = boost::ut;
 namespace cfg {
 
 using namespace std::literals;
+using namespace leka;
 
 namespace output {
 

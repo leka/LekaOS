@@ -20,7 +20,7 @@
 
 using namespace std::chrono;
 
-namespace utils::sleep {
+namespace leka::utils::sleep {
 
 constexpr inline auto SERIAL_FLUSH_TIME_MS	  = 150ms;
 constexpr inline auto US_PER_S				  = 1'000'000;
@@ -142,4 +142,4 @@ inline auto get_deep_sleep_over_idle_time_ratio_for_duration(std::chrono::millis
 	return deep_sleep_ratio;
 }
 
-}	// namespace utils::sleep
+}	// namespace leka::utils::sleep
