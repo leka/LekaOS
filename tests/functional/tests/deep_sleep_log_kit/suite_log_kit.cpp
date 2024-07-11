@@ -8,8 +8,9 @@
 #include "tests/utils.h"
 #include "tests/utils_sleep.h"
 
-using namespace boost::ut;
 using namespace std::chrono;
+using namespace leka;
+using namespace boost::ut;
 using namespace boost::ut::bdd;
 
 suite suite_log_kit = [] {

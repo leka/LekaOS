@@ -9,9 +9,9 @@
 #include "tests/utils.h"
 #include "tests/utils_sleep.h"
 
+using namespace std::chrono;
 using namespace leka;
 using namespace boost::ut;
-using namespace std::chrono;
 using namespace boost::ut::bdd;
 
 suite suite_core_buffered_serial = [] {

@@ -21,9 +21,9 @@
 #include "tests/utils.h"
 #include "tests/utils_sleep.h"
 
+using namespace std::chrono;
 using namespace leka;
 using namespace boost::ut;
-using namespace std::chrono;
 using namespace boost::ut::bdd;
 
 auto backlight = CorePwm {SCREEN_BACKLIGHT_PWM};
