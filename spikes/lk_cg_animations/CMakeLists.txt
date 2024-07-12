@@ -14,6 +14,7 @@ register_spike(
 
 	LINK_LIBRARIES
 		CoreLL
+		CorePwm
 		CoreSTM32Hal
 		CoreVideo
 		FileManagerKit
