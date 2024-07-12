@@ -208,8 +208,9 @@ struct StateMachine {
 
 		return make_transition_table(
 			// clang-format off
-			* sm::state::setup    + event<sm::event::setup_complete> [sm::guard::is_not_charging {}] = sm::state::idle
-			, sm::state::setup    + event<sm::event::setup_complete> [sm::guard::is_charging {}]     = sm::state::charging
+			* sm::state::setup    + event<sm::event::setup_complete> [sm::guard::is_not_charging {} && sm::guard::is_not_connected {}] = sm::state::idle
+			, sm::state::setup    + event<sm::event::setup_complete> [sm::guard::is_not_charging {} && sm::guard::is_connected {}]     = sm::state::working
+			, sm::state::setup    + event<sm::event::setup_complete> [sm::guard::is_charging {}]                                       = sm::state::charging
 			, sm::state::setup    + boost::sml::on_exit<_>  / sm::action::run_launching_behavior {}
 
 			, sm::state::idle     + boost::sml::on_entry<_> / (sm::action::start_sleep_timeout {}, sm::action::start_waiting_behavior {})

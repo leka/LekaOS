@@ -53,7 +53,7 @@ TEST_F(StateMachineTest, initialState)
 	EXPECT_FALSE(sm.is(lksm::state::charging));
 }
 
-TEST_F(StateMachineTest, stateSetupEventSetupCompleteGuardIsChargingFalse)
+TEST_F(StateMachineTest, stateSetupEventSetupCompleteGuardIsChargingFalseIsConnectedFalse)
 {
 	sm.set_current_states(lksm::state::setup);
 
@@ -61,10 +61,26 @@ TEST_F(StateMachineTest, stateSetupEventSetupCompleteGuardIsChargingFalse)
 	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
 	EXPECT_CALL(mock_rc, startSleepTimeout).Times(1);
 	EXPECT_CALL(mock_rc, startWaitingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(false));
 
 	sm.process_event(lksm::event::setup_complete {});
 
 	EXPECT_TRUE(sm.is(lksm::state::idle));
+}
+
+TEST_F(StateMachineTest, stateSetupEventSetupCompleteGuardIsChargingFalseIsConnectedTrue)
+{
+	sm.set_current_states(lksm::state::setup);
+
+	EXPECT_CALL(mock_rc, runLaunchingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, isCharging).WillRepeatedly(Return(false));
+	EXPECT_CALL(mock_rc, startIdleTimeout).Times(1);
+	EXPECT_CALL(mock_rc, startWorkingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, isBleConnected).WillRepeatedly(Return(true));
+
+	sm.process_event(lksm::event::setup_complete {});
+
+	EXPECT_TRUE(sm.is(lksm::state::working));
 }
 
 TEST_F(StateMachineTest, stateSetupEventSetupCompleteGuardIsChargingTrue)
