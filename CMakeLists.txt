@@ -136,6 +136,10 @@ project(LekaOS LANGUAGES C CXX ASM)
 
 include(add_lib)
 
+list(APPEND link_options
+	"--specs=nano.specs"
+)
+
 # Add c++ support, include directories
 include_directories(BEFORE SYSTEM
 	${INCLUDE_DIR}/cxxsupport
