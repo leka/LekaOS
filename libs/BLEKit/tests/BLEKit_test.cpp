@@ -140,3 +140,10 @@ TEST_F(BLEKitTest, isConnectedDefault)
 
 	EXPECT_FALSE(is_connected);
 }
+
+TEST_F(BLEKitTest, disconnect)
+{
+	EXPECT_CALL(mbed_mock_gap, disconnect);
+
+	ble.disconnect();
+}

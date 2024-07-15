@@ -34,6 +34,8 @@ class CoreGap
 	void onDisconnectionCallback(const std::function<void()> &callback);
 	[[nodiscard]] auto isConnected() const -> bool;
 
+	void disconnect();
+
   private:
 	ble::advertising_handle_t _advertising_handle {ble::LEGACY_ADVERTISING_HANDLE};
 	ble::AdvertisingParameters _advertising_params {};
