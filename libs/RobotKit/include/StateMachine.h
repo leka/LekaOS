@@ -246,6 +246,7 @@ struct StateMachine {
 
 			, sm::state::deep_sleeping + event<sm::event::ble_connection>    = X
 			, sm::state::deep_sleeping + event<sm::event::ble_disconnection> = X
+			, sm::state::deep_sleeping + event<sm::event::command_received>  = X
 
 			, sm::state::charging + boost::sml::on_entry<_> / (sm::action::start_deep_sleep_timeout {}, sm::action::start_charging_behavior {} )
 			, sm::state::charging + boost::sml::on_exit<_>  / (sm::action::stop_deep_sleep_timeout  {}, sm::action::stop_charging_behavior  {} )
