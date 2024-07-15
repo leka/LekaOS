@@ -2,26 +2,20 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(TouchSensorKit STATIC)
+add_lib_kit(TouchSensorKit
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(TouchSensorKit
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/TouchSensorKit.cpp
 
-target_sources(TouchSensorKit
-	PRIVATE
-	source/TouchSensorKit.cpp
-)
+	PUBLIC_LINK_LIBRARIES
+		CoreEventQueue
 
-target_link_libraries(TouchSensorKit
-	mbed-os
-	CoreEventQueue
-	CoreTouchSensor
-)
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
+		CoreTouchSensor
 
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/TouchSensorKit_test.cpp
-	)
-endif()
+)

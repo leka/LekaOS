@@ -2,30 +2,24 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(BLEKit STATIC)
+add_lib_kit(BLEKit
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(BLEKit
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/BLEKit.cpp
+		source/CoreGap.cpp
+		source/CoreGapEventHandler.cpp
+		source/CoreGattServer.cpp
+		source/CoreGattServerEventHandler.cpp
 
-target_sources(BLEKit
-	PRIVATE
-	source/BLEKit.cpp
-	source/CoreGapEventHandler.cpp
-	source/CoreGap.cpp
-	source/CoreGattServerEventHandler.cpp
-	source/CoreGattServer.cpp
-)
+	PUBLIC_LINK_LIBRARIES
+		mbed-bluenrg-ms
 
-target_link_libraries(BLEKit
-	mbed-os
-	CoreEventQueue
-	RFIDKit
-)
+	PRIVATE_LINK_LIBRARIES
+		CoreEventQueue
 
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/AdvertisingData_test.cpp
 		tests/CoreGapEventHandler_test.cpp
 		tests/CoreGap_test.cpp
@@ -39,5 +33,4 @@ if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/BLEServiceMagicCard_test.cpp
 		tests/BLEServiceFileExchange_test.cpp
 		tests/BLEServiceUpdate_test.cpp
-	)
-endif()
+)

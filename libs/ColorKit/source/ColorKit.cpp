@@ -5,6 +5,9 @@
 #include "ColorKit.h"
 #include <cmath>
 
+#include "internal/conversion.h"
+#include "internal/interpolation.h"
+
 namespace leka {
 
 auto ColorKit::colorGradient(const RGB &color1, const RGB &color2, const float &position) -> RGB

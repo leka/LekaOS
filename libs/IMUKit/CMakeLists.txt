@@ -4,25 +4,17 @@
 
 add_subdirectory(external)
 
-add_library(IMUKit STATIC)
+add_lib_kit(IMUKit
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(IMUKit
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/IMUKit.cpp
 
-target_sources(IMUKit
-	PRIVATE
-	source/IMUKit.cpp
-)
+	PRIVATE_LINK_LIBRARIES
+		CoreIMU
+		Fusion
 
-target_link_libraries(IMUKit
-	CoreIMU
-	Fusion
-)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/IMUKit_test.cpp
-	)
-endif()
+)

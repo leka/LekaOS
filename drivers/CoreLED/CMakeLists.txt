@@ -2,29 +2,22 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CoreLED STATIC)
+add_lib_core(CoreLED
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(CoreLED
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/CoreLED.cpp
 
-target_sources(CoreLED
-	PRIVATE
-	source/CoreLED.cpp
-)
+	PUBLIC_LINK_LIBRARIES
 
-target_link_libraries(CoreLED
-	CoreSPI
-	ColorKit
-)
+	# CoreSPI
+		ColorKit
 
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/CoreLED_test_brightness.cpp
 		tests/CoreLED_test_setColor.cpp
 		tests/CoreLED_test_showHideColor.cpp
 		tests/CoreLED_test_status.cpp
 		tests/CoreLED_test.cpp
-	)
-endif()
+)

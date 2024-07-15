@@ -2,30 +2,22 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(IOKit STATIC)
+add_lib_kit(IOKit
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(IOKit
-	PUBLIC
-	include
-	PRIVATE
-	internal
-)
+	PRIVATE_INCLUDE_DIRS
+		internal
 
-target_sources(IOKit
-	PRIVATE
-	source/IO.cpp
-	source/DigitalIn.cpp
-	source/DigitalOut.cpp
-)
+	PRIVATE_SOURCES
+		source/DigitalIn.cpp
+		source/DigitalOut.cpp
+		source/IO.cpp
 
-target_link_libraries(IOKit
-	PRIVATE
-	mbed-os
-)
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
 
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/DigitalIn_test.cpp
 		tests/DigitalOut_test.cpp
-	)
-endif()
+)

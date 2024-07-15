@@ -39,7 +39,14 @@ add_compile_options(
 	-fdiagnostics-color=always
 )
 
-# Bootloader
+# Before all, set ROOT_DIR, MBED_OS_DIR
+set(ROOT_DIR ${CMAKE_CURRENT_LIST_DIR})
+set(MBED_PATH ${ROOT_DIR}/extern/mbed-os CACHE INTERNAL "")
+set(MBED_CONFIG_PATH ${ROOT_DIR}/.mbedbuild CACHE INTERNAL "")
+set(MCUBOOT_DIR ${ROOT_DIR}/extern/mcuboot/boot)
+set(MBED_HTTP_DIR ${ROOT_DIR}/extern/mbed-http)
+
+# Bootloader option
 option(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER "Build targets with padding to use with bootloader" OFF)
 
 if(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
@@ -71,6 +78,7 @@ endif(ENABLE_LOG_DEBUG AND ENABLE_SYSTEM_STATS)
 
 # Before all
 set(ROOT_DIR ${CMAKE_CURRENT_LIST_DIR})
+set(CONFIG_DIR ${ROOT_DIR}/config)
 
 # extern
 set(MBED_OS_DIR ${ROOT_DIR}/extern/mbed-os)
@@ -94,26 +102,60 @@ set(SPIKES_DIR ${ROOT_DIR}/spikes)
 set(TESTS_FUNCTIONAL_DIR ${ROOT_DIR}/tests/functional)
 
 #
-# MARK: - LekaOS Project
+# MARK: - Mbed OS
 #
 
-# And include mbed-cmake.cmake
-include(${ROOT_DIR}/cmake/mbed-cmake.cmake)
+# Note: This block must be before the include of app.cmake
+set(MBED_APP_JSON_PATH ${CONFIG_DIR}/mbed_app.json)
+set(CUSTOM_TARGETS_JSON_PATH ${TARGETS_DIR}/custom_targets.json)
 
-project(LekaOS LANGUAGES C CXX ASM)
-
-# Add custom target subdirectory
+# add custom target subdirectory
 set(AVAILABLE_CUSTOM_TARGETS LEKA_DISCO LEKA_V1_2_DEV)
 
 if(${TARGET_BOARD} IN_LIST AVAILABLE_CUSTOM_TARGETS)
 	message(STATUS "Add subdirectory for hardware target ${TARGET_BOARD}")
-	add_subdirectory(${TARGETS_DIR}/TARGET_${TARGET_BOARD})
+	add_subdirectory(${TARGETS_DIR}/${TARGET_BOARD})
 else()
 	message(FATAL_ERROR "Target ${TARGET_BOARD} is not available.")
 endif()
 
+# turn off vscode configuration
+set(MBED_GENERATE_VSCODE_CONFIG FALSE)
+
+# include mbed os build system
+include(${MBED_PATH}/tools/cmake/app.cmake)
+add_subdirectory(${MBED_PATH})
+
+# include cmake utils
+list(APPEND CMAKE_MODULE_PATH "${ROOT_DIR}/cmake/utils")
+
+#
+# MARK: - LekaOS Project
+#
+project(LekaOS LANGUAGES C CXX ASM)
+
+include(add_lib)
+
+list(APPEND link_options
+	"--specs=nano.specs"
+)
+
+# Add c++ support, include directories
+include_directories(BEFORE SYSTEM
+	${INCLUDE_DIR}/cxxsupport
+	${MBED_OS_DIR}/platform/cxxsupport
+)
+
 include_directories(BEFORE
 	${INCLUDE_DIR}
+)
+
+# mbed os headers
+add_library(mbed_headers INTERFACE)
+target_link_libraries(mbed_headers
+	INTERFACE
+	mbed-core-flags
+	mbed-rtos-flags
 )
 
 # Link libraries to all targets
@@ -157,4 +199,7 @@ if(VERBOSE_BUILD)
 	set(CMAKE_VERBOSE_MAKEFILE ON)
 endif()
 
+include(print_compilers_flags_options_definitions)
 print_compilers_flags_options_definitions()
+
+mbed_finalize_build()

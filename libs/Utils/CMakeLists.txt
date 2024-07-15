@@ -2,29 +2,22 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(Utils STATIC)
+add_lib_kit(Utils
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(Utils
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/CastUtils.cpp
+		source/MathUtils.cpp
+		source/MemoryUtils.cpp
+		source/Utils.cpp
 
-target_sources(Utils
-	PRIVATE
-	source/Utils.cpp
-	source/CastUtils.cpp
-	source/MathUtils.cpp
-	source/MemoryUtils.cpp
-)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/CastUtils_test.cpp
 		tests/MathUtils_test_checksum.cpp
 		tests/MathUtils_test_invSqrt.cpp
 		tests/MathUtils_test_linear_function.cpp
 		tests/MathUtils_test_map.cpp
 		tests/MathUtils_test_random8.cpp
-		tests/MemoryUtils_test.cpp
-	)
-endif()
+		tests/MemoryUtils_test.cpptests/Utils_test.cpp
+)

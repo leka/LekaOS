@@ -2,7 +2,7 @@
 # Copyright 2020 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_mbed_executable(LekaOS)
+add_executable(LekaOS)
 
 target_include_directories(LekaOS
 	PRIVATE
@@ -16,30 +16,35 @@ target_sources(LekaOS
 
 target_link_libraries(LekaOS
 	bootutil
-	RobotKit
-	CoreMCU
-	CoreTimeout
+	mbed-os
+
 	CoreBattery
-	CoreQSPI
-	CoreFlashMemory
-	FileManagerKit
-	SerialNumberKit
-	FirmwareKit
-	BehaviorKit
-	CorePwm
-	CoreMotor
-	VideoKit
-	LedKit
-	CoreLED
 	CoreBufferedSerial
-	CoreRFIDReader
-	RFIDKit
-	ActivityKit
+	CoreFlashMemory
 	CoreI2C
 	CoreIMU
-	IMUKit
-	MotionKit
+	CoreLED
+	CoreMCU
+	CoreMotor
+	CorePwm
+	CoreQSPI
+	CoreRFIDReader
+	CoreSPI
+	CoreTimeout
+
+	ActivityKit
+	BehaviorKit
 	EventLoopKit
+	FileManagerKit
+	FirmwareKit
+	IMUKit
+	LedKit
+	MotionKit
+	RFIDKit
+	ReinforcerKit
+	RobotKit
+	SerialNumberKit
+	VideoKit
 )
 
-target_link_custom_leka_targets(LekaOS)
+mbed_set_post_build(LekaOS)

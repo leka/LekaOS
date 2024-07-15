@@ -15,7 +15,7 @@ target_sources(EventLoopKit
 )
 
 target_link_libraries(EventLoopKit
-	mbed-os
+	mbed_headers
 	CoreEventFlags
 )
 

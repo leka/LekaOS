@@ -2,22 +2,16 @@
 # Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(CoreMicrophone STATIC)
+add_lib_core(CoreMicrophone
+	PUBLIC_INCLUDE_DIRS
+		include
 
-target_include_directories(CoreMicrophone
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/CoreMicrophone.cpp
 
-target_sources(CoreMicrophone
-	PRIVATE
-	source/CoreMicrophone.cpp
-)
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
 
-target_link_libraries(CoreMicrophone mbed-os)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/CoreMicrophone_test.cpp
-	)
-endif()
+)

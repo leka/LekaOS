@@ -1,23 +1,16 @@
 # Leka - LekaOS
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
+add_lib_core(CoreEventQueue
+	PUBLIC_INCLUDE_DIRS
+		include
 
-add_library(CoreEventQueue STATIC)
+	PRIVATE_SOURCES
+		source/CoreEventQueue.cpp
 
-target_include_directories(CoreEventQueue
-	PUBLIC
-	include
-)
+	PRIVATE_LINK_LIBRARIES
+		mbed_headers
 
-target_sources(CoreEventQueue
-	PRIVATE
-	source/CoreEventQueue.cpp
-)
-
-target_link_libraries(CoreEventQueue mbed-os)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/CoreEventQueue_test.cpp
-	)
-endif()
+)

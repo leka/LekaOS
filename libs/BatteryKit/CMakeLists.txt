@@ -2,25 +2,18 @@
 # Copyright 2022 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
-add_library(BatteryKit STATIC)
+add_lib_kit(BatteryKit
+	PUBLIC_INCLUDE_DIRS
+		include
+		include/activities
+		include/activities/include
 
-target_include_directories(BatteryKit
-	PUBLIC
-	include
-)
+	PRIVATE_SOURCES
+		source/BatteryKit.cpp
 
-target_sources(BatteryKit
-	PRIVATE
-	source/BatteryKit.cpp
-)
+	PUBLIC_LINK_LIBRARIES
+		CoreEventQueue
 
-target_link_libraries(BatteryKit
-	mbed-os
-	CoreEventQueue
-)
-
-if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
-	leka_unit_tests_sources(
+	UNIT_TESTS_SOURCES
 		tests/BatteryKit_test.cpp
-	)
-endif()
+)
