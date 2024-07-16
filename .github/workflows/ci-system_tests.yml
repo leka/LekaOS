@@ -38,9 +38,9 @@ jobs:
         run: |
           make deep_clean
           make pull_deps
-          make config
+          make config ENABLE_FAST_SLEEP=ON
           make
 
       - name: Run system tests
         run: |
-          python3 -u tools/run_system_tests.py --duration 800 --deep-sleep-percentage 1
+          python3 -u tools/run_system_tests.py --duration 10 --deep-sleep-percentage 1
