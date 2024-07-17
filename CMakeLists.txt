@@ -49,6 +49,13 @@ if(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
 	)
 endif(BUILD_TARGETS_TO_USE_WITH_BOOTLOADER)
 
+# OS
+option(ENABLE_FAST_SLEEP "Enable fast sleep for testing" OFF)
+
+if(ENABLE_FAST_SLEEP)
+	add_definitions(-DENABLE_FAST_SLEEP)
+endif(ENABLE_FAST_SLEEP)
+
 # Logger
 option(ENABLE_LOG_DEBUG "Enable LogKit output" OFF)
 
