@@ -138,5 +138,5 @@ class reporter : public ut::reporter<ut::printer>
 
 }	// namespace cfg
 
-template <>
-inline auto ut::cfg<ut::override> = ut::runner<cfg::reporter<ut::printer>> {};
+// template <>
+// inline auto ut::cfg<ut::override> = ut::runner<cfg::reporter<ut::printer>> {};

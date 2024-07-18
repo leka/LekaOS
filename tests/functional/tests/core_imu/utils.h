@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <tuple>
 #include <vector>
 
 #include "rtos/ThisThread.h"
@@ -59,5 +58,5 @@ inline auto values_did_change_over_time(leka::interface::LSM6DSOX &lsm6dsox)
 		rtos::ThisThread::sleep_for(25ms);
 	}
 
-	return neq(i_batch, f_batch);
+	return expect(i_batch != f_batch);
 }
