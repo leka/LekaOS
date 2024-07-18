@@ -24,8 +24,8 @@ class CoreWifi : public WiFiInterface
 		const nsapi_security_t security = NSAPI_SECURITY_WPA_WPA2;
 	};
 
-	auto set_credentials(const char *ssid, const char *password, nsapi_security_t security = NSAPI_SECURITY_NONE)
-		-> int final;
+	auto set_credentials(const char *ssid, const char *password,
+						 nsapi_security_t security = NSAPI_SECURITY_NONE) -> int final;
 	auto set_channel(uint8_t channel) -> nsapi_error_t final;
 
 	auto scan(WiFiAccessPoint *res, nsapi_size_t count) -> nsapi_size_or_error_t final;

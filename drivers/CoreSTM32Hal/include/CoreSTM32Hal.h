@@ -53,8 +53,8 @@ class CoreSTM32Hal : public interface::STM32Hal
 	void HAL_NVIC_EnableIRQ(IRQn_Type IRQn) final;
 
 	auto HAL_SDRAM_Init(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_TimingTypeDef *Timing) -> HAL_StatusTypeDef final;
-	auto HAL_SDRAM_SendCommand(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_CommandTypeDef *Command, uint32_t Timeout)
-		-> HAL_StatusTypeDef final;
+	auto HAL_SDRAM_SendCommand(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_CommandTypeDef *Command,
+							   uint32_t Timeout) -> HAL_StatusTypeDef final;
 	auto HAL_SDRAM_ProgramRefreshRate(SDRAM_HandleTypeDef *hsdram, uint32_t RefreshRate) -> HAL_StatusTypeDef final;
 
 	auto HAL_DMA_Init(DMA_HandleTypeDef *hdma) -> HAL_StatusTypeDef final;
@@ -77,11 +77,11 @@ class CoreSTM32Hal : public interface::STM32Hal
 	auto HAL_DSI_LongWrite(DSI_HandleTypeDef *hdsi, uint32_t ChannelID, uint32_t Mode, uint32_t NbParams,
 						   uint32_t Param1, uint8_t *ParametersTable) -> HAL_StatusTypeDef final;
 
-	auto HAL_LTDC_StructInitFromVideoConfig(LTDC_HandleTypeDef *hltdc, DSI_VidCfgTypeDef *VidCfg)
-		-> HAL_StatusTypeDef final;
+	auto HAL_LTDC_StructInitFromVideoConfig(LTDC_HandleTypeDef *hltdc,
+											DSI_VidCfgTypeDef *VidCfg) -> HAL_StatusTypeDef final;
 	auto HAL_LTDC_Init(LTDC_HandleTypeDef *hltdc) -> HAL_StatusTypeDef final;
-	auto HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfgTypeDef *pLayerCfg, uint32_t LayerIdx)
-		-> HAL_StatusTypeDef final;
+	auto HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfgTypeDef *pLayerCfg,
+							  uint32_t LayerIdx) -> HAL_StatusTypeDef final;
 
 	auto HAL_JPEG_Init(JPEG_HandleTypeDef *hjpeg) -> HAL_StatusTypeDef final;
 	auto HAL_JPEG_GetInfo(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *pInfo) -> HAL_StatusTypeDef final;
@@ -93,12 +93,12 @@ class CoreSTM32Hal : public interface::STM32Hal
 	void HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer,
 									 uint32_t OutDataLength) final;
 
-	auto HAL_JPEG_RegisterInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_InfoReadyCallbackTypeDef pCallback)
-		-> HAL_StatusTypeDef final;
-	auto HAL_JPEG_RegisterGetDataCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_GetDataCallbackTypeDef pCallback)
-		-> HAL_StatusTypeDef final;
-	auto HAL_JPEG_RegisterDataReadyCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_DataReadyCallbackTypeDef pCallback)
-		-> HAL_StatusTypeDef final;
+	auto HAL_JPEG_RegisterInfoReadyCallback(JPEG_HandleTypeDef *hjpeg,
+											pJPEG_InfoReadyCallbackTypeDef pCallback) -> HAL_StatusTypeDef final;
+	auto HAL_JPEG_RegisterGetDataCallback(JPEG_HandleTypeDef *hjpeg,
+										  pJPEG_GetDataCallbackTypeDef pCallback) -> HAL_StatusTypeDef final;
+	auto HAL_JPEG_RegisterDataReadyCallback(JPEG_HandleTypeDef *hjpeg,
+											pJPEG_DataReadyCallbackTypeDef pCallback) -> HAL_StatusTypeDef final;
 	auto HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *hjpeg, HAL_JPEG_CallbackIDTypeDef callbackID,
 								   pJPEG_CallbackTypeDef pCallback) -> HAL_StatusTypeDef final;
 

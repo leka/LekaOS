@@ -126,7 +126,7 @@ namespace motor {
 			auto speed = CorePwm {MOTOR_RIGHT_PWM};
 
 		}	// namespace right
-	}		// namespace internal
+	}	// namespace internal
 
 	auto left  = CoreMotor {internal::left::dir_1, internal::left::dir_2, internal::left::speed};
 	auto right = CoreMotor {internal::right::dir_1, internal::right::dir_2, internal::right::speed};
