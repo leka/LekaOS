@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "CoreI2C.h"
-#include "CoreLSM6DSOX.hpp"
+#include "CoreIMU.hpp"
 #include "tests/config.h"
 #include "tests/utils_sleep.h"
 
@@ -14,7 +14,7 @@ using namespace boost::ut::bdd;
 
 auto i2c	  = CoreI2C {PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL};
 auto drdy_irq = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
-auto coreimu  = CoreLSM6DSOX {i2c, drdy_irq};
+auto coreimu  = CoreIMU {i2c, drdy_irq};
 
 suite suite_imu = [] {
 	scenario("imu initialization") = [] {

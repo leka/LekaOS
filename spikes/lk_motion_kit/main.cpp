@@ -6,7 +6,7 @@
 
 #include "CoreBufferedSerial.h"
 #include "CoreI2C.h"
-#include "CoreLSM6DSOX.hpp"
+#include "CoreIMU.hpp"
 #include "CoreMotor.h"
 #include "CorePwm.h"
 #include "CoreRFIDReaderCR95HF.h"
@@ -65,11 +65,11 @@ namespace imu {
 
 	}	// namespace internal
 
-	CoreLSM6DSOX lsm6dsox(internal::i2c, internal::drdy_irq);
+	CoreIMU coreimu(internal::i2c, internal::drdy_irq);
 
 }	// namespace imu
 
-auto imukit = IMUKit {imu::lsm6dsox};
+auto imukit = IMUKit {imu::coreimu};
 
 namespace motion::internal {
 
@@ -131,7 +131,7 @@ auto main() -> int
 	HelloWorld hello;
 	hello.start();
 
-	imu::lsm6dsox.init();
+	imu::coreimu.init();
 	imukit.init();
 	rfidkit.init();
 

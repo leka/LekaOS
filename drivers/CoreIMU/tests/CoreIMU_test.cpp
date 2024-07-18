@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "CoreLSM6DSOX.hpp"
+#include "CoreIMU.hpp"
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreI2C.h"
 #include "mocks/leka/EventQueue.h"
@@ -16,24 +16,24 @@ using testing::_;
 using testing::AtLeast;
 using testing::MockFunction;
 
-class CoreLSM6DSOXTest : public ::testing::Test
+class CoreIMUTest : public ::testing::Test
 {
   protected:
-	CoreLSM6DSOXTest() = default;
+	CoreIMUTest() = default;
 
 	void SetUp() override
 	{
 		EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
 		EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
 
-		lsm6dsox.init();
+		coreimu.init();
 	}
 	// void TearDown() override {}
 
 	mock::CoreI2C mocki2c {};
 	CoreInterruptIn drdy_irq {NC};
 
-	CoreLSM6DSOX lsm6dsox {mocki2c, drdy_irq};
+	CoreIMU coreimu {mocki2c, drdy_irq};
 
 	// ? Instantiation of mock::EventQueue is needed to setup the underlying stubs that will make the mock work
 	// ? correctly. Without it UT are failing
@@ -41,66 +41,66 @@ class CoreLSM6DSOXTest : public ::testing::Test
 	mock::EventQueue _ {};
 };
 
-TEST_F(CoreLSM6DSOXTest, initialization)
+TEST_F(CoreIMUTest, initialization)
 {
-	ASSERT_NE(&lsm6dsox, nullptr);
+	ASSERT_NE(&coreimu, nullptr);
 }
 
-TEST_F(CoreLSM6DSOXTest, setPowerMode)
+TEST_F(CoreIMUTest, setPowerMode)
 {
 	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
 	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
-	lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
+	coreimu.setPowerMode(CoreIMU::PowerMode::Off);
 
 	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
 	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
-	lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::UltraLow);
+	coreimu.setPowerMode(CoreIMU::PowerMode::UltraLow);
 
 	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
 	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
-	lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Normal);
+	coreimu.setPowerMode(CoreIMU::PowerMode::Normal);
 
 	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
 	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
-	lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::High);
+	coreimu.setPowerMode(CoreIMU::PowerMode::High);
 }
 
-TEST_F(CoreLSM6DSOXTest, onGyrDRDY)
+TEST_F(CoreIMUTest, onGyrDRDY)
 {
-	MockFunction<void(const leka::interface::LSM6DSOX::SensorData &data)> mock_callback;
+	MockFunction<void(const leka::interface::IMU::SensorData &data)> mock_callback;
 
 	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
 	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
 	EXPECT_CALL(mock_callback, Call).Times(1);
 
-	lsm6dsox.registerOnGyDataReadyCallback(mock_callback.AsStdFunction());
+	coreimu.registerOnGyDataReadyCallback(mock_callback.AsStdFunction());
 
 	auto on_rise_callback = spy_InterruptIn_getRiseCallback();
 	on_rise_callback();
 }
 
-TEST_F(CoreLSM6DSOXTest, emptyOnGyrDrdyCallback)
+TEST_F(CoreIMUTest, emptyOnGyrDrdyCallback)
 {
-	lsm6dsox.registerOnGyDataReadyCallback({});
+	coreimu.registerOnGyDataReadyCallback({});
 
 	auto on_rise_callback = spy_InterruptIn_getRiseCallback();
 	on_rise_callback();
 }
 
-TEST_F(CoreLSM6DSOXTest, enableDeepSleep)
+TEST_F(CoreIMUTest, enableDeepSleep)
 {
 	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
 	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
-	lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
+	coreimu.setPowerMode(CoreIMU::PowerMode::Off);
 
-	lsm6dsox.enableDeepSleep();
+	coreimu.enableDeepSleep();
 }
 
-TEST_F(CoreLSM6DSOXTest, disableDeepSleep)
+TEST_F(CoreIMUTest, disableDeepSleep)
 {
 	EXPECT_CALL(mocki2c, write).Times(AtLeast(1));
 	EXPECT_CALL(mocki2c, read).Times(AtLeast(1));
-	lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Normal);
+	coreimu.setPowerMode(CoreIMU::PowerMode::Normal);
 
-	lsm6dsox.disableDeepSleep();
+	coreimu.disableDeepSleep();
 }

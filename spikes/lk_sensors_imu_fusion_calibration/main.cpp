@@ -8,7 +8,7 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreI2C.h"
-#include "CoreLSM6DSOX.hpp"
+#include "CoreIMU.hpp"
 #include "LogKit.h"
 
 // ? Note the following code has been heavily inspired from:
@@ -31,7 +31,7 @@ namespace imu {
 
 	}	// namespace internal
 
-	CoreLSM6DSOX lsm6dsox(internal::i2c, internal::drdy_irq);
+	CoreIMU coreimu(internal::i2c, internal::drdy_irq);
 
 }	// namespace imu
 
@@ -48,14 +48,14 @@ namespace fusion {
 		.rejectionTimeout	   = static_cast<unsigned int>(5 * kODR_HZ),   // ? # of samples in 5 seconds
 	};
 
-	interface::LSM6DSOX::SensorData::time_point_t timestamp_previous = {};
+	interface::IMU::SensorData::time_point_t timestamp_previous = {};
 
 	auto global_offset = FusionOffset {};
 
 	constexpr auto CALIBRATION = bool {true};
 	// constexpr auto CALIBRATION = bool {false};
 
-	void callback(const interface::LSM6DSOX::SensorData data)
+	void callback(const interface::IMU::SensorData data)
 	{
 		auto timestamp_now	  = data.timestamp;
 		auto timestamp_now_us = std::chrono::microseconds {timestamp_now.time_since_epoch()}.count();
@@ -119,9 +119,9 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(1s);
 
-	imu::lsm6dsox.init();
+	imu::coreimu.init();
 
-	imu::lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Off);
+	imu::coreimu.setPowerMode(CoreIMU::PowerMode::Off);
 
 	// ? Initialise algorithms
 	FusionAhrsInitialise(&fusion::ahrs);
@@ -136,8 +136,8 @@ auto main() -> int
 
 	rtos::ThisThread::sleep_for(1s);
 
-	imu::lsm6dsox.registerOnGyDataReadyCallback(fusion::callback);
-	imu::lsm6dsox.setPowerMode(CoreLSM6DSOX::PowerMode::Normal);
+	imu::coreimu.registerOnGyDataReadyCallback(fusion::callback);
+	imu::coreimu.setPowerMode(CoreIMU::PowerMode::Normal);
 
 	while (true) {
 		rtos::ThisThread::sleep_for(5s);
