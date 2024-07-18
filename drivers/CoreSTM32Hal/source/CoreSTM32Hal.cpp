@@ -226,8 +226,8 @@ auto CoreSTM32Hal::HAL_DSI_LongWrite(DSI_HandleTypeDef *hdsi, uint32_t ChannelID
 	return ::HAL_DSI_LongWrite(hdsi, ChannelID, Mode, NbParams, Param1, ParametersTable);
 }
 
-auto CoreSTM32Hal::HAL_LTDC_StructInitFromVideoConfig(LTDC_HandleTypeDef *hltdc, DSI_VidCfgTypeDef *VidCfg)
-	-> HAL_StatusTypeDef
+auto CoreSTM32Hal::HAL_LTDC_StructInitFromVideoConfig(LTDC_HandleTypeDef *hltdc,
+													  DSI_VidCfgTypeDef *VidCfg) -> HAL_StatusTypeDef
 {
 	return ::HAL_LTDC_StructInitFromVideoConfig(hltdc, VidCfg);
 }
@@ -237,8 +237,8 @@ auto CoreSTM32Hal::HAL_LTDC_Init(LTDC_HandleTypeDef *hltdc) -> HAL_StatusTypeDef
 	return ::HAL_LTDC_Init(hltdc);
 }
 
-auto CoreSTM32Hal::HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfgTypeDef *pLayerCfg, uint32_t LayerIdx)
-	-> HAL_StatusTypeDef
+auto CoreSTM32Hal::HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfgTypeDef *pLayerCfg,
+										uint32_t LayerIdx) -> HAL_StatusTypeDef
 {
 	return ::HAL_LTDC_ConfigLayer(hltdc, pLayerCfg, LayerIdx);
 }
@@ -283,8 +283,8 @@ auto CoreSTM32Hal::HAL_JPEG_RegisterInfoReadyCallback(JPEG_HandleTypeDef *hjpeg,
 	return ::HAL_JPEG_RegisterInfoReadyCallback(hjpeg, pCallback);
 }
 
-auto CoreSTM32Hal::HAL_JPEG_RegisterGetDataCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_GetDataCallbackTypeDef pCallback)
-	-> HAL_StatusTypeDef
+auto CoreSTM32Hal::HAL_JPEG_RegisterGetDataCallback(JPEG_HandleTypeDef *hjpeg,
+													pJPEG_GetDataCallbackTypeDef pCallback) -> HAL_StatusTypeDef
 {
 	return ::HAL_JPEG_RegisterGetDataCallback(hjpeg, pCallback);
 }

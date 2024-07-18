@@ -33,8 +33,8 @@ auto CoreWifi::connect(const Network &network) -> bool
 	return true;
 }
 
-auto CoreWifi::connect(const char *ssid, const char *password, nsapi_security_t security, uint8_t channel)
-	-> nsapi_error_t
+auto CoreWifi::connect(const char *ssid, const char *password, nsapi_security_t security,
+					   uint8_t channel) -> nsapi_error_t
 {
 	return _module.connect(ssid, password, security, channel);
 }
