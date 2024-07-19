@@ -55,9 +55,9 @@ void IMUKit::init()
 		FusionOffsetInitialise(&fusion::global_offset, fusion::kODR_HZ);
 	}
 
-	auto on_drdy_callback = [this](const interface::IMU::SensorData &data) { drdy_callback(data); };
+	auto on_data_ready_callback = [this](const interface::IMU::SensorData &data) { data_ready_callback(data); };
 
-	_imu.registerOnGyDataReadyCallback(on_drdy_callback);
+	_imu.registerOnDataReadyCallback(on_data_ready_callback);
 }
 
 void IMUKit::start()
@@ -88,7 +88,7 @@ void IMUKit::onEulerAnglesReady(angles_ready_callback_t const &callback)
 	_on_euler_angles_rdy_callback = callback;
 }
 
-void IMUKit::drdy_callback(const interface::IMU::SensorData data)
+void IMUKit::data_ready_callback(const interface::IMU::SensorData data)
 {
 	// ? Note: For a detailed explanation on the code below, checkout
 	// ? https://github.com/leka/LekaOS/tree/develop/spikes/lk_sensors_imu_imu_fusion_calibration

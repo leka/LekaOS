@@ -75,7 +75,7 @@ TEST_F(IMUKitTest, onDataReady)
 
 	EXPECT_CALL(mock_callback, Call);
 
-	mock_imu.call_drdy_callback(data_initial);
+	mock_imu.call_data_ready_callback(data_initial);
 
 	const auto angles_initial = imukit.getEulerAngles();
 
@@ -86,7 +86,7 @@ TEST_F(IMUKitTest, onDataReady)
 
 	EXPECT_CALL(mock_callback, Call);
 
-	mock_imu.call_drdy_callback(data_updated);
+	mock_imu.call_data_ready_callback(data_updated);
 
 	auto angles_updated = imukit.getEulerAngles();
 
@@ -102,7 +102,7 @@ TEST_F(IMUKitTest, onDataReadyEmptyEulerAngleCallback)
 	const auto data_initial =
 		interface::IMU::SensorData {.xl = {.x = 0.F, .y = 0.F, .z = 0.F}, .gy = {.x = 0.F, .y = 0.F, .z = 0.F}};
 
-	mock_imu.call_drdy_callback(data_initial);
+	mock_imu.call_data_ready_callback(data_initial);
 
 	const auto angles_initial = imukit.getEulerAngles();
 
@@ -111,7 +111,7 @@ TEST_F(IMUKitTest, onDataReadyEmptyEulerAngleCallback)
 	const auto data_updated =
 		interface::IMU::SensorData {.xl = {.x = 1.F, .y = 2.F, .z = 3.F}, .gy = {.x = 1.F, .y = 2.F, .z = 3.F}};
 
-	mock_imu.call_drdy_callback(data_updated);
+	mock_imu.call_data_ready_callback(data_updated);
 
 	auto angles_updated = imukit.getEulerAngles();
 
