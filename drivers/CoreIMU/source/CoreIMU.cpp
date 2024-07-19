@@ -23,10 +23,10 @@ void CoreIMU::init()
 	lsm6dsox_i3c_disable_set(&_register_io_function, LSM6DSOX_I3C_DISABLE);
 	lsm6dsox_mode_get(&_register_io_function, nullptr, &_config);
 
-	_config.ui.xl.odr = _config.ui.xl.LSM6DSOX_XL_UI_52Hz_HP;
-	_config.ui.gy.odr = _config.ui.gy.LSM6DSOX_GY_UI_52Hz_HP;
-	_config.ui.xl.fs  = _config.ui.xl.LSM6DSOX_XL_UI_4g;
-	_config.ui.gy.fs  = _config.ui.gy.LSM6DSOX_GY_UI_500dps;
+	_config.ui.xl.odr = LSM6DSOX_XL_UI_52Hz_HP;
+	_config.ui.gy.odr = LSM6DSOX_GY_UI_52Hz_HP;
+	_config.ui.xl.fs  = LSM6DSOX_XL_UI_4g;
+	_config.ui.gy.fs  = LSM6DSOX_GY_UI_500dps;
 
 	lsm6dsox_mode_set(&_register_io_function, nullptr, &_config);
 

@@ -48,7 +48,8 @@ auto main() -> int
 
 	while (true) {
 		const auto [pitch, roll, yaw] = imukit.getEulerAngles();
-		log_info("Pitch : %7.2f, Roll : %7.2f Yaw : %7.2f", pitch, roll, yaw);
+		log_info("Pitch : %i, Roll : %i Yaw : %i", static_cast<int>(pitch), static_cast<int>(roll),
+				 static_cast<int>(yaw));
 		rtos::ThisThread::sleep_for(140ms);
 	}
 }
