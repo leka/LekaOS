@@ -28,6 +28,8 @@ class CoreGapEventHandler : public ble::Gap::EventHandler
 	void onDisconnectionCallback(const std::function<void()> &callback);
 	[[nodiscard]] auto isConnected() const -> bool;
 
+	[[nodiscard]] auto getConnectionHandle() const -> ble::connection_handle_t;
+
   private:
 	bool is_connected = false;
 
@@ -35,6 +37,8 @@ class CoreGapEventHandler : public ble::Gap::EventHandler
 
 	std::function<void(ble::connection_handle_t handle)> _on_connection_callback {};
 	std::function<void()> _on_disconnection_callback {};
+
+	ble::connection_handle_t _handle;
 };
 
 }	// namespace leka

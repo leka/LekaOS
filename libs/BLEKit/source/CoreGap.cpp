@@ -96,3 +96,8 @@ auto CoreGap::isConnected() const -> bool
 {
 	return _gap_event_handler.isConnected();
 }
+
+void CoreGap::disconnect()
+{
+	_gap.disconnect(_gap_event_handler.getConnectionHandle(), ble::local_disconnection_reason_t::USER_TERMINATION);
+}

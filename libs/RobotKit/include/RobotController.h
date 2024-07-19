@@ -314,6 +314,7 @@ class RobotController : public interface::RobotController
 		for (auto &component: _deep_sleep_enabled_components) {
 			component->enableDeepSleep();
 		}
+		_ble.disconnect();
 	}
 
 	void wakeUp() final { system_reset(); }

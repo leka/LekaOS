@@ -166,3 +166,10 @@ TEST_F(CoreGapEventHandlerTest, isConnected)
 	is_connected = core_gap_event_handler.isConnected();
 	EXPECT_FALSE(is_connected);
 }
+
+TEST_F(CoreGapEventHandlerTest, getConnectionHandle)
+{
+	auto handle = core_gap_event_handler.getConnectionHandle();
+
+	// nothing expected
+}

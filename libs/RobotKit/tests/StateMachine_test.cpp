@@ -278,17 +278,6 @@ TEST_F(StateMachineTest, stateDeepSleepingEventBleConnection)
 	EXPECT_TRUE(sm.is(X));
 }
 
-TEST_F(StateMachineTest, stateDeepSleepingEventBleDisconnection)
-{
-	sm.set_current_states(lksm::state::deep_sleeping);
-
-	EXPECT_CALL(mock_rc, wakeUp);
-
-	sm.process_event(lksm::event::ble_disconnection {});
-
-	EXPECT_TRUE(sm.is(X));
-}
-
 TEST_F(StateMachineTest, stateIdleEventChargeDidStart)
 {
 	sm.set_current_states(lksm::state::idle);

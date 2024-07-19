@@ -28,8 +28,8 @@ void CoreGapEventHandler::onConnectionComplete(ConnectionCompleteEvent const &ev
 	}
 
 	if (_on_connection_callback != nullptr) {
-		auto handle = event.getConnectionHandle();
-		_on_connection_callback(handle);
+		_handle = event.getConnectionHandle();
+		_on_connection_callback(_handle);
 	}
 	is_connected = true;
 }
@@ -62,4 +62,9 @@ void CoreGapEventHandler::onDisconnectionCallback(const std::function<void()> &c
 auto CoreGapEventHandler::isConnected() const -> bool
 {
 	return is_connected;
+}
+
+auto CoreGapEventHandler::getConnectionHandle() const -> connection_handle_t
+{
+	return _handle;
 }

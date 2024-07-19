@@ -218,3 +218,10 @@ TEST_F(CoreGapTest, isConnectedAfterConnection)
 
 	// nothing expected
 }
+
+TEST_F(CoreGapTest, disconnect)
+{
+	EXPECT_CALL(mbed_mock_gap, disconnect);
+
+	coregap.disconnect();
+}
