@@ -15,6 +15,8 @@ void BLEKit::setServices(std::span<interface::BLEService *> const &services)
 
 void BLEKit::init()
 {
+	_ble.shutdown();
+
 	if (_ble.hasInitialized()) {
 		return;
 	}
