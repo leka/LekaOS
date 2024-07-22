@@ -43,6 +43,9 @@ namespace sm::event {
 	struct autonomous_activities_mode_exited {
 	};
 
+	struct magic_card_detected {
+	};
+
 }	// namespace sm::event
 
 namespace sm::state {
@@ -243,8 +246,8 @@ struct StateMachine {
 
 			, sm::state::deep_sleeping + event<sm::event::charge_did_start> = X
 			, sm::state::deep_sleeping + event<sm::event::charge_did_stop>  = X
-
-			, sm::state::deep_sleeping + event<sm::event::ble_connection>    = X
+			, sm::state::deep_sleeping + event<sm::event::ble_connection>   = X
+			, sm::state::deep_sleeping + event<sm::event::magic_card_detected> = X
 
 			, sm::state::charging + boost::sml::on_entry<_> / (sm::action::start_deep_sleep_timeout {}, sm::action::start_charging_behavior {} )
 			, sm::state::charging + boost::sml::on_exit<_>  / (sm::action::stop_deep_sleep_timeout  {}, sm::action::stop_charging_behavior  {} )

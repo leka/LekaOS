@@ -278,6 +278,17 @@ TEST_F(StateMachineTest, stateDeepSleepingEventBleConnection)
 	EXPECT_TRUE(sm.is(X));
 }
 
+TEST_F(StateMachineTest, stateDeepSleepingEventMagicCardDetected)
+{
+	sm.set_current_states(lksm::state::deep_sleeping);
+
+	EXPECT_CALL(mock_rc, wakeUp);
+
+	sm.process_event(lksm::event::magic_card_detected {});
+
+	EXPECT_TRUE(sm.is(X));
+}
+
 TEST_F(StateMachineTest, stateIdleEventChargeDidStart)
 {
 	sm.set_current_states(lksm::state::idle);
