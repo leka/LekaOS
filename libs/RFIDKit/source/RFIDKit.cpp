@@ -4,6 +4,10 @@
 
 #include "RFIDKit.h"
 
+#include "rtos/ThisThread.h"
+
+using namespace std::chrono_literals;
+
 namespace leka {
 
 void RFIDKit::init()
@@ -55,11 +59,23 @@ void RFIDKit::onTagActivated(std::function<void(const MagicCard &_card)> const &
 
 void RFIDKit::enableDeepSleep()
 {
+	_event_queue.dispatch_forever();
+
+	auto on_tick = [this] {
+		_rfid_reader.disableDeepSleep();
+		rtos::ThisThread::sleep_for(40ms);
+		_rfid_reader.enableDeepSleep();
+	};
+
+	_event_queue_id = _event_queue.call_every(3s, on_tick);
+
 	_rfid_reader.enableDeepSleep();
 }
 
 void RFIDKit::disableDeepSleep()
 {
+	_event_queue.cancel(_event_queue_id);
+
 	_rfid_reader.disableDeepSleep();
 }
 

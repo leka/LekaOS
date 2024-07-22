@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "CoreEventQueue.h"
 #include "ISO14443A.h"
 #include "MagicCard.h"
 #include "interface/drivers/DeepSleepEnabled.h"
@@ -34,6 +35,9 @@ class RFIDKit : public interface::DeepSleepEnabled
 	boost::sml::sm<rfid::ISO14443A> state_machine {_rfid_reader};
 
 	static constexpr std::array<uint8_t, 4> leka_tag_header = {0x4C, 0x45, 0x4B, 0x41};
+
+	CoreEventQueue _event_queue {};
+	int _event_queue_id {};
 };
 
 }	// namespace leka
