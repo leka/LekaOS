@@ -539,7 +539,7 @@ namespace deep_sleep {
 		&motors::left::motor,
 		&motors::right::motor,
 		&display::internal::corelcd,
-		&rfid::reader,
+		&rfidkit,
 		&imu::coreimu,
 	});
 }
