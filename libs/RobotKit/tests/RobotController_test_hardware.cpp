@@ -39,6 +39,7 @@ TEST_F(RobotControllerTest, suspendHardwareForDeepSleep)
 	rc.registerDeepSleepEnabledComponents(components);
 
 	EXPECT_CALL(mock_deep_sleep_enabled, enableDeepSleep);
+	EXPECT_CALL(mbed_mock_gap, disconnect);
 	rc.suspendHardwareForDeepSleep();
 }
 
