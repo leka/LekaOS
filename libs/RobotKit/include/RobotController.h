@@ -322,7 +322,7 @@ class RobotController : public interface::RobotController
 		advertising_data.is_deep_sleeping = true;
 		_ble.setAdvertisingData(advertising_data);
 
-		_imu.registerOnWakeUpCallback([this] {});
+		_imu.registerOnWakeUpCallback([this] { raise(event::robot_is_shaken {}); });
 		_imu.enableOnWakeUpInterrupt();
 	}
 
