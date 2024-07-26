@@ -32,6 +32,7 @@
 #include "interface/RobotController.h"
 #include "interface/drivers/DeepSleepEnabled.h"
 #include "interface/drivers/FirmwareUpdate.h"
+#include "interface/drivers/IMU.hpp"
 #include "interface/drivers/LCD.hpp"
 #include "interface/drivers/Motor.h"
 #include "interface/drivers/Timeout.h"
@@ -56,7 +57,7 @@ class RobotController : public interface::RobotController
 							 interface::Motor &motor_left, interface::Motor &motor_right, interface::LED &ears,
 							 interface::LED &belt, interface::LedKit &ledkit, interface::LCD &lcd,
 							 interface::VideoKit &videokit, BehaviorKit &behaviorkit, CommandKit &cmdkit,
-							 RFIDKit &rfidkit, ActivityKit &activitykit)
+							 RFIDKit &rfidkit, ActivityKit &activitykit, interface::IMU &imu)
 		: _timeout_state_internal(timeout_state_internal),
 		  _timeout_state_transition(timeout_state_transition),
 		  _timeout_autonomous_activities(timeout_autonomous_activities),
@@ -73,7 +74,8 @@ class RobotController : public interface::RobotController
 		  _behaviorkit(behaviorkit),
 		  _cmdkit(cmdkit),
 		  _rfidkit(rfidkit),
-		  _activitykit(activitykit)
+		  _activitykit(activitykit),
+		  _imu(imu)
 	{
 		// nothing to do
 	}
@@ -319,6 +321,9 @@ class RobotController : public interface::RobotController
 		auto advertising_data			  = _ble.getAdvertisingData();
 		advertising_data.is_deep_sleeping = true;
 		_ble.setAdvertisingData(advertising_data);
+
+		_imu.registerOnWakeUpCallback([this] {});
+		_imu.enableOnWakeUpInterrupt();
 	}
 
 	void wakeUp() final { system_reset(); }
@@ -604,6 +609,7 @@ class RobotController : public interface::RobotController
 	interface::VideoKit &_videokit;
 	RFIDKit &_rfidkit;
 	ActivityKit &_activitykit;
+	interface::IMU &_imu;
 
 	BehaviorKit &_behaviorkit;
 	CommandKit &_cmdkit;

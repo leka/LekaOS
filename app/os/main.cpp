@@ -434,6 +434,7 @@ namespace robot {
 		commandkit,
 		rfidkit,
 		activitykit,
+		imu::coreimu,
 	};
 
 }	// namespace robot
