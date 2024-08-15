@@ -272,6 +272,7 @@ TEST_F(StateMachineTest, stateDeepSleepingEventBleConnection)
 	sm.set_current_states(lksm::state::deep_sleeping);
 
 	EXPECT_CALL(mock_rc, wakeUp);
+	EXPECT_CALL(mock_rc, startConnectionBehavior);
 
 	sm.process_event(lksm::event::ble_connection {});
 
