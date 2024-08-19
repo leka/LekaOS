@@ -315,6 +315,10 @@ class RobotController : public interface::RobotController
 			component->enableDeepSleep();
 		}
 		_ble.disconnect();
+
+		auto advertising_data			  = _ble.getAdvertisingData();
+		advertising_data.is_deep_sleeping = true;
+		_ble.setAdvertisingData(advertising_data);
 	}
 
 	void wakeUp() final { system_reset(); }
