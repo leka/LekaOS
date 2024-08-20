@@ -21,11 +21,9 @@ target_link_libraries(RobotKit
 	BatteryKit
 	SerialNumberKit
 	BLEKit
-	CoreMotor
 	LedKit
 	FileManagerKit
 	CoreMutex
-	VideoKit
 	BehaviorKit
 	CommandKit
 	RFIDKit
