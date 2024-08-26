@@ -103,16 +103,13 @@ TEST_F(CoreGapTest, defaultAdvertisingPayload)
 	auto default_advertising_data = AdvertisingData {};
 
 	data_builder.setName(default_advertising_data.name);
-	data_builder.setServiceData(service::commands::uuid,
-								{{
-									default_advertising_data.battery,
-									default_advertising_data.is_charging,
-									default_advertising_data.version_major,
-									default_advertising_data.version_minor,
-									static_cast<uint8_t>(default_advertising_data.version_revision >> 8),
-									static_cast<uint8_t>(default_advertising_data.version_revision),
-									default_advertising_data.is_deep_sleeping,
-								}});
+	data_builder.setServiceData(service::commands::uuid, {{
+															 default_advertising_data.battery,
+															 default_advertising_data.is_charging,
+															 default_advertising_data.version_major,
+															 default_advertising_data.version_minor,
+															 default_advertising_data.is_deep_sleeping,
+														 }});
 
 	EXPECT_CALL(mbed_mock_gap,
 				setAdvertisingPayload(LEGACY_ADVERTISING_HANDLE, compareAdvertisingPayload(data_builder)))
