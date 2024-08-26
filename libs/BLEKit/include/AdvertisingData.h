@@ -11,10 +11,10 @@ namespace leka {
 
 struct AdvertisingData {
 	const char *name = "Leka";	 // TODO: Get default name from configuration files
-	uint8_t battery {};
-	uint8_t is_charging {};
 	uint8_t version_major {};
 	uint8_t version_minor {};
+	uint8_t battery {};
+	uint8_t is_charging {};
 	uint8_t is_deep_sleeping {};
 
 	auto data()
@@ -29,7 +29,7 @@ struct AdvertisingData {
 	void updateValues()
 	{
 		_internal_values = {
-			battery, is_charging, version_major, version_minor, is_deep_sleeping,
+			version_major, version_minor, battery, is_charging, is_deep_sleeping,
 		};
 	}
 

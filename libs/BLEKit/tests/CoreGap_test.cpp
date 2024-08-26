@@ -104,10 +104,10 @@ TEST_F(CoreGapTest, defaultAdvertisingPayload)
 
 	data_builder.setName(default_advertising_data.name);
 	data_builder.setServiceData(service::commands::uuid, {{
-															 default_advertising_data.battery,
-															 default_advertising_data.is_charging,
 															 default_advertising_data.version_major,
 															 default_advertising_data.version_minor,
+															 default_advertising_data.battery,
+															 default_advertising_data.is_charging,
 															 default_advertising_data.is_deep_sleeping,
 														 }});
 
