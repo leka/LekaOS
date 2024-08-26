@@ -137,6 +137,55 @@ void CoreIMU::disableDeepSleep()
 	setPowerMode(interface::IMU::PowerMode::Normal);
 }
 
+void CoreIMU::registerOnWakeUpCallback(std::function<void()> const &callback)
+{
+	_on_wake_up_callback = callback;
+}
+
+void CoreIMU::enableOnWakeUpInterrupt()
+{
+	// ? Set filter and disable user offset
+	lsm6dsox_xl_hp_path_internal_set(&_register_io_function, LSM6DSOX_USE_SLOPE);
+	lsm6dsox_xl_usr_offset_on_wkup_set(&_register_io_function, 0);
+
+	// ? Set Wakeup config
+	lsm6dsox_wkup_threshold_set(&_register_io_function, 2);
+	lsm6dsox_wkup_ths_weight_set(&_register_io_function, LSM6DSOX_LSb_FS_DIV_64);
+	lsm6dsox_wkup_dur_set(&_register_io_function, 0x02);
+
+	// ? Set Activity config
+	lsm6dsox_act_sleep_dur_set(&_register_io_function, 0x02);
+	lsm6dsox_act_mode_set(&_register_io_function, LSM6DSOX_XL_AND_GY_NOT_AFFECTED);
+
+	lsm6dsox_pin_int1_route_t lsm6dsox_int1 {
+		.sleep_change = PROPERTY_ENABLE,
+	};
+	lsm6dsox_pin_int1_route_set(&_register_io_function, lsm6dsox_int1);
+
+	auto on_wake_up_callback = [this] {
+		_event_queue.call([this] {
+			lsm6dsox_all_sources_t all_source;
+			lsm6dsox_all_sources_get(&_register_io_function, &all_source);
+
+			if (all_source.sleep_change && all_source.sleep_state == 0 && _on_wake_up_callback != nullptr) {
+				_on_wake_up_callback();
+			}
+		});
+	};
+
+	setDataReadyInterruptCallback(on_wake_up_callback);
+}
+
+void CoreIMU::disableOnWakeUpInterrupt()
+{
+	lsm6dsox_pin_int1_route_t lsm6dsox_int1 {
+		.sleep_change = PROPERTY_DISABLE,
+	};
+	lsm6dsox_pin_int1_route_set(&_register_io_function, lsm6dsox_int1);
+
+	setDataReadyInterruptCallback({});
+}
+
 auto CoreIMU::read(uint8_t register_address, uint16_t number_bytes_to_read, uint8_t *p_buffer) -> int32_t
 {
 	// Send component address, without STOP condition
@@ -177,6 +226,8 @@ void CoreIMU::setDataReadyInterruptCallback(std::function<void()> const &callbac
 {
 	if (callback) {
 		_irq.onRise(callback);
+	} else {
+		_irq.onRise([] {});
 	}
 }
 

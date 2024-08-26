@@ -26,6 +26,10 @@ class CoreIMU : public interface::IMU, public interface::DeepSleepEnabled
 	void enableOnDataReadyInterrupt() final;
 	void disableOnDataReadyInterrupt() final;
 
+	void registerOnWakeUpCallback(std::function<void()> const &callback) final;
+	void enableOnWakeUpInterrupt() final;
+	void disableOnWakeUpInterrupt() final;
+
 	void setPowerMode(PowerMode mode) final;
 
 	void enableDeepSleep() final;
@@ -58,6 +62,8 @@ class CoreIMU : public interface::IMU, public interface::DeepSleepEnabled
 
 	static constexpr uint8_t kMaxBufferLength = 32;
 	std::array<uint8_t, kMaxBufferLength> _rx_buffer {};
+
+	std::function<void()> _on_wake_up_callback {};
 };
 
 }	// namespace leka
