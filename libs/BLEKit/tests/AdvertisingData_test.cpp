@@ -25,6 +25,7 @@ TEST(AdvertisingDataTest, data)
 		.version_major	  = 0x2C,
 		.version_minor	  = 0x2D,
 		.version_revision = 0x2E2F,
+		.is_deep_sleeping = 0x30,
 	};
 
 	auto expected_data_array = std::to_array({
@@ -34,6 +35,7 @@ TEST(AdvertisingDataTest, data)
 		0x2D,
 		0x2E,
 		0x2F,
+		0x30,
 	});
 
 	auto actual_data_array = std::span {advertising_data.data(), advertising_data.size()};
