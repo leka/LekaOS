@@ -24,8 +24,7 @@ class BLEServiceFileExchange : public interface::BLEService
 	{
 		set_file_exchange_state = static_cast<uint8_t>(value);
 
-		auto data = std::make_tuple(set_file_exchange_state_characteristic.getValueHandle(),
-									std::span(&set_file_exchange_state, 1));
+		auto data = std::make_tuple(&set_file_exchange_state_characteristic, std::span(&set_file_exchange_state, 1));
 		sendData(data);
 	}
 
@@ -35,7 +34,7 @@ class BLEServiceFileExchange : public interface::BLEService
 	{
 		clear_file = 0;
 
-		auto data = std::make_tuple(clear_file_characteristic.getValueHandle(), std::span(&clear_file, 1));
+		auto data = std::make_tuple(&clear_file_characteristic, std::span(&clear_file, 1));
 		sendData(data);
 	}
 
@@ -43,7 +42,7 @@ class BLEServiceFileExchange : public interface::BLEService
 	{
 		std::copy(std::begin(sha256), std::begin(sha256) + std::size(sha256), file_sha256.begin());
 
-		auto data = std::make_tuple(file_sha256_characteristic.getValueHandle(), file_sha256);
+		auto data = std::make_tuple(&file_sha256_characteristic, file_sha256);
 		sendData(data);
 	}
 

@@ -7,7 +7,6 @@
 #include <functional>
 #include <span>
 
-#include "BLEServiceBattery.h"
 #include "ble/BLE.h"
 
 #include "CoreEventQueue.h"
