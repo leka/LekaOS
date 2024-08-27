@@ -359,11 +359,10 @@ class RobotController : public interface::RobotController
 
 		_service_config.setRobotName(_robot_name);
 
-		auto advertising_data			  = _ble.getAdvertisingData();
-		advertising_data.name			  = reinterpret_cast<const char *>(_robot_name.data());
-		advertising_data.version_major	  = _os_version.major;
-		advertising_data.version_minor	  = _os_version.minor;
-		advertising_data.version_revision = _os_version.revision;
+		auto advertising_data		   = _ble.getAdvertisingData();
+		advertising_data.name		   = reinterpret_cast<const char *>(_robot_name.data());
+		advertising_data.version_major = _os_version.major;
+		advertising_data.version_minor = _os_version.minor;
 
 		_ble.setAdvertisingData(advertising_data);
 
