@@ -41,6 +41,26 @@ void CoreSTM32Hal::HAL_RCC_GPIOJ_CLK_ENABLE()
 	__HAL_RCC_GPIOJ_CLK_ENABLE();	// NOLINT
 }
 
+void CoreSTM32Hal::HAL_RCC_TIM6_CLK_ENABLE()
+{
+	__HAL_RCC_TIM6_CLK_ENABLE();   // NOLINT
+}
+
+void CoreSTM32Hal::HAL_RCC_TIM6_CLK_DISABLE()
+{
+	__HAL_RCC_TIM6_CLK_DISABLE();	// NOLINT
+}
+
+void CoreSTM32Hal::HAL_RCC_TIM7_CLK_ENABLE()
+{
+	__HAL_RCC_TIM7_CLK_ENABLE();   // NOLINT
+}
+
+void CoreSTM32Hal::HAL_RCC_TIM7_CLK_DISABLE()
+{
+	__HAL_RCC_TIM7_CLK_DISABLE();	// NOLINT
+}
+
 void CoreSTM32Hal::HAL_RCC_FMC_CLK_ENABLE()
 {
 	__HAL_RCC_FMC_CLK_ENABLE();	  // NOLINT
@@ -309,6 +329,38 @@ auto CoreSTM32Hal::HAL_JPEG_Pause(JPEG_HandleTypeDef *hjpeg, uint32_t XferSelect
 auto CoreSTM32Hal::HAL_JPEG_Resume(JPEG_HandleTypeDef *hjpeg, uint32_t XferSelection) -> HAL_StatusTypeDef
 {
 	return ::HAL_JPEG_Resume(hjpeg, XferSelection);
+}
+
+auto CoreSTM32Hal::HAL_TIM_Base_Init(TIM_HandleTypeDef *htim) -> HAL_StatusTypeDef
+{
+	return ::HAL_TIM_Base_Init(htim);
+}
+
+auto CoreSTM32Hal::HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim,
+														 TIM_MasterConfigTypeDef *sMasterConfig) -> HAL_StatusTypeDef
+{
+	return ::HAL_TIMEx_MasterConfigSynchronization(htim, sMasterConfig);
+}
+
+auto CoreSTM32Hal::HAL_TIM_RegisterCallback(TIM_HandleTypeDef *htim, HAL_TIM_CallbackIDTypeDef CallbackID,
+											pTIM_CallbackTypeDef pCallback) -> HAL_StatusTypeDef
+{
+	return ::HAL_TIM_RegisterCallback(htim, CallbackID, pCallback);
+}
+
+auto CoreSTM32Hal::HAL_TIM_Base_Start_IT(TIM_HandleTypeDef *htim) -> HAL_StatusTypeDef
+{
+	return ::HAL_TIM_Base_Start_IT(htim);
+}
+
+auto CoreSTM32Hal::HAL_TIM_Base_Stop_IT(TIM_HandleTypeDef *htim) -> HAL_StatusTypeDef
+{
+	return ::HAL_TIM_Base_Stop_IT(htim);
+}
+
+auto CoreSTM32Hal::HAL_TIM_Base_DeInit(TIM_HandleTypeDef *htim) -> HAL_StatusTypeDef
+{
+	return ::HAL_TIM_Base_DeInit(htim);
 }
 
 }	// namespace leka
