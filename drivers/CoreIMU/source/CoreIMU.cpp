@@ -151,7 +151,7 @@ void CoreIMU::enableOnWakeUpInterrupt()
 	lsm6dsox_xl_usr_offset_on_wkup_set(&_register_io_function, 0);
 
 	// ? Set Wakeup config
-	lsm6dsox_wkup_threshold_set(&_register_io_function, 8);	  // LSB multiplier / Max: 31
+	lsm6dsox_wkup_threshold_set(&_register_io_function, 2);	  // LSB multiplier / Max: 31
 	lsm6dsox_wkup_ths_weight_set(&_register_io_function,
 								 LSM6DSOX_LSb_FS_DIV_256);	 // 2 Weights, 1 LSB = FS_XL/2^x x:{6,8}
 	lsm6dsox_wkup_dur_set(&_register_io_function, 3);		 // 1 LSB = 1*ODR_time / Max: 3
