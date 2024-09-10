@@ -575,8 +575,8 @@ class RobotController : public interface::RobotController
 	std::chrono::seconds _deep_sleep_timeout_duration {1};
 #else
 	std::chrono::seconds _sleep_timeout_duration {60};
-	std::chrono::seconds _idle_timeout_duration {600};
-	std::chrono::seconds _deep_sleep_timeout_duration {600};
+	std::chrono::seconds _idle_timeout_duration {60};
+	std::chrono::seconds _deep_sleep_timeout_duration {60};
 #endif
 	interface::Timeout &_timeout_state_transition;
 
