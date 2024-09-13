@@ -147,7 +147,7 @@ void CoreIMU::enableOnWakeUpInterrupt()
 	// ODR = 52Hz for reference
 
 	// ? Set filter and disable user offset
-	lsm6dsox_xl_hp_path_internal_set(&_register_io_function, LSM6DSOX_USE_HPF);
+	lsm6dsox_xl_hp_path_internal_set(&_register_io_function, LSM6DSOX_USE_SLOPE);
 	lsm6dsox_xl_usr_offset_on_wkup_set(&_register_io_function, 0);
 
 	// ? Set Wakeup config
