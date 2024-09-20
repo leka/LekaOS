@@ -144,18 +144,21 @@ void CoreIMU::registerOnWakeUpCallback(std::function<void()> const &callback)
 
 void CoreIMU::enableOnWakeUpInterrupt()
 {
+	// ODR = 52Hz for reference
+
 	// ? Set filter and disable user offset
 	lsm6dsox_xl_hp_path_internal_set(&_register_io_function, LSM6DSOX_USE_SLOPE);
 	lsm6dsox_xl_usr_offset_on_wkup_set(&_register_io_function, 0);
 
 	// ? Set Wakeup config
-	lsm6dsox_wkup_threshold_set(&_register_io_function, 2);
-	lsm6dsox_wkup_ths_weight_set(&_register_io_function, LSM6DSOX_LSb_FS_DIV_64);
-	lsm6dsox_wkup_dur_set(&_register_io_function, 0x02);
+	lsm6dsox_wkup_threshold_set(&_register_io_function, 3);	  // LSB multiplier / Max: 31
+	lsm6dsox_wkup_ths_weight_set(&_register_io_function,
+								 LSM6DSOX_LSb_FS_DIV_64);	// 2 Weights, 1 LSB = FS_XL/2^x x:{6,8}
+	lsm6dsox_wkup_dur_set(&_register_io_function, 1);		// 1 LSB = 1*ODR_time / Max: 3
 
 	// ? Set Activity config
-	lsm6dsox_act_sleep_dur_set(&_register_io_function, 0x02);
-	lsm6dsox_act_mode_set(&_register_io_function, LSM6DSOX_XL_AND_GY_NOT_AFFECTED);
+	lsm6dsox_act_sleep_dur_set(&_register_io_function, 0);					  // 1 LSB = 512*ODR / Max: 15
+	lsm6dsox_act_mode_set(&_register_io_function, LSM6DSOX_XL_12Hz5_GY_PD);	  // 4 Modes
 
 	lsm6dsox_pin_int1_route_t lsm6dsox_int1 {
 		.sleep_change = PROPERTY_ENABLE,
