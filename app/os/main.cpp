@@ -65,6 +65,7 @@
 #include "SuperSimon.h"
 #include "VideoKit.h"
 #include "bootutil/bootutil_public.h"
+#include "commands/BehaviorCommand.h"
 #include "commands/LedFullCommand.h"
 #include "commands/LedRangeCommand.h"
 #include "commands/LedSingleCommand.h"
@@ -294,6 +295,7 @@ namespace command {
 		auto motors		= MotorsCommand {motors::left::motor, motors::right::motor};
 		auto reinforcer = ReinforcerCommand {reinforcerkit};
 		auto video		= VideoCommand {videokit};
+		auto behavior	= BehaviorCommand {behaviorkit};
 
 	}	// namespace internal
 
@@ -304,6 +306,7 @@ namespace command {
 		&internal::motors,
 		&internal::reinforcer,
 		&internal::video,
+		&internal::behavior,
 	});
 
 }	// namespace command
