@@ -26,7 +26,7 @@ target_link_libraries(RobotKit
 	FileManagerKit
 	CoreMutex
 	VideoKit
-	BehaviorKit
+	BehaviorKitDeprecated
 	CommandKit
 	RFIDKit
 	ActivityKit
