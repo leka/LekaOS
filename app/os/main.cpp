@@ -434,7 +434,6 @@ namespace robot {
 		commandkit,
 		rfidkit,
 		activitykit,
-		imu::coreimu,
 	};
 
 }	// namespace robot
@@ -541,6 +540,7 @@ namespace deep_sleep {
 		&motors::right::motor,
 		&display::internal::corelcd,
 		&rfidkit,
+		&imu::coreimu,
 	});
 }
 
