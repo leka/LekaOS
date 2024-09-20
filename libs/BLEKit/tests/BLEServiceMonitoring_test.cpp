@@ -54,6 +54,71 @@ TEST_F(BLEServiceMonitoringTest, setChargingStatus)
 	EXPECT_FALSE(actual_charging_status);
 }
 
+TEST_F(BLEServiceMonitoringTest, setTemperature)
+{
+	std::array<uint8_t, 4> actual_temperature {};
+	std::array<uint8_t, 4> expected_temperature {};
+
+	auto spy_callback = [&actual_temperature](const BLEServiceMonitoring::data_to_send_handle_t &handle) {
+		for (auto i = 0; i < std::size(actual_temperature); i++) {
+			actual_temperature.at(i) = std::get<1>(handle)[i];
+		}
+	};
+
+	service_monitoring.onDataReadyToSend(spy_callback);
+
+	service_monitoring.setTemperature(31.4159);
+	expected_temperature = {0xC3, 0x53, 0xFB, 0x41};   // 31.4159, little-endian as in Swift
+	EXPECT_EQ(actual_temperature, expected_temperature);
+}
+
+TEST_F(BLEServiceMonitoringTest, setHumidity)
+{
+	std::array<uint8_t, 4> actual_humidity {};
+	std::array<uint8_t, 4> expected_humidity {};
+
+	auto spy_callback = [&actual_humidity](const BLEServiceMonitoring::data_to_send_handle_t &handle) {
+		for (auto i = 0; i < std::size(actual_humidity); i++) {
+			actual_humidity.at(i) = std::get<1>(handle)[i];
+		}
+	};
+
+	service_monitoring.onDataReadyToSend(spy_callback);
+
+	service_monitoring.setHumidity(51.24);
+	expected_humidity = {0xC3, 0xF5, 0x4C, 0x42};	// 51.24 little-endian as in Swift
+	EXPECT_EQ(actual_humidity, expected_humidity);
+}
+
+TEST_F(BLEServiceMonitoringTest, onTemperatureHumidityRequested)
+{
+	testing::MockFunction<void()> mock_callback {};
+	service_monitoring.onTemperatureHumidityRequested(mock_callback.AsStdFunction());
+
+	EXPECT_CALL(mock_callback, Call).Times(1);
+
+	service_monitoring.onDataRequested(data_requested_handle);
+}
+
+TEST_F(BLEServiceMonitoringTest, onTemperatureHumidityRequestedNotSameHandle)
+{
+	testing::MockFunction<void()> mock_callback {};
+	service_monitoring.onTemperatureHumidityRequested(mock_callback.AsStdFunction());
+
+	data_requested_handle.handle = 0xFFFF;
+
+	EXPECT_CALL(mock_callback, Call).Times(0);
+
+	service_monitoring.onDataRequested(data_requested_handle);
+}
+
+TEST_F(BLEServiceMonitoringTest, onTemperatureHumidityRequestedtUnset)
+{
+	service_monitoring.onTemperatureHumidityRequested(nullptr);
+
+	service_monitoring.onDataRequested(data_requested_handle);
+}
+
 TEST_F(BLEServiceMonitoringTest, isScreensaverEnableDefault)
 {
 	auto actual_is_screensaver_enable = service_monitoring.isScreensaverEnable();
