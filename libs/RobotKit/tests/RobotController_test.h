@@ -27,7 +27,6 @@
 #include "mocks/leka/CoreMotor.h"
 #include "mocks/leka/EventQueue.h"
 #include "mocks/leka/FirmwareUpdate.h"
-#include "mocks/leka/IMU.h"
 #include "mocks/leka/LEDAnimation.h"
 #include "mocks/leka/LedKit.h"
 #include "mocks/leka/MCU.h"
@@ -109,8 +108,6 @@ class RobotControllerTest : public testing::Test
 	ActivityKit activitykit {mock_videokit};
 	activity::DisplayTags display_tag {rfidkit, mock_videokit};
 
-	mock::IMU mock_imu {};
-
 	stub::EventLoopKit event_loop {};
 	CommandKit cmdkit {event_loop};
 
@@ -130,8 +127,7 @@ class RobotControllerTest : public testing::Test
 																			  bhvkit,
 																			  cmdkit,
 																			  rfidkit,
-																			  activitykit,
-																			  mock_imu};
+																			  activitykit};
 
 	ble::GapMock &mbed_mock_gap			= ble::gap_mock();
 	ble::GattServerMock &mbed_mock_gatt = ble::gatt_server_mock();
