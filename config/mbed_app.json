@@ -32,7 +32,8 @@
 			"target.features_add": [
 				"EXPERIMENTAL_API"
 			],
-			"platform.stdio-baud-rate": 115200
+			"platform.stdio-baud-rate": 115200,
+			"platform.deepsleep-stats-enabled": true
 		},
 		"LEKA_DISCO": {
 			"target_name": "\"LEKA_DISCO\""
