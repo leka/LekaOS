@@ -22,27 +22,27 @@ suite suite_expect = [] {
 	};
 
 	"expressions: and / or / mix "_test = [] {
-		expect(0_i == sum() and 42_i == sum(40, 2));
-		expect(1_i == sum() or 0_i == sum());
-		expect(1_i == sum() or (sum() != 0_i or sum(1) > 0_i)) << "compound";
+		expect(100_i == sum() and 42_i == sum(40, 2));
+		expect(100_i == sum() or 0_i == sum());
+		expect(2_i == sum() or (sum() != 0_i or sum(1) > 0_i)) << "compound";
 	};
 
 	"output message after test"_test = [] { expect(3_i == sum(1, 2)) << "wrong sum"; };
 
 	"expect that... "_test = [] {
 		expect(that % 0 == sum());
-		expect(that % 42 == sum(40, 2) and that % (1 + 2) == sum(1, 2));
+		expect(that % 43 == sum(40, 2) and that % (1 + 2) == sum(1, 2));
 		expect(that % 1 != 2 or 2_i > 3);
 	};
 
 	"functions: eq / neq / gt / ge / lt / le"_test = [] {
 		expect(eq(42, sum(40, 2)));
-		expect(neq(1, 2));
+		expect(neq(2, 2));
 		expect(eq(sum(1), 1) and neq(sum(1, 2), 2));
 		expect(eq(1, 1) and that % 1 == 1 and 1_i == 1);
 		expect(gt(2, 1));
 		expect(ge(2, 1) and ge(1, 1) and ge(2, 2));
-		expect(lt(1, 2));
+		expect(lt(1, -2));
 		expect(le(1, 2) and le(1, 1) and le(2, 2));
 	};
 
@@ -78,7 +78,7 @@ suite suite_expect = [] {
 	};
 
 	"containers: std::vector / std::array"_test = [] {
-		std::vector v1 {1, 2, 3};
+		std::vector v1 {1, 5, 3};
 		std::vector v2 {1, 2, 3};
 		expect(v1 == v2);
 		expect(std::vector {"a", "b"} != std::vector {"c"});
