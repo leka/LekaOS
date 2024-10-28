@@ -52,20 +52,20 @@ class STM32Hal
 	virtual void HAL_NVIC_EnableIRQ(IRQn_Type IRQn)													  = 0;
 
 	virtual auto HAL_SDRAM_Init(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_TimingTypeDef *Timing) -> HAL_StatusTypeDef = 0;
-	virtual auto HAL_SDRAM_SendCommand(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_CommandTypeDef *Command, uint32_t Timeout)
-		-> HAL_StatusTypeDef = 0;
-	virtual auto HAL_SDRAM_ProgramRefreshRate(SDRAM_HandleTypeDef *hsdram, uint32_t RefreshRate)
-		-> HAL_StatusTypeDef = 0;
+	virtual auto HAL_SDRAM_SendCommand(SDRAM_HandleTypeDef *hsdram, FMC_SDRAM_CommandTypeDef *Command,
+									   uint32_t Timeout) -> HAL_StatusTypeDef									   = 0;
+	virtual auto HAL_SDRAM_ProgramRefreshRate(SDRAM_HandleTypeDef *hsdram,
+											  uint32_t RefreshRate) -> HAL_StatusTypeDef						   = 0;
 
 	virtual auto HAL_DMA_Init(DMA_HandleTypeDef *hdma) -> HAL_StatusTypeDef	  = 0;
 	virtual auto HAL_DMA_DeInit(DMA_HandleTypeDef *hdma) -> HAL_StatusTypeDef = 0;
 
-	virtual auto HAL_DMA2D_Init(DMA2D_HandleTypeDef *hdma2d) -> HAL_StatusTypeDef							= 0;
-	virtual auto HAL_DMA2D_ConfigLayer(DMA2D_HandleTypeDef *hdma2d, uint32_t LayerIdx) -> HAL_StatusTypeDef = 0;
+	virtual auto HAL_DMA2D_Init(DMA2D_HandleTypeDef *hdma2d) -> HAL_StatusTypeDef							   = 0;
+	virtual auto HAL_DMA2D_ConfigLayer(DMA2D_HandleTypeDef *hdma2d, uint32_t LayerIdx) -> HAL_StatusTypeDef	   = 0;
 	virtual auto HAL_DMA2D_Start(DMA2D_HandleTypeDef *hdma2d, uint32_t pdata, uint32_t DstAddress, uint32_t Width,
-								 uint32_t Height) -> HAL_StatusTypeDef										= 0;
-	virtual auto HAL_DMA2D_Start_IT(DMA2D_HandleTypeDef *hdma2d, uint32_t, uint32_t, uint32_t, uint32_t)
-		-> HAL_StatusTypeDef																				   = 0;
+								 uint32_t Height) -> HAL_StatusTypeDef										   = 0;
+	virtual auto HAL_DMA2D_Start_IT(DMA2D_HandleTypeDef *hdma2d, uint32_t, uint32_t, uint32_t,
+									uint32_t) -> HAL_StatusTypeDef											   = 0;
 	virtual auto HAL_DMA2D_PollForTransfer(DMA2D_HandleTypeDef *hdma2d, uint32_t Timeout) -> HAL_StatusTypeDef = 0;
 
 	virtual auto HAL_DSI_Init(DSI_HandleTypeDef *hdsi, DSI_PLLInitTypeDef *PLLInit) -> HAL_StatusTypeDef		  = 0;
@@ -77,32 +77,32 @@ class STM32Hal
 	virtual auto HAL_DSI_LongWrite(DSI_HandleTypeDef *hdsi, uint32_t ChannelID, uint32_t Mode, uint32_t NbParams,
 								   uint32_t Param1, uint8_t *ParametersTable) -> HAL_StatusTypeDef				  = 0;
 
-	virtual auto HAL_LTDC_StructInitFromVideoConfig(LTDC_HandleTypeDef *hltdc, DSI_VidCfgTypeDef *VidCfg)
-		-> HAL_StatusTypeDef												   = 0;
-	virtual auto HAL_LTDC_Init(LTDC_HandleTypeDef *hltdc) -> HAL_StatusTypeDef = 0;
-	virtual auto HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfgTypeDef *pLayerCfg, uint32_t LayerIdx)
-		-> HAL_StatusTypeDef = 0;
+	virtual auto HAL_LTDC_StructInitFromVideoConfig(LTDC_HandleTypeDef *hltdc,
+													DSI_VidCfgTypeDef *VidCfg) -> HAL_StatusTypeDef = 0;
+	virtual auto HAL_LTDC_Init(LTDC_HandleTypeDef *hltdc) -> HAL_StatusTypeDef						= 0;
+	virtual auto HAL_LTDC_ConfigLayer(LTDC_HandleTypeDef *hltdc, LTDC_LayerCfgTypeDef *pLayerCfg,
+									  uint32_t LayerIdx) -> HAL_StatusTypeDef						= 0;
 
 	virtual auto HAL_JPEG_Init(JPEG_HandleTypeDef *hjpeg) -> HAL_StatusTypeDef							   = 0;
 	virtual auto HAL_JPEG_GetInfo(JPEG_HandleTypeDef *hjpeg, JPEG_ConfTypeDef *pInfo) -> HAL_StatusTypeDef = 0;
 	virtual auto HAL_JPEG_Decode(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataIn, uint32_t InDataLength,
-								 uint8_t *pDataOutMCU, uint32_t OutDataLength, uint32_t Timeout)
-		-> HAL_StatusTypeDef																			= 0;
+								 uint8_t *pDataOutMCU, uint32_t OutDataLength,
+								 uint32_t Timeout) -> HAL_StatusTypeDef									   = 0;
 	virtual auto HAL_JPEG_Decode_DMA(JPEG_HandleTypeDef *hjpeg, uint8_t *pDataIn, uint32_t InDataLength,
-									 uint8_t *pDataOutMCU, uint32_t OutDataLength) -> HAL_StatusTypeDef = 0;
+									 uint8_t *pDataOutMCU, uint32_t OutDataLength) -> HAL_StatusTypeDef	   = 0;
 	virtual void HAL_JPEG_ConfigInputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewInputBuffer,
-											uint32_t InDataLength)										= 0;
+											uint32_t InDataLength)										   = 0;
 	virtual void HAL_JPEG_ConfigOutputBuffer(JPEG_HandleTypeDef *hjpeg, uint8_t *pNewOutputBuffer,
-											 uint32_t OutDataLength)									= 0;
+											 uint32_t OutDataLength)									   = 0;
 
-	virtual auto HAL_JPEG_RegisterInfoReadyCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_InfoReadyCallbackTypeDef)
-		-> HAL_StatusTypeDef = 0;
-	virtual auto HAL_JPEG_RegisterGetDataCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_GetDataCallbackTypeDef)
-		-> HAL_StatusTypeDef = 0;
-	virtual auto HAL_JPEG_RegisterDataReadyCallback(JPEG_HandleTypeDef *hjpeg, pJPEG_DataReadyCallbackTypeDef)
-		-> HAL_StatusTypeDef = 0;
-	virtual auto HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *hjpeg, HAL_JPEG_CallbackIDTypeDef, pJPEG_CallbackTypeDef)
-		-> HAL_StatusTypeDef = 0;
+	virtual auto HAL_JPEG_RegisterInfoReadyCallback(JPEG_HandleTypeDef *hjpeg,
+													pJPEG_InfoReadyCallbackTypeDef) -> HAL_StatusTypeDef = 0;
+	virtual auto HAL_JPEG_RegisterGetDataCallback(JPEG_HandleTypeDef *hjpeg,
+												  pJPEG_GetDataCallbackTypeDef) -> HAL_StatusTypeDef	 = 0;
+	virtual auto HAL_JPEG_RegisterDataReadyCallback(JPEG_HandleTypeDef *hjpeg,
+													pJPEG_DataReadyCallbackTypeDef) -> HAL_StatusTypeDef = 0;
+	virtual auto HAL_JPEG_RegisterCallback(JPEG_HandleTypeDef *hjpeg, HAL_JPEG_CallbackIDTypeDef,
+										   pJPEG_CallbackTypeDef) -> HAL_StatusTypeDef					 = 0;
 
 	virtual auto HAL_JPEG_Pause(JPEG_HandleTypeDef *hjpeg, uint32_t XferSelection) -> HAL_StatusTypeDef	 = 0;
 	virtual auto HAL_JPEG_Resume(JPEG_HandleTypeDef *hjpeg, uint32_t XferSelection) -> HAL_StatusTypeDef = 0;

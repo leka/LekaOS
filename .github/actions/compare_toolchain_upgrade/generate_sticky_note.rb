@@ -22,7 +22,7 @@ sticky_message = <<-EOF
 
 |           | `base`                                                                           | `head`                                                                           |
 |-----------|----------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| toolchain | `#{ENV["BASE_ARM_TOOLCHAIN_VERSION"]}`                                           | `#{ENV["HEAD_ARM_TOOLCHAIN_VERSION"]}`                                           |
+| toolchain | `#{ENV["BASE_ARM_GNU_TOOLCHAIN_VERSION"]}`                                       | `#{ENV["HEAD_ARM_GNU_TOOLCHAIN_VERSION"]}`                                       |
 | branch    | [`#{ENV["BASE_REF"]}`](https://github.com/leka/LekaOS/tree/#{ENV["BASE_REF"]})   | [`#{ENV["HEAD_REF"]}`](https://github.com/leka/LekaOS/tree/#{ENV["HEAD_REF"]})   |
 | sha       | #{ENV["BASE_SHA"]}                                                               | #{ENV["HEAD_SHA"]}                                                               |
 | mbed      | `#{ENV["BASE_MBED_VERSION"]}`                                                    | `#{ENV["HEAD_MBED_VERSION"]}`                                                    |

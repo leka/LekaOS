@@ -23,8 +23,8 @@ class CoreBufferedSerial : public interface::BufferedSerial
 
 	auto readable() -> bool final;
 
-	void enable_input() final;
-	void disable_input() final;
+	void enableDeepSleep() final;
+	void disableDeepSleep() final;
 
 	void sigio(std::function<void()> const &callback) final;
 

@@ -5,6 +5,7 @@
 #include "CoreMotor.h"
 
 #include "gtest/gtest.h"
+#include "mocks/leka/DeepSleepEnabled.h"
 #include "mocks/leka/PwmOut.h"
 #include "mocks/mbed/DigitalOut.h"
 
@@ -16,8 +17,6 @@ using namespace leka;
 class CoreMotorTest : public ::testing::Test
 {
   protected:
-	CoreMotorTest() : motor(dir_1, dir_2, speed) {}
-
 	// void SetUp() override {}
 	// void TearDown() override {}
 
@@ -32,102 +31,117 @@ class CoreMotorTest : public ::testing::Test
 		EXPECT_CALL(dir_1, write).Times(AnyNumber());
 		EXPECT_CALL(dir_2, write).Times(AnyNumber());
 	}
-
-	CoreMotor motor;
 };
 
 TEST_F(CoreMotorTest, initialization)
 {
+	auto motor = CoreMotor {dir_1, dir_2, speed};
+
 	ASSERT_NE(&motor, nullptr);
-}
-
-TEST_F(CoreMotorTest, suspendOnInitialization)
-{
-	mbed::mock::DigitalOut local_dir_1 = {};
-	mbed::mock::DigitalOut local_dir_2 = {};
-	mock::PwmOut local_speed		   = {};
-
-	EXPECT_CALL(local_speed, suspend());
-
-	auto local_motor = CoreMotor {local_dir_1, local_dir_2, local_speed};
 }
 
 TEST_F(CoreMotorTest, rotateClockwiseNormalSpeed)
 {
+	auto motor = CoreMotor {dir_1, dir_2, speed};
+
 	EXPECT_CALL(dir_1, write(1));
 	EXPECT_CALL(dir_2, write(0));
 	EXPECT_CALL(speed, write(0.5));
-	EXPECT_CALL(speed, resume());
 
 	motor.spin(Rotation::clockwise, 0.5);
 }
 
 TEST_F(CoreMotorTest, rotateClockwiseMaxSpeed)
 {
+	auto motor = CoreMotor {dir_1, dir_2, speed};
+
 	EXPECT_CALL(dir_1, write(1));
 	EXPECT_CALL(dir_2, write(0));
 	EXPECT_CALL(speed, write(1));
-	EXPECT_CALL(speed, resume());
 
 	motor.spin(Rotation::clockwise, 1);
 }
 
 TEST_F(CoreMotorTest, rotateCounterClockwiseNormalSpeed)
 {
+	auto motor = CoreMotor {dir_1, dir_2, speed};
+
 	EXPECT_CALL(dir_1, write(0));
 	EXPECT_CALL(dir_2, write(1));
 	EXPECT_CALL(speed, write(0.5));
-	EXPECT_CALL(speed, resume());
 
 	motor.spin(Rotation::counterClockwise, 0.5);
 }
 
 TEST_F(CoreMotorTest, rotateCounterClockwiseMaxSpeed)
 {
+	auto motor = CoreMotor {dir_1, dir_2, speed};
+
 	EXPECT_CALL(dir_1, write(0));
 	EXPECT_CALL(dir_2, write(1));
 	EXPECT_CALL(speed, write(1));
-	EXPECT_CALL(speed, resume());
 
 	motor.spin(Rotation::counterClockwise, 1);
 }
 
 TEST_F(CoreMotorTest, stop)
 {
+	auto motor = CoreMotor {dir_1, dir_2, speed};
+
 	EXPECT_CALL(dir_1, write(0));
 	EXPECT_CALL(dir_2, write(0));
 	EXPECT_CALL(speed, write(0));
-	EXPECT_CALL(speed, suspend());
 
 	motor.stop();
 }
 
 TEST_F(CoreMotorTest, speedValueEqualToZero)
 {
+	auto motor = CoreMotor {dir_1, dir_2, speed};
+
 	MOCK_FUNCTION_silence_digital_write_unexpected_calls();
 
 	EXPECT_CALL(speed, write(0));
-	EXPECT_CALL(speed, suspend());
 
 	motor.spin(Rotation::clockwise, 0);
 }
 
-TEST_F(CoreMotorTest, speedValueNotGreaterThanOne)
+TEST_F(CoreMotorTest, speedValueGreaterThanOne)
 {
+	auto motor = CoreMotor {dir_1, dir_2, speed};
+
 	MOCK_FUNCTION_silence_digital_write_unexpected_calls();
 
 	EXPECT_CALL(speed, write(1));
-	EXPECT_CALL(speed, resume());
 
 	motor.spin(Rotation::clockwise, 100);
 }
 
 TEST_F(CoreMotorTest, speedValueNotLowerThanZero)
 {
+	auto motor = CoreMotor {dir_1, dir_2, speed};
+
 	MOCK_FUNCTION_silence_digital_write_unexpected_calls();
 
 	EXPECT_CALL(speed, write(0));
-	EXPECT_CALL(speed, suspend());
 
 	motor.spin(Rotation::clockwise, -100);
+}
+
+TEST_F(CoreMotorTest, enableDeepSleep)
+{
+	auto motor = CoreMotor {dir_1, dir_2, speed};
+
+	EXPECT_CALL(speed, enableDeepSleep());
+
+	motor.enableDeepSleep();
+}
+
+TEST_F(CoreMotorTest, disableDeepSleep)
+{
+	auto motor = CoreMotor {dir_1, dir_2, speed};
+
+	EXPECT_CALL(speed, disableDeepSleep());
+
+	motor.disableDeepSleep();
 }

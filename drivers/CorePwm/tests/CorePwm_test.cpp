@@ -14,7 +14,6 @@ TEST(CorePwmTest, initialisation)
 	auto corepwm = CorePwm {NC};
 
 	ASSERT_NE(&corepwm, nullptr);
-	ASSERT_FALSE(spy_PwmOut_isSuspended());
 }
 
 TEST(CorePwmTest, write)
@@ -43,48 +42,30 @@ TEST(CorePwmTest, read)
 	ASSERT_EQ(val, 0.5f);
 }
 
-TEST(CorePwmTest, suspend)
+TEST(CorePwmTest, period)
+{
+	auto corepwm = CorePwm {NC};
+	auto value	 = 1.F / 100.F;
+
+	corepwm.period(value);
+
+	ASSERT_EQ(spy_PwmOut_getPeriod(), value);
+}
+
+TEST(CorePwmTest, enableDeepSleep)
 {
 	auto corepwm = CorePwm {NC};
 
-	corepwm.suspend();
+	corepwm.enableDeepSleep();
 
 	ASSERT_TRUE(spy_PwmOut_isSuspended());
 }
 
-TEST(CorePwmTest, suspendThenSuspend)
+TEST(CorePwmTest, disableDeepSleep)
 {
 	auto corepwm = CorePwm {NC};
 
-	corepwm.suspend();
-	corepwm.suspend();
-
-	ASSERT_TRUE(spy_PwmOut_isSuspended());
-}
-
-TEST(CorePwmTest, suspendThenResume)
-{
-	auto corepwm = CorePwm {NC};
-
-	corepwm.suspend();
-
-	ASSERT_TRUE(spy_PwmOut_isSuspended());
-
-	corepwm.resume();
-
-	ASSERT_FALSE(spy_PwmOut_isSuspended());
-}
-
-TEST(CorePwmTest, suspendThenResumeThenResume)
-{
-	auto corepwm = CorePwm {NC};
-
-	corepwm.suspend();
-
-	ASSERT_TRUE(spy_PwmOut_isSuspended());
-
-	corepwm.resume();
-	corepwm.resume();
+	corepwm.disableDeepSleep();
 
 	ASSERT_FALSE(spy_PwmOut_isSuspended());
 }

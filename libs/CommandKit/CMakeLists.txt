@@ -29,5 +29,6 @@ if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		tests/CommandKit_test_push.cpp
 		tests/CommandKit_test_register.cpp
 		tests/CommandRunner_test.cpp
+		tests/Command_Video_test.cpp
 	)
 endif()

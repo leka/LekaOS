@@ -14,6 +14,7 @@
 using namespace leka;
 using namespace ble;
 
+using ::testing::_;
 using ::testing::Return;
 using ::testing::Sequence;
 
@@ -64,6 +65,11 @@ MATCHER_P(compareAdvertisingPayload, expected_data_builder, "")
 	return expected_data_builder.getAdvertisingData() == arg;
 }
 
+MATCHER_P(compareSlaveLatency, expected_slave_latency, "")
+{
+	return expected_slave_latency.value() == arg.value();
+}
+
 TEST_F(CoreGapTest, initialization)
 {
 	EXPECT_NE(&coregap, nullptr);
@@ -97,11 +103,13 @@ TEST_F(CoreGapTest, defaultAdvertisingPayload)
 	auto default_advertising_data = AdvertisingData {};
 
 	data_builder.setName(default_advertising_data.name);
-	data_builder.setServiceData(service::commands::uuid,
-								{{default_advertising_data.battery, default_advertising_data.is_charging,
-								  default_advertising_data.version_major, default_advertising_data.version_minor,
-								  static_cast<uint8_t>(default_advertising_data.version_revision >> 8),
-								  static_cast<uint8_t>(default_advertising_data.version_revision)}});
+	data_builder.setServiceData(service::commands::uuid, {{
+															 default_advertising_data.version_major,
+															 default_advertising_data.version_minor,
+															 default_advertising_data.battery,
+															 default_advertising_data.is_charging,
+															 default_advertising_data.is_deep_sleeping,
+														 }});
 
 	EXPECT_CALL(mbed_mock_gap,
 				setAdvertisingPayload(LEGACY_ADVERTISING_HANDLE, compareAdvertisingPayload(data_builder)))
@@ -134,6 +142,21 @@ TEST_F(CoreGapTest, startAdvertisingAdvertisingWasActive)
 	EXPECT_CALL(mbed_mock_gap, setAdvertisingPayload).Times(0);
 
 	coregap.startAdvertising();
+}
+
+TEST_F(CoreGapTest, updateConnectionParameters)
+{
+	auto handle					 = connection_handle_t {};
+	auto min_connection_interval = conn_interval_t {12};   // Min: 15ms = 12*1,25
+	auto max_connection_interval = min_connection_interval;
+	auto slave_latency			 = slave_latency_t {0};
+	auto supervision_timeout	 = supervision_timeout_t {500};
+
+	EXPECT_CALL(mbed_mock_gap,
+				updateConnectionParameters(handle, min_connection_interval, max_connection_interval,
+										   compareSlaveLatency(slave_latency), supervision_timeout, _, _));
+
+	coregap.updateConnectionParameters(handle);
 }
 
 TEST_F(CoreGapTest, onInitializationComplete)
@@ -187,4 +210,20 @@ TEST_F(CoreGapTest, isConnectedDefault)
 	auto is_connected = coregap.isConnected();
 
 	EXPECT_FALSE(is_connected);
+}
+
+TEST_F(CoreGapTest, isConnectedAfterConnection)
+{
+	auto dummy_on_connection_callback = std::function<void()> {};
+
+	coregap.onConnectionCallback(dummy_on_connection_callback);
+
+	// nothing expected
+}
+
+TEST_F(CoreGapTest, disconnect)
+{
+	EXPECT_CALL(mbed_mock_gap, disconnect);
+
+	coregap.disconnect();
 }

@@ -7,7 +7,6 @@
 #include <functional>
 #include <span>
 
-#include "BLEServiceBattery.h"
 #include "ble/BLE.h"
 
 #include "CoreEventQueue.h"
@@ -31,6 +30,10 @@ class BLEKit
 	void onConnectionCallback(const std::function<void()> &callback);
 	void onDisconnectionCallback(const std::function<void()> &callback);
 	[[nodiscard]] auto isConnected() const -> bool;
+
+	void disconnect();
+
+	void onMTUNegotiated(const std::function<void(uint16_t)> &callback);
 
   private:
 	// ? mbed::BLE specific function

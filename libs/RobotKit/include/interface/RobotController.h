@@ -53,6 +53,7 @@ class RobotController
 
 	virtual void stopActuatorsAndLcd()		   = 0;
 	virtual void suspendHardwareForDeepSleep() = 0;
+	virtual void wakeUp()					   = 0;
 
 	virtual void resetEmergencyStopCounter() = 0;
 };

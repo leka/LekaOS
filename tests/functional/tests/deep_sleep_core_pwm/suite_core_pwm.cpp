@@ -9,198 +9,124 @@
 #include "tests/utils.h"
 #include "tests/utils_sleep.h"
 
+using namespace std::chrono;
 using namespace leka;
 using namespace boost::ut;
-using namespace std::chrono;
 using namespace boost::ut::bdd;
 
 suite suite_core_pwm = [] {
-	scenario("write") = [] {
+	scenario("base system check") = [] {
+		given("pwm is not instantiated") = [] {
+			then("I expect deep sleep TO BE possible") = [] {
+				auto status = utils::sleep::system_deep_sleep_check();
+
+				expect(status.test_check_ok);
+			};
+		};
+	};
+
+	scenario("pwm initialization") = [] {
 		given("pwm is in default configuration") = [] {
 			auto pwm = CorePwm(MOTOR_LEFT_PWM);
 
 			expect(neq(&pwm, nullptr));
 
+			rtos::ThisThread::sleep_for(500ms);
+
 			when("I do nothing") = [&] {
 				then("I expect deep sleep TO NOT BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(not status.can_deep_sleep);
-					expect(not status.test_check_ok);
-				};
-			};
-
-			when("pwm is running at 100%") = [&] {
-				pwm.write(1.0);
-
-				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
-
-					expect(not status.can_deep_sleep);
-					expect(not status.test_check_ok);
-				};
-			};
-
-			when("pwm is running at 50%") = [&] {
-				pwm.write(0.5);
-
-				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
-
-					expect(not status.can_deep_sleep);
-					expect(not status.test_check_ok);
-				};
-			};
-
-			when("pwm is running at 0%") = [&] {
-				pwm.write(0.0);
-
-				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
-
-					expect(not status.can_deep_sleep);
 					expect(not status.test_check_ok);
 				};
 			};
 		};
 	};
 
-	scenario("suspend, resume") = [] {
+	scenario("enabled/disable deepsleep") = [] {
 		given("pwm is in default configuration") = [] {
 			auto pwm = CorePwm(MOTOR_LEFT_PWM);
 
 			expect(neq(&pwm, nullptr));
 
-			when("I do nothing") = [&] {
-				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
-
-					expect(not status.can_deep_sleep);
-					expect(not status.test_check_ok);
-				};
-			};
-
-			when("pwm is suspended") = [&] {
-				pwm.suspend();
-				rtos::ThisThread::sleep_for(5ms);
-
-				then("I expect deep sleep TO BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
-
-					expect(status.can_deep_sleep);
-					expect(status.test_check_ok);
-				};
-			};
-
-			when("pwm is resumed") = [&] {
-				pwm.resume();
-
-				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
-
-					expect(not status.can_deep_sleep);
-					expect(not status.test_check_ok);
-				};
-			};
-		};
-	};
-
-	scenario("write 100%, suspend, resume") = [] {
-		given("pwm is in default configuration") = [] {
-			auto pwm = CorePwm(MOTOR_LEFT_PWM);
-
-			expect(neq(&pwm, nullptr));
+			rtos::ThisThread::sleep_for(500ms);
 
 			when("I do nothing") = [&] {
 				then("I expect deep sleep TO NOT BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(not status.can_deep_sleep);
 					expect(not status.test_check_ok);
 				};
 			};
 
-			when("pwm is running at 100%") = [&] {
-				pwm.write(1.0);
-
-				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
-
-					expect(not status.can_deep_sleep);
-					expect(not status.test_check_ok);
-				};
-			};
-
-			when("pwm is suspended") = [&] {
-				pwm.suspend();
-				rtos::ThisThread::sleep_for(5ms);
+			when("I enable deep sleep") = [&] {
+				rtos::ThisThread::sleep_for(500ms);
+				pwm.enableDeepSleep();
+				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(status.can_deep_sleep);
 					expect(status.test_check_ok);
 				};
 			};
 
-			when("pwm is resumed") = [&] {
-				pwm.resume();
+			when("I disable deep sleep") = [&] {
+				rtos::ThisThread::sleep_for(500ms);
+				pwm.disableDeepSleep();
+				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO NOT BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(not status.can_deep_sleep);
-					expect(not status.test_check_ok);
-				};
-			};
-		};
-	};
-
-	scenario("suspend, write 0%, resume") = [] {
-		given("pwm is in default configuration") = [] {
-			auto pwm = CorePwm(MOTOR_LEFT_PWM);
-
-			expect(neq(&pwm, nullptr));
-
-			when("I do nothing") = [&] {
-				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
-
-					expect(not status.can_deep_sleep);
 					expect(not status.test_check_ok);
 				};
 			};
 
-			when("pwm is running at 0%") = [&] {
-				pwm.write(0.0);
-
-				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
-
-					expect(not status.can_deep_sleep);
-					expect(not status.test_check_ok);
-				};
-			};
-
-			when("pwm is suspended") = [&] {
-				pwm.suspend();
-				rtos::ThisThread::sleep_for(5ms);
+			when("I enable deep sleep") = [&] {
+				rtos::ThisThread::sleep_for(500ms);
+				pwm.enableDeepSleep();
+				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(status.can_deep_sleep);
 					expect(status.test_check_ok);
 				};
 			};
 
-			when("pwm is resumed") = [&] {
-				pwm.resume();
+			when("I disable deep sleep") = [&] {
+				rtos::ThisThread::sleep_for(500ms);
+				pwm.disableDeepSleep();
+				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO NOT BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(not status.can_deep_sleep);
+					expect(not status.test_check_ok);
+				};
+			};
+
+			when("I enable deep sleep") = [&] {
+				rtos::ThisThread::sleep_for(500ms);
+				pwm.enableDeepSleep();
+				rtos::ThisThread::sleep_for(500ms);
+
+				then("I expect deep sleep TO BE possible") = [] {
+					auto status = utils::sleep::system_deep_sleep_check();
+
+					expect(status.test_check_ok);
+				};
+			};
+
+			when("I disable deep sleep") = [&] {
+				rtos::ThisThread::sleep_for(500ms);
+				pwm.disableDeepSleep();
+				rtos::ThisThread::sleep_for(500ms);
+
+				then("I expect deep sleep TO NOT BE possible") = [] {
+					auto status = utils::sleep::system_deep_sleep_check();
+
 					expect(not status.test_check_ok);
 				};
 			};

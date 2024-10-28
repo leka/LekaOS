@@ -18,12 +18,13 @@ class CorePwm : public interface::PwmOut
 	auto read() -> float final;
 	void write(float value) final;
 
-	void suspend() final;
-	void resume() final;
+	void period(float value) final;
+
+	void enableDeepSleep() final;
+	void disableDeepSleep() final;
 
   private:
 	mbed::PwmOut _pwm;
-	bool _is_suspended = false;
 };
 
 }	// namespace leka

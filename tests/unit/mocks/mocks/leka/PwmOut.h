@@ -14,8 +14,9 @@ class PwmOut : public interface::PwmOut
   public:
 	MOCK_METHOD(float, read, (), (override));
 	MOCK_METHOD(void, write, (float), (override));
-	MOCK_METHOD(void, suspend, (), (override));
-	MOCK_METHOD(void, resume, (), (override));
+	MOCK_METHOD(void, period, (float), (override));
+	MOCK_METHOD(void, enableDeepSleep, (), (override));
+	MOCK_METHOD(void, disableDeepSleep, (), (override));
 };
 
 }	// namespace leka::mock

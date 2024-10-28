@@ -25,6 +25,11 @@ void BLE::onEventsToProcess(FunctionPointerWithContext<ble::BLE::OnEventsToProce
 	leka::spy_ble_on_events_to_process_callback = callback;
 }
 
+auto BLE::shutdown() -> ble_error_t
+{
+	return BLE_ERROR_NONE;
+}
+
 }	// namespace ble
 
 namespace leka {

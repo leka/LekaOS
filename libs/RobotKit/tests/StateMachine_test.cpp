@@ -232,18 +232,63 @@ TEST_F(StateMachineTest, stateSleepEventAutonomousActivityRequested)
 	EXPECT_TRUE(sm.is(lksm::state::autonomous_activities));
 }
 
-// TEST_F(StateMachineTest, stateSleepEventTimeout)
-// {
-// 	sm.set_current_states(lksm::state::sleeping);
+TEST_F(StateMachineTest, stateSleepEventTimeout)
+{
+	sm.set_current_states(lksm::state::sleeping);
 
-// 	EXPECT_CALL(mock_rc, stopSleepingBehavior).Times(1);
-// 	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
-// 	EXPECT_CALL(mock_rc, suspendHardwareForDeepSleep).Times(1);
+	EXPECT_CALL(mock_rc, stopSleepingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, suspendHardwareForDeepSleep).Times(1);
 
-// 	sm.process_event(lksm::event::deep_sleep_timeout_did_end {});
+	sm.process_event(lksm::event::deep_sleep_timeout_did_end {});
 
-// 	EXPECT_TRUE(sm.is(lksm::state::deep_sleeping));
-// }
+	EXPECT_TRUE(sm.is(lksm::state::deep_sleeping));
+}
+
+TEST_F(StateMachineTest, stateDeepSleepingEventChargeDidStart)
+{
+	sm.set_current_states(lksm::state::deep_sleeping);
+
+	EXPECT_CALL(mock_rc, wakeUp);
+
+	sm.process_event(lksm::event::charge_did_start {});
+
+	EXPECT_TRUE(sm.is(X));
+}
+
+TEST_F(StateMachineTest, stateDeepSleepingEventChargeDidStop)
+{
+	sm.set_current_states(lksm::state::deep_sleeping);
+
+	EXPECT_CALL(mock_rc, wakeUp);
+
+	sm.process_event(lksm::event::charge_did_stop {});
+
+	EXPECT_TRUE(sm.is(X));
+}
+
+TEST_F(StateMachineTest, stateDeepSleepingEventBleConnection)
+{
+	sm.set_current_states(lksm::state::deep_sleeping);
+
+	EXPECT_CALL(mock_rc, wakeUp);
+	EXPECT_CALL(mock_rc, startConnectionBehavior);
+
+	sm.process_event(lksm::event::ble_connection {});
+
+	EXPECT_TRUE(sm.is(X));
+}
+
+TEST_F(StateMachineTest, stateDeepSleepingEventMagicCardDetected)
+{
+	sm.set_current_states(lksm::state::deep_sleeping);
+
+	EXPECT_CALL(mock_rc, wakeUp);
+
+	sm.process_event(lksm::event::magic_card_detected {});
+
+	EXPECT_TRUE(sm.is(X));
+}
 
 TEST_F(StateMachineTest, stateIdleEventChargeDidStart)
 {
@@ -359,18 +404,18 @@ TEST_F(StateMachineTest, stateChargingEventAutonomousActivityRequested)
 	EXPECT_TRUE(sm.is(lksm::state::charging));
 }
 
-// TEST_F(StateMachineTest, stateChargingEventTimeout)
-// {
-// 	sm.set_current_states(lksm::state::charging);
+TEST_F(StateMachineTest, stateChargingEventTimeout)
+{
+	sm.set_current_states(lksm::state::charging);
 
-// 	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
-// 	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
-// 	EXPECT_CALL(mock_rc, suspendHardwareForDeepSleep).Times(1);
+	EXPECT_CALL(mock_rc, stopChargingBehavior).Times(1);
+	EXPECT_CALL(mock_rc, stopDeepSleepTimeout).Times(1);
+	EXPECT_CALL(mock_rc, suspendHardwareForDeepSleep).Times(1);
 
-// 	sm.process_event(lksm::event::deep_sleep_timeout_did_end {});
+	sm.process_event(lksm::event::deep_sleep_timeout_did_end {});
 
-// 	EXPECT_TRUE(sm.is(lksm::state::deep_sleeping));
-// }
+	EXPECT_TRUE(sm.is(lksm::state::deep_sleeping));
+}
 
 TEST_F(StateMachineTest, stateSleepingEventBleConnection)
 {

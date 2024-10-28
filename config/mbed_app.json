@@ -15,6 +15,8 @@
 			"bluenrg_ms.SPI_nCS": "BLE_SPI_NSS",
 			"bluenrg_ms.SPI_SCK": "BLE_SPI_SCK",
 			"cordio.desired-att-mtu": 251,
+			"cordio.rx-acl-buffer-size": 259,
+			"cordio.max-prepared-writes": 1,
 			"sd.SPI_CS": "SD_SPI_CS",
 			"sd.SPI_MISO": "SD_SPI_MISO",
 			"sd.SPI_MOSI": "SD_SPI_MOSI",

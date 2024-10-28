@@ -10,20 +10,20 @@
 #include "rtos/ThisThread.h"
 
 #include "boost/ut.hpp"
-#include "interface/LSM6DSOX.hpp"
+#include "interface/drivers/IMU.hpp"
 
-inline auto values_did_change_over_time(leka::interface::LSM6DSOX &lsm6dsox)
+inline auto values_did_change_over_time(leka::interface::IMU &imu)
 {
 	using namespace std::chrono;
 	using namespace boost::ut;
 
-	auto sensor_data = leka::interface::LSM6DSOX::SensorData();
+	auto sensor_data = leka::interface::IMU::SensorData();
 
 	auto i_batch = std::vector<float> {};
 	auto f_batch = std::vector<float> {};
 
-	auto sensor_callback = [&](const leka::interface::LSM6DSOX::SensorData &data) { sensor_data = data; };
-	lsm6dsox.registerOnGyDataReadyCallback(sensor_callback);
+	auto sensor_callback = [&](const leka::interface::IMU::SensorData &data) { sensor_data = data; };
+	imu.registerOnDataReadyCallback(sensor_callback);
 
 	for (auto i = 0; i < 10; ++i) {
 		auto [xlx, xly, xlz] = sensor_data.xl;

@@ -15,6 +15,8 @@ void BLEKit::setServices(std::span<interface::BLEService *> const &services)
 
 void BLEKit::init()
 {
+	_ble.shutdown();
+
 	if (_ble.hasInitialized()) {
 		return;
 	}
@@ -61,4 +63,14 @@ void BLEKit::onDisconnectionCallback(const std::function<void()> &callback)
 auto BLEKit::isConnected() const -> bool
 {
 	return _core_gap.isConnected();
+}
+
+void BLEKit::disconnect()
+{
+	_core_gap.disconnect();
+}
+
+void BLEKit::onMTUNegotiated(const std::function<void(uint16_t)> &callback)
+{
+	_core_gatt_server.onMTUNegotiated(callback);
 }

@@ -198,14 +198,14 @@ auto CoreHTS::write(uint8_t register_address, uint8_t *pBuffer, uint16_t number_
 	return 0;
 }
 
-auto CoreHTS::ptr_io_write(void *handle, uint8_t register_address, uint8_t *p_buffer, uint16_t number_bytes_to_write)
-	-> int32_t
+auto CoreHTS::ptr_io_write(void *handle, uint8_t register_address, uint8_t *p_buffer,
+						   uint16_t number_bytes_to_write) -> int32_t
 {
 	return (int32_t)((CoreHTS *)handle)->write(register_address, p_buffer, number_bytes_to_write);
 }
 
-auto CoreHTS::ptr_io_read(void *handle, uint8_t register_address, uint8_t *p_buffer, uint16_t number_bytes_to_read)
-	-> int32_t
+auto CoreHTS::ptr_io_read(void *handle, uint8_t register_address, uint8_t *p_buffer,
+						  uint16_t number_bytes_to_read) -> int32_t
 {
 	return (int32_t)((CoreHTS *)handle)->read(register_address, p_buffer, number_bytes_to_read);
 }

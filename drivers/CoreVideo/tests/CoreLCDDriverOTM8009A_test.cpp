@@ -8,22 +8,23 @@
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreDSI.h"
 #include "mocks/leka/CoreSTM32Hal.h"
-#include "stubs/mbed/PwmOut.h"
+#include "mocks/leka/PwmOut.h"
 
 using namespace leka;
 
 using ::testing::_;
-using ::testing::Args;
 using ::testing::ElementsAre;
 using ::testing::InSequence;
 
 class CoreOTM8009ATest : public ::testing::Test
 {
   protected:
-	CoreOTM8009ATest() : otm(dsimock, PinName::SCREEN_BACKLIGHT_PWM) {}
+	CoreOTM8009ATest() : otm(dsimock, backlightmock) {}
 
 	// void SetUp() override {}
 	// void TearDown() override {}
+
+	mock::PwmOut backlightmock;
 
 	mock::CoreDSI dsimock;
 	CoreLCDDriverOTM8009A otm;
@@ -31,16 +32,15 @@ class CoreOTM8009ATest : public ::testing::Test
 
 TEST_F(CoreOTM8009ATest, instantiation)
 {
-	ASSERT_NE(&otm, nullptr);
+	EXPECT_NE(&otm, nullptr);
 }
 
 TEST_F(CoreOTM8009ATest, initialize)
 {
-	EXPECT_CALL(dsimock, write).Times(101);
+	EXPECT_CALL(backlightmock, period(0.01F));
+	EXPECT_CALL(dsimock, write(_)).Times(101);
 
 	otm.initialize();
-
-	ASSERT_EQ(spy_PwmOut_getPeriod(), 0.01f);
 }
 
 TEST_F(CoreOTM8009ATest, setLandscapeOrientation)
@@ -60,9 +60,9 @@ TEST_F(CoreOTM8009ATest, setLandscapeOrientation)
 	{
 		InSequence seq;
 
-		EXPECT_CALL(dsimock, write(_, 2)).With(Args<0, 1>(expected_instruction_array)).Times(1);
-		EXPECT_CALL(dsimock, write(_, 5)).With(Args<0, 1>(expected_set_address_for_column_array)).Times(1);
-		EXPECT_CALL(dsimock, write(_, 5)).With(Args<0, 1>(expected_set_address_for_page_array)).Times(1);
+		EXPECT_CALL(dsimock, write(expected_instruction_array)).Times(1);
+		EXPECT_CALL(dsimock, write(expected_set_address_for_column_array)).Times(1);
+		EXPECT_CALL(dsimock, write(expected_set_address_for_page_array)).Times(1);
 	}
 
 	otm.setLandscapeOrientation();
@@ -72,7 +72,8 @@ TEST_F(CoreOTM8009ATest, turnOn)
 {
 	auto expected_instruction_array = ElementsAre(lcd::otm8009a::display::turn_on::command, 0x00);
 
-	EXPECT_CALL(dsimock, write(_, 2)).With(Args<0, 1>(expected_instruction_array)).Times(1);
+	EXPECT_CALL(backlightmock, write(1));
+	EXPECT_CALL(dsimock, write(expected_instruction_array)).Times(1);
 
 	otm.turnOn();
 }
@@ -81,34 +82,46 @@ TEST_F(CoreOTM8009ATest, turnOff)
 {
 	auto expected_instruction_array = ElementsAre(lcd::otm8009a::display::turn_off::command, 0x00);
 
-	EXPECT_CALL(dsimock, write(_, 2)).With(Args<0, 1>(expected_instruction_array)).Times(1);
+	EXPECT_CALL(backlightmock, write(0));
+	EXPECT_CALL(dsimock, write(expected_instruction_array)).Times(1);
 
 	otm.turnOff();
 }
 
+TEST_F(CoreOTM8009ATest, enableDeepSleep)
+{
+	EXPECT_CALL(backlightmock, enableDeepSleep);
+
+	otm.enableDeepSleep();
+}
+
+TEST_F(CoreOTM8009ATest, disableDeepSleep)
+{
+	EXPECT_CALL(backlightmock, disableDeepSleep);
+
+	otm.disableDeepSleep();
+}
+
 TEST_F(CoreOTM8009ATest, setBrightness)
 {
-	otm.setBrightness(0.5);
+	auto value = 0.5F;
+	EXPECT_CALL(backlightmock, write(value));
 
-	ASSERT_EQ(spy_PwmOut_getValue(), 0.5);
+	otm.setBrightness(value);
 }
 
 TEST_F(CoreOTM8009ATest, setBrightnessTurnOffThenTurnOn)
 {
 	auto initial_brightness_value = 0.4F;
 
+	EXPECT_CALL(backlightmock, write(initial_brightness_value));
 	otm.setBrightness(initial_brightness_value);
 
-	EXPECT_EQ(spy_PwmOut_getValue(), initial_brightness_value);
-
-	EXPECT_CALL(dsimock, write).Times(1);
+	EXPECT_CALL(backlightmock, write(0));
+	EXPECT_CALL(dsimock, write(_)).Times(1);
 	otm.turnOff();
 
-	EXPECT_EQ(spy_PwmOut_getValue(), 0);
-	EXPECT_NE(spy_PwmOut_getValue(), initial_brightness_value);
-
-	EXPECT_CALL(dsimock, write).Times(1);
+	EXPECT_CALL(backlightmock, write(initial_brightness_value));
+	EXPECT_CALL(dsimock, write(_)).Times(1);
 	otm.turnOn();
-
-	EXPECT_EQ(spy_PwmOut_getValue(), initial_brightness_value);
 }

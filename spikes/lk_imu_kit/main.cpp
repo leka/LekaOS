@@ -5,7 +5,7 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreI2C.h"
-#include "CoreLSM6DSOX.hpp"
+#include "CoreIMU.hpp"
 #include "HelloWorld.h"
 #include "IMUKit.hpp"
 #include "LogKit.h"
@@ -19,16 +19,16 @@ namespace imu {
 
 	namespace internal {
 
-		auto drdy_irq = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
-		auto i2c	  = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
+		auto irq = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
+		auto i2c = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
 
 	}	// namespace internal
 
-	CoreLSM6DSOX lsm6dsox(internal::i2c, internal::drdy_irq);
+	CoreIMU coreimu(internal::i2c, internal::irq);
 
 }	// namespace imu
 
-IMUKit imukit(imu::lsm6dsox);
+IMUKit imukit(imu::coreimu);
 
 }	// namespace
 
@@ -40,7 +40,7 @@ auto main() -> int
 	HelloWorld hello;
 	hello.start();
 
-	imu::lsm6dsox.init();
+	imu::coreimu.init();
 
 	imukit.stop();
 	imukit.init();
@@ -48,7 +48,8 @@ auto main() -> int
 
 	while (true) {
 		const auto [pitch, roll, yaw] = imukit.getEulerAngles();
-		log_info("Pitch : %7.2f, Roll : %7.2f Yaw : %7.2f", pitch, roll, yaw);
+		log_info("Pitch : %i, Roll : %i Yaw : %i", static_cast<int>(pitch), static_cast<int>(roll),
+				 static_cast<int>(yaw));
 		rtos::ThisThread::sleep_for(140ms);
 	}
 }

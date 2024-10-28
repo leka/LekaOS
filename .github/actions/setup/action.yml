@@ -35,14 +35,14 @@ runs:
     #
 
     - name: Checkout mbed-os
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: leka/mbed-os
         ref: ${{ env.HEAD_MBED_VERSION }}
         path: extern/mbed-os
 
     - name: Checkout mcuboot
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: mcu-tools/mcuboot
         ref: ${{ env.HEAD_MCUBOOT_VERSION }}
@@ -59,35 +59,37 @@ runs:
     #
 
     - name: Cache ARM GCC Toolchain
-      id: cache_arm_toolchain
-      uses: actions/cache@v3
+      id: global_cache-arm_gnu_toolchain
+      uses: actions/cache@v4
       with:
-        path: ${{ env.RUNNER_HOME }}/gcc-arm-none-eabi
-        key: ${{ runner.os }}-global_cache-arm_toolchain-${{ hashFiles('config/toolchain_gcc_arm_none_eabi_url') }}
+        path: ${{ env.RUNNER_HOME }}/arm-gnu-toolchain
+        key: ${{ runner.os }}-global_cache-arm_gnu_toolchain-${{ hashFiles('config/arm_gnu_toolchain_url') }}
 
     - name: Install ARM GCC Toolchain
-      if: steps.cache_arm_toolchain.outputs.cache-hit != 'true'
+      if: steps.global_cache-arm_gnu_toolchain.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        wget ${{ env.ARM_TOOLCHAIN_URL }}
-        tar -xjf ${{ env.ARM_TOOLCHAIN_FILENAME }} && rm -rf ${{ env.ARM_TOOLCHAIN_FILENAME }}
-        mv ${{ env.ARM_TOOLCHAIN_EXTRACT_DIRECTORY }} ${{ env.RUNNER_HOME }}/gcc-arm-none-eabi
+        wget -q ${{ env.ARM_GNU_TOOLCHAIN_URL }} -O ${{ env.ARM_GNU_TOOLCHAIN_ARCHIVE_FILENAME }}
+        mkdir -p ${{ env.ARM_GNU_TOOLCHAIN_EXTRACT_DIRECTORY }}
+        tar -xf ${{ env.ARM_GNU_TOOLCHAIN_ARCHIVE_FILENAME }} -C ${{ env.ARM_GNU_TOOLCHAIN_EXTRACT_DIRECTORY }} --strip-components=1
+        rm -rf ${{ env.ARM_GNU_TOOLCHAIN_ARCHIVE_FILENAME }}
+        mv ${{ env.ARM_GNU_TOOLCHAIN_EXTRACT_DIRECTORY }} ${{ env.RUNNER_HOME }}/arm-gnu-toolchain
 
     - name: Add ARM GCC Toolchain to path
       shell: bash
       run: |
-        echo "${{ env.RUNNER_HOME }}/gcc-arm-none-eabi/bin" >> $GITHUB_PATH
+        echo "${{ env.RUNNER_HOME }}/arm-gnu-toolchain/bin" >> $GITHUB_PATH
 
     - name: Test ARM GCC Toolchain
       shell: bash
       run: |
-        ls -al ${{ env.RUNNER_HOME }}/gcc-arm-none-eabi/bin
+        ls -al ${{ env.RUNNER_HOME }}/arm-gnu-toolchain/bin
         arm-none-eabi-gcc -v
 
     - name: Add toolchain version to env
       shell: bash
       run: |
-        TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc \().*(?= \(re)' | sed 's/)/ -/g')
+        TOOLCHAIN_VERSION=$(arm-none-eabi-gcc --version | grep -Po '(?<=gcc \().*' | sed 's/))/)/g')
         echo "TOOLCHAIN_VERSION=$TOOLCHAIN_VERSION" >> $GITHUB_ENV
 
     #
@@ -97,12 +99,12 @@ runs:
     - name: Install tools
       shell: bash
       run: |
-        sudo apt-fast update
-        sudo apt-fast install -y --no-install-recommends ninja-build ccache lcov gcovr zsh
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends ninja-build ccache lcov gcovr zsh
 
     - name: Cache ccache
       id: global_cache-ccache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ env.CCACHE_DIR}}
         key: ${{ inputs.ccache_key }}-(${{ env.CACHE_NOW_TIME }}) # TODO(@ladislas): separate env from setup
@@ -114,7 +116,7 @@ runs:
 
     - name: Cache pip dependencies
       id: global_cache-pip_dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ${{ env.RUNNER_HOME }}/.cache/pip
@@ -126,9 +128,15 @@ runs:
     - name: Install pip packages
       shell: bash
       run: |
-        pip install --upgrade --upgrade-strategy eager mbed-cli mbed-tools imgtool
-        pip install --upgrade --upgrade-strategy eager -r ./tools/config/mbed_requirements.txt
-        pip install --upgrade --upgrade-strategy eager -r ./extern/mcuboot/scripts/requirements.txt
+        BREAK_SYSTEM_PACKAGES=""
+        if [[ $ImageOS == "ubuntu24" ]]; then
+          BREAK_SYSTEM_PACKAGES="--break-system-packages"
+        fi
+        echo "ImageOS: $ImageOS"
+        echo "BREAK_SYSTEM_PACKAGES: $BREAK_SYSTEM_PACKAGES"
+        pip install --upgrade --upgrade-strategy eager -r ./requirements.txt $BREAK_SYSTEM_PACKAGES
+        pip install --upgrade --upgrade-strategy eager -r ./tools/config/mbed_requirements.txt $BREAK_SYSTEM_PACKAGES
+        pip install --upgrade --upgrade-strategy eager -r ./extern/mcuboot/scripts/requirements.txt $BREAK_SYSTEM_PACKAGES
 
     - name: Test pip packages
       shell: bash

@@ -6,14 +6,10 @@
 
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreLCDDriver.h"
-#include "stubs/mbed/PwmOut.h"
 
 using namespace leka;
-using ::testing::_;
+
 using ::testing::An;
-using ::testing::Args;
-using ::testing::AtLeast;
-using ::testing::ElementsAre;
 using ::testing::InSequence;
 
 class CoreLCDTest : public ::testing::Test
@@ -56,6 +52,20 @@ TEST_F(CoreLCDTest, turnOff)
 	EXPECT_CALL(lcddrivermock, turnOff).Times(1);
 
 	corelcd.turnOff();
+}
+
+TEST_F(CoreLCDTest, enableDeepSleep)
+{
+	EXPECT_CALL(lcddrivermock, enableDeepSleep);
+
+	corelcd.enableDeepSleep();
+}
+
+TEST_F(CoreLCDTest, disableDeepSleep)
+{
+	EXPECT_CALL(lcddrivermock, disableDeepSleep);
+
+	corelcd.disableDeepSleep();
 }
 
 TEST_F(CoreLCDTest, setBrightness)

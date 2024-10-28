@@ -16,22 +16,17 @@ void CorePwm::write(float value)
 	_pwm.write(value);
 }
 
-void CorePwm::suspend()
+void CorePwm::period(float value)
 {
-	if (_is_suspended) {
-		return;
-	}
-
-	_pwm.suspend();
-	_is_suspended = true;
+	_pwm.period(value);
 }
 
-void CorePwm::resume()
+void CorePwm::enableDeepSleep()
 {
-	if (!_is_suspended) {
-		return;
-	}
+	_pwm.suspend();
+}
 
+void CorePwm::disableDeepSleep()
+{
 	_pwm.resume();
-	_is_suspended = false;
 }

@@ -8,9 +8,9 @@
 #include "tests/utils.h"
 #include "tests/utils_sleep.h"
 
+using namespace std::chrono;
 using namespace leka;
 using namespace boost::ut;
-using namespace std::chrono;
 using namespace boost::ut::bdd;
 
 suite suite_core_motor = [] {
@@ -19,7 +19,6 @@ suite suite_core_motor = [] {
 			then("I expect deep sleep TO BE possible") = [] {
 				auto status = utils::sleep::system_deep_sleep_check();
 
-				expect(status.can_deep_sleep);
 				expect(status.test_check_ok);
 			};
 		};
@@ -37,138 +36,79 @@ suite suite_core_motor = [] {
 			expect(neq(&motor, nullptr));
 
 			when("I do nothing") = [&] {
-				then("I expect deep sleep TO BE possible") = [] {
+				then("I expect deep sleep TO NOT BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(status.can_deep_sleep);
-					expect(status.test_check_ok);
+					expect(not status.test_check_ok);
 				};
 			};
 		};
 	};
 
-	scenario("motor spin") = [] {
+	scenario("enabled/disable deepsleep") = [] {
 		given("motor is in default configuration") = [] {
 			auto dir_1 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
 			auto dir_2 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
 			auto speed = CorePwm {MOTOR_LEFT_PWM};
 
 			auto motor = CoreMotor {dir_1, dir_2, speed};
+			rtos::ThisThread::sleep_for(5ms);
 
 			expect(neq(&motor, nullptr));
 
-			when("I spin the motor at 50%") = [&] {
-				motor.spin(Rotation::clockwise, 0.5);
-
+			when("I do nothing") = [&] {
 				then("I expect deep sleep TO NOT BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(not status.can_deep_sleep);
 					expect(not status.test_check_ok);
 				};
 			};
 
-			when("I spin the motor at 100%") = [&] {
-				motor.spin(Rotation::clockwise, 1.0);
-
-				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
-
-					expect(not status.can_deep_sleep);
-					expect(not status.test_check_ok);
-				};
-			};
-
-			when("I spin the motor at 0%") = [&] {
-				motor.spin(Rotation::clockwise, 0.0);
-				rtos::ThisThread::sleep_for(5ms);
+			when("I enable motor deep sleep") = [&] {
+				rtos::ThisThread::sleep_for(500ms);
+				motor.enableDeepSleep();
+				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(status.can_deep_sleep);
 					expect(status.test_check_ok);
 				};
 			};
-		};
-	};
 
-	scenario("motor spin, stop, spin, stop, spin, spin 0% (stop)") = [] {
-		given("motor is in default configuration") = [] {
-			auto dir_1 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_1};
-			auto dir_2 = mbed::DigitalOut {MOTOR_LEFT_DIRECTION_2};
-			auto speed = CorePwm {MOTOR_LEFT_PWM};
-
-			auto motor = CoreMotor {dir_1, dir_2, speed};
-
-			expect(neq(&motor, nullptr));
-
-			when("I spin the motor at 50%") = [&] {
-				motor.spin(Rotation::clockwise, 0.5);
+			when("I disable motor deep sleep") = [&] {
+				rtos::ThisThread::sleep_for(500ms);
+				motor.disableDeepSleep();
+				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO NOT BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(not status.can_deep_sleep);
 					expect(not status.test_check_ok);
 				};
 			};
 
-			when("I stop the motor") = [&] {
-				motor.stop();
-				rtos::ThisThread::sleep_for(5ms);
+			when("I enable motor deep sleep") = [&] {
+				rtos::ThisThread::sleep_for(500ms);
+				motor.enableDeepSleep();
+				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(status.can_deep_sleep);
 					expect(status.test_check_ok);
 				};
 			};
 
-			when("I spin the motor at 100%") = [&] {
-				motor.spin(Rotation::clockwise, 1.0);
+			when("I disable motor deep sleep") = [&] {
+				rtos::ThisThread::sleep_for(500ms);
+				motor.disableDeepSleep();
+				rtos::ThisThread::sleep_for(500ms);
 
 				then("I expect deep sleep TO NOT BE possible") = [] {
 					auto status = utils::sleep::system_deep_sleep_check();
 
-					expect(not status.can_deep_sleep);
 					expect(not status.test_check_ok);
-				};
-			};
-
-			when("I stop the motor") = [&] {
-				motor.stop();
-				rtos::ThisThread::sleep_for(5ms);
-
-				then("I expect deep sleep TO BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
-
-					expect(status.can_deep_sleep);
-					expect(status.test_check_ok);
-				};
-			};
-
-			when("I spin the motor at 100%") = [&] {
-				motor.spin(Rotation::clockwise, 1.0);
-
-				then("I expect deep sleep TO NOT BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
-
-					expect(not status.can_deep_sleep);
-					expect(not status.test_check_ok);
-				};
-			};
-
-			when("I spin the motor at 0%") = [&] {
-				motor.spin(Rotation::clockwise, 0.0);
-				rtos::ThisThread::sleep_for(5ms);
-
-				then("I expect deep sleep TO BE possible") = [] {
-					auto status = utils::sleep::system_deep_sleep_check();
-
-					expect(status.can_deep_sleep);
-					expect(status.test_check_ok);
 				};
 			};
 		};

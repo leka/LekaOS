@@ -11,6 +11,6 @@ namespace leka {
 extern std::vector<uint8_t> spy_I2C_read_values;
 extern std::vector<uint8_t> spy_I2C_write_values;
 
-void spy_temperatureSensor_setValuesBeforeRead(std::vector<uint8_t> values);
-std::vector<uint8_t> spy_temperatureSensor_getValuesAfterWrite();
+void spy_I2C_setValuesBeforeRead(std::vector<uint8_t> values);
+std::vector<uint8_t> spy_I2C_getValuesAfterWrite();
 }	// namespace leka

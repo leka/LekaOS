@@ -11,6 +11,7 @@
 #include "hal/ticker_api.h"
 #include "hal/us_ticker_api.h"
 #include "platform/mbed_power_mgmt.h"
+#include "platform/mbed_stats.h"
 #include "platform/mbed_wait_api.h"
 #include "rtos/ThisThread.h"
 
@@ -19,7 +20,7 @@
 
 using namespace std::chrono;
 
-namespace utils::sleep {
+namespace leka::utils::sleep {
 
 constexpr inline auto SERIAL_FLUSH_TIME_MS	  = 150ms;
 constexpr inline auto US_PER_S				  = 1'000'000;
@@ -119,4 +120,26 @@ inline auto system_deep_sleep_check() -> deep_sleep_status_t
 	return {can_deep_sleep, can_deep_sleep_test_check};
 }
 
-}	// namespace utils::sleep
+inline auto get_deep_sleep_over_idle_time_ratio_for_duration(std::chrono::milliseconds duration) -> double
+{
+	auto cpu = mbed_stats_cpu_t {};
+
+	mbed_stats_cpu_get(&cpu);
+	auto start_cpu_idle_time	   = cpu.idle_time;
+	auto start_cpu_deep_sleep_time = cpu.deep_sleep_time;
+
+	rtos::ThisThread::sleep_for(duration);
+
+	mbed_stats_cpu_get(&cpu);
+	auto stop_cpu_idle_time		  = cpu.idle_time;
+	auto stop_cpu_deep_sleep_time = cpu.deep_sleep_time;
+
+	auto delta_idle_time	   = static_cast<double>(stop_cpu_idle_time - start_cpu_idle_time) / 1000;
+	auto delta_deep_sleep_time = static_cast<double>(stop_cpu_deep_sleep_time - start_cpu_deep_sleep_time) / 1000;
+
+	auto deep_sleep_ratio = delta_deep_sleep_time / delta_idle_time;
+
+	return deep_sleep_ratio;
+}
+
+}	// namespace leka::utils::sleep

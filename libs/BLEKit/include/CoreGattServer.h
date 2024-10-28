@@ -6,7 +6,6 @@
 
 #include <span>
 
-#include "BLEServiceBattery.h"
 #include "ble/BLE.h"
 #include "ble/GattServer.h"
 
@@ -23,8 +22,10 @@ class CoreGattServer
 	void setEventHandler();
 	void setServices(std::span<interface::BLEService *> services);
 
+	void onMTUNegotiated(const std::function<void(uint16_t)> &callback);
+
   private:
-	void write(GattAttribute::Handle_t characteristic_updated, std::span<const uint8_t> data);
+	void write(const GattCharacteristic *characteristic_updated, std::span<const uint8_t> data);
 
 	ble::GattServer &_gatt_server;
 	leka::CoreGattServerEventHandler _gatt_server_event_handler;

@@ -63,8 +63,7 @@ void CoreDMA2D::initialize()
 void CoreDMA2D::transferData(uintptr_t input, uintptr_t output, uint32_t width, uint32_t height)
 {
 	auto isNotReady = [this] { return _hdma2d.State != HAL_DMA2D_STATE_READY; };
-	while (isNotReady())
-		;
+	while (isNotReady());
 
 	// TODO(@yann): Check if init and config are needed everytime
 	auto is_initialized = [&] { return _hal.HAL_DMA2D_Init(&_hdma2d) == HAL_OK; };

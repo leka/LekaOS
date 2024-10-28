@@ -4,9 +4,11 @@
 
 #pragma once
 
+#include "interface/drivers/DeepSleepEnabled.h"
+
 namespace leka::interface {
 
-class LCDDriver
+class LCDDriver : public interface::DeepSleepEnabled
 {
   public:
 	virtual ~LCDDriver() = default;

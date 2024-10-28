@@ -18,6 +18,7 @@
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreI2C.h"
+#include "CoreIMU.hpp"
 #include "CoreInterruptIn.h"
 #include "CoreJPEG.hpp"
 #include "CoreJPEGModeDMA.hpp"
@@ -25,7 +26,6 @@
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLL.h"
-#include "CoreLSM6DSOX.hpp"
 #include "CoreLTDC.hpp"
 #include "CoreMotor.h"
 #include "CorePwm.h"
@@ -163,6 +163,7 @@ namespace motors {
 namespace display::internal {
 
 	auto event_loop = EventLoopKit {};
+	auto backlight	= CorePwm {SCREEN_BACKLIGHT_PWM};
 
 	auto corell		   = CoreLL {};
 	auto pixel		   = CGPixel {corell};
@@ -173,7 +174,7 @@ namespace display::internal {
 	auto coreltdc	   = CoreLTDC {hal};
 	auto coregraphics  = CoreGraphics {coredma2d};
 	auto corefont	   = CoreFont {pixel};
-	auto coreotm	   = CoreLCDDriverOTM8009A {coredsi, PinName::SCREEN_BACKLIGHT_PWM};
+	auto coreotm	   = CoreLCDDriverOTM8009A {coredsi, backlight};
 	auto corelcd	   = CoreLCD {coreotm};
 	auto _corejpegmode = CoreJPEGModeDMA {hal};
 	auto corejpeg	   = CoreJPEG {hal, _corejpegmode};
@@ -189,16 +190,16 @@ namespace imu {
 
 	namespace internal {
 
-		auto drdy_irq = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
-		auto i2c	  = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
+		auto irq = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
+		auto i2c = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
 
 	}	// namespace internal
 
-	auto lsm6dsox = CoreLSM6DSOX(internal::i2c, internal::drdy_irq);
+	auto coreimu = CoreIMU(internal::i2c, internal::irq);
 
 }	// namespace imu
 
-auto imukit = IMUKit {imu::lsm6dsox};
+auto imukit = IMUKit {imu::coreimu};
 
 namespace motion::internal {
 
@@ -275,7 +276,7 @@ auto main() -> int
 
 	sd::init();
 
-	imu::lsm6dsox.init();
+	imu::coreimu.init();
 	imukit.init();
 
 	ledkit.init();

@@ -23,6 +23,9 @@ class CoreLCD : public interface::LCD
 
 	void setBrightness(float value) final;
 
+	void enableDeepSleep() final;
+	void disableDeepSleep() final;
+
   private:
 	interface::LCDDriver &_driver;
 };

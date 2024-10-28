@@ -1,12 +1,18 @@
-PrettyTable<=1.0.1; python_version < '3.6'
-prettytable>=2.0,<3.0; python_version >= '3.6'
-future>=0.18.0,<1.0
-jinja2>=2.11.3
-intelhex>=2.3.0,<3.0.0
-mbed-tools
-mbed-os-tools
-pyelftools
+# Leka - LekaOS
+# Copyright 2020 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+# mbed-os tools dependencies
+prettytable==2.5.0
+future==0.18.3
+Jinja2==3.1.2
+intelhex==2.3.0
+mbed-tools==7.59.0
+mbed-os-tools==1.8.15
+pyelftools==0.30
+setuptools==69.0.2
+jsonschema==2.6.0
 
 # needed for signing secure images
-cryptography
-cbor
+cryptography==42.0.4
+cbor==1.0.0

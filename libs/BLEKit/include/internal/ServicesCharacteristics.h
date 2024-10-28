@@ -37,10 +37,11 @@ namespace monitoring {
 	inline constexpr uint16_t uuid = 0x7779;
 
 	namespace characteristic {
-		inline constexpr uint16_t charging_status	 = 0x6783;
-		inline constexpr uint16_t screensaver_enable = 0x8369;
-		inline constexpr uint16_t soft_reboot		 = 0x8382;
-		inline constexpr uint16_t hard_reboot		 = 0x7282;
+		inline constexpr uint16_t charging_status			  = 0x6783;
+		inline constexpr uint16_t screensaver_enable		  = 0x8369;
+		inline constexpr uint16_t soft_reboot				  = 0x8382;
+		inline constexpr uint16_t hard_reboot				  = 0x7282;
+		inline constexpr UUID::LongUUIDBytes_t negotiated_mtu = {"NEGOTIATED_MTU"};
 	}	// namespace characteristic
 
 }	// namespace monitoring
@@ -56,11 +57,10 @@ namespace config {
 }	// namespace config
 
 namespace magic_card {
-	inline constexpr UUID::LongUUIDBytes_t uuid = {"Magic Card"};
+	inline constexpr UUID::LongUUIDBytes_t uuid = {"MAGIC_CARD"};
 
 	namespace characteristic {
-		inline constexpr UUID::LongUUIDBytes_t id		= {"ID"};
-		inline constexpr UUID::LongUUIDBytes_t language = {"Language"};
+		inline constexpr UUID::LongUUIDBytes_t raw_data = {"ID+LANGUAGE"};
 	}	// namespace characteristic
 
 }	// namespace magic_card

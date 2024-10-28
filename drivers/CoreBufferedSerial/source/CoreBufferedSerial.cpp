@@ -2,8 +2,6 @@
 // Copyright 2021 APF France handicap
 // SPDX-License-Identifier: Apache-2.0
 
-// LCOV_EXCL_START
-
 #include "CoreBufferedSerial.h"
 
 using namespace leka;
@@ -23,12 +21,16 @@ auto CoreBufferedSerial::readable() -> bool
 	return _serial.readable();
 }
 
-void CoreBufferedSerial::enable_input()
+void CoreBufferedSerial::disableDeepSleep()
 {
 	_serial.enable_input(true);
+
+	if (_sigio_callback != nullptr) {
+		_serial.sigio(mbed::Callback<void()> {[this] { _sigio_callback(); }});
+	}
 }
 
-void CoreBufferedSerial::disable_input()
+void CoreBufferedSerial::enableDeepSleep()
 {
 	_serial.enable_input(false);
 }
@@ -38,5 +40,3 @@ void CoreBufferedSerial::sigio(std::function<void()> const &callback)
 	_sigio_callback = callback;
 	_serial.sigio(mbed::Callback<void()> {[this] { _sigio_callback(); }});
 }
-
-// LCOV_EXCL_STOP

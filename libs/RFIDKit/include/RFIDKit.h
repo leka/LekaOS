@@ -4,13 +4,15 @@
 
 #pragma once
 
+#include "CoreEventQueue.h"
 #include "ISO14443A.h"
 #include "MagicCard.h"
+#include "interface/drivers/DeepSleepEnabled.h"
 #include "interface/drivers/RFIDReader.h"
 
 namespace leka {
 
-class RFIDKit
+class RFIDKit : public interface::DeepSleepEnabled
 {
   public:
 	explicit RFIDKit(interface::RFIDReader &rfid_reader) : _rfid_reader(rfid_reader) {};
@@ -23,6 +25,9 @@ class RFIDKit
 	[[nodiscard]] auto getCallback() const -> const std::function<void(const MagicCard &)> &;
 	[[nodiscard]] auto getLastMagicCardActivated() const -> const MagicCard &;
 
+	void enableDeepSleep() final;
+	void disableDeepSleep() final;
+
   private:
 	interface::RFIDReader &_rfid_reader;
 	MagicCard _card = MagicCard::none;
@@ -30,6 +35,9 @@ class RFIDKit
 	boost::sml::sm<rfid::ISO14443A> state_machine {_rfid_reader};
 
 	static constexpr std::array<uint8_t, 4> leka_tag_header = {0x4C, 0x45, 0x4B, 0x41};
+
+	CoreEventQueue _event_queue {};
+	int _event_queue_id {};
 };
 
 }	// namespace leka

@@ -7,14 +7,14 @@ on: push
 jobs:
   clang_format:
     name: clang-format
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
       - name: Run clang-format
         run: |
-          python3 tools/run-clang-format.py --clang-format-executable=clang-format-14 -r --extension=h,hpp,c,cpp --color=always --style=file ./app ./drivers ./libs ./spikes ./tests
+          python3 tools/run-clang-format.py --clang-format-executable=clang-format-18 -r --extension=h,hpp,c,cpp --color=always --style=file ./app ./drivers ./libs ./spikes ./tests

@@ -30,15 +30,18 @@
 #include "SerialNumberKit.h"
 #include "StateMachine.h"
 #include "interface/RobotController.h"
-#include "interface/drivers/Battery.h"
+#include "interface/drivers/DeepSleepEnabled.h"
 #include "interface/drivers/FirmwareUpdate.h"
 #include "interface/drivers/LCD.hpp"
 #include "interface/drivers/Motor.h"
 #include "interface/drivers/Timeout.h"
+#include "interface/libs/BatteryKit.h"
 #include "interface/libs/LedKit.h"
 #include "interface/libs/VideoKit.h"
 
 namespace leka {
+
+using namespace system::robot::sm;
 
 template <typename sm_t = boost::sml::sm<system::robot::StateMachine, boost::sml::logger<system::robot::sm::logger>,
 										 boost::sml::thread_safe<CoreMutex>>>
@@ -48,7 +51,7 @@ class RobotController : public interface::RobotController
 	sm_t state_machine {static_cast<interface::RobotController &>(*this), logger};
 
 	explicit RobotController(interface::Timeout &timeout_state_internal, interface::Timeout &timeout_state_transition,
-							 interface::Timeout &timeout_autonomous_activities, interface::Battery &battery,
+							 interface::Timeout &timeout_autonomous_activities, interface::BatteryKit &batterykit,
 							 SerialNumberKit &serialnumberkit, interface::FirmwareUpdate &firmware_update,
 							 interface::Motor &motor_left, interface::Motor &motor_right, interface::LED &ears,
 							 interface::LED &belt, interface::LedKit &ledkit, interface::LCD &lcd,
@@ -57,7 +60,7 @@ class RobotController : public interface::RobotController
 		: _timeout_state_internal(timeout_state_internal),
 		  _timeout_state_transition(timeout_state_transition),
 		  _timeout_autonomous_activities(timeout_autonomous_activities),
-		  _battery(battery),
+		  _batterykit(batterykit),
 		  _serialnumberkit(serialnumberkit),
 		  _firmware_update(firmware_update),
 		  _motor_left(motor_left),
@@ -86,7 +89,6 @@ class RobotController : public interface::RobotController
 
 	void startSleepTimeout() final
 	{
-		using namespace system::robot::sm;
 		auto on_sleep_timeout = [this] { raise(event::sleep_timeout_did_end {}); };
 		_timeout_state_transition.onTimeout(on_sleep_timeout);
 
@@ -97,7 +99,6 @@ class RobotController : public interface::RobotController
 
 	void startDeepSleepTimeout() final
 	{
-		using namespace system::robot::sm;
 		auto on_deep_sleep_timeout = [this] { raise(event::deep_sleep_timeout_did_end {}); };
 		_timeout_state_transition.onTimeout(on_deep_sleep_timeout);
 
@@ -108,7 +109,6 @@ class RobotController : public interface::RobotController
 
 	void startIdleTimeout() final
 	{
-		using namespace system::robot::sm;
 		auto on_idle_timeout = [this] { raise(event::idle_timeout_did_end {}); };
 		_timeout_state_transition.onTimeout(on_idle_timeout);
 
@@ -134,7 +134,6 @@ class RobotController : public interface::RobotController
 	void startSleepingBehavior() final
 	{
 		using namespace std::chrono_literals;
-		using namespace system::robot::sm;
 
 		_behaviorkit.sleeping();
 		_lcd.turnOn();
@@ -156,7 +155,7 @@ class RobotController : public interface::RobotController
 
 	auto isCharging() -> bool final
 	{
-		auto is_charging = _battery.isCharging();
+		auto is_charging = _batterykit.isCharging();
 
 		_service_monitoring.setChargingStatus(is_charging);
 
@@ -181,9 +180,8 @@ class RobotController : public interface::RobotController
 	void startChargingBehavior() final
 	{
 		using namespace std::chrono_literals;
-		using namespace system::robot::sm;
 
-		onChargingBehavior(_battery_kit.level());
+		onChargingBehavior(_batterykit.level());
 		_behaviorkit.blinkOnCharge();
 		rtos::ThisThread::sleep_for(500ms);
 		_lcd.turnOn();
@@ -204,7 +202,7 @@ class RobotController : public interface::RobotController
 	{
 		using namespace std::chrono_literals;
 		stopActuators();
-		if (_battery.isCharging()) {
+		if (_batterykit.isCharging()) {
 			_behaviorkit.bleConnectionWithoutVideo();
 			rtos::ThisThread::sleep_for(5s);
 			_behaviorkit.blinkOnCharge();
@@ -217,7 +215,7 @@ class RobotController : public interface::RobotController
 	void startDisconnectionBehavior() final
 	{
 		stopActuators();
-		if (_battery.isCharging()) {
+		if (_batterykit.isCharging()) {
 			_behaviorkit.blinkOnCharge();
 		}
 	}
@@ -240,7 +238,7 @@ class RobotController : public interface::RobotController
 	void startFileExchange() final
 	{
 		_behaviorkit.fileExchange();
-		if (_battery.isCharging()) {
+		if (_batterykit.isCharging()) {
 			_behaviorkit.blinkOnCharge();
 		}
 		_lcd.turnOn();
@@ -276,7 +274,7 @@ class RobotController : public interface::RobotController
 
 	auto isReadyToFileExchange() -> bool final
 	{
-		auto is_robot_ready = (_battery.isCharging() && _battery.level() > _minimal_battery_level_to_update);
+		auto is_robot_ready = (_batterykit.isCharging() && _batterykit.level() > _minimal_battery_level_to_update);
 
 		if (!is_robot_ready) {
 			_service_file_exchange.setFileExchangeState(false);
@@ -287,7 +285,7 @@ class RobotController : public interface::RobotController
 
 	auto isReadyToUpdate() -> bool final
 	{
-		auto is_robot_ready = _battery.isCharging() && _battery.level() > _minimal_battery_level_to_update;
+		auto is_robot_ready = _batterykit.isCharging() && _batterykit.level() > _minimal_battery_level_to_update;
 
 		auto firmware_version	  = _service_update.getVersion();
 		auto is_version_available = _firmware_update.isVersionAvailable(firmware_version);
@@ -311,7 +309,19 @@ class RobotController : public interface::RobotController
 		stopActuators();
 	}
 
-	void suspendHardwareForDeepSleep() final { log_info("TO IMPLEMENT - configuring hardware for deep sleep"); }
+	void suspendHardwareForDeepSleep() final
+	{
+		for (auto &component: _deep_sleep_enabled_components) {
+			component->enableDeepSleep();
+		}
+		_ble.disconnect();
+
+		auto advertising_data			  = _ble.getAdvertisingData();
+		advertising_data.is_deep_sleeping = true;
+		_ble.setAdvertisingData(advertising_data);
+	}
+
+	void wakeUp() final { system_reset(); }
 
 	void resetEmergencyStopCounter() final { _emergency_stop_counter = 0; }
 
@@ -344,11 +354,10 @@ class RobotController : public interface::RobotController
 
 		_service_config.setRobotName(_robot_name);
 
-		auto advertising_data			  = _ble.getAdvertisingData();
-		advertising_data.name			  = reinterpret_cast<const char *>(_robot_name.data());
-		advertising_data.version_major	  = _os_version.major;
-		advertising_data.version_minor	  = _os_version.minor;
-		advertising_data.version_revision = _os_version.revision;
+		auto advertising_data		   = _ble.getAdvertisingData();
+		advertising_data.name		   = reinterpret_cast<const char *>(_robot_name.data());
+		advertising_data.version_major = _os_version.major;
+		advertising_data.version_minor = _os_version.minor;
 
 		_ble.setAdvertisingData(advertising_data);
 
@@ -375,26 +384,21 @@ class RobotController : public interface::RobotController
 	void raiseEmergencyStop()
 	{
 		++_emergency_stop_counter;
-		raise(system::robot::sm::event::emergency_stop {});
+		raise(event::emergency_stop {});
 		if (_emergency_stop_counter >= 7) {
 			system_reset();
 		}
 	}
 
-	void raiseAutonomousActivityModeRequested()
-	{
-		raise(system::robot::sm::event::autonomous_activities_mode_requested {});
-	}
+	void raiseAutonomousActivityModeRequested() { raise(event::autonomous_activities_mode_requested {}); }
 
-	void raiseAutonomousActivityModeExited() { raise(system::robot::sm::event::autonomous_activities_mode_exited {}); }
+	void raiseAutonomousActivityModeExited() { raise(event::autonomous_activities_mode_exited {}); }
 
 	void resetAutonomousActivitiesTimeout()
 	{
 		_timeout_autonomous_activities.stop();
 
-		auto on_autonomous_activities_timeout = [this] {
-			raise(system::robot::sm::event::autonomous_activities_mode_exited {});
-		};
+		auto on_autonomous_activities_timeout = [this] { raise(event::autonomous_activities_mode_exited {}); };
 		_timeout_autonomous_activities.onTimeout(on_autonomous_activities_timeout);
 
 		_timeout_autonomous_activities.start(_timeout_autonomous_activities_duration);
@@ -409,7 +413,7 @@ class RobotController : public interface::RobotController
 
 		auto is_playing				= _activitykit.isPlaying();
 		auto NOT_is_playing			= !is_playing;
-		auto is_autonomous_mode		= state_machine.is(system::robot::sm::state::autonomous_activities);
+		auto is_autonomous_mode		= state_machine.is(state::autonomous_activities);
 		auto NOT_is_autonomous_mode = !is_autonomous_mode;
 
 		// TODO(@leka/dev-embedded): Refactor startup_delay_elapsed (see #1196)
@@ -447,23 +451,26 @@ class RobotController : public interface::RobotController
 
 	void registerEvents()
 	{
-		using namespace system::robot::sm;
-
 		// Setup callbacks for monitoring
 
 		_rfidkit.onTagActivated([this](const MagicCard &card) {
-			// ! IMPORTANT NOTE
-			// ! The order of the following functions MUST NOT
-			// ! be changed. It is a temporary fix for #1311
-			// TODO(@leka/dev-embedded): remove when fixed
+		// ! IMPORTANT NOTE
+		// ! The order of the following functions MUST NOT
+		// ! be changed. It is a temporary fix for #1311
+		// TODO(@leka/dev-embedded): remove when fixed
+
+#if defined(ENABLE_FAST_SLEEP)
+#else
+			raise(event::magic_card_detected {});
+#endif
 			_service_magic_card.setMagicCard(card);
 			onMagicCardAvailable(card);
 		});
 
 		_activitykit.registerBeforeProcessCallback([this] { resetAutonomousActivitiesTimeout(); });
 
-		_battery_kit.onDataUpdated([this](uint8_t level) {
-			auto is_charging = _battery.isCharging();
+		_batterykit.onDataUpdated([this](uint8_t level) {
+			auto is_charging = _batterykit.isCharging();
 
 			auto advertising_data		 = _ble.getAdvertisingData();
 			advertising_data.battery	 = level;
@@ -479,30 +486,29 @@ class RobotController : public interface::RobotController
 			}
 		});
 
-		auto on_low_battery = [this] {
-			if (!_battery.isCharging()) {
+		_batterykit.onLowBattery([this] {
+			if (!_batterykit.isCharging()) {
 				_behaviorkit.lowBattery();
 			}
 
-			if (_battery.level() == 0) {
+			if (_batterykit.level() == 0) {
 				system_reset();
 			}
-		};
-		_battery_kit.onLowBattery(on_low_battery);
+		});
 
-		_battery_kit.startEventHandler();
+		_batterykit.startEventHandler();
 
 		_ble.onConnectionCallback([this] { raise(event::ble_connection {}); });
 
 		_ble.onDisconnectionCallback([this] { raise(event::ble_disconnection {}); });
 
+		_ble.onMTUNegotiated([this](uint16_t new_mtu) { _service_monitoring.setNegotiatedMtu(new_mtu); });
+
 		// Setup callbacks for each State Machine events
 
-		auto on_charge_did_start = [this]() { raise(event::charge_did_start {}); };
-		_battery.onChargeDidStart(on_charge_did_start);
+		_batterykit.onChargeDidStart([this] { raise(event::charge_did_start {}); });
 
-		auto on_charge_did_stop = [this]() { raise(event::charge_did_stop {}); };
-		_battery.onChargeDidStop(on_charge_did_stop);
+		_batterykit.onChargeDidStop([this] { raise(event::charge_did_stop {}); });
 
 		_service_monitoring.onSoftReboot([] { system_reset(); });
 
@@ -512,7 +518,7 @@ class RobotController : public interface::RobotController
 				std::ignore			   = _configkit.write(config_robot_name, robot_name);
 			});
 
-		auto on_commands_received = [this](std::span<uint8_t> _buffer) {
+		_service_commands.onCommandsReceived([this](std::span<uint8_t> _buffer) {
 			raise(event::command_received {});
 
 			if (!isCharging()) {
@@ -521,8 +527,7 @@ class RobotController : public interface::RobotController
 
 				_cmdkit.push(std::span {_buffer.data(), std::size(_buffer)});
 			}
-		};
-		_service_commands.onCommandsReceived(on_commands_received);
+		});
 
 		_service_file_exchange.onSetFileExchangeState([this](bool file_exchange_requested) {
 			if (file_exchange_requested) {
@@ -532,8 +537,7 @@ class RobotController : public interface::RobotController
 			}
 		});
 
-		auto on_update_requested = [this]() { raise(event::update_requested {}); };
-		_service_update.onUpdateRequested(on_update_requested);
+		_service_update.onUpdateRequested([this] { raise(event::update_requested {}); });
 
 		raise(event::setup_complete {});
 	}
@@ -548,16 +552,27 @@ class RobotController : public interface::RobotController
 		_videokit.stopVideo();
 	}
 
-	auto isBleConnected() -> bool final { return state_machine.is(system::robot::sm::state::connected); }
+	auto isBleConnected() -> bool final { return state_machine.is(state::connected); }
+
+	void registerDeepSleepEnabledComponents(std::span<interface::DeepSleepEnabled *> components)
+	{
+		_deep_sleep_enabled_components = components;
+	}
 
   private:
 	system::robot::sm::logger logger {};
 
 	interface::Timeout &_timeout_state_internal;
 
+#if defined(ENABLE_FAST_SLEEP)
+	std::chrono::seconds _sleep_timeout_duration {1};
+	std::chrono::seconds _idle_timeout_duration {1};
+	std::chrono::seconds _deep_sleep_timeout_duration {1};
+#else
 	std::chrono::seconds _sleep_timeout_duration {60};
 	std::chrono::seconds _idle_timeout_duration {600};
 	std::chrono::seconds _deep_sleep_timeout_duration {600};
+#endif
 	interface::Timeout &_timeout_state_transition;
 
 	interface::Timeout &_timeout_autonomous_activities;
@@ -568,8 +583,7 @@ class RobotController : public interface::RobotController
 	rtos::Kernel::Clock::time_point start = rtos::Kernel::Clock::now();
 	rtos::Kernel::Clock::time_point stop  = rtos::Kernel::Clock::now();
 
-	interface::Battery &_battery;
-	BatteryKit _battery_kit {_battery};
+	interface::BatteryKit &_batterykit;
 	uint8_t _minimal_battery_level_to_update {25};
 
 	SerialNumberKit &_serialnumberkit;
@@ -615,6 +629,8 @@ class RobotController : public interface::RobotController
 	};
 
 	uint8_t _emergency_stop_counter {0};
+
+	std::span<interface::DeepSleepEnabled *> _deep_sleep_enabled_components {};
 };
 
 }	// namespace leka

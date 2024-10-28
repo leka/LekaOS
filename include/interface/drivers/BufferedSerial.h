@@ -7,11 +7,11 @@
 #include <cstdint>
 #include <functional>
 
-#include "Callback.h"
+#include "DeepSleepEnabled.h"
 
 namespace leka::interface {
 
-class BufferedSerial
+class BufferedSerial : public interface::DeepSleepEnabled
 {
   public:
 	virtual ~BufferedSerial() = default;
@@ -20,9 +20,6 @@ class BufferedSerial
 	virtual auto write(const uint8_t *buffer, std::size_t length) -> std::size_t = 0;
 
 	virtual auto readable() -> bool = 0;
-
-	virtual void disable_input() = 0;
-	virtual void enable_input()	 = 0;
 
 	virtual void sigio(std::function<void()> const &callback) = 0;
 };

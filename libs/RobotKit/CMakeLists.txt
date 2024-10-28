@@ -42,16 +42,14 @@ if(${CMAKE_PROJECT_NAME} STREQUAL "LekaOSUnitTests")
 		leka_unit_tests_sources(
 			tests/RobotController_test_initializeComponents.cpp
 			tests/RobotController_test_registerEvents.cpp
-			tests/RobotController_test_stateSetup.cpp
-			tests/RobotController_test_stateIdle.cpp
-			tests/RobotController_test_stateSleeping.cpp
-			tests/RobotController_test_stateCharging.cpp
-			tests/RobotController_test_stateConnected.cpp
-			tests/RobotController_test_stateDisconnected.cpp
-			tests/RobotController_test_stateWorking.cpp
-			tests/RobotController_test_stateEmergencyStopped.cpp
-			tests/RobotController_test_stateAutonomousActivities.cpp
-			tests/RobotController_test_stateFileExchange.cpp
+
+			tests/RobotController_test_raise.cpp
+			tests/RobotController_test_hardware.cpp
+			tests/RobotController_test_timeouts.cpp
+			tests/RobotController_test_behaviors.cpp
+			tests/RobotController_test_fileExchange.cpp
+			tests/RobotController_test_update.cpp
+			tests/RobotController_test_magicCard.cpp
 		)
 	endif()
 endif()

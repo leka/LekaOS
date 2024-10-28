@@ -8,8 +8,9 @@
 #include "tests/utils.h"
 #include "tests/utils_sleep.h"
 
-using namespace boost::ut;
 using namespace std::chrono;
+using namespace leka;
+using namespace boost::ut;
 using namespace boost::ut::bdd;
 
 // ? tests inspired from https://github.com/ARMmbed/mbed-os
@@ -39,14 +40,18 @@ suite suite_mbed_hal = [] {
 		// ? Give time to test to finish UART transmission before entering deep sleep mode
 		utils::sleep::busy_wait(utils::sleep::SERIAL_FLUSH_TIME_MS);
 
-		auto can_deep_sleep = sleep_manager_can_deep_sleep();
-		expect(can_deep_sleep) << "deep sleep not possible";
+		{
+			auto can_deep_sleep_test_check = sleep_manager_can_deep_sleep_test_check();
+			expect(can_deep_sleep_test_check) << "deep sleep not possible";
+		}
 
 		const timestamp_t wakeup_time = lp_ticker_read() + utils::sleep::us_to_ticks(20000, lp_ticker_freq);
 		lp_ticker_set_interrupt(wakeup_time);
 
-		auto can_deep_sleep_test_check = sleep_manager_can_deep_sleep_test_check();
-		expect(can_deep_sleep_test_check);
+		{
+			auto can_deep_sleep_test_check = sleep_manager_can_deep_sleep_test_check();
+			expect(can_deep_sleep_test_check) << "deep sleep not possible";
+		}
 
 		auto us_ticks_before_sleep = us_ticker_read();	 // NOLINT
 

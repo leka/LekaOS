@@ -6,11 +6,13 @@
 
 #include "gtest/gtest.h"
 #include "mocks/leka/CoreRFIDReader.h"
+#include "mocks/leka/EventQueue.h"
 
 using namespace leka;
 
+using ::testing::AnyNumber;
+using ::testing::InSequence;
 using ::testing::MockFunction;
-using ::testing::ReturnRef;
 using ::testing::SaveArg;
 
 class RFIDKitTest : public ::testing::Test
@@ -20,6 +22,8 @@ class RFIDKitTest : public ::testing::Test
 
 	// void SetUp() override {}
 	// void TearDown() override {}
+
+	mock::EventQueue event_queue {};
 
 	RFIDKit rfid_kit;
 	mock::CoreRFIDReader mock_reader {};
@@ -180,4 +184,22 @@ TEST_F(RFIDKitTest, getLastMagicCardActivated)
 	magic_card_callback(tag);
 
 	EXPECT_EQ(rfid_kit.getLastMagicCardActivated(), MagicCard::emergency_stop);
+}
+
+TEST_F(RFIDKitTest, enableDeepSleep)
+{
+	{
+		InSequence seq;
+
+		EXPECT_CALL(mock_reader, disableDeepSleep);
+		EXPECT_CALL(mock_reader, enableDeepSleep).Times(AnyNumber());
+	}
+	rfid_kit.enableDeepSleep();
+}
+
+TEST_F(RFIDKitTest, disableDeepSleep)
+{
+	EXPECT_CALL(mock_reader, disableDeepSleep);
+
+	rfid_kit.disableDeepSleep();
 }

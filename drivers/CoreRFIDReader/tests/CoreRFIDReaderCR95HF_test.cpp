@@ -212,3 +212,17 @@ TEST_F(CoreRFIDReaderTest, getTag)
 
 	EXPECT_EQ(tag.data, expected_values);
 }
+
+TEST_F(CoreRFIDReaderTest, enableDeepSleep)
+{
+	EXPECT_CALL(mockBufferedSerial, enableDeepSleep());
+
+	reader.enableDeepSleep();
+}
+
+TEST_F(CoreRFIDReaderTest, disableDeepSleep)
+{
+	EXPECT_CALL(mockBufferedSerial, disableDeepSleep());
+
+	reader.disableDeepSleep();
+}

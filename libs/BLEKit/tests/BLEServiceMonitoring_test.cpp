@@ -142,3 +142,29 @@ TEST_F(BLEServiceMonitoringTest, onDataRequested)
 
 	// nothing expected
 }
+
+TEST_F(BLEServiceMonitoringTest, onDataRequestedNotSameHandle)
+{
+	data_requested_handle.handle = 0xFFFF;
+
+	service_monitoring.onDataRequested(data_requested_handle);
+
+	// nothing expected
+}
+
+TEST_F(BLEServiceMonitoringTest, setNegotiatedMtu)
+{
+	uint16_t actual_negotiated_mtu {};
+
+	auto spy_callback = [&actual_negotiated_mtu](const BLEServiceMonitoring::data_to_send_handle_t &handle) {
+		actual_negotiated_mtu =
+			utils::memory::combineBytes({.high = std::get<1>(handle)[0], .low = std::get<1>(handle)[1]});
+	};
+
+	service_monitoring.onDataReadyToSend(spy_callback);
+
+	uint16_t expect_negotiated_mtu = 23;
+	service_monitoring.setNegotiatedMtu(expect_negotiated_mtu);
+
+	EXPECT_EQ(actual_negotiated_mtu, expect_negotiated_mtu);
+}

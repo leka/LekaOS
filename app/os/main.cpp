@@ -10,6 +10,7 @@
 #include "rtos/Thread.h"
 
 #include "ActivityKit.h"
+#include "BatteryKit.h"
 #include "ChooseReinforcer.h"
 #include "CoreBattery.h"
 #include "CoreBufferedSerial.h"
@@ -20,14 +21,13 @@
 #include "CoreFont.hpp"
 #include "CoreGraphics.hpp"
 #include "CoreI2C.h"
+#include "CoreIMU.hpp"
 #include "CoreInterruptIn.h"
 #include "CoreJPEG.hpp"
 #include "CoreJPEGModeDMA.hpp"
-#include "CoreJPEGModePolling.hpp"
 #include "CoreLCD.hpp"
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLL.h"
-#include "CoreLSM6DSOX.hpp"
 #include "CoreLTDC.hpp"
 #include "CoreMCU.h"
 #include "CoreMotor.h"
@@ -64,13 +64,13 @@
 #include "SlicingBlockDevice.h"
 #include "SuperSimon.h"
 #include "VideoKit.h"
-#include "bootutil/bootutil.h"
+#include "bootutil/bootutil_public.h"
 #include "commands/LedFullCommand.h"
 #include "commands/LedRangeCommand.h"
 #include "commands/LedSingleCommand.h"
 #include "commands/MotorsCommand.h"
 #include "commands/ReinforcerCommand.h"
-#include "commands/TestCommand.h"
+#include "commands/VideoCommand.h"
 
 using namespace leka;
 using namespace std::chrono;
@@ -90,6 +90,7 @@ namespace battery {
 	}
 
 	auto cells = CoreBattery {PinName::BATTERY_VOLTAGE, battery::charge::status_input};
+	auto kit   = BatteryKit {battery::cells};
 
 }	// namespace battery
 
@@ -232,6 +233,7 @@ namespace motors {
 namespace display::internal {
 
 	auto event_loop = EventLoopKit {};
+	auto backlight	= CorePwm {SCREEN_BACKLIGHT_PWM};
 
 	auto corell		   = CoreLL {};
 	auto pixel		   = CGPixel {corell};
@@ -242,7 +244,7 @@ namespace display::internal {
 	auto coreltdc	   = CoreLTDC {hal};
 	auto coregraphics  = CoreGraphics {coredma2d};
 	auto corefont	   = CoreFont {pixel};
-	auto coreotm	   = CoreLCDDriverOTM8009A {coredsi, PinName::SCREEN_BACKLIGHT_PWM};
+	auto coreotm	   = CoreLCDDriverOTM8009A {coredsi, backlight};
 	auto corelcd	   = CoreLCD {coreotm};
 	auto _corejpegmode = CoreJPEGModeDMA {hal};
 	auto corejpeg	   = CoreJPEG {hal, _corejpegmode};
@@ -258,16 +260,16 @@ namespace imu {
 
 	namespace internal {
 
-		auto drdy_irq = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
-		auto i2c	  = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
+		auto irq = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
+		auto i2c = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
 
 	}	// namespace internal
 
-	auto lsm6dsox = CoreLSM6DSOX(internal::i2c, internal::drdy_irq);
+	auto coreimu = CoreIMU(internal::i2c, internal::irq);
 
 }	// namespace imu
 
-auto imukit = IMUKit {imu::lsm6dsox};
+auto imukit = IMUKit {imu::coreimu};
 
 namespace motion::internal {
 
@@ -291,6 +293,7 @@ namespace command {
 		auto led_range	= LedRangeCommand {leds::ears, leds::belt};
 		auto motors		= MotorsCommand {motors::left::motor, motors::right::motor};
 		auto reinforcer = ReinforcerCommand {reinforcerkit};
+		auto video		= VideoCommand {videokit};
 
 	}	// namespace internal
 
@@ -300,6 +303,7 @@ namespace command {
 		&internal::led_range,
 		&internal::motors,
 		&internal::reinforcer,
+		&internal::video,
 	});
 
 }	// namespace command
@@ -416,7 +420,7 @@ namespace robot {
 		internal::timeout_state_internal,
 		internal::timeout_state_transition,
 		internal::timeout_autonomous_activities,
-		battery::cells,
+		battery::kit,
 		internal::serialnumberkit,
 		firmware::kit,
 		motors::left::motor,
@@ -462,6 +466,7 @@ namespace watchdog {
 			static auto battery_level	= uint8_t {};
 			static auto charging_status = uint8_t {};
 
+			static auto idle_ratio		 = uint8_t {};
 			static auto sleep_ratio		 = uint8_t {};
 			static auto deep_sleep_ratio = uint8_t {};
 
@@ -488,6 +493,7 @@ namespace watchdog {
 
 				mbed_stats_cpu_get(&stats::cpu);
 
+				idle_ratio	= static_cast<uint8_t>(((stats::cpu.idle_time / 1000 * 100) / (stats::cpu.uptime / 1000)));
 				sleep_ratio = static_cast<uint8_t>(((stats::cpu.sleep_time / 1000 * 100) / (stats::cpu.uptime / 1000)));
 				deep_sleep_ratio =
 					static_cast<uint8_t>(((stats::cpu.deep_sleep_time / 1000 * 100) / (stats::cpu.uptime / 1000)));
@@ -507,11 +513,11 @@ namespace watchdog {
 				heap_used_ratio	   = static_cast<uint8_t>((heap_used_size * 100) / heap_reserved_size);
 
 				log_info(
-					"dt: %i, kck: %u, ble: %u, lvl: %u%%, chr: %u, slp: %u%%, dsl: %u%%, sur: %u%% (%+i)[%u/"
+					"dt: %i, kck: %u, ble: %u, lvl: %u%%, chr: %u, idl: %u%%, slp: %u%%, dsl: %u%%, sur: %u%% (%+i)[%u/"
 					"%u], hur: %u%% (%+i)[%u/%u]",
-					delta, kick_count, ble_connected, battery_level, charging_status, sleep_ratio, deep_sleep_ratio,
-					stack_used_ratio, stack_used_delta, stack_used_size, stack_reserved_size, heap_used_ratio,
-					heap_used_delta, heap_used_size, heap_reserved_size);
+					delta, kick_count, ble_connected, battery_level, charging_status, idle_ratio, sleep_ratio,
+					deep_sleep_ratio, stack_used_ratio, stack_used_delta, stack_used_size, stack_reserved_size,
+					heap_used_ratio, heap_used_delta, heap_used_size, heap_reserved_size);
 
 				start = rtos::Kernel::Clock::now();
 				rtos::ThisThread::sleep_for(5s);
@@ -528,6 +534,16 @@ namespace watchdog {
 
 }	// namespace watchdog
 
+namespace deep_sleep {
+	auto components = std::to_array<interface::DeepSleepEnabled *>({
+		&motors::left::motor,
+		&motors::right::motor,
+		&display::internal::corelcd,
+		&rfidkit,
+		&imu::coreimu,
+	});
+}
+
 }	// namespace
 
 auto get_secondary_bd() -> mbed::BlockDevice *
@@ -537,7 +553,7 @@ auto get_secondary_bd() -> mbed::BlockDevice *
 
 auto main() -> int
 {
-	logger::init();
+	leka::logger::init();
 	watchdog::start();
 
 	leds::turnOff();
@@ -548,7 +564,8 @@ auto main() -> int
 	auto version = firmware::version();
 
 	log_info("\n\n");
-	log_info("Hello, LekaOS v%i.%i.%i!\n", version.major, version.minor, version.revision);
+	log_info("Hello, LekaOS v%i.%i.%i!", version.major, version.minor, version.revision);
+	log_info("Arm GNU Toolchain v%s\n\n", __VERSION__);
 
 	rtos::ThisThread::sleep_for(2s);
 
@@ -561,13 +578,14 @@ auto main() -> int
 	commandkit.registerCommand(command::list);
 	activitykit.registerActivities(activities::activities);
 
-	imu::lsm6dsox.init();
+	imu::coreimu.init();
 	imukit.init();
 
 	robot::controller.initializeComponents();
 	robot::controller.registerOnUpdateLoadedCallback(firmware::setPendingUpdate);
 	robot::controller.registerOnFactoryResetNotificationCallback(factory_reset::set);
 	robot::controller.registerEvents();
+	robot::controller.registerDeepSleepEnabledComponents(deep_sleep::components);
 
 	// TODO(@team): Add functional test prior confirming the firmware
 	firmware::confirmFirmware();

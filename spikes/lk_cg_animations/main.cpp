@@ -20,6 +20,7 @@
 #include "CoreLCDDriverOTM8009A.hpp"
 #include "CoreLL.h"
 #include "CoreLTDC.hpp"
+#include "CorePwm.h"
 #include "CoreSDRAM.hpp"
 #include "CoreSTM32Hal.h"
 #include "CoreVideo.hpp"
@@ -38,6 +39,8 @@ HelloWorld hello;
 SDBlockDevice sd_blockdevice(SD_SPI_MOSI, SD_SPI_MISO, SD_SPI_SCK);
 FATFileSystem fatfs("fs");
 
+CorePwm backlight(SCREEN_BACKLIGHT_PWM);
+
 CoreLL corell;
 CGPixel pixel(corell);
 CoreSTM32Hal hal;
@@ -47,7 +50,7 @@ CoreDSI coredsi(hal);
 CoreLTDC coreltdc(hal);
 CoreGraphics coregraphics(coredma2d);
 CoreFont corefont(pixel);
-CoreLCDDriverOTM8009A coreotm(coredsi, PinName::SCREEN_BACKLIGHT_PWM);
+CoreLCDDriverOTM8009A coreotm(coredsi, backlight);
 CoreLCD corelcd(coreotm);
 CoreJPEGModeDMA _corejpegmode {hal};
 CoreJPEG corejpeg {hal, _corejpegmode};

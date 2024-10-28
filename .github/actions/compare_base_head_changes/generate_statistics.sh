@@ -9,6 +9,9 @@ HEAD_DIR=$2
 
 source ./.github/actions/compare_base_head_changes/utils.sh
 
+FIRMWARE_STATISTICS_OUTPUT="$RUNNER_HOME/FIRMWARE_STATISTICS_OUTPUT.md"
+touch $FIRMWARE_STATISTICS_OUTPUT
+
 #
 # MARK: - bootloader statistics
 #
@@ -166,12 +169,8 @@ fi
 
 echo "Creating markdown output"
 
-echo 'FIRMWARE_STATISTICS_OUTPUT<<EOF_FIRMWARE_STATISTICS_OUTPUT' >> $GITHUB_ENV
+echo -n "| Target | Flash Used (base/head) | Flash Used Δ | Flash Available (base/head) | Static RAM (base/head) | Static RAM Δ |\n" >> $FIRMWARE_STATISTICS_OUTPUT
+echo -n "|--------|:----------------------:|:-----------:|:---------------------------:|:----------------------:|:------------:|\n" >> $FIRMWARE_STATISTICS_OUTPUT
 
-echo -n "| Target | Flash Used (base/head) | Flash Used Δ | Flash Available (base/head) | Static RAM (base/head) | Static RAM Δ |\n" >> $GITHUB_ENV
-echo -n "|--------|:----------------------:|:-----------:|:---------------------------:|:----------------------:|:------------:|\n" >> $GITHUB_ENV
-
-echo -n "| bootloader | $OUTPUT_BOOTLOADER_FLASH_USED | $OUTPUT_BOOTLOADER_FLASH_USED_DELTA | $OUTPUT_BOOTLOADER_FLASH_AVAILABLE | $OUTPUT_BOOTLOADER_RAM | $OUTPUT_BOOTLOADER_RAM_DELTA |\n" >> $GITHUB_ENV
-echo -n "| os         | $OUTPUT_LEKA_OS_FLASH_USED    | $OUTPUT_LEKA_OS_FLASH_USED_DELTA    | $OUTPUT_LEKA_OS_FLASH_AVAILABLE    | $OUTPUT_LEKA_OS_RAM    | $OUTPUT_LEKA_OS_RAM_DELTA    |\n" >> $GITHUB_ENV
-
-echo 'EOF_FIRMWARE_STATISTICS_OUTPUT' >> $GITHUB_ENV
+echo -n "| bootloader | $OUTPUT_BOOTLOADER_FLASH_USED | $OUTPUT_BOOTLOADER_FLASH_USED_DELTA | $OUTPUT_BOOTLOADER_FLASH_AVAILABLE | $OUTPUT_BOOTLOADER_RAM | $OUTPUT_BOOTLOADER_RAM_DELTA |\n" >> $FIRMWARE_STATISTICS_OUTPUT
+echo -n "| os         | $OUTPUT_LEKA_OS_FLASH_USED    | $OUTPUT_LEKA_OS_FLASH_USED_DELTA    | $OUTPUT_LEKA_OS_FLASH_AVAILABLE    | $OUTPUT_LEKA_OS_RAM    | $OUTPUT_LEKA_OS_RAM_DELTA    |\n" >> $FIRMWARE_STATISTICS_OUTPUT

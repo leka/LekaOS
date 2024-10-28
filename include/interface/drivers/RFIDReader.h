@@ -8,6 +8,8 @@
 #include <functional>
 #include <span>
 
+#include "DeepSleepEnabled.h"
+
 namespace leka {
 
 namespace rfid {
@@ -43,7 +45,7 @@ namespace rfid {
 
 namespace interface {
 
-	class RFIDReader
+	class RFIDReader : public interface::DeepSleepEnabled
 	{
 	  public:
 		virtual ~RFIDReader() = default;

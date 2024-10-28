@@ -62,8 +62,8 @@ auto QSPI::read(qspi_inst_t instruction, int alt, int address, char *rx_buffer, 
 	return QSPI_STATUS_OK;
 }
 
-auto QSPI::write(qspi_inst_t instruction, int alt, int address, const char *tx_buffer, std::size_t *tx_length)
-	-> qspi_status_t
+auto QSPI::write(qspi_inst_t instruction, int alt, int address, const char *tx_buffer,
+				 std::size_t *tx_length) -> qspi_status_t
 {
 	leka::spy_QSPI_command = instruction;
 	leka::spy_QSPI_address = address;

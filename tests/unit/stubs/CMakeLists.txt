@@ -22,6 +22,7 @@ target_sources(stubs
 	${UNIT_TESTS_STUBS_MBED_DIR}/source/AnalogIn.cpp
 	${UNIT_TESTS_STUBS_MBED_DIR}/source/InterruptIn.cpp
 	${UNIT_TESTS_STUBS_MBED_DIR}/source/PwmOut.cpp
+	${UNIT_TESTS_STUBS_MBED_DIR}/source/BufferedSerial.cpp
 	${UNIT_TESTS_STUBS_MBED_DIR}/source/QSPI.cpp
 	${UNIT_TESTS_STUBS_MBED_DIR}/source/SPI.cpp
 	${UNIT_TESTS_STUBS_MBED_DIR}/source/I2C.cpp
@@ -49,7 +50,6 @@ target_sources(stubs
 	${EXTERN_MBED_OS_DIR}/events/tests/UNITTESTS/doubles/EventQueue_stub.cpp
 	${EXTERN_MBED_OS_DIR}/drivers/tests/UNITTESTS/doubles/SerialBase_stub.cpp
 	${EXTERN_MBED_OS_DIR}/platform/tests/UNITTESTS/doubles/FileHandle_stub.cpp
-	${EXTERN_MBED_OS_DIR}/drivers/tests/UNITTESTS/doubles/BufferedSerial_stub.cpp
 	${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source/gap/AdvertisingDataBuilder.cpp
 	${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source/gap/AdvertisingParameters.cpp
 	${EXTERN_MBED_OS_DIR}/connectivity/FEATURE_BLE/source/gap/ConnectionParameters.cpp

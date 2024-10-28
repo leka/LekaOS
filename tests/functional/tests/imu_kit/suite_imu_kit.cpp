@@ -5,7 +5,7 @@
 #include "rtos/ThisThread.h"
 
 #include "CoreI2C.h"
-#include "CoreLSM6DSOX.hpp"
+#include "CoreIMU.hpp"
 #include "IMUKit.hpp"
 #include "tests/config.h"
 
@@ -26,12 +26,12 @@ suite suite_imu_kit = [] {
 	constexpr auto maximal_roll_noise_amplitude	 = 0.5F;
 	constexpr auto maximal_yaw_drift			 = 15.F;
 
-	auto i2c	  = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
-	auto drdy_irq = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
-	auto lsm6dsox = CoreLSM6DSOX {i2c, drdy_irq};
-	auto imukit	  = IMUKit {lsm6dsox};
+	auto i2c	 = CoreI2C(PinName::SENSOR_IMU_TH_I2C_SDA, PinName::SENSOR_IMU_TH_I2C_SCL);
+	auto irq	 = CoreInterruptIn {PinName::SENSOR_IMU_IRQ};
+	auto coreimu = CoreIMU {i2c, irq};
+	auto imukit	 = IMUKit {coreimu};
 
-	lsm6dsox.init();
+	coreimu.init();
 
 	"Initialization"_test = [&] {
 		expect(neq(&imukit, nullptr));

@@ -14,6 +14,8 @@ class CoreMotor : public interface::Motor
   public:
 	MOCK_METHOD(void, spin, (rotation_t, float), (override));
 	MOCK_METHOD(void, stop, (), (override));
+	MOCK_METHOD(void, enableDeepSleep, (), (override));
+	MOCK_METHOD(void, disableDeepSleep, (), (override));
 };
 
 }	// namespace leka::mock

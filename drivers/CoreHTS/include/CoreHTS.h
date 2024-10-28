@@ -73,10 +73,10 @@ class CoreHTS : public interface::TemperatureSensor, public interface::HumidityS
 	auto write(uint8_t register_command, uint8_t *data, uint16_t size) -> int;
 
 	stmdev_ctx_t _register_io_function;
-	static auto ptr_io_write(void *handle, uint8_t register_address, uint8_t *p_buffer, uint16_t number_bytes_to_write)
-		-> int32_t;
-	static auto ptr_io_read(void *handle, uint8_t register_address, uint8_t *p_buffer, uint16_t number_bytes_to_read)
-		-> int32_t;
+	static auto ptr_io_write(void *handle, uint8_t register_address, uint8_t *p_buffer,
+							 uint16_t number_bytes_to_write) -> int32_t;
+	static auto ptr_io_read(void *handle, uint8_t register_address, uint8_t *p_buffer,
+							uint16_t number_bytes_to_read) -> int32_t;
 
 	interface::I2C &_i2c;
 	const uint8_t _I2C_ADDRESS = HTS221_I2C_ADDRESS;

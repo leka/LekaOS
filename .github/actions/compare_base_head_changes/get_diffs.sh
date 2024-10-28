@@ -1,5 +1,5 @@
 # Leka - LekaOS
-# Copyright 2022 APF France handicap
+# Copyright 2021 APF France handicap
 # SPDX-License-Identifier: Apache-2.0
 
 shopt -s xpg_echo
@@ -10,9 +10,10 @@ HEAD_DIR=$2
 source ./.github/actions/compare_base_head_changes/utils.sh
 source ./.github/actions/compare_base_head_changes/get_all_targets.sh
 
-no_map_diff=true
+MAP_DIFF_OUTPUT="$RUNNER_HOME/MAP_DIFF_OUTPUT.md"
+touch $MAP_DIFF_OUTPUT
 
-echo 'MAP_DIFF_OUTPUT<<EOF_MAP_DIFF_OUTPUT' >> $GITHUB_ENV
+no_map_diff=true
 
 for target in "${all_targets[@]}"; do
 target_name=$target
@@ -30,21 +31,21 @@ target_name=$target
 			echo $diff_map_output
 			echo $diff_size_output
 
-			echo "<details>" >> $GITHUB_ENV
-			echo "<summary><b><code>$target_name</code></b> (click to expand)</summary>" >> $GITHUB_ENV
-			echo "" >> $GITHUB_ENV
+			echo "<details>" >> $MAP_DIFF_OUTPUT
+			echo "<summary><b><code>$target_name</code></b> (click to expand)</summary>" >> $MAP_DIFF_OUTPUT
+			echo "" >> $MAP_DIFF_OUTPUT
 
-			echo "\`\`\`diff" >> $GITHUB_ENV
-			echo "$diff_map_output" >> $GITHUB_ENV
-			echo "\`\`\`" >> $GITHUB_ENV
+			echo "\`\`\`diff" >> $MAP_DIFF_OUTPUT
+			echo "$diff_map_output" >> $MAP_DIFF_OUTPUT
+			echo "\`\`\`" >> $MAP_DIFF_OUTPUT
 
-			echo "\`\`\`diff" >> $GITHUB_ENV
-			echo "$diff_size_output" >> $GITHUB_ENV
-			echo "\`\`\`" >> $GITHUB_ENV
+			echo "\`\`\`diff" >> $MAP_DIFF_OUTPUT
+			echo "$diff_size_output" >> $MAP_DIFF_OUTPUT
+			echo "\`\`\`" >> $MAP_DIFF_OUTPUT
 
-			echo "" >> $GITHUB_ENV
-			echo "</details>" >> $GITHUB_ENV
-			echo "" >> $GITHUB_ENV
+			echo "" >> $MAP_DIFF_OUTPUT
+			echo "</details>" >> $MAP_DIFF_OUTPUT
+			echo "" >> $MAP_DIFF_OUTPUT
 
 			no_map_diff=false
 		fi
@@ -56,21 +57,21 @@ target_name=$target
 		map_output=$(cat $HEAD_DIR/$target_name-map.txt)
 		size_output=$(cat $HEAD_DIR/$target_name-code_size.txt)
 
-		echo "<details>" >> $GITHUB_ENV
-		echo "<summary><b><code>$target_name</code></b> (click to expand)</summary>" >> $GITHUB_ENV
-		echo "" >> $GITHUB_ENV
+		echo "<details>" >> $MAP_DIFF_OUTPUT
+		echo "<summary><b><code>$target_name</code></b> (click to expand)</summary>" >> $MAP_DIFF_OUTPUT
+		echo "" >> $MAP_DIFF_OUTPUT
 
-		echo "\`\`\`" >> $GITHUB_ENV
-		echo "$map_output" >> $GITHUB_ENV
-		echo "\`\`\`" >> $GITHUB_ENV
+		echo "\`\`\`" >> $MAP_DIFF_OUTPUT
+		echo "$map_output" >> $MAP_DIFF_OUTPUT
+		echo "\`\`\`" >> $MAP_DIFF_OUTPUT
 
-		echo "\`\`\`" >> $GITHUB_ENV
-		echo "$size_output" >> $GITHUB_ENV
-		echo "\`\`\`" >> $GITHUB_ENV
+		echo "\`\`\`" >> $MAP_DIFF_OUTPUT
+		echo "$size_output" >> $MAP_DIFF_OUTPUT
+		echo "\`\`\`" >> $MAP_DIFF_OUTPUT
 
-		echo "" >> $GITHUB_ENV
-		echo "</details>" >> $GITHUB_ENV
-		echo "" >> $GITHUB_ENV
+		echo "" >> $MAP_DIFF_OUTPUT
+		echo "</details>" >> $MAP_DIFF_OUTPUT
+		echo "" >> $MAP_DIFF_OUTPUT
 
 		no_map_diff=false
 
@@ -79,7 +80,5 @@ target_name=$target
 done
 
 if $no_map_diff; then
-	echo "No differenes where found in map files." >> $GITHUB_ENV
+	echo "No differenes where found in map files." >> $MAP_DIFF_OUTPUT
 fi
-
-echo 'EOF_MAP_DIFF_OUTPUT' >> $GITHUB_ENV
