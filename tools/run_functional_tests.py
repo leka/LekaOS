@@ -10,6 +10,7 @@ import argparse
 import datetime
 import logging
 import re
+import shutil
 import sys
 import subprocess
 import time
@@ -34,6 +35,17 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[logging.StreamHandler(sys.stdout)],
 )
+
+
+def check_external_tools():
+    """
+    Ensure that required external tools are available.
+    """
+    required_tools = ["openocd", "st-flash"]
+    missing_tools = [tool for tool in required_tools if not shutil.which(tool)]
+    if missing_tools:
+        logging.error(f"Missing required tools: {', '.join(missing_tools)}")
+        sys.exit(1)
 
 
 def valid_file(arg: str) -> Path:
@@ -97,8 +109,8 @@ class Test:
             self.result_filepath.touch(exist_ok=False)
             logging.debug(f"Created result file at {self.result_filepath}")
         except OSError as e:
-            logging.error(f"Could not create or open file: {self.result_filepath}")
-            logging.error(f"Error: {e}")
+            logging.exception(f"Could not create or open file: {self.result_filepath}")
+            logging.exception(f"Error: {e}")
             sys.exit(1)
 
     def edit_result_file(self, data: str):
@@ -110,8 +122,8 @@ class Test:
                 file.write(data)
             logging.debug(f"Appended data to {self.result_filepath}")
         except OSError as e:
-            logging.error(f"Could not write to file: {self.result_filepath}")
-            logging.error(f"Error: {e}")
+            logging.exception(f"Could not write to file: {self.result_filepath}")
+            logging.exception(f"Error: {e}")
             sys.exit(1)
 
     def flash(self) -> bool:
@@ -243,6 +255,18 @@ class Test:
             logging.error(f"The file: {self.result_filepath} doesn't exist")
             sys.exit(1)
 
+    def print_result_file(self):
+        """
+        Print the contents of the result file.
+        """
+        try:
+            with self.result_filepath.open("r") as file:
+                content = file.read()
+                print(content)
+        except OSError as e:
+            logging.error(f"Could not read file: {self.result_filepath}")
+            logging.error(f"Error: {e}")
+
 
 def erase_flash():
     """
@@ -311,6 +335,13 @@ def parse_arguments() -> argparse.Namespace:
         "--all", action="store_true", help="Select all binary executables"
     )
 
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Enable verbose (debug) logging",
+    )
+
     return parser.parse_args()
 
 
@@ -319,6 +350,14 @@ def main() -> int:
     Main function to parse arguments, initialize tests, and run tests on the device.
     """
     args = parse_arguments()
+
+    # Set logging level based on verbose flag
+    if args.verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
+        logging.debug("Verbose logging enabled.")
+
+    # Check for required external tools
+    check_external_tools()
 
     # Determine which binary files to use
     if args.all:
