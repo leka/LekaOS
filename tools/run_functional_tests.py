@@ -352,6 +352,9 @@ def main():
     if fails:
         ret = 1
 
+    print("Erasing flash after tests...")
+    flash_erase()
+
     return ret
 
 

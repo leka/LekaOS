@@ -237,6 +237,7 @@ DEEP_SLEEP_PERCENTAGE = int(args.deep_sleep_percentage)
 
 
 def main():
+    ret = 0
     connect_serial()
 
     if FLASH_ERASE_FLAG:
@@ -257,10 +258,15 @@ def main():
 
     if deep_sleep >= DEEP_SLEEP_PERCENTAGE:
         print(Fore.GREEN + f"Deep sleep is higher than {DEEP_SLEEP_PERCENTAGE}%, this is good! ✅" + Style.RESET_ALL)
-        return 0
+        ret = 0
     else:
         print(Fore.RED + f"Deep sleep is lower than {DEEP_SLEEP_PERCENTAGE}%, this is bad! ❌" + Style.RESET_ALL)
-        return 1
+        ret = 1
+
+    print("Erasing flash after tests...")
+    erase_flash()
+
+    return ret
 
 
 if __name__ == '__main__':
