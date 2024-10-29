@@ -309,7 +309,7 @@ def print_summary():
 RUN_TESTS = list()
 
 
-def flash_erase():
+def erase_flash():
     ret = os.system("st-flash --connect-under-reset --reset erase")
     return ret
 
@@ -332,7 +332,7 @@ def main():
         sys.exit(1)
 
     if FLASH_ERASE_FLAG:
-        flash_erase()
+        erase_flash()
 
     reset_buffer()
 
@@ -344,7 +344,7 @@ def main():
             RUN_TESTS.append(test)
 
     if FLASH_ERASE_FLAG:
-        flash_erase()
+        erase_flash()
 
     reset_buffer()
 
@@ -353,7 +353,7 @@ def main():
         ret = 1
 
     print("Erasing flash after tests...")
-    flash_erase()
+    erase_flash()
 
     return ret
 
