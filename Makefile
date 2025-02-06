@@ -395,9 +395,9 @@ ccache_postbuild:
 	@ccache -s -v
 
 flash:
-	openocd -f interface/stlink.cfg -c 'transport select hla_swd' -f target/stm32f7x.cfg -c 'program $(BIN_PATH) 0x08000000' -c exit
+	openocd -f interface/stlink.cfg -f target/stm32f7x.cfg -c 'program $(BIN_PATH) 0x08000000' -c exit
 	sleep 1
 	@$(MAKE) reset
 
 reset:
-	openocd -f interface/stlink.cfg -c 'transport select hla_swd' -f target/stm32f7x.cfg -c init -c 'reset run' -c exit
+	openocd -f interface/stlink.cfg -f target/stm32f7x.cfg -c init -c 'reset run' -c exit
