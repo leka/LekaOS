@@ -67,7 +67,7 @@ void RFIDKit::enableDeepSleep()
 		_rfid_reader.enableDeepSleep();
 	};
 
-	_event_queue_id = _event_queue.call_every(3s, on_tick);
+	_event_queue_id = _event_queue.call_every(1s, on_tick);
 
 	_rfid_reader.enableDeepSleep();
 }
