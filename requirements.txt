@@ -1,5 +1,6 @@
 mbed-cli>=1.10.0,<2.0
-pyserial>=3,<=3.4
+pyserial>=3,<=3.5
 intelhex>=2.3.0,<3.0.0
 prettytable>=2.0,<3.0
 imgtool>=2.0.0,<3.0.0
+colorama
