@@ -24,11 +24,20 @@ function(register_functional_test)
 	target_sources(${REGISTER_FT_TARGET}
 		PRIVATE
 			${TESTS_FUNCTIONAL_SOURCE_DIR}/test_main.cpp
+			${TESTS_FUNCTIONAL_SOURCE_DIR}/stubs_syscalls.cpp
 			${REGISTER_FT_SOURCES}
 	)
 
 	target_link_libraries(${REGISTER_FT_TARGET}
 		${REGISTER_FT_LINK_LIBRARIES}
+	)
+
+	target_link_options(${REGISTER_FT_TARGET}
+		PRIVATE
+		"-uputwc"
+		"-ugetwc"
+		"-uungetwc"
+		"-uswprintf"
 	)
 
 	target_compile_definitions(${REGISTER_FT_TARGET}
