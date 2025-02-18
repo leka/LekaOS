@@ -1,0 +1,33 @@
+# Leka - LekaOS
+# Copyright APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+CompileFlags:
+  Compiler: "arm-none-eabi-g++"
+  CompilationDatabase: "_build_cmake_tools"
+  Add:
+    - "-D__ARM_ARCH=7"
+    - "-D__ARM_ARCH_7EM__=1"
+    - "-D__ARM_ARCH_7M__=1"
+    - "-D__ARM_ARCH_7EM"
+    - "-D__ARM_ARCH_7M"
+    - "-DSTM32F769xx"
+    - "-mcpu=cortex-m7"
+
+Diagnostics:
+  UnusedIncludes: Strict
+  MissingIncludes: Strict
+
+Index:
+  Background: Build
+
+Hover:
+  ShowAKA: True
+
+InlayHints:
+  BlockEnd: True
+  Designators: True
+  Enabled: True
+  ParameterNames: True
+  DeducedTypes: True
+  TypeNameLimit: 24

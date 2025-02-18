@@ -2,6 +2,8 @@
 	"files.associations": {
 		".clang-format": "yaml",
 		".clang-tidy": "yaml",
+		".clangd": "yaml",
+		"*.xcstrings": "json",
 		"*.orig": "cpp",
 		"any": "cpp",
 		"array": "cpp",
@@ -65,11 +67,12 @@
 		"typeinfo": "cpp",
 		"variant": "cpp",
 		"lstd_*": "cpp",
-		"mstd_*": "cpp"
+		"mstd_*": "cpp",
+		"mstd_iterator": "cpp",
+		"mstd_mutex": "cpp"
 	},
 	"files.exclude": {
-		".cache": true,
-		".clangd": true
+		".cache": true
 	},
 	"editor.formatOnSave": true,
 	"cmake.ignoreKitEnv": true,
@@ -80,6 +83,7 @@
 	"cmake.generator": "Ninja",
 	"cmake.configureSettings": {
 		"TARGET_BOARD": "LEKA_V1_2_DEV",
+		"MBED_TARGET": "LEKA_V1_2_DEV",
 		"OS_VERSION": "0.0.0",
 		"ENABLE_LOG_DEBUG": "ON",
 		"ENABLE_SYSTEM_STATS": "ON",
@@ -88,17 +92,7 @@
 		"CMAKE_BUILD_TYPE": "Debug"
 	},
 	"clangd.checkUpdates": true,
-	"clangd.arguments": [
-		// On Apple Intel, un comment the following line
-		"--query-driver=/usr/local/bin/arm-none-eabi*",
-		// On Apple Silicon, un comment the following line
-		// "--query-driver=/opt/homebrew/bin/arm-none-eabi*",
-		"--log=verbose",
-		"--completion-style=detailed",
-		"--clang-tidy",
-		"--header-insertion=never",
-		"--suggest-missing-includes"
-	],
+	"clangd.arguments": ["--query-driver=**/arm-none-eabi-*"],
 	"markdownlint.config": {
 		"MD002": false,
 		"MD007": {
@@ -111,5 +105,45 @@
 			"style": "one"
 		},
 		"MD033": false
-	}
+	},
+	"cSpell.words": [
+		"activitykit",
+		"behaviorkit",
+		"coredma",
+		"coredsi",
+		"coreimu",
+		"corelcd",
+		"corell",
+		"coreltdc",
+		"coreotm",
+		"coresdram",
+		"corevideo",
+		"DSTM",
+		"eabi",
+		"imukit",
+		"ledkit",
+		"Leka",
+		"mbed",
+		"mcpu",
+		"mcuboot",
+		"MOSI",
+		"motionkit",
+		"mstd",
+		"NFC",
+		"OTM",
+		"qspi",
+		"QSPI",
+		"QSPIF",
+		"reinforcerkit",
+		"rfid",
+		"rfidkit",
+		"SPI",
+		"STM",
+		"TFT",
+		"UART",
+		"USB",
+		"WIFI",
+		"XIP",
+		"XIPM"
+	]
 }

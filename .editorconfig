@@ -29,7 +29,7 @@ indent_size = 4
 indent_style = space
 indent_size = 2
 
-[.clang-{format,tidy}]
+[.clang{d,-format,-tidy}]
 indent_style = space
 indent_size = 2
 
