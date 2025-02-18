@@ -210,14 +210,14 @@ auto CoreIMU::write(uint8_t register_address, uint16_t number_bytes_to_write, ui
 	return ret;
 }
 
-auto CoreIMU::ptr_io_write(CoreIMU *handle, uint8_t write_address, uint8_t *p_buffer,
-						   uint16_t number_bytes_to_write) -> int32_t
+auto CoreIMU::ptr_io_write(CoreIMU *handle, uint8_t write_address, uint8_t *p_buffer, uint16_t number_bytes_to_write)
+	-> int32_t
 {
 	return handle->write(write_address, number_bytes_to_write, p_buffer);
 }
 
-auto CoreIMU::ptr_io_read(CoreIMU *handle, uint8_t read_address, uint8_t *p_buffer,
-						  uint16_t number_bytes_to_read) -> int32_t
+auto CoreIMU::ptr_io_read(CoreIMU *handle, uint8_t read_address, uint8_t *p_buffer, uint16_t number_bytes_to_read)
+	-> int32_t
 {
 	return handle->read(read_address, number_bytes_to_read, p_buffer);
 }

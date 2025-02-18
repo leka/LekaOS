@@ -88,7 +88,7 @@ suite suite_expect = [] {
 	"compiletime/runtime constants"_test = [] {
 		constexpr auto compile_time_v = 42;
 		auto run_time_v				  = 99;
-		expect(constant<42_i == compile_time_v> and run_time_v == 99_i);
+		expect(constant < 42_i == compile_time_v > and run_time_v == 99_i);
 	};
 
 	"bool conversion"_test = [] { expect(static_cast<bool>(std::make_unique<int>())); };
