@@ -21,6 +21,7 @@
 #include "rtos/Thread.h"
 
 #include "CircularQueue.h"
+#include "cxxsupport/lstd_scoped_lock.h"
 
 namespace leka::logger {
 
@@ -276,7 +277,7 @@ namespace internal {
 	#define log_debug(str, ...)                                                                                        \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
-			const std::scoped_lock lock(leka::logger::internal::mutex);                                                \
+			auto lock = lstd::scoped_lock {leka::logger::internal::mutex};                                             \
 			format_time_human_readable(leka::logger::internal::now());                                                 \
 			format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                                       \
 			format_message(str, ##__VA_ARGS__);                                                                        \
@@ -289,7 +290,7 @@ namespace internal {
 	#define log_info(str, ...)                                                                                         \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
-			const std::scoped_lock lock(leka::logger::internal::mutex);                                                \
+			auto lock = lstd::scoped_lock {leka::logger::internal::mutex};                                             \
 			format_time_human_readable(leka::logger::internal::now());                                                 \
 			format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                                       \
 			format_message(str, ##__VA_ARGS__);                                                                        \
@@ -302,7 +303,7 @@ namespace internal {
 	#define log_error(str, ...)                                                                                        \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
-			const std::scoped_lock lock(leka::logger::internal::mutex);                                                \
+			auto lock = lstd::scoped_lock {leka::logger::internal::mutex};                                             \
 			format_time_human_readable(leka::logger::internal::now());                                                 \
 			format_filename_line_function(__FILENAME__, __LINE__, __FUNCTION__);                                       \
 			format_message(str, ##__VA_ARGS__);                                                                        \
@@ -315,7 +316,7 @@ namespace internal {
 	#define log_free(str, ...)                                                                                         \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
-			const std::scoped_lock lock(leka::logger::internal::mutex);                                                \
+			auto lock	= lstd::scoped_lock {leka::logger::internal::mutex};                                           \
 			auto length = format_output(str, ##__VA_ARGS__);                                                           \
 			leka::logger::internal::sink(leka::logger::buffer::output.data(), length);                                 \
 		} while (0)
@@ -323,7 +324,7 @@ namespace internal {
 	#define log_ll(p_data, size)                                                                                       \
 		do {                                                                                                           \
 			using namespace leka::logger;                                                                              \
-			const std::scoped_lock lock(leka::logger::internal::mutex);                                                \
+			auto lock = lstd::scoped_lock {leka::logger::internal::mutex};                                             \
 			leka::logger::buffer::fifo.push(std::span {p_data, static_cast<std::size_t>(size)});                       \
 			leka::logger::internal::event_queue.call(process_fifo);                                                    \
 		} while (0)

@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "rtos/Thread.h"
-
 #include "interface/drivers/Video.h"
 #include "interface/libs/EventLoop.h"
 #include "interface/libs/VideoKit.h"

@@ -3,12 +3,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "VideoKit.h"
-#include <mutex>
 
 #include "rtos/Mutex.h"
 #include "rtos/ThisThread.h"
 
 #include "FileManagerKit.h"
+#include "cxxsupport/lstd_scoped_lock.h"
 
 using namespace leka;
 using namespace std::chrono_literals;
@@ -31,7 +31,7 @@ void VideoKit::initializeScreen()
 
 void VideoKit::displayImage(const std::filesystem::path &path)
 {
-	const std::scoped_lock lock(mutex);
+	auto lock = lstd::scoped_lock {mutex};
 
 	if (path == _current_path) {
 		return;
@@ -57,7 +57,7 @@ void VideoKit::displayImage(const std::filesystem::path &path)
 
 void VideoKit::fillWhiteBackgroundAndDisplayImage(const std::filesystem::path &path)
 {
-	const std::scoped_lock lock(mutex);
+	auto lock = lstd::scoped_lock {mutex};
 
 	if (path == _current_path) {
 		return;
@@ -84,7 +84,7 @@ void VideoKit::fillWhiteBackgroundAndDisplayImage(const std::filesystem::path &p
 
 void VideoKit::playVideoOnce(const std::filesystem::path &path, const std::function<void()> &on_video_ended_callback)
 {
-	const std::scoped_lock lock(mutex);
+	auto lock = lstd::scoped_lock {mutex};
 
 	if (FileManagerKit::file_is_missing(path)) {
 		return;
@@ -105,7 +105,7 @@ void VideoKit::playVideoOnce(const std::filesystem::path &path, const std::funct
 void VideoKit::playVideoOnRepeat(const std::filesystem::path &path,
 								 const std::function<void()> &on_video_ended_callback)
 {
-	const std::scoped_lock lock(mutex);
+	auto lock = lstd::scoped_lock {mutex};
 
 	if (FileManagerKit::file_is_missing(path)) {
 		return;
