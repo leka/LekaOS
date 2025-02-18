@@ -1,362 +1,208 @@
 #!/usr/bin/env python3
 
+# Leka - LekaOS
+# Copyright 2024 APF France handicap
+# SPDX-License-Identifier: Apache-2.0
 
+import argparse
 import datetime
-import time
-from colorama import Fore, Style
-import os
-import glob
 import re
 import sys
-import argparse
-
+from dataclasses import dataclass
+from pathlib import Path
 from time import sleep
+from typing import List, Optional
 
-import serial
-import serial.tools.list_ports
+from colorama import Fore, Style
 
-
-#
-# MARK: - argparse
-#
-
-TESTS_FUNCTIONAL_ROOT_DIRECTORY = "_build/LEKA_V1_2_DEV/tests/functional/tests/"
-TESTS_BIN_EXTENSION = ".bin"
-
-
-def valid_file(parser, arg):
-    path = os.path.join(TESTS_FUNCTIONAL_ROOT_DIRECTORY, arg)
-    if not os.path.exists(path):
-        parser.error("⚠️ The file %s does not exist!" % arg)
-    else:
-        base, ext = os.path.splitext(arg)
-        if not ext.endswith(TESTS_BIN_EXTENSION):
-            parser.error(
-                "⚠️ The filename %s must have a \'.bin\' extension !" % arg)
-    return path
+from shared.test_utils import (
+    SerialConnection,
+    FlashHandler,
+    Logger,
+    SerialConfig,
+)
 
 
-parser = argparse.ArgumentParser(description='Run functional tests')
-
-parser.add_argument('-p', '--port', metavar='PORT', default='/dev/tty.usbmodem*',
-                    help='serial port path used for the robot')
-parser.add_argument('--response-timeout', metavar='RESPONSE_TIMEOUT', default=30.0,
-                    help='response timeout is seconds')
-parser.add_argument('--no-flash-erase', action='store_false',
-                    help='disable flash erase')
-
-group = parser.add_mutually_exclusive_group(required=True)
-
-group.add_argument('-b', '--bin-files', metavar='BIN_FILES', nargs='+', type=lambda s: valid_file(parser, s), default=list(),
-                   help='list binary executables')
-
-group.add_argument('--all', action='store_true',
-                   help='select all binary executable')
+@dataclass
+class Config:
+    TESTS_FUNCTIONAL_ROOT: Path = Path("_build/LEKA_V1_2_DEV/tests/functional/tests/")
+    TESTS_RESULTS_ROOT: Path = Path("_build/LEKA_V1_2_DEV/tests/functional/results/")
+    TESTS_BIN_EXTENSION: str = ".bin"
 
 
-args = parser.parse_args()
+class TestResult:
+    def __init__(self, source_path: Path):
+        self.source_path = source_path
+        self.result_path = self._generate_result_path()
+        self.failures: List[str] = []
+        self.content: str = ""
 
-#
-# MARK: - Serial
-#
+    def _generate_result_path(self) -> Path:
+        timestamp = datetime.datetime.now().strftime("%Y_%m_%d_%H.%M.%S")
+        Config.TESTS_RESULTS_ROOT.mkdir(parents=True, exist_ok=True)
+        return Config.TESTS_RESULTS_ROOT / f"{self.source_path.stem}_{timestamp}.txt"
 
-PORTS = glob.glob(args.port)
-SERIAL_PORT = PORTS[0] if (len(PORTS) != 0) else args.port
-
-RESPONSE_TIMEOUT = args.response_timeout  # in seconds
-RESPONSE_RETRY_DELAY = 0.1  # in seconds
-SERIAL_TIMEOUT = 0.1  # in seconds
-
-MAX_GET_LINE_RETRIES = RESPONSE_TIMEOUT / RESPONSE_RETRY_DELAY
-
-try:
-    com = serial.Serial(SERIAL_PORT, 115200, timeout=SERIAL_TIMEOUT)
-except serial.serialutil.SerialException as error:
-    print(f"{error}")
-    parser.print_help()
-    sys.exit(1)
-
-print(f"Connected to {com.name}")
-
-
-def read_output_serial():
-    return com.readline().decode("utf-8")
-
-
-def wait_for_response():
-    data = ''
-    no_response_counter = 0
-
-    while (no_response_counter <= MAX_GET_LINE_RETRIES):
-        sleep(RESPONSE_RETRY_DELAY)
-        data = read_output_serial()
-        if (data):
-            return data
-        no_response_counter += 1
-
-    return None
-
-
-#
-# MARK: - Functions
-#
-
-TESTS_FUNCTIONAL_BIN_FILES = list()
-
-
-def list_bin_files():
-    set = list()
-    for root, dirs, files in os.walk(TESTS_FUNCTIONAL_ROOT_DIRECTORY):
-        for filename in files:
-            if filename.endswith(TESTS_BIN_EXTENSION):
-                set.append(
-                    os.path.join(root, filename))
-
-    return set
-
-
-TESTS_FUNCTIONAL_BIN_FILES = list_bin_files() if args.all else args.bin_files
-
-FLASH_ERASE_FLAG = args.no_flash_erase
-
-
-def warningprint(*args, **kwargs):
-    print(Fore.YELLOW + "\n⚠️ Warning : " +
-          " ".join(map(str, args))+Style.RESET_ALL, **kwargs)
-
-
-#
-# MARK: - Class Test
-#
-
-class Test:
-
-    def __init__(self, path):
-        self.path = path
-
-    def generate_result_file(self):
-        def define_path(source_path):
-            base, ext = os.path.splitext(source_path)
-            timestamp = time.time()
-            date = str(datetime.datetime.fromtimestamp(
-                timestamp))
-            date = date.replace(':', '.')
-            date = date.replace(' ', '_')
-            new_extension = ".txt"
-            target_path = base + "_" + date + new_extension
-            return target_path
-
-        def create_file(path):
-            try:
-                file = open(path, "w")
-            except OSError as e:
-                print("Could not create or open file: " + path)
-                print("Error: " + e)
-                sys.exit(1)
-            file.close()
-
-        self.result_filepath = define_path(self.path)
-        create_file(self.result_filepath)
-
-    def edit_result_file(self, data):
-        result_filepath = self.result_filepath
+    def write_data(self, data: str) -> None:
         try:
-            with open(result_filepath, "a") as file:
-                file.write(data)
-        except FileNotFoundError as e:
-            print("The file: " + result_filepath + "doesn\'t exist")
-            print("Error: " + e)
-            sys.exit(1)
+            with open(self.result_path, "a", encoding="utf-8") as f:
+                f.write(data)
+        except IOError as e:
+            Logger.print_failure(f"Failed to write to result file: {e}")
+            raise
 
-    def print_result_file(self):
-        result_filepath = self.result_filepath
+    def read_content(self) -> str:
         try:
-            with open(result_filepath, "r") as file:
-                data = file.read()
-            if (data):
-                print(data)
+            with open(self.result_path, "r", encoding="utf-8") as f:
+                self.content = f.read()
+            return self.content
+        except IOError as e:
+            Logger.print_failure(f"Failed to read result file: {e}")
+            raise
+
+
+class TestRunner:
+    def __init__(self, test_path: Path, serial_conn: SerialConnection):
+        self.test_path = test_path
+        self.serial = serial_conn
+        self.result = TestResult(test_path)
+
+    def run(self) -> bool:
+        if not FlashHandler.flash_binary(self.test_path):
+            return False
+
+        while True:
+            data = self._wait_for_response()
+            if data is None:
+                return False
+
+            if data.rstrip() == "<<END_OF_TESTS>>":
+                return True
+            elif data.rstrip() != "." and data.rstrip() != "<<START_OF_TESTS>>":
+                if data.strip():
+                    self.result.write_data(data)
+
+    def _wait_for_response(self) -> Optional[str]:
+        max_retries = int(
+            SerialConfig.RESPONSE_TIMEOUT / SerialConfig.RESPONSE_RETRY_DELAY
+        )
+        for _ in range(max_retries):
+            sleep(SerialConfig.RESPONSE_RETRY_DELAY)
+            data = self.serial.read_line()
+            if data:
+                return data
+        return None
+
+    def check_status(self) -> bool:
+        try:
+            content = self.result.read_content()
+            failure_pattern = re.compile(r".*\.cpp:[0-9].+: Failure|\[  FAILED  \]")
+            self.result.failures = failure_pattern.findall(content)
+            return "All tests passed!" in content and not self.result.failures
+        except IOError as e:
+            Logger.print_failure(f"Failed to read result file: {e}")
+            raise
+
+
+def parse_arguments() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Run functional tests")
+    parser.add_argument(
+        "-p",
+        "--port",
+        default="/dev/tty.usbmodem*",
+        help="serial port path used for the robot",
+    )
+    parser.add_argument(
+        "--no-flash-erase", action="store_false", help="disable flash erase"
+    )
+
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(
+        "-b", "--bin-files", nargs="+", type=Path, help="list binary executables"
+    )
+    group.add_argument(
+        "--all", action="store_true", help="select all binary executables"
+    )
+
+    return parser.parse_args()
+
+
+def print_test_summary(results: List[TestRunner]) -> None:
+    failed_tests = [r for r in results if not r.check_status()]
+
+    print("\nResults files:")
+    for runner in results:
+        print(str(runner.result.result_path))
+
+    print("\nTest Results:")
+    for runner in results:
+        status = "❌" if runner in failed_tests else "✅"
+        print(f"{status} {runner.test_path}")
+
+    if failed_tests:
+        print("\nDetailed Failure Information:")
+        for failed_test in failed_tests:
+            print(f"\n{Fore.YELLOW}{failed_test.result.result_path}{Style.RESET_ALL}\n")
+            content = failed_test.result.read_content()
+            if content.strip():
+                print(content)
             else:
-                warningprint("No data !")
-        except FileNotFoundError as e:
-            print("The file: " + result_filepath + "doesn\'t exist")
-            print("Error: " + e)
-            sys.exit(1)
+                print(f"{Fore.YELLOW}⚠️ Warning: No test output data!{Style.RESET_ALL}")
 
-    def flash(self):
-        print(f"Flashing {self.path}...")
-        CMD_FLASH = (f"openocd -f interface/stlink.cfg "
-                     f"-c 'transport select hla_swd' "
-                     f"-f target/stm32f7x.cfg "
-                     f"-c 'program {self.path} 0x08000000' "
-                     f"-c exit "
-                     f">/dev/null 2>&1 ")
-        flash = os.system(CMD_FLASH)
-
-        sleep(1)
-
-        CMD_RESET = ("openocd -f interface/stlink.cfg "
-                     "-c 'transport select hla_swd' "
-                     "-f target/stm32f7x.cfg "
-                     "-c init -c 'reset run' "
-                     "-c exit "
-                     f">/dev/null 2>&1 ")
-        reset = os.system(CMD_RESET)
-        return flash or reset
-
-    def run(self):
-        self.generate_result_file()
-        ret = self.flash()
-
-        if ret:
-            warningprint("Error flashing !")
-            return ret
-        else:
-            while True:
-                data = wait_for_response()
-                if data is not None:
-                    if data.strip() == "<<END_OF_TESTS>>":
-                        return ret
-                    elif data.strip() != ".":
-                        self.edit_result_file(data)
-                else:
-                    return ret
-
-    def check_status(self):
-
-        def all_tests_passed(file):
-            ploop = (".*All tests passed!")
-            pattern = re.compile(ploop)
-            ret = False
-            for line in file:
-                match = pattern.search(line)
-                if match is not None:
-                    ret = True
-                    break
-            return ret
-
-        def failure_lines(file):
-            ploop = (".*\\.cpp:[0-9].+: Failure|\\[  FAILED  \\]")
-            pattern = re.compile(ploop)
-            for line in file:
-                match = pattern.search(line)
-                if match is not None:
-                    yield line.strip()
-
-        ret = 0
-        result_filepath = self.result_filepath
-
-        try:
-            with open(result_filepath, "r") as file:
-                self.failures = list()
-                for line in failure_lines(file):
-                    self.failures.append(line)
-                file.seek(0, 0)
-                if len(self.failures) or not all_tests_passed(file):
-                    print("Failures : " + str(self.failures))
-                    print("All test passed : "+str(all_tests_passed(file)))
-                    ret = 1
-
-        except FileNotFoundError as e:
-            print("The file: " + result_filepath + "doesn\'t exist")
-            print("Error: " + e)
-            sys.exit(1)
-
-        return ret
-
-
-def print_summary():
-
-    if not RUN_TESTS:
-        warningprint("No available set !")
-        sys.exit(1)
-
-    FAILS = list()
-    print("\n")
-    print("Results files :")
-    for test in RUN_TESTS:
-        print(test.result_filepath)
-        fail = test.check_status()
-        if fail:
-            FAILS.append(test)
-
-    print("\n")
-    print("{}{}".format('     ', 'TESTS'))
-    for test in RUN_TESTS:
-        path = test.path
-        status = " ❌  " if test in FAILS else " ✅  "
-        print("{}{}".format(status, path))
-
-    print("\n")
-    for test in FAILS:
-        print(Fore.YELLOW + test.result_filepath + Style.RESET_ALL)
-        test.print_result_file()
-
-    if (FAILS):
-        print(Fore.RED + " ❌ %d in %d suites have failed..." % (len(FAILS), len(RUN_TESTS)) +
-              Style.RESET_ALL)
+        print(
+            f"\n{Fore.RED}❌ {len(failed_tests)} of {len(results)} "
+            f"tests failed{Style.RESET_ALL}\n"
+        )
     else:
-        print(Fore.GREEN + " ✅ All the %d suites have passed !" % len(RUN_TESTS) +
-              Style.RESET_ALL)
-
-    ret = len(FAILS)
-    return ret
+        print(f"\n{Fore.GREEN}✅ All {len(results)} tests passed!{Style.RESET_ALL}")
 
 
-#
-# MARK: - Main script
-#
+def main() -> int:
+    args = parse_arguments()
 
-RUN_TESTS = list()
+    # Find test files
+    if args.all:
+        test_files = list(
+            Config.TESTS_FUNCTIONAL_ROOT.glob(f"**/*{Config.TESTS_BIN_EXTENSION}")
+        )
+    else:
+        test_files = args.bin_files
 
+    if not test_files:
+        Logger.print_failure("No test files found!")
+        return 1
 
-def flash_erase():
-    ret = os.system("st-flash --connect-under-reset --reset erase")
-    return ret
+    # Setup serial connection
+    serial_conn = SerialConnection(args.port)
+    serial_conn.connect()
 
+    # Initial flash erase if needed
+    if args.no_flash_erase:
+        FlashHandler.erase()
 
-def reset_buffer():
-    BREAK_DELAY = 1
-    com.reset_input_buffer()
-    com.reset_output_buffer()
-    com.send_break(BREAK_DELAY)
-    sleep(BREAK_DELAY)
+    serial_conn.reset_buffers()
 
+    # Run tests
+    Logger.print_start("Running tests")
+    results = []
+    for test_file in test_files:
+        runner = TestRunner(test_file, serial_conn)
+        if runner.run():
+            results.append(runner)
 
-def main():
-    ret = 0
+    if args.no_flash_erase:
+        FlashHandler.erase()
 
-    print("Hello, World!")
+    serial_conn.reset_buffers()
 
-    if not TESTS_FUNCTIONAL_BIN_FILES:
-        warningprint("No exec !")
-        sys.exit(1)
+    # Print detailed results
+    print_test_summary(results)
 
-    if FLASH_ERASE_FLAG:
-        flash_erase()
+    # Final flash erase
+    Logger.print_start("Erasing flash after tests")
+    FlashHandler.erase()
 
-    reset_buffer()
-
-    print("Running tests...")
-    for filepath in TESTS_FUNCTIONAL_BIN_FILES:
-        test = Test(filepath)
-        error = test.run()
-        if not error:
-            RUN_TESTS.append(test)
-
-    if FLASH_ERASE_FLAG:
-        flash_erase()
-
-    reset_buffer()
-
-    fails = print_summary()
-    if fails:
-        ret = 1
-
-    print("Erasing flash after tests...")
-    flash_erase()
-
-    return ret
+    return 1 if any(not r.check_status() for r in results) else 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())
