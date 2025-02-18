@@ -15,6 +15,12 @@ jobs:
         with:
           fetch-depth: 2
 
+      - name: Install clang-format@19
+        run: |
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo apt-get update
+          sudo apt-get install -y clang-format-19
+
       - name: Run clang-format
         run: |
-          python3 tools/run-clang-format.py --clang-format-executable=clang-format-18 -r --extension=h,hpp,c,cpp --color=always --style=file ./app ./drivers ./libs ./spikes ./tests
+          python3 tools/run-clang-format.py --clang-format-executable=clang-format-19 -r --extension=h,hpp,c,cpp --color=always --style=file ./app ./drivers ./libs ./spikes ./tests
