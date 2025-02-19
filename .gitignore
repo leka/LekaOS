@@ -10,7 +10,6 @@ _build*
 _coverage*
 cmake/config/
 .cache
-.clangd
 *.ioc.csv
 cube_path.json
 _release
