@@ -13,18 +13,6 @@ namespace leka {
 
 using namespace std::chrono;
 
-void BehaviorKit::spinLeft(float speed)
-{
-	_motor_left.spin(Rotation::clockwise, speed);
-	_motor_right.spin(Rotation::clockwise, speed);
-}
-
-void BehaviorKit::spinRight(float speed)
-{
-	_motor_left.spin(Rotation::counterClockwise, speed);
-	_motor_right.spin(Rotation::counterClockwise, speed);
-}
-
 void BehaviorKit::launching()
 {
 	_videokit.displayImage(fs::home::img::system::robot_misc_splash_screen_large_400);
