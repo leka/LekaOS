@@ -30,6 +30,7 @@ add_subdirectory(${SPIKES_DIR}/lk_rfid)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_battery)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_imu)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_imu_fusion_calibration)
+add_subdirectory(${SPIKES_DIR}/lk_sensors_imu_wakeup_calibration)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_light)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_microphone)
 add_subdirectory(${SPIKES_DIR}/lk_sensors_temperature_humidity)
@@ -73,6 +74,7 @@ add_dependencies(spikes_leka
 	spike_lk_sensors_battery
 	spike_lk_sensors_imu
 	spike_lk_sensors_imu_fusion_calibration
+	spike_lk_sensors_imu_wakeup_calibration
 	spike_lk_sensors_light
 	spike_lk_sensors_microphone
 	spike_lk_sensors_temperature_humidity
