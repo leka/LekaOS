@@ -4,6 +4,7 @@
 
 add_subdirectory(${SPIKES_DIR}/lk_activity_kit)
 add_subdirectory(${SPIKES_DIR}/lk_audio)
+add_subdirectory(${SPIKES_DIR}/lk_auto_charge)
 add_subdirectory(${SPIKES_DIR}/lk_behavior_kit)
 add_subdirectory(${SPIKES_DIR}/lk_ble)
 add_subdirectory(${SPIKES_DIR}/lk_bluetooth)
@@ -50,6 +51,7 @@ add_subdirectory(${SPIKES_DIR}/stl_cxxsupport)
 add_custom_target(spikes_leka)
 add_dependencies(spikes_leka
 	spike_lk_activity_kit
+	spike_lk_auto_charge
 	spike_lk_ble
 	spike_lk_bluetooth
 	spike_lk_cg_animations

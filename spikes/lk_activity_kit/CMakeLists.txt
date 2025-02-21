@@ -17,7 +17,7 @@ target_sources(spike_lk_activity_kit
 target_link_libraries(spike_lk_activity_kit
 	CoreTimeout
 	FileManagerKit
-	BehaviorKit
+	BehaviorKitDeprecated
 	CorePwm
 	CoreMotor
 	VideoKit
