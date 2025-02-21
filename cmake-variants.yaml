@@ -1,0 +1,29 @@
+# schema: cmake-tools-schema://schemas/variants-schema.json
+
+# Leka - LekaOS
+# Copyright APF France handicap
+# SPDX-License-Identifier: Apache-2.0
+
+buildType:
+  default: develop
+  choices:
+    develop:
+      short: Develop
+      long: Emit debug information but also optimize
+      buildType: Develop
+    debug:
+      short: Debug
+      long: Emit debug information and don't optimize
+      buildType: Debug
+    release:
+      short: Release
+      long: Optimize generated code
+      buildType: Release
+board:
+  default: DISCO_F769NI
+  choices:
+    DISCO_F769NI:
+      short: DISCO_F769NI
+      settings:
+        MBED_TARGET: DISCO_F769NI
+        UPLOAD_METHOD: NONE
