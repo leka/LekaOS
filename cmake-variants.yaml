@@ -5,25 +5,38 @@
 # SPDX-License-Identifier: Apache-2.0
 
 buildType:
-  default: develop
+  default: Develop
   choices:
-    develop:
+    Develop:
       short: Develop
       long: Emit debug information but also optimize
       buildType: Develop
-    debug:
+    Debug:
       short: Debug
       long: Emit debug information and don't optimize
       buildType: Debug
-    release:
+    Release:
       short: Release
       long: Optimize generated code
       buildType: Release
+
 board:
-  default: DISCO_F769NI
+  default: LEKA_V1_PROD
   choices:
-    DISCO_F769NI:
-      short: DISCO_F769NI
+    LEKA_V1_PROD:
+      short: LEKA_V1_PROD
       settings:
-        MBED_TARGET: DISCO_F769NI
+        MBED_TARGET: LEKA_V1_PROD
         UPLOAD_METHOD: NONE
+        OS_VERSION: 0.0.0
+        ENABLE_LOG_DEBUG: ON
+
+  # cmake.configureSettings:
+  # MBED_TARGET: LEKA_V1_PROD,
+  # OS_VERSION: 0.0.0,
+  # ENABLE_LOG_DEBUG: ON,
+  # ENABLE_SYSTEM_STATS: ON,
+  # MBED_PATH: ${workspaceFolder}/extern/mbed-os,
+  # CMAKE_CONFIG_DIR: ${workspaceFolder}/_build_cmake_tools/cmake_config,
+  # CMAKE_BUILD_TYPE: Debug
+  # }

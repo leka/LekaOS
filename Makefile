@@ -29,7 +29,7 @@ OS_VERSION       ?= $(shell cat $(ROOT_DIR)/config/os_version)
 
 # build
 BUILD_TYPE   ?= Release
-TARGET_BOARD ?= DISCO_F769NI
+TARGET_BOARD ?= LEKA_V1_PROD
 
 # tests
 COVERAGE   ?= ON
