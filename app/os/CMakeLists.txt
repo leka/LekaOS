@@ -25,7 +25,7 @@ target_link_libraries(LekaOS
 	FileManagerKit
 	SerialNumberKit
 	FirmwareKit
-	BehaviorKit
+	BehaviorKitDeprecated
 	CorePwm
 	CoreMotor
 	VideoKit

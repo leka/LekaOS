@@ -7,7 +7,7 @@
 #include "drivers/HighResClock.h"
 #include "rtos/ThisThread.h"
 
-#include "BehaviorKit.h"
+#include "BehaviorKitDeprecated.h"
 #include "CoreDMA2D.hpp"
 #include "CoreDSI.hpp"
 #include "CoreFont.hpp"
@@ -172,7 +172,7 @@ namespace display {
 
 }	// namespace display
 
-auto behaviorkit = BehaviorKit {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
+auto behaviorkit = BehaviorKitDeprecated {display::videokit, leds::kit, motors::left::motor, motors::right::motor};
 auto hello		 = HelloWorld {};
 
 }	// namespace
