@@ -22,6 +22,11 @@ class CoreSTM32Hal : public interface::STM32Hal
 	void HAL_RCC_GPIOI_CLK_ENABLE() final;
 	void HAL_RCC_GPIOJ_CLK_ENABLE() final;
 
+	void HAL_RCC_TIM6_CLK_ENABLE() final;
+	void HAL_RCC_TIM6_CLK_DISABLE() final;
+	void HAL_RCC_TIM7_CLK_ENABLE() final;
+	void HAL_RCC_TIM7_CLK_DISABLE() final;
+
 	void HAL_RCC_FMC_CLK_ENABLE() final;
 
 	void HAL_RCC_DMA2_CLK_ENABLE() final;
@@ -104,6 +109,15 @@ class CoreSTM32Hal : public interface::STM32Hal
 
 	auto HAL_JPEG_Pause(JPEG_HandleTypeDef *hjpeg, uint32_t XferSelection) -> HAL_StatusTypeDef final;
 	auto HAL_JPEG_Resume(JPEG_HandleTypeDef *hjpeg, uint32_t XferSelection) -> HAL_StatusTypeDef final;
+
+	auto HAL_TIM_Base_Init(TIM_HandleTypeDef *htim) -> HAL_StatusTypeDef final;
+	auto HAL_TIMEx_MasterConfigSynchronization(TIM_HandleTypeDef *htim, TIM_MasterConfigTypeDef *sMasterConfig)
+		-> HAL_StatusTypeDef final;
+	auto HAL_TIM_RegisterCallback(TIM_HandleTypeDef *htim, HAL_TIM_CallbackIDTypeDef CallbackID,
+								  pTIM_CallbackTypeDef pCallback) -> HAL_StatusTypeDef final;
+	auto HAL_TIM_Base_Start_IT(TIM_HandleTypeDef *htim) -> HAL_StatusTypeDef final;
+	auto HAL_TIM_Base_Stop_IT(TIM_HandleTypeDef *htim) -> HAL_StatusTypeDef final;
+	auto HAL_TIM_Base_DeInit(TIM_HandleTypeDef *htim) -> HAL_StatusTypeDef final;
 };
 
 }	// namespace leka

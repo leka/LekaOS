@@ -19,7 +19,10 @@ class CoreSTM32Hal : public interface::STM32Hal
 	MOCK_METHOD(void, HAL_RCC_GPIOH_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_GPIOI_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_GPIOJ_CLK_ENABLE, (), (override));
-
+	MOCK_METHOD(void, HAL_RCC_TIM6_CLK_ENABLE, (), (override));
+	MOCK_METHOD(void, HAL_RCC_TIM6_CLK_DISABLE, (), (override));
+	MOCK_METHOD(void, HAL_RCC_TIM7_CLK_ENABLE, (), (override));
+	MOCK_METHOD(void, HAL_RCC_TIM7_CLK_DISABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_FMC_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_DMA2_CLK_ENABLE, (), (override));
 	MOCK_METHOD(void, HAL_RCC_JPEG_CLK_ENABLE, (), (override));
@@ -113,6 +116,15 @@ class CoreSTM32Hal : public interface::STM32Hal
 
 	MOCK_METHOD(HAL_StatusTypeDef, HAL_JPEG_Pause, (JPEG_HandleTypeDef *, uint32_t), (override));
 	MOCK_METHOD(HAL_StatusTypeDef, HAL_JPEG_Resume, (JPEG_HandleTypeDef *, uint32_t), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_TIM_Base_Init, (TIM_HandleTypeDef * htim), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_TIMEx_MasterConfigSynchronization,
+				(TIM_HandleTypeDef * htim, TIM_MasterConfigTypeDef *sMasterConfig), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_TIM_RegisterCallback,
+				(TIM_HandleTypeDef * htim, HAL_TIM_CallbackIDTypeDef CallbackID, pTIM_CallbackTypeDef pCallback),
+				(override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_TIM_Base_Start_IT, (TIM_HandleTypeDef * htim), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_TIM_Base_Stop_IT, (TIM_HandleTypeDef * htim), (override));
+	MOCK_METHOD(HAL_StatusTypeDef, HAL_TIM_Base_DeInit, (TIM_HandleTypeDef * htim), (override));
 };
 
 }	// namespace leka::mock
