@@ -38,17 +38,18 @@ namespace rfid::cr95hf {
 		namespace idle_tag_detection {
 
 			inline constexpr auto tag_detection_command	  = uint8_t {0x07};
-			inline constexpr auto wu_source				  = uint8_t {0x0A};
+			inline constexpr auto wu_source				  = uint8_t {0x0A};	  // remove IRQ_IN, update LFO
 			inline constexpr auto length				  = uint8_t {0x0E};
 			inline constexpr auto enter_control			  = std::to_array<uint8_t>({0x21, 0x00});
 			inline constexpr auto wu_control			  = std::to_array<uint8_t>({0x79, 0x01});
 			inline constexpr auto leave_control			  = std::to_array<uint8_t>({0x18, 0x00});
-			inline constexpr auto wu_periode			  = uint8_t {0x20};
-			inline constexpr auto oscillator_start		  = uint8_t {0x60};
-			inline constexpr auto digital_to_analog_start = uint8_t {0x60};
-			inline constexpr auto digital_to_analog_data  = std::to_array<uint8_t>({0x70, 0x80});
-			inline constexpr auto swing_count			  = uint8_t {0x3F};
-			inline constexpr auto max_sleep				  = uint8_t {0x08};
+			inline constexpr auto wu_periode			  = uint8_t {0x28};	  // Duration beteen two burst
+			inline constexpr auto oscillator_start		  = uint8_t {0x60};	  // HFO to stabilize
+			inline constexpr auto digital_to_analog_start = uint8_t {0x60};	  // DAC to stabilize
+			inline constexpr auto digital_to_analog_data =
+				std::to_array<uint8_t>({0x70, 0x80});			  // lower and higer value for tag detection
+			inline constexpr auto swing_count = uint8_t {0x3F};	  // pay attention to
+			inline constexpr auto max_sleep	  = uint8_t {0x08};
 
 		}	// namespace idle_tag_detection
 
